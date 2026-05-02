@@ -7,5 +7,3 @@ This project is an independent consolidation of programming-agent workflow ideas
 - Superpowers, especially skill-based workflows for planning, debugging, verification, and subagent-driven development.
 
 These acknowledgments describe inspiration only. This repo is not affiliated with, endorsed by, sponsored by, or maintained by those people or projects.
-
-The tracked skills in this repo are original synthesized instructions. Source corpora, copied references, and private research notes should not be committed here.
