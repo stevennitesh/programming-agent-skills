@@ -32,6 +32,7 @@ Before any completion claim:
 
 - A check run before the final edit does not support the final claim.
 - A passing command that does not exercise the changed path is weak evidence. Say so.
+- A simulation, dry run, read-only review, or "would do" answer does not support a claim that behavior was execution-tested.
 - Passing tests do not prove requirements are met; inspect the diff against the request or acceptance checks.
 - Subagent reports count only after the parent inspects the diff or reruns the relevant check.
 - Manual checks count only when the exact steps and observed result are recorded.
@@ -43,6 +44,7 @@ Inspect the diff against the request:
 
 - Every changed file should trace to the request, an acceptance check, or a named risk-reduction step
 - Missing acceptance criteria
+- Evidence that is weaker than the requested success criterion, such as simulated tests reported as behavior tests
 - Behavior outside scope
 - Missing or weak tests
 - Tests that only prove mocks, snapshots, or test-only production hooks

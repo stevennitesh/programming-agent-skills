@@ -1,6 +1,6 @@
 ---
 name: manage-subagents
-description: Use when the user asks for subagents, parallel agents, worker agents, independent review, multi-agent exploration, or several independent tasks can safely run in parallel.
+description: Use when the user asks for subagents, parallel agents, worker agents, independent review, or multi-agent exploration; or when the current environment permits delegation and several independent tasks can safely run in parallel.
 ---
 
 # Manage Subagents
@@ -13,7 +13,7 @@ Delegate bounded work, not responsibility. The parent owns scope, integration, r
 
 ## Use Or Avoid
 
-Use subagents when at least one is true:
+Use subagents when the current environment permits delegation and at least one is true:
 
 - The user explicitly asks for subagents or parallel agents.
 - Two or more read-only questions can be answered independently.
@@ -23,6 +23,7 @@ Use subagents when at least one is true:
 
 Avoid subagents when:
 
+- The current environment, policy, or user instruction does not permit delegation.
 - The next step depends on one result you need immediately.
 - Work is tightly coupled across the same files or shared state.
 - You would only be outsourcing judgment the parent must own.

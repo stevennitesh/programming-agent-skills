@@ -1,6 +1,6 @@
 ---
 name: github-work-tracking
-description: Use when the user wants GitHub CLI issue tracking, PRDs, implementation issues, triage, PR creation, PR updates, or durable change/request tracking with gh.
+description: Use when the user wants GitHub issue tracking, PRDs, implementation issues, triage, PR creation, PR updates, or durable change/request tracking through gh, GitHub connectors, or app tools.
 ---
 
 # GitHub Work Tracking
@@ -25,13 +25,13 @@ Skip GitHub tracking for tiny obvious edits unless requested.
 Before creating or editing GitHub records:
 
 1. Confirm the repo has a GitHub remote.
-2. Check `gh auth status` if auth is uncertain.
+2. Check `gh auth status` or connector/app authorization if auth is uncertain.
 3. Read existing issue, label, and PR conventions when present.
 4. Search for a duplicate or parent issue first.
 5. Read `CONTEXT.md` when it exists so issues use shared vocabulary.
 6. Preserve the current working tree.
 
-If GitHub state affects the answer, inspect it live with `gh`; do not rely on memory.
+If GitHub state affects the answer, inspect it live with the available GitHub interface; do not rely on memory. Use `gh` when it is the repo's working interface, or GitHub connector/app tools when they are available. Preserve the same evidence rules either way: check live state, search for duplicates, follow repo conventions, and keep issue or PR bodies durable.
 
 ## PRD Issue Shape
 
@@ -60,7 +60,7 @@ Keep implementation notes durable: interfaces, constraints, prior decisions, and
 
 Use `CONTEXT.md` terms in PRDs and slice issues when they clarify intent. Do not copy progress, implementation status, or skill summaries into `CONTEXT.md`.
 
-Create with `gh issue create --title "<title>" --body-file <file>`.
+Create with `gh issue create --title "<title>" --body-file <file>` or the equivalent connector/app issue action.
 
 Use `.tmp/` for temporary body files.
 
@@ -118,7 +118,7 @@ For blocked issues, record:
 - Do not claim CI status without checking it with `gh pr checks`, `gh run`, or the GitHub UI.
 - Update or comment on the issue when scope, acceptance, or blockers change.
 
-Useful commands:
+Useful `gh` commands when the CLI is the active GitHub interface:
 
 ```bash
 gh issue list

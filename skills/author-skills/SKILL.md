@@ -41,8 +41,13 @@ Shared glossary docs, when present, store recurring terms, roles, boundaries, an
 7. Keep the body to purpose, procedure, stop conditions, examples if useful, and related handoff.
 8. Add resources only when they reduce repeated work or context load.
 9. Validate structure, then read the skill against the pressure scenarios.
-10. If possible and worthwhile, forward-test with a fresh agent using only the skill and a realistic request.
+10. If possible and worthwhile, forward-test with a fresh agent using only the skill and a realistic request. Label the evidence level:
+   - Instruction review: the skill wording was reviewed, but no agent used it on a task.
+   - Simulated forward test: a fresh agent predicted what it would do, but did not perform the task.
+   - Execution test: a fresh agent used the skill while doing a real or fixture-backed task, with observable actions, artifacts, checks, and final claim quality.
 11. Revise loopholes, vague language, and unnecessary process.
+
+Do not treat simulated forward tests as behavior proof. If the purpose is to test whether a skill changes agent behavior, the test needs execution evidence or an explicit open risk explaining why execution was not run.
 
 ## Good Skill Traits
 
@@ -69,6 +74,8 @@ Does it prevent the target failure mode?
 Does it avoid unnecessary process?
 Does it avoid local assumptions?
 What does it hand off to?
+What evidence level supports this review?
+If behavior was the target, did an agent actually execute the task or only describe what it would do?
 ```
 
 ## Handoff

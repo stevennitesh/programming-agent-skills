@@ -78,6 +78,7 @@ Use this template inline for short work or in the repo planning location for mul
 - Prefer end-to-end behavior slices over layer-only slices.
 - A good task delivers one visible behavior, one state change, one API contract, one migration step, one bug reproduction plus fix, or one safe refactor.
 - Each task needs a pass/fail check.
+- For validation or testing plans, each task must state the evidence level it will produce and what weaker evidence does not satisfy the intent.
 - Merge tasks that cannot be reviewed independently.
 - Split tasks that require unrelated files or decisions.
 - Keep related tests or checks in the same task as the behavior they protect.
@@ -103,6 +104,7 @@ Treat the plan as a route, not authority. If source evidence, user instruction, 
 Before handing off, scan the plan:
 
 - Coverage: every acceptance check maps to at least one task.
+- Evidence fit: each validation claim maps to evidence strong enough for the claim, and simulated or review-only checks are not allowed to satisfy behavior-test intent.
 - Placeholder scan: no vague work items such as "handle edge cases" without the exact behavior and check.
 - Name consistency: types, functions, commands, and terms are named the same way across tasks.
 
