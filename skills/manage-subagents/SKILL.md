@@ -40,9 +40,12 @@ Avoid subagents when:
 
 Use spec review before quality review. If spec is wrong or incomplete, quality review is premature.
 
+When dispatching a role that has a template, start from that template by default. Copy or adapt its fields into the packet instead of rebuilding the packet from memory. Use the base packet only for unusual roles, tiny one-off tasks, or when a role template would add no useful control; if you skip an applicable template, say why in the parent notes or final report.
+
 ## Packet Rules
 
 - Give each subagent a tight task packet, not the whole conversation.
+- Choose the role first, then use that role's template as the packet skeleton when one exists.
 - Include exact scope, allowed files, forbidden scope, expected output, and evidence required.
 - Name the controlling skill for implementation packets: `tdd-slice` for behavior changes, `diagnose-loop` for failing or unexplained symptoms, or `codebase-cleanup` for behavior-preserving refactors.
 - Include only the `CONTEXT.md` terms needed for the task; do not dump the whole file by default.
@@ -53,7 +56,7 @@ Use spec review before quality review. If spec is wrong or incomplete, quality r
 - Do not trust subagent success claims without parent inspection.
 - Do not let subagents make unchecked product, architecture, dependency, or scope decisions.
 
-Base packet:
+Base packet for custom roles or fallback use:
 
 ```text
 Role:
