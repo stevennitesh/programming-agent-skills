@@ -1,0 +1,44 @@
+# Local scratch and caches
+.cache/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+
+# Editor and OS noise
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# Logs and generated archives
+*.log
+*.tmp
+*.bak
+*.zip
+*.tar
+*.tar.gz
+
+# Keep scratch directory placeholder while ignoring contents
+!.tmp/
+.tmp/*
+!.tmp/.gitkeep
+
+# Node/package manager output if skill tooling uses JS
+node_modules/
+dist/
+build/
+coverage/
+
+sources/
