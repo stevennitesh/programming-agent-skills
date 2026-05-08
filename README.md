@@ -104,7 +104,9 @@ Extend the skill pack:
 
 ## Status
 
-This is an experimental baseline. The skills are meant to be revised as real work exposes weak wording, missing checks, unclear handoffs, or unnecessary process.
+This is an experimental baseline, but it is not untested. These skills have been used across five programming projects and currently match the maintainer's preferred agent workflow.
+
+Future revisions are expected as real work exposes weak wording, missing checks, unclear handoffs, or unnecessary process.
 
 ## Maintainer Check
 
