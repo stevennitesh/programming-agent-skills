@@ -66,6 +66,7 @@ foreach ($file in $tracked) {
 }
 
 $skillRoot = Join-Path $repoRoot "skills"
+$skillNames = [System.Collections.Generic.List[string]]::new()
 if (-not (Test-Path -LiteralPath $skillRoot)) {
     Add-Failure "Missing skills/ directory."
 } else {
@@ -87,6 +88,79 @@ if (-not (Test-Path -LiteralPath $skillRoot)) {
         if ($skillName -ne $dir.Name) {
             Add-Failure "Skill name mismatch: folder '$($dir.Name)' has name '$skillName'"
         }
+        $skillNames.Add($dir.Name) | Out-Null
+    }
+}
+
+$readmePath = Join-Path $repoRoot "README.md"
+if (-not (Test-Path -LiteralPath $readmePath)) {
+    Add-Failure "Missing README.md."
+} else {
+    $readmeText = Get-Content -LiteralPath $readmePath -Raw
+    foreach ($skillName in $skillNames) {
+        $skillMapPattern = '(?m)^\|\s*`' + [regex]::Escape($skillName) + '`\s*\|'
+        if ($readmeText -notmatch $skillMapPattern) {
+            Add-Failure "README skill map is missing skill: $skillName"
+        }
+    }
+
+    $mappedSkills = [regex]::Matches($readmeText, '(?m)^\|\s*`([^`]+)`\s*\|') |
+        ForEach-Object { $_.Groups[1].Value }
+    foreach ($mappedSkill in $mappedSkills) {
+        if (-not $skillNames.Contains($mappedSkill)) {
+            Add-Failure "README skill map references missing skill: $mappedSkill"
+        }
+    }
+}
+
+$renamedSkillNames = @(
+    ("thin" + "-plan"),
+    ("github-work" + "-tracking"),
+    ("manage" + "-subagents")
+)
+$renamedSkillPattern = ($renamedSkillNames | ForEach-Object { [regex]::Escape($_) }) -join "|"
+$renamedSkillHits = Invoke-Git @("grep", "-n", "-I", "-E", $renamedSkillPattern, "--", ".")
+if ($renamedSkillHits.Code -eq 0) {
+    foreach ($hit in $renamedSkillHits.Output) {
+        if ($hit -match "^scripts/validate-public-readiness\.ps1:") {
+            continue
+        }
+        Add-Failure "Stale renamed skill reference: $hit"
+    }
+} elseif ($renamedSkillHits.Code -ne 1) {
+    Add-Failure "git grep renamed skill scan failed: $($renamedSkillHits.Output -join ' ')"
+}
+
+$referenceFiles = @()
+$candidateReferenceFiles = @("README.md", "AGENTS.md")
+foreach ($relativePath in $candidateReferenceFiles) {
+    $fullPath = Join-Path $repoRoot $relativePath
+    if (Test-Path -LiteralPath $fullPath) {
+        $referenceFiles += $fullPath
+    }
+}
+if (Test-Path -LiteralPath $skillRoot) {
+    $referenceFiles += @(Get-ChildItem -LiteralPath $skillRoot -Recurse -File -Filter "*.md" | ForEach-Object { $_.FullName })
+}
+
+$allowedBacktickTerms = @(
+    "needs-triage",
+    "needs-info",
+    "ready-for-agent",
+    "ready-for-human",
+    "wontfix"
+)
+
+foreach ($file in $referenceFiles) {
+    $text = Get-Content -LiteralPath $file -Raw
+    foreach ($match in [regex]::Matches($text, '`([a-z][a-z0-9]+(?:-[a-z0-9]+)+)`')) {
+        $term = $match.Groups[1].Value
+        if ($skillNames.Contains($term) -or $allowedBacktickTerms.Contains($term)) {
+            continue
+        }
+
+        $relativeFile = [System.IO.Path]::GetRelativePath($repoRoot, $file)
+        Add-Failure "Backtick skill-shaped term does not match a skill folder: $relativeFile -> $term"
     }
 }
 

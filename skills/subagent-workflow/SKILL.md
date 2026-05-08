@@ -1,11 +1,11 @@
 ---
-name: manage-subagents
-description: Use when the user asks for subagents, parallel agents, worker agents, independent review, or multi-agent exploration; or when the current environment permits delegation and several independent tasks can safely run in parallel.
+name: subagent-workflow
+description: Use when the user asks for subagents, parallel agents, worker agents, independent code review, or multi-agent codebase exploration; or when repo work has independent source modules, checks, or review scopes that can safely run in parallel.
 ---
 
-# Manage Subagents
+# Subagent Workflow
 
-Subagents are tools for bounded specialization: exploration, one implementation slice, or independent review. They are not the default way to work.
+Subagents are tools for bounded coding work: codebase exploration, one implementation slice, or independent review of a changed source scope. They are not the default way to work.
 
 ## Core Rule
 
@@ -16,16 +16,16 @@ Delegate bounded work, not responsibility. The parent owns scope, integration, r
 Use subagents when the current environment permits delegation and at least one is true:
 
 - The user explicitly asks for subagents or parallel agents.
-- Two or more read-only questions can be answered independently.
-- One implementation slice has clear scope, clear files, and clear checks.
-- A completed slice needs independent spec or quality review.
-- Broad review benefits from separate perspectives over non-overlapping areas.
+- Two or more read-only codebase questions can be answered independently.
+- One implementation slice has clear caller-visible behavior, owned files/modules, and verification commands.
+- A completed source change needs independent spec or quality review.
+- Broad diff review benefits from separate perspectives over non-overlapping modules, contracts, or risk areas.
 
 Avoid subagents when:
 
 - The current environment, policy, or user instruction does not permit delegation.
 - The next step depends on one result you need immediately.
-- Work is tightly coupled across the same files or shared state.
+- Work is tightly coupled across the same files, caller contract, migration, or state/data path.
 - You would only be outsourcing judgment the parent must own.
 - A simple local inspect/edit/check loop is cheaper.
 
@@ -33,10 +33,10 @@ Avoid subagents when:
 
 | Role | Use for | Template |
 | --- | --- | --- |
-| Explorer | Read-only investigation, code mapping, reproduction evidence, options | `templates/explorer.md` |
-| Implementer | One vertical slice or disjoint file scope with checks | `templates/implementer.md` |
-| Spec reviewer | Did the work match request, plan, and acceptance criteria? | `templates/spec-reviewer.md` |
-| Quality reviewer | Correctness, regression risk, security/data risk, maintainability, tests | `templates/quality-reviewer.md` |
+| Explorer | Read-only source investigation, code mapping, reproduction evidence, implementation options | `templates/explorer.md` |
+| Implementer | One caller-visible slice or disjoint file/module scope with checks | `templates/implementer.md` |
+| Spec reviewer | Does the diff match the request, plan, public contract, and acceptance criteria? | `templates/spec-reviewer.md` |
+| Quality reviewer | Correctness, regression risk, security/data risk, dependency/config risk, maintainability, tests | `templates/quality-reviewer.md` |
 
 Use spec review before quality review. If spec is wrong or incomplete, quality review is premature.
 
@@ -48,15 +48,15 @@ When dispatching a role that has a template, start from that template by default
 
 - Give each subagent a tight task packet, not the whole conversation.
 - Choose the role first, then use that role's template as the packet skeleton when one exists.
-- Include exact scope, allowed files, forbidden scope, expected output, and evidence required.
+- Include exact coding scope, owned files/modules, forbidden files/behaviors, expected output, and evidence required.
 - Name the controlling skill for implementation packets: `tdd-slice` for behavior changes, `diagnose-loop` for failing or unexplained symptoms, or `codebase-cleanup` for behavior-preserving refactors.
-- Include only the `CONTEXT.md` terms needed for the task; do not dump the whole file by default.
+- Include only task-relevant `CONTEXT.md` terms; do not dump the whole file.
 - Paste the task or question into the packet; do not make the subagent reconstruct it from a plan or long thread.
 - Prefer read-only explorers and reviewers.
-- Do not run parallel implementation on overlapping files.
+- Do not run parallel implementation on overlapping files, public contracts, migrations, generated outputs, or shared state/data paths.
 - Tell implementers they are not alone in the codebase and must preserve others' work.
-- Do not trust subagent success claims without parent inspection.
-- Do not let subagents make unchecked product, architecture, dependency, or scope decisions.
+- Do not trust subagent success claims without parent diff inspection and, when needed, rerunning verification commands.
+- Do not let subagents make unchecked user/caller behavior, architecture, public contract, dependency, data migration, or scope decisions.
 
 Base packet for custom roles or fallback use:
 
@@ -66,9 +66,11 @@ Task:
 Context:
 Controlling skill:
 Shared terms:
-Allowed files/scope:
-Forbidden scope:
+Owned files/modules:
+Forbidden files/behaviors:
+Public or caller contract:
 First check:
+Acceptance check:
 Expected output:
 Verification command:
 Risks:
@@ -78,7 +80,7 @@ Risks:
 
 Use this gate after an implementer reports `DONE` or `DONE_WITH_CONCERNS`.
 
-1. Parent inspects the diff before spawning reviewers. If the diff is obviously off-scope, send it back to implementation before review.
+1. Parent inspects the changed files and diff before spawning reviewers. If the diff is obviously off-scope, send it back to implementation before review.
 2. Dispatch the spec reviewer from `templates/spec-reviewer.md`.
 3. Handle spec verdict:
    - `BLOCK`: fix the spec gap, then rerun spec review. Do not start quality review.
@@ -92,20 +94,20 @@ Use this gate after an implementer reports `DONE` or `DONE_WITH_CONCERNS`.
 6. Parent reruns the relevant verification command after final fixes. Do not rely on subagent reports.
 7. Mark the slice complete only after review blockers are closed, accepted warnings are recorded, and parent verification has run.
 
-For multi-slice work, run one final parent diff review after all slices. Add a final quality reviewer over the whole diff when slices touch shared contracts, cross-module behavior, migrations, security/data boundaries, or integration points.
+For multi-slice work, run one final parent diff review after all slices. Add a final quality reviewer over the whole diff when slices touch shared public contracts, cross-module behavior, migrations, security/data boundaries, dependency/config behavior, or integration points.
 
 ## Coordination
 
 1. Decide whether subagents add enough value to pay the context, time, and integration cost.
-2. Split by subsystem, question, or file ownership. Do not split only to keep agents busy.
+2. Split by subsystem, source entry point, caller contract, question, or file ownership. Do not split only to keep agents busy.
 3. Dispatch independent read-only work in parallel when possible.
-4. Keep implementation write scopes disjoint. If scopes overlap, run sequentially or keep one parent-owned.
-5. Let subagents propose `CONTEXT.md` updates, but the parent decides and verifies before editing durable docs.
+4. Keep implementation write scopes disjoint. If scopes overlap by file, contract, migration, generated output, or state/data path, run sequentially or keep one parent-owned.
+5. Let subagents propose `CONTEXT.md` updates, but the parent verifies and decides before editing durable docs.
 6. Handle implementer status:
    - `DONE`: inspect diff and run the Reviewer Gate.
    - `DONE_WITH_CONCERNS`: read concerns before review; address correctness or scope concerns first.
    - `NEEDS_CONTEXT`: provide missing context or narrow the task before retrying.
-   - `BLOCKED`: change something: more context, smaller task, stronger model, different route, or user decision.
+   - `BLOCKED`: change something: more repo context, smaller task, stronger model, different route, or user decision.
 7. Never force the same blocked task to retry unchanged.
 8. Inspect outputs and diffs yourself.
 9. Rerun the parent-level checks before claiming completion.
@@ -115,13 +117,13 @@ For multi-slice work, run one final parent diff review after all slices. Add a f
 When multiple reviewers report findings:
 
 1. Normalize and deduplicate.
-2. Group by spec gap, correctness bug, test gap, security/data risk, maintainability, or style.
+2. Group by spec gap, correctness bug, regression risk, test gap, security/data risk, dependency/config risk, maintainability, or style.
 3. Rank:
-   - Blocker: wrong behavior, missing acceptance criterion, data/security risk, failing required check.
-   - Important: likely regression, weak test coverage, fragile boundary, unclear ownership.
+   - Blocker: wrong caller-visible behavior, missing acceptance criterion, data/security risk, failing required check, broken public contract.
+   - Important: likely regression, weak test coverage, fragile module boundary, unclear file ownership.
    - Minor: naming, readability, local polish.
-4. Verify findings against source, diff, and tests.
-5. Resolve conflicts by requirements and tests. If still ambiguous, prefer the smaller reversible change or ask the user.
+4. Verify findings against source, diff, tests, logs, CI output, or manual check evidence.
+5. Resolve conflicts by requirements, public contracts, and tests. If still ambiguous, prefer the smaller reversible change or ask the user.
 6. Produce one fix list.
 7. Rerun parent verification after fixes.
 
@@ -136,3 +138,10 @@ Fixes made:
 Parent verification:
 Residual risk:
 ```
+
+## Handoff
+
+- Return to `coding-router` after subagent reports, review gates, and parent verification update the route.
+- Use `workspace-safety` before delegated edits in a dirty tree, branch/worktree changes, dependency installs, generated output, or risky git operations.
+- Use `github-tracking` when subagent work should become issue, PR, CI/check, or review-thread evidence.
+- Use `verify-before-done` before claiming delegated work is complete, reviewed, ready, safe, or mergeable.
