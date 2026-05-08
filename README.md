@@ -16,6 +16,12 @@ These skills make the better path easier:
 - Use tests, commands, diffs, and observed behavior as evidence.
 - Treat uncertainty, failures, and review comments as engineering signals.
 
+## Why Consolidate These Ideas
+
+I created this skill pack because I wanted one lean set of reusable workflows that combines a few useful pressures: Superpowers-style skill workflows, Matt Pocock's bias toward engineering discipline, and Karpathy's discussions of agent drift and the tradeoffs of coding with agents.
+
+The goal is not to give agents a giant rulebook. It is to steer without over-constraining: enough guardrails to keep work grounded, scoped, and verified, while leaving room for exploration when the task calls for it and the user has not ruled it out.
+
 ## How To Use
 
 Copy the skill folders you want into your local skill system, or point an agent at the `skills/` directory if your tooling supports repo-local skills.
