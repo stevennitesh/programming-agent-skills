@@ -40,6 +40,8 @@ Avoid subagents when:
 
 Use spec review before quality review. If spec is wrong or incomplete, quality review is premature.
 
+For delegated implementation slices, reviewers are a gate, not an optional perspective. Run both reviewers before marking the slice complete unless review subagents are unavailable or the user explicitly asks to skip review. If a slice is tiny enough that local self-review is clearly cheaper, avoid delegation up front instead of dispatching an implementer and skipping reviewers. Record any skip reason. If subagents are unavailable, run the same gates yourself and label them as self-review, not independent review.
+
 When dispatching a role that has a template, start from that template by default. Copy or adapt its fields into the packet instead of rebuilding the packet from memory. Use the base packet only for unusual roles, tiny one-off tasks, or when a role template would add no useful control; if you skip an applicable template, say why in the parent notes or final report.
 
 ## Packet Rules
@@ -72,6 +74,26 @@ Verification command:
 Risks:
 ```
 
+## Reviewer Gate
+
+Use this gate after an implementer reports `DONE` or `DONE_WITH_CONCERNS`.
+
+1. Parent inspects the diff before spawning reviewers. If the diff is obviously off-scope, send it back to implementation before review.
+2. Dispatch the spec reviewer from `templates/spec-reviewer.md`.
+3. Handle spec verdict:
+   - `BLOCK`: fix the spec gap, then rerun spec review. Do not start quality review.
+   - `WARN`: either fix it or record the accepted residual risk before quality review.
+   - `PASS`: proceed to quality review.
+4. Dispatch the quality reviewer from `templates/quality-reviewer.md` only after spec review passes or a spec warning is explicitly accepted.
+5. Handle quality verdict:
+   - `BLOCK`: fix the quality issue, then rerun quality review. If the fix changes scope or behavior, rerun spec review first.
+   - `WARN`: either fix it or record the accepted residual risk before marking the slice complete.
+   - `PASS`: proceed to parent verification.
+6. Parent reruns the relevant verification command after final fixes. Do not rely on subagent reports.
+7. Mark the slice complete only after review blockers are closed, accepted warnings are recorded, and parent verification has run.
+
+For multi-slice work, run one final parent diff review after all slices. Add a final quality reviewer over the whole diff when slices touch shared contracts, cross-module behavior, migrations, security/data boundaries, or integration points.
+
 ## Coordination
 
 1. Decide whether subagents add enough value to pay the context, time, and integration cost.
@@ -80,7 +102,7 @@ Risks:
 4. Keep implementation write scopes disjoint. If scopes overlap, run sequentially or keep one parent-owned.
 5. Let subagents propose `CONTEXT.md` updates, but the parent decides and verifies before editing durable docs.
 6. Handle implementer status:
-   - `DONE`: inspect diff and proceed to review.
+   - `DONE`: inspect diff and run the Reviewer Gate.
    - `DONE_WITH_CONCERNS`: read concerns before review; address correctness or scope concerns first.
    - `NEEDS_CONTEXT`: provide missing context or narrow the task before retrying.
    - `BLOCKED`: change something: more context, smaller task, stronger model, different route, or user decision.
@@ -107,6 +129,7 @@ When multiple reviewers report findings:
 
 ```text
 Subagents used:
+Review gates:
 Findings accepted:
 Findings rejected:
 Fixes made:

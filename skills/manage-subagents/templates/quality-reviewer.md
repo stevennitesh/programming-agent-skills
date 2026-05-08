@@ -15,6 +15,7 @@ Instructions:
 - Ignore personal preference unless it hides a real maintenance or correctness risk.
 Expected output:
 - Verdict: PASS | WARN | BLOCK
+- Verdict meaning: BLOCK stops completion; WARN requires parent acceptance or a fix; PASS allows parent verification.
 - Findings ranked Blocker, Important, or Minor.
 - Each finding includes evidence and the smallest required fix.
 - Test gaps or weak evidence.

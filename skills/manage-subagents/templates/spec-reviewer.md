@@ -14,7 +14,9 @@ Instructions:
 - Treat off-scope additions as findings even if the code looks good.
 Expected output:
 - Verdict: PASS | WARN | BLOCK
+- Verdict meaning: BLOCK stops quality review; WARN requires parent acceptance or a fix; PASS allows quality review.
 - Findings with file path, line/symbol when available, and requirement violated.
+- Required fixes for blockers.
 - Missing verification, if any.
 - Requirements checked with no findings.
 ```
