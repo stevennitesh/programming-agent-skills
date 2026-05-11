@@ -148,7 +148,9 @@ $allowedBacktickTerms = @(
     "needs-info",
     "ready-for-agent",
     "ready-for-human",
-    "wontfix"
+    "wontfix",
+    "parallel-disjoint",
+    "parallel-overlap"
 )
 
 foreach ($file in $referenceFiles) {
