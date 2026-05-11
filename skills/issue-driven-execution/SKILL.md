@@ -37,11 +37,14 @@ Commit and push only after the current issue is implemented, verified, diff-revi
    - Use `github-tracking` to check for duplicates, follow issue conventions, and create issues from the plan.
    - Each issue should reference the plan doc and carry its own acceptance check, likely files/modules, verification command, and out-of-scope notes.
    - Copy the plan's execution coordination into each issue: mode, parallel group, dependencies, expected overlap, worktree requirement, and claim protocol.
+   - Decide GitHub metadata from plan scale and coordination needs; leave metadata unset for sequential single-agent work when body/comments are enough.
+   - Use relationships, milestones, projects, assignees, labels, or Development links only when they improve dependency tracking, release grouping, filtering, ownership, or branch/PR traceability.
    - Update the plan with issue links after creation.
 4. Execute one issue at a time.
    - Pick the next unblocked issue.
-   - Inspect the current issue body, comments, assignees, labels, linked PRs, and recent activity before editing.
+   - Inspect the current issue body, comments, metadata, linked PRs, and recent activity before editing.
    - Post the `github-tracking` claim comment before source, test, docs, config, or workflow edits.
+   - When starting implementation, link the branch or PR through GitHub Development metadata when the repo workflow supports it.
    - Derive workspace shape from execution mode:
      - `sequential`: use the parent workspace unless user instruction or repo policy says otherwise.
      - `parallel-disjoint`: use `worktree-isolation` for each active implementation issue.
@@ -56,6 +59,7 @@ Commit and push only after the current issue is implemented, verified, diff-revi
    - Use `verify-before-done` before claiming the issue is complete.
    - Inspect the diff against the issue and plan.
    - Update the issue and plan with changed files, checks run, commit/branch/PR, open risks, claim status, and next issue.
+   - Check that comments, Development links, relationships, dependencies, and open risks agree before moving on.
    - Use `workspace-safety` before staging, committing, or pushing.
    - Commit only the current issue's intended files from the parent workspace or assigned worktree, then push the branch when the workflow calls for remote checkpoints.
 
