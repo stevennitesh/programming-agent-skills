@@ -1,12 +1,17 @@
 # Implementer Template
 
-Use for one caller-visible implementation slice with clear file/module ownership. Do not use for overlapping parallel edits.
+Use for one caller-visible implementation slice with clear file/module ownership.
+For parallel implementation, use only when the plan or issue mode allows it and `worktree-isolation` has assigned the branch/worktree.
 
 ```text
 Role: Implementer
 Task: <one slice, pasted in full>
 Context: <where this fits, constraints, public/caller contract, acceptance criteria>
 Controlling skill: <tdd-slice | diagnose-loop | codebase-cleanup | micro-loop>
+Execution mode: <sequential | parallel-disjoint | parallel-overlap>
+Parallel group: <none | group name>
+Issue claim: <claim status, issue number, or none>
+Worktree/branch: <path and branch, or parent workspace>
 Owned files/modules: <owned files, directories, modules, fixtures, or docs>
 Forbidden files/behaviors: <files, caller-visible behaviors, dependencies, refactors, generated output, external actions>
 First check: <test, search, or file read that should happen first>

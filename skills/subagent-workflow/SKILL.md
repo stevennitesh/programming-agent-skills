@@ -29,6 +29,14 @@ Avoid subagents when:
 - You would only be outsourcing judgment the parent must own.
 - A simple local inspect/edit/check loop is cheaper.
 
+Implementation subagents follow the plan or issue execution mode. Missing mode means `sequential`.
+
+- `sequential`: do not run implementation issues in parallel.
+- `parallel-disjoint`: use `worktree-isolation` so each active implementer has a separate branch/worktree.
+- `parallel-overlap`: use `worktree-isolation` plus the approved integration strategy before editing.
+
+Read-only explorers and reviewers do not require worktrees.
+
 ## Roles
 
 | Role | Use for | Template |
@@ -40,20 +48,32 @@ Avoid subagents when:
 
 Use spec review before quality review. If spec is wrong or incomplete, quality review is premature.
 
-For delegated implementation slices, reviewers are a gate, not an optional perspective. Run both reviewers before marking the slice complete unless review subagents are unavailable or the user explicitly asks to skip review. If a slice is tiny enough that local self-review is clearly cheaper, avoid delegation up front instead of dispatching an implementer and skipping reviewers. Record any skip reason. If subagents are unavailable, run the same gates yourself and label them as self-review, not independent review.
+For delegated implementation slices, reviewers are a gate, not an optional perspective.
+Run both reviewers before marking the slice complete unless review subagents are unavailable or the user explicitly asks to skip review.
+If a slice is tiny enough that local self-review is clearly cheaper, avoid delegation up front instead of dispatching an implementer and skipping reviewers.
+Record any skip reason.
+If subagents are unavailable, run the same gates yourself and label them as self-review, not independent review.
 
-When dispatching a role that has a template, start from that template by default. Copy or adapt its fields into the packet instead of rebuilding the packet from memory. Use the base packet only for unusual roles, tiny one-off tasks, or when a role template would add no useful control; if you skip an applicable template, say why in the parent notes or final report.
+When dispatching a role that has a template, start from that template by default.
+Copy or adapt its fields into the packet instead of rebuilding the packet from memory.
+Use the base packet only for unusual roles, tiny one-off tasks, or when a role template would add no useful control.
+If you skip an applicable template, say why in the parent notes or final report.
 
 ## Packet Rules
 
 - Give each subagent a tight task packet, not the whole conversation.
 - Choose the role first, then use that role's template as the packet skeleton when one exists.
 - Include exact coding scope, owned files/modules, forbidden files/behaviors, expected output, and evidence required.
-- Name the controlling skill for implementation packets: `tdd-slice` for behavior changes, `diagnose-loop` for failing or unexplained symptoms, or `codebase-cleanup` for behavior-preserving refactors.
+- Include execution mode, parallel group, issue claim state, and dependencies when implementing from a GitHub issue.
+- Include the worktree path and branch when `worktree-isolation` created an isolated workspace for the task.
+- Name the controlling skill for implementation packets.
+- Use `tdd-slice` for behavior changes, `diagnose-loop` for failing symptoms, or `codebase-cleanup` for behavior-preserving refactors.
 - Include only task-relevant `CONTEXT.md` terms; do not dump the whole file.
 - Paste the task or question into the packet; do not make the subagent reconstruct it from a plan or long thread.
 - Prefer read-only explorers and reviewers.
-- Do not run parallel implementation on overlapping files, public contracts, migrations, generated outputs, or shared state/data paths.
+- Do not run parallel implementation when the plan or issue is missing mode metadata or says `sequential`.
+- For `parallel-disjoint`, keep implementation ownership separate and use `worktree-isolation`.
+- For `parallel-overlap`, use `worktree-isolation` and the approved integration strategy.
 - Tell implementers they are not alone in the codebase and must preserve others' work.
 - Do not trust subagent success claims without parent diff inspection and, when needed, rerunning verification commands.
 - Do not let subagents make unchecked user/caller behavior, architecture, public contract, dependency, data migration, or scope decisions.
@@ -66,6 +86,9 @@ Task:
 Context:
 Controlling skill:
 Shared terms:
+Execution mode:
+Parallel group:
+Issue claim:
 Owned files/modules:
 Forbidden files/behaviors:
 Public or caller contract:
@@ -73,6 +96,7 @@ First check:
 Acceptance check:
 Expected output:
 Verification command:
+Worktree/branch:
 Risks:
 ```
 
@@ -94,23 +118,27 @@ Use this gate after an implementer reports `DONE` or `DONE_WITH_CONCERNS`.
 6. Parent reruns the relevant verification command after final fixes. Do not rely on subagent reports.
 7. Mark the slice complete only after review blockers are closed, accepted warnings are recorded, and parent verification has run.
 
-For multi-slice work, run one final parent diff review after all slices. Add a final quality reviewer over the whole diff when slices touch shared public contracts, cross-module behavior, migrations, security/data boundaries, dependency/config behavior, or integration points.
+For multi-slice work, run one final parent diff review after all slices.
+Add a final whole-diff quality reviewer when slices touch shared contracts, cross-module behavior, migrations, security/data, dependency/config, or integration points.
 
 ## Coordination
 
 1. Decide whether subagents add enough value to pay the context, time, and integration cost.
 2. Split by subsystem, source entry point, caller contract, question, or file ownership. Do not split only to keep agents busy.
 3. Dispatch independent read-only work in parallel when possible.
-4. Keep implementation write scopes disjoint. If scopes overlap by file, contract, migration, generated output, or state/data path, run sequentially or keep one parent-owned.
-5. Let subagents propose `CONTEXT.md` updates, but the parent verifies and decides before editing durable docs.
-6. Handle implementer status:
+4. Before parallel implementation, inspect the plan or issue execution coordination and current claim state.
+5. If mode is missing or `sequential`, run implementation issues one at a time or keep one parent-owned.
+6. For `parallel-disjoint`, use `worktree-isolation` and keep file/module ownership separate.
+7. For `parallel-overlap`, use `worktree-isolation` and the approved integration strategy.
+8. Let subagents propose `CONTEXT.md` updates, but the parent verifies and decides before editing durable docs.
+9. Handle implementer status:
    - `DONE`: inspect diff and run the Reviewer Gate.
    - `DONE_WITH_CONCERNS`: read concerns before review; address correctness or scope concerns first.
    - `NEEDS_CONTEXT`: provide missing context or narrow the task before retrying.
    - `BLOCKED`: change something: more repo context, smaller task, stronger model, different route, or user decision.
-7. Never force the same blocked task to retry unchanged.
-8. Inspect outputs and diffs yourself.
-9. Rerun the parent-level checks before claiming completion.
+10. Never force the same blocked task to retry unchanged.
+11. Inspect outputs and diffs yourself, including worktree diffs before integration.
+12. Rerun the parent-level checks before claiming completion.
 
 ## Review Triage
 
@@ -142,6 +170,7 @@ Residual risk:
 ## Handoff
 
 - Return to `coding-router` after subagent reports, review gates, and parent verification update the route.
+- Use `worktree-isolation` when approved parallel implementation needs separate branches/worktrees; overlap also needs an integration strategy.
 - Use `workspace-safety` before delegated edits in a dirty tree, branch/worktree changes, dependency installs, generated output, or risky git operations.
 - Use `github-tracking` when subagent work should become issue, PR, CI/check, or review-thread evidence.
 - Use `verify-before-done` before claiming delegated work is complete, reviewed, ready, safe, or mergeable.
