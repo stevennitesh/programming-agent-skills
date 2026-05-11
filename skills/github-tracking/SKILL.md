@@ -135,12 +135,22 @@ Expected overlap: None | files/modules/contracts/generated/dependency-config
 Worktree required: no | yes
 Claim protocol: comment before starting; update on pause/completion
 
+## GitHub metadata
+Assignee: None | <user>
+Labels: None | <repo labels for readiness/type/mode/blocker>
+Project: None | <project>
+Milestone: None | <release/version/checkpoint>
+Relationships: None | parent #123 / blocked by #123 / duplicate of #123
+Development: branch/PR link when available
+
 ## Out of scope
 ```
 
 Each slice should be independently understandable and verifiable. Prefer body text over custom labels unless the repo already uses them.
 
 Write durable issue bodies: describe caller-visible behavior, source scope, contracts, acceptance checks, and verification. Do not anchor the issue on line numbers, stale file paths, code dumps, or step-by-step implementation instructions.
+
+Include the `GitHub metadata` block only when sidebar fields improve ownership, filtering, dependency tracking, release grouping, branch/PR traceability, or multi-issue coordination. Omit fields that do not matter for the issue.
 
 If the source plan does not declare an execution mode, write `Mode: sequential` and `Worktree required: no`.
 
