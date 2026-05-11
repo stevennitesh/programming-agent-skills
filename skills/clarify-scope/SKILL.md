@@ -84,9 +84,10 @@ Next skill:
 
 Stop when target behavior can be tested, the implementation boundary is clear, and remaining unknowns are non-blocking or stated assumptions.
 
-Hand off as needed:
+## Handoff
 
-- `slice-plan`: multi-step work.
+- `slice-plan`: scoped work needs multiple reviewable source, test, docs, or tracking slices.
+- `issue-driven-execution`: the user wants the clarified work turned into a plan doc, GitHub issues, and issue-by-issue execution.
 - `tdd-slice`: behavior implementation.
 - `diagnose-loop`: investigation reveals a bug.
 - `github-tracking`: the result should become a PRD, issue, or long-lived decision record.

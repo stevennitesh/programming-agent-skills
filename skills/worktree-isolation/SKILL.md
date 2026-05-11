@@ -114,8 +114,8 @@ Open risks:
 
 ## Handoff
 
-- `subagent-workflow`: before approved parallel implementation subagents or sessions edit in separate worktrees.
-- `issue-driven-execution`: when plan issues declare `parallel-disjoint` or `parallel-overlap`.
+- `subagent-workflow`: return after branch/worktree paths are assigned for approved parallel implementation.
+- `issue-driven-execution`: return after worktree setup when plan issues declare `parallel-disjoint` or `parallel-overlap`.
 - `workspace-safety`: before branch/worktree creation, dependency install, generated output, staging, commits, pushes, or cleanup.
 - `tdd-slice`, `diagnose-loop`, or `codebase-cleanup`: the controlling implementation skill inside the worktree.
 - `github-tracking`: when worktree branches map to issues, PRs, CI/check status, or review threads.

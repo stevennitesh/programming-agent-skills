@@ -123,7 +123,8 @@ Before handing off, scan the plan:
 - `tdd-slice`: behavior-changing tasks.
 - `codebase-cleanup`: behavior-preserving refactor tasks.
 - `diagnose-loop`: tasks that start from a failing test, bug, regression, log, or unexplained symptom.
-- `github-tracking`: the plan should become issues or PR notes.
+- `issue-driven-execution`: the plan should become a plan doc, GitHub issues, and issue-by-issue execution.
+- `github-tracking`: the plan should become issues, PR notes, CI/check evidence, or durable GitHub records.
 - `subagent-workflow`: the user asked for subagents or independent coding/review work is genuinely useful.
 - `workspace-safety`: before branch, worktree, commit, destructive, dependency install, generated-output, or dirty-tree operations.
 - `verify-before-done`: before claiming the plan, branch, PR, or implementation is complete.

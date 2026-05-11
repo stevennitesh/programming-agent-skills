@@ -99,6 +99,7 @@ Next issue:
 - `slice-plan`: plan document structure and reviewable slices.
 - `worktree-isolation`: approved parallel implementation needs separate worktrees; overlap also needs an integration strategy.
 - `github-tracking`: issues, PRDs, PRs, CI/check evidence, review threads, and issue updates.
+- `subagent-workflow`: approved issue work needs bounded subagent exploration, implementation, or review.
 - `tdd-slice`, `diagnose-loop`, or `codebase-cleanup`: implementation work for each issue.
 - `workspace-safety`: before edits in dirty trees, plan-file creation, staging, commits, pushes, generated output, or dependency installs.
 - `verify-before-done`: before claiming an issue, commit, push, plan, or overall workflow is complete.

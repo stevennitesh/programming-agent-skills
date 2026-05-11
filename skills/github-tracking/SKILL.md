@@ -209,5 +209,6 @@ gh run view <run-id>
 
 - `clarify-scope`: before writing a PRD when target behavior, public contract, or affected source boundary is unclear.
 - `slice-plan`: turn an approved PRD or request into implementation slice issues.
+- `issue-driven-execution`: the user wants a plan doc, GitHub issues, and issue-by-issue implementation checkpoints.
 - `workspace-safety`: before commits, branch changes, or PR creation from a dirty tree.
 - `verify-before-done`: before claiming PR readiness, CI status, review resolution, or merge safety.

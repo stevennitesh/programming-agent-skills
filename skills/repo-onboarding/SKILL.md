@@ -36,6 +36,7 @@ Do not use durable context files for progress, status, onboarding notes, or skil
    - unclear target behavior or public contract -> `clarify-scope`
    - failing command, test, CI job, crash, log, or wrong output -> `diagnose-loop`
    - broad cleanup or refactor -> `codebase-cleanup`
+   - plan doc, GitHub issues, and issue-by-issue execution -> `issue-driven-execution`
    - issue, PR, CI, or review-thread work -> `github-tracking`
 3. Record only the operating facts needed for the next step:
    - relevant commands/checks
@@ -75,5 +76,6 @@ Next route:
 
 - Return to `coding-router` when enough repo context exists to choose the next workflow.
 - Use `workspace-safety` before dirty-tree edits, branch/worktree actions, dependency installs, generated output, staging, commits, or PRs.
+- Use `issue-driven-execution` when the user wants a plan doc, GitHub issues, and issue-by-issue execution after repo conventions are known.
 - Use `github-tracking` when issue, PR, CI, review-thread, or durable GitHub state is part of the work.
 - Use `verify-before-done` before claiming the repo is ready, checks are known, setup is complete, or adoption work is finished.

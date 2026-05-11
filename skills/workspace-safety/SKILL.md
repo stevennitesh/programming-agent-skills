@@ -90,5 +90,6 @@ Before commit or PR:
 ## Handoff
 
 - Return to the controlling skill after the safety risk is handled.
+- Use `worktree-isolation` when branch/worktree safety is needed because approved implementation will run in parallel across agents or sessions.
 - Use `github-tracking` for issues, PRDs, PR creation, review threads, or CI/check evidence.
 - Use `verify-before-done` before any final ready, fixed, passing, safe, or mergeable claim.
