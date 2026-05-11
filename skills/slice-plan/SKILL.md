@@ -43,6 +43,12 @@ Use this template inline for short work or in the repo planning location for mul
 
 ## Constraints
 
+## Execution mode
+Execution mode: sequential | parallel-disjoint | parallel-overlap
+Default if omitted: sequential
+Parallel groups:
+- None | <group-name>: issues, expected ownership, worktree requirement, integration owner
+
 ## Acceptance checks
 
 ## Baseline
@@ -74,6 +80,9 @@ Use this template inline for short work or in the repo planning location for mul
 ## Slicing Rules
 
 - Every task must trace to the approved request, public contract, acceptance check, or named risk-reduction step.
+- If the plan does not explicitly say `parallel-disjoint` or `parallel-overlap`, treat the work as `sequential`.
+- Use `parallel-disjoint` only when planned issue or subagent scopes can run at the same time with distinct source ownership and separate worktrees/branches.
+- Use `parallel-overlap` only when parallel implementation intentionally touches the same files, modules, public contracts, generated output, or dependency/config state; name the integration owner and comparison strategy.
 - Prefer end-to-end caller-visible slices over layer-only slices.
 - A good task delivers one API/CLI/UI behavior, one state/data change, one public contract, one migration step, one bug reproduction plus fix, one focused fixture/check, or one behavior-preserving refactor.
 - Each task needs a pass/fail command, test, fixture, or repeatable manual check.
@@ -104,6 +113,7 @@ Before handing off, scan the plan:
 
 - Coverage: every acceptance check and public contract maps to at least one task.
 - Evidence fit: each validation claim maps to a command, test, fixture, diff review, or manual check strong enough for the claim; simulated or review-only checks are not allowed to satisfy behavior-test intent.
+- Execution fit: mode is explicit or safely defaults to `sequential`; parallel modes name dependencies, file/module ownership, worktree need, and integration risk.
 - Placeholder scan: no vague work items such as "handle edge cases" without the exact input, behavior, expected output, and check.
 - Name consistency: files, modules, types, functions, commands, events, statuses, and domain terms are named the same way across tasks.
 - Scope fit: tasks do not mix unrelated files, behavior changes, refactors, dependency changes, or generated output.
