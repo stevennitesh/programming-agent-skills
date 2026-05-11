@@ -95,12 +95,27 @@ Break approved plans into small vertical slices:
 ## Blocked by
 None | #123
 
+## Execution coordination
+Mode: sequential | parallel-disjoint | parallel-overlap
+Parallel group: None | <group-name>
+Depends on: None | #123
+Expected overlap: None | files/modules/contracts/generated/dependency-config
+Worktree required: no | yes
+Claim protocol: comment before starting; update on pause/completion
+
 ## Out of scope
 ```
 
 Each slice should be independently understandable and verifiable. Prefer body text over custom labels unless the repo already uses them.
 
 Write durable issue bodies: describe caller-visible behavior, source scope, contracts, acceptance checks, and verification. Do not anchor the issue on line numbers, stale file paths, code dumps, or step-by-step implementation instructions.
+
+If the source plan does not declare an execution mode, write `Mode: sequential` and `Worktree required: no`.
+
+Use parallel modes only when the plan already supports them:
+
+- `parallel-disjoint`: ownership is separated for concurrent implementation.
+- `parallel-overlap`: the overlap and integration owner are named.
 
 Mark readiness plainly:
 
@@ -115,6 +130,41 @@ For blocked issues, record:
 
 ## Still needed
 - Specific decision, artifact, source/API contract, access, dependency, or manual review needed
+```
+
+## Issue Claiming
+
+Before editing for an implementation issue, inspect the issue body, comments, assignees, labels, linked PRs, and recent activity. Then comment:
+
+```markdown
+Claiming this issue for implementation.
+
+Agent/session: <identifier if available>
+Branch/worktree: <branch or path if relevant>
+Scope: <short source/test/docs scope>
+Started: <timestamp>
+Expected next update: <checkpoint or condition>
+```
+
+Use comments as the portable baseline. Add labels or assignees only when the repo already uses them for ownership.
+
+Collision rules:
+
+- `sequential`: if a fresh claim exists and is not released, do not start unless the user directs a takeover or the claim is clearly stale.
+- `parallel-disjoint`: work only on the issue's declared ownership scope; if another claim overlaps the same files, modules, contracts, generated output, or dependency/config state, stop or coordinate first.
+- `parallel-overlap`: use the named worktree and integration strategy before editing; do not improvise a merge plan from comments alone.
+
+When pausing, completing, blocking, or releasing the issue, comment:
+
+```markdown
+Status update.
+
+State: paused | completed | blocked | released
+Changed files:
+Checks:
+Commit/branch/PR:
+Open risks:
+Next action:
 ```
 
 ## PR Flow
