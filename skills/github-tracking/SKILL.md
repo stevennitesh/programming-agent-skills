@@ -34,6 +34,38 @@ Before creating or editing GitHub records:
 
 If GitHub state affects the answer, inspect it live with the available GitHub interface; do not rely on memory. Use `gh` when it is the repo's working interface, or GitHub connector/app tools when they are available. Preserve the same evidence rules either way: check live state, search for duplicates, follow repo conventions, and keep issue or PR bodies as durable repo artifacts rather than chat transcripts.
 
+## GitHub Metadata
+
+Issue bodies and comments are the portable source of truth.
+Use sidebar metadata when it improves coding coordination, filtering, dependency tracking, release planning, branch/PR traceability, or durable documentation.
+
+Follow existing repo conventions first. Do not invent label, project, milestone, assignee, or branch-link systems for tiny work.
+
+Required when useful:
+
+- Assignees: active owner or stable agent identity matters.
+- Labels: filtering, readiness, blocking state, issue type, or execution mode matters.
+- Projects: the repo or team already uses GitHub Projects for multi-issue work.
+- Milestones: release, migration, version, or scheduled checkpoint matters.
+- Relationships: parent/child, dependency, duplicate, or blocked-by tracking matters.
+- Development: branch or PR exists for implementation.
+
+Usually optional:
+
+- Notifications
+- Participants
+
+Human-approved only:
+
+- Transfer issue
+- Duplicate issue
+- Lock conversation
+- Pin issue
+- Delete issue
+
+Keep claim and status comments even when assignees, labels, relationships, or Development links are used.
+Metadata is a structured signal; it does not replace the technical record.
+
 ## PRD Issue Shape
 
 Use for a feature, user-facing behavior, or multi-slice change.
