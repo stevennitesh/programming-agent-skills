@@ -84,6 +84,7 @@ For bugs, regressions, failing tests, build failures, or confusing behavior:
 ## GitHub, Subagents, And Tools
 
 - Use GitHub issues, PRDs, PRs, CI status, and review threads when durable tracking is useful. Do not turn tiny local edits into issue process unless requested.
+- Use GitHub metadata when it helps ownership, dependency tracking, release grouping, branch/PR linkage, or filtering; keep issue body/comments as portable truth.
 - For plan-driven issue execution, record whether work is sequential, parallel-disjoint, or parallel-overlap. If no mode is declared, assume sequential.
 - Before implementing a GitHub issue, inspect current issue state and comment a claim. Update the issue when pausing, blocking, completing, or releasing work.
 - Use subagents only for bounded work: independent codebase exploration, one clear implementation slice, or independent review.
