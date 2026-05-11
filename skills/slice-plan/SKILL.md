@@ -49,6 +49,14 @@ Default if omitted: sequential
 Parallel groups:
 - None | <group-name>: issues, expected ownership, worktree requirement, integration owner
 
+## GitHub metadata
+Use only when durable issue coordination needs it:
+- Relationships: dependencies, parent/child work, duplicates, or blockers
+- Milestone: release, migration, version, or scheduled checkpoint
+- Assignee/labels: multi-agent ownership, readiness, blocking state, issue type, or execution mode when repo convention supports it
+- Project: repo/team project board already tracks this work
+- Development: branch/PR link when implementation starts
+
 ## Acceptance checks
 
 ## Baseline
@@ -83,6 +91,9 @@ Parallel groups:
 - If the plan does not explicitly say `parallel-disjoint` or `parallel-overlap`, treat the work as `sequential`.
 - Use `parallel-disjoint` only when planned issue or subagent scopes can run at the same time with distinct source ownership and separate worktrees/branches.
 - Use `parallel-overlap` only when parallel implementation intentionally touches the same files, modules, public contracts, generated output, or dependency/config state; name the integration owner and comparison strategy.
+- Plan GitHub metadata only when it helps coordination or documentation; sequential single-agent issue work can stay body/comment only.
+- Map dependencies to Relationships and release/version targets to Milestones when those fields exist in the repo workflow.
+- Map multi-agent ownership, parallel mode, and worktree need to assignees or labels only when repo convention supports it.
 - Prefer end-to-end caller-visible slices over layer-only slices.
 - A good task delivers one API/CLI/UI behavior, one state/data change, one public contract, one migration step, one bug reproduction plus fix, one focused fixture/check, or one behavior-preserving refactor.
 - Each task needs a pass/fail command, test, fixture, or repeatable manual check.
