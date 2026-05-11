@@ -2,7 +2,7 @@
 
 A small skill pack for coding agents working in real software repos.
 
-These skills give coding agents just enough operating structure to learn a repo, clarify scope, make reviewable source changes, debug from evidence, protect user work, track GitHub context, coordinate subagents, and verify before claiming success. The goal is better engineering behavior, not a bigger process framework.
+These skills give coding agents just enough operating structure to learn a repo, clarify scope, plan tracked work, make reviewable source changes, debug from evidence, protect user work, track GitHub context, coordinate subagents, isolate parallel implementation when needed, and verify before claiming success. The goal is better engineering behavior, not a bigger process framework.
 
 ## Why This Exists
 
@@ -52,17 +52,18 @@ Most nontrivial work starts with `coding-router`. It chooses the smallest reliab
 
 The pack uses two kinds of skills:
 
-- Controlling skills own the main workflow: repo entry, scope, planning, implementation, debugging, cleanup, or skill authoring.
-- Gate skills step in at risk boundaries: workspace safety, GitHub tracking, subagent coordination, or final verification.
+- Controlling skills own the main workflow: repo entry, scope, planning, tracked execution, implementation, debugging, cleanup, or skill authoring.
+- Gate skills step in at risk boundaries: workspace safety, GitHub tracking, subagent coordination, worktree isolation for parallel implementation, or final verification.
 
 Typical paths:
 
 - New repo or stale repo context: `repo-onboarding` -> `coding-router` -> selected workflow
+- Tracked multi-issue work: `issue-driven-execution` -> plan doc and GitHub issues -> claim, implement, checkpoint, and verify each issue
 - Feature or behavior request: `coding-router` -> `clarify-scope` or `slice-plan` -> `tdd-slice` -> `verify-before-done`
 - Bug, failing test, build, CI job, or log error: `coding-router` -> `diagnose-loop` -> focused source change and regression check -> `verify-before-done`
 - Cleanup or refactor: `coding-router` -> `codebase-cleanup` -> behavior-preserving slice -> `verify-before-done`
 - PR or review work: `coding-router` -> `github-tracking` -> source change or response -> `verify-before-done`
-- Multi-agent work: controlling skill -> `subagent-workflow` -> parent diff review and verification
+- Multi-agent implementation: controlling skill -> `subagent-workflow` -> `worktree-isolation` for approved parallel implementation -> parent integration, diff review, and verification
 
 ## Skill Map
 
@@ -72,11 +73,13 @@ Typical paths:
 | `coding-router` | A nontrivial repo task needs the right next workflow. |
 | `clarify-scope` | The request is unclear, broad, user-facing, caller-facing, architectural, or risky. |
 | `slice-plan` | Approved work needs multiple reviewable source, test, docs, or tracking slices. |
+| `issue-driven-execution` | Approved work should become a plan document, GitHub issues, and one claimed, verified implementation or research issue at a time. |
 | `tdd-slice` | You are implementing or changing one caller-visible behavior with a focused check. |
 | `diagnose-loop` | Tests, builds, CI, logs, output, crashes, or behavior are failing and the cause is not yet clear. |
 | `codebase-cleanup` | Cleanup or refactor work should preserve behavior while making future changes easier. |
 | `github-tracking` | Issues, PRDs, PRs, CI status, review threads, or durable GitHub records are useful. |
 | `subagent-workflow` | Bounded codebase exploration, implementation, or review can safely run through subagents. |
+| `worktree-isolation` | Approved parallel implementation across agents or sessions needs separate branches/worktrees; overlap also needs an integration strategy. |
 | `workspace-safety` | Dirty trees, branches, staging, commits, generated output, dependency installs, or risky Git/file operations need care. |
 | `verify-before-done` | The agent is about to claim work is done, fixed, reviewed, passing, safe, ready, or mergeable. |
 | `author-skills` | You are creating or revising coding-agent skills or skill-pack instructions. |

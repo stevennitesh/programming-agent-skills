@@ -32,11 +32,13 @@ Route by the active failure mode, not by the task label. Pick one controlling ro
 | Code question or explanation | Inspect relevant source, docs, tests, fixtures, or logs; answer with evidence |
 | Unclear user- or caller-visible feature, API, CLI, UI, module behavior, or public contract | `clarify-scope` |
 | Multi-step approved repo work or handoff | `slice-plan` |
+| Approved work should become a plan doc, GitHub issues, and issue-by-issue checkpoints | `issue-driven-execution` |
 | Caller-visible behavior change or new regression check | `tdd-slice` |
 | Bug, failing test, build/CI failure, regression, flaky behavior, or unexplained log/error | `diagnose-loop` |
 | Behavior-preserving refactor, cleanup, duplicated logic, or tangled module boundary | `codebase-cleanup` |
-| GitHub issues, PRDs, implementation slice issues, PR body/check/review tracking | `github-tracking` |
+| GitHub issues, PRDs, issue claims/updates, implementation slice issues, PR body/check/review tracking | `github-tracking` |
 | Subagents requested or useful for independent codebase exploration, implementation slices, or review | `subagent-workflow` |
+| Approved parallel implementation across agents or sessions needs separate branches/worktrees | `worktree-isolation` |
 | Completion claim, PR readiness, CI status, review resolution, or merge safety | `verify-before-done` |
 | Branching, dirty tree, staging, generated output, dependency install, or risky git operation | `workspace-safety` |
 | Creating or changing coding-agent skills | `author-skills` |
@@ -45,19 +47,21 @@ Route by the active failure mode, not by the task label. Pick one controlling ro
 
 Most work should have one controlling skill at a time:
 
-- `repo-onboarding`, `clarify-scope`, `slice-plan`, `tdd-slice`, `diagnose-loop`, `codebase-cleanup`, and `author-skills` can control the main work.
-- `workspace-safety`, `github-tracking`, `subagent-workflow`, and `verify-before-done` are usually gates: call them when the work reaches dirty-tree or git risk, durable issue/PR tracking, delegation, or completion evidence.
+- `repo-onboarding`, `clarify-scope`, `slice-plan`, `issue-driven-execution`, `tdd-slice`, `diagnose-loop`, `codebase-cleanup`, and `author-skills` can control the main work.
+- `workspace-safety`, `worktree-isolation`, `github-tracking`, `subagent-workflow`, and `verify-before-done` are usually gates: call them when the work reaches dirty-tree or git risk, approved parallel implementation, durable issue/PR tracking, delegation, or completion evidence.
 - After a gate is handled, return to the controlling skill or choose a new one if evidence changed the job.
 
 ## Rerouting
 
 - If new evidence shows the route is wrong, switch routes and say why.
 - If repo instructions, commands, checks, GitHub conventions, or durable context locations are unknown and matter to the task, switch to `repo-onboarding`.
+- If the user wants a plan document, GitHub issues, and issue-by-issue implementation checkpoints, switch to `issue-driven-execution`.
 - If a refactor uncovers a bug, switch to `diagnose-loop`.
 - If a cleanup changes caller-visible behavior, public contracts, state/data, or dependency/config behavior, switch to `tdd-slice`.
 - If the worktree, branch, generated output, dependency install, staging, or user changes create edit risk, switch to `workspace-safety`.
-- If durable request tracking, PRD, implementation issue, PR body, CI/check status, or review-thread evidence becomes useful, call `github-tracking`.
+- If durable request tracking, PRD, implementation issue, issue claim/update, PR body, CI/check status, or review-thread evidence becomes useful, call `github-tracking`.
 - If subagents are dispatched, call `subagent-workflow` before sending task packets and after code, diff, or review reports return.
+- If approved parallel implementation will run across agents or sessions, call `worktree-isolation`; overlap also needs an integration strategy.
 - Before saying work is done, fixed, passing, reviewed, ready, safe, or mergeable, call `verify-before-done`.
 - If no specialized route adds value, stay in the micro-loop.
 
