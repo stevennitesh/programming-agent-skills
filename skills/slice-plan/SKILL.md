@@ -69,6 +69,8 @@ Use only when durable issue coordination needs it:
 
 ### Task 1: <caller-visible behavior or repo change>
 - Outcome:
+- Builds on or must preserve:
+- Existing logic to reuse or extend:
 - Public contract or state/data change:
 - Depends on:
 - Likely files/modules:
@@ -96,6 +98,8 @@ Use only when durable issue coordination needs it:
 - Map multi-agent ownership, parallel mode, and worktree need to assignees or labels only when repo convention supports it.
 - Prefer end-to-end caller-visible slices over layer-only slices.
 - A good task delivers one API/CLI/UI behavior, one state/data change, one public contract, one migration step, one bug reproduction plus fix, one focused fixture/check, or one behavior-preserving refactor.
+- For every task after the first, state the earlier task output, source path, helper, test, contract, or issue result it builds on or must preserve. If the task is independent, say why.
+- Later tasks must extend, reuse, or refactor the established implementation path instead of creating a parallel path for the same behavior. If source evidence shows the earlier path is wrong, reroute and update the plan before coding the new path.
 - Each task needs a pass/fail command, test, fixture, or repeatable manual check.
 - For validation or testing plans, each task must state the evidence type it will produce and what weaker evidence does not satisfy the intent.
 - Merge tasks that cannot be reviewed independently.
@@ -116,7 +120,7 @@ Use only when durable issue coordination needs it:
 
 ## During Execution
 
-Treat the plan as a route, not authority. If repo evidence, user instruction, or verification contradicts it, reroute through the controlling skill and update the plan or issue only for durable contract, scope, or acceptance-check changes.
+Treat the plan as a route, not authority. Start each task from the current source, tests, diffs, and completed issue comments, not from the original plan snapshot alone. Before editing, name the prior implementation path the task will reuse, extend, or preserve. If repo evidence, user instruction, or verification contradicts the plan, reroute through the controlling skill and update the plan or issue only for durable contract, scope, or acceptance-check changes.
 
 ## Plan Review
 
@@ -125,6 +129,7 @@ Before handing off, scan the plan:
 - Coverage: every acceptance check and public contract maps to at least one task.
 - Evidence fit: each validation claim maps to a command, test, fixture, diff review, or manual check strong enough for the claim; simulated or review-only checks are not allowed to satisfy behavior-test intent.
 - Execution fit: mode is explicit or safely defaults to `sequential`; parallel modes name dependencies, file/module ownership, worktree need, and integration risk.
+- Continuity fit: each later task names the prior output, source path, helper, test, contract, or issue result it builds on or explains why it is independent.
 - Placeholder scan: no vague work items such as "handle edge cases" without the exact input, behavior, expected output, and check.
 - Name consistency: files, modules, types, functions, commands, events, statuses, and domain terms are named the same way across tasks.
 - Scope fit: tasks do not mix unrelated files, behavior changes, refactors, dependency changes, or generated output.

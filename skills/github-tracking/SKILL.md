@@ -119,6 +119,11 @@ Break approved plans into small vertical slices:
 ## Key contracts
 - Caller-visible interfaces, types, commands, config, or workflows that matter
 
+## Continuity
+Builds on / must preserve: None | prior issue, source path, helper, test, contract, or behavior
+Existing logic to reuse or extend: None | established implementation path
+Independent because: None | reason this issue is intentionally independent
+
 ## Acceptance criteria
 - [ ] ...
 
@@ -148,7 +153,9 @@ Development: branch/PR link when available
 
 Each slice should be independently understandable and verifiable. Prefer body text over custom labels unless the repo already uses them.
 
-Write durable issue bodies: describe caller-visible behavior, source scope, contracts, acceptance checks, and verification. Do not anchor the issue on line numbers, stale file paths, code dumps, or step-by-step implementation instructions.
+Write durable issue bodies: describe caller-visible behavior, source scope, contracts, continuity with prior issues, acceptance checks, and verification. Do not anchor the issue on line numbers, stale file paths, code dumps, or step-by-step implementation instructions.
+
+For later slice issues, carry forward the prior issue result, source path, helper, test, contract, or behavior to reuse or preserve. If the issue is independent, say why so implementers do not invent a second path for the same behavior.
 
 Include the `GitHub metadata` block only when sidebar fields improve ownership, filtering, dependency tracking, release grouping, branch/PR traceability, or multi-issue coordination. Omit fields that do not matter for the issue.
 

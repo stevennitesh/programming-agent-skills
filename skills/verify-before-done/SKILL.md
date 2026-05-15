@@ -50,6 +50,7 @@ Inspect the working-tree or PR diff against the request:
 - Tests that only prove mocks, snapshots, or test-only implementation hooks
 - Security, data/state, concurrency, dependency, config, or migration risk
 - Unnecessary complexity
+- New competing implementation path that ignores established logic, prior issue results, helpers, tests, contracts, or source paths the task was supposed to reuse or preserve
 - Drive-by formatting or unrelated refactor
 - User changes overwritten or mixed in
 - `CONTEXT.md` entries that record progress, plans, status, or claims

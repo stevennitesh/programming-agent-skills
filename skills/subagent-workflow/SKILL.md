@@ -64,7 +64,7 @@ If you skip an applicable template, say why in the parent notes or final report.
 - Give each subagent a tight task packet, not the whole conversation.
 - Choose the role first, then use that role's template as the packet skeleton when one exists.
 - Include exact coding scope, owned files/modules, forbidden files/behaviors, expected output, and evidence required.
-- Include execution mode, parallel group, issue claim state, and dependencies when implementing from a GitHub issue.
+- Include execution mode, parallel group, issue claim state, dependencies, and continuity context when implementing from a GitHub issue.
 - Include the worktree path and branch when `worktree-isolation` created an isolated workspace for the task.
 - Name the controlling skill for implementation packets.
 - Use `tdd-slice` for behavior changes, `diagnose-loop` for failing symptoms, or `codebase-cleanup` for behavior-preserving refactors.
@@ -74,7 +74,7 @@ If you skip an applicable template, say why in the parent notes or final report.
 - Do not run parallel implementation when the plan or issue is missing mode metadata or says `sequential`.
 - For `parallel-disjoint`, keep implementation ownership separate and use `worktree-isolation`.
 - For `parallel-overlap`, use `worktree-isolation` and the approved integration strategy.
-- Tell implementers they are not alone in the codebase and must preserve others' work.
+- Tell implementers they are not alone in the codebase, must preserve others' work, and must reuse or extend the established implementation path unless the parent approves a reroute.
 - Do not trust subagent success claims without parent diff inspection and, when needed, rerunning verification commands.
 - Do not let subagents make unchecked user/caller behavior, architecture, public contract, dependency, data migration, or scope decisions.
 
@@ -89,6 +89,8 @@ Shared terms:
 Execution mode:
 Parallel group:
 Issue claim:
+Builds on / must preserve:
+Existing logic to reuse or extend:
 Owned files/modules:
 Forbidden files/behaviors:
 Public or caller contract:

@@ -32,17 +32,19 @@ Commit and push only after the current issue is implemented, verified, diff-revi
    - Include goal, non-goals, constraints, acceptance checks, issue list, verification strategy, risks, and stop conditions.
    - Record `Execution mode: sequential | parallel-disjoint | parallel-overlap`. If the plan does not explicitly say parallel, treat it as `sequential`.
    - For parallel modes, record parallel groups, issue ownership, dependency order, worktree requirement, and integration owner.
+   - For later slices, record the prior output, source path, helper, test, contract, or issue result they build on or must preserve.
    - Do not copy source code into the plan unless an exact API, CLI, schema, fixture, or contract is the task.
 3. Create GitHub issues.
    - Use `github-tracking` to check for duplicates, follow issue conventions, and create issues from the plan.
-   - Each issue should reference the plan doc and carry its own acceptance check, likely files/modules, verification command, and out-of-scope notes.
-   - Copy the plan's execution coordination into each issue: mode, parallel group, dependencies, expected overlap, worktree requirement, and claim protocol.
+   - Each issue should reference the plan doc and carry its own acceptance check, continuity context, likely files/modules, verification command, and out-of-scope notes.
+   - Copy the plan's execution coordination and continuity fields into each issue: mode, parallel group, dependencies, expected overlap, worktree requirement, claim protocol, prior output to preserve, and existing logic to reuse or extend.
    - Decide GitHub metadata from plan scale and coordination needs; leave metadata unset for sequential single-agent work when body/comments are enough.
    - Use relationships, milestones, projects, assignees, labels, or Development links only when they improve dependency tracking, release grouping, filtering, ownership, or branch/PR traceability.
    - Update the plan with issue links after creation.
 4. Execute one issue at a time.
    - Pick the next unblocked issue.
    - Inspect the current issue body, comments, metadata, linked PRs, and recent activity before editing.
+   - For later issues, inspect completed dependency issue comments, commits, and current source before editing; name the implementation path to reuse, extend, or preserve.
    - Post the `github-tracking` claim comment before source, test, docs, config, or workflow edits.
    - When starting implementation, link the branch or PR through GitHub Development metadata when the repo workflow supports it.
    - Derive workspace shape from execution mode:
@@ -58,7 +60,7 @@ Commit and push only after the current issue is implemented, verified, diff-revi
 5. Checkpoint after each issue.
    - Use `verify-before-done` before claiming the issue is complete.
    - Inspect the diff against the issue and plan.
-   - Update the issue and plan with changed files, checks run, commit/branch/PR, open risks, claim status, and next issue.
+   - Update the issue and plan with changed files, checks run, commit/branch/PR, established logic for dependent issues, open risks, claim status, and next issue.
    - Check that comments, Development links, relationships, dependencies, and open risks agree before moving on.
    - Use `workspace-safety` before staging, committing, or pushing.
    - Commit only the current issue's intended files from the parent workspace or assigned worktree, then push the branch when the workflow calls for remote checkpoints.

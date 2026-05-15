@@ -12,6 +12,8 @@ Execution mode: <sequential | parallel-disjoint | parallel-overlap>
 Parallel group: <none | group name>
 Issue claim: <claim status, issue number, or none>
 Worktree/branch: <path and branch, or parent workspace>
+Builds on / must preserve: <prior issue result, source path, helper, test, contract, behavior, or none>
+Existing logic to reuse or extend: <established implementation path, or why this slice is independent>
 Owned files/modules: <owned files, directories, modules, fixtures, or docs>
 Forbidden files/behaviors: <files, caller-visible behaviors, dependencies, refactors, generated output, external actions>
 First check: <test, search, or file read that should happen first>
@@ -19,6 +21,7 @@ Verification command: <focused check plus broader check if known>
 Instructions:
 - You are not alone in the codebase. Preserve existing user and agent changes.
 - Implement exactly this slice. Do not solve adjacent tasks.
+- Reuse, extend, or refactor the established implementation path. Do not create a competing path for the same behavior unless you report BLOCKED or NEEDS_CONTEXT for parent rerouting.
 - For behavior changes, start with or identify one failing caller-visible check.
 - Apply the smallest source change that satisfies the slice.
 - Ask for context if requirements, acceptance criteria, public contracts, dependencies, or approach are unclear.
