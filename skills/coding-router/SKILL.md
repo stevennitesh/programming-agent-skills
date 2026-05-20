@@ -1,6 +1,6 @@
 ---
 name: coding-router
-description: Use when starting nontrivial repo work: source changes, debugging, refactoring, cleanup, GitHub/PR tracking, CI/check triage, or coding-agent skill authoring where scope, assumptions, route choice, or completion evidence could drift.
+description: "Use when starting nontrivial repo work: source changes, debugging, refactoring, cleanup, GitHub/PR tracking, CI/check triage, or coding-agent skill authoring where scope, assumptions, route choice, or completion evidence could drift."
 ---
 
 # Coding Router
