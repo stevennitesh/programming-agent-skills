@@ -66,11 +66,41 @@ For bugs, regressions, failing tests, build failures, or confusing behavior:
 ## Verification
 
 - Do not claim work is done, fixed, safe, passing, reviewed, or ready without fresh evidence.
+- During normal implementation, run the smallest relevant focused checks for
+  the touched path. Prefer targeted tests, touched-module checks, lint on
+  changed paths, typechecks for affected packages, or a smoke command over
+  broad validation.
+- Do not run the full test suite, full lint suite, full build, slow checks, or
+  broad repository validators by default after every small edit. Reserve
+  expensive checks for the commit gate, explicit user request, shared
+  infrastructure changes, broad runtime or public-contract changes,
+  release/high-risk checkpoints, or meaningful uncertainty left by focused
+  checks.
 - Run the most relevant check that fits the risk and explain what it proves.
 - If only a shallow check is practical, say what it does and does not prove.
-- Inspect diffs before final reporting. Every changed line should trace to the request, an acceptance check, or a necessary cleanup caused by the change.
+- Inspect diffs before final reporting. Every changed line should trace to the
+  request, an acceptance check, or a necessary cleanup caused by the change.
+- Run `git diff --check` at the commit gate by default, or earlier only when
+  whitespace risk is material.
 - Treat review comments, CI failures, test failures, logs, and warnings as engineering signals, not paperwork.
 - If verification fails, report the failure and the next useful action instead of claiming completion.
+
+## Commit Gate
+
+Run this gate only when preparing a commit, PR, merge, release checkpoint, or
+when the user asks for commit-ready verification.
+
+Before final staging or commit:
+
+- Inspect `git status --short` and review the diff for intended scope.
+- Run relevant focused checks for changed paths.
+- Run the repo's full standard check when one exists, such as the full test
+  suite, full build, typecheck, or required validator. Use repo docs for exact
+  commands.
+- Run relevant lint or formatting checks for changed source, tests, docs,
+  config, or workflows.
+- Run `git diff --check`.
+- Stage only intended files; preserve unrelated dirty work and local artifacts.
 
 ## Workspace Safety
 
