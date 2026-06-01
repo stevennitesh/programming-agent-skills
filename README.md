@@ -142,7 +142,7 @@ Before publishing or cutting a release, run:
 ./scripts/validate-skills.sh --public
 ```
 
-This adds public-repo hygiene checks for tracked source-corpus paths, stale skill names, local identifiers or secret-like patterns, and Git history/object paths.
+This adds public-repo hygiene checks for tracked source-corpus paths, ignored local source-corpus directories, stale skill names, local identifiers or secret-like patterns, and Git history/object paths.
 
 ## License
 

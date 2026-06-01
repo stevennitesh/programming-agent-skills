@@ -19,7 +19,7 @@ Keep simple edits simple. Pure syntax, import, formatting, or type-only fixes wi
 
 Start with one narrow end-to-end behavior through the real caller-facing path. This tracer bullet proves the test surface, test shape, and source route before expanding coverage.
 
-Caller-facing entry point = the API, CLI, UI/workflow, command, job, or integration path users or downstream callers use. Test surface = the behavior or contract the check observes.
+Caller-facing entry point = the API, CLI, UI/workflow, command, job, or integration path users or downstream callers use. Highest correct entry point means closest to the user or most abstract while still focused; for example, test the CLI command or UI action instead of a low-level helper when that is the behavior contract. Test surface = the behavior or contract the check observes.
 
 Do not write a batch of imagined tests and then a batch of implementation. Add one behavior check, watch it fail for the right reason, make the smallest source change, watch it pass, then repeat.
 

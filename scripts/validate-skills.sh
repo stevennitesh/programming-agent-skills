@@ -35,6 +35,34 @@ has_line() {
     grep -Fxq "$1" "$2"
 }
 
+frontmatter_value() {
+    key=$1
+    file=$2
+    awk -v key="$key" '
+        NR == 1 {
+            if ($0 != "---") {
+                exit
+            }
+            in_frontmatter = 1
+            next
+        }
+        in_frontmatter && $0 == "---" {
+            found_end = 1
+            exit
+        }
+        in_frontmatter && !found && $0 ~ ("^" key ":[[:space:]]*") {
+            sub("^[^:]+:[[:space:]]*", "")
+            value = $0
+            found = 1
+        }
+        END {
+            if (found_end && found) {
+                print value
+            }
+        }
+    ' "$file"
+}
+
 repo_root=$(git rev-parse --show-toplevel 2>/dev/null) || {
     printf '%s\n' "Not inside a Git repository." >&2
     exit 1
@@ -78,8 +106,11 @@ else
         if [ "$first_line" != "---" ]; then
             fail "Skill missing opening frontmatter marker: $skill_file"
         fi
+        if ! awk 'NR > 1 && $0 == "---" { found = 1; exit } END { exit found ? 0 : 1 }' "$skill_file"; then
+            fail "Skill missing closing frontmatter marker: $skill_file"
+        fi
 
-        skill_name=$(sed -n 's/^name:[[:space:]]*//p' "$skill_file" | sed -n '1p')
+        skill_name=$(frontmatter_value name "$skill_file")
         if [ -z "$skill_name" ]; then
             fail "Skill missing frontmatter name: $skill_file"
         elif [ "$skill_name" != "$folder_name" ]; then
@@ -87,7 +118,7 @@ else
         fi
         printf '%s\n' "$folder_name" >> "$skill_names_file"
 
-        description=$(sed -n 's/^description:[[:space:]]*//p' "$skill_file" | sed -n '1p')
+        description=$(frontmatter_value description "$skill_file")
         if [ -z "$description" ]; then
             fail "Skill missing frontmatter description: $skill_file"
         fi
@@ -161,6 +192,10 @@ matt-pocock-skills
 codex-correctness
 philosophies_discussions
 superpowers'
+
+    if [ -e sources ]; then
+        fail "Ignored source-corpus directory exists locally: sources/"
+    fi
 
     while IFS= read -r file; do
         [ -n "$file" ] || continue
@@ -237,10 +272,16 @@ superpowers'
     fi
 fi
 
-diff_check_output=$(git diff --check 2>&1) || {
-    fail "git diff --check failed:"
-    printf '%s\n' "$diff_check_output" | sed 's/^/  /'
-}
+diff_check_output="$tmp_dir/diff_check_output"
+if git diff --check > "$diff_check_output" 2>&1; then
+    diff_check_status=0
+else
+    diff_check_status=$?
+fi
+if [ "$diff_check_status" -ne 0 ] || [ -s "$diff_check_output" ]; then
+    fail "git diff --check reported whitespace or diff issues:"
+    sed 's/^/  /' "$diff_check_output"
+fi
 
 if [ "$verbose" -eq 1 ]; then
     if [ -f "$tracked_file" ]; then
