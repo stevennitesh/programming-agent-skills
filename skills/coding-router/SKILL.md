@@ -35,7 +35,7 @@ Route by the active failure mode, not by the task label. Pick one controlling ro
 | Approved work should become a plan doc, GitHub issues, and issue-by-issue checkpoints | `issue-driven-execution` |
 | Caller-visible behavior change or new regression check | `tdd-slice` |
 | Bug, failing test, build/CI failure, regression, flaky behavior, or unexplained log/error | `diagnose-loop` |
-| Behavior-preserving refactor, cleanup, duplicated logic, or tangled module boundary | `codebase-cleanup` |
+| Cleanup discovery, ordered cleanup bundles, continued cleanup search, behavior-preserving refactor, duplicated logic, or tangled module boundary | `codebase-cleanup` |
 | GitHub issues, issue metadata, PRDs, issue claims/updates, implementation slice issues, PR body/check/review tracking | `github-tracking` |
 | Subagents requested or useful for independent codebase exploration, implementation slices, or review | `subagent-workflow` |
 | Approved parallel implementation across agents or sessions needs separate branches/worktrees | `worktree-isolation` |
@@ -76,7 +76,7 @@ Intent decides target. Evidence reveals baseline. Checks prove the move.
 - For target behavior, use the approved spec, design doc, issue, PRD, migration plan, or user instruction.
 - During behavior-preserving refactors, current source, tests, fixtures, and public or caller contracts are baseline and compatibility evidence; the approved request or doc is target evidence.
 - If docs and source disagree, identify whether the disagreement is stale documentation, intentional target behavior, or an implementation gap before editing.
-- Do not add metadata systems, ledgers, or process bureaucracy unless the user asks.
+- Do not add durable metadata systems, long-lived ledgers, or process bureaucracy unless the user asks. Short working ledgers required by a controlling skill are fine.
 
 ## Ask Or Act
 

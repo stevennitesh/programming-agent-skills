@@ -1,6 +1,6 @@
 ---
 name: codebase-cleanup
-description: Use when asked to clean up a repo, organize or comment code, refactor safely, reduce duplicated code paths, simplify module boundaries or caller interfaces, make behavior easier to test, or remove code made obsolete by a change.
+description: Use when asked to find cleanup opportunities, continue searching for cleanup work, organize or comment code, refactor safely, reduce duplicated code paths, simplify module boundaries or caller interfaces, make behavior easier to test, or remove code made obsolete by a change.
 ---
 
 # Codebase Cleanup
@@ -56,15 +56,41 @@ Use the deletion test on wrappers, helpers, adapters, and ownership modules: if 
 - Comments, docstrings, or commented-out code are stale, misleading, duplicated, noisy, or absent where they carry non-obvious caller or maintainer knowledge.
 - Current work made code, imports, flags, config, docs, commands, or files obsolete.
 
+## Opportunity Sweep
+
+When the user asks to find cleanup opportunities, do not stop after the first good candidate. Define the inspected scope and run a bounded sweep across independent evidence signals:
+
+- Caller-facing entry points and ownership boundaries.
+- Duplicated rules, validation, calculations, names, or state transitions.
+- Tests and fixtures that show setup friction, private access, repeated doubles, or weak caller-facing checks.
+- Docs, commands, config, scripts, and generated artifacts that may be stale, scattered, or obsolete.
+- Recent diffs, TODOs, deprecations, wrappers, options, or compatibility paths that may no longer earn their cost.
+
+Keep a short coverage ledger:
+
+```text
+Requested scope:
+Inspected source areas:
+Inspected tests/fixtures:
+Searches or commands used:
+Candidate bundles found:
+Deferred or low-return areas:
+Uninspected areas:
+Why the sweep is sufficient for this pass:
+```
+
+Do not claim that no cleanup remains unless the coverage ledger supports that claim. Prefer: "I found no higher-return opportunities in the inspected scope; remaining uninspected or lower-return areas are ..."
+
 ## Process
 
 1. Inspect repo instructions, the dirty tree, relevant source, tests, fixtures, recent diffs, and the caller-facing entry point or module under cleanup.
 2. Use docs, ADRs, and `CONTEXT.md` as maps, then confirm the current behavior in source and tests.
 3. Separate cleanup from behavior change. If target behavior is unclear, use `clarify-scope`; if a bug appears, use `diagnose-loop`.
-4. List candidates:
+4. Group candidates into cleanup bundles by ownership boundary, caller contract, duplicated rule, test surface, or reason to change. Avoid unrelated grab bags:
 
 ```text
-Opportunity:
+Bundle:
+Why these changes belong together:
 Repo evidence of cost:
 Caller-visible behavior to preserve:
 Current caller interface or contract:
@@ -72,6 +98,7 @@ Interface depth:
 Code organization/readability issue:
 Comment/docstring need:
 Likely files/modules:
+Candidate changes:
 Consolidation option:
 Navigation cost:
 Would these files usually be opened together:
@@ -80,17 +107,19 @@ Deletion test outcome:
 Locality/leverage gained:
 Test surface impact:
 Domain term or ADR constraint:
+Dependencies or ordering constraints:
+What should not be included:
 Baseline check:
-Smallest behavior-preserving slice:
 Diff risk:
 Verification:
 Engineering return: high|medium|low
 ```
 
-5. Recommend the highest-return, lowest-risk slice. Prefer consolidation, caller simplification, or an existing caller-facing test surface over new file boundaries unless the split has clear ownership value. If it needs multiple reviewable slices, hand off to `slice-plan`.
-6. Establish a baseline with existing tests or a small repeatable check that captures current caller-visible behavior.
-7. Refactor one narrow slice and keep the repo buildable or runnable after it lands.
-8. Run focused and surrounding checks after the final edit, then inspect the diff for behavior preservation, scope control, user-change preservation, and reduced future change cost.
+5. Recommend an ordered bundle plan, not only the single best opportunity. Order bundles by dependencies, behavior-preservation risk, validation confidence, and engineering return. Name the recommended first bundle and the next bundle to inspect or implement after it. Prefer consolidation, caller simplification, or an existing caller-facing test surface over new file boundaries unless the split has clear ownership value. If it needs multiple reviewable slices, hand off to `slice-plan`.
+6. If the user asked to keep searching, continue from the coverage ledger after each bundle: pick the next uninspected source area, deferred bucket, or adjacent ownership boundary before concluding.
+7. Establish a baseline with existing tests or a small repeatable check that captures current caller-visible behavior.
+8. Refactor one narrow slice and keep the repo buildable or runnable after it lands.
+9. Run focused and surrounding checks after the final edit, then inspect the diff for behavior preservation, scope control, user-change preservation, and reduced future change cost.
 
 ## Good Cleanup
 
@@ -138,6 +167,7 @@ Engineering return: high|medium|low
 - The cleanup has multiple plausible caller interfaces, test surfaces, or ownership boundaries and repo evidence does not clearly choose one.
 - Current caller-visible behavior is important but cannot be checked cheaply.
 - The smallest safe slice is still a broad rewrite.
+- The user wants exhaustive repo-wide cleanup but the repo is too large to inspect honestly in one pass; propose a bounded sweep scope and report uninspected areas instead of implying the whole repo is clean.
 
 ## Handoff
 
