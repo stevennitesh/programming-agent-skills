@@ -11,6 +11,24 @@ Subagents are tools for bounded coding work: codebase exploration, one implement
 
 Delegate bounded work, not responsibility. The parent owns scope, integration, review triage, and final verification.
 
+Ownership scope means the files, modules, contracts, or behavior delegated to a subagent. It is task scope, not long-term code ownership or permission to change adjacent areas.
+
+## Delegation Authorization
+
+Do not dispatch a subagent unless delegation is authorized for this task and the current environment or tool policy permits it.
+
+Delegation is authorized when:
+
+- The user explicitly asks for subagents, parallel agents, worker agents, or independent review.
+- The user approves a plan, issue, or workflow that explicitly calls for subagents.
+- Existing repo or issue instructions require subagent review and no newer user instruction forbids it.
+
+This can be standing authorization. If an approved plan, issue, repo instruction, or current user request already grants delegation, do not ask again just to use an appropriate subagent.
+
+When delegation is authorized, the agent decides whether to use subagents for a specific task based on independence, scope, review value, and overhead.
+
+If authorization or tooling is missing, run the same gates locally and label the result as `self-review`, not independent review. Do not imply a separate agent inspected or verified the work.
+
 ## Use Or Avoid
 
 Use subagents when the current environment permits delegation and at least one is true:
@@ -25,7 +43,7 @@ Avoid subagents when:
 
 - The current environment, policy, or user instruction does not permit delegation.
 - The next step depends on one result you need immediately.
-- Work is tightly coupled across the same files, caller contract, migration, or state/data path.
+- Work is tightly coupled across the same files, public or caller contract, migration, or state/data path.
 - You would only be outsourcing judgment the parent must own.
 - A simple local inspect/edit/check loop is cheaper.
 
@@ -76,7 +94,7 @@ If you skip an applicable template, say why in the parent notes or final report.
 - For `parallel-overlap`, use `worktree-isolation` and the approved integration strategy.
 - Tell implementers they are not alone in the codebase, must preserve others' work, and must reuse or extend the established implementation path unless the parent approves a reroute.
 - Do not trust subagent success claims without parent diff inspection and, when needed, rerunning verification commands.
-- Do not let subagents make unchecked user/caller behavior, architecture, public contract, dependency, data migration, or scope decisions.
+- Do not let subagents make unchecked user or caller behavior, architecture, public contract, dependency, data migration, or scope decisions.
 
 Base packet for custom roles or fallback use:
 
@@ -126,7 +144,7 @@ Add a final whole-diff quality reviewer when slices touch shared contracts, cros
 ## Coordination
 
 1. Decide whether subagents add enough value to pay the context, time, and integration cost.
-2. Split by subsystem, source entry point, caller contract, question, or file ownership. Do not split only to keep agents busy.
+2. Split by subsystem, source entry point, public or caller contract, question, or file ownership. Do not split only to keep agents busy.
 3. Dispatch independent read-only work in parallel when possible.
 4. Before parallel implementation, inspect the plan or issue execution coordination and current claim state.
 5. If mode is missing or `sequential`, run implementation issues one at a time or keep one parent-owned.
@@ -160,6 +178,7 @@ When multiple reviewers report findings:
 ## Output
 
 ```text
+Delegation allowed:
 Subagents used:
 Review gates:
 Findings accepted:

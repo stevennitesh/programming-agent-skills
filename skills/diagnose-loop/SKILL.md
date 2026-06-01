@@ -7,6 +7,27 @@ description: Use when tests, commands, builds, CI jobs, or workflows fail; calle
 
 Find the cause before changing source code. Use the cheapest useful repo check strong enough for the risk.
 
+## Feedback Loop
+
+A feedback loop is the repeatable check or observation that shows the user's symptom clearly enough to guide a source change. Before fixing anything outside the fast path, name the loop and improve it until it is useful.
+
+Reproducer = the failing command/check that shows the symptom. Feedback loop = the repeatable investigation loop used while finding the cause. Regression check = the post-fix check that would fail before the fix.
+
+Check = the test, command, script, fixture, CI job, or exact manual step being run. Test surface = the behavior or contract the check observes.
+
+Caller-facing entry point = the command, API, UI/workflow, job, or module path users or downstream callers use to trigger the behavior.
+
+```text
+Loop command/check:
+Signal observed:
+Speed:
+Determinism or failure rate:
+Matches user symptom: yes|no|partial
+What would make it sharper:
+```
+
+A useful loop observes the reported failure, not a nearby setup error; runs fast enough to support iteration; and is deterministic enough, or fails often enough, to distinguish cause from coincidence. If no useful loop can be built, list what you tried and ask for the missing file, log, fixture, access, captured trace, or permission to add temporary instrumentation.
+
 ## Fast Path
 
 Use this for low-risk repo failures that repeat the same way:
@@ -19,8 +40,9 @@ Examples: syntax errors, missing imports, local type errors, obvious assertion f
 ```text
 Expected:
 Observed:
+Feedback loop:
 Trigger command/check:
-Entry point or caller path:
+Caller-facing entry point:
 Affected files/modules:
 First known bad point:
 Recent changes:
@@ -38,7 +60,7 @@ Stop there unless the change touches shared behavior, public contracts, data/sta
 Use the full loop when the cause is unclear, the failure is expensive or risky, or the fast path fails.
 
 1. Protect users, data, or live system state first when there is live risk.
-2. Establish the cheapest useful check:
+2. Build or identify the cheapest useful feedback loop:
    - Existing failing test, command, or CI job
    - New focused failing test around the caller-visible path
    - Minimal script, fixture, or CLI command
@@ -46,20 +68,20 @@ Use the full loop when the cause is unclear, the failure is expensive or risky, 
    - Replay of a captured request, payload, event, or log excerpt
    - Exact manual steps
    - Log-only evidence when no reproduction is possible
-3. Shape the check until it is useful: it matches the reported failure, is as fast as practical, observes the specific symptom, and is repeatable enough to guide a source change.
-4. If no useful check is possible, list what you tried and ask for the missing file, log, fixture, access, or permission to add temporary debug output.
-5. Minimize the case: input, fixture, state/data, entry point, module path, command, dependency range, config, runtime, and environment.
+3. Record the loop quality using the Feedback Loop fields. Improve it if it is too broad, slow, flaky, or observes the wrong symptom.
+4. If no useful loop is possible, list what you tried and ask for the missing file, log, fixture, access, captured trace, or permission to add temporary debug output.
+5. Minimize the case: input, fixture, state/data, caller-facing entry point, module path, command, dependency range, config, runtime, and environment.
 6. Read `CONTEXT.md`, ADRs, or domain notes only when repo terms affect the symptom; verify behavior in source, tests, fixtures, logs, commands, or CI output.
 7. Compare against known-good paths: recent diffs, old vs new version, working sibling code, config, environment, dependency versions, and CI history.
 8. Trace bad value, state, output, or timing backward through entry points, callers, module boundaries, and state transitions until the source is found.
-9. Rank 2-5 hypotheses:
+9. Rank 2-5 falsifiable hypotheses:
 
 ```text
 H1: If <cause>, then <observable prediction>. Evidence: <file/log/command output>. Check: <command or step>.
 ```
 
 10. Test one variable at a time. Negative results count; update the hypothesis list.
-11. Add temporary debug output only where it distinguishes hypotheses. Tag it with a unique prefix so cleanup is easy, and keep it out of the final diff.
+11. Add temporary debug output only where it distinguishes hypotheses or component boundaries. Tag it with a unique prefix so cleanup is easy, and keep it out of the final diff. For performance regressions, measure or profile before changing code.
 
 ## Flaky Issues
 
@@ -73,25 +95,30 @@ Flaky means the same command, test, fixture, or workflow sometimes passes and so
 ## Fix And Verify
 
 - Fix the cause with the smallest source change that explains the reproduction.
-- Keep or add a regression check that would fail before the fix and exercises the real failure path through the caller-visible entry point.
-- If only a shallow check is possible, say which caller path is untested and consider `codebase-cleanup` after the fix.
-- If no correct test entry point exists, say why and use the strongest repeatable command, fixture, or manual check available.
+- Keep or add a regression check that would fail before the fix and exercises the real failure path through the highest correct caller-facing entry point.
+- If only a shallow check is possible, say which caller-facing entry point is untested and why the test surface is too weak.
+- If no correct caller-facing entry point exists, say why, use the strongest repeatable command, fixture, or manual check available, and treat the gap as an architecture or testability finding after the immediate fix.
 - Remove temporary debug output and throwaway debug files, fixtures, or scripts.
 - If the fix clarifies recurring vocabulary, a module boundary, public contract, or state transition, add or propose a tiny `CONTEXT.md` note.
+- After the immediate fix, note what would have prevented the bug from being hard to reproduce or lock down. Hand off to `codebase-cleanup` when code shape blocks a durable regression check or fix.
 - Final checks scale with risk:
   - Low-risk repeatable fix: original reproducer plus focused regression command.
   - Shared behavior or public contract change: focused check plus relevant surrounding suite, typecheck, build, or smoke check.
   - Inconsistent or high-risk fix: small repeat/stress check plus relevant surrounding suite or CI rerun.
 - If a broader suite is expensive and low signal, skip it and say why.
-- If three fix attempts fail, stop and question the hypothesis, test entry point, module boundary, or architecture. Hand off to `codebase-cleanup` when code shape blocks a durable fix.
+- If three fix attempts fail, stop and question the hypothesis, test surface, module boundary, or architecture. Hand off to `codebase-cleanup` when code shape blocks a durable fix.
 
 ## Red Flags
 
 - Changing source code before reproducing or observing the failure.
+- Proceeding with a feedback loop that does not match the user's symptom.
+- Treating a nearby failure as the bug.
+- Relying on a slow or flaky loop without trying to sharpen it.
 - Treating one passing run as proof for a flaky issue.
 - Deleting, weakening, or over-mocking the failing test.
 - Fixing only the observed input while ignoring the invariant.
 - Testing many changes at once.
+- Adding broad logs that do not distinguish hypotheses.
 - Treating correlation as cause.
 - Blaming an external platform, dependency, or CI runner before creating a minimal case.
 
@@ -100,10 +127,14 @@ Flaky means the same command, test, fixture, or workflow sometimes passes and so
 ```text
 Symptom:
 Reproduction command/check:
+Feedback loop:
+Loop quality:
 Evidence:
+Hypothesis tested:
 Root cause:
 Source change:
 Regression coverage:
+Correct test surface or gap:
 Verification commands:
 Diff review:
 Remaining uncertainty:

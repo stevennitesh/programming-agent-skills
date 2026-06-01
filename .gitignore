@@ -35,7 +35,8 @@ Thumbs.db
 .tmp/*
 !.tmp/.gitkeep
 
-# Local planning and evaluation notes
+# Local planning, evidence, and evaluation notes
+docs/
 plans/
 
 # Node/package manager output if skill tooling uses JS

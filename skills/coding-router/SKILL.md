@@ -74,7 +74,7 @@ Intent decides target. Evidence reveals baseline. Checks prove the move.
 - Never use `CONTEXT.md` for progress, plans, skill summaries, or completion evidence.
 - For current behavior, inspect relevant source, callers, tests, fixtures, logs, commands, and recent diffs.
 - For target behavior, use the approved spec, design doc, issue, PRD, migration plan, or user instruction.
-- During behavior-preserving refactors, current source, tests, fixtures, and caller contracts are baseline and compatibility evidence; the approved request or doc is target evidence.
+- During behavior-preserving refactors, current source, tests, fixtures, and public or caller contracts are baseline and compatibility evidence; the approved request or doc is target evidence.
 - If docs and source disagree, identify whether the disagreement is stale documentation, intentional target behavior, or an implementation gap before editing.
 - Do not add metadata systems, ledgers, or process bureaucracy unless the user asks.
 

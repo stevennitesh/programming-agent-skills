@@ -5,7 +5,7 @@ Use for read-only repo investigation. Explorers answer one bounded codebase ques
 ```text
 Role: Explorer
 Task: <one codebase question to answer>
-Context: <why this matters, caller path, failing symptom, or known anchors>
+Context: <why this matters, caller-facing entry point, failing symptom, or known anchors>
 Allowed scope: <files, directories, modules, commands, logs, fixtures>
 Forbidden actions: no edits; no broad unrelated scans; no implementation decisions; no conclusions without evidence
 First check: <first file, command, or search to run>

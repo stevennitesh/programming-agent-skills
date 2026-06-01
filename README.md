@@ -1,8 +1,10 @@
 # Programming Agent Skills
 
-A small skill pack for coding agents working in real software repos.
+A portable skill pack for coding agents working in real software repos.
 
-These skills give coding agents just enough operating structure to learn a repo, clarify scope, plan tracked work, make reviewable source changes, debug from evidence, protect user work, track GitHub context, coordinate subagents, isolate parallel implementation when needed, and verify before claiming success. The goal is better engineering behavior, not a bigger process framework.
+These skills give coding agents just enough operating structure to learn a repo, clarify scope, plan tracked work, make reviewable source changes, debug from evidence, protect user work, track durable issue or PR context, coordinate subagents, isolate parallel implementation when needed, and verify before claiming success. The goal is better engineering behavior, not a bigger process framework.
+
+The workflows favor fast feedback loops, tracer-bullet slices, ownership-boundary cleanup, pressure-tested skill edits, disposable prototypes, explicit readiness states, and evidence-mapped completion claims.
 
 ## Why This Exists
 
@@ -31,20 +33,26 @@ The intent is not to give agents a giant rulebook. It is to steer them toward gr
 
 ## Quick Start
 
-For portable repo defaults, copy [AGENTS.md](AGENTS.md) into a programming repo and adapt the repo-specific source-of-truth files, commands, constraints, and release rules.
+There are two useful adoption paths.
 
-For skill-based agent setups, copy the skills you want into your local skill directory, or point your tooling at `skills/` if it supports repo-local skills.
+Use [AGENTS.md](AGENTS.md) when you want portable global defaults without installing any skills. Copy it into an agent's global instruction location or into a programming repo, then add repo-specific source-of-truth files, commands, constraints, and release rules.
 
-For a Codex-style local setup:
+Use `skills/` when your agent runtime supports loadable skills. Copy the skills you want into your local skill directory, or point your tooling at this repo's `skills/` directory if it supports repo-local skills.
+
+For a Codex-style starter setup:
 
 ```bash
-cp -R skills/coding-router "$CODEX_HOME/skills/"
+mkdir -p "$CODEX_HOME/skills"
 cp -R skills/repo-onboarding "$CODEX_HOME/skills/"
-cp -R skills/clarify-scope "$CODEX_HOME/skills/"
+cp -R skills/coding-router "$CODEX_HOME/skills/"
+cp -R skills/workspace-safety "$CODEX_HOME/skills/"
+cp -R skills/verify-before-done "$CODEX_HOME/skills/"
 cp -R skills/tdd-slice "$CODEX_HOME/skills/"
+cp -R skills/diagnose-loop "$CODEX_HOME/skills/"
+cp -R skills/codebase-cleanup "$CODEX_HOME/skills/"
 ```
 
-You can copy the whole pack, but you do not have to. Start with `repo-onboarding` for unfamiliar repos, then use `coding-router` when you want the agent to choose the right route for actual work.
+You can copy the whole pack, but you do not have to. Start with `repo-onboarding` for unfamiliar repos, use `coding-router` when you want the agent to choose the right route for actual work, and add the GitHub or subagent skills only when those workflows exist in your environment.
 
 ## How It Works
 
@@ -53,12 +61,12 @@ Most nontrivial work starts with `coding-router`. It chooses the smallest reliab
 The pack uses two kinds of skills:
 
 - Controlling skills own the main workflow: repo entry, scope, planning, tracked execution, implementation, debugging, cleanup, or skill authoring.
-- Gate skills step in at risk boundaries: workspace safety, GitHub tracking, subagent coordination, worktree isolation for parallel implementation, or final verification.
+- Gate skills step in at risk boundaries: workspace safety, durable tracking, subagent coordination, worktree isolation for parallel implementation, or final verification.
 
 Typical paths:
 
 - New repo or stale repo context: `repo-onboarding` -> `coding-router` -> selected workflow
-- Tracked multi-issue work: `issue-driven-execution` -> plan doc and GitHub issues -> claim, implement, checkpoint, and verify each issue
+- GitHub-backed multi-issue work: `issue-driven-execution` -> plan doc and issues -> claim, implement, checkpoint, and verify each issue
 - Feature or behavior request: `coding-router` -> `clarify-scope` or `slice-plan` -> `tdd-slice` -> `verify-before-done`
 - Bug, failing test, build, CI job, or log error: `coding-router` -> `diagnose-loop` -> focused source change and regression check -> `verify-before-done`
 - Cleanup or refactor: `coding-router` -> `codebase-cleanup` -> behavior-preserving slice -> `verify-before-done`
@@ -69,11 +77,11 @@ Typical paths:
 
 | Skill | Use it when |
 | --- | --- |
-| `repo-onboarding` | A coding agent needs to learn an unfamiliar repo's instructions, commands, context, GitHub conventions, and safety constraints before work. |
+| `repo-onboarding` | A coding agent needs to learn an unfamiliar repo's instructions, commands, context, tracker conventions, and safety constraints before work. |
 | `coding-router` | A nontrivial repo task needs the right next workflow. |
-| `clarify-scope` | The request is unclear, broad, user-facing, caller-facing, architectural, or risky. |
+| `clarify-scope` | The request is unclear, broad, caller-visible or user-visible, architectural, or risky. |
 | `slice-plan` | Approved work needs multiple reviewable source, test, docs, or tracking slices. |
-| `issue-driven-execution` | Approved work should become a plan document, GitHub issues, and one claimed, verified implementation or research issue at a time. |
+| `issue-driven-execution` | Approved GitHub-backed work should become a plan document, issues, and one claimed, verified implementation or research issue at a time. |
 | `tdd-slice` | You are implementing or changing one caller-visible behavior with a focused check. |
 | `diagnose-loop` | Tests, builds, CI, logs, output, crashes, or behavior are failing and the cause is not yet clear. |
 | `codebase-cleanup` | Cleanup or refactor work should preserve behavior while making future changes easier. |
@@ -87,6 +95,7 @@ Typical paths:
 ## What This Is Not
 
 - Not a package manager or runtime framework.
+- Not tied to one agent host. `AGENTS.md` is portable instruction text; `skills/` works where the runtime supports skills.
 - Not a replacement for repo docs, source code, tests, review, CI, or user instruction.
 - Not a rule that every task needs extra process. Tiny safe edits can use a tiny source-read, edit, check loop.
 - Not a promise that process creates correctness. Evidence still has to come from the repo and the checks that matter.
@@ -101,31 +110,39 @@ Typical paths:
 - Preserve existing behavior during refactors unless asked to change it.
 - Protect user work, agent work, and unrelated changes.
 - Verify before completion claims.
-- Use subagents only when the work is bounded and the parent can review the result.
+- Use subagents only when delegation is authorized, the work is bounded, and the parent can review the result.
 
 ## What This Repo Contains
 
 - `skills/`: reusable coding-agent skills. Each skill has a `SKILL.md` with trigger, purpose, procedure, stop/ask conditions, and handoffs.
-- `AGENTS.md`: a compact, copyable example agent guide for a programming repo.
-- `scripts/validate-public-readiness.ps1`: a lightweight release check for this repo.
+- `AGENTS.md`: portable global coding-agent instructions that can be copied into an agent or repo instruction location.
+- `scripts/validate-skills.sh`: a portable validator for skill metadata, README skill-map consistency, retired vocabulary, public-release hygiene, trailing whitespace, and `git diff --check`.
 - `ACKNOWLEDGMENTS.md`: inspiration and no-affiliation notes.
 - `LICENSE`: MIT license.
 
 ## Status
 
-This is an experimental baseline, but it is not untested. These skills have been used across five programming repos and currently match the maintainer's preferred coding-agent workflow.
+This is an experimental baseline, but it is not untested. The pack includes static validation and has been exercised against several high-risk workflows during development.
 
 Future revisions are expected as real work exposes weak wording, missing checks, unclear handoffs, or unnecessary process.
 
 ## Maintainer Check
 
-Before publishing or cutting a release, run:
+For routine local skill edits, run:
 
-```powershell
-pwsh -File scripts/validate-public-readiness.ps1
+```bash
+./scripts/validate-skills.sh
 ```
 
-This checks skill metadata and basic public-repo hygiene.
+This checks skill frontmatter, the README skill map, retired vocabulary, trailing whitespace in published markdown, and `git diff --check`.
+
+Before publishing or cutting a release, run:
+
+```bash
+./scripts/validate-skills.sh --public
+```
+
+This adds public-repo hygiene checks for tracked source-corpus paths, ignored local source-corpus directories, stale skill names, local identifiers or secret-like patterns, and Git history/object paths.
 
 ## License
 

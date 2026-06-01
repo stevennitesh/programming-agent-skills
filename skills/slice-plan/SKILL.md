@@ -5,11 +5,13 @@ description: Use when approved repo work needs multiple source, test, or docs st
 
 # Slice Plan
 
-Create a compact execution plan for coding agents. Plan enough to identify files, caller contracts, checks, and handoffs; not so much that the plan becomes a second implementation.
+Create a compact execution plan for coding agents. Plan enough to identify files, public or caller contracts, checks, and handoffs; not so much that the plan becomes a second implementation.
 
 ## Rule
 
 Each task should be one reviewable source, test, or docs change with a pass/fail check, a clear file/module boundary, and a buildable or runnable repo after it lands.
+
+Ownership scope means the files, modules, contracts, generated outputs, dependency/config state, or behavior a task, issue, or agent may change. It is task scope, not the same thing as GitHub assignee, repository owner, or long-term code ownership.
 
 ## Planning Depth
 
@@ -97,6 +99,8 @@ Use only when durable issue coordination needs it:
 - Map dependencies to Relationships and release/version targets to Milestones when those fields exist in the repo workflow.
 - Map multi-agent ownership, parallel mode, and worktree need to assignees or labels only when repo convention supports it.
 - Prefer end-to-end caller-visible slices over layer-only slices.
+- Do not make each helper extraction its own task unless it creates a reviewable ownership boundary; a helper category is not enough. Prefer tasks that leave fewer, clearer modules rather than more precise but tedious files.
+- When a task proposes new files, name why each file deserves independent ownership and what existing files, if any, should be consolidated instead.
 - A good task delivers one API/CLI/UI behavior, one state/data change, one public contract, one migration step, one bug reproduction plus fix, one focused fixture/check, or one behavior-preserving refactor.
 - For every task after the first, state the earlier task output, source path, helper, test, contract, or issue result it builds on or must preserve. If the task is independent, say why.
 - Later tasks must extend, reuse, or refactor the established implementation path instead of creating a parallel path for the same behavior. If source evidence shows the earlier path is wrong, reroute and update the plan before coding the new path.

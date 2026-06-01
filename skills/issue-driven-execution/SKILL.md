@@ -24,7 +24,7 @@ Commit and push only after the current issue is implemented, verified, diff-revi
 
 1. Establish operating context.
    - Use `repo-onboarding` if repo commands, GitHub conventions, `plans/` conventions, or safety constraints are unknown.
-   - Use `clarify-scope` if the target behavior, public/caller contract, risk, or success criteria are unclear.
+   - Use `clarify-scope` if the target behavior, public or caller contract, risk, or success criteria are unclear.
    - Use `workspace-safety` before creating plan docs, branches, commits, pushes, dependency installs, generated output, or dirty-tree edits.
 2. Create the plan document.
    - Use `slice-plan` to shape the work into reviewable source, test, docs, research, or verification slices.
@@ -33,17 +33,22 @@ Commit and push only after the current issue is implemented, verified, diff-revi
    - Record `Execution mode: sequential | parallel-disjoint | parallel-overlap`. If the plan does not explicitly say parallel, treat it as `sequential`.
    - For parallel modes, record parallel groups, issue ownership, dependency order, worktree requirement, and integration owner.
    - For later slices, record the prior output, source path, helper, test, contract, or issue result they build on or must preserve.
+   - Record issue readiness when it affects execution: `agent-ready` when repo evidence is enough to proceed, or `needs human decision` when behavior, architecture, security/data, access, dependency, or manual review is still required.
    - Do not copy source code into the plan unless an exact API, CLI, schema, fixture, or contract is the task.
 3. Create GitHub issues.
    - Use `github-tracking` to check for duplicates, follow issue conventions, and create issues from the plan.
-   - Each issue should reference the plan doc and carry its own acceptance check, continuity context, likely files/modules, verification command, and out-of-scope notes.
+   - Before publishing, scan the planned issue list for vertical tracer-bullet shape. Prefer issues that deliver one end-to-end behavior, bug fix, refactor, research answer, or verification result through the real repo path.
+   - Do not publish layer-only issues such as "just schema", "just API", or "just UI" unless the issue is an intentional blocking technical step with a dependency, verification command, and reason it cannot be folded into a behavior slice.
+   - Each issue should reference the plan doc and carry its own acceptance check, continuity context, likely files/modules, verification command, readiness state when relevant, and out-of-scope notes.
    - Copy the plan's execution coordination and continuity fields into each issue: mode, parallel group, dependencies, expected overlap, worktree requirement, claim protocol, prior output to preserve, and existing logic to reuse or extend.
+   - For `needs human decision` issues, name the specific decision, artifact, source/API contract, access, dependency, or manual review needed before implementation can start.
    - Decide GitHub metadata from plan scale and coordination needs; leave metadata unset for sequential single-agent work when body/comments are enough.
    - Use relationships, milestones, projects, assignees, labels, or Development links only when they improve dependency tracking, release grouping, filtering, ownership, or branch/PR traceability.
    - Update the plan with issue links after creation.
 4. Execute one issue at a time.
    - Pick the next unblocked issue.
    - Inspect the current issue body, comments, metadata, linked PRs, and recent activity before editing.
+   - If the issue is marked `needs human decision`, do not implement it until the missing decision or artifact is supplied and the issue is updated.
    - For later issues, inspect completed dependency issue comments, commits, and current source before editing; name the implementation path to reuse, extend, or preserve.
    - Post the `github-tracking` claim comment before source, test, docs, config, or workflow edits.
    - When starting implementation, link the branch or PR through GitHub Development metadata when the repo workflow supports it.
@@ -60,7 +65,7 @@ Commit and push only after the current issue is implemented, verified, diff-revi
 5. Checkpoint after each issue.
    - Use `verify-before-done` before claiming the issue is complete.
    - Inspect the diff against the issue and plan.
-   - Update the issue and plan with changed files, checks run, commit/branch/PR, established logic for dependent issues, open risks, claim status, and next issue.
+   - Update the issue and plan with changed files, checks run, commit/branch/PR, established logic for dependent issues to reuse or extend, readiness changes, open risks, claim status, and next issue.
    - Check that comments, Development links, relationships, dependencies, and open risks agree before moving on.
    - Use `workspace-safety` before staging, committing, or pushing.
    - Commit only the current issue's intended files from the parent workspace or assigned worktree, then push the branch when the workflow calls for remote checkpoints.
@@ -74,6 +79,7 @@ Stop before continuing when:
 - `plans/` conventions are unclear and creating a new convention would matter
 - issue scope expands beyond the approved plan
 - verification fails or does not exercise the issue's acceptance check
+- an issue is marked `needs human decision` and the missing decision, artifact, access, dependency, or manual review is still absent
 - the working tree contains unrelated or overlapping user changes
 - parallel work is expected but the plan or issue does not explicitly declare `parallel-disjoint` or `parallel-overlap`
 - a parallel implementation issue lacks worktree isolation
@@ -87,6 +93,7 @@ Plan:
 Issues:
 Current issue:
 Execution mode:
+Readiness:
 Claim:
 Worktree/branch:
 Changed files:
@@ -101,7 +108,7 @@ Next issue:
 ## Handoff
 
 - `repo-onboarding`: repo commands, GitHub conventions, `plans/` conventions, or safety constraints are unknown.
-- `clarify-scope`: target behavior, public/caller contract, risk, or success criteria are unclear.
+- `clarify-scope`: target behavior, public or caller contract, risk, or success criteria are unclear.
 - `slice-plan`: plan document structure and reviewable slices.
 - `worktree-isolation`: approved parallel implementation needs separate worktrees; overlap also needs an integration strategy.
 - `github-tracking`: issues, PRDs, PRs, CI/check evidence, review threads, and issue updates.

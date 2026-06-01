@@ -1,6 +1,6 @@
 # Spec Reviewer Template
 
-Use after implementation and before quality review. This reviewer checks whether the diff matches the request, plan, public/caller contract, and acceptance criteria.
+Use after implementation and before quality review. This reviewer checks whether the diff matches the request, plan, public or caller contract, and acceptance criteria.
 
 ```text
 Role: Spec reviewer
