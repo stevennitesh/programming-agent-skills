@@ -1,6 +1,6 @@
 ---
 name: codebase-cleanup
-description: Use when asked to clean up a repo, refactor safely, reduce duplicated code paths, simplify module boundaries or caller interfaces, make behavior easier to test, or remove code made obsolete by a change.
+description: Use when asked to clean up a repo, organize or comment code, refactor safely, reduce duplicated code paths, simplify module boundaries or caller interfaces, make behavior easier to test, or remove code made obsolete by a change.
 ---
 
 # Codebase Cleanup
@@ -12,6 +12,12 @@ Find behavior-preserving refactors that make future code changes cheaper, safer,
 Cleanup is justified by repo evidence of maintenance cost, not taste. Preserve caller-visible behavior unless the user approved a behavior change.
 
 A caller interface is everything a caller must know to use code correctly: inputs, outputs, invariants, ordering, state changes, error modes, configuration, and performance expectations. Do not judge it only by a function signature or type.
+
+## Readability And Comments Rule
+
+When cleanup touches code, do a readability pass on the changed area. Prefer clearer names, ordering, grouping, and simpler control flow before adding comments.
+
+Use comments and docstrings to preserve knowledge that clearer code cannot carry cheaply: non-obvious invariants, ordering constraints, domain rules, side effects, error semantics, performance tradeoffs, compatibility expectations, or caller contracts. Remove stale, misleading, duplicated, or commented-out code. Do not narrate obvious statements, repeat function names in prose, or use comments to justify confusing structure that should be simplified.
 
 ## Module Boundary Rule
 
@@ -45,6 +51,9 @@ Use the deletion test on wrappers, helpers, adapters, and ownership modules: if 
 - Pure helpers exist only to make tests easy while real behavior, ordering, or state changes stay scattered.
 - The same domain concept, interface contract, or state transition has several names.
 - State/data updates are split across scattered conditionals.
+- Related setup, validation, transformation, side effects, or output steps are interleaved in a way that hides the behavior.
+- Important invariants, ordering constraints, domain rules, error semantics, or performance tradeoffs are only implicit in branch order, magic constants, fixtures, or call sites.
+- Comments, docstrings, or commented-out code are stale, misleading, duplicated, noisy, or absent where they carry non-obvious caller or maintainer knowledge.
 - Current work made code, imports, flags, config, docs, commands, or files obsolete.
 
 ## Process
@@ -60,6 +69,8 @@ Repo evidence of cost:
 Caller-visible behavior to preserve:
 Current caller interface or contract:
 Interface depth:
+Code organization/readability issue:
+Comment/docstring need:
 Likely files/modules:
 Consolidation option:
 Navigation cost:
@@ -91,6 +102,10 @@ Engineering return: high|medium|low
 - Improves locality so a future change to one behavior touches fewer files, callers, tests, and state paths.
 - Moves I/O, persistence, network calls, time, randomness, or other side effects to an outer layer or explicit dependency.
 - Gives callers a simpler function, object, command, or module with clearer inputs, outputs, errors, and state changes.
+- Groups related code inside the right ownership boundary so setup, validation, core behavior, side effects, and output are easier to scan.
+- Improves names, ordering, or local structure so fewer comments are needed to understand normal control flow.
+- Adds or updates a short comment or docstring for a non-obvious invariant, ordering constraint, domain rule, side effect, error mode, performance tradeoff, compatibility expectation, or caller contract.
+- Removes stale, misleading, duplicated, noisy, or commented-out code.
 - Strengthens an existing caller-facing test surface instead of adding private hooks or new test-only entry points.
 - Renames a concept to match shared domain or architecture language.
 - Updates `CONTEXT.md` only when cleanup resolves recurring vocabulary, module-boundary, or public-contract confusion.
@@ -111,6 +126,9 @@ Engineering return: high|medium|low
 - Changes an interface shape but leaves callers needing the same implementation knowledge as before.
 - Changes behavior while calling it cleanup.
 - Adds frameworks, dependencies, metadata machinery, or configuration systems.
+- Adds comments that restate obvious code, type names, function names, assignments, or simple control flow.
+- Uses comments to explain confusing code that should instead be renamed, regrouped, simplified, or moved behind a clearer interface.
+- Reorders, renames, or reformats broad areas for style without reducing caller knowledge, navigation cost, or maintenance risk.
 - Mixes broad formatting churn with a functional or cleanup change.
 - Deletes pre-existing dead code outside the requested area without approval.
 
