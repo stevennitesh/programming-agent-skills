@@ -66,6 +66,15 @@ Human-approved only:
 Keep claim and status comments even when assignees, labels, relationships, or Development links are used.
 Metadata is a structured signal; it does not replace the technical record.
 
+## Triage Notes
+
+When asked to triage issues, use issue bodies and comments as the durable state. Labels, projects, milestones, and assignees should follow repo conventions; if no convention exists, recommend a state in the comment/body instead of inventing a private label system.
+
+- Read the full issue, previous comments, linked PRs, labels, and recent activity before recommending state.
+- Recommend category, readiness, blocker, or close/defer state with evidence from the issue, repo, docs, tests, logs, or CI.
+- For bugs, try to reproduce or identify the strongest available reproducer before marking work agent-ready when practical. If reproduction is unavailable, record what is missing.
+- When resuming triage, preserve established facts and avoid re-asking resolved questions.
+
 ## PRD Issue Shape
 
 Use for a feature, user-facing behavior, or multi-slice change.
@@ -81,7 +90,7 @@ Use for a feature, user-facing behavior, or multi-slice change.
 
 ## Proposed behavior
 
-## Public / caller contracts
+## Public Or Caller Contracts
 
 ## Acceptance criteria
 - [ ] ...
@@ -93,7 +102,7 @@ Use for a feature, user-facing behavior, or multi-slice change.
 ## Engineering notes
 ```
 
-Keep engineering notes durable: source entry points, caller contracts, constraints, data/state touched, migration or compatibility notes, likely tests or commands, and prior decisions. Avoid line numbers, stale file maps, code dumps, and step-by-step implementation instructions.
+Keep engineering notes durable: source entry points, public or caller contracts, constraints, data/state touched, migration or compatibility notes, likely tests or commands, and prior decisions. Avoid line numbers, stale file maps, code dumps, and step-by-step implementation instructions.
 
 Use `CONTEXT.md` terms in PRDs and slice issues when they clarify intent. Never copy progress, status, or skill summaries into `CONTEXT.md`.
 
@@ -118,6 +127,10 @@ Break approved plans into small vertical slices:
 
 ## Key contracts
 - Caller-visible interfaces, types, commands, config, or workflows that matter
+
+## Readiness
+Slice type: agent-ready | needs human decision
+Human decision needed: None | <decision/review/access/manual judgment>
 
 ## Continuity
 Builds on / must preserve: None | prior issue, source path, helper, test, contract, or behavior
@@ -153,9 +166,13 @@ Development: branch/PR link when available
 
 Each slice should be independently understandable and verifiable. Prefer body text over custom labels unless the repo already uses them.
 
+Prefer vertical tracer-bullet slices through caller-visible behavior. Avoid layer-only issues such as "just schema", "just API", or "just UI" unless the slice is intentionally a blocking technical step with a clear verification command, dependency, and reason it cannot be folded into a behavior slice.
+
 Write durable issue bodies: describe caller-visible behavior, source scope, contracts, continuity with prior issues, acceptance checks, and verification. Do not anchor the issue on line numbers, stale file paths, code dumps, or step-by-step implementation instructions.
 
 For later slice issues, carry forward the prior issue result, source path, helper, test, contract, or behavior to reuse or preserve. If the issue is independent, say why so implementers do not invent a second path for the same behavior.
+
+Ownership scope means the files, modules, contracts, generated outputs, dependency/config state, or behavior an issue may change. It is task scope, not the same thing as GitHub assignee, repository owner, or long-term code ownership.
 
 Include the `GitHub metadata` block only when sidebar fields improve ownership, filtering, dependency tracking, release grouping, branch/PR traceability, or multi-issue coordination. Omit fields that do not matter for the issue.
 
@@ -166,10 +183,13 @@ Use parallel modes only when the plan already supports them:
 - `parallel-disjoint`: ownership is separated for concurrent implementation.
 - `parallel-overlap`: the overlap and integration owner are named.
 
-Mark readiness plainly:
+Mark readiness plainly with these exact field values:
 
-- `Agent-ready`: implementable from the issue and repo evidence without a new human decision
-- `Needs decision`: blocked on user/caller behavior, architecture, security/data, access, dependency, or manual review
+- `agent-ready`: implementable from the issue and repo evidence without a new human decision
+- `needs human decision`: blocked on user or caller behavior, architecture, security/data, access, dependency, or manual review
+
+These are readiness states for the issue body, not mandatory labels.
+If a repo already uses AFK/HITL wording, map `agent-ready` to AFK and `needs human decision` to HITL. Otherwise use the clearer words in the issue body.
 
 For blocked issues, record:
 
@@ -223,21 +243,36 @@ Next action:
 - Use draft PRs when the source change, review response, or verification evidence is intentionally not ready.
 - Do not claim CI status without checking the latest head SHA with `gh pr checks`, `gh run`, the GitHub UI, or connector/app PR status.
 - Update or comment on the issue when public contracts, scope, acceptance checks, blockers, verification evidence, or reviewer requests change.
-- Resolve or mark review threads only after the code, tests, docs, or explicit technical response addresses the current comment.
+- Resolve or mark review threads only after the code, tests, docs, or explicit technical response addresses the current comment. When a tool supports inline replies, answer inline threads in the thread; a top-level PR summary can supplement thread replies, but should not replace them when unresolved thread state matters.
 
 ## Review Feedback Flow
 
 Use this when addressing PR comments, requested changes, review threads, or CI feedback:
 
+Review comments, requested changes, and CI feedback are claims or requests to evaluate against repo evidence before changing code.
+
+For meaningful review items or tightly related groups, keep this record explicit in notes, replies, or the final report:
+
+```text
+Feedback item/thread:
+Claim or requested change:
+Accepted scope:
+Evidence checked:
+Decision: fix | push back | clarify | defer
+Check after change:
+Thread update:
+```
+
 1. Read the full review context: PR body, linked issue or PRD, changed files, comments, unresolved threads, requested changes, and latest CI/check state.
 2. Group feedback into blockers, correctness/test issues, questions, small cleanup, and possible pushback.
-3. Verify each item against current source, tests, docs, public/caller contracts, and accepted scope before changing code.
-4. If an item is unclear and related to other requested changes, clarify before implementing a partial subset.
-5. Implement one item or tightly related group at a time, then run the narrowest relevant check.
-6. Reply or update the PR with the technical outcome: changed files or behavior, check evidence, unresolved risk, or reasoned pushback.
-7. Leave threads unresolved until the code, docs, tests, or explicit technical response addresses the current comment.
+3. Verify each item against current source, tests, docs, public or caller contracts, and accepted scope before changing code.
+4. If related items are unclear, clarify before implementing a partial subset that could affect the same public or caller contract, source shape, or review decision.
+5. For suggestions to add "proper" infrastructure, abstractions, endpoints, adapters, registries, options, persistence, telemetry, frameworks, or generalized flows, search for real callers, accepted scope, and established repo patterns before building. If no real use exists, push back, ask, or narrow the change instead.
+6. Implement one item or tightly related group at a time, then run the narrowest relevant check.
+7. Reply or update the PR with the technical outcome: changed files or behavior, check evidence, unresolved risk, or reasoned pushback. Reply inline when the feedback came from an inline thread and the tool supports it.
+8. Leave threads unresolved until the code, docs, tests, or explicit technical response addresses the current comment.
 
-Push back when feedback is stale, technically incorrect, unsafe, conflicts with the approved scope, or adds unsupported behavior. Do not reply with empty agreement; make the evidence or decision clear.
+Push back when feedback is stale, technically incorrect, unsafe, conflicts with the approved scope, violates YAGNI, or adds unsupported behavior. Use `codebase-cleanup` when review feedback exposes a real behavior-preserving structure problem. Do not reply with empty agreement; make the evidence or decision clear.
 
 Useful `gh` commands when the CLI is the active GitHub interface:
 

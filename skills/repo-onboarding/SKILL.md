@@ -21,6 +21,7 @@ Read only what helps the current coding work:
 - Git state, branch conventions, remotes, and ignored scratch/worktree locations
 - Existing issues, PRs, review threads, or release notes only when the task is tied to GitHub state
 - `CONTEXT.md`, `CONTEXT-MAP.md`, or ADRs only for shared repo vocabulary, module boundaries, public contracts, and decisions
+- Existing repo agent setup such as `docs/agents/`, issue-tracker docs, label/readiness vocabulary, local issue folders, or skill-pack notes only when adopting or refreshing agent workflow setup
 
 Do not use durable context files for progress, status, onboarding notes, or skill summaries.
 
@@ -44,7 +45,35 @@ Do not use durable context files for progress, status, onboarding notes, or skil
    - repo-specific safety constraints
    - durable context locations
    - open questions that affect correctness, reversibility, data/state, security, dependencies, or external systems
-4. If adopting this skill pack, confirm which skill files or repo instructions the user wants installed or referenced before writing setup files.
+4. If adopting or refreshing this skill pack, run the adoption branch below.
+
+## Adoption Branch
+
+Use this branch only when the user is installing this pack in a repo, asking whether repo agent setup is complete, or when missing repo workflow facts would make several skills guess.
+
+Discover:
+
+- Agent instruction target: existing `AGENTS.md` or `CLAUDE.md`, including nearby overrides and any existing agent-skills block
+- Issue tracker: GitHub, GitLab, local markdown, other tracker, or none; include the command/tool only when repo evidence or the user confirms it
+- Triage/readiness vocabulary: issue labels or status fields used for waiting, ready for agent, ready for human, won't-fix, blocked, or similar states
+- Domain docs: `CONTEXT.md`, `CONTEXT-MAP.md`, ADR locations, glossary files, architecture docs, and whether the repo is single-context or multi-context
+- Work locations: where plans, scratch files, generated logs, local issues, and handoff docs belong
+- Verification facts: cheap local checks, expensive checks, external-service checks, release gates, and commands that should not run by default
+
+Present:
+
+- Found facts
+- Missing facts that affect future skill behavior
+- Assumptions that are safe to carry for the next small task
+- Decisions that need the user because repo evidence cannot choose safely
+
+Write only after approval:
+
+- Prefer updating the existing repo instruction file over creating a parallel one.
+- If neither `AGENTS.md` nor `CLAUDE.md` exists, ask which convention to create before writing.
+- Update an existing agent-skills block in place instead of appending a duplicate.
+- Create optional `docs/agents/` files only when the same issue-tracker, label, domain-doc, or verification facts will be reused by multiple skills.
+- Keep repo setup docs as durable facts and conventions, not progress notes, task status, or skill summaries.
 
 ## Stop Or Ask
 
@@ -55,6 +84,8 @@ Ask or stop before continuing when:
 - no safe verification command can be identified for the requested work
 - the working tree has unrelated dirty files that overlap the intended edit scope
 - GitHub or CI state is required but unavailable
+- adopting the skill pack would create or rewrite repo instructions, `docs/agents/` files, labels, issue tracker settings, or workflow conventions without user approval
+- existing repo instructions conflict about issue tracking, branch rules, checks, domain docs, or agent setup
 
 If a missing fact is not blocking, state the assumption and continue with the smallest reversible next step.
 
@@ -67,6 +98,7 @@ Commands/checks:
 Source or test entry points:
 Git/GitHub context:
 Durable context:
+Adoption facts:
 Safety constraints:
 Open questions:
 Next route:

@@ -31,10 +31,12 @@ Before any completion claim:
 ## Evidence Rules
 
 - A check run before the final edit does not support the final claim.
-- A passing command that does not exercise the changed caller path, source module, fixture, or workflow is weak evidence. Say so.
+- A passing command that does not exercise the changed caller-facing entry point, source module, fixture, or workflow is weak evidence. Say so.
 - A simulation, dry run, read-only review, or "would do" answer does not support a claim that behavior was execution-tested.
 - Passing tests do not prove the approved request is met; inspect the diff against the request, public contract, and acceptance checks.
 - Subagent reports count only after the parent inspects changed files, diffs, or reruns the relevant command.
+- Self-review or local fallback review supports only a self-review claim. It does not support "independently reviewed", "reviewed by a separate agent", or "reviewed by GitHub reviewers".
+- Review claims should name the review path: self-review, parent diff review, subagent review, GitHub review, CI/check review, or another explicit source.
 - Manual checks count only when the exact steps, environment, input/state, and observed result are recorded.
 - If verification cannot run, state the blocker and the strongest weaker evidence.
 
@@ -67,6 +69,7 @@ Before claiming a branch, PR, review response, or merge is ready:
 - Check CI or PR status on the latest head SHA when CI or merge readiness is part of the claim.
 - Check unresolved review threads or requested changes before claiming review feedback is addressed.
 - Ensure the PR body or final report lists source/test/config/docs/workflow changes, checks run, known CI status, and residual risk.
+- Distinguish local checks, self-review, parent diff review, subagent review, GitHub review, CI status, and branch protection; do not let one evidence type stand in for another.
 - Do not claim merge safety from local checks alone when branch protection, CI, required reviews, migrations, or release gates still matter.
 
 ## Review Feedback
@@ -99,6 +102,9 @@ Changed files/behavior:
 
 Verified:
 - `<command>` -> pass|fail|not run (<reason>)
+
+Review evidence:
+- ...
 
 Claims supported:
 - ...

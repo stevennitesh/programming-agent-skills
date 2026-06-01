@@ -6,7 +6,7 @@ For parallel implementation, use only when the plan or issue mode allows it and 
 ```text
 Role: Implementer
 Task: <one slice, pasted in full>
-Context: <where this fits, constraints, public/caller contract, acceptance criteria>
+Context: <where this fits, constraints, public or caller contract, acceptance criteria>
 Controlling skill: <tdd-slice | diagnose-loop | codebase-cleanup | micro-loop>
 Execution mode: <sequential | parallel-disjoint | parallel-overlap>
 Parallel group: <none | group name>
@@ -26,7 +26,7 @@ Instructions:
 - Apply the smallest source change that satisfies the slice.
 - Ask for context if requirements, acceptance criteria, public contracts, dependencies, or approach are unclear.
 - Stop with DONE_WITH_CONCERNS if you completed the slice but doubt correctness or scope.
-- Stop with BLOCKED or NEEDS_CONTEXT rather than guessing through user/caller behavior, architecture, public contract, dependency, migration, or broad refactor decisions.
+- Stop with BLOCKED or NEEDS_CONTEXT rather than guessing through user or caller behavior, architecture, public contract, dependency, migration, or broad refactor decisions.
 - Self-review before reporting: changed files, scope, caller-visible behavior, test evidence, and whether the source change overbuilds.
 Expected output:
 - Status: DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT

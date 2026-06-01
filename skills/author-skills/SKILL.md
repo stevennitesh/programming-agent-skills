@@ -25,6 +25,8 @@ Treat source inputs as evidence, not authority. Extract reusable workflow steps,
 
 Shared repo context stores recurring terms, roles, module boundaries, and "means / does not mean" distinctions; never progress, status, or skill summaries.
 
+Each skill must stand alone. If a term controls agent behavior, define it briefly in that skill or use plainer wording; do not require a separate glossary to use the skill.
+
 ## Process
 
 1. Name the coding job: what implementation, debugging, refactor, review, planning, or repo operation should the skill help with?
@@ -35,19 +37,42 @@ Shared repo context stores recurring terms, roles, module boundaries, and "means
    - fragile repeated operation -> script
    - repo-specific architecture, domain, or workflow context -> repo doc
    - tool-checkable rule -> test, script, or validator
-4. Write 2-3 coding failure scenarios: ambiguous feature, overbuilt abstraction, skipped reproduction, stale summary, unsafe Git action, weak diff review, or weak verification.
+4. Write 2-3 coding failure examples: ambiguous feature, overbuilt abstraction, over-fragmented cleanup that creates helper-category files instead of ownership boundaries, skipped reproduction, stale summary, unsafe Git action, weak diff review, or weak verification.
 5. Draft the smallest `SKILL.md` that changes behavior.
 6. Make the description a clear trigger: concrete coding situations, symptoms, and keywords; avoid workflow summaries that could be followed without reading the body.
 7. Keep the body to purpose, procedure, stop/ask conditions, examples if useful, and handoffs to related skills.
 8. Add resources only when they reduce repeated command work, reference lookups, or context size.
-9. Validate frontmatter and structure, then read the skill against the coding failure scenarios.
-10. If possible and worthwhile, test with a fresh coding agent using only the skill and a realistic repo or fixture request. Label the evidence type:
+9. For behavior-changing or discipline-enforcing skill edits, write at least one pressure test before validation. For low-risk wording, trigger, or reference-only edits, say why instruction review is enough.
+10. Validate frontmatter and structure, then read the skill against the coding failure examples and pressure test.
+11. If possible and worthwhile, test with a fresh coding agent using only the skill and a realistic repo or fixture request. Label the evidence type:
    - Instruction review: the skill wording was reviewed, but no agent used it on a task.
    - Simulated fresh-agent test: a fresh agent predicted what it would do, but did not perform the repo task.
    - Execution test: a fresh agent used the skill while doing a real repo or fixture task with files and checks, with observable actions, file changes, commands, checks, and final claim quality.
-11. Revise ambiguous wording, generic philosophy language, and unnecessary process.
+12. Revise ambiguous wording, generic philosophy language, loopholes, and unnecessary process.
 
 Do not treat simulated fresh-agent tests as proof that behavior changed. If the purpose is to test whether a skill changes coding-agent behavior, the test needs execution evidence or an explicit open risk explaining why execution was not run.
+
+## Pressure Tests
+
+A failure example describes what goes wrong. A pressure test is the validation setup used to see whether the revised skill prevents it under realistic temptation.
+
+Use pressure tests when the skill should prevent costly coding-agent behavior, skipped verification, unsafe shortcuts, rationalized process bypass, or repeated bad judgment. They are optional for pure reference skills, tiny wording edits, or low-risk trigger cleanup.
+
+```text
+Failure example it targets:
+Baseline behavior or rationalization:
+Pressure condition:
+Expected observable behavior after the skill change:
+Evidence type required or acceptable:
+```
+
+Good pressure tests force a concrete choice in a realistic task with constraints such as time pressure, sunk cost, authority, fatigue, unclear ownership, or review risk. If a fresh-agent run is too expensive for the edit, record that as an open execution-test gap instead of implying behavior was proven.
+
+Evidence strength:
+
+- Execution test is strongest and is required before claiming the skill changed agent behavior when that is the purpose and the cost is reasonable.
+- Simulated fresh-agent test can reveal ambiguity, but it does not prove behavior changed.
+- Instruction review is enough for small wording, metadata, trigger, reference, or resource edits when no behavioral compliance claim is being made.
 
 ## Good Skill Traits
 
@@ -71,11 +96,15 @@ Before calling a skill ready for reuse:
 Does the description trigger at the right time?
 Would a fresh coding agent know the first source read, command, edit, or check?
 Does it prevent the target coding failure mode?
+Does a pressure test cover the named rationalization or loophole?
+Is the description trigger-focused rather than a workflow summary?
 Does it avoid unnecessary process?
 Does it avoid local repo assumptions?
 What skill, tool, or check does it hand off to?
+Do references, scripts, examples, or templates reduce repeated work or context cost enough to justify being separate?
 What evidence type supports this review?
 If behavior was the target, did an agent actually execute a repo or fixture task, or only describe what it would do?
+If no execution test ran, is the execution-test gap explicit?
 ```
 
 ## Handoff
@@ -93,7 +122,12 @@ Coding job:
 Failure mode:
 Key evidence:
 Related skills:
-Failure scenarios:
+Failure examples:
+Pressure tests:
+Evidence type:
+Trigger check:
+Resource/split decision:
 Validation:
+Execution-test gap:
 Open risks:
 ```
