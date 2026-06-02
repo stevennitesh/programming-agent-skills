@@ -35,7 +35,7 @@ Route by the active failure mode, not by the task label. Pick one controlling ro
 | Approved work should become a plan doc, GitHub issues, and issue-by-issue checkpoints | `issue-driven-execution` |
 | Caller-visible behavior change or new regression check | `tdd-slice` |
 | Bug, failing test, build/CI failure, regression, flaky behavior, or unexplained log/error | `diagnose-loop` |
-| Cleanup discovery, ordered cleanup bundles, continued cleanup search, behavior-preserving refactor, duplicated logic, or tangled module boundary | `codebase-cleanup` |
+| Cleanup discovery, ordered cleanup bundles, continued cleanup search, human-readable code organization/comments, behavior-preserving refactor, duplicated logic, or tangled module boundary | `codebase-cleanup` |
 | GitHub issues, issue metadata, PRDs, issue claims/updates, implementation slice issues, PR body/check/review tracking | `github-tracking` |
 | Subagents requested or useful for independent codebase exploration, implementation slices, or review | `subagent-workflow` |
 | Approved parallel implementation across agents or sessions needs separate branches/worktrees | `worktree-isolation` |
