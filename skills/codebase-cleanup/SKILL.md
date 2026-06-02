@@ -1,6 +1,6 @@
 ---
 name: codebase-cleanup
-description: Use when asked to find cleanup opportunities, continue searching for cleanup work, organize or comment code, refactor safely, reduce duplicated code paths, simplify module boundaries or caller interfaces, make behavior easier to test, or remove code made obsolete by a change.
+description: Use when asked to find cleanup opportunities, continue searching for cleanup work, organize code for human readability, clean up imports, add or remove comments, reorder methods or functions, refactor safely, reduce duplicated code paths, simplify module boundaries or caller interfaces, make behavior easier to test, or remove code made obsolete by a change.
 ---
 
 # Codebase Cleanup
@@ -13,11 +13,27 @@ Cleanup is justified by repo evidence of maintenance cost, not taste. Preserve c
 
 A caller interface is everything a caller must know to use code correctly: inputs, outputs, invariants, ordering, state changes, error modes, configuration, and performance expectations. Do not judge it only by a function signature or type.
 
-## Readability And Comments Rule
+## Human-Readable Organization Rule
 
-When cleanup touches code, do a readability pass on the changed area. Prefer clearer names, ordering, grouping, and simpler control flow before adding comments.
+Cleanup includes organizing the touched code so a maintainer can read the main behavior top-to-bottom without unnecessary jumping.
 
-Use comments and docstrings to preserve knowledge that clearer code cannot carry cheaply: non-obvious invariants, ordering constraints, domain rules, side effects, error semantics, performance tradeoffs, compatibility expectations, or caller contracts. Remove stale, misleading, duplicated, or commented-out code. Do not narrate obvious statements, repeat function names in prose, or use comments to justify confusing structure that should be simplified.
+Prefer the repo's existing ordering convention. If none is clear, organize by reading path:
+
+- Imports grouped and consolidated by repo or language convention before module code.
+- Module constants, types, and config before behavior that uses them.
+- Caller-facing entry points before implementation details.
+- Orchestration, setup, validation, core behavior, side effects, and output in workflow order.
+- Closely related helpers near their only caller, or grouped below the public path when reused.
+- Class methods in a stable human order: construction/lifecycle, public methods, internal helpers.
+- Tests grouped by behavior or scenario, with shared fixtures/builders before tests that use them.
+
+Import cleanup is part of the organization pass. Remove unused imports introduced or made obsolete by the cleanup. Consolidate repeated imports from the same library, package, module, or helper when repo style and language semantics allow it. Do not merge imports that are intentionally separate for side effects, conditional loading, type-only/runtime separation, readability of large groups, or formatter/linter requirements.
+
+Do not alphabetize, reshuffle, or split code mechanically. Reorder only when it reduces reader navigation cost, clarifies ownership, or makes a future change safer.
+
+Use comments and docstrings to preserve knowledge that clearer code cannot carry cheaply: non-obvious invariants, ordering constraints, domain rules, side effects, error semantics, performance tradeoffs, compatibility expectations, or caller contracts.
+
+Before adding a comment, first try clearer names, smaller local grouping, simpler control flow, or better ordering. Remove stale, misleading, duplicated, commented-out, or obvious comments. Do not repeat function names in prose or use comments to justify confusing structure that should be simplified.
 
 ## Module Boundary Rule
 
@@ -52,6 +68,7 @@ Use the deletion test on wrappers, helpers, adapters, and ownership modules: if 
 - The same domain concept, interface contract, or state transition has several names.
 - State/data updates are split across scattered conditionals.
 - Related setup, validation, transformation, side effects, or output steps are interleaved in a way that hides the behavior.
+- Multiple import lines pull from the same library, package, module, or helper without a repo-style or semantic reason to keep them separate.
 - Important invariants, ordering constraints, domain rules, error semantics, or performance tradeoffs are only implicit in branch order, magic constants, fixtures, or call sites.
 - Comments, docstrings, or commented-out code are stale, misleading, duplicated, noisy, or absent where they carry non-obvious caller or maintainer knowledge.
 - Current work made code, imports, flags, config, docs, commands, or files obsolete.
@@ -95,8 +112,11 @@ Repo evidence of cost:
 Caller-visible behavior to preserve:
 Current caller interface or contract:
 Interface depth:
-Code organization/readability issue:
-Comment/docstring need:
+Current reading/navigation problem:
+Human-readable organization plan:
+Import cleanup plan:
+Comment/docstring plan:
+Comments to remove or avoid:
 Likely files/modules:
 Candidate changes:
 Consolidation option:
@@ -119,7 +139,8 @@ Engineering return: high|medium|low
 6. If the user asked to keep searching, continue from the coverage ledger after each bundle: pick the next uninspected source area, deferred bucket, or adjacent ownership boundary before concluding.
 7. Establish a baseline with existing tests or a small repeatable check that captures current caller-visible behavior.
 8. Refactor one narrow slice and keep the repo buildable or runnable after it lands.
-9. Run focused and surrounding checks after the final edit, then inspect the diff for behavior preservation, scope control, user-change preservation, and reduced future change cost.
+9. Before final checks, do a human-readability pass on touched files: imports, method/function order, grouping, names, comments/docstrings, and stale comments. Keep the pass scoped to touched or directly related code.
+10. Run focused and surrounding checks after the final edit, then inspect the diff for behavior preservation, scope control, user-change preservation, and reduced future change cost.
 
 ## Good Cleanup
 
@@ -132,6 +153,8 @@ Engineering return: high|medium|low
 - Moves I/O, persistence, network calls, time, randomness, or other side effects to an outer layer or explicit dependency.
 - Gives callers a simpler function, object, command, or module with clearer inputs, outputs, errors, and state changes.
 - Groups related code inside the right ownership boundary so setup, validation, core behavior, side effects, and output are easier to scan.
+- Removes unused imports and consolidates repeated same-source imports when the repo style and language semantics support it.
+- Orders functions and methods around the reader's path through the behavior rather than mechanical sorting.
 - Improves names, ordering, or local structure so fewer comments are needed to understand normal control flow.
 - Adds or updates a short comment or docstring for a non-obvious invariant, ordering constraint, domain rule, side effect, error mode, performance tradeoff, compatibility expectation, or caller contract.
 - Removes stale, misleading, duplicated, noisy, or commented-out code.
@@ -158,6 +181,8 @@ Engineering return: high|medium|low
 - Adds comments that restate obvious code, type names, function names, assignments, or simple control flow.
 - Uses comments to explain confusing code that should instead be renamed, regrouped, simplified, or moved behind a clearer interface.
 - Reorders, renames, or reformats broad areas for style without reducing caller knowledge, navigation cost, or maintenance risk.
+- Leaves unused imports or repeated same-source imports in touched files after cleanup when no repo-style or semantic reason requires them.
+- Alphabetizes, reshuffles, or splits methods and helpers without making the behavior easier to read or change.
 - Mixes broad formatting churn with a functional or cleanup change.
 - Deletes pre-existing dead code outside the requested area without approval.
 
