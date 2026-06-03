@@ -1,6 +1,6 @@
 ---
 name: tdd-slice
-description: Use when implementing or changing caller-visible behavior, fixing reproduced bugs, adding features, refactoring while preserving behavior, or creating repeatable repo checks.
+description: Use when implementing or changing caller-visible or user-visible behavior, fixing reproduced bugs, adding features, refactoring while preserving behavior, or creating repeatable repo checks.
 ---
 
 # TDD Slice
@@ -15,6 +15,19 @@ If behavior should stay the same, run an existing check before and after the ref
 
 Keep simple edits simple. Pure syntax, import, formatting, or type-only fixes with no behavior decision can use the direct focused check from `diagnose-loop`.
 
+When this skill triggers, first write the behavior in caller language, name the public or caller contract it affects, and choose the focused acceptance check before editing source. Do not implement from a feature title, issue title, plan task, stack trace, or stale summary alone.
+
+Required evidence for a behavior-changing slice:
+
+- Behavior statement: `When <input/state/event>, the user, caller, API, CLI, or UI sees <result>.`
+- Test surface: the highest correct caller-facing entry point or a documented reason it is not practical.
+- RED evidence: command/check and observed failure for the right reason, or an existing reproduced failure from `diagnose-loop`.
+- GREEN evidence: the same focused check passing after the minimum source change.
+- Refactor evidence: if cleanup followed, the focused check still passes.
+- Broader evidence or skipped reason: the smallest nearby repo check that protects the touched area, or why it was not run.
+
+Do not substitute a broad suite, private helper test, mock-call assertion, snapshot, or manual confidence for the focused behavior check.
+
 ## Tracer Bullet Rule
 
 Start with one narrow end-to-end behavior through the real caller-facing path. This tracer bullet proves the test surface, test shape, and source route before expanding coverage.
@@ -25,6 +38,8 @@ Do not write a batch of imagined tests and then a batch of implementation. Add o
 
 If the behavior is caller-visible, do not test only data shape, private method shape, or mock call shape.
 
+If the first tracer bullet cannot identify the caller-facing entry point, source route, or acceptance check, pause the implementation slice and inspect source/tests or use `clarify-scope`, `repo-onboarding`, or `diagnose-loop`.
+
 ## Cycle
 
 1. Choose the next smallest caller-visible behavior:
@@ -32,6 +47,8 @@ If the behavior is caller-visible, do not test only data shape, private method s
 ```text
 When <input/state/event>, the user, caller, API, CLI, or UI sees <result>.
 ```
+
+Also name the public or caller contract, acceptance check, and known non-goals for the slice. Keep adjacent behaviors out of scope until the current cycle is green.
 
 2. Choose the highest correct caller-facing entry point and write or identify one focused check. For a reproduced bug, reuse the failing command, test, fixture, or manual check from `diagnose-loop` when it already proves the bug.
 
@@ -51,10 +68,10 @@ Avoid:
 - Batches of imagined tests before any source change
 
 3. RED: run the focused check and capture the expected failure. It should fail because the behavior is missing or wrong, not because of setup, spelling, fixture, or test code mistakes.
-   - If it passes immediately, the check targets existing behavior or is too weak.
+   - If it passes immediately, do not edit source from that check. Inspect whether the requested behavior already exists, the assertion is too weak, or the test surface is wrong.
    - If it errors for setup reasons, fix the check before implementation.
    - If it fails for a different symptom, adjust the check or use `diagnose-loop`.
-4. GREEN: implement the minimum source change that explains the failing check.
+4. GREEN: implement the minimum source change that explains the failing check and preserves existing public or caller contracts unless the behavior change explicitly requires a contract change.
 5. Run the focused check until it passes. If it fails, fix the source change or correct the check only when the check is wrong.
 6. REFACTOR: clean up only after the check passes. Keep behavior unchanged and rerun the focused check.
 7. Repeat from step 1 for the next behavior, using what the previous cycle taught.
@@ -72,6 +89,7 @@ Avoid:
 - Before mocking, know which real side effects, state changes, or downstream calls the test still depends on. Keep enough real observable behavior through the public path that the check would fail if the behavior regressed.
 - Do not add implementation methods, options, flags, or dependency hooks that exist only to make tests easier.
 - If the only possible check is private, shallow, or setup-heavy, question the caller interface or use a higher-level entry point. Consider `codebase-cleanup` when code shape blocks a useful behavior check.
+- Do not add broad dependency hooks, flags, fixtures, or generated output just to make the first check easy unless the public or caller contract needs them.
 
 ## If No Test Setup Exists
 
@@ -79,20 +97,38 @@ Create the smallest repeatable repo check available: script, fixture, CLI comman
 
 Report which behavior remains unprotected and what would be needed for a durable regression check.
 
+If no repeatable check can be created without a behavior, dependency, data, or interface decision, stop and ask before changing source.
+
 ## Red Flags
 
 - Implementing before the RED check exists.
 - Treating an immediately passing check as proof.
 - Changing source when RED fails for setup, spelling, fixture, or the wrong symptom.
+- Changing the test to match the implementation instead of the public or caller contract.
+- Using source code internals as the expected result when the user or caller behavior is what matters.
 - Writing several tests before any source change.
 - Testing private shape, data shape, or mock calls instead of caller-visible behavior.
 - Refactoring while the focused check is still red.
 - Substituting a broad suite for the focused behavior check.
 
+## Stop Or Ask
+
+Stop or ask before source edits when:
+
+- The requested behavior, public or caller contract, acceptance check, or non-goal is materially unclear after cheap repo evidence review.
+- The first check cannot fail for the right reason because the entry point, fixture, setup, state/data path, or dependency boundary is unknown.
+- The change would alter an API, CLI, UI workflow, data contract, dependency behavior, migration, security/data path, or user-visible behavior beyond the approved slice.
+- The only available check is private, shallow, or mock-only and a higher-level entry point may exist.
+- The RED result contradicts the request, existing tests, fixtures, docs, logs, CI, or caller contract.
+- Keeping behavior unchanged during a refactor is not possible without a behavior decision.
+- A broader check fails after GREEN for a reason unrelated to the slice and the cause is not understood; use `diagnose-loop`.
+
 ## Slice Report
 
 ```text
 Tracer bullet behavior:
+Public or caller contract:
+Acceptance check:
 Test surface/check:
 RED result:
 Source change:

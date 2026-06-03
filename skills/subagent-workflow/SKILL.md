@@ -1,6 +1,6 @@
 ---
 name: subagent-workflow
-description: Use when the user asks for subagents, parallel agents, worker agents, independent code review, or multi-agent codebase exploration; or when repo work has independent source modules, checks, or review scopes that can safely run in parallel.
+description: Use when the user asks for subagents, parallel agents, worker agents, independent code review, multi-agent codebase exploration, subagent-ready handoffs, or when repo work has independent source modules, checks, or review scopes that can safely run in parallel.
 ---
 
 # Subagent Workflow
@@ -12,6 +12,12 @@ Subagents are tools for bounded coding work: codebase exploration, one implement
 Delegate bounded work, not responsibility. The parent owns scope, integration, review triage, and final verification.
 
 Ownership scope means the files, modules, contracts, or behavior delegated to a subagent. It is task scope, not long-term code ownership or permission to change adjacent areas.
+
+When this skill triggers, first decide whether delegation is allowed and worth the overhead. Name the delegation decision before dispatching: authorization source, available tooling, execution mode, ownership scope, expected evidence, and parent verification. A request for "subagents" changes the route only when the work can be bounded into an agent-ready packet.
+
+Subagent-ready means the packet names the task, owned files/modules or read-only scope, forbidden files/behaviors, public or caller contract, first check, acceptance check, verification command, dependencies, and expected output. If those fields cannot be filled from repo evidence and approved scope, explore or clarify before dispatching.
+
+Do not treat a subagent report as proof. Subagent output is evidence for the parent to inspect against source, diffs, tests, logs, command output, CI, or the approved request.
 
 ## Delegation Authorization
 
@@ -29,13 +35,15 @@ When delegation is authorized, the agent decides whether to use subagents for a 
 
 If authorization or tooling is missing, run the same gates locally and label the result as `self-review`, not independent review. Do not imply a separate agent inspected or verified the work.
 
+If the user explicitly requires separate agents and tooling is unavailable, report that constraint instead of simulating independence.
+
 ## Use Or Avoid
 
 Use subagents when the current environment permits delegation and at least one is true:
 
 - The user explicitly asks for subagents or parallel agents.
 - Two or more read-only codebase questions can be answered independently.
-- One implementation slice has clear caller-visible behavior, owned files/modules, and verification commands.
+- One implementation slice has clear caller-visible behavior, owned files/modules, acceptance checks, and verification commands.
 - A completed source change needs independent spec or quality review.
 - Broad diff review benefits from separate perspectives over non-overlapping modules, contracts, or risk areas.
 
@@ -46,6 +54,7 @@ Avoid subagents when:
 - Work is tightly coupled across the same files, public or caller contract, migration, or state/data path.
 - You would only be outsourcing judgment the parent must own.
 - A simple local inspect/edit/check loop is cheaper.
+- The packet would need `TBD` for owned files/modules, forbidden scope, public or caller contract, first check, acceptance check, or verification command.
 
 Implementation subagents follow the plan or issue execution mode. Missing mode means `sequential`.
 
@@ -65,6 +74,7 @@ Read-only explorers and reviewers do not require worktrees.
 | Quality reviewer | Correctness, regression risk, security/data risk, dependency/config risk, maintainability, tests | `templates/quality-reviewer.md` |
 
 Use spec review before quality review. If spec is wrong or incomplete, quality review is premature.
+Use an explorer before an implementer when source ownership, existing logic, or the first check is not yet known.
 
 For delegated implementation slices, reviewers are a gate, not an optional perspective.
 Run both reviewers before marking the slice complete unless review subagents are unavailable or the user explicitly asks to skip review.
@@ -87,7 +97,7 @@ If you skip an applicable template, say why in the parent notes or final report.
 - Name the controlling skill for implementation packets.
 - Use `tdd-slice` for behavior changes, `diagnose-loop` for failing symptoms, or `codebase-cleanup` for behavior-preserving refactors.
 - Include only task-relevant `CONTEXT.md` terms; do not dump the whole file.
-- Paste the task or question into the packet; do not make the subagent reconstruct it from a plan or long thread.
+- Paste the task or question into the packet; do not make the subagent reconstruct it from a plan, issue title, summary, or long thread.
 - Prefer read-only explorers and reviewers.
 - Do not run parallel implementation when the plan or issue is missing mode metadata or says `sequential`.
 - For `parallel-disjoint`, keep implementation ownership separate and use `worktree-isolation`.
@@ -95,6 +105,7 @@ If you skip an applicable template, say why in the parent notes or final report.
 - Tell implementers they are not alone in the codebase, must preserve others' work, and must reuse or extend the established implementation path unless the parent approves a reroute.
 - Do not trust subagent success claims without parent diff inspection and, when needed, rerunning verification commands.
 - Do not let subagents make unchecked user or caller behavior, architecture, public contract, dependency, data migration, or scope decisions.
+- Stop before dispatching when the packet would require the subagent to infer target behavior, ownership scope, acceptance criteria, or cross-slice integration from missing context.
 
 Base packet for custom roles or fallback use:
 
@@ -159,6 +170,18 @@ Add a final whole-diff quality reviewer when slices touch shared contracts, cros
 10. Never force the same blocked task to retry unchanged.
 11. Inspect outputs and diffs yourself, including worktree diffs before integration.
 12. Rerun the parent-level checks before claiming completion.
+
+## Stop Or Ask
+
+Stop or ask before dispatching when:
+
+- Delegation is not authorized, tooling is unavailable, or the user specifically needs separate-agent evidence that cannot be produced.
+- The work cannot be bounded to an agent-ready packet with owned scope, forbidden scope, first check, acceptance check, and verification evidence.
+- Target behavior, public or caller contract, source ownership, dependency/config impact, data/security risk, or migration scope needs a human decision.
+- The user asks for parallel implementation but execution mode, worktree isolation, disjoint ownership, dependencies, or integration strategy is missing.
+- The proposed split only mirrors file layers or keeps agents busy instead of separating independent questions, contracts, or source ownership.
+- A subagent reports `BLOCKED` or `NEEDS_CONTEXT`; change the context, scope, model, route, or ask the user instead of retrying unchanged.
+- Reviewer findings conflict and repo evidence does not resolve the requirement or risk.
 
 ## Review Triage
 

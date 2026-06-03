@@ -52,6 +52,32 @@ Each skill must stand alone. If a term controls agent behavior, define it briefl
 
 Do not treat simulated fresh-agent tests as proof that behavior changed. If the purpose is to test whether a skill changes coding-agent behavior, the test needs execution evidence or an explicit open risk explaining why execution was not run.
 
+## Concrete Behavior Wording
+
+Write skills so the intended behavior is observable during real repo work. Do not rely on the agent to infer the rule from general principles when a repeated failure mode is known.
+
+For behavior-changing or discipline-enforcing edits, make the skill wording mechanical:
+
+- Name the exact user phrases, repo signals, failure symptoms, or tool outputs that trigger the behavior.
+- State what the phrase or signal changes: route, edit scope, stop condition, verification level, reporting claim, or handoff.
+- List the first observable action the agent should take.
+- List required evidence or artifacts, such as a command, diff review, coverage ledger, issue update, pressure test, or execution-test gap.
+- Name forbidden shortcuts directly, especially the tempting rationalization shown by the failure example.
+- Give stop or ask conditions in concrete terms: what is low-value, risky, outside scope, blocked by a decision, or unsupported by evidence.
+- Keep abstract principles as backup rationale, not as the only instruction.
+
+Prefer this shape for hard-to-follow behavior:
+
+```text
+When the user says or evidence shows <trigger>, do <first action>.
+This changes <route|scope|stop condition|verification|claim>.
+Required evidence before claiming success: <evidence>.
+Do not <forbidden shortcut>.
+Stop or ask only when <concrete stop conditions>.
+```
+
+If the skill still depends on careful interpretation after this rewrite, record that as an open risk or create a pressure test that targets the ambiguity.
+
 ## Pressure Tests
 
 A failure example describes what goes wrong. A pressure test is the validation setup used to see whether the revised skill prevents it under realistic temptation.
@@ -80,6 +106,7 @@ Evidence strength:
 - One core job
 - Common software-engineering language unless the skill is intentionally technology-specific
 - Few rules, each tied to a coding-agent failure mode
+- Concrete behavior wording for repeated failures: trigger, first action, required evidence, forbidden shortcut, and concrete stop conditions
 - Clear stop/ask conditions
 - Specific handoff to related skills
 - Progressive disclosure for long references
@@ -97,6 +124,7 @@ Does the description trigger at the right time?
 Would a fresh coding agent know the first source read, command, edit, or check?
 Does it prevent the target coding failure mode?
 Does a pressure test cover the named rationalization or loophole?
+Could a fresh agent follow the intended behavior from explicit trigger phrases, first actions, forbidden shortcuts, evidence requirements, and stop conditions?
 Is the description trigger-focused rather than a workflow summary?
 Does it avoid unnecessary process?
 Does it avoid local repo assumptions?
@@ -106,13 +134,6 @@ What evidence type supports this review?
 If behavior was the target, did an agent actually execute a repo or fixture task, or only describe what it would do?
 If no execution test ran, is the execution-test gap explicit?
 ```
-
-## Handoff
-
-- Return to `coding-router` when a skill edit becomes broader repo work.
-- Use `subagent-workflow` for fresh-agent testing when that validation is available and worth the cost.
-- Use `workspace-safety` before installing, committing, or editing a dirty skill file.
-- Use `verify-before-done` before claiming a skill is installed or ready for reuse.
 
 ## Output
 
@@ -126,8 +147,16 @@ Failure examples:
 Pressure tests:
 Evidence type:
 Trigger check:
+Concrete behavior wording check:
 Resource/split decision:
 Validation:
 Execution-test gap:
 Open risks:
 ```
+
+## Handoff
+
+- Return to `coding-router` when a skill edit becomes broader repo work.
+- Use `subagent-workflow` for fresh-agent testing when that validation is available and worth the cost.
+- Use `workspace-safety` before installing, committing, or editing a dirty skill file.
+- Use `verify-before-done` before claiming a skill is installed or ready for reuse.

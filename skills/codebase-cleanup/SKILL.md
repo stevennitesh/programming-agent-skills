@@ -1,6 +1,6 @@
 ---
 name: codebase-cleanup
-description: Use when asked to find cleanup opportunities, continue searching for cleanup work, organize code for human readability, clean up imports, add or remove comments, reorder methods or functions, refactor safely, reduce duplicated code paths, simplify module boundaries or caller interfaces, make behavior easier to test, or remove code made obsolete by a change.
+description: Use when asked to find cleanup opportunities, keep looping or cleaning until no useful cleanup remains, continue searching for cleanup work, organize code for human readability, clean up imports, add or remove comments, reorder methods or functions, refactor safely, reduce duplicated code paths, simplify module boundaries or caller interfaces, make behavior easier to test, or remove code made obsolete by a change.
 ---
 
 # Codebase Cleanup
@@ -31,7 +31,7 @@ Import cleanup is part of the organization pass. Remove unused imports introduce
 
 Do not alphabetize, reshuffle, or split code mechanically. Reorder only when it reduces reader navigation cost, clarifies ownership, or makes a future change safer.
 
-Use comments and docstrings to preserve knowledge that clearer code cannot carry cheaply: non-obvious invariants, ordering constraints, domain rules, side effects, error semantics, performance tradeoffs, compatibility expectations, or caller contracts.
+Use comments and docstrings to preserve knowledge that clearer code cannot carry cheaply: non-obvious invariants, ordering constraints, domain rules, side effects, error semantics, performance tradeoffs, compatibility expectations, or public or caller contracts.
 
 Before adding a comment, first try clearer names, smaller local grouping, simpler control flow, or better ordering. Remove stale, misleading, duplicated, commented-out, or obvious comments. Do not repeat function names in prose or use comments to justify confusing structure that should be simplified.
 
@@ -75,13 +75,18 @@ Use the deletion test on wrappers, helpers, adapters, and ownership modules: if 
 
 ## Opportunity Sweep
 
-When the user asks to find cleanup opportunities, do not stop after the first good candidate. Define the inspected scope and run a bounded sweep across independent evidence signals:
+When the user asks to find cleanup opportunities, continue searching, keep looping, keep cleaning, keep working until nothing useful remains, or similar, the wording changes the done check: one good bundle is not completion, and endless churn is not success. First define the requested scope, decide whether it can be inspected honestly in one pass, and run a bounded sweep across independent evidence signals before selecting a bundle.
+
+For "keep looping" or "until nothing useful remains" requests, the accepted scope is part of the task. If the request is repo-wide and too large to inspect honestly in one pass, propose a smaller bounded scope before changing files.
+
+The smallest useful loop controls edit size and verification size, not discovery depth. Use broad inspection to find ordered bundles, then use narrow verified edits to land them.
 
 - Caller-facing entry points and ownership boundaries.
 - Duplicated rules, validation, calculations, names, or state transitions.
 - Tests and fixtures that show setup friction, private access, repeated doubles, or weak caller-facing checks.
 - Docs, commands, config, scripts, and generated artifacts that may be stale, scattered, or obsolete.
 - Recent diffs, TODOs, deprecations, wrappers, options, or compatibility paths that may no longer earn their cost.
+- Additional cheap signals for exhaustive cleanup: duplicate-rule scans, dead private helper scans, repeated import/source scans, stale comment scans, test-friction scans, and ownership-boundary reads.
 
 Keep a short coverage ledger:
 
@@ -91,26 +96,29 @@ Inspected source areas:
 Inspected tests/fixtures:
 Searches or commands used:
 Candidate bundles found:
+Last cleanup signals checked:
 Deferred or low-return areas:
 Uninspected areas:
 Why the sweep is sufficient for this pass:
 ```
 
-Do not claim that no cleanup remains unless the coverage ledger supports that claim. Prefer: "I found no higher-return opportunities in the inspected scope; remaining uninspected or lower-return areas are ..."
+After each cleanup bundle, update the coverage ledger, rerun relevant cleanup signals, and continue to the next high- or medium-return candidate. Passing tests for one bundle support behavior preservation; they do not prove the requested cleanup scope is exhausted.
+
+Do not claim that no cleanup remains unless the coverage ledger shows the requested scope, inspected source and tests/fixtures, searches or commands used, last cleanup signals checked, remaining low-return/risky/out-of-scope/intentional candidates, and uninspected areas. Stop only when remaining candidates are low-value, risky, outside the requested scope, already intentional by repo evidence, or require a behavior, API, data, security, dependency, migration, or user decision. Prefer: "I found no higher-return opportunities in the inspected scope; remaining uninspected or lower-return areas are ..."
 
 ## Process
 
 1. Inspect repo instructions, the dirty tree, relevant source, tests, fixtures, recent diffs, and the caller-facing entry point or module under cleanup.
 2. Use docs, ADRs, and `CONTEXT.md` as maps, then confirm the current behavior in source and tests.
-3. Separate cleanup from behavior change. If target behavior is unclear, use `clarify-scope`; if a bug appears, use `diagnose-loop`.
-4. Group candidates into cleanup bundles by ownership boundary, caller contract, duplicated rule, test surface, or reason to change. Avoid unrelated grab bags:
+3. Separate cleanup from behavior change. If target behavior or the public or caller contract is unclear, use `clarify-scope`; if a bug appears, use `diagnose-loop`.
+4. Group candidates into cleanup bundles by ownership boundary, public or caller contract, duplicated rule, test surface, or reason to change. Avoid unrelated grab bags:
 
 ```text
 Bundle:
 Why these changes belong together:
 Repo evidence of cost:
 Caller-visible behavior to preserve:
-Current caller interface or contract:
+Current public or caller contract:
 Interface depth:
 Current reading/navigation problem:
 Human-readable organization plan:
@@ -136,11 +144,11 @@ Engineering return: high|medium|low
 ```
 
 5. Recommend an ordered bundle plan, not only the single best opportunity. Order bundles by dependencies, behavior-preservation risk, validation confidence, and engineering return. Name the recommended first bundle and the next bundle to inspect or implement after it. Prefer consolidation, caller simplification, or an existing caller-facing test surface over new file boundaries unless the split has clear ownership value. If it needs multiple reviewable slices, hand off to `slice-plan`.
-6. If the user asked to keep searching, continue from the coverage ledger after each bundle: pick the next uninspected source area, deferred bucket, or adjacent ownership boundary before concluding.
+6. If the user asked to keep searching, keep looping, or clean until nothing useful remains, continue from the coverage ledger after each bundle: pick the next uninspected source area, deferred bucket, adjacent ownership boundary, or cleanup signal before concluding.
 7. Establish a baseline with existing tests or a small repeatable check that captures current caller-visible behavior.
 8. Refactor one narrow slice and keep the repo buildable or runnable after it lands.
 9. Before final checks, do a human-readability pass on touched files: imports, method/function order, grouping, names, comments/docstrings, and stale comments. Keep the pass scoped to touched or directly related code.
-10. Run focused and surrounding checks after the final edit, then inspect the diff for behavior preservation, scope control, user-change preservation, and reduced future change cost.
+10. Run focused and surrounding checks after the final edit, then inspect the diff for behavior preservation, scope control, user-change preservation, and reduced future change cost. For continued-cleanup requests, update the coverage ledger and either pick the next high- or medium-return bundle or state the concrete stop reason.
 
 ## Good Cleanup
 
@@ -156,11 +164,11 @@ Engineering return: high|medium|low
 - Removes unused imports and consolidates repeated same-source imports when the repo style and language semantics support it.
 - Orders functions and methods around the reader's path through the behavior rather than mechanical sorting.
 - Improves names, ordering, or local structure so fewer comments are needed to understand normal control flow.
-- Adds or updates a short comment or docstring for a non-obvious invariant, ordering constraint, domain rule, side effect, error mode, performance tradeoff, compatibility expectation, or caller contract.
+- Adds or updates a short comment or docstring for a non-obvious invariant, ordering constraint, domain rule, side effect, error mode, performance tradeoff, compatibility expectation, or public or caller contract.
 - Removes stale, misleading, duplicated, noisy, or commented-out code.
 - Strengthens an existing caller-facing test surface instead of adding private hooks or new test-only entry points.
 - Renames a concept to match shared domain or architecture language.
-- Updates `CONTEXT.md` only when cleanup resolves recurring vocabulary, module-boundary, or public-contract confusion.
+- Updates `CONTEXT.md` only when cleanup resolves recurring vocabulary, module-boundary, or public or caller contract confusion.
 - Deletes code made obsolete by the current change.
 - Removes a wrapper, helper, or option that adds no useful behavior.
 
@@ -184,15 +192,23 @@ Engineering return: high|medium|low
 - Leaves unused imports or repeated same-source imports in touched files after cleanup when no repo-style or semantic reason requires them.
 - Alphabetizes, reshuffles, or splits methods and helpers without making the behavior easier to read or change.
 - Mixes broad formatting churn with a functional or cleanup change.
+- Treats one cleanup bundle, one passing check, or one quick scan as proof that a continued-cleanup scope is exhausted.
+- Keeps cleaning after only low-value, risky, out-of-scope, or decision-blocked candidates remain.
+- Starts file moves, abstraction work, deletes, or broad formatting before the source evidence, caller-visible behavior to preserve, and baseline check are known.
 - Deletes pre-existing dead code outside the requested area without approval.
 
 ## Stop Or Ask
 
-- The cleanup requires a user or caller behavior, data, security, migration, dependency, or public contract decision.
+- The cleanup requires a user or caller behavior, data, security, migration, dependency, or public or caller contract decision.
 - The cleanup has multiple plausible caller interfaces, test surfaces, or ownership boundaries and repo evidence does not clearly choose one.
 - Current caller-visible behavior is important but cannot be checked cheaply.
 - The smallest safe slice is still a broad rewrite.
-- The user wants exhaustive repo-wide cleanup but the repo is too large to inspect honestly in one pass; propose a bounded sweep scope and report uninspected areas instead of implying the whole repo is clean.
+- The user wants exhaustive repo-wide cleanup but the repo is too large to inspect honestly in one pass; propose a bounded sweep scope before editing, then report uninspected areas instead of implying the whole repo is clean.
+- Continued cleanup has reached only low-value, risky, outside-scope, already intentional, or decision-blocked findings; report the ledger and stop reason instead of continuing churn.
+
+## Report
+
+For cleanup discovery or continued-cleanup work, report the requested scope, changed files or recommended bundles, checks run, coverage ledger summary, remaining candidates or uninspected areas, and the next bundle or concrete stop reason. Do not claim behavior was preserved or a cleanup scope is exhausted without `verify-before-done` evidence.
 
 ## Handoff
 

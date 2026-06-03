@@ -17,14 +17,17 @@ Existing logic to reuse or extend: <established implementation path, or why this
 Owned files/modules: <owned files, directories, modules, fixtures, or docs>
 Forbidden files/behaviors: <files, caller-visible behaviors, dependencies, refactors, generated output, external actions>
 First check: <test, search, or file read that should happen first>
+Acceptance check: <observable behavior, regression check, diff review target, or issue criterion>
 Verification command: <focused check plus broader check if known>
 Instructions:
 - You are not alone in the codebase. Preserve existing user and agent changes.
 - Implement exactly this slice. Do not solve adjacent tasks.
+- Do not implement from a task title, stale summary, or guessed file list.
 - Reuse, extend, or refactor the established implementation path. Do not create a competing path for the same behavior unless you report BLOCKED or NEEDS_CONTEXT for parent rerouting.
 - For behavior changes, start with or identify one failing caller-visible check.
 - Apply the smallest source change that satisfies the slice.
-- Ask for context if requirements, acceptance criteria, public contracts, dependencies, or approach are unclear.
+- Ask for context if requirements, acceptance criteria, public or caller contracts, dependencies, or approach are unclear.
+- Stop with NEEDS_CONTEXT when owned scope, forbidden scope, first check, or verification evidence is missing.
 - Stop with DONE_WITH_CONCERNS if you completed the slice but doubt correctness or scope.
 - Stop with BLOCKED or NEEDS_CONTEXT rather than guessing through user or caller behavior, architecture, public contract, dependency, migration, or broad refactor decisions.
 - Self-review before reporting: changed files, scope, caller-visible behavior, test evidence, and whether the source change overbuilds.
@@ -34,5 +37,6 @@ Expected output:
 - Checks run and exact results.
 - Source change.
 - Caller-visible behavior or contract affected.
+- Acceptance check result.
 - Risks, concerns, or blockers.
 ```

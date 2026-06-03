@@ -5,7 +5,11 @@ description: Use when repo work needs GitHub issues, PRDs, implementation slices
 
 # GitHub Tracking
 
-Use GitHub records to preserve coding intent, source scope, caller-visible contracts, decisions, blockers, verification evidence, and PR review state. Do not turn tiny local edits into issue process.
+Use GitHub records to preserve coding intent, source scope, public or caller contracts, decisions, blockers, verification evidence, and PR review state. Do not turn tiny local edits into issue process.
+
+When the user asks for issues, PRDs, implementation slices, PR creation or updates, CI/check evidence, review-thread tracking, or durable request tracking, first inspect the relevant live GitHub state and repo conventions before creating or editing records.
+
+Before writing a GitHub record, account for target repo, base/head branch when relevant, linked issue/PR/check/review state, duplicate or parent issue search, accepted source scope, public or caller contract, acceptance checks, verification evidence, readiness or blocker state, and whether sidebar metadata is useful.
 
 ## When To Track
 
@@ -13,12 +17,12 @@ Track in GitHub when work is:
 
 - Multi-session or resumed later
 - Shared with humans, coding agents, reviewers, or CI
-- Changes user- or caller-visible behavior, public contracts, data/state, migrations, or release risk
+- Changes user- or caller-visible behavior, public or caller contract, data/state, migrations, or release risk
 - Needs acceptance checks, open questions, architecture decisions, or rollback notes
 - Split into implementation slices, blocked by another source change, or linked to a PR/check run/review thread
 - A cleanup or refactor candidate the user may schedule later
 
-Skip GitHub tracking for tiny obvious edits unless requested.
+Skip GitHub tracking for tiny obvious edits unless requested. If tracking is skipped, do the local repo work directly and do not create process artifacts to justify the skip.
 
 ## Baseline
 
@@ -29,10 +33,12 @@ Before creating or editing GitHub records:
 3. Read existing issue, label, and PR conventions when present.
 4. Inspect linked issues, PRs, review threads, CI/check runs, and repo notes when they are part of the request.
 5. Search for a duplicate or parent issue first.
-6. Read `CONTEXT.md` only for shared terms, module boundaries, and public contract names that should appear in durable GitHub records.
+6. Read `CONTEXT.md` only for shared terms, module boundaries, and public or caller contract names that should appear in durable GitHub records.
 7. Preserve the current working tree and record the head SHA when PR or CI state matters.
 
 If GitHub state affects the answer, inspect it live with the available GitHub interface; do not rely on memory. Use `gh` when it is the repo's working interface, or GitHub connector/app tools when they are available. Preserve the same evidence rules either way: check live state, search for duplicates, follow repo conventions, and keep issue or PR bodies as durable repo artifacts rather than chat transcripts.
+
+Do not write, update, close, label, claim, resolve, or mark ready from memory, stale summaries, or chat-only context when live GitHub state is cheap to inspect.
 
 ## GitHub Metadata
 
@@ -66,6 +72,8 @@ Human-approved only:
 Keep claim and status comments even when assignees, labels, relationships, or Development links are used.
 Metadata is a structured signal; it does not replace the technical record.
 
+Do not invent a label, project, milestone, assignee, relationship, or branch-link scheme just because one would be convenient. Use body text or comments when the repo has no established metadata convention.
+
 ## Triage Notes
 
 When asked to triage issues, use issue bodies and comments as the durable state. Labels, projects, milestones, and assignees should follow repo conventions; if no convention exists, recommend a state in the comment/body instead of inventing a private label system.
@@ -74,6 +82,7 @@ When asked to triage issues, use issue bodies and comments as the durable state.
 - Recommend category, readiness, blocker, or close/defer state with evidence from the issue, repo, docs, tests, logs, or CI.
 - For bugs, try to reproduce or identify the strongest available reproducer before marking work agent-ready when practical. If reproduction is unavailable, record what is missing.
 - When resuming triage, preserve established facts and avoid re-asking resolved questions.
+- Do not mark `agent-ready` unless the issue has enough repo evidence, accepted scope, public or caller contract, and verification path for an implementer to start without a new human decision. Mark `needs human decision` when the missing behavior, architecture, security/data, access, dependency, or manual-review decision blocks safe execution.
 
 ## PRD Issue Shape
 
@@ -203,7 +212,7 @@ For blocked issues, record:
 
 ## Issue Claiming
 
-Before editing for an implementation issue, inspect the issue body, comments, assignees, labels, linked PRs, and recent activity. Then comment:
+Before editing for an implementation issue, inspect the issue body, comments, assignees, labels, linked PRs, and recent activity. If the issue is stale, ambiguous, already claimed, or missing source scope or verification evidence, resolve that before editing. Then comment:
 
 ```markdown
 Claiming this issue for implementation.
@@ -236,14 +245,17 @@ Open risks:
 Next action:
 ```
 
+Do not start implementation from an issue title alone. Use the issue body, comments, linked PRs, accepted scope, repo evidence, and claim state as the portable baseline.
+
 ## PR Flow
 
 - Link PRs to issues in the body with the repo's preferred format, such as `Closes #123`.
 - Include source/test/config/docs/workflow changes, checks run, CI/check status when known, and residual risk.
 - Use draft PRs when the source change, review response, or verification evidence is intentionally not ready.
 - Do not claim CI status without checking the latest head SHA with `gh pr checks`, `gh run`, the GitHub UI, or connector/app PR status.
-- Update or comment on the issue when public contracts, scope, acceptance checks, blockers, verification evidence, or reviewer requests change.
+- Update or comment on the issue when public or caller contracts, scope, acceptance checks, blockers, verification evidence, or reviewer requests change.
 - Resolve or mark review threads only after the code, tests, docs, or explicit technical response addresses the current comment. When a tool supports inline replies, answer inline threads in the thread; a top-level PR summary can supplement thread replies, but should not replace them when unresolved thread state matters.
+- Before saying a PR is ready, mergeable, reviewed, or safe, verify latest head SHA, local diff scope, linked issue/PRD alignment, relevant checks, unresolved review threads, and residual risk. Hand off to `verify-before-done` for the completion claim.
 
 ## Review Feedback Flow
 
@@ -274,6 +286,16 @@ Thread update:
 
 Push back when feedback is stale, technically incorrect, unsafe, conflicts with the approved scope, violates YAGNI, or adds unsupported behavior. Use `codebase-cleanup` when review feedback exposes a real behavior-preserving structure problem. Do not reply with empty agreement; make the evidence or decision clear.
 
+## Stop Or Ask
+
+- Target repo, issue, PR, review thread, base branch, or head branch is ambiguous and live GitHub state or repo evidence cannot resolve it.
+- The GitHub action would transfer, duplicate, lock, pin, delete, force-update, merge, close, or otherwise irreversibly change external state without explicit approval.
+- A record would mark work `agent-ready`, complete, reviewed, CI-passing, mergeable, or safe without live evidence for the latest relevant state.
+- A PRD or slice issue lacks accepted behavior, source scope, public or caller contract, acceptance checks, verification path, or blocker state.
+- An implementation issue is already actively claimed, has overlapping parallel scope, or has unresolved ownership/coordination conflict.
+- Review feedback would change behavior, public or caller contract, source shape, or accepted scope and repo evidence does not decide whether to fix, push back, defer, or clarify.
+- GitHub auth, remote, connector access, or CI/check visibility is missing and the action depends on it.
+
 Useful `gh` commands when the CLI is the active GitHub interface:
 
 ```bash
@@ -291,7 +313,7 @@ gh run view <run-id>
 
 ## Handoff
 
-- `clarify-scope`: before writing a PRD when target behavior, public contract, or affected source boundary is unclear.
+- `clarify-scope`: before writing a PRD when target behavior, public or caller contract, or affected source boundary is unclear.
 - `slice-plan`: turn an approved PRD or request into implementation slice issues.
 - `issue-driven-execution`: the user wants a plan doc, GitHub issues, and issue-by-issue implementation checkpoints.
 - `workspace-safety`: before commits, branch changes, or PR creation from a dirty tree.

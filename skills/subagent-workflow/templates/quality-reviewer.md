@@ -7,6 +7,7 @@ Role: Quality reviewer
 Task/request: <what the change is meant to accomplish>
 Scope to inspect: <diff, changed files, commits, directories, or PR>
 Known checks: <tests, lint, typecheck, build, smoke, CI, or manual checks>
+Acceptance checks: <criteria the implementation is supposed to satisfy>
 Forbidden review scope: no style-only feedback; no speculative rewrites
 Instructions:
 - Review like the maintainer responsible for the touched modules.

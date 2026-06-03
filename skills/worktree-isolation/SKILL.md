@@ -1,6 +1,6 @@
 ---
 name: worktree-isolation
-description: Use when approved parallel implementation across agents or sessions needs separate git branches/worktrees; overlap also needs an integration strategy before editing.
+description: Use when approved parallel implementation across agents or sessions needs separate git branches/worktrees, when a user explicitly asks for isolated worktrees, or when `parallel-disjoint`/`parallel-overlap` execution needs branch, ownership, integration, or cleanup safety before editing.
 ---
 
 # Worktree Isolation
@@ -25,11 +25,18 @@ The parent agent owns worktree selection, safety checks, integration, cleanup, a
 
 Owner terms: `Owner` is the person, agent, session, issue, or role responsible for the work. `Ownership scope` is the files, modules, contracts, or behavior that work may touch. `Worktree owner` is who created or controls the workspace. `Cleanup owner/condition` is who may remove it and when.
 
+When this skill triggers, first write the isolation decision before creating or selecting a worktree: execution mode, whether a worktree is required, active implementers, ownership scope, overlap, integration owner, base branch, mechanism, directory ignore evidence, expected checks, and cleanup owner. This changes the route from "make a branch" to "prove the workspace split will not collide with user or agent work."
+
+Worktree-ready means the task has an approved execution mode, source ownership scope, forbidden scope, public or caller contract or behavior, acceptance check, verification command, base branch, branch naming plan, worktree mechanism, directory location, and cleanup condition. If those fields cannot be filled from the plan, issue, repo evidence, or user instruction, inspect or clarify before running `git worktree add`.
+
+Do not create a worktree from a task title, stale plan summary, or vague "use agents" request alone. If execution mode is missing, treat it as `sequential`; do not create implementation worktrees unless the user or repo policy explicitly requires isolation.
+
 ## Use Or Avoid
 
 Use when:
 
 - A plan or issue declares `parallel-disjoint` or `parallel-overlap` implementation.
+- The user explicitly asks for an isolated worktree or separate workspace for implementation.
 - Two or more agents or sessions will edit source, tests, docs, config, generated output, lockfiles, or workflows at the same time.
 - Parallel work is nominally disjoint but could collide through accidental edits, generated files, branch state, or shared test artifacts.
 - `parallel-overlap` has an approved integration strategy and the overlap is worth the extra branch, merge, review, and verification cost.
@@ -40,6 +47,7 @@ Avoid when:
 - Implementation is sequential, tiny, or handled by one parent-owned workspace.
 - The next step is blocked on one decision or one failing check that should be handled locally first.
 - The need is ordinary dirty-tree or risky Git safety without parallel implementation; use `workspace-safety`.
+- The task lacks ownership scope, forbidden scope, acceptance check, verification command, base branch, or cleanup owner.
 
 ## Inputs
 
@@ -47,7 +55,7 @@ Avoid when:
 - Repo root, current branch, base branch, current working-tree state, and existing worktree list
 - Environment detection: git dir/common dir, current branch, superproject path, and whether the current checkout is already isolated
 - Repo instructions for branch names, worktree locations, setup, tests, generated output, and cleanup
-- Task, issue, or subagent scope: owned files/modules, forbidden scope, acceptance check, and verification command
+- Task, issue, or subagent scope: owned files/modules, forbidden scope, public or caller contract or behavior, acceptance check, and verification command
 - Integration strategy for `parallel-overlap`
 - Chosen worktree mechanism, cleanup owner, and ignored-directory status for repo-local worktrees
 
@@ -56,6 +64,7 @@ Avoid when:
 1. Establish safety and detect the current workspace.
    - Use `workspace-safety` before branch/worktree creation, dependency installs, generated output, staging, commits, pushes, or cleanup.
    - Check the current branch, base branch, working tree, worktree list, and issue claim state.
+   - Do not proceed from memory, a plan title, or a subagent request alone; verify current repo, branch, and issue/plan coordination state when it affects isolation.
    - Run read-only detection before deciding to create anything:
      ```bash
      git_dir=$(cd "$(git rev-parse --git-dir)" 2>/dev/null && pwd -P)
@@ -72,19 +81,22 @@ Avoid when:
    - If mode is missing, treat it as `sequential` and do not create worktrees unless the user or repo policy explicitly requires them.
    - Confirm each parallel issue or subagent has distinct ownership, even when overlap is intentional.
    - For `parallel-overlap`, confirm the integration owner, comparison strategy, and final verification path before editing.
+   - Stop before creation if unknown dirty work overlaps the same files, public or caller contract, generated output, dependency/config behavior, branch state, or cleanup target.
 2. Choose a worktree mechanism and location.
    - Prefer host or harness-native worktree controls before manual git, such as `EnterWorktree`, `WorktreeCreate`, `/worktree`, or a `--worktree` mode.
    - If a native control creates or selects the worktree, record the mechanism and any cleanup owner it implies.
    - Use manual `git worktree add` only as a fallback when no native tool applies and worktree creation is approved.
    - Prefer an existing repo convention such as `.worktrees/` or `worktrees/`.
-   - For the chosen repo-local worktree directory, verify the directory is ignored before creating worktrees there, for example `git check-ignore -q -- .worktrees/` or `git check-ignore -q -- worktrees/`.
+   - For the chosen repo-local worktree directory, verify the directory is ignored before creating worktrees there, for example `git check-ignore -q -- .worktrees/` or `git check-ignore -q -- worktrees/`, and record the evidence.
    - If the chosen repo-local directory is not ignored, ask before adding an ignore rule, choose an approved external location, or stop.
+   - Do not create a repo-local worktree path that would appear as untracked source, docs, config, generated output, or local-only data.
 3. Create or select the worktree.
    - If an existing or native worktree is selected, record the path, branch state, mechanism, owner, and cleanup condition.
    - If using manual git fallback, use a descriptive branch name tied to the issue, slice, or subagent task.
    - Create or select one worktree per active implementation issue, session, or subagent.
    - If manual `git worktree add` fails because of sandbox or permission limits, report the failure and stop unless the user approves a different route.
    - Record the path, branch, base commit, execution mode, parallel group, owner, expected check, worktree mechanism, and directory ignore status.
+   - After creation or selection, confirm the worktree path and branch match the assigned task before handing it to an implementer.
 4. Establish a baseline when it matters.
    - Run the smallest known check that distinguishes pre-existing failures from new failures.
    - If setup or dependency install is required, follow repo instructions.
@@ -93,6 +105,7 @@ Avoid when:
 5. Hand off the isolated work.
    - Give each implementer the worktree path, branch, execution mode, ownership scope, forbidden scope, checks, and output schema.
    - Tell implementers they are not alone in the repo and must not touch other worktrees or parent-owned files.
+   - Include the public or caller contract or behavior, acceptance check, first check, verification command, dependency/setup expectations, and cleanup rule.
 6. Integrate deliberately.
    - Inspect each worktree diff before merging, cherry-picking, committing, or opening a PR.
    - For `parallel-overlap`, compare overlapping changes explicitly; do not merge by habit.
@@ -101,6 +114,7 @@ Avoid when:
    - Cleanup only worktrees created for this task, after needed changes are integrated, pushed, or explicitly abandoned.
    - Do not remove harness-managed, detached-HEAD, user-created, or unknown-owner worktrees unless explicitly approved.
    - If removal is approved, run it from the main repo root, not from inside the worktree being removed.
+   - Do not claim integration, cleanup, branch, PR, or merge readiness until `verify-before-done` maps the exact claim to fresh evidence.
 
 ## Stop Or Ask
 
@@ -112,13 +126,14 @@ Stop before creating or using a worktree when:
 - no safe base branch or branch naming convention is known
 - a repo-local worktree directory is not ignored and editing `.gitignore` is not approved
 - implementation is sequential or unspecified and no user or repo policy requires isolation
-- parallel work has no issue claim, ownership scope, expected check, or branch/worktree plan
+- parallel work has no issue claim, ownership scope, forbidden scope, expected check, verification command, or branch/worktree plan
 - `parallel-overlap` has no integration owner, comparison strategy, or acceptance check
-- overlap touches migrations, generated output, dependency/config state, or public contracts without a stronger integration plan
+- overlap touches migrations, generated output, dependency/config state, or public or caller contracts without a stronger integration plan
 - setup commands require network, credentials, external services, or dependency changes that are not approved
 - baseline checks fail and the failure affects the task's acceptance check
 - manual `git worktree add` fails because of sandbox or permission limits
 - cleanup provenance is unknown or cleanup would delete unmerged, unpushed, or unreviewed changes
+- worktree removal would run from inside the target worktree
 
 ## Output
 
@@ -132,11 +147,13 @@ Worktree:
 Branch:
 Base:
 Directory ignored: yes | no | external | not applicable
+Directory ignore evidence:
 Task/issue:
 Owner:
 Worktree owner: task | user | harness | unknown
 Ownership scope:
 Forbidden scope:
+Public or caller contract:
 Baseline check:
 Verification command:
 Integration plan:

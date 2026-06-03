@@ -13,6 +13,7 @@ Expected output:
 - Answer in 3-6 bullets.
 - Cite file paths, symbols, commands, logs, fixtures, CI output, or observed outputs.
 - Separate facts from inferences.
+- Do not rely on summaries, plans, or memory without checking current repo evidence.
 - List uncertainty and the smallest next repo check.
 - List files reviewed with no findings when relevant.
 ```

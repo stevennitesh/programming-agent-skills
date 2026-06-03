@@ -7,10 +7,11 @@ Role: Spec reviewer
 Task/request: <requirements, plan excerpt, or acceptance criteria>
 Implementation report: <implementer report or parent summary>
 Scope to inspect: <diff, changed files, commits, directories, or PR>
+Accepted non-goals: <known out-of-scope behavior, files, contracts, or none>
 Forbidden review scope: no style review unless it affects requirements; no broad rewrites
 Instructions:
 - Do not trust the implementation report. Verify against source and diff.
-- Look for missing requirements, extra behavior, wrong interpretation, public contract drift, and weak or missing acceptance checks.
+- Look for missing requirements, extra behavior, wrong interpretation, public or caller contract drift, and weak or missing acceptance checks.
 - Treat off-scope additions as findings even if the code looks good.
 Expected output:
 - Verdict: PASS | WARN | BLOCK

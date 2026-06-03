@@ -46,6 +46,7 @@ For bugs, regressions, failing tests, build failures, or confusing behavior:
 - Ask only when missing information changes correctness, source shape, public or caller contract, reversibility, security, data integrity, dependency behavior, cost, or caller-visible or user-visible behavior.
 - If repo evidence can answer the question cheaply, inspect before asking.
 - Split broad work into reviewable slices with clear acceptance checks.
+- For cleanup requests that say to keep looping, keep cleaning, or continue until nothing useful remains, broad inspection is part of the task. Use narrow verified edit loops, but do not treat one passing cleanup slice as completion. Keep a coverage ledger, rerun cleanup scans after each bundle, and stop only when remaining findings are low-value, risky, outside scope, already intentional by repo evidence, or blocked by a needed behavior decision.
 - Prefer deletion, simplification, and merging repeated logic before adding abstractions, tools, agents, or process.
 - Push back when the request is optimizing the wrong thing, skipping validation, or adding unnecessary complexity.
 
@@ -65,7 +66,7 @@ For bugs, regressions, failing tests, build failures, or confusing behavior:
 
 ## Verification
 
-- Do not claim work is done, fixed, safe, passing, reviewed, or ready without fresh evidence.
+- Do not claim work is done, fixed, passing, reviewed, ready, resolved, clean, safe, safe to merge, or mergeable without fresh evidence.
 - When claiming work was reviewed, name the review path: self-review, parent diff review, subagent review, external reviewer, CI/check review, or another explicit source.
 - During normal implementation, run the smallest relevant focused checks for
   the touched path. Prefer targeted tests, touched-module checks, lint on
