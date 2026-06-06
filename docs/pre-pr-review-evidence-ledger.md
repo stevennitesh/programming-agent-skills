@@ -12,6 +12,7 @@ Use this ledger to summarize review evidence gathered across repos. Put detailed
 | R4 | `stevennitesh/secom-yield-monitoring` | real | dependency/runtime contract, broad artifact validation, CLI workflow failures | local `/review` @ `e324f68`; PR #5 fixed through `13abb27` | `main` | `/review` transcript, PR body, CodeRabbit comments, CI | completed `codex review --base`; CodeRabbit on PR | local true positive, external minor follow-up, CI success, style/cleanup noise | `docs/pre-pr-review-samples/R4-secom-yield-monitoring-pr5.md` | captured |
 | R5 | `stevennitesh/StockMarket-ML-Gate` | real | performance/cache, artifact reuse, generated commands, time-series fills | `$pre-pr-review` on `fix-experiment-grid-run-findings`; PR #258 @ `1cd3cc0` | `main` | pre-PR transcript, PR body, CodeRabbit review threads | skill-guided manual review; long-running `codex review --base`; CodeRabbit on PR | local true positives, delayed Codex true positive, external true positives, focused tests passed | `docs/pre-pr-review-samples/R5-stockmarket-ml-gate-pr258.md` | captured |
 | R6 | `stevennitesh/stock-momentum-strategy-research-platform` | real | config/schema, cluster weighting, cap composition, diagnostic attribution | `$pre-pr-review` on `research/cluster-cap-conditional-audit`; PR #349 @ `d95533b` | `main` | pre-PR transcript, PR body, CodeRabbit thread, Codex GitHub comments | skill-guided manual review; completed `codex review --base`; CodeRabbit on PR; Codex GitHub on PR | local true positive, local Codex no findings, Codex GitHub true positives, CodeRabbit style-only nit | `docs/pre-pr-review-samples/R6-stock-momentum-pr349.md` | captured |
+| R7 | `stevennitesh/secom-yield-monitoring` | real | public docs, generated evidence snapshot, provenance reachability | `$pre-pr-review` on `docs/public-repo-polish`; PR #6 fixed through `c154807` | `main` | pre-PR transcript, PR body, Codex GitHub comment, CodeRabbit review, CI | skill-guided manual review; completed `codex review --base`; Codex GitHub on PR; CodeRabbit on PR | local clean verdict, Codex GitHub true positive, CodeRabbit no actionable comments, CI success | `docs/pre-pr-review-samples/R7-secom-yield-monitoring-pr6.md` | captured |
 | F1 |  | fixture | missed-spec-gap |  |  |  |  |  |  | planned |
 | F2 |  | fixture | weak-test-surface |  |  |  |  |  |  | planned |
 | F3 |  | fixture | data-schema-risk |  |  |  |  |  |  | planned |
@@ -41,6 +42,11 @@ Use this ledger to summarize review evidence gathered across repos. Put detailed
 | R6 | built-in Codex review | 0 | 0 | 0 | 1 local-only true positive plus 2 later GitHub Codex issues | No findings | None captured | missed cross-file config/factory/runtime and cap/diagnostic issues |
 | R6 | Codex GitHub review | 0 | 2 | 0 | n/a | Risk-level cap fallback skipped by cluster weighting | None captured | useful PR second opinion |
 | R6 | subagents | n/a | n/a | n/a | n/a | Not run | Not run | Not run |
+| R7 | baseline | n/a | n/a | n/a | n/a | Not run | Not run | Not run |
+| R7 | structured | 0 | 0 | 0 | 1 external semantic issue | No findings | None captured | incorrect Safe to PR due provenance miss |
+| R7 | built-in Codex review | 0 | 0 | 0 | 1 later GitHub Codex issue | No findings | None captured | missed generated-snapshot provenance reachability |
+| R7 | Codex GitHub review | 0 | 1 | 0 | n/a | Unreachable generated-snapshot source commit | None captured | useful PR second opinion |
+| R7 | subagents | n/a | n/a | n/a | n/a | Not run | Not run | Not run |
 
 ## Miss Taxonomy Counts
 
@@ -51,11 +57,12 @@ Use this ledger to summarize review evidence gathered across repos. Put detailed
 | missed-contract-risk | 5 | R2, R3, R4, R5, R6 | Strengthen broad-refactor, hot-path, and dependency review for generated-name collisions, config normalization, import-boundary tests, cache identity, skip contracts, cap composition, artifact ordering, generated commands, and Python/install compatibility. |
 | missed-correctness | 5 | R1, R2, R3, R5, R6 | Strengthen analogous-pattern sweeps, config/data normalization edge-case checks, cache-key completeness, cap fallback checks, missing-anchor fill checks, and fast-path equivalence checks. |
 | missed-security-data |  |  |  |
-| missed-test-gap | 5 | R1, R2, R3, R5, R6 | Require malformed-input, boundary, stale-cache, changed-policy, existing-destination, copy-fallback, mixed-cap, missing-anchor, skip-exit, and fast-path equivalence tests for each changed contract path, not only the first reviewed one. |
+| missed-test-gap | 6 | R1, R2, R3, R5, R6, R7 | Require malformed-input, boundary, stale-cache, changed-policy, existing-destination, copy-fallback, mixed-cap, missing-anchor, skip-exit, fast-path equivalence, and generated-provenance checks for each changed contract path, not only the first reviewed one. |
 | missed-check-output |  |  |  |
 | missed-performance-concurrency | 2 | R3, R5 | Add a dedicated hot-path review lens for cache keys, stale cache identity, materialization idempotency, skip semantics, telemetry counts, and producer-consumer ordering. |
 | missed-diagnostic-attribution | 1 | R6 | Distinguish aggregate residual measurements from rule-specific causal attribution in dashboards, reports, and research readouts. |
-| missed-context-source | 1 | R4 | For dependency pinning, inspect every pinned package and use package metadata, install/import evidence, or explicit docs when metadata is missing. |
+| missed-context-source | 2 | R4, R7 | For dependency pinning and generated evidence snapshots, inspect source metadata and use package metadata, install/import evidence, commit reachability, source-run evidence, or explicit docs when direct metadata is missing. |
+| missed-provenance | 1 | R7 | For generated snapshots, verify recorded commits, run ids, spec hashes, data versions, and source paths are reachable or auditable from PR head or published history. |
 
 ## Noise Taxonomy Counts
 
@@ -80,6 +87,7 @@ Use this ledger to summarize review evidence gathered across repos. Put detailed
 | `StockMarket-ML-Gate` R5 | pre-PR transcript, PR body, CodeRabbit review, and Codex review output | `.venv/bin/python -m pytest -q src/tests/test_analysis_feature_dataset_evaluation.py src/tests/test_workflow_dataset_build.py src/tests/test_experiment_grid_fold_validation.py src/tests/test_experiment_grid_runner.py src/tests/test_feature_engineering_build_benchmark.py src/tests/test_feature_engineering_snapshot_cache_reuse.py`; `git diff --check origin/main...HEAD`; `codex review --base origin/main` | skill-guided review ran focused pytest, diff whitespace check, manual source inspection, and a long-running `codex review --base` | Full suite not run in transcript; external review supplied additional misses after PR opened | Broad cache/hot-path reviews should explicitly inspect key inputs, materialization idempotency, generated commands, optional readers, and missing-anchor fills. |
 | `stock-momentum-strategy-research-platform` | local transcript, PR body, live CodeRabbit/Codex review comments, and `pyproject.toml` | `.venv/bin/python -m pytest -q tests/test_eod_walk_forward_validation.py tests/test_validation_stability.py tests/test_dashboard_validation_candidates.py tests/test_runtime_benchmark_matrix.py tests/test_eod_csv_runner.py tests/test_research_grid_run.py`; `.venv/bin/python -m unittest tests.test_eod_walk_forward_validation tests.test_validation_stability tests.test_dashboard_validation_candidates tests.test_runtime_benchmark_matrix tests.test_eod_csv_runner tests.test_research_grid_run`; `.venv/bin/python -m unittest discover -s tests`; `git diff --check main...HEAD`; `git diff --check origin/main...HEAD` | local fallback review ran targeted unittest modules, full unittest discovery, and `git diff --check`; PR state and review comments inspected | `pytest` path failed because `pytest` was not installed in the venv; full tests not rerun during evidence capture because this was classification, not fix verification | Add command-discovery fallback from pytest to unittest when repo evidence shows unittest is the working check. |
 | `stock-momentum-strategy-research-platform` R6 | pre-PR transcript, PR body, CodeRabbit review, local Codex review, and Codex GitHub review | `.venv/bin/python -m unittest tests.test_cluster_weighting_rules tests.test_weighting_rules tests.test_validation_candidate_diagnostics tests.test_dashboard_validation_candidates tests.test_eod_candidate_factory tests.test_experiment_grid_registry tests.test_research_grid_run tests.test_eod_csv_runner`; `git diff --check main...HEAD`; `codex review --base main` | skill-guided review ran focused unittest set, diff whitespace check, manual source inspection, and completed `codex review --base` | `pytest` unavailable on PATH; `ruff` not installed in venv | Config/matrix reviews should trace method enum values through factory/runtime artifact producers, cap accessors, and diagnostic attribution paths. |
+| `secom-yield-monitoring` R7 | pre-PR transcript, PR body, Codex GitHub review comment, CodeRabbit review, and CI | `make PYTHON=.venv/bin/python check`; `.venv/bin/python -m pytest -q tests/test_cli_entrypoints.py tests/test_final_report.py`; `git diff --check main...HEAD`; `cmp -s docs/results/... runs/full_study/reports/...`; `codex review --base main`; GitHub CI on Python 3.11 and 3.12 | skill-guided review ran focused pytest, diff whitespace check, snapshot byte comparisons, `codex review --base`, and observed the nested full `make check`; PR state and review comments inspected | Full study regeneration was skipped in pre-PR review because existing local generated run was used as source evidence | Generated evidence review needs provenance reachability checks, not only byte-for-byte local snapshot comparisons. |
 
 ## Subagent Evidence
 
@@ -91,6 +99,7 @@ Use this ledger to summarize review evidence gathered across repos. Put detailed
 | R4 | yes | dependency/install, CLI/workflow failures, artifact validation, reporting/audit, tests/coverage | unknown | unknown | unknown | Dependency pin or Python support changes should trigger a dependency/install lens even when tests pass. |
 | R5 | yes | performance/cache, generated commands, time-series fills, artifact reuse, tests/coverage | unknown | unknown | yes | Broad cache and runtime-improvement PRs should qualify for selective fan-out even when local review already found blockers. |
 | R6 | yes | config/schema, strategy materialization, cap composition, diagnostic attribution, tests/coverage | unknown | unknown | yes | Cross-file config/factory/runtime and research-diagnostic reviews should use separate lenses when many strategy modes or cap variants are added. |
+| R7 | maybe | public docs, generated evidence provenance, removed-surface references, CLI/docs contract | unknown | unknown | yes | Public-presentation PRs do not always need fan-out, but checked-in generated snapshots need an explicit provenance lens. |
 
 ## Design Implications
 
@@ -121,6 +130,7 @@ Use this section after every few samples.
 - Add test-spy checks for permissive `raising=False` or equivalent behavior when the target symbol is expected to exist.
 - Add dependency/runtime contract checks for changes to Python support, `pyproject.toml`, `requirements.txt`, build-system pins, install commands, and tool target versions.
 - When dependency pins change, verify every pinned package against the advertised Python floor; packages with missing metadata need install/import evidence or explicit compatibility documentation.
+- Add generated evidence provenance checks: recorded commit hashes, run ids, spec hashes, data versions, and source paths must be reachable from the PR head, published history, or explicitly explained by a reproducible source.
 - Keep style-only wording comments out of blocking or should-fix review output unless editorial polish is requested.
 
 ### Details To Move To References
@@ -132,6 +142,7 @@ Use this section after every few samples.
 - Performance/cache reference: cache key inputs, split-policy identity, identity/freshness checks, materialization idempotency, output-path reuse, skip status and CLI exit semantics, telemetry counters, producer-consumer artifact ordering, and fast-path tie-breakers.
 - Dependency/install reference: project Python floor, package `Requires-Python`, missing package metadata, build-system pins, Makefile install order, tool target versions, and metadata tests.
 - Generated-command reference: shell quoting for paths, manifests, run directories, timing sidecars, and user-controlled values.
+- Generated evidence reference: byte-for-byte snapshot match, manifest commit reachability, source run id, spec/data hashes, local-generated versus published-history distinction, and whether the recorded source can be audited by a reviewer.
 - Time-series feature reference: missing anchors, completed-bin semantics, grouped fills, shifted sparse mappings, and `NaN` preservation.
 
 ### Script Needs
@@ -153,6 +164,7 @@ Use this section after every few samples.
 - Optional scan for `returncode` aggregation over rows that also carry `run_executed`, skipped, or preflight status fields.
 - Optional scan for report/gate/dashboard generation before the producer stage writes the artifact being consumed.
 - Optional dependency metadata script that reads `pyproject.toml` and `requirements.txt`, checks each pinned version, compares package `Requires-Python` to the project floor, and reports missing metadata.
+- Optional generated-manifest provenance script that scans for `git_commit`, `source_revision`, `run_id`, spec hashes, data versions, and source paths, then checks whether revision fields are reachable from the PR head or base.
 
 ### Repo-Specific Guidance Instead Of Portable Skill Rules
 

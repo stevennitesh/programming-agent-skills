@@ -31,7 +31,9 @@ codex review --base <base>
 codex review --commit <sha>
 ```
 
-Use this instruction unless the user gives a narrower one:
+Do not pass a custom prompt or stdin prompt when using `--base`, `--commit`, or `--uncommitted`. Some CLI builds list a prompt argument in help but reject target flags combined with custom instructions. Run the target-specific command first, then apply this skill's review loop yourself as the manual lens pass. Do not print a compatibility warning for this expected path.
+
+Use this instruction for the manual lens pass unless the user gives a narrower one:
 
 ```text
 Review this as a pre-PR review. Focus only on actionable issues introduced or exposed by this diff. Ignore style issues covered by formatter/linter and avoid broad rewrites. Prioritize correctness/regression, security/privacy, data integrity, caller contract drift, missing or weak tests, dependency/config/build/migration risk, and performance/concurrency on plausible paths. For each finding include file/line or symbol, failure mechanism, severity: blocking / should-fix / optional, smallest safe fix, and validation. Also report observed or recommended checks, missing tests or weak evidence, final verdict: Safe to PR / PR after fixes / Do not PR yet, confidence, and remaining uncertainty.
@@ -97,6 +99,8 @@ Check marker columns and selection flags carefully: `.astype(bool)`, `.astype(in
 
 For time-series or bucketed features, check whether fill operations bridge invalid anchors. `ffill`, `merge_asof`, grouped fills, and shifted sparse signals must preserve intentional `NaN` gaps when the source value at a completed bin, close, boundary, or anchor is missing.
 
+For checked-in generated snapshots, reports, manifests, figures, or evidence bundles, verify provenance as well as bytes. A snapshot matching local generated output is not enough if the manifest records a commit, run id, spec hash, data version, or source path that will not be reachable or auditable from the published PR history.
+
 Do not finish this lens until you have checked both valid data and one malformed, missing, boundary, or round-trip path when the diff changes validation, parsing, artifact schemas, or feature generation.
 
 ### Broad Refactor And Removed Surface
@@ -157,6 +161,7 @@ For each changed behavior, ask what test would fail on the old bug. Weak signs:
 - No negative cases for incompatible config-field combinations, such as a method that requires a companion signal/artifact path.
 - No tests where equivalent policy is supplied through each supported config layer, such as risk-level and method-level caps.
 - No diagnostics tests for mixed-cause metrics where only part of a residual should be attributed to a specific rule.
+- No provenance check for checked-in generated evidence, such as whether recorded commit hashes are reachable from the PR head or published history.
 - A passing full suite but no focused test for the risky branch.
 - A skipped or failing check whose output is not triaged.
 - Permissive spies or monkeypatches such as `raising=False` when the target symbol should exist.
