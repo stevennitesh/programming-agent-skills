@@ -88,6 +88,25 @@ For bugs, regressions, failing tests, build failures, or confusing behavior:
 - Treat review comments, CI failures, test failures, logs, and warnings as engineering signals, not paperwork.
 - If verification fails, report the failure and the next useful action instead of claiming completion.
 
+## Pre-PR Review
+
+When the user asks for review before opening or updating a PR, treat local review as a focused semantic gate, not a substitute for deterministic checks.
+
+If Codex CLI `codex review` is available, prefer it for the review target:
+
+- `codex review --uncommitted` for staged, unstaged, and untracked changes.
+- `codex review --base <base>` for a branch against its base.
+- `codex review --commit <sha>` for one commit.
+- Add concise custom instructions for branch-specific risks.
+
+Default review instruction:
+
+```text
+Review this as a pre-PR review. Focus only on actionable issues introduced or exposed by this diff. Ignore style issues covered by formatter/linter and avoid broad rewrites. Prioritize correctness/regression, security/privacy, data integrity, public or caller contract drift, missing or weak tests, dependency/config/build/migration risk, and performance/concurrency on plausible paths. For each finding include file/line or symbol, failure mechanism, severity: blocking / should-fix / optional, smallest safe fix, and validation. Also report observed or recommended checks, missing tests or weak evidence, final verdict: Safe to PR / PR after fixes / Do not PR yet, confidence, and remaining uncertainty.
+```
+
+Run or recommend deterministic checks first when they are cheap and relevant. Separate observed check results from recommended checks. Use subagent fan-out only for high-risk or broad changes with separable review lenses; the parent agent must deduplicate and verify findings against source, diff, tests, logs, command output, or CI before reporting them.
+
 ## Commit Gate
 
 Run this gate only when preparing a commit, PR, merge, release checkpoint, or
