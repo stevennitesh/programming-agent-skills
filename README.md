@@ -86,6 +86,7 @@ Typical paths:
 | `diagnose-loop` | Tests, builds, CI, logs, output, crashes, or behavior are failing and the cause is not yet clear. |
 | `codebase-cleanup` | Cleanup or refactor work should preserve behavior while making future changes easier. |
 | `github-tracking` | Issues, PRDs, PRs, CI status, review threads, or durable GitHub records are useful. |
+| `pre-pr-review` | A branch, commit, working tree, or PR-ready diff needs a focused semantic review before opening or updating a pull request. |
 | `subagent-workflow` | Bounded codebase exploration, implementation, or review can safely run through subagents. |
 | `worktree-isolation` | Approved parallel implementation across agents or sessions needs separate branches/worktrees; overlap also needs an integration strategy. |
 | `workspace-safety` | Dirty trees, branches, staging, commits, generated output, dependency installs, or risky Git/file operations need care. |
