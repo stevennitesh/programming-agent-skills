@@ -21,13 +21,15 @@ The plan must name the overlap, integration owner, comparison strategy, and fina
 
 Worktrees prevent workspace collisions; they do not remove merge, design, or integration risk.
 
+A linked worktree contains tracked files. It does not automatically contain ignored local resources from the parent checkout, such as raw data, generated artifacts, caches, local manifests, `.tmp` outputs, virtualenvs, credentials, or local config.
+
 The parent agent owns worktree selection, safety checks, integration, cleanup, and final verification.
 
 Owner terms: `Owner` is the person, agent, session, issue, or role responsible for the work. `Ownership scope` is the files, modules, contracts, or behavior that work may touch. `Worktree owner` is who created or controls the workspace. `Cleanup owner/condition` is who may remove it and when.
 
 When this skill triggers, first write the isolation decision before creating or selecting a worktree: execution mode, whether a worktree is required, active implementers, ownership scope, overlap, integration owner, base branch, mechanism, directory ignore evidence, expected checks, and cleanup owner. This changes the route from "make a branch" to "prove the workspace split will not collide with user or agent work."
 
-Worktree-ready means the task has an approved execution mode, source ownership scope, forbidden scope, public or caller contract or behavior, acceptance check, verification command, base branch, branch naming plan, worktree mechanism, directory location, and cleanup condition. If those fields cannot be filled from the plan, issue, repo evidence, or user instruction, inspect or clarify before running `git worktree add`.
+Worktree-ready means the task has an approved execution mode, source ownership scope, forbidden scope, public or caller contract or behavior, acceptance check, verification command, base branch, branch naming plan, worktree mechanism, directory location, cleanup condition, and resource parity plan. If those fields cannot be filled from the plan, issue, repo evidence, or user instruction, inspect or clarify before running `git worktree add`.
 
 Do not create a worktree from a task title, stale plan summary, or vague "use agents" request alone. If execution mode is missing, treat it as `sequential`; do not create implementation worktrees unless the user or repo policy explicitly requires isolation.
 
@@ -55,6 +57,7 @@ Avoid when:
 - Repo root, current branch, base branch, current working-tree state, and existing worktree list
 - Environment detection: git dir/common dir, current branch, superproject path, and whether the current checkout is already isolated
 - Repo instructions for branch names, worktree locations, setup, tests, generated output, and cleanup
+- Runtime resources needed by the task: ignored data, generated artifacts, caches, `.tmp` outputs, local manifests, virtualenvs, credentials, local config, external service state, and absolute paths
 - Task, issue, or subagent scope: owned files/modules, forbidden scope, public or caller contract or behavior, acceptance check, and verification command
 - Integration strategy for `parallel-overlap`
 - Chosen worktree mechanism, cleanup owner, and ignored-directory status for repo-local worktrees
@@ -97,16 +100,36 @@ Avoid when:
    - If manual `git worktree add` fails because of sandbox or permission limits, report the failure and stop unless the user approves a different route.
    - Record the path, branch, base commit, execution mode, parallel group, owner, expected check, worktree mechanism, and directory ignore status.
    - After creation or selection, confirm the worktree path and branch match the assigned task before handing it to an implementer.
-4. Establish a baseline when it matters.
+4. Establish resource parity before implementation.
+   - Inspect the task, repo docs, config, manifests, tests, and commands for required ignored or generated resources.
+   - Check the selected worktree for those resources before the first source edit or smoke command.
+   - For each required resource, record one status:
+     - present in worktree
+     - intentionally absent and not needed
+     - copied with approval
+     - symlinked with approval
+     - accessed through an explicit absolute path or config override
+     - blocked until provided
+   - Do not assume ignored files from the parent checkout exist in the worktree.
+   - If a check or smoke uses parent-checkout resources, label it as external resource access. Record the parent path, why it was used, and whether the result proves worktree-local behavior or only configured external-resource behavior.
+   - Stop before editing when required resources are absent and there is no approved copy, symlink, absolute-path override, config override, or user-provided substitute.
+5. Establish a baseline when it matters.
    - Run the smallest known check that distinguishes pre-existing failures from new failures.
+   - Run baseline commands from the selected worktree unless explicitly labeled as a parent-checkout or external-resource check.
    - If setup or dependency install is required, follow repo instructions.
    - Treat generated or lockfile changes as task output only when expected.
    - If the baseline fails, report the failure and decide whether to diagnose, continue with known risk, or stop.
-5. Hand off the isolated work.
-   - Give each implementer the worktree path, branch, execution mode, ownership scope, forbidden scope, checks, and output schema.
+6. Keep current-directory discipline.
+   - Run every source edit, test, smoke, and git command from the selected worktree unless the command is explicitly labeled as parent-checkout, integration, cleanup, or external-resource work.
+   - Do not report a check as worktree verification if it ran in the parent checkout.
+   - When config, manifests, file paths, data roots, cache paths, or generated-output paths changed, run at least one path-sensitive smoke from inside the selected worktree.
+   - If the path-sensitive smoke must read files outside the worktree, record the exact external path and the override or config that made it intentional.
+   - When reporting status, include both parent checkout status and isolated worktree status. Include untracked files in the worktree; `git diff --stat` alone is not enough because it hides new manifests, configs, fixtures, and generated files.
+7. Hand off the isolated work.
+   - Give each implementer the worktree path, branch, execution mode, ownership scope, forbidden scope, resource parity plan, checks, and output schema.
    - Tell implementers they are not alone in the repo and must not touch other worktrees or parent-owned files.
-   - Include the public or caller contract or behavior, acceptance check, first check, verification command, dependency/setup expectations, and cleanup rule.
-6. Integrate deliberately.
+   - Include the public or caller contract or behavior, acceptance check, first check, verification command, dependency/setup expectations, resource access rules, and cleanup rule.
+8. Integrate deliberately.
    - Inspect each worktree diff before merging, cherry-picking, committing, or opening a PR.
    - For `parallel-overlap`, compare overlapping changes explicitly; do not merge by habit.
    - Use `verify-before-done` on each worktree result and again after integration when integration changes repo state.
@@ -129,6 +152,8 @@ Stop before creating or using a worktree when:
 - parallel work has no issue claim, ownership scope, forbidden scope, expected check, verification command, or branch/worktree plan
 - `parallel-overlap` has no integration owner, comparison strategy, or acceptance check
 - overlap touches migrations, generated output, dependency/config state, or public or caller contracts without a stronger integration plan
+- required ignored or generated resources are missing from the worktree and there is no approved copy, symlink, absolute-path override, config override, or user-provided substitute
+- config, manifest, data-root, cache-path, or generated-output behavior changes but no path-sensitive smoke can run from the selected worktree
 - setup commands require network, credentials, external services, or dependency changes that are not approved
 - baseline checks fail and the failure affects the task's acceptance check
 - manual `git worktree add` fails because of sandbox or permission limits
@@ -148,6 +173,14 @@ Branch:
 Base:
 Directory ignored: yes | no | external | not applicable
 Directory ignore evidence:
+Parent checkout status:
+Worktree status:
+Untracked worktree files:
+Runtime resources:
+Resource parity:
+External resource access:
+Verification working directory:
+Path-sensitive smoke:
 Task/issue:
 Owner:
 Worktree owner: task | user | harness | unknown

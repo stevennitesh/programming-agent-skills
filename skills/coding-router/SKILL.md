@@ -37,10 +37,11 @@ Route by the active failure mode and trigger signal, not by the task label. Pick
 | Caller-visible behavior change or new regression check | `tdd-slice` |
 | Bug, failing test, build/CI failure, regression, flaky behavior, or unexplained log/error | `diagnose-loop` |
 | Cleanup discovery, ordered cleanup bundles, human-readable code organization/comments, behavior-preserving refactor, duplicated logic, tangled module boundary, or cleanup requests that say "keep looping", "keep cleaning", "continue until done", or "until nothing useful remains" | `codebase-cleanup` |
+| Review a branch, commit, working tree, PR-ready diff, or "before I open/update/merge a PR" request for actionable correctness, regression, security/data, contract, test, dependency/config, performance, or migration issues | `pre-pr-review` |
 | GitHub issues, issue metadata, PRDs, issue claims/updates, implementation slice issues, PR body/check/review tracking | `github-tracking` |
 | Subagents requested or useful for independent codebase exploration, implementation slices, or review | `subagent-workflow` |
 | Approved parallel implementation across agents or sessions needs separate branches/worktrees | `worktree-isolation` |
-| Completion claim, PR readiness, CI status, review resolution, or merge safety | `verify-before-done` |
+| Completion claim, final PR readiness after edits, CI status, review resolution, or merge safety | `verify-before-done` |
 | Branching, dirty tree, staging, generated output, dependency install, or risky git operation | `workspace-safety` |
 | Creating or changing coding-agent skills | `author-skills` |
 
@@ -48,7 +49,7 @@ Route by the active failure mode and trigger signal, not by the task label. Pick
 
 Most work should have one controlling skill at a time:
 
-- `repo-onboarding`, `clarify-scope`, `slice-plan`, `issue-driven-execution`, `tdd-slice`, `diagnose-loop`, `codebase-cleanup`, and `author-skills` can control the main work.
+- `repo-onboarding`, `clarify-scope`, `slice-plan`, `issue-driven-execution`, `tdd-slice`, `diagnose-loop`, `codebase-cleanup`, `pre-pr-review`, and `author-skills` can control the main work.
 - `workspace-safety`, `worktree-isolation`, `github-tracking`, `subagent-workflow`, and `verify-before-done` are usually gates: call them when the work reaches dirty-tree or git risk, approved parallel implementation, durable issue/PR tracking, delegation, or completion evidence.
 - After a gate is handled, return to the controlling skill or choose a new one if evidence changed the job.
 - If a gate is needed, run the gate for the specific risk and then return to the controlling route. Do not let safety, tracking, delegation, or verification process replace the source read, edit, or check that the work needs.
@@ -60,6 +61,7 @@ Most work should have one controlling skill at a time:
 - If the user wants a plan document, GitHub issues, and issue-by-issue implementation checkpoints, switch to `issue-driven-execution`.
 - If a refactor uncovers a bug, switch to `diagnose-loop`.
 - If a cleanup changes caller-visible behavior, public or caller contract, state/data, or dependency/config behavior, switch to `tdd-slice`.
+- If the user asks for review, PR readiness review, bug finding, regression review, review before opening/updating/merging a PR, or a semantic check of a PR-ready diff, switch to `pre-pr-review`. Do not route that request straight to `verify-before-done`; verification gates completion claims, while `pre-pr-review` finds diff-introduced issues.
 - If the worktree, branch, generated output, dependency install, staging, or user changes create edit risk, switch to `workspace-safety`.
 - If durable request tracking, issue metadata, PRD, implementation issue, issue claim/update, PR body, CI/check status, or review-thread evidence becomes useful, call `github-tracking`.
 - If subagents are dispatched, call `subagent-workflow` before sending task packets and after code, diff, or review reports return.

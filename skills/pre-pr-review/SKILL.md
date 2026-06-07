@@ -248,9 +248,11 @@ Stop or reroute when:
 - PR threads, CI, or review status matter; use `github-tracking`.
 - Subagents are requested or an approved review plan calls for them; use `subagent-workflow`.
 - You are about to claim the change is ready, reviewed, safe, or mergeable after edits; use `verify-before-done`.
+- The next route after the review is unclear, or the user changes from review to implementation, planning, PR tracking, merge, or cleanup; return to `coding-router` and choose one controlling route.
 
 ## Handoff
 
+- `coding-router`: choose the next controlling route after the review verdict, especially when the user asks to fix findings, open/update a PR, merge, plan work, or continue with implementation.
 - `github-tracking`: live PR metadata, review threads, CI, or review-response tracking.
 - `subagent-workflow`: authorized multi-lens independent review.
 - `diagnose-loop`: failing checks, crashes, regressions, or unclear command output.
