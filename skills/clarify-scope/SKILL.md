@@ -25,25 +25,11 @@ Ask exactly one blocking question only when repo evidence cannot resolve one mat
 
 ## Procedure
 
-1. Inspect relevant repo evidence first: instructions, source entry points/callers, tests/fixtures, docs/specs, issues/PRs, diffs, logs, CI output, or shared language files when terms affect the work.
-2. State a compact frame:
+Use the fast path by default:
 
-```text
-Goal:
-User or caller:
-Current behavior:
-Target behavior:
-Public or caller contract:
-Affected entry points/modules:
-Success criteria:
-Constraints:
-Assumptions:
-Repo evidence:
-Terminology risk or context note:
-Blocking question:
-```
-
-3. If one material answer remains unresolved after evidence review, ask one question in this shape:
+1. Inspect the cheapest repo evidence that could answer the ambiguity: instructions, source entry points/callers, tests/fixtures, docs/specs, issues/PRs, diffs, logs, CI output, or shared language files when terms affect the work.
+2. Identify only the material missing decision.
+3. If blocked, ask one question in this shape:
 
 ```text
 Blocking question:
@@ -52,37 +38,36 @@ Recommended assumption:
 If accepted, I will:
 ```
 
-4. If you are about to ask but cheap repo evidence can answer the question, inspect it instead.
-5. If the request is too large, split first. Name the smallest user-visible or caller-visible slice that can be built, tested, and reviewed on its own.
-6. For user-facing, API, CLI, UI, or module behavior, separate the observed need or failing workflow from the proposed implementation. Treat unsupported claims as assumptions.
-7. For interface work, describe the public or caller contract: inputs, outputs, invariants, ordering, error modes, required configuration, performance expectations, and compatibility expectations.
-8. If names are ambiguous, overloaded, or conflicting, resolve only the terms that can change behavior, the public or caller contract, data/state, module boundaries, tests, or durable records.
-9. If unfamiliar with the area, zoom out before designing:
+4. If not blocked, state the reversible assumption and proceed to the next route.
+
+If the request is too large, name the smallest user-visible or caller-visible slice that can be built, tested, and reviewed on its own. If multiple approaches are plausible, present at most three, tie trade-offs to correctness, compatibility, maintainability, delivery risk, or testability, and recommend one.
+
+For interface work, describe only the contract details that matter to the next route: inputs, outputs, invariants, ordering, error modes, required configuration, performance expectations, and compatibility expectations.
+
+If unfamiliar with the area, zoom out only enough to answer the ambiguity:
 
 ```text
 entry point -> callers or users -> public or caller contract -> state/data changed -> failure modes -> module boundary -> existing checks
 ```
 
-10. If multiple approaches are plausible, present at most three. Tie trade-offs to correctness, compatibility, maintainability, delivery risk, or testability. Recommend one.
+## One Blocking Question
 
-## Prototype Option
+Ask exactly one blocking question only when repo evidence cannot resolve one material decision. Use reversible assumptions for non-blocking naming, formatting, helper shape, minor copy, test-file placement, or implementation preference.
 
-Use a prototype only when a small throwaway artifact can answer a design, state-machine, data-model, or UI choice faster than more discussion.
-Do not make prototypes part of normal TDD implementation.
-
-Before proposing or creating one, state:
+Use this shape and no extra template unless the work needs a durable brief:
 
 ```text
-Question it answers:
-Prototype type: logic | state | data | UI
-Artifact location:
-Run command or URL:
-Data/persistence safety:
-Disposal or absorption path:
-Decision capture:
+Blocking question:
+Why it matters:
+Recommended assumption:
+If accepted, I will:
 ```
 
-Decision capture = the durable place where the answer will be recorded, such as an issue comment, ADR, plan note, or final implementation decision.
+## Niche Prototype Path
+
+Use only when source/test evidence and one material question are slower or insufficient, and a small throwaway artifact can answer a specific design, state-machine, data-model, or UI choice faster than discussion.
+
+State only the prototype question, artifact location, run command or URL, data/persistence safety, disposal or absorption path, and durable decision capture.
 
 Prototype constraints:
 
@@ -93,9 +78,9 @@ Prototype constraints:
 - Do not add tests for the throwaway shell. If the validated logic is absorbed into production code, protect that behavior through `tdd-slice`.
 - Do not generalize beyond the question. Delete losing UI variants, terminal shells, scratch routes, and unused prototype code after the answer is captured or absorbed.
 
-## Design Brief
+## Durable Brief
 
-Produce only the fields that help the next step:
+Use a design brief only when clarification must become a durable plan, issue, PRD, ADR, or handoff.
 
 ```text
 Goal:
@@ -104,29 +89,22 @@ Current behavior:
 Proposed behavior:
 Public or caller contract:
 Affected entry points/modules:
-Repo evidence:
-Data/state touched:
 Acceptance checks:
-Verification command or check:
 Risks and rollback:
-Terminology risk or context note:
-Prototype question/artifact:
-Decision capture:
+Repo evidence:
 Open questions:
 Next skill:
 ```
 
 ## Shared Language
 
-- Use `CONTEXT.md`, `CONTEXT-MAP.md`, relevant ADRs, docs, or glossary files for recurring domain terms, module boundaries, and public or caller contracts.
-- If these files do not exist, proceed silently unless the current work resolves a recurring term, boundary, contract, state transition, or durable decision.
-- If a user term conflicts with repo vocabulary, source, tests, docs, or ADRs, surface the conflict. Recommend the source-backed term when evidence is strong; ask one material question when it is not.
-- If a term is overloaded, name the competing meanings and resolve only the one that affects the current behavior, interface, data/state path, test, or durable record.
-- Add or propose a `CONTEXT.md` note only for a term, boundary, contract, state transition, or "means / does not mean" distinction likely to recur.
-- Keep entries tiny: term, meaning, non-meaning when useful, and source or reason.
-- Never record specs, scratch notes, progress, plans, status, skill summaries, or temporary decisions there.
-- Offer an ADR only when a decision is hard to reverse, surprising without context, and the result of a real trade-off.
-- Treat context as a map. Current behavior comes from repo evidence; target behavior comes from approved user instruction, issue, PRD, or spec.
+Use durable context only for recurring terms, module boundaries, public or caller contracts, state transitions, or "means / does not mean" distinctions likely to matter again.
+
+If a term conflict changes behavior, interface, data/state path, tests, or durable records, surface the conflict. Recommend the source-backed term when evidence is strong; ask one material question when it is not.
+
+Keep entries tiny and factual. Never record specs, scratch notes, progress, plans, status, skill summaries, or temporary decisions there. Offer an ADR only when a decision is hard to reverse, surprising without context, and the result of a real trade-off.
+
+Treat context as a map. Current behavior comes from repo evidence; target behavior comes from approved user instruction, issue, PRD, or spec.
 
 ## Forbidden Shortcuts
 

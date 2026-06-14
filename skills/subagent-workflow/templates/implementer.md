@@ -19,19 +19,23 @@ Forbidden files/behaviors: <files, caller-visible behaviors, dependencies, refac
 First check: <test, search, or file read that should happen first>
 Acceptance check: <observable behavior, regression check, diff review target, or issue criterion>
 Verification command: <focused check plus broader check if known>
-Instructions:
-- You are not alone in the codebase. Preserve existing user and agent changes.
-- Implement exactly this slice. Do not solve adjacent tasks.
-- Do not implement from a task title, stale summary, or guessed file list.
-- Reuse, extend, or refactor the established implementation path. Do not create a competing path for the same behavior unless you report BLOCKED or NEEDS_CONTEXT for parent rerouting.
+Scope:
+- Preserve existing user and agent changes.
+- Implement exactly this slice; do not solve adjacent tasks.
+- Reuse, extend, or refactor the established implementation path. Do not create a competing path for the same behavior without parent approval.
+
+Implementation:
+- Start from the first check and current repo evidence, not from a task title, stale summary, or guessed file list.
 - For behavior changes, start with or identify one failing caller-visible check.
-- Apply the smallest source change that satisfies the slice.
-- Ask for context if requirements, acceptance criteria, public or caller contracts, dependencies, or approach are unclear.
-- Stop with NEEDS_CONTEXT when owned scope, forbidden scope, first check, or verification evidence is missing.
-- Stop with DONE_WITH_CONCERNS if you completed the slice but doubt correctness or scope.
-- Stop with BLOCKED or NEEDS_CONTEXT rather than guessing through user or caller behavior, architecture, public contract, dependency, migration, or broad refactor decisions.
-- Self-review before reporting: changed files, scope, caller-visible behavior, test evidence, and whether the source change overbuilds.
-Expected output:
+- Apply the smallest source change that satisfies the acceptance check.
+- Self-review changed files, scope, caller-visible behavior, test evidence, and overbuild risk before reporting.
+
+Stop states:
+- NEEDS_CONTEXT when owned scope, forbidden scope, first check, acceptance criteria, public or caller contract, dependencies, approach, or verification evidence is missing.
+- BLOCKED when safe progress requires a user or parent decision about behavior, architecture, public contract, dependency, migration, or broad refactor scope.
+- DONE_WITH_CONCERNS when the slice is complete but correctness, scope, or evidence is uncertain.
+
+Report:
 - Status: DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT
 - Files changed.
 - Checks run and exact results.

@@ -1,6 +1,6 @@
 ---
 name: slice-plan
-description: Use when approved repo work needs multiple source, test, or docs steps; multiple files; end-to-end behavior slices; coding-agent handoff; issue/PR tracking; or durable plan notes without copying source code into the plan.
+description: "Use when approved repo work needs multiple source, test, or docs steps; multiple files; end-to-end behavior slices; coding-agent handoff; a plan that may later feed issue/PR tracking; or durable plan notes without copying source code into the plan."
 ---
 
 # Slice Plan
@@ -26,7 +26,15 @@ Scale the plan to the repo work:
 - Multi-step local repo work: write an inline plan with 2-5 tasks.
 - Multi-session repo work, GitHub issues, subagent handoffs, or risky changes: use the full plan shape below.
 - Unclear target: do not plan yet; use `clarify-scope`.
-- If the only output needed is GitHub issues or issue-by-issue execution, use `github-tracking` or `issue-driven-execution` after the source scope is clear.
+- If the only output needed is GitHub issues, PR tracking, or issue-by-issue execution, use `github-tracking` or `issue-driven-execution` after the source scope is clear.
+
+## Fast Path
+
+Use for 2-5 local steps.
+
+- Write only Goal, Tasks/checks, Stop/ask, and Final verification.
+- Keep each task tied to a source boundary and pass/fail check.
+- Do not use the durable template unless work is multi-session, risky, GitHub-tracked, delegated, or likely to be resumed later.
 
 ## Inputs
 
@@ -41,7 +49,18 @@ Treat plans, summaries, memory, and prior issue comments as maps. Current behavi
 
 ## Plan Shape
 
-Use this template inline for short work or in the repo planning location for multi-session work:
+Inline plan:
+
+```text
+Goal:
+Constraints/non-goals:
+Evidence:
+Tasks/checks:
+Stop/ask:
+Final verification:
+```
+
+Durable plan adds task continuity, risk/rollback, handoffs, and update policy:
 
 ```markdown
 # Plan: <title>
@@ -55,16 +74,6 @@ Use this template inline for short work or in the repo planning location for mul
 ## Execution mode
 Execution mode: sequential | parallel-disjoint | parallel-overlap
 Default if omitted: sequential
-Parallel groups:
-- None | <group-name>: issues, expected ownership, worktree requirement, integration owner
-
-## GitHub metadata
-Use only when durable issue coordination needs it:
-- Relationships: dependencies, parent/child work, duplicates, or blockers
-- Milestone: release, migration, version, or scheduled checkpoint
-- Assignee/labels: multi-agent ownership, readiness, blocking state, issue type, or execution mode when repo convention supports it
-- Project: repo/team project board already tracks this work
-- Development: branch/PR link when implementation starts
 
 ## Acceptance checks
 
@@ -84,11 +93,9 @@ Use only when durable issue coordination needs it:
 ### Task 1: <caller-visible behavior or repo change>
 - Outcome:
 - Builds on or must preserve:
-- Existing logic to reuse or extend:
 - Public contract or state/data change:
 - Depends on:
 - Likely files/modules:
-- First command/check:
 - Change boundary:
 - Verification command:
 - Review focus:
@@ -105,11 +112,8 @@ Use only when durable issue coordination needs it:
 
 - Every task must trace to the approved request, public or caller contract, acceptance check, or named risk-reduction step.
 - If the plan does not explicitly say `parallel-disjoint` or `parallel-overlap`, treat the work as `sequential`.
-- Use `parallel-disjoint` only when planned issue or subagent scopes can run at the same time with distinct source ownership and separate worktrees/branches.
-- Use `parallel-overlap` only when parallel implementation intentionally touches the same files, modules, public or caller contracts, generated output, or dependency/config state; name the integration owner and comparison strategy.
-- Plan GitHub metadata only when it helps coordination or documentation; sequential single-agent issue work can stay body/comment only.
-- Map dependencies to Relationships and release/version targets to Milestones when those fields exist in the repo workflow.
-- Map multi-agent ownership, parallel mode, and worktree need to assignees or labels only when repo convention supports it.
+- Use parallel modes only when ownership, dependencies, worktree need, overlap, and integration strategy are explicit.
+- If the plan will become GitHub issues or PR tracking, route metadata and issue-body fields through `github-tracking`; keep this plan focused on source scope, task boundaries, checks, continuity, and execution mode.
 - Prefer end-to-end caller-visible slices over layer-only slices.
 - Make the first task prove the chosen source route, test surface, or integration path when the implementation path is uncertain.
 - Do not make each helper extraction its own task unless it creates a reviewable ownership boundary; a helper category is not enough. Prefer tasks that leave fewer, clearer modules rather than more precise but tedious files.
@@ -144,15 +148,15 @@ Do not implement from a task title alone. Use the task body, accepted scope, cur
 
 ## Plan Review
 
-Before handing off, scan the plan:
+Before handing off, scan the plan for:
 
-- Coverage: every acceptance check and public or caller contract maps to at least one task.
-- Evidence fit: each validation claim maps to a command, test, fixture, diff review, or manual check strong enough for the claim; simulated or review-only checks are not allowed to satisfy behavior-test intent.
-- Execution fit: mode is explicit or safely defaults to `sequential`; parallel modes name dependencies, file/module ownership, worktree need, and integration risk.
-- Continuity fit: each later task names the prior output, source path, helper, test, contract, or issue result it builds on or explains why it is independent.
-- Placeholder scan: no vague work items such as "handle edge cases" without the exact input, behavior, expected output, and check.
-- Name consistency: files, modules, types, functions, commands, events, statuses, and domain terms are named the same way across tasks.
-- Scope fit: tasks do not mix unrelated files, behavior changes, refactors, dependency changes, or generated output.
+- acceptance checks and public or caller contracts mapped to tasks
+- each task having a pass/fail check strong enough for the intended claim
+- continuity between dependent tasks, or a reason they are independent
+- explicit execution mode, with parallel ownership and integration details only when needed
+- no vague placeholders such as "handle edge cases" without the exact input, behavior, expected output, and check
+- consistent names for files, modules, commands, statuses, and domain terms
+- no unrelated behavior changes, refactors, dependency changes, or generated output bundled into one task
 
 ## Stop Or Ask
 
@@ -164,6 +168,17 @@ Before handing off, scan the plan:
 - The plan would invent GitHub metadata, issue readiness, labels, milestones, assignees, projects, or tracker conventions not supported by repo evidence.
 - The plan would copy source code, line-number maps, stale file lists, or implementation details instead of durable contracts, boundaries, checks, and handoffs.
 - Existing source, tests, fixtures, logs, docs, or live issue/PR state contradict the approved request or prior plan.
+
+## Report
+
+```text
+Plan:
+Plan type: none | inline | durable
+Evidence:
+Tasks/checks:
+Blocked on:
+Next route:
+```
 
 ## Handoff
 

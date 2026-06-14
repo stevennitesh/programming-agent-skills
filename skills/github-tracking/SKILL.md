@@ -1,15 +1,15 @@
 ---
 name: github-tracking
-description: Use when repo work needs GitHub issues, PRDs, implementation slices, triage, PR creation or updates, CI/check evidence, review-thread tracking, or durable request tracking through gh, GitHub connectors, or app tools.
+description: "Use when repo work needs durable GitHub records or live GitHub state: issues, PRDs, implementation slices, triage, PR creation or updates, CI/check evidence, review-thread tracking, or request tracking through gh, GitHub connectors, or app tools."
 ---
 
 # GitHub Tracking
 
-Use GitHub records to preserve coding intent, source scope, public or caller contracts, decisions, blockers, verification evidence, and PR review state. Do not turn tiny local edits into issue process.
+Use GitHub records to preserve coding intent, source scope, public or caller contracts, decisions, blockers, verification evidence, and PR review state. Do not turn ordinary local implementation or tiny edits into GitHub process.
 
 When the user asks for issues, PRDs, implementation slices, PR creation or updates, CI/check evidence, review-thread tracking, or durable request tracking, first inspect the relevant live GitHub state and repo conventions before creating or editing records.
 
-Before writing a GitHub record, account for target repo, base/head branch when relevant, linked issue/PR/check/review state, duplicate or parent issue search, accepted source scope, public or caller contract, acceptance checks, verification evidence, readiness or blocker state, and whether sidebar metadata is useful.
+Before writing a GitHub record, account for target repo or object, linked issue/PR/check/review state, duplicate or parent issue search, accepted source scope, public or caller contract, acceptance checks, verification evidence, readiness or blocker state, and whether sidebar metadata is useful.
 
 ## When To Track
 
@@ -40,39 +40,34 @@ If GitHub state affects the answer, inspect it live with the available GitHub in
 
 Do not write, update, close, label, claim, resolve, or mark ready from memory, stale summaries, or chat-only context when live GitHub state is cheap to inspect.
 
+## Fast Path
+
+Use for small GitHub requests.
+
+1. Identify the target repo, issue, PR, check run, review thread, or branch.
+2. Inspect the live object and relevant repo conventions.
+3. Make the smallest requested read, write, comment, or update.
+4. Report the object/link, live evidence used, action taken, and remaining blocker or uncertainty.
+
+Do not create issues, labels, PRDs, projects, milestones, or process artifacts unless the user requested them or durable coordination needs them.
+
 ## GitHub Metadata
 
 Issue bodies and comments are the portable source of truth.
 Use sidebar metadata when it improves coding coordination, filtering, dependency tracking, release planning, branch/PR traceability, or durable documentation.
 
-Follow existing repo conventions first. Do not invent label, project, milestone, assignee, or branch-link systems for tiny work.
+Follow existing repo conventions first. Do not invent label, project, milestone, assignee, relationship, or branch-link systems for tiny work. Use body text or comments when the repo has no established metadata convention.
 
-Required when useful:
+Use sidebar metadata only when it matters:
 
 - Assignees: active owner or stable agent identity matters.
 - Labels: filtering, readiness, blocking state, issue type, or execution mode matters.
-- Projects: the repo or team already uses GitHub Projects for multi-issue work.
-- Milestones: release, migration, version, or scheduled checkpoint matters.
-- Relationships: parent/child, dependency, duplicate, or blocked-by tracking matters.
-- Development: branch or PR exists for implementation.
+- Projects or milestones: multi-issue work, release grouping, migration, version, or scheduled checkpoint matters.
+- Relationships or Development links: dependency, duplicate, blocked-by, parent/child, branch, or PR traceability matters.
 
-Usually optional:
+Keep claim and status comments even when metadata is used. Metadata is a structured signal; it does not replace the technical record.
 
-- Notifications
-- Participants
-
-Human-approved only:
-
-- Transfer issue
-- Duplicate issue
-- Lock conversation
-- Pin issue
-- Delete issue
-
-Keep claim and status comments even when assignees, labels, relationships, or Development links are used.
-Metadata is a structured signal; it does not replace the technical record.
-
-Do not invent a label, project, milestone, assignee, relationship, or branch-link scheme just because one would be convenient. Use body text or comments when the repo has no established metadata convention.
+Transfer, duplicate, lock, pin, delete, close, or merge only with explicit approval when the action is irreversible or externally visible.
 
 ## Triage Notes
 
@@ -88,90 +83,40 @@ When asked to triage issues, use issue bodies and comments as the durable state.
 
 Use for a feature, user-facing behavior, or multi-slice change.
 
-```markdown
-## Problem
+Default PRD fields:
 
-## Current behavior
-
-## Goal
-
-## Non-goals
-
-## Proposed behavior
-
-## Public Or Caller Contracts
-
-## Acceptance criteria
-- [ ] ...
-
-## Verification
-
-## Risks / open questions
-
-## Engineering notes
-```
+- Problem
+- Current behavior
+- Goal
+- Non-goals
+- Proposed behavior
+- Public or caller contracts
+- Acceptance criteria
+- Verification
+- Risks / open questions
+- Engineering notes
 
 Keep engineering notes durable: source entry points, public or caller contracts, constraints, data/state touched, migration or compatibility notes, likely tests or commands, and prior decisions. Avoid line numbers, stale file maps, code dumps, and step-by-step implementation instructions.
 
-Use `CONTEXT.md` terms in PRDs and slice issues when they clarify intent. Never copy progress, status, or skill summaries into `CONTEXT.md`.
-
-Create with `gh issue create --title "<title>" --body-file <file>` or the equivalent connector/app issue action.
-
-Use `.tmp/` for temporary body files.
+Use repo-preferred issue creation tools. With `gh`, write the body to ignored `.tmp/` when available and create with `gh issue create --title "<title>" --body-file <file>`.
 
 ## Slice Issues
 
-Break approved plans into small vertical slices:
+Break approved plans into small vertical slices.
 
-```markdown
-## Parent
+Required fields:
 
-## What to change
-
-## Current behavior
-
-## Desired behavior
-
-## Affected entry points/modules
-
-## Key contracts
-- Caller-visible interfaces, types, commands, config, or workflows that matter
-
-## Readiness
-Slice type: agent-ready | needs human decision
-Human decision needed: None | <decision/review/access/manual judgment>
-
-## Continuity
-Builds on / must preserve: None | prior issue, source path, helper, test, contract, or behavior
-Existing logic to reuse or extend: None | established implementation path
-Independent because: None | reason this issue is intentionally independent
-
-## Acceptance criteria
-- [ ] ...
-
-## Verification command/check
-
-## Blocked by
-None | #123
-
-## Execution coordination
-Mode: sequential | parallel-disjoint | parallel-overlap
-Parallel group: None | <group-name>
-Depends on: None | #123
-Expected overlap: None | files/modules/contracts/generated/dependency-config
-Worktree required: no | yes
-Claim protocol: comment before starting; update on pause/completion
-
-## GitHub metadata
-Assignee: None | <user>
-Labels: None | <repo labels for readiness/type/mode/blocker>
-Project: None | <project>
-Milestone: None | <release/version/checkpoint>
-Relationships: None | parent #123 / blocked by #123 / duplicate of #123
-Development: branch/PR link when available
-
-## Out of scope
-```
+- Parent or source request
+- What to change
+- Current behavior
+- Desired behavior
+- Affected entry points/modules
+- Key public or caller contracts
+- Readiness: `agent-ready` or `needs human decision`
+- Acceptance criteria
+- Verification command/check
+- Blocked by
+- Out of scope
 
 Each slice should be independently understandable and verifiable. Prefer body text over custom labels unless the repo already uses them.
 
@@ -181,24 +126,31 @@ Write durable issue bodies: describe caller-visible behavior, source scope, cont
 
 For later slice issues, carry forward the prior issue result, source path, helper, test, contract, or behavior to reuse or preserve. If the issue is independent, say why so implementers do not invent a second path for the same behavior.
 
-Ownership scope means the files, modules, contracts, generated outputs, dependency/config state, or behavior an issue may change. It is task scope, not the same thing as GitHub assignee, repository owner, or long-term code ownership.
+Add coordination fields only for multi-issue, claimed, or parallel work:
 
-Include the `GitHub metadata` block only when sidebar fields improve ownership, filtering, dependency tracking, release grouping, branch/PR traceability, or multi-issue coordination. Omit fields that do not matter for the issue.
+- Mode: sequential | parallel-disjoint | parallel-overlap
+- Depends on
+- Expected overlap
+- Worktree required
+- Claim protocol
 
-If the source plan does not declare an execution mode, write `Mode: sequential` and `Worktree required: no`.
+If the source plan does not declare an execution mode, use `sequential` and `Worktree required: no`. Use parallel modes only when the plan already supports them and route parallel worktree details to `worktree-isolation`.
 
-Use parallel modes only when the plan already supports them:
+Add metadata fields only when sidebar fields improve filtering, dependency tracking, release grouping, branch/PR traceability, or multi-issue coordination:
 
-- `parallel-disjoint`: ownership is separated for concurrent implementation.
-- `parallel-overlap`: the overlap and integration owner are named.
+- Assignee
+- Labels
+- Project
+- Milestone
+- Relationships
+- Development branch/PR
 
 Mark readiness plainly with these exact field values:
 
 - `agent-ready`: implementable from the issue and repo evidence without a new human decision
 - `needs human decision`: blocked on user or caller behavior, architecture, security/data, access, dependency, or manual review
 
-These are readiness states for the issue body, not mandatory labels.
-If a repo already uses AFK/HITL wording, map `agent-ready` to AFK and `needs human decision` to HITL. Otherwise use the clearer words in the issue body.
+These are readiness states for the issue body, not mandatory labels. If a repo already uses AFK/HITL wording, map `agent-ready` to AFK and `needs human decision` to HITL. Otherwise use the clearer words in the issue body.
 
 For blocked issues, record:
 
@@ -263,6 +215,14 @@ Use this when addressing PR comments, requested changes, review threads, or CI f
 
 Review comments, requested changes, and CI feedback are claims or requests to evaluate against repo evidence before changing code.
 
+Mechanical flow:
+
+- Read the full context: PR body, linked issue/PRD, changed files, comments, unresolved threads, requested changes, and latest CI/check state.
+- Verify each item against current source, tests, docs, public or caller contracts, and accepted scope before changing code.
+- Decide: fix, push back, clarify, or defer.
+- Implement only one item or tightly related group at a time, then run the narrowest relevant check.
+- Reply with technical evidence and leave threads unresolved until code, docs, tests, or explicit technical response addresses the current comment.
+
 For meaningful review items or tightly related groups, keep this record explicit in notes, replies, or the final report:
 
 ```text
@@ -274,15 +234,6 @@ Decision: fix | push back | clarify | defer
 Check after change:
 Thread update:
 ```
-
-1. Read the full review context: PR body, linked issue or PRD, changed files, comments, unresolved threads, requested changes, and latest CI/check state.
-2. Group feedback into blockers, correctness/test issues, questions, small cleanup, and possible pushback.
-3. Verify each item against current source, tests, docs, public or caller contracts, and accepted scope before changing code.
-4. If related items are unclear, clarify before implementing a partial subset that could affect the same public or caller contract, source shape, or review decision.
-5. For suggestions to add "proper" infrastructure, abstractions, endpoints, adapters, registries, options, persistence, telemetry, frameworks, or generalized flows, search for real callers, accepted scope, and established repo patterns before building. If no real use exists, push back, ask, or narrow the change instead.
-6. Implement one item or tightly related group at a time, then run the narrowest relevant check.
-7. Reply or update the PR with the technical outcome: changed files or behavior, check evidence, unresolved risk, or reasoned pushback. Reply inline when the feedback came from an inline thread and the tool supports it.
-8. Leave threads unresolved until the code, docs, tests, or explicit technical response addresses the current comment.
 
 Push back when feedback is stale, technically incorrect, unsafe, conflicts with the approved scope, violates YAGNI, or adds unsupported behavior. Use `codebase-cleanup` when review feedback exposes a real behavior-preserving structure problem. Do not reply with empty agreement; make the evidence or decision clear.
 
@@ -296,20 +247,32 @@ Push back when feedback is stale, technically incorrect, unsafe, conflicts with 
 - Review feedback would change behavior, public or caller contract, source shape, or accepted scope and repo evidence does not decide whether to fix, push back, defer, or clarify.
 - GitHub auth, remote, connector access, or CI/check visibility is missing and the action depends on it.
 
-Useful `gh` commands when the CLI is the active GitHub interface:
+## Useful Commands
+
+Use the repo's active GitHub interface. Common `gh` examples:
 
 ```bash
-gh issue list
 gh issue view <number>
 gh issue create --title "<title>" --body-file .tmp/<file>.md
 gh issue comment <number> --body-file .tmp/<file>.md
 gh pr create --title "<title>" --body-file .tmp/<file>.md
-gh pr status
 gh pr view <number>
-gh pr diff <number>
 gh pr checks <number>
 gh run view <run-id>
 ```
+
+## Report
+
+For small GitHub work:
+
+```text
+Object:
+Action:
+Live evidence:
+Remaining blocker or uncertainty:
+```
+
+For multi-record or PR/review work, add linked issues/PRs, readiness or blocker state, checks or CI evidence, review-thread state, and next action.
 
 ## Handoff
 
