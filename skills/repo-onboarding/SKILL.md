@@ -1,6 +1,6 @@
 ---
 name: repo-onboarding
-description: Use when entering an unfamiliar repo, adopting this skill pack in a repo, resuming work after repo context is stale, or when build/test/GitHub/context conventions are unknown before coding.
+description: "Use when entering an unfamiliar repo, adopting this skill pack in a repo, resuming work when stale commands/instructions/context matter now, or when build/test/GitHub/context conventions are unknown before coding."
 ---
 
 # Repo Onboarding
@@ -11,7 +11,9 @@ Learn the repo's operating facts before changing code. Build only enough context
 
 Onboarding should make later coding safer and faster, not create a repo dossier. Prefer source-of-truth files, runnable commands, and current repo state over summaries or assumptions.
 
-When entering an unfamiliar repo, resuming stale repo context, adopting this skill pack, or facing unknown build/test/GitHub/context conventions, first identify the repo root, current branch, working tree state, nearest repo instructions, source-of-truth commands, relevant entry points, safety constraints, and the next route.
+When entering an unfamiliar repo, adopting this skill pack, or facing unknown build/test/GitHub/context conventions, first identify the repo root, current branch, working tree state, nearest repo instructions, source-of-truth commands, relevant entry points, safety constraints, and the next route.
+
+Stale context means a command, instruction, branch, dependency, tracker, source entry point, or safety fact could be outdated and matters to the current task. Do not re-onboard only because time passed.
 
 Before changing code, running expensive commands, creating repo instructions, opening issues, or claiming setup is known, account for which facts came from repo evidence, which assumptions are safe for the next small task, which missing facts affect correctness or safety, and what first source read, command, edit, check, or handoff should happen next.
 
@@ -19,56 +21,36 @@ Before changing code, running expensive commands, creating repo instructions, op
 
 Read only what helps the current coding work:
 
-- Repo instructions: `AGENTS.md`, `CLAUDE.md`, README, contributor docs, test docs, or nearby overrides
-- Project manifests and scripts that reveal setup, lint, typecheck, test, build, format, or run commands
-- CI/workflow files when local commands are unclear or PR readiness matters
-- Git state, branch conventions, remotes, and ignored scratch/worktree locations
-- Existing issues, PRs, review threads, or release notes only when the task is tied to GitHub state
-- `CONTEXT.md`, `CONTEXT-MAP.md`, or ADRs only for shared repo vocabulary, module boundaries, public or caller contracts, and decisions
-- Existing repo agent setup such as `docs/agents/`, issue-tracker docs, label/readiness vocabulary, local issue folders, or skill-pack notes only when adopting or refreshing agent workflow setup
+- nearest repo instructions and command sources
+- manifests, scripts, test docs, or CI only when commands/checks matter
+- branch, dirty state, remotes, and scratch/worktree rules when safety or GitHub state matters
+- relevant source/test entry points for the current task
+- `CONTEXT.md`, `CONTEXT-MAP.md`, ADRs, issues, PRs, or review threads only when shared terms, contracts, tracker state, or external state matter now
+- existing agent setup only when adopting or refreshing repo workflow setup
 
 Do not use durable context files for progress, status, onboarding notes, or skill summaries.
 
-## Process
+## Fast Path
 
-1. Establish the baseline:
-   - repo root and current branch
-   - working tree state
-   - relevant repo instructions and source-of-truth docs
-   - known commands and whether they are cheap, expensive, external-service dependent, or destructive
-   - relevant source/test entry points and public or caller contracts when they affect the requested work
-   - Git remote, default branch, issue/PR convention, and CI/check state only when GitHub or release readiness matters
-2. Identify the likely first route:
-   - implementation or behavior change -> `coding-router`
-   - unclear target behavior or public or caller contract -> `clarify-scope`
-   - failing command, test, CI job, crash, log, or wrong output -> `diagnose-loop`
-   - broad cleanup or refactor -> `codebase-cleanup`
-   - plan doc, GitHub issues, and issue-by-issue execution -> `issue-driven-execution`
-   - issue, PR, CI, or review-thread work -> `github-tracking`
-   - dirty tree, branch/worktree action, dependency install, generated output, staging, commit, or PR risk -> `workspace-safety` gate, then return to the chosen route
-3. Record only the operating facts needed for the next step:
-   - relevant commands/checks
-   - source or test entry points
-   - repo-specific safety constraints
-   - durable context locations
-   - open questions that affect correctness, reversibility, data/state, security, dependencies, or external systems
-   - next route and first observable action
-4. Do not keep onboarding after the next safe route is clear. Hand off instead of collecting extra docs, broad file maps, or historical notes.
-5. If adopting or refreshing this skill pack, run the adoption branch below.
+Default to a 2-minute operating-facts pass:
 
-## Adoption Branch
+1. Read the nearest repo instructions and manifest, script, or docs source that identifies commands.
+2. Check branch and working tree state.
+3. Identify only the commands/checks, entry points, safety constraints, and missing facts needed for the current task.
+4. Hand off to `coding-router` or the one obvious controller.
 
-Use this branch only when the user is installing this pack in a repo, asking whether repo agent setup is complete, or when missing repo workflow facts would make several skills guess.
+Stop onboarding once the next source read, command, edit, check, or handoff is clear.
+
+## Niche Adoption Path
+
+Use only when the user asks to install, adopt, audit, or refresh repo agent setup, or when several skills would otherwise guess repo workflow facts.
 
 Discover:
 
-- Agent instruction target: existing `AGENTS.md` or `CLAUDE.md`, including nearby overrides and any existing agent-skills block
-- Issue tracker: GitHub, GitLab, local markdown, other tracker, or none; include the command/tool only when repo evidence or the user confirms it
-- Triage/readiness vocabulary: issue labels, issue-body fields, or status fields used for `agent-ready`, `needs human decision`, waiting, ready for agent, ready for human, won't-fix, blocked, or similar states
-- Domain docs: `CONTEXT.md`, `CONTEXT-MAP.md`, ADR locations, glossary files, architecture docs, and whether the repo is single-context or multi-context
-- Work locations: where plans, scratch files, generated logs, local issues, and handoff docs belong
-- Verification facts: cheap local checks, expensive checks, external-service checks, release gates, and commands that should not run by default
-- Public or caller contracts, module boundaries, generated artifacts, dependency/config state, or data/security rules that several skills must preserve
+- repo instruction target and nearby overrides
+- tracker type, readiness vocabulary, and issue/PR conventions when repo evidence establishes them
+- durable context docs, work locations, scratch/generated-output rules, and verification facts reused by multiple skills
+- public or caller contracts, module boundaries, generated artifacts, dependency/config state, or data/security rules that several skills must preserve
 
 Present:
 
@@ -118,13 +100,12 @@ Repo:
 Relevant instructions:
 Commands/checks:
 Source or test entry points:
-Git/GitHub context:
-Durable context:
-Adoption facts:
 Safety constraints:
-Open questions:
+Assumptions/missing facts:
 Next route:
 ```
+
+Add `Adoption facts:` only when the Niche Adoption Path ran.
 
 ## Handoff
 

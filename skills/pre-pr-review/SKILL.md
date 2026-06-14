@@ -41,9 +41,21 @@ Review this as a pre-PR review. Focus only on actionable issues introduced or ex
 
 If `codex review` fails or is interrupted, label the result as manual self-review fallback. Do not present it as a completed built-in review. If it looks quiet on a broad diff, poll the session before assuming failure; a delayed final finding can still be useful, but do not let the tool run replace your own evidence-bound verification.
 
-## Required Review Loop
+## Fast Review Path
 
-For every nontrivial branch or PR-ready diff, do this loop before the verdict:
+Use for tiny or narrow diffs with obvious blast radius.
+
+- Identify the target, base, and head when Git evidence is available.
+- Inspect the diff, plus the nearest caller or test only if behavior changed.
+- Pick only the matching risk lenses, often none or one.
+- Run or recommend one relevant check when a check is cheap and useful.
+- Report findings, or `No findings in inspected scope`, with checks, verdict, confidence, and remaining uncertainty.
+
+Switch to the Full Review Path when the diff changes runtime behavior across modules, config, dependencies, generated output, data/schema, security/privacy, migrations, performance, public or caller contracts, or when the fast read leaves meaningful uncertainty.
+
+## Full Review Path
+
+Use for every nontrivial branch or PR-ready diff before the verdict:
 
 1. Map changed behavior, not just changed files. Name the main behavior groups in plain language, such as "cache key", "config loader", "dashboard artifact", "dependency pins", or "removed route".
 2. Pick the matching review lenses from this skill. For each selected lens, inspect at least one producer, one consumer, and one test or validation path when those exist.
@@ -89,67 +101,63 @@ When you find one concrete bug class, search the touched area for neighboring in
 
 Use only the lenses that match the diff, but make the choice explicit for nontrivial reviews.
 
-For every selected lens, inspect the changed source plus the nearest caller/consumer and the nearest test/check. If you cannot find a caller, consumer, or test, report that as remaining uncertainty or a missing-test gap.
+For every selected lens, inspect the changed source plus the nearest producer or caller, the nearest consumer, and the nearest test/check when they exist. If you cannot find one, report that as remaining uncertainty or a missing-test gap.
+
+Do not apply niche checks to unrelated diffs. Load deeper repo-specific context only when the selected lens and diff risk justify it.
 
 ### Data And Schema
 
 Use when the diff touches CSV/parquet/JSON artifacts, dataframes, validation, manifests, schemas, model inputs, reports, or analytics outputs.
 
-Check marker columns and selection flags carefully: `.astype(bool)`, `.astype(int)`, numeric casts, `dropna`, string booleans, fractional values, missing values, and non-numeric values. Tests should cover malformed inputs and round-trip encodings, not only in-memory happy paths.
-
-For time-series or bucketed features, check whether fill operations bridge invalid anchors. `ffill`, `merge_asof`, grouped fills, and shifted sparse signals must preserve intentional `NaN` gaps when the source value at a completed bin, close, boundary, or anchor is missing.
-
-For checked-in generated snapshots, reports, manifests, figures, or evidence bundles, verify provenance as well as bytes. A snapshot matching local generated output is not enough if the manifest records a commit, run id, spec hash, data version, or source path that will not be reachable or auditable from the published PR history.
-
-Do not finish this lens until you have checked both valid data and one malformed, missing, boundary, or round-trip path when the diff changes validation, parsing, artifact schemas, or feature generation.
+- Check parsing, validation, casts, missing values, ordering/time boundaries, and schema compatibility.
+- Check both valid data and one malformed, missing, boundary, or round-trip path when validation or parsing changes.
+- Verify checked-in generated artifacts by provenance, schema/version, and reachable source evidence, not just matching bytes.
+- Trace at least one downstream consumer that depends on the changed shape or semantics.
 
 ### Broad Refactor And Removed Surface
 
 Use when code moves, modules split/merge, routes/commands/UI controls are removed, or ownership boundaries change.
 
-Sweep for stale references in callers, tests, README, active specs, visible docs, CLI help, fixtures, and generated outputs. If docs conflict with source, classify whether the doc is active authority, stale background, or an implementation gap.
-
-When boundary tests are added, check alternate import forms such as `import package.submodule`, `from package.submodule import x`, and `from package import submodule`.
+- Sweep for stale references in callers, tests, docs, CLI/UI surfaces, fixtures, and generated outputs.
+- Check import, route, command, and compatibility paths that callers may still use.
+- Verify the new boundary reduces coupling or caller knowledge rather than hiding simple control flow.
+- If docs conflict with source, classify active authority, stale background, or implementation gap.
 
 ### Config And Generated Names
 
 Use when the diff touches config parsing, policy/action settings, thresholds, generated identifiers, feature names, or deduplication.
 
-Reject ambiguous booleans, non-finite floats, and silent coercion. Check for generated-name collisions before deduplication, rounding, normalization, or hashing hides distinct inputs.
-
-For new enum values, policy methods, strategy modes, or matrix/config fields, verify compatible companion fields and producer paths. A config option that requires a specific signal kind, artifact producer, model family, schema version, or execution mode should be rejected by the loader or factory when paired with an incompatible option, not left to fail later through missing artifacts or empty inputs.
-
-When policy values can be supplied through multiple layers, such as risk-level caps and method-level caps, trace the canonical helper or fallback path. Do not assume a behavior is inactive just because the nearest config field is absent if shared code falls back to another field.
-
-Do not finish this lens from parser membership alone. Trace at least one accepted value from loader to factory/materializer to runtime consumer, and check that incompatible combinations are rejected early.
+- Reject ambiguous booleans, non-finite numbers, silent coercion, and incompatible option combinations early.
+- Trace at least one accepted value from loader/parser to runtime consumer; parser membership alone is not enough.
+- Check companion fields, defaults, fallback layers, and producer paths for new modes or enum/config values.
+- Check generated-name collision, stability, normalization, rounding, and deduplication behavior.
 
 ### Performance, Cache, And Hot Path
 
 Use when the diff changes caching, memoization, benchmark/runtime paths, preflight checks, dashboard/report timing, or fast paths.
 
-Check cache key completeness, stale cache identity, hot/cold path equivalence, skip status, CLI exit semantics, timing counter correctness, and producer-consumer ordering for reports, gates, dashboards, manifests, or summaries. Passing unit tests or faster runtime does not prove the hot path measures the intended thing.
-
-If a fast path prunes payloads, metrics, columns, or objects before shared ranking or selection logic, verify that all tie-breakers and downstream semantics remain equivalent.
-
-For content-addressed caches, compare the key against every input consumed by the cached payload, not only obvious dates or file paths. Include policy/profile/window fields, split settings, recipe identities, feature identities, model settings, output schema versions, and any option that can change produced rows or assignments.
-
-For cache-hit materialization, check idempotency and output ownership. A hit should behave correctly when the destination already exists, when hardlinking is unavailable, and when a copy fallback is used. It must not corrupt the cached source, leave stale destination contents, or fail on a normal warm rerun.
-
-For artifact reuse decisions, validate both the cached source identity and the current requested output paths. If the cold path writes several artifacts, the reuse path must either materialize all requested artifacts or explicitly prove they are unnecessary; rewriting only a summary while leaving CSVs, sidecars, or reports absent at the new paths is a review finding.
-
-For diagnostics and research readouts, distinguish aggregate measurements from causal attribution. If several caps, filters, skips, or intentional underinvestment paths can produce the same residual, do not label the entire residual as caused by one rule unless metadata or event-level evidence proves it.
-
-Do not finish this lens from a warm-path happy test alone. Check at least one stale identity, changed option, existing destination, fallback path, mixed-cause metric, or downstream consumer when the diff changes cache, fast-path, or diagnostics behavior.
+- Check cache key completeness against every consumed input, option, and output schema version.
+- Compare hot/cold or cached/uncached semantics, output materialization, idempotency, stale identity, existing destination, and fallback behavior.
+- Check status, exit semantics, timing counters, producer-consumer ordering, and downstream consumers.
+- Treat aggregate performance or diagnostic numbers as causal only when metadata or event-level evidence supports the attribution.
 
 ### Dependency, Build, And Runtime
 
 Use when the diff changes `pyproject.toml`, requirements or lock files, package pins, build-system pins, install commands, Python or language version support, tool target versions, CI setup, or Makefile/package scripts.
 
-Cross-check the advertised runtime floor against every pinned runtime, build, and test dependency. If package metadata is missing, require install/import evidence, upstream docs, or an explicit repo note. Also check tool target versions, install order, editable install behavior, and metadata tests.
+- Cross-check runtime floors, dependency pins, lockfiles, tool target versions, CI setup, and install order.
+- Verify package metadata, editable install behavior, or import/install evidence when dependency declarations change.
+- Check generated commands, scripts, and copy-paste instructions for quoting and dynamic paths; prefer argument arrays when possible.
+- Check missing, malformed, unreadable, or optional config/report inputs according to the caller contract.
 
-When a change generates shell commands, scripts, benchmark packets, or copy-paste CLI instructions, check dynamic paths and values for quoting. Prefer argument arrays where possible; otherwise require shell-quoting for paths, manifests, run directories, timing files, and user-controlled values. Optional readers for summary/report tooling should handle missing, malformed, unreadable, and non-object JSON/YAML according to the caller contract instead of crashing unexpectedly.
+### Security, Privacy, And Destructive Risk
 
-Do not finish this lens from imports or unit tests alone. Check install/runtime compatibility, generated commands, or package metadata directly when the diff changes dependency declarations, build tooling, runtime floors, command construction, or benchmark runners.
+Use when the diff touches auth, permissions, secrets, PII, filesystem/network access, data deletion, migrations, publishing, or external services.
+
+- Check that new data exposure, logging, telemetry, artifacts, and errors do not leak secrets or private data.
+- Check authorization, path traversal, shell injection, request validation, and unsafe defaults on plausible paths.
+- Check destructive operations for target scope, reversibility, dry-run behavior, and user approval boundaries.
+- Verify security/privacy behavior through source, tests, docs, or CI evidence; do not infer safety from intent.
 
 ### Tests And Checks
 
@@ -157,23 +165,17 @@ For each changed behavior, ask what test would fail on the old bug. Weak signs:
 
 - Only happy-path tests for validation changes.
 - Tests that assert implementation details but not caller-facing behavior.
-- No negative cases for malformed config, stale caches, removed surfaces, or boundary imports.
-- No negative cases for incompatible config-field combinations, such as a method that requires a companion signal/artifact path.
-- No tests where equivalent policy is supplied through each supported config layer, such as risk-level and method-level caps.
-- No diagnostics tests for mixed-cause metrics where only part of a residual should be attributed to a specific rule.
-- No provenance check for checked-in generated evidence, such as whether recorded commit hashes are reachable from the PR head or published history.
+- No negative or boundary cases for malformed config, stale caches, removed surfaces, generated names, destructive operations, or boundary imports.
 - A passing full suite but no focused test for the risky branch.
 - A skipped or failing check whose output is not triaged.
-- Permissive spies or monkeypatches such as `raising=False` when the target symbol should exist.
-- Cache tests that prove a hit exists but not that changed policy fields, changed output paths, existing destinations, copy fallback, or malformed cached metadata are handled.
+- Permissive spies, mocks, monkeypatches, or fixtures that can pass while the real caller-facing path is broken.
+- Checked-in generated evidence without provenance or consumer checks.
 
 ## Subagents
 
-Use subagents only when the user, repo instructions, or approved plan authorizes them and the environment permits delegation.
+Use subagents only when authorized and the diff is broad or high-risk with separable lenses. Otherwise run the lenses locally and label the result as self-review.
 
-Subagent fan-out is justified for broad or high-risk diffs with separable lenses, such as data/schema, security/privacy, tests, dependency/build, performance/cache, migration, API/CLI/UI contract, or removed-surface review.
-
-If subagents are unavailable or unauthorized, run the same lenses locally and label the result as self-review. The parent must deduplicate and verify all findings against source, diff, tests, logs, command output, CI, or PR review threads.
+The parent must deduplicate and verify all findings against source, diff, tests, logs, command output, CI, or PR review threads.
 
 ## Verdict Rules
 
@@ -195,30 +197,32 @@ Before returning `Safe to PR`, do a verdict pass:
 
 Lead with findings. Keep summaries secondary.
 
+For small reviews:
+
+```text
+Findings:
+Checks:
+Verdict:
+Confidence:
+Remaining uncertainty:
+```
+
+For broad or high-risk reviews, include the detail needed to make each finding actionable:
+
 ```text
 Review path:
 Target:
 Base:
 Risk lenses:
 
-Blocking findings:
-- B1. <title>
+Findings:
+- <blocking|should-fix|optional>: <title>
   Severity:
   File/line or symbol:
   Issue:
   Failure mechanism:
   Minimal fix:
   Validation:
-
-Should-fix findings:
-- S1. <title>
-  Severity:
-  File/line or symbol:
-  Issue:
-  Failure mechanism:
-  Minimal fix:
-  Validation:
-
 Missing or weak tests:
 - ...
 

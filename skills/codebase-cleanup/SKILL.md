@@ -13,6 +13,16 @@ Cleanup is justified by repo evidence of maintenance cost, not taste. Preserve c
 
 A caller interface is everything a caller must know to use code correctly: inputs, outputs, invariants, ordering, state changes, error modes, configuration, and performance expectations. Do not judge it only by a function signature or type.
 
+First visible move:
+
+```text
+Scope:
+Behavior to preserve:
+Cleanup cost/evidence:
+Fast path or discovery path:
+Baseline check:
+```
+
 ## Human-Readable Organization Rule
 
 Cleanup includes organizing the touched code so a maintainer can read the main behavior top-to-bottom without unnecessary jumping.
@@ -39,7 +49,7 @@ Before adding a comment, first try clearer names, smaller local grouping, simple
 
 Do not optimize for small files. Optimize for clear ownership and low caller/navigation cost.
 
-Prefer an ownership module that is 150-300 cohesive lines over several tiny files that must be opened together to understand one behavior. Split a file only when the new boundary reduces coupling, hides a real implementation detail from callers, improves testability through a clearer public path, or separates distinct reasons to change.
+As a heuristic, prefer an ownership module that is 150-300 cohesive lines over several tiny files that must be opened together to understand one behavior. Do not split or merge files to hit a size target. Split a file only when the new boundary reduces coupling, hides a real implementation detail from callers, improves testability through a clearer public path, or separates distinct reasons to change.
 
 Before creating a new file, ask:
 
@@ -73,7 +83,20 @@ Use the deletion test on wrappers, helpers, adapters, and ownership modules: if 
 - Comments, docstrings, or commented-out code are stale, misleading, duplicated, noisy, or absent where they carry non-obvious caller or maintainer knowledge.
 - Current work made code, imports, flags, config, docs, commands, or files obsolete.
 
-## Opportunity Sweep
+## Fast Cleanup Path
+
+Use for narrow touched-file or touched-module cleanup when the user did not ask to discover opportunities, keep looping, or prove that no useful cleanup remains.
+
+- Name the touched scope, behavior to preserve, cleanup cost, and baseline check.
+- Inspect the relevant source, nearby tests or fixtures, and current diff if one exists.
+- Establish the cheapest useful baseline before changing behavior-sensitive code.
+- Make one behavior-preserving cleanup slice.
+- Run the same focused check after the edit.
+- Inspect the diff for behavior preservation, scope control, import/comment/readability cleanup, and reduced future change cost.
+
+Do not build a coverage ledger for ordinary narrow cleanup. If the cleanup expands into multiple ownership boundaries, repeated candidates, broad file movement, or "keep cleaning" scope, switch to the Discovery Path.
+
+## Discovery Path
 
 When the user asks to find cleanup opportunities, continue searching, keep looping, keep cleaning, keep working until nothing useful remains, or similar, the wording changes the done check: one good bundle is not completion, and endless churn is not success. First define the requested scope, decide whether it can be inspected honestly in one pass, and run a bounded sweep across independent evidence signals before selecting a bundle.
 
@@ -88,7 +111,7 @@ The smallest useful loop controls edit size and verification size, not discovery
 - Recent diffs, TODOs, deprecations, wrappers, options, or compatibility paths that may no longer earn their cost.
 - Additional cheap signals for exhaustive cleanup: duplicate-rule scans, dead private helper scans, repeated import/source scans, stale comment scans, test-friction scans, and ownership-boundary reads.
 
-Keep a short coverage ledger:
+Use a coverage ledger only for discovery, continued cleanup, exhaustive search, or "nothing useful remains" claims:
 
 ```text
 Requested scope:
@@ -115,32 +138,14 @@ Do not claim that no cleanup remains unless the coverage ledger shows the reques
 
 ```text
 Bundle:
-Why these changes belong together:
-Repo evidence of cost:
-Caller-visible behavior to preserve:
-Current public or caller contract:
-Interface depth:
-Current reading/navigation problem:
-Human-readable organization plan:
-Import cleanup plan:
-Comment/docstring plan:
-Comments to remove or avoid:
-Likely files/modules:
-Candidate changes:
-Consolidation option:
-Navigation cost:
-Would these files usually be opened together:
-Why a new file is justified, if any:
-Deletion test outcome:
-Locality/leverage gained:
-Test surface impact:
-Domain term or ADR constraint:
-Dependencies or ordering constraints:
-What should not be included:
-Baseline check:
-Diff risk:
-Verification:
-Engineering return: high|medium|low
+Why together:
+Evidence of cost:
+Behavior to preserve:
+Likely files:
+Change:
+Baseline/check:
+Risk:
+Return: high|medium|low
 ```
 
 5. Recommend an ordered bundle plan, not only the single best opportunity. Order bundles by dependencies, behavior-preservation risk, validation confidence, and engineering return. Name the recommended first bundle and the next bundle to inspect or implement after it. Prefer consolidation, caller simplification, or an existing caller-facing test surface over new file boundaries unless the split has clear ownership value. If it needs multiple reviewable slices, hand off to `slice-plan`.
@@ -154,46 +159,34 @@ Engineering return: high|medium|low
 
 - Consolidates a duplicated rule into one module, helper, or caller-facing path.
 - Consolidates small helper modules into a clearer ownership module when separation creates navigation tax without reducing coupling.
-- Keeps related types, adapters, and dispatch logic together when callers must understand them as one behavior.
 - Uses file boundaries for ownership and reasons to change, not for every helper type or implementation step.
-- Deepens a module by giving callers a smaller, clearer interface while hiding more useful implementation detail behind it.
-- Improves locality so a future change to one behavior touches fewer files, callers, tests, and state paths.
+- Deepens a module by giving callers a smaller interface, hiding useful implementation detail, and improving locality for future changes.
 - Moves I/O, persistence, network calls, time, randomness, or other side effects to an outer layer or explicit dependency.
-- Gives callers a simpler function, object, command, or module with clearer inputs, outputs, errors, and state changes.
 - Groups related code inside the right ownership boundary so setup, validation, core behavior, side effects, and output are easier to scan.
 - Removes unused imports and consolidates repeated same-source imports when the repo style and language semantics support it.
 - Orders functions and methods around the reader's path through the behavior rather than mechanical sorting.
-- Improves names, ordering, or local structure so fewer comments are needed to understand normal control flow.
-- Adds or updates a short comment or docstring for a non-obvious invariant, ordering constraint, domain rule, side effect, error mode, performance tradeoff, compatibility expectation, or public or caller contract.
+- Improves names, ordering, or local structure so fewer comments are needed.
+- Adds or updates a short comment or docstring only for non-obvious invariants, ordering constraints, domain rules, side effects, error modes, performance tradeoffs, compatibility expectations, or public or caller contracts.
 - Removes stale, misleading, duplicated, noisy, or commented-out code.
 - Strengthens an existing caller-facing test surface instead of adding private hooks or new test-only entry points.
-- Renames a concept to match shared domain or architecture language.
-- Updates `CONTEXT.md` only when cleanup resolves recurring vocabulary, module-boundary, or public or caller contract confusion.
-- Deletes code made obsolete by the current change.
-- Removes a wrapper, helper, or option that adds no useful behavior.
+- Renames a concept to match shared domain or architecture language, and updates `CONTEXT.md` only for recurring vocabulary, module-boundary, or public or caller contract confusion.
+- Deletes obsolete code, wrappers, helpers, or options that add no useful behavior.
 
 ## Bad Cleanup
 
 - Rewrites a subsystem because it looks untidy.
-- Creates one-file-per-helper, one-file-per-type, or one-file-per-step modules when the files are normally read or changed together.
-- Adds a shallow pass-through wrapper whose interface is nearly as complex as the implementation.
-- Creates an abstraction, interface, adapter, hook, or option with one real use and no actual caller variation to hide.
-- Creates a protocol, registry, or adapter with one production adapter and no real variation.
-- Splits a cohesive 150-300 line module into several tiny modules without simplifying caller behavior.
-- Hides simple control flow behind extra modules, registries, protocols, or adapters that have only one production use.
+- Creates one-file-per-helper, one-file-per-type, one-file-per-step, or size-targeted modules when the files are normally read or changed together.
+- Adds a shallow wrapper, abstraction, interface, adapter, hook, option, protocol, or registry with one real use and no actual caller variation to hide.
+- Hides simple control flow behind extra modules, registries, protocols, or adapters with one production use.
 - Extracts a pure helper only to simplify a private test while the real behavior remains scattered or hard to verify through a caller-facing entry point.
 - Moves files without reducing coupling, simplifying a caller-facing entry point, or improving a test surface.
-- Changes an interface shape but leaves callers needing the same implementation knowledge as before.
-- Changes behavior while calling it cleanup.
+- Changes behavior or interface shape while calling it cleanup, or leaves callers needing the same implementation knowledge as before.
 - Adds frameworks, dependencies, metadata machinery, or configuration systems.
-- Adds comments that restate obvious code, type names, function names, assignments, or simple control flow.
-- Uses comments to explain confusing code that should instead be renamed, regrouped, simplified, or moved behind a clearer interface.
+- Adds comments that restate obvious code or explain confusing code that should be renamed, regrouped, simplified, or moved behind a clearer interface.
 - Reorders, renames, or reformats broad areas for style without reducing caller knowledge, navigation cost, or maintenance risk.
 - Leaves unused imports or repeated same-source imports in touched files after cleanup when no repo-style or semantic reason requires them.
-- Alphabetizes, reshuffles, or splits methods and helpers without making the behavior easier to read or change.
 - Mixes broad formatting churn with a functional or cleanup change.
-- Treats one cleanup bundle, one passing check, or one quick scan as proof that a continued-cleanup scope is exhausted.
-- Keeps cleaning after only low-value, risky, out-of-scope, or decision-blocked candidates remain.
+- Treats one cleanup bundle, one passing check, or one quick scan as proof that a continued-cleanup scope is exhausted, or keeps cleaning after only low-value, risky, out-of-scope, or decision-blocked candidates remain.
 - Starts file moves, abstraction work, deletes, or broad formatting before the source evidence, caller-visible behavior to preserve, and baseline check are known.
 - Deletes pre-existing dead code outside the requested area without approval.
 

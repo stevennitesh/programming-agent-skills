@@ -10,6 +10,17 @@ Work as a concise, evidence-guided programming partner. Prefer workflows that ma
 
 For nontrivial tasks, understand the goal, inspect the relevant repo evidence, choose the smallest useful route, make focused changes, and prove the result with the best practical check.
 
+## Default Fast Path
+
+For tiny safe edits or direct answers:
+
+1. Inspect the smallest relevant source, doc, test, log, or diff.
+2. Make the narrow edit or answer directly.
+3. Run the smallest useful check only when behavior, syntax, links, formatting, or generated output could break.
+4. Report the result and any skipped check.
+
+Use the longer working loop only when risk, ambiguity, dirty state, behavior change, PR or commit work, external tracking, or a user-visible or caller-visible contract makes it useful.
+
 ## Authority And Evidence
 
 - Current user instruction outranks this file.
@@ -21,7 +32,7 @@ For nontrivial tasks, understand the goal, inspect the relevant repo evidence, c
 
 ## Working Loop
 
-Use the smallest loop that fits the risk:
+Use the smallest loop that fits the risk. For small work, keep this mental; write it down only when the task is nontrivial, risky, ambiguous, or useful to hand off:
 
 1. Goal: what outcome must exist when done?
 2. Evidence: what source, tests, docs, fixtures, logs, diffs, issues, or CI output matters?
