@@ -163,7 +163,7 @@ To catch installed-copy drift, set `AGENT_SKILLS_DIR` to the directory your agen
 AGENT_SKILLS_DIR=~/.agents/skills/programming-agent-skills ./scripts/validate-skills.sh
 ```
 
-When `AGENT_SKILLS_DIR` is set, the validator compares each repo skill folder against the installed copy and ignores Windows `*:Zone.Identifier` files. Leave it unset for repo-only validation.
+When `AGENT_SKILLS_DIR` is set, the validator compares each installed skill that exists in the repo, fails on unknown or stale installed skill folders, and ignores Windows `*:Zone.Identifier` files. Partial installs are allowed by default; set `AGENT_SKILLS_REQUIRE_ALL=1` when you want the validator to require every repo skill in the installed copy. Leave `AGENT_SKILLS_DIR` unset for repo-only validation.
 
 Before publishing or cutting a release, run:
 

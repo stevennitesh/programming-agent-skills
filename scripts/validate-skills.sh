@@ -295,16 +295,27 @@ if [ -f AGENTS_SKILL_PACK_ROUTER.md ]; then
 fi
 
 installed_skills_dir=${AGENT_SKILLS_DIR:-}
+require_all_installed=${AGENT_SKILLS_REQUIRE_ALL:-0}
 if [ -n "$installed_skills_dir" ]; then
     if [ ! -d "$installed_skills_dir" ]; then
         fail "AGENT_SKILLS_DIR does not exist or is not a directory: $installed_skills_dir"
     elif [ -d skills ]; then
+        for installed_skill_dir in "$installed_skills_dir"/*; do
+            [ -d "$installed_skill_dir" ] || continue
+            installed_skill_name=${installed_skill_dir##*/}
+            if ! has_line "$installed_skill_name" "$skill_names_file"; then
+                fail "Installed AGENT_SKILLS_DIR contains unknown or stale skill: $installed_skill_name"
+            fi
+        done
+
         while IFS= read -r skill_name; do
             [ -n "$skill_name" ] || continue
             repo_skill_dir="skills/$skill_name"
             installed_skill_dir="$installed_skills_dir/$skill_name"
             if [ ! -d "$installed_skill_dir" ]; then
-                fail "Installed skill missing from AGENT_SKILLS_DIR: $skill_name"
+                if [ "$require_all_installed" = "1" ]; then
+                    fail "Installed skill missing from AGENT_SKILLS_DIR: $skill_name"
+                fi
                 continue
             fi
             if diff -qr --exclude='*:Zone.Identifier' "$repo_skill_dir" "$installed_skill_dir" > "$installed_diff" 2>"$tmp_dir/installed_diff_err"; then

@@ -67,7 +67,7 @@ Do not count a broad deterministic check as semantic review. Passing tests suppo
 
 ## Evidence Order
 
-1. Read repo instructions first: `AGENTS.md`, nested instructions for touched paths, and repo docs that define commands, contracts, or review rules.
+1. Read repo instructions first: existing root instruction files such as `AGENTS.md`, `CLAUDE.md`, `AGENTS_PORTABLE_FALLBACK.md`, or `AGENTS_SKILL_PACK_ROUTER.md`; nested instructions for touched paths; and repo docs that define commands, contracts, or review rules.
 2. Inspect the diff before reading broad unrelated source.
 3. Read affected callers, tests, fixtures, docs, configs, CI/check definitions, and generated-contract files only as needed to verify behavior.
 4. Run cheap relevant deterministic checks when they are known and fit the risk. Separate commands actually run from commands only recommended.

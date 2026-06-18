@@ -63,7 +63,8 @@ Present:
 Write only after approval:
 
 - Prefer updating the existing repo instruction file over creating a parallel one.
-- If neither `AGENTS.md` nor `CLAUDE.md` exists, ask which convention to create before writing.
+- Treat `AGENTS.md`, `CLAUDE.md`, `AGENTS_PORTABLE_FALLBACK.md`, and `AGENTS_SKILL_PACK_ROUTER.md` as existing repo instruction conventions.
+- If no repo instruction file exists, ask which convention to create before writing.
 - Update an existing agent-skills block in place instead of appending a duplicate.
 - Create optional `docs/agents/` files only when the same issue-tracker, label, domain-doc, or verification facts will be reused by multiple skills.
 - Keep repo setup docs as durable facts and conventions, not progress notes, task status, or skill summaries.
