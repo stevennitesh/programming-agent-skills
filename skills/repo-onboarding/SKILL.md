@@ -23,7 +23,7 @@ Read only what helps the current coding work:
 
 - nearest repo instructions and command sources
 - manifests, scripts, test docs, or CI only when commands/checks matter
-- branch, dirty state, remotes, and scratch/worktree rules when safety or GitHub state matters
+- branch, unknown user work, remotes, and scratch/worktree rules when safety or GitHub state matters
 - relevant source/test entry points for the current task
 - `CONTEXT.md`, `CONTEXT-MAP.md`, ADRs, issues, PRs, or review threads only when shared terms, contracts, tracker state, or external state matter now
 - existing agent setup only when adopting or refreshing repo workflow setup
@@ -110,7 +110,7 @@ Add `Adoption facts:` only when the Niche Adoption Path ran.
 ## Handoff
 
 - Return to `coding-router` when enough repo context exists to choose the next workflow.
-- Use `workspace-safety` before dirty-tree edits, branch/worktree actions, dependency installs, generated output, staging, commits, or PRs.
-- Use `issue-driven-execution` when the user wants a plan doc, GitHub issues, and issue-by-issue execution after repo conventions are known.
-- Use `github-tracking` when issue, PR, CI, review-thread, or durable GitHub state is part of the work.
+- Use `workspace-safety` before edits that overlap dirty paths, branch/worktree actions, dependency installs, generated output, staging, commits, or PRs.
+- Use `issue-driven-execution` when the user wants a plan doc, GitHub issues, issue-by-issue execution, and an explicit checkpoint policy after repo conventions are known.
+- Use `github-tracking` when onboarding findings need durable issue/PR records, readiness/blocker comments, PR/issue links, or recorded CI/review evidence.
 - Use `verify-before-done` before claiming the repo is ready, checks are known, setup is complete, or adoption work is finished.

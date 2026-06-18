@@ -1,6 +1,6 @@
 ---
 name: slice-plan
-description: "Use when approved repo work needs multiple source, test, or docs steps; multiple files; end-to-end behavior slices; coding-agent handoff; a plan that may later feed issue/PR tracking; or durable plan notes without copying source code into the plan."
+description: "Use when approved multi-step repo work truly needs a written execution plan or handoff with task boundaries, checks, execution mode, ownership scope, continuity, and final verification; skip tiny edits, one behavior, one bug, or issue-only/PR-only tracking."
 ---
 
 # Slice Plan
@@ -13,7 +13,7 @@ Each task should be one reviewable source, test, or docs change with a pass/fail
 
 Ownership scope means the files, modules, contracts, generated outputs, dependency/config state, or behavior a task, issue, or agent may change. It is task scope, not the same thing as GitHub assignee, repository owner, or long-term code ownership.
 
-When approved repo work needs multiple source, test, docs, research, or verification steps, first decide whether a written plan is actually needed. Before writing tasks, account for the approved goal and non-goals, current repo evidence, public or caller contract, acceptance checks, execution mode, ownership scope, task continuity, verification commands, and the next handoff.
+When approved multi-step repo work appears to need a written plan or handoff, first decide whether the plan is actually needed. Before writing tasks, account for the approved goal and non-goals, current repo evidence, public or caller contract, acceptance checks, execution mode, ownership scope, task continuity, verification commands, and the next handoff.
 
 Do not turn a vague request into a broad task list. If target behavior, public or caller contract, ownership boundary, execution mode, or acceptance checks are unclear, resolve that with `clarify-scope`, `repo-onboarding`, or a focused source read before planning.
 
@@ -26,7 +26,7 @@ Scale the plan to the repo work:
 - Multi-step local repo work: write an inline plan with 2-5 tasks.
 - Multi-session repo work, GitHub issues, subagent handoffs, or risky changes: use the full plan shape below.
 - Unclear target: do not plan yet; use `clarify-scope`.
-- If the only output needed is GitHub issues, PR tracking, or issue-by-issue execution, use `github-tracking` or `issue-driven-execution` after the source scope is clear.
+- If the only output needed is GitHub issues, PR tracking, or issue-by-issue execution with an explicit checkpoint policy, use `github-tracking` or `issue-driven-execution` after the source scope is clear.
 
 ## Fast Path
 
@@ -183,10 +183,10 @@ Next route:
 ## Handoff
 
 - `tdd-slice`: behavior-changing tasks.
-- `codebase-cleanup`: behavior-preserving refactor tasks.
+- `codebase-cleanup`: cleanup discovery, explicit reviewability cleanup, or behavior-preserving refactor tasks with structure, caller-interface, testability, duplication, or obsolete-code risk.
 - `diagnose-loop`: tasks that start from a failing test, bug, regression, log, or unexplained symptom.
-- `issue-driven-execution`: the plan should become a plan doc, GitHub issues, and issue-by-issue execution.
-- `github-tracking`: the plan should become issues, PR notes, CI/check evidence, or durable GitHub records.
+- `issue-driven-execution`: the plan should become a plan doc, GitHub issues, issue-by-issue execution, and an explicit checkpoint policy.
+- `github-tracking`: the plan should become issues, PR record updates, readiness/blocker comments, or recorded CI/review evidence.
 - `subagent-workflow`: the user asked for subagents or independent coding/review work is genuinely useful.
-- `workspace-safety`: before branch, worktree, commit, destructive, dependency install, generated-output, or dirty-tree operations.
+- `workspace-safety`: before branch, worktree, commit, destructive, dependency install, generated-output, or overlapping dirty-path operations.
 - `verify-before-done`: before claiming the plan, branch, PR, or implementation is complete.

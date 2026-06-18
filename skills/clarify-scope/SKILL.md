@@ -1,6 +1,6 @@
 ---
 name: clarify-scope
-description: Use when a coding request is unclear, broad, user- or caller-visible, architectural, or likely to change runtime behavior, public or caller contract, tests, release risk, data/state, or rollback path.
+description: Use when cheap repo evidence cannot resolve a material decision about target behavior, public or caller contract, test strategy, data/state/security, release or rollback risk, ownership boundary, or durable decision records before safe implementation can proceed.
 ---
 
 # Clarify Scope
@@ -15,7 +15,7 @@ Prefer repo evidence over questions. Prefer a small caller-visible, testable sli
 
 Public or caller contract = the compatibility promise a user, API, CLI, UI, workflow, or downstream module depends on.
 
-When the user request or repo evidence is unclear, broad, architectural, user- or caller-visible, or likely to change runtime behavior, public or caller contract, tests, data/state, release risk, or rollback, clarify the implementation boundary before designing, planning, prototyping, opening issues, or editing production code.
+When cheap repo evidence cannot resolve a material target-behavior, public or caller contract, test, data/state, security, release/rollback, ownership, or durable-record decision, clarify the implementation boundary before designing, planning, prototyping, opening issues, or editing production code.
 
 First inspect the cheapest repo evidence named or implied by the request: entry point, caller or user path, tests or fixtures, docs or specs, issues, recent diffs, logs, CI output, or shared language files when terms affect the work.
 
@@ -40,7 +40,7 @@ If accepted, I will:
 
 4. If not blocked, state the reversible assumption and proceed to the next route.
 
-If the request is too large, name the smallest user-visible or caller-visible slice that can be built, tested, and reviewed on its own. If multiple approaches are plausible, present at most three, tie trade-offs to correctness, compatibility, maintainability, delivery risk, or testability, and recommend one.
+If the request is too large, name the smallest user-visible or caller-visible slice that can be built, tested, and reviewed on its own. Present multiple approaches only when the choice changes correctness, compatibility, maintainability, delivery risk, or testability; give at most three, tie trade-offs to that material difference, and recommend one.
 
 For interface work, describe only the contract details that matter to the next route: inputs, outputs, invariants, ordering, error modes, required configuration, performance expectations, and compatibility expectations.
 
@@ -65,7 +65,7 @@ If accepted, I will:
 
 ## Niche Prototype Path
 
-Use only when source/test evidence and one material question are slower or insufficient, and a small throwaway artifact can answer a specific design, state-machine, data-model, or UI choice faster than discussion.
+Use only when cheap source/test evidence and one blocking question cannot resolve a material design, state-machine, data-model, or UI choice, and a small throwaway artifact is the cheapest evidence.
 
 State only the prototype question, artifact location, run command or URL, data/persistence safety, disposal or absorption path, and durable decision capture.
 
@@ -137,9 +137,8 @@ Stop when target behavior can be tested, the implementation boundary is clear, a
 ## Handoff
 
 - `slice-plan`: scoped work needs multiple reviewable source, test, docs, or tracking slices.
-- `issue-driven-execution`: the user wants the clarified work turned into a plan doc, GitHub issues, and issue-by-issue execution.
+- `issue-driven-execution`: the user wants the clarified work turned into a plan doc, GitHub issues, issue-by-issue execution, and an explicit checkpoint policy.
 - `tdd-slice`: behavior implementation.
 - `diagnose-loop`: investigation reveals a bug.
 - `codebase-cleanup`: clarification reveals module-boundary, duplicate-vocabulary, caller-interface, or test-surface problems.
 - `github-tracking`: the result should become a PRD, issue, or long-lived decision record.
-- Consider a future `prototype-spike` skill only if prototype work becomes common enough that this skill's compact option is no longer enough.

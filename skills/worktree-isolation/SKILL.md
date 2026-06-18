@@ -54,7 +54,7 @@ Avoid when:
 - work is read-only exploration, review, planning, triage, or issue writing
 - implementation is sequential, tiny, or handled by one parent-owned workspace
 - one decision or one failing check should be handled locally first
-- the need is ordinary dirty-tree or risky Git safety without parallel implementation; use `workspace-safety`
+- the need is ordinary overlapping dirty-path or risky Git safety without parallel implementation; use `workspace-safety`
 - ownership scope, forbidden scope, acceptance check, verification command, base branch, or cleanup owner is unknown
 
 ## Full Path
@@ -174,5 +174,5 @@ Cleanup owner/condition:
 - `issue-driven-execution`: return after worktree setup when plan issues declare `parallel-disjoint` or `parallel-overlap`.
 - `workspace-safety`: before branch/worktree creation, dependency install, generated output, staging, commits, pushes, or cleanup.
 - `tdd-slice`, `diagnose-loop`, or `codebase-cleanup`: the controlling implementation skill inside the worktree.
-- `github-tracking`: when worktree branches map to issues, PRs, CI/check status, or review threads.
+- `github-tracking`: when worktree branches need durable issue/PR links, claim/status comments, readiness/blocker updates, or recorded CI/review evidence.
 - `verify-before-done`: before claiming a worktree task, integration, branch, PR, or cleanup is complete.

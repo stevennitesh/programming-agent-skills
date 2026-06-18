@@ -82,7 +82,7 @@ Implementation subagents follow the plan or issue execution mode. Missing mode m
 
 | Role | Use for | Template |
 | --- | --- | --- |
-| Explorer | Read-only source investigation, code mapping, reproduction evidence, implementation options | `templates/explorer.md` |
+| Explorer | Read-only source investigation, code mapping, reproduction evidence, existing implementation paths | `templates/explorer.md` |
 | Implementer | One caller-visible slice or disjoint file/module scope with checks | `templates/implementer.md` |
 | Spec reviewer | Does the diff match the request, plan, public contract, and acceptance criteria? | `templates/spec-reviewer.md` |
 | Quality reviewer | Correctness, regression risk, security/data risk, dependency/config risk, maintainability, tests | `templates/quality-reviewer.md` |
@@ -104,7 +104,7 @@ Verification or evidence required:
 Parent follow-up:
 ```
 
-For implementation packets, prefer `templates/implementer.md` and include execution mode, worktree or branch, controlling skill, dependencies, and continuity context there.
+For implementation packets, prefer `templates/implementer.md` and include execution mode, worktree or branch, controlling route, dependencies, and continuity context there.
 
 ## Implementation Review Gate
 
@@ -154,6 +154,6 @@ For read-only work, `Findings or fixes` can be parent-verified findings. For imp
 
 - Return to `coding-router` after subagent reports, review gates, and parent verification update the route.
 - Use `worktree-isolation` when approved parallel implementation needs separate branches/worktrees; overlap also needs an integration strategy.
-- Use `workspace-safety` before delegated edits in a dirty tree, branch/worktree changes, dependency installs, generated output, or risky git operations.
-- Use `github-tracking` when subagent work should become issue, PR, CI/check, or review-thread evidence.
+- Use `workspace-safety` before delegated edits that overlap dirty paths, branch/worktree changes, dependency installs, generated output, or risky git operations.
+- Use `github-tracking` when subagent work should become durable issue/PR record updates, claim/status comments, or recorded CI/review evidence.
 - Use `verify-before-done` before claiming delegated work is complete, reviewed, ready, safe, or mergeable.

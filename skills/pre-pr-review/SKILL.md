@@ -249,7 +249,7 @@ Stop or reroute when:
 - The review command fails and no equivalent self-review can be performed from repo evidence.
 - A deterministic check fails and the cause is not understood; use `diagnose-loop`.
 - The user asks to fix findings; use `tdd-slice`, `diagnose-loop`, or a small inspect/edit/check loop.
-- PR threads, CI, or review status matter; use `github-tracking`.
+- PR threads, CI, or review status need durable record updates; use `github-tracking`.
 - Subagents are requested or an approved review plan calls for them; use `subagent-workflow`.
 - You are about to claim the change is ready, reviewed, safe, or mergeable after edits; use `verify-before-done`.
 - The next route after the review is unclear, or the user changes from review to implementation, planning, PR tracking, merge, or cleanup; return to `coding-router` and choose one controlling route.
@@ -257,7 +257,7 @@ Stop or reroute when:
 ## Handoff
 
 - `coding-router`: choose the next controlling route after the review verdict, especially when the user asks to fix findings, open/update a PR, merge, plan work, or continue with implementation.
-- `github-tracking`: live PR metadata, review threads, CI, or review-response tracking.
+- `github-tracking`: durable PR/issue record updates, recorded CI/review evidence, or review-response decision records.
 - `subagent-workflow`: authorized multi-lens independent review.
 - `diagnose-loop`: failing checks, crashes, regressions, or unclear command output.
 - `tdd-slice`: fixing an approved finding with a behavior check.

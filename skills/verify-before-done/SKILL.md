@@ -81,7 +81,7 @@ Stop, reroute, or downgrade the claim when:
 
 If proving the claim reveals new work, return to `coding-router`.
 
-Use `pre-pr-review` for semantic diff review, `diagnose-loop` for unexplained failures, `workspace-safety` for dirty tree or Git risk, `github-tracking` for durable issue/PR records, and GitHub plugin skills or tools for live PR/comment/CI state.
+Use `pre-pr-review` for semantic diff review, `diagnose-loop` for unexplained failures, `workspace-safety` for overlapping dirty paths or Git risk, `github-tracking` for durable issue/PR records, and GitHub plugin skills or tools for live PR/comment/CI state.
 
 ## Report
 

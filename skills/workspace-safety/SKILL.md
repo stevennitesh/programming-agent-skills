@@ -1,6 +1,6 @@
 ---
 name: workspace-safety
-description: "Use as a lightweight gate when dirty state or a repo operation could overwrite, delete, publish, mix, stage, regenerate, or depend on unknown work: overlapping edits, relevant untracked files, staging, commit, PR, push, merge, branch/worktree changes, installs, lockfiles, migrations, generators, broad formatters, generated cleanup, or destructive Git/filesystem commands."
+description: "Use as a lightweight gate when overlapping dirty tracked paths, relevant untracked protected paths, or repo operations could overwrite, delete, publish, mix, stage, regenerate, or depend on unknown work: staging, commit, PR, push, merge, branch/worktree changes, installs, lockfiles, migrations, generators, broad formatters, generated cleanup, or destructive Git/filesystem commands."
 ---
 
 # Workspace Safety
@@ -94,7 +94,7 @@ Before commit or PR:
 - confirm current branch and HEAD when push, PR, merge, or commit state matters
 - run relevant checks after the final source, test, config, docs, workflow, migration, lockfile, or generated-file change
 - stage only intended files unless the user explicitly asks for all changes
-- run `git diff --cached --check`
+- run `git diff --check` for working-tree or PR-ready diffs, and `git diff --cached --check` when staging or committing
 - leave unrelated work untouched
 - use `verify-before-done` before claiming ready, safe, passing, mergeable, or complete
 
@@ -118,8 +118,8 @@ Stop or ask when:
 - a generated, dependency, formatter, migration, or tool command changed unexpected paths
 - destructive action scope is unclear
 - branch, PR, CI, merge, or worktree state matters but current state is unknown
-- the safest route is a smaller edit, separate worktree, local self-review, or user decision
+- the safest route is a smaller edit, separate worktree, or user decision
 
 ## Handoff
 
-Return to the controlling skill after the safety route is handled. Use `worktree-isolation` for approved parallel implementation, `github-tracking` for live issue/PR/CI state, and `verify-before-done` for final readiness claims.
+Return to the controlling skill after the safety route is handled. Use `worktree-isolation` for approved parallel implementation, `github-tracking` for durable issue/PR record updates or recorded CI/review evidence, and `verify-before-done` for final readiness claims.

@@ -34,11 +34,11 @@ If the task still fits the micro-loop, do not route to another skill.
 | Unclear behavior, interface, or public or caller contract after cheap repo evidence | `clarify-scope` |
 | Bug, failing command, build/CI failure, regression, flake, crash, or unexplained error | `diagnose-loop` |
 | Behavior change, new user-visible or caller-visible path, or regression check needed | `tdd-slice` |
-| Cleanup discovery, behavior-preserving refactor, readability/import/comment cleanup, or "keep cleaning/looping" request | `codebase-cleanup` |
+| Cleanup discovery, continued cleanup, explicit human-reviewability cleanup, behavior-preserving refactor with structure or testability risk, duplicated logic, module-boundary or caller-interface cleanup, or obsolete-code removal | `codebase-cleanup` |
 | Branch, commit, working tree, or PR-ready diff needs semantic correctness review | `pre-pr-review` |
 | Creating or changing coding-agent skills | `author-skills` |
 | Multi-step approved work truly needs a written plan or handoff | `slice-plan` |
-| User explicitly wants plan doc + GitHub issues + issue-by-issue checkpoints | `issue-driven-execution` |
+| User explicitly wants plan doc + GitHub issues + issue-by-issue execution with an explicit checkpoint policy | `issue-driven-execution` |
 
 Do not use `slice-plan` for one behavior, one bug, a tiny edit, or a plan that can stay in the chat.
 
@@ -48,11 +48,11 @@ Use `pre-pr-review` for review requests before opening, updating, or merging a P
 
 | Risk | Gate |
 | --- | --- |
-| Dirty tree, staging, destructive operation, branch/worktree action, dependency install, formatter/generator/migration, generated output, or cleanup could affect workspace state | `workspace-safety` |
+| Overlapping dirty tracked paths, relevant untracked protected paths, staging, destructive operation, branch/worktree action, dependency install, formatter/generator/migration, generated output, or cleanup could affect workspace state | `workspace-safety` |
 | Final completion, readiness, passing, reviewed, safe, or mergeable claim | `verify-before-done` |
-| Durable issue/PR recordkeeping, accepted scope/status updates, or long-lived GitHub state | `github-tracking` |
+| Durable issue/PR recordkeeping, accepted scope/status record updates, or long-lived GitHub record state that must be written or updated | `github-tracking` |
 | Explicit user request for subagents, approved plan delegation, or clearly independent review/exploration with enough scope | `subagent-workflow` |
-| Approved parallel implementation or real dirty-tree isolation needs separate branches/worktrees | `worktree-isolation` |
+| Approved parallel implementation or real workspace isolation needs separate branches/worktrees | `worktree-isolation` |
 
 Do not use `github-tracking` for generic live GitHub triage, PR publishing, CI debugging, or review-comment resolution when a GitHub-specific plugin skill or direct tool flow owns that job.
 
@@ -65,6 +65,7 @@ Do not use `subagent-workflow` merely because parallelism seems useful. Delegati
 - If a refactor uncovers a bug, route to `diagnose-loop`.
 - If cleanup changes behavior, route to `tdd-slice`.
 - If a gate expands into the main job, return here instead of letting the gate become the workflow.
+- If the selected skill is not installed or available, do not simulate it. Use the closest installed route only if it prevents the same failure mode; otherwise stay in the micro-loop and name the missing skill as unavailable.
 - If no specialized route prevents a failure mode, stay in the micro-loop.
 
 ## Evidence

@@ -80,7 +80,7 @@ Stop or ask when:
 
 ## Handoff
 
-Use `tdd-slice` for approved behavior checks, `codebase-cleanup` when structure blocks a durable fix or test, `workspace-safety` before dirty-tree or Git risk, `github-tracking` when the bug should become durable issue/PR state, and `verify-before-done` for final fixed/covered/passing claims.
+Use `tdd-slice` for approved behavior checks, `codebase-cleanup` when structure blocks a durable fix or test, `workspace-safety` before overlapping dirty-path or Git risk, `github-tracking` when the bug should become durable issue/PR state, and `verify-before-done` for final fixed/covered/passing claims.
 
 ## Report
 
