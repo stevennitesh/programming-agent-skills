@@ -23,7 +23,7 @@ Read only what helps the current coding work:
 
 - nearest repo instructions and command sources
 - manifests, scripts, test docs, or CI only when commands/checks matter
-- branch, dirty state, remotes, and scratch/worktree rules when safety or GitHub state matters
+- branch, unknown user work, remotes, and scratch/worktree rules when safety or GitHub state matters
 - relevant source/test entry points for the current task
 - `CONTEXT.md`, `CONTEXT-MAP.md`, ADRs, issues, PRs, or review threads only when shared terms, contracts, tracker state, or external state matter now
 - existing agent setup only when adopting or refreshing repo workflow setup
@@ -63,7 +63,8 @@ Present:
 Write only after approval:
 
 - Prefer updating the existing repo instruction file over creating a parallel one.
-- If neither `AGENTS.md` nor `CLAUDE.md` exists, ask which convention to create before writing.
+- Treat `AGENTS.md`, `CLAUDE.md`, `AGENTS_PORTABLE_FALLBACK.md`, and `AGENTS_SKILL_PACK_ROUTER.md` as existing repo instruction conventions.
+- If no repo instruction file exists, ask which convention to create before writing.
 - Update an existing agent-skills block in place instead of appending a duplicate.
 - Create optional `docs/agents/` files only when the same issue-tracker, label, domain-doc, or verification facts will be reused by multiple skills.
 - Keep repo setup docs as durable facts and conventions, not progress notes, task status, or skill summaries.
@@ -110,7 +111,7 @@ Add `Adoption facts:` only when the Niche Adoption Path ran.
 ## Handoff
 
 - Return to `coding-router` when enough repo context exists to choose the next workflow.
-- Use `workspace-safety` before dirty-tree edits, branch/worktree actions, dependency installs, generated output, staging, commits, or PRs.
-- Use `issue-driven-execution` when the user wants a plan doc, GitHub issues, and issue-by-issue execution after repo conventions are known.
-- Use `github-tracking` when issue, PR, CI, review-thread, or durable GitHub state is part of the work.
+- Use `workspace-safety` before edits that overlap dirty paths, branch/worktree actions, dependency installs, generated output, staging, commits, or PRs.
+- Use `issue-driven-execution` when the user wants a plan doc, GitHub issues, issue-by-issue execution, and an explicit checkpoint policy after repo conventions are known.
+- Use `github-tracking` when onboarding findings need durable issue/PR records, readiness/blocker comments, PR/issue links, or recorded CI/review evidence.
 - Use `verify-before-done` before claiming the repo is ready, checks are known, setup is complete, or adoption work is finished.

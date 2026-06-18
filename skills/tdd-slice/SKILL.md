@@ -5,13 +5,13 @@ description: "Use when approved work changes caller-visible or user-visible beha
 
 # TDD Slice
 
-One caller-visible behavior, one focused check, smallest source change.
+One caller-visible or user-visible behavior, one focused check, smallest source change.
 
 ## Rule
 
-Use this only when approved work changes caller-visible behavior or an understood bug needs a new durable behavior check.
+Use this only when approved work changes caller-visible or user-visible behavior, adds a new behavior path, or an understood bug needs a new durable behavior or regression check.
 
-Do not use this as the default for every bug, refactor, or repeatable check. Use `diagnose-loop` when the failure is not understood, `codebase-cleanup` for behavior-preserving refactors, and `verify-before-done` for final claim wording.
+Do not use this as the default for every bug, refactor, or repeatable check. Use `diagnose-loop` when the failure is not understood. Use `codebase-cleanup` only when a behavior-preserving refactor has structure, caller-interface, testability, duplication, or obsolete-code risk. Use `verify-before-done` for final claim wording.
 
 First visible move:
 
@@ -24,11 +24,11 @@ Existing check or new check:
 RED needed: yes|no and why
 ```
 
-Prefer an existing caller-facing check when it already covers the behavior. Write a new check only when behavior is missing, changed, or unprotected.
+Prefer an existing caller-facing or user-facing check when it already covers the behavior. Write a new check only when behavior is missing, changed, or unprotected.
 
 ## Fast Path
 
-Use when an existing caller-facing check already covers the behavior.
+Use when an existing caller-facing or user-facing check already covers the behavior.
 
 - State the behavior and check.
 - Run the check before the change when preserving behavior, or use the reproduced failure from `diagnose-loop`.
@@ -42,7 +42,7 @@ Stop there unless the change expands behavior, weakens the check surface, or add
 
 Use when behavior is missing, changed, or unprotected.
 
-1. Write or identify one focused caller-facing check.
+1. Write or identify one focused caller-facing or user-facing check.
 2. Run it and confirm it fails for the right reason.
 3. Make the smallest source change that explains the failure.
 4. Rerun the focused check until it passes.
@@ -55,7 +55,7 @@ If RED fails for setup, spelling, fixture, or a different symptom, fix the check
 
 ## Test Shape
 
-Prefer the highest practical caller-facing entry point: API, CLI, UI/workflow, command, job, exported module, or integration path users or downstream callers use.
+Prefer the highest practical caller-facing or user-facing entry point: API, CLI, UI/workflow, command, job, exported module, or integration path users or downstream callers use.
 
 Use simple inputs, fixtures, and states that show the behavior clearly. Keep one main action per check.
 
@@ -70,13 +70,13 @@ Avoid:
 
 Mock only dependency boundaries you do not control, such as network, time, randomness, file systems, external processes, or third-party services. Keep enough real observable behavior that the check would fail if the behavior regressed.
 
-If the only possible check is private, shallow, or setup-heavy for non-low-risk work, stop and question the entry point. Use `codebase-cleanup` when code shape blocks a useful behavior check.
+If the only possible check is private, shallow, or setup-heavy for non-low-risk work, stop and question the entry point. Use `codebase-cleanup` only when a behavior-preserving structure or testability cleanup can unblock a useful behavior check. Stay in this skill when the source change is part of the approved behavior slice; use `clarify-scope` when the behavior, contract, or test surface needs a decision.
 
 ## If No Test Setup Exists
 
 Create the smallest repeatable check available: script, fixture, CLI command, smoke command, or repeatable manual check.
 
-The check should observe caller-visible behavior strongly enough to guide the source change. If no repeatable check can be created without a behavior, dependency, data, or interface decision, stop and ask before changing source.
+The check should observe caller-visible or user-visible behavior strongly enough to guide the source change. If no repeatable check can be created without a behavior, dependency, data, or interface decision, stop and ask before changing source.
 
 ## Stop Or Ask
 
@@ -91,7 +91,7 @@ Stop or ask before source edits when:
 
 ## Handoff
 
-Use `diagnose-loop` for unexplained failures, `codebase-cleanup` when code shape blocks a useful check or simple implementation, `workspace-safety` for dirty tree or Git risk, and `verify-before-done` for final claims.
+Use `diagnose-loop` for unexplained failures. Use `codebase-cleanup` only when behavior-preserving structure or testability cleanup would unblock the check or implementation. Stay in this skill for behavior-changing source edits, use `clarify-scope` when the behavior or contract is unclear, use `workspace-safety` for overlapping dirty paths or Git risk, and use `verify-before-done` for final claims.
 
 Use `slice-plan` only when the behavior expands into multiple real slices that need a written plan or handoff.
 

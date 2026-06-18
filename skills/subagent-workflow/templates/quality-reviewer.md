@@ -1,6 +1,6 @@
 # Quality Reviewer Template
 
-Use only after spec review passes or the parent explicitly wants a risk scan. This reviewer checks whether the source change is correct, maintainable, and well verified.
+Use after spec review passes, after the parent explicitly accepts a spec warning, or for a standalone risk scan with supplied scope and requirements. This reviewer checks whether the source change is correct, maintainable, and well verified.
 
 ```text
 Role: Quality reviewer
