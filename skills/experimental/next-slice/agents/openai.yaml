@@ -1,0 +1,8 @@
+policy:
+  allow_implicit_invocation: false
+interface:
+  display_name: "Next Slice"
+  short_description: "Implement one saved plan slice"
+  default_prompt: >-
+    Use $next-slice on the active plan if unambiguous; otherwise ask for the
+    plan path. Commit the completed slice or report the blocker.

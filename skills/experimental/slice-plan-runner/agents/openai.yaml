@@ -1,0 +1,9 @@
+policy:
+  allow_implicit_invocation: false
+interface:
+  display_name: "Slice Plan Runner"
+  short_description: "Run a slice plan unattended"
+  default_prompt: >-
+    Use $slice-plan-runner with an explicit slice limit, Execution Handoff
+    limit, or clear full unattended run request. Commit each completed slice and
+    stop on blockers.

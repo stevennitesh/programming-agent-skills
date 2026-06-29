@@ -1,0 +1,8 @@
+policy:
+  allow_implicit_invocation: false
+interface:
+  display_name: "To Slice Plan"
+  short_description: "Create no-babysitting implementation slice plans"
+  default_prompt: >-
+    Use $to-slice-plan to create, save, and strictly validate an executable
+    no-babysitting handoff for the requested implementation goal.

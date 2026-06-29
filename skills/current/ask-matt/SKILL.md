@@ -1,60 +1,111 @@
 ---
 name: ask-matt
-description: Ask which skill or flow fits your situation. A router over the explicitly invoked skills in this repo.
+description: Ask which skill or flow fits your situation. A router skill over the explicit skills in this repo.
 ---
 
 # Ask Matt
 
 You don't remember every skill, so ask.
 
-A **flow** is a path through the skills. Most paths run along one **main flow**, and two **on-ramps** merge onto it. Everything else is standalone.
+This is a **router skill**. Its job is to reduce **cognitive load** by routing the user's situation to one next skill or flow.
 
-## The main flow: idea → ship
+## Router Behavior
 
-The route most work travels. You have an idea and want it built.
+When invoked, recommend the next skill or flow.
 
-1. **`$grill-with-docs`** — sharpen the idea by interview. Start here when you **have a codebase**: it's stateful, retaining what it learns in the repo's domain glossary and ADRs. (No codebase? Use `$grilling`.)
-2. **Branch — can you settle every question in conversation?** If a question needs a runnable answer (state, business logic, a UI you have to see), detour through a prototype, bridged by **`$handoff`** in both directions (see Crossing sessions):
-   - **`$handoff`** out, then open a fresh session against that file,
-   - **`$prototype`** to answer the question with throwaway code,
-   - **`$handoff`** back what you learned, and reference it from the original idea thread.
-3. **Branch — is this a multi-session build?**
-   - **Yes** → **`$to-prd`** (turn the thread into a PRD) → **`$to-issues`** (split the PRD into independently-grabbable issues). Because the issues are independent, **start a fresh Codex session for each one** and kick off **`$implement`** by passing it the PRD and the single issue to work on.
-   - **No** → **`$implement`** right here, in the same context window.
+If the route is clear, name one recommended path and why it fits.
 
-### Context hygiene
+If the route is unclear, ask one highest-leverage question.
 
-Keep steps 1–3 in **one unbroken context window** — don't compact or clear until after `$to-issues` — so the grilling, PRD, and issues all build on the same thinking. Each `$implement` then starts fresh, working from the issue.
+Do not run the downstream skill unless the user asks.
 
-The limit on this is the **[smart zone](https://www.aihero.dev/ai-coding-dictionary/smart-zone)**: the window (~120k tokens on state-of-the-art models) within which the model still reasons sharply. If a session approaches it before `$to-issues`, don't push on degraded — `$handoff` and continue in a fresh thread.
+## First-Time Setup
 
-## On-ramps
+If this repo has not been configured for the engineering skills, route first to **`$setup-matt-pocock-skills`**.
 
-A starting situation that generates work, then merges onto the main flow.
+Use setup when `docs/agents/issue-tracker.md`, `docs/agents/triage-labels.md`, or `docs/agents/domain.md` is missing and the route depends on issues, triage labels, or domain docs.
 
-- **Bugs and requests piling up** → **`$triage`**. It moves issues through triage roles and produces Codex-ready issues, which **`$implement`** later picks up.
+## Main Flow: Idea -> Ship
 
-  Triage is only for issues **you didn't create** — bug reports, incoming feature requests, anything that arrives raw. Issues that `$to-issues` produced are already Codex-ready, so **don't triage them**.
+Use this when the user has an idea and wants it built.
 
-## Codebase health
+| Situation | Route |
+| --- | --- |
+| The idea needs sharpening in a codebase | **`$grill-with-docs`** |
+| There is no codebase context to preserve | **`$grilling`** |
+| Too much fog of war for a PRD | **`$decision-mapping`** |
+| A runnable answer is needed | **`$prototype`**, bridged by **`$handoff`** |
+| Multi-session build | **`$to-prd`** then **`$to-issues`** |
+| One ready issue or slice | **`$implement`** |
 
-Not feature work — upkeep.
+Default path:
 
-- **`$improve-codebase-architecture`** — run whenever you have a spare moment to keep the codebase good for agents to operate in. It surfaces deepening opportunities; picking one _generates an idea_ you can take into the main flow at `$grill-with-docs`.
+1. **`$grill-with-docs`** - sharpen the idea by interview and preserve resolved domain language or ADR-worthy decisions.
+2. If conversation cannot settle a question, detour through **`$prototype`** and carry the answer back with **`$handoff`**.
+3. If the build is multi-session, use **`$to-prd`** then **`$to-issues`**.
+4. If exactly one bounded slice is ready, use **`$implement`**.
 
-## Crossing sessions
+## Incoming Work
 
-- **`$handoff`** — when a thread is full or you need to branch off (e.g. into a `$prototype` session), this compacts the conversation into a markdown file. You don't continue in place — you **open a new session and reference that file** to carry the context across. It's the bridge between context windows, in either direction. Use it when you want a **fresh session** but need the **current conversation preserved**.
-- **`/compact`** (built-in) — stay in the **same conversation**, letting the earlier turns be summarized. Use it at **intentional breaks between phases**, when you don't mind losing the verbatim history. Don't compact mid-phase — Codex can lose its way. `$handoff` forks; `/compact` continues.
+Use this when work arrives raw from outside the planning flow.
 
-## Standalone
+| Situation | Route |
+| --- | --- |
+| Bugs, requests, or external PRs need sorting | **`$triage`** |
+| A ticket is already Codex-ready | **`$implement`** |
+| A bug symptom is uncertain | **`$diagnosing-bugs`** |
+| A behavior change is clear and testable | **`$tdd`** |
 
-Off the main flow entirely.
+Do not triage issues produced by **`$to-issues`**. They are already intended to be Codex-ready.
 
-- **`$grilling`** — a relentless interview for plans or designs, especially when there is no codebase context to preserve.
-- **`$teach`** — learn a concept over multiple sessions, using the current directory as a stateful workspace.
-- **`$writing-great-skills`** — reference for writing and editing skills well.
+## Codebase Health
 
-## Precondition
+Use this for maintenance and design, not direct feature work.
 
-**`$setup-matt-pocock-skills`** — run before your first engineering flow to configure the issue tracker, triage labels, and doc layout the other skills assume. Custom issue trackers also work.
+| Situation | Route |
+| --- | --- |
+| Find architecture deepening opportunities | **`$improve-codebase-architecture`** |
+| Design a deeper module or interface | **`$codebase-design`** |
+| Resolve domain language or ADR-worthy decisions | **`$domain-modeling`** |
+| Review a diff against standards and spec | **`$review`** |
+
+Architecture work often generates an idea. Once the idea is chosen, route back into the main flow at **`$grill-with-docs`**.
+
+## Crossing Sessions
+
+Use **`$handoff`** when a fresh session should continue from the current conversation.
+
+Use it when:
+
+- the thread is near the edge of the smart zone
+- a prototype needs its own session
+- a fresh implementation session should start from a compact brief
+- the current conversation must be preserved without relying on `/compact`
+
+Use `/compact` only when staying in the same conversation is fine and losing verbatim history is acceptable.
+
+`$handoff` forks. `/compact` continues.
+
+## Standalone Routes
+
+| Situation | Route |
+| --- | --- |
+| Improve or author skills | **`$writing-great-skills`** |
+
+## Tie-Breakers
+
+If the user has a loose idea, prefer **`$grill-with-docs`**.
+
+If the idea has too many unresolved decisions for a PRD, prefer **`$decision-mapping`**.
+
+If the user names one ready issue, prefer **`$implement`**.
+
+If the symptom, root cause, or repro is uncertain, prefer **`$diagnosing-bugs`** before **`$tdd`**.
+
+If the behavior is known and testable, prefer **`$tdd`**.
+
+If the user asks what to work on next, prefer **`$triage`** for incoming tracker work and **`$improve-codebase-architecture`** for codebase health.
+
+## Completion Criteria
+
+Done means the user has one recommended next skill or flow, the reason it fits, and any setup or handoff needed before starting it.
