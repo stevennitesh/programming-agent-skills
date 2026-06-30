@@ -37,6 +37,12 @@ Type: Research | Prototype | Grilling
 
 Assets created during tickets should be linked from the map, not duplicated inside it.
 
+## What Belongs In The Map
+
+Map decisions that affect the commitment boundary: product intent, acceptance criteria, semantic correctness, user-visible behavior, public contracts, architecture direction, dependency or tooling choices, migration/data semantics, security/privacy posture, or the bounded slice.
+
+Do not map ordinary implementation technique that an agent can choose inside a bounded slice. Map internal behavior only when it is load-bearing for the requested result. Load-bearing internals need a contract and proof through the smallest meaningful seam.
+
 ## Ticket Types
 
 - **Research**: Read documentation, third-party APIs, or local resources like knowledge bases. Create a concise markdown summary as an asset.

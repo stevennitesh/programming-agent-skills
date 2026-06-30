@@ -1,6 +1,6 @@
 ---
 name: writing-great-skills
-description: Reference for writing and editing skills well — the vocabulary and principles that make a skill predictable.
+description: Use when writing, editing, or reviewing Codex skills for predictable behavior; deciding implicit vs explicit invocation; improving descriptions, leading words, context pointers, progressive disclosure, completion criteria, pruning, no-ops, sediment, sprawl, or skill information hierarchy.
 ---
 
 A skill exists to wrangle determinism out of a stochastic system. **Predictability** — Codex taking the same _process_ every run, not producing the same output — is the root virtue; every lever below serves it.

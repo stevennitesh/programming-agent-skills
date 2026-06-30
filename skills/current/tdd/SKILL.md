@@ -9,6 +9,8 @@ Use TDD to build one **tracer bullet** at a time: one failing behavior test thro
 
 Use `$diagnosing-bugs` first when the symptom, root cause, or repro is uncertain. Use `$tdd` once the behavior to prove is clear enough to write a red test.
 
+When another skill says to prove a code slice, do not weaken this discipline into after-the-fact checks. If the behavior is suitable for TDD, prove it through red-green-refactor.
+
 See [tests.md](tests.md) for good and bad test examples, [mocking.md](mocking.md) when a seam needs a fake, stub, or mock, and [refactoring.md](refactoring.md) after GREEN.
 
 ## Philosophy
@@ -43,6 +45,8 @@ RIGHT:
 Each test should respond to what the previous cycle taught you.
 
 ## Preconditions
+
+Read `docs/agents/engineering-contract.md` when present before this TDD pass changes repo behavior.
 
 When exploring the codebase, read `docs/agents/domain.md` if present so test names and behavior descriptions use the repo's domain glossary and respect ADRs. Otherwise, fall back to `CONTEXT-MAP.md`, root `CONTEXT.md`, and local ADR/domain docs.
 

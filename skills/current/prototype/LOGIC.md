@@ -19,6 +19,12 @@ If the question is visual layout or information hierarchy, use [UI.md](UI.md).
 
 Put the actual logic behind a small, pure interface. The terminal shell is throwaway; the logic module is the decision surface.
 
+Prefer building the terminal shell under `.tmp/` and calling real module seams, methods, adapters, or prototype-only pure modules from there. If the real seam already exists, exercise it from `.tmp/` instead of moving throwaway driver code into the production tree.
+
+Create or move production code near the module only after the prototype answers the question and the validated shape is ready for a real implementation pass.
+
+A logic prototype can explore interface feel or state shape, but semantic correctness requires examples, invariants, fixtures, or edge cases that prove load-bearing behavior. A runnable shell is not proof by itself.
+
 Model only the states, actions, and data needed to expose the decision surface.
 
 Choose the shape that fits the question:
@@ -87,3 +93,4 @@ Report the command and any assumption the prototype made.
 - Generalizing beyond the question.
 - Testing private helpers instead of letting the user drive the model.
 - Shipping the terminal shell into production.
+- Leaving `.tmp/` prototype artifacts behind after the answer is captured unless the user asked to preserve them.

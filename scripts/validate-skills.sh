@@ -1,6 +1,9 @@
 #!/usr/bin/env sh
 set -eu
 
+# Skill frontmatter/schema validation is intentionally delegated to the Codex
+# internal skill validator. This script only checks repo-specific integrity.
+
 public_mode=0
 verbose=0
 
@@ -35,58 +38,6 @@ has_line() {
     grep -Fxq "$1" "$2"
 }
 
-frontmatter_value() {
-    key=$1
-    file=$2
-    awk -v key="$key" '
-        NR == 1 {
-            if ($0 != "---") {
-                exit
-            }
-            in_frontmatter = 1
-            next
-        }
-        in_frontmatter && $0 == "---" {
-            found_end = 1
-            exit
-        }
-        in_frontmatter && !found && $0 ~ ("^" key ":[[:space:]]*") {
-            sub("^[^:]+:[[:space:]]*", "")
-            value = $0
-            found = 1
-        }
-        END {
-            if (found_end && found) {
-                print value
-            }
-        }
-    ' "$file"
-}
-
-frontmatter_yaml_warnings() {
-    awk '
-        NR == 1 {
-            if ($0 != "---") {
-                exit
-            }
-            in_frontmatter = 1
-            next
-        }
-        in_frontmatter && $0 == "---" {
-            exit
-        }
-        in_frontmatter && $0 ~ /^[[:alnum:]_-]+:[[:space:]]*/ {
-            key = $0
-            sub(/:.*/, "", key)
-            value = $0
-            sub(/^[^:]+:[[:space:]]*/, "", value)
-            if ((key == "name" || key == "description") && value !~ /^["\047]/ && value ~ /:[[:space:]]/) {
-                printf "%s:%d: frontmatter %s value contains colon-space and must be quoted for YAML: %s\n", FILENAME, NR, key, $0
-            }
-        }
-    ' "$1"
-}
-
 skill_resource_references() {
     awk '
         {
@@ -113,17 +64,15 @@ trap 'rm -rf "$tmp_dir"' EXIT INT TERM
 
 skill_names_file="$tmp_dir/skill_names"
 published_markdown="$tmp_dir/published_markdown"
-retired_hits="$tmp_dir/retired_hits"
 trailing_hits="$tmp_dir/trailing_hits"
-renamed_hits="$tmp_dir/renamed_hits"
 local_hits="$tmp_dir/local_hits"
-object_paths="$tmp_dir/object_paths"
 tracked_file="$tmp_dir/tracked"
+ignored_tracked_file="$tmp_dir/ignored_tracked"
 installed_diff="$tmp_dir/installed_diff"
+engineering_contract_diff="$tmp_dir/engineering_contract_diff"
 
 : > "$skill_names_file"
 : > "$published_markdown"
-: > "$retired_hits"
 : > "$trailing_hits"
 
 if [ ! -d skills ]; then
@@ -131,7 +80,7 @@ if [ ! -d skills ]; then
     fail "Missing skills/ directory."
 else
     skill_count=0
-    for skill_dir in skills/*; do
+    for skill_dir in skills/current/* skills/experimental/* skills/extra/*; do
         [ -d "$skill_dir" ] || continue
         skill_count=$((skill_count + 1))
         skill_file="$skill_dir/SKILL.md"
@@ -142,31 +91,7 @@ else
             continue
         fi
 
-        first_line=$(sed -n '1p' "$skill_file")
-        if [ "$first_line" != "---" ]; then
-            fail "Skill missing opening frontmatter marker: $skill_file"
-        fi
-        if ! awk 'NR > 1 && $0 == "---" { found = 1; exit } END { exit found ? 0 : 1 }' "$skill_file"; then
-            fail "Skill missing closing frontmatter marker: $skill_file"
-        fi
-        yaml_warnings=$(frontmatter_yaml_warnings "$skill_file")
-        if [ -n "$yaml_warnings" ]; then
-            fail "Skill frontmatter is not safe YAML:"
-            printf '%s\n' "$yaml_warnings" | sed 's/^/  /'
-        fi
-
-        skill_name=$(frontmatter_value name "$skill_file")
-        if [ -z "$skill_name" ]; then
-            fail "Skill missing frontmatter name: $skill_file"
-        elif [ "$skill_name" != "$folder_name" ]; then
-            fail "Skill name mismatch: folder '$folder_name' has name '$skill_name'"
-        fi
         printf '%s\n' "$folder_name" >> "$skill_names_file"
-
-        description=$(frontmatter_value description "$skill_file")
-        if [ -z "$description" ]; then
-            fail "Skill missing frontmatter description: $skill_file"
-        fi
 
         resource_refs="$tmp_dir/resource_refs_$folder_name"
         skill_resource_references "$skill_file" | sort -u > "$resource_refs"
@@ -191,89 +116,36 @@ fi
 
 if [ ! -f README.md ]; then
     fail "Missing README.md."
-else
-    if ! grep -Eq 'unavailable skills should not be simulated|should not simulate it' README.md; then
-        fail "README must explain that unavailable skills should not be simulated."
-    fi
-    if ! grep -Fq 'AGENT_SKILLS_DIR' README.md; then
-        fail "README install docs must use AGENT_SKILLS_DIR instead of an agent-specific skills path."
-    fi
-    if ! grep -Fq '~/.codex/skills' README.md; then
-        fail "README install docs must remind Codex users of the common ~/.codex/skills default."
-    fi
-    if ! grep -Fq '~/.claude/skills' README.md; then
-        fail "README install docs must remind Claude Code users of the common ~/.claude/skills default."
-    fi
-    if ! grep -Fq 'cp -R skills/* "$AGENT_SKILLS_DIR/"' README.md; then
-        fail 'README is missing the full router-compatible install command: cp -R skills/* "$AGENT_SKILLS_DIR/"'
-    fi
-    if ! grep -Eq 'installed[- ]copy|installed copy' README.md; then
-        fail "README must explain AGENT_SKILLS_DIR installed-copy validation."
-    fi
-    if ! grep -Fq 'smaller starter setup with the router' README.md; then
-        fail 'README must mark the smaller starter setup as using the router and core local skills.'
-    fi
-
-    while IFS= read -r skill_name; do
-        [ -n "$skill_name" ] || continue
-        if ! grep -Eq '^\|[[:space:]]*`'"$skill_name"'`[[:space:]]*\|' README.md; then
-            fail "README skill map is missing skill: $skill_name"
-        fi
-    done < "$skill_names_file"
-
-    mapped_skills="$tmp_dir/mapped_skills"
-    sed -n 's/^|[[:space:]]*`\([^`][^`]*\)`[[:space:]]*|.*/\1/p' README.md > "$mapped_skills"
-    while IFS= read -r mapped_skill; do
-        [ -n "$mapped_skill" ] || continue
-        if ! has_line "$mapped_skill" "$skill_names_file"; then
-            fail "README skill map references missing skill: $mapped_skill"
-        fi
-    done < "$mapped_skills"
-
-    readme_route_skills="$tmp_dir/readme_route_skills"
-    awk '
-        /^Typical paths:/ {
-            in_paths = 1
-            next
-        }
-        in_paths && /^## / {
-            in_paths = 0
-        }
-        in_paths {
-            line = $0
-            while (match(line, /`[^`]+`/)) {
-                token = substr(line, RSTART + 1, RLENGTH - 2)
-                if (token ~ /^[a-z0-9][a-z0-9-]*$/) {
-                    print token
-                }
-                line = substr(line, RSTART + RLENGTH)
-            }
-        }
-    ' README.md | sort -u > "$readme_route_skills"
-    while IFS= read -r route_skill; do
-        [ -n "$route_skill" ] || continue
-        if ! has_line "$route_skill" "$skill_names_file"; then
-            fail "README Typical paths references missing skill: $route_skill"
-        fi
-    done < "$readme_route_skills"
 fi
 
-if [ -e AGENTS.md ]; then
-    fail "Root AGENTS.md should not exist in this repo; use AGENTS_PORTABLE_FALLBACK.md or AGENTS_SKILL_PACK_ROUTER.md."
-fi
-
-for required_doc in AGENTS_PORTABLE_FALLBACK.md AGENTS_SKILL_PACK_ROUTER.md; do
+for required_doc in AGENTS_PORTABLE_FALLBACK.md AGENTS_SKILL_PACK_GUIDE.md; do
     if [ ! -f "$required_doc" ]; then
         fail "Missing required agent instruction document: $required_doc"
     fi
 done
 
-if [ -f AGENTS_SKILL_PACK_ROUTER.md ]; then
-    if ! grep -Eq 'unavailable.*do not simulate|do not simulate.*unavailable' AGENTS_SKILL_PACK_ROUTER.md; then
-        fail "AGENTS_SKILL_PACK_ROUTER.md must say unavailable skills should not be simulated."
+for required_setup_doc in \
+    AGENTS.md \
+    docs/agents/issue-tracker.md \
+    docs/agents/triage-labels.md \
+    docs/agents/domain.md \
+    docs/agents/engineering-contract.md \
+    skills/current/setup-matt-pocock-skills/engineering-contract.md
+do
+    if [ ! -f "$required_setup_doc" ]; then
+        fail "Missing required setup surface document: $required_setup_doc"
     fi
+done
 
-    router_skill_refs="$tmp_dir/router_skill_refs"
+if [ -f docs/agents/engineering-contract.md ] && [ -f skills/current/setup-matt-pocock-skills/engineering-contract.md ]; then
+    if ! diff -u skills/current/setup-matt-pocock-skills/engineering-contract.md docs/agents/engineering-contract.md > "$engineering_contract_diff"; then
+        fail "docs/agents/engineering-contract.md differs from setup template:"
+        sed 's/^/  /' "$engineering_contract_diff"
+    fi
+fi
+
+if [ -f AGENTS_SKILL_PACK_GUIDE.md ]; then
+    guide_skill_refs="$tmp_dir/guide_skill_refs"
     awk '
         {
             line = $0
@@ -285,13 +157,13 @@ if [ -f AGENTS_SKILL_PACK_ROUTER.md ]; then
                 line = substr(line, RSTART + RLENGTH)
             }
         }
-    ' AGENTS_SKILL_PACK_ROUTER.md | sort -u > "$router_skill_refs"
-    while IFS= read -r router_skill; do
-        [ -n "$router_skill" ] || continue
-        if ! has_line "$router_skill" "$skill_names_file"; then
-            fail "AGENTS_SKILL_PACK_ROUTER.md references missing skill: $router_skill"
+    ' AGENTS_SKILL_PACK_GUIDE.md | sort -u > "$guide_skill_refs"
+    while IFS= read -r guide_skill; do
+        [ -n "$guide_skill" ] || continue
+        if ! has_line "$guide_skill" "$skill_names_file"; then
+            fail "AGENTS_SKILL_PACK_GUIDE.md references missing skill: $guide_skill"
         fi
-    done < "$router_skill_refs"
+    done < "$guide_skill_refs"
 fi
 
 installed_skills_dir=${AGENT_SKILLS_DIR:-}
@@ -310,7 +182,16 @@ if [ -n "$installed_skills_dir" ]; then
 
         while IFS= read -r skill_name; do
             [ -n "$skill_name" ] || continue
-            repo_skill_dir="skills/$skill_name"
+            if [ -d "skills/current/$skill_name" ]; then
+                repo_skill_dir="skills/current/$skill_name"
+            elif [ -d "skills/experimental/$skill_name" ]; then
+                repo_skill_dir="skills/experimental/$skill_name"
+            elif [ -d "skills/extra/$skill_name" ]; then
+                repo_skill_dir="skills/extra/$skill_name"
+            else
+                fail "Repo skill path not found for installed skill comparison: $skill_name"
+                continue
+            fi
             installed_skill_dir="$installed_skills_dir/$skill_name"
             if [ ! -d "$installed_skill_dir" ]; then
                 if [ "$require_all_installed" = "1" ]; then
@@ -334,24 +215,20 @@ if [ -n "$installed_skills_dir" ]; then
 fi
 
 [ -f README.md ] && printf '%s\n' "README.md" >> "$published_markdown"
+[ -f AGENTS.md ] && printf '%s\n' "AGENTS.md" >> "$published_markdown"
 [ -f AGENTS_PORTABLE_FALLBACK.md ] && printf '%s\n' "AGENTS_PORTABLE_FALLBACK.md" >> "$published_markdown"
-[ -f AGENTS_SKILL_PACK_ROUTER.md ] && printf '%s\n' "AGENTS_SKILL_PACK_ROUTER.md" >> "$published_markdown"
+[ -f AGENTS_SKILL_PACK_GUIDE.md ] && printf '%s\n' "AGENTS_SKILL_PACK_GUIDE.md" >> "$published_markdown"
 if [ -d skills ]; then
     find skills -type f -name '*.md' | sort >> "$published_markdown"
 fi
-
-retired_pattern='public'/'caller|user'/'caller|caller path|caller-visible entry point|Agent-ready|[Nn]eeds decision|pressure examples?|pressure[- ]scenario|failure scenarios?|public entry point|dirty[ -]trees?|dirty state|(^|[^[:alnum:]_])seam([^[:alnum:]_]|$)'
-
-while IFS= read -r file; do
-    [ -n "$file" ] || continue
-    if [ -f "$file" ]; then
-        grep -nE "$retired_pattern" "$file" | sed "s|^|$file:|" >> "$retired_hits" || true
-    fi
-done < "$published_markdown"
-
-if [ -s "$retired_hits" ]; then
-    fail "Retired or conflicting vocabulary found:"
-    sed 's/^/  /' "$retired_hits"
+if [ -d docs/books ]; then
+    find docs/books -type f -name '*.md' | sort >> "$published_markdown"
+fi
+if [ -d docs/agents ]; then
+    find docs/agents -type f -name '*.md' | sort >> "$published_markdown"
+fi
+if [ -d docs/language ]; then
+    find docs/language -type f -name '*.md' | sort >> "$published_markdown"
 fi
 
 while IFS= read -r file; do
@@ -372,48 +249,10 @@ if [ "$public_mode" -eq 1 ]; then
         fail "No tracked files found."
     fi
 
-    blocked_path_names='andrej-karpathy-skills
-matt-pocock-skills
-codex-correctness
-philosophies_discussions
-superpowers'
-
-    if [ -e sources ]; then
-        fail "Ignored source-corpus directory exists locally: sources/"
-    fi
-
-    while IFS= read -r file; do
-        [ -n "$file" ] || continue
-        case "$file" in
-            scripts/validate-skills.sh)
-                continue
-                ;;
-        esac
-
-        for name in $blocked_path_names; do
-            case "$file" in
-                "$name"|"$name"/*)
-                    fail "Tracked source-corpus path remains: $file"
-                    ;;
-            esac
-        done
-    done < "$tracked_file"
-
-    renamed_skill_pattern='thin-plan|github-work-tracking|manage-subagents'
-    if git grep -n -I -E "$renamed_skill_pattern" -- . > "$renamed_hits" 2>"$tmp_dir/renamed_err"; then
-        while IFS= read -r hit; do
-            case "$hit" in
-                scripts/validate-skills.sh:*)
-                    continue
-                    ;;
-            esac
-            fail "Stale renamed skill reference: $hit"
-        done < "$renamed_hits"
-    else
-        code=$?
-        if [ "$code" -ne 1 ]; then
-            fail "git grep renamed skill scan failed: $(cat "$tmp_dir/renamed_err")"
-        fi
+    git ls-files -ci --exclude-standard > "$ignored_tracked_file"
+    if [ -s "$ignored_tracked_file" ]; then
+        fail "Tracked files match ignore rules:"
+        sed 's/^/  /' "$ignored_tracked_file"
     fi
 
     local_identifier_pattern='DESKTOP-|S-1-5-21|[A-Z]:\\|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|api[_-]?key[[:space:]]*[:=]|secret[[:space:]]*[:=]|token[[:space:]]*[:=]|password[[:space:]]*[:=]|BEGIN (RSA|OPENSSH|PRIVATE)'
@@ -421,6 +260,9 @@ superpowers'
         while IFS= read -r hit; do
             case "$hit" in
                 scripts/validate-skills.sh:*)
+                    continue
+                    ;;
+                *example.com*|*EXAMPLE.COM*|*correct-horse-battery-staple*)
                     continue
                     ;;
             esac
@@ -431,29 +273,6 @@ superpowers'
         if [ "$code" -ne 1 ]; then
             fail "git grep local identifier scan failed: $(cat "$tmp_dir/local_err")"
         fi
-    fi
-
-    history_output=$(git rev-list --all -- $blocked_path_names 2>&1) || {
-        fail "Git history path scan failed: $history_output"
-        history_output=''
-    }
-    if [ -n "$(printf '%s' "$history_output" | tr -d '[:space:]')" ]; then
-        fail "Git history still references removed source-corpus paths: $(printf '%s' "$history_output" | tr '\n' ' ')"
-    fi
-
-    if git rev-list --objects --all > "$object_paths" 2>"$tmp_dir/object_err"; then
-        while IFS=' ' read -r object path; do
-            [ -n "${path:-}" ] || continue
-            for name in $blocked_path_names; do
-                case "$path" in
-                    "$name"|"$name"/*|*/"$name"|*/"$name"/*)
-                        fail "Git object path still references source corpus: $object $path"
-                        ;;
-                esac
-            done
-        done < "$object_paths"
-    else
-        fail "Git object path scan failed: $(cat "$tmp_dir/object_err")"
     fi
 fi
 

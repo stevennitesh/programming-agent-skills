@@ -19,9 +19,11 @@ If the question is business logic, state transitions, data shape, or interface f
 
 ## Route Strategy
 
-Prefer prototyping inside an existing route.
+Prefer real app constraints without letting prototype chrome become production code.
 
 A UI prototype is easier to judge when it sits against the real app: real header, real sidebar, real data, real auth, real density, and real surrounding constraints. A blank throwaway route hides design problems.
+
+Use `.tmp/` for notes, copied references, static experiments, and any prototype shell that can still answer the question. Move into the app tree only when the question depends on real routing, layout, auth, data fetching, component behavior, or page density.
 
 ### Existing Route Preferred
 
@@ -128,4 +130,4 @@ Report the command, URL, variant keys, and any assumption the prototype made.
 - Sharing a layout so heavily that variants stop being real alternatives.
 - Wiring prototype UI to real mutations.
 - Treating the winning variant as production code instead of input to a real implementation pass.
-- Leaving the switcher, throwaway route, or losing variants in the repo after the decision is made.
+- Leaving the switcher, throwaway route, loose variants, or `.tmp/` artifacts in the repo after the decision is made unless the user asked to preserve them.

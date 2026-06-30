@@ -7,6 +7,8 @@ description: "Review changes since a fixed point along two separate axes: Standa
 
 Review the diff between `HEAD` and a fixed point. This is a read-only review skill: do not edit code.
 
+In the convergence loop, this is the Converge gate: verify that the chosen approach still satisfies Spec and Standards before the work is locked.
+
 Run two axes separately:
 
 - **Standards** — does the diff follow this repo's documented standards?
@@ -40,7 +42,7 @@ If `docs/agents/issue-tracker.md` is missing and tracker fetch is needed, run `$
 
 ### 3. Find Standards Sources
 
-Find repo documentation for coding standards and contribution rules: `AGENTS.md`, `CONTRIBUTING.md`, `CODING_STANDARDS.md`, `README.md`, formatter/linter configs, test docs, or local docs that describe conventions.
+Find repo documentation for coding standards and contribution rules: `AGENTS.md`, `docs/agents/engineering-contract.md`, `CONTRIBUTING.md`, `CODING_STANDARDS.md`, `README.md`, formatter/linter configs, test docs, or local docs that describe conventions.
 
 If no standards docs exist, say so. Then report only clear local-convention mismatches visible in nearby code, and label them as convention findings rather than documented-standard violations. Do not invent new standards.
 
@@ -69,6 +71,7 @@ Report:
 - whether the diff completes the intended bounded slice; for tracer-bullet issues, one narrow behavior through the real system; for support issues, the unblocker, migration, harness, config, or operational change with observable validation
 - behavior in the diff that was not asked for, including unrelated tracer bullets, support slices, or adjacent cases that widen the slice
 - requirements that look implemented but are likely wrong
+- load-bearing internal behavior whose semantics affect the requested result but are not proven through a meaningful seam
 - missing or weak tests when an acceptance criterion is not proven through the highest useful interface or seam
 
 Quote or cite the spec line, issue text, or PRD section for each finding.

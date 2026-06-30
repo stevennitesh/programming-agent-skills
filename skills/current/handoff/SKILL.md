@@ -24,7 +24,9 @@ What the next session is meant to continue or decide.
 
 ## Current State
 
-What has happened so far, what is finished, what is in progress, and what is known to be unchanged.
+What has happened so far, what is finished, what is in progress, what is known to be unchanged, and the current workflow state using the vocabulary of the active work.
+
+Examples: convergence-loop phase for implementation, prototype question and verdict, debugging loop/repro/hypothesis state, review fixed point and finding state, grilling decision state, or orchestrator-assigned slice status.
 
 ## Key Decisions
 
@@ -32,11 +34,11 @@ Decisions already made, rejected options, constraints, and scope boundaries.
 
 ## Artifacts
 
-Paths, URLs, issue numbers, PRDs, plans, ADRs, commits, diffs, prototypes, or temp files the next session should read.
+Paths, URLs, issue numbers, PRDs, plans, ADRs, commits, diffs, prototypes, preserved `.tmp` artifacts, or temp files the next session should read. Mention scratch artifacts only when intentionally preserved.
 
 ## Validation
 
-Commands run, checks performed, results, skipped validation, and residual risk.
+Commands run, checks performed, proof gathered, what still needs proof, skipped validation, and residual risk.
 
 ## Open Questions
 
@@ -44,7 +46,7 @@ Questions still unresolved, with any partial answers or relevant context.
 
 ## Next Step
 
-The single most useful next action: open a file, run a skill, continue an issue, test a behavior, or ask the user a specific question.
+The single most useful next action, stated in the vocabulary of the active work: explore, prove, expand, converge, simplify, lock, answer a prototype verdict, continue a debugging loop, test a hypothesis, resolve a review finding, run a skill, continue an issue, open a file, or ask the user a specific question.
 
 ## Suggested Skills
 
@@ -52,6 +54,8 @@ Skills the next session should invoke, with one-line reasons.
 ```
 
 Do not duplicate content already captured in durable artifacts such as PRDs, plans, ADRs, issues, commits, or diffs. Reference them by path, URL, issue number, or commit SHA.
+
+Do not force every handoff into the implementation loop. Preserve the state of the workflow that is actually active.
 
 Redact sensitive information, including API keys, passwords, tokens, private keys, credentials, and personally identifiable information.
 

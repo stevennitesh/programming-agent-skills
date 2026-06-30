@@ -1,6 +1,6 @@
 ---
 name: setup-matt-pocock-skills
-description: Configure this repo for the engineering skills — set up its issue tracker, triage label vocabulary, and domain doc layout. Run once before first use of the other engineering skills.
+description: Configure this repo for the engineering skills — set up its issue tracker, triage label vocabulary, domain doc layout, and engineering contract. Run once before first use of the other engineering skills.
 ---
 
 # Setup Matt Pocock's Skills
@@ -10,6 +10,7 @@ Scaffold the per-repo configuration that the engineering skills assume:
 - **Issue tracker** — where issues live (GitHub by default; local markdown is also supported out of the box)
 - **Triage labels** — the category and state label strings used by the triage state machine
 - **Domain docs** — where the repo's domain glossary and ADRs live, and the consumer rules for reading them
+- **Engineering contract** — the repo-local vocabulary and discipline that give the skills taste: convergence loop, commitment boundary, semantic proof, and scratch cleanup
 
 This is a prompt-driven skill, not a deterministic script. Explore, present what you found, confirm with the user, then write.
 
@@ -20,7 +21,7 @@ This is a prompt-driven skill, not a deterministic script. Explore, present what
 Look at the current repo to understand its starting state. Read whatever exists; don't assume:
 
 - `git remote -v` and `.git/config` — is this a GitHub repo? Which one?
-- `AGENTS.md` and any configured fallback instruction files at the repo root — does either exist? Is there already an `## Agent skills` section?
+- `AGENTS.md` and any configured fallback instruction files at the repo root — does either exist? Is there already an `## Agent skills` section, or a portable fallback contract headed `Portable Fallback AGENTS.md For Programming Work`?
 - `CONTEXT.md` and `CONTEXT-MAP.md` at the repo root
 - `docs/adr/` and any `src/*/docs/adr/` directories
 - `docs/agents/` — does this skill's prior output already exist?
@@ -77,12 +78,16 @@ Confirm the layout:
 - **Single-context** — one `CONTEXT.md` + `docs/adr/` at the repo root. Most repos are this.
 - **Multi-context** — `CONTEXT-MAP.md` at the root pointing to per-context `CONTEXT.md` files (typically a monorepo).
 
+**Section D — Engineering contract.**
+
+> Explainer: Coding execution skills read `docs/agents/engineering-contract.md` when they make or judge repo behavior. `implement`, `tdd`, `diagnosing-bugs`, and `review` consume it directly; `improve-codebase-architecture` uses it when making repo-specific architecture recommendations. Planning, routing, triage, and domain-modeling skills use tracker and domain docs without loading the contract by default.
+
 ### 3. Confirm and edit
 
 Show the user a draft of:
 
 - The `## Agent skills` block to add to `AGENTS.md` or the repo's configured Codex instruction file (see step 4 for selection rules)
-- The contents of `docs/agents/issue-tracker.md`, `docs/agents/triage-labels.md`, `docs/agents/domain.md`
+- The contents of `docs/agents/issue-tracker.md`, `docs/agents/triage-labels.md`, `docs/agents/domain.md`, `docs/agents/engineering-contract.md`
 
 Let them edit before writing.
 
@@ -98,10 +103,31 @@ Prefer `AGENTS.md` for Codex. Do not edit unrelated cross-agent instruction file
 
 If an `## Agent skills` block already exists in the chosen file, update its contents in-place rather than appending a duplicate. Don't overwrite user edits to the surrounding sections.
 
+If the chosen file contains the portable fallback contract, treat setup as a conversion from fallback mode to installed-pack mode:
+
+- Replace the fallback-owned generic sections (`North Star`, `Working Loop`, `Hard Gates`, `Shape Before Build`, `Implementation Taste`, `Review And Report`) with the installed-pack `## Agent skills` block below.
+- Preserve clearly repo-specific sections, commands, architecture notes, release rules, and source-of-truth routing.
+- Do not leave the fallback coding contract active beside `docs/agents/engineering-contract.md`; that would duplicate the discipline.
+
 The block:
 
 ```markdown
 ## Agent skills
+
+This repo is configured for Matt Pocock-style engineering skills.
+
+For nontrivial coding work, read `docs/agents/engineering-contract.md` before editing.
+
+AGENTS primes. `docs/agents/engineering-contract.md` teaches the discipline. Skills execute the workflow.
+
+If the user names a skill, use it. If no skill is named, suggest one only when it clearly improves the work. Do not recreate full skill procedures here.
+
+### Local configuration
+
+- Issue tracker: `docs/agents/issue-tracker.md`
+- Triage labels: `docs/agents/triage-labels.md`
+- Domain docs: `docs/agents/domain.md`
+- Engineering contract: `docs/agents/engineering-contract.md`
 
 ### Issue tracker
 
@@ -116,13 +142,14 @@ The block:
 [one-line summary of layout — "single-context" or "multi-context"]. See `docs/agents/domain.md`.
 ```
 
-Then write the three docs files using the seed templates in this skill folder as a starting point:
+Then write the four docs files using the seed templates in this skill folder as a starting point:
 
 - [issue-tracker-github.md](./issue-tracker-github.md) — GitHub issue tracker
 - [issue-tracker-gitlab.md](./issue-tracker-gitlab.md) — GitLab issue tracker
 - [issue-tracker-local.md](./issue-tracker-local.md) — local-markdown issue tracker
 - [triage-labels.md](./triage-labels.md) — label mapping
 - [domain.md](./domain.md) — domain doc consumer rules + layout
+- [engineering-contract.md](./engineering-contract.md) — agentic coding vocabulary and discipline
 
 Issue tracker docs must record the repo-equivalent operations for creating, fetching, commenting, applying labels, closing, and posting Codex-ready briefs.
 
@@ -130,4 +157,4 @@ For "other" issue trackers, write `docs/agents/issue-tracker.md` from scratch us
 
 ### 5. Done
 
-Tell the user the setup is complete and which engineering skills will now read from these files. Mention they can edit `docs/agents/*.md` directly later — re-running this skill is only necessary if they want to switch issue trackers or restart from scratch.
+Tell the user the setup is complete and which engineering skills will now read from these files. Mention they can edit `docs/agents/*.md` directly later — re-running this skill is only necessary if they want to switch issue trackers, restart from scratch, or regenerate the engineering contract.

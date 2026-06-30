@@ -20,15 +20,17 @@ The branches produce different artifacts. If the question is ambiguous and the u
 
 ## Rules
 
+- **Keep the contract boundary.** If prototype output is promoted into repo behavior or used as semantic proof, switch to the repo's real coding workflow and read `docs/agents/engineering-contract.md` first.
 - **State the question first.** Write the question in the prototype location so the artifact can be judged later.
 - **Build the smallest answering artifact.** Do not expand to adjacent questions unless the prototype disproves the original one.
-- **Keep it throwaway.** Mark prototype code clearly and locate it near the module or page it informs. Do not invent new repo structure.
+- **Keep it throwaway.** Prefer `.tmp/` for prototype shells, scratch artifacts, copied references, and rough notes. When possible, call real module seams, methods, adapters, or page-level surfaces from `.tmp/` instead of placing throwaway code in the production tree.
+- **Use production placement only when the question needs it.** Put prototype code near a module or page only when that is required to answer the question against real app constraints. Mark it clearly as prototype code and keep the diff easy to delete.
 - **Use one command.** Add or report the repo-native command that runs it.
 - **Run it once.** Run the prototype with its one command and complete the branch-specific smoke check.
 - **Skip production polish.** No tests, broad error handling, generic abstractions, or unrelated cleanup. Make it runnable enough to learn.
 - **Avoid persistence by default.** Keep state in memory unless persistence is the question. If storage is needed, use scratch storage clearly marked as prototype-only.
 - **Surface the state.** Logic prototypes print the relevant state after each action. UI prototypes make the active variant obvious and reload-stable.
-- **Do not quietly ship prototype code.** After the answer is known, delete the prototype, or treat the validated decision as input to a real implementation pass.
+- **Do not quietly ship prototype code.** After the answer is known, delete prototype artifacts by default unless the user asks to preserve them. Move code near the module only when the validated shape is ready for a real implementation pass.
 
 ## Capture The Answer
 
@@ -36,6 +38,8 @@ When the prototype has answered its question, capture:
 
 - the original question
 - what the prototype proved or disproved
+- whether the answer is a shape/feel verdict or semantic proof
+- if semantic proof is claimed, what fixtures, examples, invariants, or edge cases support it
 - the chosen direction, if any
 - what should happen next
 - whether the prototype should be deleted, used as input, or revisited

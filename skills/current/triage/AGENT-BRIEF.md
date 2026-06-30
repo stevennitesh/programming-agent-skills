@@ -67,6 +67,7 @@ For support slices, name what it unblocks or de-risks.
 Describe how Codex should prove the slice is complete.
 For tracer bullets, name the highest useful interface or seam to test through.
 For support slices, name the observable validation: migration check, harness output, compatibility proof, config behavior, or repo-standard command.
+If load-bearing internal behavior determines correctness, name the semantic examples, fixtures, invariants, or edge cases Codex should use to prove it.
 
 **Out of scope:**
 - Adjacent behavior that should not be changed
