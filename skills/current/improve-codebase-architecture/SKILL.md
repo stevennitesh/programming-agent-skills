@@ -38,11 +38,15 @@ A candidate earns its place only if it plausibly improves **depth**, **leverage*
 
 ### 2. Present Candidates As An HTML Report
 
-Write a self-contained HTML file to the OS temp directory so nothing lands in the repo. Resolve the temp dir from `$TMPDIR`, falling back to `/tmp` or `%TEMP%`, and write to:
+Write a self-contained HTML file to the repo-local temp directory. Resolve the repo root with `git rev-parse --show-toplevel` when available, create `.tmp/architecture-reviews/`, and write to:
 
 ```text
-<tmpdir>/architecture-review-<timestamp>.html
+<repo-root>/.tmp/architecture-reviews/architecture-review-<timestamp>.html
 ```
+
+If no repo root is available or `.tmp` cannot be written, fall back to the OS temp directory from `$TMPDIR`, `/tmp`, or `%TEMP%`.
+
+Do not stage or commit generated `.tmp` reports.
 
 Open it for the user when possible and report the absolute path.
 
@@ -50,6 +54,7 @@ Use [HTML-REPORT.md](HTML-REPORT.md) for the scaffold, visual style, candidate c
 
 Each candidate should include:
 
+- **Number** - stable `Candidate N` identifier used in the report, top recommendation, and chat
 - **Files** - files or modules involved
 - **Problem** - what architectural friction exists
 - **Why it matters** - the cost in locality, leverage, test surface, or AI-navigability
@@ -65,11 +70,11 @@ If a candidate contradicts an ADR, surface it only when the friction is real eno
 
 Do not propose final interfaces yet. The report should show candidate areas and why they matter, not settle the design.
 
-End the report with a **Top recommendation** section naming the candidate you would explore first and why.
+End the report with a **Top recommendation** section naming the numbered candidate you would explore first and why.
 
 After the report is written and opened or reported, ask:
 
-> Which of these would you like to explore?
+> Which candidate number would you like to explore? I recommend Candidate N because ...
 
 ### 3. Grill The Chosen Candidate
 
@@ -85,6 +90,18 @@ Use `$domain-modeling` only when durable domain terms or decisions actually land
 
 Do not write ADRs for ephemeral reasons, obvious non-decisions, or "not now."
 
+### 4. Recommend The Next Route
+
+After exploring the chosen candidate, recommend exactly one next route and why:
+
+- `$implement` when one bounded, behavior-preserving slice is ready, validation is clear, and no major design or product decisions remain.
+- `$to-issues` when the direction is clear but needs multiple dependency-ordered implementation slices.
+- `$to-prd` when the change affects product behavior, crosses multiple user-facing concerns, needs a parent spec, or still has unresolved intent or acceptance criteria.
+
+Do not run the next skill automatically. Stop after the recommendation unless the user asks to continue.
+
 ## Completion Criteria
 
-Done means the codebase was explored through domain and architecture vocabulary, candidates were filtered for real deepening value, a self-contained HTML report was written outside the repo, the path was reported or opened, a top recommendation was included, ADR conflicts were surfaced when relevant, no refactor was implemented, and the user was asked which candidate to explore.
+Initial pass done means the codebase was explored through domain and architecture vocabulary, candidates were filtered for real deepening value, a self-contained HTML report was written to repo-local `.tmp` when available or OS temp as fallback with numbered candidates, the path was reported or opened, a numbered top recommendation was included, ADR conflicts were surfaced when relevant, no refactor was implemented, generated reports were not staged, and the user was asked which candidate number to explore.
+
+After the user chooses a candidate, done means the candidate was grilled through constraints, seams, validation, migration, and out-of-scope boundaries, and exactly one next route was recommended: `$to-prd`, `$to-issues`, or `$implement`.

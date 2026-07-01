@@ -90,9 +90,9 @@ _Avoid_: human burden as a defect
 Moving reference behind a context pointer so the top-level skill stays legible while branch-specific material remains reachable.
 _Avoid_: lazy loading, hiding required steps
 
-## Steering Spine
+## Skill Encoding
 
-**Upper-bound steering spine**:
+**Skill-writing formula**:
 The default vocabulary shape for this skill pack: software-engineering taste term -> agent execution surface -> evidence gate. The software-engineering term recruits high-quality professional priors; the agent execution surface tells the LLM how to operate inside repo context and tools; the evidence gate prevents good language from becoming confident but unproven output.
 _Avoid_: taxonomy for its own sake, sophisticated phrasing without proof
 
@@ -100,7 +100,7 @@ _Avoid_: taxonomy for its own sake, sophisticated phrasing without proof
 A compact word or phrase that points the agent toward a useful pretrained cluster of knowledge and behavior. The goal is not to teach the whole source in context; it is to focus the model on upper-bound engineering priors already associated with terms like `red-green-refactor`, `tracer bullet`, `deep module`, or `ubiquitous language`.
 _Avoid_: generic reminder, decorative keyword, book summary
 
-**Behavioral compression**:
+**Source compression formula**:
 The act of converting source wisdom into the smallest skill text that changes agent behavior: leading word -> rule -> agent action -> evidence gate -> forbidden shortcut or stop condition. A skill should carry the source's useful force, not the source's full explanation.
 _Avoid_: bibliography as instruction, long explanation, compressed trivia
 

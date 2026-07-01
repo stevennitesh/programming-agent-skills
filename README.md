@@ -4,7 +4,7 @@ A skill pack for programmers who want coding agents to move quickly without losi
 
 The pack is built around a simple belief: agentic coding gets much better when the agent has strong engineering language, clear repo-local contracts, and hard evidence gates. The agent should explore fast, choose deliberately, prove behavior, keep diffs reviewable, and leave the repo easier to trust.
 
-It encodes this delivery spine:
+It encodes this delivery path:
 
 ```text
 idea

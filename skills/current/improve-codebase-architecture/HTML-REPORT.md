@@ -1,6 +1,6 @@
 # HTML Report Format
 
-Render the architecture review as a single self-contained HTML file in the OS temp directory.
+Render the architecture review as a single self-contained HTML file in the repo-local temp directory, normally `.tmp/architecture-reviews/`, with OS temp as a fallback.
 
 The report should help the user see the architectural friction quickly, compare deepening candidates visually, and choose one candidate to explore. It is not a design proposal and should not settle final interfaces.
 
@@ -60,7 +60,8 @@ Each candidate is one `<article>`.
 
 Include:
 
-- **Title** - short, names the deepening, e.g. `Collapse the Order intake pipeline`.
+- **Number and anchor** - stable `Candidate N` label and `id="candidate-n"` anchor so chat can refer to it.
+- **Title** - short, names the deepening, e.g. `Candidate 1: Collapse the Order intake pipeline`.
 - **Badge row** - recommendation strength (`Strong`, `Worth exploring`, `Speculative`) plus dependency category (`in-process`, `local-substitutable`, `remote-owned`, `true-external`).
 - **Files** - monospaced list of files or modules involved.
 - **Before / after diagram** - the centerpiece. Two columns, side by side.
@@ -140,11 +141,11 @@ Avoid decorative complexity. The visual should explain architecture, not decorat
 
 End with one larger card:
 
-- candidate name
+- candidate number and name, e.g. `Candidate 1: Collapse the Order intake pipeline`
 - one sentence on why it is the best first exploration
 - anchor link to its candidate card
 
-Do not settle the final interface here. Recommend the candidate to explore next.
+Do not settle the final interface here. Recommend the numbered candidate to explore next.
 
 ## Tone
 

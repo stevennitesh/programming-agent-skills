@@ -41,6 +41,12 @@ docs/*
 !docs/adr/**
 !docs/agents/
 !docs/agents/**
+!docs/research/
+!docs/research/**
+!docs/synthesis/
+!docs/synthesis/**
+!docs/validation/
+!docs/validation/**
 skills/wip/
 plans/
 

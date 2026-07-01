@@ -1,0 +1,61 @@
+# Skill Research Organization
+
+This folder holds per-skill facet research. The research is not runtime
+instruction by itself. Its job is to turn strong sources into compact
+synthesis notes and candidate wording that can later steer Codex toward
+upper-bound behavior.
+
+## Structure
+
+```text
+docs/research/skill-facets/
+  README.md
+  FACET-RESEARCH-PROMPT.md
+
+  <skill-name>/
+    README.md
+    SEARCH-VOCABULARY.md
+    FACET-1-<NAME>.md
+    FACET-2-<NAME>.md
+```
+
+## Boundaries
+
+`README.md` in this folder owns the organization rules for all skill research.
+
+`FACET-RESEARCH-PROMPT.md` owns the reusable workflow: research lanes, subagent review prompt, packet shape, quality bar, and the rule to promote selected wording into synthesis before editing runtime `SKILL.md`.
+
+`<skill-name>/README.md` owns one skill's research map: target skill shape, facet list, status, and links to facet docs.
+
+`<skill-name>/SEARCH-VOCABULARY.md` is optional. Use it only when a skill has enough reusable keyword work to justify a separate file. Otherwise, put search terms in the facet doc.
+
+`<skill-name>/FACET-*.md` owns the actual research packet for one facet:
+sources, ratings, high-signal vocabulary, weak/no-op vocabulary, behavior
+gates, good/bad contrast, synthesis promotion notes, prune notes, and gaps.
+
+## Creation Rule
+
+For a new skill, start with:
+
+```text
+docs/research/skill-facets/<skill-name>/README.md
+docs/research/skill-facets/<skill-name>/FACET-1-<NAME>.md
+```
+
+Add `SEARCH-VOCABULARY.md` only after search terms become too large or reusable across facets.
+
+## Runtime Boundary
+
+Research docs can contain candidate wording, but they do not choose runtime
+behavior. Promote selected wording into `docs/synthesis/` before editing the
+runtime skill.
+
+Before editing `skills/current/<skill-name>/SKILL.md`:
+
+- compress the facet packet into a synthesis note with the smallest
+  behavior-changing wording;
+- identify what stays research-only;
+- check for duplication with the engineering contract and other skills;
+- get explicit approval when the work so far has been research-only.
+
+The durable rule is: one reusable workflow, one skill map, one doc per facet.
