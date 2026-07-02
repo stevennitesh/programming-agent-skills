@@ -10,7 +10,6 @@ upper-bound behavior.
 ```text
 docs/research/skill-facets/
   README.md
-  FACET-RESEARCH-PROMPT.md
 
   <skill-name>/
     README.md
@@ -23,7 +22,9 @@ docs/research/skill-facets/
 
 `README.md` in this folder owns the organization rules for all skill research.
 
-`FACET-RESEARCH-PROMPT.md` owns the reusable workflow: research lanes, subagent review prompt, packet shape, quality bar, and the rule to promote selected wording into synthesis before editing runtime `SKILL.md`.
+`docs/synthesis/methods/source-to-skill-flow.md` and its prompts own the
+reusable workflow. Prompts 01-05 produce research maps, source search,
+extraction, and triage artifacts here.
 
 `<skill-name>/README.md` owns one skill's research map: target skill shape, facet list, status, and links to facet docs.
 
@@ -58,4 +59,5 @@ Before editing `skills/current/<skill-name>/SKILL.md`:
 - check for duplication with the engineering contract and other skills;
 - get explicit approval when the work so far has been research-only.
 
-The durable rule is: one reusable workflow, one skill map, one doc per facet.
+The durable rule is: one production workflow, one skill map, one doc per
+research artifact.

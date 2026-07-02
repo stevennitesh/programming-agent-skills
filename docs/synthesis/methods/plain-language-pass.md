@@ -1,8 +1,9 @@
-# Controlled Language Pass
+# Plain-Language Pass
 
-Use this after drafting or rewriting skills. The goal is to make completion
-gates and stop conditions blunt enough that the agent cannot wriggle around
-them.
+Use this after the detailed skill-context draft is assembled and before reality
+validation. The goal is to make completion gates and stop conditions plain and
+blunt enough that the agent cannot wriggle around them, then validate that
+plain-language candidate.
 
 The useful pattern is not full caveman-speak. Full caveman-speak loses the
 upper-bound attention handles. The better frame is controlled procedure
@@ -46,8 +47,8 @@ hard to evade once the right leading words have been chosen.
 
 ## Procedure
 
-Apply this pass to each skill after the main vocabulary and workflow are
-settled:
+Apply this pass after Prompt 09 has placed the detailed draft in skill context
+and before Prompt 11 validates behavior:
 
 1. Keep the elite term.
 2. Replace explanation with command where the behavior is already clear.
@@ -56,7 +57,7 @@ settled:
 5. Make every gate observable.
 6. Delete polite mush.
 
-Use this as a post-draft pass only:
+Use this as a post-draft, pre-validation pass:
 
 - Keep leading words like `tracer bullet`, `deep module`, `seam`,
   `red-green-refactor`, `fixed-point review`, and `residual risk`.
@@ -68,6 +69,6 @@ Use this as a post-draft pass only:
 The rule:
 
 ```text
-Do not caveman the taste.
-Caveman the gates.
+Do not flatten the taste.
+Plain-language the gates.
 ```

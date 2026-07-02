@@ -1,21 +1,25 @@
-# Prompt 10: Validate Against Reality
+# Prompt 11: Validate Against Reality
 
-Use this as Step 10 of
+Use this as Step 11 of
 [`../source-to-skill-flow.md`](../source-to-skill-flow.md).
 
-The goal is to test audited candidate skill wording against real or
-representative agent behavior and record concrete validation evidence.
+The goal is to test the plain-language candidate against real or representative
+agent behavior and record concrete validation evidence.
 
 ````markdown
-We are validating audited candidate skill wording against real or
+We are validating the plain-language skill candidate against real or
 representative agent behavior.
 
 Skill: `<skill-name>`
 Skill path: `<path-to-skill>`
 Facet or behavior: `<facet-number-and-name, or behavior name>`
-Compact draft: `<path or paste Prompt 08 output>`
-Behavior audit: `<path or paste Prompt 09 output>`
+Candidate runtime draft: `<path or paste Prompt 08 output>`
+Detailed skill-context draft: `<path or paste Prompt 09 output>`
+Plain-language candidate: `<path or paste Prompt 10 output>`
+Plain-language candidate decision: `<Prompt 10 plain-language candidate decision>`
+Traceability map and validation scenarios: `<Prompt 09/10 traceability map / scenarios>`
 Existing skill text: `<path or paste relevant SKILL.md section>`
+Revision feedback: `<optional feedback if rerunning this prompt; otherwise "none">`
 
 Do not search for new sources.
 Do not rewrite the skill yet.
@@ -23,8 +27,9 @@ Do not edit `SKILL.md` yet.
 Do not final-prune yet.
 Do not claim the skill improved without evidence.
 
-Your job is to test whether the audited candidate wording would actually change
-agent behavior in the intended direction.
+Your job is to test whether the plain-language candidate would actually change
+agent behavior in the intended direction. Validate the wording that might ship,
+not the explanatory draft.
 
 Use the validation lane that best fits the evidence available:
 
@@ -43,13 +48,41 @@ Return:
 State:
 
 - skill and facet or behavior under test;
-- candidate wording being validated;
-- behavior audit used;
+- plain-language candidate being tested;
+- Prompt 10 plain-language candidate decision used;
+- detailed skill-context draft and traceability used;
 - validation lane chosen;
 - why this lane is appropriate;
 - what validation will not decide.
 
-## 2. Expected Behavior
+## 2. Handoff And Feedback Check
+
+Confirm the draft is ready to validate before running or reviewing scenarios.
+
+Use:
+
+| Input | Used / Revised / Blocked | Validation Consequence | Notes |
+| --- | --- | --- | --- |
+
+Account for:
+
+- Prompt 10 plain-language candidate decision;
+- Prompt 09 detailed draft and traceability;
+- traceability map;
+- validation scenarios;
+- support/context pointer placeholders;
+- revision feedback.
+
+If `Revision feedback` is not `none`, account for it before validating. If the
+plain-language candidate decision is not `ready-for-reality-validation`, do not
+validate anyway; return to the owning prompt named by the plain-language candidate
+decision.
+
+If there is no revision feedback, write:
+
+`No revision feedback to disposition.`
+
+## 3. Expected Behavior
 
 Define what improvement should look like.
 
@@ -58,7 +91,7 @@ Use:
 | Behavior | Current / Risky Agent Behavior | Expected Improved Behavior | Evidence Needed |
 | --- | --- | --- | --- |
 
-## 3. Validation Scenario
+## 4. Validation Scenario
 
 Describe the task, transcript, fixture, or eval scenario.
 
@@ -71,19 +104,20 @@ If this is transcript validation, include transcript path or source.
 If this is a real-task validation, include repo/path/task context.
 If this is an eval note, include the scoring target.
 
-## 4. Candidate Line Coverage
+## 5. Draft Coverage
 
-Map candidate lines to validation evidence.
+Map draft sections and candidate lines to validation evidence.
 
 Use:
 
-| Candidate Line / Line ID | Behavior It Should Cause | Scenario That Tests It | Pass Signal | Fail Signal |
-| --- | --- | --- | --- | --- |
+| Plain-Language Candidate Section / Line ID | Prompt 09/10 Validation ID | Behavior It Should Cause | Scenario That Tests It | Pass Signal | Fail Signal |
+| --- | --- | --- | --- | --- | --- |
 
-Only validate lines that survived Prompt 09 or must be revised before
-validation.
+Validate the Step 10 plain-language candidate, not loose candidate lines or the
+more explanatory Step 09 draft. Only validate plain-language sections assembled
+from Prompt 08 candidate lines and Prompt 09 placement decisions.
 
-## 5. Run / Review Notes
+## 6. Run / Review Notes
 
 Record what was actually done.
 
@@ -103,7 +137,7 @@ Limitations:
 Prefer concrete observations: commands, diffs, transcript excerpts, task
 outcomes, failure observations, or explicit scenario reasoning.
 
-## 6. Results
+## 7. Results
 
 Use:
 
@@ -117,7 +151,7 @@ Definitions:
 - `Fail`: candidate wording would not improve behavior or creates a regression.
 - `Untested`: no adequate evidence yet.
 
-## 7. Regression And Risk Check
+## 8. Regression And Risk Check
 
 Use:
 
@@ -136,7 +170,7 @@ Check for:
 - harder invocation;
 - unclear completion criteria.
 
-## 8. Validation Decision
+## 9. Validation Decision
 
 Choose one:
 
@@ -145,9 +179,15 @@ Choose one:
 - `needs-more-validation`
 - `blocked`
 
-Explain why.
+Explain why. If the decision is `revise-before-prune`, name the earliest
+owning prompt to rerun: Prompt 10 for plain-language problems, Prompt 09
+for draft assembly or placement, Prompt 08 for candidate wording or
+validation-ID problems, or an earlier prompt for
+behavior/source-boundary problems.
 
-## 9. Handoff To Final Prune
+The validation decision label must be explicit. Do not omit it.
+
+## 10. Handoff To Final Prune
 
 End with:
 
@@ -157,12 +197,12 @@ End with:
 - support/context pointer decisions confirmed;
 - residual risks;
 - validation evidence path;
-- what Prompt 11 should do first.
+- what Prompt 12 should do first.
 
 Write the validation note to the best matching path:
 
 - skill validation:
-  `docs/validation/skills/<skill-name>/<facet-or-behavior>.md`
+  `docs/synthesis/facets/<skill-name>/FACET-<n>-<name>/11-validation.md`
 - transcript validation:
   `docs/validation/transcripts/<skill-name>/<transcript-or-behavior>.md`
 - eval note:

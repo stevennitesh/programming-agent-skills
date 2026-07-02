@@ -92,11 +92,21 @@ Do not write ADRs for ephemeral reasons, obvious non-decisions, or "not now."
 
 ### 4. Recommend The Next Route
 
-After exploring the chosen candidate, recommend exactly one next route and why:
+After exploring the chosen candidate, recommend exactly one next route for the candidate as a whole.
 
-- `$implement` when one bounded, behavior-preserving slice is ready, validation is clear, and no major design or product decisions remain.
-- `$to-issues` when the direction is clear but needs multiple dependency-ordered implementation slices.
-- `$to-prd` when the change affects product behavior, crosses multiple user-facing concerns, needs a parent spec, or still has unresolved intent or acceptance criteria.
+Before choosing, classify the candidate:
+
+- **single-slice**: one bounded behavior-preserving or behavior-changing slice can complete the candidate's architectural intent.
+- **multi-slice**: the direction is clear, but completion requires multiple dependency-ordered slices.
+- **underspecified**: product intent, acceptance criteria, architectural commitments, or validation expectations are still unresolved.
+
+Choose:
+
+- `$implement` only when the candidate is single-slice, validation is clear, and no major design or product decisions remain.
+- `$to-issues` when the candidate is multi-slice, even if the first slice is already ready to implement.
+- `$to-prd` when the change affects product behavior, crosses multiple user-facing concerns, needs a parent spec, or still has unresolved intent, acceptance criteria, architectural commitments, or validation expectations.
+
+If the candidate is multi-slice but the first slice is obvious, name that first slice as a suggested Issue 1 under the `$to-issues` recommendation. Do not recommend `$implement` merely because the first slice is ready.
 
 Do not run the next skill automatically. Stop after the recommendation unless the user asks to continue.
 
@@ -104,4 +114,4 @@ Do not run the next skill automatically. Stop after the recommendation unless th
 
 Initial pass done means the codebase was explored through domain and architecture vocabulary, candidates were filtered for real deepening value, a self-contained HTML report was written to repo-local `.tmp` when available or OS temp as fallback with numbered candidates, the path was reported or opened, a numbered top recommendation was included, ADR conflicts were surfaced when relevant, no refactor was implemented, generated reports were not staged, and the user was asked which candidate number to explore.
 
-After the user chooses a candidate, done means the candidate was grilled through constraints, seams, validation, migration, and out-of-scope boundaries, and exactly one next route was recommended: `$to-prd`, `$to-issues`, or `$implement`.
+After the user chooses a candidate, done means the candidate was grilled through constraints, seams, validation, migration, and out-of-scope boundaries; the candidate was classified as single-slice, multi-slice, or underspecified; and exactly one next route was recommended for the candidate as a whole: `$to-prd`, `$to-issues`, or `$implement`.

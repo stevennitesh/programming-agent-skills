@@ -15,6 +15,7 @@ Skill: `<skill-name>`
 Skill path: `<path-to-skill>`
 Related files or skills: `<paths, or "unknown">`
 User goal for this skill: `<what we want the skill to do better>`
+Revision feedback: `<optional feedback if rerunning this prompt; otherwise "none">`
 
 Do not research online yet.
 Do not rewrite the skill yet.
@@ -53,7 +54,40 @@ Identify the parts of the skill that affect behavior:
 - validation or proof requirements
 - final report / handoff behavior
 
-## 3. Failure Modes To Prevent
+## 3. Owner Map
+
+Map the current ownership boundaries before proposing research facets. This is
+not the final facet map; Prompt 02 owns final merge/split and ordering
+decisions.
+
+Use:
+
+| Behavior / Concept | Current Owner | Keep Here / Point Elsewhere / Unclear | Why |
+| --- | --- | --- | --- |
+
+Owners can include:
+
+- this skill;
+- another skill;
+- engineering contract;
+- repo-local docs;
+- support/reference docs;
+- unclear / needs Prompt 02 boundary.
+
+## 4. Preserve Inventory
+
+List current behaviors that must not regress during research, compaction, or
+runtime editing.
+
+Use:
+
+| Current Behavior | Source File / Line Or Section | Why It Must Not Regress |
+| --- | --- | --- |
+
+Prefer concrete source references over paraphrase-only claims. If exact line
+numbers are inconvenient, cite the file and heading.
+
+## 5. Failure Modes To Prevent
 
 List average-agent behaviors this skill should prevent, such as:
 
@@ -70,7 +104,7 @@ List average-agent behaviors this skill should prevent, such as:
 
 Use skill-specific failure modes, not generic ones only.
 
-## 4. Rough Facet Candidates
+## 6. Rough Facet Candidates
 
 Sketch possible research facets. Do not finalize facet boundaries here; Prompt
 02 owns the final facet map, research order, and merge/split decisions.
@@ -92,7 +126,17 @@ Use this table:
 | Facet | Behavior Surface | Research Question | Source Lanes | Evidence Gate | Stop/Ask Rule | Preliminary Keywords |
 | --- | --- | --- | --- | --- | --- | --- |
 
-## 5. Preliminary Keyword Bank
+## 7. Facet Collision Risks
+
+Identify rough-facet overlap for Prompt 02 to resolve. Do not decide final
+facet boundaries here.
+
+Use:
+
+| Candidate Facet | Likely Overlap | Risk If Researched Alone | Prompt 02 Boundary Question |
+| --- | --- | --- | --- |
+
+## 8. Preliminary Keyword Bank
 
 Group keywords by type:
 
@@ -116,7 +160,7 @@ criteria, no-ops, sprawl, sediment, branches, and progressive disclosure.
 Terms that are probably too generic, overloaded, or decorative unless paired
 with a concrete gate.
 
-## 6. Source Search Seeds
+## 9. Source Search Seeds
 
 For each rough facet candidate, suggest 5-15 search queries.
 
@@ -131,7 +175,18 @@ Prefer queries that can find:
 Do not include broad vague searches unless they are paired with a stronger
 term.
 
-## 7. Boundaries Before Research
+For each facet, also name search lanes that are likely to produce noise or
+ownership drift.
+
+Use this shape for each facet:
+
+- `<facet>`
+- Search seeds:
+  - `<query>`
+- Avoid / demote:
+  - `<term or lane>` because `<why it is likely noisy or owned elsewhere>`
+
+## 10. Boundaries Before Research
 
 State what research should not do.
 
@@ -142,17 +197,34 @@ Include:
 - what would count as over-research
 - what would make a source worth keeping
 
-## 8. Output Summary
+## 11. Questions For Prompt 02
+
+List the facet-boundary, merge/split, ownership, and research-order questions
+Prompt 02 must resolve.
+
+Do not choose the final facet map here. Phrase each item as a question or
+decision for Prompt 02.
+
+## 12. Output Summary
 
 End with:
 
-- the top 3-5 facets to research first
+- intent decision:
+  - `ready-for-facet-map`: continue to Prompt 02;
+  - `clarify-intent`: ask the user or inspect the missing local context before
+    continuing;
+  - `refresh-current-surface`: reread current skill/support/owner files before
+    continuing;
+- the top 3-5 rough facets or facet-map questions Prompt 02 should resolve
 - the strongest preliminary search terms
+- the highest-risk owner boundaries to preserve
 - the biggest risk if this skill is rewritten without research
 - the likely shape of the eventual compact skill change
 ```
 
 ## Quality Bar
 
-This prompt is complete when the output makes the next source-search prompt
-obvious, without proposing final runtime wording.
+This prompt is complete when the output makes the next facet-map prompt
+obvious, including current owners, preserve inventory, and open boundary
+questions, or names the clarification/current-surface gap that blocks Prompt
+02, without deciding the final facet map or proposing final runtime wording.

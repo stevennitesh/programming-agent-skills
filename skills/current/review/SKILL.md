@@ -1,98 +1,101 @@
 ---
 name: review
-description: "Review changes since a fixed point along two separate axes: Standards, for documented repo conventions, and Spec, for whether the diff implements the originating issue, PRD, or spec. Use when the user asks to review a branch, PR, or work-in-progress diff, including \"review since X\"."
+description: "Run ordinary fixed-point review for branch, WIP, or \"review since X\" diffs. Keep Standards and Spec separate: documented repo conventions, and whether the diff satisfies the originating issue, PRD, spec, or acceptance criteria. For local PR or high-risk convergence review, use convergent-pr-review."
 ---
 
 # Review
 
-Review the diff between `HEAD` and a fixed point. This is a read-only review skill: do not edit code.
+Run a read-only fixed-point review of the current diff.
 
-In the convergence loop, this is the Converge gate: verify that the chosen approach still satisfies Spec and Standards before the work is locked.
+This is the default Converge gate for ordinary branch, WIP, and `$implement` closeout review. It checks two axes separately:
 
-Run two axes separately:
+- **Standards**: whether the diff follows documented repo conventions and the local engineering contract.
+- **Spec**: whether the diff satisfies the originating issue, PRD, spec, bounded slice, and acceptance criteria.
 
-- **Standards** — does the diff follow this repo's documented standards?
-- **Spec** — does the diff faithfully implement the originating issue, PRD, or spec?
+Keep the axes separate. Do not merge, deduplicate, or rerank findings across axes. One axis passing must not hide the other axis failing.
 
-Keep the axes separate so one cannot hide the other. Do not merge or rerank findings across axes.
+Use `$convergent-pr-review` instead for local PR review or high-risk local-diff review that needs independent reviewer passes, scoped lenses, and a verified finding ledger.
 
-## Process
+Do not edit files.
 
-### 1. Pin The Fixed Point
+## 1. Pin The Fixed Point
 
 Use the fixed point the user supplied: commit SHA, branch, tag, `main`, `HEAD~5`, or similar. If none was supplied, ask.
 
 Capture:
 
+- fixed point resolution: `git rev-parse <fixed-point>`
 - diff command: `git diff <fixed-point>...HEAD`
 - commit list: `git log <fixed-point>..HEAD --oneline`
 
-Confirm the fixed point resolves with `git rev-parse <fixed-point>` and the diff is non-empty before reviewing.
+Confirm the fixed point resolves and the diff is non-empty before reviewing. Stop if the fixed point does not resolve or the diff is empty.
 
-### 2. Find The Spec Source
+Done means the fixed point, diff command, and commit range are known, or the review is stopped with the reason.
 
-Look for the originating spec in this order:
+## 2. Find The Spec
 
-1. Issue or PR references in commit messages, fetched using `docs/agents/issue-tracker.md` when available.
-2. A path, issue, URL, or PRD/spec the user passed.
-3. A PRD/spec file under `docs/`, `specs/`, `.scratch/`, or the repo's issue packet convention matching the branch or feature.
-4. If none is found, ask where the spec is. If there is no spec, skip the Spec axis and report `no spec available`.
+Find the source of product intent:
 
-If `docs/agents/issue-tracker.md` is missing and tracker fetch is needed, run `$setup-matt-pocock-skills`. If no tracker fetch is needed, continue.
+1. Issue or PR references in commit messages, fetched through `docs/agents/issue-tracker.md` when available.
+2. A path, issue, URL, PRD, spec, or acceptance criteria the user passed.
+3. A PRD/spec file under `docs/`, `specs/`, `.scratch/`, or the repo's issue-packet convention matching the branch or feature.
 
-### 3. Find Standards Sources
+If no Spec exists, skip the Spec axis and report `Skipped: no spec available`.
 
-Find repo documentation for coding standards and contribution rules: `AGENTS.md`, `docs/agents/engineering-contract.md`, `CONTRIBUTING.md`, `CODING_STANDARDS.md`, `README.md`, formatter/linter configs, test docs, or local docs that describe conventions.
+Done means the Spec axis has a source, or is explicitly skipped.
 
-If no standards docs exist, say so. Then report only clear local-convention mismatches visible in nearby code, and label them as convention findings rather than documented-standard violations. Do not invent new standards.
+## 3. Find Standards
 
-### 4. Review Both Axes
+Find documented repo rules: `AGENTS.md`, `docs/agents/engineering-contract.md`, `CONTRIBUTING.md`, `CODING_STANDARDS.md`, `README.md`, formatter/linter configs, test docs, or local convention docs.
 
-If the user explicitly requested subagents, delegation, or parallel agent work, run the two axes in separate Codex subagents. Otherwise, run them sequentially and keep notes separate.
+If no Standards source exists, say so. Report only clear nearby-convention mismatches, and label them as convention findings rather than documented-standard violations.
 
-#### Standards Axis
+Do not invent standards.
 
-Report documented-standard violations. If no standards docs exist, report only clear local-convention mismatches as convention findings.
+Done means Standards sources are named, or their absence is reported.
 
-Include:
+## 4. Review Standards
 
-- documented rule or nearby convention being violated
-- file/line or hunk evidence when possible
-- risk created by the violation
-- required change
+Report only actionable Standards findings.
 
-Skip style nits that tooling already enforces unless the diff bypasses tooling or changes tool configuration.
+Each finding needs severity, location, evidence, risk, and required change.
 
-#### Spec Axis
+Evidence is the documented rule or nearby convention. Location is file/line, hunk, or affected behavior.
 
-Report:
+Skip style nits that tooling already enforces unless the diff bypasses tooling or changes the tooling contract.
 
-- requirements that are missing or only partially implemented
-- whether the diff completes the intended bounded slice; for tracer-bullet issues, one narrow behavior through the real system; for support issues, the unblocker, migration, harness, config, or operational change with observable validation
-- behavior in the diff that was not asked for, including unrelated tracer bullets, support slices, or adjacent cases that widen the slice
+Done means documented-standard violations and meaningful convention findings have been reported, or the axis has no findings.
+
+## 5. Review Spec
+
+Report only actionable Spec findings:
+
+- missing or partially implemented requirements
+- acceptance criteria that are not proven
+- behavior outside the bounded slice
 - requirements that look implemented but are likely wrong
-- load-bearing internal behavior whose semantics affect the requested result but are not proven through a meaningful seam
-- missing or weak tests when an acceptance criterion is not proven through the highest useful interface or seam
+- load-bearing internal behavior not proven through a useful interface or seam
+- missing or weak tests where proof is required
 
-Quote or cite the spec line, issue text, or PRD section for each finding.
+Each finding needs severity, location, evidence, risk, and required change.
 
-## Finding Rules
+Evidence is a spec quote, issue text, PRD section, acceptance criterion, or code evidence.
 
-Report only actionable issues: bugs, missing requirements, scope creep, documented-standard violations, convention findings, or test gaps that create real risk.
+Done means Spec gaps, scope creep, semantic risks, and proof gaps have been reported, or the axis has no findings.
 
-Each finding must include:
+## 6. Subagent Boundary
 
-- severity: `Blocker`, `Major`, or `Minor`
-- location: file/line or hunk when possible; for cross-cutting behavior, cite the affected behavior
-- evidence: spec quote, standard citation, convention evidence, or code evidence
-- risk: why it matters
-- required change: what would make it pass
+Default to sequential review in the current agent context: Standards first, then Spec.
 
-Do not pad the review. If an axis has no findings, say so.
+A delegated parent task, including `$implement`, is not a request for delegated review.
+
+Only run Standards and Spec in separate subagents when the user explicitly asks for review subagents, delegated review, parallel review, or multi-agent review for this review step.
+
+Done means the chosen review mode matches the user's review request, not an inherited execution context.
 
 ## Output
 
-Present findings under two headings:
+Present findings under exactly these headings:
 
 ```markdown
 ## Standards
@@ -104,10 +107,14 @@ Present findings under two headings:
 <findings or "No findings." / "Skipped: no spec available.">
 ```
 
-Do not merge, deduplicate, or rerank across axes.
+Do not merge, deduplicate, or rerank findings across axes. The final one-line summary may count both axes, but findings stay under their axis.
 
-End with a one-line summary: total findings per axis and the worst severity within each axis.
+End with:
+
+```markdown
+Summary: Standards: <count>, worst <severity or none>. Spec: <count/skipped>, worst <severity or none>.
+```
 
 ## Completion Criteria
 
-Done means the fixed point was verified, the diff was reviewed read-only, Standards and Spec were evaluated separately, findings are actionable and evidenced, and missing spec or standards sources are reported explicitly.
+Done means the fixed point was verified, the diff was reviewed read-only, Standards and Spec were evaluated separately, findings are actionable and evidenced, missing sources are reported explicitly, and the output preserves the two-axis boundary.

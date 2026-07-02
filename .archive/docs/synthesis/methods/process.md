@@ -12,6 +12,7 @@ source pressure
   -> controlled language pass
   -> behavior audit
   -> blunt gates
+  -> validation draft
   -> validation on real tasks
   -> prune
 ```
@@ -143,7 +144,12 @@ Caveman the gates.
 
 ## 6. Real Task Validation
 
-Run the skill against real repo tasks, old transcripts, or representative
+First assemble a validation draft: merge the audited candidate lines into the
+current skill context without editing runtime `SKILL.md`. Preserve existing
+behavior, show placement decisions, and keep line IDs in traceability notes
+rather than runtime prose.
+
+Then run the draft against real repo tasks, old transcripts, or representative
 fixtures.
 
 Check:

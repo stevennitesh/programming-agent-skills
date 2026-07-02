@@ -19,9 +19,13 @@ diffs, and failure observations over impressions.
 
 | Lane | Role |
 | --- | --- |
-| [`skills/`](skills/) | Per-skill validation plans, before/after notes, and behavior checks. |
 | [`transcripts/`](transcripts/) | Transcript reviews that show how agents actually behaved. |
 | [`evals/`](evals/) | Repeatable eval notes, fixtures, scoring rubrics, and harness ideas. |
+
+Facet-pipeline validation notes live beside the draft they validate in
+`docs/synthesis/facets/<skill-name>/FACET-<n>-<name>/11-validation.md`.
+Use this folder for cross-run evidence, transcript reviews, and repeatable eval
+material that should outlive one facet timeline.
 
 ## Boundary
 

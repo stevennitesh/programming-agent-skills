@@ -9,10 +9,9 @@ families.
 
 | File | Role |
 | --- | --- |
-| [`process.md`](process.md) | Overall synthesis workflow from source pressure to pruned skill text. |
-| [`source-to-skill-flow.md`](source-to-skill-flow.md) | End-to-end production flow from intent and source search to compact skill wording. |
+| [`source-to-skill-flow.md`](source-to-skill-flow.md) | Production flow from intent and source search through detailed draft, plain-language candidate, reality validation, and final prune. |
 | [`prompts/`](prompts/) | Reusable prompts for each source-to-skill step. |
-| [`controlled-language-pass.md`](controlled-language-pass.md) | Post-draft compression pass for blunt gates and clear completion criteria. |
+| [`plain-language-pass.md`](plain-language-pass.md) | Post-draft plain-language pass for blunt gates and clear completion criteria. |
 
 ## Boundary
 

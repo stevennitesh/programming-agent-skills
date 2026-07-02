@@ -17,6 +17,7 @@ source pressure
   -> controlled language pass
   -> behavior audit
   -> blunt gates
+  -> validation draft
   -> validation on real tasks
   -> prune
 ```
@@ -26,16 +27,14 @@ source pressure
 | File Or Folder | Role |
 | --- | --- |
 | [`methods/`](methods/) | Reusable production flows, synthesis methods, and post-draft passes. |
-| [`promotion-flow.md`](promotion-flow.md) | Boundary rule for moving material from research to synthesis, validation, and runtime skills. |
 | [`target-spine.md`](target-spine.md) | Accepted common target spine for future skill behavior. |
 | [`language-direction.md`](language-direction.md) | Chosen language direction promoted from upstream vocabulary research. |
-| [`GENEROUS-TEMPLATE.md`](GENEROUS-TEMPLATE.md) | Template for generous synthesis before compression. |
-| [`TEMPLATE.md`](TEMPLATE.md) | Template for a new compact per-skill synthesis note. |
+| [`facets/`](facets/) | Skill/facet synthesis timelines from behavior flow through final prune. |
 | [`skills/`](skills/) | One synthesis note per high-leverage individual skill. |
 | [`families/`](families/) | Synthesis notes for tightly coupled skill families. |
 
-[`promotion-flow.md`](promotion-flow.md) owns the full boundary rule for moving
-material between research, synthesis, validation, and runtime skills.
+[`methods/source-to-skill-flow.md`](methods/source-to-skill-flow.md) owns the
+production workflow from intent through final prune.
 
 ## Note Types
 
@@ -44,8 +43,8 @@ judgments, but the runtime wording is not ready to compress. It may explain,
 compare, preserve rejected options, and expose the behavior.
 
 Use compact synthesis when the behavior is chosen. It should identify the
-chosen behavior, compressed candidate wording, audit notes, prune notes, and
-validation tasks.
+chosen behavior, compressed candidate wording, audit notes, draft placement,
+prune notes, and validation tasks.
 
 Some older notes are source-map synthesis: they preserve source pressure and
 concept maps for established skills or tightly coupled skill families. Keep
@@ -59,6 +58,7 @@ A compact synthesis note should end with:
 
 - the proposed runtime behavior;
 - wording candidates small enough to edit into `SKILL.md`;
+- what assembled validation draft would let the behavior be tested in context;
 - what should stay in research;
 - what validation would prove the skill improved.
 

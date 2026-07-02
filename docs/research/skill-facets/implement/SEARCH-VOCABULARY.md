@@ -2,7 +2,12 @@
 
 Use this file as optional search support for `implement` facet research.
 
-The reusable research workflow lives in `../FACET-RESEARCH-PROMPT.md`. The implement-specific facet map lives in `README.md`. This file is only for keywords, exact queries, source anchors, and noise filters that may be reused across multiple implement facets.
+The reusable source-to-skill workflow lives in
+`../../../synthesis/methods/source-to-skill-flow.md`. The implement-specific
+facet map lives in `02-facet-map-and-research-plan.md`. This file is only for
+keywords, exact queries, source anchors, and noise filters that may be reused
+across multiple implement facets; do not treat its section order as the current
+facet order.
 
 Use these terms to find sources. Search by facet, not all at once. Prefer exact phrases first, then broaden.
 

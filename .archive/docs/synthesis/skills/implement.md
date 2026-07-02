@@ -1,5 +1,10 @@
 # Implement Synthesis
 
+Status note: this synthesis was promoted from the historical first-pass bounded
+slice research. Facet 1 has since been demoted for rerun through the
+source-to-skill prompt pipeline; treat this as prior synthesis input, not final
+runtime wording.
+
 ## Purpose
 
 `implement` should make one behavior change from one ready issue, then stop.

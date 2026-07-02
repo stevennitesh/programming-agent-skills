@@ -1,5 +1,11 @@
 # Facet 1 Research: Bounded Slice
 
+Status note: this is historical first-pass research. Facet 1 has been demoted
+for rerun through the current source-to-skill prompt pipeline so the source
+search, extraction, triage, behavior flow, synthesis, audit, validation, and
+final prune steps can confirm or replace this packet before runtime wording is
+changed.
+
 Research question:
 
 > How do strong teams keep implementation work small, valuable, independently provable, and reviewable?
@@ -51,10 +57,10 @@ Consensus:
 - The pre-edit lock must be concrete: activity/path, outside proof, likely in-scope areas, explicit non-goals, and the stop/split trigger.
 - Add one compact good/bad slice contrast so the research stays practical.
 
-Promoted synthesis target: see
-[`../../../synthesis/skills/implement.md`](../../../synthesis/skills/implement.md).
+Current synthesis timeline: see
+[`../../../synthesis/facets/implement/FACET-1-BOUNDED-SLICE/`](../../../synthesis/facets/implement/FACET-1-BOUNDED-SLICE/).
 This research packet preserves the evidence, rejected alternatives, gates, and
-remaining gaps behind that wording.
+remaining gaps behind the synthesis artifacts.
 
 ## Second-Pass Triage
 
@@ -284,8 +290,8 @@ Stop, split, or ask when:
 
 ## Synthesis Promotion
 
-The chosen runtime-facing synthesis wording now lives in
-[`../../../synthesis/skills/implement.md`](../../../synthesis/skills/implement.md).
+The current runtime-facing synthesis timeline now lives in
+[`../../../synthesis/facets/implement/FACET-1-BOUNDED-SLICE/`](../../../synthesis/facets/implement/FACET-1-BOUNDED-SLICE/).
 
 This packet preserves source evidence, ratings, alternatives, rejected
 suggestions, behavior gates, and gaps. Do not copy this research packet into

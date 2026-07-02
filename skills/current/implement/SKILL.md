@@ -65,7 +65,9 @@ Simplify only while behavior is protected: remove disposable scaffolding, collap
 
 ### 6. Converge
 
-Run `$review` against the starting ref.
+Run `$review` against the starting ref using its default sequential mode.
+
+If this `$implement` run is itself delegated to a subagent, do not treat that as permission to spawn review subagents. Escalate only when the user explicitly requests review delegation, or when the selected review layer is `$convergent-pr-review` for local PR or high-risk convergence review.
 
 Fix in-scope findings. Record out-of-scope findings in the final note instead of expanding the slice.
 
@@ -73,7 +75,7 @@ Fix in-scope findings. Record out-of-scope findings in the final note instead of
 
 Commit to the current branch with a message that references the issue.
 
-Leave a concise implementation note on the issue. Include commit SHA, summary, validation run, skipped checks, and residual risk. For local markdown trackers, append the note using the repo convention, or under `## Implementation Notes` if none exists.
+Leave a concise implementation note on the issue. Include commit SHA, summary, review layer, validation run, skipped checks, and residual risk. For local markdown trackers, append the note using the repo convention, or under `## Implementation Notes` if none exists.
 
 Do not close, relabel, change `Status:`, or otherwise change issue state unless the user asks or `docs/agents/issue-tracker.md` defines that workflow.
 

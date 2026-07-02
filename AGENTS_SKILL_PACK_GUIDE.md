@@ -2,7 +2,7 @@
 
 This is an environment-wide guide for repos where this skill pack is installed.
 
-Most workflow skills in this pack are explicit-only. Do not silently run them and do not recreate their procedures here. This file is a suggestion index: preserve the pack's vocabulary, shape the agent's taste, and suggest the one next skill when a specialized workflow would help.
+Most workflow skills in this pack are explicit-only. Do not silently run explicit-only skills and do not recreate their procedures here. A few quality-loop skills are model-invocable by design. This file is a suggestion index: preserve the pack's vocabulary, shape the agent's taste, and suggest the one next skill when a specialized explicit-only workflow would help.
 
 Do not combine this guide with `AGENTS_PORTABLE_FALLBACK.md` in the same Codex profile. The fallback is for repos or environments without the skill pack; this guide is for installed-pack environments.
 
@@ -36,6 +36,8 @@ If the user explicitly names a skill, use that skill.
 
 If no skill is named and the task is tiny or clear, continue normally.
 
+If no skill is named but a model-invocable skill clearly matches, use it.
+
 If no skill is named but a specialized explicit-only skill would clearly improve the work, suggest one next skill and why.
 
 If several routes plausibly fit, suggest `ask-matt`.
@@ -65,8 +67,8 @@ Suggest quality-loop skills:
 
 - `tdd` when behavior is clear enough for red-green-refactor.
 - `diagnosing-bugs` when the symptom, cause, or reproduction is uncertain.
-- `review` when a diff needs fixed-point Standards and Spec review.
-- `convergent-pr-review` when a risky PR needs independent passes, a finding ledger, and patch-ready triage.
+- `review` when an ordinary branch or work-in-progress diff needs fixed-point Standards and Spec review.
+- `convergent-pr-review` when a local PR review or high-risk local-diff review needs independent passes, a finding ledger, and patch-ready triage.
 
 Suggest design and language skills:
 
@@ -81,7 +83,6 @@ Suggest experimental routes only when the user explicitly asks for them or has i
 - `to-slice-plan`
 - `next-slice`
 - `slice-plan-runner`
-- `convergent-pr-review`
 
 ## Boundary
 
