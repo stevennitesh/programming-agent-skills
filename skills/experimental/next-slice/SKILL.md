@@ -34,11 +34,11 @@ boundary remain intact.
 ## Workflow
 
 1. Load the plan and runtime contract.
-   - Read `/home/steve/.codex/skills/_shared/slice-runtime-contract.md`, the
+   - Read installed `_shared/slice-runtime-contract.md`, the
      selected plan, its Execution Handoff, local `AGENTS.md`, and slice-named
      specs, docs, tests, CLIs, or artifacts.
-   - Read `/home/steve/.codex/skills/_shared/slice-execution-contract.md` or
-     `/home/steve/.codex/skills/_shared/slice-planning-contract.md` only when
+   - Read installed `_shared/slice-execution-contract.md` or
+     `_shared/slice-planning-contract.md` only when
      this is the first slice for the plan in this conversation, strict
      validation warns or fails, the plan changed beyond status/Handoff note, or
      the selected slice touches plan/schema behavior.
@@ -51,7 +51,7 @@ boundary remain intact.
      in `.md`:
 
      ```bash
-     /home/steve/.codex/skills/to-slice-plan/scripts/validate_slice_plan.py <plan-path>
+     python path/to/to-slice-plan/scripts/validate_slice_plan.py <plan-path>
      ```
 
      Non-Markdown plans are outside the contract unless the user explicitly

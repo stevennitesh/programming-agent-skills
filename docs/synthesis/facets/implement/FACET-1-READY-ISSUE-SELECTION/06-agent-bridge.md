@@ -18,50 +18,106 @@ or stop when no safe issue is available?
 Facet boundaries:
 
 - Owns: source/candidate resolution, one issue-equivalent selection, selection
-  authority, compact readiness recheck, blocker/dependency stop, ambiguity
-  stop, no-ready stop, PRD/spec-without-issue handoff, risk confirmation smell,
-  and the handoff boundary to Context Intake.
+  authority, compact readiness recheck, blocker/dependency stop,
+  result-defining ambiguity stop, no-ready stop, PRD/spec-without-issue
+  handoff, generic risk confirmation, obvious multi-issue smell, and the
+  handoff boundary to Context Intake.
 - Does not own: issue creation, issue repair, issue splitting, ready-state
   promotion, tracker metadata mutation, exact tracker syntax, product priority,
-  full context intake, implementation planning, proof strategy, review, commit,
+  full Context Intake, implementation planning, proof strategy, review, commit,
   issue notes, or exact sensitive-domain policy.
 - Should answer: what the agent does before coding to select one ready
   issue-equivalent item or stop safely.
 - Should not answer: how to author the issue, make it ready, decompose a source
-  document, design the implementation, prove the change, or close the work.
+  document, design implementation, prove the change, or close the work.
 
 Source triage packet:
 [`docs/research/skill-facets/implement/FACET-1-READY-ISSUE-SELECTION-triage.md`](../../../../research/skill-facets/implement/FACET-1-READY-ISSUE-SELECTION-triage.md)
 
 Triage decision: `ready-for-behavior-flow`
 
+Runtime priority / budget:
+
+- Must: one selected issue-equivalent item; repo-visible ordering or explicit
+  user target; local readiness recheck; agent-prompt adequacy; observable done
+  signal; blocker/dependency check; multiple-candidate order stop; no-ready
+  stop; PRD/spec without one issue stop; result-defining ambiguity stop;
+  owner-boundary stop; explicit-target no-substitution stop when the named item
+  is not eligible.
+- Should: select first, plan later; risk-domain confirmation.
+- Could: obvious multi-issue smell; report checked surface when stopping.
+
+Bridge resolution plan:
+
+- Pull / WIP / capacity -> one selected issue-equivalent item.
+- Pull criteria / explicit policies -> repo-visible ordering or explicit user
+  target.
+- Ready-for-selection / stage-gate contrast -> small local readiness recheck.
+- Issue as prompt -> agent-prompt adequacy.
+- Acceptance criteria / testable -> observable done signal.
+- Underspecified -> result-defining ambiguity.
+- Blocked by / blocking -> blocker/dependency check.
+- Self-contained / INVEST small -> obvious multi-issue smell.
+- Human oversight / sensitive task -> risk-domain confirmation.
+
+Duplicate-collapse notes:
+
+- Primary runtime terms: one selected issue-equivalent item; repo-visible
+  ordering or explicit user target; local readiness recheck;
+  agent-prompt adequacy; observable done signal; result-defining ambiguity;
+  blocker/dependency check; select first, plan later.
+- Demote source vocabulary such as pull, WIP, Definition of Ready, INVEST,
+  Scrum, Small CLs, blocked-by/blocking syntax, and benchmark terminology to
+  support or research-only context.
+
+Owner-conflict severities:
+
+- Hard-boundary: `to-issues` owns PRD/spec decomposition; `triage` owns
+  ready-state promotion and issue-brief repair; tracker docs own exact syntax,
+  commands, labels, ordering fields, and metadata mutation; user/repo-visible
+  policy owns priority.
+- Later-facet-watchpoint: Context Intake owns full understanding and file
+  discovery; Bounded Slice Control owns detailed size/slice management;
+  Semantic Proof owns proof strategy; Review And Lock owns output review.
+- Soft-reference: engineering contract / repo docs own exact high-risk policy.
+- Support-only/research-only: Kanban, Scrum, DoR, INVEST, Small CL, and
+  benchmark rationale.
+
 Revision feedback:
 
-- Rerun Prompt 06 from the refreshed Prompt 05 triage packet.
-- Use three subagents to check behavior sequence, branches / stop rules, and
-  duplicate-term / owner-boundary compression.
+- Rerun Prompt 06 from the refreshed Prompt 05 triage packet using the current
+  `docs/synthesis/methods/prompts/06-agent-bridge.md` schema.
+- Use three subagents to check template/schema compliance, owner-boundary
+  pressure, and behavior/gate quality.
 
 Subagent inputs used:
 
-- Sequence pass: split the execution chain into source resolution, one-item
-  selection, authority check, compact readiness recheck, blocker/dependency,
-  prompt adequacy, done signal, ambiguity, risk/size, and selection boundary.
-- Branch pass: keep branches specific to no-ready, multiple candidates,
-  PRD/spec without issue, readiness repair, blocker/dependency, ambiguity,
-  prompt-poor/no-done-signal, risk, multi-issue smell, and premature planning.
-- Boundary/compression pass: use primary behavior terms from Prompt 05 and keep
-  source vocabulary such as WIP, DoR, INVEST, Scrum, and Small CLs in support.
+- Schema subagent pass: normalize the old behavior-flow artifact to the current
+  Prompt 06 input fields, `Bridge Consequence` / `Bridge Placement` table
+  headers, `agent bridge` vocabulary, and explicit `agent-bridge decision`
+  handoff while carrying forward the six-step sequence and must-keep branches.
+- Owner-boundary subagent pass: keep runtime behavior for one selected item,
+  explicit user/repo-visible authority, compact readiness recheck,
+  blocker/dependency checks, result-defining ambiguity, PRD/spec-without-one
+  stop, risk confirmation, and selection-before-planning; keep `triage`,
+  `to-issues`, tracker docs, and the engineering contract as owners for their
+  respective procedures.
+- Behavior/gate subagent pass: sharpen selection as an issue-commitment gate;
+  keep named-issue no-substitution behavior when the named item is not ready,
+  make tracker-state eligibility visible without inlining tracker mechanics,
+  and avoid inferring commitments from weak issue text.
 
 ## 1. Agent Bridge Scope
 
-This behavior flow converts the `Ready Issue Selection` triage into an
-execution skeleton for the first part of `implement`: selecting exactly one
-ready issue-equivalent item or stopping before implementation starts.
+This agent bridge converts the `Ready Issue Selection` triage into an execution
+skeleton for the first part of `implement`: selecting exactly one ready
+issue-equivalent item or stopping before implementation starts.
 
 Surviving material in scope:
 
 - one selected issue-equivalent item;
 - repo-visible ordering or explicit user target;
+- tracker-state eligibility;
 - local readiness recheck;
 - agent-prompt adequacy;
 - observable done signal;
@@ -85,43 +141,45 @@ Material intentionally left for support/reference:
 - Small CL reviewability rationale;
 - exact tracker commands, state names, labels, and dependency syntax.
 
-This behavior flow must not decide final runtime `SKILL.md` wording, write
-generous synthesis prose, create or triage issues, mutate tracker state, perform
-Context Intake, plan implementation, design proof, review output, or define
+This agent bridge must not decide final runtime `SKILL.md` wording, write full
+behavior synthesis prose, create or triage issues, mutate tracker state,
+perform Context Intake, plan implementation, design proof, review output, draft
+candidate runtime lines, convert the skill to plain language, or define
 repo-specific high-risk policy.
 
 ## 2. Prompt 05 Handoff Check
 
-| Prompt 05 Input | Used / Revised / Deferred / Rejected | Flow Consequence | Notes |
+| Prompt 05 Input | Used / Revised / Deferred / Rejected | Bridge Consequence | Notes |
 | --- | --- | --- | --- |
-| Triage decision: `ready-for-behavior-flow` | Used | Build the ordered execution skeleton. | No return to triage needed. |
+| Triage decision: `ready-for-behavior-flow` | Used | Build the ordered execution skeleton. | Prompt 05 uses the older behavior-flow label for the current agent-bridge input; no return to triage needed. |
 | Runtime priority / budget | Used | Must candidates become hard gates or stop branches. | Should/Could items become rechecks, support cues, or optional branches. |
-| Bridge resolution plan | Used | Raw source terms become plain behavior terms. | Avoid carrying Kanban, Scrum, DoR, INVEST, or benchmark language into the core flow. |
-| Duplicate / synonym collapse choices | Used | Primary terms are one selected issue-equivalent item, repo-visible ordering or explicit user target, local readiness recheck, agent-prompt adequacy, observable done signal, result-defining ambiguity, blocker/dependency check, and select first, plan later. | Source phrases remain support terms. |
+| Bridge resolution plan | Used | Raw source terms become plain behavior terms. | Avoid carrying Kanban, Scrum, DoR, INVEST, or benchmark language into the core bridge. |
+| Duplicate / synonym collapse choices | Used | Primary terms are preserved and source phrases become support terms. | Prevents Prompt 07 from carrying several names for the same behavior. |
 | Owner-conflict severities | Used | Hard boundaries become stop/handoff branches. | Especially `to-issues`, `triage`, tracker docs, Context Intake, Bounded Slice Control, Semantic Proof, Review And Lock, and engineering contract. |
-| Rejected temptation: full DoR / INVEST | Rejected | Flow does not build a readiness checklist. | Only a compact local readiness recheck survives. |
+| Rejected temptation: full DoR / INVEST | Rejected | Agent bridge does not build a readiness checklist. | Only a compact local readiness recheck survives. |
 | Watchpoint: exact tracker semantics | Deferred | Runtime checks blocker/order semantics only. | Repo docs own commands, labels, and metadata edits. |
 | Watchpoint: risk-domain confirmation | Revised | Keep as generic confirmation branch. | Engineering contract / repo docs own exact policy. |
 | Watchpoint: obvious multi-issue smell | Revised | Keep only as an early stop/narrow branch. | Bounded Slice Control owns detailed sizing and slicing. |
 
 ## 3. Priority Preservation Check
 
-| Candidate | Must / Should / Could | Flow Placement | Preserved / Demoted / Dropped | Why |
+| Candidate | Must / Should / Could | Bridge Placement | Preserved / Demoted / Dropped | Why |
 | --- | --- | --- | --- | --- |
 | One selected issue-equivalent item | Must | Steps 1-2 hard gates | Preserved | Core facet output. |
 | Repo-visible ordering or explicit user target | Must | Step 3 hard gate | Preserved | Prevents invented priority/readiness authority. |
+| Tracker-state eligibility | Must | Step 3 hard gate and Branch B11 | Preserved | Prevents a named issue from bypassing ready-state checks or being silently replaced. |
 | Local readiness recheck | Must | Step 4 hard gate | Preserved | Prevents label-only pickup. |
-| Agent-prompt adequacy | Must | Step 5 hard gate | Preserved | Tests whether a fresh agent can begin Context Intake. |
-| Observable done signal | Must | Step 6 hard gate | Preserved | Prevents unverifiable pickup without designing proof. |
-| Blocker/dependency check | Must | Step 7 hard gate | Preserved | Prevents starting blocked work. |
+| Agent-prompt adequacy | Must | Step 4 hard gate | Preserved | Tests whether a fresh agent can begin Context Intake. |
+| Observable done signal | Must | Step 4 hard gate | Preserved | Prevents unverifiable pickup without designing proof. |
+| Blocker/dependency check | Must | Step 4 hard gate and Branch B6 | Preserved | Prevents starting blocked work. |
 | Multiple-candidate order stop | Must | Branch B1 | Preserved | Priority is not agent-owned. |
 | No-ready stop | Must | Branch B2 | Preserved | Preserves `triage` / `to-issues` ownership. |
 | PRD/spec without one issue stop | Must | Branch B3 | Preserved | Prevents whole-document implementation scope. |
-| Result-defining ambiguity stop | Must | Step 8 and Branch B7 | Preserved | Prevents invented requirements. |
-| Owner-boundary stop | Must | Step 10 and Branch B10 | Preserved | Prevents readiness repair, tracker mutation, splitting, or planning. |
-| Select first, plan later | Should | Step 10 handoff gate | Preserved | Keeps Context Intake separate. |
-| Risk-domain confirmation | Should | Step 9 and Branch B8 | Preserved as recheck | Avoids silent high-risk pickup without defining policy. |
-| Obvious multi-issue smell | Could | Branch B4 / Step 9 support recheck | Demoted | Selection catches obvious scope explosions only. |
+| Result-defining ambiguity stop | Must | Step 4 and Branch B7 | Preserved | Prevents invented requirements. |
+| Owner-boundary stop | Must | Step 6 and Branch B5 | Preserved | Prevents readiness repair, tracker mutation, splitting, or planning. |
+| Select first, plan later | Should | Step 6 handoff gate | Preserved | Keeps Context Intake separate. |
+| Risk-domain confirmation | Should | Step 5 and Branch B9 | Preserved as recheck | Avoids silent high-risk pickup without defining policy. |
+| Obvious multi-issue smell | Could | Step 5 and Branch B4 | Demoted | Selection catches obvious scope explosions only. |
 | Report searched surface when stopping | Could | Branch B2 and completion criteria | Preserved as support behavior | Useful evidence without bloating main path. |
 
 ## 4. Runtime Candidate Inventory
@@ -130,6 +188,7 @@ repo-specific high-risk policy.
 | --- | --- | --- | --- |
 | One selected issue-equivalent item | behavior rule / evidence gate | Defines the facet's success condition. | Bound the run to one candidate. |
 | Repo-visible ordering or explicit user target | evidence gate | Establishes selection authority. | Prevent invented priority or readiness. |
+| Tracker-state eligibility | evidence gate / stop rule | Keeps `implement` on ready work only. | Stop on an explicit target that is closed, blocked by state, or not ready rather than substituting another item. |
 | Local readiness recheck | evidence gate / bridge translation | Catches false readiness without owning `triage`. | Check small pre-context facts. |
 | Agent-prompt adequacy | evidence gate / bridge translation | Directly tests agent-task fit. | Reject prompt-poor issues. |
 | Observable done signal | evidence gate / bridge translation | Gives later proof a target without designing proof now. | Reject unverifiable pickup. |
@@ -148,7 +207,8 @@ repo-specific high-risk policy.
 | --- | --- | --- | --- | --- |
 | Single-item discipline | One selected issue-equivalent item | pull, WIP, capacity | queue grabbing, start next task | Plain behavior is stronger than process jargon. |
 | Selection authority | Repo-visible ordering or explicit user target | ready marker, explicit policies, pull criteria | highest priority, suitable issue | Agent must not invent priority. |
-| Readiness | Local readiness recheck | ready for selection, Definition of Ready | full DoR checklist, READY-ready | Runtime needs a small gate. |
+| Tracker state | Tracker-state eligibility | ready-for-agent, needs-info, ready-for-human, wontfix, closed | label/state mutation | Runtime detects eligibility; tracker docs own exact mapping. |
+| Readiness | Local readiness recheck | ready for selection, Definition of Ready | full DoR checklist | Runtime needs a small gate. |
 | Issue quality | Agent-prompt adequacy | issue as prompt, well-scoped | clear enough, well-defined | Agentic term makes the gate checkable. |
 | Success signal | Observable done signal | acceptance criteria, testable, done when | full proof plan | Selection needs a signal, not proof design. |
 | Ambiguity | Result-defining ambiguity | underspecified, vague, unclear | ask if unsure | Specific branch avoids timidity. |
@@ -205,8 +265,9 @@ Supporting terms:
 
 Evidence gate:
 
-- The run has one candidate source type: explicit user target, repo-visible
-  ready/order surface, PRD/spec without one issue, or no ready source.
+- The run has one candidate source type: explicit user target,
+  repo-visible ready/order surface, PRD/spec without one issue, or no ready
+  source.
 
 Gate type:
 
@@ -308,6 +369,9 @@ Agent action:
 
 - Confirm the candidate is eligible by repo-visible ready/order policy or by
   explicit user target.
+- For tracker items, confirm the item is in an eligible ready state and is not
+  visibly closed, waiting for information, human-owned, rejected, or otherwise
+  blocked by tracker state.
 - Use repo tracker docs for exact ready labels, ordering fields, state names,
   or dependency syntax.
 - Do not promote, relabel, reorder, rewrite, or edit tracker metadata.
@@ -328,7 +392,7 @@ Supporting terms:
 Evidence gate:
 
 - Candidate has explicit user selection or repo-visible readiness/ordering
-  authority with no obvious contradiction.
+  authority with no obvious tracker-state contradiction.
 
 Gate type:
 
@@ -339,6 +403,8 @@ Stop / ask / continue rule:
 - Continue when authority is clear.
 - Stop or hand off if selection would require ready-state promotion, issue
   rewrite, relabeling, priority invention, or tracker mutation.
+- If the user explicitly named an ineligible issue, stop on that issue and
+  report why it cannot be picked up; do not silently substitute another issue.
 
 Failure prevented:
 
@@ -356,7 +422,7 @@ Ownership severity:
 
 Next:
 
-- Step 4 or Branch B5.
+- Step 4, Branch B5, or Branch B11.
 
 ### Step 4: Run Local Readiness Recheck
 
@@ -437,8 +503,9 @@ Trigger / situation:
 
 Agent action:
 
-- Check for sensitive, critical, consequential, regulated, production-critical,
-  security, PII, auth, incident, or deep business-logic signals.
+- Check for sensitive, critical, consequential, regulated,
+  production-critical, security, PII, auth, incident, or deep business-logic
+  signals.
 - Check whether the candidate is plainly too broad or multi-issue to be one
   coherent implementation item.
 - Do not define risk policy or slice the work here.
@@ -460,7 +527,8 @@ Supporting terms:
 Evidence gate:
 
 - Either no risk confirmation is needed, or user boundaries are explicit.
-- Candidate does not plainly require several independent implementation issues.
+- Candidate does not plainly require several independent implementation
+  issues.
 
 Gate type:
 
@@ -566,6 +634,7 @@ Next:
 | B8: Prompt-poor or no done signal | Candidate lacks work/outcome shape or any observable done signal | Stop or route upstream; do not invent the issue brief. | Adequate prompt/done signal exists. | handoff-skill | Exit to `triage`; rejoin only after repair. |
 | B9: Risk-domain confirmation | Candidate touches sensitive, critical, regulated, consequential, security, PII, auth, incident, production-critical, or deep business-logic work | Ask for explicit confirmation and boundaries; consult repo policy if available. | User confirms guardrails or selects another issue. | ask-user | Rejoin Step 5 or exit blocked. |
 | B10: Premature planning | Agent starts design, file discovery, proof strategy, or code edits before selection facts are recorded | Stop planning and record selection facts only. | Identity/readiness facts complete. | rejoin-flow | Rejoin Step 6 or hand off to Context Intake. |
+| B11: Explicit target is not eligible | User names a specific issue/path/URL, but the selected item is not ready or is blocked by visible tracker state | Stop on the named item and report the missing eligibility fact; do not substitute another issue unless the user asks. | Named item becomes eligible or user chooses a different item. | blocked | Exit facet or rejoin Step 2 only after user/repo-visible authority changes. |
 
 ## 9. Completion Criteria
 
@@ -573,6 +642,7 @@ Next:
 | --- | --- | --- | --- | --- | --- |
 | Exactly one selected issue-equivalent item is named | hard gate | The facet did not pick a batch, queue, project, or whole document. | Check selected item is singular and concrete. | It names a list, project, PRD, or source document. | It decomposes the source into issues. |
 | Selection authority is visible | hard gate | Agent did not invent priority or readiness. | Check explicit user target or repo-visible ready/order source is named. | It says "looks ready." | It edits tracker policy or labels. |
+| Tracker-state eligibility is visible | hard gate | A named item is ready enough to enter `implement`. | Check the item has eligible ready state and no visible disqualifying state. | A closed or needs-info item passes. | Agent mutates labels/state or treats exact tracker syntax as runtime-owned. |
 | Local readiness recheck is complete | hard gate | Candidate is safe enough to own before Context Intake. | Check prompt adequacy, done signal, blocker/dependency state, and ambiguity result. | It checks only a label. | It performs full Context Intake or issue repair. |
 | Agent-prompt adequacy exists | hard gate | A fresh coding agent can start from the issue plus repo-local context. | Check candidate states requested work and success shape enough to begin intake. | A title-only nontrivial issue passes. | Exact files or complete design are required. |
 | Observable done signal exists | hard gate | Later proof has a target. | Check for expected behavior, repro, proof hint, doc target, or done condition. | "Make better" passes. | A full proof plan is required now. |
@@ -589,6 +659,7 @@ Next:
 | No ready issue-equivalent item exists | Stop | `implement` must not create its own work to stay busy. | User provides a ready item or upstream workflow creates/triages one. |
 | PRD/spec/path without one ready issue | Stop / ask / handoff | A source document is not automatic implementation scope. | One ready issue-equivalent item is named. |
 | Candidate requires readiness repair or tracker mutation | Stop / handoff | Repair belongs to `triage`, `to-issues`, or tracker owner. | Item is made ready upstream. |
+| Explicit target is not eligible | Stop | A named issue does not grant permission to bypass readiness. | Named item is made eligible, or user explicitly selects another ready item. |
 | Candidate is blocked | Stop / ask | Dependency order matters. | Blocker is resolved, selected, or order is confirmed. |
 | Result-defining ambiguity exists | Ask | Prevents invented requirements. | Missing result detail is supplied. |
 | Prompt-poor issue or no done signal | Stop / handoff | Implementation would be unverifiable or invented. | Issue brief or done signal is repaired upstream. |
@@ -603,6 +674,7 @@ Next:
 | --- | --- | --- | --- | --- | --- | --- |
 | One selected issue-equivalent item | Yes | Maybe | No | No | none | Core facet behavior. |
 | Repo-visible ordering or explicit user target | Yes | Maybe | No | Repo tracker docs for exact syntax | soft-reference | Runtime needs authority; docs own details. |
+| Tracker-state eligibility | Yes | Maybe | No | Tracker docs own exact labels/state syntax; `triage` owns changes | hard-boundary | Runtime detects eligibility; upstream owners mutate state. |
 | Local readiness recheck | Yes | Maybe | No | `triage` owns repair | hard-boundary | Runtime checks; upstream fixes. |
 | Agent-prompt adequacy | Yes | Maybe | No | Context Intake owns deeper context | later-facet-watchpoint | Selection needs only adequacy. |
 | Observable done signal | Yes | Maybe | No | Semantic Proof owns proof strategy | later-facet-watchpoint | Selection needs a target, not proof design. |
@@ -620,7 +692,7 @@ Next:
 
 | Risk | Why It Matters | Mitigation |
 | --- | --- | --- |
-| Flow becomes polished runtime wording too early | Prompt 06 should produce a skeleton, not final `SKILL.md` prose. | Keep action/gate/branch language and defer prose to Prompt 07. |
+| Agent bridge becomes polished runtime wording too early | Prompt 06 should produce a skeleton, not final `SKILL.md` prose. | Keep action/gate/branch language and defer prose to Prompt 07. |
 | Local readiness recheck becomes full triage | Would make `implement` repair or promote issues. | Limit recheck to prompt adequacy, done signal, blockers, and ambiguity. |
 | Gate terms are too vague | "Ready" and "clear" can pass without evidence. | Use named gates with concrete facts. |
 | Generic ask behavior returns | Would make the agent timid. | Ask only on named gates: priority, result-defining ambiguity, blocker, risk, or missing target issue. |
@@ -633,7 +705,7 @@ Next:
 
 ## 13. Handoff To Full Behavior Synthesis
 
-Behavior-flow decision: `ready-for-full-behavior-synthesis`
+agent-bridge decision: `ready-for-full-behavior-synthesis`
 
 Final behavior sequence:
 
@@ -670,8 +742,8 @@ Strongest gates:
 
 Support/reference pointers needed:
 
-- repo tracker docs for exact ready labels, ordering, commands, state semantics,
-  and dependency syntax;
+- repo tracker docs for exact ready labels, ordering, commands, state
+  semantics, and dependency syntax;
 - support rationale for Kanban pull/WIP and DoR/stage-gate contrast if final
   runtime needs a reference note;
 - support examples for agent-prompt adequacy, blocker/dependency checks, and

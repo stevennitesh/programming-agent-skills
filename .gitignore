@@ -41,6 +41,8 @@ docs/*
 !docs/adr/**
 !docs/agents/
 !docs/agents/**
+!docs/plans/
+!docs/plans/**
 !docs/research/
 !docs/research/**
 !docs/synthesis/
@@ -48,7 +50,7 @@ docs/*
 !docs/validation/
 !docs/validation/**
 skills/wip/
-plans/
+/plans/
 
 # Node/package manager output if skill tooling uses JS
 node_modules/

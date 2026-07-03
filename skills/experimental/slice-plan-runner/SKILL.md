@@ -33,10 +33,10 @@ are limited to the runtime contract's definition.
 
 ## Loop Rules
 
-- Read `/home/steve/.codex/skills/_shared/slice-runtime-contract.md` before
+- Read installed `_shared/slice-runtime-contract.md` before
   selecting the first slice. If it cannot be read, stop.
-- Read `/home/steve/.codex/skills/_shared/slice-execution-contract.md` or
-  `/home/steve/.codex/skills/_shared/slice-planning-contract.md` only when
+- Read installed `_shared/slice-execution-contract.md` or
+  `_shared/slice-planning-contract.md` only when
   starting a fresh plan, validation warns or fails, the plan changed beyond
   allowed status/Handoff-note updates, or the selected slice touches
   plan/schema behavior.
@@ -44,7 +44,7 @@ are limited to the runtime contract's definition.
   after status updates when the plan path ends in `.md`:
 
   ```bash
-  /home/steve/.codex/skills/to-slice-plan/scripts/validate_slice_plan.py <plan-path>
+  python path/to/to-slice-plan/scripts/validate_slice_plan.py <plan-path>
   ```
 
   Non-Markdown plans are outside the contract unless the user explicitly

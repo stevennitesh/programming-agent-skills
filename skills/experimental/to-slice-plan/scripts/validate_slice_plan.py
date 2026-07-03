@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import sys
 from collections import Counter
@@ -141,10 +142,53 @@ HIGH_RISK_WARNING_FIELDS = (
     "Risks/review traps",
     "Notes/considerations",
 )
-SKILL_ROOTS = (
-    Path("/home/steve/.codex/skills"),
-    Path("/home/steve/.agents/skills"),
-)
+
+
+def default_skill_roots() -> tuple[Path, ...]:
+    roots: list[Path] = []
+    script_path = Path(__file__).resolve()
+    repo_root = script_path.parents[4]
+
+    for repo_skill_root in (
+        repo_root / "skills" / "current",
+        repo_root / "skills" / "experimental",
+        repo_root / "skills" / "extra",
+    ):
+        roots.append(repo_skill_root)
+
+    for env_name in ("AGENT_SKILLS_DIR",):
+        env_value = os.environ.get(env_name)
+        if env_value:
+            roots.append(Path(env_value).expanduser())
+
+    for env_name in ("CODEX_HOME",):
+        env_value = os.environ.get(env_name)
+        if env_value:
+            roots.append(Path(env_value).expanduser() / "skills")
+
+    home_candidates = []
+    for env_name in ("HOME", "USERPROFILE"):
+        env_value = os.environ.get(env_name)
+        if env_value:
+            home_candidates.append(Path(env_value).expanduser())
+
+    for home in home_candidates:
+        roots.extend((home / ".codex" / "skills", home / ".agents" / "skills"))
+
+    unique_roots: list[Path] = []
+    seen: set[Path] = set()
+    for root in roots:
+        try:
+            resolved = root.resolve()
+        except OSError:
+            resolved = root
+        if resolved not in seen:
+            seen.add(resolved)
+            unique_roots.append(root)
+    return tuple(unique_roots)
+
+
+SKILL_ROOTS = default_skill_roots()
 REVIEW_GATES = {
     "none",
     "local diff review",

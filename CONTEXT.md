@@ -2,6 +2,74 @@
 
 This context defines the resolved language for maintaining the skill pack. The repo exists to shape agent behavior across target repos through intentional skills, setup docs, validators, and reusable engineering vocabulary.
 
+## Repository Maintenance Invariants
+
+- `AGENTS.md` is the agent primer: short commands, context pointers, and
+  non-negotiable local invariants only.
+- `docs/plans/README.md` is the active-work router. It links current plans and
+  runbooks without copying long plan lists.
+- `docs/agents/engineering-contract.md` teaches the local coding discipline;
+  skills execute their specific workflows.
+- Stable vocabulary belongs in this file. Durable structure or policy decisions
+  belong in `docs/adr/`.
+- Tracker mechanics and label mappings belong in `docs/agents/issue-tracker.md`
+  and `docs/agents/triage-labels.md`.
+- Research, synthesis, and validation artifacts live under `docs/research/`,
+  `docs/synthesis/`, and `docs/validation/`. Treat historical artifacts,
+  transcripts, issue notes, and run logs as evidence unless they explicitly say
+  they are current instructions.
+- The validator owns mechanical and publishing hygiene. Human review,
+  `$writing-great-skills`, and this context own language quality.
+- Prefer config, scripts, and skill files over explanatory prose when behavior
+  can be enforced directly.
+
+## Workflow Model And Artifact Ownership
+
+- `README.md` is the human-facing product overview and install guide.
+- `AGENTS.md` is the boot surface for every agent run.
+- `CONTEXT.md` is the stable vocabulary, workflow model, and repo invariants.
+- `docs/plans/README.md` routes active work, live runbooks, and current plan
+  families.
+- `docs/research/` owns source intake, source ranking, search vocabulary, and
+  candidate language extraction.
+- `docs/synthesis/` owns design judgment between research and final skills:
+  methods, prompt templates, facet timelines, skill notes, and family notes.
+- `docs/validation/` owns evidence that skill wording changed agent behavior:
+  transcript reviews, eval notes, fixtures, and skipped-check records.
+- `docs/agents/` owns agent process/config for repos using this skill pack:
+  tracker mechanics, triage labels, domain routing, and the engineering
+  contract.
+- `docs/adr/` owns durable decisions that should not be relitigated during
+  routine skill edits.
+- `skills/current/` owns active skills. `skills/experimental/` owns workflows
+  still being hardened. `skills/extra/` owns optional skills outside the active
+  guide.
+
+## Generated And Historical Artifacts
+
+- Prompt outputs under `docs/synthesis/facets/` are synthesis artifacts, not
+  boot instructions.
+- Research notes, synthesis timelines, validation notes, transcripts, issue
+  notes, and run logs stay historical unless an owning README or
+  `docs/plans/README.md` marks them current.
+- Generated data, caches, downloaded artifacts, bulky outputs, and temporary
+  experiments stay out of tracked source unless the repo explicitly needs them.
+- Use `.tmp/` for disposable local experiments. Delete scratch before handoff
+  unless the user asks to preserve it.
+
+## Stable Defaults
+
+- Python commands should be portable: activate `.venv`, then run
+  `python -m ...`.
+- Pytest defaults live in `pyproject.toml`; do not repeat addopts, testpaths,
+  markers, or ignored directories across docs.
+- Focused tests should use `python -m scripts.pytest_focused` so narrow runs do
+  not inherit full-suite fanout by accident.
+- Skill-pack validation should use `python -m scripts.validate_skills`; the
+  POSIX shell script is only a compatibility wrapper.
+- Mechanical behavior belongs in config or scripts when possible. Prose should
+  explain ownership, routing, and judgment that cannot be enforced directly.
+
 ## Skill-Pack Architecture
 
 **Skill pack**:

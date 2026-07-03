@@ -126,8 +126,8 @@ Strict plan validation requires every Plan Self-Check item to be checked. Use
 `--allow-draft` only while authoring an incomplete plan.
 
 ```bash
-/home/steve/.codex/skills/to-slice-plan/scripts/validate_slice_plan.py <plan-path>
-/home/steve/.codex/skills/to-slice-plan/scripts/validate_slice_plan.py --allow-draft <plan-path>
+python path/to/to-slice-plan/scripts/validate_slice_plan.py <plan-path>
+python path/to/to-slice-plan/scripts/validate_slice_plan.py --allow-draft <plan-path>
 ```
 
 - [ ] The slice planning and runtime contracts were read and the plan is

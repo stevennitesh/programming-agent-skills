@@ -1,0 +1,22 @@
+[tool.pytest.ini_options]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--dist=worksteal",
+    "-n",
+    "auto",
+]
+testpaths = ["tests"]
+markers = [
+    "focused: narrow checks used by the focused-run wrapper",
+]
+norecursedirs = [
+    ".git",
+    ".venv",
+    ".tmp",
+    ".archive",
+    "node_modules",
+    "dist",
+    "build",
+    "coverage",
+]

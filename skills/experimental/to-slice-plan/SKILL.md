@@ -19,8 +19,8 @@ implementation belongs in `$next-slice` or `$slice-plan-runner`.
 
 Read these contracts before planning:
 
-- `/home/steve/.codex/skills/_shared/slice-planning-contract.md`
-- `/home/steve/.codex/skills/_shared/slice-runtime-contract.md`
+- installed `_shared/slice-planning-contract.md`
+- installed `_shared/slice-runtime-contract.md`
 
 If either cannot be read, stop. Use [`TEMPLATE.md`](TEMPLATE.md) as the
 authoring shape, but treat the contracts and validator as authoritative: every
@@ -31,7 +31,7 @@ without inferred intent.
 After saving any `.md` slice plan, validate it with:
 
 ```bash
-/home/steve/.codex/skills/to-slice-plan/scripts/validate_slice_plan.py <plan-path>
+python path/to/to-slice-plan/scripts/validate_slice_plan.py <plan-path>
 ```
 
 Use `--allow-draft` only while authoring an incomplete plan. Strict plan
