@@ -77,8 +77,8 @@ Commit to the current branch with a message that references the issue.
 
 Leave a concise implementation note on the issue. Include commit SHA, summary, review layer, validation run, skipped checks, and residual risk. For local markdown trackers, append the note using the repo convention, or under `## Implementation Notes` if none exists.
 
-Do not close, relabel, change `Status:`, or otherwise change issue state unless the user asks or `docs/agents/issue-tracker.md` defines that workflow.
+Set the issue state to `implemented` after the implementation note is recorded. For role-label trackers, remove the prior state-role label and apply the mapped `implemented` label from `docs/agents/triage-labels.md`. For local markdown trackers, change the `Status:` line to `implemented`. Do not close the issue unless the user asks or `docs/agents/issue-tracker.md` defines closing as part of the implemented transition.
 
 ## Completion Criteria
 
-Done means one issue is implemented, reviewed against the starting ref, committed, and noted; validation is recorded; unrelated work is preserved; issue state changes only when requested or repo-defined.
+Done means one issue is implemented, reviewed against the starting ref, committed, noted, and moved to `implemented`; validation is recorded; unrelated work is preserved.

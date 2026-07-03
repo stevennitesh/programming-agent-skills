@@ -35,11 +35,11 @@ Assume the user does not know what these terms mean. Each section starts with a 
 
 **Section A — Issue tracker.**
 
-> Explainer: The "issue tracker" is where issues live for this repo. Skills like `to-prd`, `to-issues`, `triage`, `implement`, and `review` read from and write to it — they need to know whether to call `gh issue create`, write markdown under `.scratch/`, or follow some other workflow you describe. Pick the place you actually track work for this repo.
+> Explainer: The "issue tracker" is where issues live for this repo. Skills like `to-prd`, `to-issues`, `triage`, `implement`, and `review` read from and write to it. They need to know whether to use the GitHub connector, write markdown under `.scratch/`, or follow some other workflow you describe. Pick the place you actually track work for this repo.
 
 Default posture: these skills were designed for GitHub. If a `git remote` points at GitHub, propose that. If a `git remote` points at GitLab (`gitlab.com` or a self-hosted host), propose GitLab. Otherwise (or if the user prefers), offer:
 
-- **GitHub** — issues live in the repo's GitHub Issues (uses the `gh` CLI)
+- **GitHub** — issues live in the repo's GitHub Issues (uses the GitHub connector)
 - **GitLab** — issues live in the repo's GitLab Issues (uses the [`glab`](https://gitlab.com/gitlab-org/cli) CLI)
 - **Local markdown** — issues live as files under `.scratch/<feature>/` in this repo (good for solo projects or repos without a remote)
 - **Other** (Jira, Linear, etc.) — ask the user to describe the workflow in one paragraph; the skill will record it as freeform prose
@@ -52,7 +52,7 @@ If — and only if — the user picked **GitHub** or **GitLab**, ask one follow-
 
 **Section B — Triage label vocabulary.**
 
-> Explainer: When the `triage` skill processes an incoming issue or external PR, it applies one category role and one state role. Category says what kind of work it is. State says where it is in the triage machine: needs evaluation, waiting on reporter, ready for an unattended Codex implementation session or delegated implementation subagent, ready for a human, or won't fix. Map these roles to labels that actually exist in your tracker so the skills apply the right labels instead of creating duplicates.
+> Explainer: When the `triage` skill processes an incoming issue or external PR, it applies one category role and one state role. Category says what kind of work it is. State says where it is in the triage machine: needs evaluation, waiting on reporter, ready for an unattended Codex implementation session or delegated implementation subagent, ready for a human, implemented, or won't fix. Map these roles to labels that actually exist in your tracker so the skills apply the right labels instead of creating duplicates.
 
 Category roles:
 
@@ -65,6 +65,7 @@ State roles:
 - `needs-info` — waiting on reporter
 - `ready-for-agent` — fully specified, ready for an unattended Codex implementation session or delegated implementation subagent
 - `ready-for-human` — needs human implementation
+- `implemented` — implemented, reviewed, committed, and recorded by `$implement`
 - `wontfix` — will not be actioned
 
 Default: each role's string equals its name. Ask the user if they want to override any. If their issue tracker has no existing labels, the defaults are fine.

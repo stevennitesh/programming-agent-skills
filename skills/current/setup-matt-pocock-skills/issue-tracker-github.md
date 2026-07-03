@@ -1,29 +1,31 @@
 # Issue tracker: GitHub
 
-Issues and PRDs for this repo live as GitHub issues. Use the `gh` CLI for all operations.
+Issues and PRDs for this repo live as GitHub issues. Use the GitHub connector for issue and pull-request operations.
 
 ## Conventions
 
-- **Create an issue**: `gh issue create --title "..." --body "..."`. Use a heredoc for multi-line bodies.
-- **Read an issue**: `gh issue view <number> --comments`, filtering comments by `jq` and also fetching labels.
-- **List issues**: `gh issue list --state open --json number,title,body,labels,comments --jq '[.[] | {number, title, body, labels: [.labels[].name], comments: [.comments[].body]}]'` with appropriate `--label` and `--state` filters.
-- **Comment on an issue**: `gh issue comment <number> --body "..."`
-- **Apply / remove labels**: `gh issue edit <number> --add-label "..."` / `--remove-label "..."`
-- **Close**: `gh issue close <number> --comment "..."`
+- **Create an issue**: use the GitHub connector's issue creation action.
+- **Read an issue**: use the GitHub connector to fetch the issue body, comments, and labels.
+- **List issues**: use the GitHub connector to list open issues with number, title, body, labels, and comments; filter by mapped labels when needed.
+- **Comment on an issue**: use the GitHub connector's issue comment action.
+- **Apply / remove labels**: use the GitHub connector's issue edit or label action.
+- **Close**: use the GitHub connector's close issue action with a closing comment when relevant.
 
-Infer the repo from `git remote -v` — `gh` does this automatically when run inside a clone.
+Infer the owner and repo from `git remote -v` when the connector needs explicit repository arguments.
+
+Use the `gh` CLI only as a fallback when the connector cannot perform the required operation in the current environment.
 
 ## Pull requests as a triage surface
 
 **PRs as a request surface: no.** _(Set to `yes` if this repo treats external PRs as feature requests; `$triage` reads this flag.)_
 
-When set to `yes`, PRs run through the same labels and states as issues, using the `gh pr` equivalents:
+When set to `yes`, PRs run through the same labels and states as issues using the GitHub connector:
 
-- **Read a PR**: `gh pr view <number> --comments` and `gh pr diff <number>` for the diff.
-- **List external PRs for triage**: `gh pr list --state open --json number,title,body,labels,author,authorAssociation,comments` then keep only `authorAssociation` of `CONTRIBUTOR`, `FIRST_TIME_CONTRIBUTOR`, or `NONE` (drop `OWNER`/`MEMBER`/`COLLABORATOR`).
-- **Comment / label / close**: `gh pr comment`, `gh pr edit --add-label`/`--remove-label`, `gh pr close`.
+- **Read a PR**: fetch the PR body, comments, labels, author, author association, and diff.
+- **List external PRs for triage**: list open PRs with number, title, body, labels, author, author association, and comments; keep only `CONTRIBUTOR`, `FIRST_TIME_CONTRIBUTOR`, or `NONE` author associations and drop `OWNER`, `MEMBER`, and `COLLABORATOR`.
+- **Comment / label / close**: use the connector's PR comment, edit/label, and close actions.
 
-GitHub shares one number space across issues and PRs, so a bare `#42` may be either — resolve with `gh pr view 42` and fall back to `gh issue view 42`.
+GitHub shares one number space across issues and PRs, so a bare `#42` may be either. Resolve with the GitHub connector's pull-request lookup first, then issue lookup when necessary.
 
 ## When a skill says "publish to the issue tracker"
 
@@ -31,14 +33,14 @@ Create a GitHub issue.
 
 ## When a skill says "fetch the relevant ticket"
 
-Run `gh issue view <number> --comments`.
+Fetch the issue with the GitHub connector, including comments and labels.
 
-For an external PR when PRs are a request surface, run `gh pr view <number> --comments` and `gh pr diff <number>`.
+For an external PR when PRs are a request surface, fetch the PR with the GitHub connector, including comments, labels, author metadata, and diff.
 
 ## When a skill says "post a Codex-ready brief"
 
-Post it as an issue comment with `gh issue comment <number> --body "..."`.
+Post it as an issue comment with the GitHub connector.
 
-For an external PR when PRs are a request surface, use `gh pr comment <number> --body "..."`.
+For an external PR when PRs are a request surface, post it as a PR comment with the GitHub connector.
 
 The brief text, including the AI triage disclaimer when required, comes from `$triage`.
