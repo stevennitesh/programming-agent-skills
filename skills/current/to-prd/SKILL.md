@@ -1,6 +1,6 @@
 ---
 name: to-prd
-description: Synthesize the current conversation into a comprehensive brain-dump PRD and publish it to the configured issue tracker.
+description: Synthesize the current conversation into a source-traced brain-dump PRD, draft it as repo-local `.tmp` markdown, then publish it to the configured issue tracker.
 ---
 
 # To PRD
@@ -21,11 +21,11 @@ When grounding in codebase context, follow `docs/agents/domain.md` when present 
 
 ### 1. Gather Source
 
-Use only the current conversation, explicit source material the user provides, target repo `AGENTS.md`, repo-local agent docs it names, this skill's direct supporting files, and explicit user approvals.
+Use only the current conversation, explicit source material the user provides, target repo `AGENTS.md`, repo-local agent docs it names, and this skill's direct supporting files.
 
 If a PRD, spec, issue, path, or URL is provided, read that source and any directly required context it names. Do not chase optional background or infer unstated commitments.
 
-Do not ask new requirement questions. Record unresolved product decisions under `Open Questions`. Ask only before publishing, mutating trackers, crossing a commitment boundary, or choosing a load-bearing test seam that materially changes the PRD.
+Do not ask new requirement questions. Record unresolved product decisions under `Open Questions`. Ask only when the sources do not settle a commitment boundary or a load-bearing proof seam that materially changes the PRD.
 
 ### 2. Ground In The Codebase
 
@@ -41,7 +41,7 @@ Call out ADR conflicts instead of silently overriding them.
 
 Write a source-traced brain-dump PRD with these sections:
 
-- `Source Trace` - source thread, explicit source files/issues/URLs, repo docs consulted, and user approvals relied on.
+- `Source Trace` - source thread, explicit source files/issues/URLs, repo docs consulted, and direct user instructions relied on.
 - `Problem Statement` - the problem from the user's perspective, including why the current state is painful or limiting.
 - `Desired Outcome` - what should be true when the work is done, phrased as user-visible or operator-visible change.
 - `User Stories` - distinct actors, flows, benefits, and edge cases that affect acceptance.
@@ -65,18 +65,18 @@ Proof notes name seams and proof points, not implementation steps.
 
 Avoid file paths and code snippets unless they are durable contracts or prototype findings that encode a decision more precisely than prose.
 
-### 4. Approve And Publish
+### 4. Draft And Publish
 
-Prepare the PRD as a draft first. Get explicit user approval before creating an issue, applying labels, mutating a tracker, or treating the PRD as the user's commitment.
+Write the PRD to a repo-local markdown draft under `.tmp/to-prd/` before publishing. Use a readable slug and preserve the draft as the source artifact for the tracker body.
 
-After approval, publish the PRD as a parent issue using `docs/agents/issue-tracker.md`.
+Publish the draft as a parent issue using `docs/agents/issue-tracker.md`. Invoking `$to-prd` is the publishing instruction; do not ask for a second approval before creating the issue, applying the parent category label, or recording the PRD in the configured tracker.
 
 Apply a category label when the tracker docs define one clearly, usually the label mapped from `enhancement` in `docs/agents/triage-labels.md`. Do not apply the label mapped from `ready-for-agent` to the parent PRD unless the user explicitly asks; `ready-for-agent` is reserved for implementation issues published by `$to-issues` or triage briefs that `$implement` can consume.
 
 Do not split the PRD into implementation issues here. Do not close, relabel, or otherwise modify any parent source unless explicitly asked.
 
-End by recommending `$to-issues` if the user wants implementation issues.
+End with the local draft path, the published tracker link, and a recommendation for `$to-issues` if the user wants implementation issues.
 
 ## Completion Criteria
 
-Done means the user-approved PRD is published through the configured tracker; every gathered source item is represented once, marked out of scope, or intentionally omitted as irrelevant; repo vocabulary and ADR conflicts are reflected where applicable; and no implementation issues, unapproved tracker mutations, implementation-ready labels, parent-source changes, or new requirement interviews were introduced.
+Done means the PRD exists as repo-local `.tmp` markdown and is published through the configured tracker; every gathered source item is represented once, marked out of scope, or intentionally omitted as irrelevant; repo vocabulary and ADR conflicts are reflected where applicable; and no implementation issues, implementation-ready labels, parent-source changes, or new requirement interviews were introduced.

@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: "Test-driven development through tracer-bullet vertical slices. Use when the behavior change is understood enough to write a red test: features, bug fixes with a known repro, behavior changes, and integration coverage."
+description: "Test-driven development through tracer-bullet vertical slices. Use when the behavior change is understood enough to write a red test: test-first features, bug fixes with a known repro, behavior changes, integration coverage, or red-green-refactor."
 ---
 
 # Test-Driven Development
@@ -18,6 +18,8 @@ See [tests.md](tests.md) for good and bad test examples, [mocking.md](mocking.md
 A tracer bullet earns its place by reducing uncertainty about behavior, a seam, or a risk. Prefer a few strong tracer bullets over many weak variations.
 
 A good test reads like a specification: it names what a caller or user can do and proves the outcome through the system's interface. A bad test couples to implementation: it mocks owned modules, tests private helpers, asserts internal calls, or breaks when behavior is unchanged but internals move.
+
+Expected values must come from an independent source: the spec, a known-good literal, a fixture, or a worked example; never recompute them the same way as the code.
 
 The interface is the test surface. If a behavior is hard to test, treat that as design feedback: the interface may be too shallow, too coupled, or at the wrong seam. Mock only at system boundaries through adapters.
 
@@ -48,7 +50,7 @@ Each test should respond to what the previous cycle taught you.
 
 Read `docs/agents/engineering-contract.md` when present before this TDD pass changes repo behavior.
 
-When exploring codebase context, read `docs/agents/domain.md` when present and follow it to the relevant glossary and ADRs. If no routing exists, fall back to `CONTEXT-MAP.md`, root `CONTEXT.md`, and local ADR/domain docs.
+When exploring the codebase, read `docs/agents/domain.md` if present so test names and behavior descriptions use the repo's domain glossary and respect ADRs. Otherwise, fall back to `CONTEXT-MAP.md`, root `CONTEXT.md`, and local ADR/domain docs.
 
 Resolve the behavior from the issue, PRD, spec, acceptance criteria, bug report, or current user request. Ask only when the behavior, public interface, or test seam would otherwise be guesswork.
 
@@ -69,6 +71,8 @@ Do not pick speculative edge cases before the main path is green. Do not split b
 ### 2. RED
 
 Write one focused test for the behavior.
+
+Before RED, name the behavior and seam under test.
 
 The test should describe behavior in domain language, use real code paths where practical, and assert observable outcomes rather than internal calls.
 

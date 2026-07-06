@@ -1,17 +1,17 @@
 ---
 name: prototype
-description: "Build a throwaway prototype to answer a design question: a runnable terminal app for state/business-logic questions, or radically different UI variations toggleable from one route. Use when conversation cannot settle a design without trying it."
+description: Build a throwaway prototype to answer one design question with either a tiny terminal logic app or radically different UI variants on one route.
 ---
 
 # Prototype
 
-A prototype is **throwaway code that answers a question**. The question decides the shape.
+A prototype is **throwaway code that answers one question**. The question decides the branch; the answer is the only durable artifact.
 
-This is a detour, not implementation. The only durable output is the answer.
+This is a detour, not implementation.
 
-## Pick A Branch
+## Pick The Question
 
-Identify the question being answered from the user's prompt, surrounding code, or by asking if the user is around.
+Identify the question from the user's prompt, surrounding code, or by asking if the user is around. Getting the branch wrong wastes the prototype.
 
 - **"Does this logic, state model, or data shape feel right?"** -> Read [LOGIC.md](LOGIC.md). Build a tiny interactive terminal app that lets the user press buttons and watch state change.
 - **"What should this look like?"** -> Read [UI.md](UI.md). Build several radically different UI variations on one route, switchable by URL param and a floating bottom bar.
@@ -34,7 +34,9 @@ The branches produce different artifacts. If the question is ambiguous and the u
 
 ## Capture The Answer
 
-When the prototype has answered its question, capture:
+The answer is the artifact. Capture the verdict somewhere durable, then delete the prototype or turn the validated shape into input for a real implementation pass.
+
+Capture:
 
 - the original question
 - what the prototype proved or disproved

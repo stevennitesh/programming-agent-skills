@@ -20,13 +20,11 @@ For shallow runs, use minimal ledger mode: Run, Worker Results, Serial Landing, 
 **Claim rule:** `<ready-for-agent + blockers satisfied + in selected scope>`
 **Final validation plan:** `<commands>`
 **Worker isolation requirement:** `<Codex-managed worktree / approved manual worktree>`
-**Commit target:** `<worker branch / detached HEAD commit>`
-**Starting dirty state:** `<git status --short before edits>`
-**Preflight result:** `<git status + scratch/cache write + focused proof command>`
+**Worker preflight policy:** `<root + HEAD + status + scratch write/delete + focused proof startup>`
 **Validation environment:** `<shared venv/interpreter plus known temp/cache env vars>`
-**Review route:** `<review / convergent review / local fallback>`
-**Review executor:** `<integrator subagent>`
-**Review fallback:** `<none / reason and method>`
+**Loop-close route:** `<$review / approved $convergent-pr-review / local fallback>`
+**Loop-close executor:** `<integrator subagent>`
+**Loop-close fallback:** `<none / reason and method>`
 **Launch approval:** `<approved by / already authorized / blocked>`
 **Integration method:** `<squash merge / cherry-pick / patch application>`
 

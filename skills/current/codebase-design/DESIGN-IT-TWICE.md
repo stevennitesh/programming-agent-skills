@@ -2,9 +2,9 @@
 
 Use this when a chosen deepening candidate has a consequential interface choice.
 
-This follows John Ousterhout's "design it twice" principle: the first plausible interface is rarely the best one.
+The first plausible interface is rarely the best one.
 
-The point is not to leave the user with a menu. The point is to avoid settling for the first plausible interface. Generate several meaningfully different designs, compare their trade-offs, then recommend one.
+Generate meaningfully different designs, compare their trade-offs, then recommend one. Do not leave the user with a menu.
 
 Use this with [SKILL.md](SKILL.md) for vocabulary and [DEEPENING.md](DEEPENING.md) for dependency categories, seam discipline, adapter strategy, and test migration.
 
@@ -30,7 +30,7 @@ Then proceed to alternatives.
 
 Produce at least three meaningfully different interfaces for the deepened module.
 
-Alternatives must change the shape of the interface, seam placement, dependency strategy, caller model, or ownership of behavior. Do not count renames, parameter reshuffles, or cosmetic layering as different designs.
+Alternatives must differ in interface shape, seam placement, dependency strategy, caller model, or ownership of behavior. Renames, parameter reshuffles, and cosmetic layering are fake variety.
 
 If the user explicitly requested subagents, delegation, or parallel agent work, spawn separate Codex subagents with independent technical briefs. Otherwise, produce the alternatives sequentially in the main Codex session.
 

@@ -1,21 +1,19 @@
 ---
 name: domain-modeling
-description: Build and sharpen a project's domain model. Use when the user wants to pin down domain terminology or a ubiquitous language, record an architectural decision, or when another skill needs to maintain the domain model.
+description: Build and sharpen a project's ubiquitous language. Use when the user wants to pin down domain terminology, resolve overloaded words, record an ADR-worthy decision, or when another skill needs to maintain the domain model.
 ---
 
 # Domain Modeling
 
-Actively build and sharpen the project's domain model as you design. This is the active discipline: challenge terms, sharpen fuzzy language, test concepts with concrete scenarios, cross-reference claims with code, and record resolved language or decisions as they crystallize.
+Build the project's **ubiquitous language** as it changes. This is the active discipline: challenge fuzzy terms, stress-test concept boundaries, cross-check language against code, and record resolved terms or ADR-worthy decisions as they crystallize.
 
-Merely reading `CONTEXT.md` for vocabulary is not this skill. Use this skill when the domain model is changing, not just being consumed.
+Merely reading `CONTEXT.md` is not domain modeling. Use this skill when the language or decision record is changing, not when another skill only needs vocabulary.
 
 ## Files
 
 Create files lazily, only when something has been resolved.
 
 Use `CONTEXT.md` for domain language. It is a glossary, not a spec, plan, scratchpad, implementation note, or issue tracker.
-
-An ADR-worthy decision is hard to reverse, surprising without context, and the result of a real trade-off. Use ADRs only for ADR-worthy decisions.
 
 Single-context repos use root `CONTEXT.md` and `docs/adr/`.
 
@@ -35,7 +33,7 @@ Cross-reference user claims with code. If code and language disagree, surface th
 
 Update the right `CONTEXT.md` as soon as a term is resolved. Do not batch resolved language.
 
-Offer or create ADRs sparingly when a decision is ADR-worthy. Record why the decision was made, not a long template.
+ADRs: offer only when a decision is hard to reverse, surprising without context, and the result of a real trade-off. Create one only after user approval or an explicit request to record the decision. Record why the decision was made, not a long template.
 
 Update only the relevant glossary and ADR files.
 

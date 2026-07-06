@@ -1,9 +1,11 @@
 ---
 name: writing-great-skills
-description: Use when writing, editing, or reviewing Codex skills for predictable behavior; deciding implicit vs explicit invocation; improving descriptions, leading words, context pointers, progressive disclosure, completion criteria, pruning, no-ops, sediment, sprawl, or skill information hierarchy.
+description: Use when writing, editing, or reviewing Codex skills for predictable behavior: choose implicit vs explicit invocation, write descriptions, sharpen leading words, place context pointers, use progressive disclosure, set completion criteria, and prune no-ops, sediment, sprawl, or duplicated intent.
 ---
 
 A skill exists to wrangle determinism out of a stochastic system. **Predictability** — Codex taking the same _process_ every run, not producing the same output — is the root virtue; every lever below serves it.
+
+Use this skill as a reference lens: judge every description, step, context pointer, supporting file, and completion criterion by whether it makes Codex take the same process next run.
 
 **Bold terms** are defined in [`GLOSSARY.md`](GLOSSARY.md); look them up there for the full meaning.
 
@@ -12,7 +14,7 @@ A skill exists to wrangle determinism out of a stochastic system. **Predictabili
 Two choices, trading different costs:
 
 - An **implicitly invocable** skill keeps `policy.allow_implicit_invocation` unset or true in `agents/openai.yaml`, so Codex can choose it from the skill description (you can still type its name too). Write a model-facing description with rich trigger phrasing ("Use when the user wants..., mentions...").
-- An **explicit-only** skill sets `policy.allow_implicit_invocation: false` in `agents/openai.yaml`: only explicit `$skill-name` invocation should reach it. The required `description` becomes human-facing: a one-line summary, trigger lists stripped.
+- An **explicit-only** skill sets `policy.allow_implicit_invocation: false` in `agents/openai.yaml`: only explicit `$skill-name` invocation should reach it. It reduces **context load** and spends **cognitive load**: the human must remember when to use it. The required `description` becomes human-facing: a one-line summary, trigger lists stripped.
 
 Pick implicit invocation only when Codex must reach the skill on its own. If it only ever fires by hand, make it explicit-only with `policy.allow_implicit_invocation: false`.
 

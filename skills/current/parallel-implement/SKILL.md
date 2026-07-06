@@ -29,13 +29,13 @@ Require a ready frontier: independently-grabbable issues with acceptance criteri
 
 ## Loop
 
-Routing packet: ready frontier, blockers, dependency order, write-scope risks, worker limit, validation environment, review route, tracker closeout rule, and cleanup rule.
+Routing packet: ready frontier, blockers, dependency order, write-scope risks, worker limit, validation environment, loop-close route, tracker closeout rule, and cleanup rule.
 
-Launch gate: `$parallel-implement` authorizes subagents for this run. Dispatch one fresh worker per issue only after worktree verification: isolation mode, actual checkout path, commit target, starting dirty state, and preflight result.
+Launch gate: `$parallel-implement` authorizes subagents for this run. Dispatch one fresh worker per issue only through a verified worktree route.
 
 Handoff gate: delegated work is not done until the worker sends a work-done handoff and the orchestrator accepts its result packet. Do not infer completion from dispatch, silence, elapsed time, or partial progress.
 
-Codex-managed launch gate: prefer Codex-managed worktrees created by the Codex app, not `git worktree`.
+Verified worktree route: prefer Codex-managed worktrees created by the Codex app, not `git worktree`.
 
 1. Run `codex_app.list_projects` and choose the saved project for this repo.
 2. Run `codex_app.create_thread` once per issue with a Worktree target:
@@ -62,13 +62,13 @@ If the app tool is unavailable, create the thread manually in the Codex app: new
 
 Manual fallback worktrees are not Codex-managed: `<repo-parent>/worktrees/<repo>/<run-id>/<issue-id>`, with `<repo-parent>/worktrees/` approved as a writable root.
 
-Default review route: `$review` from the run fixed point over the integrated diff; use a local fixed-point Standards/Spec fallback if unavailable.
+Loop-close route: default to `$review` from the run fixed point over the integrated diff. Use approved `$convergent-pr-review` only for high-risk integrated diffs: release gates, shared plumbing, migrations, security/permissions, CI/workflow/config, public interfaces, data contracts, performance/cache risk, or broad integration uncertainty.
 
 Proof lanes: route one concrete focused proof command and validation env per worker. Workers run focused proof; the integrator runs post-landing proof; loop close runs final review and broad validation.
 
 Worker-safe proof is for focused worker checks, not loop-close validation. Use single-process/no-cache focused tests when repo defaults are too broad, too parallel, or cache-sensitive.
 
-Record review route, executor, fixed point, and fallback in the ledger.
+Record loop-close route, executor, fixed point, and fallback in the ledger.
 Record run friction, skill bugs, and skill/supporting-file improvement ideas in the ledger and final report.
 
 For shallow runs, use minimal ledger mode: run, worker result, serial landing, final checks, and run summary.
@@ -89,12 +89,14 @@ For shallow runs, use minimal ledger mode: run, worker result, serial landing, f
 
 ## Gates
 
-Worker fixes pass two gates:
+Worker fixes pass two acceptance gates before landing:
 
 - **Orchestrator acceptance**: result packet, scope, acceptance proof, residual risk.
-- **Integrator acceptance**: actual `base..head` diff, stale-base overlap, landing result, validation.
+- **Integrator pre-landing gate**: actual `base..head` diff, expected scope, new files, stale-base overlap, conflicts, and focused proof.
 
-Review is orchestrator-owned and integrator-executed: the orchestrator requests loop-close review; the integrator runs it and reports findings.
+Pre-landing gate is acceptance, not formal review. If the worker diff needs deeper review before landing, the integrator returns a blocker or review-route escalation packet to the orchestrator.
+
+Review is orchestrator-owned and integrator-executed. The orchestrator selects `$review`, approved `$convergent-pr-review`, or a local fallback in the routing packet; the integrator runs exactly that route. If landing reveals higher risk, the integrator returns a review-route escalation packet instead of silently changing route.
 
 ## Lock
 

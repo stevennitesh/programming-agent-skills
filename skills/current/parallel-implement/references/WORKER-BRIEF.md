@@ -40,11 +40,9 @@ Preflight before edits. From the worker root, run and report:
 
 Stop before edits if the root is not the assigned repo, `HEAD` is not the assigned base, scratch writes fail, or the focused proof command cannot start.
 
-Use `$tdd` for red-testable behavior; otherwise prove the slice with the strongest focused evidence. Local skill guidance is allowed.
+Use `$tdd` for red-testable behavior; otherwise prove the slice with the routed focused evidence. If repo defaults fight the worker checkout, retry once with worker-safe proof and report both results.
 
-Focused proof: use the routed command; if repo defaults fight the worker checkout, retry once with worker-safe proof and report both results.
-
-If `.venv` is absent, use the assigned interpreter/routed env and report the fallback.
+Use the assigned validation environment. If `.venv` is absent, use the assigned interpreter/routed env and report the fallback.
 
 Do not fan out, run formal review, mutate tracker state, merge integration work, or perform lock steps. Stop before changing commitments: product intent, acceptance, public/domain contracts, dependencies, or security/privacy posture.
 

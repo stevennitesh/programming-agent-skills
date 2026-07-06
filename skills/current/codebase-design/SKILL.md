@@ -7,11 +7,13 @@ description: Shared vocabulary for designing deep modules. Use when the user wan
 
 Design **deep modules**: lots of behavior behind a small interface, placed at a clean seam, testable through that interface.
 
-Use this vocabulary wherever code is being designed, reviewed, tested, or restructured. The aim is **leverage** for callers, **locality** for maintainers, and testability through real interfaces.
+This is a vocabulary and design-discipline skill, not a full architecture scan. Use `$improve-codebase-architecture` for codebase-wide candidate discovery; use this skill to name seams, judge depth, shape interfaces, and compare designs inside a bounded slice.
+
+Use these architecture terms wherever code is being designed, reviewed, tested, or restructured. The aim is **leverage** for callers, **locality** for maintainers, and tests that prove behavior through real interfaces.
 
 ## Glossary
 
-Use these terms consistently. Prefer established repo/domain vocabulary where it exists, and map it back to these concepts instead of renaming the repo.
+Use these architecture terms exactly. Do not substitute "component," "service," "API," or "boundary." Preserve repo/domain vocabulary for business concepts, and map those concepts back to **module**, **interface**, **implementation**, **depth**, **seam**, **adapter**, **leverage**, and **locality**.
 
 **Module** - anything with an interface and an implementation. Scale-agnostic: a function, class, package, workflow, or tier-spanning slice. Avoid: unit, component, service.
 
@@ -195,56 +197,22 @@ receipt = checkout_orchestrator_factory.create().execute(
 
 unless the extra structure buys real leverage, locality, dependency isolation, or testability.
 
-## Applying The Skill
+## Using The Vocabulary
 
-When designing or improving code:
+When designing or improving code, name:
 
-1. Read the relevant repo/domain docs when present.
-2. Identify the current module, interface, implementation, seams, and adapters.
-3. Inspect callers and tests to see what the interface makes easy or painful.
-4. Run the deletion test.
-5. Propose the deeper shape: module, interface contract, seam placement, adapters, validation, migration path, and risks.
-6. Keep deepening inside the current bounded slice. If the design work is behavior-preserving but unlocks later tracer bullets, make it a support slice.
+- current shallow shape
+- proposed deeper module
+- interface callers would use
+- behavior that moves behind the interface
+- seam placement
+- real adapters or substitutes
+- test surface
+- migration step that fits the bounded slice
 
-A good recommendation names:
+Use [DEEPENING.md](DEEPENING.md) when dependency shape changes the seam, adapter, substitute, or test strategy.
 
-- the current shallow shape
-- the proposed deeper module
-- the interface callers would use
-- what behavior moves behind the interface
-- where the seam lives
-- which adapters are real
-- how tests prove behavior through the interface
-- what migration can happen without widening scope
-
-## Designing For Testability
-
-Good interfaces make testing natural.
-
-Prefer:
-
-```python
-receipt = checkout.place_order(cart_id, payment_method)
-
-assert receipt.status == "confirmed"
-```
-
-Avoid:
-
-```python
-assert checkout._calculate_tax(cart) == Decimal("4.20")
-assert checkout._reserve_inventory.called
-```
-
-Design moves that improve testability:
-
-- Accept dependencies instead of creating hard-coded external clients.
-- Return observable results instead of hiding all outcomes in side effects.
-- Put branching decisions in the module that owns the domain concept.
-- Use fakes or local substitutes at real seams.
-- Keep setup, cleanup, and inspection in test utilities unless they are real public behavior.
-
-Do not mock owned modules behind the interface under test. Mock, fake, or stub adapters at system boundaries.
+Use [DESIGN-IT-TWICE.md](DESIGN-IT-TWICE.md) when the interface choice is consequential and the first plausible design may not be the best one.
 
 ## Relationships
 

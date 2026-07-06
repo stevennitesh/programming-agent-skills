@@ -13,6 +13,19 @@ One behavior can have several assertions when they are observations of the same 
 3. Assert observable outcomes.
 4. Avoid private calls, helper names, internal order, and mock existence.
 
+## Good Minimal Example
+
+```python
+def test_created_user_can_be_retrieved():
+    user = create_user(name="Ada")
+
+    retrieved = get_user(user.id)
+
+    assert retrieved.name == "Ada"
+```
+
+This is good because it proves one observable behavior through the user interface without exposing storage, helper calls, or internal order.
+
 ## Good Feature Tracer Bullet
 
 ```python
@@ -175,6 +188,27 @@ def test_created_invoice_is_visible_in_the_customers_invoice_list():
 
 This proves the behavior through the invoice interface. The database remains an implementation detail.
 
+## Bad Tautological Test
+
+```python
+def test_calculate_total_sums_line_items():
+    lines = [{"price": 10}, {"price": 5}]
+    expected = sum(line["price"] for line in lines)
+
+    assert calculate_total(lines) == expected
+```
+
+This is bad because the expected value is recomputed the same way as the implementation. It can pass even when the test teaches nothing.
+
+## Better Independent Expectation
+
+```python
+def test_calculate_total_sums_line_items():
+    assert calculate_total([{"price": 10}, {"price": 5}]) == 15
+```
+
+Use expected values from an independent source: the spec, a known-good literal, a fixture, or a worked example.
+
 ## Good Test Names
 
 Good names describe behavior in domain language:
@@ -198,6 +232,7 @@ Prefer names that a product owner, caller, or future maintainer would understand
 
 - The test name says "calls", "invokes", "uses helper", or names an internal step.
 - The assertion checks a private method, internal call count, or mock existence.
+- The expected value is recomputed the same way as the implementation.
 - The test passes before production code changes.
 - The setup is larger than the behavior being proven.
 - Removing a mock changes the meaning of the test.

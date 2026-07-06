@@ -1,19 +1,20 @@
 # Deepening
 
-Deepen a cluster of shallow modules safely once dependency shape matters.
+Use this when dependency shape matters.
 
-Use this with [SKILL.md](SKILL.md). `SKILL.md` defines the vocabulary and taste: **module**, **interface**, **implementation**, **depth**, **seam**, **adapter**, **leverage**, and **locality**. This file explains how dependency shape changes the deepening move and the validation strategy.
+`SKILL.md` owns the vocabulary and taste. This file owns the deepening move: dependency category, seam discipline, adapter/substitute strategy, test migration, and stop conditions.
 
-A deepening move should increase **depth**, **leverage**, or **locality** without widening the current bounded slice. If the move is behavior-preserving but unlocks later tracer bullets, treat it as a support slice.
+A deepening move should increase **depth**, **leverage**, or **locality** without widening the bounded slice. If behavior-preserving work unlocks later tracer bullets, name it as a support slice.
 
 ## Process
 
-1. Name the shallow cluster and the behavior or decision currently spread across it.
-2. Name the deeper module and the interface callers should use.
+1. Name the shallow cluster and the spread behavior or decision.
+2. Name the deeper module and caller-facing interface.
 3. Classify each dependency behind or across the seam.
-4. Choose the narrowest seam and adapter/substitute strategy that proves the behavior.
+4. Choose the narrowest real seam and adapter/substitute strategy.
 5. Move tests toward the deeper interface with coverage parity.
-6. Keep, rewrite, or delete old tests based on what behavior they still prove.
+6. Keep, rewrite, or delete old tests by behavior value.
+7. Stop when the next move would widen the bounded slice.
 
 A good deepening recommendation includes:
 
