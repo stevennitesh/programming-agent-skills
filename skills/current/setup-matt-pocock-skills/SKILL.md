@@ -65,14 +65,14 @@ State roles:
 - `needs-info` — waiting on reporter
 - `ready-for-agent` — fully specified, ready for an unattended Codex implementation session or delegated implementation subagent
 - `ready-for-human` — needs human implementation
-- `implemented` — implemented, reviewed, committed, and recorded by `$implement`
+- `implemented` — implemented, reviewed, committed, and recorded by an implementation skill
 - `wontfix` — will not be actioned
 
 Default: each role's string equals its name. Ask the user if they want to override any. If their issue tracker has no existing labels, the defaults are fine.
 
 **Section C — Domain docs.**
 
-> Explainer: Some skills (`improve-codebase-architecture`, `diagnosing-bugs`, `tdd`) read the repo's domain glossary and ADRs to learn the project's language and past architectural decisions. They need to know whether the repo has one global context or multiple (e.g. a monorepo with separate frontend/backend contexts) so they look in the right place.
+> Explainer: Code-facing skills read the repo's domain glossary and ADRs when codebase context matters. `docs/agents/domain.md` is the router: it points agents to the right `CONTEXT.md`, `CONTEXT-MAP.md`, and relevant ADRs without loading all of them by default.
 
 Confirm the layout:
 
@@ -140,7 +140,7 @@ If the user names a skill, use it. If no skill is named, suggest one only when i
 
 ### Domain docs
 
-[one-line summary of layout — "single-context" or "multi-context"]. See `docs/agents/domain.md`.
+[one-line summary of layout — "single-context" or "multi-context"]. Use `docs/agents/domain.md` to find the relevant `CONTEXT.md`, `CONTEXT-MAP.md`, and ADRs.
 ```
 
 Then write the four docs files using the seed templates in this skill folder as a starting point:
@@ -152,7 +152,7 @@ Then write the four docs files using the seed templates in this skill folder as 
 - [domain.md](./domain.md) — domain doc consumer rules + layout
 - [engineering-contract.md](./engineering-contract.md) — agentic coding vocabulary and discipline
 
-Issue tracker docs must record the repo-equivalent operations for creating, fetching, commenting, applying labels, closing, and posting Codex-ready briefs.
+Issue tracker docs must record the repo-equivalent operations for creating, fetching, commenting, applying labels, closing, and posting ready-for-agent handoff briefs.
 
 For "other" issue trackers, write `docs/agents/issue-tracker.md` from scratch using the user's description.
 

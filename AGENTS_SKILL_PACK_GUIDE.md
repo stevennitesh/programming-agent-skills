@@ -59,9 +59,10 @@ Suggest shaping skills before implementation:
 Suggest product-to-implementation skills:
 
 - `to-prd` when an idea needs a durable PRD.
-- `to-issues` when a PRD, spec, plan, or issue should become independently grabbable tracer-bullet issues.
+- `to-issues` when a PRD, spec, plan, or parent issue should become dependency-ordered, ready-for-agent tracer-bullet issues.
 - `triage` when incoming issues or external PRs need state roles and ready-for-agent briefs.
 - `implement` when one ready-for-agent issue should be implemented, verified, reviewed, committed, and noted.
+- `parallel-implement` when a parent, packet, or batch of ready-for-agent issues should be implemented through delegated workers and serialized integration.
 
 Suggest quality-loop skills:
 
@@ -87,5 +88,7 @@ Suggest experimental routes only when the user explicitly asks for them or has i
 ## Boundary
 
 This guide may name leading words. It must not teach the coding loop, proof steps, review procedure, tracker operations, or repo-specific domain rules.
+
+Repo-local `docs/agents/domain.md` owns domain-doc routing; use it to find relevant glossary and ADR context when a skill asks for domain docs.
 
 For actual coding work, follow the target repo's `AGENTS.md` and `docs/agents/engineering-contract.md`. If they are missing and the work needs the pack's repo-local contract, suggest `setup-matt-pocock-skills` instead of recreating that contract here.

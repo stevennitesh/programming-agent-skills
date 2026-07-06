@@ -13,12 +13,12 @@
 
 ## Pointers
 
-- Stable vocabulary and repo invariants: `CONTEXT.md`
+- Stable vocabulary and repo invariants: `CONTEXT.md`, `CONTEXT-MAP.md`
 - Active plans and runbooks: `docs/plans/README.md`
 - Engineering contract for nontrivial coding: `docs/agents/engineering-contract.md`
 - Tracker and labels: `docs/agents/issue-tracker.md`,
   `docs/agents/triage-labels.md`
-- Domain routing and ADR use: `docs/agents/domain.md`, `docs/adr/`
+- Domain routing and ADR use: `docs/agents/domain.md`
 
 ## Invariants
 

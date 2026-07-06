@@ -35,15 +35,17 @@ Use this when the user has an idea and wants it built.
 | There is no codebase context to preserve | **`$grilling`** |
 | Too much fog of war for a PRD | **`$decision-mapping`** |
 | A runnable answer is needed | **`$prototype`**, bridged by **`$handoff`** |
-| Multi-session build | **`$to-prd`** then **`$to-issues`** |
+| Multi-session idea without a durable PRD | **`$to-prd`** then **`$to-issues`** |
+| Existing PRD, spec, plan, or parent issue needs slices | **`$to-issues`** |
 | One ready issue or slice | **`$implement`** |
 
 Default path:
 
 1. **`$grill-with-docs`** - sharpen the idea by interview and preserve resolved domain language or ADR-worthy decisions.
 2. If conversation cannot settle a question, detour through **`$prototype`** and carry the answer back with **`$handoff`**.
-3. If the build is multi-session, use **`$to-prd`** then **`$to-issues`**.
-4. If exactly one bounded slice is ready, use **`$implement`**.
+3. If the build is multi-session and lacks a durable PRD, use **`$to-prd`** then **`$to-issues`**.
+4. If a PRD, spec, plan, or parent issue already exists, use **`$to-issues`**.
+5. If exactly one bounded slice is ready, use **`$implement`**.
 
 ## Incoming Work
 
@@ -52,11 +54,11 @@ Use this when work arrives raw from outside the planning flow.
 | Situation | Route |
 | --- | --- |
 | Bugs, requests, or external PRs need sorting | **`$triage`** |
-| A ticket is already Codex-ready | **`$implement`** |
+| A ticket is already ready-for-agent | **`$implement`** |
 | A bug symptom is uncertain | **`$diagnosing-bugs`** |
 | A behavior change is clear and testable | **`$tdd`** |
 
-Do not triage issues produced by **`$to-issues`**. They are already intended to be Codex-ready.
+Do not triage issues produced by **`$to-issues`**. They are already intended to be ready-for-agent.
 
 ## Codebase Health
 

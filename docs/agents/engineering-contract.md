@@ -8,7 +8,7 @@ Give the agent room to discover, then force it to converge.
 
 The words in this repo are not decoration. They steer how agents plan, code, test, review, and report work.
 
-Use the repo's shared language. Preserve domain terms from `CONTEXT.md`, ADRs, specs, issues, and source code.
+Follow `docs/agents/domain.md` to the relevant glossary and ADRs. Preserve domain terms, accepted decisions, specs, issues, and source-code language.
 
 ## Convergence Loop
 

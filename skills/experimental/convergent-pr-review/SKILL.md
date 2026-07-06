@@ -1,13 +1,13 @@
 ---
 name: convergent-pr-review
-description: "Use for local PR review, or high-risk local-diff review where one reviewer pass is not enough: release gates, shared plumbing, migrations, security/permissions, CI/workflow/config, public interfaces, or data contracts. For ordinary fixed-point Standards/Spec review, use review."
+description: "Use for local PR review, or high-risk local-diff review where one pass is not enough: release gates, shared plumbing, migrations, security/permissions, CI/workflow/config, public interfaces, or data contracts. For ordinary fixed-point Standards/Spec review, use review."
 ---
 
 # Convergent PR Review
 
-Review a local PR or high-risk local diff through independent reviewer passes, then converge their findings into one verified ledger.
+Review a local PR or high-risk local diff from a known-good point through independent lenses, then converge findings into one verified evidence ledger.
 
-This is a read-only convergence gate. Subagents are reviewers; the main agent is the orchestrator. Reviewer consensus is evidence, not truth. The orchestrator pins the fixed point, scopes reviewers, verifies surviving findings, decides severity, and writes the handoff.
+This is a read-only convergence gate: independent lenses, evidence ledger, verified survivors, drift check, patch-ready handoff. Subagents review; the main agent orchestrates. Consensus is signal, not truth.
 
 Use `$review` instead for ordinary branch, WIP, or `review since X` fixed-point review where Standards and Spec are the main axes.
 
@@ -18,16 +18,14 @@ Use `$review` instead for ordinary branch, WIP, or `review since X` fixed-point 
 - Max rounds: `2`
 - Severity: `P0/P1/P2/P3`
 
-Use more reviewers to broaden review lenses, not to repeat the same review:
+Scale reviewers by lens diversity:
 
-- `2 reviewers`: default local PR review.
-- `3 reviewers`: distinct runtime, validation, and workflow/API risk surfaces.
-- `4-5 reviewers`: high-blast-radius changes with separable security, migration, public contract, CI/release, performance, or data-contract risk.
-- `>5 reviewers`: only by explicit user request.
+- `2`: default local PR review.
+- `3`: distinct runtime, validation, and workflow/API risk.
+- `4-5`: high-blast-radius security, migration, public contract, CI/release, performance, or data-contract risk.
+- `>5`: explicit user request only.
 
-## 1. Pin The Fixed Point
-
-Establish exactly what is being reviewed.
+## 1. Pin The Known-Good Point
 
 For branch or PR review, capture status, branch, base SHA, head SHA, merge base, diff stat, full diff, and commit range:
 
@@ -43,9 +41,9 @@ For a PR number, resolve the PR base/head first, fetch the head if needed, then 
 
 For uncommitted worktree review, capture `git diff` and `git diff --cached`, and mark the review as worktree-based.
 
-Stop if the base does not resolve or the diff is empty.
+Fail fast before reviewers: stop if the base does not resolve, the diff is empty, or the PR/local target cannot be pinned.
 
-Done means the base, head, merge base, target, diff stat, and commit range are captured, or the review is stopped with the reason.
+Done means the known-good point, review target, diff, and commit range are captured, or the review is stopped with the reason.
 
 ## 2. Build The Review Packet
 
@@ -59,11 +57,11 @@ Give reviewers only the context that changes review behavior:
 - validation commands from repo docs, scripts, package config, or CI;
 - known migration, generated-artifact, permission, network, or external-service constraints.
 
-Done means reviewers have enough context to avoid generic review and stay inside the real repo contract.
+Done means the packet names the review target, repo contract, risk surfaces, and validation needed for non-generic review.
 
 ## 3. Dispatch Independent Reviewers
 
-Run independent reviewer passes in parallel when subagents are available. Keep first-pass reviewers isolated from each other's findings.
+Run first-pass reviewers in parallel when subagents are available, isolated from each other's findings.
 
 Assign each reviewer one primary lens from the changed surface: runtime correctness, validation/CI, operator workflow, public API, backward compatibility, data contracts, migration, generated artifacts, security, permissions, performance, or caching.
 
@@ -88,17 +86,17 @@ If subagents are unavailable, run separate manual passes with distinct lenses an
 
 Done means every reviewer pass has returned, failed, or timed out, and missing reviewers are reflected in the confidence of the final report.
 
-## 4. Build The Ledger
+## 4. Build The Evidence Ledger
 
-Normalize reviewer output into one finding ledger.
+Normalize reviewer output into one evidence ledger.
 
 Each ledger item includes ID, severity, axis, title, evidence, impact, remediation direction, reviewer lens, confidence, status, verification state, and blocking decision.
 
 Status is `candidate`, `accepted`, `rejected`, `duplicate`, or `disputed`. Verification is `unverified`, `verified`, `disproved`, or `not checked`.
 
-Do not accept a finding because reviewers agree. Do not reject a finding because only one reviewer found it. Evidence decides.
+Evidence decides: consensus is signal, not truth; one-reviewer findings can survive; agreed findings can fail.
 
-Done means every reviewer finding is represented as accepted, rejected, duplicate, or disputed, and every surviving candidate has an ID.
+Done means every reviewer finding is represented, and every surviving candidate has an ID.
 
 ## 5. Converge
 
@@ -106,9 +104,9 @@ Run convergence rounds against the ledger, not raw transcripts.
 
 Ask reviewers to confirm, reject, revise, merge, split, or dispute ledger items from their lens. New findings after round 1 need direct file, diff, or command evidence and must be marked `new in round <N>`.
 
-Stop early when the round has no material delta: no new findings, status changes, severity changes, material remediation changes, or unresolved accept/reject disagreement.
+Stop early on no material delta: no new findings, status changes, severity changes, remediation changes, or unresolved accept/reject disagreement.
 
-Done means the ledger has converged, or max rounds were reached and remaining disagreement is marked disputed.
+Done means the ledger converged, or max rounds were reached and remaining disagreement is marked disputed.
 
 ## 6. Verify Survivors
 
@@ -137,4 +135,8 @@ Report accepted findings first by severity. Include ID, evidence, impact, blocki
 
 If accepted findings remain, end with a patch-ready handoff: finding ID, likely files to edit, and validation that should pass after the fix.
 
-Done means the final report comes from the verified ledger, drift is checked, and every accepted finding has a handoff.
+Done means the report is ledger-derived, drift-checked, and patch-ready.
+
+## Completion Criteria
+
+Done means the known-good point was pinned, independent lenses reviewed the same target, the evidence ledger converged, survivors were verified or explicitly not checked, drift was checked, severity/blocking decisions are clear, and accepted findings have a patch-ready handoff.

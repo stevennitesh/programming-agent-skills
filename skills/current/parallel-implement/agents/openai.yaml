@@ -1,0 +1,7 @@
+interface:
+  display_name: Parallel Implement
+  short_description: Run a three-lane implementation loop: orchestrator, isolated issue workers, and serial integrator.
+  default_prompt: Use $parallel-implement to run a selected tracker scope through ready-frontier scans, issue-lane handoffs, serial integration, and loop-close review.
+
+policy:
+  allow_implicit_invocation: false

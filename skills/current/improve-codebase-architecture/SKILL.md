@@ -17,7 +17,7 @@ Use the repo's domain glossary for domain language and `$codebase-design` for ar
 
 Read `docs/agents/engineering-contract.md` when present so candidates respect the repo's slicing, proof, and commitment-boundary discipline.
 
-Read the project's domain-doc routing (`docs/agents/domain.md`) when present, then the relevant domain glossary and ADRs. If no routing exists, fall back to `CONTEXT-MAP.md`, root `CONTEXT.md`, and local ADR/domain docs.
+When exploring codebase context, read `docs/agents/domain.md` when present and follow it to the relevant glossary and ADRs. If no routing exists, fall back to `CONTEXT-MAP.md`, root `CONTEXT.md`, and local ADR/domain docs.
 
 Walk the codebase organically and note where understanding, changing, or testing one concept requires bouncing across many modules.
 

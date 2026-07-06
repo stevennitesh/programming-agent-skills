@@ -58,6 +58,16 @@ For support slices, name what it unblocks or de-risks.
 - `InterfaceName` or seam - why it matters
 - Config shape, command, workflow, adapter, or contract - expected behavior
 
+**Relevant context:**
+- Domain terms: term or `none`
+- ADRs: path or `none`
+
+**Dependencies and parallel safety:**
+- Parent: issue, PRD, spec, packet, or `none`
+- Blocked by: issue, PR, decision, or `none`
+- Expected write scope: durable modules, interfaces, commands, docs, or `discover during implementation`
+- Parallel safety: independent after blocker lands / likely overlap with sibling issue / serialize because...
+
 **Acceptance criteria:**
 - [ ] Specific, observable criterion 1
 - [ ] Specific, observable criterion 2
@@ -101,6 +111,10 @@ This proves the user-visible description formatting behavior end to end without 
 - Skill metadata loading - produces the description shown to Codex and users.
 - Description truncation behavior - should preserve whole words and the existing max length contract.
 
+**Relevant context:**
+- Domain terms: skill description, invocation
+- ADRs: `none`
+
 **Acceptance criteria:**
 - [ ] Descriptions under the limit are unchanged.
 - [ ] Descriptions over the limit truncate at the last word boundary that fits.
@@ -140,6 +154,10 @@ This proves the core maintainer workflow end to end: finding the next issue that
 **Relevant interfaces or seams:**
 - Issue tracker query interface - fetches issues, labels, comments, and updated timestamps.
 - Triage list presentation - groups and summarizes issues for the maintainer.
+
+**Relevant context:**
+- Domain terms: triage, ready-for-agent
+- ADRs: `none`
 
 **Acceptance criteria:**
 - [ ] Unlabeled issues appear in an `Unlabeled` bucket, oldest first.
@@ -182,6 +200,10 @@ This support slice de-risks later triage tracer bullets by giving them a stable 
 - Issue tracker adapter seam - the harness should satisfy the same behavior tests need from the real tracker.
 - Triage test fixtures - should make bucket and state-transition tests concise.
 
+**Relevant context:**
+- Domain terms: triage, state transition
+- ADRs: `none`
+
 **Acceptance criteria:**
 - [ ] Tests can create issue and PR fixtures with labels, comments, authors, and timestamps.
 - [ ] Tests can represent reporter activity after the last triage note.
@@ -221,6 +243,10 @@ This finishes one bounded behavior already started by the PR: JSON output for th
 **Relevant interfaces or seams:**
 - Triage list command interface - should preserve existing non-JSON behavior.
 - JSON output path - should serialize success and error responses consistently.
+
+**Relevant context:**
+- Domain terms: triage list
+- ADRs: `none`
 
 **Acceptance criteria:**
 - [ ] `triage list --json` emits valid JSON for success output.

@@ -1,84 +1,79 @@
 ---
 name: implement
-description: Pick up one ready-for-agent issue, implement it through the repo's existing seams, verify it, review it, commit it, and leave an implementation note.
+description: Implement one bounded work item through the repo's convergence loop, with standalone closeout or staged worker handoff.
 ---
 
 # Implement
 
-Implement one ready-for-agent issue. Stop after one issue.
+Implement exactly one selected work item: a chat-selected slice, GitHub issue, local tracker issue, PRD/spec/path/URL slice, or another explicit implementation target.
 
-If the user names an issue, path, or URL, implement that. If the user names a PRD or spec, use it to find or choose one ready-for-agent issue, then stop after that issue. Otherwise, find the next unblocked issue labeled `ready-for-agent` using `docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md`. For local markdown trackers, scan the configured local issue files and use the mapped ready status.
+If the source contains multiple slices, choose one bounded ready-for-agent slice and stop after it. If no work item is supplied, select the next unblocked ready-for-agent item from the tracker.
+
+Implement is execution, not product discovery: the work item should be settled enough to name the behavior, acceptance criteria, and proof seam. If the work is not settled, stop and recommend the shaping skill that fits; do not reopen product decisions inside `$implement`.
 
 ## Preconditions
 
-Read `docs/agents/engineering-contract.md`, `docs/agents/issue-tracker.md`, and `docs/agents/triage-labels.md`; run `$setup-matt-pocock-skills` if any are missing.
+Read `docs/agents/engineering-contract.md`. If it is missing, stop and recommend `$setup-matt-pocock-skills`.
 
-When touching codebase context, read `docs/agents/domain.md` if present so implementation, tests, issue notes, and commit text use domain glossary vocabulary and respect ADRs.
+Read tracker docs only for tracker selection, tracker semantics, or tracker closeout.
 
-## Process
+## Modes
 
-Use the convergence loop scaled to the issue: orient, explore, choose, prove, expand, converge, simplify, lock. Tiny issues can compress the loop; uncertain or risky issues should make the gates explicit.
+- Owner: implements or integrates one selected work item; owns fixed point, authoritative proof, review, lock, commit, and tracker closeout.
+- Worker: implements only the assigned slice; stages the patch and returns a handoff packet.
 
-### 1. Select The Issue
+Workers do not commit, run formal `$review`, mutate trackers, fan out, or stage unrelated changes.
 
-If no issue is provided, choose the next unblocked ready-for-agent issue in dependency order. Skip issues whose blockers are incomplete.
+A read-only scout may advise on seam, scope, or validation only when the owner says so before dispatch. Scouts do not edit, stage, commit, run formal `$review`, or mutate tracker state.
 
-If multiple issues are ready and order is ambiguous, ask the user which one to pick. If no issue is available, stop and say so.
+## Intake
 
-### 2. Capture Baseline
+Identify the selected work item, source, acceptance criteria, blockers, and out-of-scope boundaries.
 
-Inspect the worktree before editing. Preserve unrelated changes.
+Clean baseline: inspect the worktree before editing. Workers never commit prior dirty work. Owners may commit prior dirty work only when the user explicitly asks or a named repo doc defines that finish mode. If dirty work remains, continue only when the selected work item can be isolated safely; record unrelated dirty files in the final note.
 
-Capture the starting ref before editing; `$review` uses this fixed point.
+Read only task-relevant comments, parent context, files, and nearby code. Treat the work item as one bounded slice.
 
-Stage and commit only files touched for this issue.
+## Patch
 
-### 3. Orient And Explore
+Patch in tight red-green slices at pre-agreed seams. Before the first test, name the seam under test; if no red seam fits, use the strongest focused evidence and say why. Record follow-ups instead of adding adjacent cleanup or extra slices.
 
-Read the full issue, comments or local notes, parent PRD/spec, linked context, acceptance criteria, blockers, and out-of-scope boundaries.
+## Worker Handoff
 
-Treat the selected issue as one bounded slice. For a tracer-bullet issue, identify the behavior to prove, the acceptance criteria it must satisfy, and the highest useful interface or seam to test through. For a support issue, identify what it unblocks or proves, how it stays behavior-preserving when relevant, and what observable validation shows it is complete. Prefer existing seams. Use `$tdd` where practical.
+Delegated work is done only when the worker returns a staged handoff packet and the owner accepts it. Do not infer completion from dispatch, silence, elapsed time, or partial progress.
 
-Explore enough to choose the best local approach. Use `.tmp/` for disposable spikes, copied references, experiments, and rough notes when that reduces uncertainty; delete scratch artifacts before final delivery unless the user asks to preserve them.
+The packet includes `git status --short`, staged diff summary, validation, skipped checks, residual risk, and unrelated dirty files.
 
-Ask only when implementation would otherwise be guesswork or when the better approach changes the commitment: product intent, acceptance criteria, semantic correctness, user-visible behavior beyond the request, public contracts, dependency or tooling choices, migration/data semantics, security/privacy posture, or the bounded slice itself.
+Workers run focused proof plus `git diff --cached --check`; add the full suite only when broad, high-risk, cheap, or explicitly requested. On feedback, update the patch, refresh staging, rerun focused proof, and return a revised packet.
 
-### 4. Choose And Implement
+## Converge
 
-Choose one approach and make the narrow change needed to complete the selected slice. Technique belongs to the agent; requirements and end result belong to the user. If internal behavior is load-bearing for the result, give it a contract and prove it through the smallest meaningful seam.
+Owners capture the fixed point before editing or worker assignment.
 
-Do not expand scope beyond the selected slice.
+If supervising a worker, avoid overlapping code changes while the worker runs. After handoff, inspect `git status --short` and the staged diff.
 
-Do not add extra tracer bullets or support slices just because adjacent cases exist. Add another behavior test or validation check only when it proves a materially different branch, risk, acceptance criterion, or unblocker. Record useful follow-ups in the final note instead of widening the slice.
+Run authoritative proof on the assembled diff: acceptance checks, quick repo lint when discoverable, whitespace check, and risk-scaled broader validation.
 
-For behavior changes, use red-green-refactor through the highest useful interface or seam when the code slice is suitable for TDD. Do not replace TDD discipline with after-the-fact checks. Prove semantic correctness: fixtures, examples, invariants, row-level expectations, checksums, or other evidence should show the output is correct, not merely present.
+For repo-local tracker files, add the closeout packet and move the item to `implemented` before final review.
 
-Run focused checks regularly: single test files, typecheck, lint, or the repo's closest equivalent.
+Stage new selected-work-item files before review. Invoke `$review` with the fixed point after the final diff is assembled; use a labeled local fallback if unavailable. Fix in-scope findings with targeted verification.
 
-### 5. Prove And Simplify
+## Lock
 
-Confirm acceptance criteria are satisfied.
+Prefer one commit per work item unless the user asks for separate commits or repo policy requires split commits.
 
-Run focused tests/checks and the full test suite or repo-standard validation if feasible. Explain skipped validation.
+Prepare one closeout packet: summary, review result, validation run, skipped checks, and residual risk. Add the commit SHA after commit for connector posting or final response; repo-local tracker notes need not include it.
 
-Simplify only while behavior is protected: remove disposable scaffolding, collapse bloated branches, improve names, and deepen modules only when it helps this slice. Keep behavior unchanged unless the issue requires the change.
+Stage only selected-work-item changes, including in-scope tracker files, review fixes, and accepted worker handoff diff. Leave unrelated files and hunks unstaged, then run `git diff --cached --check`.
 
-### 6. Converge
+Commit to the current branch with a message that names the selected work item or behavior.
 
-Run `$review` against the starting ref using its default sequential mode.
+For connector-backed trackers, mutate external tracker state only after the commit succeeds: post the closeout packet, add/apply `implemented`, remove any prior state-role label, and close only if the user or tracker docs say so.
 
-If this `$implement` run is itself delegated to a subagent, do not treat that as permission to spawn review subagents. Escalate only when the user explicitly requests review delegation, or when the selected review layer is `$convergent-pr-review` for local PR or high-risk convergence review.
+If the work item is not tracker-backed, after commit use the closeout packet as the final response.
 
-Fix in-scope findings. Record out-of-scope findings in the final note instead of expanding the slice.
+## Done
 
-### 7. Lock
+Owner done means one selected work item is implemented or integrated from worker handoff, validated, reviewed once from the fixed point, committed, and, when tracker-backed, noted and moved to `implemented`.
 
-Commit to the current branch with a message that references the issue.
-
-Leave a concise implementation note on the issue. Include commit SHA, summary, review layer, validation run, skipped checks, and residual risk. For local markdown trackers, append the note using the repo convention, or under `## Implementation Notes` if none exists.
-
-Set the issue state to `implemented` after the implementation note is recorded. For role-label trackers, remove the prior state-role label and apply the mapped `implemented` label from `docs/agents/triage-labels.md`. For local markdown trackers, change the `Status:` line to `implemented`. Do not close the issue unless the user asks or `docs/agents/issue-tracker.md` defines closing as part of the implemented transition.
-
-## Completion Criteria
-
-Done means one issue is implemented, reviewed against the starting ref, committed, noted, and moved to `implemented`; validation is recorded; unrelated work is preserved.
+Worker done means a focused patch is staged and reported in a handoff packet.

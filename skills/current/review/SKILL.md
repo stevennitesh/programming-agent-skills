@@ -1,18 +1,18 @@
 ---
 name: review
-description: "Run ordinary fixed-point review for branch, WIP, or \"review since X\" diffs. Keep Standards and Spec separate: documented repo conventions, and whether the diff satisfies the originating issue, PRD, spec, or acceptance criteria. For local PR or high-risk convergence review, use convergent-pr-review."
+description: "Run ordinary fixed-point review for branch, WIP, or \"review since X\" diffs. Judge two axes, never merged: Standards asks \"built right?\"; Spec asks \"right thing?\". For local PR or high-risk convergence review, use convergent-pr-review."
 ---
 
 # Review
 
-Run a read-only fixed-point review of the current diff.
+Run a read-only review of the selected diff from a known-good point.
 
-This is the default Converge gate for ordinary branch, WIP, and `$implement` closeout review. It checks two axes separately:
+This is the default Converge gate for ordinary branch, WIP, and `$implement` closeout review.
 
-- **Standards**: whether the diff follows documented repo conventions and the local engineering contract.
-- **Spec**: whether the diff satisfies the originating issue, PRD, spec, bounded slice, and acceptance criteria.
+- **Standards**: built right? Check documented repo conventions, the local engineering contract, meaningful nearby conventions, and the smell baseline when repo standards are thin.
+- **Spec**: right thing? Check the originating issue, PRD, spec, bounded slice, acceptance criteria, and required proof.
 
-Keep the axes separate. Do not merge, deduplicate, or rerank findings across axes. One axis passing must not hide the other axis failing.
+Keep the **two axes, never merged**. One axis passing must not hide the other axis failing, and there is no single winner across axes.
 
 Use `$convergent-pr-review` instead for local PR review or high-risk local-diff review that needs independent reviewer passes, scoped lenses, and a verified finding ledger.
 
@@ -22,13 +22,21 @@ Do not edit files.
 
 Use the fixed point the user supplied: commit SHA, branch, tag, `main`, `HEAD~5`, or similar. If none was supplied, ask.
 
+Choose the review diff:
+
+- committed branch diff: `git diff <fixed-point>...HEAD`
+- uncommitted working-tree diff: `git diff <fixed-point>`
+- staged-only diff when explicitly requested: `git diff --cached`
+
+For staged-only review, record the fixed point for context; the reviewed diff is `git diff --cached`.
+
 Capture:
 
 - fixed point resolution: `git rev-parse <fixed-point>`
-- diff command: `git diff <fixed-point>...HEAD`
-- commit list: `git log <fixed-point>..HEAD --oneline`
+- diff command selected above
+- commit list when relevant: `git log <fixed-point>..HEAD --oneline`
 
-Confirm the fixed point resolves and the diff is non-empty before reviewing. Stop if the fixed point does not resolve or the diff is empty.
+Confirm the fixed point resolves and the selected diff is non-empty before reviewing. Stop if the fixed point does not resolve or the selected diff is empty.
 
 Done means the fixed point, diff command, and commit range are known, or the review is stopped with the reason.
 
@@ -48,11 +56,9 @@ Done means the Spec axis has a source, or is explicitly skipped.
 
 Find documented repo rules: `AGENTS.md`, `docs/agents/engineering-contract.md`, `CONTRIBUTING.md`, `CODING_STANDARDS.md`, `README.md`, formatter/linter configs, test docs, or local convention docs.
 
-If no Standards source exists, say so. Report only clear nearby-convention mismatches, and label them as convention findings rather than documented-standard violations.
+If repo standards are thin, use nearby conventions plus the smell baseline as judgement calls: unclear names, duplicated logic, speculative generality, shotgun surgery, primitive obsession, and scope-shaped abstractions. Repo standards override the baseline; tooling-enforced style stays out.
 
-Do not invent standards.
-
-Done means Standards sources are named, or their absence is reported.
+Done means Standards sources are named, or their absence is reported with the convention or smell baseline used.
 
 ## 4. Review Standards
 
@@ -107,7 +113,7 @@ Present findings under exactly these headings:
 <findings or "No findings." / "Skipped: no spec available.">
 ```
 
-Do not merge, deduplicate, or rerank findings across axes. The final one-line summary may count both axes, but findings stay under their axis.
+Preserve the **two axes, never merged**: do not merge, deduplicate, rerank, or pick a single winner. The final one-line summary may count both axes; findings stay under their axis.
 
 End with:
 
@@ -117,4 +123,4 @@ Summary: Standards: <count>, worst <severity or none>. Spec: <count/skipped>, wo
 
 ## Completion Criteria
 
-Done means the fixed point was verified, the diff was reviewed read-only, Standards and Spec were evaluated separately, findings are actionable and evidenced, missing sources are reported explicitly, and the output preserves the two-axis boundary.
+Done means the known-good point was verified, the selected diff was reviewed read-only, both axes were evaluated, findings are actionable and evidenced, missing sources are explicit, and the output preserves **two axes, never merged**.

@@ -19,7 +19,7 @@ Every comment or issue posted to the issue tracker during triage **must** start 
 
 Read `docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md`; run `$setup-matt-pocock-skills` if either is missing.
 
-When exploring codebase context, read `docs/agents/domain.md` if present so issue summaries, briefs, comments, and category decisions use domain glossary vocabulary and respect ADRs.
+When exploring codebase context, read `docs/agents/domain.md` when present and follow it to the relevant glossary and ADRs.
 
 ## Reference Docs
 
@@ -48,7 +48,7 @@ Every triaged issue or PR should carry exactly one category role and one state r
 
 For a PR, state roles read against the attached code: `ready-for-agent` means a Codex-ready brief is attached and Codex should take the next bounded slice on the diff; `ready-for-human` means it is ready for a human to merge.
 
-State transitions: an unlabeled issue normally goes to `needs-triage` first; from there it moves to `needs-info`, `ready-for-agent`, `ready-for-human`, or `wontfix`. `$implement` moves `ready-for-agent` work to `implemented` after it is implemented, reviewed, committed, and noted. `needs-info` returns to `needs-triage` once the reporter replies. The maintainer can override at any time; flag unusual transitions and ask before proceeding.
+State transitions: an unlabeled issue normally goes to `needs-triage` first; from there it moves to `needs-info`, `ready-for-agent`, `ready-for-human`, or `wontfix`. `$implement` moves single-issue `ready-for-agent` work to `implemented` after it is implemented, reviewed, committed, and noted. `$parallel-implement` moves batch or parent-run child issues to `implemented` only after orchestrator review, integration, validation, and implementation notes. `needs-info` returns to `needs-triage` once the reporter replies. The maintainer can override at any time; flag unusual transitions and ask before proceeding.
 
 ## Invocation
 

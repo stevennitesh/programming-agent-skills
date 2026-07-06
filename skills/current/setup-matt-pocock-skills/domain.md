@@ -1,53 +1,28 @@
 # Domain Docs
 
-How the engineering skills should consume this repo's domain documentation when exploring the codebase.
+How engineering skills consume repo domain documentation when exploring codebase context.
 
-This file is routing guidance. Do not create missing domain docs during setup.
+This file is routing guidance. It points agents to relevant glossary and ADR files without loading all domain docs by default. Do not create missing domain docs during setup.
 
-## Before exploring, read these
+## Before Exploring
 
-- **`CONTEXT.md`** at the repo root, or
-- **`CONTEXT-MAP.md`** at the repo root if it exists — it points at one `CONTEXT.md` per context. Read each one relevant to the topic.
-- **`docs/adr/`** — read ADRs that touch the area you're about to work in. In multi-context repos, also check `src/<context>/docs/adr/` for context-scoped decisions.
+Read only the domain docs relevant to the selected issue, interface, bounded slice, or changed module:
 
-If any of these files don't exist, **proceed silently**. Don't flag their absence; don't suggest creating them upfront. The `$domain-modeling` skill (reached via `$grill-with-docs` and `$improve-codebase-architecture`) creates them lazily when terms or decisions actually get resolved.
+- `CONTEXT.md` at the repo root for single-context repos.
+- `CONTEXT-MAP.md` at the repo root for multi-context repos; follow it to relevant context `CONTEXT.md` files.
+- `docs/adr/` for repo-wide decisions touching the work.
+- `src/<context>/docs/adr/` for context-local decisions in multi-context repos.
 
-## File structure
+If any file or directory is absent, proceed silently. Do not flag its absence or suggest creating it upfront. The `$domain-modeling` skill creates domain docs lazily when terms or decisions get resolved.
 
-Single-context repo (most repos):
+## Use Glossary Vocabulary
 
-```
-/
-├── CONTEXT.md
-├── docs/adr/
-│   ├── 0001-event-sourced-orders.md
-│   └── 0002-postgres-for-write-model.md
-└── src/
-```
+When your output names a domain concept in an issue title, refactor proposal, hypothesis, test name, commit message, or implementation note, use the term as defined in the relevant `CONTEXT.md`.
 
-Multi-context repo (presence of `CONTEXT-MAP.md` at the root):
+If the concept is missing, either reconsider the invented language or note the gap for `$domain-modeling`.
 
-```
-/
-├── CONTEXT-MAP.md
-├── docs/adr/                          ← system-wide decisions
-└── src/
-    ├── ordering/
-    │   ├── CONTEXT.md
-    │   └── docs/adr/                  ← context-specific decisions
-    └── billing/
-        ├── CONTEXT.md
-        └── docs/adr/
-```
+## Flag ADR Conflicts
 
-## Use the glossary's vocabulary
+If your output contradicts an existing ADR, surface it explicitly instead of silently overriding it:
 
-When your output names a domain concept (in an issue title, a refactor proposal, a hypothesis, a test name), use the term as defined in `CONTEXT.md`. Don't drift to synonyms the glossary explicitly avoids.
-
-If the concept you need isn't in the glossary yet, that's a signal — either you're inventing language the project doesn't use (reconsider) or there's a real gap (note it for `$domain-modeling`).
-
-## Flag ADR conflicts
-
-If your output contradicts an existing ADR, surface it explicitly rather than silently overriding:
-
-> _Contradicts ADR-0007 (event-sourced orders) — but worth reopening because…_
+> Contradicts ADR-0007 (event-sourced orders), but worth reopening because...

@@ -9,7 +9,7 @@ A discipline for hard bugs. The main job is to build a feedback loop that catche
 
 Read `docs/agents/engineering-contract.md` when present before changing repo behavior or locking in the fix.
 
-When exploring the codebase, read `docs/agents/domain.md` if present to locate the relevant domain glossary and ADRs. Otherwise, fall back to `CONTEXT-MAP.md`, root `CONTEXT.md`, and local ADR/domain docs to get a clear mental model of the relevant modules.
+When exploring codebase context, read `docs/agents/domain.md` when present and follow it to the relevant glossary and ADRs. If no routing exists, fall back to `CONTEXT-MAP.md`, root `CONTEXT.md`, and local ADR/domain docs to get a clear mental model of the relevant modules.
 
 ## Phase 1 - Build A Feedback Loop
 

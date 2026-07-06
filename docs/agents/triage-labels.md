@@ -17,7 +17,7 @@ The skills speak in terms of category roles and state roles. This file maps thos
 | `needs-info`              | `needs-info`         | Waiting on reporter for more information                                     |
 | `ready-for-agent`         | `ready-for-agent`    | Fully specified, ready for an unattended Codex session or delegated subagent |
 | `ready-for-human`         | `ready-for-human`    | Requires human implementation                                                |
-| `implemented`             | `implemented`        | Implemented, reviewed, committed, and recorded by `$implement`               |
+| `implemented`             | `implemented`        | Implemented, reviewed, committed, and recorded by an implementation skill               |
 | `wontfix`                 | `wontfix`            | Will not be actioned                                                         |
 
 When a skill mentions a role, use the corresponding label string from these tables.

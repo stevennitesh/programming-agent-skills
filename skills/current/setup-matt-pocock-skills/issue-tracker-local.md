@@ -19,7 +19,7 @@ Status: ready-for-agent
 
 ## When a skill says "publish to the issue tracker"
 
-Create a new file under `.scratch/<feature-slug>/` (creating the directory if needed).
+For a PRD, create `.scratch/<feature-slug>/PRD.md` (creating the directory if needed). For implementation issues, use `.scratch/<feature-slug>/issues/<NN>-<slug>.md`.
 
 ## When a skill says "fetch the relevant ticket"
 

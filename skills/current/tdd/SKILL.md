@@ -48,7 +48,7 @@ Each test should respond to what the previous cycle taught you.
 
 Read `docs/agents/engineering-contract.md` when present before this TDD pass changes repo behavior.
 
-When exploring the codebase, read `docs/agents/domain.md` if present so test names and behavior descriptions use the repo's domain glossary and respect ADRs. Otherwise, fall back to `CONTEXT-MAP.md`, root `CONTEXT.md`, and local ADR/domain docs.
+When exploring codebase context, read `docs/agents/domain.md` when present and follow it to the relevant glossary and ADRs. If no routing exists, fall back to `CONTEXT-MAP.md`, root `CONTEXT.md`, and local ADR/domain docs.
 
 Resolve the behavior from the issue, PRD, spec, acceptance criteria, bug report, or current user request. Ask only when the behavior, public interface, or test seam would otherwise be guesswork.
 

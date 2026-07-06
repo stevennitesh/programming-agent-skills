@@ -233,3 +233,31 @@ _Avoid_: unverified claim
 **Red-green-refactor**:
 The TDD rhythm for behavior that is clear enough to test: write a failing test, make it pass, then simplify while preserving behavior.
 _Avoid_: after-the-fact testing
+
+**Batch fixed point**:
+The pinned starting ref for a parallel implementation batch. Worker bases,
+integration commits, validation, tracker notes, and final review are compared
+back to it.
+_Avoid_: floating start, latest main
+
+**Orchestrator**:
+The coordinating agent in a parallel implementation run. It owns dependency
+order, execution waves, worker dispatch, diff review, feedback, integration,
+validation, tracker notes, and issue state.
+_Avoid_: passive coordinator, background manager
+
+**Worker**:
+An isolated code-writing agent assigned exactly one bounded issue by an
+orchestrator. A worker owns implementation proof and a completion report, not
+integration or tracker state.
+_Avoid_: independent maintainer, issue owner
+
+**Worktree worker**:
+A worker running in a Codex-managed worktree thread or approved manual Git
+worktree so parallel code-writing does not collide in one checkout.
+_Avoid_: ordinary same-checkout subagent
+
+**Integration branch**:
+The branch where an orchestrator serializes accepted worker output into one
+validated history, normally one integration commit per issue.
+_Avoid_: worker branch, staging area
