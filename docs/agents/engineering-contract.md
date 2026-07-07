@@ -15,14 +15,14 @@ Follow `docs/agents/domain.md` to the relevant glossary and ADRs. Preserve domai
 Use this rhythm scaled to task size:
 
 ```text
-Orient -> Explore -> Choose -> Prove -> Expand -> Converge -> Simplify -> Lock
+Orient -> Explore -> Decide -> Prove -> Cover -> Converge -> Simplify -> Lock
 ```
 
 - **Orient**: name product intent, current behavior, constraints, acceptance criteria, fixed point, and what must be preserved.
 - **Explore**: inspect seams, compare local approaches, and use `.tmp/` for disposable spikes when useful.
-- **Choose**: pick the best local approach inside the bounded slice.
+- **Decide**: commit to the best local approach inside the bounded slice.
 - **Prove**: prove semantic correctness; use red-green-refactor when appropriate.
-- **Expand**: add remaining requirements as bounded tracer bullets or focused checks.
+- **Cover**: add remaining requirements as bounded tracer bullets or focused checks.
 - **Converge**: review against Spec and Standards from the fixed point.
 - **Simplify**: remove scaffolding, collapse bloated branches, deepen modules where it helps, and preserve behavior.
 - **Lock**: rerun the right checks, delete scratch artifacts unless asked to preserve them, record evidence, commit or hand off.
@@ -76,7 +76,7 @@ Support work is allowed when it clearly unblocks or de-risks tracer bullets and 
 
 Use `.tmp/` for disposable spikes, copied references, experiments, and rough notes.
 
-Production files should normally change after Choose. Tiny reversible production edits during Explore are acceptable only when they are the fastest way to understand the real seam.
+Production files should normally change after Decide. Tiny reversible production edits during Explore are acceptable only when they are the fastest way to understand the real seam.
 
 Delete scratch artifacts before final delivery unless the user asks to preserve them.
 

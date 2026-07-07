@@ -1,12 +1,14 @@
 # Programming Agent Skills
 
-Programming Agent Skills is a skill pack for preventing AI coding agents from falling into common coding failure modes.
+Programming Agent Skills is a skill pack for making AI coding agents feel less like autocomplete with a shell and more like a disciplined engineering partner.
 
-It gives agents and engineers a structured method for designing, implementing, proving, reviewing, and handing off product work with discipline. The pack is not a hidden dispatcher. It is a shared vocabulary plus a set of explicit workflows an agent or human can choose when the shape of the work calls for them.
+The exciting part is not that agents can write code quickly. They already can. The exciting part is getting that speed inside a workflow that shapes vague ideas, slices real product work, proves behavior, reviews the diff, and leaves the repo easier for the next human or agent to trust.
 
 ## Purpose
 
-This pack exists because AI coding agents drift into predictable bad habits: vague scope, shallow exploration, premature implementation, brittle abstractions, weak proof, broad diffs, stale handoffs, and confident summaries without evidence.
+AI coding agents are fast, but they drift into predictable failure modes: vague scope, shallow exploration, premature implementation, brittle abstractions, weak proof, broad diffs, stale handoffs, and confident summaries without evidence.
+
+This pack turns those failure modes into named workflows and engineering habits.
 
 It gives agents and engineers durable habits for:
 
@@ -22,15 +24,16 @@ It gives agents and engineers durable habits for:
 
 Build faster without making the repo harder to trust.
 
-The skills favor small, inspectable moves over broad agent autonomy. A good agent run should know its source material, name its scope, protect unrelated work, prove load-bearing behavior, and leave a fresh session enough context to continue.
+The pack treats AI speed as useful only when it is paired with engineering discipline. Agents should move quickly through discovery, but slowly at the gates that protect correctness: scope, commitments, proof, review, and handoff.
 
-The pack leans on a few recurring ideas:
+The philosophy is:
 
-- **Leading words**: compact terms like `tracer bullet`, `fixed point`, `fog of war`, and `deep module` carry behavior without long prose.
-- **Single source of truth**: setup docs, tracker rules, domain language, and workflow procedures each live in one owning place.
-- **Progressive disclosure**: top-level skills own process and boundaries; supporting files own detailed mechanics.
-- **Commitment boundaries**: users own requirements, semantics, and product commitments; agents own ordinary implementation technique unless it changes the promised result.
-- **Evidence over vibes**: tests, source links, fixtures, logs, diffs, tracker state, and explicit confirmation beat plausible summaries.
+- **Shape before build**: unclear intent should become a grilling session, PRD, wayfinding map, research note, or prototype before implementation starts.
+- **Slice by observable behavior**: good agent work moves through tracer bullets and support slices, not broad horizontal rewrites.
+- **Prove what matters**: load-bearing behavior needs evidence through a useful seam; output existence is not correctness.
+- **Review from a fixed point**: judge the actual diff against Standards and Spec instead of trusting the agent's story.
+- **Preserve shared language**: domain terms, ADRs, issue briefs, and handoffs keep future humans and agents aligned.
+- **Keep one source of truth**: skills own workflow, repo docs own local contracts, and supporting files own detailed mechanics.
 
 ## Engineering Contract
 
@@ -40,7 +43,7 @@ The contract works by activating good engineering habit priors with leading word
 
 | Leading word | Source | Meaning | Agent habit it activates |
 | --- | --- | --- | --- |
-| `convergence loop` | Debugging, design review, and release discipline | `Orient -> Explore -> Choose -> Prove -> Expand -> Converge -> Simplify -> Lock` | Explore without drifting, then force the work toward proof, simplification, and closure. |
+| `convergence loop` | Debugging, design review, and release discipline | `Orient -> Explore -> Decide -> Prove -> Cover -> Converge -> Simplify -> Lock` | Give the agent room to explore, cover the requirements, and converge on a simple verified solution. |
 | `fixed point` | Code review and diff-based verification | A known starting ref for judging what changed | Review the actual diff instead of the whole repo or the agent's memory of the task. |
 | `commitment boundary` | Product ownership, API contracts, and safety review | The line between user-owned outcomes and agent-owned technique | Ask before changing requirements, semantics, public behavior, data meaning, security posture, or scope. |
 | `load-bearing internal` | Testing discipline and interface design | Internal behavior that determines whether the requested result is correct | Give correctness-critical internals a contract and prove them through the smallest meaningful seam. |
