@@ -36,6 +36,17 @@ Run `glab issue view <number> --comments`.
 
 For an external MR when MRs are a request surface, run `glab mr view <number> --comments` and `glab mr diff <number>`.
 
+## Wayfinding operations
+
+Used by `$wayfinder`. The **map** is a single GitLab issue with child issues as tickets.
+
+- **Map**: create one issue labelled `wayfinder:map`. Its body holds Destination, Notes, Decisions So Far, Not Yet Specified, and Out Of Scope. On GitLab tiers with native epics, an epic may hold the map instead; a labelled issue works everywhere.
+- **Child ticket**: create one issue per ticket. If native child relationships are unavailable, add `Part of #<map>` at the top of the child body. Label each ticket with exactly one `wayfinder:<type>` label: `research`, `prototype`, `grilling`, or `task`.
+- **Blocking**: use GitLab's native issue links/blocking relationship when available. If unavailable, put `Blocked by: #<n>, #<n>` near the top of the child body. A ticket is unblocked when every blocker is closed.
+- **Frontier query**: list the map's open children, then drop tickets with an open blocker or assignee. The first remaining ticket in map order is the frontier.
+- **Claim**: assign the ticket to the driver before work; the assignee is the concurrency guard.
+- **Resolve**: post the answer as a note, close the ticket, then append one context pointer to the map's Decisions So Far.
+
 ## When a skill says "post a Codex-ready brief"
 
 Post it as an issue note with `glab issue note <number> --message "..."`.

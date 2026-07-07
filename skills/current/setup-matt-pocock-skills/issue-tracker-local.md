@@ -25,6 +25,17 @@ For a PRD, create `.scratch/<feature-slug>/PRD.md` (creating the directory if ne
 
 Read the file at the referenced path. The user will normally pass the path or the issue number directly.
 
+## Wayfinding operations
+
+Used by `$wayfinder`. The **map** is one markdown file with child ticket files.
+
+- **Map**: create `.scratch/<feature-slug>/wayfinder/map.md`. Its body holds Destination, Notes, Decisions So Far, Not Yet Specified, and Out Of Scope.
+- **Child ticket**: create `.scratch/<feature-slug>/wayfinder/tickets/<NN>-<slug>.md`. Put `Part of: map.md`, `Type: research | prototype | grilling | task`, `Status: Pending | In Progress | Resolved | Blocked | Out Of Scope`, and optional `Blocked by: <NN>, <NN>` lines near the top.
+- **Blocking**: a ticket is unblocked when every ticket in `Blocked by` is `Resolved` or `Out Of Scope`.
+- **Frontier query**: read open ticket headers, then drop tickets with an unresolved blocker or `Status: In Progress`. The first remaining ticket in map order is the frontier.
+- **Claim**: set `Status: In Progress` before work.
+- **Resolve**: record the answer in the ticket, set `Status: Resolved`, then append one context pointer to the map's Decisions So Far.
+
 ## When a skill says "post a Codex-ready brief"
 
 Append it to the issue file.

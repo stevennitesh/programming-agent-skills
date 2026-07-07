@@ -22,11 +22,7 @@
 
 ## Invariants
 
-- Keep `AGENTS.md` short: it primes; the contract teaches; skills execute.
-- If the user names a skill, use it. Otherwise suggest a specialized skill only
-  when it clearly improves the work.
-- Do not copy full skill procedures into repo docs or answers; point to the
-  owning skill/doc.
+- Keep `AGENTS.md` short: it primes; referenced docs teach; skills execute.
 - Keep durable vocabulary in `CONTEXT.md` and durable decisions in `docs/adr/`.
 - Do not rewrite historical research, synthesis, validation, issue notes, or
   run logs as current instructions.

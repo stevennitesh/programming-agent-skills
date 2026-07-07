@@ -44,14 +44,14 @@ Run `setup-matt-pocock-skills` inside each target repo before first use.
 Use the map when you know the shape of the work but not the best skill. The
 copyable installed-pack guide lives in
 [`AGENTS_SKILL_PACK_GUIDE.md`](AGENTS_SKILL_PACK_GUIDE.md).
-Use `ask-matt` when route choice itself is the work.
+Recommend `ask-matt` when route choice itself is the work.
 
 North star: build faster without making the repo harder to trust.
 
 Routing handles:
 
 - **grilling session**: reduce ambiguity before building.
-- **decision map**: make fog of war visible.
+- **wayfinding map**: make fog of war visible.
 - **prototype**: answer one design question by trying it.
 - **PRD**: preserve product intent beyond the current thread.
 - **ready-for-agent**: specific enough for a fresh implementation session.
@@ -63,7 +63,7 @@ Shaping before implementation:
 
 - `grill-with-docs` when product intent is foggy and repo context matters.
 - `grilling` when the user needs a grilling session without repo-doc work.
-- `decision-mapping` when unresolved decisions block a PRD, plan, or implementation.
+- `wayfinder` when unresolved decisions block a PRD, plan, or implementation.
 - `prototype` when conversation cannot settle a design question without trying it.
 - `handoff` when context must cross sessions.
 

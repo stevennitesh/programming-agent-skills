@@ -37,6 +37,17 @@ Fetch the issue with the GitHub connector, including comments and labels.
 
 For an external PR when PRs are a request surface, fetch the PR with the GitHub connector, including comments, labels, author metadata, and diff.
 
+## Wayfinding operations
+
+Used by `$wayfinder`. The **map** is a single GitHub issue with child issues as tickets.
+
+- **Map**: create one issue labelled `wayfinder:map`. Its body holds Destination, Notes, Decisions So Far, Not Yet Specified, and Out Of Scope.
+- **Child ticket**: create one issue per ticket, linked to the map as a GitHub sub-issue when available. If sub-issues are unavailable, add the child to a task list in the map body and put `Part of #<map>` at the top of the child body. Label each ticket with exactly one `wayfinder:<type>` label: `research`, `prototype`, `grilling`, or `task`.
+- **Blocking**: use GitHub's native issue dependencies when available. If unavailable, put `Blocked by: #<n>, #<n>` near the top of the child body. A ticket is unblocked when every blocker is closed.
+- **Frontier query**: list the map's open children, then drop tickets with an open blocker or assignee. The first remaining ticket in map order is the frontier.
+- **Claim**: assign the ticket to the driver before work; the assignee is the concurrency guard.
+- **Resolve**: post the answer as a comment, close the ticket, then append one context pointer to the map's Decisions So Far.
+
 ## When a skill says "post a Codex-ready brief"
 
 Post it as an issue comment with the GitHub connector.

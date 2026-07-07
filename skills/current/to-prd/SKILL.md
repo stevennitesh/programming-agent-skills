@@ -55,11 +55,15 @@ Write a source-traced brain-dump PRD with these sections:
 
 Write for a fresh Codex session that needs to recover the shared understanding without rereading the source thread. Summarize source material; do not mirror it, and do not produce generic boilerplate.
 
-User stories should use:
+User stories must be a long, numbered list. Each story should use:
 
 `As a <actor>, I want <capability>, so that <benefit>.`
 
-Write only stories that carry acceptance signal: a distinct actor, flow, benefit, edge case, permission boundary, or failure mode.
+Example:
+
+`As a mobile bank customer, I want to see balance on my accounts, so that I can make better informed decisions about my spending.`
+
+Make the list extensive enough to cover all meaningful aspects of the feature.
 
 Proof notes name seams and proof points, not implementation steps.
 

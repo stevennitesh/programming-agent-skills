@@ -10,7 +10,7 @@ import pytest
 @pytest.mark.focused
 def test_validate_slice_plan_regression_script_passes() -> None:
     root = Path(__file__).resolve().parents[1]
-    script = root / "skills" / "experimental" / "to-slice-plan" / "scripts" / "test_validate_slice_plan.py"
+    script = root / "skills" / ".archive" / "to-slice-plan" / "scripts" / "test_validate_slice_plan.py"
     result = subprocess.run(
         [sys.executable, str(script)],
         cwd=root,

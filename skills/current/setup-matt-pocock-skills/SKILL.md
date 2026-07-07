@@ -70,6 +70,8 @@ State roles:
 
 Default: each role's string equals its name. Ask the user if they want to override any. If their issue tracker has no existing labels, the defaults are fine.
 
+Also record `$wayfinder`'s fixed labels: `wayfinder:map`, `wayfinder:research`, `wayfinder:prototype`, `wayfinder:grilling`, and `wayfinder:task`. These are not triage roles.
+
 **Section C — Domain docs.**
 
 > Explainer: Code-facing skills read the repo's domain glossary and ADRs when codebase context matters. `docs/agents/domain.md` is the router: it points agents to the right `CONTEXT.md`, `CONTEXT-MAP.md`, and relevant ADRs without loading all of them by default.
@@ -115,32 +117,18 @@ The block:
 ```markdown
 ## Agent skills
 
-This repo is configured for Matt Pocock-style engineering skills.
+This repo uses the Matt Pocock-style engineering skill pack.
+
+AGENTS primes. Repo-local docs teach. Skills execute.
 
 For nontrivial coding work, read `docs/agents/engineering-contract.md` before editing.
 
-AGENTS primes. `docs/agents/engineering-contract.md` teaches the discipline. Skills execute the workflow.
+### Pointers
 
-If the user names a skill, use it. If no skill is named, suggest one only when it clearly improves the work. Do not recreate full skill procedures here.
-
-### Local configuration
-
-- Issue tracker: `docs/agents/issue-tracker.md`
-- Triage labels: `docs/agents/triage-labels.md`
-- Domain docs: `docs/agents/domain.md`
+- Issue tracker operations: `docs/agents/issue-tracker.md`
+- Triage label roles: `docs/agents/triage-labels.md`
+- Domain docs and ADR routing: `docs/agents/domain.md`
 - Engineering contract: `docs/agents/engineering-contract.md`
-
-### Issue tracker
-
-[one-line summary of where issues are tracked, plus whether external PRs are a triage surface]. See `docs/agents/issue-tracker.md`.
-
-### Triage labels
-
-[one-line summary of the category and state label vocabulary]. See `docs/agents/triage-labels.md`.
-
-### Domain docs
-
-[one-line summary of layout — "single-context" or "multi-context"]. Use `docs/agents/domain.md` to find the relevant `CONTEXT.md`, `CONTEXT-MAP.md`, and ADRs.
 ```
 
 Then write the four docs files using the seed templates in this skill folder as a starting point:
@@ -152,7 +140,7 @@ Then write the four docs files using the seed templates in this skill folder as 
 - [domain.md](./domain.md) — domain doc consumer rules + layout
 - [engineering-contract.md](./engineering-contract.md) — agentic coding vocabulary and discipline
 
-Issue tracker docs must record the repo-equivalent operations for creating, fetching, commenting, applying labels, closing, and posting ready-for-agent handoff briefs.
+Issue tracker docs must record the repo-equivalent operations for creating, fetching, commenting, applying labels, closing, posting ready-for-agent handoff briefs, and `$wayfinder` map/ticket operations.
 
 For "other" issue trackers, write `docs/agents/issue-tracker.md` from scratch using the user's description.
 

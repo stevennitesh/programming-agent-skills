@@ -1,19 +1,17 @@
 # Skill Pack Guide AGENTS.md
 
-This is the installed-pack suggestion map. It names the pack's vocabulary and suggests the one next skill when a specialized workflow would help.
+Installed-pack suggestion map. It names routing handles and suggests one next skill when a specialized workflow would help.
 
-It does not teach skill procedures, tracker mechanics, domain routing, labels, or the engineering contract. Repo-local `AGENTS.md` and `docs/agents/*` own those details.
+Do not combine this guide with `AGENTS_PORTABLE_FALLBACK.md`; that file is for environments without the installed skill pack.
 
-Do not combine this guide with `AGENTS_PORTABLE_FALLBACK.md` in the same Codex profile. The fallback is for repos or environments without the skill pack; this guide is for installed-pack environments.
+Repo-local `AGENTS.md` primes. `docs/agents/*` owns tracker, labels, domain routing, and engineering-contract details. Skills own procedures.
 
-## North Star
+North star: build faster without making the repo harder to trust.
 
-Build faster without making the repo harder to trust.
-
-Use these as routing handles, not procedures:
+## Routing Handles
 
 - **grilling session**: reduce ambiguity before building.
-- **decision map**: make fog of war visible.
+- **wayfinding map**: make fog of war visible.
 - **prototype**: answer one design question by trying it.
 - **PRD**: preserve product intent beyond the current thread.
 - **ready-for-agent**: specific enough for a fresh implementation session.
@@ -23,17 +21,17 @@ Use these as routing handles, not procedures:
 
 ## Suggestion Index
 
-Use `ask-matt` when route choice is the work.
+Recommend `ask-matt` when route choice is the work.
 
-Suggest shaping skills before implementation:
+Shape:
 
 - `grill-with-docs` when product intent is foggy and repo context matters.
 - `grilling` when the user needs a grilling session without repo-doc work.
-- `decision-mapping` when unresolved decisions block a PRD, plan, or implementation.
+- `wayfinder` when unresolved decisions block a PRD, plan, or implementation.
 - `prototype` when conversation cannot settle a design question without trying it.
 - `handoff` when context must cross sessions.
 
-Suggest product-to-implementation skills:
+Build:
 
 - `to-prd` when a multi-session idea needs a durable parent PRD before implementation issues.
 - `to-issues` when a PRD, spec, plan, or parent issue should become dependency-ordered, ready-for-agent tracer-bullet issues.
@@ -41,14 +39,14 @@ Suggest product-to-implementation skills:
 - `implement` when one ready-for-agent issue should be implemented, verified, reviewed, committed, and noted.
 - `parallel-implement` when a parent, packet, or batch of ready-for-agent issues should be implemented through delegated workers and serialized integration.
 
-Suggest quality-loop skills:
+Quality:
 
 - `tdd` when behavior is clear enough for red-green-refactor.
 - `diagnosing-bugs` when the symptom, cause, or reproduction is uncertain.
 - `review` when an ordinary branch or work-in-progress diff needs fixed-point Standards and Spec review.
 - `convergent-pr-review` when a local PR review or high-risk local-diff review needs independent passes, a finding ledger, and patch-ready triage.
 
-Suggest design and language skills:
+Design:
 
 - `domain-modeling` for shared language, glossary terms, or ADR-worthy decisions.
 - `codebase-design` for module, interface, seam, adapter, depth, leverage, and locality vocabulary.
