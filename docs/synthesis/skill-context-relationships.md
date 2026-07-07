@@ -38,6 +38,7 @@ flowchart TD
   Wayfinder --> Grilling
   Wayfinder --> DomainModel
   Wayfinder --> Prototype["prototype"]
+  Wayfinder --> Research["research"]
   Prototype --> Handoff["handoff"]
   Prototype --> DomainModel
   Prototype -. "promoted behavior" .-> Contract
@@ -89,6 +90,11 @@ flowchart TD
   CPR --> SpecSources
   CPR --> StandardsSources
 
+  Research --> ResearchDocs["docs/research/*"]
+  Conflict["resolving-merge-conflicts"] --> Contract
+  Conflict --> SpecSources
+  Conflict --> StandardsSources
+
   TDD["tdd"] --> Contract
   TDD --> DomainRouter
   Debug["diagnosing-bugs"] --> Contract
@@ -96,6 +102,7 @@ flowchart TD
   Debug -. "architecture cause" .-> Arch["improve-codebase-architecture"]
   Arch --> Contract
   Arch --> DomainRouter
+  Arch --> Grilling
   Arch --> CodeDesign["codebase-design"]
   Arch --> DomainModel
   Arch --> HtmlReport["HTML-REPORT.md / .tmp/architecture-reviews/"]
@@ -129,7 +136,9 @@ Source: `skills/current/*/agents/openai.yaml`.
 | `implement` | explicit-only |
 | `improve-codebase-architecture` | explicit-only |
 | `parallel-implement` | explicit-only |
-| `prototype` | explicit-only |
+| `prototype` | implicitly invocable |
+| `research` | implicitly invocable |
+| `resolving-merge-conflicts` | implicitly invocable |
 | `review` | implicitly invocable |
 | `setup-matt-pocock-skills` | explicit-only |
 | `tdd` | implicitly invocable |
@@ -151,6 +160,8 @@ Source: `skills/current/*/agents/openai.yaml`.
 | `docs/agents/engineering-contract.md` | Coding discipline, proof, `.tmp` cleanup, review/lock | `implement`, `tdd`, `diagnosing-bugs`, `improve-codebase-architecture`, `parallel-implement`, `review`, `convergent-pr-review` |
 | `domain-modeling` | Mutates domain glossary and ADRs | `grill-with-docs`, `wayfinder`, `prototype`, `triage`, `improve-codebase-architecture` |
 | `codebase-design` | Interface, seam, adapter, depth, leverage, and locality vocabulary | `to-prd`, `improve-codebase-architecture`, `tdd`, architecture/design follow-ups |
+| `research` | Primary-source research notes and source trace | `wayfinder`, `to-prd`, `to-issues`, `diagnosing-bugs`, `improve-codebase-architecture` |
+| `resolving-merge-conflicts` | Source-traced Git conflict resolution | Git operations, `review`, `parallel-implement`, integration work |
 | `review` | Ordinary fixed-point Standards/Spec review | `implement`, `parallel-implement`; escalates to `convergent-pr-review` for high risk |
 
 ## Supporting Files
@@ -165,6 +176,8 @@ Source: `skills/current/*/agents/openai.yaml`.
 | `triage` | `AGENT-BRIEF.md`: ready-for-agent brief format; `OUT-OF-SCOPE.md`: rejected-work knowledge base |
 | `setup-matt-pocock-skills` | Tracker, label, domain, and engineering-contract seed docs |
 | `wayfinder` | Tracker-backed map and ticket process for foggy multi-session efforts |
+| `research` | One cited repo-local Markdown note per source question |
+| `resolving-merge-conflicts` | Merge/rebase/cherry-pick conflict process and finish boundary |
 | `improve-codebase-architecture` | `HTML-REPORT.md`: report format and visual style |
 | `parallel-implement` | `WORKER-BRIEF.md`, `INTEGRATOR-BRIEF.md`, `RUN-LEDGER.md`: lane contracts and run ledger |
 
@@ -175,6 +188,8 @@ Source: `skills/current/*/agents/openai.yaml`.
 - `domain-modeling` is the only skill that should write domain glossary/ADR truth; readers follow `docs/agents/domain.md`.
 - `to-prd` owns parent PRD synthesis and tracker publication; `to-issues` owns implementation issue slicing.
 - `wayfinder` owns foggy multi-session maps; tracker docs own the transport mechanics for maps, child tickets, blocking, claiming, and resolution.
+- `research` owns primary-source legwork and cited repo-local notes; downstream skills should link the note instead of duplicating findings.
+- `resolving-merge-conflicts` owns Git conflict resolution; it may resolve files but should not abort, discard sides, commit, or continue a rebase unless explicitly approved or requested.
 - `triage` owns incoming issue/PR state transitions and ready-for-agent briefs; do not re-triage `$to-issues` output.
 - Tracker docs own transport and tracker commands; `triage` owns ready-for-agent brief text and AI-triage disclaimer content.
 - `implement` owns one selected item; `parallel-implement` owns batch orchestration and serialized integration.

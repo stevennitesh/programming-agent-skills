@@ -56,7 +56,7 @@ Done means the Spec axis has a source, or is explicitly skipped.
 
 Find documented repo rules: `AGENTS.md`, `docs/agents/engineering-contract.md`, `CONTRIBUTING.md`, `CODING_STANDARDS.md`, `README.md`, formatter/linter configs, test docs, or local convention docs.
 
-If repo standards are thin, use nearby conventions plus the smell baseline as judgement calls: unclear names, duplicated logic, speculative generality, shotgun surgery, primitive obsession, and scope-shaped abstractions. Repo standards override the baseline; tooling-enforced style stays out.
+If repo standards are thin, use nearby conventions plus the smell baseline as judgement calls: unclear names, duplicated logic, speculative generality, shotgun surgery, primitive obsession, and scope-shaped abstractions. Repo standards override the baseline. Treat baseline smells as labelled heuristics, not hard violations. Tooling-enforced style stays out.
 
 Done means Standards sources are named, or their absence is reported with the convention or smell baseline used.
 
@@ -64,13 +64,13 @@ Done means Standards sources are named, or their absence is reported with the co
 
 Report only actionable Standards findings.
 
-Each finding needs severity, location, evidence, risk, and required change.
+Each finding needs severity, type, location, evidence, risk, and required change. Type is `documented-standard breach` or `baseline judgement call`.
 
-Evidence is the documented rule or nearby convention. Location is file/line, hunk, or affected behavior.
+Evidence is the documented rule, nearby convention, or baseline smell. Location is file/line, hunk, or affected behavior.
 
 Skip style nits that tooling already enforces unless the diff bypasses tooling or changes the tooling contract.
 
-Done means documented-standard violations and meaningful convention findings have been reported, or the axis has no findings.
+Done means documented-standard breaches and meaningful baseline judgement calls have been reported, or the axis has no findings.
 
 ## 5. Review Spec
 

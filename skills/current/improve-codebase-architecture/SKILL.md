@@ -58,7 +58,7 @@ After the report is written and opened or reported, ask:
 
 ### 3. Grill The Chosen Candidate
 
-Grill the chosen candidate through constraints, seams, adapters or substitutes, validation, migration, and out-of-scope boundaries.
+Run `$grilling` on the chosen candidate: constraints, seams, adapters or substitutes, validation, migration, and out-of-scope boundaries.
 
 Use `$codebase-design` only when the candidate needs dependency classification, seam discipline, or design-it-twice alternatives.
 

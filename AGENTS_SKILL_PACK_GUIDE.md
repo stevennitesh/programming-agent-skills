@@ -12,10 +12,12 @@ North star: build faster without making the repo harder to trust.
 
 - **grilling session**: reduce ambiguity before building.
 - **wayfinding map**: make fog of war visible.
+- **research note**: answer source questions with primary-source trace.
 - **prototype**: answer one design question by trying it.
 - **PRD**: preserve product intent beyond the current thread.
 - **ready-for-agent**: specific enough for a fresh implementation session.
 - **fixed-point review**: review a diff from a known starting point.
+- **conflict resolution**: preserve both intents through a Git conflict.
 - **convergent review**: use independent passes when one review is not enough.
 - **handoff**: preserve workflow state for a fresh session.
 
@@ -28,6 +30,7 @@ Shape:
 - `grill-with-docs` when product intent is foggy and repo context matters.
 - `grilling` when the user needs a grilling session without repo-doc work.
 - `wayfinder` when unresolved decisions block a PRD, plan, or implementation.
+- `research` when a source question needs a primary-source note.
 - `prototype` when conversation cannot settle a design question without trying it.
 - `handoff` when context must cross sessions.
 
@@ -43,6 +46,7 @@ Quality:
 
 - `tdd` when behavior is clear enough for red-green-refactor.
 - `diagnosing-bugs` when the symptom, cause, or reproduction is uncertain.
+- `resolving-merge-conflicts` when a merge, rebase, cherry-pick, revert, or conflict marker needs source-traced resolution.
 - `review` when an ordinary branch or work-in-progress diff needs fixed-point Standards and Spec review.
 - `convergent-pr-review` when a local PR review or high-risk local-diff review needs independent passes, a finding ledger, and patch-ready triage.
 

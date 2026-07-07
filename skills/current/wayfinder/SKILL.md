@@ -84,9 +84,9 @@ The answer is recorded on resolution, not prefilled in the ticket body. Link ass
 
 ## Ticket Types
 
-- **Research**: Read documentation, third-party APIs, local docs, or knowledge bases. Create a concise linked summary when the result must survive.
+- **Research**: Use `$research` when source legwork needs a durable, cited note. Link the note from the ticket resolution.
 - **Prototype**: Raise fidelity with a cheap concrete artifact: outline, stub, UI/logic spike, or `$prototype`. Link the artifact or captured answer.
-- **Grilling**: Resolve through conversation. Recommend `$grilling` and `$domain-modeling`; ask one question at a time. This is the default.
+- **Grilling**: Resolve through conversation. Run `$grilling` and `$domain-modeling`; ask one question at a time. This is the default.
 - **Task**: Manual or mechanical work that must happen before the discussion can move forward. Automate where possible; otherwise hand the user a precise checklist. Resolve with what was done and any facts later tickets depend on.
 
 ## Fog Of War
@@ -118,8 +118,8 @@ Two modes. Either way, never resolve more than one ticket per session.
 
 Use this when the user brings a loose idea.
 
-1. **Name the destination.** Recommend `$grilling` and `$domain-modeling` to pin down what this map is finding its way to: spec, decision, or change.
-2. **Map the frontier.** Grill breadth-first across the space, surfacing open decisions and the first takeable tickets.
+1. **Name the destination.** Run `$grilling` and `$domain-modeling` to pin down what this map is finding its way to: spec, decision, or change.
+2. **Map the frontier.** Grill breadth-first across the space, not deep on one thread, surfacing open decisions and the first takeable tickets.
 3. **Create the map.** Fill Destination and Notes, leave Decisions So Far empty, and sketch non-ticketable fog into Not Yet Specified.
 4. **Create ticketable children.** Create every sharp ticket, then wire blocking edges in a second pass after ticket ids exist.
 5. Stop. Charting the map does not resolve tickets or implement product code.
@@ -133,9 +133,9 @@ Use this when the user provides a map URL, number, or path. A ticket is optional
 1. Load the map low-resolution view, not every ticket body.
 2. Choose the ticket. If the user named one, use it. Otherwise take the first frontier ticket in map order.
 3. Claim the ticket before work.
-4. Resolve it. Zoom into related or closed tickets only as needed; follow the map Notes; when in doubt, recommend `$grilling` and `$domain-modeling`.
+4. Resolve it. Zoom into related or closed tickets only as needed; follow the map Notes; when in doubt, run `$grilling` and `$domain-modeling`.
 5. Record the resolution: post the answer, close or mark the ticket resolved, and append one context pointer to Decisions So Far.
-6. Add newly surfaced tickets and wire blocking edges. Graduate any fog made specifiable, removing each graduated patch from Not Yet Specified. Rule out-of-scope discoveries out of scope instead of resolving them on the route.
+6. Add newly surfaced tickets and wire blocking edges. Graduate any fog made specifiable, removing each graduated patch from Not Yet Specified. Update or close tickets invalidated by the answer. Rule out-of-scope discoveries out of scope instead of resolving them on the route.
 7. Stop. Do not implement product code.
 
 Expect other sessions to edit the tracker concurrently. Preserve other sessions' updates and touch only the selected ticket, directly affected dependency edges, and map sections affected by the resolution.

@@ -34,6 +34,7 @@ Route here when the user has an idea and wants it built.
 | The idea needs sharpening in a codebase | **`$grill-with-docs`** |
 | There is no codebase context to preserve | **`$grilling`** |
 | Too much fog of war for a PRD | **`$wayfinder`** |
+| A source question needs durable evidence | **`$research`** |
 | A runnable answer is needed | **`$prototype`**, bridged by **`$handoff`** |
 | Multi-session idea without a durable PRD | **`$to-prd`** then **`$to-issues`** |
 | Existing PRD, spec, plan, or parent issue needs slices | **`$to-issues`** |
@@ -55,8 +56,10 @@ Route here when work arrives raw from outside the planning flow.
 | --- | --- |
 | Bugs, requests, or external PRs need sorting | **`$triage`** |
 | A ticket is already ready-for-agent | **`$implement`** |
+| A source question needs durable evidence | **`$research`** |
 | A bug symptom is uncertain | **`$diagnosing-bugs`** |
 | A behavior change is clear and testable | **`$tdd`** |
+| A merge/rebase/cherry-pick has conflicts | **`$resolving-merge-conflicts`** |
 
 Do not triage issues produced by **`$to-issues`**. They are already intended to be ready-for-agent.
 
@@ -100,11 +103,15 @@ If the user has a loose idea, prefer **`$grill-with-docs`**.
 
 If the idea has too many unresolved decisions for a PRD, prefer **`$wayfinder`**.
 
+If the blocker is source knowledge, prefer **`$research`**.
+
 If the user names one ready issue, prefer **`$implement`**.
 
 If the symptom, root cause, or repro is uncertain, prefer **`$diagnosing-bugs`** before **`$tdd`**.
 
 If the behavior is known and testable, prefer **`$tdd`**.
+
+If Git is in a conflicted merge, rebase, cherry-pick, or revert, prefer **`$resolving-merge-conflicts`**.
 
 If the user asks what to work on next, prefer **`$triage`** for incoming tracker work and **`$improve-codebase-architecture`** for codebase health.
 

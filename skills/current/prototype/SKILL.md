@@ -1,6 +1,6 @@
 ---
 name: prototype
-description: Build a throwaway prototype to answer one design question with either a tiny terminal logic app or radically different UI variants on one route.
+description: Prototype a throwaway answer to one design question before implementation. Use when the user wants to sanity-check state, domain logic, or data shape with a tiny terminal app, or compare radically different UI directions on one route.
 ---
 
 # Prototype

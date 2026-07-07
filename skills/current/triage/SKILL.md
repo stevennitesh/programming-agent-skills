@@ -17,7 +17,7 @@ Every comment or issue posted to the issue tracker during triage **must** start 
 
 ## Preconditions
 
-Read `docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md`; run `$setup-matt-pocock-skills` if either is missing.
+Read `docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md`. If either is missing, stop and recommend `$setup-matt-pocock-skills`; do not recreate tracker or label rules here.
 
 When exploring codebase context, read `docs/agents/domain.md` when present and follow it to the relevant glossary and ADRs.
 
