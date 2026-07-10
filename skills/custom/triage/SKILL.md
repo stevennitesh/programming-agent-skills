@@ -13,7 +13,7 @@ Apply PR triage only when `docs/agents/issue-tracker.md` enables PRs as a reques
 
 ## Contracts
 
-Read `docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md` before tracker access. A missing contract blocks triage; recommend `$setup-matt-pocock-skills`.
+Read `docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md` before tracker access. A missing contract blocks triage; recommend `$repo-bootstrap`.
 
 When codebase context matters, follow `docs/agents/domain.md`. Before reproduction, checkout, or executable validation, read `docs/agents/engineering-contract.md` when present.
 

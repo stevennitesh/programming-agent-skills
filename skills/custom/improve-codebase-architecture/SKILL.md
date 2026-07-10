@@ -63,7 +63,7 @@ Scouting is complete when every planned region or pressure returned evidence or 
 
 ### 3. Report
 
-Apply the **storage gate**: confirm `.tmp/architecture-reviews/` is ignored. If it is not, stop and recommend `$setup-matt-pocock-skills`.
+Apply the **storage gate**: confirm `.tmp/architecture-reviews/` is ignored. If it is not, stop and recommend `$repo-bootstrap`.
 
 Write one HTML report under `.tmp/architecture-reviews/`. Keep generated reports outside the index and commits.
 

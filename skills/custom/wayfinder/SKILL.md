@@ -22,7 +22,7 @@ Tickets resolve uncertainty. Delivery begins after the map closes.
 
 **Fog or ticket?** Ticket a question when it is precise, even if blocked. Keep it as fog while the question itself remains unclear.
 
-Read `docs/agents/issue-tracker.md`, section `Wayfinding operations`, before any tracker mutation. If the section is absent or its required operations are unavailable, stop and recommend `$setup-matt-pocock-skills`. For local-only work, use `.scratch/<feature-slug>/wayfinder/`.
+Read `docs/agents/issue-tracker.md`, section `Wayfinding operations`, before any tracker mutation. If the section is absent or its required operations are unavailable, stop and recommend `$repo-bootstrap`. For local-only work, use `.scratch/<feature-slug>/wayfinder/`.
 
 ## Ticket Types
 

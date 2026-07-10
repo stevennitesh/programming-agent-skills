@@ -9,7 +9,7 @@ Create **ready-for-agent tickets** from settled source material.
 
 Default to **tracer bullets**: independently grabbable vertical slices through the real system, each demoable or verifiable independently. Use **support tickets** when they unblock or de-risk a named tracer bullet.
 
-Apply the **setup gate**: use the target repo's `AGENTS.md` for tracker, label, domain, and packet docs. If any required doc or tracker operation is missing, stop and recommend `$setup-matt-pocock-skills`.
+Apply the **setup gate**: use the target repo's `AGENTS.md` for tracker, label, domain, and packet docs. If any required doc or tracker operation is missing, stop and recommend `$repo-bootstrap`.
 
 ## Process
 

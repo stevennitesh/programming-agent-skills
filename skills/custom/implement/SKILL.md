@@ -13,7 +13,7 @@ Apply the **readiness gate** before Patch: the selected work item is unblocked, 
 
 ## Preconditions
 
-Read `docs/agents/engineering-contract.md`. If it is missing, stop and recommend `$setup-matt-pocock-skills`.
+Read `docs/agents/engineering-contract.md`. If it is missing, stop and recommend `$repo-bootstrap`.
 
 Read tracker docs only for tracker selection, claim, semantics, or closeout.
 

@@ -35,7 +35,7 @@ Move quickly through reversible exploration. Slow down at the gates that protect
 
 ## Engineering Contract
 
-[`$setup-matt-pocock-skills`](skills/custom/setup-matt-pocock-skills/SKILL.md) installs a small `docs/agents/engineering-contract.md` in each target repo. The contract gives Codex strong handles for the decisions that matter while leaving implementation technique flexible.
+[`$repo-bootstrap`](skills/custom/repo-bootstrap/SKILL.md) installs a small `docs/agents/engineering-contract.md` in each target repo. The contract gives Codex strong handles for the decisions that matter while leaving implementation technique flexible.
 
 The shared loop is `Orient -> Explore -> Decide -> Prove -> Cover -> Converge -> Simplify -> Lock`. A **source trace** grounds the work. A **bounded slice** controls scope. **Semantic proof** establishes that the result means the right thing. A **fixed point** anchors review. Separate **Spec / Standards** passes ask "right thing?" and "built right?" independently. **Lock** closes only with evidence and named residual risk.
 
@@ -53,9 +53,9 @@ It keeps the upstream emphasis on strong leading words, then extends it with rep
 - **Turn intent into delivery**: `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement`
 - **Prove and protect behavior**: `$tdd`, `$diagnosing-bugs`, `$resolving-merge-conflicts`, `$review`, `$convergent-pr-review`
 - **Deepen design and language**: `$domain-modeling`, `$codebase-design`, `$improve-codebase-architecture`
-- **Route and maintain the pack**: `$setup-matt-pocock-skills`, `$ask-matt`, `$writing-great-skills`
+- **Route and maintain the pack**: `$repo-bootstrap`, `$skill-router`, `$writing-great-skills`
 
-The small [`GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`](GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md) bootstrap teaches Codex when to suggest `$ask-matt` and `$setup-matt-pocock-skills`. Workflows stay with their skills, and personal global instructions stay local.
+The small [`GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`](GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md) bootstrap teaches Codex when to suggest `$skill-router` and `$repo-bootstrap`. Workflows stay with their skills, and personal global instructions stay local.
 
 ## Setup
 
@@ -91,9 +91,9 @@ The installer creates or updates only the template's `## Skill Pack Bootstrap` s
 
 ## Using The Pack
 
-Start in each target repo with `$setup-matt-pocock-skills`. It inventories the repo, walks through tracker, label, and domain-layout choices one at a time, shows the exact proposed changes, waits for approval, then provisions and verifies the local setup surface.
+Start in each target repo with `$repo-bootstrap`. It inventories the repo, walks through tracker, label, and domain-layout choices one at a time, shows the exact proposed changes, waits for approval, then provisions and verifies the local setup surface.
 
-After setup, invoke a skill directly or let `$ask-matt` carry the route map. The router recommends exactly one next skill or flow and stops.
+After setup, invoke a skill directly or let `$skill-router` carry the route map. The router recommends exactly one next skill or flow and stops.
 
 Representative paths:
 
@@ -104,7 +104,7 @@ Representative paths:
 - Known behavior with a red-capable seam -> `$tdd`; uncertain symptom, cause, or reproduction -> `$diagnosing-bugs`
 - Ordinary diff -> `$review`; local PR or high-risk diff -> `$convergent-pr-review`
 
-These are examples. `$ask-matt` owns the complete route map and tie-breakers.
+These are examples. `$skill-router` owns the complete route map and tie-breakers.
 
 ## Repository Layout
 
@@ -112,7 +112,7 @@ These are examples. `$ask-matt` owns the complete route map and tie-breakers.
 - `skills/extra/`: optional extra skills
 - `skills/.archive/`: inactive historical or experimental skills
 - `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`: minimal global Codex bootstrap
-- `skills/custom/setup-matt-pocock-skills/`: target-repo setup workflow and contract templates
+- `skills/custom/repo-bootstrap/`: target-repo setup workflow and contract templates
 - `CONTEXT.md`: stable vocabulary and maintenance invariants for this repository
 - `docs/synthesis/skill-context-relationships.md`: maintainer map for skill boundaries and context ownership
 - `scripts/install_skills.py`: managed install and update that preserves unrelated skills

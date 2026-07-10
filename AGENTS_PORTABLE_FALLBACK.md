@@ -9,7 +9,7 @@ and source-of-truth docs in each target repo. This file is a portable fallback:
 it should steer taste and gates, not replace repo docs, source code, tests,
 review, CI, or direct user instruction.
 
-Do not keep this fallback active after `setup-matt-pocock-skills` installs
+Do not keep this fallback active after `$repo-bootstrap` installs
 repo-local `docs/agents/*`. Setup should replace this fallback contract with
 the thin installed-pack `AGENTS.md` block and move coding discipline to
 `docs/agents/engineering-contract.md`.

@@ -16,14 +16,14 @@ def implicit_policy(skill: Path) -> bool:
 
 
 def test_router_names_every_explicit_only_skill() -> None:
-    router = (CUSTOM / "ask-matt/SKILL.md").read_text(encoding="utf-8")
+    router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
     explicit = {
         skill.name
         for skill in CUSTOM.iterdir()
         if skill.is_dir() and not implicit_policy(skill)
     }
 
-    assert explicit - {"ask-matt"} <= {
+    assert explicit - {"skill-router"} <= {
         token.removeprefix("$")
         for token in re.findall(r"\$[a-z0-9][a-z0-9-]*", router)
     }
@@ -32,9 +32,9 @@ def test_router_names_every_explicit_only_skill() -> None:
 def test_tracker_templates_share_ready_and_readback_contracts() -> None:
     trackers = [
         ROOT / "docs/agents/issue-tracker.md",
-        CUSTOM / "setup-matt-pocock-skills/issue-tracker-github.md",
-        CUSTOM / "setup-matt-pocock-skills/issue-tracker-gitlab.md",
-        CUSTOM / "setup-matt-pocock-skills/issue-tracker-local.md",
+        CUSTOM / "repo-bootstrap/issue-tracker-github.md",
+        CUSTOM / "repo-bootstrap/issue-tracker-gitlab.md",
+        CUSTOM / "repo-bootstrap/issue-tracker-local.md",
     ]
     required = (
         "**Ready-for-agent contract**",

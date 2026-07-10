@@ -1,15 +1,15 @@
 ---
-name: ask-matt
-description: Route a situation to one next skill or flow in this pack.
+name: skill-router
+description: Route the current situation to exactly one next skill or flow in this engineering pack.
 ---
 
-# Ask Matt
+# Skill Router
 
 Use this **router** when route choice is the work.
 
 ## Router Contract
 
-Ask Matt owns the recommendation. Downstream skills own their Source Trace, procedure, artifacts, mutations, and completion.
+The router owns the recommendation. Downstream skills own their Source Trace, procedure, artifacts, mutations, and completion.
 
 Route from the user's stated situation and visible repo state. Inspect only the fact that would change the route.
 
@@ -21,7 +21,7 @@ Return the route and stop. The user starts it.
 
 ## Setup Gate
 
-Route first to `$setup-matt-pocock-skills` when the chosen engineering flow depends on a missing setup contract:
+Route first to `$repo-bootstrap` when the chosen engineering flow depends on a missing setup contract:
 
 - installed-pack primer in `AGENTS.md`;
 - `docs/agents/issue-tracker.md`;
@@ -29,7 +29,7 @@ Route first to `$setup-matt-pocock-skills` when the chosen engineering flow depe
 - `docs/agents/domain.md`;
 - `docs/agents/engineering-contract.md`.
 
-Let `$setup-matt-pocock-skills` own inventory, choices, writes, tracker mutations, and verification.
+Let `$repo-bootstrap` own inventory, choices, writes, tracker mutations, and verification.
 
 ## Route Map
 

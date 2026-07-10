@@ -17,7 +17,7 @@ def write_template(root: Path) -> None:
     (root / "GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md").write_text(
         "# Global Codex Instructions\n\n"
         "## Skill Pack Bootstrap\n\n"
-        "- **Route:** Suggest `$ask-matt`.\n",
+        "- **Route:** Suggest `$skill-router`.\n",
         encoding="utf-8",
     )
 
@@ -72,7 +72,7 @@ def test_install_updates_only_existing_bootstrap_section(tmp_path: Path) -> None
     text = target.read_text(encoding="utf-8")
     assert status == "updated"
     assert "Old route" not in text
-    assert "Suggest `$ask-matt`" in text
+    assert "Suggest `$skill-router`" in text
     assert "Personal before" in text
     assert "## Personal After\n\nKeep me." in text
 

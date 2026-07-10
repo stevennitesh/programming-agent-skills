@@ -14,10 +14,10 @@ Edge labels are descriptive, not executable. Solid edges usually mark ownership 
 
 ```mermaid
 flowchart TD
-  GlobalTemplate["GLOBAL_AGENTS_TEMPLATE_SKILL_PACK<br/>global bootstrap template"] --> AskMatt["ask-matt<br/>router skill"]
-  GlobalTemplate --> Setup["setup-matt-pocock-skills"]
+  GlobalTemplate["GLOBAL_AGENTS_TEMPLATE_SKILL_PACK<br/>global bootstrap template"] --> Router["skill-router<br/>router skill"]
+  GlobalTemplate --> Setup["repo-bootstrap"]
 
-  AskMatt --> Setup["setup-matt-pocock-skills"]
+  Router --> Setup["repo-bootstrap"]
   Setup --> AgentDocs["repo-local setup surface<br/>AGENTS.md + docs/agents/*"]
   AgentDocs --> Tracker["issue-tracker.md"]
   AgentDocs --> Labels["triage-labels.md"]
@@ -29,8 +29,8 @@ flowchart TD
   DomainModel["domain-modeling"] --> Context
   DomainModel --> ADRs
 
-  AskMatt --> Shape["grilling / grill-with-docs / wayfinder / prototype"]
-  AskMatt --> Handoff["handoff"]
+  Router --> Shape["grilling / grill-with-docs / wayfinder / prototype"]
+  Router --> Handoff["handoff"]
   GrillDocs["grill-with-docs"] --> Grilling["grilling"]
   GrillDocs --> DomainModel
   Grilling -. "durable memory" .-> GrillDocs
@@ -126,7 +126,6 @@ Source: `skills/custom/*/agents/openai.yaml`.
 
 | Skill | Invocation |
 | --- | --- |
-| `ask-matt` | explicit-only |
 | `codebase-design` | implicitly invocable |
 | `convergent-pr-review` | implicitly invocable |
 | `diagnosing-bugs` | implicitly invocable |
@@ -138,10 +137,11 @@ Source: `skills/custom/*/agents/openai.yaml`.
 | `improve-codebase-architecture` | explicit-only |
 | `parallel-implement` | explicit-only |
 | `prototype` | implicitly invocable |
+| `repo-bootstrap` | explicit-only |
 | `research` | implicitly invocable |
 | `resolving-merge-conflicts` | implicitly invocable |
 | `review` | implicitly invocable |
-| `setup-matt-pocock-skills` | explicit-only |
+| `skill-router` | explicit-only |
 | `tdd` | implicitly invocable |
 | `to-tickets` | explicit-only |
 | `to-spec` | explicit-only |
@@ -155,13 +155,13 @@ Source: `skills/custom/*/agents/openai.yaml`.
 | --- | --- | --- |
 | `README.md` | Human-facing overview and installation | Humans installing or learning the pack |
 | `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md` | Minimal pack-owned global Codex bootstrap template: explicit-only router/setup discovery | `~/.codex/AGENTS.md` |
-| `ask-matt` | Current executable route map and tie-breakers | Humans or agents choosing one next route |
-| `setup-matt-pocock-skills` | Provisions and verifies the repo setup surface | `ask-matt`, setup gates in planning/tracker skills |
+| `skill-router` | Current executable route map and tie-breakers | Humans or agents choosing one next route |
+| `repo-bootstrap` | Provisions and verifies the repo setup surface | `skill-router`, setup gates in planning/tracker skills |
 | `docs/agents/issue-tracker.md` | Tracker interface, work-item lifecycle, PR-as-request rules, and wayfinding operations | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `review`, `wayfinder` |
 | `docs/agents/triage-labels.md` | Category/state role to label mapping and fixed wayfinding labels | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
 | `docs/agents/domain.md` | Routing to `CONTEXT.md`, `CONTEXT-MAP.md`, ADRs | `to-spec`, `triage`, `tdd`, `diagnosing-bugs`, `improve-codebase-architecture`, `parallel-implement` |
 | `docs/agents/engineering-contract.md` | Shared runtime engineering language, repo-owned commands, commitment boundary, semantic proof, work-state policy, fixed-point Spec/Standards review, and Lock | `implement`, `tdd`, `diagnosing-bugs`, `prototype`, `improve-codebase-architecture`, `parallel-implement`, `review`, `convergent-pr-review` |
-| `domain-modeling` | Mutates `CONTEXT.md`, `CONTEXT-MAP.md`, and ADR truth | `ask-matt`, `grill-with-docs`, `wayfinder`, `prototype`, `setup-matt-pocock-skills` |
+| `domain-modeling` | Mutates `CONTEXT.md`, `CONTEXT-MAP.md`, and ADR truth | `skill-router`, `grill-with-docs`, `wayfinder`, `prototype`, `repo-bootstrap` |
 | `codebase-design` | Interface, seam, adapter, depth, leverage, and locality vocabulary | `to-spec`, `improve-codebase-architecture`, `tdd`, architecture/design follow-ups |
 | `research` | Primary-source legwork and cited repo-local research notes | `wayfinder`, `to-spec`, `to-tickets`, `improve-codebase-architecture` |
 | `resolving-merge-conflicts` | Source-traced Git conflict resolution | Git operations, `review`, `parallel-implement`, integration work |
@@ -177,7 +177,7 @@ Source: `skills/custom/*/agents/openai.yaml`.
 | `tdd` | `tests.md`, `mocking.md`, `refactoring.md`: examples and branch mechanics |
 | `prototype` | `LOGIC.md`, `UI.md`: branch mechanics; `SKILL.md` owns lifecycle and boundary |
 | `triage` | `ATTENTION-SCAN.md`, `SPECIFIC-ITEM.md`, `QUICK-OVERRIDE.md`: branch procedures; `AGENT-BRIEF.md`: ready-contract rendering; `AGENT-BRIEF-EXAMPLES.md`: examples; `OUT-OF-SCOPE.md`: rejected-work knowledge base |
-| `setup-matt-pocock-skills` | Tracker, label, domain, and engineering-contract seeds; `scripts/validate_setup.py`: target-repo setup-surface validation |
+| `repo-bootstrap` | Tracker, label, domain, and engineering-contract seeds; `scripts/validate_setup.py`: target-repo setup-surface validation |
 | `wayfinder` | `MAP-FORMAT.md`: map and ticket body shape; `SKILL.md`: foggy map lifecycle and semantics |
 | `research` | One cited repo-local Markdown note per source question |
 | `resolving-merge-conflicts` | Merge/rebase/cherry-pick conflict process and finish boundary |
@@ -186,9 +186,9 @@ Source: `skills/custom/*/agents/openai.yaml`.
 
 ## Boundary Notes
 
-- The global template exposes bootstrap handles; `ask-matt` routes; neither teaches downstream workflow procedures.
+- The global template exposes bootstrap handles; `skill-router` routes; neither teaches downstream workflow procedures.
 - Setup docs own tracker, labels, domain routing, and engineering-contract details. Skills should point there instead of restating those mechanics.
-- `domain-modeling` is the only skill that writes `CONTEXT.md`, `CONTEXT-MAP.md`, or ADR truth; `setup-matt-pocock-skills` configures the layout, and vocabulary consumers follow `docs/agents/domain.md`.
+- `domain-modeling` is the only skill that writes `CONTEXT.md`, `CONTEXT-MAP.md`, or ADR truth; `repo-bootstrap` configures the layout, and vocabulary consumers follow `docs/agents/domain.md`.
 - `to-spec` owns parent spec synthesis and tracker publication; `to-tickets` owns implementation issue slicing.
 - `wayfinder` owns foggy multi-session maps; tracker docs own the transport mechanics for maps, child tickets, blocking, claiming, and resolution.
 - `research` owns primary-source legwork and cited repo-local notes; downstream skills should link the note instead of duplicating findings.

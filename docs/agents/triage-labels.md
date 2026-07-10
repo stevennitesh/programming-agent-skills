@@ -4,15 +4,15 @@ The skills speak in terms of category roles and state roles. This file maps thos
 
 ## Category Roles
 
-| Role in mattpocock/skills | Label in our tracker | Meaning                    |
-| ------------------------- | -------------------- | -------------------------- |
+| Skill-pack role | Label in our tracker | Meaning                    |
+| --------------- | -------------------- | -------------------------- |
 | `bug`                     | `bug`                | Something is broken        |
 | `enhancement`             | `enhancement`        | New feature or improvement |
 
 ## State Roles
 
-| Role in mattpocock/skills | Label in our tracker | Meaning                                                                      |
-| ------------------------- | -------------------- | ---------------------------------------------------------------------------- |
+| Skill-pack role | Label in our tracker | Meaning                                                                      |
+| --------------- | -------------------- | ---------------------------------------------------------------------------- |
 | `needs-triage`            | `needs-triage`       | Maintainer needs to evaluate this issue                                      |
 | `needs-info`              | `needs-info`         | Waiting on reporter for more information                                     |
 | `ready-for-agent`         | `ready-for-agent`    | Fully specified, ready for an unattended Codex session or delegated subagent |
@@ -38,4 +38,4 @@ Edit the right-hand column to match whatever vocabulary you actually use.
 
 ## Provisioning
 
-For GitHub or GitLab, `$setup-matt-pocock-skills` verifies every mapped and fixed label exists and creates only missing labels after approval. Local Markdown uses these values directly and creates no external labels.
+For GitHub or GitLab, `$repo-bootstrap` verifies every mapped and fixed label exists and creates only missing labels after approval. Local Markdown uses these values directly and creates no external labels.

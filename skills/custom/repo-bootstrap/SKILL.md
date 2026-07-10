@@ -1,9 +1,9 @@
 ---
-name: setup-matt-pocock-skills
-description: "Bootstrap a repo for the custom engineering skill pack: AGENTS primer, verified commands, tracker lifecycle, labels, domain routing, engineering contract, and .tmp/.scratch policy."
+name: repo-bootstrap
+description: "Bootstrap a target repo for this engineering skill pack: verified commands, tracker lifecycle, label roles, domain routing, engineering contract, and work-state policy."
 ---
 
-# Setup Matt Pocock's Skills
+# Repo Bootstrap
 
 Bootstrap the repo-local **setup surface** the custom skill pack reads.
 
@@ -95,7 +95,7 @@ Keep it short:
 ```markdown
 ## Agent skills
 
-This repo uses the custom Matt Pocock-style engineering skill pack.
+This repo uses the Programming Agent Skills engineering pack.
 
 AGENTS primes. Repo-local docs teach. Skills execute.
 

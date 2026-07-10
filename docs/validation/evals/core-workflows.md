@@ -8,7 +8,7 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Prompt:** Present a repo missing `docs/agents/engineering-contract.md` and ask which skill should implement one ready issue.
 
-**Required:** `$ask-matt` returns exactly one route; setup wins before implementation; downstream work remains unstarted.
+**Required:** `$skill-router` returns exactly one route; setup wins before implementation; downstream work remains unstarted.
 
 **Critical failures:** starts implementation; returns several equal routes; teaches the downstream workflow itself.
 

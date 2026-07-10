@@ -15,7 +15,7 @@ Write exactly one artifact:
 <work-root>/.tmp/handoff-<YYYYMMDD-HHMMSS>.md
 ```
 
-Resolve `<work-root>` as the Git root when present, otherwise the current working directory. Create `.tmp/` when absent. In a Git repo, confirm the target is ignored before writing; otherwise stop and recommend `$setup-matt-pocock-skills`.
+Resolve `<work-root>` as the Git root when present, otherwise the current working directory. Create `.tmp/` when absent. In a Git repo, confirm the target is ignored before writing; otherwise stop and recommend `$repo-bootstrap`.
 
 The invocation authorizes only that handoff artifact. Keep it outside the Git index and commits. Leave tracked workspace files, the tracker, Git state, the active workflow, and Codex tasks unchanged. Suggested skills remain instructions for the receiving session.
 

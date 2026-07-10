@@ -17,7 +17,7 @@ GLOBAL_AGENTS_TEMPLATE = "GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md"
 INSTALLED_MANIFEST = ".programming-agent-skills-manifest.json"
 REQUIRED_AGENT_DOCS = ("AGENTS_PORTABLE_FALLBACK.md", GLOBAL_AGENTS_TEMPLATE)
 REQUIRED_REPO_FILES = ("README.md", "scripts/install_skills.py")
-GLOBAL_AGENTS_SKILLS = frozenset(("ask-matt", "setup-matt-pocock-skills"))
+GLOBAL_AGENTS_SKILLS = frozenset(("repo-bootstrap", "skill-router"))
 GLOBAL_AGENTS_TOKENS = (
     "# Global Codex Instructions",
     "## Skill Pack Bootstrap",
@@ -34,7 +34,7 @@ REQUIRED_SETUP_DOCS = (
     "docs/agents/domain.md",
     "docs/agents/engineering-contract.md",
     "docs/plans/README.md",
-    "skills/custom/setup-matt-pocock-skills/engineering-contract.md",
+    "skills/custom/repo-bootstrap/engineering-contract.md",
 )
 PUBLISHED_MARKDOWN_ROOTS = (
     "skills",
@@ -70,6 +70,8 @@ ACTIVE_SURFACE_FILES = (
 )
 STALE_ACTIVE_TOKENS = (
     "AGENTS_SKILL_PACK_GUIDE",
+    "ask-matt",
+    "setup-matt-pocock-skills",
     "$to-issues",
     "$to-prd",
     "skills/current",
@@ -272,7 +274,7 @@ def validate_required_docs(root: Path) -> list[str]:
 
 
 def validate_setup_surface(root: Path) -> list[str]:
-    validator = root / "skills/custom/setup-matt-pocock-skills/scripts/validate_setup.py"
+    validator = root / "skills/custom/repo-bootstrap/scripts/validate_setup.py"
     if not validator.is_file():
         return [f"Missing setup-surface validator: {validator.relative_to(root).as_posix()}"]
     result = subprocess.run(
@@ -334,7 +336,7 @@ def validate_global_agents_template(root: Path, skill_names: list[str]) -> list[
         )
     for skill_name in sorted(refs - GLOBAL_AGENTS_SKILLS):
         failures.append(
-            f"{GLOBAL_AGENTS_TEMPLATE} must leave route maps to ask-matt; "
+            f"{GLOBAL_AGENTS_TEMPLATE} must leave route maps to skill-router; "
             f"unexpected skill reference: {skill_name}"
         )
 
@@ -550,7 +552,7 @@ def main(argv: list[str] | None = None) -> int:
     validation.extend(validate_setup_surface(root))
     validation.extend(
         unified_file_diff(
-            root / "skills/custom/setup-matt-pocock-skills/engineering-contract.md",
+            root / "skills/custom/repo-bootstrap/engineering-contract.md",
             root / "docs/agents/engineering-contract.md",
             root=root,
         )

@@ -5,7 +5,7 @@ This repository packages a shared engineering discipline as skills, setup contra
 ## Repository Invariants
 
 - `AGENTS.md` is a short agent primer: verified commands, context pointers, and local invariants.
-- `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md` is the minimal global bootstrap for `$ask-matt` and `$setup-matt-pocock-skills`. Personal environment rules stay outside it.
+- `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md` is the minimal global bootstrap for `$skill-router` and `$repo-bootstrap`. Personal environment rules stay outside it.
 - `docs/plans/README.md` routes current work without copying plans or runbooks.
 - `docs/agents/engineering-contract.md` owns shared runtime engineering language and cross-cutting coding discipline.
 - `docs/agents/issue-tracker.md`, `triage-labels.md`, and `domain.md` own tracker mechanics, state roles, and domain routing.
@@ -76,7 +76,7 @@ _Avoid_: client repo, downstream repo
 
 **Setup surface**
 
-The verified target-repo contract installed by `$setup-matt-pocock-skills`: primer, commands, tracker lifecycle, label vocabulary, domain routing, engineering contract, and work-state policy.
+The verified target-repo contract installed by `$repo-bootstrap`: primer, commands, tracker lifecycle, label vocabulary, domain routing, engineering contract, and work-state policy.
 _Avoid_: generated docs, bootstrap output
 
 **Agent primer**
