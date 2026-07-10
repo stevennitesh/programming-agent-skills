@@ -8,7 +8,7 @@ for `implement`.
 
 Skill: `implement`
 
-Skill path: `skills/current/implement/SKILL.md`
+Skill path: `skills/custom/implement/SKILL.md`
 
 Facet or scope: `1 - Ready Issue Selection`
 
@@ -17,7 +17,7 @@ Candidate runtime draft:
 
 Candidate-draft decision: `ready-for-detailed-skill-context-draft`
 
-Existing skill text: `skills/current/implement/SKILL.md`, especially the
+Existing skill text: `skills/custom/implement/SKILL.md`, especially the
 existing description, intro, `### 1. Select The Issue`, later Context Intake,
 bounded slice, proof, review, commit, implementation note, and issue-state
 guard.
@@ -27,8 +27,8 @@ Relevant owners to preserve:
 - Engineering contract: `docs/agents/engineering-contract.md`
 - Tracker docs: `docs/agents/issue-tracker.md`
 - Triage labels: `docs/agents/triage-labels.md`
-- Related skills: `skills/current/triage/SKILL.md`,
-  `skills/current/to-issues/SKILL.md`, `skills/current/implement/SKILL.md`
+- Related skills: `skills/custom/triage/SKILL.md`,
+  `skills/custom/to-tickets/SKILL.md`, `skills/custom/implement/SKILL.md`
 - Support docs: none created
 
 Revision feedback:
@@ -65,7 +65,7 @@ Candidate runtime draft used:
 
 Existing `SKILL.md` text used as the base:
 
-- `skills/current/implement/SKILL.md`, especially `### 1. Select The Issue`.
+- `skills/custom/implement/SKILL.md`, especially `### 1. Select The Issue`.
 
 Prompt 08 candidate-draft decision used:
 
@@ -117,7 +117,7 @@ validate.
 | Tracker docs | GitHub operations, ready labels, ordering, state, dependency syntax. | Point to tracker docs for exact mechanics. | Inline `gh` commands, label tables, or tracker mutation procedure. | `A4` includes behavior plus pointer, not commands. |
 | Triage labels | Local role-to-label mapping and ready/ineligible state roles. | Use eligible tracker-state concept. | Reproduce or edit state-label tables. | Keep exact label semantics in docs. |
 | `triage` | Make issues ready, repair briefs, request info, classify labels/state. | Detect unready work and route/stop. | Repair, relabel, promote, or rewrite issue briefs. | `O1` blocks repair inside `implement`. |
-| `to-issues` | Decompose PRDs/specs/plans into ready issue slices. | Route source docs that lack one ready item. | Decompose or author issues inside `implement`. | `R3` is route-only. |
+| `to-tickets` | Decompose PRDs/specs/plans into ready issue slices. | Route source docs that lack one ready item. | Decompose or author issues inside `implement`. | `R3` is route-only. |
 | Later bounded-slice control | Detailed scope/slice management after selection. | Detect obvious many-item scope before pickup. | Split or plan the work in this facet. | `O2` stays ask/handoff only. |
 | Semantic Proof / `$tdd` | Proof strategy and red-green-refactor after selection. | Require a done signal before pickup. | Demand a proof plan or test design during selection. | `L3` says no proof plan yet. |
 | User / product owner | Product priority, explicit target choice, result-defining missing facts. | Ask on unordered candidates, ambiguity, blocker order, or ineligible named target. | Invent priority or silently substitute another item. | `A1`, `A2`, `A4`, and `L5` preserve authority. |
@@ -128,7 +128,7 @@ validate.
 | --- | --- | --- | --- | --- | --- |
 | R1 | must-runtime | Runtime Core | replace/merge with selection opening | Before Context Intake, select exactly one issue-equivalent item. | Assemble into opening gate. |
 | R2 | must-runtime | Runtime Core | insert near selection opening | Broad source surfaces are not implementation scope until one ready issue-equivalent item is named. | Assemble with explicit path/URL caveat. |
-| R3 | must-runtime | Runtime Core | merge with existing PRD/spec sentence | PRD/spec/source/path without one ready item asks for target item or routes to `to-issues`. | Assemble route-only; no decomposition. |
+| R3 | must-runtime | Runtime Core | merge with existing PRD/spec sentence | PRD/spec/source/path without one ready item asks for target item or routes to `to-tickets`. | Assemble route-only; no decomposition. |
 | R4 | must-runtime | Runtime Core | insert | No one issue-equivalent item, no implementation. | Assemble as blunt consequence. |
 | R5 | candidate-runtime | Validation Detail | insert or merge with R1/R4 | Done when one concrete issue, URL, tracker item, path-backed ready slice, or explicit user-selected work item is named. | Assemble as issue-equivalent definition. |
 | A1 | must-runtime | Runtime Core | replace broad choose-next wording | Use explicit user target or repo-visible ready/order policy; do not invent priority or readiness. | Assemble in authority paragraph. |
@@ -190,7 +190,7 @@ validate.
 
 ## 7. Detailed Skill-Context Draft
 
-Replacement draft for `skills/current/implement/SKILL.md`,
+Replacement draft for `skills/custom/implement/SKILL.md`,
 `### 1. Select The Issue`:
 
 ```markdown
@@ -202,7 +202,7 @@ ready slice, or explicit user-selected work item. A queue, project, PRD, spec,
 batch, list, or bare source path is not implementation scope until one ready
 item is named. If the user provides a PRD, spec, source document, or bare source
 path, use it only to identify one ready item; if it does not name one, ask for
-the target item or route to `to-issues`. Do not treat an explicit path/URL
+the target item or route to `to-tickets`. Do not treat an explicit path/URL
 target or path-backed ready slice as a broad source path when it is already one
 issue-equivalent item. No one issue-equivalent item, no implementation.
 
@@ -295,7 +295,7 @@ Line IDs not assembled and why:
 
 Owner boundaries preserved:
 
-- `to-issues` owns PRD/spec decomposition and issue authoring.
+- `to-tickets` owns PRD/spec decomposition and issue authoring.
 - `triage` owns issue repair, ready-state promotion, and relabeling.
 - tracker docs own exact labels, commands, state roles, ordering fields, and
   dependency syntax.

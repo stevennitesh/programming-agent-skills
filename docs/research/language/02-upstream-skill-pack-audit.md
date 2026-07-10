@@ -1,6 +1,6 @@
 # Matt Skill Pack Vocabulary Audit
 
-This document compares Matt Pocock's upstream skills clone in `.tmp/mattpocock-skills/` with this repo's active skills in `skills/current/`.
+This document compares Matt Pocock's upstream skills clone in `.tmp/mattpocock-skills/` with this repo's active skills in `skills/custom/`.
 
 The question: do the active skills preserve Matt's method and vocabulary, and where has important language drifted?
 
@@ -18,7 +18,7 @@ Matt's clone is more faithful to Matt's native public language:
 - `AFK agent`
 - `red-green-refactor`
 
-This repo's `skills/current/` is more operational and Codex-specific:
+This repo's `skills/custom/` is more operational and Codex-specific:
 
 - `explicit-only` and `implicitly invocable`
 - `ready-for-agent`
@@ -55,7 +55,7 @@ The divergence is mostly dialect, not philosophy.
 
 ### Issue Pipeline Discipline
 
-`skills/current/to-issues` is more precise than upstream about what makes a good implementation issue:
+`skills/custom/to-issues` is more precise than upstream about what makes a good implementation issue:
 
 - dependency order
 - bounded slices
@@ -69,7 +69,7 @@ That is useful. It should stay.
 
 ### Implementation Scope
 
-`skills/current/implement` is much stronger than upstream. It enforces:
+`skills/custom/implement` is much stronger than upstream. It enforces:
 
 - one ready-for-agent issue
 - baseline capture
@@ -83,13 +83,13 @@ Upstream `implement` is intentionally short. This repo's version better encodes 
 
 ### TDD As Tracer Bullets
 
-`skills/current/tdd` connects TDD to tracer-bullet vertical slices, seams, interfaces, observable behavior, and refactoring while green.
+`skills/custom/tdd` connects TDD to tracer-bullet vertical slices, seams, interfaces, observable behavior, and refactoring while green.
 
 Upstream keeps the more recognizable phrase `red-green-refactor`, but this repo better explains how TDD should behave inside the issue pipeline.
 
 ### Codebase Design Vocabulary
 
-`skills/current/codebase-design` gives fuller definitions for:
+`skills/custom/codebase-design` gives fuller definitions for:
 
 - module
 - interface

@@ -8,20 +8,20 @@ for `implement`.
 
 Skill: `implement`
 
-Skill path: `skills/current/implement/SKILL.md`
+Skill path: `skills/custom/implement/SKILL.md`
 
 Related files or skills:
 
-- `skills/current/implement/agents/openai.yaml`
+- `skills/custom/implement/agents/openai.yaml`
 - `.tmp/mattpocock-skills/skills/engineering/implement/SKILL.md`
 - `docs/agents/engineering-contract.md`
 - `docs/agents/issue-tracker.md`
 - `docs/agents/triage-labels.md`
 - `docs/agents/domain.md`
-- `skills/current/to-issues/SKILL.md`
-- `skills/current/triage/SKILL.md`
-- `skills/current/tdd/SKILL.md`
-- `skills/current/review/SKILL.md`
+- `skills/custom/to-issues/SKILL.md`
+- `skills/custom/triage/SKILL.md`
+- `skills/custom/tdd/SKILL.md`
+- `skills/custom/review/SKILL.md`
 
 User goal for this skill: redo Prompt 01 for `implement` while also analyzing
 the upstream/minimal `implement` skill in `.tmp/mattpocock-skills`, so the next
@@ -44,7 +44,7 @@ Subagent inputs used:
 Constraints:
 
 - Do not research online yet.
-- Do not rewrite `skills/current/implement/SKILL.md`.
+- Do not rewrite `skills/custom/implement/SKILL.md`.
 - Do not propose final runtime wording yet.
 - Do not choose the final facet map; Prompt 02 owns final merge/split/order.
 
@@ -108,23 +108,23 @@ It should explicitly not:
 
 | Surface | Current / Source Behavior | Research Need |
 | --- | --- | --- |
-| Invocation / description | Current `SKILL.md` describes picking up one ready-for-agent issue and carrying it through seams, verification, review, commit, and note. `skills/current/implement/SKILL.md:1-4` | Preserve explicit-workflow shape without turning the description into an implicit router. |
-| Invocation policy | Current OpenAI config disables implicit invocation. `skills/current/implement/agents/openai.yaml:1-2` | Any later description changes must stay compatible with explicit-only routing. |
+| Invocation / description | Current `SKILL.md` describes picking up one ready-for-agent issue and carrying it through seams, verification, review, commit, and note. `skills/custom/implement/SKILL.md:1-4` | Preserve explicit-workflow shape without turning the description into an implicit router. |
+| Invocation policy | Current OpenAI config disables implicit invocation. `skills/custom/implement/agents/openai.yaml:1-2` | Any later description changes must stay compatible with explicit-only routing. |
 | Upstream source shape | `.tmp` source is a compact launcher: implement PRD/issues, use `/tdd`, run checks, `/review`, commit. `.tmp/mattpocock-skills/skills/engineering/implement/SKILL.md:1-15` | Keep the original proof/review/commit spine, but do not regress current ready-issue gates. |
-| First action | Current skill starts with one ready-for-agent issue and stops after one issue. `skills/current/implement/SKILL.md:8-10` | Make one-item selection hard to skip. |
-| Issue selection | Named issue/path/URL wins; PRD/spec is used to find/choose one ready issue; otherwise choose next unblocked `ready-for-agent` issue from repo docs. `skills/current/implement/SKILL.md:8-10`, `:22-26` | Research readiness, dependency order, ambiguity, no-ready stop, and PRD/spec handoff without owning issue creation. |
-| Preconditions | Read engineering contract, issue tracker, triage labels, and domain docs when relevant. `skills/current/implement/SKILL.md:12-16` | Preserve repo-local truth routing; avoid copying all repo-doc content into the skill. |
-| Convergence loop | Current skill uses orient, explore, choose, prove, expand, converge, simplify, lock. `skills/current/implement/SKILL.md:18-20`, `docs/agents/engineering-contract.md:13-30` | Decide later what `implement` must keep inline versus point to the engineering contract. |
-| Baseline | Inspect worktree, preserve unrelated changes, capture starting ref, stage only in-scope files. `skills/current/implement/SKILL.md:28-34` | Research fixed-point and dirty-work gates that make review/commit trustworthy. |
-| Context intake | Read full issue, comments/local notes, parent source, linked context, acceptance criteria, blockers, and out-of-scope boundaries. `skills/current/implement/SKILL.md:36-40` | Define enough pre-edit context without turning selection into triage or product discovery. |
-| Bounded slice | Treat selected issue as one bounded tracer-bullet/support slice. `skills/current/implement/SKILL.md:40-42` | Research one-slice discipline and adjacent-work resistance. |
-| Ask/stop rule | Ask only when implementation would be guesswork or the better approach changes a commitment. `skills/current/implement/SKILL.md:42-44`, `docs/agents/engineering-contract.md:32-40` | Sharpen user-owned commitment boundaries without making the agent timid. |
-| Implementation | Choose one approach, make the narrow change, prove load-bearing internals through meaningful seams. `skills/current/implement/SKILL.md:46-56` | Research local approach choice, load-bearing internals, and semantic proof without duplicating design/TDD skills. |
-| Proof / validation | Use red-green-refactor when suitable; prove semantic correctness; run focused checks and full/repo-standard validation when feasible. `skills/current/implement/SKILL.md:54-62`; `.tmp` preserves typecheck, single tests, and full suite at end. `.tmp/.../implement/SKILL.md:9-12` | Keep source proof cadence while adapting it to current repo-local behavior. |
-| Simplification | Simplify only while behavior is protected. `skills/current/implement/SKILL.md:58-64` | Decide later how much cleanup/refactor guidance belongs in `implement`. |
-| Review | Run `$review` against the starting ref; fix in-scope findings; record out-of-scope findings. `skills/current/implement/SKILL.md:66-70`; `.tmp` says use `/review` once done. `.tmp/.../implement/SKILL.md:13` | Preserve review invocation and fixed point while leaving review procedure to `$review`. |
-| Lock | Commit, leave implementation note, and avoid issue-state changes unless requested or repo-defined. `skills/current/implement/SKILL.md:72-78`; `.tmp` preserves commit. `.tmp/.../implement/SKILL.md:15` | Research final handoff evidence and issue-state restraint. |
-| Completion criteria | Done means one issue implemented, reviewed, committed, noted, validation recorded, unrelated work preserved, and issue-state changes controlled. `skills/current/implement/SKILL.md:80-82` | Keep done checkable and resistant to premature completion. |
+| First action | Current skill starts with one ready-for-agent issue and stops after one issue. `skills/custom/implement/SKILL.md:8-10` | Make one-item selection hard to skip. |
+| Issue selection | Named issue/path/URL wins; PRD/spec is used to find/choose one ready issue; otherwise choose next unblocked `ready-for-agent` issue from repo docs. `skills/custom/implement/SKILL.md:8-10`, `:22-26` | Research readiness, dependency order, ambiguity, no-ready stop, and PRD/spec handoff without owning issue creation. |
+| Preconditions | Read engineering contract, issue tracker, triage labels, and domain docs when relevant. `skills/custom/implement/SKILL.md:12-16` | Preserve repo-local truth routing; avoid copying all repo-doc content into the skill. |
+| Convergence loop | Current skill uses orient, explore, choose, prove, expand, converge, simplify, lock. `skills/custom/implement/SKILL.md:18-20`, `docs/agents/engineering-contract.md:13-30` | Decide later what `implement` must keep inline versus point to the engineering contract. |
+| Baseline | Inspect worktree, preserve unrelated changes, capture starting ref, stage only in-scope files. `skills/custom/implement/SKILL.md:28-34` | Research fixed-point and dirty-work gates that make review/commit trustworthy. |
+| Context intake | Read full issue, comments/local notes, parent source, linked context, acceptance criteria, blockers, and out-of-scope boundaries. `skills/custom/implement/SKILL.md:36-40` | Define enough pre-edit context without turning selection into triage or product discovery. |
+| Bounded slice | Treat selected issue as one bounded tracer-bullet/support slice. `skills/custom/implement/SKILL.md:40-42` | Research one-slice discipline and adjacent-work resistance. |
+| Ask/stop rule | Ask only when implementation would be guesswork or the better approach changes a commitment. `skills/custom/implement/SKILL.md:42-44`, `docs/agents/engineering-contract.md:32-40` | Sharpen user-owned commitment boundaries without making the agent timid. |
+| Implementation | Choose one approach, make the narrow change, prove load-bearing internals through meaningful seams. `skills/custom/implement/SKILL.md:46-56` | Research local approach choice, load-bearing internals, and semantic proof without duplicating design/TDD skills. |
+| Proof / validation | Use red-green-refactor when suitable; prove semantic correctness; run focused checks and full/repo-standard validation when feasible. `skills/custom/implement/SKILL.md:54-62`; `.tmp` preserves typecheck, single tests, and full suite at end. `.tmp/.../implement/SKILL.md:9-12` | Keep source proof cadence while adapting it to current repo-local behavior. |
+| Simplification | Simplify only while behavior is protected. `skills/custom/implement/SKILL.md:58-64` | Decide later how much cleanup/refactor guidance belongs in `implement`. |
+| Review | Run `$review` against the starting ref; fix in-scope findings; record out-of-scope findings. `skills/custom/implement/SKILL.md:66-70`; `.tmp` says use `/review` once done. `.tmp/.../implement/SKILL.md:13` | Preserve review invocation and fixed point while leaving review procedure to `$review`. |
+| Lock | Commit, leave implementation note, and avoid issue-state changes unless requested or repo-defined. `skills/custom/implement/SKILL.md:72-78`; `.tmp` preserves commit. `.tmp/.../implement/SKILL.md:15` | Research final handoff evidence and issue-state restraint. |
+| Completion criteria | Done means one issue implemented, reviewed, committed, noted, validation recorded, unrelated work preserved, and issue-state changes controlled. `skills/custom/implement/SKILL.md:80-82` | Keep done checkable and resistant to premature completion. |
 
 ## 3. Owner Map
 
@@ -132,15 +132,15 @@ It should explicitly not:
 | --- | --- | --- | --- |
 | One ready issue through implementation | `implement` | Keep here | This is the skill's core job. |
 | Upstream compact implementation spine | `.tmp` source skill | Keep as source pressure | It preserves TDD/check/review/commit as the original minimum contract. |
-| Explicit-only routing | `skills/current/implement/agents/openai.yaml` and skill config | Keep here / point to config | `implement` is heavy and should not become an implicit general coding router. |
-| PRD/spec decomposition into issues | `to-issues` | Point elsewhere | `to-issues` creates dependency-ordered bounded slices and names `$implement` as next step. `skills/current/to-issues/SKILL.md:38-94` |
-| Ready-state promotion and Codex-ready briefs | `triage` | Point elsewhere | `triage` owns state roles, verification, Codex-ready brief comments, and label changes. `skills/current/triage/SKILL.md:29-50`, `:118-141` |
+| Explicit-only routing | `skills/custom/implement/agents/openai.yaml` and skill config | Keep here / point to config | `implement` is heavy and should not become an implicit general coding router. |
+| PRD/spec decomposition into issues | `to-issues` | Point elsewhere | `to-issues` creates dependency-ordered bounded slices and names `$implement` as next step. `skills/custom/to-issues/SKILL.md:38-94` |
+| Ready-state promotion and Codex-ready briefs | `triage` | Point elsewhere | `triage` owns state roles, verification, Codex-ready brief comments, and label changes. `skills/custom/triage/SKILL.md:29-50`, `:118-141` |
 | Tracker commands and label strings | `docs/agents/issue-tracker.md`, `docs/agents/triage-labels.md` | Point elsewhere | Repo docs own exact GitHub commands, issue/PR distinction, and label mappings. |
 | Engineering convergence loop | `docs/agents/engineering-contract.md` | Keep local execution slice / point elsewhere for theory | `implement` executes parts of the loop but should not duplicate the full contract. |
 | Domain vocabulary and ADR routing | `docs/agents/domain.md`, root `CONTEXT.md`, `docs/adr/` | Point elsewhere with local read gate | `implement` should consume domain terms when coding/testing/notes/commits, not create missing domain docs. |
 | Dirty work and starting ref | `implement` | Keep here | Pre-edit safety and review fixed point must happen before implementation. |
-| Fixed-point review procedure | `review` | Point elsewhere with local handoff gate | `implement` captures the fixed point and invokes `$review`; `$review` owns Standards/Spec review. `skills/current/review/SKILL.md:21-113` |
-| Red-green-refactor mechanics | `tdd` | Point elsewhere with proof gate | `implement` decides when TDD is suitable; `$tdd` owns the full workflow. `skills/current/tdd/SKILL.md:55-120` |
+| Fixed-point review procedure | `review` | Point elsewhere with local handoff gate | `implement` captures the fixed point and invokes `$review`; `$review` owns Standards/Spec review. `skills/custom/review/SKILL.md:21-113` |
+| Red-green-refactor mechanics | `tdd` | Point elsewhere with proof gate | `implement` decides when TDD is suitable; `$tdd` owns the full workflow. `skills/custom/tdd/SKILL.md:55-120` |
 | Bug diagnosis when repro/cause is uncertain | `diagnosing-bugs` | Unclear / Prompt 02 boundary | Current skill does not mention this; Prompt 02 should decide if uncertain bug work needs a handoff gate. |
 | Seam/interface design vocabulary | `codebase-design` / engineering contract | Unclear / Prompt 02 boundary | Current skill uses seams and load-bearing internals; Prompt 02 should decide if this is a facet or a pointer. |
 | Commitment boundaries | Engineering contract plus `implement` | Keep local operational rule / point elsewhere for definitions | `implement` needs an ask gate, but contract owns broad commitment vocabulary. |
@@ -151,32 +151,32 @@ It should explicitly not:
 
 | Current Behavior | Source File / Line Or Section | Why It Must Not Regress |
 | --- | --- | --- |
-| Explicit-only policy | `skills/current/implement/agents/openai.yaml:1-2` | Prevents a heavy workflow from firing as a generic coding helper. |
+| Explicit-only policy | `skills/custom/implement/agents/openai.yaml:1-2` | Prevents a heavy workflow from firing as a generic coding helper. |
 | Upstream minimal proof/review/commit spine | `.tmp/mattpocock-skills/skills/engineering/implement/SKILL.md:7-15` | The current skill should deepen behavior without losing the original closeout contract. |
-| One-issue WIP limit | `skills/current/implement/SKILL.md:8-10` | Prevents broad PRD sweeps and multi-issue sessions. |
-| Named issue/path/URL precedence | `skills/current/implement/SKILL.md:10` | Honors explicit user target before auto-selection. |
-| PRD/spec resolves to one ready issue | `skills/current/implement/SKILL.md:10` | Keeps `implement` downstream of planning/issue creation. |
-| Setup docs required before implementation | `skills/current/implement/SKILL.md:14` | Prevents generic behavior when repo-local contract/tracker truth is missing. |
-| Domain docs read when touching codebase context | `skills/current/implement/SKILL.md:16`, `docs/agents/domain.md:7-28` | Keeps code, tests, notes, and commits aligned with repo language and ADRs. |
-| Dependency-order ready issue selection | `skills/current/implement/SKILL.md:22-26` | Avoids blocked work and arbitrary priority choices. |
-| Dirty tree inspection | `skills/current/implement/SKILL.md:28-34` | Protects unrelated user work. |
-| Starting ref capture | `skills/current/implement/SKILL.md:32` | Makes fixed-point review possible. |
-| In-scope staging/commit boundary | `skills/current/implement/SKILL.md:34` | Prevents unrelated changes entering the final commit. |
-| Full issue/context read before implementation | `skills/current/implement/SKILL.md:36-40` | Preserves product intent, acceptance criteria, blockers, and non-goals. |
-| `.tmp/` disposable exploration | `skills/current/implement/SKILL.md:42`, `docs/agents/engineering-contract.md:75-81` | Reduces uncertainty without leaving scratch behind. |
-| Commitment-boundary ask rule | `skills/current/implement/SKILL.md:44`, `docs/agents/engineering-contract.md:32-40` | Prevents silent changes to user-owned decisions. |
-| Agent technique autonomy | `skills/current/implement/SKILL.md:48` | Avoids unnecessary questions about ordinary implementation technique. |
-| No adjacent tracer bullets/support slices | `skills/current/implement/SKILL.md:50-52` | Keeps one implementation run bounded and reviewable. |
-| TDD when suitable | `skills/current/implement/SKILL.md:54`, `.tmp/.../implement/SKILL.md:9`, `skills/current/tdd/SKILL.md:8-14` | Prevents after-the-fact checks from replacing red-green-refactor when appropriate. |
-| Semantic correctness over output existence | `skills/current/implement/SKILL.md:54`, `docs/agents/engineering-contract.md:42-65` | Requires evidence that the result means the right thing. |
-| Focused checks and full/repo-standard validation when feasible | `skills/current/implement/SKILL.md:56-62`, `.tmp/.../implement/SKILL.md:11` | Keeps feedback tight while preserving broader confidence. |
-| Simplify only while behavior is protected | `skills/current/implement/SKILL.md:64` | Allows cleanup without hidden scope expansion. |
-| `$review` from starting ref | `skills/current/implement/SKILL.md:68`, `skills/current/review/SKILL.md:21-31` | Keeps review tied to the actual diff. |
-| Fix in-scope review findings, record out-of-scope | `skills/current/implement/SKILL.md:68-70` | Prevents review from widening the issue. |
-| Commit with issue reference | `skills/current/implement/SKILL.md:74`, `.tmp/.../implement/SKILL.md:15` | Makes the work durable and traceable. |
-| Implementation note includes SHA, summary, validation, skipped checks, risk | `skills/current/implement/SKILL.md:76` | Lets future humans/agents audit the work. |
-| Issue state changes are controlled | `skills/current/implement/SKILL.md:78` | Preserves tracker and user authority. |
-| Done is implemented, reviewed, committed, noted, validated, and isolated | `skills/current/implement/SKILL.md:80-82` | Resists premature completion. |
+| One-issue WIP limit | `skills/custom/implement/SKILL.md:8-10` | Prevents broad PRD sweeps and multi-issue sessions. |
+| Named issue/path/URL precedence | `skills/custom/implement/SKILL.md:10` | Honors explicit user target before auto-selection. |
+| PRD/spec resolves to one ready issue | `skills/custom/implement/SKILL.md:10` | Keeps `implement` downstream of planning/issue creation. |
+| Setup docs required before implementation | `skills/custom/implement/SKILL.md:14` | Prevents generic behavior when repo-local contract/tracker truth is missing. |
+| Domain docs read when touching codebase context | `skills/custom/implement/SKILL.md:16`, `docs/agents/domain.md:7-28` | Keeps code, tests, notes, and commits aligned with repo language and ADRs. |
+| Dependency-order ready issue selection | `skills/custom/implement/SKILL.md:22-26` | Avoids blocked work and arbitrary priority choices. |
+| Dirty tree inspection | `skills/custom/implement/SKILL.md:28-34` | Protects unrelated user work. |
+| Starting ref capture | `skills/custom/implement/SKILL.md:32` | Makes fixed-point review possible. |
+| In-scope staging/commit boundary | `skills/custom/implement/SKILL.md:34` | Prevents unrelated changes entering the final commit. |
+| Full issue/context read before implementation | `skills/custom/implement/SKILL.md:36-40` | Preserves product intent, acceptance criteria, blockers, and non-goals. |
+| `.tmp/` disposable exploration | `skills/custom/implement/SKILL.md:42`, `docs/agents/engineering-contract.md:75-81` | Reduces uncertainty without leaving scratch behind. |
+| Commitment-boundary ask rule | `skills/custom/implement/SKILL.md:44`, `docs/agents/engineering-contract.md:32-40` | Prevents silent changes to user-owned decisions. |
+| Agent technique autonomy | `skills/custom/implement/SKILL.md:48` | Avoids unnecessary questions about ordinary implementation technique. |
+| No adjacent tracer bullets/support slices | `skills/custom/implement/SKILL.md:50-52` | Keeps one implementation run bounded and reviewable. |
+| TDD when suitable | `skills/custom/implement/SKILL.md:54`, `.tmp/.../implement/SKILL.md:9`, `skills/custom/tdd/SKILL.md:8-14` | Prevents after-the-fact checks from replacing red-green-refactor when appropriate. |
+| Semantic correctness over output existence | `skills/custom/implement/SKILL.md:54`, `docs/agents/engineering-contract.md:42-65` | Requires evidence that the result means the right thing. |
+| Focused checks and full/repo-standard validation when feasible | `skills/custom/implement/SKILL.md:56-62`, `.tmp/.../implement/SKILL.md:11` | Keeps feedback tight while preserving broader confidence. |
+| Simplify only while behavior is protected | `skills/custom/implement/SKILL.md:64` | Allows cleanup without hidden scope expansion. |
+| `$review` from starting ref | `skills/custom/implement/SKILL.md:68`, `skills/custom/review/SKILL.md:21-31` | Keeps review tied to the actual diff. |
+| Fix in-scope review findings, record out-of-scope | `skills/custom/implement/SKILL.md:68-70` | Prevents review from widening the issue. |
+| Commit with issue reference | `skills/custom/implement/SKILL.md:74`, `.tmp/.../implement/SKILL.md:15` | Makes the work durable and traceable. |
+| Implementation note includes SHA, summary, validation, skipped checks, risk | `skills/custom/implement/SKILL.md:76` | Lets future humans/agents audit the work. |
+| Issue state changes are controlled | `skills/custom/implement/SKILL.md:78` | Preserves tracker and user authority. |
+| Done is implemented, reviewed, committed, noted, validated, and isolated | `skills/custom/implement/SKILL.md:80-82` | Resists premature completion. |
 
 ## 5. Failure Modes To Prevent
 

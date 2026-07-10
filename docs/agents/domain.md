@@ -2,6 +2,8 @@
 
 How engineering skills consume repo domain documentation when exploring codebase context.
 
+**Configured layout:** single-context.
+
 This file is routing guidance. It points agents to relevant glossary and ADR files without loading all domain docs by default. Do not create missing domain docs during setup.
 
 ## Before Exploring

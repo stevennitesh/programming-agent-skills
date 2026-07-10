@@ -8,7 +8,7 @@ for `implement` Facet 1 using the latest Prompt 09 revision feedback.
 
 Skill: `implement`
 
-Skill path: `skills/current/implement/SKILL.md`
+Skill path: `skills/custom/implement/SKILL.md`
 
 Facet or scope: `1. Bounded Slice`
 
@@ -18,7 +18,7 @@ Generous synthesis:
 Behavior flow:
 [`06-agent-bridge.md`](06-agent-bridge.md)
 
-Existing skill text to preserve: `skills/current/implement/SKILL.md`,
+Existing skill text to preserve: `skills/custom/implement/SKILL.md`,
 especially issue selection, baseline capture, context intake, `.tmp/`
 exploration and cleanup, TDD/proof handoff, simplification, fixed-point review,
 commit, and implementation-note behavior.
@@ -39,7 +39,7 @@ Synthesis input used:
 - Prompt 06 agent bridge;
 - Prompt 07 full behavior synthesis;
 - Prompt 09 detailed skill-context draft revision feedback;
-- existing `skills/current/implement/SKILL.md`;
+- existing `skills/custom/implement/SKILL.md`;
 - `docs/agents/engineering-contract.md` as an ownership check.
 
 Existing skill behavior that must be preserved:

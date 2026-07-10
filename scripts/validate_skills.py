@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 
 
-SKILL_ROOTS = ("skills/current", "skills/experimental", "skills/extra")
+SKILL_ROOTS = ("skills/custom", "skills/experimental", "skills/extra")
 REQUIRED_AGENT_DOCS = ("AGENTS_PORTABLE_FALLBACK.md", "AGENTS_SKILL_PACK_GUIDE.md")
 REQUIRED_SETUP_DOCS = (
     "AGENTS.md",
@@ -26,7 +26,7 @@ REQUIRED_SETUP_DOCS = (
     "docs/agents/domain.md",
     "docs/agents/engineering-contract.md",
     "docs/plans/README.md",
-    "skills/current/setup-matt-pocock-skills/engineering-contract.md",
+    "skills/custom/setup-matt-pocock-skills/engineering-contract.md",
 )
 PUBLISHED_MARKDOWN_ROOTS = (
     "skills",
@@ -141,6 +141,23 @@ def validate_required_docs(root: Path) -> list[str]:
         if not (root / doc).is_file():
             failures.append(f"Missing required setup surface document: {doc}")
     return failures
+
+
+def validate_setup_surface(root: Path) -> list[str]:
+    validator = root / "skills/custom/setup-matt-pocock-skills/scripts/validate_setup.py"
+    if not validator.is_file():
+        return [f"Missing setup-surface validator: {validator.relative_to(root).as_posix()}"]
+    result = subprocess.run(
+        [sys.executable, str(validator), str(root)],
+        cwd=root,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    if result.returncode == 0:
+        return []
+    output = (result.stdout + result.stderr).strip()
+    return ["Repo setup surface is invalid:", *indent_lines(output)]
 
 
 def unified_file_diff(expected: Path, actual: Path, *, root: Path) -> list[str]:
@@ -333,9 +350,10 @@ def main(argv: list[str] | None = None) -> int:
     skill_names, skill_failures = validate_skill_folders(root)
     validation.extend(skill_failures)
     validation.extend(validate_required_docs(root))
+    validation.extend(validate_setup_surface(root))
     validation.extend(
         unified_file_diff(
-            root / "skills/current/setup-matt-pocock-skills/engineering-contract.md",
+            root / "skills/custom/setup-matt-pocock-skills/engineering-contract.md",
             root / "docs/agents/engineering-contract.md",
             root=root,
         )

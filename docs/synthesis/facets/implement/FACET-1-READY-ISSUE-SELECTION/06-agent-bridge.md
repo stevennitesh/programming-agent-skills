@@ -8,7 +8,7 @@ for `implement`.
 
 Skill: `implement`
 
-Skill path: `skills/current/implement/SKILL.md`
+Skill path: `skills/custom/implement/SKILL.md`
 
 Facet: `1 - Ready Issue Selection`
 
@@ -72,7 +72,7 @@ Duplicate-collapse notes:
 
 Owner-conflict severities:
 
-- Hard-boundary: `to-issues` owns PRD/spec decomposition; `triage` owns
+- Hard-boundary: `to-tickets` owns PRD/spec decomposition; `triage` owns
   ready-state promotion and issue-brief repair; tracker docs own exact syntax,
   commands, labels, ordering fields, and metadata mutation; user/repo-visible
   policy owns priority.
@@ -100,7 +100,7 @@ Subagent inputs used:
   explicit user/repo-visible authority, compact readiness recheck,
   blocker/dependency checks, result-defining ambiguity, PRD/spec-without-one
   stop, risk confirmation, and selection-before-planning; keep `triage`,
-  `to-issues`, tracker docs, and the engineering contract as owners for their
+  `to-tickets`, tracker docs, and the engineering contract as owners for their
   respective procedures.
 - Behavior/gate subagent pass: sharpen selection as an issue-commitment gate;
   keep named-issue no-substitution behavior when the named item is not ready,
@@ -155,7 +155,7 @@ repo-specific high-risk policy.
 | Runtime priority / budget | Used | Must candidates become hard gates or stop branches. | Should/Could items become rechecks, support cues, or optional branches. |
 | Bridge resolution plan | Used | Raw source terms become plain behavior terms. | Avoid carrying Kanban, Scrum, DoR, INVEST, or benchmark language into the core bridge. |
 | Duplicate / synonym collapse choices | Used | Primary terms are preserved and source phrases become support terms. | Prevents Prompt 07 from carrying several names for the same behavior. |
-| Owner-conflict severities | Used | Hard boundaries become stop/handoff branches. | Especially `to-issues`, `triage`, tracker docs, Context Intake, Bounded Slice Control, Semantic Proof, Review And Lock, and engineering contract. |
+| Owner-conflict severities | Used | Hard boundaries become stop/handoff branches. | Especially `to-tickets`, `triage`, tracker docs, Context Intake, Bounded Slice Control, Semantic Proof, Review And Lock, and engineering contract. |
 | Rejected temptation: full DoR / INVEST | Rejected | Agent bridge does not build a readiness checklist. | Only a compact local readiness recheck survives. |
 | Watchpoint: exact tracker semantics | Deferred | Runtime checks blocker/order semantics only. | Repo docs own commands, labels, and metadata edits. |
 | Watchpoint: risk-domain confirmation | Revised | Keep as generic confirmation branch. | Engineering contract / repo docs own exact policy. |
@@ -173,7 +173,7 @@ repo-specific high-risk policy.
 | Observable done signal | Must | Step 4 hard gate | Preserved | Prevents unverifiable pickup without designing proof. |
 | Blocker/dependency check | Must | Step 4 hard gate and Branch B6 | Preserved | Prevents starting blocked work. |
 | Multiple-candidate order stop | Must | Branch B1 | Preserved | Priority is not agent-owned. |
-| No-ready stop | Must | Branch B2 | Preserved | Preserves `triage` / `to-issues` ownership. |
+| No-ready stop | Must | Branch B2 | Preserved | Preserves `triage` / `to-tickets` ownership. |
 | PRD/spec without one issue stop | Must | Branch B3 | Preserved | Prevents whole-document implementation scope. |
 | Result-defining ambiguity stop | Must | Step 4 and Branch B7 | Preserved | Prevents invented requirements. |
 | Owner-boundary stop | Must | Step 6 and Branch B5 | Preserved | Prevents readiness repair, tracker mutation, splitting, or planning. |
@@ -195,7 +195,7 @@ repo-specific high-risk policy.
 | Blocker/dependency check | stop/ask rule / evidence gate | Keeps dependency order intact. | Stop or ask on blocked work. |
 | Result-defining ambiguity | stop/ask rule | Prevents invented requirements. | Ask only on missing details that change the result. |
 | No-ready stop | stop rule | Keeps `implement` from creating its own work. | Stop when no ready item exists. |
-| PRD/spec without one issue | stop/handoff rule | Prevents treating source documents as implementation scope. | Route to `to-issues` or ask for target issue. |
+| PRD/spec without one issue | stop/handoff rule | Prevents treating source documents as implementation scope. | Route to `to-tickets` or ask for target issue. |
 | Owner-boundary stop | stop/handoff rule | Protects neighboring skills/facets. | Route issue repair, splitting, planning, and tracker mutation to owners. |
 | Risk-domain confirmation | stop/ask rule | Prevents silent high-risk autonomous pickup. | Ask for explicit boundaries. |
 | Obvious multi-issue smell | stop/narrow rule | Catches plainly unsafe scope early. | Ask to narrow or route upstream without slicing. |
@@ -625,10 +625,10 @@ Next:
 | Branch | Trigger | Behavior | Gate | Exit Type | Rejoin / Exit |
 | --- | --- | --- | --- | --- | --- |
 | B1: Multiple eligible candidates | More than one eligible item and no repo-visible order | Ask user to choose or provide ordering source. | One candidate selected. | ask-user | Rejoin Step 2. |
-| B2: No ready item | Checked surface has no ready issue-equivalent item | Stop and report checked surface plus no-ready reason. | Surface named; no item selected. | blocked | Exit facet; route to `triage` / `to-issues` if appropriate. |
-| B3: PRD/spec without one issue | User provides source doc, PRD, spec, or path but no ready issue-equivalent item | Ask for target issue or route to `to-issues`. | One ready issue-equivalent item is named. | handoff-skill | Rejoin Step 2 after upstream slice exists. |
-| B4: Obvious multi-issue smell | Candidate is broad, multi-slice, or many unrelated areas | Ask to narrow or route upstream; do not slice here. | One coherent issue-equivalent item exists. | ask-user | Rejoin Step 2 or exit to `to-issues` / `triage`. |
-| B5: Readiness repair or tracker mutation needed | Selection would require issue rewrite, acceptance-criteria repair, ready-state promotion, relabeling, ordering changes, or dependency metadata edits | Stop and hand off to owner. | Upstream owner makes item ready. | handoff-skill | Exit to `triage`, `to-issues`, or tracker owner; rejoin only after ready issue exists. |
+| B2: No ready item | Checked surface has no ready issue-equivalent item | Stop and report checked surface plus no-ready reason. | Surface named; no item selected. | blocked | Exit facet; route to `triage` / `to-tickets` if appropriate. |
+| B3: PRD/spec without one issue | User provides source doc, PRD, spec, or path but no ready issue-equivalent item | Ask for target issue or route to `to-tickets`. | One ready issue-equivalent item is named. | handoff-skill | Rejoin Step 2 after upstream slice exists. |
+| B4: Obvious multi-issue smell | Candidate is broad, multi-slice, or many unrelated areas | Ask to narrow or route upstream; do not slice here. | One coherent issue-equivalent item exists. | ask-user | Rejoin Step 2 or exit to `to-tickets` / `triage`. |
+| B5: Readiness repair or tracker mutation needed | Selection would require issue rewrite, acceptance-criteria repair, ready-state promotion, relabeling, ordering changes, or dependency metadata edits | Stop and hand off to owner. | Upstream owner makes item ready. | handoff-skill | Exit to `triage`, `to-tickets`, or tracker owner; rejoin only after ready issue exists. |
 | B6: Blocked candidate | Candidate has an unresolved blocker/dependency and the candidate is not itself the blocker | Stop, skip if repo order clearly identifies an unblocked ready item, or ask whether to work the blocker. | Blocker resolved, order confirmed, or blocker selected. | ask-user | Rejoin Step 2 or Step 4. |
 | B7: Result-defining ambiguity | Missing detail would change the expected result | Ask for that specific missing result detail or route upstream. | Missing detail supplied. | ask-user | Rejoin Step 4 or exit to `triage`. |
 | B8: Prompt-poor or no done signal | Candidate lacks work/outcome shape or any observable done signal | Stop or route upstream; do not invent the issue brief. | Adequate prompt/done signal exists. | handoff-skill | Exit to `triage`; rejoin only after repair. |
@@ -640,7 +640,7 @@ Next:
 
 | Criterion | Gate Type | What It Proves | How Agent Checks It | Too Weak If | Too Heavy If |
 | --- | --- | --- | --- | --- | --- |
-| Exactly one selected issue-equivalent item is named | hard gate | The facet did not pick a batch, queue, project, or whole document. | Check selected item is singular and concrete. | It names a list, project, PRD, or source document. | It decomposes the source into issues. |
+| Exactly one selected issue-equivalent item is named | hard gate | The facet did not pick a batch, queue, project, or whole document. | Check selected item is singular and concrete. | It names a list, project, PRD, or source document. | It decomposes the source inTo Tickets. |
 | Selection authority is visible | hard gate | Agent did not invent priority or readiness. | Check explicit user target or repo-visible ready/order source is named. | It says "looks ready." | It edits tracker policy or labels. |
 | Tracker-state eligibility is visible | hard gate | A named item is ready enough to enter `implement`. | Check the item has eligible ready state and no visible disqualifying state. | A closed or needs-info item passes. | Agent mutates labels/state or treats exact tracker syntax as runtime-owned. |
 | Local readiness recheck is complete | hard gate | Candidate is safe enough to own before Context Intake. | Check prompt adequacy, done signal, blocker/dependency state, and ambiguity result. | It checks only a label. | It performs full Context Intake or issue repair. |
@@ -658,7 +658,7 @@ Next:
 | Multiple eligible candidates with no visible order | Ask | Priority is user/repo-owned. | User or repo ordering selects one. |
 | No ready issue-equivalent item exists | Stop | `implement` must not create its own work to stay busy. | User provides a ready item or upstream workflow creates/triages one. |
 | PRD/spec/path without one ready issue | Stop / ask / handoff | A source document is not automatic implementation scope. | One ready issue-equivalent item is named. |
-| Candidate requires readiness repair or tracker mutation | Stop / handoff | Repair belongs to `triage`, `to-issues`, or tracker owner. | Item is made ready upstream. |
+| Candidate requires readiness repair or tracker mutation | Stop / handoff | Repair belongs to `triage`, `to-tickets`, or tracker owner. | Item is made ready upstream. |
 | Explicit target is not eligible | Stop | A named issue does not grant permission to bypass readiness. | Named item is made eligible, or user explicitly selects another ready item. |
 | Candidate is blocked | Stop / ask | Dependency order matters. | Blocker is resolved, selected, or order is confirmed. |
 | Result-defining ambiguity exists | Ask | Prevents invented requirements. | Missing result detail is supplied. |
@@ -680,13 +680,13 @@ Next:
 | Observable done signal | Yes | Maybe | No | Semantic Proof owns proof strategy | later-facet-watchpoint | Selection needs a target, not proof design. |
 | Blocker/dependency check | Yes | Maybe | No | Tracker docs own syntax and metadata edits | hard-boundary | Runtime detects; tracker owner mutates. |
 | Result-defining ambiguity stop | Yes | Maybe | No | `triage` / user may supply missing result detail | hard-boundary | Runtime must not invent requirements. |
-| Multiple/no-ready stop branches | Yes | No | No | User / `triage` / `to-issues` | hard-boundary | Prevents silent ownership change. |
-| PRD/spec without issue branch | Yes | No | No | `to-issues` | hard-boundary | Prevents whole-spec implementation. |
+| Multiple/no-ready stop branches | Yes | No | No | User / `triage` / `to-tickets` | hard-boundary | Prevents silent ownership change. |
+| PRD/spec without issue branch | Yes | No | No | `to-tickets` | hard-boundary | Prevents whole-spec implementation. |
 | Risk-domain confirmation | Yes | Maybe | No | Engineering contract / repo docs | soft-reference | Runtime asks; policy owns thresholds. |
-| Obvious multi-issue smell | Maybe | Yes | No | Bounded Slice Control / `to-issues` | later-facet-watchpoint | Selection catches only obvious unsafe scope. |
+| Obvious multi-issue smell | Maybe | Yes | No | Bounded Slice Control / `to-tickets` | later-facet-watchpoint | Selection catches only obvious unsafe scope. |
 | Select first, plan later | Yes | No | No | Context Intake owns next phase | later-facet-watchpoint | Keeps phase boundary clear. |
 | Kanban/DoR/Small CL rationale | No | Yes | Maybe | No | support-only | Useful rationale, not inline behavior. |
-| Full DoR/INVEST/story splitting | No | No | Yes | `to-issues` / `triage` | hard-boundary | Not source selection behavior. |
+| Full DoR/INVEST/story splitting | No | No | Yes | `to-tickets` / `triage` | hard-boundary | Not source selection behavior. |
 
 ## 12. Agent Bridge Risks
 
@@ -698,7 +698,7 @@ Next:
 | Generic ask behavior returns | Would make the agent timid. | Ask only on named gates: priority, result-defining ambiguity, blocker, risk, or missing target issue. |
 | Selection becomes planning | Would collapse into Context Intake. | Require selection facts only before handoff. |
 | Agent invents priority | Would violate user/repo ownership. | Require repo-visible order or explicit user target. |
-| `implement` repairs issues | Would take over `triage` / `to-issues`. | Add hard owner-boundary stop. |
+| `implement` repairs issues | Would take over `triage` / `to-tickets`. | Add hard owner-boundary stop. |
 | Size smell becomes slicing workflow | Would steal Bounded Slice Control. | Only reject obviously multi-issue candidates; do not decompose. |
 | Risk gate becomes policy doc | Could conflict with repo policy. | Keep as confirmation branch and point to repo docs / engineering contract. |
 | Source support terms leak inline | DoR, INVEST, WIP, and Scrum terms can bloat runtime. | Keep them in support/reference inventory. |
@@ -763,7 +763,7 @@ Unresolved design questions:
 
 Ownership conflicts:
 
-- `to-issues` owns PRD/spec decomposition.
+- `to-tickets` owns PRD/spec decomposition.
 - `triage` owns ready-state promotion and issue-brief repair.
 - Repo tracker docs own exact labels, commands, ordering fields, state names,
   and dependency metadata.

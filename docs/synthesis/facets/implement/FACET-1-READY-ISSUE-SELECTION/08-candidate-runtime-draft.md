@@ -8,7 +8,7 @@ for `implement`.
 
 Skill: `implement`
 
-Skill path: `skills/current/implement/SKILL.md`
+Skill path: `skills/custom/implement/SKILL.md`
 
 Facet or scope: `1 - Ready Issue Selection`
 
@@ -20,7 +20,7 @@ Synthesis decision: `ready-for-candidate-runtime-draft`
 Behavior flow artifact(s):
 [`06-agent-bridge.md`](06-agent-bridge.md)
 
-Existing skill text to preserve: `skills/current/implement/SKILL.md`,
+Existing skill text to preserve: `skills/custom/implement/SKILL.md`,
 especially the current description, "Implement one ready-for-agent issue. Stop
 after one issue.", issue selection, preconditions, Context Intake, bounded
 slice behavior, proof/review/commit/note flow, and the rule against issue state
@@ -31,7 +31,7 @@ Relevant owners to preserve:
 - Engineering contract: `docs/agents/engineering-contract.md`
 - Tracker docs: `docs/agents/issue-tracker.md`,
   `docs/agents/triage-labels.md`
-- Related skills: `to-issues`, `triage`, `review`,
+- Related skills: `to-tickets`, `triage`, `review`,
   `convergent-pr-review`, `tdd`
 - Later `implement` steps: Capture Baseline, Context Intake, Choose And
   Implement, Prove And Simplify, Converge, Lock
@@ -55,7 +55,7 @@ Subagent inputs used:
   Scan, use `Draft Risk`, `Validation Detail`, and current handoff labels.
 - Runtime line pass: keep most R/A/L/O/H IDs stable, preserve `L6`, and make
   tracker eligibility/no-substitution explicit in `A4`.
-- Owner/context pass: keep source decomposition in `to-issues`, tracker syntax
+- Owner/context pass: keep source decomposition in `to-tickets`, tracker syntax
   in tracker docs, risk policy in the engineering contract, and Context Intake
   after selection facts are recorded.
 
@@ -69,7 +69,7 @@ Full behavior synthesis input used:
 
 - [`07-full-behavior-synthesis.md`](07-full-behavior-synthesis.md)
 - [`06-agent-bridge.md`](06-agent-bridge.md)
-- existing `skills/current/implement/SKILL.md`
+- existing `skills/custom/implement/SKILL.md`
 - repo owner docs listed in Prompt Inputs
 
 Prompt 07 synthesis decision used:
@@ -120,10 +120,10 @@ This draft must not decide:
 | Blocker/dependency check | Detect blockers; tracker docs own syntax and mutation. | `L4` handles dependency order; `A4` handles tracker pointer. | Could drift into tracker metadata editing. |
 | Result-defining ambiguity | Ask only when missing information changes expected result. | `L5` requires naming the missing fact and result effect. | Generic "ask if unsure" would create timid over-asking. |
 | No-ready stop | Stop and report checked surface. | `A3` preserves no-ready behavior. | Could silently route into issue creation. |
-| PRD/spec stop | Ask for target or route upstream. | `R3` routes without decomposing. | Could duplicate `to-issues` if it starts authoring issues. |
-| Owner-boundary stop | Detect unready work; do not repair it. | `O1` is the runtime guard; owner details are in Section 4. | Could duplicate `triage`, `to-issues`, or tracker docs if expanded. |
+| PRD/spec stop | Ask for target or route upstream. | `R3` routes without decomposing. | Could duplicate `to-tickets` if it starts authoring issues. |
+| Owner-boundary stop | Detect unready work; do not repair it. | `O1` is the runtime guard; owner details are in Section 4. | Could duplicate `triage`, `to-tickets`, or tracker docs if expanded. |
 | Risk-domain confirmation | Keep short; repo docs own exact policy. | `O3` stays support/pointer-only. | Inline risk policy would bloat runtime. |
-| Obvious multi-issue smell | Optional narrow/handoff branch; do not slice here. | `O2` remains validation-visible detail. | Could duplicate Bounded Slice Control or `to-issues`. |
+| Obvious multi-issue smell | Optional narrow/handoff branch; do not slice here. | `O2` remains validation-visible detail. | Could duplicate Bounded Slice Control or `to-tickets`. |
 | Select first, plan later | Record selection facts before Context Intake. | `H1` through `H3` preserve the handoff boundary. | Could collapse into planning, file discovery, proof, or edits. |
 | Support-only material | WIP, DoR, INVEST, Scrum, Small CLs, and source examples move out of runtime. | Cut or support-only in Sections 10-12. | Source vocabulary could bloat runtime. |
 | Research-only material | Kanban metrics, Scrum ceremonies, SWE-bench scoring, platform setup, detailed splitting stay out. | Cut in Section 12. | Runtime could become a research summary. |
@@ -156,7 +156,7 @@ place.
 | Tracker docs | GitHub issue operations, ready labels, ordering, state, dependency syntax. | Point to tracker docs for exact labels, state, order, and dependency syntax. | Inline `gh` commands, mutate labels/state, or define tracker-specific semantics here. | `A4` is runtime behavior plus pointer, not a tracker procedure. |
 | Triage labels | Actual state-role labels such as `ready-for-agent`, `needs-info`, `ready-for-human`, and `wontfix`. | Use the idea of eligible tracker state. | Reproduce or edit label tables. | `A4` keeps syntax repo-owned. |
 | `triage` | Make issues ready, request info, classify labels/state. | Detect unready work and hand off. | Repair prompts, promote readiness, relabel, or rewrite issue briefs. | `O1` blocks repair inside `implement`. |
-| `to-issues` | Turn PRDs/specs/plans into ready issue slices. | Route source documents that lack one ready item. | Decompose PRDs/specs or author new issues. | `R3` is route-only. |
+| `to-tickets` | Turn PRDs/specs/plans into ready issue slices. | Route source documents that lack one ready item. | Decompose PRDs/specs or author new issues. | `R3` is route-only. |
 | Bounded Slice Control / later implement scope control | Detailed size/slice management after selection. | Detect obvious multi-issue smell before pickup. | Split or plan the work here. | `O2` remains validation detail. |
 | Semantic Proof / `$tdd` | Proof strategy and red-green-refactor once behavior is selected. | Require a done signal before pickup. | Demand proof plan or test design during selection. | `L3` avoids proof planning. |
 | User / product owner | Product priority, result-defining missing facts, explicit target choice. | Ask on unordered candidates, ambiguity, blocker order, or ineligible named target. | Invent priority or silently replace explicit targets. | `A1`, `A2`, `A4`, and `L5` keep authority visible. |
@@ -242,7 +242,7 @@ without broadening invocation.
 implementation scope until one ready issue-equivalent item is named.
 
 [R3] If the user provides a PRD, spec, source document, or path without one
-ready item, ask for the target item or route to `to-issues`.
+ready item, ask for the target item or route to `to-tickets`.
 
 [R4] No one issue-equivalent item, no implementation.
 
@@ -311,7 +311,7 @@ proof strategy, or edits until selection facts are recorded.
 | --- | --- | --- | --- | --- | --- | --- |
 | R1 | Before Context Intake, select exactly one issue-equivalent item. | step | replace/merge with `### 1. Select The Issue` opening | one selected issue-equivalent item | must-runtime | Could be too abstract without R5 examples. |
 | R2 | A queue, project, PRD, spec, batch, list, or bare source path is not implementation scope until one ready issue-equivalent item is named. | hard gate | insert near selection opening | PRD/spec/path not scope | must-runtime | Must not overblock explicit path targets or path-backed ready slices. |
-| R3 | If source document/path lacks one ready item, ask or route to `to-issues`. | stop/ask rule | merge with existing PRD/spec sentence | PRD/spec stop | must-runtime | Could duplicate `to-issues` if it says how to decompose. |
+| R3 | If source document/path lacks one ready item, ask or route to `to-tickets`. | stop/ask rule | merge with existing PRD/spec sentence | PRD/spec stop | must-runtime | Could duplicate `to-tickets` if it says how to decompose. |
 | R4 | No one issue-equivalent item, no implementation. | hard gate | insert | blunt gate | must-runtime | Could sound harsh but useful. |
 | R5 | Done when one concrete issue-equivalent item is named. | completion criterion | insert or merge with R1/R4 | selection completion | candidate-runtime | Examples must not widen into a batch. |
 | A1 | Use explicit user target or repo-visible ready/order policy. | hard gate | replace broad "choose next" wording | selection authority | must-runtime | Weak if "repo-visible" is not tied to tracker docs. |
@@ -348,7 +348,7 @@ proof strategy, or edits until selection facts are recorded.
 | L4 | Blocked work waits unless selected item is the blocker or repo-visible order confirms this item should be worked now. | Preserve dependency order. | Work starts behind an unresolved blocker. |
 | L5 | Ask only after naming the missing fact and how it would change the expected result. | Avoid invented requirements without timid asking. | Generic uncertainty blocks ordinary implementation. |
 | L6 | No prompt adequacy, done signal, clear blocker state, or ambiguity result, no pickup. | Make readiness blunt. | Prompt-poor or unverifiable work starts. |
-| O1 | Detect unready work; do not make it ready inside `implement`. | Preserve owner boundaries. | `implement` becomes `triage` or `to-issues`. |
+| O1 | Detect unready work; do not make it ready inside `implement`. | Preserve owner boundaries. | `implement` becomes `triage` or `to-tickets`. |
 | O2 | If the candidate has multiple independent outcomes/items/surfaces, ask or hand off; do not split here. | Catch non-singular scope. | Selection becomes decomposition or broad implementation. |
 | H2 | Select first, plan later: no file discovery, implementation planning, proof strategy, or edits until selection facts are recorded. | Preserve phase boundary. | Selection collapses into Context Intake or coding. |
 
@@ -412,7 +412,7 @@ proof strategy, or edits until selection facts are recorded.
 | Exact dependency syntax | Move | Repo tracker docs own exact syntax. |
 | Result-defining ambiguity | Preserve | Prevents invented product intent. |
 | Generic "ask if unsure" | Cut | Too timid and not checkable. |
-| Issue repair/relabel/split/promote/rewrite | Preserve as prohibited behavior | Protects `triage`, `to-issues`, and tracker owners. |
+| Issue repair/relabel/split/promote/rewrite | Preserve as prohibited behavior | Protects `triage`, `to-tickets`, and tracker owners. |
 | Risk-domain confirmation | Move | Useful guard, but exact policy belongs elsewhere. |
 | Obvious multi-issue smell | Preserve as validation detail | Useful rejection when tied to multiple independent outcomes/items/surfaces; slicing belongs elsewhere. |
 | Select first, plan later | Preserve | Protects Context Intake boundary. |
@@ -431,7 +431,7 @@ proof strategy, or edits until selection facts are recorded.
 implementation scope until one ready issue-equivalent item is named.
 
 [R3] If the user provides a PRD, spec, source document, or path without one
-ready item, ask for the target item or route to `to-issues`.
+ready item, ask for the target item or route to `to-tickets`.
 
 [R4] No one issue-equivalent item, no implementation.
 
@@ -497,7 +497,7 @@ Lines most likely to be no-ops:
 
 Lines most likely to duplicate another skill or contract:
 
-- `R3`, if it starts decomposing PRDs/specs instead of routing to `to-issues`;
+- `R3`, if it starts decomposing PRDs/specs instead of routing to `to-tickets`;
 - `A4`, if it reproduces tracker label tables or command syntax;
 - `O1`, if it teaches issue repair by listing too many forbidden operations;
 - `O2`, if it becomes a slicing workflow instead of a narrow/handoff smell;
@@ -517,7 +517,7 @@ Line IDs whose placement or runtime weight is most uncertain:
 
 Owner conflicts or owner-boundary risks:
 
-- `R3` must route to `to-issues` without decomposing source documents.
+- `R3` must route to `to-tickets` without decomposing source documents.
 - `A4` must check eligibility without editing tracker metadata or inlining
   tracker commands.
 - `O1` must detect unready work without becoming `triage`.

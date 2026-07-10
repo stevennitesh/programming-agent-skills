@@ -2,13 +2,13 @@
 
 This note maps the books and supporting references behind the local issue pipeline skills:
 
-- `/home/steve/code/programming-agent-skills/skills/current/to-prd/SKILL.md`
-- `/home/steve/code/programming-agent-skills/skills/current/to-issues/SKILL.md`
-- `/home/steve/code/programming-agent-skills/skills/current/triage/SKILL.md`
-- `/home/steve/code/programming-agent-skills/skills/current/triage/AGENT-BRIEF.md`
-- `/home/steve/code/programming-agent-skills/skills/current/triage/OUT-OF-SCOPE.md`
-- `/home/steve/code/programming-agent-skills/skills/current/implement/SKILL.md`
-- `/home/steve/code/programming-agent-skills/skills/current/review/SKILL.md`
+- `/home/steve/code/programming-agent-skills/skills/custom/to-spec/SKILL.md`
+- `/home/steve/code/programming-agent-skills/skills/custom/to-tickets/SKILL.md`
+- `/home/steve/code/programming-agent-skills/skills/custom/triage/SKILL.md`
+- `/home/steve/code/programming-agent-skills/skills/custom/triage/AGENT-BRIEF.md`
+- `/home/steve/code/programming-agent-skills/skills/custom/triage/OUT-OF-SCOPE.md`
+- `/home/steve/code/programming-agent-skills/skills/custom/implement/SKILL.md`
+- `/home/steve/code/programming-agent-skills/skills/custom/review/SKILL.md`
 
 The local skill-pack stance is: turn messy intent into durable product understanding, split that understanding into dependency-ordered bounded slices, convert raw outside requests into the same ready-for-agent shape, implement exactly one ready slice at a time, and review the result against both repo standards and the originating spec.
 
@@ -27,7 +27,7 @@ Use for:
 
 Maps to:
 
-- `to-issues/SKILL.md`: tracer-bullet issues for product behavior
+- `to-tickets/SKILL.md`: tracer-bullet issues for product behavior
 - `implement/SKILL.md`: one bounded slice through existing seams
 - `review/SKILL.md`: checking whether the diff completes the intended slice
 
@@ -48,13 +48,13 @@ Use for:
 
 Maps to:
 
-- `to-prd/SKILL.md`: parent PRD as full explored understanding
-- `to-issues/SKILL.md`: dependency-ordered issues with parent references
-- `to-issues/SKILL.md`: fewer strong tracer bullets over many weak variations
+- `to-spec/SKILL.md`: parent spec as full explored understanding
+- `to-tickets/SKILL.md`: dependency-ordered issues with parent references
+- `to-tickets/SKILL.md`: fewer strong tracer bullets over many weak variations
 
 Skill-pack takeaway:
 
-The parent PRD keeps the whole story visible; issues are slices through that story, not a flat backlog of layers.
+The parent spec keeps the whole story visible; issues are slices through that story, not a flat backlog of layers.
 
 ### Gojko Adzic - Specification by Example
 
@@ -69,8 +69,8 @@ Use for:
 
 Maps to:
 
-- `to-prd/SKILL.md`: testing notes that identify observable behavior
-- `to-issues/SKILL.md`: specific observable acceptance criteria
+- `to-spec/SKILL.md`: testing notes that identify observable behavior
+- `to-tickets/SKILL.md`: specific observable acceptance criteria
 - `triage/AGENT-BRIEF.md`: complete acceptance criteria and validation notes
 - `review/SKILL.md`: Spec axis findings for missing or weak behavior proof
 
@@ -92,7 +92,7 @@ Use for:
 Maps to:
 
 - `implement/SKILL.md`: identify the highest useful interface or seam to test through
-- `to-issues/SKILL.md`: tracer bullets that cross every layer needed for one behavior
+- `to-tickets/SKILL.md`: tracer bullets that cross every layer needed for one behavior
 - `triage/AGENT-BRIEF.md`: validation notes for proving behavior through the right seam
 
 Skill-pack takeaway:
@@ -133,7 +133,7 @@ Use for:
 
 Maps to:
 
-- `to-issues/SKILL.md`: support issues for behavior-preserving prefactoring
+- `to-tickets/SKILL.md`: support issues for behavior-preserving prefactoring
 - `implement/SKILL.md`: avoid widening one bounded slice
 - `review/SKILL.md`: scope-creep findings when a diff adds unrelated behavior
 
@@ -154,8 +154,8 @@ Use for:
 
 Maps to:
 
-- `to-prd/SKILL.md`: seams to test through
-- `to-issues/SKILL.md`: likely test surface and useful prefactoring
+- `to-spec/SKILL.md`: seams to test through
+- `to-tickets/SKILL.md`: likely test surface and useful prefactoring
 - `implement/SKILL.md`: prefer existing seams and avoid guesswork
 - `review/SKILL.md`: missing or weak tests when acceptance criteria are not proven through the right seam
 
@@ -199,7 +199,7 @@ Use for:
 
 Maps to:
 
-- `to-issues/SKILL.md`: bounded, independently verifiable slices
+- `to-tickets/SKILL.md`: bounded, independently verifiable slices
 - `triage/AGENT-BRIEF.md`: why this slice
 
 Skill-pack takeaway:
@@ -219,8 +219,8 @@ Use for:
 
 Maps to:
 
-- `to-prd/SKILL.md`: user story format
-- `to-issues/SKILL.md`: issue titles and behavior descriptions
+- `to-spec/SKILL.md`: user story format
+- `to-tickets/SKILL.md`: issue titles and behavior descriptions
 - `triage/SKILL.md`: grilling raw requests until they can move to a state role
 
 Skill-pack takeaway:
@@ -239,7 +239,7 @@ Use for:
 
 Maps to:
 
-- `to-issues/SKILL.md`: blockers and dependency order
+- `to-tickets/SKILL.md`: blockers and dependency order
 - `triage/SKILL.md`: recommend the state with reasoning
 - `implement/SKILL.md`: stop after one issue
 
@@ -249,12 +249,12 @@ Dependency order should expose the next real constraint. Do not split work into 
 
 ## Concept Map By File
 
-### `to-prd/SKILL.md`
+### `to-spec/SKILL.md`
 
 Primary concepts:
 
 - synthesis, not grilling
-- parent PRD
+- parent spec
 - full explored idea
 - user-visible desired outcome
 - accepted decisions and rejected options
@@ -268,7 +268,7 @@ Best sources:
 - User Stories Applied for story shape
 - Specification by Example for behavior-oriented testing notes
 
-### `to-issues/SKILL.md`
+### `to-tickets/SKILL.md`
 
 Primary concepts:
 
@@ -278,7 +278,7 @@ Primary concepts:
 - support issues only when they unblock or de-risk
 - observable acceptance criteria
 - blockers
-- parent references instead of duplicated PRD context
+- parent references instead of duplicated spec context
 
 Best sources:
 
@@ -368,7 +368,7 @@ Best sources:
 
 The issue pipeline is in the right direction when it:
 
-- preserves intent from PRD to issue to brief to implementation note
+- preserves intent from spec to issue to brief to implementation note
 - slices by observable behavior, not horizontal layers
 - prefers tracer bullets over broad support work
 - records out-of-scope boundaries before implementation starts

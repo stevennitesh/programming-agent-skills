@@ -8,7 +8,7 @@ for `implement`.
 
 Skill: `implement`
 
-Skill path: `skills/current/implement/SKILL.md`
+Skill path: `skills/custom/implement/SKILL.md`
 
 Facet: `1 - Ready Issue Selection`
 
@@ -54,7 +54,7 @@ Subagent inputs used:
 
 Constraints:
 
-- Do not rewrite `skills/current/implement/SKILL.md`.
+- Do not rewrite `skills/custom/implement/SKILL.md`.
 - Do not decide final runtime wording.
 - Do not triage what survives; Prompt 05 owns survival decisions.
 - Extract only material that could change Codex behavior.

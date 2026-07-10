@@ -2,7 +2,7 @@
 
 Purpose: map context owners, pointers, and cross-skill pressure so skill edits do not duplicate setup docs or creep across workflow boundaries.
 
-Scope: `skills/current/**` markdown files, their direct supporting files, `README.md`, and `AGENTS_SKILL_PACK_GUIDE.md`.
+Scope: `skills/custom/**` markdown files, their direct supporting files, `README.md`, and `AGENTS_SKILL_PACK_GUIDE.md`.
 
 This is a design-analysis map, not the runtime invocation graph. Edges show ownership pressure, vocabulary influence, setup dependencies, and possible boundary creep. A graph edge does not mean a skill should invoke another skill.
 
@@ -43,16 +43,16 @@ flowchart TD
   Prototype --> DomainModel
   Prototype -. "promoted behavior" .-> Contract
 
-  Shape --> ToPrd["to-prd"]
-  ToPrd --> DomainRouter
-  ToPrd --> CodeDesign
-  ToPrd --> TmpPrd[".tmp/to-prd/*.md"]
-  ToPrd --> Tracker
-  ToPrd --> Labels
-  ToPrd --> ToIssues["to-issues"]
-  ToIssues --> Tracker
-  ToIssues --> Labels
-  ToIssues --> Ready["ready-for-agent issues"]
+  Shape --> ToSpec["to-spec"]
+  ToSpec --> DomainRouter
+  ToSpec --> CodeDesign
+  ToSpec --> TmpSpec[".tmp/to-spec/*.md"]
+  ToSpec --> Tracker
+  ToSpec --> Labels
+  ToSpec --> ToTickets["to-tickets"]
+  ToTickets --> Tracker
+  ToTickets --> Labels
+  ToTickets --> Ready["ready-for-agent issues"]
 
   Triage["triage"] --> Tracker
   Triage --> Labels
@@ -83,7 +83,7 @@ flowchart TD
   IntegratorBrief -. "ledger-approved only" .-> CPR
   Review --> Tracker
   Review --> Contract
-  Review --> SpecSources["PRD / spec / acceptance / source material"]
+  Review --> SpecSources["spec / acceptance / source material"]
   Review --> StandardsSources["repo standards / configs / test docs"]
   Review -. "local PR / high risk" .-> CPR
   CPR --> Contract
@@ -107,8 +107,8 @@ flowchart TD
   Arch --> DomainModel
   Arch --> HtmlReport["HTML-REPORT.md / .tmp/architecture-reviews/"]
   Arch --> Implement
-  Arch --> ToIssues
-  Arch --> ToPrd
+  Arch --> ToTickets
+  Arch --> ToSpec
 
   TDD --> TddRefs["tests.md / mocking.md / refactoring.md"]
   TddRefs -. "uncertain repro" .-> Debug
@@ -121,7 +121,7 @@ flowchart TD
 
 ## Invocation Map
 
-Source: `skills/current/*/agents/openai.yaml`.
+Source: `skills/custom/*/agents/openai.yaml`.
 
 | Skill | Invocation |
 | --- | --- |
@@ -142,8 +142,8 @@ Source: `skills/current/*/agents/openai.yaml`.
 | `review` | implicitly invocable |
 | `setup-matt-pocock-skills` | explicit-only |
 | `tdd` | implicitly invocable |
-| `to-issues` | explicit-only |
-| `to-prd` | explicit-only |
+| `to-tickets` | explicit-only |
+| `to-spec` | explicit-only |
 | `triage` | explicit-only |
 | `wayfinder` | explicit-only |
 | `writing-great-skills` | implicitly invocable |
@@ -153,14 +153,14 @@ Source: `skills/current/*/agents/openai.yaml`.
 | Owner | Owns | Read by / pointed to |
 | --- | --- | --- |
 | `README.md`, `AGENTS_SKILL_PACK_GUIDE.md` | Public and installed suggestion maps only | Humans, agents choosing a route |
-| `setup-matt-pocock-skills` | Creates repo setup surface and seed docs | `ask-matt`, setup gates in planning/tracker skills |
-| `docs/agents/issue-tracker.md` | Tracker operations, PR-as-request rules, and wayfinding operations | `to-prd`, `to-issues`, `triage`, `implement`, `parallel-implement`, `review`, `wayfinder` |
-| `docs/agents/triage-labels.md` | Category/state role to label mapping and fixed wayfinding labels | `to-prd`, `to-issues`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
-| `docs/agents/domain.md` | Routing to `CONTEXT.md`, `CONTEXT-MAP.md`, ADRs | `to-prd`, `triage`, `tdd`, `diagnosing-bugs`, `improve-codebase-architecture`, `parallel-implement` |
-| `docs/agents/engineering-contract.md` | Coding discipline, proof, `.tmp` cleanup, review/lock | `implement`, `tdd`, `diagnosing-bugs`, `improve-codebase-architecture`, `parallel-implement`, `review`, `convergent-pr-review` |
-| `domain-modeling` | Mutates domain glossary and ADRs | `grill-with-docs`, `wayfinder`, `prototype`, `triage`, `improve-codebase-architecture` |
-| `codebase-design` | Interface, seam, adapter, depth, leverage, and locality vocabulary | `to-prd`, `improve-codebase-architecture`, `tdd`, architecture/design follow-ups |
-| `research` | Primary-source research notes and source trace | `wayfinder`, `to-prd`, `to-issues`, `diagnosing-bugs`, `improve-codebase-architecture` |
+| `setup-matt-pocock-skills` | Provisions and verifies the repo setup surface | `ask-matt`, setup gates in planning/tracker skills |
+| `docs/agents/issue-tracker.md` | Tracker interface, work-item lifecycle, PR-as-request rules, and wayfinding operations | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `review`, `wayfinder` |
+| `docs/agents/triage-labels.md` | Category/state role to label mapping and fixed wayfinding labels | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
+| `docs/agents/domain.md` | Routing to `CONTEXT.md`, `CONTEXT-MAP.md`, ADRs | `to-spec`, `triage`, `tdd`, `diagnosing-bugs`, `improve-codebase-architecture`, `parallel-implement` |
+| `docs/agents/engineering-contract.md` | Command ownership, coding discipline, proof, `.tmp` cleanup, durable `.scratch` preservation, review/lock | `implement`, `tdd`, `diagnosing-bugs`, `improve-codebase-architecture`, `parallel-implement`, `review`, `convergent-pr-review` |
+| `domain-modeling` | Mutates `CONTEXT.md`, `CONTEXT-MAP.md`, and ADR truth | `ask-matt`, `grill-with-docs`, `wayfinder`, `prototype`, `setup-matt-pocock-skills`, `improve-codebase-architecture` |
+| `codebase-design` | Interface, seam, adapter, depth, leverage, and locality vocabulary | `to-spec`, `improve-codebase-architecture`, `tdd`, architecture/design follow-ups |
+| `research` | Primary-source research notes and source trace | `wayfinder`, `to-spec`, `to-tickets`, `improve-codebase-architecture` |
 | `resolving-merge-conflicts` | Source-traced Git conflict resolution | Git operations, `review`, `parallel-implement`, integration work |
 | `review` | Ordinary fixed-point Standards/Spec review | `implement`, `parallel-implement`; escalates to `convergent-pr-review` for high risk |
 
@@ -170,12 +170,12 @@ Source: `skills/current/*/agents/openai.yaml`.
 | --- | --- |
 | `writing-great-skills` | `GLOSSARY.md`: skill-authoring vocabulary |
 | `codebase-design` | `DEEPENING.md`: dependency/seam discipline; `DESIGN-IT-TWICE.md`: alternative interface exploration |
-| `domain-modeling` | `CONTEXT-FORMAT.md`, `ADR-FORMAT.md`: durable language and ADR formats |
+| `domain-modeling` | `CONTEXT-FORMAT.md`: glossary and context-map format; `ADR-FORMAT.md`: ADR gate and format |
 | `tdd` | `tests.md`, `mocking.md`, `refactoring.md`: examples and branch mechanics |
 | `prototype` | `LOGIC.md`, `UI.md`: branch mechanics; `SKILL.md` owns lifecycle and boundary |
-| `triage` | `AGENT-BRIEF.md`: ready-for-agent brief format; `OUT-OF-SCOPE.md`: rejected-work knowledge base |
-| `setup-matt-pocock-skills` | Tracker, label, domain, and engineering-contract seed docs |
-| `wayfinder` | Tracker-backed map and ticket process for foggy multi-session efforts |
+| `triage` | `AGENT-BRIEF.md`: ready-for-agent contract; `AGENT-BRIEF-EXAMPLES.md`: branch examples; `OUT-OF-SCOPE.md`: rejected-work knowledge base |
+| `setup-matt-pocock-skills` | Tracker, label, domain, and engineering-contract seeds; `scripts/validate_setup.py`: target-repo setup-surface validation |
+| `wayfinder` | `MAP-FORMAT.md`: map and ticket body shape; `SKILL.md`: foggy map lifecycle and semantics |
 | `research` | One cited repo-local Markdown note per source question |
 | `resolving-merge-conflicts` | Merge/rebase/cherry-pick conflict process and finish boundary |
 | `improve-codebase-architecture` | `HTML-REPORT.md`: report format and visual style |
@@ -185,15 +185,15 @@ Source: `skills/current/*/agents/openai.yaml`.
 
 - Suggestion maps suggest; `ask-matt` routes; neither teaches workflow procedures.
 - Setup docs own tracker, labels, domain routing, and engineering-contract details. Skills should point there instead of restating those mechanics.
-- `domain-modeling` is the only skill that should write domain glossary/ADR truth; readers follow `docs/agents/domain.md`.
-- `to-prd` owns parent PRD synthesis and tracker publication; `to-issues` owns implementation issue slicing.
+- `domain-modeling` is the only skill that writes `CONTEXT.md`, `CONTEXT-MAP.md`, or ADR truth; `setup-matt-pocock-skills` configures the layout, and vocabulary consumers follow `docs/agents/domain.md`.
+- `to-spec` owns parent spec synthesis and tracker publication; `to-tickets` owns implementation issue slicing.
 - `wayfinder` owns foggy multi-session maps; tracker docs own the transport mechanics for maps, child tickets, blocking, claiming, and resolution.
 - `research` owns primary-source legwork and cited repo-local notes; downstream skills should link the note instead of duplicating findings.
 - `resolving-merge-conflicts` owns Git conflict resolution; it may resolve files but should not abort, discard sides, commit, or continue a rebase unless explicitly approved or requested.
-- `triage` owns incoming issue/PR state transitions and ready-for-agent briefs; do not re-triage `$to-issues` output.
+- `triage` owns incoming issue/PR state transitions and ready-for-agent briefs; do not re-triage `$to-tickets` output.
 - Tracker docs own transport and tracker commands; `triage` owns ready-for-agent brief text and AI-triage disclaimer content.
 - `implement` owns one selected item; `parallel-implement` owns batch orchestration and serialized integration.
 - `review` is the ordinary closeout gate; `convergent-pr-review` is an approved high-risk/local-PR route, not default review.
 - `convergent-pr-review` may run its own read-only reviewer passes only when selected as the review route; it is not a second implementation orchestrator.
-- `handoff` carries pointers across sessions; it should reference durable artifacts, not duplicate PRDs, issues, ADRs, commits, or diffs.
+- `handoff` carries pointers across sessions; it should reference durable artifacts, not duplicate specs, issues, ADRs, commits, or diffs.
 - `.tmp/` artifacts are disposable unless a skill explicitly preserves them as source, report, or ledger evidence.

@@ -2,10 +2,10 @@
 
 This note maps the books and supporting references behind the local `$tdd` skill and its supporting files:
 
-- `/home/steve/.agents/skills/tdd/SKILL.md`
-- `/home/steve/.agents/skills/tdd/tests.md`
-- `/home/steve/.agents/skills/tdd/mocking.md`
-- `/home/steve/.agents/skills/tdd/refactoring.md`
+- `skills/custom/tdd/SKILL.md`
+- `skills/custom/tdd/tests.md`
+- `skills/custom/tdd/mocking.md`
+- `skills/custom/tdd/refactoring.md`
 
 The local skill pack stance is: classicist TDD by default, tracer-bullet vertical slices, behavior through meaningful interfaces, fakes before mocks, and refactoring only while GREEN.
 
@@ -198,7 +198,8 @@ Primary concepts:
 - one tracer bullet at a time
 - vertical slices, not horizontal batches
 - behavior through the highest useful public interface or seam
-- use `$diagnosing-bugs` before `$tdd` when repro or root cause is uncertain
+- use `$diagnosing-bugs` end-to-end when the symptom, cause, or repro is uncertain
+- use `$tdd` directly for known-repro bugs
 
 Best sources:
 

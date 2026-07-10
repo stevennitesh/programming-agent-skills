@@ -46,5 +46,5 @@ wording, not a long essay.
 - `SEARCH-VOCABULARY.md` owns reusable implement search terms.
 - `FACET-*.md` files own the actual research packets.
 - Chosen wording belongs in `docs/synthesis/facets/implement/` before any
-  runtime edit. Runtime skill edits belong in `skills/current/implement/SKILL.md`
+  runtime edit. Runtime skill edits belong in `skills/custom/implement/SKILL.md`
   only after synthesis compression, validation, final prune, and user approval.

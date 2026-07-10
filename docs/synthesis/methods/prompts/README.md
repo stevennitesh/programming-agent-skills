@@ -42,4 +42,4 @@ feeds the next step without jumping straight to runtime `SKILL.md` edits.
 - Put research outputs in `../../../research/`.
 - Put facet synthesis artifacts in `../../facets/`.
 - Put whole-skill or legacy synthesis notes in `../../skills/` or `../../families/`.
-- Put runtime behavior only in `../../../../skills/current/`.
+- Put runtime behavior only in `../../../../skills/custom/`.

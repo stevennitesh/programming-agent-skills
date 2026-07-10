@@ -13,7 +13,7 @@ This pack turns those failure modes into named workflows and engineering habits.
 It gives agents and engineers durable habits for:
 
 - sharpening vague ideas before code is written
-- turning product intent into PRDs and ready-for-agent issues
+- turning product intent into specs and ready-for-agent issues
 - implementing one bounded slice at a time
 - proving behavior through tests, seams, and useful validation
 - reviewing diffs from a fixed point
@@ -28,7 +28,7 @@ The pack treats AI speed as useful only when it is paired with engineering disci
 
 The philosophy is:
 
-- **Shape before build**: unclear intent should become a grilling session, PRD, wayfinding map, research note, or prototype before implementation starts.
+- **Shape before build**: unclear intent should become a grilling session, spec, wayfinding map, research note, or prototype before implementation starts.
 - **Slice by observable behavior**: good agent work moves through tracer bullets and support slices, not broad horizontal rewrites.
 - **Prove what matters**: load-bearing behavior needs evidence through a useful seam; output existence is not correctness.
 - **Review from a fixed point**: judge the actual diff against Standards and Spec instead of trusting the agent's story.
@@ -37,7 +37,7 @@ The philosophy is:
 
 ## Engineering Contract
 
-Every target repo gets a local `docs/agents/engineering-contract.md` from [`setup-matt-pocock-skills`](skills/current/setup-matt-pocock-skills/SKILL.md). That file is the repo-specific contract for nontrivial coding work: how an agent explores, proves, reviews, locks, and reports changes.
+Every target repo gets a local `docs/agents/engineering-contract.md` from [`setup-matt-pocock-skills`](skills/custom/setup-matt-pocock-skills/SKILL.md). That file is the repo-specific contract for nontrivial coding work: how an agent explores, proves, reviews, locks, and reports changes.
 
 The contract works by activating good engineering habit priors with leading words. Instead of telling an agent every small move to make, it gives compact handles that pull useful behavior from familiar engineering practice:
 
@@ -60,12 +60,12 @@ These words shape agents because language changes the search space. A prompt tha
 
 This pack is inspired by [Matt Pocock's AI engineering skills](https://github.com/mattpocock/skills) and by practical multi-session Codex work on real repositories. It borrows the idea that skills should be small, named workflows with strong leading words, then adapts that style for repo-local contracts, issue trackers, long-running agent work, parallel implementation, and source-traced review.
 
-It also draws from common engineering habits: TDD, PRDs, issue triage, domain modeling, deep module design, architecture review, and careful merge-conflict resolution.
+It also draws from common engineering habits: TDD, specs, issue triage, domain modeling, deep module design, architecture review, and careful merge-conflict resolution.
 
 ## What's Included
 
 - **Shaping**: `grilling`, `grill-with-docs`, `wayfinder`, `research`, `prototype`, `handoff`
-- **Product to implementation**: `to-prd`, `to-issues`, `triage`, `implement`, `parallel-implement`
+- **Product to implementation**: `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`
 - **Quality loops**: `tdd`, `diagnosing-bugs`, `resolving-merge-conflicts`, `review`, `convergent-pr-review`
 - **Design and language**: `domain-modeling`, `codebase-design`, `improve-codebase-architecture`
 - **Pack maintenance**: `setup-matt-pocock-skills`, `ask-matt`, `writing-great-skills`
@@ -81,7 +81,7 @@ Install the current active skills:
 ```bash
 : "${AGENT_SKILLS_DIR:?Set AGENT_SKILLS_DIR to your agent's skills directory}"
 mkdir -p "$AGENT_SKILLS_DIR"
-cp -R skills/current/* "$AGENT_SKILLS_DIR/"
+cp -R skills/custom/* "$AGENT_SKILLS_DIR/"
 ```
 
 PowerShell:
@@ -89,31 +89,31 @@ PowerShell:
 ```powershell
 $env:AGENT_SKILLS_DIR = "$HOME\.codex\skills"
 New-Item -ItemType Directory -Force $env:AGENT_SKILLS_DIR | Out-Null
-Copy-Item -Recurse -Force skills/current/* $env:AGENT_SKILLS_DIR
+Copy-Item -Recurse -Force skills/custom/* $env:AGENT_SKILLS_DIR
 ```
 
-Run `setup-matt-pocock-skills` once inside each target repo before using the engineering workflows there. That creates the repo-local issue tracker, triage label, domain, and engineering-contract docs that the skills expect.
+Run `setup-matt-pocock-skills` once inside each target repo before using the engineering workflows there. It builds and verifies the local setup surface: `AGENTS.md` commands and pointers, tracker lifecycle, required labels, domain routing, engineering contract, and disposable-work policy.
 
-`skills/current/` is the supported install set. `skills/extra/` is optional, and `skills/.archive/` is not active.
+`skills/custom/` is the supported install set. `skills/extra/` is optional, and `skills/.archive/` is not active.
 
 ## Using The Pack
 
-After installation, run `setup-matt-pocock-skills` once in each repo. That creates the repo-local contract the skills read: tracker operations, triage labels, domain routing, and engineering discipline.
+After installation, run `setup-matt-pocock-skills` once in each repo. It provisions the repo-local contracts and tracker vocabulary the skills consume, then verifies the setup surface before declaring the repo ready.
 
 Then use skills by naming them directly, or ask `ask-matt` when you know the shape of the work but not the route.
 
 Typical paths:
 
-- Fuzzy idea -> `grill-with-docs` -> `to-prd` -> `to-issues` -> `implement`
+- Fuzzy idea -> `grill-with-docs` -> `to-spec` -> `to-tickets` -> `implement`
 - Incoming issue or PR -> `triage` -> `implement`
-- Large unclear effort -> `wayfinder` -> `research` / `prototype` / `grilling` tickets -> `to-prd` or `implement`
+- Large unclear effort -> `wayfinder` -> `research` / `prototype` / `grilling` tickets -> `to-spec` or `implement`
 - Clear behavior change -> `tdd` or `implement`
 - Hard bug -> `diagnosing-bugs`
 - Risky diff -> `review` or `convergent-pr-review`
 
 ## Repository Layout
 
-- `skills/current/`: active skills to install
+- `skills/custom/`: active skills to install
 - `skills/extra/`: optional extra skills
 - `skills/.archive/`: inactive historical or experimental skills
 - `AGENTS_SKILL_PACK_GUIDE.md`: copyable installed-pack suggestion map

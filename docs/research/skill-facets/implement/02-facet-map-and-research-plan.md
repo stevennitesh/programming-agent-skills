@@ -8,7 +8,7 @@ for `implement`.
 
 Skill: `implement`
 
-Skill path: `skills/current/implement/SKILL.md`
+Skill path: `skills/custom/implement/SKILL.md`
 
 Step 1 output:
 [`docs/research/skill-facets/implement/01-intent-and-keywords.md`](01-intent-and-keywords.md)
@@ -39,7 +39,7 @@ Subagent inputs used:
 Constraints:
 
 - Do not research online yet.
-- Do not rewrite `skills/current/implement/SKILL.md`.
+- Do not rewrite `skills/custom/implement/SKILL.md`.
 - Do not propose final runtime wording yet.
 - Choose the research structure before source search.
 

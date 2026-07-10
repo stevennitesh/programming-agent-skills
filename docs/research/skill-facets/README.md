@@ -51,7 +51,7 @@ Research docs can contain candidate wording, but they do not choose runtime
 behavior. Promote selected wording into `docs/synthesis/` before editing the
 runtime skill.
 
-Before editing `skills/current/<skill-name>/SKILL.md`:
+Before editing `skills/custom/<skill-name>/SKILL.md`:
 
 - compress the facet packet into a synthesis note with the smallest
   behavior-changing wording;

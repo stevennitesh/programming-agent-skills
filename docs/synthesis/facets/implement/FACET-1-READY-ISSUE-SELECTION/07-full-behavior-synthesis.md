@@ -8,7 +8,7 @@ for `implement`.
 
 Skill: `implement`
 
-Skill path: `skills/current/implement/SKILL.md`
+Skill path: `skills/custom/implement/SKILL.md`
 
 Facet: `1 - Ready Issue Selection`
 
@@ -47,7 +47,7 @@ Typed gates and branch exits:
 - Rechecks: risk-domain confirmation; obvious multi-issue smell.
 - Handoff: selection facts recorded before Context Intake.
 - Branch exits: multiple candidates ask user; no ready item blocks; PRD/spec
-  without one issue hands off to `to-issues`; readiness repair/tracker mutation
+  without one issue hands off to `to-tickets`; readiness repair/tracker mutation
   hands off; blocked candidate asks/stops; result-defining ambiguity asks;
   prompt-poor/no done signal hands off; risk asks; premature planning rejoins
   after recording facts; explicit ineligible target blocks without silent
@@ -78,7 +78,7 @@ Duplicate-term choices:
 
 Owner-severity decisions:
 
-- Hard-boundary: `to-issues` owns PRD/spec decomposition; `triage` owns
+- Hard-boundary: `to-tickets` owns PRD/spec decomposition; `triage` owns
   ready-state promotion and issue-brief repair; tracker docs own exact syntax,
   commands, labels, ordering fields, and metadata mutation; user/repo-visible
   policy owns priority.
@@ -170,7 +170,7 @@ elsewhere.
 | Branch exits | Used | Branches remain ask-user, handoff-skill, blocked, or rejoin-flow. | No generic "ask if unsure" branch is introduced. |
 | Priority preservation | Used | Must candidates remain runtime candidates. | Should/Could items become compact branches or support pressure. |
 | Duplicate-term choices | Used | Primary terms are kept; source terms are demoted. | WIP, DoR, INVEST, Scrum, and Small CLs do not become runtime anchors. |
-| Owner-severity decisions | Used | Hard-boundary conflicts become stop/handoff explanations. | `triage`, `to-issues`, tracker docs, Context Intake, Semantic Proof, Review And Lock, and engineering contract remain owners. |
+| Owner-severity decisions | Used | Hard-boundary conflicts become stop/handoff explanations. | `triage`, `to-tickets`, tracker docs, Context Intake, Semantic Proof, Review And Lock, and engineering contract remain owners. |
 | Support/reference pointers | Used | Support keeps rationale and examples. | Runtime should point to repo tracker docs for exact syntax. |
 | Explicit-target no-substitution branch | Used | Named ineligible target stops on that item instead of silently replacing it. | This is a hard eligibility behavior for Prompt 08. |
 | Unresolved design questions | Resolved or deferred | `agent-prompt adequacy` remains visible; risk and multi-issue branches are short; PRD/spec route remains explicit. | Prompt 08 may decide whether risk/size survive inline after compression. |
@@ -295,7 +295,7 @@ handed off. Then it moves to Context Intake.
 
 | Gate | Gate Type | Why It Matters | Too Weak If | Too Heavy If | Candidate Consequence Shape |
 | --- | --- | --- | --- | --- | --- |
-| Candidate surface can produce one item | hard gate | Prevents source documents, queues, and vague requests from becoming scope. | It accepts a PRD/spec as scope. | It decomposes the PRD into issues. | "No one issue-equivalent item, no implementation." |
+| Candidate surface can produce one item | hard gate | Prevents source documents, queues, and vague requests from becoming scope. | It accepts a PRD/spec as scope. | It decomposes the PRD inTo Tickets. | "No one issue-equivalent item, no implementation." |
 | Exactly one selected issue-equivalent item | hard gate | Bounds the run to one item. | It names a list or project. | It rejects valid user-selected path-backed work. | "Name one issue-equivalent item." |
 | Selection authority is visible | hard gate | Prevents invented priority/readiness. | It says "looks ready." | It edits labels, state, or priority. | "Use repo-visible order or explicit user target." |
 | Tracker-state eligibility is visible | hard gate | Keeps named tracker work from bypassing readiness. | Closed, needs-info, ready-for-human, wontfix, or other ineligible state passes. | Agent edits state or inlines exact tracker syntax. | "Named target must be eligible; do not substitute silently." |
@@ -317,7 +317,7 @@ handed off. Then it moves to Context Intake.
 | No ready issue-equivalent item exists | Stop | `implement` must not create work to stay busy. | User provides a ready item or upstream workflow creates one. |
 | User gives PRD/spec/path without one ready item | Stop / ask / handoff | A source document is not automatic implementation scope. | One ready issue-equivalent item is named. |
 | User names an ineligible tracker item | Stop | An explicit target does not grant permission to bypass readiness. | Named item becomes eligible or user explicitly selects another ready item. |
-| Selection requires issue repair, relabeling, promotion, splitting, or tracker metadata edit | Stop / handoff | Making work ready belongs upstream. | `triage`, `to-issues`, or tracker owner makes it ready. |
+| Selection requires issue repair, relabeling, promotion, splitting, or tracker metadata edit | Stop / handoff | Making work ready belongs upstream. | `triage`, `to-tickets`, or tracker owner makes it ready. |
 | Candidate is blocked | Stop / ask | Dependency order matters. | Blocker is resolved, selected, or order is confirmed. |
 | Candidate is prompt-poor or has no done signal | Stop / handoff | Agent would invent the brief or do unverifiable work. | Issue brief or done signal is repaired upstream. |
 | Result-defining ambiguity exists | Ask | Missing detail changes what should be built. | Missing result detail is supplied. |
@@ -347,7 +347,7 @@ handed off. Then it moves to Context Intake.
 | DoR / stage-gate contrast | Support | support/reference section | Explains why readiness check stays small. |
 | Issue-as-prompt examples | Support | support/reference section | Helps examples without bloating runtime. |
 | Tracker labels, commands, ordering fields, dependency syntax | Elsewhere | other skill/contract | Repo tracker docs own exact details. |
-| Issue repair, promotion, splitting, relabeling | Elsewhere | other skill/contract | `triage` / `to-issues` own readiness repair. |
+| Issue repair, promotion, splitting, relabeling | Elsewhere | other skill/contract | `triage` / `to-tickets` own readiness repair. |
 | Full proof strategy | Elsewhere | later facet | Semantic Proof owns proof. |
 | Context reading, file discovery, implementation planning | Elsewhere | later facet | Context Intake owns this after selection. |
 | Review and lock behavior | Elsewhere | later facet | Review And Lock owns output review. |
@@ -362,13 +362,13 @@ handed off. Then it moves to Context Intake.
 | Silent substitution when named item is ineligible | Reject | Violates explicit user target and hides readiness failure. | User explicitly asks for another ready issue. |
 | Whole PRD/spec as implementation scope | Reject | Violates one issue-equivalent boundary. | A ready issue-equivalent slice is named. |
 | Full DoR checklist | Reject | Turns selection into triage/process ceremony. | Working on `triage` or repo process docs. |
-| Full INVEST matrix | Reject | Issue authoring and slicing are upstream. | Working on `to-issues` or `triage`. |
+| Full INVEST matrix | Reject | Issue authoring and slicing are upstream. | Working on `to-tickets` or `triage`. |
 | Runtime tracker command syntax | Defer | Repo docs own exact syntax and change over time. | Editing repo tracker docs. |
 | Issue repair during selection | Reject | `implement` detects unready work but must not make it ready. | User explicitly asks for tracker/triage maintenance. |
 | Agent chooses priority among unordered candidates | Reject | Product priority is not agent-owned. | User or repo order selects one. |
 | Full risk policy | Defer | Runtime should ask; repo docs define thresholds. | Working on engineering contract or repo policy. |
 | Full proof plan before selection | Reject | Semantic Proof owns proof strategy. | Later facet starts after selection. |
-| Detailed slicing of broad work | Reject here | Bounded Slice Control or `to-issues` owns slicing. | A later facet or skill is invoked. |
+| Detailed slicing of broad work | Reject here | Bounded Slice Control or `to-tickets` owns slicing. | A later facet or skill is invoked. |
 | Generic "ask if unsure" | Reject | Causes timid over-asking. | It becomes named gates: order, ambiguity, blockers, risk, missing target, or ineligible explicit target. |
 | Planning/file discovery before selection facts | Reject | Collapses into Context Intake. | Selection facts are recorded first. |
 
@@ -380,7 +380,7 @@ handed off. Then it moves to Context Intake.
 | Should `tracker-state eligibility` stay separate from selection authority? | It protects explicit-target cases and keeps tracker state visible. | resolved-for-candidate-draft | Keep it as its own candidate line or sub-gate; point exact syntax to tracker docs. |
 | Should `risk-domain confirmation` be inline? | It protects high-risk pickup but can become policy text. | defer-to-Prompt-08 | Keep as a short ask gate plus repo-policy pointer if budget allows. |
 | Should the obvious multi-issue smell survive runtime? | It catches unsafe scope but can drift into slicing. | defer-to-Prompt-08 | Keep only if compressed as "ask/narrow; do not split here." |
-| How explicit should PRD/spec routing be? | Users may give source documents while implying a narrow slice. | resolved-for-candidate-draft | Say source docs require one ready issue-equivalent item or `to-issues` handoff. |
+| How explicit should PRD/spec routing be? | Users may give source documents while implying a narrow slice. | resolved-for-candidate-draft | Say source docs require one ready issue-equivalent item or `to-tickets` handoff. |
 | Should Prompt 08 use "pull" as a leading word? | It is useful taste but less concrete than the selected-item gate. | defer-to-Prompt-08 | Prefer one selected issue-equivalent item; keep pull as support if needed. |
 
 ## 14. Verbose Draft Notes
@@ -450,7 +450,7 @@ has rushed past the facet.
 | Kanban/WIP/DoR/INVEST/Scrum source terms | Support-Only | Useful rationale but too heavy for runtime. | Always demote from runtime unless needed as support pointer. |
 | Tracker command syntax | Avoid | Repo docs own exact syntax. | Revive only in tracker docs. |
 | Full proof strategy | Avoid | Semantic Proof owns this. | Revive in proof facet. |
-| Issue repair/splitting/promotion steps | Avoid | `triage` / `to-issues` own this. | Revive in those skills. |
+| Issue repair/splitting/promotion steps | Avoid | `triage` / `to-tickets` own this. | Revive in those skills. |
 
 ## 16. Candidate Draft Contract
 

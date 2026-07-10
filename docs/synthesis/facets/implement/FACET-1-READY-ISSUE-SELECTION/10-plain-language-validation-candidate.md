@@ -8,7 +8,7 @@ for `implement`.
 
 Skill: `implement`
 
-Skill path: `skills/current/implement/SKILL.md`
+Skill path: `skills/custom/implement/SKILL.md`
 
 Facet or scope: `1 - Ready Issue Selection`
 
@@ -19,7 +19,7 @@ Draft decision: `ready-for-plain-language-candidate`
 
 Traceability map and validation scenarios: Prompt 09 Sections 8 and 10.
 
-Existing skill text: `skills/current/implement/SKILL.md`, especially
+Existing skill text: `skills/custom/implement/SKILL.md`, especially
 `### 1. Select The Issue`.
 
 Revision feedback: none.
@@ -82,7 +82,7 @@ No revision feedback to disposition.
 | --- | --- | --- | --- |
 | One concrete implementation target | `one issue-equivalent item`; "No one item, no implementation." | Keep | Carries V1 and prevents queue/PRD/batch pickup. |
 | Valid explicit issue/path/URL targets | `issue-equivalent item`; `path-backed ready slice` | Keep | Preserves current explicit target behavior and V3. |
-| Broad source surfaces are not scope | "not implementation scope by itself" | Keep | Keeps PRD/spec/path source work routed without becoming `to-issues`. |
+| Broad source surfaces are not scope | "not implementation scope by itself" | Keep | Keeps PRD/spec/path source work routed without becoming `to-tickets`. |
 | Source docs may identify one ready item | "use those sources only to find one ready item" | Keep | Preserves V2 and V12 without decomposition. |
 | Selection authority | `explicit user target` / `repo-visible ready/order policy` | Keep | Prevents invented priority and preserves V4. |
 | No-input tracker path | `next unblocked ready item` | Keep | Preserves existing skill behavior and V11. |
@@ -108,7 +108,7 @@ Select exactly one issue-equivalent item before Context Intake: one issue, URL,
 tracker item, path-backed ready slice, or explicit user-selected work item. A
 queue, PRD, spec, batch, list, or bare source path is not implementation scope
 by itself. Use those sources only to find one ready item. If they do not name
-one, ask for the target item or hand off to `to-issues`. Use an explicit path
+one, ask for the target item or hand off to `to-tickets`. Use an explicit path
 or URL when it already names one issue-equivalent item. No one item, no
 implementation.
 
@@ -153,7 +153,7 @@ Context Intake. Select first, plan later.
 | --- | --- | --- |
 | `R1`, `R4`: exactly one item; no one item, no implementation | Opening paragraph and blunt gate | Prompt 11 must ensure this blocks queues and batches. |
 | `R5`: issue, URL, tracker item, path-backed ready slice, explicit target | Opening definition | Final prune could remove path/URL protection. |
-| `R2`, `R3`: PRD/spec/source/path handling | Source-surface sentences and `to-issues` handoff | Prompt 11 must distinguish valid path target from bare source path. |
+| `R2`, `R3`: PRD/spec/source/path handling | Source-surface sentences and `to-tickets` handoff | Prompt 11 must distinguish valid path target from bare source path. |
 | `A1`: explicit user target or repo-visible policy | Selection authority paragraph | "Ready/order policy" must not let the agent invent priority. |
 | `A2`: unordered multiple candidates ask | "multiple eligible items... ask" | Ask target is concise; Prompt 11 should test ambiguous order. |
 | `A3`: no ready item stops | "stop and report that surface" | Reporting must not become issue creation or repair. |
@@ -172,7 +172,7 @@ Context Intake. Select first, plan later.
 | Plain-Language Candidate Area | Prompt 09/10 Validation IDs | What Prompt 11 Should Test First | Pass / Fail Signal |
 | --- | --- | --- | --- |
 | One issue-equivalent item gate | `V1-single-item` | Batch, queue, or project request with no one item. | Pass: stops/asks; fail: starts implementation. |
-| Source-surface handling | `V2-prd-source-handoff`, `V12-prd-identifies-one-ready-item` | PRD/spec/source document with and without one named ready item. | Pass: selects only the one ready item or routes to `to-issues`; fail: implements whole source. |
+| Source-surface handling | `V2-prd-source-handoff`, `V12-prd-identifies-one-ready-item` | PRD/spec/source document with and without one named ready item. | Pass: selects only the one ready item or routes to `to-tickets`; fail: implements whole source. |
 | Path/URL acceptance | `V3-path-backed-slice` | Explicit path/URL that already names one ready slice versus bare source path. | Pass: accepts ready path/URL, rejects bare source path; fail: overblocks or overaccepts. |
 | Selection authority and ineligible explicit target | `V4-authority` | Named tracker issue is ineligible. | Pass: stops on that target without substitution or metadata edits; fail: chooses another issue or edits labels. |
 | No-ready surface | `V5-no-ready` | Checked surface has no ready item. | Pass: stops and reports surface; fail: creates/repairs/promotes work. |

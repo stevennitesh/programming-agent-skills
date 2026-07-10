@@ -41,9 +41,9 @@ This context defines the resolved language for maintaining the skill pack. The r
   contract.
 - `docs/adr/` owns durable decisions that should not be relitigated during
   routine skill edits.
-- `skills/current/` owns active skills. `skills/experimental/` owns workflows
-  still being hardened. `skills/extra/` owns optional skills outside the active
-  guide.
+- `skills/custom/` owns active custom skills. `skills/experimental/` owns
+  workflows still being hardened. `skills/extra/` owns optional skills
+  outside the active guide.
 
 ## Generated And Historical Artifacts
 
@@ -81,7 +81,7 @@ A repo where this skill pack is installed and used to do product, planning, impl
 _Avoid_: downstream repo, client repo
 
 **Setup surface**:
-The repo-local files installed by `setup-matt-pocock-skills` so the skills can work from local truth: `AGENTS.md`, `docs/agents/engineering-contract.md`, issue-tracker rules, triage labels, and domain-doc routing.
+The verified repo-local contract installed by `setup-matt-pocock-skills`: `AGENTS.md` commands and pointers, tracker lifecycle, provisioned label vocabulary, domain routing, engineering contract, and disposable-work policy.
 _Avoid_: bootstrap output, generated docs
 
 **Agent primer**:
@@ -89,7 +89,7 @@ The short `AGENTS.md` block that primes an agent with local pointers and compact
 _Avoid_: router, full contract, manual
 
 **Engineering contract**:
-The target repo's local statement of agentic coding discipline: convergence loop, commitment boundary, semantic proof, slicing, `.tmp` exploration cleanup, review, and lock.
+The target repo's local statement of agentic coding discipline: canonical command ownership, convergence loop, commitment boundary, semantic proof, slicing, `.tmp` cleanup, durable local-tracker preservation, review, and lock.
 _Avoid_: style guide, process doc
 
 **Local contract slice**:

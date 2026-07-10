@@ -29,10 +29,10 @@ Use these terms consistently going forward:
 
 ## Proposed Changes
 
-Do not revert `skills/current/` to upstream. Instead:
+Do not revert `skills/custom/` to upstream. Instead:
 
 1. Update `ask-matt` to restore `main flow`, `on-ramp`, `standalone`, `grilling session`, and `independently-grabbable`, while keeping the current routes.
-2. Update `to-issues` to prefer `independently-grabbable issues` and explain `AFK-ready` beside `ready-for-agent`.
+2. Update `to-tickets` to prefer `independently-grabbable issues` and explain `AFK-ready` beside `ready-for-agent`.
 3. Update `tdd` to name `red-green-refactor` in the description and first paragraph.
 4. Update README wording to reduce `Codex-ready` in public-facing sections and prefer `ready-for-agent` / `AFK-ready`.
 5. Audit the validator so it does not block Matt vocabulary that carries intent, especially `AFK`, `agent-ready`, `user-invoked`, `model-invoked`, `shared language`, and `grilling session`.

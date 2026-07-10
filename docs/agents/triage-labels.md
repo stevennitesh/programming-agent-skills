@@ -25,3 +25,17 @@ When a skill mentions a role, use the corresponding label string from these tabl
 Every triaged issue should carry exactly one category role and one state role.
 
 Edit the right-hand column to match whatever vocabulary you actually use.
+
+## Wayfinding Labels
+
+`$wayfinder` uses these fixed labels for map and ticket mechanics. They are not triage roles.
+
+- `wayfinder:map`
+- `wayfinder:research`
+- `wayfinder:prototype`
+- `wayfinder:grilling`
+- `wayfinder:task`
+
+## Provisioning
+
+For GitHub or GitLab, `$setup-matt-pocock-skills` verifies every mapped and fixed label exists and creates only missing labels after approval. Local Markdown uses these values directly and creates no external labels.

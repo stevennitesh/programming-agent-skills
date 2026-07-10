@@ -1,6 +1,6 @@
 # Issue Tracker: GitHub
 
-Issues and PRDs for this repo live as GitHub issues. Use the GitHub connector for issue and pull-request operations.
+Issues and specs for this repo live as GitHub issues. Use the GitHub connector for issue and pull-request operations.
 
 Repository: `stevennitesh/programming-agent-skills`
 
@@ -32,6 +32,35 @@ Create a GitHub issue.
 ## When A Skill Says "Fetch The Relevant Ticket"
 
 Fetch the issue with the GitHub connector, including comments and labels.
+
+## Work-item operations
+
+Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement`, and `$review`.
+
+**Close implemented items:** no.
+
+- **Packet**: the issue body and comments are the durable packet. A parent spec owns intent; child issues own implementation slices and closeout evidence. No separate repo-local packet is required unless `AGENTS.md` points to one. Approved implementation tickets carry the mapped `ready-for-agent` state and one category role when the source settles it.
+- **Parent / child**: use GitHub sub-issues when available. Otherwise keep an ordered task list in the parent and put `Part of #<parent>` near the top of each child.
+- **Blocking**: use native issue dependencies when available. Otherwise put `Blocked by: #<n>, #<n>` near the top of the child body. A work item is unblocked when every blocker is closed.
+- **Ready query**: list open issues with the mapped `ready-for-agent` state, then drop issues with an open blocker or assignee. Within a parent, preserve child order; otherwise choose oldest first.
+- **Claim**: assign the work item to the owner or orchestrator before implementation dispatch; the assignee is the concurrency guard.
+- **Release**: remove the active assignee when work blocks, is abandoned, or reaches closeout.
+- **Closeout**: after required review and commits, post the closeout packet, apply `implemented`, remove the prior state-role label, and release the claim. Close the issue only when `Close implemented items` is `yes` or the user directs it. Close a parent only after its in-scope children and follow-ups are drained.
+
+## Wayfinding operations
+
+Used by `$wayfinder`. The **map** is a single GitHub issue with child issues as tickets.
+
+- **Map**: create one issue labelled `wayfinder:map`. Its body holds Destination, Notes, Decisions So Far, Not Yet Specified, and Out Of Scope.
+- **Child ticket**: create one issue per ticket, linked to the map as a GitHub sub-issue when available. If sub-issues are unavailable, add the child to a task list in the map body and put `Part of #<map>` at the top of the child body. Put `Participation: HITL | AFK` near the top. Label each ticket with exactly one `wayfinder:<type>` label: `research`, `prototype`, `grilling`, or `task`.
+- **Blocking**: use the work-item blocking convention. For a blocker still in fog, put `Blocked: fog - <gist>` near the top of the child body. A ticket is unblocked when every blocker is closed and any `Blocked:` marker has been removed.
+- **Frontier query**: list the map's open children, then drop tickets with an open blocker, a `Blocked:` marker, or an assignee. The first remaining ticket in map order is the frontier.
+- **Claim**: use the work-item claim convention before work.
+- **Release**: use the work-item release convention when active work ends.
+- **Resolve**: post the answer as a comment, close the ticket, release the claim, then append one context pointer to the map's Decisions So Far.
+- **Block**: comment with the blocker, wire a sharp blocker or add the fog marker, release the claim, and leave the ticket open.
+- **Out of scope**: comment with the reason, close the ticket, release the claim, then append one linked note to the map's Out Of Scope section.
+- **Complete map**: after the map's closing conditions hold, post the destination and next route as a closing comment, then close the map issue.
 
 ## When A Skill Says "Post A Codex-Ready Brief"
 

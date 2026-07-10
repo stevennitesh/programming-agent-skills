@@ -1,7 +1,0 @@
-policy:
-  allow_implicit_invocation: true
-
-interface:
-  display_name: "Convergent PR Review"
-  short_description: "Verified PR finding ledger"
-  default_prompt: "Use $convergent-pr-review to review this PR locally against main with 2 reviewers at high effort for up to 2 rounds."

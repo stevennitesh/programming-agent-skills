@@ -1,7 +1,0 @@
-interface:
-  display_name: Parallel Implement
-  short_description: Run a wavefront implementation loop: orchestrator, isolated one-commit workers, and hot integrator.
-  default_prompt: Use $parallel-implement to run a selected tracker scope through wave dispatch, one-commit worker handoffs, serial integration, loop-close review, and tracker lock.
-
-policy:
-  allow_implicit_invocation: false

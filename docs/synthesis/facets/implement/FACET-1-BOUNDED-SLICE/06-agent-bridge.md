@@ -8,7 +8,7 @@ for `implement` Facet 1.
 
 Skill: `implement`
 
-Skill path: `skills/current/implement/SKILL.md`
+Skill path: `skills/custom/implement/SKILL.md`
 
 Facet: `1. Bounded Slice`
 
@@ -448,7 +448,7 @@ Next:
 | Commitment changes | No | Pointer only | No | Facet 4, engineering contract | User-owned decisions need a separate authority model. |
 | Load-bearing internals/seam depth | No | Pointer only | No | Facet 6, `codebase-design` | This flow should not become design theory. |
 | Implementation note, residual risk, issue state, commit readiness | No | Pointer only | No | Facet 8, `$review` | Closing and locking behavior belongs later. |
-| Story mapping/backlog/product workshop process | No | No | Yes | `to-prd`, `to-issues` if needed | Useful source pressure, not implement runtime. |
+| Story mapping/backlog/product workshop process | No | No | Yes | `to-prd`, `to-tickets` if needed | Useful source pressure, not implement runtime. |
 | Small-batch economics and speed claims | No | Maybe | Yes | No | Keep as caution against overclaiming. |
 | Google CL stacking/approval bits | No | No | Yes | Repo review docs if ever needed | Source-specific process is not portable runtime behavior. |
 | Agent benchmarks/framework terms | No | No | Yes | No | No direct behavior after translation. |
@@ -462,7 +462,7 @@ Next:
 | Duplicates the engineering contract | The repo contract owns commitment authority and broad engineering discipline. | Mention only when boundedness changes; point commitment decisions to Facet 4 and the contract. |
 | Duplicates `$tdd` or Semantic Proof | Proof target language can drift into test procedure. | Keep proof as a boundary and handoff; leave red-green mechanics and proof modes to `$tdd` and Facet 5. |
 | Duplicates `$review` or Review And Lock | "Reviewable" can become final review instructions. | Runtime keeps one concept plus proof; later facets own fixed-point review and lock. |
-| Duplicates `triage` / `to-issues` | Missing proof target could turn into issue-authoring workflow. | Stop or propose a narrower slice; do not author the whole issue inside this facet. |
+| Duplicates `triage` / `to-tickets` | Missing proof target could turn into issue-authoring workflow. | Stop or propose a narrower slice; do not author the whole issue inside this facet. |
 | Walking skeleton becomes architecture theater | It is valuable only when the proof path is uncertain. | Keep as support-only and require approval before architecture/dependency/tooling/public-contract/data/security/privacy changes. |
 | File spread becomes numeric policy | File counts can be misleading. | Treat spread as evidence to re-bound and justify, not as a hard threshold. |
 | Failed proof broadens scope | Agents often chase whatever a tool reports. | Require classification before fixing and fix only in-slice failures. |

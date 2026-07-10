@@ -18,5 +18,5 @@ docs/synthesis/facets/<skill-name>/
 ```
 
 Research stays in `docs/research/`. Runtime behavior stays in
-`skills/current/`. This folder owns the synthesis and integration artifacts
+`skills/custom/`. This folder owns the synthesis and integration artifacts
 between those boundaries.

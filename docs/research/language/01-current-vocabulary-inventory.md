@@ -2,7 +2,7 @@
 
 This document inventories unusual agentic coding vocabulary from the core
 language surfaces: docs/agents/engineering-contract.md, CONTEXT.md, ADRs,
-README.md, AGENTS.md, skills/current/, and the upstream comparison clone at
+README.md, AGENTS.md, skills/custom/, and the upstream comparison clone at
 .tmp/mattpocock-skills.
 
 `CONTEXT.md` remains the canonical glossary. This file is a scan-friendly

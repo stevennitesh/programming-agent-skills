@@ -9,4 +9,4 @@ This folder tracks synthesis artifacts for the `implement` skill by facet.
 
 Use this map for synthesis status only. Research packets remain in
 `../../../research/skill-facets/implement/`, and runtime edits remain in
-`../../../../skills/current/implement/SKILL.md`.
+`../../../../skills/custom/implement/SKILL.md`.

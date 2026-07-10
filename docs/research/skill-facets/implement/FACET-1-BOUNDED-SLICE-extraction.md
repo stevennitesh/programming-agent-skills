@@ -8,7 +8,7 @@ for `implement` Facet 1.
 
 Skill: `implement`
 
-Skill path: `skills/current/implement/SKILL.md`
+Skill path: `skills/custom/implement/SKILL.md`
 
 Facet: `1. Bounded Slice`
 

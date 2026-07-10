@@ -8,7 +8,7 @@ for `implement`.
 
 Skill: `implement`
 
-Skill path: `skills/current/implement/SKILL.md`
+Skill path: `skills/custom/implement/SKILL.md`
 
 Facet: `1 - Ready Issue Selection`
 
@@ -75,7 +75,7 @@ Subagent inputs used:
 
 Constraints:
 
-- Do not rewrite `skills/current/implement/SKILL.md`.
+- Do not rewrite `skills/custom/implement/SKILL.md`.
 - Do not extract detailed lessons yet.
 - Do not summarize sources for their own sake.
 - Rank sources by usefulness for improving this facet's agent behavior.
