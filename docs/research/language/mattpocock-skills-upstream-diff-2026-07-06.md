@@ -1,5 +1,7 @@
 # Matt Pocock Skills Upstream Diff - 2026-07-06
 
+Durable source and reconstruction: [UPSTREAM-SOURCE.md](UPSTREAM-SOURCE.md).
+
 ## Scope
 
 Compared the copied old repo at `.tmp/mattpocock-skills` against the freshly fetched upstream `origin/main`.

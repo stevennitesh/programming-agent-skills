@@ -1,32 +1,44 @@
 # Deepening
 
-Use this when dependency shape matters.
+Use this branch when dependency shape changes the seam, substitute, test migration, or validation strategy.
 
-`SKILL.md` owns the vocabulary and taste. This file owns the deepening move: dependency category, seam discipline, adapter/substitute strategy, test migration, and stop conditions.
+[SKILL.md](SKILL.md) owns vocabulary and taste gates. [DIRECT-DESIGN.md](DIRECT-DESIGN.md) owns Source Trace, the direct pass, and final design packet. This file owns dependency classification, seam discipline, adapter strategy, coverage parity, and the bounded migration.
 
-A deepening move should increase **depth**, **leverage**, or **locality** without widening the bounded slice. If behavior-preserving work unlocks later tracer bullets, name it as a support slice.
+Cluster -> dependency category -> real seam -> coverage parity -> bounded migration.
+
+## Contents
+
+- [Process](#process)
+- [Deepening Packet](#deepening-packet)
+- [Dependency Categories](#dependency-categories)
+- [Seam Discipline](#seam-discipline)
+- [Testing Strategy](#testing-strategy-replace-dont-layer)
+- [Completion Criteria](#completion-criteria)
 
 ## Process
 
-1. Name the shallow cluster and the spread behavior or decision.
+1. Name the shallow cluster and spread behavior or decision.
 2. Name the deeper module and caller-facing interface.
-3. Classify each dependency behind or across the seam.
-4. Choose the narrowest real seam and adapter/substitute strategy.
-5. Move tests toward the deeper interface with coverage parity.
-6. Keep, rewrite, or delete old tests by behavior value.
-7. Stop when the next move would widen the bounded slice.
+3. Classify every dependency behind or across the seam.
+4. Choose the narrowest real seam and adapter or substitute strategy.
+5. Establish coverage parity through the deeper interface.
+6. Classify each old test as add, rewrite, keep, or delete.
+7. Name the migration and validation proof.
+8. Stop at the bounded-slice edge.
 
-A good deepening recommendation includes:
+## Deepening Packet
 
-- current shallow shape
-- proposed deeper module
-- interface contract
-- dependency category
-- seam placement
-- adapter or local substitute strategy
-- tests to add, rewrite, keep, or delete
-- migration path
-- validation command or proof
+Contribute these fields to the parent design packet:
+
+- shallow cluster and spread behavior;
+- deeper module and interface;
+- every dependency category;
+- seam, adapters, and substitutes;
+- tests to add, rewrite, keep, or delete;
+- coverage-parity evidence;
+- bounded migration path;
+- validation command or proof;
+- stop boundary and follow-ups.
 
 ## Dependency Categories
 
@@ -34,40 +46,17 @@ Classify dependencies by what they need from tests and runtime.
 
 ### 1. In-Process
 
-Pure computation, in-memory state, no I/O.
+Pure computation and in-memory state need no adapter. Move the decision into the module that owns it and prove behavior through the deeper interface.
 
-Best move: merge shallow modules or move the decision into the module that owns the domain concept. No adapter is needed.
-
-Test through the deeper module's interface.
-
-Good:
-
-```python
-total = price_cart(cart, discounts=discounts, tax_region=customer.region)
-```
-
-The pricing module owns line totals, discounts, taxability, rounding, and currency rules.
-
-Bad:
-
-```python
-line_total = calculate_line_total(line)
-discounted = apply_discount(line_total, discount)
-tax = calculate_tax(discounted, customer.region)
-total = add_tax(discounted, tax)
-```
-
-This may be fine inside the pricing implementation. It is shallow when every caller must know the sequence.
-
-Validation: behavior tests through the deeper interface, plus focused module tests only for dense rules that are real behavior in their own right.
+Use focused internal tests only for dense rules that are independently meaningful.
 
 ### 2. Local-Substitutable
 
-Dependencies with realistic local substitutes: in-memory stores, temp filesystems, local service emulators, SQLite/PGLite, fake clocks, or deterministic queues.
+Dependencies with realistic local substitutes: in-memory stores, isolated `.tmp/` filesystems, local service emulators, SQLite/PGLite, fake clocks, or deterministic queues.
 
-Best move: keep the deeper module's external interface small and test it with the local substitute. Do not expose extra seams just so the substitute can be injected unless injecting that dependency is part of the real module contract or keeps I/O at the edge.
+Keep the deeper module's external interface small and test it with the local substitute. Add dependency injection to the external contract only when the dependency is a real caller concern or keeps I/O at the edge.
 
-Good:
+Behavior proof:
 
 ```python
 store = create_test_store(
@@ -84,9 +73,9 @@ assert receipt.status == "confirmed"
 assert store.inventory.available("COURSE-TS") == 1
 ```
 
-The test proves checkout behavior through the checkout interface while using a local store substitute. Inspecting `store.inventory` is test fixture inspection, not a caller-facing production interface.
+The test proves checkout behavior through the checkout interface while using a local store substitute. Inspecting `store.inventory` is fixture inspection rather than a caller-facing production interface.
 
-Bad:
+Call-sequence wiring:
 
 ```python
 checkout = Checkout(
@@ -97,7 +86,7 @@ checkout = Checkout(
 )
 ```
 
-This exposes implementation seams and turns the test into call-sequence wiring.
+This exposes implementation seams and turns the test into wiring verification.
 
 Validation: run behavior tests through the deeper interface using the local substitute. Keep separate substitute tests only when the substitute has meaningful contract risk.
 
@@ -105,13 +94,11 @@ Validation: run behavior tests through the deeper interface using the local subs
 
 Your own services across a network boundary: internal APIs, queues, workers, or microservices.
 
-Best move: define an interface at the seam where transport varies. Keep domain logic in the deep module. Production uses an HTTP/gRPC/queue adapter. Tests use an in-memory or fake adapter.
+Define an interface at the seam where transport varies. Keep domain logic in the deep module. Production uses an HTTP, gRPC, or queue adapter; tests use an in-memory or fake adapter.
 
 Recommendation shape:
 
 > Define an interface at the shipment quote seam. Keep quote selection and fallback behavior in the shipping module. Use an HTTP adapter for production and an in-memory adapter for tests, so transport varies but the domain decision stays local.
-
-Good:
 
 ```python
 class QuoteGateway(Protocol):
@@ -136,21 +123,21 @@ quote = shipping.quote(
 
 The seam is real because production and tests use different adapters, and the owned remote service can be represented locally.
 
-Validation: behavior tests through the deep module with a fake adapter, plus contract checks for the production adapter when the remote contract is risky. Contract checks do not replace behavior tests.
+Validation: prove domain behavior through the deep module with a fake adapter. Add production-adapter contract checks when the remote contract carries meaningful risk.
 
 ### 4. True External
 
-Third-party systems you do not control: payments, email, SMS, carrier APIs, hosted LLMs, analytics, or external identity providers.
+Third-party systems outside your control: payments, email, SMS, carrier APIs, hosted LLMs, analytics, or external identity providers.
 
-Best move: put an adapter seam at the external dependency. The deep module owns domain behavior. The adapter owns third-party request/response translation.
+Place an adapter seam at the external dependency. The deep module owns domain behavior; the adapter owns third-party request and response translation.
 
-Use the smallest test double that proves the behavior:
+Use the smallest test double that proves the risk:
 
-- **Fake** when domain behavior needs realistic external outcomes.
-- **Stub** when one fixed external response is enough.
-- **Mock** only when the adapter call contract itself is the behavior or risk.
+- **Fake** for realistic external outcomes that drive domain behavior.
+- **Stub** for one fixed external response.
+- **Mock** for an adapter call contract that is itself the behavior or risk.
 
-Good domain behavior test:
+Domain behavior proof:
 
 ```python
 payments = FakePaymentAdapter(
@@ -166,7 +153,7 @@ assert receipt.status == "confirmed"
 assert receipt.transaction_id == "txn_123"
 ```
 
-Good adapter contract test:
+Adapter contract proof:
 
 ```python
 def test_stripe_adapter_sends_authorized_amount(stripe_client):
@@ -181,54 +168,32 @@ def test_stripe_adapter_sends_authorized_amount(stripe_client):
     )
 ```
 
-This test belongs around the Stripe adapter. It is acceptable because the request contract to Stripe is the behavior under test.
+Keep vendor translation inside the adapter and domain decisions inside the deep module.
 
-Bad:
-
-```python
-def test_checkout_calls_stripe(mocker):
-    stripe_charge = mocker.patch("stripe.PaymentIntent.create")
-
-    checkout.place_order(cart_with_item("COURSE-TS"))
-
-    stripe_charge.assert_called_once()
-```
-
-This leaks the external vendor call into checkout behavior. Checkout should depend on a payment adapter, not Stripe directly.
-
-Validation: behavior tests through the deep module with fake/stub adapters, adapter contract tests around third-party translation, and live smoke tests only when the repo already supports them safely.
+Validation: pair domain behavior tests with adapter contract tests when both risks exist. Use live smoke tests only when the repo already supports them safely.
 
 ## Seam Discipline
 
-A seam is a real design point, not a test hook.
+A seam earns its place through locality, dependency isolation, domain ownership, or real variation.
 
-Introduce or keep a seam when it improves **locality**, isolates a real dependency, captures domain ownership, or supports real variation.
-
-Do not introduce a seam only because a test wants to patch something.
-
-One adapter usually means a hypothetical seam. Two adapters usually means a real seam: production plus fake, local substitute, emulator, in-memory adapter, or a second production integration.
-
-Internal seams are real design seams inside the implementation. Do not expose them through the external interface, and do not create private hooks just for tests. Test an internal module directly only when it owns behavior worth specifying in its own right.
+- Keep dependency injection at a caller-facing contract or I/O edge that genuinely varies.
+- Treat production plus a fake, local substitute, emulator, or second integration as evidence of a real seam.
+- Keep internal seams inside the implementation.
+- Test an internal module directly only when it owns independently meaningful behavior.
+- Treat a patch point requested only by tests as interface pressure, then redesign the caller-facing surface.
 
 ## Testing Strategy: Replace, Don't Layer
 
-Move tests toward the deeper interface.
-
-Do not keep old shallow-module tests just because they exist. Do not delete them blindly either.
-
-Use coverage parity:
+Establish **coverage parity** before removing shallow tests.
 
 - Add behavior tests through the deeper interface first.
-- Rewrite old tests when they describe behavior that still matters but through the wrong surface.
-- Keep old tests when they cover dense rules, adapter contracts, regression cases, or behavior not yet covered through the deeper interface.
-- Delete old tests when they only assert implementation details, pass-through calls, or behavior now covered better through the deeper interface.
+- Rewrite tests whose behavior matters but whose surface is obsolete.
+- Keep tests for dense rules, adapter contracts, regression cases, or behavior not yet covered through the deeper interface.
+- Delete tests that assert only pass-through calls, internal ordering, or behavior now proved better through the deeper interface.
+- Assert observable outcomes through the same interface callers use.
 
-Tests should assert observable outcomes through the interface, not internal state or call order.
+A test that changes only because implementation changed is testing past the interface.
 
-If a test must change when implementation changes but behavior does not, it is testing past the interface.
+## Completion Criteria
 
-## Stop Conditions
-
-Stop deepening when the deeper module has a smaller useful interface, behavior is proven through that interface, and the next move would widen the bounded slice.
-
-If the next improvement needs a different dependency category, migration step, or product behavior, record it as a follow-up support slice or tracer bullet.
+Complete only when every dependency is classified; seam, adapter, and substitute choices match those categories; the proposed interface is smaller and useful; coverage parity accounts for every affected test; validation proof is named; the migration fits the bounded slice; and the next move beyond that boundary is recorded as a follow-up.

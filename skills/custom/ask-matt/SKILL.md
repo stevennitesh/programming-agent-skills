@@ -1,123 +1,92 @@
 ---
 name: ask-matt
-description: Ask which skill or flow fits your situation. A router skill over the explicit skills in this repo.
+description: Route a situation to one next skill or flow in this pack.
 ---
 
 # Ask Matt
 
-You don't remember every skill, so ask.
+Use this **router** when route choice is the work.
 
-This is a **router skill**. Its job is to reduce **cognitive load** by routing the user's situation to one next skill or flow.
+## Router Contract
 
-## Router Behavior
+Ask Matt owns the recommendation. Downstream skills own their Source Trace, procedure, artifacts, mutations, and completion.
 
-When invoked, recommend the next skill or flow.
+Route from the user's stated situation and visible repo state. Inspect only the fact that would change the route.
 
-If the route is clear, name one recommended path and why it fits.
+- **Clear:** Recommend exactly one skill or flow and explain why it fits.
+- **Unclear:** Ask one highest-leverage question, then route.
+- **Return:** Give one route, one reason, and one setup or handoff precondition when needed.
 
-If the route is unclear, ask one highest-leverage question.
+Return the route and stop. The user starts it.
 
-Do not run the downstream skill unless the user asks.
+## Setup Gate
 
-## First-Time Setup
+Route first to `$setup-matt-pocock-skills` when the chosen engineering flow depends on a missing setup contract:
 
-If this repo has not been configured for the engineering skills, route first to **`$setup-matt-pocock-skills`**.
+- installed-pack primer in `AGENTS.md`;
+- `docs/agents/issue-tracker.md`;
+- `docs/agents/triage-labels.md`;
+- `docs/agents/domain.md`;
+- `docs/agents/engineering-contract.md`.
 
-Recommend **`$setup-matt-pocock-skills`** when `docs/agents/issue-tracker.md`, `docs/agents/triage-labels.md`, or `docs/agents/domain.md` is missing and the route depends on issues, triage labels, or domain docs.
+Let `$setup-matt-pocock-skills` own inventory, choices, writes, tracker mutations, and verification.
 
-## Main Flow: Idea -> Ship
+## Route Map
 
-Route here when the user has an idea and wants it built.
-
-| Situation | Route |
-| --- | --- |
-| The idea needs sharpening in a codebase | **`$grill-with-docs`** |
-| There is no codebase context to preserve | **`$grilling`** |
-| Too much fog of war for a spec | **`$wayfinder`** |
-| A source question needs durable evidence | **`$research`** |
-| A runnable answer is needed | **`$prototype`**, bridged by **`$handoff`** |
-| Multi-session idea without a durable spec | **`$to-spec`** then **`$to-tickets`** |
-| Existing spec, plan, or parent issue needs slices | **`$to-tickets`** |
-| One ready issue or slice | **`$implement`** |
-| Two or more ready items with non-overlapping write scopes and proof lanes | **`$parallel-implement`** |
-
-Default path:
-
-1. **`$grill-with-docs`** - sharpen the idea by interview and preserve resolved domain language or ADR-worthy decisions.
-2. If conversation cannot settle a question, recommend **`$prototype`** and carry the answer back with **`$handoff`**.
-3. If the build is multi-session and lacks a durable spec, recommend **`$to-spec`** then **`$to-tickets`**.
-4. If a spec, plan, or parent issue already exists, recommend **`$to-tickets`**.
-5. If exactly one bounded slice is ready, recommend **`$implement`**.
-6. If at least two ready slices have non-overlapping write scopes and proof lanes, recommend **`$parallel-implement`**.
-
-## Incoming Work
-
-Route here when work arrives raw from outside the planning flow.
+### Shape
 
 | Situation | Route |
 | --- | --- |
-| Bugs, requests, or external PRs need sorting | **`$triage`** |
-| A ticket is already ready-for-agent | **`$implement`** |
-| A ready parent, packet, or batch has a parallel-safe frontier | **`$parallel-implement`** |
-| A source question needs durable evidence | **`$research`** |
-| A bug symptom is uncertain | **`$diagnosing-bugs`** |
-| A behavior change is clear and testable | **`$tdd`** |
-| A merge/rebase/cherry-pick has conflicts | **`$resolving-merge-conflicts`** |
+| Product or design intent needs a repo-backed interview and durable domain capture | `$grill-with-docs` |
+| A plan or design needs a conversation-only interview | `$grilling` |
+| A large, foggy effort needs a tracker-backed decision map | `$wayfinder` |
+| One source question needs a cited repo-local note | `$research` |
+| One design question needs runnable evidence | `$prototype` |
+| Context must cross into a fresh session or agent thread | `$handoff` |
 
-Do not triage issues produced by **`$to-tickets`**. They are already intended to be ready-for-agent.
-
-## Codebase Health
-
-Route here for maintenance and design, not direct feature work.
+### Build
 
 | Situation | Route |
 | --- | --- |
-| Find architecture deepening opportunities | **`$improve-codebase-architecture`** |
-| Design a deeper module or interface | **`$codebase-design`** |
-| Resolve domain language or ADR-worthy decisions | **`$domain-modeling`** |
-| Review a diff against standards and spec | **`$review`** |
+| A multi-session idea lacks a durable parent spec | `$to-spec` then `$to-tickets` |
+| Settled source needs dependency-ordered ready-for-agent tickets | `$to-tickets` |
+| One bounded ready-for-agent item is selected | `$implement` |
+| A ready frontier has non-overlapping write scopes and proof lanes | `$parallel-implement` |
 
-Architecture work often generates an idea. Once the idea is chosen, route back into the main flow at **`$grill-with-docs`**.
+`$to-tickets` output is already ready-for-agent. Route its ready frontier directly to `$implement` or `$parallel-implement`.
 
-## Crossing Sessions
-
-Recommend **`$handoff`** when a fresh session should continue from the current conversation.
-
-Recommend it when:
-
-- the thread is near the edge of the smart zone
-- a prototype needs its own session
-- a fresh implementation session should start from a compact brief
-- the current conversation must be preserved without relying on `/compact`
-
-Prefer `/compact` only when staying in the same conversation is fine and losing verbatim history is acceptable.
-
-`$handoff` forks. `/compact` continues.
-
-## Standalone Routes
+### Incoming Work And Quality
 
 | Situation | Route |
 | --- | --- |
-| Improve or author skills | **`$writing-great-skills`** |
+| Raw issues, requests, or external PRs need sorting | `$triage` |
+| A symptom, cause, or reproduction is uncertain | `$diagnosing-bugs` |
+| Expected behavior and a red-capable proof seam are known | `$tdd` |
+| A merge, rebase, cherry-pick, or revert is conflicted | `$resolving-merge-conflicts` |
+| An ordinary branch, WIP, staged, or since-X diff needs fixed-point review | `$review` |
+| A local PR or high-risk local diff needs independent passes and a finding ledger | `$convergent-pr-review` |
+
+### Design And Pack Maintenance
+
+| Situation | Route |
+| --- | --- |
+| Find codebase-wide architecture deepening candidates | `$improve-codebase-architecture` |
+| Design one bounded module, interface, seam, or adapter | `$codebase-design` |
+| Resolve domain terms, context boundaries, or ADR-worthy decisions | `$domain-modeling` |
+| Create, edit, or review Codex skills | `$writing-great-skills` |
+
+`$domain-modeling` and `$codebase-design` are **shared disciplines**. Route to them when language or interface shape is the work; otherwise let the owning workflow load them.
 
 ## Tie-Breakers
 
-If the user has a loose idea, prefer **`$grill-with-docs`**.
-
-If the idea has too many unresolved decisions for a spec, prefer **`$wayfinder`**.
-
-If the blocker is source knowledge, prefer **`$research`**.
-
-If exactly one bounded item is ready, prefer **`$implement`**. If at least two ready items have non-overlapping write scopes and proof lanes, prefer **`$parallel-implement`**.
-
-If the symptom, cause, or repro is uncertain, prefer **`$diagnosing-bugs`**; it owns the diagnostic loop through regression proof.
-
-If the bug already has a known red-capable repro and expected behavior, prefer **`$tdd`**.
-
-If Git is in a conflicted merge, rebase, cherry-pick, or revert, prefer **`$resolving-merge-conflicts`**.
-
-If the user asks what to work on next, prefer **`$triage`** for incoming tracker work and **`$improve-codebase-architecture`** for codebase health.
+- **Grill / Wayfind:** Use `$grill-with-docs` for a decision tree that fits one session; use `$wayfinder` when fog of war requires a multi-session tracker map.
+- **Research / Prototype:** Use `$research` for a source fact; use `$prototype` for a runnable design verdict.
+- **Diagnose / TDD:** Use `$diagnosing-bugs` when the symptom, cause, or repro is uncertain; use `$tdd` when behavior and a red-capable seam are known.
+- **Review / Convergent:** Use `$review` for ordinary fixed-point review; use `$convergent-pr-review` for local PRs or high-risk local diffs.
+- **Implement / Parallel:** Use `$implement` for one ready item; use `$parallel-implement` for a parallel-safe ready frontier.
+- **Triage / Architecture:** Use `$triage` for incoming tracker work; use `$improve-codebase-architecture` for codebase health.
+- **Handoff / compact:** `$handoff` carries context to a fresh session or agent thread; `/compact` continues the current conversation.
 
 ## Completion Criteria
 
-Done means the user has one recommended next skill or flow, the reason it fits, and any setup or handoff needed before starting it.
+Complete only when the user has exactly one recommended next skill or flow, the reason it wins, and any setup or handoff precondition. When a routing question was required, completion waits for the answer and final route. Downstream work remains unstarted.

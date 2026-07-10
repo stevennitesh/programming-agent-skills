@@ -16,7 +16,7 @@ The skills speak in terms of category roles and state roles. This file maps thos
 | `needs-triage`            | `needs-triage`       | Maintainer needs to evaluate this issue                                      |
 | `needs-info`              | `needs-info`         | Waiting on reporter for more information                                     |
 | `ready-for-agent`         | `ready-for-agent`    | Fully specified, ready for an unattended Codex session or delegated subagent |
-| `ready-for-human`         | `ready-for-human`    | Requires human implementation                                                |
+| `ready-for-human`         | `ready-for-human`    | Requires human judgment, access, design, testing, or merge action             |
 | `implemented`             | `implemented`        | Implemented, reviewed, committed, and recorded by an implementation skill               |
 | `wontfix`                 | `wontfix`            | Will not be actioned                                                         |
 

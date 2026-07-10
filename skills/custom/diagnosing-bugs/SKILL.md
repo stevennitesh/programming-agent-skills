@@ -11,7 +11,7 @@ description: "Diagnose hard or uncertain failures through a tight red-capable lo
 
 ## Ownership And Modes
 
-- **Diagnosis mode:** prove the cause and recommend the smallest fix. Temporary diagnostic artifacts and instrumentation must be removed before return; no production behavior change remains.
+- **Diagnosis mode:** prove the cause and recommend the smallest fix. Put disposable diagnostic artifacts under `.tmp/diagnosing-bugs/<bug-slug>/`; remove them and all instrumentation before return so no production behavior change remains.
 - **Fix mode:** use only when the user or caller authorizes implementation. Apply the smallest causal fix and prove it against both the regression seam and original scenario.
 - **Caller:** owns review, staging, commit, tracker or external mutation, push, release, and architecture follow-up.
 
@@ -41,7 +41,7 @@ Keep local instrumentation reversible, uniquely tagged, and easy to remove. Live
 
 ## Phase 1 - Build A Tight Loop
 
-Build one command that catches the exact reported symptom.
+Build one command that catches the exact reported symptom. Put disposable scripts, logs, captures, and harnesses under `.tmp/diagnosing-bugs/<bug-slug>/`.
 
 Try these roughly in order:
 
@@ -151,7 +151,7 @@ If a proposed fix fails the original loop, treat that result as evidence against
 Before return:
 
 - remove every tagged instrumentation point and grep its prefix;
-- delete throwaway harnesses or preserve them only in an explicitly approved debug location;
+- delete disposable `.tmp/` harnesses, logs, and captures; move only explicitly approved version-controlled evidence to `.scratch/diagnosing-bugs/<bug-slug>/` and keep it in review and staging scope;
 - inspect worktree status and preserve all pre-existing or unrelated changes;
 - record whether the original loop remains red in diagnosis mode or is green in fix mode;
 - return the diagnosis packet.
@@ -172,7 +172,7 @@ Return:
 - **Fix:** applied change or recommended change;
 - **Regression proof:** RED/GREEN results or documented seam gap;
 - **Original scenario:** final loop result;
-- **Cleanup:** instrumentation and scratch-artifact status;
+- **Cleanup:** instrumentation, disposable `.tmp/`, and tracked `.scratch/` status;
 - **Validation:** additional checks and skipped reasons;
 - **Residual risk:** remaining uncertainty and follow-up route.
 

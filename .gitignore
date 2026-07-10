@@ -30,7 +30,7 @@ Thumbs.db
 *.tar
 *.tar.gz
 
-# Keep scratch directory placeholder while ignoring contents
+# Keep disposable temp directory placeholder while ignoring contents
 !.tmp/
 .tmp/*
 !.tmp/.gitkeep

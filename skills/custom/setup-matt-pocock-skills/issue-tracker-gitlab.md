@@ -4,13 +4,13 @@ Issues and specs for this repo live as GitLab issues. Use the [`glab`](https://g
 
 ## Conventions
 
-- **Create an issue**: `glab issue create --title "..." --description "..."`. Use a heredoc for multi-line descriptions. Pass `--description -` to open an editor.
+- **Create an issue**: `glab issue create --title "..." --description "..."`. For a multiline description, pass `--description -` and use the configured editor.
 - **Read an issue**: `glab issue view <number> --comments`. Use `-F json` for machine-readable output.
-- **List issues**: `glab issue list -F json` with appropriate `--label` filters.
+- **List issues**: `glab issue list -O json` with appropriate `--label` filters.
 - **Comment on an issue**: `glab issue note <number> --message "..."`. GitLab calls comments "notes".
 - **Apply / remove labels**: `glab issue update <number> --label "..."` / `--unlabel "..."`. Multiple labels can be comma-separated or by repeating the flag.
 - **Close**: `glab issue close <number>`. `glab issue close` does not accept a closing comment, so post the explanation first with `glab issue note <number> --message "..."`, then close.
-- **Merge requests**: GitLab calls PRs "merge requests". Use `glab mr create`, `glab mr view`, `glab mr note`, etc. — the same shape as `gh pr ...` with `mr` in place of `pr` and `note`/`--message` in place of `comment`/`--body`.
+- **Merge requests**: GitLab calls PRs "merge requests". Use `glab mr create`, `view`, `diff`, `note`, `update`, and `close`; comments are notes and use `--message`.
 
 Infer the repo from `git remote -v` — `glab` does this automatically when run inside a clone.
 
@@ -43,12 +43,14 @@ Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement
 **Close implemented items:** no.
 
 - **Packet**: the issue description and notes are the durable packet. A parent spec owns intent; child issues own implementation slices and closeout evidence. No separate repo-local packet is required unless `AGENTS.md` points to one. Approved implementation tickets carry the mapped `ready-for-agent` state and one category role when the source settles it.
+- **Ready-for-agent contract**: every ready item names one bounded slice, Source Trace, observable acceptance criteria, dependency state, proof lane, expected write scope, parallel-safety note, and scope fence. `$triage` owns incoming classification and verification; `$to-tickets` owns slicing and dependency order. Both produce this contract.
 - **Parent / child**: use native child relationships when available. Otherwise keep an ordered task list in the parent and put `Part of #<parent>` near the top of each child.
 - **Blocking**: use native blocking issue links when available. Otherwise put `Blocked by: #<n>, #<n>` near the top of the child description. A work item is unblocked when every blocker is closed.
 - **Ready query**: list open issues with the mapped `ready-for-agent` state, then drop issues with an open blocker or assignee. Within a parent, preserve child order; otherwise choose oldest first.
 - **Claim**: assign the work item to the owner or orchestrator before implementation dispatch; the assignee is the concurrency guard.
 - **Release**: clear the active assignee when work blocks, is abandoned, or reaches closeout.
 - **Closeout**: after required review and commits, post the closeout packet as a note, apply `implemented`, remove the prior state-role label, and release the claim. Close the issue only when `Close implemented items` is `yes` or the user directs it. Close a parent only after its in-scope children and follow-ups are drained.
+- **Mutation read-back**: after creating or changing an item, refetch it and verify the intended description, relationships, labels or state, assignee, notes, and open/closed status. A partial mutation is blocked; report applied operations, failed operations, and the safest recovery action.
 
 ## Wayfinding operations
 

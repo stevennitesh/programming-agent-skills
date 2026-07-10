@@ -1,7 +1,7 @@
 interface:
   display_name: Parallel Implement
   short_description: Run a ready-frontier wavefront
-  default_prompt: Use $parallel-implement to run this ready frontier through isolated one-commit workers, an adaptive serial integration lane, loop-close review, applicable tracker lock, and release sweep.
+  default_prompt: Use $parallel-implement to run this ready frontier through isolated one-commit lane workers, an adaptive serial integration lane, loop-close review, applicable tracker lock, and release sweep.
 
 policy:
   allow_implicit_invocation: false

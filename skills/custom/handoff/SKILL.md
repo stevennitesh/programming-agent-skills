@@ -1,17 +1,29 @@
 ---
 name: handoff
-description: Compact the current conversation into a handoff document for a fresh Codex session or agent thread to pick up.
+description: Compact the live thread into a resumable handoff for a fresh Codex session or agent thread.
 ---
 
 # Handoff
 
-Write a handoff document so a fresh Codex session or agent thread can continue without rediscovering the conversation.
+Create a **compaction**: preserve the live thread's resumable core while durable artifacts remain the source of truth.
 
-Save it as a timestamped markdown file in the OS temp directory, not the current workspace.
+## Boundary
 
-If the user passed arguments, treat them as the focus for the next session and tailor the handoff to that focus.
+Write exactly one artifact:
 
-## What To Include
+```text
+<work-root>/.tmp/handoff-<YYYYMMDD-HHMMSS>.md
+```
+
+Resolve `<work-root>` as the Git root when present, otherwise the current working directory. Create `.tmp/` when absent. In a Git repo, confirm the target is ignored before writing; otherwise stop and recommend `$setup-matt-pocock-skills`.
+
+The invocation authorizes only that handoff artifact. Keep it outside the Git index and commits. Leave tracked workspace files, the tracker, Git state, the active workflow, and Codex tasks unchanged. Suggested skills remain instructions for the receiving session.
+
+When the invocation includes a focus, make it the receiving session's Purpose and Next Step. The **focus gate** preserves every blocker, risk, unresolved decision, and state fact required to resume safely.
+
+## Build The Handoff
+
+Trace the live thread and its named artifacts. **Snapshot:** verify volatile state and pointer exactness; mark unknowns, and leave new evidence trails and task work to the receiving session.
 
 Use this structure:
 
@@ -20,47 +32,68 @@ Use this structure:
 
 ## Purpose
 
-What the next session is meant to continue or decide.
+What the receiving session must continue, decide, or prove.
 
 ## Current State
 
-What has happened so far, what is finished, what is in progress, what is known to be unchanged, and the current workflow state using the vocabulary of the active work.
+What is complete, in progress, intentionally unchanged, and currently blocked.
 
-Examples: convergence-loop phase for implementation, prototype question and verdict, debugging loop/repro/hypothesis state, review fixed point and finding state, grilling decision state, or orchestrator-assigned slice status.
+Name the active workflow and its exact phase or gate.
+
+For repo work, include the cwd or worktree, branch or detached HEAD, relevant commit, staged and unstaged scope, material untracked files, and ownership of unrelated dirty work.
 
 ## Key Decisions
 
-Decisions already made, rejected options, constraints, and scope boundaries.
+Confirmed decisions, rejected options, constraints, scope boundaries, and commitments still requiring user approval.
 
-## Artifacts
+## Source Trace
 
-Paths, URLs, issue numbers, specs, plans, ADRs, commits, diffs, prototypes, preserved `.tmp` artifacts, or temp files the next session should read. Mention scratch artifacts only when intentionally preserved.
+Exact paths, URLs, issue numbers, specs, plans, ADRs, commits, diffs, prototypes, intentionally preserved `.tmp/` artifacts, and tracked `.scratch/` artifacts the receiving session must read.
 
 ## Validation
 
-Commands run, checks performed, proof gathered, what still needs proof, skipped validation, and residual risk.
+Commands and checks run, their outcomes, proof gathered, skipped validation, missing proof, and residual risk.
 
 ## Open Questions
 
-Questions still unresolved, with any partial answers or relevant context.
+Unresolved questions, partial answers, evidence gaps, and the decision each answer would unlock.
 
 ## Next Step
 
-The single most useful next action, stated in the vocabulary of the active work: explore, prove, expand, converge, simplify, lock, answer a prototype verdict, continue a debugging loop, test a hypothesis, resolve a review finding, run a skill, continue an issue, open a file, or ask the user a specific question.
+One executable next action in the active workflow vocabulary, including its target and stopping point.
 
 ## Suggested Skills
 
-Skills the next session should invoke, with one-line reasons.
+Only the skills the receiving session should invoke, each with a one-line reason. Write `None` when no skill is needed.
 ```
 
-Do not duplicate content already captured in durable artifacts such as specs, plans, ADRs, issues, commits, or diffs. Reference them by path, URL, issue number, or commit SHA.
+## Compaction Rules
 
-Do not force every handoff into the implementation loop. Preserve the state of the workflow that is actually active.
+- **References, not copies:** Point to specs, plans, ADRs, issues, commits, diffs, and other durable truth instead of restating them.
+- **Workflow-native:** Preserve the workflow actually in progress rather than translating every handoff into implementation.
+- **Facts / Inferences / Unknowns:** Label confirmed state, interpretation, and uncertainty distinctly.
+- **Redaction gate:** Remove API keys, passwords, tokens, private keys, credentials, secrets, and personally identifiable information.
+- **Resumable core:** Carry only state the receiving session cannot recover cheaply from the Source Trace.
 
-Redact sensitive information, including API keys, passwords, tokens, private keys, credentials, and personally identifiable information.
+## Read Back And Return
 
-Keep the handoff factual. Separate what was confirmed from what is inferred or still uncertain.
+Reread the saved file and verify:
+
+- every load-bearing live-state fact is captured or source-traced;
+- the output is under `<work-root>/.tmp/` and ignored when `<work-root>` is a Git repo;
+- local paths, issue numbers, URLs, and commit identifiers are exact or marked unverified;
+- repo and workflow state are current;
+- durable truth was referenced rather than copied;
+- secrets and personal data are absent;
+- the Next Step is executable;
+- Suggested Skills are justified.
+
+Report the absolute path and this pickup prompt:
+
+> Continue from `<absolute-path>`. Read the handoff first, then execute its Next Step.
+
+When a focus was supplied, append it to the pickup prompt.
 
 ## Completion Criteria
 
-Done means the handoff file is saved in the OS temp directory, redactions are applied, durable artifacts are referenced instead of copied, the next step is concrete, suggested skills are included, and the saved path is reported to the user.
+Complete only when exactly one handoff file is saved under `<work-root>/.tmp/`, ignored when the work root is a Git repo, reread, redacted, and source-traced; the current workflow and conditional repo state are accurate; the Next Step and Suggested Skills are actionable; the absolute path and pickup prompt are returned; and no other state changed.

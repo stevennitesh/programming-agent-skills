@@ -2,11 +2,12 @@
 
 This note maps the books and supporting references behind the local `$codebase-design` and `$improve-codebase-architecture` skills:
 
-- `/home/steve/.agents/skills/codebase-design/SKILL.md`
-- `/home/steve/.agents/skills/codebase-design/DEEPENING.md`
-- `/home/steve/.agents/skills/codebase-design/DESIGN-IT-TWICE.md`
-- `/home/steve/.agents/skills/improve-codebase-architecture/SKILL.md`
-- `/home/steve/.agents/skills/improve-codebase-architecture/HTML-REPORT.md`
+- `skills/custom/codebase-design/SKILL.md`
+- `skills/custom/codebase-design/DIRECT-DESIGN.md`
+- `skills/custom/codebase-design/DEEPENING.md`
+- `skills/custom/codebase-design/DESIGN-IT-TWICE.md`
+- `skills/custom/improve-codebase-architecture/SKILL.md`
+- `skills/custom/improve-codebase-architecture/HTML-REPORT.md`
 
 The local skill-pack stance is: design deep modules with small useful interfaces, place seams where behavior genuinely varies, use adapters only when they buy locality or testability, compare interface alternatives before settling, and present architecture friction visually enough that a user can choose the next exploration.
 

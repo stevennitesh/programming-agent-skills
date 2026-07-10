@@ -1,57 +1,73 @@
 ---
 name: research
-description: Use when the user wants a topic researched, docs/API/library facts checked, primary-source evidence gathered, or source legwork delegated before a decision, spec, issue, diagnosis, or architecture recommendation; save one cited repo-local Markdown note.
+description: Research one source question into a cited repo-local Markdown note. Use when the user asks for durable source evidence, current docs/API/library facts must be verified for repo work, or another skill delegates source legwork before a decision or artifact.
 ---
 
 # Research
 
-Use this when a question needs source legwork before a decision, spec, issue, diagnosis, or architecture recommendation.
+**Research delegates reading, not judgment.**
 
-Research answers with **primary sources**: official docs, specs, standards, source code, first-party APIs, release notes, papers, or repo-local documents. Secondary write-ups can help discover sources, but they do not own claims.
+Question -> source lanes -> claim ledger -> evidence gate -> one cited note -> pointer.
+
+## Ownership
+
+- **Research:** Own the question, read-only source legwork, claim ledger, one cited note, and handoff pointer.
+- **Workers:** Own assigned source lanes and return evidence. The main agent owns synthesis and the final note.
+- **Caller:** Own the decision and every tracker, spec, ADR, domain, source, config, or implementation mutation.
+- **Write boundary:** Create or update exactly one research note.
 
 ## Process
 
-1. **Frame the question.** Name the exact question, why it matters, and what decision or artifact the answer will support.
-2. **Find primary sources.** Prefer repo-local docs and source for repo behavior; use official external sources for external APIs, libraries, standards, or product behavior. Browse when freshness or source attribution matters.
-3. **Trace claims.** Follow every load-bearing claim back to the source that owns it. If sources conflict, record the conflict instead of smoothing it over.
-4. **Write one note.** Save the findings as a Markdown file where the repo keeps research notes. If no convention exists, use `docs/research/<slug>.md`.
-5. **Hand back the pointer.** Report the note path, the answer in one paragraph, and any uncertainty, blocker, or next route.
+1. **Lock the research contract.** Name one question, the decision or artifact it supports, scope, freshness requirement, target repo, and note path.
+2. **Pass the artifact gate.** Confirm a writable repo and one note path. When either is unavailable, return the blocker and offer an inline-answer fallback.
+3. **Open source lanes.** Match each claim to the source that owns it:
+   - repo behavior -> source, tests, config, governing docs, and ADRs;
+   - APIs and libraries -> versioned official docs, specifications, tagged source, and release notes;
+   - standards -> the issuing body's standard;
+   - empirical claims -> the original paper, dataset, and method.
 
-Use a subagent for broad reading when available and useful. If no subagent is available, do the research inline. Either way, the output is the same: one cited note in the repo.
+   Use secondary sources for discovery; trace load-bearing claims to primary sources.
+4. **Delegate independent lanes when it materially improves breadth or speed.** Give each worker one lane and require claims, evidence, authority, version or date, conflicts, and gaps. Workers return evidence; the main agent judges it.
+5. **Build the claim ledger.** Classify every load-bearing claim as `supported`, `conflicted`, or `unknown`; attach its source, authority, and freshness.
+6. **Pass the evidence gate.** Continue until every load-bearing claim is classified, the best available authority and version or date are recorded, conflicts and gaps are explicit, and further searching only repeats evidence or cannot close a documented gap.
+7. **Write one note.** Use the repo's research-note convention or `docs/research/<slug>.md`. Preserve the contract, ledger, evidence, uncertainty, and next route in the note shape below.
+8. **Hand back the pointer.** Return the note path, one-paragraph answer, status, uncertainty, and next route.
 
 ## Note Shape
 
 ```markdown
 # <Question>
 
+Status: answered | conflicted | blocked
+Supports: <decision or artifact>
+Scope: <bounds>
+Freshness: <as-of date or version>
+
 ## Answer
 
-<short answer>
+<one-paragraph answer>
 
 ## Findings
 
-- <claim> ([source](url-or-path))
+- <claim> - <supported | conflicted | unknown> ([source](url-or-path))
+
+## Conflicts and Uncertainty
+
+- <conflict, unknown, freshness risk, or blocker>
 
 ## Source Trace
 
-- <source>: <why it is authoritative>
-
-## Uncertainty
-
-- <unknown, conflict, freshness risk, or blocker>
+| Source | Authority | Version or date | Supports |
+| --- | --- | --- | --- |
+| <source> | <why it owns the claim> | <version or date> | <claim> |
 
 ## Next
 
-- <recommended next skill, issue, spec, or decision>
+- <recommended skill, ticket, spec, or decision>
 ```
-
-## Boundaries
-
-- Do not publish tracker comments or mutate issues unless the invoking workflow explicitly asks.
-- Do not turn research into implementation. Hand back the note and next route.
-- Do not cite secondary sources for load-bearing claims when a primary source exists.
-- Do not paste long source excerpts; cite and summarize.
 
 ## Completion Criteria
 
-Done means one Markdown note exists in the repo, every load-bearing claim has a source trace, and the user has the note path plus the decision or next route it supports.
+Complete only when the research contract and note path are locked; exactly one cited note exists; every load-bearing claim is classified and source-traced; authority, freshness, conflicts, and unknowns are explicit; the note is the only repo mutation; and the caller receives the pointer, answer, status, uncertainty, and next route.
+
+A blocked note is complete only when it records the attempted source lanes and missing evidence.

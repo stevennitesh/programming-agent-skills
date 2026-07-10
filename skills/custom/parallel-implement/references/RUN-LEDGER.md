@@ -1,6 +1,6 @@
 # Parallel Implement Run Ledger
 
-Instantiate this append-only ledger at `.tmp/parallel-implement/<run-id>/LEDGER.md`. Copy durable facts to the routed closeout destination before cleanup.
+Instantiate this disposable append-only ledger at `.tmp/parallel-implement/<run-id>/LEDGER.md`. Copy durable facts to the routed closeout destination before cleanup.
 
 Append events once. Derive routing and closeout from the event stream.
 
@@ -22,7 +22,7 @@ Append events once. Derive routing and closeout from the event stream.
 **Worker isolation:** `<worktree and env policy>`
 **Preflight policy:** `<full first host / compact after host proven>`
 **Proof budget:** `<worker focused / integration touched-area / loop-close broad>`
-**Validation environment:** `<shared interpreter plus isolated worker temp/cache paths>`
+**Validation environment:** `<shared interpreter plus isolated worker .tmp/ cache and temp paths>`
 **Review route:** `<$review / $convergent-pr-review>`
 **Tracker lock:** `<repo-local / connector-backed / none>`
 **Durable closeout destination:** `<issue comment / PR body / docs note / run summary / none>`

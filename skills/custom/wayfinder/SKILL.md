@@ -45,11 +45,13 @@ Choose exactly one mode per session.
 
 Use this mode for a loose idea without an existing map.
 
-1. **Name the destination.** Use `$grill-with-docs` to settle the outcome and scope.
-2. **Sweep breadth-first.** Continue `$grill-with-docs` across the settled scope, surfacing open decisions before following any one branch deeply.
+1. **Name the destination.** Run `$grill-with-docs` with a **charting bound**: settle only the outcome, scope, and route-closing condition.
+2. **Sweep breadth-first.** Surface each material child decision as a sharp question. Defer it explicitly to a named Wayfinder ticket instead of resolving it inside the charting interview.
 3. **Gate on fog.** If the route is already clear, skip the map and use the closing routes below.
 4. **Chart the map.** Read [MAP-FORMAT.md](MAP-FORMAT.md), then create the map with its destination, notes, empty resolution index, visible fog, and scope boundary.
 5. **Create-then-wire.** Create every sharp child ticket, then add blocking edges after ticket identities exist.
+
+Apply the tracker's **Mutation read-back** rule to the map, every child, and every blocking edge before declaring the chart complete.
 
 Charting is complete when either:
 
@@ -68,7 +70,8 @@ Use this mode when the user supplies a map. A named ticket wins only when it is 
    - **Blocked:** record the blocker. Create-then-wire a sharp blocker; return an unaskable blocker to fog. Apply the tracker's blocked convention and release the active claim.
    - **Out of scope:** close or mark the ticket out of scope and append one linked scope note under `Out Of Scope`.
 5. **Reconcile.** Graduate sharpened fog, create-then-wire newly visible tickets, update invalidated dependencies, and close or revise tickets made obsolete by the outcome.
-6. **Expose the edge.** Show the next frontier or close the map.
+6. **Read back.** Apply the tracker's Mutation read-back rule to the ticket, claim, outcome, map pointers, and changed edges.
+7. **Expose the edge.** Show the next frontier or close the map.
 
 Other sessions may update the tracker concurrently. Preserve their work and touch only the selected ticket, directly affected edges, and map sections changed by its outcome.
 

@@ -1,6 +1,6 @@
 ---
 name: to-spec
-description: Synthesize settled source into a source-traced parent spec, save a repo-local draft, and publish it to the configured tracker.
+description: Synthesize settled source into a source-traced parent spec and publish it to the configured tracker.
 ---
 
 # To Spec
@@ -57,14 +57,16 @@ Include file paths or code snippets only when a durable contract or prototype fi
 
 **Coverage gate:** before publishing, account for every source-visible commitment, actor, flow, constraint, edge case, failure mode, prototype finding, and scope boundary in the appropriate section, or mark it explicitly irrelevant in `Source Trace`.
 
-**Publication scope:** mutate only the `.tmp` draft and one published parent spec. Treat supplied artifacts as sources unless the user explicitly asks to update them. `$to-tickets` owns implementation slicing, blocking edges, and `ready-for-agent` state.
+**Publication scope:** mutate only the `.tmp/` draft and one published parent spec. Treat supplied artifacts as sources unless the user explicitly asks to update them. `$to-tickets` owns implementation slicing, blocking edges, and `ready-for-agent` state.
 
-Save the draft to `.tmp/to-spec/<slug>.md`.
+Draft under `.tmp/to-spec/<slug>.md`.
 
 Publish through the tracker and label docs routed by `AGENTS.md`.
 
-End with the local draft path, published parent reference (link or path), and a recommendation for `$to-tickets` when implementation slicing is next.
+Apply the tracker's **Mutation read-back** rule. Verify the published body and metadata against the draft. After successful verification, delete the disposable draft unless the user explicitly asks to preserve it. Preserve and report the draft when publication or read-back is blocked.
+
+End with the published parent reference, any intentionally preserved draft path, and a recommendation for `$to-tickets` when implementation slicing is next.
 
 ## Completion Criteria
 
-Complete only when every supplied artifact was fully read, every relied-on source is traced, the coverage gate passes, every material gap is resolved, remaining gaps are recorded in `Open Questions`, the spec is repo-grounded, proof-seam-aware, and passes the fresh-session test, and the only mutations are the draft and one published parent spec, both of which exist.
+Complete only when every supplied artifact was fully read, every relied-on source is traced, the coverage gate passes, every material gap is resolved, remaining gaps are recorded in `Open Questions`, the spec is repo-grounded, proof-seam-aware, passes the fresh-session test, and the published parent was read back successfully. The disposable draft is deleted after success or intentionally preserved and reported after a blocker or explicit user request.

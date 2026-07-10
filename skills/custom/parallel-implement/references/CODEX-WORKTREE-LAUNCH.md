@@ -11,7 +11,7 @@ Use the native collaboration subagent route for internal workers and a routed in
 3. Prefer a detached worker worktree so one clean commit is the complete handoff. Give a dedicated integrator the routed integration branch.
 4. Launch one fresh subagent with the complete brief.
 5. Require every shell command and file operation to use the assigned worktree.
-6. Accept the lane only after its preflight reports the actual repo root, checkout path, `HEAD`, branch or detached state, starting status, scratch write/delete result, and focused-proof startup.
+6. Accept the lane only after its preflight reports the actual repo root, checkout path, `HEAD`, branch or detached state, starting status, `.tmp/` write/delete result, and focused-proof startup.
 
 A manually assigned worktree is isolated only when the lane uses that path for its entire lifetime. If isolation cannot be established, stop or downshift; never run parallel writers in one checkout.
 

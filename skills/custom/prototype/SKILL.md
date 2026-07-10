@@ -1,57 +1,95 @@
 ---
 name: prototype
-description: Prototype a throwaway answer to one design question before implementation. Use when the user wants to sanity-check state, domain logic, or data shape with a tiny terminal app, or compare radically different UI directions on one route.
+description: Prototype one design question with a throwaway runnable probe. Use when the user asks to drive state, domain logic, or a data shape through cases in a tiny terminal app; compare structurally different UI bets on one real route; or another skill delegates a runnable evidence gap.
 ---
 
 # Prototype
 
-A prototype is **throwaway code that answers one question**. The question decides the branch; the answer is the only durable artifact.
+A prototype is a **throwaway probe for one design question**. The question decides the shape. The **verdict**, not the code, is durable.
 
-This is a detour, not implementation.
+Question -> branch -> smallest probe -> smoke gate -> verdict -> cleanup or handoff.
 
-## Pick The Question
+## Ownership
 
-Identify the question from the user's prompt, surrounding code, or by asking if the user is around. Getting the branch wrong wastes the prototype.
+- **Prototype:** Own the locked question, authorized `.tmp/` and app-tree paths, one repo-native command, branch smoke proof, verdict packet, and cleanup.
+- **Caller:** Own the decision, durable publication, tracker, spec, ADR, domain, and commit mutations, and promotion into production behavior.
+- **Judge:** The user owns shape/feel verdicts. Named examples, invariants, fixtures, and edge cases support design evidence. The real coding workflow owns production proof.
+- **Write boundary:** Use `.tmp/` for disposable work. Route explicitly authorized version-controlled evidence to caller-owned `.scratch/<feature-slug>/prototype/`. Use app-tree paths only when real constraints require them and the request or caller authorizes them.
 
-- **"Does this logic, state model, or data shape feel right?"** -> Read [LOGIC.md](LOGIC.md). Build a tiny interactive terminal app that lets the user press buttons and watch state change.
-- **"What should this look like?"** -> Read [UI.md](UI.md). Build several radically different UI variations on one route, switchable by URL param and a floating bottom bar.
+## 1. Lock The Prototype Contract
 
-The branches produce different artifacts. If the question is ambiguous and the user is not reachable, choose the branch that best matches the surrounding code: backend module means logic; page or component means UI. State the assumption at the top of the prototype.
+Trace one question to the user prompt or caller packet and the relevant code constraints.
 
-## Rules
+Name:
 
-- **Keep the contract boundary.** If prototype output is promoted into repo behavior or used as semantic proof, switch to the repo's real coding workflow and read `docs/agents/engineering-contract.md` first.
-- **State the question first.** Write the question in the prototype location so the artifact can be judged later.
-- **Build the smallest answering artifact.** Do not expand to adjacent questions unless the prototype disproves the original one.
-- **Keep it throwaway.** Prefer `.tmp/` for prototype shells, scratch artifacts, copied references, and rough notes. When possible, call real module seams, methods, adapters, or page-level surfaces from `.tmp/` instead of placing throwaway code in the production tree.
-- **Use production placement only when the question needs it.** Put prototype code near a module or page only when that is required to answer the question against real app constraints. Mark it clearly as prototype code and keep the diff easy to delete.
-- **Use one command.** Add or report the repo-native command that runs it.
-- **Run it once.** Run the prototype with its one command and complete the branch-specific smoke check.
-- **Skip production polish.** No tests, broad error handling, generic abstractions, or unrelated cleanup. Make it runnable enough to learn.
-- **Avoid persistence by default.** Keep state in memory unless persistence is the question. If storage is needed, use scratch storage clearly marked as prototype-only.
-- **Surface the state.** Logic prototypes print the relevant state after each action. UI prototypes make the active variant obvious and reload-stable.
-- **Do not quietly ship prototype code.** After the answer is known, delete prototype artifacts by default unless the user asks to preserve them. Move code near the module only when the validated shape is ready for a real implementation pass.
+- the decision it unlocks;
+- the judge;
+- the claim level: shape/feel verdict or design evidence;
+- the authorized paths;
+- the cleanup plan.
 
-## Capture The Answer
+Hold one question. Iterate within it until the judge can decide. A disproved premise may replace it; adjacent questions wait.
 
-The answer is the artifact. Capture the verdict somewhere durable, then delete the prototype or turn the validated shape into input for a real implementation pass.
+**Production-proof gate:** When the requested result must establish production behavior or semantic correctness, return the contract to the real coding workflow. Read `docs/agents/engineering-contract.md` before changing production behavior.
 
-Capture:
+## 2. Pick The Branch
 
-- the original question
-- what the prototype proved or disproved
-- whether the answer is a shape/feel verdict or semantic proof
-- if semantic proof is claimed, what fixtures, examples, invariants, or edge cases support it
-- the chosen direction, if any
-- what should happen next
-- whether the prototype should be deleted, used as input, or revisited
+- **Logic, state, or data shape:** Read [LOGIC.md](LOGIC.md). Build a tiny terminal app that lets the judge drive the decision surface through cases.
+- **UI direction:** Read [UI.md](UI.md). Build structurally different UI bets on one route, switchable through URL state and visible prototype chrome.
 
-Use the smallest durable place that fits: issue comment, spec note, ADR, commit message, `NOTES.md`, or `$handoff`.
+When the branch is ambiguous, ask the user when available. Otherwise infer from the surrounding code—backend module means logic; page or component means UI—and record the assumption with the prototype.
 
-If the prototype was a detour from a larger `$grilling`, `$to-spec`, or design thread, use `$handoff` to carry the answer back into that thread.
+## 3. Build The Smallest Probe
 
-If the answer resolves domain language, update it with `$domain-modeling`. If it creates an ADR-worthy decision, offer or record the ADR there.
+Build only what can change the verdict.
+
+- **Disposable first:** Put shells, copied references, experiments, and notes under `.tmp/`. Call real seams from there when possible.
+- **Real constraints:** Use an authorized app-tree path only when routing, layout, auth, data, density, or component behavior is part of the question.
+- **Repo-native:** Use the existing language, runtime, tooling, and one run command.
+- **Fidelity budget:** Add only the structure and error handling needed to make the question judgeable.
+- **In-memory default:** Persist only when persistence is the question; use clearly marked `.tmp/` storage.
+- **Disposable diff:** Mark prototype code clearly and keep every `.tmp/` or authorized prototype path easy to delete.
+
+## 4. Pass The Smoke Gate
+
+Run the prototype through its one command and complete the branch-specific smoke check.
+
+The smoke gate proves the probe is judgeable. The verdict gate answers the question.
+
+Report the command, artifact path or URL, and every assumption that affects judgment.
+
+## 5. Capture The Verdict
+
+Hand the probe to its judge and iterate within the locked question.
+
+- **Shape/feel:** Capture the user's verdict and decisive feedback. When the user is unavailable, set status to `awaiting-verdict`, preserve the named artifacts intentionally, and report the exact command or URL.
+- **Design evidence:** Record the examples, invariants, fixtures, edge cases, and observed limits. Label the result design evidence; production proof remains with the real coding workflow.
+- **Blocked:** Record the blocker, attempted path, and evidence still needed.
+
+Return a **verdict packet** containing:
+
+- status: `answered`, `awaiting-verdict`, or `blocked`;
+- Source Trace: originating prompt or caller artifact, plus relevant code constraints;
+- question and decision it unlocks;
+- branch and claim level;
+- artifact paths, command, URL, and variant keys;
+- smoke proof;
+- verdict, feedback or evidence, and limits;
+- chosen direction and residual uncertainty;
+- cleanup or preservation state;
+- next route and any domain or ADR candidate.
+
+Return the packet directly to the invoking caller. Recommend `$handoff` only when the verdict must cross sessions. Flag domain or ADR candidates for the caller to route through `$domain-modeling`.
+
+## 6. Reconcile The Artifacts
+
+- **Answered:** Capture the verdict packet, then delete prototype artifacts by default. Preserve only artifacts the request or caller explicitly keeps.
+- **Awaiting verdict:** Preserve the named runnable artifacts and report the single next judging action.
+- **Blocked:** Reconcile every prototype path as deleted or intentionally preserved.
+- **Promotion:** Send the validated shape into the real coding workflow. Prototype code remains disposable.
 
 ## Completion Criteria
 
-Done means the question is written down, the correct branch doc was followed, the prototype runs in one command, the branch-specific smoke check passed, the answer or pending verdict is captured durably, and the cleanup or next-step path is clear.
+Complete only when the prototype contract is locked, the correct branch file was followed, the probe runs through one repo-native command, the branch smoke gate passed, the verdict packet was returned, and every prototype path is deleted or intentionally preserved.
+
+`awaiting-verdict` completes the build-and-handoff session; the design question remains open.

@@ -1,85 +1,130 @@
 ---
 name: improve-codebase-architecture
-description: Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick.
+description: Survey a codebase for architectural friction, rank deepening candidates in a visual report, then pressure-test the chosen candidate.
 ---
 
 # Improve Codebase Architecture
 
-Run this as **periodic architecture maintenance** or when one concept requires too much bouncing across small modules.
+Run an **architecture survey**: find friction, rank real **deepening opportunities**, and help the user choose one.
 
-This skill is the **survey**: surface **architectural friction** and propose **deepening opportunities**. `$codebase-design` is the **design bench** for the chosen candidate.
+This skill owns wide candidate discovery. Load `$codebase-design` as shared vocabulary; keep its direct design pass for one chosen candidate.
 
-This is discovery and decision work, not refactoring. Do not implement changes. Find candidates, make the friction visible, help the user choose one, then recommend one next route.
+## Ownership
 
-Use repo domain language for business concepts and `$codebase-design` for architecture claims. Domain language names good seams; architecture language judges depth; ADRs mark decisions this skill should not re-litigate.
+- **Architecture survey:** Own the Source Trace, scouts, deletion-test filtering, candidate ranking, visual report, and architecture packet.
+- **`$grill-with-docs`:** Own the chosen-candidate interview and durable domain capture.
+- **`$codebase-design`:** Own dependency classification, seam discipline, interface alternatives, and the design packet.
+- **Downstream skills:** Own specs, tickets, implementation, tracker mutation, staging, and commits.
+- **Mutation boundary:** The initial pass writes only a disposable report under ignored `.tmp/architecture-reviews/`. Product code, tracked docs, tracker state, the index, and commits stay unchanged. Chosen-candidate domain writes flow only through `$grill-with-docs` and its gates.
+
+Use repo domain language for business concepts and `$codebase-design` vocabulary for architecture claims. ADRs mark decisions the survey reopens only when material new friction exists.
 
 ## Process
 
-### 1. Explore
+### 1. Orient
 
-Read `docs/agents/engineering-contract.md` when present; keep candidates inside its slicing, proof, and commitment-boundary discipline.
+Build the **Source Trace** from:
 
-Follow `docs/agents/domain.md` to the relevant glossary and ADRs. If no routing exists, fall back to `CONTEXT-MAP.md`, root `CONTEXT.md`, and local ADR/domain docs.
+- the request and repo instructions;
+- `docs/agents/engineering-contract.md` when present;
+- `docs/agents/domain.md` and its routed glossary and ADRs;
+- the current implementation, representative callers, and tests;
+- operational constraints relevant to the suspected seams.
 
-Explore organically. Follow architectural friction first, checklist second.
+Without domain routing, fall back to `CONTEXT-MAP.md`, root `CONTEXT.md`, and local ADR or domain docs.
+
+When a load-bearing external fact is missing, delegate that source question to `$research` and link its note.
+
+Orienting is complete when the planned survey regions, domain and ADR constraints, relevant callers and tests, and known evidence gaps are named.
+
+### 2. Scout
+
+Use independent **scouts** when available and the repo or survey lenses can be partitioned. Give each scout the shared vocabulary, one bounded region or pressure, and a requirement to return source pointers. The main agent owns synthesis, deduplication, filtering, ranking, and the report. Use one pass for a small or unpartitionable repo.
+
+Follow architectural friction first, checklist second.
 
 Look for:
 
-- shallow modules: interface nearly as complex as implementation
-- behavior or decisions spread across callers
-- pure functions extracted only for testability while bugs hide in how they are called
-- seams that leak implementation knowledge
-- pass-through adapters or wrappers
-- owned modules mocked in tests instead of behavior proved through an interface
-- scattered domain ownership that makes fresh-agent navigation hard
-- behavior-preserving support slices that would unlock later tracer bullets
+- one concept requiring repeated jumps across modules;
+- shallow interfaces that expose nearly as much as their implementations;
+- behavior or decisions spread across callers;
+- pure helpers whose call choreography holds the real bugs;
+- caller-facing tests blocked by implementation detail;
+- seams that leak implementation knowledge;
+- pass-through adapters or wrappers;
+- owned modules mocked instead of proved through their interfaces;
+- ownership that is difficult to locate.
 
-Apply the **deletion test**: would removing this module concentrate complexity behind a smaller interface, or just move it around? Only "concentrates" earns a candidate.
+Apply the **deletion test** to each suspected module or cluster. Removing pass-through indirection should eliminate complexity; removing an earning module would redistribute it. A candidate earns its place when a deeper owner could concentrate that behavior behind a smaller interface.
 
-Filter hard. A report full of cleanup advice has failed the skill. Keep only candidates that plausibly improve **depth**, **leverage**, **locality**, test surface, or AI-navigability.
+Apply the **deepening gate**: keep only candidates that plausibly improve **depth**, **leverage**, **locality**, or the caller-facing test surface. Exclude cleanup-only work and speculative abstraction.
 
-### 2. Present Candidates
+Scouting is complete when every planned region or pressure returned evidence or a named gap, and every surviving candidate has a Source Trace and deletion-test result.
 
-Write a self-contained HTML report to repo-local `.tmp/architecture-reviews/` when available, with OS temp as fallback. Do not stage or commit generated reports.
+### 3. Report
 
-Open the report for the user when possible and report the absolute path.
+Apply the **storage gate**: confirm `.tmp/architecture-reviews/` is ignored. If it is not, stop and recommend `$setup-matt-pocock-skills`.
 
-Use [HTML-REPORT.md](HTML-REPORT.md) for card fields, visual style, tone, and diagram patterns.
+Write one HTML report under `.tmp/architecture-reviews/`. Keep generated reports outside the index and commits.
 
-Make the report visual first: diagrams prove shallowness and proposed depth.
+Read [HTML-REPORT.md](HTML-REPORT.md) for report fields, visual style, tone, and diagram patterns.
 
-ADR conflicts: surface only friction worth reopening.
+Apply the **survey gate**: show the current friction, responsibility that could consolidate, and validation angle. The chosen-candidate pass owns dependency classification and interface contracts.
 
-End with a numbered **Top recommendation**.
+Number every candidate, rank them, and end with one **Top recommendation**. Open the report when possible and always report its absolute path.
 
-After the report is written and opened or reported, ask:
+Then ask:
 
 > Which candidate number would you like to explore? I recommend Candidate N because ...
 
-### 3. Grill The Chosen Candidate
+The initial pass stops here until the user selects a candidate.
 
-Run `$grilling` on the chosen candidate: constraints, seams, adapters or substitutes, validation, migration, and out-of-scope boundaries.
+### 4. Pressure-Test The Candidate
 
-Use `$codebase-design` only when the candidate needs dependency classification, seam discipline, or design-it-twice alternatives.
+After selection, run `$grill-with-docs` with the candidate and Source Trace as its caller packet. Before starting, state that resolved domain terms may be persisted through `$domain-modeling`; ADR creation still requires its approval gate.
 
-Durable language: use `$domain-modeling` only for resolved domain terms or ADR-worthy decisions. Do not record ephemeral "not now" reasons.
+Pressure-test:
 
-### 4. Recommend One Route
+- constraints and public-contract commitments;
+- current callers and behavior that could move behind the interface;
+- seam, adapter, and substitute hypotheses;
+- validation;
+- bounded migration;
+- out-of-scope boundaries.
 
-After grilling, classify the candidate:
+Invoke `$codebase-design` when dependency classification, seam discipline, or meaningfully different interface alternatives are needed.
 
-- **single-slice**: one bounded slice can complete the architectural intent
-- **multi-slice**: direction is clear, but completion needs dependency-ordered slices
-- **underspecified**: intent, acceptance, architecture, or validation is unresolved
+Treat load-bearing rejections as ADR candidates. Treat timing-only reasons as deferrals.
+
+Honor `$grill-with-docs`'s **Confirmed** and **Evidence gap** exits. Only a Confirmed exit proceeds to classification.
+
+### 5. Classify And Hand Off
+
+Classify the confirmed candidate:
+
+- **single-slice:** one bounded slice can complete the architectural intent;
+- **multi-slice:** the direction is settled but completion needs dependency-ordered slices;
+- **underspecified:** intent, acceptance, architecture, or validation remains unresolved.
 
 Recommend exactly one route:
 
-- `$implement` for single-slice candidates with clear validation and no major unresolved decisions
-- `$to-tickets` for multi-slice candidates, even when the first slice is ready
-- `$to-spec` when product behavior, user-facing concerns, parent spec, acceptance, architecture, or validation is unresolved
+- `$implement` for a ready single-slice candidate with clear proof;
+- `$to-tickets` for a settled multi-slice candidate;
+- `$to-spec` for an underspecified candidate or one needing a durable parent spec.
+
+Return an **architecture packet** containing:
+
+- report path and chosen candidate;
+- Source Trace;
+- `$grill-with-docs` exit packet;
+- `$codebase-design` design packet when used;
+- classification;
+- recommended route and reason.
+
+Return the recommendation and stop. The user starts downstream execution.
 
 ## Completion Criteria
 
-Initial pass done means a visual report was written outside staged files, only real deepening candidates survived, the path was reported or opened, no refactor was implemented, and the user was asked which candidate to explore.
+The initial pass is complete only when every planned survey region is accounted for; every reported candidate is source-traced and passes the deletion and deepening gates; the numbered visual report and Top recommendation exist; the report path is returned; tracked state remains unchanged; and the user is asked to select a candidate.
 
-Chosen-candidate pass done means the candidate was grilled through constraints, seams, validation, migration, and scope boundaries; classified as single-slice, multi-slice, or underspecified; and recommended to exactly one next skill.
+The chosen-candidate pass is complete only after a Confirmed grilling exit; every resolved domain or ADR outcome is accounted for; any required design packet exists; the architecture packet is returned; and exactly one downstream route is recommended without executing it.

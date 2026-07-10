@@ -18,7 +18,7 @@ Use `$convergent-pr-review` instead for local PR review or high-risk local-diff 
 
 ## 1. Pin The Review Target
 
-Use the fixed point the user or caller supplied: commit SHA, branch, tag, `main`, `HEAD~5`, or similar. If none was supplied, ask.
+Use the fixed point the user or caller supplied. Otherwise discover the repository default branch and merge base, state the resolved baseline, and ask only when discovery is ambiguous.
 
 Choose the review target:
 
@@ -104,7 +104,7 @@ Run **single-agent**: Standards, then a **lens reset**, then Spec. Set Standards
 
 Route requests for independent reviewer subagents to `$convergent-pr-review`.
 
-Done means both axes ran sequentially with independent lenses.
+Done means both axes ran sequentially with a lens reset and remained separate.
 
 ## Output
 

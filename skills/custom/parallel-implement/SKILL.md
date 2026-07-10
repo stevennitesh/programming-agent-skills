@@ -1,23 +1,23 @@
 ---
 name: parallel-implement
-description: Run a ready-frontier wavefront with isolated one-commit workers and an adaptive serial integration lane.
+description: Run a ready-frontier wavefront with isolated one-commit lane workers and an adaptive serial integration lane.
 ---
 
 # Parallel Implement
 
 Run a **wavefront** over ready-for-agent work.
 
-The loop is **ready frontier -> isolated one-commit workers -> accepted packets -> adaptive integration lane -> loop-close lock -> tracker lock -> release sweep**.
+The loop is **ready frontier -> isolated one-commit lane workers -> accepted packets -> adaptive integration lane -> loop-close lock -> tracker lock -> release sweep**.
 
 - **Orchestrator**: owns source trace, scope, DAG, routing packet, ledger, worker acceptance, review route, tracker lock, closeout decision, and release sweep.
 - **Integration lane**: serially lands accepted work. The orchestrator owns it by default; a hot or late integrator owns it only when routed.
-- **Workers**: isolated one-item lanes; produce one clean local commit plus focused proof, or a blocker packet.
+- **Lane workers**: isolated one-item worktrees; produce one clean local commit plus focused proof, or a blocker packet. Within this skill, `worker` means lane worker.
 
 A **ready frontier** is the set of unblocked, unclaimed work items that can start now without dependency or write-scope overlap. A wave requires at least two.
 
 Use this when a ready frontier exists and parallel implementation can outrun serial work without outrunning integration.
 
-**Downshift:** use ordinary `$implement` when only one bounded item is in scope, or route items serially when isolation cannot be established. Use **shallow mode** for one finite wave with orchestrator-owned serial landing. Return readiness gaps to shaping.
+**Downshift:** when only one bounded item is in scope, return `$implement` as the next route and stop before dispatch. When several items must serialize because isolation cannot be established, return their order and route the first through `$implement`. Use **shallow mode** only when at least two isolated lane workers can still run in one finite wave. Return readiness gaps to shaping.
 
 Shallow mode means one wave of two or three workers, focused proof, orchestrator-owned landing, loop-close lock, applicable tracker lock, and no persistent integrator.
 
@@ -64,7 +64,7 @@ Build the routing packet from `references/RUN-LEDGER.md`. Resolve every field or
 
 **Proof budget:** workers run focused proof; the integration lane runs post-landing touched-area proof; loop close runs broad validation and fixed-point review. Worker broad suites require shared-behavior risk or an explicit route. Shared-behavior risk includes public APIs, shared modules, schema or migrations, cross-cutting config, cache or performance behavior, and data contracts.
 
-**Env lock:** workers use isolated venv, cache, and temp paths or leave dependency mutation to the integration lane. Broad dependency-mutating commands against a shared checkout or environment require an explicit route.
+**Env lock:** each lane uses its own repo-local `.tmp/parallel-implement/<run-id>/lanes/<lane-id>/` cache and temp paths, plus an isolated venv, or leaves dependency mutation to the integration lane. Broad dependency-mutating commands against a shared checkout or environment require an explicit route.
 
 **Hot integrator:** prefer a dedicated integration worktree. A shared orchestrator checkout uses a same-checkout lock: the integrator is the only writer and test runner while active; the orchestrator remains read-only there. The integrator reports `starting`, `ready`, `running`, `blocked`, `waiting`, `ready-to-land`, or `packet-ready` after gates, long commands, approval waits, and validation results.
 
@@ -105,6 +105,8 @@ Record the approved closeout `HEAD`. External tracker mutation, push, and releas
 ## Lock
 
 **Tracker lock:** follow `docs/agents/issue-tracker.md`. Fill the ledger closeout summary before mutation, include repo-local closeout changes in final review, and mutate connector-backed tracker state only after the approved closeout `HEAD` and required commits exist. Close only when tracker policy or the user says to close. The orchestrator owns external tracker mutations and push.
+
+Apply the tracker's **Mutation read-back** rule before recording tracker lock complete. A partial or unverifiable mutation blocks closeout.
 
 Workers and the integration lane may prepare closeout notes. The orchestrator accepts or blocks closeout after review and asks the user only when requested confirmation or tracker policy requires it.
 

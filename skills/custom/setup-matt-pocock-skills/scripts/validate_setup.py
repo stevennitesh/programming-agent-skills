@@ -23,9 +23,34 @@ AGENT_POINTERS = (
     "docs/agents/engineering-contract.md",
 )
 
+CONTRACT_TOKENS = (
+    "**Source trace:**",
+    "**Bounded slice:**",
+    "**Commitment boundary:**",
+    "**Load-bearing internal:**",
+    "**Semantic correctness:**",
+    "**Semantic proof:**",
+    "**Proof seam:**",
+    "**Proof lane:**",
+    "**Evidence:**",
+    "**Tracer bullet:**",
+    "**Fixed point:**",
+    "**Review snapshot:**",
+    "**staged worker**",
+    "**lane worker**",
+    "**Spec / Standards:**",
+    "**Residual risk:**",
+    "Orient -> Explore -> Decide -> Prove -> Cover -> Converge -> Simplify -> Lock",
+    ".tmp/",
+    ".scratch/",
+    "## Lock",
+)
+
 WORK_ITEM_TOKENS = (
     "## Work-item operations",
     "**Packet**",
+    "**Ready-for-agent contract**",
+    "**Mutation read-back**",
     "**Parent / child**",
     "**Blocking**",
     "**Ready query**",
@@ -123,6 +148,14 @@ def main() -> int:
         if not re.search(r"(?m)^## Commands\s*$", agents):
             failures.append("AGENTS.md is missing a ## Commands primer")
         require_tokens(agents, "AGENTS.md", AGENT_POINTERS, failures)
+        if not re.search(
+            r"(?im)^(?:[-*]\s*)?(?:before|for)\s+nontrivial coding[^\n]*"
+            r"docs/agents/engineering-contract\.md[^\n]*$",
+            agents,
+        ):
+            failures.append(
+                "AGENTS.md must tell agents to read the engineering contract before nontrivial coding"
+            )
 
     tracker = texts["docs/agents/issue-tracker.md"]
     if tracker:
@@ -159,7 +192,7 @@ def main() -> int:
     require_tokens(
         contract,
         "docs/agents/engineering-contract.md",
-        ("AGENTS.md", ".tmp/", ".scratch/"),
+        CONTRACT_TOKENS,
         failures,
     )
 
@@ -173,12 +206,11 @@ def main() -> int:
     elif not ignored:
         failures.append(".tmp/ contents are not ignored")
 
-    if local_tracker:
-        ignored, error = check_ignore(root, ".scratch/setup-validation-probe")
-        if ignored is None:
-            failures.append(error)
-        elif ignored:
-            failures.append(".scratch/ is ignored but Local Markdown requires durable tracker state")
+    ignored, error = check_ignore(root, ".scratch/setup-validation-probe")
+    if ignored is None:
+        failures.append(error)
+    elif ignored:
+        failures.append(".scratch/ is ignored; durable local state must remain trackable")
 
     if failures:
         print("Setup surface is incomplete:")

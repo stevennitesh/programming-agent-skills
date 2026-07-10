@@ -4,4 +4,4 @@ policy:
 interface:
   display_name: "Convergent PR Review"
   short_description: "Independent reviewers, verified ledger"
-  default_prompt: "Use $convergent-pr-review to review this PR locally against main with 2 independent reviewers for up to 2 rounds."
+  default_prompt: "Use $convergent-pr-review to review this PR locally from its resolved merge base with 2 independent reviewers for up to 2 rounds."

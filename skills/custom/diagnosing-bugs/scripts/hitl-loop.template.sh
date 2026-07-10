@@ -2,11 +2,11 @@
 # Human-in-the-loop reproduction loop.
 # Use only when the bug cannot be reproduced by an unattended command.
 #
-# Copy this file to a scratch path, edit the repro steps below, then run the copy.
+# Copy this file under .tmp/diagnosing-bugs/<bug-slug>/, edit the repro steps below, then run the copy.
 # The agent runs the script; the user follows prompts in their terminal/browser/app.
 #
 # Usage:
-#   bash /tmp/hitl-loop-<bug-name>.sh
+#   bash .tmp/diagnosing-bugs/<bug-slug>/hitl-loop.sh
 #
 # Helpers:
 #   step "<instruction>"      Show an instruction and wait for Enter.

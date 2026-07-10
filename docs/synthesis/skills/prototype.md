@@ -2,9 +2,9 @@
 
 This note maps the books and supporting references behind the local `$prototype` skill and its supporting files:
 
-- `/home/steve/code/programming-agent-skills/skills/custom/prototype/SKILL.md`
-- `/home/steve/code/programming-agent-skills/skills/custom/prototype/LOGIC.md`
-- `/home/steve/code/programming-agent-skills/skills/custom/prototype/UI.md`
+- `skills/custom/prototype/SKILL.md`
+- `skills/custom/prototype/LOGIC.md`
+- `skills/custom/prototype/UI.md`
 
 The local skill-pack stance is: a prototype is throwaway code that answers one design question. The question decides the branch: a tiny terminal app for state, business logic, data shape, or interface feel; or structurally different UI variants on one route for visual and interaction decisions. The durable output is the captured answer, not the prototype code.
 

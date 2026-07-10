@@ -7,7 +7,7 @@ Do not mock owned modules behind the interface you are testing. If testing throu
 Prefer this order:
 
 1. Real in-process code.
-2. Local substitute: in-memory store, temp filesystem, test database, or local service emulator.
+2. Local substitute: in-memory store, isolated `.tmp/` filesystem, test database, or local service emulator.
 3. Fake adapter that preserves the behavior needed by the test.
 4. Stub for one controlled value or response.
 5. Mock adapter for a true external system when the call contract itself is the behavior or risk.

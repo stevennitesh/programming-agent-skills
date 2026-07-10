@@ -1,84 +1,50 @@
 ---
 name: writing-great-skills
-description: Use when writing, editing, or reviewing Codex skills for predictable behavior: choose implicit vs explicit invocation, write descriptions, sharpen leading words, place context pointers, use progressive disclosure, set completion criteria, and prune no-ops, sediment, sprawl, or duplicated intent.
+description: Predictability lens for creating, editing, or reviewing Codex skills. Use when deciding invocation, ownership, composition, descriptions, information hierarchy, context pointers, leading words, gates, completion criteria, or pruning.
 ---
 
-A skill exists to wrangle determinism out of a stochastic system. **Predictability** — Codex taking the same _process_ every run, not producing the same output — is the root virtue; every lever below serves it.
+# Writing Great Skills
 
-Use this skill as a reference lens: judge every description, step, context pointer, supporting file, and completion criterion by whether it makes Codex take the same process next run.
+Make skill behavior **predictable**: the same process every run, with outputs free to vary.
 
-**Bold terms** are defined in [`GLOSSARY.md`](GLOSSARY.md); look them up there for the full meaning.
+## Load The Right Reference
 
-## Invocation
+Trace the declared source of truth, disclosed files, `agents/openai.yaml`, installed mirror, upstream counterpart, callers, routers, composers, owned outputs, and mutation boundary.
 
-Two choices, trading different costs:
+Read [GLOSSARY.md](GLOSSARY.md) completely for a full audit. For a bounded edit, read only the owning sections:
 
-- An **implicitly invocable** skill keeps `policy.allow_implicit_invocation` unset or true in `agents/openai.yaml`, so Codex can choose it from the skill description (you can still type its name too). Write a model-facing description with rich trigger phrasing ("Use when the user wants..., mentions...").
-- An **explicit-only** skill sets `policy.allow_implicit_invocation: false` in `agents/openai.yaml`: only explicit `$skill-name` invocation should reach it. It reduces **context load** and spends **cognitive load**: the human must remember when to use it. The required `description` becomes human-facing: a one-line summary, trigger lists stripped.
+- invocation or description: `Invocation` and `Leading Word`;
+- structure or splitting: `Information Hierarchy`;
+- pruning: `Pruning` and the relevant failure mode;
+- completion drift: `Completion Criterion`, `Legwork`, and `Premature Completion`.
 
-Pick implicit invocation only when Codex must reach the skill on its own. If it only ever fires by hand, make it explicit-only with `policy.allow_implicit_invocation: false`.
+## Audit Spine
 
-When explicit-only skills multiply past what you can remember, that piled-up cognitive load is cured by a **router skill**: one explicit-only skill that names the others and when to reach for each.
+1. **Invoke.** Decide implicit or explicit-only reach. Make the policy explicit in `agents/openai.yaml`. For implicit reach, front-load the description with one trigger per real branch. For explicit-only reach, keep the description human-facing and route discoverability through a router.
+2. **Own.** Give every behavior one owner. The owner keeps its rules, gates, output, mutation boundary, and completion criterion. Compose by invoking an owner whose policy permits caller composition; route an explicit-only owner by naming one next skill and stopping.
+3. **Arrange.** Keep universal steps in `SKILL.md`. Keep compact universal reference beside them. Move branch-only reference behind a sharp context pointer. Split a sequence only when visible later steps cause observed premature completion after its criterion is already sharp.
+4. **Lead.** Prefer pretrained leading words that recruit the intended behavior. Repeat the word, not its explanation. Keep explicit wording wherever a leading word would merely imply an owner, gate, output, completion criterion, or handoff.
+5. **Gate.** End every meaningful step with a checkable bound. Demand enough evidence to prevent plausible-but-unproven completion. Name failure, blocked, and partial-mutation outcomes.
+6. **Prune.** Keep one source of truth. Delete duplication, sediment, and true no-ops. Move live branch detail; preserve behavior-bearing detail. State the positive target first and retain negation only for a hard guardrail.
+7. **Verify.** Recheck every active surface and relationship. Confirm that pruning left behavior explicit, referenced files resolve, invocation policy matches the description, and the installed mirror matches when sync is in scope.
 
-## Writing the description
+## Mode Gate
 
-An implicitly invocable **description** does two jobs — state what the skill is, and list the **branches** that should trigger it. Every word increases **context load**, so a description earns even harder pruning than the body:
+Honor review-only as read-only. When edits are authorized, change the declared source of truth first, validate it, then sync the installed mirror when that surface is in scope.
 
-- **Front-load the skill's leading word** — the description is where it does its invocation work.
-- **One trigger per branch.** Synonyms that rename a single branch are **duplication** — "build features using TDD … asks for test-first development" is one branch written twice. Collapse them; keep only genuinely distinct branches.
-- **Cut identity that's already in the body.** Keep the description to triggers, plus any "when another skill needs…" reach clause.
+Own skill-authoring judgment. The caller owns task mode, product decisions, and mutation scope.
 
-## Information hierarchy
+## Audit Output
 
-A skill is built from two content types — **steps** and **reference** — that mix freely: a skill can be all steps, all reference, or both. The core decision is which to use and where each sits on the **information hierarchy**, a ladder ranked by how immediately Codex needs the material:
+Return:
 
-1. **In-skill step** — an ordered action in `SKILL.md`, the primary tier: what Codex does, in order. Each step ends on a **completion criterion**, the condition that tells Codex the work is done. Make it _checkable_ (can Codex tell done from not-done?) and, where it matters, _exhaustive_ ("every modified model accounted for", not "produce a change list") — a vague criterion invites **premature completion**.
-2. **In-skill reference** — a definition, rule, or fact in `SKILL.md`, consulted on demand. Often a legitimately flat peer-set (every rule of a review on one rung) — a fine arrangement, not a smell. _This skill is all reference._
-3. **External reference** — reference pushed out of `SKILL.md` into a separate file, reached by a **context pointer**, loaded only when the pointer fires. (Spans _disclosed_ reference — a sibling file like `GLOSSARY.md`, still part of the skill — through fully **external reference** that lives outside the skill system and any skill can point at.)
+1. Verdict and concise ratings
+2. Behavior and leading words to keep
+3. Findings ordered by impact
+4. Exact replacement wording
+5. Deliberate non-changes
+6. Behavior at risk from pruning
 
-A demanding completion criterion drives thorough **legwork** — the digging Codex does within the work — whether the skill has steps or not, since "every rule applied" binds flat reference just as "every step done" binds a sequence.
+## Completion Criteria
 
-Push too little down and the top bloats; push too much and you hide material the agent actually needs. That tension is the whole decision.
-
-**Progressive disclosure** is the move down the ladder — out of `SKILL.md` into a linked file — so the top stays legible. Mechanics: a linked `.md` file in the skill folder, named for what it holds (this skill discloses its full definitions to `GLOSSARY.md`). Some skills are used in more than one way, and each distinct way is a **branch** — different runs taking different paths through the skill. Branching is the cleanest disclosure test: inline what every branch needs, and push behind a pointer what only some branches reach. A **context pointer**'s _wording_, not its target, decides when and how reliably Codex reaches the material.
-
-Where the ladder decides _how far down_ a piece sits, **co-location** decides _what sits beside it_ once there: keep a concept's definition, rules, and caveats under one heading rather than scattered, so reading one part brings its neighbours with it.
-
-## When to split
-
-**Granularity** is how finely you divide skills, and each cut spends one of the two loads, so split only when the cut earns it. Two cuts:
-
-- **By invocation** — split off an **implicitly invocable** skill when you have a distinct **leading word** that should trigger it on its own, or another skill must reach it. You pay **context load** for the new always-loaded **description**, so that independent reach has to be worth it.
-- **By sequence** — split a run of **steps** when the steps still ahead (a step's **post-completion steps**) tempt the agent to rush the one in front of it (**premature completion**). Keeping them out of view encourages the agent to do more **legwork** on the current task.
-
-## Pruning
-
-Keep each meaning in a **single source of truth**: one authoritative place, so changing the behaviour is a one-place edit.
-
-Check every line for **relevance**: does it still bear on what the skill does?
-
-Then hunt **no-ops** sentence by sentence, not just line by line: run the no-op test on each sentence in isolation, and when one fails, delete the whole sentence rather than trim words from it. Be aggressive — most prose that fails should go, not be rewritten.
-
-## Leading words
-
-A **leading word** is a compact concept already living in the model's pretraining that Codex thinks with while running the skill (e.g. _lesson_, _fog of war_, _tracer bullets_). Repeated throughout the text (though not necessarily - a strong leading word might only be needed once), it accumulates a distributed definition and anchors a whole region of behaviour in the fewest tokens, by recruiting priors the model already holds.
-
-It serves predictability twice. In the body it anchors _execution_: Codex reaches for the same behaviour every time the word appears. In the description it anchors _invocation_: when the same word lives in your prompts, docs, and code, Codex links that shared language to the skill and fires it more reliably.
-
-Hunt for opportunities to refactor skills to use leading words. A triad spelled out at three sites (**duplication**), a description spending a sentence to gesture at one idea — each is a passage begging to **collapse** into a single token. Examples include:
-
-- "fast, deterministic, low-overhead" -> _tight_ — one quality restated across a phase — into a single pretrained word (a _tight_ loop).
-- "a loop you believe in" -> _red_ — converts a fuzzy gate into a binary observable state (the loop goes _red_ on the bug, or it doesn't).
-
-You win twice over: fewer tokens, _and_ a sharper hook for Codex to hang its thinking on. Assume every skill is carrying restatements that leading words retire — go find them.
-
-## Failure modes
-
-Use these to diagnose issues the user may be having with the skill.
-
-- **Premature completion** — ending a step before it's genuinely done, attention slipping to _being done_. Defence, in order: sharpen the completion criterion first (cheap, local); only if it is irreducibly fuzzy _and_ you observe the rush, hide the post-completion steps by splitting (the sequence cut).
-- **Duplication** — the same meaning in more than one place. Costs maintenance and tokens, and inflates a meaning's prominence on the ladder past its real rank.
-- **Sediment** — stale layers that settle because adding feels safe and removing feels risky. The default fate of any skill without a pruning discipline.
-- **Sprawl** — a skill simply too long, even when every line is live and unique. Hurts readability and maintainability and wastes tokens. The cure is the ladder: disclose **reference** behind pointers, and split by **branch** or sequence so each path carries only what it needs.
-- **No-op** — a line the model already obeys by default, so you pay load to say nothing. The test: does it change behaviour versus the default? A weak leading word (_be thorough_ when the agent is already thorough-ish) is a no-op; the fix is a stronger word (_relentless_), not a different technique.
-- **Negation** — steering by prohibition backfires: _don't think of an elephant_ names the elephant and makes it more available, not less. Prompt the **positive**: state the target behavior so the banned one is never spoken; keep a prohibition only as a hard guardrail you cannot phrase positively, and even then pair it with what to do instead.
+Complete only when every active invocation surface, owner, composition edge, context pointer, gate, output, mutation boundary, handoff, and completion criterion is accounted for; every upstream/custom difference is deliberate; each meaning has one owner; and pruning preserves behavior explicitly rather than by implication.

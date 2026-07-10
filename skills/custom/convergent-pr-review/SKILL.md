@@ -7,17 +7,17 @@ description: "Use for local PR review or high-risk local-diff review that needs 
 
 Run a read-only **convergence gate** over one pinned **review snapshot**:
 
-**review snapshot -> source trace -> independent lenses -> evidence ledger -> verified survivors -> drift check -> patch-ready handoff**
+**review snapshot -> source trace -> independent reviewers -> evidence ledger -> verified survivors -> drift check -> patch-ready handoff**
 
 Reviewer subagents inspect; the main agent orchestrates and verifies. Consensus is signal, not truth.
 
-**Read-only boundary:** inspection, ref fetches, and routed validation may create only disposable artifacts. Patches, staging, commits, and tracker mutations belong to downstream implementation. Sandbox-crossing or external validation follows normal tool approval and is reported.
+**Read-only boundary:** inspection, ref fetches, and routed validation may create only disposable `.tmp/` artifacts. Patches, tracked `.scratch/` evidence, staging, commits, and tracker mutations belong to downstream implementation. Sandbox-crossing or external validation follows normal tool approval and is reported.
 
 Use `$review` instead for ordinary branch, WIP, or `review since X` fixed-point review where Standards and Spec are the main axes.
 
 ## Defaults
 
-- Base ref: `main`
+- Base ref: caller-supplied; otherwise discover the repository default branch and merge base
 - Reviewers: `2`
 - Max rounds: `2`
 - Severity: `P0/P1/P2/P3`
@@ -96,11 +96,11 @@ Lens:
 Review read-only. Return only high-confidence actionable findings with file:line evidence, impact, severity, and remediation direction. Focus on correctness, behavioral regressions, broken contracts, workflow failures, missing validation, CI blockers, security/permission risk, and operator risk. Style-only feedback, broad refactors, and speculation are out of scope.
 ```
 
-If subagents are unavailable, run separate manual passes with distinct lenses and mark the report reduced-confidence.
+If subagents are unavailable, run separated manual lens passes and mark the report reduced-confidence. These passes are distinct, not independent.
 
-**Independence gate:** require at least two completed passes with distinct lenses over the same snapshot before building the ledger. Replace failed or timed-out reviewers or run distinct manual passes. Report the review incomplete when two independent passes cannot be obtained.
+**Independence gate:** require at least two isolated reviewer passes over the same snapshot. Replace failed or timed-out reviewers. When isolation is unavailable, allow two separated manual lens passes only as a reduced-confidence fallback and label the review non-independent.
 
-Done means at least two independent passes completed over the same snapshot, or the review stopped incomplete with the missing lenses reported.
+Done means at least two independent passes completed over the same snapshot, or two reduced-confidence separated passes were reported as non-independent, or the review stopped incomplete with the missing lenses reported.
 
 ## 4. Build The Evidence Ledger
 
@@ -141,7 +141,7 @@ The orchestrator verifies accepted and disputed findings.
 
 Use the cheapest meaningful evidence: inspect cited lines, inspect nearby tests, run `git diff --check`, run targeted validation, or inspect affected config, migrations, permissions, or operator workflows.
 
-Keep verification local and disposable. Use installs, network or external services, destructive commands, or large generated artifacts only when explicitly requested and permitted by the repo contract and tool policy.
+Keep generated verification artifacts local and disposable under `.tmp/`; delete them or name each intentionally preserved path in the report. Hand off any evidence that must become tracked `.scratch/` state to downstream implementation. Use installs, network or external services, destructive commands, or large generated artifacts only when explicitly requested and permitted by the repo contract and tool policy.
 
 Done means every accepted or disputed finding has a consistent status and verification state; disproved findings were rejected; and every `not checked` item records the blocker, confidence impact, and provisional blocking decision.
 
@@ -187,4 +187,4 @@ Done means the report returns the complete ledger, preserves axis separation, re
 
 ## Completion Criteria
 
-Complete only when the fixed point and non-empty review snapshot are pinned; Source Trace is recorded; at least two independent lenses reviewed the same captured target; Standards and Spec ran or Spec was explicitly skipped and replaced; every reviewer finding is represented in the ledger; status and verification agree; survivors are verified or explicitly not checked; drift and the read-only boundary were checked; severity and blocking decisions are clear; and the final ledger plus any patch-ready handoff were returned.
+Complete only when the fixed point and non-empty review snapshot are pinned; Source Trace is recorded; at least two isolated reviewer passes reviewed the same captured target, or the result is explicitly reduced-confidence and non-independent; Standards and Spec ran or Spec was explicitly skipped and replaced; every reviewer finding is represented in the ledger; status and verification agree; survivors are verified or explicitly not checked; drift and the read-only boundary were checked; severity and blocking decisions are clear; and the final ledger plus any patch-ready handoff were returned.

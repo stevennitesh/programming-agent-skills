@@ -32,12 +32,14 @@ Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement
 **Implemented items remain as tracked files.**
 
 - **Packet**: `SPEC.md`, issue bodies, `## Comments`, and `## Implementation Notes` are the durable packet. Approved implementation issues use `Status: ready-for-agent` and one category role when the source settles it.
+- **Ready-for-agent contract**: every ready item names one bounded slice, Source Trace, observable acceptance criteria, dependency state, proof lane, expected write scope, parallel-safety note, and scope fence. `$triage` owns incoming classification and verification; `$to-tickets` owns slicing and dependency order. Both produce this contract.
 - **Parent / child**: `SPEC.md` is the parent. Its ordered issue list links each file, and every issue records `Parent: ../SPEC.md`.
 - **Blocking**: put `Blocked by: <NN>, <NN>` near the top of an issue. A work item is unblocked when every listed issue has `Status: implemented`.
 - **Ready query**: list issues with `Status: ready-for-agent`, then drop issues with an unresolved blocker or `Claimed by`. Preserve the order in `SPEC.md`; without a parent order, choose the lowest issue number.
 - **Claim**: add `Claimed by: <driver/session>` before implementation dispatch; keep the state role unchanged.
 - **Release**: remove `Claimed by` when work blocks, is abandoned, or reaches closeout.
 - **Closeout**: before final review, append the closeout packet under `## Implementation Notes`, set `Status: implemented`, remove the prior state value and claim, and stage the tracker file with the implementation diff.
+- **Mutation read-back**: after creating or changing tracker files, reread them and verify the intended body, relationships, state, claim, comments, and closeout metadata. A partial mutation is blocked; report applied operations, failed operations, and the safest recovery action.
 
 ## Wayfinding operations
 

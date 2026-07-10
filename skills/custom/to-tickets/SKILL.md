@@ -33,16 +33,11 @@ Leave patch design and exact file choices to implementation.
 
 Split the work into dependency-ordered tickets with clear **blocking edges**.
 
-Every ticket satisfies the **ticket contract**:
+Every ticket satisfies the tracker's **Ready-for-agent contract**. Add the slicing fields this skill owns:
 
 - Parent reference
 - Why this slice
 - What to build: end-to-end behavior or support change
-- Acceptance criteria: observable behavior
-- Proof lane: repo-owned seam, command, or artifact expected to prove acceptance
-- Blocked by
-- Expected write scope: stable modules, interfaces, commands, or docs; use `discover during implementation` when unknown
-- Parallel safety
 - Relevant context: source trace and applicable glossary, ADR, or prototype pointers
 
 Tracer-bullet tickets deliver one narrow behavior across every needed layer. Support tickets name the tracer bullet they unblock or de-risk and the proof that makes them done.
@@ -79,6 +74,8 @@ Publish approved tickets in dependency order, blockers first, through `docs/agen
 
 Record parent and child links, ticket order, blocking edges, source trace, durable context pointers, readiness, proof lanes, write scopes, and parallel safety according to the repo packet convention.
 
+Apply the tracker's **Mutation read-back** rule to the parent and every published ticket. Verify bodies, relationships, blocking edges, labels or state, and the resulting ready frontier. Treat a partial publication as blocked and report the safest recovery.
+
 **Publication scope:** publish only the approved tickets and required parent, dependency, and packet metadata. Preserve the parent's intent and lifecycle state; change its body only when the tracker convention requires child links. End before implementation execution, code review, or closeout.
 
 Name the initial **ready frontier**: published tickets that are unblocked and unclaimed under the tracker convention.
@@ -87,4 +84,4 @@ End with the published ticket references, packet path when applicable, initial r
 
 ## Completion Criteria
 
-Complete only when the setup, coverage, and approval gates pass; no source gap remains; every ticket satisfies the ticket contract; approved tickets are published blockers-first with explicit blocking edges; required label and packet conventions are satisfied; publication stayed inside scope; and the initial ready frontier plus one next action are reported.
+Complete only when the setup, coverage, and approval gates pass; no source gap remains; every ticket satisfies the Ready-for-agent contract; approved tickets are published blockers-first with explicit blocking edges; publication is read back without partial failure; required label and packet conventions are satisfied; publication stayed inside scope; and the initial ready frontier plus one next action are reported.

@@ -1,6 +1,6 @@
 # Writing Codex-Ready Briefs
 
-A Codex-ready brief is the durable implementation contract posted when an issue or PR moves to `ready-for-agent`. The original request and discussion remain source context; the brief names one bounded handoff.
+A Codex-ready brief renders the tracker's Ready-for-agent contract when an issue or PR moves to `ready-for-agent`. The original request and discussion remain source context; the brief names one bounded handoff.
 
 For an issue, the brief describes the slice to build. For a PR, it describes the slice left to finish on the existing diff.
 
@@ -65,7 +65,7 @@ For a support slice, name what it unblocks or de-risks.
 - [ ] Specific, observable criterion 2
 - [ ] Specific, observable criterion 3
 
-**Validation notes:**
+**Proof lane:**
 Name the highest useful interface or seam to prove through.
 For support slices, name the observable proof: migration check, harness output, compatibility proof, config behavior, or repo-standard command.
 When load-bearing internals determine correctness, name the semantic examples, fixtures, invariants, or edge cases.

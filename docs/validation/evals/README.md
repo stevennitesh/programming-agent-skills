@@ -13,3 +13,7 @@ An eval note should state:
 - how results should feed back into synthesis or skill wording.
 
 Keep evals small enough to run and compare across skill revisions.
+
+## Current Suite
+
+- [`core-workflows.md`](core-workflows.md): seven pack-level routing, handoff, proof, and mutation fixtures.

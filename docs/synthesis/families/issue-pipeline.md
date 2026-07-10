@@ -2,13 +2,16 @@
 
 This note maps the books and supporting references behind the local issue pipeline skills:
 
-- `/home/steve/code/programming-agent-skills/skills/custom/to-spec/SKILL.md`
-- `/home/steve/code/programming-agent-skills/skills/custom/to-tickets/SKILL.md`
-- `/home/steve/code/programming-agent-skills/skills/custom/triage/SKILL.md`
-- `/home/steve/code/programming-agent-skills/skills/custom/triage/AGENT-BRIEF.md`
-- `/home/steve/code/programming-agent-skills/skills/custom/triage/OUT-OF-SCOPE.md`
-- `/home/steve/code/programming-agent-skills/skills/custom/implement/SKILL.md`
-- `/home/steve/code/programming-agent-skills/skills/custom/review/SKILL.md`
+- `skills/custom/to-spec/SKILL.md`
+- `skills/custom/to-tickets/SKILL.md`
+- `skills/custom/triage/SKILL.md`
+- `skills/custom/triage/ATTENTION-SCAN.md`
+- `skills/custom/triage/SPECIFIC-ITEM.md`
+- `skills/custom/triage/QUICK-OVERRIDE.md`
+- `skills/custom/triage/AGENT-BRIEF.md`
+- `skills/custom/triage/OUT-OF-SCOPE.md`
+- `skills/custom/implement/SKILL.md`
+- `skills/custom/review/SKILL.md`
 
 The local skill-pack stance is: turn messy intent into durable product understanding, split that understanding into dependency-ordered bounded slices, convert raw outside requests into the same ready-for-agent shape, implement exactly one ready slice at a time, and review the result against both repo standards and the originating spec.
 

@@ -20,7 +20,7 @@ Read tracker docs only for tracker selection, claim, semantics, or closeout.
 ## Modes
 
 - **Owner:** implements or integrates one selected work item; owns fixed point, authoritative proof, `$review`, Lock, commit, and tracker closeout.
-- **Worker:** owns only the assigned patch, focused proof, staging of that patch, and the handoff packet.
+- **Staged worker:** owns only the assigned patch, focused proof, staging of that patch, and the handoff packet. Within this skill, `worker` means staged worker.
 - **Scout:** owns read-only advice on seam, scope, or validation.
 
 Formal review, commit, tracker mutation, and delegation are owner-only.
@@ -39,9 +39,9 @@ Read only task-relevant comments, parent context, files, and nearby code. Treat 
 
 Use `$tdd` when behavior is clear enough for a RED test through a useful seam. Otherwise name the proof seam, use the strongest focused evidence, and record why RED was unsuitable. Keep the patch inside the selected work item; record adjacent work as follow-ups.
 
-## Worker Handoff
+## Staged Worker Handoff
 
-Only owner acceptance of the staged packet closes the **handoff gate**. Returning the packet makes the worker handoff-ready.
+Only owner acceptance of the staged packet closes the **handoff gate**. Returning the packet makes the staged worker handoff-ready.
 
 The packet includes `git status --short`, staged diff summary, validation, skipped checks, residual risk, and unrelated dirty files.
 
@@ -77,10 +77,12 @@ Add the commit SHA to the closeout packet for connector posting or the final res
 
 For connector-backed trackers, mutate external tracker state only after the commit succeeds and its tree matches the lock tree: post the closeout packet, add/apply `implemented`, remove any prior state-role label, and close only if the user or tracker docs say so.
 
+Apply the tracker's **Mutation read-back** rule. A closeout that cannot be read back is blocked, not done.
+
 If the work item is not tracker-backed, after commit use the closeout packet as the final response.
 
 ## Done
 
 Owner done means one selected work item is implemented or integrated from worker handoff, validated, reviewed from the fixed point through an immutable review tree, committed with a tree matching the approved lock tree, and, when tracker-backed, noted and moved to `implemented`.
 
-Worker handoff-ready means a focused patch is staged and reported. Delegated work is done only after owner acceptance.
+Staged-worker handoff-ready means a focused patch is staged and reported. Delegated work is done only after owner acceptance.

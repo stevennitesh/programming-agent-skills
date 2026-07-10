@@ -1,5 +1,7 @@
 # Matt Skill Pack Vocabulary Audit
 
+Durable source and reconstruction: [UPSTREAM-SOURCE.md](UPSTREAM-SOURCE.md).
+
 This document compares Matt Pocock's upstream skills clone in `.tmp/mattpocock-skills/` with this repo's active skills in `skills/custom/`.
 
 The question: do the active skills preserve Matt's method and vocabulary, and where has important language drifted?

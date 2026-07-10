@@ -1,5 +1,7 @@
 # Prompt 02: Implement Facet Map And Research Plan
 
+Durable upstream source and reconstruction: [`UPSTREAM-SOURCE.md`](../../language/UPSTREAM-SOURCE.md).
+
 This executes
 [`docs/synthesis/methods/prompts/02-facet-map-and-research-plan.md`](../../../synthesis/methods/prompts/02-facet-map-and-research-plan.md)
 for `implement`.

@@ -1,13 +1,13 @@
 ---
 name: setup-matt-pocock-skills
-description: "Bootstrap a repo for the custom engineering skill pack: AGENTS primer, verified commands, tracker lifecycle, labels, domain routing, engineering contract, and scratch policy."
+description: "Bootstrap a repo for the custom engineering skill pack: AGENTS primer, verified commands, tracker lifecycle, labels, domain routing, engineering contract, and .tmp/.scratch policy."
 ---
 
 # Setup Matt Pocock's Skills
 
 Bootstrap the repo-local **setup surface** the custom skill pack reads.
 
-A repo is **ready** only when its agent primer points to verified commands and complete local contracts, its chosen tracker is usable, required labels exist, and disposable work stays disposable.
+A repo is **ready** only when its agent primer points to verified commands and complete local contracts, its chosen tracker is usable, required labels exist, disposable work stays in ignored `.tmp/`, and durable local state stays trackable in `.scratch/`.
 
 This is a prompt-driven setup. **Inventory, Choose, Draft, Provision, Verify.**
 
@@ -19,12 +19,12 @@ Inspect before asking:
 - `AGENTS.md` plus configured Codex fallback instruction files: existing commands, invariants, pointers, prior setup output, or the portable fallback heading `Portable Fallback AGENTS.md For Programming Work`.
 - `README`, contribution docs, manifests, lockfiles, task runners, and CI: canonical setup, focused-test, full-test, lint/format, typecheck, and build commands.
 - `docs/agents/`, `CONTEXT.md`, `CONTEXT-MAP.md`, root and context-local ADR directories.
-- `.gitignore`, `.tmp/`, and `.scratch/`: disposable-work policy and any existing local tracker.
+- `.gitignore`, `.tmp/`, and `.scratch/`: disposable and tracked-local-state policy, plus any existing local tracker.
 - For a detected GitHub or GitLab remote, read tracker access and label inventory when credentials permit.
 
 Treat a command as verified only when repo config, CI, or maintained docs own it. Surface conflicting command sources.
 
-Inventory is complete when the tracker candidate, instruction target, verified command set, existing setup surface, domain layout, scratch policy, and access blockers are known.
+Inventory is complete when the tracker candidate, instruction target, verified command set, existing setup surface, domain layout, local-state policy, and access blockers are known.
 
 ## 2. Choose
 
@@ -66,7 +66,7 @@ Choose:
 
 Record the choice in `docs/agents/domain.md`. Domain files remain lazy: `$domain-modeling` creates or changes them when language or decisions resolve.
 
-Then explain the fixed setup outputs: verified commands in `AGENTS.md`, the engineering contract, tracker and label contracts, domain routing, and `.tmp/` hygiene. These are pack invariants, not extra choices; surface any repo-policy conflict.
+Then explain the fixed setup outputs: verified commands in `AGENTS.md`, the engineering contract, tracker and label contracts, domain routing, and `.tmp/`/`.scratch/` policy. These are pack invariants, not extra choices; surface any repo-policy conflict.
 
 ## 3. Draft
 
@@ -99,7 +99,7 @@ This repo uses the custom Matt Pocock-style engineering skill pack.
 
 AGENTS primes. Repo-local docs teach. Skills execute.
 
-For nontrivial coding work, read `docs/agents/engineering-contract.md` before editing.
+Before nontrivial coding, read `docs/agents/engineering-contract.md`.
 
 ### Pointers
 
@@ -125,17 +125,17 @@ Write:
 The tracker contract must define:
 
 - tracker interface and PR/MR request-surface policy;
-- packet storage, parent-child links, blocking edges, ready query, claim/release, closeout state, and close policy;
+- packet storage, the shared ready-for-agent contract, parent-child links, blocking edges, ready query, claim/release, mutation read-back, closeout state, and close policy;
 - Codex-ready brief transport;
 - `$wayfinder` map/ticket transport, participation, frontier, outcomes, and map completion.
 
 For another tracker, write the same contract from the user's operation map.
 
-### Scratch And Tracker State
+### Disposable And Tracked Local State
 
 Ensure `.tmp/` contents are ignored without replacing unrelated ignore rules.
 
-For Local Markdown, keep `.scratch/` trackable: it is durable tracker state, not disposable scratch.
+Keep `.scratch/` trackable without replacing unrelated ignore rules. It is durable, version-controlled local work state; Local Markdown tracker files live there when selected.
 
 For GitHub or GitLab, create only missing mapped and fixed labels after approval. Preserve existing labels and descriptions.
 
@@ -151,4 +151,4 @@ Run `scripts/validate_setup.py` from this skill against the target repo. Then:
 
 Treat dependency installation or broad environment mutation as a separate user-approved action.
 
-Setup is complete only when `AGENTS.md`, all four local contracts, tracker access, labels or local status vocabulary, domain layout, command pointers, and scratch policy are verified. Otherwise report **Setup incomplete**, the blocker, and the exact next action.
+Setup is complete only when `AGENTS.md`, all four local contracts, tracker access, labels or local status vocabulary, domain layout, command pointers, and local-state policy are verified. Otherwise report **Setup incomplete**, the blocker, and the exact next action.

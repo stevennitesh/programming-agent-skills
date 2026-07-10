@@ -1,5 +1,7 @@
 # Agentic Vocabulary Inventory
 
+Durable upstream source and reconstruction: [UPSTREAM-SOURCE.md](UPSTREAM-SOURCE.md).
+
 This document inventories unusual agentic coding vocabulary from the core
 language surfaces: docs/agents/engineering-contract.md, CONTEXT.md, ADRs,
 README.md, AGENTS.md, skills/custom/, and the upstream comparison clone at

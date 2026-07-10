@@ -1,123 +1,121 @@
 # Programming Agent Skills
 
-Programming Agent Skills is a skill pack for making AI coding agents feel less like autocomplete with a shell and more like a disciplined engineering partner.
+AI coding agents are already astonishingly fast. The breakthrough is making that speed dependable by giving Codex the habits of a strong senior engineer: clarify intent before coding, work in bounded slices, prove the behavior that matters, review the real diff, and leave the repository easier to trust.
 
-The exciting part is not that agents can write code quickly. They already can. The exciting part is getting that speed inside a workflow that shapes vague ideas, slices real product work, proves behavior, reviews the diff, and leaves the repo easier for the next human or agent to trust.
+Programming Agent Skills is a Codex-first skill pack built around that idea. It turns fuzzy requests into named workflows, keeps product commitments with the human, gives implementation technique to the agent, and puts evidence gates between "looks done" and done.
 
 ## Purpose
 
-AI coding agents are fast, but they drift into predictable failure modes: vague scope, shallow exploration, premature implementation, brittle abstractions, weak proof, broad diffs, stale handoffs, and confident summaries without evidence.
+Fast agents fail in predictable ways: vague scope, shallow exploration, premature implementation, brittle abstractions, weak proof, broad diffs, stale handoffs, and confident summaries without evidence.
 
-This pack turns those failure modes into named workflows and engineering habits.
+This pack turns those failure modes into small, composable workflows. Each skill owns one engineering job; together they cover the path from an unclear idea to a verified change:
 
-It gives agents and engineers durable habits for:
+- sharpen intent before code is written;
+- turn product decisions into specs and ready-for-agent tickets;
+- implement one bounded slice at a time;
+- prove behavior through meaningful seams and focused feedback loops;
+- review the actual diff from a fixed point;
+- preserve domain language, decisions, evidence, and handoff state;
+- keep large, foggy efforts navigable across sessions.
 
-- sharpening vague ideas before code is written
-- turning product intent into specs and ready-for-agent issues
-- implementing one bounded slice at a time
-- proving behavior through tests, seams, and useful validation
-- reviewing diffs from a fixed point
-- preserving domain language, decisions, and handoff context
-- keeping large, foggy efforts navigable across sessions
+The payoff is visible uncertainty, inspectable proof, and named residual risk before work is accepted.
 
 ## Philosophy
 
 Build faster without making the repo harder to trust.
 
-The pack treats AI speed as useful only when it is paired with engineering discipline. Agents should move quickly through discovery, but slowly at the gates that protect correctness: scope, commitments, proof, review, and handoff.
+Move quickly through reversible exploration. Slow down at the gates that protect commitments, correctness, and trust.
 
-The philosophy is:
-
-- **Shape before build**: unclear intent should become a grilling session, spec, wayfinding map, research note, or prototype before implementation starts.
-- **Slice by observable behavior**: good agent work moves through tracer bullets and support slices, not broad horizontal rewrites.
-- **Prove what matters**: load-bearing behavior needs evidence through a useful seam; output existence is not correctness.
-- **Review from a fixed point**: judge the actual diff against Standards and Spec instead of trusting the agent's story.
-- **Preserve shared language**: domain terms, ADRs, issue briefs, and handoffs keep future humans and agents aligned.
-- **Keep one source of truth**: skills own workflow, repo docs own local contracts, and supporting files own detailed mechanics.
+- **Shape before build**: turn unclear intent into a grilling session, spec, wayfinding map, research note, or prototype before implementation starts.
+- **Tracer bullets**: deliver observable vertical slices that keep proof close to each change.
+- **Semantic proof**: prove that the result means the right thing; output existence alone is not correctness.
+- **Fixed-point review**: judge the actual diff against Spec and Standards instead of trusting the agent's story.
+- **Ubiquitous language**: preserve domain terms and decisions across code, tests, docs, tickets, and handoffs.
+- **One owner**: skills own workflows, repo docs own local contracts, and supporting files own detailed mechanics.
 
 ## Engineering Contract
 
-Every target repo gets a local `docs/agents/engineering-contract.md` from [`setup-matt-pocock-skills`](skills/custom/setup-matt-pocock-skills/SKILL.md). That file is the repo-specific contract for nontrivial coding work: how an agent explores, proves, reviews, locks, and reports changes.
+[`$setup-matt-pocock-skills`](skills/custom/setup-matt-pocock-skills/SKILL.md) installs a small `docs/agents/engineering-contract.md` in each target repo. The contract gives Codex strong handles for the decisions that matter while leaving implementation technique flexible.
 
-The contract works by activating good engineering habit priors with leading words. Instead of telling an agent every small move to make, it gives compact handles that pull useful behavior from familiar engineering practice:
+The shared loop is `Orient -> Explore -> Decide -> Prove -> Cover -> Converge -> Simplify -> Lock`. A **source trace** grounds the work. A **bounded slice** controls scope. **Semantic proof** establishes that the result means the right thing. A **fixed point** anchors review. Separate **Spec / Standards** passes ask "right thing?" and "built right?" independently. **Lock** closes only with evidence and named residual risk.
 
-| Leading word | Source | Meaning | Agent habit it activates |
-| --- | --- | --- | --- |
-| `convergence loop` | Debugging, design review, and release discipline | `Orient -> Explore -> Decide -> Prove -> Cover -> Converge -> Simplify -> Lock` | Give the agent room to explore, cover the requirements, and converge on a simple verified solution. |
-| `fixed point` | Code review and diff-based verification | A known starting ref for judging what changed | Review the actual diff instead of the whole repo or the agent's memory of the task. |
-| `commitment boundary` | Product ownership, API contracts, and safety review | The line between user-owned outcomes and agent-owned technique | Ask before changing requirements, semantics, public behavior, data meaning, security posture, or scope. |
-| `load-bearing internal` | Testing discipline and interface design | Internal behavior that determines whether the requested result is correct | Give correctness-critical internals a contract and prove them through the smallest meaningful seam. |
-| `tracer bullet` | Vertical-slice delivery and TDD | One observable path through the real system | Prefer thin end-to-end proof over broad horizontal work that cannot yet prove behavior. |
-| `support slice` | Refactoring and migration practice | Behavior-preserving work that unlocks or de-risks tracer bullets | Allow setup work only when it has observable validation and a clear reason. |
-| `seam` | Testing, modular design, and adapter patterns | A useful boundary where behavior can be observed, substituted, or protected | Prove behavior at meaningful interfaces instead of mocking owned internals by default. |
-| `deep module` | Deep-module design vocabulary | A small interface hiding substantial, coherent behavior | Move complexity behind stable boundaries instead of spreading decisions across callers. |
-| `domain language` | Domain-driven design and ADR practice | The repo's accepted words for business concepts and decisions | Preserve shared meaning across code, tests, docs, issues, and reviews. |
-| `evidence` | Scientific debugging, CI, and review culture | Source material, tests, fixtures, logs, diffs, command output, screenshots, CI, or explicit confirmation | Replace plausible claims with proof a future maintainer can inspect. |
-
-These words shape agents because language changes the search space. A prompt that says "make a small fix" invites generic coding. A contract that says "orient to the fixed point, keep the bounded slice, prove load-bearing internals through a seam, then lock with evidence" steers the model toward high-quality engineering moves it already has priors for.
+That compact vocabulary recruits senior engineering habits while keeping prompts and workflows small.
 
 ## Inspiration
 
-This pack is inspired by [Matt Pocock's AI engineering skills](https://github.com/mattpocock/skills) and by practical multi-session Codex work on real repositories. It borrows the idea that skills should be small, named workflows with strong leading words, then adapts that style for repo-local contracts, issue trackers, long-running agent work, parallel implementation, and source-traced review.
+This pack started with [Matt Pocock's engineering skills](https://github.com/mattpocock/skills), which showed how powerful small, named, composable workflows can be. This repository is a Codex-first adaptation shaped by practical multi-session work on real codebases.
 
-It also draws from common engineering habits: TDD, specs, issue triage, domain modeling, deep module design, architecture review, and careful merge-conflict resolution.
+It keeps the upstream emphasis on strong leading words, then extends it with repo-local contracts, tracker-backed delivery, long-running wayfinding, isolated parallel implementation, source-traced review, TDD, domain modeling, deep module design, architecture review, and careful conflict resolution.
 
 ## What's Included
 
-- **Shaping**: `grilling`, `grill-with-docs`, `wayfinder`, `research`, `prototype`, `handoff`
-- **Product to implementation**: `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`
-- **Quality loops**: `tdd`, `diagnosing-bugs`, `resolving-merge-conflicts`, `review`, `convergent-pr-review`
-- **Design and language**: `domain-modeling`, `codebase-design`, `improve-codebase-architecture`
-- **Pack maintenance**: `setup-matt-pocock-skills`, `ask-matt`, `writing-great-skills`
+- **Shape before building**: `$grilling`, `$grill-with-docs`, `$wayfinder`, `$research`, `$prototype`, `$handoff`
+- **Turn intent into delivery**: `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement`
+- **Prove and protect behavior**: `$tdd`, `$diagnosing-bugs`, `$resolving-merge-conflicts`, `$review`, `$convergent-pr-review`
+- **Deepen design and language**: `$domain-modeling`, `$codebase-design`, `$improve-codebase-architecture`
+- **Route and maintain the pack**: `$setup-matt-pocock-skills`, `$ask-matt`, `$writing-great-skills`
 
-For the installed-pack suggestion map, see [`AGENTS_SKILL_PACK_GUIDE.md`](AGENTS_SKILL_PACK_GUIDE.md).
+The small [`GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`](GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md) bootstrap teaches Codex when to suggest `$ask-matt` and `$setup-matt-pocock-skills`. Workflows stay with their skills, and personal global instructions stay local.
 
 ## Setup
 
-Set `AGENT_SKILLS_DIR` to the skills directory your agent runtime reads. Common locations are `~/.codex/skills`, `~/.claude/skills`, and `~/.agents/skills`.
+Requirements: Codex, Git, and Python 3.10 or newer. GitHub or GitLab authentication is optional; the pack can use a local Markdown tracker.
 
-Install the current active skills:
+Codex reads global skills from `$HOME/.agents/skills` and global instructions from `$HOME/.codex/AGENTS.md`.
+
+Clone the repository and install the active skills.
+
+Bash:
 
 ```bash
-: "${AGENT_SKILLS_DIR:?Set AGENT_SKILLS_DIR to your agent's skills directory}"
-mkdir -p "$AGENT_SKILLS_DIR"
-cp -R skills/custom/* "$AGENT_SKILLS_DIR/"
+git clone https://github.com/stevennitesh/programming-agent-skills.git
+cd programming-agent-skills
+
+python -m scripts.install_skills
+python -m scripts.validate_skills --installed-root "$HOME/.agents/skills" --require-installed
 ```
 
 PowerShell:
 
 ```powershell
-$env:AGENT_SKILLS_DIR = "$HOME\.codex\skills"
-New-Item -ItemType Directory -Force $env:AGENT_SKILLS_DIR | Out-Null
-Copy-Item -Recurse -Force skills/custom/* $env:AGENT_SKILLS_DIR
+git clone https://github.com/stevennitesh/programming-agent-skills.git
+Set-Location programming-agent-skills
+
+python -m scripts.install_skills
+python -m scripts.validate_skills --installed-root "$HOME\.agents\skills" --require-installed
 ```
 
-Run `setup-matt-pocock-skills` once inside each target repo before using the engineering workflows there. It builds and verifies the local setup surface: `AGENTS.md` commands and pointers, tracker lifecycle, required labels, domain routing, engineering contract, and disposable-work policy.
+The installer creates or updates only the template's `## Skill Pack Bootstrap` section, migrates the legacy `## Skill Pack Guide` block, and preserves personal global instructions. It records pack-managed skills in `$HOME/.agents/skills/.programming-agent-skills-manifest.json`, so updates can retire old pack skills without touching unrelated personal skills. Use `python -m scripts.install_skills --dry-run` to preview an update.
 
 `skills/custom/` is the supported install set. `skills/extra/` is optional, and `skills/.archive/` is not active.
 
 ## Using The Pack
 
-After installation, run `setup-matt-pocock-skills` once in each repo. It provisions the repo-local contracts and tracker vocabulary the skills consume, then verifies the setup surface before declaring the repo ready.
+Start in each target repo with `$setup-matt-pocock-skills`. It inventories the repo, walks through tracker, label, and domain-layout choices one at a time, shows the exact proposed changes, waits for approval, then provisions and verifies the local setup surface.
 
-Then use skills by naming them directly, or ask `ask-matt` when you know the shape of the work but not the route.
+After setup, invoke a skill directly or let `$ask-matt` carry the route map. The router recommends exactly one next skill or flow and stops.
 
-Typical paths:
+Representative paths:
 
-- Fuzzy idea -> `grill-with-docs` -> `to-spec` -> `to-tickets` -> `implement`
-- Incoming issue or PR -> `triage` -> `implement`
-- Large unclear effort -> `wayfinder` -> `research` / `prototype` / `grilling` tickets -> `to-spec` or `implement`
-- Clear behavior change -> `tdd` or `implement`
-- Hard bug -> `diagnosing-bugs`
-- Risky diff -> `review` or `convergent-pr-review`
+- Fuzzy product idea needing durable decisions -> `$grill-with-docs` -> `$to-spec` -> `$to-tickets`
+- One bounded ready item -> `$implement`; parallel-safe ready frontier -> `$parallel-implement`
+- Incoming issue or configured external PR -> `$triage`; ready-for-agent item -> `$implement`
+- Multi-session fog of war -> `$wayfinder` until the map closes -> `$to-spec`, `$to-tickets`, or `$implement`
+- Known behavior with a red-capable seam -> `$tdd`; uncertain symptom, cause, or reproduction -> `$diagnosing-bugs`
+- Ordinary diff -> `$review`; local PR or high-risk diff -> `$convergent-pr-review`
+
+These are examples. `$ask-matt` owns the complete route map and tie-breakers.
 
 ## Repository Layout
 
 - `skills/custom/`: active skills to install
 - `skills/extra/`: optional extra skills
 - `skills/.archive/`: inactive historical or experimental skills
-- `AGENTS_SKILL_PACK_GUIDE.md`: copyable installed-pack suggestion map
-- `docs/synthesis/skill-context-relationships.md`: design-analysis map for skill boundaries and context ownership
+- `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`: minimal global Codex bootstrap
+- `skills/custom/setup-matt-pocock-skills/`: target-repo setup workflow and contract templates
+- `CONTEXT.md`: stable vocabulary and maintenance invariants for this repository
+- `docs/synthesis/skill-context-relationships.md`: maintainer map for skill boundaries and context ownership
+- `scripts/install_skills.py`: managed install and update that preserves unrelated skills
 - `scripts/validate_skills.py`: integrity checks for the pack
 
 ## License

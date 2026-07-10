@@ -16,13 +16,15 @@ _Avoid_: consistency, reliability, robustness, output-determinism
 
 How a skill is reached — and the two loads you pay for the choice.
 
-### Model-Invoked
+### Implicitly Invocable
 
-A skill with `policy.allow_implicit_invocation` unset or true, so Codex can choose it from the skill **description** — and the human can still type its name, so implicit invocation always _includes_ explicit reach. There is no model-only state: implicit invocation only ever _adds_ Codex discovery, never removes the human's. Pays a permanent **context load** on every turn in exchange for that discoverability. Reachable by other skills, because the description that makes it discoverable makes it invocable. An implicitly invocable skill whose content is all **reference** is also one home for shared reference: another skill can invoke it, so reference needed by several skills lives in one place. Pick implicit invocation only when Codex must reach the skill on its own; if it never fires except by hand, make it **explicit-only**.
+A skill with `policy.allow_implicit_invocation` unset or true, so Codex can choose it from the skill **description** — and the human can still type its name, so implicit invocation always _includes_ explicit reach. There is no model-only state: implicit invocation only ever _adds_ Codex discovery, never removes the human's. Pays a permanent **context load** on every turn in exchange for that discoverability. Reachable by other skills, because the description that makes it discoverable makes it invocable. An implicitly invocable skill whose content is all **reference** is also one home for shared reference: another skill can invoke it, so reference needed by several skills lives in one place. Choose implicit invocation when Codex must discover the skill from the request or another skill must load it; choose **explicit-only** when human judgment should select every use.
+
+Pack rule: record `allow_implicit_invocation: true` explicitly so every active skill has an auditable policy file.
 
 _Avoid_: ability, tool, capability
 
-### User-Invoked
+### Explicit-Only
 
 A skill with `policy.allow_implicit_invocation: false` in `agents/openai.yaml`. Codex will not choose it from the prompt; it is reachable when the human explicitly types its name (explicit-_only_, where **implicitly invocable** is explicit-_and-Codex_). Trades Codex discoverability for lower **context load**. Because it is not implicitly invocable, other skills should not rely on Codex discovering it by description.
 

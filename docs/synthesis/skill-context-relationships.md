@@ -2,7 +2,7 @@
 
 Purpose: map context owners, pointers, and cross-skill pressure so skill edits do not duplicate setup docs or creep across workflow boundaries.
 
-Scope: `skills/custom/**` markdown files, their direct supporting files, `README.md`, and `AGENTS_SKILL_PACK_GUIDE.md`.
+Scope: `skills/custom/**` markdown files, their direct supporting files, `README.md`, and `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`.
 
 This is a design-analysis map, not the runtime invocation graph. Edges show ownership pressure, vocabulary influence, setup dependencies, and possible boundary creep. A graph edge does not mean a skill should invoke another skill.
 
@@ -14,7 +14,8 @@ Edge labels are descriptive, not executable. Solid edges usually mark ownership 
 
 ```mermaid
 flowchart TD
-  Guide["README / AGENTS_SKILL_PACK_GUIDE<br/>suggestion map only"] --> AskMatt["ask-matt<br/>router skill"]
+  GlobalTemplate["GLOBAL_AGENTS_TEMPLATE_SKILL_PACK<br/>global bootstrap template"] --> AskMatt["ask-matt<br/>router skill"]
+  GlobalTemplate --> Setup["setup-matt-pocock-skills"]
 
   AskMatt --> Setup["setup-matt-pocock-skills"]
   Setup --> AgentDocs["repo-local setup surface<br/>AGENTS.md + docs/agents/*"]
@@ -35,34 +36,33 @@ flowchart TD
   Grilling -. "durable memory" .-> GrillDocs
   Wayfinder["wayfinder"] --> Tracker
   Wayfinder --> Labels
-  Wayfinder --> Grilling
-  Wayfinder --> DomainModel
+  Wayfinder --> GrillDocs
   Wayfinder --> Prototype["prototype"]
   Wayfinder --> Research["research"]
-  Prototype --> Handoff["handoff"]
-  Prototype --> DomainModel
-  Prototype -. "promoted behavior" .-> Contract
+  Prototype -. "verdict crosses sessions" .-> Handoff["handoff"]
+  Prototype -. "resolved domain delta" .-> DomainModel
+  Prototype -. "promotion or production proof" .-> Contract
 
   Shape --> ToSpec["to-spec"]
   ToSpec --> DomainRouter
   ToSpec --> CodeDesign
-  ToSpec --> TmpSpec[".tmp/to-spec/*.md"]
+  ToSpec --> TmpSpec[".tmp/to-spec/*.md<br/>draft until publication is verified"]
   ToSpec --> Tracker
   ToSpec --> Labels
   ToSpec --> ToTickets["to-tickets"]
   ToTickets --> Tracker
   ToTickets --> Labels
-  ToTickets --> Ready["ready-for-agent issues"]
+  ToTickets --> Ready["ready-for-agent items"]
 
   Triage["triage"] --> Tracker
   Triage --> Labels
   Triage --> DomainRouter
+  Triage --> TriageFlows["ATTENTION-SCAN / SPECIFIC-ITEM / QUICK-OVERRIDE<br/>branch procedures"]
   Triage --> AgentBrief["AGENT-BRIEF.md"]
   Triage --> OutOfScope["OUT-OF-SCOPE.md / .out-of-scope/"]
   Triage --> Ready
-  Triage -. "needs fleshing out" .-> Grilling
-  Triage -. "resolved terms" .-> DomainModel
-  Tracker -. "brief body" .-> Triage
+  Triage -. "needs fleshing out" .-> GrillDocs
+  Tracker -. "ready contract" .-> Triage
 
   Ready --> Implement["implement"]
   Ready --> Parallel["parallel-implement"]
@@ -73,7 +73,7 @@ flowchart TD
   Parallel --> Contract
   Parallel --> Tracker
   Parallel --> DomainRouter
-  Parallel --> WorkerBrief["WORKER-BRIEF.md"]
+  Parallel --> WorkerBrief["WORKER-BRIEF.md<br/>lane worker contract"]
   Parallel --> IntegratorBrief["INTEGRATOR-BRIEF.md"]
   Parallel --> Ledger["RUN-LEDGER.md / .tmp/parallel-implement/"]
   Parallel --> Review
@@ -102,9 +102,9 @@ flowchart TD
   Debug -. "architecture cause" .-> Arch["improve-codebase-architecture"]
   Arch --> Contract
   Arch --> DomainRouter
-  Arch --> Grilling
+  Arch --> GrillDocs
   Arch --> CodeDesign["codebase-design"]
-  Arch --> DomainModel
+  Arch -. "external evidence gap" .-> Research
   Arch --> HtmlReport["HTML-REPORT.md / .tmp/architecture-reviews/"]
   Arch --> Implement
   Arch --> ToTickets
@@ -114,7 +114,8 @@ flowchart TD
   TddRefs -. "uncertain repro" .-> Debug
   TddRefs -. "larger design follow-up" .-> CodeDesign
   TddRefs -. "larger design follow-up" .-> Arch
-  CodeDesign --> DesignRefs["DEEPENING.md / DESIGN-IT-TWICE.md"]
+  CodeDesign --> DirectDesign["DIRECT-DESIGN.md"]
+  DirectDesign --> DesignRefs["DEEPENING.md / DESIGN-IT-TWICE.md"]
   CodeDesign -. "wide scan" .-> Arch
   Writing["writing-great-skills"] --> Glossary["GLOSSARY.md"]
 ```
@@ -131,7 +132,7 @@ Source: `skills/custom/*/agents/openai.yaml`.
 | `diagnosing-bugs` | implicitly invocable |
 | `domain-modeling` | implicitly invocable |
 | `grilling` | implicitly invocable |
-| `grill-with-docs` | explicit-only |
+| `grill-with-docs` | implicitly invocable |
 | `handoff` | explicit-only |
 | `implement` | explicit-only |
 | `improve-codebase-architecture` | explicit-only |
@@ -152,15 +153,17 @@ Source: `skills/custom/*/agents/openai.yaml`.
 
 | Owner | Owns | Read by / pointed to |
 | --- | --- | --- |
-| `README.md`, `AGENTS_SKILL_PACK_GUIDE.md` | Public and installed suggestion maps only | Humans, agents choosing a route |
+| `README.md` | Human-facing overview and installation | Humans installing or learning the pack |
+| `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md` | Minimal pack-owned global Codex bootstrap template: explicit-only router/setup discovery | `~/.codex/AGENTS.md` |
+| `ask-matt` | Current executable route map and tie-breakers | Humans or agents choosing one next route |
 | `setup-matt-pocock-skills` | Provisions and verifies the repo setup surface | `ask-matt`, setup gates in planning/tracker skills |
 | `docs/agents/issue-tracker.md` | Tracker interface, work-item lifecycle, PR-as-request rules, and wayfinding operations | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `review`, `wayfinder` |
 | `docs/agents/triage-labels.md` | Category/state role to label mapping and fixed wayfinding labels | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
 | `docs/agents/domain.md` | Routing to `CONTEXT.md`, `CONTEXT-MAP.md`, ADRs | `to-spec`, `triage`, `tdd`, `diagnosing-bugs`, `improve-codebase-architecture`, `parallel-implement` |
-| `docs/agents/engineering-contract.md` | Command ownership, coding discipline, proof, `.tmp` cleanup, durable `.scratch` preservation, review/lock | `implement`, `tdd`, `diagnosing-bugs`, `improve-codebase-architecture`, `parallel-implement`, `review`, `convergent-pr-review` |
-| `domain-modeling` | Mutates `CONTEXT.md`, `CONTEXT-MAP.md`, and ADR truth | `ask-matt`, `grill-with-docs`, `wayfinder`, `prototype`, `setup-matt-pocock-skills`, `improve-codebase-architecture` |
+| `docs/agents/engineering-contract.md` | Shared runtime engineering language, repo-owned commands, commitment boundary, semantic proof, work-state policy, fixed-point Spec/Standards review, and Lock | `implement`, `tdd`, `diagnosing-bugs`, `prototype`, `improve-codebase-architecture`, `parallel-implement`, `review`, `convergent-pr-review` |
+| `domain-modeling` | Mutates `CONTEXT.md`, `CONTEXT-MAP.md`, and ADR truth | `ask-matt`, `grill-with-docs`, `wayfinder`, `prototype`, `setup-matt-pocock-skills` |
 | `codebase-design` | Interface, seam, adapter, depth, leverage, and locality vocabulary | `to-spec`, `improve-codebase-architecture`, `tdd`, architecture/design follow-ups |
-| `research` | Primary-source research notes and source trace | `wayfinder`, `to-spec`, `to-tickets`, `improve-codebase-architecture` |
+| `research` | Primary-source legwork and cited repo-local research notes | `wayfinder`, `to-spec`, `to-tickets`, `improve-codebase-architecture` |
 | `resolving-merge-conflicts` | Source-traced Git conflict resolution | Git operations, `review`, `parallel-implement`, integration work |
 | `review` | Ordinary fixed-point Standards/Spec review | `implement`, `parallel-implement`; escalates to `convergent-pr-review` for high risk |
 
@@ -169,11 +172,11 @@ Source: `skills/custom/*/agents/openai.yaml`.
 | Skill | Supporting files own |
 | --- | --- |
 | `writing-great-skills` | `GLOSSARY.md`: skill-authoring vocabulary |
-| `codebase-design` | `DEEPENING.md`: dependency/seam discipline; `DESIGN-IT-TWICE.md`: alternative interface exploration |
+| `codebase-design` | `DIRECT-DESIGN.md`: direct pass and packet; `DEEPENING.md`: dependency/seam discipline; `DESIGN-IT-TWICE.md`: alternative interface exploration |
 | `domain-modeling` | `CONTEXT-FORMAT.md`: glossary and context-map format; `ADR-FORMAT.md`: ADR gate and format |
 | `tdd` | `tests.md`, `mocking.md`, `refactoring.md`: examples and branch mechanics |
 | `prototype` | `LOGIC.md`, `UI.md`: branch mechanics; `SKILL.md` owns lifecycle and boundary |
-| `triage` | `AGENT-BRIEF.md`: ready-for-agent contract; `AGENT-BRIEF-EXAMPLES.md`: branch examples; `OUT-OF-SCOPE.md`: rejected-work knowledge base |
+| `triage` | `ATTENTION-SCAN.md`, `SPECIFIC-ITEM.md`, `QUICK-OVERRIDE.md`: branch procedures; `AGENT-BRIEF.md`: ready-contract rendering; `AGENT-BRIEF-EXAMPLES.md`: examples; `OUT-OF-SCOPE.md`: rejected-work knowledge base |
 | `setup-matt-pocock-skills` | Tracker, label, domain, and engineering-contract seeds; `scripts/validate_setup.py`: target-repo setup-surface validation |
 | `wayfinder` | `MAP-FORMAT.md`: map and ticket body shape; `SKILL.md`: foggy map lifecycle and semantics |
 | `research` | One cited repo-local Markdown note per source question |
@@ -183,17 +186,17 @@ Source: `skills/custom/*/agents/openai.yaml`.
 
 ## Boundary Notes
 
-- Suggestion maps suggest; `ask-matt` routes; neither teaches workflow procedures.
+- The global template exposes bootstrap handles; `ask-matt` routes; neither teaches downstream workflow procedures.
 - Setup docs own tracker, labels, domain routing, and engineering-contract details. Skills should point there instead of restating those mechanics.
 - `domain-modeling` is the only skill that writes `CONTEXT.md`, `CONTEXT-MAP.md`, or ADR truth; `setup-matt-pocock-skills` configures the layout, and vocabulary consumers follow `docs/agents/domain.md`.
 - `to-spec` owns parent spec synthesis and tracker publication; `to-tickets` owns implementation issue slicing.
 - `wayfinder` owns foggy multi-session maps; tracker docs own the transport mechanics for maps, child tickets, blocking, claiming, and resolution.
 - `research` owns primary-source legwork and cited repo-local notes; downstream skills should link the note instead of duplicating findings.
 - `resolving-merge-conflicts` owns Git conflict resolution; it may resolve files but should not abort, discard sides, commit, or continue a rebase unless explicitly approved or requested.
-- `triage` owns incoming issue/PR state transitions and ready-for-agent briefs; do not re-triage `$to-tickets` output.
-- Tracker docs own transport and tracker commands; `triage` owns ready-for-agent brief text and AI-triage disclaimer content.
+- Tracker docs own transport, tracker commands, the shared Ready-for-agent contract, and Mutation read-back. `triage` owns incoming classification, verification, brief rendering, state transitions, and the AI disclaimer; `$to-tickets` owns slicing and dependency order. Do not re-triage valid `$to-tickets` output.
 - `implement` owns one selected item; `parallel-implement` owns batch orchestration and serialized integration.
 - `review` is the ordinary closeout gate; `convergent-pr-review` is an approved high-risk/local-PR route, not default review.
 - `convergent-pr-review` may run its own read-only reviewer passes only when selected as the review route; it is not a second implementation orchestrator.
 - `handoff` carries pointers across sessions; it should reference durable artifacts, not duplicate specs, issues, ADRs, commits, or diffs.
-- `.tmp/` artifacts are disposable unless a skill explicitly preserves them as source, report, or ledger evidence.
+- `.tmp/` artifacts are disposable unless a skill explicitly preserves them for the user or next session.
+- `.scratch/` artifacts are durable, version-controlled local state; include in-scope changes in review and staging.

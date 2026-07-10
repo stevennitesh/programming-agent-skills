@@ -1,5 +1,7 @@
 # Matt Pocock Skills v1.1 Upstream Audit
 
+Durable source and reconstruction: [UPSTREAM-SOURCE.md](UPSTREAM-SOURCE.md).
+
 Snapshot before updating `.tmp/mattpocock-skills`.
 
 ## Update Window
