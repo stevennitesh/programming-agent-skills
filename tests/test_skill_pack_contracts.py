@@ -240,6 +240,30 @@ def test_portable_fallback_carries_the_standalone_engineering_contract() -> None
         assert token in fallback
 
 
+def test_readme_exposes_both_adoption_paths() -> None:
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+
+    required = (
+        '<h1 align="center">Programming Agent Skills</h1>',
+        "img.shields.io/badge/License-MIT",
+        "img.shields.io/badge/Python-3.10%2B",
+        "## How It Works",
+        "flowchart LR",
+        "| Common agent failure | Pack response |",
+        "| Full Skill Pack | Portable Contract |",
+        "### Full Skill Pack",
+        "### Portable Contract Only",
+        "[`AGENTS_PORTABLE_FALLBACK.md`](AGENTS_PORTABLE_FALLBACK.md)",
+        "without installing skills",
+        "Choose one engineering-contract owner per repository",
+        "## Using The Full Pack",
+    )
+    for token in required:
+        assert token in readme
+
+    assert readme.count("```mermaid") == 1
+
+
 def test_triage_ready_examples_use_the_shared_proof_lane_schema() -> None:
     examples = (CUSTOM / "triage/AGENT-BRIEF-EXAMPLES.md").read_text(encoding="utf-8")
 

@@ -7,12 +7,17 @@ An eval note should state:
 
 - behavior being measured;
 - task fixture or dataset;
+- requested and resolved model, when available;
+- reasoning effort, reasoning mode, and text verbosity, when configurable;
 - expected evidence;
 - scoring rubric;
 - failure modes;
 - how results should feed back into synthesis or skill wording.
 
 Keep evals small enough to run and compare across skill revisions.
+Change one instruction, example, tool group, or runtime setting at a time. Rerun
+the same fixtures and preserve behavior-bearing context, hard constraints,
+approval boundaries, evidence requirements, and completion criteria.
 
 ## Current Suite
 

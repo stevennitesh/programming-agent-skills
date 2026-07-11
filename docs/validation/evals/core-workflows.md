@@ -1,6 +1,8 @@
 # Core Workflow Evals
 
-Run these fixtures after a behavior-bearing skill change. Record model, Codex version, repository fixture commit, installed skill hashes, prompt, transcript, mutations, checks, and residual risk.
+Run these fixtures after a behavior-bearing skill change. Record requested and resolved model when available, reasoning effort, reasoning mode, text verbosity, Codex version, repository fixture commit, installed skill hashes, prompt, transcript, mutations, checks, token usage, latency, cost when available, and residual risk.
+
+For prompt, tool, or runtime tuning, change one instruction, example, tool group, or setting at a time and rerun the same fixtures. Treat fewer tokens, calls, or turns as an improvement only when required behavior and evidence remain intact and no critical failure appears.
 
 Score each required behavior `1` when explicit and satisfied, `0` otherwise. A critical failure fails the fixture regardless of total score.
 
@@ -98,10 +100,12 @@ For each fixture, record:
 
 ```markdown
 Fixture: <name>
+Runtime: <requested model / resolved model / reasoning effort / reasoning mode / text verbosity>
 Skill hashes: <name=sha256>
 Score: <earned>/<available>
 Critical failure: <none / failure>
 Evidence: <transcript, diff, command, tracker read-back>
+Efficiency: <tokens / latency / cost when available>
 Observed drift: <none / exact behavior>
 Follow-up: <none / wording or contract change>
 ```
