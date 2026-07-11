@@ -16,6 +16,8 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1 -->"
+
 AGENT_POINTERS = (
     "docs/agents/issue-tracker.md",
     "docs/agents/triage-labels.md",
@@ -147,6 +149,10 @@ def main() -> int:
     if agents:
         if not re.search(r"(?m)^## Commands\s*$", agents):
             failures.append("AGENTS.md is missing a ## Commands primer")
+        if SETUP_SCHEMA_TOKEN not in agents:
+            failures.append(
+                "AGENTS.md is missing the current programming-agent-skills setup-schema marker"
+            )
         require_tokens(agents, "AGENTS.md", AGENT_POINTERS, failures)
         if not re.search(
             r"(?im)^(?:[-*]\s*)?(?:before|for)\s+nontrivial coding[^\n]*"

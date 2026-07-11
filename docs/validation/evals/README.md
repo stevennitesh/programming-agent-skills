@@ -16,4 +16,4 @@ Keep evals small enough to run and compare across skill revisions.
 
 ## Current Suite
 
-- [`core-workflows.md`](core-workflows.md): seven pack-level routing, handoff, proof, and mutation fixtures.
+- [`core-workflows.md`](core-workflows.md): pack-level routing, handoff, proof, mutation, and reconciliation fixtures.

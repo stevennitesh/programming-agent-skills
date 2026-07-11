@@ -1,5 +1,7 @@
 # Repository Instructions
 
+<!-- programming-agent-skills setup-schema: 1 -->
+
 ## Commands
 
 - Create the repo environment if needed: `python -m venv .venv`

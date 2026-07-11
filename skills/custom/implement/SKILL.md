@@ -13,13 +13,13 @@ Apply the **readiness gate** before Patch: the selected work item is unblocked, 
 
 ## Preconditions
 
-Read `docs/agents/engineering-contract.md`. If it is missing, stop and recommend `$repo-bootstrap`.
+Read `docs/agents/engineering-contract.md`. If that contract or another required setup document or named operation is absent or incompatible with this skill, stop and recommend `$repo-bootstrap`.
 
 Read tracker docs only for tracker selection, claim, semantics, or closeout.
 
 ## Modes
 
-- **Owner:** implements or integrates one selected work item; owns fixed point, authoritative proof, `$review`, Lock, commit, and tracker closeout.
+- **Owner:** implements or integrates one selected work item; owns fixed point, authoritative proof, review route, Lock, commit, and tracker closeout.
 - **Staged worker:** owns only the assigned patch, focused proof, staging of that patch, and the handoff packet. Within this skill, `worker` means staged worker.
 - **Scout:** owns read-only advice on seam, scope, or validation.
 
@@ -55,13 +55,15 @@ Run **authoritative proof** on the assembled diff: acceptance checks, canonical 
 
 **Scope fence:** stage every selected-work-item change before review, including in-scope tracker files and accepted worker handoff. Verify the cached diff contains no unrelated file or hunk, then run `git diff --cached --check`.
 
-Capture the immutable **review tree** with `git write-tree`. Invoke `$review` with the fixed point, review tree, and `git diff <fixed-point> <review-tree>`. If `$review` is unavailable, stop before Lock and report the missing review route.
+Capture the immutable **review tree** with `git write-tree`.
+
+**Review route:** Use `$review` by default. Use `$convergent-pr-review` for a local PR or high-risk diff matching its trigger. Record the route and invoke exactly that route with the fixed point, review tree, and `git diff <fixed-point> <review-tree>`. An unavailable route blocks Lock.
 
 Fix in-scope findings with targeted verification. Prepare the closeout packet: summary, review result, validation run, skipped checks, and residual risk. For repo-local tracker files, add the packet and move the item to `implemented` before capturing the lock tree. Repo-local notes need not include the commit SHA.
 
 Restage every selected-work-item change and capture the **lock tree** with `git write-tree`.
 
-**Delta gate:** inspect `git diff <review-tree> <lock-tree>`. Finding-only fixes and closeout-only metadata need targeted verification. A material behavior, scope, or contract delta requires another `$review` with the lock tree as the new review tree. Apply findings, restage, capture a new lock tree, and repeat until the lock tree is reviewed or differs only by verified finding fixes and closeout metadata.
+**Delta gate:** inspect `git diff <review-tree> <lock-tree>`. Finding-only fixes and closeout-only metadata need targeted verification. A material behavior, scope, or contract delta requires another pass through the selected review route with the lock tree as the new review tree. Reselect the route when the delta changes risk. Apply findings, restage, capture a new lock tree, and repeat until the lock tree is reviewed or differs only by verified finding fixes and closeout metadata.
 
 ## Lock
 
@@ -83,6 +85,6 @@ If the work item is not tracker-backed, after commit use the closeout packet as 
 
 ## Done
 
-Owner done means one selected work item is implemented or integrated from worker handoff, validated, reviewed from the fixed point through an immutable review tree, committed with a tree matching the approved lock tree, and, when tracker-backed, noted and moved to `implemented`.
+Owner done means one selected work item is implemented or integrated from worker handoff, validated, reviewed from the fixed point through the selected route and an immutable review tree, committed with a tree matching the approved lock tree, and, when tracker-backed, noted and moved to `implemented`.
 
 Staged-worker handoff-ready means a focused patch is staged and reported. Delegated work is done only after owner acceptance.

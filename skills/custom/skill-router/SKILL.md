@@ -21,9 +21,9 @@ Return the route and stop. The user starts it.
 
 ## Setup Gate
 
-Route first to `$repo-bootstrap` when the chosen engineering flow depends on a missing setup contract:
+Route first to `$repo-bootstrap` when the chosen engineering flow depends on a missing or outdated setup contract:
 
-- installed-pack primer in `AGENTS.md`;
+- current setup-schema marker and installed-pack primer in `AGENTS.md`;
 - `docs/agents/issue-tracker.md`;
 - `docs/agents/triage-labels.md`;
 - `docs/agents/domain.md`;

@@ -48,6 +48,41 @@ def test_skill_validation_rejects_missing_reference_and_policy(tmp_path: Path) -
     assert any("resource reference is missing" in failure for failure in failures)
 
 
+def test_skill_handle_validation_rejects_unknown_custom_skill(tmp_path: Path) -> None:
+    write_skill(tmp_path, "example", "Route to `$missing-skill`.")
+
+    failures = validate_skills.validate_skill_handle_references(tmp_path, ["example"])
+
+    assert failures == [
+        "Active surface references missing custom skill: "
+        "skills/custom/example/SKILL.md -> $missing-skill"
+    ]
+
+
+def test_relationship_invocation_map_must_match_policies(tmp_path: Path) -> None:
+    write_skill(tmp_path, "implicit")
+    explicit = write_skill(tmp_path, "explicit")
+    (explicit / "agents/openai.yaml").write_text(
+        "policy:\n  allow_implicit_invocation: false\n",
+        encoding="utf-8",
+    )
+    relationship_map = tmp_path / "docs/synthesis/skill-context-relationships.md"
+    relationship_map.parent.mkdir(parents=True)
+    relationship_map.write_text(
+        "| Skill | Invocation |\n"
+        "| --- | --- |\n"
+        "| `explicit` | implicitly invocable |\n"
+        "| `retired` | explicit-only |\n",
+        encoding="utf-8",
+    )
+
+    failures = validate_skills.validate_relationship_invocation_map(tmp_path)
+
+    assert "Relationship invocation map is missing skill: implicit" in failures
+    assert "Relationship invocation map contains unknown skill: retired" in failures
+    assert any("disagrees with policy: explicit" in failure for failure in failures)
+
+
 def test_installed_validation_preserves_unrelated_skills(tmp_path: Path) -> None:
     root = tmp_path / "repo"
     installed = tmp_path / "installed"

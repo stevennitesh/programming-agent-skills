@@ -69,13 +69,13 @@ Use this mode when the user supplies a map. A named ticket wins only when it is 
    - **Resolved:** record the answer, close or resolve the ticket, and append one context pointer to `Decisions So Far`.
    - **Blocked:** record the blocker. Create-then-wire a sharp blocker; return an unaskable blocker to fog. Apply the tracker's blocked convention and release the active claim.
    - **Out of scope:** close or mark the ticket out of scope and append one linked scope note under `Out Of Scope`.
-5. **Reconcile.** Graduate sharpened fog, create-then-wire newly visible tickets, update invalidated dependencies, and close or revise tickets made obsolete by the outcome.
+5. **Reconcile.** Graduate sharpened fog, create-then-wire newly visible tickets, update invalidated dependencies, and mark tickets made obsolete by the outcome as consequence-only state changes without answering their questions.
 6. **Read back.** Apply the tracker's Mutation read-back rule to the ticket, claim, outcome, map pointers, and changed edges.
 7. **Expose the edge.** Show the next frontier or close the map.
 
 Other sessions may update the tracker concurrently. Preserve their work and touch only the selected ticket, directly affected edges, and map sections changed by its outcome.
 
-Advancing is complete when exactly one ticket has one recorded outcome, its claim state is reconciled, every direct map consequence is updated, and the next frontier or closing route is visible.
+Advancing is complete when exactly one selected ticket has a substantive outcome; every other ticket mutation is consequence-only; the selected claim state and every direct map consequence are reconciled; and the next frontier or closing route is visible.
 
 ## Close The Map
 

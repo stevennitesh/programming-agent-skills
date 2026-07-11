@@ -13,7 +13,7 @@ Apply PR triage only when `docs/agents/issue-tracker.md` enables PRs as a reques
 
 ## Contracts
 
-Read `docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md` before tracker access. A missing contract blocks triage; recommend `$repo-bootstrap`.
+Read `docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md` before tracker access. If either contract is absent or incompatible with triage, stop and recommend `$repo-bootstrap`.
 
 When codebase context matters, follow `docs/agents/domain.md`. Before reproduction, checkout, or executable validation, read `docs/agents/engineering-contract.md` when present.
 
@@ -49,4 +49,4 @@ For a PR, `ready-for-agent` means a Codex-ready brief names the next bounded sli
 
 Attention scan completes only through its read-only branch criterion.
 
-A mutation branch completes only when the maintainer-approved packet was applied, read back, and returned as a triage packet; role invariants hold; every tracker comment carries the disclaimer; required briefs and rejected-enhancement memory exist; and partial failures, skipped checks, and blockers are reported.
+A mutation branch completes only when the maintainer-approved packet was applied, read back, and returned as a triage packet; role invariants hold; every tracker comment carries the disclaimer; required briefs and rejected-enhancement memory exist; any shaping domain delta is accounted for; and partial failures, skipped checks, and blockers are reported.

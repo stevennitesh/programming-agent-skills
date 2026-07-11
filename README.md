@@ -85,13 +85,13 @@ python -m scripts.install_skills
 python -m scripts.validate_skills --installed-root "$HOME\.agents\skills" --require-installed
 ```
 
-The installer creates or updates only the template's `## Skill Pack Bootstrap` section, migrates the legacy `## Skill Pack Guide` block, and preserves personal global instructions. It records pack-managed skills in `$HOME/.agents/skills/.programming-agent-skills-manifest.json`, so updates can retire old pack skills without touching unrelated personal skills. Use `python -m scripts.install_skills --dry-run` to preview an update.
+The installer creates or updates only the template's `## Skill Pack Bootstrap` section, migrates the legacy `## Skill Pack Guide` block, and preserves personal global instructions. It records pack-managed skills in `$HOME/.agents/skills/.programming-agent-skills-manifest.json`, so updates can retire old pack skills without touching unrelated personal skills. Use `python -m scripts.install_skills --dry-run` to report skill deltas and the global-bootstrap action.
 
 `skills/custom/` is the supported install set. `skills/extra/` is optional, and `skills/.archive/` is not active.
 
 ## Using The Pack
 
-Start in each target repo with `$repo-bootstrap`. It inventories the repo, walks through tracker, label, and domain-layout choices one at a time, shows the exact proposed changes, waits for approval, then provisions and verifies the local setup surface.
+Start in each target repo with `$repo-bootstrap`. It inventories the repo, resolves tracker, label, and domain-layout choices, shows the exact proposed changes, waits for approval, then provisions and verifies the local setup surface. Run it again after pack upgrades: it reconciles existing setup, carries forward confirmed choices and repo-specific additions, and proposes only the required delta.
 
 After setup, invoke a skill directly or let `$skill-router` carry the route map. The router recommends exactly one next skill or flow and stops.
 

@@ -73,6 +73,33 @@ def bootstrap_section(template: Path) -> str:
     return text[start:].strip() + "\n"
 
 
+def preview_global_bootstrap(template: Path, target: Path) -> str:
+    section = bootstrap_section(template)
+    if not target.exists():
+        return "created"
+
+    text = target.read_text(encoding="utf-8")
+    start = text.find(BOOTSTRAP_HEADING)
+    if start >= 0:
+        next_heading = re.search(
+            r"(?m)^##\s+", text[start + len(BOOTSTRAP_HEADING) :]
+        )
+        end = len(text)
+        if next_heading is not None:
+            end = start + len(BOOTSTRAP_HEADING) + next_heading.start()
+        current = text[start:end].strip() + "\n"
+        return "present" if current == section else "updated"
+
+    legacy_start = text.find(LEGACY_BOOTSTRAP_HEADING)
+    if legacy_start >= 0:
+        if text.find(LEGACY_BOUNDARY_HEADING, legacy_start) < 0:
+            raise ValueError(
+                f"Legacy skill-pack block has no {LEGACY_BOUNDARY_HEADING}: {target}"
+            )
+        return "migrated"
+    return "merged"
+
+
 def install_global_bootstrap(template: Path, target: Path) -> str:
     section = bootstrap_section(template)
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -126,11 +153,33 @@ def install(
     previous_names = read_managed_names(skills_dir) if skills_dir.exists() else set()
     retired_names = sorted(previous_names - active_names)
 
+    new_names: list[str] = []
+    updated_names: list[str] = []
+    unchanged_names: list[str] = []
+    for source in sources:
+        destination = skills_dir / source.name
+        if not destination.is_dir():
+            new_names.append(source.name)
+        elif tree_hash(source) == tree_hash(destination):
+            unchanged_names.append(source.name)
+        else:
+            updated_names.append(source.name)
+
+    bootstrap_status = "skipped"
+    if global_agents is not None:
+        bootstrap_status = preview_global_bootstrap(
+            root / "GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md",
+            global_agents,
+        )
+
     if dry_run:
         return {
             "skills": sorted(active_names),
+            "new": new_names,
+            "updated": updated_names,
+            "unchanged": unchanged_names,
             "retired": retired_names,
-            "global_bootstrap": "planned" if global_agents is not None else "skipped",
+            "global_bootstrap": bootstrap_status,
         }
 
     skills_dir.mkdir(parents=True, exist_ok=True)
@@ -154,7 +203,6 @@ def install(
         encoding="utf-8",
     )
 
-    bootstrap_status = "skipped"
     if global_agents is not None:
         bootstrap_status = install_global_bootstrap(
             root / "GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md",
@@ -163,6 +211,9 @@ def install(
 
     return {
         "skills": sorted(active_names),
+        "new": new_names,
+        "updated": updated_names,
+        "unchanged": unchanged_names,
         "retired": retired_names,
         "global_bootstrap": bootstrap_status,
     }
@@ -201,8 +252,15 @@ def main() -> int:
     except (OSError, ValueError, RuntimeError) as error:
         print(f"Install failed: {error}", file=sys.stderr)
         return 1
-    verb = "Would install" if args.dry_run else "Installed"
-    print(f"{verb} {len(result['skills'])} custom skills into {args.skills_dir.expanduser()}")
+    if args.dry_run:
+        print(f"Managed skills: {len(result['skills'])} in {args.skills_dir.expanduser()}")
+        if result["new"]:
+            print(f"New skills: {', '.join(result['new'])}")
+        if result["updated"]:
+            print(f"Updated skills: {', '.join(result['updated'])}")
+        print(f"Unchanged skills: {len(result['unchanged'])}")
+    else:
+        print(f"Installed {len(result['skills'])} custom skills into {args.skills_dir.expanduser()}")
     if result["retired"]:
         print(f"Retired managed skills: {', '.join(result['retired'])}")
     print(f"Global bootstrap: {result['global_bootstrap']}")

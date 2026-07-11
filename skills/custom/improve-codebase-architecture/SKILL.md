@@ -15,7 +15,7 @@ This skill owns wide candidate discovery. Load `$codebase-design` as shared voca
 - **`$grill-with-docs`:** Own the chosen-candidate interview and durable domain capture.
 - **`$codebase-design`:** Own dependency classification, seam discipline, interface alternatives, and the design packet.
 - **Downstream skills:** Own specs, tickets, implementation, tracker mutation, staging, and commits.
-- **Mutation boundary:** The initial pass writes only a disposable report under ignored `.tmp/architecture-reviews/`. Product code, tracked docs, tracker state, the index, and commits stay unchanged. Chosen-candidate domain writes flow only through `$grill-with-docs` and its gates.
+- **Mutation boundary:** The initial pass writes only a disposable report under ignored `.tmp/architecture-reviews/`. A `$research` lane may also write one cited note only when the caller approves that tracked mutation. Product code, other tracked docs, tracker state, the index, and commits stay unchanged. Chosen-candidate domain writes flow only through `$grill-with-docs` and its gates.
 
 Use repo domain language for business concepts and `$codebase-design` vocabulary for architecture claims. ADRs mark decisions the survey reopens only when material new friction exists.
 
@@ -33,7 +33,7 @@ Build the **Source Trace** from:
 
 Without domain routing, fall back to `CONTEXT-MAP.md`, root `CONTEXT.md`, and local ADR or domain docs.
 
-When a load-bearing external fact is missing, delegate that source question to `$research` and link its note.
+When a load-bearing external fact is missing, name the exact source question. Invoke `$research` and link its note only when the caller approves that tracked mutation; otherwise record a named evidence gap.
 
 Orienting is complete when the planned survey regions, domain and ADR constraints, relevant callers and tests, and known evidence gaps are named.
 
@@ -125,6 +125,6 @@ Return the recommendation and stop. The user starts downstream execution.
 
 ## Completion Criteria
 
-The initial pass is complete only when every planned survey region is accounted for; every reported candidate is source-traced and passes the deletion and deepening gates; the numbered visual report and Top recommendation exist; the report path is returned; tracked state remains unchanged; and the user is asked to select a candidate.
+The initial pass is complete only when every planned survey region is accounted for; every reported candidate is source-traced and passes the deletion and deepening gates; the numbered visual report and Top recommendation exist; the report path is returned; tracked state remains unchanged except for any approved `$research` note; and the user is asked to select a candidate.
 
 The chosen-candidate pass is complete only after a Confirmed grilling exit; every resolved domain or ADR outcome is accounted for; any required design packet exists; the architecture packet is returned; and exactly one downstream route is recommended without executing it.

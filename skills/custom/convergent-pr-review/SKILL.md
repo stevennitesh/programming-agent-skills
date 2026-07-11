@@ -156,7 +156,7 @@ Severity:
 
 P0/P1 block merge. P2 blocks when required validation or CI is affected. P3 does not block unless the user says otherwise.
 
-Before reporting, rerun the staleness check. If HEAD or the worktree changed from the pinned fixed point, mark the review stale unless rerun.
+**Drift check:** A supplied review tree is immutable. For a branch or PR, compare the current target head with the captured head. For a live worktree, compare the current `HEAD`, index, status, and in-scope untracked content with the captured snapshot. Any difference makes the review stale; rerun before reporting a current result.
 
 Begin with:
 

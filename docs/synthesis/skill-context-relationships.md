@@ -6,7 +6,7 @@ Scope: `skills/custom/**` markdown files, their direct supporting files, `README
 
 This is a design-analysis map, not the runtime invocation graph. Edges show ownership pressure, vocabulary influence, setup dependencies, and possible boundary creep. A graph edge does not mean a skill should invoke another skill.
 
-Use this map to prune direct `$skill` references. Upstream means an earlier skill or doc already provides a context pointer to the owning material. A pointer is not loaded context unless its wording tells the agent to read, load, or follow it for the current branch. Keep a `$skill` reference when no upstream read/load pointer covers the target behavior and the current skill needs a real skill boundary: recommend an explicit-only workflow, invoke or load an implicit skill, or cross a commitment boundary. When the behavior or vocabulary is already loaded through upstream wording, replace the `$skill` reference with leading words.
+Use this map to prune direct skill-handle references. Upstream means an earlier skill or doc already provides a context pointer to the owning material. A pointer is not loaded context unless its wording tells the agent to read, load, or follow it for the current branch. Keep a skill handle when no upstream read/load pointer covers the target behavior and the current skill needs a real skill boundary: recommend an explicit-only workflow, invoke or load an implicit skill, or cross a commitment boundary. When the behavior or vocabulary is already loaded through upstream wording, replace the handle with leading words.
 
 Edge labels are descriptive, not executable. Solid edges usually mark ownership or direct workflow pressure; dotted edges usually mark conditional pressure, vocabulary influence, or escalation risk.
 
@@ -68,6 +68,7 @@ flowchart TD
   Ready --> Parallel["parallel-implement"]
   Implement --> Contract
   Implement --> Review["review"]
+  Implement -. "local PR / high risk" .-> CPR
   Implement --> Tracker
   Implement -. "unsettled work" .-> Shape
   Parallel --> Contract
@@ -191,7 +192,7 @@ Source: `skills/custom/*/agents/openai.yaml`.
 - `domain-modeling` is the only skill that writes `CONTEXT.md`, `CONTEXT-MAP.md`, or ADR truth; `repo-bootstrap` configures the layout, and vocabulary consumers follow `docs/agents/domain.md`.
 - `to-spec` owns parent spec synthesis and tracker publication; `to-tickets` owns implementation issue slicing.
 - `wayfinder` owns foggy multi-session maps; tracker docs own the transport mechanics for maps, child tickets, blocking, claiming, and resolution.
-- `research` owns primary-source legwork and cited repo-local notes; downstream skills should link the note instead of duplicating findings.
+- `research` owns primary-source legwork and one cited repo-local note; a caller must approve that tracked mutation before invocation, then link the note instead of duplicating findings.
 - `resolving-merge-conflicts` owns Git conflict resolution; it may resolve files but should not abort, discard sides, commit, or continue a rebase unless explicitly approved or requested.
 - Tracker docs own transport, tracker commands, the shared Ready-for-agent contract, and Mutation read-back. `triage` owns incoming classification, verification, brief rendering, state transitions, and the AI disclaimer; `$to-tickets` owns slicing and dependency order. Do not re-triage valid `$to-tickets` output.
 - `implement` owns one selected item; `parallel-implement` owns batch orchestration and serialized integration.

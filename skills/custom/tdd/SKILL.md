@@ -15,7 +15,7 @@ Build one **tracer bullet** at a time:
 
 Use `$diagnosing-bugs` instead when the symptom, cause, or repro is uncertain; it owns that diagnostic loop through regression proof. Use `$tdd` directly for known-repro bugs. Use `$prototype` for throwaway design questions.
 
-Read [tests.md](tests.md) when choosing or repairing a test, [mocking.md](mocking.md) before adding a test double, and [refactoring.md](refactoring.md) only while GREEN.
+Read [tests.md](tests.md) only when test shape, oracle, or seam remains unclear after inspecting nearby tests; read [mocking.md](mocking.md) before adding a test double; read [refactoring.md](refactoring.md) only while GREEN.
 
 ## Principles
 

@@ -1,22 +1,22 @@
 ---
 name: repo-bootstrap
-description: "Bootstrap a target repo for this engineering skill pack: verified commands, tracker lifecycle, label roles, domain routing, engineering contract, and work-state policy."
+description: "Bootstrap or reconcile a target repo for this engineering skill pack: verified commands, tracker lifecycle, label roles, domain routing, engineering contract, and work-state policy."
 ---
 
 # Repo Bootstrap
 
-Bootstrap the repo-local **setup surface** the custom skill pack reads.
+Bootstrap or reconcile the repo-local **setup surface** the custom skill pack reads.
 
 A repo is **ready** only when its agent primer points to verified commands and complete local contracts, its chosen tracker is usable, required labels exist, disposable work stays in ignored `.tmp/`, and durable local state stays trackable in `.scratch/`.
 
-This is a prompt-driven setup. **Inventory, Choose, Draft, Provision, Verify.**
+This is a prompt-driven setup. **Inventory, Reconcile, Choose, Draft, Provision, Verify.**
 
 ## 1. Inventory
 
 Inspect before asking:
 
 - `git remote -v` and `.git/config`: tracker host and repository identity.
-- `AGENTS.md` plus configured Codex fallback instruction files: existing commands, invariants, pointers, prior setup output, or the portable fallback heading `Portable Fallback AGENTS.md For Programming Work`.
+- `AGENTS.md` plus configured Codex fallback instruction files: setup-schema marker, existing commands, invariants, pointers, prior setup output, or the portable fallback heading `Portable Fallback AGENTS.md For Programming Work`.
 - `README`, contribution docs, manifests, lockfiles, task runners, and CI: canonical setup, focused-test, full-test, lint/format, typecheck, and build commands.
 - `docs/agents/`, `CONTEXT.md`, `CONTEXT-MAP.md`, root and context-local ADR directories.
 - `.gitignore`, `.tmp/`, and `.scratch/`: disposable and tracked-local-state policy, plus any existing local tracker.
@@ -26,9 +26,20 @@ Treat a command as verified only when repo config, CI, or maintained docs own it
 
 Inventory is complete when the tracker candidate, instruction target, verified command set, existing setup surface, domain layout, local-state policy, and access blockers are known.
 
+## Reconcile Existing Setup
+
+When a prior setup surface exists, treat this run as a **reconcile**, not a reset.
+
+A missing `programming-agent-skills setup-schema` marker identifies a legacy setup. Compare its capabilities with the current contract; preserve compatible local choices and propose only the missing delta.
+
+- **Preserve:** confirmed tracker, label mappings, domain layout, PR/MR request policy, close policy, verified commands, repo invariants, and repo-specific contract additions.
+- **Delta:** propose only changes required by the current pack.
+- **Re-ask:** revisit a choice only when it is missing, ambiguous, incompatible, or explicitly reopened by the user.
+- **Conflict:** surface current-pack requirements that conflict with preserved repo policy and wait for the user to resolve them.
+
 ## 2. Choose
 
-Walk through these three decisions **one at a time**. Explain the consequence, recommend the discovered default, and wait for the answer.
+Resolve these three decisions **one at a time**. Carry forward every reconciled choice. For each unresolved decision, explain the consequence, recommend the discovered default, and wait for the answer.
 
 ### A. Tracker
 
@@ -72,9 +83,10 @@ Then explain the fixed setup outputs: verified commands in `AGENTS.md`, the engi
 
 Show the exact proposed setup before writing:
 
-- the `AGENTS.md` patch, including verified commands, local invariants, and setup pointers;
+- the `AGENTS.md` patch, including the current setup-schema marker, verified commands, local invariants, and setup pointers;
 - all four `docs/agents/*.md` files;
 - the `.gitignore` delta;
+- preserved choices and repo-specific additions, plus any conflict that requires a decision;
 - tracker labels to reuse or create;
 - tracker access blockers and the verification plan.
 
@@ -95,6 +107,8 @@ Keep it short:
 ```markdown
 ## Agent skills
 
+<!-- programming-agent-skills setup-schema: 1 -->
+
 This repo uses the Programming Agent Skills engineering pack.
 
 AGENTS primes. Repo-local docs teach. Skills execute.
@@ -114,6 +128,8 @@ Update existing sections in place and preserve repo-specific commands, architect
 When `AGENTS.md` contains the portable fallback contract, replace its generic `North Star`, `Working Loop`, `Hard Gates`, `Shape Before Build`, `Implementation Taste`, and `Review And Report` sections with the installed-pack block and engineering-contract pointer. Keep repo-specific material. Keep other agent instruction files unchanged unless Codex configuration or the user makes them part of this setup.
 
 ### Local Contracts
+
+Reconcile existing local contracts in place. Preserve repo-specific additions. Surface any incompatibility with current requirements in Draft and carry it as an explicit user decision.
 
 Write:
 
@@ -151,4 +167,4 @@ Run `scripts/validate_setup.py` from this skill against the target repo. Then:
 
 Treat dependency installation or broad environment mutation as a separate user-approved action.
 
-Setup is complete only when `AGENTS.md`, all four local contracts, tracker access, labels or local status vocabulary, domain layout, command pointers, and local-state policy are verified. Otherwise report **Setup incomplete**, the blocker, and the exact next action.
+Setup is complete only when `AGENTS.md` carries the current setup-schema marker; all four local contracts, tracker access, labels or local status vocabulary, domain layout, command pointers, any preserved repo-specific additions, and local-state policy are verified. Otherwise report **Setup incomplete**, the blocker, and the exact next action.

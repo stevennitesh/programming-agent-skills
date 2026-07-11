@@ -30,7 +30,7 @@ Shallow mode means one wave of two or three workers, focused proof, orchestrator
 
 ## Preconditions
 
-Apply the **setup gate**: read `docs/agents/engineering-contract.md`; when tracker work is in scope, read `docs/agents/issue-tracker.md` and what it points to. If a required setup surface is missing, stop and recommend `$repo-bootstrap`. Read `docs/agents/domain.md` only when domain semantics affect the run.
+Apply the **setup gate**: read `docs/agents/engineering-contract.md`; when tracker work is in scope, read `docs/agents/issue-tracker.md` and what it points to. If a required setup document or named operation is absent or incompatible with this skill, stop and recommend `$repo-bootstrap`. Read `docs/agents/domain.md` only when domain semantics affect the run.
 
 Build the **Source Trace** from the current request, selected parent or packet, every in-scope work item and decision-bearing comment, repo `AGENTS.md`, and every named source. Record it once in the thin ledger. Pass each worker its relevant slice unchanged and give the integration lane the full trace for loop-close review.
 

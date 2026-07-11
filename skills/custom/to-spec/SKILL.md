@@ -9,7 +9,7 @@ Create the **parent spec**: the durable product and engineering intent artifact 
 
 This is **synthesis**. Treat the source as settled, recover its intent, ground it in repo context, choose the proof seam, and publish a spec a fresh Codex session can trust.
 
-Use the target repo's `AGENTS.md` for tracker, label, and domain docs. If any required setup doc is missing, stop and recommend `$repo-bootstrap`.
+Use the target repo's `AGENTS.md` for tracker, label, and domain docs. If a required setup document or named tracker operation is absent or incompatible with this skill, stop and recommend `$repo-bootstrap`.
 
 ## Process
 

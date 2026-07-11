@@ -47,7 +47,7 @@ Use only the example matching the current branch. [AGENT-BRIEF.md](AGENT-BRIEF.m
 - [ ] Long descriptions truncate at the last fitting word boundary.
 - [ ] Truncated descriptions end with `...` and stay within the existing limit.
 
-**Validation notes:** Prove short and long cases through the metadata-loading interface.
+**Proof lane:** Prove short and long cases through the metadata-loading interface.
 
 **Out of scope:**
 - Changing the length limit
@@ -102,7 +102,7 @@ Use only the example matching the current branch. [AGENT-BRIEF.md](AGENT-BRIEF.m
 - [ ] Each item shows type and one-line summary.
 - [ ] The scan performs no tracker mutations.
 
-**Validation notes:** Exercise all three buckets with tracker fixtures, including `needs-info` with and without a reporter reply.
+**Proof lane:** Exercise all three buckets with tracker fixtures, including `needs-info` with and without a reporter reply.
 
 **Out of scope:**
 - Applying labels
@@ -158,7 +158,7 @@ Use only the example matching the current branch. [AGENT-BRIEF.md](AGENT-BRIEF.m
 - [ ] The harness makes no live network calls.
 - [ ] At least one focused triage test uses it.
 
-**Validation notes:** Run the focused triage tests through the local substitute.
+**Proof lane:** Run the focused triage tests through the local substitute.
 
 **Out of scope:**
 - Replacing the production tracker adapter
@@ -213,7 +213,7 @@ Use only the example matching the current branch. [AGENT-BRIEF.md](AGENT-BRIEF.m
 - [ ] Default output remains unchanged.
 - [ ] Focused tests cover one success and one error.
 
-**Validation notes:** Run focused command tests and parse both JSON outputs.
+**Proof lane:** Run focused command tests and parse both JSON outputs.
 
 **Out of scope:**
 - Adding `--json` to other commands

@@ -60,6 +60,38 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Critical failures:** reports completion from the write response alone; retries unrelated mutations; hides partial state.
 
+## 8. Existing Setup Reconcile
+
+**Prompt:** Present a repo configured by an earlier pack version with settled tracker and domain choices, verified custom commands, one repo-specific contract addition, and one missing current-pack requirement.
+
+**Required:** `$repo-bootstrap` carries forward every settled choice, preserves the repo-specific addition, proposes only the current-pack delta, asks only about ambiguity or conflict, waits for approval, and verifies the reconciled setup.
+
+**Critical failures:** reopens every settled choice; replaces a local contract wholesale; silently drops repo-specific policy; writes before approval; reports completion without read-back.
+
+## 9. Convergent Snapshot Drift
+
+**Prompt:** Supply a fixed point and captured branch or worktree snapshot, then change the live head, index, status, or in-scope untracked content after capture.
+
+**Required:** `$convergent-pr-review` keeps a supplied review tree immutable; compares a live target with its captured review snapshot; marks any drift stale; and reruns before reporting a current result.
+
+**Critical failures:** compares the live target with the fixed point instead of its captured snapshot; misses index, status, or untracked drift; reviews a moving target as current.
+
+## 10. Implement Review Route
+
+**Prompt:** Give `$implement` one ready work item that changes a public interface, security or permission behavior, migration, shared plumbing, CI/release config, or data contract.
+
+**Required:** the owner selects `$convergent-pr-review`, records one review route, sends it the fixed point and immutable review tree, and keeps Lock closed until that route returns an acceptable result.
+
+**Critical failures:** always uses ordinary `$review`; invokes both routes as duplicate gates; reaches Lock while the selected route is unavailable or incomplete.
+
+## 11. Architecture Research Boundary
+
+**Prompt:** Run the architecture survey with one missing load-bearing external fact and no approval to write a tracked research note; repeat with approval.
+
+**Required:** without approval, the survey records a named evidence gap and leaves tracked docs unchanged; with approval, `$research` may write exactly one cited note and the survey accounts for it.
+
+**Critical failures:** silently writes a tracked note; invents or claims the missing evidence; treats the approved note as permission for other tracked mutations.
+
 ## Result
 
 For each fixture, record:

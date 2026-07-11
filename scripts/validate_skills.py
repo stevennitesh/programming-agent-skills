@@ -57,9 +57,15 @@ MARKDOWN_LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
 FRONTMATTER_RE = re.compile(r"\A---\s*\r?\n(.*?)\r?\n---\s*(?:\r?\n|\Z)", re.DOTALL)
 FRONTMATTER_FIELD_RE = re.compile(r"(?m)^([a-zA-Z0-9_-]+):\s*(.+?)\s*$")
 TRAILING_WHITESPACE_RE = re.compile(r"[ \t]$")
+SKILL_HANDLE_RE = re.compile(r"\$([a-z0-9][a-z0-9-]*)")
+INVOCATION_ROW_RE = re.compile(
+    r"(?m)^\| `([a-z0-9][a-z0-9-]*)` \| "
+    r"(implicitly invocable|explicit-only) \|$"
+)
 ACTIVE_SURFACE_FILES = (
     "README.md",
     "AGENTS.md",
+    "AGENTS_PORTABLE_FALLBACK.md",
     "CONTEXT.md",
     GLOBAL_AGENTS_TEMPLATE,
     "docs/agents/engineering-contract.md",
@@ -67,6 +73,8 @@ ACTIVE_SURFACE_FILES = (
     "docs/agents/triage-labels.md",
     "docs/agents/domain.md",
     "docs/synthesis/skill-context-relationships.md",
+    "docs/validation/evals/README.md",
+    "docs/validation/evals/core-workflows.md",
 )
 STALE_ACTIVE_TOKENS = (
     "AGENTS_SKILL_PACK_GUIDE",
@@ -256,6 +264,67 @@ def validate_active_surfaces(root: Path) -> list[str]:
         for token in STALE_ACTIVE_TOKENS:
             if token in text:
                 failures.append(f"Active surface contains stale token: {relative} -> {token}")
+    return failures
+
+
+def validate_skill_handle_references(root: Path, skill_names: list[str]) -> list[str]:
+    failures: list[str] = []
+    names = set(skill_names)
+    paths = {root / relative for relative in ACTIVE_SURFACE_FILES}
+    custom_root = root / CUSTOM_SKILL_ROOT
+    if custom_root.is_dir():
+        paths.update(custom_root.rglob("*.md"))
+
+    for path in sorted(paths):
+        if not path.is_file():
+            continue
+        relative = path.relative_to(root).as_posix()
+        for handle in sorted(set(SKILL_HANDLE_RE.findall(path.read_text(encoding="utf-8")))):
+            if handle not in names:
+                failures.append(
+                    f"Active surface references missing custom skill: {relative} -> ${handle}"
+                )
+    return failures
+
+
+def validate_relationship_invocation_map(root: Path) -> list[str]:
+    relative = "docs/synthesis/skill-context-relationships.md"
+    path = root / relative
+    if not path.is_file():
+        return [f"Missing relationship map: {relative}"]
+
+    rows = INVOCATION_ROW_RE.findall(path.read_text(encoding="utf-8"))
+    failures: list[str] = []
+    row_names = [name for name, _ in rows]
+    duplicates = {name for name in row_names if row_names.count(name) > 1}
+    for name in sorted(duplicates):
+        failures.append(f"Relationship invocation map repeats skill: {name}")
+    actual = dict(rows)
+
+    expected: dict[str, str] = {}
+    for skill_dir in custom_skill_dirs(root):
+        policy = skill_dir / "agents/openai.yaml"
+        if not policy.is_file():
+            continue
+        values = re.findall(
+            r"(?m)^\s*allow_implicit_invocation:\s*(true|false)\s*$",
+            policy.read_text(encoding="utf-8"),
+        )
+        if len(values) == 1:
+            expected[skill_dir.name] = (
+                "implicitly invocable" if values[0] == "true" else "explicit-only"
+            )
+
+    for name in sorted(expected.keys() - actual.keys()):
+        failures.append(f"Relationship invocation map is missing skill: {name}")
+    for name in sorted(actual.keys() - expected.keys()):
+        failures.append(f"Relationship invocation map contains unknown skill: {name}")
+    for name in sorted(expected.keys() & actual.keys()):
+        if actual[name] != expected[name]:
+            failures.append(
+                "Relationship invocation map disagrees with policy: "
+                f"{name} -> {actual[name]} (expected {expected[name]})"
+            )
     return failures
 
 
@@ -549,6 +618,8 @@ def main(argv: list[str] | None = None) -> int:
     validation.extend(skill_failures)
     validation.extend(validate_required_docs(root))
     validation.extend(validate_active_surfaces(root))
+    validation.extend(validate_skill_handle_references(root, custom_skill_names))
+    validation.extend(validate_relationship_invocation_map(root))
     validation.extend(validate_setup_surface(root))
     validation.extend(
         unified_file_diff(

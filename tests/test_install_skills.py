@@ -125,3 +125,32 @@ def test_install_removes_only_previously_managed_retired_skills(tmp_path: Path) 
     assert not (installed / "alpha").exists()
     assert (installed / "beta").is_dir()
     assert (installed / "personal").is_dir()
+
+
+def test_dry_run_reports_new_updated_unchanged_and_retired(tmp_path: Path) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / "skills"
+    global_agents = tmp_path / "AGENTS.md"
+    write_template(root)
+    write_source_skill(root, "alpha", "v1")
+    write_source_skill(root, "beta", "v1")
+    write_source_skill(root, "old", "v1")
+    install_skills.install(root, installed, global_agents)
+
+    (root / "skills/custom/beta/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / "skills/custom/old/SKILL.md").unlink()
+    (root / "skills/custom/old").rmdir()
+    write_source_skill(root, "gamma", "v1")
+
+    result = install_skills.install(
+        root,
+        installed,
+        global_agents,
+        dry_run=True,
+    )
+
+    assert result["new"] == ["gamma"]
+    assert result["updated"] == ["beta"]
+    assert result["unchanged"] == ["alpha"]
+    assert result["retired"] == ["old"]
+    assert result["global_bootstrap"] == "present"
