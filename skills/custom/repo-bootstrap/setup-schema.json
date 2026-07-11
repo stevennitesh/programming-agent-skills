@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "version": 1,
+  "contract_files": [
+    "domain.md",
+    "engineering-contract.md",
+    "issue-tracker-github.md",
+    "issue-tracker-gitlab.md",
+    "issue-tracker-local.md",
+    "scripts/validate_setup.py",
+    "triage-labels.md"
+  ],
+  "contract_sha256": "236234b749835bde72697aa96bbc4482940fab47b9def01e1507aa62ff5672ee"
+}

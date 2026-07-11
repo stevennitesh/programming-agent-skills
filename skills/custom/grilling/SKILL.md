@@ -20,7 +20,7 @@ Hold the **commitment boundary**. Grilling owns the interview; execution starts 
 Stop only through one exit:
 
 - **Confirmed:** every material branch is resolved or explicitly deferred. Present a compact exit packet; exit only after the user confirms it and the next route is named.
-- **Evidence gap:** the next branch depends on source facts or runnable evidence unavailable in the conversation. Name the exact question and its decision impact; recommend `$research` or `$prototype`. Recommend `$handoff` when the evidence work needs a fresh session and its answer must return here.
+- **Evidence gap:** the next branch depends on source facts or runnable evidence unavailable in the conversation. Name the exact question and its decision impact; recommend `$research` for a durable cited note or `$prototype` for runnable evidence. Recommend `$handoff` when the evidence work needs a fresh session and its answer must return here.
 
 The **exit packet** contains confirmed decisions, explicit deferrals, source pointers, any evidence gap, and the next route.
 

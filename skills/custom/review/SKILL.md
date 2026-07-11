@@ -1,6 +1,6 @@
 ---
 name: review
-description: "Run ordinary fixed-point review for branch, WIP, staged, or \"review since X\" diffs. Keep Standards (\"built right?\") and Spec (\"right thing?\") as two axes, never merged. Use convergent-pr-review for local PRs or high-risk local diffs."
+description: "Run ordinary fixed-point review for branch, WIP, staged, or \"review since X\" diffs. Keep Standards (\"built right?\") and Spec (\"right thing?\") as two axes, never merged. Use $convergent-pr-review for local PRs or high-risk local diffs."
 ---
 
 # Review

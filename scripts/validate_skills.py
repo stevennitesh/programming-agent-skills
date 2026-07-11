@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -11,8 +12,10 @@ import sys
 from pathlib import Path
 
 
-SKILL_ROOTS = ("skills/custom", "skills/experimental", "skills/extra")
+SKILL_ROOTS = ("skills/custom", "skills/extra")
 CUSTOM_SKILL_ROOT = "skills/custom"
+SETUP_SKILL_ROOT = "skills/custom/repo-bootstrap"
+SETUP_SCHEMA_MANIFEST = f"{SETUP_SKILL_ROOT}/setup-schema.json"
 GLOBAL_AGENTS_TEMPLATE = "GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md"
 INSTALLED_MANIFEST = ".programming-agent-skills-manifest.json"
 REQUIRED_AGENT_DOCS = ("AGENTS_PORTABLE_FALLBACK.md", GLOBAL_AGENTS_TEMPLATE)
@@ -54,10 +57,24 @@ LOCAL_IDENTIFIER_RE = re.compile(
 )
 RESOURCE_REF_RE = re.compile(r"`([^`]+)`")
 MARKDOWN_LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
+FENCED_CODE_RE = re.compile(
+    r"(?ms)(?:^```[^\r\n]*\r?\n.*?^```[ \t]*$|^~~~[^\r\n]*\r?\n.*?^~~~[ \t]*$)"
+)
 FRONTMATTER_RE = re.compile(r"\A---\s*\r?\n(.*?)\r?\n---\s*(?:\r?\n|\Z)", re.DOTALL)
 FRONTMATTER_FIELD_RE = re.compile(r"(?m)^([a-zA-Z0-9_-]+):\s*(.+?)\s*$")
 TRAILING_WHITESPACE_RE = re.compile(r"[ \t]$")
 SKILL_HANDLE_RE = re.compile(r"\$([a-z0-9][a-z0-9-]*)")
+SETUP_SCHEMA_MARKER_RE = re.compile(
+    r"<!-- programming-agent-skills setup-schema: [^>]+ -->"
+)
+SETUP_SCHEMA_MARKER_PLACEHOLDER = (
+    "<!-- programming-agent-skills setup-schema: <fingerprint> -->"
+)
+SETUP_SCHEMA_MARKER_TARGETS = (
+    "AGENTS.md",
+    "skills/custom/repo-bootstrap/SKILL.md",
+    "skills/custom/repo-bootstrap/scripts/validate_setup.py",
+)
 INVOCATION_ROW_RE = re.compile(
     r"(?m)^\| `([a-z0-9][a-z0-9-]*)` \| "
     r"(implicitly invocable|explicit-only) \|$"
@@ -152,9 +169,13 @@ def skill_frontmatter(skill_file: Path) -> dict[str, str] | None:
     }
 
 
-def skill_resource_references(skill_file: Path) -> list[str]:
+def markdown_without_fenced_code(path: Path) -> str:
+    return FENCED_CODE_RE.sub("", path.read_text(encoding="utf-8"))
+
+
+def skill_resource_references(markdown_file: Path) -> list[str]:
     references: set[str] = set()
-    text = skill_file.read_text(encoding="utf-8")
+    text = markdown_without_fenced_code(markdown_file)
     for match in MARKDOWN_LINK_RE.finditer(text):
         token = match.group(1).strip().split("#", 1)[0]
         if (
@@ -231,20 +252,21 @@ def validate_skill_folders(root: Path) -> tuple[list[str], list[str]]:
 
         failures.extend(validate_skill_policy(skill_dir))
 
-        for resource_ref in skill_resource_references(skill_file):
-            resource_path = (skill_dir / resource_ref).resolve()
-            skills_root = (root / "skills").resolve()
-            if not resource_path.is_relative_to(skills_root):
-                failures.append(
-                    "Skill resource reference must stay inside skills/: "
-                    f"{skill_file.as_posix()} -> {resource_ref}"
-                )
-                continue
-            if not resource_path.exists():
-                failures.append(
-                    "Skill resource reference is missing: "
-                    f"{skill_file.as_posix()} -> {resource_ref}"
-                )
+        for markdown_file in sorted(skill_dir.rglob("*.md")):
+            for resource_ref in skill_resource_references(markdown_file):
+                resource_path = (markdown_file.parent / resource_ref).resolve()
+                skills_root = (root / "skills").resolve()
+                if not resource_path.is_relative_to(skills_root):
+                    failures.append(
+                        "Skill resource reference must stay inside skills/: "
+                        f"{markdown_file.as_posix()} -> {resource_ref}"
+                    )
+                    continue
+                if not resource_path.exists():
+                    failures.append(
+                        "Skill resource reference is missing: "
+                        f"{markdown_file.as_posix()} -> {resource_ref}"
+                    )
 
     return sorted(skill_names), failures
 
@@ -274,12 +296,18 @@ def validate_skill_handle_references(root: Path, skill_names: list[str]) -> list
     custom_root = root / CUSTOM_SKILL_ROOT
     if custom_root.is_dir():
         paths.update(custom_root.rglob("*.md"))
+        paths.update(custom_root.rglob("*.yaml"))
 
     for path in sorted(paths):
         if not path.is_file():
             continue
         relative = path.relative_to(root).as_posix()
-        for handle in sorted(set(SKILL_HANDLE_RE.findall(path.read_text(encoding="utf-8")))):
+        text = (
+            markdown_without_fenced_code(path)
+            if path.suffix.lower() == ".md"
+            else path.read_text(encoding="utf-8")
+        )
+        for handle in sorted(set(SKILL_HANDLE_RE.findall(text))):
             if handle not in names:
                 failures.append(
                     f"Active surface references missing custom skill: {relative} -> ${handle}"
@@ -339,6 +367,84 @@ def validate_required_docs(root: Path) -> list[str]:
     for doc in REQUIRED_SETUP_DOCS:
         if not (root / doc).is_file():
             failures.append(f"Missing required setup surface document: {doc}")
+    return failures
+
+
+def setup_contract_hash(root: Path, contract_files: list[str]) -> str:
+    setup_root = root / SETUP_SKILL_ROOT
+    digest = hashlib.sha256()
+    for relative in sorted(contract_files):
+        path = setup_root / relative
+        text = path.read_text(encoding="utf-8").replace("\r\n", "\n")
+        normalized = SETUP_SCHEMA_MARKER_RE.sub(
+            SETUP_SCHEMA_MARKER_PLACEHOLDER,
+            text,
+        )
+        digest.update(relative.replace("\\", "/").encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(normalized.encode("utf-8"))
+        digest.update(b"\0")
+    return digest.hexdigest()
+
+
+def validate_setup_schema_manifest(root: Path) -> list[str]:
+    manifest_path = root / SETUP_SCHEMA_MANIFEST
+    if not manifest_path.is_file():
+        return [f"Missing setup-schema manifest: {SETUP_SCHEMA_MANIFEST}"]
+
+    try:
+        payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        return [f"Setup-schema manifest is invalid: {SETUP_SCHEMA_MANIFEST}: {error}"]
+
+    failures: list[str] = []
+    if not isinstance(payload, dict) or payload.get("format") != 1:
+        return [f"Setup-schema manifest must use format 1: {SETUP_SCHEMA_MANIFEST}"]
+
+    version = payload.get("version")
+    contract_files = payload.get("contract_files")
+    recorded_hash = payload.get("contract_sha256")
+    if not isinstance(version, int) or version < 1:
+        failures.append("Setup-schema version must be a positive integer.")
+    if (
+        not isinstance(contract_files, list)
+        or not contract_files
+        or not all(isinstance(path, str) and path for path in contract_files)
+        or len(contract_files) != len(set(contract_files))
+    ):
+        failures.append("Setup-schema contract_files must be a non-empty unique string list.")
+    if not isinstance(recorded_hash, str) or not re.fullmatch(r"[0-9a-f]{64}", recorded_hash):
+        failures.append("Setup-schema contract_sha256 must be a lowercase SHA-256 digest.")
+    if failures:
+        return failures
+
+    missing = [
+        relative
+        for relative in contract_files
+        if not (root / SETUP_SKILL_ROOT / relative).is_file()
+    ]
+    if missing:
+        return [f"Setup-schema contract file is missing: {relative}" for relative in missing]
+
+    actual_hash = setup_contract_hash(root, contract_files)
+    if recorded_hash != actual_hash:
+        failures.append(
+            "Setup-schema contract fingerprint is stale: "
+            f"recorded {recorded_hash}, actual {actual_hash}"
+        )
+
+    marker = (
+        f"<!-- programming-agent-skills setup-schema: {version}:{actual_hash[:12]} -->"
+    )
+    for relative in SETUP_SCHEMA_MARKER_TARGETS:
+        path = root / relative
+        if not path.is_file():
+            failures.append(f"Setup-schema marker target is missing: {relative}")
+            continue
+        if marker not in path.read_text(encoding="utf-8"):
+            failures.append(
+                f"Setup-schema marker is stale or missing: {relative} -> {marker}"
+            )
     return failures
 
 
@@ -617,6 +723,7 @@ def main(argv: list[str] | None = None) -> int:
     custom_skill_names = [path.name for path in custom_skill_dirs(root)]
     validation.extend(skill_failures)
     validation.extend(validate_required_docs(root))
+    validation.extend(validate_setup_schema_manifest(root))
     validation.extend(validate_active_surfaces(root))
     validation.extend(validate_skill_handle_references(root, custom_skill_names))
     validation.extend(validate_relationship_invocation_map(root))

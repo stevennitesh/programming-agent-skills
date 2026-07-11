@@ -33,7 +33,6 @@ flowchart TD
   Router --> Handoff["handoff"]
   GrillDocs["grill-with-docs"] --> Grilling["grilling"]
   GrillDocs --> DomainModel
-  Grilling -. "durable memory" .-> GrillDocs
   Wayfinder["wayfinder"] --> Tracker
   Wayfinder --> Labels
   Wayfinder --> GrillDocs
@@ -164,7 +163,7 @@ Source: `skills/custom/*/agents/openai.yaml`.
 | `docs/agents/engineering-contract.md` | Shared runtime engineering language, repo-owned commands, commitment boundary, semantic proof, work-state policy, fixed-point Spec/Standards review, and Lock | `implement`, `tdd`, `diagnosing-bugs`, `prototype`, `improve-codebase-architecture`, `parallel-implement`, `review`, `convergent-pr-review` |
 | `domain-modeling` | Mutates `CONTEXT.md`, `CONTEXT-MAP.md`, and ADR truth | `skill-router`, `grill-with-docs`, `wayfinder`, `prototype`, `repo-bootstrap` |
 | `codebase-design` | Interface, seam, adapter, depth, leverage, and locality vocabulary | `to-spec`, `improve-codebase-architecture`, `tdd`, architecture/design follow-ups |
-| `research` | Primary-source legwork and cited repo-local research notes | `wayfinder`, `to-spec`, `to-tickets`, `improve-codebase-architecture` |
+| `research` | Primary-source legwork and authorized cited repo-local research notes | `wayfinder`, `to-spec`, `to-tickets`, `improve-codebase-architecture` |
 | `resolving-merge-conflicts` | Source-traced Git conflict resolution | Git operations, `review`, `parallel-implement`, integration work |
 | `review` | Ordinary fixed-point Standards/Spec review | `implement`, `parallel-implement`; escalates to `convergent-pr-review` for high risk |
 
@@ -176,12 +175,14 @@ Source: `skills/custom/*/agents/openai.yaml`.
 | `codebase-design` | `DIRECT-DESIGN.md`: direct pass and packet; `DEEPENING.md`: dependency/seam discipline; `DESIGN-IT-TWICE.md`: alternative interface exploration |
 | `domain-modeling` | `CONTEXT-FORMAT.md`: glossary and context-map format; `ADR-FORMAT.md`: ADR gate and format |
 | `tdd` | `tests.md`, `mocking.md`, `refactoring.md`: examples and branch mechanics |
+| `diagnosing-bugs` | `scripts/hitl-loop.template.sh`: structured HITL fallback |
 | `prototype` | `LOGIC.md`, `UI.md`: branch mechanics; `SKILL.md` owns lifecycle and boundary |
 | `triage` | `ATTENTION-SCAN.md`, `SPECIFIC-ITEM.md`, `QUICK-OVERRIDE.md`: branch procedures; `AGENT-BRIEF.md`: ready-contract rendering; `AGENT-BRIEF-EXAMPLES.md`: examples; `OUT-OF-SCOPE.md`: rejected-work knowledge base |
-| `repo-bootstrap` | Tracker, label, domain, and engineering-contract seeds; `scripts/validate_setup.py`: target-repo setup-surface validation |
+| `repo-bootstrap` | Tracker, label, domain, and engineering-contract seeds; `setup-schema.json`: compatibility fingerprint; `scripts/validate_setup.py`: target-repo setup-surface validation |
 | `wayfinder` | `MAP-FORMAT.md`: map and ticket body shape; `SKILL.md`: foggy map lifecycle and semantics |
 | `research` | One cited repo-local Markdown note per source question |
 | `resolving-merge-conflicts` | Merge/rebase/cherry-pick conflict process and finish boundary |
+| `review`, `convergent-pr-review` | `review/SMELL-BASELINE.md`: fallback Standards reference when repo standards are thin |
 | `improve-codebase-architecture` | `HTML-REPORT.md`: report format and visual style |
 | `parallel-implement` | `WORKER-BRIEF.md`, `INTEGRATOR-BRIEF.md`, `RUN-LEDGER.md`: lane contracts and run ledger |
 
@@ -189,10 +190,11 @@ Source: `skills/custom/*/agents/openai.yaml`.
 
 - The global template exposes bootstrap handles; `skill-router` routes; neither teaches downstream workflow procedures.
 - Setup docs own tracker, labels, domain routing, and engineering-contract details. Skills should point there instead of restating those mechanics.
+- `$grill-with-docs` is the sole composer of `$grilling` and `$domain-modeling`; the owned skills do not route or invoke each other.
 - `domain-modeling` is the only skill that writes `CONTEXT.md`, `CONTEXT-MAP.md`, or ADR truth; `repo-bootstrap` configures the layout, and vocabulary consumers follow `docs/agents/domain.md`.
 - `to-spec` owns parent spec synthesis and tracker publication; `to-tickets` owns implementation issue slicing.
 - `wayfinder` owns foggy multi-session maps; tracker docs own the transport mechanics for maps, child tickets, blocking, claiming, and resolution.
-- `research` owns primary-source legwork and one cited repo-local note; a caller must approve that tracked mutation before invocation, then link the note instead of duplicating findings.
+- `research` owns primary-source legwork and one cited repo-local note. A user request or caller packet must authorize one note path before that tracked mutation; otherwise research returns cited inline evidence or a blocker.
 - `resolving-merge-conflicts` owns Git conflict resolution; it may resolve files but should not abort, discard sides, commit, or continue a rebase unless explicitly approved or requested.
 - Tracker docs own transport, tracker commands, the shared Ready-for-agent contract, and Mutation read-back. `triage` owns incoming classification, verification, brief rendering, state transitions, and the AI disclaimer; `$to-tickets` owns slicing and dependency order. Do not re-triage valid `$to-tickets` output.
 - `implement` owns one selected item; `parallel-implement` owns batch orchestration and serialized integration.

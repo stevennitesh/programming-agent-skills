@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
+
+from scripts import validate_skills
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -72,7 +75,13 @@ def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
 
 
 def test_repo_bootstrap_marks_and_validates_setup_schema() -> None:
-    marker = "<!-- programming-agent-skills setup-schema: 1 -->"
+    schema = json.loads(
+        (CUSTOM / "repo-bootstrap/setup-schema.json").read_text(encoding="utf-8")
+    )
+    marker = (
+        "<!-- programming-agent-skills setup-schema: "
+        f"{schema['version']}:{schema['contract_sha256'][:12]} -->"
+    )
     bootstrap = (CUSTOM / "repo-bootstrap/SKILL.md").read_text(encoding="utf-8")
     validator = (CUSTOM / "repo-bootstrap/scripts/validate_setup.py").read_text(
         encoding="utf-8"
@@ -82,7 +91,9 @@ def test_repo_bootstrap_marks_and_validates_setup_schema() -> None:
     assert marker in bootstrap
     assert marker in validator
     assert marker in agents
-    assert "A missing `programming-agent-skills setup-schema` marker identifies a legacy setup." in bootstrap
+    assert "marker identifies a legacy setup" in bootstrap
+    assert "a different fingerprint identifies an outdated setup" in bootstrap
+    assert validate_skills.validate_setup_schema_manifest(ROOT) == []
 
 
 def test_outdated_setup_routes_to_repo_bootstrap() -> None:
@@ -93,6 +104,14 @@ def test_outdated_setup_routes_to_repo_bootstrap() -> None:
 
     assert "missing or outdated setup contract" in router
     assert "missing or outdated repo setup surface" in template
+
+
+def test_router_returns_exactly_one_next_skill() -> None:
+    router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
+
+    assert "Route the current situation to exactly one next skill" in router
+    assert "skill or flow" not in router
+    assert "`$to-spec` then `$to-tickets`" not in router
 
 
 def test_branch_heavy_skills_disclose_branch_procedure() -> None:
@@ -119,6 +138,21 @@ def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
     assert "When a caller supplies a bound" in grill_docs
 
 
+def test_grill_with_docs_owns_interview_domain_composition() -> None:
+    grill_docs = (CUSTOM / "grill-with-docs/SKILL.md").read_text(encoding="utf-8")
+    grilling = (CUSTOM / "grilling/SKILL.md").read_text(encoding="utf-8")
+    domain = (CUSTOM / "domain-modeling/SKILL.md").read_text(encoding="utf-8")
+    relationships = (ROOT / "docs/synthesis/skill-context-relationships.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert "$grilling" in grill_docs
+    assert "$domain-modeling" in grill_docs
+    assert "$domain-modeling" not in grilling
+    assert "$grilling" not in domain
+    assert "$grill-with-docs` is the sole composer" in relationships
+
+
 def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
     review = (CUSTOM / "review/SKILL.md").read_text(encoding="utf-8")
     convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(encoding="utf-8")
@@ -127,6 +161,8 @@ def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
     assert "Base ref: `main`" not in convergent
     assert "distinct, not independent" in convergent
     assert "reduced-confidence" in convergent
+    assert "Use $convergent-pr-review" in review
+    assert "use $review" in convergent
 
 
 def test_convergent_review_checks_snapshot_drift_not_baseline_drift() -> None:
@@ -169,6 +205,39 @@ def test_tdd_discloses_test_reference_only_for_an_evidence_gap() -> None:
     tdd = (CUSTOM / "tdd/SKILL.md").read_text(encoding="utf-8")
 
     assert "only when test shape, oracle, or seam remains unclear after inspecting nearby tests" in tdd
+    assert "Apply the caller-loaded engineering contract when supplied" in tdd
+
+
+def test_portable_fallback_carries_the_standalone_engineering_contract() -> None:
+    loop = "Orient -> Explore -> Decide -> Prove -> Cover -> Converge -> Simplify -> Lock"
+    fallback = (ROOT / "AGENTS_PORTABLE_FALLBACK.md").read_text(encoding="utf-8")
+    contract = (ROOT / "docs/agents/engineering-contract.md").read_text(encoding="utf-8")
+    bootstrap = (CUSTOM / "repo-bootstrap/SKILL.md").read_text(encoding="utf-8")
+
+    assert loop in fallback
+    assert loop in contract
+    assert "Portable Engineering Contract" in bootstrap
+    assert re.findall(r"\$[a-z0-9][a-z0-9-]*", fallback) == []
+    assert len(fallback.split()) <= 950
+    assert not any(line.startswith("  ") for line in fallback.splitlines())
+
+    required = (
+        "**Source trace:**",
+        "**Bounded slice:**",
+        "**Semantic proof:**",
+        "one highest-leverage decision",
+        "against primary sources",
+        "Staging, commits, pushes, PRs, tracker changes, deployments, messages",
+        "Parallelize only independent write scopes",
+        "observe RED before GREEN",
+        "known-good example",
+        "production implementation",
+        "One axis passing never hides the other failing.",
+        "Lock only when",
+        "at the authorized boundary",
+    )
+    for token in required:
+        assert token in fallback
 
 
 def test_triage_ready_examples_use_the_shared_proof_lane_schema() -> None:

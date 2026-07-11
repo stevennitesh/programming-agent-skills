@@ -1,6 +1,6 @@
 ---
 name: convergent-pr-review
-description: "Use for local PR review or high-risk local-diff review that needs independent reviewer subagents and a verified finding ledger: release gates, shared plumbing, migrations, security/permissions, CI/workflow/config, public interfaces, or data contracts. For ordinary fixed-point Standards/Spec review, use review."
+description: "Use for local PR review or high-risk local-diff review that needs independent reviewer subagents and a verified finding ledger: release gates, shared plumbing, migrations, security/permissions, CI/workflow/config, public interfaces, or data contracts. For ordinary fixed-point Standards/Spec review, use $review."
 ---
 
 # Convergent PR Review

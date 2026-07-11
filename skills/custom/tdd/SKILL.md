@@ -26,7 +26,7 @@ Read [tests.md](tests.md) only when test shape, oracle, or seam remains unclear 
 
 ## Preconditions
 
-Read `docs/agents/engineering-contract.md` when present before changing repo behavior.
+Apply the caller-loaded engineering contract when supplied; otherwise read `docs/agents/engineering-contract.md` when present before changing repo behavior.
 
 When exploring the codebase, follow `docs/agents/domain.md` when present. Otherwise use the relevant context map, glossary, ADRs, and nearby code.
 

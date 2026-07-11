@@ -1,6 +1,6 @@
 ---
 name: research
-description: Research one source question into a cited repo-local Markdown note. Use when the user asks for durable source evidence, current docs/API/library facts must be verified for repo work, or another skill delegates source legwork before a decision or artifact.
+description: Research one source question into a cited repo-local Markdown note. Use when the user requests durable source evidence or a caller supplies an approved note path for source legwork.
 ---
 
 # Research
@@ -14,12 +14,12 @@ Question -> source lanes -> claim ledger -> evidence gate -> one cited note -> p
 - **Research:** Own the question, read-only source legwork, claim ledger, one cited note, and handoff pointer.
 - **Workers:** Own assigned source lanes and return evidence. The main agent owns synthesis and the final note.
 - **Caller:** Own the decision and every tracker, spec, ADR, domain, source, config, or implementation mutation.
-- **Write boundary:** Create or update exactly one research note.
+- **Write gate:** A user request for a repo-local research note, or a caller packet that authorizes one note path, permits exactly that tracked mutation. Otherwise leave the repo unchanged and return cited inline evidence or a blocker.
 
 ## Process
 
-1. **Lock the research contract.** Name one question, the decision or artifact it supports, scope, freshness requirement, target repo, and note path.
-2. **Pass the artifact gate.** Confirm a writable repo and one note path. When either is unavailable, return the blocker and offer an inline-answer fallback.
+1. **Lock the research contract.** Name one question, the decision or artifact it supports, scope, freshness requirement, target repo, note path, and write authority.
+2. **Pass the write and artifact gates.** Confirm authorization, a writable repo, and one note path. When any is unavailable, leave the repo unchanged and return cited inline evidence or a blocker.
 3. **Open source lanes.** Match each claim to the source that owns it:
    - repo behavior -> source, tests, config, governing docs, and ADRs;
    - APIs and libraries -> versioned official docs, specifications, tagged source, and release notes;
@@ -68,6 +68,8 @@ Freshness: <as-of date or version>
 
 ## Completion Criteria
 
-Complete only when the research contract and note path are locked; exactly one cited note exists; every load-bearing claim is classified and source-traced; authority, freshness, conflicts, and unknowns are explicit; the note is the only repo mutation; and the caller receives the pointer, answer, status, uncertainty, and next route.
+Complete with a note only when write authority, the research contract, and note path are locked; exactly one cited note exists; every load-bearing claim is classified and source-traced; authority, freshness, conflicts, and unknowns are explicit; the note is the only repo mutation; and the caller receives the pointer, answer, status, uncertainty, and next route.
+
+A no-write fallback is complete only when it records the missing authority or artifact gate, returns cited inline evidence or a blocker, and leaves the repo unchanged.
 
 A blocked note is complete only when it records the attempted source lanes and missing evidence.

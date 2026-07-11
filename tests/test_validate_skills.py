@@ -48,6 +48,21 @@ def test_skill_validation_rejects_missing_reference_and_policy(tmp_path: Path) -
     assert any("resource reference is missing" in failure for failure in failures)
 
 
+def test_skill_validation_rejects_missing_nested_markdown_reference(tmp_path: Path) -> None:
+    skill = write_skill(tmp_path, "example")
+    (skill / "GUIDE.md").write_text(
+        "Read [missing](references/MISSING.md).\n",
+        encoding="utf-8",
+    )
+
+    _, failures = validate_skills.validate_skill_folders(tmp_path)
+
+    assert failures == [
+        "Skill resource reference is missing: "
+        f"{(skill / 'GUIDE.md').as_posix()} -> references/MISSING.md"
+    ]
+
+
 def test_skill_handle_validation_rejects_unknown_custom_skill(tmp_path: Path) -> None:
     write_skill(tmp_path, "example", "Route to `$missing-skill`.")
 
@@ -57,6 +72,58 @@ def test_skill_handle_validation_rejects_unknown_custom_skill(tmp_path: Path) ->
         "Active surface references missing custom skill: "
         "skills/custom/example/SKILL.md -> $missing-skill"
     ]
+
+
+def test_skill_handle_validation_rejects_unknown_yaml_handle(tmp_path: Path) -> None:
+    skill = write_skill(tmp_path, "example")
+    (skill / "agents/openai.yaml").write_text(
+        "policy:\n"
+        "  allow_implicit_invocation: true\n"
+        "interface:\n"
+        "  default_prompt: Use $missing-skill.\n",
+        encoding="utf-8",
+    )
+
+    failures = validate_skills.validate_skill_handle_references(tmp_path, ["example"])
+
+    assert failures == [
+        "Active surface references missing custom skill: "
+        "skills/custom/example/agents/openai.yaml -> $missing-skill"
+    ]
+
+
+def test_setup_schema_fingerprint_detects_contract_drift(tmp_path: Path) -> None:
+    setup = tmp_path / validate_skills.SETUP_SKILL_ROOT
+    (setup / "scripts").mkdir(parents=True)
+    (setup / "domain.md").write_text("# Domain\n", encoding="utf-8")
+    contract_files = ["domain.md"]
+    fingerprint = validate_skills.setup_contract_hash(tmp_path, contract_files)
+    marker = f"<!-- programming-agent-skills setup-schema: 1:{fingerprint[:12]} -->"
+
+    (tmp_path / "AGENTS.md").write_text(f"{marker}\n", encoding="utf-8")
+    (setup / "SKILL.md").write_text(f"{marker}\n", encoding="utf-8")
+    (setup / "scripts/validate_setup.py").write_text(
+        f"SETUP_SCHEMA_TOKEN = {marker!r}\n",
+        encoding="utf-8",
+    )
+    (setup / "setup-schema.json").write_text(
+        json.dumps(
+            {
+                "format": 1,
+                "version": 1,
+                "contract_files": contract_files,
+                "contract_sha256": fingerprint,
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    assert validate_skills.validate_setup_schema_manifest(tmp_path) == []
+
+    (setup / "domain.md").write_text("# Changed Domain\n", encoding="utf-8")
+
+    failures = validate_skills.validate_setup_schema_manifest(tmp_path)
+    assert any("contract fingerprint is stale" in failure for failure in failures)
 
 
 def test_relationship_invocation_map_must_match_policies(tmp_path: Path) -> None:

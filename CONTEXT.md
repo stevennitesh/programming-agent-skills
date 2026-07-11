@@ -9,7 +9,7 @@ This repository packages a shared engineering discipline as skills, setup contra
 - `docs/plans/README.md` routes current work without copying plans or runbooks.
 - `docs/agents/engineering-contract.md` owns shared runtime engineering language and cross-cutting coding discipline.
 - `docs/agents/issue-tracker.md`, `triage-labels.md`, and `domain.md` own tracker mechanics, state roles, and domain routing.
-- `skills/custom/` is the supported install set. `skills/experimental/` is still hardening. `skills/extra/` is optional.
+- `skills/custom/` is the supported install set. `skills/extra/` is optional. `skills/.archive/` is inactive.
 - Historical research, synthesis, transcripts, issue notes, and run logs remain evidence. They become current instructions only when an owning README or `docs/plans/README.md` says so.
 - Mechanical rules belong in scripts or config. Prose owns routing, judgment, and behavior that cannot be enforced directly.
 

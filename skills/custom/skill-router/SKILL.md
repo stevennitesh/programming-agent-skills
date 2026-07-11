@@ -1,6 +1,6 @@
 ---
 name: skill-router
-description: Route the current situation to exactly one next skill or flow in this engineering pack.
+description: Route the current situation to exactly one next skill in this engineering pack.
 ---
 
 # Skill Router
@@ -13,9 +13,9 @@ The router owns the recommendation. Downstream skills own their Source Trace, pr
 
 Route from the user's stated situation and visible repo state. Inspect only the fact that would change the route.
 
-- **Clear:** Recommend exactly one skill or flow and explain why it fits.
+- **Clear:** Recommend exactly one skill and explain why it fits.
 - **Unclear:** Ask one highest-leverage question, then route.
-- **Return:** Give one route, one reason, and one setup or handoff precondition when needed.
+- **Return:** Give one skill, one reason, and one setup or handoff precondition when needed.
 
 Return the route and stop. The user starts it.
 
@@ -48,7 +48,7 @@ Let `$repo-bootstrap` own inventory, choices, writes, tracker mutations, and ver
 
 | Situation | Route |
 | --- | --- |
-| A multi-session idea lacks a durable parent spec | `$to-spec` then `$to-tickets` |
+| Settled source needs a durable parent spec | `$to-spec` |
 | Settled source needs dependency-ordered ready-for-agent tickets | `$to-tickets` |
 | One bounded ready-for-agent item is selected | `$implement` |
 | A ready frontier has non-overlapping write scopes and proof lanes | `$parallel-implement` |
@@ -80,7 +80,7 @@ Let `$repo-bootstrap` own inventory, choices, writes, tracker mutations, and ver
 ## Tie-Breakers
 
 - **Grill / Wayfind:** Use `$grill-with-docs` for a decision tree that fits one session; use `$wayfinder` when fog of war requires a multi-session tracker map.
-- **Research / Prototype:** Use `$research` for a source fact; use `$prototype` for a runnable design verdict.
+- **Research / Prototype:** Use `$research` for a durable cited source note; use `$prototype` for a runnable design verdict.
 - **Diagnose / TDD:** Use `$diagnosing-bugs` when the symptom, cause, or repro is uncertain; use `$tdd` when behavior and a red-capable seam are known.
 - **Review / Convergent:** Use `$review` for ordinary fixed-point review; use `$convergent-pr-review` for local PRs or high-risk local diffs.
 - **Implement / Parallel:** Use `$implement` for one ready item; use `$parallel-implement` for a parallel-safe ready frontier.
@@ -89,4 +89,4 @@ Let `$repo-bootstrap` own inventory, choices, writes, tracker mutations, and ver
 
 ## Completion Criteria
 
-Complete only when the user has exactly one recommended next skill or flow, the reason it wins, and any setup or handoff precondition. When a routing question was required, completion waits for the answer and final route. Downstream work remains unstarted.
+Complete only when the user has exactly one recommended next skill, the reason it wins, and any setup or handoff precondition. When a routing question was required, completion waits for the answer and final route. Downstream work remains unstarted.

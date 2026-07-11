@@ -9,14 +9,14 @@ Bootstrap or reconcile the repo-local **setup surface** the custom skill pack re
 
 A repo is **ready** only when its agent primer points to verified commands and complete local contracts, its chosen tracker is usable, required labels exist, disposable work stays in ignored `.tmp/`, and durable local state stays trackable in `.scratch/`.
 
-This is a prompt-driven setup. **Inventory, Reconcile, Choose, Draft, Provision, Verify.**
+**Inventory, Reconcile, Choose, Draft, Provision, Verify.**
 
 ## 1. Inventory
 
 Inspect before asking:
 
 - `git remote -v` and `.git/config`: tracker host and repository identity.
-- `AGENTS.md` plus configured Codex fallback instruction files: setup-schema marker, existing commands, invariants, pointers, prior setup output, or the portable fallback heading `Portable Fallback AGENTS.md For Programming Work`.
+- `AGENTS.md` plus configured Codex fallback instruction files: setup-schema marker, existing commands, invariants, pointers, prior setup output, or the portable fallback heading `Portable Engineering Contract`.
 - `README`, contribution docs, manifests, lockfiles, task runners, and CI: canonical setup, focused-test, full-test, lint/format, typecheck, and build commands.
 - `docs/agents/`, `CONTEXT.md`, `CONTEXT-MAP.md`, root and context-local ADR directories.
 - `.gitignore`, `.tmp/`, and `.scratch/`: disposable and tracked-local-state policy, plus any existing local tracker.
@@ -30,7 +30,7 @@ Inventory is complete when the tracker candidate, instruction target, verified c
 
 When a prior setup surface exists, treat this run as a **reconcile**, not a reset.
 
-A missing `programming-agent-skills setup-schema` marker identifies a legacy setup. Compare its capabilities with the current contract; preserve compatible local choices and propose only the missing delta.
+[setup-schema.json](setup-schema.json) defines the current contract fingerprint. A missing `programming-agent-skills setup-schema` marker identifies a legacy setup; a different fingerprint identifies an outdated setup. Compare its capabilities with the current contract; preserve compatible local choices and propose only the missing delta.
 
 - **Preserve:** confirmed tracker, label mappings, domain layout, PR/MR request policy, close policy, verified commands, repo invariants, and repo-specific contract additions.
 - **Delta:** propose only changes required by the current pack.
@@ -107,7 +107,7 @@ Keep it short:
 ```markdown
 ## Agent skills
 
-<!-- programming-agent-skills setup-schema: 1 -->
+<!-- programming-agent-skills setup-schema: 1:236234b74983 -->
 
 This repo uses the Programming Agent Skills engineering pack.
 
@@ -149,7 +149,7 @@ For another tracker, write the same contract from the user's operation map.
 
 ### Disposable And Tracked Local State
 
-Ensure `.tmp/` contents are ignored without replacing unrelated ignore rules.
+Require `.tmp/` contents to be ignored without replacing unrelated ignore rules.
 
 Keep `.scratch/` trackable without replacing unrelated ignore rules. It is durable, version-controlled local work state; Local Markdown tracker files live there when selected.
 
