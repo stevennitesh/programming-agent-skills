@@ -99,6 +99,7 @@ flowchart TD
   TDD --> DomainRouter
   Debug["diagnosing-bugs"] --> Contract
   Debug --> DomainRouter
+  Conflict -. "uncertain post-resolution failure" .-> Debug
   Debug -. "architecture cause" .-> Arch["improve-codebase-architecture"]
   Arch --> Contract
   Arch --> DomainRouter
@@ -160,11 +161,11 @@ Source: `skills/custom/*/agents/openai.yaml`.
 | `docs/agents/issue-tracker.md` | Tracker interface, work-item lifecycle, PR-as-request rules, and wayfinding operations | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `review`, `wayfinder` |
 | `docs/agents/triage-labels.md` | Category/state role to label mapping and fixed wayfinding labels | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
 | `docs/agents/domain.md` | Routing to `CONTEXT.md`, `CONTEXT-MAP.md`, ADRs | `to-spec`, `triage`, `tdd`, `diagnosing-bugs`, `improve-codebase-architecture`, `parallel-implement` |
-| `docs/agents/engineering-contract.md` | Shared runtime engineering language, repo-owned commands, commitment boundary, semantic proof, work-state policy, fixed-point Spec/Standards review, and Lock | `implement`, `tdd`, `diagnosing-bugs`, `prototype`, `improve-codebase-architecture`, `parallel-implement`, `review`, `convergent-pr-review` |
+| `docs/agents/engineering-contract.md` | Shared runtime engineering language, repo-owned commands, commitment boundary, semantic proof, work-state policy, fixed-point Spec/Standards review, and Lock | `implement`, `tdd`, `diagnosing-bugs`, `prototype`, `improve-codebase-architecture`, `parallel-implement`, `resolving-merge-conflicts`, `review`, `convergent-pr-review` |
 | `domain-modeling` | Mutates `CONTEXT.md`, `CONTEXT-MAP.md`, and ADR truth | `skill-router`, `grill-with-docs`, `wayfinder`, `prototype`, `repo-bootstrap` |
 | `codebase-design` | Interface, seam, adapter, depth, leverage, and locality vocabulary | `to-spec`, `improve-codebase-architecture`, `tdd`, architecture/design follow-ups |
 | `research` | Primary-source legwork and authorized cited repo-local research notes | `wayfinder`, `to-spec`, `to-tickets`, `improve-codebase-architecture` |
-| `resolving-merge-conflicts` | Source-traced Git conflict resolution | Git operations, `review`, `parallel-implement`, integration work |
+| `resolving-merge-conflicts` | Three-way, source-traced Git conflict reconciliation and finish boundary | Git operations and implementation or integration work that enters a conflicted state |
 | `review` | Ordinary fixed-point Standards/Spec review | `implement`, `parallel-implement`; escalates to `convergent-pr-review` for high risk |
 
 ## Supporting Files
@@ -181,7 +182,7 @@ Source: `skills/custom/*/agents/openai.yaml`.
 | `repo-bootstrap` | Tracker, label, domain, and engineering-contract seeds; `setup-schema.json`: compatibility fingerprint; `scripts/validate_setup.py`: target-repo setup-surface validation |
 | `wayfinder` | `MAP-FORMAT.md`: map and ticket body shape; `SKILL.md`: foggy map lifecycle and semantics |
 | `research` | One cited repo-local Markdown note per source question |
-| `resolving-merge-conflicts` | Merge/rebase/cherry-pick conflict process and finish boundary |
+| `resolving-merge-conflicts` | Three-way merge/rebase/cherry-pick/revert and marker-only conflict process, proof, handoff, and finish boundary |
 | `review`, `convergent-pr-review` | `review/SMELL-BASELINE.md`: fallback Standards reference when repo standards are thin |
 | `improve-codebase-architecture` | `HTML-REPORT.md`: report format and visual style |
 | `parallel-implement` | `WORKER-BRIEF.md`, `INTEGRATOR-BRIEF.md`, `RUN-LEDGER.md`: lane contracts and run ledger |
@@ -195,7 +196,7 @@ Source: `skills/custom/*/agents/openai.yaml`.
 - `to-spec` owns parent spec synthesis and tracker publication; `to-tickets` owns implementation issue slicing.
 - `wayfinder` owns foggy multi-session maps; tracker docs own the transport mechanics for maps, child tickets, blocking, claiming, and resolution.
 - `research` owns primary-source legwork and one cited repo-local note. A user request or caller packet must authorize one note path before that tracked mutation; otherwise research returns cited inline evidence or a blocker.
-- `resolving-merge-conflicts` owns Git conflict resolution; it may resolve files but should not abort, discard sides, commit, or continue a rebase unless explicitly approved or requested.
+- `resolving-merge-conflicts` owns Git conflict reconciliation and may edit in-scope conflicted files. Abort, hard reset, or discarding a side requires explicit approval; staging, commit, and operation continuation require explicit user authorization.
 - Tracker docs own transport, tracker commands, the shared Ready-for-agent contract, and Mutation read-back. `triage` owns incoming classification, verification, brief rendering, state transitions, and the AI disclaimer; `$to-tickets` owns slicing and dependency order. Do not re-triage valid `$to-tickets` output.
 - `implement` owns one selected item; `parallel-implement` owns batch orchestration and serialized integration.
 - `review` is the ordinary closeout gate; `convergent-pr-review` is an approved high-risk/local-PR route, not default review.

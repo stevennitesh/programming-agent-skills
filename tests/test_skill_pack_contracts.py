@@ -233,6 +233,31 @@ def test_tdd_discloses_test_reference_only_for_an_evidence_gap() -> None:
     assert "Apply the caller-loaded engineering contract when supplied" in tdd
 
 
+def test_merge_conflict_resolution_is_three_way_and_finish_bounded() -> None:
+    skill_dir = CUSTOM / "resolving-merge-conflicts"
+    skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    relationships = (ROOT / "docs/synthesis/skill-context-relationships.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert implicit_policy(skill_dir)
+    required = (
+        "three-way merge",
+        "`git ls-files -u`",
+        "during rebase, `ours` is the so-far rebased target",
+        "in-scope content or path conflict",
+        "Block before continuation if unrelated index state would enter its commit.",
+        "A new conflict returns to **State**; repeat until Git exits",
+        "Without finish authority, leave staging, commit, and continuation untouched.",
+        "an uncertain failure is a `$diagnosing-bugs` handoff",
+    )
+    for token in required:
+        assert token in skill
+
+    assert 'Conflict -. "uncertain post-resolution failure" .-> Debug' in relationships
+    assert "`resolving-merge-conflicts`, `review`" in relationships
+
+
 def test_portable_fallback_carries_the_standalone_engineering_contract() -> None:
     loop = "Orient -> Explore -> Decide -> Prove -> Cover -> Converge -> Simplify -> Lock"
     fallback = (ROOT / "AGENTS_PORTABLE_FALLBACK.md").read_text(encoding="utf-8")

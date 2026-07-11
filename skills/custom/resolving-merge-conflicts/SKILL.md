@@ -1,30 +1,35 @@
 ---
 name: resolving-merge-conflicts
-description: Use when the repo is in an in-progress merge, rebase, cherry-pick, revert, or has conflict markers; resolve conflicts by tracing both sides to source intent, preserving behavior, running checks, and stopping before commit or rebase continuation unless the user asked to finish.
+description: Use when Git is in an in-progress merge, rebase, cherry-pick, or revert, or files contain conflict markers. Reconcile each conflict through three-way source trace, prove the result, and finish the Git operation only when explicitly requested.
 ---
 
 # Resolving Merge Conflicts
 
-Use this when Git is in a conflicted state or files contain conflict markers.
+Treat every conflict as a **three-way merge**: base, both sides, and the operation goal.
 
-Resolve by preserving **both intents**, not by choosing sides mechanically.
+**State -> Trace -> Reconcile -> Prove -> Finish.**
+
+**Finish authority** means the user explicitly asked to finish the Git operation.
 
 ## Process
 
-1. **See the state.** Inspect `git status`, the operation in progress, conflicted files, and the merge/rebase/cherry-pick goal. Read repo instructions before editing.
-2. **Trace both intents.** For each conflict, find the primary sources: commit messages, branch diffs, PRs, issues, ADRs, specs, tests, and nearby code. Understand what each side was trying to preserve.
-3. **Resolve hunks.** Preserve both intents where compatible. Where incompatible, choose the result that matches the operation's stated goal and record the trade-off. Do not invent new behavior.
-4. **Check locally.** Run the smallest meaningful checks for the touched area, then broader checks if risk or repo convention requires them. Fix only breakage caused by the resolution.
-5. **Stop at the commitment boundary.** If the user asked to finish the merge/rebase/cherry-pick, stage the resolved files and continue the operation. Otherwise report resolved files, checks, unresolved risks, and the exact command the user can run next.
+1. **State.** Read repo instructions and `docs/agents/engineering-contract.md` when present. Inspect `git status`, operation metadata, `git ls-files -u`, in-scope markers, dirty and index state, the operation goal, and finish authority. Proceed only when the operation or marker-only state, scope, unrelated work, and mutation boundary are known.
+2. **Trace.** For every unmerged entry or marker-only conflict, inspect the available base and both sides. Trace behavior and each side's intent through commits, branch diffs, PRs, issues, ADRs, specs, tests, and nearby code. Map index stages to their actual roles; during rebase, `ours` is the so-far rebased target and `theirs` is the commit being replayed. Block any path whose required intent remains unproven.
+3. **Reconcile.** Resolve every in-scope content or path conflict. Preserve compatible intents. When intents conflict, follow the source trace, operation goal, and commitment boundary; record the trade-off. Keep only traced behavior. Inspect full resolved files and rescan the scope for markers.
+4. **Prove.** Run focused repo-owned checks, then broader canonical checks as risk or repo convention requires. Repair only proven resolution-caused breakage. Such failures block **Finish**; an uncertain failure is a `$diagnosing-bugs` handoff; a proven pre-existing failure is residual risk.
+5. **Finish.** With finish authority, stage only resolved in-scope paths and continue the merge, rebase, cherry-pick, or revert. Block before continuation if unrelated index state would enter its commit. A new conflict returns to **State**; repeat until Git exits or a blocker is reported. Without finish authority, leave staging, commit, and continuation untouched. Stage or commit marker-only work only when separately requested.
 
 ## Guardrails
 
-- Do not run `git merge --abort`, `git rebase --abort`, `git reset --hard`, or discard either side without explicit approval.
-- Do not use wholesale `--ours` or `--theirs` unless the source trace proves one side is obsolete for the operation's goal.
-- Do not resolve by deleting tests, relaxing assertions, or changing public behavior unless the source trace supports it.
-- Do not stage unrelated dirty files.
-- Do not commit, continue a rebase, or complete a cherry-pick unless the user explicitly asked you to finish that operation.
+- **Preserve Git state.** Abort, hard reset, or discard a side only with explicit approval.
+- **Evidence over labels.** Use wholesale `--ours` or `--theirs` only when the source trace proves the other side obsolete for this operation.
+- **Preserve proof.** Keep tests, assertions, and public behavior unless the source trace requires their change.
+- **Isolate.** Preserve unrelated dirty work and its existing index state.
+
+## Handoff
+
+Report the operation and goal; finish authority; resolved and blocked paths; source-intent trade-offs; checks, skips, and residual risk; current `git status`; and either the finished operation or the exact next command.
 
 ## Completion Criteria
 
-Done means every conflict marker in the intended scope is resolved or explicitly reported as blocked; each resolution is tied to source intent; relevant checks ran or were intentionally skipped with a reason; and the handoff states whether the operation was finished or exactly what remains.
+Complete only when every in-scope unmerged entry and marker is reconciled or blocked; every resolution has three-way source trace and full-file inspection; checks passed or skips and failures are classified; unrelated work is preserved; and Git is either finished under finish authority or handed off with exact remaining state.
