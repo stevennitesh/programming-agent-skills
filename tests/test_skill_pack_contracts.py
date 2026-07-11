@@ -59,6 +59,31 @@ def test_tracker_templates_share_ready_and_readback_contracts() -> None:
             assert token in text, f"{tracker} is missing {token}"
 
 
+def test_github_closeout_clears_dependency_frontier_safely() -> None:
+    github_trackers = (
+        ROOT / "docs/agents/issue-tracker.md",
+        CUSTOM / "repo-bootstrap/issue-tracker-github.md",
+    )
+    required = (
+        "**Close implemented items:** yes.",
+        "close the implementation issue as completed",
+        "Preserve dependency links",
+        "**Non-completed closure**",
+        "false-ready frontier",
+        "affected dependents",
+        "resulting frontier",
+    )
+
+    for tracker in github_trackers:
+        text = tracker.read_text(encoding="utf-8")
+        for token in required:
+            assert token in text, f"{tracker} is missing {token}"
+
+    bootstrap = (CUSTOM / "repo-bootstrap/SKILL.md").read_text(encoding="utf-8")
+    assert "GitHub default: yes" in bootstrap
+    assert "GitLab default: no" in bootstrap
+
+
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     bootstrap = (CUSTOM / "repo-bootstrap/SKILL.md").read_text(encoding="utf-8")
     required = (

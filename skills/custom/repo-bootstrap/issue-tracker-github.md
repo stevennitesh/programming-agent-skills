@@ -41,7 +41,7 @@ For an external PR when PRs are a request surface, fetch the PR with the GitHub 
 
 Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement`, and `$review`.
 
-**Close implemented items:** no.
+**Close implemented items:** yes.
 
 - **Packet**: the issue body and comments are the durable packet. A parent spec owns intent; child issues own implementation slices and closeout evidence. No separate repo-local packet is required unless `AGENTS.md` points to one. Approved implementation tickets carry the mapped `ready-for-agent` state and one category role when the source settles it.
 - **Ready-for-agent contract**: every ready item names one bounded slice, Source Trace, observable acceptance criteria, dependency state, proof lane, expected write scope, parallel-safety note, and scope fence. `$triage` owns incoming classification and verification; `$to-tickets` owns slicing and dependency order. Both produce this contract.
@@ -50,8 +50,9 @@ Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement
 - **Ready query**: list open issues with the mapped `ready-for-agent` state, then drop issues with an open blocker or assignee. Within a parent, preserve child order; otherwise choose oldest first.
 - **Claim**: assign the work item to the owner or orchestrator before implementation dispatch; the assignee is the concurrency guard.
 - **Release**: remove the active assignee when work blocks, is abandoned, or reaches closeout.
-- **Closeout**: after required review and commits, post the closeout packet, apply `implemented`, remove the prior state-role label, and release the claim. Close the issue only when `Close implemented items` is `yes` or the user directs it. Close a parent only after its in-scope children and follow-ups are drained.
-- **Mutation read-back**: after creating or changing an item, refetch it and verify the intended body, relationships, labels or state, assignee, comments, and open/closed status. A partial mutation is blocked; report applied operations, failed operations, and the safest recovery action.
+- **Closeout**: after required review and commits, post the closeout packet, apply or retain `implemented`, remove the prior state-role label, release the claim, and close the implementation issue as completed. Preserve dependency links: closing a completed blocker retains history and removes it from the active blocker set. Close a parent spec only after every in-scope child and follow-up is closed; post a final summary before closing it.
+- **Non-completed closure**: before closing a blocker as not planned, duplicate, or superseded, inspect every dependent. Rewire it, give it an explicit open blocker, or close it for its own reason. Closure must not create a false-ready frontier.
+- **Mutation read-back**: after creating or changing an item, refetch the item and its affected dependents; verify the intended body, relationships, labels or state, assignee, comments, close reason, open/closed status, and resulting frontier. A partial mutation is blocked; report applied operations, failed operations, and the safest recovery action.
 
 ## Wayfinding operations
 

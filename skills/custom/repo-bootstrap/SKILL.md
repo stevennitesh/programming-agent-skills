@@ -55,7 +55,7 @@ Prefer the detected remote. Otherwise recommend Local Markdown.
 For GitHub or GitLab, ask:
 
 - **External PRs/MRs as a triage surface?** Default: no.
-- **Close implemented work items after closeout?** Default: no. The `implemented` state remains authoritative either way.
+- **Close implemented work items after closeout?** GitHub default: yes, so dependency and sub-issue progress match the ready frontier. GitLab default: no. The `implemented` state preserves searchable outcome history either way.
 
 ### B. Labels
 
@@ -107,7 +107,7 @@ Keep it short:
 ```markdown
 ## Agent skills
 
-<!-- programming-agent-skills setup-schema: 1:236234b74983 -->
+<!-- programming-agent-skills setup-schema: 1:427ef8595173 -->
 
 This repo uses the Programming Agent Skills engineering pack.
 
