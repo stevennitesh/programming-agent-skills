@@ -38,7 +38,7 @@ Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement
 - **Ready query**: list issues with `Status: ready-for-agent`, then drop issues with an unresolved blocker or `Claimed by`. Preserve the order in `SPEC.md`; without a parent order, choose the lowest issue number.
 - **Claim**: add `Claimed by: <driver/session>` before implementation dispatch; keep the state role unchanged.
 - **Release**: remove `Claimed by` when work blocks, is abandoned, or reaches closeout.
-- **Closeout**: before final review, append the closeout packet under `## Implementation Notes`, set `Status: implemented`, remove the prior state value and claim, and stage the tracker file with the implementation diff.
+- **Closeout**: after acceptable review and before Lock, append the final closeout packet under `## Implementation Notes`, set `Status: implemented`, remove the claim, stage the tracker file with the selected-work diff, and apply **Mutation read-back**.
 - **Mutation read-back**: after creating or changing tracker files, reread them and verify the intended body, relationships, state, claim, comments, and closeout metadata. A partial mutation is blocked; report applied operations, failed operations, and the safest recovery action.
 
 ## Wayfinding operations

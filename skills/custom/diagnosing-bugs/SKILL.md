@@ -46,18 +46,7 @@ Keep local instrumentation reversible, uniquely tagged, and easy to remove. Live
 
 Build one command that catches the exact reported symptom. Put disposable scripts, logs, captures, and harnesses under `.tmp/diagnosing-bugs/<bug-slug>/`.
 
-Try these roughly in order:
-
-1. **Failing test** at the seam that reaches the bug.
-2. **HTTP script** against a running service.
-3. **CLI invocation** with fixture input and asserted output.
-4. **Headless browser script** asserting DOM, console, or network behavior.
-5. **Captured trace replay** from a real request, payload, event log, or fixture.
-6. **Throwaway harness** around the smallest system subset that reaches the bug.
-7. **Property or fuzz loop** for intermittent wrong output.
-8. **Bisection harness** across known-good and known-bad states.
-9. **Differential loop** comparing versions, implementations, or configurations.
-10. **Structured HITL script** as a last resort. Adapt `scripts/hitl-loop.template.sh`, or translate it to the available shell while preserving its captured fields.
+Start at the nearest automated seam; escalate through replay, a throwaway harness, fuzzing, bisection, differential probes, then structured HITL. For HITL, adapt `scripts/hitl-loop.template.sh`, or translate it to the available shell while preserving its captured fields.
 
 Tighten the loop:
 
@@ -111,7 +100,7 @@ Test one hypothesis and one variable at a time. Negative evidence counts.
 
 Prefer debugger or REPL inspection, then targeted logs at seams or state transitions. Every instrumentation point must distinguish named hypotheses.
 
-Tag temporary instrumentation with a unique prefix such as `[DEBUG-a4f2]`.
+Tag temporary instrumentation with a unique run-specific prefix.
 
 For performance regressions, establish a measured baseline, classify the bottleneck, then profile, bisect, or probe against that constraint.
 

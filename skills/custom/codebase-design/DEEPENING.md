@@ -100,27 +100,6 @@ Recommendation shape:
 
 > Define an interface at the shipment quote seam. Keep quote selection and fallback behavior in the shipping module. Use an HTTP adapter for production and an in-memory adapter for tests, so transport varies but the domain decision stays local.
 
-```python
-class QuoteGateway(Protocol):
-    def quote(self, request: QuoteRequest) -> QuoteResponse:
-        ...
-
-
-class HttpQuoteGateway:
-    ...
-
-
-class FakeQuoteGateway:
-    ...
-
-
-quote = shipping.quote(
-    parcel=parcel,
-    destination=destination,
-    gateway=FakeQuoteGateway([express_quote, economy_quote]),
-)
-```
-
 The seam is real because production and tests use different adapters, and the owned remote service can be represented locally.
 
 Validation: prove domain behavior through the deep module with a fake adapter. Add production-adapter contract checks when the remote contract carries meaningful risk.
@@ -136,22 +115,6 @@ Use the smallest test double that proves the risk:
 - **Fake** for realistic external outcomes that drive domain behavior.
 - **Stub** for one fixed external response.
 - **Mock** for an adapter call contract that is itself the behavior or risk.
-
-Domain behavior proof:
-
-```python
-payments = FakePaymentAdapter(
-    result=PaymentResult(status="paid", transaction_id="txn_123")
-)
-
-receipt = checkout.place_order(
-    cart=cart_with_item("COURSE-TS"),
-    payment_adapter=payments,
-)
-
-assert receipt.status == "confirmed"
-assert receipt.transaction_id == "txn_123"
-```
 
 Adapter contract proof:
 

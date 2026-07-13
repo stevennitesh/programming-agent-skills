@@ -40,7 +40,7 @@ Build the smallest terminal app that lets the judge press buttons and watch stat
 
 Stay repo-native: use the host project's language and tooling. Ask before selecting a runtime when the project has no obvious one.
 
-Render a stable frame by clearing the screen with `console.clear()`, `print("\033[2J\033[H")`, or the local equivalent.
+Render a stable terminal frame.
 
 Each frame shows:
 

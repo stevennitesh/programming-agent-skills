@@ -107,7 +107,7 @@ Keep it short:
 ```markdown
 ## Agent skills
 
-<!-- programming-agent-skills setup-schema: 1:859a503ba864 -->
+<!-- programming-agent-skills setup-schema: 1:09b24483e0a2 -->
 
 This repo uses the Programming Agent Skills engineering pack.
 

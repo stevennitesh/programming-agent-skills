@@ -1,173 +1,74 @@
 # Mocking And Boundaries
 
-This skill is classicist by default: prefer real in-process code and local substitutes. Use fakes, stubs, or mocks only at a real **seam**, usually through an **adapter**.
+Prefer real in-process code and local substitutes. Put a test double at a real **seam**, usually through an **adapter**.
 
-Do not mock owned modules behind the interface you are testing. If testing through the public interface is painful, treat that as design feedback: the interface may be too shallow, too coupled, or at the wrong seam.
-
-Prefer this order:
+Use this order:
 
 1. Real in-process code.
-2. Local substitute: in-memory store, isolated `.tmp/` filesystem, test database, or local service emulator.
-3. Fake adapter that preserves the behavior needed by the test.
+2. Local substitute: in-memory store, isolated `.tmp/` filesystem, test database, or local emulator.
+3. Fake adapter preserving the behavior needed by the test.
 4. Stub for one controlled value or response.
-5. Mock adapter for a true external system when the call contract itself is the behavior or risk.
+5. Mock adapter when a true external call contract is itself the behavior or risk.
 
-Use test doubles for:
+Use the smallest double that preserves the contract:
 
-- third-party APIs
-- time
-- randomness
-- network
-- email
-- payments
-- filesystem or database only when no local substitute is practical
+- **Fake:** working local adapter implementation.
+- **Stub:** fixed response for one scenario.
+- **Mock:** interaction assertion at an external seam.
 
-Do not mock:
+Inject a narrow, domain-facing adapter at an external seam. Keep transport machinery and provider shapes behind it.
 
-- owned modules
-- private helpers
-- internal collaborators
-- the behavior under test
-
-## Fake, Stub, Or Mock
-
-Use the smallest test double that preserves the behavior you need.
-
-- **Fake**: working local implementation of an adapter, such as an in-memory payment adapter or repository.
-- **Stub**: fixed response for one scenario, such as a clock returning a known time.
-- **Mock**: interaction assertion against an adapter call.
-
-Prefer fakes when the test is proving domain behavior. Use mocks only when the adapter's request or interaction contract is the thing being proven.
-
-## Boundary Design
-
-Use **dependency injection** at external seams: pass a domain-facing adapter into owned behavior instead of constructing the external client inside it.
-
-Prefer narrow, SDK-style adapter operations over test scripts against a generic fetcher. Keep shared transport machinery behind the adapter; make the test double express only the real contract the system consumes.
-
-## Good Boundary Fake
+## Boundary Fake
 
 ```python
 class FakePaymentAdapter:
-    def __init__(self):
-        self.charges = []
-
     def charge(self, *, order_id, amount, currency):
-        self.charges.append(
-            {"order_id": order_id, "amount": amount, "currency": currency}
-        )
         return {"status": "paid", "transaction_id": "txn_test"}
 
 
 def test_paid_order_is_confirmed():
-    payments = FakePaymentAdapter()
-
     result = place_order(
         cart=cart_with_one_item(price=25),
-        payment_adapter=payments,
+        payment_adapter=FakePaymentAdapter(),
     )
 
     assert result.status == "confirmed"
     assert result.payment.transaction_id == "txn_test"
 ```
 
-Why this is good:
+The fake sits at the payment seam while the owned order behavior remains real. Mock a call only when the adapter request itself is the contract under test.
 
-- The fake sits at the payment seam.
-- The order behavior is real.
-- The fake preserves the adapter behavior the test needs.
-- The test asserts the observable order outcome, not just that `charge` was called.
+## Owned Behavior
 
-## Acceptable Mock Assertion
-
-Mock call assertions are implementation-coupled unless the interaction crosses a real system seam. Use them only when the adapter contract itself is the risk being proven.
+Implementation coupling:
 
 ```python
-def test_payment_adapter_receives_the_order_id_and_authorized_amount(mocker):
-    payment_adapter = mocker.Mock()
-    payment_adapter.charge.return_value = {
-        "status": "paid",
-        "transaction_id": "txn_test",
-    }
-
-    place_order(
-        cart=cart_with_one_item(price=25),
-        payment_adapter=payment_adapter,
-    )
-
-    payment_adapter.charge.assert_called_once_with(
-        order_id=mocker.ANY,
-        amount=25,
-        currency="USD",
-    )
+reserve_inventory = mocker.patch("orders.reserve_inventory")
+checkout(cart_with_one_item())
+reserve_inventory.assert_called_once()
 ```
 
-This is acceptable only if the payment seam's request contract is the behavior under test. Otherwise, prefer asserting the resulting order behavior.
-
-## Bad Mocked Internal Collaborator
+Behavior through the owning interface:
 
 ```python
-def test_checkout_calls_inventory_reserver(mocker):
-    reserve_inventory = mocker.patch("orders.reserve_inventory")
+store = create_test_store(inventory={"COURSE-TS": 2})
 
-    checkout(cart_with_one_item())
+result = checkout(store, cart_with_item("COURSE-TS"))
 
-    reserve_inventory.assert_called_once()
+assert result.status == "confirmed"
+assert get_inventory(store, "COURSE-TS") == 1
 ```
 
-This is bad because `reserve_inventory` is owned code behind the checkout interface. The test couples to implementation and can fail during a harmless refactor.
+Painful caller-facing tests are interface pressure: the interface may be shallow, coupled, or placed at the wrong seam.
 
-## Better Behavior Test
-
-```python
-def test_checkout_reserves_inventory_for_confirmed_order():
-    store = create_test_store(
-        inventory=[{"sku": "COURSE-TS", "available": 2}]
-    )
-
-    result = checkout(store, cart_with_item("COURSE-TS"))
-
-    assert result.status == "confirmed"
-    assert get_inventory(store, "COURSE-TS").available == 1
-```
-
-This proves the behavior through the checkout interface. The inventory reserver remains an implementation detail.
-
-## Mocking Checklist
+## Checklist
 
 Before adding a fake, stub, or mock, answer:
 
-- What seam is this test double replacing?
-- Is the dependency truly external, slow, flaky, nondeterministic, or unsafe to call?
-- What behavior from the real dependency does this test rely on?
-- Would real in-process code or a local substitute be clearer?
-- Does the fake, stub, or mock response match the real contract closely enough?
-- Would this test still matter if the implementation behind the interface changed?
+- What real seam does it replace?
+- Why is real in-process code or a local substitute insufficient?
+- Which behavior from the real dependency does the test rely on?
+- Does the double match every consumed contract field?
+- Would the test still matter if internals moved?
 
-If you cannot answer these, run the test with the real dependency or a local substitute first.
-
-## Anti-Patterns
-
-### Mocking Owned Modules
-
-Do not mock owned modules for convenience. Test through the interface that owns the behavior.
-
-### Testing Mock Existence
-
-Do not assert that a mocked child, fake element, or placeholder exists unless that placeholder is product behavior.
-
-### Test-Only Production Methods
-
-Do not add methods, flags, or visibility to production modules solely for tests. Put setup, cleanup, and inspection in test utilities unless they are real public interface behavior.
-
-### Mocking Without Understanding
-
-Do not mock a high-level method before understanding what behavior it hides. Mock the external operation, not the owned behavior.
-
-### Incomplete Test Doubles
-
-Test doubles must match the real contract the system consumes, including every field used downstream. Do not invent a partial shape or mirror provider fields the system does not consume.
-
-### Over-Complex Test Doubles
-
-If test-double setup is longer than the behavior being tested, reconsider the seam. A higher-level integration test or a simpler interface may be better.
+Reconsider the seam when contract fidelity is unclear or double setup overwhelms the behavior under test.

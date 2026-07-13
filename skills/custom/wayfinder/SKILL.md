@@ -29,7 +29,7 @@ Read `docs/agents/issue-tracker.md`, section `Wayfinding operations`, before any
 Every ticket declares a method and a participation mode:
 
 - **Research - AFK:** Name one approved repo-local note path, then invoke `$research`; link its cited note from the resolution.
-- **Prototype - HITL:** Create the cheapest concrete artifact the human can react to: outline, stub, UI/logic spike, or invoke `$prototype` for a runnable probe. Link the artifact and capture the verdict.
+- **Prototype - HITL:** Create the cheapest judgeable artifact; invoke `$prototype` when it must run. Link the artifact and capture the verdict.
 - **Grilling - HITL:** Invoke `$grill-with-docs`. This is the default for decision questions.
 - **Task - HITL or AFK:** Complete a prerequisite that exposes a later decision. Automate AFK work; otherwise provide a precise HITL checklist. Record what changed and the facts later tickets depend on.
 

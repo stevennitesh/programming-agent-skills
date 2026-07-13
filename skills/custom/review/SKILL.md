@@ -1,74 +1,78 @@
 ---
 name: review
-description: "Run ordinary fixed-point review for branch, WIP, staged, or \"review since X\" diffs. Keep Standards (\"built right?\") and Spec (\"right thing?\") as two axes, never merged. Hand off local PRs or high-risk local diffs to $convergent-pr-review."
+description: "Review ordinary branch, WIP, staged, or \"review since X\" diffs read-only from a fixed point. Judge Standards (\"built right?\") and Spec (\"right thing?\") as two separate axes. Hand off local PRs or high-risk local diffs to $convergent-pr-review."
 ---
 
 # Review
 
-Run a read-only review of the selected diff from a known-good point.
+**Pin. Trace. Judge. Report.**
 
-This is the default Converge gate for ordinary branch, WIP, staged, and `$implement` closeout review.
+Review one ordinary diff read-only from a known-good point.
 
-- **Standards**: built right? Check documented repo conventions, the local engineering contract, meaningful nearby conventions, and the smell baseline when repo standards are thin.
-- **Spec**: right thing? Check the originating request, issue, spec, bounded slice, acceptance criteria, and required proof.
+- **Standards:** built right? Judge the diff against documented repo rules, meaningful nearby conventions, and the smell baseline when standards are thin.
+- **Spec:** right thing? Judge the diff against the originating request, bounded slice, acceptance criteria, and required proof.
 
-Keep the **two axes, never merged**. One axis passing must not hide the other axis failing, and there is no single winner across axes.
+Keep the **two axes** separate. Never merge, deduplicate, rerank, or select a winner across axes; one passing axis cannot hide a failing one.
 
-**Spec requirement:** The caller supplies `Spec required: yes | no`. Default to `no` for standalone review. When `yes`, a missing, conflicting, or unresolved Spec source makes the review `incomplete`; never skip or replace the Spec axis.
+**Spec gate:** The caller supplies `Spec required: yes | no`. Default to `no` for standalone review. When `yes`, a missing, conflicting, or unresolved Spec source makes the review `incomplete`; never skip or replace the Spec axis.
 
-Hand off to `$convergent-pr-review` and stop for local PR review or high-risk local-diff review that needs independent reviewer passes, scoped lenses, and a verified finding ledger. Carry the caller-supplied Spec requirement, Source Trace and Spec sources, fixed point, and captured target into the handoff.
+**Review route:** Hand off to `$convergent-pr-review` and stop for local PRs or high-risk local diffs. Carry the caller-supplied Spec requirement, Source Trace and Spec sources, fixed point, and captured target into the handoff.
 
-## 1. Pin The Review Target
+## 1. Pin The Target
 
-Use the fixed point the user or caller supplied. Otherwise discover the repository default branch and merge base, state the resolved baseline, and ask only when discovery is ambiguous.
+Use the supplied fixed point. Otherwise discover the repository default branch and merge base, state the resolved baseline, and ask only when discovery is ambiguous.
 
-Choose the review target:
+Select the target:
 
-- supplied immutable tree: `git diff <fixed-point> <review-tree>`
+- immutable tree: `git diff <fixed-point> <review-tree>`
 - committed branch: `git diff <fixed-point>...HEAD`
-- uncommitted working tree: `git diff <fixed-point>`
+- working tree: `git diff <fixed-point>`
 - staged only, when explicitly requested: `git diff --cached`
 
-A supplied `<review-tree>` wins over every live target. Verify it with `git cat-file -e <review-tree>^{tree}` and inspect snapshot content with `git show <review-tree>:<path>`, not the live worktree.
+A supplied `<review-tree>` wins over every live target. Verify it with `git cat-file -e <review-tree>^{tree}` and inspect its files with `git show <review-tree>:<path>`.
 
-For staged-only review, record the fixed point for context; the reviewed diff remains `git diff --cached`.
+For staged-only review, record the fixed point for context; review only `git diff --cached`.
 
 Capture:
 
-- fixed point resolution: `git rev-parse <fixed-point>`
+- resolved fixed point: `git rev-parse <fixed-point>`
 - selected diff command
 - `git status --short`
-- commit list when relevant: `git log <fixed-point>..HEAD --oneline`
+- relevant commits: `git log <fixed-point>..HEAD --oneline`
 
-For working-tree review, read every in-scope untracked file directly; Git diff omits them. Count those files when deciding whether the target is non-empty.
+For a working-tree target, read every in-scope untracked file directly; Git diff omits them.
 
-Confirm the fixed point and any review tree resolve and the selected target is non-empty. Stop otherwise.
+**Fail fast** when the fixed point or review tree does not resolve, the complete target cannot be captured, or the target is empty.
 
-Done means the immutable or live review target, diff command, status, and relevant commit range are known, or review stopped with the reason.
+## 2. Trace The Sources
 
-## 2. Find The Spec
+Build the **Source Trace** before judging the diff.
 
-Find product intent in this order:
+Trace Spec in this order:
 
-1. The current request or a caller-supplied selected item, bounded slice, acceptance criteria, path, issue, URL, spec, or legacy PRD.
-2. Issue or PR references in commit messages, fetched through `docs/agents/issue-tracker.md` when available.
-3. A matching spec or legacy PRD under `docs/`, `specs/`, `.scratch/`, or the repo's issue-packet convention.
+1. The current request or caller-supplied selected item, bounded slice, acceptance criteria, path, issue, URL, spec, or legacy PRD.
+2. Issue or PR references in captured commit messages, using `docs/agents/issue-tracker.md` when available.
+3. A matching spec, legacy PRD, or issue packet under the repo's documented conventions, including `docs/`, `specs/`, and `.scratch/`.
 
-When `Spec required: yes` and no authoritative Spec source resolves, return `incomplete` before reviewing. When `Spec required: no` and no Spec exists, skip the Spec axis and report `Skipped: no spec available`.
+When `Spec required: yes`, return `incomplete` unless one authoritative source resolves without an unresolved conflict. When `Spec required: no` and none resolves, skip the axis and report `Skipped: no spec available`.
 
-Done means the Spec axis has a source, or optional Spec was explicitly skipped.
+Trace Standards through `AGENTS.md`, `docs/agents/engineering-contract.md`, contributor and coding standards, README guidance, formatter or linter configuration, test documentation, and meaningful nearby conventions.
 
-## 3. Find Standards
-
-Find documented repo rules: `AGENTS.md`, `docs/agents/engineering-contract.md`, `CONTRIBUTING.md`, `CODING_STANDARDS.md`, `README.md`, formatter/linter configs, test docs, or local convention docs.
-
-If repo standards are thin, use meaningful nearby conventions and read [SMELL-BASELINE.md](SMELL-BASELINE.md). Repo standards override it; every smell remains a labelled judgement call. Tooling-enforced style stays out.
-
-Done means Standards sources are named, or their absence is reported with the convention or smell baseline used.
+When Standards are thin, read [SMELL-BASELINE.md](SMELL-BASELINE.md). Repo standards override it; every smell remains a `baseline judgement call`. Leave tooling-enforced style to tooling.
 
 ## Finding Contract
 
-Every finding needs severity, location, evidence, risk, and required change.
+Report only actionable findings. Trace every finding to a location and governing source or code evidence.
+
+Every finding includes:
+
+- severity
+- location
+- evidence
+- risk
+- required change
+
+Severity:
 
 - **P0:** catastrophic failure, data loss, or exploitable security flaw.
 - **P1:** merge-blocking correctness or contract failure.
@@ -77,38 +81,29 @@ Every finding needs severity, location, evidence, risk, and required change.
 
 Standards findings also identify their type: `documented-standard breach` or `baseline judgement call`.
 
-## 4. Review Standards
+## 3. Judge The Axes
 
-Report only actionable Standards findings. Evidence is the documented rule, meaningful nearby convention, or baseline smell. Location is a file and line, hunk, or affected behavior.
+Run single-agent: **Standards -> lens reset -> Spec**.
 
-Skip style nits that tooling already enforces unless the diff bypasses tooling or changes the tooling contract.
+### Standards
 
-Done means documented-standard breaches and meaningful baseline judgement calls have been reported, or the axis has no findings.
+Judge only against the traced Standards sources.
 
-## 5. Review Spec
+Report documented-standard breaches and meaningful baseline judgement calls. Skip style nits already enforced by tooling unless the diff bypasses or changes that tooling contract.
 
-Report only actionable Spec findings:
+### Lens Reset
 
-- missing or partially implemented requirements
-- acceptance criteria that are not proven
-- behavior outside the bounded slice
-- requirements that look implemented but are likely wrong
-- load-bearing internal behavior not proven through a useful interface or seam
-- missing or weak tests where proof is required
+Set Standards findings aside. Start the Spec axis from the pinned target and traced Spec source; do not carry Standards judgments across.
 
-Evidence is a spec quote, issue text, acceptance criterion, or code evidence.
+### Spec
 
-Done means Spec gaps, scope creep, semantic risks, and proof gaps have been reported, or the axis has no findings.
+Judge only against the traced Spec source.
 
-## 6. Review Mode
+Report omissions, incorrect behavior, scope creep, and proof gaps, including load-bearing behavior not demonstrated through a useful interface or seam.
 
-Run **single-agent**: Standards, then a **lens reset**, then Spec. Set Standards findings aside; judge Spec only against the review target and Spec source.
+Skip this axis only when the Spec gate permits it.
 
-Hand off requests for independent reviewer subagents to `$convergent-pr-review` and stop this review.
-
-Done means both axes ran sequentially with a lens reset and remained separate.
-
-## Output
+## 4. Report
 
 Begin with:
 
@@ -117,7 +112,7 @@ Review target: <resolved fixed point> | <diff command> | <review tree or live ta
 Sources: Standards: <sources>. Spec: <source or skipped>.
 ```
 
-Present findings under exactly these headings:
+Use exactly these headings:
 
 ```markdown
 ## Standards
@@ -129,8 +124,6 @@ Present findings under exactly these headings:
 <findings or "No findings." / "Skipped: no spec available.">
 ```
 
-Preserve the **two axes, never merged**: do not merge, deduplicate, rerank, or pick a single winner. The final one-line summary may count both axes; findings stay under their axis.
-
 End with:
 
 ```markdown
@@ -139,4 +132,4 @@ Summary: Standards: <count>, worst <severity or none>. Spec: <count/skipped>, wo
 
 ## Completion Criteria
 
-Complete only when the review target is pinned and non-empty; Standards and Spec sources are named, or optional Spec was explicitly skipped; required Spec resolved; both applicable axes were evaluated with lens separation; every finding satisfies the finding contract; the output names the target and sources; and the review remained read-only.
+Complete when the target is pinned and non-empty; Standards sources are named; required Spec resolves or optional Spec is explicitly skipped; both applicable axes run with a lens reset; every finding meets the finding contract; and the read-only report names the target, sources, and per-axis summary.

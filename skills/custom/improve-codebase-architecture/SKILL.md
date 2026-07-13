@@ -43,17 +43,7 @@ Use direct fresh-context read-only scouts when independent judgment matters and 
 
 Follow architectural friction first, checklist second.
 
-Look for:
-
-- one concept requiring repeated jumps across modules;
-- shallow interfaces that expose nearly as much as their implementations;
-- behavior or decisions spread across callers;
-- pure helpers whose call choreography holds the real bugs;
-- caller-facing tests blocked by implementation detail;
-- seams that leak implementation knowledge;
-- pass-through adapters or wrappers;
-- owned modules mocked instead of proved through their interfaces;
-- ownership that is difficult to locate.
+Follow friction: repeated concept jumps, caller-spread decisions, shallow or leaking seams, implementation-bound tests, pass-through indirection, and unclear ownership.
 
 Apply the **deletion test** to each suspected module or cluster. Removing pass-through indirection should eliminate complexity; removing an earning module would redistribute it. A candidate earns its place when a deeper owner could concentrate that behavior behind a smaller interface.
 
@@ -73,9 +63,7 @@ Apply the **survey gate**: show the current friction, responsibility that could 
 
 Number every candidate, rank them, and end with one **Top recommendation**. Open the report when possible and always report its absolute path.
 
-Then ask:
-
-> Which candidate number would you like to explore? I recommend Candidate N because ...
+Ask the user to select one numbered candidate, state the Top recommendation, and stop.
 
 The initial pass stops here until the user selects a candidate.
 

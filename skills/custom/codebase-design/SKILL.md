@@ -41,18 +41,15 @@ Use repo and domain terms for business concepts and existing code. Use these ter
 
 A deep interface compresses caller knowledge:
 
-```python
-receipt = checkout.place_order(cart_id, payment_method)
+```text
+Deep: checkout.place_order(cart, payment)
 ```
 
 A shallow interface makes callers reconstruct the implementation:
 
-```python
-cart = carts.get(cart_id)
-reservation = inventory.reserve(cart.items)
-payment = payments.authorize(payment_method, cart.total)
-order = orders.create(cart, reservation, payment)
-receipt = receipts.create(order)
+```text
+Shallow: load cart -> price items -> reserve stock -> charge payment
+         -> persist order -> build receipt
 ```
 
 That sequence may belong inside `checkout`; it is shallow when every caller must know it.

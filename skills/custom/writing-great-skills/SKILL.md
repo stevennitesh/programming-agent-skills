@@ -1,17 +1,17 @@
 ---
 name: writing-great-skills
-description: Predictability lens for creating, editing, or reviewing Codex skills. Use when deciding invocation, ownership, composition, descriptions, information hierarchy, context pointers, leading words, gates, completion criteria, or pruning.
+description: Create, review, or edit Codex skills for predictable invocation, one owner, deliberate composition, sharp context pointers, strong leading words, proportional gates, and pruning.
 ---
 
 # Writing Great Skills
 
-Make skill behavior **predictable**: the same process every run, with outputs free to vary.
+**Predictability:** same process, variable output.
 
 ## Load The Right Reference
 
-Trace the declared source of truth, disclosed files, `agents/openai.yaml`, installed mirror, upstream counterpart, callers, routers, composers, owned outputs, and mutation boundary.
+For bounded work, trace only affected surfaces. For a pack-wide audit, trace source, `agents/openai.yaml`, disclosed files, upstream, callers, routers, composers, owned outputs, mutation boundaries, and installed mirrors.
 
-Read [GLOSSARY.md](GLOSSARY.md) completely for a full audit. For a bounded edit, read only the owning sections:
+Read [GLOSSARY.md](GLOSSARY.md) completely for a full audit. For bounded work, read only the owning sections:
 
 - invocation or description: `Invocation` and `Leading Word`;
 - structure or splitting: `Information Hierarchy`;
@@ -20,37 +20,34 @@ Read [GLOSSARY.md](GLOSSARY.md) completely for a full audit. For a bounded edit,
 
 ## Delegation
 
-**Delegate legwork:** Invocation is sufficient authority for the root agent to use direct subagents without separate user confirmation when pack-wide scope, independent judgment, or parallel reading materially improves the result.
-
-Give each subagent one bounded, self-contained, read-only evidence lane. When independence matters, start it with `fork_turns="none"` when supported and exclude parent conclusions and peer results. Subagents return evidence to the root. Direct children do not spawn. The root retains required source reading, skill-authoring judgment, synthesis, edits, verification, and completion.
+**Delegate legwork:** For pack-wide audits, invocation authorizes direct subagents without separate confirmation. Give each one bounded, read-only evidence lane. Use `fork_turns="none"` when independent judgment matters; direct children do not spawn. Subagents return evidence; the root owns required source reading, judgment, synthesis, edits, verification, and completion.
 
 ## Audit Spine
 
-1. **Invoke.** Decide implicit or explicit-only reach. Make the policy explicit in `agents/openai.yaml`. For implicit reach, front-load the description with one trigger per real branch. For explicit-only reach, keep the description human-facing and route discoverability through a router.
-2. **Own.** Give every behavior one owner. The owner keeps its rules, gates, output, mutation boundary, and completion criterion. Compose by invoking an owner whose policy permits caller composition; route an explicit-only owner by naming one next skill and stopping.
-3. **Arrange.** Keep universal steps in `SKILL.md`. Keep compact universal reference beside them. Move branch-only reference behind a sharp context pointer. Split a sequence only when visible later steps cause observed premature completion after its criterion is already sharp.
-4. **Lead.** Prefer pretrained leading words that recruit the intended behavior. Repeat the word, not its explanation. Keep explicit wording wherever a leading word would merely imply an owner, gate, output, completion criterion, or handoff.
-5. **Gate.** End every meaningful step with a checkable bound. Demand enough evidence to prevent plausible-but-unproven completion. Name failure, blocked, and partial-mutation outcomes.
-6. **Prune.** Keep one source of truth. Delete duplication, sediment, and true no-ops. Move live branch detail; preserve behavior-bearing detail. State the positive target first and retain negation only for a hard guardrail. Change one instruction, example, or tool group at a time and rerun the same representative evals.
-7. **Verify.** Recheck every active surface and relationship. Confirm that pruning left behavior explicit, referenced files resolve, invocation policy matches the description, and the installed mirror matches when sync is in scope.
+1. **Choose.** Choose implicit or explicit-only reach and record it in `agents/openai.yaml`. For implicit reach, front-load one trigger per real branch and collapse synonyms. For explicit-only reach, keep the description human-facing and route it through a router.
+
+2. **Own.** Give every behavior one owner. The owner keeps its rules, gates, output, mutation boundary, and completion criterion. Compose only when the owner permits caller composition. Route by naming one next skill and stopping.
+
+3. **Arrange.** Keep common-path steps and compact universal reference in `SKILL.md`. Disclose branch-only reference through a sharp context pointer. Split only when the cut earns its context or cognitive load through distinct invocation or observed premature completion after a sharp criterion.
+
+4. **Collapse.** Collapse repeated meaning into a pretrained leading word. Repeat the word, not its explanation. Keep non-intuitive Codex mechanics, gates, outputs, mutation boundaries, and completion explicit with their owner. Callers name the owner and handoff.
+
+5. **Gate.** Give each common-path step a checkable result. Keep approval and mutation boundaries explicit. Add a failure branch only when it changes the safe next action in a representative workflow.
+
+6. **Hunt.** Hunt duplication, no-ops, defensive narration, hypothetical recovery, and examples that teach no non-default judgment. Delete them or collapse repeated meaning into a leading word. Keep non-intuitive Codex mechanics explicit. Add no status, packet field, file, or skill unless it removes more complexity than it creates.
+
+7. **Verify.** Recheck affected surfaces and representative workflows. For a pack-wide audit, verify each active relationship once. Confirm that references resolve, invocation policy matches the description, and installed mirrors match when synchronization is in scope.
 
 ## Mode Gate
 
-Honor review-only as read-only. When edits are authorized, change the declared source of truth first, validate it, then sync the installed mirror when that surface is in scope.
+Review-only stays read-only. When edits are authorized, change the declared source of truth first, validate it, then synchronize installed mirrors only when that surface is in scope.
 
-Own skill-authoring judgment. The caller owns task mode, product decisions, and mutation scope.
+The root owns skill-authoring judgment. The caller owns task mode, product decisions, and mutation scope.
 
 ## Audit Output
 
-Return:
-
-1. Verdict and concise ratings
-2. Behavior and leading words to keep
-3. Findings ordered by impact
-4. Exact replacement wording
-5. Deliberate non-changes
-6. Behavior at risk from pruning
+For a full audit, return the verdict, highest-impact findings, exact fixes, deliberate non-changes, and behavior at risk. For bounded work, return only applicable findings.
 
 ## Completion Criteria
 
-Complete only when every active invocation surface, owner, composition edge, context pointer, gate, output, mutation boundary, handoff, and completion criterion is accounted for; every upstream/custom difference is deliberate; each meaning has one owner; and pruning preserves behavior explicitly rather than by implication.
+Complete when common-path invocation, ownership, composition, mutation boundaries, outputs, and completion criteria are unambiguous, and affected surfaces verify. Stop before enumerating hypothetical failures.

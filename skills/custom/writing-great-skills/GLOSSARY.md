@@ -138,13 +138,13 @@ _Avoid_: keyword, term, motif
 
 ### Completion Criterion
 
-The condition that tells the agent a unit of work is done — the target it judges against. Two properties make it a lever, not just a quality. Its **clarity** (can the agent tell done from not-done?) resists **premature completion** — a vague bound ("understanding reached") lets the agent declare done and slip to the next step; this axis needs _steps_ to bite, since premature completion is a between-steps failure. Its **demand** (how much it requires) sets **legwork** — "every modified model accounted for" forces thorough work where "produce a change list" does not — and this axis is _not_ step-bound: it can bind a body of flat reference too, which is how a skill with no steps still carries an exhaustiveness bar ("every rule applied"). The strongest criteria are both checkable and exhaustive.
+The condition that tells the agent a unit of work is done. Its **clarity** resists **premature completion**; its **demand** sets **legwork**. Match that demand to the behavior the step owns. Strong criteria are checkable and proportional.
 
 _Avoid_: done condition, exit condition, stopping rule
 
 ### Legwork
 
-The work Codex does behind the scenes within a single step — reading files, exploring the codebase, making changes, digging up what it needs rather than offloading to the user. It lives below the step structure: never written as its own step, latent in the wording, controlled by Codex rather than the skill. The within-step counterpart to **post-completion steps**' across-step pull. Raised by a **leading word** (_comprehensive_, _thorough_) or a **completion criterion** that demands the work be exhaustive — including the demand axis applied to flat reference, which is what drives a skill of flat reference to cover all its rungs. Goes thin either when that demand is missing or when **premature completion** cuts the step short.
+The work Codex does behind the scenes within a single step — reading files, exploring the codebase, making changes, and gathering evidence rather than offloading it to the user. It lives below the step structure and is controlled by a **leading word** or demanding **completion criterion**. It goes thin when that demand is weak or **premature completion** cuts the step short.
 
 _Avoid_: scope, effort, diligence, coverage
 
@@ -162,7 +162,7 @@ _Avoid_: premature closure, the rush, rushing, shortcutting
 
 ### Negation
 
-_Failure mode._ Steering by prohibition — telling Codex what _not_ to do — drags the forbidden behavior into context and makes it more available, not less. _Don't think of an elephant_, and the elephant is all there is; _never write verbose comments_, and verbosity is the pattern Codex has just read. The negation is a weak modifier the strongly activated concept overruns, so the ban half-reads as an instruction to do the thing. Its **leading word** is the _elephant_: whatever a prohibition names into the frame. Cure: prompt the **positive** — describe the target behavior ("write one-line comments") so the banned one is never spoken. A prohibition earns its place only as a hard guardrail on a behavior you cannot phrase positively; even then, pair it with the positive target so attention lands on what to do.
+_Failure mode._ Prohibition activates the behavior it names. State the positive target first: "write one-line comments" steers more directly than "never write verbose comments." Keep negation only for a hard guardrail, paired with the positive target.
 
 _Avoid_: ironic rebound, don't-prompting, the pink elephant
 

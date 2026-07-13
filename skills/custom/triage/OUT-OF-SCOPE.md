@@ -12,21 +12,16 @@ Use one short kebab-case file per **concept**, not per issue. Group every reques
 Write a short, readable decision record:
 
 ```markdown
-# Dark Mode
+# <Rejected concept>
 
-This project does not support dark mode or user-facing theming.
+Decision: Out of scope because <durable product, technical, or strategic reason>.
 
-## Why this is out of scope
-
-The rendering pipeline assumes one build-time color palette. Runtime themes would require a theme provider, theme-aware component styles, and preference persistence, which moves beyond the project's content-authoring scope.
+Not sufficient: temporary capacity or priority.
 
 ## Prior requests
 
-- #42 - "Add dark mode support"
-- #87 - "Night theme for accessibility"
+- <tracker reference> - "<request title>"
 ```
-
-Use a substantive, durable reason grounded in project scope, technical constraints, or strategy. Temporary capacity is a deferral, not a rejection.
 
 ## Screen For Prior Rejection
 

@@ -5,23 +5,17 @@
 ## Structure
 
 ```md
-# {Context Name}
+# <Context name>
 
-{One or two sentence description of what this context is and why it exists.}
+<One or two sentences describing the context and why it exists.>
 
 ## Language
 
-**Order**:
-{A one or two sentence definition of the term. Define what it is, not how it is implemented.}
-_Avoid_: Purchase, transaction
+### <Canonical term>
 
-**Invoice**:
-A request for payment sent to a customer after delivery.
-_Avoid_: Bill, payment request
+<Precise project meaning and boundary.>
 
-**Customer**:
-A person or organization that places orders.
-_Avoid_: Client, buyer, account
+_Avoid_: <ambiguous or rejected synonym>
 ```
 
 ## Writing Rules
@@ -43,15 +37,16 @@ Multi-context repos use a root `CONTEXT-MAP.md` that points to each context's `C
 
 ## Contexts
 
-- [Ordering](./src/ordering/CONTEXT.md) - receives and tracks customer orders
-- [Billing](./src/billing/CONTEXT.md) - generates invoices and processes payments
-- [Fulfillment](./src/fulfillment/CONTEXT.md) - manages warehouse picking and shipping
+- [<Upstream context>](<path>/CONTEXT.md) - <owned language and responsibility>
+- [<Downstream context>](<path>/CONTEXT.md) - <owned language and responsibility>
 
 ## Relationships
 
-- **Ordering -> Fulfillment**: Ordering emits `OrderPlaced` events; Fulfillment consumes them to start picking.
-- **Fulfillment -> Billing**: Fulfillment emits `ShipmentDispatched` events; Billing consumes them to generate invoices.
-- **Ordering <-> Billing**: Shared types for `CustomerId` and `Money`.
+### <Upstream context> -> <Downstream context>
+
+Relationship: <customer-supplier | conformist | shared kernel | translation>
+Contract: <what crosses the boundary>
+Owner: <who controls the contract>
 ```
 
 Use `CONTEXT-MAP.md` to route terms and record resolved context relationships. Create or update it when a context boundary or relationship resolves. Update every relevant glossary when a term crosses contexts. Keep unclear ownership unresolved and surface it in the domain delta.

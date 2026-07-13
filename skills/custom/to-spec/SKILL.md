@@ -47,9 +47,7 @@ Sections:
 - `Open Questions`
 - `Further Notes` - omit when empty
 
-Write extensive, numbered user stories covering every source-visible actor, flow, benefit, edge case, and acceptance branch:
-
-`As a <actor>, I want <capability>, so that <benefit>.`
+Number each user story and name its actor, capability, benefit, edge cases, and acceptance branches.
 
 Keep proof notes at spec level: seams, proof points, likely tracer bullets, useful fixtures, prior patterns, and regression risks.
 

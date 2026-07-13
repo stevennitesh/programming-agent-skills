@@ -299,10 +299,10 @@ def test_convergent_review_checks_snapshot_drift_not_baseline_drift() -> None:
 def test_implement_selects_one_risk_scaled_review_route() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
 
-    assert "**Review route:** Invoke `$review` by default." in implement
-    assert "Invoke `$convergent-pr-review` for a local PR or high-risk diff matching its trigger." in implement
-    assert "invoke exactly that route" in implement
-    assert "another pass through the selected review route" in implement
+    assert "Invoke exactly one route:" in implement
+    assert "`$review` for an ordinary diff" in implement
+    assert "`$convergent-pr-review` for a local PR or matching high-risk diff" in implement
+    assert "repeat the selected route" in implement
 
 
 def test_architecture_research_requires_tracked_mutation_approval() -> None:
@@ -419,8 +419,8 @@ def test_implementation_closeout_requires_the_spec_axis() -> None:
     assert "`Spec required: yes`, the selected work item" in implement
     assert "`Spec required: yes`, the run Source Trace" in parallel
     assert (
-        "`pass with residual risk` unlocks Lock only when the selected work item, "
-        "repo policy, or user accepts every named residual risk"
+        "Accepted residual risk must be authorized by the selected item, repo "
+        "policy, or user"
     ) in implement
     for text in (review, convergent):
         assert (
@@ -461,19 +461,13 @@ def test_writing_great_skills_authorizes_bounded_direct_subagents() -> None:
 
     assert "## Delegation" in writing
     assert "**Delegate legwork:**" in writing
-    assert "Invocation is sufficient authority" in writing
-    assert "without separate user confirmation" in writing
-    assert (
-        "pack-wide scope, independent judgment, or parallel reading materially "
-        "improves the result"
-    ) in writing
-    assert "one bounded, self-contained, read-only evidence lane" in writing
+    assert "invocation authorizes direct subagents without separate confirmation" in writing
+    assert "bounded, read-only evidence lane" in writing
     assert 'fork_turns="none"' in writing
-    assert "exclude parent conclusions and peer results" in writing
-    assert "Direct children do not spawn." in writing
+    assert "direct children do not spawn" in writing
     assert (
-        "The root retains required source reading, skill-authoring judgment, "
-        "synthesis, edits, verification, and completion."
+        "the root owns required source reading, judgment, synthesis, edits, "
+        "verification, and completion"
     ) in writing
 
 
@@ -563,11 +557,14 @@ def test_readme_exposes_both_adoption_paths() -> None:
     assert readme.count("```mermaid") == 1
 
 
-def test_triage_ready_examples_use_the_shared_proof_lane_schema() -> None:
+def test_triage_branches_share_the_authoritative_brief_schema() -> None:
     examples = (CUSTOM / "triage/AGENT-BRIEF-EXAMPLES.md").read_text(encoding="utf-8")
+    brief = (CUSTOM / "triage/AGENT-BRIEF.md").read_text(encoding="utf-8")
 
-    assert examples.count("**Proof lane:**") == 4
-    assert "**Validation notes:**" not in examples
+    assert brief.count("**Proof lane:**") == 1
+    assert "| Branch | Emphasize |" in examples
+    for branch in ("Bug tracer", "Enhancement tracer", "Support slice", "PR finish"):
+        assert f"| {branch} |" in examples
 
 
 def test_mutating_workflows_require_readback() -> None:
@@ -711,33 +708,35 @@ def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
 
     required = (
-        "Implement exactly one selected ready work item through staging, review, one commit, and repo-policy tracker closeout",
-        "A parent spec, plan, queue, batch, list, or bare source path is selection context, not implementation scope.",
-        "**Explicit target:**",
-        "stop on that target",
-        "**No target:**",
-        "repo-visible readiness, dependency, and ordering policy",
-        "ask instead of choosing by taste",
-        "**Selection boundary:**",
-        "Do not substitute, split, relabel, promote, or reprioritize tracker state.",
-        "Explicit owner-mode invocation authorizes selected-work staging, one commit, and tracker closeout allowed by repo policy.",
-        "Push, deployment, PR creation, unrelated external messages, and destructive Git require separate authority.",
+        "Implement one selected ready work item through review, one commit, and repo-policy closeout",
+        "**Select -> Patch -> Review -> Lock -> Close**",
+        "Owner mode is the default.",
+        "Staged-worker mode requires an explicit assignment and accepting owner.",
+        "A parent spec, plan, queue, batch, list, or bare source path is context, not implementation scope.",
+        "An explicit target is binding.",
+        "report that gate instead of substituting another item",
+        "Ask when it does not identify one next item.",
+        "Selection reads state; it does not split, relabel, promote, reprioritize, or otherwise repair it.",
+        "Owner-mode invocation authorizes in-scope staging, one commit, and repo-policy closeout.",
+        "Push, deployment, PR creation, destructive Git, and unrelated external mutations require separate authority.",
     )
 
     for token in required:
         assert token in implement
 
 
-def test_local_tracker_closeout_enters_the_review_snapshot() -> None:
+def test_local_tracker_closeout_enters_the_lock_snapshot() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
 
-    pending = implement.index("`Review: pending`")
     review_tree = implement.index("Capture the immutable **review tree**")
-    resolved = implement.index("replace `Review: pending`")
+    closeout = implement.index("For repo-local trackers, record it")
+    lock_tree = implement.index("Capture the **lock tree**")
 
-    assert pending < review_tree < resolved
-    assert "refresh the provisional closeout metadata" in implement
-    assert "the review-result field is the only post-review metadata change" in implement
+    assert review_tree < closeout < lock_tree
+    assert "apply Mutation read-back, and stage the tracker file" in implement
+    assert "Only verified closeout metadata may differ from the reviewed tree" in implement
+    assert "Any implementation, behavior, scope, or contract delta returns to Review" in implement
+    assert "Review: pending" not in implement
 
 
 def test_diagnosis_returns_to_one_implementation_owner() -> None:
@@ -745,7 +744,7 @@ def test_diagnosis_returns_to_one_implementation_owner() -> None:
     diagnosing = (CUSTOM / "diagnosing-bugs/SKILL.md").read_text(encoding="utf-8")
 
     assert "invoke `$diagnosing-bugs` in fix mode" in implement
-    assert "then returns here for Converge" in implement
+    assert "resume here after regression proof" in implement
     assert "A caller-invoked run returns its diagnosis packet to that caller" in diagnosing
     assert "A standalone diagnosis-only run recommends `$implement`" in diagnosing
     assert "**Return owner:**" in diagnosing

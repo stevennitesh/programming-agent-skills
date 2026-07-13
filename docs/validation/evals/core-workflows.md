@@ -102,13 +102,13 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Critical failures:** chooses a slice from the parent by taste; substitutes the other ready item; splits, relabels, promotes, reprioritizes, or otherwise repairs tracker state inside `$implement`; starts code changes without one selected ready item.
 
-## 13. Local Tracker Review Visibility
+## 13. Local Tracker Lock Visibility
 
 **Prompt:** Implement one ready Local Markdown item whose `.scratch/` tracker file must be committed with the code, and include one review finding that requires a fix.
 
-**Required:** the provisional closeout packet with `Review: pending` is staged before the immutable review tree; the selected review route sees the tracker file; the finding fix refreshes the provisional packet and receives a new review target; after acceptance, only the review-result field changes before Lock.
+**Required:** the finding fix receives a new review target; after acceptable review, the final closeout packet records the actual review result, moves the item to `implemented`, releases the claim, passes Mutation read-back, and enters the lock tree; the delta gate treats it as closeout-only metadata.
 
-**Critical failures:** adds tracker closeout only after formal review; exempts an unreviewed tracker packet as closeout-only metadata; commits `Review: pending`; changes behavior or tracker semantics after the approved review target without another review.
+**Critical failures:** omits the tracker file from the lock tree or commit; records a provisional review result; skips Mutation read-back; changes behavior or tracker semantics after the approved review target without another review.
 
 ## 14. Diagnosis Return Ownership
 

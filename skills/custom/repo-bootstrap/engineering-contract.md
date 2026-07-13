@@ -70,12 +70,7 @@ For docs, config, exploration, or behavior-preserving work, use the strongest pr
 
 Treat a runnable prototype as a question answered, not production proof. Expose each load-bearing internal through the smallest meaningful seam.
 
-Examples:
-
-- Data filtering needs fixtures that prove included, excluded, and edge rows.
-- Transformations need known input/output examples and invariants.
-- Ranking needs explainable examples, thresholds, or relative-order checks.
-- Migrations need before/after counts, constraints, checksums, and sample records.
+Match proof to meaning: filtering uses included, excluded, and edge fixtures; transformations use known inputs, outputs, and invariants; ordering uses thresholds or relative order; persistence changes use before/after evidence and constraints.
 
 ## Tracer Bullets
 

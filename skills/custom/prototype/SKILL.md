@@ -37,7 +37,7 @@ Hold one question. Iterate within it until the judge can decide. A disproved pre
 - **Logic, state, or data shape:** Read [LOGIC.md](LOGIC.md). Build a tiny terminal app that lets the judge drive the decision surface through cases.
 - **UI direction:** Read [UI.md](UI.md). Build structurally different UI bets on one route, switchable through URL state and visible prototype chrome.
 
-When the branch is ambiguous, ask the user when available. Otherwise infer from the surrounding code—backend module means logic; page or component means UI—and record the assumption with the prototype.
+When the branch is ambiguous, infer it from the decision surface and record the assumption.
 
 ## 3. Build The Smallest Probe
 

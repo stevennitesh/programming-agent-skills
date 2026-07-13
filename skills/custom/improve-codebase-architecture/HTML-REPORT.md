@@ -10,51 +10,9 @@ The report must open offline with no network request. Embed CSS and SVG directly
 
 When the repo already provides a local Mermaid renderer, render Mermaid to static SVG with its default strict security level and embed the SVG. Otherwise draw the relationship with inline SVG or positioned HTML.
 
-## Scaffold
+## Structure
 
-```html
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Architecture review - {{repo name}}</title>
-    <style>
-      :root {
-        color-scheme: dark;
-        --page: #09090b;
-        --panel: #18181b;
-        --border: #3f3f46;
-        --text: #f4f4f5;
-        --muted: #a1a1aa;
-        --accent: #7dd3fc;
-        --leak: #f87171;
-        --warn: #fbbf24;
-      }
-      * { box-sizing: border-box; }
-      body { margin: 0; background: var(--page); color: var(--text); font: 15px/1.5 system-ui, sans-serif; }
-      main { width: min(1100px, calc(100% - 32px)); margin: 0 auto; padding: 48px 0 72px; }
-      header, article, .recommendation { margin-bottom: 40px; }
-      article, .recommendation { border: 1px solid var(--border); border-radius: 14px; background: var(--panel); padding: 24px; }
-      .comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-      .diagram { min-height: 320px; border: 1px solid var(--border); border-radius: 10px; padding: 16px; overflow: auto; }
-      .muted { color: var(--muted); }
-      .accent { color: var(--accent); }
-      .warning { color: var(--warn); }
-      .seam { stroke-dasharray: 4 4; }
-      .leak { stroke: var(--leak); }
-      @media (max-width: 760px) { .comparison { grid-template-columns: 1fr; } }
-    </style>
-  </head>
-  <body>
-    <main>
-      <header>...</header>
-      <section id="candidates">...</section>
-      <section id="top-recommendation" class="recommendation">...</section>
-    </main>
-  </body>
-</html>
-```
+Produce one self-contained semantic HTML report with embedded CSS and SVG. Include the current structure, friction points, numbered candidates, trade-offs, and a visibly marked Top recommendation.
 
 ## Header
 
@@ -86,11 +44,9 @@ Redraw the diagram when prose grows.
 
 Choose the smallest visual that explains the candidate:
 
-- **Static graph:** locally pre-rendered Mermaid SVG or hand-built inline SVG for call, dependency, or round-trip flow.
-- **Boxes and arrows:** positioned modules with inline SVG arrows when automatic layout obscures the point.
+- **Graph:** locally pre-rendered Mermaid SVG or hand-built inline SVG for dependencies, ownership, or flow.
 - **Cross-section:** stacked bands showing many shallow layers becoming one deeper responsibility.
 - **Mass diagram:** paired interface/implementation rectangles showing interface compression.
-- **Call-graph collapse:** scattered calls faded inside one deep module.
 
 Keep diagrams around 320px tall so before and after remain comparable.
 

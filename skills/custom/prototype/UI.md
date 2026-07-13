@@ -63,7 +63,7 @@ Include:
 
 Behavior:
 
-- variant state lives in the URL, for example `?variant=A`;
+- variant state remains URL-backed;
 - controls cycle variants and wrap around;
 - reload preserves the selected variant;
 - direct variant links work;
