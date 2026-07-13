@@ -6,10 +6,7 @@ created.
 
 ## Current Work
 
-| Work | Route |
-| --- | --- |
-| Ready issue selection facet synthesis | [`docs/synthesis/facets/implement/FACET-1-READY-ISSUE-SELECTION/`](../synthesis/facets/implement/FACET-1-READY-ISSUE-SELECTION/) |
-| Parallel implement orchestration design | [`parallel-implement-design.md`](parallel-implement-design.md) |
+No active pack-maintenance plan.
 
 ## Current Runbooks
 
