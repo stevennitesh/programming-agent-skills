@@ -38,4 +38,4 @@ Do not add production methods, flags, visibility, or optional parameters solely 
 
 Stop refactoring when the slice is clear, the interface is testable, and the next improvement would expand scope beyond the current tracer bullet.
 
-If refactoring reveals a larger design problem, record it as a follow-up instead of widening the slice. Use `$codebase-design` or `$improve-codebase-architecture` when the follow-up needs architectural exploration.
+If refactoring reveals a larger design problem, record it as a follow-up instead of widening the slice. Recommend `$codebase-design` or `$improve-codebase-architecture` when the follow-up needs architectural exploration.

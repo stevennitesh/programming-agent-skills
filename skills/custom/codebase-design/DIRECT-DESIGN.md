@@ -12,7 +12,7 @@ Complete when the bounded candidate, spread behavior or decision, current caller
 
 Name the current module, interface, and implementation; behavior or decisions spread across callers; caller friction and interface pressure; real and hypothetical seams; deletion-test result; and losses in depth, leverage, and locality.
 
-Route a wide or candidate-finding scan to `$improve-codebase-architecture`.
+Recommend `$improve-codebase-architecture` and stop for a wide or candidate-finding scan.
 
 ## 3. Deepen
 

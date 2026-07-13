@@ -27,7 +27,7 @@ Verification ends with evidence. Route code changes to implementation.
 
 Reporter-owned missing facts route directly to `needs-info`.
 
-When maintainer-owned scope, acceptance, domain language, or design decisions remain unresolved, run `$grill-with-docs`. Add changed domain paths and ADR outcomes from its exit packet to the refreshed Source Trace and final triage packet. Refresh affected verification after shaping.
+When maintainer-owned scope, acceptance, domain language, or design decisions remain unresolved, invoke `$grill-with-docs`. Add changed domain paths and ADR outcomes from its exit packet to the refreshed Source Trace and final triage packet. Refresh affected verification after shaping.
 
 ## 4. Recommend
 

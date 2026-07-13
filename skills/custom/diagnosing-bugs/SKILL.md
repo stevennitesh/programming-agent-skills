@@ -1,6 +1,6 @@
 ---
 name: diagnosing-bugs
-description: "Diagnose hard or uncertain failures through a tight red-capable loop. Use for flakes, environment- or production-only bugs, performance regressions, and failures without a trusted repro; apply a fix only when implementation is authorized."
+description: "Diagnose or debug broken, failing, flaky, slow, environment-only, or production-only behavior when the cause or trusted repro is uncertain. Apply a fix only inside an authorized implementation boundary."
 ---
 
 # Diagnosing Bugs
@@ -14,8 +14,9 @@ description: "Diagnose hard or uncertain failures through a tight red-capable lo
 - **Diagnosis mode:** prove the cause and recommend the smallest fix. Put disposable diagnostic artifacts under `.tmp/diagnosing-bugs/<bug-slug>/`; remove them and all instrumentation before return so no production behavior change remains.
 - **Fix mode:** use only when the user or caller authorizes implementation. Apply the smallest causal fix and prove it against both the regression seam and original scenario.
 - **Caller:** owns review, staging, commit, tracker or external mutation, push, release, and architecture follow-up.
+- **Return owner:** A caller-invoked run returns its diagnosis packet to that caller. A standalone diagnosis-only run recommends `$implement` as its one next owner. Fix mode returns to the caller that authorized implementation.
 
-Uncertain diagnosis stays in `$diagnosing-bugs` through regression proof. Known-repro behavior may enter `$tdd` directly.
+Uncertain diagnosis stays in `$diagnosing-bugs` through regression proof. Hand off to `$tdd` when behavior and a trusted reproduction are already known before the diagnostic loop begins; retain the original caller as the return owner.
 
 Advance only when the current phase gate is satisfied. Existing evidence may satisfy a gate only when its source, command or artifact, and result are recorded in the Source Trace.
 
@@ -124,9 +125,9 @@ Otherwise rerank the hypotheses and continue probing.
 
 ## Phase 5 - Fix And Prove
 
-In **diagnosis mode**, record the recommended fix and continue to cleanup without retaining a production behavior change.
+In **diagnosis mode**, record the recommended fix and continue to cleanup without retaining a production behavior change. Return to the invoking caller when one exists; otherwise recommend `$implement` and stop with the diagnosis packet as its input.
 
-In **fix mode**, apply the smallest change that addresses the proven cause.
+In **fix mode**, apply the smallest change that addresses the proven cause, complete regression proof, and return the packet to the caller for review and Lock.
 
 When a correct regression seam exists:
 
@@ -175,11 +176,12 @@ Return:
 - **Cleanup:** instrumentation, disposable `.tmp/`, and tracked `.scratch/` status;
 - **Validation:** additional checks and skipped reasons;
 - **Residual risk:** remaining uncertainty and follow-up route.
+- **Return owner:** invoking caller or `$implement` as the one next owner.
 
 ## Completion Criteria
 
-Diagnosis is complete only when the exact symptom and Source Trace are recorded, a tight red-capable loop and load-bearing repro exist or their blocker is explicit, the cause gate is satisfied, temporary mutations are removed, and the diagnosis packet is returned.
+Diagnosis is complete only when the exact symptom and Source Trace are recorded, a tight red-capable loop and load-bearing repro exist or their blocker is explicit, the cause gate is satisfied, temporary mutations are removed, the return owner is named, and the diagnosis packet is returned.
 
-Fix work is complete only when implementation was authorized, the causal fix passed its regression proof when a correct seam exists, the original scenario went green, flake or performance comparisons were run when applicable, cleanup is complete, and the packet records residual risk.
+Fix work is complete only when implementation was authorized, the causal fix passed its regression proof when a correct seam exists, the original scenario went green, flake or performance comparisons were run when applicable, cleanup is complete, the caller is named, and the packet records residual risk.
 
 A blocked investigation reports the missing loop, access, evidence, or causal proof. It does not claim a cause or fix.

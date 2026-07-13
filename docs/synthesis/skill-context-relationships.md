@@ -150,6 +150,66 @@ Source: `skills/custom/*/agents/openai.yaml`.
 | `wayfinder` | explicit-only |
 | `writing-great-skills` | implicitly invocable |
 
+## Runtime Composition
+
+Use one verb for each executable relationship:
+
+- **Load `<skill>`:** apply its shared reference or discipline inside the caller. The caller keeps output, mutation, and completion ownership.
+- **Invoke `<skill>`:** run the callee through its own gates, return its packet, then resume the caller.
+- **Compose `<skill>`:** keep the callee active under one named composer. Each skill retains its owned gates and mutations; the composer owns the combined exit.
+- **Hand off to `<skill>`:** stop the current skill and transfer ownership with the available Source Trace or packet.
+- **Recommend `<skill>` and stop:** return one next route without executing it. The user or receiving caller starts it.
+
+`Load`, `Invoke`, `Compose`, and `Hand off` target implicitly invocable skills. An explicit-only target is reached through `Recommend and stop` so human selection remains authoritative.
+
+| Caller | Verb | Callee | Condition and return |
+| --- | --- | --- | --- |
+| `grill-with-docs` | Compose | `$grilling` | Run the one-decision interview; return its exit packet through the composer. |
+| `grill-with-docs` | Compose | `$domain-modeling` | Keep durable domain capture active under its own write and ADR gates. |
+| `grilling` | Recommend and stop | `$research` | A source evidence gap needs one cited note. |
+| `grilling` | Recommend and stop | `$prototype` | A design evidence gap needs a runnable verdict. |
+| `grilling` | Recommend and stop | `$handoff` | Evidence work must cross into a fresh session. |
+| `wayfinder` | Invoke | `$research` | Resolve one AFK research ticket, then record its pointer. |
+| `wayfinder` | Invoke | `$prototype` | Resolve one runnable prototype ticket, then capture its verdict. |
+| `wayfinder` | Invoke | `$grill-with-docs` | Resolve one HITL decision ticket or the bounded Chart interview. |
+| `wayfinder` | Recommend and stop | `$domain-modeling` | A closing decision changes durable language or warrants an ADR offer. |
+| `wayfinder` | Recommend and stop | `$to-spec` | The closed map produced settled parent-spec source. |
+| `wayfinder` | Recommend and stop | `$to-tickets` | The closed map produced several settled implementation slices. |
+| `wayfinder` | Recommend and stop | `$implement` | The closed map produced exactly one ready slice. |
+| `to-spec` | Load | `$codebase-design` | Apply deep-module vocabulary while the spec remains authoritative. |
+| `to-spec` | Recommend and stop | `$to-tickets` | The verified parent spec is ready for implementation slicing. |
+| `to-tickets` | Recommend and stop | `$implement` | The ready frontier is singular or write-overlapping. |
+| `to-tickets` | Recommend and stop | `$parallel-implement` | At least two ready items have independent write scopes and proof lanes. |
+| `triage` | Invoke | `$grill-with-docs` | Maintainer-owned shaping is required before the triage recommendation. |
+| `implement` | Invoke | `$tdd` | Behavior and a red-capable seam are known. |
+| `implement` | Invoke | `$diagnosing-bugs` | A bug's cause or trusted reproduction is uncertain; return for Converge. |
+| `implement` | Invoke | `$review` | The selected diff needs ordinary fixed-point review. |
+| `implement` | Invoke | `$convergent-pr-review` | The selected diff is a local PR or matches a high-risk trigger. |
+| `implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
+| `parallel-implement` | Invoke | `$tdd` | A lane worker has red-testable behavior. |
+| `parallel-implement` | Invoke | `$review` | The integrated closeout target needs ordinary review. |
+| `parallel-implement` | Invoke | `$convergent-pr-review` | The integrated closeout target matches a high-risk trigger. |
+| `parallel-implement` | Recommend and stop | `$implement` | The ready set downshifts to one serial item. |
+| `parallel-implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
+| `tdd` | Hand off | `$diagnosing-bugs` | The symptom, cause, or trusted reproduction is uncertain. |
+| `tdd` | Hand off | `$prototype` | The question is design evidence rather than production proof. |
+| `diagnosing-bugs` | Hand off | `$tdd` | Behavior and a trusted reproduction are already known; retain the original caller. |
+| `diagnosing-bugs` | Recommend and stop | `$implement` | Standalone diagnosis proved the cause and needs an implementation owner. |
+| `diagnosing-bugs` | Recommend and stop | `$improve-codebase-architecture` | Proven causal evidence exposes a wider architecture follow-up. |
+| `resolving-merge-conflicts` | Hand off | `$diagnosing-bugs` | A post-resolution failure remains causally uncertain. |
+| `review` | Hand off | `$convergent-pr-review` | The target is a local PR or needs independent high-risk review. |
+| `convergent-pr-review` | Hand off | `$review` | The target is an ordinary fixed-point review. |
+| `improve-codebase-architecture` | Load | `$codebase-design` | Apply shared architecture vocabulary during the wide survey. |
+| `improve-codebase-architecture` | Invoke | `$research` | An approved tracked note must close an external evidence gap. |
+| `improve-codebase-architecture` | Invoke | `$grill-with-docs` | Pressure-test the selected candidate and capture domain changes. |
+| `improve-codebase-architecture` | Invoke | `$codebase-design` | The chosen candidate needs dependency, seam, or interface design. |
+| `improve-codebase-architecture` | Recommend and stop | `$implement` | The confirmed candidate is one ready slice. |
+| `improve-codebase-architecture` | Recommend and stop | `$to-tickets` | The confirmed candidate needs dependency-ordered slices. |
+| `improve-codebase-architecture` | Recommend and stop | `$to-spec` | The confirmed candidate still needs a durable parent spec. |
+| `prototype` | Recommend and stop | `$handoff` | An awaiting verdict must cross sessions. |
+| `prototype` | Recommend and stop | `$domain-modeling` | The verdict exposes a durable term or ADR candidate. |
+| `codebase-design` | Recommend and stop | `$improve-codebase-architecture` | The request is a wide candidate-finding survey. |
+
 ## Context Owners
 
 | Owner | Owns | Read by / pointed to |

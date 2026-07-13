@@ -81,7 +81,7 @@ The initial pass stops here until the user selects a candidate.
 
 ### 4. Pressure-Test The Candidate
 
-After selection, run `$grill-with-docs` with the candidate and Source Trace as its caller packet.
+After selection, invoke `$grill-with-docs` with the candidate and Source Trace as its caller packet.
 
 Pressure-test:
 

@@ -17,7 +17,7 @@ Use the target repo's `AGENTS.md` for tracker, label, and domain docs. If a requ
 
 Trace the current conversation, supplied artifacts, and directly required context they name. Read every supplied artifact in full, including decision-bearing comments and directly required linked context.
 
-Explore enough code to identify current modules, existing seams, proof surfaces, and relevant prior art. Use domain glossary terms for product concepts and `$codebase-design` terms for architecture. Surface conflicts with the domain glossary or ADRs.
+Explore enough code to identify current modules, existing seams, proof surfaces, and relevant prior art. Use domain glossary terms for product concepts. Load `$codebase-design` as shared architecture vocabulary while this spec workflow remains authoritative. Surface conflicts with the domain glossary or ADRs.
 
 Record every relied-on source in `Source Trace`.
 

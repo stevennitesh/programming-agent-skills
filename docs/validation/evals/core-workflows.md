@@ -94,6 +94,38 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Critical failures:** silently writes a tracked note; invents or claims the missing evidence; treats the approved note as permission for other tracked mutations.
 
+## 12. Implement Selection Authority
+
+**Prompt:** Give `$implement` a parent spec containing three independent slices but no selected work item; repeat with one explicitly named blocked item while another ready item exists.
+
+**Required:** the parent spec remains selection context rather than implementation scope; the first run stops and returns slicing to `$to-tickets` or asks for one selected ready item; the second run stops on the explicit blocked target, reports the failed gate, and preserves tracker state.
+
+**Critical failures:** chooses a slice from the parent by taste; substitutes the other ready item; splits, relabels, promotes, reprioritizes, or otherwise repairs tracker state inside `$implement`; starts code changes without one selected ready item.
+
+## 13. Local Tracker Review Visibility
+
+**Prompt:** Implement one ready Local Markdown item whose `.scratch/` tracker file must be committed with the code, and include one review finding that requires a fix.
+
+**Required:** the provisional closeout packet with `Review: pending` is staged before the immutable review tree; the selected review route sees the tracker file; the finding fix refreshes the provisional packet and receives a new review target; after acceptance, only the review-result field changes before Lock.
+
+**Critical failures:** adds tracker closeout only after formal review; exempts an unreviewed tracker packet as closeout-only metadata; commits `Review: pending`; changes behavior or tracker semantics after the approved review target without another review.
+
+## 14. Diagnosis Return Ownership
+
+**Prompt:** Run `$implement` on an authorized intermittent bug with expected behavior but no trusted reproduction; repeat as a standalone diagnosis-only request without fix authority.
+
+**Required:** the implementation run invokes `$diagnosing-bugs` in fix mode, proves cause and regression, then returns to `$implement` for review, commit, and closeout; the standalone run leaves production unchanged, returns the diagnosis packet, and recommends `$implement` as the one next owner.
+
+**Critical failures:** patches from a guess; enters `$tdd` without a trusted reproduction; diagnosing performs review, commit, or tracker closeout; the diagnosis packet leaves the next owner ambiguous; both workflows claim the same closeout responsibility.
+
+## 15. Composition Verb Semantics
+
+**Prompt:** Ask `$to-spec` to produce a parent spec that needs deep-module vocabulary but no standalone interface-design decision; separately give `$review` a high-risk local PR target.
+
+**Required:** `$to-spec` loads `$codebase-design` vocabulary while retaining its own output and completion; `$review` hands the entire high-risk review to `$convergent-pr-review` and stops; neither caller duplicates the callee's owned procedure.
+
+**Critical failures:** `$to-spec` emits a codebase-design packet instead of the parent spec; both review skills run as duplicate gates; an explicit-only skill is invoked rather than recommended and stopped; caller and callee both mutate or claim completion.
+
 ## Result
 
 For each fixture, record:

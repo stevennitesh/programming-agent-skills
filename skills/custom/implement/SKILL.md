@@ -1,15 +1,19 @@
 ---
 name: implement
-description: Implement one bounded work item through the repo's convergence loop, with standalone closeout or staged worker handoff.
+description: Implement exactly one selected ready work item through staging, review, one commit, and repo-policy tracker closeout; in staged-worker mode, stop at a staged patch and handoff.
 ---
 
 # Implement
 
-Implement exactly one selected work item: a chat-selected slice, GitHub issue, local tracker issue, spec/path/URL slice, or another explicit implementation target.
+Implement exactly one **selected work item**: one tracker item, chat-selected bounded slice, or path or URL whose content already defines one ready item.
 
-If the source contains multiple slices, choose one bounded ready-for-agent slice and stop after it. If no work item is supplied, select the next unblocked ready-for-agent item from the tracker.
+A parent spec, plan, queue, batch, list, or bare source path is selection context, not implementation scope.
 
-Apply the **readiness gate** before Patch: the selected work item is unblocked, its behavior and acceptance criteria are settled, and a proof seam can be named from repo evidence. If the gate fails, stop with the gaps and recommend shaping.
+- **Explicit target:** Treat the user's target as binding. If it is ineligible, blocked, ambiguous, or unready, stop on that target and report the failed gate.
+- **No target:** Use repo-visible readiness, dependency, and ordering policy to select the next unblocked ready-for-agent item. When that policy does not identify one next item, ask instead of choosing by taste.
+- **Selection boundary:** Selection reads state; it does not repair it. Do not substitute, split, relabel, promote, or reprioritize tracker state. Return unsliced source to `$to-tickets` and other failed gates to the owner that can settle them.
+
+Apply the **readiness gate** before Patch: the selected work item is eligible when tracker-backed; its expected behavior and acceptance criteria are settled; it is unblocked; and an observable done signal exists. A non-diagnostic path also names a proof seam from repo evidence. An uncertain bug may instead enter `$diagnosing-bugs` when expected and actual behavior are clear enough to investigate. If the gate fails, stop with the exact gap and one next owner.
 
 ## Preconditions
 
@@ -25,6 +29,8 @@ Read tracker docs only for tracker selection, claim, semantics, or closeout.
 
 Formal review, commit, tracker mutation, and delegation are owner-only.
 
+**Owner authority:** Explicit owner-mode invocation authorizes selected-work staging, one commit, and tracker closeout allowed by repo policy. Push, deployment, PR creation, unrelated external messages, and destructive Git require separate authority.
+
 ## Intake
 
 Identify the selected work item, source, acceptance criteria, blockers, and out-of-scope boundaries.
@@ -37,7 +43,11 @@ Read only task-relevant comments, parent context, files, and nearby code. Treat 
 
 ## Patch
 
-Use `$tdd` when behavior is clear enough for a RED test through a useful seam. Otherwise name the proof seam, use the strongest focused evidence, and record why RED was unsuitable. Keep the patch inside the selected work item; record adjacent work as follow-ups.
+For red-testable behavior and known-repro bugs, invoke `$tdd`.
+
+For a bug whose exact symptom, cause, or trusted reproduction is uncertain, invoke `$diagnosing-bugs` in fix mode with the selected work item as its caller. It owns the tight loop, cause gate, causal fix, and regression proof, then returns here for Converge. Implement retains review, staging, commit, tracker closeout, and Lock.
+
+For work without a red-capable seam, name the proof seam, use the strongest focused evidence, and record why RED was unsuitable. Keep the patch inside the selected work item; record adjacent work as follow-ups.
 
 ## Staged Worker Handoff
 
@@ -55,11 +65,15 @@ Run **authoritative proof** on the assembled diff: acceptance checks, canonical 
 
 **Scope fence:** stage every selected-work-item change before review, including in-scope tracker files and accepted worker handoff. Verify the cached diff contains no unrelated file or hunk, then run `git diff --cached --check`.
 
+For repo-local tracker files, prepare review-visible closeout metadata before pinning the review target: summary, validation, skipped checks, residual risk, and `Review: pending`. Append it under `## Implementation Notes`, move the item to `implemented`, release its claim, stage the tracker file with the implementation diff, and apply the tracker's **Mutation read-back** rule. Repo-local notes need not include the commit SHA.
+
 Capture the immutable **review tree** with `git write-tree`.
 
-**Review route:** Use `$review` by default. Use `$convergent-pr-review` for a local PR or high-risk diff matching its trigger. Record the route and invoke exactly that route with the fixed point, review tree, and `git diff <fixed-point> <review-tree>`. An unavailable route blocks Lock.
+**Review route:** Invoke `$review` by default. Invoke `$convergent-pr-review` for a local PR or high-risk diff matching its trigger. Record the route and invoke exactly that route with the fixed point, review tree, and `git diff <fixed-point> <review-tree>`. An unavailable route blocks Lock.
 
-Fix in-scope findings with targeted verification. Prepare the closeout packet: summary, review result, validation run, skipped checks, and residual risk. For repo-local tracker files, add the packet and move the item to `implemented` before capturing the lock tree. Repo-local notes need not include the commit SHA.
+Fix in-scope findings with targeted verification. For repo-local tracker work, refresh the provisional closeout metadata after every finding fix, restage the complete selected-work diff, capture a new review tree, and run another pass through the selected review route. The final repo-local packet stays inside the reviewed tree.
+
+After an acceptable review, prepare the closeout packet: summary, review result, validation run, skipped checks, and residual risk. For repo-local tracker work, replace `Review: pending` with the actual result and read the file back; the review-result field is the only post-review metadata change. Keep connector-backed closeout pending until Lock.
 
 Restage every selected-work-item change and capture the **lock tree** with `git write-tree`.
 

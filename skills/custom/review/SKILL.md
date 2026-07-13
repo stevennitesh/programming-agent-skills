@@ -1,6 +1,6 @@
 ---
 name: review
-description: "Run ordinary fixed-point review for branch, WIP, staged, or \"review since X\" diffs. Keep Standards (\"built right?\") and Spec (\"right thing?\") as two axes, never merged. Use $convergent-pr-review for local PRs or high-risk local diffs."
+description: "Run ordinary fixed-point review for branch, WIP, staged, or \"review since X\" diffs. Keep Standards (\"built right?\") and Spec (\"right thing?\") as two axes, never merged. Hand off local PRs or high-risk local diffs to $convergent-pr-review."
 ---
 
 # Review
@@ -14,7 +14,7 @@ This is the default Converge gate for ordinary branch, WIP, staged, and `$implem
 
 Keep the **two axes, never merged**. One axis passing must not hide the other axis failing, and there is no single winner across axes.
 
-Use `$convergent-pr-review` instead for local PR review or high-risk local-diff review that needs independent reviewer passes, scoped lenses, and a verified finding ledger.
+Hand off to `$convergent-pr-review` and stop for local PR review or high-risk local-diff review that needs independent reviewer passes, scoped lenses, and a verified finding ledger.
 
 ## 1. Pin The Review Target
 
@@ -102,7 +102,7 @@ Done means Spec gaps, scope creep, semantic risks, and proof gaps have been repo
 
 Run **single-agent**: Standards, then a **lens reset**, then Spec. Set Standards findings aside; judge Spec only against the review target and Spec source.
 
-Route requests for independent reviewer subagents to `$convergent-pr-review`.
+Hand off requests for independent reviewer subagents to `$convergent-pr-review` and stop this review.
 
 Done means both axes ran sequentially with a lens reset and remained separate.
 

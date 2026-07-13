@@ -1,6 +1,6 @@
 ---
 name: convergent-pr-review
-description: "Use for local PR review or high-risk local-diff review that needs independent reviewer subagents and a verified finding ledger: release gates, shared plumbing, migrations, security/permissions, CI/workflow/config, public interfaces, or data contracts. For ordinary fixed-point Standards/Spec review, use $review."
+description: "Use for local PR review or high-risk local-diff review that needs independent reviewer subagents and a verified finding ledger: release gates, shared plumbing, migrations, security/permissions, CI/workflow/config, public interfaces, or data contracts. Hand off ordinary fixed-point Standards/Spec review to $review."
 ---
 
 # Convergent PR Review
@@ -13,7 +13,7 @@ Reviewer subagents inspect; the main agent orchestrates and verifies. Consensus 
 
 **Read-only boundary:** inspection, ref fetches, and routed validation may create only disposable `.tmp/` artifacts. Patches, tracked `.scratch/` evidence, staging, commits, and tracker mutations belong to downstream implementation. Sandbox-crossing or external validation follows normal tool approval and is reported.
 
-Use `$review` instead for ordinary branch, WIP, or `review since X` fixed-point review where Standards and Spec are the main axes.
+Hand off to `$review` and stop for ordinary branch, WIP, or `review since X` fixed-point review where Standards and Spec are the main axes.
 
 ## Defaults
 

@@ -5,7 +5,7 @@ description: Compose a repo-backed grilling session with durable domain capture.
 
 # Grill With Docs
 
-Run one `$grilling` session with `$domain-modeling` active throughout.
+Compose one `$grilling` session with `$domain-modeling` active throughout.
 
 **Mutation boundary:** Before the interview, state that Confirmed domain terms may update routed domain docs. ADR creation still requires explicit approval.
 

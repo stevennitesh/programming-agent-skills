@@ -56,7 +56,7 @@ Why this is good:
 
 ## Good Bug Regression Test
 
-Use `$diagnosing-bugs` when the exact symptom, cause, or repro is uncertain; it owns that diagnostic loop through regression proof. Use `$tdd` directly for known-repro bugs.
+Hand off to `$diagnosing-bugs` when the exact symptom, cause, or repro is uncertain; it owns that diagnostic loop through regression proof. Use `$tdd` directly for known-repro bugs.
 
 ```python
 def test_blank_email_is_rejected_before_account_creation():

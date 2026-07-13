@@ -94,7 +94,7 @@ The orchestrator or routed integrator executes the pre-landing gate. It is accep
 
 **Stale-base packet:** when serial landings obsolete a worker base, the integration lane returns the packet; the orchestrator chooses rebase, re-dispatch, serialization, or rejection.
 
-**Review route:** default to `$review`. Route high-risk integrated diffs matching `$convergent-pr-review` to that skill. The orchestrator selects and records the route; the integration lane executes it. An unavailable route blocks closeout. Higher risk discovered during landing returns a review-route escalation packet.
+**Review route:** invoke `$review` by default. Invoke `$convergent-pr-review` for high-risk integrated diffs matching its trigger. The orchestrator selects and records the route; the integration lane executes only that route. An unavailable route blocks closeout. Higher risk discovered during landing returns a review-route escalation packet.
 
 **Loop-close lock:** before review, require a clean in-scope integration state with all integrated work and review-visible repo-local closeout metadata committed. Pin the integration `HEAD` as the immutable review target and run the assigned route from the run fixed point.
 

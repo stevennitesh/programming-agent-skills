@@ -68,7 +68,7 @@ Run broad validation at wave boundaries only when routed. Loop close owns final 
 
 When the orchestrator drains the ready frontier, assemble review-visible repo-local closeout metadata, require a clean in-scope integration state, and pin current `HEAD` as the immutable review target.
 
-Run final validation and exactly the assigned review route from the run fixed point. Use `$review` for ordinary fixed-point Standards/Spec review. When routed to `$convergent-pr-review`, dispatch its reviewer subagents only inside its read-only convergence gate and return its finding ledger and verified survivors.
+Run final validation and exactly the assigned review route from the run fixed point. Invoke `$review` for ordinary fixed-point Standards/Spec review. When assigned `$convergent-pr-review`, invoke it, dispatch its reviewer subagents only inside its read-only convergence gate, and return its finding ledger and verified survivors.
 
 Return a review-route escalation packet when the integrated diff reveals higher risk than the recorded route covers. The orchestrator must assign the new route before review continues.
 

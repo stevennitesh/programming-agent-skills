@@ -186,8 +186,8 @@ def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
     assert "Base ref: `main`" not in convergent
     assert "distinct, not independent" in convergent
     assert "reduced-confidence" in convergent
-    assert "Use $convergent-pr-review" in review
-    assert "use $review" in convergent
+    assert "Hand off local PRs or high-risk local diffs to $convergent-pr-review" in review
+    assert "Hand off ordinary fixed-point Standards/Spec review to $review" in convergent
 
 
 def test_convergent_review_checks_snapshot_drift_not_baseline_drift() -> None:
@@ -201,8 +201,8 @@ def test_convergent_review_checks_snapshot_drift_not_baseline_drift() -> None:
 def test_implement_selects_one_risk_scaled_review_route() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
 
-    assert "**Review route:** Use `$review` by default." in implement
-    assert "Use `$convergent-pr-review` for a local PR or high-risk diff matching its trigger." in implement
+    assert "**Review route:** Invoke `$review` by default." in implement
+    assert "Invoke `$convergent-pr-review` for a local PR or high-risk diff matching its trigger." in implement
     assert "invoke exactly that route" in implement
     assert "another pass through the selected review route" in implement
 
@@ -249,7 +249,7 @@ def test_merge_conflict_resolution_is_three_way_and_finish_bounded() -> None:
         "Block before continuation if unrelated index state would enter its commit.",
         "A new conflict returns to **State**; repeat until Git exits",
         "Without finish authority, leave staging, commit, and continuation untouched.",
-        "an uncertain failure is a `$diagnosing-bugs` handoff",
+        "hand off an uncertain failure to `$diagnosing-bugs`",
     )
     for token in required:
         assert token in skill
@@ -336,3 +336,104 @@ def test_worker_modes_have_distinct_completion_artifacts() -> None:
     assert "**lane worker**" in contract
     assert "**Staged worker:**" in implement
     assert "**Lane workers**" in parallel
+
+
+def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -> None:
+    implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
+
+    required = (
+        "Implement exactly one selected ready work item through staging, review, one commit, and repo-policy tracker closeout",
+        "A parent spec, plan, queue, batch, list, or bare source path is selection context, not implementation scope.",
+        "**Explicit target:**",
+        "stop on that target",
+        "**No target:**",
+        "repo-visible readiness, dependency, and ordering policy",
+        "ask instead of choosing by taste",
+        "**Selection boundary:**",
+        "Do not substitute, split, relabel, promote, or reprioritize tracker state.",
+        "Explicit owner-mode invocation authorizes selected-work staging, one commit, and tracker closeout allowed by repo policy.",
+        "Push, deployment, PR creation, unrelated external messages, and destructive Git require separate authority.",
+    )
+
+    for token in required:
+        assert token in implement
+
+
+def test_local_tracker_closeout_enters_the_review_snapshot() -> None:
+    implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
+
+    pending = implement.index("`Review: pending`")
+    review_tree = implement.index("Capture the immutable **review tree**")
+    resolved = implement.index("replace `Review: pending`")
+
+    assert pending < review_tree < resolved
+    assert "refresh the provisional closeout metadata" in implement
+    assert "the review-result field is the only post-review metadata change" in implement
+
+
+def test_diagnosis_returns_to_one_implementation_owner() -> None:
+    implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
+    diagnosing = (CUSTOM / "diagnosing-bugs/SKILL.md").read_text(encoding="utf-8")
+
+    assert "invoke `$diagnosing-bugs` in fix mode" in implement
+    assert "then returns here for Converge" in implement
+    assert "A caller-invoked run returns its diagnosis packet to that caller" in diagnosing
+    assert "A standalone diagnosis-only run recommends `$implement`" in diagnosing
+    assert "**Return owner:**" in diagnosing
+
+
+def test_runtime_composition_edges_respect_invocation_policy() -> None:
+    relationships = (ROOT / "docs/synthesis/skill-context-relationships.md").read_text(
+        encoding="utf-8"
+    )
+    rows = re.findall(
+        r"(?m)^\| `([a-z0-9][a-z0-9-]*)` \| "
+        r"(Load|Invoke|Compose|Hand off|Recommend and stop) \| "
+        r"`\$([a-z0-9][a-z0-9-]*)` \|",
+        relationships,
+    )
+    edges = set(rows)
+
+    required = {
+        ("grill-with-docs", "Compose", "grilling"),
+        ("grill-with-docs", "Compose", "domain-modeling"),
+        ("to-spec", "Load", "codebase-design"),
+        ("wayfinder", "Invoke", "research"),
+        ("wayfinder", "Invoke", "prototype"),
+        ("wayfinder", "Invoke", "grill-with-docs"),
+        ("triage", "Invoke", "grill-with-docs"),
+        ("implement", "Invoke", "tdd"),
+        ("implement", "Invoke", "diagnosing-bugs"),
+        ("implement", "Invoke", "review"),
+        ("implement", "Invoke", "convergent-pr-review"),
+        ("review", "Hand off", "convergent-pr-review"),
+        ("tdd", "Hand off", "diagnosing-bugs"),
+        ("tdd", "Hand off", "prototype"),
+        ("diagnosing-bugs", "Hand off", "tdd"),
+        ("diagnosing-bugs", "Recommend and stop", "implement"),
+    }
+
+    assert required <= edges
+
+    source_wording = {
+        CUSTOM / "grill-with-docs/SKILL.md": "Compose one `$grilling` session with `$domain-modeling` active throughout.",
+        CUSTOM / "to-spec/SKILL.md": "Load `$codebase-design` as shared architecture vocabulary",
+        CUSTOM / "triage/SPECIFIC-ITEM.md": "invoke `$grill-with-docs`",
+        CUSTOM / "implement/SKILL.md": "invoke `$diagnosing-bugs` in fix mode",
+        CUSTOM / "parallel-implement/SKILL.md": "invoke `$review` by default",
+        CUSTOM / "review/SKILL.md": "Hand off to `$convergent-pr-review` and stop",
+        CUSTOM / "tdd/SKILL.md": "Hand off to `$diagnosing-bugs`",
+        CUSTOM / "codebase-design/DIRECT-DESIGN.md": "Recommend `$improve-codebase-architecture` and stop",
+    }
+    for path, token in source_wording.items():
+        assert token in path.read_text(encoding="utf-8"), f"{path} is missing {token}"
+
+    skill_names = {skill.name for skill in CUSTOM.iterdir() if skill.is_dir()}
+    for caller, verb, callee in rows:
+        assert caller in skill_names
+        assert callee in skill_names
+        if verb != "Recommend and stop":
+            assert implicit_policy(CUSTOM / callee), (
+                f"{caller} cannot {verb} explicit-only skill {callee}; "
+                "recommend it and stop instead"
+            )

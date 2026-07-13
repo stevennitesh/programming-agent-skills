@@ -28,9 +28,9 @@ Read `docs/agents/issue-tracker.md`, section `Wayfinding operations`, before any
 
 Every ticket declares a method and a participation mode:
 
-- **Research - AFK:** Name one approved repo-local note path, then run `$research`; link its cited note from the resolution.
-- **Prototype - HITL:** Create the cheapest concrete artifact the human can react to: outline, stub, UI/logic spike, or `$prototype`. Link the artifact and capture the verdict.
-- **Grilling - HITL:** Run `$grill-with-docs`. This is the default for decision questions.
+- **Research - AFK:** Name one approved repo-local note path, then invoke `$research`; link its cited note from the resolution.
+- **Prototype - HITL:** Create the cheapest concrete artifact the human can react to: outline, stub, UI/logic spike, or invoke `$prototype` for a runnable probe. Link the artifact and capture the verdict.
+- **Grilling - HITL:** Invoke `$grill-with-docs`. This is the default for decision questions.
 - **Task - HITL or AFK:** Complete a prerequisite that exposes a later decision. Automate AFK work; otherwise provide a precise HITL checklist. Record what changed and the facts later tickets depend on.
 
 A **HITL** ticket completes only through live human participation. An **AFK** ticket may be driven autonomously.
@@ -45,7 +45,7 @@ Choose exactly one mode per session.
 
 Use this mode for a loose idea without an existing map.
 
-1. **Name the destination.** Run `$grill-with-docs` with a **charting bound**: settle only the outcome, scope, and route-closing condition.
+1. **Name the destination.** Invoke `$grill-with-docs` with a **charting bound**: settle only the outcome, scope, and route-closing condition.
 2. **Sweep breadth-first.** Surface each material child decision as a sharp question. Defer it explicitly to a named Wayfinder ticket instead of resolving it inside the charting interview.
 3. **Gate on fog.** If the route is already clear, skip the map and use the closing routes below.
 4. **Chart the map.** Read [MAP-FORMAT.md](MAP-FORMAT.md), then create the map with its destination, notes, empty resolution index, visible fog, and scope boundary.
