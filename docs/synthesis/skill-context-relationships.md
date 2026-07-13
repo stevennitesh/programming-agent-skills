@@ -35,6 +35,7 @@ flowchart TD
   GrillDocs --> DomainModel
   Wayfinder["wayfinder"] --> Tracker
   Wayfinder --> Labels
+  Wayfinder -. "setup gate" .-> Setup
   Wayfinder --> GrillDocs
   Wayfinder --> Prototype["prototype"]
   Wayfinder --> Research["research"]
@@ -49,13 +50,16 @@ flowchart TD
   ToSpec --> Tracker
   ToSpec --> Labels
   ToSpec --> ToTickets["to-tickets"]
+  ToSpec -. "setup gate" .-> Setup
   ToTickets --> Tracker
   ToTickets --> Labels
   ToTickets --> Ready["ready-for-agent items"]
+  ToTickets -. "setup gate" .-> Setup
 
   Triage["triage"] --> Tracker
   Triage --> Labels
   Triage --> DomainRouter
+  Triage -. "setup gate" .-> Setup
   Triage --> TriageFlows["ATTENTION-SCAN / SPECIFIC-ITEM / QUICK-OVERRIDE<br/>branch procedures"]
   Triage --> AgentBrief["AGENT-BRIEF.md"]
   Triage --> OutOfScope["OUT-OF-SCOPE.md / .out-of-scope/"]
@@ -70,6 +74,7 @@ flowchart TD
   Implement -. "local PR / high risk" .-> CPR
   Implement --> Tracker
   Implement -. "unsettled work" .-> Shape
+  Implement -. "unsliced source" .-> ToTickets
   Parallel --> Contract
   Parallel --> Tracker
   Parallel --> DomainRouter
@@ -80,6 +85,7 @@ flowchart TD
   Parallel -. "approved high risk only" .-> CPR["convergent-pr-review"]
   Parallel -. "conflicted landing" .-> Conflict
   WorkerBrief --> TDD
+  WorkerBrief --> Debug
   Review --> Tracker
   Review --> Contract
   Review --> SpecSources["spec / acceptance / source material"]
@@ -109,6 +115,9 @@ flowchart TD
   Arch --> Implement
   Arch --> ToTickets
   Arch --> ToSpec
+  Arch -. "setup gate" .-> Setup
+
+  Handoff -. "setup gate" .-> Setup
 
   TDD --> TddRefs["tests.md / mocking.md / refactoring.md"]
   TddRefs -. "uncertain repro" .-> Debug
@@ -175,25 +184,33 @@ Use one verb for each executable relationship:
 | `wayfinder` | Recommend and stop | `$to-spec` | The closed map produced settled parent-spec source. |
 | `wayfinder` | Recommend and stop | `$to-tickets` | The closed map produced several settled implementation slices. |
 | `wayfinder` | Recommend and stop | `$implement` | The closed map produced exactly one ready slice. |
+| `wayfinder` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `to-spec` | Load | `$codebase-design` | Apply deep-module vocabulary while the spec remains authoritative. |
 | `to-spec` | Recommend and stop | `$to-tickets` | The verified parent spec is ready for implementation slicing. |
+| `to-spec` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `to-tickets` | Recommend and stop | `$implement` | The ready frontier is singular or write-overlapping. |
 | `to-tickets` | Recommend and stop | `$parallel-implement` | At least two ready items have independent write scopes and proof lanes. |
+| `to-tickets` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `triage` | Invoke | `$grill-with-docs` | Maintainer-owned shaping is required before the triage recommendation. |
-| `implement` | Invoke | `$tdd` | Behavior and a red-capable seam are known. |
-| `implement` | Invoke | `$diagnosing-bugs` | A bug's cause or trusted reproduction is uncertain; return for Converge. |
+| `triage` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
+| `implement` | Invoke | `$tdd` | New behavior is settled and red-testable, or expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known. |
+| `implement` | Invoke | `$diagnosing-bugs` | A bug's exact symptom, cause, or trusted red-capable reproduction is uncertain; return for Converge. |
 | `implement` | Invoke | `$review` | The selected diff needs ordinary fixed-point review. |
 | `implement` | Invoke | `$convergent-pr-review` | The selected diff is a local PR or matches a high-risk trigger. |
+| `implement` | Recommend and stop | `$to-tickets` | The supplied source contains multiple or unsliced implementation items. |
 | `implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
-| `parallel-implement` | Invoke | `$tdd` | A lane worker has red-testable behavior. |
+| `parallel-implement` | Invoke | `$tdd` | A lane worker has red-testable new behavior, or a bug whose expected behavior, exact symptom, cause, and trusted red-capable reproduction are known. |
+| `parallel-implement` | Invoke | `$diagnosing-bugs` | A lane worker's bug has an uncertain exact symptom, cause, or trusted red-capable reproduction; return to the same lane worker. |
 | `parallel-implement` | Invoke | `$review` | The integrated closeout target needs ordinary review. |
 | `parallel-implement` | Invoke | `$convergent-pr-review` | The integrated closeout target matches a high-risk trigger. |
 | `parallel-implement` | Invoke | `$resolving-merge-conflicts` | A routed landing enters conflicted or partially applied Git state; resume only from the resolver's verified and authorized return state. |
 | `parallel-implement` | Recommend and stop | `$implement` | The ready set downshifts to one serial item. |
 | `parallel-implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
-| `tdd` | Hand off | `$diagnosing-bugs` | The symptom, cause, or trusted reproduction is uncertain. |
+| `tdd` | Hand off | `$diagnosing-bugs` | A bug's exact symptom, cause, or trusted red-capable reproduction is uncertain. |
 | `tdd` | Hand off | `$prototype` | The question is design evidence rather than production proof. |
-| `diagnosing-bugs` | Hand off | `$tdd` | Behavior and a trusted reproduction are already known; retain the original caller. |
+| `tdd` | Recommend and stop | `$codebase-design` | A GREEN refactor exposes one bounded interface or seam question outside the slice. |
+| `tdd` | Recommend and stop | `$improve-codebase-architecture` | A GREEN refactor exposes a wide candidate-finding survey outside the slice. |
+| `diagnosing-bugs` | Hand off | `$tdd` | Only when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known before Phase 1; retain the original caller. |
 | `diagnosing-bugs` | Recommend and stop | `$implement` | Standalone diagnosis proved the cause and needs an implementation owner. |
 | `diagnosing-bugs` | Recommend and stop | `$improve-codebase-architecture` | Proven causal evidence exposes a wider architecture follow-up. |
 | `resolving-merge-conflicts` | Hand off | `$diagnosing-bugs` | A post-resolution failure remains causally uncertain. |
@@ -206,9 +223,11 @@ Use one verb for each executable relationship:
 | `improve-codebase-architecture` | Recommend and stop | `$implement` | The confirmed candidate is one ready slice. |
 | `improve-codebase-architecture` | Recommend and stop | `$to-tickets` | The confirmed candidate needs dependency-ordered slices. |
 | `improve-codebase-architecture` | Recommend and stop | `$to-spec` | The confirmed candidate still needs a durable parent spec. |
+| `improve-codebase-architecture` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `prototype` | Recommend and stop | `$handoff` | An awaiting verdict must cross sessions. |
 | `prototype` | Recommend and stop | `$domain-modeling` | The verdict exposes a durable term or ADR candidate. |
 | `codebase-design` | Recommend and stop | `$improve-codebase-architecture` | The request is a wide candidate-finding survey. |
+| `handoff` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 
 ## Context Owners
 
@@ -225,7 +244,7 @@ Use one verb for each executable relationship:
 | `domain-modeling` | Mutates `CONTEXT.md`, `CONTEXT-MAP.md`, and ADR truth | `skill-router`, `grill-with-docs`, `wayfinder`, `prototype`, `repo-bootstrap` |
 | `codebase-design` | Interface, seam, adapter, depth, leverage, and locality vocabulary | `to-spec`, `improve-codebase-architecture`, `tdd`, architecture/design follow-ups |
 | `research` | Primary-source legwork and authorized cited repo-local research notes | `wayfinder`, `to-spec`, `to-tickets`, `improve-codebase-architecture` |
-| `resolving-merge-conflicts` | Three-way, source-traced Git conflict reconciliation and finish boundary | Git operations and implementation or integration work that enters a conflicted state |
+| `resolving-merge-conflicts` | Read-only three-way inspection, authorized reconciliation, and the separate finish boundary | Git operations and implementation or integration work that enters a conflicted state |
 | `review` | Ordinary fixed-point Standards/Spec review | `implement`, `parallel-implement`; escalates to `convergent-pr-review` for high risk |
 
 ## Supporting Files
@@ -256,7 +275,7 @@ Use one verb for each executable relationship:
 - `to-spec` owns parent spec synthesis and tracker publication; `to-tickets` owns implementation issue slicing.
 - `wayfinder` owns foggy multi-session maps; tracker docs own the transport mechanics for maps, child tickets, blocking, claiming, and resolution.
 - `research` owns primary-source legwork and one cited repo-local note. A user request or caller packet must authorize one note path before that tracked mutation; otherwise research returns cited inline evidence or a blocker.
-- `resolving-merge-conflicts` owns Git conflict reconciliation and may edit in-scope conflicted files. Abort, hard reset, or discarding a side requires explicit approval; staging, commit, and operation continuation require explicit user authorization.
+- `resolving-merge-conflicts` inspects State and Trace read-only by default. Reconciliation authority permits edits only to in-scope conflicts; finish authority separately permits staging and continuation. Abort, hard reset, or discarding a side requires explicit approval.
 - Tracker docs own transport, tracker commands, the shared Ready-for-agent contract, and Mutation read-back. `triage` owns incoming classification, verification, brief rendering, state transitions, and the AI disclaimer; `$to-tickets` owns slicing and dependency order. Do not re-triage valid `$to-tickets` output.
 - `implement` owns one selected item; `parallel-implement` owns batch orchestration and serialized integration.
 - The `parallel-implement` orchestrator is the sole dispatcher and formal-review owner. Lane workers and child integrators never fan out; an integration lane lands, validates, and returns a review-ready packet.

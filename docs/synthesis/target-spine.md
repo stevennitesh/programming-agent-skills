@@ -86,7 +86,7 @@ until the test has failed for the right reason, passed with the smallest impleme
 ```text
 Use fixed-point review
 against the starting ref
-until Standards and Spec have both been checked, in-scope findings are fixed, and residual risk is named.
+until Standards and Spec have both been checked, every finding is actionable and source-backed, and residual risk is named.
 ```
 
 ## Guardrails

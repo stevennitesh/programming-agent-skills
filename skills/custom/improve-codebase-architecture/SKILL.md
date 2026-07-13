@@ -39,7 +39,7 @@ Orienting is complete when the planned survey regions, domain and ADR constraint
 
 ### 2. Scout
 
-Use independent **scouts** when available and the repo or survey lenses can be partitioned. Give each scout the shared vocabulary, one bounded region or pressure, and a requirement to return source pointers. The main agent owns synthesis, deduplication, filtering, ranking, and the report. Use one pass for a small or unpartitionable repo.
+Use direct fresh-context read-only scouts when independent judgment matters and the repo or survey lenses can be partitioned. Start each with `fork_turns="none"` when supported. Give every scout the shared vocabulary, a self-contained survey frame, one bounded region or pressure, source pointers, mutation boundary, and output contract. Exclude parent hypotheses, preferred candidates, and peer results. Scouts inspect and report only; they never edit files, mutate external state, or spawn. The main agent alone owns synthesis, deduplication, filtering, ranking, and the report. For partitioned inventory where continuity matters more than independence, fork only the minimum necessary recent context and do not call the result independent. Use one pass for a small or unpartitionable repo.
 
 Follow architectural friction first, checklist second.
 

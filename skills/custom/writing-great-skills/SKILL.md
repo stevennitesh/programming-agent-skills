@@ -18,6 +18,12 @@ Read [GLOSSARY.md](GLOSSARY.md) completely for a full audit. For a bounded edit,
 - pruning: `Pruning` and the relevant failure mode;
 - completion drift: `Completion Criterion`, `Legwork`, and `Premature Completion`.
 
+## Delegation
+
+**Delegate legwork:** Invocation is sufficient authority for the root agent to use direct subagents without separate user confirmation when pack-wide scope, independent judgment, or parallel reading materially improves the result.
+
+Give each subagent one bounded, self-contained, read-only evidence lane. When independence matters, start it with `fork_turns="none"` when supported and exclude parent conclusions and peer results. Subagents return evidence to the root. Direct children do not spawn. The root retains required source reading, skill-authoring judgment, synthesis, edits, verification, and completion.
+
 ## Audit Spine
 
 1. **Invoke.** Decide implicit or explicit-only reach. Make the policy explicit in `agents/openai.yaml`. For implicit reach, front-load the description with one trigger per real branch. For explicit-only reach, keep the description human-facing and route discoverability through a router.

@@ -1,5 +1,7 @@
 # Language Direction
 
+Status: historical synthesis snapshot. Do not execute the Proposed Changes. Active vocabulary is owned by `CONTEXT.md`; runtime behavior is owned by `skills/custom/*/SKILL.md`; validation policy is owned by `scripts/validate_skills.py` and the contract tests.
+
 This synthesis note promotes the actionable findings from
 [`../research/language/02-upstream-skill-pack-audit.md`](../research/language/02-upstream-skill-pack-audit.md).
 
@@ -39,6 +41,6 @@ Do not revert `skills/custom/` to upstream. Instead:
 
 ## Boundary
 
-This file owns the chosen language direction. The research audit owns evidence
-and comparison. Runtime skills own active behavior only after their `SKILL.md`
-files are edited.
+This file records the language direction considered at the time. The research
+audit owns its evidence and comparison. Current owners are named in the status
+line above.

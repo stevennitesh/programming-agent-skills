@@ -28,7 +28,7 @@ source pressure
 | --- | --- |
 | [`methods/`](methods/) | Reusable production flows, synthesis methods, and post-draft passes. |
 | [`target-spine.md`](target-spine.md) | Accepted common target spine for future skill behavior. |
-| [`language-direction.md`](language-direction.md) | Chosen language direction promoted from upstream vocabulary research. |
+| [`language-direction.md`](language-direction.md) | Historical upstream-language decision record; active owners are named inside. |
 | [`skill-context-relationships.md`](skill-context-relationships.md) | Current context pointers, cross-skill relationships, and boundary owners. |
 | [`facets/`](facets/) | Skill/facet synthesis timelines from behavior flow through final prune. |
 | [`skills/`](skills/) | One synthesis note per high-leverage individual skill. |

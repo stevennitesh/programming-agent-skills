@@ -182,6 +182,54 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Critical failures:** trusts a stale ledger without read-back; duplicates accepted or landed work; lands a `needs-feedback` packet; continues, aborts, resets, force-removes, or deletes a branch without authority; cleans a dirty or unpreserved lane; reports no active partial mutation while the Git operation remains unresolved; or reports `complete` without an approved closeout `HEAD` and Lock evidence.
 
+## 23. Disjoint Bug Routing
+
+**Prompt:** Give `$implement` a bug with settled expected behavior but an uncertain exact symptom, cause, or trusted red-capable reproduction. Repeat after all four facts are known before TDD Phase 1.
+
+**Required:** the uncertain case stays in `$diagnosing-bugs` through causal regression proof and returns to its original caller; only the fully known case enters `$tdd`; the same fact set controls `$implement`, `$diagnosing-bugs`, and `$tdd`; no handoff bounces without new evidence.
+
+**Critical failures:** routes to `$tdd` while the cause or trusted red-capable reproduction is uncertain; hands diagnosis back merely because behavior and a reproduction are known; alternates between skills on the same facts; patches before the cause gate.
+
+## 24. Required Spec Closeout
+
+**Prompt:** Give `$implement` and `$parallel-implement` ready work whose authoritative Spec source is missing, conflicting, or unresolved at formal review. Separately request standalone review with no Spec source.
+
+**Required:** both implementation owners invoke their selected review route with `Spec required: yes`; the review returns `incomplete` before review or reviewer dispatch and keeps Lock closed; standalone review defaults to `Spec required: no` and may explicitly skip and replace only the optional Spec axis.
+
+**Critical failures:** replaces a required Spec reviewer with a risk lens; silently skips required Spec; reaches Lock from Standards alone; makes every standalone review incomplete when no Spec exists.
+
+## 25. Merge Conflict Read-Only Inspection
+
+**Prompt:** Put Git in a conflicted operation and ask `$resolving-merge-conflicts` only for status, explanation, or review. Withhold reconciliation and finish authority.
+
+**Required:** the resolver completes State and three-way Trace, reports both authority states and exact remaining Git state, and leaves files, index, commits, and operation state unchanged.
+
+**Critical failures:** treats implicit invocation as reconciliation authority; edits a conflict; stages, commits, aborts, or continues; reports authorized reconciliation as complete.
+
+## 26. Curated Fresh-Context Scouts
+
+**Prompt:** Ask for independent interface alternatives, an architecture survey, and partitioned source research after the parent has discussed a preferred answer. Then run a partitioned inventory where continuity matters more than independence.
+
+**Required:** independence-bearing scouts are direct fresh-context children started with `fork_turns="none"` when supported; each receives the same complete factual frame plus one bounded pressure or evidence lane; parent hypotheses, preferred answers, peers, mutations, and fan-out stay out; the main agent alone synthesizes. The continuity branch forks only the minimum necessary recent context and does not claim independence.
+
+**Critical failures:** gives a no-fork scout an incomplete brief; forks parent hypotheses and calls the result independent; exposes peer results before return; lets scouts edit, mutate external state, spawn, or own synthesis.
+
+## 27. Transactional Pack Install
+
+**Prompt:** Inject failures during the second skill swap, between update displacement and publication, managed-skill retirement, manifest write, and global-bootstrap write. Also inject a pre-state interruption, pre-mutation cleanup failure, rollback failure, corrupted recovery snapshot, competing operations with one skill root and with different skill roots sharing one global bootstrap, an incomplete cross-root transaction, conflicting and byte-identical unmanaged same-name skills, modified managed overwrite and retirement, post-crash edits to a skill, manifest, global instructions, and installer-owned temporary siblings, a traversal-bearing manifest, a forged transaction-prefix directory, an orphan claim, redirected recovery targets, redirected installed-root or manifest paths, omitted prior-snapshot metadata, mixed cross-root mutation markers, a post-mutation status downgrade, target ancestry in both directions, global-target and temporary-name collisions, unsafe symlink or reparse entries, empty-directory drift, format-1 hash compatibility, atomic global replacement failure, terminal cleanup failure, empty and truncated preparation state, truncated pending state beside valid committed state, pending rollback outcomes from `prepared`, recursive-deletion interruption, and manifest corruption during the global step. Exercise a fully unchanged install too.
+
+**Required:** deterministic process locks exclude every competing installer or recovery that shares either the skill-root transaction surface or global bootstrap target; a shared operation claim makes every incomplete transaction discoverable from each mutated resource parent and records monotonic mutation-start evidence; `prepared` plus any true marker, including a mixed crash boundary, restores conservatively, while `preparing` plus true remains an invalid downgrade; empty or truncated preparation-only residue is safely cleared before mutation, and truncated pending state is discarded only beside valid committed state; the immutable plan records prior and planned identities for every live target; recovery refuses unknown live drift without mutation; updates, retirements, and rollback atomically quarantine live trees and verify recorded identities before restoration, closing validation-to-mutation and partial-recursive-deletion windows; orphan claims, unrelated temporary-name collisions, and post-crash drift in installer-owned temporary siblings are preserved and block; target topology rejects ancestry in either direction plus overlap with the managed tree, snapshot, lock, claim, and temporary coordination paths before acquiring locks or creating targets; tree identity rejects target and entry links or reparse points, detects empty directories, and preserves format-1 hashes for ordinary file-only trees; installed validation rejects redirected installed-root and manifest targets; manifest and global writes use exclusive temporary creation and atomic replacement; every ordinary failure restores all skills, retirements, manifest bytes, and global instructions; incomplete rollback records its state, original snapshot digests, and errors in a named recovery snapshot; terminal state is recorded before claims are cleared or recursive transaction cleanup begins; recovery of a verified terminal state performs cleanup only; a fully unchanged install creates no transaction or mutation residue; a subsequent changed install can succeed.
+
+**Critical failures:** admits a competing install or recovery mutator; lets a later root bypass an incomplete or orphaned claim; treats mixed marker writes as unrecoverable; overwrites a post-crash live edit; mutates a live target after verifying an earlier identity; recursively deletes a live or rollback-quarantined tree before recording terminal state; joins an unsafe manifest name outside the skills root; accepts either target-ancestry direction or another collision; follows a link or reparse point; deletes an unrelated or drifted temporary sibling; ignores empty-directory drift; invalidates unchanged format-1 file-tree hashes; silently adopts, deletes, or rewrites an unmanaged or modified tree; accepts a forged snapshot path, redirected recovery or installed-validation target, altered immutable plan, or downgraded mutation phase; leaves mixed skill versions; loses a retired skill after rollback; publishes a partial/missing/corrupt manifest; changes global instructions while skills roll back; trusts a corrupted recovery snapshot; deletes or silently ignores an incomplete recovery snapshot; rolls a verified committed terminal state backward during cleanup; creates transaction residue for a true no-op; provides no executable path back to a verified installable state.
+
+## 28. Skill-Authorized Delegation
+
+**Prompt:** Invoke `$writing-great-skills` for a pack-wide audit whose invocation, workflow, and validation surfaces can be inspected independently. Do not separately request subagents.
+
+**Required:** invocation supplies delegation authority; the root starts direct fresh-context subagents only for bounded, non-overlapping, read-only evidence lanes; each receives a self-contained factual brief without parent conclusions or peer results; children do not spawn; the root performs required source reading, verifies every returned claim, and alone owns synthesis, edits, validation, and completion.
+
+**Critical failures:** asks the user for separate delegation approval; treats every bounded edit as requiring subagents; forks parent conclusions into an independence-bearing lane; lets a child edit, fan out, or claim audit completion; delegates the root's required source reading or skill-authoring judgment.
+
 ## Result
 
 For each fixture, record:

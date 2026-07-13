@@ -59,9 +59,10 @@ Let `$repo-bootstrap` own inventory, choices, writes, tracker mutations, and ver
 
 | Situation | Route |
 | --- | --- |
-| Raw issues, requests, or external PRs need sorting | `$triage` |
-| A symptom, cause, or reproduction is uncertain | `$diagnosing-bugs` |
-| Expected behavior and a red-capable proof seam are known | `$tdd` |
+| Raw issues, requests, or configured external PR/MR intake need sorting | `$triage` |
+| A bug's exact symptom, cause, or trusted red-capable reproduction is uncertain | `$diagnosing-bugs` |
+| Settled new behavior has a red-capable proof seam | `$tdd` |
+| For a bug, expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known | `$tdd` |
 | A merge, rebase, cherry-pick, or revert is conflicted | `$resolving-merge-conflicts` |
 | An ordinary branch, WIP, staged, or since-X diff needs fixed-point review | `$review` |
 | A local PR or high-risk local diff needs independent passes and a finding ledger | `$convergent-pr-review` |
@@ -81,7 +82,8 @@ Let `$repo-bootstrap` own inventory, choices, writes, tracker mutations, and ver
 
 - **Grill / Wayfind:** Use `$grill-with-docs` for a decision tree that fits one session; use `$wayfinder` when fog of war requires a multi-session tracker map.
 - **Research / Prototype:** Use `$research` for a durable cited source note; use `$prototype` for a runnable design verdict.
-- **Diagnose / TDD:** Use `$diagnosing-bugs` when the symptom, cause, or repro is uncertain; use `$tdd` when behavior and a red-capable seam are known.
+- **Diagnose / TDD:** Use `$diagnosing-bugs` when the exact symptom, cause, or trusted red-capable reproduction is uncertain. Use `$tdd` for settled new behavior with a red-capable seam or when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known.
+- **Triage / Review:** Use `$triage` for configured incoming-work intake. Use `$review` or `$convergent-pr-review` when a code diff is already the subject.
 - **Review / Convergent:** Use `$review` for ordinary fixed-point review; use `$convergent-pr-review` for local PRs or high-risk local diffs.
 - **Implement / Parallel:** Use `$implement` for one ready item; use `$parallel-implement` for a parallel-safe ready frontier.
 - **Triage / Architecture:** Use `$triage` for incoming tracker work; use `$improve-codebase-architecture` for codebase health.

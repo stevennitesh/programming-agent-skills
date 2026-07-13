@@ -15,7 +15,9 @@ The main agent is the **review root**. It pins the target, dispatches direct rev
 
 **Read-only boundary:** Inspect only. Validation may create disposable artifacts under `.tmp/`. A required pre-capture ref fetch may update Git metadata; record it and follow normal tool approval. After capture, keep the review snapshot fixed. Leave the working tree, index, commits, tracked `.scratch/` state, tracker, PR reviews or comments, and external messages unchanged. Downstream implementation owns patches and closeout mutations. Report sandbox-crossing, network, or external validation and its approval state.
 
-Hand off to `$review` and stop for ordinary branch, WIP, or `review since X` fixed-point review where Standards and Spec are the main axes.
+**Spec requirement:** The caller supplies `Spec required: yes | no`. Default to `no` for standalone review. When `yes`, a missing, conflicting, or unresolved Spec source makes the review `incomplete`; never skip or replace the Spec axis.
+
+Hand off to `$review` and stop for ordinary branch, WIP, or `review since X` fixed-point review where Standards and Spec are the main axes. Carry the caller-supplied Spec requirement, Source Trace and Spec sources, fixed point, and captured target into the handoff.
 
 ## Defaults
 
@@ -23,7 +25,7 @@ Hand off to `$review` and stop for ordinary branch, WIP, or `review since X` fix
 - Reviewers: `2`
 - Max rounds: `2`
 - Severity: `P0/P1/P2/P3`
-- Spec fallback: highest-risk uncovered lens
+- Optional Spec fallback: highest-risk uncovered lens
 
 Scale reviewers by coverage:
 
@@ -59,7 +61,7 @@ Resolve Spec in this order:
 3. Issue or PR references in the captured commit messages.
 4. A matching spec, legacy PRD, or issue packet under the repo's documented conventions.
 
-Follow `docs/agents/issue-tracker.md` for PR and issue transport and mutation rules when it exists. When sources disagree, record their precedence and the conflict in `Source Trace`. When no Spec source exists, record `Spec: skipped - no source available` and replace that reviewer with the highest-risk uncovered lens.
+Follow `docs/agents/issue-tracker.md` for PR and issue transport and mutation rules when it exists. When sources disagree, record their precedence and the conflict in `Source Trace`. When `Spec required: yes` and no authoritative Spec source resolves, return `incomplete` before reviewer dispatch. Never replace the required Spec reviewer with a risk lens. When `Spec required: no` and no Spec source exists, record `Spec: skipped - no source available` and replace that reviewer with the highest-risk uncovered lens.
 
 For Standards, include repo rules and [SMELL-BASELINE.md](../review/SMELL-BASELINE.md) when repo standards are thin.
 
@@ -223,4 +225,4 @@ Done means the report returns the complete ledger, preserves axis separation, re
 
 ## Completion Criteria
 
-Complete only when the fixed point and non-empty review snapshot are pinned; Source Trace is recorded; round-one reviewers were fresh-context direct children when the runtime supported context control; reviewers never fanned out; at least two independent reviewers inspected the same captured target, or the result is explicitly reduced-confidence and non-independent; Standards and Spec ran or Spec was explicitly skipped and replaced; every reviewer finding is represented in the ledger; any second round was limited to targeted ledger challenges; no candidate or unverified item remains; final status and verification agree; survivors are verified or explicitly not checked; drift and the read-only boundary were checked; severity and blocking decisions are clear; and one review decision plus the complete ledger and any patch-ready handoffs were returned.
+Complete only when the fixed point and non-empty review snapshot are pinned; Source Trace is recorded; required Spec resolved; round-one reviewers were fresh-context direct children when the runtime supported context control; reviewers never fanned out; at least two independent reviewers inspected the same captured target, or the result is explicitly reduced-confidence and non-independent; Standards and Spec ran, or optional Spec was explicitly skipped and replaced; every reviewer finding is represented in the ledger; any second round was limited to targeted ledger challenges; no candidate or unverified item remains; final status and verification agree; survivors are verified or explicitly not checked; drift and the read-only boundary were checked; severity and blocking decisions are clear; and one review decision plus the complete ledger and any patch-ready handoffs were returned.

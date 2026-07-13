@@ -107,7 +107,7 @@ Keep it short:
 ```markdown
 ## Agent skills
 
-<!-- programming-agent-skills setup-schema: 1:427ef8595173 -->
+<!-- programming-agent-skills setup-schema: 1:859a503ba864 -->
 
 This repo uses the Programming Agent Skills engineering pack.
 
@@ -125,7 +125,7 @@ Before nontrivial coding, read `docs/agents/engineering-contract.md`.
 
 Update existing sections in place and preserve repo-specific commands, architecture, release rules, and source-of-truth routing.
 
-When `AGENTS.md` contains the portable fallback contract, replace its generic `North Star`, `Working Loop`, `Hard Gates`, `Shape Before Build`, `Implementation Taste`, and `Review And Report` sections with the installed-pack block and engineering-contract pointer. Keep repo-specific material. Keep other agent instruction files unchanged unless Codex configuration or the user makes them part of this setup.
+When `AGENTS.md` contains the portable fallback contract, replace its portable title and owner preamble plus its generic `North Star`, `Working Loop`, `Hard Gates`, `Shape Before Build`, `Implementation Taste`, and `Review And Report` sections with the installed-pack block and engineering-contract pointer. Keep repo-specific material. Keep other agent instruction files unchanged unless Codex configuration or the user makes them part of this setup.
 
 ### Local Contracts
 

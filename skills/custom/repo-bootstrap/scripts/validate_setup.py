@@ -16,7 +16,39 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:427ef8595173 -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:859a503ba864 -->"
+SETUP_SCHEMA_MARKER_RE = re.compile(
+    r"<!-- programming-agent-skills setup-schema: \d+:[0-9a-f]{12} -->"
+)
+
+PORTABLE_OWNER_TOKENS = (
+    "# Portable Engineering Contract",
+    "This contract owns engineering taste, gates, and completion.",
+)
+
+PORTABLE_SECTION_HEADINGS = (
+    "## North Star",
+    "## Working Loop",
+    "## Hard Gates",
+    "## Shape Before Build",
+    "## Implementation Taste",
+    "## Review And Report",
+)
+
+PORTABLE_SECTION_SIGNATURES = (
+    ("## North Star", "Discover broadly. Converge under proof."),
+    (
+        "## Working Loop",
+        "Orient -> Explore -> Decide -> Prove -> Cover -> Converge -> Simplify -> Lock",
+    ),
+    ("## Hard Gates", "**No evidence, no done.**"),
+    ("## Shape Before Build", "**Interview:** when intent is unsettled"),
+    ("## Implementation Taste", "Prefer tracer-bullet vertical slices."),
+    (
+        "## Review And Report",
+        "Review every nontrivial diff from a fixed point on separate axes:",
+    ),
+)
 
 AGENT_POINTERS = (
     "docs/agents/issue-tracker.md",
@@ -112,6 +144,36 @@ def require_tokens(
             failures.append(f"{relative} is missing {token}")
 
 
+def markdown_section_contains(text: str, heading: str, signature: str) -> bool:
+    pattern = re.compile(
+        rf"(?ms)^{re.escape(heading)}[ \t]*(?:\r?\n|\Z)"
+        r"(.*?)(?=^#{1,2}(?:[ \t]+|$)|\Z)"
+    )
+    return any(signature in match.group(1) for match in pattern.finditer(text))
+
+
+def portable_owner_failures(agents: str) -> list[str]:
+    portable_section_remains = any(
+        markdown_section_contains(agents, heading, signature)
+        for heading, signature in PORTABLE_SECTION_SIGNATURES
+    )
+    if any(token in agents for token in PORTABLE_OWNER_TOKENS) or portable_section_remains:
+        return [
+            "AGENTS.md still declares the portable engineering-contract owner; "
+            "complete portable-fallback adoption through $repo-bootstrap."
+        ]
+    return []
+
+
+def setup_schema_marker_failures(agents: str) -> list[str]:
+    if SETUP_SCHEMA_MARKER_RE.findall(agents) == [SETUP_SCHEMA_TOKEN]:
+        return []
+    return [
+        "AGENTS.md must contain exactly one current programming-agent-skills "
+        "setup-schema marker"
+    ]
+
+
 def check_ignore(root: Path, probe: str) -> tuple[bool | None, str]:
     result = subprocess.run(
         ["git", "check-ignore", "-q", "--no-index", probe],
@@ -147,12 +209,10 @@ def main() -> int:
 
     agents = texts["AGENTS.md"]
     if agents:
+        failures.extend(portable_owner_failures(agents))
         if not re.search(r"(?m)^## Commands\s*$", agents):
             failures.append("AGENTS.md is missing a ## Commands primer")
-        if SETUP_SCHEMA_TOKEN not in agents:
-            failures.append(
-                "AGENTS.md is missing the current programming-agent-skills setup-schema marker"
-            )
+        failures.extend(setup_schema_marker_failures(agents))
         require_tokens(agents, "AGENTS.md", AGENT_POINTERS, failures)
         if not re.search(
             r"(?im)^(?:[-*]\s*)?(?:before|for)\s+nontrivial coding[^\n]*"
