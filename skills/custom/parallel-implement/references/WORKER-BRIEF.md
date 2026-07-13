@@ -7,7 +7,8 @@ Implement exactly one assigned work item.
 **Work item:** `<id and title>`
 **Source Trace:** `<issue / local packet / spec slice / decision-bearing comments / named repo sources>`
 **Lane worker:** `<agent id / explicit user-owned task id>`
-**Launch route:** `<native isolated worktree / approved manual worktree / explicit user-owned background worktree>`
+**Context mode:** `<fresh direct child with fork_turns="none" / explicit user-owned task>`
+**Launch route:** `<root-created detached worktree / explicit user-owned Codex App worktree task>`
 **Starting state:** `<project default branch / existing branch or ref / working tree>`
 **Base SHA:** `<sha expected by orchestrator>`
 **Worker worktree path:** `<absolute path from preflight>`
@@ -17,7 +18,8 @@ Implement exactly one assigned work item.
 **Preflight result:** `<repo root + HEAD + status + .tmp/ write/delete + focused proof startup>`
 **Expected write scope:** `<paths/modules, or "discover and report before widening">`
 **Acceptance packet:** `<criteria, blockers, out-of-scope work, dependency notes>`
-**Parent context:** `<spec / issue packet links>`
+**Integration context:** `<interfaces or decisions from already-landed work that the Source Trace does not contain / none>`
+**Report transport:** `<compact inline packet / exact lane-local .tmp path plus short envelope>`
 **Focused proof:** `<commands or expected evidence>`
 **Proof budget:** `<focused-only / routed shared-behavior broad check>`
 **Validation environment:** `<interpreter/venv, cwd, PYTHONPATH, isolated .tmp/ cache and temp paths, focused runner>`
@@ -28,7 +30,11 @@ Implement exactly one assigned work item.
 
 Read every source in the Source Trace and `docs/agents/engineering-contract.md`. The work-item source owns acceptance; this brief owns lane-worker process.
 
-Produce exactly one clean local commit plus focused proof, or return a blocker packet.
+**Workspace boundary:** the assigned worktree, not the process startup cwd, is your workspace. Before any edit, prove its absolute path, repo root, `HEAD`, branch or detached state, and status. Set that path as `workdir` on every shell call. Use absolute paths under it for every file edit. Never modify the parent or integration checkout.
+
+**One worker, one lane, one packet:** do not spawn subagents, integrate, review, mutate trackers, push, or widen scope.
+
+Produce exactly one clean local commit plus focused proof, or return a `blocker` or `needs-feedback` packet.
 
 Preflight before edits. Full preflight reports:
 
@@ -48,13 +54,13 @@ Invoke `$tdd` for red-testable behavior; otherwise prove the slice with routed f
 
 Use the assigned validation environment. If `.venv` is absent, use the routed interpreter/env and report the fallback. Shared dependency mutation requires an explicit route.
 
-Keep one lane: patch, focused proof, one local commit, packet. Return adjacent work or commitment changes as `needs-feedback`. Formal review, fan-out, tracker mutation, integration, push, and lock remain upstream.
+Keep one lane: patch, focused proof, one local commit, packet. Return adjacent work or commitment changes as `needs-feedback`. Formal review, tracker mutation, integration, push, and lock remain upstream.
 
 Stop before changing product intent, acceptance, public or domain contracts, dependencies, or security/privacy posture.
 
 ## Report
 
-Done means verified preflight, a clean `git status --short`, and exactly one worker commit SHA, or a blocker packet.
+`done` means verified preflight, a clean `git status --short`, and exactly one worker commit SHA. `blocker` or `needs-feedback` makes no completion claim and reports exact state, reason, next need, and any preserved commit or worktree state.
 
 Return Source Trace, preflight, base SHA, commit SHA, owned files, validation, acceptance proof, skipped checks, residual risk or blockers, scope notes, unrelated dirty files, final status, and skill feedback.
 
@@ -70,6 +76,7 @@ owned files:
 proof:
 skipped checks:
 risk/blockers:
+next need:
 scope notes:
 final status: <clean / dirty + reason>
 skill feedback:

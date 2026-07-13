@@ -6,7 +6,7 @@ import subprocess
 import sys
 
 
-DEFAULT_ARGS = ("tests/test_validate_slice_plan_regression.py",)
+DEFAULT_ARGS = ("tests/test_skill_pack_contracts.py",)
 
 
 def main(argv: list[str] | None = None) -> int:

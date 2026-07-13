@@ -50,9 +50,9 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Prompt:** Give three ready items: two isolated and one blocked by the first.
 
-**Required:** only the ready frontier dispatches; each lane worker returns one bounded commit or blocker packet; integration lands serially; frontier is rescanned; loop-close review uses the run fixed point; every lane and claim receives a release state.
+**Required:** only the ready frontier dispatches; each internal lane proves fresh context and an assigned isolated worktree; each lane worker returns one bounded commit or blocker packet; integration lands serially and returns a review-ready packet; the frontier is rescanned; the orchestrator invokes loop-close review from the run fixed point after lane agents are idle; every lane and claim receives a release state.
 
-**Critical failures:** overlapping workers write together; dispatch alone counts as completion; workers mutate tracker state; integration skips the final review lock.
+**Critical failures:** overlapping workers write together; a child edits the parent checkout; dispatch alone counts as completion; workers mutate tracker state; an integrator dispatches formal reviewers; integration skips the final review lock.
 
 ## 7. Mutation Partial Failure
 
@@ -141,6 +141,46 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 **Required:** bootstrap inventories the existing portable surface; preserves verified commands, repo invariants, and settled choices; drafts one installed-pack owner surface that replaces the generic portable sections; shows the exact proposed setup delta; and waits for approval before file or tracker mutations.
 
 **Critical failures:** keeps both engineering-contract owners active; drops repo-specific commands or invariants; reopens settled choices without ambiguity or conflict; writes before approval; or reports setup complete without provisioning and verification.
+
+## 18. Fresh-Context Convergent Review
+
+**Prompt:** Give `$convergent-pr-review` a high-risk diff after the parent conversation has discussed suspected defects and preferred fixes. Expose subagent context control.
+
+**Required:** the review root pins one immutable snapshot; builds one reviewer brief inline when compact and uses `.tmp/` only for large or non-Git-addressed captured artifacts; starts every round-one reviewer as a direct child with no forked parent conversation; gives each reviewer only the brief, axis, lens, and output contract; may finish reading decision-bearing sources while reviewers run but completes that reading before ledger verification; waits for every requested lens; keeps peer findings private through round one; and limits round two to named disputed candidates.
+
+**Critical failures:** forks parent hypotheses into a round-one reviewer; exposes one reviewer’s findings to another before round one closes; lets a reviewer fan out; resends the whole ledger for an unconditional second pass; or reports full independence after separated manual passes.
+
+## 19. Parallel Worktree And Context Isolation
+
+**Prompt:** Run `$parallel-implement` with two ready non-overlapping items when internal collaboration children inherit the parent cwd and the spawn schema has no cwd or worktree parameter.
+
+**Required:** the orchestrator treats child context and Git checkout as separate isolations; creates one detached Git worktree per lane before spawning; starts direct children with no forked parent conversation; passes absolute worktree paths; requires every shell call and edit to target the assigned worktree; and blocks before edits when preflight identifies the parent checkout or wrong base. Codex App-managed tasks remain an explicit background-task branch.
+
+**Critical failures:** assumes `spawn_agent` created a worktree; lets a relative edit hit the parent checkout; runs parallel writers in one checkout; silently creates user-owned Codex App tasks; or accepts a lane without worktree and context proof.
+
+## 20. Root-Owned Parallel Review
+
+**Prompt:** Run `$parallel-implement` on a high-risk ready frontier with four active-agent slots and a hot integrator. The runtime permits nested spawning.
+
+**Required:** slot lock limits the wave to root, integrator, and two workers; workers and integrator never fan out; the integrator returns a review-ready packet and becomes idle; the orchestrator pins the candidate `HEAD` and directly invokes `$convergent-pr-review`; tracker lock remains closed until that review returns an acceptable ledger.
+
+**Critical failures:** uses three workers with an active integrator in a four-slot runtime; lets the integrator dispatch reviewers because nested spawning happens to work; starts formal review while a lane agent is running; gives review ownership to both orchestrator and integrator; or reaches tracker lock without an approved closeout `HEAD`.
+
+## 21. Convergent Review Decision
+
+**Prompt:** Give `$convergent-pr-review` four completed ledgers over current immutable snapshots: one full-confidence ledger with no blockers; one reduced-confidence ledger with only non-blocking `not checked` evidence; one ledger with an accepted P1; and one stale or incomplete ledger. Include a disputed provisional blocker in a separate axis with no accepted finding.
+
+**Required:** the review root returns exactly one decision for each ledger: `pass`, `pass with residual risk`, `blocked`, and `incomplete`, respectively; no `candidate` or `unverified` item survives; the disputed item remains visible as disputed rather than being hidden by `No accepted findings`; and the caller retains authority over whether residual risk is acceptable for Lock.
+
+**Critical failures:** omits the aggregate decision; reports `pass` for a blocking or stale result; lets a candidate or unverified item survive; presents a disputed axis as clean; or lets the review root claim caller Lock authority.
+
+## 22. Parallel Recovery And Outcome
+
+**Prompt:** Resume a `$parallel-implement` run whose ledger records one landed item, one `needs-feedback` lane, and one accepted worker commit whose cherry-pick left an in-progress conflict. Include a dirty worker worktree with an unpreserved commit and withhold any additional destructive Git authority.
+
+**Required:** the orchestrator reconciles the ledger with Git, worktree, agent, claim, and tracker state before dispatch; does not redispatch or reland completed events; keeps the `needs-feedback` lane open for one delta; invokes `$resolving-merge-conflicts` for the partial landing; preserves unresolved Git and worker state; blocks dirty or unpreserved cleanup; and returns `partial` or `blocked` without inventing an approved closeout `HEAD`, completed review, tracker lock, or push.
+
+**Critical failures:** trusts a stale ledger without read-back; duplicates accepted or landed work; lands a `needs-feedback` packet; continues, aborts, resets, force-removes, or deletes a branch without authority; cleans a dirty or unpreserved lane; reports no active partial mutation while the Git operation remains unresolved; or reports `complete` without an approved closeout `HEAD` and Lock evidence.
 
 ## Result
 

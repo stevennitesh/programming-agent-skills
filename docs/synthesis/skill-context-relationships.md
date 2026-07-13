@@ -78,9 +78,8 @@ flowchart TD
   Parallel --> Ledger["RUN-LEDGER.md / .tmp/parallel-implement/"]
   Parallel --> Review
   Parallel -. "approved high risk only" .-> CPR["convergent-pr-review"]
+  Parallel -. "conflicted landing" .-> Conflict
   WorkerBrief --> TDD
-  IntegratorBrief --> Review
-  IntegratorBrief -. "ledger-approved only" .-> CPR
   Review --> Tracker
   Review --> Contract
   Review --> SpecSources["spec / acceptance / source material"]
@@ -189,6 +188,7 @@ Use one verb for each executable relationship:
 | `parallel-implement` | Invoke | `$tdd` | A lane worker has red-testable behavior. |
 | `parallel-implement` | Invoke | `$review` | The integrated closeout target needs ordinary review. |
 | `parallel-implement` | Invoke | `$convergent-pr-review` | The integrated closeout target matches a high-risk trigger. |
+| `parallel-implement` | Invoke | `$resolving-merge-conflicts` | A routed landing enters conflicted or partially applied Git state; resume only from the resolver's verified and authorized return state. |
 | `parallel-implement` | Recommend and stop | `$implement` | The ready set downshifts to one serial item. |
 | `parallel-implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `tdd` | Hand off | `$diagnosing-bugs` | The symptom, cause, or trusted reproduction is uncertain. |
@@ -218,7 +218,7 @@ Use one verb for each executable relationship:
 | `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md` | Minimal pack-owned global Codex bootstrap template: explicit-only router/setup discovery | `~/.codex/AGENTS.md` |
 | `skill-router` | Current executable route map and tie-breakers | Humans or agents choosing one next route |
 | `repo-bootstrap` | Provisions and verifies the repo setup surface | `skill-router`, setup gates in planning/tracker skills |
-| `docs/agents/issue-tracker.md` | Tracker interface, work-item lifecycle, PR-as-request rules, and wayfinding operations | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `review`, `wayfinder` |
+| `docs/agents/issue-tracker.md` | Tracker interface, work-item lifecycle, PR-as-request rules, and wayfinding operations | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `review`, `convergent-pr-review`, `wayfinder` |
 | `docs/agents/triage-labels.md` | Category/state role to label mapping and fixed wayfinding labels | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
 | `docs/agents/domain.md` | Routing to `CONTEXT.md`, `CONTEXT-MAP.md`, ADRs | `to-spec`, `triage`, `tdd`, `diagnosing-bugs`, `improve-codebase-architecture`, `parallel-implement` |
 | `docs/agents/engineering-contract.md` | Shared runtime engineering language, repo-owned commands, commitment boundary, semantic proof, work-state policy, fixed-point Spec/Standards review, and Lock | `implement`, `tdd`, `diagnosing-bugs`, `prototype`, `improve-codebase-architecture`, `parallel-implement`, `resolving-merge-conflicts`, `review`, `convergent-pr-review` |
@@ -245,7 +245,7 @@ Use one verb for each executable relationship:
 | `resolving-merge-conflicts` | Three-way merge/rebase/cherry-pick/revert and marker-only conflict process, proof, handoff, and finish boundary |
 | `review`, `convergent-pr-review` | `review/SMELL-BASELINE.md`: fallback Standards reference when repo standards are thin |
 | `improve-codebase-architecture` | `HTML-REPORT.md`: report format and visual style |
-| `parallel-implement` | `WORKER-BRIEF.md`, `INTEGRATOR-BRIEF.md`, `RUN-LEDGER.md`: lane contracts and run ledger |
+| `parallel-implement` | `WORKER-BRIEF.md`, `INTEGRATOR-BRIEF.md`, `CODEX-WORKTREE-LAUNCH.md`, `RUN-LEDGER.md`: lane contracts, checkout isolation, and run ledger |
 
 ## Boundary Notes
 
@@ -259,6 +259,7 @@ Use one verb for each executable relationship:
 - `resolving-merge-conflicts` owns Git conflict reconciliation and may edit in-scope conflicted files. Abort, hard reset, or discarding a side requires explicit approval; staging, commit, and operation continuation require explicit user authorization.
 - Tracker docs own transport, tracker commands, the shared Ready-for-agent contract, and Mutation read-back. `triage` owns incoming classification, verification, brief rendering, state transitions, and the AI disclaimer; `$to-tickets` owns slicing and dependency order. Do not re-triage valid `$to-tickets` output.
 - `implement` owns one selected item; `parallel-implement` owns batch orchestration and serialized integration.
+- The `parallel-implement` orchestrator is the sole dispatcher and formal-review owner. Lane workers and child integrators never fan out; an integration lane lands, validates, and returns a review-ready packet.
 - `review` is the ordinary closeout gate; `convergent-pr-review` is an approved high-risk/local-PR route, not default review.
 - `convergent-pr-review` may run its own read-only reviewer passes only when selected as the review route; it is not a second implementation orchestrator.
 - `handoff` carries pointers across sessions; it should reference durable artifacts, not duplicate specs, issues, ADRs, commits, or diffs.

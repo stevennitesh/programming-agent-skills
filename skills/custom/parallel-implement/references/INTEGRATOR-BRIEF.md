@@ -9,26 +9,26 @@ Hold the serial integration lane only when the routing packet assigns a **hot** 
 **Source Trace:** `<request / parent / packet / work items / decision-bearing comments / repo sources>`
 **Run fixed point:** `<sha>`
 **Integration branch:** `<branch>`
-**Integrator checkout:** `<dedicated integration worktree / same as orchestrator fallback>`
-**Same-checkout lock:** `<not needed / active lock owner and rule>`
+**Integrator checkout:** `<dedicated integration worktree>`
 **Ledger path:** `<path>`
 **Landing route:** `<repo-owned harness / manual pre-landing gate>`
+**Landing mode:** `<cherry-pick / merge / squash / patch application>`
 **Validation route:** `<commands or policy>`
-**Loop-close route:** `<$review / $convergent-pr-review>`
-**Review authority:** `<orchestrator selects; integrator executes exactly that route>`
+**Formal review owner:** `orchestrator`
+**Review-ready target:** `<candidate HEAD / pending>`
 **Tracker closeout:** `<repo-local / connector-backed / none>`
 **Heartbeat:** `<starting / ready / running / blocked / waiting / ready-to-land / packet-ready>`
-**Fast-fix policy:** `<direct tiny fix allowed / micro-worker required>`
+**Fast-fix policy:** `<direct tiny fix allowed / fresh lane worker required>`
 
 ## Contract
 
 Read `docs/agents/engineering-contract.md`, every source in the Source Trace, the ledger, and each orchestrator-submitted worker report.
 
-Own the serial landing lane. Accept input only through orchestrator-submitted worker reports. The orchestrator owns claims, worker dispatch, review routing, external tracker mutation, push, and closeout. Dispatch subagents only when the assigned `$convergent-pr-review` route requires its internal reviewers.
+Own serial landing and routed integration validation only. Accept input only through orchestrator-submitted worker reports. The orchestrator owns claims, worker dispatch, formal review, external tracker mutation, push, and closeout. Do not dispatch subagents or invoke `$review` or `$convergent-pr-review`.
 
-Prefer a dedicated integration worktree. A shared orchestrator checkout uses the same-checkout lock: you are the only writer and test runner while active; the orchestrator remains read-only there.
+Use a dedicated integration worktree. When that worktree is unavailable, return a blocker so the orchestrator can take over landing.
 
-Heartbeat after every gate, long command, approval wait, validation result, and loop-close result.
+Heartbeat after every gate, long command, approval wait, validation result, and review-ready result.
 
 ## Ready Gate
 
@@ -37,16 +37,16 @@ Before worker dispatch in hot mode, or before the first landing in late mode, ve
 - actual repo root and checkout path
 - current `HEAD` and integration branch
 - clean in-scope status except routed ledger or closeout files
-- same-checkout lock when applicable
 - ledger access
 - landing route
+- landing mode
 - validation startup
 
 Return `ready` with those fields, or `blocked` with the failed gate. Ready means the lane can accept one worker packet without further setup.
 
 ## Pre-Landing Gate
 
-Use one routed landing mode: squash merge, cherry-pick, or patch application. Use the repo-owned landing harness when routed; otherwise run the gate manually.
+Use the recorded Landing mode. Use the repo-owned landing harness when routed; otherwise run the gate manually.
 
 For each accepted worker report:
 
@@ -58,22 +58,22 @@ For each accepted worker report:
 6. Verify the landed diff.
 7. Run post-landing touched-area proof.
 8. Append the ledger event.
-9. Report the routing packet.
+9. Report the landing event.
+
+If landing conflicts or partially applies, stop and report the operation, status, unmerged paths, worker commit, current `HEAD`, recorded landing mode, and landing authority. Preserve the partial state for the orchestrator's Conflict gate.
 
 Report: status, work item, current `HEAD`, clean status, worker SHA, integration SHA when landed, landing mode, changed files, validation, skipped checks, conflicts or stale-base overlap, decision, feedback needed, residual risk, and skill feedback.
 
-Run broad validation at wave boundaries only when routed. Loop close owns final broad validation.
+Run broad validation at wave boundaries only when routed. The review-ready handoff owns final broad validation.
 
-## Loop Close
+## Review-Ready Handoff
 
-When the orchestrator drains the ready frontier, assemble review-visible repo-local closeout metadata, require a clean in-scope integration state, and pin current `HEAD` as the immutable review target.
+When the orchestrator drains the ready frontier, assemble review-visible repo-local closeout metadata, require a clean in-scope integration state, and run final validation from the run fixed point.
 
-Run final validation and exactly the assigned review route from the run fixed point. Invoke `$review` for ordinary fixed-point Standards/Spec review. When assigned `$convergent-pr-review`, invoke it, dispatch its reviewer subagents only inside its read-only convergence gate, and return its finding ledger and verified survivors.
+Return a review-ready packet containing the candidate `HEAD`, clean status, integrated worker SHAs, final validation, review-visible closeout metadata, skipped checks, residual risk, tracker readiness, blockers, feedback, and skill feedback. The orchestrator pins the immutable review target and invokes formal review.
 
 Return a review-route escalation packet when the integrated diff reveals higher risk than the recorded route covers. The orchestrator must assign the new route before review continues.
 
-After a review fix, inspect `<reviewed-head>..<current-head>`. Apply a tiny finding-only fix directly only when the routing packet permits it and focused proof is sufficient. A material behavior, scope, contract, schema, dependency, security, or public-interface delta requires a new review target and another loop-close review.
-
-Return: reviewed `HEAD`, approved closeout `HEAD`, final validation, review result, tracker readiness, blockers, skipped checks, residual risk, integrated item SHAs, feedback, and skill feedback.
+When the orchestrator sends a review-fix delta, inspect `<reviewed-head>..<current-head>`. Apply a tiny finding-only fix directly only when the routing packet permits it and focused proof is sufficient. When Fast-fix policy requires a fresh lane worker, return the delta to the orchestrator without editing. A material behavior, scope, contract, schema, dependency, security, or public-interface delta requires a new review-ready packet.
 
 The orchestrator accepts or blocks closeout and owns every external mutation.

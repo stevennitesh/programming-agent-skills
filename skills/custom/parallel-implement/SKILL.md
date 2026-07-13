@@ -1,25 +1,25 @@
 ---
 name: parallel-implement
-description: Run a ready-frontier wavefront with isolated one-commit lane workers and an adaptive serial integration lane.
+description: Run two or more ready, non-overlapping work items as a wavefront through isolated worktrees, fresh-context one-commit workers, serial integration, root-owned review, tracker lock, and release sweep.
 ---
 
 # Parallel Implement
 
-Run a **wavefront** over ready-for-agent work.
+Run a **wavefront** over ready-for-agent work:
 
-The loop is **ready frontier -> isolated one-commit lane workers -> accepted packets -> adaptive integration lane -> loop-close lock -> tracker lock -> release sweep**.
+**ready frontier -> worktree lock -> fresh-context lane workers -> accepted packets -> serial integration -> root-owned review -> tracker lock -> release sweep**
 
-- **Orchestrator**: owns source trace, scope, DAG, routing packet, ledger, worker acceptance, review route, tracker lock, closeout decision, and release sweep.
-- **Integration lane**: serially lands accepted work. The orchestrator owns it by default; a hot or late integrator owns it only when routed.
-- **Lane workers**: isolated one-item worktrees; produce one clean local commit plus focused proof, or a blocker packet. Within this skill, `worker` means lane worker.
+- **Orchestrator**: sole dispatcher and final owner of Source Trace, scope, DAG, routing packet, thin ledger, worker acceptance, review route, tracker mutation, closeout, and release.
+- **Integration lane**: serially lands accepted commits and runs routed integration validation. The orchestrator owns it by default; a hot or late integrator owns it only when routed. A child integrator returns a review-ready packet and never dispatches subagents or invokes formal review.
+- **Lane workers**: each direct fresh-context child owns one ready item in one isolated worktree and returns one clean local commit plus focused proof, or a blocker packet. Within this skill, `worker` means lane worker.
 
-A **ready frontier** is the set of unblocked, unclaimed work items that can start now without dependency or write-scope overlap. A wave requires at least two.
+**Two isolations:** a fresh subagent context isolates attention; a Git worktree isolates files. A delegated lane is ready only when both are established and preflight proves the assigned checkout.
 
-Use this when a ready frontier exists and parallel implementation can outrun serial work without outrunning integration.
+**Root-only fan-out:** workers, an optional integrator, and formal reviewers are direct children of the orchestrator. Workers and integrators never spawn. The workflow never depends on recursive delegation.
+
+A **ready frontier** is the set of unblocked, unclaimed work items that can start now without dependency, write-scope, or semantic overlap. A wave requires at least two and must outrun serial work without outrunning integration.
 
 **Downshift:** when only one bounded item is in scope, return `$implement` as the next route and stop before dispatch. When several items must serialize because isolation cannot be established, return their order and route the first through `$implement`. Use **shallow mode** only when at least two isolated lane workers can still run in one finite wave. Return readiness gaps to shaping.
-
-Shallow mode means one wave of two or three workers, focused proof, orchestrator-owned landing, loop-close lock, applicable tracker lock, and no persistent integrator.
 
 ## References
 
@@ -32,15 +32,17 @@ Shallow mode means one wave of two or three workers, focused proof, orchestrator
 
 Apply the **setup gate**: read `docs/agents/engineering-contract.md`; when tracker work is in scope, read `docs/agents/issue-tracker.md` and what it points to. If a required setup document or named operation is absent or incompatible with this skill, stop and recommend `$repo-bootstrap`. Read `docs/agents/domain.md` only when domain semantics affect the run.
 
-Build the **Source Trace** from the current request, selected parent or packet, every in-scope work item and decision-bearing comment, repo `AGENTS.md`, and every named source. Record it once in the thin ledger. Pass each worker its relevant slice unchanged and give the integration lane the full trace for loop-close review.
+Build the **Source Trace** from the current request, selected parent or packet, every in-scope work item and decision-bearing comment, repo `AGENTS.md`, and every named source. Record it once in the thin ledger. Pass each worker its relevant slice unchanged and give the integration lane the full trace for integration validation.
 
 Require every frontier item to have settled acceptance criteria, dependency order, parallel-safety notes, a proof lane, expected write scope, and load-bearing seams where needed. Return gaps to shaping before dispatch.
 
 Require a **contract matrix** when correctness depends on data contracts, claim levels, permissions, public semantics, or state transitions: `case | allowed | invalid examples | proof`.
 
+**Frontier gate:** cross-check acceptance criteria, contract matrices, shared interfaces, expected write scopes, proof lanes, and ordering assumptions across frontier items. Non-overlapping files do not prove semantic independence. When one item changes an assumption another consumes, add a dependency edge or apply Downshift before dispatch.
+
 ## Integration Modes
 
-- **Shallow mode:** one finite wave; the orchestrator lands accepted commits after or between worker completions.
+- **Shallow mode:** one finite wave of two or three workers, focused proof, orchestrator-owned landing, loop-close Lock, applicable tracker lock, and no persistent integrator.
 - **Hot integrator:** a persistent subagent lands while workers continue or when a landing unlocks the next frontier.
 - **Late integrator:** a fresh subagent assembles a completed wave when integration is semantically complex or loop-close validation is long, but no useful overlap exists.
 
@@ -50,13 +52,15 @@ Require a **contract matrix** when correctness depends on data contracts, claim 
 
 Build the routing packet from `references/RUN-LEDGER.md`. Resolve every field or mark it `not applicable` before dispatch.
 
-**Review bandwidth** sets wave size: default `2-3`. Reserve one agent slot for the orchestrator and one for an active integrator; cap the rest by the worker packets the orchestrator can inspect and the integration lane can land before the next frontier decision. Increase only after write scopes and env isolation are proven.
+**Resume gate:** before any new dispatch, load the existing run ledger when one is supplied or already exists and reconcile it with Git, worktree, agent, claim, and tracker state. Treat accepted, landed, review-ready, tracker-lock, and release events as authoritative after reconciliation; do not redispatch or reland them. Resume from the first unresolved event. When the ledger and external state cannot be reconciled, return `blocked` with the exact mismatch.
 
-**Permission plan:** record likely sandbox-crossing or external actions: worktree creation and cleanup, dependency installation, network access, push, and connector-backed tracker mutation. External mutations follow tool and repo policy at the point of action.
+**Slot lock:** set the worker limit to the smaller of three or the live slots remaining after reserving the orchestrator and any active child integrator. Require at least two worker slots for a wave; otherwise apply Downshift. Cap the wave further by the **review bandwidth** needed to inspect every packet before the next frontier decision. Formal review starts after lane agents are idle.
 
-**Landing harness:** use a repo-owned deterministic landing command when available. Otherwise run the pre-landing gate manually. Either route verifies base, scope, new files, stale-base overlap, landing result, touched-area proof, and the ledger event.
+**Permission plan:** predict likely sandbox-crossing, external, or destructive actions before dispatch. The selected run authorizes scoped worker commits and the recorded serial landing route; recording another action does not authorize it. At the point of action, apply tool, repo, and user policy to worktree creation or cleanup, dependency installation, network access, push, connector-backed tracker mutation, external messages, force operations, and branch deletion.
 
-**Dispatch:** choose the integration mode first. For a hot integrator, start it and accept its integrator-ready packet before workers launch. Then launch one fresh worker per selected frontier item, up to the worker limit, through the isolated route in `references/CODEX-WORKTREE-LAUNCH.md`. For a late integrator, start it after the wave finishes and accept its ready packet before the first landing.
+**Landing harness:** record one landing mode and one executor before the first landing. Default detached one-commit workers to `cherry-pick`; use merge, squash, or patch application only when repo policy or the routing packet selects it. Use the repo-owned deterministic landing command when available; otherwise run the pre-landing gate manually. Every route verifies base, scope, new files, stale-base overlap, landing result, touched-area proof, and the ledger event.
+
+**Default lane route:** pair one root-created detached Git worktree at the assigned base with one direct fresh-context worker launched with `fork_turns="none"`. Establish and independently preflight every lane through `references/CODEX-WORKTREE-LAUNCH.md`. A hot or late integrator uses a dedicated integration worktree; when that cannot be established, the orchestrator owns landing. Read **Explicit Background Task** only when the user explicitly requests separate, visible, or background worker tasks.
 
 **Wavefront:** dispatch only the independent work in the current frontier. Rescan after serial landings. Blocked, dependent, or write-overlapping work stays out of the wave.
 
@@ -64,11 +68,13 @@ Build the routing packet from `references/RUN-LEDGER.md`. Resolve every field or
 
 **Proof budget:** workers run focused proof; the integration lane runs post-landing touched-area proof; loop close runs broad validation and fixed-point review. Worker broad suites require shared-behavior risk or an explicit route. Shared-behavior risk includes public APIs, shared modules, schema or migrations, cross-cutting config, cache or performance behavior, and data contracts.
 
-**Env lock:** each lane uses its own repo-local `.tmp/parallel-implement/<run-id>/lanes/<lane-id>/` cache and temp paths, plus an isolated venv, or leaves dependency mutation to the integration lane. Broad dependency-mutating commands against a shared checkout or environment require an explicit route.
+**Env lock:** each lane uses lane-local `.tmp/parallel-implement/<run-id>/lanes/<lane-id>/` cache and temp paths. Use a routed shared interpreter or environment read-only when sufficient. When dependency mutation is required, use an isolated lane venv or leave the mutation to the integration lane. Broad shared dependency mutation requires an explicit route.
 
-**Hot integrator:** prefer a dedicated integration worktree. A shared orchestrator checkout uses a same-checkout lock: the integrator is the only writer and test runner while active; the orchestrator remains read-only there. The integrator reports `starting`, `ready`, `running`, `blocked`, `waiting`, `ready-to-land`, or `packet-ready` after gates, long commands, approval waits, and validation results.
+**Integrator heartbeat:** the child integrator reports `starting`, `ready`, `running`, `blocked`, `waiting`, `ready-to-land`, or `packet-ready` after gates, long commands, approval waits, and validation results.
 
 **Delta packets:** continuation prompts carry only the delta: work item, ledger event, expected base, accepted worker SHA, and next need.
+
+**Packet transport:** inline compact briefs and results. Put large source slices, diffs, logs, or reports under the lane's existing `.tmp/parallel-implement/<run-id>/lanes/<lane-id>/` path and pass exact paths plus a short status envelope. Exact requirements live once in the worker brief; continuations carry only deltas.
 
 **Thin ledger:** instantiate the run ledger from `references/RUN-LEDGER.md`, append each event once, and derive routing and closeout from that stream.
 
@@ -76,12 +82,12 @@ Build the routing packet from `references/RUN-LEDGER.md`. Resolve every field or
 2. Capture the run fixed point, start the thin ledger, and resolve the routing packet.
 3. Choose the integration mode; start and ready the routed integrator at its mode-specific gate.
 4. Claim and dispatch the current wave through isolated worktrees.
-5. Accept or reject worker result packets.
+5. Classify and disposition worker result packets through Worker status.
 6. Land accepted commits serially through the assigned integration lane and landing route.
 7. Rescan the frontier after landings; repeat until drained or blocked.
-8. Assemble review-visible repo-local closeout metadata and pin the immutable review target.
-9. Run loop-close validation and review; apply the delta gate until the closeout target is approved.
-10. Accept or block closeout, apply tracker lock, and run the release sweep.
+8. Assemble review-visible repo-local closeout metadata, run final integration validation, and produce or accept a clean review-ready packet.
+9. Wait until lane agents are idle, pin the immutable review target, and have the orchestrator invoke exactly the selected review route.
+10. Route any finding fix through the assigned integration lane or a fresh lane worker scoped only to the accepted finding fix, repin when required by the delta gate, then apply tracker lock and run the release sweep.
 
 ## Gates
 
@@ -92,11 +98,26 @@ Worker fixes pass two acceptance gates before landing:
 
 The orchestrator or routed integrator executes the pre-landing gate. It is acceptance, not formal review. A diff needing deeper review returns a blocker or review-route escalation packet.
 
+**Worker status:**
+
+- `done`: verify the complete packet, actual commit, scope, proof, final status, and residual risk; then accept or reject it.
+- `needs-feedback`: keep the lane and claim open. Supply the missing decision or context through one delta packet, or return the commitment change to its owner. Do not accept or land the result yet.
+- `blocker`: classify the blocker as context, permission or tool, stale base, readiness, task size, or commitment. Retry only after the input, route, base, capability, or task shape changes. Otherwise preserve the worktree and commit state, release the claim when appropriate, and record the blocked disposition.
+
 **Stale-base packet:** when serial landings obsolete a worker base, the integration lane returns the packet; the orchestrator chooses rebase, re-dispatch, serialization, or rejection.
 
-**Review route:** invoke `$review` by default. Invoke `$convergent-pr-review` for high-risk integrated diffs matching its trigger. The orchestrator selects and records the route; the integration lane executes only that route. An unavailable route blocks closeout. Higher risk discovered during landing returns a review-route escalation packet.
+**Conflict gate:** when landing enters an in-progress Git operation, leaves unmerged paths or conflict markers, or partially applies a patch, pause the integration lane and record the operation, status, unmerged paths, landed state, and remaining worker commit. Invoke `$resolving-merge-conflicts` within its owned authorization boundary. Resume only after the integration checkout has a reconciled, explicitly authorized Git state; otherwise return `blocked` and preserve the partial state. Abort, continue, forced cleanup, reset, or side discard requires its normal explicit authority.
 
-**Loop-close lock:** before review, require a clean in-scope integration state with all integrated work and review-visible repo-local closeout metadata committed. Pin the integration `HEAD` as the immutable review target and run the assigned route from the run fixed point.
+**Review route:** the orchestrator invokes `$review` by default and `$convergent-pr-review` for a high-risk integrated diff matching its trigger. The integration lane produces a clean review-ready packet containing the candidate `HEAD`, final validation, closeout metadata, skipped checks, and residual risk; a child integrator returns it and becomes idle. Before formal review, verify that no lane agent is running. Higher risk discovered during landing returns a review-route escalation packet to the orchestrator.
+
+**Review acceptance:** the orchestrator records both the route result and the caller-owned Lock decision.
+
+- `$convergent-pr-review`: `pass` unlocks review; `pass with residual risk` unlocks only when the routing packet or user accepts that residual risk; `blocked` and `incomplete` keep Lock closed.
+- `$review`: P0/P1 findings and missing required validation keep Lock closed; record lower non-blocking findings as residual risk unless repo or user policy says otherwise.
+
+An unavailable route, unresolved blocking finding, or unaccepted residual-risk result blocks closeout.
+
+**Loop-close lock:** before review, require a clean in-scope integration state with all integrated work and review-visible repo-local closeout metadata committed. Pin the integration `HEAD` as the immutable review target and have the orchestrator invoke exactly the assigned route from the run fixed point.
 
 After any review fix lands, inspect `<reviewed-head>..<current-head>`. A tiny finding-only fix may use targeted proof when the routing packet permits it. A material behavior, scope, contract, schema, dependency, security, or public-interface delta requires a new review target and another loop-close review.
 
@@ -108,12 +129,20 @@ Record the approved closeout `HEAD`. External tracker mutation, push, and releas
 
 Apply the tracker's **Mutation read-back** rule before recording tracker lock complete. A partial or unverifiable mutation blocks closeout.
 
+After an authorized push, verify that the remote branch or PR head resolves to the approved closeout `HEAD` before recording push complete. A failed or unverifiable push remains `partial` or `blocked`.
+
 Workers and the integration lane may prepare closeout notes. The orchestrator accepts or blocks closeout after review and asks the user only when requested confirmation or tracker policy requires it.
 
-**Release sweep:** close only after one ledger event accounts for every selected item and every active lane. Finish or stop every worker and integrator, release claims, remove worker worktrees under the routed cleanup rule, preserve branches unless that rule says otherwise, and record tracker, push, skipped-check, and residual-risk state.
+**Release sweep:** before any outcome, finish or stop every worker and integrator and append one event accounting for every selected item and active lane. Release claims, remove only clean worker worktrees under the routed cleanup rule, preserve anything blocked from cleanup, preserve branches unless that rule says otherwise, and record tracker, push, skipped-check, and residual-risk state.
 
 Return the ledger-derived Closeout Summary. Every selected item is integrated, rejected, blocked, or routed to follow-up; every lane and claim has a release state.
 
 ## Completion Criteria
 
-Complete only when Source Trace and the routing packet are recorded; the integration mode is chosen; every routed integrator passed its ready gate; every worker packet is accepted, rejected, or blocked; accepted work landed serially; the approved closeout `HEAD` passed validation and its assigned review route; tracker lock was respected; the release sweep accounts for every item, lane, claim, worktree, branch, tracker action, and push state; skipped checks, residual risk, and skill feedback are reported; and unrelated work is preserved.
+Return exactly one ledger Outcome: `complete`, `partial`, or `blocked`.
+
+A `complete` outcome requires a current approved closeout `HEAD` that passed final validation and its assigned review route, followed by the applicable tracker lock and release sweep.
+
+A `partial` or `blocked` outcome does not claim an approved closeout `HEAD`, completed review, tracker lock, or push that never occurred. Record the current integration `HEAD` and Git state, landed and unlanded items, exact blockers, next owner, remaining permissions or mutations, and every preserved or released lane, worktree, branch, and claim.
+
+Every outcome requires Source Trace and the routing packet; one disposition for every worker and integrator packet; serial-landing accounting for every accepted commit; no active lane or unaccounted partial mutation; skipped checks, residual risk, and skill feedback; and preservation of unrelated work. A `complete` outcome additionally requires that every delegated lane used both isolations, fan-out stayed root-only, every routed ready gate passed, the integration lane produced a review-ready packet, formal review ran from the orchestrator after lane agents were idle, and the approved closeout `HEAD` has all applicable Lock and release evidence.

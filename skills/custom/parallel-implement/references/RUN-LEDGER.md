@@ -14,20 +14,24 @@ Append events once. Derive routing and closeout from the event stream.
 **Integration mode:** `<shallow / hot / late>`
 **Integration branch:** `<branch>`
 **Integration lane owner:** `<orchestrator / integrator agent id>`
-**Integration checkout:** `<orchestrator checkout / dedicated worktree / same-checkout lock>`
-**Same-checkout lock:** `<not applicable / owner and rule>`
+**Integration checkout:** `<orchestrator checkout / dedicated integration worktree>`
 **Landing route:** `<repo-owned harness / manual pre-landing gate>`
-**Worker launch route:** `<native isolated worktree / approved manual worktree / explicit user-owned background worktree>`
-**Worker limit:** `<number and review-bandwidth rationale>`
+**Landing mode:** `<cherry-pick / merge / squash / patch application>`
+**Worker launch route:** `<root-created detached worktree / explicit user-owned Codex App worktree task>`
+**Context policy:** `<fresh direct children with fork_turns="none" / explicit user-owned tasks / context control unavailable>`
+**Slot lock:** `<live capacity, reserved slots, active worker limit>`
+**Worker limit:** `<number and review-bandwidth rationale within slot lock>`
 **Worker isolation:** `<worktree and env policy>`
 **Preflight policy:** `<full first host / compact after host proven>`
 **Proof budget:** `<worker focused / integration touched-area / loop-close broad>`
 **Validation environment:** `<shared interpreter plus isolated worker .tmp/ cache and temp paths>`
 **Review route:** `<$review / $convergent-pr-review>`
+**Formal review owner:** `orchestrator`
+**Review slot gate:** `<all lane agents idle / blocker>`
 **Tracker lock:** `<repo-local / connector-backed / none>`
 **Durable closeout destination:** `<issue comment / PR body / docs note / run summary / none>`
-**Permission plan:** `<worktree create/cleanup, install, network, push, tracker mutation>`
-**Release sweep:** `<lane, worktree, branch, claim, tracker, push, skipped-check, and risk accounting>`
+**Permission plan:** `<worktree create/cleanup, install, network, push, tracker mutation, external message, force operation, branch deletion>`
+**Release sweep:** `<lane, agent, worktree, commit, branch, claim, tracker, push, skipped-check, and risk accounting>`
 
 Shallow mode uses the same packet and thin ledger. Mark unused integrator fields `not applicable`.
 
@@ -35,7 +39,7 @@ Shallow mode uses the same packet and thin ledger. Mark unused integrator fields
 
 | Time | Event | Work Item | Worker SHA | Integration SHA | Validation | Decision | Risk |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `<time>` | `<scope/downshift/frontier/integrator-ready/dispatch/handoff/accept/reject/stale-base/land/feedback/wave-validation/review-target/closeout-head/tracker-lock/release/friction>` | `<id/all>` | `<sha/none>` | `<sha/none>` | `<command/result/skipped>` | `<short decision>` | `<none/short>` |
+| `<time>` | `<scope/downshift/resume/frontier/integrator-ready/dispatch/handoff/accept/reject/stale-base/conflict/land/feedback/wave-validation/review-ready/review-target/review-decision/closeout-head/tracker-lock/push/release/friction>` | `<id/all>` | `<sha/none>` | `<sha/none>` | `<command/result/skipped>` | `<short decision>` | `<none/short>` |
 
 ## Closeout Summary
 
@@ -43,13 +47,18 @@ Fill this before tracker mutation.
 
 **Outcome:** `<complete / partial / blocked>`
 **Run fixed point:** `<sha>`
-**Reviewed HEAD:** `<sha>`
-**Approved closeout HEAD:** `<sha>`
+**Current integration HEAD:** `<sha / none>`
+**Current Git state:** `<clean / in-progress operation and status>`
+**Reviewed HEAD:** `<sha / not reached>`
+**Approved closeout HEAD:** `<sha / not reached>`
 **Integrated items:** `<ids>`
 **Unintegrated items:** `<rejected / blocked / follow-up ids and reasons>`
 **Landing order:** `<item ids / integration SHAs>`
-**Final validation:** `<commands and results>`
-**Loop-close review:** `<route and result>`
+**Final validation:** `<commands and results / not reached>`
+**Loop-close review:** `<route and result / not reached>`
+**Blockers:** `<none / exact blockers>`
+**Next owner:** `<none / user / orchestrator / named skill or maintainer>`
+**Remaining permissions or mutations:** `<none / exact actions and authority needed>`
 **Tracker actions:** `<labels/comments/closures or skipped>`
 **Claims released:** `<ids / none>`
 **Durable closeout destination:** `<issue comment / PR body / docs note / run summary / none>`

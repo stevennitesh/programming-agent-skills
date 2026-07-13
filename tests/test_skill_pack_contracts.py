@@ -184,10 +184,60 @@ def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
 
     assert "discover the repository default branch and merge base" in review
     assert "Base ref: `main`" not in convergent
-    assert "distinct, not independent" in convergent
+    assert "distinct but non-independent" in convergent
     assert "reduced-confidence" in convergent
     assert "Hand off local PRs or high-risk local diffs to $convergent-pr-review" in review
     assert "Hand off ordinary fixed-point Standards/Spec review to $review" in convergent
+
+
+def test_convergent_review_uses_fresh_context_and_root_only_fanout() -> None:
+    convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(
+        encoding="utf-8"
+    )
+
+    required = (
+        '**Fresh-context independence:**',
+        'fork_turns="none"',
+        "The review root is the only dispatcher.",
+        "Reviewers never spawn subagents",
+        "Parent-context forks do not satisfy independence.",
+        "Do not resend the whole ledger",
+        "Inline it when compact.",
+        "A Git commit or tree SHA is already immutable",
+        "the review root may finish that reading while reviewers run",
+    )
+    for token in required:
+        assert token in convergent
+
+    assert "Record the packet path and content hash." not in convergent
+
+
+def test_convergent_review_returns_a_lock_usable_decision() -> None:
+    convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(
+        encoding="utf-8"
+    )
+    relationships = (ROOT / "docs/synthesis/skill-context-relationships.md").read_text(
+        encoding="utf-8"
+    )
+
+    required = (
+        "**Review decision:** return exactly one:",
+        "`pass with residual risk`",
+        "The review root owns this decision.",
+        "The caller owns whether `pass with residual risk` is acceptable for Lock.",
+        "No `candidate` or `unverified` item survives the final report.",
+        "No accepted findings; disputed: <IDs>.",
+        "A required pre-capture ref fetch may update Git metadata",
+        "PR reviews or comments",
+        "Follow `docs/agents/issue-tracker.md` for PR and issue transport",
+    )
+    for token in required:
+        assert token in convergent
+
+    assert "unavailable verification -> `not checked`" not in convergent
+    assert (
+        "`review`, `convergent-pr-review`, `wayfinder`" in relationships
+    )
 
 
 def test_convergent_review_checks_snapshot_drift_not_baseline_drift() -> None:
@@ -338,6 +388,124 @@ def test_worker_modes_have_distinct_completion_artifacts() -> None:
     assert "**Lane workers**" in parallel
 
 
+def test_parallel_implement_separates_context_checkout_and_review_ownership() -> None:
+    parallel = (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8")
+    worker = (CUSTOM / "parallel-implement/references/WORKER-BRIEF.md").read_text(
+        encoding="utf-8"
+    )
+    integrator = (
+        CUSTOM / "parallel-implement/references/INTEGRATOR-BRIEF.md"
+    ).read_text(encoding="utf-8")
+    launch = (
+        CUSTOM / "parallel-implement/references/CODEX-WORKTREE-LAUNCH.md"
+    ).read_text(encoding="utf-8")
+    ledger = (CUSTOM / "parallel-implement/references/RUN-LEDGER.md").read_text(
+        encoding="utf-8"
+    )
+    relationships = (
+        ROOT / "docs/synthesis/skill-context-relationships.md"
+    ).read_text(encoding="utf-8")
+
+    assert "**Two isolations:**" in parallel
+    assert "A delegated lane is ready only when both are established" in parallel
+    assert "**Root-only fan-out:**" in parallel
+    assert "**Slot lock:**" in parallel
+    assert "the smaller of three or the live slots remaining" in parallel
+    assert 'fork_turns="none"' in parallel
+    assert "**Default lane route:**" in parallel
+    assert "Before formal review, verify that no lane agent is running." in parallel
+    assert "the integration lane produced a review-ready packet" in parallel
+    assert "**Workspace boundary:**" in worker
+    assert "**One worker, one lane, one packet:**" in worker
+    assert "Do not dispatch subagents or invoke `$review`" in integrator
+    assert "## Review-Ready Handoff" in integrator
+    assert "`spawn_agent` creates a child context" in launch
+    assert 'git worktree add --detach' in launch
+    assert "## Explicit Background Task" in launch
+    assert "only when the user explicitly asks" in launch
+    assert "**Formal review owner:** `orchestrator`" in ledger
+    assert "IntegratorBrief --> Review" not in relationships
+    assert "IntegratorBrief -. \"ledger-approved only\" .-> CPR" not in relationships
+    assert "integration lane executes only that route" not in parallel
+    assert "dispatch its reviewer subagents" not in integrator
+    assert "native internal worktree" not in parallel
+    assert "native internal worktree" not in worker
+    assert "native internal worktree" not in launch
+    assert "native internal worktree" not in ledger
+
+
+def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
+    parallel = (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8")
+    worker = (CUSTOM / "parallel-implement/references/WORKER-BRIEF.md").read_text(
+        encoding="utf-8"
+    )
+    integrator = (
+        CUSTOM / "parallel-implement/references/INTEGRATOR-BRIEF.md"
+    ).read_text(encoding="utf-8")
+    launch = (
+        CUSTOM / "parallel-implement/references/CODEX-WORKTREE-LAUNCH.md"
+    ).read_text(encoding="utf-8")
+    ledger = (CUSTOM / "parallel-implement/references/RUN-LEDGER.md").read_text(
+        encoding="utf-8"
+    )
+    relationships = (
+        ROOT / "docs/synthesis/skill-context-relationships.md"
+    ).read_text(encoding="utf-8")
+
+    required_parallel = (
+        "Run two or more ready, non-overlapping work items as a wavefront",
+        "**Frontier gate:**",
+        "Non-overlapping files do not prove semantic independence.",
+        "**Resume gate:**",
+        "do not redispatch or reland them",
+        "**Worker status:**",
+        "**Conflict gate:**",
+        "Invoke `$resolving-merge-conflicts`",
+        "**Review acceptance:**",
+        "`pass with residual risk` unlocks only when",
+        "The selected run authorizes scoped worker commits",
+        "record one landing mode and one executor",
+        "verify that the remote branch or PR head resolves to the approved closeout `HEAD`",
+        "Return exactly one ledger Outcome: `complete`, `partial`, or `blocked`.",
+        "A `partial` or `blocked` outcome does not claim an approved closeout `HEAD`",
+        "no active lane or unaccounted partial mutation",
+    )
+    for token in required_parallel:
+        assert token in parallel
+
+    assert parallel.count("**Shallow mode:**") == 1
+    assert "micro-worker" not in parallel
+    assert "downshift or serialize" not in parallel
+
+    assert "**Integration context:**" in worker
+    assert "**Report transport:**" in worker
+    assert "next need:" in worker
+    assert "**Landing mode:**" in integrator
+    assert "recorded landing mode, and landing authority" in integrator
+    assert "Preserve the partial state for the orchestrator's Conflict gate." in integrator
+    assert "fresh lane worker required" in integrator
+    assert "micro-worker" not in integrator
+
+    assert "Dirty state, untracked work, or an unpreserved commit blocks cleanup." in launch
+    assert "Forced removal and branch deletion require explicit destructive authority." in launch
+
+    for token in (
+        "**Landing mode:**",
+        "<scope/downshift/resume/frontier/",
+        "**Current integration HEAD:**",
+        "**Current Git state:**",
+        "**Blockers:**",
+        "**Next owner:**",
+        "**Remaining permissions or mutations:**",
+    ):
+        assert token in ledger
+
+    assert (
+        "| `parallel-implement` | Invoke | `$resolving-merge-conflicts` |"
+        in relationships
+    )
+
+
 def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
 
@@ -420,7 +588,7 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         CUSTOM / "to-spec/SKILL.md": "Load `$codebase-design` as shared architecture vocabulary",
         CUSTOM / "triage/SPECIFIC-ITEM.md": "invoke `$grill-with-docs`",
         CUSTOM / "implement/SKILL.md": "invoke `$diagnosing-bugs` in fix mode",
-        CUSTOM / "parallel-implement/SKILL.md": "invoke `$review` by default",
+        CUSTOM / "parallel-implement/SKILL.md": "the orchestrator invokes `$review` by default",
         CUSTOM / "review/SKILL.md": "Hand off to `$convergent-pr-review` and stop",
         CUSTOM / "tdd/SKILL.md": "Hand off to `$diagnosing-bugs`",
         CUSTOM / "codebase-design/DIRECT-DESIGN.md": "Recommend `$improve-codebase-architecture` and stop",

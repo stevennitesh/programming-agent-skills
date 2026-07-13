@@ -1,17 +1,19 @@
 ---
 name: convergent-pr-review
-description: "Use for local PR review or high-risk local-diff review that needs independent reviewer subagents and a verified finding ledger: release gates, shared plumbing, migrations, security/permissions, CI/workflow/config, public interfaces, or data contracts. Hand off ordinary fixed-point Standards/Spec review to $review."
+description: "Review local PRs and high-risk local diffs with fresh-context independent reviewer subagents and a root-verified evidence ledger. Trigger for release gates, shared plumbing, migrations, security or permission changes, CI/workflow/config, public interfaces, and data contracts. Hand off ordinary fixed-point Standards/Spec review to $review."
 ---
 
 # Convergent PR Review
 
 Run a read-only **convergence gate** over one pinned **review snapshot**:
 
-**review snapshot -> source trace -> independent reviewers -> evidence ledger -> verified survivors -> drift check -> patch-ready handoff**
+**review snapshot -> fresh-context reviewers -> evidence ledger -> targeted challenge -> verified survivors -> drift check -> patch-ready handoff**
 
-Reviewer subagents inspect; the main agent orchestrates and verifies. Consensus is signal, not truth.
+The main agent is the **review root**. It pins the target, dispatches direct reviewer children, waits for every requested lens, builds and verifies the ledger, and owns the final report. Reviewers inspect only. Reviewers never spawn subagents, edit files, mutate external state, or claim completion for the gate. Consensus is signal, not truth.
 
-**Read-only boundary:** inspection, ref fetches, and routed validation may create only disposable `.tmp/` artifacts. Patches, tracked `.scratch/` evidence, staging, commits, and tracker mutations belong to downstream implementation. Sandbox-crossing or external validation follows normal tool approval and is reported.
+**Fresh-context independence:** start every round-one reviewer without forked parent conversation history. Use `fork_turns="none"` when the active collaboration tool exposes it. Each reviewer receives one complete shared reviewer brief containing the immutable review snapshot and Source Trace, plus its assigned axis, lens, and output contract. Keep parent hypotheses, preliminary findings, peer output, and a partially built ledger out of round-one reviewer context.
+
+**Read-only boundary:** Inspect only. Validation may create disposable artifacts under `.tmp/`. A required pre-capture ref fetch may update Git metadata; record it and follow normal tool approval. After capture, keep the review snapshot fixed. Leave the working tree, index, commits, tracked `.scratch/` state, tracker, PR reviews or comments, and external messages unchanged. Downstream implementation owns patches and closeout mutations. Report sandbox-crossing, network, or external validation and its approval state.
 
 Hand off to `$review` and stop for ordinary branch, WIP, or `review since X` fixed-point review where Standards and Spec are the main axes.
 
@@ -21,6 +23,7 @@ Hand off to `$review` and stop for ordinary branch, WIP, or `review since X` fix
 - Reviewers: `2`
 - Max rounds: `2`
 - Severity: `P0/P1/P2/P3`
+- Spec fallback: highest-risk uncovered lens
 
 Scale reviewers by coverage:
 
@@ -28,8 +31,6 @@ Scale reviewers by coverage:
 - `3`: Standards, Spec, and the highest-risk changed surface.
 - `4-5`: Standards, Spec, plus distinct security, migration, public-contract, CI/release, performance, caching, or data-contract lenses.
 - `>5`: explicit user request only.
-
-If no Spec source exists, record `Spec: skipped` and replace that reviewer with the highest-risk uncovered lens.
 
 ## 1. Pin The Review Snapshot
 
@@ -45,17 +46,26 @@ Give every reviewer the captured snapshot, not a live diff command.
 
 **Target gate:** stop before dispatch when the fixed point or review tree does not resolve, the target is empty, or the complete snapshot cannot be captured.
 
-Done means the fixed point, review snapshot, status, diff command, captured content, and commit range are recorded.
+Done means the fixed point and non-empty review snapshot are recorded with the applicable target metadata: snapshot identifier or capture hash, selected diff command, captured content, status for live targets, and commit range when relevant.
 
-## 2. Trace Sources And Build The Review Packet
+## 2. Trace Sources And Build The Reviewer Brief
 
-Trace the current request or caller packet, PR body and decision-bearing comments, linked issue or spec, repo `AGENTS.md`, `docs/agents/engineering-contract.md`, and validation configuration. Read every named source in full.
+Trace the current request or caller packet, PR body and decision-bearing comments, linked issue or spec, repo `AGENTS.md`, `docs/agents/engineering-contract.md`, and validation configuration. Resolve each named source before dispatch. Readable sources enter `Source Trace`; unavailable sources enter it with the affected axis and reason. Read every decision-bearing source in full before verifying the ledger; the review root may finish that reading while reviewers run.
+
+Resolve Spec in this order:
+
+1. Caller-supplied selected item, bounded slice, acceptance criteria, path, issue, or spec.
+2. PR body, decision-bearing comments, and directly linked issue or spec.
+3. Issue or PR references in the captured commit messages.
+4. A matching spec, legacy PRD, or issue packet under the repo's documented conventions.
+
+Follow `docs/agents/issue-tracker.md` for PR and issue transport and mutation rules when it exists. When sources disagree, record their precedence and the conflict in `Source Trace`. When no Spec source exists, record `Spec: skipped - no source available` and replace that reviewer with the highest-risk uncovered lens.
 
 For Standards, include repo rules and [SMELL-BASELINE.md](../review/SMELL-BASELINE.md) when repo standards are thin.
 
-Record every relied-on source under `Source Trace`. Record missing Standards or Spec sources and the affected axes. Use `Spec: skipped - no source available` when no Spec can be found.
+Record missing Standards sources and the affected axis.
 
-The packet contains:
+The reviewer brief contains:
 
 - captured review snapshot;
 - Source Trace;
@@ -66,41 +76,52 @@ The packet contains:
 - validation commands;
 - migration, generated-artifact, permission, network, and external-service constraints.
 
+Build one complete reviewer brief. Inline it when compact. Put only large captured artifacts under `.tmp/convergent-pr-review/<run-id>/` and pass their exact paths.
+
+A Git commit or tree SHA is already immutable and needs no duplicate content hash. Hash a captured artifact only when it represents live staged, unstaged, or untracked work that Git does not already address.
+
+The reviewer brief owns repeated review context. Reviewer prompts carry only the brief or artifact pointer, assigned axis, assigned lens, and output contract.
+
 Done means every reviewer receives the same snapshot, source trace, repo contract, risk surfaces, and validation context.
 
-## 3. Dispatch Independent Reviewers
+## 3. Dispatch Fresh-Context Reviewers
 
-Dispatch the configured reviewer subagents in parallel, isolated from one another and from each other's findings.
+The review root is the only dispatcher.
 
 Assign one reviewer the Standards axis and one the Spec axis. Assign additional reviewers distinct risk lenses from the changed surface.
 
-Every reviewer receives the same captured snapshot and Source Trace.
+Spawn every round-one reviewer as a direct child with `fork_turns="none"` when supported. Give each reviewer the same reviewer brief and only its assigned axis and lens. Keep every result private until all requested round-one reviewers have returned.
 
 Reviewer prompt:
 
 ```text
-Review the captured snapshot against its fixed point.
+You are one fresh-context, read-only reviewer. Do not spawn subagents, edit files, or inspect other reviewer output.
 
-Review snapshot:
-<captured target>
+Reviewer brief: <inline complete brief or exact artifact path>
+Axis: <Standards / Spec / Risk>
+Lens: <primary lens>
 
-Source Trace:
-<sources>
+Read the complete reviewer brief and every source it assigns to your axis. Review only its captured snapshot.
 
-Axis:
-<Standards / Spec / Risk>
+Return only high-confidence actionable findings. Each finding must include severity, axis and lens, file:line evidence, the violated behavior or contract, concrete impact, remediation direction, and confidence.
 
-Lens:
-<primary lens>
+Prioritize correctness, behavioral regressions, broken contracts, workflow failures, missing validation, CI blockers, security or permission risk, and operator risk. Exclude style-only feedback, broad refactors, and speculation.
 
-Review read-only. Return only high-confidence actionable findings with file:line evidence, impact, severity, and remediation direction. Focus on correctness, behavioral regressions, broken contracts, workflow failures, missing validation, CI blockers, security/permission risk, and operator risk. Style-only feedback, broad refactors, and speculation are out of scope.
+Return:
+status: <complete / blocked>
+axis:
+lens:
+coverage:
+findings: <list or "none">
+skipped checks:
+blockers:
 ```
 
-If subagents are unavailable, run separated manual lens passes and mark the report reduced-confidence. These passes are distinct, not independent.
+Wait for every requested reviewer. Replace failed or timed-out reviewers when another slot is available.
 
-**Independence gate:** require at least two isolated reviewer passes over the same snapshot. Replace failed or timed-out reviewers. When isolation is unavailable, allow two separated manual lens passes only as a reduced-confidence fallback and label the review non-independent.
+**Independence gate:** require at least two fresh-context reviewers over the same immutable snapshot. Parent-context forks do not satisfy independence. When fresh-context reviewers are unavailable, run two separated manual lens passes, mark them distinct but non-independent, and report reduced confidence.
 
-Done means at least two independent passes completed over the same snapshot, or two reduced-confidence separated passes were reported as non-independent, or the review stopped incomplete with the missing lenses reported.
+Done means every requested lens returned a complete result, was replaced, or is named as an unresolved blocker; and at least two independent passes completed, or the reduced-confidence fallback is explicit.
 
 ## 4. Build The Evidence Ledger
 
@@ -112,32 +133,37 @@ Axis is `Standards`, `Spec`, or `Risk`; lens is the reviewer's assigned focus. C
 
 Status is `candidate`, `accepted`, `rejected`, `duplicate`, or `disputed`. Verification is `unverified`, `verified`, `disproved`, or `not checked`.
 
-Verification and status must agree:
+During convergence, `candidate` is interim and normally `unverified`. At final report, keep status and verification consistent:
 
-- verified survivor -> `accepted`
-- disproved finding -> `rejected`
-- unresolved finding -> `disputed`
-- unavailable verification -> `not checked` with reason and confidence impact
+- `accepted` is `verified`.
+- `rejected` is `disproved`, or is `not checked` with an explicit non-evidentiary rejection reason.
+- `duplicate` points to its canonical ledger ID; its verification and blocking decision follow that item.
+- `disputed` is `verified` or `not checked` and records the unresolved question and provisional blocking decision.
+- every `not checked` item records the reason and confidence impact.
+
+No `candidate` or `unverified` item survives the final report.
 
 Evidence decides: consensus is signal, not truth; one-reviewer findings can survive; agreed findings can fail.
 
 Done means every reviewer finding is represented, and every surviving candidate has an ID.
 
-## 5. Converge
+## 5. Run Targeted Convergence
 
-Run convergence rounds against the ledger, not raw transcripts.
+Round one establishes independent findings. Keep peer findings private until every round-one reviewer returns.
 
-Ask reviewers to confirm, reject, revise, merge, split, or dispute ledger items from their lens. New findings after round 1 need direct file, diff, or command evidence and must be marked `new in round <N>`.
+The review root normalizes round-one output into the evidence ledger, merges same-axis duplicates, links cross-axis overlap, and performs the first evidence check.
 
-Merge duplicates only within an axis; link cross-axis overlap without collapsing it.
+Use round two only for a named candidate that remains disputed, ambiguous, materially under-evidenced, or inconsistent across lenses. Send a targeted follow-up to the original reviewer or one opposing reviewer containing only the ledger ID, original claim and evidence, contrary evidence or unresolved question, and the exact confirm, reject, revise, merge, split, or severity decision required.
 
-Stop early on no material delta: no new findings, status changes, severity changes, remediation changes, or unresolved accept/reject disagreement.
+Do not resend the whole ledger or ask every reviewer to reread the snapshot. New findings in round two require direct file, diff, or command evidence and must be marked `new in round 2`.
 
-Done means the ledger converged, or max rounds were reached and remaining disagreement is marked disputed.
+Stop when no candidate requires a targeted challenge, or after the configured maximum round. Remaining disagreement stays `disputed`.
+
+Done means every candidate is accepted, rejected, duplicate, or disputed with its evidence state recorded.
 
 ## 6. Verify Survivors
 
-The orchestrator verifies accepted and disputed findings.
+The review root verifies accepted and disputed findings.
 
 Use the cheapest meaningful evidence: inspect cited lines, inspect nearby tests, run `git diff --check`, run targeted validation, or inspect affected config, migrations, permissions, or operator workflows.
 
@@ -156,6 +182,15 @@ Severity:
 
 P0/P1 block merge. P2 blocks when required validation or CI is affected. P3 does not block unless the user says otherwise.
 
+**Review decision:** return exactly one:
+
+- `pass`: the snapshot is current, confidence is full, no accepted or disputed item blocks, and no required check was skipped.
+- `pass with residual risk`: the snapshot is current and no item blocks, but confidence is reduced or non-blocking `not checked` evidence remains.
+- `blocked`: an accepted item blocks, or a disputed or `not checked` item has a provisional blocking decision.
+- `incomplete`: the target, required-lens, verification, or drift gate was not satisfied and no permitted fallback closed it.
+
+The review root owns this decision. The caller owns whether `pass with residual risk` is acceptable for Lock.
+
 **Drift check:** A supplied review tree is immutable. For a branch or PR, compare the current target head with the captured head. For a live worktree, compare the current `HEAD`, index, status, and in-scope untracked content with the captured snapshot. Any difference makes the review stale; rerun before reporting a current result.
 
 Begin with:
@@ -166,6 +201,7 @@ Source Trace: <sources and skipped axes>
 Reviewers: <completed lenses / requested lenses>
 Rounds: <completed / maximum>
 Confidence: <full / reduced with reason>
+Review decision: <pass / pass with residual risk / blocked / incomplete>
 ```
 
 Report the final ledger under:
@@ -179,7 +215,7 @@ Report the final ledger under:
 
 Keep findings in their axis. Sort within each axis by severity. Include ID, location, evidence, impact, remediation direction, verification state, confidence, and blocking decision.
 
-When no accepted finding exists for an axis, report `No accepted findings.`
+When an axis has no accepted or disputed item, report `No accepted findings.` When disputed items exist without accepted findings, report `No accepted findings; disputed: <IDs>.`
 
 End accepted findings with a patch-ready handoff: finding ID, likely files, required change, and validation expected after the fix.
 
@@ -187,4 +223,4 @@ Done means the report returns the complete ledger, preserves axis separation, re
 
 ## Completion Criteria
 
-Complete only when the fixed point and non-empty review snapshot are pinned; Source Trace is recorded; at least two isolated reviewer passes reviewed the same captured target, or the result is explicitly reduced-confidence and non-independent; Standards and Spec ran or Spec was explicitly skipped and replaced; every reviewer finding is represented in the ledger; status and verification agree; survivors are verified or explicitly not checked; drift and the read-only boundary were checked; severity and blocking decisions are clear; and the final ledger plus any patch-ready handoff were returned.
+Complete only when the fixed point and non-empty review snapshot are pinned; Source Trace is recorded; round-one reviewers were fresh-context direct children when the runtime supported context control; reviewers never fanned out; at least two independent reviewers inspected the same captured target, or the result is explicitly reduced-confidence and non-independent; Standards and Spec ran or Spec was explicitly skipped and replaced; every reviewer finding is represented in the ledger; any second round was limited to targeted ledger challenges; no candidate or unverified item remains; final status and verification agree; survivors are verified or explicitly not checked; drift and the read-only boundary were checked; severity and blocking decisions are clear; and one review decision plus the complete ledger and any patch-ready handoffs were returned.

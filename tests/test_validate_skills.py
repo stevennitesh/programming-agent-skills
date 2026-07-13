@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
 from pathlib import Path
 
-from scripts import validate_skills
+from scripts import pytest_focused, validate_skills
 
 
 def write_skill(root: Path, name: str, body: str = "") -> Path:
@@ -191,3 +192,18 @@ def test_git_diff_validation_checks_worktree_and_index(monkeypatch, tmp_path: Pa
     assert validate_skills.validate_git_diff_check(tmp_path) == []
     assert ["diff", "--check"] in calls
     assert ["diff", "--cached", "--check"] in calls
+
+
+def test_focused_pytest_default_targets_current_contract_suite(monkeypatch) -> None:
+    calls: list[list[str]] = []
+
+    def fake_run(command: list[str]):
+        calls.append(command)
+        return subprocess.CompletedProcess(command, 0)
+
+    monkeypatch.setattr(pytest_focused.subprocess, "run", fake_run)
+
+    assert pytest_focused.main(None) == 0
+    target = "tests/test_skill_pack_contracts.py"
+    assert (Path(__file__).resolve().parents[1] / target).is_file()
+    assert calls == [[sys.executable, "-m", "pytest", "-n", "0", target]]
