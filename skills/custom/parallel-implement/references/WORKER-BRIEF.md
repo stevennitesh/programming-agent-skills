@@ -50,7 +50,7 @@ Use compact preflight only when the routing packet says the worktree host is pro
 
 Stop before edits when the root is wrong, `HEAD` differs from the assigned base, starting status contains unexpected changes, `.tmp/` writes fail, or focused proof cannot start.
 
-Invoke `$tdd` for red-testable behavior; otherwise prove the slice with routed focused evidence. Run a broad suite only when routed or when the slice changes shared behavior. If repo defaults fail only because of the isolated checkout, retry once with the routed worker-safe proof and report both results.
+For red-testable new behavior, invoke `$tdd`. For a bug, invoke `$tdd` only when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known. When a bug's exact symptom, cause, or trusted red-capable reproduction is uncertain, invoke `$diagnosing-bugs` in fix mode with this lane worker as its caller. It owns the diagnostic loop through regression proof, then returns here for the worker commit and packet. Otherwise prove the slice with routed focused evidence. Run a broad suite only when routed or when the slice changes shared behavior. If repo defaults fail only because of the isolated checkout, retry once with the routed worker-safe proof and report both results.
 
 Use the assigned validation environment. If `.venv` is absent, use the routed interpreter/env and report the fallback. Shared dependency mutation requires an explicit route.
 

@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import sys
 from pathlib import Path
 
-from scripts import pytest_focused, validate_skills
+import pytest
+
+from scripts import pytest_focused, skill_pack_contract, validate_skills
 
 
 def write_skill(root: Path, name: str, body: str = "") -> Path:
@@ -20,6 +23,28 @@ def write_skill(root: Path, name: str, body: str = "") -> Path:
         encoding="utf-8",
     )
     return skill_dir
+
+
+def install_example_skill(
+    root: Path,
+    installed: Path,
+    *,
+    manifest_payload: dict[str, object] | None = None,
+    write_manifest: bool = True,
+) -> tuple[Path, Path, Path]:
+    source = write_skill(root, "example")
+    destination = installed / "example"
+    shutil.copytree(source, destination)
+    manifest = installed / validate_skills.INSTALLED_MANIFEST
+    if write_manifest:
+        payload = manifest_payload or {
+            "format": 1,
+            "source": "skills/custom",
+            "skills": ["example"],
+            "hashes": {"example": skill_pack_contract.tree_hash(source)},
+        }
+        manifest.write_text(json.dumps(payload), encoding="utf-8")
+    return source, destination, manifest
 
 
 def test_skill_validation_covers_markdown_and_cross_skill_references(tmp_path: Path) -> None:
@@ -121,6 +146,17 @@ def test_setup_schema_fingerprint_detects_contract_drift(tmp_path: Path) -> None
 
     assert validate_skills.validate_setup_schema_manifest(tmp_path) == []
 
+    (tmp_path / "AGENTS.md").write_text(f"{marker}\n{marker}\n", encoding="utf-8")
+    duplicate_failures = validate_skills.validate_setup_schema_manifest(tmp_path)
+    assert any("stale, missing, or duplicated" in failure for failure in duplicate_failures)
+
+    stale = "<!-- programming-agent-skills setup-schema: 1:deadbeefdead -->"
+    (tmp_path / "AGENTS.md").write_text(f"{stale}\n{marker}\n", encoding="utf-8")
+    mixed_failures = validate_skills.validate_setup_schema_manifest(tmp_path)
+    assert any("stale, missing, or duplicated" in failure for failure in mixed_failures)
+
+    (tmp_path / "AGENTS.md").write_text(f"{marker}\n", encoding="utf-8")
+
     (setup / "domain.md").write_text("# Changed Domain\n", encoding="utf-8")
 
     failures = validate_skills.validate_setup_schema_manifest(tmp_path)
@@ -154,21 +190,9 @@ def test_relationship_invocation_map_must_match_policies(tmp_path: Path) -> None
 def test_installed_validation_preserves_unrelated_skills(tmp_path: Path) -> None:
     root = tmp_path / "repo"
     installed = tmp_path / "installed"
-    source = write_skill(root, "example")
     installed.mkdir()
     (installed / "finance-brain").mkdir()
-    destination = installed / "example"
-    destination.mkdir()
-    for path in source.rglob("*"):
-        relative = path.relative_to(source)
-        if path.is_dir():
-            (destination / relative).mkdir(exist_ok=True)
-        else:
-            (destination / relative).write_bytes(path.read_bytes())
-    (installed / validate_skills.INSTALLED_MANIFEST).write_text(
-        json.dumps({"skills": ["example"]}),
-        encoding="utf-8",
-    )
+    install_example_skill(root, installed)
 
     failures = validate_skills.validate_installed_skills(
         root,
@@ -178,6 +202,140 @@ def test_installed_validation_preserves_unrelated_skills(tmp_path: Path) -> None
     )
 
     assert failures == []
+
+
+def test_installed_validation_rejects_empty_directory_drift(tmp_path: Path) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / "installed"
+    _, destination, _ = install_example_skill(root, installed)
+    (destination / "extra-empty").mkdir()
+
+    failures = validate_skills.validate_installed_skills(
+        root,
+        ["example"],
+        str(installed),
+        True,
+    )
+
+    assert "Installed skill differs from repo: example" in failures
+    assert any(
+        "Only in installed copy: directory extra-empty" in failure
+        for failure in failures
+    )
+
+
+def test_installed_validation_rejects_symlinked_and_empty_directory_drift(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / "installed"
+    _, destination, _ = install_example_skill(root, installed)
+    (destination / "extra-empty").mkdir()
+    external = tmp_path / "external-skill.md"
+    external.write_bytes((destination / "SKILL.md").read_bytes())
+    (destination / "SKILL.md").unlink()
+    try:
+        (destination / "SKILL.md").symlink_to(external)
+    except OSError as error:
+        pytest.skip(f"symlink creation unavailable: {error}")
+    failures = validate_skills.validate_installed_skills(
+        root,
+        ["example"],
+        str(installed),
+        True,
+    )
+
+    assert "Installed skill differs from repo: example" in failures
+    assert any("Unsafe special tree entry" in failure for failure in failures)
+
+
+@pytest.mark.parametrize("unsafe_kind", ["root", "manifest"])
+def test_installed_validation_rejects_reparse_root_and_manifest_metadata(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    unsafe_kind: str,
+) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / "installed"
+    _, _, manifest = install_example_skill(root, installed)
+    unsafe = installed if unsafe_kind == "root" else manifest
+    original_lstat = skill_pack_contract.os.lstat
+    reparse_flag = 0x400
+    monkeypatch.setattr(
+        skill_pack_contract.stat,
+        "FILE_ATTRIBUTE_REPARSE_POINT",
+        reparse_flag,
+        raising=False,
+    )
+
+    class ReparseMetadata:
+        def __init__(self, metadata):
+            self.st_mode = metadata.st_mode
+            self.st_file_attributes = (
+                getattr(metadata, "st_file_attributes", 0) | reparse_flag
+            )
+
+    def fake_lstat(path):
+        metadata = original_lstat(path)
+        if Path(path) == unsafe:
+            return ReparseMetadata(metadata)
+        return metadata
+
+    monkeypatch.setattr(skill_pack_contract.os, "lstat", fake_lstat)
+
+    failures = validate_skills.validate_installed_skills(
+        root, ["example"], str(installed), True
+    )
+
+    assert any("unsafe" in failure.lower() for failure in failures)
+
+
+def test_installed_validation_rejects_manifest_contract_and_hash_drift(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / "installed"
+    install_example_skill(
+        root,
+        installed,
+        manifest_payload={
+            "format": 2,
+            "source": "legacy/source",
+            "skills": ["example"],
+            "hashes": {"example": "0" * 64},
+        },
+    )
+
+    failures = validate_skills.validate_installed_skills(
+        root,
+        ["example"],
+        str(installed),
+        True,
+    )
+
+    assert "Installed skill manifest must use format 1." in failures
+    assert "Installed skill manifest source must be skills/custom." in failures
+    assert "Installed manifest hash differs from repo: example" in failures
+
+
+def test_required_installed_validation_rejects_a_missing_manifest(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / "installed"
+    install_example_skill(root, installed, write_manifest=False)
+
+    failures = validate_skills.validate_installed_skills(
+        root,
+        ["example"],
+        str(installed),
+        True,
+    )
+
+    assert failures == [
+        f"Required installed skill manifest is missing: "
+        f"{installed / validate_skills.INSTALLED_MANIFEST}"
+    ]
 
 
 def test_git_diff_validation_checks_worktree_and_index(monkeypatch, tmp_path: Path) -> None:

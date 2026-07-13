@@ -11,15 +11,21 @@ import subprocess
 import sys
 from pathlib import Path
 
+from scripts import skill_pack_contract as pack_contract
+
 
 SKILL_ROOTS = ("skills/custom", "skills/extra")
 CUSTOM_SKILL_ROOT = "skills/custom"
 SETUP_SKILL_ROOT = "skills/custom/repo-bootstrap"
 SETUP_SCHEMA_MANIFEST = f"{SETUP_SKILL_ROOT}/setup-schema.json"
 GLOBAL_AGENTS_TEMPLATE = "GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md"
-INSTALLED_MANIFEST = ".programming-agent-skills-manifest.json"
+INSTALLED_MANIFEST = pack_contract.MANIFEST_NAME
 REQUIRED_AGENT_DOCS = ("AGENTS_PORTABLE_FALLBACK.md", GLOBAL_AGENTS_TEMPLATE)
-REQUIRED_REPO_FILES = ("README.md", "scripts/install_skills.py")
+REQUIRED_REPO_FILES = (
+    "README.md",
+    "scripts/install_skills.py",
+    "scripts/skill_pack_contract.py",
+)
 GLOBAL_AGENTS_SKILLS = frozenset(("repo-bootstrap", "skill-router"))
 GLOBAL_AGENTS_TOKENS = (
     "# Global Codex Instructions",
@@ -65,7 +71,7 @@ FRONTMATTER_FIELD_RE = re.compile(r"(?m)^([a-zA-Z0-9_-]+):\s*(.+?)\s*$")
 TRAILING_WHITESPACE_RE = re.compile(r"[ \t]$")
 SKILL_HANDLE_RE = re.compile(r"\$([a-z0-9][a-z0-9-]*)")
 SETUP_SCHEMA_MARKER_RE = re.compile(
-    r"<!-- programming-agent-skills setup-schema: [^>]+ -->"
+    r"<!-- programming-agent-skills setup-schema: \d+:[0-9a-f]{12} -->"
 )
 SETUP_SCHEMA_MARKER_PLACEHOLDER = (
     "<!-- programming-agent-skills setup-schema: <fingerprint> -->"
@@ -102,17 +108,6 @@ STALE_ACTIVE_TOKENS = (
     "skills/current",
     "skills/matt-pocock",
 )
-
-
-class Validation:
-    def __init__(self) -> None:
-        self.failures: list[str] = []
-
-    def fail(self, message: str) -> None:
-        self.failures.append(message)
-
-    def extend(self, messages: list[str]) -> None:
-        self.failures.extend(messages)
 
 
 def run_git(args: list[str], *, cwd: Path, check: bool = False) -> subprocess.CompletedProcess[str]:
@@ -441,9 +436,11 @@ def validate_setup_schema_manifest(root: Path) -> list[str]:
         if not path.is_file():
             failures.append(f"Setup-schema marker target is missing: {relative}")
             continue
-        if marker not in path.read_text(encoding="utf-8"):
+        markers = SETUP_SCHEMA_MARKER_RE.findall(path.read_text(encoding="utf-8"))
+        if markers != [marker]:
             failures.append(
-                f"Setup-schema marker is stale or missing: {relative} -> {marker}"
+                "Setup-schema marker is stale, missing, or duplicated: "
+                f"{relative} -> {marker}"
             )
     return failures
 
@@ -540,38 +537,62 @@ def repo_skill_dir(root: Path, skill_name: str) -> Path | None:
 
 def compare_dirs(expected: Path, actual: Path) -> list[str]:
     failures: list[str] = []
-    expected_files = {
-        path.relative_to(expected).as_posix(): path
-        for path in expected.rglob("*")
-        if path.is_file() and not path.name.endswith(":Zone.Identifier")
+    try:
+        expected_entries = pack_contract.tree_entries(expected)
+    except (OSError, ValueError) as error:
+        failures.append(f"Unsafe repo skill tree: {error}")
+        return failures
+    try:
+        actual_entries = pack_contract.tree_entries(actual)
+    except (OSError, ValueError) as error:
+        failures.append(f"Unsafe installed skill tree: {error}")
+        return failures
+
+    expected_entries = {
+        name: entry
+        for name, entry in expected_entries.items()
+        if not name.endswith(":Zone.Identifier")
     }
-    actual_files = {
-        path.relative_to(actual).as_posix(): path
-        for path in actual.rglob("*")
-        if path.is_file() and not path.name.endswith(":Zone.Identifier")
+    actual_entries = {
+        name: entry
+        for name, entry in actual_entries.items()
+        if not name.endswith(":Zone.Identifier")
     }
-    for name in sorted(expected_files.keys() - actual_files.keys()):
-        failures.append(f"Only in repo: {expected_files[name]}")
-    for name in sorted(actual_files.keys() - expected_files.keys()):
-        failures.append(f"Only in installed copy: {actual_files[name]}")
-    for name in sorted(expected_files.keys() & actual_files.keys()):
-        if expected_files[name].read_bytes() != actual_files[name].read_bytes():
-            failures.append(f"Files differ: {expected_files[name]} {actual_files[name]}")
+    for name in sorted(expected_entries.keys() - actual_entries.keys()):
+        failures.append(f"Only in repo: {expected_entries[name][0]} {name}")
+    for name in sorted(actual_entries.keys() - expected_entries.keys()):
+        failures.append(
+            f"Only in installed copy: {actual_entries[name][0]} {name}"
+        )
+    for name in sorted(expected_entries.keys() & actual_entries.keys()):
+        expected_kind, expected_content = expected_entries[name]
+        actual_kind, actual_content = actual_entries[name]
+        if expected_kind != actual_kind:
+            failures.append(
+                f"Entry types differ: {expected_kind} {actual_kind} {name}"
+            )
+        elif expected_content != actual_content:
+            failures.append(f"Files differ: {expected / name} {actual / name}")
     return failures
 
 
-def read_installed_manifest(installed_root: Path) -> tuple[set[str], list[str]]:
+def read_installed_manifest(
+    installed_root: Path,
+) -> tuple[set[str], dict[str, str], list[str]]:
     manifest_path = installed_root / INSTALLED_MANIFEST
+    try:
+        pack_contract.reject_unsafe_redirect(
+            manifest_path, "installed skill manifest"
+        )
+    except ValueError as error:
+        return set(), {}, [f"Installed skill manifest path is unsafe: {error}"]
     if not manifest_path.is_file():
-        return set(), []
+        return set(), {}, []
     try:
         payload = json.loads(manifest_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as error:
-        return set(), [f"Installed skill manifest is invalid: {manifest_path}: {error}"]
-    names = payload.get("skills") if isinstance(payload, dict) else None
-    if not isinstance(names, list) or not all(isinstance(name, str) for name in names):
-        return set(), [f"Installed skill manifest must contain a string list named skills: {manifest_path}"]
-    return set(names), []
+        return set(), {}, [f"Installed skill manifest is invalid: {manifest_path}: {error}"]
+    return pack_contract.parse_managed_manifest_payload(payload)
 
 
 def validate_installed_skills(
@@ -587,18 +608,43 @@ def validate_installed_skills(
         return failures
 
     installed_root = Path(installed_skills_dir).expanduser()
+    try:
+        pack_contract.reject_unsafe_redirect(
+            installed_root, "installed skills root"
+        )
+    except ValueError as error:
+        return [f"Installed skills root is unsafe: {error}"]
     if not installed_root.is_dir():
         return [f"AGENT_SKILLS_DIR does not exist or is not a directory: {installed_root}"]
 
     names = set(skill_names)
     manifest_exists = (installed_root / INSTALLED_MANIFEST).is_file()
-    managed_names, manifest_failures = read_installed_manifest(installed_root)
+    if require_all_installed and not manifest_exists:
+        failures.append(
+            "Required installed skill manifest is missing: "
+            f"{installed_root / INSTALLED_MANIFEST}"
+        )
+    managed_names, managed_hashes, manifest_failures = read_installed_manifest(
+        installed_root
+    )
     failures.extend(manifest_failures)
     for stale_name in sorted(managed_names - names):
         failures.append(f"Installed manifest contains retired managed skill: {stale_name}")
     for unmanaged_name in sorted(names - managed_names):
         if manifest_exists:
             failures.append(f"Installed manifest is missing active managed skill: {unmanaged_name}")
+
+    for skill_name in sorted(names & managed_names):
+        source_dir = repo_skill_dir(root, skill_name)
+        if source_dir is None:
+            continue
+        try:
+            source_hash = pack_contract.tree_hash(source_dir)
+        except (OSError, ValueError) as error:
+            failures.append(f"Unsafe repo skill tree for {skill_name}: {error}")
+            continue
+        if managed_hashes.get(skill_name) != source_hash:
+            failures.append(f"Installed manifest hash differs from repo: {skill_name}")
 
     for skill_name in skill_names:
         source_dir = repo_skill_dir(root, skill_name)
@@ -718,25 +764,25 @@ def main(argv: list[str] | None = None) -> int:
     root = repo_root()
     os.chdir(root)
 
-    validation = Validation()
+    failures: list[str] = []
     skill_names, skill_failures = validate_skill_folders(root)
     custom_skill_names = [path.name for path in custom_skill_dirs(root)]
-    validation.extend(skill_failures)
-    validation.extend(validate_required_docs(root))
-    validation.extend(validate_setup_schema_manifest(root))
-    validation.extend(validate_active_surfaces(root))
-    validation.extend(validate_skill_handle_references(root, custom_skill_names))
-    validation.extend(validate_relationship_invocation_map(root))
-    validation.extend(validate_setup_surface(root))
-    validation.extend(
+    failures.extend(skill_failures)
+    failures.extend(validate_required_docs(root))
+    failures.extend(validate_setup_schema_manifest(root))
+    failures.extend(validate_active_surfaces(root))
+    failures.extend(validate_skill_handle_references(root, custom_skill_names))
+    failures.extend(validate_relationship_invocation_map(root))
+    failures.extend(validate_setup_surface(root))
+    failures.extend(
         unified_file_diff(
             root / "skills/custom/repo-bootstrap/engineering-contract.md",
             root / "docs/agents/engineering-contract.md",
             root=root,
         )
     )
-    validation.extend(validate_global_agents_template(root, custom_skill_names))
-    validation.extend(
+    failures.extend(validate_global_agents_template(root, custom_skill_names))
+    failures.extend(
         validate_installed_skills(
             root,
             custom_skill_names,
@@ -744,10 +790,10 @@ def main(argv: list[str] | None = None) -> int:
             args.require_installed,
         )
     )
-    validation.extend(validate_trailing_whitespace(root))
+    failures.extend(validate_trailing_whitespace(root))
     if args.public_mode:
-        validation.extend(validate_public_mode(root))
-    validation.extend(validate_git_diff_check(root))
+        failures.extend(validate_public_mode(root))
+    failures.extend(validate_git_diff_check(root))
 
     if args.verbose:
         tracked = run_git(["ls-files"], cwd=root)
@@ -755,8 +801,8 @@ def main(argv: list[str] | None = None) -> int:
             print(f"Tracked files: {len([line for line in tracked.stdout.splitlines() if line])}")
         print(f"Skill folders: {len(skill_names)}")
 
-    if validation.failures:
-        for failure in validation.failures:
+    if failures:
+        for failure in failures:
             print(f"- {failure}")
         print("Public readiness check failed." if args.public_mode else "Skill validation failed.")
         return 1

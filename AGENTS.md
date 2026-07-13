@@ -1,6 +1,6 @@
 # Repository Instructions
 
-<!-- programming-agent-skills setup-schema: 1:427ef8595173 -->
+<!-- programming-agent-skills setup-schema: 1:859a503ba864 -->
 
 ## Commands
 

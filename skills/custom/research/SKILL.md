@@ -27,7 +27,7 @@ Question -> source lanes -> claim ledger -> evidence gate -> one cited note -> p
    - empirical claims -> the original paper, dataset, and method.
 
    Use secondary sources for discovery; trace load-bearing claims to primary sources.
-4. **Delegate independent lanes when it materially improves breadth or speed.** Give each worker one lane and require claims, evidence, authority, version or date, conflicts, and gaps. Workers return evidence; the main agent judges it.
+4. **Delegate independent evidence lanes only when it materially improves breadth or speed.** Start direct fresh-context read-only scouts with `fork_turns="none"` when supported and one complete research contract. Give each scout one lane and require claims, evidence, authority, version or date, conflicts, and gaps. Scouts inspect and report only; they never edit files, mutate external state, or spawn. Keep parent conclusions and peer results out of their context. The main agent alone judges evidence and writes the note. When continuity matters more than independence, fork only the minimum necessary recent context; do not call the result independent.
 5. **Build the claim ledger.** Classify every load-bearing claim as `supported`, `conflicted`, or `unknown`; attach its source, authority, and freshness.
 6. **Pass the evidence gate.** Continue until every load-bearing claim is classified, the best available authority and version or date are recorded, conflicts and gaps are explicit, and further searching only repeats evidence or cannot close a documented gap.
 7. **Write one note.** Use the repo's research-note convention or `docs/research/<slug>.md`. Preserve the contract, ledger, evidence, uncertainty, and next route in the note shape below.

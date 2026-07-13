@@ -7,7 +7,7 @@ description: Create and publish approved, dependency-ordered ready-for-agent tic
 
 Create **ready-for-agent tickets** from settled source material.
 
-Default to **tracer bullets**: independently grabbable vertical slices through the real system, each demoable or verifiable independently. Use **support tickets** when they unblock or de-risk a named tracer bullet.
+Default to **tracer bullets**: independently grabbable vertical slices through the real system, each demoable or verifiable independently. Use **support slices** when they unblock or de-risk a named tracer bullet.
 
 Apply the **setup gate**: use the target repo's `AGENTS.md` for tracker, label, domain, and packet docs. If a required setup document or named tracker operation is absent or incompatible with this skill, stop and recommend `$repo-bootstrap`.
 
@@ -23,7 +23,7 @@ A **source gap** is a needed decision outside the trace; return it to the caller
 
 ### 2. Map Work
 
-Explore enough code to name stable seams, **proof lanes**, and support tickets that materially de-risk tracer bullets.
+Explore enough code to name stable seams, **proof lanes**, and support slices that materially de-risk tracer bullets.
 
 Use domain vocabulary from the source trace. Use ADR and glossary pointers when they affect ticket shape.
 
@@ -40,7 +40,7 @@ Every ticket satisfies the tracker's **Ready-for-agent contract**. Add the slici
 - What to build: end-to-end behavior or support change
 - Relevant context: source trace and applicable glossary, ADR, or prototype pointers
 
-Tracer-bullet tickets deliver one narrow behavior across every needed layer. Support tickets name the tracer bullet they unblock or de-risk and the proof that makes them done.
+Tracer-bullet tickets deliver one narrow behavior across every needed layer. Support slices name the tracer bullet they unblock or de-risk and the proof that makes them done.
 
 Cut tickets for distinct behaviors, branches, failure modes, permission boundaries, state transitions, integration seams, migration risks, or required support work. Start with the happy-path tracer bullet when the end-to-end path is still unproven.
 

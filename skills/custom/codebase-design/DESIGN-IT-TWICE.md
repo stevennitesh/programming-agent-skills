@@ -26,9 +26,13 @@ Include a rough code sketch only when it makes the constraints easier to see. Tr
 
 Produce at least three meaningfully different interfaces.
 
-Use independent subagents when available. Give each worker the shared problem frame and one distinct design pressure without exposing the other alternatives. The main agent owns comparison and recommendation.
+Use direct fresh-context scouts when independent judgment is part of the evidence. Start each with `fork_turns="none"` when supported. Give every scout the same self-contained factual brief: objective, settled constraints, scope, relevant source pointers, one distinct design pressure, mutation boundary, and output contract. Exclude parent hypotheses, preferred solutions, other candidates, and peer results.
 
-When delegation is unavailable, produce alternatives sequentially and reset the design pressure between them. Require three alternatives, not three workers; the main agent may contribute one independent design.
+Scouts inspect and propose only; they never edit files, mutate external state, or spawn. Keep alternatives private until every scout returns. The main agent owns comparison, recommendation, and completion.
+
+For partitioned exploration where continuity matters more than independence, fork only the minimum necessary recent context or carry those facts in the brief. Do not describe forked results as independent.
+
+When delegation is unavailable, produce alternatives sequentially and reset the design pressure between them. Require three alternatives, not three workers; the main agent may contribute one alternative.
 
 Use different design pressures to force real variety:
 

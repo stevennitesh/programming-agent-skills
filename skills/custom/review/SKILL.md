@@ -14,7 +14,9 @@ This is the default Converge gate for ordinary branch, WIP, staged, and `$implem
 
 Keep the **two axes, never merged**. One axis passing must not hide the other axis failing, and there is no single winner across axes.
 
-Hand off to `$convergent-pr-review` and stop for local PR review or high-risk local-diff review that needs independent reviewer passes, scoped lenses, and a verified finding ledger.
+**Spec requirement:** The caller supplies `Spec required: yes | no`. Default to `no` for standalone review. When `yes`, a missing, conflicting, or unresolved Spec source makes the review `incomplete`; never skip or replace the Spec axis.
+
+Hand off to `$convergent-pr-review` and stop for local PR review or high-risk local-diff review that needs independent reviewer passes, scoped lenses, and a verified finding ledger. Carry the caller-supplied Spec requirement, Source Trace and Spec sources, fixed point, and captured target into the handoff.
 
 ## 1. Pin The Review Target
 
@@ -52,9 +54,9 @@ Find product intent in this order:
 2. Issue or PR references in commit messages, fetched through `docs/agents/issue-tracker.md` when available.
 3. A matching spec or legacy PRD under `docs/`, `specs/`, `.scratch/`, or the repo's issue-packet convention.
 
-If no Spec exists, skip the Spec axis and report `Skipped: no spec available`.
+When `Spec required: yes` and no authoritative Spec source resolves, return `incomplete` before reviewing. When `Spec required: no` and no Spec exists, skip the Spec axis and report `Skipped: no spec available`.
 
-Done means the Spec axis has a source, or is explicitly skipped.
+Done means the Spec axis has a source, or optional Spec was explicitly skipped.
 
 ## 3. Find Standards
 
@@ -137,4 +139,4 @@ Summary: Standards: <count>, worst <severity or none>. Spec: <count/skipped>, wo
 
 ## Completion Criteria
 
-Complete only when the review target is pinned and non-empty; Standards and Spec sources are named or explicitly skipped; both axes were evaluated with lens separation; every finding satisfies the finding contract; the output names the target and sources; and the review remained read-only.
+Complete only when the review target is pinned and non-empty; Standards and Spec sources are named, or optional Spec was explicitly skipped; required Spec resolved; both applicable axes were evaluated with lens separation; every finding satisfies the finding contract; the output names the target and sources; and the review remained read-only.

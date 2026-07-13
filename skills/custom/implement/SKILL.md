@@ -43,9 +43,9 @@ Read only task-relevant comments, parent context, files, and nearby code. Treat 
 
 ## Patch
 
-For red-testable behavior and known-repro bugs, invoke `$tdd`.
+For red-testable new behavior, invoke `$tdd`. For a bug, invoke `$tdd` only when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known.
 
-For a bug whose exact symptom, cause, or trusted reproduction is uncertain, invoke `$diagnosing-bugs` in fix mode with the selected work item as its caller. It owns the tight loop, cause gate, causal fix, and regression proof, then returns here for Converge. Implement retains review, staging, commit, tracker closeout, and Lock.
+When a bug's exact symptom, cause, or trusted red-capable reproduction is uncertain, invoke `$diagnosing-bugs` in fix mode with the selected work item as its caller. It owns the tight loop, cause gate, causal fix, and regression proof, then returns here for Converge. Implement retains review, staging, commit, tracker closeout, and Lock.
 
 For work without a red-capable seam, name the proof seam, use the strongest focused evidence, and record why RED was unsuitable. Keep the patch inside the selected work item; record adjacent work as follow-ups.
 
@@ -69,7 +69,9 @@ For repo-local tracker files, prepare review-visible closeout metadata before pi
 
 Capture the immutable **review tree** with `git write-tree`.
 
-**Review route:** Invoke `$review` by default. Invoke `$convergent-pr-review` for a local PR or high-risk diff matching its trigger. Record the route and invoke exactly that route with the fixed point, review tree, and `git diff <fixed-point> <review-tree>`. An unavailable route blocks Lock.
+**Review route:** Invoke `$review` by default. Invoke `$convergent-pr-review` for a local PR or high-risk diff matching its trigger. Record the route and invoke exactly that route with `Spec required: yes`, the selected work item and acceptance criteria, Source Trace, fixed point, review tree, and `git diff <fixed-point> <review-tree>`. An unavailable route or unresolved Spec source blocks Lock.
+
+**Review acceptance:** For `$convergent-pr-review`, `pass` unlocks Lock; `pass with residual risk` unlocks Lock only when the selected work item, repo policy, or user accepts every named residual risk and the closeout packet records that authority; `blocked` or `incomplete` keeps Lock closed. For `$review`, any P0/P1 finding, missing required validation, or incomplete Spec axis keeps Lock closed; record lower non-blocking findings as residual risk unless repo or user policy blocks them.
 
 Fix in-scope findings with targeted verification. For repo-local tracker work, refresh the provisional closeout metadata after every finding fix, restage the complete selected-work diff, capture a new review tree, and run another pass through the selected review route. The final repo-local packet stays inside the reviewed tree.
 

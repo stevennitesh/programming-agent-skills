@@ -7,7 +7,7 @@ description: Run two or more ready, non-overlapping work items as a wavefront th
 
 Run a **wavefront** over ready-for-agent work:
 
-**ready frontier -> worktree lock -> fresh-context lane workers -> accepted packets -> serial integration -> root-owned review -> tracker lock -> release sweep**
+**ready frontier -> two isolations -> fresh-context lane workers -> accepted packets -> serial integration -> root-owned review -> tracker lock -> release sweep**
 
 - **Orchestrator**: sole dispatcher and final owner of Source Trace, scope, DAG, routing packet, thin ledger, worker acceptance, review route, tracker mutation, closeout, and release.
 - **Integration lane**: serially lands accepted commits and runs routed integration validation. The orchestrator owns it by default; a hot or late integrator owns it only when routed. A child integrator returns a review-ready packet and never dispatches subagents or invokes formal review.
@@ -113,11 +113,11 @@ The orchestrator or routed integrator executes the pre-landing gate. It is accep
 **Review acceptance:** the orchestrator records both the route result and the caller-owned Lock decision.
 
 - `$convergent-pr-review`: `pass` unlocks review; `pass with residual risk` unlocks only when the routing packet or user accepts that residual risk; `blocked` and `incomplete` keep Lock closed.
-- `$review`: P0/P1 findings and missing required validation keep Lock closed; record lower non-blocking findings as residual risk unless repo or user policy says otherwise.
+- `$review`: P0/P1 findings or missing required validation keep Lock closed; an incomplete Spec axis keeps Lock closed. Record lower non-blocking findings as residual risk unless repo or user policy says otherwise.
 
 An unavailable route, unresolved blocking finding, or unaccepted residual-risk result blocks closeout.
 
-**Loop-close lock:** before review, require a clean in-scope integration state with all integrated work and review-visible repo-local closeout metadata committed. Pin the integration `HEAD` as the immutable review target and have the orchestrator invoke exactly the assigned route from the run fixed point.
+**Loop-close lock:** before review, require a clean in-scope integration state with all integrated work and review-visible repo-local closeout metadata committed. Pin the integration `HEAD` as the immutable review target and have the orchestrator invoke exactly the assigned route with `Spec required: yes`, the run Source Trace, selected work items and acceptance criteria, run fixed point, integration `HEAD`, and complete integrated diff.
 
 After any review fix lands, inspect `<reviewed-head>..<current-head>`. A tiny finding-only fix may use targeted proof when the routing packet permits it. A material behavior, scope, contract, schema, dependency, security, or public-interface delta requires a new review target and another loop-close review.
 

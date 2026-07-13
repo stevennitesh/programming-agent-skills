@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: "Use for red-testable production behavior through tracer-bullet red-green-refactor: test-first features, known-repro bug fixes, and behavior changes. Hand off uncertain bugs to $diagnosing-bugs and throwaway design questions to $prototype."
+description: "Use for red-testable new behavior. Use for bug fixes only when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known. Hand off bugs when the exact symptom, cause, or trusted red-capable reproduction is uncertain to $diagnosing-bugs; hand off throwaway design questions to $prototype."
 ---
 
 # Test-Driven Development
@@ -13,7 +13,7 @@ Build one **tracer bullet** at a time:
 
 **Boundary:** own this inner loop only. The caller owns bounded scope, review, staging, commit, tracker or external mutation, publishing, and closeout.
 
-Hand off to `$diagnosing-bugs` when the symptom, cause, or repro is uncertain; it owns that diagnostic loop through regression proof. Use `$tdd` directly for known-repro bugs. Hand off to `$prototype` for throwaway design questions.
+Hand off to `$diagnosing-bugs` for a bug when the exact symptom, cause, or trusted red-capable reproduction is uncertain; it owns that diagnostic loop through regression proof. Use `$tdd` directly only when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known. Hand off to `$prototype` for throwaway design questions.
 
 Read [tests.md](tests.md) only when test shape, oracle, or seam remains unclear after inspecting nearby tests; read [mocking.md](mocking.md) before adding a test double; read [refactoring.md](refactoring.md) only while GREEN.
 

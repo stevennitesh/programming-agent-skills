@@ -1,6 +1,6 @@
 ---
 name: diagnosing-bugs
-description: "Diagnose or debug broken, failing, flaky, slow, environment-only, or production-only behavior when the cause or trusted repro is uncertain. Apply a fix only inside an authorized implementation boundary."
+description: "Diagnose or debug broken, failing, flaky, slow, environment-only, or production-only behavior when the exact symptom, cause, or trusted red-capable reproduction is uncertain. Apply a fix only inside an authorized implementation boundary."
 ---
 
 # Diagnosing Bugs
@@ -16,7 +16,9 @@ description: "Diagnose or debug broken, failing, flaky, slow, environment-only, 
 - **Caller:** owns review, staging, commit, tracker or external mutation, push, release, and architecture follow-up.
 - **Return owner:** A caller-invoked run returns its diagnosis packet to that caller. A standalone diagnosis-only run recommends `$implement` as its one next owner. Fix mode returns to the caller that authorized implementation.
 
-Uncertain diagnosis stays in `$diagnosing-bugs` through regression proof. Hand off to `$tdd` when behavior and a trusted reproduction are already known before the diagnostic loop begins; retain the original caller as the return owner.
+Uncertain diagnosis stays in `$diagnosing-bugs` through causal regression proof. When the exact symptom, cause, or trusted red-capable reproduction is uncertain, keep ownership here. Hand off to `$tdd` only when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known before Phase 1; retain the original caller as the return owner.
+
+**Relentless diagnosis:** spend disproportionate effort on the evidence loop. Try every practical lane or rule it out with recorded evidence before returning blocked.
 
 Advance only when the current phase gate is satisfied. Existing evidence may satisfy a gate only when its source, command or artifact, and result are recorded in the Source Trace.
 

@@ -81,6 +81,10 @@ python -m scripts.validate_skills --installed-root "$HOME\.agents\skills" --requ
 
 The installer creates or updates only the global template's `## Skill Pack Bootstrap` section, migrates the legacy `## Skill Pack Guide` block, and preserves personal global instructions. It records pack-managed skills in `$HOME/.agents/skills/.programming-agent-skills-manifest.json`, so updates can retire old pack skills without touching unrelated personal skills.
 
+Skill swaps, retirements, the manifest, and the global bootstrap commit as one transaction. One process lock excludes competing installs and recovery. The installer validates the complete managed manifest and refuses unsafe names, modified managed trees, or conflicting unmanaged paths before mutation. A failure restores the previous pack and removes the transaction snapshot. If rollback itself cannot finish, the installer preserves a named `.programming-agent-skills-transaction-*` recovery snapshot and refuses another install.
+
+Run `python -m scripts.install_skills --recover-transaction <snapshot-path>` with the reported path. For nondefault targets, repeat the original `--skills-dir` and `--global-agents` values (or `--skip-global-agents`); recovery binds the snapshot to those explicit targets before any restore. The immutable plan records both the prior and planned identities. Recovery refuses to overwrite a live skill, manifest, or global instruction file that matches neither identity, so post-crash edits stay in place for operator reconciliation. It safely clears a verified pre-mutation interruption, restores and verifies the previous managed pack after an interrupted mutation, or finishes cleanup without rollback when the transaction already reached a verified terminal state. Claims are cleared while the snapshot still exists; the snapshot is removed last, then rerun the installer after a restored or cleared pre-mutation transaction.
+
 Use `python -m scripts.install_skills --dry-run` to preview skill deltas and the global-bootstrap action. `skills/custom/` is the supported install set, `skills/extra/` is optional, and `skills/.archive/` is inactive.
 
 </details>
@@ -113,7 +117,7 @@ Representative routes:
 - One bounded ready item -> `$implement`; parallel-safe ready frontier -> `$parallel-implement`
 - Incoming issue or configured external PR -> `$triage`; ready-for-agent item -> `$implement`
 - Multi-session fog of war -> `$wayfinder` until the map closes -> `$to-spec`, `$to-tickets`, or `$implement`
-- Known behavior with a red-capable seam -> `$tdd`; uncertain symptom, cause, or reproduction -> `$diagnosing-bugs`
+- Settled red-testable behavior -> `$tdd`; uncertain bug -> `$diagnosing-bugs`; the router owns the exact diagnosis/TDD boundary.
 - Ordinary diff -> `$review`; local PR or high-risk diff -> `$convergent-pr-review`
 
 These are examples. `$skill-router` owns the complete route map and tie-breakers.
@@ -153,7 +157,7 @@ It keeps the upstream emphasis on strong leading words, then extends it with rep
 - `skills/custom/repo-bootstrap/`: target-repository setup workflow and contract templates
 - `CONTEXT.md`: stable vocabulary and maintenance invariants for this repository
 - `docs/synthesis/skill-context-relationships.md`: maintainer map for skill boundaries and context ownership
-- `scripts/install_skills.py`: managed installation and update that preserves unrelated skills
+- `scripts/install_skills.py`: transactional managed installation and update that preserves unrelated skills
 - `scripts/validate_skills.py`: integrity checks for the pack
 
 ## License
