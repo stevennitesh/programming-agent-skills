@@ -23,30 +23,26 @@ Not sufficient: temporary capacity or priority.
 - <tracker reference> - "<request title>"
 ```
 
-## Screen For Prior Rejection
+## Screen
 
-- **Screen:** inspect filenames and headings, then search by domain concept.
-- **Load:** read likely matches in full; read the entire directory only when it is small.
-- **Match:** compare concepts, not keywords.
-- **Confirm:** append the request and close under the existing decision.
-- **Reconsider:** require an explicit maintainer decision, then include any update or deletion in the mutation packet.
-- **Distinguish:** continue normal triage when the concepts are related but materially different.
+Inspect filenames and headings, search by domain concept, and read likely matches in full. Read the entire directory only when it is small. Match concepts, not keywords.
 
-## Write Gate
+## Decide
 
-A maintainer-approved rejected enhancement opens this knowledge-base write gate. This applies equally to enhancement issues and configured enhancement PRs.
+A maintainer-approved rejected enhancement opens the write gate for issues and configured PRs.
 
-- **Rejected enhancement:** create or update one concept file, link it from the tracker comment, then close.
-- **Already implemented:** point to the existing behavior in the tracker.
-- **Rejected bug:** explain the rejection in the tracker.
-- **Reconsidered concept:** update or delete the concept file only through the approved mutation packet.
+- **Confirm:** record the request under the existing decision.
+- **Reconsider:** update or delete the record through the approved mutation packet, then continue the triggering request through normal triage. Historical issues remain historical.
+- **Distinguish:** continue normal triage when the concepts are materially different.
+- **Already implemented:** point to the existing behavior in the tracker; do not write a rejection record.
+- **Rejected bug:** explain the rejection in the tracker; do not write a rejection record.
 
-## Apply The Decision
+## Record
 
 1. Find or create the concept file.
 2. Preserve the durable decision and reason.
 3. Append the request under `## Prior requests`.
-4. Post the disclaimer-prefixed tracker comment with the file path.
-5. Apply `wontfix` and close through the tracker contract.
 
-When a maintainer reopens the concept, update or delete the record through the approved mutation packet. Historical issues remain historical; the triggering request continues through normal triage.
+## Close
+
+Post the disclaimer-prefixed tracker comment with the file path, apply `wontfix`, and close through the tracker contract.

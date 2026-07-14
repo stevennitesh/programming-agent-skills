@@ -1,7 +1,5 @@
 # Attention Scan
 
-[`SKILL.md`](SKILL.md) owns contracts, state roles, shared gates, and completion.
-
 Query the configured tracker and present these disjoint buckets oldest first:
 
 1. **Role drift:** unlabeled items and items with missing or conflicting category or state roles.

@@ -1,7 +1,5 @@
 # Specific Item
 
-[`SKILL.md`](SKILL.md) owns contracts, state roles, shared gates, and completion.
-
 ## 1. Trace
 
 Build the **Source Trace** from the current request; tracker and label contracts; full item body, labels, author, dates, decision-bearing comments, and prior triage notes; PR diff when applicable; relevant glossary terms, ADRs, code, verification evidence, and rejected-enhancement records.
@@ -21,7 +19,7 @@ Complete when the claim, prior decisions, current roles, implementation surface,
 - **Enhancement:** verify current behavior, relevant seams, plausibility, redundancy, and prior rejection.
 - **PR:** inspect the tracker-provided diff first. When execution is required, use an isolated worktree or approved clean checkout and focused commands.
 
-Verification ends with evidence. Route code changes to implementation.
+Route code changes to implementation.
 
 ## 3. Shape
 
@@ -33,7 +31,7 @@ When maintainer-owned scope, acceptance, domain language, or design decisions re
 
 Return the proposed category and state, reasoning, current behavior and seams, redundancy and prior-rejection results, verification result, remaining unknowns, and proposed tracker/comment/brief/`.out-of-scope/`/close mutations. Wait for maintainer direction.
 
-## 5. Gate Mutation
+## 5. Approve
 
 Maintainer direction approves the recommended outcome. Before acting, state one **mutation packet**:
 
@@ -59,7 +57,7 @@ Replace prior role labels so the role invariant holds.
 
 Apply actual label strings through `docs/agents/triage-labels.md`.
 
-## 7. Read Back
+## 7. Prove
 
 Apply the tracker's **Mutation read-back** rule. Also verify the disclaimer and required `.out-of-scope/` changes.
 

@@ -8,7 +8,7 @@ For an issue, the brief describes the slice to build. For a PR, it describes the
 
 - **Bounded:** name one independently completable slice.
 - **Tracer bullet:** prefer one narrow product behavior through the real system with observable acceptance criteria.
-- **Support slice:** use only when it independently proves, unblocks, or de-risks later behavior, such as prefactoring, migration, compatibility proof, test harness, config, or operational wiring.
+- **Support slice:** use only when it independently proves, unblocks, or de-risks later behavior.
 - **Durable:** describe behavior, interfaces, seams, contracts, types, commands, config shapes, and validation that survive file movement.
 - **Behavioral:** state what the system must do and let implementation rediscover the current code shape.
 - **Observable:** give independently verifiable acceptance criteria and the highest useful proof seam.
