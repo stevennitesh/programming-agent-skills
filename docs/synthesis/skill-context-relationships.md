@@ -105,8 +105,7 @@ flowchart TD
   Debug["diagnosing-bugs"] --> Contract
   Debug --> DomainRouter
   Conflict -. "uncertain post-resolution failure" .-> Debug
-  Debug -. "architecture cause" .-> Arch["improve-codebase-architecture"]
-  Arch --> Contract
+  Arch["improve-codebase-architecture"] --> Contract
   Arch --> DomainRouter
   Arch --> GrillDocs
   Arch --> CodeDesign["codebase-design"]
@@ -210,9 +209,8 @@ Use one verb for each executable relationship:
 | `tdd` | Hand off | `$prototype` | The question is design evidence rather than production proof. |
 | `tdd` | Recommend and stop | `$codebase-design` | A GREEN refactor exposes one bounded interface or seam question outside the slice. |
 | `tdd` | Recommend and stop | `$improve-codebase-architecture` | A GREEN refactor exposes a wide candidate-finding survey outside the slice. |
-| `diagnosing-bugs` | Hand off | `$tdd` | Only when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known before Phase 1; retain the original caller. |
+| `diagnosing-bugs` | Hand off | `$tdd` | Only when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known before Trace; retain the original caller. |
 | `diagnosing-bugs` | Recommend and stop | `$implement` | Standalone diagnosis proved the cause and needs an implementation owner. |
-| `diagnosing-bugs` | Recommend and stop | `$improve-codebase-architecture` | Proven causal evidence exposes a wider architecture follow-up. |
 | `resolving-merge-conflicts` | Hand off | `$diagnosing-bugs` | A post-resolution failure remains causally uncertain. |
 | `review` | Hand off | `$convergent-pr-review` | The target is a local PR or needs independent high-risk review. |
 | `convergent-pr-review` | Hand off | `$review` | The target is an ordinary fixed-point review. |
@@ -255,7 +253,6 @@ Use one verb for each executable relationship:
 | `codebase-design` | `DIRECT-DESIGN.md`: direct pass and packet; `DEEPENING.md`: dependency/seam discipline; `DESIGN-IT-TWICE.md`: alternative interface exploration |
 | `domain-modeling` | `CONTEXT-FORMAT.md`: glossary and context-map format; `ADR-FORMAT.md`: ADR gate and format |
 | `tdd` | `tests.md`, `mocking.md`, `refactoring.md`: examples and branch mechanics |
-| `diagnosing-bugs` | `scripts/hitl-loop.template.sh`: structured HITL fallback |
 | `prototype` | `LOGIC.md`, `UI.md`: branch mechanics; `SKILL.md` owns lifecycle and boundary |
 | `triage` | `ATTENTION-SCAN.md`, `SPECIFIC-ITEM.md`, `QUICK-OVERRIDE.md`: branch procedures; `AGENT-BRIEF.md`: ready-contract rendering; `AGENT-BRIEF-EXAMPLES.md`: examples; `OUT-OF-SCOPE.md`: rejected-work knowledge base |
 | `repo-bootstrap` | Tracker, label, domain, and engineering-contract seeds; `setup-schema.json`: compatibility fingerprint; `scripts/validate_setup.py`: target-repo setup-surface validation |

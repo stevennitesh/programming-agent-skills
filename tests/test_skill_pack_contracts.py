@@ -458,8 +458,13 @@ def test_bug_routing_is_disjoint_and_non_bouncing() -> None:
         assert uncertain in text
         assert known in text
 
-    assert "are known before Phase 1" in diagnosing
+    assert "are known before **Trace**" in diagnosing
     assert "**Relentless diagnosis:**" in diagnosing
+    assert "No red-capable loop, no hypothesis. No proven cause, no fix." in diagnosing
+    assert "only with user or caller implementation authority" in diagnosing
+    assert "The **cause gate** passes only when" in diagnosing
+    assert "a green original scenario" in diagnosing
+    assert "claims no cause or fix" in diagnosing
     assert uncertain in diagnosing.split("---", 2)[1]
     assert uncertain in tdd.split("---", 2)[1]
     assert known in tdd.split("---", 2)[1]
@@ -850,12 +855,20 @@ def test_local_tracker_closeout_enters_the_lock_snapshot() -> None:
 def test_diagnosis_returns_to_one_implementation_owner() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
     diagnosing = (CUSTOM / "diagnosing-bugs/SKILL.md").read_text(encoding="utf-8")
+    relationships = (ROOT / "docs/synthesis/skill-context-relationships.md").read_text(
+        encoding="utf-8"
+    )
 
     assert "invoke `$diagnosing-bugs` in fix mode" in implement
     assert "resume here after regression proof" in implement
     assert "A caller-invoked run returns its diagnosis packet to that caller" in diagnosing
     assert "A standalone diagnosis-only run recommends `$implement`" in diagnosing
-    assert "**Return owner:**" in diagnosing
+    assert "Record architecture concerns as follow-up evidence for the caller" in diagnosing
+    assert "do not start architecture work here" in diagnosing
+    assert (
+        "`diagnosing-bugs` | Recommend and stop | `$improve-codebase-architecture`"
+        not in relationships
+    )
 
 
 def test_runtime_composition_edges_respect_invocation_policy() -> None:
