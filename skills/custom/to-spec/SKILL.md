@@ -5,35 +5,31 @@ description: Synthesize settled source into a source-traced parent spec and publ
 
 # To Spec
 
-Create the **parent spec**: the durable product and engineering intent artifact sometimes called a PRD.
+Own one outcome: a source-traced **parent spec** that preserves settled product and engineering intent for a fresh Codex session.
 
-This is **synthesis**. Treat the source as settled, recover its intent, ground it in repo context, choose the proof seam, and publish a spec a fresh Codex session can trust.
-
-Use the target repo's `AGENTS.md` for tracker, label, and domain docs. If a required setup document or named tracker operation is absent or incompatible with this skill, stop and recommend `$repo-bootstrap`.
+Use the target repo's `AGENTS.md` for tracker, label, and domain pointers. If a required setup document or named tracker operation is absent or incompatible with this skill, recommend `$repo-bootstrap` and stop.
 
 ## Process
 
-### 1. Trace Source
+### 1. Trace
 
-Trace the current conversation, supplied artifacts, and directly required context they name. Read every supplied artifact in full, including decision-bearing comments and directly required linked context.
+Trace the settled source: the conversation; every supplied artifact in full; decision-bearing comments; required linked context; and relevant code, prior art, domain terms, and ADRs. Surface domain or ADR conflicts. Record every relied-on source in `Source Trace`.
 
-Explore enough code to identify current modules, existing seams, proof surfaces, and relevant prior art. Use domain glossary terms for product concepts. Load `$codebase-design` as shared architecture vocabulary while this spec workflow remains authoritative. Surface conflicts with the domain glossary or ADRs.
+Load `$codebase-design` as shared architecture vocabulary; this skill retains spec ownership.
 
-Record every relied-on source in `Source Trace`.
+Pause only for a **material gap**: an unsettled decision that would change product intent, scope, architecture, or proof. Record other uncertainty in `Open Questions`.
 
-A **material gap** is the only reason to pause: ask when an unsettled decision would change product intent, scope, architecture, or proof. Put every non-blocking uncertainty in `Open Questions`.
+### 2. Choose
 
-### 2. Choose Proof Seam
+Choose the highest existing **proof seam** that proves user-visible behavior. Add a new load-bearing seam only when no existing seam can prove the spec.
 
-Choose the highest existing seam that proves user-visible behavior. Propose and justify a new load-bearing seam only when existing seams cannot prove the spec.
+Record the seam, behavior proved, prior art, and regression risks. A disputed load-bearing choice is a material gap.
 
-Before drafting, name the seam, behavior proven, relevant prior art, and regression risks. Apply the material-gap gate when the choice is unsettled; otherwise cite its source in `Source Trace`.
+### 3. Draft
 
-### 3. Write And Publish
+Draft under `.tmp/to-spec/<slug>.md`. Pass the **fresh-session test**: the spec alone recovers the shared understanding.
 
-Pass the **fresh-session test**: a new Codex session can recover the shared understanding from the spec alone.
-
-Sections:
+Use these sections:
 
 - `Source Trace`
 - `Problem Statement`
@@ -47,24 +43,18 @@ Sections:
 - `Open Questions`
 - `Further Notes` - omit when empty
 
-Number each user story and name its actor, capability, benefit, edge cases, and acceptance branches.
+Write a comprehensive, numbered set of user stories that exhausts every source-visible actor, capability, benefit, edge case, and acceptance branch. Keep proof notes to seams, proof points, likely tracer bullets, fixtures, prior patterns, and regression risks. Include paths or snippets only when a durable contract or prototype finding preserves a decision more precisely than prose.
 
-Keep proof notes at spec level: seams, proof points, likely tracer bullets, useful fixtures, prior patterns, and regression risks.
+### 4. Cover
 
-Include file paths or code snippets only when a durable contract or prototype finding encodes a decision more precisely than prose.
+Apply the **coverage gate**: account for every source-visible commitment, actor, flow, constraint, edge case, failure mode, prototype finding, and scope boundary, or mark it irrelevant in `Source Trace`.
 
-**Coverage gate:** before publishing, account for every source-visible commitment, actor, flow, constraint, edge case, failure mode, prototype finding, and scope boundary in the appropriate section, or mark it explicitly irrelevant in `Source Trace`.
+### 5. Publish
 
-**Publication scope:** mutate only the `.tmp/` draft and one published parent spec. Treat supplied artifacts as sources unless the user explicitly asks to update them. `$to-tickets` owns implementation slicing, blocking edges, and `ready-for-agent` state.
+Mutate only the draft and one parent spec. Supplied artifacts remain sources unless the user explicitly asks to update them. `$to-tickets` owns implementation slicing, blocking edges, and `ready-for-agent` state.
 
-Draft under `.tmp/to-spec/<slug>.md`.
+Publish through the tracker contract routed by `AGENTS.md`. Apply **Mutation read-back** to body and metadata. Delete the draft after successful read-back; preserve and report it when blocked or explicitly requested.
 
-Publish through the tracker and label docs routed by `AGENTS.md`.
+Return the parent reference, any preserved draft path, and recommend `$to-tickets` and stop when implementation slicing is next.
 
-Apply the tracker's **Mutation read-back** rule. Verify the published body and metadata against the draft. After successful verification, delete the disposable draft unless the user explicitly asks to preserve it. Preserve and report the draft when publication or read-back is blocked.
-
-End with the published parent reference, any intentionally preserved draft path, and a recommendation for `$to-tickets` when implementation slicing is next.
-
-## Completion Criteria
-
-Complete only when every supplied artifact was fully read, every relied-on source is traced, the coverage gate passes, every material gap is resolved, remaining gaps are recorded in `Open Questions`, the spec is repo-grounded, proof-seam-aware, passes the fresh-session test, and the published parent was read back successfully. The disposable draft is deleted after success or intentionally preserved and reported after a blocker or explicit user request.
+Complete only after Trace and Cover pass, no material gap remains, publication is read back, and draft cleanup or preservation is reported.
