@@ -573,6 +573,21 @@ def test_mutating_workflows_require_readback() -> None:
         assert "Mutation read-back" in text, name
 
 
+def test_to_tickets_preserves_approval_coverage_and_frontier_contract() -> None:
+    tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
+
+    required = (
+        "Apply the **coverage gate**",
+        "Get explicit user approval",
+        "before publishing",
+        "exactly one next action",
+        "recommend `$implement`",
+        "recommend `$parallel-implement`",
+    )
+    for token in required:
+        assert token in tickets
+
+
 def test_worker_modes_have_distinct_completion_artifacts() -> None:
     contract = (ROOT / "docs/agents/engineering-contract.md").read_text(encoding="utf-8")
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
@@ -782,6 +797,8 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         ("diagnosing-bugs", "Hand off", "tdd"),
         ("diagnosing-bugs", "Recommend and stop", "implement"),
         ("implement", "Recommend and stop", "to-tickets"),
+        ("to-tickets", "Recommend and stop", "implement"),
+        ("to-tickets", "Recommend and stop", "parallel-implement"),
         ("wayfinder", "Recommend and stop", "repo-bootstrap"),
         ("triage", "Recommend and stop", "repo-bootstrap"),
         ("to-spec", "Recommend and stop", "repo-bootstrap"),
