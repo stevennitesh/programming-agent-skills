@@ -1,19 +1,18 @@
 ---
 name: grill-with-docs
-description: Compose a repo-backed grilling session with durable domain capture. Use when both the interview loop and domain-model upkeep are required, including when another skill needs both.
+description: Compose a repo-backed grilling session with durable domain capture. Use when a plan or design needs both the interview loop and domain-model upkeep.
 ---
 
 # Grill With Docs
 
-Compose one `$grilling` session with `$domain-modeling` active throughout.
+**Outcome:** one `$grilling` exit packet reconciled with `$domain-modeling`'s domain delta.
 
-**Mutation boundary:** Before the interview, state that Confirmed domain terms may update routed domain docs. ADR creation still requires explicit approval.
+**Compose.** Run one `$grilling` session with `$domain-modeling` active throughout; preserve their gates and mutation boundaries.
 
-When a caller supplies a bound, pass it to `$grilling`. Treat material branches beyond that bound as explicit deferrals to the caller's named artifact or workflow; keep the normal Confirmed and Evidence gap exits.
+**Disclose.** Before the interview, state that confirmed domain terms may update routed domain docs; ADRs require explicit approval.
 
-- `$grilling` owns the design tree, one-decision turns, and exit packet.
-- `$domain-modeling` owns every `CONTEXT.md` or ADR write and applies its persistence and approval rules unchanged.
+**Bound.** Pass through caller bounds. Defer material branches beyond them to the caller's named artifact or workflow.
 
-**Domain gate:** before either exit, require every resolved domain term to be captured and every resolved ADR-worthy decision to be offered or recorded. Add changed domain paths and ADR outcomes to the exit packet.
+**Reconcile.** Before either exit, obtain `$domain-modeling`'s complete domain delta and add its changed paths and ADR outcomes to `$grilling`'s packet.
 
-Return through `$grilling`'s **Confirmed** or **Evidence gap** gate.
+**Return.** Use the **Confirmed** or **Evidence gap** gate.

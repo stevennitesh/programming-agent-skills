@@ -208,7 +208,9 @@ def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
     assert "zero tickets have recorded outcomes" in wayfinder
     assert "exactly one selected ticket has a substantive outcome" in wayfinder
     assert "every other ticket mutation is consequence-only" in wayfinder
-    assert "When a caller supplies a bound" in grill_docs
+    assert "**Bound.**" in grill_docs
+    assert "caller bounds" in grill_docs
+    assert "caller's named artifact or workflow" in grill_docs
 
 
 def test_grill_with_docs_owns_interview_domain_composition() -> None:
@@ -224,6 +226,12 @@ def test_grill_with_docs_owns_interview_domain_composition() -> None:
     assert "$domain-modeling" not in grilling
     assert "$grilling" not in domain
     assert "$grill-with-docs` is the sole composer" in relationships
+    for verb in ("Compose", "Disclose", "Bound", "Reconcile", "Return"):
+        assert f"**{verb}.**" in grill_docs
+    assert "confirmed domain terms may update routed domain docs" in grill_docs
+    assert "ADRs require explicit approval" in grill_docs
+    assert "complete domain delta" in grill_docs
+    assert "changed paths and ADR outcomes" in grill_docs
 
 
 def test_domain_modeling_owns_durable_domain_truth() -> None:
@@ -847,7 +855,7 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
     assert required <= edges
 
     source_wording = {
-        CUSTOM / "grill-with-docs/SKILL.md": "Compose one `$grilling` session with `$domain-modeling` active throughout.",
+        CUSTOM / "grill-with-docs/SKILL.md": "`$grilling` session with `$domain-modeling` active throughout",
         CUSTOM / "to-spec/SKILL.md": "Load `$codebase-design` as shared architecture vocabulary",
         CUSTOM / "triage/SPECIFIC-ITEM.md": "invoke `$grill-with-docs`",
         CUSTOM / "implement/SKILL.md": "invoke `$diagnosing-bugs` in fix mode",
