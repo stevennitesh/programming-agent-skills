@@ -1,49 +1,20 @@
 ---
 name: domain-modeling
-description: Build a project's ubiquitous language and ADR record. Use when domain terms or boundaries are being resolved, a decision may be ADR-worthy, or another skill delegates durable domain capture.
+description: Resolve and persist a project's ubiquitous language, context boundaries, and ADR-worthy decisions. Use when canonical domain terms or boundaries are changing, an ADR may be warranted, or another skill delegates durable domain capture.
 ---
 
 # Domain Modeling
 
-Build the project's **ubiquitous language** as it changes.
+Own durable domain truth. Vocabulary consumption follows repo domain routing; this skill starts when domain truth is changing.
 
-Vocabulary consumption belongs to repo domain routing. This discipline begins when domain language, context boundaries, or decision records are changing.
+## Process
 
-## Orient
+1. **Trace.** Trace the request or caller packet, repo instructions, `docs/agents/domain.md` when present, routed context docs, ADRs, and evidence needed for factual claims. Without configured routing, an existing root `CONTEXT-MAP.md` selects multi-context; otherwise use root `CONTEXT.md`. Create domain files only while persisting the first resolution.
 
-Build the **Source Trace** from the current request or caller packet, repo instructions, `docs/agents/domain.md` when present, the relevant context map, glossaries, ADRs, and any code evidence needed by factual claims.
+2. **Challenge.** Surface collisions among requested language, existing language, ADRs, and code. Sharpen vague or overloaded terms; stress-test concept and context boundaries with concrete edge cases; keep contradictions open until resolved.
 
-Follow configured domain routing. Without it, a root `CONTEXT-MAP.md` selects multi-context; otherwise use a root `CONTEXT.md`. Create domain files only when the first resolution needs them.
+3. **Resolve.** Settle each term's canonical name, definition, owning context, and material conflicts. Evidence settles facts; the user or caller packet settles contested language, boundaries, and decisions.
 
-Orienting is complete when the owning context, existing language, relevant decisions, and evidence gaps are known.
+4. **Persist.** A request to change domain truth, or a caller contract that includes durable domain capture, authorizes context writes; otherwise return patch-ready wording and target paths. Read [CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md), capture resolved terms immediately, and reconcile affected context relationships. Apply [ADR-FORMAT.md](./ADR-FORMAT.md) to ADR candidates; create an ADR only after an explicit request or user approval. Mutate only `CONTEXT.md`, `CONTEXT-MAP.md`, and ADR files; return other work to its owner.
 
-## Model
-
-- **Challenge:** Surface collisions between user language, glossary language, ADRs, and code.
-- **Sharpen:** Replace vague or overloaded language with one precise canonical term. Prefer existing terms when they fit; record rejected synonyms under `_Avoid_`.
-- **Stress-test:** Use concrete edge cases to force concept and context boundaries.
-- **Cross-check:** Test factual claims against code and named sources. Keep contradictions open until resolved.
-- **Resolve:** Require a settled canonical name, definition, owning context, and material conflicts. Source evidence settles facts; the user or caller packet settles contested language, boundaries, and decisions.
-
-## Persist
-
-**Write gate:** A request to change domain truth, or an invoked caller whose contract includes durable domain capture, authorizes glossary and context-map writes. Otherwise return patch-ready wording and target paths.
-
-- **Glossary:** Read [CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md), then capture each resolved term immediately in the owning `CONTEXT.md`.
-- **Map:** Create or update `CONTEXT-MAP.md` when a context boundary or cross-context relationship resolves.
-- **ADR:** Apply the **ADR-worthy gate** in [ADR-FORMAT.md](./ADR-FORMAT.md) when a resolved decision may deserve a durable record. Create an ADR only after an explicit request or user approval.
-- **Scope:** Mutate only `CONTEXT.md`, `CONTEXT-MAP.md`, and ADR files. Return code, spec, plan, ticket, or tracker work to its owning skill.
-
-## Handoff
-
-Return a **domain delta** containing:
-
-- Source Trace;
-- resolved terms and owning contexts;
-- changed domain paths or patch-ready wording;
-- ADR offers, paths, and outcomes;
-- unresolved terms, contradictions, and evidence gaps.
-
-## Completion Criteria
-
-Complete only when every resolved term is captured or handed off patch-ready; every affected context map is reconciled; every ADR candidate has an offered, recorded, or declined outcome; every unresolved contradiction is named; writes stayed inside the domain scope; and the domain delta was returned.
+5. **Return.** Return a **domain delta** with the Source Trace; resolved terms and owning contexts; changed paths or patch-ready wording; ADR offers, paths, and outcomes; and unresolved terms, contradictions, and evidence gaps. Complete only when each resolution and affected context relationship is accounted for, every ADR candidate is offered, recorded, or declined, and writes stayed inside domain scope.

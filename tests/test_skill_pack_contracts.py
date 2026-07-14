@@ -226,6 +226,19 @@ def test_grill_with_docs_owns_interview_domain_composition() -> None:
     assert "$grill-with-docs` is the sole composer" in relationships
 
 
+def test_domain_modeling_owns_durable_domain_truth() -> None:
+    domain = (CUSTOM / "domain-modeling/SKILL.md").read_text(encoding="utf-8")
+
+    for verb in ("Trace", "Challenge", "Resolve", "Persist", "Return"):
+        assert f"**{verb}.**" in domain
+
+    assert "[CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md)" in domain
+    assert "[ADR-FORMAT.md](./ADR-FORMAT.md)" in domain
+    assert "explicit request or user approval" in domain
+    assert "Mutate only `CONTEXT.md`, `CONTEXT-MAP.md`, and ADR files" in domain
+    assert "Return a **domain delta**" in domain
+
+
 def test_grilling_preserves_one_decision_confirmed_exit_and_evidence_routes() -> None:
     grilling = (CUSTOM / "grilling/SKILL.md").read_text(encoding="utf-8")
 

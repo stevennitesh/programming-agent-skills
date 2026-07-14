@@ -49,4 +49,4 @@ Contract: <what crosses the boundary>
 Owner: <who controls the contract>
 ```
 
-Use `CONTEXT-MAP.md` to route terms and record resolved context relationships. Create or update it when a context boundary or relationship resolves. Update every relevant glossary when a term crosses contexts. Keep unclear ownership unresolved and surface it in the domain delta.
+`CONTEXT-MAP.md` routes terms and records resolved context relationships. When a term crosses contexts, update each affected glossary. Leave unclear ownership unresolved for the domain delta.
