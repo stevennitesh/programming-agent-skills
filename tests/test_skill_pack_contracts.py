@@ -614,7 +614,7 @@ def test_implementation_closeout_requires_the_spec_axis() -> None:
     assert "When `Spec required: yes`" in convergent
     assert "return `incomplete` before reviewer dispatch" in convergent
     assert "`Spec required: yes`, the selected work item" in implement
-    assert "`Spec required: yes`, the run Source Trace" in parallel
+    assert "with `Spec required: yes`, the Source Trace" in parallel
     assert (
         "Accepted residual risk must be authorized by the selected item, repo "
         "policy, or user"
@@ -624,7 +624,8 @@ def test_implementation_closeout_requires_the_spec_axis() -> None:
             "Carry the caller-supplied Spec requirement, Source Trace and Spec "
             "sources, fixed point, and captured target into the handoff."
         ) in text
-    assert "an incomplete Spec axis keeps Lock closed" in parallel
+    assert "incomplete Spec axis" in parallel
+    assert "Keep Lock closed" in parallel
 
 
 def test_independent_scouts_receive_curated_fresh_context() -> None:
@@ -826,7 +827,7 @@ def test_worker_modes_have_distinct_completion_artifacts() -> None:
     assert "**staged worker**" in contract
     assert "**lane worker**" in contract
     assert "**Staged worker:**" in implement
-    assert "**Lane workers**" in parallel
+    assert "**Lane worker:**" in parallel
 
 
 def test_parallel_implement_separates_context_checkout_and_review_ownership() -> None:
@@ -848,25 +849,24 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
     ).read_text(encoding="utf-8")
 
     assert "**Two isolations:**" in parallel
-    assert "ready frontier -> two isolations -> fresh-context lane workers" in parallel
+    assert "**Trace -> Gate -> Wave -> Integrate -> Review -> Lock -> Release**" in parallel
     assert "worktree lock" not in parallel
-    assert "A delegated lane is ready only when both are established" in parallel
+    assert "every delegated lane requires both fresh context" in parallel
     assert "**Root-only fan-out:**" in parallel
-    assert "**Slot lock:**" in parallel
-    assert "the smaller of three or the live slots remaining" in parallel
+    assert "**slot lock**" in parallel
+    assert "the smaller of three or live slots remaining" in parallel
     assert 'fork_turns="none"' in parallel
-    assert "**Default lane route:**" in parallel
-    assert "Before formal review, verify that no lane agent is running." in parallel
-    assert "the integration lane produced a review-ready packet" in parallel
+    assert "Wait until every lane agent is idle." in parallel
+    assert "it returns a review-ready packet" in parallel
     assert "**Workspace boundary:**" in worker
     assert "**One worker, one lane, one packet:**" in worker
-    assert "Do not dispatch subagents or invoke `$review`" in integrator
+    assert "Never dispatch, formally review" in integrator
     assert "## Review-Ready Handoff" in integrator
     assert "`spawn_agent` creates a child context" in launch
     assert 'git worktree add --detach' in launch
     assert "## Explicit Background Task" in launch
-    assert "only when the user explicitly asks" in launch
-    assert "**Formal review owner:** `orchestrator`" in ledger
+    assert "only when the user explicitly requests" in launch
+    assert "**Review:**" in ledger
     assert "IntegratorBrief --> Review" not in relationships
     assert "IntegratorBrief -. \"ledger-approved only\" .-> CPR" not in relationships
     assert "integration lane executes only that route" not in parallel
@@ -896,49 +896,50 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
     ).read_text(encoding="utf-8")
 
     required_parallel = (
-        "Run two or more ready, non-overlapping work items as a wavefront",
-        "**Frontier gate:**",
+        "Orchestrate two or more ready, semantically independent work items",
+        "**frontier gate**",
         "Non-overlapping files do not prove semantic independence.",
-        "**Resume gate:**",
-        "do not redispatch or reland them",
-        "**Worker status:**",
-        "**Conflict gate:**",
-        "Invoke `$resolving-merge-conflicts`",
-        "**Review acceptance:**",
-        "`pass with residual risk` unlocks only when",
+        "On resume, reconcile it with Git, worktrees, agents, claims, and tracker state",
+        "Never redispatch or reland them.",
+        "`done`:",
+        "`needs-feedback`:",
+        "`blocker`:",
+        "invoke `$resolving-merge-conflicts`",
+        "Keep Lock closed",
+        "unaccepted residual risk",
+        "`pass with residual risk` opens Lock only when",
         "The selected run authorizes scoped worker commits",
-        "record one landing mode and one executor",
-        "verify that the remote branch or PR head resolves to the approved closeout `HEAD`",
+        "integration mode, landing mode, executor",
+        "verify the remote branch or PR head resolves to the approved closeout `HEAD`",
         "Return exactly one ledger Outcome: `complete`, `partial`, or `blocked`.",
-        "A `partial` or `blocked` outcome does not claim an approved closeout `HEAD`",
+        "`partial` or `blocked` claims only events that occurred",
         "no active lane or unaccounted partial mutation",
     )
     for token in required_parallel:
         assert token in parallel
 
-    assert parallel.count("**Shallow mode:**") == 1
+    assert parallel.count("**Shallow:**") == 1
     assert "micro-worker" not in parallel
     assert "downshift or serialize" not in parallel
 
     assert "**Integration context:**" in worker
     assert "**Report transport:**" in worker
     assert "next need:" in worker
-    assert "**Landing mode:**" in integrator
+    assert "**Landing route and mode:**" in integrator
     assert "recorded landing mode, and landing authority" in integrator
     assert "Preserve the partial state for the orchestrator's Conflict gate." in integrator
-    assert "fresh lane worker required" in integrator
+    assert "fresh lane worker is required" in integrator
     assert "micro-worker" not in integrator
 
     assert "Dirty state, untracked work, or an unpreserved commit blocks cleanup." in launch
     assert "Forced removal and branch deletion require explicit destructive authority." in launch
 
     for token in (
-        "**Landing mode:**",
+        "**Landing:**",
         "<scope/downshift/resume/frontier/",
         "**Current integration HEAD:**",
         "**Current Git state:**",
-        "**Blockers:**",
-        "**Next owner:**",
+        "**Blockers and next owner:**",
         "**Remaining permissions or mutations:**",
     ):
         assert token in ledger
@@ -1052,7 +1053,7 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         CUSTOM / "to-spec/SKILL.md": "Load `$codebase-design` as shared architecture vocabulary",
         CUSTOM / "triage/SPECIFIC-ITEM.md": "invoke `$grill-with-docs`",
         CUSTOM / "implement/SKILL.md": "invoke `$diagnosing-bugs` in fix mode",
-        CUSTOM / "parallel-implement/SKILL.md": "the orchestrator invokes `$review` by default",
+        CUSTOM / "parallel-implement/SKILL.md": "The orchestrator invokes `$review` by default",
         CUSTOM / "review/SKILL.md": "Hand off to `$convergent-pr-review` and stop",
         CUSTOM / "tdd/SKILL.md": "Hand off to `$diagnosing-bugs`",
         CUSTOM / "codebase-design/DIRECT-DESIGN.md": "Recommend `$improve-codebase-architecture` and stop",

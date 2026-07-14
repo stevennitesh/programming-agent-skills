@@ -1,7 +1,7 @@
 interface:
   display_name: "Parallel Implement"
-  short_description: "Isolated wavefront, root-owned review"
-  default_prompt: "Use $parallel-implement to run these ready, non-overlapping work items as an isolated wavefront with fresh-context one-commit workers, serial integration, root-owned review, tracker lock, and release sweep."
+  short_description: "Isolated wavefront with root-owned Lock"
+  default_prompt: "Use $parallel-implement to run these ready, semantically independent work items through isolated one-commit lanes, serial integration, root-owned review, Lock, and release."
 
 policy:
   allow_implicit_invocation: false
