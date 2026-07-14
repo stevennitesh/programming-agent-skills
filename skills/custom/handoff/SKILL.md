@@ -5,89 +5,50 @@ description: Compact the live thread into a resumable handoff for a fresh Codex 
 
 # Handoff
 
-Create a **compaction**: preserve the live thread's resumable core while durable artifacts remain the source of truth.
+**Trace -> Snapshot -> Compact -> Redact -> Save -> Verify -> Return**
 
-## Boundary
+**Trace.** Resolve `<work-root>` as the Git root when present, otherwise the current directory. Target `<work-root>/.tmp/handoff-<YYYYMMDD-HHMMSS>.md`. In a Git repo, confirm the target is ignored before writing; otherwise recommend `$repo-bootstrap` and stop. Read the live thread and named artifacts.
 
-Write exactly one artifact at `<work-root>/.tmp/handoff-<YYYYMMDD-HHMMSS>.md`. Resolve `<work-root>` as the Git root when present, otherwise the current working directory. Create `.tmp/` when absent. In a Git repo, confirm the target is ignored before writing; otherwise stop and recommend `$repo-bootstrap`.
+**Snapshot.** Verify volatile repo and workflow state and every pointer. Label facts, inferences, and unknowns; leave new evidence and task work to the receiving session.
 
-The invocation authorizes only that handoff artifact. Keep it outside the Git index and commits. Leave tracked workspace files, the tracker, Git state, the active workflow, and Codex tasks unchanged. Suggested skills remain instructions for the receiving session.
-
-When the invocation includes a focus, make it the receiving session's Purpose and Next Step. The **focus gate** preserves every blocker, risk, unresolved decision, and state fact required to resume safely.
-
-## Build The Handoff
-
-Trace the live thread and its named artifacts. **Snapshot:** verify volatile state and pointer exactness; mark unknowns, and leave new evidence trails and task work to the receiving session.
-
-Use this structure:
+**Compact.** Preserve only state expensive to recover from the Source Trace, using the active workflow's vocabulary. A supplied focus sets Purpose and Next Step without hiding any blocker, risk, unresolved decision, or state needed to resume safely.
 
 ```markdown
 # Handoff
 
 ## Purpose
-
-What the receiving session must continue, decide, or prove.
+Continuation, decision, or proof target.
 
 ## Current State
-
-What is complete, in progress, intentionally unchanged, and currently blocked.
-
-Name the active workflow and its exact phase or gate.
-
-For repo work, include the cwd or worktree, branch or detached HEAD, relevant commit, staged and unstaged scope, material untracked files, and ownership of unrelated dirty work.
+Complete, in-progress, intentionally unchanged, and blocked state; active workflow and exact phase or gate. For repo work: cwd/worktree, branch or detached HEAD, relevant commit, staged/unstaged scope, material untracked files, and unrelated-dirty-work ownership.
 
 ## Key Decisions
-
-Confirmed decisions, rejected options, constraints, scope boundaries, and commitments still requiring user approval.
+Confirmed and rejected decisions, constraints, scope boundaries, and commitments awaiting approval.
 
 ## Source Trace
-
-Exact paths, URLs, issue numbers, specs, plans, ADRs, commits, diffs, prototypes, intentionally preserved `.tmp/` artifacts, and tracked `.scratch/` artifacts the receiving session must read.
+Exact pointers to durable truth and intentionally preserved `.tmp/` or tracked `.scratch/` artifacts. Reference; do not copy.
 
 ## Validation
-
-Commands and checks run, their outcomes, proof gathered, skipped validation, missing proof, and residual risk.
+Commands/checks, outcomes, proof, skips, gaps, and residual risk.
 
 ## Open Questions
-
-Unresolved questions, partial answers, evidence gaps, and the decision each answer would unlock.
+Question, known evidence, and decision unlocked.
 
 ## Next Step
-
-One executable next action in the active workflow vocabulary, including its target and stopping point.
+One executable, workflow-native action with target and stopping point.
 
 ## Suggested Skills
-
-Only the skills the receiving session should invoke, each with a one-line reason. Write `None` when no skill is needed.
+Receiving-session skills with one-line reasons, or `None`.
 ```
 
-## Compaction Rules
+**Redact.** Remove secrets, credentials, and personally identifiable information.
 
-- **References, not copies:** Point to specs, plans, ADRs, issues, commits, diffs, and other durable truth instead of restating them.
-- **Workflow-native:** Preserve the workflow actually in progress rather than translating every handoff into implementation.
-- **Facts / Inferences / Unknowns:** Label confirmed state, interpretation, and uncertainty distinctly.
-- **Redaction gate:** Remove API keys, passwords, tokens, private keys, credentials, secrets, and personally identifiable information.
-- **Resumable core:** Carry only state the receiving session cannot recover cheaply from the Source Trace.
+**Save.** Create `.tmp/` when absent and write exactly the target artifact. The invocation authorizes only those changes. Keep the file outside the index and commits; leave tracked files, tracker state, Git state, the active workflow, and Codex tasks unchanged. Suggested skills remain unexecuted.
 
-## Read Back And Return
+**Verify.** Reread until the file is source-traced, redacted, actionable, current, pointer-exact or explicitly unverified, ignored when Git applies, and the only authorized state change.
 
-Reread the saved file and verify:
-
-- every load-bearing live-state fact is captured or source-traced;
-- the output is under `<work-root>/.tmp/` and ignored when `<work-root>` is a Git repo;
-- local paths, issue numbers, URLs, and commit identifiers are exact or marked unverified;
-- repo and workflow state are current;
-- durable truth was referenced rather than copied;
-- secrets and personal data are absent;
-- the Next Step is executable;
-- Suggested Skills are justified.
-
-Report the absolute path and this pickup prompt:
+**Return.** Report the absolute path and:
 
 > Continue from `<absolute-path>`. Read the handoff first, then execute its Next Step.
 
-When a focus was supplied, append it to the pickup prompt.
-
-## Completion Criteria
-
-Complete only when exactly one handoff file is saved under `<work-root>/.tmp/`, ignored when the work root is a Git repo, reread, redacted, and source-traced; the current workflow and conditional repo state are accurate; the Next Step and Suggested Skills are actionable; the absolute path and pickup prompt are returned; and no other state changed.
+Append a supplied focus to the pickup prompt.

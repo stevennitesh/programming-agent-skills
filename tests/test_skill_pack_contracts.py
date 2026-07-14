@@ -29,6 +29,31 @@ def test_router_names_every_custom_skill() -> None:
     }
 
 
+def test_handoff_compacts_context_without_advancing_work() -> None:
+    skill_dir = CUSTOM / "handoff"
+    handoff = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+
+    assert not implicit_policy(skill_dir)
+    verbs = ("Trace", "Snapshot", "Compact", "Redact", "Save", "Verify", "Return")
+    for verb in verbs:
+        assert f"**{verb}.**" in handoff
+
+    required = (
+        "<work-root>/.tmp/handoff-<YYYYMMDD-HHMMSS>.md",
+        "confirm the target is ignored before writing",
+        "recommend `$repo-bootstrap` and stop",
+        "A supplied focus sets Purpose and Next Step without hiding any blocker",
+        "Label facts, inferences, and unknowns",
+        "Reference; do not copy",
+        "The invocation authorizes only those changes",
+        "Suggested skills remain unexecuted",
+        "the only authorized state change",
+        "Continue from `<absolute-path>`. Read the handoff first, then execute its Next Step.",
+    )
+    for token in required:
+        assert token in handoff
+
+
 def test_tracker_templates_share_ready_and_readback_contracts() -> None:
     trackers = [
         ROOT / "docs/agents/issue-tracker.md",

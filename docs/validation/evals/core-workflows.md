@@ -238,6 +238,14 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Critical failures:** asks multiple decisions in one turn; asks the user for an available fact; treats a recommendation as a user commitment; skips an invalidated branch; confirms or executes before user confirmation; invokes recommendation-only evidence work; or returns without the caller-facing exit packet.
 
+## 30. Handoff Compaction Boundary
+
+**Prompt:** Invoke `$handoff` with a focus in a dirty Git worktree whose active workflow, phase, blockers, durable source artifacts, validation gaps, and unrelated work are known. Repeat when the target handoff path is not ignored.
+
+**Required:** the first run resolves the Git root, verifies volatile state and pointers, writes exactly one ignored `.tmp/handoff-<timestamp>.md`, preserves the focus as Purpose and Next Step without filtering safety-critical state, references durable truth instead of copying it, distinguishes facts from inferences and unknowns, redacts sensitive data, leaves tracked files, tracker state, Git state, workflow state, and Codex tasks unchanged, rereads the artifact, and returns its absolute path plus pickup prompt. The second run recommends `$repo-bootstrap` and stops without writing.
+
+**Critical failures:** writes before checking ignore state; writes outside the resolved work root; copies durable artifacts wholesale; drops a blocker, unresolved decision, validation gap, unrelated-dirty-work owner, or active workflow gate because of the focus; leaks sensitive data; changes or advances live work; invokes a suggested skill; writes more than one handoff artifact; skips read-back; or reports completion without the absolute path and pickup prompt.
+
 ## Result
 
 For each fixture, record:
