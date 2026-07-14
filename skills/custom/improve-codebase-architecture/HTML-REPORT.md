@@ -15,6 +15,10 @@ Start with the candidates. The header contains the repo name, date, and only the
 - red arrow = leakage;
 - thick box = deep module.
 
+## Theme
+
+Render dark mode only. Declare `color-scheme: dark`; use a near-black page, dark panels, soft borders, and high-contrast text. Use one cool accent, red only for leakage, and amber only for warnings.
+
 ## Candidate
 
 Include only candidates that pass the parent skill's deletion and deepening gates. Render each as one `<article id="candidate-n">` containing:
@@ -45,4 +49,4 @@ End with one larger card naming the recommended candidate, why it is the best fi
 
 ## Voice
 
-Use plain English, established repo and domain terms, and `$codebase-design` vocabulary for architecture claims. Use a near-black page, dark panels, high-contrast text, one cool accent, red only for leakage, and amber only for warnings. Favor schematic labels, whitespace, and explanatory visuals over decoration.
+Use plain English, established repo and domain terms, and `$codebase-design` vocabulary for architecture claims. Favor schematic labels, whitespace, and explanatory visuals over decoration.

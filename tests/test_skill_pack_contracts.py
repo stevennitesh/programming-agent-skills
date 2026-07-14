@@ -399,6 +399,8 @@ def test_architecture_report_matches_the_survey_gate() -> None:
     )
 
     assert "no network requests or runtime JavaScript" in report
+    assert "Render dark mode only" in report
+    assert "`color-scheme: dark`" in report
     assert "pass the parent skill's deletion and deepening gates" in report
     assert "`Strong` or `Worth exploring`" in report
     assert "`Speculative`" not in report
