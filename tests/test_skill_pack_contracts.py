@@ -110,9 +110,9 @@ def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     bootstrap = (CUSTOM / "repo-bootstrap/SKILL.md").read_text(encoding="utf-8")
     required = (
         "treat this run as a **reconcile**, not a reset",
-        "**Preserve:** confirmed tracker",
-        "**Delta:** propose only changes required by the current pack.",
-        "**Re-ask:** revisit a choice only when it is missing, ambiguous, incompatible, or explicitly reopened by the user.",
+        "**Preserve.** Carry forward the confirmed tracker",
+        "**Delta.** Propose only changes required by the current pack.",
+        "**Re-ask.** Revisit a choice only when missing, ambiguous, incompatible, explicitly reopened",
         "Reconcile existing local contracts in place.",
         "Preserve repo-specific additions.",
     )
@@ -140,6 +140,7 @@ def test_repo_bootstrap_marks_and_validates_setup_schema() -> None:
     assert marker in agents
     assert "marker identifies a legacy setup" in bootstrap
     assert "a different fingerprint identifies an outdated setup" in bootstrap
+    assert "[setup-schema.json](setup-schema.json) owns the current fingerprint" in bootstrap
     assert validate_skills.validate_setup_schema_manifest(ROOT) == []
 
 
@@ -151,6 +152,7 @@ def test_portable_fallback_adoption_removes_the_portable_contract_owner() -> Non
     )
 
     assert "replace its portable title and owner preamble" in bootstrap
+    assert "installed-pack primer and engineering-contract pointer" in bootstrap
     failures = validator["portable_owner_failures"](fallback)
     assert failures == [
         "AGENTS.md still declares the portable engineering-contract owner; "
@@ -707,7 +709,7 @@ def test_portable_fallback_carries_the_standalone_engineering_contract() -> None
 
     assert loop in fallback
     assert loop in contract
-    assert "Portable Engineering Contract" in bootstrap
+    assert "portable engineering-contract owner" in bootstrap
     assert re.findall(r"\$[a-z0-9][a-z0-9-]*", fallback) == []
     assert len(fallback.split()) <= 950
     assert not any(line.startswith("  ") for line in fallback.splitlines())
