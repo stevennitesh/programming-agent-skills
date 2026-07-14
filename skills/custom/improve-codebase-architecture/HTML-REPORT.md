@@ -1,71 +1,48 @@
-# HTML Report Format
+# HTML Report Contract
 
-Render one self-contained architecture survey under repo-local `.tmp/architecture-reviews/`.
+Render one self-contained semantic architecture survey under repo-local `.tmp/architecture-reviews/`.
 
-The report compares source-traced deepening candidates. The chosen-candidate pass owns dependency classification and interface contracts.
+## Portability
 
-## Portability Gate
+The report must open offline with no network requests or runtime JavaScript. Embed CSS and static SVG. If the repo already provides a local Mermaid renderer, pre-render with its default strict security level; otherwise use inline SVG or positioned HTML.
 
-The report must open offline with no network request. Embed CSS and SVG directly. Use no runtime JavaScript.
+## Layout
 
-When the repo already provides a local Mermaid renderer, render Mermaid to static SVG with its default strict security level and embed the SVG. Otherwise draw the relationship with inline SVG or positioned HTML.
-
-## Structure
-
-Produce one self-contained semantic HTML report with embedded CSS and SVG. Include the current structure, friction points, numbered candidates, trade-offs, and a visibly marked Top recommendation.
-
-## Header
-
-Include repo name, date, and a compact legend:
+Start with the candidates. The header contains the repo name, date, and only the visual encodings actually used:
 
 - solid box = module;
 - dashed line = seam;
 - red arrow = leakage;
 - thick box = deep module.
 
-Start with candidates; omit an introductory essay.
+## Candidate
 
-## Candidate Card
+Include only candidates that pass the parent skill's deletion and deepening gates. Render each as one `<article id="candidate-n">` containing:
 
-Include only candidates that pass the parent skill's deepening gate. Each candidate is one `<article>` with:
-
-- stable `Candidate N` label and `id="candidate-n"`;
-- short title naming the deepening;
-- recommendation strength: `Strong`, `Worth exploring`, or `Speculative`;
+- stable `Candidate N` label and a short deepening title;
+- recommendation strength: `Strong` or `Worth exploring`;
 - compact Source Trace with file and line pointers;
-- side-by-side before/after diagrams;
-- one sentence each for Problem, Why it matters, Deepening hypothesis, and Validation angle;
+- comparable before/after diagrams;
+- one sentence each for Problem, Deepening hypothesis, Trade-off, and Validation angle;
 - short wins in `$codebase-design` terms;
-- one warning line when an ADR may need reopening.
+- one ADR warning when material friction may justify reopening a decision.
 
-Redraw the diagram when prose grows.
+Report a deepening hypothesis, not a final interface contract. Redraw the diagram when prose grows.
 
-## Diagram Patterns
+## Diagram
 
 Choose the smallest visual that explains the candidate:
 
-- **Graph:** locally pre-rendered Mermaid SVG or hand-built inline SVG for dependencies, ownership, or flow.
-- **Cross-section:** stacked bands showing many shallow layers becoming one deeper responsibility.
-- **Mass diagram:** paired interface/implementation rectangles showing interface compression.
+- **Graph** for dependencies, ownership, or flow;
+- **Cross-section** for shallow layers becoming one responsibility;
+- **Mass diagram** for interface compression.
 
-Keep diagrams around 320px tall so before and after remain comparable.
-
-## Style
-
-- Lean editorial, not a dashboard.
-- Near-black page, dark panels, soft borders, high-contrast text.
-- One cool accent; reserve red for leakage and amber for warnings.
-- Schematic module labels; generous whitespace.
-- Every visual explains architecture; decoration remains subordinate.
+Keep paired diagrams visually comparable and stack them on narrow screens.
 
 ## Top Recommendation
 
-End with one larger card containing the chosen candidate number and name, one sentence explaining why it is the best first exploration, and an anchor link to its card.
+End with one larger card naming the recommended candidate, why it is the best first exploration, and an anchor link to its card. Keep the recommendation at survey level.
 
-Keep the recommendation at survey level. The chosen-candidate pass owns the final interface.
+## Voice
 
-## Tone
-
-Use plain English and the `$codebase-design` vocabulary loaded by the parent skill. Preserve established repo and domain terms.
-
-Every architecture claim names a module, interface, implementation, seam, adapter, depth, leverage, or locality. Every gain names depth, leverage, locality, or caller-facing test surface.
+Use plain English, established repo and domain terms, and `$codebase-design` vocabulary for architecture claims. Use a near-black page, dark panels, high-contrast text, one cool accent, red only for leakage, and amber only for warnings. Favor schematic labels, whitespace, and explanatory visuals over decoration.

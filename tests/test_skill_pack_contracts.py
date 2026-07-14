@@ -385,9 +385,25 @@ def test_architecture_research_requires_tracked_mutation_approval() -> None:
         encoding="utf-8"
     )
 
-    assert architecture.count("only when the caller approves that tracked mutation") == 2
+    assert "only with caller approval for that tracked mutation" in architecture
     assert "otherwise record a named evidence gap" in architecture
-    assert "tracked state remains unchanged except for any approved `$research` note" in architecture
+    assert (
+        "Keep product code, other tracked docs, tracker state, the index, and commits "
+        "unchanged."
+    ) in architecture
+
+
+def test_architecture_report_matches_the_survey_gate() -> None:
+    report = (CUSTOM / "improve-codebase-architecture/HTML-REPORT.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert "no network requests or runtime JavaScript" in report
+    assert "pass the parent skill's deletion and deepening gates" in report
+    assert "`Strong` or `Worth exploring`" in report
+    assert "`Speculative`" not in report
+    assert "naming the recommended candidate" in report
+    assert "chosen candidate" not in report
 
 
 def test_direct_workflows_gate_on_setup_compatibility() -> None:

@@ -5,114 +5,63 @@ description: Survey a codebase for architectural friction, rank deepening candid
 
 # Improve Codebase Architecture
 
-Run an **architecture survey**: find friction, rank real **deepening opportunities**, and help the user choose one.
+Own one outcome: a source-traced architecture survey whose selected deepening candidate is pressure-tested and routed. Load `$codebase-design` as survey vocabulary; use its direct design pass only for the selected candidate.
 
-This skill owns wide candidate discovery. Load `$codebase-design` as shared vocabulary; keep its direct design pass for one chosen candidate.
+## Boundary
 
-## Ownership
-
-- **Architecture survey:** Own the Source Trace, scouts, deletion-test filtering, candidate ranking, visual report, and architecture packet.
-- **`$grill-with-docs`:** Own the chosen-candidate interview and durable domain capture.
-- **`$codebase-design`:** Own dependency classification, seam discipline, interface alternatives, and the design packet.
-- **Downstream skills:** Own specs, tickets, implementation, tracker mutation, staging, and commits.
-- **Mutation boundary:** The initial pass writes only a disposable report under ignored `.tmp/architecture-reviews/`. A `$research` lane may also write one cited note only when the caller approves that tracked mutation. Product code, other tracked docs, tracker state, the index, and commits stay unchanged. Chosen-candidate domain writes flow only through `$grill-with-docs` and its gates.
-
-Use repo domain language for business concepts and `$codebase-design` vocabulary for architecture claims. ADRs mark decisions the survey reopens only when material new friction exists.
+- The survey may write one disposable report under ignored `.tmp/architecture-reviews/`.
+- `$research` may write one cited note only with caller approval for that tracked mutation; otherwise record a named evidence gap.
+- Selected-candidate domain writes flow only through `$grill-with-docs` and its gates.
+- Keep product code, other tracked docs, tracker state, the index, and commits unchanged. Reopen an ADR only for material new friction.
 
 ## Process
 
-### 1. Orient
+### 1. Trace
 
-Build the **Source Trace** from:
+**Trace.** Follow a user-named module, subsystem, or pain point. Otherwise start with recently changed hotspots and widen only when churn is scattered.
 
-- the request and repo instructions;
-- `docs/agents/engineering-contract.md` when present;
-- `docs/agents/domain.md` and its routed glossary and ADRs;
-- the current implementation, representative callers, and tests;
-- operational constraints relevant to the suspected seams.
+Build the **Source Trace** from the request, repo instructions, routed engineering and domain docs, relevant ADRs, current implementation, representative callers and tests, and operational constraints. Without domain routing, use `CONTEXT-MAP.md`, root `CONTEXT.md`, and local domain or ADR docs.
 
-Without domain routing, fall back to `CONTEXT-MAP.md`, root `CONTEXT.md`, and local ADR or domain docs.
-
-When a load-bearing external fact is missing, name the exact source question. Invoke `$research` and link its note only when the caller approves that tracked mutation; otherwise record a named evidence gap.
-
-Orienting is complete when the planned survey regions, domain and ADR constraints, relevant callers and tests, and known evidence gaps are named.
+Name the survey regions and evidence gaps. For a missing load-bearing external fact, name one source question; invoke `$research` only under the approved note boundary above.
 
 ### 2. Scout
 
-Use direct fresh-context read-only scouts when independent judgment matters and the repo or survey lenses can be partitioned. Start each with `fork_turns="none"` when supported. Give every scout the shared vocabulary, a self-contained survey frame, one bounded region or pressure, source pointers, mutation boundary, and output contract. Exclude parent hypotheses, preferred candidates, and peer results. Scouts inspect and report only; they never edit files, mutate external state, or spawn. The main agent alone owns synthesis, deduplication, filtering, ranking, and the report. For partitioned inventory where continuity matters more than independence, fork only the minimum necessary recent context and do not call the result independent. Use one pass for a small or unpartitionable repo.
+**Scout.** Use direct fresh-context read-only scouts when independent judgment matters and the survey partitions cleanly. Start each with `fork_turns="none"` when supported. Give each a self-contained frame, shared vocabulary, one bounded region or pressure, source pointers, mutation boundary, and output contract. Exclude parent hypotheses, preferred candidates, and peer results. Scouts inspect and report only; they never edit files, mutate external state, or spawn. The main agent alone owns synthesis, filtering, ranking, and the report.
 
-Follow architectural friction first, checklist second.
+When continuity matters more than independence, fork only the minimum necessary recent context and do not call the result independent. Use one pass for a small or unpartitionable repo.
 
-Follow friction: repeated concept jumps, caller-spread decisions, shallow or leaking seams, implementation-bound tests, pass-through indirection, and unclear ownership.
+Scout friction: repeated concept jumps, caller-spread decisions, shallow or leaking seams, implementation-bound tests, pass-through indirection, and unclear ownership.
 
-Apply the **deletion test** to each suspected module or cluster. Removing pass-through indirection should eliminate complexity; removing an earning module would redistribute it. A candidate earns its place when a deeper owner could concentrate that behavior behind a smaller interface.
+### 3. Filter
 
-Apply the **deepening gate**: keep only candidates that plausibly improve **depth**, **leverage**, **locality**, or the caller-facing test surface. Exclude cleanup-only work and speculative abstraction.
+**Filter.** Apply the **deletion test**: removing pass-through indirection eliminates complexity; removing an earning module redistributes it. Keep only candidates where a deeper owner could concentrate behavior behind a smaller interface and plausibly improve depth, leverage, locality, or the caller-facing test surface.
 
-Scouting is complete when every planned region or pressure returned evidence or a named gap, and every surviving candidate has a Source Trace and deletion-test result.
+Account for every survey region with evidence or a named gap. Give every surviving candidate a Source Trace and deletion-test result. Exclude cleanup-only work and speculative abstraction.
 
-### 3. Report
+### 4. Report
 
-Apply the **storage gate**: confirm `.tmp/architecture-reviews/` is ignored. If it is not, stop and recommend `$repo-bootstrap`.
+**Report.** Confirm `.tmp/architecture-reviews/` is ignored; otherwise recommend `$repo-bootstrap` and stop. Read [HTML-REPORT.md](HTML-REPORT.md) completely, then write one self-contained report there.
 
-Write one HTML report under `.tmp/architecture-reviews/`. Keep generated reports outside the index and commits.
+Show current friction, the responsibility that could consolidate, and a validation angle; leave dependency classification and interface contracts to the selected-candidate pass. Number and rank the candidates, end with one **Top recommendation**, return the absolute report path, ask the user to select one candidate, and stop.
 
-Read [HTML-REPORT.md](HTML-REPORT.md) for report fields, visual style, tone, and diagram patterns.
+### 5. Grill
 
-Apply the **survey gate**: show the current friction, responsibility that could consolidate, and validation angle. The chosen-candidate pass owns dependency classification and interface contracts.
+**Grill.** After selection, invoke `$grill-with-docs` with the candidate, report path, Source Trace, and survey bounds. It owns the interview and durable domain capture.
 
-Number every candidate, rank them, and end with one **Top recommendation**. Open the report when possible and always report its absolute path.
+Return its **Evidence gap** packet and stop. Only a **Confirmed** packet proceeds. Invoke `$codebase-design` only when the confirmed candidate still needs dependency classification, seam discipline, or meaningfully different interface alternatives; collect its design packet.
 
-Ask the user to select one numbered candidate, state the Top recommendation, and stop.
+### 6. Route
 
-The initial pass stops here until the user selects a candidate.
+**Route.** Classify the confirmed candidate and recommend exactly one next skill:
 
-### 4. Pressure-Test The Candidate
+- **single-slice** — `$implement` when one bounded slice can complete the intent with clear proof;
+- **multi-slice** — `$to-tickets` when the settled direction needs dependency-ordered slices;
+- **underspecified** — `$to-spec` when intent, acceptance, architecture, or validation remains unresolved.
 
-After selection, invoke `$grill-with-docs` with the candidate and Source Trace as its caller packet.
+Return an **architecture packet** with the report path, chosen candidate, Source Trace, `$grill-with-docs` exit packet, any `$codebase-design` packet, classification, and recommended route with reason. Stop without starting downstream work.
 
-Pressure-test:
+## Completion
 
-- constraints and public-contract commitments;
-- current callers and behavior that could move behind the interface;
-- seam, adapter, and substitute hypotheses;
-- validation;
-- bounded migration;
-- out-of-scope boundaries.
+The survey pass is complete only when every region is accounted for, every reported candidate passes both filters, the numbered report and Top recommendation exist, its absolute path is returned, and tracked state stayed within the boundary.
 
-Invoke `$codebase-design` when dependency classification, seam discipline, or meaningfully different interface alternatives are needed.
-
-Treat load-bearing rejections as ADR candidates. Treat timing-only reasons as deferrals.
-
-Honor `$grill-with-docs`'s **Confirmed** and **Evidence gap** exits. Only a Confirmed exit proceeds to classification.
-
-### 5. Classify And Hand Off
-
-Classify the confirmed candidate:
-
-- **single-slice:** one bounded slice can complete the architectural intent;
-- **multi-slice:** the direction is settled but completion needs dependency-ordered slices;
-- **underspecified:** intent, acceptance, architecture, or validation remains unresolved.
-
-Recommend exactly one route:
-
-- `$implement` for a ready single-slice candidate with clear proof;
-- `$to-tickets` for a settled multi-slice candidate;
-- `$to-spec` for an underspecified candidate or one needing a durable parent spec.
-
-Return an **architecture packet** containing:
-
-- report path and chosen candidate;
-- Source Trace;
-- `$grill-with-docs` exit packet;
-- `$codebase-design` design packet when used;
-- classification;
-- recommended route and reason.
-
-Return the recommendation and stop. The user starts downstream execution.
-
-## Completion Criteria
-
-The initial pass is complete only when every planned survey region is accounted for; every reported candidate is source-traced and passes the deletion and deepening gates; the numbered visual report and Top recommendation exist; the report path is returned; tracked state remains unchanged except for any approved `$research` note; and the user is asked to select a candidate.
-
-The chosen-candidate pass is complete only after a Confirmed grilling exit; every resolved domain or ADR outcome is accounted for; any required design packet exists; the architecture packet is returned; and exactly one downstream route is recommended without executing it.
+The selected-candidate pass is complete only from a Confirmed grilling exit, with domain and ADR outcomes accounted for, any required design packet present, and exactly one downstream route recommended without execution.
