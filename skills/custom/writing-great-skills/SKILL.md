@@ -9,7 +9,7 @@ description: Create, review, or edit Codex skills for predictable invocation, si
 
 ## Reference
 
-Read [GLOSSARY.md](GLOSSARY.md) completely for a full audit. For bounded work, load the owning headings: `Invocation` and `Leading Word`; `Information Hierarchy`; `Pruning` and its failure mode; or `Completion Criterion`, `Legwork`, and `Premature Completion`.
+Read [GLOSSARY.md](GLOSSARY.md) completely for a full audit. For bounded work, load the owning headings: `Invocation` and `Leading Word`; `Information Hierarchy` and `Semantic Skill Surface`; `Pruning` and its failure mode; or `Completion Criterion`, `Legwork`, and `Premature Completion`.
 
 ## Delegation
 
@@ -23,7 +23,7 @@ Read [GLOSSARY.md](GLOSSARY.md) completely for a full audit. For bounded work, l
 
 3. **Own.** Give each behavior one owner for its rules, gates, output, mutation boundary, and completion criterion. Compose only through a relationship the owner explicitly permits. Callers name the callee, trigger, and return boundary; routers name one next skill and stop.
 
-4. **Arrange.** Keep common-path steps and compact universal reference in `SKILL.md`. Give each step a checkable, proportional result. Co-locate each concept. Disclose branch-only reference through a sharp context pointer. Split only for distinct invocation or observed premature completion after a sharp criterion.
+4. **Arrange.** Apply the **Semantic Skill Surface**: outcome; boundary and authority; route-aware spine or branch; process or reference; return; completion. These are semantic roles, not mandatory headings or one universal layout. Keep common-path steps and compact universal reference in `SKILL.md`. Give each step a checkable, proportional result. Co-locate each concept. Disclose branch-only reference through a sharp context pointer. Split only for distinct invocation or observed premature completion after a sharp criterion.
 
 5. **Prune.** Collapse repeated meaning into a pretrained leading word; repeat the word, not its explanation. Test no-ops sentence by sentence and delete failures. Keep only non-intuitive mechanics; semantic and safety contracts; scope, approval, ownership, and mutation boundaries; required outputs and proof; irreversible sequencing; and completion criteria. Keep a failure branch inline only when it changes the safe next action.
 

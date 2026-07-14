@@ -82,6 +82,14 @@ A skill with no **steps** uses just the bottom two rungs — often a legitimatel
 
 _Avoid_: structure, organization, layout
 
+### Semantic Skill Surface
+
+The common instruction grammar that makes a skill's contract discoverable without forcing every skill into one file shape. Present the applicable roles in this order: **Outcome**; **Boundary and authority**; a route-aware spine or **branch** choice; **steps** or peer **reference**; **Return**; **Completion criterion**. A role may be a heading, compact preamble, leading-word spine, branch pointer, terminal step, or explicit sentence. Linear skills, routers, composers, state machines, templates, and flat reference keep the shape their behavior needs.
+
+Use only applicable roles, but never hide an owned mutation boundary, return artifact, or completion gate for visual uniformity. A branch root contains only universal behavior; branch-specific sequence and completion live behind its sharp **context pointer**. Similar headings, numbering, capitalization, and punctuation are cosmetic unless a parser or machine interface consumes them.
+
+_Avoid_: universal template, mandatory heading sequence, house style
+
 ### Steps
 
 The ordered actions the agent performs — when a skill has them, the primary tier of its content, and the part that earns its place in SKILL.md. Not every skill has steps: a skill can be all steps (`tdd`), all **reference** (a review), or both, independent of invocation. Every step ends on a **completion criterion**, clear or vague.

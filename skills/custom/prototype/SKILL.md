@@ -54,23 +54,23 @@ Hand the probe to its judge and iterate within the locked question.
 - **Design evidence:** Record the examples, invariants, fixtures, edge cases, observed limits, and chosen direction.
 - **Blocked:** Record the blocker, attempted path, and evidence still needed.
 
-Return a verdict packet with:
+Record the verdict fields that Reconcile will finalize:
 
 - status: `answered`, `awaiting-verdict`, or `blocked`;
 - Source Trace, question, decision, branch, and claim level;
 - artifact paths, command, URL, and variant keys;
 - smoke proof and judgment-affecting assumptions;
 - verdict or evidence, limits, chosen direction, and residual uncertainty;
-- cleanup or preservation state;
+- intended cleanup or preservation state;
 - next route and any domain or ADR candidate.
-
-Return the packet directly to the invoking caller. Recommend `$handoff` only when the verdict must cross sessions. Recommend `$domain-modeling` when the caller should resolve durable language or an ADR candidate.
 
 ## 6. Reconcile
 
-- **Answered:** Delete prototype artifacts unless the request or caller explicitly preserves them, record the resulting cleanup or preservation state, then return the packet.
+- **Answered:** Delete prototype artifacts unless the request or caller explicitly preserves them, then record the resulting cleanup or preservation state.
 - **Awaiting verdict:** Preserve the named runnable artifacts and report one next judging action.
 - **Blocked:** Account for every prototype path as deleted or intentionally preserved.
+
+Finalize the cleanup or preservation state, remove any artifact pointers invalidated by cleanup, and return the verdict packet directly to the invoking caller. Recommend `$handoff` only when the verdict must cross sessions. Recommend `$domain-modeling` when the caller should resolve durable language or an ADR candidate.
 
 Return the validated direction, not prototype code, to the real coding workflow.
 

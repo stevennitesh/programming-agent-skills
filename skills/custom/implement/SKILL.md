@@ -5,11 +5,13 @@ description: Implement one selected ready work item through review, one commit, 
 
 # Implement
 
-**Select -> Patch -> Review -> Lock -> Close**
-
 Implement exactly one selected ready work item.
 
 Owner mode is the default. Staged-worker mode requires an explicit assignment and accepting owner.
+
+**Owner: Select -> Patch -> Review -> Lock -> Close.**
+
+**Staged worker: Select -> Patch -> Return.**
 
 - **Owner:** owns tracker claim and release, review, commit, Lock, and closeout.
 - **Staged worker:** owns only its assigned patch, focused proof, staging, and handoff; it never mutates tracker state.
@@ -74,3 +76,5 @@ A mismatch blocks external closeout. Add the commit SHA to the closeout packet.
 After Lock, apply connector-backed tracker closeout through repo policy and Mutation read-back. Failed read-back is blocked, not done.
 
 Done means the selected item is proven, reviewed from its fixed point, committed with the approved tree, and, when tracker-backed, moved to `implemented`.
+
+Return the mode, selected item, final status, commit SHA or staged-handoff summary, review result, validation, skipped checks, residual risk, tracker read-back or `not applicable`, current Git state, and the exact next action for any blocked outcome.

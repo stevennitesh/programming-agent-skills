@@ -2,7 +2,7 @@
 
 Read this file only when charting a new map.
 
-Open work lives in child tickets. Resolution detail lives in the ticket that owns it. The map keeps orientation and pointers.
+Open work lives in child tickets. Resolution detail lives in the ticket that owns it. The map keeps orientation and pointers. The Scope Boundary fixes the charted effort; Out Of Scope indexes linked tickets or discoveries later excluded from that boundary.
 
 ## Map
 
@@ -10,6 +10,10 @@ Open work lives in child tickets. Resolution detail lives in the ticket that own
 ## Destination
 
 <the decision, artifact, or readiness state that closes this map>
+
+## Scope Boundary
+
+<what is inside this map and what destination delivery remains outside>
 
 ## Notes
 

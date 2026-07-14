@@ -7,7 +7,9 @@ description: Research one source question against primary sources into a cited r
 
 **Research delegates reading, not judgment.**
 
-Lock -> Trace -> Scout -> Classify -> Gate -> Write -> Return.
+**Authorized note: Lock -> Trace -> Scout -> Classify -> Gate -> Write -> Verify -> Return.**
+
+**Inline or blocker: Lock -> Trace -> Scout -> Classify -> Gate -> Verify -> Return.**
 
 ## Boundary
 
@@ -55,5 +57,5 @@ Freshness: <as-of date or version>
 - <recommended skill, ticket, spec, or decision>
 ```
 
-7. **Verify.** Reread the note, verify every ledger claim has a citation and the authorized path exists, and compare work state so this run changed only that note while preserving pre-existing work.
-8. **Return.** For a written note, give the caller its path, one-paragraph answer, status, uncertainty, and next route. For a no-write result, name the missing gate and return cited inline evidence or a blocker.
+7. **Verify.** Verify every returned claim has a citation and compare work state so the run preserved pre-existing work. For a written note, also reread it, verify every ledger claim has a citation, confirm the authorized path exists, and require that this run changed only that note.
+8. **Return.** For a written note, return its path, one-paragraph answer, status, and uncertainty. For a no-write result, return cited inline evidence or the blocker. When caller-invoked, return to that caller; it owns the supported decision and next route. When standalone, recommend exactly one next route.

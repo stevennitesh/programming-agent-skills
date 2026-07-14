@@ -7,7 +7,9 @@ description: Reconcile an in-progress merge, rebase, cherry-pick, revert, or con
 
 Treat every conflict as a **three-way merge**: base, both sides, and the operation goal.
 
-**State -> Trace -> Reconcile -> Prove -> Finish.**
+**Read-only: State -> Trace -> Return.**
+
+**Reconcile: State -> Trace -> Reconcile -> Prove -> Return; add Finish before Return only with finish authority.**
 
 **Reconciliation authority** permits resolving requested in-scope conflicts. **Finish authority** separately permits staging and continuing the Git operation. The user request or owning caller packet grants them separately; invocation alone grants neither.
 
@@ -26,7 +28,7 @@ Without reconciliation authority, stop after **State** and **Trace**. Report unc
 
 Abort, hard reset, or side discard requires explicit approval. Use wholesale `--ours` or `--theirs` only when the Source Trace proves the other side obsolete. Preserve unrelated dirty work and existing index state.
 
-## Handoff
+## Return
 
 Report the operation and goal, both authorities, inspected/resolved/blocked paths, intent trade-offs, proof and residual risk, current `git status`, and the finished operation or exact next command.
 

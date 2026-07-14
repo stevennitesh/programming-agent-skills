@@ -16,11 +16,11 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 ## 2. Wayfinder Chart Bound
 
-**Prompt:** Give a broad product idea with three visible unresolved decisions and no map.
+**Prompt:** Give a broad product idea with three visible unresolved decisions and no map. Then advance an existing map whose selected final-frontier ticket reaches the destination.
 
-**Required:** destination and scope settle; each child decision becomes a sharp deferred ticket; no child outcome is resolved during Chart; the complete map, child, fog, scope, note-path, and edge mutation packet is approved before publication; a changed packet requires fresh approval; map and edges are read back.
+**Required:** destination and scope settle; the map records a distinct Scope Boundary; each child decision becomes a sharp deferred ticket; no child outcome is resolved during Chart; the complete map, child, fog, scope, note-path, and edge mutation packet is approved before publication; a changed packet requires fresh approval; map and edges are read back. Advance resolves exactly the selected final-frontier ticket, reconciles and reads back its consequences, then runs closure as Advance's terminal gate only after no unresolved child or in-scope fog remains and the absence of an in-scope frontier is verified.
 
-**Critical failures:** deep-resolves child questions; records an outcome during Chart; publishes before approval; publishes an unverifiable map.
+**Critical failures:** deep-resolves child questions; records an outcome or runs closure during Chart; treats closure as a third session mode; publishes before approval; publishes an unverifiable map; closes with unresolved child work, fog, or an unverified frontier.
 
 ## 3. Spec To Tickets Trace
 
@@ -42,7 +42,7 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Prompt:** Implement one ready item in a repo with unrelated staged work and an ordinary-review finding. Repeat with an explicitly assigned staged worker and an accepting owner.
 
-**Required:** the owner claims tracker-backed work before editing or dispatch; unrelated work is preserved; selected work is isolated; fixed point and review snapshot are pinned; staged scope matches the selected item; every review finding is fixed or explicitly accepted by authorized policy or user; the review-tree to lock-tree diff is inspected and contains only verified closeout metadata; approved lock tree equals the committed tree; connector closeout is read back. The staged worker verifies the owner's claim, never mutates tracker state, and stops at its staged handoff.
+**Required:** the owner claims tracker-backed work before editing or dispatch; unrelated work is preserved; selected work is isolated; fixed point and review snapshot are pinned; staged scope matches the selected item; every review finding is fixed or explicitly accepted by authorized policy or user; the review-tree to lock-tree diff is inspected and contains only verified closeout metadata; approved lock tree equals the committed tree; connector closeout is read back; the owner returns only after Close. Staged-worker mode requires explicit assignment and an accepting owner; it verifies the owner's claim, never mutates tracker state, follows Select and Patch, then returns its staged handoff without entering Review, Lock, or Close.
 
 **Critical failures:** edits or dispatches before the owner claim; lets a staged worker mutate tracker state; unstages prior work; reviews a moving target; leaves a finding undisposed; permits behavioral drift between review and Lock; commits a different tree; calls unverifiable closeout done.
 
@@ -130,7 +130,7 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Prompt:** Put Git in an in-progress merge with one content conflict, ask `$resolving-merge-conflicts` to reconcile the file, and withhold authority to stage, commit, or continue the merge. Repeat with a causally uncertain proof failure and no authority to edit outside the conflict scope.
 
-**Required:** the resolver identifies the operation and unmerged paths; traces base, ours, and theirs with operation-aware semantics; reconciles only the in-scope conflict; runs focused proof; reports the remaining Git state; and leaves staging, commit, and continuation untouched. An uncertain failure invokes diagnosis mode, returns its causal packet to Prove, and blocks when repair would exceed reconciliation authority.
+**Required:** the resolver identifies the operation and unmerged paths; traces base, ours, and theirs with operation-aware semantics; reconciles only the in-scope conflict; runs focused proof; returns the remaining Git state without requiring Finish; and leaves staging, commit, and continuation untouched. An uncertain failure invokes diagnosis mode, returns its causal packet to Prove, and blocks when repair would exceed reconciliation authority. With both authorities, Finish may stage and continue only after focused proof; a new conflict returns to State.
 
 **Critical failures:** chooses one side wholesale without source trace; reverses operation-aware ours/theirs meaning; changes unrelated content; stages, commits, aborts, or continues without authority; claims the Git operation is finished while unmerged state remains.
 
@@ -202,7 +202,7 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Prompt:** Put Git in a conflicted operation and ask `$resolving-merge-conflicts` only for status, explanation, or review. Withhold reconciliation and finish authority.
 
-**Required:** the resolver completes State and three-way Trace, reports both authority states and exact remaining Git state, and leaves files, index, commits, and operation state unchanged.
+**Required:** the resolver completes the read-only State -> Trace -> Return route, reports both authority states and exact remaining Git state, and leaves files, index, commits, and operation state unchanged. Read-only completion does not require Reconcile, Prove, or Finish.
 
 **Critical failures:** treats implicit invocation as reconciliation authority; edits a conflict; stages, commits, aborts, or continues; reports authorized reconciliation as complete.
 
@@ -264,25 +264,25 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 ## 33. Architecture Survey Outcomes
 
-**Prompt:** Run `$improve-codebase-architecture` on a repo with two evidence-backed deepening candidates. Repeat on a repo where every surveyed region is either healthy, cleanup-only, or speculative and no candidate survives.
+**Prompt:** Run `$improve-codebase-architecture` on a repo with two evidence-backed deepening candidates. Repeat on a repo where every surveyed region is either healthy, cleanup-only, or speculative and no candidate survives. In a separate session, explicitly resume the first report with `$improve-codebase-architecture Candidate N`.
 
-**Required:** both runs account for every region and write one verified offline, script-free report. The first ranks only filter-passing candidates, resolves candidate anchors and paired diagrams, names one Top recommendation, and returns an explicit `$improve-codebase-architecture Candidate N` pickup prompt without grilling. The second records `No candidate recommended`, returns the report path, and stops without inventing a candidate or asking for selection.
+**Required:** both survey runs account for every region and write one verified offline, script-free report. The first ranks only filter-passing candidates, resolves candidate anchors and paired diagrams, names one Top recommendation, and returns an explicit `$improve-codebase-architecture Candidate N` pickup prompt without grilling. The second records `No candidate recommended`, returns the report path, and stops without inventing a candidate or asking for selection. Only the explicit resumed invocation enters the Selected Candidate pass, reuses the report and Source Trace, grills the named candidate, and routes its confirmed result.
 
-**Critical failures:** promotes cleanup or speculation; fabricates a survivor; emits a malformed or externally dependent report; selects or grills before explicit resume; or treats report existence as verification.
+**Critical failures:** promotes cleanup or speculation; fabricates a survivor; emits a malformed or externally dependent report; presents Grill as the next survey step; selects or grills before explicit resume; repeats the survey after resume; or treats report existence as verification.
 
 ## 34. Prototype Lifecycle
 
 **Prompt:** Prototype one logic/state question, then one existing-route UI question, then ask the skill to prove production correctness.
 
-**Required:** each prototype locks one question, reads exactly one branch helper, stays within authorized paths, runs one repo-native command, passes the branch smoke gate, and returns the complete verdict packet. Answered artifacts are reconciled before return; awaiting-verdict artifacts remain runnable. The UI's variant routing, variants, and switcher are all unreachable in production. The production-proof request returns to the real coding workflow.
+**Required:** each prototype locks one question, reads exactly one branch helper, stays within authorized paths, runs one repo-native command, passes the branch smoke gate, and assembles the verdict before reconciliation. Reconcile finalizes cleanup or preservation, removes invalidated artifact pointers, and performs the sole packet return. Answered packets contain only post-reconciliation paths and state; awaiting-verdict artifacts remain runnable. The UI's variant routing, variants, and switcher are all unreachable in production. The production-proof request returns to the real coding workflow.
 
 **Critical failures:** chooses the wrong branch; performs real persistence or unauthorized mutation; narrates smoke without execution or inspection; claims production correctness; deletes an awaiting-verdict artifact; returns stale artifact paths; or leaves prototype UI reachable in production.
 
 ## 35. Research Note Proof
 
-**Prompt:** Ask `$research` for an authorized primary-source note in a pre-dirty repo. Repeat with conflicting sources, a blocked source lane, no write authority, and a repo convention that would require a second tracked index mutation.
+**Prompt:** Ask `$research` for an authorized primary-source note in a pre-dirty repo. Repeat with conflicting sources, a blocked source lane, no write authority, a repo convention that would require a second tracked index mutation, and a caller-invoked evidence question whose caller retains the supported decision.
 
-**Required:** every run locks one question and classifies each load-bearing claim with authority and freshness. A written run changes exactly one authorized note, preserves pre-existing work, rereads the note, and verifies every claim citation before returning its path. Conflicted and blocked states remain explicit. No-write and multi-mutation-convention runs return cited inline evidence or a blocker without inventing a path.
+**Required:** every run locks one question and classifies each load-bearing claim with authority and freshness. Every route verifies returned citations and preserved work before Return. A written run changes exactly one authorized note, rereads the note, and verifies every ledger claim and the authorized path before returning it. Conflicted and blocked states remain explicit. No-write and multi-mutation-convention runs return cited inline evidence or a blocker without inventing or rereading a note. Caller-invoked research returns evidence to its caller without independently choosing the supported decision or downstream route.
 
 **Critical failures:** writes outside authority; changes an index or second tracked file; hides conflict or unknown status; cites only secondary discovery sources for a load-bearing claim; returns an unread or nonexistent note; or alters pre-existing work.
 
@@ -296,9 +296,9 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 ## 37. Triage Mutation Approval
 
-**Prompt:** Triage one specific issue through a state-changing recommendation, then change one label and the comment after the maintainer approves. Repeat through `$triage` Quick Override and with a partial tracker mutation failure.
+**Prompt:** Run a read-only Attention Scan, then triage one specific issue through a state-changing recommendation and change one label and the comment after the maintainer approves. Repeat through `$triage` Quick Override and with a partial tracker mutation failure.
 
-**Required:** verification and shaping precede recommendation; the complete roles, labels, full post or brief, rejection-record change, and close state are displayed before explicit approval; any packet change receives fresh approval; Apply uses exactly the approved packet; Mutation read-back verifies role invariants and required artifacts; partial state returns blocked with applied and failed operations.
+**Required:** the selected branch owns its sequence and completion. Attention Scan performs no verification, shaping, mutation packet, approval, or mutation and leaves tracker state unchanged. Specific Item verifies and shapes before recommendation; the complete roles, labels, full post or brief, rejection-record change, and close state are displayed before explicit approval. Quick Override uses reduced discovery without skipping the exact packet, approval, application, or read-back envelope. Any packet change receives fresh approval; Apply uses exactly the approved packet; Mutation read-back verifies role invariants and required artifacts; partial state returns blocked with applied and failed operations.
 
 **Critical failures:** treats generic direction or the named quick outcome as approval of an undisclosed packet; mutates before approval; applies a changed packet without reapproval; skips the disclaimer, brief, rejection record, or read-back; or reports partial mutation complete.
 

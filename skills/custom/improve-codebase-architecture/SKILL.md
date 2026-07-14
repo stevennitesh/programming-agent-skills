@@ -7,6 +7,10 @@ description: Survey a codebase for architectural friction, rank deepening candid
 
 Own one outcome: a source-traced architecture survey whose selected deepening candidate is pressure-tested and routed. Load `$codebase-design` as survey vocabulary; use its direct design pass only for the selected candidate.
 
+**Survey: Trace -> Scout -> Filter -> Report -> Return.**
+
+**Selected candidate: Grill -> Route -> Return.**
+
 ## Boundary
 
 - The survey may write one disposable report under ignored `.tmp/architecture-reviews/`.
@@ -14,9 +18,9 @@ Own one outcome: a source-traced architecture survey whose selected deepening ca
 - Selected-candidate domain writes flow only through `$grill-with-docs` and its gates.
 - Keep product code, other tracked docs, tracker state, the index, and commits unchanged. Flag an ADR for reopening only when material new friction exists.
 
-## Process
+## Survey
 
-### 1. Trace
+### Trace
 
 **Trace.** Follow a user-named module, subsystem, or pain point. Otherwise start with recently changed hotspots and widen only when churn is scattered.
 
@@ -24,7 +28,7 @@ Build the **Source Trace** from the request, repo instructions, routed engineeri
 
 Name the survey regions and evidence gaps. For a missing load-bearing external fact, name one source question; invoke `$research` only under the approved note boundary above.
 
-### 2. Scout
+### Scout
 
 **Scout.** Use direct fresh-context read-only scouts when independent judgment matters and the survey partitions cleanly. Start each with `fork_turns="none"` when supported. Give each a self-contained frame, shared vocabulary, one bounded region or pressure, source pointers, mutation boundary, and output contract. Exclude parent hypotheses, preferred candidates, and peer results. Scouts inspect and report only; they never edit files, mutate external state, or spawn. The main agent alone owns synthesis, filtering, ranking, and the report.
 
@@ -32,13 +36,13 @@ When continuity matters more than independence, fork only the minimum necessary 
 
 Scout friction: repeated concept jumps, caller-spread decisions, shallow or leaking seams, implementation-bound tests, pass-through indirection, and unclear ownership.
 
-### 3. Filter
+### Filter
 
 **Filter.** Apply the **deletion test**: removing pass-through indirection eliminates complexity; removing an earning module redistributes it. Keep only candidates where a deeper owner could concentrate behavior behind a smaller interface and plausibly improve depth, leverage, locality, or the caller-facing test surface.
 
 Account for every survey region with evidence or a named gap. Give every surviving candidate a Source Trace and deletion-test result. Exclude cleanup-only work and speculative abstraction.
 
-### 4. Report
+### Report
 
 **Report.** Confirm `.tmp/architecture-reviews/` is ignored; otherwise recommend `$repo-bootstrap` and stop. Read [HTML-REPORT.md](HTML-REPORT.md) completely, then write one self-contained report there.
 
@@ -48,13 +52,17 @@ Reread the report and, when supported, render or open it. Verify that it is offl
 
 For a non-empty report, return its absolute path and ask the user to reply with `$improve-codebase-architecture Candidate N`; then stop.
 
-### 5. Grill
+## Selected Candidate
+
+Run this pass only after the user explicitly resumes with a candidate from the verified survey report. Reuse that candidate's report and Source Trace; do not repeat the survey.
+
+### Grill
 
 **Grill.** After selection, invoke `$grill-with-docs` with the candidate, report path, Source Trace, and survey bounds. It owns the interview and durable domain capture.
 
 Return its **Evidence gap** packet and stop. Only a **Confirmed** packet proceeds. Invoke `$codebase-design` only when the confirmed candidate still needs dependency classification, seam discipline, or meaningfully different interface alternatives; collect its design packet.
 
-### 6. Route
+### Route
 
 **Route.** Classify the confirmed candidate and recommend exactly one next skill:
 

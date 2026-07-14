@@ -33,7 +33,7 @@ A HITL ticket resolves only through live human participation. The ticket owns th
 
 ## Modes
 
-Choose exactly one mode per session.
+Choose exactly one mode per session. Closure is the terminal gate of Advance, not a third mode.
 
 ### Chart
 
@@ -62,15 +62,15 @@ Use Advance when a map exists.
    - **Out of scope:** record why it lies beyond the destination and add its linked scope note to `Out Of Scope`.
 5. **Reconcile.** Graduate sharpened fog, create-then-wire newly visible tickets, update affected dependencies, and mark obsolete tickets through consequence-only state changes without answering them.
 6. **Verify.** Apply **Mutation read-back** to the selected ticket, claim, outcome, map pointers, changed edges, and resulting frontier.
-7. **Expose.** Show the next frontier or close the map.
+7. **Expose.** Show the next frontier or run **Advance Closure** below.
 
 Preserve concurrent work. Touch only the selected ticket, directly affected edges, and map sections changed by its outcome.
 
 Advance completes when exactly one selected ticket has a substantive outcome; every other ticket mutation is consequence-only; its claim and direct map consequences are reconciled; and the next frontier or closing route is visible.
 
-## Close
+#### Advance Closure
 
-Close the map only when the destination is reached, no unresolved child or in-scope fog remains, and the next durable artifact or action is clear. Apply the tracker's **Complete map** and **Mutation read-back** conventions; closure completes only when the closing comment or state and the resulting absence of an in-scope frontier are verified. Recommend exactly one route and stop:
+At the end of Advance, close the map only when the destination is reached, no unresolved child or in-scope fog remains, and the next durable artifact or action is clear. Apply the tracker's **Complete map** and **Mutation read-back** conventions; closure completes only when the closing comment or state and the resulting absence of an in-scope frontier are verified. Recommend exactly one route and stop:
 
 - settled decision — report it; recommend `$domain-modeling` only for durable language or an ADR;
 - settled parent-spec source — `$to-spec`;

@@ -246,12 +246,19 @@ def test_router_returns_exactly_one_next_skill() -> None:
 
 def test_branch_heavy_skills_disclose_branch_procedure() -> None:
     triage = (CUSTOM / "triage/SKILL.md").read_text(encoding="utf-8")
+    attention = (CUSTOM / "triage/ATTENTION-SCAN.md").read_text(encoding="utf-8")
+    quick = (CUSTOM / "triage/QUICK-OVERRIDE.md").read_text(encoding="utf-8")
     design = (CUSTOM / "codebase-design/SKILL.md").read_text(encoding="utf-8")
 
     assert "[ATTENTION-SCAN.md](ATTENTION-SCAN.md)" in triage
     assert "[SPECIFIC-ITEM.md](SPECIFIC-ITEM.md)" in triage
     assert "[QUICK-OVERRIDE.md](QUICK-OVERRIDE.md)" in triage
     assert "## Specific Item" not in triage
+    run = triage.split("3. **Run.**", 1)[1].split("4. **Prove.**", 1)[0]
+    assert "selected branch" in run
+    assert "For any mutation branch" in run
+    assert "tracker state stayed unchanged" in attention
+    assert "Skip request verification and grilling" in quick
     assert "[DIRECT-DESIGN.md](DIRECT-DESIGN.md)" in design
     assert "## 1. Orient" not in design
 
@@ -297,27 +304,26 @@ def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
     assert not implicit_policy(skill_dir)
     assert "[MAP-FORMAT.md](MAP-FORMAT.md)" in wayfinder
     chart, advance = wayfinder.split("### Chart", 1)[1].split("### Advance", 1)
-    assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", chart) == [
-        "Bound",
-        "Sweep",
-        "Gate",
-        "Approve",
-        "Chart",
-        "Wire",
-        "Verify",
-    ]
-    assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", advance) == [
-        "Orient",
-        "Select",
-        "Claim",
-        "Resolve",
-        "Reconcile",
-        "Verify",
-        "Expose",
-    ]
+    for earlier, later in (
+        ("**Bound.**", "**Approve.**"),
+        ("**Approve.**", "**Chart.**"),
+        ("**Chart.**", "**Verify.**"),
+    ):
+        assert chart.index(earlier) < chart.index(later)
+    for earlier, later in (
+        ("**Orient.**", "**Claim.**"),
+        ("**Claim.**", "**Resolve.**"),
+        ("**Resolve.**", "**Reconcile.**"),
+        ("**Reconcile.**", "**Verify.**"),
+        ("**Verify.**", "**Expose.**"),
+    ):
+        assert advance.index(earlier) < advance.index(later)
+    assert re.findall(r"(?m)^### (Chart|Advance)$", wayfinder) == ["Chart", "Advance"]
+    assert "#### Advance Closure" in advance
     map_template = map_format.split("```markdown", 1)[1].split("```", 1)[0]
     assert re.findall(r"(?m)^## (.+)$", map_template) == [
         "Destination",
+        "Scope Boundary",
         "Notes",
         "Decisions So Far",
         "Not Yet Specified",
@@ -392,14 +398,13 @@ def test_prototype_preserves_lifecycle_boundaries_and_branch_gates() -> None:
     logic = (CUSTOM / "prototype/LOGIC.md").read_text(encoding="utf-8")
     ui = (CUSTOM / "prototype/UI.md").read_text(encoding="utf-8")
 
-    assert re.findall(r"(?m)^## \d+\. (.+)$", prototype) == [
-        "Lock",
-        "Branch",
-        "Probe",
-        "Smoke",
-        "Judge",
-        "Reconcile",
-    ]
+    judge = prototype.split("## 5. Judge", 1)[1].split("## 6. Reconcile", 1)[0]
+    reconcile = prototype.split("## 6. Reconcile", 1)[1].split("## Completion", 1)[0]
+    assert "Record the verdict fields" in judge
+    assert "return the verdict packet" not in judge
+    assert reconcile.index("Finalize the cleanup or preservation state") < reconcile.index(
+        "return the verdict packet"
+    )
     assert "[LOGIC.md](LOGIC.md)" in prototype
     assert "[UI.md](UI.md)" in prototype
     assert set(re.findall(r"`(answered|awaiting-verdict|blocked)`", prototype)) == {
@@ -531,6 +536,11 @@ def test_architecture_report_matches_the_survey_gate() -> None:
     ]
     assert "`color-scheme: dark`" in report
     assert "`Strong` or `Worth exploring`" in report
+    survey = architecture.split("## Survey", 1)[1].split("## Selected Candidate", 1)[0]
+    selected = architecture.split("## Selected Candidate", 1)[1].split("## Completion", 1)[0]
+    assert survey.index("### Report") < survey.index("Candidate N")
+    assert "### Grill" not in survey
+    assert selected.index("explicitly resumes") < selected.index("### Grill")
     top_recommendation = report.split("## Top Recommendation", 1)[1].split(
         "## Voice", 1
     )[0]
@@ -621,16 +631,20 @@ def test_independent_scouts_receive_curated_fresh_context() -> None:
 def test_research_owns_one_authorized_cited_note() -> None:
     research = (CUSTOM / "research/SKILL.md").read_text(encoding="utf-8")
 
-    assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", research) == [
-        "Lock",
-        "Trace",
-        "Scout",
-        "Classify",
-        "Gate",
-        "Write",
-        "Verify",
-        "Return",
-    ]
+    authorized = re.search(r"(?m)^\*\*Authorized note: (.+)\.\*\*$", research)
+    inline = re.search(r"(?m)^\*\*Inline or blocker: (.+)\.\*\*$", research)
+    assert authorized is not None and inline is not None
+    assert (
+        authorized.group(1).index("Write")
+        < authorized.group(1).index("Verify")
+        < authorized.group(1).index("Return")
+    )
+    assert (
+        inline.group(1).index("Gate")
+        < inline.group(1).index("Verify")
+        < inline.group(1).index("Return")
+    )
+    assert research.index("7. **Verify.**") < research.index("8. **Return.**")
     template = research.split("```markdown", 1)[1].split("```", 1)[0]
     assert re.findall(r"(?m)^## (.+)$", template) == [
         "Answer",
@@ -648,22 +662,27 @@ def test_writing_great_skills_authorizes_bounded_direct_subagents() -> None:
 
     assert implicit_policy(skill_dir)
     assert "[GLOSSARY.md](GLOSSARY.md)" in writing
-    assert re.findall(r"(?m)^## (.+)$", writing) == [
-        "Reference",
-        "Delegation",
-        "Audit Spine",
-        "Output",
-        "Completion",
-    ]
-    assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", writing) == [
-        "Trace",
-        "Choose",
-        "Own",
-        "Arrange",
-        "Prune",
-        "Verify",
-    ]
     assert 'fork_turns="none"' in writing
+
+
+def test_writing_great_skills_defines_format_neutral_semantic_surface() -> None:
+    skill_dir = CUSTOM / "writing-great-skills"
+    writing = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    glossary = (skill_dir / "GLOSSARY.md").read_text(encoding="utf-8")
+    surface = glossary.split("### Semantic Skill Surface", 1)[1].split("### Steps", 1)[0]
+
+    roles = (
+        "Outcome",
+        "Boundary and authority",
+        "route-aware spine",
+        "steps",
+        "Return",
+        "Completion criterion",
+    )
+    positions = [surface.index(role) for role in roles]
+    assert positions == sorted(positions)
+    assert "not mandatory headings" in writing
+    assert "universal template" in surface
 
 
 def test_merge_conflict_resolution_is_three_way_and_finish_bounded() -> None:
@@ -671,16 +690,16 @@ def test_merge_conflict_resolution_is_three_way_and_finish_bounded() -> None:
     skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
 
     assert implicit_policy(skill_dir)
-    assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", skill) == [
-        "State",
-        "Trace",
-        "Reconcile",
-        "Prove",
-        "Finish",
-    ]
+    read_only = re.search(r"(?m)^\*\*Read-only: (.+)\.\*\*$", skill)
+    reconcile = re.search(r"(?m)^\*\*Reconcile: (.+)\.\*\*$", skill)
+    assert read_only is not None and reconcile is not None
+    assert "Reconcile" not in read_only.group(1)
+    assert "Finish" not in read_only.group(1)
+    assert reconcile.group(1).index("Prove") < reconcile.group(1).index("Return")
+    assert "only with finish authority" in reconcile.group(1)
     assert "`git ls-files -u`" in skill
     assert "## Guardrails" in skill
-    assert "## Handoff" in skill
+    assert "## Return" in skill
 
 
 def test_portable_fallback_carries_the_standalone_engineering_contract() -> None:
@@ -761,29 +780,15 @@ def test_readme_exposes_both_adoption_paths() -> None:
 
 
 def test_triage_branches_share_the_authoritative_brief_schema() -> None:
-    triage = (CUSTOM / "triage/SKILL.md").read_text(encoding="utf-8")
     specific = (CUSTOM / "triage/SPECIFIC-ITEM.md").read_text(encoding="utf-8")
     quick = (CUSTOM / "triage/QUICK-OVERRIDE.md").read_text(encoding="utf-8")
     examples = (CUSTOM / "triage/AGENT-BRIEF-EXAMPLES.md").read_text(encoding="utf-8")
     brief = (CUSTOM / "triage/AGENT-BRIEF.md").read_text(encoding="utf-8")
     out_of_scope = (CUSTOM / "triage/OUT-OF-SCOPE.md").read_text(encoding="utf-8")
 
-    assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", triage) == [
-        "Load",
-        "Choose",
-        "Run",
-        "Prove",
-    ]
-    assert re.findall(r"(?m)^## \d+\. ([A-Za-z]+)$", specific) == [
-        "Trace",
-        "Verify",
-        "Shape",
-        "Recommend",
-        "Approve",
-        "Apply",
-        "Prove",
-    ]
-    assert specific.index("mutation packet") < specific.index("explicit maintainer approval")
+    assert specific.index("mutation packet") < specific.index(
+        "explicit maintainer approval"
+    )
     assert "## Completion" in quick
     assert brief.count("**Proof lane:**") == 1
     assert "concrete example" not in brief
@@ -921,13 +926,13 @@ def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
 
     assert not implicit_policy(CUSTOM / "implement")
-    assert re.findall(r"(?m)^## ([A-Za-z]+)$", implement) == [
-        "Select",
-        "Patch",
-        "Review",
-        "Lock",
-        "Close",
-    ]
+    owner_route = re.search(r"(?m)^\*\*Owner: (.+)\.\*\*$", implement)
+    worker_route = re.search(r"(?m)^\*\*Staged worker: (.+)\.\*\*$", implement)
+    assert owner_route is not None and worker_route is not None
+    assert "Review" in owner_route.group(1) and "Lock" in owner_route.group(1)
+    assert worker_route.group(1).endswith("Return")
+    assert "Review" not in worker_route.group(1)
+    assert "Lock" not in worker_route.group(1)
     assert re.findall(r"(?m)^- \*\*([^*]+):\*\*", implement)[:2] == [
         "Owner",
         "Staged worker",
