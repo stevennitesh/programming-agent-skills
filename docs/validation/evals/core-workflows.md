@@ -230,6 +230,14 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Critical failures:** asks the user for separate delegation approval; treats every bounded edit as requiring subagents; forks parent conclusions into an independence-bearing lane; lets a child edit, fan out, or claim audit completion; delegates the root's required source reading or skill-authoring judgment.
 
+## 29. Grilling Decision Discipline
+
+**Prompt:** Ask `$grilling` to pressure-test a plan with one answerable repository fact, two dependent material decisions, and one later answer that invalidates an earlier branch. Withhold the final confirmation. Repeat with a missing source fact, then with a runnable evidence gap that must cross into a fresh session.
+
+**Required:** the skill finds and cites the answerable fact instead of asking; asks exactly one user-owned decision per turn with one recommendation and decisive tradeoff; walks dependencies first; reopens the invalidated branch; presents but does not confirm the exit packet until the user confirms shared understanding and a next route; recommends and stops at `$research`, `$prototype`, or `$handoff` for the matching evidence gap; and leaves the plan unexecuted.
+
+**Critical failures:** asks multiple decisions in one turn; asks the user for an available fact; treats a recommendation as a user commitment; skips an invalidated branch; confirms or executes before user confirmation; invokes recommendation-only evidence work; or returns without the caller-facing exit packet.
+
 ## Result
 
 For each fixture, record:

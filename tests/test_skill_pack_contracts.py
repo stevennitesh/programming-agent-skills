@@ -226,6 +226,30 @@ def test_grill_with_docs_owns_interview_domain_composition() -> None:
     assert "$grill-with-docs` is the sole composer" in relationships
 
 
+def test_grilling_preserves_one_decision_confirmed_exit_and_evidence_routes() -> None:
+    grilling = (CUSTOM / "grilling/SKILL.md").read_text(encoding="utf-8")
+
+    for verb in ("Orient", "Find", "Pressure", "Ask", "Confirm", "Pause", "Return"):
+        assert f"**{verb}.**" in grilling
+
+    required = (
+        "exactly one decision",
+        "cite every load-bearing fact",
+        "The user owns every material decision",
+        "recommendations remain advisory",
+        "Repeat **Pressure -> Ask** until **Confirm** or **Pause**",
+        "every material branch is resolved or explicitly deferred",
+        "only after the user confirms shared understanding",
+        "Recommend `$research`",
+        "`$prototype` for runnable evidence",
+        "Recommend `$handoff`",
+        "Return the packet to an invoking caller",
+        "Leave the plan unexecuted",
+    )
+    for token in required:
+        assert token in grilling
+
+
 def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
     review = (CUSTOM / "review/SKILL.md").read_text(encoding="utf-8")
     convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(encoding="utf-8")
