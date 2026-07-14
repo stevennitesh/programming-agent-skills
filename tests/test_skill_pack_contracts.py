@@ -631,6 +631,27 @@ def test_independent_scouts_receive_curated_fresh_context() -> None:
     assert "main agent alone owns synthesis" in architecture
 
 
+def test_research_owns_one_authorized_cited_note() -> None:
+    research = (CUSTOM / "research/SKILL.md").read_text(encoding="utf-8")
+
+    for verb in ("Lock", "Trace", "Scout", "Classify", "Gate", "Write", "Return"):
+        assert f"**{verb}.**" in research
+
+    required = (
+        "Write exactly one tracked note",
+        "all other mutations",
+        "leave the repo unchanged",
+        "supported`, `conflicted`, or `unknown",
+        "A blocked note records attempted lanes and missing evidence",
+        "Status: answered | conflicted | blocked",
+        "## Source Trace",
+        "note path, one-paragraph answer, status, uncertainty, and next route",
+        "return cited inline evidence or a blocker",
+    )
+    for token in required:
+        assert token in research
+
+
 def test_writing_great_skills_authorizes_bounded_direct_subagents() -> None:
     writing = (CUSTOM / "writing-great-skills/SKILL.md").read_text(
         encoding="utf-8"
