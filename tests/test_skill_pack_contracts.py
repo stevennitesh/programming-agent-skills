@@ -326,6 +326,60 @@ def test_grilling_preserves_one_decision_confirmed_exit_and_evidence_routes() ->
         assert token in grilling
 
 
+def test_prototype_preserves_lifecycle_boundaries_and_branch_gates() -> None:
+    prototype = (CUSTOM / "prototype/SKILL.md").read_text(encoding="utf-8")
+    logic = (CUSTOM / "prototype/LOGIC.md").read_text(encoding="utf-8")
+    ui = (CUSTOM / "prototype/UI.md").read_text(encoding="utf-8")
+
+    for index, verb in enumerate(
+        ("Lock", "Branch", "Probe", "Smoke", "Judge", "Reconcile"), start=1
+    ):
+        assert f"## {index}. {verb}" in prototype
+
+    required = (
+        "one design question answered by a judgeable, disposable probe",
+        "Use `.tmp/` for disposable work",
+        "Use an app-tree path only when real constraints require it",
+        "`.scratch/<feature-slug>/prototype/`",
+        "The real coding workflow owns production proof",
+        "Read [LOGIC.md](LOGIC.md)",
+        "Read [UI.md](UI.md)",
+        "one run command",
+        "Smoke proves the probe is judgeable, not production-correct",
+        "`answered`, `awaiting-verdict`, or `blocked`",
+        "Return the packet directly to the invoking caller",
+        "Recommend `$handoff` only when the verdict must cross sessions",
+        "Recommend `$domain-modeling`",
+        "every prototype path is deleted or intentionally preserved",
+        "`blocked` returns evidence without claiming completion",
+    )
+    for token in required:
+        assert token in prototype
+
+    for heading in ("## Model", "## Drive", "## Smoke"):
+        assert heading in logic
+    for token in (
+        "smallest pure interface",
+        "Current state",
+        "Available actions",
+        "leaves state unchanged when applicable",
+    ):
+        assert token in logic
+
+    for heading in ("## Host", "## Bet", "## Switch", "## Smoke"):
+        assert heading in ui
+    for token in (
+        "A blank route is a **vacuum**",
+        "3 structurally different bets",
+        "cap the set at 5",
+        "**wallpaper**",
+        "keeps mutations fake or stubbed",
+        "Keep variant state URL-backed",
+        "hidden or unreachable in production builds",
+    ):
+        assert token in ui
+
+
 def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
     review = (CUSTOM / "review/SKILL.md").read_text(encoding="utf-8")
     convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(encoding="utf-8")
