@@ -3,5 +3,5 @@ policy:
 
 interface:
   display_name: "Convergent PR Review"
-  short_description: "Fresh-context reviewers, verified ledger"
-  default_prompt: "Use $convergent-pr-review on this local PR or high-risk diff: pin one snapshot, dispatch 2 fresh-context reviewers, run targeted convergence, and return a root-verified ledger."
+  short_description: "Independent reviewers, verified ledger"
+  default_prompt: "Use $convergent-pr-review to pin this local PR or high-risk diff, run independent fresh-context review, and return a verified decision ledger."
