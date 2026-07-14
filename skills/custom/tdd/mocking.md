@@ -1,22 +1,14 @@
 # Mocking And Boundaries
 
-Prefer real in-process code and local substitutes. Put a test double at a real **seam**, usually through an **adapter**.
+Prefer real in-process code. Put a test double only at a real boundary adapter.
 
 Use this order:
 
 1. Real in-process code.
 2. Local substitute: in-memory store, isolated `.tmp/` filesystem, test database, or local emulator.
-3. Fake adapter preserving the behavior needed by the test.
+3. Fake adapter preserving required behavior.
 4. Stub for one controlled value or response.
-5. Mock adapter when a true external call contract is itself the behavior or risk.
-
-Use the smallest double that preserves the contract:
-
-- **Fake:** working local adapter implementation.
-- **Stub:** fixed response for one scenario.
-- **Mock:** interaction assertion at an external seam.
-
-Inject a narrow, domain-facing adapter at an external seam. Keep transport machinery and provider shapes behind it.
+5. Mock adapter when the external call contract is itself the behavior or risk.
 
 ## Boundary Fake
 
@@ -36,39 +28,16 @@ def test_paid_order_is_confirmed():
     assert result.payment.transaction_id == "txn_test"
 ```
 
-The fake sits at the payment seam while the owned order behavior remains real. Mock a call only when the adapter request itself is the contract under test.
+The fake replaces the payment boundary while owned order behavior remains real. Assert an interaction only when the adapter request is the contract under test.
 
-## Owned Behavior
+## Fidelity Gate
 
-Implementation coupling:
+Before adding a double, establish:
 
-```python
-reserve_inventory = mocker.patch("orders.reserve_inventory")
-checkout(cart_with_one_item())
-reserve_inventory.assert_called_once()
-```
+- the real seam it replaces;
+- why real code or a local substitute is insufficient;
+- the dependency behavior and side effects the test needs;
+- every consumed contract field;
+- whether the test survives internal movement.
 
-Behavior through the owning interface:
-
-```python
-store = create_test_store(inventory={"COURSE-TS": 2})
-
-result = checkout(store, cart_with_item("COURSE-TS"))
-
-assert result.status == "confirmed"
-assert get_inventory(store, "COURSE-TS") == 1
-```
-
-Painful caller-facing tests are interface pressure: the interface may be shallow, coupled, or placed at the wrong seam.
-
-## Checklist
-
-Before adding a fake, stub, or mock, answer:
-
-- What real seam does it replace?
-- Why is real in-process code or a local substitute insufficient?
-- Which behavior from the real dependency does the test rely on?
-- Does the double match every consumed contract field?
-- Would the test still matter if internals moved?
-
-Reconsider the seam when contract fidelity is unclear or double setup overwhelms the behavior under test.
+Reconsider the seam when fidelity is unclear or double setup overwhelms the behavior. Keep transport and provider shapes behind a narrow domain-facing adapter. Put test-only setup, cleanup, and inspection in test utilities—not production interfaces.

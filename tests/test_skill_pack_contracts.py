@@ -463,9 +463,9 @@ def test_bug_routing_is_disjoint_and_non_bouncing() -> None:
     assert uncertain in diagnosing.split("---", 2)[1]
     assert uncertain in tdd.split("---", 2)[1]
     assert known in tdd.split("---", 2)[1]
-    assert "Use for red-testable new behavior. Use for bug fixes only when" in tdd.split(
-        "---", 2
-    )[1]
+    assert "Use for tracer-bullet red-green-refactor on red-testable new behavior" in (
+        tdd.split("---", 2)[1]
+    )
     assert "Use `$tdd` directly for known-repro bugs." not in tdd
     assert "Apply the bug ownership gate in [SKILL.md](SKILL.md)" in tdd_tests
     assert "known-repro bugs" not in tdd_tests

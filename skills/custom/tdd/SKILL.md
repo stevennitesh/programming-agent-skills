@@ -1,126 +1,77 @@
 ---
 name: tdd
-description: "Use for red-testable new behavior. Use for bug fixes only when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known. Hand off bugs when the exact symptom, cause, or trusted red-capable reproduction is uncertain to $diagnosing-bugs; hand off throwaway design questions to $prototype."
+description: "Use for tracer-bullet red-green-refactor on red-testable new behavior. For bugs, use only when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known. Hand off bugs when the exact symptom, cause, or trusted red-capable reproduction is uncertain to $diagnosing-bugs; hand off throwaway design questions to $prototype."
 ---
 
 # Test-Driven Development
 
-Build one **tracer bullet** at a time:
+Own one inner loop:
 
-**RED -> verify RED -> GREEN -> verify GREEN -> REFACTOR**
+**TRACE -> RED -> GREEN -> REFACTOR -> RETURN**
 
-**No observed RED, no TDD.** After-the-fact checks may supplement RED evidence; they do not replace it.
+**No observed RED, no TDD.** After-the-fact proof may supplement RED evidence; it cannot replace it.
 
-**Boundary:** own this inner loop only. The caller owns bounded scope, review, staging, commit, tracker or external mutation, publishing, and closeout.
+The caller owns bounded scope, review, staging, commit, tracker or external mutation, publishing, and closeout.
 
-Hand off to `$diagnosing-bugs` for a bug when the exact symptom, cause, or trusted red-capable reproduction is uncertain; it owns that diagnostic loop through regression proof. Use `$tdd` directly only when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known. Hand off to `$prototype` for throwaway design questions.
+Hand off to `$diagnosing-bugs` when a bug's exact symptom, cause, or trusted red-capable reproduction is uncertain; it returns regression proof to the original caller. Hand off throwaway design questions to `$prototype`.
 
-Read [tests.md](tests.md) only when test shape, oracle, or seam remains unclear after inspecting nearby tests; read [mocking.md](mocking.md) before adding a test double; read [refactoring.md](refactoring.md) only while GREEN.
+Read [tests.md](tests.md) only when test shape, oracle, or seam remains unclear after inspecting nearby tests. Read [mocking.md](mocking.md) before adding a test double. Read [refactoring.md](refactoring.md) only while GREEN.
 
-## Principles
+## 1. TRACE
 
-- **Tracer bullet:** prove one narrow observable behavior through the highest useful public interface or seam. Finish its vertical cycle before writing the next test.
-- **Test oracle:** trace expected outcomes to an independent source: acceptance criteria, a specification, a known-good literal, a fixture, or a worked example. Never derive the oracle from the production implementation.
-- **Interface pressure:** hard-to-test behavior exposes a shallow, coupled, or misplaced seam. Do not add private or test-only hooks to escape that pressure.
-- **Classicist:** prefer real in-process code and local substitutes. Use fakes, stubs, or mocks only at real boundary adapters.
+Apply the caller-loaded engineering contract when supplied; otherwise read `docs/agents/engineering-contract.md` when present. Follow `docs/agents/domain.md` when present for domain routing.
 
-## Preconditions
+Reuse the caller's **Source Trace** or trace the behavior to its request, acceptance criterion, public contract, and independent oracle.
 
-Apply the caller-loaded engineering contract when supplied; otherwise read `docs/agents/engineering-contract.md` when present before changing repo behavior.
+Lock one **tracer bullet**:
 
-When exploring the codebase, follow `docs/agents/domain.md` when present. Otherwise use the relevant context map, glossary, ADRs, and nearby code.
-
-Reuse the caller's **Source Trace** when supplied. Otherwise trace the behavior, acceptance criterion, public contract, and test oracle to the request, work item, specification, bug repro, or repo contract.
-
-Choose the technical seam from repo evidence. Ask only when the behavior, public contract, acceptable oracle, or a user-owned commitment remains unsettled.
-
-If no red-capable harness reaches the seam, return that gap to the caller. Create the smallest repo-native automated check only when it stays inside the assigned scope. Do not silently add dependencies, services, or public test hooks. Manual proof is not RED.
-
-## Workflow
-
-### 1. Lock The Next Tracer Bullet
-
-Name:
-
-- the observable behavior;
+- one observable behavior;
 - its source or acceptance criterion;
-- the public interface or seam;
-- the test oracle;
+- the highest useful public interface or seam;
+- an independent oracle;
 - the focused test command.
 
-Choose the smallest acceptance-critical or highest-risk behavior. If no path is proven and risk does not dictate otherwise, start with the happy path.
+Choose the seam from repo evidence. Ask only when behavior, public contract, oracle, or a user-owned commitment remains unsettled.
 
-Add another tracer bullet only for a materially distinct behavior, branch, failure mode, permission boundary, state transition, integration seam, or migration risk. Use focused module tests for dense pure logic when they remain behind a meaningful interface.
+If no red-capable harness reaches the seam, create the smallest repo-native automated check only within scope. Do not add dependencies, services, or public test hooks without authority. Manual proof is not RED.
 
-Stop when remaining cases are data variations of behavior already proved.
+A GREEN prefactor may expose the seam only when focused tests already protect existing behavior; otherwise return the gap as support work.
 
-A **GREEN prefactor** may expose a useful seam only when existing focused tests already protect behavior. Otherwise return it as support work instead of widening the TDD slice.
+## 2. RED
 
-### 2. RED
+Write one focused behavior test and run it before production implementation.
 
-Write one focused test in domain language. Exercise real code paths where practical and assert observable outcomes rather than internal calls.
+RED passes its gate only when the test fails for the expected missing or wrong behavior—not from setup, imports, fixtures, typos, or unrelated breakage.
 
-Run the focused test before writing production code.
+If it passes immediately, reassess the behavior, assertion, and seam. If it errors, repair the test or setup and rerun.
 
-Pass the **RED gate** only when:
+Quarantine only implementation authored for this behavior during the current cycle. If RED cannot be observed safely against the baseline, return after-the-fact proof and do not claim TDD.
 
-- the test fails;
-- the failure is expected;
-- missing or wrong behavior caused the failure;
-- setup, imports, fixtures, typos, and unrelated breakage did not cause it.
+## 3. GREEN
 
-If the test passes immediately, stop. The behavior may already exist, the assertion may be weak, or the seam may be wrong. Do not edit production code from that test.
+Make the smallest production change that satisfies the tracer bullet.
 
-If the test errors, repair the test or setup and rerun until it fails for the expected behavioral reason.
+Run the focused test, then the nearest relevant test group. GREEN requires the focused behavior through the chosen seam and passing nearby tests.
 
-**Exploration quarantine:** set aside only implementation authored for this behavior during the current cycle. Preserve user and pre-existing work. If RED cannot be observed safely against a baseline, return after-the-fact proof and do not claim TDD.
+Change the test only when its Source Trace, oracle, or seam was wrong. Preserve a correct assertion.
 
-### 3. GREEN
+## 4. REFACTOR
 
-Write the smallest production change that makes the focused test pass.
+Refactor only while GREEN. Follow [refactoring.md](refactoring.md), rerun the focused test after each move, and run the nearest relevant test group before the next tracer bullet.
 
-Do not add future behavior, broad cleanup, speculative abstractions, or unrelated fixes.
+Behavior or interface changes start a new RED cycle.
 
-Run the focused test, then the nearest relevant test group.
+## 5. RETURN
 
-Pass the **GREEN gate** only when:
-
-- the focused test passes;
-- the behavior works through the chosen interface or seam;
-- nearby tests still pass;
-- output is trustworthy.
-
-Change the test only when its Source Trace, oracle, or seam was wrong. Do not relax a correct assertion to manufacture GREEN.
-
-### 4. REFACTOR
-
-Refactor only while GREEN.
-
-Follow [refactoring.md](refactoring.md). Keep behavior unchanged, make one meaningful move at a time, and rerun the focused test after each move.
-
-Prefer deeper modules and simpler interfaces over shallow pass-through helpers. New behavior starts a new RED cycle.
-
-Before leaving the tracer bullet, rerun the nearest relevant test group.
-
-### 5. Repeat Or Stop
-
-Pick the next materially distinct behavior in the assigned slice and repeat.
-
-Stop when the assigned acceptance criteria are proved, the next case is only a data variation, or a remaining behavior requires a user-owned decision.
-
-## Proof Packet
+Repeat only for materially distinct acceptance behavior. Stop when the assigned criteria are proved, remaining cases are data variations, or the next behavior requires a user-owned decision.
 
 Return:
 
-- **Source Trace:** behavior source, acceptance criterion, seam, and oracle;
-- **RED:** command and expected failure;
+- **Source Trace:** behavior, source, seam, and oracle;
+- **RED:** command and expected behavioral failure;
 - **GREEN:** command and passing result;
-- **Coverage:** nearest relevant validation, broader validation, or skipped reason;
+- **Coverage:** relevant validation or skipped reason;
 - **Refactor:** material cleanup or `none`;
 - **Residual risk:** remaining uncertainty or blocker.
 
-## Completion Criteria
-
-Complete only when each implemented behavior in the assigned slice crossed the RED gate before its production implementation, crossed the GREEN gate through the chosen interface or seam, stayed GREEN through refactoring, received relevant validation, and appears in the proof packet.
-
-If RED was not observed safely, report the result as after-the-fact proof, not TDD.
+Complete only when every implemented behavior crossed observed RED before production implementation, crossed GREEN through its chosen seam, stayed GREEN through refactoring, received relevant validation, and appears in the proof packet.
