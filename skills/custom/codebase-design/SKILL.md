@@ -1,74 +1,40 @@
 ---
 name: codebase-design
-description: "Design deep modules behind small interfaces. Use when the user wants to deepen a bounded module, shape or compare an interface, place a seam or adapter, improve testability through a caller-facing surface, or another skill needs the deep-module vocabulary."
+description: "Design one bounded deep module behind a small caller-facing interface. Use for a specific module, interface, seam, adapter, or testability decision, or as shared deep-module vocabulary inside another skill."
 ---
 
 # Codebase Design
 
-Design **deep modules**: meaningful behavior behind a small interface, placed at a clean seam, and proved through that interface.
+Own one outcome: a recommended design for one bounded **deep module**—useful behavior behind a small interface at an earned seam, proved through that interface.
 
-This skill is the **design bench** for one bounded candidate. `$improve-codebase-architecture` owns codebase-wide survey and candidate discovery.
+Default to read-only design. The user or caller owns public-contract commitments, design acceptance, implementation, and downstream mutations. When loaded only as vocabulary, retain the caller's artifact, mutation boundary, and completion criterion.
 
-When another skill needs only the vocabulary, apply it inside that caller's workflow. Keep the caller's output and completion criteria authoritative.
-
-## Ownership
-
-- **Codebase design:** Own architecture vocabulary, source-traced analysis, alternatives, recommendation, and the design packet.
-- **User or caller:** Own public-contract commitments, design acceptance, implementation, and every tracker, spec, ADR, domain, staging, or commit mutation.
-- **Write boundary:** Default to read-only design. Inside an authorized implementation workflow, keep the caller's write scope and gates authoritative.
+For codebase-wide candidate discovery, recommend `$improve-codebase-architecture` and stop.
 
 ## Vocabulary
 
-Use repo and domain terms for business concepts and existing code. Use these terms for architecture claims; translate rather than rename established project language.
+Use repo and domain terms for business concepts and existing code. Use these terms for architecture claims:
 
-**Module** - anything with an interface and an implementation: a function, class, package, workflow, or tier-spanning slice.
+- **Module** — an interface plus its hidden implementation; scale may be a function, class, package, workflow, or tier-spanning slice.
+- **Interface** — everything callers must know: operations, inputs, outputs, invariants, ordering, errors, configuration, performance, and behavior.
+- **Implementation** — behavior hidden behind the interface. Use **adapter** only when its role at a seam matters.
+- **Depth** — caller and test leverage per unit of interface learned. Depth is a property of the interface, not implementation size.
+- **Seam** — where behavior can vary without editing callers; the interface lives here.
+- **Adapter** — a concrete implementation satisfying an interface at a seam.
+- **Leverage** — capability gained per unit of interface learned.
+- **Locality** — change, bugs, decisions, knowledge, and verification concentrated in one place.
 
-**Interface** - everything callers must know to use the module correctly: operations, inputs, outputs, invariants, ordering, errors, configuration, performance, and behavior contract.
+## Taste
 
-**Implementation** - behavior hidden behind the interface. Use **adapter** only when the role at a seam is the subject.
+- **Compress.** Reduce what callers learn and coordinate.
+- **Delete.** A useful module redistributes its complexity when removed; a pass-through removes it.
+- **Earn.** Keep a seam or layer only for locality, dependency isolation, domain ownership, real variation, or testability. One adapter is hypothetical; production plus a fake, substitute, emulator, or second integration demonstrates variation.
+- **Prove.** Use the caller-facing interface as the test surface. Prefer observable outcomes; specify an internal module directly only when it owns independently meaningful behavior.
 
-**Depth** - leverage at the interface: how much useful behavior callers and tests receive per unit of interface they must understand.
+## Direct Design
 
-**Seam** - the place where behavior can vary without editing callers. The interface lives at the seam.
+For one bounded module, shallow cluster, seam, or interface question, read [DIRECT-DESIGN.md](DIRECT-DESIGN.md) completely and run its pass.
 
-**Adapter** - a concrete implementation that satisfies an interface at a seam.
+## Completion
 
-**Leverage** - more capability per unit of interface learned.
-
-**Locality** - change, bugs, decisions, knowledge, and verification concentrated in one place.
-
-## Deep And Shallow
-
-A deep interface compresses caller knowledge:
-
-```text
-Deep: checkout.place_order(cart, payment)
-```
-
-A shallow interface makes callers reconstruct the implementation:
-
-```text
-Shallow: load cart -> price items -> reserve stock -> charge payment
-         -> persist order -> build receipt
-```
-
-That sequence may belong inside `checkout`; it is shallow when every caller must know it.
-
-## Taste Gates
-
-- **Caller compression:** A deeper module makes callers learn and coordinate less.
-- **Deletion test:** Deleting a useful module redistributes its complexity across callers, tests, or workflows. Deleting a pass-through removes complexity.
-- **Interface pressure:** Painful caller-facing tests signal a shallow, coupled, or misplaced interface. Return observable outcomes and inject dependencies only at real seams.
-- **Interface is the test surface:** Callers and behavior tests cross the same seam. Test an internal module directly only when it owns behavior worth specifying independently.
-- **Real seam:** Locality, dependency isolation, domain ownership, or real variation earns a seam. One adapter suggests a hypothetical seam; production plus a fake, substitute, emulator, or second integration can make it real.
-- **Earned indirection:** Merge modules, inline pass-throughs, or keep code boring when another layer adds no leverage, locality, isolation, or testability.
-
-## Direct Design Branch
-
-When the user supplies one bounded module, shallow cluster, seam, or interface question, read [DIRECT-DESIGN.md](DIRECT-DESIGN.md) completely and run its pass.
-
-## Completion Criteria
-
-A reference-only use is complete when the caller's artifact applies the vocabulary consistently without changing the caller's workflow boundary.
-
-A direct design pass is complete only through [DIRECT-DESIGN.md](DIRECT-DESIGN.md)'s completion criterion.
+A vocabulary-only use is complete when the caller's artifact applies the terms without transferring ownership. A direct pass is complete only through [DIRECT-DESIGN.md](DIRECT-DESIGN.md)'s completion criterion.

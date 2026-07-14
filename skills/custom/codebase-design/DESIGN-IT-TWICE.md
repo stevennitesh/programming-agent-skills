@@ -1,88 +1,49 @@
 # Design It Twice
 
-Use this branch for a consequential interface choice.
+Use this branch for a consequential interface choice. The first plausible interface is an anchor, not a conclusion.
 
-The first plausible interface is an anchor, not a conclusion. Produce independent alternatives, expose fake variety, compare trade-offs, then recommend one.
+Frame -> Diverge -> Compare -> Commit.
 
-Use [SKILL.md](SKILL.md) for vocabulary, [DIRECT-DESIGN.md](DIRECT-DESIGN.md) for the design packet, and [DEEPENING.md](DEEPENING.md) for dependency categories, seam discipline, adapter strategy, and test migration.
+Use [`SKILL.md`](SKILL.md) for vocabulary, [DIRECT-DESIGN.md](DIRECT-DESIGN.md) for the design packet, and [DEEPENING.md](DEEPENING.md) for dependency and migration strategy.
 
-## Process
+## 1. Frame
 
-### 1. Frame The Problem Space
+Frame the problem from the Source Trace: candidate module or shallow cluster, spread behavior or decision, constraints, dependencies, painful callers and tests, public-contract commitments, and bounded-slice edge. Use a sketch only when it clarifies constraints; it is evidence, not a proposal.
 
-Before proposing designs, write a short user-facing frame:
+## 2. Diverge
 
-- Source Trace: request or caller artifact, relevant implementation, callers, tests, domain terms, and ADR constraints;
-- candidate module or shallow cluster;
-- behavior or decision currently spread across callers;
-- constraints the new interface must satisfy;
-- dependencies and their categories from [DEEPENING.md](DEEPENING.md);
-- existing callers and tests that reveal pain;
-- bounded-slice constraint.
+Produce at least three genuinely different interfaces.
 
-Include a rough code sketch only when it makes the constraints easier to see. Treat the sketch as evidence rather than a proposal.
-
-### 2. Produce Alternatives
-
-Produce at least three meaningfully different interfaces.
-
-Use direct fresh-context scouts when independent judgment is part of the evidence. Start each with `fork_turns="none"` when supported. Give every scout the same self-contained factual brief: objective, settled constraints, scope, relevant source pointers, one distinct design pressure, mutation boundary, and output contract. Exclude parent hypotheses, preferred solutions, other candidates, and peer results.
+Use direct fresh-context scouts when independent judgment matters. Start each with `fork_turns="none"` when supported. Give every scout the same self-contained factual brief: objective, settled constraints, scope, source pointers, one distinct design pressure, mutation boundary, and output contract. Exclude parent hypotheses, preferred solutions, other candidates, and peer results.
 
 Scouts inspect and propose only; they never edit files, mutate external state, or spawn. Keep alternatives private until every scout returns. The main agent owns comparison, recommendation, and completion.
 
-For partitioned exploration where continuity matters more than independence, fork only the minimum necessary recent context or carry those facts in the brief. Do not describe forked results as independent.
+When continuity matters more than independence, fork only the minimum necessary recent context and do not call the result independent. When delegation is unavailable, produce alternatives sequentially under different pressures.
 
-When delegation is unavailable, produce alternatives sequentially and reset the design pressure between them. Require three alternatives, not three workers; the main agent may contribute one alternative.
+Use pressures that force structural variety:
 
-Use different design pressures to force real variety:
+- **Minimal** — smallest useful surface;
+- **Caller-first** — trivial common call;
+- **Domain-owned** — decisions move to their domain owner;
+- **Seam-first** — real adapters or substitutes shape the interface;
+- **Migration-first** — first safe step fits the bounded slice.
 
-- **Minimal surface** - minimize the useful interface and maximize leverage per entry point.
-- **Caller-optimized** - make the most common caller trivial.
-- **Domain-owned** - move decisions to the module that owns the domain concept.
-- **Seam-focused** - design around real adapters or local substitutes.
-- **Migration-first** - fit the first safe step inside the bounded slice.
+For each alternative, show:
 
-Each alternative includes:
+- interface sketch and caller experience;
+- behavior hidden behind the interface;
+- seam, dependencies, adapters, and substitutes;
+- test surface and validation proof;
+- first migration step, trade-offs, and risks.
 
-- **Interface sketch** - usage plus useful type or function detail.
-- **Caller experience** - what callers learn and stop knowing.
-- **Behavior hidden** - what moves behind the interface.
-- **Seam and adapters** - where variation lives and which adapters or substitutes are real.
-- **Dependency category** - from [DEEPENING.md](DEEPENING.md).
-- **Test surface** - how behavior is proved through the interface.
-- **Migration path** - first safe step and any support slice.
-- **Trade-offs** - gains and weaknesses in depth, leverage, locality, testability, and risk.
+## 3. Compare
 
-### 3. Compare
+Compare depth, locality, caller ergonomics, seam placement, dependency strategy, test surface, migration cost, and risk. Merge alternatives that differ only by names, parameter reshuffling, or cosmetic layering; replace fake variety with a genuinely different design.
 
-Present alternatives one at a time, then compare them by:
+## 4. Commit
 
-- **Depth**;
-- **Locality**;
-- **Caller ergonomics**;
-- **Seam placement**;
-- **Dependency strategy**;
-- **Test surface**;
-- **Migration cost**;
-- **Risk**.
+Recommend one design. Explain why it wins, why credible alternatives lose, any useful hybrid, the first bounded migration step, validation proof, risks, and follow-ups. Name behavior-preserving prerequisites as support slices.
 
-Merge alternatives that differ only by names, parameter reshuffling, or cosmetic layering; replace them with a genuinely different design.
+## Completion
 
-### 4. Recommend
-
-Choose one design.
-
-Include:
-
-- why it wins;
-- why rejected alternatives lose;
-- any useful hybrid;
-- first migration step;
-- validation proof;
-- risks and follow-ups.
-
-Name behavior-preserving prerequisites as support slices. When the design exceeds the bounded slice, recommend the smallest useful next slice.
-
-## Completion Criteria
-
-Complete only when the problem frame is source-traced; at least three genuinely different interfaces exist; fake variety was replaced; every alternative covers caller experience, hidden behavior, seam, dependencies, test surface, migration, and trade-offs; the alternatives were compared; one design was recommended; and the first bounded migration step, proof, risks, and follow-ups were returned.
+Complete when the frame is source-traced; at least three genuinely different interfaces exist; fake variety was removed; every alternative covers callers, hidden behavior, seam, dependencies, tests, migration, trade-offs, and risk; one design was recommended; and the bounded first step and proof were returned.

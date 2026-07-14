@@ -199,6 +199,36 @@ def test_branch_heavy_skills_disclose_branch_procedure() -> None:
     assert "## 1. Orient" not in design
 
 
+def test_codebase_design_preserves_lean_branch_contracts() -> None:
+    design = (CUSTOM / "codebase-design/SKILL.md").read_text(encoding="utf-8")
+    direct = (CUSTOM / "codebase-design/DIRECT-DESIGN.md").read_text(
+        encoding="utf-8"
+    )
+    deepening = (CUSTOM / "codebase-design/DEEPENING.md").read_text(
+        encoding="utf-8"
+    )
+    alternatives = (CUSTOM / "codebase-design/DESIGN-IT-TWICE.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert "When loaded only as vocabulary" in design
+    assert "retain the caller's artifact, mutation boundary, and completion criterion" in design
+    assert "recommend `$improve-codebase-architecture` and stop" in design
+    assert "Orient -> Diagnose -> Deepen -> Compare -> Recommend" in direct
+    assert "Recommend `$improve-codebase-architecture` and stop" in direct
+    assert "Classify -> Place -> Substitute -> Replace -> Migrate" in deepening
+    for category in (
+        "In-process",
+        "Local-substitutable",
+        "Remote-owned",
+        "True external",
+    ):
+        assert category in deepening
+    assert "add, rewrite, keep, or delete" in deepening
+    assert "Frame -> Diverge -> Compare -> Commit" in alternatives
+    assert "at least three genuinely different interfaces" in alternatives
+
+
 def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
     wayfinder = (CUSTOM / "wayfinder/SKILL.md").read_text(encoding="utf-8")
     grill_docs = (CUSTOM / "grill-with-docs/SKILL.md").read_text(encoding="utf-8")
