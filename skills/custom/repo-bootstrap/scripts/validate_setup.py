@@ -16,7 +16,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:67ee67b25505 -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:3965def50145 -->"
 ENGINEERING_PRIMER_TOKEN = (
     "Explore imaginatively. Converge under proof. Simplify ruthlessly."
 )
@@ -65,7 +65,7 @@ AGENT_POINTERS = (
     "docs/agents/engineering-contract.md",
 )
 
-CONTRACT_TOKENS = (
+CONTRACT_LITERAL_TOKENS = (
     ENGINEERING_PRIMER_TOKEN,
     "## Engineering Taste",
     "**Imagination before commitment.**",
@@ -90,8 +90,6 @@ CONTRACT_TOKENS = (
     "**Spec / Standards:**",
     "**Residual risk:**",
     "Explore -> Choose -> Prove -> Expand -> Simplify -> Lock",
-    "Expand evidence and coverage, not unauthorized scope.",
-    "Treat repo config, CI, and maintained contributor docs as command authority.",
     ".tmp/",
     ".scratch/",
     "## Lock",
@@ -161,6 +159,18 @@ def require_tokens(
             failures.append(f"{relative} is missing {token}")
 
 
+def require_section_tokens(
+    text: str,
+    relative: str,
+    requirements: tuple[tuple[str, tuple[str, ...]], ...],
+    failures: list[str],
+) -> None:
+    for heading, tokens in requirements:
+        for token in tokens:
+            if not markdown_section_contains(text, heading, token):
+                failures.append(f"{relative} section {heading} is missing {token}")
+
+
 def markdown_section_contains(text: str, heading: str, signature: str) -> bool:
     pattern = re.compile(
         rf"(?ms)^{re.escape(heading)}[ \t]*(?:\r?\n|\Z)"
@@ -221,19 +231,29 @@ def check_ignore(root: Path, probe: str) -> tuple[bool | None, str]:
     return None, result.stderr.strip() or "git check-ignore failed"
 
 
+def git_root_failures(root: Path) -> list[str]:
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"],
+            cwd=root,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+    except OSError as error:
+        return [f"Git root check failed: {error}"]
+    if result.returncode != 0:
+        return ["Target is not a Git repository"]
+    if Path(result.stdout.strip()).resolve() != root:
+        return ["Target must be the Git repository root"]
+    return []
+
+
 def main() -> int:
     root = Path(parse_args().repo).resolve()
     failures: list[str] = []
 
-    git_root = subprocess.run(
-        ["git", "rev-parse", "--show-toplevel"],
-        cwd=root,
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-    if git_root.returncode != 0:
-        failures.append("Target is not a Git repository")
+    failures.extend(git_root_failures(root))
 
     texts = {
         relative: read_required(root, relative, failures) for relative in REQUIRED_FILES
@@ -291,7 +311,18 @@ def main() -> int:
     require_tokens(
         contract,
         "docs/agents/engineering-contract.md",
-        CONTRACT_TOKENS,
+        CONTRACT_LITERAL_TOKENS,
+        failures,
+    )
+    require_section_tokens(
+        contract,
+        "docs/agents/engineering-contract.md",
+        (
+            ("## Tight Engineering Spine", ("**Expand:**", "bounded slice")),
+            ("## Proof Discipline", ("command authority",)),
+            ("## Work State And Workers", ("**staged worker**", "**lane worker**")),
+            ("## Lock", (".tmp/", ".scratch/", "mutation boundary")),
+        ),
         failures,
     )
 

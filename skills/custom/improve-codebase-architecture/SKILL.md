@@ -12,7 +12,7 @@ Own one outcome: a source-traced architecture survey whose selected deepening ca
 - The survey may write one disposable report under ignored `.tmp/architecture-reviews/`.
 - `$research` may write one cited note only with caller approval for that tracked mutation; otherwise record a named evidence gap.
 - Selected-candidate domain writes flow only through `$grill-with-docs` and its gates.
-- Keep product code, other tracked docs, tracker state, the index, and commits unchanged. Reopen an ADR only for material new friction.
+- Keep product code, other tracked docs, tracker state, the index, and commits unchanged. Flag an ADR for reopening only when material new friction exists.
 
 ## Process
 
@@ -42,7 +42,11 @@ Account for every survey region with evidence or a named gap. Give every survivi
 
 **Report.** Confirm `.tmp/architecture-reviews/` is ignored; otherwise recommend `$repo-bootstrap` and stop. Read [HTML-REPORT.md](HTML-REPORT.md) completely, then write one self-contained report there.
 
-Show current friction, the responsibility that could consolidate, and a validation angle; leave dependency classification and interface contracts to the selected-candidate pass. Number and rank the candidates, end with one **Top recommendation**, return the absolute report path, ask the user to select one candidate, and stop.
+Show current friction, the responsibility that could consolidate, and a validation angle; leave dependency classification and interface contracts to the selected-candidate pass. When candidates survive, number and rank them and end with one **Top recommendation**. When none survive, record **No candidate recommended** with the accounted regions and evidence gaps; return the absolute report path and stop without selection or grilling.
+
+Reread the report and, when supported, render or open it. Verify that it is offline and script-free, candidate IDs and anchors resolve, paired diagrams exist, and the Top recommendation or empty verdict matches the surviving set.
+
+For a non-empty report, return its absolute path and ask the user to reply with `$improve-codebase-architecture Candidate N`; then stop.
 
 ### 5. Grill
 
@@ -62,6 +66,6 @@ Return an **architecture packet** with the report path, chosen candidate, Source
 
 ## Completion
 
-The survey pass is complete only when every region is accounted for, every reported candidate passes both filters, the numbered report and Top recommendation exist, its absolute path is returned, and tracked state stayed within the boundary.
+The survey pass is complete only when every region is accounted for, every reported candidate passes both filters, the verified report and matching Top recommendation or **No candidate recommended** verdict exist, its absolute path is returned, any selection request includes the explicit pickup prompt, and tracked state stayed within the boundary.
 
 The selected-candidate pass is complete only from a Confirmed grilling exit, with domain and ADR outcomes accounted for, any required design packet present, and exactly one downstream route recommended without execution.

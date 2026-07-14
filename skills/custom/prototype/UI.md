@@ -34,7 +34,7 @@ Share small primitives without forcing variants through one layout.
 
 Build visible prototype chrome with previous, current, and next controls.
 
-Keep variant state URL-backed. Controls wrap, reload preserves the selection, direct links work, and the active variant remains obvious. Isolate the switcher from the designs and hide or exclude it from production builds.
+Keep variant state URL-backed in non-production environments. Controls wrap, reload preserves the selection, direct links work, and the active variant remains obvious. Gate variant routing, variant subtrees, and the switcher together so the entire prototype surface is unreachable in production builds.
 
 ## Smoke
 
@@ -46,4 +46,4 @@ Run the app and inspect the prototype in a browser. Verify:
 - reload preserves the active variant;
 - the active variant is obvious;
 - the switcher leaves important UI unobscured at relevant viewport sizes;
-- prototype-only chrome is hidden or unreachable in production builds.
+- the entire prototype surface—variant routing, variants, and switcher—is unreachable in production builds.

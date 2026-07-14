@@ -21,9 +21,7 @@ Pause only for a **material gap**: an unsettled decision that would change produ
 
 ### 2. Choose
 
-Choose the highest existing **proof seam** that proves user-visible behavior. Add a new load-bearing seam only when no existing seam can prove the spec.
-
-Record the seam, behavior proved, prior art, and regression risks. A disputed load-bearing choice is a material gap.
+Choose the highest existing **proof seam** that proves user-visible behavior. If no existing seam can prove the spec, record the proposed load-bearing seam, behavior proved, prior art, and regression risks. Unless the settled source already approves it, treat that new seam as a material gap.
 
 ### 3. Draft
 
@@ -57,4 +55,4 @@ Publish through the tracker contract routed by `AGENTS.md`. Apply **Mutation rea
 
 Return the parent reference, any preserved draft path, and recommend `$to-tickets` and stop when implementation slicing is next.
 
-Complete only after Trace and Cover pass, no material gap remains, publication is read back, and draft cleanup or preservation is reported.
+Complete only after Trace passes; the proof seam is settled; Draft passes the fresh-session test; Cover passes; no material gap remains; publication is read back; and draft cleanup or preservation is reported.

@@ -1,6 +1,6 @@
-# Brief Branch Differences
+# Brief Branch Emphasis
 
-[AGENT-BRIEF.md](AGENT-BRIEF.md) owns the brief structure. Adjust its evidence emphasis by branch:
+[AGENT-BRIEF.md](AGENT-BRIEF.md) owns the brief schema and Ready Gate. This file changes evidence emphasis only:
 
 | Branch | Emphasize |
 |---|---|

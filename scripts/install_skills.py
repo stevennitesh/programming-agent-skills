@@ -20,6 +20,7 @@ from scripts.skill_pack_contract import (
     SHA256_RE,
     SKILL_NAME_RE,
     file_hash,
+    level_two_section_span,
     lexical_path,
     manifest_bytes,
     parse_managed_manifest_payload,
@@ -1566,10 +1567,11 @@ def rollback_install(
 
 def bootstrap_section(template: Path) -> str:
     text = template.read_text(encoding="utf-8")
-    start = text.find(BOOTSTRAP_HEADING)
-    if start < 0:
+    span = level_two_section_span(text, BOOTSTRAP_HEADING)
+    if span is None:
         raise ValueError(f"Template is missing {BOOTSTRAP_HEADING}: {template}")
-    return text[start:].strip() + "\n"
+    start, end = span
+    return text[start:end].strip() + "\n"
 
 
 def render_global_bootstrap(template: Path, target: Path) -> tuple[str, str]:
@@ -1578,31 +1580,23 @@ def render_global_bootstrap(template: Path, target: Path) -> tuple[str, str]:
         return "created", "# Global Codex Instructions\n\n" + section
 
     text = target.read_text(encoding="utf-8")
-    start = text.find(BOOTSTRAP_HEADING)
-    if start >= 0:
-        next_heading = re.search(
-            r"(?m)^##\s+", text[start + len(BOOTSTRAP_HEADING) :]
-        )
-        end = len(text)
-        if next_heading is not None:
-            end = start + len(BOOTSTRAP_HEADING) + next_heading.start()
+    current_span = level_two_section_span(text, BOOTSTRAP_HEADING)
+    if current_span is not None:
+        start, end = current_span
         updated = text[:start].rstrip() + "\n\n" + section
         if end < len(text):
             updated += "\n" + text[end:].lstrip()
         return ("present" if updated == text else "updated"), updated
 
-    legacy_start = text.find(LEGACY_BOOTSTRAP_HEADING)
-    if legacy_start >= 0:
-        if text.find(LEGACY_BOUNDARY_HEADING, legacy_start) < 0:
+    legacy_span = level_two_section_span(text, LEGACY_BOOTSTRAP_HEADING)
+    if legacy_span is not None:
+        legacy_start, _ = legacy_span
+        boundary_span = level_two_section_span(text, LEGACY_BOUNDARY_HEADING)
+        if boundary_span is None or boundary_span[0] < legacy_start:
             raise ValueError(
                 f"Legacy skill-pack block has no {LEGACY_BOUNDARY_HEADING}: {target}"
             )
-        boundary_start = text.find(LEGACY_BOUNDARY_HEADING, legacy_start)
-        after_boundary = boundary_start + len(LEGACY_BOUNDARY_HEADING)
-        next_heading = re.search(r"(?m)^##\s+", text[after_boundary:])
-        legacy_end = len(text)
-        if next_heading is not None:
-            legacy_end = after_boundary + next_heading.start()
+        _, legacy_end = boundary_span
         updated = text[:legacy_start].rstrip() + "\n\n" + section
         if legacy_end < len(text):
             updated += "\n" + text[legacy_end:].lstrip()
@@ -2054,7 +2048,7 @@ def parse_args() -> argparse.Namespace:
         "--recover-transaction",
         type=Path,
         metavar="SNAPSHOT_PATH",
-        help="Restore and verify the previous managed pack from a transaction snapshot.",
+        help="Reconcile a preserved skill-pack transaction against its recorded targets.",
     )
     return parser.parse_args()
 

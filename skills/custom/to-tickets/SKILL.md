@@ -50,6 +50,8 @@ Apply the **coverage gate**: map every source-visible implementation commitment 
 
 ### 4. Approve
 
+Show the coverage map, including every explicit deferral, exclusion, and no-ticket reason.
+
 Show each proposed ticket's title, blockers, covered behavior, proof lane, why, expected write scope, and parallel safety.
 
 Get explicit user approval for granularity, order, blocking edges, acceptance criteria, proof lanes, write scopes, and parallel safety before publishing.
@@ -65,7 +67,8 @@ Apply **Mutation read-back** to the parent, tickets, relationships, blocking edg
 Return the published references, packet path when applicable, verified initial ready frontier, and exactly one next action:
 
 - empty frontier: resolve the named blocker;
-- one ready ticket or write-overlapping tickets: recommend `$implement`;
+- one ready ticket: recommend `$implement` for it;
+- write-overlapping tickets: name the first ticket under the tracker's ready order and recommend `$implement` for that ticket;
 - at least two tickets with independent write scopes and proof lanes: recommend `$parallel-implement`.
 
 Complete only when the setup, source, coverage, and approval gates pass; every ticket satisfies the Ready-for-agent contract; publication and read-back succeed; and the verified frontier plus one next action are returned.

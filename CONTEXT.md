@@ -60,7 +60,6 @@ The installer records pack-managed names in `.programming-agent-skills-manifest.
 - Use `python -m scripts.pytest_focused` for narrow tests without full-suite fanout.
 - Use `python -m scripts.validate_skills` for repo integrity.
 - Use `python -m scripts.install_skills` for managed install or update, then validate the installed root.
-- Keep `scripts/validate-skills.sh` as a POSIX compatibility wrapper only.
 
 ## Pack Vocabulary
 

@@ -11,8 +11,8 @@ description: Route the current situation to exactly one next skill in this engin
 
 1. **Inspect.** Use the user's stated situation and visible repo state. Inspect only a fact that could change the route.
 2. **Clarify.** If two routes remain plausible, ask one highest-leverage question and wait.
-3. **Route.** Choose one route below. If the chosen engineering route depends on a missing or outdated setup contract, route to `$repo-bootstrap` instead.
-4. **Stop.** Return one skill, one reason it wins, and any setup or handoff precondition. The user starts it; downstream work remains unstarted.
+3. **Route.** Choose one route below. If the chosen engineering route depends on a missing or outdated setup surface, route to `$repo-bootstrap` instead.
+4. **Stop.** Return `Skill: <skill-name>`, `Reason: <why it wins>`, and `Precondition: <setup or handoff need | none>`. The user starts it; downstream work remains unstarted.
 
 ## Route Map
 
@@ -43,9 +43,9 @@ description: Route the current situation to exactly one next skill in this engin
 | Situation | Route |
 | --- | --- |
 | Raw issues, requests, or configured external PR/MR intake need sorting | `$triage` |
-| A bug's exact symptom, cause, or trusted red-capable reproduction is uncertain | `$diagnosing-bugs` |
+| A bug's expected behavior, exact symptom, cause, or trusted red-capable reproduction is uncertain | `$diagnosing-bugs` |
 | Settled new behavior has a red-capable proof seam, or for a bug expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known | `$tdd` |
-| A merge, rebase, cherry-pick, or revert is conflicted | `$resolving-merge-conflicts` |
+| A merge, rebase, cherry-pick, or revert is conflicted, or files contain conflict markers | `$resolving-merge-conflicts` |
 | An ordinary branch, WIP, staged, or since-X diff needs fixed-point review | `$review` |
 | A local PR or high-risk local diff needs independent passes and a finding ledger | `$convergent-pr-review` |
 

@@ -17,7 +17,7 @@ Own one read-only convergence gate over one immutable review snapshot. The revie
 
 ## 1. Pin
 
-Use the caller-supplied base ref; otherwise discover the repository default branch and merge base.
+Resolve and record the caller-supplied base ref to a commit SHA; otherwise discover the default branch and merge base, then record the resolved commit.
 
 Capture one complete target:
 
@@ -46,7 +46,7 @@ The caller supplies `Spec required: yes | no`. Default to `no` for standalone re
 
 When `Spec required: yes`, a missing, conflicting, or unresolved authoritative source makes the review `incomplete`; return `incomplete` before reviewer dispatch and never skip or replace the Spec axis. When `no` and no Spec resolves, record `Spec: skipped - no source available` and replace that reviewer with the highest-risk uncovered lens.
 
-For Standards, use repository rules and meaningful nearby conventions. Load [SMELL-BASELINE.md](../review/SMELL-BASELINE.md) only when repository standards are thin.
+For Standards, use repository rules and meaningful nearby conventions. Load [SMELL-BASELINE.md](../review/SMELL-BASELINE.md) only when documented repository standards and meaningful nearby conventions are thin. Label any resulting finding a `baseline judgement call`.
 
 Build one reviewer brief containing the captured snapshot, Source Trace, repo contract, Standards and Spec sources, acceptance criteria, touched seams and contracts, validation commands, and relevant migration, permission, generated-artifact, network, or external-service constraints.
 
@@ -68,7 +68,7 @@ skipped checks:
 blockers:
 ```
 
-Each finding includes severity, axis, lens, file:line evidence, violated behavior or contract, impact, remediation direction, and confidence.
+Each finding includes severity, axis, lens, source location (`file:line`, issue or comment anchor, or captured-artifact location), violated behavior or contract, impact, remediation direction, and confidence.
 
 Keep parent hypotheses, preliminary findings, peer output, and the partial ledger out of round-one context. Wait for every requested lens; replace failed or timed-out reviewers when capacity permits.
 
@@ -106,7 +106,7 @@ Run the drift check before reporting:
 
 - A supplied review tree is immutable.
 - For a branch or PR, compare the current target head with the captured head.
-- For a live worktree, compare the current `HEAD`, index, status, and in-scope untracked content with the captured snapshot.
+- For a live worktree, compare the current `HEAD`, index tree, staged diff, unstaged diff, status, and all in-scope untracked paths and content with the captured snapshot.
 
 Any difference makes the review stale. Rerun against a new snapshot or return `incomplete`.
 
@@ -114,6 +114,10 @@ Any difference makes the review stale. Rerun against a new snapshot or return `i
 
 Severity and blocking:
 
+- `P0`: data loss, security exposure, or catastrophic production failure.
+- `P1`: merge-blocking correctness, contract, or important-path workflow failure.
+- `P2`: significant edge-case, validation, CI, or operator-risk defect.
+- `P3`: lower-risk correctness or maintainability defect with concrete impact.
 - `P0/P1` block.
 - `P2` blocks when required validation or CI is affected.
 - `P3` is non-blocking unless the caller says otherwise.
@@ -123,7 +127,7 @@ Severity and blocking:
 - `pass`: current snapshot, full confidence, no blocker, and no required check skipped;
 - `pass with residual risk`: current snapshot and no blocker, but reduced confidence or non-blocking `not checked` evidence remains;
 - `blocked`: an accepted item blocks, or a disputed or `not checked` item has a provisional blocking decision;
-- `incomplete`: the target, required Spec or lens, verification, independence, or drift gate did not close.
+- `incomplete`: the target, required Spec or lens, verification, or drift gate did not close, and no permitted fallback closed it.
 
 The review root owns this decision. The caller owns whether `pass with residual risk` is acceptable for Lock.
 

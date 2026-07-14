@@ -138,13 +138,13 @@ _Avoid_: keyword, term, motif
 
 ### Completion Criterion
 
-The condition that tells the agent a unit of work is done. Its **clarity** resists **premature completion**; its **demand** sets **legwork**. Match that demand to the behavior the step owns. Strong criteria are checkable and proportional.
+The condition that tells Codex a unit of work is done. Its **clarity** resists **premature completion**; its **demand** sets **legwork**. Demand applies to steps and flat reference; match it to the behavior the owner promises. Strong criteria are checkable and proportional, and exhaustive when the behavior promises full coverage.
 
 _Avoid_: done condition, exit condition, stopping rule
 
 ### Legwork
 
-The work Codex does behind the scenes within a single step — reading files, exploring the codebase, making changes, and gathering evidence rather than offloading it to the user. It lives below the step structure and is controlled by a **leading word** or demanding **completion criterion**. It goes thin when that demand is weak or **premature completion** cuts the step short.
+The work Codex does behind the scenes to satisfy a step or flat-reference demand — reading files, exploring the codebase, making changes, and gathering evidence rather than offloading it to the user. It lives below the visible structure and is controlled by a **leading word** or demanding **completion criterion**. It goes thin when that demand is weak or **premature completion** cuts the work short.
 
 _Avoid_: scope, effort, diligence, coverage
 

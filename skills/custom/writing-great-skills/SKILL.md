@@ -13,7 +13,7 @@ Read [GLOSSARY.md](GLOSSARY.md) completely for a full audit. For bounded work, l
 
 ## Delegation
 
-**Delegate legwork:** For pack-wide audits, invocation authorizes direct subagents without separate confirmation. Give each one bounded, read-only evidence lane. Use `fork_turns="none"` when independent judgment matters; direct children do not spawn. Subagents return evidence; the root owns required source reading, judgment, synthesis, edits, verification, and completion.
+**Delegate legwork:** For pack-wide audits, invocation authorizes direct subagents without separate confirmation. Give each direct child one bounded, non-overlapping, self-contained, read-only evidence lane; exclude parent conclusions and peer results. Use `fork_turns="none"` when independent judgment matters; direct children do not spawn. Subagents return evidence; the root owns required source reading, judgment, synthesis, edits, verification, and completion.
 
 ## Audit Spine
 
@@ -21,7 +21,7 @@ Read [GLOSSARY.md](GLOSSARY.md) completely for a full audit. For bounded work, l
 
 2. **Choose.** Choose implicit or explicit-only reach in `agents/openai.yaml`. For implicit reach, front-load one trigger per branch. For explicit-only reach, keep the description human-facing and route it through a router.
 
-3. **Own.** Give each behavior one owner for its rules, gates, output, mutation boundary, and completion criterion. Compose only when the owner permits it. Callers name the callee, trigger, and return boundary; routers name one next skill and stop.
+3. **Own.** Give each behavior one owner for its rules, gates, output, mutation boundary, and completion criterion. Compose only through a relationship the owner explicitly permits. Callers name the callee, trigger, and return boundary; routers name one next skill and stop.
 
 4. **Arrange.** Keep common-path steps and compact universal reference in `SKILL.md`. Give each step a checkable, proportional result. Co-locate each concept. Disclose branch-only reference through a sharp context pointer. Split only for distinct invocation or observed premature completion after a sharp criterion.
 
@@ -31,8 +31,8 @@ Read [GLOSSARY.md](GLOSSARY.md) completely for a full audit. For bounded work, l
 
 ## Output
 
-A full audit returns the verdict, impact-ordered findings, exact fixes, deliberate non-changes, and behavior at risk. Bounded work returns only applicable findings.
+A full audit returns the verdict, impact-ordered findings, exact replacement wording or test changes, deliberate non-changes, and behavior at risk. Bounded work returns only applicable findings.
 
 ## Completion
 
-Complete when invocation, ownership, composition, mutation boundaries, outputs, proof, and completion criteria are unambiguous, and affected surfaces verify.
+Complete when every affected invocation surface, owner, composition edge, context pointer, gate, output, mutation boundary, handoff, and completion criterion is accounted for; source, upstream, and mirror differences are classified; and every claimed relationship and representative workflow has evidence.

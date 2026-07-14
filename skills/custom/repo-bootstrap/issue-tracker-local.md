@@ -48,7 +48,7 @@ Used by `$wayfinder`. The **map** is one markdown file with child ticket files.
 - **Map**: create `.scratch/<feature-slug>/wayfinder/map.md`. Put `Status: Open | Complete` near the top. Its body holds Destination, Notes, Decisions So Far, Not Yet Specified, and Out Of Scope.
 - **Child ticket**: create `.scratch/<feature-slug>/wayfinder/tickets/<NN>-<slug>.md`. Put `Part of: map.md`, `Type: research | prototype | grilling | task`, `Participation: HITL | AFK`, `Status: Pending | In Progress | Resolved | Blocked | Out Of Scope`, optional `Claimed by: <driver/session>`, and optional `Blocked by: <NN>, <NN>` lines near the top.
 - **Blocking**: a ticket is unblocked when every ticket in `Blocked by` is `Resolved` or `Out Of Scope`. When the last blocker clears, change `Status: Blocked` to `Status: Pending`.
-- **Frontier query**: list tickets with `Status: Pending`, then drop tickets with an unresolved blocker. The first remaining ticket in map order is the frontier.
+- **Frontier query**: list tickets with `Status: Pending`, then drop tickets with an unresolved blocker. The remaining tickets in map order are the frontier; the first is the default selection.
 - **Claim**: set `Status: In Progress` and `Claimed by: <driver/session>` before work; those fields are the concurrency guard.
 - **Release**: remove `Claimed by` when active work ends.
 - **Resolve**: record the answer, set `Status: Resolved`, release the claim, then append one context pointer to the map's Decisions So Far.

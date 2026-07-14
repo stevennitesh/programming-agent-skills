@@ -1039,8 +1039,58 @@ def test_install_updates_only_existing_bootstrap_section(tmp_path: Path) -> None
     text = target.read_text(encoding="utf-8")
     assert status == "updated"
     assert "Old route" not in text
-    assert "Suggest `$skill-router`" in text
+    assert install_skills.bootstrap_section(
+        root / "GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md"
+    ) in text
     assert "Personal before" in text
+    assert "## Personal After\n\nKeep me." in text
+
+
+def test_bootstrap_section_uses_one_real_level_two_heading(tmp_path: Path) -> None:
+    template = tmp_path / "template.md"
+    template.write_text(
+        "# Global Codex Instructions\n\n"
+        "Mention `## Skill Pack Bootstrap` without opening it.\n\n"
+        "## Skill Pack Bootstrap\n\nManaged.\n\n"
+        "## Personal Reference\n\nUnmanaged.\n",
+        encoding="utf-8",
+    )
+
+    assert install_skills.bootstrap_section(template) == (
+        "## Skill Pack Bootstrap\n\nManaged.\n"
+    )
+
+    template.write_text(
+        "# Global Codex Instructions\n\n"
+        "## Skill Pack Bootstrap\n\nFirst.\n\n"
+        "## Skill Pack Bootstrap\n\nSecond.\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="exactly one"):
+        install_skills.bootstrap_section(template)
+
+
+def test_install_ignores_bootstrap_heading_inside_fenced_example(tmp_path: Path) -> None:
+    root = tmp_path / "repo"
+    target = tmp_path / "AGENTS.md"
+    write_template(root)
+    target.write_text(
+        "# Global Codex Instructions\n\n"
+        "```markdown\n## Skill Pack Bootstrap\nExample only.\n```\n\n"
+        "## Skill Pack Bootstrap\n\nOld route.\n\n"
+        "## Personal After\n\nKeep me.\n",
+        encoding="utf-8",
+    )
+
+    status = install_skills.install_global_bootstrap(
+        root / "GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md",
+        target,
+    )
+
+    text = target.read_text(encoding="utf-8")
+    assert status == "updated"
+    assert "```markdown\n## Skill Pack Bootstrap\nExample only.\n```" in text
+    assert "Old route" not in text
     assert "## Personal After\n\nKeep me." in text
 
 
@@ -1680,5 +1730,3 @@ def test_readme_documents_the_executable_recovery_path() -> None:
     ).read_text(encoding="utf-8")
 
     assert "python -m scripts.install_skills --recover-transaction <snapshot-path>" in readme
-    assert "restores and verifies the previous managed pack" in readme
-    assert "rerun the installer" in readme

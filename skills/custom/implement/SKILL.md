@@ -11,8 +11,8 @@ Implement exactly one selected ready work item.
 
 Owner mode is the default. Staged-worker mode requires an explicit assignment and accepting owner.
 
-- **Owner:** owns review, commit, Lock, and tracker closeout.
-- **Staged worker:** owns only its assigned patch, focused proof, staging, and handoff.
+- **Owner:** owns tracker claim and release, review, commit, Lock, and closeout.
+- **Staged worker:** owns only its assigned patch, focused proof, staging, and handoff; it never mutates tracker state.
 
 Owner-mode invocation authorizes in-scope staging, one commit, and repo-policy closeout. Push, deployment, PR creation, destructive Git, and unrelated external mutations require separate authority.
 
@@ -28,7 +28,7 @@ A parent spec, plan, queue, batch, list, or bare source path is context, not imp
 
 Ready means expected behavior and acceptance criteria are settled, the item is unblocked, and an observable proof seam exists. Tracker-backed items must also satisfy tracker eligibility.
 
-Claim tracker-backed work before editing. Capture the fixed point, worktree, and index; preserve unrelated work and isolate the selected diff.
+For tracker-backed work, the owner claims the item before editing or dispatch. A staged worker verifies that claim and does not mutate tracker state. Capture the fixed point, worktree, and index; preserve unrelated work and isolate the selected diff.
 
 ## Patch
 
@@ -53,7 +53,7 @@ Invoke exactly one route:
 
 Pass `Spec required: yes`, the selected work item, Source Trace, acceptance criteria, fixed point, review tree, and its diff.
 
-Incomplete review, unresolved Spec, missing required validation, and route-defined blockers keep Lock closed. Accepted residual risk must be authorized by the selected item, repo policy, or user.
+Review is acceptable only when complete and every finding is fixed or explicitly accepted as residual risk by selected-item, repo, or user authority. A route decision of `blocked` or `incomplete`, unresolved Spec, or missing required validation keeps Lock closed.
 
 Fix findings, restage, capture a new review tree, and repeat the selected route.
 
@@ -63,7 +63,7 @@ After acceptable review, prepare the closeout packet: summary, review result, va
 
 Capture the **lock tree** with `git write-tree`.
 
-Only verified closeout metadata may differ from the reviewed tree. Any implementation, behavior, scope, or contract delta returns to Review.
+Inspect `git diff <review-tree> <lock-tree>`. Only verified closeout metadata may differ from the reviewed tree. Any implementation, behavior, scope, or contract delta returns to Review.
 
 Require the index tree to equal the approved lock tree, run `git diff --cached --check`, and commit once to the current branch. Then require `HEAD^{tree}` to equal the approved lock tree.
 

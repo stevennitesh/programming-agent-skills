@@ -23,7 +23,7 @@ Read every Source Trace entry and `docs/agents/engineering-contract.md`. The wor
 
 **One worker, one lane, one packet:** never spawn, integrate, formally review, mutate trackers, push, or widen scope. Return exactly one clean local commit plus focused proof, or a `blocker` or `needs-feedback` packet.
 
-For red-testable new behavior, invoke `$tdd`. For a bug, invoke `$tdd` only when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known. When a bug's exact symptom, cause, or trusted red-capable reproduction is uncertain, invoke `$diagnosing-bugs` in fix mode with this lane worker as its caller; return here after regression proof.
+For red-testable new behavior, invoke `$tdd`. For a bug, invoke `$tdd` only when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known. When a bug's expected behavior, exact symptom, cause, or trusted red-capable reproduction is uncertain, invoke `$diagnosing-bugs` in fix mode with this lane worker as its caller; return here after regression proof.
 
 Apply the routed proof budget. Run broad validation only for shared-behavior risk or an explicit route. Use the assigned environment and lane-local cache/temp paths. Shared dependency mutation requires an explicit route.
 
@@ -31,7 +31,7 @@ Keep product intent, acceptance, public and domain contracts, dependencies, secu
 
 ## Report
 
-`done` requires verified preflight, one worker commit, focused proof, and clean final status. `blocker` or `needs-feedback` claims no completion and preserves exact state.
+`done` requires verified preflight, every acceptance criterion accounted for, one worker commit, focused proof, and clean final status. `blocker` or `needs-feedback` claims no completion and preserves exact state.
 
 ```text
 status: <done / blocker / needs-feedback>
@@ -41,7 +41,7 @@ preflight:
 base:
 commit:
 owned files:
-proof:
+proof: <acceptance criterion -> evidence; focused commands/results>
 skipped checks:
 risk/blockers:
 next need:

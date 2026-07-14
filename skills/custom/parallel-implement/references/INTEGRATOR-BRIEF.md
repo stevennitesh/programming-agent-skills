@@ -20,7 +20,7 @@ Read `docs/agents/engineering-contract.md`, the complete Source Trace, ledger, a
 
 Own serial landing and routed integration validation only. Accept packets only from the orchestrator. Never dispatch, formally review, mutate external trackers, push, or close the run. The orchestrator owns those actions.
 
-Use a dedicated integration worktree established through `CODEX-WORKTREE-LAUNCH.md`. If it is unavailable, return `blocked` so the orchestrator can own landing.
+Use a dedicated integration worktree established through `CODEX-WORKTREE-LAUNCH.md`. If it is unavailable, return a `blocker` packet so the orchestrator can own landing.
 
 Before worker dispatch in hot mode, or the first landing in late mode, report `ready` only after verifying the repo root, worktree, branch, `HEAD`, clean in-scope status, ledger access, landing route and mode, and validation startup.
 
@@ -30,17 +30,17 @@ For each orchestrator-accepted worker packet:
 
 1. Require a clean checkout except routed ledger or closeout files.
 2. Inspect the actual `base..head` diff for scope, new files, stale-base overlap, conflicts, and proof.
-3. Return a stale-base, feedback, or blocker packet when unsafe.
+3. Return a stale-base, `needs-feedback`, or `blocker` packet when unsafe.
 4. Land exactly one item through the recorded mode.
-5. Verify the landed diff, run touched-area proof, append the event, and report the new `HEAD` and status.
+5. Verify the landed diff, run touched-area proof, append the event, and report the work item, worker and integration SHAs, landing mode, changed files, validation, skipped checks, overlap or conflicts, decision, next need, risk, skill feedback, new `HEAD`, and status.
 
-If landing conflicts or partially applies, stop. Report the operation, status, unmerged paths, worker commit, current `HEAD`, recorded landing mode, and landing authority. Preserve the partial state for the orchestrator's Conflict gate.
+If landing conflicts or partially applies, stop. Report the operation, status, unmerged paths, worker commit, current `HEAD`, recorded landing mode, and landing authority. Preserve the partial state and return the conflict packet; the orchestrator applies the routed conflict-recovery boundary.
 
 Run broad validation at routed wave boundaries only. Final broad validation belongs to the review-ready handoff.
 
 ## Review-Ready Handoff
 
-When the orchestrator drains the frontier, assemble review-visible closeout metadata, require a clean in-scope state, and run final validation from the fixed point.
+When the orchestrator drains the frontier, assemble review-visible closeout metadata, require a clean in-scope state, run final validation on the candidate integration `HEAD`, and preserve the run fixed point as the review base.
 
 Return the candidate `HEAD`, clean status, integrated worker SHAs, final validation, closeout metadata, skipped checks, residual risk, tracker readiness, blockers, and skill feedback. Return a review-route escalation when integrated risk exceeds the selected route. Then become idle; the orchestrator pins the target and invokes formal review.
 

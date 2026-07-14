@@ -171,7 +171,7 @@ Use one verb for each executable relationship:
 
 | Caller | Verb | Callee | Condition and return |
 | --- | --- | --- | --- |
-| `grill-with-docs` | Compose | `$grilling` | Run the one-decision interview; return its exit packet through the composer. |
+| `grill-with-docs` | Compose | `$grilling` | Run the one-decision-at-a-time interview; return its exit packet through the composer. |
 | `grill-with-docs` | Compose | `$domain-modeling` | Keep durable domain capture active under its own write and ADR gates. |
 | `grilling` | Recommend and stop | `$research` | A source evidence gap needs one cited note. |
 | `grilling` | Recommend and stop | `$prototype` | A design evidence gap needs a runnable verdict. |
@@ -199,19 +199,19 @@ Use one verb for each executable relationship:
 | `implement` | Recommend and stop | `$to-tickets` | The supplied source contains multiple or unsliced implementation items. |
 | `implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `parallel-implement` | Invoke | `$tdd` | A lane worker has red-testable new behavior, or a bug whose expected behavior, exact symptom, cause, and trusted red-capable reproduction are known. |
-| `parallel-implement` | Invoke | `$diagnosing-bugs` | A lane worker's bug has an uncertain exact symptom, cause, or trusted red-capable reproduction; return to the same lane worker. |
+| `parallel-implement` | Invoke | `$diagnosing-bugs` | A lane worker's bug has uncertain expected behavior, exact symptom, cause, or trusted red-capable reproduction; return to the same lane worker. |
 | `parallel-implement` | Invoke | `$review` | The integrated closeout target needs ordinary review. |
 | `parallel-implement` | Invoke | `$convergent-pr-review` | The integrated closeout target matches a high-risk trigger. |
 | `parallel-implement` | Invoke | `$resolving-merge-conflicts` | A routed landing enters conflicted or partially applied Git state; resume only from the resolver's verified and authorized return state. |
 | `parallel-implement` | Recommend and stop | `$implement` | The ready set downshifts to one serial item. |
 | `parallel-implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
-| `tdd` | Hand off | `$diagnosing-bugs` | A bug's exact symptom, cause, or trusted red-capable reproduction is uncertain. |
+| `tdd` | Hand off | `$diagnosing-bugs` | A bug's expected behavior, exact symptom, cause, or trusted red-capable reproduction is uncertain. |
 | `tdd` | Hand off | `$prototype` | The question is design evidence rather than production proof. |
 | `tdd` | Recommend and stop | `$codebase-design` | A GREEN refactor exposes one bounded interface or seam question outside the slice. |
 | `tdd` | Recommend and stop | `$improve-codebase-architecture` | A GREEN refactor exposes a wide candidate-finding survey outside the slice. |
 | `diagnosing-bugs` | Hand off | `$tdd` | Only when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known before Trace; retain the original caller. |
 | `diagnosing-bugs` | Recommend and stop | `$implement` | Standalone diagnosis proved the cause and needs an implementation owner. |
-| `resolving-merge-conflicts` | Hand off | `$diagnosing-bugs` | A post-resolution failure remains causally uncertain. |
+| `resolving-merge-conflicts` | Invoke | `$diagnosing-bugs` | Diagnose an uncertain proof failure, return the causal packet, then resume Prove. |
 | `review` | Hand off | `$convergent-pr-review` | The target is a local PR or needs independent high-risk review. |
 | `convergent-pr-review` | Hand off | `$review` | The target is an ordinary fixed-point review. |
 | `improve-codebase-architecture` | Load | `$codebase-design` | Apply shared architecture vocabulary during the wide survey. |
@@ -254,7 +254,7 @@ Use one verb for each executable relationship:
 | `domain-modeling` | `CONTEXT-FORMAT.md`: glossary and context-map format; `ADR-FORMAT.md`: ADR gate and format |
 | `tdd` | `tests.md`, `mocking.md`, `refactoring.md`: examples and branch mechanics |
 | `prototype` | `LOGIC.md`, `UI.md`: branch mechanics; `SKILL.md` owns lifecycle and boundary |
-| `triage` | `ATTENTION-SCAN.md`, `SPECIFIC-ITEM.md`, `QUICK-OVERRIDE.md`: branch procedures; `AGENT-BRIEF.md`: ready-contract rendering; `AGENT-BRIEF-EXAMPLES.md`: examples; `OUT-OF-SCOPE.md`: rejected-work knowledge base |
+| `triage` | `ATTENTION-SCAN.md`, `SPECIFIC-ITEM.md`, `QUICK-OVERRIDE.md`: branch procedures; `AGENT-BRIEF.md`: ready-contract rendering; `AGENT-BRIEF-EXAMPLES.md`: branch evidence emphasis; `OUT-OF-SCOPE.md`: rejected-work knowledge base |
 | `repo-bootstrap` | Tracker, label, domain, and engineering-contract seeds; `setup-schema.json`: compatibility fingerprint; `scripts/validate_setup.py`: target-repo setup-surface validation |
 | `wayfinder` | `MAP-FORMAT.md`: map and ticket body shape; `SKILL.md`: foggy map lifecycle and semantics |
 | `research` | One cited repo-local Markdown note per source question |

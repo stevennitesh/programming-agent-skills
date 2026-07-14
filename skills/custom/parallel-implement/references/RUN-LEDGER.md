@@ -30,7 +30,7 @@ Resolve every field or mark it `not applicable` before dispatch. Shallow mode us
 
 ## Closeout Summary
 
-Fill this before tracker mutation.
+Fill this before closeout tracker mutation.
 
 **Outcome:** `<complete / partial / blocked>`
 **Run fixed point:** `<sha>`

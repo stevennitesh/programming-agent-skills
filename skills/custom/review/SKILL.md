@@ -9,23 +9,35 @@ description: "Review ordinary branch, WIP, staged, or \"review since X\" diffs r
 
 Own one ordinary, read-only fixed-point review.
 
+**Read-only:** Inspect only. Leave the worktree, index, commits, tracker, PR comments or reviews, and external messages unchanged.
+
 - **Standards:** built right, against repository rules, meaningful nearby conventions, and the fallback smell baseline when standards are thin.
 - **Spec:** right thing, against the authoritative request, bounded slice, acceptance criteria, and required proof.
 
 Keep the axes separate. Never merge, deduplicate, or rerank findings across them.
 
-**Review route:** Hand off to `$convergent-pr-review` and stop for local PRs or high-risk local diffs. Carry the caller-supplied Spec requirement, Source Trace and Spec sources, fixed point, and captured target into the handoff.
+**Review route:** For a local PR or high-risk local diff, hand off to `$convergent-pr-review` and stop. Carry the caller-supplied Spec requirement, Source Trace and Spec sources, fixed point, and target inputs; `$convergent-pr-review` owns snapshot capture.
 
 **Spec gate:** The caller supplies `Spec required: yes | no`. Default to `no` for standalone review. When `Spec required: yes`, a missing, conflicting, or unresolved authoritative source makes the review `incomplete`; never skip or replace the Spec axis.
 
+An incomplete review returns:
+
+```text
+Review status: incomplete
+Review target: <resolved target or unresolved>
+Sources: Standards: <sources or not traced>. Spec: <source or unresolved>.
+Blocker: <unresolved ref | empty or incomplete target | missing or conflicting Spec>
+Skipped: judgment did not run.
+```
+
 ## 1. Pin
 
-Use the supplied fixed point. Otherwise discover the repository default branch and merge base, state the resolved baseline, and ask only when discovery is ambiguous.
+Resolve the supplied fixed point to a commit SHA. Otherwise discover the repository default branch and merge base, record the resolved commit, and ask only when discovery is ambiguous.
 
 Select one target:
 
 - review tree: `git diff <fixed-point> <review-tree>`
-- committed branch: `git diff <fixed-point>...HEAD`
+- committed branch: `git diff <fixed-point> HEAD`
 - working tree: `git diff <fixed-point>`
 - explicitly staged only: `git diff --cached`
 
@@ -67,6 +79,7 @@ Judge Standards from its traced sources. Set those findings aside, reset to the 
 Use exactly:
 
 ```markdown
+Review status: complete
 Review target: <resolved fixed point> | <diff command> | <review tree or live target>
 Sources: Standards: <sources>. Spec: <source or skipped>.
 

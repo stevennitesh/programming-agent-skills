@@ -1,13 +1,13 @@
 ---
 name: diagnosing-bugs
-description: "Diagnose broken, failing, flaky, slow, environment-only, or production-only behavior when the exact symptom, cause, or trusted red-capable reproduction is uncertain. Fix only when implementation is authorized."
+description: "Diagnose broken, failing, flaky, slow, environment-only, or production-only behavior when expected behavior, the exact symptom, cause, or a trusted red-capable reproduction is uncertain. Fix only when implementation is authorized."
 ---
 
 # Diagnosing Bugs
 
 **Trace -> Loop -> Minimise -> Hypothesise -> Probe -> Prove -> Return**
 
-**No red-capable loop, no hypothesis. No proven cause, no fix.**
+**No evidence-capable Loop, no causal hypothesis. No proven cause, no fix.**
 
 ## Boundary
 
@@ -27,11 +27,13 @@ Apply `docs/agents/engineering-contract.md` and `docs/agents/domain.md` when pre
 
 Record the Source Trace, including expected and actual behavior, exact evidence, reproducer and environment, known-good baseline, contradictions, and missing evidence. Broken output is not the expected-behavior oracle.
 
+When expected behavior remains unresolved, return a decision-needed packet to the caller. Make no causal claim or production change.
+
 Before instrumentation, record the fixed point, worktree state, and pre-existing changes. Existing evidence satisfies a later gate only when its source and result are recorded.
 
 ## 2. Loop
 
-**Relentless diagnosis:** build and run one command that catches the exact reported symptom.
+**Relentless diagnosis:** build and run one repeatable harness, normally a single command, that catches the exact reported symptom.
 
 Start at the nearest automated seam; escalate through replay, a throwaway harness, fuzzing, bisection, differential comparison, then structured HITL. When automation is impossible, use a shell-appropriate HITL harness that captures the exact symptom, expected and actual behavior, steps, attempts, failures, environment, and observations.
 
@@ -54,7 +56,7 @@ Stop when every remaining element is load-bearing or explicitly unremovable with
 
 ## 4. Hypothesise
 
-Rank three to five falsifiable hypotheses before testing them:
+Rank the plausible falsifiable hypotheses before testing them. Include a competing explanation unless direct evidence uniquely determines the cause.
 
 > If `<cause>` is true, `<probe>` will produce `<observable prediction>`.
 
@@ -87,11 +89,11 @@ In fix mode, when a correct regression seam reproduces the real bug pattern:
 
 When no correct seam exists, record the test-surface gap and prove the authorized fix with the original Loop without claiming durable regression coverage.
 
-Compare flake rates or performance measurements with their baselines. If the original Loop remains red, remove only the attempted fix, record the evidence, and return to **Hypothesise**.
+Compare flake rates or performance measurements with their baselines. If the original Loop remains red, revert only changes authored for that attempted fix, preserving pre-existing and unrelated hunks. If clean isolation is impossible, stop with the exact state. Record the evidence and return to **Hypothesise**.
 
 ## 7. Return
 
-Remove tagged instrumentation and disposable `.tmp/` artifacts, verify their absence, and reconcile the worktree with its starting state. Preserve durable evidence under `.scratch/diagnosing-bugs/<bug-slug>/` only with explicit approval.
+Remove tagged instrumentation and disposable `.tmp/` artifacts, verify their absence, and reconcile temporary diagnostic changes against the starting inventory. Retain only the authorized causal fix and approved durable evidence. Preserve durable evidence under `.scratch/diagnosing-bugs/<bug-slug>/` only with explicit approval.
 
 Return one diagnosis packet containing:
 

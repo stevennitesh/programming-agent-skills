@@ -35,7 +35,7 @@ Fetch the issue with the GitHub connector, including comments and labels.
 
 ## Work-item operations
 
-Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement`, and `$review`.
+Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement`, `$review`, and `$convergent-pr-review`.
 
 **Close implemented items:** yes.
 
@@ -57,7 +57,7 @@ Used by `$wayfinder`. The **map** is a single GitHub issue with child issues as 
 - **Map**: create one issue labelled `wayfinder:map`. Its body holds Destination, Notes, Decisions So Far, Not Yet Specified, and Out Of Scope.
 - **Child ticket**: create one issue per ticket, linked to the map as a GitHub sub-issue when available. If sub-issues are unavailable, add the child to a task list in the map body and put `Part of #<map>` at the top of the child body. Put `Participation: HITL | AFK` near the top. Label each ticket with exactly one `wayfinder:<type>` label: `research`, `prototype`, `grilling`, or `task`.
 - **Blocking**: use the work-item blocking convention. For a blocker still in fog, put `Blocked: fog - <gist>` near the top of the child body. A ticket is unblocked when every blocker is closed and any `Blocked:` marker has been removed.
-- **Frontier query**: list the map's open children, then drop tickets with an open blocker, a `Blocked:` marker, or an assignee. The first remaining ticket in map order is the frontier.
+- **Frontier query**: list the map's open children, then drop tickets with an open blocker, a `Blocked:` marker, or an assignee. The remaining tickets in map order are the frontier; the first is the default selection.
 - **Claim**: use the work-item claim convention before work.
 - **Release**: use the work-item release convention when active work ends.
 - **Resolve**: post the answer as a comment, close the ticket, release the claim, then append one context pointer to the map's Decisions So Far.

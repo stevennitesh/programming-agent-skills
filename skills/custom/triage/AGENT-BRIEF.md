@@ -4,15 +4,9 @@ A Codex-ready brief renders the tracker's Ready-for-agent contract when an issue
 
 For an issue, the brief describes the slice to build. For a PR, it describes the slice left to finish on the existing diff.
 
-## Principles
+## Shape
 
-- **Bounded:** name one independently completable slice.
-- **Tracer bullet:** prefer one narrow product behavior through the real system with observable acceptance criteria.
-- **Support slice:** use only when it independently proves, unblocks, or de-risks later behavior.
-- **Durable:** describe behavior, interfaces, seams, contracts, types, commands, config shapes, and validation that survive file movement.
-- **Behavioral:** state what the system must do and let implementation rediscover the current code shape.
-- **Observable:** give independently verifiable acceptance criteria and the highest useful proof seam.
-- **Scope fence:** name adjacent behavior that remains out of scope.
+Prefer one independently completable tracer bullet through real behavior. Use a support slice only when it independently proves, unblocks, or de-risks later behavior. Describe durable behavior and interfaces rather than current file choreography; make acceptance observable through the highest useful seam and fence adjacent work.
 
 ## Template
 
@@ -79,6 +73,6 @@ When load-bearing internals determine correctness, name the semantic examples, f
 
 Complete only when the brief names one bounded slice; verification is confirmed or a maintainer override and its residual uncertainty are explicit; Source Trace is preserved; dependencies, write scope, and parallel safety are explicit; acceptance criteria are observable; the proof lane reaches the highest useful seam; and adjacent work is fenced out.
 
-## Examples
+## Branch Emphasis
 
-Read [AGENT-BRIEF-EXAMPLES.md](AGENT-BRIEF-EXAMPLES.md) only when a concrete example is needed. Load only the matching bug tracer, enhancement tracer, support-slice, or PR-finish example.
+Read [AGENT-BRIEF-EXAMPLES.md](AGENT-BRIEF-EXAMPLES.md) only when branch-specific evidence emphasis is needed. Apply only the matching row.

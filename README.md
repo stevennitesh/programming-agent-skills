@@ -83,7 +83,15 @@ The installer creates or updates only the global template's `## Skill Pack Boots
 
 Skill swaps, retirements, the manifest, and the global bootstrap commit as one transaction. One process lock excludes competing installs and recovery. The installer validates the complete managed manifest and refuses unsafe names, modified managed trees, or conflicting unmanaged paths before mutation. A failure restores the previous pack and removes the transaction snapshot. If rollback itself cannot finish, the installer preserves a named `.programming-agent-skills-transaction-*` recovery snapshot and refuses another install.
 
-Run `python -m scripts.install_skills --recover-transaction <snapshot-path>` with the reported path. For nondefault targets, repeat the original `--skills-dir` and `--global-agents` values (or `--skip-global-agents`); recovery binds the snapshot to those explicit targets before any restore. The immutable plan records both the prior and planned identities. Recovery refuses to overwrite a live skill, manifest, or global instruction file that matches neither identity, so post-crash edits stay in place for operator reconciliation. It safely clears a verified pre-mutation interruption, restores and verifies the previous managed pack after an interrupted mutation, or finishes cleanup without rollback when the transaction already reached a verified terminal state. Claims are cleared while the snapshot still exists; the snapshot is removed last, then rerun the installer after a restored or cleared pre-mutation transaction.
+Run `python -m scripts.install_skills --recover-transaction <snapshot-path>` with the reported path. For nondefault targets, repeat the original `--skills-dir` and `--global-agents` values, or `--skip-global-agents`. Recovery binds the snapshot to those targets and refuses live content that matches neither the prior nor planned identity.
+
+| Recovery status | Meaning | Next action |
+| --- | --- | --- |
+| `cleared-preparation` | No managed mutation began; preparation residue was removed. | Rerun the installer. |
+| `restored` | An interrupted mutation was restored and verified. | Rerun the installer. |
+| `cleared-commit` | The committed install was verified; only recovery residue remained. | No reinstall is needed. |
+
+Claims are cleared while the snapshot still exists, and the snapshot is removed last.
 
 Use `python -m scripts.install_skills --dry-run` to preview skill deltas and the global-bootstrap action. `skills/custom/` is the supported install set, `skills/extra/` is optional, and `skills/.archive/` is inactive.
 

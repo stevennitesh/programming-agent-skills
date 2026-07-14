@@ -11,8 +11,8 @@ description: Compose a repo-backed grilling session with durable domain capture.
 
 **Disclose.** Before the interview, state that confirmed domain terms may update routed domain docs; ADRs require explicit approval.
 
-**Bound.** Pass through caller bounds. Defer material branches beyond them to the caller's named artifact or workflow.
+**Bound.** Pass through caller bounds. Without them, bind the session to the user-named plan or design. Record material branches beyond the bound as explicit deferrals in the packet.
 
-**Reconcile.** Before either exit, obtain `$domain-modeling`'s complete domain delta and add its changed paths and ADR outcomes to `$grilling`'s packet.
+**Reconcile.** Before either exit, obtain `$domain-modeling`'s complete domain delta and attach it intact to `$grilling`'s packet.
 
-**Return.** Use the **Confirmed** or **Evidence gap** gate.
+**Return.** Preserve `$grilling`'s **Evidence gap** exit. Return **Confirmed** only after `$grilling`'s confirmation gate and `$domain-modeling`'s completion criterion both close. Return the packet to the caller, or report it for standalone use, and stop without downstream execution.

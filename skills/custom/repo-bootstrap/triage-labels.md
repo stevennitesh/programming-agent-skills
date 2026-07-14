@@ -22,7 +22,7 @@ The skills speak in terms of category roles and state roles. This file maps thos
 
 When a skill mentions a role, use the corresponding label string from these tables.
 
-Every triaged issue or PR should carry exactly one category role and one state role.
+Every triaged work item should carry exactly one category role and one state role.
 
 Edit the right-hand column to match whatever vocabulary you actually use.
 

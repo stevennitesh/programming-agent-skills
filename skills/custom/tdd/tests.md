@@ -4,7 +4,7 @@ Use these contrasts when test shape, oracle, or seam remains unclear. Apply the 
 
 ## Tracer Bullet
 
-Arrange meaningful domain state, act through the highest useful public interface or seam, and assert one observable outcome from an independent oracle. Several assertions may prove one outcome.
+Arrange meaningful domain state, act through the highest useful public interface or seam, and prove one acceptance behavior from an independent oracle through its observable effects. Several assertions may jointly prove that behavior.
 
 ```python
 def test_confirmed_order_reserves_inventory_and_exposes_receipt():
@@ -17,7 +17,7 @@ def test_confirmed_order_reserves_inventory_and_exposes_receipt():
     assert get_inventory(store, "COURSE-TS") == 1
 ```
 
-This proves one vertical outcome rather than separate pricing, reservation, persistence, and receipt helpers.
+This proves one acceptance behavior through its observable effects rather than splitting pricing, reservation, persistence, and receipt into horizontal tests.
 
 ## Public Behavior
 
@@ -41,7 +41,7 @@ A focused module test is appropriate when the module exposes a stable behavioral
 
 ## Independent Oracle
 
-Tautological:
+Implementation-derived:
 
 ```python
 expected = sum(line["price"] for line in lines)
@@ -61,4 +61,4 @@ Trace expectations to a specification, known-good literal, fixture, or worked re
 - the name describes calls, helpers, layers, or storage;
 - a snapshot replaces available semantic assertions;
 - setup is larger than the behavior being proved;
-- data variants or horizontal-layer tests repeat one behavior.
+- semantically equivalent data variants repeat an already-proved behavior and oracle, or horizontal-layer tests split one acceptance behavior.

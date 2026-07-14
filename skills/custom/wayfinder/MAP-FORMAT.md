@@ -37,3 +37,4 @@ Open work lives in child tickets. Resolution detail lives in the ticket that own
 ```
 
 Record type, HITL/AFK mode, parent relationship, blocking edges, claim state, and resolution state through the repo's `Wayfinding operations` convention.
+For Research tickets, also record the caller-approved repo-local note path.

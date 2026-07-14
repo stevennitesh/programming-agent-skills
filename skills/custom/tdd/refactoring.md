@@ -1,6 +1,6 @@
 # Refactoring After GREEN
 
-Refactor only while tests are GREEN. Preserve behavior and the tested public interface; intended behavior or interface changes start a new RED cycle.
+Refactor only while tests are GREEN. Preserve observable behavior and the current public contract; intended behavior or contract changes start a new RED cycle.
 
 Prefer moves that increase **depth**, **leverage**, or **locality**:
 
@@ -13,6 +13,6 @@ Prefer moves that increase **depth**, **leverage**, or **locality**:
 
 Make one meaningful move at a time. Rerun the focused test after each move and the nearest relevant test group before leaving the tracer bullet. Preserve correct behavior tests and keep test-only hooks out of production interfaces.
 
-Stop when the slice is clear, the interface is testable, or the next improvement would expand scope.
+Stop when the intended material cleanup is complete and the focused plus nearest relevant tests are GREEN, or when the next improvement would expand scope.
 
-If refactoring reveals a larger design problem, record it as a follow-up instead of widening the slice. Recommend `$codebase-design` and stop for one bounded interface or seam question. Recommend `$improve-codebase-architecture` and stop for a wide candidate-finding survey.
+If refactoring reveals a larger design problem, return it as residual follow-up evidence without mutating a tracker or widening the slice. Recommend `$codebase-design` and stop for one bounded interface or seam question. Recommend `$improve-codebase-architecture` and stop for a wide candidate-finding survey.

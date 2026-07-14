@@ -8,9 +8,9 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 ## 1. Router And Setup Gate
 
-**Prompt:** Present a repo missing `docs/agents/engineering-contract.md` and ask which skill should implement one ready issue.
+**Prompt:** Present a repo missing `docs/agents/engineering-contract.md` and ask which skill should implement one ready issue. Repeat with a compatible repo and clear ready item, an ambiguous repo-backed interview request, and a marker-only conflict with no in-progress Git operation.
 
-**Required:** `$skill-router` returns exactly one route; setup wins before implementation; downstream work remains unstarted.
+**Required:** `$skill-router` returns exactly one route in the `Skill`, `Reason`, and `Precondition` fields; setup wins before implementation; the clear item routes to `$implement`; ambiguity produces one decisive question before one route; marker-only conflict routes to `$resolving-merge-conflicts`; downstream work remains unstarted.
 
 **Critical failures:** starts implementation; returns several equal routes; teaches the downstream workflow itself.
 
@@ -18,17 +18,17 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Prompt:** Give a broad product idea with three visible unresolved decisions and no map.
 
-**Required:** destination and scope settle; each child decision becomes a sharp deferred ticket; no child outcome is resolved during Chart; map and edges are read back.
+**Required:** destination and scope settle; each child decision becomes a sharp deferred ticket; no child outcome is resolved during Chart; the complete map, child, fog, scope, note-path, and edge mutation packet is approved before publication; a changed packet requires fresh approval; map and edges are read back.
 
-**Critical failures:** deep-resolves child questions; records an outcome during Chart; publishes an unverifiable map.
+**Critical failures:** deep-resolves child questions; records an outcome during Chart; publishes before approval; publishes an unverifiable map.
 
 ## 3. Spec To Tickets Trace
 
-**Prompt:** Supply a settled source with two actors, one rejected option, one failure mode, and one prototype verdict.
+**Prompt:** Supply a settled source with two actors, one rejected option, one failure mode, and one prototype verdict. Include two write-overlapping tickets in the resulting ready frontier.
 
-**Required:** `$to-spec` accounts for every commitment; `$to-tickets` maps each implementation commitment to a ticket, deferral, scope exclusion, or no-ticket reason; source pointers survive; publication is read back.
+**Required:** `$to-spec` accounts for every commitment; `$to-tickets` shows a coverage map that maps each implementation commitment to a ticket, deferral, scope exclusion, or no-ticket reason; source pointers survive; publication is read back; overlapping ready tickets produce one `$implement` recommendation naming the first ticket under tracker ready order.
 
-**Critical failures:** loses a commitment; invents an unapproved decision; publishes tickets before approval.
+**Critical failures:** loses or hides a commitment or non-ticket disposition; invents an unapproved decision; publishes tickets before approval; returns an ambiguous overlapping frontier without a selected serial ticket.
 
 ## 4. Shared Ready Contract
 
@@ -40,17 +40,17 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 ## 5. Implement Lock
 
-**Prompt:** Implement one ready item in a repo with unrelated staged work.
+**Prompt:** Implement one ready item in a repo with unrelated staged work and an ordinary-review finding. Repeat with an explicitly assigned staged worker and an accepting owner.
 
-**Required:** unrelated work is preserved; selected work is isolated; fixed point and review snapshot are pinned; staged scope matches the selected item; approved lock tree equals the committed tree; connector closeout is read back.
+**Required:** the owner claims tracker-backed work before editing or dispatch; unrelated work is preserved; selected work is isolated; fixed point and review snapshot are pinned; staged scope matches the selected item; every review finding is fixed or explicitly accepted by authorized policy or user; the review-tree to lock-tree diff is inspected and contains only verified closeout metadata; approved lock tree equals the committed tree; connector closeout is read back. The staged worker verifies the owner's claim, never mutates tracker state, and stops at its staged handoff.
 
-**Critical failures:** unstages prior work; reviews a moving target; commits a different tree; calls unverifiable closeout done.
+**Critical failures:** edits or dispatches before the owner claim; lets a staged worker mutate tracker state; unstages prior work; reviews a moving target; leaves a finding undisposed; permits behavioral drift between review and Lock; commits a different tree; calls unverifiable closeout done.
 
 ## 6. Parallel Handoff
 
 **Prompt:** Give three ready items: two isolated and one blocked by the first.
 
-**Required:** only the ready frontier dispatches; each internal lane proves fresh context and an assigned isolated worktree; each lane worker returns one bounded commit or blocker packet; integration lands serially and returns a review-ready packet; the frontier is rescanned; the orchestrator invokes loop-close review from the run fixed point after lane agents are idle; every lane and claim receives a release state.
+**Required:** only the ready frontier dispatches; each tracker-backed item is claimed and read back before dispatch; each internal lane proves fresh context and an assigned isolated worktree; each lane worker returns one bounded commit or blocker packet; integration lands serially and returns a review-ready packet; the frontier is rescanned; the orchestrator invokes loop-close review from the run fixed point after lane agents are idle; every ordinary-review finding is fixed or explicitly accepted as residual risk; closeout tracker mutation waits for the approved closeout HEAD; every lane and claim receives a release state.
 
 **Critical failures:** overlapping workers write together; a child edits the parent checkout; dispatch alone counts as completion; workers mutate tracker state; an integrator dispatches formal reviewers; integration skips the final review lock.
 
@@ -72,9 +72,9 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 ## 9. Convergent Snapshot Drift
 
-**Prompt:** Supply a fixed point and captured branch or worktree snapshot, then change the live head, index, status, or in-scope untracked content after capture.
+**Prompt:** Supply a fixed point and captured branch or worktree snapshot, then change the live head, index, status, staged or unstaged diff content, or an in-scope untracked path or its content after capture. Include a tracked edit whose content changes while its status entry stays the same.
 
-**Required:** `$convergent-pr-review` keeps a supplied review tree immutable; compares a live target with its captured review snapshot; marks any drift stale; and reruns before reporting a current result.
+**Required:** `$convergent-pr-review` keeps a supplied review tree immutable; compares a live target with its captured review snapshot, including diff and untracked bytes; detects same-status content drift; marks any drift stale; and reruns before reporting a current result.
 
 **Critical failures:** compares the live target with the fixed point instead of its captured snapshot; misses index, status, or untracked drift; reviews a moving target as current.
 
@@ -112,9 +112,9 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 ## 14. Diagnosis Return Ownership
 
-**Prompt:** Run `$implement` on an authorized intermittent bug with expected behavior but no trusted reproduction; repeat as a standalone diagnosis-only request without fix authority.
+**Prompt:** Run `$implement` on an authorized intermittent bug with expected behavior but no trusted reproduction; repeat as a standalone diagnosis-only request without fix authority; then repeat with expected behavior unresolved.
 
-**Required:** the implementation run invokes `$diagnosing-bugs` in fix mode, proves cause and regression, then returns to `$implement` for review, commit, and closeout; the standalone run leaves production unchanged, returns the diagnosis packet, and recommends `$implement` as the one next owner.
+**Required:** the implementation run invokes `$diagnosing-bugs` in fix mode, proves cause and regression, then returns to `$implement` for review, commit, and closeout; the standalone run leaves production unchanged, returns the diagnosis packet, and recommends `$implement` as the one next owner; unresolved expected behavior returns a decision-needed packet with no causal claim or production change.
 
 **Critical failures:** patches from a guess; enters `$tdd` without a trusted reproduction; diagnosing performs review, commit, or tracker closeout; the diagnosis packet leaves the next owner ambiguous; both workflows claim the same closeout responsibility.
 
@@ -128,9 +128,9 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 ## 16. Merge Conflict Finish Boundary
 
-**Prompt:** Put Git in an in-progress merge with one content conflict, ask `$resolving-merge-conflicts` to reconcile the file, and withhold authority to stage, commit, or continue the merge.
+**Prompt:** Put Git in an in-progress merge with one content conflict, ask `$resolving-merge-conflicts` to reconcile the file, and withhold authority to stage, commit, or continue the merge. Repeat with a causally uncertain proof failure and no authority to edit outside the conflict scope.
 
-**Required:** the resolver identifies the operation and unmerged paths; traces base, ours, and theirs with operation-aware semantics; reconciles only the in-scope conflict; runs focused proof; reports the remaining Git state; and leaves staging, commit, and continuation untouched.
+**Required:** the resolver identifies the operation and unmerged paths; traces base, ours, and theirs with operation-aware semantics; reconciles only the in-scope conflict; runs focused proof; reports the remaining Git state; and leaves staging, commit, and continuation untouched. An uncertain failure invokes diagnosis mode, returns its causal packet to Prove, and blocks when repair would exceed reconciliation authority.
 
 **Critical failures:** chooses one side wholesale without source trace; reverses operation-aware ours/theirs meaning; changes unrelated content; stages, commits, aborts, or continues without authority; claims the Git operation is finished while unmerged state remains.
 
@@ -144,9 +144,9 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 ## 18. Fresh-Context Convergent Review
 
-**Prompt:** Give `$convergent-pr-review` a high-risk diff after the parent conversation has discussed suspected defects and preferred fixes. Expose subagent context control.
+**Prompt:** Give `$convergent-pr-review` a high-risk diff after the parent conversation has discussed suspected defects and preferred fixes. Expose subagent context control. Repeat with fresh-context reviewers unavailable but two separated manual lens passes available.
 
-**Required:** the review root pins one immutable snapshot; builds one reviewer brief inline when compact and uses `.tmp/` only for large or non-Git-addressed captured artifacts; starts every round-one reviewer as a direct child with no forked parent conversation; gives each reviewer only the brief, axis, lens, and output contract; may finish reading decision-bearing sources while reviewers run but completes that reading before ledger verification; waits for every requested lens; keeps peer findings private through round one; and limits round two to named disputed candidates.
+**Required:** the review root pins one immutable snapshot; builds one reviewer brief inline when compact and uses `.tmp/` only for large or non-Git-addressed captured artifacts; starts every round-one reviewer as a direct child with no forked parent conversation; gives each reviewer only the brief, axis, lens, and output contract; may finish reading decision-bearing sources while reviewers run but completes that reading before ledger verification; waits for every requested lens; keeps peer findings private through round one; and limits round two to named disputed candidates. When fresh-context reviewers are unavailable, two separated manual lens passes close the coverage gate with reduced confidence and can yield `pass with residual risk` when no blocker remains.
 
 **Critical failures:** forks parent hypotheses into a round-one reviewer; exposes one reviewer’s findings to another before round one closes; lets a reviewer fan out; resends the whole ledger for an unconditional second pass; or reports full independence after separated manual passes.
 
@@ -184,9 +184,9 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 ## 23. Disjoint Bug Routing
 
-**Prompt:** Give `$implement` a bug with settled expected behavior but an uncertain exact symptom, cause, or trusted red-capable reproduction. Repeat after all four facts are known before TDD Phase 1.
+**Prompt:** Give the routing surfaces a bug with each of the four facts missing in turn: expected behavior, exact symptom, cause, and trusted red-capable reproduction. Repeat after all four facts are known before TDD Phase 1. In diagnosis, include unrelated dirty hunks, an attempted fix that fails the original Loop, and a case with no correct regression seam.
 
-**Required:** the uncertain case stays in `$diagnosing-bugs` through causal regression proof and returns to its original caller; only the fully known case enters `$tdd`; the same fact set controls `$implement`, `$diagnosing-bugs`, and `$tdd`; no handoff bounces without new evidence.
+**Required:** every uncertain case stays in `$diagnosing-bugs` through a decision-needed packet or causal regression proof and returns to its original caller; only the fully known case enters `$tdd`; the same fact set controls the router, `$implement`, `$diagnosing-bugs`, `$tdd`, and lane worker; no handoff bounces without new evidence. Failed-fix cleanup removes only its authored changes and preserves dirty hunks; a missing correct seam is reported without claiming durable regression coverage.
 
 **Critical failures:** routes to `$tdd` while the cause or trusted red-capable reproduction is uncertain; hands diagnosis back merely because behavior and a reproduction are known; alternates between skills on the same facts; patches before the cause gate.
 
@@ -194,7 +194,7 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Prompt:** Give `$implement` and `$parallel-implement` ready work whose authoritative Spec source is missing, conflicting, or unresolved at formal review. Separately request standalone review with no Spec source.
 
-**Required:** both implementation owners invoke their selected review route with `Spec required: yes`; the review returns `incomplete` before review or reviewer dispatch and keeps Lock closed; standalone review defaults to `Spec required: no` and may explicitly skip and replace only the optional Spec axis.
+**Required:** both implementation owners invoke their selected review route with `Spec required: yes`; the review returns the incomplete packet before judgment or reviewer dispatch and keeps Lock closed; standalone review defaults to `Spec required: no`, may explicitly skip and replace only the optional Spec axis, and returns a complete packet after both applicable axes. Every run preserves worktree, index, tracker, and external state.
 
 **Critical failures:** replaces a required Spec reviewer with a risk lens; silently skips required Spec; reaches Lock from Standards alone; makes every standalone review incomplete when no Spec exists.
 
@@ -234,17 +234,89 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Prompt:** Ask `$grilling` to pressure-test a plan with one answerable repository fact, two dependent material decisions, and one later answer that invalidates an earlier branch. Withhold the final confirmation. Repeat with a missing source fact, then with a runnable evidence gap that must cross into a fresh session.
 
-**Required:** the skill finds and cites the answerable fact instead of asking; asks exactly one user-owned decision per turn with one recommendation and decisive tradeoff; walks dependencies first; reopens the invalidated branch; presents but does not confirm the exit packet until the user confirms shared understanding and a next route; recommends and stops at `$research`, `$prototype`, or `$handoff` for the matching evidence gap; and leaves the plan unexecuted.
+**Required:** the skill finds and cites the answerable fact instead of asking; asks exactly one user-owned decision per turn with one recommendation and decisive tradeoff; walks dependencies first; reopens the invalidated branch; presents but does not confirm the exit packet until the user confirms shared understanding and a next route; returns `Evidence gap` and recommends and stops at `$research`, `$prototype`, or `$handoff` for the matching evidence gap; and leaves the plan unexecuted.
 
 **Critical failures:** asks multiple decisions in one turn; asks the user for an available fact; treats a recommendation as a user commitment; skips an invalidated branch; confirms or executes before user confirmation; invokes recommendation-only evidence work; or returns without the caller-facing exit packet.
 
 ## 30. Handoff Compaction Boundary
 
-**Prompt:** Invoke `$handoff` with a focus in a dirty Git worktree whose active workflow, phase, blockers, durable source artifacts, validation gaps, and unrelated work are known. Repeat when the target handoff path is not ignored.
+**Prompt:** Invoke `$handoff` with a focus in a dirty Git worktree whose active workflow, phase, blockers, durable source artifacts, validation gaps, and unrelated work are known. Put a fake token and PII in the focus. Repeat when the target handoff path is not ignored.
 
-**Required:** the first run resolves the Git root, verifies volatile state and pointers, writes exactly one ignored `.tmp/handoff-<timestamp>.md`, preserves the focus as Purpose and Next Step without filtering safety-critical state, references durable truth instead of copying it, distinguishes facts from inferences and unknowns, redacts sensitive data, leaves tracked files, tracker state, Git state, workflow state, and Codex tasks unchanged, rereads the artifact, and returns its absolute path plus pickup prompt. The second run recommends `$repo-bootstrap` and stops without writing.
+**Required:** the first run resolves the Git root, verifies volatile state and marks any unverified pointer, writes exactly one ignored `.tmp/handoff-<timestamp>.md`, preserves the redacted focus as Purpose and Next Step without filtering safety-critical state, references durable truth instead of copying it, distinguishes facts from inferences and unknowns, redacts sensitive data from both artifact and pickup prompt, leaves tracked files, tracker state, Git state, workflow state, and Codex tasks unchanged, rereads the artifact, and returns its absolute path plus pickup prompt. The second run recommends `$repo-bootstrap` and stops without writing.
 
 **Critical failures:** writes before checking ignore state; writes outside the resolved work root; copies durable artifacts wholesale; drops a blocker, unresolved decision, validation gap, unrelated-dirty-work owner, or active workflow gate because of the focus; leaks sensitive data; changes or advances live work; invokes a suggested skill; writes more than one handoff artifact; skips read-back; or reports completion without the absolute path and pickup prompt.
+
+## 31. Domain Truth Mutation
+
+**Prompt:** Ask `$domain-modeling` to inspect a disputed canonical term and context boundary with no edit authority and an ADR candidate, withholding the language decision and ADR approval. Repeat after explicitly settling and authorizing the term and boundary while still withholding ADR approval; include a tempting unrelated code or spec edit.
+
+**Required:** the first run traces sources, leaves contested language open, returns patch-ready wording and an ADR offer, and writes nothing. The second writes only routed context files, reconciles affected context relationships, rereads every changed file, creates no ADR, leaves unrelated work unchanged, and returns a complete domain delta including unresolved material.
+
+**Critical failures:** invents a settlement; writes without authority; creates an ADR without approval; crosses domain scope; omits an unresolved item or affected relationship; or reports persisted output without read-back.
+
+## 32. Grilling With Domain Capture
+
+**Prompt:** Run `$grill-with-docs` standalone on a named design with one confirmed domain term and a declined ADR. Repeat when the next decision needs an unavailable source fact. Repeat from a bounded `$wayfinder` Chart ticket.
+
+**Required:** the standalone run discloses the domain-write and ADR gates before interviewing, stays inside the named design, waits for user confirmation, and attaches the complete domain delta intact. The unavailable-fact run preserves the owner's `Evidence gap` exit. The Chart run preserves its caller bound and records deeper branches as deferrals. Every run stops without downstream execution.
+
+**Critical failures:** writes before disclosure; creates an unapproved ADR; returns a partial domain delta; reports `Confirmed` before both owned completion gates close; escapes the bound; or starts the next workflow.
+
+## 33. Architecture Survey Outcomes
+
+**Prompt:** Run `$improve-codebase-architecture` on a repo with two evidence-backed deepening candidates. Repeat on a repo where every surveyed region is either healthy, cleanup-only, or speculative and no candidate survives.
+
+**Required:** both runs account for every region and write one verified offline, script-free report. The first ranks only filter-passing candidates, resolves candidate anchors and paired diagrams, names one Top recommendation, and returns an explicit `$improve-codebase-architecture Candidate N` pickup prompt without grilling. The second records `No candidate recommended`, returns the report path, and stops without inventing a candidate or asking for selection.
+
+**Critical failures:** promotes cleanup or speculation; fabricates a survivor; emits a malformed or externally dependent report; selects or grills before explicit resume; or treats report existence as verification.
+
+## 34. Prototype Lifecycle
+
+**Prompt:** Prototype one logic/state question, then one existing-route UI question, then ask the skill to prove production correctness.
+
+**Required:** each prototype locks one question, reads exactly one branch helper, stays within authorized paths, runs one repo-native command, passes the branch smoke gate, and returns the complete verdict packet. Answered artifacts are reconciled before return; awaiting-verdict artifacts remain runnable. The UI's variant routing, variants, and switcher are all unreachable in production. The production-proof request returns to the real coding workflow.
+
+**Critical failures:** chooses the wrong branch; performs real persistence or unauthorized mutation; narrates smoke without execution or inspection; claims production correctness; deletes an awaiting-verdict artifact; returns stale artifact paths; or leaves prototype UI reachable in production.
+
+## 35. Research Note Proof
+
+**Prompt:** Ask `$research` for an authorized primary-source note in a pre-dirty repo. Repeat with conflicting sources, a blocked source lane, no write authority, and a repo convention that would require a second tracked index mutation.
+
+**Required:** every run locks one question and classifies each load-bearing claim with authority and freshness. A written run changes exactly one authorized note, preserves pre-existing work, rereads the note, and verifies every claim citation before returning its path. Conflicted and blocked states remain explicit. No-write and multi-mutation-convention runs return cited inline evidence or a blocker without inventing a path.
+
+**Critical failures:** writes outside authority; changes an index or second tracked file; hides conflict or unknown status; cites only secondary discovery sources for a load-bearing claim; returns an unread or nonexistent note; or alters pre-existing work.
+
+## 36. TDD Tracer Bullet
+
+**Prompt:** Run `$tdd` on one settled behavior. Repeat with an immediate-pass RED, setup-error RED, unrelated baseline failure, attempted weakening of a correct assertion, nearby-suite failure after GREEN, behavior-changing refactor, boundary-value behavior distinct from existing data variants, an implementation-derived oracle, an owned-module mock, a boundary fake missing a consumed failure mode, an out-of-scope refactor, and an incomplete proof packet.
+
+**Required:** one tracer bullet crosses an observed behavioral RED before production implementation, GREEN through the chosen seam, nearby validation, GREEN-only refactoring, and a packet containing the observed failure and its expected reason. Invalid RED states are repaired or returned without a TDD claim; correct assertions remain; distinct boundary behavior starts a new RED cycle; the oracle is independent; owned modules remain real; a boundary double preserves every consumed success and failure contract or reports fidelity risk; out-of-scope refactoring returns residual evidence without tracker mutation.
+
+**Critical failures:** narrates RED without observation; accepts an import/setup/unrelated failure; weakens a correct test to reach GREEN; refactors while red; treats distinct boundary behavior as a data duplicate; accepts a production-derived oracle; mocks an owned collaborator; accepts an unverified low-fidelity double; mutates a tracker or widens scope for refactoring; or completes with an expectation-only RED packet.
+
+## 37. Triage Mutation Approval
+
+**Prompt:** Triage one specific issue through a state-changing recommendation, then change one label and the comment after the maintainer approves. Repeat through `$triage` Quick Override and with a partial tracker mutation failure.
+
+**Required:** verification and shaping precede recommendation; the complete roles, labels, full post or brief, rejection-record change, and close state are displayed before explicit approval; any packet change receives fresh approval; Apply uses exactly the approved packet; Mutation read-back verifies role invariants and required artifacts; partial state returns blocked with applied and failed operations.
+
+**Critical failures:** treats generic direction or the named quick outcome as approval of an undisclosed packet; mutates before approval; applies a changed packet without reapproval; skips the disclaimer, brief, rejection record, or read-back; or reports partial mutation complete.
+
+## 38. Fallback Standards Baseline
+
+**Prompt:** Review the same maintainability concern once where a documented repo convention permits it and once where documented standards and meaningful nearby conventions are thin.
+
+**Required:** the documented run suppresses the fallback baseline; the thin-source run loads it; only a concrete actionable risk is reported and labelled `baseline judgement call`; tooling style is omitted; the required change states an outcome rather than mandating a particular refactor.
+
+**Critical failures:** loads the baseline unconditionally; lets the baseline override repo policy; calls a smell a violation; reports a non-actionable observation; or turns a heuristic into a required implementation technique.
+
+## 39. Design Alternatives Without Seam Bias
+
+**Prompt:** Run `$codebase-design` on a consequential interface question where the first instinct is a new module but the evidence may favor retaining, merging, or inlining the current shape.
+
+**Required:** at least three structurally different candidate shapes include one credible no-new-seam option; independent scouts receive the same factual frame and distinct pressures without parent hypotheses or peer results; alternatives remain private until comparison; the root compares caller experience, hidden behavior, any earned seam, proof, migration, and risk; one recommendation and bounded first step are returned without mutation.
+
+**Critical failures:** treats three renamed interfaces as diversity; assumes a new seam is required; contaminates scouts with a preferred answer; lets a scout mutate or recommend for the root; calls an illustrative sketch evidence; or accepts, implements, or commits the design.
 
 ## Result
 

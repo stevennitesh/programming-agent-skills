@@ -83,10 +83,44 @@ def test_skill_validation_rejects_missing_nested_markdown_reference(tmp_path: Pa
 
     _, failures = validate_skills.validate_skill_folders(tmp_path)
 
-    assert failures == [
-        "Skill resource reference is missing: "
-        f"{(skill / 'GUIDE.md').as_posix()} -> references/MISSING.md"
-    ]
+    assert len(failures) == 1
+    assert "resource reference is missing" in failures[0]
+    assert (skill / "GUIDE.md").as_posix() in failures[0]
+    assert "references/MISSING.md" in failures[0]
+
+
+def test_global_bootstrap_validation_requires_one_structured_managed_section(
+    tmp_path: Path,
+) -> None:
+    template = tmp_path / validate_skills.GLOBAL_AGENTS_TEMPLATE
+    template.write_text(
+        "# Global Codex Instructions\n\n"
+        "**Route:** **Setup:** **Boundary:**\n\n"
+        "```markdown\n## Skill Pack Bootstrap\n```\n\n"
+        "## Skill Pack Bootstrap\n\n"
+        "Mention `$skill-router` and `$repo-bootstrap` without role bullets.\n",
+        encoding="utf-8",
+    )
+
+    failures = validate_skills.validate_global_agents_template(
+        tmp_path, ["repo-bootstrap", "skill-router"]
+    )
+
+    assert any("structured Route, Setup, and Boundary roles" in item for item in failures)
+
+    template.write_text(
+        "# Global Codex Instructions\n\n"
+        "## Skill Pack Bootstrap\n\n"
+        "- **Route:** `$skill-router`\n"
+        "- **Setup:** `$repo-bootstrap`\n"
+        "- **Boundary:** owners\n\n"
+        "## Skill Pack Bootstrap\n\nDuplicate.\n",
+        encoding="utf-8",
+    )
+    failures = validate_skills.validate_global_agents_template(
+        tmp_path, ["repo-bootstrap", "skill-router"]
+    )
+    assert any("exactly one" in item for item in failures)
 
 
 def test_skill_handle_validation_rejects_unknown_custom_skill(tmp_path: Path) -> None:
@@ -94,10 +128,10 @@ def test_skill_handle_validation_rejects_unknown_custom_skill(tmp_path: Path) ->
 
     failures = validate_skills.validate_skill_handle_references(tmp_path, ["example"])
 
-    assert failures == [
-        "Active surface references missing custom skill: "
-        "skills/custom/example/SKILL.md -> $missing-skill"
-    ]
+    assert len(failures) == 1
+    assert "missing custom skill" in failures[0]
+    assert "skills/custom/example/SKILL.md" in failures[0]
+    assert "$missing-skill" in failures[0]
 
 
 def test_skill_handle_validation_rejects_unknown_yaml_handle(tmp_path: Path) -> None:
@@ -112,10 +146,10 @@ def test_skill_handle_validation_rejects_unknown_yaml_handle(tmp_path: Path) -> 
 
     failures = validate_skills.validate_skill_handle_references(tmp_path, ["example"])
 
-    assert failures == [
-        "Active surface references missing custom skill: "
-        "skills/custom/example/agents/openai.yaml -> $missing-skill"
-    ]
+    assert len(failures) == 1
+    assert "missing custom skill" in failures[0]
+    assert "skills/custom/example/agents/openai.yaml" in failures[0]
+    assert "$missing-skill" in failures[0]
 
 
 def test_setup_schema_fingerprint_detects_contract_drift(tmp_path: Path) -> None:
@@ -332,10 +366,9 @@ def test_required_installed_validation_rejects_a_missing_manifest(
         True,
     )
 
-    assert failures == [
-        f"Required installed skill manifest is missing: "
-        f"{installed / validate_skills.INSTALLED_MANIFEST}"
-    ]
+    assert len(failures) == 1
+    assert "installed skill manifest is missing" in failures[0]
+    assert str(installed / validate_skills.INSTALLED_MANIFEST) in failures[0]
 
 
 def test_git_diff_validation_checks_worktree_and_index(monkeypatch, tmp_path: Path) -> None:

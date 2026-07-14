@@ -27,22 +27,12 @@ Not sufficient: temporary capacity or priority.
 
 Inspect filenames and headings, search by domain concept, and read likely matches in full. Read the entire directory only when it is small. Match concepts, not keywords.
 
-## Decide
+## Classify
 
-A maintainer-approved rejected enhancement opens the write gate for issues and configured PRs.
-
-- **Confirm:** record the request under the existing decision.
-- **Reconsider:** update or delete the record through the approved mutation packet, then continue the triggering request through normal triage. Historical issues remain historical.
+- **Confirm:** add the tracker reference under the existing decision.
+- **Reconsider:** propose an update or deletion, then return the triggering request to normal triage. Historical issues remain historical.
 - **Distinguish:** continue normal triage when the concepts are materially different.
-- **Already implemented:** point to the existing behavior in the tracker; do not write a rejection record.
-- **Rejected bug:** explain the rejection in the tracker; do not write a rejection record.
+- **Already implemented:** point to the existing behavior; no rejection record is needed.
+- **Rejected bug:** explain the rejection; no rejection record is needed.
 
-## Record
-
-1. Find or create the concept file.
-2. Preserve the durable decision and reason.
-3. Append the request under `## Prior requests`.
-
-## Close
-
-Post the disclaimer-prefixed tracker comment with the file path, apply `wontfix`, and close through the tracker contract.
+For a rejected enhancement, return the matched or proposed concept path, durable reason, `Prior requests` delta, and required tracker outcome to the active triage branch. A knowledge-base change may occur only inside that branch's explicitly approved mutation packet; the branch owns application and proof.

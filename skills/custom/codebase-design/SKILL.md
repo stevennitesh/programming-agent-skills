@@ -1,11 +1,11 @@
 ---
 name: codebase-design
-description: "Design one bounded deep module behind a small caller-facing interface. Use for a specific module, interface, seam, adapter, or testability decision, or as shared deep-module vocabulary inside another skill."
+description: "Design one bounded module behind a small caller-facing interface. Use when choosing the interface, seam, adapter, or caller-facing test surface for one specific module, or when another skill needs shared deep-module vocabulary."
 ---
 
 # Codebase Design
 
-Own one outcome: a recommended design for one bounded **deep module**—useful behavior behind a small interface at an earned seam, proved through that interface.
+Own one outcome: a recommended shape for one bounded module or interface question. Prefer useful behavior behind a small interface at an earned seam, proved through that interface; merge, inline, or keep the current shape when that is stronger.
 
 Default to read-only design. The user or caller owns public-contract commitments, design acceptance, implementation, and downstream mutations. When loaded only as vocabulary, retain the caller's artifact, mutation boundary, and completion criterion.
 

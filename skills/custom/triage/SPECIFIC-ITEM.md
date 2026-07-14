@@ -29,19 +29,18 @@ When maintainer-owned scope, acceptance, domain language, or design decisions re
 
 ## 4. Recommend
 
-Return the proposed category and state, reasoning, current behavior and seams, redundancy and prior-rejection results, verification result, remaining unknowns, and proposed tracker/comment/brief/`.out-of-scope/`/close mutations. Wait for maintainer direction.
+Return the proposed category and state, reasoning, current behavior and seams, redundancy and prior-rejection results, verification result, and remaining unknowns. Build and display one complete **mutation packet** containing:
 
-## 5. Approve
-
-Maintainer direction approves the recommended outcome. Before acting, state one **mutation packet**:
-
-- roles before and after;
-- mapped labels added and removed;
-- comment or brief;
+- roles and mapped labels before and after;
+- the full comment or brief;
 - `.out-of-scope/` create, update, or delete;
 - open or closed state.
 
-Ask again only when the packet adds an unapproved mutation or verification or shaping changed the recommended outcome.
+Wait for explicit maintainer approval of that packet.
+
+## 5. Approve
+
+Apply only the explicitly approved mutation packet. Ask again whenever verification, shaping, or any packet detail changes the proposed outcome or mutation.
 
 ## 6. Apply
 

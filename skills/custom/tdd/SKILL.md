@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: "Use for tracer-bullet red-green-refactor on red-testable new behavior. For bugs, use only when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known. Hand off bugs when the exact symptom, cause, or trusted red-capable reproduction is uncertain to $diagnosing-bugs; hand off throwaway design questions to $prototype."
+description: "Use for tracer-bullet red-green-refactor on red-testable new behavior. For bugs, use only when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known. Hand off bugs when any of those facts is uncertain to $diagnosing-bugs; hand off throwaway design questions to $prototype."
 ---
 
 # Test-Driven Development
@@ -13,7 +13,7 @@ Own one inner loop:
 
 The caller owns bounded scope, review, staging, commit, tracker or external mutation, publishing, and closeout.
 
-Hand off to `$diagnosing-bugs` when a bug's exact symptom, cause, or trusted red-capable reproduction is uncertain; it returns regression proof to the original caller. Hand off throwaway design questions to `$prototype`.
+Hand off to `$diagnosing-bugs` when a bug's expected behavior, exact symptom, cause, or trusted red-capable reproduction is uncertain; it returns regression proof or a decision-needed packet to the original caller. Hand off throwaway design questions to `$prototype`.
 
 Read [tests.md](tests.md) only when test shape, oracle, or seam remains unclear after inspecting nearby tests. Read [mocking.md](mocking.md) before adding a test double. Read [refactoring.md](refactoring.md) only while GREEN.
 
@@ -63,12 +63,12 @@ Behavior or interface changes start a new RED cycle.
 
 ## 5. RETURN
 
-Repeat only for materially distinct acceptance behavior. Stop when the assigned criteria are proved, remaining cases are data variations, or the next behavior requires a user-owned decision.
+Repeat only for materially distinct acceptance behavior. Stop when the assigned criteria are proved, remaining cases are semantically equivalent data variations already covered by the same behavior and oracle, or the next behavior requires a user-owned decision.
 
 Return:
 
 - **Source Trace:** behavior, source, seam, and oracle;
-- **RED:** command and expected behavioral failure;
+- **RED:** command, observed failing result, and why it is the expected behavioral failure;
 - **GREEN:** command and passing result;
 - **Coverage:** relevant validation or skipped reason;
 - **Refactor:** material cleanup or `none`;

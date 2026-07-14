@@ -17,6 +17,45 @@ SKILL_NAME_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 
 
+def level_two_heading_spans(text: str) -> list[tuple[str, int, int]]:
+    """Return real level-two Markdown headings and spans, excluding fences."""
+    headings: list[tuple[str, int]] = []
+    offset = 0
+    fence: tuple[str, int] | None = None
+    for line in text.splitlines(keepends=True):
+        content = line.rstrip("\r\n")
+        fence_match = re.match(r"^[ \t]*(`{3,}|~{3,})", content)
+        if fence_match:
+            marker = fence_match.group(1)
+            if fence is None:
+                fence = (marker[0], len(marker))
+            elif marker[0] == fence[0] and len(marker) >= fence[1]:
+                fence = None
+        elif fence is None:
+            heading_match = re.fullmatch(r"##[ \t]+(.+?)[ \t]*", content)
+            if heading_match:
+                headings.append((heading_match.group(1), offset))
+        offset += len(line)
+
+    return [
+        (title, start, headings[index + 1][1] if index + 1 < len(headings) else len(text))
+        for index, (title, start) in enumerate(headings)
+    ]
+
+
+def level_two_section_span(text: str, heading: str) -> tuple[int, int] | None:
+    """Return one exact level-two section span or reject duplicate headings."""
+    title = heading.removeprefix("## ")
+    matches = [
+        (start, end)
+        for candidate, start, end in level_two_heading_spans(text)
+        if candidate == title
+    ]
+    if len(matches) > 1:
+        raise ValueError(f"Markdown must contain exactly one {heading} heading")
+    return matches[0] if matches else None
+
+
 def lexical_path(path: Path) -> Path:
     """Return an absolute path without following links or reparse points."""
     return Path(os.path.abspath(os.fspath(path.expanduser())))

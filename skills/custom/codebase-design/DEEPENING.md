@@ -8,7 +8,7 @@ Classify -> Place -> Substitute -> Replace -> Migrate.
 
 ## 1. Classify
 
-Classify every dependency behind or across the proposed interface:
+Classify every dependency whose shape affects the proposed interface, seam, substitute, migration, or proof:
 
 | Category | Design and proof consequence |
 | --- | --- |
@@ -46,4 +46,4 @@ Return the dependency classifications; seam, adapters, and substitutes; test dis
 
 ## Completion
 
-Complete when every dependency is classified; seam and substitute choices match those categories; the proposed interface is smaller and useful; coverage parity accounts for every affected test; validation proof is named; and migration stops at the bounded-slice edge.
+Complete when every relevant dependency is classified; seam and substitute choices match those categories; the proposed interface is smaller and useful; coverage parity accounts for every affected test; validation proof is named; and migration stops at the bounded-slice edge.

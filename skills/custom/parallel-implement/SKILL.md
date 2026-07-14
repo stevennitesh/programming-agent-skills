@@ -60,13 +60,13 @@ The selected run authorizes scoped worker commits and the recorded serial landin
 
 For each frontier item, create and preflight the isolated worktree, then launch one direct fresh-context worker with `fork_turns="none"` and the complete worker brief.
 
-When tracker work is in scope, claim each item under tracker policy before dispatch.
+When tracker work is in scope, claim each item and apply tracker-policy **Mutation read-back** before dispatch.
 
 Dispatch only the current independent frontier.
 
 Classify each returned packet:
 
-- `done`: verify the commit, actual diff, scope, proof, final status, and residual risk; accept or reject it.
+- `done`: verify acceptance accounting, the commit, actual diff, scope, proof, final status, and residual risk; accept or reject it.
 - `needs-feedback`: keep the lane and claim open; send one delta or return the commitment change to its owner.
 - `blocker`: retry only after the input, base, route, capability, authority, or task shape changes; otherwise preserve and record its disposition.
 
@@ -92,7 +92,7 @@ Assemble review-visible closeout metadata, require a clean in-scope integration 
 
 Wait until every lane agent is idle. Pin the integration `HEAD` as the immutable review target. The orchestrator invokes `$review` by default or `$convergent-pr-review` when its high-risk trigger matches, with `Spec required: yes`, the Source Trace, selected items and acceptance, run fixed point, integration `HEAD`, and complete diff.
 
-Keep Lock closed for an unavailable route, P0/P1 finding, missing required validation, incomplete Spec axis, `blocked` or `incomplete` review, or unaccepted residual risk.
+Keep Lock closed for an unavailable route, P0/P1 finding, required-validation P2, missing required validation, incomplete Spec axis, `blocked` or `incomplete` review, or unaccepted residual risk. Every lower-severity ordinary-review finding must be fixed or explicitly accepted as residual risk by the routing packet, repo policy, or user.
 
 A `pass with residual risk` opens Lock only when the routing packet, repo policy, or user accepts that risk.
 
@@ -100,9 +100,9 @@ After a review fix, inspect the delta. A material behavior, scope, contract, sch
 
 ## Lock
 
-Record the approved closeout `HEAD`. Tracker mutation and push require the current integration `HEAD` to match it.
+Record the approved closeout `HEAD`. Closeout tracker mutation and push require the current integration `HEAD` to match it.
 
-Follow `docs/agents/issue-tracker.md`. Fill the closeout summary before mutation, mutate only under the configured authority, and apply **Mutation read-back**. A partial or unverifiable mutation keeps Lock closed.
+Follow `docs/agents/issue-tracker.md`. Fill the closeout summary before closeout tracker mutation, mutate only under the configured authority, and apply **Mutation read-back**. A partial or unverifiable mutation keeps Lock closed.
 
 After an authorized push, verify the remote branch or PR head resolves to the approved closeout `HEAD`.
 

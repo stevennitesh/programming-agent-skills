@@ -9,7 +9,7 @@ description: Compact the live thread into a resumable handoff for a fresh Codex 
 
 **Trace.** Resolve `<work-root>` as the Git root when present, otherwise the current directory. Target `<work-root>/.tmp/handoff-<YYYYMMDD-HHMMSS>.md`. In a Git repo, confirm the target is ignored before writing; otherwise recommend `$repo-bootstrap` and stop. Read the live thread and named artifacts.
 
-**Snapshot.** Verify volatile repo and workflow state and every pointer. Label facts, inferences, and unknowns; leave new evidence and task work to the receiving session.
+**Snapshot.** Verify volatile repo and workflow state. Verify every pointer or mark it explicitly unverified. Label facts, inferences, and unknowns; leave new evidence and task work to the receiving session.
 
 **Compact.** Preserve only state expensive to recover from the Source Trace, using the active workflow's vocabulary. A supplied focus sets Purpose and Next Step without hiding any blocker, risk, unresolved decision, or state needed to resume safely.
 
@@ -51,4 +51,4 @@ Receiving-session skills with one-line reasons, or `None`.
 
 > Continue from `<absolute-path>`. Read the handoff first, then execute its Next Step.
 
-Append a supplied focus to the pickup prompt.
+Append a redacted one-line form of any supplied focus to the pickup prompt.

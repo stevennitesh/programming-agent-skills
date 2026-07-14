@@ -42,9 +42,10 @@ Use Chart for a loose idea without a map.
 1. **Bound.** Invoke `$grill-with-docs` with a **charting bound**: settle only the destination, scope, and route-closing condition.
 2. **Sweep.** Surface material decisions breadth-first. For each material decision: Defer it explicitly to a named Wayfinder ticket rather than resolving it during Chart.
 3. **Gate.** If the route is already clear, name the closing route and stop without creating a map.
-4. **Chart.** Read [MAP-FORMAT.md](MAP-FORMAT.md), then create the map with destination, notes, empty resolution index, fog, and scope boundary.
-5. **Wire.** Create every sharp child ticket before adding known blocking edges.
-6. **Verify.** Apply the tracker's **Mutation read-back** rule to the map, children, and edges.
+4. **Approve.** Show the destination, map title, child titles, questions, types, modes, approved research note paths, fog, scope boundary, and blocking edges as one mutation packet. Obtain explicit approval; any changed packet requires fresh approval.
+5. **Chart.** Read [MAP-FORMAT.md](MAP-FORMAT.md), then create the map with destination, notes, empty resolution index, fog, and scope boundary.
+6. **Wire.** Create every sharp child ticket before adding known blocking edges.
+7. **Verify.** Apply the tracker's **Mutation read-back** rule to the map, children, and edges.
 
 Chart completes when no map is needed and one closing route is named, or when every sharp question is ticketed, known edges are wired, remaining fog is not yet askable, and zero tickets have recorded outcomes.
 
@@ -54,7 +55,7 @@ Use Advance when a map exists.
 
 1. **Orient.** Load the map and ticket headers at low resolution; load full bodies only as needed.
 2. **Select.** Use a named ticket only when it is on the frontier; otherwise report its state, expose the frontier, and stop. Without a selection, take the first frontier ticket.
-3. **Claim.** Refresh the ticket, then record the claim. If its state changed or another session owns it, refresh the frontier and stop.
+3. **Claim.** Refresh the ticket, record the claim, then apply **Mutation read-back before resolution work**. If the ticket changed, the claim is not verified, or another session owns it, refresh the frontier and stop.
 4. **Resolve.** Follow the ticket's type and mode, then record exactly one outcome through the tracker convention:
    - **Resolved:** answer the question and add its context pointer to `Decisions So Far`.
    - **Blocked:** record the blocker; create-then-wire a sharp blocker or return an unaskable blocker to fog.
@@ -69,7 +70,7 @@ Advance completes when exactly one selected ticket has a substantive outcome; ev
 
 ## Close
 
-Close the map only when the destination is reached, no unresolved child or in-scope fog remains, and the next durable artifact or action is clear. Apply the tracker convention, recommend exactly one route, and stop:
+Close the map only when the destination is reached, no unresolved child or in-scope fog remains, and the next durable artifact or action is clear. Apply the tracker's **Complete map** and **Mutation read-back** conventions; closure completes only when the closing comment or state and the resulting absence of an in-scope frontier are verified. Recommend exactly one route and stop:
 
 - settled decision — report it; recommend `$domain-modeling` only for durable language or an ADR;
 - settled parent-spec source — `$to-spec`;

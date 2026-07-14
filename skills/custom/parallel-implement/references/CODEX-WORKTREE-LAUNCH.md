@@ -25,4 +25,4 @@ A user-owned task passes the same isolation and preflight gate.
 
 ## Release
 
-Finish or stop every lane before formal review. Remove a worker worktree only after verifying clean status and that every commit is integrated or explicitly preserved. Dirty state, untracked work, or an unpreserved commit blocks cleanup. Forced removal and branch deletion require explicit destructive authority.
+Require every lane agent to be idle before formal review. Finish or stop every lane during the orchestrator's Release. Remove a worker worktree only after verifying clean status and that every commit is integrated or explicitly preserved. Dirty state, untracked work, or an unpreserved commit blocks cleanup. Forced removal and branch deletion require explicit destructive authority.

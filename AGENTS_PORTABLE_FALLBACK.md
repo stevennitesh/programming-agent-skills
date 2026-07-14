@@ -43,7 +43,7 @@ Explore -> Choose -> Prove -> Expand -> Simplify -> Lock
 - **Explore:** build the source trace, inspect real seams, and generate credible alternatives. Keep probes disposable and production probes tiny and reversible.
 - **Choose:** select the strongest local approach and one tracer bullet inside the commitment boundary.
 - **Prove:** establish semantic proof through the smallest meaningful seam.
-- **Expand:** cover remaining requirements, edge cases, failure modes, and integrations. Expand evidence and coverage, not unauthorized scope.
+- **Expand:** cover remaining requirements, edge cases, failure modes, and integrations. Widen proof and required coverage while holding the bounded slice.
 - **Simplify:** remove scaffolding and accidental complexity; deepen only when correctness, locality, testability, or maintainability improves; keep proof green.
 - **Lock:** review Spec and Standards separately, then reconcile work state, evidence, residual risk, and the authorized boundary.
 
@@ -85,7 +85,7 @@ Review every nontrivial diff from a fixed point on separate axes:
 - **Standards:** repo conventions, maintainability, locality, naming, and operability.
 - **Spec:** request or spec, acceptance criteria, semantic correctness, and residual risk.
 
-One axis passing never hides the other failing.
+Report each axis independently; success on one does not offset failure on the other.
 
 Use the smallest check that proves the slice and broader checks at commit, PR, release, shared-infrastructure, or high-risk boundaries.
 

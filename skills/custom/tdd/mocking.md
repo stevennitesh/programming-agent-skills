@@ -1,6 +1,6 @@
 # Mocking And Boundaries
 
-Prefer real in-process code. Put a test double only at a real boundary adapter.
+Keep owned in-process modules behind the tested interface real. Put a test double only at a real boundary adapter.
 
 Use this order:
 
@@ -36,8 +36,9 @@ Before adding a double, establish:
 
 - the real seam it replaces;
 - why real code or a local substitute is insufficient;
-- the dependency behavior and side effects the test needs;
-- every consumed contract field;
+- every dependency behavior, side effect, failure mode, and contract value the tested path consumes;
 - whether the test survives internal movement.
+
+When the repo has adapter contract tests, run the same contract against the double and the real or local implementation; otherwise record the unverified fidelity risk.
 
 Reconsider the seam when fidelity is unclear or double setup overwhelms the behavior. Keep transport and provider shapes behind a narrow domain-facing adapter. Put test-only setup, cleanup, and inspection in test utilities—not production interfaces.

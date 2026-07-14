@@ -6,14 +6,14 @@ Use this branch for a **decision surface**: state transitions, data shape, inter
 
 ## Model
 
-Model only the states, actions, and data needed by the locked question. Put them behind the smallest pure interface that fits:
+Model only the states, actions, and data needed by the locked question. Put them behind the smallest explicit decision interface that fits:
 
 - **Reducer:** `(state, action) -> state` for discrete events over one state object.
 - **State machine:** explicit states and transitions when action legality is the question.
 - **Pure functions over plain data:** transformations without ongoing current state.
 - **Class or module:** a clear interface when the concept genuinely owns internal state.
 
-Inputs enter through the decision surface and updated state leaves through return values. Keep I/O, prompts, timing, randomness, and rendering in the disposable shell. Drive the public decision surface; treat private helpers as implementation details.
+Inputs enter only through the decision surface; each call returns updated state or an observable state snapshot. Keep I/O, prompts, timing, randomness, and rendering in the disposable shell. Drive the public decision surface; treat private helpers as implementation details.
 
 ## Drive
 

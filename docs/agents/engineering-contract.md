@@ -44,7 +44,7 @@ Explore -> Choose -> Prove -> Expand -> Simplify -> Lock
 - **Explore:** build the Source Trace; pin the fixed point, commitments, and bounded slice; inspect real seams and generate credible alternatives. Keep probes disposable. Touch production during Explore only for the smallest reversible probe inside the authorized boundary.
 - **Choose:** select the strongest local approach and one tracer bullet. Choose technique freely inside the bounded slice. Stop for a user decision when a better approach changes a commitment. Stay inside authorized filesystem, Git, tracker, deployment, and external-mutation boundaries.
 - **Prove:** establish semantic proof through the smallest meaningful seam. Observe RED before GREEN when behavior and a useful test seam are known. Treat prototypes as design evidence, not production proof.
-- **Expand:** after the tracer bullet works, cover the remaining requirements, edge cases, failure modes, and integrations. Reconsider the design with what the proof revealed. Expand evidence and coverage, not unauthorized scope.
+- **Expand:** after the tracer bullet works, cover the remaining requirements, edge cases, failure modes, and integrations. Reconsider the design with what the proof revealed. Widen proof and required coverage while holding the bounded slice.
 - **Simplify:** remove scaffolding, collapse accidental complexity, sharpen names and boundaries, and deepen abstractions only when correctness, locality, testability, or maintainability improves. Keep proof green.
 - **Lock:** run canonical repo checks, reconcile work state, review Spec and Standards separately, record evidence and residual risk, and stop at the authorized boundary.
 
@@ -54,7 +54,7 @@ Tiny work may compress to `Explore -> Prove -> Lock`; uncertain, risky, user-fac
 
 Claims need evidence. Expose every load-bearing internal through the smallest meaningful seam.
 
-Treat repo config, CI, and maintained contributor docs as command authority. When `AGENTS.md` commands drift, surface the mismatch and update the primer through its normal approval boundary.
+Use maintained repo configuration, CI, and contributor docs as command authority. When `AGENTS.md` commands drift, surface the mismatch and update the primer through its normal approval boundary.
 
 Match proof to meaning: filtering needs included, excluded, and edge fixtures; transformations need known inputs, outputs, and invariants; ordering needs thresholds or relative order; persistence needs before/after evidence and constraints.
 

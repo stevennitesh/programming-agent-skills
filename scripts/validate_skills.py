@@ -27,14 +27,6 @@ REQUIRED_REPO_FILES = (
     "scripts/skill_pack_contract.py",
 )
 GLOBAL_AGENTS_SKILLS = frozenset(("repo-bootstrap", "skill-router"))
-GLOBAL_AGENTS_TOKENS = (
-    "# Global Codex Instructions",
-    "## Skill Pack Bootstrap",
-    "Repo-local `AGENTS.md` primes.",
-    "**Route:**",
-    "**Setup:**",
-    "**Boundary:**",
-)
 GLOBAL_AGENTS_FORBIDDEN_TOKENS = ("## Shell Search Safety", "rg -F --")
 REQUIRED_SETUP_DOCS = (
     "AGENTS.md",
@@ -515,11 +507,35 @@ def validate_global_agents_template(root: Path, skill_names: list[str]) -> list[
     template = root / GLOBAL_AGENTS_TEMPLATE
     if template.is_file():
         text = template.read_text(encoding="utf-8")
-        for token in GLOBAL_AGENTS_TOKENS:
-            if token not in text:
-                failures.append(f"{GLOBAL_AGENTS_TEMPLATE} is missing {token}")
+        if not re.match(r"\A# Global Codex Instructions[ \t]*(?:\r?\n|\Z)", text):
+            failures.append(
+                f"{GLOBAL_AGENTS_TEMPLATE} must begin with # Global Codex Instructions"
+            )
+        try:
+            span = pack_contract.level_two_section_span(text, "## Skill Pack Bootstrap")
+        except ValueError:
+            span = None
+            failures.append(
+                f"{GLOBAL_AGENTS_TEMPLATE} must contain exactly one "
+                "## Skill Pack Bootstrap heading"
+            )
+        if span is None:
+            if not any("exactly one" in failure for failure in failures):
+                failures.append(
+                    f"{GLOBAL_AGENTS_TEMPLATE} must contain exactly one "
+                    "## Skill Pack Bootstrap heading"
+                )
+            managed = ""
+        else:
+            managed = text[span[0] : span[1]]
+        roles = re.findall(r"(?m)^- \*\*(Route|Setup|Boundary):\*\*", managed)
+        if roles != ["Route", "Setup", "Boundary"]:
+            failures.append(
+                f"{GLOBAL_AGENTS_TEMPLATE} must define structured Route, Setup, "
+                "and Boundary roles in that order"
+            )
         for token in GLOBAL_AGENTS_FORBIDDEN_TOKENS:
-            if token in text:
+            if token in managed:
                 failures.append(
                     f"{GLOBAL_AGENTS_TEMPLATE} must leave environment-specific "
                     f"instructions local; found {token}"
@@ -707,7 +723,7 @@ def validate_public_mode(root: Path) -> list[str]:
     grep = run_git(["grep", "-n", "-I", "-E", LOCAL_IDENTIFIER_RE.pattern, "--", "."], cwd=root)
     if grep.returncode == 0:
         for hit in grep.stdout.splitlines():
-            if hit.startswith("scripts/validate-skills.sh:") or hit.startswith("scripts/validate_skills.py:"):
+            if hit.startswith("scripts/validate_skills.py:"):
                 continue
             if "example.com" in hit or "EXAMPLE.COM" in hit or "correct-horse-battery-staple" in hit:
                 continue

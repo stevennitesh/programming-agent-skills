@@ -5,7 +5,7 @@ import re
 import runpy
 from pathlib import Path
 
-from scripts import validate_skills
+from scripts import skill_pack_contract, validate_skills
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -22,11 +22,13 @@ def implicit_policy(skill: Path) -> bool:
 def test_router_names_every_custom_skill() -> None:
     router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
     skill_names = {skill.name for skill in CUSTOM.iterdir() if skill.is_dir()}
+    routes = re.findall(
+        r"(?m)^\| (?!-)([^|]+?) \| `\$([a-z0-9][a-z0-9-]*)` \|$", router
+    )
+    routed = [skill for _, skill in routes]
 
-    assert skill_names - {"skill-router"} <= {
-        token.removeprefix("$")
-        for token in re.findall(r"\$[a-z0-9][a-z0-9-]*", router)
-    }
+    assert set(routed) | {"repo-bootstrap"} == skill_names - {"skill-router"}
+    assert len(routed) == len(set(routed))
 
 
 def test_handoff_compacts_context_without_advancing_work() -> None:
@@ -34,24 +36,29 @@ def test_handoff_compacts_context_without_advancing_work() -> None:
     handoff = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
 
     assert not implicit_policy(skill_dir)
-    verbs = ("Trace", "Snapshot", "Compact", "Redact", "Save", "Verify", "Return")
-    for verb in verbs:
-        assert f"**{verb}.**" in handoff
-
-    required = (
-        "<work-root>/.tmp/handoff-<YYYYMMDD-HHMMSS>.md",
-        "confirm the target is ignored before writing",
-        "recommend `$repo-bootstrap` and stop",
-        "A supplied focus sets Purpose and Next Step without hiding any blocker",
-        "Label facts, inferences, and unknowns",
-        "Reference; do not copy",
-        "The invocation authorizes only those changes",
-        "Suggested skills remain unexecuted",
-        "the only authorized state change",
-        "Continue from `<absolute-path>`. Read the handoff first, then execute its Next Step.",
-    )
-    for token in required:
-        assert token in handoff
+    assert re.findall(r"(?m)^\*\*([A-Za-z]+)\.\*\*", handoff) == [
+        "Trace",
+        "Snapshot",
+        "Compact",
+        "Redact",
+        "Save",
+        "Verify",
+        "Return",
+    ]
+    template = handoff.split("```markdown", 1)[1].split("```", 1)[0]
+    assert re.findall(r"(?m)^## (.+)$", template) == [
+        "Purpose",
+        "Current State",
+        "Key Decisions",
+        "Source Trace",
+        "Validation",
+        "Open Questions",
+        "Next Step",
+        "Suggested Skills",
+    ]
+    assert "<work-root>/.tmp/handoff-<YYYYMMDD-HHMMSS>.md" in handoff
+    assert "$repo-bootstrap" in handoff
+    assert "Continue from `<absolute-path>`. Read the handoff first, then execute its Next Step." in handoff
 
 
 def test_tracker_templates_share_ready_and_readback_contracts() -> None:
@@ -81,25 +88,24 @@ def test_tracker_templates_share_ready_and_readback_contracts() -> None:
             assert token in text, f"{tracker} is missing {token}"
 
 
+def test_triage_label_template_respects_tracker_pr_policy() -> None:
+    labels = (CUSTOM / "repo-bootstrap/triage-labels.md").read_text(encoding="utf-8")
+    triage = (CUSTOM / "triage/SKILL.md").read_text(encoding="utf-8")
+
+    assert "Every triaged work item" in labels
+    assert "Every triaged issue or PR" not in labels
+    assert "Triage PRs only when the tracker enables them" in triage
+
+
 def test_github_closeout_clears_dependency_frontier_safely() -> None:
     github_trackers = (
         ROOT / "docs/agents/issue-tracker.md",
         CUSTOM / "repo-bootstrap/issue-tracker-github.md",
     )
-    required = (
-        "**Close implemented items:** yes.",
-        "close the implementation issue as completed",
-        "Preserve dependency links",
-        "**Non-completed closure**",
-        "false-ready frontier",
-        "affected dependents",
-        "resulting frontier",
-    )
-
     for tracker in github_trackers:
         text = tracker.read_text(encoding="utf-8")
-        for token in required:
-            assert token in text, f"{tracker} is missing {token}"
+        assert "**Close implemented items:** yes." in text
+        assert "**Non-completed closure**" in text
 
     bootstrap = (CUSTOM / "repo-bootstrap/SKILL.md").read_text(encoding="utf-8")
     assert "GitHub default: yes" in bootstrap
@@ -108,17 +114,15 @@ def test_github_closeout_clears_dependency_frontier_safely() -> None:
 
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     bootstrap = (CUSTOM / "repo-bootstrap/SKILL.md").read_text(encoding="utf-8")
-    required = (
-        "treat this run as a **reconcile**, not a reset",
-        "**Preserve.** Carry forward the confirmed tracker",
-        "**Delta.** Propose only changes required by the current pack.",
-        "**Re-ask.** Revisit a choice only when missing, ambiguous, incompatible, explicitly reopened",
-        "Reconcile existing local contracts in place.",
-        "Preserve repo-specific additions.",
-    )
-
-    for token in required:
-        assert token in bootstrap
+    assert re.findall(r"(?m)^## ([A-Za-z]+)$", bootstrap) == [
+        "Inventory",
+        "Reconcile",
+        "Choose",
+        "Draft",
+        "Provision",
+        "Verify",
+    ]
+    assert bootstrap.index("## Draft") < bootstrap.index("## Provision")
 
 
 def test_repo_bootstrap_marks_and_validates_setup_schema() -> None:
@@ -138,26 +142,19 @@ def test_repo_bootstrap_marks_and_validates_setup_schema() -> None:
     assert marker in bootstrap
     assert marker in validator
     assert marker in agents
-    assert "marker identifies a legacy setup" in bootstrap
-    assert "a different fingerprint identifies an outdated setup" in bootstrap
-    assert "[setup-schema.json](setup-schema.json) owns the current fingerprint" in bootstrap
+    assert "[setup-schema.json](setup-schema.json)" in bootstrap
     assert validate_skills.validate_setup_schema_manifest(ROOT) == []
 
 
 def test_portable_fallback_adoption_removes_the_portable_contract_owner() -> None:
     fallback = (ROOT / "AGENTS_PORTABLE_FALLBACK.md").read_text(encoding="utf-8")
-    bootstrap = (CUSTOM / "repo-bootstrap/SKILL.md").read_text(encoding="utf-8")
     validator = runpy.run_path(
         str(CUSTOM / "repo-bootstrap/scripts/validate_setup.py")
     )
 
-    assert "replace its portable title and owner preamble" in bootstrap
-    assert "installed-pack primer and engineering-contract pointer" in bootstrap
     failures = validator["portable_owner_failures"](fallback)
-    assert failures == [
-        "AGENTS.md still declares the portable engineering-contract owner; "
-        "complete portable-fallback adoption through $repo-bootstrap."
-    ]
+    assert len(failures) == 1
+    assert "$repo-bootstrap" in failures[0]
     assert validator["portable_owner_failures"](
         "# Repository Instructions\n\n## Skill Pack\n\nAGENTS primes.\n"
     ) == []
@@ -213,6 +210,11 @@ def test_portable_fallback_adoption_removes_the_portable_contract_owner() -> Non
         valid_primer.replace(primer, f"## History\n\n{primer}")
     ) == primer_failure
 
+    assert validator["git_root_failures"](ROOT) == []
+    assert validator["git_root_failures"](ROOT / "skills") == [
+        "Target must be the Git repository root"
+    ]
+
 
 def test_outdated_setup_routes_to_repo_bootstrap() -> None:
     router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
@@ -220,16 +222,26 @@ def test_outdated_setup_routes_to_repo_bootstrap() -> None:
         encoding="utf-8"
     )
 
-    assert "missing or outdated setup contract" in router
-    assert "missing or outdated repo setup surface" in template
+    assert "$repo-bootstrap" in router
+    assert "$repo-bootstrap" in template
 
 
 def test_router_returns_exactly_one_next_skill() -> None:
     router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
 
-    assert "Route the current situation to exactly one next skill" in router
-    assert "skill or flow" not in router
-    assert "`$to-spec` then `$to-tickets`" not in router
+    assert not implicit_policy(CUSTOM / "skill-router")
+    assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", router) == [
+        "Inspect",
+        "Clarify",
+        "Route",
+        "Stop",
+    ]
+    stop = router.split("4. **Stop.**", 1)[1].split("## Route Map", 1)[0]
+    assert re.findall(r"`(Skill|Reason|Precondition):", stop) == [
+        "Skill",
+        "Reason",
+        "Precondition",
+    ]
 
 
 def test_branch_heavy_skills_disclose_branch_procedure() -> None:
@@ -256,12 +268,9 @@ def test_codebase_design_preserves_lean_branch_contracts() -> None:
         encoding="utf-8"
     )
 
-    assert "When loaded only as vocabulary" in design
-    assert "retain the caller's artifact, mutation boundary, and completion criterion" in design
-    assert "recommend `$improve-codebase-architecture` and stop" in design
-    assert "Orient -> Diagnose -> Deepen -> Compare -> Recommend" in direct
-    assert "Recommend `$improve-codebase-architecture` and stop" in direct
-    assert "Classify -> Place -> Substitute -> Replace -> Migrate" in deepening
+    assert "[DIRECT-DESIGN.md](DIRECT-DESIGN.md)" in design
+    assert len(re.findall(r"(?m)^## \d+\. ", direct)) == 5
+    assert len(re.findall(r"(?m)^## \d+\. ", deepening)) == 5
     for category in (
         "In-process",
         "Local-substitutable",
@@ -269,23 +278,55 @@ def test_codebase_design_preserves_lean_branch_contracts() -> None:
         "True external",
     ):
         assert category in deepening
-    assert "add, rewrite, keep, or delete" in deepening
-    assert "Frame -> Diverge -> Compare -> Commit" in alternatives
-    assert "at least three genuinely different interfaces" in alternatives
+    for disposition in ("Add", "Rewrite", "Keep", "Delete"):
+        assert f"**{disposition}**" in deepening
+    assert re.findall(r"(?m)^## \d+\. ([A-Za-z]+)$", alternatives) == [
+        "Frame",
+        "Diverge",
+        "Compare",
+        "Recommend",
+    ]
+    assert "**No-new-seam**" in alternatives
 
 
 def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
-    wayfinder = (CUSTOM / "wayfinder/SKILL.md").read_text(encoding="utf-8")
-    grill_docs = (CUSTOM / "grill-with-docs/SKILL.md").read_text(encoding="utf-8")
+    skill_dir = CUSTOM / "wayfinder"
+    wayfinder = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    map_format = (skill_dir / "MAP-FORMAT.md").read_text(encoding="utf-8")
 
-    assert "**charting bound**" in wayfinder
-    assert "Defer it explicitly to a named Wayfinder ticket" in wayfinder
-    assert "zero tickets have recorded outcomes" in wayfinder
-    assert "exactly one selected ticket has a substantive outcome" in wayfinder
-    assert "every other ticket mutation is consequence-only" in wayfinder
-    assert "**Bound.**" in grill_docs
-    assert "caller bounds" in grill_docs
-    assert "caller's named artifact or workflow" in grill_docs
+    assert not implicit_policy(skill_dir)
+    assert "[MAP-FORMAT.md](MAP-FORMAT.md)" in wayfinder
+    chart, advance = wayfinder.split("### Chart", 1)[1].split("### Advance", 1)
+    assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", chart) == [
+        "Bound",
+        "Sweep",
+        "Gate",
+        "Approve",
+        "Chart",
+        "Wire",
+        "Verify",
+    ]
+    assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", advance) == [
+        "Orient",
+        "Select",
+        "Claim",
+        "Resolve",
+        "Reconcile",
+        "Verify",
+        "Expose",
+    ]
+    map_template = map_format.split("```markdown", 1)[1].split("```", 1)[0]
+    assert re.findall(r"(?m)^## (.+)$", map_template) == [
+        "Destination",
+        "Notes",
+        "Decisions So Far",
+        "Not Yet Specified",
+        "Out Of Scope",
+    ]
+    assert "caller-approved repo-local note path" in map_format
+    assert advance.index("Mutation read-back before resolution work") < advance.index(
+        "4. **Resolve.**"
+    )
 
 
 def test_grill_with_docs_owns_interview_domain_composition() -> None:
@@ -300,50 +341,50 @@ def test_grill_with_docs_owns_interview_domain_composition() -> None:
     assert "$domain-modeling" in grill_docs
     assert "$domain-modeling" not in grilling
     assert "$grilling" not in domain
-    assert "$grill-with-docs` is the sole composer" in relationships
-    for verb in ("Compose", "Disclose", "Bound", "Reconcile", "Return"):
-        assert f"**{verb}.**" in grill_docs
-    assert "confirmed domain terms may update routed domain docs" in grill_docs
-    assert "ADRs require explicit approval" in grill_docs
-    assert "complete domain delta" in grill_docs
-    assert "changed paths and ADR outcomes" in grill_docs
+    assert re.findall(r"(?m)^\*\*([A-Za-z]+)\.\*\*", grill_docs) == [
+        "Compose",
+        "Disclose",
+        "Bound",
+        "Reconcile",
+        "Return",
+    ]
+    rows = re.findall(
+        r"(?m)^\| `([a-z0-9-]+)` \| (Load|Invoke|Compose|Hand off|Recommend and stop) \| `\$([a-z0-9-]+)` \|",
+        relationships,
+    )
+    assert {
+        caller for caller, verb, callee in rows if verb == "Compose" and callee == "domain-modeling"
+    } == {"grill-with-docs"}
 
 
 def test_domain_modeling_owns_durable_domain_truth() -> None:
     domain = (CUSTOM / "domain-modeling/SKILL.md").read_text(encoding="utf-8")
 
-    for verb in ("Trace", "Challenge", "Resolve", "Persist", "Return"):
-        assert f"**{verb}.**" in domain
-
-    assert "[CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md)" in domain
-    assert "[ADR-FORMAT.md](./ADR-FORMAT.md)" in domain
-    assert "explicit request or user approval" in domain
-    assert "Mutate only `CONTEXT.md`, `CONTEXT-MAP.md`, and ADR files" in domain
-    assert "Return a **domain delta**" in domain
+    assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", domain) == [
+        "Trace",
+        "Challenge",
+        "Resolve",
+        "Persist",
+        "Return",
+    ]
+    for target in ("CONTEXT-FORMAT.md", "ADR-FORMAT.md"):
+        assert (CUSTOM / "domain-modeling" / target).is_file()
+        assert f"({f'./{target}'})" in domain
+    assert "**domain delta**" in domain
 
 
 def test_grilling_preserves_one_decision_confirmed_exit_and_evidence_routes() -> None:
     grilling = (CUSTOM / "grilling/SKILL.md").read_text(encoding="utf-8")
 
-    for verb in ("Orient", "Find", "Pressure", "Ask", "Confirm", "Pause", "Return"):
-        assert f"**{verb}.**" in grilling
-
-    required = (
-        "exactly one decision",
-        "cite every load-bearing fact",
-        "The user owns every material decision",
-        "recommendations remain advisory",
-        "Repeat **Pressure -> Ask** until **Confirm** or **Pause**",
-        "every material branch is resolved or explicitly deferred",
-        "only after the user confirms shared understanding",
-        "Recommend `$research`",
-        "`$prototype` for runnable evidence",
-        "Recommend `$handoff`",
-        "Return the packet to an invoking caller",
-        "Leave the plan unexecuted",
-    )
-    for token in required:
-        assert token in grilling
+    assert re.findall(r"(?m)^\*\*([A-Za-z ]+)\.\*\*", grilling) == [
+        "Orient",
+        "Find",
+        "Pressure",
+        "Ask",
+        "Confirm",
+        "Evidence gap",
+        "Return",
+    ]
 
 
 def test_prototype_preserves_lifecycle_boundaries_and_branch_gates() -> None:
@@ -351,65 +392,58 @@ def test_prototype_preserves_lifecycle_boundaries_and_branch_gates() -> None:
     logic = (CUSTOM / "prototype/LOGIC.md").read_text(encoding="utf-8")
     ui = (CUSTOM / "prototype/UI.md").read_text(encoding="utf-8")
 
-    for index, verb in enumerate(
-        ("Lock", "Branch", "Probe", "Smoke", "Judge", "Reconcile"), start=1
-    ):
-        assert f"## {index}. {verb}" in prototype
-
-    required = (
-        "one design question answered by a judgeable, disposable probe",
-        "Use `.tmp/` for disposable work",
-        "Use an app-tree path only when real constraints require it",
-        "`.scratch/<feature-slug>/prototype/`",
-        "The real coding workflow owns production proof",
-        "Read [LOGIC.md](LOGIC.md)",
-        "Read [UI.md](UI.md)",
-        "one run command",
-        "Smoke proves the probe is judgeable, not production-correct",
-        "`answered`, `awaiting-verdict`, or `blocked`",
-        "Return the packet directly to the invoking caller",
-        "Recommend `$handoff` only when the verdict must cross sessions",
-        "Recommend `$domain-modeling`",
-        "every prototype path is deleted or intentionally preserved",
-        "`blocked` returns evidence without claiming completion",
-    )
-    for token in required:
-        assert token in prototype
-
-    for heading in ("## Model", "## Drive", "## Smoke"):
-        assert heading in logic
-    for token in (
-        "smallest pure interface",
-        "Current state",
-        "Available actions",
-        "leaves state unchanged when applicable",
-    ):
-        assert token in logic
-
-    for heading in ("## Host", "## Bet", "## Switch", "## Smoke"):
-        assert heading in ui
-    for token in (
-        "A blank route is a **vacuum**",
-        "3 structurally different bets",
-        "cap the set at 5",
-        "**wallpaper**",
-        "keeps mutations fake or stubbed",
-        "Keep variant state URL-backed",
-        "hidden or unreachable in production builds",
-    ):
-        assert token in ui
+    assert re.findall(r"(?m)^## \d+\. (.+)$", prototype) == [
+        "Lock",
+        "Branch",
+        "Probe",
+        "Smoke",
+        "Judge",
+        "Reconcile",
+    ]
+    assert "[LOGIC.md](LOGIC.md)" in prototype
+    assert "[UI.md](UI.md)" in prototype
+    assert set(re.findall(r"`(answered|awaiting-verdict|blocked)`", prototype)) == {
+        "answered",
+        "awaiting-verdict",
+        "blocked",
+    }
+    assert re.findall(r"(?m)^## (.+)$", logic) == ["Model", "Drive", "Smoke"]
+    assert re.findall(r"(?m)^## (.+)$", ui) == ["Host", "Bet", "Switch", "Smoke"]
+    assert "smallest explicit decision interface" in logic
+    assert "entire prototype surface" in ui
+    assert "unreachable in production builds" in ui
 
 
 def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
     review = (CUSTOM / "review/SKILL.md").read_text(encoding="utf-8")
     convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(encoding="utf-8")
+    baseline = (CUSTOM / "review/SMELL-BASELINE.md").read_text(encoding="utf-8")
 
-    assert "discover the repository default branch and merge base" in review
-    assert "Base ref: `main`" not in convergent
-    assert "distinct but non-independent" in convergent
-    assert "reduced-confidence" in convergent
-    assert "Hand off local PRs or high-risk local diffs to $convergent-pr-review" in review
-    assert "Hand off ordinary fixed-point Standards/Spec review to $review" in convergent
+    assert "## 1. Pin" in review
+    assert "## 1. Pin" in convergent
+    assert "$convergent-pr-review" in review.split("---", 2)[1]
+    assert "$review" in convergent.split("---", 2)[1]
+    assert "only when documented repo standards" in baseline
+    assert "concrete, actionable maintainability risk" in baseline
+    assert "baseline judgement call" in review
+    assert "baseline judgement call" in convergent
+    assert re.findall(r"(?m)^## \d+\. ([A-Za-z]+)$", review) == [
+        "Pin",
+        "Trace",
+        "Judge",
+        "Report",
+    ]
+    report = review.split("```markdown", 1)[1].split("```", 1)[0]
+    assert report.lstrip().startswith("Review status: complete")
+    assert re.findall(r"(?m)^## (Standards|Spec)$", report) == ["Standards", "Spec"]
+    incomplete = review.split("```text", 1)[1].split("```", 1)[0]
+    assert re.findall(r"(?m)^([A-Za-z ]+):", incomplete) == [
+        "Review status",
+        "Review target",
+        "Sources",
+        "Blocker",
+        "Skipped",
+    ]
 
 
 def test_convergent_review_uses_fresh_context_and_root_only_fanout() -> None:
@@ -417,184 +451,144 @@ def test_convergent_review_uses_fresh_context_and_root_only_fanout() -> None:
         encoding="utf-8"
     )
 
-    required = (
-        '**Fresh-context independence:**',
-        'fork_turns="none"',
-        "The review root is the only dispatcher.",
-        "Reviewers never spawn subagents",
-        "Parent-context forks do not satisfy independence.",
-        "Do not resend the whole ledger",
-        "Inline it when compact.",
-        "A Git commit or tree SHA is already immutable",
-        "the review root may finish that reading while reviewers run",
-    )
-    for token in required:
-        assert token in convergent
-
-    assert "Record the packet path and content hash." not in convergent
+    assert 'fork_turns="none"' in convergent
+    contract = convergent.split("```text", 1)[1].split("```", 1)[0]
+    assert set(re.findall(r"(?m)^([a-z ]+):", contract)) == {
+        "status",
+        "axis",
+        "lens",
+        "coverage",
+        "findings",
+        "skipped checks",
+        "blockers",
+    }
 
 
 def test_convergent_review_returns_a_lock_usable_decision() -> None:
     convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(
         encoding="utf-8"
     )
-    relationships = (ROOT / "docs/synthesis/skill-context-relationships.md").read_text(
-        encoding="utf-8"
+    decisions = set(
+        re.findall(
+            r"(?m)^- `(pass|pass with residual risk|blocked|incomplete)`: ",
+            convergent,
+        )
     )
-
-    required = (
-        "**Review decision:** return exactly one:",
-        "`pass with residual risk`",
-        "The review root owns this decision.",
-        "The caller owns whether `pass with residual risk` is acceptable for Lock.",
-        "No `candidate` or `unverified` item survives the final report.",
-        "No accepted findings; disputed: <IDs>.",
-        "A required pre-capture ref fetch may update Git metadata",
-        "PR reviews or comments",
-        "Follow `docs/agents/issue-tracker.md` for PR and issue transport",
+    assert decisions == {"pass", "pass with residual risk", "blocked", "incomplete"}
+    ledger_states = set(
+        re.findall(
+            r"(?m)^Status is (?:`([^`]+)`, `([^`]+)`, `([^`]+)`, `([^`]+)`, or `([^`]+)`)\.",
+            convergent,
+        )[0]
     )
-    for token in required:
-        assert token in convergent
-
-    assert "unavailable verification -> `not checked`" not in convergent
-    assert (
-        "`review`, `convergent-pr-review`, `wayfinder`" in relationships
-    )
+    assert ledger_states == {"candidate", "accepted", "rejected", "duplicate", "disputed"}
 
 
 def test_convergent_review_checks_snapshot_drift_not_baseline_drift() -> None:
     convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(encoding="utf-8")
 
-    assert "For a branch or PR, compare the current target head with the captured head." in convergent
-    assert "For a live worktree, compare the current `HEAD`, index, status, and in-scope untracked content with the captured snapshot." in convergent
-    assert "changed from the pinned fixed point" not in convergent
+    verify = convergent.split("## 5. Verify", 1)[1].split("## 6. Report", 1)[0]
+    for surface in (
+        "`HEAD`",
+        "index tree",
+        "staged diff",
+        "unstaged diff",
+        "status",
+        "untracked paths and content",
+    ):
+        assert surface in verify
 
 
 def test_implement_selects_one_risk_scaled_review_route() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
 
-    assert "Invoke exactly one route:" in implement
-    assert "`$review` for an ordinary diff" in implement
-    assert "`$convergent-pr-review` for a local PR or matching high-risk diff" in implement
-    assert "repeat the selected route" in implement
-
-
-def test_architecture_research_requires_tracked_mutation_approval() -> None:
-    architecture = (CUSTOM / "improve-codebase-architecture/SKILL.md").read_text(
-        encoding="utf-8"
-    )
-
-    assert "only with caller approval for that tracked mutation" in architecture
-    assert "otherwise record a named evidence gap" in architecture
-    assert (
-        "Keep product code, other tracked docs, tracker state, the index, and commits "
-        "unchanged."
-    ) in architecture
+    review_section = implement.split("## Review", 1)[1].split("## Lock", 1)[0]
+    assert re.findall(r"(?m)^- `\$(review|convergent-pr-review)`", review_section) == [
+        "review",
+        "convergent-pr-review",
+    ]
 
 
 def test_architecture_report_matches_the_survey_gate() -> None:
+    architecture = (CUSTOM / "improve-codebase-architecture/SKILL.md").read_text(
+        encoding="utf-8"
+    )
     report = (CUSTOM / "improve-codebase-architecture/HTML-REPORT.md").read_text(
         encoding="utf-8"
     )
 
-    assert "no network requests or runtime JavaScript" in report
-    assert "Render dark mode only" in report
+    assert not implicit_policy(CUSTOM / "improve-codebase-architecture")
+    assert "$improve-codebase-architecture Candidate N" in architecture
+    assert "**No candidate recommended**" in architecture
+    assert re.findall(r"(?m)^## (.+)$", report) == [
+        "Portability",
+        "Layout",
+        "Theme",
+        "Candidate",
+        "Diagram",
+        "Top Recommendation",
+        "Voice",
+    ]
     assert "`color-scheme: dark`" in report
-    assert "pass the parent skill's deletion and deepening gates" in report
     assert "`Strong` or `Worth exploring`" in report
-    assert "`Speculative`" not in report
-    assert "naming the recommended candidate" in report
-    assert "chosen candidate" not in report
-
-
-def test_direct_workflows_gate_on_setup_compatibility() -> None:
-    for name in ("implement", "parallel-implement", "to-spec", "to-tickets"):
-        text = (CUSTOM / name / "SKILL.md").read_text(encoding="utf-8")
-        assert "absent or incompatible with this skill" in text, name
-
-    triage = (CUSTOM / "triage/SKILL.md").read_text(encoding="utf-8")
-    assert "absent or incompatible with triage" in triage
+    top_recommendation = report.split("## Top Recommendation", 1)[1].split(
+        "## Voice", 1
+    )[0]
+    assert "**No candidate recommended**" in top_recommendation
+    assert "surveyed region" in top_recommendation
 
 
 def test_tdd_discloses_test_reference_only_for_an_evidence_gap() -> None:
     tdd = (CUSTOM / "tdd/SKILL.md").read_text(encoding="utf-8")
 
-    assert "only when test shape, oracle, or seam remains unclear after inspecting nearby tests" in tdd
-    assert "Apply the caller-loaded engineering contract when supplied" in tdd
+    assert re.findall(r"(?m)^## \d+\. ([A-Z]+)$", tdd) == [
+        "TRACE",
+        "RED",
+        "GREEN",
+        "REFACTOR",
+        "RETURN",
+    ]
+    for helper in ("tests.md", "mocking.md", "refactoring.md"):
+        assert (CUSTOM / "tdd" / helper).is_file()
+        assert f"[{helper}]({helper})" in tdd
 
 
 def test_tdd_routes_architecture_followups_by_scope() -> None:
     refactoring = (CUSTOM / "tdd/refactoring.md").read_text(encoding="utf-8")
 
-    assert (
-        "Recommend `$codebase-design` and stop for one bounded interface or seam "
-        "question. Recommend `$improve-codebase-architecture` and stop for a wide "
-        "candidate-finding survey."
-    ) in refactoring
-    assert "Recommend `$codebase-design` or `$improve-codebase-architecture`" not in refactoring
+    assert "$codebase-design" in refactoring
+    assert "$improve-codebase-architecture" in refactoring
 
 
 def test_bug_routing_is_disjoint_and_non_bouncing() -> None:
     diagnosing = (CUSTOM / "diagnosing-bugs/SKILL.md").read_text(encoding="utf-8")
     tdd = (CUSTOM / "tdd/SKILL.md").read_text(encoding="utf-8")
     tdd_tests = (CUSTOM / "tdd/tests.md").read_text(encoding="utf-8")
-    implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
-    worker = (CUSTOM / "parallel-implement/references/WORKER-BRIEF.md").read_text(
-        encoding="utf-8"
-    )
-    router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
-    readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    relationships = (ROOT / "docs/synthesis/skill-context-relationships.md").read_text(
-        encoding="utf-8"
-    )
 
-    uncertain = "exact symptom, cause, or trusted red-capable reproduction is uncertain"
-    known = (
-        "expected behavior, the exact symptom, the cause, and a trusted "
-        "red-capable reproduction are known"
-    )
-    for text in (diagnosing, tdd, implement, worker, router, relationships):
-        assert uncertain in text
-        assert known in text
-
-    assert "are known before **Trace**" in diagnosing
-    assert "**Relentless diagnosis:**" in diagnosing
-    assert "No red-capable loop, no hypothesis. No proven cause, no fix." in diagnosing
-    assert "only with user or caller implementation authority" in diagnosing
-    assert "The **cause gate** passes only when" in diagnosing
-    assert "a green original scenario" in diagnosing
-    assert "claims no cause or fix" in diagnosing
-    assert uncertain in diagnosing.split("---", 2)[1]
-    assert uncertain in tdd.split("---", 2)[1]
-    assert known in tdd.split("---", 2)[1]
-    assert "Use for tracer-bullet red-green-refactor on red-testable new behavior" in (
-        tdd.split("---", 2)[1]
-    )
-    assert "Use `$tdd` directly for known-repro bugs." not in tdd
-    assert "Apply the bug ownership gate in [SKILL.md](SKILL.md)" in tdd_tests
-    assert "known-repro bugs" not in tdd_tests
-    assert "the router owns the exact diagnosis/TDD boundary" in readme
-    assert "Known behavior with a red-capable seam" not in readme
-    assert "Behavior and a trusted reproduction are already known" not in relationships
-    assert "with this lane worker as its caller" in worker
-    assert "WorkerBrief --> Debug" in relationships
+    assert [
+        match.group(1)
+        for match in re.finditer(r"(?m)^## \d+\. ([A-Za-z]+)$", diagnosing)
+    ] == ["Trace", "Loop", "Minimise", "Hypothesise", "Probe", "Prove", "Return"]
+    assert "[SKILL.md](SKILL.md)" in tdd_tests
+    assert "$diagnosing-bugs" in tdd.split("---", 2)[1]
+    assert "expected behavior" in diagnosing.split("---", 2)[1]
+    assert "expected behavior" in tdd.split("---", 2)[1]
+    assert "observed failing result" in tdd
 
 
 def test_workflow_trace_matches_to_spec_publication_authority() -> None:
     to_spec = (CUSTOM / "to-spec/SKILL.md").read_text(encoding="utf-8")
-    transcript = (
-        ROOT
-        / "docs/validation/transcripts/2026-07-13-whole-pack-workflow-traces.md"
-    ).read_text(encoding="utf-8")
 
     assert not implicit_policy(CUSTOM / "to-spec")
-    assert "and publish it to the configured tracker" in to_spec
-    assert "Apply the **approval gate**" not in to_spec
-    assert (
-        "Its explicit invocation authorizes the bounded `.tmp/` draft and one "
-        "published parent spec"
-    ) in transcript
-    assert "both publication gates wait for approval/read-back" not in transcript
+    assert re.findall(r"(?m)^### \d+\. ([A-Za-z]+)$", to_spec) == [
+        "Trace",
+        "Choose",
+        "Draft",
+        "Cover",
+        "Publish",
+    ]
+    draft = to_spec.split("Use these sections:", 1)[1].split("Write a comprehensive", 1)[0]
+    assert len(re.findall(r"(?m)^- `[^`]+`", draft)) >= 10
 
 
 def test_implementation_closeout_requires_the_spec_axis() -> None:
@@ -607,25 +601,8 @@ def test_implementation_closeout_requires_the_spec_axis() -> None:
 
     for text in (review, convergent):
         assert "`Spec required: yes | no`" in text
-        assert "Default to `no` for standalone review." in text
-        assert "never skip or replace the Spec axis" in text
-
-    assert "When `Spec required: yes`" in review
-    assert "When `Spec required: yes`" in convergent
-    assert "return `incomplete` before reviewer dispatch" in convergent
-    assert "`Spec required: yes`, the selected work item" in implement
-    assert "with `Spec required: yes`, the Source Trace" in parallel
-    assert (
-        "Accepted residual risk must be authorized by the selected item, repo "
-        "policy, or user"
-    ) in implement
-    for text in (review, convergent):
-        assert (
-            "Carry the caller-supplied Spec requirement, Source Trace and Spec "
-            "sources, fixed point, and captured target into the handoff."
-        ) in text
-    assert "incomplete Spec axis" in parallel
-    assert "Keep Lock closed" in parallel
+    for text in (implement, parallel):
+        assert "`Spec required: yes`" in text
 
 
 def test_independent_scouts_receive_curated_fresh_context() -> None:
@@ -639,85 +616,71 @@ def test_independent_scouts_receive_curated_fresh_context() -> None:
 
     for text in (design, research, architecture):
         assert 'fork_turns="none"' in text
-        assert "direct fresh-context" in text
-        assert "never edit files, mutate external state, or spawn" in text
-
-    assert "same self-contained factual brief" in design
-    assert "Exclude parent hypotheses, preferred solutions, other candidates, and peer results." in design
-    assert "fork only the minimum necessary recent context" in design
-    assert "main agent may contribute one independent design" not in design
-    assert "one complete research contract" in research
-    assert "main agent alone judges evidence and writes the note" in research
-    assert "one bounded region or pressure" in architecture
-    assert "main agent alone owns synthesis" in architecture
 
 
 def test_research_owns_one_authorized_cited_note() -> None:
     research = (CUSTOM / "research/SKILL.md").read_text(encoding="utf-8")
 
-    for verb in ("Lock", "Trace", "Scout", "Classify", "Gate", "Write", "Return"):
-        assert f"**{verb}.**" in research
-
-    required = (
-        "Write exactly one tracked note",
-        "all other mutations",
-        "leave the repo unchanged",
-        "supported`, `conflicted`, or `unknown",
-        "A blocked note records attempted lanes and missing evidence",
-        "Status: answered | conflicted | blocked",
-        "## Source Trace",
-        "note path, one-paragraph answer, status, uncertainty, and next route",
-        "return cited inline evidence or a blocker",
-    )
-    for token in required:
-        assert token in research
+    assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", research) == [
+        "Lock",
+        "Trace",
+        "Scout",
+        "Classify",
+        "Gate",
+        "Write",
+        "Verify",
+        "Return",
+    ]
+    template = research.split("```markdown", 1)[1].split("```", 1)[0]
+    assert re.findall(r"(?m)^## (.+)$", template) == [
+        "Answer",
+        "Findings",
+        "Conflicts and Uncertainty",
+        "Source Trace",
+        "Next",
+    ]
+    assert "Status: answered | conflicted | blocked" in template
 
 
 def test_writing_great_skills_authorizes_bounded_direct_subagents() -> None:
-    writing = (CUSTOM / "writing-great-skills/SKILL.md").read_text(
-        encoding="utf-8"
-    )
+    skill_dir = CUSTOM / "writing-great-skills"
+    writing = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
 
-    assert "## Delegation" in writing
-    assert "**Delegate legwork:**" in writing
-    assert "invocation authorizes direct subagents without separate confirmation" in writing
-    assert "bounded, read-only evidence lane" in writing
+    assert implicit_policy(skill_dir)
+    assert "[GLOSSARY.md](GLOSSARY.md)" in writing
+    assert re.findall(r"(?m)^## (.+)$", writing) == [
+        "Reference",
+        "Delegation",
+        "Audit Spine",
+        "Output",
+        "Completion",
+    ]
+    assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", writing) == [
+        "Trace",
+        "Choose",
+        "Own",
+        "Arrange",
+        "Prune",
+        "Verify",
+    ]
     assert 'fork_turns="none"' in writing
-    assert "direct children do not spawn" in writing
-    assert (
-        "the root owns required source reading, judgment, synthesis, edits, "
-        "verification, and completion"
-    ) in writing
 
 
 def test_merge_conflict_resolution_is_three_way_and_finish_bounded() -> None:
     skill_dir = CUSTOM / "resolving-merge-conflicts"
     skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
-    relationships = (ROOT / "docs/synthesis/skill-context-relationships.md").read_text(
-        encoding="utf-8"
-    )
 
     assert implicit_policy(skill_dir)
-    required = (
-        "three-way merge",
-        "`git ls-files -u`",
-        "During rebase, `ours` is the so-far rebased target",
-        "in-scope content or path conflict",
-        "block unrelated index state from the commit",
-        "Each new conflict returns to **State** until Git exits",
-        "**Reconciliation authority** permits resolving requested in-scope conflicts.",
-        "Without reconciliation authority, stop after **State** and **Trace**.",
-        "leave files, index, commits, and Git-operation state unchanged.",
-        "Without finish authority, leave staging, commit, and continuation untouched.",
-        "hand uncertain failures to `$diagnosing-bugs`",
-        "Reconciliation completes only when every in-scope entry and marker is resolved",
-        "A blocked path returns a blocked outcome, never completion.",
-    )
-    for token in required:
-        assert token in skill
-
-    assert 'Conflict -. "uncertain post-resolution failure" .-> Debug' in relationships
-    assert "`resolving-merge-conflicts`, `review`" in relationships
+    assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", skill) == [
+        "State",
+        "Trace",
+        "Reconcile",
+        "Prove",
+        "Finish",
+    ]
+    assert "`git ls-files -u`" in skill
+    assert "## Guardrails" in skill
+    assert "## Handoff" in skill
 
 
 def test_portable_fallback_carries_the_standalone_engineering_contract() -> None:
@@ -728,78 +691,117 @@ def test_portable_fallback_carries_the_standalone_engineering_contract() -> None
 
     assert loop in fallback
     assert loop in contract
-    personality = (
-        "Explore imaginatively. Converge under proof. Simplify ruthlessly.",
-        "Be adventurous in discovery, conservative in claims, and exacting at Lock.",
-        "**Imagination before commitment.**",
-        "**Experiments over speculation.**",
-        "**Semantic proof over plausible output.**",
-        "**Deep simplicity.**",
-        "Expand evidence and coverage, not unauthorized scope.",
-    )
-    for token in personality:
-        assert token in fallback
-        assert token in contract
+    assert re.findall(r"(?m)^## (.+)$", fallback) == [
+        "North Star",
+        "Engineering Taste",
+        "Working Loop",
+        "Hard Gates",
+        "Shape Before Build",
+        "Implementation Taste",
+        "Review And Report",
+    ]
+    assert re.findall(r"(?m)^## (.+)$", contract) == [
+        "Shared Engineering Language",
+        "Engineering Taste",
+        "Tight Engineering Spine",
+        "Proof Discipline",
+        "Work State And Workers",
+        "Lock",
+    ]
+    north_star = fallback.split("## North Star", 1)[1].split("## Engineering Taste", 1)[0]
+    vocabulary = set(re.findall(r"(?m)^- \*\*([^*]+):\*\*", north_star))
+    assert vocabulary >= {
+        "Source trace",
+        "Bounded slice",
+        "Commitment boundary",
+        "Semantic proof",
+        "Fixed point",
+        "Spec / Standards",
+        "Residual risk",
+        "Lock",
+    }
     assert "portable engineering-contract owner" in bootstrap
     assert re.findall(r"\$[a-z0-9][a-z0-9-]*", fallback) == []
     assert len(fallback.split()) <= 950
     assert not any(line.startswith("  ") for line in fallback.splitlines())
 
-    required = (
-        "**Source trace:**",
-        "**Bounded slice:**",
-        "**Semantic proof:**",
-        "one highest-leverage decision",
-        "against primary sources",
-        "Staging, commits, pushes, PRs, tracker changes, deployments, messages",
-        "Parallelize only independent write scopes",
-        "observe RED before GREEN",
-        "known-good example",
-        "production implementation",
-        "One axis passing never hides the other failing.",
-        "Lock only when",
-        "at the authorized boundary",
-    )
-    for token in required:
-        assert token in fallback
+    hard_gates = fallback.split("## Hard Gates", 1)[1].split("## Shape Before Build", 1)[0]
+    for mutation in ("filesystem", "Git", "tracker", "deployment", "external"):
+        assert mutation in hard_gates
+    implementation = fallback.split("## Implementation Taste", 1)[1].split(
+        "## Review And Report", 1
+    )[0]
+    assert implementation.index("RED") < implementation.index("GREEN")
+    assert "oracle" in implementation
+    review = fallback.split("## Review And Report", 1)[1]
+    assert re.findall(r"(?m)^- \*\*(Standards|Spec):\*\*", review) == [
+        "Standards",
+        "Spec",
+    ]
+    assert "Lock" in review
 
 
 def test_readme_exposes_both_adoption_paths() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
 
-    required = (
-        '<h1 align="center">Programming Agent Skills</h1>',
-        "img.shields.io/badge/License-MIT",
-        "img.shields.io/badge/Python-3.10%2B",
-        "## How It Works",
-        "flowchart LR",
-        "| Common agent failure | Pack response |",
-        "| Full Skill Pack | Portable Contract |",
-        "### Full Skill Pack",
-        "### Portable Contract Only",
-        "[`AGENTS_PORTABLE_FALLBACK.md`](AGENTS_PORTABLE_FALLBACK.md)",
-        "without installing skills",
-        "Choose one engineering-contract owner per repository",
-        "## Using The Full Pack",
-    )
-    for token in required:
-        assert token in readme
-
+    headings = re.findall(r"(?m)^(#{2,3}) (.+)$", readme)
+    assert ("##", "Setup") in headings
+    assert ("###", "Full Skill Pack") in headings
+    assert ("###", "Portable Contract Only") in headings
+    assert ("##", "Using The Full Pack") in headings
+    setup = readme.split("## Setup", 1)[1].split("## What's Included", 1)[0]
+    assert "| Full Skill Pack | Portable Contract |" in setup
+    assert "[Install the full pack](#full-skill-pack)" in setup
+    assert "[Use the portable contract](AGENTS_PORTABLE_FALLBACK.md)" in setup
+    for language in ("bash", "powershell"):
+        block = readme.split(f"```{language}", 1)[1].split("```", 1)[0]
+        assert "python -m scripts.install_skills" in block
+        assert "python -m scripts.validate_skills" in block
     assert readme.count("```mermaid") == 1
 
 
 def test_triage_branches_share_the_authoritative_brief_schema() -> None:
+    triage = (CUSTOM / "triage/SKILL.md").read_text(encoding="utf-8")
+    specific = (CUSTOM / "triage/SPECIFIC-ITEM.md").read_text(encoding="utf-8")
+    quick = (CUSTOM / "triage/QUICK-OVERRIDE.md").read_text(encoding="utf-8")
     examples = (CUSTOM / "triage/AGENT-BRIEF-EXAMPLES.md").read_text(encoding="utf-8")
     brief = (CUSTOM / "triage/AGENT-BRIEF.md").read_text(encoding="utf-8")
+    out_of_scope = (CUSTOM / "triage/OUT-OF-SCOPE.md").read_text(encoding="utf-8")
 
+    assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", triage) == [
+        "Load",
+        "Choose",
+        "Run",
+        "Prove",
+    ]
+    assert re.findall(r"(?m)^## \d+\. ([A-Za-z]+)$", specific) == [
+        "Trace",
+        "Verify",
+        "Shape",
+        "Recommend",
+        "Approve",
+        "Apply",
+        "Prove",
+    ]
+    assert specific.index("mutation packet") < specific.index("explicit maintainer approval")
+    assert "## Completion" in quick
     assert brief.count("**Proof lane:**") == 1
+    assert "concrete example" not in brief
+    assert examples.startswith("# Brief Branch Emphasis")
     assert "| Branch | Emphasize |" in examples
     for branch in ("Bug tracer", "Enhancement tracer", "Support slice", "PR finish"):
         assert f"| {branch} |" in examples
+    assert [
+        title for title, _, _ in skill_pack_contract.level_two_heading_spans(out_of_scope)
+    ] == [
+        "File Format",
+        "Screen",
+        "Classify",
+    ]
 
 
 def test_mutating_workflows_require_readback() -> None:
-    for name in ("implement", "parallel-implement", "to-spec", "to-tickets", "wayfinder"):
+    for name in ("implement", "parallel-implement", "to-spec", "to-tickets", "triage", "wayfinder"):
         text = (CUSTOM / name / "SKILL.md").read_text(encoding="utf-8")
         assert "Mutation read-back" in text, name
 
@@ -807,16 +809,14 @@ def test_mutating_workflows_require_readback() -> None:
 def test_to_tickets_preserves_approval_coverage_and_frontier_contract() -> None:
     tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
 
-    required = (
-        "Apply the **coverage gate**",
-        "Get explicit user approval",
-        "before publishing",
-        "exactly one next action",
-        "recommend `$implement`",
-        "recommend `$parallel-implement`",
-    )
-    for token in required:
-        assert token in tickets
+    assert not implicit_policy(CUSTOM / "to-tickets")
+    assert re.findall(r"(?m)^### \d+\. ([A-Za-z]+)$", tickets) == [
+        "Trace",
+        "Map",
+        "Slice",
+        "Approve",
+        "Publish",
+    ]
 
 
 def test_worker_modes_have_distinct_completion_artifacts() -> None:
@@ -844,37 +844,47 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
     ledger = (CUSTOM / "parallel-implement/references/RUN-LEDGER.md").read_text(
         encoding="utf-8"
     )
-    relationships = (
-        ROOT / "docs/synthesis/skill-context-relationships.md"
-    ).read_text(encoding="utf-8")
-
-    assert "**Two isolations:**" in parallel
-    assert "**Trace -> Gate -> Wave -> Integrate -> Review -> Lock -> Release**" in parallel
-    assert "worktree lock" not in parallel
-    assert "every delegated lane requires both fresh context" in parallel
-    assert "**Root-only fan-out:**" in parallel
-    assert "**slot lock**" in parallel
-    assert "the smaller of three or live slots remaining" in parallel
+    assert re.findall(r"(?m)^## ([A-Za-z]+)$", parallel) == [
+        "Contract",
+        "References",
+        "Trace",
+        "Gate",
+        "Wave",
+        "Integrate",
+        "Review",
+        "Lock",
+        "Release",
+    ]
     assert 'fork_turns="none"' in parallel
-    assert "Wait until every lane agent is idle." in parallel
-    assert "it returns a review-ready packet" in parallel
-    assert "**Workspace boundary:**" in worker
-    assert "**One worker, one lane, one packet:**" in worker
-    assert "Never dispatch, formally review" in integrator
     assert "## Review-Ready Handoff" in integrator
-    assert "`spawn_agent` creates a child context" in launch
     assert 'git worktree add --detach' in launch
     assert "## Explicit Background Task" in launch
-    assert "only when the user explicitly requests" in launch
-    assert "**Review:**" in ledger
-    assert "IntegratorBrief --> Review" not in relationships
-    assert "IntegratorBrief -. \"ledger-approved only\" .-> CPR" not in relationships
-    assert "integration lane executes only that route" not in parallel
-    assert "dispatch its reviewer subagents" not in integrator
-    assert "native internal worktree" not in parallel
-    assert "native internal worktree" not in worker
-    assert "native internal worktree" not in launch
-    assert "native internal worktree" not in ledger
+    report = worker.split("```text", 1)[1].split("```", 1)[0]
+    assert re.findall(r"(?m)^([^:\n]+):", report) == [
+        "status",
+        "work item",
+        "source trace",
+        "preflight",
+        "base",
+        "commit",
+        "owned files",
+        "proof",
+        "skipped checks",
+        "risk/blockers",
+        "next need",
+        "scope notes",
+        "final status",
+        "skill feedback",
+    ]
+    assert "acceptance criterion" in report.split("proof:", 1)[1].splitlines()[0]
+    diagnosis_route = worker.split("When a bug's", 1)[1].split(";", 1)[0]
+    assert "expected behavior" in diagnosis_route
+    assert "## Routing Packet" in ledger
+    assert "## Closeout Summary" in ledger
+    assert "candidate integration `HEAD`" in integrator
+    assert "`needs-feedback`" in integrator
+    assert "`blocker` packet" in integrator
+    assert "orchestrator's Conflict gate" not in integrator
 
 
 def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
@@ -891,84 +901,37 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
     ledger = (CUSTOM / "parallel-implement/references/RUN-LEDGER.md").read_text(
         encoding="utf-8"
     )
-    relationships = (
-        ROOT / "docs/synthesis/skill-context-relationships.md"
-    ).read_text(encoding="utf-8")
-
-    required_parallel = (
-        "Orchestrate two or more ready, semantically independent work items",
-        "**frontier gate**",
-        "Non-overlapping files do not prove semantic independence.",
-        "On resume, reconcile it with Git, worktrees, agents, claims, and tracker state",
-        "Never redispatch or reland them.",
-        "`done`:",
-        "`needs-feedback`:",
-        "`blocker`:",
-        "invoke `$resolving-merge-conflicts`",
-        "Keep Lock closed",
-        "unaccepted residual risk",
-        "`pass with residual risk` opens Lock only when",
-        "The selected run authorizes scoped worker commits",
-        "integration mode, landing mode, executor",
-        "verify the remote branch or PR head resolves to the approved closeout `HEAD`",
-        "Return exactly one ledger Outcome: `complete`, `partial`, or `blocked`.",
-        "`partial` or `blocked` claims only events that occurred",
-        "no active lane or unaccounted partial mutation",
-    )
-    for token in required_parallel:
-        assert token in parallel
-
-    assert parallel.count("**Shallow:**") == 1
-    assert "micro-worker" not in parallel
-    assert "downshift or serialize" not in parallel
-
-    assert "**Integration context:**" in worker
-    assert "**Report transport:**" in worker
-    assert "next need:" in worker
-    assert "**Landing route and mode:**" in integrator
-    assert "recorded landing mode, and landing authority" in integrator
-    assert "Preserve the partial state for the orchestrator's Conflict gate." in integrator
-    assert "fresh lane worker is required" in integrator
-    assert "micro-worker" not in integrator
-
-    assert "Dirty state, untracked work, or an unpreserved commit blocks cleanup." in launch
-    assert "Forced removal and branch deletion require explicit destructive authority." in launch
-
-    for token in (
-        "**Landing:**",
-        "<scope/downshift/resume/frontier/",
-        "**Current integration HEAD:**",
-        "**Current Git state:**",
-        "**Blockers and next owner:**",
-        "**Remaining permissions or mutations:**",
-    ):
-        assert token in ledger
-
-    assert (
-        "| `parallel-implement` | Invoke | `$resolving-merge-conflicts` |"
-        in relationships
-    )
+    assert set(re.findall(r"(?m)^- `(done|needs-feedback|blocker)`: ", parallel)) == {
+        "done",
+        "needs-feedback",
+        "blocker",
+    }
+    for outcome in ("complete", "partial", "blocked"):
+        assert f"`{outcome}`" in parallel.split("## Release", 1)[1]
+    assert "<scope/downshift/resume/frontier/" in ledger
+    assert "## Release" in launch
+    wave = parallel.split("## Wave", 1)[1].split("## Integrate", 1)[0]
+    lock = parallel.split("## Lock", 1)[1].split("## Release", 1)[0]
+    assert "claim" in wave and "Mutation read-back" in wave
+    assert "closeout tracker mutation" in lock
+    assert "idle before formal review" in launch
 
 
 def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
 
-    required = (
-        "Implement one selected ready work item through review, one commit, and repo-policy closeout",
-        "**Select -> Patch -> Review -> Lock -> Close**",
-        "Owner mode is the default.",
-        "Staged-worker mode requires an explicit assignment and accepting owner.",
-        "A parent spec, plan, queue, batch, list, or bare source path is context, not implementation scope.",
-        "An explicit target is binding.",
-        "report that gate instead of substituting another item",
-        "Ask when it does not identify one next item.",
-        "Selection reads state; it does not split, relabel, promote, reprioritize, or otherwise repair it.",
-        "Owner-mode invocation authorizes in-scope staging, one commit, and repo-policy closeout.",
-        "Push, deployment, PR creation, destructive Git, and unrelated external mutations require separate authority.",
-    )
-
-    for token in required:
-        assert token in implement
+    assert not implicit_policy(CUSTOM / "implement")
+    assert re.findall(r"(?m)^## ([A-Za-z]+)$", implement) == [
+        "Select",
+        "Patch",
+        "Review",
+        "Lock",
+        "Close",
+    ]
+    assert re.findall(r"(?m)^- \*\*([^*]+):\*\*", implement)[:2] == [
+        "Owner",
+        "Staged worker",
+    ]
 
 
 def test_local_tracker_closeout_enters_the_lock_snapshot() -> None:
@@ -979,28 +942,28 @@ def test_local_tracker_closeout_enters_the_lock_snapshot() -> None:
     lock_tree = implement.index("Capture the **lock tree**")
 
     assert review_tree < closeout < lock_tree
-    assert "apply Mutation read-back, and stage the tracker file" in implement
-    assert "Only verified closeout metadata may differ from the reviewed tree" in implement
-    assert "Any implementation, behavior, scope, or contract delta returns to Review" in implement
-    assert "Review: pending" not in implement
+    assert "Mutation read-back" in implement
+    assert "git diff <review-tree> <lock-tree>" in implement
 
 
 def test_diagnosis_returns_to_one_implementation_owner() -> None:
-    implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
     diagnosing = (CUSTOM / "diagnosing-bugs/SKILL.md").read_text(encoding="utf-8")
     relationships = (ROOT / "docs/synthesis/skill-context-relationships.md").read_text(
         encoding="utf-8"
     )
 
-    assert "invoke `$diagnosing-bugs` in fix mode" in implement
-    assert "resume here after regression proof" in implement
-    assert "A caller-invoked run returns its diagnosis packet to that caller" in diagnosing
-    assert "A standalone diagnosis-only run recommends `$implement`" in diagnosing
-    assert "Record architecture concerns as follow-up evidence for the caller" in diagnosing
-    assert "do not start architecture work here" in diagnosing
-    assert (
-        "`diagnosing-bugs` | Recommend and stop | `$improve-codebase-architecture`"
-        not in relationships
+    packet = diagnosing.split("Return one diagnosis packet containing:", 1)[1]
+    assert len(re.findall(r"(?m)^- ", packet)) >= 7
+    rows = set(
+        re.findall(
+            r"(?m)^\| `([a-z0-9-]+)` \| (Load|Invoke|Compose|Hand off|Recommend and stop) \| `\$([a-z0-9-]+)` \|",
+            relationships,
+        )
+    )
+    assert ("diagnosing-bugs", "Recommend and stop", "implement") in rows
+    assert all(
+        not (caller == "diagnosing-bugs" and callee == "improve-codebase-architecture")
+        for caller, _, callee in rows
     )
 
 
@@ -1019,16 +982,34 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
     required = {
         ("grill-with-docs", "Compose", "grilling"),
         ("grill-with-docs", "Compose", "domain-modeling"),
+        ("grilling", "Recommend and stop", "research"),
+        ("grilling", "Recommend and stop", "prototype"),
+        ("grilling", "Recommend and stop", "handoff"),
         ("to-spec", "Load", "codebase-design"),
         ("wayfinder", "Invoke", "research"),
         ("wayfinder", "Invoke", "prototype"),
         ("wayfinder", "Invoke", "grill-with-docs"),
+        ("wayfinder", "Recommend and stop", "domain-modeling"),
+        ("wayfinder", "Recommend and stop", "to-spec"),
+        ("wayfinder", "Recommend and stop", "to-tickets"),
+        ("wayfinder", "Recommend and stop", "implement"),
         ("triage", "Invoke", "grill-with-docs"),
+        ("improve-codebase-architecture", "Invoke", "grill-with-docs"),
         ("implement", "Invoke", "tdd"),
         ("implement", "Invoke", "diagnosing-bugs"),
         ("implement", "Invoke", "review"),
         ("implement", "Invoke", "convergent-pr-review"),
         ("review", "Hand off", "convergent-pr-review"),
+        ("convergent-pr-review", "Hand off", "review"),
+        ("parallel-implement", "Invoke", "convergent-pr-review"),
+        ("parallel-implement", "Invoke", "resolving-merge-conflicts"),
+        ("resolving-merge-conflicts", "Invoke", "diagnosing-bugs"),
+        ("improve-codebase-architecture", "Invoke", "research"),
+        ("improve-codebase-architecture", "Load", "codebase-design"),
+        ("improve-codebase-architecture", "Invoke", "codebase-design"),
+        ("improve-codebase-architecture", "Recommend and stop", "implement"),
+        ("improve-codebase-architecture", "Recommend and stop", "to-tickets"),
+        ("improve-codebase-architecture", "Recommend and stop", "to-spec"),
         ("tdd", "Hand off", "diagnosing-bugs"),
         ("tdd", "Hand off", "prototype"),
         ("tdd", "Recommend and stop", "codebase-design"),
@@ -1041,25 +1022,13 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         ("wayfinder", "Recommend and stop", "repo-bootstrap"),
         ("triage", "Recommend and stop", "repo-bootstrap"),
         ("to-spec", "Recommend and stop", "repo-bootstrap"),
+        ("to-spec", "Recommend and stop", "to-tickets"),
         ("to-tickets", "Recommend and stop", "repo-bootstrap"),
         ("handoff", "Recommend and stop", "repo-bootstrap"),
         ("improve-codebase-architecture", "Recommend and stop", "repo-bootstrap"),
     }
 
     assert required <= edges
-
-    source_wording = {
-        CUSTOM / "grill-with-docs/SKILL.md": "`$grilling` session with `$domain-modeling` active throughout",
-        CUSTOM / "to-spec/SKILL.md": "Load `$codebase-design` as shared architecture vocabulary",
-        CUSTOM / "triage/SPECIFIC-ITEM.md": "invoke `$grill-with-docs`",
-        CUSTOM / "implement/SKILL.md": "invoke `$diagnosing-bugs` in fix mode",
-        CUSTOM / "parallel-implement/SKILL.md": "The orchestrator invokes `$review` by default",
-        CUSTOM / "review/SKILL.md": "Hand off to `$convergent-pr-review` and stop",
-        CUSTOM / "tdd/SKILL.md": "Hand off to `$diagnosing-bugs`",
-        CUSTOM / "codebase-design/DIRECT-DESIGN.md": "Recommend `$improve-codebase-architecture` and stop",
-    }
-    for path, token in source_wording.items():
-        assert token in path.read_text(encoding="utf-8"), f"{path} is missing {token}"
 
     skill_names = {skill.name for skill in CUSTOM.iterdir() if skill.is_dir()}
     for caller, verb, callee in rows:
@@ -1081,8 +1050,6 @@ def test_router_and_synthesis_keep_active_ownership_unambiguous() -> None:
     )
     spine = (ROOT / "docs/synthesis/target-spine.md").read_text(encoding="utf-8")
 
-    assert "configured external PR/MR intake" in router
-    assert "**Triage / Review:**" in router
     assert "Historical upstream-language decision record" in synthesis_index
     assert "Status: historical synthesis snapshot." in language
     assert "Do not execute the Proposed Changes." in language

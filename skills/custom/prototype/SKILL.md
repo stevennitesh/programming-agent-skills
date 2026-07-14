@@ -1,6 +1,6 @@
 ---
 name: prototype
-description: Prototype one design question with a throwaway runnable probe. Use for a terminal decision surface over logic, state, or data; structurally different UI bets on one real route; or a caller's runnable evidence gap.
+description: Prototype one design question with a throwaway runnable probe. Use for a terminal decision surface over logic, state, data, or API/interface shape; structurally different UI bets on one real route; or a caller's runnable evidence gap.
 ---
 
 # Prototype
@@ -68,7 +68,7 @@ Return the packet directly to the invoking caller. Recommend `$handoff` only whe
 
 ## 6. Reconcile
 
-- **Answered:** Return the packet, then delete prototype artifacts unless the request or caller explicitly preserves them.
+- **Answered:** Delete prototype artifacts unless the request or caller explicitly preserves them, record the resulting cleanup or preservation state, then return the packet.
 - **Awaiting verdict:** Preserve the named runnable artifacts and report one next judging action.
 - **Blocked:** Account for every prototype path as deleted or intentionally preserved.
 
