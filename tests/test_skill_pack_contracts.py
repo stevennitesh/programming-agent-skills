@@ -171,6 +171,7 @@ def test_portable_fallback_adoption_removes_the_portable_contract_owner() -> Non
         repo_specific_headings += f"\n{heading}\n\nRepo-specific guidance.\n"
     assert validator["portable_owner_failures"](repo_specific_headings) == []
     for heading, signature in validator["PORTABLE_SECTION_SIGNATURES"]:
+        assert validator["markdown_section_contains"](fallback, heading, signature)
         split_pair = (
             "# Repository Instructions\n\n"
             f"{heading}\n\nRepo-specific guidance.\n\n"
@@ -194,6 +195,23 @@ def test_portable_fallback_adoption_removes_the_portable_contract_owner() -> Non
     assert validator["setup_schema_marker_failures"](
         f"{stale}\n{marker}\n"
     ) == expected_marker_failure
+
+    primer = validator["ENGINEERING_PRIMER_TOKEN"]
+    valid_primer = (
+        f"# Repository Instructions\n\n{marker}\n\n{primer}\n\n"
+        "## Commands\n\n- Test: `python -m pytest`\n"
+    )
+    assert validator["engineering_primer_failures"](valid_primer) == []
+    primer_failure = [
+        "AGENTS.md must place the engineering primer between the current "
+        "setup-schema marker and ## Commands"
+    ]
+    assert validator["engineering_primer_failures"](
+        valid_primer.replace(primer, f"> {primer}")
+    ) == primer_failure
+    assert validator["engineering_primer_failures"](
+        valid_primer.replace(primer, f"## History\n\n{primer}")
+    ) == primer_failure
 
 
 def test_outdated_setup_routes_to_repo_bootstrap() -> None:
@@ -702,13 +720,25 @@ def test_merge_conflict_resolution_is_three_way_and_finish_bounded() -> None:
 
 
 def test_portable_fallback_carries_the_standalone_engineering_contract() -> None:
-    loop = "Orient -> Explore -> Decide -> Prove -> Cover -> Converge -> Simplify -> Lock"
+    loop = "Explore -> Choose -> Prove -> Expand -> Simplify -> Lock"
     fallback = (ROOT / "AGENTS_PORTABLE_FALLBACK.md").read_text(encoding="utf-8")
     contract = (ROOT / "docs/agents/engineering-contract.md").read_text(encoding="utf-8")
     bootstrap = (CUSTOM / "repo-bootstrap/SKILL.md").read_text(encoding="utf-8")
 
     assert loop in fallback
     assert loop in contract
+    personality = (
+        "Explore imaginatively. Converge under proof. Simplify ruthlessly.",
+        "Be adventurous in discovery, conservative in claims, and exacting at Lock.",
+        "**Imagination before commitment.**",
+        "**Experiments over speculation.**",
+        "**Semantic proof over plausible output.**",
+        "**Deep simplicity.**",
+        "Expand evidence and coverage, not unauthorized scope.",
+    )
+    for token in personality:
+        assert token in fallback
+        assert token in contract
     assert "portable engineering-contract owner" in bootstrap
     assert re.findall(r"\$[a-z0-9][a-z0-9-]*", fallback) == []
     assert len(fallback.split()) <= 950

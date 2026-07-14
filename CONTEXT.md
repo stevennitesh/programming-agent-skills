@@ -7,7 +7,7 @@ This repository packages a shared engineering discipline as skills, setup contra
 - `AGENTS.md` is a short agent primer: verified commands, context pointers, and local invariants.
 - `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md` is the minimal global bootstrap for `$skill-router` and `$repo-bootstrap`. Personal environment rules stay outside it.
 - `docs/plans/README.md` routes current work without copying plans or runbooks.
-- `docs/agents/engineering-contract.md` owns shared runtime engineering language and cross-cutting coding discipline.
+- `docs/agents/engineering-contract.md` owns engineering taste, shared runtime language, and cross-cutting discipline.
 - `docs/agents/issue-tracker.md`, `triage-labels.md`, and `domain.md` own tracker mechanics, state roles, and domain routing.
 - `skills/custom/` is the supported install set. `skills/extra/` is optional. `skills/.archive/` is inactive.
 - Historical research, synthesis, transcripts, issue notes, and run logs remain evidence. They become current instructions only when an owning README or `docs/plans/README.md` says so.
@@ -87,7 +87,7 @@ _Avoid_: manual, full contract, router
 
 **Engineering contract**
 
-The target repo's source of shared runtime engineering language and convergence discipline.
+The target repo's source of engineering taste, shared runtime language, and convergence discipline.
 _Avoid_: style guide, copied philosophy
 
 **Local contract slice**

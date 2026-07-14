@@ -135,9 +135,9 @@ Build faster without making the repository harder to trust. Move quickly through
 
 ## Engineering Contract
 
-[`$repo-bootstrap`](skills/custom/repo-bootstrap/SKILL.md) installs a small `docs/agents/engineering-contract.md` in each target repository. The contract gives Codex strong handles for the decisions that matter while leaving implementation technique flexible.
+[`$repo-bootstrap`](skills/custom/repo-bootstrap/SKILL.md) installs a small `docs/agents/engineering-contract.md` in each target repository. The contract owns engineering taste, shared vocabulary, and cross-skill discipline while leaving implementation technique flexible.
 
-The shared loop is `Orient -> Explore -> Decide -> Prove -> Cover -> Converge -> Simplify -> Lock`. A **source trace** grounds the work. A **bounded slice** controls scope. **Semantic proof** establishes that the result means the right thing. A **fixed point** anchors review. Separate **Spec / Standards** passes ask "right thing?" and "built right?" independently. **Lock** closes only with evidence and named residual risk.
+The shared spine is `Explore -> Choose -> Prove -> Expand -> Simplify -> Lock`. Explore opens the solution space. Proof establishes one real tracer bullet. Expand covers requirements and improves the design with what the proof revealed. Simplify removes accidental complexity. **Lock** closes only with separate Spec / Standards review, evidence, and named residual risk.
 
 For the same core behavior without installing skills, use [`AGENTS_PORTABLE_FALLBACK.md`](AGENTS_PORTABLE_FALLBACK.md) as a standalone repository-level `AGENTS.md`.
 

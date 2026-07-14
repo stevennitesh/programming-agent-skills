@@ -16,7 +16,10 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:09b24483e0a2 -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:67ee67b25505 -->"
+ENGINEERING_PRIMER_TOKEN = (
+    "Explore imaginatively. Converge under proof. Simplify ruthlessly."
+)
 SETUP_SCHEMA_MARKER_RE = re.compile(
     r"<!-- programming-agent-skills setup-schema: \d+:[0-9a-f]{12} -->"
 )
@@ -28,6 +31,7 @@ PORTABLE_OWNER_TOKENS = (
 
 PORTABLE_SECTION_HEADINGS = (
     "## North Star",
+    "## Engineering Taste",
     "## Working Loop",
     "## Hard Gates",
     "## Shape Before Build",
@@ -36,14 +40,18 @@ PORTABLE_SECTION_HEADINGS = (
 )
 
 PORTABLE_SECTION_SIGNATURES = (
-    ("## North Star", "Discover broadly. Converge under proof."),
+    (
+        "## North Star",
+        "Explore imaginatively. Converge under proof. Simplify ruthlessly.",
+    ),
+    ("## Engineering Taste", "**Imagination before commitment.**"),
     (
         "## Working Loop",
-        "Orient -> Explore -> Decide -> Prove -> Cover -> Converge -> Simplify -> Lock",
+        "Explore -> Choose -> Prove -> Expand -> Simplify -> Lock",
     ),
     ("## Hard Gates", "**No evidence, no done.**"),
     ("## Shape Before Build", "**Interview:** when intent is unsettled"),
-    ("## Implementation Taste", "Prefer tracer-bullet vertical slices."),
+    ("## Implementation Taste", "Order tracer-bullet slices by dependency."),
     (
         "## Review And Report",
         "Review every nontrivial diff from a fixed point on separate axes:",
@@ -58,6 +66,13 @@ AGENT_POINTERS = (
 )
 
 CONTRACT_TOKENS = (
+    ENGINEERING_PRIMER_TOKEN,
+    "## Engineering Taste",
+    "**Imagination before commitment.**",
+    "**Experiments over speculation.**",
+    "**Semantic proof over plausible output.**",
+    "**Deep simplicity.**",
+    "**Stewardship.**",
     "**Source trace:**",
     "**Bounded slice:**",
     "**Commitment boundary:**",
@@ -74,7 +89,9 @@ CONTRACT_TOKENS = (
     "**lane worker**",
     "**Spec / Standards:**",
     "**Residual risk:**",
-    "Orient -> Explore -> Decide -> Prove -> Cover -> Converge -> Simplify -> Lock",
+    "Explore -> Choose -> Prove -> Expand -> Simplify -> Lock",
+    "Expand evidence and coverage, not unauthorized scope.",
+    "Treat repo config, CI, and maintained contributor docs as command authority.",
     ".tmp/",
     ".scratch/",
     "## Lock",
@@ -174,6 +191,21 @@ def setup_schema_marker_failures(agents: str) -> list[str]:
     ]
 
 
+def engineering_primer_failures(agents: str) -> list[str]:
+    pattern = re.compile(
+        rf"(?m)\A# Repository Instructions[ \t]*\r?\n"
+        rf"(?:[ \t]*\r?\n)*{re.escape(SETUP_SCHEMA_TOKEN)}[ \t]*\r?\n"
+        rf"(?:[ \t]*\r?\n)*{re.escape(ENGINEERING_PRIMER_TOKEN)}[ \t]*\r?\n"
+        rf"(?:[ \t]*\r?\n)*## Commands[ \t]*$"
+    )
+    if pattern.search(agents):
+        return []
+    return [
+        "AGENTS.md must place the engineering primer between the current "
+        "setup-schema marker and ## Commands"
+    ]
+
+
 def check_ignore(root: Path, probe: str) -> tuple[bool | None, str]:
     result = subprocess.run(
         ["git", "check-ignore", "-q", "--no-index", probe],
@@ -213,6 +245,7 @@ def main() -> int:
         if not re.search(r"(?m)^## Commands\s*$", agents):
             failures.append("AGENTS.md is missing a ## Commands primer")
         failures.extend(setup_schema_marker_failures(agents))
+        failures.extend(engineering_primer_failures(agents))
         require_tokens(agents, "AGENTS.md", AGENT_POINTERS, failures)
         if not re.search(
             r"(?im)^(?:[-*]\s*)?(?:before|for)\s+nontrivial coding[^\n]*"

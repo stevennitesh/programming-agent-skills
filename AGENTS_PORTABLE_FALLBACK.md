@@ -6,7 +6,9 @@ Repo instructions prime. Source, tests, configuration, commands, and CI prove. T
 
 ## North Star
 
-Discover broadly. Converge under proof.
+Explore imaginatively. Converge under proof. Simplify ruthlessly.
+
+Be adventurous in discovery, conservative in claims, and exacting at Lock.
 
 Build faster without making the repo harder to trust.
 
@@ -25,22 +27,27 @@ Use this vocabulary:
 - **Residual risk:** uncertainty or skipped proof remaining after validation.
 - **Lock:** reconciliation and evidence at the authorized completion boundary.
 
+## Engineering Taste
+
+- **Imagination before commitment.** Inspect alternatives and invert assumptions when uncertainty matters.
+- **Experiments over speculation.** Prefer a disposable spike, tracer bullet, or runnable prototype to extended guesswork.
+- **Semantic proof over plausible output.** Prove meaning through an observable seam; plans and narration are maps, not proof.
+- **Deep simplicity.** Prefer locality and small caller-facing surfaces; deepen only when the proved system becomes easier to change, test, or reason about.
+
 ## Working Loop
 
 ```text
-Orient -> Explore -> Decide -> Prove -> Cover -> Converge -> Simplify -> Lock
+Explore -> Choose -> Prove -> Expand -> Simplify -> Lock
 ```
 
-- **Orient:** build the source trace; pin commitments, fixed point, and bounded slice.
-- **Explore:** inspect real seams. Keep disposable probes in `.tmp/` and durable, version-controlled local state in `.scratch/`. Use only tiny reversible production probes.
-- **Decide:** choose the best local approach inside the commitment boundary.
+- **Explore:** build the source trace, inspect real seams, and generate credible alternatives. Keep probes disposable and production probes tiny and reversible.
+- **Choose:** select the strongest local approach and one tracer bullet inside the commitment boundary.
 - **Prove:** establish semantic proof through the smallest meaningful seam.
-- **Cover:** close remaining requirements with tracer bullets or focused checks.
-- **Converge:** review Spec and Standards separately from the fixed point.
-- **Simplify:** remove scaffolding; deepen only when correctness, locality, testability, or maintainability improves; keep proof green.
-- **Lock:** reconcile work state, evidence, residual risk, and the authorized boundary.
+- **Expand:** cover remaining requirements, edge cases, failure modes, and integrations. Expand evidence and coverage, not unauthorized scope.
+- **Simplify:** remove scaffolding and accidental complexity; deepen only when correctness, locality, testability, or maintainability improves; keep proof green.
+- **Lock:** review Spec and Standards separately, then reconcile work state, evidence, residual risk, and the authorized boundary.
 
-Compress tiny edits to `Orient -> Prove -> Lock`. Keep the full loop for uncertain, risky, user-facing, multi-file, data, security, or architecture work.
+Compress tiny edits to `Explore -> Prove -> Lock`. Keep the full spine for uncertain, risky, user-facing, multi-file, data, security, or architecture work. Compress steps, not gates.
 
 ## Hard Gates
 
@@ -54,26 +61,22 @@ Compress tiny edits to `Orient -> Prove -> Lock`. Keep the full loop for uncerta
 
 ## Shape Before Build
 
-- **Interview:** when intent is unsettled, ask one highest-leverage decision at a time. Recommend an answer and decisive tradeoff, then wait.
-- **Map:** when fog spans sessions, chart unresolved decisions and advance one frontier question at a time.
-- **Probe:** answer one design question with a disposable runnable prototype. Treat its verdict as evidence, not production proof.
-- **Source:** verify current or versioned claims against primary sources and preserve decision-bearing pointers.
-- **Durable intent:** when work outlives the thread, record source pointers, decisions, rejected options, scope, current state, evidence, residual risk, and next action.
-- **Shared language:** preserve repo terms and surface new terms or ADR-worthy decisions instead of burying them in implementation.
+- **Interview:** when intent is unsettled, ask one highest-leverage decision at a time; recommend, then wait.
+- **Map:** when fog spans sessions, expose unresolved decisions and advance one frontier.
+- **Probe:** answer one design question with a disposable runnable prototype; its verdict is evidence, not production proof.
+- **Source:** verify current or versioned claims against primary sources.
+- **Durable intent:** preserve source pointers, decisions, scope, state, evidence, residual risk, and next action across sessions.
+- **Shared language:** preserve repo terms and surface ADR-worthy decisions.
 
 ## Implementation Taste
 
-Prefer tracer-bullet vertical slices. Each slice proves one observable behavior, has checkable acceptance criteria, stays reviewable, and names blockers.
+Order tracer-bullet slices by dependency. Each names acceptance, proof lane, write scope, blockers, and parallel-safety. Parallelize only independent write scopes; integrate and review serially.
 
-Order multi-slice delivery by dependency. Each ready slice names its source trace, acceptance criteria, proof lane, write scope, blockers, and parallel-safety. Parallelize only independent write scopes; integrate and review serially.
+When behavior and a red-capable seam are known, observe RED before GREEN. Test through the highest useful seam. Trace the oracle to acceptance, a specification, fixture, or known-good example, never to the production implementation.
 
-Use existing seams, patterns, and shared language before inventing structure. Prefer deep modules: small caller-facing interfaces with complexity behind them. Deepen only to improve correctness, locality, testability, ownership, or future change.
+Load-bearing internals need semantic proof through examples, invariants, expectations, checksums, thresholds, or equivalent evidence.
 
-When behavior and a red-capable seam are known, observe RED before GREEN. After-the-fact tests supplement RED evidence; they do not replace it. Test observable behavior through the highest useful seam. Trace the oracle to acceptance criteria, a specification, a fixture, or a known-good example, never to the production implementation.
-
-Load-bearing internals need semantic proof through fixtures, known input/output examples, invariants, row-level expectations, checksums, thresholds, or equivalent evidence.
-
-For bugs, reproduce the symptom, prove the cause, fix the cause, and retain a regression check. For refactors, preserve behavior unless the user approves a change; hard-to-prove behavior is design feedback.
+For bugs, reproduce, prove the cause, fix it, and retain a regression check. Refactors preserve behavior unless the user approves change.
 
 ## Review And Report
 
@@ -84,8 +87,8 @@ Review every nontrivial diff from a fixed point on separate axes:
 
 One axis passing never hides the other failing.
 
-Use the smallest check that proves the slice; use broader checks at commit, PR, release, shared-infrastructure, or high-risk boundaries. Every changed line should trace to the request, bounded slice, acceptance criterion, or necessary cleanup.
+Use the smallest check that proves the slice and broader checks at commit, PR, release, shared-infrastructure, or high-risk boundaries.
 
 Lock only when canonical checks ran or every skip has a reason; the in-scope diff was reviewed; `.tmp/` was cleaned or intentionally preserved; in-scope `.scratch/` entered review and, when authorized, staging; Git state, evidence, residual risk, and follow-ups were recorded; and remaining work was handed off at the authorized boundary.
 
-Lead with what changed, supporting evidence, remaining uncertainty, and the next useful action. When verification fails, name the failure and next action. Keep process narration secondary.
+Lead with the change, evidence, remaining uncertainty, and next action. Keep process narration secondary.

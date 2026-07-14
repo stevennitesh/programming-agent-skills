@@ -1,102 +1,80 @@
 # Engineering Contract
 
-Discover broadly. Converge under proof.
+Explore imaginatively. Converge under proof. Simplify ruthlessly.
+
+Be adventurous in discovery, conservative in claims, and exacting at Lock.
+
+This contract owns engineering taste, shared runtime language, and cross-cutting discipline. `AGENTS.md` owns repo commands and pointers. Domain docs own product language and decisions. Skills own procedures and local contract slices.
+
+Follow `docs/agents/domain.md` to the relevant glossary and ADRs. Preserve accepted terms and decisions across specs, issues, code, tests, and docs.
 
 ## Shared Engineering Language
 
-This contract owns shared runtime engineering language and cross-cutting coding discipline. Domain docs own product language. `AGENTS.md` owns repo commands and pointers. Skills own procedures and local contract slices.
-
-Follow `docs/agents/domain.md` to the relevant glossary and ADRs. Preserve accepted domain terms and decisions across specs, issues, code, tests, and docs.
-
-- **Source trace:** the request, issue or spec, repo instructions, domain decisions, current behavior and constraints, relevant code and tests, and fixed point that govern the slice.
-- **Bounded slice:** the smallest useful scope that preserves the commitment boundary and can produce evidence.
-- **Commitment boundary:** product intent, acceptance criteria, semantic correctness, user-visible behavior, public contracts, data semantics, security/privacy posture, and agreed scope. Technique stays agent-owned.
+- **Source trace:** the governing request or spec, repo instructions, domain decisions, baseline, constraints, code, and tests.
+- **Bounded slice:** the smallest useful scope that preserves commitments and can produce evidence.
+- **Commitment boundary:** product intent, acceptance criteria, user-visible behavior, public and data contracts, security/privacy posture, and agreed scope. Technique stays agent-owned.
 - **Load-bearing internal:** internal behavior that determines semantic correctness and therefore needs a contract and proof.
-- **Semantic correctness:** correctness of the result's meaning, not merely the existence of output.
-- **Semantic proof:** evidence that establishes semantic correctness through an observable seam.
-- **Proof seam:** the caller-facing interface or observable boundary through which semantic correctness can be established.
-- **Proof lane:** the named repo-owned command, fixture, workflow, or artifact that will exercise a proof seam for one work item.
-- **Evidence:** inspectable support for a claim: source, tests, fixtures, logs, diffs, commands, CI, screenshots, rendered output, or user confirmation.
+- **Semantic correctness:** correctness of meaning, not output existence.
+- **Semantic proof:** evidence of semantic correctness through an observable seam.
+- **Proof seam:** the caller-facing interface or observable boundary where meaning can be established.
+- **Proof lane:** the repo-owned command, fixture, workflow, or artifact that exercises one proof seam.
+- **Evidence:** inspectable support for a claim.
 - **Tracer bullet:** one narrow, observable path through the real system.
-- **Fixed point:** the pinned baseline for review.
+- **Fixed point:** the pinned review baseline.
 - **Review snapshot:** the immutable tree or captured target compared with a fixed point.
-- **Spec / Standards:** originating intent and semantic commitments / documented repo conventions and maintainability; review the axes separately.
-- **Residual risk:** uncertainty or skipped proof that remains after validation.
-- **Disposable / durable:** `.tmp/` holds disposable local work; `.scratch/` holds durable, version-controlled local state.
+- **Spec / Standards:** originating commitments / repo conventions and maintainability. Review them separately.
+- **Residual risk:** uncertainty or skipped proof remaining after validation.
+- **Disposable / durable:** `.tmp/` holds disposable work; `.scratch/` holds durable, version-controlled local state.
 - **Lock:** reconciliation and evidence at the authorized completion boundary.
 
-## Repo-Owned Commands
+## Engineering Taste
 
-Run canonical setup and validation commands from `AGENTS.md` and their named config.
+- **Imagination before commitment.** Do not confuse the first workable idea with the best local design. When uncertainty matters, inspect alternatives, invert assumptions, and use experiments to discover what the code can teach.
+- **Experiments over speculation.** Prefer a disposable spike, tracer bullet, or runnable prototype to extended guesswork. Keep experiments cheap enough to discard and real enough to change the decision.
+- **Semantic proof over plausible output.** Prove that the result means the right thing through an observable seam. Treat plans, summaries, memory, and confident narration as maps, not proof.
+- **Deep simplicity.** Prefer locality, small caller-facing surfaces, and complexity hidden behind clear ownership. Add or deepen an abstraction only when the proved system becomes easier to change, test, or reason about.
+- **Stewardship.** Preserve unrelated work and accepted language. Leave the selected slice more coherent than you found it without laundering adjacent cleanup into scope.
 
-Repair command drift by tracing repo config, CI, or maintained contributor docs; update the primer through the repo's normal approval boundary.
-
-For review, a caller-supplied fixed point wins. Otherwise discover the repository default branch and merge base, state the resolved baseline, and ask only when discovery is ambiguous.
-
-## Tight Convergence Loop
-
-Scale one tight loop to risk:
+## Tight Engineering Spine
 
 ```text
-Orient -> Explore -> Decide -> Prove -> Cover -> Converge -> Simplify -> Lock
+Explore -> Choose -> Prove -> Expand -> Simplify -> Lock
 ```
 
-- **Orient:** build the source trace; pin the fixed point, commitments, and bounded slice.
-- **Explore:** inspect real seams and keep probes disposable.
-- **Decide:** choose the best local approach inside the commitment boundary.
-- **Prove:** establish semantic proof through the smallest meaningful seam; capture red before green when TDD applies.
-- **Cover:** close remaining requirements with tracer bullets or focused checks.
-- **Converge:** review Spec and Standards separately from the fixed point.
-- **Simplify:** remove scaffolding, collapse bloated branches, and add or deepen an abstraction only when it improves correctness, locality, testability, or maintainability; keep proof green.
-- **Lock:** run canonical checks, reconcile work state, record evidence and residual risk, and stop at the authorized boundary.
+- **Explore:** build the Source Trace; pin the fixed point, commitments, and bounded slice; inspect real seams and generate credible alternatives. Keep probes disposable. Touch production during Explore only for the smallest reversible probe inside the authorized boundary.
+- **Choose:** select the strongest local approach and one tracer bullet. Choose technique freely inside the bounded slice. Stop for a user decision when a better approach changes a commitment. Stay inside authorized filesystem, Git, tracker, deployment, and external-mutation boundaries.
+- **Prove:** establish semantic proof through the smallest meaningful seam. Observe RED before GREEN when behavior and a useful test seam are known. Treat prototypes as design evidence, not production proof.
+- **Expand:** after the tracer bullet works, cover the remaining requirements, edge cases, failure modes, and integrations. Reconsider the design with what the proof revealed. Expand evidence and coverage, not unauthorized scope.
+- **Simplify:** remove scaffolding, collapse accidental complexity, sharpen names and boundaries, and deepen abstractions only when correctness, locality, testability, or maintainability improves. Keep proof green.
+- **Lock:** run canonical repo checks, reconcile work state, review Spec and Standards separately, record evidence and residual risk, and stop at the authorized boundary.
 
-For tiny edits, compress the loop to Orient -> Prove -> Lock. Keep every gate for uncertain, risky, user-facing, multi-file, or architecture-touching work.
+Tiny work may compress to `Explore -> Prove -> Lock`; uncertain, risky, user-facing, multi-file, data, security, or architecture work uses the full spine. Compress steps, not gates.
 
-## Commitment Boundary
+## Proof Discipline
 
-Choose implementation technique freely inside the bounded slice while commitments and semantic proof hold.
+Claims need evidence. Expose every load-bearing internal through the smallest meaningful seam.
 
-Stop for a user decision when a better approach changes a commitment.
+Treat repo config, CI, and maintained contributor docs as command authority. When `AGENTS.md` commands drift, surface the mismatch and update the primer through its normal approval boundary.
 
-Stay inside the authorized filesystem, Git, tracker, and external-mutation boundary. Lock the authorized state and hand off anything beyond it.
-
-## Semantic Proof
-
-Claims need evidence. Prove semantic correctness, not output existence.
-
-When behavior is clear enough and the repo has a useful test seam, capture red before green; after-the-fact checks supplement that evidence.
-
-For docs, config, exploration, or behavior-preserving work, use the strongest practical evidence.
-
-Treat a runnable prototype as a question answered, not production proof. Expose each load-bearing internal through the smallest meaningful seam.
-
-Match proof to meaning: filtering uses included, excluded, and edge fixtures; transformations use known inputs, outputs, and invariants; ordering uses thresholds or relative order; persistence changes use before/after evidence and constraints.
-
-## Tracer Bullets
-
-Prefer tracer-bullet vertical slices over horizontal slices.
+Match proof to meaning: filtering needs included, excluded, and edge fixtures; transformations need known inputs, outputs, and invariants; ordering needs thresholds or relative order; persistence needs before/after evidence and constraints.
 
 Support work earns its place only when it directly unblocks or de-risks a tracer bullet and has observable proof.
 
-## Work State
+For review, a caller-supplied fixed point wins. Otherwise discover the default branch and merge base, state the resolved baseline, and ask only when discovery is ambiguous.
 
-Explore with disposable `.tmp/` spikes, copied references, experiments, and rough notes.
+## Work State And Workers
 
-Store durable, version-controlled local work state in `.scratch/`. A Local Markdown tracker is one such use.
+Production changes begin after Choose, except for the authorized Explore probe above.
 
-A **staged worker** returns one bounded staged patch and proof to an owner. A **lane worker** returns one bounded commit from an isolated worktree. Neither owns integration, formal review, tracker closeout, or push.
-
-Change production files after Decide. Use a tiny reversible production edit during Explore only when it is the shortest probe of the real seam.
-
-At Lock, delete each disposable `.tmp/` path or name the path intentionally preserved for the user or next session. Preserve in-scope `.scratch/` state through cleanup; include it in review and in staging when staging is in scope.
+A **staged worker** returns one bounded staged patch and focused proof to an owner. A **lane worker** returns one bounded commit and proof from an isolated worktree. Neither owns integration, formal review, tracker closeout, or push.
 
 ## Lock
 
 Lock only when:
 
-- canonical checks ran or every skipped check has a reason;
-- each nontrivial diff was reviewed from its fixed point against Spec and Standards separately;
+- canonical checks ran or every skip has a reason;
+- each nontrivial diff passed separate Spec and Standards review from its fixed point;
 - every `.tmp/` path was deleted or intentionally preserved;
 - in-scope `.scratch/` state entered review and, when authorized, staging;
 - current Git state, evidence, residual risk, and out-of-slice follow-ups were recorded;
-- the authorized mutation boundary was respected and remaining work was handed off.
+- the mutation boundary held and remaining work was handed off.

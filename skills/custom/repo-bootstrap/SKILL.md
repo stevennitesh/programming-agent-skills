@@ -42,7 +42,7 @@ Verified commands, the four local contracts, and `.tmp/`/`.scratch/` policy are 
 
 Show the exact proposed delta:
 
-- the `AGENTS.md` patch with verified commands, invariants, pointers, and `<!-- programming-agent-skills setup-schema: 1:09b24483e0a2 -->`;
+- the `AGENTS.md` patch with the engineering primer, verified commands, invariants, pointers, and `<!-- programming-agent-skills setup-schema: 1:67ee67b25505 -->`;
 - all four `docs/agents/*.md` results;
 - the `.gitignore` delta;
 - preserved repo-specific additions and unresolved conflicts;
@@ -55,7 +55,7 @@ Wait for approval before any file write or tracker mutation.
 
 Apply only the approved delta. Reconcile existing local contracts in place. Preserve repo-specific additions.
 
-- **Primer.** Update or create a short `AGENTS.md` with verified commands, local invariants, the current marker, and pointers to the four local contracts. When the portable engineering-contract owner is present, replace its portable title and owner preamble with the installed-pack primer and engineering-contract pointer; preserve repo-specific material.
+- **Primer.** Update or create a short `AGENTS.md` with `Explore imaginatively. Converge under proof. Simplify ruthlessly.`, verified commands, local invariants, the current marker, and pointers to the four local contracts. When the portable engineering-contract owner is present, replace its portable title and owner preamble with the installed-pack primer and engineering-contract pointer; preserve repo-specific material.
 - **Contracts.** Reconcile the selected tracker template into `docs/agents/issue-tracker.md`; [triage-labels.md](triage-labels.md) into `docs/agents/triage-labels.md`; [domain.md](domain.md), with its layout resolved, into `docs/agents/domain.md`; and [engineering-contract.md](engineering-contract.md) into `docs/agents/engineering-contract.md`. For another tracker, use the approved operation map.
 - **State.** Keep `.tmp/` contents ignored and `.scratch/` trackable without replacing unrelated ignore rules.
 - **Labels.** For GitHub or GitLab, create only approved missing mapped and fixed labels; preserve existing labels and descriptions.
