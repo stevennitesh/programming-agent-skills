@@ -680,17 +680,17 @@ def test_merge_conflict_resolution_is_three_way_and_finish_bounded() -> None:
     required = (
         "three-way merge",
         "`git ls-files -u`",
-        "during rebase, `ours` is the so-far rebased target",
+        "During rebase, `ours` is the so-far rebased target",
         "in-scope content or path conflict",
-        "Block before continuation if unrelated index state would enter its commit.",
-        "A new conflict returns to **State**; repeat until Git exits",
-        "**Reconciliation authority** means the user asked to resolve the in-scope conflicts.",
-        "Without reconciliation authority, stop after **State** and **Trace** with a read-only report.",
-        "Leave files, the index, commits, and Git-operation state unchanged.",
+        "block unrelated index state from the commit",
+        "Each new conflict returns to **State** until Git exits",
+        "**Reconciliation authority** permits resolving requested in-scope conflicts.",
+        "Without reconciliation authority, stop after **State** and **Trace**.",
+        "leave files, index, commits, and Git-operation state unchanged.",
         "Without finish authority, leave staging, commit, and continuation untouched.",
-        "hand off an uncertain failure to `$diagnosing-bugs`",
-        "Authorized reconciliation is complete only when every in-scope unmerged entry and marker is reconciled.",
-        "A blocked path returns a blocked outcome with exact remaining state",
+        "hand uncertain failures to `$diagnosing-bugs`",
+        "Reconciliation completes only when every in-scope entry and marker is resolved",
+        "A blocked path returns a blocked outcome, never completion.",
     )
     for token in required:
         assert token in skill
