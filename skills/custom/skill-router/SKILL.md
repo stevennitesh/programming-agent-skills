@@ -5,31 +5,14 @@ description: Route the current situation to exactly one next skill in this engin
 
 # Skill Router
 
-Use this **router** when route choice is the work.
+**Route:** recommend exactly one next skill and stop. Downstream skills own their procedures, artifacts, mutations, proof, and completion.
 
-## Router Contract
+## Spine
 
-The router owns the recommendation. Downstream skills own their Source Trace, procedure, artifacts, mutations, and completion.
-
-Route from the user's stated situation and visible repo state. Inspect only the fact that would change the route.
-
-- **Clear:** Recommend exactly one skill and explain why it fits.
-- **Unclear:** Ask one highest-leverage question, then route.
-- **Return:** Give one skill, one reason, and one setup or handoff precondition when needed.
-
-Return the route and stop. The user starts it.
-
-## Setup Gate
-
-Route first to `$repo-bootstrap` when the chosen engineering flow depends on a missing or outdated setup contract:
-
-- current setup-schema marker and installed-pack primer in `AGENTS.md`;
-- `docs/agents/issue-tracker.md`;
-- `docs/agents/triage-labels.md`;
-- `docs/agents/domain.md`;
-- `docs/agents/engineering-contract.md`.
-
-Let `$repo-bootstrap` own inventory, choices, writes, tracker mutations, and verification.
+1. **Inspect.** Use the user's stated situation and visible repo state. Inspect only a fact that could change the route.
+2. **Clarify.** If two routes remain plausible, ask one highest-leverage question and wait.
+3. **Route.** Choose one route below. If the chosen engineering route depends on a missing or outdated setup contract, route to `$repo-bootstrap` instead.
+4. **Stop.** Return one skill, one reason it wins, and any setup or handoff precondition. The user starts it; downstream work remains unstarted.
 
 ## Route Map
 
@@ -37,7 +20,7 @@ Let `$repo-bootstrap` own inventory, choices, writes, tracker mutations, and ver
 
 | Situation | Route |
 | --- | --- |
-| Product or design intent needs a repo-backed interview and durable domain capture | `$grill-with-docs` |
+| A repo-backed plan or design needs an interview and durable domain capture | `$grill-with-docs` |
 | A plan or design needs a conversation-only interview | `$grilling` |
 | A large, foggy effort needs a tracker-backed decision map | `$wayfinder` |
 | One source question needs a cited repo-local note | `$research` |
@@ -53,7 +36,7 @@ Let `$repo-bootstrap` own inventory, choices, writes, tracker mutations, and ver
 | One bounded ready-for-agent item is selected | `$implement` |
 | A ready frontier has non-overlapping write scopes and proof lanes | `$parallel-implement` |
 
-`$to-tickets` output is already ready-for-agent. Route its ready frontier directly to `$implement` or `$parallel-implement`.
+`$to-tickets` output is already ready-for-agent; route its ready frontier directly to `$implement` or `$parallel-implement`.
 
 ### Incoming Work And Quality
 
@@ -61,11 +44,12 @@ Let `$repo-bootstrap` own inventory, choices, writes, tracker mutations, and ver
 | --- | --- |
 | Raw issues, requests, or configured external PR/MR intake need sorting | `$triage` |
 | A bug's exact symptom, cause, or trusted red-capable reproduction is uncertain | `$diagnosing-bugs` |
-| Settled new behavior has a red-capable proof seam | `$tdd` |
-| For a bug, expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known | `$tdd` |
+| Settled new behavior has a red-capable proof seam, or for a bug expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known | `$tdd` |
 | A merge, rebase, cherry-pick, or revert is conflicted | `$resolving-merge-conflicts` |
 | An ordinary branch, WIP, staged, or since-X diff needs fixed-point review | `$review` |
 | A local PR or high-risk local diff needs independent passes and a finding ledger | `$convergent-pr-review` |
+
+**Triage / Review:** route incoming work to `$triage`; route an existing diff to `$review` or `$convergent-pr-review`.
 
 ### Design And Pack Maintenance
 
@@ -76,19 +60,6 @@ Let `$repo-bootstrap` own inventory, choices, writes, tracker mutations, and ver
 | Resolve domain terms, context boundaries, or ADR-worthy decisions | `$domain-modeling` |
 | Create, edit, or review Codex skills | `$writing-great-skills` |
 
-`$domain-modeling` and `$codebase-design` are **shared disciplines**. Route to them when language or interface shape is the work; otherwise let the owning workflow load them.
+`$domain-modeling` and `$codebase-design` are shared disciplines. Route to them when language or interface shape is the work; otherwise let the owning workflow load them.
 
-## Tie-Breakers
-
-- **Grill / Wayfind:** Use `$grill-with-docs` for a decision tree that fits one session; use `$wayfinder` when fog of war requires a multi-session tracker map.
-- **Research / Prototype:** Use `$research` for a durable cited source note; use `$prototype` for a runnable design verdict.
-- **Diagnose / TDD:** Use `$diagnosing-bugs` when the exact symptom, cause, or trusted red-capable reproduction is uncertain. Use `$tdd` for settled new behavior with a red-capable seam or when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known.
-- **Triage / Review:** Use `$triage` for configured incoming-work intake. Use `$review` or `$convergent-pr-review` when a code diff is already the subject.
-- **Review / Convergent:** Use `$review` for ordinary fixed-point review; use `$convergent-pr-review` for local PRs or high-risk local diffs.
-- **Implement / Parallel:** Use `$implement` for one ready item; use `$parallel-implement` for a parallel-safe ready frontier.
-- **Triage / Architecture:** Use `$triage` for incoming tracker work; use `$improve-codebase-architecture` for codebase health.
-- **Handoff / compact:** `$handoff` carries context to a fresh session or agent thread; `/compact` continues the current conversation.
-
-## Completion Criteria
-
-Complete only when the user has exactly one recommended next skill, the reason it wins, and any setup or handoff precondition. When a routing question was required, completion waits for the answer and final route. Downstream work remains unstarted.
+**Handoff / compact:** `$handoff` carries context to a fresh session or agent thread; `/compact` continues the current conversation.
