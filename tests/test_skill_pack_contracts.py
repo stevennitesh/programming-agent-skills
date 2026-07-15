@@ -913,13 +913,54 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
     }
     for outcome in ("complete", "partial", "blocked"):
         assert f"`{outcome}`" in parallel.split("## Release", 1)[1]
-    assert "<scope/downshift/resume/frontier/" in ledger
+    assert "<scope/scope-change/resume/frontier/" in ledger
     assert "## Release" in launch
     wave = parallel.split("## Wave", 1)[1].split("## Integrate", 1)[0]
     lock = parallel.split("## Lock", 1)[1].split("## Release", 1)[0]
     assert "claim" in wave and "Mutation read-back" in wave
     assert "closeout tracker mutation" in lock
     assert "idle before formal review" in launch
+
+
+def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts() -> None:
+    skill_dir = CUSTOM / "parallel-implement"
+    parallel = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    ledger = (skill_dir / "references/RUN-LEDGER.md").read_text(encoding="utf-8")
+    launch = (skill_dir / "references/CODEX-WORKTREE-LAUNCH.md").read_text(
+        encoding="utf-8"
+    )
+    router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
+    tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
+    relationships = (ROOT / "docs/synthesis/skill-context-relationships.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert not implicit_policy(skill_dir)
+    assert "recommend `$implement` and stop" not in parallel
+
+    gate = parallel.split("## Gate", 1)[1].split("## Wave", 1)[0]
+    assert re.findall(r"(?m)^- \*\*(Serial|Parallel|Blocked):\*\*", gate) == [
+        "Serial",
+        "Parallel",
+        "Blocked",
+    ]
+
+    review = parallel.split("## Review", 1)[1].split("## Lock", 1)[0]
+    lock = parallel.split("## Lock", 1)[1].split("## Release", 1)[0]
+    assert "$review" in review
+    assert "Mutation read-back" in lock
+    assert lock.index("child") < lock.index("parent")
+
+    for field in ("**Parent:**", "**Child-set snapshot:**", "**Frontier plan:**"):
+        assert field in ledger
+    for event in ("serial-frontier", "parallel-frontier", "child-closeout", "parent-closeout"):
+        assert event in ledger
+    assert "Downshift" not in launch
+
+    assert re.search(r"(?m)^\| One parent spec or PRD .* \| `\$parallel-implement` \|$", router)
+    assert tickets.index("`$parallel-implement`") < tickets.index("`$implement`")
+    assert "`to-tickets` | Recommend and stop | `$parallel-implement`" in relationships
+    assert "| `parallel-implement` | Recommend and stop | `$implement` |" not in relationships
 
 
 def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -> None:

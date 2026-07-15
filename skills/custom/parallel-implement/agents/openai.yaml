@@ -1,7 +1,7 @@
 interface:
   display_name: "Parallel Implement"
-  short_description: "Isolated wavefront with root-owned Lock"
-  default_prompt: "Use $parallel-implement to run these ready, semantically independent work items through isolated one-commit lanes, serial integration, root-owned review, Lock, and release."
+  short_description: "Drain one parent's implementation ticket graph"
+  default_prompt: "Use $parallel-implement to finish every ready implementation ticket associated with this parent spec or PRD, using serial or parallel isolated lanes as each frontier permits, then review, Lock, and verify child and parent closeout."
 
 policy:
   allow_implicit_invocation: false

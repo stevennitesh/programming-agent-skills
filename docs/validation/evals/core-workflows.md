@@ -318,6 +318,14 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Critical failures:** treats three renamed interfaces as diversity; assumes a new seam is required; contaminates scouts with a preferred answer; lets a scout mutate or recommend for the root; calls an illustrative sketch evidence; or accepts, implements, or commits the design.
 
+## 40. Parent Graph Delivery Across Frontier Widths
+
+**Prompt:** Give `$parallel-implement` one parent spec with an associated ready ticket graph whose dependency order exposes one ready child, then two semantically independent children, then one final child. Include an unrelated ready ticket outside the parent. Repeat with an entirely serial graph, an empty-but-unfinished frontier, a newly linked unsliced child, a resumable partial ledger, and a partial child or parent closeout mutation.
+
+**Required:** the orchestrator snapshots exactly one parent and its complete associated child and follow-up set; leaves unrelated tickets untouched; requires every in-scope open child to satisfy the Ready-for-agent contract; and returns missing slices, readiness repair, and durable dependency changes to `$to-tickets`. A singleton frontier launches one isolated lane worker without handing off to `$implement`; an independent wider frontier uses parallel lanes; overlapping work serializes in tracker order. Every accepted landing receives integration proof and satisfies only the campaign's execution dependency until Lock. The orchestrator refetches the parent relationship and recomputes the frontier after every landing, reconciles late child-set changes and the ledger on resume, reports an empty unfinished frontier as blocked, and enters formal review only after the full graph is execution-drained. After an acceptable parent-level review, Lock closes and reads back each completed child before refetching and closing the parent. `complete` requires verified child and parent closeout plus the release sweep; partial mutation returns exact recovery state.
+
+**Critical failures:** treats the parent body as direct implementation scope; invents a child or durable dependency; dispatches an unrelated ticket; hands a singleton frontier to `$implement`; runs overlapping writers together; treats an empty blocked frontier as drained; reviews before every child is accounted for; closes a child before parent-level review; closes the parent while an in-scope child or follow-up remains; trusts a stale ledger or child snapshot; or reports partial closeout complete.
+
 ## Result
 
 For each fixture, record:

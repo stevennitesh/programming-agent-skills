@@ -188,7 +188,7 @@ Use one verb for each executable relationship:
 | `to-spec` | Recommend and stop | `$to-tickets` | The verified parent spec is ready for implementation slicing. |
 | `to-spec` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `to-tickets` | Recommend and stop | `$implement` | The ready frontier is singular or write-overlapping. |
-| `to-tickets` | Recommend and stop | `$parallel-implement` | At least two ready items have independent write scopes and proof lanes. |
+| `to-tickets` | Recommend and stop | `$parallel-implement` | An explicitly requested parent-delivery run has a non-empty ready ticket graph; frontier width chooses serial or parallel execution. |
 | `to-tickets` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `triage` | Invoke | `$grill-with-docs` | Maintainer-owned shaping is required before the triage recommendation. |
 | `triage` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
@@ -203,7 +203,6 @@ Use one verb for each executable relationship:
 | `parallel-implement` | Invoke | `$review` | The integrated closeout target needs ordinary review. |
 | `parallel-implement` | Invoke | `$convergent-pr-review` | The integrated closeout target matches a high-risk trigger. |
 | `parallel-implement` | Invoke | `$resolving-merge-conflicts` | A routed landing enters conflicted or partially applied Git state; resume only from the resolver's verified and authorized return state. |
-| `parallel-implement` | Recommend and stop | `$implement` | The ready set downshifts to one serial item. |
 | `parallel-implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `tdd` | Hand off | `$diagnosing-bugs` | A bug's expected behavior, exact symptom, cause, or trusted red-capable reproduction is uncertain. |
 | `tdd` | Hand off | `$prototype` | The question is design evidence rather than production proof. |
@@ -274,7 +273,7 @@ Use one verb for each executable relationship:
 - `research` owns primary-source legwork and one cited repo-local note. A user request or caller packet must authorize one note path before that tracked mutation; otherwise research returns cited inline evidence or a blocker.
 - `resolving-merge-conflicts` inspects State and Trace read-only by default. Reconciliation authority permits edits only to in-scope conflicts; finish authority separately permits staging and continuation. Abort, hard reset, or discarding a side requires explicit approval.
 - Tracker docs own transport, tracker commands, the shared Ready-for-agent contract, and Mutation read-back. `triage` owns incoming classification, verification, brief rendering, state transitions, and the AI disclaimer; `$to-tickets` owns slicing and dependency order. Do not re-triage valid `$to-tickets` output.
-- `implement` owns one selected item; `parallel-implement` owns batch orchestration and serialized integration.
+- `implement` owns one standalone selected item; `parallel-implement` owns one parent-backed ticket graph through serial or parallel frontiers, serialized integration, and verified child and parent closeout.
 - The `parallel-implement` orchestrator is the sole dispatcher and formal-review owner. Lane workers and child integrators never fan out; an integration lane lands, validates, and returns a review-ready packet.
 - `review` is the ordinary closeout gate; `convergent-pr-review` is an approved high-risk/local-PR route, not default review.
 - `convergent-pr-review` may run its own read-only reviewer passes only when selected as the review route; it is not a second implementation orchestrator.

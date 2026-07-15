@@ -122,7 +122,7 @@ After setup, invoke a skill directly or let `$skill-router` carry the route map.
 Representative routes:
 
 - Fuzzy product idea needing durable decisions -> `$grill-with-docs` -> `$to-spec` -> `$to-tickets`
-- One bounded ready item -> `$implement`; parallel-safe ready frontier -> `$parallel-implement`
+- One bounded ready item -> `$implement`; one parent-backed ready ticket graph to finish -> `$parallel-implement`, serializing or parallelizing each frontier as needed
 - Incoming issue or configured external PR -> `$triage`; ready-for-agent item -> `$implement`
 - Multi-session fog of war -> `$wayfinder` until the map closes -> `$to-spec`, `$to-tickets`, or `$implement`
 - Settled red-testable behavior -> `$tdd`; uncertain bug -> `$diagnosing-bugs`; the router owns the exact diagnosis/TDD boundary.

@@ -34,9 +34,9 @@ description: Route the current situation to exactly one next skill in this engin
 | Settled source needs a durable parent spec | `$to-spec` |
 | Settled source needs dependency-ordered ready-for-agent tickets | `$to-tickets` |
 | One bounded ready-for-agent item is selected | `$implement` |
-| A ready frontier has non-overlapping write scopes and proof lanes | `$parallel-implement` |
+| One parent spec or PRD has an associated ready ticket graph to finish | `$parallel-implement` |
 
-`$to-tickets` output is already ready-for-agent; route its ready frontier directly to `$implement` or `$parallel-implement`.
+`$to-tickets` output is already ready-for-agent. Route one selected item to `$implement`; route an explicitly requested parent-delivery run to `$parallel-implement`, which serializes or parallelizes each frontier until the parent graph closes.
 
 ### Incoming Work And Quality
 

@@ -5,7 +5,7 @@ Hold the serial integration lane only when the routing packet assigns a **hot** 
 ## Assignment
 
 **Mode:** `<hot / late>`
-**Selected scope and Source Trace:** `<items and governing sources>`
+**Parent, selected scope, and Source Trace:** `<parent / child graph / items and governing sources>`
 **Run fixed point:** `<sha>`
 **Integration branch and worktree:** `<branch / absolute dedicated path>`
 **Ledger:** `<path>`
@@ -40,7 +40,7 @@ Run broad validation at routed wave boundaries only. Final broad validation belo
 
 ## Review-Ready Handoff
 
-When the orchestrator drains the frontier, assemble review-visible closeout metadata, require a clean in-scope state, run final validation on the candidate integration `HEAD`, and preserve the run fixed point as the review base.
+When the orchestrator drains the parent graph, assemble review-visible parent and child closeout metadata, require a clean in-scope state, run final validation on the candidate integration `HEAD`, and preserve the run fixed point as the review base.
 
 Return the candidate `HEAD`, clean status, integrated worker SHAs, final validation, closeout metadata, skipped checks, residual risk, tracker readiness, blockers, and skill feedback. Return a review-route escalation when integrated risk exceeds the selected route. Then become idle; the orchestrator pins the target and invokes formal review.
 

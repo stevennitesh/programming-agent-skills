@@ -13,7 +13,7 @@ Use this after the orchestrator resolves the routing packet and completes the wo
 5. Require every shell call and edit to target the assigned absolute worktree.
 6. Accept the lane only after its independent preflight proves the root, path, `HEAD`, branch or detached state, starting status, `.tmp/` write/delete, environment, and focused-proof startup.
 
-A worker without both isolations stops or triggers Downshift. A child integrator without a dedicated worktree returns landing to the orchestrator. Never run parallel writers in one checkout.
+A worker without both isolations stops and blocks that frontier item until an isolated lane is available. A child integrator without a dedicated worktree returns landing to the orchestrator. Never run concurrent writers in one checkout.
 
 Record worktree creation, cleanup authority, and branch preservation in the permission plan. Use the repo-approved worktree root or a run-scoped sibling root.
 
