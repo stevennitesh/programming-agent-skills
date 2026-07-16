@@ -7,6 +7,7 @@ Hold the serial integration lane only when the routing packet assigns a **hot** 
 **Mode:** `<hot / late>`
 **Parent, selected scope, and Source Trace:** `<parent / child graph / items and governing sources>`
 **Run fixed point:** `<sha>`
+**Lane provider and preflight:** `<runtime-managed or manual-git / packet identity>`
 **Integration branch and worktree:** `<branch / absolute dedicated path>`
 **Ledger:** `<path>`
 **Landing route and mode:** `<harness or manual gate / cherry-pick, merge, squash, or patch>`
@@ -22,7 +23,7 @@ Own serial landing and routed integration validation only. Accept packets only f
 
 Use a dedicated integration worktree established through `CODEX-WORKTREE-LAUNCH.md`. If it is unavailable, return a `blocker` packet so the orchestrator can own landing.
 
-Before worker dispatch in hot mode, or the first landing in late mode, report `ready` only after verifying the repo root, worktree, branch, `HEAD`, clean in-scope status, ledger access, landing route and mode, and validation startup.
+Before worker dispatch in hot mode, or the first landing in late mode, report `ready` only after reconciling the preflight packet with the repo root, worktree, branch, `HEAD`, clean in-scope status, Git trust route, ledger access, landing route and mode, and validation startup.
 
 ## Integrate
 

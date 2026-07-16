@@ -7,7 +7,10 @@ Implement exactly one assigned work item.
 **Work item:** `<id and title>`
 **Source Trace:** `<issue / packet / spec slice / decisions / named repo sources>`
 **Base SHA:** `<orchestrator-verified sha>`
+**Lane provider:** `<runtime-managed / manual-git>`
 **Worktree:** `<absolute isolated path>`
+**Preflight packet:** `<exact packet or lane-local path / packet identity>`
+**Git trust:** `<normal / command-scoped safe.directory>`
 **Expected write scope:** `<paths/modules, or discover and report before widening>`
 **Acceptance:** `<criteria, blockers, exclusions, dependencies>`
 **Integration context:** `<relevant landed interfaces or decisions / none>`
@@ -19,7 +22,7 @@ Implement exactly one assigned work item.
 
 Read every Source Trace entry and `docs/agents/engineering-contract.md`. The work-item source owns acceptance; this brief owns lane-worker process.
 
-**Workspace boundary:** the assigned worktree, not the process startup cwd, is your workspace. Before editing, run the independent preflight required by `CODEX-WORKTREE-LAUNCH.md`. Set the assigned path as `workdir` on every shell call and use absolute paths beneath it for edits. Stop on the wrong root or base, unexpected starting changes, failed `.tmp/` writes, or proof that cannot start.
+**Workspace boundary:** the assigned worktree, not the process startup cwd, is your workspace. Verify the recorded preflight packet against the current root, base, status, write probes, Git trust route, and proof startup before editing. Set the assigned path as `workdir` on every shell call and use absolute paths beneath it for edits. Stop on a mismatch.
 
 **One worker, one lane, one packet:** never spawn, integrate, formally review, mutate trackers, push, or widen scope. Return exactly one clean local commit plus focused proof, or a `blocker` or `needs-feedback` packet.
 

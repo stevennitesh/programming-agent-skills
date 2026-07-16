@@ -29,8 +29,8 @@ The parent selects existing work; it is never direct implementation scope. `$to-
 
 - Always apply `docs/agents/engineering-contract.md`.
 - Read `docs/agents/issue-tracker.md` when tracker work is in scope and `docs/agents/domain.md` when domain semantics affect the run.
-- Before dispatch or resume, instantiate or load `references/RUN-LEDGER.md`.
-- Establish every worker or child-integrator checkout through `references/CODEX-WORKTREE-LAUNCH.md`. Read its Explicit Background Task branch only when the user requests visible or background tasks.
+- Before dispatch or resume, instantiate or load `references/RUN-LEDGER.md`; append and validate its event stream with `scripts/run_ledger.py`.
+- Establish and release every worker or child-integrator checkout through `references/CODEX-WORKTREE-LAUNCH.md`.
 - Dispatch each worker with `references/WORKER-BRIEF.md`.
 - Start a routed hot or late child integrator with `references/INTEGRATOR-BRIEF.md`.
 
@@ -56,7 +56,7 @@ Choose one frontier mode and record it in the ledger:
 - **Parallel:** dispatch up to the worker limit when at least two ready tickets are semantically independent.
 - **Blocked:** return the unfinished tickets and exact blockers when no ticket is executable.
 
-Record the integration mode, landing mode, executor, review route, proof budget, environment route, and permission plan in the ledger.
+Record the integration mode, landing mode, executor, review route, proof budget, environment route, lane provider and root, and permission plan in the ledger.
 
 - **Shallow:** one or more finite serial or parallel waves; the orchestrator lands.
 - **Hot:** a child integrator can land while another worker continues or unlock the next frontier.
@@ -70,7 +70,7 @@ The selected run authorizes scoped worker commits and the recorded serial landin
 
 ## Wave
 
-For each item selected by the current frontier mode, create and preflight the isolated worktree, then launch one direct fresh-context worker with `fork_turns="none"` and the complete worker brief.
+For each item selected by the current frontier mode, establish its isolated worktree through the launch reference. Dispatch one direct fresh-context worker with `fork_turns="none"` only from a reconciled `ok: true` preflight packet.
 
 When tracker work is in scope, claim each item and apply tracker-policy **Mutation read-back** before dispatch.
 
@@ -90,13 +90,13 @@ Apply the **proof budget**: worker focused proof, integration touched-area proof
 
 Land accepted commits serially through the recorded executor and route. Default detached one-commit workers to `cherry-pick` unless repo policy selects another mode.
 
-Before every landing, inspect the actual `base..head` diff, expected scope, new files, stale-base overlap, conflicts, and focused proof. Verify the landed result, run touched-area proof, append one ledger event, and mark the item execution-complete for dependency calculation without claiming tracker closeout.
+Before every landing, inspect the actual `base..head` diff, expected scope, new files, stale-base overlap, conflicts, and focused proof. Verify the landed result, run touched-area proof, append one event through the ledger helper, and mark the item execution-complete for dependency calculation without claiming tracker closeout. Create its draft child closeout packet in the ledger from the accepted worker evidence and landed proof.
 
 A stale base returns a **stale-base packet**; the orchestrator chooses rebase, redispatch, serialization, or rejection.
 
 When landing conflicts or partially applies, preserve the Git state and invoke `$resolving-merge-conflicts` within its authority boundary. Resume only from its verified, authorized return state. Otherwise return `blocked`; never invent authority to abort, continue, reset, discard, or force-clean.
 
-After each landing, refetch the parent relationship and rescan every associated ticket. Reconcile child-set changes, then choose the next serial, parallel, or blocked frontier. Repeat Wave and Integrate until every in-scope ticket is execution-complete or has an owner-approved non-implementation disposition. An empty frontier with unfinished tickets returns `blocked`; it never implies completion.
+After each landing, refetch a relationship fingerprint covering membership, state, readiness labels, assignee, blocking edges, and revision. Fetch complete changed tickets and decision-bearing comments when the fingerprint changes or lacks a safe revision marker. Perform a complete reconciliation before Review and Lock. Then choose the next serial, parallel, or blocked frontier. Repeat Wave and Integrate until every in-scope ticket is execution-complete or has an owner-approved non-implementation disposition. An empty frontier with unfinished tickets returns `blocked`; it never implies completion.
 
 ## Review
 
@@ -110,11 +110,13 @@ A `pass with residual risk` opens Lock only when the routing packet, repo policy
 
 After a review fix, inspect the delta. A material behavior, scope, contract, schema, dependency, security, or public-interface change requires a new review target and review. A tiny finding-only fix may use targeted proof only when the routing packet permits it.
 
+After the accepted review, finalize every execution-complete child's ledger packet with the reviewed `HEAD`, review result, and accepted residual risk. Lock remains closed until every such packet is `review-final`.
+
 ## Lock
 
 Record the approved closeout `HEAD`. Closeout tracker mutation and push require the current integration `HEAD` to match it.
 
-Follow `docs/agents/issue-tracker.md`. Fill the closeout summary before closeout tracker mutation. For each execution-complete child, post its closeout packet, apply the implemented state, release its claim, close it when policy requires, and apply **Mutation read-back** to the child and affected dependents.
+Follow `docs/agents/issue-tracker.md`. Fill the closeout summary before closeout tracker mutation. For each execution-complete child, require a complete `review-final` ledger packet, render its comment through the ledger-owned template, post that exact comment, apply the implemented state, release its claim, close it when policy requires, and apply **Mutation read-back** to the child and affected dependents. Record the comment reference, resulting tracker state, and read-back before marking the packet `verified` or advancing to the next child.
 
 Then refetch the parent and its complete child and follow-up set. Close the parent only when every in-scope item is closed or has its owner-approved disposition and the tracker parent-close rule passes. Post the final parent summary, apply parent closeout, and read back the parent, relationships, children, claims, and resulting frontier. A new or unresolved child, partial mutation, or unverifiable read-back keeps Lock closed and returns the exact recovery state.
 
@@ -124,11 +126,11 @@ After an authorized push, verify the remote branch or PR head resolves to the ap
 
 Finish or stop every worker and integrator. Record one disposition for the parent and every associated child, packet, frontier generation, lane, claim, worktree, commit, branch, tracker action, push, skipped check, and residual risk.
 
-Remove only clean worker worktrees whose commits are integrated or explicitly preserved. Preserve dirty, untracked, unintegrated, conflicted, or unauthorized state.
+Release every lane through the launch reference. Remove only a clean worktree whose exact commit is integrated or explicitly preserved; record Git registration and directory cleanup separately. Preserve dirty, untracked, unintegrated, conflicted, unauthorized, or residual-directory state.
 
 Return exactly one ledger Outcome: `complete`, `partial`, or `blocked`.
 
-`complete` requires a current approved closeout `HEAD`, final validation, the assigned formal review, every in-scope child accounted for and closed when tracker-backed, verified parent closeout, applicable tracker Lock, and the release sweep.
+`complete` requires a current approved closeout `HEAD`, final validation, the assigned formal review, every execution-complete child packet verified, every in-scope child accounted for and closed when tracker-backed, verified parent closeout, applicable tracker Lock, and one verified removed, provider-preserved, or intentionally preserved unregistered-residual disposition per lane. Registered, dirty, or unpreserved lanes keep completion closed.
 
 `partial` or `blocked` claims only events that occurred. Record current `HEAD` and Git state, landed and unlanded items, exact blockers, next owner, remaining authority or mutations, and preserved state.
 

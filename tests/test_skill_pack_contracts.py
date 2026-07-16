@@ -862,8 +862,16 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
     ]
     assert 'fork_turns="none"' in parallel
     assert "## Review-Ready Handoff" in integrator
-    assert 'git worktree add --detach' in launch
-    assert "## Explicit Background Task" in launch
+    assert re.findall(r"(?m)^## ([A-Za-z]+)$", launch) == [
+        "Select",
+        "Create",
+        "Preflight",
+        "Dispatch",
+        "Recover",
+        "Release",
+    ]
+    assert "scripts/lane_worktree.py" in launch
+    assert "Runtime-managed" in launch and "Manual Git" in launch
     report = worker.split("```text", 1)[1].split("```", 1)[0]
     assert re.findall(r"(?m)^([^:\n]+):", report) == [
         "status",
@@ -885,6 +893,9 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
     diagnosis_route = worker.split("When a bug's", 1)[1].split(";", 1)[0]
     assert "expected behavior" in diagnosis_route
     assert "## Routing Packet" in ledger
+    assert "## Event Stream" in ledger
+    assert "events.jsonl" in ledger
+    assert "## Event Log" not in ledger
     assert "## Closeout Summary" in ledger
     assert "candidate integration `HEAD`" in integrator
     assert "`needs-feedback`" in integrator
@@ -906,6 +917,9 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
     ledger = (CUSTOM / "parallel-implement/references/RUN-LEDGER.md").read_text(
         encoding="utf-8"
     )
+    event_types = runpy.run_path(
+        str(CUSTOM / "parallel-implement/scripts/run_ledger.py")
+    )["EVENT_TYPES"]
     assert set(re.findall(r"(?m)^- `(done|needs-feedback|blocker)`: ", parallel)) == {
         "done",
         "needs-feedback",
@@ -913,19 +927,21 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
     }
     for outcome in ("complete", "partial", "blocked"):
         assert f"`{outcome}`" in parallel.split("## Release", 1)[1]
-    assert "<scope/scope-change/resume/frontier/" in ledger
+    assert {"scope", "scope-change", "resume", "frontier"} <= event_types
     assert "## Release" in launch
     wave = parallel.split("## Wave", 1)[1].split("## Integrate", 1)[0]
     lock = parallel.split("## Lock", 1)[1].split("## Release", 1)[0]
     assert "claim" in wave and "Mutation read-back" in wave
     assert "closeout tracker mutation" in lock
-    assert "idle before formal review" in launch
+    review = parallel.split("## Review", 1)[1].split("## Lock", 1)[0]
+    assert "idle" in review
 
 
 def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts() -> None:
     skill_dir = CUSTOM / "parallel-implement"
     parallel = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     ledger = (skill_dir / "references/RUN-LEDGER.md").read_text(encoding="utf-8")
+    event_types = runpy.run_path(str(skill_dir / "scripts/run_ledger.py"))["EVENT_TYPES"]
     launch = (skill_dir / "references/CODEX-WORKTREE-LAUNCH.md").read_text(
         encoding="utf-8"
     )
@@ -953,8 +969,37 @@ def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts
 
     for field in ("**Parent:**", "**Child-set snapshot:**", "**Frontier plan:**"):
         assert field in ledger
-    for event in ("serial-frontier", "parallel-frontier", "child-closeout", "parent-closeout"):
-        assert event in ledger
+    closeout_packets = ledger.split("## Child Closeout Packets", 1)[1].split(
+        "## Closeout Summary", 1
+    )[0]
+    packet_fields = re.findall(r"(?m)^\*\*([^*]+):\*\*", closeout_packets)
+    assert packet_fields == [
+        "State",
+        "Worker commit",
+        "Integration commit",
+        "Delivered",
+        "Acceptance evidence",
+        "Focused and integration proof",
+        "Review",
+        "Residual risk",
+        "Intended mutation",
+        "Posted comment",
+        "Mutation read-back",
+    ]
+    comment_template = closeout_packets.split("```markdown", 1)[1].split("```", 1)[0]
+    assert re.findall(r"(?m)^### (.+)$", comment_template) == [
+        "Delivered",
+        "Acceptance",
+        "Validation",
+        "Review",
+        "Residual risk",
+    ]
+    assert {
+        "serial-frontier",
+        "parallel-frontier",
+        "child-closeout",
+        "parent-closeout",
+    } <= event_types
     assert "Downshift" not in launch
 
     assert re.search(r"(?m)^\| One parent spec or PRD .* \| `\$parallel-implement` \|$", router)
