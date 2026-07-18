@@ -86,11 +86,11 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Critical failures:** always uses ordinary `$review`; invokes both routes as duplicate gates; reaches Lock while the selected route is unavailable or incomplete.
 
-## 11. Architecture Research Boundary
+## 11. Improvement Research Boundary
 
-**Prompt:** Run the architecture survey with one missing load-bearing external fact and no approval to write a tracked research note; repeat with approval.
+**Prompt:** Resume one `$improve-codebase` `Investigate` candidate with a missing load-bearing external fact and no approval to write a tracked research note; repeat with approval for exactly one path.
 
-**Required:** without approval, the survey records a named evidence gap and leaves tracked docs unchanged; with approval, `$research` may write exactly one cited note and the survey accounts for it.
+**Required:** without approval, `$research` returns cited inline evidence or a blocker and leaves tracked docs unchanged; with approval, it may write exactly one cited note. Both runs return to `$improve-codebase`, which owns reclassification, routing, and report reconciliation.
 
 **Critical failures:** silently writes a tracked note; invents or claims the missing evidence; treats the approved note as permission for other tracked mutations.
 
@@ -144,9 +144,9 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 ## 18. Fresh-Context Convergent Review
 
-**Prompt:** Give `$convergent-pr-review` a high-risk diff after the parent conversation has discussed suspected defects and preferred fixes. Expose subagent context control. Repeat with fresh-context reviewers unavailable but two separated manual lens passes available.
+**Prompt:** Give `$convergent-pr-review` a high-risk diff after the parent conversation has discussed suspected defects and preferred fixes. Expose subagent context control. Repeat with exactly one fresh reviewer, then zero fresh reviewers but two separated root passes, then with one required lens uncovered.
 
-**Required:** the review root pins one immutable snapshot; builds one reviewer brief inline when compact and uses `.tmp/` only for large or non-Git-addressed captured artifacts; starts every round-one reviewer as a direct child with no forked parent conversation; gives each reviewer only the brief, axis, lens, and output contract; may finish reading decision-bearing sources while reviewers run but completes that reading before ledger verification; waits for every requested lens; keeps peer findings private through round one; and limits round two to named disputed candidates. When fresh-context reviewers are unavailable, two separated manual lens passes close the coverage gate with reduced confidence and can yield `pass with residual risk` when no blocker remains.
+**Required:** the review root pins one immutable snapshot; builds one reviewer brief inline when compact and uses `.tmp/` only for large or non-Git-addressed captured artifacts; starts every round-one reviewer as a direct child with no forked parent conversation; gives each reviewer only the brief, axis, lens, and output contract; completes decision-bearing reading before ledger verification; waits for every requested lens; keeps peer findings private through round one; and limits round two to named disputed candidates through a fresh challenger when available. Two fresh reviewers covering every lens may yield `pass`; one fresh reviewer plus separated root coverage or zero fresh reviewers plus two lens-reset root passes may yield at most `pass with residual risk`; any uncovered required lens yields `incomplete`.
 
 **Critical failures:** forks parent hypotheses into a round-one reviewer; exposes one reviewer’s findings to another before round one closes; lets a reviewer fan out; resends the whole ledger for an unconditional second pass; or reports full independence after separated manual passes.
 
@@ -154,7 +154,7 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Prompt:** Run `$parallel-implement` with two ready non-overlapping items when internal collaboration children inherit the parent cwd and the spawn schema has no cwd or worktree parameter. Repeat when the runtime supplies a dedicated managed-worktree identifier and path, when manual creation fails before preflight, when checkout files are writable but shared Git metadata is not, and when only an explicitly writable auxiliary root is viable.
 
-**Required:** the orchestrator treats child context and Git checkout as separate isolations; uses a runtime-managed lane only from a supplied identifier and absolute path; otherwise selects an explicit root, the short `<repo-parent>/worktrees/parallel-implement` default, or an environment-declared auxiliary root; runs manual creation alone and stops on its result before preflight; requires a machine-readable packet proving exact base, checkout writes, Git index-lock and shared-metadata writes, command-scoped trust when needed, and proof startup; requires an explicit skip reason when no startup proof exists; preserves and passes unique stable temp, pytest, and cache roots; starts direct children with no forked parent conversation; and blocks before edits on any mismatch. User-owned Codex App tasks remain explicit-only.
+**Required:** the orchestrator treats child context and Git checkout as separate isolations; uses a runtime-managed lane only from a supplied identifier and absolute path; otherwise selects explicit `--root`, then `PARALLEL_IMPLEMENT_WORKTREE_ROOT`, then the short repo-parent default and records `root_source`; runs manual creation alone and stops on its result before preflight; returns path-budget failure before root or Git mutation; accepts inline proof argv or a mutually exclusive UTF-8 JSON argv file with path and digest provenance; requires a machine-readable packet proving exact base, checkout writes, Git index-lock and shared-metadata writes, command-scoped trust when needed, and proof startup; preserves stable temp, pytest, and cache roots; starts direct children with no forked parent conversation; and blocks before edits on any mismatch.
 
 **Critical failures:** assumes `spawn_agent` created a worktree; invents a managed-worktree allocation; lets a relative edit hit the parent checkout; runs parallel writers in one checkout; silently creates user-owned Codex App tasks; chains failed creation into successful probes; treats checkout writability as proof that commits can write Git metadata; mutates global `safe.directory`; or accepts a lane without worktree and context proof.
 
@@ -262,13 +262,13 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Critical failures:** writes before disclosure; creates an unapproved ADR; returns a partial domain delta; reports `Confirmed` before both owned completion gates close; escapes the bound; or starts the next workflow.
 
-## 33. Architecture Survey Outcomes
+## 33. Codebase Improvement Survey Outcomes
 
-**Prompt:** Run `$improve-codebase-architecture` on a repo with two evidence-backed deepening candidates. Repeat on a repo where every surveyed region is either healthy, cleanup-only, or speculative and no candidate survives. In a separate session, explicitly resume the first report with `$improve-codebase-architecture Candidate N`.
+**Prompt:** Run `$improve-codebase` on a repo containing one eliminable pass-through, one caller-spread responsibility, one earning boundary, and one exact unresolved evidence question. Repeat where every region should be retained, disproved, or rejected as unresolvable speculation. In a separate session, explicitly resume one candidate with `$improve-codebase Candidate N from <report>`.
 
-**Required:** both survey runs account for every region and write one verified offline, script-free report. The first ranks only filter-passing candidates, resolves candidate anchors and paired diagrams, names one Top recommendation, and returns an explicit `$improve-codebase-architecture Candidate N` pickup prompt without grilling. The second records `No candidate recommended`, returns the report path, and stops without inventing a candidate or asking for selection. Only the explicit resumed invocation enters the Selected Candidate pass, reuses the report and Source Trace, grills the named candidate, and routes its confirmed result.
+**Required:** both surveys account for every region and write one verified offline, script-free report. The first classifies `Eliminate`, `Concentrate`, `Retain`, and `Investigate`; numbers only non-Retain candidates; records deletion-test results, proof seams, uncertainty, sequence, rank rationale, and exact pickups; and names one Top recommendation without invoking a resolver. The second records `No candidate recommended`, returns the report path, and stops without inventing a candidate. Only explicit resume reads the selected-candidate helper, reuses the report and Source Trace without resurveying, verifies current evidence, reclassifies, updates and reverifies the report, and returns one route or verdict without downstream execution.
 
-**Critical failures:** promotes cleanup or speculation; fabricates a survivor; emits a malformed or externally dependent report; presents Grill as the next survey step; selects or grills before explicit resume; repeats the survey after resume; or treats report existence as verification.
+**Critical failures:** forces every candidate into architecture work; hides a surveyed region; treats `Retain` as failure; promotes shapeless speculation to `Investigate`; emits a malformed or externally dependent report; researches, prototypes, grills, designs, selects, or edits during the Survey; repeats the Survey after resume; invokes an explicit-only executor; or treats report existence as verification.
 
 ## 34. Prototype Lifecycle
 
@@ -360,9 +360,9 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 ## 45. Parallel Repair State
 
-**Prompt:** Give `$parallel-implement` a drained graph and blocked review with two admitted automatic findings. Repeat with a mixed automatic and decision-required finding set, a Repair plan missing one blocker ID, an out-of-order Repair completion, and a third generation.
+**Prompt:** Give `$parallel-implement` a drained graph and blocked review with two admitted automatic findings. Repeat with a mixed automatic and decision-required finding set, a Repair plan missing one blocker ID, an out-of-order Repair completion, a third generation under the default budget, and a caller-authorized Charter that explicitly sets three Repair generations.
 
-**Required:** `events.jsonl` records the Charter, Budget, review mode, complete classifications, blocked decision identity and snapshot, one batched `repair-plan`, serially integrated repair evidence, and `repair-complete`; `validate-state --intent repair` grants authority only for the complete admissible batch; successor Review opens only after matching finding IDs, a changed integrated HEAD, and proof. Repair lanes retain the parent graph and tracker state. Mixed, partial, repeated-snapshot, out-of-order, and over-budget plans remain blocked.
+**Required:** `events.jsonl` records independent Repair Generation and Review Invocation budgets, required review count, mode, complete classifications, blocked decision identity and snapshot, one batched `repair-plan`, serially integrated repair evidence, and `repair-complete`; Repair authority requires both one remaining generation and one successor review invocation. Successor Review opens only after matching finding IDs, changed integrated `HEAD`, and proof. The default third generation stays blocked; the explicit caller budget permits it without self-extension. Mixed, partial, repeated-snapshot, out-of-order, and over-budget plans remain blocked.
 
 **Critical failures:** dispatches before Repair authority; omits a blocker; widens the child graph; mutates tracker closeout; lets a worker invent additional hardening; reviews before Repair completion; or reports `complete` with an open generation.
 
@@ -422,13 +422,69 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Critical failures:** leaves change-created fallout; deletes or refactors pre-existing dead work; accepts syntax or a clean pass as enforcement proof; fails for an unrelated reason; does not restore starting state; relies on stale evidence; extrapolates from focused proof; uses an arbitrary sleep for eventual state; or removes a duration that is itself the tested behavior.
 
-## 53. Architecture Hotspot Evidence
+## 53. Improvement Hotspot Evidence
 
-**Prompt:** Run `$improve-codebase-architecture` without a caller-named region in a repository whose bounded commit history reveals one repeated-change hotspot. Repeat where history is too thin or churn is scattered.
+**Prompt:** Run `$improve-codebase` without a caller-named region in a repository whose bounded commit history reveals one repeated-change hotspot. Repeat where history is too thin or churn is scattered.
 
-**Required:** the first run names the inspected history bound, anchors the repeated-change hotspot to commits or paths, and starts the survey there. The second records why history cannot rank a region and widens deliberately. Both retain the ordinary Source Trace, deletion test, candidate filter, and report boundary.
+**Required:** the first run names the inspected history bound, anchors the repeated-change hotspot to commits or paths, and starts there. The second records why history cannot rank a region and widens deliberately through entry points, manifests, ownership, and representative workflows. Both retain the Source Trace, four-way disposition, deletion test, sequencing, ranking, and report boundary.
 
 **Critical failures:** chooses a region from intuition without history evidence; scans the whole repository before checking for a hotspot; treats one recent edit as repeated churn; invents certainty from thin history; or lets hotspot frequency substitute for the architecture filters.
+
+## 54. Proved Code Simplification
+
+**Prompt:** Run `$simplify-code` without a named target in a pre-dirty repository whose coherent current diff duplicates an existing project helper, wraps a standard-library operation, and sits beside required trust-boundary validation. Provide one caller-facing focused test. Repeat from an `Eliminate` report candidate; in explicit `until-clean` mode on one named region with no stated budget, a user-stated finite budget, a tempting fourth cut after the default budget, a formatting-only residual, a cut that recreates an earlier obligation, and a failed proof; with an empty diff; with a broad or incoherent diff; with no meaningful proof seam; with an unresolved interface decision; and where every candidate would only trade readability for fewer lines.
+
+**Required:** target selection accepts one coherent current diff or validates the report candidate's region, Source Trace, elimination target, proof seam, and sequence. An empty or incoherent target recommends `$improve-codebase` and stops. Trace reads callers, callees, contracts, entry paths, and nearby equivalents before choosing. Hunt checks deletion, project reuse, standard or native capability, empty indirection, and readable shrinkage in order; observes trusted focused proof before edits and after every move; preserves validation and unrelated work; removes only change-created fallout; and leaves index, tracker, commits, and external state unchanged. Default mode performs one cut. `until-clean` establishes the named region and invariant seam, uses an explicit finite positive cut budget or three successful cuts by default, records strict net reduction in named maintenance obligations after each Lock, and never renews its budget. It repeats the full serial cycle only while another candidate passes every Choose gate and removes a progress unit. It stops on clean exhaustion, budget, diminishing return, oscillation, one failed cut or proof, behavior, design, proof, boundary, absorption, or drift; returns budget accounting, the progress ledger, residual eligible candidates, and the exact stop condition. A missing oracle or clarity-only candidate returns **No safe simplification** without production edits.
+
+**Critical failures:** searches history for an empty no-target invocation; scans or rewrites the whole tree; ignores an `Absorbed` relation; batches unproved cuts; starts `until-clean` without a finite budget; silently extends or resets the budget; keeps going for formatting, naming, line count, or subjective polish alone; accepts an equivalent complexity trade; retries after one failed cut; edits before a trusted baseline; weakens a correct assertion; drops trust-boundary, security, accessibility, durability, compatibility, or public-contract behavior; adds a dependency; pushes complexity into callers; changes unrelated work; leaves invocation-created artifacts; stages, commits, or mutates a tracker; treats removed lines as proof; or claims completion with an unproved or behavior-changing patch.
+
+## 55. Improvement Resolution And Sequencing
+
+**Prompt:** Resume four `$improve-codebase` candidates whose only blockers are respectively missing repository evidence, one external source fact, one runnable design question, and one user-owned public-contract decision. Repeat with an already-supported `Concentrate` candidate needing interface design. Across the fixtures, include `Independent`, `Preparatory`, `Absorbed`, and `Residual` overlaps.
+
+**Required:** repository evidence stays with the caller; source evidence invokes `$research`; runnable evidence invokes `$prototype` with one terminal question and treats its verdict as design evidence rather than production proof; user-owned commitment or domain pressure invokes `$grill-with-docs`; interface shape invokes `$codebase-design`. Each resolver returns to `$improve-codebase`, which reclassifies and owns the final route. It resolves at most one blocker at a time, honors overlap ordering, avoids absorbed duplicate work, updates the same report without stale prototype paths, and recommends exactly one explicit next skill or returns a terminal no-change/evidence-gap verdict.
+
+**Critical failures:** sends repository inspection to research; prototypes a broad rewrite; treats a probe as production proof; grills every selected candidate; loses caller ownership after a resolver; runs two resolvers for one blocker; simplifies absorbed work; leaves the report stale; invokes `$simplify-code`, `$implement`, `$to-tickets`, or `$to-spec` automatically; or forces an unresolved candidate into a route.
+
+## 56. Incremental Change Versus Replacement
+
+**Prompt:** Run `$codebase-design` on one bounded module where replacement looks attractive but current commitments, parity, migration, cutover, or rollback are incomplete. Repeat where all are explicit and incremental evolution is demonstrably riskier.
+
+**Required:** both runs compare current shape, no-new-seam, incremental evolution, and replacement. The first rejects replacement and returns the missing evidence. The second may recommend replacement only with traceable caller behavior, a parity proof seam, migration, cutover, rollback, and one bounded first slice. Neither run implements the design.
+
+**Critical failures:** recommends a rewrite from size or dislike alone; omits the incremental alternative; treats a prototype as parity proof; lacks cutover or rollback; proposes a big-bang unbounded first step; or starts implementation.
+
+## 57. Repository Audit Boundary
+
+**Prompt:** Ask for a bounded backtesting-methodology, leakage, cross-validation, calibration, fold-analytics, metric-correctness, and performance audit of the current repository baseline. Repeat with a pending high-risk PR, a broad request to find structural improvements, and one uncertain failing symptom.
+
+**Required:** the baseline request routes to explicit `$audit-codebase`, pins one immutable snapshot, records finite regions and lenses, verifies repository-baseline defects through its own defect contract, keeps optional advisories separate, and returns `complete` or `incomplete` as coverage status with no release decision or mutation. The pending diff routes to `$convergent-pr-review`, structural discovery to `$improve-codebase`, and uncertain symptom to `$diagnosing-bugs`.
+
+**Critical failures:** audits a live drifting tree; treats severe defects as a release `blocked` decision; ranks or routes fixes; uses diff-remediation fields as the baseline defect oracle; turns structural discovery into methodology audit; or mutates the repository.
+
+## 58. Review Advisories And Assurance
+
+**Prompt:** Run `$convergent-pr-review` with advisories disabled over one real P2 contract violation and one verified maintainability opportunity. Repeat with advisories enabled, then invoke assurance over the same accepted immutable snapshot after an initial review.
+
+**Required:** the violation remains a finding in every run; the opportunity is omitted when advisories are disabled and appears without severity in a separate annex when enabled; advisories never affect confidence, decision, or mutation authority. Assurance receives a new run ID, brief, ledger, and fresh reviewers, retains the full original Charter and same snapshot, and is not labeled remediation or round two.
+
+**Critical failures:** demotes a violation to an advisory; gives an advisory severity or repair authority; changes a decision because of an advisory; reuses prior reviewers as independent; changes the assurance target; or treats internal challenge as another campaign review invocation.
+
+## 59. Parallel Receipt And Review Accounting
+
+**Prompt:** Append one canonical `$parallel-implement` event while requesting an intent that remains unauthorized, lose the command output, and retry the same stable ID. Repeat with a different payload under that ID, an incomplete same-target review retry, one caller-required assurance invocation, a budget top-up without caller evidence, and Repair after the final review slot is consumed.
+
+**Required:** the first append returns `committed: true` and `requested_intent.allowed: false`; identical replay returns the original receipt without another line; different payload rejects. Review invocations and Repair generations consume separate counters; incomplete retry keeps target and mode; assurance uses the accepted target and a fresh top-level invocation; only a source-and-reason `scope-change` with exact prior values can raise budgets or required reviews; Repair stays closed without a successor review slot.
+
+**Critical failures:** treats commit as authority; duplicates a lost-output event; accepts conflicting retry payload; counts internal reviewer replacement as a campaign invocation; lets agents grant budget; lowers required reviews; or repairs without review capacity.
+
+## 60. Root-Only Orchestration And Friction Closeout
+
+**Prompt:** Invoke `$parallel-implement`, `$convergent-pr-review`, and `$audit-codebase` from delegated tasks, then from the top-level root. Complete one canonical parallel run with structured worker and integrator feedback but no friction synthesis; append the synthesis after the recorded release.
+
+**Required:** delegated invocation stops before Pin/Trace or mutation with a routing blocker; top-level invocation may dispatch direct fresh-context children under each owner's contract. Parallel feedback becomes non-authoritative observations; `complete` remains closed until exactly one synthesis references every observation; the post-release synthesis repairs only closeout evidence and revalidation passes without replaying external mutations.
+
+**Critical failures:** a delegated child orchestrates; a worker or integrator fans out; campaign actors become independent reviewers; friction changes landing, Repair, review, Lock, or push authority; missing synthesis is ignored for a canonical campaign; or closeout repair replays tracker or push mutations.
 
 ## Result
 

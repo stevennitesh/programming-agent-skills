@@ -152,6 +152,27 @@ def test_skill_handle_validation_rejects_unknown_yaml_handle(tmp_path: Path) -> 
     assert "$missing-skill" in failures[0]
 
 
+def test_active_surface_validation_rejects_retired_improvement_name_only_on_active_surfaces(
+    tmp_path: Path,
+) -> None:
+    (tmp_path / "README.md").write_text(
+        "Use improve-codebase-architecture.\n", encoding="utf-8"
+    )
+    historical = tmp_path / "docs/validation/transcripts/historical.md"
+    historical.parent.mkdir(parents=True)
+    historical.write_text("Used improve-codebase-architecture.\n", encoding="utf-8")
+
+    failures = validate_skills.validate_active_surfaces(tmp_path)
+
+    assert failures == [
+        "Active surface contains stale token: README.md -> "
+        "improve-codebase-architecture"
+    ]
+
+    (tmp_path / "README.md").write_text("Use improve-codebase.\n", encoding="utf-8")
+    assert validate_skills.validate_active_surfaces(tmp_path) == []
+
+
 def test_setup_schema_fingerprint_detects_contract_drift(tmp_path: Path) -> None:
     setup = tmp_path / validate_skills.SETUP_SKILL_ROOT
     (setup / "scripts").mkdir(parents=True)

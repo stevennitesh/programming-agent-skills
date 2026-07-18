@@ -8,6 +8,7 @@ import os
 import subprocess
 import sys
 import uuid
+from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -40,6 +41,7 @@ EVENT_TYPES = {
     "graph-drained",
     "review-ready",
     "review-target",
+    "review-invocation",
     "review-decision",
     "repair-plan",
     "repair-complete",
@@ -57,7 +59,8 @@ SAFE_LANE_STATES = {
     "provider-preserved",
     "unregistered-residual-directory",
 }
-ACCEPTED_REVIEWS = {"pass", "pass-with-residual-risk"}
+ACCEPTED_REVIEWS = {"pass", "pass with residual risk"}
+LEGACY_REVIEW_DECISIONS = {"pass-with-residual-risk": "pass with residual risk"}
 CLOSEOUT_FIELDS = {
     "delivered",
     "acceptance_evidence",
@@ -69,6 +72,39 @@ CLOSEOUT_FIELDS = {
     "posted_comment",
     "mutation_readback",
 }
+
+
+@contextmanager
+def stream_lock(path: Path):
+    """Serialize read-validate-append operations across supported platforms."""
+    lock_path = path.with_suffix(path.suffix + ".lock")
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with lock_path.open("a+b") as handle:
+        handle.seek(0, os.SEEK_END)
+        if handle.tell() == 0:
+            handle.write(b"\0")
+            handle.flush()
+        handle.seek(0)
+        if os.name == "nt":
+            import msvcrt
+
+            msvcrt.locking(handle.fileno(), msvcrt.LK_LOCK, 1)
+        else:
+            import fcntl
+
+            fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            handle.seek(0)
+            if os.name == "nt":
+                import msvcrt
+
+                msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
+            else:
+                import fcntl
+
+                fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
 
 
 def emit(ok: bool, **data: Any) -> int:
@@ -184,11 +220,12 @@ def input_event(args: argparse.Namespace) -> dict[str, Any]:
 
 def append(args: argparse.Namespace) -> int:
     path = event_path(args.events)
-    prior = load_events(path)
-    validate_events(prior)
-    event = normalize_event(input_event(args))
-    validate_events([*prior, event])
-    append_encoded(path, [event])
+    with stream_lock(path):
+        prior = load_events(path)
+        validate_events(prior)
+        event = normalize_event(input_event(args))
+        validate_events([*prior, event])
+        append_encoded(path, [event])
     return emit(True, operation="append", events=str(path), event=event)
 
 
@@ -206,12 +243,157 @@ def read_batch(args: argparse.Namespace) -> list[dict[str, Any]]:
 
 def append_batch(args: argparse.Namespace) -> int:
     path = event_path(args.events)
-    prior = load_events(path)
-    validate_events(prior)
-    events = read_batch(args)
-    validate_events([*prior, *events])
-    append_encoded(path, events)
+    with stream_lock(path):
+        prior = load_events(path)
+        validate_events(prior)
+        events = read_batch(args)
+        validate_events([*prior, *events])
+        append_encoded(path, events)
     return emit(True, operation="append-batch", events=str(path), count=len(events))
+
+
+def semantic_event(event: dict[str, Any]) -> dict[str, Any]:
+    """Return the retry identity without generated time or stored receipt."""
+    return {
+        key: value
+        for key, value in event.items()
+        if key not in {"timestamp", "receipt"}
+    }
+
+
+def receipt_payload(
+    state: dict[str, Any],
+    *,
+    event_id: str,
+    event_number: int,
+    intent: str,
+    state_event_count: int,
+) -> dict[str, Any]:
+    requested_errors = intent_errors(state, intent)
+    authorized = [
+        candidate
+        for candidate in sorted(INTENTS)
+        if not intent_errors(state, candidate)
+    ]
+    return {
+        "operation": "append-receipt",
+        "committed": True,
+        "event_id": event_id,
+        "event_number": event_number,
+        "state_event_count": state_event_count,
+        "receipt_fresh": event_number == state_event_count,
+        "requested_intent": {"name": intent, "allowed": not requested_errors},
+        "authorized_intents": authorized,
+        "next_actions": next_actions(requested_errors, intent),
+        "counters": {
+            "repairs_used": state["repair_generation"],
+            "repairs_remaining": max(
+                0, state["repair_generation_budget"] - state["repair_generation"]
+            ),
+            "reviews_used": state["review_invocations_used"],
+            "reviews_remaining": max(
+                0,
+                state["review_invocation_budget"]
+                - state["review_invocations_used"],
+            ),
+            "reviews_required_remaining": max(
+                0,
+                state["review_invocations_required"]
+                - state["review_invocations_completed"],
+            ),
+        },
+        "candidate_sha": state["integration_head"],
+        "reviewed_sha": state["review_target"],
+        "released_sha": (
+            state["closeout_head"] if state["release_outcome"] else None
+        ),
+    }
+
+
+def append_receipt(args: argparse.Namespace) -> int:
+    path = event_path(args.events)
+    raw = input_event(args)
+    supplied_id = raw.get("event_id")
+    if supplied_id and supplied_id != args.event_id:
+        return emit(
+            False,
+            operation="append-receipt",
+            committed=False,
+            event_id=args.event_id,
+            error="stdin event_id differs from --event-id",
+        )
+    raw["event_id"] = args.event_id
+
+    with stream_lock(path):
+        prior = load_events(path)
+        validate_events(prior)
+        existing_number = next(
+            (
+                number
+                for number, event in enumerate(prior, 1)
+                if event["event_id"] == args.event_id
+            ),
+            None,
+        )
+        if existing_number is not None:
+            existing = prior[existing_number - 1]
+            if "timestamp" not in raw:
+                raw["timestamp"] = existing["timestamp"]
+            candidate = normalize_event(raw)
+            if semantic_event(candidate) != semantic_event(existing):
+                return emit(
+                    False,
+                    operation="append-receipt",
+                    committed=False,
+                    event_id=args.event_id,
+                    event_number=existing_number,
+                    error="event_id already exists with a different payload",
+                )
+            stored = existing.get("receipt")
+            if isinstance(stored, dict) and existing_number == len(prior):
+                return emit(True, **stored)
+            state = derive_state(prior, args.repo)
+            if state["errors"]:
+                return emit(
+                    False,
+                    operation="append-receipt",
+                    committed=False,
+                    event_id=args.event_id,
+                    error="existing event prefix is semantically invalid",
+                    errors=state["errors"],
+                )
+            receipt = receipt_payload(
+                state,
+                event_id=args.event_id,
+                event_number=existing_number,
+                intent=args.intent,
+                state_event_count=len(prior),
+            )
+            return emit(True, **receipt)
+
+        event = normalize_event(raw)
+        prospective = [*prior, event]
+        validate_events(prospective)
+        state = derive_state(prospective, args.repo)
+        if state["errors"]:
+            return emit(
+                False,
+                operation="append-receipt",
+                committed=False,
+                event_id=args.event_id,
+                error="prospective event is semantically invalid",
+                errors=state["errors"],
+            )
+        receipt = receipt_payload(
+            state,
+            event_id=args.event_id,
+            event_number=len(prospective),
+            intent=args.intent,
+            state_event_count=len(prospective),
+        )
+        event["receipt"] = receipt
+        append_encoded(path, [event])
+    return emit(True, **receipt)
 
 
 def git_head(repo: str | None) -> str | None:
@@ -248,7 +430,12 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
     tracker_locked = False
     release_seen = False
     charter_id: str | None = None
-    repair_budget = 2
+    runtime_contract = 1
+    repair_generation_budget = 2
+    review_invocation_budget = 3
+    review_invocations_required = 1
+    review_invocations_used = 0
+    review_invocations_completed = 0
     repair_generation = 0
     repair_completed_generation = 0
     repair_open = False
@@ -256,6 +443,12 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
     repair_findings: list[str] = []
     review_findings: list[dict[str, Any]] = []
     review_decision_id: str | None = None
+    review_invocation_id: str | None = None
+    review_mode: str | None = None
+    review_invocation_canonical = False
+    review_invocation_ids: set[str] = set()
+    friction_observations: dict[str, dict[str, Any]] = {}
+    friction_synthesis: dict[str, Any] | None = None
 
     def item_state(item: str) -> dict[str, Any]:
         return items.setdefault(item, {})
@@ -277,10 +470,20 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
 
         if kind in {"scope", "scope-change"}:
             visible = data.get("children")
-            if need(
-                isinstance(visible, list)
-                and all(isinstance(child, str) and child for child in visible),
-                f"{prefix} requires data.children",
+            if kind == "scope":
+                need(
+                    isinstance(visible, list)
+                    and all(isinstance(child, str) and child for child in visible),
+                    f"{prefix} requires data.children",
+                )
+            elif visible is not None:
+                need(
+                    isinstance(visible, list)
+                    and all(isinstance(child, str) and child for child in visible),
+                    f"{prefix} data.children must be a list of IDs",
+                )
+            if isinstance(visible, list) and all(
+                isinstance(child, str) and child for child in visible
             ):
                 children = list(dict.fromkeys(visible))
                 dispositions = data.get("dispositions", {})
@@ -297,10 +500,115 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                         need(candidate_id == charter_id, f"{prefix} changes the campaign Charter")
                     else:
                         charter_id = candidate_id
-                candidate_budget = charter.get("repair_budget", repair_budget)
-                if need(isinstance(candidate_budget, int), f"{prefix} Charter repair_budget must be an integer"):
-                    need(0 <= candidate_budget <= 2, f"{prefix} Charter repair_budget must be between zero and two")
-                    repair_budget = candidate_budget
+                candidate_contract = charter.get("runtime_contract", runtime_contract)
+                if need(
+                    isinstance(candidate_contract, int)
+                    and candidate_contract in {1, 2},
+                    f"{prefix} Charter runtime_contract must be 1 or 2",
+                ):
+                    if kind == "scope-change":
+                        need(
+                            candidate_contract >= runtime_contract,
+                            f"{prefix} cannot lower runtime_contract",
+                        )
+                    runtime_contract = max(runtime_contract, candidate_contract)
+
+                legacy_repair = charter.get("repair_budget")
+                canonical_repair = charter.get("repair_generation_budget")
+                if legacy_repair is not None and canonical_repair is not None:
+                    need(
+                        legacy_repair == canonical_repair,
+                        f"{prefix} has conflicting repair budget aliases",
+                    )
+                candidate_repair = (
+                    canonical_repair
+                    if canonical_repair is not None
+                    else legacy_repair
+                    if legacy_repair is not None
+                    else repair_generation_budget
+                )
+                candidate_review_budget = charter.get(
+                    "review_invocation_budget",
+                    candidate_repair + 1
+                    if kind == "scope"
+                    else review_invocation_budget,
+                )
+                candidate_required = charter.get(
+                    "review_invocations_required", review_invocations_required
+                )
+                budget_values_valid = True
+                budget_values_valid &= need(
+                    isinstance(candidate_repair, int) and candidate_repair >= 0,
+                    f"{prefix} Charter repair_generation_budget must be a nonnegative integer",
+                )
+                budget_values_valid &= need(
+                    isinstance(candidate_review_budget, int)
+                    and candidate_review_budget > 0,
+                    f"{prefix} Charter review_invocation_budget must be a positive integer",
+                )
+                budget_values_valid &= need(
+                    isinstance(candidate_required, int) and candidate_required > 0,
+                    f"{prefix} Charter review_invocations_required must be a positive integer",
+                )
+                if budget_values_valid:
+                    need(
+                        candidate_review_budget >= candidate_required,
+                        f"{prefix} review budget is below required invocations",
+                    )
+                    if kind == "scope-change" and any(
+                        key in charter
+                        for key in {
+                            "repair_budget",
+                            "repair_generation_budget",
+                            "review_invocation_budget",
+                            "review_invocations_required",
+                        }
+                    ):
+                        change = data.get("budget_change")
+                        valid_change = need(
+                            isinstance(change, dict),
+                            f"{prefix} budget changes require data.budget_change",
+                        )
+                        if isinstance(change, dict):
+                            valid_change &= need(
+                                bool(change.get("source")),
+                                f"{prefix} budget change requires caller source",
+                            )
+                            valid_change &= need(
+                                bool(change.get("reason")),
+                                f"{prefix} budget change requires reason",
+                            )
+                            prior = change.get("prior")
+                            expected_prior = {
+                                "repair_generation_budget": repair_generation_budget,
+                                "review_invocation_budget": review_invocation_budget,
+                                "review_invocations_required": review_invocations_required,
+                            }
+                            valid_change &= need(
+                                prior == expected_prior,
+                                f"{prefix} budget change prior values do not match state",
+                            )
+                        valid_change &= need(
+                            candidate_repair >= repair_generation,
+                            f"{prefix} repair budget is below consumed generations",
+                        )
+                        valid_change &= need(
+                            candidate_review_budget >= review_invocations_used,
+                            f"{prefix} review budget is below consumed invocations",
+                        )
+                        valid_change &= need(
+                            candidate_review_budget >= candidate_required,
+                            f"{prefix} review budget is below required invocations",
+                        )
+                        valid_change &= need(
+                            candidate_required >= review_invocations_required,
+                            f"{prefix} cannot lower required review invocations",
+                        )
+                        budget_values_valid &= valid_change
+                    if budget_values_valid:
+                        repair_generation_budget = candidate_repair
+                        review_invocation_budget = candidate_review_budget
+                        review_invocations_required = candidate_required
         elif kind == "resume":
             resume_pending = True
         elif kind == "reconcile":
@@ -359,34 +667,142 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
             need(graph_drained, f"{prefix} requires graph-drained")
             need(not repair_open, f"{prefix} requires completed Repair")
             need(event.get("integration_sha") == integration_head, f"{prefix} HEAD differs from integration HEAD")
-            if review_target:
-                need(repair_generation > 0, f"{prefix} successor Review requires Repair")
-                need(repair_completed_generation == repair_generation, f"{prefix} successor Review requires Repair proof")
-                need(repair_base == review_target, f"{prefix} Repair base differs from prior review target")
-                need(integration_head != review_target, f"{prefix} successor Review requires a new HEAD")
+            need(
+                repair_generation == repair_completed_generation,
+                f"{prefix} latest Repair generation lacks completion proof",
+            )
             review_ready = True
         elif kind == "review-target":
             need(not resume_pending, f"{prefix} requires reconciliation after resume")
             need(review_ready, f"{prefix} requires review-ready")
             need(event.get("integration_sha") == integration_head, f"{prefix} HEAD differs from integration HEAD")
+            need(
+                review_invocations_used < review_invocation_budget,
+                f"{prefix} exceeds review invocation budget",
+            )
+            legacy_mode = "initial" if repair_generation == 0 else "remediation"
+            if legacy_mode == "remediation" and review_target:
+                need(
+                    repair_completed_generation == repair_generation,
+                    f"{prefix} successor Review requires Repair proof",
+                )
+                need(
+                    repair_base == review_target,
+                    f"{prefix} Repair base differs from prior review target",
+                )
+                need(
+                    integration_head != review_target,
+                    f"{prefix} successor Review requires a new HEAD",
+                )
+            review_invocation_id = event["event_id"]
+            review_mode = legacy_mode
+            review_invocation_canonical = False
+            review_invocation_ids.add(review_invocation_id)
+            review_invocations_used += 1
             review_target = event.get("integration_sha")
             review_ready = False
             review_decision = None
             review_decision_id = None
             review_findings = []
+        elif kind == "review-invocation":
+            need(not resume_pending, f"{prefix} requires reconciliation after resume")
+            invocation_id = event["event_id"]
+            mode = data.get("mode")
+            target = event.get("integration_sha")
+            valid = True
+            valid &= need(
+                invocation_id not in review_invocation_ids,
+                f"{prefix} duplicates review invocation identity",
+            )
+            valid &= need(
+                mode in {"initial", "remediation", "assurance"},
+                f"{prefix} has invalid review mode",
+            )
+            reason = data.get("reason")
+            valid &= need(
+                isinstance(reason, str) and bool(reason.strip()),
+                f"{prefix} requires a reason",
+            )
+            valid &= need(
+                target == integration_head,
+                f"{prefix} HEAD differs from integration HEAD",
+            )
+            valid &= need(
+                review_invocations_used < review_invocation_budget,
+                f"{prefix} exceeds review invocation budget",
+            )
+            if review_invocation_id is None:
+                valid &= need(
+                    review_ready and mode == "initial",
+                    f"{prefix} first invocation must be initial and review-ready",
+                )
+            elif review_decision == "incomplete":
+                valid &= need(
+                    target == review_target and mode == review_mode,
+                    f"{prefix} incomplete retry must keep target and mode",
+                )
+            elif mode == "assurance":
+                valid &= need(
+                    review_decision in ACCEPTED_REVIEWS,
+                    f"{prefix} assurance requires an accepted review",
+                )
+                valid &= need(
+                    target == review_target,
+                    f"{prefix} assurance requires the accepted immutable target",
+                )
+            elif mode == "remediation":
+                valid &= need(review_ready, f"{prefix} remediation requires review-ready")
+                valid &= need(
+                    repair_completed_generation == repair_generation
+                    and repair_generation > 0,
+                    f"{prefix} remediation requires completed Repair proof",
+                )
+                valid &= need(
+                    repair_base == review_target,
+                    f"{prefix} Repair base differs from prior review target",
+                )
+                valid &= need(
+                    target != review_target,
+                    f"{prefix} remediation requires a successor HEAD",
+                )
+            else:
+                valid &= need(
+                    review_ready and review_invocation_id is None,
+                    f"{prefix} initial mode is only valid for the first invocation or incomplete retry",
+                )
+            if valid:
+                review_invocation_ids.add(invocation_id)
+                review_invocation_id = invocation_id
+                review_mode = mode
+                review_invocation_canonical = True
+                review_invocations_used += 1
+                review_target = target
+                review_ready = False
+                review_decision = None
+                review_decision_id = None
+                review_findings = []
         elif kind == "review-decision":
-            need(bool(review_target), f"{prefix} requires review-target")
+            need(bool(review_target), f"{prefix} requires a review invocation")
             need(review_decision is None, f"{prefix} duplicates a decision for the review target")
             need(event.get("integration_sha") == review_target, f"{prefix} HEAD differs from review target")
-            need(event.get("decision") in ACCEPTED_REVIEWS | {"blocked", "incomplete", "fail"}, f"{prefix} has unknown decision")
-            mode = data.get("mode", "initial" if repair_generation == 0 else "remediation")
-            need(mode in {"initial", "remediation"}, f"{prefix} has invalid review mode")
-            need(mode == ("initial" if repair_generation == 0 else "remediation"), f"{prefix} review mode does not match Repair generation")
+            raw_decision = event.get("decision")
+            decision = LEGACY_REVIEW_DECISIONS.get(raw_decision, raw_decision)
+            need(decision in ACCEPTED_REVIEWS | {"blocked", "incomplete", "fail"}, f"{prefix} has unknown decision")
+            decision_invocation = data.get("review_invocation_id")
+            if review_invocation_canonical:
+                need(
+                    decision_invocation == review_invocation_id,
+                    f"{prefix} review invocation identity differs",
+                )
+            mode = data.get("mode", review_mode)
+            need(mode == review_mode, f"{prefix} review mode differs from invocation")
             findings = data.get("findings", [])
             need(isinstance(findings, list) and all(isinstance(finding, dict) for finding in findings), f"{prefix} data.findings must be a list of objects")
-            review_decision = event.get("decision")
+            review_decision = decision
             review_decision_id = event.get("event_id")
             review_findings = findings if isinstance(findings, list) else []
+            if decision != "incomplete":
+                review_invocations_completed += 1
         elif kind == "repair-plan":
             generation = data.get("generation")
             finding_ids = data.get("finding_ids")
@@ -398,7 +814,11 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
             need(bool(charter_id), f"{prefix} requires a recorded Charter")
             need(data.get("charter_id") == charter_id, f"{prefix} Charter differs from campaign Charter")
             need(isinstance(generation, int) and generation == repair_generation + 1, f"{prefix} has invalid Repair generation")
-            need(isinstance(generation, int) and generation <= repair_budget, f"{prefix} exceeds Repair Budget")
+            need(isinstance(generation, int) and generation <= repair_generation_budget, f"{prefix} exceeds Repair Generation Budget")
+            need(
+                review_invocations_used < review_invocation_budget,
+                f"{prefix} requires one remaining successor review invocation",
+            )
             need(bool(blockers), f"{prefix} requires complete blocking findings")
             need(
                 all(
@@ -433,6 +853,10 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
         elif kind == "closeout-head":
             need(not resume_pending, f"{prefix} requires reconciliation after resume")
             need(review_decision in ACCEPTED_REVIEWS, f"{prefix} requires accepted review")
+            need(
+                review_invocations_completed >= review_invocations_required,
+                f"{prefix} requires {review_invocations_required} completed review invocations",
+            )
             need(event.get("integration_sha") == integration_head, f"{prefix} closeout HEAD differs from integration HEAD")
             need(event.get("integration_sha") == review_target, f"{prefix} closeout HEAD differs from review target")
             closeout_head = event.get("integration_sha")
@@ -467,6 +891,66 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
             need(bool(parent_closeout), f"{prefix} requires verified parent closeout")
             need(event.get("integration_sha") == closeout_head, f"{prefix} HEAD differs from closeout HEAD")
             tracker_locked = True
+        elif kind == "friction":
+            friction_kind = data.get("kind")
+            if friction_kind == "observation":
+                need(
+                    friction_synthesis is None,
+                    f"{prefix} observation occurs after friction synthesis",
+                )
+                required = {"surface", "source", "evidence", "impact", "suggestion"}
+                missing = sorted(field for field in required if not data.get(field))
+                if need(
+                    not missing,
+                    f"{prefix} observation missing: {', '.join(missing)}",
+                ):
+                    friction_observations[event["event_id"]] = data
+            elif friction_kind == "synthesis":
+                need(
+                    friction_synthesis is None,
+                    f"{prefix} duplicates friction synthesis",
+                )
+                observation_ids = data.get("observations")
+                themes = data.get("deduplicated_themes")
+                none_observed = data.get("none_observed")
+                valid_synthesis = True
+                valid_synthesis &= need(
+                    isinstance(observation_ids, list)
+                    and all(isinstance(value, str) and value for value in observation_ids),
+                    f"{prefix} synthesis observations must be IDs",
+                )
+                valid_synthesis &= need(
+                    isinstance(themes, list)
+                    and all(isinstance(value, str) and value for value in themes),
+                    f"{prefix} synthesis themes must be strings",
+                )
+                valid_synthesis &= need(
+                    isinstance(none_observed, bool),
+                    f"{prefix} synthesis requires none_observed",
+                )
+                if isinstance(observation_ids, list):
+                    valid_synthesis &= need(
+                        set(observation_ids) == set(friction_observations),
+                        f"{prefix} synthesis must reference every friction observation exactly once",
+                    )
+                    valid_synthesis &= need(
+                        len(observation_ids) == len(set(observation_ids)),
+                        f"{prefix} synthesis duplicates an observation ID",
+                    )
+                if none_observed is True:
+                    valid_synthesis &= need(
+                        not friction_observations and not observation_ids and not themes,
+                        f"{prefix} none_observed conflicts with recorded friction",
+                    )
+                else:
+                    valid_synthesis &= need(
+                        bool(friction_observations),
+                        f"{prefix} synthesis requires observations or none_observed true",
+                    )
+                if valid_synthesis:
+                    friction_synthesis = data
+            else:
+                need(False, f"{prefix} friction kind must be observation or synthesis")
         elif kind == "release":
             need(event.get("decision") in {"complete", "partial", "blocked"}, f"{prefix} has invalid outcome")
             if event.get("decision") == "complete":
@@ -484,6 +968,9 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                 need(not unsafe, f"{prefix} has active lanes: {', '.join(unsafe)}")
             release_outcome = event.get("decision")
             release_seen = True
+
+    if runtime_contract >= 2 and release_outcome == "complete" and not friction_synthesis:
+        errors.append("canonical campaign requires one Workflow Friction synthesis")
 
     current_head = git_head(repo)
     lane_status: dict[str, str] = {}
@@ -544,7 +1031,12 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
         "resume_pending": resume_pending,
         "tracker_locked": tracker_locked,
         "charter_id": charter_id,
-        "repair_budget": repair_budget,
+        "runtime_contract": runtime_contract,
+        "repair_generation_budget": repair_generation_budget,
+        "review_invocation_budget": review_invocation_budget,
+        "review_invocations_required": review_invocations_required,
+        "review_invocations_used": review_invocations_used,
+        "review_invocations_completed": review_invocations_completed,
         "repair_generation": repair_generation,
         "repair_completed_generation": repair_completed_generation,
         "repair_open": repair_open,
@@ -552,6 +1044,10 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
         "repair_findings": repair_findings,
         "review_findings": review_findings,
         "review_decision_id": review_decision_id,
+        "review_invocation_id": review_invocation_id,
+        "review_mode": review_mode,
+        "friction_observations": friction_observations,
+        "friction_synthesis": friction_synthesis,
     }
 
 
@@ -573,6 +1069,17 @@ def intent_errors(state: dict[str, Any], intent: str) -> list[str]:
             errors.append("Repair generation is not complete")
         if state["repair_generation"] != state["repair_completed_generation"]:
             errors.append("latest Repair generation lacks completion proof")
+        if state["review_invocations_used"] >= state["review_invocation_budget"]:
+            errors.append("Review Invocation Budget is exhausted")
+        if state["review_invocation_id"] and state["review_decision"] is None:
+            errors.append("current review invocation has no decision")
+        repaired_successor_ready = (
+            state["repair_generation"] > 0
+            and state["repair_generation"] == state["repair_completed_generation"]
+            and state["integration_head"] != state["review_target"]
+        )
+        if state["review_decision"] in {"blocked", "fail"} and not repaired_successor_ready:
+            errors.append("blocked review requires Repair or caller decision")
     elif intent == "repair":
         if not state["charter_id"]:
             errors.append("campaign Charter is not recorded")
@@ -580,8 +1087,10 @@ def intent_errors(state: dict[str, Any], intent: str) -> list[str]:
             errors.append("review is not blocked")
         if not state["repair_open"]:
             errors.append("no Repair plan is open")
-        if state["repair_generation"] > state["repair_budget"]:
-            errors.append("Repair Budget is exhausted")
+        if state["repair_generation"] > state["repair_generation_budget"]:
+            errors.append("Repair Generation Budget is exhausted")
+        if state["review_invocations_used"] >= state["review_invocation_budget"]:
+            errors.append("no successor review invocation remains")
         if state["review_target"] != state["current_head"]:
             errors.append("blocked review target does not equal current HEAD")
     elif intent == "lock":
@@ -591,6 +1100,11 @@ def intent_errors(state: dict[str, Any], intent: str) -> list[str]:
             errors.append("review target does not equal current HEAD")
         if state["repair_open"]:
             errors.append("Repair generation remains open")
+        if (
+            state["review_invocations_completed"]
+            < state["review_invocations_required"]
+        ):
+            errors.append("required review invocations are incomplete")
     elif intent == "push":
         if not state["closeout_head"]:
             errors.append("closeout HEAD is not approved")
@@ -648,8 +1162,12 @@ def validate_state_command(args: argparse.Namespace) -> int:
         approved_head=state["closeout_head"],
         review_decision_id=state["review_decision_id"],
         repair_generation=state["repair_generation"],
-        repair_budget=state["repair_budget"],
+        repair_generation_budget=state["repair_generation_budget"],
         repair_open=state["repair_open"],
+        review_invocations_used=state["review_invocations_used"],
+        review_invocation_budget=state["review_invocation_budget"],
+        review_invocations_completed=state["review_invocations_completed"],
+        review_invocations_required=state["review_invocations_required"],
     )
 
 
@@ -676,8 +1194,12 @@ def status(args: argparse.Namespace) -> int:
         current_head=state["current_head"],
         review_decision_id=state["review_decision_id"],
         repair_generation=state["repair_generation"],
-        repair_budget=state["repair_budget"],
+        repair_generation_budget=state["repair_generation_budget"],
         repair_open=state["repair_open"],
+        review_invocations_used=state["review_invocations_used"],
+        review_invocation_budget=state["review_invocation_budget"],
+        review_invocations_completed=state["review_invocations_completed"],
+        review_invocations_required=state["review_invocations_required"],
     )
 
 
@@ -724,7 +1246,9 @@ def markdown(state: dict[str, Any], events_name: str) -> str:
         f"- Integration HEAD: `{state['integration_head'] or 'not reached'}`",
         f"- Reviewed HEAD: `{state['review_target'] or 'not reached'}`",
         f"- Closeout HEAD: `{state['closeout_head'] or 'not reached'}`",
-        f"- Repair Budget: `{state['repair_generation']}/{state['repair_budget']}`",
+        f"- Runtime contract: `{state['runtime_contract']}`",
+        f"- Repair generations: `{state['repair_generation']}/{state['repair_generation_budget']}`",
+        f"- Review invocations: `{state['review_invocations_used']}/{state['review_invocation_budget']}` used; `{state['review_invocations_completed']}/{state['review_invocations_required']}` required complete",
         f"- Repair state: `{'open' if state['repair_open'] else 'closed'}`",
         f"- Carried findings: {', '.join(state['repair_findings']) or 'none'}",
         f"- Children: {', '.join(state['children']) or 'not recorded'}",
@@ -738,6 +1262,33 @@ def markdown(state: dict[str, Any], events_name: str) -> str:
         lines.append(f"| `{lane_id}` | `{state['lanes'][lane_id]['work_item']}` | `{lane_state}` |")
     if not state["lane_status"]:
         lines.append("| none | none | none |")
+    lines.extend(["", "## Workflow Friction", ""])
+    if state["friction_observations"]:
+        for observation_id, observation in state["friction_observations"].items():
+            lines.extend(
+                [
+                    f"### {observation_id}",
+                    "",
+                    f"- Surface: {observation['surface']}",
+                    f"- Source: {observation['source']}",
+                    f"- Evidence: {observation['evidence']}",
+                    f"- Impact: {observation['impact']}",
+                    f"- Suggestion: {observation['suggestion']}",
+                    "",
+                ]
+            )
+    elif state["friction_synthesis"] and state["friction_synthesis"].get(
+        "none_observed"
+    ):
+        lines.append("- None observed.")
+    else:
+        lines.append("- Synthesis not recorded.")
+    if state["friction_synthesis"] and not state["friction_synthesis"].get(
+        "none_observed"
+    ):
+        themes = state["friction_synthesis"].get("deduplicated_themes", [])
+        lines.append(f"- Themes: {', '.join(themes) or 'none'}")
+
     lines.extend(["", "## Child Closeout Packets", ""])
     for child in state["children"]:
         packet = state["child_closeouts"].get(child, {})
@@ -824,6 +1375,12 @@ def parser() -> argparse.ArgumentParser:
     add_event_arguments(append_parser)
     append_parser.set_defaults(handler=append)
 
+    receipt_parser = commands.add_parser("append-receipt")
+    add_event_arguments(receipt_parser)
+    receipt_parser.add_argument("--intent", required=True, choices=sorted(INTENTS))
+    receipt_parser.add_argument("--repo")
+    receipt_parser.set_defaults(handler=append_receipt)
+
     batch_parser = commands.add_parser("append-batch")
     batch_parser.add_argument("--events", required=True)
     source = batch_parser.add_mutually_exclusive_group(required=True)
@@ -870,6 +1427,11 @@ def main() -> int:
         if args.command == "append" and not args.stdin:
             if not args.event or not args.work_item:
                 raise ValueError("flag input requires --event and --work-item")
+        if args.command == "append-receipt":
+            if not args.stdin:
+                raise ValueError("append-receipt requires --stdin")
+            if not args.event_id:
+                raise ValueError("append-receipt requires --event-id")
         return args.handler(args)
     except (OSError, ValueError, json.JSONDecodeError) as error:
         return emit(

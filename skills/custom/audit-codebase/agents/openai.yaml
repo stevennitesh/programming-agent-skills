@@ -1,0 +1,7 @@
+interface:
+  display_name: "Audit Codebase"
+  short_description: "Audit a bounded repository baseline"
+  default_prompt: "Use $audit-codebase to audit this immutable repository snapshot against a bounded correctness or methodology charter."
+
+policy:
+  allow_implicit_invocation: false

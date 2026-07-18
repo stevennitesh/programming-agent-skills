@@ -103,6 +103,12 @@ flowchart TD
   CPR --> SpecSources
   CPR --> StandardsSources
   CPR --> FindingContract
+  CPR --> AdvisoryContract["ADVISORY-CONTRACT.md<br/>optional nonblocking observations"]
+  CPR -. "repository-baseline audit" .-> Audit["audit-codebase"]
+  Audit --> Contract
+  Audit --> DomainRouter
+  Audit --> AuditDefects["DEFECT-CONTRACT.md"]
+  Audit --> AdvisoryContract
 
   Research --> ResearchDocs["docs/research/*"]
   Conflict["resolving-merge-conflicts"] --> Contract
@@ -114,26 +120,34 @@ flowchart TD
   Debug["diagnosing-bugs"] --> Contract
   Debug --> DomainRouter
   Conflict -. "uncertain post-resolution failure" .-> Debug
-  Arch["improve-codebase-architecture"] --> Contract
-  Arch --> DomainRouter
-  Arch --> GrillDocs
-  Arch --> CodeDesign["codebase-design"]
-  Arch -. "external evidence gap" .-> Research
-  Arch --> HtmlReport["HTML-REPORT.md / .tmp/architecture-reviews/"]
-  Arch --> Implement
-  Arch --> ToTickets
-  Arch --> ToSpec
-  Arch -. "setup gate" .-> Setup
+  Simplify["simplify-code"] --> Contract
+  Simplify -. "interface question" .-> CodeDesign
+  Simplify -. "wide improvement search" .-> Improve
+  Improve["improve-codebase"] --> Contract
+  Improve --> DomainRouter
+  Improve --> CodeDesign["codebase-design"]
+  Improve --> HtmlReport["HTML-REPORT.md / .tmp/improvement-reviews/"]
+  Improve --> SelectedCandidate["SELECTED-CANDIDATE.md"]
+  SelectedCandidate -. "source evidence" .-> Research
+  SelectedCandidate -. "runnable evidence" .-> Prototype
+  SelectedCandidate -. "user or domain decision" .-> GrillDocs
+  SelectedCandidate -. "interface design" .-> CodeDesign
+  SelectedCandidate -. "eliminate" .-> Simplify
+  SelectedCandidate --> Implement
+  SelectedCandidate --> ToTickets
+  SelectedCandidate --> ToSpec
+  Improve -. "setup gate" .-> Setup
 
   Handoff -. "setup gate" .-> Setup
 
   TDD --> TddRefs["tests.md / mocking.md / refactoring.md"]
   TddRefs -. "uncertain repro" .-> Debug
+  TddRefs -. "standalone bounded cleanup" .-> Simplify
   TddRefs -. "larger design follow-up" .-> CodeDesign
-  TddRefs -. "larger design follow-up" .-> Arch
+  TddRefs -. "wide improvement follow-up" .-> Improve
   CodeDesign --> DirectDesign["DIRECT-DESIGN.md"]
   DirectDesign --> DesignRefs["DEEPENING.md / DESIGN-IT-TWICE.md"]
-  CodeDesign -. "wide scan" .-> Arch
+  CodeDesign -. "wide scan" .-> Improve
   Writing["writing-great-skills"] --> Glossary["GLOSSARY.md<br/>authoring vocabulary"]
   Writing --> BehaviorEvals["BEHAVIOR-EVALS.md<br/>counterfactual wording evaluation"]
 ```
@@ -152,13 +166,15 @@ Source: `skills/custom/*/agents/openai.yaml`.
 | `grill-with-docs` | implicitly invocable |
 | `handoff` | explicit-only |
 | `implement` | explicit-only |
-| `improve-codebase-architecture` | explicit-only |
+| `audit-codebase` | explicit-only |
+| `improve-codebase` | explicit-only |
 | `parallel-implement` | explicit-only |
 | `prototype` | implicitly invocable |
 | `repo-bootstrap` | explicit-only |
 | `research` | implicitly invocable |
 | `resolving-merge-conflicts` | implicitly invocable |
 | `review` | implicitly invocable |
+| `simplify-code` | explicit-only |
 | `skill-router` | explicit-only |
 | `tdd` | implicitly invocable |
 | `to-questionnaire` | explicit-only |
@@ -220,23 +236,29 @@ Use one verb for each executable relationship:
 | `parallel-implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `tdd` | Hand off | `$diagnosing-bugs` | A bug's expected behavior, exact symptom, cause, or trusted red-capable reproduction is uncertain. |
 | `tdd` | Hand off | `$prototype` | The question is design evidence rather than production proof. |
+| `tdd` | Recommend and stop | `$simplify-code` | A GREEN refactor exposes settled, bounded, behavior-preserving cleanup outside the tracer bullet. |
 | `tdd` | Recommend and stop | `$codebase-design` | A GREEN refactor exposes one bounded interface or seam question outside the slice. |
-| `tdd` | Recommend and stop | `$improve-codebase-architecture` | A GREEN refactor exposes a wide candidate-finding survey outside the slice. |
+| `tdd` | Recommend and stop | `$improve-codebase` | A GREEN refactor exposes wide or unclassified improvement work outside the slice. |
 | `diagnosing-bugs` | Hand off | `$tdd` | Only when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known before Trace; retain the original caller. |
 | `diagnosing-bugs` | Recommend and stop | `$implement` | Standalone diagnosis proved the cause and needs an implementation owner. |
 | `resolving-merge-conflicts` | Invoke | `$diagnosing-bugs` | Diagnose an uncertain proof failure, return the causal packet, then resume Prove. |
 | `review` | Hand off | `$convergent-pr-review` | The target is a local PR or needs independent high-risk review. |
-| `improve-codebase-architecture` | Load | `$codebase-design` | Apply shared architecture vocabulary during the wide survey. |
-| `improve-codebase-architecture` | Invoke | `$research` | An approved tracked note must close an external evidence gap. |
-| `improve-codebase-architecture` | Invoke | `$grill-with-docs` | Pressure-test the selected candidate and capture domain changes. |
-| `improve-codebase-architecture` | Invoke | `$codebase-design` | The chosen candidate needs dependency, seam, or interface design. |
-| `improve-codebase-architecture` | Recommend and stop | `$implement` | The confirmed candidate is one ready slice. |
-| `improve-codebase-architecture` | Recommend and stop | `$to-tickets` | The confirmed candidate needs dependency-ordered slices. |
-| `improve-codebase-architecture` | Recommend and stop | `$to-spec` | The confirmed candidate still needs a durable parent spec. |
-| `improve-codebase-architecture` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
+| `convergent-pr-review` | Recommend and stop | `$audit-codebase` | The request targets a bounded repository correctness or methodology baseline rather than a pending release diff. |
+| `improve-codebase` | Load | `$codebase-design` | Apply shared module, interface, seam, depth, leverage, and locality vocabulary during the Survey. |
+| `improve-codebase` | Invoke | `$research` | A selected `Investigate` candidate needs one source question; return cited evidence or a blocker to the caller. |
+| `improve-codebase` | Invoke | `$prototype` | A selected `Investigate` candidate needs one runnable design verdict; return its reconciled verdict and cleanup state. |
+| `improve-codebase` | Invoke | `$grill-with-docs` | A selected candidate needs a user-owned commitment, trade-off, domain, or ADR decision. |
+| `improve-codebase` | Invoke | `$codebase-design` | A selected `Concentrate` candidate needs dependency, seam, ownership, interface, migration, or replacement design. |
+| `improve-codebase` | Recommend and stop | `$simplify-code` | A selected candidate reclassifies to `Eliminate`; return its report pickup without edits. |
+| `improve-codebase` | Recommend and stop | `$implement` | A selected `Concentrate` candidate is one ready slice. |
+| `improve-codebase` | Recommend and stop | `$to-tickets` | A selected `Concentrate` candidate needs dependency-ordered slices. |
+| `improve-codebase` | Recommend and stop | `$to-spec` | A selected `Concentrate` candidate still needs a durable parent spec. |
+| `improve-codebase` | Recommend and stop | `$repo-bootstrap` | The disposable report boundary is missing or incompatible. |
+| `simplify-code` | Recommend and stop | `$improve-codebase` | The request needs wide discovery, ranking, or multi-region sequencing. |
+| `simplify-code` | Recommend and stop | `$codebase-design` | The best next move requires one new interface or ownership decision. |
 | `prototype` | Recommend and stop | `$handoff` | An awaiting verdict must cross sessions. |
 | `prototype` | Recommend and stop | `$domain-modeling` | The verdict exposes a durable term or ADR candidate. |
-| `codebase-design` | Recommend and stop | `$improve-codebase-architecture` | The request is a wide candidate-finding survey. |
+| `codebase-design` | Recommend and stop | `$improve-codebase` | The request needs codebase-wide improvement discovery and classification. |
 | `handoff` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 
 ## Context Owners
@@ -249,14 +271,16 @@ Use one verb for each executable relationship:
 | `repo-bootstrap` | Provisions and verifies the repo setup surface | `skill-router`, setup gates in planning/tracker skills |
 | `docs/agents/issue-tracker.md` | Tracker interface, work-item lifecycle, PR-as-request rules, and wayfinding operations | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `review`, `convergent-pr-review`, `wayfinder` |
 | `docs/agents/triage-labels.md` | Category/state role to label mapping and fixed wayfinding labels | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
-| `docs/agents/domain.md` | Routing to `CONTEXT.md`, `CONTEXT-MAP.md`, ADRs | `to-spec`, `triage`, `tdd`, `diagnosing-bugs`, `improve-codebase-architecture`, `parallel-implement` |
-| `docs/agents/engineering-contract.md` | Engineering taste, shared runtime language, Charter, commitment boundary, change-created fallout, fresh and negative-control proof, work-state policy, fixed-snapshot Spec/Standards review, Repair generation, and Lock | `implement`, `tdd`, `diagnosing-bugs`, `prototype`, `improve-codebase-architecture`, `parallel-implement`, `resolving-merge-conflicts`, `review`, `convergent-pr-review` |
+| `docs/agents/domain.md` | Routing to `CONTEXT.md`, `CONTEXT-MAP.md`, ADRs | `to-spec`, `triage`, `tdd`, `diagnosing-bugs`, `simplify-code`, `improve-codebase`, `audit-codebase`, `parallel-implement` |
+| `docs/agents/engineering-contract.md` | Engineering taste, shared runtime language, Charter, commitment boundary, change-created fallout, fresh and negative-control proof, work-state policy, fixed-snapshot Spec/Standards review, Repair generation, and Lock | `implement`, `tdd`, `diagnosing-bugs`, `prototype`, `simplify-code`, `improve-codebase`, `audit-codebase`, `parallel-implement`, `resolving-merge-conflicts`, `review`, `convergent-pr-review` |
 | `domain-modeling` | Mutates `CONTEXT.md`, `CONTEXT-MAP.md`, and ADR truth | `skill-router`, `grill-with-docs`, `wayfinder`, `prototype`, `repo-bootstrap` |
-| `codebase-design` | Interface, seam, adapter, depth, leverage, and locality vocabulary | `to-spec`, `improve-codebase-architecture`, `tdd`, architecture/design follow-ups |
-| `research` | Primary-source legwork and authorized cited repo-local research notes | `skill-router`, `grilling`, `wayfinder`, `improve-codebase-architecture` |
+| `codebase-design` | Interface, seam, adapter, depth, leverage, locality, and bounded replacement vocabulary | `to-spec`, `improve-codebase`, `tdd`, architecture/design follow-ups |
+| `research` | Primary-source legwork and authorized cited repo-local research notes | `skill-router`, `grilling`, `wayfinder`, `improve-codebase` |
 | `to-questionnaire` | One recipient-ready async discovery artifact for one external stakeholder and downstream decision | `skill-router`, `grilling`, humans collecting stakeholder evidence |
 | `resolving-merge-conflicts` | Read-only three-way inspection, authorized reconciliation, and the separate finish boundary | Git operations and implementation or integration work that enters a conflicted state |
 | `review` | Ordinary fixed-snapshot Standards/Spec review | `implement`, `parallel-implement`; escalates once to `convergent-pr-review` for high risk |
+| `audit-codebase` | Bounded immutable repository-baseline defects, advisories, evidence gaps, coverage, and confidence without a release decision | `skill-router`, `convergent-pr-review`, humans explicitly invoking repository audits |
+| `simplify-code` | One unstaged, behavior-preserving simplification patch, an explicit finite and bounded `until-clean` campaign, or a proved no-safe-cut verdict | `skill-router`, `tdd`, `improve-codebase`, humans invoking bounded cleanup |
 
 ## Supporting Files
 
@@ -272,8 +296,10 @@ Use one verb for each executable relationship:
 | `wayfinder` | `MAP-FORMAT.md`: canonical map and ticket shape, empty-fog sentinel, and exclusion pointers; `SKILL.md`: Chart, Advance, Maintain, Closure, and foggy map lifecycle semantics |
 | `research` | One cited repo-local Markdown note per source question |
 | `resolving-merge-conflicts` | Three-way merge/rebase/cherry-pick/revert and marker-only conflict process, proof, return packet, and finish boundary |
-| `review`, `convergent-pr-review`, `implement`, `parallel-implement` | `review/FINDING-CONTRACT.md`: shared finding admission, remediation classes, and remediation-review bound; `review/SMELL-BASELINE.md`: fallback Standards reference when repo standards are thin |
-| `improve-codebase-architecture` | `HTML-REPORT.md`: report format and visual style |
+| `review`, `convergent-pr-review`, `implement`, `parallel-implement` | `review/FINDING-CONTRACT.md`: shared diff-finding admission, remediation classes, and remediation-review bound; `review/SMELL-BASELINE.md`: fallback Standards reference when repo standards are thin |
+| `convergent-pr-review`, `audit-codebase` | `review/ADVISORY-CONTRACT.md`: verified nonblocking opportunities kept outside decision-bearing ledgers |
+| `audit-codebase` | `DEFECT-CONTRACT.md`: repository-baseline defect admission and evidence interface |
+| `improve-codebase` | `HTML-REPORT.md`: report format and visual style; `SELECTED-CANDIDATE.md`: explicit candidate resolution, reclassification, routing, and report reconciliation |
 | `parallel-implement` | `WORKER-BRIEF.md`, `INTEGRATOR-BRIEF.md`, `CODEX-WORKTREE-LAUNCH.md`: lane contracts and checkout lifecycle; `run_ledger.py` and `RUN-LEDGER.md`: canonical campaign state, authority validation, generated ledger, and closeout plan |
 
 ## Boundary Notes
@@ -293,6 +319,9 @@ Use one verb for each executable relationship:
 - `review` is the ordinary fixed-snapshot gate and may hand off once to `convergent-pr-review`; the high-risk route never hands back.
 - `review` and `convergent-pr-review` return terminal read-only evidence. Their reports grant no mutation or successor-snapshot authority; the implementation caller's pre-recorded Charter and Repair Budget govern continuation.
 - `convergent-pr-review` may run its own bounded read-only reviewer passes only when selected as the review route; it is not a second implementation orchestrator.
+- `audit-codebase` owns caller-bounded correctness and methodology judgment over one immutable repository baseline. Its `complete / incomplete` status reports coverage, never release acceptance; it does not rank improvements, route remediation, or mutate the repository.
+- `improve-codebase` owns read-only improvement discovery, exhaustive region classification, overlap sequencing, ranking, a disposable report, and one explicitly resumed candidate through conditional evidence or design resolution. It never starts explicit mutation or delivery skills.
+- `simplify-code` owns one standalone cleanup patch or an explicitly bounded serial `until-clean` campaign with a finite cut budget, strict net-reduction ledger, and terminal stop condition under before-and-after proof gates. It does not own feature work, bug diagnosis, public-contract decisions, wide improvement surveys, staging, commits, or tracker closeout.
 - `handoff` carries pointers across sessions; it should reference durable artifacts, not duplicate specs, issues, ADRs, commits, or diffs.
 - `.tmp/` artifacts are disposable unless a skill explicitly preserves them for the user or next session.
 - `.scratch/` artifacts are durable, version-controlled local state; include in-scope changes in review and staging.

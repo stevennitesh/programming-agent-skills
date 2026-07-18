@@ -99,6 +99,7 @@ STALE_ACTIVE_TOKENS = (
     "$to-prd",
     "skills/current",
     "skills/matt-pocock",
+    "improve-codebase-architecture",
 )
 
 

@@ -1,7 +1,7 @@
 interface:
   display_name: "Parallel Implement"
-  short_description: "Drain one graph through bounded repair"
-  default_prompt: "Use $parallel-implement to drain every in-scope implementation ticket associated with this parent spec or PRD. Record one Charter, Tripwire high-risk contracts, Downshift unless independence is proven, integrate serially, repair only admitted blockers within the Budget, then Lock and verify closeout."
+  short_description: "Drain one graph with budgeted review"
+  default_prompt: "Use $parallel-implement from the root to drain every in-scope implementation ticket for this parent, preserve event-sourced authority, integrate serially, and close only after budgeted review, friction accounting, and verified release."
 
 policy:
   allow_implicit_invocation: false

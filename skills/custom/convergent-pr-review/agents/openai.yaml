@@ -3,5 +3,5 @@ policy:
 
 interface:
   display_name: "Convergent PR Review"
-  short_description: "Terminal high-risk fixed-snapshot review"
-  default_prompt: "Use $convergent-pr-review to pin one immutable local PR or high-risk diff, admit only Charter-relevant findings through independent fresh-context review, and return one verified read-only decision ledger without remediation."
+  short_description: "Root-owned high-risk release review"
+  default_prompt: "Use $convergent-pr-review from the root to pin one immutable high-risk diff, cover every required lens with fresh reviewers or an explicit degraded fallback, and return one verified read-only release decision."

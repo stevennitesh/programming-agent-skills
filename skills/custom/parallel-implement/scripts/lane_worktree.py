@@ -189,11 +189,16 @@ def blocked(
 
 def create(args: argparse.Namespace) -> int:
     repo, repo_trust = git_root(Path(args.repo).resolve())
-    root = (
-        Path(args.root).resolve()
-        if args.root
-        else (repo.parent / "worktrees" / "parallel-implement").resolve()
-    )
+    environment_root = os.environ.get("PARALLEL_IMPLEMENT_WORKTREE_ROOT", "").strip()
+    if args.root:
+        root = Path(args.root).resolve()
+        root_source = "explicit"
+    elif environment_root:
+        root = Path(environment_root).resolve()
+        root_source = "environment"
+    else:
+        root = (repo.parent / "worktrees" / "parallel-implement").resolve()
+        root_source = "repo-parent-default"
     worktree = (root / lane_name(repo, args.run_id, args.item_id)).resolve()
     if contains(repo, worktree) and not args.allow_inside_repo:
         raise LaneError("worktree path is inside the active checkout")
@@ -201,7 +206,24 @@ def create(args: argparse.Namespace) -> int:
         raise LaneError("worktree path escaped the selected root")
     if worktree.exists():
         raise LaneError(f"worktree path already exists: {worktree}")
-    budget = path_budget(worktree, repo, args.max_path)
+    try:
+        budget = path_budget(worktree, repo, args.max_path)
+    except LaneError as error:
+        return blocked(
+            "create",
+            state="blocked-path-budget",
+            error=str(error),
+            recoverable=True,
+            next_action={
+                "command": "create",
+                "repair": "choose a shorter explicit or environment worktree root",
+            },
+            provider="manual-git",
+            repo=str(repo),
+            root=str(root),
+            root_source=root_source,
+            worktree=str(worktree),
+        )
     root.mkdir(parents=True, exist_ok=True)
 
     command = ["git", "worktree", "add"]
@@ -224,6 +246,7 @@ def create(args: argparse.Namespace) -> int:
             provider="manual-git",
             repo=str(repo),
             root=str(root),
+            root_source=root_source,
             worktree=str(worktree),
             git_trust=create_trust,
         )
@@ -243,6 +266,7 @@ def create(args: argparse.Namespace) -> int:
         provider="manual-git",
         repo=str(repo),
         root=str(root),
+        root_source=root_source,
         worktree=str(worktree),
         base=expected,
         branch=args.branch,
@@ -272,9 +296,33 @@ def resolve_git_path(worktree: Path, value: str) -> Path:
     return path.resolve() if path.is_absolute() else (worktree / path).resolve()
 
 
+def proof_command(args: argparse.Namespace) -> tuple[list[str] | None, dict[str, str]]:
+    if args.proof_command_file:
+        path = Path(args.proof_command_file).resolve()
+        raw = path.read_bytes()
+        try:
+            value = json.loads(raw.decode("utf-8-sig"))
+        except UnicodeDecodeError as error:
+            raise LaneError("proof command file must be UTF-8") from error
+        provenance = {
+            "command_file": str(path),
+            "command_file_sha256": hashlib.sha256(raw).hexdigest(),
+        }
+    elif args.proof_command_json:
+        value = json.loads(args.proof_command_json)
+        provenance = {"command_source": "inline-json"}
+    else:
+        return None, {}
+    if not isinstance(value, list) or not value or not all(
+        isinstance(part, str) and part for part in value
+    ):
+        raise LaneError("proof command must be a non-empty JSON string array")
+    return value, provenance
+
+
 def preflight(args: argparse.Namespace) -> int:
     worktree = Path(args.worktree).resolve()
-    if not args.proof_command_json and not args.skip_proof:
+    if not args.proof_command_json and not args.proof_command_file and not args.skip_proof:
         return blocked(
             "preflight",
             state="blocked-proof",
@@ -282,10 +330,16 @@ def preflight(args: argparse.Namespace) -> int:
             recoverable=True,
             next_action={
                 "command": "preflight",
-                "required": ["--proof-command-json", "or --skip-proof --reason"],
+                "required": [
+                    "--proof-command-json",
+                    "--proof-command-file",
+                    "or --skip-proof --reason",
+                ],
             },
             worktree=str(worktree),
         )
+
+    command, command_provenance = proof_command(args)
     if args.skip_proof and not args.reason:
         return blocked(
             "preflight",
@@ -348,18 +402,14 @@ def preflight(args: argparse.Namespace) -> int:
     reversible_probe(common_dir / "objects" / "info" / f"parallel-implement-{token}.probe")
 
     proof: dict[str, Any]
-    if args.proof_command_json:
-        command = json.loads(args.proof_command_json)
-        if not isinstance(command, list) or not command or not all(
-            isinstance(part, str) and part for part in command
-        ):
-            raise LaneError("proof command must be a non-empty JSON string array")
+    if command is not None:
         result = run(command, cwd=worktree, check=False)
         proof = {
             "command": command,
             "returncode": result.returncode,
             "stdout": result.stdout[-2000:],
             "stderr": result.stderr[-2000:],
+            **command_provenance,
         }
         if result.returncode != 0:
             raise LaneError(f"proof startup failed: {result.stderr.strip()}")
@@ -582,8 +632,10 @@ def parser() -> argparse.ArgumentParser:
     preflight_parser.add_argument("--base", required=True)
     preflight_parser.add_argument("--actor-id", required=True)
     preflight_parser.add_argument("--expect-branch")
-    preflight_parser.add_argument("--proof-command-json")
-    preflight_parser.add_argument("--skip-proof", action="store_true")
+    proof_group = preflight_parser.add_mutually_exclusive_group()
+    proof_group.add_argument("--proof-command-json")
+    proof_group.add_argument("--proof-command-file")
+    proof_group.add_argument("--skip-proof", action="store_true")
     preflight_parser.add_argument("--reason")
     preflight_parser.set_defaults(handler=preflight)
 

@@ -1,51 +1,60 @@
 ---
 name: parallel-implement
-description: Drain one parent spec or PRD's implementation ticket graph automatically through isolated lanes, serial integration, bounded review repair, and verified child and parent closeout.
+description: Implement one root-owned parent spec or PRD ticket graph through dependency-ready frontiers, isolated fresh-context lanes, serial landing, separately budgeted repair and review, event-sourced authority, friction accounting, and verified closeout. Use only from the top-level root agent; delegated invocation is a routing blocker.
 ---
 
 # Parallel Implement
 
+**Trace -> Gate -> Drain -> Review -> Repair -> Lock -> Release**
+
 Drain one parent-backed implementation graph to verified closeout.
 
-- **Orchestrator:** owns scope, state, dispatch, acceptance, serial landing, review, mutations, outcome, and release.
-- **Lane worker:** owns one ready ticket, isolated worktree, clean commit, and focused proof.
-- **Integration lane:** owns serial landing and integration proof only; the orchestrator holds it unless explicitly routed.
+**Root-only orchestration.** The top-level root is the sole dispatcher, campaign decision-maker, formal-review invoker, state writer, and release owner. If invoked inside a delegated task, stop before Trace or mutation and return a routing blocker.
 
-**Two isolations:** every lane requires fresh context and a preflighted worktree. Workers, an optional integrator, and reviewers are direct fresh-context children; they never spawn.
+- **Lane worker:** own one ready ticket, isolated worktree, clean commit, and focused proof.
+- **Integration lane:** own serial landing and integration proof only. Keep it with the root unless a shallow, hot, or late child integrator is justified.
+- **Formal review:** the root invokes the selected review skill. That skill owns its reviewers and returns one terminal decision; campaign workers and integrators never review their own work.
 
-**State machine:** `events.jsonl` is canonical. Append records evidence; `run_ledger.py validate-state` grants authority. A successful append never authorizes dispatch, landing, Review, Lock, push, or `complete`.
+Create campaign workers and any integrator as direct children with `fork_turns="none"`. They do not spawn. Use `followup_task` only once for a narrow `needs-feedback` continuation when the same actor must answer for its evidence or finish an omitted deliverable. Replace a blocked, stalled, superseded, or context-contaminated actor only after its input, base, route, capability, authority, or task shape changes.
 
-Run one resumable wavefront campaign:
+**Two isolations:** every lane needs fresh context and a preflighted worktree.
 
-**Trace -> Gate -> Drain -> Review -> Repair -> Lock -> Release**
+**Event-sourced authority:** `events.jsonl` is canonical and `LEDGER.md` is generated. Prefer `run_ledger.py append-receipt` for canonical events. `committed: true` means only that the event was durably appended; act only when the requested intent has `allowed: true` in authority derived from the current stream. A same-ID replay at the stream tail returns the stored receipt; after later events it preserves the append acknowledgement but recomputes authority from the full stream. Never infer append success from missing output.
 
 ## Operating Surface
 
-- Always apply `docs/agents/engineering-contract.md`.
-- Read `docs/agents/issue-tracker.md` before tracker work and `docs/agents/domain.md` when domain semantics affect the campaign.
-- Use `references/RUN-LEDGER.md` and `scripts/run_ledger.py` for campaign state, authority, rendering, and closeout.
+- Apply `docs/agents/engineering-contract.md`.
+- Read `docs/agents/issue-tracker.md` before tracker work and `docs/agents/domain.md` when domain semantics matter.
+- Use [RUN-LEDGER.md](references/RUN-LEDGER.md) and `scripts/run_ledger.py` for campaign state, authority, rendering, and closeout.
 - Use [FINDING-CONTRACT.md](../review/FINDING-CONTRACT.md) for review admission and remediation classes.
-- Use `references/CODEX-WORKTREE-LAUNCH.md` and `scripts/lane_worktree.py` for lane lifecycle and recovery.
-- Dispatch workers with `references/WORKER-BRIEF.md`.
-- Read `references/INTEGRATOR-BRIEF.md` only when deciding or operating a shallow, hot, or late child integrator.
+- Use [CODEX-WORKTREE-LAUNCH.md](references/CODEX-WORKTREE-LAUNCH.md) and `scripts/lane_worktree.py` for lane lifecycle and recovery.
+- Dispatch with [WORKER-BRIEF.md](references/WORKER-BRIEF.md). Read [INTEGRATOR-BRIEF.md](references/INTEGRATOR-BRIEF.md) only when selecting or operating a child integrator.
 
 ## Trace
 
 Apply the **setup gate**. When a required setup surface or named operation is absent or incompatible, recommend `$repo-bootstrap` and stop.
 
-**Resume:** when an event stream exists, Resume inside Trace. Run `resume-status`, reconcile Git, worktrees, agents, tracker, and remote state, then append that evidence. A missing agent is not completion; redispatch only from a reconciled classification authorized by `validate-state`.
+**Resume:** when an event stream exists, run `resume-status`, reconcile Git, worktrees, agents, tracker, and remote state, then append that evidence. A missing actor is not completion. Redispatch only from a reconciled classification authorized by the receipt or `validate-state`.
 
-Otherwise resolve exactly one parent and its exhaustive child and follow-up graph. Build the Source Trace and record the fixed point, child-set snapshot, dependencies, readiness, exclusions, and parent closeout rule.
+Otherwise resolve exactly one parent and its exhaustive child and follow-up graph. Record the Source Trace, fixed point, child-set snapshot, dependencies, readiness, exclusions, and parent closeout rule. The parent selects work; it is never direct implementation scope.
 
-Record one campaign **Charter** in the `scope` event: parent outcome, exhaustive child set, acceptance criteria, supported workflows and environments, required validation, commitment boundary, non-goals, fixed point, review route, and Repair Budget. Default the Budget to two generations unless the caller explicitly sets a smaller bound. A changed child set or commitment requires scope reconciliation; an authority-changing commitment requires a caller decision before mutation.
+Record one Charter in the `scope` event with `runtime_contract: 2`, the parent outcome, exhaustive children, acceptance, supported workflows and environments, required proof, commitment boundary, non-goals, fixed point, review route, and these independent counters:
 
-Every open in-scope ticket must satisfy the repo's Ready-for-agent contract. The parent selects work; it is never direct implementation scope.
+```yaml
+repair_generation_budget: 2
+review_invocation_budget: 3
+review_invocations_required: 1
+```
 
-When graph repair is required, return one **exhaustive repair packet** covering every visible missing slice, dependency edge, readiness defect, acceptance ambiguity, and unsliced commitment. Recommend `$to-tickets` and stop. Resume only after the entire repaired graph is published, read back, and reconciled.
+The Repair Generation Budget is a ceiling on automatic repair batches; any explicit nonnegative caller value is valid. The Review Invocation Budget is a positive ceiling on formal top-level review calls and defaults to Repair Generation Budget plus one. Review Invocations Required is the caller's positive minimum of completed formal reviews and defaults to one. Internal reviewer replacement, challenge rounds, and root fallback passes belong to the review invocation and do not consume campaign review invocations. Continue accepting legacy `repair_budget` when it does not conflict with the canonical value.
+
+A budget is a ceiling, not an obligation. Change budgets or required review count after Trace only through a `scope-change` event with exact prior values, explicit caller source, and reason. Never lower a value below consumption, lower required reviews, or self-grant more budget. A changed child set or commitment still requires scope reconciliation and caller authority where it changes commitments.
+
+Every open in-scope ticket must satisfy the repo's Ready-for-agent contract. When graph repair is required, return one exhaustive repair packet covering every missing slice, dependency edge, readiness defect, acceptance ambiguity, and unsliced commitment. Recommend `$to-tickets` and stop until the complete repaired graph is published, read back, and reconciled.
 
 ## Gate
 
-Build the frontier from reconciled tracker and ledger state. A landed item satisfies execution dependencies; tracker closeout waits for Lock. A changed child set reopens scope reconciliation.
+Build the frontier from reconciled tracker and ledger state. A landed item satisfies execution dependencies; tracker closeout waits for Lock.
 
 Apply the **frontier gate** across acceptance, contracts, write scopes, proof, dependencies, slots, and review bandwidth. Disjoint files do not prove semantic independence.
 
@@ -57,58 +66,59 @@ Apply the **frontier gate** across acceptance, contracts, write scopes, proof, d
 - **Parallel:** select up to the worker limit only when at least two ready tickets are semantically independent.
 - **Blocked:** return the unfinished tickets and exact blockers when no ticket is executable.
 
-The worker limit is the smaller of three or live slots after reserving the orchestrator and any integrator. Parallelism requires bandwidth to inspect every packet before the next frontier decision. No worker slot means blocked, not `$implement`.
+The worker limit is the smaller of three or live slots after reserving the root and any integrator. Require bandwidth to inspect every packet before the next frontier decision. No worker slot means blocked, not `$implement`.
 
 ## Drain
 
-Before dispatch, claim and read back tracker state, establish the lane, and require `validate-state --intent dispatch`. Launch one direct worker with `fork_turns="none"`, its brief, absolute worktree, stable temp roots, and liveness checkpoint.
+Before dispatch, claim and read back tracker state, establish the lane, append its evidence, and require a receipt authorizing `dispatch`. Launch one direct worker with its brief, absolute worktree, stable temp roots, and liveness checkpoint.
 
-Classify each return: accept or reject a verified `done`; keep `needs-feedback` open for one delta; retry `blocker` only after its input, base, route, capability, authority, or task shape changes.
+Classify each return: accept or reject a verified `done`; continue `needs-feedback` once under the narrow rule above; retry `blocker` only after its blocking condition changes. Use the launch reference's **Stall** branch when a worker misses its checkpoint without agent or process progress.
 
-Use the launch reference's **Stall** branch when a worker misses its recorded checkpoint without agent or process progress. Inspect before redispatch.
+Only accepted `done` may land. Land serially through the recorded route; detached one-commit workers default to `cherry-pick`. Inspect `base..head`, scope, stale-base overlap, conflicts, and proof, then require a receipt authorizing `land`.
 
-Only accepted `done` may land. Land serially through the recorded route; detached one-commit workers default to `cherry-pick`. Inspect `base..head`, scope, stale-base overlap, conflicts, and proof, then require `validate-state --intent land`.
-
-Apply the **proof budget**: worker focused, integration touched-area, loop-close broad. After landing, verify the diff and proof, record the integration SHA, and append draft closeout evidence.
+Apply the **proof budget**: worker focused, integration touched-area, loop-close broad. After landing, verify the diff and proof, record the integration SHA, append draft closeout evidence, refetch the relationship fingerprint, reconcile any graph change, and repeat.
 
 A **stale-base packet** returns for rebase, redispatch, serialization, or rejection. A partial or conflicted landing preserves Git state and invokes `$resolving-merge-conflicts` before resuming.
 
-After each landing, refetch the relationship fingerprint. Fetch full changed tickets when it changes or lacks a safe revision. Reconcile scope, ask `validate-state` for the next transition, and repeat until drained or blocked.
-
 ## Review
 
-Enter Review only when `validate-state --intent review` passes. Require the drained graph, child accounting, clean integration state, final validation, and idle lanes. Pin immutable integration `HEAD`.
+Enter Review only when a receipt authorizes `review`. Require the drained graph, child accounting, clean integration state, final validation, and idle lanes. Pin immutable integration `HEAD`.
 
-Invoke `$review` by default or `$convergent-pr-review` for high risk, with `Spec required: yes`, `Review mode: initial`, the Charter, parent, child accounting, Source Trace, fixed point, target `HEAD`, and diff.
+Append one `review-invocation` immediately before each formal review with the immutable target, event ID, mode, reason, and route. Its decision must reference that event ID.
 
-Keep Lock closed for an unavailable or incomplete review, admitted blocker, missing required validation, or residual risk requiring separate authority. `pass with residual risk` is acceptable automatically only when every residual is nonblocking under the Charter and tracker or repo policy requires no separate acceptance.
+- `initial`: review the first integrated candidate.
+- `remediation`: review a successor created from one admitted Repair generation.
+- `assurance`: re-examine the same accepted snapshot through `$convergent-pr-review` with a new run, ledger, and fresh reviewers because the caller required additional confidence.
+- An `incomplete` invocation may retry the same target and mode when review budget remains.
 
-The review report returns evidence; it grants no mutation, worker dispatch, or successor-snapshot authority. The orchestrator's recorded Charter, ledger state, and remaining Budget control Repair. Finalize child closeout evidence only after acceptance.
+Invoke `$review` by default or `$convergent-pr-review` for high risk, with `Spec required: yes`, the Charter, Source Trace, fixed point, target, mode, and mode-specific packet. If assurance is required but the Charter selected ordinary review, return the route change for caller-authorized reconciliation.
+
+Keep Lock closed for an unavailable or incomplete review, admitted blocker, missing required proof, unmet required-review count, or residual risk needing separate authority. `pass with residual risk` is acceptable automatically only when every residual is nonblocking under the Charter and policy requires no separate acceptance.
+
+The review report is evidence. It grants no mutation, repair, or successor-snapshot authority.
 
 ## Repair
 
-Classify the complete review result through the finding contract before dispatch or editing. Continue automatically only when every blocker is admitted, marked `automatic-in-scope`, preserves the Charter, has bounded proof, and `validate-state --intent repair` passes. If any blocker is ambiguous or `decision-required`, return the whole decision packet without partially repairing it. An `incomplete` review is not repair authority.
+Classify the complete review result through the finding contract. Continue automatically only when every blocker is admitted, `automatic-in-scope`, Charter-preserving, bounded by proof, and both one Repair generation and one successor Review invocation remain. An `incomplete` review is never repair authority.
 
-Append one `repair-plan` referencing the blocked review-decision event and snapshot, with the generation, every eligible finding ID, owners, write scopes, and proof. Batch all eligible blockers into that generation. The orchestrator may apply a tiny routed fix or dispatch isolated repair workers; every worker receives the Charter, generation, reviewed `HEAD`, assigned finding IDs, owned files, and required proof. Repair work never widens the parent graph or mutates tracker closeout state.
+Append one `repair-plan` tied to the blocked review decision and target. Batch every eligible blocker into the generation with owners, write scopes, and proof. If any blocker is ambiguous or `decision-required`, return the whole decision packet without partial repair.
 
-Accept and land repair packets serially. Run finding proof, repair-regression proof, and touched-area integration proof, then append `repair-complete`. Pin one successor `HEAD` and invoke the same review route with `Review mode: remediation`, the original Charter, generation, prior snapshot, carried finding IDs, repair delta, and remaining original acceptance.
+Apply a tiny routed fix or dispatch isolated repair workers. Repair never widens the parent graph or mutates tracker closeout state. Land packets serially, run finding, regression, and integration proof, append `repair-complete`, pin one successor `HEAD`, and invoke `remediation` review.
 
-Remediation review may judge carried findings, repair regressions, and remaining original acceptance. It may not reopen untouched surfaces with new hardening lenses. Stop when review is acceptable, a decision is required, or two Repair generations have been consumed.
+Stop when review is acceptable, a decision is required, or either budget is exhausted.
 
 ## Lock
 
-Open Lock only when `validate-state --intent lock` proves that the accepted reviewed `HEAD` equals current integration `HEAD`. Generate the closeout plan from the event stream.
+Open Lock only when a receipt authorizes `lock` and proves the latest accepted reviewed `HEAD` equals current integration `HEAD` and the required review count is complete.
 
-Follow tracker policy and execute the generated plan child-first. Render and post each verified packet, apply its mutation, and **Mutation read-back** before advancing. Then refetch the complete related set, close the parent only when its rule passes, and read back the graph.
+Generate the closeout plan from the event stream. Execute tracker mutations child-first under tracker policy, render each verified packet, and perform **Mutation read-back** after every change. Close the parent only when its rule passes and the complete related set reads back correctly.
 
-Push only when `validate-state --intent push` proves current and approved `HEAD` match; verify the remote resolves to that SHA.
+Push only when a receipt authorizes `push`; verify the remote resolves to the approved SHA.
 
 ## Release
 
-Finish every agent. Release each lane through the helper, recording registration and directory state separately. Preserve dirty, unintegrated, conflicted, unauthorized, or residual state.
+Append structured friction observations from worker, integrator, reviewer, and root packets. Before `complete`, append exactly one synthesis referencing every observation, or `none_observed: true`. Friction is process evidence only: it never grants dispatch, landing, repair, review, Lock, or push authority. A missing synthesis may be repaired after the release event by appending that evidence alone.
 
-Render `LEDGER.md` from `events.jsonl`; never edit generated ledger prose. Return exactly one outcome from `validate-state`: `complete`, `partial`, or `blocked`.
+Finish every actor. Release each lane through the helper and preserve dirty, unintegrated, conflicted, unauthorized, or residual state. Render `LEDGER.md` from `events.jsonl`; never edit generated prose.
 
-`complete` requires approved current `HEAD`, no admitted blocker, final validation and review, verified child and parent closeout, applicable tracker and push proof, no open Repair generation, and safe lane dispositions. `partial` and `blocked` claim only reconciled events and preserve exact recovery state.
-
-Every outcome includes the Source Trace, child-set snapshot, frontier history, landing and closeout accounting, current Git state, skipped checks, residual risk, and release state. No outcome leaves an active lane or uncertain partial mutation unaccounted.
+Return exactly one outcome from `validate-state`: `complete`, `partial`, or `blocked`. `complete` requires the approved current `HEAD`, accepted latest review, required review count, final proof, verified child and parent closeout, applicable push proof, friction synthesis, no open Repair generation, and safe lane dispositions. Every outcome includes recovery-ready state and leaves no active lane or uncertain partial mutation unaccounted.

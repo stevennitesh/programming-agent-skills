@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import os
 import runpy
 import subprocess
 import sys
@@ -26,12 +28,15 @@ def command(*args: str, cwd: Path | None = None) -> subprocess.CompletedProcess[
     )
 
 
-def helper(script: Path, *args: str) -> tuple[subprocess.CompletedProcess[str], dict]:
+def helper(
+    script: Path, *args: str, env: dict[str, str] | None = None
+) -> tuple[subprocess.CompletedProcess[str], dict]:
     result = subprocess.run(
         [sys.executable, str(script), *args],
         text=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
+        env=env,
     )
     packet = json.loads(result.stdout)
     return result, packet
@@ -48,6 +53,38 @@ def append_event(events: Path, event: dict) -> dict:
     packet = json.loads(result.stdout)
     assert result.returncode == 0, packet
     return packet["event"]
+
+
+def append_receipt(
+    events: Path,
+    event: dict,
+    *,
+    intent: str,
+    event_id: str,
+    repo: Path | None = None,
+) -> tuple[subprocess.CompletedProcess[str], dict]:
+    args = [
+        sys.executable,
+        str(LEDGER),
+        "append-receipt",
+        "--events",
+        str(events),
+        "--intent",
+        intent,
+        "--event-id",
+        event_id,
+        "--stdin",
+    ]
+    if repo is not None:
+        args.extend(["--repo", str(repo)])
+    result = subprocess.run(
+        args,
+        input=json.dumps(event),
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    return result, json.loads(result.stdout)
 
 
 def validate_state(
@@ -129,6 +166,7 @@ def test_lane_helper_defaults_to_the_repo_parent_worktree_namespace(
     assert result.returncode == 0, created
     expected_root = (repo.parent / "worktrees" / "parallel-implement").resolve()
     assert Path(created["root"]) == expected_root
+    assert created["root_source"] == "repo-parent-default"
     assert Path(created["worktree"]).is_relative_to(expected_root)
 
     result, cleanup = helper(
@@ -195,6 +233,153 @@ def test_lane_helper_creates_preflights_and_removes_a_detached_worktree(
     assert cleanup["state"] == "removed"
     assert cleanup["registered_after"] is False
     assert cleanup["directory_exists"] is False
+
+
+def test_lane_preflight_accepts_a_utf8_argv_file_with_provenance(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    created = create_lane(repo, base, tmp_path / "lanes")
+    proof_file = tmp_path / "proof-command.json"
+    proof_bytes = json.dumps(
+        [sys.executable, "-c", "print('file-started')"]
+    ).encode("utf-8")
+    proof_file.write_bytes(proof_bytes)
+
+    result, preflight = helper(
+        LANE,
+        "preflight",
+        "--worktree",
+        created["worktree"],
+        "--base",
+        base,
+        "--actor-id",
+        "worker-file",
+        "--proof-command-file",
+        str(proof_file),
+    )
+    assert result.returncode == 0, preflight
+    proof = preflight["proof_startup"]
+    assert proof["returncode"] == 0
+    assert proof["command_file"] == str(proof_file.resolve())
+    assert proof["command_file_sha256"] == hashlib.sha256(proof_bytes).hexdigest()
+
+    bom_proof_file = tmp_path / "proof-command-bom.json"
+    bom_proof_bytes = b"\xef\xbb\xbf" + proof_bytes
+    bom_proof_file.write_bytes(bom_proof_bytes)
+    result, bom_preflight = helper(
+        LANE,
+        "preflight",
+        "--worktree",
+        created["worktree"],
+        "--base",
+        base,
+        "--actor-id",
+        "worker-file-bom",
+        "--proof-command-file",
+        str(bom_proof_file),
+    )
+    assert result.returncode == 0, bom_preflight
+    bom_proof = bom_preflight["proof_startup"]
+    assert bom_proof["returncode"] == 0
+    assert bom_proof["command_file_sha256"] == hashlib.sha256(
+        bom_proof_bytes
+    ).hexdigest()
+
+    result, cleanup = helper(
+        LANE,
+        "cleanup",
+        "--repo",
+        str(repo),
+        "--root",
+        created["root"],
+        "--worktree",
+        created["worktree"],
+        "--expected-head",
+        base,
+        "--disposition",
+        "integrated",
+    )
+    assert result.returncode == 0, cleanup
+
+
+def test_lane_root_precedence_uses_explicit_then_environment_then_default(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    environment_root = tmp_path / "environment-lanes"
+    explicit_root = tmp_path / "explicit-lanes"
+    env = {**os.environ, "PARALLEL_IMPLEMENT_WORKTREE_ROOT": str(environment_root)}
+
+    result, created = helper(
+        LANE,
+        "create",
+        "--repo",
+        str(repo),
+        "--root",
+        str(explicit_root),
+        "--base",
+        base,
+        "--run-id",
+        "run-explicit",
+        "--item-id",
+        "ticket-explicit",
+        "--max-path",
+        "1000",
+        env=env,
+    )
+    assert result.returncode == 0, created
+    assert Path(created["root"]) == explicit_root.resolve()
+    assert created["root_source"] == "explicit"
+    result, cleanup = helper(
+        LANE,
+        "cleanup",
+        "--repo",
+        str(repo),
+        "--root",
+        created["root"],
+        "--worktree",
+        created["worktree"],
+        "--expected-head",
+        base,
+        "--disposition",
+        "integrated",
+    )
+    assert result.returncode == 0, cleanup
+
+    result, created = helper(
+        LANE,
+        "create",
+        "--repo",
+        str(repo),
+        "--base",
+        base,
+        "--run-id",
+        "run-environment",
+        "--item-id",
+        "ticket-environment",
+        "--max-path",
+        "1000",
+        env=env,
+    )
+    assert result.returncode == 0, created
+    assert Path(created["root"]) == environment_root.resolve()
+    assert created["root_source"] == "environment"
+    result, cleanup = helper(
+        LANE,
+        "cleanup",
+        "--repo",
+        str(repo),
+        "--root",
+        created["root"],
+        "--worktree",
+        created["worktree"],
+        "--expected-head",
+        base,
+        "--disposition",
+        "integrated",
+    )
+    assert result.returncode == 0, cleanup
 
 
 def test_lane_preflight_requires_proof_or_an_explicit_skip(tmp_path: Path) -> None:
@@ -295,13 +480,14 @@ def test_lane_creation_stops_on_failure_and_rejects_unsafe_roots(tmp_path: Path)
     assert result.returncode == 1
     assert "inside the active checkout" in nested["error"]
 
+    short_budget_root = tmp_path / "short-budget-lanes"
     result, budget = helper(
         LANE,
         "create",
         "--repo",
         str(repo),
         "--root",
-        str(lane_root),
+        str(short_budget_root),
         "--base",
         base,
         "--run-id",
@@ -313,6 +499,8 @@ def test_lane_creation_stops_on_failure_and_rejects_unsafe_roots(tmp_path: Path)
     )
     assert result.returncode == 1
     assert "path budget exceeded" in budget["error"]
+    assert budget["state"] == "blocked-path-budget"
+    assert not short_budget_root.exists()
 
     created = create_lane(repo, base, lane_root, item="ticket-with-a-long-name")
     if sys.platform == "win32":
@@ -496,6 +684,132 @@ def test_run_ledger_is_the_validated_append_only_event_owner(tmp_path: Path) -> 
     assert len(events.read_text(encoding="utf-8").splitlines()) == 3
 
 
+def test_append_receipt_is_idempotent_and_separates_commit_from_authority(
+    tmp_path: Path,
+) -> None:
+    events = tmp_path / "receipt.jsonl"
+    scope = {
+        "event": "scope",
+        "work_item": "parent",
+        "data": {
+            "children": ["ticket-1"],
+            "charter": {
+                "id": "charter-1",
+                "repair_generation_budget": 2,
+                "review_invocation_budget": 3,
+                "review_invocations_required": 1,
+            },
+        },
+    }
+
+    result, first = append_receipt(
+        events, scope, intent="dispatch", event_id="scope-1"
+    )
+    assert result.returncode == 0, first
+    assert first["committed"] is True
+    assert first["event_id"] == "scope-1"
+    assert first["event_number"] == 1
+    assert first["requested_intent"] == {"name": "dispatch", "allowed": False}
+    assert "dispatch" not in first["authorized_intents"]
+    assert first["counters"] == {
+        "repairs_used": 0,
+        "repairs_remaining": 2,
+        "reviews_used": 0,
+        "reviews_remaining": 3,
+        "reviews_required_remaining": 1,
+    }
+
+    result, replay = append_receipt(
+        events, scope, intent="dispatch", event_id="scope-1"
+    )
+    assert result.returncode == 0, replay
+    assert replay == first
+    assert len(events.read_text(encoding="utf-8").splitlines()) == 1
+
+    conflicting = {**scope, "data": {**scope["data"], "children": ["ticket-2"]}}
+    result, rejected = append_receipt(
+        events, conflicting, intent="dispatch", event_id="scope-1"
+    )
+    assert result.returncode == 1
+    assert rejected["committed"] is False
+    assert "different payload" in rejected["error"]
+    assert len(events.read_text(encoding="utf-8").splitlines()) == 1
+
+
+def test_append_receipt_replay_rechecks_authority_after_the_stream_advances(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    events = tmp_path / "stale-receipt.jsonl"
+    prefix = canonical_review_prefix(base)
+    for event in prefix[:-1]:
+        append_event(events, event)
+
+    decision = prefix[-1]
+    result, first = append_receipt(
+        events,
+        decision,
+        intent="lock",
+        event_id="review-1-decision",
+        repo=repo,
+    )
+    assert result.returncode == 0, first
+    assert first["requested_intent"] == {"name": "lock", "allowed": True}
+    assert first["receipt_fresh"] is True
+
+    append_event(events, {"event": "resume", "work_item": "parent"})
+    result, replay = append_receipt(
+        events,
+        decision,
+        intent="lock",
+        event_id="review-1-decision",
+        repo=repo,
+    )
+    assert result.returncode == 0, replay
+    assert replay["committed"] is True
+    assert replay["event_number"] == first["event_number"]
+    assert replay["state_event_count"] == first["state_event_count"] + 1
+    assert replay["receipt_fresh"] is False
+    assert replay["requested_intent"] == {"name": "lock", "allowed": False}
+    assert "lock" not in replay["authorized_intents"]
+
+
+def test_canonical_review_invocations_require_a_nonempty_reason(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    for reason in (None, ""):
+        events = tmp_path / f"missing-reason-{reason is None}.jsonl"
+        prefix = canonical_review_prefix(base)
+        invocation = prefix[-2]
+        invocation["data"] = {"mode": "initial"}
+        if reason is not None:
+            invocation["data"]["reason"] = reason
+        for event in prefix:
+            append_event(events, event)
+        result, invalid = validate_state(events, "lock", repo=repo)
+        assert result.returncode == 1
+        assert any("requires a reason" in error for error in invalid["errors"])
+
+def test_append_receipt_rejects_semantically_invalid_state_without_writing(
+    tmp_path: Path,
+) -> None:
+    events = tmp_path / "invalid-receipt.jsonl"
+    result, rejected = append_receipt(
+        events,
+        {
+            "event": "accept",
+            "work_item": "ticket-1",
+            "worker_sha": "abc",
+        },
+        intent="land",
+        event_id="invalid-accept",
+    )
+    assert result.returncode == 1
+    assert rejected["committed"] is False
+    assert "semantically invalid" in rejected["error"]
+    assert not events.exists() or events.read_text(encoding="utf-8") == ""
+
 def test_ledger_state_machine_rejects_illegal_campaign_transitions(
     tmp_path: Path,
 ) -> None:
@@ -639,6 +953,58 @@ def blocked_review_events(base: str, findings: list[dict], *, budget: int = 2) -
     ]
 
 
+def canonical_review_prefix(
+    base: str,
+    *,
+    review_budget: int = 3,
+    reviews_required: int = 1,
+    decision: str = "pass",
+    findings: list[dict] | None = None,
+) -> list[dict]:
+    return [
+        {
+            "event": "scope",
+            "work_item": "parent",
+            "data": {
+                "children": ["ticket-1"],
+                "charter": {
+                    "id": "parent-charter",
+                    "runtime_contract": 2,
+                    "repair_generation_budget": 2,
+                    "review_invocation_budget": review_budget,
+                    "review_invocations_required": reviews_required,
+                },
+            },
+        },
+        {"event": "lane-create", "work_item": "ticket-1", "data": {"lane_id": "lane-1"}},
+        {"event": "lane-preflight", "work_item": "ticket-1", "data": {"lane_id": "lane-1"}},
+        {"event": "dispatch", "work_item": "ticket-1", "data": {"lane_id": "lane-1"}},
+        {"event": "accept", "work_item": "ticket-1", "worker_sha": base},
+        {"event": "land", "work_item": "ticket-1", "worker_sha": base, "integration_sha": base},
+        {"event": "graph-drained", "work_item": "parent", "integration_sha": base},
+        {"event": "review-ready", "work_item": "parent", "integration_sha": base},
+        {
+            "event": "review-invocation",
+            "event_id": "review-1",
+            "work_item": "parent",
+            "integration_sha": base,
+            "data": {"mode": "initial", "reason": "first integrated candidate"},
+        },
+        {
+            "event": "review-decision",
+            "event_id": "review-1-decision",
+            "work_item": "parent",
+            "integration_sha": base,
+            "decision": decision,
+            "data": {
+                "review_invocation_id": "review-1",
+                "mode": "initial",
+                "findings": findings or [],
+            },
+        },
+    ]
+
+
 def test_ledger_authorizes_one_complete_bounded_repair_generation(tmp_path: Path) -> None:
     repo, base = repository(tmp_path)
     events = tmp_path / "repair.jsonl"
@@ -704,7 +1070,16 @@ def test_ledger_authorizes_one_complete_bounded_repair_generation(tmp_path: Path
     result, review = validate_state(events, "review", repo=repo)
     assert result.returncode == 0, review
     append_event(events, {"event": "review-ready", "work_item": "parent", "integration_sha": repaired})
-    append_event(events, {"event": "review-target", "work_item": "parent", "integration_sha": repaired})
+    append_event(
+        events,
+        {
+            "event": "review-invocation",
+            "event_id": "review-2",
+            "work_item": "parent",
+            "integration_sha": repaired,
+            "data": {"mode": "remediation", "reason": "verify repaired successor"},
+        },
+    )
     append_event(
         events,
         {
@@ -712,11 +1087,183 @@ def test_ledger_authorizes_one_complete_bounded_repair_generation(tmp_path: Path
             "work_item": "parent",
             "integration_sha": repaired,
             "decision": "pass",
-            "data": {"mode": "remediation", "findings": []},
+            "data": {
+                "review_invocation_id": "review-2",
+                "mode": "remediation",
+                "findings": [],
+            },
         },
     )
     result, lock = validate_state(events, "lock", repo=repo)
     assert result.returncode == 0, lock
+
+
+def test_review_invocations_support_assurance_and_caller_budget_changes(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    events = tmp_path / "assurance.jsonl"
+    for event in canonical_review_prefix(base):
+        append_event(events, event)
+
+    append_event(
+        events,
+        {
+            "event": "scope-change",
+            "work_item": "parent",
+            "data": {
+                "charter": {
+                    "id": "parent-charter",
+                    "runtime_contract": 2,
+                    "repair_generation_budget": 2,
+                    "review_invocation_budget": 4,
+                    "review_invocations_required": 4,
+                },
+                "budget_change": {
+                    "source": "caller requested three additional assurance reviews",
+                    "reason": "increase confidence before closeout",
+                    "prior": {
+                        "repair_generation_budget": 2,
+                        "review_invocation_budget": 3,
+                        "review_invocations_required": 1,
+                    },
+                },
+            },
+        },
+    )
+    for number in range(2, 5):
+        append_event(
+            events,
+            {
+                "event": "review-invocation",
+                "event_id": f"review-{number}",
+                "work_item": "parent",
+                "integration_sha": base,
+                "data": {
+                    "mode": "assurance",
+                    "reason": f"caller-required confidence pass {number - 1}",
+                },
+            },
+        )
+        append_event(
+            events,
+            {
+                "event": "review-decision",
+                "work_item": "parent",
+                "integration_sha": base,
+                "decision": "pass with residual risk",
+                "data": {
+                    "review_invocation_id": f"review-{number}",
+                    "mode": "assurance",
+                    "findings": [],
+                },
+            },
+        )
+
+    result, lock = validate_state(events, "lock", repo=repo)
+    assert result.returncode == 0, lock
+    assert lock["review_invocations_used"] == 4
+    assert lock["review_invocations_completed"] == 4
+    assert lock["review_invocations_required"] == 4
+
+
+def test_budget_scope_change_requires_exact_prior_values_and_caller_evidence(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    events = tmp_path / "unauthorized-budget-change.jsonl"
+    for event in canonical_review_prefix(base):
+        append_event(events, event)
+    append_event(
+        events,
+        {
+            "event": "scope-change",
+            "work_item": "parent",
+            "data": {
+                "charter": {
+                    "id": "parent-charter",
+                    "runtime_contract": 2,
+                    "repair_generation_budget": 4,
+                    "review_invocation_budget": 5,
+                    "review_invocations_required": 2,
+                }
+            },
+        },
+    )
+    result, blocked = validate_state(events, "lock", repo=repo)
+    assert result.returncode == 1
+    assert any("budget changes require data.budget_change" in error for error in blocked["errors"])
+
+
+def test_incomplete_review_may_retry_the_same_target_and_mode(tmp_path: Path) -> None:
+    repo, base = repository(tmp_path)
+    events = tmp_path / "retry.jsonl"
+    for event in canonical_review_prefix(base, decision="incomplete"):
+        append_event(events, event)
+    append_event(
+        events,
+        {
+            "event": "review-invocation",
+            "event_id": "review-2",
+            "work_item": "parent",
+            "integration_sha": base,
+            "data": {"mode": "initial", "reason": "retry incomplete invocation"},
+        },
+    )
+    append_event(
+        events,
+        {
+            "event": "review-decision",
+            "work_item": "parent",
+            "integration_sha": base,
+            "decision": "pass",
+            "data": {
+                "review_invocation_id": "review-2",
+                "mode": "initial",
+                "findings": [],
+            },
+        },
+    )
+    result, lock = validate_state(events, "lock", repo=repo)
+    assert result.returncode == 0, lock
+    assert lock["review_invocations_used"] == 2
+    assert lock["review_invocations_completed"] == 1
+
+
+def test_repair_requires_a_remaining_successor_review_invocation(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    events = tmp_path / "no-successor-review.jsonl"
+    finding = {
+        "id": "F1",
+        "blocking": True,
+        "remediation": "automatic-in-scope",
+        "anchor": "acceptance",
+        "evidence": "failure",
+        "required_proof": "proof",
+    }
+    for event in canonical_review_prefix(
+        base, review_budget=1, decision="blocked", findings=[finding]
+    ):
+        append_event(events, event)
+    append_event(
+        events,
+        {
+            "event": "repair-plan",
+            "work_item": "parent",
+            "data": {
+                "charter_id": "parent-charter",
+                "generation": 1,
+                "review_decision_id": "review-1-decision",
+                "review_target": base,
+                "finding_ids": ["F1"],
+            },
+        },
+    )
+    result, repair = validate_state(events, "repair", repo=repo)
+    assert result.returncode == 1
+    assert any("successor review invocation" in error for error in repair["errors"])
 
 
 @pytest.mark.parametrize(
@@ -773,7 +1320,7 @@ def test_ledger_authorizes_one_complete_bounded_repair_generation(tmp_path: Path
             ],
             ["F1"],
             0,
-            "Repair Budget",
+            "Repair Generation Budget",
         ),
     ],
 )
@@ -855,6 +1402,70 @@ def test_ledger_validates_complete_campaign_and_renders_canonical_markdown(
     text = ledger.read_text(encoding="utf-8")
     assert "Generated from `events.jsonl`; do not edit." in text
     assert "ticket-1" in text and "ticket implementation" in text
+
+
+def test_canonical_closeout_requires_one_repairable_friction_synthesis(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    events = tmp_path / "canonical-closeout.jsonl"
+    campaign = valid_campaign_events(base)
+    campaign[0]["data"]["charter"] = {
+        "id": "parent-charter",
+        "runtime_contract": 2,
+        "repair_generation_budget": 2,
+        "review_invocation_budget": 3,
+        "review_invocations_required": 1,
+    }
+    campaign[8] = {
+        "event": "review-invocation",
+        "event_id": "review-1",
+        "work_item": "parent",
+        "integration_sha": base,
+        "data": {"mode": "initial", "reason": "first integrated candidate"},
+    }
+    campaign[9]["data"] = {
+        "review_invocation_id": "review-1",
+        "mode": "initial",
+        "findings": [],
+    }
+    for event in campaign:
+        append_event(events, event)
+
+    result, missing = validate_state(events, "complete", repo=repo)
+    assert result.returncode == 1
+    assert any("Workflow Friction synthesis" in error for error in missing["errors"])
+
+    append_event(
+        events,
+        {
+            "event": "friction",
+            "event_id": "friction-synthesis",
+            "work_item": "parent",
+            "data": {
+                "kind": "synthesis",
+                "observations": [],
+                "deduplicated_themes": [],
+                "none_observed": True,
+            },
+        },
+    )
+    result, complete = validate_state(events, "complete", repo=repo)
+    assert result.returncode == 0, complete
+
+    ledger = tmp_path / "LEDGER.md"
+    result, rendered = helper(
+        LEDGER,
+        "render",
+        "--events",
+        str(events),
+        "--output",
+        str(ledger),
+    )
+    assert result.returncode == 0, rendered
+    text = ledger.read_text(encoding="utf-8")
+    assert "## Workflow Friction" in text
+    assert "None observed." in text
 
 
 def test_ledger_blocks_wrong_closeout_head_and_unreleased_lane(tmp_path: Path) -> None:

@@ -9,7 +9,7 @@ Own one outcome: a recommended shape for one bounded module or interface questio
 
 Default to read-only design. The user or caller owns public-contract commitments, design acceptance, implementation, and downstream mutations. When loaded only as vocabulary, retain the caller's artifact, mutation boundary, and completion criterion.
 
-For codebase-wide candidate discovery, recommend `$improve-codebase-architecture` and stop.
+For codebase-wide improvement discovery and classification, recommend `$improve-codebase` and stop.
 
 ## Vocabulary
 

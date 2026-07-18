@@ -1,0 +1,7 @@
+interface:
+  display_name: "Improve Codebase"
+  short_description: "Find and sequence high-value code improvements"
+  default_prompt: "Use $improve-codebase to survey this codebase and recommend the strongest evidence-backed improvement."
+
+policy:
+  allow_implicit_invocation: false

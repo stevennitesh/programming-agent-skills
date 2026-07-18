@@ -1,0 +1,7 @@
+interface:
+  display_name: "Simplify Code"
+  short_description: "Cut complexity without changing behavior"
+  default_prompt: "Use $simplify-code to apply one bounded, behavior-preserving simplification, or specify until-clean with a finite campaign budget for a named region."
+
+policy:
+  allow_implicit_invocation: false

@@ -14,7 +14,9 @@ Name the module, interface, implementation, spread behavior or decisions, caller
 
 ## 3. Shape
 
-Choose the strongest shape: deepen, merge, inline, retain, or introduce no new seam. Describe its caller-facing contract, hidden behavior and decisions, any earned seam, adapters or substitutes, caller and test surfaces, and first bounded migration step.
+Choose the strongest shape: deepen, merge, inline, retain, replace, or introduce no new seam. Describe its caller-facing contract, hidden behavior and decisions, any earned seam, adapters or substitutes, caller and test surfaces, and first bounded migration step.
+
+Admit **replace** only when current commitments and caller behavior are traceable, incremental evolution is riskier or more complicated, parity has a proof seam, and migration, cutover, rollback, and one bounded first slice are explicit.
 
 For an enforceable boundary, require one **boundary proof**: a representative allowed caller, a forbidden caller, and a red-capable check that accepts the first and rejects the second.
 
@@ -22,7 +24,7 @@ Read [DEEPENING.md](DEEPENING.md) when dependency shape changes the seam, substi
 
 ## 4. Compare
 
-Compare the candidate with the current shape and the simplest no-new-seam option. Read [DESIGN-IT-TWICE.md](DESIGN-IT-TWICE.md) when the interface is consequential, several shapes are plausible, or migration and compatibility risk are meaningful.
+Compare the candidate with the current shape and the simplest no-new-seam option. When replacement is credible, compare it explicitly with incremental evolution. Read [DESIGN-IT-TWICE.md](DESIGN-IT-TWICE.md) when the interface is consequential, several shapes are plausible, or migration and compatibility risk are meaningful.
 
 ## 5. Recommend
 
@@ -41,8 +43,9 @@ Return:
 - caller leverage, maintainer locality, and test surface;
 - credible alternatives and recommendation;
 - first bounded migration step and validation proof, including the boundary proof when applicable;
+- for replacement, parity seam, migration, cutover, and rollback evidence;
 - risks, follow-ups, and any domain or ADR candidate.
 
 ## Completion
 
-Complete when the Source Trace covers the candidate, callers, tests, dependencies, and constraints; current and recommended interfaces are explicit; any seam or adapter is earned; behavior is provable through the caller-facing surface; every enforceable boundary has its boundary proof; the current and no-new-seam shapes were compared; consequential alternatives were explored; one design and a bounded first migration step were recommended; the design packet was returned; and downstream mutations remain caller-owned.
+Complete when the Source Trace covers the candidate, callers, tests, dependencies, and constraints; current and recommended interfaces are explicit; any seam or adapter is earned; behavior is provable through the caller-facing surface; every enforceable boundary has its boundary proof; the current and no-new-seam shapes were compared; replacement was compared with incremental evolution when credible and has parity, migration, cutover, and rollback evidence when chosen; consequential alternatives were explored; one design and a bounded first migration step were recommended; the design packet was returned; and downstream mutations remain caller-owned.

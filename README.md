@@ -107,8 +107,8 @@ The portable contract carries the convergence loop, commitment boundaries, shapi
 
 - **Shape before building:** `$grilling`, `$grill-with-docs`, `$wayfinder`, `$to-questionnaire`, `$research`, `$prototype`, `$handoff`
 - **Turn intent into delivery:** `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement`
-- **Prove and protect behavior:** `$tdd`, `$diagnosing-bugs`, `$resolving-merge-conflicts`, `$review`, `$convergent-pr-review`
-- **Deepen design and language:** `$domain-modeling`, `$codebase-design`, `$improve-codebase-architecture`
+- **Prove and protect behavior:** `$tdd`, `$diagnosing-bugs`, `$resolving-merge-conflicts`, `$review`, `$convergent-pr-review`, `$audit-codebase`
+- **Improve code and design:** `$improve-codebase`, `$simplify-code`, `$codebase-design`, `$domain-modeling`
 - **Route and maintain the pack:** `$repo-bootstrap`, `$skill-router`, `$writing-great-skills`
 
 The small [`GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`](GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md) bootstrap teaches Codex when to suggest `$skill-router` and `$repo-bootstrap`. Workflows stay with their skills, and personal global instructions stay local.
@@ -127,7 +127,10 @@ Representative routes:
 - Incoming issue or configured external PR -> `$triage`; ready-for-agent item -> `$implement`
 - Multi-session fog of war -> `$wayfinder` until the map closes -> `$to-spec`, `$to-tickets`, or `$implement`
 - Settled red-testable behavior -> `$tdd`; uncertain bug -> `$diagnosing-bugs`; the router owns the exact diagnosis/TDD boundary.
+- Bloated or hard-to-change code with an uncertain best move -> `$improve-codebase` -> selected candidate -> `$simplify-code`, `$codebase-design`, or a delivery route
+- Existing behavior in one bounded region -> `$simplify-code` for one proved reduction, a finite `until-clean` campaign, or a no-safe-cut verdict
 - Ordinary diff -> `$review`; local PR or high-risk diff -> `$convergent-pr-review`
+- Bounded correctness or methodology audit of an immutable repository baseline -> `$audit-codebase`; structural improvement discovery -> `$improve-codebase`
 
 These are examples. `$skill-router` owns the complete route map and tie-breakers.
 

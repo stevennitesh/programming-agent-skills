@@ -1,13 +1,14 @@
-# Codebase Architecture Family Synthesis
+# Codebase Improvement And Design Family Synthesis
 
-This note maps the books and supporting references behind the local `$codebase-design` and `$improve-codebase-architecture` skills:
+This note maps the books and supporting references behind the local `$codebase-design` and `$improve-codebase` skills:
 
 - `skills/custom/codebase-design/SKILL.md`
 - `skills/custom/codebase-design/DIRECT-DESIGN.md`
 - `skills/custom/codebase-design/DEEPENING.md`
 - `skills/custom/codebase-design/DESIGN-IT-TWICE.md`
-- `skills/custom/improve-codebase-architecture/SKILL.md`
-- `skills/custom/improve-codebase-architecture/HTML-REPORT.md`
+- `skills/custom/improve-codebase/SKILL.md`
+- `skills/custom/improve-codebase/SELECTED-CANDIDATE.md`
+- `skills/custom/improve-codebase/HTML-REPORT.md`
 
 The local skill-pack stance is: design deep modules with small useful interfaces, place seams where behavior genuinely varies, use adapters only when they buy locality or testability, compare interface alternatives before settling, and present architecture friction visually enough that a user can choose the next exploration.
 
@@ -31,7 +32,7 @@ Maps to:
 - `codebase-design/SKILL.md`: depth, interface, implementation, leverage, locality
 - `codebase-design/DEEPENING.md`: deepening shallow clusters
 - `codebase-design/DESIGN-IT-TWICE.md`: generating several interface alternatives
-- `improve-codebase-architecture/SKILL.md`: finding candidates where shallow modules create friction
+- `improve-codebase/SKILL.md`: finding candidates where shallow modules create friction
 
 Skill-pack takeaway:
 
@@ -52,7 +53,7 @@ Maps to:
 
 - `codebase-design/SKILL.md`: module, interface, implementation, locality
 - `codebase-design/DEEPENING.md`: moving decisions into the module that owns them
-- `improve-codebase-architecture/SKILL.md`: spotting behavior spread across callers
+- `improve-codebase/SKILL.md`: spotting behavior spread across callers
 
 Skill-pack takeaway:
 
@@ -74,7 +75,7 @@ Maps to:
 
 - `codebase-design/SKILL.md`: prefer repo/domain vocabulary and map it to shared architecture vocabulary
 - `codebase-design/DEEPENING.md`: move behavior to the module that owns the domain concept
-- `improve-codebase-architecture/SKILL.md`: read domain glossary and ADRs before proposing candidates
+- `improve-codebase/SKILL.md`: read domain glossary and ADRs before proposing candidates
 - `HTML-REPORT.md`: preserve real repo/domain terms in candidate cards
 
 Skill-pack takeaway:
@@ -96,7 +97,7 @@ Maps to:
 
 - `codebase-design/DEEPENING.md`: behavior-preserving support slices
 - `codebase-design/DESIGN-IT-TWICE.md`: first safe migration step
-- `improve-codebase-architecture/SKILL.md`: report candidates but do not implement refactors
+- `improve-codebase/SKILL.md`: report candidates but do not implement changes
 
 Skill-pack takeaway:
 
@@ -117,7 +118,7 @@ Maps to:
 
 - `codebase-design/SKILL.md`: seam and adapter definitions
 - `codebase-design/DEEPENING.md`: dependency categories and adapter strategy
-- `improve-codebase-architecture/SKILL.md`: test surface and seam leakage as candidate signals
+- `improve-codebase/SKILL.md`: test surface and seam leakage as candidate signals
 
 Skill-pack takeaway:
 
@@ -138,7 +139,7 @@ Maps to:
 
 - `codebase-design/SKILL.md`: interface is the test surface
 - `codebase-design/DEEPENING.md`: fake adapters and local substitutes
-- `improve-codebase-architecture/SKILL.md`: owned modules mocked in tests as a friction signal
+- `improve-codebase/SKILL.md`: owned modules mocked in tests as a friction signal
 
 Skill-pack takeaway:
 
@@ -159,7 +160,7 @@ Maps to:
 
 - `codebase-design/DEEPENING.md`: remote-owned and true-external dependency categories
 - `codebase-design/SKILL.md`: adapter and seam vocabulary
-- `improve-codebase-architecture/SKILL.md`: spotting pass-through adapters vs useful isolation
+- `improve-codebase/SKILL.md`: spotting pass-through adapters versus useful isolation
 
 Skill-pack takeaway:
 
@@ -180,7 +181,7 @@ Maps to:
 
 - `codebase-design/SKILL.md`: interface includes invariants, error modes, performance characteristics, and behavior contracts
 - `codebase-design/DEEPENING.md`: local-substitutable, remote-owned, and true-external dependencies
-- `improve-codebase-architecture/SKILL.md`: why testability and locality matter around data workflows
+- `improve-codebase/SKILL.md`: why testability and locality matter around data workflows
 
 Skill-pack takeaway:
 
@@ -200,7 +201,7 @@ Use for:
 
 Maps to:
 
-- `improve-codebase-architecture/SKILL.md`: candidate filtering by real architectural value
+- `improve-codebase/SKILL.md`: classifying elimination, concentration, retention, and evidence gaps by demonstrated value
 - `HTML-REPORT.md`: recommendation strength and trade-off-oriented prose
 - `codebase-design/DESIGN-IT-TWICE.md`: compare alternatives by risk, migration cost, test surface, and locality
 
@@ -223,7 +224,7 @@ Maps to:
 
 - `codebase-design/DEEPENING.md`: support slices and validation commands
 - `codebase-design/DESIGN-IT-TWICE.md`: migration path and validation proof
-- `improve-codebase-architecture/SKILL.md`: no implementation during discovery; choose one candidate to explore next
+- `improve-codebase/SKILL.md`: no implementation during discovery; choose one candidate to resolve next
 
 Skill-pack takeaway:
 
@@ -243,7 +244,7 @@ Use for:
 Maps to:
 
 - `codebase-design/SKILL.md`: locality and AI-navigability
-- `improve-codebase-architecture/SKILL.md`: fresh-agent navigation as an architectural signal
+- `improve-codebase/SKILL.md`: fresh-agent navigation as an improvement signal
 - `HTML-REPORT.md`: explain why scattered ownership costs future work
 
 Skill-pack takeaway:
@@ -264,8 +265,8 @@ Use for:
 
 Maps to:
 
-- `improve-codebase-architecture/HTML-REPORT.md`: before/after diagrams, dependency flow, call-graph collapse
-- `improve-codebase-architecture/SKILL.md`: report candidates visually instead of settling final interfaces in prose
+- `improve-codebase/HTML-REPORT.md`: disposition-specific diagrams, dependency flow, and call-graph collapse
+- `improve-codebase/SKILL.md`: report candidates visually instead of settling final interfaces or edits in survey prose
 
 Skill-pack takeaway:
 
@@ -345,16 +346,18 @@ Best sources:
 - Evans for domain-owned alternatives
 - Evolutionary Architecture for migration and validation
 
-### `improve-codebase-architecture/SKILL.md`
+### `improve-codebase/SKILL.md`
 
 Primary concepts:
 
-- discover deepening candidates
-- filter out generic cleanup
+- discover evidence-backed codebase improvement candidates
+- classify `Eliminate`, `Concentrate`, `Retain`, and `Investigate`
 - use domain and architecture vocabulary
-- produce a visual HTML report outside the repo
-- ask the user which candidate to explore
-- grill the chosen candidate before design/implementation
+- sequence overlap before ranking
+- produce a visual HTML report under ignored `.tmp/`
+- ask the user which candidate to resolve
+- conditionally research, prototype, grill, or design only after explicit selection
+- recommend explicit mutation or delivery skills and stop
 
 Best sources:
 
@@ -364,14 +367,14 @@ Best sources:
 - Ford/Richards for architectural trade-offs
 - Simon Brown for visual architecture communication
 
-### `improve-codebase-architecture/HTML-REPORT.md`
+### `improve-codebase/HTML-REPORT.md`
 
 Primary concepts:
 
 - diagrams carry the weight
-- before/after visual proof
+- disposition-specific visual explanation
 - lean editorial prose
-- consistent architecture vocabulary
+- consistent improvement and architecture vocabulary
 - recommendation strength and top recommendation
 - dark, static, self-contained report
 

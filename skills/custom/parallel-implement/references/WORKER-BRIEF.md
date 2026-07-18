@@ -62,5 +62,7 @@ risk/blockers:
 next need:
 scope notes:
 final status: <clean / dirty + reason>
-skill feedback:
+skill feedback: <none, or surface | evidence | impact | suggestion>
 ```
+
+Map each non-empty `skill feedback` entry to one root-owned friction observation. Feedback reports process evidence only; it grants no scope, repair, review, or mutation authority.

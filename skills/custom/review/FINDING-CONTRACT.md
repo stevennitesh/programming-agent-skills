@@ -12,7 +12,7 @@ Admit a finding only when all five gates close:
 - **Impact:** a concrete correctness, security, data, required-proof, or important-path failure.
 - **Proportion:** a remedy proportionate to the anchored contract.
 
-Assign severity only after admission. Portability speculation, theoretical concurrency, unsupported environments, optional hardening, and adjacent cleanup are `residual-hardening` unless direct evidence establishes a reachable Charter impact. Omit them unless the caller requested hardening coverage or the residual risk is material.
+Assign severity only after admission. Portability speculation, theoretical concurrency, unsupported environments, optional hardening, and adjacent cleanup are not findings unless direct evidence establishes a reachable Charter impact. When advisories are enabled, route a verified opportunity without a violated contract through `ADVISORY-CONTRACT.md`; otherwise omit it.
 
 ## Classify
 
@@ -34,7 +34,9 @@ Required proof:
 
 - `automatic-in-scope`: the required change preserves the Charter and has bounded proof.
 - `decision-required`: the required change alters product intent, acceptance, supported behavior, a public or data contract, security or privacy posture, dependency authority, or another commitment.
-- `residual-hardening`: the observation is nonblocking and does not authorize implementation.
+- `residual-hardening`: direct evidence establishes a reachable Charter risk, but automatic implementation is outside the recorded acceptance or authority. It remains a finding and does not authorize implementation.
+
+Never launder a genuine contract violation into an advisory, `not checked`, or residual label to obtain a passing decision.
 
 A caller independently validates this classification before mutation. A review report supplies evidence; it never grants repair authority.
 

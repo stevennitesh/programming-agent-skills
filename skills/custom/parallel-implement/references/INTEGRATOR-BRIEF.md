@@ -40,7 +40,7 @@ For each orchestrator-accepted worker packet:
 2. Inspect the actual `base..head` diff for scope, new files, stale-base overlap, conflicts, and proof.
 3. Return a stale-base, `needs-feedback`, or `blocker` packet when unsafe.
 4. Land exactly one item through the recorded mode.
-5. Verify the landed diff, run touched-area proof, append structured evidence through `run_ledger.py`, and report the work item, worker and integration SHAs, landing mode, changed files, validation, skipped checks, overlap or conflicts, decision, next need, risk, skill feedback, new `HEAD`, and status.
+5. Verify the landed diff, run touched-area proof, append structured evidence through `run_ledger.py`, and report the work item, worker and integration SHAs, landing mode, changed files, validation, skipped checks, overlap or conflicts, decision, next need, risk, `skill feedback: <none, or surface | evidence | impact | suggestion>`, new `HEAD`, and status.
 
 If landing conflicts or partially applies, stop. Report the operation, status, unmerged paths, worker commit, current `HEAD`, recorded landing mode, and landing authority. Preserve the partial state and return the conflict packet; the orchestrator applies the routed conflict-recovery boundary.
 
@@ -51,5 +51,7 @@ Run broad validation at routed wave boundaries only. Final broad validation belo
 When the orchestrator drains the parent graph, assemble review-visible parent and child closeout metadata, require a clean in-scope state, run final validation on the candidate integration `HEAD`, and preserve the run fixed point as the review base.
 
 Return the candidate `HEAD`, clean status, integrated worker SHAs, final validation, closeout metadata, skipped checks, residual risk, tracker readiness, blockers, and skill feedback. Return a review-route escalation when integrated risk exceeds the selected route. Then become idle; the orchestrator pins the target and invokes formal review.
+
+The root maps each non-empty skill-feedback entry to one friction observation. Feedback is process evidence only and never changes landing, review, Repair, or release authority.
 
 For an authorized Repair generation, inspect `<reviewed-head>..<current-head>` and require every delta to map to an admitted finding ID. Apply a tiny routed fix only when the Repair authorization names the ID, write scope, and required proof. Otherwise return the finding packet for a fresh worker without editing. Return any Charter change to the orchestrator as `needs-feedback`.

@@ -653,9 +653,57 @@ def test_convergent_review_uses_fresh_context_and_root_only_fanout() -> None:
         "lens",
         "coverage",
         "findings",
+        "advisories",
         "skipped checks",
         "blockers",
     }
+
+
+def test_convergent_review_has_root_guard_capacity_modes_and_advisories() -> None:
+    convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(
+        encoding="utf-8"
+    )
+    advisory = (CUSTOM / "review/ADVISORY-CONTRACT.md").read_text(encoding="utf-8")
+
+    assert "**Root-only guard:**" in convergent
+    assert "stop before Pin" in convergent
+    assert {"initial", "remediation", "assurance"} <= set(
+        re.findall(r"(?m)^- `([^`]+)`:", convergent)
+    )
+    for capacity in (
+        "At least two fresh completed reviewers",
+        "Exactly one fresh completed reviewer",
+        "Zero fresh completed reviewers",
+        "Any required lens or evidence axis remains uncovered",
+    ):
+        assert capacity in convergent
+    assert "Reduced-capacity execution never produces plain `pass`" in convergent
+    assert "[ADVISORY-CONTRACT.md](../review/ADVISORY-CONTRACT.md)" in convergent
+    assert "repair-ready handoff" in convergent
+    assert "advisory patch-ready handoff" not in convergent
+    assert "never affect confidence or a terminal decision" in advisory
+    assert "Never demote" in advisory
+
+
+def test_audit_codebase_is_explicit_and_disjoint_from_diff_review_and_improvement() -> None:
+    skill_dir = CUSTOM / "audit-codebase"
+    audit = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    defect = (skill_dir / "DEFECT-CONTRACT.md").read_text(encoding="utf-8")
+    router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
+
+    assert not implicit_policy(skill_dir)
+    assert "**Root-only guard:**" in audit
+    assert "Release decision: none" in audit
+    assert "A complete audit may contain severe defects" in audit
+    assert "[DEFECT-CONTRACT.md](DEFECT-CONTRACT.md)" in audit
+    assert "FINDING-CONTRACT.md" not in audit
+    assert "Severity communicates impact; it does not issue a release decision" in defect
+    for route in ("$review", "$convergent-pr-review", "$improve-codebase", "$diagnosing-bugs", "$codebase-design"):
+        assert route in audit
+    assert re.search(
+        r"(?m)^\| An immutable repository baseline .* \| `\$audit-codebase` \|$",
+        router,
+    )
 
 
 def test_convergent_review_returns_a_lock_usable_decision() -> None:
@@ -708,38 +756,55 @@ def test_implement_selects_one_risk_scaled_review_route() -> None:
     )
 
 
-def test_architecture_report_matches_the_survey_gate() -> None:
-    architecture = (CUSTOM / "improve-codebase-architecture/SKILL.md").read_text(
-        encoding="utf-8"
-    )
-    report = (CUSTOM / "improve-codebase-architecture/HTML-REPORT.md").read_text(
-        encoding="utf-8"
-    )
+def test_improve_codebase_separates_survey_from_selected_candidate() -> None:
+    skill_dir = CUSTOM / "improve-codebase"
+    survey = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    selected = (skill_dir / "SELECTED-CANDIDATE.md").read_text(encoding="utf-8")
+    report = (skill_dir / "HTML-REPORT.md").read_text(encoding="utf-8")
 
-    assert not implicit_policy(CUSTOM / "improve-codebase-architecture")
-    assert "$improve-codebase-architecture Candidate N" in architecture
-    assert "**No candidate recommended**" in architecture
+    assert not implicit_policy(skill_dir)
+    assert "[SELECTED-CANDIDATE.md](SELECTED-CANDIDATE.md)" in survey
+    assert "$improve-codebase Candidate N from <absolute-report-path>" in survey
+    assert "Do not resolve, select, research, prototype, grill, design, or execute" in survey
+    assert "**No candidate recommended**" in survey
+    for disposition in ("Eliminate", "Concentrate", "Retain", "Investigate"):
+        assert disposition in survey
+    for relationship in ("Independent", "Preparatory", "Absorbed", "Residual"):
+        assert relationship in survey
+    for field in (
+        "behavior and commitment boundary",
+        "proof seam",
+        "uncertainty",
+        "sequence relationship",
+        "exact pickup invocation",
+    ):
+        assert field in survey
+    assert "`Eliminate` points to `$simplify-code`" in survey
+    assert "never `$tdd` or `$implement`" in report
+
     assert re.findall(r"(?m)^## (.+)$", report) == [
         "Portability",
         "Layout",
-        "Theme",
+        "Theme And Accessibility",
+        "Survey Ledger",
         "Candidate",
-        "Diagram",
+        "Visual",
+        "Ranking",
         "Top Recommendation",
+        "Resolution",
         "Voice",
     ]
     assert "`color-scheme: dark`" in report
     assert "`Strong` or `Worth exploring`" in report
-    survey = architecture.split("## Survey", 1)[1].split("## Selected Candidate", 1)[0]
-    selected = architecture.split("## Selected Candidate", 1)[1].split("## Completion", 1)[0]
-    assert survey.index("### Report") < survey.index("Candidate N")
-    assert "### Grill" not in survey
-    assert selected.index("explicitly resumes") < selected.index("### Grill")
-    top_recommendation = report.split("## Top Recommendation", 1)[1].split(
-        "## Voice", 1
-    )[0]
-    assert "**No candidate recommended**" in top_recommendation
-    assert "surveyed region" in top_recommendation
+    assert "**No candidate recommended**" in report
+
+    assert "Do not repeat the Survey" in selected
+    assert "at most one decision-blocking uncertainty" in selected
+    for resolver in ("$research", "$prototype", "$grill-with-docs", "$codebase-design"):
+        assert resolver in selected
+    assert "design evidence, never production proof" in selected
+    assert "$simplify-code Candidate N from <absolute-report-path>" in selected
+    assert "Update the same report" in selected
 
 
 def test_tdd_discloses_test_reference_only_for_an_evidence_gap() -> None:
@@ -757,11 +822,75 @@ def test_tdd_discloses_test_reference_only_for_an_evidence_gap() -> None:
         assert f"[{helper}]({helper})" in tdd
 
 
-def test_tdd_routes_architecture_followups_by_scope() -> None:
+def test_tdd_routes_improvement_followups_by_scope() -> None:
     refactoring = (CUSTOM / "tdd/refactoring.md").read_text(encoding="utf-8")
 
+    assert "$simplify-code" in refactoring
     assert "$codebase-design" in refactoring
-    assert "$improve-codebase-architecture" in refactoring
+    assert "$improve-codebase" in refactoring
+
+
+def test_simplify_code_is_explicit_bounded_and_behavior_preserving() -> None:
+    skill_dir = CUSTOM / "simplify-code"
+    skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+
+    assert not implicit_policy(skill_dir)
+    assert "one proved reduction in total codebase complexity" in skill
+    assert "No safe simplification" in skill
+    assert "trusted focused proof" in skill
+    assert "before and after" in skill
+    assert "After the last proof command, refresh worktree status" in skill
+    assert "proves that no use remains" in skill
+    assert "git ls-files --stage" in skill
+    assert "status text alone is not index proof" in skill
+    assert "Leave the index, commits, trackers, external systems" in skill
+    assert "Without a bounded target, recommend `$improve-codebase` and stop" in skill
+    assert "Candidate N" in skill and "verified `$improve-codebase` report" in skill
+    assert "Enter this branch only when the invocation explicitly says `until-clean`" in skill
+    assert "rerun the complete Trace, Baseline, Hunt, Choose, Cut, Prove, Lock cycle" in skill
+    assert re.findall(r"(?m)^\d\. \*\*([A-Za-z]+)\.\*\*", skill) == [
+        "Delete",
+        "Reuse",
+        "Standardize",
+        "Collapse",
+        "Shrink",
+    ]
+
+
+def test_simplify_code_until_clean_has_a_finite_convergence_contract() -> None:
+    skill = (CUSTOM / "simplify-code/SKILL.md").read_text(encoding="utf-8")
+    branch = skill.split("## Until Clean", 1)[1].split("## Return", 1)[0]
+
+    for contract_field in ("**Region:**", "**Budget:**", "**Progress unit:**", "**Clean criterion:**"):
+        assert contract_field in branch
+    assert "`3` successful cuts by default" in branch
+    assert "Never infer, extend, or reset the budget" in branch
+    assert "strict net reduction" in branch
+    assert "all five rungs" in branch
+    assert "line-count reduction alone never keeps a campaign open" in branch
+    assert "one Cut or Prove attempt" in branch
+    assert "continuation requires a new explicit invocation and budget" in branch
+    assert re.findall(r"(?m)^\d\. \*\*([^*]+):\*\*", branch) == [
+        "Clean",
+        "Budget exhausted",
+        "Diminishing return",
+        "Oscillation",
+        "Failed cut",
+        "Boundary stop",
+    ]
+
+    returned = skill.split("## Return", 1)[1].split("## Completion", 1)[0]
+    assert "Campaign: <region; cut budget, used, and remaining | n/a>" in returned
+    assert "Progress ledger:" in returned
+
+
+def test_codebase_design_compares_replacement_with_incremental_evolution() -> None:
+    direct = (CUSTOM / "codebase-design/DIRECT-DESIGN.md").read_text(encoding="utf-8")
+
+    assert "deepen, merge, inline, retain, replace" in direct
+    assert "compare it explicitly with incremental evolution" in direct
+    for gate in ("parity", "migration", "cutover", "rollback"):
+        assert gate in direct
 
 
 def test_bug_routing_is_disjoint_and_non_bouncing() -> None:
@@ -814,11 +943,9 @@ def test_independent_scouts_receive_curated_fresh_context() -> None:
         encoding="utf-8"
     )
     research = (CUSTOM / "research/SKILL.md").read_text(encoding="utf-8")
-    architecture = (CUSTOM / "improve-codebase-architecture/SKILL.md").read_text(
-        encoding="utf-8"
-    )
+    improvement = (CUSTOM / "improve-codebase/SKILL.md").read_text(encoding="utf-8")
 
-    for text in (design, research, architecture):
+    for text in (design, research, improvement):
         assert 'fork_turns="none"' in text
 
 
@@ -1102,7 +1229,9 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
     diagnosis_route = worker.split("When a bug's", 1)[1].split(";", 1)[0]
     assert "expected behavior" in diagnosis_route
     assert "## Progressive Evidence" in ledger
-    assert "## State Invariants" in ledger
+    assert "## Canonical Charter" in ledger
+    assert "## Review State" in ledger
+    assert "## Friction" in ledger
     assert "events.jsonl" in ledger
     assert "LEDGER.md" in ledger and "generated output" in ledger
     assert "validate-state" in ledger
@@ -1147,6 +1276,7 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
         "scope-change",
         "resume",
         "frontier",
+        "review-invocation",
         "repair-plan",
         "repair-complete",
     } <= event_types
@@ -1156,6 +1286,33 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
     assert "closeout plan" in lock and "Mutation read-back" in lock
     review = parallel.split("## Review", 1)[1].split("## Lock", 1)[0]
     assert "idle" in review
+
+
+def test_parallel_implement_has_root_receipt_budget_and_windows_contracts() -> None:
+    skill_dir = CUSTOM / "parallel-implement"
+    parallel = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    ledger = (skill_dir / "references/RUN-LEDGER.md").read_text(encoding="utf-8")
+    launch = (skill_dir / "references/CODEX-WORKTREE-LAUNCH.md").read_text(
+        encoding="utf-8"
+    )
+    script = (skill_dir / "scripts/run_ledger.py").read_text(encoding="utf-8")
+    lane_script = (skill_dir / "scripts/lane_worktree.py").read_text(encoding="utf-8")
+
+    assert "**Root-only orchestration.**" in parallel
+    assert "stop before Trace" in parallel
+    for field in (
+        "repair_generation_budget",
+        "review_invocation_budget",
+        "review_invocations_required",
+    ):
+        assert field in parallel and field in ledger and field in script
+    assert "append-receipt" in parallel and "append-receipt" in ledger and "append-receipt" in script
+    assert "`committed: true`" in parallel
+    assert "`allowed: true`" in parallel
+    assert "review-invocation" in parallel and "review-invocation" in ledger
+    assert "PARALLEL_IMPLEMENT_WORKTREE_ROOT" in launch and "PARALLEL_IMPLEMENT_WORKTREE_ROOT" in lane_script
+    assert "--proof-command-file" in launch and "--proof-command-file" in lane_script
+    assert "none_observed: true" in parallel
 
 
 def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts() -> None:
@@ -1264,7 +1421,7 @@ def test_diagnosis_returns_to_one_implementation_owner() -> None:
     )
     assert ("diagnosing-bugs", "Recommend and stop", "implement") in rows
     assert all(
-        not (caller == "diagnosing-bugs" and callee == "improve-codebase-architecture")
+        not (caller == "diagnosing-bugs" and callee == "improve-codebase")
         for caller, _, callee in rows
     )
 
@@ -1299,25 +1456,31 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         ("wayfinder", "Recommend and stop", "to-tickets"),
         ("wayfinder", "Recommend and stop", "implement"),
         ("triage", "Invoke", "grill-with-docs"),
-        ("improve-codebase-architecture", "Invoke", "grill-with-docs"),
+        ("improve-codebase", "Invoke", "grill-with-docs"),
         ("implement", "Invoke", "tdd"),
         ("implement", "Invoke", "diagnosing-bugs"),
         ("implement", "Invoke", "review"),
         ("implement", "Invoke", "convergent-pr-review"),
         ("review", "Hand off", "convergent-pr-review"),
+        ("convergent-pr-review", "Recommend and stop", "audit-codebase"),
         ("parallel-implement", "Invoke", "convergent-pr-review"),
         ("parallel-implement", "Invoke", "resolving-merge-conflicts"),
         ("resolving-merge-conflicts", "Invoke", "diagnosing-bugs"),
-        ("improve-codebase-architecture", "Invoke", "research"),
-        ("improve-codebase-architecture", "Load", "codebase-design"),
-        ("improve-codebase-architecture", "Invoke", "codebase-design"),
-        ("improve-codebase-architecture", "Recommend and stop", "implement"),
-        ("improve-codebase-architecture", "Recommend and stop", "to-tickets"),
-        ("improve-codebase-architecture", "Recommend and stop", "to-spec"),
+        ("improve-codebase", "Invoke", "research"),
+        ("improve-codebase", "Invoke", "prototype"),
+        ("improve-codebase", "Load", "codebase-design"),
+        ("improve-codebase", "Invoke", "codebase-design"),
+        ("improve-codebase", "Recommend and stop", "simplify-code"),
+        ("improve-codebase", "Recommend and stop", "implement"),
+        ("improve-codebase", "Recommend and stop", "to-tickets"),
+        ("improve-codebase", "Recommend and stop", "to-spec"),
+        ("simplify-code", "Recommend and stop", "improve-codebase"),
+        ("simplify-code", "Recommend and stop", "codebase-design"),
         ("tdd", "Hand off", "diagnosing-bugs"),
         ("tdd", "Hand off", "prototype"),
+        ("tdd", "Recommend and stop", "simplify-code"),
         ("tdd", "Recommend and stop", "codebase-design"),
-        ("tdd", "Recommend and stop", "improve-codebase-architecture"),
+        ("tdd", "Recommend and stop", "improve-codebase"),
         ("diagnosing-bugs", "Hand off", "tdd"),
         ("diagnosing-bugs", "Recommend and stop", "implement"),
         ("implement", "Recommend and stop", "to-tickets"),
@@ -1329,7 +1492,7 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         ("to-spec", "Recommend and stop", "to-tickets"),
         ("to-tickets", "Recommend and stop", "repo-bootstrap"),
         ("handoff", "Recommend and stop", "repo-bootstrap"),
-        ("improve-codebase-architecture", "Recommend and stop", "repo-bootstrap"),
+        ("improve-codebase", "Recommend and stop", "repo-bootstrap"),
     }
 
     assert required <= edges
