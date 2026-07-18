@@ -16,7 +16,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:3965def50145 -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:eb715ead15d5 -->"
 ENGINEERING_PRIMER_TOKEN = (
     "Explore imaginatively. Converge under proof. Simplify ruthlessly."
 )
@@ -113,6 +113,14 @@ WAYFINDER_TOKENS = (
     "Participation: HITL | AFK",
     "**Frontier query**",
     "**Claim**",
+    "Claim token:",
+    "Claimed at:",
+    "codex/<lowercase UUIDv4>",
+    "<YYYY-MM-DDTHH:MM:SSZ>",
+    "Maintain claims the map",
+    "never reuse it across invocations",
+    "Elapsed time alone never makes a claim stale.",
+    "explicit user approval",
     "**Release**",
     "**Resolve**",
     "**Block**",

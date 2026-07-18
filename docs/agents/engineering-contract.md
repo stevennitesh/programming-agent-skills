@@ -20,8 +20,10 @@ Follow `docs/agents/domain.md` to the relevant glossary and ADRs. Preserve accep
 - **Proof lane:** the repo-owned command, fixture, workflow, or artifact that exercises one proof seam.
 - **Evidence:** inspectable support for a claim.
 - **Tracer bullet:** one narrow, observable path through the real system.
-- **Fixed point:** the pinned review baseline.
-- **Review snapshot:** the immutable tree or captured target compared with a fixed point.
+- **Fixed point:** the pinned review baseline; it does not mean fixing and reviewing until no findings remain.
+- **Review snapshot:** the immutable tree or captured target compared with a fixed point for one review invocation.
+- **Charter:** the caller-recorded outcome, acceptance, supported paths, required proof, commitment boundary, non-goals, fixed point, and repair budget for one implementation campaign.
+- **Repair generation:** one caller-owned batch of admitted in-scope findings, its proof, and one successor review snapshot under the same Charter.
 - **Spec / Standards:** originating commitments / repo conventions and maintainability. Review them separately.
 - **Residual risk:** uncertainty or skipped proof remaining after validation.
 - **Disposable / durable:** `.tmp/` holds disposable work; `.scratch/` holds durable, version-controlled local state.
@@ -33,7 +35,7 @@ Follow `docs/agents/domain.md` to the relevant glossary and ADRs. Preserve accep
 - **Experiments over speculation.** Prefer a disposable spike, tracer bullet, or runnable prototype to extended guesswork. Keep experiments cheap enough to discard and real enough to change the decision.
 - **Semantic proof over plausible output.** Prove that the result means the right thing through an observable seam. Treat plans, summaries, memory, and confident narration as maps, not proof.
 - **Deep simplicity.** Prefer locality, small caller-facing surfaces, and complexity hidden behind clear ownership. Add or deepen an abstraction only when the proved system becomes easier to change, test, or reason about.
-- **Stewardship.** Preserve unrelated work and accepted language. Leave the selected slice more coherent than you found it without laundering adjacent cleanup into scope.
+- **Stewardship.** Preserve unrelated work and accepted language. Remove code and artifacts made unused by the selected slice; preserve pre-existing dead work outside it. Leave the slice more coherent without laundering adjacent cleanup into scope.
 
 ## Tight Engineering Spine
 
@@ -52,19 +54,25 @@ Tiny work may compress to `Explore -> Prove -> Lock`; uncertain, risky, user-fac
 
 ## Proof Discipline
 
-Claims need evidence. Expose every load-bearing internal through the smallest meaningful seam.
+Claims need fresh, proportionate evidence from current state. Map each claim to the command, observation, or read-back that proves it. A focused check proves only its slice; record broader skipped checks and residual risk instead of extrapolating.
 
 Use maintained repo configuration, CI, and contributor docs as command authority. When `AGENTS.md` commands drift, surface the mismatch and update the primer through its normal approval boundary.
 
 Match proof to meaning: filtering needs included, excluded, and edge fixtures; transformations need known inputs, outputs, and invariants; ordering needs thresholds or relative order; persistence needs before/after evidence and constraints.
 
+**Negative control.** Prove a new validator, hook, dependency boundary, or enforcement rule by observing the clean case pass, one controlled violation fail for the intended rule, and the restored case pass. Preserve and restore the starting state.
+
 Support work earns its place only when it directly unblocks or de-risks a tracer bullet and has observable proof.
+
+When meaningful execution is unsafe, irreversible, or blocked on human access, use the strongest safe structural proxy: trace the promised inputs, transitions, outputs, and failure branches. Name every unrun behavior and its residual risk. Never report the proxy as runtime or semantic proof.
 
 For review, a caller-supplied fixed point wins. Otherwise discover the default branch and merge base, state the resolved baseline, and ask only when discovery is ambiguous.
 
 ## Work State And Workers
 
 Production changes begin after Choose, except for the authorized Explore probe above.
+
+**Refresh after interaction.** Before resuming mutation after user feedback, worker return, or an external wait, refresh Git and work state and reread every in-scope file you will touch. Reconcile intervening edits; never overwrite from memory.
 
 A **staged worker** returns one bounded staged patch and focused proof to an owner. A **lane worker** returns one bounded commit and proof from an isolated worktree. Neither owns integration, formal review, tracker closeout, or push.
 

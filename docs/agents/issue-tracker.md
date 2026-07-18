@@ -54,16 +54,17 @@ Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement
 
 Used by `$wayfinder`. The **map** is a single GitHub issue with child issues as tickets.
 
-- **Map**: create one issue labelled `wayfinder:map`. Its body holds Destination, Notes, Decisions So Far, Not Yet Specified, and Out Of Scope.
+- **Map**: create one issue labelled `wayfinder:map`. Its body follows the invoking Wayfinder's `MAP-FORMAT.md` contract.
 - **Child ticket**: create one issue per ticket, linked to the map as a GitHub sub-issue when available. If sub-issues are unavailable, add the child to a task list in the map body and put `Part of #<map>` at the top of the child body. Put `Participation: HITL | AFK` near the top. Label each ticket with exactly one `wayfinder:<type>` label: `research`, `prototype`, `grilling`, or `task`.
 - **Blocking**: use the work-item blocking convention. For a blocker still in fog, put `Blocked: fog - <gist>` near the top of the child body. A ticket is unblocked when every blocker is closed and any `Blocked:` marker has been removed.
-- **Frontier query**: list the map's open children, then drop tickets with an open blocker, a `Blocked:` marker, or an assignee. The remaining tickets in map order are the frontier; the first is the default selection.
-- **Claim**: use the work-item claim convention before work.
-- **Release**: use the work-item release convention when active work ends.
+- **Frontier query**: list the map's open children, then drop tickets with an open blocker, a `Blocked:` marker, an assignee, or an active `Claim token:`. The remaining tickets in map order are the frontier; the first is the default selection.
+- **Claim**: Advance claims the selected ticket; Maintain claims the map. Use the work-item assignee convention on that item, then put `Claim token: codex/<lowercase UUIDv4>` and `Claimed at: <YYYY-MM-DDTHH:MM:SSZ>` near its top. Generate one fresh UUIDv4 per Wayfinder invocation, reuse it for every claim in that invocation, and never reuse it across invocations. Read back the assignee, exact token, and timestamp; a different token owns the item even when the assignee is the same.
+- **Release**: remove the active assignee, `Claim token:`, and `Claimed at:` when active work ends.
+- **Stale claim**: Elapsed time alone never makes a claim stale. Replace a different token only after explicit user approval; first record the prior token, claimed-at value, and takeover reason in a comment, then apply Mutation read-back to the replacement claim.
 - **Resolve**: post the answer as a comment, close the ticket, release the claim, then append one context pointer to the map's Decisions So Far.
 - **Block**: comment with the blocker, wire a sharp blocker or add the fog marker, release the claim, and leave the ticket open.
 - **Out of scope**: comment with the reason, close the ticket, release the claim, then append one linked note to the map's Out Of Scope section.
-- **Complete map**: after the map's closing conditions hold, post the destination and next route as a closing comment, then close the map issue.
+- **Complete map**: after the map's closing conditions hold, post the destination and next route as a closing comment, close the map issue, read back the closed state, release any map claim, then read back the claim's absence.
 
 ## When A Skill Says "Post A Codex-Ready Brief"
 

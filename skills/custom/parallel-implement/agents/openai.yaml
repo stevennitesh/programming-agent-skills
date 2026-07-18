@@ -1,7 +1,7 @@
 interface:
   display_name: "Parallel Implement"
-  short_description: "Drain one parent's implementation ticket graph"
-  default_prompt: "Use $parallel-implement to finish every ready implementation ticket associated with this parent spec or PRD, using serial or parallel isolated lanes as each frontier permits, then review, Lock, and verify child and parent closeout."
+  short_description: "Drain one graph through bounded repair"
+  default_prompt: "Use $parallel-implement to drain every in-scope implementation ticket associated with this parent spec or PRD. Record one Charter, Tripwire high-risk contracts, Downshift unless independence is proven, integrate serially, repair only admitted blockers within the Budget, then Lock and verify closeout."
 
 policy:
   allow_implicit_invocation: false

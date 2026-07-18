@@ -61,6 +61,25 @@ def test_handoff_compacts_context_without_advancing_work() -> None:
     assert "Continue from `<absolute-path>`. Read the handoff first, then execute its Next Step." in handoff
 
 
+def test_to_questionnaire_owns_one_safe_recipient_artifact() -> None:
+    skill_dir = CUSTOM / "to-questionnaire"
+    questionnaire = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+
+    assert not implicit_policy(skill_dir)
+    assert re.findall(r"(?m)^\*\*([A-Za-z]+)\.\*\*", questionnaire) == [
+        "Boundary",
+        "Admit",
+        "Lock",
+        "Gap",
+        "Draft",
+        "Cover",
+        "Save",
+        "Verify",
+        "Return",
+    ]
+    assert "<work-root>/.tmp/to-questionnaire/<slug>.md" in questionnaire
+
+
 def test_tracker_templates_share_ready_and_readback_contracts() -> None:
     trackers = [
         ROOT / "docs/agents/issue-tracker.md",
@@ -86,6 +105,34 @@ def test_tracker_templates_share_ready_and_readback_contracts() -> None:
         text = tracker.read_text(encoding="utf-8")
         for token in required:
             assert token in text, f"{tracker} is missing {token}"
+
+
+def test_wayfinder_tracker_claims_distinguish_sessions_and_recover_explicitly() -> None:
+    trackers = (
+        CUSTOM / "repo-bootstrap/issue-tracker-github.md",
+        CUSTOM / "repo-bootstrap/issue-tracker-gitlab.md",
+        CUSTOM / "repo-bootstrap/issue-tracker-local.md",
+    )
+    for tracker in trackers:
+        wayfinding = tracker.read_text(encoding="utf-8").split(
+            "## Wayfinding operations", 1
+        )[1]
+        for token in (
+            "MAP-FORMAT.md",
+            "Claim token:",
+            "Claimed at:",
+            "codex/<lowercase UUIDv4>",
+            "<YYYY-MM-DDTHH:MM:SSZ>",
+            "Maintain claims the map",
+            "never reuse it across invocations",
+            "different token owns the item",
+            "Elapsed time alone never makes a claim stale.",
+            "explicit user approval",
+            "takeover reason",
+            "Mutation read-back",
+        ):
+            assert token in wayfinding, f"{tracker} is missing {token}"
+        assert "Its body holds Destination" not in wayfinding
 
 
 def test_triage_label_template_respects_tracker_pr_policy() -> None:
@@ -303,7 +350,9 @@ def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
 
     assert not implicit_policy(skill_dir)
     assert "[MAP-FORMAT.md](MAP-FORMAT.md)" in wayfinder
-    chart, advance = wayfinder.split("### Chart", 1)[1].split("### Advance", 1)
+    chart, modes = wayfinder.split("### Chart", 1)[1].split("### Advance", 1)
+    advance, remaining = modes.split("### Maintain", 1)
+    maintain, closure = remaining.split("## Closure", 1)
     for earlier, later in (
         ("**Bound.**", "**Approve.**"),
         ("**Approve.**", "**Chart.**"),
@@ -318,8 +367,13 @@ def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
         ("**Verify.**", "**Expose.**"),
     ):
         assert advance.index(earlier) < advance.index(later)
-    assert re.findall(r"(?m)^### (Chart|Advance)$", wayfinder) == ["Chart", "Advance"]
-    assert "#### Advance Closure" in advance
+    assert re.findall(r"(?m)^### (Chart|Advance|Maintain)$", wayfinder) == [
+        "Chart",
+        "Advance",
+        "Maintain",
+    ]
+    assert "At the end of Advance or Maintain" in closure
+    assert "zero frontier tickets have substantive outcomes" in maintain
     map_template = map_format.split("```markdown", 1)[1].split("```", 1)[0]
     assert re.findall(r"(?m)^## (.+)$", map_template) == [
         "Destination",
@@ -333,6 +387,89 @@ def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
     assert advance.index("Mutation read-back before resolution work") < advance.index(
         "4. **Resolve.**"
     )
+
+
+def test_wayfinder_prototype_participation_matches_judgment() -> None:
+    skill_dir = CUSTOM / "wayfinder"
+    wayfinder = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    map_format = (skill_dir / "MAP-FORMAT.md").read_text(encoding="utf-8")
+
+    tickets = wayfinder.split("## Tickets", 1)[1].split("## Modes", 1)[0]
+    rules = re.findall(
+        r"(?m)^- `(shape/feel|design evidence)` — (HITL|AFK) (.+)\.$",
+        tickets,
+    )
+    assert [(claim, mode) for claim, mode, _ in rules] == [
+        ("shape/feel", "HITL"),
+        ("design evidence", "AFK"),
+        ("design evidence", "HITL"),
+    ]
+    assert "objective verdict criteria" in rules[1][2]
+    assert "explicitly reserves the verdict for a human" in rules[2][2]
+    assert "reconciled verdict packet and cleanup or preservation state" in tickets
+
+    approve = wayfinder.split("4. **Approve.**", 1)[1].split("5. **Chart.**", 1)[0]
+    for field in ("claim level", "human judge", "objective verdict criteria"):
+        assert field in approve
+    assert "reject" in approve and "participation rule" in approve
+
+    for field in ("Claim level:", "Human judge:", "Verdict criteria:"):
+        assert field in map_format
+
+
+def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
+    skill_dir = CUSTOM / "wayfinder"
+    wayfinder = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    map_format = (skill_dir / "MAP-FORMAT.md").read_text(encoding="utf-8")
+
+    tickets = wayfinder.split("## Tickets", 1)[1].split("## Modes", 1)[0]
+    assert "user owns the resolution" in tickets
+    assert "accepted repository contracts and objective proof" in tickets
+    assert "Classify by resolution authority" in tickets
+    assert "Split a ticket" in tickets
+
+    advance = wayfinder.split("### Advance", 1)[1].split("### Maintain", 1)[0]
+    claim = advance.split("3. **Claim.**", 1)[1].split("4. **Resolve.**", 1)[0]
+    assert "current session's claim identity" in claim
+    assert "exact session identity or claimed-at value" in claim
+
+    reconcile = advance.split("5. **Reconcile.**", 1)[1].split(
+        "6. **Verify.**", 1
+    )[0]
+    assert re.findall(r"(?m)^   - \*\*(Retain|Graduate|Resolve|Exclude):\*\*", reconcile) == [
+        "Retain",
+        "Graduate",
+        "Resolve",
+        "Exclude",
+    ]
+    assert "every affected fog item has exactly one disposition" in advance
+    assert "sole fog container" in map_format
+    assert "None — all remaining in-scope questions are ticket-owned." in map_format
+    assert "future-work owner, governing resolution, or map pointer" in map_format
+    assert "Do not create a ticket solely to supply a link." in map_format
+
+    maintain = wayfinder.split("### Maintain", 1)[1].split("## Closure", 1)[0]
+    assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", maintain) == [
+        "Orient",
+        "Bound",
+        "Approve",
+        "Claim",
+        "Repair",
+        "Verify",
+        "Expose",
+    ]
+    assert "Record no child outcome" in maintain
+    assert "claim the map" in maintain
+    assert "specific predicate takes precedence over Advance" in maintain
+    assert "evidence-backed scope indexing" in maintain
+    assert "every affected fog item exactly one Advance disposition" in maintain
+    assert "linked resolution" in maintain and "governing exclusion pointer" in maintain
+
+    closure = wayfinder.split("## Closure", 1)[1].split("## Return", 1)[0]
+    assert "read back the absence of that claim" in closure
+
+    returned = wayfinder.split("## Return", 1)[1]
+    assert "Next frontier: [<ticket title>](<link>). Invoke $wayfinder to advance it." in returned
 
 
 def test_grill_with_docs_owns_interview_domain_composition() -> None:
@@ -412,9 +549,21 @@ def test_prototype_preserves_lifecycle_boundaries_and_branch_gates() -> None:
         "awaiting-verdict",
         "blocked",
     }
-    assert re.findall(r"(?m)^## (.+)$", logic) == ["Model", "Drive", "Smoke"]
+    assert {"Model", "Surface", "Smoke"} <= set(
+        re.findall(r"(?m)^## (.+)$", logic)
+    )
     assert re.findall(r"(?m)^## (.+)$", ui) == ["Host", "Bet", "Switch", "Smoke"]
     assert "smallest explicit decision interface" in logic
+    surface = logic.split("## Surface", 1)[1].split("## Smoke", 1)[0]
+    interactive = surface.split("### Interactive", 1)[1].split(
+        "### Deterministic", 1
+    )[0]
+    deterministic = surface.split("### Deterministic", 1)[1]
+    assert "Read one command" in interactive and "until quit" in interactive
+    assert "caller-locked objective criteria" in deterministic
+    assert "without prompts" in deterministic
+    assert "Human judgment" in judge and "human-reserved design verdict" in judge
+    assert "Objective design evidence" in judge and "criterion results" in judge
     assert "entire prototype surface" in ui
     assert "unreachable in production builds" in ui
 
@@ -427,17 +576,18 @@ def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
     assert "## 1. Pin" in review
     assert "## 1. Pin" in convergent
     assert "$convergent-pr-review" in review.split("---", 2)[1]
-    assert "$review" in convergent.split("---", 2)[1]
     assert "only when documented repo standards" in baseline
     assert "concrete, actionable maintainability risk" in baseline
     assert "baseline judgement call" in review
     assert "baseline judgement call" in convergent
-    assert re.findall(r"(?m)^## \d+\. ([A-Za-z]+)$", review) == [
-        "Pin",
-        "Trace",
-        "Judge",
-        "Report",
-    ]
+    review_steps = re.findall(r"(?m)^## \d+\. ([A-Za-z]+)$", review)
+    assert {"Pin", "Trace", "Admit", "Judge", "Return"} <= set(review_steps)
+    assert review_steps.index("Pin") < review_steps.index("Trace") < review_steps.index("Admit")
+    assert review_steps.index("Admit") < review_steps.index("Judge") < review_steps.index("Return")
+    convergent_steps = re.findall(r"(?m)^## \d+\. ([A-Za-z]+)$", convergent)
+    assert {"Pin", "Trace", "Isolate", "Challenge", "Verify", "Return"} <= set(
+        convergent_steps
+    )
     report = review.split("```markdown", 1)[1].split("```", 1)[0]
     assert report.lstrip().startswith("Review status: complete")
     assert re.findall(r"(?m)^## (Standards|Spec)$", report) == ["Standards", "Spec"]
@@ -448,7 +598,46 @@ def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
         "Sources",
         "Blocker",
         "Skipped",
+        "Return boundary",
+        "Mutation authority",
+        "Successor snapshot authority",
     ]
+
+
+def test_review_finding_interface_and_return_boundary_are_shared() -> None:
+    review = (CUSTOM / "review/SKILL.md").read_text(encoding="utf-8")
+    convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(
+        encoding="utf-8"
+    )
+    finding = (CUSTOM / "review/FINDING-CONTRACT.md").read_text(encoding="utf-8")
+
+    fields = finding.split("```text", 1)[1].split("```", 1)[0]
+    assert set(re.findall(r"(?m)^([A-Za-z ]+):", fields)) == {
+        "ID",
+        "Axis",
+        "Severity",
+        "Location",
+        "Anchor",
+        "Supported scenario",
+        "Evidence",
+        "Impact",
+        "Blocking",
+        "Remediation",
+        "Required proof",
+    }
+    assert {
+        "automatic-in-scope",
+        "decision-required",
+        "residual-hardening",
+    } <= set(re.findall(r"(?m)^- `([^`]+)`:", finding))
+    severity = finding.split("## Severity", 1)[1].split("## Bound", 1)[0]
+    assert re.findall(r"(?m)^- `(P[0-3])`:", severity) == ["P0", "P1", "P2", "P3"]
+    for skill in (review, convergent):
+        assert "FINDING-CONTRACT.md" in skill
+        assert not re.search(r"(?m)^- (?:\*\*)?`?P[0-3]", skill)
+        assert "Return boundary: caller" in skill
+        assert "Mutation authority: none" in skill
+        assert "Successor snapshot authority: none" in skill
 
 
 def test_convergent_review_uses_fresh_context_and_root_only_fanout() -> None:
@@ -492,7 +681,7 @@ def test_convergent_review_returns_a_lock_usable_decision() -> None:
 def test_convergent_review_checks_snapshot_drift_not_baseline_drift() -> None:
     convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(encoding="utf-8")
 
-    verify = convergent.split("## 5. Verify", 1)[1].split("## 6. Report", 1)[0]
+    verify = convergent.split("## 5. Verify", 1)[1].split("## 6. Return", 1)[0]
     for surface in (
         "`HEAD`",
         "index tree",
@@ -512,6 +701,11 @@ def test_implement_selects_one_risk_scaled_review_route() -> None:
         "review",
         "convergent-pr-review",
     ]
+    repair_section = implement.split("## Repair", 1)[1].split("## Lock", 1)[0]
+    assert "FINDING-CONTRACT.md" in repair_section
+    assert {"automatic-in-scope", "decision-required"} <= set(
+        re.findall(r"`([^`]+)`", repair_section)
+    )
 
 
 def test_architecture_report_matches_the_survey_gate() -> None:
@@ -662,7 +856,13 @@ def test_writing_great_skills_authorizes_bounded_direct_subagents() -> None:
 
     assert implicit_policy(skill_dir)
     assert "[GLOSSARY.md](GLOSSARY.md)" in writing
+    assert "[BEHAVIOR-EVALS.md](BEHAVIOR-EVALS.md)" in writing
     assert 'fork_turns="none"' in writing
+    assert "pack-wide audits and behavioral evaluation samples" in writing
+    behavior = (skill_dir / "BEHAVIOR-EVALS.md").read_text(encoding="utf-8")
+    sample = behavior.split("## Sample", 1)[1].split("## Stress", 1)[0]
+    assert 'fresh-context samples as direct read-only subagents with `fork_turns="none"`' in sample
+    assert "fixed across arms" in sample
 
 
 def test_writing_great_skills_defines_format_neutral_semantic_surface() -> None:
@@ -849,25 +1049,30 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
     ledger = (CUSTOM / "parallel-implement/references/RUN-LEDGER.md").read_text(
         encoding="utf-8"
     )
-    assert re.findall(r"(?m)^## ([A-Za-z]+)$", parallel) == [
-        "Contract",
-        "References",
+    parallel_steps = re.findall(r"(?m)^## (.+)$", parallel)
+    expected_steps = [
+        "Operating Surface",
         "Trace",
         "Gate",
-        "Wave",
-        "Integrate",
+        "Drain",
         "Review",
+        "Repair",
         "Lock",
         "Release",
     ]
+    assert all(step in parallel_steps for step in expected_steps)
+    assert [parallel_steps.index(step) for step in expected_steps] == sorted(
+        parallel_steps.index(step) for step in expected_steps
+    )
     assert 'fork_turns="none"' in parallel
     assert "## Review-Ready Handoff" in integrator
-    assert re.findall(r"(?m)^## ([A-Za-z]+)$", launch) == [
+    assert re.findall(r"(?m)^## (.+)$", launch) == [
         "Select",
         "Create",
         "Preflight",
         "Dispatch",
-        "Recover",
+        "Stall",
+        "Resume",
         "Release",
     ]
     assert "scripts/lane_worktree.py" in launch
@@ -876,12 +1081,16 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
     assert re.findall(r"(?m)^([^:\n]+):", report) == [
         "status",
         "work item",
+        "mode",
+        "repair generation",
+        "finding IDs",
         "source trace",
         "preflight",
         "base",
         "commit",
         "owned files",
         "proof",
+        "liveness",
         "skipped checks",
         "risk/blockers",
         "next need",
@@ -892,11 +1101,11 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
     assert "acceptance criterion" in report.split("proof:", 1)[1].splitlines()[0]
     diagnosis_route = worker.split("When a bug's", 1)[1].split(";", 1)[0]
     assert "expected behavior" in diagnosis_route
-    assert "## Routing Packet" in ledger
-    assert "## Event Stream" in ledger
+    assert "## Progressive Evidence" in ledger
+    assert "## State Invariants" in ledger
     assert "events.jsonl" in ledger
-    assert "## Event Log" not in ledger
-    assert "## Closeout Summary" in ledger
+    assert "LEDGER.md" in ledger and "generated output" in ledger
+    assert "validate-state" in ledger
     assert "candidate integration `HEAD`" in integrator
     assert "`needs-feedback`" in integrator
     assert "`blocker` packet" in integrator
@@ -920,19 +1129,31 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
     event_types = runpy.run_path(
         str(CUSTOM / "parallel-implement/scripts/run_ledger.py")
     )["EVENT_TYPES"]
-    assert set(re.findall(r"(?m)^- `(done|needs-feedback|blocker)`: ", parallel)) == {
+    drain = parallel.split("## Drain", 1)[1].split("## Review", 1)[0]
+    assert {"done", "needs-feedback", "blocker"} <= set(
+        re.findall(r"`([^`]+)`", drain)
+    )
+    report_status = re.search(r"(?m)^status: <([^>]+)>$", worker)
+    assert report_status is not None
+    assert {status.strip() for status in report_status.group(1).split("/")} == {
         "done",
         "needs-feedback",
         "blocker",
     }
     for outcome in ("complete", "partial", "blocked"):
         assert f"`{outcome}`" in parallel.split("## Release", 1)[1]
-    assert {"scope", "scope-change", "resume", "frontier"} <= event_types
+    assert {
+        "scope",
+        "scope-change",
+        "resume",
+        "frontier",
+        "repair-plan",
+        "repair-complete",
+    } <= event_types
     assert "## Release" in launch
-    wave = parallel.split("## Wave", 1)[1].split("## Integrate", 1)[0]
     lock = parallel.split("## Lock", 1)[1].split("## Release", 1)[0]
-    assert "claim" in wave and "Mutation read-back" in wave
-    assert "closeout tracker mutation" in lock
+    assert "claim" in drain and "read back" in drain.lower()
+    assert "closeout plan" in lock and "Mutation read-back" in lock
     review = parallel.split("## Review", 1)[1].split("## Lock", 1)[0]
     assert "idle" in review
 
@@ -942,6 +1163,9 @@ def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts
     parallel = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     ledger = (skill_dir / "references/RUN-LEDGER.md").read_text(encoding="utf-8")
     event_types = runpy.run_path(str(skill_dir / "scripts/run_ledger.py"))["EVENT_TYPES"]
+    closeout_fields = runpy.run_path(str(skill_dir / "scripts/run_ledger.py"))[
+        "CLOSEOUT_FIELDS"
+    ]
     launch = (skill_dir / "references/CODEX-WORKTREE-LAUNCH.md").read_text(
         encoding="utf-8"
     )
@@ -954,7 +1178,7 @@ def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts
     assert not implicit_policy(skill_dir)
     assert "recommend `$implement` and stop" not in parallel
 
-    gate = parallel.split("## Gate", 1)[1].split("## Wave", 1)[0]
+    gate = parallel.split("## Gate", 1)[1].split("## Drain", 1)[0]
     assert re.findall(r"(?m)^- \*\*(Serial|Parallel|Blocked):\*\*", gate) == [
         "Serial",
         "Parallel",
@@ -967,40 +1191,25 @@ def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts
     assert "Mutation read-back" in lock
     assert lock.index("child") < lock.index("parent")
 
-    for field in ("**Parent:**", "**Child-set snapshot:**", "**Frontier plan:**"):
-        assert field in ledger
-    closeout_packets = ledger.split("## Child Closeout Packets", 1)[1].split(
-        "## Closeout Summary", 1
-    )[0]
-    packet_fields = re.findall(r"(?m)^\*\*([^*]+):\*\*", closeout_packets)
-    assert packet_fields == [
-        "State",
-        "Worker commit",
-        "Integration commit",
-        "Delivered",
-        "Acceptance evidence",
-        "Focused and integration proof",
-        "Review",
-        "Residual risk",
-        "Intended mutation",
-        "Posted comment",
-        "Mutation read-back",
-    ]
-    comment_template = closeout_packets.split("```markdown", 1)[1].split("```", 1)[0]
-    assert re.findall(r"(?m)^### (.+)$", comment_template) == [
-        "Delivered",
-        "Acceptance",
-        "Validation",
-        "Review",
-        "Residual risk",
-    ]
+    assert closeout_fields == {
+        "delivered",
+        "acceptance_evidence",
+        "proof",
+        "review",
+        "reviewed_head",
+        "residual_risk",
+        "intended_mutation",
+        "posted_comment",
+        "mutation_readback",
+    }
+    assert "renderer owns tracker-comment and ledger prose" in ledger
     assert {
         "serial-frontier",
         "parallel-frontier",
         "child-closeout",
         "parent-closeout",
     } <= event_types
-    assert "Downshift" not in launch
+    assert "**Tripwire:**" in gate and "**Downshift:**" in gate
 
     assert re.search(r"(?m)^\| One parent spec or PRD .* \| `\$parallel-implement` \|$", router)
     assert tickets.index("`$parallel-implement`") < tickets.index("`$implement`")
@@ -1015,7 +1224,9 @@ def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -
     owner_route = re.search(r"(?m)^\*\*Owner: (.+)\.\*\*$", implement)
     worker_route = re.search(r"(?m)^\*\*Staged worker: (.+)\.\*\*$", implement)
     assert owner_route is not None and worker_route is not None
-    assert "Review" in owner_route.group(1) and "Lock" in owner_route.group(1)
+    assert {"Charter", "Review", "Repair", "Lock"} <= set(
+        part.strip() for part in owner_route.group(1).split("->")
+    )
     assert worker_route.group(1).endswith("Return")
     assert "Review" not in worker_route.group(1)
     assert "Lock" not in worker_route.group(1)
@@ -1075,7 +1286,10 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         ("grill-with-docs", "Compose", "domain-modeling"),
         ("grilling", "Recommend and stop", "research"),
         ("grilling", "Recommend and stop", "prototype"),
+        ("grilling", "Recommend and stop", "to-questionnaire"),
         ("grilling", "Recommend and stop", "handoff"),
+        ("to-questionnaire", "Recommend and stop", "research"),
+        ("to-questionnaire", "Recommend and stop", "grilling"),
         ("to-spec", "Load", "codebase-design"),
         ("wayfinder", "Invoke", "research"),
         ("wayfinder", "Invoke", "prototype"),
@@ -1091,7 +1305,6 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         ("implement", "Invoke", "review"),
         ("implement", "Invoke", "convergent-pr-review"),
         ("review", "Hand off", "convergent-pr-review"),
-        ("convergent-pr-review", "Hand off", "review"),
         ("parallel-implement", "Invoke", "convergent-pr-review"),
         ("parallel-implement", "Invoke", "resolving-merge-conflicts"),
         ("resolving-merge-conflicts", "Invoke", "diagnosing-bugs"),
@@ -1120,6 +1333,7 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
     }
 
     assert required <= edges
+    assert ("convergent-pr-review", "Hand off", "review") not in edges
 
     skill_names = {skill.name for skill in CUSTOM.iterdir() if skill.is_dir()}
     for caller, verb, callee in rows:

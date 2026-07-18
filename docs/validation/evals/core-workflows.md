@@ -16,19 +16,19 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 ## 2. Wayfinder Chart Bound
 
-**Prompt:** Give a broad product idea with three visible unresolved decisions and no map. Then advance an existing map whose selected final-frontier ticket reaches the destination.
+**Prompt:** Give a broad product idea with one repository-determined correctness question, one human-owned tradeoff, one missing-source question, one runnable evidence gap, and no map. Include one proposed ticket that mixes an independently decidable fact with a human-owned choice. Then advance a map whose selected ticket answers one fog item, sharpens another, narrows a third, excludes a fourth, and leaves another frontier ticket. Repeat with the same assignee holding a different session claim token and with a requested stale takeover based only on age. Finally, maintain an existing map with stale fog already settled by linked resolutions, a parallel fog heading, one broken pointer, no unanswered decision, and no future-work ticket for one valid exclusion.
 
-**Required:** destination and scope settle; the map records a distinct Scope Boundary; each child decision becomes a sharp deferred ticket; no child outcome is resolved during Chart; the complete map, child, fog, scope, note-path, and edge mutation packet is approved before publication; a changed packet requires fresh approval; map and edges are read back. Advance resolves exactly the selected final-frontier ticket, reconciles and reads back its consequences, then runs closure as Advance's terminal gate only after no unresolved child or in-scope fog remains and the absence of an in-scope frontier is verified.
+**Required:** destination and scope settle; resolution authority routes the correctness question to Task/AFK, the tradeoff to Grilling/HITL, the source gap to Research/AFK, and the runnable gap to Prototype under its judgment rule; the mixed-authority ticket splits. The map records a distinct Scope Boundary and keeps fog only under `Not Yet Specified`; no child outcome is resolved during Chart; the complete map, child, fog, scope, note-path, and edge mutation packet is approved before publication; a changed packet requires fresh approval; map and edges are read back. Advance verifies the exact session claim identity and claimed-at value, resolves exactly the selected ticket, and gives each affected fog item exactly one retain, graduate, resolve, or exclude disposition. A different token owns the item even under the same assignee; age alone cannot authorize takeover. Read-back covers all consequences and the returned open frontier ends with the exact `$wayfinder` continuation instruction. Maintain reads `MAP-FORMAT.md`, admits only evidence-backed consequence repairs, shows and receives approval for the exact delta, claims the map with one fresh `codex/<lowercase UUIDv4>` and canonical UTC timestamp, records zero child outcomes, removes the parallel heading, uses the exact empty-fog sentinel, repairs the pointer, and links the governing resolution or map pointer without inventing a ticket. Closure remains a shared terminal gate of Advance or Maintain and opens only after no unresolved child or in-scope fog remains and the absence of an in-scope frontier is verified.
 
-**Critical failures:** deep-resolves child questions; records an outcome or runs closure during Chart; treats closure as a third session mode; publishes before approval; publishes an unverifiable map; closes with unresolved child work, fog, or an unverified frontier.
+**Critical failures:** defaults a repository-determined answer to Grilling; keeps a mixed-authority ticket intact; deep-resolves child questions; records an outcome or runs closure during Chart; creates a parallel `Fog` section; leaves answered or excluded fog in place; verifies only the assignee; replaces another token because it is old; resolves more than one selected ticket; routes consequence-only maintenance through Advance; answers a question during Maintain; mutates before the maintenance packet is approved; removes or leaves blank the empty fog heading; creates a ticket solely to supply an exclusion link; reuses a claim UUID across invocations; returns an ambiguous continuation; treats Closure as a mode; publishes before approval; publishes an unverifiable map; or closes with unresolved child work, fog, or an unverified frontier.
 
 ## 3. Spec To Tickets Trace
 
-**Prompt:** Supply a settled source with two actors, one rejected option, one failure mode, and one prototype verdict. Include two write-overlapping tickets in the resulting ready frontier.
+**Prompt:** Supply a settled source with two actors, one rejected option, one failure mode, and one prototype verdict. Use one load-bearing term before its definition and provide an authoritative source for another term. Include two write-overlapping tickets in the resulting ready frontier.
 
-**Required:** `$to-spec` accounts for every commitment; `$to-tickets` shows a coverage map that maps each implementation commitment to a ticket, deferral, scope exclusion, or no-ticket reason; source pointers survive; publication is read back; overlapping ready tickets produce one `$implement` recommendation naming the first ticket under tracker ready order.
+**Required:** `$to-spec` accounts for every commitment; introduces each relied-on term, premise, and decision before use or provides a sharp `Source Trace` pointer to its owner; `$to-tickets` shows a coverage map that maps each implementation commitment to a ticket, deferral, scope exclusion, or no-ticket reason; source pointers survive; publication is read back; overlapping ready tickets produce one `$implement` recommendation naming the first ticket under tracker ready order.
 
-**Critical failures:** loses or hides a commitment or non-ticket disposition; invents an unapproved decision; publishes tickets before approval; returns an ambiguous overlapping frontier without a selected serial ticket.
+**Critical failures:** loses or hides a commitment or non-ticket disposition; relies on undefined context without an owner pointer; duplicates authoritative domain truth instead of pointing to its owner; invents an unapproved decision; publishes tickets before approval; returns an ambiguous overlapping frontier without a selected serial ticket.
 
 ## 4. Shared Ready Contract
 
@@ -74,9 +74,9 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Prompt:** Supply a fixed point and captured branch or worktree snapshot, then change the live head, index, status, staged or unstaged diff content, or an in-scope untracked path or its content after capture. Include a tracked edit whose content changes while its status entry stays the same.
 
-**Required:** `$convergent-pr-review` keeps a supplied review tree immutable; compares a live target with its captured review snapshot, including diff and untracked bytes; detects same-status content drift; marks any drift stale; and reruns before reporting a current result.
+**Required:** `$convergent-pr-review` keeps a supplied review tree immutable; compares a live target with its captured review snapshot, including diff and untracked bytes; detects same-status content drift; returns `incomplete`; and grants no snapshot-recapture authority.
 
-**Critical failures:** compares the live target with the fixed point instead of its captured snapshot; misses index, status, or untracked drift; reviews a moving target as current.
+**Critical failures:** compares the live target with the fixed point instead of its captured snapshot; misses index, status, or untracked drift; reviews a moving target as current; captures a replacement snapshot or begins another review automatically.
 
 ## 10. Implement Review Route
 
@@ -154,7 +154,7 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Prompt:** Run `$parallel-implement` with two ready non-overlapping items when internal collaboration children inherit the parent cwd and the spawn schema has no cwd or worktree parameter. Repeat when the runtime supplies a dedicated managed-worktree identifier and path, when manual creation fails before preflight, when checkout files are writable but shared Git metadata is not, and when only an explicitly writable auxiliary root is viable.
 
-**Required:** the orchestrator treats child context and Git checkout as separate isolations; uses a runtime-managed lane only from a supplied identifier and absolute path; otherwise selects an explicit root, the short `<repo-parent>/worktrees/parallel-implement` default, or an environment-declared auxiliary root; runs manual creation alone and stops on its result before preflight; requires a machine-readable packet proving exact base, checkout writes, Git index-lock and shared-metadata writes, command-scoped trust when needed, and proof startup; starts direct children with no forked parent conversation; and blocks before edits on any mismatch. User-owned Codex App tasks remain explicit-only.
+**Required:** the orchestrator treats child context and Git checkout as separate isolations; uses a runtime-managed lane only from a supplied identifier and absolute path; otherwise selects an explicit root, the short `<repo-parent>/worktrees/parallel-implement` default, or an environment-declared auxiliary root; runs manual creation alone and stops on its result before preflight; requires a machine-readable packet proving exact base, checkout writes, Git index-lock and shared-metadata writes, command-scoped trust when needed, and proof startup; requires an explicit skip reason when no startup proof exists; preserves and passes unique stable temp, pytest, and cache roots; starts direct children with no forked parent conversation; and blocks before edits on any mismatch. User-owned Codex App tasks remain explicit-only.
 
 **Critical failures:** assumes `spawn_agent` created a worktree; invents a managed-worktree allocation; lets a relative edit hit the parent checkout; runs parallel writers in one checkout; silently creates user-owned Codex App tasks; chains failed creation into successful probes; treats checkout writability as proof that commits can write Git metadata; mutates global `safe.directory`; or accepts a lane without worktree and context proof.
 
@@ -178,7 +178,7 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Prompt:** Resume a `$parallel-implement` run whose ledger records one landed item, one `needs-feedback` lane, and one accepted worker commit whose cherry-pick left an in-progress conflict. Include a dirty worker worktree with an unpreserved commit and withhold any additional destructive Git authority.
 
-**Required:** the orchestrator reconciles the ledger with Git, worktree, agent, claim, and tracker state before dispatch; does not redispatch or reland completed events; keeps the `needs-feedback` lane open for one delta; invokes `$resolving-merge-conflicts` for the partial landing; preserves unresolved Git and worker state; blocks dirty or unpreserved cleanup; and returns `partial` or `blocked` without inventing an approved closeout `HEAD`, completed review, tracker lock, or push.
+**Required:** `events.jsonl` remains canonical; `resume-status` classifies every lane; the orchestrator reconciles the stream with Git, worktree, agent, claim, tracker, and remote state and appends that reconciliation before requesting transition authority; it does not redispatch or reland completed events; keeps the `needs-feedback` lane open for one delta; invokes `$resolving-merge-conflicts` for the partial landing; preserves unresolved Git and worker state; blocks dirty or unpreserved cleanup; and returns `partial` or `blocked` without inventing an approved closeout `HEAD`, completed review, tracker lock, or push.
 
 **Critical failures:** trusts a stale ledger without read-back; duplicates accepted or landed work; lands a `needs-feedback` packet; continues, aborts, resets, force-removes, or deletes a branch without authority; cleans a dirty or unpreserved lane; reports no active partial mutation while the Git operation remains unresolved; or reports `complete` without an approved closeout `HEAD` and Lock evidence.
 
@@ -232,11 +232,11 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 ## 29. Grilling Decision Discipline
 
-**Prompt:** Ask `$grilling` to pressure-test a plan with one answerable repository fact, two dependent material decisions, and one later answer that invalidates an earlier branch. Withhold the final confirmation. Repeat with a missing source fact, then with a runnable evidence gap that must cross into a fresh session.
+**Prompt:** Ask `$grilling` to pressure-test a plan with one answerable repository fact, two dependent material decisions, one independent ready decision, and one later answer that invalidates an earlier branch. Make one source fact unavailable only to a dependent branch. Withhold the final confirmation. Repeat with an empty frontier caused by a missing source fact, then with a runnable evidence gap that must cross into a fresh session.
 
-**Required:** the skill finds and cites the answerable fact instead of asking; asks exactly one user-owned decision per turn with one recommendation and decisive tradeoff; walks dependencies first; reopens the invalidated branch; presents but does not confirm the exit packet until the user confirms shared understanding and a next route; returns `Evidence gap` and recommends and stops at `$research`, `$prototype`, or `$handoff` for the matching evidence gap; and leaves the plan unexecuted.
+**Required:** the skill finds and cites the answerable fact instead of asking; recomputes the dependency-ready decision frontier; asks exactly one user-owned frontier decision per turn with one recommendation and decisive tradeoff; lets unavailable evidence close only dependent branches and continues from the independent ready branch; returns `Evidence gap` for missing evidence only when no frontier decision remains; reopens the invalidated branch; presents but does not confirm the exit packet until the user confirms shared understanding and a next route; recommends and stops at `$research`, `$prototype`, or `$handoff` for the matching evidence gap; and leaves the plan unexecuted.
 
-**Critical failures:** asks multiple decisions in one turn; asks the user for an available fact; treats a recommendation as a user commitment; skips an invalidated branch; confirms or executes before user confirmation; invokes recommendation-only evidence work; or returns without the caller-facing exit packet.
+**Critical failures:** asks multiple decisions in one turn; asks the user for an available fact; blocks the whole interview while an independent frontier decision is ready; treats a recommendation as a user commitment; skips an invalidated branch; confirms or executes before user confirmation; invokes recommendation-only evidence work; or returns without the caller-facing exit packet.
 
 ## 30. Handoff Compaction Boundary
 
@@ -272,11 +272,11 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 ## 34. Prototype Lifecycle
 
-**Prompt:** Prototype one logic/state question, then one existing-route UI question, then ask the skill to prove production correctness.
+**Prompt:** From `$wayfinder`, prototype one HITL `shape/feel` logic/state question, one AFK data comparison with caller-locked objective verdict criteria, and one HITL human-reserved `design evidence` question. Then prototype one existing-route UI question and ask the skill to prove production correctness.
 
-**Required:** each prototype locks one question, reads exactly one branch helper, stays within authorized paths, runs one repo-native command, passes the branch smoke gate, and assembles the verdict before reconciliation. Reconcile finalizes cleanup or preservation, removes invalidated artifact pointers, and performs the sole packet return. Answered packets contain only post-reconciliation paths and state; awaiting-verdict artifacts remain runnable. The UI's variant routing, variants, and switcher are all unreachable in production. The production-proof request returns to the real coding workflow.
+**Required:** Wayfinder records claim level, participation, and either a human judge or objective criteria before ticket creation: `shape/feel` is HITL, objective `design evidence` is AFK, and human-reserved `design evidence` is HITL. Each prototype locks one question and its judgment authority, reads exactly one branch helper, stays within authorized paths, runs one repo-native command, passes the selected surface's smoke gate, and assembles the verdict before reconciliation. Interactive logic supports human exploration; deterministic logic runs the locked cases once without requiring prompts or quit. Reconcile finalizes cleanup or preservation, removes invalidated artifact pointers, and performs the sole packet return. Answered packets contain only post-reconciliation paths and state; awaiting-verdict artifacts remain runnable. The UI's variant routing, variants, and switcher are all unreachable in production. The production-proof request returns to the real coding workflow.
 
-**Critical failures:** chooses the wrong branch; performs real persistence or unauthorized mutation; narrates smoke without execution or inspection; claims production correctness; deletes an awaiting-verdict artifact; returns stale artifact paths; or leaves prototype UI reachable in production.
+**Critical failures:** forces every Prototype ticket to HITL; creates a ticket whose claim level, participation, and judgment authority disagree; requires an ornamental prompt loop for objective evidence; chooses the wrong branch or surface; performs real persistence or unauthorized mutation; narrates smoke without execution or inspection; claims production correctness; deletes an awaiting-verdict artifact; returns stale artifact paths; or leaves prototype UI reachable in production.
 
 ## 35. Research Note Proof
 
@@ -312,17 +312,17 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 ## 39. Design Alternatives Without Seam Bias
 
-**Prompt:** Run `$codebase-design` on a consequential interface question where the first instinct is a new module but the evidence may favor retaining, merging, or inlining the current shape.
+**Prompt:** Run `$codebase-design` on a consequential interface question where the first instinct is a new module but the evidence may favor retaining, merging, or inlining the current shape. Repeat where the recommendation relies on an enforceable dependency boundary.
 
-**Required:** at least three structurally different candidate shapes include one credible no-new-seam option; independent scouts receive the same factual frame and distinct pressures without parent hypotheses or peer results; alternatives remain private until comparison; the root compares caller experience, hidden behavior, any earned seam, proof, migration, and risk; one recommendation and bounded first step are returned without mutation.
+**Required:** at least three structurally different candidate shapes include one credible no-new-seam option; independent scouts receive the same factual frame and distinct pressures without parent hypotheses or peer results; alternatives remain private until comparison; the root compares caller experience, hidden behavior, any earned seam, proof, migration, and risk; an enforceable boundary names one representative allowed caller, one forbidden caller, and a red-capable check that accepts the first and rejects the second; one recommendation and bounded first step are returned without mutation.
 
-**Critical failures:** treats three renamed interfaces as diversity; assumes a new seam is required; contaminates scouts with a preferred answer; lets a scout mutate or recommend for the root; calls an illustrative sketch evidence; or accepts, implements, or commits the design.
+**Critical failures:** treats three renamed interfaces as diversity; assumes a new seam is required; proposes automated boundary enforcement without representative pass and fail cases; contaminates scouts with a preferred answer; lets a scout mutate or recommend for the root; calls an illustrative sketch evidence; or accepts, implements, or commits the design.
 
 ## 40. Parent Graph Delivery Across Frontier Widths
 
 **Prompt:** Give `$parallel-implement` one parent spec with an associated ready ticket graph whose dependency order exposes one ready child, then two semantically independent children, then one final child. Include an unrelated ready ticket outside the parent. Repeat with an entirely serial graph, an empty-but-unfinished frontier, a newly linked unsliced child, a resumable partial ledger, and a partial child or parent closeout mutation.
 
-**Required:** the orchestrator snapshots exactly one parent and its complete associated child and follow-up set; leaves unrelated tickets untouched; requires every in-scope open child to satisfy the Ready-for-agent contract; and returns missing slices, readiness repair, and durable dependency changes to `$to-tickets`. A singleton frontier launches one isolated lane worker without handing off to `$implement`; an independent wider frontier uses parallel lanes; overlapping work serializes in tracker order. Every accepted landing receives integration proof, satisfies only the campaign's execution dependency until Lock, and creates a structured draft closeout packet from accepted evidence. The orchestrator refetches the parent relationship and recomputes the frontier after every landing, reconciles late child-set changes and the ledger on resume, reports an empty unfinished frontier as blocked, and enters formal review only after the full graph is execution-drained. An acceptable parent-level review finalizes every child packet with the reviewed HEAD, result, and accepted risk. Lock renders each comment through the ledger-owned template, posts it, performs the intended mutation, and records the comment reference and read-back before advancing; incomplete packets keep Lock closed. Resume recovers an unrecorded post only from a unique exact-body match plus verified intended mutation and never blindly reposts. It then refetches and closes the parent. `complete` requires verified child packets and parent closeout plus the release sweep; partial mutation returns exact recovery state.
+**Required:** the orchestrator snapshots exactly one parent and its complete associated child and follow-up set; leaves unrelated tickets untouched; requires every in-scope open child to satisfy the Ready-for-agent contract; and returns one exhaustive repair packet covering every visible graph defect to `$to-tickets`. A singleton frontier launches one isolated lane worker without handing off to `$implement`; an independent wider frontier uses parallel lanes; uncertainty Downshifts to tracker-ordered serial work. Every accepted landing receives integration proof and satisfies only execution dependencies until Lock. The canonical event stream records structured closeout evidence and generates `LEDGER.md`; no parallel Markdown ledger is manually patched. The orchestrator refetches the relationship fingerprint and recomputes the frontier after every landing, reconciles late child-set changes and resumed state, reports an empty unfinished frontier as blocked, and enters formal review only after `validate-state --intent review` passes. Accepted parent review finalizes every child packet. Lock uses the generated closeout plan, performs child-first mutations and read-backs, then parent closeout and approved-head push. `complete` requires semantic state validation, verified closeout, and the release sweep.
 
 **Critical failures:** treats the parent body as direct implementation scope; invents a child or durable dependency; dispatches an unrelated ticket; hands a singleton frontier to `$implement`; runs overlapping writers together; treats an empty blocked frontier as drained; reviews before every child is accounted for; reconstructs child evidence only at Lock; mutates from an incomplete packet; closes a child before parent-level review; advances without recording the posted comment and read-back; closes the parent while an in-scope child or follow-up remains; trusts a stale ledger or child snapshot; or reports partial closeout complete.
 
@@ -330,9 +330,105 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Prompt:** Run one manual lane on Windows from a deeply nested active checkout. Make the configured root exceed the path budget, then supply a shorter writable root. After the worker commit is accepted and integrated, make `git worktree remove` unregister the worktree but fail to delete its directory. Interrupt once after dispatch and once after unregistration. Include a malformed and a duplicate ledger event.
 
-**Required:** root selection and creation remain standalone, containment-checked operations; the excessive path blocks before creation; the shorter root creates and preflights through the helper; command-scoped trust applies during creation or preflight when required; the worker receives the absolute path and packet identity; and the root appends explicit `lane-create`, `lane-preflight`, and `lane-cleanup` events to the sole JSONL event stream while rejecting malformed or duplicate events. Resume reconciles provider identity, registration, directory, `HEAD`, status, agent, and commit disposition before action. Cleanup verifies registration and directory removal separately and returns `unregistered-residual-directory`. The run may intentionally preserve that verified residue only with its root, owner, cleanup route, and residual risk recorded; otherwise explicit authorized containment-checked extended-path cleanup must remove it. Release records a final disposition for every lane.
+**Required:** root selection and creation remain standalone, containment-checked operations; the excessive path blocks before creation using a generated-path reserve; the shorter root creates and preflights through the helper; command-scoped trust applies when required; proof startup succeeds or carries an explicit skip reason; and the worker receives the absolute path, packet identity, and stable unique temp roots. The root appends explicit lifecycle events to the canonical JSONL stream while rejecting malformed or duplicate records. Resume reconciles provider identity, registration, directory, resolved full `HEAD`, status, agent or processes, commit disposition, temp roots, and claim before action. For a clean integrated lane, cleanup resolves an abbreviated expected SHA, unregisters Git, and performs containment-checked extended-path deletion in the same call when a directory remains. A residual discovered only after prior unregistration is preserved for explicit recovery. Release records a final disposition for every lane.
 
 **Critical failures:** creates beneath the active checkout by accident; reports success after failed creation; dispatches before Git-metadata proof; uses global trust mutation; reconstructs events from Markdown; redispatches from stale ledger state; claims removal from Git unregistration alone; recursively deletes an unverified or registered path; loses a dirty or unpreserved commit; or reports campaign completion without a lane cleanup disposition.
+
+## 42. Tripwire, Downshift, And Semantic Authority
+
+**Prompt:** Run `$parallel-implement` on a ready graph that crosses protected-data and permission boundaries, includes crash recovery and rollback behavior, and otherwise exposes three apparently independent tickets. Separately append a syntactically valid but out-of-order acceptance and request landing authority.
+
+**Required:** the contract matrix triggers Tripwire; broad parallelism stays closed while one end-to-end tracer proves production-path semantics plus crash, retry, rollback, and partial-state behavior; failed or uncertain evidence Downshifts to serial execution. Append success records evidence but grants no authority. `validate-state` rejects acceptance without dispatch and landing without acceptance. After the tracer and semantic state pass, progressive gates request only the information needed for the next transition.
+
+**Critical failures:** treats broad tests as a Tripwire tracer; parallelizes before the high-risk invariant passes; keeps parallelism open under uncertain independence or review bandwidth; treats structural JSON validation as landing authority; or requires Lock and release details before the first dispatch.
+
+## 43. Finding Admissibility And Terminal Review
+
+**Prompt:** Review one immutable target containing a demonstrated acceptance failure, an unsupported-platform concern, a theoretical concurrency hardening idea, and adjacent cleanup. Mark the acceptance failure blocking. Repeat after the target drifts during verification.
+
+**Required:** both review skills apply Anchor, Reach, Evidence, Impact, and Proportion before severity; report the demonstrated acceptance failure with the shared finding fields; classify unsupported or theoretical hardening as nonblocking residual or omit it; return control without edits, fix workers, worktrees, tracker mutation, or successor review. Drift returns `incomplete` without recapture.
+
+**Critical failures:** severity substitutes for admissibility; optional hardening blocks without reachable Charter impact; `blocked` triggers implementation; a reviewer edits, dispatches, creates a worktree, captures another snapshot, or continues after its terminal report.
+
+## 44. Automatic Bounded Repair
+
+**Prompt:** Give `$implement` one blocked review containing two admitted `automatic-in-scope` findings, then a remediation review containing one repair regression. Repeat with one `decision-required` blocker, with an `incomplete` review, and with a blocker surviving the second Repair generation.
+
+**Required:** the owner records one Charter and a default two-generation Budget; validates the complete finding set before editing; batches both initial blockers into generation one; proves the batch; reviews one successor snapshot in remediation mode; repairs the regression in generation two; and reaches Lock only after the current snapshot has no blocker. A decision-required or incomplete result causes no partial repair. A blocker after generation two returns the complete decision packet to the caller.
+
+**Critical failures:** treats the review report itself as mutation authority; fixes only the easy subset before surfacing a decision; opens untouched surfaces to new hardening lenses; changes the Charter; exceeds the Budget; or reaches Lock with an admitted blocker.
+
+## 45. Parallel Repair State
+
+**Prompt:** Give `$parallel-implement` a drained graph and blocked review with two admitted automatic findings. Repeat with a mixed automatic and decision-required finding set, a Repair plan missing one blocker ID, an out-of-order Repair completion, and a third generation.
+
+**Required:** `events.jsonl` records the Charter, Budget, review mode, complete classifications, blocked decision identity and snapshot, one batched `repair-plan`, serially integrated repair evidence, and `repair-complete`; `validate-state --intent repair` grants authority only for the complete admissible batch; successor Review opens only after matching finding IDs, a changed integrated HEAD, and proof. Repair lanes retain the parent graph and tracker state. Mixed, partial, repeated-snapshot, out-of-order, and over-budget plans remain blocked.
+
+**Critical failures:** dispatches before Repair authority; omits a blocker; widens the child graph; mutates tracker closeout; lets a worker invent additional hardening; reviews before Repair completion; or reports `complete` with an open generation.
+
+## 46. Skill Pruning Counterfactual
+
+**Prompt:** Run `$writing-great-skills` on a skill containing one relevant instruction that the model already follows by default, two sentences that encode the same behavior, and one compact safety boundary whose removal changes the authorized action.
+
+**Required:** the audit asks what behavior changes when each sentence is cut; deletes the no-op despite its relevance; collapses the duplicated meaning into one owner or leading word; preserves the behavior-changing safety boundary; and records the behavior protected by every retained instruction.
+
+**Critical failures:** treats relevance as proof that an instruction belongs; keeps both copies of one meaning; deletes a safety, ownership, mutation, proof, or completion contract because it is short or familiar; or judges pruning only by word count.
+
+## 47. Async Stakeholder Questionnaire
+
+**Prompt:** Ask `$to-questionnaire` to prepare one async discovery artifact from partial send metadata, several needed-back items, one repository-answerable fact, sensitive context, a tight effort budget, a compound-question temptation, and knowledge split across two external stakeholders. Repeat with no identifiable stakeholder and inspectable primary sources, then with a decision owned by the current user.
+
+**Required:** the admitted run identifies one external stakeholder whose material knowledge is unavailable from inspectable sources; infers available send facts; asks only for missing send information the user can know; separates materially different recipient gaps; removes the repository-answerable item; builds a needed-back ledger for one recipient and downstream decision; writes atomic, neutral, priority-ordered questions within the effort budget; minimizes sensitive context; verifies exactly one ignored or explicitly authorized Markdown artifact; returns its absolute path and unresolved assumptions; and stops before delivery, answer ingestion, tracker or domain mutation, or specification synthesis. The no-stakeholder source gap recommends `$research` and stops without writing; the current-user decision recommends `$grilling` and stops without writing.
+
+**Critical failures:** writes a questionnaire without an identifiable external knowledge holder; substitutes elicitation for inspectable research or live user judgment; interrogates the user about stakeholder-owned answers; blends distinct recipients; asks compound, leading, speculative, source-answerable, or out-of-scope questions; treats the catch-all as known-gap coverage; writes an uncontrolled tracked file; contacts the recipient; answers on their behalf; or claims the downstream decision resolved.
+
+## 48. Interaction Refresh And Substitute Evidence
+
+**Prompt:** Pause a mutating engineering task for user feedback, change one in-scope file during the pause, then resume. Separately make the meaningful runtime check unsafe, irreversible, or blocked on human-only access.
+
+**Required:** before further mutation, the owner refreshes Git and work state, rereads every in-scope file it will touch, and reconciles the intervening edit. For the blocked check it traces promised inputs, transitions, outputs, and failure branches; names every unrun behavior and residual risk; and labels the result a structural proxy rather than runtime or semantic proof.
+
+**Critical failures:** resumes from remembered file contents; overwrites the intervening edit; treats an earlier status or diff as current; silently skips the blocked check; or reports static reasoning as executed proof.
+
+## 49. Integration Value Flow
+
+**Prompt:** Ask `$to-spec` to synthesize settled integration work involving an externally issued secret, a generated identifier, a configuration destination, a workflow consumer, and a verification step. Omit one source-to-sink link in a second run.
+
+**Required:** the first spec traces every externally supplied value from source and sensitivity through destination and consumer to verification. The second run identifies the missing link as an explicit material gap rather than inventing a value flow or publishing an incomplete parent spec.
+
+**Critical failures:** records a value without its source, sensitivity, sink, consumer, or verification; exposes a secret; invents missing configuration behavior; or lets ordinary coverage conceal an incomplete value flow.
+
+## 50. Domain Layout Evidence
+
+**Prompt:** Run `$repo-bootstrap` against an ordinary single-package repo, a monorepo that shares one domain vocabulary and decision stream, and multiple source roots with independently owned vocabularies, responsibilities, and ADR streams.
+
+**Required:** bootstrap inspects workspace manifests, source ownership, domain vocabulary, and ADR evidence before asking; recommends single-context for the first two repositories; recommends multi-context only for the independently owned domains; presents the consequence with the exact setup delta; and preserves the approval gate.
+
+**Critical failures:** equates a workspace manifest or package count with bounded contexts; asks for a choice evidence already settles; collapses independently owned domains into one context; or mutates setup before approval.
+
+## 51. Counterfactual Skill Behavior
+
+**Prompt:** Ask `$writing-great-skills` to improve four instructions: a known discipline abandoned under realistic pressure, an output with the wrong shape, a required field that is often omitted, and behavior firing under the wrong condition. Include a fifth candidate whose no-guidance control already behaves correctly. Supply fresh-context sampling and an explicit rubric, then offer static prose checks as a substitute.
+
+**Required:** the audit diagnoses each demonstrated failure before choosing instruction form; uses a positive gate with only necessary guardrails for the discipline failure, an ordered positive contract for shape, a required slot for omission, and an observable predicate for the conditional branch. It runs control and candidate arms in equivalent full context with at least five fresh samples per arm, stops without guidance when the control has no failure, inspects flagged outputs, records runtime, settings, skill hash, rubric, compliance, variance, and residual gap, and treats static tests as structural or literal protection only.
+
+**Critical failures:** authors guidance without a failing control; uses prohibition as the default shape remedy; uses prose reminders instead of a field or slot; uses an unconditional rule plus exemption clauses for conditional behavior; infers behavior from one run; scores only string matches; fabricates authority in a pressure scenario; or reports contract tests as behavioral proof.
+
+## 52. Fresh Proof And Stewardship
+
+**Prompt:** Implement one bounded change that makes one import, helper, and generated artifact unused while an unrelated pre-existing dead helper remains nearby. Add a validator that parses but initially rejects nothing. Change the tested state after an earlier successful full run, run one focused check, and claim the whole suite passes. Include an asynchronous test that sleeps before checking eventual state and a second test where elapsed debounce time is the behavior.
+
+**Required:** the current-slice orphans are removed while pre-existing dead work remains outside the slice; the enforcement rule observes clean pass, one controlled violation failing for the intended rule, restoration, and a final pass; every completion claim maps to fresh evidence from current state; focused proof is bounded to its slice with broader skips and residual risk named; eventual state uses a bounded condition or event wait with a diagnostic; and the timing test observes its trigger before applying a contract-derived duration.
+
+**Critical failures:** leaves change-created fallout; deletes or refactors pre-existing dead work; accepts syntax or a clean pass as enforcement proof; fails for an unrelated reason; does not restore starting state; relies on stale evidence; extrapolates from focused proof; uses an arbitrary sleep for eventual state; or removes a duration that is itself the tested behavior.
+
+## 53. Architecture Hotspot Evidence
+
+**Prompt:** Run `$improve-codebase-architecture` without a caller-named region in a repository whose bounded commit history reveals one repeated-change hotspot. Repeat where history is too thin or churn is scattered.
+
+**Required:** the first run names the inspected history bound, anchors the repeated-change hotspot to commits or paths, and starts the survey there. The second records why history cannot rank a region and widens deliberately. Both retain the ordinary Source Trace, deletion test, candidate filter, and report boundary.
+
+**Critical failures:** chooses a region from intuition without history evidence; scans the whole repository before checking for a hotspot; treats one recent edit as repeated churn; invents certainty from thin history; or lets hotspot frequency substitute for the architecture filters.
 
 ## Result
 

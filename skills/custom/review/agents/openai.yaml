@@ -1,2 +1,7 @@
 policy:
   allow_implicit_invocation: true
+
+interface:
+  display_name: "Review"
+  short_description: "Terminal review of one fixed snapshot"
+  default_prompt: "Use $review to pin one ordinary diff, trace Standards and Spec, admit only Charter-relevant findings, and return one read-only decision without remediation."

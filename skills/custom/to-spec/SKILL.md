@@ -25,7 +25,7 @@ Choose the highest existing **proof seam** that proves user-visible behavior. If
 
 ### 3. Draft
 
-Draft under `.tmp/to-spec/<slug>.md`. Pass the **fresh-session test**: the spec alone recovers the shared understanding.
+Draft under `.tmp/to-spec/<slug>.md`. Pass the **fresh-session test**: the spec alone recovers the shared understanding. Pass the **grounding test**: introduce every term, premise, or decision before a section relies on it, or provide a sharp `Source Trace` pointer to its owner.
 
 Use these sections:
 
@@ -47,6 +47,8 @@ Write a comprehensive, numbered set of user stories that exhausts every source-v
 
 Apply the **coverage gate**: account for every source-visible commitment, actor, flow, constraint, edge case, failure mode, prototype finding, and scope boundary, or mark it irrelevant in `Source Trace`.
 
+For setup, credential, CI, migration, or external-integration work, apply the **value-flow gate**: trace every externally supplied value from its source and sensitivity through its destination and consumer to its verification path, or record an explicit gap.
+
 ### 5. Publish
 
 Mutate only the draft and one parent spec. Supplied artifacts remain sources unless the user explicitly asks to update them. `$to-tickets` owns implementation slicing, blocking edges, and `ready-for-agent` state.
@@ -55,4 +57,4 @@ Publish through the tracker contract routed by `AGENTS.md`. Apply **Mutation rea
 
 Return the parent reference, any preserved draft path, and recommend `$to-tickets` and stop when implementation slicing is next.
 
-Complete only after Trace passes; the proof seam is settled; Draft passes the fresh-session test; Cover passes; no material gap remains; publication is read back; and draft cleanup or preservation is reported.
+Complete only after Trace passes; the proof seam is settled; Draft passes the fresh-session and grounding tests; Cover passes; no material gap remains; publication is read back; and draft cleanup or preservation is reported.

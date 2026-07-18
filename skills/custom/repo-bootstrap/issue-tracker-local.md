@@ -45,16 +45,17 @@ Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement
 
 Used by `$wayfinder`. The **map** is one markdown file with child ticket files.
 
-- **Map**: create `.scratch/<feature-slug>/wayfinder/map.md`. Put `Status: Open | Complete` near the top. Its body holds Destination, Notes, Decisions So Far, Not Yet Specified, and Out Of Scope.
-- **Child ticket**: create `.scratch/<feature-slug>/wayfinder/tickets/<NN>-<slug>.md`. Put `Part of: map.md`, `Type: research | prototype | grilling | task`, `Participation: HITL | AFK`, `Status: Pending | In Progress | Resolved | Blocked | Out Of Scope`, optional `Claimed by: <driver/session>`, and optional `Blocked by: <NN>, <NN>` lines near the top.
+- **Map**: create `.scratch/<feature-slug>/wayfinder/map.md`. Put `Status: Open | Complete` near the top and follow the invoking Wayfinder's `MAP-FORMAT.md` contract.
+- **Child ticket**: create `.scratch/<feature-slug>/wayfinder/tickets/<NN>-<slug>.md`. Put `Part of: map.md`, `Type: research | prototype | grilling | task`, `Participation: HITL | AFK`, and `Status: Pending | In Progress | Resolved | Blocked | Out Of Scope` near the top. Add `Claimed by: codex`, `Claim token: codex/<lowercase UUIDv4>`, and `Claimed at: <YYYY-MM-DDTHH:MM:SSZ>` only while claimed; add `Blocked by: <NN>, <NN>` only when blocked by sharp tickets.
 - **Blocking**: a ticket is unblocked when every ticket in `Blocked by` is `Resolved` or `Out Of Scope`. When the last blocker clears, change `Status: Blocked` to `Status: Pending`.
-- **Frontier query**: list tickets with `Status: Pending`, then drop tickets with an unresolved blocker. The remaining tickets in map order are the frontier; the first is the default selection.
-- **Claim**: set `Status: In Progress` and `Claimed by: <driver/session>` before work; those fields are the concurrency guard.
-- **Release**: remove `Claimed by` when active work ends.
+- **Frontier query**: list tickets with `Status: Pending`, then drop tickets with an unresolved blocker or active `Claim token:`. The remaining tickets in map order are the frontier; the first is the default selection.
+- **Claim**: Advance claims the selected ticket; Maintain claims the map. Put `Claimed by: codex`, `Claim token: codex/<lowercase UUIDv4>`, and `Claimed at: <YYYY-MM-DDTHH:MM:SSZ>` on the claimed item; also set a claimed ticket to `Status: In Progress`. Generate one fresh UUIDv4 per Wayfinder invocation, reuse it for every claim in that invocation, and never reuse it across invocations. Read back the exact token and timestamp; a different token owns the item even when the driver is the same.
+- **Release**: remove `Claimed by`, `Claim token:`, and `Claimed at:` when active work ends.
+- **Stale claim**: Elapsed time alone never makes a claim stale. Replace a different token only after explicit user approval; first record the prior token, claimed-at value, and takeover reason under `## Comments`, then apply Mutation read-back to the replacement claim.
 - **Resolve**: record the answer, set `Status: Resolved`, release the claim, then append one context pointer to the map's Decisions So Far.
 - **Block**: record the blocker, set `Status: Blocked`, add `Blocked by` when the blocker is sharp or return it to map fog, then release the claim.
 - **Out of scope**: record the reason, set `Status: Out Of Scope`, release the claim, then append one linked note to the map's Out Of Scope section.
-- **Complete map**: after the map's closing conditions hold, record the destination and next route, then set the map to `Status: Complete`.
+- **Complete map**: after the map's closing conditions hold, record the destination and next route, set the map to `Status: Complete`, read back the completed state, release any map claim, then read back the claim's absence.
 
 ## When a skill says "post a Codex-ready brief"
 

@@ -1,19 +1,19 @@
 ---
 name: convergent-pr-review
-description: "Review local PRs and high-risk local diffs through independent fresh-context reviewers and a root-verified evidence ledger. Use for release gates, shared plumbing, migrations, security or permission changes, CI/workflow/config, public interfaces, and data contracts. Hand off ordinary fixed-point Standards/Spec review to $review."
+description: "Review one immutable local PR or high-risk diff read-only through independent fresh-context reviewers and a root-verified evidence ledger, then return one terminal decision. Use for release gates, shared plumbing, migrations, security or permission changes, CI/workflow/config, public interfaces, and data contracts."
 ---
 
 # Convergent PR Review
 
-**Pin. Trace. Isolate. Converge. Verify. Report.**
+**Pin. Trace. Isolate. Challenge. Verify. Return.**
 
-Own one read-only convergence gate over one immutable review snapshot. The review root owns reviewer dispatch, the evidence ledger, verification, drift detection, and the final decision. Downstream implementation owns fixes, tracked mutations, and closeout.
+Own one read-only convergence gate over one immutable review snapshot. The review root owns reviewer dispatch, the evidence ledger, verification, drift detection, and the final decision. The implementation caller owns any authorized repair, tracked mutation, and closeout.
 
-**Route:** Hand off to `$review` and stop for an ordinary branch, WIP, staged, or `review since X` fixed-point review. Carry the caller-supplied Spec requirement, Source Trace and Spec sources, fixed point, and captured target into the handoff.
+**Terminal boundary:** Return one decision and stop. This invocation performs no remediation, fix-worker dispatch, worktree creation, tracker mutation, successor review, or snapshot recapture. A `blocked` decision supplies evidence; it grants no mutation or rereview authority.
 
 **Read-only boundary:** Inspect only. Disposable evidence may live under `.tmp/`. A required pre-capture ref fetch may update Git metadata with normal approval and must be recorded. Keep the working tree, index, commits, tracked `.scratch/`, tracker, PR reviews or comments, and external messages unchanged.
 
-**Defaults:** two reviewers, two rounds maximum, and `P0/P1/P2/P3` severity. Use three to five reviewers only when distinct high-risk surfaces need their own lenses; more than five requires an explicit user request.
+**Defaults:** two reviewers, two rounds maximum, and `P0/P1/P2/P3` severity. Use three to five reviewers only when distinct Charter surfaces need their own high-risk lenses; more than five requires an explicit user request.
 
 ## 1. Pin
 
@@ -28,6 +28,8 @@ Capture one complete target:
 A supplied review tree wins over live targets. Resolve a PR before any fetch needed to capture its head.
 
 Give reviewers the captured snapshot, never a live diff command. A Git commit or tree SHA is already immutable and needs no second hash; hash only captured live content not already addressed by Git.
+
+Record `Review mode: initial | remediation`; default to `initial`. Remediation mode requires the original Charter, prior snapshot, carried finding IDs, and repair delta.
 
 Return `incomplete` before dispatch when the fixed point or review tree does not resolve, the target is empty, or the complete snapshot cannot be captured.
 
@@ -48,7 +50,7 @@ When `Spec required: yes`, a missing, conflicting, or unresolved authoritative s
 
 For Standards, use repository rules and meaningful nearby conventions. Load [SMELL-BASELINE.md](../review/SMELL-BASELINE.md) only when documented repository standards and meaningful nearby conventions are thin. Label any resulting finding a `baseline judgement call`.
 
-Build one reviewer brief containing the captured snapshot, Source Trace, repo contract, Standards and Spec sources, acceptance criteria, touched seams and contracts, validation commands, and relevant migration, permission, generated-artifact, network, or external-service constraints.
+Read [FINDING-CONTRACT.md](../review/FINDING-CONTRACT.md). Build one reviewer brief containing the captured snapshot, Charter, review mode, Source Trace, repo contract, Standards and Spec sources, acceptance criteria, touched seams and contracts, validation commands, and relevant migration, permission, generated-artifact, network, or external-service constraints. In remediation mode, include only carried findings, the repair delta, and remaining original acceptance.
 
 Inline it when compact. Put only large captured artifacts under `.tmp/convergent-pr-review/<run-id>/` and pass exact paths; the review root may finish that reading while reviewers run, but must finish before ledger verification.
 
@@ -68,23 +70,21 @@ skipped checks:
 blockers:
 ```
 
-Each finding includes severity, axis, lens, source location (`file:line`, issue or comment anchor, or captured-artifact location), violated behavior or contract, impact, remediation direction, and confidence.
+Each finding applies the shared admission gates and returns its fields plus lens and confidence.
 
 Keep parent hypotheses, preliminary findings, peer output, and the partial ledger out of round-one context. Wait for every requested lens; replace failed or timed-out reviewers when capacity permits.
 
 Require at least two fresh-context reviewers over the same snapshot. Parent-context forks do not satisfy independence. When fresh-context reviewers are unavailable, run two separated manual lens passes, label them distinct but non-independent, and report reduced-confidence.
 
-## 4. Converge
+## 4. Challenge
 
-Normalize every reviewer finding into one evidence ledger with:
-
-`ID | severity | axis | title | evidence | impact | remediation | lens | confidence | status | verification | blocking decision`
+Normalize every reviewer finding into one evidence ledger using the shared finding fields plus `title | lens | confidence | status | verification | blocking decision`.
 
 Status is `candidate`, `accepted`, `rejected`, `duplicate`, or `disputed`. Verification is `unverified`, `verified`, `disproved`, or `not checked`.
 
 Evidence decides; consensus is signal, not truth. Merge same-axis duplicates, link cross-axis overlap without collapsing the axes, and preserve one-reviewer findings when the evidence survives.
 
-Use round two only for a named candidate that remains disputed, ambiguous, under-evidenced, or inconsistent across lenses. Send only its ledger ID, claim, evidence, contrary evidence or open question, and the exact decision needed. Do not resend the whole ledger. Mark any directly evidenced new finding as `new in round 2`.
+Use round two only to challenge a named candidate that remains disputed, ambiguous, under-evidenced, or inconsistent across lenses. Send only its ledger ID, claim, evidence, contrary evidence or open question, and the exact decision needed. Keep the same snapshot and lenses; round two is not a new audit. Label a round-two repair regression `new in round 2`.
 
 Stop after no candidate needs challenge or after round two. Finalize every item:
 
@@ -98,7 +98,7 @@ No `candidate` or `unverified` item survives the final report.
 
 ## 5. Verify
 
-The review root verifies every accepted and disputed item with the cheapest meaningful direct evidence. Reject disproved claims. Preserve `not checked` only when its blocker, confidence impact, and provisional blocking decision are explicit.
+The review root verifies every accepted and disputed item under the shared Bound rules. Reject disproved claims; preserve `not checked` only with its reason, Charter relevance, confidence impact, and provisional blocking decision.
 
 Delete disposable verification artifacts or name each intentionally preserved `.tmp/` path in the report.
 
@@ -108,19 +108,9 @@ Run the drift check before reporting:
 - For a branch or PR, compare the current target head with the captured head.
 - For a live worktree, compare the current `HEAD`, index tree, staged diff, unstaged diff, status, and all in-scope untracked paths and content with the captured snapshot.
 
-Any difference makes the review stale. Rerun against a new snapshot or return `incomplete`.
+Any difference makes the review stale. Return `incomplete`; the caller alone decides whether another snapshot is authorized.
 
-## 6. Report
-
-Severity and blocking:
-
-- `P0`: data loss, security exposure, or catastrophic production failure.
-- `P1`: merge-blocking correctness, contract, or important-path workflow failure.
-- `P2`: significant edge-case, validation, CI, or operator-risk defect.
-- `P3`: lower-risk correctness or maintainability defect with concrete impact.
-- `P0/P1` block.
-- `P2` blocks when required validation or CI is affected.
-- `P3` is non-blocking unless the caller says otherwise.
+## 6. Return
 
 **Review decision:** return exactly one:
 
@@ -151,8 +141,16 @@ Return the complete ledger under:
 ## Rejected Or Duplicate
 ```
 
-Sort each axis by severity. Include location, evidence, impact, remediation, verification, confidence, and blocking decision. Use `No accepted findings.` for a clean axis and `No accepted findings; disputed: <IDs>.` when disputes remain.
+Sort each axis by severity and render the shared finding fields plus the ledger fields. Use `No accepted findings.` for a clean axis and `No accepted findings; disputed: <IDs>.` when disputes remain.
 
-End each accepted finding with a patch-ready handoff naming the finding ID, likely files, required change, and expected validation.
+End each accepted finding with an advisory patch-ready handoff naming the finding ID, likely files, required change, and expected validation.
 
-Complete only when the snapshot and Source Trace are recorded; the required Spec gate closed; at least two independent reviewers completed or reduced confidence is explicit; every finding reached a terminal ledger state; survivors were verified or explicitly not checked; drift and the read-only boundary were checked; and one decision plus the complete ledger and patch-ready handoffs were returned.
+End the report with:
+
+```text
+Return boundary: caller
+Mutation authority: none
+Successor snapshot authority: none
+```
+
+Complete only when the snapshot, Charter boundary, review mode, and Source Trace are recorded; the required Spec gate closed; at least two independent reviewers completed or reduced confidence is explicit; every finding reached a terminal ledger state and passed the admission contract; survivors were verified or explicitly not checked; drift and the read-only boundary were checked; and one decision plus the complete ledger and advisory handoffs returned control to the caller.

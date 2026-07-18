@@ -23,6 +23,7 @@ description: Route the current situation to exactly one next skill in this engin
 | A repo-backed plan or design needs an interview and durable domain capture | `$grill-with-docs` |
 | A plan or design needs a conversation-only interview | `$grilling` |
 | A large, foggy effort needs a tracker-backed decision map | `$wayfinder` |
+| One external stakeholder holds missing knowledge and needs an async discovery questionnaire | `$to-questionnaire` |
 | One source question needs a cited repo-local note | `$research` |
 | One design question needs runnable evidence | `$prototype` |
 | Context must cross into a fresh session or agent thread | `$handoff` |

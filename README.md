@@ -105,7 +105,7 @@ The portable contract carries the convergence loop, commitment boundaries, shapi
 
 ## What's Included
 
-- **Shape before building:** `$grilling`, `$grill-with-docs`, `$wayfinder`, `$research`, `$prototype`, `$handoff`
+- **Shape before building:** `$grilling`, `$grill-with-docs`, `$wayfinder`, `$to-questionnaire`, `$research`, `$prototype`, `$handoff`
 - **Turn intent into delivery:** `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement`
 - **Prove and protect behavior:** `$tdd`, `$diagnosing-bugs`, `$resolving-merge-conflicts`, `$review`, `$convergent-pr-review`
 - **Deepen design and language:** `$domain-modeling`, `$codebase-design`, `$improve-codebase-architecture`
@@ -122,6 +122,7 @@ After setup, invoke a skill directly or let `$skill-router` carry the route map.
 Representative routes:
 
 - Fuzzy product idea needing durable decisions -> `$grill-with-docs` -> `$to-spec` -> `$to-tickets`
+- External stakeholder knowledge gap -> `$to-questionnaire` -> human delivery and answer collection
 - One bounded ready item -> `$implement`; one parent-backed ready ticket graph to finish -> `$parallel-implement`, serializing or parallelizing each frontier as needed
 - Incoming issue or configured external PR -> `$triage`; ready-for-agent item -> `$implement`
 - Multi-session fog of war -> `$wayfinder` until the map closes -> `$to-spec`, `$to-tickets`, or `$implement`

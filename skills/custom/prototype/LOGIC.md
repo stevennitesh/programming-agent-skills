@@ -15,9 +15,13 @@ Model only the states, actions, and data needed by the locked question. Put them
 
 Inputs enter only through the decision surface; each call returns updated state or an observable state snapshot. Keep I/O, prompts, timing, randomness, and rendering in the disposable shell. Drive the public decision surface; treat private helpers as implementation details.
 
-## Drive
+## Surface
 
-Build a thin terminal shell that lets the judge press buttons and watch state change.
+Choose the surface that matches the locked judgment authority.
+
+### Interactive
+
+Use an interactive terminal shell when human exploration or interaction itself supplies the evidence. Let the judge press buttons and watch state change.
 
 Render one stable frame showing:
 
@@ -36,11 +40,13 @@ Run this loop:
 
 Surface unavailable or illegal actions and leave state unchanged when the model defines them.
 
+### Deterministic
+
+Use a one-shot terminal report when caller-locked objective criteria decide the question. Drive the decision surface through the locked cases without prompts, then print each case's input, observed output, and criterion result followed by the invariants, edge cases, limits, and supported direction.
+
 ## Smoke
 
-Run the prototype's repo-native command and verify:
+Run the prototype's repo-native command and apply the selected surface's smoke gate:
 
-- the first frame renders;
-- at least one action changes visible state;
-- an unavailable or illegal action is surfaced and leaves state unchanged when applicable;
-- quit works.
+- **Interactive:** the first frame renders; at least one action changes visible state; an unavailable or illegal action is surfaced and leaves state unchanged when applicable; quit works.
+- **Deterministic:** every locked case appears with its criterion result; repeated runs produce the same report; the invariants, limits, and supported direction are visible; no prompt or quit path is required.

@@ -7,7 +7,7 @@ description: Prototype one design question with a throwaway runnable probe. Use 
 
 **Outcome:** one design question answered by a judgeable, disposable probe. The verdict is durable; the code is not.
 
-**Ownership.** Prototype owns the locked question, authorized artifacts, one repo-native command, branch smoke proof, verdict packet, and reconciliation. The user judges shape and feel. The caller owns the resulting decision, durable publication, tracker, spec, domain, ADR, commit, and production mutations. The real coding workflow owns production proof.
+**Ownership.** Prototype owns the locked question, authorized artifacts, one repo-native command, branch smoke proof, verdict packet, and reconciliation. The user judges `shape/feel` and explicitly human-reserved design verdicts; caller-locked objective criteria judge autonomous `design evidence`. The caller owns the resulting decision, durable publication, tracker, spec, domain, ADR, commit, and production mutations. The real coding workflow owns production proof.
 
 **Write boundary.** Use `.tmp/` for disposable work. Use an app-tree path only when real constraints require it and the request or caller authorizes it. Put explicitly authorized version-controlled evidence in caller-owned `.scratch/<feature-slug>/prototype/`.
 
@@ -18,8 +18,8 @@ Trace exactly one question to the prompt or caller packet and relevant code cons
 Lock:
 
 - the decision it unlocks;
-- the judge;
 - the claim level: `shape/feel` or `design evidence`;
+- the judgment authority: the human judge or caller-locked objective verdict criteria;
 - authorized paths;
 - cleanup or preservation intent.
 
@@ -50,14 +50,14 @@ Smoke proves the probe is judgeable, not production-correct. Report the command,
 
 Hand the probe to its judge and iterate within the locked question.
 
-- **Shape/feel:** Capture the user's verdict and decisive feedback. If unavailable, return `awaiting-verdict`, preserve the named runnable artifacts, and report the exact command or URL.
-- **Design evidence:** Record the examples, invariants, fixtures, edge cases, observed limits, and chosen direction.
+- **Human judgment:** For `shape/feel` or a human-reserved design verdict, capture the user's verdict and decisive feedback. If unavailable, return `awaiting-verdict`, preserve the named runnable artifacts, and report the exact command or URL.
+- **Objective design evidence:** Execute the locked verdict criteria; record the examples, invariants, fixtures, edge cases, observed limits, criterion results, and supported direction.
 - **Blocked:** Record the blocker, attempted path, and evidence still needed.
 
 Record the verdict fields that Reconcile will finalize:
 
 - status: `answered`, `awaiting-verdict`, or `blocked`;
-- Source Trace, question, decision, branch, and claim level;
+- Source Trace, question, decision, branch, claim level, judgment authority, and objective verdict criteria when applicable;
 - artifact paths, command, URL, and variant keys;
 - smoke proof and judgment-affecting assumptions;
 - verdict or evidence, limits, chosen direction, and residual uncertainty;

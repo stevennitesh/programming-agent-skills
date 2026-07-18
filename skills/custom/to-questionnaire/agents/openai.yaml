@@ -1,0 +1,5 @@
+interface:
+  display_name: "To Questionnaire"
+  short_description: "Draft an async stakeholder questionnaire"
+policy:
+  allow_implicit_invocation: false

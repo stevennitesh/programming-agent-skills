@@ -22,7 +22,7 @@ Own one outcome: a source-traced architecture survey whose selected deepening ca
 
 ### Trace
 
-**Trace.** Follow a user-named module, subsystem, or pain point. Otherwise start with recently changed hotspots and widen only when churn is scattered.
+**Trace.** Follow a user-named module, subsystem, or pain point. Otherwise inspect a bounded commit-history window, name repeated-change hotspots with their commits or paths, and start there. Widen only when churn is scattered or history is too thin to rank a region.
 
 Build the **Source Trace** from the request, repo instructions, routed engineering and domain docs, relevant ADRs, current implementation, representative callers and tests, and operational constraints. Without domain routing, use `CONTEXT-MAP.md`, root `CONTEXT.md`, and local domain or ADR docs.
 

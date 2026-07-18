@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -99,9 +100,15 @@ def git_with_trust(
     return result, trust
 
 
-def slug(value: str, *, limit: int = 28) -> str:
+def slug(value: str, *, limit: int = 16) -> str:
     normalized = re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
     return (normalized or "lane")[:limit].rstrip("-")
+
+
+def lane_name(repo: Path, run_id: str, item_id: str) -> str:
+    identity = f"{repo.name}\0{run_id}\0{item_id}"
+    suffix = hashlib.sha256(identity.encode()).hexdigest()[:8]
+    return f"{slug(repo.name, limit=12)}-{slug(run_id, limit=10)}-{slug(item_id, limit=10)}-{suffix}"
 
 
 def contains(root: Path, target: Path) -> bool:
@@ -135,7 +142,7 @@ def longest_tracked_path(repo: Path) -> int:
 def path_budget(worktree: Path, repo: Path, configured: int | None) -> dict[str, int]:
     limit = configured if configured is not None else (240 if os.name == "nt" else 4096)
     longest = longest_tracked_path(repo)
-    reserve = 32
+    reserve = 128 if os.name == "nt" else 32
     predicted = len(str(worktree)) + 1 + longest + reserve
     if predicted > limit:
         raise LaneError(
@@ -160,6 +167,26 @@ def emit(operation: str, ok: bool, **data: Any) -> int:
     return 0 if ok else 1
 
 
+def blocked(
+    operation: str,
+    *,
+    state: str,
+    error: str,
+    recoverable: bool,
+    next_action: dict[str, Any],
+    **data: Any,
+) -> int:
+    return emit(
+        operation,
+        False,
+        state=state,
+        error=error,
+        recoverable=recoverable,
+        next_action=next_action,
+        **data,
+    )
+
+
 def create(args: argparse.Namespace) -> int:
     repo, repo_trust = git_root(Path(args.repo).resolve())
     root = (
@@ -167,7 +194,7 @@ def create(args: argparse.Namespace) -> int:
         if args.root
         else (repo.parent / "worktrees" / "parallel-implement").resolve()
     )
-    worktree = (root / f"{slug(repo.name)}-{slug(args.run_id)}" / slug(args.item_id)).resolve()
+    worktree = (root / lane_name(repo, args.run_id, args.item_id)).resolve()
     if contains(repo, worktree) and not args.allow_inside_repo:
         raise LaneError("worktree path is inside the active checkout")
     if not contains(root, worktree):
@@ -185,15 +212,20 @@ def create(args: argparse.Namespace) -> int:
     command.extend([str(worktree), args.base])
     result, create_trust = git_repo_with_trust(repo, command[1:], check=False)
     if result.returncode != 0:
-        return emit(
+        return blocked(
             "create",
-            False,
+            state="blocked-create",
+            error=result.stderr.strip() or result.stdout.strip(),
+            recoverable=True,
+            next_action={
+                "command": "create",
+                "repair": "change the base, root, trust, permission, capability, or conflicting path",
+            },
             provider="manual-git",
             repo=str(repo),
             root=str(root),
             worktree=str(worktree),
             git_trust=create_trust,
-            error=result.stderr.strip() or result.stdout.strip(),
         )
 
     records = registered_worktrees(repo)
@@ -242,19 +274,46 @@ def resolve_git_path(worktree: Path, value: str) -> Path:
 
 def preflight(args: argparse.Namespace) -> int:
     worktree = Path(args.worktree).resolve()
+    if not args.proof_command_json and not args.skip_proof:
+        return blocked(
+            "preflight",
+            state="blocked-proof",
+            error="proof startup is required unless explicitly skipped",
+            recoverable=True,
+            next_action={
+                "command": "preflight",
+                "required": ["--proof-command-json", "or --skip-proof --reason"],
+            },
+            worktree=str(worktree),
+        )
+    if args.skip_proof and not args.reason:
+        return blocked(
+            "preflight",
+            state="blocked-proof",
+            error="--skip-proof requires --reason",
+            recoverable=True,
+            next_action={"command": "preflight", "required": ["--reason"]},
+            worktree=str(worktree),
+        )
+
+    trusts: set[str] = set()
     root_result, trust = git_with_trust(worktree, ["rev-parse", "--show-toplevel"])
+    trusts.add(trust)
     root = Path(root_result.stdout.strip()).resolve()
     if root != worktree:
         raise LaneError(f"worktree root mismatch: expected {worktree}, got {root}")
 
     head_result, trust = git_with_trust(worktree, ["rev-parse", "HEAD"])
+    trusts.add(trust)
     head = head_result.stdout.strip()
     base_result, trust = git_with_trust(worktree, ["rev-parse", args.base])
+    trusts.add(trust)
     base = base_result.stdout.strip()
     if head != base:
         raise LaneError(f"worktree HEAD {head} does not match base {base}")
 
     status_result, trust = git_with_trust(worktree, ["status", "--porcelain=v1"])
+    trusts.add(trust)
     status = status_result.stdout
     if status:
         raise LaneError(f"worktree is not clean: {status.strip()}")
@@ -262,6 +321,7 @@ def preflight(args: argparse.Namespace) -> int:
     branch_result, trust = git_with_trust(
         worktree, ["symbolic-ref", "-q", "--short", "HEAD"], check=False
     )
+    trusts.add(trust)
     branch = branch_result.stdout.strip() if branch_result.returncode == 0 else None
     if args.expect_branch and branch != args.expect_branch:
         raise LaneError(f"expected branch {args.expect_branch}, got {branch or 'detached'}")
@@ -270,20 +330,24 @@ def preflight(args: argparse.Namespace) -> int:
 
     token = uuid.uuid4().hex
     lane_tmp = worktree / ".tmp"
-    lane_tmp_existed = lane_tmp.exists()
     reversible_probe(lane_tmp / f"parallel-implement-{token}.probe")
-    if not lane_tmp_existed and lane_tmp.exists() and not any(lane_tmp.iterdir()):
-        lane_tmp.rmdir()
+    actor_root = lane_tmp / "pi" / slug(args.actor_id, limit=20)
+    pytest_basetemp = actor_root / "pytest"
+    cache_root = actor_root / "cache"
+    pytest_basetemp.mkdir(parents=True, exist_ok=True)
+    cache_root.mkdir(parents=True, exist_ok=True)
 
     index_result, trust = git_with_trust(worktree, ["rev-parse", "--git-path", "index"])
+    trusts.add(trust)
     index_path = resolve_git_path(worktree, index_result.stdout.strip())
     reversible_probe(index_path.with_name(f"{index_path.name}.{token}.lock-probe"))
 
     common_result, trust = git_with_trust(worktree, ["rev-parse", "--git-common-dir"])
+    trusts.add(trust)
     common_dir = resolve_git_path(worktree, common_result.stdout.strip())
     reversible_probe(common_dir / "objects" / "info" / f"parallel-implement-{token}.probe")
 
-    proof: dict[str, Any] = {"command": None, "returncode": None}
+    proof: dict[str, Any]
     if args.proof_command_json:
         command = json.loads(args.proof_command_json)
         if not isinstance(command, list) or not command or not all(
@@ -299,6 +363,8 @@ def preflight(args: argparse.Namespace) -> int:
         }
         if result.returncode != 0:
             raise LaneError(f"proof startup failed: {result.stderr.strip()}")
+    else:
+        proof = {"skipped": True, "reason": args.reason}
 
     return emit(
         "preflight",
@@ -311,53 +377,92 @@ def preflight(args: argparse.Namespace) -> int:
         branch=branch,
         detached=branch is None,
         status="clean",
-        git_trust=trust,
+        git_trust=(
+            "command-scoped-safe-directory"
+            if "command-scoped-safe-directory" in trusts
+            else "normal"
+        ),
         effective_identity=os.environ.get("USERNAME") or os.environ.get("USER"),
         probes={"checkout": "passed", "index_lock": "passed", "git_objects": "passed"},
         proof_startup=proof,
+        actor_id=args.actor_id,
+        temp_root=str(actor_root),
+        pytest_basetemp=str(pytest_basetemp),
+        cache_root=str(cache_root),
         cleanup_route="lane_worktree.py cleanup",
     )
 
 
 def cleanup(args: argparse.Namespace) -> int:
     repo, repo_trust = git_root(Path(args.repo).resolve())
+    root = Path(args.root).resolve()
     worktree = Path(args.worktree).resolve()
+    if not contains(root, worktree):
+        raise LaneError("worktree path is outside the recorded root")
     registered_before = worktree in registered_worktrees(repo)
     if not registered_before:
         state = "unregistered-residual-directory" if worktree.exists() else "removed"
-        return emit(
+        if state == "removed":
+            return emit(
+                "cleanup",
+                True,
+                repo=str(repo),
+                root=str(root),
+                worktree=str(worktree),
+                state=state,
+                registered_before=False,
+                registered_after=False,
+                directory_exists=False,
+            )
+        return blocked(
             "cleanup",
-            state == "removed",
-            repo=str(repo),
-            worktree=str(worktree),
             state=state,
+            error="worktree is already unregistered, so its HEAD and cleanliness cannot be reverified",
+            recoverable=True,
+            next_action={
+                "command": "purge-residual",
+                "root": str(root),
+                "worktree": str(worktree),
+                "requires": "explicit residual cleanup authority",
+            },
+            repo=str(repo),
+            root=str(root),
+            worktree=str(worktree),
             registered_before=False,
             registered_after=False,
-            directory_exists=worktree.exists(),
+            directory_exists=True,
         )
 
     head_result, _ = git_with_trust(worktree, ["rev-parse", "HEAD"])
     head = head_result.stdout.strip()
-    if head != args.expected_head:
-        raise LaneError(f"worktree HEAD {head} does not match recorded {args.expected_head}")
+    expected_result, _ = git_with_trust(worktree, ["rev-parse", args.expected_head])
+    expected_head = expected_result.stdout.strip()
+    if head != expected_head:
+        raise LaneError(f"worktree HEAD {head} does not match recorded {expected_head}")
     status_result, _ = git_with_trust(worktree, ["status", "--porcelain=v1"])
     if status_result.stdout:
-        return emit(
+        return blocked(
             "cleanup",
-            False,
-            repo=str(repo),
-            worktree=str(worktree),
             state="blocked-dirty",
+            error="worktree is dirty",
+            recoverable=True,
+            next_action={"command": "inspect", "repair": "preserve or reconcile dirty state"},
+            repo=str(repo),
+            root=str(root),
+            worktree=str(worktree),
             head=head,
             status=status_result.stdout,
         )
     if args.disposition not in {"integrated", "preserved"}:
-        return emit(
+        return blocked(
             "cleanup",
-            False,
-            repo=str(repo),
-            worktree=str(worktree),
             state="blocked-unpreserved",
+            error="commit disposition is neither integrated nor preserved",
+            recoverable=True,
+            next_action={"command": "cleanup", "repair": "record integrated or preserved disposition"},
+            repo=str(repo),
+            root=str(root),
+            worktree=str(worktree),
             head=head,
         )
 
@@ -366,6 +471,36 @@ def cleanup(args: argparse.Namespace) -> int:
     )
     registered_after = worktree in registered_worktrees(repo)
     directory_exists = worktree.exists()
+    residual_removed = False
+    if not registered_after and directory_exists:
+        try:
+            shutil.rmtree(extended_path(worktree))
+        except OSError as error:
+            return blocked(
+                "cleanup",
+                state="unregistered-residual-directory",
+                error=str(error),
+                recoverable=True,
+                next_action={
+                    "command": "purge-residual",
+                    "root": str(root),
+                    "worktree": str(worktree),
+                    "requires": "explicit residual cleanup authority",
+                },
+                repo=str(repo),
+                root=str(root),
+                worktree=str(worktree),
+                head=head,
+                expected_head=expected_head,
+                disposition=args.disposition,
+                registered_before=registered_before,
+                registered_after=False,
+                directory_exists=True,
+                git_returncode=result.returncode,
+                git_error=result.stderr.strip(),
+            )
+        directory_exists = worktree.exists()
+        residual_removed = not directory_exists
     if not registered_after and not directory_exists:
         state = "removed"
     elif not registered_after and directory_exists:
@@ -376,9 +511,11 @@ def cleanup(args: argparse.Namespace) -> int:
         "cleanup",
         state == "removed",
         repo=str(repo),
+        root=str(root),
         worktree=str(worktree),
         state=state,
         head=head,
+        expected_head=expected_head,
         disposition=args.disposition,
         git_trust=(
             "command-scoped-safe-directory"
@@ -388,6 +525,7 @@ def cleanup(args: argparse.Namespace) -> int:
         registered_before=registered_before,
         registered_after=registered_after,
         directory_exists=directory_exists,
+        residual_removed=residual_removed,
         git_returncode=result.returncode,
         git_error=result.stderr.strip(),
     )
@@ -442,12 +580,16 @@ def parser() -> argparse.ArgumentParser:
     preflight_parser = commands.add_parser("preflight")
     preflight_parser.add_argument("--worktree", required=True)
     preflight_parser.add_argument("--base", required=True)
+    preflight_parser.add_argument("--actor-id", required=True)
     preflight_parser.add_argument("--expect-branch")
     preflight_parser.add_argument("--proof-command-json")
+    preflight_parser.add_argument("--skip-proof", action="store_true")
+    preflight_parser.add_argument("--reason")
     preflight_parser.set_defaults(handler=preflight)
 
     cleanup_parser = commands.add_parser("cleanup")
     cleanup_parser.add_argument("--repo", required=True)
+    cleanup_parser.add_argument("--root", required=True)
     cleanup_parser.add_argument("--worktree", required=True)
     cleanup_parser.add_argument("--expected-head", required=True)
     cleanup_parser.add_argument("--disposition", required=True)
@@ -467,7 +609,13 @@ def main() -> int:
     try:
         return args.handler(args)
     except (LaneError, OSError, json.JSONDecodeError) as error:
-        return emit(args.command, False, error=str(error))
+        return blocked(
+            args.command,
+            state="blocked-error",
+            error=str(error),
+            recoverable=True,
+            next_action={"command": args.command, "repair": "inspect the returned error and retry only after its cause changes"},
+        )
 
 
 if __name__ == "__main__":

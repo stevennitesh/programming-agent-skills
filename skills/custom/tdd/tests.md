@@ -56,6 +56,26 @@ assert calculate_total([{"price": 10}, {"price": 5}]) == 15
 
 Trace expectations to a specification, known-good literal, fixture, or worked result—not the production implementation.
 
+## Async Waiting
+
+Wait for the observable condition or event with a bounded timeout and useful failure diagnostic.
+
+```python
+wait_for(
+    lambda: job.status == "complete",
+    timeout=5,
+    description="job to complete",
+)
+```
+
+Use elapsed delay only when time is the behavior. Observe the trigger first, derive the duration from the contract, and state why that duration proves it.
+
+```python
+wait_for(lambda: events.contains("DEBOUNCE_STARTED"), timeout=1)
+advance_clock(DEBOUNCE_INTERVAL)
+assert events.contains("SEARCH_REQUESTED")
+```
+
 ## Red Flags
 
 - the name describes calls, helpers, layers, or storage;

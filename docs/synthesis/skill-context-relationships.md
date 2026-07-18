@@ -30,9 +30,14 @@ flowchart TD
   DomainModel --> ADRs
 
   Router --> Shape["grilling / grill-with-docs / wayfinder / prototype"]
+  Router --> Questionnaire["to-questionnaire"]
   Router --> Handoff["handoff"]
   GrillDocs["grill-with-docs"] --> Grilling["grilling"]
   GrillDocs --> DomainModel
+  Grilling -. "async stakeholder gap" .-> Questionnaire
+  Questionnaire --> TmpQuestionnaire[".tmp/to-questionnaire/*.md"]
+  Questionnaire -. "source-answerable" .-> Research
+  Questionnaire -. "user-owned decision" .-> Grilling
   Wayfinder["wayfinder"] --> Tracker
   Wayfinder --> Labels
   Wayfinder -. "setup gate" .-> Setup
@@ -71,6 +76,7 @@ flowchart TD
   Ready --> Parallel["parallel-implement"]
   Implement --> Contract
   Implement --> Review["review"]
+  Implement --> FindingContract["FINDING-CONTRACT.md<br/>admission + remediation interface"]
   Implement -. "local PR / high risk" .-> CPR
   Implement --> Tracker
   Implement -. "unsettled work" .-> Shape
@@ -80,8 +86,9 @@ flowchart TD
   Parallel --> DomainRouter
   Parallel --> WorkerBrief["WORKER-BRIEF.md<br/>lane worker contract"]
   Parallel --> IntegratorBrief["INTEGRATOR-BRIEF.md"]
-  Parallel --> Ledger["RUN-LEDGER.md / .tmp/parallel-implement/"]
+  Parallel --> Ledger["RUN-LEDGER.md / run_ledger.py<br/>canonical events + generated ledger"]
   Parallel --> Review
+  Parallel --> FindingContract
   Parallel -. "approved high risk only" .-> CPR["convergent-pr-review"]
   Parallel -. "conflicted landing" .-> Conflict
   WorkerBrief --> TDD
@@ -90,10 +97,12 @@ flowchart TD
   Review --> Contract
   Review --> SpecSources["spec / acceptance / source material"]
   Review --> StandardsSources["repo standards / configs / test docs"]
+  Review --> FindingContract
   Review -. "local PR / high risk" .-> CPR
   CPR --> Contract
   CPR --> SpecSources
   CPR --> StandardsSources
+  CPR --> FindingContract
 
   Research --> ResearchDocs["docs/research/*"]
   Conflict["resolving-merge-conflicts"] --> Contract
@@ -125,7 +134,8 @@ flowchart TD
   CodeDesign --> DirectDesign["DIRECT-DESIGN.md"]
   DirectDesign --> DesignRefs["DEEPENING.md / DESIGN-IT-TWICE.md"]
   CodeDesign -. "wide scan" .-> Arch
-  Writing["writing-great-skills"] --> Glossary["GLOSSARY.md"]
+  Writing["writing-great-skills"] --> Glossary["GLOSSARY.md<br/>authoring vocabulary"]
+  Writing --> BehaviorEvals["BEHAVIOR-EVALS.md<br/>counterfactual wording evaluation"]
 ```
 
 ## Invocation Map
@@ -151,6 +161,7 @@ Source: `skills/custom/*/agents/openai.yaml`.
 | `review` | implicitly invocable |
 | `skill-router` | explicit-only |
 | `tdd` | implicitly invocable |
+| `to-questionnaire` | explicit-only |
 | `to-tickets` | explicit-only |
 | `to-spec` | explicit-only |
 | `triage` | explicit-only |
@@ -175,9 +186,12 @@ Use one verb for each executable relationship:
 | `grill-with-docs` | Compose | `$domain-modeling` | Keep durable domain capture active under its own write and ADR gates. |
 | `grilling` | Recommend and stop | `$research` | A source evidence gap needs one cited note. |
 | `grilling` | Recommend and stop | `$prototype` | A design evidence gap needs a runnable verdict. |
+| `grilling` | Recommend and stop | `$to-questionnaire` | An identifiable external stakeholder owns evidence that must be collected asynchronously. |
 | `grilling` | Recommend and stop | `$handoff` | Evidence work must cross into a fresh session. |
+| `to-questionnaire` | Recommend and stop | `$research` | Inspectable primary sources can answer the gap. |
+| `to-questionnaire` | Recommend and stop | `$grilling` | The current user owns the unresolved decision. |
 | `wayfinder` | Invoke | `$research` | Resolve one AFK research ticket, then record its pointer. |
-| `wayfinder` | Invoke | `$prototype` | Resolve one runnable prototype ticket, then capture its verdict. |
+| `wayfinder` | Invoke | `$prototype` | Resolve one HITL or AFK runnable probe, then receive its reconciled verdict packet and cleanup or preservation state. |
 | `wayfinder` | Invoke | `$grill-with-docs` | Resolve one HITL decision ticket or the bounded Chart interview. |
 | `wayfinder` | Recommend and stop | `$domain-modeling` | A closing decision changes durable language or warrants an ADR offer. |
 | `wayfinder` | Recommend and stop | `$to-spec` | The closed map produced settled parent-spec source. |
@@ -194,13 +208,13 @@ Use one verb for each executable relationship:
 | `triage` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `implement` | Invoke | `$tdd` | New behavior is settled and red-testable, or expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known. |
 | `implement` | Invoke | `$diagnosing-bugs` | A bug's exact symptom, cause, or trusted red-capable reproduction is uncertain; return after regression proof. |
-| `implement` | Invoke | `$review` | The selected diff needs ordinary fixed-point review. |
+| `implement` | Invoke | `$review` | The selected diff or bounded Repair generation needs ordinary fixed-snapshot review. |
 | `implement` | Invoke | `$convergent-pr-review` | The selected diff is a local PR or matches a high-risk trigger. |
 | `implement` | Recommend and stop | `$to-tickets` | The supplied source contains multiple or unsliced implementation items. |
 | `implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `parallel-implement` | Invoke | `$tdd` | A lane worker has red-testable new behavior, or a bug whose expected behavior, exact symptom, cause, and trusted red-capable reproduction are known. |
 | `parallel-implement` | Invoke | `$diagnosing-bugs` | A lane worker's bug has uncertain expected behavior, exact symptom, cause, or trusted red-capable reproduction; return to the same lane worker. |
-| `parallel-implement` | Invoke | `$review` | The integrated closeout target needs ordinary review. |
+| `parallel-implement` | Invoke | `$review` | The integrated closeout target or bounded Repair generation needs ordinary fixed-snapshot review. |
 | `parallel-implement` | Invoke | `$convergent-pr-review` | The integrated closeout target matches a high-risk trigger. |
 | `parallel-implement` | Invoke | `$resolving-merge-conflicts` | A routed landing enters conflicted or partially applied Git state; resume only from the resolver's verified and authorized return state. |
 | `parallel-implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
@@ -212,7 +226,6 @@ Use one verb for each executable relationship:
 | `diagnosing-bugs` | Recommend and stop | `$implement` | Standalone diagnosis proved the cause and needs an implementation owner. |
 | `resolving-merge-conflicts` | Invoke | `$diagnosing-bugs` | Diagnose an uncertain proof failure, return the causal packet, then resume Prove. |
 | `review` | Hand off | `$convergent-pr-review` | The target is a local PR or needs independent high-risk review. |
-| `convergent-pr-review` | Hand off | `$review` | The target is an ordinary fixed-point review. |
 | `improve-codebase-architecture` | Load | `$codebase-design` | Apply shared architecture vocabulary during the wide survey. |
 | `improve-codebase-architecture` | Invoke | `$research` | An approved tracked note must close an external evidence gap. |
 | `improve-codebase-architecture` | Invoke | `$grill-with-docs` | Pressure-test the selected candidate and capture domain changes. |
@@ -237,46 +250,49 @@ Use one verb for each executable relationship:
 | `docs/agents/issue-tracker.md` | Tracker interface, work-item lifecycle, PR-as-request rules, and wayfinding operations | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `review`, `convergent-pr-review`, `wayfinder` |
 | `docs/agents/triage-labels.md` | Category/state role to label mapping and fixed wayfinding labels | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
 | `docs/agents/domain.md` | Routing to `CONTEXT.md`, `CONTEXT-MAP.md`, ADRs | `to-spec`, `triage`, `tdd`, `diagnosing-bugs`, `improve-codebase-architecture`, `parallel-implement` |
-| `docs/agents/engineering-contract.md` | Engineering taste, shared runtime language, commitment boundary, semantic proof, work-state policy, fixed-point Spec/Standards review, and Lock | `implement`, `tdd`, `diagnosing-bugs`, `prototype`, `improve-codebase-architecture`, `parallel-implement`, `resolving-merge-conflicts`, `review`, `convergent-pr-review` |
+| `docs/agents/engineering-contract.md` | Engineering taste, shared runtime language, Charter, commitment boundary, change-created fallout, fresh and negative-control proof, work-state policy, fixed-snapshot Spec/Standards review, Repair generation, and Lock | `implement`, `tdd`, `diagnosing-bugs`, `prototype`, `improve-codebase-architecture`, `parallel-implement`, `resolving-merge-conflicts`, `review`, `convergent-pr-review` |
 | `domain-modeling` | Mutates `CONTEXT.md`, `CONTEXT-MAP.md`, and ADR truth | `skill-router`, `grill-with-docs`, `wayfinder`, `prototype`, `repo-bootstrap` |
 | `codebase-design` | Interface, seam, adapter, depth, leverage, and locality vocabulary | `to-spec`, `improve-codebase-architecture`, `tdd`, architecture/design follow-ups |
 | `research` | Primary-source legwork and authorized cited repo-local research notes | `skill-router`, `grilling`, `wayfinder`, `improve-codebase-architecture` |
+| `to-questionnaire` | One recipient-ready async discovery artifact for one external stakeholder and downstream decision | `skill-router`, `grilling`, humans collecting stakeholder evidence |
 | `resolving-merge-conflicts` | Read-only three-way inspection, authorized reconciliation, and the separate finish boundary | Git operations and implementation or integration work that enters a conflicted state |
-| `review` | Ordinary fixed-point Standards/Spec review | `implement`, `parallel-implement`; escalates to `convergent-pr-review` for high risk |
+| `review` | Ordinary fixed-snapshot Standards/Spec review | `implement`, `parallel-implement`; escalates once to `convergent-pr-review` for high risk |
 
 ## Supporting Files
 
 | Skill | Supporting files own |
 | --- | --- |
-| `writing-great-skills` | `GLOSSARY.md`: skill-authoring vocabulary |
+| `writing-great-skills` | `GLOSSARY.md`: skill-authoring vocabulary; `BEHAVIOR-EVALS.md`: counterfactual wording evaluation |
 | `codebase-design` | `DIRECT-DESIGN.md`: direct pass and packet; `DEEPENING.md`: dependency/seam discipline; `DESIGN-IT-TWICE.md`: alternative interface exploration |
 | `domain-modeling` | `CONTEXT-FORMAT.md`: glossary and context-map format; `ADR-FORMAT.md`: ADR gate and format |
 | `tdd` | `tests.md`, `mocking.md`, `refactoring.md`: examples and branch mechanics |
 | `prototype` | `LOGIC.md`, `UI.md`: branch mechanics; `SKILL.md` owns lifecycle and boundary |
 | `triage` | `ATTENTION-SCAN.md`, `SPECIFIC-ITEM.md`, `QUICK-OVERRIDE.md`: branch procedures; `AGENT-BRIEF.md`: ready-contract rendering; `AGENT-BRIEF-EXAMPLES.md`: branch evidence emphasis; `OUT-OF-SCOPE.md`: rejected-work knowledge base |
 | `repo-bootstrap` | Tracker, label, domain, and engineering-contract seeds; `setup-schema.json`: compatibility fingerprint; `scripts/validate_setup.py`: target-repo setup-surface validation |
-| `wayfinder` | `MAP-FORMAT.md`: map and ticket body shape; `SKILL.md`: foggy map lifecycle and semantics |
+| `wayfinder` | `MAP-FORMAT.md`: canonical map and ticket shape, empty-fog sentinel, and exclusion pointers; `SKILL.md`: Chart, Advance, Maintain, Closure, and foggy map lifecycle semantics |
 | `research` | One cited repo-local Markdown note per source question |
 | `resolving-merge-conflicts` | Three-way merge/rebase/cherry-pick/revert and marker-only conflict process, proof, return packet, and finish boundary |
-| `review`, `convergent-pr-review` | `review/SMELL-BASELINE.md`: fallback Standards reference when repo standards are thin |
+| `review`, `convergent-pr-review`, `implement`, `parallel-implement` | `review/FINDING-CONTRACT.md`: shared finding admission, remediation classes, and remediation-review bound; `review/SMELL-BASELINE.md`: fallback Standards reference when repo standards are thin |
 | `improve-codebase-architecture` | `HTML-REPORT.md`: report format and visual style |
-| `parallel-implement` | `WORKER-BRIEF.md`, `INTEGRATOR-BRIEF.md`, `CODEX-WORKTREE-LAUNCH.md`, `RUN-LEDGER.md`: lane contracts, checkout isolation, and run ledger |
+| `parallel-implement` | `WORKER-BRIEF.md`, `INTEGRATOR-BRIEF.md`, `CODEX-WORKTREE-LAUNCH.md`: lane contracts and checkout lifecycle; `run_ledger.py` and `RUN-LEDGER.md`: canonical campaign state, authority validation, generated ledger, and closeout plan |
 
 ## Boundary Notes
 
 - The global template exposes bootstrap handles; `skill-router` routes; neither teaches downstream workflow procedures.
 - Setup docs own tracker, labels, domain routing, and engineering-contract details. Skills should point there instead of restating those mechanics.
 - `$grill-with-docs` is the sole composer of `$grilling` and `$domain-modeling`; the owned skills do not route or invoke each other.
+- `to-questionnaire` owns async stakeholder elicitation into one verified artifact only after its admissibility gate; source-answerable gaps return to `$research`, and current-user decisions return to `$grilling`. It does not contact the recipient, ingest answers, mutate trackers or domain truth, or synthesize a specification.
 - `domain-modeling` is the only skill that writes `CONTEXT.md`, `CONTEXT-MAP.md`, or ADR truth; `repo-bootstrap` configures the layout, and vocabulary consumers follow `docs/agents/domain.md`.
 - `to-spec` owns parent spec synthesis and tracker publication; `to-tickets` owns implementation issue slicing.
-- `wayfinder` owns foggy multi-session maps; tracker docs own the transport mechanics for maps, child tickets, blocking, claiming, and resolution.
+- `wayfinder` owns foggy multi-session maps, ticket resolution authority, consequence-only Maintain repairs, fog disposition, and Prototype ticket participation; tracker docs own transport, child and map claim identity, stale-claim recovery, blocking, and resolution mechanics. `prototype` owns judgment mechanics, probe execution, verdict assembly, and artifact reconciliation.
 - `research` owns primary-source legwork and one cited repo-local note. A user request or caller packet must authorize one note path before that tracked mutation; otherwise research returns cited inline evidence or a blocker.
 - `resolving-merge-conflicts` inspects State and Trace read-only by default. Reconciliation authority permits edits only to in-scope conflicts; finish authority separately permits staging and continuation. Abort, hard reset, or discarding a side requires explicit approval.
 - Tracker docs own transport, tracker commands, the shared Ready-for-agent contract, and Mutation read-back. `triage` owns incoming classification, verification, brief rendering, state transitions, and the AI disclaimer; `$to-tickets` owns slicing and dependency order. Do not re-triage valid `$to-tickets` output.
-- `implement` owns one standalone selected item; `parallel-implement` owns one parent-backed ticket graph through serial or parallel frontiers, serialized integration, and verified child and parent closeout.
+- `implement` owns one standalone selected item and its bounded Repair campaign; `parallel-implement` owns one parent-backed ticket graph through serial or parallel frontiers, bounded Repair generations, serialized integration, and verified child and parent closeout.
 - The `parallel-implement` orchestrator is the sole dispatcher and formal-review owner. Lane workers and child integrators never fan out; an integration lane lands, validates, and returns a review-ready packet.
-- `review` is the ordinary closeout gate; `convergent-pr-review` is an approved high-risk/local-PR route, not default review.
-- `convergent-pr-review` may run its own read-only reviewer passes only when selected as the review route; it is not a second implementation orchestrator.
+- `review` is the ordinary fixed-snapshot gate and may hand off once to `convergent-pr-review`; the high-risk route never hands back.
+- `review` and `convergent-pr-review` return terminal read-only evidence. Their reports grant no mutation or successor-snapshot authority; the implementation caller's pre-recorded Charter and Repair Budget govern continuation.
+- `convergent-pr-review` may run its own bounded read-only reviewer passes only when selected as the review route; it is not a second implementation orchestrator.
 - `handoff` carries pointers across sessions; it should reference durable artifacts, not duplicate specs, issues, ADRs, commits, or diffs.
 - `.tmp/` artifacts are disposable unless a skill explicitly preserves them for the user or next session.
 - `.scratch/` artifacts are durable, version-controlled local state; include in-scope changes in review and staging.

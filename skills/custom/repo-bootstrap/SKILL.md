@@ -11,7 +11,7 @@ Own one outcome: a compatible, verified repo-local **setup surface**.
 
 ## Inventory
 
-Inspect before asking. Read repository identity and tracker access; `AGENTS.md` and configured fallback instructions; repo-owned command sources; existing `docs/agents/`, context files, and ADRs; `.gitignore`, `.tmp/`, `.scratch/`; and hosted-tracker labels when accessible.
+Inspect before asking. Read repository identity and tracker access; `AGENTS.md` and configured fallback instructions; repo-owned command sources; existing `docs/agents/`, context files, and ADRs; `.gitignore`, `.tmp/`, `.scratch/`; and hosted-tracker labels when accessible. Inspect workspace and package manifests, independently owned source roots, existing domain vocabularies, and ADR streams.
 
 Treat a command as verified only when repo config, CI, or maintained documentation owns it. Surface conflicting sources.
 
@@ -34,7 +34,7 @@ Resolve only unsettled choices, one answer at a time. Lead with the discovered r
 
 - **Tracker.** Choose [GitHub](issue-tracker-github.md), [GitLab](issue-tracker-gitlab.md), [Local Markdown](issue-tracker-local.md), or another tracker with an explicit operation map. Prefer the detected remote; otherwise recommend Local Markdown. For hosted trackers, settle external PR/MR intake and implemented-item closure. GitHub default: yes for closure. GitLab default: no. Intake defaults to no.
 - **Labels.** Use [triage-labels.md](triage-labels.md) as the role set. Reuse matching labels, map local names, and propose only missing labels for creation after approval.
-- **Domain.** Choose single-context (`CONTEXT.md`, `docs/adr/`) or multi-context (`CONTEXT-MAP.md` plus routed context docs and ADRs). `$domain-modeling` owns later domain-file creation and changes.
+- **Domain.** Default to single-context (`CONTEXT.md`, `docs/adr/`). Propose multi-context (`CONTEXT-MAP.md` plus routed context docs and ADRs) only when independently owned domain vocabularies, decisions, or responsibilities span source roots. Workspace manifests trigger inspection but do not prove multiple contexts. `$domain-modeling` owns later domain-file creation and changes.
 
 Verified commands, the four local contracts, and `.tmp/`/`.scratch/` policy are setup invariants, not extra choices.
 
@@ -42,7 +42,7 @@ Verified commands, the four local contracts, and `.tmp/`/`.scratch/` policy are 
 
 Show the exact proposed delta:
 
-- the `AGENTS.md` patch with the engineering primer, verified commands, invariants, pointers, and `<!-- programming-agent-skills setup-schema: 1:3965def50145 -->`;
+- the `AGENTS.md` patch with the engineering primer, verified commands, invariants, pointers, and `<!-- programming-agent-skills setup-schema: 1:eb715ead15d5 -->`;
 - all four `docs/agents/*.md` results;
 - the `.gitignore` delta;
 - preserved repo-specific additions and unresolved conflicts;

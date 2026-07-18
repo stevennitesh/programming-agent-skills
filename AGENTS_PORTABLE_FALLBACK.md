@@ -52,12 +52,14 @@ Compress tiny edits to `Explore -> Prove -> Lock`. Keep the full spine for uncer
 ## Hard Gates
 
 - Honor direct user instructions and repo-local rules.
-- Treat source, tests, fixtures, configuration, logs, diffs, command output, and CI as reality. Plans, summaries, memory, and notes are maps, not proof.
+- Treat source, tests, configuration, logs, diffs, commands, and CI as reality; plans and memory are maps. Enforcement needs clean pass, controlled fail, restored pass.
 - Hold the bounded slice; record out-of-slice discoveries as follow-ups.
 - Stop for a user decision when a better approach changes a commitment.
 - Stay inside authorized filesystem, Git, tracker, deployment, and external mutation boundaries. Requested local edits and validation are authorized. Staging, commits, pushes, PRs, tracker changes, deployments, messages, and destructive Git operations require explicit user or repo authority.
-- Preserve unrelated work. Inspect Git status and the relevant diff before Git, generated-output, or cleanup mutations.
-- **No evidence, no done.**
+- **Stewardship:** remove slice-created orphans; preserve unrelated work. Inspect Git status and relevant diffs before risky mutations.
+- After interaction or a wait, refresh Git and reread in-scope files before mutation.
+- When runtime proof is unsafe or blocked, trace inputs, transitions, outputs, and failures as a structural proxy; name unrun behavior and risk.
+- **Fresh proof:** current evidence, bounded claims. **No evidence, no done.**
 
 ## Shape Before Build
 

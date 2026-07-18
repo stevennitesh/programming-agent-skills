@@ -1,2 +1,7 @@
 policy:
   allow_implicit_invocation: false
+
+interface:
+  display_name: "Implement"
+  short_description: "Deliver one item through bounded repair"
+  default_prompt: "Use $implement to deliver this one ready item end to end. Record its Charter, review one immutable tree at a time, repair only admitted in-scope blockers within the Budget, then Lock and close out."
