@@ -1,6 +1,6 @@
 ---
 name: convergent-pr-review
-description: Review one immutable local PR, release candidate, or bounded high-risk diff read-only through direct fresh-context reviewers, root-verified finding admission, exact degraded-capacity fallbacks, and optional nonblocking advisories, then return one terminal release decision. Use only from the top-level root agent. Route open-ended repository correctness, methodology, model-risk, leakage, validation, calibration, analytics, or performance baselines to $audit-codebase.
+description: Review one immutable local PR, release candidate, or bounded high-risk diff read-only through direct fresh-context reviewers, root-verified finding admission, exact degraded-capacity fallbacks, and optional nonblocking advisories, then return one terminal release decision. Root-only. Route open-ended repository correctness, methodology, model-risk, leakage, validation, calibration, analytics, or performance baselines to $audit-codebase.
 ---
 
 # Convergent PR Review
@@ -9,13 +9,13 @@ description: Review one immutable local PR, release candidate, or bounded high-r
 
 Own one read-only convergence gate over one immutable review snapshot.
 
-**Root-only guard:** the top-level root agent is the sole review dispatcher, evidence-ledger owner, verifier, drift checker, and decision-maker. If invoked inside a delegated task, stop before Pin and return `incomplete` with a routing blocker. Reviewer tasks may apply the supplied contracts; they never invoke or orchestrate this skill.
+**Root-only guard:** the top-level root owns review dispatch, the evidence ledger, verification, drift checks, and the decision. If invoked inside a delegated task, stop before Pin and return `incomplete` with a routing blocker. Reviewers apply supplied contracts; they never invoke or orchestrate this skill.
 
-**Terminal boundary:** return one decision and stop. Perform no remediation, fix dispatch, worktree creation, tracker mutation, successor review, or snapshot recapture. A `blocked` decision supplies evidence and grants no mutation or rereview authority.
+**Terminal:** return one decision and stop. Start no remediation, fix dispatch, worktree creation, tracker mutation, successor review, or snapshot recapture. A `blocked` decision supplies evidence only.
 
-**Read-only boundary:** inspect only. Disposable evidence may live under `.tmp/`. Record any required pre-capture ref fetch. Keep the worktree, index, commits, tracked `.scratch/`, tracker, PR reviews or comments, and external messages unchanged.
+**Read-only:** inspect only. Store disposable evidence under `.tmp/` and record any required pre-capture ref fetch. Keep the worktree, index, commits, tracked `.scratch/`, tracker, PR reviews or comments, and external messages unchanged.
 
-**Defaults:** two reviewers, two rounds maximum, `P0/P1/P2/P3` severity, and `Advisories: no`. Use three to five reviewers only when distinct Charter surfaces justify their own high-risk lenses; more than five requires an explicit user request.
+**Defaults:** two reviewers, two rounds maximum, `P0/P1/P2/P3` severity, and `Advisories: no`. Use three to five reviewers only for distinct high-risk Charter lenses; more than five requires an explicit user request.
 
 ## 1. Pin
 
@@ -27,7 +27,7 @@ Capture one complete target:
 - branch or PR: record base, head, merge base, status, commit range, stat, and full diff;
 - worktree: record `HEAD`, status, staged and unstaged diffs, and every in-scope untracked file.
 
-A supplied review tree wins over live targets. Resolve a PR before any fetch needed to capture its head. Give reviewers the captured snapshot, never live diff commands. Git-addressed content needs no second hash; hash only captured live content not already addressed by Git.
+**Snapshot precedence:** a supplied review tree wins over live targets. Resolve a PR before any fetch needed to capture its head. Give reviewers the captured snapshot, never live diff commands. Git-addressed content needs no second hash; hash only captured live content.
 
 Record a new run ID and `Review mode: initial | remediation | assurance`.
 
@@ -35,13 +35,13 @@ Record a new run ID and `Review mode: initial | remediation | assurance`.
 - `remediation`: new invocation over a successor snapshot; require the original Charter, prior snapshot, carried finding IDs, Repair delta, and remaining acceptance.
 - `assurance`: new full-Charter invocation over the same accepted snapshot because the caller requested more confidence.
 
-Every mode gets a new brief and ledger. Never reuse a reviewer from a prior invocation as an independent reviewer. Assurance is not remediation, same-invocation retry, or round two.
+**Fresh invocation:** every mode gets a new brief and ledger. A prior-invocation reviewer is not independent. Assurance is neither remediation, a same-invocation retry, nor round two.
 
 Return `incomplete` before dispatch when the fixed point or target does not resolve, the target is empty, or the complete snapshot cannot be captured.
 
 ## 2. Trace
 
-Build one Source Trace from the request or caller packet, PR body and decision-bearing comments, linked issues or specs, captured commits, repo instructions, `docs/agents/engineering-contract.md`, and validation configuration. Follow `docs/agents/issue-tracker.md` for transport and mutation rules when present. Record unavailable or conflicting sources, their axis, and precedence.
+Build one Source Trace from the request or caller packet, PR body and decision-bearing comments, linked issues or specs, captured commits, repo instructions, `docs/agents/engineering-contract.md`, and validation configuration. Follow `docs/agents/issue-tracker.md` when present. Record unavailable or conflicting sources, their axis, and precedence.
 
 Resolve Spec in this order:
 
@@ -56,7 +56,7 @@ For Standards, use repository rules and meaningful nearby conventions. Load [SME
 
 Read [FINDING-CONTRACT.md](../review/FINDING-CONTRACT.md). When the Charter says `Advisories: yes`, also read [ADVISORY-CONTRACT.md](../review/ADVISORY-CONTRACT.md). Build one brief containing the snapshot, Charter, mode, Source Trace, Standards and Spec sources, acceptance, touched seams, validation, and relevant migration, permission, generated-artifact, network, or service constraints. In remediation mode, limit the brief to carried findings, the Repair delta, and remaining original acceptance.
 
-Inline compact briefs. Put only large captured artifacts under `.tmp/convergent-pr-review/<run-id>/` and pass exact paths. Finish all decision-bearing reading before ledger verification.
+**Inline:** keep the brief in context. Store only large captured artifacts under `.tmp/convergent-pr-review/<run-id>/` and pass exact paths. Finish decision-bearing reading before ledger verification.
 
 ## 3. Isolate
 
@@ -75,7 +75,7 @@ skipped checks:
 blockers:
 ```
 
-Keep parent hypotheses, preliminary findings, peer output, and partial ledger out of round one. Wait for every requested lens; replace failed reviewers when capacity permits. Reconcile active capacity and retry dispatch once before degrading.
+**Blind round one:** withhold parent hypotheses, preliminary findings, peer output, and the partial ledger. Wait for every requested lens; replace failed reviewers when capacity permits. Reconcile active capacity and retry dispatch once before degrading.
 
 | Available independent review | Required coverage | Maximum no-blocker decision |
 | --- | --- | --- |
@@ -92,11 +92,11 @@ Normalize reviewer findings into one evidence ledger using the shared finding fi
 
 Status is `candidate`, `accepted`, `rejected`, `duplicate`, or `disputed`. Verification is `unverified`, `verified`, `disproved`, or `not checked`.
 
-Evidence decides; consensus is signal. Merge same-axis duplicates, link cross-axis overlap without collapsing axes, and preserve one-reviewer findings whose evidence survives.
+**Evidence over consensus:** merge same-axis duplicates, link cross-axis overlap without collapsing axes, and preserve one-reviewer findings whose evidence survives.
 
 Use round two only for a named candidate that remains disputed, ambiguous, under-evidenced, or inconsistent. Prefer a new direct `fork_turns="none"` challenger and send only the ledger ID, claim, evidence, contrary evidence or question, and exact decision needed. Use `followup_task` on the originating reviewer only to obtain an omitted contract field, locate evidence it already claimed, or answer a narrow question about its own output. Such continuation adds no independence and receives no peer findings or shared provisional ledger.
 
-Keep the same snapshot and lenses; round two is not a new audit. Label a remediation regression `new in round 2`. Stop after no candidate needs challenge or after round two.
+**Same snapshot:** round two keeps the original snapshot and lenses; it is not a new audit. Label a remediation regression `new in round 2`. Stop when no candidate needs challenge or after round two.
 
 Finalize every item: accepted is verified; rejected is disproved or `not checked` with a non-evidentiary reason; duplicate points to its canonical item; disputed records the unresolved question and provisional blocking decision; every `not checked` item records its reason and confidence impact. No `candidate` or `unverified` item survives.
 
@@ -104,17 +104,17 @@ When enabled, verify advisories separately under the advisory contract. They nev
 
 ## 5. Verify
 
-The root verifies every accepted and disputed finding under the shared Bound rules. Reject disproved claims. Preserve `not checked` only with its reason, Charter relevance, confidence impact, and provisional blocking decision.
+**Root verification:** verify every accepted and disputed finding under the shared Bound rules. Reject disproved claims. Preserve `not checked` only with its reason, Charter relevance, confidence impact, and provisional blocking decision.
 
 Delete disposable evidence or name each preserved `.tmp/` path.
 
-Run the drift check before reporting:
+**Drift gate:** before reporting, compare:
 
 - supplied review tree: immutable;
 - branch or PR: compare current target head with captured head;
 - live worktree: compare current `HEAD`, index tree, staged diff, unstaged diff, status, and all in-scope untracked paths and content with the captured snapshot.
 
-Any difference makes the review stale. Return `incomplete`; the caller alone decides whether another snapshot is authorized.
+Any difference makes the review stale. Return `incomplete`; only the caller may authorize another snapshot.
 
 ## 6. Return
 
@@ -125,7 +125,7 @@ Any difference makes the review stale. Return `incomplete`; the caller alone dec
 - `blocked`: an accepted item blocks, or a disputed or `not checked` item has a provisional blocking decision;
 - `incomplete`: the target, required Spec or lens, verification, or drift gate did not close.
 
-The root owns this decision. The caller owns whether `pass with residual risk` is acceptable for Lock.
+The caller alone decides whether `pass with residual risk` is acceptable for Lock.
 
 Begin with:
 
@@ -161,4 +161,4 @@ Mutation authority: none
 Successor snapshot authority: none
 ```
 
-Complete only when the snapshot, Charter, mode, run ID, and Source Trace are recorded; required Spec and lenses closed under the capacity matrix; every finding reached a terminal ledger state and passed admission; survivors were verified or explicitly not checked; enabled advisories passed their separate contract; drift and read-only boundaries were checked; and one decision plus the complete ledger returned control.
+**Complete:** record the snapshot, Charter, mode, run ID, and Source Trace; close the Spec, capacity, terminal-ledger, admission, verification, advisory, drift, and read-only gates; return one decision and the complete ledger to the caller.

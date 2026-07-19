@@ -39,8 +39,8 @@ Inspect the bounded region in this order:
 
 1. **Delete.** Remove unreachable code, expired compatibility, speculative branches, dead flags, or unused configuration only after reference and entry-point evidence proves the cut.
 2. **Reuse.** Replace a local reimplementation with an existing project-owned helper, type, decision, or pattern whose semantics match.
-3. **Standardize.** Prefer a standard-library, language, browser, database, framework, or already-installed dependency capability over custom machinery when compatibility and edge behavior match.
-4. **Collapse.** Inline pass-through wrappers, single-product factories, one-implementation abstractions, duplicated decisions, or layers that add no earning boundary.
+3. **Standardize.** **Native-first.** Search in order: a standard-library, language, or runtime capability; a browser, database, framework, or platform capability; then an already-installed dependency. Use the first semantic match whose compatibility and edge behavior hold.
+4. **Collapse.** Inline pass-through wrappers, single-product factories, one-implementation abstractions, or layers that add no earning boundary. Consolidate duplicated decisions at their narrowest existing owner.
 5. **Shrink.** Reduce branching and data movement with ordinary, readable language constructs while preserving edge cases.
 
 Earlier rungs outrank later ones. Within the first rung that holds, prefer the candidate that removes the most total complexity while remaining one coherent, provable slice. Record credible rejected candidates and why they fail behavior, scope, clarity, sequencing, or proof.
@@ -62,7 +62,7 @@ If every candidate fails, return **No safe simplification** with the accounted r
 
 Make one meaningful move at a time. After each move, remove only change-created fallout: unused imports, helpers, files, configuration, dependencies, and implementation-detail tests superseded by stronger caller-facing proof. Preserve correct behavior tests and pre-existing dead work outside the slice.
 
-Keep the code boring and readable. Retain comments that explain a non-obvious constraint; omit commentary that only narrates the code.
+Keep the code boring and readable. Retain one concise comment when the cut depends on a non-obvious constraint; name its ceiling and concrete revisit trigger. Omit commentary that only narrates the code.
 
 ## Prove
 

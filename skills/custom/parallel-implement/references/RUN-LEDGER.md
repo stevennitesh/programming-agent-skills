@@ -1,97 +1,92 @@
-# Campaign State and Ledger
+# Campaign Runtime
 
-Use this before the first campaign event, on every resume, before an authority transition, and at closeout.
+`events.jsonl` is the sole campaign source of truth. `LEDGER.md` is generated. The root is the sole writer.
 
-`events.jsonl` is the sole campaign source of truth. `LEDGER.md` is generated output. The root is the sole writer.
+## Normal path
 
-## Commands
-
-Initialize once:
+Start from one JSON scope packet containing `parent`, exhaustive `children`, and a Charter with at least `id` and outcome:
 
 ```text
-python <skill-dir>/scripts/run_ledger.py init --events <run-dir>/events.jsonl
+python <skill-dir>/scripts/run_ledger.py start --events <run-dir>/events.jsonl --repo <repo> --scope-file <scope.json>
 ```
 
-For canonical events, use a stable event ID and request one resulting intent receipt:
+`start` supplies runtime contract 3, default budgets, a stable scope event ID, and the repository HEAD. It rejects a nonempty stream; use `status` to resume.
+
+The canonical Charter counters are `repair_generation_budget` (default `2`), `review_invocation_budget` (default `3`), and `review_invocations_required` (default `1`). They are independent ceilings/minimums and change only through caller-authorized scope evidence.
+
+Ask for the current mechanical move whenever state changes or a run resumes:
 
 ```text
-python <skill-dir>/scripts/run_ledger.py append-receipt \
-  --events <events.jsonl> \
-  --repo <repo> \
-  --intent <dispatch|land|review|repair|lock|push|complete> \
-  --event-id <stable-id> \
-  --stdin
+python <skill-dir>/scripts/run_ledger.py status --events <events.jsonl> --repo <repo>
 ```
 
-The command locks the stream, validates its prior and prospective semantic state, appends once, fsyncs, re-derives state, and returns a machine-readable receipt. Retrying the same ID and semantic payload at the stream tail returns the stored receipt. After later events, the retry preserves the append position but recomputes authority from the full stream and returns `receipt_fresh: false`; a different payload rejects. `committed: true` records the event only. Authority exists only when the current `requested_intent.allowed` is true.
+The response reports `phase`, current and integration heads, implementation state, frontier, active lanes, blockers, `decision_required`, currently authorized intents, and one `next_action`. It derives mechanics only. Root judgment still selects scope, independence, acceptance, correction policy, findings, and external mutation.
 
-Keep `append` and `append-batch` for legacy or atomic evidence ingestion. They preserve structural append behavior and do not grant authority:
+Apply a UTF-8 JSON packet:
 
 ```text
-python <skill-dir>/scripts/run_ledger.py append --events <events> --stdin
-python <skill-dir>/scripts/run_ledger.py append-batch --events <events> --from-file <packet.json>
+python <skill-dir>/scripts/run_ledger.py apply --events <events.jsonl> --repo <repo> --packet-file <packet.json>
 ```
 
-`validate` checks stream structure. `validate-state --intent <intent>` derives semantic state and authority. Use `status` during a run, `resume-status` after interruption, and `closeout-plan` after accepted review.
+Supported packet kinds:
+
+- `lane-ready`: `work_item`, `lane_id`, `actor_id`, and the helper's `create` and `preflight` evidence; records creation and preflight atomically.
+- `worker-result`: `work_item` and `report`; records a handoff but never accepts it automatically.
+- `events`: a nonempty `events` list for decisions and exceptional branches whose semantics remain explicit.
+
+`apply` supplies stable event IDs, locks and fsyncs the stream, validates the complete prospective state, and is idempotent for the same semantic packet. A changed payload under the same identity rejects.
+
+Generate a worker brief from current state:
 
 ```text
-python <skill-dir>/scripts/run_ledger.py validate-state --events <events> --intent <intent> --repo <repo>
+python <skill-dir>/scripts/run_ledger.py brief --events <events.jsonl> --repo <repo> --work-item <id> --mode <implementation|integration-correction|review-repair> --output <brief.md>
 ```
 
-Render after material state changes and at Release:
+Finish only after terminal `complete` has been recorded:
 
 ```text
-python <skill-dir>/scripts/run_ledger.py render --events <events> --repo <repo> --output <run-dir>/LEDGER.md
+python <skill-dir>/scripts/run_ledger.py finish --events <events.jsonl> --repo <repo> --output <run-dir>/LEDGER.md
 ```
 
-## Canonical Charter
+When no friction observations exist, `finish` appends the canonical `none_observed` synthesis. When observations exist, it requires deliberate synthesis. It then validates complete authority and renders the ledger. It never closes trackers, pushes, or fabricates Release.
 
-Set `runtime_contract: 2` and record:
+**Adjudicate before synthesis.** Compare each observation and suggestion with the current canonical skill, helper behavior, and owning repository contract. Classify it as `generic-skill-gap`, `repo-contract-gap`, `run-specific`, or `already-satisfied`. Preserve every observation as historical evidence, but include only verified unresolved generic skill gaps in deduplicated improvement themes. Synthesis is adjudication, not transcription.
 
-- `repair_generation_budget`: nonnegative automatic Repair ceiling, default `2`;
-- `review_invocation_budget`: positive formal-review ceiling, default Repair budget plus one;
-- `review_invocations_required`: positive completed-review minimum, default `1`.
+## Phases and decisions
 
-Legacy `repair_budget` remains an alias when it agrees with the canonical value. A budget-changing `scope-change` carries the exact prior values plus caller source and reason. Counters never authorize their own increase.
+| Phase | Root decision | Runtime derives |
+| --- | --- | --- |
+| Trace | outcome, graph, Charter, commitments | scope identity, budgets, starting HEAD |
+| Select | readiness, independence, worker count | unfinished children and recorded blockers |
+| Open | claim, actor, proof route | lane/preflight consistency and dispatch authority |
+| Drain | accept/reject, stale-base route, correction route | landing authority, integration HEAD, invalidation |
+| Review | route, finding admission, repair eligibility | immutable target, counters, successor requirements |
+| Lock | external mutation approval | closeout plan, approved HEAD, missing read-backs |
+| Release | terminal disposition | completeness, safe lanes, friction synthesis |
 
-## Review State
+If `status.next_action` is surprising, inspect the state and canonical events. Do not force the suggested command.
 
-Append `review-invocation` before the formal call. Use its event ID as the invocation identity, its `integration_sha` as the immutable target, and `data.mode` as `initial`, `remediation`, or `assurance`. The resulting `review-decision.data.review_invocation_id` must match.
+## Branch packets
 
-Historical `review-target` events remain valid implicit invocations. New flows do not emit both event forms.
+Use an `events` packet for checkpoint/resume, integration correction, formal review, Repair, Lock, and Release. These branches are explicit because they carry judgment or external evidence, not because the operator must calculate IDs or receipts.
 
-- Initial reviews the first integrated candidate.
-- Remediation requires a proved Repair generation and successor SHA.
-- Assurance requires an accepted immutable target and consumes a new top-level review invocation.
-- Incomplete may retry the same target and mode when budget remains.
+Progressive evidence belongs at the gate where it becomes actionable:
 
-Every invocation consumes review budget. Every decision except `incomplete` counts toward required completed reviews. Internal reviewer replacement and challenge rounds do not affect campaign counters. Repair may start only when one generation and one successor review invocation remain.
+- **Checkpoint:** idle actors, repository-backed nonempty current HEAD, safe lanes, continuation, frontier, blockers, tracker/remote state, and complete retained-or-released claim accounting.
+- **Integration regression:** trusted RED, prior integration HEAD, route, owner, structured write-scope IDs, and required proof.
+- **Integration correction:** matching regression, owner and lane actor, selected scope-ID subset, worker or correction commit, actual changed files, ancestry, clean successor HEAD, and bounded regression proof.
+- **Review:** drained graph, loop-close proof, immutable target, `review-invocation` identity, route, mode, classified findings, decision, and residual risk.
+- **Repair:** blocked snapshot, one complete eligible finding set, generation, owners, scopes, proof, successor HEAD, and completion evidence.
+- **Lock:** approved HEAD, verified child packets, child-first mutation read-backs, parent closeout, applicable push/remote proof, and lane dispositions.
 
-## Progressive Evidence
+Runtime contract 3 uses `checkpoint` for resumable `partial` or `blocked`. After `resume`, authority stays closed until `reconcile` records Git, worktree, actor, tracker, and remote observations. `release` is terminal and accepts only `complete`.
 
-Record evidence when its gate becomes actionable:
+`landed-awaiting-lock` is a derived, campaign-scoped execution state. It satisfies in-scope dependency readiness only while the accepted landing remains in current integration history with valid proof. It does not close an issue or alter the tracker dependency. Rollback, invalidation, or failed proof removes the overlay and reblocks dependents.
 
-- **Scope:** Charter, parent, Source Trace, fixed point, exhaustive children, dependencies, dispositions, closeout rule, budgets, and push requirement.
-- **Dispatch:** frontier, readiness, Tripwire, Downshift, provider, preflight, temp roots, proof budget, claim read-back, permission route, and liveness checkpoint.
-- **Integration:** worker SHA, landing executor and mode, integration SHA, proof, stale-base or conflict state, and relationship fingerprint.
-- **Review:** drained graph, final validation, immutable target, invocation ID, route, mode, classified findings, decision, and accepted residual risk.
-- **Repair:** blocked snapshot, generation, complete blocking IDs, owners, write scopes, proof, integrated Repair HEAD, and completion evidence.
-- **Lock:** approved HEAD, child packets, child-first mutation read-backs, parent closeout, push, remote verification, lane disposition, and friction synthesis.
+## Advanced and compatibility surface
 
-The executable event fields live in `run_ledger.py`; do not duplicate that interface in handwritten ledger prose.
+`append-receipt --intent <intent> --event-id <stable-id> --stdin` remains the exact low-level authority surface. It validates the prospective event, appends once, and returns the requested and currently authorized intents. `committed: true` proves durable append only; action requires `requested_intent.allowed: true` in current state.
 
-## Friction
+`validate-state`, `resume-status`, `closeout-plan`, `render`, `list`, `append`, and `append-batch` remain available for diagnosis, recovery, historical streams, and tests. New normal-path orchestration should prefer `start`, `status`, `apply`, `brief`, and `finish`.
 
-Record observations with `kind: observation`, `surface`, `source`, `evidence`, `impact`, and `suggestion`. Record exactly one synthesis with all observation event IDs, deduplicated themes, and `none_observed`.
-
-The synthesis is mandatory only for `runtime_contract: 2` `complete` closeout. Its content never changes implementation or review authority. Because friction is the only allowed post-release event, a missing synthesis can be appended after an otherwise recorded release without replaying mutations.
-
-## Resume and Closeout
-
-After `resume`, dispatch, landing, Review, Lock, and push stay closed until `reconcile` records Git, worktree, agent, and tracker evidence.
-
-`resume-status` classifies lanes as active, clean-uncommitted, committed-unlanded, landed, dirty-preserved, or residual. Reconcile those classifications against checkout, Git registration, actor/process state, tracker claim, and remote state.
-
-Update each `child-closeout` through `draft`, `review-final`, `posted`, and `verified`. Post only rendered packets, refetch before uncertain mutation replay, and run `closeout-plan` after each external change. Release is complete only when `validate-state --intent complete` passes.
-
-The renderer owns tracker-comment and ledger prose; handwritten Markdown never overrides the event stream.
+The executable schema lives in `run_ledger.py`. Do not copy field-by-field event contracts into `SKILL.md` or edit generated ledger prose.

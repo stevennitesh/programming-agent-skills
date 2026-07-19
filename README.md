@@ -130,7 +130,7 @@ Representative routes:
 - Bloated or hard-to-change code with an uncertain best move -> `$improve-codebase` -> selected candidate -> `$simplify-code`, `$codebase-design`, or a delivery route
 - Existing behavior in one bounded region -> `$simplify-code` for one proved reduction, a finite `until-clean` campaign, or a no-safe-cut verdict
 - Ordinary diff -> `$review`; local PR or high-risk diff -> `$convergent-pr-review`
-- Bounded correctness or methodology audit of an immutable repository baseline -> `$audit-codebase`; structural improvement discovery -> `$improve-codebase`
+- Bounded correctness, domain-robustness, or performance audit of an immutable repository baseline -> `$audit-codebase`; structural deepening, consolidation, or simplification discovery -> `$improve-codebase`
 
 These are examples. `$skill-router` owns the complete route map and tie-breakers.
 

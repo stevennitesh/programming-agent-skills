@@ -13,7 +13,7 @@ Read only the domain docs relevant to the selected issue, interface, bounded sli
 - `CONTEXT.md` at the repo root for single-context repos.
 - `CONTEXT-MAP.md` at the repo root for multi-context repos; follow it to relevant context `CONTEXT.md` files.
 - `docs/adr/` for repo-wide decisions touching the work.
-- `src/<context>/docs/adr/` for context-local decisions in multi-context repos.
+- `<context-root>/docs/adr/` for context-local decisions in multi-context repositories, following the context root recorded in `CONTEXT-MAP.md`.
 
 If any file or directory is absent, proceed silently. Do not flag its absence or suggest creating it upfront. The `$domain-modeling` skill creates domain docs lazily when terms or decisions get resolved.
 

@@ -71,6 +71,22 @@ TRANSACTION_STATUSES = frozenset(
 )
 
 
+def ignored_skill_cache(path: Path, _is_directory: bool) -> bool:
+    return path.name == "__pycache__" or path.suffix == ".pyc"
+
+
+def skill_tree_hash(directory: Path) -> str:
+    return tree_hash(directory, ignore=ignored_skill_cache)
+
+
+def copy_skill_tree(source: Path, destination: Path) -> None:
+    shutil.copytree(
+        source,
+        destination,
+        ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+    )
+
+
 @dataclass(frozen=True)
 class InstallPlan:
     skills_dir: Path
@@ -1691,7 +1707,7 @@ def _install_locked(
         )
 
     active_names = {path.name for path in sources}
-    source_hashes = {source.name: tree_hash(source) for source in sources}
+    source_hashes = {source.name: skill_tree_hash(source) for source in sources}
     previous_names, recorded_hashes = read_managed_manifest(skills_dir)
     retired_names = sorted(previous_names - active_names)
 
@@ -1705,9 +1721,13 @@ def _install_locked(
         if not destination.is_dir():
             new_names.append(source.name)
         else:
-            installed_hash = tree_hash(destination)
+            installed_hash = skill_tree_hash(destination)
             if source.name in previous_names:
-                if installed_hash != recorded_hashes[source.name]:
+                recorded_hash = recorded_hashes[source.name]
+                raw_hash = tree_hash(destination)
+                recorded_filtered = installed_hash == recorded_hash
+                recorded_legacy = not recorded_filtered and raw_hash == recorded_hash
+                if not recorded_filtered and not recorded_legacy:
                     raise ValueError(
                         f"Refusing to overwrite modified managed skill: {source.name}"
                     )
@@ -1716,7 +1736,7 @@ def _install_locked(
                     "Refusing to take over an unmanaged skill path without explicit "
                     f"adoption: {source.name}"
                 )
-            if source_hashes[source.name] == installed_hash:
+            if source_hashes[source.name] == installed_hash and not recorded_legacy:
                 unchanged_names.append(source.name)
             else:
                 updated_names.append(source.name)
@@ -1725,8 +1745,13 @@ def _install_locked(
         destination = managed_skill_path(skills_dir, name)
         if destination.exists() and not destination.is_dir():
             raise ValueError(f"Managed skill path is not a directory: {destination}")
-        if destination.is_dir() and tree_hash(destination) != recorded_hashes[name]:
-            raise ValueError(f"Refusing to retire modified managed skill: {name}")
+        if destination.is_dir():
+            recorded_hash = recorded_hashes[name]
+            if (
+                skill_tree_hash(destination) != recorded_hash
+                and tree_hash(destination) != recorded_hash
+            ):
+                raise ValueError(f"Refusing to retire modified managed skill: {name}")
 
     bootstrap_status = "skipped"
     global_target_text: str | None = None
@@ -1862,7 +1887,7 @@ def _install_locked(
         paths.displaced.mkdir()
         for source in sources:
             staged = paths.staged / source.name
-            shutil.copytree(source, staged)
+            copy_skill_tree(source, staged)
             if tree_hash(staged) != source_hashes[source.name]:
                 raise RuntimeError(f"Staged skill failed hash verification: {source.name}")
 

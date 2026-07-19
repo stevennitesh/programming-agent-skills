@@ -108,6 +108,8 @@ flowchart TD
   Audit --> Contract
   Audit --> DomainRouter
   Audit --> AuditDefects["DEFECT-CONTRACT.md"]
+  Audit --> AuditPerformance["PERFORMANCE-LENS.md<br/>only for performance Charters"]
+  Audit --> AuditReport["HTML-REPORT.md"]
   Audit --> AdvisoryContract
 
   Research --> ResearchDocs["docs/research/*"]
@@ -243,16 +245,17 @@ Use one verb for each executable relationship:
 | `diagnosing-bugs` | Recommend and stop | `$implement` | Standalone diagnosis proved the cause and needs an implementation owner. |
 | `resolving-merge-conflicts` | Invoke | `$diagnosing-bugs` | Diagnose an uncertain proof failure, return the causal packet, then resume Prove. |
 | `review` | Hand off | `$convergent-pr-review` | The target is a local PR or needs independent high-risk review. |
-| `convergent-pr-review` | Recommend and stop | `$audit-codebase` | The request targets a bounded repository correctness or methodology baseline rather than a pending release diff. |
+| `convergent-pr-review` | Recommend and stop | `$audit-codebase` | The request targets a bounded repository correctness, domain-robustness, methodology, or performance baseline rather than a pending release diff. |
 | `improve-codebase` | Load | `$codebase-design` | Apply shared module, interface, seam, depth, leverage, and locality vocabulary during the Survey. |
-| `improve-codebase` | Invoke | `$research` | A selected `Investigate` candidate needs one source question; return cited evidence or a blocker to the caller. |
-| `improve-codebase` | Invoke | `$prototype` | A selected `Investigate` candidate needs one runnable design verdict; return its reconciled verdict and cleanup state. |
-| `improve-codebase` | Invoke | `$grill-with-docs` | A selected candidate needs a user-owned commitment, trade-off, domain, or ADR decision. |
+| `improve-codebase` | Invoke | `$research` | A selected candidate needs one source question; return cited evidence or a blocker to the caller. |
+| `improve-codebase` | Invoke | `$prototype` | A selected candidate needs one runnable design verdict; return its reconciled verdict and cleanup state. |
+| `improve-codebase` | Invoke | `$grill-with-docs` | A selected candidate needs one user-owned decision; return the composed grilling packet and domain delta. |
 | `improve-codebase` | Invoke | `$codebase-design` | A selected `Concentrate` candidate needs dependency, seam, ownership, interface, migration, or replacement design. |
+| `improve-codebase` | Recommend and stop | `$wayfinder` | Multiple interdependent unresolved decisions or prerequisites need a tracker-backed route. |
 | `improve-codebase` | Recommend and stop | `$simplify-code` | A selected candidate reclassifies to `Eliminate`; return its report pickup without edits. |
 | `improve-codebase` | Recommend and stop | `$implement` | A selected `Concentrate` candidate is one ready slice. |
 | `improve-codebase` | Recommend and stop | `$to-tickets` | A selected `Concentrate` candidate needs dependency-ordered slices. |
-| `improve-codebase` | Recommend and stop | `$to-spec` | A selected `Concentrate` candidate still needs a durable parent spec. |
+| `improve-codebase` | Recommend and stop | `$to-spec` | A selected `Concentrate` candidate has a settled direction that needs a durable parent spec before slicing. |
 | `improve-codebase` | Recommend and stop | `$repo-bootstrap` | The disposable report boundary is missing or incompatible. |
 | `simplify-code` | Recommend and stop | `$improve-codebase` | The request needs wide discovery, ranking, or multi-region sequencing. |
 | `simplify-code` | Recommend and stop | `$codebase-design` | The best next move requires one new interface or ownership decision. |
@@ -269,17 +272,17 @@ Use one verb for each executable relationship:
 | `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md` | Minimal pack-owned global Codex bootstrap template: explicit-only router/setup discovery | `~/.codex/AGENTS.md` |
 | `skill-router` | Current executable route map and tie-breakers | Humans or agents choosing one next route |
 | `repo-bootstrap` | Provisions and verifies the repo setup surface | `skill-router`, setup gates in planning/tracker skills |
-| `docs/agents/issue-tracker.md` | Tracker interface, work-item lifecycle, PR-as-request rules, and wayfinding operations | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `review`, `convergent-pr-review`, `wayfinder` |
+| `docs/agents/issue-tracker.md` | Tracker interface, work-item lifecycle, PR-as-request rules, wayfinding operations, and the campaign-scoped `landed-awaiting-lock` dependency overlay | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `review`, `convergent-pr-review`, `wayfinder` |
 | `docs/agents/triage-labels.md` | Category/state role to label mapping and fixed wayfinding labels | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
 | `docs/agents/domain.md` | Routing to `CONTEXT.md`, `CONTEXT-MAP.md`, ADRs | `to-spec`, `triage`, `tdd`, `diagnosing-bugs`, `simplify-code`, `improve-codebase`, `audit-codebase`, `parallel-implement` |
-| `docs/agents/engineering-contract.md` | Engineering taste, shared runtime language, Charter, commitment boundary, change-created fallout, fresh and negative-control proof, work-state policy, fixed-snapshot Spec/Standards review, Repair generation, and Lock | `implement`, `tdd`, `diagnosing-bugs`, `prototype`, `simplify-code`, `improve-codebase`, `audit-codebase`, `parallel-implement`, `resolving-merge-conflicts`, `review`, `convergent-pr-review` |
+| `docs/agents/engineering-contract.md` | Engineering taste, shared runtime language, Charter, commitment boundary, change-created fallout, fresh, negative-control, and state-boundary proof, work-state policy, fixed-snapshot Spec/Standards review, Repair generation, and Lock | `to-tickets`, `implement`, `tdd`, `diagnosing-bugs`, `prototype`, `simplify-code`, `improve-codebase`, `audit-codebase`, `parallel-implement`, `resolving-merge-conflicts`, `review`, `convergent-pr-review` |
 | `domain-modeling` | Mutates `CONTEXT.md`, `CONTEXT-MAP.md`, and ADR truth | `skill-router`, `grill-with-docs`, `wayfinder`, `prototype`, `repo-bootstrap` |
 | `codebase-design` | Interface, seam, adapter, depth, leverage, locality, and bounded replacement vocabulary | `to-spec`, `improve-codebase`, `tdd`, architecture/design follow-ups |
 | `research` | Primary-source legwork and authorized cited repo-local research notes | `skill-router`, `grilling`, `wayfinder`, `improve-codebase` |
 | `to-questionnaire` | One recipient-ready async discovery artifact for one external stakeholder and downstream decision | `skill-router`, `grilling`, humans collecting stakeholder evidence |
 | `resolving-merge-conflicts` | Read-only three-way inspection, authorized reconciliation, and the separate finish boundary | Git operations and implementation or integration work that enters a conflicted state |
 | `review` | Ordinary fixed-snapshot Standards/Spec review | `implement`, `parallel-implement`; escalates once to `convergent-pr-review` for high risk |
-| `audit-codebase` | Bounded immutable repository-baseline defects, advisories, evidence gaps, coverage, and confidence without a release decision | `skill-router`, `convergent-pr-review`, humans explicitly invoking repository audits |
+| `audit-codebase` | Bounded immutable repository-baseline correctness, domain robustness, performance, advisories, evidence gaps, coverage, and one verified HTML report without a release decision | `skill-router`, `convergent-pr-review`, humans explicitly invoking repository audits |
 | `simplify-code` | One unstaged, behavior-preserving simplification patch, an explicit finite and bounded `until-clean` campaign, or a proved no-safe-cut verdict | `skill-router`, `tdd`, `improve-codebase`, humans invoking bounded cleanup |
 
 ## Supporting Files
@@ -298,9 +301,9 @@ Use one verb for each executable relationship:
 | `resolving-merge-conflicts` | Three-way merge/rebase/cherry-pick/revert and marker-only conflict process, proof, return packet, and finish boundary |
 | `review`, `convergent-pr-review`, `implement`, `parallel-implement` | `review/FINDING-CONTRACT.md`: shared diff-finding admission, remediation classes, and remediation-review bound; `review/SMELL-BASELINE.md`: fallback Standards reference when repo standards are thin |
 | `convergent-pr-review`, `audit-codebase` | `review/ADVISORY-CONTRACT.md`: verified nonblocking opportunities kept outside decision-bearing ledgers |
-| `audit-codebase` | `DEFECT-CONTRACT.md`: repository-baseline defect admission and evidence interface |
+| `audit-codebase` | `DEFECT-CONTRACT.md`: finding admission, gaps, and zero-or-one suggested-owner interface; `PERFORMANCE-LENS.md`: conditional measurement and classification rules; `HTML-REPORT.md`: terminal offline audit artifact |
 | `improve-codebase` | `HTML-REPORT.md`: report format and visual style; `SELECTED-CANDIDATE.md`: explicit candidate resolution, reclassification, routing, and report reconciliation |
-| `parallel-implement` | `WORKER-BRIEF.md`, `INTEGRATOR-BRIEF.md`, `CODEX-WORKTREE-LAUNCH.md`: lane contracts and checkout lifecycle; `run_ledger.py` and `RUN-LEDGER.md`: canonical campaign state, authority validation, generated ledger, and closeout plan |
+| `parallel-implement` | `WORKER-BRIEF.md`, `INTEGRATOR-BRIEF.md`, `CODEX-WORKTREE-LAUNCH.md`: compact lane contracts and one-step checkout opening; `run_ledger.py` and `RUN-LEDGER.md`: intuitive campaign facade over canonical event state, strict authority validation, generated ledger, and closeout plan |
 
 ## Boundary Notes
 
@@ -319,7 +322,7 @@ Use one verb for each executable relationship:
 - `review` is the ordinary fixed-snapshot gate and may hand off once to `convergent-pr-review`; the high-risk route never hands back.
 - `review` and `convergent-pr-review` return terminal read-only evidence. Their reports grant no mutation or successor-snapshot authority; the implementation caller's pre-recorded Charter and Repair Budget govern continuation.
 - `convergent-pr-review` may run its own bounded read-only reviewer passes only when selected as the review route; it is not a second implementation orchestrator.
-- `audit-codebase` owns caller-bounded correctness and methodology judgment over one immutable repository baseline. Its `complete / incomplete` status reports coverage, never release acceptance; it does not rank improvements, route remediation, or mutate the repository.
+- `audit-codebase` owns caller-bounded correctness, domain robustness, methodology, and performance judgment over one immutable repository baseline. It reports every verified in-scope item in one offline HTML artifact. Its `complete / incomplete` status reports coverage, never release acceptance; each item may suggest one immediate owner, but the audit ranks no improvement, starts no downstream work, and returns to the caller.
 - `improve-codebase` owns read-only improvement discovery, exhaustive region classification, overlap sequencing, ranking, a disposable report, and one explicitly resumed candidate through conditional evidence or design resolution. It never starts explicit mutation or delivery skills.
 - `simplify-code` owns one standalone cleanup patch or an explicitly bounded serial `until-clean` campaign with a finite cut budget, strict net-reduction ledger, and terminal stop condition under before-and-after proof gates. It does not own feature work, bug diagnosis, public-contract decisions, wide improvement surveys, staging, commits, or tracker closeout.
 - `handoff` carries pointers across sessions; it should reference durable artifacts, not duplicate specs, issues, ADRs, commits, or diffs.

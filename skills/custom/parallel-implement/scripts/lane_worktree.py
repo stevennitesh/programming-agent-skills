@@ -16,6 +16,31 @@ from typing import Any
 
 
 SCHEMA_VERSION = 1
+WINDOWS_DEFAULT_WORKTREE_ROOT = Path("E:/pi")
+WINDOWS_DEFAULT_MAX_PATH = 320
+PYTHON_PROVENANCE_MARKER = "PARALLEL_IMPLEMENT_PYTHON_PROVENANCE="
+PYTHON_PROVENANCE_PROBE = r"""
+import importlib
+import json
+import sys
+
+roots = json.loads(sys.argv[1])
+packages = json.loads(sys.argv[2])
+sys.path[:0] = roots
+resolved = {}
+for package in packages:
+    module = importlib.import_module(package)
+    spec = module.__spec__
+    paths = []
+    origin = getattr(spec, "origin", None)
+    if origin and origin not in {"built-in", "frozen"}:
+        paths.append(str(origin))
+    locations = getattr(spec, "submodule_search_locations", None)
+    if locations:
+        paths.extend(str(location) for location in locations)
+    resolved[package] = list(dict.fromkeys(paths))
+print("PARALLEL_IMPLEMENT_PYTHON_PROVENANCE=" + json.dumps(resolved, sort_keys=True))
+"""
 
 
 class LaneError(RuntimeError):
@@ -140,7 +165,11 @@ def longest_tracked_path(repo: Path) -> int:
 
 
 def path_budget(worktree: Path, repo: Path, configured: int | None) -> dict[str, int]:
-    limit = configured if configured is not None else (240 if os.name == "nt" else 4096)
+    limit = (
+        configured
+        if configured is not None
+        else (WINDOWS_DEFAULT_MAX_PATH if os.name == "nt" else 4096)
+    )
     longest = longest_tracked_path(repo)
     reserve = 128 if os.name == "nt" else 32
     predicted = len(str(worktree)) + 1 + longest + reserve
@@ -196,6 +225,9 @@ def create(args: argparse.Namespace) -> int:
     elif environment_root:
         root = Path(environment_root).resolve()
         root_source = "environment"
+    elif os.name == "nt":
+        root = WINDOWS_DEFAULT_WORKTREE_ROOT.resolve()
+        root_source = "windows-default"
     else:
         root = (repo.parent / "worktrees" / "parallel-implement").resolve()
         root_source = "repo-parent-default"
@@ -320,6 +352,109 @@ def proof_command(args: argparse.Namespace) -> tuple[list[str] | None, dict[str,
     return value, provenance
 
 
+def python_provenance(args: argparse.Namespace, worktree: Path) -> dict[str, Any]:
+    path = Path(args.python_provenance_file).resolve()
+    raw = path.read_bytes()
+    try:
+        value = json.loads(raw.decode("utf-8-sig"))
+    except UnicodeDecodeError as error:
+        raise LaneError("Python provenance file must be UTF-8") from error
+    if not isinstance(value, dict):
+        raise LaneError("Python provenance file must contain one JSON object")
+
+    executable_value = value.get("executable")
+    roots_value = value.get("import_roots")
+    packages = value.get("packages")
+    if not isinstance(executable_value, str) or not executable_value:
+        raise LaneError("Python provenance requires an explicit executable")
+    executable_path = Path(executable_value)
+    if not executable_path.is_absolute():
+        raise LaneError("Python provenance executable must be an existing absolute file")
+    executable = executable_path.resolve()
+    if not executable.is_file():
+        raise LaneError("Python provenance executable must be an existing absolute file")
+    if not isinstance(roots_value, list) or not roots_value or not all(
+        isinstance(root, str) and root for root in roots_value
+    ):
+        raise LaneError("Python provenance import_roots must be a non-empty string list")
+    if not isinstance(packages, list) or not packages or not all(
+        isinstance(package, str)
+        and re.fullmatch(r"[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*", package)
+        for package in packages
+    ):
+        raise LaneError("Python provenance packages must be a non-empty import-name list")
+
+    import_roots: list[Path] = []
+    for root_value in roots_value:
+        candidate = Path(root_value)
+        resolved = (
+            candidate.resolve()
+            if candidate.is_absolute()
+            else (worktree / candidate).resolve()
+        )
+        if resolved != worktree and not contains(worktree, resolved):
+            raise LaneError(f"Python provenance import root escapes the lane: {root_value}")
+        if not resolved.is_dir():
+            raise LaneError(f"Python provenance import root is not a directory: {root_value}")
+        import_roots.append(resolved)
+
+    result = run(
+        [
+            str(executable),
+            "-I",
+            "-c",
+            PYTHON_PROVENANCE_PROBE,
+            json.dumps([str(root) for root in import_roots]),
+            json.dumps(packages),
+        ],
+        cwd=worktree,
+        check=False,
+    )
+    if result.returncode != 0:
+        detail = result.stderr.strip() or result.stdout.strip() or "probe failed"
+        raise LaneError(f"Python provenance probe failed: {detail}")
+    encoded = next(
+        (
+            line[len(PYTHON_PROVENANCE_MARKER) :]
+            for line in reversed(result.stdout.splitlines())
+            if line.startswith(PYTHON_PROVENANCE_MARKER)
+        ),
+        None,
+    )
+    if encoded is None:
+        raise LaneError("Python provenance probe returned no structured result")
+    resolved_value = json.loads(encoded)
+    if not isinstance(resolved_value, dict):
+        raise LaneError("Python provenance probe returned an invalid result")
+
+    resolved_packages: dict[str, list[str]] = {}
+    for package in packages:
+        package_paths = resolved_value.get(package)
+        if not isinstance(package_paths, list) or not package_paths or not all(
+            isinstance(package_path, str) and package_path
+            for package_path in package_paths
+        ):
+            raise LaneError(f"Python package resolved no project paths: {package}")
+        verified: list[str] = []
+        for package_path in package_paths:
+            resolved_path = Path(package_path).resolve()
+            if resolved_path != worktree and not contains(worktree, resolved_path):
+                raise LaneError(
+                    f"Python package resolves outside the lane: {package} -> {resolved_path}"
+                )
+            verified.append(str(resolved_path))
+        resolved_packages[package] = verified
+
+    return {
+        "configuration_file": str(path),
+        "configuration_sha256": hashlib.sha256(raw).hexdigest(),
+        "executable": str(executable),
+        "import_roots": [str(root) for root in import_roots],
+        "packages": packages,
+        "resolved_packages": resolved_packages,
+    }
+
+
 def preflight(args: argparse.Namespace) -> int:
     worktree = Path(args.worktree).resolve()
     if not args.proof_command_json and not args.proof_command_file and not args.skip_proof:
@@ -347,6 +482,33 @@ def preflight(args: argparse.Namespace) -> int:
             error="--skip-proof requires --reason",
             recoverable=True,
             next_action={"command": "preflight", "required": ["--reason"]},
+            worktree=str(worktree),
+        )
+    if not args.python_provenance_file and not args.skip_python_provenance:
+        return blocked(
+            "preflight",
+            state="blocked-provenance",
+            error="Python provenance is required unless explicitly skipped",
+            recoverable=True,
+            next_action={
+                "command": "preflight",
+                "required": [
+                    "--python-provenance-file",
+                    "or --skip-python-provenance --python-provenance-reason",
+                ],
+            },
+            worktree=str(worktree),
+        )
+    if args.skip_python_provenance and not args.python_provenance_reason:
+        return blocked(
+            "preflight",
+            state="blocked-provenance",
+            error="--skip-python-provenance requires --python-provenance-reason",
+            recoverable=True,
+            next_action={
+                "command": "preflight",
+                "required": ["--python-provenance-reason"],
+            },
             worktree=str(worktree),
         )
 
@@ -416,6 +578,12 @@ def preflight(args: argparse.Namespace) -> int:
     else:
         proof = {"skipped": True, "reason": args.reason}
 
+    provenance = (
+        python_provenance(args, worktree)
+        if args.python_provenance_file
+        else {"skipped": True, "reason": args.python_provenance_reason}
+    )
+
     return emit(
         "preflight",
         True,
@@ -435,11 +603,120 @@ def preflight(args: argparse.Namespace) -> int:
         effective_identity=os.environ.get("USERNAME") or os.environ.get("USER"),
         probes={"checkout": "passed", "index_lock": "passed", "git_objects": "passed"},
         proof_startup=proof,
+        python_provenance=provenance,
         actor_id=args.actor_id,
         temp_root=str(actor_root),
         pytest_basetemp=str(pytest_basetemp),
         cache_root=str(cache_root),
         cleanup_route="lane_worktree.py cleanup",
+    )
+
+
+def helper_packet(arguments: list[str]) -> tuple[subprocess.CompletedProcess[str], dict[str, Any]]:
+    result = run([sys.executable, str(Path(__file__).resolve()), *arguments], check=False)
+    try:
+        packet = json.loads(result.stdout)
+    except json.JSONDecodeError as error:
+        raise LaneError(
+            f"lane helper returned no structured packet: {result.stderr.strip()}"
+        ) from error
+    if not isinstance(packet, dict):
+        raise LaneError("lane helper returned an invalid packet")
+    return result, packet
+
+
+def open_lane(args: argparse.Namespace) -> int:
+    """Create and preflight one lane while preserving it on startup failure."""
+    create_args = [
+        "create",
+        "--repo",
+        args.repo,
+        "--base",
+        args.base,
+        "--run-id",
+        args.run_id,
+        "--item-id",
+        args.item_id,
+    ]
+    if args.root:
+        create_args.extend(["--root", args.root])
+    if args.branch:
+        create_args.extend(["--branch", args.branch])
+    if args.max_path is not None:
+        create_args.extend(["--max-path", str(args.max_path)])
+    if args.allow_inside_repo:
+        create_args.append("--allow-inside-repo")
+    create_result, lane = helper_packet(create_args)
+    if create_result.returncode != 0 or not lane.get("ok"):
+        return emit(
+            "open",
+            False,
+            state=lane.get("state", "blocked-create"),
+            recoverable=lane.get("recoverable", True),
+            lane=lane,
+            error=lane.get("error", "lane creation failed"),
+            next_action=lane.get("next_action"),
+        )
+
+    preflight_args = [
+        "preflight",
+        "--worktree",
+        str(lane["worktree"]),
+        "--base",
+        args.base,
+        "--actor-id",
+        args.actor_id,
+    ]
+    if args.branch:
+        preflight_args.extend(["--expect-branch", args.branch])
+    if args.proof_command_json:
+        preflight_args.extend(["--proof-command-json", args.proof_command_json])
+    elif args.proof_command_file:
+        preflight_args.extend(["--proof-command-file", args.proof_command_file])
+    elif args.skip_proof:
+        preflight_args.append("--skip-proof")
+    if args.reason:
+        preflight_args.extend(["--reason", args.reason])
+    if args.python_provenance_file:
+        preflight_args.extend(["--python-provenance-file", args.python_provenance_file])
+    elif args.skip_python_provenance:
+        preflight_args.append("--skip-python-provenance")
+    if args.python_provenance_reason:
+        preflight_args.extend(
+            ["--python-provenance-reason", args.python_provenance_reason]
+        )
+    preflight_result, preflight_packet = helper_packet(preflight_args)
+    if preflight_result.returncode != 0 or not preflight_packet.get("ok"):
+        return emit(
+            "open",
+            False,
+            state="created-preflight-blocked",
+            recoverable=True,
+            repo=lane.get("repo"),
+            root=lane.get("root"),
+            worktree=lane.get("worktree"),
+            lane=lane,
+            preflight=preflight_packet,
+            error=preflight_packet.get("error", "lane preflight failed"),
+            next_action={
+                "command": "preflight",
+                "worktree": lane.get("worktree"),
+                "repair": "fix the startup cause and retry preflight; the lane was preserved",
+            },
+        )
+    return emit(
+        "open",
+        True,
+        state="ready",
+        repo=lane.get("repo"),
+        root=lane.get("root"),
+        worktree=lane.get("worktree"),
+        lane=lane,
+        preflight=preflight_packet,
+        next_action={
+            "command": "run_ledger.py apply",
+            "packet": "lane-ready",
+        },
     )
 
 
@@ -522,7 +799,10 @@ def cleanup(args: argparse.Namespace) -> int:
     registered_after = worktree in registered_worktrees(repo)
     directory_exists = worktree.exists()
     residual_removed = False
+    cleanup_method = "git-worktree-remove"
+    fallback = "not-needed"
     if not registered_after and directory_exists:
+        cleanup_method = "extended-path-fallback"
         try:
             shutil.rmtree(extended_path(worktree))
         except OSError as error:
@@ -546,11 +826,15 @@ def cleanup(args: argparse.Namespace) -> int:
                 registered_before=registered_before,
                 registered_after=False,
                 directory_exists=True,
+                cleanup_method=cleanup_method,
+                git_remove="succeeded" if result.returncode == 0 else "failed",
+                fallback="failed",
                 git_returncode=result.returncode,
                 git_error=result.stderr.strip(),
             )
         directory_exists = worktree.exists()
         residual_removed = not directory_exists
+        fallback = "succeeded" if residual_removed else "failed"
     if not registered_after and not directory_exists:
         state = "removed"
     elif not registered_after and directory_exists:
@@ -576,6 +860,9 @@ def cleanup(args: argparse.Namespace) -> int:
         registered_after=registered_after,
         directory_exists=directory_exists,
         residual_removed=residual_removed,
+        cleanup_method=cleanup_method,
+        git_remove="succeeded" if result.returncode == 0 else "failed",
+        fallback=fallback,
         git_returncode=result.returncode,
         git_error=result.stderr.strip(),
     )
@@ -627,6 +914,27 @@ def parser() -> argparse.ArgumentParser:
     create_parser.add_argument("--allow-inside-repo", action="store_true")
     create_parser.set_defaults(handler=create)
 
+    open_parser = commands.add_parser("open")
+    open_parser.add_argument("--repo", required=True)
+    open_parser.add_argument("--root")
+    open_parser.add_argument("--base", required=True)
+    open_parser.add_argument("--run-id", required=True)
+    open_parser.add_argument("--item-id", required=True)
+    open_parser.add_argument("--actor-id", required=True)
+    open_parser.add_argument("--branch")
+    open_parser.add_argument("--max-path", type=int)
+    open_parser.add_argument("--allow-inside-repo", action="store_true")
+    open_proof = open_parser.add_mutually_exclusive_group()
+    open_proof.add_argument("--proof-command-json")
+    open_proof.add_argument("--proof-command-file")
+    open_proof.add_argument("--skip-proof", action="store_true")
+    open_parser.add_argument("--reason")
+    open_provenance = open_parser.add_mutually_exclusive_group()
+    open_provenance.add_argument("--python-provenance-file")
+    open_provenance.add_argument("--skip-python-provenance", action="store_true")
+    open_parser.add_argument("--python-provenance-reason")
+    open_parser.set_defaults(handler=open_lane)
+
     preflight_parser = commands.add_parser("preflight")
     preflight_parser.add_argument("--worktree", required=True)
     preflight_parser.add_argument("--base", required=True)
@@ -637,6 +945,10 @@ def parser() -> argparse.ArgumentParser:
     proof_group.add_argument("--proof-command-file")
     proof_group.add_argument("--skip-proof", action="store_true")
     preflight_parser.add_argument("--reason")
+    provenance_group = preflight_parser.add_mutually_exclusive_group()
+    provenance_group.add_argument("--python-provenance-file")
+    provenance_group.add_argument("--skip-python-provenance", action="store_true")
+    preflight_parser.add_argument("--python-provenance-reason")
     preflight_parser.set_defaults(handler=preflight)
 
     cleanup_parser = commands.add_parser("cleanup")

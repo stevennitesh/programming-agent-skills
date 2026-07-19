@@ -7,6 +7,7 @@ import json
 import os
 import re
 import stat
+from collections.abc import Callable
 from pathlib import Path
 
 
@@ -84,7 +85,11 @@ def reject_unsafe_redirect(path: Path, label: str) -> None:
         candidate = candidate.parent
 
 
-def tree_entries(directory: Path) -> dict[str, tuple[str, bytes]]:
+def tree_entries(
+    directory: Path,
+    *,
+    ignore: Callable[[Path, bool], bool] | None = None,
+) -> dict[str, tuple[str, bytes]]:
     directory = directory.expanduser()
     reparse_flag = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0)
 
@@ -114,15 +119,34 @@ def tree_entries(directory: Path) -> dict[str, tuple[str, bytes]]:
         directory_names.sort()
         file_names.sort()
         current_path = Path(current)
-        for name in [*directory_names, *file_names]:
+        kept_directories: list[str] = []
+        for name in directory_names:
             path = current_path / name
-            relative = path.relative_to(directory).as_posix()
-            entries[relative] = classify(path)
+            relative_path = path.relative_to(directory)
+            relative = relative_path.as_posix()
+            entry = classify(path)
+            if ignore is not None and ignore(relative_path, True):
+                continue
+            entries[relative] = entry
+            kept_directories.append(name)
+        directory_names[:] = kept_directories
+        for name in file_names:
+            path = current_path / name
+            relative_path = path.relative_to(directory)
+            relative = relative_path.as_posix()
+            entry = classify(path)
+            if ignore is not None and ignore(relative_path, False):
+                continue
+            entries[relative] = entry
     return entries
 
 
-def tree_hash(directory: Path) -> str:
-    entries = tree_entries(directory)
+def tree_hash(
+    directory: Path,
+    *,
+    ignore: Callable[[Path, bool], bool] | None = None,
+) -> str:
+    entries = tree_entries(directory, ignore=ignore)
     names = set(entries)
     digest = hashlib.sha256()
     # Preserve format-1 Path ordering. Existing manifests rely on its

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -669,6 +670,63 @@ def test_install_updates_managed_skills_and_preserves_unrelated(tmp_path: Path) 
         (installed / install_skills.MANIFEST_NAME).read_text(encoding="utf-8")
     )
     assert manifest["skills"] == ["alpha", "beta"]
+
+
+def test_install_excludes_and_ignores_python_cache_artifacts(tmp_path: Path) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / ".agents/skills"
+    write_source_skill(root, "alpha", "v1")
+    write_template(root)
+    source_scripts = root / "skills/custom/alpha/scripts"
+    (source_scripts / "__pycache__").mkdir(parents=True)
+    (source_scripts / "__pycache__/helper.cpython-312.pyc").write_bytes(b"cached")
+    (source_scripts / "helper.pyc").write_bytes(b"loose-cache")
+
+    result = install_skills.install(root, installed, None)
+
+    assert result["new"] == ["alpha"]
+    assert not (installed / "alpha/scripts/__pycache__").exists()
+    assert not (installed / "alpha/scripts/helper.pyc").exists()
+
+    runtime_cache = installed / "alpha/scripts/__pycache__"
+    runtime_cache.mkdir(parents=True)
+    (runtime_cache / "runtime.cpython-312.pyc").write_bytes(b"runtime-cache")
+
+    preview = install_skills.install(root, installed, None, dry_run=True)
+
+    assert preview["unchanged"] == ["alpha"]
+    assert preview["updated"] == []
+
+
+def test_install_migrates_a_legacy_cache_inclusive_manifest(tmp_path: Path) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / ".agents/skills"
+    write_source_skill(root, "alpha", "v1")
+    write_template(root)
+    source_cache = root / "skills/custom/alpha/scripts/__pycache__"
+    source_cache.mkdir(parents=True)
+    (source_cache / "helper.cpython-312.pyc").write_bytes(b"legacy-cache")
+    installed.mkdir(parents=True)
+    shutil.copytree(root / "skills/custom/alpha", installed / "alpha")
+    install_skills.write_manifest(
+        installed / install_skills.MANIFEST_NAME,
+        {
+            "format": skill_pack_contract.MANIFEST_FORMAT,
+            "source": skill_pack_contract.MANIFEST_SOURCE,
+            "skills": ["alpha"],
+            "hashes": {"alpha": skill_pack_contract.tree_hash(installed / "alpha")},
+        },
+    )
+
+    preview = install_skills.install(root, installed, None, dry_run=True)
+    result = install_skills.install(root, installed, None)
+
+    assert preview["updated"] == ["alpha"]
+    assert result["updated"] == ["alpha"]
+    assert not (installed / "alpha/scripts/__pycache__").exists()
+    assert install_skills.install(root, installed, None, dry_run=True)["unchanged"] == [
+        "alpha"
+    ]
 
 
 def test_install_refuses_a_conflicting_unmanaged_same_name_skill(

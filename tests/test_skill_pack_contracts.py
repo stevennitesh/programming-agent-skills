@@ -161,6 +161,7 @@ def test_github_closeout_clears_dependency_frontier_safely() -> None:
 
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     bootstrap = (CUSTOM / "repo-bootstrap/SKILL.md").read_text(encoding="utf-8")
+    domain = (CUSTOM / "repo-bootstrap/domain.md").read_text(encoding="utf-8")
     assert re.findall(r"(?m)^## ([A-Za-z]+)$", bootstrap) == [
         "Inventory",
         "Reconcile",
@@ -170,6 +171,9 @@ def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
         "Verify",
     ]
     assert bootstrap.index("## Draft") < bootstrap.index("## Provision")
+    assert "<context-root>/docs/adr/" in domain
+    assert "following the context root recorded in `CONTEXT-MAP.md`" in domain
+    assert "src/<context>/docs/adr/" not in domain
 
 
 def test_repo_bootstrap_marks_and_validates_setup_schema() -> None:
@@ -685,23 +689,66 @@ def test_convergent_review_has_root_guard_capacity_modes_and_advisories() -> Non
     assert "Never demote" in advisory
 
 
-def test_audit_codebase_is_explicit_and_disjoint_from_diff_review_and_improvement() -> None:
+def test_audit_codebase_is_terminal_html_audit_with_bounded_suggestions() -> None:
     skill_dir = CUSTOM / "audit-codebase"
     audit = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     defect = (skill_dir / "DEFECT-CONTRACT.md").read_text(encoding="utf-8")
+    performance = (skill_dir / "PERFORMANCE-LENS.md").read_text(encoding="utf-8")
+    performance_lower = performance.lower()
+    report = (skill_dir / "HTML-REPORT.md").read_text(encoding="utf-8")
     router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
 
     assert not implicit_policy(skill_dir)
-    assert "**Root-only guard:**" in audit
+    assert "**Root-owned:**" in audit
     assert "Release decision: none" in audit
-    assert "A complete audit may contain severe defects" in audit
+    assert "a complete audit may contain severe defects" in audit
     assert "[DEFECT-CONTRACT.md](DEFECT-CONTRACT.md)" in audit
+    assert "[PERFORMANCE-LENS.md](PERFORMANCE-LENS.md)" in audit
+    assert "[HTML-REPORT.md](HTML-REPORT.md)" in audit
+    assert ".tmp/audit-codebase/<run-id>/report.html" in audit
     assert "FINDING-CONTRACT.md" not in audit
-    assert "Severity communicates impact; it does not issue a release decision" in defect
-    for route in ("$review", "$convergent-pr-review", "$improve-codebase", "$diagnosing-bugs", "$codebase-design"):
-        assert route in audit
+    assert "**Terminal:**" in audit
+    assert "**Chain of custody.**" in audit
+    assert "$wayfinder" not in audit
+    assert "$to-tickets" not in audit
+    assert "offline and script-free" not in audit
+    assert "## Burden Of Proof" in defect
+    assert "Severity orders defects" in defect
+    assert "exactly zero or one" in defect
+    assert "Severity orders defects; evidence state and work shape choose the suggestion" in defect
+    assert "Downstream execution: none" in audit
+    for route in (
+        "$research",
+        "$prototype",
+        "$grill-with-docs",
+        "$diagnosing-bugs",
+        "$to-spec",
+        "$to-tickets",
+        "$implement",
+        "$improve-codebase",
+        "$wayfinder",
+    ):
+        assert route in defect
+    assert "$tdd" not in defect
+    assert "Exactly one bounded remediation item is ready" in defect
+    assert "multiple unresolved decisions or prerequisites" in defect
+    assert "solution is settled and only slicing remains" in defect
+    assert "**Like-for-like:**" in performance
+    assert "smell alone" in performance
+    for field in ("Workload:", "Environment:", "Baseline:", "Observed:", "Sample count and variance:"):
+        assert field in performance
+    assert "performance defect" in performance_lower
+    assert "performance opportunity" in performance_lower
+    assert "performance evidence gap" in performance_lower
+    assert "offline" in report
+    assert "runtime JavaScript" in report
+    assert "Coverage Matrix" in report
+    assert "Suggested Handoffs" in report
+    assert "## Top Recommendation" not in report
+    assert "**Ledger, not leaderboard:**" in report
+    assert "caller selection required" in report
     assert re.search(
-        r"(?m)^\| An immutable repository baseline .* \| `\$audit-codebase` \|$",
+        r"(?m)^\| An immutable repository baseline .*domain robustness.*performance.* \| `\$audit-codebase` \|$",
         router,
     )
 
@@ -765,7 +812,8 @@ def test_improve_codebase_separates_survey_from_selected_candidate() -> None:
     assert not implicit_policy(skill_dir)
     assert "[SELECTED-CANDIDATE.md](SELECTED-CANDIDATE.md)" in survey
     assert "$improve-codebase Candidate N from <absolute-report-path>" in survey
-    assert "Do not resolve, select, research, prototype, grill, design, or execute" in survey
+    assert "**Terminal.**" in survey
+    assert "Start no candidate resolution or execution" in survey
     assert "**No candidate recommended**" in survey
     for disposition in ("Eliminate", "Concentrate", "Retain", "Investigate"):
         assert disposition in survey
@@ -774,12 +822,23 @@ def test_improve_codebase_separates_survey_from_selected_candidate() -> None:
     for field in (
         "behavior and commitment boundary",
         "proof seam",
-        "uncertainty",
+        "resolution need",
         "sequence relationship",
-        "exact pickup invocation",
+        "provisional destination",
+        "exact immediate pickup invocation",
     ):
         assert field in survey
-    assert "`Eliminate` points to `$simplify-code`" in survey
+    for resolution_need in (
+        "`none`",
+        "`repository`",
+        "`source`",
+        "`runnable`",
+        "`user-decision`",
+        "`design`",
+    ):
+        assert resolution_need in survey
+    assert "`Eliminate` -> `$simplify-code`" in survey
+    assert "$domain-modeling" not in survey
     assert "never `$tdd` or `$implement`" in report
 
     assert re.findall(r"(?m)^## (.+)$", report) == [
@@ -799,12 +858,21 @@ def test_improve_codebase_separates_survey_from_selected_candidate() -> None:
     assert "**No candidate recommended**" in report
 
     assert "Do not repeat the Survey" in selected
-    assert "at most one decision-blocking uncertainty" in selected
-    for resolver in ("$research", "$prototype", "$grill-with-docs", "$codebase-design"):
+    assert "**Resolve at most one blocker.**" in selected
+    for resolver in (
+        "$research",
+        "$prototype",
+        "$grill-with-docs",
+        "$codebase-design",
+    ):
         assert resolver in selected
+    assert "$grilling" not in selected
     assert "design evidence, never production proof" in selected
+    assert "settled direction" in selected and "$to-spec" in selected
+    assert "multiple interdependent unresolved decisions or prerequisites" in selected
+    assert "$wayfinder" in selected
     assert "$simplify-code Candidate N from <absolute-report-path>" in selected
-    assert "Update the same report" in selected
+    assert "**Reconcile.**" in selected and "same card" in selected
 
 
 def test_tdd_discloses_test_reference_only_for_an_evidence_gap() -> None:
@@ -855,6 +923,17 @@ def test_simplify_code_is_explicit_bounded_and_behavior_preserving() -> None:
         "Collapse",
         "Shrink",
     ]
+
+    standardize = skill.split("3. **Standardize.**", 1)[1].split("4. **Collapse.**", 1)[0]
+    assert "**Native-first.**" in standardize
+    assert standardize.index("standard-library") < standardize.index("browser")
+    assert standardize.index("browser") < standardize.index("already-installed dependency")
+
+    collapse = skill.split("4. **Collapse.**", 1)[1].split("5. **Shrink.**", 1)[0]
+    assert "narrowest existing owner" in collapse
+
+    cut = skill.split("## Cut", 1)[1].split("## Prove", 1)[0]
+    assert "ceiling" in cut and "revisit trigger" in cut
 
 
 def test_simplify_code_until_clean_has_a_finite_convergence_contract() -> None:
@@ -1178,12 +1257,11 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
     )
     parallel_steps = re.findall(r"(?m)^## (.+)$", parallel)
     expected_steps = [
-        "Operating Surface",
         "Trace",
-        "Gate",
+        "Select",
+        "Open",
         "Drain",
         "Review",
-        "Repair",
         "Lock",
         "Release",
     ]
@@ -1194,46 +1272,44 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
     assert 'fork_turns="none"' in parallel
     assert "## Review-Ready Handoff" in integrator
     assert re.findall(r"(?m)^## (.+)$", launch) == [
-        "Select",
-        "Create",
-        "Preflight",
-        "Dispatch",
-        "Stall",
-        "Resume",
-        "Release",
+        "Open",
+        "Startup proof",
+        "Dispatch and liveness",
+        "Recovery commands",
+        "Cleanup",
     ]
     assert "scripts/lane_worktree.py" in launch
-    assert "Runtime-managed" in launch and "Manual Git" in launch
+    assert "runtime-managed" in launch and "manual Git" in launch
     report = worker.split("```text", 1)[1].split("```", 1)[0]
     assert re.findall(r"(?m)^([^:\n]+):", report) == [
         "status",
         "work item",
         "mode",
-        "repair generation",
-        "finding IDs",
-        "source trace",
-        "preflight",
+        "actor ID",
         "base",
         "commit",
-        "owned files",
-        "proof",
-        "liveness",
+        "changed scope IDs",
+        "actual changed files",
+        "acceptance proof",
+        "commands and results",
         "skipped checks",
-        "risk/blockers",
+        "liveness checkpoint",
+        "risk or blocker",
         "next need",
         "scope notes",
         "final status",
         "skill feedback",
     ]
-    assert "acceptance criterion" in report.split("proof:", 1)[1].splitlines()[0]
-    diagnosis_route = worker.split("When a bug's", 1)[1].split(";", 1)[0]
-    assert "expected behavior" in diagnosis_route
-    assert "## Progressive Evidence" in ledger
-    assert "## Canonical Charter" in ledger
-    assert "## Review State" in ledger
-    assert "## Friction" in ledger
+    assert "criterion -> evidence" in report
+    assert "$diagnosing-bugs" in worker
+    assert "## Normal path" in ledger
+    assert "## Phases and decisions" in ledger
+    assert "## Branch packets" in ledger
+    assert "## Advanced and compatibility surface" in ledger
     assert "events.jsonl" in ledger
-    assert "LEDGER.md" in ledger and "generated output" in ledger
+    assert "LEDGER.md" in ledger and "generated" in ledger
+    for command_name in ("start", "status", "apply", "brief", "finish"):
+        assert f"run_ledger.py {command_name}" in ledger
     assert "validate-state" in ledger
     assert "candidate integration `HEAD`" in integrator
     assert "`needs-feedback`" in integrator
@@ -1270,19 +1346,23 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
         "blocker",
     }
     for outcome in ("complete", "partial", "blocked"):
-        assert f"`{outcome}`" in parallel.split("## Release", 1)[1]
+        assert f"`{outcome}`" in parallel
     assert {
         "scope",
         "scope-change",
         "resume",
         "frontier",
+        "checkpoint",
+        "integration-regression",
+        "integration-correction",
         "review-invocation",
         "repair-plan",
         "repair-complete",
     } <= event_types
-    assert "## Release" in launch
+    assert "## Cleanup" in launch
     lock = parallel.split("## Lock", 1)[1].split("## Release", 1)[0]
-    assert "claim" in drain and "read back" in drain.lower()
+    assert "claim" in parallel.split("## Open", 1)[1].split("## Drain", 1)[0]
+    assert "read back" in parallel.lower()
     assert "closeout plan" in lock and "Mutation read-back" in lock
     review = parallel.split("## Review", 1)[1].split("## Lock", 1)[0]
     assert "idle" in review
@@ -1295,24 +1375,45 @@ def test_parallel_implement_has_root_receipt_budget_and_windows_contracts() -> N
     launch = (skill_dir / "references/CODEX-WORKTREE-LAUNCH.md").read_text(
         encoding="utf-8"
     )
+    worker = (skill_dir / "references/WORKER-BRIEF.md").read_text(encoding="utf-8")
     script = (skill_dir / "scripts/run_ledger.py").read_text(encoding="utf-8")
     lane_script = (skill_dir / "scripts/lane_worktree.py").read_text(encoding="utf-8")
 
-    assert "**Root-only orchestration.**" in parallel
-    assert "stop before Trace" in parallel
+    assert "**Root only.**" in parallel
+    assert "stop before mutation" in parallel
     for field in (
         "repair_generation_budget",
         "review_invocation_budget",
         "review_invocations_required",
     ):
-        assert field in parallel and field in ledger and field in script
-    assert "append-receipt" in parallel and "append-receipt" in ledger and "append-receipt" in script
-    assert "`committed: true`" in parallel
-    assert "`allowed: true`" in parallel
-    assert "review-invocation" in parallel and "review-invocation" in ledger
+        assert field in ledger and field in script
+    assert "append-receipt" in ledger and "append-receipt" in script
+    assert "`committed: true`" in ledger
+    assert "review-invocation" in ledger
     assert "PARALLEL_IMPLEMENT_WORKTREE_ROOT" in launch and "PARALLEL_IMPLEMENT_WORKTREE_ROOT" in lane_script
+    assert "E:\\pi" in launch and 'Path("E:/pi")' in lane_script
+    assert "maximum path `320`" in launch
+    assert "WINDOWS_DEFAULT_MAX_PATH = 320" in lane_script
     assert "--proof-command-file" in launch and "--proof-command-file" in lane_script
-    assert "none_observed: true" in parallel
+    assert "none_observed" in parallel
+    assert "runtime contract 3" in parallel.lower()
+    assert "Integration correction" in ledger
+    assert "correction_authorization" in script
+    assert "runtime contract 3" in ledger
+    assert "viability, not throughput" in launch and "-n 0" in launch
+    assert "project imports must resolve beneath the lane" in launch
+    assert "repo-owned configuration" in launch
+    assert "namespace-package locations" in launch
+    assert "--python-provenance-file" in launch and "--python-provenance-file" in lane_script
+    assert "original worker" in parallel
+    assert "### Integration correction" in worker
+    assert "regression event ID" in worker
+    assert "prior integration HEAD" in worker
+    assert "structured write-scope IDs" in worker
+    assert "structured write-scope IDs" in ledger
+    assert "selected scope-ID subset" in ledger
+    assert "owner and lane actor" in ledger
+    assert "extended-path" in launch
 
 
 def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts() -> None:
@@ -1335,12 +1436,10 @@ def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts
     assert not implicit_policy(skill_dir)
     assert "recommend `$implement` and stop" not in parallel
 
-    gate = parallel.split("## Gate", 1)[1].split("## Drain", 1)[0]
-    assert re.findall(r"(?m)^- \*\*(Serial|Parallel|Blocked):\*\*", gate) == [
-        "Serial",
-        "Parallel",
-        "Blocked",
-    ]
+    gate = parallel.split("## Select", 1)[1].split("## Open", 1)[0]
+    assert "Select one ticket" in gate
+    assert "Select up to three" in gate
+    assert "Stop with exact blockers" in gate
 
     review = parallel.split("## Review", 1)[1].split("## Lock", 1)[0]
     lock = parallel.split("## Lock", 1)[1].split("## Release", 1)[0]
@@ -1359,7 +1458,7 @@ def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts
         "posted_comment",
         "mutation_readback",
     }
-    assert "renderer owns tracker-comment and ledger prose" in ledger
+    assert "Do not copy field-by-field event contracts" in ledger
     assert {
         "serial-frontier",
         "parallel-frontier",
@@ -1372,6 +1471,60 @@ def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts
     assert tickets.index("`$parallel-implement`") < tickets.index("`$implement`")
     assert "`to-tickets` | Recommend and stop | `$parallel-implement`" in relationships
     assert "| `parallel-implement` | Recommend and stop | `$implement` |" not in relationships
+
+
+def test_parallel_dependency_overlay_is_campaign_scoped_and_reversible() -> None:
+    tracker_surfaces = [
+        ROOT / "docs/agents/issue-tracker.md",
+        CUSTOM / "repo-bootstrap/issue-tracker-github.md",
+        CUSTOM / "repo-bootstrap/issue-tracker-gitlab.md",
+        CUSTOM / "repo-bootstrap/issue-tracker-local.md",
+    ]
+
+    for path in tracker_surfaces:
+        text = path.read_text(encoding="utf-8")
+        assert "landed-awaiting-lock" in text, path
+        assert "same-campaign" in text, path
+        assert "until Lock" in text, path
+        assert "reblocks dependents" in text, path
+
+
+def test_state_boundary_proof_has_one_owner_and_explicit_consumers() -> None:
+    contract = (ROOT / "docs/agents/engineering-contract.md").read_text(
+        encoding="utf-8"
+    )
+    seed = (CUSTOM / "repo-bootstrap/engineering-contract.md").read_text(
+        encoding="utf-8"
+    )
+    tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
+    parallel = (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8")
+    worker = (CUSTOM / "parallel-implement/references/WORKER-BRIEF.md").read_text(
+        encoding="utf-8"
+    )
+    ledger = (CUSTOM / "parallel-implement/references/RUN-LEDGER.md").read_text(
+        encoding="utf-8"
+    )
+
+    owner_text = (
+        "**State-boundary matrix.** When correctness depends on cached, persisted, "
+        "resumed, grouped, projected, or session-scoped state"
+    )
+    assert owner_text in contract
+    assert owner_text in seed
+    assert "engineering contract's state-boundary matrix" in tickets
+    assert "Ready-for-agent defect" in parallel
+    assert "Loop-close proof recombines applicable state-boundary matrices" in parallel
+    assert "State-boundary matrix:" in worker
+    assert "return it as `needs-feedback`" in worker
+    assert "**Adjudicate before synthesis.**" in ledger
+    for disposition in (
+        "generic-skill-gap",
+        "repo-contract-gap",
+        "run-specific",
+        "already-satisfied",
+    ):
+        assert f"`{disposition}`" in ledger
+    assert "Synthesis is adjudication, not transcription." in ledger
 
 
 def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -> None:
@@ -1470,6 +1623,7 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         ("improve-codebase", "Invoke", "prototype"),
         ("improve-codebase", "Load", "codebase-design"),
         ("improve-codebase", "Invoke", "codebase-design"),
+        ("improve-codebase", "Recommend and stop", "wayfinder"),
         ("improve-codebase", "Recommend and stop", "simplify-code"),
         ("improve-codebase", "Recommend and stop", "implement"),
         ("improve-codebase", "Recommend and stop", "to-tickets"),
@@ -1496,6 +1650,7 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
     }
 
     assert required <= edges
+    assert ("improve-codebase", "Invoke", "grilling") not in edges
     assert ("convergent-pr-review", "Hand off", "review") not in edges
 
     skill_names = {skill.name for skill in CUSTOM.iterdir() if skill.is_dir()}

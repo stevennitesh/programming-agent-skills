@@ -1,68 +1,67 @@
-# Lane Worker Brief
+# Worker Brief Contract
 
-Implement exactly one assigned work item.
+Generate one assignment with `run_ledger.py brief`, then add the ticket-owned Source Trace, acceptance, expected scope, and focused proof that the ledger cannot infer.
 
-## Assignment
+## Common assignment
 
-**Work item:** `<id and title>`
-**Mode:** `<implementation / review-repair>`
-**Source Trace:** `<issue / packet / spec slice / decisions / named repo sources>`
-**Charter:** `<recorded campaign Charter identity and relevant fields>`
-**Repair generation:** `<number / not applicable>`
-**Reviewed HEAD and finding IDs:** `<sha and assigned IDs / not applicable>`
-**Base SHA:** `<orchestrator-verified sha>`
-**Lane provider:** `<runtime-managed / manual-git>`
-**Worktree:** `<absolute isolated path>`
-**Preflight packet:** `<exact packet or lane-local path / packet identity>`
-**Git trust:** `<normal / command-scoped safe.directory>`
-**Temp roots:** `<temp_root / pytest_basetemp / cache_root>`
-**Liveness checkpoint:** `<observable checkpoint / expected evidence boundary>`
-**Expected write scope:** `<paths/modules, or discover and report before widening>`
-**Acceptance:** `<criteria, blockers, exclusions, dependencies>`
-**Integration context:** `<relevant landed interfaces or decisions / none>`
-**Focused proof:** `<commands or evidence>`
-**Validation environment:** `<interpreter, cwd, cache/temp paths, focused runner>`
-**Report transport:** `<compact inline packet / exact lane-local .tmp path>`
+- Work item and mode
+- Actor ID and preflight packet
+- Charter and Source Trace
+- Verified base and absolute worktree
+- Stable temp, pytest, and cache roots
+- Acceptance, exclusions, and dependencies
+- State-boundary matrix: `<applicable branches and interactions / not applicable>`
+- Expected write scope; proposed concrete write set when shared fixtures are plausible
+- Focused proof and validation environment
+- Observable liveness checkpoint
+- Report transport
 
-## Contract
+The assigned worktree is the workspace. Reconcile its root, base, clean status, actor, proof startup, Python import provenance, and temp roots before editing. Use it as `workdir` for every command and edit only beneath it. Stop on mismatch.
 
-Read every Source Trace entry and `docs/agents/engineering-contract.md`. The work-item source owns acceptance; this brief owns lane-worker process.
+One worker owns one lane and returns one packet. Never spawn, integrate, formally review, mutate trackers, push, or widen scope. Use `$tdd` for red-testable behavior. For an uncertain bug, use `$diagnosing-bugs` in fix mode and return after trusted regression proof.
 
-**Workspace boundary:** the assigned worktree, not the process startup cwd, is your workspace. Verify the recorded preflight packet against the current root, base, status, write probes, Git trust route, stable temp roots, and proof startup before editing. Set the assigned path as `workdir` on every shell call, use the assigned temp/cache paths, and edit only beneath the worktree. Stop on a mismatch.
+Prove every assigned matrix branch. If repository inspection reveals a supported semantic branch omitted from the assignment, return it as `needs-feedback`; do not silently narrow acceptance or widen the commitment boundary.
 
-**One worker, one lane, one packet:** never spawn, integrate, formally review, mutate trackers, push, or widen scope. Return exactly one clean local commit plus focused proof, or a `blocker` or `needs-feedback` packet.
+Run focused proof by default. Run broader proof only for shared-behavior risk or an explicit route. Product intent, public/domain contracts, dependency meaning, security posture, and adjacent work remain outside the lane unless the Source Trace authorizes them.
 
-In `review-repair` mode, change only the assigned finding IDs under the original Charter. Prove each required remedy and repair regression. Return adjacent observations as scope notes; they do not authorize additional work.
+## Mode additions
 
-For red-testable new behavior, invoke `$tdd`. For a bug, invoke `$tdd` only when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known. When a bug's expected behavior, exact symptom, cause, or trusted red-capable reproduction is uncertain, invoke `$diagnosing-bugs` in fix mode with this lane worker as its caller; return here after regression proof.
+### Implementation
 
-Apply the routed proof budget. Run broad validation only for shared-behavior risk or an explicit route. Use the assigned environment and lane-local cache/temp paths. Shared dependency mutation requires an explicit route.
+Implement exactly the assigned acceptance slice. Discoveries outside it are scope notes, not authority. Return one clean commit or an exact blocker/needs-feedback packet.
 
-Keep product intent, acceptance, public and domain contracts, dependencies, security/privacy posture, and adjacent work outside the lane unless the Source Trace already authorizes them. Return a commitment change as `needs-feedback`.
+### Integration correction
 
-## Report
+Include the regression event ID, prior integration HEAD, correction route, authorized owner and actor, structured write-scope IDs, trusted RED, and required proof. Start from that HEAD, select only authorized IDs, reproduce or reconcile the RED, and prove failing and affected paths. Return selected IDs, actual changed files, one clean correction commit, and evidence. Do not land it.
 
-`done` requires verified preflight, every acceptance criterion accounted for, one worker commit, focused proof, and clean final status. `blocker` or `needs-feedback` claims no completion and preserves exact state.
+The original worker may receive this as its one narrow continuation only when the root records that route and supplies a reconciled correction lane. Otherwise use a fresh lane.
+
+### Review repair
+
+Include the repair generation, blocked reviewed HEAD, complete assigned finding IDs, scopes, and required proof. Change only those admitted findings under the original Charter. Prove each remedy and regression. Adjacent observations authorize no work.
+
+## Return packet
 
 ```text
 status: <done / blocker / needs-feedback>
 work item:
 mode:
-repair generation:
-finding IDs:
-source trace:
-preflight:
+actor ID:
 base:
 commit:
-owned files:
-proof: <acceptance criterion -> evidence; focused commands/results>
-liveness: <last checkpoint reached / evidence>
+changed scope IDs: <when authorized IDs exist>
+actual changed files:
+acceptance proof: <criterion -> evidence>
+commands and results:
 skipped checks:
-risk/blockers:
+liveness checkpoint:
+risk or blocker:
 next need:
 scope notes:
 final status: <clean / dirty + reason>
 skill feedback: <none, or surface | evidence | impact | suggestion>
 ```
 
-Map each non-empty `skill feedback` entry to one root-owned friction observation. Feedback reports process evidence only; it grants no scope, repair, review, or mutation authority.
+`done` requires reconciled preflight, every criterion accounted for, one commit, focused proof, and clean status. `blocker` and `needs-feedback` claim no completion and preserve exact state.
+
+Skill feedback is process evidence only. The root may record it as friction; it grants no implementation authority.

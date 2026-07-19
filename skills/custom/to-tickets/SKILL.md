@@ -42,6 +42,8 @@ Every ticket satisfies the tracker's Ready-for-agent contract and adds:
 
 Separate behavior, state transitions, failure or permission boundaries, integration risks, and support work when they require independent proof. Start with the happy-path tracer when the end-to-end route is unproven.
 
+For a stateful boundary, include the engineering contract's state-boundary matrix in acceptance and its proof lane. Name every applicable branch and any explicitly non-applicable axis. Do not defer supported-path discovery to implementation or formal review.
+
 A support slice names the tracer bullet it de-risks and its proof.
 
 For a mechanical **blast-radius** change that cannot land green as a tracer bullet, use **expand-contract**: expand; migrate callers in green batches; contract after every batch. If batches cannot remain green independently, use one integration branch and a final integrate-and-verify slice blocked by every batch.
@@ -54,7 +56,7 @@ Show the coverage map, including every explicit deferral, exclusion, and no-tick
 
 Show each proposed ticket's title, blockers, covered behavior, proof lane, why, expected write scope, and parallel safety.
 
-Get explicit user approval for granularity, order, blocking edges, acceptance criteria, proof lanes, write scopes, and parallel safety before publishing.
+Get explicit user approval for granularity, order, blocking edges, acceptance criteria, proof lanes, applicable state-boundary matrices, write scopes, and parallel safety before publishing.
 
 ### 5. Publish
 

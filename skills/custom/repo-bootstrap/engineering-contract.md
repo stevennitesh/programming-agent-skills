@@ -60,6 +60,8 @@ Use maintained repo configuration, CI, and contributor docs as command authority
 
 Match proof to meaning: filtering needs included, excluded, and edge fixtures; transformations need known inputs, outputs, and invariants; ordering needs thresholds or relative order; persistence needs before/after evidence and constraints.
 
+**State-boundary matrix.** When correctness depends on cached, persisted, resumed, grouped, projected, or session-scoped state, derive proof from the supported semantic branches: initial or absent state; current reusable state; legacy or incompatible state; each public access path; supported configuration or profile variants; and relevant lifecycle transitions such as reuse, invalidation, expiry, restart, or exit. Cover every distinct branch and high-risk interaction, not a blind Cartesian product. A broad green suite does not replace missing branch evidence.
+
 **Negative control.** Prove a new validator, hook, dependency boundary, or enforcement rule by observing the clean case pass, one controlled violation fail for the intended rule, and the restored case pass. Preserve and restore the starting state.
 
 Support work earns its place only when it directly unblocks or de-risks a tracer bullet and has observable proof.

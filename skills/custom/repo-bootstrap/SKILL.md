@@ -42,7 +42,7 @@ Verified commands, the four local contracts, and `.tmp/`/`.scratch/` policy are 
 
 Show the exact proposed delta:
 
-- the `AGENTS.md` patch with the engineering primer, verified commands, invariants, pointers, and `<!-- programming-agent-skills setup-schema: 1:eb715ead15d5 -->`;
+- the `AGENTS.md` patch with the engineering primer, verified commands, invariants, pointers, and `<!-- programming-agent-skills setup-schema: 1:74105ed8ab28 -->`;
 - all four `docs/agents/*.md` results;
 - the `.gitignore` delta;
 - preserved repo-specific additions and unresolved conflicts;

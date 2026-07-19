@@ -1,93 +1,67 @@
 # Isolated Lane Lifecycle
 
-Use this to establish, preflight, inspect, recover, and release every worker or child-integrator lane.
+Fresh context does not isolate a checkout. Every dispatched worker needs both.
 
-Fresh context does not create checkout isolation. Dispatch requires both.
+## Open
 
-## Select
-
-Choose one provider:
-
-1. **Runtime-managed:** use only a dedicated worktree whose provider identifier and absolute path are supplied to the orchestrator.
-2. **Manual Git:** select an explicit `--root`, then `PARALLEL_IMPLEMENT_WORKTREE_ROOT`, then `<repo-parent>/worktrees/parallel-implement`.
-3. **Blocked:** stop when neither provider proves checkout and shared Git-metadata writes.
-
-Provider namespaces never overlap. The runtime owns managed cleanup. The helper owns only manual paths beneath the recorded root. A user-owned Codex App task remains explicit-only and passes the same preflight.
-
-## Create
-
-Run manual creation as one standalone command and inspect its JSON before continuing:
+For a manual Git lane, create and preflight in one command:
 
 ```text
-python <skill-dir>/scripts/lane_worktree.py create --repo <repo> --root <root> --base <sha> --run-id <run> --item-id <item>
+python <skill-dir>/scripts/lane_worktree.py open \
+  --repo <repo> --base <sha> --run-id <run> --item-id <item> --actor-id <actor> \
+  --proof-command-file <argv.json> --python-provenance-file <python.json>
 ```
 
-Omit `--root` to use the environment value when present, otherwise the repo-parent default. Pass `--branch <name>` only for a routed integrator. The helper records `root_source`, uses a bounded hashed lane name, verifies containment, budgets generated and tracked path space before filesystem or Git mutation, creates detached workers by default, verifies registration and base, and reports command-scoped Git trust. A path failure returns `blocked-path-budget` with the selected root and recovery route.
+Root selection is explicit `--root`, then `PARALLEL_IMPLEMENT_WORKTREE_ROOT`, then `E:\pi` on Windows or `<repo-parent>/worktrees/parallel-implement` elsewhere. Windows defaults to maximum path `320`; override only from recorded repository evidence. Detached HEAD is the worker default; pass `--branch` only for a routed integrator.
 
-Record every attempt as `lane-create`. Retry only after its base, root, trust, permission, capability, or conflicting filesystem state changes.
+The helper verifies containment and path budget before mutation, creates the worktree, verifies its registration and base, and performs preflight. `ok: true, state: ready` is the only dispatchable result. A preflight failure preserves the created lane and returns the exact retry route.
 
-## Preflight
+Use a runtime-managed lane only when the provider supplies its identifier and absolute path and owns cleanup. Provider namespaces never overlap.
 
-Run preflight separately with a unique actor identifier:
+## Startup proof
 
-```text
-python <skill-dir>/scripts/lane_worktree.py preflight --worktree <path> --base <sha> --actor-id <actor> --proof-command-json <json-array>
+Supply one UTF-8 JSON argv array through `--proof-command-file`; inline JSON is acceptable for simple commands. The helper never invokes a shell. Preflight proves viability, not throughput, so disable test parallelism by default (`-n 0` for pytest/xdist) unless concurrency is itself under proof.
+
+Use the repository's verified Python executable. A shared environment may provide dependencies, but project imports must resolve beneath the lane. Supply one UTF-8 provenance object:
+
+```json
+{
+  "executable": "<absolute verified Python executable>",
+  "import_roots": ["<repo-owned project root>"],
+  "packages": ["project_package"]
+}
 ```
 
-For Windows or complex argv transport, prefer a UTF-8 JSON file (a Windows-authored UTF-8 BOM is accepted):
+The helper resolves every root beneath the lane, imports each package in isolated Python, and rejects concrete origins or namespace-package locations outside it. Derive roots from repo-owned configuration; do not assume one layout. When the repository has no importable project package, explicitly use `--skip-python-provenance --python-provenance-reason <reason>` and carry the residual risk.
 
-```text
-python <skill-dir>/scripts/lane_worktree.py preflight --worktree <path> --base <sha> --actor-id <actor> --proof-command-file <path>
-```
+When no startup proof exists, use `--skip-proof --reason <reason>`. A skipped check is evidence of a gap, not a pass.
 
-The file contains one JSON array of argv strings, is mutually exclusive with inline JSON and `--skip-proof`, is never evaluated through a shell, and is recorded by resolved path and SHA-256 digest. Resolve the root choice and proof transport during Trace before creating lanes.
+The ready packet includes exact root, worktree, base, branch state, clean status, checkout/index/object write probes, Git trust route, actor ID, proof and provenance, and stable `temp_root`, `pytest_basetemp`, and `cache_root`. Pass those exact values to the worker.
 
-Proof startup is required. When no repository startup proof exists, use `--skip-proof --reason <reason>` and carry that skip as residual risk. Inline JSON, proof file, and skip are mutually exclusive.
+## Dispatch and liveness
 
-Require `ok: true`. The packet proves exact root and base, detached or routed branch state, clean status, checkout writes, Git index-lock and shared-object writes, command-scoped trust, effective identity, and proof startup. It also creates and returns stable, actor-specific `temp_root`, `pytest_basetemp`, and `cache_root`; pass those exact paths to the actor.
+Apply the ready packet to the ledger, generate the brief, and launch one direct fresh-context child. Every command and edit targets the recorded worktree.
 
-Record the packet as `lane-preflight`. A failed operation returns `state`, `recoverable`, and `next_action`; it never authorizes dispatch.
+A missed liveness checkpoint plus no actor or process progress triggers inspection, not duplicate dispatch. Stop the actor, reconcile child processes, then inspect registration, root, HEAD, status, commit, patch, temp roots, and claim. Preserve dirty or uncommitted work. Never start two writers in one inherited lane.
 
-## Dispatch
+## Recovery commands
 
-Launch one direct fresh-context child with the complete brief, absolute worktree, preflight packet, temp roots, and liveness checkpoint. Every command and edit targets that path. The worker reconciles the packet before editing.
+`create` and `preflight` remain separately callable for diagnosis and retry. Retry only after the observed base, root, trust, permission, capability, startup proof, or conflicting filesystem state changes.
 
-One checkout has one writer. A worker without both isolations blocks its item. An integrator without a dedicated branch worktree returns landing to the orchestrator.
+On resume, reconcile provider identity, registration, directory, HEAD, status, actor/process, commit disposition, temp roots, claim, and ledger packet. Missing is not done.
 
-## Stall
+## Cleanup
 
-A missed recorded checkpoint plus no agent or process progress triggers inspection, not redispatch.
-
-1. Record `lane-stall` with the missed checkpoint and last evidence.
-2. Stop the worker and reconcile its child processes.
-3. Inspect worktree registration, root, `HEAD`, status, commit, patch, temp roots, and claim.
-4. Preserve dirty or uncommitted work and emit one recovery packet.
-5. Record `lane-recovery`; redispatch only after the inherited lane and packet reconcile.
-
-Never infer completion from a missing worker. Never start two writers in the inherited lane.
-
-## Resume
-
-Reconcile provider identifier, Git registration, directory, `HEAD`, status, agent or process, commit disposition, temp roots, claim, and ledger packets. Preserve every mismatch. Recreate, redispatch, remove, or purge only from observed state plus the returned recovery route.
-
-## Release
-
-Make the lane idle. A runtime-managed lane records the provider's released or preserved state and never enters manual cleanup.
-
-For a manual lane, record its exact commit as integrated or preserved, then run:
+Make the lane idle and record its commit as integrated or preserved, then run:
 
 ```text
 python <skill-dir>/scripts/lane_worktree.py cleanup --repo <repo> --root <root> --worktree <path> --expected-head <sha> --disposition <integrated-or-preserved>
 ```
 
-The helper resolves abbreviated SHAs, verifies containment, exact `HEAD`, clean status, and disposition, then removes the Git registration. If Git unregisters but leaves a directory, the same invocation performs containment-checked extended-path cleanup. Record registration and directory results separately as `lane-cleanup`.
+The helper verifies containment, exact HEAD, clean status, and disposition before unregistering. If Git unregisters but leaves a directory, containment-checked extended-path cleanup runs in the same invocation. A successful fallback remains `ok: true, state: removed` and retains Git's raw error as diagnostics.
 
-Safe terminal states are `removed`, `provider-preserved`, or an explicitly accepted `unregistered-residual-directory`. Dirty, registered, unpreserved, or unaccounted state blocks `complete`.
+Safe terminal states are `removed`, `provider-preserved`, or an explicitly accepted `unregistered-residual-directory`. Dirty, registered, unpreserved, or unknown state blocks complete.
 
-A residual found after registration was already lost cannot be reverified automatically. Preserve it until explicit cleanup authority permits:
+Lost registration cannot be reverified automatically. Preserve the residual until explicit cleanup authority permits `purge-residual --confirm-unregistered-residual` beneath the recorded root.
 
-```text
-python <skill-dir>/scripts/lane_worktree.py purge-residual --repo <repo> --root <root> --worktree <path> --confirm-unregistered-residual
-```
-
-Forced Git removal, branch deletion, global `safe.directory` mutation, and cleanup outside the recorded root remain outside helper authority.
+Forced removal, branch deletion, global `safe.directory` mutation, and cleanup outside the recorded root are outside helper authority.

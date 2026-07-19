@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import subprocess
@@ -36,6 +37,8 @@ EVENT_TYPES = {
     "stale-base",
     "conflict",
     "land",
+    "integration-regression",
+    "integration-correction",
     "feedback",
     "wave-validation",
     "graph-drained",
@@ -50,10 +53,21 @@ EVENT_TYPES = {
     "parent-closeout",
     "tracker-lock",
     "push",
+    "checkpoint",
     "release",
     "friction",
 }
-INTENTS = {"dispatch", "land", "review", "repair", "lock", "push", "complete"}
+INTENTS = {
+    "dispatch",
+    "land",
+    "correct-integration",
+    "review",
+    "repair",
+    "lock",
+    "push",
+    "checkpoint",
+    "complete",
+}
 SAFE_LANE_STATES = {
     "removed",
     "provider-preserved",
@@ -261,6 +275,71 @@ def semantic_event(event: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def stable_event_id(prefix: str, payload: Any, *, index: int = 0) -> str:
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+    digest = hashlib.sha256(encoded).hexdigest()[:16]
+    return f"{prefix}-{index + 1}-{digest}"
+
+
+def append_facade_events(
+    path: Path,
+    raw_events: list[dict[str, Any]],
+    *,
+    repo: str | None,
+) -> tuple[int, int, list[dict[str, Any]]]:
+    """Append an idempotent semantic batch and keep the reducer authoritative."""
+    with stream_lock(path):
+        prior = load_events(path)
+        validate_events(prior)
+        by_id = {event["event_id"]: event for event in prior}
+        appended: list[dict[str, Any]] = []
+        replayed = 0
+        for raw in raw_events:
+            event = normalize_event(raw)
+            existing = by_id.get(event["event_id"])
+            if existing is not None:
+                if "timestamp" not in raw:
+                    event["timestamp"] = existing["timestamp"]
+                if semantic_event(event) != semantic_event(existing):
+                    raise ValueError(
+                        f"event_id {event['event_id']} already exists with a different payload"
+                    )
+                replayed += 1
+                continue
+            appended.append(event)
+            by_id[event["event_id"]] = event
+        prospective = [*prior, *appended]
+        validate_events(prospective)
+        state = derive_state(prospective, repo)
+        if state["errors"]:
+            raise ValueError(
+                "prospective packet is semantically invalid: "
+                + "; ".join(state["errors"])
+            )
+        if appended:
+            append_encoded(path, appended)
+    return len(appended), replayed, prospective
+
+
+def scope_identifiers(value: Any) -> tuple[list[str], str | None]:
+    if not isinstance(value, list) or not value:
+        return [], "must be a non-empty list"
+    identifiers: list[str] = []
+    for entry in value:
+        if isinstance(entry, str):
+            identifier = entry.strip()
+        elif isinstance(entry, dict) and isinstance(entry.get("id"), str):
+            identifier = entry["id"].strip()
+        else:
+            return [], "entries must be nonempty strings or objects with a nonempty id"
+        if not identifier:
+            return [], "entries must be nonempty strings or objects with a nonempty id"
+        identifiers.append(identifier)
+    if len(identifiers) != len(set(identifiers)):
+        return [], "identifiers must be unique"
+    return identifiers, None
+
+
 def receipt_payload(
     state: dict[str, Any],
     *,
@@ -270,6 +349,18 @@ def receipt_payload(
     state_event_count: int,
 ) -> dict[str, Any]:
     requested_errors = intent_errors(state, intent)
+    regression = state.get("integration_regression") or {}
+    correction_authorization = None
+    if intent == "correct-integration" and regression:
+        correction_authorization = {
+            "regression_event_id": regression.get("event_id"),
+            "prior_integration_sha": regression.get("integration_sha"),
+            "route": regression.get("route"),
+            "owner": regression.get("owner"),
+            "write_scope": regression.get("write_scope"),
+            "write_scope_ids": regression.get("write_scope_ids"),
+            "required_proof": regression.get("required_proof"),
+        }
     authorized = [
         candidate
         for candidate in sorted(INTENTS)
@@ -283,6 +374,7 @@ def receipt_payload(
         "state_event_count": state_event_count,
         "receipt_fresh": event_number == state_event_count,
         "requested_intent": {"name": intent, "allowed": not requested_errors},
+        "correction_authorization": correction_authorization,
         "authorized_intents": authorized,
         "next_actions": next_actions(requested_errors, intent),
         "counters": {
@@ -323,6 +415,15 @@ def append_receipt(args: argparse.Namespace) -> int:
             error="stdin event_id differs from --event-id",
         )
     raw["event_id"] = args.event_id
+    if args.intent == "checkpoint" and not args.repo:
+        return emit(
+            False,
+            operation="append-receipt",
+            committed=False,
+            event_id=args.event_id,
+            error="checkpoint receipt requires repository-backed Git evidence",
+            errors=["checkpoint receipt requires repository-backed Git evidence"],
+        )
 
     with stream_lock(path):
         prior = load_events(path)
@@ -410,6 +511,42 @@ def git_head(repo: str | None) -> str | None:
     return result.stdout.strip()
 
 
+def git_clean(repo: str | None) -> bool | None:
+    if not repo:
+        return None
+    result = subprocess.run(
+        ["git", "-C", str(Path(repo).resolve()), "status", "--porcelain=v1"],
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    if result.returncode != 0:
+        raise ValueError(result.stderr.strip() or "cannot inspect repository status")
+    return not bool(result.stdout)
+
+
+def git_is_ancestor(repo: str | None, ancestor: str, descendant: str) -> bool:
+    if not repo:
+        return True
+    result = subprocess.run(
+        [
+            "git",
+            "-C",
+            str(Path(repo).resolve()),
+            "merge-base",
+            "--is-ancestor",
+            ancestor,
+            descendant,
+        ],
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    if result.returncode not in {0, 1}:
+        raise ValueError(result.stderr.strip() or "cannot verify integration ancestry")
+    return result.returncode == 0
+
+
 def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[str, Any]:
     errors: list[str] = []
     children: list[str] = []
@@ -425,6 +562,10 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
     child_closeouts: dict[str, dict[str, Any]] = {}
     parent_closeout: dict[str, Any] | None = None
     pushed_head: str | None = None
+    checkpoint_outcome: str | None = None
+    checkpoint_data: dict[str, Any] | None = None
+    checkpoint_active = False
+    checkpoint_resume_pending = False
     release_outcome: str | None = None
     resume_pending = False
     tracker_locked = False
@@ -449,6 +590,8 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
     review_invocation_ids: set[str] = set()
     friction_observations: dict[str, dict[str, Any]] = {}
     friction_synthesis: dict[str, Any] | None = None
+    integration_regression: dict[str, Any] | None = None
+    latest_integration_correction: str | None = None
 
     def item_state(item: str) -> dict[str, Any]:
         return items.setdefault(item, {})
@@ -467,6 +610,10 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
 
         if release_seen and kind != "friction":
             errors.append(f"{prefix} occurs after release")
+        if checkpoint_active and kind not in {"friction", "resume"}:
+            errors.append(f"{prefix} occurs before checkpoint resume")
+        if checkpoint_resume_pending and kind not in {"friction", "reconcile"}:
+            errors.append(f"{prefix} occurs before checkpoint reconciliation")
 
         if kind in {"scope", "scope-change"}:
             visible = data.get("children")
@@ -503,8 +650,8 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                 candidate_contract = charter.get("runtime_contract", runtime_contract)
                 if need(
                     isinstance(candidate_contract, int)
-                    and candidate_contract in {1, 2},
-                    f"{prefix} Charter runtime_contract must be 1 or 2",
+                    and candidate_contract in {1, 2, 3},
+                    f"{prefix} Charter runtime_contract must be 1, 2, or 3",
                 ):
                     if kind == "scope-change":
                         need(
@@ -610,12 +757,16 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                         review_invocation_budget = candidate_review_budget
                         review_invocations_required = candidate_required
         elif kind == "resume":
+            if checkpoint_active:
+                checkpoint_active = False
+                checkpoint_resume_pending = True
             resume_pending = True
         elif kind == "reconcile":
             required = {"git", "worktrees", "agents", "tracker"}
             missing = sorted(field for field in required if field not in data)
             need(not missing, f"{prefix} missing reconciliation evidence: {', '.join(missing)}")
             resume_pending = bool(missing)
+            checkpoint_resume_pending = bool(missing)
         elif kind == "lane-create":
             lane_id = data.get("lane_id")
             if need(isinstance(lane_id, str) and bool(lane_id), f"{prefix} requires data.lane_id"):
@@ -657,6 +808,111 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
             lane_id = state.get("lane_id")
             if lane_id in lanes:
                 lanes[lane_id]["state"] = "landed"
+        elif kind == "integration-regression":
+            route = data.get("route")
+            write_scope_ids, write_scope_error = scope_identifiers(data.get("write_scope"))
+            need(runtime_contract >= 3, f"{prefix} requires runtime contract 3")
+            need(bool(integration_head), f"{prefix} requires an integrated HEAD")
+            need(
+                event.get("integration_sha") == integration_head,
+                f"{prefix} HEAD differs from integration HEAD",
+            )
+            need(
+                review_invocations_used == 0,
+                f"{prefix} is only valid before formal review",
+            )
+            need(integration_regression is None, f"{prefix} duplicates an open integration regression")
+            need(bool(data.get("red")), f"{prefix} requires a trusted RED")
+            need(
+                route in {"original-worker", "fresh-lane", "root-tiny"},
+                f"{prefix} has invalid correction route",
+            )
+            need(
+                isinstance(data.get("owner"), str) and bool(data["owner"].strip()),
+                f"{prefix} requires an owner",
+            )
+            need(not write_scope_error, f"{prefix} write scope {write_scope_error}")
+            need(bool(data.get("required_proof")), f"{prefix} requires regression proof")
+            if route == "root-tiny":
+                need(
+                    data.get("root_authorized") is True,
+                    f"{prefix} tiny root correction requires explicit authorization",
+                )
+            integration_regression = {
+                **data,
+                "event_id": event["event_id"],
+                "integration_sha": integration_head,
+                "write_scope_ids": write_scope_ids,
+            }
+            graph_drained = False
+            review_ready = False
+        elif kind == "integration-correction":
+            regression = integration_regression or {}
+            route = data.get("route")
+            corrected_head = event.get("integration_sha")
+            actor_id = data.get("actor_id")
+            changed_scope_ids, changed_scope_error = scope_identifiers(data.get("changed_scope"))
+            need(bool(integration_regression), f"{prefix} requires an open integration regression")
+            need(
+                data.get("regression_event_id") == regression.get("event_id"),
+                f"{prefix} regression identity differs",
+            )
+            need(
+                data.get("prior_integration_sha") == integration_head,
+                f"{prefix} prior HEAD differs from integration HEAD",
+            )
+            need(route == regression.get("route"), f"{prefix} correction route differs")
+            need(
+                isinstance(actor_id, str) and bool(actor_id.strip()),
+                f"{prefix} requires actor_id",
+            )
+            need(
+                actor_id == regression.get("owner"),
+                f"{prefix} actor differs from authorized owner",
+            )
+            need(bool(corrected_head), f"{prefix} requires integration_sha")
+            need(corrected_head != integration_head, f"{prefix} requires a successor HEAD")
+            need(
+                data.get("correction_commit") == corrected_head,
+                f"{prefix} correction commit differs from successor HEAD",
+            )
+            need(not changed_scope_error, f"{prefix} changed scope {changed_scope_error}")
+            if not changed_scope_error:
+                authorized_scope_ids = set(regression.get("write_scope_ids") or [])
+                need(
+                    set(changed_scope_ids) <= authorized_scope_ids,
+                    f"{prefix} changed scope exceeds authorization",
+                )
+            need(bool(event.get("validation")), f"{prefix} requires correction proof")
+            if route in {"original-worker", "fresh-lane"}:
+                lane_id = data.get("lane_id")
+                worker_sha = data.get("worker_sha")
+                need(lane_id in lanes, f"{prefix} requires a known correction lane")
+                lane_actor = lanes.get(lane_id, {}).get("actor_id")
+                need(
+                    isinstance(lane_actor, str) and bool(lane_actor),
+                    f"{prefix} correction lane lacks preflight actor identity",
+                )
+                need(
+                    lane_actor == actor_id,
+                    f"{prefix} lane actor differs from correction actor",
+                )
+                lane_item = lanes.get(lane_id, {}).get("work_item")
+                need(
+                    bool(lane_item)
+                    and item_state(str(lane_item)).get("accepted") == worker_sha,
+                    f"{prefix} requires an accepted correction packet",
+                )
+            if integration_head and corrected_head:
+                need(
+                    git_is_ancestor(repo, integration_head, corrected_head),
+                    f"{prefix} successor HEAD does not descend from integration HEAD",
+                )
+            integration_head = corrected_head or integration_head
+            latest_integration_correction = corrected_head
+            integration_regression = None
+            graph_drained = False
+            review_ready = False
         elif kind == "graph-drained":
             need(bool(children), f"{prefix} requires an exhaustive scope")
             unfinished = [child for child in children if not item_state(child).get("landed") and not item_state(child).get("disposition")]
@@ -951,8 +1207,123 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                     friction_synthesis = data
             else:
                 need(False, f"{prefix} friction kind must be observation or synthesis")
+        elif kind == "checkpoint":
+            decision = event.get("decision")
+            required = {
+                "reason",
+                "continuation",
+                "current_head",
+                "actors",
+                "integration_state",
+                "next_frontier",
+                "blockers",
+                "claims",
+                "tracker",
+                "remote",
+            }
+            missing = sorted(field for field in required if field not in data)
+            need(runtime_contract >= 3, f"{prefix} requires runtime contract 3")
+            need(decision in {"partial", "blocked"}, f"{prefix} has invalid outcome")
+            need(not missing, f"{prefix} missing checkpoint evidence: {', '.join(missing)}")
+            checkpoint_head = data.get("current_head")
+            need(
+                isinstance(checkpoint_head, str) and bool(checkpoint_head.strip()),
+                f"{prefix} requires a nonempty current HEAD",
+            )
+            need(
+                event.get("integration_sha") == checkpoint_head,
+                f"{prefix} event HEAD differs from current HEAD",
+            )
+            need(data.get("actors") == "idle", f"{prefix} requires idle actors")
+            need(
+                data.get("integration_state") in {"clean", "preserved"},
+                f"{prefix} has invalid integration state",
+            )
+            need(
+                isinstance(data.get("next_frontier"), list),
+                f"{prefix} next_frontier must be a list",
+            )
+            need(
+                isinstance(data.get("blockers"), list),
+                f"{prefix} blockers must be a list",
+            )
+            need(data.get("claims_complete") is True, f"{prefix} requires complete claim accounting")
+            claims = data.get("claims")
+            valid_claims = need(
+                isinstance(claims, list) and all(isinstance(claim, dict) for claim in claims),
+                f"{prefix} claims must be a list of objects",
+            )
+            claim_items: list[str] = []
+            if isinstance(claims, list):
+                for claim in claims:
+                    claim_item = claim.get("work_item")
+                    claim_state = claim.get("state")
+                    valid_claims &= need(
+                        isinstance(claim_item, str) and bool(claim_item),
+                        f"{prefix} claim requires work_item",
+                    )
+                    if isinstance(claim_item, str):
+                        claim_items.append(claim_item)
+                    valid_claims &= need(
+                        claim_state in {"retained", "released"},
+                        f"{prefix} claim has invalid state",
+                    )
+                    if claim_state == "retained":
+                        valid_claims &= need(
+                            all(claim.get(field) for field in ("owner", "token", "claimed_at", "recovery_owner")),
+                            f"{prefix} retained claim lacks owner or recovery evidence",
+                        )
+                    elif claim_state == "released":
+                        valid_claims &= need(
+                            bool(claim.get("readback")),
+                            f"{prefix} released claim lacks read-back",
+                        )
+            if valid_claims:
+                need(
+                    len(claim_items) == len(set(claim_items)),
+                    f"{prefix} duplicates claim work items",
+                )
+            unsafe = []
+            for lane_id, lane in lanes.items():
+                lane_state = lane.get("state")
+                if lane_state not in SAFE_LANE_STATES or (
+                    lane_state == "unregistered-residual-directory"
+                    and not lane.get("intentionally_preserved")
+                ):
+                    unsafe.append(f"{lane_id}:{lane_state}")
+            need(not unsafe, f"{prefix} has active lanes: {', '.join(unsafe)}")
+            if integration_head:
+                need(
+                    checkpoint_head == integration_head,
+                    f"{prefix} HEAD differs from integration HEAD",
+                )
+            if integration_regression:
+                blocker_ids = {
+                    blocker
+                    if isinstance(blocker, str)
+                    else blocker.get("id")
+                    for blocker in data.get("blockers", [])
+                    if isinstance(blocker, (str, dict))
+                }
+                need(
+                    decision == "blocked",
+                    f"{prefix} open integration regression requires blocked outcome",
+                )
+                need(
+                    integration_regression.get("event_id") in blocker_ids,
+                    f"{prefix} blockers omit the open integration regression",
+                )
+            need(not repair_open, f"{prefix} has an open Repair generation")
+            checkpoint_outcome = decision
+            checkpoint_data = data
+            checkpoint_active = True
         elif kind == "release":
             need(event.get("decision") in {"complete", "partial", "blocked"}, f"{prefix} has invalid outcome")
+            if runtime_contract >= 3:
+                need(
+                    event.get("decision") == "complete",
+                    f"{prefix} runtime contract 3 reserves release for complete",
+                )
             if event.get("decision") == "complete":
                 need(tracker_locked, f"{prefix} requires tracker Lock")
                 need(event.get("integration_sha") == closeout_head, f"{prefix} HEAD differs from closeout HEAD")
@@ -973,6 +1344,20 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
         errors.append("canonical campaign requires one Workflow Friction synthesis")
 
     current_head = git_head(repo)
+    current_clean = git_clean(repo)
+    if latest_integration_correction is not None and latest_integration_correction == integration_head:
+        need(
+            current_head == integration_head,
+            "corrected integration HEAD differs from current HEAD",
+        )
+        need(current_clean is not False, "corrected integration checkout is not clean")
+    if checkpoint_active and checkpoint_data:
+        need(
+            checkpoint_data.get("current_head") == current_head,
+            "active checkpoint HEAD differs from current HEAD",
+        )
+        if checkpoint_data.get("integration_state") == "clean":
+            need(current_clean is not False, "active checkpoint requires a clean integration checkout")
     lane_status: dict[str, str] = {}
     for lane_id, lane in lanes.items():
         state = str(lane.get("state") or "unknown")
@@ -997,6 +1382,8 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
 
     if release_outcome:
         campaign_status = release_outcome
+    elif checkpoint_active:
+        campaign_status = checkpoint_outcome or "partial"
     elif repair_open:
         campaign_status = "repairing"
     elif review_decision in ACCEPTED_REVIEWS:
@@ -1019,7 +1406,9 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
         "lane_status": lane_status,
         "integration_head": integration_head,
         "current_head": current_head,
+        "current_clean": current_clean,
         "graph_drained": graph_drained,
+        "review_ready": review_ready,
         "review_target": review_target,
         "review_decision": review_decision,
         "closeout_head": closeout_head,
@@ -1027,6 +1416,11 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
         "parent_closeout": parent_closeout,
         "pushed_head": pushed_head,
         "release_outcome": release_outcome,
+        "checkpoint_outcome": checkpoint_outcome,
+        "checkpoint_data": checkpoint_data,
+        "checkpoint_active": checkpoint_active,
+        "checkpoint_resume_pending": checkpoint_resume_pending,
+        "integration_regression": integration_regression,
         "campaign_status": campaign_status,
         "resume_pending": resume_pending,
         "tracker_locked": tracker_locked,
@@ -1054,6 +1448,8 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
 def intent_errors(state: dict[str, Any], intent: str) -> list[str]:
     errors = list(state["errors"])
     items = state["items"]
+    if state["checkpoint_active"] and intent != "checkpoint":
+        errors.append("active checkpoint requires resume before authority reopens")
     if state["resume_pending"]:
         errors.append("resume requires reconciled Git, worktree, agent, and tracker evidence")
     if intent == "dispatch":
@@ -1062,11 +1458,24 @@ def intent_errors(state: dict[str, Any], intent: str) -> list[str]:
     elif intent == "land":
         if not any(item.get("accepted") and not item.get("landed") for item in items.values()):
             errors.append("no accepted unlanded item is ready to land")
+    elif intent == "correct-integration":
+        if not state["integration_regression"]:
+            errors.append("no integration regression is open")
+        if state["integration_head"] != state["current_head"]:
+            errors.append("integration HEAD does not equal current HEAD")
+        if state["current_clean"] is False:
+            errors.append("integration checkout is not clean")
     elif intent == "review":
         if not state["graph_drained"]:
             errors.append("parent graph is not execution-drained")
         if state["repair_open"]:
             errors.append("Repair generation is not complete")
+        if state["integration_regression"]:
+            errors.append("integration regression is not corrected")
+        if state["integration_head"] != state["current_head"]:
+            errors.append("integration HEAD does not equal current HEAD")
+        if state["current_clean"] is False:
+            errors.append("integration checkout is not clean")
         if state["repair_generation"] != state["repair_completed_generation"]:
             errors.append("latest Repair generation lacks completion proof")
         if state["review_invocations_used"] >= state["review_invocation_budget"]:
@@ -1112,6 +1521,9 @@ def intent_errors(state: dict[str, Any], intent: str) -> list[str]:
             errors.append("closeout HEAD does not equal current HEAD")
         if state["repair_open"]:
             errors.append("Repair generation remains open")
+    elif intent == "checkpoint":
+        if not state["checkpoint_active"]:
+            errors.append("no resumable checkpoint is active")
     elif intent == "complete":
         if state["release_outcome"] != "complete":
             errors.append("release outcome is not complete")
@@ -1159,6 +1571,8 @@ def validate_state_command(args: argparse.Namespace) -> int:
         next_action=next_actions(errors, args.intent),
         lane_status=state["lane_status"],
         current_head=state["current_head"],
+        integration_head=state["integration_head"],
+        checkpoint_active=state["checkpoint_active"],
         approved_head=state["closeout_head"],
         review_decision_id=state["review_decision_id"],
         repair_generation=state["repair_generation"],
@@ -1183,6 +1597,7 @@ def status(args: argparse.Namespace) -> int:
     events = load_events(path)
     validate_events(events)
     state = derive_state(events, args.repo)
+    facade = facade_view(state)
     return emit(
         not state["errors"],
         operation="resume-status" if args.command == "resume-status" else "status",
@@ -1192,6 +1607,7 @@ def status(args: argparse.Namespace) -> int:
         lane_status=state["lane_status"],
         integration_head=state["integration_head"],
         current_head=state["current_head"],
+        checkpoint_active=state["checkpoint_active"],
         review_decision_id=state["review_decision_id"],
         repair_generation=state["repair_generation"],
         repair_generation_budget=state["repair_generation_budget"],
@@ -1200,10 +1616,358 @@ def status(args: argparse.Namespace) -> int:
         review_invocation_budget=state["review_invocation_budget"],
         review_invocations_completed=state["review_invocations_completed"],
         review_invocations_required=state["review_invocations_required"],
+        **facade,
     )
 
 
+def implementation_states(state: dict[str, Any]) -> dict[str, str]:
+    result: dict[str, str] = {}
+    for child in state["children"]:
+        item = state["items"].get(child, {})
+        closeout = state["child_closeouts"].get(child, {})
+        if closeout.get("state") == "verified":
+            value = "closed"
+        elif item.get("landed"):
+            value = "landed-awaiting-lock"
+        elif item.get("accepted"):
+            value = "accepted"
+        elif item.get("dispatched"):
+            value = "active"
+        elif item.get("preflight"):
+            value = "ready"
+        elif item.get("disposition"):
+            value = f"disposed:{item['disposition']}"
+        else:
+            value = "pending"
+        result[child] = value
+    return result
+
+
+def facade_view(state: dict[str, Any]) -> dict[str, Any]:
+    implementations = implementation_states(state)
+    active = sorted(
+        lane_id
+        for lane_id, lane_state in state["lane_status"].items()
+        if lane_state in {"active", "committed-unlanded", "dirty-preserved"}
+    )
+    authorized = [
+        intent for intent in sorted(INTENTS) if not intent_errors(state, intent)
+    ]
+    action = "select-frontier"
+    evidence = "reconciled dependencies, scope, proof, slots, and review bandwidth"
+    suggested = "record a serial or parallel frontier packet with apply"
+    phase = "select"
+    decision_required = False
+
+    if state["errors"]:
+        phase, action = "blocked", "reconcile-state"
+        evidence = state["errors"]
+        suggested = "inspect status errors and repair the canonical event stream"
+    elif state["release_outcome"] == "complete":
+        phase, action = "complete", "none"
+        evidence, suggested = "terminal release is recorded", "no campaign action remains"
+    elif state["checkpoint_active"]:
+        phase, action = "checkpoint", "resume"
+        evidence = "fresh Git, worktree, actor, tracker, and remote observations"
+        suggested = "append resume, then apply one reconciliation packet"
+    elif state["resume_pending"]:
+        phase, action = "open", "reconcile"
+        evidence = "Git, worktrees, actors, tracker, and remote"
+        suggested = "apply a reconciliation packet before dispatch or landing"
+    elif state["integration_regression"]:
+        phase, action = "drain", "correct-integration"
+        evidence = state["integration_regression"]
+        suggested = "open the authorized correction route and apply its accepted result"
+    elif any(value == "ready" for value in implementations.values()):
+        phase, action = "open", "dispatch"
+        evidence = sorted(key for key, value in implementations.items() if value == "ready")
+        suggested = "dispatch the preflighted lane with its generated brief"
+    elif any(value == "accepted" for value in implementations.values()):
+        phase, action = "drain", "land"
+        evidence = sorted(key for key, value in implementations.items() if value == "accepted")
+        suggested = "inspect and serially land one accepted packet"
+    elif any(value == "active" for value in implementations.values()):
+        phase, action = "drain", "await-worker"
+        evidence, suggested = active, "classify each worker return when it arrives"
+    elif not state["graph_drained"]:
+        finished = all(
+            value.startswith("landed") or value.startswith("disposed") or value == "closed"
+            for value in implementations.values()
+        ) and bool(implementations)
+        if finished:
+            phase, action = "drain", "record-graph-drained"
+            evidence = "every child is landed or explicitly disposed"
+            suggested = "apply graph-drained at the current integration HEAD"
+    elif not state["review_ready"]:
+        phase, action = "review", "record-review-ready"
+        evidence = "broad loop-close proof and idle lanes"
+        suggested = "apply review-ready at the immutable integration HEAD"
+    elif state["review_decision"] is None:
+        phase, action = "review", "invoke-review"
+        evidence = "Charter, Source Trace, fixed point, and immutable target"
+        suggested = "invoke the selected formal review route"
+    elif state["review_decision"] not in ACCEPTED_REVIEWS:
+        phase, action, decision_required = "review", "repair-or-decide", True
+        evidence = state["review_findings"]
+        suggested = "apply one complete eligible Repair plan or return the decision packet"
+    elif not state["closeout_head"]:
+        phase, action = "lock", "lock"
+        evidence = "accepted reviewed HEAD equals current integration HEAD"
+        suggested = "record closeout-head, then execute the generated closeout plan"
+    elif not state["tracker_locked"]:
+        phase, action = "lock", "closeout"
+        evidence = closeout_actions(state)
+        suggested = "complete child-first tracker mutations with read-back"
+    elif state["push_required"] and state["pushed_head"] != state["closeout_head"]:
+        phase, action = "lock", "push"
+        evidence = state["closeout_head"]
+        suggested = "push and verify the approved closeout SHA"
+    else:
+        phase, action = "release", "release"
+        evidence = "safe lanes, complete closeout, and friction synthesis"
+        suggested = "append terminal complete release, then run finish"
+
+    return {
+        "phase": phase,
+        "frontier": sorted(
+            key for key, value in implementations.items() if value in {"pending", "ready"}
+        ),
+        "active_lanes": active,
+        "blockers": state["errors"],
+        "decision_required": decision_required,
+        "authorized_actions": authorized,
+        "implementation_state": implementations,
+        "next_action": {
+            "action": action,
+            "evidence": evidence,
+            "suggested": suggested,
+        },
+    }
+
+
+def read_object(path_value: str) -> dict[str, Any]:
+    value = json.loads(Path(path_value).read_text(encoding="utf-8"))
+    if not isinstance(value, dict):
+        raise ValueError(f"{path_value} must contain one JSON object")
+    return value
+
+
+def start(args: argparse.Namespace) -> int:
+    path = event_path(args.events)
+    if load_events(path):
+        raise ValueError("start requires an empty event stream; use status to resume")
+    packet = read_object(args.scope_file)
+    parent = packet.get("parent")
+    children = packet.get("children")
+    charter = packet.get("charter")
+    if not isinstance(parent, str) or not parent:
+        raise ValueError("scope packet requires parent")
+    if not isinstance(children, list):
+        raise ValueError("scope packet requires children")
+    if not isinstance(charter, dict) or not charter.get("id"):
+        raise ValueError("scope packet requires charter.id")
+    repair_budget = charter.get("repair_generation_budget", 2)
+    charter = {
+        **charter,
+        "runtime_contract": 3,
+        "repair_generation_budget": repair_budget,
+        "review_invocation_budget": charter.get(
+            "review_invocation_budget", repair_budget + 1
+        ),
+        "review_invocations_required": charter.get("review_invocations_required", 1),
+    }
+    data = {
+        key: value
+        for key, value in packet.items()
+        if key not in {"parent", "integration_sha"}
+    }
+    data["charter"] = charter
+    raw = {
+        "event": "scope",
+        "event_id": stable_event_id("scope", {"parent": parent, "data": data}),
+        "work_item": parent,
+        "integration_sha": git_head(args.repo) if args.repo else packet.get("integration_sha"),
+        "data": data,
+    }
+    applied, replayed, events = append_facade_events(path, [raw], repo=args.repo)
+    state = derive_state(events, args.repo)
+    return emit(
+        True,
+        operation="start",
+        events=str(path),
+        applied=applied,
+        replayed=replayed,
+        **facade_view(state),
+    )
+
+
+def packet_events(packet: dict[str, Any]) -> list[dict[str, Any]]:
+    kind = packet.get("kind")
+    work_item = packet.get("work_item")
+    identity = {key: value for key, value in packet.items() if key != "event_id"}
+    if kind == "lane-ready":
+        lane_id = packet.get("lane_id")
+        actor_id = packet.get("actor_id")
+        if not all(isinstance(value, str) and value for value in (work_item, lane_id, actor_id)):
+            raise ValueError("lane-ready requires work_item, lane_id, and actor_id")
+        create = packet.get("create") if isinstance(packet.get("create"), dict) else {}
+        preflight = packet.get("preflight") if isinstance(packet.get("preflight"), dict) else {}
+        return [
+            {
+                "event": "lane-create",
+                "event_id": stable_event_id("lane-create", identity),
+                "work_item": work_item,
+                "data": {**create, "lane_id": lane_id, "actor_id": actor_id},
+            },
+            {
+                "event": "lane-preflight",
+                "event_id": stable_event_id("lane-preflight", identity),
+                "work_item": work_item,
+                "data": {**preflight, "lane_id": lane_id, "actor_id": actor_id},
+            },
+        ]
+    if kind == "worker-result":
+        if not isinstance(work_item, str) or not work_item:
+            raise ValueError("worker-result requires work_item")
+        return [{"event": "handoff", "event_id": stable_event_id("handoff", identity), "work_item": work_item, "data": packet.get("report", packet)}]
+    if kind == "events":
+        values = packet.get("events")
+        if not isinstance(values, list) or not values:
+            raise ValueError("events packet requires a non-empty events list")
+        result = []
+        for index, value in enumerate(values):
+            if not isinstance(value, dict):
+                raise ValueError("events packet entries must be objects")
+            result.append({**value, "event_id": value.get("event_id") or stable_event_id(str(value.get("event", "event")), identity, index=index)})
+        return result
+    raise ValueError("unsupported packet kind; use lane-ready, worker-result, or events")
+
+
+def apply_packet(args: argparse.Namespace) -> int:
+    path = event_path(args.events)
+    packet = read_object(args.packet_file)
+    raw_events = packet_events(packet)
+    applied, replayed, events = append_facade_events(path, raw_events, repo=args.repo)
+    state = derive_state(events, args.repo)
+    return emit(
+        True,
+        operation="apply",
+        events=str(path),
+        applied=applied,
+        replayed=replayed,
+        event_ids=[event["event_id"] for event in raw_events],
+        **facade_view(state),
+    )
+
+
+def brief(args: argparse.Namespace) -> int:
+    path = event_path(args.events)
+    events = load_events(path)
+    validate_events(events)
+    state = derive_state(events, args.repo)
+    item = state["items"].get(args.work_item, {})
+    lane = state["lanes"].get(item.get("lane_id"), {})
+    if not item:
+        raise ValueError(f"unknown work item: {args.work_item}")
+    lines = [
+        "# Parallel Implementation Assignment",
+        "",
+        f"- Work item: `{args.work_item}`",
+        f"- Mode: `{args.mode}`",
+        f"- Actor: `{lane.get('actor_id') or 'unassigned'}`",
+        f"- Charter: `{state['charter_id'] or 'not recorded'}`",
+        f"- Base: `{lane.get('base') or state['current_head'] or 'not recorded'}`",
+        f"- Worktree: `{lane.get('worktree') or 'not recorded'}`",
+        "- State-boundary matrix: `<required for stateful behavior; otherwise not applicable>`",
+        "",
+        "Implement only the assigned acceptance slice in this lane. Do not integrate, review, mutate trackers, push, spawn agents, or widen scope.",
+        "Return one clean commit with criterion-to-proof evidence, or an exact blocker/needs-feedback packet.",
+    ]
+    if args.mode == "integration-correction":
+        regression = state.get("integration_regression") or {}
+        lines.extend([
+            "",
+            "## Integration correction",
+            "",
+            f"- Regression event: `{regression.get('event_id') or 'not recorded'}`",
+            f"- Prior integration HEAD: `{regression.get('integration_sha') or 'not recorded'}`",
+            f"- Route: `{regression.get('route') or 'not recorded'}`",
+            f"- Authorized scope IDs: `{', '.join(regression.get('write_scope_ids') or []) or 'not recorded'}`",
+            f"- Required proof: `{regression.get('required_proof') or 'not recorded'}`",
+        ])
+    elif args.mode == "review-repair":
+        lines.extend([
+            "",
+            "## Review repair",
+            "",
+            f"- Generation: `{state['repair_generation']}`",
+            f"- Finding IDs: `{', '.join(state['repair_findings']) or 'not recorded'}`",
+            f"- Reviewed HEAD: `{state['repair_base'] or 'not recorded'}`",
+        ])
+    output = Path(args.output).resolve()
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return emit(True, operation="brief", events=str(path), output=str(output), mode=args.mode, work_item=args.work_item)
+
+
+def finish(args: argparse.Namespace) -> int:
+    path = event_path(args.events)
+    events = load_events(path)
+    validate_events(events)
+    state = derive_state(events, args.repo)
+    friction = "already-recorded"
+    if not state["friction_synthesis"]:
+        if state["friction_observations"]:
+            return emit(
+                False,
+                operation="finish",
+                events=str(path),
+                state="decision-required",
+                error="friction observations require a deliberate synthesis",
+                observations=sorted(state["friction_observations"]),
+                **facade_view(state),
+            )
+        parent = events[0]["work_item"] if events else "campaign"
+        raw = {
+            "event": "friction",
+            "event_id": stable_event_id("friction-none", {"parent": parent}),
+            "work_item": parent,
+            "data": {
+                "kind": "synthesis",
+                "observations": [],
+                "deduplicated_themes": [],
+                "none_observed": True,
+            },
+        }
+        _, _, events = append_facade_events(path, [raw], repo=args.repo)
+        state = derive_state(events, args.repo)
+        friction = "none-observed-recorded"
+    errors = intent_errors(state, "complete")
+    if errors:
+        return emit(
+            False,
+            operation="finish",
+            events=str(path),
+            state="blocked-incomplete",
+            errors=errors,
+            friction=friction,
+            **facade_view(state),
+        )
+    output = Path(args.output).resolve()
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(markdown(state, path.name), encoding="utf-8")
+    return emit(True, operation="finish", events=str(path), output=str(output), friction=friction, **facade_view(state))
+
+
 def closeout_actions(state: dict[str, Any]) -> list[dict[str, str]]:
+    if state["checkpoint_active"]:
+        return [
+            {
+                "owner": "campaign",
+                "action": "resume-campaign",
+                "state": state["checkpoint_outcome"] or "partial",
+            }
+        ]
     actions: list[dict[str, str]] = []
     for child in state["children"]:
         child_state = state["child_closeouts"].get(child, {}).get("state")
@@ -1289,14 +2053,31 @@ def markdown(state: dict[str, Any], events_name: str) -> str:
         themes = state["friction_synthesis"].get("deduplicated_themes", [])
         lines.append(f"- Themes: {', '.join(themes) or 'none'}")
 
-    lines.extend(["", "## Child Closeout Packets", ""])
+    lines.extend(["", "## Child Implementation and Tracker Closeout", ""])
     for child in state["children"]:
         packet = state["child_closeouts"].get(child, {})
+        item = state["items"].get(child, {})
+        if item.get("landed"):
+            implementation = f"landed at `{item['landed']}`"
+        elif item.get("accepted"):
+            implementation = f"committed at `{item['accepted']}`; not landed"
+        elif item.get("disposition"):
+            implementation = f"disposed: {item['disposition']}"
+        elif item.get("dispatched"):
+            implementation = "active"
+        else:
+            implementation = "pending"
+        tracker_closeout = packet.get("state")
+        if not tracker_closeout:
+            tracker_closeout = (
+                "deferred by checkpoint" if state["checkpoint_active"] else "not started"
+            )
         lines.extend(
             [
                 f"### {child}",
                 "",
-                f"- State: `{packet.get('state', 'missing')}`",
+                f"- Implementation: {implementation}",
+                f"- Tracker closeout: `{tracker_closeout}`",
                 f"- Delivered: {packet.get('delivered', 'not recorded')}",
                 f"- Acceptance: {packet.get('acceptance_evidence', 'not recorded')}",
                 f"- Validation: {packet.get('proof', 'not recorded')}",
@@ -1370,6 +2151,36 @@ def parser() -> argparse.ArgumentParser:
     init_parser = commands.add_parser("init")
     init_parser.add_argument("--events", required=True)
     init_parser.set_defaults(handler=init)
+
+    start_parser = commands.add_parser("start")
+    start_parser.add_argument("--events", required=True)
+    start_parser.add_argument("--scope-file", required=True)
+    start_parser.add_argument("--repo")
+    start_parser.set_defaults(handler=start)
+
+    apply_parser = commands.add_parser("apply")
+    apply_parser.add_argument("--events", required=True)
+    apply_parser.add_argument("--packet-file", required=True)
+    apply_parser.add_argument("--repo")
+    apply_parser.set_defaults(handler=apply_packet)
+
+    brief_parser = commands.add_parser("brief")
+    brief_parser.add_argument("--events", required=True)
+    brief_parser.add_argument("--work-item", required=True)
+    brief_parser.add_argument(
+        "--mode",
+        required=True,
+        choices=["implementation", "integration-correction", "review-repair"],
+    )
+    brief_parser.add_argument("--output", required=True)
+    brief_parser.add_argument("--repo")
+    brief_parser.set_defaults(handler=brief)
+
+    finish_parser = commands.add_parser("finish")
+    finish_parser.add_argument("--events", required=True)
+    finish_parser.add_argument("--output", required=True)
+    finish_parser.add_argument("--repo")
+    finish_parser.set_defaults(handler=finish)
 
     append_parser = commands.add_parser("append")
     add_event_arguments(append_parser)

@@ -4,37 +4,37 @@ Render one self-contained semantic improvement survey under repo-local `.tmp/imp
 
 ## Portability
 
-The report must open offline with no network requests or runtime JavaScript. Embed CSS and static SVG. If the repo already provides a local Mermaid renderer, pre-render with its default strict security level; otherwise use inline SVG or positioned HTML.
+**Offline.** Use no network requests or runtime JavaScript. Embed CSS and static SVG. Pre-render Mermaid only with an existing local renderer under strict security; otherwise use inline SVG or positioned HTML.
 
 ## Layout
 
-Show the survey bound and **Top recommendation** first, followed by ranked candidate cards and the complete survey ledger. The header contains the repo name, date, inspected history or named scope, and only visual encodings actually used. Candidate and ledger anchors must be stable.
+Lead with the survey bound and **Top recommendation**, then ranked candidate cards and the complete survey ledger. The header names the repo, date, inspected history or scope, and only visual encodings in use. Keep candidate and ledger anchors stable.
 
 ## Theme And Accessibility
 
-Declare `color-scheme: dark`; use a near-black page, dark panels, soft borders, and high-contrast text. Use one cool accent, red only for leakage or removal pressure, amber only for uncertainty, and green only for retained or verified state. Pair every color with a text label, preserve visible keyboard focus, use semantic headings and lists, and stack cleanly on narrow screens.
+**Dark and accessible.** Declare `color-scheme: dark`. Use near-black pages, dark panels, soft borders, high-contrast text, visible keyboard focus, semantic headings and lists, and a narrow-screen stack. Pair every color with a label: one cool accent, red only for removal pressure, amber for uncertainty, green for retained or verified state.
 
 ## Survey Ledger
 
-Account for every surveyed region with its disposition, compact evidence, and candidate anchor when applicable. Render `Retain` regions in the ledger rather than inventing action cards. Record speculative regions as rejected with the missing evidence; promote one to `Investigate` only when it has an exact decision-relevant question.
+**Ledger.** Account for every region with disposition, compact evidence, and candidate anchor when applicable. Keep `Retain` in the ledger, not action cards. Record speculation as rejected with its missing evidence; promote it to `Investigate` only for an exact decision-relevant question.
 
 ## Candidate
 
-Render numbered `Eliminate`, `Concentrate`, and `Investigate` candidates in rank order as `<article id="candidate-n">` cards containing:
+Render ranked `Eliminate`, `Concentrate`, and `Investigate` candidates as `<article id="candidate-n">` cards containing:
 
-- stable `Candidate N`, disposition badge, concise title, and recommendation strength: `Strong` or `Worth exploring`;
+- stable `Candidate N`, disposition, concise title, and `Strong` or `Worth exploring` recommendation strength;
 - compact Source Trace with file and line pointers;
 - observed friction and deletion-test result;
 - behavior and commitment boundary;
 - elimination target or responsibility to concentrate;
 - proof seam;
-- uncertainty and evidence route;
+- resolution need and evidence route;
 - sequence relationship, risk, blast radius, and rank rationale;
-- recommended next skill and exact pickup invocation.
+- provisional destination and exact immediate pickup invocation.
 
-State a survey-level hypothesis, not a final interface or implementation contract.
+Keep each card provisional: a survey hypothesis, not an interface or implementation contract.
 
-An `Eliminate` card names `$simplify-code` as its provisional downstream owner, never `$tdd` or `$implement`; its immediate pickup still resumes `$improve-codebase` for verification. A `Concentrate` card names selected design or delivery resolution. An `Investigate` card names exactly one evidence route.
+An `Eliminate` card names `$simplify-code`, never `$tdd` or `$implement`; its immediate pickup still resumes `$improve-codebase`. A `Concentrate` card names selected design or delivery resolution. An `Investigate` card names one evidence route.
 
 ## Visual
 
@@ -42,24 +42,24 @@ Choose the smallest visual that changes understanding:
 
 - **Eliminate:** before/after dependency, branch, or control-flow removal;
 - **Concentrate:** responsibility consolidation, dependency flow, or interface compression;
-- **Investigate:** question-to-evidence decision surface without a fabricated after-state.
+- **Investigate:** question-to-evidence surface without a fabricated after-state.
 
-Keep paired diagrams comparable when a pair is useful. Omit a diagram when the ledger or a compact code-flow sketch is clearer.
+Keep pairs comparable. Omit a diagram when the ledger or compact code-flow sketch is clearer.
 
 ## Ranking
 
-Explain the ordering through evidence and proofability, total complexity or caller burden addressed, recurring friction, risk and reversibility, and overlap. Do not fabricate numeric scores. Prefer `Eliminate` when otherwise tied.
+Explain order through evidence and proofability, complexity or caller burden addressed, recurring friction, risk and reversibility, and overlap. Use no fabricated scores; prefer `Eliminate` on ties.
 
 ## Top Recommendation
 
-Render one prominent card naming the highest-value next move, why it wins now, and an anchor to its candidate. An `Investigate` recommendation names the exact question and evidence route.
+Render one prominent card naming the highest-value next move, why it wins now, and its candidate anchor. For `Investigate`, name the exact question and evidence route.
 
-When no numbered candidate survives, render **No candidate recommended** instead. The ledger must show why each region is retained, disproved, or too speculative to investigate. Emit no candidate anchor or selection prompt.
+When no candidate survives, render **No candidate recommended** and show why every region was retained, disproved, or rejected as speculation. Emit no candidate anchor or selection prompt.
 
 ## Resolution
 
-After an explicit selected-candidate pass, update that card with the resolver used, returned evidence or decision, final disposition, route, and resolution time. Preserve stable IDs. Include only post-reconciliation prototype paths; record verdicts from deleted probes without stale artifact links.
+After a selected-candidate pass, update that card with resolver, returned evidence or decision, final disposition, route, and time. Preserve IDs. Include only surviving prototype paths; retain verdicts from deleted probes without stale links.
 
 ## Voice
 
-Use plain English and established repo and domain terms. Name concrete modules, callers, decisions, dependencies, interfaces, seams, proof lanes, and risks. Favor schematic labels, whitespace, and explanatory visuals over decoration.
+Use plain repo and domain language. Name concrete modules, callers, decisions, dependencies, interfaces, seams, proof lanes, and risks. Prefer schematic labels and whitespace over decoration.

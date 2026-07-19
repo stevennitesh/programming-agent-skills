@@ -1,6 +1,6 @@
 # Finding Contract
 
-Read this before judging either Standards or Spec. It owns finding admissibility and the interface returned to implementation callers.
+**Ownership:** this contract owns finding admissibility and the interface returned to implementation callers. Read it before judging Standards or Spec.
 
 ## Admit
 
@@ -12,7 +12,7 @@ Admit a finding only when all five gates close:
 - **Impact:** a concrete correctness, security, data, required-proof, or important-path failure.
 - **Proportion:** a remedy proportionate to the anchored contract.
 
-Assign severity only after admission. Portability speculation, theoretical concurrency, unsupported environments, optional hardening, and adjacent cleanup are not findings unless direct evidence establishes a reachable Charter impact. When advisories are enabled, route a verified opportunity without a violated contract through `ADVISORY-CONTRACT.md`; otherwise omit it.
+**Admission before severity:** portability speculation, theoretical concurrency, unsupported environments, optional hardening, and adjacent cleanup are not findings unless direct evidence establishes a reachable Charter impact. When advisories are enabled, route a verified opportunity without a violated contract through `ADVISORY-CONTRACT.md`; otherwise omit it.
 
 ## Classify
 
@@ -36,9 +36,9 @@ Required proof:
 - `decision-required`: the required change alters product intent, acceptance, supported behavior, a public or data contract, security or privacy posture, dependency authority, or another commitment.
 - `residual-hardening`: direct evidence establishes a reachable Charter risk, but automatic implementation is outside the recorded acceptance or authority. It remains a finding and does not authorize implementation.
 
-Never launder a genuine contract violation into an advisory, `not checked`, or residual label to obtain a passing decision.
+**No laundering:** never turn a genuine contract violation into an advisory, `not checked`, or residual label to obtain a passing decision.
 
-A caller independently validates this classification before mutation. A review report supplies evidence; it never grants repair authority.
+**Authority:** the caller validates classification before mutation. A review report supplies evidence; it never grants repair authority.
 
 ## Severity
 
@@ -51,6 +51,6 @@ A caller independently validates this classification before mutation. A review r
 
 ## Bound
 
-Verification may reproduce or disprove a finding read-only. Missing required proof makes the review `incomplete`. Optional verification that needs substantial new infrastructure becomes explicit residual risk instead of expanding the review.
+**Verification bound:** reproduce or disprove findings read-only. Missing required proof makes the review `incomplete`. Optional verification that needs substantial new infrastructure becomes explicit residual risk instead of expanding the review.
 
-For `Review mode: remediation`, judge only carried finding IDs, regressions introduced by their repair delta, and remaining acceptance under the original Charter. Admit newly observed failures only through those surfaces. Do not reopen untouched surfaces with new hardening lenses.
+**Remediation bound:** judge only carried finding IDs, regressions introduced by their Repair delta, and remaining acceptance under the original Charter. Admit newly observed failures only through those surfaces. Do not reopen untouched surfaces with new hardening lenses.

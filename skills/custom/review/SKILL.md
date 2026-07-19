@@ -9,14 +9,14 @@ description: "Review one ordinary branch, WIP, staged, or \"review since X\" dif
 
 Own one ordinary, read-only fixed-snapshot review.
 
-**Terminal boundary:** Judge one immutable snapshot and return. This invocation performs no remediation, dispatch, tracker mutation, successor review, or snapshot recapture. Its report grants no mutation or new-snapshot authority.
+**Terminal:** judge one immutable snapshot and return. Start no remediation, dispatch, tracker mutation, successor review, or snapshot recapture. The report grants no mutation or new-snapshot authority.
 
 **Read-only:** Inspect only. Leave the worktree, index, commits, tracker, PR comments or reviews, and external messages unchanged.
 
 - **Standards:** built right, against repository rules, meaningful nearby conventions, and the fallback smell baseline when standards are thin.
 - **Spec:** right thing, against the authoritative request, bounded slice, acceptance criteria, and required proof.
 
-Keep the axes separate. Never merge, deduplicate, or rerank findings across them.
+**Lens reset:** keep the axes separate. Never merge, deduplicate, or rerank findings across them.
 
 **Review route:** For a local PR or high-risk local diff, hand off once to `$convergent-pr-review` and stop. Carry the caller-supplied Charter, review mode, Spec requirement, Source Trace, fixed point, target inputs, and any carried finding IDs; `$convergent-pr-review` owns snapshot capture. Do not resume this skill when it returns.
 
@@ -50,7 +50,7 @@ A supplied review tree wins over every live target. Verify `<review-tree>^{tree}
 
 Capture the resolved fixed point, selected diff command, `git status --short`, and relevant commits. Read in-scope untracked files directly for working-tree review. Record `Review mode: initial | remediation`; default to `initial`. Remediation mode requires the original Charter, prior snapshot, carried finding IDs, and repair delta.
 
-Fail when a ref does not resolve, the complete target cannot be captured, or the target is empty.
+Return `incomplete` when a ref does not resolve, the complete target cannot be captured, or the target is empty.
 
 ## 2. Trace
 
@@ -62,7 +62,7 @@ Trace Spec in order:
 2. Issue or PR references in captured commits, following `docs/agents/issue-tracker.md` when available.
 3. A matching source under repository conventions such as `docs/`, `specs/`, or `.scratch/`.
 
-When Spec is required, stop `incomplete` unless one authoritative source resolves without conflict. When optional and absent, report `Skipped: no spec available`.
+When Spec is optional and absent, report `Skipped: no spec available`.
 
 Trace Standards from `AGENTS.md` and its pointers, contributor or coding guidance, test and tooling configuration, and meaningful nearby conventions. When these are thin, read [SMELL-BASELINE.md](SMELL-BASELINE.md). Repository standards override it; label each smell a `baseline judgement call`; leave tooling-enforced style to tooling.
 
@@ -76,7 +76,7 @@ Run **Standards -> lens reset -> Spec**.
 
 Report only admitted findings through the shared finding interface. Standards findings also say `documented-standard breach` or `baseline judgement call`.
 
-Judge Standards from its traced sources. Set those findings aside, reset to the pinned target and Spec source, then judge Spec for omissions, incorrect behavior, scope creep, and proof gaps through useful interfaces or seams.
+Judge Standards from its traced sources, then reset to the pinned target and Spec source. Judge Spec for omissions, incorrect behavior, scope creep, and proof gaps through useful interfaces or seams.
 
 ## 5. Return
 
@@ -101,4 +101,4 @@ Mutation authority: none
 Successor snapshot authority: none
 ```
 
-Complete only when Pin and Trace pass; every reported finding passes Admit; both applicable axes run with a lens reset; the report satisfies the finding contract; and control returns without mutation or successor review.
+**Complete:** Pin and Trace pass; every reported finding passes Admit; both applicable axes run with a lens reset; the report satisfies the finding contract; and control returns without mutation or successor review.

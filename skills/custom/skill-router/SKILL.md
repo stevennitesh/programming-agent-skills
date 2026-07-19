@@ -49,10 +49,10 @@ description: Route the current situation to exactly one next skill in this engin
 | A merge, rebase, cherry-pick, or revert is conflicted, or files contain conflict markers | `$resolving-merge-conflicts` |
 | An ordinary branch, WIP, staged, or since-X diff needs fixed-point review | `$review` |
 | A local PR or high-risk local diff needs independent passes and a finding ledger | `$convergent-pr-review` |
-| An immutable repository baseline needs a bounded correctness, methodology, model-risk, leakage, validation, calibration, metric, analytics, or performance audit without a release decision | `$audit-codebase` |
+| An immutable repository baseline needs a bounded domain robustness, correctness, methodology, model-risk, leakage, validation, analytics, or performance audit without a release decision | `$audit-codebase` |
 | Existing behavior in one bounded region should be simplified under proof | `$simplify-code` |
 
-**Existing-code tie-breaker:** route a caller-bounded repository correctness or methodology baseline to `$audit-codebase`, one bounded behavior-preserving reduction to `$simplify-code`, one already-framed interface or seam to `$codebase-design`, and broad uncertainty about what to eliminate, concentrate, retain, or investigate to `$improve-codebase`. A selected ready item belongs to `$implement`, new behavior to `$tdd`, and an existing diff needing judgment rather than edits to `$review` or `$convergent-pr-review`.
+**Existing-code tie-breaker:** route a caller-bounded repository correctness, domain-robustness, or performance baseline to `$audit-codebase`, one bounded behavior-preserving reduction to `$simplify-code`, one already-framed interface or seam to `$codebase-design`, and broad uncertainty about what to eliminate, concentrate, retain, or investigate to `$improve-codebase`. A selected ready item belongs to `$implement`, new behavior to `$tdd`, and an existing diff needing judgment rather than edits to `$review` or `$convergent-pr-review`.
 
 **Triage / Review:** route incoming work to `$triage`; route an existing diff to `$review` or `$convergent-pr-review`.
 

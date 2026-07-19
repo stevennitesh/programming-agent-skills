@@ -1,7 +1,7 @@
 interface:
   display_name: "Parallel Implement"
-  short_description: "Drain one graph with budgeted review"
-  default_prompt: "Use $parallel-implement from the root to drain every in-scope implementation ticket for this parent, preserve event-sourced authority, integrate serially, and close only after budgeted review, friction accounting, and verified release."
+  short_description: "Drain one ticket graph to verified release"
+  default_prompt: "Use $parallel-implement from the root to trace this parent graph, open isolated ready lanes, land serially, obtain formal review, and close only the verified reviewed HEAD."
 
 policy:
   allow_implicit_invocation: false
