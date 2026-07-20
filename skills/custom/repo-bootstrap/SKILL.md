@@ -34,7 +34,7 @@ When a prior setup surface exists, treat this run as a **reconcile**, not a rese
 
 Resolve only unsettled choices, one answer at a time. Lead with the discovered recommendation and its consequence.
 
-- **Tracker.** Choose [GitHub](issue-tracker-github.md), [GitLab](issue-tracker-gitlab.md), [Local Markdown](issue-tracker-local.md), or another tracker with an explicit operation map. Prefer the detected remote; otherwise recommend Local Markdown. For hosted trackers, settle external PR/MR intake and implemented-item closure. GitHub default: yes for closure. GitLab default: no. Intake defaults to no.
+- **Tracker.** Choose [GitHub](issue-tracker-github.md), [GitLab](issue-tracker-gitlab.md), [Local Markdown](issue-tracker-local.md), or another tracker with an explicit tracker mapping. Prefer the detected remote; otherwise recommend Local Markdown. For hosted trackers, settle external PR/MR intake and implemented-item closure. GitHub default: yes for closure. GitLab default: no. Intake defaults to no.
 - **Labels.** Use [triage-labels.md](triage-labels.md) as the role set. Reuse matching labels, map local names, and propose only missing labels for creation after approval.
 - **Domain.** Default to single-context (`CONTEXT.md`, `docs/adr/`). Propose multi-context (`CONTEXT-MAP.md` plus routed context docs and ADRs) only when independently owned domain vocabularies, decisions, or responsibilities span source roots. Workspace manifests trigger inspection but do not prove multiple contexts. `$domain-modeling` owns later domain-file creation and changes.
 
@@ -44,7 +44,7 @@ Verified commands, the four local contracts, and `.tmp/`/`.scratch/` policy are 
 
 Show the exact proposed delta:
 
-- the `AGENTS.md` patch with the engineering primer, verified commands, invariants, pointers, and `<!-- programming-agent-skills setup-schema: 1:57bffed703dc -->`;
+- the `AGENTS.md` patch with the engineering primer, verified commands, invariants, pointers, and `<!-- programming-agent-skills setup-schema: 1:87b57bfbb165 -->`;
 - all four `docs/agents/*.md` results;
 - the `.gitignore` delta;
 - preserved repo-specific additions and unresolved conflicts;
@@ -58,7 +58,7 @@ Wait for approval before any file write or tracker mutation.
 Apply only the approved delta. Reconcile existing local contracts in place. Preserve repo-specific additions.
 
 - **Primer.** Update or create a short `AGENTS.md` with `Explore imaginatively. Converge under proof. Simplify ruthlessly.`, verified commands, local invariants, the current marker, and pointers to the four local contracts. When the portable engineering-contract owner is present, replace its portable title and owner preamble with the installed-pack primer and engineering-contract pointer; preserve repo-specific material.
-- **Contracts.** Reconcile the selected tracker template into `docs/agents/issue-tracker.md`; [triage-labels.md](triage-labels.md) into `docs/agents/triage-labels.md`; [domain.md](domain.md), with its layout resolved, into `docs/agents/domain.md`; and [engineering-contract.md](engineering-contract.md) into `docs/agents/engineering-contract.md`. For another tracker, use the approved operation map. Write each current setup-file marker only after that file's content and preserved additions have been reconciled.
+- **Contracts.** Reconcile the selected tracker template into `docs/agents/issue-tracker.md`; [triage-labels.md](triage-labels.md) into `docs/agents/triage-labels.md`; [domain.md](domain.md), with its layout resolved, into `docs/agents/domain.md`; and [engineering-contract.md](engineering-contract.md) into `docs/agents/engineering-contract.md`. For another tracker, use the approved tracker mapping. Write each current setup-file marker only after that file's content and preserved additions have been reconciled.
 - **State.** Keep `.tmp/` contents ignored and `.scratch/` trackable without replacing unrelated ignore rules.
 - **Labels.** For GitHub or GitLab, create only approved missing mapped and fixed labels; preserve existing labels and descriptions.
 

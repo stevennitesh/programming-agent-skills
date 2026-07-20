@@ -218,6 +218,9 @@ def blocked(
 
 def create(args: argparse.Namespace) -> int:
     repo, repo_trust = git_root(Path(args.repo).resolve())
+    role = getattr(args, "role", "worker")
+    if role == "integration" and not args.branch:
+        raise LaneError("managed integration worktree requires --branch")
     environment_root = os.environ.get("PARALLEL_IMPLEMENT_WORKTREE_ROOT", "").strip()
     if args.root:
         root = Path(args.root).resolve()
@@ -295,6 +298,11 @@ def create(args: argparse.Namespace) -> int:
     return emit(
         "create",
         True,
+        role=role,
+        ownership_mode=(
+            "managed-integration-worktree" if role == "integration" else "worker-lane"
+        ),
+        cleanup_authority="managed",
         provider="manual-git",
         repo=str(repo),
         root=str(root),
@@ -637,6 +645,8 @@ def open_lane(args: argparse.Namespace) -> int:
         args.run_id,
         "--item-id",
         args.item_id,
+        "--role",
+        args.role,
     ]
     if args.root:
         create_args.extend(["--root", args.root])
@@ -844,6 +854,7 @@ def cleanup(args: argparse.Namespace) -> int:
     return emit(
         "cleanup",
         state == "removed",
+        role=getattr(args, "role", "worker"),
         repo=str(repo),
         root=str(root),
         worktree=str(worktree),
@@ -909,6 +920,9 @@ def parser() -> argparse.ArgumentParser:
     create_parser.add_argument("--base", required=True)
     create_parser.add_argument("--run-id", required=True)
     create_parser.add_argument("--item-id", required=True)
+    create_parser.add_argument(
+        "--role", choices=["worker", "integration"], default="worker"
+    )
     create_parser.add_argument("--branch")
     create_parser.add_argument("--max-path", type=int)
     create_parser.add_argument("--allow-inside-repo", action="store_true")
@@ -921,6 +935,9 @@ def parser() -> argparse.ArgumentParser:
     open_parser.add_argument("--run-id", required=True)
     open_parser.add_argument("--item-id", required=True)
     open_parser.add_argument("--actor-id", required=True)
+    open_parser.add_argument(
+        "--role", choices=["worker", "integration"], default="worker"
+    )
     open_parser.add_argument("--branch")
     open_parser.add_argument("--max-path", type=int)
     open_parser.add_argument("--allow-inside-repo", action="store_true")
@@ -957,6 +974,9 @@ def parser() -> argparse.ArgumentParser:
     cleanup_parser.add_argument("--worktree", required=True)
     cleanup_parser.add_argument("--expected-head", required=True)
     cleanup_parser.add_argument("--disposition", required=True)
+    cleanup_parser.add_argument(
+        "--role", choices=["worker", "integration"], default="worker"
+    )
     cleanup_parser.set_defaults(handler=cleanup)
 
     purge_parser = commands.add_parser("purge-residual")

@@ -1,6 +1,6 @@
 # Parallel Implement Efficiency Synthesis
 
-Status: lean design reference and implementation map incorporating the answered width-rule prototype; not an executable contract.
+Status: lean design reference and extraction map. Stage 1 and Stage 2 are implemented in the canonical working tree for validation; the installed global mirror remains the unchanged control until separately authorized synchronization.
 
 Runtime authority remains in:
 
@@ -12,7 +12,7 @@ Runtime authority remains in:
 - `$review`, `$convergent-pr-review`, and `$resolving-merge-conflicts` at their owned boundaries; and
 - the relationship map, pack tests, behavior evaluations, and installed mirror.
 
-This note proposes a small efficiency change: retain one warm primary implementer, add independent actors only when their likely implementation savings exceed visible coordination cost, and measure results passively from the existing ledger. Five concurrent subagents remain the session ceiling, not a target. The runtime skill remains unchanged until an authorized implementation updates and validates every affected surface.
+This note specifies a small efficiency change: retain one warm primary implementer, add independent actors only when their likely implementation savings exceed visible coordination cost, and measure results passively from the existing ledger. Five concurrent subagents remain the session ceiling, not a target. Canonical extraction does not become the installed runtime until validation passes and synchronization is separately authorized.
 
 ## How To Read This Document
 
@@ -27,9 +27,11 @@ This synthesis is a proposed runtime extraction, not an additional operating con
 | --- | --- |
 | What outcome and trade-off govern the rewrite? | [North Star](#north-star) and [Design Verdict](#design-verdict) |
 | What is the proposed normal path? | [Lean Operating Model](#lean-operating-model) and [End-To-End Delivery Map](#end-to-end-delivery-map) |
+| Which campaign terms have precise meanings? | [Campaign Vocabulary](#campaign-vocabulary) |
 | What do the runtime leading words mean? | [Leading-Word Runtime Model](#leading-word-runtime-model) |
 | Where does each proposed rule live? | [Normative Home Index](#normative-home-index) |
-| When is each operation complete and what may it return? | [Operation And Completion Contracts](#operation-and-completion-contracts) and [Return Contract](#return-contract) |
+| Which operation is legal now, when is it complete, and what may it return? | [Campaign State And Transition Contract](#campaign-state-and-transition-contract), [Operation And Completion Contracts](#operation-and-completion-contracts), and [Return Contract](#return-contract) |
+| Which campaign artifact proves what? | [Campaign Artifact Authority Contract](#campaign-artifact-authority-contract) |
 | When should width remain serial or grow through five? | [Actor And Width Policy](#actor-and-width-policy) |
 | How are context, proof, and telemetry kept economical? | [Compact Context And Results](#compact-context-and-results), [Proof Model](#proof-model), and [Passive Telemetry And Release Result](#passive-telemetry-and-release-result) |
 | How does the normal terminal path avoid manual ledger plumbing? | [Terminal Operator Facade](#terminal-operator-facade) |
@@ -99,6 +101,23 @@ The lean change has six parts:
 4. Adjust implementation width with a small observable rule, up to five.
 5. Derive a compact efficiency result from ledger events without asking agents for narrative telemetry.
 6. Keep Review through Release on one typed terminal-packet generator plus `apply`, without hand-authored event IDs.
+
+## Campaign Vocabulary
+
+Shared terms such as Charter, proof seam, fixed point, Repair generation, residual risk, and Lock retain their meanings from the engineering contract. Parallel Implement adds only this campaign-specific vocabulary:
+
+| Term | Meaning |
+| --- | --- |
+| **Campaign** | One explicit root-owned run for one exhaustive parent-backed ticket graph, ending in a recovery-complete Checkpoint or terminal Release |
+| **Frontier** | The reconciled dependency-ready work eligible for the root's next selection; readiness alone does not make every item economical or safe to parallelize |
+| **Assignment** | One bounded work item joined to an actor, immutable base, isolated lane, acceptance, public proof seam, proof command, and result path |
+| **Actor** | One direct implementation child in the role of warm primary, additional implementer, or bounded integrator |
+| **Lane** | One isolated worktree and process boundary for one assignment; it is never the serial landing authority |
+| **Integration checkout** | The recorded existing checkout or campaign-managed integration worktree where the root lands accepted commits serially |
+| **Candidate** | The current immutable integration HEAD after the graph drains and candidate proof passes; any code-changing Repair creates a successor candidate |
+| **Result queue** | Returned actor packets not yet classified and, when accepted, inspected, landed, and recombined under current proof |
+
+These names orient the design. The indexed Layer Two contracts remain the sole authority for decisions, transitions, artifacts, completion, and Return.
 
 ## Leading-Word Runtime Model
 
@@ -170,8 +189,10 @@ This index assigns each proposed concern one authority. The named section owns t
 | Concern | Sole normative home |
 | --- | --- |
 | Root admission, graph readiness, semantic decisions, and Lock eligibility | [Decision Contracts](#decision-contracts) |
+| Legal next operation from current canonical facts | [Campaign State And Transition Contract](#campaign-state-and-transition-contract) |
 | Operation entry, completion, and legal nonterminal branch | [Operation And Completion Contracts](#operation-and-completion-contracts) |
 | Reference-loading triggers and attention exclusions | [Runtime Context Loading Contract](#runtime-context-loading-contract) |
+| Canonical, derived, scoped, review, and external evidence roles | [Campaign Artifact Authority Contract](#campaign-artifact-authority-contract) |
 | Actor reuse, integration-checkout ownership, width, Downshift, and serial latch | [Actor And Width Policy](#actor-and-width-policy) |
 | Assignment economics, briefs, receipts, and proof-output transport | [Compact Context And Results](#compact-context-and-results) |
 | Slice, wave, and candidate proof | [Proof Model](#proof-model) |
@@ -203,7 +224,25 @@ This index assigns each proposed concern one authority. The named section owns t
 
 Helpers may validate structure, state, ancestry, budgets, and receipts. They do not decide semantic independence, public-seam adequacy, result acceptance, finding admission, or residual risk.
 
-Every `status.next_action` is a conservative projection of current reducer state. It must be presently valid, must not regress behind recorded Review, Lock, tracker, push, or Release evidence, and may be `null` with exact missing evidence when no mechanical suggestion is safe.
+Every `status.next_action` is a conservative mechanical projection of the current canonical facts and the transition contract below. It must be presently legal, must not regress behind recorded Review, Lock, tracker, push, or Release evidence, and may be `null` with exact missing evidence when no suggestion is safe. It never chooses root-owned semantics or authorizes mutation by itself.
+
+## Campaign State And Transition Contract
+
+This table is the sole proposed authority for which operation may happen next. It derives legal movement from canonical facts already owned by the reducer; it creates no second lifecycle enum, event schema, or persisted state. The next section alone owns completion evidence.
+
+| Observed canonical condition | Legal operation or branch | Illegal shortcut |
+| --- | --- | --- |
+| No stream exists after root and graph admission | **Trace** and `start` | Creating state through a later command or dispatching before start reads back |
+| Reducer errors exist or resumed state is unreconciled | **Trace / Resume** and universal **Reconcile** | Selecting, dispatching, landing, reviewing, or closing from contradictory state |
+| A Checkpoint is active | **Resume**, then **Reconcile** | Continuing from the old continuation or treating Checkpoint as Release |
+| Reconciled unfinished scope has no return requiring Drain | **Select**; then **Open** for each authorized assignment | Dispatching merely because an item is ready or a slot is free |
+| An actor is active, a result is queued, an accepted commit awaits landing, or integration regressed | **Drain**; **Downshift** or bounded correction when its predicate fires | Opening behind backpressure, skipping inspection, or reviewing an unproved HEAD |
+| No executable work remains but the graph is unfinished or authority is unavailable | **Checkpoint** | Nonterminal Release or unaccounted actors, lanes, claims, or results |
+| The graph is drained but candidate proof or review-ready identity is missing | Prove and pin the **Candidate**, then enter **Review** | Reviewing a mutable, stale, or unproved target |
+| Review is pending or not accepted | **Review**; then one admitted **Repair** batch or a decision-required Checkpoint | Automatic finding admission, piecemeal Repairs, or Lock before the current candidate is accepted |
+| Review accepts the current candidate but Lock evidence is incomplete | **Lock** | Mutating the accepted tree, inferring external success, or entering Release early |
+| The reducer admits terminal `complete` after Lock | **Release** | Using Release for `partial`, `blocked`, or decision-required work |
+| Terminal Release is recorded | No campaign operation remains | Reopening or appending post-terminal work under the same campaign |
 
 ## Operation And Completion Contracts
 
@@ -234,7 +273,25 @@ Load branch context only when its trigger fires. The root may read a reference t
 | Use a bounded child integrator | `references/INTEGRATOR-BRIEF.md` and its generated assignment | Peer dispatch, formal review, tracker mutation, push, or campaign Release authority |
 | Serial landing enters preserved conflict or partial Git operation state | `$resolving-merge-conflicts` with the exact preserved state | Ad hoc cleanup or unrelated Parallel Implement references |
 
+The runtime topology has three roles: `SKILL.md` is the universal control plane; the four existing references disclose triggered procedure; and `events.jsonl` plus the reducer form the durable state plane. Generated status and `LEDGER.md` are projections of that state. Do not copy branch procedure or executable schemas into the control plane.
+
 Do not add `OPERATIONS.md` initially. The workflow remains one linear campaign with existing branch-specific references. Introduce another disclosed surface only if the rewritten main skill still exhibits measured sprawl or premature completion after these pointers are evaluated.
+
+## Campaign Artifact Authority Contract
+
+This table is the sole proposed authority for what a campaign artifact proves. It indexes existing artifacts and requires no new file, provider, telemetry stream, or duplicate schema.
+
+| Artifact or surface | Owns or proves | Must not substitute for |
+| --- | --- | --- |
+| Canonical `events.jsonl` at one absolute path | Sole durable campaign facts, authority transitions, budgets, receipts, and terminal outcome | Unobserved Git or tracker truth; root semantic judgment |
+| Reducer status, `next_action`, and generated `LEDGER.md` | Mechanical and human-readable projections of the canonical stream | Canonical state, mutation authority, or unrecorded external work |
+| Generated assignment brief | One actor's bounded base, lane, scope, exclusions, proof seam, command, and result authority | Parent authority, peer dispatch, acceptance, formal review, tracker mutation, Lock, or Release |
+| Structured report, compact receipt, and proof log | Actor-produced implementation and proof evidence | Root acceptance, current-base reconciliation, serial landing, wave proof, or completion |
+| Prepared terminal packet and `apply` receipt | The packet proposes one applicable terminal transition; the receipt proves its validated durable append | Automatic judgment, external mutation, or external success without recorded read-back |
+| Immutable candidate SHA and independent review report | Exact review identity and reviewer judgment against one fixed candidate | Root finding admission, current-HEAD equality, Repair authorization, Lock, or Release |
+| Tracker, remote, claim, and worktree read-backs | Observed external facts required by reconciliation, Checkpoint, Lock, or Release | Semantic correctness, missing proof, or another unobserved gate |
+
+When two artifacts disagree, reconcile against `events.jsonl` and fresh external observations. Correct or append canonical facts through an authorized packet; never edit a projection to repair state.
 
 ## Actor And Width Policy
 
@@ -494,7 +551,7 @@ Invoke exactly one formal-review owner:
 - `$review` for an ordinary fixed-snapshot diff; or
 - `$convergent-pr-review` for a local PR or high-risk candidate.
 
-Implementation actors never count as independent reviewers. The review report grants no mutation. The root admits one complete eligible finding batch under the existing Repair and successor-review budgets. A repaired successor receives required proof and a fresh formal review.
+Implementation actors never count as independent reviewers. The review report grants no mutation. The root admits one complete eligible finding batch under the Repair and successor-review budgets. The canonical defaults are four Repair generations and five review invocations, preserving the initial review plus one successor review per possible Repair. A repaired successor receives required proof and a fresh formal review.
 
 Record terminal decisions through `prepare` and `apply`: generate the current `review` packet after the external report, a `repair` packet only for an admitted batch, `closeout` packets around external read-backs, and one final `release` packet. The generator prefills state; it never admits findings, authorizes mutations, or invents evidence.
 
@@ -621,6 +678,8 @@ The eventual main skill should read approximately as:
 ```text
 Outcome and explicit root-only boundary
 Actor authority
+Compact campaign vocabulary and canonical artifact distinction
+Current canonical condition -> legal operation
 Trace | Resume -> ledger pointer
 Select + Downshift
 Open -> worktree lifecycle pointer
@@ -633,7 +692,7 @@ Return
 Completion
 ```
 
-This is a semantic target, not approved final wording. `SKILL.md` keeps only universal behavior, operation selection, sharp context pointers, Return, and completion. It does not copy executable packet schemas, helper commands, or branch-only recovery mechanics.
+This is a semantic target, not approved final wording. `SKILL.md` keeps only universal vocabulary and authority, canonical-versus-derived artifact distinction, operation selection, sharp context pointers, Return, and completion. It does not copy executable packet schemas, helper commands, or branch-only recovery mechanics.
 
 ## Runtime Ownership And Change Map
 
@@ -641,19 +700,19 @@ The `Must not absorb` column is part of the design. It prevents the main skill f
 
 | Surface | Owns | Proposed delta | Must not absorb |
 | --- | --- | --- | --- |
-| `skills/custom/parallel-implement/SKILL.md` | Outcome, root authority, leading-word spine, operation selection and completion, sharp context pointers, Return, and campaign completion | Realize the proposed semantic surface; add warm-primary reuse, the simple width rule, public-seam proof, compact context and receipts, terminal-facade invocation, correction locality, passive results, and the five-agent ceiling | Executable packet schemas, provider transport, helper internals, branch-only recovery mechanics, predictive scheduling, caches, automatic tiers, or per-class budgets |
-| `agents/openai.yaml` | Explicit-only invocation policy and concise human-facing prompt | Retain `allow_implicit_invocation: false`; mention the warm primary, adaptive width up to five, serial landing, and verified reviewed HEAD | Runtime procedure or detailed gating |
+| `skills/custom/parallel-implement/SKILL.md` | Outcome, root authority, compact vocabulary, leading-word spine, legal operation selection and completion, artifact distinctions, sharp context pointers, Return, and campaign completion | Realize the proposed semantic surface; add transition selection, warm-primary reuse, the simple width rule, public-seam proof, compact context and receipts, terminal-facade invocation, correction locality, passive results, and the five-agent ceiling | Executable packet schemas, provider transport, helper internals, branch-only recovery mechanics, predictive scheduling, caches, automatic tiers, or per-class budgets |
+| `agents/openai.yaml` | Explicit-only invocation policy and concise human-facing prompt | Stage 1 retains `allow_implicit_invocation: false` and names the warm primary, serial landing, and verified reviewed HEAD; Stage 2 adds adaptive justified width up to five only after its reducer and behavior proof exist | Runtime procedure or detailed gating |
 | `references/WORKER-BRIEF.md` | Generated implementation, integration-correction, and review-Repair assignment and receipt contracts | Make each mode complete and file-backed; add the public proof seam, compact receipt, exception-only communication, primary-reuse boundary, and correction continuation | Parent campaign context, root dispatch policy, peer dispatch, tracker mutation, formal review, or Release |
 | `references/INTEGRATOR-BRIEF.md` | Bounded child-integrator assignment and review-ready handoff | Keep the integrator optional, non-dispatching, and loadable only for a genuinely independent integration lane | Ordinary root landing, worker procedure, formal review, tracker mutation, push, or Release |
 | `references/CODEX-WORKTREE-LAUNCH.md` and `scripts/lane_worktree.py` | Triggered lane preflight, stable paths, registration, and recoverable cleanup | Distinguish `existing-checkout` from `managed-integration-worktree`; create or clean only the managed form, including long-path residual recovery | Wave batching, proof scheduling, actor selection, semantic independence, result acceptance, or non-lifecycle campaign procedure |
-| `references/RUN-LEDGER.md` | Triggered operator-facing ledger procedure and normal-versus-recovery command selection | Document complete `brief`, `prepare`, `apply`, `status`, and `finish` examples through Review, Repair, closeout, and Release | Reducer implementation details, semantic judgment, provider mutation, or a duplicate event schema |
-| `scripts/run_ledger.py` | Canonical event reduction, packet generation and ingestion, state validation, rendering, and passive result derivation | Add actor reuse and width state, reason codes and serial latch, complete briefs and receipts, absolute stream identity, monotonic `next_action`, typed terminal packets, closeout read-back batches, proof level and duration, result-queue state, and Release results | Semantic independence, public-proof adequacy, finding admission, tracker mutation, automatic width changes, or efficient-frontier calculation |
+| `references/RUN-LEDGER.md` | Triggered operator-facing ledger procedure, artifact roles, and normal-versus-recovery command selection | Document complete `brief`, `prepare`, `apply`, `status`, and `finish` examples through Review, Repair, closeout, and Release; point to canonical, derived, evidence, and external read-back distinctions | Reducer implementation details, semantic judgment, provider mutation, or a duplicate event schema |
+| `scripts/run_ledger.py` | Canonical event reduction, legal transition and intent validation, packet generation and ingestion, state validation, rendering, and passive result derivation | Add actor reuse and width state, reason codes and serial latch, complete briefs and receipts, absolute stream identity, monotonic transition-conformant `next_action`, typed terminal packets, closeout read-back batches, proof level and duration, result-queue state, and Release results | Semantic independence, public-proof adequacy, finding admission, tracker mutation, automatic width changes, efficient-frontier calculation, or a second lifecycle model |
 | `skills/custom/to-tickets/SKILL.md` | Shaping boundary for executable tickets | Require a minimum economic slice and compact execution profile where Parallel Implement is an authorized route | Parallel dispatch procedure or runtime width selection |
 | `docs/synthesis/skill-context-relationships.md` | One authoritative composition edge per caller and callee | Update changed triggers and return boundaries without copying runtime procedure | Skill-local mechanics |
-| `tests/test_skill_pack_contracts.py` and `docs/validation/evals/core-workflows.md` | Structural contracts and behavior evaluations | Cover every promoted matrix row, E0 control lock, applicable E1 through E4 phase, semantic-surface discovery, context-load trigger, operation completion, Return form, critical failure, residual gap, and negative control | Incidental prose snapshots or simulated claims of real efficiency |
+| `tests/test_skill_pack_contracts.py` and `docs/validation/evals/core-workflows.md` | Structural contracts and behavior evaluations | Cover every promoted matrix row, E0 control lock, applicable E1 through E4 phase, semantic-surface discovery, transition legality, artifact authority, context-load trigger, operation completion, Return form, critical failure, residual gap, and negative control | Incidental prose snapshots or simulated claims of real efficiency |
 | Installed mirror `C:\Users\steve\.agents\skills\parallel-implement` | Validated runtime copy | Synchronize only after canonical implementation and proof complete | Independent edits or partial synchronization |
 
-Preserve `events.jsonl`, generated `LEDGER.md`, runtime contract 3, `SCHEMA_VERSION = 1`, receipt authority, and compatibility commands. `append`, `append-batch`, and `append-receipt` remain recovery surfaces; the normal path uses generated packets. Helpers validate structure and authority transitions but never make the root's semantic decisions.
+Preserve the [Campaign Artifact Authority Contract](#campaign-artifact-authority-contract), runtime contract 3, `SCHEMA_VERSION = 1`, and compatibility commands. `append`, `append-batch`, and `append-receipt` remain recovery surfaces; the normal path uses generated packets. Helpers validate structure and authority transitions but never make the root's semantic decisions.
 
 ## Staged Behavior-Evaluation Protocol
 
@@ -662,8 +721,8 @@ Implementation Stage 1 and Stage 2 remain separately evaluated promotion units; 
 | Evaluation phase | Gate | Minimum evidence |
 | --- | --- | --- |
 | **E0: Control lock** | The current skill or a no-guidance arm exhibits the claimed failure on one fixed realistic scenario before candidate evaluation | Control hash, repository snapshot, graph, tools, model and reasoning tier, rubric, and one red-capable fixture per promoted behavioral claim |
-| **E1: Attention** | The candidate selects the correct operation, loads only triggered context, honors Return and completion, and resists premature completion | Fresh-context start, resume, active, review-ready, terminal, and wrong-reference scenarios |
-| **E2: Ordinary execution** | Primary reuse, compact packets, proof levels, stream identity, checkout ownership, passive metrics, and any Stage 2 width behavior work under ordinary and contended execution | Singleton, serial, two-lane, three-to-five-lane, shared-seam, result-queue, and proof-contention scenarios as applicable |
+| **E1: Attention** | The candidate uses stable campaign terms, selects the legal operation, loads only triggered context, honors Return and completion, and resists premature completion | Fresh-context start, resume, active, review-ready, terminal, and wrong-reference scenarios |
+| **E2: Ordinary execution** | Primary reuse, compact packets, proof levels, stream and artifact authority, checkout ownership, passive metrics, and any Stage 2 width behavior work under ordinary and contended execution | Singleton, serial, two-lane, three-to-five-lane, shared-seam, result-queue, and proof-contention scenarios as applicable |
 | **E3: Recovery and terminal authority** | Correction, Downshift, checkpoint/resume, Review, Repair, closeout, Lock, and Release preserve authority and recovery | Failure injection, stale-base, conflict, partial closeout, Repair-budget, wrong-HEAD, missing-read-back, and nonterminal-Release scenarios |
 | **E4: Integrated promotion** | Relationships, canonical surfaces, helpers, behavior evaluations, installation, and mirror parity hold together | Focused and full validation, changed-file read-back, installation dry-run, and installed hash parity |
 
@@ -675,12 +734,12 @@ Implement Stage 1 in row order and evaluate it against its E0 control before adm
 
 | Implementation stage / evaluation phase | Behavior | Required source changes | Positive case | Negative control | Verification |
 | --- | --- | --- | --- | --- | --- |
-| `1 · E1` | Runtime semantic surface and leading words | `SKILL.md`, `agents/openai.yaml`, structural tests, behavior evaluations | Given the current status packet, a fresh root uses the main skill alone to identify the outcome, authority, current operation, selected context pointer, Return forms, and completion gate; the leading words produce consistent operation choices | The rewrite implements file deltas but buries branch selection, requires helper inspection to discover the next action, or lets a mnemonic substitute for a completion criterion | Semantic-surface structural test plus fresh-context branch-selection samples across start, resume, active, review-ready, and terminal states |
-| `1 · E1` | Triggered context loading | `SKILL.md`, all four disclosed references, generated briefs, behavior evaluations | The root loads only the reference whose trigger fires; workers receive complete generated briefs; an integrator reference loads only for a bounded child-integrator lane | All references load at campaign start, a required branch reference is skipped, workers receive the parent conversation, or unrelated helper/schema context enters a branch | Reference-resolution and trigger tests plus prompt/context traces from representative Open, Drain, Checkpoint, Review, and conflict branches |
-| `1 · E1, E3` | Operation completion and Return | `SKILL.md`, `RUN-LEDGER.md`, `run_ledger.py`, worker and integrator briefs, behavior evaluations | Every operation holds until its authoritative completion row passes; each invocation returns exactly one typed packet or `complete`, `partial`, or `blocked` outcome with recovery-complete evidence | Dispatch, clean worker output, generated packets, a review report, or a clean serial wave is treated as campaign completion; a nonterminal Release or incomplete checkpoint escapes | Table-driven operation scenarios, premature-completion negative controls, reducer transition tests, and Return-shape assertions |
+| `1 · E1` | Runtime semantic surface, vocabulary, and leading words | `SKILL.md`, `agents/openai.yaml`, structural tests, behavior evaluations | Given current canonical facts, a fresh root uses the main skill alone to identify the outcome, authority, campaign terms, legal operation, selected context pointer, Return forms, and completion gate; the leading words produce consistent operation choices | The rewrite implements file deltas but uses conflicting campaign terms, buries transition selection, requires helper inspection to discover the legal operation, or lets a mnemonic substitute for a completion criterion | Semantic-surface and vocabulary structural tests plus fresh-context branch-selection samples across start, resume, active, review-ready, and terminal states |
+| `1 · E1` | Triggered context loading | `SKILL.md`, all four disclosed references, generated briefs, behavior evaluations | The root keeps the universal control plane in `SKILL.md`, loads only the reference whose trigger fires, and treats the ledger plus reducer as the durable state plane; workers receive complete generated briefs and an integrator reference loads only for its bounded lane | All references load at campaign start, a required branch reference is skipped, state schema is copied into `SKILL.md`, workers receive the parent conversation, or unrelated helper context enters a branch | Reference-resolution and trigger tests plus prompt/context traces from representative Open, Drain, Checkpoint, Review, and conflict branches |
+| `1 · E1, E3` | Legal transition, operation completion, and Return | `SKILL.md`, `RUN-LEDGER.md`, `run_ledger.py`, worker and integrator briefs, behavior evaluations | Current canonical facts admit only a transition-contract operation; it holds until its completion row passes; each invocation returns exactly one typed packet or `complete`, `partial`, or `blocked` outcome with recovery-complete evidence | The campaign jumps from stale, active, unproved, rejected, or incompletely locked state to a later operation; dispatch, clean worker output, generated packets, a review report, or a clean serial wave is treated as completion | Table-driven transition and operation scenarios, illegal-jump and premature-completion negative controls, reducer intent tests, and Return-shape assertions |
 | `1 · E2` | Compact context and warm-primary reuse | `SKILL.md`, worker and integrator briefs, `run_ledger.py` | Common campaign context is stored once; one idle primary receives successive complete assignment deltas through a new reconciled lane and returns a compact receipt | The parent conversation or issue graph is repeated; periodic narrative telemetry is required; one mutable checkout survives across assignments | Packet fixtures plus control-versus-candidate samples measuring prompt transport, fresh implementation contexts, and complete result evidence |
 | `1 · E2` | Public-seam and three-level proof | `SKILL.md`, worker brief, `RUN-LEDGER.md`, `run_ledger.py` | Each assignment names the highest meaningful caller-facing seam; slice proof runs per assignment, wave proof after serial landing, and one current candidate proof before Review | Private-helper proof substitutes for an available public seam; broad proof or benchmarks run in parallel; unchanged candidates repeat broad suites | Proof-level fixtures, state-boundary scenarios, command counts and durations, and behavior evaluation |
-| `1 · E2` | Canonical stream and status projection | `RUN-LEDGER.md`, `run_ledger.py` | Every normal command uses one absolute existing event stream; a missing stream fails with its resolved path; `next_action` is presently legal, monotonic, or `null` with missing evidence | A relative path from another worktree appears as a fresh campaign; status recommends an already completed or now-illegal transition | Changed-working-directory, missing-stream, and reducer-state tests |
+| `1 · E2` | Artifact authority, canonical stream, and status projection | `SKILL.md`, all four disclosed references, `RUN-LEDGER.md`, `run_ledger.py` | Every normal command uses one absolute existing event stream; each derived projection, scoped brief, evidence receipt, terminal packet, review artifact, and external read-back is used only for its owned claim; `next_action` is presently legal, monotonic, or `null` with missing evidence | A relative path appears as a fresh campaign; `LEDGER.md`, status, a worker receipt, prepared packet, review report, or unverified external assertion substitutes for canonical state or its required authority gate | Changed-working-directory, missing-stream, artifact-substitution, projection-tamper, and reducer-state tests |
 | `1 · E3` | Typed Review-to-Release facade | `SKILL.md`, `RUN-LEDGER.md`, `run_ledger.py` | `prepare` and `apply` complete Review, Repair, closeout, and Release with stable generated IDs and only root judgment or external read-back supplied manually | Normal execution inspects helper source, authors event IDs, or falls back to `append`, `append-batch`, or `append-receipt` | End-to-end terminal fixtures, idempotent retry tests, and operator behavior evaluation |
 | `1 · E3` | Provider-neutral closeout ingestion | `SKILL.md`, `RUN-LEDGER.md`, `run_ledger.py` | One packet ingests several child read-backs while preserving each intended mutation, comment, observation, unresolved item, and child-first order | The helper mutates the tracker, infers provider success, hides partial completion, or closes the parent before every required child passes | Complete and partial closeout fixtures with per-item read-back assertions |
 | `1 · E2, E3` | Integration-checkout ownership | `SKILL.md`, worktree reference, `lane_worktree.py`, `run_ledger.py` | An existing checkout is preserved; a managed integration worktree is registered and safely cleaned, including long-path residual recovery | Raw cleanup removes an existing checkout, loses registration before cleanup, or treats an unknown checkout as campaign-owned | Existing, managed, missing-registration, dirty, and long-path lifecycle tests |
@@ -689,7 +748,9 @@ Implement Stage 1 in row order and evaluate it against its E0 control before adm
 | `2 · E2` | Serial default and two-item cold start | `SKILL.md`, `run_ledger.py`, behavior evaluations | Width starts at one except for two obviously substantial, semantically independent, proof-isolated items with immediate root capacity | Disjoint filenames, available slots, tiny work, a shared seam, integration, performance, correction, or Repair justify parallelism | Singleton, tiny-work, shared-seam, two-lane, performance, and correction scenarios |
 | `2 · E2` | Additive widening through five | `SKILL.md`, `run_ledger.py`, behavior evaluations | After an eligible clean parallel wave, width increases by one up to five only while another independent item and immediate inspection capacity exist; an uninspected result holds width | Five actors launch because five slots exist; width jumps by more than one; dispatch continues while results queue for inspection | Three-to-five-lane graphs with clean waves, queue injection, and peak-width assertions |
 | `2 · E2, E3` | Downshift and serial latch | `SKILL.md`, `run_ledger.py`, behavior evaluations | Correctness failure, overlap, invalidation, contention, or backpressure returns new dispatch to one and latches serial execution until a reconciled external change removes the cause | A clean serial wave reopens parallelism; the cause is cleared without evidence; safe active work is discarded automatically | Failure, stale-base, overlap, proof-contention, and backpressure sequences with cause and release read-back |
-| `1 and 2 · E4` | Relationships, validation, and installation | `to-tickets`, relationship map, canonical tests and evaluations, installed mirror | Ticket shaping exposes an economic slice; each relationship appears once; every promoted row passes focused and full validation before scoped mirror synchronization and hash parity | Procedure is copied into relationship surfaces; an unproved stage or partial canonical family reaches the installed mirror | Focused tests, full pytest, `scripts.validate_skills`, installation dry-run, both diff checks, changed-file read-back, and mirror parity |
+| `1 · E4` | Lean-core relationships and canonical validation | `to-tickets`, relationship map, Stage 1 tests and evaluations | Ticket shaping exposes an economic slice; each relationship appears once; the warm-primary, compact-context, proof, terminal, checkout, and passive-result rows pass canonical focused and full validation | Procedure is copied into relationship surfaces, Stage 2 wording appears before its reducer exists, or an unproved Stage 1 family reaches the installed mirror | Focused tests, full pytest, `scripts.validate_skills`, both diff checks, and changed-file read-back |
+| `2 · E4` | Adaptive-width canonical validation | `SKILL.md`, `agents/openai.yaml`, `run_ledger.py`, Stage 2 tests and evaluations | Serial default, cold two-item start, additive widening through five, result backpressure, Downshift, and latch release pass together after Stage 1 | Metadata advertises adaptive width before the reducer and negative controls pass, or slots alone produce parallel dispatch | Focused width tests, full pytest, `scripts.validate_skills`, both diff checks, and changed-file read-back |
+| `1 and 2 · E4` | Installed promotion | canonical family and installed mirror | Both stages pass their independent gates before one separately authorized scoped synchronization and hash parity check | A partial canonical family or unproved stage reaches the installed mirror | Installation dry-run, scoped synchronization after authorization, installed hash parity, and final read-back |
 
 ## Promotion Gate And Residual Gaps
 
@@ -700,14 +761,14 @@ A critical failure blocks the stage regardless of averages:
 - delegated or otherwise unauthorized mutation;
 - false `complete`, nonterminal Release, or Lock on an unreviewed or wrong HEAD;
 - lost actor, lane, claim, result-queue, or integration-checkout ownership at Checkpoint or resume;
-- helper-owned semantic judgment, inferred tracker success, or missing required mutation or push read-back;
+- helper-owned semantic judgment, a derived artifact substituted for canonical state, inferred external success, or missing required mutation or push read-back;
 - incomplete Return or recovery state; or
 - weakened graph, protected-data, permission, review, Repair, closeout, cleanup, or Release authority.
 
 Promote a claim only when E0 demonstrates the failure, the candidate materially reduces it, variance does not expose a new unstable tail, and no new critical failure appears. Stage 1 additionally requires unchanged correctness and improvement in at least one measured cost—campaign tokens when available, fresh contexts, proof load, operator-authored packets, source inspections, compatibility fallbacks, retries, or time-to-Lock—without material regression elsewhere. Generated canonical event count may stay the same or increase when it carries stronger authority at lower operator cost. Stage 2 promotes only after Stage 1 and only when adaptive width expands or improves the measured result frontier without weakening correctness or worst-case outcomes.
 
-A residual gap blocks promotion when it affects admission, authority, mutation scope, operation selection, stream identity, context loading, lane safety, checkpoint recovery, Return completeness, review independence, Lock truth, closeout read-back, or Release truth. Noncritical uncertainty may remain only when the record names its evidence limit, operational consequence, and later validation owner. Prose and simulation never authorize promotion.
+A residual gap blocks promotion when it affects admission, authority, mutation scope, operation selection, transition legality, artifact identity or role, stream identity, context loading, lane safety, checkpoint recovery, Return completeness, review independence, Lock truth, closeout read-back, or Release truth. Noncritical uncertainty may remain only when the record names its evidence limit, operational consequence, and later validation owner. Prose and simulation never authorize promotion.
 
 ## Completion Criterion For The Future Rewrite
 
-The rewrite is complete only when every normative concern has one indexed home; the main skill exposes the proposed semantic surface; every operation, context pointer, Return form, and completion gate is discoverable and behaviorally proved; every promoted claim has an E0 control and passes its applicable E1 through E4 gates; no critical worst-case regression or promotion-blocking residual gap remains; every ownership row has one authoritative implementation; Stage 1 and Stage 2 each satisfy their independent promotion gate; authority and recovery remain invariant through verified Lock; canonical validation and installed-mirror parity pass; and Release reports actual results and measurement gaps without a synthetic score or unproved savings claim.
+The rewrite is complete only when every normative concern has one indexed home; the main skill exposes the proposed semantic surface and stable campaign vocabulary; current canonical facts select one legal operation; every artifact is used only for its owned claim; every operation, context pointer, Return form, and completion gate is discoverable and behaviorally proved; every promoted claim has an E0 control and passes its applicable E1 through E4 gates; no critical worst-case regression or promotion-blocking residual gap remains; every ownership row has one authoritative implementation; Stage 1 and Stage 2 each satisfy their independent promotion gate; authority and recovery remain invariant through verified Lock; canonical validation and installed-mirror parity pass; and Release reports actual results and measurement gaps without a synthetic score or unproved savings claim.

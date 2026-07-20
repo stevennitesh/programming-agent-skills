@@ -65,19 +65,27 @@ def test_to_questionnaire_owns_one_safe_recipient_artifact() -> None:
     skill_dir = CUSTOM / "to-questionnaire"
     questionnaire = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
 
-    assert not implicit_policy(skill_dir)
-    assert re.findall(r"(?m)^\*\*([A-Za-z]+)\.\*\*", questionnaire) == [
-        "Boundary",
-        "Admit",
+    assert implicit_policy(skill_dir)
+    compose = questionnaire.split("## Compose", 1)[1].split("## Return", 1)[0]
+    assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", compose) == [
         "Lock",
         "Gap",
         "Draft",
         "Cover",
         "Save",
         "Verify",
-        "Return",
     ]
+    for field in (
+        "Caller and return owner:",
+        "Recipient name or role:",
+        "Downstream decision or prerequisite:",
+        "Needed-back ledger:",
+        "Authorized output root or exact path:",
+    ):
+        assert field in questionnaire
     assert "<work-root>/.tmp/to-questionnaire/<slug>.md" in questionnaire
+    assert "Delivery: not performed" in questionnaire
+    assert "exactly one Markdown file" in questionnaire
 
 
 def test_tracker_templates_share_ready_and_readback_contracts() -> None:
@@ -107,7 +115,7 @@ def test_tracker_templates_share_ready_and_readback_contracts() -> None:
             assert token in text, f"{tracker} is missing {token}"
 
 
-def test_wayfinder_tracker_claims_distinguish_sessions_and_recover_explicitly() -> None:
+def test_wayfinder_tracker_templates_provide_equivalent_mapping() -> None:
     trackers = (
         CUSTOM / "repo-bootstrap/issue-tracker-github.md",
         CUSTOM / "repo-bootstrap/issue-tracker-gitlab.md",
@@ -115,24 +123,90 @@ def test_wayfinder_tracker_claims_distinguish_sessions_and_recover_explicitly() 
     )
     for tracker in trackers:
         wayfinding = tracker.read_text(encoding="utf-8").split(
-            "## Wayfinding operations", 1
+            "## Wayfinder tracker mapping", 1
         )[1]
         for token in (
             "MAP-FORMAT.md",
-            "Claim token:",
-            "Claimed at:",
-            "codex/<lowercase UUIDv4>",
-            "<YYYY-MM-DDTHH:MM:SSZ>",
-            "Maintain claims the map",
-            "never reuse it across invocations",
-            "different token owns the item",
-            "Elapsed time alone never makes a claim stale.",
-            "explicit user approval",
-            "takeover reason",
-            "Mutation read-back",
+            "**Map object**",
+            "open and closed",
+            "**Ticket object**",
+            "**Resolver type mapping**",
+            "diagnosis",
+            "questionnaire",
+            "design",
+            "**Parent and blocking mapping**",
+            "**Claim storage**",
+            "campaign-claim block",
+            "**Claim capability**",
+            "`unavailable`",
+            "captured revision",
+            "must fail a losing actor or changed revision",
+            "invocation and losing-race result",
+            "**Claim release mapping**",
+            "**Revision token**",
+            "**Read-back primitive**",
+            "errors and observed fields",
         ):
             assert token in wayfinding, f"{tracker} is missing {token}"
-        assert "Its body holds Destination" not in wayfinding
+        assert "Wayfinder owns identity rules" in wayfinding
+        for forbidden in (
+            "before Chart",
+            "Gather",
+            "pre-Seal",
+            "Wayfinder derives the frontier",
+            "Elapsed time alone",
+        ):
+            assert forbidden not in wayfinding, f"{tracker} absorbs {forbidden}"
+
+
+def test_wayfinder_tracker_capability_omissions_fail_section_validation() -> None:
+    validator = runpy.run_path(
+        str(CUSTOM / "repo-bootstrap/scripts/validate_setup.py")
+    )
+    requirements = validator["WAYFINDER_MAPPING_REQUIREMENTS"]
+
+    for tracker in (
+        CUSTOM / "repo-bootstrap/issue-tracker-github.md",
+        CUSTOM / "repo-bootstrap/issue-tracker-gitlab.md",
+        CUSTOM / "repo-bootstrap/issue-tracker-local.md",
+    ):
+        current = tracker.read_text(encoding="utf-8")
+        for capability in (
+            "**Map object**",
+            "**Claim capability**",
+            "**Revision token**",
+            "**Read-back primitive**",
+        ):
+            prefix, wayfinding = current.split("## Wayfinder tracker mapping", 1)
+            failures: list[str] = []
+            validator["require_section_tokens"](
+                prefix
+                + "## Wayfinder tracker mapping"
+                + wayfinding.replace(capability, "**Removed capability**", 1),
+                tracker.name,
+                requirements,
+                failures,
+            )
+            assert failures == [
+                f"{tracker.name} section ## Wayfinder tracker mapping is missing {capability}"
+            ]
+
+        for required_contract in (
+            "open and closed",
+            "must fail a losing actor or changed revision",
+            "invocation and losing-race result",
+            "errors and observed fields",
+        ):
+            failures = []
+            validator["require_section_tokens"](
+                current.replace(required_contract, "removed-contract", 1),
+                tracker.name,
+                requirements,
+                failures,
+            )
+            assert failures == [
+                f"{tracker.name} section ## Wayfinder tracker mapping is missing {required_contract}"
+            ]
 
 
 def test_triage_label_template_respects_tracker_pr_policy() -> None:
@@ -142,6 +216,7 @@ def test_triage_label_template_respects_tracker_pr_policy() -> None:
     assert "Every triaged work item" in labels
     assert "Every triaged issue or PR" not in labels
     assert "Triage PRs only when the tracker enables them" in triage
+    assert "equivalent unprefixed `Type:` values" in labels
 
 
 def test_github_closeout_clears_dependency_frontier_safely() -> None:
@@ -335,19 +410,21 @@ def test_outdated_setup_routes_to_repo_bootstrap() -> None:
 def test_router_returns_exactly_one_next_skill() -> None:
     router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
 
-    assert not implicit_policy(CUSTOM / "skill-router")
+    assert implicit_policy(CUSTOM / "skill-router")
     assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", router) == [
+        "Admit",
         "Inspect",
+        "Exclude",
+        "Prefer",
         "Clarify",
-        "Route",
-        "Stop",
+        "Return",
     ]
-    stop = router.split("4. **Stop.**", 1)[1].split("## Route Map", 1)[0]
-    assert re.findall(r"`(Skill|Reason|Precondition):", stop) == [
-        "Skill",
-        "Reason",
-        "Precondition",
-    ]
+    returned = router.split("## Return", 1)[1]
+    for field in ("Skill:", "Reason:", "Precondition:", "Return boundary:"):
+        assert field in returned
+    assert "Downstream execution: none" in returned
+    assert "terminal residual" in router
+    assert "Never select Skill Router" in router
 
 
 def test_branch_heavy_skills_disclose_branch_procedure() -> None:
@@ -380,8 +457,12 @@ def test_codebase_design_preserves_lean_branch_contracts() -> None:
     alternatives = (CUSTOM / "codebase-design/DESIGN-IT-TWICE.md").read_text(
         encoding="utf-8"
     )
+    coherence = (CUSTOM / "codebase-design/DESIGN-COHERENCE.md").read_text(
+        encoding="utf-8"
+    )
 
     assert "[DIRECT-DESIGN.md](DIRECT-DESIGN.md)" in design
+    assert "[DESIGN-COHERENCE.md](DESIGN-COHERENCE.md)" in design
     assert len(re.findall(r"(?m)^## \d+\. ", direct)) == 5
     assert len(re.findall(r"(?m)^## \d+\. ", deepening)) == 5
     for category in (
@@ -400,52 +481,152 @@ def test_codebase_design_preserves_lean_branch_contracts() -> None:
         "Recommend",
     ]
     assert "**No-new-seam**" in alternatives
+    assert {"Responsibility", "Interface", "Dependency", "Seam", "Migration", "Proof"} <= set(
+        re.findall(r"(?m)^\| \*\*([A-Za-z]+)\*\* \|", coherence)
+    )
+    assert "## Frame" in coherence and "## Check" in coherence
+    assert "Caller retains: artifact, disposition, mutation, and completion authority" in coherence
 
 
 def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
     skill_dir = CUSTOM / "wayfinder"
     wayfinder = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     map_format = (skill_dir / "MAP-FORMAT.md").read_text(encoding="utf-8")
+    operations = (skill_dir / "OPERATIONS.md").read_text(encoding="utf-8")
 
     assert not implicit_policy(skill_dir)
     assert "[MAP-FORMAT.md](MAP-FORMAT.md)" in wayfinder
-    chart, modes = wayfinder.split("### Chart", 1)[1].split("### Advance", 1)
-    advance, remaining = modes.split("### Maintain", 1)
-    maintain, closure = remaining.split("## Closure", 1)
-    for earlier, later in (
-        ("**Bound.**", "**Approve.**"),
-        ("**Approve.**", "**Chart.**"),
-        ("**Chart.**", "**Verify.**"),
-    ):
-        assert chart.index(earlier) < chart.index(later)
-    for earlier, later in (
-        ("**Orient.**", "**Claim.**"),
-        ("**Claim.**", "**Resolve.**"),
-        ("**Resolve.**", "**Reconcile.**"),
-        ("**Reconcile.**", "**Verify.**"),
-        ("**Verify.**", "**Expose.**"),
-    ):
-        assert advance.index(earlier) < advance.index(later)
-    assert re.findall(r"(?m)^### (Chart|Advance|Maintain)$", wayfinder) == [
-        "Chart",
+    assert "[Qualification And Chart](OPERATIONS.md#qualification-and-chart)" in wayfinder
+    assert re.findall(r"(?m)^## (Qualification And Chart|Advance|Maintain|Resume|Closeout|Terminate|Reopen)$", operations) == [
+        "Qualification And Chart",
         "Advance",
         "Maintain",
+        "Resume",
+        "Closeout",
+        "Terminate",
+        "Reopen",
     ]
-    assert "At the end of Advance or Maintain" in closure
-    assert "zero frontier tickets have substantive outcomes" in maintain
+    chart = operations.split("## Qualification And Chart", 1)[1].split("## Advance", 1)[0]
+    for token in ("**Qualify.**", "**Admit.**", "**Approve.**", "**Chart.**", "**Verify.**"):
+        assert token in chart
+    assert chart.index("**Approve.**") < chart.index("**Chart.**") < chart.index("**Verify.**")
     map_template = map_format.split("```markdown", 1)[1].split("```", 1)[0]
     assert re.findall(r"(?m)^## (.+)$", map_template) == [
+        "Campaign",
+        "Authority",
         "Destination",
-        "Scope Boundary",
-        "Notes",
+        "Budgets",
+        "Source Trace",
+        "Ticket Index",
         "Decisions So Far",
         "Not Yet Specified",
         "Out Of Scope",
+        "Liveness",
+        "Closure",
+        "Corrections",
     ]
-    assert "caller-approved repo-local note path" in map_format
-    assert advance.index("Mutation read-back before resolution work") < advance.index(
-        "4. **Resolve.**"
-    )
+    assert "exactly that new map is canonical" in chart
+    assert "resolve no ticket" in chart.lower()
+    assert chart.count("[MAP-FORMAT.md](MAP-FORMAT.md)") >= 3
+    for rule in (
+        "`authorized now` permits only confirmed domain writes",
+        "`deferred to Closeout` permits only a pending domain delta and no domain write",
+        "ADR creation always remains separately approval-gated",
+        "named contingency or `none`",
+        "every required tracker mapping and capability",
+    ):
+        assert rule in chart
+    for field in (
+        "Chart approval evidence:",
+        "Allowed resolver types:",
+        "Graph-expansion authority:",
+        "Destination-change authority:",
+    ):
+        assert field in map_template
+
+
+def test_wayfinder_state_completion_and_context_loading_have_one_runtime_owner() -> None:
+    skill_dir = CUSTOM / "wayfinder"
+    wayfinder = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    operations = (skill_dir / "OPERATIONS.md").read_text(encoding="utf-8")
+
+    state = wayfinder.split("## State Authority", 1)[1].split(
+        "## Completion Authority", 1
+    )[0]
+    completion = wayfinder.split("## Completion Authority", 1)[1].split(
+        "## Mutation Envelope", 1
+    )[0]
+    for operation in (
+        "Chart",
+        "Advance",
+        "Maintain",
+        "Resume",
+        "Closeout",
+        "Terminate",
+        "Reopen",
+    ):
+        assert operation in state
+    for operation in (
+        "Chart",
+        "Orient",
+        "Advance",
+        "Maintain",
+        "Resume",
+        "Closeout",
+        "Terminate",
+        "Reopen",
+    ):
+        assert f"**{operation}**" in completion
+
+    assert "Read only the operation selected" in operations
+    assert "The sole same-invocation continuation" in wayfinder
+    assert "never start a second resolver or Advance" in wayfinder
+    assert "Complete the envelope before another resolver may start" not in operations
+    assert "Name the first frontier ticket when one remains, then stop." in wayfinder
+    for rule in (
+        "Wayfinder tracker mapping",
+        "Wayfinder owns Mutation read-back semantics",
+        "Query every open and closed mapped map object",
+        "Chart pre-create and post-create reads",
+        "Elapsed time alone never makes a claim stale",
+        "safest mapped recovery action",
+        "authority-transfer request is not Maintain",
+        "Resume: Recover owns",
+    ):
+        assert rule in wayfinder
+    for provider_detail in ("GitHub", "GitLab", "glab issue", "wayfinder:map"):
+        assert provider_detail not in wayfinder
+
+
+def test_wayfinder_budget_authority_is_finite_and_nonresetting() -> None:
+    wayfinder = (CUSTOM / "wayfinder/SKILL.md").read_text(encoding="utf-8")
+    budget = wayfinder.split("## Budget Authority", 1)[1].split(
+        "## Graph Growth", 1
+    )[0]
+
+    for rule in (
+        "one unit per initial ticket",
+        "at most one explicitly justified named contingency",
+        "converts that reservation to used",
+        "Questionnaire wait preserves its reservation",
+        "consume no outcome or correction unit",
+        "only a net-new direct-consequence obligation",
+        "No hidden reserve",
+        "Blocked` is substantive only when it records one durable exact intervention",
+        "one unit per first-graph ticket",
+        "one cumulative correction budget",
+        "cannot reset, replenish, replace, or add a second counter",
+    ):
+        assert rule in budget
+    graph_growth = wayfinder.split("## Graph Growth", 1)[1].split(
+        "## Reconcile", 1
+    )[0]
+    for rule in (
+        "resolved and unresolved obligations",
+        "why the approved graph underestimated the route",
+        "exact destination-owner successor decision",
+    ):
+        assert rule in graph_growth
 
 
 def test_wayfinder_prototype_participation_matches_judgment() -> None:
@@ -453,27 +634,70 @@ def test_wayfinder_prototype_participation_matches_judgment() -> None:
     wayfinder = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     map_format = (skill_dir / "MAP-FORMAT.md").read_text(encoding="utf-8")
 
-    tickets = wayfinder.split("## Tickets", 1)[1].split("## Modes", 1)[0]
-    rules = re.findall(
-        r"(?m)^- `(shape/feel|design evidence)` — (HITL|AFK) (.+)\.$",
-        tickets,
-    )
-    assert [(claim, mode) for claim, mode, _ in rules] == [
-        ("shape/feel", "HITL"),
-        ("design evidence", "AFK"),
-        ("design evidence", "HITL"),
-    ]
-    assert "objective verdict criteria" in rules[1][2]
-    assert "explicitly reserves the verdict for a human" in rules[2][2]
-    assert "reconciled verdict packet and cleanup or preservation state" in tickets
-
-    approve = wayfinder.split("4. **Approve.**", 1)[1].split("5. **Chart.**", 1)[0]
-    for field in ("claim level", "human judge", "objective verdict criteria"):
-        assert field in approve
-    assert "reject" in approve and "participation rule" in approve
-
-    for field in ("Claim level:", "Human judge:", "Verdict criteria:"):
+    operations = (skill_dir / "OPERATIONS.md").read_text(encoding="utf-8")
+    advance = operations.split("## Advance", 1)[1].split("## Maintain", 1)[0]
+    for rule in (
+        "`shape/feel` HITL",
+        "objective `design evidence` AFK",
+        "explicitly human-reserved evidence HITL",
+    ):
+        assert rule in advance
+    for field in (
+        "Prototype claim level:",
+        "Prototype human judge | objective verdict criteria:",
+    ):
         assert field in map_format
+
+
+def test_wayfinder_resolver_defaults_and_questionnaire_packet_are_complete() -> None:
+    skill_dir = CUSTOM / "wayfinder"
+    operations = (skill_dir / "OPERATIONS.md").read_text(encoding="utf-8")
+    map_format = (skill_dir / "MAP-FORMAT.md").read_text(encoding="utf-8")
+    advance = operations.split("## Advance", 1)[1].split("## Maintain", 1)[0]
+
+    for rule in (
+        "Research — AFK",
+        "Diagnosis — AFK by default",
+        "reproduction requires live human action",
+        "Questionnaire — external",
+        "Grilling — HITL",
+        "Design — AFK by default",
+        "public contract, irreversible migration, product tradeoff",
+        "Task — AFK by default",
+        "evidence gathering requires live human action",
+        "complete domain delta, deferrals, and ADR outcome or evidence gap",
+        "supported answer, affected boundary, proof, disposable evidence, and blocker",
+        "A missing delegated field is a transient incomplete attempt",
+    ):
+        assert rule in advance
+
+    for field in (
+        "Questionnaire caller and return owner:",
+        "Questionnaire caller item or decision identifier:",
+        "Questionnaire recipient name or role:",
+        "Questionnaire recipient expertise and relationship to sender:",
+        "Questionnaire downstream decision or prerequisite:",
+        "Questionnaire needed-back ledger:",
+        "Questionnaire authorized context and source pointers:",
+        "Questionnaire deadline and effort budget:",
+        "Questionnaire authorized output root or exact path:",
+        "Questionnaire sensitive-context constraints:",
+        "Questionnaire known delivery assumptions:",
+    ):
+        assert field in map_format
+
+
+def test_wayfinder_closure_snapshot_is_not_self_referential() -> None:
+    map_format = (CUSTOM / "wayfinder/MAP-FORMAT.md").read_text(encoding="utf-8")
+    closure_fields = map_format.split("## Closure", 1)[1].split("## Corrections", 1)[0]
+    snapshot = map_format.split("## Closure Snapshot", 1)[1].split(
+        "## Terminal Packet", 1
+    )[0]
+
+    assert "Post-close revision:" in closure_fields
+    assert "Post-release revision:" in closure_fields
+    assert "Post-close and post-release revisions:" not in snapshot
+    assert "occur after sealing" in snapshot
 
 
 def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
@@ -481,54 +705,30 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
     wayfinder = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     map_format = (skill_dir / "MAP-FORMAT.md").read_text(encoding="utf-8")
 
-    tickets = wayfinder.split("## Tickets", 1)[1].split("## Modes", 1)[0]
-    assert "user owns the resolution" in tickets
-    assert "accepted repository contracts and objective proof" in tickets
-    assert "Classify by resolution authority" in tickets
-    assert "Split a ticket" in tickets
-
-    advance = wayfinder.split("### Advance", 1)[1].split("### Maintain", 1)[0]
-    claim = advance.split("3. **Claim.**", 1)[1].split("4. **Resolve.**", 1)[0]
-    assert "current session's claim identity" in claim
-    assert "exact session identity or claimed-at value" in claim
-
-    reconcile = advance.split("5. **Reconcile.**", 1)[1].split(
-        "6. **Verify.**", 1
-    )[0]
-    assert re.findall(r"(?m)^   - \*\*(Retain|Graduate|Resolve|Exclude):\*\*", reconcile) == [
+    operations = (skill_dir / "OPERATIONS.md").read_text(encoding="utf-8")
+    assert "Classify by resolution authority" in map_format
+    assert "Split independently decidable facts" in map_format
+    assert re.findall(r"(?m)^- \*\*(Retain|Graduate|Resolve|Exclude):\*\*", wayfinder) == [
         "Retain",
         "Graduate",
         "Resolve",
         "Exclude",
     ]
-    assert "every affected fog item has exactly one disposition" in advance
-    assert "sole fog container" in map_format
-    assert "None — all remaining in-scope questions are ticket-owned." in map_format
-    assert "future-work owner, governing resolution, or map pointer" in map_format
-    assert "Do not create a ticket solely to supply a link." in map_format
-
-    maintain = wayfinder.split("### Maintain", 1)[1].split("## Closure", 1)[0]
-    assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", maintain) == [
-        "Orient",
-        "Bound",
-        "Approve",
-        "Claim",
-        "Repair",
-        "Verify",
-        "Expose",
-    ]
-    assert "Record no child outcome" in maintain
-    assert "claim the map" in maintain
-    assert "specific predicate takes precedence over Advance" in maintain
-    assert "evidence-backed scope indexing" in maintain
-    assert "every affected fog item exactly one Advance disposition" in maintain
-    assert "linked resolution" in maintain and "governing exclusion pointer" in maintain
-
-    closure = wayfinder.split("## Closure", 1)[1].split("## Return", 1)[0]
-    assert "read back the absence of that claim" in closure
-
-    returned = wayfinder.split("## Return", 1)[1]
-    assert "Next frontier: [<ticket title>](<link>). Invoke $wayfinder to advance it." in returned
+    assert "only fog container" in map_format
+    assert "None - all remaining in-scope questions are ticket-owned." in map_format
+    assert "Do not create a ticket only to provide an Out Of Scope link." in map_format
+    for heading in ("## Maintain", "## Resume", "## Closeout", "## Terminate", "## Reopen"):
+        assert heading in operations
+    assert "no substantive ticket outcome" in operations
+    assert "Gather -> Coherence -> Durability -> Seal" in operations
+    coherence = operations.split("### Coherence", 1)[1].split(
+        "### Durability", 1
+    )[0]
+    for lens in ("Destination", "Decision", "Domain", "Design", "Evidence"):
+        assert f"**{lens}:**" in coherence
+    assert "Budget exhaustion evidence, when applicable:" in map_format
+    assert "tracker mapping owns only provider representation and primitives" in map_format
+    assert "Outcome budget total, reserved, used, and uncommitted" in wayfinder
 
 
 def test_grill_with_docs_owns_interview_domain_composition() -> None:
@@ -1493,7 +1693,8 @@ def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts
 
     gate = parallel.split("## Select", 1)[1].split("## Open", 1)[0]
     assert "Select one ticket" in gate
-    assert "Select up to three" in gate
+    assert "Five concurrent subagents is the ceiling, not a target." in gate
+    assert "widen by one" in gate
     assert "Stop with exact blockers" in gate
 
     review = parallel.split("## Review", 1)[1].split("## Lock", 1)[0]
@@ -1526,6 +1727,54 @@ def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts
     assert tickets.index("`$parallel-implement`") < tickets.index("`$implement`")
     assert "`to-tickets` | Recommend and stop | `$parallel-implement`" in relationships
     assert "| `parallel-implement` | Recommend and stop | `$implement` |" not in relationships
+
+
+def test_parallel_implement_exposes_efficient_frontier_runtime_surface() -> None:
+    skill_dir = CUSTOM / "parallel-implement"
+    parallel = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    worker = (skill_dir / "references/WORKER-BRIEF.md").read_text(encoding="utf-8")
+    ledger = (skill_dir / "references/RUN-LEDGER.md").read_text(encoding="utf-8")
+    launch = (skill_dir / "references/CODEX-WORKTREE-LAUNCH.md").read_text(
+        encoding="utf-8"
+    )
+    tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
+    relationships = (ROOT / "docs/synthesis/skill-context-relationships.md").read_text(
+        encoding="utf-8"
+    )
+    ledger_runtime = runpy.run_path(str(skill_dir / "scripts/run_ledger.py"))
+
+    for term in (
+        "warm primary",
+        "result queue",
+        "highest meaningful public seam",
+        "serial latch",
+        "## Context and Return",
+        "Completion is terminal Release",
+    ):
+        assert term in parallel
+    assert "## Compact receipt" in worker
+    for field in (
+        "changed_scope_summary",
+        "proof_outcome",
+        "proof_log_path",
+        "report_path",
+        "final_status",
+    ):
+        assert field in worker
+    assert "## Prepared terminal path" in ledger
+    assert "run_ledger.py prepare" in ledger
+    assert "absolute event path" in ledger
+    assert "never estimates unavailable tokens" in ledger
+    assert "--role integration" in launch
+    assert "existing-checkout" in launch
+    assert "managed-integration-worktree" in launch
+    assert len(ledger_runtime["FRONTIER_REASONS"]) == 12
+    assert "compact execution profile" in tickets
+    assert "substantial enough" in tickets
+    assert (
+        "| `parallel-implement` | Recommend and stop | `$to-tickets` |"
+        in relationships
+    )
 
 
 def test_parallel_dependency_overlay_is_campaign_scoped_and_reversible() -> None:
@@ -1659,10 +1908,14 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         ("wayfinder", "Invoke", "research"),
         ("wayfinder", "Invoke", "prototype"),
         ("wayfinder", "Invoke", "grill-with-docs"),
-        ("wayfinder", "Recommend and stop", "domain-modeling"),
+        ("wayfinder", "Invoke", "diagnosing-bugs"),
+        ("wayfinder", "Invoke", "to-questionnaire"),
+        ("wayfinder", "Load", "codebase-design"),
+        ("wayfinder", "Invoke", "codebase-design"),
+        ("wayfinder", "Invoke", "domain-modeling"),
+        ("wayfinder", "Invoke", "skill-router"),
         ("wayfinder", "Recommend and stop", "to-spec"),
-        ("wayfinder", "Recommend and stop", "to-tickets"),
-        ("wayfinder", "Recommend and stop", "implement"),
+        ("skill-router", "Recommend and stop", "wayfinder"),
         ("triage", "Invoke", "grill-with-docs"),
         ("improve-codebase", "Invoke", "grill-with-docs"),
         ("implement", "Invoke", "tdd"),
@@ -1705,6 +1958,9 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
     }
 
     assert required <= edges
+    assert ("wayfinder", "Recommend and stop", "to-tickets") not in edges
+    assert ("wayfinder", "Recommend and stop", "implement") not in edges
+    assert ("wayfinder", "Recommend and stop", "parallel-implement") not in edges
     assert ("improve-codebase", "Invoke", "grilling") not in edges
     assert ("convergent-pr-review", "Hand off", "review") not in edges
 

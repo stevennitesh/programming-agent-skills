@@ -4,6 +4,7 @@ import json
 import shutil
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 
 import pytest
@@ -419,3 +420,12 @@ def test_focused_pytest_default_targets_current_contract_suite(monkeypatch) -> N
     target = "tests/test_skill_pack_contracts.py"
     assert (Path(__file__).resolve().parents[1] / target).is_file()
     assert calls == [[sys.executable, "-m", "pytest", "-n", "0", target]]
+
+
+def test_default_pytest_parallelism_is_capped_at_ten() -> None:
+    root = Path(__file__).resolve().parents[1]
+    config = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))
+    addopts = config["tool"]["pytest"]["ini_options"]["addopts"]
+
+    assert addopts[addopts.index("-n") + 1] == "auto"
+    assert addopts[addopts.index("--maxprocesses") + 1] == "10"

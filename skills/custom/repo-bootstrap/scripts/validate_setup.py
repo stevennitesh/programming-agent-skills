@@ -17,7 +17,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:57bffed703dc -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:87b57bfbb165 -->"
 ENGINEERING_PRIMER_TOKEN = (
     "Explore imaginatively. Converge under proof. Simplify ruthlessly."
 )
@@ -119,24 +119,32 @@ WORK_ITEM_TOKENS = (
     "**Closeout**",
 )
 
-WAYFINDER_TOKENS = (
-    "## Wayfinding operations",
-    "Participation: HITL | AFK",
-    "**Frontier query**",
-    "**Claim**",
-    "Claim token:",
-    "Claimed at:",
-    "codex/<lowercase UUIDv4>",
-    "<YYYY-MM-DDTHH:MM:SSZ>",
-    "Maintain claims the map",
-    "never reuse it across invocations",
-    "Elapsed time alone never makes a claim stale.",
-    "explicit user approval",
-    "**Release**",
-    "**Resolve**",
-    "**Block**",
-    "**Out of scope**",
-    "**Complete map**",
+WAYFINDER_MAPPING_REQUIREMENTS = (
+    (
+        "## Wayfinder tracker mapping",
+        (
+            "**Map object**",
+            "MAP-FORMAT.md",
+            "open and closed",
+            "**Ticket object**",
+            "**Resolver type mapping**",
+            "diagnosis",
+            "questionnaire",
+            "design",
+            "**Parent and blocking mapping**",
+            "**Claim storage**",
+            "campaign-claim block",
+            "**Claim capability**",
+            "`unavailable`",
+            "captured revision",
+            "must fail a losing actor or changed revision",
+            "invocation and losing-race result",
+            "**Claim release mapping**",
+            "**Revision token**",
+            "**Read-back primitive**",
+            "errors and observed fields",
+        ),
+    ),
 )
 
 LABEL_TOKENS = (
@@ -152,6 +160,9 @@ LABEL_TOKENS = (
     "`wayfinder:research`",
     "`wayfinder:prototype`",
     "`wayfinder:grilling`",
+    "`wayfinder:diagnosis`",
+    "`wayfinder:questionnaire`",
+    "`wayfinder:design`",
     "`wayfinder:task`",
 )
 
@@ -341,7 +352,12 @@ def main() -> int:
     tracker = texts["docs/agents/issue-tracker.md"]
     if tracker:
         require_tokens(tracker, "docs/agents/issue-tracker.md", WORK_ITEM_TOKENS, failures)
-        require_tokens(tracker, "docs/agents/issue-tracker.md", WAYFINDER_TOKENS, failures)
+        require_section_tokens(
+            tracker,
+            "docs/agents/issue-tracker.md",
+            WAYFINDER_MAPPING_REQUIREMENTS,
+            failures,
+        )
         if "post a codex-ready brief" not in tracker.lower():
             failures.append(
                 "docs/agents/issue-tracker.md is missing Codex-ready brief transport"

@@ -5,6 +5,8 @@ addopts = [
     "--dist=worksteal",
     "-n",
     "auto",
+    "--maxprocesses",
+    "10",
 ]
 testpaths = ["tests"]
 markers = [

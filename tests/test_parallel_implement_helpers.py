@@ -29,7 +29,10 @@ def command(*args: str, cwd: Path | None = None) -> subprocess.CompletedProcess[
 
 
 def helper(
-    script: Path, *args: str, env: dict[str, str] | None = None
+    script: Path,
+    *args: str,
+    env: dict[str, str] | None = None,
+    cwd: Path | None = None,
 ) -> tuple[subprocess.CompletedProcess[str], dict]:
     result = subprocess.run(
         [sys.executable, str(script), *args],
@@ -37,6 +40,7 @@ def helper(
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         env=env,
+        cwd=cwd,
     )
     packet = json.loads(result.stdout)
     return result, packet
@@ -110,6 +114,27 @@ def validate_state(
     return result, json.loads(result.stdout)
 
 
+def apply_json_packet(
+    events: Path,
+    packet: dict,
+    *,
+    repo: Path,
+    name: str,
+) -> tuple[subprocess.CompletedProcess[str], dict]:
+    packet_path = events.parent / f"{name}.json"
+    packet_path.write_text(json.dumps(packet), encoding="utf-8")
+    return helper(
+        LEDGER,
+        "apply",
+        "--events",
+        str(events),
+        "--repo",
+        str(repo),
+        "--packet-file",
+        str(packet_path),
+    )
+
+
 def repository(tmp_path: Path) -> tuple[Path, str]:
     repo = tmp_path / "repo"
     repo.mkdir()
@@ -121,6 +146,83 @@ def repository(tmp_path: Path) -> tuple[Path, str]:
     command("git", "commit", "-m", "base", cwd=repo)
     base = command("git", "rev-parse", "HEAD", cwd=repo).stdout.strip()
     return repo, base
+
+
+def proof_evidence(level: str, *, outcome: str = "pass") -> dict:
+    return {
+        "level": level,
+        "command_identity": f"pytest:{level}",
+        "exit_code": 0 if outcome == "pass" else 1,
+        "duration_seconds": 1.25,
+        "counts": {"passed": 1, "failed": 0 if outcome == "pass" else 1},
+        "environment_identity": "test-python",
+        "log_digest": f"sha256:{level}-proof",
+    }
+
+
+def complete_assignment(tmp_path: Path) -> dict:
+    return {
+        "source_trace": ["spec.md#acceptance", "tests/test_public.py"],
+        "dependencies": ["ticket-0 landed-awaiting-lock"],
+        "acceptance": ["public path reads once"],
+        "expected_scope": ["src/public.py"],
+        "exclusions": ["unrelated refactor"],
+        "public_proof_seam": "public_api.execute",
+        "proof_command_file": str((tmp_path / "proof.json").resolve()),
+        "report_path": str((tmp_path / "report.json").resolve()),
+        "claim": {
+            "owner": "root",
+            "token": "claim-ticket-1",
+            "readback": "assigned to primary-1",
+        },
+        "temp_roots": {
+            "temp": str((tmp_path / "temp").resolve()),
+            "pytest": str((tmp_path / "pytest").resolve()),
+            "cache": str((tmp_path / "cache").resolve()),
+        },
+        "liveness_checkpoint": "return after focused proof",
+        "state_boundary_matrix": {"initial": "covered", "reuse": "covered"},
+    }
+
+
+def add_runtime_three_execution_evidence(events: list[dict], base: str) -> None:
+    scope = events[0]
+    children = list(scope["data"]["children"])
+    lane_index = next(
+        index for index, event in enumerate(events) if event["event"] == "lane-create"
+    )
+    events.insert(
+        lane_index,
+        {
+            "event": "frontier",
+            "work_item": scope["work_item"],
+            "data": {
+                "selected": [children[0]],
+                "width": 1,
+                "reason": "serial-default",
+            },
+        },
+    )
+    graph_indices = [
+        index
+        for index, event in enumerate(events)
+        if event["event"] == "graph-drained"
+    ]
+    for index in reversed(graph_indices):
+        events.insert(
+            index,
+            {
+                "event": "wave-validation",
+                "work_item": scope["work_item"],
+                "integration_sha": events[index]["integration_sha"],
+                "validation": "current wave proof passed",
+                "data": {"outcome": "pass", "proof": proof_evidence("wave")},
+            },
+        )
+    for event in events:
+        if event["event"] == "review-ready":
+            event["validation"] = "current candidate proof passed"
+            event.setdefault("data", {})["proof"] = proof_evidence("candidate")
 
 
 def create_lane(repo: Path, base: str, lane_root: Path, item: str = "ticket-1") -> dict:
@@ -285,8 +387,8 @@ def test_ledger_facade_starts_applies_reports_and_briefs_idempotently(
     assert recorded_scope["data"]["charter"] == {
         "id": "parent-charter",
         "outcome": "deliver the recorded child graph",
-        "repair_generation_budget": 2,
-        "review_invocation_budget": 3,
+        "repair_generation_budget": 4,
+        "review_invocation_budget": 5,
         "review_invocations_required": 1,
         "runtime_contract": 3,
     }
@@ -300,7 +402,18 @@ def test_ledger_facade_starts_applies_reports_and_briefs_idempotently(
                 "lane_id": "lane-1",
                 "actor_id": "worker-1",
                 "create": {"worktree": str(tmp_path / "lane-1"), "state": "created"},
-                "preflight": {"base": base, "status": "clean"},
+                "preflight": {
+                    "base": base,
+                    "status": "clean",
+                    "worktree": str((tmp_path / "lane-1").resolve()),
+                    "actor_id": "worker-1",
+                    "proof_startup": "passed",
+                    "python_provenance": "beneath lane",
+                    "temp_root": complete_assignment(tmp_path)["temp_roots"]["temp"],
+                    "pytest_basetemp": complete_assignment(tmp_path)["temp_roots"]["pytest"],
+                    "cache_root": complete_assignment(tmp_path)["temp_roots"]["cache"],
+                },
+                "assignment": complete_assignment(tmp_path),
             }
         ),
         encoding="utf-8",
@@ -365,8 +478,1300 @@ def test_ledger_facade_starts_applies_reports_and_briefs_idempotently(
     assert "Mode: `implementation`" in text
     assert "Actor: `worker-1`" in text
     assert "State-boundary matrix:" in text
-    assert "required for stateful behavior; otherwise not applicable" in text
+    assert "'initial': 'covered'" in text
     assert "Integration correction" not in text
+
+
+def test_normal_ledger_facade_requires_one_absolute_existing_stream(
+    tmp_path: Path,
+) -> None:
+    repo, _ = repository(tmp_path)
+    scope = tmp_path / "scope.json"
+    scope.write_text(
+        json.dumps(
+            {
+                "parent": "parent",
+                "children": ["ticket-1"],
+                "charter": {"id": "parent-charter", "outcome": "deliver"},
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    result, rejected = helper(
+        LEDGER,
+        "start",
+        "--events",
+        "relative/events.jsonl",
+        "--repo",
+        str(repo),
+        "--scope-file",
+        str(scope),
+        cwd=tmp_path,
+    )
+    assert result.returncode == 1
+    assert "absolute" in rejected["error"]
+    assert not (tmp_path / "relative" / "events.jsonl").exists()
+
+    missing = tmp_path / "missing" / "events.jsonl"
+    result, rejected = helper(
+        LEDGER,
+        "status",
+        "--events",
+        str(missing),
+        "--repo",
+        str(repo),
+    )
+    assert result.returncode == 1
+    assert str(missing.resolve()) in rejected["error"]
+    assert "does not exist" in rejected["error"]
+    assert not missing.exists()
+
+
+def test_prepare_review_packet_applies_typed_terminal_state_idempotently(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    events = tmp_path / "review-facade" / "events.jsonl"
+    review_prefix = canonical_review_prefix(base)
+    review_prefix[7]["validation"] = "candidate proof passed"
+    for event in review_prefix[:8]:
+        append_event(events, event)
+
+    packet_path = tmp_path / "review.json"
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(LEDGER),
+            "prepare",
+            "--events",
+            str(events),
+            "--repo",
+            str(repo),
+            "--step",
+            "review",
+            "--output",
+            str(packet_path),
+        ],
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    assert result.returncode == 0, result.stderr or result.stdout
+    prepared = json.loads(result.stdout)
+    packet = json.loads(packet_path.read_text(encoding="utf-8"))
+    assert prepared["step"] == "review"
+    assert prepared["packet_id"] == packet["packet_id"]
+    assert packet["kind"] == "terminal"
+    assert packet["step"] == "review"
+    assert packet["stream"]["event_count"] == 8
+    assert packet["prefilled"]["target"] == base
+    assert packet["required_fields"] == [
+        "invocation_id",
+        "mode",
+        "reason",
+        "route",
+        "findings",
+        "decision",
+        "residual_risk",
+    ]
+
+    packet["values"] = {
+        "invocation_id": "review-1",
+        "mode": "initial",
+        "reason": "first integrated candidate",
+        "route": "review",
+        "findings": [],
+        "decision": "pass",
+        "residual_risk": "none",
+    }
+    packet_path.write_text(json.dumps(packet), encoding="utf-8")
+    result, applied = helper(
+        LEDGER,
+        "apply",
+        "--events",
+        str(events),
+        "--repo",
+        str(repo),
+        "--packet-file",
+        str(packet_path),
+    )
+    assert result.returncode == 0, applied
+    assert applied["phase"] == "lock"
+    assert applied["next_action"]["action"] == "lock"
+    assert len(applied["event_ids"]) == 2
+
+    count = len(events.read_text(encoding="utf-8").splitlines())
+    result, replayed = helper(
+        LEDGER,
+        "apply",
+        "--events",
+        str(events),
+        "--repo",
+        str(repo),
+        "--packet-file",
+        str(packet_path),
+    )
+    assert result.returncode == 0, replayed
+    assert replayed["applied"] == 0
+    assert replayed["replayed"] == 2
+    assert len(events.read_text(encoding="utf-8").splitlines()) == count
+
+
+def test_prepare_closeout_and_release_packets_batch_readbacks_without_provider_mutation(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    events = tmp_path / "terminal-facade" / "events.jsonl"
+    prefix = canonical_review_prefix(base)
+    prefix[0]["data"]["charter"]["runtime_contract"] = 3
+    add_runtime_three_execution_evidence(prefix, base)
+    for event in prefix:
+        append_event(events, event)
+    append_event(
+        events,
+        {
+            "event": "lane-cleanup",
+            "work_item": "ticket-1",
+            "data": {
+                "lane_id": "lane-1",
+                "state": "removed",
+                "registered_after": False,
+                "directory_exists": False,
+            },
+        },
+    )
+
+    closeout_path = tmp_path / "closeout.json"
+    result, prepared = helper(
+        LEDGER,
+        "prepare",
+        "--events",
+        str(events),
+        "--repo",
+        str(repo),
+        "--step",
+        "closeout",
+        "--output",
+        str(closeout_path),
+    )
+    assert result.returncode == 0, prepared
+    closeout = json.loads(closeout_path.read_text(encoding="utf-8"))
+    assert closeout["prefilled"]["approved_head"] == base
+    assert closeout["prefilled"]["pending_children"] == ["ticket-1"]
+    assert closeout["prefilled"]["expected_child_mutations"] == [
+        {
+            "work_item": "ticket-1",
+            "intended_mutation": "close child after verified evidence",
+        }
+    ]
+    assert "mutation_readback" in closeout["prefilled"]["child_verified_fields"]
+    closeout["values"] = {
+        "child_readbacks": [
+            {
+                "work_item": "ticket-1",
+                "state": "posted",
+                "intended_mutation": "close child",
+                "posted_comment": "comment-1",
+                "mutation_readback": "comment posted; close still pending",
+            }
+        ]
+    }
+    closeout_path.write_text(json.dumps(closeout), encoding="utf-8")
+    result, partial = helper(
+        LEDGER,
+        "apply",
+        "--events",
+        str(events),
+        "--repo",
+        str(repo),
+        "--packet-file",
+        str(closeout_path),
+    )
+    assert result.returncode == 0, partial
+    assert partial["phase"] == "lock"
+    assert partial["next_action"]["action"] == "closeout"
+
+    result, prepared = helper(
+        LEDGER,
+        "prepare",
+        "--events",
+        str(events),
+        "--repo",
+        str(repo),
+        "--step",
+        "closeout",
+        "--output",
+        str(closeout_path),
+    )
+    assert result.returncode == 0, prepared
+    closeout = json.loads(closeout_path.read_text(encoding="utf-8"))
+    assert closeout["prefilled"]["pending_children"] == ["ticket-1"]
+    closeout["values"] = {
+        "child_readbacks": [
+            {
+                "work_item": "ticket-1",
+                "state": "verified",
+                "delivered": "ticket implementation",
+                "acceptance_evidence": "criterion -> proof",
+                "proof": "slice, wave, and candidate proof passed",
+                "review": "pass",
+                "reviewed_head": base,
+                "residual_risk": "none",
+                "intended_mutation": "close child",
+                "posted_comment": "comment-1",
+                "mutation_readback": "closed and claim released",
+            }
+        ],
+        "parent_readback": {
+            "state": "verified",
+            "mutation_readback": "parent closed after child read-back",
+        },
+        "tracker_lock": {"readback": "tracker lock verified"},
+        "push": None,
+    }
+    closeout_path.write_text(json.dumps(closeout), encoding="utf-8")
+    result, applied = helper(
+        LEDGER,
+        "apply",
+        "--events",
+        str(events),
+        "--repo",
+        str(repo),
+        "--packet-file",
+        str(closeout_path),
+    )
+    assert result.returncode == 0, applied
+    assert applied["phase"] == "release"
+    assert applied["next_action"]["action"] == "release"
+
+    release_path = tmp_path / "release.json"
+    result, prepared = helper(
+        LEDGER,
+        "prepare",
+        "--events",
+        str(events),
+        "--repo",
+        str(repo),
+        "--step",
+        "release",
+        "--output",
+        str(release_path),
+    )
+    assert result.returncode == 0, prepared
+    release = json.loads(release_path.read_text(encoding="utf-8"))
+    assert release["prefilled"]["review_state"]["decision"] == "pass"
+    assert release["prefilled"]["closeout_state"]["tracker_locked"] is True
+    assert release["prefilled"]["lane_state"]["lane-1"] == "removed"
+    assert release["prefilled"]["efficiency_state"]["proof_invocations"] == 2
+    release["values"] = {
+        "friction_synthesis": {
+            "observations": [],
+            "deduplicated_themes": [],
+            "none_observed": True,
+        },
+        "disposition": "complete",
+        "residual_risk": "none",
+    }
+    release_path.write_text(json.dumps(release), encoding="utf-8")
+    result, applied = helper(
+        LEDGER,
+        "apply",
+        "--events",
+        str(events),
+        "--repo",
+        str(repo),
+        "--packet-file",
+        str(release_path),
+    )
+    assert result.returncode == 0, applied
+    assert applied["phase"] == "complete"
+    assert applied["next_action"]["action"] == "none"
+
+    ledger = tmp_path / "LEDGER.md"
+    result, finished = helper(
+        LEDGER,
+        "finish",
+        "--events",
+        str(events),
+        "--repo",
+        str(repo),
+        "--output",
+        str(ledger),
+    )
+    assert result.returncode == 0, finished
+    efficiency = finished["efficiency_result"]
+    assert efficiency["outcome"] == "complete"
+    assert efficiency["total_tokens"] == "unavailable"
+    assert efficiency["canonical_event_count"] == len(
+        events.read_text(encoding="utf-8").splitlines()
+    )
+    assert efficiency["root_authored_terminal_packets"] == 3
+    assert efficiency["proof_invocations"] == 2
+    assert efficiency["proof_duration_seconds"] == 2.5
+    assert efficiency["correctness_result"] == "accepted"
+    assert efficiency["review_invocations"]["completed"] == 1
+    assert efficiency["repair_generations"]["used"] == 0
+    assert "## Efficiency Result" in ledger.read_text(encoding="utf-8")
+
+
+def test_start_records_existing_integration_checkout_ownership(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    events = tmp_path / "ownership" / "events.jsonl"
+    scope = tmp_path / "scope.json"
+    scope.write_text(
+        json.dumps(
+            {
+                "parent": "parent",
+                "children": ["ticket-1"],
+                "charter": {"id": "parent-charter", "outcome": "deliver"},
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    result, started = helper(
+        LEDGER,
+        "start",
+        "--events",
+        str(events),
+        "--repo",
+        str(repo),
+        "--scope-file",
+        str(scope),
+    )
+    assert result.returncode == 0, started
+    assert started["integration_checkout"] == {
+        "mode": "existing-checkout",
+        "path": str(repo.resolve()),
+        "git_common_dir": str((repo / ".git").resolve()),
+        "starting_head": base,
+        "cleanup_authority": "none",
+    }
+
+
+def test_generated_brief_is_complete_for_warm_primary_assignment(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    events = tmp_path / "brief" / "events.jsonl"
+    for event in (
+            {
+                "event": "scope",
+            "work_item": "parent",
+            "integration_sha": base,
+            "data": {
+                "children": ["ticket-1"],
+                "charter": {"id": "parent-charter", "runtime_contract": 3},
+            },
+        },
+    ):
+        append_event(events, event)
+    packet_path = tmp_path / "lane-ready.json"
+    packet_path.write_text(
+        json.dumps(
+            {
+                "kind": "lane-ready",
+                "work_item": "ticket-1",
+                "lane_id": "lane-1",
+                "actor_id": "primary-1",
+                "role": "primary",
+                "create": {"worktree": str(tmp_path / "lane-1"), "state": "created"},
+                "preflight": {
+                    "base": base,
+                    "status": "clean",
+                    "worktree": str((tmp_path / "lane-1").resolve()),
+                    "actor_id": "primary-1",
+                    "proof_startup": "passed",
+                    "python_provenance": "beneath lane",
+                    "temp_root": complete_assignment(tmp_path)["temp_roots"]["temp"],
+                    "pytest_basetemp": complete_assignment(tmp_path)["temp_roots"]["pytest"],
+                    "cache_root": complete_assignment(tmp_path)["temp_roots"]["cache"],
+                },
+                "assignment": complete_assignment(tmp_path),
+            }
+        ),
+        encoding="utf-8",
+    )
+    result, applied = helper(
+        LEDGER,
+        "apply",
+        "--events",
+        str(events),
+        "--repo",
+        str(repo),
+        "--packet-file",
+        str(packet_path),
+    )
+    assert result.returncode == 0, applied
+
+    brief_path = tmp_path / "WORKER.md"
+    result, generated = helper(
+        LEDGER,
+        "brief",
+        "--events",
+        str(events),
+        "--repo",
+        str(repo),
+        "--work-item",
+        "ticket-1",
+        "--mode",
+        "implementation",
+        "--output",
+        str(brief_path),
+    )
+    assert result.returncode == 0, generated
+    text = brief_path.read_text(encoding="utf-8")
+    for expected in (
+        "Role: `primary`",
+        "Acceptance: `public path reads once`",
+        "Expected scope: `src/public.py`",
+        "Exclusions: `unrelated refactor`",
+        "Public proof seam: `public_api.execute`",
+        f"Proof command file: `{(tmp_path / 'proof.json').resolve()}`",
+        f"Report path: `{(tmp_path / 'report.json').resolve()}`",
+        "Source Trace: `spec.md#acceptance, tests/test_public.py`",
+        "Dependencies: `ticket-0 landed-awaiting-lock`",
+        "Claim owner: `root`",
+        "Claim read-back: `assigned to primary-1`",
+        "Preflight proof startup: `passed`",
+        "Python import provenance: `beneath lane`",
+        "Liveness checkpoint: `return after focused proof`",
+        "State-boundary matrix: `{'initial': 'covered', 'reuse': 'covered'}`",
+        "A warm actor receives a new isolated lane",
+    ):
+        assert expected in text
+
+
+def test_generated_brief_rejects_an_incomplete_assignment(tmp_path: Path) -> None:
+    repo, base = repository(tmp_path)
+    events = tmp_path / "incomplete-brief" / "events.jsonl"
+    append_event(
+        events,
+        {
+            "event": "scope",
+            "work_item": "parent",
+            "integration_sha": base,
+            "data": {
+                "children": ["ticket-1"],
+                "charter": {"id": "parent-charter", "runtime_contract": 3},
+            },
+        },
+    )
+    for event in (
+        {
+            "event": "lane-create",
+            "work_item": "ticket-1",
+            "data": {
+                "lane_id": "lane-1",
+                "actor_id": "primary-1",
+                "role": "primary",
+                "assignment": {"acceptance": ["incomplete"]},
+            },
+        },
+        {
+            "event": "lane-preflight",
+            "work_item": "ticket-1",
+            "data": {"lane_id": "lane-1", "actor_id": "primary-1"},
+        },
+    ):
+        append_event(events, event)
+
+    result, rejected = helper(
+        LEDGER,
+        "brief",
+        "--events",
+        str(events),
+        "--repo",
+        str(repo),
+        "--work-item",
+        "ticket-1",
+        "--mode",
+        "implementation",
+        "--output",
+        str((tmp_path / "WORKER.md").resolve()),
+    )
+
+    assert result.returncode == 1
+    assert "brief assignment missing" in rejected["error"]
+
+
+def test_worker_result_requires_compact_receipt_and_exposes_root_result_queue(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    events = tmp_path / "result-queue" / "events.jsonl"
+    for event in (
+        {
+            "event": "scope",
+            "work_item": "parent",
+            "integration_sha": base,
+            "data": {
+                "children": ["ticket-1"],
+                "charter": {"id": "parent-charter", "runtime_contract": 3},
+            },
+        },
+        {
+            "event": "frontier",
+            "work_item": "parent",
+            "data": {
+                "selected": ["ticket-1"],
+                "width": 1,
+                "reason": "serial-default",
+            },
+        },
+        {
+            "event": "lane-create",
+            "work_item": "ticket-1",
+            "data": {
+                "lane_id": "lane-1",
+                "actor_id": "primary-1",
+                "role": "primary",
+            },
+        },
+        {
+            "event": "lane-preflight",
+            "work_item": "ticket-1",
+            "data": {"lane_id": "lane-1", "actor_id": "primary-1"},
+        },
+        {
+            "event": "dispatch",
+            "work_item": "ticket-1",
+            "data": {"lane_id": "lane-1"},
+        },
+    ):
+        append_event(events, event)
+    packet_path = tmp_path / "worker-result.json"
+    packet_path.write_text(
+        json.dumps(
+            {
+                "kind": "worker-result",
+                "work_item": "ticket-1",
+                "report": {"status": "done", "commit": base},
+            }
+        ),
+        encoding="utf-8",
+    )
+    result, rejected = helper(
+        LEDGER,
+        "apply",
+        "--events",
+        str(events),
+        "--repo",
+        str(repo),
+        "--packet-file",
+        str(packet_path),
+    )
+    assert result.returncode == 1
+    assert "worker result missing" in rejected["error"]
+
+    receipt = {
+        "status": "done",
+        "commit": base,
+        "changed_scope_summary": "src/public.py",
+        "proof_outcome": "passed",
+        "proof_log_path": str((tmp_path / "proof.log").resolve()),
+        "proof": proof_evidence("slice"),
+        "skipped_checks": [],
+        "risks": [],
+        "report_path": str((tmp_path / "report.json").resolve()),
+        "final_status": "clean",
+    }
+    packet_path.write_text(
+        json.dumps(
+            {"kind": "worker-result", "work_item": "ticket-1", "report": receipt}
+        ),
+        encoding="utf-8",
+    )
+    result, applied = helper(
+        LEDGER,
+        "apply",
+        "--events",
+        str(events),
+        "--repo",
+        str(repo),
+        "--packet-file",
+        str(packet_path),
+    )
+    assert result.returncode == 0, applied
+    assert applied["phase"] == "drain"
+    assert applied["next_action"]["action"] == "inspect-result"
+    assert applied["result_queue"] == ["ticket-1"]
+
+
+def test_dispatch_requires_the_selected_frontier_and_drains_accepted_work_first(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    events = tmp_path / "dispatch-authority" / "events.jsonl"
+    for event in (
+        {
+            "event": "scope",
+            "work_item": "parent",
+            "integration_sha": base,
+            "data": {
+                "children": ["ticket-1", "ticket-2"],
+                "charter": {"id": "parent-charter", "runtime_contract": 3},
+            },
+        },
+        {
+            "event": "frontier",
+            "work_item": "parent",
+            "data": {
+                "selected": ["ticket-1"],
+                "width": 1,
+                "reason": "serial-default",
+            },
+        },
+        {
+            "event": "lane-create",
+            "work_item": "ticket-1",
+            "data": {"lane_id": "lane-1", "actor_id": "primary-1"},
+        },
+        {
+            "event": "lane-preflight",
+            "work_item": "ticket-1",
+            "data": {"lane_id": "lane-1", "actor_id": "primary-1"},
+        },
+        {
+            "event": "lane-create",
+            "work_item": "ticket-2",
+            "data": {"lane_id": "lane-2", "actor_id": "worker-2"},
+        },
+        {
+            "event": "lane-preflight",
+            "work_item": "ticket-2",
+            "data": {"lane_id": "lane-2", "actor_id": "worker-2"},
+        },
+    ):
+        append_event(events, event)
+
+    result, rejected = apply_json_packet(
+        events,
+        {
+            "kind": "events",
+            "events": [{"event": "dispatch", "work_item": "ticket-2", "data": {"lane_id": "lane-2"}}],
+        },
+        repo=repo,
+        name="dispatch-unselected",
+    )
+    assert result.returncode == 1
+    assert "selected frontier" in rejected["error"]
+
+    result, applied = apply_json_packet(
+        events,
+        {
+            "kind": "events",
+            "events": [
+                {
+                    "event": "dispatch",
+                    "work_item": "ticket-1",
+                    "data": {"lane_id": "lane-1", "attempt": 2},
+                }
+            ],
+        },
+        repo=repo,
+        name="dispatch-selected",
+    )
+    assert result.returncode == 0, applied
+
+    result, duplicate = apply_json_packet(
+        events,
+        {
+            "kind": "events",
+            "events": [{"event": "dispatch", "work_item": "ticket-1", "data": {"lane_id": "lane-1"}}],
+        },
+        repo=repo,
+        name="dispatch-duplicate",
+    )
+    assert result.returncode == 1
+    assert "already dispatched" in duplicate["error"]
+
+    append_event(
+        events,
+        {"event": "accept", "work_item": "ticket-1", "worker_sha": base},
+    )
+    result, status = helper(
+        LEDGER, "status", "--events", str(events), "--repo", str(repo)
+    )
+    assert result.returncode == 0, status
+    assert status["next_action"]["action"] == "land"
+
+    result, blocked = validate_state(events, "dispatch", repo=repo)
+    assert result.returncode == 1
+    assert any("accepted unlanded" in error for error in blocked["errors"])
+
+
+def test_runtime_contract_3_review_ready_requires_current_candidate_proof(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    events = tmp_path / "candidate-proof.jsonl"
+    for event in (
+        {
+            "event": "scope",
+            "work_item": "parent",
+            "data": {
+                "children": ["ticket-1"],
+                    "charter": {"id": "parent-charter", "runtime_contract": 3},
+                },
+            },
+            {
+                "event": "frontier",
+                "work_item": "parent",
+                "data": {
+                    "selected": ["ticket-1"],
+                    "width": 1,
+                    "reason": "serial-default",
+                },
+            },
+            {
+                "event": "lane-create",
+                "work_item": "ticket-1",
+            "data": {"lane_id": "lane-1"},
+        },
+        {
+            "event": "lane-preflight",
+            "work_item": "ticket-1",
+            "data": {"lane_id": "lane-1"},
+        },
+        {
+            "event": "dispatch",
+            "work_item": "ticket-1",
+            "data": {"lane_id": "lane-1"},
+        },
+        {"event": "accept", "work_item": "ticket-1", "worker_sha": base},
+        {
+            "event": "land",
+            "work_item": "ticket-1",
+            "worker_sha": base,
+            "integration_sha": base,
+        },
+        {"event": "graph-drained", "work_item": "parent", "integration_sha": base},
+        {
+            "event": "review-ready",
+            "work_item": "parent",
+            "integration_sha": base,
+            "validation": "candidate proof passed",
+        },
+    ):
+        append_event(events, event)
+
+    result, payload = validate_state(events, "review", repo=repo)
+    assert result.returncode == 1
+    assert any("candidate proof evidence" in error for error in payload["errors"])
+
+
+def test_adaptive_width_widens_additively_caps_at_five_and_latches_downshift(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    events = tmp_path / "adaptive-width" / "events.jsonl"
+    append_event(
+        events,
+        {
+            "event": "scope",
+            "work_item": "parent",
+            "integration_sha": base,
+            "data": {
+                "children": [f"ticket-{number}" for number in range(1, 7)],
+                "charter": {"id": "parent-charter", "runtime_contract": 3},
+            },
+        },
+    )
+
+    result, initial = helper(
+        LEDGER, "status", "--events", str(events), "--repo", str(repo)
+    )
+    assert result.returncode == 0, initial
+    assert initial["width"] == 1
+    assert initial["frontier_reason"] == "serial-default"
+
+    unjustified = {
+        "kind": "events",
+        "events": [
+            {
+                "event": "frontier",
+                "work_item": "parent",
+                "data": {
+                    "selected": ["ticket-1", "ticket-2"],
+                    "width": 2,
+                    "reason": "parallel-independent",
+                    "cold_start": True,
+                    "substantial": True,
+                    "semantic_independence": False,
+                    "proof_isolated": True,
+                    "root_capacity": True,
+                },
+            }
+        ],
+    }
+    result, rejected = apply_json_packet(
+        events, unjustified, repo=repo, name="unjustified-cold-start"
+    )
+    assert result.returncode == 1
+    assert "requires semantic_independence" in rejected["error"]
+
+    def frontier(width: int, reason: str, name: str, **extra: object) -> dict:
+        selected = [f"ticket-{number}" for number in range(1, width + 1)]
+        packet = {
+            "kind": "events",
+            "events": [
+                {
+                    "event": "frontier",
+                    "work_item": "parent",
+                    "data": {
+                        "selected": selected,
+                        "width": width,
+                        "reason": reason,
+                        "substantial": True,
+                        "semantic_independence": True,
+                        "proof_isolated": True,
+                        "root_capacity": True,
+                        **extra,
+                    },
+                }
+            ],
+        }
+        result, payload = apply_json_packet(
+            events, packet, repo=repo, name=name
+        )
+        assert result.returncode == 0, payload
+        return payload
+
+    frontier(2, "parallel-independent", "cold-two", cold_start=True)
+    result, status_payload = helper(
+        LEDGER, "status", "--events", str(events), "--repo", str(repo)
+    )
+    assert result.returncode == 0, status_payload
+    assert status_payload["width"] == 2
+    assert status_payload["peak_width"] == 2
+
+    for width in range(3, 6):
+        append_event(
+            events,
+            {
+                "event": "wave-validation",
+                "work_item": "parent",
+                "integration_sha": base,
+                "validation": f"wave at width {width - 1} passed",
+                "data": {
+                    "outcome": "pass",
+                    "proof": proof_evidence("wave"),
+                },
+            },
+        )
+        frontier(width, "widen-after-clean-wave", f"widen-{width}")
+
+    too_wide = {
+        "kind": "events",
+        "events": [
+            {
+                "event": "frontier",
+                "work_item": "parent",
+                "data": {
+                    "selected": [f"ticket-{number}" for number in range(1, 7)],
+                    "width": 6,
+                    "reason": "widen-after-clean-wave",
+                    "substantial": True,
+                    "semantic_independence": True,
+                    "proof_isolated": True,
+                    "root_capacity": True,
+                },
+            }
+        ],
+    }
+    result, rejected = apply_json_packet(
+        events, too_wide, repo=repo, name="too-wide"
+    )
+    assert result.returncode == 1
+    assert "width must be between 1 and 5" in rejected["error"]
+
+    for event in (
+        {
+            "event": "lane-create",
+            "work_item": "ticket-1",
+            "data": {
+                "lane_id": "lane-1",
+                "actor_id": "primary-1",
+                "role": "primary",
+            },
+        },
+        {
+            "event": "lane-preflight",
+            "work_item": "ticket-1",
+            "data": {"lane_id": "lane-1", "actor_id": "primary-1"},
+        },
+        {
+            "event": "dispatch",
+            "work_item": "ticket-1",
+            "data": {"lane_id": "lane-1"},
+        },
+    ):
+        append_event(events, event)
+    append_event(
+        events,
+        {
+            "event": "handoff",
+            "work_item": "ticket-1",
+            "data": {
+                "status": "done",
+                "commit": base,
+                "proof": proof_evidence("slice"),
+            },
+        },
+    )
+    result, queued = helper(
+        LEDGER, "status", "--events", str(events), "--repo", str(repo)
+    )
+    assert result.returncode == 0, queued
+    assert queued["next_action"]["action"] == "downshift"
+
+    frontier(1, "downshift-backpressure", "downshift")
+    result, latched = helper(
+        LEDGER, "status", "--events", str(events), "--repo", str(repo)
+    )
+    assert result.returncode == 0, latched
+    assert latched["serial_latch"]["cause"] == "downshift-backpressure"
+
+    append_event(
+        events,
+        {
+            "event": "accept",
+            "work_item": "ticket-1",
+            "worker_sha": base,
+        },
+    )
+    append_event(
+        events,
+        {
+            "event": "wave-validation",
+            "work_item": "parent",
+            "integration_sha": base,
+            "validation": "serial proof passed",
+            "data": {"outcome": "pass", "proof": proof_evidence("wave")},
+        },
+    )
+    reopening = {
+        "kind": "events",
+        "events": [
+            {
+                "event": "frontier",
+                "work_item": "parent",
+                "data": {
+                    "selected": ["ticket-2", "ticket-3"],
+                    "width": 2,
+                    "reason": "widen-after-clean-wave",
+                    "substantial": True,
+                    "semantic_independence": True,
+                    "proof_isolated": True,
+                    "root_capacity": True,
+                },
+            }
+        ],
+    }
+    result, rejected = apply_json_packet(
+        events, reopening, repo=repo, name="latched-reopen"
+    )
+    assert result.returncode == 1
+    assert "serial latch" in rejected["error"]
+
+    frontier(
+        1,
+        "reset-after-external-change",
+        "reset-latch",
+        release_evidence="root inspection capacity increased",
+    )
+    frontier(2, "parallel-independent", "reopen-two")
+    result, reopened = helper(
+        LEDGER, "status", "--events", str(events), "--repo", str(repo)
+    )
+    assert result.returncode == 0, reopened
+    assert reopened["width"] == 2
+    assert reopened["peak_width"] == 5
+    assert reopened["serial_latch"] is None
+
+
+@pytest.mark.parametrize(
+    ("event_kind", "reason"),
+    [("stale-base", "downshift-stale"), ("conflict", "downshift-overlap")],
+)
+def test_stale_or_conflicted_return_requires_downshift(
+    tmp_path: Path, event_kind: str, reason: str
+) -> None:
+    repo, base = repository(tmp_path)
+    events = tmp_path / event_kind / "events.jsonl"
+    for event in (
+        {
+            "event": "scope",
+            "work_item": "parent",
+            "integration_sha": base,
+            "data": {
+                "children": ["ticket-1", "ticket-2"],
+                "charter": {"id": "parent-charter", "runtime_contract": 3},
+            },
+        },
+        {
+            "event": "frontier",
+            "work_item": "parent",
+            "data": {
+                "selected": ["ticket-1", "ticket-2"],
+                "width": 2,
+                "reason": "parallel-independent",
+                "cold_start": True,
+                "substantial": True,
+                "semantic_independence": True,
+                "proof_isolated": True,
+                "root_capacity": True,
+            },
+        },
+        {
+            "event": "lane-create",
+            "work_item": "ticket-1",
+            "data": {"lane_id": "lane-1", "actor_id": "primary-1"},
+        },
+        {
+            "event": "lane-preflight",
+            "work_item": "ticket-1",
+            "data": {"lane_id": "lane-1", "actor_id": "primary-1"},
+        },
+        {
+            "event": "dispatch",
+            "work_item": "ticket-1",
+            "data": {"lane_id": "lane-1"},
+        },
+        {
+            "event": "handoff",
+            "work_item": "ticket-1",
+            "data": {
+                "status": "done",
+                "commit": base,
+                "proof": proof_evidence("slice"),
+            },
+        },
+    ):
+        append_event(events, event)
+
+    append_event(
+        events,
+        {
+            "event": event_kind,
+            "work_item": "ticket-1",
+            "data": {"cause": "integration changed beneath returned work"},
+        },
+    )
+    result, status = helper(
+        LEDGER, "status", "--events", str(events), "--repo", str(repo)
+    )
+    assert result.returncode == 0, status
+    assert status["phase"] == "downshift"
+    assert status["next_action"]["evidence"]["reason"] == reason
+
+
+def test_prepare_repair_packet_separates_plan_from_proved_completion(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    events = tmp_path / "repair-facade" / "events.jsonl"
+    findings = [
+        {
+            "id": "F1",
+            "blocking": True,
+            "remediation": "automatic-in-scope",
+            "anchor": "acceptance A",
+            "evidence": "failing proof A",
+            "required_proof": "proof A passes",
+        },
+        {
+            "id": "F2",
+            "blocking": True,
+            "remediation": "automatic-in-scope",
+            "anchor": "acceptance B",
+            "evidence": "failing proof B",
+            "required_proof": "proof B passes",
+        },
+    ]
+    prefix = blocked_review_events(base, findings)
+    prefix[0]["data"]["charter"].update(
+        {
+            "runtime_contract": 3,
+            "repair_generation_budget": 2,
+            "review_invocation_budget": 3,
+            "review_invocations_required": 1,
+        }
+    )
+    add_runtime_three_execution_evidence(prefix, base)
+    for event in prefix:
+        append_event(events, event)
+
+    packet_path = tmp_path / "repair-plan.json"
+    result, prepared = helper(
+        LEDGER,
+        "prepare",
+        "--events",
+        str(events),
+        "--repo",
+        str(repo),
+        "--step",
+        "repair",
+        "--output",
+        str(packet_path),
+    )
+    assert result.returncode == 0, prepared
+    packet = json.loads(packet_path.read_text(encoding="utf-8"))
+    assert packet["prefilled"]["phase"] == "plan"
+    assert [finding["id"] for finding in packet["prefilled"]["findings"]] == [
+        "F1",
+        "F2",
+    ]
+    packet["values"] = {
+        "finding_ids": ["F1", "F2"],
+        "assignments": [
+            {
+                "owner": "primary-1",
+                "scope": ["src/a.py", "src/b.py"],
+                "required_proof": ["proof A passes", "proof B passes"],
+            }
+        ],
+    }
+    packet_path.write_text(json.dumps(packet), encoding="utf-8")
+    result, applied = helper(
+        LEDGER,
+        "apply",
+        "--events",
+        str(events),
+        "--repo",
+        str(repo),
+        "--packet-file",
+        str(packet_path),
+    )
+    assert result.returncode == 0, applied
+    assert "repair" in applied["authorized_actions"]
+
+    (repo / "tracked.txt").write_text("repaired\n", encoding="utf-8")
+    command("git", "add", "tracked.txt", cwd=repo)
+    command("git", "commit", "-m", "repair findings", cwd=repo)
+    repaired = command("git", "rev-parse", "HEAD", cwd=repo).stdout.strip()
+    for event in (
+        {
+            "event": "lane-create",
+            "work_item": "repair-1",
+            "data": {"lane_id": "repair-lane", "actor_id": "primary-1"},
+        },
+        {
+            "event": "lane-preflight",
+            "work_item": "repair-1",
+            "data": {"lane_id": "repair-lane", "actor_id": "primary-1"},
+        },
+        {
+            "event": "dispatch",
+            "work_item": "repair-1",
+            "data": {"lane_id": "repair-lane"},
+        },
+        {"event": "accept", "work_item": "repair-1", "worker_sha": repaired},
+        {
+            "event": "land",
+            "work_item": "repair-1",
+            "worker_sha": repaired,
+            "integration_sha": repaired,
+        },
+    ):
+        append_event(events, event)
+
+    completion_path = tmp_path / "repair-complete.json"
+    result, prepared = helper(
+        LEDGER,
+        "prepare",
+        "--events",
+        str(events),
+        "--repo",
+        str(repo),
+        "--step",
+        "repair",
+        "--output",
+        str(completion_path),
+    )
+    assert result.returncode == 0, prepared
+    completion = json.loads(completion_path.read_text(encoding="utf-8"))
+    assert completion["prefilled"]["phase"] == "complete"
+    completion["values"] = {
+        "finding_ids": ["F1", "F2"],
+        "successor_head": repaired,
+        "proof": proof_evidence("repair"),
+        "changed_scope": ["src/a.py", "src/b.py"],
+    }
+    completion_path.write_text(json.dumps(completion), encoding="utf-8")
+    result, applied = helper(
+        LEDGER,
+        "apply",
+        "--events",
+        str(events),
+        "--repo",
+        str(repo),
+        "--packet-file",
+        str(completion_path),
+    )
+    assert result.returncode == 0, applied
+    assert applied["phase"] == "review"
+    assert applied["next_action"]["action"] == "record-review-ready"
+
+
+def test_managed_integration_worktree_has_explicit_role_and_cleanup_authority(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(LANE),
+            "create",
+            "--repo",
+            str(repo),
+            "--root",
+            str(tmp_path / "lanes"),
+            "--base",
+            base,
+            "--run-id",
+            "run-1",
+            "--item-id",
+            "integration",
+            "--role",
+            "integration",
+            "--branch",
+            "codex/integration",
+            "--max-path",
+            "1000",
+        ],
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    assert result.returncode == 0, result.stderr or result.stdout
+    created = json.loads(result.stdout)
+    assert created["role"] == "integration"
+    assert created["ownership_mode"] == "managed-integration-worktree"
+    assert created["cleanup_authority"] == "managed"
+
+    result, cleaned = helper(
+        LANE,
+        "cleanup",
+        "--repo",
+        str(repo),
+        "--root",
+        created["root"],
+        "--worktree",
+        created["worktree"],
+        "--expected-head",
+        base,
+        "--disposition",
+        "preserved",
+        "--role",
+        "integration",
+    )
+    assert result.returncode == 0, cleaned
+    assert cleaned["role"] == "integration"
 
 
 @pytest.mark.skipif(os.name != "nt", reason="Windows manual-lane default")
@@ -1225,7 +2630,9 @@ def test_resume_requires_external_reconciliation_before_redispatch(
                 "worktrees": "verified",
                 "agents": "none active",
                 "tracker": "claim verified",
+                "claims": "claim ownership read back",
                 "remote": "unchanged",
+                "integration_checkout": "ownership and registration read back",
             },
         },
     )
@@ -1255,9 +2662,21 @@ def checkpoint_data(base: str, *, claim_state: str = "retained") -> dict:
         "continuation": "resume at the next reconciled frontier",
         "current_head": base,
         "actors": "idle",
+        "lanes": {},
         "integration_state": "clean",
+        "integration_checkout": {
+            "mode": "existing-checkout",
+            "path": "recorded integration checkout",
+            "registration": "not-managed",
+            "cleanup_authority": "none",
+            "final_disposition": "preserved",
+        },
         "next_frontier": ["ticket-1"],
         "blockers": [],
+        "serial_latch": None,
+        "result_queue": [],
+        "proof_state": {"slice": [], "wave": [], "candidate": None},
+        "open_work": {"integration_regression": None, "repair": None},
         "claims_complete": True,
         "claims": [claim],
         "tracker": "retained claim read back",
@@ -1281,6 +2700,15 @@ def correction_campaign(
             "data": {
                 "children": ["ticket-1"],
                 "charter": {"id": "parent-charter", "runtime_contract": 3},
+            },
+        },
+        {
+            "event": "frontier",
+            "work_item": "parent",
+            "data": {
+                "selected": ["ticket-1"],
+                "width": 1,
+                "reason": "serial-default",
             },
         },
         {
@@ -1534,6 +2962,31 @@ def test_runtime_three_checkpoint_is_nonterminal_and_requires_reconciled_resume(
     assert result.returncode == 1
     assert any("resume requires reconciled" in error for error in blocked["errors"])
 
+    result, rejected = apply_json_packet(
+        events,
+        {
+            "kind": "events",
+            "events": [
+                {
+                    "event": "reconcile",
+                    "work_item": "parent",
+                    "data": {
+                        "git": "clean at checkpoint HEAD",
+                        "worktrees": "none active",
+                        "agents": "none active",
+                        "tracker": "retained claim verified",
+                    },
+                }
+            ],
+        },
+        repo=repo,
+        name="incomplete-reconcile",
+    )
+    assert result.returncode == 1
+    assert "claims" in rejected["error"]
+    assert "remote" in rejected["error"]
+    assert "integration_checkout" in rejected["error"]
+
     append_event(
         events,
         {
@@ -1544,7 +2997,21 @@ def test_runtime_three_checkpoint_is_nonterminal_and_requires_reconciled_resume(
                 "worktrees": "none active",
                 "agents": "none active",
                 "tracker": "retained claim verified",
+                "claims": "retained claim read back",
                 "remote": "unchanged",
+                "integration_checkout": "ownership and registration read back",
+            },
+        },
+    )
+    append_event(
+        events,
+        {
+            "event": "frontier",
+            "work_item": "parent",
+            "data": {
+                "selected": ["ticket-1"],
+                "width": 1,
+                "reason": "serial-default",
             },
         },
     )
@@ -1560,6 +3027,49 @@ def test_runtime_three_checkpoint_is_nonterminal_and_requires_reconciled_resume(
     assert result.returncode == 0, allowed
     assert allowed["allowed"] is True
     assert allowed["checkpoint_active"] is False
+
+
+def test_checkpoint_requires_complete_recovery_state(tmp_path: Path) -> None:
+    repo, base = repository(tmp_path)
+    events = tmp_path / "checkpoint-completeness.jsonl"
+    append_event(
+        events,
+        {
+            "event": "scope",
+            "work_item": "parent",
+            "integration_sha": base,
+            "data": {
+                "children": ["ticket-1"],
+                "charter": {"id": "parent-charter", "runtime_contract": 3},
+            },
+        },
+    )
+
+    for field in (
+        "lanes",
+        "integration_checkout",
+        "serial_latch",
+        "result_queue",
+        "proof_state",
+        "open_work",
+    ):
+        data = checkpoint_data(base)
+        data.pop(field)
+        result, rejected = append_receipt(
+            events,
+            {
+                "event": "checkpoint",
+                "work_item": "parent",
+                "integration_sha": base,
+                "decision": "partial",
+                "data": data,
+            },
+            intent="checkpoint",
+            event_id=f"checkpoint-missing-{field}",
+            repo=repo,
+        )
+        assert result.returncode == 1
+        assert any(field in error for error in rejected["errors"])
 
 
 def test_checkpoint_rejects_a_null_head_without_repository_evidence(
@@ -1705,6 +3215,15 @@ def test_checkpoint_renderer_separates_implementation_from_tracker_closeout(
                 "charter": {"id": "parent-charter", "runtime_contract": 3},
             },
         },
+        {
+            "event": "frontier",
+            "work_item": "parent",
+            "data": {
+                "selected": ["ticket-1"],
+                "width": 1,
+                "reason": "serial-default",
+            },
+        },
         {"event": "lane-create", "work_item": "ticket-1", "data": {"lane_id": "lane-1"}},
         {"event": "lane-preflight", "work_item": "ticket-1", "data": {"lane_id": "lane-1"}},
         {"event": "dispatch", "work_item": "ticket-1", "data": {"lane_id": "lane-1"}},
@@ -1765,13 +3284,35 @@ def test_pre_review_integration_correction_advances_the_canonical_head(
                 "charter": {"id": "parent-charter", "runtime_contract": 3},
             },
         },
+        {
+            "event": "frontier",
+            "work_item": "parent",
+            "data": {
+                "selected": ["ticket-1"],
+                "width": 1,
+                "reason": "serial-default",
+            },
+        },
         {"event": "lane-create", "work_item": "ticket-1", "data": {"lane_id": "lane-1"}},
         {"event": "lane-preflight", "work_item": "ticket-1", "data": {"lane_id": "lane-1"}},
         {"event": "dispatch", "work_item": "ticket-1", "data": {"lane_id": "lane-1"}},
         {"event": "accept", "work_item": "ticket-1", "worker_sha": base},
         {"event": "land", "work_item": "ticket-1", "worker_sha": base, "integration_sha": base},
+        {
+            "event": "wave-validation",
+            "work_item": "parent",
+            "integration_sha": base,
+            "validation": "current wave proof passed",
+            "data": {"outcome": "pass", "proof": proof_evidence("wave")},
+        },
         {"event": "graph-drained", "work_item": "parent", "integration_sha": base},
-        {"event": "review-ready", "work_item": "parent", "integration_sha": base},
+        {
+            "event": "review-ready",
+            "work_item": "parent",
+            "integration_sha": base,
+            "validation": "current candidate proof passed at the public seam",
+            "data": {"proof": proof_evidence("candidate")},
+        },
     ):
         append_event(events, event)
 
@@ -1828,6 +3369,9 @@ def test_pre_review_integration_correction_advances_the_canonical_head(
     blocked_checkpoint = checkpoint_data(base)
     blocked_checkpoint["next_frontier"] = ["integration-correction"]
     blocked_checkpoint["blockers"] = ["integration-regression-1"]
+    blocked_checkpoint["open_work"]["integration_regression"] = (
+        "integration-regression-1"
+    )
     result, checkpoint = append_receipt(
         events,
         {
@@ -1853,7 +3397,9 @@ def test_pre_review_integration_correction_advances_the_canonical_head(
                 "worktrees": "none active",
                 "agents": "none active",
                 "tracker": "retained claim verified",
+                "claims": "retained claim read back",
                 "remote": "unchanged",
+                "integration_checkout": "ownership and registration read back",
             },
         },
     )
@@ -1878,6 +3424,7 @@ def test_pre_review_integration_correction_advances_the_canonical_head(
                 "route": "root-tiny",
                 "actor_id": "root",
                 "changed_scope": ["tracked-code"],
+                "proof": proof_evidence("correction"),
             },
         },
     )
@@ -1889,11 +3436,27 @@ def test_pre_review_integration_correction_advances_the_canonical_head(
 
     append_event(
         events,
+        {
+            "event": "wave-validation",
+            "work_item": "parent",
+            "integration_sha": corrected,
+            "validation": "corrected wave proof passed",
+            "data": {"outcome": "pass", "proof": proof_evidence("wave")},
+        },
+    )
+    append_event(
+        events,
         {"event": "graph-drained", "work_item": "parent", "integration_sha": corrected},
     )
     append_event(
         events,
-        {"event": "review-ready", "work_item": "parent", "integration_sha": corrected},
+        {
+            "event": "review-ready",
+            "work_item": "parent",
+            "integration_sha": corrected,
+            "validation": "current candidate proof passed at the public seam",
+            "data": {"proof": proof_evidence("candidate")},
+        },
     )
     result, ready = validate_state(events, "review", repo=repo)
     assert result.returncode == 0, ready
@@ -2513,14 +4076,23 @@ def test_finish_records_empty_friction_synthesis_and_renders_complete_campaign(
         "review_invocation_budget": 3,
         "review_invocations_required": 1,
     }
-    campaign[8] = {
+    add_runtime_three_execution_evidence(campaign, base)
+    review_invocation_index = next(
+        index
+        for index, event in enumerate(campaign)
+        if event["event"] == "review-target"
+    )
+    campaign[review_invocation_index] = {
         "event": "review-invocation",
         "event_id": "review-1",
         "work_item": "parent",
         "integration_sha": base,
         "data": {"mode": "initial", "reason": "first integrated candidate"},
     }
-    campaign[9]["data"] = {
+    review_decision = next(
+        event for event in campaign if event["event"] == "review-decision"
+    )
+    review_decision["data"] = {
         "review_invocation_id": "review-1",
         "mode": "initial",
         "findings": [],
@@ -2586,3 +4158,21 @@ def test_ledger_blocks_wrong_closeout_head_and_unreleased_lane(tmp_path: Path) -
     result, state = validate_state(events, "complete", repo=repo)
     assert result.returncode == 1
     assert any("after release" in error or "active lanes" in error for error in state["errors"])
+
+    events = tmp_path / "managed-integration-without-disposition.jsonl"
+    campaign = valid_campaign_events(base)
+    campaign[0]["data"]["integration_checkout"] = {
+        "mode": "managed-integration-worktree",
+        "path": str(tmp_path / "managed-integration"),
+        "git_common_dir": str(repo / ".git"),
+        "starting_head": base,
+        "cleanup_authority": "managed",
+    }
+    for event in campaign:
+        append_event(events, event)
+    result, state = validate_state(events, "complete", repo=repo)
+    assert result.returncode == 1
+    assert any(
+        "managed integration checkout lacks a safe final disposition" in error
+        for error in state["errors"]
+    )

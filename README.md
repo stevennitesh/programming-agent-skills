@@ -20,7 +20,7 @@ flowchart LR
     E --> F["Lock<br/>evidence + residual risk"]
 ```
 
-The diagram shows the common path, not a mandatory sequence. Each skill owns one engineering job, and `$skill-router` recommends exactly one next skill when route choice is the work.
+The diagram shows the common path, not a mandatory sequence. Each skill owns one engineering job, and `$skill-router` returns exactly one next skill or `none` when route choice is requested or an owner delegates terminal unowned residual work.
 
 ## Purpose
 
@@ -111,7 +111,7 @@ The portable contract carries the convergence loop, commitment boundaries, shapi
 - **Improve code and design:** `$improve-codebase`, `$simplify-code`, `$codebase-design`, `$domain-modeling`
 - **Route and maintain the pack:** `$repo-bootstrap`, `$skill-router`, `$writing-great-skills`
 
-The small [`GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`](GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md) bootstrap teaches Codex when to suggest `$skill-router` and `$repo-bootstrap`. Workflows stay with their skills, and personal global instructions stay local.
+The small [`GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`](GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md) bootstrap teaches Codex when to invoke the residual `$skill-router` or recommend `$repo-bootstrap`. Workflows stay with their skills, and personal global instructions stay local.
 
 ## Using The Full Pack
 

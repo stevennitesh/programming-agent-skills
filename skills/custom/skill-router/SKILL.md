@@ -1,18 +1,39 @@
 ---
 name: skill-router
-description: Route the current situation to exactly one next skill in this engineering pack.
+description: Route only an explicit next-skill selection request or a terminal out-of-scope residual packet delegated by another skill. Return one next skill or none without executing it. Do not replace an active skill's in-scope work or owned handoffs.
 ---
 
 # Skill Router
 
-**Route:** recommend exactly one next skill and stop. Downstream skills own their procedures, artifacts, mutations, proof, and completion.
+Own one decision: select one next skill or `none` for an explicit route-selection request or a terminal residual packet outside its caller's scope. Never interrupt an active owner's in-scope work, replace a known contractual handoff, or start downstream execution.
 
 ## Spine
 
-1. **Inspect.** Use the user's stated situation and visible repo state. Inspect only a fact that could change the route.
-2. **Clarify.** If two routes remain plausible, ask one highest-leverage question and wait.
-3. **Route.** Choose one route below. If the chosen engineering route depends on a missing or outdated setup surface, route to `$repo-bootstrap` instead.
-4. **Stop.** Return `Skill: <skill-name>`, `Reason: <why it wins>`, and `Precondition: <setup or handoff need | none>`. The user starts it; downstream work remains unstarted.
+1. **Admit.** Accept only an explicit route-selection request or a caller-delegated terminal residual. Return to the caller when work remains in its scope or an owned handoff applies.
+2. **Inspect.** Use the packet and visible repository state. Inspect only facts that can change ownership.
+3. **Exclude.** Remove the current owner, Skill Router, exhausted owners, and routes whose admission predicates fail.
+4. **Prefer.** Choose the narrowest owner that can close the residual: one leaf before an orchestrator, an owned deterministic handoff before routing, and settled delivery before renewed discovery. When the chosen engineering route requires a missing or outdated setup surface, select `$repo-bootstrap` instead.
+5. **Clarify.** Ask one highest-leverage question only when two routes remain materially plausible and the packet cannot decide.
+6. **Return.** Recommend exactly one skill or `none`, name its precondition, and stop without executing it.
+
+## Residual Packet
+
+A caller supplies as much as it knows:
+
+```text
+Current owner:
+Owner result: complete | blocked | rejected as out of scope
+Original outcome:
+Residual work:
+Available evidence and source pointers:
+Attempted or exhausted owners:
+Rejected or excluded routes:
+Known decisions and prerequisites:
+Constraints and authority:
+Caller return boundary:
+```
+
+A caller may not label expected, difficult, or merely unfinished in-scope work as residual.
 
 ## Route Map
 
@@ -68,3 +89,33 @@ description: Route the current situation to exactly one next skill in this engin
 `$domain-modeling` and `$codebase-design` are shared disciplines. Route to them when language or interface shape is the work; otherwise let the owning workflow load them.
 
 **Handoff / compact:** `$handoff` carries context to a fresh session or agent thread; `/compact` continues the current conversation.
+
+## Wayfinder Pre-Screen
+
+Select `$wayfinder` only when one bounded destination remains foggy, at least two interdependent material decisions remain, at least one needs non-conversational work, and the set needs durable tracker-backed sequencing. Question count, size, severity, session count, or generic fog alone does not qualify.
+
+Prefer `$grill-with-docs` for question- or domain-only work; `$domain-modeling` for settled domain persistence; the direct leaf for one evidence gap; `$to-spec` for settled source needing a parent artifact; `$to-tickets` for several settled slices; `$implement` for one ready slice; and `none` when no skill owns the residual.
+
+A Wayfinder rejection excludes Wayfinder until material evidence changes its Admission state.
+
+## Loop Guards
+
+- Never select Skill Router.
+- Never immediately return unchanged residual work to the caller that rejected it.
+- A leaf invoked by an orchestrator returns to that orchestrator; it does not route the next step.
+- An open Wayfinder campaign keeps in-scope consequences inside its map.
+- Grill With Docs invoked by Wayfinder returns residuals to that map.
+- Repeated routing with an unchanged packet returns the same route or `none`.
+- A recommendation never starts the selected skill.
+
+## Return
+
+```text
+Skill: <skill-name> | none
+Reason:
+Precondition:
+Return boundary:
+Downstream execution: none
+```
+
+Complete when Admission holds, exclusions and the narrowest-owner preference leave one justified route or `none`, Return is complete, and downstream execution remains unstarted.

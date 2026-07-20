@@ -40,6 +40,8 @@ Every ticket satisfies the tracker's Ready-for-agent contract and adds:
 - what to build;
 - relevant Source Trace and durable context pointers.
 
+When the parent may route to `$parallel-implement`, add one compact execution profile: blocking dependencies, semantic owner, expected production scope, exclusions, highest meaningful public proof seam, proof fixture or command, size (`small` or `substantial`), known shared seam or scarce proof resource, and any serial tripwire. A parallel-eligible slice must be substantial enough that its likely implementation saving can repay dispatch, context loading, root inspection, serial landing, and recombined proof. Mark smaller work for serial coalescing; do not inflate it into a ticket merely to create a lane.
+
 Separate behavior, state transitions, failure or permission boundaries, integration risks, and support work when they require independent proof. Start with the happy-path tracer when the end-to-end route is unproven.
 
 For a stateful boundary, include the engineering contract's state-boundary matrix in acceptance and its proof lane. Name every applicable branch and any explicitly non-applicable axis. Do not defer supported-path discovery to implementation or formal review.
@@ -72,6 +74,6 @@ Return the published references, packet path when applicable, verified initial r
 - non-empty parent graph with an explicitly requested parent-delivery run: recommend `$parallel-implement` with the parent, regardless of initial frontier width;
 - one ready ticket: recommend `$implement` for it;
 - write-overlapping tickets: name the first ticket under the tracker's ready order and recommend `$implement` for that ticket;
-- at least two tickets with independent write scopes and proof lanes: recommend `$parallel-implement`.
+- at least two substantial tickets with independent semantic ownership, production write scopes, and proof lanes: recommend `$parallel-implement`.
 
 Complete only when the setup, source, coverage, and approval gates pass; every ticket satisfies the Ready-for-agent contract; publication and read-back succeed; and the verified frontier plus one next action are returned.

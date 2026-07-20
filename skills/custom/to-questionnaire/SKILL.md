@@ -1,32 +1,69 @@
 ---
 name: to-questionnaire
-description: Create one Markdown discovery questionnaire for one external stakeholder who holds facts or decisions the user cannot supply.
+description: Create one recipient-ready Markdown questionnaire when the user requests it or an active caller delegates one external-stakeholder knowledge gap with one recipient, downstream decision, needed-back ledger, and authorized output location. Return the verified path without sending, answering, or continuing the caller's workflow.
 ---
 
 # To Questionnaire
 
-**Outcome:** one recipient-ready questionnaire that closes a named knowledge gap for one downstream decision.
+Own one outcome: one recipient-ready Markdown questionnaire for one external stakeholder, plus its verified path and needed-back ledger.
 
-**Boundary.** This skill owns send intake, the needed-back ledger, question design, one Markdown artifact, verification, and its returned path. The user owns the recipient, delivery, answers, and downstream decision. Leave tracker, domain, specification, Git, and external state unchanged. Never contact or answer for the recipient.
+This skill owns send intake, question design, one artifact, and verification. The caller owns its decision, tracker or workflow state, answer verification, and next transition. The user owns the recipient, delivery, answers, and unapproved sensitive material. Leave tracker, domain, specification, implementation, Git, and external state unchanged.
 
-**Grill the send, not the subject.**
+## Direct Or Delegated
 
-**Admit.** Proceed only when one identifiable external stakeholder owns material knowledge unavailable from inspectable sources. When sources can answer, recommend `$research` and stop. When the current user owns the decision, recommend `$grilling` and stop.
+A direct user invocation may infer available context and ask one compact intake for missing send information the user can reasonably know.
 
-**Lock.** Trace supplied context. Lock one recipient; their role, expertise, and relationship to the sender; the downstream decision; what must be learned; how answers will be used; the deadline; the effort budget; and the authorized output path. Infer available fields. Ask one compact intake only for missing send information the user can reasonably know.
+A delegated invocation must supply:
 
-**Gap.** Build a needed-back ledger. Each missing fact, judgment, constraint, example, or risk names the downstream decision it unlocks. When materially different gaps belong to different recipients, return the proposed split instead of blending them.
+```text
+Caller and return owner:
+Caller item or decision identifier:
+Recipient name or role:
+Recipient expertise and relationship to sender:
+Downstream decision or prerequisite:
+Needed-back ledger:
+Authorized context and source pointers:
+Deadline and effort budget:
+Authorized output root or exact path:
+Sensitive-context constraints:
+Known delivery assumptions:
+```
 
-**Draft.** Give the recipient enough context to answer without reconstructing the conversation. Order questions by decision value, then dependency. Keep each question neutral, recipient-answerable, and about one idea. Add answer space and a short “why this matters” only when it prevents misreading.
+When a delegated field is missing, return that exact field to the caller without creating a partial artifact or choosing the caller's next action.
 
-Use a title; purpose and decision; sender, recipient, and answer use; context; answering instructions; themed questions; and a final catch-all.
+## Admit
 
-**Cover.** Map every needed-back item to a question. Remove duplicate, compound, leading, speculative, source-answerable, and out-of-scope questions. The catch-all does not cover a known ledger item.
+Proceed only when one identifiable stakeholder owns material knowledge unavailable to the caller and authorized inspectable sources; one downstream decision depends on it; the ledger fits one recipient and coherent questionnaire; an authorized path exists; and delivery plus downstream authority remain outside this skill.
 
-**Save.** Write exactly one file. Default to `<work-root>/.tmp/to-questionnaire/<slug>.md` after verifying the path is ignored. Otherwise recommend `$repo-bootstrap` and stop. An explicitly supplied path overrides the default.
+Source-answerable facts return `$research` as the missing owner. A current-user preference or tradeoff returns `$grilling`. Several recipients return a proposed split without writing. Missing output setup recommends `$repo-bootstrap` only when no explicitly authorized or verified ignored path exists.
 
-**Verify.** Reread the artifact as the recipient. Verify identity, context, coverage, priority, answerability, effort fit, sensitive-context minimization, path existence, and that only the authorized file changed.
+## Compose
 
-**Return.** Report the absolute path, recipient, downstream decision, covered ledger items, and unresolved send assumptions. Stop before delivery or downstream synthesis.
+1. **Lock.** Lock recipient, role, relationship, downstream decision, ledger, answer use, deadline, effort budget, and path.
+2. **Gap.** Map each missing fact, judgment, constraint, example, or risk to what it unlocks.
+3. **Draft.** Supply bounded context. Order questions by decision value and dependency. Keep each neutral, atomic, recipient-answerable, and within recipient authority.
+4. **Cover.** Map every ledger item to questions. Remove duplicates, compounds, leading or speculative wording, source-answerable items, unnecessary sensitive context, and scope drift. A catch-all covers no known item.
+5. **Save.** Write exactly one Markdown file at the authorized path; otherwise use `<work-root>/.tmp/to-questionnaire/<slug>.md` only after proving it ignored.
+6. **Verify.** Reread as the recipient. Verify identity, purpose, context, coverage, priority, answerability, effort fit, sensitive-context minimization, path existence, and one-file containment.
 
-Complete only when Admit passes; one recipient and downstream decision are locked; every needed-back item has an atomic, recipient-answerable question; the questionnaire fits the effort budget; the artifact passes reread; only the authorized file changed; and its path and unresolved assumptions are returned.
+Use a title; purpose and downstream decision; sender, recipient, and answer use; bounded context; instructions; themed questions with answer space; and one final catch-all.
+
+## Return
+
+```text
+Artifact path:
+Recipient:
+Downstream decision or prerequisite:
+Covered needed-back ledger:
+Question count and effort estimate:
+Authorized source pointers used:
+Unresolved send assumptions:
+Delivery: not performed
+Caller retains: tracker, waiting, answer verification, downstream decision, and next-transition authority
+```
+
+Return to the delegating caller and stop. Do not recommend another route after a delegated run.
+
+## Completion
+
+Complete when Admit passes; recipient and decision are locked; every ledger item has an atomic recipient-answerable question; the effort budget fits; sensitive context is minimized; reread and one-file containment pass; and Return is complete. Stop before delivery, answer collection, answer interpretation, or caller continuation.

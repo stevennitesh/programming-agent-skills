@@ -11,28 +11,31 @@ Runtime authority remains in:
 - `docs/synthesis/skill-context-relationships.md`; and
 - the target repository's domain and engineering contracts.
 
-The proposed runtime extraction in this note does not become authoritative until the canonical Wayfinder skill, supporting files, tracker templates, tests, behavior evaluations, and installed mirrors are updated and validated together.
+The coordinated canonical candidate has been extracted into the Wayfinder skill, supporting files, tracker templates, relationships, tests, and behavior-evaluation definitions. Canonical structural validation passes. This synthesis does not claim staged behavior promotion or installed-mirror parity; the global mirror remains intentionally unsynchronized until separately authorized.
 
 ## How To Read This Document
 
-This synthesis is intentionally exhaustive. Its job is to preserve the complete design, authority model, rationale, alternatives, edge cases, migration surface, and future runtime extraction. Concision belongs to the eventual runtime skill, not to this source of design understanding.
+This synthesis is exhaustive only for accepted behavior, material alternatives, and proof needed for extraction. Retain a paragraph only when removing it would change runtime design, implementation sequencing, validation, or a future promotion decision. Historical discussion belongs in research or validation evidence; concision belongs to the eventual runtime skill.
 
 The document has four layers:
 
 1. **Orientation** gives the destination, boundaries, operation vocabulary, and explanatory end-to-end flow.
 2. **Normative Design** is the sole authority for proposed runtime behavior and relationships. The state-transition table is the sole state-machine authority.
-3. **Evidence And Rationale** preserves explanations, audits, alternatives, and edge cases without creating authoritative runtime rules.
+3. **Evidence And Rationale** preserves rationale, deliberate non-changes, and deferred hypotheses without creating authoritative runtime rules.
 4. **Extraction And Verification** places and proves the exhaustive design without redefining it.
 
-Change proposed runtime behavior in Layer Two; explain it in Layer Three; place and prove it in Layer Four. The Normative Home Index assigns each behavior one authority. The Runtime Ownership And Change Map owns file placement, the Staged Behavior-Evaluation Protocol owns proof mechanics, and the Migration And Acceptance Matrix owns case coverage only. [Synthesis Ownership](../README.md#synthesis-ownership) governs cross-document placement: this note owns Wayfinder's process and required capability outcomes, while each foreign file owner's synthesis owns its concrete rewrite. Correct any diagram, rationale, ownership row, or acceptance case that disagrees with its Layer Two owner.
+Change proposed runtime behavior in Layer Two; explain it in Layer Three; place and prove it in Layer Four. The Design Verdict summarizes selected extraction status without creating rules. The Normative Home Index assigns each behavior one authority; the Runtime Ownership And Change Map owns file placement and source bundles; the Staged Extraction Plan owns implementation order; the Staged Behavior-Evaluation Protocol owns proof mechanics; and the Migration And Acceptance Matrix owns case coverage only. [Synthesis Ownership](../README.md#synthesis-ownership) governs cross-document placement: this note owns Wayfinder's process and required capability outcomes, while each foreign file owner's synthesis owns its concrete rewrite. Correct any diagram, rationale, ownership row, or acceptance case that disagrees with its Layer Two owner.
 
 Use this index for direct navigation:
 
 | Question | Owning section |
 | --- | --- |
+| What is selected now, required from other owners, deferred, or rejected? | [Design Verdict](#design-verdict) |
+| How may Wayfinder be reached? | [Invocation](#invocation) |
 | Where does each rule live? | [Normative Home Index](#normative-home-index) |
 | Should a campaign exist? | [Qualification](#qualification) and [Admission](#admission) |
 | What may the current map do next? | [Normative State Model](#normative-state-model) |
+| When is the selected operation complete? | [Operation And Completion Contracts](#operation-and-completion-contracts) |
 | How does a waiting or blocked map regain a frontier? | [Resume](#resume) |
 | Which claim is required and when? | [Campaign Claim](#campaign-claim) |
 | Which resolver owns a ticket? | [Ticket Contract And Resolver Taxonomy](#ticket-contract-and-resolver-taxonomy) |
@@ -45,7 +48,8 @@ Use this index for direct navigation:
 | What does every invocation return? | [Return Contract](#return-contract) |
 | Which skill owns each composition edge? | [Relationship Ownership](#relationship-ownership) |
 | Which context loads for the selected state? | [Runtime Context Loading Contract](#runtime-context-loading-contract) |
-| What belongs in the eventual runtime files? | [Runtime Ownership And Change Map](#runtime-ownership-and-change-map) |
+| How should the eventual main skill read? | [Proposed Runtime Semantic Surface](#proposed-runtime-semantic-surface) |
+| What belongs in each runtime surface and implementation stage? | [Runtime Ownership And Change Map](#runtime-ownership-and-change-map) and [Staged Extraction Plan](#staged-extraction-plan) |
 | How will the extracted runtime be verified and promoted? | [Staged Behavior-Evaluation Protocol](#staged-behavior-evaluation-protocol), [Migration And Acceptance Matrix](#migration-and-acceptance-matrix), and [Promotion Gate And Residual Gaps](#promotion-gate-and-residual-gaps) |
 
 # Layer One: Orientation
@@ -64,6 +68,18 @@ Wayfinder is warranted only when all conditions hold:
 4. the route needs finite tracker-backed sequencing across sessions.
 
 Question count, project size, severity, generic uncertainty, or multi-session work alone never justifies Wayfinder. One bounded resolver stays with its current owner. Conversation-and-domain-only work belongs to `$grill-with-docs`. Settled domain truth needing only persistence belongs to `$domain-modeling`.
+
+## Design Verdict
+
+This table summarizes extraction status and points to the sections that own the behavior. It does not create runtime rules.
+
+| Stratum | Selected shape | Runtime status |
+| --- | --- | --- |
+| Wayfinder core | One bounded tracker-backed map; one normative state model; serial single-ticket Advance; one Mutation Envelope; bounded outcome, expansion, and correction growth; snapshot-gated Closeout; To Spec as the successful exit; and `SKILL.md`, `OPERATIONS.md`, and `MAP-FORMAT.md` as the runtime surfaces | Ready for coordinated staged extraction from Layer Two |
+| Invocation | Explicit-only; the user deliberately starts or resumes Wayfinder by naming `$wayfinder`; upstream skills and Skill Router may recommend it and stop | Preserve `allow_implicit_invocation: false` through extraction and promotion |
+| Required capability deltas | Design Coherence reference, provider tracker capabilities, bounded resolver returns, Router boundaries, tests, evaluations, and mirror parity | Required before promotion; concrete foreign rewrites remain with their owners |
+| Deferred hypotheses | Parallel Advance and a separate authority-transfer operation | Excluded from the first runtime; require observed need and independent evidence before design admission |
+| Rejected machinery | Operation-per-file sprawl, a closure schema or helper, a parallel event ledger, provider procedure inside Wayfinder, full Codebase Design invocation at gates, and direct delivery-skill exits | Preserve the simpler selected owners and boundaries |
 
 ## Delivery Boundary
 
@@ -103,7 +119,7 @@ Return
 - **Reconcile** accounts for direct consequences without resolving another ticket implicitly.
 - **Return** exposes the durable state, evidence, budget, and next permitted operation, then stops.
 
-Closeout is a first-class operation. Advance or Maintain may hand directly into Closeout after their own completion and fresh orientation, but Closeout retains a separate contract and completion criterion.
+Closeout is a first-class operation. Only a completed Advance may hand directly into Closeout after fresh orientation; every other operation returns first. Closeout retains its own branch and completion-table row.
 
 Advance is serial per map. Exactly one operation-qualified campaign claim may be active for a map, so every substantive outcome reconciles before another resolver starts. External waits release the claim and leave other ready tickets eligible for a later Advance.
 
@@ -194,16 +210,19 @@ Each behavior has one normative home. Other sections may point, explain, execute
 
 | Concern | Sole normative home | Other appearances |
 | --- | --- | --- |
+| Invocation reach | [Invocation](#invocation) | Design Verdict, Relationship Ownership, runtime ownership, and invocation evaluation |
 | Human and durable authority | [Authority Gates](#authority-gates) and [Destination And Campaign Charter](#destination-and-campaign-charter) | Operation prerequisites and acceptance cases |
 | Campaign qualification and admission | [Qualification](#qualification) and [Admission](#admission) | Flowchart and invocation evaluation |
 | First map creation | [Chart](#chart) | State-table entry and provider tests |
 | State derivation and next-operation selection | [Normative State Model](#normative-state-model) | Flowchart, operation entry, and state scenarios |
-| Mutation concurrency, persistence, and recovery | [Campaign Claim](#campaign-claim) | Operations name only their unique mutation and completion |
+| Operation completion and legal nonterminal return | [Operation And Completion Contracts](#operation-and-completion-contracts) | Named operation sections perform unique work; Return supplies packet fields |
+| Mutation concurrency, persistence, and recovery | [Campaign Claim](#campaign-claim) | Operations name only their unique mutation and failure handling |
+| Provider objects and primitives required by Wayfinder | [Tracker Mapping Boundary](#tracker-mapping-boundary) | Repo Bootstrap templates map and validate them without owning process |
 | Ticket meaning and resolver authority | [Ticket Contract And Resolver Taxonomy](#ticket-contract-and-resolver-taxonomy) | Chart packets and resolver evaluations |
 | Persisted map shape | [Map Artifact Contract](#map-artifact-contract) | Provider representation and read-back tests |
 | Fog liveness | [Tethered Fog](#tethered-fog) | Admission and Reconcile outcomes |
 | Counters and graph growth | [Campaign Budgets And Progress](#campaign-budgets-and-progress) | Operations invoke the shared authority without restating it |
-| Operation-specific work and completion | The named operation section | Transition table selects; acceptance matrix tests |
+| Operation-specific work and failure handling | The named operation section | Completion table decides when the operation may end |
 | Closure evidence and comparison | [Revision-Backed Closure Evidence](#revision-backed-closure-evidence) | Closeout executes; provider templates transport |
 | Successful closure | [Closeout](#closeout) | Transition table and delivery evaluation |
 | Unsuccessful closure | [Terminate](#terminate) | Authority gate and terminal scenarios |
@@ -211,6 +230,10 @@ Each behavior has one normative home. Other sections may point, explain, execute
 | Composition edges, exclusions, and handoff boundaries | [Relationship Ownership](#relationship-ownership) | Resolver sections and relationship evaluation |
 | Context selection and progressive disclosure | [Runtime Context Loading Contract](#runtime-context-loading-contract) | Runtime ownership map and context-loading evaluation |
 | Invocation output | [Return Contract](#return-contract) | Every operation supplies its applicable fields |
+
+## Invocation
+
+Wayfinder is explicit-only. A user starts or resumes it by naming `$wayfinder`; its own Qualification and Admission still decide whether a campaign may proceed. Skill Router and other skills may recommend Wayfinder and stop, but they never invoke, compose, or continue it automatically. Preserve `policy.allow_implicit_invocation: false`; use the description only to explain the human-selected capability.
 
 ## Authority Gates
 
@@ -277,7 +300,7 @@ Run Qualification only when a tracker read proves zero matching maps. Multiple p
 
 After a zero-match result, invoke `$grill-with-docs` only far enough to populate the Campaign Charter and one proposed graph packet: known decisions and prerequisites; typed tickets, edges, frontier or waiting trigger; tethered fog; design framing; domain and ADR mode; graph-derived budgets; and exact Admission gaps. Stable destination identity is the provider lookup and later Chart-refetch key.
 
-Qualification uses the Codebase Design-owned design-coherence reference as framing. It does not invoke `$codebase-design`, choose an architecture, or resolve the destination's substantive decisions. Known design questions become proposed Design tickets; unclear design concerns remain tethered fog.
+Qualification reads [Design Coherence Frame](codebase-design.md#frame). Every applicable criterion returns an accepted Constraint, bounded Question, Evidence gap, or evidenced non-applicability. Wayfinder alone maps a material Evidence gap to tethered fog under its Fog contract. It does not invoke `$codebase-design`, choose an architecture, or resolve the destination's substantive decisions.
 
 Lock one domain-persistence mode:
 
@@ -301,9 +324,9 @@ Admit Wayfinder only when the qualification packet proves all of these predicate
 7. the proposed graph has a dependency-ready frontier or one named external waiting trigger;
 8. design-relevant concerns are represented as accepted constraints, proposed Design tickets, or tethered fog rather than silent architectural assumptions;
 9. finite outcome and expansion budgets, their calculations, and any named contingency are approved; and
-10. tracker operations required by the proposed map are available, including one-active-campaign-claim enforcement, provider revision evidence, and mutation read-back.
+10. the target's `Wayfinder tracker mapping` supplies every required object and primitive, including a configured exclusive-claim capability, provider revision token, release mapping, and mutation read-back.
 
-Admission performs no tracker mutation. A destination requiring only conversation or domain persistence fails Admission. A missing or outdated tracker setup operation returns `$repo-bootstrap` as the exact precondition rather than creating a partially executable map.
+Admission performs no tracker mutation. A destination requiring only conversation or domain persistence fails Admission. A missing, placeholder, `unavailable`, or incompatible tracker mapping returns `$repo-bootstrap` as the exact precondition rather than creating a partially executable map.
 
 On failure, return this packet to Skill Router and stop:
 
@@ -378,6 +401,21 @@ The following table is the sole state-machine authority:
 
 Closed semantic history is immutable except for bounded delivered-map Reopen. A pack or tracker migration may add consequence-only representation metadata to a closed record only through the owning migration contract; it never changes the historical decisions, disposition, or closure evidence through Wayfinder Maintain.
 
+## Operation And Completion Contracts
+
+The Normative State Model alone selects the next operation. This table alone decides when that selected operation is complete and which nonterminal result may end the invocation. The Return Contract alone defines the shared packet fields.
+
+| Operation | State-table selector | Complete when | Legal nonterminal return |
+| --- | --- | --- | --- |
+| **Chart** | Chart row | Pre-create identity remained zero; exactly the new map became canonical; the approved map and exact graph read back; initial state and frontier or wait are visible; no child resolution or claim remains | Existing, ambiguous, different, or unreadable identity packet; created-map recovery packet when post-create identity is not canonical |
+| **Orient** | Universal invocation entry, then one matching state-table row | Fresh identity, representation, lifecycle, disposition, claims, counters, edges, and provider state derive one integrity result and exactly one permitted operation or return | Ambiguous identity, incompatible state, immutable terminal state, waiting trigger, blocker, setup precondition, or exact missing authority |
+| **Advance** | Advance row | Exactly one selected ticket has one substantive outcome, or one Questionnaire ticket has a verified `awaiting-external-response` packet with its reservation preserved; every other mutation is a direct consequence; fog, counters, claim absence, and the next frontier or waiting state read back | One Questionnaire waiting packet with artifact, ledger, owner, trigger, preserved reservation, and unchanged used counter; or one transient incomplete-attempt packet with recovery evidence and unchanged outcome and counters |
+| **Maintain** | Maintain row | Every evidence-determined repair reads back; no material meaning or ticket outcome changed; claim absence and the resulting state read back | Incompatible packet naming the decision, scope change, unavailable provider operation, or nondeterministic repair that withholds authority |
+| **Resume** | Resume Wake or Recover row | One satisfied trigger or intervention and every direct consequence read back; net growth reconciles; no ticket outcome changed; claim absence and the resulting state read back | Unsatisfied or incomplete condition, destination or scope change, exhausted-budget successor blocker, or incompatible packet |
+| **Closeout** | Closeout row | Gather is complete; every Coherence lens passes; Durability returns no delta or verified persistence without contradiction; Seal proves unchanged declared fields; sealed packet, delivered close, post-close revision, claim absence, and post-release revision read back; To Spec is the successful route | Typed gap or blocker, approval wait without a claim, amendment or successor requirement, provider recovery packet, or semantic-change reorientation |
+| **Terminate** | Terminate row | Destination-owner confirmation, terminal disposition, reason, evidence, budgets, unresolved obligations, recovery or successor boundary, closed state, and claim absence read back | Open state unchanged plus the exact missing confirmation or incompatible terminal evidence |
+| **Reopen** | Reopen row | Prior generations remain immutable; approved correction evidence, budget, and frontier read back; lifecycle is open and active; claim absence and next operation are visible | Destination-owner judgment, amendment or capacity blocker, successor requirement, or provider recovery packet |
+
 ## Waiting And Blocked
 
 `waiting` means progress depends on one named external response or event with an identified owner, needed-back ledger, and observable resumption trigger.
@@ -396,11 +434,13 @@ Every mutating operation uses one envelope:
 2. Acquire and read back one map-scoped claim containing actor, token, timestamp, operation, and the selected ticket only for Advance.
 3. Perform only the selected operation's authorized mutation and apply Graph-Growth Authority when obligations change.
 4. Reconcile and read back every affected artifact, relationship, state field, counter, evidence pointer, and provider revision required by that operation.
-5. Release the claim, read back its absence, Orient from fresh state, and Return or enter a newly applicable operation.
+5. Release the claim, read back its absence, and Orient from fresh state. Return after every operation. The sole same-invocation continuation is from a completed Advance into Closeout when fresh Orient selects Closeout; never start a second resolver or Advance.
 
-### Transport And Lifetimes
+### Semantics And Lifetimes
 
-The tracker contract exclusively owns claim transport, token generation, leases, timestamps, staleness, takeover authority, and recovery. It also owns the provider-native mutation and read-back mechanism. Wayfinder owns operation purpose, the envelope boundaries, semantic comparison, and the exact permitted delta. A ticket may show `In Progress` and point to the map claim but never carries independent concurrency authority.
+Wayfinder owns claim-token generation, timestamps, fields, operation purpose, lifetime, semantic comparison, staleness, takeover authority, failure recovery, release semantics, and the exact permitted delta. Generate one fresh `codex/<lowercase UUIDv4>` token and UTC timestamp per invocation. Elapsed time alone never makes a claim stale. Replacing a foreign claim requires recorded prior evidence, reason, and destination-owner or provider-administrator authority.
+
+The target tracker mapping owns only provider representation and primitives: claim storage, a conditional mutation or exclusive lock against a captured revision, release, revision token, and refetch. The configured acquisition must fail when another actor wins or the captured revision changes; ordinary last-write-wins mutation plus read-back is evidence, not acquisition. When no exact primitive and losing-race result are configured, capability is `unavailable` and Wayfinder returns the Repo Bootstrap precondition before mutation. Assignment may mirror the actor but grants no destination or decision authority; a ticket may point to the map claim but never carries independent concurrency authority.
 
 | Operation purpose | Unique claim lifetime |
 | --- | --- |
@@ -412,7 +452,23 @@ The tracker contract exclusively owns claim transport, token generation, leases,
 | Terminate | Confirmed terminal mutation through terminal read-back |
 | Reopen | Delivered-to-open transition through authorized frontier read-back |
 
-External waits retain no claim. A failed acquisition, mutation, read-back, or release stops with the tracker-owned recovery action; Wayfinder never removes a foreign claim without tracker-owned authority. A final Advance may enter Closeout in the same invocation only after its envelope completes and fresh Orient proves the Closeout row applies.
+External waits retain no claim. A failed acquisition, mutation, read-back, or release returns applied operations, failed operations, current claim evidence, and the safest mapped recovery action. Wayfinder never removes a foreign claim without recorded takeover authority. Release removes the configured guard and claim representation, then proves their absence. A final Advance may enter Closeout in the same invocation only after its envelope completes and fresh Orient proves the Closeout row applies.
+
+## Tracker Mapping Boundary
+
+Before mutation, read the target's `Wayfinder tracker mapping`. It must map exactly these provider-neutral surfaces:
+
+1. map object and open-plus-closed lookup input;
+2. ticket object;
+3. resolver-type labels or fields;
+4. parent and blocking relationships;
+5. campaign-claim storage;
+6. exclusive-claim capability, recorded as configured with its exact invocation and losing-race result or as `unavailable`;
+7. claim-release primitive;
+8. revision token; and
+9. read-back primitive returning provider errors and observed fields.
+
+The mapping answers only where data lives and which primitive exposes it. Wayfinder owns identity cardinality and comparison, every persisted field's meaning, state and frontier derivation, claim semantics, operation order, authority, recovery, budgets, and completion. Repo Bootstrap selects, provisions, reconciles, and structurally validates the mapping; it never interprets Wayfinder state.
 
 ## Ticket Contract And Resolver Taxonomy
 
@@ -527,11 +583,11 @@ Chart proposes and locks two finite original-campaign counters:
 
 The proposal is graph-derived rather than an unexplained number. Outcome budget includes one unit for every initial ticket and one explicitly named finite contingency when uncertainty warrants it. Each unresolved ticket reserves one outcome unit; its substantive outcome converts that unit to used. Uncommitted outcome capacity is the total minus used and reserved units. Resume never consumes outcome budget. Expansion budget is the maximum accepted net-new direct-consequence obligations. The approval packet shows both calculations. No silent reserve exists.
 
-Every original-campaign completed Advance converts the selected ticket's reserved outcome unit to used, including Resolved, Blocked, or Out of Scope. A correction-generation Advance converts its reserved correction unit to used instead. `Blocked` is substantive only when it records one durable exact intervention or external prerequisite. A transient tool, access, or resolver failure is an incomplete attempt: record recovery evidence, release and read back the claim, leave counters and ticket outcome unchanged, and Return. A repeated or confirmed non-transient failure must become Blocked rather than cycle as incomplete.
+Every outcome-producing original-campaign Advance converts the selected ticket's reserved outcome unit to used, including Resolved, Blocked, or Out of Scope. A correction-generation Advance converts its reserved correction unit to used instead. A Questionnaire waiting return preserves its reservation and leaves used unchanged until verified answers later produce a substantive outcome. `Blocked` is substantive only when it records one durable exact intervention or external prerequisite. A transient tool, access, or resolver failure is an incomplete attempt: record recovery evidence, release and read back the claim, leave counters and ticket outcome unchanged, and Return. A repeated or confirmed non-transient failure must become Blocked rather than cycle as incomplete.
 
 During the original campaign, every net-new obligation consumes expansion and must fit within uncommitted outcome capacity. A bounded replacement removes or invalidates its named source obligation and consumes expansion only for net growth; reopening an existing obligation consumes none. Correction generations use the approved correction packet and budget below instead of expansion. Consequence-only Maintain, Resume, read-only Closeout work, tracker recovery, incomplete attempts, and Return consume no budget.
 
-Each Advance must resolve, narrow, replace, exclude, or exactly block an existing obligation. A new ticket or fog item names its source outcome, destination impact, in-scope reason, budget effect, and blocking relationship. It may not restart the same question under another label.
+Each outcome-producing Advance must resolve, narrow, replace, exclude, or exactly block an existing obligation. A Questionnaire waiting return instead preserves the obligation and records one external owner, needed-back ledger, observable trigger, and artifact pointer. A new ticket or fog item names its source outcome, destination impact, in-scope reason, budget effect, and blocking relationship. It may not restart the same question under another label.
 
 When an operation exhausts a required budget while obligations remain, Reconcile records `open` + `blocked` under the current claim with total, reserved, used, and uncommitted capacity; resolved and unresolved obligations; why the approved graph underestimated the route; and the exact destination-owner successor decision. The existing map's budget is never silently extended. Continued wayfinding requires confirmed supersession and a newly qualified successor campaign.
 
@@ -549,18 +605,17 @@ An operation may expose a proposed obligation but cannot create it without the a
 
 ## Advance
 
-Advance resolves exactly one selected frontier ticket:
+Advance processes exactly one selected frontier ticket toward one substantive outcome or one authorized external wait:
 
 1. Orient and select the named frontier ticket or the first frontier ticket in map order.
 2. Verify that the selected ticket owns one reserved outcome or correction unit and that total, reserved, used, and uncommitted counters reconcile.
 3. Under the Mutation Envelope, invoke the ticket's resolver using its locked participation and authority.
 4. On a transient incomplete attempt, record recovery evidence and complete the envelope without changing outcome or counters. A repeated or confirmed persistent failure becomes Blocked.
-5. Otherwise record exactly one substantive outcome—Resolved, Blocked, or Out Of Scope—and convert the ticket's reservation to used.
-6. Apply Graph-Growth Authority and reconcile only direct tickets, dependencies, fog, domain candidates, design consequences, counters, and resulting disposition without answering another ticket.
+5. When a Questionnaire resolver returns a verified artifact, record `awaiting-external-response`, its artifact pointer, needed-back ledger, external owner, and observable trigger; preserve its reservation and used counter; Reconcile to `active` when another frontier ticket remains or `waiting` when none remains; complete the envelope and Return.
+6. Otherwise record exactly one substantive outcome—Resolved, Blocked, or Out Of Scope—and convert the ticket's reservation to used.
+7. Apply Graph-Growth Authority and reconcile only direct tickets, dependencies, fog, domain candidates, design consequences, counters, and resulting disposition without answering another ticket.
 
 Advance touches only the selected ticket and direct consequences. It never starts another resolver before the envelope completes.
-
-Advance completes when exactly one ticket has a substantive outcome; every other mutation is consequence-only; every affected fog item has one disposition; claim release reads back; counters reconcile; and the next state or Closeout entry is visible. An incomplete attempt is a terminal invocation result, not a completed Advance.
 
 ## Maintain
 
@@ -571,8 +626,6 @@ Maintain applies only to `repairable-drift`:
 3. Record no substantive child outcome and make no material decision.
 
 If repair permits discretion, requires a decision, changes approved meaning, crosses scope, or needs an unavailable tracker operation, integrity is incompatible and Maintain is not authorized. Closed records remain outside Wayfinder Maintain.
-
-Maintain completes when every deterministic repair reads back, zero ticket outcomes changed, the campaign claim is absent, and the resulting state is visible.
 
 ## Resume
 
@@ -587,11 +640,9 @@ Resume reconciles exactly one newly satisfied liveness condition without resolvi
 
 Resume consumes no outcome budget and performs no resolver work. One invocation handles one trigger or intervention; other satisfied conditions remain visible for later Resume operations. Wake and Recover are branches inside Resume, not additional first-class operations.
 
-Resume completes when the selected evidence and every direct consequence read back, net growth reconciles, no ticket outcome changed, the campaign claim is absent, and the resulting state is visible.
-
 ## Revision-Backed Closure Evidence
 
-Closure uses one tracker-native snapshot packet rather than a parallel machine ledger. Wayfinder owns the packet's declared field inventory, completeness, materiality, comparison, and closure judgment. Tracker contracts own provider transport, observable revision evidence, persistence, and read-back.
+Closure uses one tracker-native snapshot packet rather than a parallel machine ledger. Wayfinder owns the packet's declared field inventory, completeness, materiality, comparison, closure judgment, and recovery semantics. The tracker mapping supplies only representation, observable revision tokens, persistence primitives, and refetch.
 
 Gather records the exact closure-relevant fields and their current values or evidence pointers plus the initial source revision vector. Provider revision evidence uses an observable native version, timestamp, content hash, tracked-file hash, or equivalent provider-specific token. The evidence detects intervening activity; it does not replace field-level semantic comparison.
 
@@ -626,7 +677,7 @@ Gather is read-only. It completes when every mapped obligation has one dispositi
 
 ### Resolution Coherence
 
-Wayfinder owns one read-only coherence gate. It reads the Codebase Design-owned design-coherence reference but does not invoke `$codebase-design`.
+Wayfinder owns one read-only coherence gate. It reads [Design Coherence Check](codebase-design.md#check) but does not invoke `$codebase-design`.
 
 Test five lenses:
 
@@ -669,8 +720,6 @@ After Coherence and Durability pass, run one Closeout-Seal Mutation Envelope:
 5. Complete the envelope with claim absence and the post-release revision, recommend `$to-spec`, and stop.
 
 Seal proves source completeness: every mapped obligation, decision, prerequisite, exclusion, evidence pointer, budget, design constraint, domain outcome, and provider revision is accounted for. To Spec retains fresh-session synthesis, grounding, actor and workflow coverage, edge-case coverage, parent publication, and its own read-back.
-
-Closeout completes only when Gather is complete, every Coherence lens passes, Durability returns no delta or verified persistence without contradiction, Seal confirms unchanged declared closure fields under the pre-Seal revision vector, the sealed snapshot packet and delivered close read back with a post-close revision, campaign-claim release reads absent with a post-release revision, and To Spec is the sole successful route.
 
 ## Terminate
 
@@ -727,6 +776,8 @@ Nothing imports implicitly. Claims, state, frontier order, budgets, and closure 
 
 This section is the sole authority for composition edges, exclusions, and handoff boundaries. Operation sections may invoke these edges but never redefine them.
 
+No skill invokes Wayfinder. Every upstream edge is recommendation-and-stop followed by a later explicit user invocation.
+
 | Caller | Verb | Callee | Trigger and return |
 | --- | --- | --- | --- |
 | Direct user | Invoke | `$wayfinder` | Start Qualification or Orient; Wayfinder's own gates still apply |
@@ -739,6 +790,7 @@ This section is the sole authority for composition edges, exclusions, and handof
 | `$wayfinder` | Invoke | `$codebase-design` | Resolve one sufficiently evidenced Design ticket; return the bounded packet to Wayfinder |
 | `$wayfinder` | Read reference | Codebase Design design-coherence reference | Frame Admission and validate Closeout without invoking the design procedure |
 | `$wayfinder` | Invoke | `$domain-modeling` | Reconcile or persist domain truth under the locked mode; return the complete domain delta |
+| `$wayfinder` | Recommend and stop | `$repo-bootstrap` | A required tracker or setup capability is missing or incompatible; return the exact precondition so the user can reconcile the repository later |
 | `$wayfinder` | Recommend and stop | `$to-spec` | A delivered map passed successful Closeout |
 | `$wayfinder` | Invoke and stop | `$skill-router` | Admission failed and no owned handoff applies; return one rejection packet for later routing |
 
@@ -746,7 +798,7 @@ Skill Router owns upstream selection details. Wayfinder owns the qualification p
 
 Task is not a callee relationship. Wayfinder performs its bounded evidence-only repository or operational check directly under the ticket contract and returns durable mutation needs as Blocked to their owning skill or authority.
 
-Wayfinder owns closure-field completeness, materiality, and comparison. Tracker contracts own provider transport, revision evidence, persistence, and read-back; Repo Bootstrap only reconciles those tracker capabilities into a target repository.
+Wayfinder owns closure-field completeness, materiality, comparison, mutation timing, and recovery. Tracker mappings own provider representation, revision tokens, and primitive execution; Repo Bootstrap only provisions, reconciles, and structurally validates those mappings in a target repository.
 
 ### Relationship Exclusions
 
@@ -763,15 +815,15 @@ Load the smallest complete context for the selected state. `SKILL.md` is univers
 | Observed state or phase | Load now | Keep out |
 | --- | --- | --- |
 | Invocation start | `SKILL.md` outcome, tracker precondition, vocabulary, Chart-or-Orient entry, transition table, Mutation Envelope, Reconcile, Return, and completion | Full operation branches, artifact schema, every resolver, provider mechanics, rationale |
-| Zero matching maps | Qualification and Chart anchors in `OPERATIONS.md`; load `MAP-FORMAT.md` only while drafting, approving, creating, or reading back the map | Existing-map operations and leaf resolvers |
+| Zero matching maps | Qualification and Chart anchors in `OPERATIONS.md`; load Design Coherence Frame while preparing design framing; load `MAP-FORMAT.md` only while drafting, approving, creating, or reading back the map | Existing-map operations, Design Coherence Check, and leaf resolvers |
 | Exactly one map | Relevant `MAP-FORMAT.md` groups for Orient; after the transition table selects, load only that operation anchor | Unselected operations and unrelated map history |
 | Return-only state | Relevant map fields, evidence pointer, and Return contract | `OPERATIONS.md`, resolver skills, and mutation references |
 | Advance | Selected ticket, its evidence pointers, and exactly one resolver skill after authority locks | Other resolver skills and unrelated tickets beyond dependency context |
 | Maintain or Resume | Selected operation anchor plus only affected artifact groups and evidence | Resolver skills and closure references |
-| Closeout | Closeout anchor and closure artifact groups; load Design Coherence for Coherence and Domain Modeling only for Durability | Other operation branches and full Codebase Design procedure |
+| Closeout | Closeout anchor and closure artifact groups; load Design Coherence Check for Coherence and Domain Modeling only for Durability | Other operation branches, Design Coherence Frame, and full Codebase Design procedure |
 | Terminate | Terminate anchor, authority evidence, terminal artifact group, and successor pointer when applicable | Coherence, Durability, Seal, and resolver context |
 | Reopen | Reopen anchor, sealed generation, To Spec return, correction packet or amendment, and affected artifact groups | Full predecessor transcript and unrelated closed generations |
-| Missing tracker capability | Return the Repo Bootstrap precondition and provider evidence | Repo Bootstrap procedure or provider-specific setup details |
+| Missing tracker mapping or capability | Return the Repo Bootstrap precondition and observed mapping evidence | Repo Bootstrap procedure or provider-specific setup details |
 
 A context pointer is complete only when its predicate, target anchor, expected return, and completion boundary are explicit. Never preload every branch merely because the campaign may eventually use it.
 
@@ -794,7 +846,7 @@ Next frontier | waiting trigger | blocker | terminal record | To Spec route:
 Next permitted operation:
 ```
 
-An incomplete attempt additionally returns its recovery evidence and leaves the ticket outcome and counters unchanged. When a frontier remains, name its first ticket and stop. A recommendation never starts another explicit-only skill automatically. Every resolver invoked by Wayfinder returns to the owning ticket and never selects the next graph action.
+When the Operation And Completion Contracts admit an incomplete attempt, Return additionally supplies its recovery evidence and unchanged ticket outcome and counters. When a frontier remains, name its first ticket and stop. A recommendation never starts another explicit-only skill automatically. Every resolver invoked by Wayfinder returns to the owning ticket and never selects the next graph action.
 
 # Layer Three: Evidence And Rationale
 
@@ -810,9 +862,9 @@ Lifecycle records whether the map is open, disposition explains its operating co
 
 Map identity treats zero, one, and many as different authority states. Chart repeats lookup and creates no children before post-create identity refetch, preventing concurrent qualification from producing populated duplicate graphs.
 
-One map-scoped claim serializes shared mutation because every substantive result can alter counters, fog, edges, state, and summaries. Advance resolves one ticket; parallel dispatch remains deferred until an observed need justifies a merge contract. Maintain is pre-authorized only for the unique representation implied by accepted evidence. Resume is distinct because newly arrived liveness evidence changes readiness rather than repairing drift. Closeout is first-class so an already-drained map can enter its own snapshot and completion boundary directly.
+One map-scoped claim serializes shared mutation because every substantive result can alter counters, fog, edges, state, and summaries. Maintain is pre-authorized only for the unique representation implied by accepted evidence. Resume is distinct because newly arrived liveness evidence changes readiness rather than repairing drift. Closeout is first-class so an already-drained map can enter its own snapshot and completion boundary directly.
 
-The state-transition table is normative because repeating state rules in the flowchart, decision table, prose, and audit checklist creates multiple plausible answers to “what may happen next?” Other surfaces explain or test the table rather than restating it as separate authority.
+The state-transition table is normative because repeating state rules in the flowchart, completion table, prose, and acceptance cases creates multiple plausible answers to “what may happen next?” Other surfaces point to or test the table.
 
 ## Why Campaigns Converge
 
@@ -824,104 +876,128 @@ To Spec is the sole successful exit because it owns fresh-session synthesis of d
 
 Gather, Coherence, Domain Modeling, and approval can take meaningful time, so Closeout holds no claim during read-only analysis or human waits. It acquires exclusivity only for one gap mutation or Seal. Gather and pre-Seal revision vectors plus field comparison expose intervening semantic change; post-close and post-release revisions prove mutation without making the sealed packet self-referential.
 
-This packet preserves the actual safety boundary—declared-field completeness, materiality judgment, equality at Seal, and durable generations—without a duplicate JSON manifest, digest authority, helper schema, or historical-validator system. Optimistic concurrency may force a fresh Gather, but it avoids stale long-held claims.
+Declared-field completeness, materiality judgment, equality at Seal, and durable generations are the safety boundary. Provider-native revision evidence supplies auditability without a parallel closure system. Optimistic concurrency may force a fresh Gather, but it avoids stale long-held claims.
 
-## Derived Loop Audit
+## Deliberate Non-Changes
 
-This checklist derives from the normative homes above and creates no new rule:
+These choices explain the extraction boundary; Layer Two and the Runtime Ownership And Change Map remain authoritative.
 
-- **Routing:** leaf resolvers return; Wayfinder never nests itself; an unchanged rejection cannot immediately re-enter.
-- **Identity and concurrency:** ambiguous maps never auto-select; Chart creates no child before canonical refetch; one map has one mutating claim and no concurrent Advances.
-- **Liveness:** Advance cannot relabel the same question, Resume handles one condition without resolving a ticket, orphan fog cannot persist, and repeated transient failure becomes a substantive blocker.
-- **Growth:** every new obligation uses Graph-Growth Authority; destination change, missing cohesion, or exhausted capacity requires a successor rather than relabeling or silent extension.
-- **Correction:** first Reopen requires its approved packet and cumulative budget; later growth requires an approved amendment; reseal never replenishes capacity.
-- **Boundaries:** Task cannot hide durable delivery or setup mutation, and only the closure evidence contract can authorize Seal.
+| Choice retained | Why | Reconsider only when |
+| --- | --- | --- |
+| One `OPERATIONS.md`, not one file per operation | One branch reference protects `SKILL.md` while preserving a single operation vocabulary and completion authority | Measured context loading or premature completion remains poor after sharp operation pointers |
+| Provider-native closure evidence, not a JSON schema, helper, digest authority, or event ledger | The tracker already supplies history, revisions, immutable outcomes, map state, and closure generations | A proved safety requirement cannot be expressed or read back through supported providers |
+| Provider mapping remains with Repo Bootstrap and tracker contracts | Wayfinder owns semantic purpose, mutation timing, and recovery; provider owners already map representation and primitives | A provider-neutral object or primitive is missing from the mapping rather than a semantic rule from Wayfinder |
+| Admission and Coherence read Design Coherence without invoking full Codebase Design | Guidance and validation need shared vocabulary, while architecture decisions remain ticket-owned | Evidence shows the reference cannot frame or validate a bounded design question reliably |
+
+## Deferred Hypotheses
+
+Deferred ideas are not prerequisites for the first runtime and do not acquire normative authority from appearing here.
+
+| Hypothesis | Evidence required before admission |
+| --- | --- |
+| Parallel Advance | Repeated campaigns show material time loss from independent ready decisions; a merge, counter, fog, claim, and recovery contract preserves the serial invariants; control-versus-candidate behavior improves without a worse tail |
+| Separate authority-transfer operation | Repeated legitimate transfers cannot be represented safely by explicit outgoing and incoming authority plus the current waiting or blocked state; the proposed operation has one owner, tracker transport, recovery path, and behavior proof |
 
 # Layer Four: Extraction And Verification
 
-## Runtime Ownership And Change Map
-
-The exhaustive synthesis should produce three concise Wayfinder Markdown runtime surfaces through progressive disclosure. This map owns placement, the concrete migration delta, and anti-duplication boundaries; the acceptance matrix below owns proof. Do not add one file per operation or any closure JSON schema, helper, event ledger, or duplicate durable snapshot.
-
-| Surface | Owns | Proposed delta | Must not absorb |
-| --- | --- | --- | --- |
-| `skills/custom/wayfinder/SKILL.md` | Outcome and hard boundary; tracker precondition; compact navigation vocabulary; Chart and Orient entry; normative transition table; Mutation Envelope; universal graph-growth, serial-Advance, incomplete-attempt, Reconcile, Return, and completion invariants | Rewrite the current Chart/Advance/Maintain surface around the complete operation model and Runtime Context Loading Contract; add direct transition-table anchors into `OPERATIONS.md`; keep universal contracts compact | Provider transport, full branch steps, artifact schemas, exhaustive rationale, route catalogs, or edge catalogs |
-| New `skills/custom/wayfinder/OPERATIONS.md` | Qualification and Chart, Advance, Maintain, Resume, Closeout, Terminate, and Reopen; each branch's predicate, unique work, authority delta, failure return, and completion criterion | Create one disclosed branch reference with stable operation anchors; invoke the universal Mutation Envelope and Graph-Growth Authority rather than repeating them; move branch procedure out of `SKILL.md` and `MAP-FORMAT.md` | Provider mechanics, persisted schemas, universal transition or mutation rules, repeated read-back boilerplate, or a second relationship map |
-| `skills/custom/wayfinder/MAP-FORMAT.md` | Campaign charter; decision authority packet; lifecycle and disposition; campaign claim; ticket and resolver fields; tethered fog; budgets; waiting and blocked evidence; closure snapshot packets and generations; terminal, correction, Reopen, and successor packets | Replace the current smaller map schema with the accepted artifact contracts; remove procedural steps and point each operation field back to its owner | Procedural instructions, provider mutation steps, operation selection, or resolver procedure |
-| New `skills/custom/codebase-design/DESIGN-COHERENCE.md` | Responsibility ownership, interface clarity, dependency direction, seam value, migration, compatibility, and caller-facing proof criteria | Create one disclosed reference owned by Codebase Design; point Wayfinder Admission and Coherence at it without invoking the full skill | Wayfinder operations, map state, ticket routing, or campaign closure authority |
-| Repo Bootstrap tracker templates, setup validator, and schema fingerprint | Wayfinder requires provider transport, unique map identity, revision evidence, campaign-claim storage and recovery, mutation read-back, and representation of its map and ticket fields | Record only the required observable capability here; [Repo Bootstrap Reconciliation Synthesis](repo-bootstrap.md#issue-tracker-githubmd-issue-tracker-gitlabmd-and-issue-tracker-localmd) owns the concrete GitHub, GitLab, Local Markdown, label, validator, fingerprint, and reconciliation changes | Provider-specific rewrite details, setup procedure, or duplicated Repo Bootstrap acceptance criteria |
-| Resolver and composer skills | Their own evidence, judgment, participation, mutation, and return contracts | Verify Grill With Docs, Domain Modeling, Research, Prototype, Diagnosis, Questionnaire, and Codebase Design permit the recorded bounded call and return; change only an observed contract mismatch | Wayfinder frontier selection, map mutation, campaign budgets, or next-route authority |
-| Skill Router, its synthesis, and `docs/synthesis/skill-context-relationships.md` | Upstream recommendation-and-stop policy and one authoritative composition edge per relationship | Update only triggers and return boundaries changed by the accepted Wayfinder contract; preserve later user invocation and To Spec as the sole successful exit | Wayfinder Admission predicates, operation procedure, or downstream execution |
-| `skills/custom/wayfinder/agents/openai.yaml` | Wayfinder invocation policy and concise trigger description | Align the description and implicit/explicit policy with the final bounded multi-decision trigger | Runtime procedure, resolver catalog, or state-machine detail |
-| `tests/test_skill_pack_contracts.py` and `docs/validation/evals/core-workflows.md` | Structural protection and behavior evaluation | Cover operation routing, authority, campaign claims, budgets, closure, correction, relationships, progressive disclosure, and negative controls from the acceptance matrix | Incidental prose snapshots or claims that static checks prove runtime behavior |
-| Installed mirror `C:\Users\steve\.agents\skills\wayfinder` | Validated runtime copy | Synchronize only after canonical source, affected tracker contracts, tests, and evaluations pass | Independent edits, partial synchronization, or authority over canonical source |
+## Proposed Runtime Semantic Surface
 
 The eventual main skill should read approximately as:
 
 ```text
 Outcome and hard boundary
+Explicit invocation boundary
 Tracker precondition
 Navigation vocabulary
 Chart | Orient
 Normative transition table with operation anchors
+Operation completion contract
 Mutation Envelope and Graph-Growth Authority
 Read the selected branch in OPERATIONS.md
 Universal Reconcile
 Universal Return
-Completion
+Campaign completion
 ```
 
-This is a semantic target, not approved final wording. Use strong leading words and behavior-complete criteria rather than compressing by omission. Historical research, synthesis, validation transcripts, issue notes, and run logs remain evidence and are not rewritten as current instructions.
+This is a semantic target, not approved final wording. `SKILL.md` keeps only universal behavior, operation selection and completion, sharp context pointers, Return, and campaign completion. It does not copy branch procedures, artifact schemas, provider transport, resolver catalogs, or rationale.
+
+## Runtime Ownership And Change Map
+
+The exhaustive synthesis should produce three concise Wayfinder Markdown runtime surfaces through progressive disclosure. This map alone owns file placement, concrete migration delta, anti-duplication boundaries, and source-bundle identity; the acceptance matrix points here rather than copying file lists.
+
+| Bundle | Surface | Owns | Proposed delta | Must not absorb |
+| --- | --- | --- | --- | --- |
+| `W1` | `skills/custom/wayfinder/SKILL.md` | Human-facing description; outcome and hard boundary; explicit invocation boundary; tracker-mapping precondition; compact navigation vocabulary; Chart and Orient entry; normative transition and completion tables; claim semantics and Mutation Envelope; universal graph-growth, serial-Advance, incomplete-attempt, Reconcile, Return, and campaign completion | Realize the Proposed Runtime Semantic Surface and Runtime Context Loading Contract; add direct operation anchors into `OPERATIONS.md`; keep universal contracts compact | Provider primitives, full branch steps, artifact schemas, exhaustive rationale, route catalogs, or edge catalogs |
+| `W1` | New `skills/custom/wayfinder/OPERATIONS.md` | Qualification and Chart, Advance, Maintain, Resume, Closeout, Terminate, and Reopen; each branch's unique work, authority delta, and failure handling | Create one disclosed branch reference with stable operation anchors; invoke universal state, completion, Mutation Envelope, and Graph-Growth contracts rather than repeating them; move branch procedure out of `SKILL.md` and `MAP-FORMAT.md` | Provider mechanics, persisted schemas, universal transition, completion, or mutation rules, repeated read-back boilerplate, or a second relationship map |
+| `W1` | `skills/custom/wayfinder/MAP-FORMAT.md` | Campaign charter; decision authority packet; lifecycle and disposition; campaign claim; ticket and resolver fields; tethered fog; budgets; waiting and blocked evidence; closure snapshot packets and generations; terminal, correction, Reopen, and successor packets | Replace the current smaller map schema with the accepted artifact contracts; remove procedural steps and point each operation field back to its owner | Procedural instructions, provider mutation steps, operation selection, or resolver procedure |
+| `W1` | `skills/custom/wayfinder/agents/openai.yaml` | Wayfinder invocation policy | Preserve `policy.allow_implicit_invocation: false` | Description, runtime procedure, resolver catalog, or state-machine detail |
+| `W2` | Codebase Design-owned coherence capability | Responsibility ownership, interface clarity, dependency direction, seam value, migration, compatibility, and caller-facing proof criteria | Provide Frame and Check as one disclosed reference; [Codebase Design Coherence Reference Synthesis](codebase-design.md#runtime-ownership-and-change-map) owns the exact file changes and proof | Wayfinder operations, map state, ticket routing, campaign closure authority, or a second copy of the criteria |
+| `W3` | Repo Bootstrap tracker templates, setup validator, and schema fingerprint | Map and ticket objects, resolver-type and relationship mappings, claim storage, configured-or-unavailable exclusive primitive, release mapping, revision token, read-back primitive, and labels | Record only these provider mappings and capability status; [Repo Bootstrap Reconciliation Synthesis](repo-bootstrap.md#tracker-provider-templates) owns the concrete GitHub, GitLab, Local Markdown, label, validator, fingerprint, and reconciliation changes | Identity cardinality, map fields, state/frontier logic, claim semantics or recovery, operation procedure, setup details here, or duplicated Repo Bootstrap acceptance criteria |
+| `W4` | To Questionnaire-owned delegated artifact capability | One recipient-ready artifact, needed-back ledger, no-send boundary, and return to the owning Questionnaire ticket | Invoke one complete caller packet and preserve the ticket's reservation through external waiting; [To Questionnaire Delegated-Leaf Synthesis](to-questionnaire.md#runtime-ownership-and-change-map) owns invocation, drafting, Return, and exact file changes | Tracker state, answer verification, counters, Wayfinder transitions, or downstream decision authority |
+| `W4` | Other resolver and composer skills | Their own evidence, judgment, participation, mutation, and return contracts | Verify Grill With Docs, Domain Modeling, Research, Prototype, Diagnosis, and Codebase Design permit the recorded bounded call and return; change only an observed contract mismatch | Wayfinder frontier selection, map mutation, campaign budgets, or next-route authority |
+| `W4` | Skill Router, its synthesis, and `docs/synthesis/skill-context-relationships.md` | Upstream recommendation-and-stop policy and one authoritative composition edge per relationship | Preserve recommendation-and-stop followed by later explicit user invocation; update only triggers and return boundaries changed by the accepted Wayfinder contract; preserve To Spec as the sole successful exit | Automatic Wayfinder invocation, Wayfinder Admission predicates, operation procedure, or downstream execution |
+| `W5` | `tests/test_skill_pack_contracts.py` and `docs/validation/evals/core-workflows.md` | Structural protection and behavior evaluation | Cover operation routing and completion, authority, claims, budgets, closure, correction, relationships, progressive disclosure, and negative controls from the acceptance matrix | Incidental prose snapshots or claims that static checks prove runtime behavior |
+| `W5` | Installed mirror `C:\Users\steve\.agents\skills\wayfinder` | Validated runtime copy | Synchronize only after canonical source, affected tracker contracts, tests, and evaluations pass | Independent edits, partial synchronization, or authority over canonical source |
+
+## Staged Extraction Plan
+
+Implementation stages order the coordinated rewrite; they are not independently installable or promotable. Build the complete canonical candidate before behavior promotion, then synchronize only after `I3` and every applicable evaluation phase pass.
+
+| Stage | Bundles | Extraction outcome | Stage boundary |
+| --- | --- | --- | --- |
+| `I1` | `W1` | Extract the selected Wayfinder semantic core, disclosed operations, artifact contract, invocation surface, state authority, completion authority, context pointers, and Return | Every Layer Two concern has one runtime destination and all Wayfinder-owned references resolve in canonical source |
+| `I2` | `W2`, `W3`, `W4` | Reconcile Design Coherence, tracker capabilities, resolver returns, Router boundaries, and relationship surfaces against the accepted Wayfinder contract | Each foreign owner supplies the required capability without absorbing Wayfinder procedure or authority |
+| `I3` | `W5` | Add structural protection, behavior evaluations, target reconciliation, promotion evidence, and installed-mirror parity | All positive and negative cases pass; residual gaps satisfy the promotion gate; source and mirror hashes agree |
 
 ## Staged Behavior-Evaluation Protocol
 
-Stages gate proof, not partial installation. Build the coordinated candidate in canonical source, evaluate it progressively, and synchronize no installed or target-repo surface until every applicable stage passes.
+Evaluation phases gate proof, not partial installation. Build the coordinated candidate in canonical source, evaluate it progressively, and synchronize no installed or target-repo surface until every applicable phase passes.
 
-| Stage | Claims proved | Representative matrix rows |
+| Evaluation phase | Claims proved | Representative matrix rows |
 | --- | --- | --- |
-| 0. Control lock | The current skill or no-guidance arm exhibits the claimed failure on a fixed realistic scenario | One control fixture per promoted behavioral claim |
-| 1. Attention and entry | Invocation, admission, identity, Chart safety, and reference loading select the right capability with minimal context | Invocation, map identity, Qualification and Chart, decision authority |
-| 2. State and ordinary operation | Orient selects exactly one transition; Mutation Envelope, claims, budgets, graph growth, resolvers, Advance, Maintain, Resume, and recovery remain coherent | State through Design coherence, excluding Closeout-only rows |
-| 3. Closure and correction | Gather, Coherence, Durability, Seal, Terminate, Reopen, successor, revision evidence, and immutable generations converge without authority leakage | Gather through Successor |
-| 4. Integrated promotion | Routing, provider equivalence, canonical validation, target reconciliation, installation, and mirror parity hold together | Delivery and routing; runtime ownership and installation |
+| `E0`: Control lock | The current skill or no-guidance arm exhibits the claimed failure on a fixed realistic scenario | One control fixture per promoted behavioral claim |
+| `E1`: Attention and entry | Invocation, admission, identity, Chart safety, operation and completion discovery, and reference loading select the right capability with minimal context | Invocation, context loading, map identity, Qualification and Chart, decision authority |
+| `E2`: State and ordinary operation | Orient selects exactly one transition; completion, Mutation Envelope, claims, budgets, graph growth, resolvers, Advance, Maintain, Resume, and recovery remain coherent | State through Design coherence, excluding Closeout-only rows |
+| `E3`: Closure and correction | Gather, Coherence, Durability, Seal, Terminate, Reopen, successor, revision evidence, and immutable generations converge without authority leakage | Gather through Successor |
+| `E4`: Integrated promotion | Routing, provider equivalence, canonical validation, target reconciliation, installation, and mirror parity hold together | Delivery and routing; runtime ownership and installation |
 
 For each promoted behavioral claim, fix the repository and tracker snapshots, prompt, evidence, authority packet, tools, runtime, model, reasoning tier, skill hash, and rubric across arms. Run at least five independent fresh-context samples per arm. Use the current skill as control where behavior overlaps; use a no-candidate-guidance control for genuinely new behavior. Stop when the control does not exhibit the claimed failure.
 
 Judge promised behavior, not template echoes. Record correct invocation and operation; references loaded; unauthorized mutation or false completion; transition, claim, budget, and recovery accuracy; Return completeness; provider operations; available time and token evidence; protocol deviations; and residual gaps. Report median, range or variance, and worst observed outcome. Static tests protect structure only.
 
-A stage promotes only when the control demonstrates the failure, the candidate materially reduces it, variance narrows, and no new critical failure appears. Any unauthorized mutation, false successful closure, foreign-claim removal, silent budget extension, or missing required read-back is a stage failure regardless of averages.
+An evaluation phase passes only when the control demonstrates the failure, the candidate materially reduces it, variance narrows, and no new critical failure appears. Any unauthorized mutation, false successful closure, foreign-claim removal, silent budget extension, or missing required read-back fails the phase regardless of averages.
 
 ## Migration And Acceptance Matrix
 
-Inside the canonical candidate, implement in ownership order: finalize the shared design-coherence reference; change Wayfinder runtime and artifact contracts; reconcile provider tracker templates and setup validation; update Router and relationship surfaces only where the accepted boundary changes; then add structural and behavioral proof. Run the staged protocol before target reconciliation or installed-mirror synchronization. Never migrate tracker state before its owning runtime contract, overwrite unreconciled setup markers, or promote a partially validated family.
+Implement through `I1` to `I3` and evaluate with the listed `E` phases. Never migrate tracker state before its owning runtime contract, overwrite unreconciled setup markers, or promote a partially validated family.
 
-This matrix supplies cases, not runtime rules or file placement. Each behavior points to its Layer Two owner; the final extraction row points to the Layer Four ownership map.
+This matrix supplies cases, not runtime rules or file placement. Linked claims point to their Layer Two owners; bundle IDs point to the Runtime Ownership And Change Map.
 
-| Claim under test | Owning section | Positive case | Negative control | Verification |
-| --- | --- | --- | --- | --- |
-| Invocation and admission bound | [Qualification](#qualification) and [Admission](#admission) | One bounded foggy destination with interdependent decisions, non-conversational work, and tracker-backed sequencing reaches Qualification | Question-only, domain-only, one-leaf, generic uncertainty, unbounded work, or unavailable tracker is rejected without mutation | Behavior evaluation plus invocation-policy validation |
-| Context loading | [Runtime Context Loading Contract](#runtime-context-loading-contract) | Invocation starts with universal context; observed state selects one operation anchor; phase-specific references and exactly one resolver load only when needed | Every operation, resolver, provider procedure, full map history, or Codebase Design procedure preloads speculatively | Reference-resolution tests plus control-versus-candidate context inventories |
-| Identity, Qualification, and Chart | [Qualification](#qualification) and [Chart](#chart) | Zero qualifies; one orients; approved Chart repeats zero, creates only the map, proves it canonical, creates the exact graph, reads back, and stops | New, ambiguous, different, unreadable, unapproved, partial, or Chart-to-Advance state creates children or starts resolution | Provider race fixtures, packet checks, and behavior evaluation |
-| Decision and resolver authority | [Authority Gates](#authority-gates) and [Ticket Contract And Resolver Taxonomy](#ticket-contract-and-resolver-taxonomy) | Accountable owner, reserved decisions, participation, one resolver, acceptance, proof, and mutation boundary read back | Invocation, assignment, generic role, leaf routing, or Task evidence implies authority or hides durable mutation | Provider fixtures, packet checks, and relationship evaluation |
-| State and Mutation Envelope | [Normative State Model](#normative-state-model) and [Campaign Claim](#campaign-claim) | Integrity derives; one transition applies; the canonical envelope completes and reorients | Integrity persists; a branch invents an envelope; or a concurrent, foreign, retained-wait, or unread mutation proceeds | State-table, concurrency, failure-injection, and cross-operation scenarios |
-| Advance | [Advance](#advance) | One ticket produces one substantive outcome, direct consequences reconcile, counters read back, and claim releases | A transient incomplete attempt consumes no outcome; no second resolver starts | Behavior evaluation with failure injection |
-| Maintain and Resume | [Maintain](#maintain) and [Resume](#resume) | Maintain applies one evidence-determined repair; Resume reconciles one satisfied Wake or Recover condition without a ticket outcome | Discretionary repair, new meaning, unsatisfied or multiple conditions, scope change, or exhausted-budget extension mutates | Drift, waiting, blocker, and liveness fixtures |
-| Bounded progress | [Campaign Budgets And Progress](#campaign-budgets-and-progress) and [Tethered Fog](#tethered-fog) | Reservations and outcome, expansion, correction, fog, and Graph-Growth rules bound every resolver cycle and net-new obligation | A branch invents an exception, overcommits, silently extends, graduates orphan fog, restarts a question, or bypasses successor | Counter, fog, cross-operation growth, and exhaustion scenarios |
-| Design coherence | [Admission](#admission) and [Resolution Coherence](#resolution-coherence) | The same reference frames Admission, Design tickets, and Closeout | Admission and Coherence invoke full Codebase Design or decide architecture inside the gate | Reference-resolution test and behavior evaluation |
-| Gather, Coherence, and Durability | [Closeout](#closeout) | Fresh declared fields and revisions form one packet; five lenses pass; domain delta is absent or authorized and read back | Transport metadata becomes semantic; a gate resolves its gap; missing authority mutates; Wayfinder writes domain truth; or an ADR or claim crosses an approval wait | Field inventory, lens, domain-delta, mutation-boundary, and claim-lifetime scenarios |
-| Seal | [Seal](#seal) | Gather and pre-Seal vectors enter the sealed packet; delivered close and claim release each read back with their resulting revisions; To Spec is recommended | A changed closure field, self-referential packet, or missing close or release read-back still seals | Stable, semantic-change, unrelated-metadata, self-reference, and persistence-failure scenarios |
-| Terminate | [Terminate](#terminate) | Destination-owner-confirmed cancelled, superseded, or out-of-scope state closes with a terminal packet | Unconfirmed termination and successful Closeout through Terminate succeed | Authority and terminal-state scenarios |
-| Reopen and correction budget | [Reopen And To Spec Re-entry](#reopen-and-to-spec-re-entry) | The first approved cohesive graph establishes finite correction capacity; later amendments reserve only uncommitted contingency; reseal adds an immutable generation | Reopen depends on nonexistent capacity, hides reserve, resets budget, grows without approval, fragments a cohesive return, or reopens unsuccessful history | First and later Reopen, reservation, exhaustion, amendment, and multi-generation scenarios |
-| Successor | [Successor Import Contract](#successor-import-contract) | A fresh campaign explicitly imports or invalidates predecessor decisions and evidence | Claims, lifecycle, budgets, frontier order, or closure status transfer implicitly | Successor lineage fixture |
-| Delivery and routing | [Relationship Ownership](#relationship-ownership) | Delivered Wayfinder recommends To Spec and stops; To Spec is the sole successful exit | Direct To Tickets, Implement, Parallel Implement, automatic Router execution, or resolver-owned map mutation succeeds | Relationship tests and behavior evaluation |
-| Runtime ownership and installation | [Runtime Ownership And Change Map](#runtime-ownership-and-change-map) | References resolve, canonical runtime and provider contracts agree, focused and full validation pass, and installed hashes match | Operation-per-file sprawl, closure helper/schema, JSONL ledger, provider mechanics in `SKILL.md`, or partial synchronization is promoted | Focused tests, full pytest, `scripts.validate_skills`, target setup validation, diff checks, changed-file read-back, and mirror parity |
+| Implementation / evaluation | Bundles | Claim and normative owner | Positive case | Negative control | Verification |
+| --- | --- | --- | --- | --- | --- |
+| `I1,I2 / E1` | `W1,W4` | [Invocation](#invocation), [Qualification](#qualification), and [Admission](#admission) | A user explicitly names `$wayfinder`; one bounded foggy destination with interdependent decisions, non-conversational work, and tracker-backed sequencing reaches Qualification | A caller or Skill Router automatically invokes Wayfinder; question-only, domain-only, one-leaf, generic uncertainty, unbounded work, or unavailable tracker is rejected without mutation | Invocation-policy test, relationship test, and fresh-context behavior evaluation |
+| `I1 / E1` | `W1` | [Context loading](#runtime-context-loading-contract) | Invocation starts with universal context; observed state selects one operation anchor; phase-specific references and exactly one resolver load only when needed | Every operation, resolver, provider procedure, full map history, or Codebase Design procedure preloads speculatively | Reference-resolution tests plus control-versus-candidate context inventories |
+| `I1,I2 / E1,E2` | `W1,W3` | [Identity, Qualification, and Chart](#chart) | Zero qualifies; one orients; approved Chart repeats zero, creates only the map, proves it canonical, creates the exact graph, reads back, and stops | New, ambiguous, different, unreadable, unapproved, partial, or Chart-to-Advance state creates children or starts resolution | Provider race fixtures, packet checks, and behavior evaluation |
+| `I1,I2 / E1,E2` | `W1,W3,W4` | [Decision and resolver authority](#ticket-contract-and-resolver-taxonomy) | Accountable owner, reserved decisions, participation, one resolver, acceptance, proof, and mutation boundary read back | Invocation, assignment, generic role, leaf routing, or Task evidence implies authority or hides durable mutation | Provider fixtures, packet checks, and relationship evaluation |
+| `I1,I2 / E2` | `W1,W3` | [State, completion, Mutation Envelope, and tracker mapping](#operation-and-completion-contracts) | Integrity derives; one transition applies; completion holds; the canonical envelope uses the mapped exclusive primitive, completes, and reorients | Integrity persists; completion advances early; a branch invents an envelope; unavailable capability mutates; or a concurrent, foreign, retained-wait, or unread mutation proceeds | State-table, completion, provider-mapping, concurrency, failure-injection, and cross-operation scenarios |
+| `I1,I2 / E2` | `W1,W4` | [Advance](#advance) | One ticket produces one substantive outcome, or one Questionnaire ticket enters verified external waiting with its reservation preserved; direct consequences reconcile, counters read back, and claim releases | A Questionnaire artifact resolves the ticket, consumes its unit, suppresses another ready frontier, or retains a claim; a transient incomplete attempt counts as completed Advance; or a second resolver starts | Behavior evaluation with questionnaire-waiting and failure injection |
+| `I1,I2 / E2` | `W1,W3` | [Maintain and Resume](#maintain) | Maintain applies one evidence-determined repair; Resume reconciles one satisfied Wake or Recover condition without a ticket outcome | Discretionary repair, new meaning, unsatisfied or multiple conditions, scope change, or exhausted-budget extension mutates | Drift, waiting, blocker, and liveness fixtures |
+| `I1 / E2,E3` | `W1` | [Bounded progress](#campaign-budgets-and-progress) | Reservations and outcome, expansion, correction, fog, and Graph-Growth rules bound every resolver cycle and net-new obligation | A branch invents an exception, overcommits, silently extends, graduates orphan fog, restarts a question, or bypasses successor | Counter, fog, cross-operation growth, and exhaustion scenarios |
+| `I1,I2 / E1,E3` | `W1,W2,W4` | [Design coherence](#resolution-coherence) | The same reference frames Admission and validates Closeout; actual Design tickets invoke full Codebase Design | Admission and Coherence invoke full Codebase Design, or a Design ticket substitutes the lightweight frame for the owned design procedure | Reference-resolution test and behavior evaluation |
+| `I1,I2 / E3` | `W1,W2,W3,W4` | [Gather, Coherence, and Durability](#closeout) | Fresh declared fields and revisions form one packet; five lenses pass; domain delta is absent or authorized and read back | Transport metadata becomes semantic; a gate resolves its gap; missing authority mutates; Wayfinder writes domain truth; or an ADR or claim crosses an approval wait | Field inventory, lens, domain-delta, mutation-boundary, and claim-lifetime scenarios |
+| `I1,I2 / E3` | `W1,W3` | [Seal](#seal) | Gather and pre-Seal vectors enter the sealed packet; delivered close and claim release each read back with their resulting revisions; To Spec is recommended | A changed closure field, self-referential packet, or missing close or release read-back still seals | Stable, semantic-change, unrelated-metadata, self-reference, and persistence-failure scenarios |
+| `I1,I2 / E3` | `W1,W3` | [Terminate](#terminate) | Destination-owner-confirmed cancelled, superseded, or out-of-scope state closes with a terminal packet | Unconfirmed termination and successful Closeout through Terminate succeed | Authority and terminal-state scenarios |
+| `I1,I2 / E3` | `W1,W3` | [Reopen and correction budget](#reopen-and-to-spec-re-entry) | The first approved cohesive graph establishes finite correction capacity; later amendments reserve only uncommitted contingency; reseal adds an immutable generation | Reopen depends on nonexistent capacity, hides reserve, resets budget, grows without approval, fragments a cohesive return, or reopens unsuccessful history | First and later Reopen, reservation, exhaustion, amendment, and multi-generation scenarios |
+| `I1 / E3` | `W1` | [Successor](#successor-import-contract) | A fresh campaign explicitly imports or invalidates predecessor decisions and evidence | Claims, lifecycle, budgets, frontier order, or closure status transfer implicitly | Successor lineage fixture |
+| `I1,I2 / E4` | `W1,W3,W4` | [Delivery and routing](#relationship-ownership) | Delivered Wayfinder recommends To Spec; missing or incompatible setup recommends Repo Bootstrap; unowned rejected residual invokes Skill Router; every branch stops before downstream execution | Direct To Tickets, Implement, Parallel Implement, automatic execution of an explicit-only skill, Router-started downstream execution, or resolver-owned map mutation succeeds | Relationship tests and behavior evaluation |
+| `I1-I3 / E4` | `W1-W5` | [Runtime ownership and installation](#runtime-ownership-and-change-map) | References resolve, canonical runtime and provider contracts agree, focused and full validation pass, and installed hashes match | Operation-per-file sprawl, closure helper/schema, JSONL ledger, provider mechanics in `SKILL.md`, or partial synchronization is promoted | Focused tests, full pytest, `scripts.validate_skills`, target setup validation, diff checks, changed-file read-back, and mirror parity |
 
 ## Promotion Gate And Residual Gaps
 
-The promotion record names each staged claim, control and candidate hashes, fixed scenarios, sample counts, rubric, median, variance or range, worst result, critical failures, unavailable telemetry, protocol deviations, and residual gaps. Simulation remains labeled design evidence and never substitutes for fresh-context behavior.
+The promotion record names each claim, implementation stage, evaluation phase, source bundle, control and candidate hashes, fixed scenarios, sample counts, rubric, median, variance or range, worst result, critical failures, unavailable telemetry, protocol deviations, and residual gaps. Simulation remains labeled design evidence and never substitutes for fresh-context behavior.
 
-Promote only the coordinated canonical family. Stage success does not authorize partial tracker migration or mirror synchronization. A residual gap blocks promotion when it affects admission, authority, mutation scope, state selection, claim safety, budget boundedness, closure truth, Return completeness, provider equivalence, or recovery. Noncritical uncertainty may remain only when named with its evidence limit, operational consequence, and later validation owner.
+Promote only the coordinated canonical family. Implementation-stage completion or evaluation-phase success does not authorize partial tracker migration or mirror synchronization. A residual gap blocks promotion when it affects admission, authority, mutation scope, state selection, operation completion, claim safety, budget boundedness, closure truth, Return completeness, provider equivalence, or recovery. Noncritical uncertainty may remain only when named with its evidence limit, operational consequence, and later validation owner.
 
 ## Completion Criterion For The Future Rewrite
 
-The rewrite is complete only when every normative concern has one indexed home; the main skill follows the compact semantic skeleton; each observed state loads only its required references; every operation preserves its unique work and completion criterion through the shared Mutation Envelope and Graph-Growth Authority; provider mechanics remain with Repo Bootstrap; every acceptance row passes its positive and negative cases under the staged protocol; no critical worst-case regression remains; canonical validation and target reconciliation pass; and the installed mirror matches the validated source exactly.
+The rewrite is complete only when the selected Design Verdict is extracted without deferred or rejected machinery; every normative concern has one indexed home; the main skill follows the Proposed Runtime Semantic Surface; the state table alone selects operations; the completion table alone closes them; each branch preserves its unique work and failure handling; each observed state loads only its required references; provider mechanics remain with Repo Bootstrap; every `I1` through `I3` bundle is reconciled; every acceptance row passes its positive and negative cases under the listed evaluation phases; no critical worst-case regression remains; canonical validation and target reconciliation pass; and the installed mirror matches the validated source exactly.
