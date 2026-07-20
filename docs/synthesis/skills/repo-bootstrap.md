@@ -12,7 +12,7 @@ Runtime authority remains in:
 - `scripts/validate_skills.py` and `tests/test_skill_pack_contracts.py` for pack integrity; and
 - the target repository's approved setup choices and preserved additions.
 
-This note preserves the complete reconciliation model and the file-by-file changes needed when Repo Bootstrap is next revised. It also defines Repo Bootstrap's narrow role when an owning skill changes a managed tracker or label contract. Workflow semantics remain with that skill and the canonical tracker templates; Repo Bootstrap owns only reconciliation. See [Wayfinder Synthesis](wayfinder.md) for the current Wayfinder design.
+This note follows [Synthesis Ownership](../README.md#synthesis-ownership). It preserves Repo Bootstrap's reconciliation model and the exact changes required in files Repo Bootstrap owns. A consuming skill owns its workflow semantics; Repo Bootstrap owns the provider templates, setup settings, provisioning, reconciliation, validation, and read-back that expose the required capability.
 
 ## North Star
 
@@ -34,7 +34,7 @@ The canonical working-tree design already contains the essential reconciliation 
 
 These changes must remain one coordinated contract. A marker-only implementation is insufficient because a marker records provenance, not current semantic completeness.
 
-The proposed Wayfinder synthesis may eventually revise managed tracker and label sources. Repo Bootstrap should neither restate nor interpret that workflow. Its only responsibility is to reconcile an accepted source revision through the same inventory, approval, provenance, validation, and read-back contract used for every managed setup change.
+When an owning skill accepts a managed tracker or label revision, Repo Bootstrap owns the concrete provider-template, label, validation, fingerprint, and reconciliation changes. It does not restate or interpret the consuming workflow. For the pending Wayfinder revision, [Wayfinder's Runtime Ownership And Change Map](wayfinder.md#runtime-ownership-and-change-map) defines the required capability boundary and [its Migration And Acceptance Matrix](wayfinder.md#migration-and-acceptance-matrix) defines behavioral proof; this synthesis records how Repo Bootstrap's owned files provide that capability.
 
 ## Managed Surface
 
@@ -140,6 +140,8 @@ Keep one deterministic aggregate hash over every contract-bearing source named i
 
 The aggregate hash remains generation evidence, not per-file completeness evidence.
 
+The pending Wayfinder provider revision changes all three tracker templates, `triage-labels.md`, and `scripts/validate_setup.py`. Regenerate the aggregate fingerprint only after those managed sources reach one coordinated final form; synthesis-only edits do not change it.
+
 ### `scripts/validate_setup.py`
 
 Validate all required files in one run and accumulate every failure. Keep these responsibilities co-located:
@@ -155,11 +157,22 @@ Validate all required files in one run and accumulate every failure. Keep these 
 
 When an accepted tracker contract changes, update its section-scoped semantic checks with the provider templates. The validator proves that the selected target implements the current managed contract; it does not become a second source of workflow semantics.
 
+For the pending Wayfinder provider revision, validate only Repo Bootstrap-owned representation and transport:
+
+- every fixed hosted-provider mechanic label declared by `triage-labels.md`;
+- a stable map identity lookup and provider-native create/refetch result;
+- storage for the complete map and ticket artifacts owned by Wayfinder's `MAP-FORMAT.md`;
+- one map-scoped campaign-claim representation with actor, token, timestamp, operation, and optional selected ticket;
+- provider-native dependency, state, revision-evidence, mutation-read-back, claim-release, and recovery surfaces; and
+- equivalent observable capability across GitHub, GitLab, and Local Markdown.
+
+Validate section-scoped capability tokens and fields. Do not encode Wayfinder's operation selection, claim lifetime, state transitions, resolver semantics, coherence judgment, budgets, or closure decision in `validate_setup.py`.
+
 Prefer section-scoped semantic checks over a growing unstructured global token tuple. Negative-control tests should remove one required behavior from each managed contract and prove the validator reports that exact file while continuing to report other failures.
 
 ### `engineering-contract.md`
 
-No Wayfinder-specific rewrite is needed. It remains the portable source of engineering taste and shared runtime vocabulary. Changes such as the State-boundary matrix must change its template hash, aggregate schema hash, target setup-file marker, semantic validator coverage, and reconciliation eval together.
+An owning workflow's tracker or label revision does not require an engineering-contract rewrite unless shared engineering behavior also changes. Any accepted engineering-contract change must update its template hash, aggregate schema hash, target setup-file marker, semantic validator coverage, and reconciliation eval together.
 
 ### `domain.md`
 
@@ -167,7 +180,13 @@ No layout-specific source-root assumption is permitted. Resolve only `single-con
 
 ### `triage-labels.md`
 
-Reconcile the fixed labels declared by the current canonical label template while preserving the repository's approved label mapping and unrelated labels. A skill-specific taxonomy belongs to its owning skill and the canonical label contract, not this synthesis. Any accepted label-contract revision must update label validation, hosted-label provisioning, and tests in the same slice.
+Reconcile the fixed labels declared by the canonical label template while preserving the repository's approved label mapping and unrelated labels. The pending Wayfinder tracker representation adds these missing hosted-provider mechanic labels:
+
+- `wayfinder:diagnosis`;
+- `wayfinder:questionnaire`; and
+- `wayfinder:design`.
+
+Together with the existing map, research, prototype, grilling, and task labels, they provide one label for every resolver type defined by [Wayfinder's Ticket Contract And Resolver Taxonomy](wayfinder.md#ticket-contract-and-resolver-taxonomy). They are mechanic labels, not triage roles, lifecycle, participation, or authority. Local Markdown uses the equivalent `Type:` field and creates no hosted labels. Update the label template, validator, provisioning proof, tests, and aggregate fingerprint in the same slice.
 
 ### `issue-tracker-github.md`, `issue-tracker-gitlab.md`, and `issue-tracker-local.md`
 
@@ -175,7 +194,18 @@ Keep provider-native transport, claims, mutation read-back, work-item dependency
 
 When an owning skill changes the accepted tracker contract, revise all affected provider templates as one managed-source change. Update the label template when required, refresh section-scoped validator expectations and the schema fingerprint, prove provider-equivalent outcomes in the owning contract's tests, and reconcile target repositories through Repo Bootstrap. Provider templates may use different native representations, but Repo Bootstrap should copy no workflow procedure into its own skill or synthesis.
 
-For Wayfinder specifically, [Wayfinder Synthesis](wayfinder.md#tracker-contracts) owns the proposed semantics and [its migration order](wayfinder.md#migration-order) defines when those semantics become eligible for tracker-template reconciliation.
+The pending Wayfinder revision changes each provider template as follows:
+
+| Tracker-template surface | Repo Bootstrap-owned change | Semantic owner |
+| --- | --- | --- |
+| Map identity | Define a stable destination-identity query, zero/one/multiple result, provider-native map creation, and post-create identity refetch before child creation | [Wayfinder Chart and state selection](wayfinder.md#normative-state-model) |
+| Map and child representation | Define where the provider stores and reads back the complete `MAP-FORMAT.md` map groups, ticket fields, relationships, resolver-type representation, and `AFK | HITL | external` participation | [Wayfinder Map Artifact Contract](wayfinder.md#map-artifact-contract) and [Ticket Contract](wayfinder.md#ticket-contract-and-resolver-taxonomy) |
+| Campaign-claim transport | Replace ticket-versus-map claim variants with one map-scoped representation containing actor, token, timestamp, operation, and optional selected ticket; define provider-native acquire, refetch, release, absence check, stale-claim evidence, and authorized recovery | [Wayfinder Campaign Claim](wayfinder.md#campaign-claim) |
+| Dependency and state transport | Define provider-native child, blocking, lifecycle, disposition, waiting, blocked, and resumption representation and queries without deciding the next operation | [Wayfinder Normative State Model](wayfinder.md#normative-state-model) |
+| Revision evidence | Define the provider's observable native version, timestamp, content hash, tracked-file hash, or equivalent token and how it is refetched with closure-relevant sources | [Wayfinder Revision-Backed Closure Evidence](wayfinder.md#revision-backed-closure-evidence) |
+| Mutation read-back | Refetch every affected map, child, relationship, claim, state, closure record, and claim release; classify partial provider mutation as blocked and report applied operations plus recovery | [Wayfinder operation completion contracts](wayfinder.md#leading-word-operation-model) |
+
+Provider templates must explain their native transport completely enough to execute and verify it, but should point to Wayfinder for field meaning, operation order, authority gates, budgets, reconciliation, and closeout. GitHub, GitLab, and Local Markdown may differ mechanically while producing the same observable contract.
 
 ### `agents/openai.yaml`
 
@@ -194,6 +224,8 @@ No change is needed. Repo Bootstrap remains explicit-only because setup mutation
 - first install, legacy install, current reconciliation, custom tracker, and portable-fallback adoption;
 - accepted provider templates remain semantically compatible with the current tracker contract without duplicating that contract in Repo Bootstrap; and
 - stale installed-mirror detection after canonical changes.
+
+The pending Wayfinder provider revision adds provider-neutral fixtures for the new fixed labels, map-identity cardinality and create/refetch transport, complete map and child storage, one map-scoped claim representation, claim recovery, dependency and state fields, revision evidence, mutation read-back, and missing-capability negative controls. Run the same observable cases against GitHub, GitLab, and Local Markdown representations; behavioral use remains in Wayfinder's evaluations.
 
 `docs/validation/evals/core-workflows.md` should retain the complete setup reconciliation fixture and add a tracker-template migration fixture only when an owning runtime contract produces an accepted managed-source revision.
 
@@ -240,3 +272,6 @@ The Repo Bootstrap rewrite is complete only when every owned source file is clas
 10. Did any runtime contract change regenerate the aggregate fingerprint and every affected source marker?
 11. Does the installed mirror match the validated canonical source only after synchronization?
 12. Are runtime-authoritative changes kept out of this synthesis note until their owning files change and validate?
+13. Does every tracker template provide the complete provider transport required by its owning workflow without copying that workflow's process?
+14. Are fixed mechanic labels, local field equivalents, validator expectations, provisioning checks, tests, and the aggregate fingerprint updated together?
+15. Do provider-equivalent fixtures prove identity, representation, claims, revisions, recovery, and mutation read-back across GitHub, GitLab, and Local Markdown?

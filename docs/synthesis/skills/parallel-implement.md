@@ -16,20 +16,31 @@ This note proposes a small efficiency change: retain one warm primary implemente
 
 ## How To Read This Document
 
-This synthesis is a proposed runtime extraction, not an additional operating contract. Read the design sections to understand the intended behavior, the ownership map to place each change once, and the evidence sections to decide whether a stage earns promotion.
+This synthesis is a proposed runtime extraction, not an additional operating contract. It has four layers:
+
+1. **Orientation** states the outcome, selected design, and explanatory delivery flow.
+2. **Normative Design** is the sole authority for proposed runtime behavior and relationships.
+3. **Evidence And Rationale** preserves deliberate non-changes, prototype findings, limits, and deferred hypotheses without creating additional rules.
+4. **Extraction And Verification** maps the design into owned runtime surfaces, locks the behavioral control, and governs staged promotion and residual gaps.
 
 | Question | Owning section |
 | --- | --- |
 | What outcome and trade-off govern the rewrite? | [North Star](#north-star) and [Design Verdict](#design-verdict) |
 | What is the proposed normal path? | [Lean Operating Model](#lean-operating-model) and [End-To-End Delivery Map](#end-to-end-delivery-map) |
+| What do the runtime leading words mean? | [Leading-Word Runtime Model](#leading-word-runtime-model) |
+| Where does each proposed rule live? | [Normative Home Index](#normative-home-index) |
+| When is each operation complete and what may it return? | [Operation And Completion Contracts](#operation-and-completion-contracts) and [Return Contract](#return-contract) |
 | When should width remain serial or grow through five? | [Actor And Width Policy](#actor-and-width-policy) |
 | How are context, proof, and telemetry kept economical? | [Compact Context And Results](#compact-context-and-results), [Proof Model](#proof-model), and [Passive Telemetry And Release Result](#passive-telemetry-and-release-result) |
 | How does the normal terminal path avoid manual ledger plumbing? | [Terminal Operator Facade](#terminal-operator-facade) |
+| How should the eventual main skill read and load references? | [Proposed Runtime Semantic Surface](#proposed-runtime-semantic-surface) and [Runtime Context Loading Contract](#runtime-context-loading-contract) |
 | Which runtime surface owns each change? | [Runtime Ownership And Change Map](#runtime-ownership-and-change-map) |
-| What must pass before implementation or promotion? | [Behavior Evaluation](#behavior-evaluation), [Implementation Order](#implementation-order), and [Completion Criterion For The Future Rewrite](#completion-criterion-for-the-future-rewrite) |
+| What must pass before implementation or promotion? | [Staged Behavior-Evaluation Protocol](#staged-behavior-evaluation-protocol), [Migration And Acceptance Matrix](#migration-and-acceptance-matrix), [Promotion Gate And Residual Gaps](#promotion-gate-and-residual-gaps), and [Completion Criterion For The Future Rewrite](#completion-criterion-for-the-future-rewrite) |
 | Which ideas remain evidence or hypotheses? | [Prototype Evidence](#prototype-evidence) and [Deferred Optimization Laboratory](#deferred-optimization-laboratory) |
 
-When explanatory prose disagrees with a decision contract, ownership row, or promotion gate, correct the prose; do not create a second rule.
+When another layer disagrees with Normative Design, correct that layer. The ownership map places rules, the staged protocol owns proof standard, the acceptance matrix owns case coverage, and the promotion gate owns admission; none may redefine runtime behavior.
+
+# Layer One: Orientation
 
 ## North Star
 
@@ -58,9 +69,9 @@ A strategy is better only when it preserves the gates and improves at least one 
 
 The previous proposal correctly identified useful optimization questions but promoted too many of them into mandatory procedure. Calibration profiles, predicted return schedules, automatic reasoning tiers, context-rollover knees, proof caches, provider batching, source fingerprint graphs, per-class token budgets, and live frontier estimation each add state, prompts, validation, and recovery paths. Operating all of them could cost more than the parallelism saves.
 
-Use two layers:
+The proposed implementation has two strata:
 
-| Layer | Purpose | Runtime status |
+| Stratum | Purpose | Runtime status |
 | --- | --- | --- |
 | Lean delivery core | Preserve correctness while removing known context and proof waste | Ready for staged direct implementation |
 | Optimization laboratory | Test whether advanced controls improve the measured result vector | Width-rule shape answered; remaining controls stay deferred unless separately justified |
@@ -88,6 +99,24 @@ The lean change has six parts:
 4. Adjust implementation width with a small observable rule, up to five.
 5. Derive a compact efficiency result from ledger events without asking agents for narrative telemetry.
 6. Keep Review through Release on one typed terminal-packet generator plus `apply`, without hand-authored event IDs.
+
+## Leading-Word Runtime Model
+
+The eventual skill should make its existing spine operational rather than merely mnemonic:
+
+| Leading word | Runtime meaning |
+| --- | --- |
+| **Trace / Resume** | Establish or reconcile the exhaustive graph, Charter, canonical stream, actors, claims, worktrees, tracker, and remote state before choosing work |
+| **Select** | Choose one dependency-ready frontier, its economical width, and one recorded reason |
+| **Open** | Claim, isolate, preflight, brief, and make one actor observable |
+| **Drain** | Classify every return, inspect and land accepted commits serially, and recombine proof on current integration HEAD |
+| **Downshift** | Collapse new dispatch to one, latch the cause, and account for safe active work without discarding it |
+| **Checkpoint** | Quiesce actors and preserve complete recovery state for one exact continuation |
+| **Review / Repair** | Judge one immutable candidate independently and route at most one admitted bounded Repair batch under budget |
+| **Lock** | Prove that the accepted reviewed current HEAD owns complete closeout and authorized push evidence |
+| **Release** | Terminate only from verified `complete`, with actors and lanes safe and the passive result rendered |
+
+**Reconcile** is universal: refresh authoritative Git, worktree, actor, ledger, tracker, claim, and remote state before every new dispatch, landing, resumed mutation, formal review, or terminal transition.
 
 ## End-To-End Delivery Map
 
@@ -132,6 +161,27 @@ flowchart TB
     LOCK --> RELEASE["Release with compact efficiency result"]
 ```
 
+# Layer Two: Normative Design
+
+## Normative Home Index
+
+This index assigns each proposed concern one authority. The named section owns the rule; this index, diagrams, rationale, ownership rows, evaluation protocol, and acceptance cases may point to or test it but never redefine it.
+
+| Concern | Sole normative home |
+| --- | --- |
+| Root admission, graph readiness, semantic decisions, and Lock eligibility | [Decision Contracts](#decision-contracts) |
+| Operation entry, completion, and legal nonterminal branch | [Operation And Completion Contracts](#operation-and-completion-contracts) |
+| Reference-loading triggers and attention exclusions | [Runtime Context Loading Contract](#runtime-context-loading-contract) |
+| Actor reuse, integration-checkout ownership, width, Downshift, and serial latch | [Actor And Width Policy](#actor-and-width-policy) |
+| Assignment economics, briefs, receipts, and proof-output transport | [Compact Context And Results](#compact-context-and-results) |
+| Slice, wave, and candidate proof | [Proof Model](#proof-model) |
+| Passive measurement and the Release result | [Passive Telemetry And Release Result](#passive-telemetry-and-release-result) |
+| Normal ledger commands, terminal packet generation, and closeout ingestion | [Terminal Operator Facade](#terminal-operator-facade) |
+| Landing, correction, checkpoint, resume, and recovery | [Drain, Correction, And Recovery](#drain-correction-and-recovery) |
+| Review, Repair, Lock, and Release sequencing | [Review, Lock, And Release](#review-lock-and-release) |
+| External return form and required content | [Return Contract](#return-contract) |
+| Cross-skill trigger, authority, and handoff | [Relationship Table](#relationship-table) |
+
 ## Decision Contracts
 
 | Decision | Owner | Passing evidence | Failure branch |
@@ -154,6 +204,37 @@ flowchart TB
 Helpers may validate structure, state, ancestry, budgets, and receipts. They do not decide semantic independence, public-seam adequacy, result acceptance, finding admission, or residual risk.
 
 Every `status.next_action` is a conservative projection of current reducer state. It must be presently valid, must not regress behind recorded Review, Lock, tracker, push, or Release evidence, and may be `null` with exact missing evidence when no mechanical suggestion is safe.
+
+## Operation And Completion Contracts
+
+This table is the sole proposed authority for operation completion. The surrounding sections explain mechanics; they do not permit advancing before the applicable row passes.
+
+| Operation | Enter when | Complete when | Nonterminal return |
+| --- | --- | --- | --- |
+| **Trace / Resume** | A top-level explicit invocation starts or resumes one campaign | The exhaustive graph, Charter, canonical stream, integration checkout, actors, lanes, claims, tracker, remote, budgets, and continuation reconcile without unknown state | Routing blocker before mutation; exhaustive graph-repair packet before dispatch; otherwise recovery-complete `partial` or `blocked` |
+| **Select** | Reconciled unfinished scope needs a next frontier | Exactly one executable frontier, critical-path primary assignment, width, reason code, and required serial latch state are selected; or the absence of executable work is checkpointed with exact blockers | `partial` or `blocked` checkpoint |
+| **Open** | One selected assignment has authority and capacity | Its claim reads back; exact base, checkout, preflight, import provenance, generated brief, report path, actor identity, and liveness evidence are recorded | Assignment blocker with claim and lane cleanup or preservation disposition |
+| **Drain** | At least one actor or returned packet is in scope | Every return is classified; accepted commits reconcile expected and actual scope, land serially, and pass current wave proof; rejected, stale, conflicted, and retained lanes have explicit dispositions | Bounded correction, preserved conflict handoff, or recovery-complete checkpoint |
+| **Downshift** | Correctness, overlap, invalidation, contention, or root backpressure makes parallel dispatch unsafe | New dispatch is width one, the serial latch and cause read back, affected work is checkpointed, and every safe active lane is assigned a drain or quiesce disposition | `blocked` when safe serialization cannot be established |
+| **Checkpoint** | Execution cannot continue safely or authority is temporarily unavailable | Actors are quiesced and current HEAD, integration ownership, actors, lanes, claims, frontier, latch, blockers, result queue, proof, tracker, remote, open correction or Repair, and exact continuation read back | Campaign outcome `partial` or `blocked`; never Release |
+| **Review / Repair** | The graph is drained and one current immutable candidate has passed candidate proof | One independent report and root decision are recorded; any admitted Repair is one complete bounded batch, produces a proved successor, and receives a fresh review | Decision-required packet or recovery-complete `blocked` checkpoint |
+| **Lock** | The accepted reviewed HEAD equals current integration HEAD | Required proof and review counts pass; child-first tracker mutations, parent rule, claim release, and any authorized push read back against the approved SHA | `partial` or `blocked` with the exact missing Lock gate |
+| **Release** | Reducer state already admits terminal `complete` | Every actor and lane is safe, no correction or Repair remains open, friction is adjudicated, `LEDGER.md` renders, and the passive result records actual evidence and measurement gaps | No nonterminal Release; return through Checkpoint instead |
+
+## Runtime Context Loading Contract
+
+Load branch context only when its trigger fires. The root may read a reference to generate or validate a packet; a worker receives the complete generated brief rather than the reference or parent conversation.
+
+| Trigger | Required context | Do not load or delegate |
+| --- | --- | --- |
+| Every invocation | `SKILL.md` universal spine and, when a stream exists, the current generated ledger status | All disclosed references at campaign start |
+| Start, resume, status dispute, checkpoint, Review, Repair, closeout, or Release | `references/RUN-LEDGER.md` and the exact canonical stream or generated terminal packet | Helper source merely to discover the normal command path; compatibility commands unless recovery requires them |
+| Open, inspect, preserve, or clean a worker lane or integration checkout | `references/CODEX-WORKTREE-LAUNCH.md` plus exact helper output | Worker or ledger schemas unrelated to the lifecycle action |
+| Generate, validate, or interpret an implementation, integration-correction, or review-Repair assignment | `references/WORKER-BRIEF.md`; the actor itself reads only its generated brief and report path | Parent conversation, exhaustive issue graph, or unrelated branch references |
+| Use a bounded child integrator | `references/INTEGRATOR-BRIEF.md` and its generated assignment | Peer dispatch, formal review, tracker mutation, push, or campaign Release authority |
+| Serial landing enters preserved conflict or partial Git operation state | `$resolving-merge-conflicts` with the exact preserved state | Ad hoc cleanup or unrelated Parallel Implement references |
+
+Do not add `OPERATIONS.md` initially. The workflow remains one linear campaign with existing branch-specific references. Introduce another disclosed surface only if the rewritten main skill still exhibits measured sprawl or premature completion after these pointers are evaluated.
 
 ## Actor And Width Policy
 
@@ -205,6 +286,8 @@ Use this rule instead of a predictive controller:
 | Any correctness failure, overlap, stale or invalidated work, proof contention, or result queue | Return to one and latch serial execution |
 | Serial latch active | Stay at one until an explicit reconciled capacity or workload change removes its cause |
 | No executable work or missing authority | Use zero writers and checkpoint |
+
+The initial runtime exposes only this `balanced` rule. It has no caller-selectable `favor-speed` or `favor-tokens` branch.
 
 Do not calculate a numeric marginal-savings inequality during delivery. Record one compact reason code for each serial or parallel frontier:
 
@@ -419,6 +502,21 @@ Lock opens only when the accepted reviewed HEAD equals current integration HEAD 
 
 Release quiesces actors, cleans or explicitly preserves lanes and the managed integration worktree, adjudicates friction, validates terminal state, renders `LEDGER.md`, and adds the compact passive result. Runtime-contract-3 Release remains terminal and accepts only `complete`.
 
+## Return Contract
+
+The campaign ledger retains exactly three outcomes: `complete`, `partial`, and `blocked`. Other exits are typed packets, not additional ledger outcomes:
+
+| Return | Use when | Required content |
+| --- | --- | --- |
+| Routing blocker | A delegated agent invokes this root-only skill | Root-only violation and the required top-level route; no mutation |
+| Graph-repair packet | The parent graph is incomplete, ambiguous, uneconomically sliced, or not Ready-for-agent | One exhaustive defect set, affected graph evidence, and `$to-tickets` recommendation; no partial dispatch |
+| Decision-required packet | Review, Repair, scope, authority, or residual risk needs caller judgment | The complete decision set, immutable target, options, consequences, and exact continuation |
+| `partial` | Safe progress exists and the campaign can resume from current authority | The complete Checkpoint packet and exact next operation |
+| `blocked` | No safe progress is currently possible without a named condition change | The complete Checkpoint packet, blocker owner, observable release condition, and exact resume operation |
+| `complete` | Lock and terminal Release both pass on the approved current HEAD | Final proof, accepted review, closeout and push read-backs when applicable, lane dispositions, friction synthesis, passive result, and residual risk |
+
+Every invocation returns exactly one of these forms. Narrative progress, a worker receipt, a generated ledger packet, a clean serial wave, or a review report alone is never campaign completion.
+
 ## Relationship Table
 
 | Caller | Verb | Callee | Trigger And Return |
@@ -435,95 +533,11 @@ Release quiesces actors, cleans or explicitly preserves lanes and the managed in
 
 Parallel Implement has no direct relationship to Wayfinder, To Spec, Audit Codebase, or Improve Codebase during delivery. It does not hand singleton frontiers to `$implement`; it owns the complete parent campaign and uses the primary for serial work. Workers and child integrators never dispatch peers, invoke formal review, mutate trackers, or push.
 
-## Runtime Ownership And Change Map
-
-Each proposed behavior has one runtime owner. The `Must not absorb` column is part of the design: it prevents a concise skill from becoming a second helper manual and prevents mechanical helpers from acquiring semantic authority.
-
-| Surface | Owns | Proposed delta | Must not absorb | Required proof |
-| --- | --- | --- | --- | --- |
-| `skills/custom/parallel-implement/SKILL.md` | Outcome, root authority, leading-word spine, universal gates, branch selection, return, and completion | Add warm-primary reuse, the simple width rule, public-seam proof, compact context and receipts, terminal-facade invocation, correction locality, passive results, and the five-agent ceiling | Executable packet schemas, provider transport, helper internals, predictive scheduling, caches, automatic tiers, or per-class budgets | Structural contract tests plus positive and negative behavior evaluation |
-| `agents/openai.yaml` | Explicit-only invocation policy and concise human-facing prompt | Retain `allow_implicit_invocation: false`; mention the warm primary, adaptive width up to five, serial landing, and verified reviewed HEAD | Runtime procedure or detailed gating | Invocation-policy validation |
-| `references/WORKER-BRIEF.md` and `references/INTEGRATOR-BRIEF.md` | Mode-specific assignment, authority, receipt, and completion contracts | Make briefs complete and file-backed; add the public proof seam, compact receipt, exception-only communication, reuse boundary, and correction continuation | Root dispatch policy, peer dispatch, tracker mutation, formal review, or Release | Reference-resolution tests and representative packet evaluation |
-| `references/CODEX-WORKTREE-LAUNCH.md` and `scripts/lane_worktree.py` | Lane preflight, stable paths, registration, and recoverable cleanup | Distinguish `existing-checkout` from `managed-integration-worktree`; create or clean only the managed form, including long-path residual recovery | Wave batching, proof scheduling, actor selection, semantic independence, or result acceptance | Existing-checkout preservation, managed cleanup, missing-registration, and long-path recovery tests |
-| `references/RUN-LEDGER.md` | Operator-facing ledger procedure and normal-versus-recovery command selection | Document complete `brief`, `prepare`, `apply`, `status`, and `finish` examples through Review, Repair, closeout, and Release | Reducer implementation details or a duplicate event schema | Command examples exercised against canonical fixtures without helper-source inspection |
-| `scripts/run_ledger.py` | Canonical event reduction, packet generation and ingestion, state validation, rendering, and passive result derivation | Add actor reuse and width state, reason codes and serial latch, complete briefs and receipts, absolute stream identity, monotonic `next_action`, typed terminal packets, closeout read-back batches, proof level and duration, result-queue state, and Release results | Semantic independence, public-proof adequacy, finding admission, tracker mutation, automatic width changes, or efficient-frontier calculation | Reducer transition tests, idempotency and missing-stream negatives, terminal-path fixtures, and Release-result fixtures |
-| `skills/custom/to-tickets/SKILL.md` | Shaping boundary for executable tickets | Require a minimum economic slice and compact execution profile where Parallel Implement is an authorized route | Parallel dispatch procedure or runtime width selection | Relationship and ticket-shape evaluations |
-| `docs/synthesis/skill-context-relationships.md` | One authoritative composition edge per caller and callee | Update changed triggers and return boundaries without copying runtime procedure | Skill-local mechanics | Relationship tests |
-| `tests/test_skill_pack_contracts.py` and `docs/validation/evals/core-workflows.md` | Structural contracts and behavior evaluations | Cover primary reuse, scaling through five, Downshift and latch release, result-queue hold, public proof, compact packets, terminal facade, stream identity, checkout ownership, closeout batching, passive telemetry, correction locality, and mirror parity | Incidental prose snapshots or simulated claims of real efficiency | Focused static tests plus repeated control-versus-candidate behavioral samples |
-| Installed mirror `C:\Users\steve\.agents\skills\parallel-implement` | Validated runtime copy | Synchronize only after canonical implementation and proof complete | Independent edits or partial synchronization | File-by-file hash parity after installation |
-
-Preserve `events.jsonl`, generated `LEDGER.md`, runtime contract 3, `SCHEMA_VERSION = 1`, receipt authority, and compatibility commands. `append`, `append-batch`, and `append-receipt` remain recovery surfaces; the normal path uses generated packets. Helpers validate structure and authority transitions but never make the root's semantic decisions.
-
-## Behavior Evaluation
-
-Run a current-skill control before claiming improvement. Static contract tests protect structure; they do not prove lower time or token use.
-
-Use fixed repository snapshots, graphs, tools, model and reasoning tier, and rubrics. Run enough fresh samples to expose variance; five per arm is the minimum for a promoted behavioral claim. Report median, range or variance, and worst observed outcome.
-
-Measure only the passive result vector. When platform token telemetry is unavailable, say so and report structural proxies separately.
-
-Positive scenarios must show that the candidate:
-
-- reuses one primary across semantically connected assignments with a new lane each time;
-- keeps tiny, shared-seam, integration, performance, correction, and Repair work serial;
-- starts at two only for two obvious substantial independent items;
-- widens by one after clean waves and can reach five when the graph genuinely supports it;
-- refuses to widen while results wait for root inspection;
-- returns to one and latches serial execution after correctness, overlap, stale work, contention, or backpressure;
-- releases the latch only after a reconciled external capacity or workload change;
-- generates compact complete briefs and receipts;
-- completes Review through Release through typed `prepare` and `apply` packets without inspecting helper source or supplying event IDs;
-- fails clearly on a relative or missing normal-path stream instead of presenting an empty campaign;
-- returns only a presently legal monotonic status suggestion, or `null` with missing evidence;
-- preserves existing integration checkouts and safely cleans managed integration worktrees;
-- ingests multi-child closeout read-backs through one packet while preserving each child's evidence and unresolved state;
-- proves the highest meaningful public seam;
-- runs one slice proof per assignment, one recombined proof per wave, and one current candidate proof;
-- routes correction to the original owner or primary; and
-- reaches the same or stronger Lock evidence with a non-dominated measured result.
-
-Negative controls must show that it does not:
-
-- treat disjoint filenames or available slots as sufficient independence;
-- launch five actors because five are available;
-- reopen parallelism merely because one later serial wave was clean;
-- retain one mutable worktree across primary assignments;
-- ask workers for token estimates or narrative progress telemetry;
-- infer missing token measurements from prompt length;
-- use compatibility append commands on the normal terminal path;
-- treat fewer canonical events as an efficiency win when operator-authored packets do not fall;
-- auto-mutate a tracker, infer a successful read-back, or hide partial external closeout;
-- remove an existing integration checkout or bypass managed-worktree cleanup;
-- parallelize broad proof or timing-sensitive benchmarks;
-- count implementation actors as independent reviewers;
-- auto-accept generated packets or worker reports; or
-- weaken checkpoint, proof, tracker, Lock, push, cleanup, or Release authority.
-
-## Implementation Order
-
-Use two small promotable stages.
-
-### Stage 1: Context And Measurement Hygiene
-
-1. Add complete file-backed briefs, compact receipts, bounded proof output, public-seam acceptance, and passive Release results.
-2. Add strict absolute stream identity, monotonic status projection, and the typed `prepare` plus `apply` terminal path through Release.
-3. Add provider-neutral closeout read-back ingestion and explicit integration-checkout ownership with managed cleanup.
-4. Reuse the primary across new reconciled lanes.
-5. Preserve existing selection width while running control-versus-candidate evaluation.
-
-Promote only if correctness is unchanged and total campaign tokens, fresh contexts, proof load, operator-authored packets, source inspections, compatibility fallbacks, retries, or time-to-Lock improves without material regression elsewhere. Generated canonical event count may stay the same or increase when it carries stronger authority at lower operator cost.
-
-### Stage 2: Simple Adaptive Width
-
-1. Add the serial default, narrow two-item cold-start exception, additive widening through five, result-queue hold, immediate Downshift triggers, and the one-bit serial latch.
-2. Keep every width and latch-release decision with the root and record one reason code plus release evidence when applicable.
-3. Evaluate representative singleton, shared-seam, two-lane, and three-to-five-lane graphs.
-
-Promote only if the adaptive rule expands or improves the measured result frontier without weakening correctness or tail outcomes.
-
-For each stage, update all owned canonical surfaces, run focused and full tests, validate the skill pack, dry-run installation, run both diff checks, synchronize the scoped installed mirror, and verify hash parity. Never claim efficiency from prose or simulation alone.
+# Layer Three: Evidence And Rationale
 
 ## Deliberate Non-Changes
+
+These exclusions record the rewrite boundary; they do not create authority outside Normative Design.
 
 - Keep Parallel Implement root-only and explicit-only.
 - Keep one exhaustive parent graph and existing Ready-for-agent boundary.
@@ -594,28 +608,106 @@ The following ideas remain hypotheses, not initial runtime requirements:
 
 Each idea must first prove that its time or token savings exceed its collection, decision, validation, maintenance, and recovery cost. Promote controls independently; never require Stage 3 as one bundle. Provider-neutral batching of already-observed closeout evidence belongs to the lean terminal facade; batching or automating external provider mutations remains deferred. The completed prototype answered only the simple width-rule shape; tier choices, context rollover, telemetry availability, and other advanced controls remain unproved and are not prerequisites for the lean rewrite.
 
-The next recommended route is direct `$writing-great-skills` implementation. Apply Stage 1 across the canonical skill, disclosed references, helpers, tests, behavior evaluations, relationship map, and installed mirror; validate its measured result before admitting Stage 2. Then apply and evaluate Stage 2 separately. No ticket-shaping or further prototype step is required before Stage 1.
+The migration matrix owns implementation order and case coverage; the staged protocol owns proof standard and the promotion gate owns admission. No ticket-shaping or further prototype step is required before Stage 1.
+
+# Layer Four: Extraction And Verification
+
+Extract each proposed behavior once. Keep the universal operating spine in `SKILL.md`, disclose branch mechanics and executable schemas through sharp pointers, keep helpers mechanical, and retain a field, event, packet, or metric only when it changes a decision or proves an outcome.
+
+## Proposed Runtime Semantic Surface
+
+The eventual main skill should read approximately as:
+
+```text
+Outcome and explicit root-only boundary
+Actor authority
+Trace | Resume -> ledger pointer
+Select + Downshift
+Open -> worktree lifecycle pointer
+Drain -> generated assignment and result pointers
+Checkpoint -> ledger pointer
+Review | Repair -> terminal ledger pointer
+Lock | Release -> terminal ledger pointer
+Universal Reconcile
+Return
+Completion
+```
+
+This is a semantic target, not approved final wording. `SKILL.md` keeps only universal behavior, operation selection, sharp context pointers, Return, and completion. It does not copy executable packet schemas, helper commands, or branch-only recovery mechanics.
+
+## Runtime Ownership And Change Map
+
+The `Must not absorb` column is part of the design. It prevents the main skill from becoming a helper manual and prevents mechanical surfaces from acquiring semantic authority.
+
+| Surface | Owns | Proposed delta | Must not absorb |
+| --- | --- | --- | --- |
+| `skills/custom/parallel-implement/SKILL.md` | Outcome, root authority, leading-word spine, operation selection and completion, sharp context pointers, Return, and campaign completion | Realize the proposed semantic surface; add warm-primary reuse, the simple width rule, public-seam proof, compact context and receipts, terminal-facade invocation, correction locality, passive results, and the five-agent ceiling | Executable packet schemas, provider transport, helper internals, branch-only recovery mechanics, predictive scheduling, caches, automatic tiers, or per-class budgets |
+| `agents/openai.yaml` | Explicit-only invocation policy and concise human-facing prompt | Retain `allow_implicit_invocation: false`; mention the warm primary, adaptive width up to five, serial landing, and verified reviewed HEAD | Runtime procedure or detailed gating |
+| `references/WORKER-BRIEF.md` | Generated implementation, integration-correction, and review-Repair assignment and receipt contracts | Make each mode complete and file-backed; add the public proof seam, compact receipt, exception-only communication, primary-reuse boundary, and correction continuation | Parent campaign context, root dispatch policy, peer dispatch, tracker mutation, formal review, or Release |
+| `references/INTEGRATOR-BRIEF.md` | Bounded child-integrator assignment and review-ready handoff | Keep the integrator optional, non-dispatching, and loadable only for a genuinely independent integration lane | Ordinary root landing, worker procedure, formal review, tracker mutation, push, or Release |
+| `references/CODEX-WORKTREE-LAUNCH.md` and `scripts/lane_worktree.py` | Triggered lane preflight, stable paths, registration, and recoverable cleanup | Distinguish `existing-checkout` from `managed-integration-worktree`; create or clean only the managed form, including long-path residual recovery | Wave batching, proof scheduling, actor selection, semantic independence, result acceptance, or non-lifecycle campaign procedure |
+| `references/RUN-LEDGER.md` | Triggered operator-facing ledger procedure and normal-versus-recovery command selection | Document complete `brief`, `prepare`, `apply`, `status`, and `finish` examples through Review, Repair, closeout, and Release | Reducer implementation details, semantic judgment, provider mutation, or a duplicate event schema |
+| `scripts/run_ledger.py` | Canonical event reduction, packet generation and ingestion, state validation, rendering, and passive result derivation | Add actor reuse and width state, reason codes and serial latch, complete briefs and receipts, absolute stream identity, monotonic `next_action`, typed terminal packets, closeout read-back batches, proof level and duration, result-queue state, and Release results | Semantic independence, public-proof adequacy, finding admission, tracker mutation, automatic width changes, or efficient-frontier calculation |
+| `skills/custom/to-tickets/SKILL.md` | Shaping boundary for executable tickets | Require a minimum economic slice and compact execution profile where Parallel Implement is an authorized route | Parallel dispatch procedure or runtime width selection |
+| `docs/synthesis/skill-context-relationships.md` | One authoritative composition edge per caller and callee | Update changed triggers and return boundaries without copying runtime procedure | Skill-local mechanics |
+| `tests/test_skill_pack_contracts.py` and `docs/validation/evals/core-workflows.md` | Structural contracts and behavior evaluations | Cover every promoted matrix row, E0 control lock, applicable E1 through E4 phase, semantic-surface discovery, context-load trigger, operation completion, Return form, critical failure, residual gap, and negative control | Incidental prose snapshots or simulated claims of real efficiency |
+| Installed mirror `C:\Users\steve\.agents\skills\parallel-implement` | Validated runtime copy | Synchronize only after canonical implementation and proof complete | Independent edits or partial synchronization |
+
+Preserve `events.jsonl`, generated `LEDGER.md`, runtime contract 3, `SCHEMA_VERSION = 1`, receipt authority, and compatibility commands. `append`, `append-batch`, and `append-receipt` remain recovery surfaces; the normal path uses generated packets. Helpers validate structure and authority transitions but never make the root's semantic decisions.
+
+## Staged Behavior-Evaluation Protocol
+
+Implementation Stage 1 and Stage 2 remain separately evaluated promotion units; Stage 2 still depends on promoted Stage 1. Evaluation phases `E0` through `E4` govern how claims inside either stage are proved:
+
+| Evaluation phase | Gate | Minimum evidence |
+| --- | --- | --- |
+| **E0: Control lock** | The current skill or a no-guidance arm exhibits the claimed failure on one fixed realistic scenario before candidate evaluation | Control hash, repository snapshot, graph, tools, model and reasoning tier, rubric, and one red-capable fixture per promoted behavioral claim |
+| **E1: Attention** | The candidate selects the correct operation, loads only triggered context, honors Return and completion, and resists premature completion | Fresh-context start, resume, active, review-ready, terminal, and wrong-reference scenarios |
+| **E2: Ordinary execution** | Primary reuse, compact packets, proof levels, stream identity, checkout ownership, passive metrics, and any Stage 2 width behavior work under ordinary and contended execution | Singleton, serial, two-lane, three-to-five-lane, shared-seam, result-queue, and proof-contention scenarios as applicable |
+| **E3: Recovery and terminal authority** | Correction, Downshift, checkpoint/resume, Review, Repair, closeout, Lock, and Release preserve authority and recovery | Failure injection, stale-base, conflict, partial closeout, Repair-budget, wrong-HEAD, missing-read-back, and nonterminal-Release scenarios |
+| **E4: Integrated promotion** | Relationships, canonical surfaces, helpers, behavior evaluations, installation, and mirror parity hold together | Focused and full validation, changed-file read-back, installation dry-run, and installed hash parity |
+
+Use the same fixed scenarios, tools, model and reasoning tier, and rubrics for control and candidate arms. Five fresh samples per arm is the minimum for a promoted behavioral claim. Record median, range or variance, worst result, protocol deviations, unavailable telemetry, and residual gaps. Static tests protect structure only; simulations remain labeled design evidence.
+
+## Migration And Acceptance Matrix
+
+Implement Stage 1 in row order and evaluate it against its E0 control before admitting Stage 2. In the first column, the number is the implementation stage and `E` is the governing evaluation phase. Measure only the passive result vector and report unavailable token telemetry rather than estimating it.
+
+| Implementation stage / evaluation phase | Behavior | Required source changes | Positive case | Negative control | Verification |
+| --- | --- | --- | --- | --- | --- |
+| `1 · E1` | Runtime semantic surface and leading words | `SKILL.md`, `agents/openai.yaml`, structural tests, behavior evaluations | Given the current status packet, a fresh root uses the main skill alone to identify the outcome, authority, current operation, selected context pointer, Return forms, and completion gate; the leading words produce consistent operation choices | The rewrite implements file deltas but buries branch selection, requires helper inspection to discover the next action, or lets a mnemonic substitute for a completion criterion | Semantic-surface structural test plus fresh-context branch-selection samples across start, resume, active, review-ready, and terminal states |
+| `1 · E1` | Triggered context loading | `SKILL.md`, all four disclosed references, generated briefs, behavior evaluations | The root loads only the reference whose trigger fires; workers receive complete generated briefs; an integrator reference loads only for a bounded child-integrator lane | All references load at campaign start, a required branch reference is skipped, workers receive the parent conversation, or unrelated helper/schema context enters a branch | Reference-resolution and trigger tests plus prompt/context traces from representative Open, Drain, Checkpoint, Review, and conflict branches |
+| `1 · E1, E3` | Operation completion and Return | `SKILL.md`, `RUN-LEDGER.md`, `run_ledger.py`, worker and integrator briefs, behavior evaluations | Every operation holds until its authoritative completion row passes; each invocation returns exactly one typed packet or `complete`, `partial`, or `blocked` outcome with recovery-complete evidence | Dispatch, clean worker output, generated packets, a review report, or a clean serial wave is treated as campaign completion; a nonterminal Release or incomplete checkpoint escapes | Table-driven operation scenarios, premature-completion negative controls, reducer transition tests, and Return-shape assertions |
+| `1 · E2` | Compact context and warm-primary reuse | `SKILL.md`, worker and integrator briefs, `run_ledger.py` | Common campaign context is stored once; one idle primary receives successive complete assignment deltas through a new reconciled lane and returns a compact receipt | The parent conversation or issue graph is repeated; periodic narrative telemetry is required; one mutable checkout survives across assignments | Packet fixtures plus control-versus-candidate samples measuring prompt transport, fresh implementation contexts, and complete result evidence |
+| `1 · E2` | Public-seam and three-level proof | `SKILL.md`, worker brief, `RUN-LEDGER.md`, `run_ledger.py` | Each assignment names the highest meaningful caller-facing seam; slice proof runs per assignment, wave proof after serial landing, and one current candidate proof before Review | Private-helper proof substitutes for an available public seam; broad proof or benchmarks run in parallel; unchanged candidates repeat broad suites | Proof-level fixtures, state-boundary scenarios, command counts and durations, and behavior evaluation |
+| `1 · E2` | Canonical stream and status projection | `RUN-LEDGER.md`, `run_ledger.py` | Every normal command uses one absolute existing event stream; a missing stream fails with its resolved path; `next_action` is presently legal, monotonic, or `null` with missing evidence | A relative path from another worktree appears as a fresh campaign; status recommends an already completed or now-illegal transition | Changed-working-directory, missing-stream, and reducer-state tests |
+| `1 · E3` | Typed Review-to-Release facade | `SKILL.md`, `RUN-LEDGER.md`, `run_ledger.py` | `prepare` and `apply` complete Review, Repair, closeout, and Release with stable generated IDs and only root judgment or external read-back supplied manually | Normal execution inspects helper source, authors event IDs, or falls back to `append`, `append-batch`, or `append-receipt` | End-to-end terminal fixtures, idempotent retry tests, and operator behavior evaluation |
+| `1 · E3` | Provider-neutral closeout ingestion | `SKILL.md`, `RUN-LEDGER.md`, `run_ledger.py` | One packet ingests several child read-backs while preserving each intended mutation, comment, observation, unresolved item, and child-first order | The helper mutates the tracker, infers provider success, hides partial completion, or closes the parent before every required child passes | Complete and partial closeout fixtures with per-item read-back assertions |
+| `1 · E2, E3` | Integration-checkout ownership | `SKILL.md`, worktree reference, `lane_worktree.py`, `run_ledger.py` | An existing checkout is preserved; a managed integration worktree is registered and safely cleaned, including long-path residual recovery | Raw cleanup removes an existing checkout, loses registration before cleanup, or treats an unknown checkout as campaign-owned | Existing, managed, missing-registration, dirty, and long-path lifecycle tests |
+| `1 · E2` | Passive efficiency result | `SKILL.md`, `RUN-LEDGER.md`, `run_ledger.py` | Release derives time, available tokens, contexts, width, proof cost, backpressure, rework, operator packet load, fallbacks, and correctness from events or platform telemetry | Workers estimate cost; prompt length becomes a token estimate; fewer canonical events alone or a synthetic score claims efficiency | Release-result fixtures plus real control-versus-candidate samples with missing-token handling |
+| `1 · E3` | Correction, recovery, review, and Lock authority | `SKILL.md`, worker and integrator briefs, `RUN-LEDGER.md`, `run_ledger.py`, relationship map | Correction returns to the original owner or primary when safe; checkpoints preserve recovery state; formal review stays independent; only the accepted reviewed current HEAD reaches Lock and Release | A worker self-reviews, generated packets are auto-accepted, Repair bypasses budgets, or proof, tracker, push, cleanup, and Release gates weaken | Regression, checkpoint/resume, Repair-budget, immutable-review, ancestry, and terminal-state scenarios |
+| `2 · E2` | Serial default and two-item cold start | `SKILL.md`, `run_ledger.py`, behavior evaluations | Width starts at one except for two obviously substantial, semantically independent, proof-isolated items with immediate root capacity | Disjoint filenames, available slots, tiny work, a shared seam, integration, performance, correction, or Repair justify parallelism | Singleton, tiny-work, shared-seam, two-lane, performance, and correction scenarios |
+| `2 · E2` | Additive widening through five | `SKILL.md`, `run_ledger.py`, behavior evaluations | After an eligible clean parallel wave, width increases by one up to five only while another independent item and immediate inspection capacity exist; an uninspected result holds width | Five actors launch because five slots exist; width jumps by more than one; dispatch continues while results queue for inspection | Three-to-five-lane graphs with clean waves, queue injection, and peak-width assertions |
+| `2 · E2, E3` | Downshift and serial latch | `SKILL.md`, `run_ledger.py`, behavior evaluations | Correctness failure, overlap, invalidation, contention, or backpressure returns new dispatch to one and latches serial execution until a reconciled external change removes the cause | A clean serial wave reopens parallelism; the cause is cleared without evidence; safe active work is discarded automatically | Failure, stale-base, overlap, proof-contention, and backpressure sequences with cause and release read-back |
+| `1 and 2 · E4` | Relationships, validation, and installation | `to-tickets`, relationship map, canonical tests and evaluations, installed mirror | Ticket shaping exposes an economic slice; each relationship appears once; every promoted row passes focused and full validation before scoped mirror synchronization and hash parity | Procedure is copied into relationship surfaces; an unproved stage or partial canonical family reaches the installed mirror | Focused tests, full pytest, `scripts.validate_skills`, installation dry-run, both diff checks, changed-file read-back, and mirror parity |
+
+## Promotion Gate And Residual Gaps
+
+The promotion record names each claim, implementation stage, E0 control and candidate hashes, fixed scenarios, sample counts, tools, model and reasoning tier, rubric, median, variance or range, worst result, critical failures, unavailable telemetry, protocol deviations, and residual gaps.
+
+A critical failure blocks the stage regardless of averages:
+
+- delegated or otherwise unauthorized mutation;
+- false `complete`, nonterminal Release, or Lock on an unreviewed or wrong HEAD;
+- lost actor, lane, claim, result-queue, or integration-checkout ownership at Checkpoint or resume;
+- helper-owned semantic judgment, inferred tracker success, or missing required mutation or push read-back;
+- incomplete Return or recovery state; or
+- weakened graph, protected-data, permission, review, Repair, closeout, cleanup, or Release authority.
+
+Promote a claim only when E0 demonstrates the failure, the candidate materially reduces it, variance does not expose a new unstable tail, and no new critical failure appears. Stage 1 additionally requires unchanged correctness and improvement in at least one measured cost—campaign tokens when available, fresh contexts, proof load, operator-authored packets, source inspections, compatibility fallbacks, retries, or time-to-Lock—without material regression elsewhere. Generated canonical event count may stay the same or increase when it carries stronger authority at lower operator cost. Stage 2 promotes only after Stage 1 and only when adaptive width expands or improves the measured result frontier without weakening correctness or worst-case outcomes.
+
+A residual gap blocks promotion when it affects admission, authority, mutation scope, operation selection, stream identity, context loading, lane safety, checkpoint recovery, Return completeness, review independence, Lock truth, closeout read-back, or Release truth. Noncritical uncertainty may remain only when the record names its evidence limit, operational consequence, and later validation owner. Prose and simulation never authorize promotion.
 
 ## Completion Criterion For The Future Rewrite
 
-The future rewrite is complete only when all six conditions hold:
-
-1. **Surface coverage.** Every owned source, disclosed reference, helper, relationship, test, evaluation, and installed mirror is classified in the ownership map and changed only at its authority boundary.
-2. **Execution behavior.** One warm primary and zero to four additional actors obey the root-owned width rule; every assignment uses a new reconciled lane; serial tripwires hold; Downshift latches serial execution until an explicit reconciled external change releases it.
-3. **Economical proof.** Briefs, receipts, and proof output are compact and file-backed; the highest meaningful public seam and all three proof levels are enforced without redundant broad suites or narrative cost collection.
-4. **Normal operator path.** The absolute canonical stream fails closed when missing; `status.next_action` remains monotonic and legal; Review through Release uses typed `prepare` and `apply` packets without helper-source inspection, manual event IDs, or compatibility commands; existing and managed integration checkouts retain distinct safe lifecycles.
-5. **Authority and recovery.** Multi-child closeout preserves individual read-back authority; correction remains local; checkpoints and Lock remain recovery-complete; formal review remains fresh and independent; the accepted reviewed HEAD equals the released HEAD.
-6. **Promotion evidence.** Each stage has repeated real-agent control-versus-candidate evidence, improves the measured result vector without weakening correctness or tail outcomes, passes canonical validation and mirror parity, and reports actual results and measurement gaps without a synthetic score or unproved savings claim.
-
-## Extraction Audit
-
-Before converting this synthesis into runtime changes, ask:
-
-1. Does every proposed behavior have exactly one owner and an explicit anti-duplication boundary?
-2. Can `SKILL.md` retain the universal operating spine while branch mechanics and executable schemas stay behind sharp pointers?
-3. Does every helper remain mechanical, with semantic independence, proof adequacy, result acceptance, finding admission, and residual risk owned by the root?
-4. Does each retained field, event, packet, and metric either change a decision or prove an outcome?
-5. Have repeated runtime requirements been consolidated into the decision contracts, ownership map, behavior evaluation, or completion criterion rather than restated elsewhere?
-6. Can Stage 1 ship and prove value independently before adaptive width is introduced in Stage 2?
-7. Does behavioral evaluation compare real control and candidate runs while labeling simulations and unavailable token telemetry honestly?
-8. Have all laboratory ideas remained outside the runtime until their expected savings exceed their collection, decision, validation, maintenance, and recovery cost?
+The rewrite is complete only when every normative concern has one indexed home; the main skill exposes the proposed semantic surface; every operation, context pointer, Return form, and completion gate is discoverable and behaviorally proved; every promoted claim has an E0 control and passes its applicable E1 through E4 gates; no critical worst-case regression or promotion-blocking residual gap remains; every ownership row has one authoritative implementation; Stage 1 and Stage 2 each satisfy their independent promotion gate; authority and recovery remain invariant through verified Lock; canonical validation and installed-mirror parity pass; and Release reports actual results and measurement gaps without a synthetic score or unproved savings claim.
