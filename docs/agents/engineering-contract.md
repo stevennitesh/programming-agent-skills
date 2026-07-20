@@ -1,5 +1,7 @@
 # Engineering Contract
 
+<!-- programming-agent-skills setup-file: engineering-contract.md:e46615f3e126 -->
+
 Explore imaginatively. Converge under proof. Simplify ruthlessly.
 
 Be adventurous in discovery, conservative in claims, and exacting at Lock.

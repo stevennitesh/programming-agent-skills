@@ -65,6 +65,10 @@ SKILL_HANDLE_RE = re.compile(r"\$([a-z0-9][a-z0-9-]*)")
 SETUP_SCHEMA_MARKER_RE = re.compile(
     r"<!-- programming-agent-skills setup-schema: \d+:[0-9a-f]{12} -->"
 )
+SETUP_FILE_MARKER_LINE_RE = re.compile(
+    r"(?m)^<!-- programming-agent-skills setup-file: [a-z0-9./-]+:[0-9a-f]{12} -->"
+    r"\r?\n(?:[ \t]*\r?\n)?"
+)
 SETUP_SCHEMA_MARKER_PLACEHOLDER = (
     "<!-- programming-agent-skills setup-schema: <fingerprint> -->"
 )
@@ -459,6 +463,14 @@ def unified_file_diff(expected: Path, actual: Path, *, root: Path) -> list[str]:
     if not expected.is_file() or not actual.is_file():
         return []
     if expected.read_bytes() == actual.read_bytes():
+        return []
+    expected_text = SETUP_FILE_MARKER_LINE_RE.sub(
+        "", expected.read_text(encoding="utf-8")
+    )
+    actual_text = SETUP_FILE_MARKER_LINE_RE.sub(
+        "", actual.read_text(encoding="utf-8")
+    )
+    if expected_text == actual_text:
         return []
     try:
         result = subprocess.run(

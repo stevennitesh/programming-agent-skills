@@ -1,5 +1,7 @@
 # Issue Tracker: GitHub
 
+<!-- programming-agent-skills setup-file: issue-tracker-github.md:d79c8dbdc0e3 -->
+
 Issues and specs for this repo live as GitHub issues. Use the GitHub connector for issue and pull-request operations.
 
 Repository: `stevennitesh/programming-agent-skills`

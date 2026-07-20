@@ -174,6 +174,10 @@ def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     assert "<context-root>/docs/adr/" in domain
     assert "following the context root recorded in `CONTEXT-MAP.md`" in domain
     assert "src/<context>/docs/adr/" not in domain
+    assert "do not wait until Verify" in bootstrap
+    assert "Compare every managed surface" in bootstrap
+    assert "setup-file" in bootstrap
+    assert "Markers are provenance evidence" in bootstrap
 
 
 def test_repo_bootstrap_marks_and_validates_setup_schema() -> None:
@@ -195,6 +199,57 @@ def test_repo_bootstrap_marks_and_validates_setup_schema() -> None:
     assert marker in agents
     assert "[setup-schema.json](setup-schema.json)" in bootstrap
     assert validate_skills.validate_setup_schema_manifest(ROOT) == []
+
+
+def test_repo_bootstrap_validates_each_managed_setup_file_source() -> None:
+    validator = runpy.run_path(
+        str(CUSTOM / "repo-bootstrap/scripts/validate_setup.py")
+    )
+    targets = (
+        "docs/agents/issue-tracker.md",
+        "docs/agents/triage-labels.md",
+        "docs/agents/domain.md",
+        "docs/agents/engineering-contract.md",
+    )
+
+    for relative in targets:
+        text = (ROOT / relative).read_text(encoding="utf-8")
+        marker = validator["expected_setup_file_marker"](relative, text)
+        assert marker in text, relative
+        assert validator["setup_file_marker_failures"](
+            text, relative, marker
+        ) == []
+        stale = re.sub(r":[0-9a-f]{12} -->", ":deadbeefdead -->", marker)
+        stale_text = text.replace(marker, stale)
+        failures = validator["setup_file_marker_failures"](
+            stale_text, relative, marker
+        )
+        assert len(failures) == 1
+        assert relative in failures[0]
+        assert marker in failures[0]
+
+    assert "**State-boundary matrix.**" in validator["CONTRACT_LITERAL_TOKENS"]
+
+
+def test_current_aggregate_marker_cannot_hide_one_stale_setup_file() -> None:
+    validator = runpy.run_path(
+        str(CUSTOM / "repo-bootstrap/scripts/validate_setup.py")
+    )
+    relative = "docs/agents/engineering-contract.md"
+    current = (ROOT / relative).read_text(encoding="utf-8")
+    expected = validator["expected_setup_file_marker"](relative, current)
+    without_file_marker = current.replace(expected, "")
+
+    assert validator["setup_schema_marker_failures"](
+        validator["SETUP_SCHEMA_TOKEN"]
+    ) == []
+    failures = validator["setup_file_marker_failures"](
+        without_file_marker, relative, expected
+    )
+    assert failures == [
+        f"{relative} must contain exactly one current setup-file source marker: "
+        f"{expected}"
+    ]
 
 
 def test_portable_fallback_adoption_removes_the_portable_contract_owner() -> None:

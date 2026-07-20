@@ -13,6 +13,8 @@ Own one outcome: a compatible, verified repo-local **setup surface**.
 
 Inspect before asking. Read repository identity and tracker access; `AGENTS.md` and configured fallback instructions; repo-owned command sources; existing `docs/agents/`, context files, and ADRs; `.gitignore`, `.tmp/`, `.scratch/`; and hosted-tracker labels when accessible. Inspect workspace and package manifests, independently owned source roots, existing domain vocabularies, and ADR streams.
 
+When any prior setup surface exists, run [scripts/validate_setup.py](scripts/validate_setup.py) read-only during Inventory; do not wait until Verify. Its complete failure list seeds the reconciliation delta.
+
 Treat a command as verified only when repo config, CI, or maintained documentation owns it. Surface conflicting sources.
 
 Inventory completes when the tracker candidate, verified commands, existing setup surface, domain layout, local-state policy, settled choices, and access blockers are known.
@@ -21,7 +23,7 @@ Inventory completes when the tracker candidate, verified commands, existing setu
 
 When a prior setup surface exists, treat this run as a **reconcile**, not a reset.
 
-[setup-schema.json](setup-schema.json) owns the current fingerprint. A missing `programming-agent-skills setup-schema` marker identifies a legacy setup; a different fingerprint identifies an outdated setup.
+[setup-schema.json](setup-schema.json) owns the aggregate pack fingerprint. It identifies the setup generation, not per-file completeness. Compare every managed surface: `AGENTS.md`, all four `docs/agents/*.md` contracts, `.tmp/` and `.scratch/` policy, and applicable tracker configuration. Each managed contract carries a `programming-agent-skills setup-file` marker naming its source template and template hash; a missing or different marker identifies that file as unreconciled even when the aggregate marker is current. Markers are provenance evidence, not substitutes for content inspection or validator proof.
 
 - **Preserve.** Carry forward the confirmed tracker, label mapping, domain layout, PR/MR intake policy, close policy, verified commands, repo invariants, and repo-specific contract additions.
 - **Delta.** Propose only changes required by the current pack.
@@ -42,7 +44,7 @@ Verified commands, the four local contracts, and `.tmp/`/`.scratch/` policy are 
 
 Show the exact proposed delta:
 
-- the `AGENTS.md` patch with the engineering primer, verified commands, invariants, pointers, and `<!-- programming-agent-skills setup-schema: 1:74105ed8ab28 -->`;
+- the `AGENTS.md` patch with the engineering primer, verified commands, invariants, pointers, and `<!-- programming-agent-skills setup-schema: 1:57bffed703dc -->`;
 - all four `docs/agents/*.md` results;
 - the `.gitignore` delta;
 - preserved repo-specific additions and unresolved conflicts;
@@ -56,7 +58,7 @@ Wait for approval before any file write or tracker mutation.
 Apply only the approved delta. Reconcile existing local contracts in place. Preserve repo-specific additions.
 
 - **Primer.** Update or create a short `AGENTS.md` with `Explore imaginatively. Converge under proof. Simplify ruthlessly.`, verified commands, local invariants, the current marker, and pointers to the four local contracts. When the portable engineering-contract owner is present, replace its portable title and owner preamble with the installed-pack primer and engineering-contract pointer; preserve repo-specific material.
-- **Contracts.** Reconcile the selected tracker template into `docs/agents/issue-tracker.md`; [triage-labels.md](triage-labels.md) into `docs/agents/triage-labels.md`; [domain.md](domain.md), with its layout resolved, into `docs/agents/domain.md`; and [engineering-contract.md](engineering-contract.md) into `docs/agents/engineering-contract.md`. For another tracker, use the approved operation map.
+- **Contracts.** Reconcile the selected tracker template into `docs/agents/issue-tracker.md`; [triage-labels.md](triage-labels.md) into `docs/agents/triage-labels.md`; [domain.md](domain.md), with its layout resolved, into `docs/agents/domain.md`; and [engineering-contract.md](engineering-contract.md) into `docs/agents/engineering-contract.md`. For another tracker, use the approved operation map. Write each current setup-file marker only after that file's content and preserved additions have been reconciled.
 - **State.** Keep `.tmp/` contents ignored and `.scratch/` trackable without replacing unrelated ignore rules.
 - **Labels.** For GitHub or GitLab, create only approved missing mapped and fixed labels; preserve existing labels and descriptions.
 

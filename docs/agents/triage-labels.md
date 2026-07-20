@@ -1,5 +1,7 @@
 # Triage Labels
 
+<!-- programming-agent-skills setup-file: triage-labels.md:06f253d31ea8 -->
+
 The skills speak in terms of category roles and state roles. This file maps those roles to the actual label strings used in this repo's issue tracker.
 
 ## Category Roles

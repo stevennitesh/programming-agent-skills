@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import re
 import subprocess
 from pathlib import Path
@@ -16,13 +17,22 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:74105ed8ab28 -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:57bffed703dc -->"
 ENGINEERING_PRIMER_TOKEN = (
     "Explore imaginatively. Converge under proof. Simplify ruthlessly."
 )
 SETUP_SCHEMA_MARKER_RE = re.compile(
     r"<!-- programming-agent-skills setup-schema: \d+:[0-9a-f]{12} -->"
 )
+SETUP_FILE_MARKER_RE = re.compile(
+    r"<!-- programming-agent-skills setup-file: [a-z0-9./-]+:[0-9a-f]{12} -->"
+)
+
+SETUP_FILE_SOURCES = {
+    "docs/agents/triage-labels.md": "triage-labels.md",
+    "docs/agents/domain.md": "domain.md",
+    "docs/agents/engineering-contract.md": "engineering-contract.md",
+}
 
 PORTABLE_OWNER_TOKENS = (
     "# Portable Engineering Contract",
@@ -79,6 +89,7 @@ CONTRACT_LITERAL_TOKENS = (
     "**Load-bearing internal:**",
     "**Semantic correctness:**",
     "**Semantic proof:**",
+    "**State-boundary matrix.**",
     "**Proof seam:**",
     "**Proof lane:**",
     "**Evidence:**",
@@ -209,6 +220,43 @@ def setup_schema_marker_failures(agents: str) -> list[str]:
     ]
 
 
+def tracker_source(text: str) -> str | None:
+    lowered = text.lower()
+    for provider in ("github", "gitlab", "local markdown"):
+        if re.search(rf"(?m)^#\s+issue tracker:\s*{re.escape(provider)}\s*$", lowered):
+            suffix = "local" if provider == "local markdown" else provider
+            return f"issue-tracker-{suffix}.md"
+    return None
+
+
+def expected_setup_file_marker(relative: str, text: str) -> str:
+    source = (
+        tracker_source(text)
+        if relative == "docs/agents/issue-tracker.md"
+        else SETUP_FILE_SOURCES.get(relative)
+    )
+    if source is None:
+        source = "custom-tracker-interface"
+        digest = hashlib.sha256(SETUP_SCHEMA_TOKEN.encode()).hexdigest()[:12]
+    else:
+        template = Path(__file__).resolve().parents[1] / source
+        if not template.is_file():
+            raise ValueError(f"Missing setup source template: {source}")
+        digest = hashlib.sha256(template.read_bytes()).hexdigest()[:12]
+    return f"<!-- programming-agent-skills setup-file: {source}:{digest} -->"
+
+
+def setup_file_marker_failures(
+    text: str, relative: str, expected: str
+) -> list[str]:
+    if SETUP_FILE_MARKER_RE.findall(text) == [expected]:
+        return []
+    return [
+        f"{relative} must contain exactly one current setup-file source marker: "
+        f"{expected}"
+    ]
+
+
 def engineering_primer_failures(agents: str) -> list[str]:
     pattern = re.compile(
         rf"(?m)\A# Repository Instructions[ \t]*\r?\n"
@@ -266,6 +314,12 @@ def main() -> int:
     texts = {
         relative: read_required(root, relative, failures) for relative in REQUIRED_FILES
     }
+
+    for relative in REQUIRED_FILES[1:]:
+        text = texts[relative]
+        if text:
+            expected = expected_setup_file_marker(relative, text)
+            failures.extend(setup_file_marker_failures(text, relative, expected))
 
     agents = texts["AGENTS.md"]
     if agents:

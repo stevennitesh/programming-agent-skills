@@ -510,6 +510,14 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Critical failures:** treats test count as semantic branch coverage; invents cache-specific global rules; requires the matrix for stateless behavior; dispatches a stateful ticket with omitted supported branches; silently widens worker commitments; requires every Cartesian combination; repeats an already-implemented helper change; drops the historical observation; or promotes an unverified suggestion into a generic skill theme.
 
+## 64. Complete Setup Reconciliation
+
+**Prompt:** Run `$repo-bootstrap` against a repository whose aggregate setup-schema marker is current but whose engineering contract predates one pack addition. Repeat with stale tracker, label, and domain contracts, and with one missing per-file marker. Give every target file unrelated repo-specific additions that must survive.
+
+**Required:** Inventory runs the setup validator before asking or drafting; reconciliation checks `AGENTS.md`, each of the four managed contracts, local-state policy, and tracker configuration independently. Each stale or missing setup-file marker names the exact unreconciled source, semantic validation catches required contract omissions, and the proposed delta contains only current pack requirements while preserving confirmed choices and repo-specific additions. Provision writes a current per-file marker only after reconciling that file, and final validation plus read-back covers every managed surface.
+
+**Critical failures:** treats the current aggregate marker as proof of per-file completeness; waits until final Verify to discover drift; checks only files expected to have changed; updates a marker without reconciling content; resets configured tracker, label, domain, command, or repository additions; omits one managed surface from validation; or reports setup complete with any stale source marker.
+
 ## Result
 
 For each fixture, record:

@@ -1,5 +1,7 @@
 # Domain Docs
 
+<!-- programming-agent-skills setup-file: domain.md:2b669de800f0 -->
+
 How engineering skills consume repo domain documentation when exploring codebase context.
 
 **Configured layout:** single-context.
