@@ -186,7 +186,7 @@ flowchart TB
         CLOSEOUT --> GATHER["Build closure snapshot packet from fresh reads"]
         GATHER --> COHERENCE{"Resolution Coherence passes?"}
         COHERENCE -->|No| GAP["Apply graph-growth authority; reopen, request amendment, or require successor"]
-        COHERENCE -->|Yes| DURABILITY["Run Domain Modeling under locked persistence mode"]
+        COHERENCE -->|Yes| DURABILITY["Run Domain Modeling under locked context action"]
         DURABILITY --> DURABLE{"No material conflict or authority gap?"}
         DURABLE -->|Material gap| GAP
         DURABLE -->|Authority blocker| BLOCK_CLOSE["Briefly claim map, record blocker, release, and stop"]
@@ -241,9 +241,9 @@ An authority gate never performs the work needed to make its own predicate true.
 
 | Gate | Owner | Passing evidence | Other branch | Mutation authority |
 | --- | --- | --- | --- | --- |
-| Chart packet approved | Destination owner | Destination, stable destination identity, scope, closing condition, graph, fog, design framing, budgets, decision authority, and persistence mode are accepted | Resume Qualification or revise the packet | Approval only; Chart owns later mutation |
+| Chart packet approved | Destination owner | Destination, stable destination identity, scope, closing condition, graph, fog, design framing, budgets, decision authority, and domain context action are accepted | Resume Qualification or revise the packet | Approval only; Chart owns later mutation |
 | Resolver participation and acceptance locked | Destination owner or named ticket authority | The ticket records AFK, HITL, or external participation; objective criteria or the named human acceptance owner; and the mutation boundary | Revise the packet or remain blocked | The resolver receives only the locked ticket authority |
-| Durable domain truth accepted | Domain Modeling for domain truth; destination owner for reserved language or boundary judgments | The complete domain delta is compatible and every authorized write reads back | Return the exact authority blocker or typed material gap | Domain Modeling alone owns domain files |
+| Durable domain truth accepted | Domain Modeling for domain truth; destination owner for reserved language or boundary judgments | The complete Domain Delta is compatible, every intended persistence entry is verified or rendered, and no material nondeferred blocker remains | Return the exact authority blocker, failed entry, or typed material gap | Domain Modeling alone owns domain files |
 | ADR creation approved | User or recorded ADR authority | Explicit approval names the proposed ADR decision | Preserve the candidate without writing | Domain Modeling owns the approved ADR write |
 | Unsuccessful termination confirmed | Destination owner | Wayfinder's cancelled, superseded, or out-of-scope classification is explicitly confirmed | Keep the map open | Confirmation only; Terminate owns later mutation |
 | Correction packet or amendment approved | Destination owner | The first packet traces one finite cohesive in-scope graph to a concrete To Spec return and calculates one cumulative correction budget; a later amendment remains connected to that failed closure condition and fits uncommitted capacity | Leave the delivered map immutable | Approval only; Reopen or the owning Closeout-gap mutation performs the later change |
@@ -273,7 +273,7 @@ Explicit exclusions:
 Expansion rule: direct in-scope consequence only
 Destination-change authority: approved successor campaign
 Design-coherence reference:
-Domain persistence: authorized now | deferred to Closeout
+Domain context action: persist authorized | render only
 ADR creation: explicit approval required
 Outcome budget and calculation:
 Expansion budget and calculation:
@@ -298,14 +298,14 @@ Wayfinder does not own implementation-ticket boundaries, expected write scopes, 
 
 Run Qualification only when a tracker read proves zero matching maps. Multiple plausible matches return an incompatible identity packet listing each candidate's name, lifecycle, disposition, destination owner, predecessor, and unresolved obligations. The destination owner must classify them as canonical, duplicate, successor, or distinct destination before Wayfinder may mutate or Chart another map. Wayfinder never auto-selects, merges, or creates through ambiguous identity.
 
-After a zero-match result, invoke `$grill-with-docs` only far enough to populate the Campaign Charter and one proposed graph packet: known decisions and prerequisites; typed tickets, edges, frontier or waiting trigger; tethered fog; design framing; domain and ADR mode; graph-derived budgets; and exact Admission gaps. Stable destination identity is the provider lookup and later Chart-refetch key.
+After a zero-match result, invoke `$grill-with-docs` only far enough to populate the Campaign Charter and one proposed graph packet: known decisions and prerequisites; typed tickets, edges, frontier or waiting trigger; tethered fog; design framing; domain context action and ADR authority; graph-derived budgets; and exact Admission gaps. Stable destination identity is the provider lookup and later Chart-refetch key.
 
 Qualification reads [Design Coherence Frame](codebase-design.md#frame). Every applicable criterion returns an accepted Constraint, bounded Question, Evidence gap, or evidenced non-applicability. Wayfinder alone maps a material Evidence gap to tethered fog under its Fog contract. It does not invoke `$codebase-design`, choose an architecture, or resolve the destination's substantive decisions.
 
-Lock one domain-persistence mode:
+Lock one domain context action:
 
-- **Authorized now:** the caller contract or explicit approval permits Domain Modeling to persist confirmed terms and boundaries during Qualification and later tickets.
-- **Deferred to Closeout:** Domain Modeling challenges and reconciles language but returns a pending domain delta without writing domain files.
+- **Persist authorized:** the caller contract or explicit approval permits Domain Modeling to persist confirmed terms and boundaries during Qualification and later tickets.
+- **Render only:** Domain Modeling challenges and reconciles language, then returns directly applicable per-target changes without writing domain files during the current invocation.
 
 ADR creation remains separately approval-gated in both modes. Every early domain write appears in the qualification packet and later map Source Trace. A domain contradiction that prevents coherent Chart remains an exact admission gap rather than being persisted implicitly.
 
@@ -493,7 +493,7 @@ Budget source:
 | Prototype | One runnable design or behavior verdict is needed | Locked objective criteria or named human judge | Verdict, evidence, limits, and cleanup or preservation state |
 | Diagnosis | Expected behavior, symptom, cause, or trusted reproduction is uncertain | Causal evidence | Reproduction, cause status, evidence, regression seam, and blocker |
 | Questionnaire | One identifiable external stakeholder owns unavailable information | Named recipient | Questionnaire, needed-back ledger, external owner, trigger, and later verified answers |
-| Grilling | The user owns one preference, term, boundary, commitment, public contract, or tradeoff | User, with Domain Modeling active under the locked persistence mode | Confirmed decision, deferrals, domain delta, ADR outcome, and evidence gap |
+| Grilling | The user owns one preference, term, boundary, commitment, public contract, or tradeoff | User, with Domain Modeling active under the locked context action | Confirmed decision, deferrals, Domain Delta, ADR outcome, and evidence gap |
 | Design | One evidenced module, interface, seam, adapter, ownership, migration, compatibility, or caller-facing proof question remains | The ticket's locked objective criteria or named human acceptance owner | Accepted shape, alternatives, interface contract, migration, proof seam, risks, and residual gap |
 | Task | One bounded read-only repository or operational evidence question has no specialized resolver | Accepted repository contracts and observable proof | Supported answer, affected boundary, proof, disposable evidence, and blocker |
 
@@ -523,7 +523,7 @@ Resolver-specific boundaries remain:
 - Prototype returns one verdict and its cleanup or preservation state; prototype code never becomes destination delivery implicitly.
 - Diagnosis remains diagnosis-only inside Wayfinder; it returns causal status and a trusted proof seam without fixing the behavior.
 - Questionnaire creates the collection artifact but does not resolve the ticket; verified supplied answers do.
-- Grilling may ask several conversational questions only to settle the one ticket-owned decision and returns a complete domain delta under the locked persistence mode.
+- Grilling may ask several conversational questions only to settle the one ticket-owned decision and returns a complete Domain Delta under the locked context action.
 - Design invokes Codebase Design only for the one ticket-owned design question and returns its bounded packet without choosing another ticket. Wayfinder records a resolution only under the ticket's locked objective criteria or named human acceptance.
 - Task may inspect the repository, run bounded commands, and create disposable evidence inside existing authority. It never changes production code, durable configuration, tracker setup, or external systems. A prerequisite requiring durable mutation becomes Blocked with its owning skill or authority. Task is not a catch-all for source research, runnable design evidence, causal diagnosis, design, or stakeholder authority.
 
@@ -535,7 +535,7 @@ The map remains an index rather than a transcript. Its normative information gro
 Stable destination identity, provider identity and Chart refetch evidence, predecessor, lifecycle, disposition, and operation-qualified campaign claim
 Decision authority packet: accountable owner, observable evidence, reserved decisions, and optional bounded delegate
 Destination, scope boundary, route-closing condition, campaign-budget calculations, and counters
-Source Trace, domain-persistence mode, ADR boundary, and design-coherence reference
+Source Trace, domain context action, ADR boundary, and design-coherence reference
 Ordered child-ticket index and blocking relationships
 Decisions So Far with one-line gists and owning ticket pointers
 Not Yet Specified as the sole tethered-fog container
@@ -666,7 +666,7 @@ Decision authority, destination, scope, closing condition, budgets, and claim ab
 Complete in-scope ticket index with resolver, state, dependencies, dispositions, and revisions:
 Accepted, rejected, deferred, and excluded decisions with evidence pointers:
 Research, prototype, diagnosis, questionnaire, grilling, and task returns:
-Design packets, domain deltas, ADR outcomes, and accepted engineering constraints:
+Design packets, Domain Deltas, ADR outcomes, and accepted engineering constraints:
 Actor, workflow, edge-case, failure, proof, and observable-outcome constraints:
 Residual nonmaterial uncertainty and revision evidence for every declared source:
 ```
@@ -683,7 +683,7 @@ Test five lenses:
 
 - **Destination:** every accepted resolution supports the destination, scope, closing condition, and settled-engineering boundary.
 - **Decision:** dependent decisions agree across public and data contracts, state and lifecycle behavior, permissions, environments, migration, cutover, rollback, security, and compatibility.
-- **Domain:** accepted language, context ownership, and boundaries agree with canonical truth or one explicit pending delta; every collision is accounted for under the locked persistence mode.
+- **Domain:** accepted language, context ownership, and boundaries agree with canonical truth or one complete rendered delta; every collision is accounted for under the locked context action.
 - **Design:** responsibility ownership, caller-facing interfaces, dependency direction, seam value, migration, compatibility, and caller-facing proof satisfy the shared design-coherence reference.
 - **Evidence:** every material conclusion has the source, runnable evidence, causal proof, human authority, external response, or repository proof required by its ticket.
 
@@ -693,28 +693,35 @@ Record lens results and typed gap pointers in the closure snapshot packet. Coher
 
 ### Durability
 
-After Coherence passes, invoke `$domain-modeling` under the locked persistence mode to reconcile canonical terms, context ownership, boundaries, durable invariants, and ADR-worthy decisions.
+After Coherence passes, invoke `$domain-modeling` under the locked context action to reconcile canonical terms, context ownership, boundaries, durable invariants, and already-settled ADR-worthy decisions.
 
-`authorized now` permits required domain writes and read-back. `deferred to Closeout` requires approval before persistence; while approval is pending, no campaign claim is held. ADR creation always requires explicit approval.
+`persist authorized` permits required domain writes and read-back. `render only` requires directly applicable target entries and performs no domain writes in the current invocation. ADR creation always requires explicit approval from the recorded authority.
 
 Durability returns:
 
 ```text
-Domain delta: none | persisted | pending authority
-Changed domain paths:
-ADR candidates and outcomes:
-Domain contradictions: none | <typed gap>
-Read-back: verified | not applicable
+Domain subject and source:
+Decision and mutation authority:
+Resolution: no-change | resolved | partial | unresolved
+Persistence: complete | partial | failed | not-applicable
+Persistence entries: <target>: rendered | verified | failed
+Open blockers: <zero or more authority | evidence | contradiction | routing/setup | persistence/verification entries>
+Resolved or open consequences:
+Changed paths and read-back, when present:
+Rendered changes, when present:
+ADR candidates and outcomes, when present:
+Return owner: Wayfinder
+Caller continuation authority: preserved
 ```
 
-A missing authority returns the exact approval requirement. When persisted disposition must change, record the blocker under one Closeout-gap Mutation Envelope. A material contradiction or new decision applies Graph-Growth Authority before that envelope creates one typed ticket; correction growth still requires prior amendment approval. Consequence-only persistence of a domain delta already represented in Gather does not rerun Coherence; changed or newly exposed material meaning does.
+A missing authority returns an `authority` blocker with the exact approval requirement. If accepted topology requires a single-to-multi-context routing transition, retain Domain Modeling's topology result, recommend `$repo-bootstrap` with the exact setup requirement, and stop before domain persistence; a later invocation resumes only after setup read-back verifies the new routing. When persisted disposition must change, record the blocker under one Closeout-gap Mutation Envelope. A material contradiction or new participant-owned decision applies Graph-Growth Authority before that envelope creates one typed Grilling ticket; correction growth still requires prior amendment approval. Consequence-only persistence or rendering of a Domain Delta already represented in Gather does not rerun Coherence; changed or newly exposed material meaning does.
 
 ### Seal
 
 After Coherence and Durability pass, run one Closeout-Seal Mutation Envelope:
 
 1. Refetch every declared closure field and provider revision; record the pre-Seal source revision vector.
-2. Compare each closure field with Gather, excluding expected claim transport. Treat verified persistence of an already-accounted domain delta as equal and retain its changed-path evidence.
+2. Compare each closure field with Gather, excluding expected claim transport. Treat verified persistence or rendering of an already-accounted Domain Delta as equal and retain its per-target evidence.
 3. On semantic change, complete the envelope without closing and Return for reorientation. Unrelated transport, formatting, or expected-claim revision changes may refresh evidence and continue.
 4. On equality, merge Durability plus the Gather and pre-Seal vectors into the sealed packet, persist it, close as `delivered`, and read back the packet, closed state, and post-close revision.
 5. Complete the envelope with claim absence and the post-release revision, recommend `$to-spec`, and stop.
@@ -742,7 +749,7 @@ Every delivered map recommends To Spec with this packet:
 ```text
 Route: $to-spec
 Settled source: <sealed closure packet>
-Domain delta: reconciled
+Domain Delta: <complete attached Domain Delta>
 Material gaps: none
 Map: <closed delivered map>
 ```
@@ -789,7 +796,7 @@ No skill invokes Wayfinder. Every upstream edge is recommendation-and-stop follo
 | `$wayfinder` | Invoke | `$to-questionnaire` | Create one stakeholder artifact; retain the ticket as waiting until verified answers return |
 | `$wayfinder` | Invoke | `$codebase-design` | Resolve one sufficiently evidenced Design ticket; return the bounded packet to Wayfinder |
 | `$wayfinder` | Read reference | Codebase Design design-coherence reference | Frame Admission and validate Closeout without invoking the design procedure |
-| `$wayfinder` | Invoke | `$domain-modeling` | Reconcile or persist domain truth under the locked mode; return the complete domain delta |
+| `$wayfinder` | Invoke | `$domain-modeling` | Reconcile, persist, or render settled domain truth under the locked context action; return the complete Domain Delta |
 | `$wayfinder` | Recommend and stop | `$repo-bootstrap` | A required tracker or setup capability is missing or incompatible; return the exact precondition so the user can reconcile the repository later |
 | `$wayfinder` | Recommend and stop | `$to-spec` | A delivered map passed successful Closeout |
 | `$wayfinder` | Invoke and stop | `$skill-router` | Admission failed and no owned handoff applies; return one rejection packet for later routing |
@@ -984,7 +991,7 @@ This matrix supplies cases, not runtime rules or file placement. Linked claims p
 | `I1,I2 / E2` | `W1,W3` | [Maintain and Resume](#maintain) | Maintain applies one evidence-determined repair; Resume reconciles one satisfied Wake or Recover condition without a ticket outcome | Discretionary repair, new meaning, unsatisfied or multiple conditions, scope change, or exhausted-budget extension mutates | Drift, waiting, blocker, and liveness fixtures |
 | `I1 / E2,E3` | `W1` | [Bounded progress](#campaign-budgets-and-progress) | Reservations and outcome, expansion, correction, fog, and Graph-Growth rules bound every resolver cycle and net-new obligation | A branch invents an exception, overcommits, silently extends, graduates orphan fog, restarts a question, or bypasses successor | Counter, fog, cross-operation growth, and exhaustion scenarios |
 | `I1,I2 / E1,E3` | `W1,W2,W4` | [Design coherence](#resolution-coherence) | The same reference frames Admission and validates Closeout; actual Design tickets invoke full Codebase Design | Admission and Coherence invoke full Codebase Design, or a Design ticket substitutes the lightweight frame for the owned design procedure | Reference-resolution test and behavior evaluation |
-| `I1,I2 / E3` | `W1,W2,W3,W4` | [Gather, Coherence, and Durability](#closeout) | Fresh declared fields and revisions form one packet; five lenses pass; domain delta is absent or authorized and read back | Transport metadata becomes semantic; a gate resolves its gap; missing authority mutates; Wayfinder writes domain truth; or an ADR or claim crosses an approval wait | Field inventory, lens, domain-delta, mutation-boundary, and claim-lifetime scenarios |
+| `I1,I2 / E3` | `W1,W2,W3,W4` | [Gather, Coherence, and Durability](#closeout) | Fresh declared fields and revisions form one packet; five lenses pass; the complete Domain Delta reports resolution, aggregate persistence, per-target verified or rendered results, and typed blockers | Transport metadata becomes semantic; a gate resolves its gap; missing authority mutates; Wayfinder writes domain truth; rendered work is reported as verified; or an ADR or claim crosses an approval wait | Field inventory, lens, Domain Delta, mutation-boundary, and claim-lifetime scenarios |
 | `I1,I2 / E3` | `W1,W3` | [Seal](#seal) | Gather and pre-Seal vectors enter the sealed packet; delivered close and claim release each read back with their resulting revisions; To Spec is recommended | A changed closure field, self-referential packet, or missing close or release read-back still seals | Stable, semantic-change, unrelated-metadata, self-reference, and persistence-failure scenarios |
 | `I1,I2 / E3` | `W1,W3` | [Terminate](#terminate) | Destination-owner-confirmed cancelled, superseded, or out-of-scope state closes with a terminal packet | Unconfirmed termination and successful Closeout through Terminate succeed | Authority and terminal-state scenarios |
 | `I1,I2 / E3` | `W1,W3` | [Reopen and correction budget](#reopen-and-to-spec-re-entry) | The first approved cohesive graph establishes finite correction capacity; later amendments reserve only uncommitted contingency; reseal adds an immutable generation | Reopen depends on nonexistent capacity, hides reserve, resets budget, grows without approval, fragments a cohesive return, or reopens unsuccessful history | First and later Reopen, reservation, exhaustion, amendment, and multi-generation scenarios |

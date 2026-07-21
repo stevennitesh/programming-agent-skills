@@ -296,7 +296,7 @@ This table is the sole proposed authority for when an operation may end.
 | **Attention Scan** | Read-capable configured tracker | All three disjoint buckets were evaluated, PR/MR policy was respected, counts and oldest-first summaries were returned, and observed tracker state remained unchanged | `blocked` with exact inaccessible query or policy field |
 | **Specific Trace** | One unambiguous work item | Request, decision-bearing discussion, prior triage, roles, domain source, code/diff surface, redundancy, rejection memory, and evidence gaps are accounted for | `blocked` on ambiguous identity or inaccessible decision source |
 | **Verify** | Trace complete | Observation status, inspected seam, evidence, uncertainty, and skipped checks are explicit; no product code changed | `partial` or `blocked` with the strongest safe evidence and next fact needed |
-| **Shape** | Maintainer-owned decision gap and bounded caller packet | The composed exit packet and domain delta return, affected source is refreshed, and stale verification is rerun or marked stale | `decision-required` or `blocked` from the composer; no triage recommendation is fabricated |
+| **Shape** | Maintainer-owned decision gap and bounded caller packet | The composed exit packet and Domain Delta return, affected source is refreshed, and stale verification is rerun or marked stale | `decision-required` or `blocked` from the composer; no triage recommendation is fabricated |
 | **Recommend** | Applicable Trace, Verify, and Shape complete | One category, one state, one disposition, reasoning, evidence, remaining unknowns, and one complete mutation packet are displayed | `decision-required` awaiting exact-packet approval |
 | **Override** | Exact user-selected state | Current roles and enough source exist to render every required post, readiness brief, memory delta, close state, and existing `implemented` evidence | `blocked` when the selected state cannot be rendered safely; no fallback to guessed content |
 | **Approve** | Complete visible mutation packet | The maintainer explicitly approves that exact packet and its target | `decision-required` on silence, revision, rejection, or conditional approval that changes the packet |
@@ -349,7 +349,7 @@ Verification may read and execute within the engineering contract, but Triage ne
 
 Reporter-owned missing facts bypass maintainer grilling and recommend `needs-info`.
 
-When maintainer-owned scope, acceptance, domain language, or design decisions remain unresolved, invoke `$grill-with-docs` with the target identity, bounded item, current Source Trace, open decisions, and no tracker-mutation authority. Consume its complete exit packet and domain delta. Add changed domain paths and ADR outcomes to the Source Trace, then refresh every verification result affected by the new decision.
+When maintainer-owned scope, acceptance, domain language, or design decisions remain unresolved, invoke `$grill-with-docs` with the target identity, bounded item, current Source Trace, open decisions, and no tracker-mutation authority. Consume its complete exit packet and Domain Delta. Add changed domain paths and ADR outcomes to the Source Trace, then refresh every verification result affected by the new decision.
 
 ### Recommend
 
@@ -366,7 +366,7 @@ Recommendation never implies approval.
 
 ### Approve, Apply, And Prove
 
-Use the shared contracts below. No Specific Item mutation occurs during Trace, Verify, Shape, or Recommend. Domain writes performed by `$grill-with-docs` remain that skill's separately governed mutation and appear as consumed source, not hidden Triage mutation.
+Use the shared contracts below. No Specific Item mutation occurs during Trace, Verify, Shape, or Recommend. Domain writes performed by Domain Modeling inside `$grill-with-docs` remain separately governed mutation and appear as consumed source, not hidden Triage mutation.
 
 ## Quick Override
 
@@ -414,7 +414,7 @@ Evidence should reach the highest useful caller-facing seam. Structural proxy ev
 
 ## Shaping And Domain Authority
 
-Triage owns the decision that maintainer shaping is needed and the bounded caller packet. `$grill-with-docs` owns the interview, confirmation gate, Domain Modeling composition, domain mutation, ADR approval, and combined Return.
+Triage owns the decision that maintainer shaping is needed and the bounded caller packet. `$grill-with-docs` owns the interview composition, mutation disclosure, confirmation gate, and combined Return. Domain Modeling owns domain resolution, rendering or mutation, ADR assessment, and approved ADR recording. The named user or recorded ADR authority alone owns ADR approval.
 
 The composition edge is legal only when:
 
@@ -627,7 +627,7 @@ Only `scan-complete` and `mutation-complete` satisfy their branch completion cri
 | Human or Skill Router | Explicitly invoke or recommend and stop | Triage | Raw configured issue/request or configured external PR/MR needs classification or state work | Triage owns the selected branch; recommender does not continue it |
 | Triage | Load | Tracker docs | Every invocation before tracker access | Provider, literal mappings, ready fields, close policy, external PR/MR policy, and read-back capability; no provider procedure copied into Triage |
 | Triage | Load | Domain routing and engineering contract | Domain-sensitive work; reproduction or executable validation | Current vocabulary, decisions, work-state discipline, and proof expectations |
-| Triage | Invoke | `$grill-with-docs` | Maintainer-owned scope, acceptance, language, or design remains unresolved | Complete composer exit packet and domain delta return to the same target; no tracker mutation authority transfers |
+| Triage | Invoke | `$grill-with-docs` | Maintainer-owned scope, acceptance, language, or design remains unresolved | Complete composer exit packet and Domain Delta return to the same target; no tracker mutation authority transfers |
 | Triage | Recommend and stop | `$repo-bootstrap` | Required tracker or label setup is missing or incompatible | Setup recommendation only; Triage does not continue automatically |
 | Triage | Produce | Tracker-owned Ready-for-agent contract | Approved `ready-for-agent` or `ready-for-human` state | Complete readiness brief with Triage verification extension |
 | `$to-tickets` | Produce peer contract | Tracker-owned Ready-for-agent contract | Settled parent source is sliced | Valid output bypasses Triage; Triage does not add verification retroactively |
@@ -690,7 +690,7 @@ The current skill already embodies much of this source pressure: explicit states
 - Tracker docs own transport, mappings, readiness fields, and Mutation read-back.
 - The brief preserves one bounded slice, public seam, dependencies, parallel safety, and scope fence.
 - `.out-of-scope/` stores durable concept decisions rather than issue-by-issue rejection noise.
-- `$grill-with-docs` owns maintainer interview and domain capture.
+- `$grill-with-docs` owns the composed maintainer interview and combined Return; Domain Modeling owns domain persistence and approved ADR recording within that composition.
 - Installed triage files currently match canonical files exactly.
 
 ## Current Gaps Addressed By The Proposed Design
@@ -783,7 +783,7 @@ This map owns proposed file placement and coordinated source bundles. Acceptance
 | `T3` | `skills/custom/triage/OUT-OF-SCOPE.md` | Record format, concept screen, classification, directory-absence behavior, approved lifecycle, and read-back | Add tracked-state and no-commit/no-push boundary; preserve concept-level memory | Bug rejection records, provider commands, Triage state model, or general product roadmap |
 | `T1` | `skills/custom/triage/agents/openai.yaml` | Explicit-only invocation policy | Preserve `allow_implicit_invocation: false`; keep description human-facing | Runtime procedure or state catalog |
 | `T4` | Repo Bootstrap-owned tracker templates, label template, validator, and setup fingerprints | Provider transport, work-item fields, external PR/MR policy, literal mappings, close rules, affected-dependent read-back, and provider capabilities | Supply the outcomes required by this synthesis; concrete changes belong to [Repo Bootstrap synthesis](repo-bootstrap.md) | Triage classification, evidence, packet approval, readiness rendering, or rejected-memory semantics |
-| `T4` | `$grill-with-docs` and Domain Modeling-owned surfaces | Maintainer interview, domain delta, ADR gate, and Return | Verify the bounded Triage caller and no-tracker-authority Return; change only observed mismatch | Triage recommendation, packet approval, tracker mutation, or readiness rendering |
+| `T4` | `$grill-with-docs` and Domain Modeling-owned surfaces | Maintainer interview, Domain Delta, ADR gate, and Return | Verify the bounded Triage caller and no-tracker-authority Return; change only observed mismatch | Triage recommendation, packet approval, tracker mutation, or readiness rendering |
 | `T4` | `$to-tickets`, `$implement`, `$parallel-implement`, Skill Router, README, and `docs/synthesis/skill-context-relationships.md` | Their own routing and consumption boundaries | Preserve peer ready producer, later delivery, explicit recommendation, and one authoritative relationship edge | Triage branch procedure or duplicated ready schema |
 | `T5` | `tests/test_skill_pack_contracts.py` and `docs/validation/evals/core-workflows.md` | Structural protection and behavior evaluation | Cover every promoted acceptance row, context pointer, role invariant, approval refresh, Return state, and negative control | Incidental prose snapshots or claims that literal tests prove judgment |
 | `T5` | Installed mirror `C:\Users\steve\.agents\skills\triage` | Validated runtime copy | Synchronize only after the coordinated canonical candidate and evaluations pass | Independent edits, partial synchronization, or authority over canonical source |
@@ -836,7 +836,7 @@ This matrix supplies cases, not runtime rules or file placement. Linked claims p
 | `I1 / E1` | `T1` | [Attention Scan](#attention-scan) | Three first-match buckets are disjoint, oldest first, tagged by item kind, counted, summarized, and read-only | Duplicates appear across buckets; reporter activity cutoff is invented; scan verifies or mutates | Fixed tracker snapshot, state diff, and behavior evaluation |
 | `I1 / E2` | `T1` | [Trace](#trace) | Full decision-bearing history, prior triage, roles, domain, code/diff, redundancy, memory, and evidence gaps are classified | Title and current labels substitute for source; resolved questions reopen; PR diff is skipped | Source inventory fixtures and seeded history scenarios |
 | `I1 / E2` | `T1` | [Verification](#verification-and-evidence-contract) | Confirmed, not-confirmed, partial, and insufficient evidence remain distinct from maintainer override; public-seam evidence is named | Failed reproduction becomes false report; structural proxy becomes runtime proof; override is recorded as confirmation | Bug/enhancement/PR scenarios and evidence rubric |
-| `I1,I3 / E2` | `T1,T4` | [Shaping](#shaping-and-domain-authority) | Reporter facts route to needs-info; maintainer decisions invoke Grill With Docs with bounded source; returned domain delta refreshes evidence | Reporter is grilled; Triage writes domain truth; a blocked composer return becomes a recommendation; composer return approves tracker mutation | Relationship tests and fresh-context composition samples |
+| `I1,I3 / E2` | `T1,T4` | [Shaping](#shaping-and-domain-authority) | Reporter facts route to needs-info; maintainer decisions invoke Grill With Docs with bounded source; returned Domain Delta refreshes evidence | Reporter is grilled; Triage writes domain truth; a blocked composer return becomes a recommendation; composer return approves tracker mutation | Relationship tests and fresh-context composition samples |
 | `I1 / E2` | `T1` | [Classification and state](#classification-and-state-contract) | Exactly one category, state, and semantic disposition are explicit; each ready/wait/reject state meets its admission meaning | Category is missing; state is a generic escape; `wontfix` hides disposition; normal Triage manufactures `implemented` | Table-driven category/state/disposition cases |
 | `I2 / E2` | `T2` | [Readiness brief](#readiness-brief-contract) | Agent and human variants share every semantic field; human variant names reason and completion evidence; PR finish names current diff | Human brief omits dependencies/proof; agent brief invents files; PR brief treats attached code as done | Schema tests plus fresh implementation-recipient scoring |
 | `I2 / E2` | `T2` | [Bounded slice and proof](#readiness-brief-contract) | Tracer or independently valuable support slice names caller-facing proof, expected write scope, semantic parallel safety, and scope fence | Horizontal layers, filename-only independence, broad cleanup, or private-helper proof passes readiness | Seeded brief candidates and negative controls |

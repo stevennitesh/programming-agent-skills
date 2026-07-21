@@ -7,7 +7,7 @@ Runtime authority remains in:
 - `skills/custom/grill-with-docs/SKILL.md`;
 - `skills/custom/grill-with-docs/agents/openai.yaml`;
 - `skills/custom/grilling/SKILL.md` for interview admission, facts and decisions, the decision frontier, one-focus questioning, bound control, Evidence gap, confirmation, and the Grilling exit packet;
-- `skills/custom/domain-modeling/SKILL.md`, `CONTEXT-FORMAT.md`, and `ADR-FORMAT.md` for domain resolution, persistence modes, context and ADR mutation, read-back, and the domain delta;
+- `skills/custom/domain-modeling/SKILL.md`, `CONTEXT-FORMAT.md`, and `ADR-FORMAT.md` for domain resolution, persistence intent and actions, context and ADR mutation, read-back, and the Domain Delta;
 - each invoking caller for its item identity, bounds, supplied authority, continuation authority, and return contract;
 - `docs/synthesis/skill-context-relationships.md` for pack-wide executable composition edges;
 - `tests/test_skill_pack_contracts.py` and `docs/validation/evals/core-workflows.md` for current structural and behavioral protection; and
@@ -88,7 +88,7 @@ Do not create a separate operations file, packet reference, route catalog, or fa
 
 | Term | Meaning |
 | --- | --- |
-| **Composition fit** | One bounded invocation needs Grilling and Domain Modeling active together, or an authorized caller explicitly requires both even when the domain delta may be `none` |
+| **Composition fit** | One bounded invocation needs Grilling and Domain Modeling active together, or an authorized caller explicitly requires both even when Domain Modeling may return the minimal no-change delta |
 | **Entry adapter** | The composer-owned mapping that preserves caller fields while providing compatible Grilling and Domain Modeling packets |
 | **Shared source** | The governing request, caller item, and source pointers both component packets must identify consistently |
 | **Mutation disclosure** | The pre-question explanation of current domain persistence, separate ADR authority, possible collision-driven reopening, and no downstream execution |
@@ -126,14 +126,14 @@ flowchart TB
     COMPOSE --> ANSWER["Grilling receives and integrates one answer"]
     ANSWER --> DOMAIN{"Potential domain consequence?"}
     DOMAIN -->|No| GRILL["Return control to Grilling"]
-    DOMAIN -->|Yes| BRIDGE["Send confirmed answer and pending delta to Domain Modeling"]
+    DOMAIN -->|Yes| BRIDGE["Send confirmed answer and current Domain Delta to Domain Modeling"]
     BRIDGE --> COLLISION{"Domain collision affects interview?"}
     COLLISION -->|Yes| REOPEN["Return exact collision to Grilling for reorientation"]
     COLLISION -->|No| GRILL
     REOPEN --> GRILL
     GRILL --> TERMINAL{"Grilling terminal candidate?"}
     TERMINAL -->|No| ANSWER
-    TERMINAL -->|Yes| CURRENT["Verify cumulative domain delta is current and complete"]
+    TERMINAL -->|Yes| CURRENT["Verify cumulative Domain Delta is current and complete"]
     CURRENT --> JOIN{"Joint result eligible?"}
     JOIN -->|No| INCOMPLETE
     JOIN -->|Confirmed| CONFIRMED["Wrap intact packets as Confirmed"]
@@ -171,10 +171,10 @@ Each decision is owned once. Grill With Docs evaluates only composer predicates 
 | Decision | Owner | Passing evidence | Other branch |
 | --- | --- | --- | --- |
 | Composition fits? | Grill With Docs | One bound needs a participant-facing Grilling session plus active Domain Modeling, or a caller explicitly requires both | Return the narrower component or caller without starting it |
-| Caller packet adaptable? | Grill With Docs | Shared source, bounds, authority, domain modes, component return expectations, caller identity, and continuation are compatible | Return the exact missing or contradictory adapter field |
+| Caller packet adaptable? | Grill With Docs | Shared source, bounds, authority, domain context action, component return expectations, caller identity, and continuation are compatible | Return the exact missing or contradictory adapter field |
 | Mutation disclosure complete? | Grill With Docs | The participant can tell whether domain context may change now, how ADR approval differs, how collisions affect the interview, and that confirmation starts nothing | Disclose before the first Grilling question |
 | Domain callback required? | Grill With Docs using Domain Modeling's admission vocabulary | A confirmed answer may change or contradict durable domain truth | Continue Grilling without ceremonial domain work |
-| Interview may advance after callback? | Grill With Docs | Domain Modeling returned a current delta update or `none`, and no returned collision requires Grilling reorientation | Return the exact collision or blocker to Grilling first |
+| Interview may advance after callback? | Grill With Docs | Domain Modeling returned a current material update or complete no-change delta, and no returned collision requires Grilling reorientation | Return the exact collision or blocker to Grilling first |
 | Joint result eligible? | Grill With Docs | Both component payloads are current, complete under their owners, mutually compatible, and preserve caller fields | Return `Incomplete` with exact component or adapter gap |
 | Caller may continue? | Caller | The caller already held continuation authority before invocation | Return and stop; the composer never continues the caller itself |
 
@@ -185,12 +185,12 @@ Grill With Docs remains implicitly invocable. Admit two forms:
 - **Direct:** the user asks for one repo-backed plan, design, proposal, decision, or idea to be grilled while durable domain consequences are captured.
 - **Caller-bounded:** Wayfinder, Triage, Improve Codebase, or another authorized caller supplies one bounded item and requires Grilling with Domain Modeling active throughout.
 
-Composition remains valid when the eventual domain delta is `none`. A caller may intentionally use one stable user-decision edge so it does not predict domain consequences before the interview. Domain Modeling still runs under its own admission and may return a complete no-change delta.
+Composition remains valid when Domain Modeling eventually returns the minimal no-change delta: subject and source, `Resolution: no-change`, `Persistence: not-applicable`, no blockers, and the return owner. A caller may intentionally use one stable user-decision edge so it does not predict domain consequences before the interview.
 
 Composition does not fit when:
 
 - a conversation-only pressure test needs Grilling but no durable domain capture;
-- domain truth is settled or directly disputed without an interview, so Domain Modeling alone owns the work;
+- domain truth is settled and only persistence or approved ADR recording remains, so Domain Modeling alone owns the work;
 - one source, runnable, causal, external-stakeholder, or interface question belongs to its evidence or design owner;
 - a tracker-backed multi-session campaign belongs to Wayfinder; or
 - another active caller owns ordinary in-scope clarification and has not invoked this composer.
@@ -222,11 +222,11 @@ Compatibility requires:
 | Interview bound | Grilling packet | Relevant domain question or consequence | Preserve scope alignment; do not classify interview branches |
 | Domain persistence and authorized paths | No semantic ownership | Domain packet | Pass the caller or direct request intact; do not redefine the mode |
 | ADR authority | No semantic ownership | Domain packet | Preserve it separately from context persistence |
-| Existing pending domain delta | Source input when a collision affects the tree | Domain packet | Preserve cumulative identity and version or source pointers |
+| Existing cumulative Domain Delta | Source input when a collision affects the tree | Domain packet | Preserve cumulative identity, source lineage, per-target entries, and blockers without inventing a version |
 | Caller identifiers and return fields | Grilling return when required | Domain return when required | Preserve them in the combined wrapper |
 | Continuation authority | No execution authority | No execution authority | Record the caller owner and stop after Return |
 
-A caller-specific mode such as Wayfinder's `deferred to Closeout` remains caller vocabulary and is passed through the Domain Modeling packet. Domain Modeling owns its accepted-mode mapping. A direct request's persistence authority is resolved by Domain Modeling's direct-authority contract; when ambiguity remains, the adapter keeps mutation closed and returns the missing field.
+A caller-specific phrase may remain caller vocabulary at Entry, but the adapter passes an explicit Domain Modeling action. Wayfinder passes its locked `persist authorized` or `render only` context action intact. A direct request's persistence authority is resolved by Domain Modeling's direct-authority contract; when ambiguity remains, the adapter keeps mutation closed and returns the missing field.
 
 The adapter never invents a decision owner, confirmation authority, authorized path, ADR approval, or caller continuation. Entry completes only when both component packets are independently admissible or return their exact gaps.
 
@@ -234,7 +234,7 @@ The adapter never invents a decision owner, confirmation authority, authorized p
 
 Before Grilling asks its first question, state four facts using the effective component packets:
 
-1. whether Domain Modeling may persist confirmed domain truth now or will return patch-ready changes;
+1. whether Domain Modeling may persist confirmed domain truth now or will render directly applicable changes without writing;
 2. that ADR creation has a separate explicit approval gate;
 3. that a domain collision may reopen or block an interview branch; and
 4. that confirming the combined result does not start research, design, planning, tickets, implementation, tracker mutation, or another workflow.
@@ -262,9 +262,9 @@ Domain Modeling retains exclusive ownership of:
 - its invocation and domain-consequence admission;
 - routing, Source Trace, factual and semantic authority;
 - challenge, resolution, context ownership, and relationship coherence;
-- persistence modes and authorized paths;
+- persistence intent, context action, and authorized paths;
 - context and ADR mutation, formatting, and read-back;
-- blocking state, no-change result, and complete domain delta; and
+- resolution status, aggregate persistence, per-target entries, typed blockers, no-change result, and complete Domain Delta; and
 - its completion criterion.
 
 Composition transfers neither component's authority to the other or to the composer. Grill With Docs may schedule, adapt, bridge, join, and return. It may not answer a Grilling decision, settle domain truth, approve a write, classify an ADR, weaken a blocker, or declare a component complete.
@@ -279,7 +279,7 @@ The current composer state selects exactly one legal next operation:
 | Component packets absent, stale, or inconsistent | Adapt | Both packets share one bounded source and preserve all authorities and caller fields | Disclose or Incomplete |
 | Participant has not received current mutation notice | Disclose | Effective domain, ADR, collision, and execution boundaries are stated | Compose |
 | Both components admitted and nonterminal | Compose | Grilling owns the next interview operation; Domain Modeling remains active | Await answer or component return |
-| Grilling confirms an answer with potential domain consequence | Bridge | Domain Modeling returns a current delta update, `none`, or blocker; material collision is returned to Grilling | Continue, reorient, or Incomplete |
+| Grilling confirms an answer with potential domain consequence | Bridge | Domain Modeling returns a current material update, complete no-change delta, or blocker; material collision is returned to Grilling | Continue, reorient, or Incomplete |
 | Grilling reaches a terminal candidate | Join | Current complete component payloads support one wrapper status | Return or Incomplete |
 | Caller fields or component payload is missing, stale, incompatible, or operationally failed | Join as Incomplete | Exact gap, current payloads, and return owner are recorded | Return |
 | Wrapper assembled | Return | Combined packet reaches the named owner with downstream execution `none` | Terminal |
@@ -294,9 +294,9 @@ When the predicate is false, continue Grilling without invoking ceremonial domai
 
 When it is true or materially uncertain:
 
-1. pass the confirmed answer, shared source, current Grilling branch identifiers, effective Domain Modeling packet, and cumulative pending domain delta to Domain Modeling;
+1. pass the confirmed answer, shared source, current Grilling branch identifiers, effective Domain Modeling packet, and cumulative Domain Delta to Domain Modeling;
 2. receive Domain Modeling's complete incremental result under its own schema;
-3. preserve any changed paths, patch-ready targets, ADR outcomes, blockers, and read-back evidence inside the cumulative domain delta;
+3. preserve resolution and persistence status, per-target verified or rendered results, changed paths, rendered targets, ADR outcomes, typed blockers, and read-back evidence inside the cumulative Domain Delta;
 4. when Domain Modeling returns a collision or blocker that affects the interview, return it intact to Grilling for its own reorientation, deferral, or Evidence-gap handling; and
 5. continue only after both components reflect the same current source and resolution state.
 
@@ -310,13 +310,13 @@ Join derives one wrapper status without replacing either component's status or b
 
 | Wrapper status | Required component evidence |
 | --- | --- |
-| **Confirmed** | Grilling returned its complete `Confirmed` packet; Domain Modeling returned a complete current delta; every material domain collision was already fed back to Grilling; no Domain Modeling blocker makes the two payloads incompatible; disclosure and adapter state are current |
+| **Confirmed** | Grilling returned its complete `Confirmed` packet; Domain Modeling returned a complete current delta; every material domain collision was already fed back to Grilling; no material nondeferred Domain Modeling blocker remains; disclosure and adapter state are current |
 | **Evidence gap** | Grilling returned its legitimate complete `Evidence gap` packet; Domain Modeling returned a complete current delta through the last settled answer; both payloads and caller fields remain compatible |
-| **Incomplete** | Composition fit or packet adaptation failed; a component payload is missing or stale; Domain Modeling has an unprocessed material collision, write/read-back failure, or incompatible blocker; a required disclosure was skipped; or component completion cannot be verified |
+| **Incomplete** | Composition fit or packet adaptation failed; a component payload is missing or stale; Domain Modeling has an unprocessed material collision, `persistence/verification` failure, or incompatible blocker; a required disclosure was skipped; or component completion cannot be verified |
 
 `Evidence gap` is preserved from Grilling; the composer does not create it for Domain Modeling failures. `Incomplete` reports composition or component-integrity failure without relabeling it as an interview evidence state.
 
-Join does not ask for a second user confirmation. Grilling owns shared-understanding confirmation. The composer verifies only that the confirmed Grilling packet and current domain delta can coexist.
+Join does not ask for a second user confirmation. Grilling owns shared-understanding confirmation. The composer verifies only that the confirmed Grilling packet and current Domain Delta can coexist.
 
 A caller may resume after Return only under continuation authority recorded before invocation. Joint status never grants it.
 
@@ -338,7 +338,7 @@ Caller continuation authority: preserved
 Downstream execution: none
 ```
 
-Attach each component payload intact under its own schema. Do not flatten decisions, rejected options, deferrals, sources, evidence gaps, changed paths, patch-ready targets, ADR outcomes, contradictions, partial writes, or blocking state into a shorter composer summary.
+Attach each component payload intact under its own schema. Do not flatten decisions, rejected options, deferrals, sources, evidence gaps, resolution or persistence status, per-target entries, changed paths, rendered targets, ADR outcomes, contradictions, partial writes, or typed blockers into a shorter composer summary.
 
 The bridge record proves sequencing; it does not duplicate the semantic content of either payload. Keep it compact: answer or branch identifier, Domain Modeling result identity or source pointer, returned collision if any, and whether Grilling reoriented.
 
@@ -352,9 +352,9 @@ Grill With Docs completes only when:
 - the entry adapter preserved one shared source, both component packets, every authority boundary, caller identifiers, and return ownership;
 - mutation disclosure preceded the first Grilling question;
 - both components remained active under their own unweakened contracts;
-- every potential domain consequence was bridged before dependent interview progress or explicitly returned `none` by Domain Modeling;
+- every potential domain consequence was bridged before dependent interview progress or represented by Domain Modeling's complete minimal no-change delta;
 - every material domain collision was returned to Grilling before Join;
-- the cumulative domain delta is current through the last settled answer;
+- the cumulative Domain Delta is current through the last settled answer;
 - Join derived `Confirmed`, `Evidence gap`, or `Incomplete` from complete component evidence without replacing component states;
 - the combined wrapper attaches both payloads intact and records exact composition gaps;
 - caller continuation authority remained with the caller; and
@@ -397,11 +397,11 @@ Compose -> Disclose -> Bound -> Reconcile -> Return
 
 It protects:
 
-- one Grilling packet plus one domain delta;
+- one Grilling packet plus one Domain Delta;
 - separate component gates and mutation boundaries;
 - pre-interview domain and ADR disclosure;
 - caller-bound pass-through;
-- an intact domain delta at either exit;
+- an intact Domain Delta at either exit;
 - joint eligibility for Confirmed; and
 - no downstream execution.
 
@@ -416,7 +416,7 @@ The prior synthesis was useful as an exhaustive inventory but assigned component
 | Participation Admission | Grilling Invocation And Admission |
 | Locked Interview Bound | Grilling Bound, Deferral, And Rebinding |
 | Grilling steps inside Compose | Grilling state and leading-word contracts |
-| Domain Persistence And ADR Authority | Domain Modeling Persistence Modes and ADR Contract |
+| Domain Persistence And ADR Authority | Domain Modeling persistence-intent, context-action, and ADR contracts |
 | Domain challenge, writes, read-back, and delta completeness | Domain Modeling resolution and persistence contracts |
 | Evidence Gap predicate and evidence-owner routes | Grilling Evidence Gap |
 | Shared-understanding confirmation | Grilling Confirmation Boundary |
@@ -426,7 +426,7 @@ The composer keeps only the observable relationship: adapt inputs, disclose muta
 
 ## Why A Composer Exists
 
-Calling Grilling and Domain Modeling independently would leave the caller responsible for noticing domain-relevant answers, ordering reconciliation before the next dependent question, returning collisions to the interview, keeping one cumulative delta, and proving both results describe the same source state.
+Calling Grilling and Domain Modeling independently would leave the caller responsible for noticing domain-relevant answers, ordering reconciliation before the next dependent question, returning collisions to the interview, keeping one cumulative Domain Delta, and proving both results describe the same source state.
 
 Those are stable relationship mechanics. Grill With Docs owns them once so callers do not duplicate or inconsistently implement the seam.
 
@@ -446,11 +446,11 @@ Disclosure is the one user-facing behavior created by the composition itself. Ne
 
 An exit-only domain pass can discover that an early answer conflicts with canonical language or invalidates several later choices after Grilling has already traversed them. The bridge makes the collision visible at the first dependent boundary.
 
-The composer does not perform Domain Modeling after every answer. It uses the domain-consequence trigger and lets Domain Modeling return `none` when uncertainty warrants a check but no durable effect exists.
+The composer does not perform Domain Modeling after every answer. It uses the domain-consequence trigger and accepts Domain Modeling's minimal no-change delta when uncertainty warrants a check but no durable effect exists.
 
 ## Why Payloads Stay Intact
 
-The Grilling packet and domain delta serve different recovery needs. Flattening them loses decision-tree history, caller fields, rejected options, persistence evidence, ADR outcomes, contradictions, or partial failures. An intact wrapper keeps each owner independently inspectable and makes later continuation safe.
+The Grilling packet and Domain Delta serve different recovery needs. Flattening them loses decision-tree history, caller fields, rejected options, persistence evidence, ADR outcomes, contradictions, or partial failures. An intact wrapper keeps each owner independently inspectable and makes later continuation safe.
 
 The bridge record adds sequencing proof only; it does not become a third semantic summary.
 
@@ -577,7 +577,7 @@ Evaluation phases gate promotion, not partial installation:
 
 For each promoted behavioral claim, fix the prompt, caller and component packets, source fixtures, authority, persistence and ADR modes, tools, runtime, model, reasoning tier, skill hashes, and rubric across arms. Run at least five independent fresh-context samples per arm. Use the current composer as control for modified behavior and a no-candidate-guidance arm for genuinely new behavior. Stop when the control does not exhibit the claimed failure.
 
-Judge behavior, not copied phrases. Record correct invocation; adapter completeness; caller-field preservation; disclosure timing; component contracts loaded; callback selection; cumulative-delta state; collision return; interview reorientation; component completion; joint status; intact payloads; unauthorized mutation or downstream execution; return owner; runtime settings; variance; worst outcome; protocol deviations; and residual gaps.
+Judge behavior, not copied phrases. Record correct invocation; adapter completeness; caller-field preservation; disclosure timing; component contracts loaded; callback selection; cumulative Domain Delta state; collision return; interview reorientation; component completion; joint status; intact payloads; unauthorized mutation or downstream execution; return owner; runtime settings; variance; worst outcome; protocol deviations; and residual gaps.
 
 An evaluation phase passes only when the control demonstrates the failure, the candidate materially reduces it, variance narrows, and no new critical failure appears. Component authority theft, skipped disclosure, first reconciliation only at exit, unprocessed material collision, false Confirmed, relabeled component failure, partial payload, lost caller identity, or automatic continuation fails the phase regardless of averages.
 
@@ -588,13 +588,13 @@ Implement through `I1` to `I4` and evaluate through the listed `E` phases. This 
 | Implementation / evaluation | Bundles | Claim and normative owner | Positive case | Negative control | Verification |
 | --- | --- | --- | --- | --- | --- |
 | `I1,I2 / E1` | `C1,C2` | [Invocation And Composition Admission](#invocation-and-composition-admission) | Direct repo-backed interview plus capture and caller-required dual-owner work admit; conversation-only, domain-only, one evidence leaf, and Wayfinder campaign work stay with narrower owners | The composer steals ordinary clarification, replaces Skill Router, or requires a known domain change before caller-bounded use | Invocation-policy test, relationship assertions, and fresh-context routing samples |
-| `I1,I2 / E1` | `C1,C2` | [Entry Adapter](#entry-adapter) | Direct, Wayfinder, Triage, and Improve Codebase packets preserve shared source, component authority, custom item IDs, modes, return owner, and continuation | Generic translation drops caller fields, upgrades authority, or gives persistence details to Grilling | Packet rubric across all caller fixtures |
-| `I1 / E2` | `C1` | [Mutation Disclosure](#mutation-disclosure) | The effective context-write mode, separate ADR gate, collision effect, and no-execution state are disclosed before the first question | Disclosure follows the first answer, invents authority, or omits the distinction between confirmation and execution | Turn-order and authority rubric |
+| `I1,I2 / E1` | `C1,C2` | [Entry Adapter](#entry-adapter) | Direct, Wayfinder, Triage, and Improve Codebase packets preserve shared source, component authority, custom item IDs, context actions, return owner, and continuation | Generic translation drops caller fields, upgrades authority, or gives persistence details to Grilling | Packet rubric across all caller fixtures |
+| `I1 / E2` | `C1` | [Mutation Disclosure](#mutation-disclosure) | The effective context action, separate ADR gate, collision effect, and no-execution state are disclosed before the first question | Disclosure follows the first answer, invents authority, or omits the distinction between confirmation and execution | Turn-order and authority rubric |
 | `I1,I2 / E2` | `C1,C2` | [Component Contract Preservation](#component-contract-preservation) | Grilling alone selects questions and status; Domain Modeling alone settles and persists truth; the composer only sequences | The composer classifies a branch, routes an Evidence gap, approves an ADR, writes a context file, or weakens a blocker | Ownership-attribution samples and mutation boundary inspection |
-| `I1,I2 / E2` | `C1,C2` | [Reconciliation Bridge](#reconciliation-bridge) | One domain-relevant answer updates the cumulative delta before the next dependent question; an unrelated answer produces no ceremony; uncertain consequence may return `none` | Domain Modeling is skipped because no change is expected, every answer creates synthetic work, or first reconciliation occurs only at exit | Multi-turn transcript evaluation with callback inventory |
+| `I1,I2 / E2` | `C1,C2` | [Reconciliation Bridge](#reconciliation-bridge) | One domain-relevant answer updates the cumulative Domain Delta before the next dependent question; an unrelated answer produces no ceremony; uncertain consequence may return the minimal no-change delta | Domain Modeling is skipped because no change is expected, every answer creates synthetic work, or first reconciliation occurs only at exit | Multi-turn transcript evaluation with callback inventory |
 | `I1,I2 / E2` | `C1,C2` | [Reconciliation Bridge](#reconciliation-bridge) | A glossary or context collision returns intact to Grilling and Grilling reorients before continuing | The composer resolves the collision, summarizes it away, or continues dependent questioning | Collision fixture and ordered transcript inspection |
-| `I1,I2 / E3` | `C1,C2` | [Joint Result Eligibility](#joint-result-eligibility) | Grilling Confirmed plus a current compatible domain delta yields Confirmed without a second confirmation turn | Stale delta, unprocessed collision, missing disclosure, or Domain Modeling write failure still yields Confirmed | Component-state matrix and negative controls |
-| `I1,I2 / E3` | `C1,C2` | [Joint Result Eligibility](#joint-result-eligibility) | A legitimate Grilling Evidence gap remains Evidence gap with the complete current delta attached | A Domain Modeling operational failure is mislabeled Evidence gap, or an available Grilling frontier is terminated by the composer | Evidence-gap and component-failure paired fixtures |
+| `I1,I2 / E3` | `C1,C2` | [Joint Result Eligibility](#joint-result-eligibility) | Grilling Confirmed plus a current compatible Domain Delta with no material nondeferred blocker yields Confirmed without a second confirmation turn | Stale delta, unprocessed collision, missing disclosure, or a `persistence/verification` failure still yields Confirmed | Component-state matrix and negative controls |
+| `I1,I2 / E3` | `C1,C2` | [Joint Result Eligibility](#joint-result-eligibility) | A legitimate Grilling Evidence gap remains Evidence gap with the complete current Domain Delta attached | A Domain Modeling operational failure is mislabeled Evidence gap, or an available Grilling frontier is terminated by the composer | Evidence-gap and component-failure paired fixtures |
 | `I1,I2 / E3` | `C1,C2` | [Combined Exit Packet And Return](#combined-exit-packet-and-return) | Confirmed, Evidence gap, and Incomplete wrappers preserve both full payloads, bridge evidence, caller identity, return owner, and downstream `none` | Compact output flattens decisions or domain blockers, loses item identity, or starts the next route | Packet rubric across standalone and caller-bounded cases |
 | `I1,I2 / E3,E4` | `C1,C2` | [Combined Exit Packet And Return](#combined-exit-packet-and-return) | Wayfinder, Triage, and Improve Codebase receive the wrapper and alone resume under pre-existing authority; Audit remains suggestion-only | The composer advances a map, mutates triage, edits an improvement report, or turns the audit suggestion into invocation | Integrated caller evaluations and relationship assertions |
 | `I1-I4 / E4` | `C1-C4` | [Runtime Ownership And Change Map](#runtime-ownership-and-change-map) | Canonical composer, component boundaries, callers, relationships, tests, evaluations, validation, and installed hashes agree | Runtime copies component rules, a supporting file is added without proof, callers implement their own bridge, or mirror sync is partial | Focused pytest, full pytest, `scripts.validate_skills`, diff checks, changed-file read-back, and hash parity |

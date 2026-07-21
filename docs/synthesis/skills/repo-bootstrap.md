@@ -47,7 +47,7 @@ Every Inventory and Verify pass accounts for this complete surface, not only fil
 | `AGENTS.md` | Repo Bootstrap primer contract plus repo-owned commands and invariants | One current aggregate marker, primer placement, required pointers, verified commands, and read-back | Preserve repo-specific commands, pointers, and invariants; remove only the obsolete portable owner during approved adoption |
 | `docs/agents/issue-tracker.md` | Selected hosted or local tracker template, or approved custom tracker mapping | Current setup-file marker, semantic tracker contract, configured policies, live access where applicable, and mutation read-back | Preserve tracker selection, local label mapping, intake policy, close policy, and repo-specific mappings |
 | `docs/agents/triage-labels.md` | `triage-labels.md` | Current setup-file marker, every required role and fixed mechanic label, hosted-label verification, and read-back | Preserve mapped local label names and descriptions |
-| `docs/agents/domain.md` | `domain.md` with one resolved layout | Current setup-file marker, resolved single- or multi-context layout, routed paths, and read-back | Preserve the confirmed domain layout; do not create domain truth |
+| `docs/agents/domain.md` | `domain.md` with one resolved layout | Current setup-file marker, resolved single- or multi-context layout, routed paths, and read-back | Preserve the confirmed domain layout or an accepted Domain Modeling topology requirement; do not create domain truth |
 | `docs/agents/engineering-contract.md` | `engineering-contract.md` | Current setup-file marker, required language and section semantics, source comparison, and read-back | Preserve compatible repo-specific additions; surface conflicts instead of overwriting them |
 | `.gitignore`, `.tmp/`, `.scratch/` | Work-state policy | `git check-ignore` proves `.tmp/` content ignored and `.scratch/` trackable | Preserve unrelated ignore rules and existing work state |
 | Hosted tracker configuration | Selected provider plus approved mapping | Read access, policies, mapped labels, fixed labels, and post-mutation refetch | Create only approved missing labels; preserve unrelated tracker configuration |
@@ -173,6 +173,8 @@ An owning workflow's tracker or label revision does not require an engineering-c
 
 No layout-specific source-root assumption is permitted. Resolve only `single-context` or `multi-context`, preserve configured routing, and leave glossary or ADR creation to Domain Modeling. Its template hash and semantic layout check remain part of complete reconciliation.
 
+For an accepted single-to-multi-context transition, Domain Modeling owns the topology requirement: context identities, owners, relationships, and required routed records. Repo Bootstrap accepts that requirement as setup input, drafts the exact `docs/agents/domain.md` and managed-marker changes, receives approval through its own mutation gate, and validates the resulting routing. It returns the verified routing state to the caller; Domain Modeling may persist domain truth only in a later invocation after that read-back. Repo Bootstrap never writes the context records or decides their meaning.
+
 ### `triage-labels.md`
 
 Reconcile the fixed labels declared by the canonical label template while preserving the repository's approved label mapping and unrelated labels. The accepted Wayfinder tracker representation adds these hosted-provider mechanic labels:
@@ -246,6 +248,7 @@ Do not land a tracker-template migration before its owning runtime contract. Do 
 - Do not duplicate provider mappings in `SKILL.md`.
 - Do not duplicate another skill's workflow semantics in Repo Bootstrap or this synthesis.
 - Do not treat workspace manifests, multiple source roots, or repository size alone as proof of multiple domain contexts.
+- Do not persist domain truth before a required routing transition has been reconciled and verified.
 - Do not let setup validation choose tracker, label, domain, or close policy for the user.
 
 ## Completion Criterion For The Future Rewrite
@@ -269,3 +272,4 @@ The Repo Bootstrap rewrite is complete only when every owned source file is clas
 13. Does every tracker template provide the required objects and primitives without copying the consuming workflow's process?
 14. Are fixed mechanic labels, local field equivalents, validator expectations, provisioning checks, tests, and the aggregate fingerprint updated together?
 15. Do provider-equivalent fixtures prove objects, relationships, claim capability status, revisions, release, and read-back across GitHub, GitLab, and Local Markdown?
+16. When Domain Modeling supplies an accepted topology transition, does Repo Bootstrap change and verify routing before Domain Modeling resumes persistence?
