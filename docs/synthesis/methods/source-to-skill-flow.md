@@ -19,6 +19,8 @@ intent
   -> plain-language validation candidate
   -> reality validation
   -> final prune
+       |-> plan-ready
+       `-> Author canonical edit -> canonical proof -> Return
 ```
 
 ## Cadence
@@ -49,6 +51,22 @@ When a later prompt loops back, paste the decision and the smallest useful
 feedback into the earlier prompt so the rerun addresses the specific failed
 gate.
 
+## Canonical Extraction Boundary
+
+Prompts 1-11 produce synthesis, candidate wording, and evidence. Prompt 12
+selects one authorized terminal branch:
+
+- `plan-only` returns a final patch shape without runtime mutation;
+- `apply-edit` enters `$writing-great-skills` Author, edits the requested
+  canonical package and directly affected proof or relationship surfaces,
+  proves the canonical result, and returns; or
+- for a new unscaffolded skill, the bundled `skill-creator` creates package
+  structure and metadata before Writing Great Skills owns semantic extraction.
+
+The flow stops after canonical proof. Installation, installed-mirror
+synchronization, publishing, staging, commits, and pushes need separate
+authority and owners.
+
 ## Feedback Loops
 
 Every prompt should end with a next-step decision, not only a handoff. Use the
@@ -67,7 +85,7 @@ smallest loop that fixes the problem:
 | 09 Detailed Skill-Context Draft | draft decision is `ready-for-plain-language-candidate`, Prompt 08 lines are assembled into current skill context with full useful detail, repeated runtime meaning removed, and placement/preservation traceability clear | placement cannot preserve behavior, candidate lines are insufficient, wording cannot be assembled cleanly, repeated runtime meaning remains, or an owner/support decision is blocked |
 | 10 Plain-Language Candidate | plain-language-candidate decision is `ready-for-reality-validation`, leading words and blunt gates preserve Prompt 09 behavior, repeated runtime meaning is removed, and Prompt 11 can test the actual text that might ship | plain-language wording loses behavior, hides placement, weakens traceability, creates unvalidated behavior, repeats meaning, or exposes Prompt 09/08 gaps |
 | 11 Reality Validation | validation decision is `ready-for-final-prune`, Prompt 09/10 traceability is accounted for, and evidence covers the plain-language candidate rather than the explanatory draft or loose candidate lines | `revise-before-prune` loops to Prompt 10, Prompt 09, or earlier based on the failed evidence; `needs-more-validation` stays in Prompt 11; `blocked` resolves the named validation blocker |
-| 12 Final Prune | final-prune decision is `plan-ready` or `edit-applied`, final text is validation-backed, non-duplicative, and either patch-shaped or applied in the requested mode | validation is weak, final text introduces unvalidated behavior, support/runtime ownership is unresolved, or Prompt 11 did not decide `ready-for-final-prune` |
+| 12 Final Prune | final-prune decision is `plan-ready` or `edit-applied`; final text is validation-backed and non-duplicative; any applied edit has Writing Great Skills Author authority and canonical proof | validation is weak, final text introduces unvalidated behavior, support/runtime ownership is unresolved, Author authority is absent, or Prompt 11 did not decide `ready-for-final-prune` |
 
 Do not skip forward with a known weak gate. A short loop now is cheaper than
 validating wording the draft already shows is weak.
@@ -343,7 +361,13 @@ Remove:
 
 The final runtime skill should keep only behavior-changing wording.
 
+In `plan-only` mode, return the patch-ready shape and leave runtime untouched.
+In `apply-edit` mode, enter `$writing-great-skills` Author. For a new package,
+have the bundled `skill-creator` establish structure and metadata first. Apply
+the validated semantics to canonical source, prove that source, and return
+before installation or delivery.
+
 ## Prompt Work
 
 Future prompt docs should follow this file one step at a time. Each prompt
-should name its input, output, quality bar, and promotion target.
+should name its input, output, quality bar, and next owner or terminal Return.

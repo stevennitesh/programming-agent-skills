@@ -42,7 +42,7 @@ source pressure
 | [`families/`](families/) | Synthesis notes for tightly coupled skill families. |
 
 [`methods/source-to-skill-flow.md`](methods/source-to-skill-flow.md) owns the
-production workflow from intent through final prune.
+production workflow from intent through final prune and canonical Return.
 
 ## Synthesis Ownership
 
@@ -63,6 +63,32 @@ Use **consumer requirement, owner implementation**. A consumer synthesis may exp
 Cross-document references are contracts, not copies. When two synthesis notes need the same detail, keep the rule with its owner and replace the duplicate with a named requirement plus an anchor. If ownership changes, move the rule and update every pointer in the same revision.
 
 Synthesis is design authority only until implemented. Canonical runtime files remain executable authority; target-repository settings remain instance authority. Repo Bootstrap synthesis owns how those settings are selected, represented, preserved, reconciled, and verified, but not any repository's literal values. Promote a repo-specific lesson only when it changes the reusable setup contract.
+
+## Canonical Extraction
+
+Use one ownership chain to turn selected synthesis into runtime behavior:
+
+```text
+selected synthesis
+  -> skill-creator scaffold and metadata, only for a new package
+  -> $writing-great-skills Author semantic extraction
+  -> canonical proof and Return
+  -> separately authorized installation or delivery
+```
+
+`plan-only` work ends with synthesis artifacts and a patch-ready shape; it does
+not mutate runtime files. `apply-edit` explicitly enters
+`$writing-great-skills` Author and changes only the requested canonical package
+plus directly affected proof or relationship surfaces. A new unscaffolded skill
+first uses the bundled `skill-creator`; that owner does not decide semantic
+quality. Writing Great Skills stops after canonical proof. Installation,
+installed mirrors, publishing, staging, commits, and pushes remain outside the
+authoring completion criterion.
+
+[`methods/source-to-skill-flow.md`](methods/source-to-skill-flow.md) owns the
+cadence, and Prompt 12 owns this final plan-only or canonical-edit branch. The
+synthesis note supplies selected behavior, placement, preservation, and proof
+obligations; it never becomes executable authority itself.
 
 ## Note Types
 

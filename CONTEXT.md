@@ -39,12 +39,18 @@ Copying downstream procedure upward is duplication. Repeating one leading word a
 - `scripts/validate_skills.py`: skill schema, policy, reference, setup, mirror, publication, and diff integrity.
 - `skills/experimental/manifest.json`: current experimental tree identities, capture provenance, and active baselines.
 - `docs/research/`: source intake and historical source evidence.
-- `docs/synthesis/`: design judgment, methods, family notes, and historical prompt outputs.
+- `docs/synthesis/`: selected design, evidence, extraction maps, methods, family notes, and historical prompt outputs; synthesis does not authorize runtime mutation.
 - `docs/validation/`: repeatable fixtures and evidence that wording changes behavior.
 - `docs/adr/`: durable decisions that routine skill edits should not relitigate.
 - `skills/custom/<skill>/SKILL.md`: active skill behavior; sibling files hold disclosed branch reference.
 - `skills/experimental/<skill>/`: inactive candidate behavior with the same name as an active custom skill; it is not routed, installed, or an edit source for the active pack.
 - `$HOME/.agents/skills/<skill>`: installed mirror, never the edit source of truth.
+
+Canonical extraction has one ownership chain. For a new package, the bundled
+`skill-creator` owns scaffolding and metadata. `$writing-great-skills` Author
+owns semantic edits to the requested canonical package and directly affected
+proof or relationship surfaces, then stops after canonical proof. Installation,
+publishing, and Git delivery resume only under their own authority.
 
 The installer records pack-managed names in `.programming-agent-skills-manifest.json`. It may update or retire those names while preserving unrelated skills in the shared install directory.
 

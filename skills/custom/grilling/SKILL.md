@@ -1,24 +1,24 @@
 ---
 name: grilling
-description: Grill the user relentlessly, one decision at a time. Use for a conversation-only pressure test of a plan, design, decision, or idea, including "grill me" requests, before action.
+description: Grill the user relentlessly, one question at a time, until shared understanding of a bounded plan, design, decision, or idea is explicitly confirmed. Conversation-only and before action.
 ---
 
 # Grilling
 
-**Outcome:** a confirmed design tree, left unexecuted.
+**Outcome:** shared understanding of one bounded plan, design, decision, or idea, left unexecuted.
 
-**Orient.** Recompute the decision frontier: every unresolved material decision whose prerequisites are settled. Start with a compact plan recap and the current frontier. On later turns, incorporate the latest answer and reopen any branch it invalidates.
+**Boundary.** Inspect available evidence read-only. Keep recommendations advisory. Write nothing and start no downstream work.
 
-**Find.** Resolve every answerable factual uncertainty from available sources and cite every load-bearing fact. A pending fact closes only its dependent branches; continue from another frontier branch. Return an **Evidence gap** only when no frontier decision remains. The user owns every material decision; recommendations remain advisory.
+**Bound.** Lock the subject, participant and decision authority, Bound authority, Confirmation authority, caller identity and opaque identifiers when supplied, and return owner. Direct use defaults the authorities and return owner to the user. A fresh session requires at least one unresolved material decision. A choice is material only when its answer changes the outcome, scope, acceptance, contract, risk, irreversible commitment, another material dependency, or a stated human-judgment consequence. Bound authority must accept the known impact of any deferral that weakens the outcome.
 
-**Pressure.** Choose the frontier decision whose assumption, dependency, failure mode, or tradeoff unlocks the most downstream branches.
+**Find.** Resolve inspectable facts yourself. Mark support as cited, participant-supplied, or inferred. Missing evidence or unavailable authority blocks only dependent decisions.
 
-**Ask.** Put exactly one decision to the user. Recommend an answer and its decisive tradeoff, then wait.
+**Grill.** Maintain the frontier of unresolved in-bound material decisions whose prerequisites are settled and decision authority is available. Choose the one with greatest downstream leverage. Ask exactly one thing and wait: recommend an answer and decisive tradeoff for a choice; ask a participant-held fact neutrally.
 
-Repeat **Pressure -> Ask** until **Confirm** or **Evidence gap**.
+**Integrate.** Incorporate the answer, preserve material alternatives and deferrals, reopen invalidated decisions, and classify new branches as prerequisites, deferrals, or Bound-authority scope changes. Under `$grill-with-docs` composition, return each settled material answer with the shared subject, source, and relevant opaque identifiers, then pause dependent questioning. Integrate the returned domain collision or blocker and reopen every affected branch before continuing; never classify the domain consequence yourself. Continue `Find -> Grill -> Integrate` until every in-bound material branch is resolved or validly deferred. Permit one focused clarification; return an authority gap instead of rephrasing indefinitely.
 
-**Confirm.** When the user has resolved or explicitly deferred every material branch, present the exit packet and wait. The exit is Confirmed only after the user confirms shared understanding and the next route is named.
+**Confirm.** Present the decisions, deferrals, and evidence limits. Continue grilling until Confirmation authority explicitly accepts shared understanding. A correction reopens the loop. Confirmation authorizes no next action.
 
-**Evidence gap.** When the next decision requires unavailable source facts or runnable evidence, name the exact question and its decision impact. Recommend `$research` for a cited note or `$prototype` for runnable evidence. Recommend `$to-questionnaire` when an unavailable fact or decision belongs to an identifiable external stakeholder and must be collected asynchronously. Recommend `$handoff` when evidence work must cross into a fresh session and return here.
+**Gap.** When unresolved branches remain but neither evidence nor available decision authority can advance them, return `Evidence gap` with kind `evidence` or `decision authority`, the exact missing input, and its impact. Name exactly one uninvoked blocking owner: `$research` for an authoritative source, `$prototype` for runnable design evidence, `$diagnosing-bugs` for causal or reproduction uncertainty, `$to-questionnaire` for an external stakeholder, `$handoff` for cross-session work, and the caller or `none` otherwise. Return the gap and stop.
 
-**Return.** Include confirmed decisions, explicit deferrals, source pointers, any evidence gap, and the next route. Return the packet to an invoking caller; otherwise report it and stop. Leave the plan unexecuted.
+**Return.** Return `Confirmed` or `Evidence gap`, the bound, confirmed decisions, populated supporting details, caller identity and opaque identifiers when supplied, return owner, and `Downstream execution: none`. Return to the caller or user and stop.

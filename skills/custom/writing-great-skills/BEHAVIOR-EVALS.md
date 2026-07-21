@@ -12,31 +12,31 @@ Classify the observed failure before choosing its instruction form:
 | Output has the wrong shape | Ordered positive contract |
 | A required element is omitted | Required field, slot, or schema |
 | Behavior fires under the wrong condition | Observable predicate |
+| Invocation misses or false-fires | One distinct trigger per branch plus positive and adjacent negative cases |
+| A step ends early | Sharper checkable criterion first; context split only after the failure persists |
 
 ## Control
 
-Run the realistic task in its full context without the candidate guidance. Keep runtime, model settings, tools, and task evidence fixed.
-
-Stop when the control does not exhibit the claimed failure. Guidance without a demonstrated failure is a no-op candidate.
+Fix the task, full context, model, reasoning settings, tools, authority, evidence, runtime, and rubric. Run without the candidate guidance. Stop when the claimed failure does not appear; the guidance is a no-op candidate.
 
 ## Sample
 
-Run control and candidate arms in fresh contexts. Use at least five independent samples per arm for a behavioral claim. Record the runtime, settings, skill hash, scenario, result, and variance.
+Run control and candidate arms in fresh contexts with at least five independent samples per arm for a behavioral claim. Keep inputs fixed. Alternate or randomize arm order when practical.
 
-When available, run fresh-context samples as direct read-only subagents with `fork_turns="none"`. Keep the scenario, evidence, runtime settings, and rubric fixed across arms.
+Keep candidate language, conclusions, and prior outputs out of control contexts. Ambient collaboration policy decides whether and how workers run; evidence judgment stays with the root.
 
 ## Stress
 
-Stress only discipline failures. Combine realistic pressures that compete with the owned gate while preserving the actual authority and mutation boundary.
-
-Shape, omission, and conditional failures use representative tasks, not adversarial pressure.
+Stress only discipline failures with realistic competing pressures. Keep authority and mutation boundaries fixed. Shape, omission, invocation, conditional, and completion failures use representative positive and negative tasks instead of invented adversity.
 
 ## Judge
 
-Score the promised behavior through an explicit rubric. Inspect every flagged output; string matches and template echoes are not behavioral proof.
+Use an explicit behavior rubric. Inspect every flagged output; strings, headings, and template echoes are structural evidence only. Accept guidance only when the control demonstrates the failure, the candidate materially improves compliance, variance narrows or remains acceptably bounded, and no new critical failure appears.
 
-Accept guidance only when the control demonstrates the failure, the candidate materially reduces it, variance narrows, and no new critical failure appears.
+## Record
+
+Record the failure, fixed inputs, control, candidate, sample count, runtime, hashes, rubric, per-sample results, aggregate, variance, worst result, critical failures, protocol deviations, unavailable telemetry, decision, and residual gap.
 
 ## Completion
 
-Complete when the failure, control, candidate, runtime, samples, rubric, observed behavior, variance, and residual gap are recorded.
+Complete when the record is current and supports `accept`, `reject-no-control-failure`, `reject-regression`, `needs-more-evidence`, or `blocked` without extrapolation.

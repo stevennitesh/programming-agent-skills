@@ -21,6 +21,7 @@ Validation note: `<path or paste Prompt 11 output>`
 Validation decision: `<Prompt 11 validation decision>`
 Validated / revise / cut lines: `<Prompt 11 handoff lists>`
 Existing skill text: `<path or paste relevant SKILL.md section>`
+Canonical package state: `<existing | new-unscaffolded>`
 Mode: `<plan-only | apply-edit>`
 Revision feedback: `<optional feedback if rerunning this prompt; otherwise "none">`
 
@@ -29,13 +30,22 @@ Do not reopen extraction, triage, agent bridge, or full behavior synthesis.
 Do not widen the skill beyond the validated scope.
 Do not change invocation policy unless validation explicitly requires it.
 Do not add support docs unless the validated placement decision requires them.
+Do not install, synchronize an installed mirror, publish, stage, commit, or
+push. Those actions begin only after a separate owner receives authority.
 
 Your job is to remove anything left after validation that still does not earn a
 runtime place. The main plain-language compression already happened in Prompt
 10; this pass is residual pruning, support routing, and optional patch
 application.
 
-Use the `writing-great-skills` pruning standard:
+Use the `$writing-great-skills` semantic and pruning contract. `plan-only`
+changes only the final-prune synthesis artifact. `apply-edit` explicitly enters
+Writing Great Skills Author. If `Canonical package state` is
+`new-unscaffolded`, use the bundled `skill-creator` for package structure and
+metadata before Writing Great Skills applies semantic content. Writing Great
+Skills stops after canonical proof.
+
+Apply these pruning rules:
 
 - keep each meaning in one place;
 - keep only behavior-changing lines;
@@ -54,7 +64,9 @@ State:
 - detailed skill-context draft and plain-language candidate used;
 - validation decision used;
 - existing behavior that must be preserved;
+- canonical package state and the scaffold owner when applicable;
 - whether this is `plan-only` or `apply-edit`;
+- mutation authority for the selected mode;
 - what this pass will not change.
 
 If `Revision feedback` is not `none`, account for it before producing final
@@ -144,7 +156,7 @@ Use:
 
 Include skipped validation or uncertainty honestly.
 
-## 8. Apply Edit Branch
+## 8. Canonical Apply-Edit Branch
 
 If mode is `plan-only`, write:
 
@@ -152,11 +164,17 @@ If mode is `plan-only`, write:
 
 If mode is `apply-edit`:
 
-- edit only the validated target files;
+- require explicit Writing Great Skills Author authority;
+- when the package is `new-unscaffolded`, have the bundled `skill-creator`
+  create only package structure and metadata, then resume semantic authoring;
+- edit only the validated canonical target files and directly affected proof or
+  relationship surfaces;
 - preserve unrelated user changes;
 - do not touch unrelated skills;
-- run the appropriate checks;
+- read back changed bytes and run claim-proportionate canonical checks;
 - record files changed and checks run.
+
+Return after canonical proof. Do not continue into installation or delivery.
 
 Use:
 
@@ -169,15 +187,17 @@ End with:
 
 - final-prune decision:
   - `plan-ready`: final patch shape is ready but not applied;
-  - `edit-applied`: validated runtime edit was applied;
+  - `edit-applied`: validated canonical edit was applied and proved; delivery
+    remains unstarted;
   - `return-to-validation`: Prompt 11 or an earlier owning prompt must rerun;
   - `blocked`: stop until the named owner, support-doc, or user decision is
     resolved;
 - final behavior preserved or introduced;
 - files to edit or edited;
 - checks to run or run;
+- canonical proof and actual terminal boundary;
 - residual risks;
-- follow-up work, if any.
+- separately owned follow-up work, if any.
 
 Write the final prune note to:
 
@@ -188,4 +208,6 @@ Write the final prune note to:
 
 This prompt is complete when the final runtime text is smaller than the draft,
 behavior-changing, validation-backed, non-duplicative, and every remaining line
-earns its place.
+earns its place. In `apply-edit`, completion additionally requires explicit
+Author authority, canonical read-back and proof, preserved unrelated work, and
+a Return before installation or delivery.

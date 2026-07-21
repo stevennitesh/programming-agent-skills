@@ -20,8 +20,6 @@ How a skill is reached — and the two loads you pay for the choice.
 
 A skill with `policy.allow_implicit_invocation` unset or true, so Codex can choose it from the skill **description** — and the human can still type its name, so implicit invocation always _includes_ explicit reach. There is no model-only state: implicit invocation only ever _adds_ Codex discovery, never removes the human's. Pays a permanent **context load** on every turn in exchange for that discoverability. Reachable by other skills, because the description that makes it discoverable makes it invocable. An implicitly invocable skill whose content is all **reference** is also one home for shared reference: another skill can invoke it, so reference needed by several skills lives in one place. Choose implicit invocation when Codex must discover the skill from the request or another skill must load it; choose **explicit-only** when human judgment should select every use.
 
-Pack rule: record `allow_implicit_invocation: true` explicitly so every active skill has an auditable policy file.
-
 _Avoid_: ability, tool, capability
 
 ### Explicit-Only
@@ -56,7 +54,7 @@ _Avoid_: human index, burden, overhead
 
 ### Router Skill
 
-An **explicit-only** skill whose job is to point at your other explicit-only skills — naming each and when to reach for it — so the human has one skill to remember instead of many. It can only hint, never fire them automatically. The cure for **cognitive load** when explicit-only skills multiply.
+A skill whose only job is to select one next skill or `none` and stop without executing it. An **explicit-only** router lets the human ask for route selection. A narrowly **implicitly invocable** residual router also accepts a terminal out-of-scope packet from another skill after that owner has exhausted its work and known handoffs. It never interrupts active in-scope work or intermediates a deterministic handoff. The cure for duplicated route maps and, when explicit-only, for **cognitive load** as explicit skills multiply.
 
 _Avoid_: dispatcher, menu, registry, index, router procedure
 

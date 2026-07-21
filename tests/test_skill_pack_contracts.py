@@ -489,12 +489,22 @@ def test_grill_with_docs_owns_interview_domain_composition() -> None:
     assert "$domain-modeling" not in grilling
     assert "$grilling" not in domain
     assert re.findall(r"(?m)^\*\*([A-Za-z]+)\.\*\*", grill_docs) == [
-        "Compose",
+        "Boundary",
+        "Admit",
         "Disclose",
-        "Bound",
-        "Reconcile",
+        "Compose",
+        "Join",
         "Return",
     ]
+    for contract in (
+        "Admit -> Disclose -> Compose [Grill <-> Relay <-> Model] -> Join -> Return",
+        "Relay each settled material answer",
+        "return every material collision or blocker to Grilling",
+        "The composer filters or merges neither",
+        "Status: Confirmed | Evidence gap | Blocked",
+        "This is a return, not a general handoff",
+    ):
+        assert contract in grill_docs
     rows = re.findall(
         r"(?m)^\| `([a-z0-9-]+)` \| (Load|Invoke|Compose|Hand off|Recommend and stop) \| `\$([a-z0-9-]+)` \|",
         relationships,
@@ -511,27 +521,42 @@ def test_domain_modeling_owns_durable_domain_truth() -> None:
         "Trace",
         "Challenge",
         "Resolve",
-        "Persist",
+        "Reconcile",
         "Return",
     ]
+    assert "Trace -> Challenge -> Resolve -> Reconcile -> (Persist -> Verify | Render) -> Return" in domain
     for target in ("CONTEXT-FORMAT.md", "ADR-FORMAT.md"):
         assert (CUSTOM / "domain-modeling" / target).is_file()
         assert f"({f'./{target}'})" in domain
-    assert "**domain delta**" in domain
+    for contract in (
+        "accept every settled material answer",
+        "return any collision or blocker before dependent Grilling progress",
+        "Never decide answer materiality or interview branching",
+        "Domain Delta",
+    ):
+        assert contract in domain
 
 
 def test_grilling_preserves_one_decision_confirmed_exit_and_evidence_routes() -> None:
     grilling = (CUSTOM / "grilling/SKILL.md").read_text(encoding="utf-8")
 
     assert re.findall(r"(?m)^\*\*([A-Za-z ]+)\.\*\*", grilling) == [
-        "Orient",
+        "Boundary",
+        "Bound",
         "Find",
-        "Pressure",
-        "Ask",
+        "Grill",
+        "Integrate",
         "Confirm",
-        "Evidence gap",
+        "Gap",
         "Return",
     ]
+    for contract in (
+        "return each settled material answer",
+        "pause dependent questioning",
+        "Integrate the returned domain collision or blocker",
+        "never classify the domain consequence yourself",
+    ):
+        assert contract in grilling
 
 
 def test_prototype_preserves_lifecycle_boundaries_and_branch_gates() -> None:
@@ -1056,19 +1081,52 @@ def test_research_owns_one_authorized_cited_note() -> None:
     assert "Status: answered | conflicted | blocked" in template
 
 
-def test_writing_great_skills_authorizes_bounded_direct_subagents() -> None:
+def test_writing_great_skills_keeps_concise_authoring_boundary() -> None:
     skill_dir = CUSTOM / "writing-great-skills"
-    writing = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    behavior_evals = (skill_dir / "BEHAVIOR-EVALS.md").read_text(
+        encoding="utf-8"
+    )
+    glossary = (skill_dir / "GLOSSARY.md").read_text(encoding="utf-8")
+    relationships = (
+        ROOT / "docs/synthesis/skill-context-relationships.md"
+    ).read_text(encoding="utf-8")
 
     assert implicit_policy(skill_dir)
-    assert "[GLOSSARY.md](GLOSSARY.md)" in writing
-    assert "[BEHAVIOR-EVALS.md](BEHAVIOR-EVALS.md)" in writing
-    assert 'fork_turns="none"' in writing
-    assert "pack-wide audits and behavioral evaluation samples" in writing
-    behavior = (skill_dir / "BEHAVIOR-EVALS.md").read_text(encoding="utf-8")
-    sample = behavior.split("## Sample", 1)[1].split("## Stress", 1)[0]
-    assert 'fresh-context samples as direct read-only subagents with `fork_turns="none"`' in sample
-    assert "fixed across arms" in sample
+    for contract in (
+        "**Audit:** advise read-only",
+        "**Author:** edit only the requested canonical skill",
+        "Trace",
+        "Own",
+        "Shape",
+        "Prune",
+        "Prove",
+        "callee, trigger, authority, and return boundary",
+        "bundled `skill-creator`",
+        "Inspect mirrors only when asked",
+        "Stop after canonical proof",
+        "delivery needs separate authority",
+    ):
+        assert contract in skill
+
+    for contract in (
+        "Invocation misses or false-fires",
+        "A step ends early",
+        "at least five independent samples per arm",
+        "Ambient collaboration policy decides whether and how workers run",
+        "Keep candidate language, conclusions, and prior outputs out of control",
+        "reject-no-control-failure",
+    ):
+        assert contract in behavior_evals
+
+    assert "fork_turns" not in skill
+    assert "installed mirrors" not in skill.lower()
+    assert "Pack rule:" not in glossary
+    assert (
+        "bundled system `skill-creator` owns new-package scaffolding and metadata mechanics"
+        in relationships
+    )
+    assert "$writing-great-skills` owns semantic quality" in relationships
 
 
 def test_writing_great_skills_defines_format_neutral_semantic_surface() -> None:
@@ -1087,7 +1145,8 @@ def test_writing_great_skills_defines_format_neutral_semantic_surface() -> None:
     )
     positions = [surface.index(role) for role in roles]
     assert positions == sorted(positions)
-    assert "not mandatory headings" in writing
+    assert "Apply the **Semantic Skill Surface**" in writing
+    assert "Use only applicable roles" in surface
     assert "universal template" in surface
 
 

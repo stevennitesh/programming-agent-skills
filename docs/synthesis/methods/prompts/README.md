@@ -19,6 +19,15 @@ feeds the next step without jumping straight to runtime `SKILL.md` edits.
   revise, rerun the smallest earlier prompt that owns the problem before moving
   forward.
 
+## Canonical Extraction
+
+Prompts 1-11 produce design artifacts and evidence, not runtime authority.
+Prompt 12 either returns a `plan-only` patch shape or enters
+`$writing-great-skills` Author for an explicitly authorized canonical edit. A
+new unscaffolded package first uses the bundled `skill-creator` for structure
+and metadata. Writing Great Skills owns semantic quality and stops after
+canonical proof; installation and Git delivery remain separate.
+
 ## Prompts
 
 | Prompt | Step | Output |
@@ -34,7 +43,7 @@ feeds the next step without jumping straight to runtime `SKILL.md` edits.
 | [`09-detailed-skill-context-draft.md`](09-detailed-skill-context-draft.md) | Assemble detailed skill-context draft | Candidate-draft intake gate, owner-boundary check, candidate input, placement/merge map, preserved behavior, integrated detailed draft, traceability map, support placeholders, repetition check, and draft decision. |
 | [`10-plain-language-validation-candidate.md`](10-plain-language-validation-candidate.md) | Create plain-language validation candidate | Leading-word and gate plan, plain-language candidate text, preservation check, repetition removal, reality-validation handoff, and plain-language-candidate decision. |
 | [`11-validate-against-reality.md`](11-validate-against-reality.md) | Validate against reality | Validation lane, expected behavior, scenario, plain-language-candidate coverage, evidence notes, results, regression risks, decision, and final-prune handoff. |
-| [`12-final-prune-and-runtime-patch.md`](12-final-prune-and-runtime-patch.md) | Prune and prepare runtime patch | Validation-driven residual decisions, final runtime text, invocation/support decisions, prune log, residual risk, optional applied edit record, and completion summary. |
+| [`12-final-prune-and-runtime-patch.md`](12-final-prune-and-runtime-patch.md) | Prune and prepare runtime patch | Validation-driven residual decisions, final runtime text, invocation/support decisions, prune log, residual risk, and either a plan-ready shape or an Author-owned canonical edit with proof. |
 
 ## Boundary
 
@@ -43,3 +52,5 @@ feeds the next step without jumping straight to runtime `SKILL.md` edits.
 - Put facet synthesis artifacts in `../../facets/`.
 - Put whole-skill or legacy synthesis notes in `../../skills/` or `../../families/`.
 - Put runtime behavior only in `../../../../skills/custom/`.
+- Do not install, synchronize mirrors, publish, stage, or commit from this prompt
+  sequence; those actions require their own authority after canonical Return.

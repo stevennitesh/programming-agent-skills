@@ -41,7 +41,7 @@ Admit:
 
 A fresh session requires at least one unresolved material decision within the available participant's decision authority. Do not admit a fresh confirmation-only ceremony, ordinary in-scope clarification owned by another skill, an inspectable fact, a settled domain change, one evidence question, an external-stakeholder-only question, or a tracker-backed multi-session campaign.
 
-Begin with or derive the interview bound and source; participant and decision authority; Bound authority; Confirmation authority; known decisions, evidence, and deferrals; and caller and return owner. Direct use defaults the authorities and return owner to the user. Ask for a missing field only when it changes admission, ownership, or the bound. A caller preserves its own identifiers and equivalent fields without lossy translation. Downstream execution is always `none`.
+Begin with or derive the interview bound and source; participant and decision authority; Bound authority; Confirmation authority; known decisions, evidence, and deferrals; and caller identity, opaque identifiers, and return owner. Direct use defaults the authorities and return owner to the user. Ask for a missing field only when it changes admission, ownership, or the bound. A caller preserves its own identifiers and equivalent fields without lossy translation. Downstream execution is always `none`.
 
 ### Authority And Materiality
 
@@ -96,6 +96,8 @@ Use natural prose rather than a mandatory form. Several sentences may frame one 
 #### Integrate
 
 Incorporate the latest fact, decision, correction, or explicit deferral. Preserve material rejected alternatives and superseded history; derive immediate consequences without deciding new choices; reopen invalidated answers; classify newly exposed branches; and return to `Find` or `Grill`.
+
+Under Grill With Docs composition, return every settled material answer with the shared subject, source, and relevant opaque identifiers, then pause dependent progress. Integrate any returned domain collision or blocker and reopen affected branches before continuing. Grilling never classifies the domain consequence.
 
 Every substantive answer must resolve, invalidate, explicitly defer, or replace one branch with finite prerequisites traceable to the locked outcome. An unchanged frontier permits one focused clarification. Continued non-progress becomes a typed decision-authority gap rather than another paraphrase.
 
@@ -186,7 +188,7 @@ The synthesis changes no repository-wide domain term or context boundary. `Bound
 | `G0` | `skills/experimental/grilling/SKILL.md` | Hold the concise non-canonical evaluation candidate | Installation, active routing, caller dependence, or executable authority |
 | `G1` | `skills/custom/grilling/SKILL.md` | Extract the proposed runtime design into one concise leading-word contract | Domain mutation, caller procedure, evidence execution, durable storage, routing catalog, rationale, or evaluation prose |
 | `G1` | `skills/custom/grilling/agents/openai.yaml` | Preserve explicit `policy.allow_implicit_invocation: true` | Trigger prose or runtime procedure |
-| `G2` | `$grill-with-docs`, router, callers, evidence owners, and their syntheses | Reconcile only accepted triggers, packet compatibility, and return boundaries | A second copy of Grilling procedure |
+| `G2` | The [minimum coordinated experimental cohort](grill-with-docs.md#runtime-ownership-and-change-map) plus recommendation-only evidence owners | Reconcile only accepted triggers, packet compatibility, and return boundaries; generate no candidate outside the cohort without an observed owned mismatch | A second copy of Grilling procedure or speculative regeneration of verification-only owners |
 | `G2` | `docs/synthesis/skill-context-relationships.md` | Preserve current edges and add the narrowly gated Grilling-to-Diagnosing-Bugs edge | Interview procedure or duplicate route catalog |
 | `G2` | README and active route guidance | Change only materially affected human-facing wording | Normative runtime procedure |
 | `G2` | `skills/extra/loop-me/SKILL.md` | Classify compatibility; change only through separately authorized extra-skill work | Authority over active Grilling behavior |
@@ -209,7 +211,7 @@ Use the counterfactual method owned by `skills/custom/writing-great-skills/BEHAV
 | Bound control | Prerequisites join; adjacent work defers; scope change waits for Bound authority | Silent expansion, participant-approved caller scope change, or required blocker disguised as deferral |
 | Typed gap and owner | Source, runnable, causal, external-owner, fresh-session, caller-owned, and ownerless gaps select one exact uninvoked owner | Premature exit, several owners, automatic invocation, causal work misrouted to research or prototype, or gap while a frontier remains |
 | Confirmation and Return | Withheld confirmation stays open; revision reopens; accepted understanding returns the conditional semantic packet with downstream `none` | Internal completeness reported Confirmed, route agreement required, general route chosen, field loss, or automatic continuation |
-| Composition | Grill With Docs is selected at admission for durable capture, preserves both component contracts, and returns a Grilling Evidence gap with its uninvoked owner and the complete Domain Delta | Grilling mutates domain truth, the composer weakens a gate, reroutes or invokes the gap owner, re-enters itself, loses a payload, or loses caller identity |
+| Composition | Grill With Docs is selected at admission for durable capture; every settled material answer crosses the composer; returned collisions reopen affected branches; and a Grilling Evidence gap returns with its uninvoked owner and the complete Domain Delta | Grilling classifies domain consequence or mutates truth; dependent questioning continues before collision return; the composer weakens a gate, reroutes or invokes the gap owner, re-enters itself, loses a payload, or loses caller identity |
 
 Static tests protect structure and relationships only. Promotion requires fresh counterfactual behavior evidence for each changed claim and no critical failure.
 
