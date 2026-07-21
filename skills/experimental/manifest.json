@@ -33,6 +33,12 @@
       "candidate_sha256": "64cc2617fcf37faa311053fbc5f96e0d35bf4a6e1be3f7b18bfb3e81c054fd3e",
       "active_baseline_sha256": "a0d1665f9bfbcb8cfe37f159e2c5f6731b2f970984ec1255a9ad81f8d013796c"
     },
+    "prototype": {
+      "origin": "skills/custom/prototype at 7ecff6cf032bd43dde403caa439c501c046b7a84 as the active baseline for synthesis-driven extraction",
+      "reason": "Preserve the inactive complete Prototype candidate for structural proof, behavioral evaluation, and coordinated Router and caller review before promotion.",
+      "candidate_sha256": "69435f142f98e858c302532ce93854b67a2785d49198faa2a3f50695fb155907",
+      "active_baseline_sha256": "ecba1e84f0e0df9a0b32b2febdac4e1d7f096dcbf468f9c054c0d5bf7d95a3ef"
+    },
     "repo-bootstrap": {
       "origin": "skills/custom/repo-bootstrap at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f before the installed-baseline restore",
       "reason": "Preserve the divergent candidate while the installed managed version remains active.",

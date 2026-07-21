@@ -123,6 +123,69 @@ def test_experimental_composer_family_shares_one_relay_handshake() -> None:
         ) == "policy:\n  allow_implicit_invocation: true\n"
 
 
+def test_experimental_prototype_preserves_selected_leaf_contract() -> None:
+    skill_dir = EXPERIMENTAL / "prototype"
+    skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    logic = (skill_dir / "LOGIC.md").read_text(encoding="utf-8")
+    ui = (skill_dir / "UI.md").read_text(encoding="utf-8")
+    measure = (skill_dir / "MEASURE.md").read_text(encoding="utf-8")
+    policy = (skill_dir / "agents/openai.yaml").read_text(encoding="utf-8")
+
+    for contract in (
+        "Admit -> Freeze -> Load -> Probe -> Smoke -> Judge -> Reconcile -> Return",
+        "request_subject",
+        "Before mutation, read back five locks",
+        "claim_kind: shape/feel | design-evidence",
+        "judgment_mode: human | rule-based",
+        ".tmp/prototype/<question-slug>/",
+        "Load exactly one branch reference",
+        "[MEASURE.md](MEASURE.md)",
+        "preserve-for-verdict",
+        "authorized-durable-evidence",
+        "No terminal return leaves a live resource",
+        "Resume is permitted only from an `awaiting-verdict` packet",
+        "invoke `$skill-router` only when the active Router policy admits terminal residuals",
+        "one `verdict`",
+        "every started operation either meets its criterion or returns `blocked`",
+    ):
+        assert contract in skill
+
+    for removed in (
+        "supported_direction",
+        "Admit -> Freeze -> Branch",
+    ):
+        assert removed not in skill
+    assert (
+        "Do not add universal `last_operation` or `next_required_action` fields"
+        in skill
+    )
+
+    assert "happy, boundary, and rejected cases" in logic
+    assert "repeated runs are equivalent" in logic
+    assert "positively isolates the whole prototype surface" in ui
+    assert "never exceed five" in ui
+    assert "actual browser or target UI" in ui
+    assert "variance and worst observed result" in measure
+    assert "known confounders and unsupported extrapolations" in measure
+    assert "does not diagnose an unexplained slowdown" in measure
+    for branch in (logic, ui, measure):
+        assert "Return to `Judge` in [SKILL.md](SKILL.md)" in branch
+        assert "this branch does not Reconcile or Return" in branch
+
+    assert {
+        path.relative_to(skill_dir).as_posix()
+        for path in skill_dir.rglob("*")
+        if path.is_file()
+    } == {
+        "LOGIC.md",
+        "MEASURE.md",
+        "SKILL.md",
+        "UI.md",
+        "agents/openai.yaml",
+    }
+    assert policy == "policy:\n  allow_implicit_invocation: true\n"
+
+
 def test_experimental_repo_bootstrap_preserves_per_file_reconciliation() -> None:
     bootstrap = (EXPERIMENTAL / "repo-bootstrap/SKILL.md").read_text(
         encoding="utf-8"

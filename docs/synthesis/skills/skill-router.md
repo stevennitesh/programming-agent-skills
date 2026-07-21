@@ -401,6 +401,7 @@ The invocation is complete only when Admission is resolved; every plausible dest
 | Eligible active skill | Invoke | `$skill-router` | A complete terminal residual remains after owned work and handoffs; return one route or `none` to the caller |
 | `$domain-modeling` | Invoke | `$skill-router` | In the future coordinated candidate only, a standalone terminal pass has a complete material residual outside Domain Modeling and no owned handoff; preserve the residual packet and return one route or `none` without sending unfinished in-scope domain work back to Domain Modeling or invoking its composer directly |
 | `$wayfinder` | Invoke | `$skill-router` | Qualification or Admission rejects terminal unowned residual work; preserve the Wayfinder exclusion and return one narrower route or `none` |
+| `$prototype` | Invoke | `$skill-router` | In the future coordinated candidate only, a direct `not-admitted` result has no owned caller return or handoff and supplies a complete terminal residual; preserve the failed fit, actual need shape, and attempted or excluded routes, then return one recommendation or `none` without starting it |
 | `$skill-router` | Recommend and stop | One destination | One destination wins and any precondition is named; the user or caller may start it later |
 | `$skill-router` | Return and stop | `none` | Admission fails, no skill owns the work, or ambiguity remains after the one-question budget |
 
@@ -414,14 +415,15 @@ The current repository snapshot contains three distinct states that must not be 
 
 | Surface | Observed state | Design consequence |
 | --- | --- | --- |
-| Canonical `skills/custom/skill-router/SKILL.md` | Contains the six-step residual-router candidate, exhaustive current route map, Wayfinder pre-screen, loop guards, and complete Return | Useful extraction candidate, not promoted behavior proof |
-| Canonical `agents/openai.yaml` | Sets implicit invocation to `true` | Requires the strict trigger evaluation and vocabulary migration |
-| Installed Skill Router mirror | Retains the earlier explicit-only four-step human index | Valid control arm; not canonical edit source |
-| `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md` | Carries the narrow explicit-request or terminal-residual bootstrap wording | Must remain a pointer, never a copied route map |
-| `CONTEXT.md` | Still defines Router skill as explicit-only | Known vocabulary conflict that blocks promotion |
-| Writing Great Skills glossary | Canonical source defines both the explicit-only human index and narrowly implicit residual-router subtype; the installed mirror still has the older explicit-only definition | Preserve the canonical distinction, verify it with the rewrite, and synchronize only after promotion |
-| `docs/synthesis/skill-context-relationships.md` | Marks Skill Router implicitly invocable and records Wayfinder-to-Router plus Router-to-Wayfinder | Relationship candidate exists; caller audit remains incomplete |
-| Runtime callers | Wayfinder has the concrete terminal rejection packet; other skills retain their owned handoffs and suggestions | Do not claim generic caller adoption without an exhaustive caller audit |
+| Canonical `skills/custom/skill-router/SKILL.md` | Retains the explicit-only four-step human route index | Active control and runtime authority; not the edit source for the implicit candidate |
+| Canonical `agents/openai.yaml` | Sets implicit invocation to `false` | Active policy agrees with the current human-selected Router |
+| Experimental `skills/experimental/skill-router/` | Preserves the six-step implicit residual-router candidate and policy `true` | Extraction baseline for later audit, repair, evaluation, and coordinated promotion |
+| Installed Skill Router mirror | Retains the explicit-only human index | Valid installed control arm; never the edit source |
+| `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md` | Suggests Router only when choosing one next skill is the task | Active pointer remains explicit until coordinated promotion |
+| `CONTEXT.md` | Uses the current explicit-only Router vocabulary | Reconcile only during the coordinated implicit-policy migration |
+| Writing Great Skills glossary | Defines both the explicit-only human index and narrowly implicit residual-router subtype | Preserve the distinction and verify the selected subtype during promotion |
+| `docs/synthesis/skill-context-relationships.md` | Records the active Router as explicit-only and separately indexes future candidate edges | Keep current invocation truth distinct from proposed relationships |
+| Runtime callers | Wayfinder and Domain Modeling syntheses select future complete-residual callers; the Prototype synthesis and experimental candidate now preserve its proposed direct terminal non-admission packet while active runtime retains current returns and suggestions | Audit and promote each caller edge atomically; do not claim generic caller adoption |
 | Structural tests | Protect route-map coverage, implicit policy, six leading words, Return fields, loop guard, setup presence, and relationship-policy compatibility | Static proof only; wording behavior remains unproved |
 | Core workflow evaluation | Defines explicit request, missing setup, ready item, ambiguous interview, marker-only conflict, terminal residual, and ordinary non-trigger cases | Good integrated seed; insufficient alone for full route and cycle coverage |
 
@@ -600,7 +602,7 @@ This matrix supplies cases, not runtime rules. Normative claims point to their L
 | `I1-I3 / E2` | `R1,R5` | [`none`](#clarification-return-and-completion) | Unowned operational work or irreducible ambiguity returns `none` with a concrete reason | Router forces the nearest engineering skill or uses a vague fallback | Abstention fixtures |
 | `I1-I3 / E2` | `R1,R5` | [Exhaustive Route Taxonomy](#exhaustive-route-taxonomy) | Every supported custom destination except Router appears exactly once and `$repo-bootstrap` remains the setup override | A destination is missing, duplicated, or represented by procedure instead of ingress | Structural route-inventory test and owner read-back |
 | `I2-I3 / E1,E4` | `R2-R5` | [Invocation policy coherence](#invocation-and-admission) | Glossary, Context, bootstrap, relationships, policy, README, and tests describe one accepted residual-router subtype | Any active surface still says all routers are explicit-only or suggests automatic dispatch | Literal inventory plus semantic review |
-| `I2-I3 / E1,E3` | `R4,R5` | [Relationship Contract](#relationship-contract) | Known handoffs stay local; only proved terminal residual callers invoke Router | Callers send owned edges through Router or duplicate the complete route catalog | Exhaustive active-surface relationship audit |
+| `I2-I3 / E1,E3` | `R4,R5` | [Relationship Contract](#relationship-contract) | Known handoffs stay local; Wayfinder, standalone Domain Modeling, and direct Prototype non-admission invoke Router only with their proved complete terminal residuals | Callers send owned or unfinished edges through Router, Prototype bypasses a caller return, or any caller duplicates the complete route catalog | Exhaustive active-surface relationship audit |
 | `I0-I4 / E4` | `R1-R6` | [Runtime ownership and installation](#runtime-ownership-and-change-map) | Focused/full tests, validator, diff checks, install preview, install, read-back, and source/mirror hashes pass | Partial sync, independent mirror edits, stale bootstrap, or unvalidated candidate is promoted | Canonical commands, manifest inspection, and hash parity |
 
 ## Promotion Gate And Residual Gaps

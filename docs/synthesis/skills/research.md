@@ -1,6 +1,6 @@
 # Research Evidence And Runtime Design Synthesis
 
-Status: exhaustive design reference for a future Research rewrite; not an executable contract.
+Status: confirmed exhaustive design reference; control lock required before experimental extraction; not an executable contract.
 
 Runtime authority remains in:
 
@@ -12,7 +12,7 @@ Runtime authority remains in:
 - tests and behavior evaluations; and
 - the installed mirror.
 
-The current canonical and installed Research skill family are identical. The current skill is intentionally compact and already protects the one-question, primary-source, one-note, caller-return, and no-write boundaries. This synthesis does not claim those instructions exhibit a behavioral failure, does not change runtime files, and does not authorize installation. A future rewrite must first lock its control and then prove that the candidate improves evidence judgment or predictability without adding research ceremony that costs more than it prevents.
+The current canonical and installed Research skill family are identical. The current skill is intentionally compact and already protects the one-question, primary-source, one-note, caller-return, and no-write boundaries. This synthesis does not claim those instructions exhibit a behavioral failure, does not change runtime files, and does not authorize installation. Before any experimental extraction, a fixed E0 control must demonstrate the precise failure each proposed addition intends to correct. If the control behaves correctly, prune that addition and do not build its candidate. A later candidate must improve evidence judgment or predictability without adding research ceremony that costs more than it prevents.
 
 ## How To Read This Document
 
@@ -49,6 +49,7 @@ Use this index for direct navigation:
 | How should the eventual skill read? | [Proposed Runtime Semantic Surface](#proposed-runtime-semantic-surface) |
 | Where does each rewrite change belong? | [Runtime Ownership And Change Map](#runtime-ownership-and-change-map) |
 | What must pass before promotion? | [Staged Behavior-Evaluation Protocol](#staged-behavior-evaluation-protocol), [Migration And Acceptance Matrix](#migration-and-acceptance-matrix), and [Promotion Gate And Residual Gaps](#promotion-gate-and-residual-gaps) |
+| Is the design ready for experimental extraction? | [Experimental Extraction Readiness Decision](#experimental-extraction-readiness-decision) |
 
 When any diagram, rationale, ownership row, or acceptance case disagrees with Layer Two, correct that other surface.
 
@@ -77,19 +78,19 @@ A faster or cheaper research route is better only when these gates remain unchan
 
 | Stratum | Selected shape | Runtime status |
 | --- | --- | --- |
-| Research core | One bounded question; one claim ledger; claim-owned evidence; proportional assurance; explicit conflict and unknowns; one saturation gate; one verified answer | Ready for counterfactual design evaluation before extraction |
+| Research core | One bounded question; complete internal claim classification; claim-owned evidence; proportional assurance and saturation; explicit conflict and unknowns; one verified answer | Confirmed design; E0 control failure required before extraction |
 | Output branches | One exact authorized tracked note, or cited inline evidence, blocker, or inadmissible packet with no tracked mutation | Preserve and sharpen |
 | Delegated leaf | Accept a complete caller packet and return to that caller without selecting its decision or next transition | Preserve and formalize |
 | Scout model | One root evidence judge, serial by default; direct fresh read-only scouts only for substantial disjoint source lanes whose likely reading savings exceed dispatch and verification cost | Add as a simple economic gate, not an orchestration system |
-| Progressive disclosure | Keep universal research judgment in `SKILL.md`; disclose the durable note schema and optional scout packet only when their branch fires | Candidate runtime shape; prove pointer reliability before promotion |
+| Progressive disclosure | Keep the first experimental candidate in one `SKILL.md`; split note or scout reference only after its own E0 control proves a specific inline-attention failure and the pointer candidate corrects it | Evidence-gated future option, not first-candidate scope |
 | Rejected machinery | Mandatory source counts, numeric confidence scores, complete query logs, citation databases, knowledge graphs, automatic note indexing, always-parallel background research, automated source ranking, or a persistent research ledger | Excluded |
-| Deferred hypotheses | Automatic note refresh, reusable source caches, formal systematic-review mode, machine-verifiable citation extraction, and adaptive scout width | Require observed need and independent proof |
+| Deferred hypotheses | Automatic note refresh, reusable source caches, formal systematic-review mode, machine-verifiable citation extraction, and automatic adaptive scout width | Require observed need and independent proof |
 
-The first rewrite remains one linear skill. It adds no helper, provider, state machine, search database, or campaign ledger.
+The first rewrite remains one linear, single-file skill. It adds no helper, reference file, provider, state machine, search database, or campaign ledger unless a later behavior control independently earns that surface.
 
 ## Proposed Invocation Description
 
-> Research one bounded source question against claim-owning evidence and return a citation-verified answer, conflict, or blocker. Use when a direct user requests durable cited research or an authorized caller supplies one source question, scope, freshness, return owner, and note authority. Write at most one repo-local Markdown note; otherwise return cited inline evidence without changing tracked state.
+> Research one bounded source question against claim-owning evidence and return a citation-verified answer, conflict, or blocker. Use when a direct user requests durable cited research, explicitly asks for research-grade source evidence, names `$research`, or an authorized caller supplies one source question, scope, freshness, return owner, and note authority. Write at most one repo-local Markdown note; otherwise return cited inline evidence without changing tracked state. Do not use for ordinary web lookup.
 
 This wording is a candidate, not runtime authority. Its evaluation must distinguish Research from generic lookup, open-ended literature review, diagnosis, prototyping, stakeholder elicitation, current-user judgment, and multi-decision planning.
 
@@ -120,8 +121,8 @@ Research may expose that the question belongs elsewhere. It returns the classifi
 | **Owning source** | The source with authority for that claim kind in the applicable version, jurisdiction, time, or repository state |
 | **Discovery source** | A secondary index, summary, snippet, citation trail, or lead used to find evidence; it does not support a load-bearing claim unless it owns a distinct synthesis claim |
 | **Counterevidence** | Applicable evidence that weakens, narrows, or contradicts a proposed claim |
-| **Claim ledger** | The in-memory and returned mapping from each load-bearing claim to status, evidence, applicability, freshness, counterevidence, and limits |
-| **Saturation** | The checkable point where another bounded search pass yields no better applicable authority, new material claim, or unresolved counterevidence, or where an exact access or evidence boundary prevents closure |
+| **Claim ledger** | The complete in-memory mapping from each load-bearing claim to status, evidence, applicability, freshness, counterevidence, and limits; its returned rendering scales with claim count, assurance, conflict, and blockage |
+| **Saturation** | The assurance-proportional point where the applicable owning evidence and contradiction duty are complete, higher-assurance work yields no better authority or material counterevidence from another bounded pass, or an exact access or evidence boundary prevents closure |
 | **Research note** | One time-bounded cited Markdown artifact; it records evidence as of a fixed point and is never self-updating truth |
 
 ## Leading-Word Research Model
@@ -129,12 +130,12 @@ Research may expose that the question belongs elsewhere. It returns the classifi
 The eventual runtime should expose this compact spine:
 
 ```text
-Frame -> Trace -> Scout -> Appraise -> Triangulate -> Saturate -> Write -> Verify -> Return
+Frame -> Trace -> Inspect -> Appraise -> Triangulate -> Saturate -> Write -> Verify -> Return
 ```
 
 - **Frame** locks one question, caller use, scope, freshness, assurance, and mutation authority.
 - **Trace** decomposes the likely answer into load-bearing claims and maps each claim to its likely owning source class.
-- **Scout** finds and reads evidence; it may delegate only disjoint read-only source lanes.
+- **Inspect** finds and reads evidence. Optional scouts are delegated readers for disjoint read-only source lanes, never the universal operation.
 - **Appraise** judges authority, applicability, directness, freshness, methodological fit, and source limitations.
 - **Triangulate** reconciles scope differences, seeks counterevidence, and classifies every load-bearing claim.
 - **Saturate** proves why further bounded search is redundant or unable to close an exact gap.
@@ -142,7 +143,7 @@ Frame -> Trace -> Scout -> Appraise -> Triangulate -> Saturate -> Write -> Verif
 - **Verify** checks citation entailment, status, freshness, source identity, output completeness, and work containment.
 - **Return** gives the evidence owner one terminal packet and stops.
 
-Scout is an operation even when the root performs it alone. Parallel scouts are optional mechanics inside Scout, not a separate outcome.
+Inspect is always a root-owned operation. A scout is an optional delegated reader admitted only by the economic gate, not a synonym for ordinary source inspection.
 
 ## End-To-End Explanatory Flow
 
@@ -153,7 +154,7 @@ flowchart TB
     ADMIT -->|No| WRONG["Return inadmissible or exact missing-contract packet"]
     ADMIT -->|Yes| TRACE["Trace load-bearing claims to owning source classes"]
     TRACE --> LANES{"Substantial disjoint source lanes?"}
-    LANES -->|No| ROOT["Root reads serially"]
+    LANES -->|No| ROOT["Root inspects serially"]
     LANES -->|Yes| SCOUTS["Open bounded read-only scouts"]
     ROOT --> APPRAISE["Appraise authority, applicability, freshness, and method"]
     SCOUTS --> VERIFY_SCOUTS["Root verifies included scout citations"]
@@ -203,7 +204,7 @@ The diagram is explanatory. Layer Two owns admission, authority, classification,
 
 ## Invocation And Admission
 
-Research remains narrowly implicitly invocable. Preserve `policy.allow_implicit_invocation: true` so a direct request for durable source evidence or an authorized caller's bounded source ticket can reach it. The description must require one source question and one cited note or cited return; it must not compete with generic web lookup, open-ended literature review, debugging, prototyping, interviewing, design, or decision-making.
+Research remains narrowly implicitly invocable. Preserve `policy.allow_implicit_invocation: true` so a direct request for durable cited research, an explicit request for research-grade source evidence, or an authorized caller's bounded source ticket can reach it. A direct user may also name `$research`. Ordinary web lookup does not qualify merely because citations would be useful. The description must require one source question and one cited note or research-grade return; it must not compete with generic lookup, open-ended literature review, debugging, prototyping, interviewing, design, or decision-making.
 
 Admit only when all predicates hold:
 
@@ -281,7 +282,7 @@ This table is the sole proposed authority for which Research action or terminal 
 | Required contract field is missing | Complete **Frame** from repository evidence or return all missing caller-owned fields | Searching under an ambiguous question, freshness bound, or write authority |
 | The question is multi-owner, decision-owned, runnable, causal, stakeholder-owned, or otherwise inadmissible | Return `inadmissible` with the correct evidence owner | Simulating another skill inside Research |
 | Contract passes but load-bearing claims and source roles are not mapped | **Trace** | Searching a topic without a claim or authority map |
-| Mapped claims lack inspected evidence | **Scout** serially or through admitted source lanes | Writing from snippets, summaries, memory, or unverified scout prose |
+| Mapped claims lack inspected evidence | **Inspect** serially, optionally using admitted scouts for disjoint source lanes | Writing from snippets, summaries, memory, or unverified scout prose |
 | Evidence exists but authority, applicability, freshness, method, or directness is unevaluated | **Appraise** | Counting citations as support |
 | A claim lacks counterevidence check, contains unresolved scope divergence, or depends on inference | **Triangulate** | Choosing the newest, most official-looking, or most numerous source without claim-specific judgment |
 | All load-bearing claims are classified but saturation is unproved | **Saturate** | Stopping because one plausible answer or arbitrary source count was reached |
@@ -297,11 +298,11 @@ This table is the sole proposed authority for operation completion. The named se
 | --- | --- | --- | --- |
 | **Frame** | A direct or caller request reaches Research | One question, caller use, scope, exclusions, applicability, assurance, access, return owner, note path, and write authority are explicit; Admission is decidable | Complete missing-field packet or `inadmissible` packet; no research or mutation |
 | **Trace** | Admission passes | Every provisional load-bearing claim has one likely owning source class, applicability bound, and search lane; known source disagreement and inference needs are visible | Exact untraceable-claim blocker |
-| **Scout** | At least one mapped claim lacks inspected evidence | Every admitted lane returns direct source identities, inspected evidence, dates or versions, counterevidence, gaps, and limits; the root verifies every citation it may use | Access or source-availability blocker with attempted lanes |
+| **Inspect** | At least one mapped claim lacks inspected evidence | The root has direct source identities, inspected evidence, dates or versions, counterevidence, gaps, and limits for every admitted lane; it verifies every scout citation it may use | Access or source-availability blocker with attempted lanes |
 | **Appraise** | Evidence has been inspected | Each source used for a load-bearing claim has a recorded role, authority, applicability, directness, freshness, methodological fit when relevant, and limitation | Exact source-fitness gap |
 | **Triangulate** | Proposed claims and appraised evidence exist | Each load-bearing claim is `supported`, `conflicted`, or `unknown`; scope differences are reconciled; applicable counterevidence and inference premises are explicit | Material conflict or unknown remains visible for Saturate and terminal status |
-| **Saturate** | Every load-bearing claim is classified | The best applicable authority was inspected; the required disconfirmation pass ran; one final bounded pass found no material new authority, claim, or counterevidence, or an exact access/evidence boundary explains why closure is impossible | `conflicted` or `blocked` evidence state; never a falsely answered result |
-| **Write** | Saturation passes and note mutation is authorized | Exactly one new or existing authorized note contains the contract, answer, claim ledger, conflicts, limits, source trace, saturation basis, and caller-use boundary | Publication blocker with no extra tracked mutation |
+| **Saturate** | Every load-bearing claim is classified | The best applicable authority was inspected and the assurance-specific contradiction duty passed: an ordinary stable claim has an owning-source verification and contradiction check; consequential, uncertain, contested, empirical, or high-stakes work also has active disconfirmation and a final bounded pass, or an exact access/evidence boundary explains why closure is impossible | `conflicted` or `blocked` evidence state; never a falsely answered result |
+| **Write** | Saturation passes and note mutation is authorized | Exactly one new or existing authorized note contains the contract, answer, proportionate claim representation, conflicts, limits, source trace, saturation basis, and caller-use boundary | Publication blocker with no extra tracked mutation |
 | **Verify** | A note or inline result is assembled | Citation entailment, source identity, applicability, freshness, claim coverage, status derivation, answer limits, caller boundary, and filesystem containment all pass | Exact verification failure; preserve evidence and leave no false completion |
 | **Return** | Verification passes or an earlier typed nonresearch branch applies | One complete terminal packet reaches the direct user or delegating caller and no downstream work starts | None |
 
@@ -335,7 +336,7 @@ Assurance changes evidence depth, not the caller's decision authority:
 
 | Assurance | Passing evidence |
 | --- | --- |
-| **Ordinary** | One exact owning source may support a stable normative or repository fact after applicability and contradiction checks; synthesis claims still expose their premises |
+| **Ordinary** | One exact owning source may support a stable normative or repository fact after applicability and a bounded contradiction check; no second search pass is mandatory when that check exposes no material reason to widen |
 | **Consequential** | Every load-bearing claim has the best applicable owner plus independent corroboration or an explicit reason one uniquely authoritative source is sufficient; material counterevidence is actively sought |
 | **High-stakes** | Applicable official, jurisdictional, versioned, and current authorities are inspected; methodological and scope limits are explicit; unresolved disagreement or missing professional judgment blocks a definitive answer |
 
@@ -345,7 +346,7 @@ No fixed minimum citation count applies. One authoritative standard may conclusi
 
 ## Claim Ledger And Result Status
 
-Every load-bearing claim records:
+Every load-bearing claim is classified in the internal ledger and records:
 
 ```text
 Claim ID and proposition:
@@ -374,6 +375,8 @@ The terminal research status derives mechanically from load-bearing claims:
 | `blocked` | At least one load-bearing claim is unknown because evidence, access, freshness, applicability, or authority is insufficient |
 
 `inadmissible` is a typed pre-research return, not a research status. Non-load-bearing uncertainty remains in limits and never upgrades a result to false certainty.
+
+Rendering is proportional. A simple ordinary answer with one supported claim may express the ledger as one cited statement with its applicability and material limit. Multiple, consequential, conflicted, or blocked claims render the explicit ledger fields needed to make status, evidence, and uncertainty inspectable. Compact rendering never relaxes internal classification or citation verification.
 
 ## Freshness And Applicability
 
@@ -415,7 +418,7 @@ Open a direct scout only when all conditions hold:
 4. the root can inspect each return promptly; and
 5. source access and the mutation boundary remain read-only.
 
-Begin with no more than two scouts. Add another only when a still-unsearched independent lane remains material after early returns. The platform's five-subagent capacity is a ceiling, not a target. Bundle tiny related source checks with the root rather than creating lanes.
+Open the smallest economical set of independent lanes that the root can verify promptly. One or two initial scouts will often be enough, but no fixed count is normative; independence, expected reading savings, root verification bandwidth, and platform capacity determine width. Add a scout only while a still-unsearched independent lane remains material after early returns. Bundle tiny related source checks with the root rather than creating lanes.
 
 Independent judgment uses `fork_turns="none"` and a complete file-backed or prompt-bounded scout packet. Continuity work may receive the minimum recent context necessary but is not called independent. Scouts do not spawn.
 
@@ -450,14 +453,14 @@ The root verifies every citation used in the final answer or note. Scout count, 
 
 ## Saturation Gate
 
-Saturation is claim-driven, not query-count-driven. It passes only when:
+Saturation is claim-driven and assurance-proportional, not query-count-driven. It passes only when:
 
 1. every load-bearing claim is classified;
 2. the best known applicable owning source was inspected or its exact access failure is recorded;
 3. the assurance-specific corroboration or unique-authority reason is complete;
-4. one bounded disconfirmation pass ran against the proposed answer;
+4. the contradiction duty matched assurance: ordinary stable claims received an owning-source contradiction check, while consequential, uncertain, contested, empirical, or high-stakes claims received active disconfirmation;
 5. conflicts were reconciled by scope or preserved as material conflict; and
-6. the last bounded search pass produced no better authority, new load-bearing claim, or material counterevidence, or an exact source/access boundary makes further closure impossible.
+6. for work above the ordinary stable case, the last bounded search pass produced no better authority, new load-bearing claim, or material counterevidence, or an exact source/access boundary makes further closure impossible.
 
 Record the saturation basis, not every query. A blocked result records attempted source lanes, inaccessible owning evidence, and what observable change would permit another run. A caller time or source budget may end search, but it cannot convert unknown evidence into an answered result.
 
@@ -493,8 +496,10 @@ Assurance and saturation basis
 Answer
   concise answer with claim-level citations
 
-Claim Ledger
-  claim, status, fact or inference, evidence, counterevidence, and limit
+Claim Representation
+  one cited statement with applicability and material limit for a simple ordinary
+  answer; otherwise the explicit claim, status, fact or inference, evidence,
+  counterevidence, and limit fields needed to make the result inspectable
 
 Conflicts, Unknowns, And Limits
   material disagreement, inaccessible evidence, applicability limits, and what is not proved
@@ -506,7 +511,7 @@ Caller Use Boundary
   what the evidence may inform, what Research did not decide, and return owner
 ```
 
-Exact Markdown rendering belongs in the future note-format surface. The schema must keep citations next to the claims they support; a bibliography alone is insufficient. Discovery-only and inaccessible sources may appear in limits but never as supporting citations.
+Exact Markdown rendering remains in the first single-file candidate. A later `NOTE-FORMAT.md` may own it only after a fixed control demonstrates a specific inline-attention failure and a pointer candidate corrects that failure. The schema must keep citations next to the claims they support; a bibliography alone is insufficient. Discovery-only and inaccessible sources may appear in limits but never as supporting citations.
 
 A `conflicted` or `blocked` note is valid when the authorized caller requested durable research evidence and Saturation passes on the conflict or access boundary. It must not present an unsupported one-paragraph answer as settled.
 
@@ -516,7 +521,7 @@ Verification proves all applicable gates:
 
 ### Evidence
 
-- every load-bearing claim appears in the ledger and answer;
+- every load-bearing claim appears in the internal ledger and in the answer's proportionate claim representation;
 - every supporting citation resolves to an inspected direct source rather than a search result or scout summary;
 - the cited source entails the adjacent claim within its authority and applicability;
 - inference is labeled and its premises are cited;
@@ -545,14 +550,14 @@ Load the smallest complete context for the selected branch:
 
 | Trigger | Load now | Keep out |
 | --- | --- | --- |
-| Every invocation | `SKILL.md`, direct request or complete Research Contract, target repo instructions, and already named source pointers | Full caller conversation, unrelated tickets, every possible source, note schema, scout schema, or rationale |
-| Exact authorized note branch | Proposed `NOTE-FORMAT.md`, existing note when updating, repo note convention, and starting work-state evidence | Scout procedure when no scouts are admitted; unrelated publication indexes |
-| Scout economic gate passes | Proposed `SCOUT-BRIEF.md` and only the assigned lane's contract | Parent conclusion, peer returns, note-writing procedure, caller decision, or unrelated claim lanes |
+| Every invocation | `SKILL.md`, direct request or complete Research Contract, target repo instructions, and already named source pointers | Full caller conversation, unrelated tickets, every possible source, or rationale |
+| Exact authorized note branch | The note branch in the first single-file `SKILL.md`, existing note when updating, repo note convention, and starting work-state evidence | Scout procedure when no scouts are admitted; unrelated publication indexes |
+| Scout economic gate passes | The scout branch in the first single-file `SKILL.md` and only the assigned lane's contract | Parent conclusion, peer returns, note-writing procedure, caller decision, or unrelated claim lanes |
 | Repository claim | Exact governing source, tests, config, docs, ADRs, and fixed point needed for that claim | Whole repository by default |
 | External source claim | Direct applicable source plus only necessary discovery and counterevidence paths | Broad web context unrelated to the claim ledger |
 | Return-only or inadmissible branch | Contract, evidence pointer, exact missing gate, and Return Contract | Note and scout references |
 
-The main skill must retain source appraisal, claim status, saturation, verification, Return, and completion because every research path needs them. Do not hide universal evidence judgment behind an optional reference.
+The main skill must retain source appraisal, claim status, saturation, verification, Return, and completion because every research path needs them. The first candidate also retains note and scout mechanics. A later support-file split must pass its own control and pointer evaluation; universal evidence judgment never moves behind it.
 
 ## Return Contract
 
@@ -560,7 +565,7 @@ Every terminal Research invocation returns one of four forms:
 
 | Return | Use when | Required content |
 | --- | --- | --- |
-| `answered` | Every load-bearing claim is supported | Question, concise answer, claim ledger summary, direct citations or note path, freshness and assurance, limits, saturation basis, mutation result, and return owner |
+| `answered` | Every load-bearing claim is supported | Question, concise answer, proportionate claim representation, direct citations or note path, freshness and assurance, limits, saturation basis, mutation result, and return owner |
 | `conflicted` | Applicable evidence remains materially conflicted | Question, competing claims and sources, reconciled scope differences, unresolved conflict, answer impact, saturation basis, note path or inline citations, and return owner |
 | `blocked` | A load-bearing claim remains unknown | Question, exact missing evidence or access, attempted lanes, available supported evidence, observable unblock condition, note path when authorized, mutation result, and return owner |
 | `inadmissible` | The request fails Admission or belongs to another evidence owner | Failed predicate, settled contract fields, correct owner, evidence already available, mutation `none`, and return owner |
@@ -593,7 +598,7 @@ This table is the sole proposed authority for Research composition edges. Caller
 
 | Caller | Verb | Callee | Trigger and return |
 | --- | --- | --- | --- |
-| Direct user | Invoke | `$research` | One bounded source question needs durable cited evidence or the user explicitly names `$research`; return the verified note, inline answer, conflict, blocker, or inadmissible packet |
+| Direct user | Invoke | `$research` | One bounded source question needs durable cited evidence, the user explicitly requests research-grade source evidence, or the user names `$research`; return the verified note, inline answer, conflict, blocker, or inadmissible packet. Ordinary web lookup stays outside this edge. |
 | `$skill-router` | Recommend and stop | `$research` | One source question needs a cited repo-local note; the later Research invocation runs its own Admission |
 | `$grilling` | Recommend and stop | `$research` | A source evidence gap blocks the current user-owned decision; Research later returns evidence without making that decision |
 | `$to-questionnaire` | Recommend and stop | `$research` | The apparent stakeholder gap is answerable from inspectable sources; Research later runs independently |
@@ -608,6 +613,8 @@ This table is the sole proposed authority for Research composition edges. Caller
 | `$research` | Recommend and stop | `$wayfinder` | Admission shows several interdependent decisions and non-conversational prerequisites need a durable route; the user must start Wayfinder later |
 
 Research has no direct delivery relationship to To Spec, To Tickets, Implement, Parallel Implement, Domain Modeling, or tracker providers. It may name evidence implications but never creates their artifacts or starts their procedures.
+
+The Research-owned recommend-and-stop rows above are deterministic Admission mismatches, so they stay local. Skill Router does not confirm a known handoff. Only a complete terminal residual with no owned caller return or relationship may reach the future implicit residual Router after its coordinated promotion; the active explicit-only Router remains user-started.
 
 # Layer Three: Evidence And Rationale
 
@@ -649,14 +656,27 @@ The current text leaves several important decisions implicit. These are candidat
 - “Primary source” is too coarse to explain when a standard, source code, versioned docs, original study, or systematic review owns a particular claim.
 - The claim ledger does not explicitly distinguish direct facts, labeled inference, discovery sources, counterevidence, or inaccessible leads.
 - Freshness is named but applicability across version, jurisdiction, repository fixed point, population, and evaluation window is not fully specified.
-- The current gate does not require a bounded disconfirmation pass or define saturation strongly enough to resist both premature stopping and endless browsing.
+- The current gate may not scale contradiction checks and additional search strongly enough to assurance, leaving both premature-stopping and unnecessary-search hypotheses to test.
 - Scout parallelism has a material-improvement predicate but no compact economic or width discipline.
 - The durable note template does not record assurance, saturation basis, fact-versus-inference, or the caller-use boundary.
 - Status derivation from claim status remains implicit.
 - Citation presence is verified, but claim-to-source entailment and direct-source identity are not explicit.
 - Caller packets are described in prose rather than one complete reusable contract.
 
-Each proposed addition must prove it changes behavior under a realistic control. If the current skill already behaves correctly, prune the addition as a no-op.
+Each proposed addition must first prove a realistic fixed control fails before any experimental extraction for that addition. If the current skill already behaves correctly, prune the addition as a no-op and do not build its candidate.
+
+## Confirmed Deployment Decisions
+
+Deploy Prompt 1 settled the design pressure before extraction:
+
+- E0 control failure precedes experimental extraction for each proposed behavioral addition.
+- Saturation scales with assurance: an ordinary stable claim needs owning-source verification and a contradiction check; higher-assurance work also needs active disconfirmation and another bounded pass.
+- The first candidate stays single-file. `NOTE-FORMAT.md` or `SCOUT-BRIEF.md` requires its own demonstrated inline-attention failure and pointer improvement.
+- **Inspect** names universal source work; **scout** names only an optional delegated reader.
+- Narrow implicit invocation covers durable cited research, explicit research-grade source evidence, an explicit `$research` request, or a complete caller packet, not generic lookup.
+- Claim classification remains complete internally while visible ledger detail scales with claim count, assurance, conflict, and blockage.
+- Scout width follows lane economics and root verification bandwidth, not a fixed numeric cap.
+- Research keeps deterministic Admission-mismatch recommendations local; Skill Router receives only a complete terminal unowned residual under its future coordinated residual-router contract.
 
 ## Why Claim-Owned Evidence Beats Primary-Source Absolutism
 
@@ -666,13 +686,13 @@ The selected design therefore preserves primary-source pressure while making the
 
 ## Why Saturation Is A Gate
 
-Research has two symmetric failure modes. It can stop at the first plausible source, or continue searching after the answer and uncertainty have stabilized. Arbitrary source counts solve neither problem. The claim ledger plus one disconfirmation pass and one no-new-material-evidence pass create a checkable middle boundary.
+Research has two symmetric failure modes. It can stop at the first plausible source, or continue searching after the answer and uncertainty have stabilized. Arbitrary source counts and mandatory passes solve neither problem. The claim ledger plus an assurance-proportional contradiction duty create a checkable middle boundary: an ordinary stable claim may close after owning-source verification and a bounded contradiction check, while consequential, uncertain, contested, empirical, or high-stakes work adds active disconfirmation and a no-new-material-evidence pass.
 
 This does not make research mechanically complete. It makes the judgment inspectable: what claims matter, which authority owns them, what could falsify them, what remains unknown, and why another bounded pass is unlikely to change the result.
 
 ## Why Scouts Stay Optional
 
-Independent source lanes can reduce elapsed reading time and confirmation bias. They also repeat context, searches, summaries, and root verification. For one narrow source question, a strong serial owner is usually cheaper and more coherent. The selected rule therefore treats parallel reading like any other economic decomposition: disjoint substantial lanes only, no duplicated conclusion prompts, and root verification before use.
+Independent source lanes can reduce elapsed reading time and confirmation bias. They also repeat context, searches, summaries, and root verification. For one narrow source question, a strong serial owner is usually cheaper and more coherent. The selected rule therefore treats parallel reading like any other economic decomposition: the smallest economical set of disjoint substantial lanes, no fixed initial count, no duplicated conclusion prompts, and root verification before use.
 
 ## Deliberate Non-Changes
 
@@ -687,6 +707,7 @@ Independent source lanes can reduce elapsed reading time and confirmation bias. 
 - Keep local repo evidence, official external sources, specifications, original research, and source code within one general Research capability.
 - Add no provider-specific browser, search, academic database, repository host, or citation-manager procedure.
 - Add no executable helper in the first rewrite.
+- Keep the first experimental candidate in one file; support files remain evidence-gated future options.
 - Preserve unrelated dirty work and the target repository's note convention.
 
 ## Rejected Machinery
@@ -698,6 +719,7 @@ Independent source lanes can reduce elapsed reading time and confirmation bias. 
 | Complete query and browsing ledger | High token and maintenance cost; saturation needs only claim-impacting lanes and blocked attempts |
 | Always start a background agent | Wastes context and time for narrow questions and splits evidence judgment from the owner |
 | One scout per claim | Creates coordination proportional to claim count rather than reading economics |
+| Fixed initial scout count | Substitutes an arbitrary number for lane independence, expected reading savings, and root verification bandwidth |
 | Persistent citation database, knowledge graph, or evidence JSONL | Duplicates source and note state without a proved recovery or reuse need |
 | Automatic repo-note indexing | Exceeds the one-note authority and couples Research to publication setup |
 | Auto-refresh or “current forever” notes | Freshness must be rerun against an explicit as-of contract |
@@ -712,7 +734,7 @@ Independent source lanes can reduce elapsed reading time and confirmation bias. 
 | Citation-entailment helper | Manual citation errors recur; a helper can detect them without claiming semantic judgment or requiring a duplicate claim schema |
 | Source cache or reusable evidence bundle | Repeated questions inspect the same versioned sources; invalidation and provenance are cheaper than fresh inspection |
 | Automatic note refresh | A target repo owns freshness policy, triggers, mutation authority, review, and non-destructive update behavior |
-| Adaptive scout width beyond the simple gate | Real evaluations show elapsed-time improvement after dispatch and verification cost, with no worse conflict, citation, or token tail |
+| Automatic adaptive scout-width policy | Real evaluations show elapsed-time improvement after dispatch and verification cost, with no worse conflict, citation, or token tail |
 | Durable claim-ledger sidecar | One note cannot preserve required evidence state without duplication, drift, or poor caller usability |
 
 # Layer Four: Extraction And Verification
@@ -727,16 +749,16 @@ The eventual main skill should read approximately as:
 Outcome and bounded evidence-leaf boundary
 Narrow implicit invocation and Admission
 Research Contract
-Frame -> Trace -> Scout -> Appraise -> Triangulate -> Saturate
+Frame -> Trace -> Inspect -> Appraise -> Triangulate -> Saturate
 Source ownership, assurance, claim status, and result status
-Authorized note -> NOTE-FORMAT pointer | no-write branch
-Optional parallel Scout -> SCOUT-BRIEF pointer
+Authorized note branch | no-write branch
+Optional delegated scout branch
 Verify
 Return
 Completion
 ```
 
-This is a semantic target, not approved final wording. `SKILL.md` keeps the evidence rules every path needs. The note schema and scout packet may move behind precise context pointers only if evaluation proves those pointers fire reliably. If disclosure causes omissions, keep the compact contract inline rather than preserving a file split for appearance.
+This is a semantic target, not approved final wording. The first candidate keeps the complete compact contract in `SKILL.md`. A note schema or scout packet may move behind a precise context pointer only after its own E0 control proves an inline-attention failure and the pointer candidate materially improves it. If no such control fails, no support file is created.
 
 ## Runtime Ownership And Change Map
 
@@ -744,10 +766,10 @@ The `Must not absorb` column is part of the design.
 
 | Bundle | Surface | Owns | Proposed delta | Must not absorb |
 | --- | --- | --- | --- | --- |
-| `R1` | `skills/custom/research/SKILL.md` | Outcome, invocation, Admission, Research Contract, authority, leading-word route, source ownership, assurance, claim and result statuses, freshness, triangulation, saturation, context pointers, Verify, Return, and completion | Realize the proposed semantic surface; sharpen claim-owned evidence, proportional assurance, disconfirmation, saturation, citation entailment, pre-dirty containment, and caller return | Full note template, full scout prompt, caller workflow, provider/browser procedure, academic-review protocol, citation database, or source-scoring algorithm |
-| `R1` | New `skills/custom/research/NOTE-FORMAT.md` | Durable note fields, claim-ledger rendering, source-trace rendering, note-only verification, and update semantics | Move the detailed note schema behind the exact authorized-note trigger if behavior evaluation shows no omission | Universal evidence judgment, Admission, search procedure, caller decision, route selection, or publication index mutation |
-| `R1` | New `skills/custom/research/SCOUT-BRIEF.md` | Complete optional scout assignment and compact read-only return packet | Disclose only when the scout economic gate passes; preserve fresh-context independence and root verification | Scout-selection judgment, final classification, note writing, caller context, peer dispatch, or mutation authority |
-| `R1` | `skills/custom/research/agents/openai.yaml` | Narrow implicit invocation policy and concise human-facing metadata | Preserve `allow_implicit_invocation: true`; describe one bounded source question, cited note or return, and evidence-leaf boundary | Runtime procedure, caller catalog, source taxonomy, or note schema |
+| `R1` | `skills/custom/research/SKILL.md` | Outcome, invocation, Admission, Research Contract, authority, leading-word route, source ownership, assurance, claim and result statuses, freshness, triangulation, saturation, compact note and scout branches, Verify, Return, and completion | Realize only the E0-proved parts of the proposed semantic surface; sharpen claim-owned evidence, proportional assurance and rendering, citation entailment, pre-dirty containment, and caller return | Verbose note examples, caller workflow, provider/browser procedure, academic-review protocol, citation database, or source-scoring algorithm |
+| Future only | Conditional `skills/custom/research/NOTE-FORMAT.md` | Durable note rendering and note-only verification after a proved inline-attention failure | Create only when a fixed E0 control fails and a pointer candidate materially improves the note branch | Universal evidence judgment, Admission, search procedure, caller decision, route selection, or publication index mutation |
+| Future only | Conditional `skills/custom/research/SCOUT-BRIEF.md` | Optional scout assignment and return rendering after a proved inline-attention failure | Create only when a fixed E0 control fails and a pointer candidate materially improves the scout branch | Scout-selection judgment, final classification, note writing, caller context, peer dispatch, or mutation authority |
+| `R1` | `skills/custom/research/agents/openai.yaml` | Narrow implicit invocation policy and concise human-facing metadata | Preserve `allow_implicit_invocation: true`; describe durable cited research, explicit research-grade source evidence, explicit `$research`, complete caller packets, and the ordinary-lookup exclusion | Runtime procedure, caller catalog, source taxonomy, or note schema |
 | `R2` | Wayfinder runtime and synthesis | Research-ticket selection, complete caller packet, map state, claim, outcome, and next transition | Reconcile only fields required by the accepted Research Contract and Return; preserve AFK participation and caller ownership | Research source procedure, note schema, scout economics, or evidence status redefinition |
 | `R2` | Improve Codebase selected-candidate contract | One candidate's source-resolution question and later reclassification | Supply the complete Research Contract with note path `none` unless authorized; receive the bounded return | Research procedure or final evidence judgment |
 | `R2` | Grilling, Grill With Docs, To Questionnaire, and Skill Router surfaces | Their existing recommendation predicates and stop boundaries | Preserve the conversation-only versus repo-backed domain-capture admission split; update only if Research Admission or Return changes an accepted edge | Research procedure, automatic invocation, or caller continuation |
@@ -756,7 +778,7 @@ The `Must not absorb` column is part of the design.
 | `R3` | `docs/validation/evals/core-workflows.md` and evaluation transcripts | Counterfactual behavior proof | Extend current Research fixtures across Admission, source ownership, applicability, assurance, triangulation, saturation, citations, scouts, note containment, and Return | Template echoes or source-count proxies for judgment quality |
 | `R3` | Installed mirror `C:\Users\steve\.agents\skills\research` | Validated runtime copy | Synchronize only after the coordinated canonical candidate and behavior gate pass | Independent edits, partial synchronization, or authority over canonical source |
 
-No helper or target-repo setup change belongs in the first rewrite. If `NOTE-FORMAT.md` or `SCOUT-BRIEF.md` fails its context-loading evaluation, collapse that contract back into `SKILL.md` rather than adding more pointers.
+No helper, support file, or target-repo setup change belongs in the first candidate. A later `NOTE-FORMAT.md` or `SCOUT-BRIEF.md` exists only after its separate E0 and pointer evaluation pass; any omission collapses the contract back into `SKILL.md`.
 
 ## Staged Extraction Plan
 
@@ -764,18 +786,19 @@ Implementation stages order work; they do not authorize partial installation.
 
 | Stage | Bundles | Outcome | Boundary |
 | --- | --- | --- | --- |
-| `I1` | `R1` | Extract the complete Research-owned candidate and its optional references in canonical source | Every normative concern has one runtime destination; reference triggers and anti-duplication boundaries are explicit |
-| `I2` | `R2` | Reconcile caller packets, return boundaries, invocation index, and supporting-file ownership | Each caller supplies only its owned contract and consumes the return without absorbing Research procedure |
+| `I0` | Control surfaces | Pin the current skill hash, source and repository snapshots, fixed red-capable scenarios, runtime settings, and rubric; run E0 for each proposed addition | Extract nothing unless the current skill or no-guidance arm exhibits the precise claimed failure; prune passing-control additions |
+| `I1` | `R1` | Extract one complete single-file Research-owned candidate containing only E0-admitted changes | Every admitted normative concern has one runtime destination; note and scout branches remain compact and inline |
+| `I2` | `R2` | Reconcile caller packets, return boundaries, invocation index, and any evidence-earned supporting-file ownership | Each caller supplies only its owned contract and consumes the return without absorbing Research procedure |
 | `I3` | `R3` | Replace brittle structural snapshots where necessary, add counterfactual behavior evaluation, validate, and synchronize after authorization | Positive and negative cases pass; no promotion-blocking residual gap remains; installed hashes match |
 
 ## Staged Behavior-Evaluation Protocol
 
-Evaluation phases prove claims, not document completeness. Build the coordinated canonical candidate first. Do not synchronize the installed mirror until every applicable phase passes.
+Evaluation phases prove claims, not document completeness. Run E0 before experimental extraction. Build a coordinated single-file candidate only from additions whose controls fail, then run E1-E4. Do not synchronize the installed mirror until every applicable phase passes.
 
 | Evaluation phase | Claims proved | Representative scenarios |
 | --- | --- | --- |
-| `E0`: Control lock | The current skill or no-guidance arm exhibits the precise claimed failure before candidate evaluation | One fixed red-capable scenario per promoted change, with current skill hash and source snapshot |
-| `E1`: Invocation and attention | One source question invokes; wrong-owner or multi-question work does not; the Research Contract and correct branch pointers are found without speculative loading | Direct note request, caller packet, generic lookup, multi-question survey, runnable question, user decision, missing field, note and no-note branches |
+| `E0`: Control lock | Before extraction, the current skill or no-guidance arm exhibits the precise claimed failure; an addition whose control passes is pruned without a candidate | One fixed red-capable scenario per proposed change, with current skill hash and source snapshot |
+| `E1`: Invocation and attention | Qualifying one-question research invokes; wrong-owner, generic-lookup, or multi-question work does not; the Research Contract and correct inline branch are found without speculative loading | Direct note request, explicit research-grade request, explicit `$research`, caller packet, generic lookup, multi-question survey, runnable question, user decision, missing field, note and no-note branches |
 | `E2`: Ordinary evidence work | Claim tracing, source ownership, applicability, assurance, appraisal, inference, triangulation, saturation, and citations produce a supported answer with proportionate legwork | Stable official contract, versioned API, pinned repo behavior, current fact, empirical claim, summary-only source list, unique authority, and independent corroboration |
 | `E3`: Conflict, failure, scouts, and containment | Material conflict and unknowns remain visible; scout economics and root verification hold; one-note or no-write mutation boundaries survive dirty work and access failures | Version divergence, jurisdiction mismatch, official-versus-implementation drift, inaccessible owner, misleading search snippet, stale page, scout disagreement, pre-dirty note update, second-file convention, and disposable capture |
 | `E4`: Integrated promotion | Callers, relationships, canonical files, references, tests, evaluations, installation, and mirror parity agree | Wayfinder and Improve Codebase returns, recommendation-and-stop callers, full validation, scoped install, and hash parity |
@@ -792,20 +815,21 @@ This matrix supplies implementation order and cases. The linked Layer Two sectio
 
 | Implementation / evaluation | Bundles | Behavior | Positive case | Negative control | Verification |
 | --- | --- | --- | --- | --- | --- |
-| `I1,I2 / E1` | `R1,R2` | Invocation and Admission | A direct durable-evidence request or complete caller packet for one source-answerable question reaches Research and locks one contract; a direct user-owned mismatch recommends Grilling for conversation-only work or Grill With Docs for repo-backed durable capture | Generic lookup, open-ended survey, multiple unrelated questions, diagnosis, prototype, stakeholder evidence, user judgment, or incomplete caller packet starts research or mutation; the two interview entries are collapsed or invoked automatically | Invocation-policy test, caller packet fixtures, and fresh-context classification samples |
-| `I1 / E1` | `R1` | Semantic surface and context loading | A fresh run identifies outcome, boundary, leading route, note or no-write branch, Verify, Return, and completion; only the note or scout reference whose predicate fires loads | The skill preloads both references, hides universal appraisal in a branch file, misses a required pointer, or loads caller workflow | Structural reference tests and context inventories across direct, delegated, note, inline, and scout branches |
+| `I0 / E0` | Control surfaces | Control admission | The current skill or no-guidance arm exhibits the precise fixed failure for one proposed addition before any candidate exists | The control behaves correctly but the addition is extracted anyway | Fixed prompt, source and repository snapshots, current skill hash, runtime settings, rubric, and fresh-context control samples |
+| `I1,I2 / E1` | `R1,R2` | Invocation and Admission | A direct durable-evidence request, explicit request for research-grade source evidence, explicit `$research` request, or complete caller packet for one source-answerable question reaches Research and locks one contract; a direct user-owned mismatch recommends Grilling for conversation-only work or Grill With Docs for repo-backed durable capture | Generic lookup, an ordinary request that merely benefits from citations, open-ended survey, multiple unrelated questions, diagnosis, prototype, stakeholder evidence, user judgment, or incomplete caller packet starts research or mutation; the two interview entries are collapsed or invoked automatically | Invocation-policy test, caller packet fixtures, and fresh-context classification samples |
+| `I1 / E1` | `R1` | Semantic surface and context loading | A fresh run identifies outcome, boundary, `Frame -> Trace -> Inspect`, note or no-write branch, optional scout branch, Verify, Return, and completion from one compact skill | Universal appraisal is hidden, ordinary inspection is called Scout, a speculative support file is created, or caller workflow loads | Structural surface tests and context inventories across direct, delegated, note, inline, and scout branches |
 | `I1 / E2` | `R1` | Research Contract and Trace | One bounded question maps every provisional load-bearing claim to an applicable source class and search lane | Topic-first browsing, predetermined conclusion, fixed source list treated as proof, or unrelated subquestions expand silently | Contract and claim-map fixtures plus output inspection |
 | `I1 / E2` | `R1` | Source ownership and roles | Each claim uses the source that owns it in the applicable state; discovery, owning, corroborating, counterevidence, and inaccessible roles stay distinct | Search snippets, blogs, scout prose, wrong version, official marketing, source code, or a single paper are used beyond the claims they own | Claim-to-source adjudication scenarios and citation inspection |
 | `I1 / E2` | `R1` | Assurance and proportionality | A narrow stable normative claim closes from one exact owner after contradiction check; consequential, contested, empirical, or high-stakes claims receive the required corroboration and limits | Mandatory source count adds derivative sources, or one source yields broad certainty where assurance requires more | Ordinary, consequential, unique-authority, empirical, contested, and high-stakes scenario set |
 | `I1 / E2` | `R1` | Freshness and applicability | Version, date, jurisdiction, fixed point, population, environment, and method are recorded only where they affect meaning; applicability wins over nominal recency | A newer wrong-version source supersedes the governing source, or an undated result is called current | Version, jurisdiction, repo-SHA, current-fact, and empirical-window fixtures |
 | `I1 / E2,E3` | `R1` | Triangulation, inference, and status | Scope divergence is reconciled; direct facts and labeled inference remain distinct; supported, conflicted, and unknown claims derive answered, conflicted, or blocked correctly | Majority vote, prestige, newest-date wins, hidden counterevidence, unlabeled inference, or unsupported answered status succeeds | Conflict and status table scenarios with output inspection |
-| `I1 / E2` | `R1` | Saturation | Best authority, assurance, disconfirmation, conflict handling, and a no-new-material-evidence pass produce a checkable stop | First plausible source, arbitrary count, time budget, or endless low-value browsing substitutes for saturation | Search-sequence fixtures and control-versus-candidate behavior evaluation |
+| `I1 / E2` | `R1` | Saturation | A stable ordinary claim closes after owning-source verification and a contradiction check; consequential, uncertain, contested, empirical, or high-stakes work adds active disconfirmation and a no-new-material-evidence pass | First plausible source, mandatory extra searching for a conclusive stable owner, arbitrary count, time budget, or endless low-value browsing substitutes for proportional saturation | Ordinary and higher-assurance search-sequence fixtures plus control-versus-candidate behavior evaluation |
 | `I1 / E2,E3` | `R1` | Citations and verification | Every load-bearing claim cites an inspected direct source that entails it; inference premises and limitations remain visible | Citation exists but supports only the topic, points to a search result, comes only from a scout, or omits applicability | Citation-entailment rubric, direct-source checks, and manual output inspection |
-| `I1 / E3` | `R1` | Scout economics and independence | Serial is default; at most two initial disjoint substantial lanes open; root verifies included citations; later widening has a material unsearched lane | One page gets a scout, five scouts start because slots exist, peers see conclusions, scouts write, or consensus replaces appraisal | Fixed serial, two-lane, duplicated-lane, disagreement, and capacity scenarios with time/token evidence when available |
+| `I1 / E3` | `R1` | Scout economics and independence | Serial is default; the smallest economical set of disjoint substantial lanes opens within root verification bandwidth; root verifies included citations; later widening has a material unsearched lane | One page gets a scout, a fixed count overrides lane economics, all slots fill because they exist, peers see conclusions, scouts write, or consensus replaces appraisal | Serial, varying-lane, duplicated-lane, disagreement, and capacity scenarios with time/token evidence when available |
 | `I1 / E3` | `R1` | One-note and no-write containment | An authorized new or existing note is the only run-created tracked delta; inline, blocked-without-note, and inadmissible runs leave tracked state unchanged; dirty work survives | Research edits an index or source file, overwrites unrelated dirty work, claims the repo was clean, or writes a note from `none` authority | Pre/post work-state fixtures, pre-dirty update, second-file convention, and disposable-capture checks |
-| `I1 / E3` | `R1` | Note contract | Answered, conflicted, and blocked notes preserve contract, answer, ledger, limits, source trace, saturation, and caller-use boundary | Bibliography without claim citations, false settled answer in a blocked note, live-truth claim, or missing caller boundary passes | Note-shape structural tests plus semantic note-reread rubric |
+| `I1 / E3` | `R1` | Note contract | Answered, conflicted, and blocked notes preserve contract, answer, proportionate claim representation, limits, source trace, saturation, and caller-use boundary; complex or non-answered results expose the full needed ledger | A simple answer is forced into ceremony, a complex result hides its ledger, a bibliography replaces claim citations, a blocked note presents a settled answer, or the caller boundary is missing | Note-shape structural tests plus semantic note-reread rubric |
 | `I1,I2 / E3,E4` | `R1,R2` | Return and caller authority | Caller-invoked runs return one complete packet and stop; direct runs may end with `Next: none` or one recommendation | Research changes caller state, decides its artifact, starts another skill, or forces a recommendation after a complete answer | Wayfinder and Improve Codebase caller fixtures plus direct-user behavior evaluation |
-| `I1-I3 / E4` | `R1-R3` | Integrated promotion | Canonical runtime, optional references, callers, relationships, tests, evals, validation, and installed hashes agree | Partial file split, unresolved caller mismatch, unproved behavior claim, or independent mirror edit is promoted | Focused tests, full pytest, `scripts.validate_skills`, both diff checks, changed-file read-back, installation dry-run, scoped sync after authorization, and hash parity |
+| `I1-I3 / E4` | `R1-R3` | Integrated promotion | Canonical runtime, callers, relationships, tests, evals, validation, and installed hashes agree; a support file exists only if its separate control and pointer evaluation passed | Speculative or partial file split, unresolved caller mismatch, unproved behavior claim, or independent mirror edit is promoted | Focused tests, full pytest, `scripts.validate_skills`, both diff checks, changed-file read-back, installation dry-run, scoped sync after authorization, and hash parity |
 
 ## Promotion Gate And Residual Gaps
 
@@ -832,4 +856,8 @@ Static validation proves structure. Upstream comparison supplies design pressure
 
 ## Completion Criterion For The Future Rewrite
 
-The rewrite is complete only when every normative concern has one indexed home; the main skill exposes the proposed semantic surface without becoming a research manual; Admission reliably distinguishes Research from neighboring evidence owners; one complete Research Contract drives claim-owned source work; every load-bearing claim is appraised, triangulated, classified, saturated, and citation-verified; note and no-write branches preserve their exact mutation and durability boundaries; optional scouts improve their admitted cases without worsening token, citation, or worst-case results; every caller retains its decision and next transition; every acceptance row passes its positive and negative cases under the required evaluation phase; no promotion-blocking residual gap or critical failure remains; canonical validation passes; and the installed mirror matches the separately authorized validated source exactly.
+The rewrite is complete only when every admitted change has a failing E0 control; every normative concern has one indexed home; the main skill exposes the proposed semantic surface without becoming a research manual; Admission reliably distinguishes Research from neighboring evidence owners; one complete Research Contract drives claim-owned source work; every load-bearing claim is appraised, triangulated, classified, saturated, and citation-verified; visible claim detail is proportionate without hiding complex evidence; note and no-write branches preserve their exact mutation and durability boundaries; optional scouts improve their admitted cases without worsening token, citation, or worst-case results; every caller retains its decision and next transition; every acceptance row passes its positive and negative cases under the required evaluation phase; no promotion-blocking residual gap or critical failure remains; canonical validation passes; and the installed mirror matches the separately authorized validated source exactly.
+
+## Experimental Extraction Readiness Decision
+
+**Decision: not ready for experimental extraction.** The synthesis decisions are confirmed and the candidate shape is coherent, but no E0 control has yet demonstrated a current-skill failure. The next legal step is a read-only control-lock pass against fixed scenarios for the proposed additions. Only additions whose controls fail may enter Deploy Prompt 3; passing-control additions are pruned without extraction.

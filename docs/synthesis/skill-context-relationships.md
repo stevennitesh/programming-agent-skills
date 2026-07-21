@@ -44,6 +44,7 @@ flowchart TD
   Wayfinder --> GrillDocs
   Wayfinder --> Prototype["prototype"]
   Wayfinder --> Research["research"]
+  Prototype -. "future terminal direct non-admission residual" .-> Router
   Prototype -. "verdict crosses sessions" .-> Handoff["handoff"]
   Prototype -. "resolved Domain Delta" .-> DomainModel
   Prototype -. "promotion or production proof" .-> Contract
@@ -211,8 +212,13 @@ Use one verb for each accepted relationship:
 | `to-questionnaire` | Recommend and stop | `$research` | Inspectable primary sources can answer the gap. |
 | `to-questionnaire` | Recommend and stop | `$grilling` | The current user owns the unresolved conversation-only decision. |
 | `to-questionnaire` | Recommend and stop | `$grill-with-docs` | The current user owns the unresolved repo-backed decision and durable domain capture must remain active. |
+| `research` | Recommend and stop | `$diagnosing-bugs` | Admission shows the missing authority is causal reproduction or diagnosis rather than source evidence. |
+| `research` | Recommend and stop | `$prototype` | Admission shows the question needs one runnable design or behavior verdict. |
 | `research` | Recommend and stop | `$grilling` | The current user owns the unresolved conversation-only decision. |
 | `research` | Recommend and stop | `$grill-with-docs` | The current user owns the unresolved repo-backed decision and durable domain capture must remain active. |
+| `research` | Recommend and stop | `$to-questionnaire` | One identifiable external stakeholder owns unavailable material knowledge. |
+| `research` | Recommend and stop | `$codebase-design` | One bounded interface, seam, adapter, ownership, or migration design must be chosen. |
+| `research` | Recommend and stop | `$wayfinder` | Several interdependent decisions and non-conversational prerequisites need a durable route; the user must start Wayfinder later. |
 | `wayfinder` | Invoke | `$research` | Resolve one AFK research ticket, then record its pointer. |
 | `wayfinder` | Invoke | `$prototype` | Resolve one HITL or AFK runnable probe, then receive its reconciled verdict packet and cleanup or preservation state. |
 | `wayfinder` | Invoke | `$grill-with-docs` | Resolve one HITL decision ticket or bounded Chart interview needing durable capture under the locked domain and ADR actions; return the intact lean combined packet to the same map item. |
@@ -270,7 +276,7 @@ Use one verb for each accepted relationship:
 | `codebase-design` | Recommend and stop | `$improve-codebase` | The request needs codebase-wide improvement discovery and classification. |
 | `handoff` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 
-The accepted future Domain Modeling promotion changes Wayfinder's durability edge to `Invoke`, with the locked context action and complete Domain Delta returned to the same campaign. The coordinated residual-Router design also adds one edge only when the Router becomes implicitly invocable: a standalone terminal `$domain-modeling` pass may invoke `$skill-router` with a complete material residual outside Domain Modeling and no owned handoff. The Router returns one route or `none`, starts nothing, never sends unfinished in-scope domain work back to Domain Modeling, and never causes Domain Modeling to invoke `$grill-with-docs` directly. Neither future edge is executable under the active policies above.
+The accepted future Domain Modeling promotion changes Wayfinder's durability edge to `Invoke`, with the locked context action and complete Domain Delta returned to the same campaign. The coordinated residual-Router design adds only complete terminal residual edges when the Router becomes implicitly invocable: a standalone terminal `$domain-modeling` pass may invoke `$skill-router` with material residual outside Domain Modeling and no owned handoff; a direct `$prototype` `not-admitted` result may invoke it only with no owned caller return or handoff, a complete residual packet, and no unchanged Router cycle. The Router returns one route or `none`, starts nothing, never accepts unfinished in-scope work, never bypasses a caller-owned return, and never causes Domain Modeling to invoke `$grill-with-docs` directly. The behaviorally accepted experimental Prototype candidate and the experimental Router candidate preserve both ends of their proposed edge; it remains non-executable under the active policies until coordinated promotion and integrated edge proof.
 
 ## Context Owners
 
@@ -301,7 +307,7 @@ The accepted future Domain Modeling promotion changes Wayfinder's durability edg
 | `codebase-design` | `DIRECT-DESIGN.md`: direct pass and packet; `DEEPENING.md`: dependency/seam discipline; `DESIGN-IT-TWICE.md`: alternative interface exploration |
 | `domain-modeling` | `CONTEXT-FORMAT.md`: glossary and context-map format; `ADR-FORMAT.md`: ADR gate and format |
 | `tdd` | `tests.md`, `mocking.md`, `refactoring.md`: examples and branch mechanics |
-| `prototype` | `LOGIC.md`, `UI.md`: branch mechanics; `SKILL.md` owns lifecycle and boundary |
+| `prototype` | Current `LOGIC.md` and `UI.md`: branch mechanics; the selected promotion adds `MEASURE.md`. Exactly one branch contract loads and returns to main Judge; `SKILL.md` owns lifecycle, reconciliation, and Return. |
 | `triage` | `ATTENTION-SCAN.md`, `SPECIFIC-ITEM.md`, `QUICK-OVERRIDE.md`: branch procedures; `AGENT-BRIEF.md`: ready-contract rendering; `AGENT-BRIEF-EXAMPLES.md`: branch evidence emphasis; `OUT-OF-SCOPE.md`: rejected-work knowledge base |
 | `repo-bootstrap` | Tracker, label, domain, and engineering-contract seeds; `setup-schema.json`: aggregate compatibility fingerprint; per-file source markers and `scripts/validate_setup.py`: complete target-repo setup-surface reconciliation and validation |
 | `wayfinder` | `MAP-FORMAT.md`: canonical map and ticket shape, empty-fog sentinel, and exclusion pointers; `SKILL.md`: Chart, Advance, Maintain, Closure, and foggy map lifecycle semantics |
@@ -322,7 +328,7 @@ The accepted future Domain Modeling promotion changes Wayfinder's durability edg
 - `to-questionnaire` owns async stakeholder elicitation into one verified artifact only after its admissibility gate; source-answerable gaps return to `$research`, and a direct current-user mismatch recommends `$grilling` for conversation-only work or `$grill-with-docs` when repo-backed durable domain capture must remain active. Delegated mismatches return classification to their caller. It does not contact the recipient, ingest answers, mutate trackers or domain truth, or synthesize a specification.
 - `domain-modeling` is the only skill that writes `CONTEXT.md`, `CONTEXT-MAP.md`, or approved ADR truth; `repo-bootstrap` configures and verifies routing before persistence across a required topology transition, and vocabulary consumers follow `docs/agents/domain.md`.
 - `to-spec` owns parent spec synthesis and tracker publication; `to-tickets` owns implementation issue slicing.
-- `wayfinder` owns foggy multi-session maps, ticket resolution authority, consequence-only Maintain repairs, fog disposition, and Prototype ticket participation; tracker docs own transport, child and map claim identity, stale-claim recovery, blocking, and resolution mechanics. `prototype` owns judgment mechanics, probe execution, verdict assembly, and artifact reconciliation.
+- `wayfinder` owns foggy multi-session maps, ticket resolution authority, consequence-only Maintain repairs, fog disposition, and Prototype ticket participation; tracker docs own transport, child and map claim identity, stale-claim recovery, blocking, and resolution mechanics. `prototype` owns judgment mechanics, probe execution, verdict assembly, artifact reconciliation, and its own terminal non-admission packet. Caller-owned returns stay local; only a future direct terminal unowned non-admission may reach the implicit residual Router, which recommends and stops.
 - `research` owns primary-source legwork and one cited repo-local note. A user request or caller packet must authorize one note path before that tracked mutation; otherwise research returns cited inline evidence or a blocker.
 - `resolving-merge-conflicts` inspects State and Trace read-only by default. Reconciliation authority permits edits only to in-scope conflicts; finish authority separately permits staging and continuation. Abort, hard reset, or discarding a side requires explicit approval.
 - Tracker docs own transport, tracker commands, the shared Ready-for-agent contract, and Mutation read-back. `triage` owns incoming classification, verification, brief rendering, state transitions, and the AI disclaimer; `$to-tickets` owns slicing and dependency order. Do not re-triage valid `$to-tickets` output.

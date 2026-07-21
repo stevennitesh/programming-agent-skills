@@ -17,9 +17,28 @@ decisions remain and Prompt 6 only when Git delivery is wanted.
 Optional.
 
 ```text
-Use $grill-with-docs to resolve anything material worth debating in the named skill's synthesis: ambiguity, ownership, simplification, navigation, leading words, or unnecessary complexity.
+First use $writing-great-skills in Audit mode to pressure-test the named skill's complete synthesis. Read the full synthesis and required skill-authoring references; headings, searches, or truncated excerpts are not complete coverage.
 
-Use domain context `render only` and ADR action `offer only`. Return the confirmed decision packet without editing or downstream execution.
+Explicitly classify every category below, even when no finding exists:
+
+1. Ambiguity — contradictions, overloaded terms, unclear gates, and normal, edge, and failure boundary cases.
+2. Ownership — rule, authority, evidence, mutation, Return, relationship, and completion owners.
+3. Simplification — duplication, no-ops, scattered meaning, and behavior-preserving cuts.
+4. Navigation — authority trace, normative homes, pointers, layer boundaries, and stale or competing surfaces.
+5. Leading words — steering value, invocation fit, conflicting anchors, invented terms, and harmful negation.
+6. Unnecessary complexity — each mechanism's behavior gained versus runtime, caller, proof, and maintenance load.
+
+Do not treat `selected`, `normative`, `exhaustive`, rationale, tests, or polished structure as proof that a decision is correct. Challenge the design by inversion, counterexample, ownership trace, and cut test.
+
+Before asking the user anything, produce an internal category ledger containing evidence, verdict, and every unresolved material decision. A category is not closed merely because another category found one obvious issue.
+
+Then use $grill-with-docs to resolve the material decision frontier one question at a time. Recommend an answer and state the decisive tradeoff. After each answer, relay its domain consequence before continuing.
+
+Use domain context `render only` and ADR action `offer only`. Do not edit files or start downstream execution.
+
+Acceptance of one recommendation confirms only that decision. After every category is closed, present the complete decisions, deferrals, evidence limits, and category ledger, and obtain explicit confirmation of the whole packet.
+
+Return the confirmed decision packet, the six-category coverage ledger, and Domain Delta. If any category lacks complete evidence, return `Blocked` or `Evidence gap`; never claim full confirmation.
 
 Skill name: CHANGE_ME
 ```
