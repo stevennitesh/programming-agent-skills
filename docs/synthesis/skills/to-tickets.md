@@ -1,9 +1,9 @@
 # To Tickets Runtime Design Synthesis
 
-Status: exhaustive design reference, not an executable contract. The canonical
-working tree currently contains an uncommitted execution-profile and economic
-parallel-routing candidate; the installed mirror intentionally remains the
-earlier control. Neither state is promoted by this note.
+Status: exhaustive design reference, not an executable contract. The
+execution-profile and economic parallel-routing candidate is preserved under
+`skills/experimental/to-tickets/`; custom and installed copies remain the
+earlier active control. The candidate is not promoted by this note.
 
 Runtime authority remains in:
 
@@ -878,7 +878,7 @@ read-back, and composition contracts.
 
 | Evidence surface | Classification | Design use |
 | --- | --- | --- |
-| `skills/custom/to-tickets/SKILL.md` and `agents/openai.yaml` | Current canonical runtime | Existing five-verb behavior, explicit-only reach, and current working-tree execution-profile candidate |
+| `skills/custom/to-tickets/SKILL.md` and `agents/openai.yaml` | Active runtime matching the installed baseline | Existing five-verb behavior and explicit-only reach; the execution-profile candidate remains under `skills/experimental/to-tickets/` |
 | `docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md` | Current owner contracts | Ready fields, roles, graph representation, ready query, mutation, and read-back |
 | `docs/agents/engineering-contract.md` and `docs/agents/domain.md` | Current shared contracts | Source Trace, semantic proof, state-boundary coverage, domain pointers, and ADR conflict handling |
 | `skills/custom/to-spec/SKILL.md` | Current source producer | Parent-spec completeness, grounding, proof expectations, and recommendation boundary |

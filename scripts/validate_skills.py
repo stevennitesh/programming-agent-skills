@@ -16,6 +16,10 @@ from scripts import skill_pack_contract as pack_contract
 
 SKILL_ROOTS = ("skills/custom", "skills/extra")
 CUSTOM_SKILL_ROOT = "skills/custom"
+EXPERIMENTAL_SKILL_ROOT = pack_contract.EXPERIMENTAL_SOURCE
+EXPERIMENTAL_MANIFEST = (
+    f"{EXPERIMENTAL_SKILL_ROOT}/{pack_contract.EXPERIMENTAL_MANIFEST_NAME}"
+)
 SETUP_SKILL_ROOT = "skills/custom/repo-bootstrap"
 SETUP_SCHEMA_MANIFEST = f"{SETUP_SKILL_ROOT}/setup-schema.json"
 GLOBAL_AGENTS_TEMPLATE = "GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md"
@@ -141,6 +145,102 @@ def custom_skill_dirs(root: Path) -> list[Path]:
     if not skill_root.is_dir():
         return []
     return sorted(path for path in skill_root.iterdir() if path.is_dir())
+
+
+def validate_experimental_skills(root: Path) -> list[str]:
+    experimental_root = root / EXPERIMENTAL_SKILL_ROOT
+    manifest_path = root / EXPERIMENTAL_MANIFEST
+    if not experimental_root.is_dir():
+        return [f"Missing experimental skill root: {EXPERIMENTAL_SKILL_ROOT}"]
+    if not manifest_path.is_file():
+        return [f"Missing experimental skill manifest: {EXPERIMENTAL_MANIFEST}"]
+
+    try:
+        payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        return [f"Cannot read experimental skill manifest: {manifest_path}: {error}"]
+
+    failures: list[str] = []
+    if payload.get("format") != pack_contract.EXPERIMENTAL_MANIFEST_FORMAT:
+        failures.append(
+            "Experimental skill manifest must use format "
+            f"{pack_contract.EXPERIMENTAL_MANIFEST_FORMAT}."
+        )
+    if payload.get("active_root") != CUSTOM_SKILL_ROOT:
+        failures.append(
+            f"Experimental skill manifest active_root must be {CUSTOM_SKILL_ROOT}."
+        )
+    if payload.get("experimental_root") != EXPERIMENTAL_SKILL_ROOT:
+        failures.append(
+            "Experimental skill manifest experimental_root must be "
+            f"{EXPERIMENTAL_SKILL_ROOT}."
+        )
+
+    entries = payload.get("skills")
+    if not isinstance(entries, dict):
+        failures.append("Experimental skill manifest skills must be an object.")
+        return failures
+
+    directories = {
+        path.name for path in experimental_root.iterdir() if path.is_dir()
+    }
+    recorded = set(entries)
+    for name in sorted(directories - recorded):
+        failures.append(f"Experimental skill is missing from manifest: {name}")
+    for name in sorted(recorded - directories):
+        failures.append(f"Experimental manifest entry has no skill directory: {name}")
+
+    for name in sorted(directories & recorded):
+        skill_dir = experimental_root / name
+        entry = entries[name]
+        if not pack_contract.SKILL_NAME_RE.fullmatch(name):
+            failures.append(f"Experimental skill has unsafe name: {name!r}")
+            continue
+        if not isinstance(entry, dict):
+            failures.append(f"Experimental manifest entry must be an object: {name}")
+            continue
+        if not (root / CUSTOM_SKILL_ROOT / name).is_dir():
+            failures.append(f"Experimental skill has no active custom counterpart: {name}")
+
+        skill_file = skill_dir / "SKILL.md"
+        if not skill_file.is_file():
+            failures.append(f"Experimental skill folder missing SKILL.md: {name}")
+        else:
+            frontmatter = skill_frontmatter(skill_file)
+            if frontmatter is None or frontmatter.get("name") != name:
+                failures.append(
+                    f"Experimental skill frontmatter name must match directory: {name}"
+                )
+
+        candidate_hash = entry.get("candidate_sha256")
+        if not isinstance(candidate_hash, str) or not pack_contract.SHA256_RE.fullmatch(
+            candidate_hash
+        ):
+            failures.append(f"Experimental candidate hash is invalid: {name}")
+        else:
+            try:
+                actual_hash = pack_contract.tree_hash(
+                    skill_dir,
+                    ignore=lambda path, _is_directory: (
+                        path.name == "__pycache__" or path.suffix == ".pyc"
+                    ),
+                )
+            except (OSError, ValueError) as error:
+                failures.append(f"Cannot hash experimental skill {name}: {error}")
+            else:
+                if actual_hash != candidate_hash:
+                    failures.append(f"Experimental candidate hash differs: {name}")
+
+        baseline_hash = entry.get("active_baseline_sha256")
+        if not isinstance(baseline_hash, str) or not pack_contract.SHA256_RE.fullmatch(
+            baseline_hash
+        ):
+            failures.append(f"Experimental active baseline hash is invalid: {name}")
+        for field in ("origin", "reason"):
+            if not isinstance(entry.get(field), str) or not entry[field].strip():
+                failures.append(f"Experimental manifest {field} is missing: {name}")
+
+    return failures
 
 
 def unquote_yaml_scalar(value: str) -> str:
@@ -797,6 +897,7 @@ def main(argv: list[str] | None = None) -> int:
     skill_names, skill_failures = validate_skill_folders(root)
     custom_skill_names = [path.name for path in custom_skill_dirs(root)]
     failures.extend(skill_failures)
+    failures.extend(validate_experimental_skills(root))
     failures.extend(validate_required_docs(root))
     failures.extend(validate_setup_schema_manifest(root))
     failures.extend(validate_active_surfaces(root))

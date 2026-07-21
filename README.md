@@ -20,7 +20,7 @@ flowchart LR
     E --> F["Lock<br/>evidence + residual risk"]
 ```
 
-The diagram shows the common path, not a mandatory sequence. Each skill owns one engineering job, and `$skill-router` returns exactly one next skill or `none` when route choice is requested or an owner delegates terminal unowned residual work.
+The diagram shows the common path, not a mandatory sequence. Each skill owns one engineering job, and `$skill-router` recommends exactly one next skill when route choice is the work.
 
 ## Purpose
 
@@ -93,7 +93,7 @@ Run `python -m scripts.install_skills --recover-transaction <snapshot-path>` wit
 
 Claims are cleared while the snapshot still exists, and the snapshot is removed last.
 
-Use `python -m scripts.install_skills --dry-run` to preview skill deltas and the global-bootstrap action. `skills/custom/` is the supported install set, `skills/extra/` is optional, and `skills/.archive/` is inactive.
+Use `python -m scripts.install_skills --dry-run` to preview skill deltas and the global-bootstrap action. `skills/custom/` is the only managed install source. `skills/experimental/` preserves inactive alternatives without routing or installing them, `skills/extra/` is optional, and `skills/.archive/` is retired history.
 
 </details>
 
@@ -111,7 +111,7 @@ The portable contract carries the convergence loop, commitment boundaries, shapi
 - **Improve code and design:** `$improve-codebase`, `$simplify-code`, `$codebase-design`, `$domain-modeling`
 - **Route and maintain the pack:** `$repo-bootstrap`, `$skill-router`, `$writing-great-skills`
 
-The small [`GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`](GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md) bootstrap teaches Codex when to invoke the residual `$skill-router` or recommend `$repo-bootstrap`. Workflows stay with their skills, and personal global instructions stay local.
+The small [`GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`](GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md) bootstrap teaches Codex when to suggest `$skill-router` and `$repo-bootstrap`. Workflows stay with their skills, and personal global instructions stay local.
 
 ## Using The Full Pack
 
@@ -162,8 +162,9 @@ It keeps the upstream emphasis on strong leading words, then extends it with rep
 ## Repository Layout
 
 - `skills/custom/`: active skills to install
+- `skills/experimental/`: inactive, manifest-tracked alternatives to active skills
 - `skills/extra/`: optional extra skills
-- `skills/.archive/`: inactive historical or experimental skills
+- `skills/.archive/`: retired historical skills
 - `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`: minimal global Codex bootstrap
 - `AGENTS_PORTABLE_FALLBACK.md`: standalone repository-level engineering contract for use without installed skills
 - `skills/custom/repo-bootstrap/`: target-repository setup workflow and contract templates

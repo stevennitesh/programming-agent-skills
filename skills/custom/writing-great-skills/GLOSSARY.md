@@ -56,7 +56,7 @@ _Avoid_: human index, burden, overhead
 
 ### Router Skill
 
-A skill whose only job is to select one next skill or `none` and stop without executing it. An **explicit-only** router lets the human ask for route selection. A narrowly **implicitly invocable** residual router also accepts a terminal out-of-scope packet from another skill after that owner has exhausted its work and known handoffs. It never interrupts active in-scope work or intermediates a deterministic handoff. The cure for duplicated route maps and, when explicit-only, for **cognitive load** as explicit skills multiply.
+An **explicit-only** skill whose job is to point at your other explicit-only skills — naming each and when to reach for it — so the human has one skill to remember instead of many. It can only hint, never fire them automatically. The cure for **cognitive load** when explicit-only skills multiply.
 
 _Avoid_: dispatcher, menu, registry, index, router procedure
 

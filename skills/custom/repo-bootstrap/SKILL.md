@@ -13,8 +13,6 @@ Own one outcome: a compatible, verified repo-local **setup surface**.
 
 Inspect before asking. Read repository identity and tracker access; `AGENTS.md` and configured fallback instructions; repo-owned command sources; existing `docs/agents/`, context files, and ADRs; `.gitignore`, `.tmp/`, `.scratch/`; and hosted-tracker labels when accessible. Inspect workspace and package manifests, independently owned source roots, existing domain vocabularies, and ADR streams.
 
-When any prior setup surface exists, run [scripts/validate_setup.py](scripts/validate_setup.py) read-only during Inventory; do not wait until Verify. Its complete failure list seeds the reconciliation delta.
-
 Treat a command as verified only when repo config, CI, or maintained documentation owns it. Surface conflicting sources.
 
 Inventory completes when the tracker candidate, verified commands, existing setup surface, domain layout, local-state policy, settled choices, and access blockers are known.
@@ -23,7 +21,7 @@ Inventory completes when the tracker candidate, verified commands, existing setu
 
 When a prior setup surface exists, treat this run as a **reconcile**, not a reset.
 
-[setup-schema.json](setup-schema.json) owns the aggregate pack fingerprint. It identifies the setup generation, not per-file completeness. Compare every managed surface: `AGENTS.md`, all four `docs/agents/*.md` contracts, `.tmp/` and `.scratch/` policy, and applicable tracker configuration. Each managed contract carries a `programming-agent-skills setup-file` marker naming its source template and template hash; a missing or different marker identifies that file as unreconciled even when the aggregate marker is current. Markers are provenance evidence, not substitutes for content inspection or validator proof.
+[setup-schema.json](setup-schema.json) owns the current fingerprint. A missing `programming-agent-skills setup-schema` marker identifies a legacy setup; a different fingerprint identifies an outdated setup.
 
 - **Preserve.** Carry forward the confirmed tracker, label mapping, domain layout, PR/MR intake policy, close policy, verified commands, repo invariants, and repo-specific contract additions.
 - **Delta.** Propose only changes required by the current pack.
@@ -34,7 +32,7 @@ When a prior setup surface exists, treat this run as a **reconcile**, not a rese
 
 Resolve only unsettled choices, one answer at a time. Lead with the discovered recommendation and its consequence.
 
-- **Tracker.** Choose [GitHub](issue-tracker-github.md), [GitLab](issue-tracker-gitlab.md), [Local Markdown](issue-tracker-local.md), or another tracker with an explicit tracker mapping. Prefer the detected remote; otherwise recommend Local Markdown. For hosted trackers, settle external PR/MR intake and implemented-item closure. GitHub default: yes for closure. GitLab default: no. Intake defaults to no.
+- **Tracker.** Choose [GitHub](issue-tracker-github.md), [GitLab](issue-tracker-gitlab.md), [Local Markdown](issue-tracker-local.md), or another tracker with an explicit operation map. Prefer the detected remote; otherwise recommend Local Markdown. For hosted trackers, settle external PR/MR intake and implemented-item closure. GitHub default: yes for closure. GitLab default: no. Intake defaults to no.
 - **Labels.** Use [triage-labels.md](triage-labels.md) as the role set. Reuse matching labels, map local names, and propose only missing labels for creation after approval.
 - **Domain.** Default to single-context (`CONTEXT.md`, `docs/adr/`). Propose multi-context (`CONTEXT-MAP.md` plus routed context docs and ADRs) only when independently owned domain vocabularies, decisions, or responsibilities span source roots. Workspace manifests trigger inspection but do not prove multiple contexts. `$domain-modeling` owns later domain-file creation and changes.
 
@@ -44,7 +42,7 @@ Verified commands, the four local contracts, and `.tmp/`/`.scratch/` policy are 
 
 Show the exact proposed delta:
 
-- the `AGENTS.md` patch with the engineering primer, verified commands, invariants, pointers, and `<!-- programming-agent-skills setup-schema: 1:87b57bfbb165 -->`;
+- the `AGENTS.md` patch with the engineering primer, verified commands, invariants, pointers, and `<!-- programming-agent-skills setup-schema: 1:74105ed8ab28 -->`;
 - all four `docs/agents/*.md` results;
 - the `.gitignore` delta;
 - preserved repo-specific additions and unresolved conflicts;
@@ -58,7 +56,7 @@ Wait for approval before any file write or tracker mutation.
 Apply only the approved delta. Reconcile existing local contracts in place. Preserve repo-specific additions.
 
 - **Primer.** Update or create a short `AGENTS.md` with `Explore imaginatively. Converge under proof. Simplify ruthlessly.`, verified commands, local invariants, the current marker, and pointers to the four local contracts. When the portable engineering-contract owner is present, replace its portable title and owner preamble with the installed-pack primer and engineering-contract pointer; preserve repo-specific material.
-- **Contracts.** Reconcile the selected tracker template into `docs/agents/issue-tracker.md`; [triage-labels.md](triage-labels.md) into `docs/agents/triage-labels.md`; [domain.md](domain.md), with its layout resolved, into `docs/agents/domain.md`; and [engineering-contract.md](engineering-contract.md) into `docs/agents/engineering-contract.md`. For another tracker, use the approved tracker mapping. Write each current setup-file marker only after that file's content and preserved additions have been reconciled.
+- **Contracts.** Reconcile the selected tracker template into `docs/agents/issue-tracker.md`; [triage-labels.md](triage-labels.md) into `docs/agents/triage-labels.md`; [domain.md](domain.md), with its layout resolved, into `docs/agents/domain.md`; and [engineering-contract.md](engineering-contract.md) into `docs/agents/engineering-contract.md`. For another tracker, use the approved operation map.
 - **State.** Keep `.tmp/` contents ignored and `.scratch/` trackable without replacing unrelated ignore rules.
 - **Labels.** For GitHub or GitLab, create only approved missing mapped and fixed labels; preserve existing labels and descriptions.
 

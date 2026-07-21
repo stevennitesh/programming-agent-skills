@@ -6,7 +6,7 @@
 - **Hot:** land while another worker continues or to unlock the next frontier.
 - **Late:** begin after workers finish when integration or loop-close validation needs fresh context.
 
-**Default:** the root owns serial landing. Load this reference only when integration itself is one bounded independent lane whose context saving exceeds its dispatch and handoff cost.
+**Default:** the orchestrator owns serial landing.
 
 ## Assignment
 

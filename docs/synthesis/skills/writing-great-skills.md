@@ -24,11 +24,11 @@ contracts explicit. The future rewrite should become smaller than this
 synthesis. This document explains and proves the design; runtime files should
 carry only behavior-changing instructions.
 
-The evidence snapshot is the working tree on 2026-07-20. That tree already
-contains an uncommitted `GLOSSARY.md` Router Skill refinement and many unrelated
-changes. The installed mirror matches the other three package files but retains
-the pre-refinement glossary. That drift is evidence to reconcile during a
-future promoted rewrite, not authority to synchronize during this synthesis.
+The evidence snapshot is the working tree on 2026-07-20. The `GLOSSARY.md`
+Router Skill refinement is preserved under
+`skills/experimental/writing-great-skills/`; custom and installed copies retain
+the pre-refinement active glossary. That drift is evidence to reconcile during
+a future promoted rewrite, not authority to synchronize during this synthesis.
 
 ## How To Read This Document
 
@@ -696,7 +696,7 @@ These observations motivate the selected design:
 | Behavioral evaluation is strong but only one generic branch | Current `BEHAVIOR-EVALS.md` | Invocation and premature-completion claims need clear mapping into the protocol |
 | Static tests protect only selected literal contracts | Two focused tests | Core Audit and Author behavior lacks direct current candidate evaluation |
 | Return has no typed nonterminal forms | Current Output and Completion | Partial evidence can be narrated as complete or blocked imprecisely |
-| Current canonical glossary and installed glossary differ | SHA-256 read-back | Installed execution does not yet contain the Router Skill refinement |
+| Experimental glossary and active installed glossary differ | Manifest and SHA-256 read-back | Active execution does not contain the Router Skill refinement |
 
 These are design gaps, not claims that current behavior is unusable. A future
 control must demonstrate the relevant failure before candidate wording earns

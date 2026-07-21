@@ -1,0 +1,61 @@
+{
+  "format": 1,
+  "active_root": "skills/custom",
+  "experimental_root": "skills/experimental",
+  "skills": {
+    "codebase-design": {
+      "origin": "skills/custom/codebase-design at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f before the installed-baseline restore",
+      "reason": "Preserve the divergent candidate while the installed managed version remains active.",
+      "candidate_sha256": "18c226fea230fe510422e3cdd07b61063291916485d08aeff2aff65f116e5cc4",
+      "active_baseline_sha256": "72223008a4b2f8a3ad540be60aa9af5cc87806918f24c5c49f3936181d7470b2"
+    },
+    "grilling": {
+      "origin": "pre-existing skills/experimental/grilling candidate at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f",
+      "reason": "Retain the inactive concise candidate separately from the active skill.",
+      "candidate_sha256": "ff0730b0e9c0702b1f417e4f239c2120dfe9858e768a96f13faa35128462cd80",
+      "active_baseline_sha256": "567960f5e87a7300949c2b9b4d272b56e1475a825b442e759e7056e101df3d52"
+    },
+    "parallel-implement": {
+      "origin": "skills/custom/parallel-implement at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f before the installed-baseline restore",
+      "reason": "Preserve the divergent candidate while the installed managed version remains active.",
+      "candidate_sha256": "64cc2617fcf37faa311053fbc5f96e0d35bf4a6e1be3f7b18bfb3e81c054fd3e",
+      "active_baseline_sha256": "a0d1665f9bfbcb8cfe37f159e2c5f6731b2f970984ec1255a9ad81f8d013796c"
+    },
+    "repo-bootstrap": {
+      "origin": "skills/custom/repo-bootstrap at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f before the installed-baseline restore",
+      "reason": "Preserve the divergent candidate while the installed managed version remains active.",
+      "candidate_sha256": "3e8f1f909172a3aab97974daa71447b0cc67b8444b742a5dc7261398d7e9679e",
+      "active_baseline_sha256": "2e0adaeb731132ca7f2208a372b9509f996d79161d16ea5f72656b83f4243051"
+    },
+    "skill-router": {
+      "origin": "skills/custom/skill-router at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f before the installed-baseline restore",
+      "reason": "Preserve the divergent candidate while the installed managed version remains active.",
+      "candidate_sha256": "4a85be0938e0752e31fd52c2791298421f8545d5d9e51972cef74208b76e6663",
+      "active_baseline_sha256": "aa2cefdfc76d82e260efc2272f1ed01098b5b77a5e38a9f159eba66b947ffeff"
+    },
+    "to-questionnaire": {
+      "origin": "skills/custom/to-questionnaire at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f before the installed-baseline restore",
+      "reason": "Preserve the divergent candidate while the installed managed version remains active.",
+      "candidate_sha256": "ec772d61f41e293e6a2e2d7b1a64b44ea4705119bf87974553c724245f680308",
+      "active_baseline_sha256": "163d76f3468f2301c6cddeead5cca34b08afaf9ae370f457157707c12e010158"
+    },
+    "to-tickets": {
+      "origin": "skills/custom/to-tickets at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f before the installed-baseline restore",
+      "reason": "Preserve the divergent candidate while the installed managed version remains active.",
+      "candidate_sha256": "73162c29e0dee4620be7f70b403a8ba8ddd682ef7c07ecf3b94e6d02baafe5a1",
+      "active_baseline_sha256": "e75b45e4086e817800fc4678efbb0c4dfa0d442d1382436102daaec2f7cdf9a4"
+    },
+    "wayfinder": {
+      "origin": "skills/custom/wayfinder at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f before the installed-baseline restore",
+      "reason": "Preserve the divergent candidate while the installed managed version remains active.",
+      "candidate_sha256": "a1055066fd8772c61f3e01ec223b94c3e30f7f46b65c7d76170f46135850e1f7",
+      "active_baseline_sha256": "8b71e1d0847831e3f60c3f74399e38ec794f20f2595daaa13b13b30e99b932fa"
+    },
+    "writing-great-skills": {
+      "origin": "skills/custom/writing-great-skills at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f before the installed-baseline restore",
+      "reason": "Preserve the divergent candidate while the installed managed version remains active.",
+      "candidate_sha256": "a5d26c4036c80f06aba961c7409627b32c63c9d4a84d940b651e9bf11dfb1293",
+      "active_baseline_sha256": "27a3e6b9ab1f13b7a2bc6a359e924a7daf63e37fee0c047a81100e44279fb52f"
+    }
+  }
+}

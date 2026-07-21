@@ -1,6 +1,6 @@
 # Parallel Implement Efficiency Synthesis
 
-Status: lean design reference and extraction map. Stage 1 and Stage 2 are implemented in the canonical working tree for validation; the installed global mirror remains the unchanged control until separately authorized synchronization.
+Status: lean design reference and extraction map. The Stage 1 and Stage 2 candidate is preserved under `skills/experimental/parallel-implement/`; custom and installed copies remain the unchanged active control.
 
 Runtime authority remains in:
 
@@ -12,7 +12,7 @@ Runtime authority remains in:
 - `$review`, `$convergent-pr-review`, and `$resolving-merge-conflicts` at their owned boundaries; and
 - the relationship map, pack tests, behavior evaluations, and installed mirror.
 
-This note specifies a small efficiency change: retain one warm primary implementer, add independent actors only when their likely implementation savings exceed visible coordination cost, and measure results passively from the existing ledger. Five concurrent subagents remain the session ceiling, not a target. Canonical extraction does not become the installed runtime until validation passes and synchronization is separately authorized.
+This note specifies a small efficiency change: retain one warm primary implementer, add independent actors only when their likely implementation savings exceed visible coordination cost, and measure results passively from the existing ledger. Five concurrent subagents remain the session ceiling, not a target. The experimental extraction does not become active runtime until it is promoted into `skills/custom/`, validated, and separately synchronized.
 
 ## How To Read This Document
 

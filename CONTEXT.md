@@ -9,7 +9,7 @@ This repository packages a shared engineering discipline as skills, setup contra
 - `docs/plans/README.md` routes current work without copying plans or runbooks.
 - `docs/agents/engineering-contract.md` owns engineering taste, shared runtime language, and cross-cutting discipline.
 - `docs/agents/issue-tracker.md`, `triage-labels.md`, and `domain.md` own tracker mechanics, state roles, and domain routing.
-- `skills/custom/` is the supported install set. `skills/extra/` is optional. `skills/.archive/` is inactive.
+- `skills/custom/` is the active supported install set and the only source for managed installation. `skills/experimental/` holds inactive named alternatives to active skills. `skills/extra/` is optional, and `skills/.archive/` is retired history.
 - Historical research, synthesis, transcripts, issue notes, and run logs remain evidence. They become current instructions only when an owning README or `docs/plans/README.md` says so.
 - Mechanical rules belong in scripts or config. Prose owns routing, judgment, and behavior that cannot be enforced directly.
 
@@ -37,11 +37,13 @@ Copying downstream procedure upward is duplication. Repeating one leading word a
 - `README.md`: human-facing product overview, install, update, and first-use path.
 - `scripts/install_skills.py`: managed installation and installed-pack manifest.
 - `scripts/validate_skills.py`: skill schema, policy, reference, setup, mirror, publication, and diff integrity.
+- `skills/experimental/manifest.json`: current experimental tree identities, capture provenance, and active baselines.
 - `docs/research/`: source intake and historical source evidence.
 - `docs/synthesis/`: design judgment, methods, family notes, and historical prompt outputs.
 - `docs/validation/`: repeatable fixtures and evidence that wording changes behavior.
 - `docs/adr/`: durable decisions that routine skill edits should not relitigate.
 - `skills/custom/<skill>/SKILL.md`: active skill behavior; sibling files hold disclosed branch reference.
+- `skills/experimental/<skill>/`: inactive candidate behavior with the same name as an active custom skill; it is not routed, installed, or an edit source for the active pack.
 - `$HOME/.agents/skills/<skill>`: installed mirror, never the edit source of truth.
 
 The installer records pack-managed names in `.programming-agent-skills-manifest.json`. It may update or retire those names while preserving unrelated skills in the shared install directory.
@@ -67,6 +69,16 @@ The installer records pack-managed names in `.programming-agent-skills-manifest.
 
 A coordinated set of skills, setup contracts, validators, and reference that produces one engineering operating model.
 _Avoid_: prompt collection, script bundle
+
+**Active skill**
+
+A supported skill under `skills/custom/`; it is eligible for validation, routing, managed installation, and mirror comparison.
+_Avoid_: custom variant, production experiment
+
+**Experimental skill**
+
+An inactive alternative under `skills/experimental/` that shadows one active skill name while its design is evaluated. It is preserved and hash-tracked, but never routed or installed until explicitly promoted into `skills/custom/`.
+_Avoid_: active skill, installed skill, archive
 
 **Target repo**
 

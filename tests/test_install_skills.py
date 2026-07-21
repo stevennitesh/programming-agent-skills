@@ -672,6 +672,26 @@ def test_install_updates_managed_skills_and_preserves_unrelated(tmp_path: Path) 
     assert manifest["skills"] == ["alpha", "beta"]
 
 
+def test_install_ignores_same_named_experimental_skill(tmp_path: Path) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / ".agents/skills"
+    write_source_skill(root, "alpha", "active")
+    experimental = root / "skills/experimental/alpha"
+    experimental.mkdir(parents=True)
+    (experimental / "SKILL.md").write_text("candidate", encoding="utf-8")
+    write_template(root)
+
+    result = install_skills.install(root, installed, None)
+
+    assert result["skills"] == ["alpha"]
+    assert (installed / "alpha/SKILL.md").read_text(encoding="utf-8") == "active"
+    manifest = json.loads(
+        (installed / install_skills.MANIFEST_NAME).read_text(encoding="utf-8")
+    )
+    assert manifest["source"] == "skills/custom"
+    assert manifest["skills"] == ["alpha"]
+
+
 def test_install_excludes_and_ignores_python_cache_artifacts(tmp_path: Path) -> None:
     root = tmp_path / "repo"
     installed = tmp_path / ".agents/skills"

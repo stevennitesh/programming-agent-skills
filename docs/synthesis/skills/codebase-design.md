@@ -1,6 +1,6 @@
 # Codebase Design Whole-Skill Synthesis
 
-Status: generous whole-skill design reference for a future rewrite. This document does not change executable behavior, authorize implementation, or claim installed-mirror parity.
+Status: generous whole-skill design reference for a future rewrite. The unpromoted candidate is preserved under `skills/experimental/codebase-design/`; this document does not change executable behavior or authorize promotion.
 
 Runtime authority remains in:
 
@@ -8,13 +8,12 @@ Runtime authority remains in:
 - `skills/custom/codebase-design/DIRECT-DESIGN.md`;
 - `skills/custom/codebase-design/DEEPENING.md`;
 - `skills/custom/codebase-design/DESIGN-IT-TWICE.md`;
-- `skills/custom/codebase-design/DESIGN-COHERENCE.md` when present in the coordinated canonical candidate;
 - `skills/custom/codebase-design/agents/openai.yaml`;
 - the caller's artifact, mutation boundary, acceptance, and completion criterion;
 - `docs/synthesis/skill-context-relationships.md`, pack tests, behavior evaluations, and validation transcripts; and
 - the installed mirror under `C:\Users\steve\.agents\skills\codebase-design` only after validated synchronization.
 
-The current canonical working tree contains a coordinated Design Coherence candidate that the installed mirror does not yet contain. Treat that difference as migration state, not as proof that the candidate behavior has been promoted.
+`skills/custom/codebase-design/` matches the installed active baseline. `skills/experimental/codebase-design/` preserves the coordinated Design Coherence candidate, including `DESIGN-COHERENCE.md`; it is neither routed nor installed.
 
 ## How To Read This Document
 
@@ -536,13 +535,13 @@ Wayfinder and other bounded callers need to expose design questions early and de
 
 | Surface | Current evidence | Residual gap for the future rewrite |
 | --- | --- | --- |
-| `SKILL.md` | Implicit invocation, vocabulary, taste, direct pointer, coherence pointer, wide-discovery boundary, and mode-aware completion exist in the canonical candidate | Description and mode selection need behavior evaluation against realistic ambiguous prompts |
+| `SKILL.md` | Implicit invocation, vocabulary, taste, direct pointer, coherence pointer, wide-discovery boundary, and mode-aware completion exist in the experimental candidate | Description and mode selection need behavior evaluation against realistic ambiguous prompts |
 | `DIRECT-DESIGN.md` | Five-step pass, current/no-new-seam comparison, replacement gate, design packet, and completion exist | Full packet completeness and premature-recommendation behavior have not been sampled in the current coordinated candidate |
 | `DEEPENING.md` | Four dependency categories, seam placement, substitutes, coverage parity, test dispositions, and migration exist | Category choice, seam avoidance, and affected-test accounting need behavior controls |
 | `DESIGN-IT-TWICE.md` | Three alternatives, structural pressures, fresh-context scout isolation, comparison, and completion exist | Independence and genuinely different alternatives need repeated fresh-context sampling |
-| `DESIGN-COHERENCE.md` | Canonical candidate contains shared criteria, Frame, Check, typed gap, Return, and completion | Installed mirror lacks the file; Frame and Check behavior still require candidate-versus-control evidence |
-| Structural tests | Protect reference disclosure, branch shapes, dependency categories, test dispositions, no-new-seam, replacement gates, coherence criteria, caller-retained authority, and selected relationship edges | Static assertions do not prove design judgment, evidence use, or authority preservation under pressure |
-| Core workflow evaluations | Define Design Alternatives Without Seam Bias and Incremental Change Versus Replacement, plus composition and Wayfinder coherence expectations | The definitions are not themselves fresh behavior runs |
+| `DESIGN-COHERENCE.md` | Experimental candidate contains shared criteria, Frame, Check, typed gap, Return, and completion | Active custom and installed copies lack the file; Frame and Check behavior still require candidate-versus-control evidence |
+| Structural tests at capture commit `586160f` | Protected reference disclosure, branch shapes, dependency categories, test dispositions, no-new-seam, replacement gates, coherence criteria, caller-retained authority, and selected relationship edges | Active tests no longer claim promotion; static assertions do not prove judgment or authority preservation under pressure |
+| Core workflow evaluations at capture commit `586160f` | Defined Design Alternatives Without Seam Bias and Incremental Change Versus Replacement, plus composition and Wayfinder coherence expectations | Active evaluations remain on the installed baseline; definitions are not themselves fresh behavior runs |
 | Validation transcripts | Earlier composition evidence showed To Spec loading vocabulary without losing ownership; older pack validation proved then-current source/mirror parity | Evidence predates the coordinated coherence candidate and cannot prove the future rewrite |
 | Installed mirror | Contains the older main skill, Direct Design, Deepening, Design It Twice, and policy file | It lacks Design Coherence and must remain the control until the coordinated candidate is validated and synchronization is authorized |
 

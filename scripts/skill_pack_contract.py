@@ -14,6 +14,9 @@ from pathlib import Path
 MANIFEST_NAME = ".programming-agent-skills-manifest.json"
 MANIFEST_FORMAT = 1
 MANIFEST_SOURCE = "skills/custom"
+EXPERIMENTAL_SOURCE = "skills/experimental"
+EXPERIMENTAL_MANIFEST_NAME = "manifest.json"
+EXPERIMENTAL_MANIFEST_FORMAT = 1
 SKILL_NAME_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 

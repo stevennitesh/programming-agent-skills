@@ -11,7 +11,7 @@ Runtime authority remains in:
 - `docs/synthesis/skill-context-relationships.md`; and
 - the target repository's domain and engineering contracts.
 
-The coordinated canonical candidate has been extracted into the Wayfinder skill, supporting files, tracker templates, relationships, tests, and behavior-evaluation definitions. Canonical structural validation passes. This synthesis does not claim staged behavior promotion or installed-mirror parity; the global mirror remains intentionally unsynchronized until separately authorized.
+`skills/custom/wayfinder/` matches the installed active baseline. The coordinated candidate and its `OPERATIONS.md` extraction are preserved under `skills/experimental/wayfinder/`; this synthesis does not claim staged behavior promotion or authorize routing or installation of that candidate.
 
 ## How To Read This Document
 

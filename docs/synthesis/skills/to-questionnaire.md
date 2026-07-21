@@ -9,13 +9,13 @@ Runtime authority remains in:
 - each caller for its downstream decision, item identity, waiting state, answer verification, retention requirement, and continuation authority;
 - `$research` and `$grilling` for source-answerable and current-user-owned gaps;
 - `$skill-router` for explicit route selection;
-- `skills/custom/wayfinder/SKILL.md`, `OPERATIONS.md`, and `MAP-FORMAT.md` for the Questionnaire-ticket caller packet and external-wait lifecycle;
+- the active Wayfinder contract for any supported Questionnaire-ticket caller packet and external-wait lifecycle;
 - `docs/synthesis/skill-context-relationships.md` for pack-wide invocation and recommendation edges;
 - `tests/test_skill_pack_contracts.py` and `docs/validation/evals/core-workflows.md` for current structural and behavioral protection;
 - `README.md` for human-facing orientation; and
 - `C:\Users\steve\.agents\skills\to-questionnaire` as the installed mirror of the last synchronized canonical source.
 
-The canonical working tree currently contains an in-progress implicitly invocable delegated-leaf candidate, while the installed mirror still contains the older explicit-only direct-use skill. That divergence is evidence, not promotion. This synthesis changes neither runtime surface.
+`skills/custom/to-questionnaire/` matches the installed explicit-only active baseline. The implicitly invocable delegated-leaf candidate is preserved under `skills/experimental/to-questionnaire/`; that difference is evidence, not promotion.
 
 ## How To Read This Document
 
@@ -568,7 +568,7 @@ It does not mutate Wayfinder maps, tracker state, domain truth, specs, tickets, 
 
 ## Current Runtime Baseline
 
-The canonical working-tree candidate currently provides:
+The preserved experimental candidate provides:
 
 - narrowly implicit invocation;
 - direct and delegated entry;
@@ -580,7 +580,7 @@ The canonical working-tree candidate currently provides:
 - an unsent Return with caller ownership; and
 - a sharp no-delivery, no-answer, no-continuation boundary.
 
-The installed mirror retains the earlier explicit-only direct-use contract and lacks the delegated packet. The relationship map, Wayfinder caller, tests, and behavior evaluation already describe the canonical candidate. A future rewrite must reconcile this drift deliberately rather than treat either copy as implicit promotion evidence.
+The custom and installed active baseline retains the earlier explicit-only direct-use contract and lacks the delegated packet. The experimental tree, this synthesis, and capture commit preserve the coordinated candidate evidence. A future promotion must reconcile callers, relationships, tests, and behavior evaluation deliberately rather than treat either tree as implicit promotion evidence.
 
 ## Expansion From The Prior Synthesis
 

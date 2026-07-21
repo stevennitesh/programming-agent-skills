@@ -90,6 +90,49 @@ def test_skill_validation_rejects_missing_nested_markdown_reference(tmp_path: Pa
     assert "references/MISSING.md" in failures[0]
 
 
+def test_experimental_manifest_tracks_candidates_without_activating_them(
+    tmp_path: Path,
+) -> None:
+    active = write_skill(tmp_path, "example")
+    experimental = tmp_path / "skills/experimental/example"
+    shutil.copytree(active, experimental)
+    candidate_hash = skill_pack_contract.tree_hash(experimental)
+    baseline_hash = skill_pack_contract.tree_hash(active)
+    manifest = tmp_path / "skills/experimental/manifest.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "format": 1,
+                "active_root": "skills/custom",
+                "experimental_root": "skills/experimental",
+                "skills": {
+                    "example": {
+                        "origin": "test capture",
+                        "reason": "test candidate",
+                        "candidate_sha256": candidate_hash,
+                        "active_baseline_sha256": baseline_hash,
+                    }
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    assert validate_skills.validate_experimental_skills(tmp_path) == []
+
+    (experimental / "SKILL.md").write_text(
+        (experimental / "SKILL.md").read_text(encoding="utf-8") + "changed\n",
+        encoding="utf-8",
+    )
+    assert "Experimental candidate hash differs: example" in (
+        validate_skills.validate_experimental_skills(tmp_path)
+    )
+
+    shutil.rmtree(active)
+    failures = validate_skills.validate_experimental_skills(tmp_path)
+    assert "Experimental skill has no active custom counterpart: example" in failures
+
+
 def test_global_bootstrap_validation_requires_one_structured_managed_section(
     tmp_path: Path,
 ) -> None:

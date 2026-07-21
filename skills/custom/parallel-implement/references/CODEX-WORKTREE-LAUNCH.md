@@ -1,6 +1,6 @@
 # Isolated Lane Lifecycle
 
-Fresh context does not isolate a checkout. Every dispatched worker needs both. Campaign start also classifies the integration checkout as either user-owned `existing-checkout` or campaign-owned `managed-integration-worktree`; unknown ownership blocks lane creation.
+Fresh context does not isolate a checkout. Every dispatched worker needs both.
 
 ## Open
 
@@ -13,17 +13,6 @@ python <skill-dir>/scripts/lane_worktree.py open \
 ```
 
 Root selection is explicit `--root`, then `PARALLEL_IMPLEMENT_WORKTREE_ROOT`, then `E:\pi` on Windows or `<repo-parent>/worktrees/parallel-implement` elsewhere. Windows defaults to maximum path `320`; override only from recorded repository evidence. Detached HEAD is the worker default; pass `--branch` only for a routed integrator.
-
-For a campaign-owned integration checkout, use the same lifecycle helper with an explicit branch and role:
-
-```text
-python <skill-dir>/scripts/lane_worktree.py open \
-  --role integration --branch <campaign-branch> \
-  --repo <repo> --base <sha> --run-id <run> --item-id integration --actor-id <actor> \
-  --proof-command-file <argv.json> --python-provenance-file <python.json>
-```
-
-Never remove an `existing-checkout`; its cleanup authority is `none`. A managed integration worktree has helper-owned lifecycle authority and uses the same verified cleanup and residual-recovery path as a worker lane.
 
 The helper verifies containment and path budget before mutation, creates the worktree, verifies its registration and base, and performs preflight. `ok: true, state: ready` is the only dispatchable result. A preflight failure preserves the created lane and returns the exact retry route.
 
@@ -66,7 +55,7 @@ On resume, reconcile provider identity, registration, directory, HEAD, status, a
 Make the lane idle and record its commit as integrated or preserved, then run:
 
 ```text
-python <skill-dir>/scripts/lane_worktree.py cleanup --role <worker|integration> --repo <repo> --root <root> --worktree <path> --expected-head <sha> --disposition <integrated-or-preserved>
+python <skill-dir>/scripts/lane_worktree.py cleanup --repo <repo> --root <root> --worktree <path> --expected-head <sha> --disposition <integrated-or-preserved>
 ```
 
 The helper verifies containment, exact HEAD, clean status, and disposition before unregistering. If Git unregisters but leaves a directory, containment-checked extended-path cleanup runs in the same invocation. A successful fallback remains `ok: true, state: removed` and retains Git's raw error as diagnostics.

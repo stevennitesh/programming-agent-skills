@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import re
 import subprocess
 from pathlib import Path
@@ -17,22 +16,13 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:87b57bfbb165 -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:74105ed8ab28 -->"
 ENGINEERING_PRIMER_TOKEN = (
     "Explore imaginatively. Converge under proof. Simplify ruthlessly."
 )
 SETUP_SCHEMA_MARKER_RE = re.compile(
     r"<!-- programming-agent-skills setup-schema: \d+:[0-9a-f]{12} -->"
 )
-SETUP_FILE_MARKER_RE = re.compile(
-    r"<!-- programming-agent-skills setup-file: [a-z0-9./-]+:[0-9a-f]{12} -->"
-)
-
-SETUP_FILE_SOURCES = {
-    "docs/agents/triage-labels.md": "triage-labels.md",
-    "docs/agents/domain.md": "domain.md",
-    "docs/agents/engineering-contract.md": "engineering-contract.md",
-}
 
 PORTABLE_OWNER_TOKENS = (
     "# Portable Engineering Contract",
@@ -89,7 +79,6 @@ CONTRACT_LITERAL_TOKENS = (
     "**Load-bearing internal:**",
     "**Semantic correctness:**",
     "**Semantic proof:**",
-    "**State-boundary matrix.**",
     "**Proof seam:**",
     "**Proof lane:**",
     "**Evidence:**",
@@ -119,32 +108,24 @@ WORK_ITEM_TOKENS = (
     "**Closeout**",
 )
 
-WAYFINDER_MAPPING_REQUIREMENTS = (
-    (
-        "## Wayfinder tracker mapping",
-        (
-            "**Map object**",
-            "MAP-FORMAT.md",
-            "open and closed",
-            "**Ticket object**",
-            "**Resolver type mapping**",
-            "diagnosis",
-            "questionnaire",
-            "design",
-            "**Parent and blocking mapping**",
-            "**Claim storage**",
-            "campaign-claim block",
-            "**Claim capability**",
-            "`unavailable`",
-            "captured revision",
-            "must fail a losing actor or changed revision",
-            "invocation and losing-race result",
-            "**Claim release mapping**",
-            "**Revision token**",
-            "**Read-back primitive**",
-            "errors and observed fields",
-        ),
-    ),
+WAYFINDER_TOKENS = (
+    "## Wayfinding operations",
+    "Participation: HITL | AFK",
+    "**Frontier query**",
+    "**Claim**",
+    "Claim token:",
+    "Claimed at:",
+    "codex/<lowercase UUIDv4>",
+    "<YYYY-MM-DDTHH:MM:SSZ>",
+    "Maintain claims the map",
+    "never reuse it across invocations",
+    "Elapsed time alone never makes a claim stale.",
+    "explicit user approval",
+    "**Release**",
+    "**Resolve**",
+    "**Block**",
+    "**Out of scope**",
+    "**Complete map**",
 )
 
 LABEL_TOKENS = (
@@ -160,9 +141,6 @@ LABEL_TOKENS = (
     "`wayfinder:research`",
     "`wayfinder:prototype`",
     "`wayfinder:grilling`",
-    "`wayfinder:diagnosis`",
-    "`wayfinder:questionnaire`",
-    "`wayfinder:design`",
     "`wayfinder:task`",
 )
 
@@ -231,43 +209,6 @@ def setup_schema_marker_failures(agents: str) -> list[str]:
     ]
 
 
-def tracker_source(text: str) -> str | None:
-    lowered = text.lower()
-    for provider in ("github", "gitlab", "local markdown"):
-        if re.search(rf"(?m)^#\s+issue tracker:\s*{re.escape(provider)}\s*$", lowered):
-            suffix = "local" if provider == "local markdown" else provider
-            return f"issue-tracker-{suffix}.md"
-    return None
-
-
-def expected_setup_file_marker(relative: str, text: str) -> str:
-    source = (
-        tracker_source(text)
-        if relative == "docs/agents/issue-tracker.md"
-        else SETUP_FILE_SOURCES.get(relative)
-    )
-    if source is None:
-        source = "custom-tracker-interface"
-        digest = hashlib.sha256(SETUP_SCHEMA_TOKEN.encode()).hexdigest()[:12]
-    else:
-        template = Path(__file__).resolve().parents[1] / source
-        if not template.is_file():
-            raise ValueError(f"Missing setup source template: {source}")
-        digest = hashlib.sha256(template.read_bytes()).hexdigest()[:12]
-    return f"<!-- programming-agent-skills setup-file: {source}:{digest} -->"
-
-
-def setup_file_marker_failures(
-    text: str, relative: str, expected: str
-) -> list[str]:
-    if SETUP_FILE_MARKER_RE.findall(text) == [expected]:
-        return []
-    return [
-        f"{relative} must contain exactly one current setup-file source marker: "
-        f"{expected}"
-    ]
-
-
 def engineering_primer_failures(agents: str) -> list[str]:
     pattern = re.compile(
         rf"(?m)\A# Repository Instructions[ \t]*\r?\n"
@@ -326,12 +267,6 @@ def main() -> int:
         relative: read_required(root, relative, failures) for relative in REQUIRED_FILES
     }
 
-    for relative in REQUIRED_FILES[1:]:
-        text = texts[relative]
-        if text:
-            expected = expected_setup_file_marker(relative, text)
-            failures.extend(setup_file_marker_failures(text, relative, expected))
-
     agents = texts["AGENTS.md"]
     if agents:
         failures.extend(portable_owner_failures(agents))
@@ -352,12 +287,7 @@ def main() -> int:
     tracker = texts["docs/agents/issue-tracker.md"]
     if tracker:
         require_tokens(tracker, "docs/agents/issue-tracker.md", WORK_ITEM_TOKENS, failures)
-        require_section_tokens(
-            tracker,
-            "docs/agents/issue-tracker.md",
-            WAYFINDER_MAPPING_REQUIREMENTS,
-            failures,
-        )
+        require_tokens(tracker, "docs/agents/issue-tracker.md", WAYFINDER_TOKENS, failures)
         if "post a codex-ready brief" not in tracker.lower():
             failures.append(
                 "docs/agents/issue-tracker.md is missing Codex-ready brief transport"

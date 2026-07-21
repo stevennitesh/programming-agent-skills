@@ -14,6 +14,8 @@ Runtime authority remains in:
 
 This note follows [Synthesis Ownership](../README.md#synthesis-ownership). It preserves Repo Bootstrap's reconciliation model and the exact changes required in files Repo Bootstrap owns. A consuming skill owns its workflow semantics; Repo Bootstrap owns the provider templates, setup settings, provisioning, reconciliation, validation, and read-back that expose the required capability.
 
+`skills/custom/repo-bootstrap/` matches the installed active baseline. The per-file provenance and Wayfinder-provider candidate described below is preserved under `skills/experimental/repo-bootstrap/` and is not an active setup contract.
+
 ## North Star
 
 Repo Bootstrap owns one outcome: a compatible, verified repo-local setup surface that preserves settled repository choices and exposes current pack contracts.
@@ -24,7 +26,7 @@ The aggregate setup marker identifies the pack contract generation. It never pro
 
 ## Current Design Status
 
-The canonical working-tree design already contains the essential reconciliation repair prompted by an engineering-contract change that an aggregate marker alone did not expose:
+The experimental candidate contains the essential reconciliation repair prompted by an engineering-contract change that an aggregate marker alone did not expose:
 
 - Inventory runs the setup validator before Draft whenever any prior setup surface exists.
 - Reconcile checks every managed surface even when the aggregate setup-schema marker is current.

@@ -1,6 +1,6 @@
 # Skill Router Residual Routing Synthesis
 
-Status: design reference and extraction map. The canonical working tree contains an unpromoted implicit residual-router candidate; the installed mirror remains the explicit-only control. Focused Router contract tests and canonical skill validation pass in the current working tree, while fresh-context behavior promotion, full-suite validation, vocabulary reconciliation, caller audit, and installed-mirror synchronization remain outstanding.
+Status: design reference and extraction map. The implicit residual-router candidate is preserved under `skills/experimental/skill-router/`; custom and installed copies remain the explicit-only active control. Fresh-context behavior promotion and coordinated caller validation remain outstanding.
 
 Runtime authority remains in:
 

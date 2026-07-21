@@ -9,8 +9,6 @@ Own one outcome: a recommended shape for one bounded module or interface questio
 
 Default to read-only design. The user or caller owns public-contract commitments, design acceptance, implementation, and downstream mutations. When loaded only as vocabulary, retain the caller's artifact, mutation boundary, and completion criterion.
 
-For caller-owned early framing or final coherence checking without a design recommendation, read [DESIGN-COHERENCE.md](DESIGN-COHERENCE.md) and use only its `Frame` or `Check` branch. The caller retains artifact, disposition, mutation, and completion authority.
-
 For codebase-wide improvement discovery and classification, recommend `$improve-codebase` and stop.
 
 ## Vocabulary
@@ -39,4 +37,4 @@ For one bounded module, shallow cluster, seam, or interface question, read [DIRE
 
 ## Completion
 
-A vocabulary-only use is complete when the caller's artifact applies the terms without transferring ownership. A coherence use is complete through [DESIGN-COHERENCE.md](DESIGN-COHERENCE.md)'s completion criterion. A direct pass is complete only through [DIRECT-DESIGN.md](DIRECT-DESIGN.md)'s completion criterion.
+A vocabulary-only use is complete when the caller's artifact applies the terms without transferring ownership. A direct pass is complete only through [DIRECT-DESIGN.md](DIRECT-DESIGN.md)'s completion criterion.

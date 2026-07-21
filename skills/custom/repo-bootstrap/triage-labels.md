@@ -34,11 +34,8 @@ Edit the right-hand column to match whatever vocabulary you actually use.
 - `wayfinder:research`
 - `wayfinder:prototype`
 - `wayfinder:grilling`
-- `wayfinder:diagnosis`
-- `wayfinder:questionnaire`
-- `wayfinder:design`
 - `wayfinder:task`
 
 ## Provisioning
 
-For GitHub or GitLab, `$repo-bootstrap` verifies every mapped and fixed label exists and creates only missing labels after approval. Local Markdown uses equivalent unprefixed `Type:` values and creates no external labels.
+For GitHub or GitLab, `$repo-bootstrap` verifies every mapped and fixed label exists and creates only missing labels after approval. Local Markdown uses these values directly and creates no external labels.
