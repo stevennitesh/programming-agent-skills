@@ -298,7 +298,7 @@ Wayfinder does not own implementation-ticket boundaries, expected write scopes, 
 
 Run Qualification only when a tracker read proves zero matching maps. Multiple plausible matches return an incompatible identity packet listing each candidate's name, lifecycle, disposition, destination owner, predecessor, and unresolved obligations. The destination owner must classify them as canonical, duplicate, successor, or distinct destination before Wayfinder may mutate or Chart another map. Wayfinder never auto-selects, merges, or creates through ambiguous identity.
 
-After a zero-match result, invoke `$grill-with-docs` only far enough to populate the Campaign Charter and one proposed graph packet: known decisions and prerequisites; typed tickets, edges, frontier or waiting trigger; tethered fog; design framing; domain context action and ADR authority; graph-derived budgets; and exact Admission gaps. Stable destination identity is the provider lookup and later Chart-refetch key.
+After a zero-match result, first lock the domain context and ADR actions below, then invoke `$grill-with-docs` for the bounded decisions needed to populate the Campaign Charter and one proposed graph packet. Supply the proposed campaign as the shared subject, the current Source Trace, the Grilling bound and decision authority, the locked domain and ADR actions, stable destination and map identifiers, Wayfinder as return owner, and no downstream-execution authority. Consume the composer's intact lean packet before recording known decisions and prerequisites; typed tickets, edges, frontier or waiting trigger; tethered fog; design framing; graph-derived budgets; and exact Admission gaps. Stable destination identity is the provider lookup and later Chart-refetch key.
 
 Qualification reads [Design Coherence Frame](codebase-design.md#frame). Every applicable criterion returns an accepted Constraint, bounded Question, Evidence gap, or evidenced non-applicability. Wayfinder alone maps a material Evidence gap to tethered fog under its Fog contract. It does not invoke `$codebase-design`, choose an architecture, or resolve the destination's substantive decisions.
 
@@ -493,7 +493,7 @@ Budget source:
 | Prototype | One runnable design or behavior verdict is needed | Locked objective criteria or named human judge | Verdict, evidence, limits, and cleanup or preservation state |
 | Diagnosis | Expected behavior, symptom, cause, or trusted reproduction is uncertain | Causal evidence | Reproduction, cause status, evidence, regression seam, and blocker |
 | Questionnaire | One identifiable external stakeholder owns unavailable information | Named recipient | Questionnaire, needed-back ledger, external owner, trigger, and later verified answers |
-| Grilling | The user owns one preference, term, boundary, commitment, public contract, or tradeoff | User, with Domain Modeling active under the locked context action | Confirmed decision, deferrals, Domain Delta, ADR outcome, and evidence gap |
+| Grilling | The user owns one preference, term, boundary, commitment, public contract, or tradeoff | User, through Grill With Docs with Domain Modeling active under the locked context action | Lean combined packet with joint `Confirmed`, `Evidence gap`, or `Blocked` status, available component payloads intact, and exact blocker details only when blocked |
 | Design | One evidenced module, interface, seam, adapter, ownership, migration, compatibility, or caller-facing proof question remains | The ticket's locked objective criteria or named human acceptance owner | Accepted shape, alternatives, interface contract, migration, proof seam, risks, and residual gap |
 | Task | One bounded read-only repository or operational evidence question has no specialized resolver | Accepted repository contracts and observable proof | Supported answer, affected boundary, proof, disposable evidence, and blocker |
 
@@ -523,7 +523,7 @@ Resolver-specific boundaries remain:
 - Prototype returns one verdict and its cleanup or preservation state; prototype code never becomes destination delivery implicitly.
 - Diagnosis remains diagnosis-only inside Wayfinder; it returns causal status and a trusted proof seam without fixing the behavior.
 - Questionnaire creates the collection artifact but does not resolve the ticket; verified supplied answers do.
-- Grilling may ask several conversational questions only to settle the one ticket-owned decision and returns a complete Domain Delta under the locked context action.
+- Grilling through Grill With Docs may ask several conversational questions only to settle the one ticket-owned decision. The composer returns its intact lean `Confirmed`, `Evidence gap`, or `Blocked` packet under the locked context action; Wayfinder does not flatten either component payload.
 - Design invokes Codebase Design only for the one ticket-owned design question and returns its bounded packet without choosing another ticket. Wayfinder records a resolution only under the ticket's locked objective criteria or named human acceptance.
 - Task may inspect the repository, run bounded commands, and create disposable evidence inside existing authority. It never changes production code, durable configuration, tracker setup, or external systems. A prerequisite requiring durable mutation becomes Blocked with its owning skill or authority. Task is not a catch-all for source research, runnable design evidence, causal diagnosis, design, or stakeholder authority.
 
@@ -789,7 +789,7 @@ No skill invokes Wayfinder. Every upstream edge is recommendation-and-stop follo
 | --- | --- | --- | --- |
 | Direct user | Invoke | `$wayfinder` | Start Qualification or Orient; Wayfinder's own gates still apply |
 | `$skill-router` | Recommend and stop | `$wayfinder` | A terminal residual provisionally passes the Router pre-screen; the user starts Wayfinder later |
-| `$wayfinder` | Invoke | `$grill-with-docs` | Qualify a proposed campaign or resolve one Grilling ticket; return to Wayfinder |
+| `$wayfinder` | Invoke | `$grill-with-docs` | Qualify a proposed campaign or resolve one Grilling ticket under the locked domain and ADR actions; return the intact lean combined packet to the same map item |
 | `$wayfinder` | Invoke | `$research` | Resolve one authoritative source ticket; return evidence to Wayfinder |
 | `$wayfinder` | Invoke | `$prototype` | Resolve one runnable verdict ticket; return evidence to Wayfinder |
 | `$wayfinder` | Invoke | `$diagnosing-bugs` | Resolve one causal uncertainty ticket; return evidence to Wayfinder |

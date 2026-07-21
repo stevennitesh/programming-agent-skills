@@ -285,7 +285,7 @@ This taxonomy owns only the Router-side observable ingress for every supported d
 | Destination | Recommend when | Exclude or prefer another route when |
 | --- | --- | --- |
 | `$grilling` | A plan, design, decision, or idea needs a conversation-only one-decision-at-a-time pressure test | Repo-backed durable domain capture is required, the decisions need non-conversational evidence, or only persistence remains |
-| `$grill-with-docs` | A repo-backed plan or design needs both the interview loop and durable domain-model upkeep | The exchange is conversation-only, domain truth is already settled, one leaf evidence gap remains, or a tracker campaign is independently justified |
+| `$grill-with-docs` | A repo-backed plan, design, proposal, decision, or idea needs both a user-owned decision interview and active durable domain capture | The exchange is conversation-only, domain truth is already settled, one leaf evidence gap remains, or a tracker campaign is independently justified |
 | `$wayfinder` | The complete [Wayfinder Pre-Screen](#wayfinder-pre-screen) passes and the user will later start the explicit-only campaign | Question-only, domain-only, one-leaf, settled-delivery, unbounded, tracker-unavailable, or unchanged rejected work |
 | `$to-questionnaire` | One identifiable external stakeholder holds one knowledge gap and needs one recipient-ready async questionnaire with a downstream decision and needed-back ledger | Public sources can answer it, the current user owns the answer, there are several stakeholders or unresolved decisions, or sending/answer collection is the requested work |
 | `$research` | One source question needs primary-source legwork and an authorized cited repo-local Markdown note | No durable note is authorized, runnable or causal evidence is needed, or the question is broad multi-decision discovery |
@@ -333,7 +333,7 @@ Question count, project size, severity, session count, generic uncertainty, or t
 When the pre-screen fails, prefer:
 
 - `$grilling` for a conversation-only pressure test without durable repo capture;
-- `$grill-with-docs` for question- or domain-heavy repo-backed shaping;
+- `$grill-with-docs` for repo-backed shaping that needs both a user-owned decision interview and active durable domain capture;
 - `$domain-modeling` when domain truth is settled and persistence, rendering, or approved ADR recording remains;
 - the direct evidence leaf for one source, runnable, causal, stakeholder, or interface gap;
 - `$to-spec` when direction is settled but no durable parent source exists;

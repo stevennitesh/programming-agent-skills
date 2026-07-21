@@ -1,15 +1,16 @@
 # Synthesis
 
-Synthesis docs are the exhaustive research-and-design bench between source
-discovery and final skills. They preserve the full decision trace: source
-pressure, current-runtime evidence, ownership collisions, alternatives,
-selected behavior, rejected and deferred options, extraction placement, and
-validation design.
+Synthesis docs are the decision-and-evidence bench between source discovery
+and final skills. They preserve a decision-complete trace: decision-changing
+source pressure, current-runtime evidence, ownership collisions, material
+alternatives and rejection reasons, selected behavior, extraction placement,
+and validation design.
 
-`SKILL.md` files should not be exhaustive. The job of synthesis is to retain
-the evidence and reasoning needed to produce compact behavioral instructions
-without forcing later editors to rediscover why those instructions exist. See
-[ADR-0007](../adr/0007-synthesis-preserves-exhaustive-research-runtime-skills-compress.md).
+`SKILL.md` files should not be exhaustive. Synthesis retains the evidence and
+reasoning needed to produce compact behavioral instructions without forcing
+later editors to rediscover why those instructions exist. Preserve provenance,
+not every presentation: collapse duplicate prose and superseded
+representations, then point to their owning evidence. See [ADR-0007](../adr/0007-synthesis-preserves-exhaustive-research-runtime-skills-compress.md).
 
 Synthesis stays outside `docs/research/` because it is design judgment, not
 source discovery. Research asks what sources and language might matter.
@@ -65,16 +66,17 @@ Synthesis is design authority only until implemented. Canonical runtime files re
 
 ## Note Types
 
-Use exhaustive whole-skill synthesis when source pressure and current-runtime
-evidence are strong enough to select a coordinated design. Preserve the
-orientation, selected design contract, decision-to-evidence trace, rejected
-and deferred alternatives, runtime ownership map, extraction order, and
-validation plan even after the behavior is chosen.
+Use whole-skill synthesis when source pressure and current-runtime evidence are
+strong enough to select a coordinated design. Preserve the orientation,
+selected design contract, decision-to-evidence trace, material rejected and
+deferred alternatives, runtime ownership map, extraction order, and validation
+plan after the behavior is chosen. Collapse any duplicate representation that
+adds no distinct decision, ownership, or proof value.
 
 Facet timelines may remain narrower because their earlier and later prompt
 artifacts preserve the rest of the trace. Candidate runtime drafts, detailed
 skill-context drafts, plain-language candidates, and final-prune plans remain
-compact at their owning steps; they do not redefine the exhaustive synthesis
+compact at their owning steps; they do not redefine the whole-skill synthesis
 record.
 
 Some older notes are source-map synthesis: they preserve source pressure and
@@ -85,7 +87,7 @@ become; move pure source lists or broad search targets back to
 
 ## Output
 
-An exhaustive whole-skill synthesis note should contain:
+A whole-skill synthesis note should contain:
 
 - an orientation and hard ownership boundary;
 - one selected design contract for proposed behavior;
@@ -97,6 +99,8 @@ An exhaustive whole-skill synthesis note should contain:
 
 ## Rule
 
-Research and synthesis may be exhaustive. Candidate runtime wording and final
-skills should compress hard. Never prune the synthesis record merely because
-the extracted runtime contract is now concise.
+Research may be exhaustive. Synthesis should be decision-complete, not
+transcript-complete; candidate runtime wording and final skills should compress
+hard. Prune a synthesis representation when removing it changes no selected
+behavior, ownership boundary, material alternative, or proof obligation, and
+preserve its provenance through source pointers or explicit historical notes.

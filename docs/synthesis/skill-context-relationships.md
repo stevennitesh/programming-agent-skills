@@ -188,12 +188,13 @@ Source: `skills/custom/*/agents/openai.yaml`.
 
 ## Runtime Composition
 
-Use one verb for each executable relationship:
+Use one verb for each accepted relationship:
 
 - **Load `<skill>`:** apply its shared reference or discipline inside the caller. The caller keeps output, mutation, and completion ownership.
 - **Invoke `<skill>`:** run the callee through its own gates, return its packet, then resume the caller.
 - **Compose `<skill>`:** keep the callee active under one named composer. Each skill retains its owned gates and mutations; the composer owns the combined exit.
 - **Hand off to `<skill>`:** stop the current skill and transfer ownership with the available Source Trace or packet.
+- **Suggest only `<skill>`:** name a possible owner inside a read-only finding; the current caller chooses any later route and the suggesting skill neither invokes nor resumes.
 - **Recommend `<skill>` and stop:** return one next route without executing it. The user or receiving caller starts it.
 
 `Load`, `Invoke`, `Compose`, and `Hand off` target implicitly invocable skills. An explicit-only target is reached through `Recommend and stop` so human selection remains authoritative.
@@ -201,7 +202,7 @@ Use one verb for each executable relationship:
 | Caller | Verb | Callee | Condition and return |
 | --- | --- | --- | --- |
 | `grill-with-docs` | Compose | `$grilling` | Run the one-decision-at-a-time interview; return its exit packet through the composer. |
-| `grill-with-docs` | Compose | `$domain-modeling` | Keep durable domain capture active under its own write and ADR gates. |
+| `grill-with-docs` | Compose | `$domain-modeling` | Relay every settled material answer and receive Domain Modeling's authoritative current cumulative Domain Delta under the explicit context action and separate ADR gate. |
 | `grilling` | Recommend and stop | `$research` | A source evidence gap needs one cited note. |
 | `grilling` | Recommend and stop | `$prototype` | A design evidence gap needs a runnable verdict. |
 | `grilling` | Recommend and stop | `$diagnosing-bugs` | Expected behavior, the exact symptom, cause, or a trusted reproduction remains uncertain and blocks every available interview branch; Diagnosis remains uninvoked and no fix is authorized. |
@@ -214,7 +215,7 @@ Use one verb for each executable relationship:
 | `research` | Recommend and stop | `$grill-with-docs` | The current user owns the unresolved repo-backed decision and durable domain capture must remain active. |
 | `wayfinder` | Invoke | `$research` | Resolve one AFK research ticket, then record its pointer. |
 | `wayfinder` | Invoke | `$prototype` | Resolve one HITL or AFK runnable probe, then receive its reconciled verdict packet and cleanup or preservation state. |
-| `wayfinder` | Invoke | `$grill-with-docs` | Resolve one HITL decision ticket or the bounded Chart interview. |
+| `wayfinder` | Invoke | `$grill-with-docs` | Resolve one HITL decision ticket or bounded Chart interview needing durable capture under the locked domain and ADR actions; return the intact lean combined packet to the same map item. |
 | `wayfinder` | Recommend and stop | `$domain-modeling` | A closing decision changes durable language or warrants an ADR offer. |
 | `wayfinder` | Recommend and stop | `$to-spec` | The closed map produced settled parent-spec source. |
 | `wayfinder` | Recommend and stop | `$to-tickets` | The closed map produced several settled implementation slices. |
@@ -226,7 +227,7 @@ Use one verb for each executable relationship:
 | `to-tickets` | Recommend and stop | `$implement` | The ready frontier is singular or write-overlapping. |
 | `to-tickets` | Recommend and stop | `$parallel-implement` | An explicitly requested parent-delivery run has a non-empty ready ticket graph; frontier width chooses serial or parallel execution. |
 | `to-tickets` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
-| `triage` | Invoke | `$grill-with-docs` | Maintainer-owned shaping is required before the triage recommendation. |
+| `triage` | Invoke | `$grill-with-docs` | Maintainer-owned shaping needs both a user-owned decision and durable capture under explicit context and ADR actions; return the intact lean combined packet to the same item without tracker authority. |
 | `triage` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `implement` | Invoke | `$tdd` | New behavior is settled and red-testable, or expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known. |
 | `implement` | Invoke | `$diagnosing-bugs` | A bug's exact symptom, cause, or trusted red-capable reproduction is uncertain; return after regression proof. |
@@ -250,10 +251,11 @@ Use one verb for each executable relationship:
 | `resolving-merge-conflicts` | Invoke | `$diagnosing-bugs` | Diagnose an uncertain proof failure, return the causal packet, then resume Prove. |
 | `review` | Hand off | `$convergent-pr-review` | The target is a local PR or needs independent high-risk review. |
 | `convergent-pr-review` | Recommend and stop | `$audit-codebase` | The request targets a bounded repository correctness, domain-robustness, methodology, or performance baseline rather than a pending release diff. |
+| `audit-codebase` finding contract | Suggest only | `$grill-with-docs` | A read-only finding exposes a user-owned term, rule, preference, or trade-off; the caller chooses any later route and Audit neither invokes the composer nor resumes. |
 | `improve-codebase` | Load | `$codebase-design` | Apply shared module, interface, seam, depth, leverage, and locality vocabulary during the Survey. |
 | `improve-codebase` | Invoke | `$research` | A selected candidate needs one source question; return cited evidence or a blocker to the caller. |
 | `improve-codebase` | Invoke | `$prototype` | A selected candidate needs one runnable design verdict; return its reconciled verdict and cleanup state. |
-| `improve-codebase` | Invoke | `$grill-with-docs` | A selected candidate needs one user-owned decision; return the composed grilling packet and Domain Delta. |
+| `improve-codebase` | Invoke | `$grill-with-docs` | A selected candidate needs both a user-owned decision and active durable capture under explicit context and ADR actions; return the intact lean combined packet to the same candidate for caller-owned reclassification. |
 | `improve-codebase` | Invoke | `$codebase-design` | A selected `Concentrate` candidate needs dependency, seam, ownership, interface, migration, or replacement design. |
 | `improve-codebase` | Recommend and stop | `$wayfinder` | Multiple interdependent unresolved decisions or prerequisites need a tracker-backed route. |
 | `improve-codebase` | Recommend and stop | `$simplify-code` | A selected candidate reclassifies to `Eliminate`; return its report pickup without edits. |
@@ -282,7 +284,7 @@ The accepted future Domain Modeling promotion changes Wayfinder's durability edg
 | `docs/agents/triage-labels.md` | Category/state role to label mapping and fixed wayfinding labels | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
 | `docs/agents/domain.md` | Routing to `CONTEXT.md`, `CONTEXT-MAP.md`, ADRs | `to-spec`, `triage`, `tdd`, `diagnosing-bugs`, `simplify-code`, `improve-codebase`, `audit-codebase`, `parallel-implement` |
 | `docs/agents/engineering-contract.md` | Engineering taste, shared runtime language, Charter, commitment boundary, change-created fallout, fresh, negative-control, and state-boundary proof, work-state policy, fixed-snapshot Spec/Standards review, Repair generation, and Lock | `to-tickets`, `implement`, `tdd`, `diagnosing-bugs`, `prototype`, `simplify-code`, `improve-codebase`, `audit-codebase`, `parallel-implement`, `resolving-merge-conflicts`, `review`, `convergent-pr-review` |
-| `domain-modeling` | Resolves domain semantics; renders or mutates `CONTEXT.md` and `CONTEXT-MAP.md`; assesses plausible ADR candidates; and records approved ADR truth | `skill-router`, `grill-with-docs`, `wayfinder`, `prototype`, `repo-bootstrap` |
+| `domain-modeling` | Resolves domain semantics; exclusively accumulates and returns the authoritative current cumulative Domain Delta; renders or persists routed `CONTEXT.md` and `CONTEXT-MAP.md` changes under `render only` or `persist authorized`; assesses plausible ADR candidates; and records approved ADR truth | `skill-router`, `grill-with-docs`, `wayfinder`, `prototype`, `repo-bootstrap` |
 | `codebase-design` | Interface, seam, adapter, depth, leverage, locality, and bounded replacement vocabulary | `to-spec`, `improve-codebase`, `tdd`, architecture/design follow-ups |
 | `research` | Primary-source legwork and authorized cited repo-local research notes | `skill-router`, `grilling`, `wayfinder`, `improve-codebase` |
 | `to-questionnaire` | One recipient-ready async discovery artifact for one external stakeholder and downstream decision | `skill-router`, `grilling`, humans collecting stakeholder evidence |
@@ -315,7 +317,7 @@ The accepted future Domain Modeling promotion changes Wayfinder's durability edg
 
 - The global template exposes bootstrap handles; `skill-router` routes; neither teaches downstream workflow procedures.
 - Setup docs own tracker, labels, domain routing, and engineering-contract details. Skills should point there instead of restating those mechanics.
-- `$grill-with-docs` is the sole composer of `$grilling` and `$domain-modeling`; the owned skills do not invoke each other. Choose the composer at interview admission when durable domain capture must remain active. A Grilling Evidence gap retains Grilling's one uninvoked blocking owner and returns through the active composer with the current Domain Delta; it never re-enters the composer. For a future standalone Domain Modeling residual, the coordinated implicit Router may recommend Grill With Docs and stop; this never occurs from inside the composer.
+- `$grill-with-docs` is the sole composer of `$grilling` and `$domain-modeling`; the owned skills do not invoke each other. Its closed invoking set is the direct user, Wayfinder, Triage, and Improve Codebase. Direct omission defaults the context action to `render only`; callers supply `render only` or `persist authorized`, while ADR approval remains separate. During composition every settled material answer crosses Relay, Domain Modeling alone accumulates the current Domain Delta, and collisions return before dependent questioning. The composer returns only the lean `Confirmed`, `Evidence gap`, or `Blocked` combined result and starts no downstream route. Skill Router, Research, and To Questionnaire may recommend it and stop; Audit Codebase may suggest it only. A standalone Domain Modeling residual may reach the implicit Router, but Domain Modeling never invokes its composer.
 - `to-questionnaire` owns async stakeholder elicitation into one verified artifact only after its admissibility gate; source-answerable gaps return to `$research`, and a direct current-user mismatch recommends `$grilling` for conversation-only work or `$grill-with-docs` when repo-backed durable domain capture must remain active. Delegated mismatches return classification to their caller. It does not contact the recipient, ingest answers, mutate trackers or domain truth, or synthesize a specification.
 - `domain-modeling` is the only skill that writes `CONTEXT.md`, `CONTEXT-MAP.md`, or approved ADR truth; `repo-bootstrap` configures and verifies routing before persistence across a required topology transition, and vocabulary consumers follow `docs/agents/domain.md`.
 - `to-spec` owns parent spec synthesis and tracker publication; `to-tickets` owns implementation issue slicing.

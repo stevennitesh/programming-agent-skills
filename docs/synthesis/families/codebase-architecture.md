@@ -356,7 +356,7 @@ Primary concepts:
 - sequence overlap before ranking
 - produce a visual HTML report under ignored `.tmp/`
 - ask the user which candidate to resolve
-- conditionally research, prototype, grill, or design only after explicit selection
+- after explicit selection, conditionally research, prototype, or design; invoke `$grill-with-docs` only when the selected candidate needs both a user-owned decision and durable domain capture under an explicit context action, then return to that candidate
 - recommend explicit mutation or delivery skills and stop
 
 Best sources:
