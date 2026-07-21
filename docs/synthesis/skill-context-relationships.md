@@ -204,10 +204,14 @@ Use one verb for each executable relationship:
 | `grill-with-docs` | Compose | `$domain-modeling` | Keep durable domain capture active under its own write and ADR gates. |
 | `grilling` | Recommend and stop | `$research` | A source evidence gap needs one cited note. |
 | `grilling` | Recommend and stop | `$prototype` | A design evidence gap needs a runnable verdict. |
+| `grilling` | Recommend and stop | `$diagnosing-bugs` | Expected behavior, the exact symptom, cause, or a trusted reproduction remains uncertain and blocks every available interview branch; Diagnosis remains uninvoked and no fix is authorized. |
 | `grilling` | Recommend and stop | `$to-questionnaire` | An identifiable external stakeholder owns evidence that must be collected asynchronously. |
 | `grilling` | Recommend and stop | `$handoff` | Evidence work must cross into a fresh session. |
 | `to-questionnaire` | Recommend and stop | `$research` | Inspectable primary sources can answer the gap. |
-| `to-questionnaire` | Recommend and stop | `$grilling` | The current user owns the unresolved decision. |
+| `to-questionnaire` | Recommend and stop | `$grilling` | The current user owns the unresolved conversation-only decision. |
+| `to-questionnaire` | Recommend and stop | `$grill-with-docs` | The current user owns the unresolved repo-backed decision and durable domain capture must remain active. |
+| `research` | Recommend and stop | `$grilling` | The current user owns the unresolved conversation-only decision. |
+| `research` | Recommend and stop | `$grill-with-docs` | The current user owns the unresolved repo-backed decision and durable domain capture must remain active. |
 | `wayfinder` | Invoke | `$research` | Resolve one AFK research ticket, then record its pointer. |
 | `wayfinder` | Invoke | `$prototype` | Resolve one HITL or AFK runnable probe, then receive its reconciled verdict packet and cleanup or preservation state. |
 | `wayfinder` | Invoke | `$grill-with-docs` | Resolve one HITL decision ticket or the bounded Chart interview. |
@@ -311,8 +315,8 @@ The accepted future Domain Modeling promotion changes Wayfinder's durability edg
 
 - The global template exposes bootstrap handles; `skill-router` routes; neither teaches downstream workflow procedures.
 - Setup docs own tracker, labels, domain routing, and engineering-contract details. Skills should point there instead of restating those mechanics.
-- `$grill-with-docs` is the sole composer of `$grilling` and `$domain-modeling`; the owned skills do not invoke each other. For a future standalone Domain Modeling residual, the coordinated implicit Router may recommend Grill With Docs and stop; this never occurs from inside the composer.
-- `to-questionnaire` owns async stakeholder elicitation into one verified artifact only after its admissibility gate; source-answerable gaps return to `$research`, and current-user decisions return to `$grilling`. It does not contact the recipient, ingest answers, mutate trackers or domain truth, or synthesize a specification.
+- `$grill-with-docs` is the sole composer of `$grilling` and `$domain-modeling`; the owned skills do not invoke each other. Choose the composer at interview admission when durable domain capture must remain active. A Grilling Evidence gap retains Grilling's one uninvoked blocking owner and returns through the active composer with the current Domain Delta; it never re-enters the composer. For a future standalone Domain Modeling residual, the coordinated implicit Router may recommend Grill With Docs and stop; this never occurs from inside the composer.
+- `to-questionnaire` owns async stakeholder elicitation into one verified artifact only after its admissibility gate; source-answerable gaps return to `$research`, and a direct current-user mismatch recommends `$grilling` for conversation-only work or `$grill-with-docs` when repo-backed durable domain capture must remain active. Delegated mismatches return classification to their caller. It does not contact the recipient, ingest answers, mutate trackers or domain truth, or synthesize a specification.
 - `domain-modeling` is the only skill that writes `CONTEXT.md`, `CONTEXT-MAP.md`, or approved ADR truth; `repo-bootstrap` configures and verifies routing before persistence across a required topology transition, and vocabulary consumers follow `docs/agents/domain.md`.
 - `to-spec` owns parent spec synthesis and tracker publication; `to-tickets` owns implementation issue slicing.
 - `wayfinder` owns foggy multi-session maps, ticket resolution authority, consequence-only Maintain repairs, fog disposition, and Prototype ticket participation; tracker docs own transport, child and map claim identity, stale-claim recovery, blocking, and resolution mechanics. `prototype` owns judgment mechanics, probe execution, verdict assembly, and artifact reconciliation.

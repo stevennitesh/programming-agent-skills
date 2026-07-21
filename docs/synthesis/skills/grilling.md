@@ -158,6 +158,8 @@ Questioning, advice, an internally complete tree, or a presented confirmation pa
 
 Grilling owns interview behavior and its semantic packet. Grill With Docs owns mutation disclosure, Domain Modeling composition, continuous domain reconciliation, the intact combined packet, and joint completion. Domain Modeling alone owns durable domain truth and ADR handling. Evidence skills own their work. Callers retain their identifiers, bounds, return behavior, and continuation authority.
 
+Choose Grill With Docs at interview admission whenever durable domain capture must remain active. Once composition begins, Grilling still owns every Evidence-gap classification and names the one uninvoked blocking owner; Grill With Docs preserves that gap with the current Domain Delta and returns it without restarting composition or routing the evidence work.
+
 Grilling invokes none of its recommended owners and never becomes a router, campaign tracker, domain owner, evidence workflow, plan writer, or implementation owner.
 
 ## Rationale And Deliberate Non-Changes
@@ -207,7 +209,7 @@ Use the counterfactual method owned by `skills/custom/writing-great-skills/BEHAV
 | Bound control | Prerequisites join; adjacent work defers; scope change waits for Bound authority | Silent expansion, participant-approved caller scope change, or required blocker disguised as deferral |
 | Typed gap and owner | Source, runnable, causal, external-owner, fresh-session, caller-owned, and ownerless gaps select one exact uninvoked owner | Premature exit, several owners, automatic invocation, causal work misrouted to research or prototype, or gap while a frontier remains |
 | Confirmation and Return | Withheld confirmation stays open; revision reopens; accepted understanding returns the conditional semantic packet with downstream `none` | Internal completeness reported Confirmed, route agreement required, general route chosen, field loss, or automatic continuation |
-| Composition | Grill With Docs preserves both component contracts, attaches the complete domain delta, and alone owns the combined exit | Grilling mutates domain truth, composer weakens a gate, partial payload, or caller identity loss |
+| Composition | Grill With Docs is selected at admission for durable capture, preserves both component contracts, and returns a Grilling Evidence gap with its uninvoked owner and the complete Domain Delta | Grilling mutates domain truth, the composer weakens a gate, reroutes or invokes the gap owner, re-enters itself, loses a payload, or loses caller identity |
 
 Static tests protect structure and relationships only. Promotion requires fresh counterfactual behavior evidence for each changed claim and no critical failure.
 

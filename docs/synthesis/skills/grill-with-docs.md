@@ -185,6 +185,8 @@ Grill With Docs remains implicitly invocable. Admit two forms:
 - **Direct:** the user asks for one repo-backed plan, design, proposal, decision, or idea to be grilled while durable domain consequences are captured.
 - **Caller-bounded:** Wayfinder, Triage, Improve Codebase, or another authorized caller supplies one bounded item and requires Grilling with Domain Modeling active throughout.
 
+Choose the composer at interview admission whenever durable domain capture must remain active. Do not enter or re-enter it merely because Grilling later names an evidence owner: that Evidence gap belongs to the already-running Grilling component and returns through this composer with the current Domain Delta.
+
 Composition remains valid when Domain Modeling eventually returns the minimal no-change delta: subject and source, `Resolution: no-change`, `Persistence: not-applicable`, no blockers, and the return owner. A caller may intentionally use one stable user-decision edge so it does not predict domain consequences before the interview.
 
 Composition does not fit when:
@@ -342,7 +344,7 @@ Attach each component payload intact under its own schema. Do not flatten decisi
 
 The bridge record proves sequencing; it does not duplicate the semantic content of either payload. Keep it compact: answer or branch identifier, Domain Modeling result identity or source pointer, returned collision if any, and whether Grilling reoriented.
 
-For a caller-bounded invocation, return the wrapper to that caller and stop. For a standalone invocation, report it to the user and stop. The named next route remains inside Grilling's packet as advisory and unstarted.
+For a caller-bounded invocation, return the wrapper to that caller and stop. For a standalone invocation, report it to the user and stop. On `Evidence gap`, Grilling's exact blocking owner remains advisory and uninvoked inside its packet. On `Confirmed`, the composer selects no next route.
 
 ## Completion Criterion
 
@@ -381,7 +383,7 @@ Grill With Docs is the sole composer of Grilling and Domain Modeling. The compon
 
 Grill With Docs does not invoke Skill Router, Research, Prototype, Diagnosing Bugs, To Questionnaire, Codebase Design, Wayfinder, Domain Modeling outside the composition, To Spec, To Tickets, Implement, or any downstream route in response to a component result.
 
-It does not own a generic route map. Grilling may recommend an evidence owner or next route under its own contract; the composer preserves that recommendation and stops.
+It does not own a generic route map. Grilling may name one blocking evidence owner under its own contract; the composer preserves that recommendation with the current Domain Delta and stops. It never redirects the gap back through itself.
 
 It does not mutate plans, specs, tickets, implementation files, reports, tracker state, Git state, or external systems. The only possible file mutation belongs to Domain Modeling under its own exact context and ADR authority.
 
@@ -594,7 +596,7 @@ Implement through `I1` to `I4` and evaluate through the listed `E` phases. This 
 | `I1,I2 / E2` | `C1,C2` | [Reconciliation Bridge](#reconciliation-bridge) | One domain-relevant answer updates the cumulative Domain Delta before the next dependent question; an unrelated answer produces no ceremony; uncertain consequence may return the minimal no-change delta | Domain Modeling is skipped because no change is expected, every answer creates synthetic work, or first reconciliation occurs only at exit | Multi-turn transcript evaluation with callback inventory |
 | `I1,I2 / E2` | `C1,C2` | [Reconciliation Bridge](#reconciliation-bridge) | A glossary or context collision returns intact to Grilling and Grilling reorients before continuing | The composer resolves the collision, summarizes it away, or continues dependent questioning | Collision fixture and ordered transcript inspection |
 | `I1,I2 / E3` | `C1,C2` | [Joint Result Eligibility](#joint-result-eligibility) | Grilling Confirmed plus a current compatible Domain Delta with no material nondeferred blocker yields Confirmed without a second confirmation turn | Stale delta, unprocessed collision, missing disclosure, or a `persistence/verification` failure still yields Confirmed | Component-state matrix and negative controls |
-| `I1,I2 / E3` | `C1,C2` | [Joint Result Eligibility](#joint-result-eligibility) | A legitimate Grilling Evidence gap remains Evidence gap with the complete current Domain Delta attached | A Domain Modeling operational failure is mislabeled Evidence gap, or an available Grilling frontier is terminated by the composer | Evidence-gap and component-failure paired fixtures |
+| `I1,I2 / E3` | `C1,C2` | [Joint Result Eligibility](#joint-result-eligibility) | A legitimate Grilling Evidence gap remains Evidence gap with its one uninvoked blocking owner and the complete current Domain Delta attached | A Domain Modeling operational failure is mislabeled Evidence gap, an available Grilling frontier is terminated by the composer, or the composer invokes the owner or re-enters itself | Evidence-gap and component-failure paired fixtures |
 | `I1,I2 / E3` | `C1,C2` | [Combined Exit Packet And Return](#combined-exit-packet-and-return) | Confirmed, Evidence gap, and Incomplete wrappers preserve both full payloads, bridge evidence, caller identity, return owner, and downstream `none` | Compact output flattens decisions or domain blockers, loses item identity, or starts the next route | Packet rubric across standalone and caller-bounded cases |
 | `I1,I2 / E3,E4` | `C1,C2` | [Combined Exit Packet And Return](#combined-exit-packet-and-return) | Wayfinder, Triage, and Improve Codebase receive the wrapper and alone resume under pre-existing authority; Audit remains suggestion-only | The composer advances a map, mutates triage, edits an improvement report, or turns the audit suggestion into invocation | Integrated caller evaluations and relationship assertions |
 | `I1-I4 / E4` | `C1-C4` | [Runtime Ownership And Change Map](#runtime-ownership-and-change-map) | Canonical composer, component boundaries, callers, relationships, tests, evaluations, validation, and installed hashes agree | Runtime copies component rules, a supporting file is added without proof, callers implement their own bridge, or mirror sync is partial | Focused pytest, full pytest, `scripts.validate_skills`, diff checks, changed-file read-back, and hash parity |

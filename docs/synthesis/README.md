@@ -1,9 +1,15 @@
 # Synthesis
 
-Synthesis docs are the workshop bench between research and final skills.
+Synthesis docs are the exhaustive research-and-design bench between source
+discovery and final skills. They preserve the full decision trace: source
+pressure, current-runtime evidence, ownership collisions, alternatives,
+selected behavior, rejected and deferred options, extraction placement, and
+validation design.
 
-They can be generous and exploratory. `SKILL.md` files should not be. The job
-of synthesis is to turn source pressure into compact behavioral instructions.
+`SKILL.md` files should not be exhaustive. The job of synthesis is to retain
+the evidence and reasoning needed to produce compact behavioral instructions
+without forcing later editors to rediscover why those instructions exist. See
+[ADR-0007](../adr/0007-synthesis-preserves-exhaustive-research-runtime-skills-compress.md).
 
 Synthesis stays outside `docs/research/` because it is design judgment, not
 source discovery. Research asks what sources and language might matter.
@@ -59,13 +65,17 @@ Synthesis is design authority only until implemented. Canonical runtime files re
 
 ## Note Types
 
-Use generous synthesis when source pressure is strong enough to make design
-judgments, but the runtime wording is not ready to compress. It may explain,
-compare, preserve rejected options, and expose the behavior.
+Use exhaustive whole-skill synthesis when source pressure and current-runtime
+evidence are strong enough to select a coordinated design. Preserve the
+orientation, selected design contract, decision-to-evidence trace, rejected
+and deferred alternatives, runtime ownership map, extraction order, and
+validation plan even after the behavior is chosen.
 
-Use compact synthesis when the behavior is chosen. It should identify the
-chosen behavior, compressed candidate wording, audit notes, draft placement,
-prune notes, and validation tasks.
+Facet timelines may remain narrower because their earlier and later prompt
+artifacts preserve the rest of the trace. Candidate runtime drafts, detailed
+skill-context drafts, plain-language candidates, and final-prune plans remain
+compact at their owning steps; they do not redefine the exhaustive synthesis
+record.
 
 Some older notes are source-map synthesis: they preserve source pressure and
 concept maps for established skills or tightly coupled skill families. Keep
@@ -75,15 +85,18 @@ become; move pure source lists or broad search targets back to
 
 ## Output
 
-A compact synthesis note should end with:
+An exhaustive whole-skill synthesis note should contain:
 
-- the proposed runtime behavior;
-- wording candidates small enough to edit into `SKILL.md`;
-- what assembled validation draft would let the behavior be tested in context;
-- what should stay in research;
-- what validation would prove the skill improved.
+- an orientation and hard ownership boundary;
+- one selected design contract for proposed behavior;
+- a decision trace connecting evidence, rationale, runtime owner, and proof;
+- explicit rejected, deferred, and deliberately unchanged behavior;
+- an extraction and affected-surface map;
+- a validation plan that distinguishes behavioral from deterministic proof;
+- the remaining research and evidence gaps.
 
 ## Rule
 
-Research can be verbose. Generous and source-map synthesis can explain.
-Compact synthesis and final skills should compress hard.
+Research and synthesis may be exhaustive. Candidate runtime wording and final
+skills should compress hard. Never prune the synthesis record merely because
+the extracted runtime contract is now concise.
