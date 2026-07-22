@@ -208,7 +208,7 @@ This index assigns each proposed concern one authority. The named section owns t
 | Decision | Owner | Passing evidence | Failure branch |
 | --- | --- | --- | --- |
 | Top-level root? | Parallel Implement | Invocation is at the root | Return routing blocker before mutation |
-| Graph ready? | Root | One exhaustive parent graph has settled acceptance, dependencies, scopes, state branches, and proof seams | Return one exhaustive `$to-tickets` repair packet |
+| Graph ready? | Root | One exhaustive parent graph has settled acceptance, dependencies, scopes, state branches, proof seams, and a complete To Tickets execution profile for every parent-delivery ticket | Return one exhaustive `$to-tickets` repair packet |
 | Canonical stream identified? | Normal-path helper | `--events` is absolute; `start` alone may create it; every later command finds the same existing stream | Fail with the resolved path and no mutation |
 | Frontier executable? | Root | Tracker and ledger agree and all blockers are satisfied | Checkpoint exact blockers |
 | Additional actor justified? | Root | The item is substantial, semantically independent, proof-isolated, and root capacity is available | Keep it serial |
@@ -384,18 +384,21 @@ Among equally eligible items, give the warm primary the work most likely to shor
 
 Store common campaign context once and assignment-specific context separately. The root reads the exhaustive graph once. Workers receive paths to complete generated briefs rather than repeated issue graphs or conversation history.
 
-Each ticket should expose a minimum economic slice:
+Each parent-delivery ticket must expose the To Tickets execution profile. Treat
+a missing or contradictory field as a Ready-for-agent defect and return the
+complete profile repair in the exhaustive graph-repair packet; do not recreate
+To Tickets shaping judgment inside Parallel Implement.
 
 ```text
 Work item and source pointer:
 Acceptance and dependencies:
 Semantic owner:
-Expected write scope:
+Expected production scope and exclusions:
 Highest meaningful proof seam:
-Focused proof command file:
-Shared fixtures or contention:
+Focused proof:
+Size: small | substantial
+Shared seam, fixture, or scarce proof resource:
 Serial tripwire:
-Exclusions:
 ```
 
 Merge tiny adjacent work sharing one semantic owner and proof seam unless it carries an independent commitment, dependency unlock, rollback boundary, authority, or proof result. Parallel Implement may return inefficient slicing as a graph defect instead of opening several uneconomic lanes.

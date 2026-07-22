@@ -438,7 +438,7 @@ Every readiness brief contains:
 | --- | --- |
 | Heading and disclaimer | AI triage disclaimer first; `Codex-Ready Brief` for agent or `Human-Ready Brief` for human |
 | Category and state | One configured category and the selected ready state |
-| Slice type and summary | One tracer bullet or independently valuable support slice and one-line outcome |
+| Work-unit form, learning role, migration phase, and summary | One vertical behavior slice, support slice, or technical migration stage; tracer bullet or `none`; expand, migrate, contract, or `not applicable`; and one-line outcome |
 | Current behavior | Verified status quo; for PR/MR, current diff state and remaining gap |
 | Verification | Observation status, evidence pointer, readiness authority, and residual uncertainty |
 | Desired behavior | Observable outcome, relevant edges, error conditions, and operator/user effect |
@@ -455,7 +455,7 @@ Every readiness brief contains:
 
 ### Agent Variant
 
-`ready-for-agent` means an unattended implementation session or delegated implementation worker can execute without inventing product intent. The brief names one bounded slice and complete proof target. A support slice is allowed only when it independently proves, unblocks, or de-risks later behavior.
+`ready-for-agent` means an unattended implementation session or delegated implementation worker can execute without inventing product intent. The brief names one bounded slice and complete proof target. Default to a vertical behavior slice across only the real concerns needed for its selected value. A tracer bullet is a separate learning role for a thin real feedback or load-bearing-risk path; one brief may be both, but the terms are not synonyms. Independent completion means the slice can be judged without unrelated sibling completion and does not establish concurrency. A support slice is allowed only when it has observable proof and names the delivery slice it unblocks or materially de-risks.
 
 ### Human Variant
 
@@ -465,12 +465,14 @@ Every readiness brief contains:
 
 | Branch | Emphasize |
 | --- | --- |
-| Bug tracer | Trusted reproduction or proxy, suspected boundary, regression proof, and unresolved environment variance |
-| Enhancement tracer | Desired outcome, smallest vertical slice, compatibility pressure, and acceptance proof |
-| Support slice | Smallest safe enabling change, blocked boundary, independent value, and validation |
+| Bug tracer | When the tracer role is selected: trusted reproduction or proxy, suspected boundary, regression proof, and unresolved environment variance |
+| Enhancement vertical slice | Desired outcome, selected value, compatibility pressure, and acceptance proof |
+| Enhancement tracer | When the tracer role is selected: early feedback or load-bearing risk through a thin real path |
+| Support slice | Smallest safe enabling change, named delivery slice, blocked boundary, and observable proof |
+| Technical migration stage | Compatibility obligation, phase, operable intermediate state, and rollback proof |
 | PR/MR finish | Current base/head and diff, remaining work, unresolved decision-bearing feedback, and merge-ready proof |
 
-The shared schema is complete only when one bounded slice, verification authority, Source Trace, dependencies, write scope, parallel safety, observable acceptance, proof lane, and scope fence are explicit.
+The shared schema is complete only when one bounded slice, work-unit form, learning role, migration phase, verification authority, Source Trace, dependencies, write scope, parallel safety, observable acceptance, proof lane, and scope fence are explicit.
 
 ## Rejected-Enhancement Memory
 
@@ -672,7 +674,7 @@ The issue-pipeline synthesis supplies the established design lineage:
 | Kanban explicit policies | State roles are admission policies, not decorative labels |
 | User Stories Applied | Raw requests become shared, bounded understanding rather than copied prose |
 | Specification by Example | Acceptance is observable and fresh implementers can identify done behavior |
-| The Pragmatic Programmer | Prefer one real tracer bullet over a horizontal or speculative plan |
+| The Pragmatic Programmer | Use a thin real tracer path for early feedback or load-bearing risk without redefining the default vertical delivery shape |
 | Growing Object-Oriented Software and Legacy Code seams | Name the caller-facing proof seam and relevant responsibility boundary |
 | Continuous Delivery | Readiness includes repeatable validation expectations and explicit skipped proof |
 | Software by Numbers | A support slice must independently justify its incremental value |
@@ -840,7 +842,7 @@ This matrix supplies cases, not runtime rules or file placement. Linked claims p
 | `I1,I3 / E2` | `T1,T4` | [Shaping](#shaping-and-domain-authority) | Reporter facts route to needs-info; maintainer decisions invoke Grill With Docs with bounded source and explicit modes; the intact `Confirmed` packet refreshes evidence while `Evidence gap` and `Blocked` stop | Reporter is grilled; Triage writes domain truth; a non-Confirmed composer return becomes a recommendation; component payloads are flattened; composer return approves tracker mutation | Relationship tests and fresh-context composition samples |
 | `I1 / E2` | `T1` | [Classification and state](#classification-and-state-contract) | Exactly one category, state, and semantic disposition are explicit; each ready/wait/reject state meets its admission meaning | Category is missing; state is a generic escape; `wontfix` hides disposition; normal Triage manufactures `implemented` | Table-driven category/state/disposition cases |
 | `I2 / E2` | `T2` | [Readiness brief](#readiness-brief-contract) | Agent and human variants share every semantic field; human variant names reason and completion evidence; PR finish names current diff | Human brief omits dependencies/proof; agent brief invents files; PR brief treats attached code as done | Schema tests plus fresh implementation-recipient scoring |
-| `I2 / E2` | `T2` | [Bounded slice and proof](#readiness-brief-contract) | Tracer or independently valuable support slice names caller-facing proof, expected write scope, semantic parallel safety, and scope fence | Horizontal layers, filename-only independence, broad cleanup, or private-helper proof passes readiness | Seeded brief candidates and negative controls |
+| `I2 / E2` | `T2` | [Bounded slice and proof](#readiness-brief-contract) | Vertical behavior slice, optional tracer learning role, support slice, or technical migration stage names its selected value or purpose, caller-facing proof, expected write scope, semantic parallel safety, and scope fence | Tracer and vertical slice are synonyms, independent completion implies concurrency, horizontal layers, filename-only independence, broad cleanup, or private-helper proof passes readiness | Seeded brief candidates and negative controls |
 | `I2 / E2` | `T3` | [Rejected memory](#rejected-enhancement-memory) | Concept screen confirms, reconsiders, distinguishes, or bypasses records correctly; first approved rejection creates the directory and one concept record | Keyword match alone decides; temporary priority becomes durable reason; bugs or already-implemented work create records | Local filesystem fixtures and concept-pair behavior evaluation |
 | `I1 / E2` | `T1` | [Quick Override](#quick-override) | Exact target state skips verification and grilling but retains full brief/post, packet, approval, snapshot refresh, invariant, and read-back | Requested state is treated as approval; override claims confirmation; `implemented` lacks prior closeout evidence | Full-versus-override paired scenarios |
 | `I1 / E3` | `T1` | [Mutation packet and approval](#mutation-packet-and-approval) | Full packet binds target, snapshot, roles, literals, post, memory, close state, order, evidence, and recovery before explicit approval | Summary-only packet, conditional revision, or changed content applies under old approval | Packet fixtures and approval transcript evaluation |

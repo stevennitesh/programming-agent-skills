@@ -39,7 +39,7 @@ Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement
 - **Claim**: add `Claimed by: <driver/session>` before implementation dispatch; keep the state role unchanged.
 - **Release**: remove `Claimed by` when work blocks, is abandoned, or reaches closeout.
 - **Closeout**: after acceptable review and before Lock, append the final closeout packet under `## Implementation Notes`, set `Status: implemented`, remove the claim, stage the tracker file with the selected-work diff, and apply **Mutation read-back**.
-- **Mutation read-back**: after creating or changing tracker files, reread them and verify the intended body, relationships, state, claim, comments, and closeout metadata. A partial mutation is blocked; report applied operations, failed operations, and the safest recovery action.
+- **Mutation read-back**: after creating or changing tracker files, reread the changed files and every affected dependent file; verify the intended file bodies, relationships, state, claims, comments, closeout metadata, and resulting ready frontier. A partial mutation is blocked; report applied operations, failed operations, and the safest recovery action.
 
 ## Wayfinding operations
 

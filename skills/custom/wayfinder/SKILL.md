@@ -100,9 +100,7 @@ Maintain completes when zero frontier tickets have substantive outcomes, every a
 At the end of Advance or Maintain, close the map only when the destination is reached, no unresolved child or in-scope fog remains, and the next durable artifact or action is clear. Apply the tracker's **Complete map** and **Mutation read-back** conventions; while maintaining, keep the map claim through close, release it only after the closed state reads back, then read back the absence of that claim. Closure completes only when the closing comment or state, claim release, and resulting absence of an in-scope frontier are verified. Recommend exactly one route and stop:
 
 - settled decision — report it; recommend `$domain-modeling` only for durable language or an ADR;
-- settled parent-spec source — `$to-spec`;
-- settled source containing multiple implementation slices — `$to-tickets`;
-- exactly one bounded ready slice — `$implement`.
+- settled parent-spec source or a successfully delivered implementation map — `$to-spec`.
 
 ## Return
 

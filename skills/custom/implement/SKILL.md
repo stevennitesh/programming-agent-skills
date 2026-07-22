@@ -22,11 +22,11 @@ Owner-mode invocation authorizes in-scope staging, Repair within the recorded Bu
 
 Read `docs/agents/engineering-contract.md`. If it or another required setup surface is absent or incompatible with this skill, recommend `$repo-bootstrap` and stop. Read tracker docs only for tracker-backed work.
 
-A parent spec, plan, queue, batch, list, or bare source path is context, not implementation scope.
+A parent spec, plan, queue, batch, list, or bare source path is context, not implementation scope. When it identifies several ready items and repository policy does not select one, ask for the target. Return only unsliced or shaping-unready work to `$to-tickets`.
 
-- An explicit target is binding. If it is blocked, ambiguous, or unready, report that gate instead of substituting another item.
+- An explicit target is binding. Report a live dependency blocker or target-identity ambiguity instead of substituting another item.
 - Without a target, follow repo readiness, dependency, and ordering policy. Ask when it does not identify one next item.
-- Selection reads state; it does not split, relabel, promote, reprioritize, or otherwise repair it. Return unsliced work to `$to-tickets`.
+- Selection reads state; it does not split, relabel, promote, reprioritize, or otherwise repair it. Return unsliced or shaping-unready work to `$to-tickets` with the exact readiness defects.
 
 Ready means expected behavior and acceptance criteria are settled, the item is unblocked, and an observable proof seam exists. Tracker-backed items must also satisfy tracker eligibility.
 

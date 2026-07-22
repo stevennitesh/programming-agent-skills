@@ -50,7 +50,7 @@ Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement
 - **Claim**: assign the work item to the owner or orchestrator before implementation dispatch; the assignee is the concurrency guard.
 - **Release**: clear the active assignee when work blocks, is abandoned, or reaches closeout.
 - **Closeout**: after required review and commits, post the closeout packet as a note, apply `implemented`, remove the prior state-role label, and release the claim. Close the issue only when `Close implemented items` is `yes` or the user directs it. Close a parent only after its in-scope children and follow-ups are drained.
-- **Mutation read-back**: after creating or changing an item, refetch it and verify the intended description, relationships, labels or state, assignee, notes, and open/closed status. A partial mutation is blocked; report applied operations, failed operations, and the safest recovery action.
+- **Mutation read-back**: after creating or changing an item, refetch it and its affected dependents; verify the intended description, relationships, labels or state, assignees, notes, open/closed status, and resulting ready frontier. A partial mutation is blocked; report applied operations, failed operations, and the safest recovery action.
 
 ## Wayfinding operations
 

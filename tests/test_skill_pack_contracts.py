@@ -1235,6 +1235,21 @@ def test_mutating_workflows_require_readback() -> None:
 def test_to_tickets_preserves_approval_coverage_and_frontier_contract() -> None:
     tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
 
+    def process_section(name: str) -> str:
+        match = re.search(
+            rf"(?ms)^### \d+\. {re.escape(name)}\n(.*?)(?=^### \d+\. |^## |\Z)",
+            tickets,
+        )
+        assert match is not None, name
+        return re.sub(r"\s+", " ", match.group(1).lower())
+
+    def level_two_section(name: str) -> str:
+        match = re.search(
+            rf"(?ms)^## {re.escape(name)}\n(.*?)(?=^## |\Z)", tickets
+        )
+        assert match is not None, name
+        return re.sub(r"\s+", " ", match.group(1).lower())
+
     assert not implicit_policy(CUSTOM / "to-tickets")
     assert re.findall(r"(?m)^### \d+\. ([A-Za-z]+)$", tickets) == [
         "Trace",
@@ -1243,6 +1258,108 @@ def test_to_tickets_preserves_approval_coverage_and_frontier_contract() -> None:
         "Approve",
         "Publish",
     ]
+
+    slice_contract = process_section("Slice")
+    for concept in ("vertical behavior slice", "tracer bullet", "support slices"):
+        assert concept in slice_contract
+    assert re.search(r"tracer bullet.*(?:not synonyms|distinct)", slice_contract, re.S)
+    assert re.search(r"support slices.*delivery slice.*(?:proof|de-risks)", slice_contract, re.S)
+
+    assert "blocking edge" in slice_contract
+    assert re.search(r"dependent consumes.*predecessor.*outcome", slice_contract, re.S)
+    assert re.search(r"serial tripwires.*not blockers", slice_contract, re.S)
+    assert "state-boundary matrix" in slice_contract
+    assert "applicable branch" in slice_contract
+    assert "non-applicable axis" in slice_contract
+    for profile_field in (
+        "execution profile",
+        "blockers",
+        "semantic owner",
+        "production scope",
+        "public proof seam",
+        "size",
+        "scarce resource",
+        "serial tripwire",
+    ):
+        assert profile_field in slice_contract
+
+    assert "expand-migrate-contract" in slice_contract
+    assert "backward-compatible" in slice_contract
+    assert re.search(r"contract only after old usage ends", slice_contract)
+    assert "blast radius" in slice_contract
+    for exposure_control in ("progressive exposure", "health checks", "rollback proof"):
+        assert exposure_control in slice_contract
+    assert re.search(
+        r"blast radius.*separately|separately.*blast radius", slice_contract, re.S
+    )
+    assert re.search(
+        r"(?=.*(?:migration|backfill))(?=.*risk[- ]bearing operation)"
+        r"(?=.*health)(?=.*compatibility)(?=.*rollback)"
+        r"(?=.*before expan.*boundar)",
+        slice_contract,
+        re.S,
+    )
+
+    approve_contract = process_section("Approve")
+    assert "proposal revision" in approve_contract
+    assert re.search(r"explicit approval.*exact revision", approve_contract, re.S)
+    assert re.search(r"material change.*fresh approval", approve_contract, re.S)
+
+    publish_contract = process_section("Publish")
+    assert re.search(r"before mutation.*reconcile", publish_contract, re.S)
+    assert re.search(r"material drift.*approve", publish_contract, re.S)
+    for observed_surface in (
+        "parent",
+        "ordered children",
+        "bodies",
+        "roles",
+        "state",
+        "relationships",
+        "blocking edges",
+        "affected dependents",
+        "ready frontier",
+    ):
+        assert observed_surface in publish_contract
+    assert "provider receipts do not prove completion" in publish_contract
+    for recovery_fact in (
+        "applied and failed operations",
+        "unknown state",
+        "frontier risk",
+        "non-duplicating recovery",
+    ):
+        assert recovery_fact in publish_contract
+
+    route_order = [
+        "empty frontier",
+        "parent-delivery run",
+        "one ready ticket",
+        "overlapping semantic ownership",
+        "at least two substantial",
+        "uncertain independence or economics",
+    ]
+    route_positions = [publish_contract.index(route) for route in route_order]
+    assert route_positions == sorted(route_positions)
+    assert "recommend and stop" in publish_contract
+    assert re.search(r"never begin.*implementation route", publish_contract, re.S)
+
+    return_contract = level_two_section("Return")
+    for result_kind in (
+        "setup precondition",
+        "source-gap packet",
+        "no-ticket result",
+        "proposal awaiting approval",
+        "partial-publication recovery",
+        "published graph",
+    ):
+        assert result_kind in return_contract
+    assert "exactly one typed result" in return_contract
+    assert "exact safe continuation" in return_contract
+
+    completion_contract = level_two_section("Completion")
+    assert "distinct blockers and serial constraints" in completion_contract
+    assert "state matrices and execution profiles" in completion_contract
+    assert "one verified next action" in completion_contract
+    assert "without starting it" in completion_contract
 
 
 def test_worker_modes_have_distinct_completion_artifacts() -> None:
@@ -1621,8 +1738,6 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         ("wayfinder", "Recommend and stop", "grill-with-docs"),
         ("wayfinder", "Recommend and stop", "domain-modeling"),
         ("wayfinder", "Recommend and stop", "to-spec"),
-        ("wayfinder", "Recommend and stop", "to-tickets"),
-        ("wayfinder", "Recommend and stop", "implement"),
         ("triage", "Recommend and stop", "grill-with-docs"),
         ("improve-codebase", "Recommend and stop", "grill-with-docs"),
         ("implement", "Invoke", "tdd"),
@@ -1667,6 +1782,16 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
     assert required <= edges
     assert ("improve-codebase", "Invoke", "grilling") not in edges
     assert ("convergent-pr-review", "Hand off", "review") not in edges
+    assert ("wayfinder", "Recommend and stop", "to-tickets") not in edges
+    assert ("wayfinder", "Recommend and stop", "implement") not in edges
+
+    wayfinder = (CUSTOM / "wayfinder/SKILL.md").read_text(encoding="utf-8")
+    closure = wayfinder.split("## Closure", 1)[1].split("\n## ", 1)[0]
+    assert "`$to-spec`" in closure
+    assert "successfully delivered implementation map" in closure
+    assert "`$to-tickets`" not in closure
+    assert "`$implement`" not in closure
+    assert "`$parallel-implement`" not in closure
 
     skill_names = {skill.name for skill in CUSTOM.iterdir() if skill.is_dir()}
     for caller, verb, callee in rows:

@@ -312,16 +312,18 @@ discovery.
   user-selected work item may be the target.
 - A parent spec, PRD, queue, batch, list, project, or bare source path is
   selection context, not implementation scope by itself.
-- A broad source may identify one already-ready item. If it does not, ask for
-  one target or recommend `$to-tickets` and stop.
+- A broad source may identify one already-ready item. If it identifies several
+  ready items and repository policy does not select one, ask for the target.
 - A candidate containing multiple independent outcomes, work items, or
   unrelated surfaces is unsliced. Detect the defect; do not split it inside
   Implement.
 
 ### Selection authority
 
-- An explicit target is binding. If it is blocked, ambiguous, ineligible, or
-  unready, stop on that target. Never silently substitute another ready item.
+- An explicit target is binding. Report a live dependency blocker or
+  target-identity ambiguity locally and never silently substitute another
+  ready item. Return unsliced or shaping-unready work to `$to-tickets` with the
+  exact readiness defects; do not repair ticket shape inside Implement.
 - Without a target, follow the repository's tracker, readiness, dependency,
   and ordering policy. When exactly one next item is determined, select it.
 - When several items are eligible but repository order does not choose among
@@ -832,7 +834,7 @@ Every invocation returns exactly one form:
 | Return | Use when | Required content |
 | --- | --- | --- |
 | Setup precondition | Required setup is absent or incompatible | Missing surface, evidence, `$repo-bootstrap` recommendation, and no mutation |
-| Selection gate | No one item exists, the explicit item is unready or blocked, order is ambiguous, or source is unsliced | Checked surface, target or candidates, failed readiness fact, no-substitution evidence, and exact route or question |
+| Selection gate | No item is ready, the explicit item has a live dependency blocker, target or order identity is ambiguous, or work is unsliced or shaping-unready | Checked surface, target or candidates, failed readiness fact, no-substitution evidence, and either the local blocker or exact `$to-tickets` repair return |
 | Assignment blocker | Staged-worker authority or accepting owner is incomplete | Missing assignment field, current state, and required owner action |
 | Staged handoff | The explicit staged worker completed or cannot complete its bounded assignment | The complete staged-worker packet; never implementation completion |
 | Decision required | Charter, commitment, review, Repair, residual risk, or Budget needs caller judgment | Immutable target, complete decision set, options, consequences, and exact continuation |
@@ -855,7 +857,7 @@ attempt alone is never complete.
 | `$implement` | Invoke | `$diagnosing-bugs` | A bug's expected behavior, exact symptom, cause, or trusted red-capable reproduction is uncertain; return to the same Implement owner |
 | `$implement` | Invoke | `$review` | One ordinary immutable review or remediation tree needs fixed-snapshot judgment |
 | `$implement` | Invoke | `$convergent-pr-review` | One local PR or high-risk immutable review or remediation tree needs independent convergence |
-| `$implement` | Recommend and stop | `$to-tickets` | Supplied source contains multiple, broad, or unsliced implementation items |
+| `$implement` | Recommend and stop | `$to-tickets` | The supplied work is unsliced or shaping-unready; return the exact readiness defects |
 | `$implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible |
 
 Implement has no execution relationship to Wayfinder, To Spec, Parallel

@@ -6,7 +6,17 @@ For an issue, the brief describes the slice to build. For a PR, it describes the
 
 ## Shape
 
-Prefer one independently completable tracer bullet through real behavior. Use a support slice only when it independently proves, unblocks, or de-risks later behavior. Describe durable behavior and interfaces rather than current file choreography; make acceptance observable through the highest useful seam and fence adjacent work.
+Prefer one independently completable vertical behavior slice: one request or
+behavior across the real components or concerns needed for its selected value.
+Use a tracer-bullet role when the purpose is a skeletally thin real path for
+early feedback or a load-bearing risk. One brief may be both; the terms are not
+synonyms. Independent completion means the slice can be judged without
+unrelated sibling completion; it does not establish concurrency.
+
+Use a support slice only when it has observable proof and names the delivery
+slice it unblocks or materially de-risks. Describe durable behavior and
+interfaces rather than current file choreography; make acceptance observable
+through the highest useful seam and fence adjacent work.
 
 ## Template
 
@@ -17,7 +27,9 @@ Prefer one independently completable tracer bullet through real behavior. Use a 
 
 **Category:** bug / enhancement
 **State:** ready-for-agent
-**Slice type:** tracer bullet / support slice
+**Work-unit form:** vertical behavior slice / support slice / technical migration stage
+**Learning role:** tracer bullet / none
+**Migration phase:** expand / migrate / contract / not applicable
 **Summary:** one-line description of the bounded slice
 
 **Current behavior:**
@@ -31,8 +43,10 @@ Describe the verified status quo. For a PR, describe the current state of the di
 Describe the observable behavior after this slice, including edge cases, error conditions, and user-visible or operator-visible outcomes.
 
 **Why this slice:**
-For a tracer bullet, name the behavior or risk it proves.
-For a support slice, name what it unblocks or de-risks.
+For a vertical behavior slice, name its selected value.
+For a tracer role, name the feedback or risk it targets.
+For a support slice, name the delivery slice it unblocks or de-risks.
+For a technical migration stage, name the compatibility obligation and phase.
 
 **Relevant interfaces or seams:**
 - Interface, command, workflow, adapter, config shape, or contract - why it matters
@@ -71,7 +85,12 @@ When load-bearing internals determine correctness, name the semantic examples, f
 
 ## Ready Gate
 
-Complete only when the brief names one bounded slice; verification is confirmed or a maintainer override and its residual uncertainty are explicit; Source Trace is preserved; dependencies, write scope, and parallel safety are explicit; acceptance criteria are observable; the proof lane reaches the highest useful seam; and adjacent work is fenced out.
+Complete only when the brief names one bounded slice and its work-unit form,
+learning role, and migration phase; verification is confirmed or a maintainer
+override and its residual uncertainty are explicit; Source Trace is preserved;
+dependencies, write scope, and parallel safety are explicit; acceptance
+criteria are observable; the proof lane reaches the highest useful seam; and
+adjacent work is fenced out.
 
 ## Branch Emphasis
 

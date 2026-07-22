@@ -223,14 +223,12 @@ Use one verb for each accepted relationship:
 | `wayfinder` | Recommend and stop | `$grill-with-docs` | One HITL decision ticket or Chart bound needs a direct user decision with durable capture; resume Wayfinder later with the returned decision. |
 | `wayfinder` | Recommend and stop | `$domain-modeling` | A closing decision changes durable language or warrants an ADR offer. |
 | `wayfinder` | Recommend and stop | `$to-spec` | The closed map produced settled parent-spec source. |
-| `wayfinder` | Recommend and stop | `$to-tickets` | The closed map produced several settled implementation slices. |
-| `wayfinder` | Recommend and stop | `$implement` | The closed map produced exactly one ready slice. |
 | `wayfinder` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `to-spec` | Load | `$codebase-design` | Apply deep-module vocabulary while the spec remains authoritative. |
 | `to-spec` | Recommend and stop | `$to-tickets` | The verified parent spec is ready for implementation slicing. |
 | `to-spec` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
-| `to-tickets` | Recommend and stop | `$implement` | The ready frontier is singular or write-overlapping. |
-| `to-tickets` | Recommend and stop | `$parallel-implement` | An explicitly requested parent-delivery run has a non-empty ready ticket graph; frontier width chooses serial or parallel execution. |
+| `to-tickets` | Recommend and stop | `$implement` | One ticket is ready, or overlap, a serial tripwire, uncertain independence, or uneconomic parallel dispatch requires the first ready ticket in tracker order. |
+| `to-tickets` | Recommend and stop | `$parallel-implement` | An explicitly requested parent-delivery run has a non-empty ready ticket graph; Parallel Implement owns serial or parallel runtime width. |
 | `to-tickets` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `triage` | Recommend and stop | `$grill-with-docs` | Maintainer-owned shaping needs a direct user decision with durable capture; stop before mutation and resume Triage later with the result. |
 | `triage` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
@@ -238,7 +236,7 @@ Use one verb for each accepted relationship:
 | `implement` | Invoke | `$diagnosing-bugs` | A bug's exact symptom, cause, or trusted red-capable reproduction is uncertain; return after regression proof. |
 | `implement` | Invoke | `$review` | The selected diff or bounded Repair generation needs ordinary fixed-snapshot review. |
 | `implement` | Invoke | `$convergent-pr-review` | The selected diff is a local PR or matches a high-risk trigger. |
-| `implement` | Recommend and stop | `$to-tickets` | The supplied source contains multiple or unsliced implementation items. |
+| `implement` | Recommend and stop | `$to-tickets` | The supplied work is unsliced or shaping-unready; return the exact readiness defects. Selection ambiguity remains local to Implement. |
 | `implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `parallel-implement` | Invoke | `$tdd` | A lane worker has red-testable new behavior, or a bug whose expected behavior, exact symptom, cause, and trusted red-capable reproduction are known. |
 | `parallel-implement` | Invoke | `$diagnosing-bugs` | A lane worker's bug has uncertain expected behavior, exact symptom, cause, or trusted red-capable reproduction; return to the same lane worker. |

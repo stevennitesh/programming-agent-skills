@@ -1,9 +1,11 @@
 # To Tickets Runtime Design Synthesis
 
-Status: exhaustive design reference, not an executable contract. The
-execution-profile and economic parallel-routing candidate is preserved under
-`skills/experimental/to-tickets/`; custom and installed copies remain the
-earlier active control. The candidate is not promoted by this note.
+Status: exhaustive design reference, not an executable contract. Stage I1 / T1
+has been applied to the canonical `skills/custom/to-tickets/` runtime, and the
+bounded I2 consumer repairs described below have been applied to their
+canonical surfaces. The installed copy remains the earlier control until a
+separately authorized installation pass. These changes establish source and
+contract alignment, not behavioral effectiveness.
 
 Runtime authority remains in:
 
@@ -894,7 +896,7 @@ read-back, and composition contracts.
 
 | Evidence surface | Classification | Design use |
 | --- | --- | --- |
-| `skills/custom/to-tickets/SKILL.md` and `agents/openai.yaml` | Active runtime matching the installed baseline | Existing five-verb behavior and explicit-only reach; the execution-profile candidate remains under `skills/experimental/to-tickets/` |
+| `skills/custom/to-tickets/SKILL.md` and `agents/openai.yaml` | Canonical runtime at the applied I1 revision | Five-verb behavior, explicit-only reach, corrected slicing vocabulary, local proof policy, execution profile, approval, publication, and typed Return |
 | `docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md` | Current owner contracts | Ready fields, roles, graph representation, ready query, mutation, and read-back |
 | `docs/agents/engineering-contract.md` and `docs/agents/domain.md` | Current shared contracts | Source Trace, semantic proof, state-boundary coverage, domain pointers, and ADR conflict handling |
 | `skills/custom/to-spec/SKILL.md` | Current source producer | Parent-spec completeness, grounding, proof expectations, and recommendation boundary |
@@ -906,7 +908,7 @@ read-back, and composition contracts.
 | `tests/test_skill_pack_contracts.py` | Current structural evidence | Invocation, spine, read-back, state-boundary consumption, execution-profile terms, and relationship edges |
 | `docs/validation/evals/core-workflows.md` | Current behavior-evaluation definitions | Coverage, shared readiness, state branches, and critical-failure expectations |
 | `docs/validation/transcripts/2026-07-13-whole-pack-workflow-traces.md` | Historical contract simulation | One-run workflow evidence and explicit live-execution gaps |
-| Installed `C:\Users\steve\.agents\skills\to-tickets` | Current control runtime | Earlier runtime control and eventual post-promotion parity target; never the edit source |
+| Installed `C:\Users\steve\.agents\skills\to-tickets` | Earlier control runtime | Installation parity remains separately owned; never edit this mirror as the canonical source |
 
 ## Upstream Comparison
 

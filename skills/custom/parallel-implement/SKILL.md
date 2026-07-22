@@ -29,14 +29,30 @@ If the graph is incomplete, ambiguous, or not Ready-for-agent, return one exhaus
 
 For any stateful ticket, verify that acceptance carries the applicable state-boundary matrix. Missing supported branches are a Ready-for-agent defect: include them in the exhaustive graph-repair packet rather than treating them as optional worker discovery.
 
+For a parent-delivery run, require each ticket's To Tickets execution profile:
+blocking dependencies; semantic owner; expected production scope and
+exclusions; highest meaningful public proof seam and focused proof; size as
+`small` or `substantial`; shared seam or scarce proof resource; and serial
+tripwire. A missing or contradictory field is a Ready-for-agent defect: include
+the complete profile repair in the exhaustive packet rather than reconstructing
+To Tickets judgment here.
+
 ## Select
 
 Choose the next dependency-ready frontier from reconciled tracker and ledger state. A verified landing may satisfy an in-campaign execution dependency as `landed-awaiting-lock`; tracker closure still waits for Lock. Rollback, invalidation, or failed proof reblocks it.
 
-Apply the frontier gate across semantics, acceptance, write scope, proof, dependencies, live slots, and root review bandwidth. Disjoint files alone do not prove independence.
+Apply the frontier gate across semantics, acceptance, the execution profile,
+dependencies, live slots, and root review bandwidth. Small work stays serial;
+its likely implementation savings do not repay separate concurrent dispatch,
+inspection, landing, and proof recombination. Disjoint files alone do not prove
+independence.
 
 - Select one ticket when independence or review capacity is uncertain.
-- Select up to three only when at least two tickets are semantically independent and every packet can be inspected before the next frontier.
+- Select up to three only when at least two tickets are substantial, have
+  independent semantic owners, isolated production scopes, and proof lanes
+  that do not contend for a shared seam or scarce resource; honor every serial
+  tripwire unless stronger current evidence proves isolation. Every packet must
+  remain inspectable before the next frontier.
 - Stop with exact blockers when nothing is executable.
 
 **Tripwire:** protected data, permissions, trust boundaries, irreversible state, migrations, and cutovers require one production-path tracer first, including retry, rollback, and partial-state proof.
