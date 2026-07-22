@@ -1,11 +1,11 @@
 ---
 name: grill-with-docs
-description: Compose one repo-backed decision through $grilling and $domain-modeling.
+description: Compose one explicitly invoked repo-backed decision through $grilling and $domain-modeling; return intact component results without downstream execution.
 ---
 
 # Grill With Docs
 
-Return one intact Grilling packet and Domain Modeling's current cumulative Domain Delta. Own only their composition.
+Compose `$grilling` with `$domain-modeling` for one bounded repo-backed decision. Own only their admission, ordering, transport, combined status, and Return; interpret neither component and start nothing downstream.
 
 ```text
 Admit -> Compose [Grill <-> Relay <-> Model] -> Return
@@ -15,7 +15,9 @@ Admit -> Compose [Grill <-> Relay <-> Model] -> Return
 
    Before Grilling asks its first question, state the effective context action, separate ADR approval gate, possibility that a domain collision may reopen or block a branch, and that confirmation starts no downstream work. If the request needs only one component, name that narrower owner and stop without invoking it. Return a missing or contradictory requirement as `Blocked` with the exact blocker and re-entry condition before starting either component.
 
-2. **Compose.** Run one Grilling session with Domain Modeling active. Relay every settled material answer and returned collision before dependent progress, carrying Domain Modeling's current cumulative Domain Delta opaquely. Grilling owns the interview and materiality; Domain Modeling owns domain consequences, mutation, ADR handling, and delta accumulation. A no-change delta is valid; a missing current delta is `Blocked`.
+2. **Compose.** Run one Grilling session with Domain Modeling active. After every settled material answer, Relay it with the shared subject and source to Domain Modeling, carry its authoritative current cumulative Domain Delta opaquely, and return any collision or blocker to Grilling before dependent questioning continues.
+
+   Grilling owns materiality, questioning, Evidence gap, confirmation, and its packet. Domain Modeling owns domain consequences, mutation, ADR handling, and delta accumulation. A cumulative no-change delta is valid. Return `Blocked` when Domain Modeling cannot supply a current delta.
 
 3. **Return.** When Grilling reaches a terminal result, derive one status without re-performing either component's completion criterion or asking for another confirmation:
 

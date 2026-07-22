@@ -476,7 +476,7 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
     assert "Next frontier: [<ticket title>](<link>). Invoke $wayfinder to advance it." in returned
 
 
-def test_grill_with_docs_owns_interview_domain_composition() -> None:
+def test_grill_with_docs_package_and_relationship_contract() -> None:
     grill_docs = (CUSTOM / "grill-with-docs/SKILL.md").read_text(encoding="utf-8")
     grilling = (CUSTOM / "grilling/SKILL.md").read_text(encoding="utf-8")
     domain = (CUSTOM / "domain-modeling/SKILL.md").read_text(encoding="utf-8")
@@ -484,27 +484,15 @@ def test_grill_with_docs_owns_interview_domain_composition() -> None:
         encoding="utf-8"
     )
 
-    assert "$grilling" in grill_docs
-    assert "$domain-modeling" in grill_docs
+    assert not implicit_policy(CUSTOM / "grill-with-docs")
+    assert {
+        path.relative_to(CUSTOM / "grill-with-docs").as_posix()
+        for path in (CUSTOM / "grill-with-docs").rglob("*")
+        if path.is_file()
+    } == {"SKILL.md", "agents/openai.yaml"}
+    assert "$grilling" in grill_docs and "$domain-modeling" in grill_docs
     assert "$domain-modeling" not in grilling
     assert "$grilling" not in domain
-    assert re.findall(r"(?m)^\*\*([A-Za-z]+)\.\*\*", grill_docs) == [
-        "Boundary",
-        "Admit",
-        "Disclose",
-        "Compose",
-        "Join",
-        "Return",
-    ]
-    for contract in (
-        "Admit -> Disclose -> Compose [Grill <-> Relay <-> Model] -> Join -> Return",
-        "Relay each settled material answer",
-        "return every material collision or blocker to Grilling",
-        "The composer filters or merges neither",
-        "Status: Confirmed | Evidence gap | Blocked",
-        "This is a return, not a general handoff",
-    ):
-        assert contract in grill_docs
     rows = re.findall(
         r"(?m)^\| `([a-z0-9-]+)` \| (Load|Invoke|Compose|Hand off|Recommend and stop) \| `\$([a-z0-9-]+)` \|",
         relationships,
@@ -512,6 +500,11 @@ def test_grill_with_docs_owns_interview_domain_composition() -> None:
     assert {
         caller for caller, verb, callee in rows if verb == "Compose" and callee == "domain-modeling"
     } == {"grill-with-docs"}
+    assert {
+        caller
+        for caller, verb, callee in rows
+        if verb == "Recommend and stop" and callee == "grill-with-docs"
+    } >= {"wayfinder", "triage", "improve-codebase"}
 
 
 def test_domain_modeling_owns_durable_domain_truth() -> None:
@@ -1625,13 +1618,13 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         ("to-spec", "Load", "codebase-design"),
         ("wayfinder", "Invoke", "research"),
         ("wayfinder", "Invoke", "prototype"),
-        ("wayfinder", "Invoke", "grill-with-docs"),
+        ("wayfinder", "Recommend and stop", "grill-with-docs"),
         ("wayfinder", "Recommend and stop", "domain-modeling"),
         ("wayfinder", "Recommend and stop", "to-spec"),
         ("wayfinder", "Recommend and stop", "to-tickets"),
         ("wayfinder", "Recommend and stop", "implement"),
-        ("triage", "Invoke", "grill-with-docs"),
-        ("improve-codebase", "Invoke", "grill-with-docs"),
+        ("triage", "Recommend and stop", "grill-with-docs"),
+        ("improve-codebase", "Recommend and stop", "grill-with-docs"),
         ("implement", "Invoke", "tdd"),
         ("implement", "Invoke", "diagnosing-bugs"),
         ("implement", "Invoke", "review"),

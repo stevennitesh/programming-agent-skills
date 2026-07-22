@@ -80,7 +80,7 @@ The governing invariants are:
 | Approval | One immutable mutation packet tied to target identity and a captured decision snapshot; refresh after approval and reapprove on material drift | Add explicitly during extraction |
 | Readiness rendering | One shared semantic schema for `ready-for-agent` and `ready-for-human`, with branch-specific emphasis and headings | Consolidate ownership without changing the tracker-owned Ready-for-agent fields |
 | Rejected work | `.out-of-scope/` records concepts for rejected enhancements only; Triage screens and mutates them inside the approved packet | Preserve and add lifecycle/read-back clarity |
-| Relationships | Triage may invoke `$grill-with-docs` for maintainer-owned shaping, recommend `$repo-bootstrap` when setup is absent or incompatible, and stop at delivery boundaries | Preserve; do not add automatic Wayfinder or implementation continuation |
+| Relationships | Triage may recommend explicit `$grill-with-docs` and stop for maintainer-owned shaping, recommend `$repo-bootstrap` when setup is absent or incompatible, and stop at delivery boundaries | Preserve direct-user composer authority; do not add automatic continuation |
 | Proof | Structural contracts plus fixed-scenario, fresh-context behavior evaluation across scan, full triage, override, drift, partial failure, PR, and provider variants | Expand before promotion |
 | Deferred machinery | Conditional tracker claims, a machine packet schema/helper, automated bulk mutation, and new category or state roles | Exclude until observed failures justify separate design |
 | Rejected machinery | Provider commands in Triage, automatic state transitions, re-triaging valid `$to-tickets` output, code changes, implementation closeout, and an event ledger | Keep outside the rewrite |
@@ -349,7 +349,7 @@ Verification may read and execute within the engineering contract, but Triage ne
 
 Reporter-owned missing facts bypass maintainer grilling and recommend `needs-info`.
 
-When maintainer-owned scope, acceptance, domain language, or design decisions remain unresolved, invoke `$grill-with-docs` with the target identity, bounded item, current Source Trace, exact open decisions, Grilling bound and maintainer authority, Triage as caller and return owner, and no tracker-mutation or downstream-execution authority. Pass `render only` unless separate persistence authority supplies `persist authorized`; pass `offer only` unless approved ADR candidate identifiers are supplied. Consume the lean combined packet intact. On `Confirmed`, add changed domain paths and ADR outcomes from its Domain Delta to the Source Trace, then refresh every verification result affected by the decision. On `Evidence gap` or `Blocked`, preserve the complete composer packet and return without Recommend.
+When maintainer-owned scope, acceptance, domain language, or design decisions remain unresolved, return the target identity, bounded item, current Source Trace, and exact open decisions; recommend explicit `$grill-with-docs` and stop before tracker mutation. Resume the same item in a later Triage invocation. Add any returned domain paths and ADR outcomes to the Source Trace, then refresh every verification result affected by the decision; preserve an `Evidence gap` or `Blocked` result without entering Recommend.
 
 ### Recommend
 
@@ -366,7 +366,7 @@ Recommendation never implies approval.
 
 ### Approve, Apply, And Prove
 
-Use the shared contracts below. No Specific Item mutation occurs during Trace, Verify, Shape, or Recommend. Domain writes performed by Domain Modeling inside `$grill-with-docs` remain separately governed mutation and appear as consumed source, not hidden Triage mutation.
+Use the shared contracts below. No Specific Item mutation occurs during Trace, Verify, Shape, or Recommend. Domain writes from a separately invoked `$grill-with-docs` remain governed by Domain Modeling and appear as consumed source after Triage resumes, not hidden Triage mutation.
 
 ## Quick Override
 
@@ -414,7 +414,7 @@ Evidence should reach the highest useful caller-facing seam. Structural proxy ev
 
 ## Shaping And Domain Authority
 
-Triage owns the decision that maintainer shaping is needed and the bounded caller packet. `$grill-with-docs` owns the interview composition, mutation disclosure, confirmation gate, and combined Return. Domain Modeling owns domain resolution, rendering or mutation, ADR assessment, and approved ADR recording. The named user or recorded ADR authority alone owns ADR approval.
+Triage owns the decision that maintainer shaping is needed, the bounded recommendation packet, and later resumption. Direct `$grill-with-docs` owns interview composition, mutation disclosure, confirmation, and combined Return. Domain Modeling owns domain resolution, rendering or mutation, ADR assessment, and approved ADR recording. The named user or recorded ADR authority alone owns ADR approval.
 
 The composition edge is legal only when:
 
@@ -628,7 +628,7 @@ Only `scan-complete` and `mutation-complete` satisfy their branch completion cri
 | Human or Skill Router | Explicitly invoke or recommend and stop | Triage | Raw configured issue/request or configured external PR/MR needs classification or state work | Triage owns the selected branch; recommender does not continue it |
 | Triage | Load | Tracker docs | Every invocation before tracker access | Provider, literal mappings, ready fields, close policy, external PR/MR policy, and read-back capability; no provider procedure copied into Triage |
 | Triage | Load | Domain routing and engineering contract | Domain-sensitive work; reproduction or executable validation | Current vocabulary, decisions, work-state discipline, and proof expectations |
-| Triage | Invoke | `$grill-with-docs` | Maintainer-owned scope, acceptance, language, or design requires both a user-owned decision interview and durable domain capture under explicit context and ADR actions | Intact lean `Confirmed`, `Evidence gap`, or `Blocked` packet returns to the same target; no tracker mutation authority transfers |
+| Triage | Recommend and stop | `$grill-with-docs` | Maintainer-owned scope, acceptance, language, or design requires direct-user resolution with durable capture | Resume the same target later with the direct result; no tracker mutation authority transfers |
 | Triage | Recommend and stop | `$repo-bootstrap` | Required tracker or label setup is missing or incompatible | Setup recommendation only; Triage does not continue automatically |
 | Triage | Produce | Tracker-owned Ready-for-agent contract | Approved `ready-for-agent` or `ready-for-human` state | Complete readiness brief with Triage verification extension |
 | `$to-tickets` | Produce peer contract | Tracker-owned Ready-for-agent contract | Settled parent source is sliced | Valid output bypasses Triage; Triage does not add verification retroactively |
@@ -656,7 +656,7 @@ Keep universal outcome, admission, role invariant, branch choice, approval envel
 | Exact-state override | `QUICK-OVERRIDE.md` | Full verification and shaping procedure |
 | Agent or human readiness | One shared readiness-brief reference; branch emphasis only for the matching case | Rejected-memory procedure unless disposition requires it; unrelated examples |
 | Rejected or reconsidered enhancement | `OUT-OF-SCOPE.md` and likely local concept records | Full directory when concept search is sufficient |
-| Maintainer shaping | `$grill-with-docs` through its invocation boundary | Copied Grilling or Domain Modeling procedure |
+| Maintainer shaping | Direct user through a `$grill-with-docs` recommendation boundary | Copied Grilling or Domain Modeling procedure |
 | Apply after approval | Approved packet, refreshed target, tracker mutation/read-back contract, changed local files | Parent conversation material not referenced by the packet |
 
 Context pointers must state both trigger and purpose. A future rewrite may rename a disclosed file, but it must preserve branch-only loading and one owner per semantic contract.
@@ -691,7 +691,7 @@ The current skill already embodies much of this source pressure: explicit states
 - Tracker docs own transport, mappings, readiness fields, and Mutation read-back.
 - The brief preserves one bounded slice, public seam, dependencies, parallel safety, and scope fence.
 - `.out-of-scope/` stores durable concept decisions rather than issue-by-issue rejection noise.
-- `$grill-with-docs` owns the composed maintainer interview and combined Return; Domain Modeling owns domain persistence and approved ADR recording within that composition.
+- Direct `$grill-with-docs` owns the composed maintainer interview and combined Return; Triage recommends and stops, then owns later resumption. Domain Modeling owns domain persistence and approved ADR recording within that composition.
 - Installed triage files currently match canonical files exactly.
 
 ## Current Gaps Addressed By The Proposed Design
@@ -784,7 +784,7 @@ This map owns proposed file placement and coordinated source bundles. Acceptance
 | `T3` | `skills/custom/triage/OUT-OF-SCOPE.md` | Record format, concept screen, classification, directory-absence behavior, approved lifecycle, and read-back | Add tracked-state and no-commit/no-push boundary; preserve concept-level memory | Bug rejection records, provider commands, Triage state model, or general product roadmap |
 | `T1` | `skills/custom/triage/agents/openai.yaml` | Explicit-only invocation policy | Preserve `allow_implicit_invocation: false`; keep description human-facing | Runtime procedure or state catalog |
 | `T4` | Repo Bootstrap-owned tracker templates, label template, validator, and setup fingerprints | Provider transport, work-item fields, external PR/MR policy, literal mappings, close rules, affected-dependent read-back, and provider capabilities | Supply the outcomes required by this synthesis; concrete changes belong to [Repo Bootstrap synthesis](repo-bootstrap.md) | Triage classification, evidence, packet approval, readiness rendering, or rejected-memory semantics |
-| `T4` | `$grill-with-docs` and Domain Modeling-owned surfaces | Maintainer interview, explicit context and ADR actions, authoritative Domain Delta, and lean three-status Return | Verify the bounded Triage caller, intact component payloads, and no-tracker-authority Return; change only observed mismatch | Triage recommendation, packet approval, tracker mutation, or readiness rendering |
+| `T4` | `$grill-with-docs` and Domain Modeling-owned surfaces | Direct-user interview, explicit context and ADR actions, authoritative Domain Delta, and lean three-status Return | Verify Triage recommends and stops, then later consumes the intact result without tracker-authority transfer | Triage packet approval, tracker mutation, or readiness rendering |
 | `T4` | `$to-tickets`, `$implement`, `$parallel-implement`, Skill Router, README, and `docs/synthesis/skill-context-relationships.md` | Their own routing and consumption boundaries | Preserve peer ready producer, later delivery, explicit recommendation, and one authoritative relationship edge | Triage branch procedure or duplicated ready schema |
 | `T5` | `tests/test_skill_pack_contracts.py` and `docs/validation/evals/core-workflows.md` | Structural protection and behavior evaluation | Cover every promoted acceptance row, context pointer, role invariant, approval refresh, Return state, and negative control | Incidental prose snapshots or claims that literal tests prove judgment |
 | `T5` | Installed mirror `C:\Users\steve\.agents\skills\triage` | Validated runtime copy | Synchronize only after the coordinated canonical candidate and evaluations pass | Independent edits, partial synchronization, or authority over canonical source |

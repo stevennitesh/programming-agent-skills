@@ -1,398 +1,291 @@
 # Grill With Docs Composition Synthesis
 
-Status: decision-complete composer design reference and future extraction map. The inactive Steps 1-3 candidate is preserved under `skills/experimental/grill-with-docs/`. This document and candidate are not runtime authority; the active canonical skill and installed mirror remain authoritative until the complete coordinated family is behaviorally proved, validated, promoted, and synchronized.
+Status: Prompt 5 complete. Accepted candidate `09438242574437c91ed631a1dd59010f3c02752b51b8eb93d096259fab65def7` is canonical and installed with matching hashes; its experimental package and manifest entry are removed. Prompt 4 evidence was reused because bytes and claims were unchanged.
 
-Runtime authority remains in:
+Runtime authority currently remains in:
 
 - `skills/custom/grill-with-docs/SKILL.md` and `skills/custom/grill-with-docs/agents/openai.yaml`;
-- `skills/custom/grilling/SKILL.md` for interview admission, factual legwork, the decision frontier, one-focus questioning, bound control, Evidence gap, confirmation, and the Grilling exit packet;
-- `skills/custom/domain-modeling/SKILL.md`, `CONTEXT-FORMAT.md`, and `ADR-FORMAT.md` for domain resolution, persistence, ADR mutation, read-back, and the Domain Delta;
-- each invoking caller for its item identity, supplied authority, continuation, and return contract;
-- `docs/synthesis/skill-context-relationships.md` for pack-wide executable composition edges;
-- `tests/test_skill_pack_contracts.py` and `docs/validation/evals/core-workflows.md` for current structural and behavioral protection; and
-- `C:\Users\steve\.agents\skills\grill-with-docs` as the installed mirror of validated canonical source.
+- Grilling for the interview and intact Grilling exit packet;
+- Domain Modeling for domain meaning, persistence, ADR handling, and the authoritative cumulative Domain Delta;
+- `docs/synthesis/skill-context-relationships.md` for the current pack-wide relationship map; and
+- the current structural and behavioral proof surfaces.
 
-The sibling [Grilling Decision-Frontier Synthesis](grilling.md) and [Domain Modeling Durable-Truth Synthesis](domain-modeling.md) own proposed future component behavior. This note owns only their composition. The current runtime remains unchanged by this rewrite.
+The sibling [Grilling Decision-Frontier Synthesis](grilling.md) and [Domain Modeling Durable-Truth Synthesis](domain-modeling.md) own component behavior. This synthesis owns only their composition.
 
 ## How To Read This Document
 
-This synthesis retains a four-layer authority model consistent with [ADR-0007](../../adr/0007-synthesis-preserves-exhaustive-research-runtime-skills-compress.md):
+Consistent with [ADR-0007](../../adr/0007-synthesis-preserves-exhaustive-research-runtime-skills-compress.md):
 
-1. **Orientation** states the selected composer design and vocabulary.
-2. **Normative Design** is the sole authority for proposed future behavior.
-3. **Evidence And Rationale** preserves pressure, corrections, deliberate non-changes, and rejected machinery without creating rules.
-4. **Extraction And Verification** places and proves the accepted behavior.
+1. **Orientation** states the selected future design.
+2. **Normative Design** is the sole authority for future runtime behavior.
+3. **Evidence And Decisions** preserves exhaustive research, admissions, rejections, and current-runtime comparison without creating rules.
+4. **Extraction And Proof** tells Deploy Prompt 3 where each admitted behavior belongs and how later prompts prove it.
 
-When another layer disagrees with Normative Design, correct that layer. The Contract Map is the single navigation surface for normative ownership; the extraction map places rules, and the acceptance matrix proves them without redefining them.
+When another layer conflicts with Normative Design, correct the other layer. A confirmed decision enters runtime only through the destination named in the extraction map.
 
 # Layer One: Orientation
 
 ## North Star
 
-Grill With Docs returns one bounded Grilling packet and one current, complete Domain Delta as a coherent result while both components retain their own authority, mutation boundary, completion criterion, and return semantics.
+Grill With Docs is an explicit, direct-user composer for one bounded repo-backed decision that needs both relentless Grilling and active Domain Modeling. It returns the intact Grilling packet and Domain Modeling's current cumulative Domain Delta as one result, then stops.
 
-The composer owns only the seam:
+The composer owns only admission, pre-question disclosure, scheduling, Relay, combined status, and Return. It does not own questioning, semantic judgment, persistence, ADR approval, component payloads, caller continuation, or downstream execution.
 
-- admit work that needs both capabilities only after establishing the shared subject, source, authority, modes, identity, and return owner;
-- disclose the effective domain, ADR, collision, and no-execution boundaries before questioning;
-- keep Grilling and Domain Modeling active under their own contracts;
-- relay every settled material answer to Domain Modeling;
-- return domain collisions to Grilling before dependent questioning continues;
-- join only current, complete component results; and
-- return to the direct user or caller without starting downstream work.
+## Simplest Credible Baseline
 
-It does not own participant authority, question selection, frontier progress, branch materiality, evidence routing, domain-consequence classification, semantic settlement, persistence, ADR worthiness, Domain Delta accumulation, caller continuation, or downstream execution.
-
-## Design Verdict
-
-Keep Grill With Docs as a thin, implicitly invocable, one-file composer with one nested interaction spine:
+The selected design control is Matt Pocock's complete one-line skill:
 
 ```text
-Admit -> Disclose -> Compose [Grill <-> Relay <-> Model] -> Join -> Return
+Run a /grilling session, using the /domain-modeling skill.
 ```
 
-The future runtime defines only:
+That is the smallest credible expression of the core outcome: compose Grilling with Domain Modeling. The repository adapts the slash-command vocabulary to `$grilling` and `$domain-modeling`, and the Codex platform requires `agents/openai.yaml` to make the composer explicit-only. Everything else must earn admission as a delta from this baseline.
 
-1. the dual-capability admission predicate, closed caller set, and minimal shared seam;
-2. mutation disclosure before the first question;
-3. component-preserving composition with a repeated Relay callback;
-4. joint-result eligibility; and
-5. a lean combined Return.
+## Minimum Viable Runtime
 
-Do not add a universal entry schema, normative state machine, bridge ledger, full forensic wrapper, caller-specific runtime branch, operations file, packet reference, route catalog, or failure manual. If the runtime becomes long, remove component restatement before considering progressive disclosure.
+```text
+Admit -> Compose [Grill <-> Relay <-> Model] -> Return
+```
+
+- **Admit** accepts only an explicit direct-user request needing both components, locks mutation authority, and gives the required disclosure before the first question.
+- **Compose** runs one Grilling session with Domain Modeling active.
+- **Relay** carries each settled material answer to Domain Modeling and any collision back before dependent progress.
+- **Return** derives one combined status, preserves both component payloads intact, reports an exact blocker and re-entry condition when blocked, and stops.
+
+`Relay` is a repeated callback inside `Compose`, not a peer phase. Pre-question disclosure is part of `Admit`. Joint eligibility is part of `Return`. The runtime needs neither separate `Disclose` and `Join` stages nor a state machine.
 
 ## Composer Vocabulary
 
 | Term | Meaning |
 | --- | --- |
-| **Composition fit** | One bounded invocation needs both a participant-facing Grilling session and active Domain Modeling |
-| **Admission seam** | The minimal composer-owned compatibility check over shared subject and source, each component's admission-ready bound and authority lock, domain and ADR modes, caller identity, and return owner |
-| **Mutation disclosure** | The pre-question explanation of effective context persistence, separate ADR authority, collision-driven reopening, and the no-execution boundary |
-| **Settled material answer** | An answer Grilling has integrated as decision-bearing under its own frontier and authority rules |
-| **Relay** | Opaque transport of each settled material answer to Domain Modeling and of any returned collision to Grilling before dependent progress |
+| **Composition fit** | One explicit direct-user request needs both a bounded Grilling interview and active Domain Modeling |
+| **Settled material answer** | An answer Grilling has integrated as decision-bearing under its own rules |
+| **Relay** | Opaque transport of each settled material answer to Domain Modeling and any returned collision or blocker to Grilling before dependent progress |
 | **Component payload** | The complete Grilling exit packet or authoritative cumulative Domain Delta, preserved under its owner's schema |
-| **Joint status** | The composer-derived result `Confirmed`, `Evidence gap`, or `Blocked`; it never replaces a component status or blocker |
-| **Return owner** | The direct user or invoking caller that receives the combined packet and retains continuation authority |
+| **Combined status** | `Confirmed`, `Evidence gap`, or `Blocked`, derived by the composer without replacing component states |
 
-These are local composer terms, not additions to the repository domain glossary.
-
-## Leading-Word Runtime Model
-
-| Leading word | Runtime meaning |
-| --- | --- |
-| **Admit** | Verify the direct dual-capability trigger or one named caller edge and establish the shared subject, Source Trace, each component's admission-ready authority lock, domain and ADR modes, caller identity, and return owner; otherwise return the exact mismatch or blocker without starting a component |
-| **Disclose** | State the effective context, ADR, collision, and no-execution boundaries before Grilling asks its first question |
-| **Compose** | Run one Grilling session while Domain Modeling remains active under its own contract |
-| **Relay** | Carry every settled material answer to Domain Modeling and any returned collision back to Grilling |
-| **Join** | Derive one joint status from current complete component results without re-performing either completion criterion |
-| **Return** | Deliver the lean combined packet to the named owner and stop |
-
-**Compose** is the steering word. **Relay** repeats inside it; it is not a post-interview peer step.
-
-## Interaction Model
-
-```mermaid
-flowchart LR
-    ENTRY["Direct user or named caller"] --> COMPOSER["Admit -> Disclose"]
-    COMPOSER --> GRILL["Grilling owns the interview"]
-    GRILL -->|settled material answer| RELAY["Relay"]
-    RELAY --> DOMAIN["Domain Modeling owns the cumulative Domain Delta"]
-    DOMAIN -->|current delta; collision when present| RELAY
-    RELAY -->|collision before dependent progress| GRILL
-    GRILL -->|terminal candidate| JOIN["Join"]
-    DOMAIN -->|current complete delta| JOIN
-    JOIN --> RETURN["Return and stop"]
-```
-
-The diagram explains interaction only. Layer Two owns admission, disclosure, composition, Relay, Join, and Return.
+These are composer-local terms, not additions to the repository domain model.
 
 # Layer Two: Normative Design
 
 ## Contract Map
 
-| Concern | Owner | Normative section | Failure return |
+| Concern | Owner | Destination | Failure return |
 | --- | --- | --- | --- |
-| Dual-capability fit, closed caller admission, and shared-seam compatibility | Grill With Docs | [Admission](#admission) | Exact mismatch or `Blocked` with the missing or contradictory field |
-| Pre-question mutation and execution notice | Grill With Docs | [Disclose](#disclose) | Disclose before questioning or return `Blocked` |
-| Interview, domain, and composer authority | Respective component or composer | [Compose And Component Authority](#compose-and-component-authority) | Return the exact ownership violation or component blocker |
-| Settled-answer and collision transport | Grill With Docs | [Relay](#relay) | Pause dependent progress; return collision or `Blocked` |
-| Domain meaning and cumulative Domain Delta | Domain Modeling | [Relay](#relay) | Preserve its blocker; the composer never repairs or accumulates it |
-| Joint terminal eligibility and status | Grill With Docs | [Join](#join) | `Blocked` with owner and safe resumption requirement |
-| Combined packet and stop boundary | Grill With Docs | [Return](#return) | Return exact packet gap; start nothing |
-| Complete composer criterion | Grill With Docs | [Completion](#completion) | Remain unconfirmed or `Blocked` |
-| Executable and suggestion-only edges | Relationship owner | [Relationships](#relationships) | Return to the direct user or invoking caller |
+| Explicit-only platform policy | Grill With Docs metadata | `agents/openai.yaml` | Candidate is not extractable without `allow_implicit_invocation: false` |
+| Direct composition fit, modes, and pre-question disclosure | Grill With Docs | [Admit](#admit) | Exact mismatch or `Blocked` with exact blocker and re-entry condition |
+| Interview and exit packet | Grilling | Component-owned | Preserve its result intact |
+| Domain semantics, mutation, ADR handling, and cumulative Domain Delta | Domain Modeling | Component-owned | Preserve its collision, blocker, and delta intact |
+| Settled-answer and collision transport | Grill With Docs | [Compose And Relay](#compose-and-relay) | Pause dependent progress; return `Blocked` if a current delta cannot be obtained |
+| Combined status, packet, and stop boundary | Grill With Docs | [Return](#return) | `Blocked`; start nothing |
+| Completion | Grill With Docs | [Completion](#completion) | Remain incomplete or `Blocked` |
 
-## Admission
+## Admit
 
-Grill With Docs remains implicitly invocable. Its description must front-load both required conditions: one repo-backed decision interview needs user-owned ambiguity resolution and durable domain-record capture active together.
+Grill With Docs is explicit-only and admits only a direct user. Admit when the user explicitly invokes it for one bounded repo-backed decision that needs both user-owned ambiguity resolution through Grilling and active Domain Modeling.
 
-Admit only:
+Reject a mismatch before starting either component. Name the narrower owner when the work needs only Grilling or only Domain Modeling, but do not invoke that owner. The composer is not a router.
 
-- **Direct user:** one named plan, design, proposal, decision, or idea needs both Grilling and Domain Modeling.
-- **Wayfinder:** qualification or one bounded Grilling ticket requires a user decision under the map's locked domain mode.
-- **Triage:** one bounded item needs maintainer-owned shaping plus domain capture before Triage can recommend.
-- **Improve Codebase:** one selected candidate needs a user-owned decision before the caller can reclassify it.
+Lock only the shared subject and Source Trace plus Domain Modeling's two independent mutation modes:
 
-This caller set is closed. A new caller requires an explicit trigger, supplied authority, return contract, relationship-map edge, and proof before promotion. Audit Codebase remains explicit-only and may suggest Grill With Docs, but it never invokes the composer.
+- context action defaults to `render only`; use `persist authorized` only when the user separately grants that authority; and
+- ADR action defaults to `offer only`; create an ADR only after separate explicit approval for an identified candidate.
 
-Composition does not fit when:
+Before Grilling asks its first question, tell the user the effective context action, the separate ADR approval gate, that a domain collision may reopen or block a branch, and that confirmation starts no downstream work. This disclosure reports authority and grants none.
 
-- a conversation-only pressure test needs Grilling without durable capture;
-- settled domain truth needs Domain Modeling without an interview;
-- one source, runnable, causal, external-stakeholder, or interface question belongs to its evidence or design owner;
-- a tracker-backed multi-session campaign belongs to Wayfinder; or
-- an active caller owns ordinary clarification and has no accepted Grill With Docs edge.
+Each component validates its own inputs and authority. The composer does not invent a universal entry packet, caller identity, opaque identifiers, return-owner field, or generalized handoff contract.
 
-On a direct mismatch, name the narrower owner and stop without starting it. On a caller mismatch, return the exact mismatch to that caller. A mismatch is not a combined packet and receives no joint status. The composer is not a general router.
+Admit completes when the work fits both components, their subject and source agree, the effective mutation modes are explicit, and the disclosure has been made. A missing or contradictory requirement returns `Blocked` with the exact blocker and re-entry condition.
 
-Admission establishes only the shared seam:
-
-```text
-Subject and Source Trace:
-Component-required bounds and authorities:
-Domain context action: persist authorized | render only
-ADR action: offer only | approved candidate identifiers
-Caller identity and opaque identifiers, when present:
-Return owner:
-Downstream execution: none
-```
-
-For a direct invocation, missing persistence intent becomes `render only`; invoking Grill With Docs does not itself authorize a context write. A caller must pass `persist authorized` or `render only`. ADR creation always requires separate explicit approval.
-
-Preserve caller vocabulary and identifiers opaquely. Each component validates its own admission-ready bound, authorities, and inputs and produces its own packet; the composer does not create a universal component schema, weaken a component requirement, invent an authority, or merge caller fields into generic replacements.
-
-Admission completes only when both components identify the same bounded subject and source, each accepts its required bound and authority lock, domain and ADR modes are explicit, and the return owner is known. Missing or contradictory fields return `Blocked` with their owner and safe resumption requirement.
-
-## Disclose
-
-Before Grilling asks its first question, state:
-
-1. whether Domain Modeling is `persist authorized` or `render only`;
-2. that ADR creation has a separate explicit approval gate;
-3. that a domain collision may reopen or block an interview branch; and
-4. that confirmation starts no research, design, planning, ticket, implementation, tracker, or other downstream workflow.
-
-Disclosure reports authority; it grants none. Point detailed persistence and confirmation mechanics to Domain Modeling and Grilling rather than copying them. Disclosure completes when the participant can distinguish possible in-session domain persistence from the unstarted next route.
-
-## Compose And Component Authority
+## Compose And Relay
 
 Run one Grilling session with Domain Modeling active throughout.
 
-Grilling exclusively owns:
+Grilling exclusively owns participant authority, factual legwork, materiality, frontier selection, questioning, bounds, Evidence gap, confirmation, its exit packet, and its completion criterion.
 
-- participant admission and decision authority;
-- factual legwork, source citations, materiality, frontier selection, and one-focus questioning;
-- interview bounds, deferral, rebinding, and Evidence-gap classification;
-- shared-understanding confirmation; and
-- its complete exit packet and completion criterion.
+Domain Modeling exclusively owns domain-consequence classification, semantic resolution, context routing, context and ADR mutation, verification, the authoritative current cumulative Domain Delta, and its completion criterion.
 
-Domain Modeling exclusively owns:
+After every settled material answer:
 
-- domain-consequence classification, routing, Source Trace, and semantic authority;
-- challenge, resolution, context ownership, and relationship coherence;
-- context and ADR modes, mutation, formatting, and read-back;
-- the authoritative cumulative Domain Delta, including no-change, rendered, persisted, blocked, and partial-failure states; and
-- its completion criterion.
-
-Grill With Docs owns admission, disclosure, scheduling, Relay timing, joint eligibility, and Return. Composition transfers no component authority. The composer never asks or answers a Grilling decision, settles domain truth, approves a write, classifies an ADR, merges Domain Delta entries, weakens a blocker, or re-performs a component completion criterion.
-
-## Relay
-
-After Grilling integrates each settled material answer:
-
-1. relay the answer, shared subject and source, and relevant opaque branch or caller identifiers to Domain Modeling;
+1. relay the answer with the shared subject and source to Domain Modeling;
 2. receive Domain Modeling's authoritative current cumulative Domain Delta;
-3. carry that delta opaquely without merging entries, assigning versions, or recording a separate bridge ledger;
-4. relay any material domain collision or blocker to Grilling intact; and
-5. allow dependent questioning to continue only after Grilling has integrated the returned result.
+3. carry that delta opaquely without filtering, merging, versioning, or keeping a bridge ledger;
+4. relay any material collision or blocker to Grilling intact; and
+5. allow dependent questioning to continue only after Grilling integrates the returned result.
 
-The composer does not decide whether an answer has a domain consequence. Grilling owns whether the answer is settled and material; Domain Modeling owns whether the consequence is material, no-change, contradictory, rendered, persisted, or blocked.
-
-Domain Modeling may return a minimal cumulative no-change delta. This is the legitimate result of active durable capture, not ceremonial composer work. A collision may reopen the decision tree; Grilling alone decides how. If Domain Modeling cannot return a current delta, return `Blocked` rather than silently continuing or relabeling the failure as Grilling's Evidence gap.
-
-## Join
-
-Join runs only when Grilling reaches a terminal candidate. It checks component-declared terminal state and mutual compatibility; it does not reproduce either component's completion logic or ask for a second confirmation.
-
-| Joint status | Eligibility |
-| --- | --- |
-| **Confirmed** | Grilling returns its complete confirmed packet; Domain Modeling returns a current complete delta; no material nondeferred collision or blocker remains |
-| **Evidence gap** | Grilling returns its legitimate complete Evidence-gap packet; Domain Modeling returns a current complete delta through the last settled answer |
-| **Blocked** | Admission, disclosure, component integrity, collision processing, domain persistence or verification, payload currency, or compatibility cannot close |
-
-Only Grilling originates `Evidence gap`. Every `Blocked` result names the exact blocker, owner, and safe resumption requirement. Joint status never grants caller continuation authority.
+Grilling decides whether an answer is settled and material. Domain Modeling decides whether its domain consequence is no-change, resolved, contradictory, rendered, persisted, or blocked. A cumulative no-change Domain Delta is valid. If Domain Modeling cannot return a current delta, return `Blocked` rather than continuing silently or relabeling the failure as Grilling's Evidence gap.
 
 ## Return
 
-Return one lean combined packet:
+When Grilling reaches a terminal candidate, derive one combined status from current component results without re-performing either completion criterion or asking for a second confirmation:
+
+| Status | Eligibility |
+| --- | --- |
+| `Confirmed` | Grilling returns its complete confirmed packet; Domain Modeling returns a current complete delta; no material nondeferred collision or blocker remains |
+| `Evidence gap` | Grilling returns its legitimate complete Evidence-gap packet; Domain Modeling returns a current complete delta through the last settled answer |
+| `Blocked` | Admission, component integrity, Relay, collision processing, mutation verification, payload currency, or compatibility cannot close |
+
+Only Grilling originates `Evidence gap`. A Domain Modeling failure is `Blocked` at the composer boundary.
+
+Return only:
 
 ```text
 Status: Confirmed | Evidence gap | Blocked
-Caller identity and opaque identifiers: <when supplied>
 Grilling exit packet: <attached intact when available>
 Domain Delta: <attached intact when available>
-Composition blocker, owner, and resumption requirement: <Blocked only>
-Return owner:
+Composition blocker and re-entry condition: <Blocked only>
 ```
 
-Do not copy input packets, disclosure text, callback history, a bridge ledger, component semantics, continuation authority, or `Downstream execution: none` into the output. Those are input, runtime, component, or stop-boundary rules rather than useful return data.
+The direct user is necessarily the recipient, so caller identifiers and return-owner fields are noise and are omitted. Do not copy admission data, disclosure text, callback history, component semantics, or continuation instructions into the packet.
 
-For a caller invocation, return to that caller and stop. For a direct invocation, report to the user and stop. An Evidence-gap packet preserves Grilling's exact uninvoked evidence owner. A Confirmed packet selects no next route. A Blocked packet reports recovery but does not perform it.
+Return to the user and stop. `Confirmed` selects no next route. `Evidence gap` preserves Grilling's exact uninvoked evidence owner. `Blocked` explains safe re-entry without performing recovery.
 
 ## Completion
 
-Grill With Docs completes only when:
+Complete only when:
 
-- admission either establishes the dual-capability fit or returns an exact mismatch;
-- admission establishes the shared seam without losing or widening authority;
-- disclosure precedes the first question;
-- both components retain their own contracts;
+- Admit either establishes direct dual-capability fit or returns the exact mismatch;
+- the mutation modes and required disclosure are explicit before questioning;
+- both components retain their contracts;
 - every settled material answer and returned collision traverses Relay before dependent progress;
-- Domain Modeling alone returns a current cumulative Domain Delta;
-- Join derives `Confirmed`, `Evidence gap`, or `Blocked` without replacing component states;
-- Return preserves available component payloads and caller identity in the lean packet; and
-- downstream execution remains unstarted.
+- Domain Modeling alone supplies a current cumulative Domain Delta;
+- Return derives exactly one allowed status from intact current component results;
+- a blocked result names the exact blocker and re-entry condition; and
+- no downstream workflow starts.
 
-Composer completion never substitutes for component completion or the caller's broader workflow completion.
+Composer completion never substitutes for component completion.
 
 ## Relationships
 
+The future runtime has only these executable relationships:
+
 | Source | Relationship | Target | Trigger and return |
 | --- | --- | --- | --- |
-| Direct user | Invoke | `$grill-with-docs` | One repo-backed decision needs both interview and durable capture; report the combined packet and stop |
-| `$skill-router` | Recommend and stop | `$grill-with-docs` | Both capabilities are needed; the user starts the composer later |
-| `$wayfinder` | Invoke | `$grill-with-docs` | Qualification or one Grilling ticket needs a user decision under the locked domain mode; return to the same map item |
-| `$triage` | Invoke | `$grill-with-docs` | One item needs maintainer shaping and domain capture; return to that item without tracker authority |
-| `$improve-codebase` | Invoke | `$grill-with-docs` | One selected candidate needs a user-owned decision; return to the same candidate and report |
-| `$audit-codebase` finding contract | Suggest only | `$grill-with-docs` | A read-only finding exposes a user-owned term, rule, preference, or tradeoff; caller selection is required |
-| `$grill-with-docs` | Compose | `$grilling` | Preserve its full interview contract and receive its exit packet |
-| `$grill-with-docs` | Compose | `$domain-modeling` | Relay settled material answers and receive its authoritative cumulative Domain Delta |
+| Direct user | Explicitly invoke | `$grill-with-docs` | One bounded repo-backed decision needs both components; receive the combined packet and stop |
+| `$grill-with-docs` | Compose | `$grilling` | Preserve its complete interview contract and intact exit packet |
+| `$grill-with-docs` | Compose | `$domain-modeling` | Relay every settled material answer and preserve its authoritative cumulative Domain Delta |
 
-The closed invoking set is the direct user, Wayfinder, Triage, and Improve Codebase. The components never invoke each other, and callers do not bypass the composer when their accepted edge requires both components.
+Wayfinder, Triage, and Improve Codebase caller integrations are deferred. They are not admitted runtime branches, entry fields, Return fields, or Prompt 3 extraction work. Recommendation-only or suggestion-only references may continue to tell the user that the explicit skill exists, but they confer no admission or continuation authority.
 
-Grill With Docs invokes no Router, Research, Prototype, Diagnosing Bugs, To Questionnaire, Codebase Design, Wayfinder, Domain Modeling outside the composition, To Spec, To Tickets, Implement, or other downstream route. It mutates no plan, spec, ticket, implementation file, report, tracker, Git state, or external system. Only Domain Modeling may mutate routed context or approved ADR files under the admitted mode.
+The current relationship index still describes the current canonical skill and therefore remains unchanged in Prompt 2. It becomes an affected promotion surface only after the experimental candidate is accepted and the canonical invocation policy and caller edges actually change.
 
-# Layer Three: Evidence And Rationale
+# Layer Three: Evidence And Decisions
 
-## Current Runtime Baseline
+## Baseline Evidence
 
-The current runtime uses:
+Prompt 1 inspected all required checked-out upstreams and the complete current canonical package:
+
+| Candidate | Observed state | Result |
+| --- | --- | --- |
+| Matt Pocock | clean `ed37663cc5fbef691ddfecd080dff42f7e7e350d`, dated 2026-07-21 | Matching one-line package selected as simplest credible baseline; its explicit invocation is retained, while slash-command and write-authority assumptions are adapted to this repository and platform |
+| Superpowers | clean `d884ae04edebef577e82ff7c4e143debd0bbec99`, dated 2026-07-02 | No matching or equivalent package found |
+| Ponytail | clean `16f29800fd2681bdf24f3eb4ccffe38be3baec6b`, dated 2026-07-15 | No matching or equivalent package found |
+| Prior canonical | one-file implicit composer with direct, Wayfinder, Triage, and Improve Codebase admission | Historical composition evidence, not current authority |
+
+Freshness is bounded to those Prompt 1 observations. No behavioral claim was proved by the upstream comparison.
+
+## Prior Runtime Versus Promoted Design
+
+The prior canonical used:
 
 ```text
-Compose -> Disclose -> Bound -> Reconcile -> Return
+Admit -> Disclose -> Compose [Grill <-> Relay <-> Model] -> Join -> Return
 ```
 
-It already protects the two component gates, pre-interview disclosure, caller-bound pass-through, an intact Domain Delta at exit, joint eligibility for Confirmed, preservation of Grilling's Evidence gap, and no downstream execution.
+It was implicitly invocable, admitted three workflow callers in addition to direct use, transported caller identifiers and return ownership, and named Disclose and Join as peer stages.
 
-The selected future design changes behavior in four material ways:
+The promoted design changes those points deliberately: explicit-only, direct-user-only, no caller packet, disclosure folded into Admit, and joint eligibility folded into Return. It preserves render-only default, separate ADR approval, every-answer Relay, Domain Modeling's cumulative-delta ownership, intact component payloads, three combined statuses, exact blocked re-entry, and no downstream execution.
 
-- direct composition defaults to render-only instead of treating durable capture as implicit write authority;
-- every settled material answer is relayed during the interview instead of performing the first reconciliation only at exit;
-- Domain Modeling, not the composer, owns the cumulative Domain Delta; and
-- the combined Return is lean and uses `Blocked` for composition failure.
+## Mechanism-Admission Ledger
 
-It also sharpens existing behavior by closing the caller set, absorbing the shared compatibility check into Admit instead of retaining Bound or a separate Align stage, and removing duplicated state and packet machinery.
+| Mechanism beyond one-line baseline | Baseline failure or required contract | Owner | Cheaper alternative | Load | Admission and destination |
+| --- | --- | --- | --- | --- | --- |
+| Codex component names | Slash-command syntax is not this repository's skill vocabulary | Platform adaptation | Keep slash syntax | Two names | **admit**: inline composition sentence |
+| Explicit-only metadata | Human judgment must select every use | `agents/openai.yaml` | Implicit dual-condition description | Human cognitive load, lower ambient context load | **admit**: metadata |
+| Direct dual-capability admission | One-line baseline can run for single-capability work | Grill With Docs | Trust user selection alone | Small entry gate | **admit**: inline Admit |
+| Render-only default and separate ADR approval | Composition is not mutation consent | Domain Modeling owns action; composer locks it | Always write | Small authority gate | **admit**: inline Admit; detailed procedure component-owned |
+| Pre-question disclosure | User must know mutation and no-execution boundaries before answering | Grill With Docs | Separate Disclose stage | Four compact facts | **admit**: fold into Admit |
+| Every-settled-answer Relay | Exit-only modeling can discover collisions after dependent questioning | Composer transports; components interpret | Model once at exit | Repeated callback | **admit**: inline Compose |
+| Cumulative Domain Delta | Composer-side reconstruction duplicates semantic reduction | Domain Modeling | Composer ledger | Conditional component work | **caller-owned** by Domain Modeling; carry opaquely |
+| Collision return before dependent progress | Continuing can compound a contradicted model | Grilling integrates; composer transports | Report collision only at exit | Pause branch | **admit**: inline Compose |
+| Three combined statuses | Component outputs need one coherent terminal signal | Grill With Docs | Return two unjoined statuses | Small Return table | **admit**: inline Return |
+| Intact component payloads | Flattening loses owner-specific recovery semantics | Component owners | Universal schema | Two opaque attachments | **caller-owned**, preserved inline in Return |
+| Exact blocker and re-entry condition | `Blocked` without recovery is not actionable | Grill With Docs | Status alone | One conditional field | **admit**: inline Return |
+| No downstream execution | Confirmation grants no next-route authority | Direct user | Auto-route | One stop guard | **admit**: inline boundary and Return |
+| Caller integrations | Current callers can supply identities and continuation contracts | Wayfinder, Triage, Improve Codebase | Direct use first | Branch and coordination load | **defer**: no Prompt 3 destination |
+| Caller identifiers and return-owner fields | Needed only by deferred callers | Caller owners | Direct user as implicit recipient | Packet noise | **reject** from direct runtime |
+| Separate Disclose and Join stages | Their behaviors remain necessary | Composer | Fold into adjacent gates | Navigation load | **reject** as stages; behavior admitted in Admit and Return |
+| Universal schema, bridge ledger, callback history, state machine | No proved baseline failure requires durable composer state | none | Opaque transport | High runtime and maintenance load | **reject** |
+| Evaluation and promotion machinery | Needed to prove and ship, not execute | Later deploy prompts | Runtime prose | Non-runtime process load | **non-runtime**: Layer Four and validation records |
 
-## Decision Trace
+## Rejected, Deferred, And Residual Complexity
 
-| Decision | Selected behavior and rejected alternative | Decisive reason | Normative and proof owner |
+Rejected runtime hypotheses are implicit invocation, universal entry or return schemas, caller identity plumbing, a bridge ledger, callback history, a normative state machine, separate Disclose and Join phases, component restatement, and automatic continuation.
+
+Deferred caller integrations are Wayfinder, Triage, and Improve Codebase. Each would require its own observable trigger, supplied authority, identity, Return contract, relationship edge, and behavioral proof before admission. Prompt 3 must not prebuild extension fields for them.
+
+Residual unavoidable complexity is limited to three control-backed behavior deltas—mutation authority and admission disclosure, combined terminal eligibility, and exact safe failure—plus the minimum protected Relay ownership seam. Prompt 4's corrected upstream control performed ordered Relay 5/5 without detailed composer guidance, so the final candidate collapses that procedure while retaining the confirmed transport boundary. The small `Blocked` field is the only branch-specific inline contract; keeping its exact re-entry data beside status derivation is cheaper and safer than a disclosed runtime file.
+
+# Layer Four: Extraction And Proof
+
+## Prompt 3 Extraction Map
+
+The experimental package is one thin skill file plus platform metadata. No supporting runtime reference, script, schema, template, or asset is admitted.
+
+| Classification | Behavior or surface | Exact destination | Prompt 3 action |
 | --- | --- | --- | --- |
-| Keep a composer | One thin composer orders the two components; reject independent caller-built sequences | Independent calls make every caller reproduce alignment, collision ordering, and joint return | [Compose](#compose-and-component-authority); integrated caller cases |
-| Keep component authority singular | Grilling owns interview behavior; Domain Modeling owns domain meaning; reject composer interpretation | Composition should transport authority, not redistribute it | [Compose](#compose-and-component-authority); ownership samples |
-| Admit through a minimal seam | Preserve shared subject, source, modes, identity, and return owner inside admission; reject a separate Align stage and universal component packet | Compatibility is an admission gate rather than a distinct activity, while a generic schema duplicates component admission and risks lossy caller translation | [Admission](#admission); caller fixtures |
-| Default direct use to render-only | Require explicit persistence intent; reject composer invocation as write authority | Locally settled answers may reopen, and composition is not mutation consent | [Admission](#admission); authority samples |
-| Relay every settled material answer | Let Domain Modeling classify the consequence; reject composer-side filtering and exit-only reconciliation | Filtering duplicates semantic judgment and can discover collisions too late | [Relay](#relay); ordered multi-turn samples |
-| Give Domain Modeling the cumulative delta | Carry its current delta opaquely; reject composer-side accumulation, versions, and bridge ledgers | A second reducer would need semantic merge, conflict, and partial-write rules | [Relay](#relay); callback inventory |
-| Return a lean packet | Preserve both component outputs, caller identity, and exact blocker only; reject the forensic wrapper | Repeated inputs and callback history add stale state without semantic evidence | [Return](#return); packet rubric |
-| Use `Blocked` | Require blocker, owner, and resumption condition; reject vague `Incomplete` | Composition failure must stay distinct from an open interview and Grilling Evidence gap | [Join](#join); terminal-state matrix |
-| Use the nested interaction spine | Absorb Align into Admit, keep Relay inside Compose, and reject a normative state machine or flat peer sequence | Compatibility is checked at entry, the composer has no persistent transaction or recovery state, and Relay repeats during the interview | [Leading-Word Runtime Model](#leading-word-runtime-model); ordered transcripts |
-| Keep implicit invocation | Use a sharp dual-condition trigger; reject explicit-only reach | Natural dual-capability requests would otherwise fall into Grilling unless the user already knew the composer or Router | [Admission](#admission); routing samples |
-| Close the caller set | Admit the direct user, Wayfinder, Triage, and Improve Codebase; keep Audit suggestion-only; reject an open extension point | Every executable edge needs explicit supplied authority, return ownership, and proof | [Relationships](#relationships); relationship assertions |
-| Keep one confirmation and no continuation | Grilling confirms once and the composer returns; reject second confirmation and automatic next routes | Neither composition nor joint status grants downstream authority | [Join](#join) and [Return](#return); terminal caller samples |
+| Baseline | Compose Grilling with Domain Modeling | `skills/experimental/grill-with-docs/SKILL.md` opening outcome | Start from the one-line core using `$` vocabulary |
+| Add | Direct dual-capability gate, render-only default, ADR offer-only default, and pre-question disclosure | Inline `Admit` | Extract the common entry gate |
+| Add | Every-answer Relay, collision return, opaque cumulative delta | Inline `Compose` | Extract the repeated callback without component procedure |
+| Add | Three statuses, intact payloads, blocker and re-entry, stop boundary | Inline `Return` | Fold joint eligibility into Return |
+| Add | Checkable end condition | Inline completion | Protect authority, Relay currency, payload integrity, and no execution |
+| Platform adaptation | Explicit-only invocation | `skills/experimental/grill-with-docs/agents/openai.yaml` | Set `policy.allow_implicit_invocation: false`; keep description concise and explicit-use oriented |
+| Caller-owned | Interview, questioning, Evidence gap, confirmation, Grilling packet | Grilling runtime | Point by ownership; do not copy |
+| Caller-owned | Domain semantics, persistence, ADR mechanics, cumulative Domain Delta | Domain Modeling runtime and disclosed references | Point by ownership; do not copy |
+| Deferred | Wayfinder, Triage, Improve Codebase integrations | None | Do not create fields, branches, or references for future callers |
+| Non-runtime | Upstream evidence, admission ledger, rationale, evaluation and promotion procedure | This synthesis and Prompt 3 validation record | Keep out of runtime |
+| Rejected | Universal schema, caller packet, bridge ledger, callback history, state machine, separate Disclose and Join stages | None | Do not extract |
 
-## Preserved Boundaries And Deferred Work
+The smallest coordinated experimental cohort is only `grill-with-docs`. Grilling and Domain Modeling already expose the required component contracts; Prompt 3 verifies compatibility read-only and changes them only if it finds a concrete contradiction that makes extraction impossible. Caller skills and the current relationship index are outside Prompt 3 because their integrations are deferred and canonical behavior has not changed.
 
-| Disposition | Item | Reason or revisit gate |
+## Proof Ownership And Phases
+
+| Phase | Owner | Proves | Must not claim |
+| --- | --- | --- | --- |
+| Prompt 3 structural proof | Deploy Prompt 3 | Complete package inventory, explicit-only metadata, exact admitted surfaces, no undeclared files, readable candidate, and structural integrity | That wording changes multi-turn behavior |
+| Prompt 4 behavior proof | Deploy Prompt 4 | Direct admission, disclosure timing, Relay order, collision pause, delta ownership, statuses, intact Return, blocked re-entry, and no execution against fresh controls | Promotion or installed parity |
+| Prompt 5 promotion proof | Deploy Prompt 5 | Accepted candidate becomes canonical; affected current relationship and policy surfaces are reconciled; canonical tests and validation pass; installed mirror is synchronized when authorized by that prompt | New caller integrations |
+
+Structural tests may assert machine-consumed policy and package shape. Semantic outcomes require behavior evaluation; they must not be encoded as brittle phrase-presence tests.
+
+## Prompt 4 Behavioral Matrix
+
+| Normative owner | Positive cases | Promotion-blocking negative cases |
 | --- | --- | --- |
-| Unchanged | One concise runtime file with no supporting reference | Universal composer behavior fits one semantic surface |
-| Unchanged | Independent implicitly invocable Grilling and Domain Modeling owners | The composer is their sole seam, not their replacement |
-| Unchanged | Pre-question disclosure, intact component payloads, Grilling-owned Evidence gap, and no downstream execution | These are safety and recovery boundaries |
-| Unchanged | Audit Codebase remains explicit-only and suggestion-only | Audit is terminal, read-only, and caller-selected |
-| Unchanged | Canonical proof precedes installed synchronization | Partial family promotion would create authority drift |
-| Deferred | Automatic semantic diffing, callback budgets, or speculative Domain Modeling before Grilling settles materiality | Promote only after a fixed control proves an observed failure |
-| Deferred | Caller-specific runtime branches or new callers | Add only with an owned edge, supplied authority, return contract, and proof |
-| Deferred | Automatic evidence-owner invocation or caller continuation | Requires new downstream authority; never inferred from component results |
+| Admit | Explicit direct dual-capability request admits; context defaults render-only; ADR defaults offer-only; disclosure precedes questioning | Implicit selection, single-capability admission, inferred write authority, late disclosure, or caller-specific fields |
+| Compose and Relay | Every settled material answer reaches Domain Modeling; no-change is valid; collision returns before dependent questioning | Composer filters or merges, reconciles only at exit, fabricates delta state, or continues through collision |
+| Return | Current component results yield exactly Confirmed, Evidence gap, or Blocked; payloads stay intact; blocker includes re-entry; nothing downstream starts | Second confirmation, false Confirmed, Domain failure relabeled Evidence gap, flattened payload, caller fields, vague Blocked, or continuation |
 
-Deferred machinery may promote only when a realistic control demonstrates that it improves a decision or proof obligation without weakening component ownership, payload integrity, mutation authority, or the no-execution boundary.
+Use fixed realistic controls and fresh candidate contexts under the Writing Great Skills behavior-evaluation contract. Record evidence limits and residual gaps; do not treat structural assertions as semantic proof.
 
-# Layer Four: Extraction And Verification
+## Prompt 3 Extraction Readiness (Satisfied)
 
-## Proposed Runtime Semantic Surface
+Prompt 3 classified every surface without inventing a decision:
 
-Extract the [Leading-Word Runtime Model](#leading-word-runtime-model) and its Layer Two contracts into `skills/custom/grill-with-docs/SKILL.md` in semantic order: outcome and boundary, Admit with the shared seam, Disclose, Compose with nested Relay, Join, Return, and Completion. This is a semantic target, not final wording. Leave component procedure, caller-specific mechanics, rationale, evaluation protocol, and migration detail with their owners or in this synthesis.
+- the exact baseline is quoted and its platform adaptations are named;
+- every delta has an admission, owner, cheaper alternative, load, and destination;
+- all common-path runtime behavior is inline, with component procedure caller-owned;
+- no disclosed Grill With Docs runtime file is required;
+- caller integrations and their fields are explicitly deferred or rejected;
+- proof phases distinguish structure, behavior, promotion, and installation; and
+- current canonical and relationship evidence is labeled current rather than normative future behavior.
 
-## Runtime Ownership And Change Map
+No extraction choice remained between competing spines, invocation policies, caller sets, packet schemas, or proof methods.
 
-The minimum coordinated experimental cohort is `grilling`, `domain-modeling`, `grill-with-docs`, `wayfinder`, `triage`, and `improve-codebase`. Before promotion, generate or refresh one current candidate for every behaviorally affected cohort member: the first three own the composed behavior and the final three are the closed invoking caller set. Domain Modeling is a leaf and has no Skill Router promotion dependency. Repo Bootstrap and recommendation-only or suggestion-only owners require compatibility verification, not experimental candidate generation, unless an observed packet or route mismatch requires an owned change.
+## Prompt 4 Acceptance Decision
 
-| Stage / bundle | Surface | Owns | Proposed delta | Must not absorb |
-| --- | --- | --- | --- | --- |
-| `I1 / C1` | `skills/custom/grill-with-docs/SKILL.md` | Dual-condition description; thin boundary; Admit with the shared seam, Disclose, Compose and Relay, Join, lean Return, Completion | Extract Layer Two into one concise nested composer contract | Component procedure, caller-specific branches, route catalog, state machine, universal packet, bridge ledger, or rationale |
-| `I1 / C1` | `skills/custom/grill-with-docs/agents/openai.yaml` | Invocation policy | Preserve explicitly declared `policy.allow_implicit_invocation: true` | Description or runtime procedure |
-| `I2 / C2` | Grilling runtime and synthesis | Complete interview, Evidence gap, confirmation, and exit-packet contracts | Accept opaque caller identity and returned domain collisions; change only an observed mismatch | Domain mutation, composition status, or combined Return |
-| `I2 / C2` | Domain Modeling runtime, references, and synthesis | Domain admission, semantic resolution, modes, persistence, ADRs, cumulative Domain Delta, and blockers | Accept every settled material answer and return the authoritative cumulative delta; preserve render-only default absent explicit persistence | Interview procedure, composer status, or caller continuation |
-| `I2 / C2` | Wayfinder-owned surfaces | Locked domain mode, map identity, bounded decision, and continuation | Supply admission-seam fields and consume the lean packet | Composer internals or automatic next operation |
-| `I2 / C2` | Triage-owned surfaces | Item identity, shaping trigger, Source Trace refresh, and continuation | Supply an explicit domain mode and consume the lean packet | Interview, domain procedure, or tracker authority transfer |
-| `I2 / C2` | Improve Codebase selected-candidate surface | Candidate identity, one-blocker resolution, report reconciliation, and reclassification | Supply an explicit domain mode and consume the lean packet | Component procedure or loss of caller ownership |
-| `I2 / C2` | Audit Codebase finding contract | Read-only suggested-owner classification | Preserve explicit-only, suggestion-only behavior | Composer invocation or audit continuation |
-| `I2 / C2` | Skill Router | Direct distinction among Grilling, Grill With Docs, Domain Modeling, evidence leaves, and Wayfinder | Preserve recommend-and-stop; align only if admission wording changes | Composer procedure or automatic invocation |
-| `I2 / C2` | `docs/synthesis/skill-context-relationships.md` | Invocation policy and executable edges | Preserve the closed caller set and two Compose edges; sharpen trigger and return wording | Component procedure or unlisted caller edge |
-| `I2 / C2` | README and active human route guidance | Human orientation | Update only materially changed invocation wording | Normative procedure or caller catalog |
-| `I3 / C3` | `tests/test_skill_pack_contracts.py` | Structural composition, invocation policy, closed edges, ownership exclusions, and mirror-safe invariants | Protect the accepted nested spine and single ownership without snapshotting incidental prose | Claims that strings prove multi-turn behavior |
-| `I3 / C3` | `docs/validation/evals/core-workflows.md` | Behavioral prompts, required outcomes, critical failures, and integrated caller cases | Cover render-only default, Relay timing, cumulative-delta ownership, Blocked, lean Return, and closed callers | Runtime rules not owned in Layer Two |
-| `I3 / C3` | Behavior-evaluation records | Fixed controls and candidate evidence | Use shared coverage-optimized scenarios with per-claim scoring | Normative authority or anecdotal proof |
-| `I4 / C4` | Installed mirror | Validated copy of canonical runtime | Synchronize only after coordinated proof | Independent edits, partial synchronization, or canonical authority |
+**Accepted and promoted to canonical source** at exact tree hash `09438242574437c91ed631a1dd59010f3c02752b51b8eb93d096259fab65def7`.
 
-Stages order one coordinated rewrite: `I1` extracts the composer, `I2` reconciles owned relationships, `I3` proves behavior and structure, and `I4` synchronizes the validated mirror. No stage is separately promotable.
+The upstream control failed admission/disclosure, one-component non-invocation, and all three combined-status Returns in all five samples. The final candidate passed every fixed case in five fresh contexts, as did the repaired pre-prune control; no critical failure or prune regression appeared. Ordered Relay was already correct in the neutral upstream control, so detailed Relay procedure was removed and only the protected seam remains. Evidence and residual limits are recorded in [`2026-07-22-grill-with-docs-post-candidate-behavior-eval.md`](../../validation/transcripts/2026-07-22-grill-with-docs-post-candidate-behavior-eval.md).
 
-## Staged Behavior-Evaluation Protocol
-
-| Phase | Claims proved | Shared scenario family |
-| --- | --- | --- |
-| `E0`: Control lock | Current or no-candidate guidance exhibits each claimed failure | Fixed realistic controls for changed behavior |
-| `E1`: Admit and Disclose | Dual trigger, closed callers, shared seam, opaque identity, render-only default, explicit modes, and notice timing | Direct, mismatch, Wayfinder, Triage, and Improve entry variants |
-| `E2`: Compose and Relay | Component authority, every settled material answer relayed, current cumulative delta, collision return, and no composer reduction | Multi-turn no-change, domain-change, and collision variants |
-| `E3`: Join and Return | Confirmed, Evidence gap, Blocked, intact component payloads, lean packet, caller return, and no execution | Terminal direct and caller variants |
-| `E4`: Integrated promotion | Components, callers, Audit suggestion, Router, relationships, static protection, validation, installation, and parity agree | Coordinated family validation |
-
-Use a coverage-optimized sample matrix. Shared scenarios may exercise several claims, but every changed behavioral claim must appear in at least five independent fresh-context samples per control and candidate arm and receive its own rubric score. Hold prompts, sources, authorities, modes, tools, runtime, model, reasoning tier, and relevant hashes fixed across arms. Run a focused diagnostic scenario only when a bundled result fails or remains ambiguous.
-
-Use the current composer as control for modified behavior and a no-candidate-guidance arm for genuinely new behavior. Stop testing a proposed instruction when its control does not exhibit the claimed failure. Judge behavior rather than copied phrases. Record each claim, sample coverage, result distribution, variance, worst outcome, protocol deviation, and residual gap.
-
-Every negative case in the acceptance matrix is promotion-blocking regardless of averages.
-
-## Migration And Acceptance Matrix
-
-This matrix supplies coverage, not runtime rules or file placement.
-
-| Implementation / evaluation | Claim and normative owner | Positive case | Negative case | Verification |
-| --- | --- | --- | --- | --- |
-| `I1,I2 / E1` | [Admission](#admission) | Direct dual-capability work and each closed caller admit only with shared subject, source, authority modes, opaque IDs, and return owner; direct omission becomes render-only; conversation-only, domain-only, evidence-leaf, campaign, and unlisted-caller work stay outside | Composer steals ordinary clarification, becomes a router, admits Audit, drops IDs, invents authority, or treats composer invocation as persistence permission | Policy and relationship tests, caller fixtures, shared routing samples, and authority rubric |
-| `I1 / E1` | [Disclose](#disclose) | Effective context mode, separate ADR gate, collision effect, and no-execution boundary precede the first question | Disclosure is late, generic, incomplete, or grants authority | Turn-order rubric |
-| `I1,I2 / E2` | [Compose And Component Authority](#compose-and-component-authority) | Grilling alone owns interview behavior; Domain Modeling alone owns semantics and cumulative delta; composer owns the seam | Composer asks a decision, classifies domain relevance, approves mutation, merges a delta, or weakens a blocker | Ownership samples and mutation-boundary inspection |
-| `I1,I2 / E2` | [Relay](#relay) | Every settled material answer reaches Domain Modeling; no-change remains legitimate; collisions return before dependent progress | Composer filters answers, reconciles first at exit, fabricates ceremony, or continues through a collision | Ordered multi-turn samples with callback inventory |
-| `I1,I2 / E3` | [Join](#join) | Current compatible component results yield Confirmed or Evidence gap; integrity failures yield Blocked with recovery | Second confirmation, stale delta, false Confirmed, Domain failure labeled Evidence gap, or vague Blocked | Component-state matrix and paired terminal samples |
-| `I1,I2 / E3,E4` | [Return](#return) and [Relationships](#relationships) | Lean packet preserves both outputs and caller identity; named callers alone resume; Audit only suggests | Full forensic duplication, flattened payload, unlisted caller, audit continuation, or downstream execution | Packet rubric, caller samples, and relationship assertions |
-| `I1-I4 / E4` | [Runtime Ownership And Change Map](#runtime-ownership-and-change-map) | Canonical behavior, components, callers, tests, evaluations, validation, and installed hashes agree | Partial family migration, copied component rules, rejected machinery, or partial mirror sync | Focused pytest, full pytest, validation, diff checks, read-back, and hash parity |
-
-## Promotion Gate And Residual Gaps
-
-The promotion record names each changed claim, normative owner, implementation stage, evaluation phase, shared-scenario coverage, control and candidate hashes, fixed inputs, sample count, rubric, result distribution, worst outcome, critical failures, protocol deviations, unavailable telemetry, and residual gaps.
-
-Promote only the coordinated canonical family. A passing stage does not authorize partial caller migration or mirror synchronization. A residual gap blocks promotion when it affects dual-capability admission, closed caller identity, shared-seam compatibility, authority preservation, disclosure timing, Relay sequencing, collision return, Domain Delta ownership or currency, component completion, joint status, payload integrity, caller identity, no-execution behavior, or installed parity.
-
-Static tests protect structure and relationships only. Noncritical uncertainty may remain only with its evidence limit, behavioral consequence, and later validation owner.
-
-## Completion Criterion For The Future Rewrite
-
-The future rewrite is complete only when `I1` through `I4`, applicable `E0` through `E4`, and every acceptance-matrix row pass; no promotion-blocking residual remains; canonical validation, changed-file read-back, and both diff checks pass; and the installed mirror matches validated canonical source exactly. The [Contract Map](#contract-map) owns behavior and the [Runtime Ownership And Change Map](#runtime-ownership-and-change-map) owns placement.
+Prompt 5 reused this evidence because candidate bytes and affected claims remained unchanged. Executable caller integrations remain removed; Wayfinder, Triage, and Improve Codebase now recommend the explicit direct-user composer and stop.

@@ -41,7 +41,7 @@ flowchart TD
   Wayfinder["wayfinder"] --> Tracker
   Wayfinder --> Labels
   Wayfinder -. "setup gate" .-> Setup
-  Wayfinder --> GrillDocs
+  Wayfinder -. "recommend and stop" .-> GrillDocs
   Wayfinder --> Prototype["prototype"]
   Wayfinder --> Research["research"]
   Prototype -. "verdict crosses sessions" .-> Handoff["handoff"]
@@ -165,7 +165,7 @@ Source: `skills/custom/*/agents/openai.yaml`.
 | `diagnosing-bugs` | implicitly invocable |
 | `domain-modeling` | implicitly invocable |
 | `grilling` | implicitly invocable |
-| `grill-with-docs` | implicitly invocable |
+| `grill-with-docs` | explicit-only |
 | `handoff` | explicit-only |
 | `implement` | explicit-only |
 | `audit-codebase` | explicit-only |
@@ -220,7 +220,7 @@ Use one verb for each accepted relationship:
 | `research` | Recommend and stop | `$wayfinder` | Several interdependent decisions and non-conversational prerequisites need a durable route; the user must start Wayfinder later. |
 | `wayfinder` | Invoke | `$research` | Resolve one AFK research ticket, then record its pointer. |
 | `wayfinder` | Invoke | `$prototype` | Resolve one HITL or AFK runnable probe, then receive its reconciled verdict packet and cleanup or preservation state. |
-| `wayfinder` | Invoke | `$grill-with-docs` | Resolve one HITL decision ticket or bounded Chart interview needing durable capture under the locked domain and ADR actions; return the intact lean combined packet to the same map item. |
+| `wayfinder` | Recommend and stop | `$grill-with-docs` | One HITL decision ticket or Chart bound needs a direct user decision with durable capture; resume Wayfinder later with the returned decision. |
 | `wayfinder` | Recommend and stop | `$domain-modeling` | A closing decision changes durable language or warrants an ADR offer. |
 | `wayfinder` | Recommend and stop | `$to-spec` | The closed map produced settled parent-spec source. |
 | `wayfinder` | Recommend and stop | `$to-tickets` | The closed map produced several settled implementation slices. |
@@ -232,7 +232,7 @@ Use one verb for each accepted relationship:
 | `to-tickets` | Recommend and stop | `$implement` | The ready frontier is singular or write-overlapping. |
 | `to-tickets` | Recommend and stop | `$parallel-implement` | An explicitly requested parent-delivery run has a non-empty ready ticket graph; frontier width chooses serial or parallel execution. |
 | `to-tickets` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
-| `triage` | Invoke | `$grill-with-docs` | Maintainer-owned shaping needs both a user-owned decision and durable capture under explicit context and ADR actions; return the intact lean combined packet to the same item without tracker authority. |
+| `triage` | Recommend and stop | `$grill-with-docs` | Maintainer-owned shaping needs a direct user decision with durable capture; stop before mutation and resume Triage later with the result. |
 | `triage` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `implement` | Invoke | `$tdd` | New behavior is settled and red-testable, or expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known. |
 | `implement` | Invoke | `$diagnosing-bugs` | A bug's exact symptom, cause, or trusted red-capable reproduction is uncertain; return after regression proof. |
@@ -260,7 +260,7 @@ Use one verb for each accepted relationship:
 | `improve-codebase` | Load | `$codebase-design` | Apply shared module, interface, seam, depth, leverage, and locality vocabulary during the Survey. |
 | `improve-codebase` | Invoke | `$research` | A selected candidate needs one source question; return cited evidence or a blocker to the caller. |
 | `improve-codebase` | Invoke | `$prototype` | A selected candidate needs one runnable design verdict; return its reconciled verdict and cleanup state. |
-| `improve-codebase` | Invoke | `$grill-with-docs` | A selected candidate needs both a user-owned decision and active durable capture under explicit context and ADR actions; return the intact lean combined packet to the same candidate for caller-owned reclassification. |
+| `improve-codebase` | Recommend and stop | `$grill-with-docs` | A selected candidate needs a direct user decision with durable capture; resume the same candidate later with the result. |
 | `improve-codebase` | Invoke | `$codebase-design` | A selected `Concentrate` candidate needs dependency, seam, ownership, interface, migration, or replacement design. |
 | `improve-codebase` | Recommend and stop | `$wayfinder` | Multiple interdependent unresolved decisions or prerequisites need a tracker-backed route. |
 | `improve-codebase` | Recommend and stop | `$simplify-code` | A selected candidate reclassifies to `Eliminate`; return its report pickup without edits. |
@@ -338,7 +338,7 @@ Pruning evidence:
 - The global template exposes bootstrap handles; `skill-router` routes; neither teaches downstream workflow procedures.
 - The bundled system `skill-creator` owns new-package scaffolding and metadata mechanics. `$writing-great-skills` owns semantic quality for new and existing canonical skill instructions, stops after canonical proof, and does not absorb installation or delivery.
 - Setup docs own tracker, labels, domain routing, and engineering-contract details. Skills should point there instead of restating those mechanics.
-- `$grill-with-docs` is the sole composer of `$grilling` and `$domain-modeling`; the owned skills do not invoke each other. Direct Domain Modeling may ask focused questions only about terms, invariants, bounded contexts, and relationships. The composer's closed invoking set is the direct user, Wayfinder, Triage, and Improve Codebase. Direct omission defaults the context action to `render only`; callers supply `render only` or `persist authorized`, while ADR approval remains separate. During composition every settled material answer crosses Relay, Domain Modeling alone accumulates the current Domain Delta, and collisions return before dependent questioning. The composer returns only the lean `Confirmed`, `Evidence gap`, or `Blocked` combined result and starts no downstream route. Skill Router, Research, and To Questionnaire may recommend it and stop; Audit Codebase may suggest it only. Domain Modeling returns every residual to its direct user or caller and stops.
+- `$grill-with-docs` is the explicit-only, direct-user composer of `$grilling` and `$domain-modeling`; the owned skills do not invoke each other. Direct Domain Modeling may ask focused questions only about terms, invariants, bounded contexts, and relationships. Missing context authority defaults to `render only`, while ADR approval remains separate. During composition every settled material answer crosses Relay, Domain Modeling alone accumulates the current Domain Delta, and collisions return before dependent questioning. The composer returns only `Confirmed`, `Evidence gap`, or `Blocked` with intact component payloads and starts no downstream route. Wayfinder, Triage, Improve Codebase, Skill Router, Research, and To Questionnaire may recommend it and stop; Audit Codebase may suggest it only. Domain Modeling returns every residual to its direct user or caller and stops.
 - `to-questionnaire` owns async stakeholder elicitation into one verified artifact only after its admissibility gate; source-answerable gaps return to `$research`, and a direct current-user mismatch recommends `$grilling` for conversation-only work or `$grill-with-docs` when repo-backed durable domain capture must remain active. Delegated mismatches return classification to their caller. It does not contact the recipient, ingest answers, mutate trackers or domain truth, or synthesize a specification.
 - `domain-modeling` is the only skill that writes `CONTEXT.md`, `CONTEXT-MAP.md`, or approved ADR truth; `repo-bootstrap` configures and verifies routing before persistence across a required topology transition, and vocabulary consumers follow `docs/agents/domain.md`.
 - `to-spec` owns parent spec synthesis and tracker publication; `to-tickets` owns implementation issue slicing.

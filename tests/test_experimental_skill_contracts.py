@@ -86,46 +86,15 @@ def test_promoted_domain_modeling_preserves_compact_ddd_contract() -> None:
     assert policy == "policy:\n  allow_implicit_invocation: true\n"
 
 
-def test_experimental_grill_with_docs_preserves_concise_composer_contract() -> None:
-    skill_dir = EXPERIMENTAL / "grill-with-docs"
-    skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
-    policy = (skill_dir / "agents/openai.yaml").read_text(encoding="utf-8")
-
-    for contract in (
-        "Admit -> Disclose -> Compose [Grill <-> Relay <-> Model] -> Join -> Return",
-        "a direct user, Wayfinder, Triage, or Improve Codebase",
-        "an admission-ready bound and authority lock for each component",
-        "`persist authorized` or `render only`",
-        "ADR creation always requires separate explicit approval",
-        "Relay each settled material answer",
-        "Domain Modeling's authoritative current cumulative Domain Delta",
-        "The composer filters or merges neither",
-        "Status: Confirmed | Evidence gap | Blocked",
-        "This is a return, not a general handoff",
-        "downstream execution remains unstarted",
-    ):
-        assert contract in skill
-
-    assert "## Align" not in skill
-    assert {
-        path.relative_to(skill_dir).as_posix()
-        for path in skill_dir.rglob("*")
-        if path.is_file()
-    } == {"SKILL.md", "agents/openai.yaml"}
-    assert policy == "policy:\n  allow_implicit_invocation: true\n"
-
-
-def test_promoted_grilling_preserves_experimental_composer_handshake() -> None:
+def test_promoted_grilling_and_domain_modeling_preserve_composer_inputs() -> None:
     grilling_dir = CUSTOM / "grilling"
     domain_dir = CUSTOM / "domain-modeling"
-    composer_dir = EXPERIMENTAL / "grill-with-docs"
     grilling = (grilling_dir / "SKILL.md").read_text(encoding="utf-8")
     grilling_plain = grilling.replace("**", "")
     grilling_policy = (grilling_dir / "agents/openai.yaml").read_text(
         encoding="utf-8"
     )
     domain = (domain_dir / "SKILL.md").read_text(encoding="utf-8")
-    composer = (composer_dir / "SKILL.md").read_text(encoding="utf-8")
 
     for contract in (
         "Relay every settled material answer",
@@ -145,25 +114,15 @@ def test_promoted_grilling_preserves_experimental_composer_handshake() -> None:
         assert contract in domain
 
     for contract in (
-        "an admission-ready bound and authority lock for each component",
-        "Each component validates its own requirements",
-        "Relay each settled material answer",
-        "return every material collision or blocker to Grilling",
-        "The composer filters or merges neither",
-    ):
-        assert contract in composer
-
-    for contract in (
         'display_name: "Grilling"',
         'short_description: "Stress-test thinking one question at a time"',
         "allow_implicit_invocation: true",
     ):
         assert contract in grilling_policy
 
-    for skill_dir in (domain_dir, composer_dir):
-        assert (skill_dir / "agents/openai.yaml").read_text(
-            encoding="utf-8"
-        ) == "policy:\n  allow_implicit_invocation: true\n"
+    assert (domain_dir / "agents/openai.yaml").read_text(
+        encoding="utf-8"
+    ) == "policy:\n  allow_implicit_invocation: true\n"
 
 
 def test_experimental_to_questionnaire_preserves_admitted_leaf_contract() -> None:

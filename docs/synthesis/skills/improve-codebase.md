@@ -481,7 +481,7 @@ Resolve at most one blocker per invocation. `resolution need: none` invokes no r
 | `repository` | Improve Codebase inspects the missing repository source, caller, test, history, configuration, or operational evidence directly | Supported answer, pointers, limits, or exact blocker | All candidate authority |
 | `source` | Invoke `$research` with one question, supported decision, scope, freshness, and `authorized note path: none` unless one path is approved | Cited evidence, limits, conflicts, one authorized note pointer or `none`, or blocker | Supported decision, reclassification, report, route |
 | `runnable` | Invoke `$prototype` with one terminal question, claim level, judgment mode, human judge or objective criteria as applicable, decision owner, and an authorized `.tmp/improvement-prototypes/` path | Reconciled verdict, evidence, limits, cleanup or preservation state | Production-proof judgment, reclassification, report, route |
-| `user-decision` | Invoke `$grill-with-docs` for one user-owned preference, commitment, trade-off, term, boundary, or ADR question. Supply the card and Source Trace, Grilling bound and authority, candidate identity, Improve Codebase as return owner, and no downstream execution; pass `render only` unless separate persistence authority supplies `persist authorized`, and `offer only` unless approved ADR candidate identifiers are supplied | Intact lean `Confirmed`, `Evidence gap`, or `Blocked` combined packet | Candidate identity, reclassification, report, route |
+| `user-decision` | Return one bounded question, recommend explicit `$grill-with-docs`, and stop. Resume the same candidate in a later Improve Codebase invocation with the direct-user result | Intact `Confirmed`, `Evidence gap`, or `Blocked` result supplied on resumption | Candidate identity, reclassification, report, route |
 | `design` | Invoke `$codebase-design` Direct Design only for a supported `Concentrate` candidate needing dependency, seam, ownership, interface, migration, compatibility, replacement, or proof-surface design | One bounded design packet with acceptance evidence or gaps | Final disposition, overlap, report, route |
 
 Do not send repository inspection to Research, broad implementation to Prototype, every candidate to Grilling, or an unsupported Eliminate/Investigate candidate to Direct Design. A Prototype verdict is design evidence, never production proof. Grill With Docs remains the sole user-decision caller edge so Grilling and Domain Modeling stay active under their own gates, even when Domain Modeling returns the minimal no-change delta.
@@ -558,7 +558,7 @@ Load the smallest complete context selected by observed branch and operation:
 | Selected `repository` need | Exact missing repository surfaces | Research, Prototype, Grill With Docs, or Direct Design |
 | Selected `source` need | `$research` and its complete caller packet | Other resolvers |
 | Selected `runnable` need | `$prototype` and its complete caller packet | Other resolvers and production workflow |
-| Selected `user-decision` need | `$grill-with-docs` and its complete caller packet | Direct `$grilling` edge or conditional Domain Modeling omission |
+| Selected `user-decision` need | Direct user after a `$grill-with-docs` recommendation and stop | Caller invocation, direct `$grilling` edge, or conditional Domain Modeling omission |
 | Supported selected `design` need | `$codebase-design` Direct Design branch and its triggered references only | Survey vocabulary-only mode or unrelated resolver branches |
 | Report reconciliation | `HTML-REPORT.md` plus the same card's original and current evidence | Whole-repository resurvey |
 | Missing ignored report boundary | Exact ignore and setup evidence needed for the Repo Bootstrap precondition | Repo Bootstrap's mutation procedure |
@@ -578,7 +578,7 @@ This section is the sole authority for Improve Codebase's composition and termin
 | `$improve-codebase` | Load | `$codebase-design` vocabulary | Apply module, interface, seam, depth, leverage, and locality during Survey; caller retains report and completion |
 | `$improve-codebase` | Invoke | `$research` | One selected source need returns cited evidence or blocker to the same card |
 | `$improve-codebase` | Invoke | `$prototype` | One selected runnable need returns reconciled design evidence and cleanup state |
-| `$improve-codebase` | Invoke | `$grill-with-docs` | One selected candidate needs both a user-owned decision and active durable capture under explicit context and ADR actions; return the intact lean combined packet to the same candidate for caller-owned reclassification |
+| `$improve-codebase` | Recommend and stop | `$grill-with-docs` | One selected candidate needs a direct user decision with durable capture; resume the same candidate later with the result |
 | `$improve-codebase` | Invoke | `$codebase-design` Direct Design | One supported selected `Concentrate` candidate returns a bounded design packet for reclassification |
 | `$improve-codebase` | Recommend and stop | `$wayfinder` | Multiple interdependent unresolved decisions or prerequisites need a tracker-backed route |
 | `$improve-codebase` | Recommend and stop | `$simplify-code` | Final selected disposition is `Eliminate` |

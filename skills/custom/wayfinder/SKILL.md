@@ -26,7 +26,7 @@ Every ticket declares one type and participation mode:
 
 - **Research — AFK:** Invoke `$research` with one approved note path; return its cited note pointer.
 - **Prototype — HITL or AFK:** Invoke `$prototype` when the question needs a runnable probe; apply the participation rule below and return its reconciled verdict packet and cleanup or preservation state.
-- **Grilling — HITL:** Invoke `$grill-with-docs` when the user owns the resolution because it depends on preference, contested terminology, or a material tradeoff not settled by accepted repository contracts; return one decision.
+- **Grilling — HITL:** When the user owns the resolution because it depends on preference, contested terminology, or a material tradeoff not settled by accepted repository contracts, return the ticket bound, recommend explicit `$grill-with-docs`, and stop. Resume the ticket in a later Wayfinder invocation with the returned decision.
 - **Task — AFK or HITL:** Use AFK when accepted repository contracts and objective proof determine the resolution; return the supported answer, affected boundary, and proof criteria. Use HITL only when completing the prerequisite requires live human action.
 
 A HITL ticket resolves only through live human participation. The ticket owns the question; its resolution owns the answer and linked assets.
@@ -47,7 +47,7 @@ Choose exactly one mode per session: Chart, Advance, or Maintain. Closure is the
 
 Use Chart for a loose idea without a map.
 
-1. **Bound.** Invoke `$grill-with-docs` with a **charting bound**: settle only the destination, scope, and route-closing condition.
+1. **Bound.** Return a **charting bound** that settles only the destination, scope, and route-closing condition; recommend explicit `$grill-with-docs` and stop. Resume Chart in a later Wayfinder invocation with the returned decision.
 2. **Sweep.** Surface material decisions breadth-first. For each material decision: Defer it explicitly to a named Wayfinder ticket rather than resolving it during Chart.
 3. **Gate.** If the route is already clear, name the closing route and stop without creating a map.
 4. **Approve.** Show the destination, map title, child titles, questions, types, modes, approved research note paths, fog, scope boundary, and blocking edges as one mutation packet. For each Prototype ticket, also show its claim level and either the human judge or objective verdict criteria; reject a packet whose claim level, judgment, and mode disagree with the participation rule. Obtain explicit approval; any changed packet requires fresh approval.

@@ -25,7 +25,7 @@ Route code changes to implementation.
 
 Reporter-owned missing facts route directly to `needs-info`.
 
-When maintainer-owned scope, acceptance, domain language, or design decisions remain unresolved, invoke `$grill-with-docs`. Add changed domain paths and ADR outcomes from its exit packet to the refreshed Source Trace and final triage packet. Refresh affected verification after shaping.
+When maintainer-owned scope, acceptance, domain language, or design decisions remain unresolved, return the exact shaping bound, recommend explicit `$grill-with-docs`, and stop before mutation. Resume this item in a later Triage invocation; add any returned domain paths and ADR outcomes to the refreshed Source Trace and refresh affected verification.
 
 ## 4. Recommend
 
