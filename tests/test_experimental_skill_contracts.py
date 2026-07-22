@@ -6,6 +6,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+CUSTOM = ROOT / "skills/custom"
 EXPERIMENTAL = ROOT / "skills/experimental"
 
 
@@ -123,36 +124,103 @@ def test_experimental_composer_family_shares_one_relay_handshake() -> None:
         ) == "policy:\n  allow_implicit_invocation: true\n"
 
 
+def test_experimental_to_questionnaire_preserves_admitted_leaf_contract() -> None:
+    skill_dir = EXPERIMENTAL / "to-questionnaire"
+    skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    policy = (skill_dir / "agents/openai.yaml").read_text(encoding="utf-8")
+
+    for contract in (
+        "Direct | Wayfinder -> Admit -> Lock -> Gap -> Draft -> Cover -> Save -> Verify -> Direct | Wayfinder Return",
+        "Default the current user as return and reconciliation owner",
+        "Recipient knowledge and disclosure authority:",
+        "Do not infer Wayfinder-owned authority",
+        "missing or unverified recipient identity or authority: return `Incomplete`",
+        "proven route, owner, or coherence mismatch: return `Not admitted`",
+        "do not select or recommend its next route",
+        "Every admitted item maps to at least one atomic question",
+        "every substantive question maps back to an admitted item",
+        "optional final catch-all",
+        "return `Incomplete` before writing",
+        ".scratch/to-questionnaire/<slug>.md",
+        ".tmp` is invalid",
+        "resolve an absolute `.md` target",
+        "Capture the pre-write identity",
+        "unrelated baseline or concurrent drift is recorded separately",
+        "Status: Questionnaire ready | Not admitted | Incomplete",
+        "Reason or exact blocking predicate:",
+        "Artifact identity: <absolute path + SHA-256> | none",
+        "Wayfinder retains: waiting, delivery, answer reconciliation",
+        "Never represent a partial, stale, or unverified artifact as `Questionnaire ready`",
+    ):
+        assert contract in skill
+
+    assert {
+        path.relative_to(skill_dir).as_posix()
+        for path in skill_dir.rglob("*")
+        if path.is_file()
+    } == {"SKILL.md", "agents/openai.yaml"}
+    assert "final catch-all." not in skill
+    assert policy.endswith("policy:\n  allow_implicit_invocation: true\n")
+
+
 def test_experimental_prototype_preserves_selected_leaf_contract() -> None:
     skill_dir = EXPERIMENTAL / "prototype"
     skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     logic = (skill_dir / "LOGIC.md").read_text(encoding="utf-8")
     ui = (skill_dir / "UI.md").read_text(encoding="utf-8")
     measure = (skill_dir / "MEASURE.md").read_text(encoding="utf-8")
+    resume = (skill_dir / "RESUME.md").read_text(encoding="utf-8")
     policy = (skill_dir / "agents/openai.yaml").read_text(encoding="utf-8")
+    wayfinder_map = (EXPERIMENTAL / "wayfinder" / "MAP-FORMAT.md").read_text(
+        encoding="utf-8"
+    )
+    wayfinder_operations = (
+        EXPERIMENTAL / "wayfinder" / "OPERATIONS.md"
+    ).read_text(encoding="utf-8")
+
+    assert (
+        "description: Prototype one bounded design question with a disposable "
+        "runnable probe; exclude production proof, uncertain defects, and "
+        "multi-decision design."
+        in skill
+    )
 
     for contract in (
         "Admit -> Freeze -> Load -> Probe -> Smoke -> Judge -> Reconcile -> Return",
         "request_subject",
         "Before mutation, read back five locks",
-        "claim_kind: shape/feel | design-evidence",
-        "judgment_mode: human | rule-based",
+        "claim level: shape/feel | design evidence",
+        "judgment mode: human | rule-based",
+        "The decision owner and human judge are independent roles",
         ".tmp/prototype/<question-slug>/",
         "Load exactly one branch reference",
         "[MEASURE.md](MEASURE.md)",
         "preserve-for-verdict",
         "authorized-durable-evidence",
         "No terminal return leaves a live resource",
-        "Resume is permitted only from an `awaiting-verdict` packet",
-        "invoke `$skill-router` only when the active Router policy admits terminal residuals",
+        "read back the current invocation identity",
+        "never carry them from a preceding request or supplied packet",
+        "Return and stop without selecting or invoking a downstream route",
         "one `verdict`",
+        "another answer defined by the frozen rule",
+        "Freeze fields reached",
         "every started operation either meets its criterion or returns `blocked`",
     ):
         assert contract in skill
 
+    for contract in (
+        "Resume is permitted only from an `awaiting-verdict` packet",
+        "A request to Resume any other status returns `not-admitted`",
+        "never the rejected packet's subject",
+        "require fresh Admit and Freeze",
+        "return to Judge in [SKILL.md](SKILL.md)",
+    ):
+        assert contract in resume
+
     for removed in (
         "supported_direction",
         "Admit -> Freeze -> Branch",
+        "$skill-router",
     ):
         assert removed not in skill
     assert (
@@ -168,6 +236,13 @@ def test_experimental_prototype_preserves_selected_leaf_contract() -> None:
     assert "variance and worst observed result" in measure
     assert "known confounders and unsupported extrapolations" in measure
     assert "does not diagnose an unexplained slowdown" in measure
+    assert "Prototype claim level: shape/feel | design evidence" in wayfinder_map
+    assert "Prototype judgment mode: human | rule-based" in wayfinder_map
+    assert "Resolution authority (Prototype decision owner when applicable)" in wayfinder_map
+    assert "pass Resolution authority as the decision owner" in wayfinder_operations
+    assert "never infer either role from the other" in wayfinder_operations
+    assert "claim level `shape/feel` plus judgment mode `human`" in wayfinder_operations
+    assert "claim level `design evidence` plus `rule-based`" in wayfinder_operations
     for branch in (logic, ui, measure):
         assert "Return to `Judge` in [SKILL.md](SKILL.md)" in branch
         assert "this branch does not Reconcile or Return" in branch
@@ -179,6 +254,7 @@ def test_experimental_prototype_preserves_selected_leaf_contract() -> None:
     } == {
         "LOGIC.md",
         "MEASURE.md",
+        "RESUME.md",
         "SKILL.md",
         "UI.md",
         "agents/openai.yaml",
@@ -247,3 +323,63 @@ def test_experimental_aggregate_marker_cannot_hide_stale_setup_file() -> None:
         f"{relative} must contain exactly one current setup-file source marker: "
         f"{expected}"
     ]
+
+
+def test_experimental_research_preserves_bounded_evidence_leaf_contract() -> None:
+    skill_dir = EXPERIMENTAL / "research"
+    skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    policy = (skill_dir / "agents/openai.yaml").read_text(encoding="utf-8")
+    baseline = (CUSTOM / "research" / "SKILL.md").read_text(encoding="utf-8")
+    baseline_policy = (CUSTOM / "research" / "agents/openai.yaml").read_text(
+        encoding="utf-8"
+    )
+    normalized_skill = " ".join(skill.split())
+
+    assert skill.splitlines()[2] == baseline.splitlines()[2]
+    assert policy == baseline_policy
+
+    for contract in (
+        "Authorized note: Admit -> Lock -> Trace -> Scout -> Classify -> Gate -> Write -> Verify -> Return",
+        "Inline or blocker: Admit -> Lock -> Trace -> Scout -> Classify -> Gate -> Verify -> Return",
+        "one bounded question can be answered from",
+        "Status: not-admitted",
+        "every failed or missing predicate",
+        "settled information",
+        "actual need shape",
+        "available evidence",
+        "match is deterministic",
+        "classification without",
+        "choosing or invoking its next route",
+        'fork_turns="none"',
+        "do not call the result independent",
+        "render only the applicable semantic fields",
+        "evidence depth and stopping basis",
+        "adjacent claim-level citations",
+        "caller-use boundary and return owner",
+        "Omit empty conditional sections",
+        "durable evidence, not a settled answer",
+        "Tracked mutation: none",
+        "mutation result, and return owner",
+        "For an admitted standalone result",
+    ):
+        assert contract in normalized_skill
+
+    assert {
+        path.relative_to(skill_dir).as_posix()
+        for path in skill_dir.rglob("*")
+        if path.is_file()
+    } == {"SKILL.md", "agents/openai.yaml"}
+    assert policy.endswith("policy:\n  allow_implicit_invocation: true\n")
+    for rejected in (
+        "primary or governing sources",
+        "ordinary lookup stays outside this skill",
+        "ordinary | heightened",
+        "final bounded pass",
+        "default_prompt:",
+        "interface:",
+        "## Completion",
+        "```markdown",
+        "Write when authorized",
+        "Next: none",
+    ):
+        assert rejected not in skill

@@ -23,7 +23,7 @@ Advance processes exactly one frontier ticket toward one substantive outcome or 
 2. Verify its reserved outcome or correction unit and reconcile total, reserved, used, and uncommitted capacity.
 3. Under the Mutation Envelope, invoke exactly one locked resolver with its default participation and return:
    - **Research — AFK:** `$research`; return answer, citations, limits, and approved note.
-   - **Prototype — conditional:** `$prototype`; use `shape/feel` HITL, objective `design evidence` AFK, or explicitly human-reserved evidence HITL; return verdict, evidence, limits, and cleanup state.
+   - **Prototype — conditional:** `$prototype`; pass Resolution authority as the decision owner, independently name the human judge when judgment mode is `human`, and never infer either role from the other. Use claim level `shape/feel` plus judgment mode `human` for HITL, claim level `design evidence` plus `rule-based` for AFK, or `design evidence` plus `human` for an explicitly human-reserved verdict; return verdict, evidence, limits, and cleanup state.
    - **Diagnosis — AFK by default:** `$diagnosing-bugs`; use HITL only when reproduction requires live human action; return reproduction, cause status, evidence, regression seam, and blocker without fixing.
    - **Questionnaire — external:** before invoking `$to-questionnaire`, pass every delegated field persisted in [MAP-FORMAT.md](MAP-FORMAT.md); return one artifact and needed-back ledger without sending or interpreting answers. A missing delegated field is a transient incomplete attempt, not an external wait.
    - **Grilling — HITL:** `$grill-with-docs`; return one user-owned decision, complete domain delta, deferrals, and ADR outcome or evidence gap under the locked persistence mode.

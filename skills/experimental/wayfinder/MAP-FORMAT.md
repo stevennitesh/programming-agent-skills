@@ -103,7 +103,7 @@ Resolver type: Research | Prototype | Diagnosis | Questionnaire | Grilling | Des
 Participation: AFK | HITL | external
 Question or prerequisite:
 Destination impact:
-Resolution authority:
+Resolution authority (Prototype decision owner when applicable):
 Dependencies:
 Expected return:
 Proof or confirmation:
@@ -116,6 +116,7 @@ State: open | awaiting-external-response | resolved | blocked | out-of-scope
 
 Research note path:
 Prototype claim level: shape/feel | design evidence
+Prototype judgment mode: human | rule-based
 Prototype human judge | objective verdict criteria:
 Questionnaire caller and return owner:
 Questionnaire caller item or decision identifier:

@@ -1,6 +1,6 @@
 # Measure Prototype
 
-Use this branch for one comparative design question whose relevant latency, throughput, resource, variability, or scaling observations may vary across runs. [SKILL.md](SKILL.md) owns Freeze, authority, the lifecycle, reconciliation, and Return. This file owns only Measure Probe, Smoke, verdict-evidence mechanics, and return to main Judge.
+Use this branch for one comparative design question whose relevant latency, throughput, resource, variability, or scaling observations may vary across runs. [SKILL.md](SKILL.md) owns Freeze, authority, the lifecycle, reconciliation, and Return. This file owns only Measure Probe, Smoke, and verdict-evidence mechanics.
 
 ## Fit
 

@@ -35,8 +35,8 @@
     },
     "prototype": {
       "origin": "skills/custom/prototype at 7ecff6cf032bd43dde403caa439c501c046b7a84 as the active baseline for synthesis-driven extraction",
-      "reason": "Preserve the inactive complete Prototype candidate for structural proof, behavioral evaluation, and coordinated Router and caller review before promotion.",
-      "candidate_sha256": "69435f142f98e858c302532ce93854b67a2785d49198faa2a3f50695fb155907",
+      "reason": "Preserve the behaviorally re-accepted inactive pruned Prototype candidate for coordinated caller promotion.",
+      "candidate_sha256": "4d9ca65a05d5b174b8eefbbc9396f00020ce267932b628415004575e03ff329d",
       "active_baseline_sha256": "ecba1e84f0e0df9a0b32b2febdac4e1d7f096dcbf468f9c054c0d5bf7d95a3ef"
     },
     "repo-bootstrap": {
@@ -45,6 +45,12 @@
       "candidate_sha256": "3e8f1f909172a3aab97974daa71447b0cc67b8444b742a5dc7261398d7e9679e",
       "active_baseline_sha256": "2e0adaeb731132ca7f2208a372b9509f996d79161d16ea5f72656b83f4243051"
     },
+    "research": {
+      "origin": "skills/custom/research at c456e83c0e39 as the active baseline for synthesis-driven extraction",
+      "reason": "Preserve the canonical-first inactive Research candidate containing only typed non-admission and proportional Write/Return deltas, pending Prompt 4.",
+      "candidate_sha256": "c230f0ccabce2c0c23679eb7ac55a2a572655f62ddaf48b0441ed8daf2f1a35f",
+      "active_baseline_sha256": "7cb171f1459d3f7efa1e26dccbd04264340eb9304a315391f9341b924c949f5f"
+    },
     "skill-router": {
       "origin": "skills/custom/skill-router at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f before the installed-baseline restore",
       "reason": "Preserve the divergent candidate while the installed managed version remains active.",
@@ -52,9 +58,9 @@
       "active_baseline_sha256": "aa2cefdfc76d82e260efc2272f1ed01098b5b77a5e38a9f159eba66b947ffeff"
     },
     "to-questionnaire": {
-      "origin": "skills/custom/to-questionnaire at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f before the installed-baseline restore",
-      "reason": "Preserve the divergent candidate while the installed managed version remains active.",
-      "candidate_sha256": "ec772d61f41e293e6a2e2d7b1a64b44ea4705119bf87974553c724245f680308",
+      "origin": "skills/custom/to-questionnaire at c456e83c0e3976e3e1adb5bf46b2204a824cf682 as the Control Lock baseline for synthesis-driven extraction",
+      "reason": "Preserve the inactive pruned leaf with its shorter invocation description until coordinated Wayfinder integration and E4 proof pass.",
+      "candidate_sha256": "7d36b43411bfc6146d9390465b845ff251893d309cdae09690db921b56cc8376",
       "active_baseline_sha256": "163d76f3468f2301c6cddeead5cca34b08afaf9ae370f457157707c12e010158"
     },
     "to-tickets": {
@@ -66,8 +72,14 @@
     "wayfinder": {
       "origin": "skills/custom/wayfinder at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f before the installed-baseline restore",
       "reason": "Preserve the divergent candidate while the installed managed version remains active.",
-      "candidate_sha256": "a1055066fd8772c61f3e01ec223b94c3e30f7f46b65c7d76170f46135850e1f7",
+      "candidate_sha256": "00d52ec91fc001837eed728e21d7bdad5a8729fc847507c908ade168a6e0bedb",
       "active_baseline_sha256": "8b71e1d0847831e3f60c3f74399e38ec794f20f2595daaa13b13b30e99b932fa"
+    },
+    "writing-great-skills": {
+      "origin": "mattpocock/skills writing-great-skills at ed37663cc5fbef691ddfecd080dff42f7e7e350d as the simplest credible baseline, reconciled with the current active local package",
+      "reason": "Preserve the behaviorally accepted inactive baseline-first Writing Great Skills candidate pending Prompt 5 promotion.",
+      "candidate_sha256": "c7c02f4f9896cd5bf6e6c25886e77785a9f80c0ccea0d02f7aaa6fc85076dcc4",
+      "active_baseline_sha256": "f70d6c83d49800a11ea4c51e5ea87b601d12755e587bd28a8ee32f956a7682ba"
     }
   }
 }

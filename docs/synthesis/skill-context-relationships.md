@@ -44,7 +44,6 @@ flowchart TD
   Wayfinder --> GrillDocs
   Wayfinder --> Prototype["prototype"]
   Wayfinder --> Research["research"]
-  Prototype -. "future terminal direct non-admission residual" .-> Router
   Prototype -. "verdict crosses sessions" .-> Handoff["handoff"]
   Prototype -. "resolved Domain Delta" .-> DomainModel
   Prototype -. "promotion or production proof" .-> Contract
@@ -276,7 +275,22 @@ Use one verb for each accepted relationship:
 | `codebase-design` | Recommend and stop | `$improve-codebase` | The request needs codebase-wide improvement discovery and classification. |
 | `handoff` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 
-The accepted future Domain Modeling promotion changes Wayfinder's durability edge to `Invoke`, with the locked context action and complete Domain Delta returned to the same campaign. The coordinated residual-Router design adds only complete terminal residual edges when the Router becomes implicitly invocable: a standalone terminal `$domain-modeling` pass may invoke `$skill-router` with material residual outside Domain Modeling and no owned handoff; a direct `$prototype` `not-admitted` result may invoke it only with no owned caller return or handoff, a complete residual packet, and no unchanged Router cycle. The Router returns one route or `none`, starts nothing, never accepts unfinished in-scope work, never bypasses a caller-owned return, and never causes Domain Modeling to invoke `$grill-with-docs` directly. The behaviorally accepted experimental Prototype candidate and the experimental Router candidate preserve both ends of their proposed edge; it remains non-executable under the active policies until coordinated promotion and integrated edge proof.
+The accepted future Domain Modeling promotion changes Wayfinder's durability edge to `Invoke`, with the locked context action and complete Domain Delta returned to the same campaign. The coordinated residual-Router design adds only complete terminal residual edges when the Router becomes implicitly invocable: a standalone terminal `$domain-modeling` pass may invoke `$skill-router` with material residual outside Domain Modeling and no owned handoff. The Router returns one route or `none`, starts nothing, never accepts unfinished in-scope work, never bypasses a caller-owned return, and never causes Domain Modeling to invoke `$grill-with-docs` directly. Prototype deliberately has no residual-Router edge: every `not-admitted` result returns directly to its caller or the user and stops.
+
+The experimental To Questionnaire candidate is behaviorally accepted for the
+leaf side of the proposed Wayfinder Questionnaire edge: complete packet
+validation, durable `.scratch` identity, typed status, matched Return, and
+classification-only delegated mismatches passed five fresh contexts without a
+critical failure. Its bounded prune also passed five frozen pre-prune and five
+final-candidate contexts without a critical failure or post-first-Save repair.
+The edge remains non-executable under active policy and is
+not promotion-ready until the experimental Wayfinder packet, waiting
+transition, and later answer-reconciliation owner match it and integrated proof
+passes. The active graph, invocation table, and context-owner rows therefore
+continue to describe the canonical explicit-only leaf. Evidence:
+[`2026-07-21-to-questionnaire-post-candidate-behavior-eval.md`](../validation/transcripts/2026-07-21-to-questionnaire-post-candidate-behavior-eval.md).
+Pruning evidence:
+[`2026-07-21-to-questionnaire-pruning-equivalence-eval.md`](../validation/transcripts/2026-07-21-to-questionnaire-pruning-equivalence-eval.md).
 
 ## Context Owners
 
@@ -292,7 +306,7 @@ The accepted future Domain Modeling promotion changes Wayfinder's durability edg
 | `docs/agents/engineering-contract.md` | Engineering taste, shared runtime language, Charter, commitment boundary, change-created fallout, fresh, negative-control, and state-boundary proof, work-state policy, fixed-snapshot Spec/Standards review, Repair generation, and Lock | `to-tickets`, `implement`, `tdd`, `diagnosing-bugs`, `prototype`, `simplify-code`, `improve-codebase`, `audit-codebase`, `parallel-implement`, `resolving-merge-conflicts`, `review`, `convergent-pr-review` |
 | `domain-modeling` | Resolves domain semantics; exclusively accumulates and returns the authoritative current cumulative Domain Delta; renders or persists routed `CONTEXT.md` and `CONTEXT-MAP.md` changes under `render only` or `persist authorized`; assesses plausible ADR candidates; and records approved ADR truth | `skill-router`, `grill-with-docs`, `wayfinder`, `prototype`, `repo-bootstrap` |
 | `codebase-design` | Interface, seam, adapter, depth, leverage, locality, and bounded replacement vocabulary | `to-spec`, `improve-codebase`, `tdd`, architecture/design follow-ups |
-| `research` | Primary-source legwork and authorized cited repo-local research notes | `skill-router`, `grilling`, `wayfinder`, `improve-codebase` |
+| `research` | Claim-owning source legwork and one authorized cited note or verified inline evidence | `skill-router`, `grilling`, `wayfinder`, `improve-codebase` |
 | `to-questionnaire` | One recipient-ready async discovery artifact for one external stakeholder and downstream decision | `skill-router`, `grilling`, humans collecting stakeholder evidence |
 | `resolving-merge-conflicts` | Read-only three-way inspection, authorized reconciliation, and the separate finish boundary | Git operations and implementation or integration work that enters a conflicted state |
 | `review` | Ordinary fixed-snapshot Standards/Spec review | `implement`, `parallel-implement`; escalates once to `convergent-pr-review` for high risk |
@@ -307,7 +321,7 @@ The accepted future Domain Modeling promotion changes Wayfinder's durability edg
 | `codebase-design` | `DIRECT-DESIGN.md`: direct pass and packet; `DEEPENING.md`: dependency/seam discipline; `DESIGN-IT-TWICE.md`: alternative interface exploration |
 | `domain-modeling` | `CONTEXT-FORMAT.md`: glossary and context-map format; `ADR-FORMAT.md`: ADR gate and format |
 | `tdd` | `tests.md`, `mocking.md`, `refactoring.md`: examples and branch mechanics |
-| `prototype` | Current `LOGIC.md` and `UI.md`: branch mechanics; the selected promotion adds `MEASURE.md`. Exactly one branch contract loads and returns to main Judge; `SKILL.md` owns lifecycle, reconciliation, and Return. |
+| `prototype` | `LOGIC.md`, `UI.md`, and `MEASURE.md`: decision-bearing branch mechanics. `RESUME.md`: resumed-verdict admission and restart checks. Exactly one decision branch loads and returns to main Judge; `SKILL.md` owns the universal lifecycle, reconciliation, and Return. |
 | `triage` | `ATTENTION-SCAN.md`, `SPECIFIC-ITEM.md`, `QUICK-OVERRIDE.md`: branch procedures; `AGENT-BRIEF.md`: ready-contract rendering; `AGENT-BRIEF-EXAMPLES.md`: branch evidence emphasis; `OUT-OF-SCOPE.md`: rejected-work knowledge base |
 | `repo-bootstrap` | Tracker, label, domain, and engineering-contract seeds; `setup-schema.json`: aggregate compatibility fingerprint; per-file source markers and `scripts/validate_setup.py`: complete target-repo setup-surface reconciliation and validation |
 | `wayfinder` | `MAP-FORMAT.md`: canonical map and ticket shape, empty-fog sentinel, and exclusion pointers; `SKILL.md`: Chart, Advance, Maintain, Closure, and foggy map lifecycle semantics |
@@ -328,8 +342,8 @@ The accepted future Domain Modeling promotion changes Wayfinder's durability edg
 - `to-questionnaire` owns async stakeholder elicitation into one verified artifact only after its admissibility gate; source-answerable gaps return to `$research`, and a direct current-user mismatch recommends `$grilling` for conversation-only work or `$grill-with-docs` when repo-backed durable domain capture must remain active. Delegated mismatches return classification to their caller. It does not contact the recipient, ingest answers, mutate trackers or domain truth, or synthesize a specification.
 - `domain-modeling` is the only skill that writes `CONTEXT.md`, `CONTEXT-MAP.md`, or approved ADR truth; `repo-bootstrap` configures and verifies routing before persistence across a required topology transition, and vocabulary consumers follow `docs/agents/domain.md`.
 - `to-spec` owns parent spec synthesis and tracker publication; `to-tickets` owns implementation issue slicing.
-- `wayfinder` owns foggy multi-session maps, ticket resolution authority, consequence-only Maintain repairs, fog disposition, and Prototype ticket participation; tracker docs own transport, child and map claim identity, stale-claim recovery, blocking, and resolution mechanics. `prototype` owns judgment mechanics, probe execution, verdict assembly, artifact reconciliation, and its own terminal non-admission packet. Caller-owned returns stay local; only a future direct terminal unowned non-admission may reach the implicit residual Router, which recommends and stops.
-- `research` owns primary-source legwork and one cited repo-local note. A user request or caller packet must authorize one note path before that tracked mutation; otherwise research returns cited inline evidence or a blocker.
+- `wayfinder` owns foggy multi-session maps, ticket resolution authority, consequence-only Maintain repairs, fog disposition, and Prototype ticket participation; tracker docs own transport, child and map claim identity, stale-claim recovery, blocking, and resolution mechanics. `prototype` owns judgment mechanics, probe execution, verdict assembly, artifact reconciliation, and its own terminal non-admission packet. Every Prototype return stays local to its caller or the user; Prototype never delegates non-admission to Router.
+- `research` owns one bounded source question, claim-owning evidence judgment, and one authorized cited note or verified inline result. A user request or caller packet must authorize one note path before that tracked mutation; otherwise Research returns cited inline evidence, a blocker, or typed `not-admitted` classification without choosing the caller's next route.
 - `resolving-merge-conflicts` inspects State and Trace read-only by default. Reconciliation authority permits edits only to in-scope conflicts; finish authority separately permits staging and continuation. Abort, hard reset, or discarding a side requires explicit approval.
 - Tracker docs own transport, tracker commands, the shared Ready-for-agent contract, and Mutation read-back. `triage` owns incoming classification, verification, brief rendering, state transitions, and the AI disclaimer; `$to-tickets` owns slicing and dependency order. Do not re-triage valid `$to-tickets` output.
 - `implement` owns one standalone selected item and its bounded Repair campaign; `parallel-implement` owns one parent-backed ticket graph through serial or parallel frontiers, bounded Repair generations, serialized integration, and verified child and parent closeout.

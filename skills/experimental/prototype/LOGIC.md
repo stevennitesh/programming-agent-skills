@@ -1,6 +1,6 @@
 # Logic Prototype
 
-Use this branch for one decision about state transitions, rules, data shape, API shape, or interface behavior. [SKILL.md](SKILL.md) owns Freeze, authority, the lifecycle, reconciliation, and Return. This file owns only Logic Probe, Smoke, verdict-evidence mechanics, and return to main Judge.
+Use this branch for one decision about state transitions, rules, data shape, API shape, or interface behavior. [SKILL.md](SKILL.md) owns Freeze, authority, the lifecycle, reconciliation, and Return. This file owns only Logic Probe, Smoke, and verdict-evidence mechanics.
 
 ## Model
 

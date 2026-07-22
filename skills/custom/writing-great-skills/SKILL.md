@@ -26,7 +26,7 @@ For a full audit, read [GLOSSARY.md](GLOSSARY.md) completely. For bounded work, 
 
 2. **Own.** Give each behavior one owner for its rule, authority, evidence, Return, and completion. Each relationship preserves its callee, trigger, authority, and return boundary. Point to foreign procedure; do not copy it.
 
-3. **Shape.** Apply the **Semantic Skill Surface** from `GLOSSARY.md`. Keep common-path behavior inline, disclose branch-only detail through an observable pointer, and co-locate each concept. Split only for independent invocation, irreducible branch load, or observed premature completion that survives a sharper criterion.
+3. **Shape.** Apply the **Semantic Skill Surface** from `GLOSSARY.md`. Treat the description as an always-loaded routing predicate: name observable request or caller triggers and, when necessary, the closest exclusion. Omit explicit-name reach, runtime procedure, and body-summary detail. Keep common-path behavior inline, disclose branch-only detail through an observable pointer, and co-locate each concept. Split only for independent invocation, irreducible branch load, or observed premature completion that survives a sharper criterion.
 
 4. **Prune.** Protect non-intuitive mechanics, semantic and safety contracts, authority, proof, irreversible order, safe failure actions, and completion. Ask, “If I cut this, what behavior changes?” Cut no-ops, restore one owner, disclose branch detail, and collapse repeated meaning into one rule or leading word. State the positive target first; keep negation only as a necessary guardrail paired with the safe action.
 

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Research"
+  short_description: "Research one source question with cited evidence"
+  default_prompt: "Use $research to investigate one bounded question using primary or governing sources."
+
+policy:
+  allow_implicit_invocation: true
