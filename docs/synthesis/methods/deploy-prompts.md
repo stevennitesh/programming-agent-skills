@@ -21,7 +21,15 @@ Conditionally skippable only under the gate above.
 ```text
 First use $writing-great-skills in Audit mode to pressure-test the named skill's complete synthesis. Read the full synthesis and required skill-authoring references; headings, searches, or truncated excerpts are not complete coverage.
 
-Before judging the proposed design, identify and completely inspect the simplest credible baseline: prefer a current upstream or canonical skill that still expresses the core outcome; otherwise write a minimal scratch outline. Treat that baseline as a design control, not runtime authority.
+Before judging the proposed design, inspect every checked-out upstream below as a mandatory baseline candidate:
+
+- Matt Pocock under `.tmp/mattpocock-skills`;
+- Superpowers under `.tmp/superpowers`; and
+- Ponytail under `.tmp/ponytail`.
+
+Search ignored paths explicitly, such as with `rg -uu`. For each upstream, locate and completely read the matching or equivalent package when one exists, plus any directly named upstream exclusion or change record capable of changing its interpretation. Record each upstream HEAD, worktree state, and freshness limit independently. Record an absent checkout or missing match as a gap rather than implying coverage.
+
+Also completely inspect the current canonical skill. Compare all available upstream candidates and canonical, then select the simplest credible version that still expresses the core outcome; use a minimal scratch outline only when none does. Treat the selected baseline as a design control, not runtime authority.
 
 Build a mechanism-admission ledger for every behavior beyond that baseline:
 
@@ -126,7 +134,9 @@ Promote the accepted experimental candidate for the named skill.
 
 First use $writing-great-skills in Author mode to update the canonical skill and directly affected proof, relationship, and synthesis surfaces, stopping after canonical proof.
 
-After that Return, complete the experimental-promotion lifecycle and use the repository's managed installer to update the global installed skill and verify parity. Do not perform Git delivery.
+Reuse the accepted behavioral evidence when the candidate bytes and affected behavioral claims are unchanged; do not run another behavioral-evaluation wave solely for promotion. If either changed, stop and return to behavioral evaluation before promotion.
+
+After that Return, complete the experimental-promotion lifecycle: delete only the promoted skill's entire experimental directory and remove only its manifest entry, preserving every other experimental candidate. Then use the repository's managed installer to update the global installed skill and verify parity. Do not perform Git delivery.
 
 Skill name: CHANGE_ME
 ```

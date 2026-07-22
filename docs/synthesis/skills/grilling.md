@@ -1,230 +1,236 @@
 # Grilling Runtime Design Synthesis
 
-Status: accepted future design and extraction map. `skills/experimental/grilling/SKILL.md` is the non-canonical evaluation candidate. This document and that candidate do not change current runtime behavior; canonical rewrite, behavior evaluation, validation, and installed-mirror synchronization remain future work.
+Status: Deploy Prompt 5 complete. Canonical and installed Grilling are byte-identical at tree hash `5c6ab5e504123fdaa79db33fc436f361e8e9383bf028892970a9efee4b54cf63`, and Grilling's experimental package and manifest entry are removed. Canonical Grilling is executable authority; this document authorizes no downstream execution by itself.
 
-Executable authority remains in `skills/custom/grilling/SKILL.md` and `skills/custom/grilling/agents/openai.yaml`. Callers own their bounds and continuation authority; `$grill-with-docs` owns composition with `$domain-modeling`; evidence skills own their evidence work; and `docs/synthesis/skill-context-relationships.md` indexes accepted edges. `C:\Users\steve\.agents\skills\grilling` is a validated distribution copy, never an independent authority.
+Executable authority is `skills/custom/grilling/SKILL.md` and `skills/custom/grilling/agents/openai.yaml`. `C:\Users\steve\.agents\skills\grilling` is the verified managed distribution copy, never independent authority. The accepted evaluation fixture remains under `docs/validation/evals/grilling-pruning-pre-prune/` as evidence, not runtime.
 
 ## Design Verdict
 
-Keep Grilling as one compact, implicitly invocable, conversation-only skill. It grills one bounded plan, design, decision, or idea until the confirmation authority explicitly accepts shared understanding, without executing the result.
+Rebuild the experimental candidate from Matt Pocock's small Grilling primitive, then admit only the local mechanisms needed for bounded questioning, composition, recoverable gaps, and caller return. Grilling remains one implicitly invocable, conversation-only skill whose purpose is to grill until shared understanding is explicitly confirmed. It writes nothing, invokes no evidence owner, chooses no downstream route, and starts no work.
 
-The future runtime strengthens six contracts:
+The simplest credible baseline is the complete upstream package at Matt Pocock checkout `ed37663cc5fbef691ddfecd080dff42f7e7e350d`:
 
-1. explicit participation, bound, confirmation, and return authority;
-2. consequence-based materiality and a dependency-ready decision frontier;
-3. one-input `Grill` turns for either a material choice or participant-held fact;
-4. dependency-local evidence blocking and semantic convergence;
-5. confirmation separated from routing and execution; and
-6. one caller-recoverable exit packet with typed gaps and honest attribution.
+- `.tmp/mattpocock-skills/skills/productivity/grilling/SKILL.md`
+- `.tmp/mattpocock-skills/skills/productivity/grilling/agents/openai.yaml`
 
-Keep the complete runtime contract in one `SKILL.md`. Every rule applies to ordinary Grilling sessions, so a disclosed reference would add a mandatory context hop rather than progressive disclosure. The experimental candidate tests the concise target; split only if counterfactual behavior evaluation later proves a repeatable omission that a sharp conditional pointer fixes.
+The minimum viable runtime is the baseline behavior plus six admitted deltas: bounded materiality, a conditional caller seam, composed Relay, semantic progress, typed evidence gaps, and a status-discriminated Return. The explicit no-execution boundary is preserved from upstream and sharpened for composition. No supporting runtime file is justified.
 
-## Proposed Runtime Design
+## Baseline Comparison
 
-This section is the sole normative authority for the future rewrite. Rationale, ownership, and proof sections may not redefine it.
+All observations below are from the local ignored checkouts. Each checkout was clean when inspected; commit date records local checkout freshness, not a network freshness guarantee.
+
+| Candidate | Local revision and observed date | Relevant package | Disposition |
+| --- | --- | --- | --- |
+| Matt Pocock | `ed37663cc5fbef691ddfecd080dff42f7e7e350d`, 2026-07-21; `HEAD`, `origin/main`, and `origin/HEAD` aligned | `skills/productivity/grilling/` | **Selected baseline.** It supplies relentless branch-by-branch interviewing, one question at a time, recommendations for decisions, factual inspection, human-owned decisions, explicit confirmation, and no action before confirmation. |
+| Superpowers | `d884ae04edebef577e82ff7c4e143debd0bbec99`, 2026-07-02; `HEAD`, `origin/main`, and `origin/HEAD` aligned; tag `v6.1.1` | No Grilling package. Closest analogue: `skills/brainstorming/SKILL.md` | Adjacent evidence only. It supports context inspection, one-question turns, recommendations with tradeoffs, approval, and YAGNI. Reject its mandatory design sections, design-doc write and commit, visual companion, user spec review, and automatic transition to `writing-plans`; those violate Grilling's bounded conversation-only purpose. |
+| Ponytail | `16f29800fd2681bdf24f3eb4ccffe38be3baec6b`, 2026-07-15; `HEAD`, `origin/main`, and `origin/HEAD` aligned | No Grilling package or behaviorally equivalent interview skill. Closest relevant package: `skills/ponytail/SKILL.md` | Simplification pressure only. Its minimum-solution ladder supports pruning, but its code-first persistence, execution posture, and coding-only scope are not Grilling behavior. No runtime clause is imported. |
+| Current local canonical | `skills/custom/grilling/SKILL.md`; identical current experimental body at inspection | Promoted seven-stage local design | Evidence for local composition and recovery needs, not the selected text baseline. It over-specifies authority roles, attribution, history, stages, and clarification count relative to the confirmed minimum. It remains runtime authority until later promotion. |
+
+Matt Pocock's `.out-of-scope/question-limits.md` also rejects a numeric question cap: difficulty determines interview length, natural-language steering is the control surface, and redundant questions are a prompt-quality failure rather than a quantity failure. The accepted design therefore uses semantic progress, not a counter.
+
+## Normative Design
+
+This section is the sole normative authority for Prompt 3. Later rationale and proof sections may explain or test it, but may not add runtime behavior.
 
 ### Outcome And Boundary
 
-Grilling owns shared understanding of one bounded subject, left unexecuted. Its decision tree is an internal means, not the user-facing outcome. It may inspect repository files, caller packets, cited sources, and other available evidence read-only. It writes no plan, specification, ticket, research note, questionnaire, domain file, ADR, implementation file, tracker state, Git state, or external state.
+Grilling achieves shared understanding of one bounded plan, design, decision, or idea and leaves it unexecuted. It may inspect available evidence read-only. It asks only material questions, one at a time, and gives one recommended answer with the decisive tradeoff for each decision. Participant-held facts are asked neutrally.
 
-The interview is relentless about in-bound ambiguity, not expansive. It finds inspectable facts, asks exactly one unresolved input per turn, reopens invalidated decisions, and stops before evidence work or downstream execution.
+Direct use defaults decision ownership, confirmation, and return to the user. A caller may instead supply the subject, authority, identifiers, and return owner. Grilling preserves those fields without taking caller continuation authority.
 
-### Admission And Interview Packet
+Grilling owns the interview, materiality, confirmation gate, gap classification, and its exit packet. It does not own domain consequences, evidence work, durable capture, routing, planning, specification, tickets, implementation, tracker state, Git state, or external state.
 
-Grilling remains implicitly invocable with `policy.allow_implicit_invocation: true`.
+### Minimum Viable Runtime
 
-Admit:
+Prompt 3 must extract this semantic contract into `skills/experimental/grilling/SKILL.md`. It may tighten incidental wording only when every clause, leading word, owner, branch, and returned field remains behaviorally equivalent.
 
-- **Direct:** the user asks to be grilled, challenged, interviewed, or pressure-tested on one bounded subject before action.
-- **Caller-bounded:** an authorized caller, currently `$grill-with-docs`, supplies an equivalent packet and receives Grilling's complete exit packet.
-- **Resumed:** an existing Grilling session returns with new evidence, an answer, a correction, or a decision tree ready for confirmation.
+```md
+---
+name: grilling
+description: Grill the user relentlessly about a bounded plan, decision, or idea until shared understanding is confirmed. Use when the user wants to stress-test their thinking or uses a "grill" trigger phrase. Conversation-only and before action.
+---
 
-A fresh session requires at least one unresolved material decision within the available participant's decision authority. Do not admit a fresh confirmation-only ceremony, ordinary in-scope clarification owned by another skill, an inspectable fact, a settled domain change, one evidence question, an external-stakeholder-only question, or a tracker-backed multi-session campaign.
+# Grilling
 
-Begin with or derive the interview bound and source; participant and decision authority; Bound authority; Confirmation authority; known decisions, evidence, and deferrals; and caller identity, opaque identifiers, and return owner. Direct use defaults the authorities and return owner to the user. Ask for a missing field only when it changes admission, ownership, or the bound. A caller preserves its own identifiers and equivalent fields without lossy translation. Downstream execution is always `none`.
+Interview relentlessly until shared understanding is confirmed. Grilling writes nothing and starts nothing downstream.
 
-### Authority And Materiality
+**Bound.** Use caller-supplied subject, authority, identifiers, and return owner; otherwise the user owns decisions, scope changes, confirmation, and return. Ask only material choices whose plausible answers change the outcome or commitment boundary, another material dependency, or a stated human-judgment consequence.
 
-Facts are found; decisions are owned.
+**Grill.** Find inspectable facts instead of asking. Put decisions to their owner one at a time, with one recommendation and decisive tradeoff; ask participant-held facts neutrally. Follow dependency order, incorporate each answer and deferral, and reopen invalidated decisions. Continue while clarification advances or corrects a branch; a repeated non-answer makes that decision authority unavailable.
 
-- Inspectable evidence settles facts.
-- The available participant settles only choices within their stated decision authority.
-- Bound authority alone approves a changed outcome or material scope and any deferral that weakens the promised outcome.
-- Confirmation authority accepts shared understanding after the tree is complete.
-- The caller retains reserved decisions, return ownership, and continuation authority.
-- Later design or implementation owners retain reversible technique unless it changes the current commitment boundary.
+Under composition, **Relay** every settled material answer and pause dependent progress until any domain collision or blocker returns. Grilling owns materiality, not domain consequences.
 
-A choice is material only when plausible answers would change the bounded outcome, supported scope, acceptance, observable behavior, public or domain contract, security or privacy posture, risk appetite, irreversible commitment, another material dependency, or an explicitly human-judged criterion whose outcome consequence is stated. Caller reservation identifies ownership; it does not manufacture materiality.
+**Confirm.** Present the decisions, deferrals, and evidence limits. Continue until confirmation authority explicitly accepts shared understanding. Confirmation starts nothing.
 
-Naming, formatting, local technique, and reversible mechanics stay outside the user decision tree unless they cross that predicate.
+**Gap.** When required branches remain and neither evidence nor available authority can advance them, return `Evidence gap` with kind `evidence` or `decision authority`, missing input, impact, and exactly one uninvoked owner. Choose `$research` for an authoritative source, `$prototype` for runnable design evidence, `$diagnosing-bugs` for causal or reproduction uncertainty, `$to-questionnaire` for an external stakeholder, `$handoff` for cross-session continuation, and the caller or `none` otherwise.
 
-### Leading-Word Loop
-
-```text
-Bound -> Find -> Grill -> Integrate -> Confirm | Gap -> Return
+**Return.** Always return status, bound, confirmed decisions, return owner, and `Downstream execution: none`. Add caller identifiers when supplied. For `Evidence gap`, add kind, missing input, impact, and uninvoked owner. Return to the caller or user and stop.
 ```
 
-#### Bound
+Keep `policy.allow_implicit_invocation: true` in `skills/experimental/grilling/agents/openai.yaml`.
 
-Lock the subject, source, participant and decision authority, Bound authority, Confirmation authority, and return owner. Maintain an internal decision tree of material choices, prerequisites, answers, deferrals, and invalidations. A newly exposed branch is an in-bound prerequisite, a valid deferral, or a proposed bound change requiring Bound authority.
+### Mechanism Admission Ledger
 
-The tree stays finite through traceability to the locked outcome, not a numeric question budget. A required unavailable prerequisite is a gap, not a deferral used to manufacture confirmation.
+| Mechanism | Pressure and evidence | Cheapest sufficient form | Runtime destination | Proof owner |
+| --- | --- | --- | --- | --- |
+| Bounded materiality | Upstream's open-ended interview can become redundant or expand into adjacent choices; the out-of-scope note rejects a hard count | One consequence predicate tied to outcome, commitment boundary, dependency, or stated human judgment | `Bound`, inline and universal | Prompt 4 multi-turn behavior evaluation |
+| Conditional caller seam | Grill With Docs and its named callers must preserve subject, authority, identifiers, and return ownership; direct use should stay simple | One caller-override sentence with user defaults | `Bound`, inline and universal | Prompt 4 direct/composed contrast |
+| Composed Relay | Grill With Docs must pass every settled material answer to Domain Modeling and return collisions before dependent questioning | One conditional paragraph; no generic packet schema | `Relay`, inline but branch-only | Prompt 4 ordered composition case; Grill With Docs owns transport proof |
+| Semantic progress | A fixed question cap truncates hard interviews, while unlimited paraphrase does not advance understanding | Continue only while clarification advances or corrects a branch; repeated non-answers make that authority unavailable | `Grill`, inline and universal | Prompt 4 redundant-question negative control |
+| Typed evidence gap | A blocked interview needs a recoverable next owner without silently invoking work | Two gap kinds, missing input, impact, and one category-mapped uninvoked owner | `Gap`, inline and conditional | Prompt 4 owner-selection cases; each named skill owns any later work |
+| Status-discriminated Return | Direct and composed callers need a small stable result without a forensic transcript | Common fields always; gap fields only for `Evidence gap`; preserve supplied identifiers | `Return`, inline and universal | Prompt 4 packet and caller-return cases |
+| Explicit no-execution boundary | Upstream confirmation gate prevents premature action; composition must not turn confirmation into continuation authority | Opening guard, Confirm guard, and returned `Downstream execution: none` | Opening, `Confirm`, and `Return` | Prompt 4 withheld-confirmation and no-action cases |
 
-#### Find
+Every admitted delta has a behavioral reason, a smaller rejected alternative, one destination, and a later proof owner. No mechanism may enter another runtime surface by implication.
 
-Resolve every answerable factual uncertainty from available sources before questioning the participant. Attribute each load-bearing fact as one of:
+### Placement And Ownership Classification
 
-- **cited source:** supported by an inspectable repository or external source;
-- **participant supplied:** stated by the legitimate participant but not independently verified; or
-- **inference:** derived from named support and clearly identified as inference.
-
-Never manufacture conversation citations or present inference as sourced fact. Do not create a durable research artifact without separate authority.
-
-When a fact is legitimately participant-held, pass exactly that unresolved input to `Grill` neutrally. When evidence or decision authority is unavailable, mark only dependent branches pending and continue from another ready branch.
-
-#### Grill
-
-Recompute the frontier: every unresolved in-bound material decision whose prerequisites are settled and whose decision authority is available. Select the one that unlocks the most downstream branches after testing its assumption, dependency, failure mode, reversibility, risk, and decisive tradeoff.
-
-Request exactly one unresolved input and wait:
-
-- for a material decision, give one recommendation and its decisive tradeoff;
-- for a participant-held fact, ask neutrally without a recommended answer.
-
-Use natural prose rather than a mandatory form. Several sentences may frame one input, but never combine independent decisions, a decision with an unrelated intake checklist, or several branches to shorten the session. Advice remains advisory; silence, ambiguity, and partial answers do not resolve the input.
-
-#### Integrate
-
-Incorporate the latest fact, decision, correction, or explicit deferral. Preserve material rejected alternatives and superseded history; derive immediate consequences without deciding new choices; reopen invalidated answers; classify newly exposed branches; and return to `Find` or `Grill`.
-
-Under Grill With Docs composition, return every settled material answer with the shared subject, source, and relevant opaque identifiers, then pause dependent progress. Integrate any returned domain collision or blocker and reopen affected branches before continuing. Grilling never classifies the domain consequence.
-
-Every substantive answer must resolve, invalidate, explicitly defer, or replace one branch with finite prerequisites traceable to the locked outcome. An unchanged frontier permits one focused clarification. Continued non-progress becomes a typed decision-authority gap rather than another paraphrase.
-
-When an answer contradicts evidence or an earlier answer, surface the collision. Do not choose which statement wins.
-
-#### Confirm
-
-Enter Confirm only when every in-bound material branch is resolved or validly deferred and the current tree is source-consistent. Present the complete semantic packet and wait for Confirmation authority to accept shared understanding.
-
-Confirmation covers the bound, decisions, material rejected alternatives, deferrals and their impact, attribution, and evidence limits. It does not require agreement with a downstream route. A correction, caveat, changed answer, or rejected understanding returns to `Integrate`; keep grilling until shared understanding is explicit.
-
-Confirmation authorizes no research, domain mutation, planning, specification, tickets, implementation, tracker mutation, Git mutation, or downstream skill invocation.
-
-#### Gap
-
-Return terminal status `Evidence gap` only when unresolved required branches remain, no frontier decision is available, and one focused clarification cannot progress the tree.
-
-Return the gap kind (`evidence` or `decision authority`), exact missing input, blocked decisions and impact, and why current sources or participant cannot settle it. Name exactly one uninvoked blocking owner:
-
-| Gap | Owner and boundary |
-| --- | --- |
-| One authoritative source question | Recommend `$research`; do not invoke it |
-| One runnable logic, behavior, or interface question | Recommend `$prototype`; do not invoke it |
-| Expected behavior, exact symptom, cause, or a trusted reproduction is uncertain | Recommend `$diagnosing-bugs`; do not authorize a fix |
-| One identifiable external stakeholder owns missing knowledge or judgment | Recommend `$to-questionnaire`; do not contact the stakeholder |
-| Evidence work or continuation must cross into a fresh session | Recommend `$handoff`; do not start it |
-| The invoking caller owns the missing repository or operational evidence | Return the gap to that caller |
-| No justified owner exists | Record owner `none` |
-
-A hard question, partially blocked tree, or later implementation step is not a terminal gap while another frontier decision is ready.
-
-#### Return
-
-Return one caller-recoverable semantic packet and stop. Always include status (`Confirmed` or `Evidence gap`), the bound, confirmed decisions, return owner, and `Downstream execution: none`; include authorities when distinct and material rejected options, deferrals, support, superseded decisions, gap details, or caller identifiers only when populated or required.
-
-On `Evidence gap`, the blocking owner is exact but uninvoked. On `Confirmed`, preserve a caller-supplied continuation when present; otherwise return to the user without choosing general downstream work. Selecting a new route is a later explicit `$skill-router` task.
-
-### Completion
-
-Grilling completes only through one terminal packet:
-
-- **Confirmed:** the tree and authorities were current; every in-bound branch was resolved or validly deferred; attribution was honest; invalidated branches were reopened; Confirmation authority accepted shared understanding; and nothing downstream started.
-- **Evidence gap:** every available frontier decision and one focused clarification were exhausted; the typed missing input, impact, owner, current decisions, deferrals, evidence limits, return owner, and no-execution state were returned.
-
-Questioning, advice, an internally complete tree, or a presented confirmation packet is not completion before the required wait and terminal Return.
+| Behavior or information | Classification | Destination or owner |
+| --- | --- | --- |
+| Relentless branch-by-branch interview, dependency order, one question at a time, factual inspection, human-owned decisions, explicit confirmation | Baseline behavior | Inline in experimental `SKILL.md` |
+| Bounded materiality, semantic progress, confirmation summary, typed Gap, recoverable Return, no-execution guard | Grilling-owned admitted behavior | Inline in experimental `SKILL.md` |
+| Subject, authority, caller identifiers, return owner, and any continuation after Return | Caller-owned input and behavior | Caller supplies and receives; Grilling preserves only |
+| Transport of settled answers and returned collisions | Composer-owned transport with callee-owned pause/integration obligation | Grill With Docs owns transport; Grilling's conditional `Relay` owns its pause and response |
+| Domain-consequence classification, Domain Delta, persistence, and ADR work | Domain Modeling-owned behavior | Outside Grilling runtime |
+| Research, prototype, diagnosis, questionnaire, handoff, or caller recovery work | Named owner behavior, uninvoked by Grilling | Outside Grilling runtime; Gap names one owner only |
+| Display name, short description, and implicit-invocation policy | Platform adaptation | Experimental `agents/openai.yaml`: upstream interface values plus repository policy |
+| Baseline comparison, admission rationale, rejected machinery, migration state, proof method | Non-runtime evidence | This synthesis and later evaluation records |
+| Supporting reference, durable interview state, question counter, confidence score, route catalog | Rejected or deferred machinery | No destination |
 
 ### Relationship Ownership
 
-| Caller | Verb | Callee | Trigger and return |
+The accepted executable edges do not change:
+
+| Source | Relationship | Target | Boundary |
 | --- | --- | --- | --- |
-| Direct user | Invoke | `$grilling` | Pressure-test one bounded subject conversation-only; report the packet and stop |
-| `$skill-router` | Recommend and stop | `$grilling` | A bounded subject needs a conversation-only interview; the user starts it later |
-| `$grill-with-docs` | Compose | `$grilling` | Preserve every Grilling gate, receive its complete packet, attach Domain Modeling's intact delta, and own only the combined exit |
-| `$to-questionnaire` | Recommend and stop | `$grilling` | The present participant owns the unresolved choice |
-| `$grilling` | Recommend and stop | `$research` | An authoritative source gap blocks every remaining branch |
-| `$grilling` | Recommend and stop | `$prototype` | A runnable design-evidence gap blocks every remaining branch |
-| `$grilling` | Recommend and stop | `$diagnosing-bugs` | Causal or reproduction uncertainty blocks every remaining branch |
-| `$grilling` | Recommend and stop | `$to-questionnaire` | One external stakeholder owns the blocking knowledge or judgment |
-| `$grilling` | Recommend and stop | `$handoff` | Evidence work or continuation must cross into a fresh session |
+| Direct user | Invoke | `$grilling` | Grill one bounded subject, return the packet, and stop |
+| `$skill-router` | Recommend and stop | `$grilling` | The user starts the conversation-only interview later |
+| `$grill-with-docs` | Compose | `$grilling` | Preserve Grilling's complete interview contract, Relay each settled answer, receive its packet, and own the combined return |
+| `$to-questionnaire` or `$research` | Recommend and stop | `$grilling` | The current user owns the remaining decision |
+| `$grilling` | Name uninvoked owner | `$research`, `$prototype`, `$diagnosing-bugs`, `$to-questionnaire`, or `$handoff` | Identify one blocked recovery owner without invoking it |
 
-Grilling owns interview behavior and its semantic packet. Grill With Docs owns mutation disclosure, Domain Modeling composition, continuous domain reconciliation, the intact combined packet, and joint completion. Domain Modeling alone owns durable domain truth and ADR handling. Evidence skills own their work. Callers retain their identifiers, bounds, return behavior, and continuation authority.
+Grilling owns materiality, not domain consequence. Grill With Docs remains the sole composer of Grilling with Domain Modeling. Domain Modeling alone owns durable domain truth. Evidence owners act only after a separately authorized invocation. The relationship index already expresses these edges and therefore needs no Prompt 2 edit.
 
-Choose Grill With Docs at interview admission whenever durable domain capture must remain active. Once composition begins, Grilling still owns every Evidence-gap classification and names the one uninvoked blocking owner; Grill With Docs preserves that gap with the current Domain Delta and returns it without restarting composition or routing the evidence work.
+## Rejected, Deferred, And Residual Complexity
 
-Grilling invokes none of its recommended owners and never becomes a router, campaign tracker, domain owner, evidence workflow, plan writer, or implementation owner.
+### Rejected From Runtime
 
-## Rationale And Deliberate Non-Changes
+- The `cited | participant-supplied | inferred` attribution taxonomy. Ordinary evidence discipline is sufficient; Grilling only needs to present evidence limits at confirmation.
+- Four separately named authority roles on every direct invocation. The caller override plus user defaults preserves ownership without making direct use ceremonial.
+- The seven-stage `Bound -> Find -> Grill -> Integrate -> Confirm | Gap -> Return` spine. `Find` and `Integrate` are ordinary interview work inside `Grill`; keeping them as peer stages adds navigation without a distinct user-facing gate.
+- A hard one-clarification allowance or numeric question budget. Progress is semantic, and the upstream out-of-scope decision rejects counters.
+- Material rejected-option history and a supersession ledger. Confirmed decisions, current deferrals, and evidence limits are enough for shared understanding and caller recovery.
+- Agreement on a downstream route before confirmation. Shared understanding and route selection are different decisions.
+- A supporting reference, universal packet schema, operations manual, durable interview state, confidence score, or caller catalog.
+- Automatic evidence-owner invocation, automatic continuation, or any action after confirmation.
+- Superpowers' design-document write, commit, review, visual-companion, and `writing-plans` transition behaviors.
+- Ponytail's persistent coding mode, code-first output, and execution posture.
 
-- **Frontier:** eligibility and priority are different. Dependency-ready membership prevents one missing fact from blocking independent decisions; `Grill` then chooses the highest-leverage eligible branch.
-- **Bound:** traceable prerequisites permit relentless coverage without an arbitrary question budget or open-ended adjacent exploration.
-- **Confirmation:** shared understanding must not silently authorize routing, mutation, or execution.
-- **One file:** the runtime rules are universal; pruning explanation is cheaper and more reliable than adding a mandatory reference hop.
+### Deferred Hypotheses
 
-Retain implicit invocation, one-input turns, read-only factual inspection, caller continuation authority, recommendation-only evidence edges, and conversation-only output. Do not add a durable map, tracker, question budget, questionnaire artifact, confidence score, automatic evidence invocation, automatic downstream transition, caller catalog, or supporting runtime file without new behavioral evidence.
+- Add a support file only if repeated fresh-context behavior evidence shows one conditional branch cannot remain reliable after inline tightening.
+- Add a new Gap owner only after a real blocked case demonstrates a distinct owner with an accepted relationship edge and proof plan.
+- Expand caller fields only after a caller cannot preserve identity or recover the result through the current seam.
+- Add more progress machinery only after a fixed control proves repeated non-progress that the present semantic rule does not correct.
 
-The specialized `skills/extra/loop-me` workflow remains outside the active custom-pack contract.
+### Residual Unavoidable Complexity
 
-## Source Trace
+Only three local complexities remain beyond upstream: composed Relay ordering, typed recovery ownership, and a caller-recoverable Return. They are unavoidable because existing callers require collision-safe composition and blocked sessions must stop without losing ownership. Everything else stays in ordinary model capability, caller contracts, relationship documentation, or proof records.
 
-The accepted design reconciles the current canonical skill; its invocation policy; the experimental candidate; `$grill-with-docs`, `$domain-modeling`, evidence-owner, router, and caller boundaries; `docs/synthesis/README.md`; `docs/synthesis/skill-context-relationships.md`; `tests/test_skill_pack_contracts.py`; `docs/validation/evals/core-workflows.md`; ADR 0003 on local contract slices; ADR 0004 on behavior rather than language lint; and the established history at `4d1b816`, `d99751a`, `5e27cd5`, `8fb5289`, and `c2c096e`.
+## Source Trace And Domain Delta
 
-The synthesis changes no repository-wide domain term or context boundary. `Bound authority`, `Participant and decision authority`, and `Gap kind` are Grilling-local contract terms. No ADR is selected.
+The design reconciles the complete selected Matt Pocock package and question-limit note; Superpowers' complete Brainstorming package; Ponytail's complete core package; the current canonical and experimental Grilling packages; Grilling's OpenAI policy; Grill With Docs and Domain Modeling synthesis; the pack relationship index; the experimental manifest; current structural tests and evaluation ownership; `docs/synthesis/README.md`; and ADRs 0003, 0004, 0005, and 0007.
 
-## Runtime Ownership And Extraction Map
+The Domain Delta is `no-change`. The accepted terms are local skill-contract vocabulary and do not alter repository-wide ubiquitous language, bounded-context responsibility, or an ADR-worthy architectural decision.
 
-| Stage | Surface | Accepted change | Must remain outside |
-| --- | --- | --- | --- |
-| `G0` | `skills/experimental/grilling/SKILL.md` | Hold the concise non-canonical evaluation candidate | Installation, active routing, caller dependence, or executable authority |
-| `G1` | `skills/custom/grilling/SKILL.md` | Extract the proposed runtime design into one concise leading-word contract | Domain mutation, caller procedure, evidence execution, durable storage, routing catalog, rationale, or evaluation prose |
-| `G1` | `skills/custom/grilling/agents/openai.yaml` | Preserve explicit `policy.allow_implicit_invocation: true` | Trigger prose or runtime procedure |
-| `G2` | The [minimum coordinated experimental cohort](grill-with-docs.md#runtime-ownership-and-change-map) plus recommendation-only evidence owners | Reconcile only accepted triggers, packet compatibility, and return boundaries; generate no candidate outside the cohort without an observed owned mismatch | A second copy of Grilling procedure or speculative regeneration of verification-only owners |
-| `G2` | `docs/synthesis/skill-context-relationships.md` | Preserve current edges and add the narrowly gated Grilling-to-Diagnosing-Bugs edge | Interview procedure or duplicate route catalog |
-| `G2` | README and active route guidance | Change only materially affected human-facing wording | Normative runtime procedure |
-| `G2` | `skills/extra/loop-me/SKILL.md` | Classify compatibility; change only through separately authorized extra-skill work | Authority over active Grilling behavior |
-| `G3` | `tests/test_skill_pack_contracts.py` | Protect invocation, semantic spine, ownership, required edges, and mirror-safe invariants | Claims that strings prove behavior |
-| `G3` | `docs/validation/evals/core-workflows.md` and dated transcripts | Own Grilling-specific scenarios, critical failures, results, and residual gaps | Generic counterfactual evaluation procedure |
-| `G4` | Installed mirror | Synchronize only after the coordinated canonical candidate passes | Independent edits, partial synchronization, or authority over canonical source |
+## Reconciliation With Current Surfaces
 
-Evaluate `G0`, then implement `G1` through `G4` in order. No stage is independently promotable. Keep the canonical family coherent before synchronizing the installed mirror.
+The current canonical and experimental Grilling bodies were identical at inspection. They encode the older detailed design and remain untouched by Prompt 2. Their presence does not override this accepted next design:
+
+- canonical remains current runtime authority until a later promotion;
+- experimental is stale and is the only runtime package Prompt 3 may replace;
+- the experimental manifest's existing origin record must be refreshed by Prompt 3 to describe the new candidate provenance and lifecycle;
+- Grill With Docs, Domain Modeling, and the relationship index keep their current edges because the new packet preserves their required subject, identifiers, Relay pause, terminal status, and return owner; and
+- the existing Grilling evaluation prose is historical evidence, not proof of the new minimum runtime. Prompt 4 must create fresh control/candidate evidence.
+
+No competing synthesis paragraph, table, historical note, or current runtime may be read as permission to reintroduce a rejected mechanism into the Prompt 3 candidate.
+
+## Prompt 3 Extraction Contract
+
+Prompt 3 is ready to execute with no design choice left open.
+
+### Exact Baseline
+
+Read the complete Matt Pocock Grilling package at checkout `ed37663cc5fbef691ddfecd080dff42f7e7e350d`. Treat its `SKILL.md` behavior as Add-preserving baseline material, then apply only the admitted deltas in this synthesis. Superpowers, Ponytail, and current canonical are comparison evidence, not merge sources.
+
+### Destination And Inventory
+
+Prompt 3 may change only the experimental Grilling package and its inventory record:
+
+- replace `skills/experimental/grilling/SKILL.md` with the minimum viable runtime;
+- update `skills/experimental/grilling/agents/openai.yaml` to declare `interface.display_name: "Grilling"`, `interface.short_description: "Stress-test thinking one question at a time"`, and `policy.allow_implicit_invocation: true`;
+- update Grilling's entry in `skills/experimental/manifest.json` with the selected upstream provenance and current candidate identity; and
+- create no support file.
+
+Prompt 3 must not edit `skills/custom/grilling/`, the installed mirror, callers, relationship docs, tests, or validation records unless it stops and returns a concrete mismatch to the owning later prompt.
+
+### Platform Adaptation
+
+- Preserve repository frontmatter keys `name` and `description`; do not copy plugin- or Claude-specific invocation syntax.
+- Preserve upstream `interface.display_name: "Grilling"` and `interface.short_description: "Stress-test thinking one question at a time"` in the repository-supported `interface` block.
+- Preserve `policy.allow_implicit_invocation: true` explicitly.
+- Use repository skill references such as `$grill-with-docs`, never upstream slash-command syntax, when a local skill is named.
+
+### Clause Classification
+
+| Minimum-runtime clause | Prompt 3 treatment |
+| --- | --- |
+| Frontmatter and opening relentless interview/no-action contract | Add from selected baseline, adapted to repository wording |
+| `Bound` | Add as admitted Grilling-owned delta; preserve caller-owned fields without elaborating a caller schema |
+| `Grill` | Add from baseline plus admitted materiality and semantic-progress deltas |
+| Conditional `Relay` | Add as admitted composition delta; keep branch-only and inline |
+| `Confirm` | Add from baseline plus concise summary and no-action guard |
+| `Gap` | Add as admitted recovery delta; owners remain uninvoked |
+| `Return` | Add as admitted caller-recovery delta |
+| Attribution taxonomy, four-role ceremony, seven stages, clarification count, history ledger, route agreement, automatic work | Remove or do not add; explicitly rejected |
+| Metadata and implicit policy | Add the exact interface values and implicit policy named above to `agents/openai.yaml`; do not repeat them as runtime procedure |
+| Evaluation scenarios and claims | Disclose to Prompt 4; do not add to runtime |
+
+### Proof Ownership
+
+Prompt 3 owns source read-back, exact clause accounting, package inventory, schema-safe metadata, diff checks, and structural validation only. Structural checks may prove that the package parses, policy is declared, forbidden files are absent, and the experimental inventory is coherent. They may not prove that the model asks one material question, converges, pauses Relay correctly, or withholds action.
+
+Prompt 4 owns fresh no-guidance controls, candidate trials, repeated samples where risk warrants, claim-level scoring, critical-failure admission, and residual behavioral gaps. Promotion remains blocked until that behavioral evidence exists.
 
 ## Grilling-Specific Behavior Proof
 
-Use the counterfactual method owned by `skills/custom/writing-great-skills/BEHAVIOR-EVALS.md`. This section owns only Grilling-specific claims and cases.
-
 | Claim | Positive case | Critical failure |
 | --- | --- | --- |
-| Admission and authority | Direct and composed sessions preserve participant, bound, confirmation, caller, and return authority; a resumed tree may enter Confirm | Fresh confirmation ceremony, unavailable-owner proxying, ordinary caller clarification theft, or invented authority |
-| Facts and attribution | Repository facts are found and cited; participant facts are neutral and marked supplied; inferences are labeled | Asking for inspectable facts, invented citations, or inference presented as fact |
-| Frontier and one-input turns | One blocked dependency leaves an independent branch ready; a choice receives advice; a fact does not | Global blocking, several independent inputs in one turn, leading factual answers, or unavailable-owner questions |
-| Integration and convergence | Later information reopens an invalid branch; each answer changes the tree; one clarification precedes a non-progress gap | Stale confirmation, overwritten history, repeated paraphrase, or untraceable tree growth |
-| Bound control | Prerequisites join; adjacent work defers; scope change waits for Bound authority | Silent expansion, participant-approved caller scope change, or required blocker disguised as deferral |
-| Typed gap and owner | Source, runnable, causal, external-owner, fresh-session, caller-owned, and ownerless gaps select one exact uninvoked owner | Premature exit, several owners, automatic invocation, causal work misrouted to research or prototype, or gap while a frontier remains |
-| Confirmation and Return | Withheld confirmation stays open; revision reopens; accepted understanding returns the conditional semantic packet with downstream `none` | Internal completeness reported Confirmed, route agreement required, general route chosen, field loss, or automatic continuation |
-| Composition | Grill With Docs is selected at admission for durable capture; every settled material answer crosses the composer; returned collisions reopen affected branches; and a Grilling Evidence gap returns with its uninvoked owner and the complete Domain Delta | Grilling classifies domain consequence or mutates truth; dependent questioning continues before collision return; the composer weakens a gate, reroutes or invokes the gap owner, re-enters itself, loses a payload, or loses caller identity |
+| Bounded materiality | The interview asks only choices whose plausible answers change the outcome, commitment boundary, a material dependency, or stated human-judgment consequence | Adjacent preference fishing, ceremony with no unresolved decision, or unbounded expansion |
+| One-input decision quality | One decision arrives with one recommendation and decisive tradeoff; one participant-held fact is asked neutrally | Multiple independent inputs, no recommendation for a decision, or a leading factual question |
+| Evidence discipline | Inspectable facts are found before questioning; evidence limits are disclosed at confirmation | Asking the user for readily inspectable facts or presenting inference as settled evidence |
+| Semantic progress | Each clarification advances or corrects a branch; an invalidated decision reopens; a blocked unchanged frontier reaches Gap | Repeated paraphrase, arbitrary question cap, stale confirmation, or endless questioning |
+| Composition | Each settled material answer crosses Relay; dependent progress pauses for the returned collision or blocker; Grilling does not classify the domain consequence | Exit-only reconciliation, questioning past a collision, domain mutation, or lossy caller identity |
+| Confirmation | Decisions, deferrals, and evidence limits are presented and explicit acceptance is awaited | Internal completeness treated as confirmation, route agreement required, or work starts after acceptance |
+| Gap ownership | A required blocked branch returns one typed gap and exactly one uninvoked owner | Premature gap while another branch can advance, multiple owners, owner invocation, or vague missing input/impact |
+| Return | Direct and composed sessions return the common packet, preserve supplied identifiers, add gap-only fields conditionally, and stop with downstream `none` | Field loss, transcript dump, invented continuation, or automatic routing/execution |
 
-Static tests protect structure and relationships only. Promotion requires fresh counterfactual behavior evidence for each changed claim and no critical failure.
+## Prompt 4 Acceptance And Readiness
 
-## Promotion And Completion
+Fresh controls and candidate samples are recorded in [`2026-07-21-grilling-post-candidate-behavior-eval.md`](../../validation/transcripts/2026-07-21-grilling-post-candidate-behavior-eval.md). Prompt 4 made two evidence-backed repairs inside admitted mechanisms:
 
-The future rewrite is complete only when:
+- repeated non-answers now make decision authority unavailable, closing semantic non-progress from 3/5 to 5/5 candidate compliance; and
+- Gap now maps evidence categories to one uninvoked owner, closing authoritative-source selection from 4/5 to 5/5.
 
-- the experimental candidate reflects the accepted `Bound -> Find -> Grill -> Integrate -> Confirm | Gap -> Return` design and remains non-canonical until promotion;
-- the canonical runtime expresses every Proposed Runtime Design concern once with strong leading words and no supporting file;
-- composer, caller, router, evidence-owner, relationship, and extra-skill boundaries are compatible without copied procedure;
-- Grilling-specific positive and negative cases pass the shared behavior-evaluation protocol;
-- focused tests, full pytest, `python -m scripts.validate_skills`, and both diff checks pass;
-- every changed file is reread and residual gaps are recorded; and
-- the installed mirror matches the validated canonical source exactly.
+| Claim | Selected control | Final candidate |
+| --- | ---: | ---: |
+| Metadata routing | 29/30 | 30/30 |
+| Material closure and confirmation entry | 4/5 | 5/5 |
+| Repeated non-answer reaches typed Gap | 0/5 | 5/5 after repair |
+| Composed Relay pauses dependent progress | 0/5 | 5/5 |
+| Authoritative-source Gap returns complete packet and `$research` | 0/5 | 5/5 after repair |
+| Explicit confirmation returns complete packet | 0/5 | 5/5 |
 
-Until that coordinated Lock, this synthesis remains accepted future design rather than executable runtime authority.
+The repaired pre-prune fixture and final candidate are byte-identical at the accepted tree hash. The independent cut audit retained only baseline behavior, admitted local mechanisms, machine identity, and protected no-mutation/no-execution boundaries. No support file, caller change, relationship change, or new runtime mechanism was admitted.
+
+**Deploy Prompt 5: complete.** The promoted bytes match the accepted candidate exactly, so Prompt 4 evidence was reused without another behavioral wave. Only Grilling's experimental package and manifest entry were removed; the managed installer changed only Grilling, and its final dry-run reports all 25 managed skills unchanged.

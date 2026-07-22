@@ -672,6 +672,33 @@ def test_install_updates_managed_skills_and_preserves_unrelated(tmp_path: Path) 
     assert manifest["skills"] == ["alpha", "beta"]
 
 
+def test_current_bootstrap_preserves_personal_mixed_line_endings(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / ".agents/skills"
+    global_agents = tmp_path / ".codex/AGENTS.md"
+    write_source_skill(root, "alpha", "v1")
+    write_template(root)
+    install_skills.install(root, installed, None)
+    global_agents.parent.mkdir(parents=True)
+    original = (
+        b"# Global Codex Instructions\r\n\r\n"
+        b"Personal rule.\n\n"
+        b"## Skill Pack Bootstrap\r\n\r\n"
+        b"- **Route:** Suggest `$skill-router`.\r\n"
+    )
+    global_agents.write_bytes(original)
+    (root / "skills/custom/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+
+    result = install_skills.install(root, installed, global_agents)
+
+    assert result["updated"] == ["alpha"]
+    assert result["global_bootstrap"] == "present"
+    assert (installed / "alpha/SKILL.md").read_text(encoding="utf-8") == "v2"
+    assert global_agents.read_bytes() == original
+
+
 def test_install_ignores_same_named_experimental_skill(tmp_path: Path) -> None:
     root = tmp_path / "repo"
     installed = tmp_path / ".agents/skills"

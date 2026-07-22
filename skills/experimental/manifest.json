@@ -9,23 +9,11 @@
       "candidate_sha256": "18c226fea230fe510422e3cdd07b61063291916485d08aeff2aff65f116e5cc4",
       "active_baseline_sha256": "72223008a4b2f8a3ad540be60aa9af5cc87806918f24c5c49f3936181d7470b2"
     },
-    "domain-modeling": {
-      "origin": "skills/custom/domain-modeling at f5b8e2fb62638adf1e4fbe6855e7ec13ff236145 as the active baseline for the compact candidate",
-      "reason": "Preserve the inactive Steps 1-3 compact Domain Modeling family for review before coordinated caller and Router integration.",
-      "candidate_sha256": "599a98910c7b392d54e595331d114ec4e101dffe251d277ed5067b308602e045",
-      "active_baseline_sha256": "8bbcbab2bb837a2f3df2458f7b7116c3517ed131696f5710051b6464e6426ccc"
-    },
     "grill-with-docs": {
       "origin": "skills/custom/grill-with-docs at f5b8e2fb62638adf1e4fbe6855e7ec13ff236145 as the active baseline for the concise composer candidate",
       "reason": "Preserve the inactive Steps 1-3 concise composer for review before coordinated component and caller integration and behavioral proof.",
       "candidate_sha256": "1c7c30f466bce1045d02e7c9b659f1f45ac645a81f7ca5964570a6b95c592ca4",
       "active_baseline_sha256": "4ac0a1da75cd5e506a5769feb3b0999a54c8ed9618ed996e35c393ea6134aa64"
-    },
-    "grilling": {
-      "origin": "pre-existing skills/experimental/grilling candidate at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f",
-      "reason": "Retain the inactive concise candidate with its Grill With Docs Relay handshake separately from the active skill.",
-      "candidate_sha256": "489ec7721d494eb3cb696475755f71ec0a0a86146b11db1afaf91ef7b645fb9b",
-      "active_baseline_sha256": "567960f5e87a7300949c2b9b4d272b56e1475a825b442e759e7056e101df3d52"
     },
     "parallel-implement": {
       "origin": "skills/custom/parallel-implement at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f before the installed-baseline restore",
@@ -74,12 +62,6 @@
       "reason": "Preserve the divergent candidate while the installed managed version remains active.",
       "candidate_sha256": "00d52ec91fc001837eed728e21d7bdad5a8729fc847507c908ade168a6e0bedb",
       "active_baseline_sha256": "8b71e1d0847831e3f60c3f74399e38ec794f20f2595daaa13b13b30e99b932fa"
-    },
-    "writing-great-skills": {
-      "origin": "mattpocock/skills writing-great-skills at ed37663cc5fbef691ddfecd080dff42f7e7e350d as the simplest credible baseline, reconciled with the current active local package",
-      "reason": "Preserve the behaviorally accepted inactive baseline-first Writing Great Skills candidate pending Prompt 5 promotion.",
-      "candidate_sha256": "c7c02f4f9896cd5bf6e6c25886e77785a9f80c0ccea0d02f7aaa6fc85076dcc4",
-      "active_baseline_sha256": "f70d6c83d49800a11ea4c51e5ea87b601d12755e587bd28a8ee32f956a7682ba"
     }
   }
 }

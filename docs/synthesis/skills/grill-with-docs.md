@@ -333,7 +333,7 @@ Extract the [Leading-Word Runtime Model](#leading-word-runtime-model) and its La
 
 ## Runtime Ownership And Change Map
 
-The minimum coordinated experimental cohort is `grilling`, `domain-modeling`, `grill-with-docs`, `skill-router`, `wayfinder`, `triage`, and `improve-codebase`. Before promotion, generate or refresh one current candidate for every cohort member: the first three own the composed behavior, Skill Router owns Domain Modeling's eligible standalone terminal residual, and the final three are the closed invoking caller set. Repo Bootstrap and recommendation-only or suggestion-only owners require compatibility verification, not experimental candidate generation, unless an observed packet or route mismatch requires an owned change.
+The minimum coordinated experimental cohort is `grilling`, `domain-modeling`, `grill-with-docs`, `wayfinder`, `triage`, and `improve-codebase`. Before promotion, generate or refresh one current candidate for every behaviorally affected cohort member: the first three own the composed behavior and the final three are the closed invoking caller set. Domain Modeling is a leaf and has no Skill Router promotion dependency. Repo Bootstrap and recommendation-only or suggestion-only owners require compatibility verification, not experimental candidate generation, unless an observed packet or route mismatch requires an owned change.
 
 | Stage / bundle | Surface | Owns | Proposed delta | Must not absorb |
 | --- | --- | --- | --- | --- |

@@ -1,469 +1,251 @@
 # Domain Modeling Durable-Truth Synthesis
 
-Status: selected future design and coordinated extraction map. The inactive compact Steps 1-3 candidate is preserved under `skills/experimental/domain-modeling/`. This document and candidate are not runtime authority; the active canonical skill, its disclosed references, callers, tests, and installed mirror remain authoritative until the complete coordinated candidate is behaviorally proved, validated, promoted, and synchronized.
+Status: Prompt 5 complete. The accepted Domain Modeling package is canonical and globally installed; no experimental lifecycle entry remains.
 
-Current runtime authority remains in:
+Before Prompt 3, the canonical and experimental Domain Modeling packages were byte-identical. Prompt 3 replaced the stale lifecycle copy; Prompt 4 repaired direct-user meaning authority and false Context Mapping labels, froze pre-prune package `cfea0f22106e4a8ec231912afadd09ca717189dcb4b53eadb6ec19bdde44c6e0`, and accepted pruned candidate `88413f471ffcedccdf8b4b3a162a3068334c7befbcd28801165add6d29e8941b`. Prompt 5 promoted those exact bytes to `skills/custom/domain-modeling/`; accepted behavioral evidence was reused because no candidate byte or claim changed.
 
-- `skills/custom/domain-modeling/SKILL.md` for active Domain Modeling behavior;
-- `skills/custom/domain-modeling/CONTEXT-FORMAT.md` for active context-record representation;
-- `skills/custom/domain-modeling/ADR-FORMAT.md` for active ADR assessment and representation;
-- `skills/custom/domain-modeling/agents/openai.yaml` for active invocation policy;
-- each target repository's routed `CONTEXT.md`, `CONTEXT-MAP.md`, and ADRs for accepted project truth and decisions;
-- `docs/adr/0006-domain-modeling-records-approved-adrs.md` for the accepted ADR-recording ownership decision;
-- `$grill-with-docs` for composition with `$grilling`;
-- each invoking caller for supplied authority, continuation, and return;
-- `$repo-bootstrap` for the domain-routing setup surface;
-- `docs/synthesis/skill-context-relationships.md` for the pack-wide relationship index; and
-- tests, behavioral evaluations, and installed mirrors only at their owned verification boundaries.
+This synthesis has four roles:
 
-The experimental Domain Modeling candidate depends on the narrowly implicit residual-router candidate preserved under `skills/experimental/skill-router/`. The active custom Router remains explicit-only, so the Router edge and Domain Modeling candidate cannot promote independently.
+1. **Baseline** identifies the smallest credible control.
+2. **Normative Design** owns the selected future behavior.
+3. **Admission And Decision Ledgers** preserve why each delta exists.
+4. **Extraction And Proof** makes Prompt 3 mechanical without claiming behavioral proof.
 
-## Guide
+## Baseline
 
-This synthesis has four authority layers:
+The design control is Matt Pocock's checked-out `domain-modeling` package at `ed37663cc5fbef691ddfecd080dff42f7e7e350d`, inspected clean on 2026-07-21. Its smallest credible core is:
 
-1. **Orientation** states the selected outcome, vocabulary, boundary, and leading-word model.
-2. **Normative Design** is the sole authority for proposed Domain Modeling behavior.
-3. **Evidence And Rationale** preserves decision-changing pressure and deliberate exclusions without creating rules.
-4. **Extraction And Verification** assigns every accepted change to one owner and one proof path.
+- change the domain model rather than merely consume vocabulary;
+- challenge glossary conflicts and fuzzy language;
+- use concrete scenarios to sharpen relationships and boundaries;
+- cross-check descriptive claims against code;
+- create domain records lazily;
+- persist resolved ubiquitous language; and
+- offer concise ADRs only for durable, surprising, real trade-offs.
 
-Key paths: [runtime spine](#leading-word-runtime-model), [authority gates](#authority-gates), [representation branches](#representation-branches), and [migration matrix](#migration-and-acceptance-matrix).
+The checked-out Superpowers baseline at `d884ae04edebef577e82ff7c4e143debd0bbec99` and Ponytail baseline at `16f29800fd2681bdf24f3eb4ccffe38be3baec6b` were clean and contained no matching or equivalent package. Freshness is limited to these local checkouts; no network refresh was performed.
 
-# Layer One: Orientation
+The upstream package is a design control, not local runtime authority. Local additions must cure a demonstrated baseline failure, satisfy an accepted caller contract, or preserve a non-intuitive safety boundary.
 
-## North Star
+# Normative Design
 
-Domain Modeling makes each in-scope change to durable project meaning explicit, source-traced, authority-settled, correctly represented, safely persisted or exactly rendered, and recoverable through one complete Domain Delta.
+## Outcome And Admission
 
-It owns:
+Domain Modeling keeps a project's context-scoped ubiquitous language, invariants, bounded contexts, relationships, and approved durable decisions coherent.
 
-- canonical terms and context-scoped ubiquitous language;
-- concept and bounded-context boundaries;
-- cross-context contracts and authority;
-- durable domain invariants;
-- contradictions among accepted records, evidence, decisions, and implementation; and
-- assessment of plausible ADR candidates and recording of explicitly approved ADR-worthy decisions.
+Keep it narrowly implicitly invocable when:
 
-It does not own the participant interview, the underlying non-domain design decision, repository setup, code alignment, caller continuation, or downstream execution.
-
-## Design Verdict
-
-Keep one narrowly implicit Domain Modeling skill with two disclosed representation branches and one linear semantic spine.
-
-| Concern | Selected design |
-| --- | --- |
-| Invocation | Admit durable-truth change or persistence, plus assessment or recording of an already-settled ADR-worthy decision |
-| Participant judgment | Return unsettled judgment through the caller or, for a standalone terminal residual, the implicit Skill Router; `$grill-with-docs` owns the interview |
-| Direct authority | Treat the direct user as decision authority unless the Source Trace names another owner |
-| Context mutation | Require explicit persistence intent; otherwise Render exact domain-record changes |
-| ADR mutation | Keep separate explicit approval and the branch mechanics in `ADR-FORMAT.md` |
-| Representation | Keep exact context and ADR forms behind sharp pointers |
-| Reconciliation | Reconcile only on material state changes |
-| Return | Use a compact Domain Delta with semantic, persistence, and blocker state kept distinct |
-| Promotion | Coordinate the Domain Modeling rewrite with the implicit residual Router and affected callers |
-
-Do not add an ontology engine, event-storming method, code-renaming workflow, generic architecture process, persistent delta ledger, or third runtime reference.
-
-## Durable-Truth Boundary
-
-**Domain truth** is accepted project meaning for domain terms, boundaries, relationships, and invariants. **Source facts** are evidence-settled observations about current behavior or state. **Domain records** are routed context files and ADRs that persist accepted meaning and explicitly approved durable decisions.
-
-Accepted vocabulary is consumed through repository routing without invoking Domain Modeling. Domain Modeling starts only when durable truth must change or be persisted, a material contradiction must be accounted for, or an already-settled decision needs ADR assessment or recording.
-
-Domain Modeling may inspect code, tests, contracts, plans, issues, research, and runtime evidence when they can change a fact, expose a collision, or reveal a material consequence. It mutates only routed context records and explicitly approved ADRs. It returns all code, test, plan, spec, tracker, setup, and implementation consequences to their owners.
-
-## Domain Vocabulary
-
-| Term | Meaning |
-| --- | --- |
-| **Domain truth** | Accepted project meaning settled by named decision authority; current implementation may support or contradict it but does not silently redefine it |
-| **Source fact** | An evidence-settled observation about current behavior or state |
-| **Domain record** | Routed context files and ADRs that persist accepted domain truth and approved durable decisions |
-| **Ubiquitous language** | Context-scoped canonical language used consistently with one meaning inside its owning context, never a forced global vocabulary |
-| **Owning context** | The bounded context responsible for a concept's meaning, invariants, and changes |
-| **Context relationship** | A cross-context contract with an explicit type and singular or joint authority model |
-| **Domain contradiction** | An unresolved collision among accepted records, evidence, decisions, current usage, or context ownership |
-| **Domain Delta** | The complete return packet for semantic resolution, per-target persistence, blockers, consequences, and return ownership |
-
-Process states live beside their owning gates rather than in this vocabulary.
-
-## Leading-Word Runtime Model
-
-```text
-Trace -> Challenge -> Resolve -> Reconcile -> (Persist -> Verify | Render) -> Return
-```
-
-| Leading word | Runtime meaning |
-| --- | --- |
-| **Trace** | Establish the subject, routed truth, load-bearing evidence, decision authority, mutation modes, target boundary, caller, and return owner |
-| **Challenge** | Test proposed meaning through Overload, Alias, Leakage, Boundary, and Contradiction |
-| **Resolve** | Record the accepted semantic core or the exact unresolved choice under its rightful authority |
-| **Reconcile** | Update the cumulative delta and affected relationships after a material state change |
-| **Persist** | Apply only explicitly authorized domain-record or approved ADR changes |
-| **Verify** | Reread every changed domain record and reconcile actual state with the delta |
-| **Render** | Produce directly applicable domain-record wording without writing |
-| **Return** | Deliver the complete Domain Delta to its owner and stop |
-
-## Explanatory Flow
-
-```mermaid
-flowchart TB
-    START["Direct, invoked, or composed entry"] --> TRACE["Trace routing, truth, evidence, and authority"]
-    TRACE --> CONSEQUENCE{"Durable consequence?"}
-    CONSEQUENCE -->|No| NONE["Return minimal no-change delta"]
-    CONSEQUENCE -->|Yes| CHALLENGE["Challenge collisions and boundaries"]
-    CHALLENGE --> SETTLED{"Evidence and decision authority sufficient?"}
-    SETTLED -->|No| OPEN["Record blocker or terminal residual"]
-    SETTLED -->|Yes| RESOLVE["Resolve semantic core"]
-    RESOLVE --> RECONCILE["Reconcile delta and relationships"]
-    RECONCILE --> MODE{"Authorized action"]
-    MODE -->|Context write or approved ADR| PERSIST["Persist, then Verify"]
-    MODE -->|No write authority| RENDER["Render exact changes"]
-    PERSIST --> RETURN["Return complete delta"]
-    RENDER --> RETURN
-    OPEN --> RETURN
-    NONE --> RETURN
-```
-
-The diagram explains sequence. Layer Two alone owns the proposed gates and behavior.
-
-# Layer Two: Normative Design
-
-## Authority Gates
-
-| Decision | Authority | Open branch |
-| --- | --- | --- |
-| Does Domain Modeling fit? | Domain Modeling admission | Consume routed truth, return to the current owner, or decline the pass |
-| Is a source fact settled? | Inspectable evidence | Record an `evidence` blocker and keep dependent meaning open |
-| Is domain meaning settled? | Direct user absent a named conflict, or caller-named domain authority | Return the exact contested choice; do not interview or invent agreement |
-| Is a context boundary settled? | Named domain authority | Preserve responsibility, relationship, and authority conflicts in the delta |
-| May a context record change? | Explicit persistence request or caller mode | Render exact context changes and write nothing |
-| May an ADR be created? | Explicit approval for one identified candidate | Preserve the offered, deferred, declined, or unapproved outcome |
-| Is persistence verified? | Fresh read-back of every changed target | Return exact per-target failure state; never claim intended state |
-| May another workflow start? | User or caller with pre-existing continuation authority | Return and stop; delegate only an eligible standalone terminal residual to Skill Router |
-
-## Invocation And Admission
-
-Domain Modeling remains implicitly invocable under two narrow triggers:
-
-1. durable domain truth itself must change or be persisted; or
+1. domain meaning, an invariant, a context boundary, or a context relationship must be clarified, changed, rendered, or persisted; or
 2. an already-settled decision needs ADR assessment or explicitly approved recording.
 
-It admits direct, caller-invoked, and `$grill-with-docs`-composed forms. Ordinary vocabulary consumption, a possible future gap, implementation work implied by a resolution, or an unsettled non-domain decision does not admit the skill.
+Ordinary vocabulary lookup follows repository domain routing and does not invoke the skill. Generic planning, interface design, implementation, and non-domain decision settlement remain with their owners.
 
-A direct request to decide contested meaning is participant-judgment work, not standalone Domain Modeling interview authority. When that distinction is already visible, normal invocation or Skill Router should select `$grill-with-docs`. When Domain Modeling discovers it after admission, it records the unresolved choice and completes its pass; an eligible standalone terminal residual may then go to the implicit Router. Domain Modeling never invokes its composer directly.
+Use the leading instruction **Model, don't catalog**. Capture meaning, behavior, invariants, responsibility, and relationships; omit generic technical vocabulary, implementation indexes, and structure that exists only because of the current code layout.
 
-Composed Domain Modeling accepts every settled material answer relayed from Grilling with its shared subject, source, and opaque identifiers. It maintains and returns the authoritative cumulative Domain Delta and returns domain collisions before dependent questioning continues. Caller-invoked Domain Modeling returns blockers to its caller rather than routing around it.
-
-Admission grants no mutation or continuation authority.
-
-## Inputs And Authority Lock
-
-A structured packet is required only at caller and composer boundaries. Preserve caller identifiers and equivalent fields rather than translating them into a lossy universal schema.
-
-The packet provides:
-
-- bounded subject, governing source, and candidate consequences;
-- relevant routed truth, accepted decisions, and pending Domain Delta;
-- named decision and boundary authority;
-- context action: `persist authorized` or `render only`;
-- authorized paths or routing boundary;
-- ADR action: `offer only` or approved candidate identifiers;
-- caller and return owner; and
-- caller continuation authority.
-
-Standalone Trace derives the same authority lock from visible sources. The direct user is decision authority unless evidence names another owner. Missing persistence intent becomes `render only`; missing ADR approval remains `offer only`. Missing decision authority, routing, or return ownership stays open rather than widening authority.
-
-## Trace And Routing
-
-Trace only sources capable of changing an in-scope resolution:
-
-- the request or caller packet;
-- repository instructions and `docs/agents/domain.md` when present;
-- the routed `CONTEXT-MAP.md`, relevant `CONTEXT.md` files, and relevant ADRs;
-- accepted sources named by the caller; and
-- code, tests, data contracts, runtime evidence, or downstream consumers only when they can settle a fact or expose a material collision.
-
-Distinguish accepted domain truth, source facts, current usage, proposed language, caller-settled decisions, contradictions, and unavailable evidence. Historical sources and widespread code usage are evidence, not automatic semantic authority.
-
-Select domain records in this order:
-
-1. follow configured `docs/agents/domain.md` routing;
-2. for configured multi-context routing, follow root `CONTEXT-MAP.md` to relevant contexts;
-3. for configured single-context routing, use root `CONTEXT.md` and root ADRs;
-4. without configured routing, an existing root `CONTEXT-MAP.md` selects multi-context; otherwise use the safe single-context fallback.
-
-Missing domain records do not justify empty placeholders. Create a first record only for an authorized settled resolution.
-
-A single-to-multi-context transition is two-owner work. Domain Modeling returns the accepted topology and exact routing requirement; Repo Bootstrap changes and verifies the setup mode; Domain Modeling resumes persistence only after routing agrees. Directory layout, package count, and service boundaries do not establish bounded contexts by themselves.
-
-## Challenge
-
-Challenge each proposed resolution through five lenses:
-
-- **Overload:** one term names materially different concepts;
-- **Alias:** several terms accidentally name one concept;
-- **Leakage:** implementation detail or imported jargon poses as project domain meaning;
-- **Boundary:** scope, context responsibility, relationship contract, or authority is unclear; and
-- **Contradiction:** accepted records, ADRs, evidence, decisions, or observable behavior disagree.
-
-Use concrete normal, edge, failure, inclusion, and exclusion examples only where they can change the resolution. Challenge completes when each material collision is settled or becomes an exact blocker with owner and impact.
-
-## Resolve
-
-Every resolution has a fixed semantic core:
-
-- accepted term or decision;
-- precise meaning independent of implementation;
-- owning context;
-- load-bearing sources; and
-- decision authority.
-
-Add included or excluded edges, aliases, conflicts, relationships, downstream consequences, or ADR candidacy only when material.
-
-Record only domain-specific concepts. Generic technical vocabulary, ordinary business words, and code-index entries stay outside context records.
-
-Evidence settles descriptive claims about current behavior. Named authority may settle normative intent despite contrary implementation, but the Domain Delta must expose the mismatch and return alignment work to its owner. Never persist a descriptive claim against contrary evidence.
-
-Unsettled participant judgment remains unresolved. Domain Modeling may sharpen the exact choice and consequences, but Grilling owns the participant interview. Under composition, return the choice to Grilling. Under caller invocation, return it to the caller. For an eligible standalone terminal residual, invoke the implicit Router with the complete residual packet; the Router may select `$grill-with-docs` and starts nothing.
-
-## Reconcile
-
-Reconcile after a material resolution, newly discovered or cleared blocker, authority or scope change, supersession, persistence outcome, or verification outcome. Supporting observations remain in the Source Trace and do not trigger ceremonial packet rewrites.
-
-When a new resolution supersedes an earlier one, mark the earlier meaning superseded, reconcile every affected context relationship and ADR status, and expose downstream consequences. Never leave two active canonical meanings without an explicit context distinction.
-
-In composition, Domain Modeling receives each settled material answer with the shared subject, source, and relevant opaque identifiers. It classifies the domain consequence, updates its authoritative cumulative Domain Delta, returns any collision before dependent Grilling progress, and returns a minimal cumulative no-change delta when the considered subject has no durable consequence. Grilling remains the sole owner of answer materiality, questioning, and confirmation.
-
-The cumulative delta uses caller identifiers and ordered material reconciliation events. Do not invent versions, hashes, or a persisted session ledger.
-
-## Persistence Authority
-
-Context action and ADR action are independent.
-
-- **Persist authorized:** an explicit request such as persist, record, update the glossary, or an exact caller mode permits only routed in-scope context-record changes.
-- **Render only:** resolve and reconcile normally, then return exact domain-record wording, target, placement, and relationship effects without writing.
-
-Words such as resolve, decide, model, inspect, or review do not authorize persistence. ADR approval never authorizes unrelated context, code, spec, plan, tracker, setup, or implementation mutation. Context authority never authorizes ADR creation.
-
-Before writing after user interaction or caller return, refresh routing and every target. Reconcile intervening edits and preserve unrelated work. If the target or authority is ambiguous, Render or return the exact blocker.
-
-## Representation Branches
-
-Read `CONTEXT-FORMAT.md` whenever Persist or Render must create or change a glossary, invariant, context map, or relationship. The main skill owns semantic resolution and mutation authority; the format owns exact representation.
-
-The accepted future context format must support:
-
-- canonical definitions in one owning context;
-- optional context-owned `Invariants` for settled domain rules;
-- singular controlling authority or explicit joint owners with a change rule;
-- `customer-supplier`, `conformist`, `shared kernel`, and `translation` as preferred relationship labels;
-- a custom relationship label only with explicit meaning, contract, and authority;
-- owner, reference, or translation for cross-context language; and
-- repeated shared definitions only for a genuine explicitly governed shared kernel.
-
-An owning context defines canonical meaning. A consuming context relies on the relationship contract without duplicating the definition. A translation relationship defines each context's local term and mapping. Exact rendered output names the target path, insertion or replacement scope, complete wording, affected relationships, and ordering dependency.
-
-Open the ADR branch only for a settled decision that plausibly represents a durable tradeoff. Read `ADR-FORMAT.md`; it solely owns worthiness predicates, approval mechanics, location, numbering, and representation. Domain Modeling is the pack's single ADR recorder, not the universal decision owner. Non-domain decisions arrive settled from their product, interface, architecture, or engineering owner. Ordinary resolutions omit ADR status.
-
-## Persist, Verify, Or Render
-
-For authorized multi-target persistence:
-
-1. refresh and preflight every routed target;
-2. apply only the bounded accepted changes;
-3. stop on the first write or verification failure;
-4. reread every attempted and changed domain record; and
-5. reconcile the actual per-target state into the Domain Delta.
-
-Never automatically roll back verified changes, continue best-effort mutation after failure, or overwrite broadly. A partial failure returns the exact verified and failed targets, current contents relevant to recovery, owner, impact, and re-entry requirement. Semantic completion remains blocked until the inconsistent domain record is repaired.
-
-Render follows the same representation and relationship rules but writes nothing.
-
-## Domain Delta And Return
-
-Every Domain Delta has a fixed core:
+## Minimum Runtime
 
 ```text
-Domain subject and source:
-Decision and mutation authority:
-Resolution: no-change | resolved | partial | unresolved
-Persistence: complete | partial | failed | not-applicable
-Persistence entries: <target>: rendered | verified | failed
-Open blockers: <zero or more typed entries>
-Resolved or open consequences:
-Return owner:
-Caller continuation authority: preserved | not supplied
+Trace -> Challenge -> Resolve -> (Persist -> Verify | Render) -> Return
 ```
 
-Each blocker uses one class and names its exact condition, owner, impact, and re-entry requirement:
+### Trace
 
-- `authority`;
-- `evidence`;
-- `contradiction`;
-- `routing/setup`; or
-- `persistence/verification`.
+Establish the bounded subject, relevant domain records, load-bearing evidence, domain authority, mutation authority, ADR authority, caller, and return owner.
 
-Add resolved terms, context boundaries, relationships, invariants, material conflicts, downstream consequences, changed paths and read-back, rendered changes, and ADR outcomes only when present. Conditional sections may be absent; unresolved material may not be compressed away.
+Follow the repository's configured domain-document route first. When no convention exists, use root `CONTEXT-MAP.md` for an existing multi-context model and root `CONTEXT.md` as the local fallback. These filenames are fallbacks, not universal DDD requirements. Create no empty record; create the first record only for an authorized settled resolution.
 
-`Resolution` reports semantic state. `Persistence` reports whether every in-scope persistence obligation reached its intended per-target result. A deliberate combination of verified and rendered targets may be `complete`; `partial` is reserved for an incomplete or failed obligation. A composed no-change result contains only the considered subject and source, `Resolution: no-change`, `Persistence: not-applicable`, no blockers, and the return owner.
+Treat code, tests, contracts, runtime behavior, and widespread usage as evidence about current implementation, not automatic authority over intended domain meaning. Bounded contexts follow model, language, responsibility, and consistency boundaries rather than directory, package, service, or repository size alone.
 
-Pass completion means every consequence and blocker is accounted for and safely returned; it does not mean the domain is resolved. A caller decides whether a returned blocker prevents its broader completion. `$grill-with-docs` cannot return Confirmed while a material nondeferred domain blocker remains.
+Direct use may ask focused domain-expert questions needed to resolve terms, invariants, boundaries, and relationships. Under `$grill-with-docs`, Grilling owns all questioning and Domain Modeling receives settled material answers. A caller-invoked pass returns unresolved choices to its caller.
 
-Return caller-invoked results to the caller and composed results to `$grill-with-docs`. A standalone pass with material residual work may invoke the implicit Skill Router only after the pass is terminal, the residual is outside Domain Modeling, and no owned handoff applies. The Router returns one route or `none` and starts nothing. Domain Modeling then surfaces the recommendation and stops.
+### Challenge
 
-Domain Modeling completes when Trace is current; every consequence is resolved, explicitly no-change, or represented by an exact blocker; every material state change was reconciled; each authorized target is verified or returned with exact failure state; each rendered target is directly applicable; every plausible ADR branch has an outcome; mutation stayed within domain scope; the Domain Delta is complete; and Return starts no downstream work.
+Test only material uncertainty through three checks:
 
-# Layer Three: Evidence And Rationale
+- **Language collisions:** overloaded terms, accidental synonyms, and implementation language leaking into the domain model.
+- **Model boundaries:** unclear responsibility, invariant ownership, relationship contract, language ownership, or change authority.
+- **Contradictions:** accepted records, evidence, participant decisions, and current implementation disagree.
 
-## Current-To-Proposed Gap
+Use normal, edge, failure, inclusion, and exclusion scenarios only when they can change the model. Finish with each material collision resolved or represented by an exact blocker and owner.
 
-The active five-step runtime already protects routed tracing, collision discovery, fact-versus-authority separation, lazy creation, context versus ADR authorization, domain-only mutation, read-back, and a complete delta. The future design retains that core and closes these gaps:
+### Resolve
 
-| Current pressure | Selected response |
-| --- | --- |
-| Direct resolution language can imply write authority | Require explicit persistence intent; otherwise Render |
-| Domain Modeling and Grilling can both appear to own questions | Make Grilling the sole participant interviewer; route standalone terminal judgment residuals through the implicit Router |
-| Reconcile also describes post-write read-back | Reserve Reconcile for semantic state and Verify for read-back |
-| A scalar result conflates semantic and persistence state | Separate resolution, aggregate persistence, per-target results, and blockers |
-| One blocker field cannot represent concurrent conditions | Use a small typed blocker ledger |
-| Cross-context copying duplicates definitions | Use owner, reference, translation, or explicitly governed shared kernel |
-| Durable invariants lack a representation | Add an optional context-owned Invariants branch |
-| ADR mechanics appear in several owners | Put the complete conditional branch in `ADR-FORMAT.md` |
-| Caller catalogs and staged codes dominate the synthesis | Keep provider contracts local and use one plain-language migration matrix |
-| Generic evaluation protocol is repeated | Point to the Writing Great Skills evaluation owner and keep only Domain Modeling cases |
+Settle the canonical term or decision, implementation-independent meaning, owning context, load-bearing sources, and decision authority. Add aliases, invariants, boundaries, relationships, conflicts, and consequences only when material.
 
-## Failure Pressure
+Evidence settles source facts. The direct user unless a source names another authority, or the caller's named domain authority, settles intended meaning. When intended truth and implementation differ, preserve the accepted truth, expose the contradiction, and return alignment work to its owner. Keep unresolved meaning out of durable domain records.
 
-The rewrite must resist:
+For context relationships, always record interaction direction, responsibility, contract, language ownership, and change authority. Apply a recognized DDD Context Mapping pattern only when it accurately describes the relationship. The context-format reference owns Partnership, Shared Kernel, Customer/Supplier Development, Conformist, Anticorruption Layer, Open-host Service, Published Language, Separate Ways, and Big Ball of Mud as optional recognized patterns. Never force a pattern or use `translation` as though it were itself a standard relationship pattern.
 
-- invocation for ordinary vocabulary consumption;
-- code popularity silently redefining accepted meaning;
-- user decision authority silently becoming write or ADR authority;
-- Domain Modeling interviewing a participant or invoking its own composer;
-- directories being mistaken for bounded contexts;
-- false cross-context uniformity or duplicated canonical definitions;
-- unnamed joint ownership behind `shared kernel`;
-- generic vocabulary or implementation detail entering a glossary;
-- ordinary decisions producing ceremonial ADR classifications;
-- successful write commands substituting for read-back;
-- rollback or continued mutation widening a partial failure;
-- a short return hiding contradictions, failures, or caller identity; and
-- standalone blockers bypassing the residual Router or caller-owned handoffs.
+### Persist, Verify, Or Render
 
-## Non-Obvious Rationale
+Lock context and ADR mutation separately:
 
-**Participant judgment stays outside Domain Modeling.** Domain Modeling owns semantic analysis and durable records. `$grill-with-docs` owns the only composed participant interview. Direct invocation would create a cycle because the composer already contains Domain Modeling; a terminal residual through the implicit Router preserves both ownership boundaries.
+- `persist authorized` requires an explicit persistence request or exact caller mode and permits only routed domain-record changes;
+- otherwise use `render only` and return directly applicable wording, target, placement, and relationship effects; and
+- ADR creation requires separate explicit approval for one identified candidate.
 
-**Reconciliation is event-triggered.** Exit-only reconciliation can let dependent interview branches advance past an invalidating collision. Updating after every observation is ceremonial. Material state changes are the smallest safe trigger.
+Read `CONTEXT-FORMAT.md` only when rendering or persisting language, invariants, context maps, or relationships. Read `ADR-FORMAT.md` only for a plausible already-settled ADR candidate.
 
-**Context and ADR representation stay disclosed.** Every pass needs semantic and authority gates, but only Persist, Render, or a plausible ADR candidate needs exact representation mechanics.
+Domain Modeling remains the repository's single recorder for approved ADRs, including non-domain engineering decisions. The originating product, domain, interface, architecture, or engineering workflow owns settlement; the disclosed ADR branch owns only worthiness assessment, explicit approval, representation, persistence, and verification.
 
-**Partial state is preserved, not rolled back.** Cross-file persistence cannot be truly atomic, while automatic rollback can overwrite intervening work. Preflight, bounded writes, read-back, and exact recovery state are safer than a second mutation campaign.
+For authorized persistence, refresh routing and every target, preflight the bounded set, write only accepted changes, and reread each attempted and changed record. On the first write or verification failure, preserve verified changes, stop further mutation, and return exact partial state. Do not automatically roll back or continue best-effort writes.
 
-**No Domain Delta file is selected.** A compact core and conditional branches fit the main runtime contract. Add another file only after observed omission persists despite a sharp inline schema.
+Repository setup remains owned by `$repo-bootstrap`. When a managed domain-routing surface must change, Domain Modeling returns the accepted topology and exact setup requirement to the user or caller and stops. Persistence may resume only in a later invocation after setup read-back agrees.
+
+### Return
+
+Return the complete Domain Delta to the direct user, caller, or `$grill-with-docs` and stop. Domain Modeling is a leaf: it never invokes Skill Router, its composer, or downstream execution.
+
+Every Domain Delta has four common fields:
+
+```text
+Semantic outcome: no-change | resolved | partial | unresolved
+Persistence outcome: complete | partial | failed | not-applicable
+Blockers and consequences:
+Return owner:
+```
+
+Add authority, resolved language, context boundaries, invariants, relationships, per-target rendered or verified state, caller identifiers, ADR outcomes, and continuation authority only when present or required by the caller. Each blocker names its condition, owner, impact, and re-entry requirement. A no-change result stays minimal.
+
+Under `$grill-with-docs`, accept every settled material answer, including one with no durable consequence. Update and return the authoritative cumulative Domain Delta before dependent questioning continues; return collisions or blockers without deciding interview materiality or branching. This is a disclosed composer contract, not a universal `Reconcile` stage.
+
+## Completion
+
+Complete when Trace is current; every in-scope consequence is resolved, explicitly no-change, or represented by an exact blocker; each intended target is verified, rendered, or returned with exact failure state; every plausible ADR candidate has an outcome; mutation stayed inside routed domain records and approved ADRs; the Domain Delta is complete; and Return starts no downstream work.
+
+# Admission And Decision Ledgers
+
+## Mechanism-Admission Ledger
+
+| Mechanism beyond baseline | Baseline failure or required contract | Owner | Cheaper alternative considered | Load | Admission |
+| --- | --- | --- | --- | --- | --- |
+| Narrow implicit trigger and lookup exclusion | Passive vocabulary consumption otherwise competes with active modeling | Description and admission | Make explicit-only | Permanent description load | admit |
+| Source fact versus intended meaning | Popular code can silently redefine accepted domain truth | Trace and Resolve | Treat code as authority | Small semantic distinction | admit |
+| Context-scoped invariants and relationships | Glossary-only records omit load-bearing DDD model boundaries | Resolve and `CONTEXT-FORMAT.md` | Glossary only | Conditional representation | admit |
+| Repository routing first, filename fallback | Mandatory local filenames do not fit every repository | Trace; setup owned by Repo Bootstrap | Always require `CONTEXT.md` | Small routing branch | admit |
+| Direct focused domain questioning | The baseline's core clarification work cannot proceed from unsettled expert meaning | Direct Domain Modeling | Always require the composer | Small direct branch | admit |
+| Composed Grilling ownership | Two interview owners create branching and confirmation conflicts | `$grill-with-docs` and Grilling | Let Domain Modeling ask inside composition | Conditional caller contract | caller-owned |
+| Explicit persist versus render | Resolution language otherwise implies write authority | Persistence gate | Always write resolved truth | Small universal authority gate | admit |
+| Separate ADR approval | Domain persistence authority otherwise creates unrelated ADRs | `ADR-FORMAT.md` | One combined write grant | Conditional safety gate | admit |
+| Universal ADR recorder | ADR-0006 and callers require one mutation owner without transferring decision authority | Disclosed ADR branch | Each workflow writes its own ADR | Conditional branch and maintenance | disclose |
+| Read-back and bounded partial failure | Successful commands do not prove persisted truth; rollback can overwrite intervening work | Persistence branch | Best-effort writes or automatic rollback | Conditional failure procedure | disclose |
+| Four-field Domain Delta with conditional detail | Callers need semantic, persistence, blocker, and return state without a universal forensic wrapper | Return | Fixed nine-field schema | Small common schema | admit |
+| Cumulative composed Domain Delta | Exit-only capture can lose collisions before dependent questioning | Disclosed composer branch | Rebuild at exit | Conditional caller load | disclose |
+| Mandatory five Challenge lenses | Three plain checks express the same DDD pressure | none | Retain invented lens names | Common-path steering | reject |
+| Universal `Reconcile` stage | Ordinary reconciliation already occurs in Resolve, Verify, and Return | none | Keep seven-word spine | Common-path step | reject |
+| Domain Modeling to Skill Router residual edge | Adds no domain capability and couples promotion to routing machinery | none | Return residual and stop | Cross-skill and proof load | reject |
+| Mandatory partial relationship taxonomy | False labels create worse models than explicit semantics | `CONTEXT-FORMAT.md` | Four preferred labels plus custom | Representation and correctness risk | reject |
+| Ontology, automatic extraction, automatic renaming, mandatory event storming | No demonstrated baseline failure | none | Add speculative method or tooling | High runtime and maintenance load | defer |
+
+## Confirmed Prompt 1 Decisions
+
+1. Use Matt Pocock's package as the simplest credible baseline.
+2. Keep universal ADR recording only as a disclosed branch; decision authority remains upstream.
+3. Reduce the Domain Delta to four common fields plus conditional detail.
+4. Require semantic relationship facts and use DDD pattern names only when accurate.
+5. Remove `Reconcile` from the universal runtime spine.
+6. Collapse five invented Challenge lenses into three plain DDD checks.
+7. Remove direct Skill Router invocation and make Domain Modeling a leaf.
+8. Permit focused domain-expert questions on direct invocation; preserve Grilling ownership under composition.
+9. Follow repository routing first and use local filenames only as fallback conventions.
+
+## Six-Category Coverage
+
+| Category | Closed decision | Residual evidence limit |
+| --- | --- | --- |
+| Ambiguity | Separate source facts, intended meaning, mutation modes, relationship semantics, and direct versus composed questioning | Behavioral reliability unproved |
+| Ownership | Domain authority settles meaning; Domain Modeling records domain truth and approved ADRs; Grilling owns composed questioning; Repo Bootstrap owns managed routing; callers own continuation | Caller compatibility needs Prompt 4 proof |
+| Simplification | Baseline-first five-stage runtime, four-field common return, three Challenge checks | Exact wording remains Prompt 3 work |
+| Navigation | Common path inline; context, ADR, composition, and persistence-failure mechanics disclosed at their branch owners | Pointer-following behavior unproved |
+| Leading words | Keep Model, Trace, Challenge, Resolve, Persist, Verify, Render, and Return; remove Reconcile as a separate stage | Invocation and steering effects unproved |
+| Unnecessary complexity | Reject Router coupling, fixed universal filenames, mandatory partial taxonomy, forensic return fields, and speculative DDD machinery | Aggregate candidate load must be rechecked in Prompt 4 |
 
 ## Deliberate Non-Changes
 
 - Keep Domain Modeling narrowly implicit.
-- Keep accepted-vocabulary consumption in repository domain routing.
-- Keep Domain Modeling as the only context-record and approved-ADR writer.
-- Keep Repo Bootstrap as routing-setup owner.
-- Keep `$grill-with-docs` as the sole composer with Grilling.
+- Keep accepted-vocabulary consumption in repository routing.
 - Keep context persistence and ADR creation independently authorized.
 - Keep first domain records lazy and non-ceremonial.
-- Keep unresolved meaning out of accepted records.
-- Keep downstream code, plan, spec, tracker, setup, and external mutation out of scope.
-- Keep installed mirrors equal to validated canonical source before promotion.
+- Keep unresolved meaning out of durable records.
+- Keep code, plan, spec, tracker, setup, and implementation mutation out of scope.
+- Keep the composer transport-only: Grilling asks; Domain Modeling models and returns its delta.
+- Keep installed mirrors outside synthesis authoring and promotion.
 
-## Deferred Hypotheses
+## Historical Evidence And Limits
 
-Do not promote without demonstrated control failure:
+The existing canonical package, structural tests, relationship index, ADR-0006, domain-routing guide, and prior workflow fixtures establish current ownership and safety pressure. They do not prove that the proposed wording improves invocation, judgment, context loading, mutation behavior, Return, or completion.
 
-- event storming, domain storytelling, or another mandatory discovery method;
-- an ontology, schema, graph database, or automatic term extractor;
-- automatic code, test, or API renaming;
-- automatic context inference from workspace layout;
-- repository-wide vocabulary scanning on every invocation;
-- a persisted Domain Delta ledger or third runtime reference;
-- richer mandatory ADR templates or automatic creation;
-- automatic context-relationship inference; or
-- context persistence before routing setup verifies a multi-context transition.
+The prior experimental copy has no valid treatment/control contrast because it is byte-identical to canonical. Treat its manifest description as lifecycle drift, not behavioral evidence. Prompt 3 must create a new hash-identified candidate; Prompt 4 must select realistic controls, prove control failures before crediting added guidance, and evaluate pruning equivalence from an admitted pre-prune snapshot.
 
-# Layer Four: Extraction And Verification
+# Extraction And Proof
 
-## Proposed Runtime Semantic Surface
+## Prompt 3 Semantic Surface
 
-The future `skills/custom/domain-modeling/SKILL.md` should read approximately as:
+Prompt 3 should build a new experimental package from this order:
 
 ```text
-Outcome and narrow implicit admission
-Durable-truth and participant-judgment boundary
-Caller packet or standalone authority lock
-Trace and routing pointer
-Challenge -> Resolve -> Reconcile
-Persist -> Verify | Render -> CONTEXT-FORMAT pointer
-Conditional ADR branch -> ADR-FORMAT pointer
-Compact Domain Delta
-Caller, composer, or residual-Router Return
-Pass completion
+Narrow implicit description
+Outcome and Model leading instruction
+Meaning, context-mutation, and ADR authority
+Trace -> Challenge -> Resolve -> (Persist -> Verify | Render) -> Return
+Four-field Domain Delta with conditional additions
+Direct versus composed questioning branch
+Completion
 ```
 
-Keep universal authority, mutation scope, sequencing, pointer triggers, Return, and completion in the main file. Keep exact context-record representation in `CONTEXT-FORMAT.md`, exact ADR mechanics in `ADR-FORMAT.md`, and evidence plus migration detail here.
+Keep universal authority, mutation scope, sequence, pointer triggers, Return, and completion in `SKILL.md`. Keep exact context representation and the optional recognized Context Mapping patterns—Partnership, Shared Kernel, Customer/Supplier Development, Conformist, Anticorruption Layer, Open-host Service, Published Language, Separate Ways, and Big Ball of Mud—in `CONTEXT-FORMAT.md`. Keep ADR worthiness, approval, placement, numbering, record form, and verification in `ADR-FORMAT.md`.
 
-## Migration And Acceptance Matrix
+## Prompt 3 Classification Matrix
 
-Implement in dependency order. Rows assign owned changes and cases; they do not create runtime rules beyond Layer Two.
+| Surface or behavior | Classification | Destination | Admission basis |
+| --- | --- | --- | --- |
+| Upstream challenge, scenarios, code cross-check, lazy records | Baseline | `SKILL.md` | Simplest credible control |
+| Narrow trigger and lookup exclusion | Add | description | Invocation collision |
+| Fact versus meaning authority | Add | `SKILL.md` | Semantic safety |
+| Direct focused questions | Add | `SKILL.md` | Core DDD clarification |
+| Render versus persist and read-back | Add | `SKILL.md` plus conditional format pointer | Mutation safety |
+| Context-scoped invariants and relationship semantics | Add | `CONTEXT-FORMAT.md` | DDD completeness |
+| Universal ADR recording mechanics | Disclose | `ADR-FORMAT.md` | ADR-0006 caller contract |
+| Composed cumulative delta | Disclose | sharp branch in `SKILL.md`; composer procedure stays foreign | Required caller contract |
+| Setup mutation | Caller-owned | `$repo-bootstrap` | Existing owner |
+| Non-domain decision settlement and downstream execution | Caller-owned | originating workflow | Authority boundary |
+| Prompt 1 rationale, ledgers, baseline hashes, migration state | Non-runtime | this synthesis | Evidence only |
+| Reconcile step, five named lenses, Router edge, fixed nine-field return | Rejected | none | Confirmed simplification |
+| Mandatory methods and automatic tooling | Deferred | none | No demonstrated failure |
 
-| Order and owner | Accepted change | Positive case | Negative control | Proof |
-| --- | --- | --- | --- | --- |
-| 1. Domain Modeling `SKILL.md` | Extract the narrow admission, authority lock, selected spine, participant boundary, compact delta, caller return, and completion | Settled domain persistence completes through the correct mode and return | Vocabulary consumption invokes the skill, resolve implies write, or the skill interviews the user | Structural contract plus fresh-context invocation and authority evaluation |
-| 2. `CONTEXT-FORMAT.md` | Add optional invariants, explicit singular or joint relationship authority, preferred labels plus custom escape, and owner/reference/translation representation | Single-owner, translated, and governed shared-kernel examples render coherently | Definitions are copied into consumers, joint ownership is unnamed, or a false type is forced | Format examples, relationship fixtures, and changed-file read-back |
-| 3. `ADR-FORMAT.md` | Own the complete conditional worthiness, approval, placement, numbering, and representation branch | One settled approved candidate records correctly while ordinary resolutions skip the branch | Domain-write authority creates an ADR or an unsettled decision is recorded | Candidate matrix, approval control, location fixture, and read-back |
-| 4. Domain Modeling policy and description | Preserve explicit `allow_implicit_invocation: true` under the two narrow triggers | Durable-truth change and settled ADR recording admit | Ordinary work, future gaps, and underlying design decisions compete for invocation | Invocation-policy assertion and fresh-context routing samples |
-| 5. Skill Router candidate and vocabulary | Promote the narrowly implicit terminal-residual Router, accept the complete Domain Modeling residual packet, and narrow its broad domain route to settled persistence or ADR recording while participant judgment selects `$grill-with-docs` | Standalone terminal judgment residual selects `$grill-with-docs` or another narrow owner and executes nothing | Domain Modeling invokes its composer, Router sends unsettled judgment back to Domain Modeling, or unfinished in-scope work is delegated | Router control/candidate evaluation, loop guard, relationship assertion, and policy parity |
-| 6. `$grill-with-docs` | Preserve Grilling as sole question owner, relay every settled material answer, receive Domain Modeling's authoritative cumulative Domain Delta, and keep Domain Modeling blockers out of Confirmed | Domain collision returns before dependent questioning and the final delta remains intact | Composer filters domain relevance, accumulates the delta, settles meaning, reroutes a component result, or confirms with a nondeferred blocker | Multi-turn composition evaluation and packet comparison |
-| 7. Composer-defined cohort, Repo Bootstrap, and relationship index | Apply the [minimum coordinated experimental cohort](grill-with-docs.md#runtime-ownership-and-change-map); pass compatible packets, preserve known handoffs, sequence routing setup before multi-context persistence, and index only accepted edges. Verify Repo Bootstrap and recommendation-only or suggestion-only owners without generating unrelated candidates unless an observed mismatch requires an owned change | Cohort caller, residual-Router, and setup boundaries remain intact | Caller catalogs are copied locally, verification-only owners are regenerated speculatively, or Domain Modeling mutates setup | Active-surface relationship audit and setup fixture |
-| 8. `CONTEXT.md` vocabulary | During coordinated promotion, persist Source fact, Domain truth, Domain record, and Ubiquitous language without overwriting intervening Active/Experimental skill vocabulary | Active vocabulary matches the promoted behavior | Future candidate language is published before coordinated promotion or current unrelated terms are lost | Domain read-back and vocabulary-owner audit |
-| 9. Tests and Domain Modeling evaluations | Protect ownership, pointers, policy, return shape, negative controls, and integrated composer/Router cases | Structural and behavioral claims each have proportionate proof | Static strings are reported as semantic or mutation proof | Focused pytest, behavioral evaluation records, and residual-gap review |
-| 10. Canonical validation and mirrors | Validate the complete coordinated candidate, then synchronize all in-scope installed mirrors | Canonical source, callers, setup, tests, and installed hashes agree | Partial promotion or mirror drift leaves incompatible authority | Full pytest, `scripts.validate_skills`, install preview/sync, diff checks, read-back, and hash parity |
+## Prompt 3 Extraction Result
 
-## Domain-Specific Behavioral Evaluation
+Complete. Prompt 3 classified every proposed behavior without inventing a decision and:
 
-Use [`writing-great-skills/BEHAVIOR-EVALS.md`](../../../skills/custom/writing-great-skills/BEHAVIOR-EVALS.md) as the sole generic protocol. Demonstrate a realistic control failure before adding guidance; keep runtime, settings, tools, repository fixtures, authority, and rubric fixed; use at least five fresh samples per arm for each behavioral claim; and inspect every flagged result.
+- replaced rather than blessed the stale byte-identical experimental copy;
+- used the confirmed baseline and classifications above;
+- updated the experimental manifest to the new package identity and truthful baseline;
+- preserved the already-reconciled direct-question and leaf Return relationships;
+- recorded pruning decisions for every instruction-bearing unit in `docs/validation/transcripts/2026-07-21-domain-modeling-extraction-pruning-evidence.md`; and
+- stopped before behavioral evaluation, promotion, installation, or Git delivery.
 
-Domain Modeling-specific scenarios must cover:
+## Prompt 4 Proof Obligations
 
-- settled persistence versus unsettled participant judgment;
-- direct, caller, and composed authority locks;
-- single- and multi-context routing, including setup-first transition;
-- all five Challenge lenses;
-- normative intent versus descriptive implementation fact;
-- owner, reference, translation, joint governance, and custom relationship type;
-- Render, verified persistence, deliberate verified-plus-rendered completion, and injected partial failure;
-- plausible ADR candidate versus ordinary resolution;
-- compact resolved, partial, unresolved, and no-change deltas;
-- concurrent blocker classes;
-- caller return, composer collision return, and standalone terminal residual routing; and
-- mutation and downstream non-execution boundaries.
+Behavioral evaluation must cover:
 
-Critical failures are invented settlement, wrong-context persistence, unauthorized context or ADR creation, a participant interview owned by Domain Modeling, recursive composer invocation, missing relationship authority, hidden implementation contradiction, omitted blocker, false verification, automatic rollback, hidden partial state, incomplete delta, caller-identity loss, or downstream execution.
+- invocation for domain clarification or durable capture versus ordinary lookup;
+- direct focused questioning versus composed Grilling ownership;
+- source fact versus intended domain truth;
+- repository-specific routing and fallback behavior;
+- language, boundary, and contradiction challenges;
+- accurate relationship semantics and optional Context Mapping patterns;
+- render, verified persistence, and injected partial failure;
+- plausible ADR assessment versus unauthorized creation;
+- minimal no-change, resolved, partial, and unresolved deltas;
+- cumulative composer collision ordering; and
+- leaf Return with no Router or downstream execution.
 
-Several claims may share one fixed scenario and sample set when the rubric scores each claim independently. Structural tests protect literals and relationships only; they do not replace behavioral or filesystem proof.
+Critical failures are invented settlement, false DDD pattern labels, directory-derived bounded contexts, unauthorized persistence or ADR creation, missing relationship authority, hidden implementation contradiction, false verification, automatic rollback, omitted partial state or blocker, caller-identity loss, Domain Modeling taking over composed questioning, Router invocation, or downstream execution.
 
-## Promotion Gate
+Prompt 4 is complete. Claim-matched controls exposed failures in settled-ADR routing, persistence verification, Context Mapping accuracy, partial-failure Return, composed question ownership, and leaf completion. An initial candidate wave passed every case except Context Mapping: three of five samples invented Conformist, and one also invented Open-host Service. A narrow reference repair produced 5/5 accurate pattern choices on a fresh affected-arm rerun. The repaired pre-prune and final packages both returned the same pruned completion behavior at 5/5. Full results, deviations, and residual gaps are recorded in `docs/validation/transcripts/2026-07-21-domain-modeling-post-candidate-behavior-eval.md`.
 
-Promote only the coordinated candidate. The record must identify every promoted behavior claim, its Layer Two owner, source changes, fixed scenario and repository state, control and candidate hashes, runtime, sample count, rubric, result distribution, worst outcome, critical failures, protocol deviations, unavailable telemetry, and residual gaps.
+## Prompt 5 Promotion Result
 
-Promotion requires:
+Complete. Prompt 5 promoted accepted hash `88413f471ffcedccdf8b4b3a162a3068334c7befbcd28801165add6d29e8941b` byte-for-byte to `skills/custom/domain-modeling/`, reused the unchanged Prompt 4 behavioral evidence, and proved the canonical package before lifecycle cleanup. The relationship index already represented the selected invocation and ownership edges, so it required no change.
 
-- one runtime owner for every admitted behavior, representation branch, relationship, and completion gate;
-- the implicit Router and Domain Modeling residual edge promoted together;
-- `$grill-with-docs`, callers, setup routing, and the relationship index compatible with the new packet and return contracts;
-- context and ADR formats matching their selected ownership;
-- all positive and negative cases passing with no critical regression;
-- canonical tests, full validation, setup validation, diff checks, and changed-file read-back passing;
-- the rendered `CONTEXT.md` vocabulary reconciled with intervening active/experimental work; and
-- installed Domain Modeling, both disclosed references, Router, and every in-scope caller mirror matching validated canonical source.
-
-A residual gap blocks promotion when it affects invocation, semantic or participant authority, routing, context ownership, relationship completeness, mutation authority, ADR approval, read-back truth, partial-state recovery, blocker accounting, Domain Delta completeness, caller return, Router loop safety, composer compatibility, or installed parity. Noncritical uncertainty may remain only with its evidence limit, behavioral consequence, and later validation owner.
+The Domain Modeling experimental directory and only its manifest entry were removed. The managed installer then synchronized the canonical package to `C:\Users\steve\.agents\skills\domain-modeling`. A concurrent global-bootstrap change triggered the transactional guard; the supported `--skip-global-agents` path preserved that unrelated file and installed the skill pack. Canonical and installed Domain Modeling hashes match, the post-install dry run reports all managed skills unchanged, and complete proof is recorded in `docs/validation/transcripts/2026-07-22-domain-modeling-promotion-install-evidence.md`.

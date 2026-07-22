@@ -10,8 +10,8 @@ CUSTOM = ROOT / "skills/custom"
 EXPERIMENTAL = ROOT / "skills/experimental"
 
 
-def test_experimental_domain_modeling_preserves_compact_ddd_contract() -> None:
-    skill_dir = EXPERIMENTAL / "domain-modeling"
+def test_promoted_domain_modeling_preserves_compact_ddd_contract() -> None:
+    skill_dir = CUSTOM / "domain-modeling"
     skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     context_format = (skill_dir / "CONTEXT-FORMAT.md").read_text(encoding="utf-8")
     adr_format = (skill_dir / "ADR-FORMAT.md").read_text(encoding="utf-8")
@@ -19,26 +19,40 @@ def test_experimental_domain_modeling_preserves_compact_ddd_contract() -> None:
 
     for contract in (
         "Model, don't catalog.",
-        "Trace -> Challenge -> Resolve -> Reconcile -> (Persist -> Verify | Render) -> Return",
-        "Overload, Alias, Leakage, Boundary, and Contradiction",
+        "Trace -> Challenge -> Resolve -> (Persist -> Verify | Render) -> Return",
+        "language collisions",
+        "model boundaries",
+        "contradictions",
         "evidence settles source facts",
-        "Bounded contexts follow model and responsibility boundaries",
-        "Create no empty record",
+        "the direct user unless a source names another authority",
+        "Direct use may ask focused questions",
+        "Bounded contexts follow model, language, responsibility, and consistency boundaries",
+        "Create the first record only for an authorized settled resolution",
         "`persist authorized`",
         "`render only`",
-        "routing/setup",
-        "persistence/verification",
+        "return the accepted topology and exact setup requirement",
+        "preserve verified changes",
         "Domain Delta",
         "$grill-with-docs",
-        "$skill-router",
+        "Semantic outcome: no-change | resolved | partial | unresolved",
+        "Persistence outcome: complete | partial | failed | not-applicable",
+        "Return every other consequence or residual to its owner and stop",
     ):
         assert contract in skill
 
     for contract in (
         "## Invariants",
         "Authority:",
-        "owner | reference | translation | shared kernel",
-        "customer-supplier | conformist | shared kernel | translation",
+        "Language: <owner, reference, or explicit translation>",
+        "Partnership",
+        "Customer/Supplier Development",
+        "Anticorruption Layer",
+        "Published Language",
+        "Separate Ways",
+        "Big Ball of Mud",
+        "it is not itself a Context Mapping pattern",
+        "A boundary that translates into a distinct local model is an **Anticorruption Layer**, not Conformist",
+        "A versioned or published schema alone does not establish it",
     ):
         assert contract in context_format
 
@@ -47,10 +61,28 @@ def test_experimental_domain_modeling_preserves_compact_ddd_contract() -> None:
         "Surprising without context",
         "Real trade-off",
         "explicit approval",
-        "already settled",
+        "already-settled",
     ):
         assert contract in adr_format
 
+    for rejected in (
+        "Trace -> Challenge -> Resolve -> Reconcile",
+        "Overload, Alias, Leakage, Boundary, and Contradiction",
+        "$skill-router",
+        "Domain subject and source:",
+    ):
+        assert rejected not in skill
+
+    assert {
+        path.relative_to(skill_dir).as_posix()
+        for path in skill_dir.rglob("*")
+        if path.is_file()
+    } == {
+        "ADR-FORMAT.md",
+        "CONTEXT-FORMAT.md",
+        "SKILL.md",
+        "agents/openai.yaml",
+    }
     assert policy == "policy:\n  allow_implicit_invocation: true\n"
 
 
@@ -83,29 +115,32 @@ def test_experimental_grill_with_docs_preserves_concise_composer_contract() -> N
     assert policy == "policy:\n  allow_implicit_invocation: true\n"
 
 
-def test_experimental_composer_family_shares_one_relay_handshake() -> None:
-    grilling_dir = EXPERIMENTAL / "grilling"
-    domain_dir = EXPERIMENTAL / "domain-modeling"
+def test_promoted_grilling_preserves_experimental_composer_handshake() -> None:
+    grilling_dir = CUSTOM / "grilling"
+    domain_dir = CUSTOM / "domain-modeling"
     composer_dir = EXPERIMENTAL / "grill-with-docs"
     grilling = (grilling_dir / "SKILL.md").read_text(encoding="utf-8")
+    grilling_plain = grilling.replace("**", "")
+    grilling_policy = (grilling_dir / "agents/openai.yaml").read_text(
+        encoding="utf-8"
+    )
     domain = (domain_dir / "SKILL.md").read_text(encoding="utf-8")
     composer = (composer_dir / "SKILL.md").read_text(encoding="utf-8")
 
     for contract in (
-        "return each settled material answer",
-        "pause dependent questioning",
-        "Integrate the returned domain collision or blocker",
-        "never classify the domain consequence yourself",
-        "caller identity and opaque identifiers when supplied",
+        "Relay every settled material answer",
+        "pause dependent progress",
+        "domain collision or blocker returns",
+        "Grilling owns materiality, not domain consequences",
+        "Add caller identifiers when supplied",
     ):
-        assert contract in grilling
+        assert contract in grilling_plain
 
     for contract in (
         "accept every settled material answer",
-        "including answers with no durable consequence",
-        "return any collision or blocker before dependent Grilling progress",
-        "Never decide answer materiality or interview branching",
-        "every composed answer has a returned current delta",
+        "including one with no durable consequence",
+        "Return the authoritative cumulative Domain Delta and any collision before dependent questioning continues",
+        "never choose interview materiality or branching",
     ):
         assert contract in domain
 
@@ -118,7 +153,14 @@ def test_experimental_composer_family_shares_one_relay_handshake() -> None:
     ):
         assert contract in composer
 
-    for skill_dir in (grilling_dir, domain_dir, composer_dir):
+    for contract in (
+        'display_name: "Grilling"',
+        'short_description: "Stress-test thinking one question at a time"',
+        "allow_implicit_invocation: true",
+    ):
+        assert contract in grilling_policy
+
+    for skill_dir in (domain_dir, composer_dir):
         assert (skill_dir / "agents/openai.yaml").read_text(
             encoding="utf-8"
         ) == "policy:\n  allow_implicit_invocation: true\n"

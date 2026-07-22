@@ -17,7 +17,7 @@ Lock three independent authorities:
 - **Context:** use `persist authorized` only after an explicit persistence request or exact caller mode; otherwise use `render only`.
 - **ADR:** use `offer only` unless one identified, already-settled candidate has explicit recording approval. The originating workflow owns the decision.
 
-Mutate only routed domain records and approved ADRs. Return every other consequence or residual to its owner and stop.
+Mutate only routed domain records and approved ADRs. Return setup, code, spec, plan, tracker, and implementation consequences to their owners. Invoke no Router, composer, or downstream work.
 
 ## Runtime
 

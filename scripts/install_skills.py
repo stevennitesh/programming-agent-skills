@@ -1809,11 +1809,14 @@ def _install_locked(
         name: source_hashes.get(name) for name in mutated_names
     }
     manifest_target_sha256 = hashlib.sha256(manifest_bytes(manifest)).hexdigest()
-    global_target_sha256 = (
-        hashlib.sha256(native_text_bytes(global_target_text)).hexdigest()
-        if global_target_text is not None
-        else None
-    )
+    if bootstrap_status == "present":
+        global_target_sha256 = global_sha256
+    else:
+        global_target_sha256 = (
+            hashlib.sha256(native_text_bytes(global_target_text)).hexdigest()
+            if global_target_text is not None
+            else None
+        )
     manifest_is_planned = (
         manifest_existed and file_hash(manifest_path) == manifest_target_sha256
     )

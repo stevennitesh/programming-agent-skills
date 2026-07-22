@@ -1,12 +1,12 @@
 # Writing Great Skills Design Synthesis
 
-Status: Deploy Prompt 4 accepted the inactive experimental candidate on
-2026-07-21. Commit preflight normalized two trailing blank lines without
-changing instructions; the current accepted tree hash is
+Status: Deploy Prompt 5 promoted the behaviorally accepted candidate into the
+canonical package on 2026-07-21 at tree hash
 `c7c02f4f9896cd5bf6e6c25886e77785a9f80c0ccea0d02f7aaa6fc85076dcc4`.
-The design is ready for the separately authorized promotion prompt. This
-document remains design and evidence, not runtime authority, and Prompt 4 did
-not modify the active package.
+The Author phase migrated directly affected structural proof and stopped after
+canonical proof. The separately owned continuation retired the experimental
+copy and manifest entry, then synchronized the managed installed mirror at the
+same hash. Git delivery was not performed.
 
 Canonical runtime authority remains in:
 
@@ -29,9 +29,9 @@ implementation runbook.
 The evidence snapshot is the working tree inspected through 2026-07-21, the
 2026-07-21 authoring-boundary evaluation, the Prompt 4 metadata, full-package,
 and pruning-equivalence studies, and freshly fetched upstream HEAD
-`ed37663cc5fbef691ddfecd080dff42f7e7e350d`. The active concise package remains
-under `skills/custom/writing-great-skills/`; its current bytes are evidence, not
-authority for the accepted inactive candidate.
+`ed37663cc5fbef691ddfecd080dff42f7e7e350d`. The promoted package under
+`skills/custom/writing-great-skills/` is now executable authority; the prior
+active baseline and Prompt 4 candidate remain historical evidence.
 
 # Verdict
 
@@ -425,12 +425,12 @@ candidate removes more variance than complexity it adds.
 | Relationship map | Indexes the `skill-creator` scaffolding versus semantic-quality boundary once. | Copied owner procedures or invented invocation. |
 | Tests and evaluation fixtures | During Prompt 3, update structural proof only for machine-consumed policy, metadata, links, and schemas; record semantic obligations for Prompt 4 instead of encoding them as prose assertions. Keep canonical literal tests untouched during extraction. If promotion later changes their owned runtime, replace prose-coupled protection for the deferred exact spine, named surface, fixed order, or unproved wording with the least brittle structural or behavioral evidence appropriate to the admitted contract. | Prompt 3 structural assertions for semantic behavior; claims that strings prove behavior or admission; or claims that installation belongs to this skill. |
 | `CONTEXT.md` and ADR 0004 | No change unless a later rewrite changes durable vocabulary or artifact ownership. | Skill-local procedure or candidate wording. |
-| Installer, manifests, installed mirror, publishing, and Git | No change. They remain outside this design and its completion. | Writing-quality judgment or canonical authoring authority. |
+| Installer, manifests, installed mirror, publishing, and Git | No change during the Author phase. Promotion lifecycle and managed installation continue only under their separate authority. | Writing-quality judgment or canonical authoring authority. |
 
-The 2026-07-21 promotion remains historical evidence. Deploy Prompts 1 and 2
-supersede its exact-spine and named-surface decisions for the next experimental
-candidate while preserving the admitted operations, behaviors, references,
-policy, ownership, and Return. Follow
+The earlier pre-Deploy promotion record from 2026-07-21 remains historical
+evidence. Deploy Prompts 1 and 2 supersede its exact-spine and named-surface
+decisions for this promoted candidate while preserving the admitted operations,
+behaviors, references, policy, ownership, and Return. Follow
 [`source-to-skill-flow.md`](../methods/source-to-skill-flow.md) for later
 rewrites. Installation and delivery never enter the authoring order.
 
@@ -499,29 +499,48 @@ The exact five-word mnemonic, `Semantic Skill Surface` name, and fixed role
 order remain unadmitted; no sampled failure justified a helper, schema, ledger,
 template, new reference, generated trigger, or ceiling.
 
+## Prompt 5 Promotion Evidence
+
+Prompt 5 read back the accepted experimental and promoted canonical trees at
+the same hash,
+`c7c02f4f9896cd5bf6e6c25886e77785a9f80c0ccea0d02f7aaa6fc85076dcc4`.
+The canonical package retained the accepted four-file shape. Its policy file
+now follows the repository's default LF contract, so the obsolete active-
+baseline CRLF exception was removed from `.gitattributes` without changing
+policy meaning.
+
+Canonical proof passed 59 focused skill-pack contract tests, direct custom-skill
+validation, and diff checks. The managed-install preview reported only
+`writing-great-skills` updated and 24 managed skills unchanged. The scoped
+install skipped the unchanged global bootstrap, installed 25 managed skills,
+and source-to-installed validation and direct tree-hash comparison passed.
+
+The first parallel full-suite run had one unrelated empty-subprocess-output
+failure in a Parallel Implement helper test. That exact test passed serially,
+and a fresh full-suite rerun passed 191 tests with 4 skips. The transient result
+does not affect the promoted package but remains recorded rather than hidden.
+
 ## Remaining Integration Gaps
 
-- Metadata routing was simulated from the inactive package. Host discovery and
-  canonical caller integration require promotion-time proof.
+- Metadata routing was simulated during Prompt 4. Canonical policy, package,
+  reference, and relationship structure now have promotion-time proof; live
+  host discovery remains unobserved.
 - Fixed cases simulated action sequences and terminal packets rather than
   mutating representative skill packages.
 - The grouped Audit case proved strict read-only behavior and typed Return but
   did not add a separate contradictory-authority stress wave; that additional
   ten-context study was disproportionate after the broader suite passed.
-- Canonical replacement, structural-test migration away from the deferred
-  exact spine and named surface, managed installation, and mirror parity remain
-  Prompt 5 work.
 - Exact model, reasoning, token, and timing telemetry was unavailable and must
   not be inferred.
 
 ## Promotion Readiness
 
-Decision: `accepted-experimental-candidate-ready-for-promotion`.
+Decision: `promoted-canonical-and-installed`.
 
-Prompt 5 may promote only current accepted hash
-`c7c02f4f9896cd5bf6e6c25886e77785a9f80c0ccea0d02f7aaa6fc85076dcc4`,
-update directly affected canonical proof and relationship surfaces, and then
-use the separately owned managed installer. Acceptance does not itself authorize promotion,
-installation, or Git delivery. If the candidate bytes change, Prompt 4
-acceptance no longer applies and the changed behavioral claims require fresh
-proportionate proof.
+Prompt 5 promoted the accepted bytes without changing their tree hash and
+replaced prose-coupled protection for the deferred exact spine and named
+surface with package, policy, reference, and relationship checks. After the
+canonical Author Return, the separately owned lifecycle retired the
+experimental copy and manifest entry, ran the managed installer, and proved
+source-to-mirror parity. No promotion-blocking integration gap remains. Git
+delivery remains unauthorized.

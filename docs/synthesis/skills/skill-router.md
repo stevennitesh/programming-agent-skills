@@ -291,7 +291,7 @@ This taxonomy owns only the Router-side observable ingress for every supported d
 | `$research` | One source question needs primary-source legwork and an authorized cited repo-local Markdown note | No durable note is authorized, runnable or causal evidence is needed, or the question is broad multi-decision discovery |
 | `$prototype` | One bounded design question needs a throwaway runnable probe and terminal verdict surface | Production implementation is already settled, the symptom or cause is uncertain, or source evidence alone can decide |
 | `$handoff` | The user explicitly needs a resumable context artifact for a fresh session or agent thread | `/compact` continues the same conversation; an active workflow can return its own complete packet without a new handoff artifact |
-| `$domain-modeling` | Settled domain truth needs persistence or rendering, or an already-settled plausible ADR candidate needs assessment and approved recording | A participant-owned term, boundary, relationship, or decision remains unsettled; evidence or a tracker campaign is still needed; interface design rather than ubiquitous language is the work |
+| `$domain-modeling` | Domain-specific meaning, an invariant, a bounded-context responsibility or relationship needs focused clarification, rendering, or persistence; or an already-settled plausible ADR candidate needs assessment and approved recording | A broader plan or design needs a multi-decision interview, non-conversational evidence or a tracker campaign is still needed, or interface design rather than ubiquitous language is the work |
 
 ### Settled Delivery And Incoming Work
 
@@ -334,7 +334,7 @@ When the pre-screen fails, prefer:
 
 - `$grilling` for a conversation-only pressure test without durable repo capture;
 - `$grill-with-docs` for repo-backed shaping that needs both a user-owned decision interview and active durable domain capture;
-- `$domain-modeling` when domain truth is settled and persistence, rendering, or approved ADR recording remains;
+- `$domain-modeling` when focused domain clarification, persistence, rendering, or approved ADR recording remains;
 - the direct evidence leaf for one source, runnable, causal, stakeholder, or interface gap;
 - `$to-spec` when direction is settled but no durable parent source exists;
 - `$to-tickets` when settled source needs several dependency-ordered slices;
@@ -399,7 +399,6 @@ The invocation is complete only when Admission is resolved; every plausible dest
 | --- | --- | --- | --- |
 | Direct user | Invoke | `$skill-router` | The user explicitly requests one next-skill selection; return one route or `none` to the user |
 | Eligible active skill | Invoke | `$skill-router` | A complete terminal residual remains after owned work and handoffs; return one route or `none` to the caller |
-| `$domain-modeling` | Invoke | `$skill-router` | In the future coordinated candidate only, a standalone terminal pass has a complete material residual outside Domain Modeling and no owned handoff; preserve the residual packet and return one route or `none` without sending unfinished in-scope domain work back to Domain Modeling or invoking its composer directly |
 | `$wayfinder` | Invoke | `$skill-router` | Qualification or Admission rejects terminal unowned residual work; preserve the Wayfinder exclusion and return one narrower route or `none` |
 | `$skill-router` | Recommend and stop | One destination | One destination wins and any precondition is named; the user or caller may start it later |
 | `$skill-router` | Return and stop | `none` | Admission fails, no skill owns the work, or ambiguity remains after the one-question budget |
@@ -540,7 +539,7 @@ This map alone owns file placement, concrete migration delta, anti-duplication b
 | `R2` | `CONTEXT.md` | Stable pack vocabulary and source ownership | Reconcile Router vocabulary with the promoted subtype and preserve the distinction from dispatcher | Runtime steps or route catalog |
 | `R3` | `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md` and the managed global bootstrap | Minimal discovery pointer | Keep only the two triggers, one-route-or-none result, and no-downstream-execution boundary | Route map, procedures, tracker policy, domain rules, or personal environment guidance |
 | `R3` | Repository `AGENTS.md` primer and Repo Bootstrap templates/validator if affected | Repo-local route pointer and compatible setup installation | Reconcile `Invoke` versus `Suggest` semantics with the promoted policy; preserve short-primer ownership | Complete route taxonomy or destination procedures |
-| `R4` | Caller skills with a proved terminal unowned residual | Caller terminality, packet assembly, exclusions, and receiving Return | Add or update only observed valid residual edges; Domain Modeling supplies its complete standalone terminal residual packet, while all callers preserve owned handoffs and prevent unfinished-work delegation | Pack-wide route catalogs or Router selection logic |
+| `R4` | Caller skills with a proved terminal unowned residual | Caller terminality, packet assembly, exclusions, and receiving Return | Add or update only observed valid residual edges; callers preserve owned handoffs and prevent unfinished-work delegation. Domain Modeling deliberately returns residuals without invoking Router | Pack-wide route catalogs or Router selection logic |
 | `R4` | Destination skills and their syntheses | Destination admission, authority, procedure, output, and completion | Change only an observed ingress mismatch; keep rejection possible | Router algorithm or automatic execution |
 | `R4` | `docs/synthesis/skill-context-relationships.md` | Accepted invocation policy, context owner, and cross-skill edge index | Record the final Router policy and only verified caller/destination relationships | Runtime procedure or a second admission authority |
 | `R4` | `README.md` | Human-facing overview and examples | Describe explicit selection and terminal residual routing accurately; keep examples non-normative | Complete route map or installation internals |
