@@ -52,12 +52,12 @@ rules.
 | Which gates prevent premature publication? | [Authority Gates](#authority-gates) |
 | What must be traced before slicing? | [Source Trace Contract](#source-trace-contract) |
 | How is every commitment accounted for? | [Coverage Map Contract](#coverage-map-contract) |
-| What makes a good tracer or support slice? | [Slicing Model](#slicing-model) |
+| What makes a good vertical, tracer, or support slice? | [Slicing Model](#slicing-model) |
 | What belongs in one ready ticket? | [Ticket Artifact Contract](#ticket-artifact-contract) |
 | What is a real blocker rather than a scheduling constraint? | [Dependency Graph And Ready Frontier](#dependency-graph-and-ready-frontier) |
 | What must be shaped for stateful work? | [State-Boundary Acceptance](#state-boundary-acceptance) |
 | What must be known before a graph may route to Parallel Implement? | [Execution Economics And Parallel Profile](#execution-economics-and-parallel-profile) |
-| How are wide mechanical changes sliced? | [Blast-Radius Changes](#blast-radius-changes) |
+| How are compatibility migrations shaped and blast radius controlled? | [Compatibility Migration And Blast-Radius Control](#compatibility-migration-and-blast-radius-control) |
 | What must the user approve? | [Approval Packet](#approval-packet) |
 | What may happen next from the current observed state? | [Normative State And Transition Model](#normative-state-and-transition-model) |
 | When is each process step complete? | [Operation And Completion Contracts](#operation-and-completion-contracts) |
@@ -105,7 +105,7 @@ creates uneconomic lanes, or cannot prove what each slice means.
 | Invocation | Explicit-only; a user deliberately selects ticket shaping, while upstream skills recommend it and stop | Preserve `allow_implicit_invocation: false` |
 | Source | Accept one bounded body of settled implementation source; return material source gaps without slicing or mutation | Selected |
 | Coverage | Use one exhaustive coverage map with exactly one disposition for every source-visible implementation commitment and scope boundary | Selected |
-| Slice shape | Tracer bullets by default; proof-bearing support slices only when they unblock or de-risk a named tracer; expand-contract for exceptional blast-radius changes | Selected |
+| Slice shape | Vertical behavior slices are the default delivery shape; use tracer bullets for thin real feedback or load-bearing risk paths, proof-bearing support slices only when they unblock or de-risk a named delivery slice, and expand-migrate-contract stages for incompatible changes | Selected |
 | Graph semantics | Separate true blocking edges from serial tripwires, predicted overlap, and implementation order | Selected |
 | Readiness | Reuse the tracker-owned Ready-for-agent contract and add only To Tickets-owned source, slicing, coverage, and execution-profile fields | Selected |
 | Publication | Require approval of the exact proposal, publish blockers first, preserve parent intent and lifecycle, and apply Mutation read-back to the graph and frontier | Selected |
@@ -152,7 +152,7 @@ operational:
 | --- | --- |
 | **Trace** | Establish one authoritative settled-source boundary, its Source Trace, commitments, accepted decisions, exclusions, and material gaps |
 | **Map** | Inspect only enough repository reality to connect commitments to stable seams, state branches, proof lanes, durable pointers, and slicing constraints |
-| **Slice** | Build one coverage-complete dependency graph of tracer bullets and justified support or expand-contract slices |
+| **Slice** | Build one coverage-complete dependency graph of vertical behavior slices, tracer bullets where the feedback or risk purpose applies, justified support slices, and compatibility-migration stages |
 | **Approve** | Present the exact coverage map and graph; obtain explicit approval for every judgment that will become tracker state |
 | **Publish** | Reconcile freshness, create only the approved graph blockers-first, read back every mutation, derive the frontier, and return one next action |
 
@@ -168,8 +168,9 @@ on prior approval.
 | **Settled source** | One bounded source set whose product intent, implementation-relevant commitments, material decisions, scope, and proof expectations are authoritative enough to slice without invention |
 | **Commitment** | One source-visible behavior, contract, constraint, state branch, failure or permission outcome, migration obligation, proof expectation, or scope boundary that affects implementation |
 | **Coverage map** | The exhaustive reconciliation from every commitment to exactly one ticket, explicit deferral, explicit exclusion, or no-ticket reason |
-| **Tracer bullet** | One narrow, independently verifiable path through the real system that proves useful behavior or a load-bearing risk |
-| **Support slice** | One independently provable enabling change that unblocks or materially de-risks a named tracer bullet without becoming generic cleanup |
+| **Vertical behavior slice** | One request or behavior organized across the real components or concerns needed for its selected value |
+| **Tracer bullet** | One skeletally thin real path selected to obtain early feedback or retire a load-bearing risk; it may also be a vertical behavior slice |
+| **Support slice** | One enabling change with its own local proof that unblocks or materially de-risks a named delivery slice without becoming generic cleanup |
 | **Blocking edge** | A semantic or execution prerequisite that makes the dependent ticket not executable until the blocker is satisfied |
 | **Serial tripwire** | Evidence that work should not execute concurrently even when no semantic dependency exists; it is scheduling metadata, not automatically a blocker |
 | **Ready-for-agent** | The tracker-owned handoff contract proving a ticket is fully shaped for unattended implementation; it does not imply the ticket is currently unblocked |
@@ -186,7 +187,7 @@ flowchart TB
     TRACE --> GAP{"Material source gap?"}
     GAP -->|Yes| SOURCE["Return source-gap packet without slicing"]
     GAP -->|No| MAP["Map seams, proof lanes, state branches, and durable pointers"]
-    MAP --> SLICE["Slice tracer bullets and justified support work"]
+    MAP --> SLICE["Slice vertical behavior, tracer, support, and compatibility work"]
     SLICE --> COVER{"Every commitment has one disposition?"}
     COVER -->|No| SLICE
     COVER -->|Yes| GRAPH["Validate blockers, frontier, session fit, and execution profiles"]
@@ -218,12 +219,12 @@ transitions, completion, recovery, and downstream routing.
 | Source completeness and source-gap classification | [Source Trace Contract](#source-trace-contract) |
 | Repository inspection boundary | [Repository Mapping Boundary](#repository-mapping-boundary) |
 | Exhaustive commitment accounting | [Coverage Map Contract](#coverage-map-contract) |
-| Tracer, support, split, and sizing decisions | [Slicing Model](#slicing-model) |
+| Vertical, tracer, support, split, and sizing decisions | [Slicing Model](#slicing-model) |
 | Per-ticket meaning and required fields | [Ticket Artifact Contract](#ticket-artifact-contract) |
 | Blockers, serial constraints, order, and frontier | [Dependency Graph And Ready Frontier](#dependency-graph-and-ready-frontier) |
 | Stateful acceptance coverage | [State-Boundary Acceptance](#state-boundary-acceptance) |
 | Parallel economics and execution profile | [Execution Economics And Parallel Profile](#execution-economics-and-parallel-profile) |
-| Wide mechanical change exception | [Blast-Radius Changes](#blast-radius-changes) |
+| Compatibility migration and blast-radius control | [Compatibility Migration And Blast-Radius Control](#compatibility-migration-and-blast-radius-control) |
 | User-visible proposed mutation | [Approval Packet](#approval-packet) |
 | Legal next step from current evidence | [Normative State And Transition Model](#normative-state-and-transition-model) |
 | Step completion and nonterminal return | [Operation And Completion Contracts](#operation-and-completion-contracts) |
@@ -393,43 +394,51 @@ visible to the approver, and no ticket invents behavior beyond the source.
 
 ## Slicing Model
 
-### Tracer Bullets
+### Vertical Slices And Tracer Bullets
 
-Default to one independently grabbable tracer bullet: a narrow complete path
-through every layer needed to make one behavior or risk observable. It need not
-touch every architectural layer. It touches only those required for its proof.
+Default to one independently grabbable vertical behavior slice: one request or
+behavior organized across the real components or concerns needed for its
+selected value, with observable proof through its claimed boundary. Use a
+tracer bullet when the purpose is to establish a skeletally thin real path for
+early feedback or retire a load-bearing risk. One ticket may serve both
+purposes, but the terms are not synonyms.
 
-A tracer bullet passes all of these tests:
+**Local proof policy:** every ticket carries observable proof through its
+claimed boundary. Independent completion means it can be judged without
+unrelated sibling completion; it does not establish concurrency.
 
-- **Outcome:** it delivers or proves one useful observable behavior or
-  load-bearing risk.
+A delivery slice passes all of these tests:
+
+- **Outcome:** a vertical slice delivers one useful observable behavior; a
+  tracer bullet obtains the selected feedback or retires the named risk.
 - **Fresh-session:** a new implementation session can retrieve its bounded
   source and act without the parent conversation.
 - **Semantic cohesion:** acceptance, scope, proof, and ownership describe one
   coherent reason to change.
-- **Independent verification:** completion can be judged without waiting for
-  unrelated sibling tickets.
+- **Local proof:** completion can be judged without waiting for unrelated
+  sibling tickets.
 - **Session fit:** one medium-effort implementation owner can normally reach
   proof, review, and handoff in one fresh session.
 - **Scope fence:** adjacent behavior and cleanup are explicitly outside it.
 
-Start with the happy-path tracer when the end-to-end route is unproved. Add
-edge, failure, permission, migration, or alternate-state slices separately
-only when they have independent proof, authority, risk, or ordering value.
+Start with a happy-path tracer when the end-to-end route is unproved; otherwise
+default to vertical behavior slices. Add edge, failure, permission, migration,
+or alternate-state slices separately only when they have distinct proof,
+authority, risk, or ordering value.
 
 ### Support Slices
 
 A support slice is permitted only when it:
 
-1. names the tracer bullet it unblocks or materially de-risks;
+1. names the delivery slice it unblocks or materially de-risks;
 2. has its own observable, behavior-preserving proof;
 3. is the smallest enabling change with durable value; and
-4. cannot be more economically included in the dependent tracer.
+4. cannot be more economically included in the dependent delivery slice.
 
 Repository cleanup, abstraction work, harness work, schema preparation, and
 prefactoring do not qualify merely because they may make later work pleasant.
 Use the principle “make the change easy, then make the easy change” only when
-the enabling proof and dependent tracer are explicit.
+the enabling proof and dependent delivery slice are explicit.
 
 ### Split And Merge Rules
 
@@ -467,7 +476,9 @@ To Tickets adds:
 
 ```text
 Parent or bounded source reference
-Slice type: tracer bullet | support slice | expand | migrate | contract | integrate-and-verify
+Work-unit form: vertical behavior slice | support slice | technical migration stage
+Learning role: tracer bullet | none
+Migration phase: expand | migrate | contract | not applicable
 Why this slice
 What to build
 Covered commitment IDs or descriptions
@@ -513,8 +524,7 @@ Keep four concepts distinct:
 | Serial tripwire | Concurrent execution would create overlap, contention, or integration risk | Parallel-safety metadata; no edge unless a real predecessor outcome is needed |
 | Expected write overlap | Predicted shared production scope | Usually serialize; create an edge only when one ticket semantically depends on the other's result |
 
-The approved graph must be acyclic or explicitly use the integration-branch
-exception in Blast-Radius Changes. Every edge names the exact predecessor
+The approved graph must be acyclic. Every edge names the exact predecessor
 outcome the dependent consumes. “Do this first,” shared files, reviewer
 preference, or agent availability are not sufficient explanations.
 
@@ -592,30 +602,34 @@ dispatch, landing, backpressure, Downshift, and proof recombination. Do not
 inflate tiny work into separate tickets to manufacture lanes and do not encode
 runtime width in the graph.
 
-## Blast-Radius Changes
+## Compatibility Migration And Blast-Radius Control
 
-A wide mechanical change is the exception to ordinary tracer-bullet slicing
-only when no narrow path can land green because the change fans across many
-callers at once.
+### Expand-Migrate-Contract Compatibility Change
 
-Use **expand-contract**:
+Use **expand-migrate-contract** when incompatible interfaces, schemas, clients,
+or data cannot switch atomically:
 
 1. **Expand:** introduce the compatible new form beside the old and prove both
    may coexist.
-2. **Migrate:** move bounded caller groups in independently green batches, each
-   blocked by Expand.
-3. **Contract:** remove the old form only after every migration batch and
-   compatibility proof pass.
+2. **Migrate:** move callers or data through releasable, backward-compatible
+   stages, with each real predecessor dependency explicit.
+3. **Contract:** remove the old form only after old usage ends and compatibility
+   proof passes.
 
-Batch by a stable blast-radius boundary such as package, service, consumer,
-schema generation unit, or deployable—not by arbitrary ticket count. Each
-batch names its compatibility and rollback proof.
+Every intermediate stage remains operable and releasable. Migration ordering
+does not waive compatibility or create an exception for temporary non-operable
+composition. Expand, migrate, and contract are technical migration phases; they
+are not automatically vertical product slices.
 
-When batches cannot stay green independently, preserve the sequence but use one
-explicit integration branch and a final integrate-and-verify ticket blocked by
-every batch. The intermediate tickets state that only the integration branch,
-not the mainline frontier, owns temporary non-green composition. This exception
-does not authorize vague big-bang refactors or omit rollback and final proof.
+### Blast-Radius Control
+
+Track blast radius separately as progressive-exposure and rollback control.
+When risk warrants it, expose or batch by a stable boundary such as package,
+service, consumer, schema generation unit, or deployable rather than arbitrary
+ticket count. Each boundary names its health, compatibility, and rollback
+proof. Broadness or failed vertical slicing is not an entry condition for
+expand-migrate-contract, and blast-radius boundaries do not define product
+slice shape.
 
 ## Approval Packet
 
@@ -627,7 +641,7 @@ Coverage map with every ticket, deferral, exclusion, and no-ticket reason
 Ordered ticket graph and predicted initial frontier
 For each ticket:
   title
-  slice type
+  work-unit form, learning role, and migration phase
   blockers and consumed predecessor outcome
   covered commitments
   acceptance criteria
@@ -684,7 +698,7 @@ acceptance cases explain or test it but do not add legal movement.
 | --- | --- | --- | --- |
 | **Trace** | One explicit invocation has a candidate source set | Source identity, owner, commitments, decisions, boundaries, evidence, and material gaps are complete | Setup precondition or complete source-gap packet |
 | **Map** | Trace passes but stable slicing evidence is not yet complete | Required seams, proof lanes, state branches, durable pointers, overlap, migration, and blast-radius constraints are known or exact source conflicts are returned | Source-gap packet naming contradictory repository evidence |
-| **Slice** | Trace and Map pass | Coverage is exhaustive; every ticket passes artifact, tracer/support, session-fit, dependency, state, economic, and scope-fence contracts; one exact proposal revision exists | Source-gap packet or no-ticket result |
+| **Slice** | Trace and Map pass | Coverage is exhaustive; every ticket passes artifact, vertical/tracer/support/migration, session-fit, dependency, state, economic, and scope-fence contracts; one exact proposal revision exists | Source-gap packet or no-ticket result |
 | **Approve** | One complete proposal revision exists | The exact revision is explicitly approved, or a complete revision request and unchanged tracker state are returned | Proposal awaiting approval or revised proposal requiring fresh approval |
 | **Publish** | The approved revision is fresh and publication authority exists | Every intended mutation reads back; parent preservation, roles, bodies, edges, state, and frontier match; exactly one next action is selected | Partial-publication recovery packet with applied and failed operations and safest continuation |
 
@@ -857,12 +871,14 @@ bounded returns, not successful publication.
 
 The current design is the convergence of four evidence streams:
 
-1. Distilled outside sources supply tracer bullets, story mapping,
-   specification by example, seam-oriented proof, releasable increments,
-   support work, and explicit work-state ideas.
-2. The upstream `to-tickets` skill contributes memorable vertical-slice,
-   blocking-edge, independently-grabbable, prefactoring, and expand-contract
-   language.
+1. Distilled outside sources distinguish tracer bullets as thin real feedback
+   paths, vertical slices as delivery organized around a request, and
+   expand-migrate-contract as compatible, releasable migration sequencing;
+   they also supply story mapping, specification by example, seam-oriented
+   proof, support work, blast-radius control, and explicit work-state ideas.
+2. The upstream `to-tickets` skill contributes memorable slicing,
+   blocking-edge, independently-grabbable, prefactoring, and migration
+   language; validation narrows those terms where upstream compounded them.
 3. The local 2026-07-14 rewrite established the five-verb spine and delegated
    tracker transport, labels, packet mechanics, and Mutation read-back to the
    tracker owner.
@@ -896,18 +912,28 @@ read-back, and composition contracts.
 
 | Upstream behavior | Disposition | Reason |
 | --- | --- | --- |
-| Tracer-bullet vertical slices | Import and strengthen | Preserve the narrow end-to-end instinct, but define completeness through observable meaning rather than a mandatory schema/API/UI stack |
-| Independently grabbable and one fresh context | Import | Strong fresh-session and session-fit steering |
+| Tracer bullets | Adapt | Preserve the skeletally thin real feedback or risk path without treating it as a synonym for delivery shape |
+| Vertical slices | Adopt | Default delivery shape around one request or behavior across only the real concerns needed for its selected value |
+| Independently grabbable and one fresh context | Retain current local rule | Preserve dispatch-size and fresh-session steering without making independence part of tracer or vertical-slice meaning |
+| Explicit proof and independent completion | Adapt | Sources support observable proof; To Tickets retains the stronger independent-completion gate as local policy, not term meaning or concurrency evidence |
+| Dependency-ready set and locally defined ready frontier | Retain current local rule | Keep tracker-defined readiness distinct from write, resource, ownership, and concurrency safety |
 | Explicit blocking edges and blockers-first publication | Import | Core graph semantics and provider-safe publication order |
 | Quiz the user before publication | Import as Approval Packet | Local design needs exact approval scope, matrices, proof, write scope, and parallel safety |
-| Prefactoring and “make the change easy” | Import conditionally | Keep only as a proof-bearing support slice tied to a named tracer |
-| Expand-contract wide-refactor exception | Import | It preserves green migration and truthful blast-radius slicing |
+| Prefactoring and “make the change easy” | Import conditionally | Keep only as a proof-bearing support slice tied to a named delivery slice |
+| Expand-migrate-contract compatibility sequencing | Adopt | Preserve old/new coexistence, releasable backward-compatible migration stages, and Contract only after old usage ends |
+| Blast-radius control as a compatibility-migration phase | Reject | Progressive exposure, health, and rollback are separate controls |
+| Automatic equivalence between migration phases and product slices | Defer | No direct comparative source establishes equivalence; classify each work unit separately and preserve the bounded inference that phases are not automatically product slices |
+| Temporary non-operable integration exception | Reject | Real dependencies may order stages but do not waive compatibility, operability, or releasability |
 | Optional codebase exploration | Strengthen | Mapping is required only to the extent needed for stable seams, supported state, and proof |
 | Local and hosted tracker templates in the skill | Reject | Tracker transport and packet representation belong to repository setup docs |
 | Apply ready label by construction | Strengthen | Readiness requires the full shared contract and post-mutation read-back |
 | Modify no parent under any condition | Refine | Preserve parent intent and lifecycle; permit only tracker-required child-link metadata in the approved packet |
 | Recommend working the frontier one ticket at a time | Refine | Return one route based on caller intent and verified graph; Parallel Implement may own a complete parent campaign while remaining serial |
 | Non-overlapping files imply parallel work | Reject | Semantic ownership, production scope, public proof seams, shared resources, and economics govern eligibility |
+
+These are semantic corrections to source meaning. Whether their exact wording
+improves slicing, proof, dependency, or migration behavior remains untested and
+deferred to the fixed-control behavior protocol below.
 
 ## Why Coverage Precedes Approval
 
@@ -1012,7 +1038,7 @@ Trace
 Map
 Slice
   coverage
-  tracer/support/expand-contract
+  vertical/tracer/support/migration
   ticket and dependency contracts
   state matrix and conditional execution profile
 Approve exact proposal revision
@@ -1064,7 +1090,7 @@ families. Build and validate the canonical candidate before synchronization.
 | --- | --- | --- |
 | **E0: Control lock** | The current skill or no-guidance arm exhibits the claimed failure before candidate evaluation | Fixed source, repository, tracker snapshot, tools, model, tier, rubric, and one red-capable scenario per promoted claim |
 | **E1: Entry and attention** | Explicit invocation, admission, source-gap return, owner pointers, five-verb discovery, and selective context loading are reliable | Settled conversation, parent spec, ambiguous source, missing setup, stateful source, and parent-delivery prompts |
-| **E2: Ordinary shaping** | Coverage, tracer/support classification, ticket contracts, dependency semantics, proof seams, state matrices, economics, and approval are behaviorally correct | Multi-actor spec, omitted failure, support temptation, false blocker, overlapping scopes, tiny work, substantial independent work, and stateful branches |
+| **E2: Ordinary shaping** | Coverage, vertical/tracer/support/migration classification, ticket contracts, dependency semantics, proof seams, state matrices, economics, and approval are behaviorally correct | Multi-actor spec, omitted failure, support temptation, false blocker, overlapping scopes, tiny work, substantial independent work, and stateful branches |
 | **E3: Mutation and recovery** | Proposal freshness, blockers-first publication, parent preservation, read-back, partial recovery, frontier derivation, and next-action selection preserve authority | Approval revision, concurrent tracker drift, duplicate risk, partial create/link/label failure, empty/singular/overlap/independent frontier, and explicit parent-delivery cases |
 | **E4: Integrated promotion** | Producers, consumers, relationships, canonical validation, provider equivalence, installation, and mirror parity agree | To Spec handoff, Triage equivalence, Implement return, Parallel repair packet, all provider contracts, focused/full checks, and hash parity |
 
@@ -1093,12 +1119,12 @@ Layer Two rules or Runtime Ownership And Change Map.
 | `I1,I2 / E1` | `T1,T2` | [Authority Gates](#authority-gates) | Missing tracker operation returns the exact Repo Bootstrap precondition; all other gates remain unstarted | Assumed provider behavior, partial setup, or old approval permits mutation | Setup fixtures and gate-order behavior evaluation |
 | `I1 / E1,E2` | `T1` | [Source Trace Contract](#source-trace-contract) | Full source, comments, durable owners, accepted prototype verdict, and scope are traced without copying unrelated context | Headline-only read, undefined term, missing decision comment, current code overriding intent, or speculative linked material shapes tickets | Source-recall rubric and grounding samples |
 | `I1 / E2` | `T1` | [Coverage Map Contract](#coverage-map-contract) | Every actor, behavior, failure, state branch, verdict, and boundary has exactly one ticket, deferral, exclusion, or no-ticket reason; every ticket traces back | One source commitment disappears, one is double-counted, an exclusion hides acceptance, or a speculative ticket has no source | Bidirectional coverage fixture with precision/recall and critical-omission rule |
-| `I1 / E2` | `T1` | [Slicing Model](#slicing-model) | Happy-path behavior becomes one tracer; a harness refactor becomes support only when it independently proves and unlocks that tracer; tiny adjacent work coalesces | Horizontal schema/API/UI tickets, generic cleanup, support work without dependent tracer, or many tiny lanes pass | Fixed slicing scenarios judged for semantic cohesion, proof, and session fit |
+| `I1 / E2` | `T1` | [Slicing Model](#slicing-model) | A behavior becomes one vertical slice; an unproved end-to-end route uses a tracer role; a harness refactor becomes support only when it has local proof and unlocks the named delivery slice; tiny adjacent work coalesces | Tracer and vertical are treated as synonyms, horizontal schema/API/UI tickets, generic cleanup, support work without a dependent delivery slice, or many tiny lanes pass | Fixed slicing scenarios judged for semantic cohesion, proof, and session fit |
 | `I1 / E2` | `T1` | [Ticket Artifact Contract](#ticket-artifact-contract) | Each ticket is fresh-session ready, observable, source-traced, scoped, and technique-flexible | Vague acceptance, copied parent, frozen file choreography, private-helper-only proof, or missing scope fence passes | Packet rubric and consumer dry-read by a fresh implementation context |
 | `I1 / E2` | `T1` | [Dependency Graph And Ready Frontier](#dependency-graph-and-ready-frontier) | True prerequisites become acyclic edges; shared files become serial metadata when no predecessor outcome is consumed | Disjoint filenames prove independence, shared scope always creates blockers, cycles pass, or predicted frontier ignores an edge | Graph fixtures and edge-justification behavior evaluation |
 | `I1,I2 / E2` | `T1,T2` | [State-Boundary Acceptance](#state-boundary-acceptance) | Applicable absent, current, legacy, access-path, profile, and lifecycle branches enter acceptance and proof; irrelevant axes are evidenced | Broad green suite or test count replaces supported branches; stateless work gets a blind matrix | State-contract fixtures and Parallel admission dry-run |
 | `I1,I2 / E2` | `T1,T2` | [Execution Economics And Parallel Profile](#execution-economics-and-parallel-profile) | Tiny work is marked small and serial-coalesced; two substantial semantically independent, scope-isolated, proof-isolated tickets receive complete profiles | Open slots, disjoint filenames, or inflated tickets justify lanes; shared seams, benchmarks, integration, or scarce fixtures are called independent | Fixed economic graphs, receiving Parallel review, and consistency rubric |
-| `I1 / E2` | `T1` | [Blast-Radius Changes](#blast-radius-changes) | Expand coexists, migration batches stay green and prove rollback, Contract waits for all, or one explicit integration branch owns non-green composition | Big-bang refactor, arbitrary batching, early Contract, or ordinary behavior work abuses the exception | Migration graph fixtures and edge/proof assertions |
+| `I1 / E2` | `T1` | [Compatibility Migration And Blast-Radius Control](#compatibility-migration-and-blast-radius-control) | Expand preserves old/new coexistence, migrate stages stay releasable and backward-compatible, Contract waits for old usage to end, and blast-radius controls name health and rollback separately | Big-bang refactor, temporary non-operable composition, arbitrary exposure boundaries, early Contract, or migration phases treated automatically as product slices | Migration graph fixtures and edge/proof assertions |
 | `I1 / E2,E3` | `T1` | [Approval Packet](#approval-packet) | The user sees complete coverage and exact graph; a requested change triggers whole-proposal reconciliation and new revision approval | Partial list, hidden deferral, vague assent, or post-approval acceptance/edge edit publishes | Multi-turn approval samples with proposal identity and mutation spy |
 | `I1,I2 / E3` | `T1,T2` | [Normative State And Transition Model](#normative-state-and-transition-model) and [Publication And Recovery](#publication-and-recovery) | Fresh approved graph publishes blockers-first; parent semantics survive; every body, role, edge, and frontier reads back | Publish before approval, dependents before blockers, receipt-only success, parent lifecycle change, or implementation begins | Provider-equivalent operation traces and mutation-order assertions |
 | `I1,I2 / E3` | `T1,T2` | [Publication And Recovery](#publication-and-recovery) | One child create succeeds, one link fails, and one label is unknown; the skill refetches identities, reports exact state, and retries nothing unsafe | Reports success, duplicates a child, guesses the edge, continues publishing blindly, or changes meaning without reapproval | Failure injection against GitHub, GitLab, and Local Markdown representations |
