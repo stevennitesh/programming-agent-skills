@@ -5,9 +5,10 @@ Status: source-packet-complete
 Supports: bounded source-validation routing for
 [`Upper-Bound Engineering Language`](../upper-bound-engineering-language.md)
 
-Scope: UBL-00 only; local supplied artifacts inspected 2026-07-22; no browsing,
-upstream repository access, conversations, behavioral runs, wording decisions,
-or downstream edits
+Scope: UBL-00 local inventory plus the authorized UBL-01 evidence pointer and
+claim dispositions, reconciled 2026-07-22; external evidence remains in EV-09;
+no upstream repository access, conversations, behavioral runs, wording
+decisions, or downstream edits
 
 ## Question And Boundary
 
@@ -16,10 +17,11 @@ behavioral or transfer claims must remain downstream?
 
 This ledger inventories the decision-bearing reference at a coarse semantic
 unit, splits every steering formulation into term, action, and gate components,
-and admits one five-claim cohort under UBL-01. It routes evidence; it does not
-decide the wording. Cross-pack repetition is recorded only as pack-usage
-evidence. It never supplies semantic, professional-validity, behavioral,
-transfer, or local-suitability proof by itself.
+and records the completed source dispositions for its five-claim UBL-01 cohort.
+It routes evidence; it does not decide the wording. Cross-pack repetition is
+recorded only as pack-usage evidence. It never supplies semantic,
+professional-validity, behavioral, transfer, or local-suitability proof by
+itself.
 
 ## Verified Source Registry
 
@@ -33,6 +35,7 @@ transfer, or local-suitability proof by itself.
 | EV-06 | [`04-agentic-bridge-vocabulary.md`](../04-agentic-bridge-vocabulary.md) | inspected 2026-07-22 | Local comparison owner for agent-execution language and bridge patterns | Candidate language only; the proposed term + instruction + criterion bridge is behaviorally unverified |
 | EV-07 | [`upper-bound-engineering-language-validation-roadmap.md`](../../backlog/upper-bound-engineering-language-validation-roadmap.md) | inspected 2026-07-22 | Governing unit, admission, ownership, budget, and completion contract | Backlog authority only; does not validate a claim or authorize correction |
 | EV-08 | [`source-distillation-flow.md`](../../../synthesis/methods/source-distillation-flow.md) and [`Prompt 05`](../../../synthesis/methods/prompts/05-distill-source-packet.md) | inspected 2026-07-22 | Claim-label, provenance, limitation, prune, gap, and terminal-decision method | Applied only to the already-inspected local packet set; no new search or extraction lane opened |
+| EV-09 | [`UBL-01-slicing-and-migration.md`](UBL-01-slicing-and-migration.md) | inspected 2026-07-22 | Complete UBL-01 source packet; original/canonical semantic lanes plus bounded official-practice counterpressure | Decides source dispositions for UBL01-C1 through UBL01-C5; full current tracer-bullet chapter inaccessible, “frontier” lacks a stable external definition, and all behavior remains untested |
 
 ## Admission Decision
 
@@ -44,14 +47,15 @@ replace the other gates.
 
 | Claim ID | Exact Claim And Location | Current Evidence And Label | Hidden Assumption And Falsifier | Required Proof And Owner | Consequence / Uncertainty / Leverage / Cost | Queue State And Revisit Trigger | Result | Behavioral Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| UBL01-C1 | `Fast Lookup: Prove one real path early`; `Tier 1: Tracer-bullet vertical slice`; `Tier 2: Tracer-bullet slicing`; `Aliases: Tracer-bullet vertical slice`; `Steering Formulations: Tracer-bullet vertical slice` term component. Claim: tracer bullet, vertical slice, bite-sized task, and shortest working diff name distinct learning, delivery-shape, dispatch-size, and solution-volume decisions. | `synthesis`; EV-01 compares M corroborated, S corroborated, and P corroborated usage. | Assumes the four distinctions are stable outside their packs. Falsified or narrowed if original/professional sources use them interchangeably or define different axes. | Semantic fidelity plus bounded counterpressure; UBL-01 | H / H / H / M | `active`; revisit after the UBL-01 packet or if access cannot distinguish the terms | unresolved | untested |
-| UBL01-C2 | Same tracer-bullet rows, action component. Claim: an admitted tracer-bullet or vertical-slice action crosses every necessary real layer for one observable behavior. | `synthesis`; M corroborated through EV-02; EV-05 asserts the professional prior without inspected origin evidence. | Assumes completeness through necessary layers is essential to both terms rather than a local synthesis. Falsified or narrowed by authoritative definitions permitting a learning skeleton, walking skeleton, or partial path with different completeness. | Semantic fidelity; independent corroboration only if professional validity remains claimed; UBL-01 | H / H / H / M | `active`; revisit when UBL-01 can assign the mechanic to the correct term and condition | unresolved | untested |
-| UBL01-C3 | Same tracer-bullet rows, gate component; `Tier 2: Tracer-bullet slicing with explicit blockers`. Claim: the slice must be independently verifiable through the real boundary, except where a declared migration dependency makes that impossible. | `synthesis`; M corroborated in EV-02; cross-pack smallness agreement in EV-01 is usage evidence only. | Assumes independent proof is definitional rather than a local completion policy. Falsified or narrowed if strong sources allow non-independent slices or use a different readiness/proof condition. | Semantic fidelity plus professional counterpressure; UBL-01 | H / H / H / M | `active`; revisit when UBL-01 establishes the proof condition and exceptions | unresolved | untested |
-| UBL01-C4 | `Fast Lookup: Expose what can start now`; `Tier 2: Tracer-bullet slicing with explicit blockers`; `Aliases: Independent problem domain`; `Failure Modes: Independent`; planning application row. Claim: blocking edges and frontier distinguish factual predecessor constraints from open work, but do not alone establish concurrency. | `synthesis`; M corroborated in EV-02; S supplies a conflicting concurrency use of independence in EV-03. | Assumes blocker/frontier meanings transfer across planning and delegation. Falsified or split if original planning sources make frontier or independence inherently scheduling-specific. | Semantic/professional meaning with explicit concurrency counterpressure; UBL-01 | H / H / H / M | `active`; revisit when UBL-01 can separate readiness, claim state, and parallel safety | unresolved | untested |
-| UBL01-C5 | `Tier 2: Expand-contract migration`; tracer-bullet misuse/exception cells; planning application row; prune decision for ladder/slicing language. Claim: expand-contract is a broad-migration technique whose green intermediate states and dependency exceptions must not be mislabeled as vertical product slices. | `synthesis`; M direct in EV-02; no external definition or mature migration counterpressure inspected. | Assumes the named sequence and its exception boundary match established parallel-change/expand-contract practice. Falsified or narrowed by canonical migration guidance with different phases, operability requirements, or slicing relationships. | Semantic fidelity plus bounded API/schema migration counterpressure; UBL-01 | H / H / H / M | `active`; revisit when UBL-01 establishes the exact sequence, green-state requirement, and exception boundary | unresolved | untested |
+| UBL01-C1 | `Fast Lookup: Prove one real path early`; `Tier 1: Tracer-bullet vertical slice`; `Tier 2: Tracer-bullet slicing`; `Aliases: Tracer-bullet vertical slice`; `Steering Formulations: Tracer-bullet vertical slice` term component. Claim: tracer bullet, vertical slice, bite-sized task, and shortest working diff name distinct learning, delivery-shape, dispatch-size, and solution-volume decisions. | `synthesis`; EV-01 compares pack usage; EV-09 supplies primary semantic evidence and counterpressure. | Assumes the four distinctions are stable outside their packs. Falsified or narrowed if original/professional sources use them interchangeably or define different axes. | Semantic fidelity plus bounded counterpressure; UBL-01 | H / H / H / M | `decided by EV-09`; UBL-24 owns any correction | `split`: preserve four distinct axes and state overlap rather than aliasing them | untested |
+| UBL01-C2 | Same tracer-bullet rows, action component. Claim: an admitted tracer-bullet or vertical-slice action crosses every necessary real layer for one observable behavior. | `synthesis`; EV-09 confirms a thin real path and front-to-back concerns but conflicts with universal layer completeness. | Assumes completeness through necessary layers is essential to both terms rather than a local synthesis. Falsified or narrowed by authoritative definitions permitting a learning skeleton, walking skeleton, or partial path with different completeness. | Semantic fidelity; independent corroboration only if professional validity remains claimed; UBL-01 | H / H / H / M | `decided by EV-09`; UBL-24 owns any correction | `narrow`: require the real components or concerns needed for the selected feedback or value, not every architectural layer | untested |
+| UBL01-C3 | Same tracer-bullet rows, gate component; `Tier 2: Tracer-bullet slicing with explicit blockers`. Claim: the slice must be independently verifiable through the real boundary, except where a declared migration dependency makes that impossible. | `synthesis`; EV-09 supports explicit testable/usable proof as policy, not “independently verifiable” as term meaning; migration dependencies do not waive intermediate operability. | Assumes independent proof is definitional rather than a local completion policy. Falsified or narrowed if strong sources allow non-independent slices or use a different readiness/proof condition. | Semantic fidelity plus professional counterpressure; UBL-01 | H / H / H / M | `decided by EV-09`; UBL-24 owns any correction | `narrow`: retain proof through the claimed boundary as local policy and remove the definitional or operability-waiver implication | untested |
+| UBL01-C4 | `Fast Lookup: Expose what can start now`; `Tier 2: Tracer-bullet slicing with explicit blockers`; `Aliases: Independent problem domain`; `Failure Modes: Independent`; planning application row. Claim: blocking edges and frontier distinguish factual predecessor constraints from open work, but do not alone establish concurrency. | `synthesis`; EV-09 supports the readiness/concurrency distinction but finds “frontier” nonstandard and readiness domain-relative. | Assumes blocker/frontier meanings transfer across planning and delegation. Falsified or split if original planning sources make frontier or independence inherently scheduling-specific. | Semantic/professional meaning with explicit concurrency counterpressure; UBL-01 | H / H / H / M | `decided by EV-09`; UBL-24 owns any correction | `demote`: define dependency-ready frontier locally, qualify readiness, and keep parallel safety separate | untested |
+| UBL01-C5 | `Tier 2: Expand-contract migration`; tracer-bullet misuse/exception cells; planning application row; prune decision for ladder/slicing language. Claim: expand-contract is a broad-migration technique whose green intermediate states and dependency exceptions must not be mislabeled as vertical product slices. | `synthesis`; EV-09 confirms expand-migrate-contract coexistence and compatibility but conflicts with broadness, “green,” and the compound blast-radius/slice framing. | Assumes the named sequence and its exception boundary match established parallel-change/expand-contract practice. Falsified or narrowed by canonical migration guidance with different phases, operability requirements, or slicing relationships. | Semantic fidelity plus bounded API/schema migration counterpressure; UBL-01 | H / H / H / M | `decided by EV-09`; UBL-24 owns any correction | `split`: separate compatibility migration, progressive-exposure blast radius, and product-slice shape; require releasable/backward-compatible states | untested |
 
-The active cohort is exactly five claims, all owned by UBL-01. None is admitted
-because several packs repeat it. The selected packet projects zero agent runs.
+The admitted cohort is exactly five claims, all decided by UBL-01 source
+evidence. None was admitted because several packs repeat it. The packet used
+zero behavioral or evaluation runs.
 
 ## Conditional And Deferred Claim Groups
 
@@ -134,7 +138,7 @@ Compact notation below uses `G01` for UBL01-C1 through UBL01-C5 and shortens
 | Work Unit | Planned Cap | Used | Decision Gained | Stop Or Expansion Reason |
 | --- | ---: | ---: | --- | --- |
 | UBL-00 local inventory and admission | 1 ledger; 6 named input artifacts; 0 browser lanes; 0 repository reopenings; 0 contacts; 0 agent runs | 1 ledger; 6 named inputs; roadmap, method, and Prompt 05; 0 external lanes; 0 agent runs | Five UBL-01 source claims activated; every other row grouped conditional/deferred; behavioral and transfer work kept downstream | Stop: admission and completion gate are satisfied; more local rereading does not change the routing decision |
-| Projected UBL-01 packet | 1 canonical/original semantic lane plus bounded countersearch; conditional corroboration only if required; 0 agent runs | 0 (not authorized or executed) | Would decide UBL01-C1 through UBL01-C5 | Open only with separate authorization; stop at bounded disposition, repeated evidence, cap, or named gap |
+| UBL-01 slicing and migration packet | 3 semantic facets; at most 16 source records / 22 directly inspected pages; bounded counterpressure; 0 behavioral runs | 1 packet; 16 source records / 22 pages; 3 read-only source scouts; 0 history lanes, contacts, practitioner sessions, or behavioral runs | UBL01-C1 `split`; C2 `narrow`; C3 `narrow`; C4 `demote`; C5 `split` | Stop: all five claims have bounded dispositions; further sources repeat the deciding distinctions; no conditional lane is material |
 
 ## Evidence Gaps And Limitations
 
@@ -147,8 +151,13 @@ Compact notation below uses `G01` for UBL01-C1 through UBL01-C5 and shortens
   fixed task, red-capable control, harness, rubric, and budget. No exact
   reusable candidate evidence was admitted.
 - No field, conversation, transfer, or local-adoption lane passed its gate.
-- UBL-01 may return an access or evidence gap if canonical meanings cannot be
-  inspected deeply enough. That possibility does not block this ledger.
+- The full 2019 tracer-bullet chapter was inaccessible beyond a licensed
+  preview; the complete 2001 author article and official tips supplied the
+  accessible primary account. Exact later-edition drift remains a limitation.
+- No inspected source establishes “frontier” as stable general planning
+  vocabulary, and no source directly compares expand-contract phases with
+  vertical product slices. EV-09 therefore demotes the former and labels the
+  latter separation as inference.
 
 ## Completion-Gate Verification
 
@@ -158,20 +167,21 @@ Compact notation below uses `G01` for UBL01-C1 through UBL01-C5 and shortens
 - Every steering formulation has separate term, action, and gate ownership.
 - All behavioral, transfer, and local claims are `untested`; no exact reusable
   candidate record was found in the authorized inputs.
-- The active cohort is five claims, all admitted to UBL-01, one concept cluster.
+- The active cohort was five claims in one UBL-01 concept cluster; EV-09 now
+  supplies one bounded disposition for each.
 - No admission rests on cross-pack repetition.
 - Every conditional or deferred group records a reason and revisit trigger.
-- The source campaign can select UBL-01 and later reconcile UBL-24 from this
-  ledger without rereading the entire reference to rediscover scope.
-- Only this authorized ledger was created by UBL-00; no language, synthesis,
-  runtime, context, or engineering-contract owner was edited.
+- UBL-24 can now reconcile the bounded correction matrix from EV-01 and EV-09
+  without opening a conditional source lane.
+- UBL-01 changed only its source packet and this ledger pointer; no language,
+  synthesis, runtime, context, or engineering-contract owner was edited.
 
 ## Next
 
-Recommend UBL-01 under separate authorization. Admission reason: UBL01-C1
-through UBL01-C5 are high-consequence, uncertain, reusable source claims in one
-concept cluster, and bounded semantic evidence can change exact Fast Lookup,
-Tier 1, Tier 2, steering-formulation, alias, application, and prune decisions.
+Recommend UBL-24 under separate authorization. Admission reason: EV-09 gives
+every active source claim a bounded disposition while behavioral status remains
+`untested`; UBL-24 is the sole owner of the correction or no-change matrix and
+does not require another source lane.
 
 ## Final Decision
 
