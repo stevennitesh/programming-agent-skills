@@ -25,6 +25,7 @@ Use this folder to answer:
 | --- | --- |
 | [`language/03-high-signal-steering-words.md`](language/03-high-signal-steering-words.md) | Candidate steering words distilled from existing language and source research. |
 | [`language/04-agentic-bridge-vocabulary.md`](language/04-agentic-bridge-vocabulary.md) | Candidate bridge between software-engineering language and agentic execution language. |
+| [`language/upper-bound-engineering-language.md`](language/upper-bound-engineering-language.md) | Cross-pack, source-validated synthesis intake for authors working in `docs/synthesis/skills/`; not runtime guidance. |
 | [`backlog/further-research-opportunities.md`](backlog/further-research-opportunities.md) | Targeted future research lanes and stop rules. |
 
 ## Rule

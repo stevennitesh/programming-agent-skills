@@ -21,6 +21,7 @@ Use this folder to answer:
 | --- | --- |
 | [`03-high-signal-steering-words.md`](03-high-signal-steering-words.md) | Candidate professional software-engineering terms that may steer high-quality behavior. |
 | [`04-agentic-bridge-vocabulary.md`](04-agentic-bridge-vocabulary.md) | Candidate bridges from engineering concepts into agent execution and completion criteria. |
+| [`upper-bound-engineering-language.md`](upper-bound-engineering-language.md) | Cross-pack, source-validated synthesis intake for authors working in `docs/synthesis/skills/`; not runtime guidance. |
 
 ## Current Owners
 

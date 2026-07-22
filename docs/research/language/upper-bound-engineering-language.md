@@ -6,10 +6,12 @@ Supports: language and method selection while authoring documents under
 docs/synthesis/skills/
 
 Scope: cross-packet distillation of the Matt Pocock, Superpowers, and Ponytail
-vocabulary packets, compared only with the two existing local language
-documents named below
+vocabulary packets, compared with the two existing local language documents
+named below and corrected only for the five slicing, readiness, and migration
+claims validated by UBL-01 and decided by UBL-24
 
-Freshness: source packets and local comparison owners inspected 2026-07-22
+Freshness: source packets, local comparison owners, and completed UBL
+validation evidence inspected or applied 2026-07-22
 
 ## Purpose And Boundary
 
@@ -20,10 +22,12 @@ strongest useful pressure for designing or improving coding-agent skills?
 This is synthesis intake. It is not canonical vocabulary, a universal
 engineering sequence, a runtime instruction, or authority to change a skill.
 The three generated vocabulary packets are the only source evidence about the
-upstream packs. Engineering Steering Vocabulary and Agentic Bridge Vocabulary
-are comparison-only local terminology owners: they help deduplicate language
-and expose collisions, but they do not turn an upstream claim into a local
-decision.
+upstream packs. UBL-01 adds bounded semantic and professional evidence only for
+the five admitted slicing, readiness, and migration claims; UBL-24 owns their
+correction decision. Engineering Steering Vocabulary and Agentic Bridge
+Vocabulary are comparison-only local terminology owners: they help deduplicate
+language and expose collisions, but they do not turn an upstream claim into a
+local decision.
 
 Evidence keys used throughout:
 
@@ -32,27 +36,40 @@ Evidence keys used throughout:
 - P: [Ponytail vocabulary packet](ponytail-skill-pack-vocabulary.md)
 - L-Steer: [Engineering Steering Vocabulary](03-high-signal-steering-words.md)
 - L-Bridge: [Agentic Bridge Vocabulary](04-agentic-bridge-vocabulary.md)
+- V-00: [UBL-00 claim ledger](validation/UBL-00-claim-ledger.md)
+- V-01: [UBL-01 slicing and migration source packet](validation/UBL-01-slicing-and-migration.md)
+- V-24: [UBL-24 final correction decision](validation/UBL-24-final-correction-decision.md)
 
 The labels direct and corroborated retain the source packets' claim labels.
 Synthesis marks a comparison, merge, or proposed local use. Inference marks an
-application that needs downstream validation. Provenance cells use compact
-semantic-owner suffixes plus M, S, or P; the linked packet preserves the exact
-upstream path and line locator, claim label, conditions, and limits. This pass
-did not reopen upstream repositories. Cross-pack repetition establishes shared
-skill-pack usage only. It does not establish professional correctness,
-behavioral effectiveness, or local suitability.
+application that needs downstream validation. Provenance cells use two locator
+forms: M, S, or P plus a semantic-owner suffix points into an upstream packet,
+whose linked record preserves the exact repository path, line locator, claim
+label, conditions, and limits; V-01 plus an S-number points to an externally
+inspected source record, while UBL01-C1 through UBL01-C5 identify its validated
+claim dispositions. V-00 owns admission and status, and V-24 owns only the
+bounded correction decision. This pass did not reopen upstream repositories.
+Cross-pack repetition establishes shared skill-pack usage only. It does not
+establish professional correctness, behavioral effectiveness, or local
+suitability. V-01 establishes bounded source fidelity for UBL01-C1 through
+UBL01-C5; it and V-24 explicitly leave behavioral effect, transfer, and local
+suitability `untested`.
 
 ## Source Registry
 
-| Packet | Inspected Revision And Coverage | Completion Status | Authority | Material Limitations |
+| Evidence Key | Inspected Revision And Coverage | Completion Status | Authority | Material Limitations |
 | --- | --- | --- | --- | --- |
 | M | Matt Pocock Skills, ed37663cc5fbef691ddfecd080dff42f7e7e350d; 167 tracked files accounted for; checkout verified 2026-07-22 | source-packet-complete | Primary evidence for that revision's instructions, metadata, references, scripts, examples, and status buckets | No network fetch; package versions conflict; no behavioral tests; in-progress, personal, miscellaneous, and deprecated terms do not establish promoted behavior; external term origins were not verified |
 | S | Superpowers, d884ae04edebef577e82ff7c4e143debd0bbec99; 172 tracked files accounted for; checkout verified 2026-07-22 | source-packet-complete | Primary evidence for that revision's runtime skills, disclosed material, tests, integrations, plans, and specs | No network fetch; external superpowers-evals checkout absent; several tests prove recall or negative shape rather than full behavior; integration docs drift; current and historical authoring guidance conflict |
 | P | Ponytail, 16f29800fd2681bdf24f3eb4ccffe38be3baec6b; 156 tracked files accounted for; checkout verified 2026-07-22 | source-packet-complete | Primary evidence for that revision's canonical skills, adapters, commands, tests, benchmarks, examples, and docs | No network fetch; host adapters disagree on lifecycle terms; short copies omit ladder rungs; benchmark evidence is task-, model-, scorer-, and sample-bound; several checks are structural proxies; six PNGs had no inspectable textual contract |
+| V-00 | UBL-00 claim ledger; reconciled 2026-07-22 | source-packet-complete | Owns admission, claim IDs, active/deferred state, and revisit triggers | Routes evidence and preserves status; does not prove source meaning or behavior |
+| V-01 | UBL-01 source packet; 16 source records / 22 directly inspected pages checked 2026-07-22 | source-packet-complete | Registry and synthesis of primary or canonical semantic evidence plus bounded professional counterpressure for UBL01-C1 through UBL01-C5 | Full current tracer-bullet chapter access was partial; frontier lacks a stable general definition; expand-contract/product-slice separation is inference; behavior remains untested |
+| V-24 | UBL-24 correction decision; completed 2026-07-22 | source-packet-complete | Owns the bounded split, narrow, demote, and row-level application decisions | Source-synthesis judgment only; does not authorize or establish downstream behavioral, transfer, or local results |
 
-All three packets report complete accounting of their supplied revisions. That
-completeness supports vocabulary distillation, not claims that the instructions
-work well.
+The three upstream packets report complete accounting of their supplied
+revisions. That completeness supports vocabulary distillation, not claims that
+the instructions work well. The validation records add only the bounded source
+decisions and limitations stated in their rows.
 
 ## Fast Lookup
 
@@ -69,8 +86,9 @@ work well.
 | Resolve dependent human decisions | Shared understanding; one question at a time | Look up facts independently, walk one decision branch at a time, recommend, and leave judgment with the human | The human confirms the resulting understanding before action | Bulk questionnaires lose dependency order; a mandatory interview adds ceremony when no judgment is open | synthesis; M corroborated: grilling/SKILL.md:6-12; S direct: brainstorming/SKILL.md:20-32,63-72 |
 | Keep product meaning stable | Active domain modeling; canonical term; domain model | Challenge ambiguity with concrete scenarios, check existing use, and update the owning glossary when authorized | Examples agree with the term and its invariants; durable decisions meet the stated ADR bar | A glossary is not a full specification; routine choices create decision sediment | synthesis; M corroborated: domain-modeling/SKILL.md:44-74; L-Steer owns ubiquitous language and domain model locally |
 | **Planning, slicing, and dependency control** | - | - | - | - | - |
-| Prove one real path early | Tracer-bullet vertical slice | Cross every necessary layer for one observable behavior and keep the slice independently verifiable | The slice runs through the real boundary and has an executable or inspectable proof | Horizontal layer batches defer evidence; wide mechanical migrations are an explicit exception | synthesis; M corroborated: to-tickets/SKILL.md:25-40 and tdd/SKILL.md:28-35 |
-| Expose what can start now | Blocking edges; frontier | Record actual dependencies and distinguish blocked work from open, unclaimed work | Every runnable item has no unresolved predecessor and carries its own proof condition | Frontier has a narrower Wayfinder meaning; a list without edges does not justify parallelism | synthesis; M corroborated: to-tickets/SKILL.md:38-65 and wayfinder/SKILL.md:63-69 |
+| Prove one real path early | Tracer bullet | Build a skeletally thin path through the real components needed for selected feedback, observe it, and adjust from the proven base | The named path runs through real components and yields executable or inspectable evidence | It need not be customer-complete or final architecture and does not define task size or diff volume | synthesis; M corroborated: to-tickets/SKILL.md:25-40; V-01 S01-S03 and UBL01-C1, UBL01-C2, UBL01-C3; behavioral effect untested |
+| Deliver one behavior end to end | Vertical slice | Organize the relevant concerns around one request or valuable behavior | The behavior is usable or testable through its claimed boundary under the local completion policy | It need not touch every named architectural layer and does not establish concurrency, task size, or diff volume | synthesis; V-01 S04-S07 and UBL01-C1, UBL01-C2, UBL01-C3; behavioral effect untested |
+| Expose what can start now | Predecessor edges; dependency-ready set | Record actual dependencies; define frontier only locally as open, unclaimed work whose named predecessors are satisfied | Every eligible item has its named predecessors satisfied and its own proof condition; state, resource, ownership, write, and conflict constraints are checked before concurrency | Readiness is domain-relative; a list or frontier alone does not justify parallelism | synthesis; M corroborated: to-tickets/SKILL.md:38-65; V-01 S08-S11 and UBL01-C4; behavioral effect untested |
 | **Implementation and test-first proof** | - | - | - | - | - |
 | Prove behavior before general implementation | RED-GREEN-REFACTOR | Observe the intended failure, make the smallest passing change, then simplify while green | The test is seen red for the right reason and green after the minimal change; refactoring retains green | M's runtime body moves refactoring to review while its metadata uses the three-part phrase | synthesis; S corroborated: test-driven-development/SKILL.md:31-71,113-192; M corroborated but conflicted: tdd/SKILL.md:8,34-36 |
 | Minimize new machinery without under-delivery | Existing owner before new code; shortest working diff | Understand and trace first; check local reuse, standard or platform capability, and installed dependencies before adding code | All explicit behavior and safety floors hold; any new dependency or abstraction has a concrete insufficiency case | Shortest can become code golf or a patch at the wrong semantic owner | synthesis; P corroborated: ponytail/SKILL.md:32-64 and docs/platform-native.md:197-211 |
@@ -102,7 +120,8 @@ does not canonize them locally.
 | Leading word | Compact established concept that recruits a distributed prior | Compresses a meaningful practice without re-explaining it | A known professional term accurately names the desired behavior | Name the observable action and gate after the term | Invented, decorative, or ambiguous words become no-ops | synthesis; M corroborated: writing-great-skills/GLOSSARY.md:129-135; compared with L-Steer and L-Bridge |
 | Completion criterion | Observable, demanding done condition | Resists premature completion and vague confidence | A skill has a bounded outcome | Enumerate required evidence and residual limitation | A cosmetic checklist can still under-specify legwork | synthesis; M corroborated: writing-great-skills/GLOSSARY.md:137-159 |
 | Evidence before claims | Success claim follows current inspectable support | Replaces memory and confidence with verification | Reporting completion, repair, review, or delegation results | Run the proving check, read all output, qualify scope | Fresh but partial evidence can still be overclaimed | synthesis; S corroborated: verification-before-completion/SKILL.md:8-48,76-106 |
-| Tracer-bullet vertical slice | Narrow complete path through the real system | Proves architecture and behavior early | Work can land as one independently verifiable behavior | Cross necessary layers and declare blockers | Not suitable as the literal unit for every wide mechanical migration | synthesis; M corroborated: to-tickets/SKILL.md:25-40 |
+| Tracer bullet | Skeletally thin real path for early feedback | Makes one real path observable so design can adjust from a proven base | Learning across real components is needed before broader implementation | Name the selected feedback and real components; attach executable or inspectable proof | Can be skeletal, non-customer-complete, and non-final; does not define task size or diff volume | synthesis; M corroborated: to-tickets/SKILL.md:25-40; V-01 S01-S03 and UBL01-C1, UBL01-C2, UBL01-C3; behavioral effect untested |
+| Vertical slice | One request or behavior organized across its relevant concerns | Produces a usable or testable end-to-end increment | Work can land as one value or behavior slice | State the claimed boundary and local completion proof; declare blockers separately | Does not require every named layer or establish concurrency; compatibility-sensitive staged work can be a safer shape | synthesis; V-01 S04-S07 and UBL01-C1, UBL01-C2, UBL01-C3; behavioral effect untested |
 | RED-GREEN-REFACTOR | Observed failure, smallest pass, simplification while green | Constrains implementation and proves the test can fail | Expected behavior and a red-capable seam are known | Watch the intended red, implement minimal green, retain green during refactor | M's current runtime moves refactoring to review; name the chosen loop | synthesis; S corroborated: test-driven-development/SKILL.md:31-71,113-192; M corroborated but conflicted: tdd/SKILL.md:8,34-36 |
 | Tight, red-capable feedback loop | Fast exact-symptom signal that can fail and pass | Makes debugging consume evidence | The symptom or performance failure is uncertain | Run before hypothesizing; reuse for regression proof | A nearby or nondeterministic proxy can misdirect diagnosis | synthesis; M corroborated: diagnosing-bugs/SKILL.md:12-60; S direct: systematic-debugging/SKILL.md:46-213 |
 | Falsifiable hypothesis | Explanation with a discriminating prediction | Replaces guess-and-check with uncertainty reduction | More than one cause remains plausible | Instrument one signal and change one variable | Vague hypotheses merely rename intuition | synthesis; M corroborated: diagnosing-bugs/SKILL.md:62-122; S direct: systematic-debugging/SKILL.md:46-213 |
@@ -124,8 +143,8 @@ labeled synthesis or inference in the provenance cell.
 | Invocation economics and route-only routing | Allocate discovery cost between model and human without making the router an executor | Classify model-invoked versus user-invoked reach; expose one map; return the next owner or flow and stop | More than one skill exists and users or models need a stable selection surface | Fresh prompts reach the right owner; router runs leave downstream state untouched | Unreachable skills, overloaded descriptions, and routers that silently do the work | Routers, skill-pack entrypoints, invocation metadata | synthesis; M corroborated: .agents/invocation.md:1-16 and ask-matt/SKILL.md:7-13 |
 | Information hierarchy with conditional loading | Put immediate action above reference while preserving required branches | Inline common path; place local reference next; disclose external or branch material through sharpened conditions | A skill contains both always-needed and conditional material | Retrieval, application, and gap probes show the correct branch loads the correct material | Context bloat, buried steps, and invisible must-have rules | Any multi-branch skill or large reference skill | synthesis; M corroborated: writing-great-skills/SKILL.md:30-44 and GLOSSARY.md:67-111 |
 | Sequential decision elicitation | Resolve human-owned choices without losing dependencies | Ask one question, offer a recommendation and tradeoff, look up facts, follow the chosen branch, and require confirmation | Open decisions materially change scope or design | Shared understanding is confirmed and the decision artifact records settled terms | Autonomous invention of user intent and bulk-question overload | Grilling, brainstorming, domain modeling, planning | synthesis; M corroborated: grilling/SKILL.md:6-12; S direct: brainstorming/SKILL.md:20-72 |
-| Tracer-bullet slicing with explicit blockers | Turn a plan into independently provable end-to-end work | Shape one real behavior across required layers, size it for a fresh context, and declare predecessor edges | Work can be decomposed into behavior slices | Each slice has its own proof and no hidden predecessor; runnable frontier is derivable | Horizontal batches, imagined integration, and false parallelism | Ticket shaping, implementation planning, TDD | synthesis; M corroborated: to-tickets/SKILL.md:25-65 and tdd/SKILL.md:28-35 |
-| Expand-contract migration | Keep a broad mechanical refactor operable | Introduce new form, migrate by blast-radius batches, remove old form, then integrate and verify if no batch can stay independently green | The change cannot land as useful vertical slices | Each phase is green or the unavoidable integration dependency is explicit | Flag-day replacement and dishonest vertical-slice labeling | Refactor planning, schema or API migrations | synthesis; M direct: to-tickets/SKILL.md:40 |
+| End-to-end behavior slicing with explicit blockers | Turn a plan into proof-bearing behavior slices | Shape one request or behavior across its relevant concerns, size it separately for a fresh context, and declare predecessor edges | Work can be decomposed into behavior slices | Each slice has explicit proof through its claimed boundary and no hidden predecessor; a dependency-ready set is derivable, while concurrency is proved separately | Unjustified horizontal batches that defer behavior proof, imagined integration, and false parallelism | Ticket shaping, implementation planning, TDD | synthesis; M corroborated: to-tickets/SKILL.md:25-65 and tdd/SKILL.md:28-35; V-01 S04-S11 and UBL01-C1, UBL01-C2, UBL01-C3, UBL01-C4; behavioral effect untested |
+| Expand-migrate-contract compatibility change | Change an incompatible interface or schema while old and new forms coexist | Add the new form while preserving the old, migrate callers or data through releasable backward-compatible stages, remove the old form after its use ends, and record dependencies or required stops | Clients, versions, or data cannot switch atomically | Every stage remains operational or releasable and compatible; dependencies and required stops are explicit | Flag-day replacement, premature contraction, and labeling a technical migration stage as a product slice | Refactor planning, schema or API migrations | synthesis; V-01 S12-S15 and UBL01-C5; separating progressive-exposure blast-radius control and product-slice shape is inference from S16 and their distinct gates; behavioral effect untested |
 | Test-first behavioral proof | Constrain code with an independently sourced behavioral failure | Write or select the public-seam test, observe the intended red, make minimal green, simplify under green | Expected behavior, exact symptom, and red-capable seam are known | Red reason is correct; green proves the behavior; refactor does not add behavior | Tests that only confirm existing behavior or mirror implementation | TDD, feature work, understood bugs | synthesis; S direct: test-driven-development/SKILL.md:47-192; M corroborated with refactor-location conflict |
 | Systematic diagnostic loop | Reduce causal uncertainty before repair | Reproduce, collect evidence, compare patterns, state one falsifiable hypothesis, change one variable, trace backward, then regression-test | Symptom, cause, or reproduction is uncertain | Exact symptom is reproduced; hypothesis is discriminated; same loop and regression proof pass after repair | Guess-and-check patches and plausible storytelling | Bug diagnosis, flake investigation, performance diagnosis | synthesis; S direct: systematic-debugging/SKILL.md:46-213; M direct: diagnosing-bugs/SKILL.md:12-124 |
 | Deep-module deletion and interface test | Decide whether an abstraction earns its surface | Apply deletion test, classify dependencies, require a real variation seam, hide internals, replace internal-coupled tests with interface tests | A module, adapter, or seam is proposed or under review | Deleting it would recreate meaningful behavior; callers and tests depend on the interface only | Pass-through abstraction and premature seams | Design, architecture improvement, TDD seam choice | synthesis; M corroborated: codebase-design/SKILL.md:60-67 and DEEPENING.md:1-36 |
@@ -170,7 +189,8 @@ observable action and a gate. Every proposed use is labeled.
 | Leading word | Select one established term that accurately compresses the target practice, then state the required action | A no-guidance comparison and fresh treatment samples show a behavior change rather than word echo | Skill invocation, descriptions, body pruning | synthesis |
 | Context pointer plus progressive disclosure | Keep common-path action inline and load branch material only under a named condition | Retrieval and application probes show the branch receives all required material | Large or multi-branch skills | synthesis |
 | Shared understanding plus active domain model | Resolve one dependent decision at a time and test canonical terms with concrete scenarios | Human confirmation and scenario consistency precede action; authorized glossary change records the result | Requirements, domain work, design | synthesis |
-| Tracer-bullet vertical slice | Implement one real behavior through every necessary layer | The path crosses the real boundary and produces executable or inspectable evidence | Ticket shaping and early implementation | synthesis |
+| Tracer bullet | Build a skeletally thin path through the real components needed for selected feedback, observe it, and adjust from the proven base | The named real path produces executable or inspectable evidence for only its claimed feedback boundary | Early learning and architecture steering | synthesis; V-01 S01-S03 and UBL01-C1, UBL01-C2, UBL01-C3; behavioral effect untested |
+| Vertical slice | Organize one request or valuable behavior across its relevant concerns | The behavior is usable or testable through its claimed boundary under the local completion policy | Ticket shaping and end-to-end delivery | synthesis; V-01 S04-S07 and UBL01-C1, UBL01-C2, UBL01-C3; behavioral effect untested |
 | RED-GREEN-REFACTOR | Observe the intended failure, make the smallest passing change, then simplify without new behavior | Correct red is witnessed; green follows; refactor remains green | Red-testable implementation; explicitly qualify M's refactor-location conflict | synthesis |
 | Tight, red-capable feedback loop | Reproduce the exact symptom with one fast, deterministic command before forming a repair theory | The same command is red before repair and green after it; nondeterminism uses a pinned reproduction-rate substitute | Bug and performance diagnosis | synthesis |
 | Root cause, not symptom | Trace all affected callers and repair their shared semantic owner | Caller coverage and a regression check prove the shared failure is closed | Multi-path defects and duplicated validation | synthesis |
@@ -194,13 +214,14 @@ source packets that expose the alias or collision.
 | --- | --- | --- | --- |
 | Route-only router (M) | Router skill, ask-matt, flow map | S skill-first invocation loads a method; it is not a router, and M's router cannot execute another user-invoked skill | Use router for selection and stop; use invocation for loading the chosen owner |
 | Context pointer (M) | Disclosed-file pointer, branch pointer | S file-backed handoff moves state across owners or contexts; P thin adapter transports behavior across hosts | Use pointer for conditional loading, handoff for transfer, adapter for portability |
-| Tracer-bullet vertical slice (M) | Vertical slice, one slice at a time | S bite-sized task governs dispatch size; P shortest working diff governs solution volume | Name delivery shape, work-unit size, and diff volume separately |
+| Tracer bullet (V-01; M usage) | Thin real path, skeletal end-to-end feedback | A vertical slice can overlap but organizes delivery around a behavior; S bite-sized task governs dispatch size and P shortest working diff governs solution volume | Use for learning and steering; name delivery shape, work-unit size, and diff volume separately |
+| Vertical slice (V-01; M usage) | End-to-end behavior slice, one slice at a time | A tracer bullet can be skeletal and learning-oriented; S bite-sized task governs dispatch size and P shortest working diff governs solution volume | Use for delivery shape; name learning purpose, work-unit size, and diff volume separately |
 | Qualified gate | Iron Law, hard gate, Gate Function, Red Flags - STOP | S gate also means design approval, proof, task review, and output-shape check | Always qualify gate by subject, entry condition, pass evidence, and exception policy |
 | Interface and seam (M) | API, boundary, adapter | M explicitly rejects boundary as a synonym for its module-interface location; adapter is a role, implementation is substance | Preserve the qualifier; do not silently replace seam with boundary |
 | RED-GREEN-REFACTOR (S) | Red-green, documentation TDD | M's runtime ends implementation at green and moves refactoring to review while metadata and docs still use the three-part phrase | State whether the loop targets code or agent behavior and where refactoring occurs |
 | Fixed point | Review baseline, immutable target | S fresh evidence concerns timing of proof; P honesty boundary qualifies a measurement baseline and counterfactual | Do not use fresh, fixed, and fair baseline as synonyms |
 | Spec, plan, task, and decision ticket | Agent brief, bite-sized task, issue, ticket | S spec is approved design, plan is durable implementation artifact, task is dispatch unit; M decision ticket answers a question and is not a build slice | Define artifact scope and owner before using the generic noun |
-| Independent problem domain (S) | Independent task, isolated context, frontier work | S SDD calls tasks independent but executes them serially; parallel-dispatch independence licenses concurrency | State independence dimensions and scheduling consequence explicitly |
+| Independent problem domain (S) | Independent task, isolated context, locally defined dependency-ready work | S SDD calls tasks independent but executes them serially; parallel-dispatch independence licenses concurrency | State independence dimensions and scheduling consequence explicitly |
 | Completion criterion (M) | Done condition, evidence floor, one runnable check | P one runnable check is a minimum for small logic; S fresh evidence gates a claim; none alone guarantees semantic completeness | Pair the criterion with proportionate proof and claim scope |
 | Known ceiling (P) | Upgrade path, trigger to revisit, Skipped / Add when | Upgrade action and revisit condition are different; a deliberate limit is not generic uncertainty or residual risk | Record limit, condition, and action separately; keep uncertainty under its own owner |
 | Platform-native capability (P) | Native, stdlib, installed dependency | S native-tool-first means harness-owned tooling, not a code-level platform primitive | Qualify native by platform, harness, compatibility, and ownership |
@@ -273,7 +294,7 @@ listed concept.
 | Invocation and routing | synthesis: invocation reach, route-only router, method precedence, runtime duration | Trigger evaluation, fresh-context reachability, router no-op check | Prompts that should and should not invoke; harness delivery proof; evidence that the router stops |
 | Context and loading | synthesis: leading word, context pointer, progressive disclosure, single semantic owner | Information hierarchy, retrieval/application/gap probes, file-backed recovery, adapter parity | Fresh contexts load required branches; removed or deferred text does not reduce behavior; duplicates are detected |
 | Intent and requirements | synthesis: shared understanding, active domain model, qualified approval gate | One-question decision walk, fact lookup, scenario testing, durable brief | Open decisions are real and human-owned; terms survive examples; acceptance and exclusions are observable |
-| Planning and dependencies | synthesis: tracer-bullet vertical slice, blocker edge, frontier, bite-sized unit | End-to-end slicing, explicit dependency graph, expand-contract exception | Each unit is independently provable; blockers are factual; wide changes preserve operability |
+| Planning and dependencies | synthesis: tracer bullet, vertical slice, bite-sized unit, predecessor edge, dependency-ready set, locally defined frontier, expand-migrate-contract compatibility change, progressive-exposure blast-radius control | Thin real feedback paths, end-to-end behavior slicing, explicit dependency graphs, compatibility staging, and separate exposure control | Purpose-scoped path or slice proof is explicit; blockers are factual; readiness is separate from concurrency safety; migration stages remain releasable and backward-compatible; blast radius is assessed separately; behavioral effect remains untested |
 | Implementation and TDD | synthesis: RED-GREEN-REFACTOR, public seam, minimum new machinery | Observed red, minimal green, green refactor, ordered sufficiency search | Expected behavior and red-capable test are known; correctness and safety floors hold; M/S refactor conflict is resolved |
 | Debugging | synthesis: tight red-capable loop, falsifiable hypothesis, root cause, caller trace | Exact reproduction, minimisation, one-variable probe, backward trace, regression test | Symptom is exact; hypothesis discriminates; affected callers and correct proof seam are established |
 | Design and simplification | synthesis: deep module, interface, seam, existing owner, known ceiling | Deletion test, interface test, reuse/native search, bounded deferral, question-driven prototype | Abstraction has leverage; dependency insufficiency is concrete; shortcut trigger is observable; prototype yields a verdict |
@@ -309,11 +330,23 @@ listed concept.
 
 ## Evidence Gaps
 
-- The packets establish what three supplied revisions instruct, name, test, or
-  report. They cannot establish that a repeated term is professionally correct.
-- No external-origin study verified the attributed engineering traditions,
-  definitions, or intellectual history of tracer bullets, TDD, deep modules,
-  DDD, debugging practices, YAGNI, or other established terms.
+- The three upstream packets establish what their supplied revisions instruct,
+  name, test, or report. Repetition alone cannot establish professional
+  correctness. V-01 supplies bounded semantic and professional evidence only
+  for UBL01-C1 through UBL01-C5.
+- External semantic validation was completed only for tracer bullets, vertical
+  slices, dependency readiness, and expand-migrate-contract within V-01's
+  stated scope. No external-origin study verified the intellectual history or
+  other attributed engineering traditions such as TDD, deep modules, DDD,
+  debugging practices, or YAGNI.
+- Full current-edition tracer-bullet text was inaccessible beyond a licensed
+  preview; exact later-edition drift remains unknown.
+- No inspected source establishes frontier as general professional planning
+  vocabulary. General rows use dependency-ready set; the Wayfinder-scoped
+  metaphor remains local.
+- No source directly compares expand-contract phases with vertical product
+  slices. Their separation remains `inference` from distinct goals and gates.
+- Live official documentation underlying V-01 can change after 2026-07-22.
 - No controlled comparison shows which retained term, formulation, or
   combination changes behavior in this skill pack. Every proposed local use
   still needs skill-specific controls and acceptance criteria.
@@ -340,9 +373,9 @@ listed concept.
   than the neutral or professional formulation retained here.
 - No combined evaluation tests the proposed three-part bridge of steering term,
   observable action, and evidence gate. The formulations remain synthesis aids.
-- The two local language documents are comparison owners only. This pass does
-  not decide canonical ownership, update their claims, or resolve downstream
-  synthesis conflicts.
+- The two local language documents remain comparison owners only. This bounded
+  application updates no local comparison owner, canonical ownership decision,
+  or downstream synthesis conflict.
 - Applicability to any individual docs/synthesis/skills/<skill>.md remains
   unknown until that skill's invocation, ownership, risk, artifact, and
   completion contract are inspected.
