@@ -1,8 +1,6 @@
 # Facet 1: Bounded Slice Full Behavior Synthesis
 
-This executes
-[`docs/synthesis/methods/prompts/07-full-behavior-synthesis.md`](../../../methods/prompts/07-full-behavior-synthesis.md)
-for `implement` Facet 1.
+Historical source-to-skill Prompt 07 artifact for `implement` Facet 1.
 
 ## Prompt Inputs
 

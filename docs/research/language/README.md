@@ -2,9 +2,8 @@
 
 Language docs are exploratory research for the skill pack.
 
-They record the language we currently have, language borrowed or compared from
-other skill packs, and candidate terms that may later become synthesis or
-runtime wording. They are not the committed source of truth for operational
+They preserve candidate professional and agentic terms that may later inform
+synthesis. They are not the committed source of truth for operational
 instructions.
 
 Use this folder to answer:
@@ -16,21 +15,21 @@ Use this folder to answer:
 - Which words deserve promotion into synthesis, `CONTEXT.md`, `docs/agents/`,
   or runtime skills?
 
-## Workflow
+## Files
 
-| Step | File | Role |
-| --- | --- | --- |
-| 1 | [`01-current-vocabulary-inventory.md`](01-current-vocabulary-inventory.md) | Inventory the language already present in this repo and comparison surfaces. |
-| 2 | [`02-upstream-skill-pack-audit.md`](02-upstream-skill-pack-audit.md) | Compare the upstream/Matt-style skill pack vocabulary with this repo's active language. |
-| 3 | [`03-high-signal-steering-words.md`](03-high-signal-steering-words.md) | Extract candidate professional software-engineering terms that may steer high-quality behavior. |
-| 4 | [`04-agentic-bridge-vocabulary.md`](04-agentic-bridge-vocabulary.md) | Bridge engineering taste into LLM execution language and completion criteria. |
+| File | Role |
+| --- | --- |
+| [`03-high-signal-steering-words.md`](03-high-signal-steering-words.md) | Candidate professional software-engineering terms that may steer high-quality behavior. |
+| [`04-agentic-bridge-vocabulary.md`](04-agentic-bridge-vocabulary.md) | Candidate bridges from engineering concepts into agent execution and completion criteria. |
 
-## Promoted Synthesis
+## Current Owners
 
-These language findings have been promoted into synthesis:
-
-- [`../../synthesis/target-spine.md`](../../synthesis/target-spine.md)
-- [`../../synthesis/language-direction.md`](../../synthesis/language-direction.md)
+`CONTEXT.md` owns active pack vocabulary. The engineering contract owns shared
+runtime engineering language, and each canonical skill owns its behavior.
+Future outside-source refreshes use the source-distillation method rather than
+reusing earlier language synthesis as current guidance. Use the generic
+[skill-pack vocabulary profile](../../synthesis/methods/prompts/extract-skill-pack-vocabulary.md)
+when extracting language from an upstream or local skill pack.
 
 ## Rule
 

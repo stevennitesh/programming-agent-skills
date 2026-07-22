@@ -11,9 +11,9 @@ software-engineering taste term
 ```
 
 Do not delay synthesis or skill work for another broad source hunt. Use these
-lanes only when a facet has a concrete gap. Compare any finding against the
-accepted target spine and skill-writing formula in
-[`../../synthesis/target-spine.md`](../../synthesis/target-spine.md).
+lanes only when a bounded source question has a concrete gap. Apply the
+source-distillation admission and provenance standards before carrying a
+finding into synthesis.
 
 ## Research Lanes
 

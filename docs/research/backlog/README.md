@@ -8,8 +8,8 @@ block current synthesis or runtime skill edits.
 
 Backlog docs should not become accepted design decisions, validation evidence,
 or runtime instructions. Promote a backlog item only when it sharpens a source
-list, candidate language, skill-facet packet, synthesis note, or validation
-plan.
+list, important concept, usable technique, source packet, synthesis decision,
+or validation plan.
 
 ## Files
 

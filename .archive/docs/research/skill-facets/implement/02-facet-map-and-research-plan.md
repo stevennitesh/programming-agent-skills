@@ -2,9 +2,7 @@
 
 Durable upstream source and reconstruction: [`UPSTREAM-SOURCE.md`](../../language/UPSTREAM-SOURCE.md).
 
-This executes
-[`docs/synthesis/methods/prompts/02-facet-map-and-research-plan.md`](../../../synthesis/methods/prompts/02-facet-map-and-research-plan.md)
-for `implement`.
+Historical source-to-skill Prompt 02 artifact for `implement`.
 
 ## Prompt Inputs
 

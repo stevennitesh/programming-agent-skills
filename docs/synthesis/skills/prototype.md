@@ -33,7 +33,7 @@ The four layers separate orientation, selected behavior, evidence, and extractio
 | P12 | Implicit invocation with a narrow positive trigger and promotion-blocking invocation tests | [Outcome](#outcome-and-invariants), [change map](#runtime-ownership-and-change-map) | [Current trace](#current-runtime-trace); `current-runtime`, `local-design-judgment`; confirmed by Deploy Prompt 1 | `agents/openai.yaml`, description | E1 |
 | P13 | Behavior-family counterfactual evaluation | [Behavior Evaluation](#behavior-evaluation-protocol) | repository behavior-evaluation contract; `repository-contract`, `behavioral-validation` | evaluation owner | E0-E4 |
 | P14 | Staged construction and atomic promotion | [Staged Extraction](#staged-extraction) | runtime-authority boundary; `repository-contract`, `local-design-judgment` | rewrite caller | E4 |
-| P15 | Historical source pressure is background until verified | [Source Pressure](#source-pressure-behind-the-model) | source-to-skill method; `repository-contract`, `unverified-historical-pressure` | synthesis owner | research refresh |
+| P15 | Historical source pressure is background until verified | [Source Pressure](#source-pressure-behind-the-model) | source-distillation method; `repository-contract`, `unverified-historical-pressure` | synthesis owner | research refresh |
 | P16 | Every non-admission returns directly to the invoker or user and stops | [Relationships](#relationship-ownership) | [Leaf rationale](#why-prototype-is-a-leaf); `repository-contract`, `local-design-judgment`; confirmed by Deploy Prompt 1 | `SKILL.md`, relationship index | E1-E4 |
 
 ## Navigation

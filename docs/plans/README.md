@@ -12,8 +12,14 @@ No active pack-maintenance plan.
 
 | Work | Route |
 | --- | --- |
-| Source-to-skill research and synthesis loop | [`docs/synthesis/methods/source-to-skill-flow.md`](../synthesis/methods/source-to-skill-flow.md) |
-| Source-to-skill prompt templates | [`docs/synthesis/methods/prompts/`](../synthesis/methods/prompts/) |
+| Whole-skill synthesis deployment | [`docs/synthesis/methods/deploy-prompts.md`](../synthesis/methods/deploy-prompts.md) |
+| Optional source distillation | [`docs/synthesis/methods/source-distillation-flow.md`](../synthesis/methods/source-distillation-flow.md) |
+| Optional source-distillation prompts | [`docs/synthesis/methods/prompts/`](../synthesis/methods/prompts/) |
+
+Deploy Prompts are the default route once a whole-skill synthesis exists.
+Source distillation is optional evidence work for primary and outside sources,
+upstream skills, books, and engineering practice; it stops at important
+concepts and usable techniques rather than drafting or deploying a skill.
 
 ## Rules
 

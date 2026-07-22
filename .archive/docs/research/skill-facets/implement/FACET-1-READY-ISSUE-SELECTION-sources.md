@@ -1,8 +1,6 @@
 # Prompt 03: Source Search For Implement Facet 1
 
-This executes
-[`docs/synthesis/methods/prompts/03-source-search-per-facet.md`](../../../synthesis/methods/prompts/03-source-search-per-facet.md)
-for `implement`.
+Historical source-to-skill Prompt 03 artifact for `implement`.
 
 ## Prompt Inputs
 

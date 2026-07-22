@@ -96,13 +96,11 @@ When possible, pair operational terms with stronger engineering vocabulary:
 - `decision map` -> open decisions, trade-offs, and `ADR-worthy decision`
 - `ready-for-agent` -> `bounded vertical slice` with `acceptance criteria`
 
-## Promoted Target
+## Current Ownership
 
-The accepted target spine lives in
-[`../../synthesis/target-spine.md`](../../synthesis/target-spine.md).
-
-This file owns the candidate words. The target-spine file owns their accepted
-sequence.
+This file preserves candidate vocabulary, not an accepted universal sequence.
+`CONTEXT.md`, the engineering contract, and each canonical skill own current
+language at their respective boundaries.
 
 ## Writing Rule
 

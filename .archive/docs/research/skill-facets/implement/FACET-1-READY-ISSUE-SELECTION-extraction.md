@@ -1,8 +1,6 @@
 # Prompt 04: Source Extraction For Implement Facet 1
 
-This executes
-[`docs/synthesis/methods/prompts/04-source-extraction.md`](../../../synthesis/methods/prompts/04-source-extraction.md)
-for `implement`.
+Historical source-to-skill Prompt 04 artifact for `implement`.
 
 ## Prompt Inputs
 

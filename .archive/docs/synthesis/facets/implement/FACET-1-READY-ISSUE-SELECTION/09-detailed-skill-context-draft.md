@@ -1,8 +1,6 @@
 # Prompt 09: Detailed Skill-Context Draft For Implement Facet 1
 
-This executes
-[`docs/synthesis/methods/prompts/09-detailed-skill-context-draft.md`](../../../methods/prompts/09-detailed-skill-context-draft.md)
-for `implement`.
+Historical source-to-skill Prompt 09 artifact for `implement`.
 
 ## Prompt Inputs
 

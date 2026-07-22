@@ -22,7 +22,7 @@ Tests and behavioral evaluations prove the canonical design; they do not define
 it. Installation, mirror synchronization, publishing, and Git delivery remain
 with their existing owners.
 
-`docs/synthesis/methods/source-to-skill-flow.md` owns rewrite cadence. This
+`docs/synthesis/methods/deploy-prompts.md` owns rewrite cadence. This
 synthesis owns the selected design and its acceptance obligations, not a second
 implementation runbook.
 
@@ -431,7 +431,7 @@ The earlier pre-Deploy promotion record from 2026-07-21 remains historical
 evidence. Deploy Prompts 1 and 2 supersede its exact-spine and named-surface
 decisions for this promoted candidate while preserving the admitted operations,
 behaviors, references, policy, ownership, and Return. Follow
-[`source-to-skill-flow.md`](../methods/source-to-skill-flow.md) for later
+[`deploy-prompts.md`](../methods/deploy-prompts.md) for later
 rewrites. Installation and delivery never enter the authoring order.
 
 ## Promotion Acceptance Obligations

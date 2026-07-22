@@ -1,8 +1,6 @@
 # Facet 1: Bounded Slice Source Search
 
-This executes
-[`docs/synthesis/methods/prompts/03-source-search-per-facet.md`](../../../synthesis/methods/prompts/03-source-search-per-facet.md)
-for `implement` Facet 1.
+Historical source-to-skill Prompt 03 artifact for `implement` Facet 1.
 
 ## Prompt Inputs
 

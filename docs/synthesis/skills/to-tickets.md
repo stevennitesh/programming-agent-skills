@@ -857,7 +857,7 @@ bounded returns, not successful publication.
 
 The current design is the convergence of four evidence streams:
 
-1. The local issue-pipeline synthesis supplies tracer bullets, story mapping,
+1. Distilled outside sources supply tracer bullets, story mapping,
    specification by example, seam-oriented proof, releasable increments,
    support work, and explicit work-state ideas.
 2. The upstream `to-tickets` skill contributes memorable vertical-slice,
@@ -886,10 +886,6 @@ read-back, and composition contracts.
 | `skills/custom/implement/SKILL.md` | Current single-item consumer | Selection gate, parent-as-context rule, proof input, and unsliced-work return |
 | `skills/custom/parallel-implement/SKILL.md` and its synthesis | Current parent-graph consumer and candidate design | Exhaustive repair return, state-branch admission, execution economics, and serial/parallel ownership boundary |
 | `docs/synthesis/skill-context-relationships.md` | Current relationship index | Inbound and outbound recommendation-and-stop edges and prohibited direct routes |
-| `docs/synthesis/families/issue-pipeline.md` | Source-map synthesis | Professional source pressure for tracer bullets, story mapping, acceptance, seams, support work, and flow |
-| `docs/research/language/02-upstream-skill-pack-audit.md` | Historical research | Local-versus-upstream comparison and independently-grabbable vocabulary |
-| `docs/research/language/05-mattpocock-skills-v1-1-upstream-audit.md` | Historical upstream snapshot | Rename context, explicit blocking edges, provider parity, and expand-contract addition |
-| `docs/synthesis/language-direction.md` | Historical synthesis | Vocabulary direction only; its proposed changes are not executable authority |
 | Git commits `4d1b816`, `66095cd`, `f72d5e8`, `c646d99`, and `c613df9` | Historical runtime lineage | Detailed baseline, support-slice naming, lean spine, parent-graph routing, and state-boundary strengthening |
 | `tests/test_skill_pack_contracts.py` | Current structural evidence | Invocation, spine, read-back, state-boundary consumption, execution-profile terms, and relationship edges |
 | `docs/validation/evals/core-workflows.md` | Current behavior-evaluation definitions | Coverage, shared readiness, state branches, and critical-failure expectations |

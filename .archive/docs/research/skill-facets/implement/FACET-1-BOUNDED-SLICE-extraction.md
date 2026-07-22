@@ -1,8 +1,6 @@
 # Facet 1: Bounded Slice Source Extraction
 
-This executes
-[`docs/synthesis/methods/prompts/04-source-extraction.md`](../../../synthesis/methods/prompts/04-source-extraction.md)
-for `implement` Facet 1.
+Historical source-to-skill Prompt 04 artifact for `implement` Facet 1.
 
 ## Prompt Inputs
 

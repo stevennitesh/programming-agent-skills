@@ -650,7 +650,7 @@ Everything in this layer derives from Layer Two. It records why the selected des
 
 ## Source Pressure
 
-The [Codebase Improvement And Design Family Synthesis](../families/codebase-architecture.md) supplies the durable architecture pressure:
+The durable architecture pressure incorporated here is:
 
 - Ousterhout: deep modules, information hiding, and design leverage;
 - Parnas: hide decisions likely to change rather than mirroring processing steps;

@@ -118,7 +118,7 @@ no independent rules.
 | Roles | Owner is default; staged worker exists only through an explicit assignment with an accepting owner | Preserve and sharpen |
 | Selection | One explicit target wins; otherwise use repository readiness and order; source collections remain context | Preserve the integrated Ready Issue Selection design |
 | Charter | One immutable campaign Charter records commitments, proof, fixed point, review route, non-goals, and a finite Repair Budget | Preserve and make the single scope authority |
-| Bounded slice | Lock one behavior path or honest support purpose, proof target, non-goals, expected edit surface, and focused evidence before production implementation | Promote from historical facet synthesis into the future whole-skill design |
+| Bounded slice | Lock one behavior path or honest support purpose, proof target, non-goals, expected edit surface, and focused evidence before production implementation | Selected for the future whole-skill design |
 | Patch and proof | Use one tracer bullet, route settled red-testable behavior to TDD, uncertain bugs to Diagnosis, and classify proof feedback before widening | Preserve current composition and add bounded-slice pressure |
 | Review | Capture one isolated immutable selected-work tree and invoke exactly one review owner | Preserve and sharpen dirty-index isolation |
 | Repair | Validate the whole report, batch every eligible blocker into one generation, preserve the Charter, and stop on mixed authority or exhausted budget | Preserve |
@@ -572,7 +572,7 @@ its trigger fires.
 
 | Trigger | Required context | Do not preload or absorb |
 | --- | --- | --- |
-| Every invocation | Implement outcome, role boundary, leading-word spine, transition selection, Return, completion, and `docs/agents/engineering-contract.md` | All tracker providers, review internals, TDD references, diagnosis procedure, or historical facet synthesis |
+| Every invocation | Implement outcome, role boundary, leading-word spine, transition selection, Return, completion, and `docs/agents/engineering-contract.md` | All tracker providers, review internals, TDD references, diagnosis procedure, or unrelated synthesis context |
 | Tracker-backed selection, claim, or closeout | Target repository's `docs/agents/issue-tracker.md` and exact current item | Tracker template for another provider or generic provider mechanics in `SKILL.md` |
 | Domain language or durable decision is touched | Target repository's `docs/agents/domain.md` and routed domain source | Unrelated contexts or Domain Modeling procedure unless its trigger fires |
 | Red-testable behavior | Invoke `$tdd`; supply Charter, slice, seam, oracle, and command | Copy TDD's RED/GREEN/REFACTOR procedure into Implement |
@@ -866,29 +866,6 @@ or another explicit-only delivery owner.
 
 # Layer Three: Evidence And Rationale
 
-## Facet Consolidation Register
-
-The historical facet pipeline remains evidence, not competing authority. This
-whole-skill synthesis incorporates its durable decisions as follows:
-
-| Historical synthesis artifact | Durable contribution | Consolidated disposition |
-| --- | --- | --- |
-| `facets/implement/FACET-1-READY-ISSUE-SELECTION/06-agent-bridge.md` | Candidate surface, authority, local readiness, owner boundary, and selection-fact sequence | Incorporated into Selection And Readiness; verbose behavior sequence stays historical |
-| `facets/implement/FACET-1-READY-ISSUE-SELECTION/07-full-behavior-synthesis.md` | Source pressure, chosen one-item behavior, evidence gates, stop/ask logic, and rejected options | Incorporated into selection rules and rationale |
-| `facets/implement/FACET-1-READY-ISSUE-SELECTION/08-candidate-runtime-draft.md` | Runtime candidate, gate consequences, placement, cut/preserve decisions | Superseded as whole-skill wording authority; retained for traceability |
-| `facets/implement/FACET-1-READY-ISSUE-SELECTION/09-detailed-skill-context-draft.md` | Integration placement, preserved current behavior, validation scenarios | Incorporated into ownership and extraction maps |
-| `facets/implement/FACET-1-READY-ISSUE-SELECTION/10-plain-language-validation-candidate.md` | Final compact selection wording, `V1` through `V12`, and reality-validation priorities | Incorporated into Layer Two and the acceptance matrix; selection behavior already exists in current runtime in compressed form |
-| `facets/implement/FACET-1-BOUNDED-SLICE/06-agent-bridge.md` | Slice lock, tracer bullet, support slice, scope pressure, proof-feedback classification | Incorporated into Bounded Slice Contract |
-| `facets/implement/FACET-1-BOUNDED-SLICE/07-full-behavior-synthesis.md` | Chosen behavior, leading words, evidence gates, stop/ask logic, and rejected size thresholds | Incorporated into the bounded-slice design and deliberate non-changes |
-| `facets/implement/FACET-1-BOUNDED-SLICE/08-candidate-runtime-draft.md` | Audit-approved compact candidate, scratch/probe boundary, coupled-edit test, and validation handoff | Selected for future extraction after control/candidate validation |
-| `facets/implement/README.md` | Timeline and current status | Update only when extraction status changes; it remains the facet-history index |
-
-Pure source discovery remains under
-`docs/research/skill-facets/implement/`. It does not move into runtime or this
-document. After promotion, this whole-skill note is the synthesis authority;
-the facet artifacts remain historical evidence and should not be edited to
-track later runtime wording.
-
 ## Current Runtime Evidence
 
 The current runtime already establishes several strong contracts that the
@@ -1117,7 +1094,6 @@ The `Must not absorb` column is part of the design.
 | `docs/synthesis/skill-context-relationships.md` | Composition verb and edge index | Reconcile only changed trigger or return wording; keep each edge once | Skill-local mechanics |
 | `tests/test_skill_pack_contracts.py` | Structural and relationship contracts | Add semantic-surface, selection, role, bounded-slice, transition, artifact, Repair, Lock, and provider-order assertions that protect behavior without snapshotting incidental prose | Claims of behavioral improvement or full source-text snapshots |
 | `docs/validation/evals/core-workflows.md` | Canonical behavior fixtures | Add or refine controls for Bound, proof-feedback classification, selected-work isolation, staged-worker handoff, and terminal Return | Runtime rules or one-sample promotion claims |
-| `docs/synthesis/facets/implement/**` | Historical facet pipeline | Preserve; update only its README status after successful extraction | Current runtime authority or duplicated future wording |
 | Installed mirror `C:\Users\steve\.agents\skills\implement` | Validated runtime copy | Synchronize only after canonical extraction and promotion are authorized | Independent edits or partial family synchronization |
 
 ## Source Bundles
@@ -1204,7 +1180,7 @@ Linked sections are the sole behavior authority; cases do not create rules.
 | `I4 / E3` | [Lock tree identity](#tracker-closeout-lock-and-close) | Review-to-lock diff is closeout-only; selected index equals lock; one commit succeeds; `HEAD^{tree}` equals lock | Behavior changes after review, mixed index commits, second implementation commit hides mismatch, or commit tree differs | Git tree fixture and exact identity assertions |
 | `I4 / E3` | [Connector Close](#tracker-closeout-lock-and-close) | Commit SHA enters the packet; selected item mutation and affected frontier read back | Tracker closes before commit, attempted mutation is called done, parent closes, or push/deploy begins without authority | GitHub/GitLab complete and partial mutation fixtures |
 | `I1-I4 / E3` | [Return](#return-contract) | Every branch returns one complete typed packet with exact continuation or terminal evidence | Narrative progress, staged `done`, review report, commit attempt, or mutation attempt is completion | Return-shape tests and premature-completion controls |
-| `I1-I5 / E4` | [Ownership map](#runtime-ownership-and-change-map) | Canonical runtime, relationships, provider mappings, tests, evals, and installed mirror agree after promotion | Historical facet prose, foreign-owner procedure, partial runtime, or unproved metadata reaches the mirror | Focused/full validation, read-back, install dry-run, scoped sync, and hash parity |
+| `I1-I5 / E4` | [Ownership map](#runtime-ownership-and-change-map) | Canonical runtime, relationships, provider mappings, tests, evals, and installed mirror agree after promotion | Duplicated design prose, foreign-owner procedure, partial runtime, or unproved metadata reaches the mirror | Focused/full validation, read-back, install dry-run, scoped sync, and hash parity |
 
 ## Promotion Gate And Residual Gaps
 

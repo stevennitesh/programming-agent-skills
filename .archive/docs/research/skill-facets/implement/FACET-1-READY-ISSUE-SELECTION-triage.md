@@ -1,8 +1,6 @@
 # Prompt 05: Source Triage For Implement Facet 1
 
-This executes
-[`docs/synthesis/methods/prompts/05-source-triage.md`](../../../synthesis/methods/prompts/05-source-triage.md)
-for `implement`.
+Historical source-to-skill Prompt 05 artifact for `implement`.
 
 ## Prompt Inputs
 

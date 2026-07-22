@@ -22,10 +22,8 @@ diffs, and failure observations over impressions.
 | [`transcripts/`](transcripts/) | Transcript reviews that show how agents actually behaved. |
 | [`evals/`](evals/) | Repeatable fixtures and scoring rubrics, starting with [`core-workflows.md`](evals/core-workflows.md). |
 
-Facet-pipeline validation notes live beside the draft they validate in
-`docs/synthesis/facets/<skill-name>/FACET-<n>-<name>/11-validation.md`.
 Use this folder for cross-run evidence, transcript reviews, and repeatable eval
-material that should outlive one facet timeline.
+material that should remain durable across runs.
 
 ## Boundary
 

@@ -1,8 +1,7 @@
 # Facet 1: Bounded Slice Compact Draft
 
-This reruns
-[`docs/synthesis/methods/prompts/08-candidate-runtime-draft.md`](../../../methods/prompts/08-candidate-runtime-draft.md)
-for `implement` Facet 1 using the latest Prompt 09 revision feedback.
+Historical source-to-skill Prompt 08 artifact for `implement` Facet 1, using
+the latest Prompt 09 revision feedback recorded at the time.
 
 ## Prompt Inputs
 

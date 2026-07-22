@@ -16,33 +16,29 @@ Synthesis stays outside `docs/research/` because it is design judgment, not
 source discovery. Research asks what sources and language might matter.
 Synthesis decides what the skill should become before runtime wording changes.
 
-The drafting loop inside synthesis is:
+The optional outside-source evidence loop is:
 
 ```text
-source pressure
-  -> generous synthesis
-  -> controlled language pass
-  -> behavior audit
-  -> blunt gates
-  -> validation draft
-  -> validation on real tasks
-  -> prune
+source question
+  -> optional facet map
+  -> search and verify
+  -> extract concepts and techniques
+  -> distill source packet
 ```
 
 ## Files
 
 | File Or Folder | Role |
 | --- | --- |
-| [`methods/`](methods/) | Reusable production flows, synthesis methods, and post-draft passes. |
-| [`target-spine.md`](target-spine.md) | Accepted common target spine for future skill behavior. |
-| [`language-direction.md`](language-direction.md) | Historical upstream-language decision record; active owners are named inside. |
+| [`methods/`](methods/) | Reusable deployment and optional source-distillation methods. |
 | [`skill-context-relationships.md`](skill-context-relationships.md) | Current context pointers, cross-skill relationships, and boundary owners. |
-| [`facets/`](facets/) | Skill/facet synthesis timelines from behavior flow through final prune. |
 | [`skills/`](skills/) | One whole-skill synthesis note per skill as coverage expands. |
-| [`families/`](families/) | Synthesis notes for tightly coupled skill families. |
 
-[`methods/source-to-skill-flow.md`](methods/source-to-skill-flow.md) owns the
-production workflow from intent through final prune and canonical Return.
+[`methods/deploy-prompts.md`](methods/deploy-prompts.md) owns the default
+whole-skill workflow from synthesis debate through candidate evaluation,
+promotion, installation, and optional Git delivery. The source-distillation
+method is an optional evidence lane for primary and outside sources, upstream
+skills, books, and engineering practice.
 
 ## Synthesis Ownership
 
@@ -54,7 +50,6 @@ production workflow from intent through final prune and canonical Return.
 | Exact changes to a skill's `SKILL.md`, disclosed references, helpers, templates, validators, tests, evaluations, and installation surfaces | `skills/<file-owner>.md` |
 | A provider or setup capability consumed by another skill | The consumer names the required outcome and links to the file owner's synthesis; the file owner specifies the concrete representation and verification |
 | One cross-skill invocation or return edge | The participating skill syntheses own their respective boundaries; `skill-context-relationships.md` indexes the accepted edge without copying either process |
-| Behavior genuinely shared by a tightly coupled family | `families/<family>.md`, with each member synthesis linking to the shared owner |
 | The supported repo-setting schema, choice points, provider mappings, preservation rules, and reconciliation behavior | `skills/repo-bootstrap.md` |
 | One target repository's selected literal settings, commands, provider ids, and preserved additions | That target repository's approved setup state; its reusable lessons return to Repo Bootstrap synthesis only when they change the global setup contract |
 
@@ -66,29 +61,29 @@ Synthesis is design authority only until implemented. Canonical runtime files re
 
 ## Canonical Extraction
 
-Use one ownership chain to turn selected synthesis into runtime behavior:
+Use Deploy Prompts to turn selected whole-skill synthesis into runtime behavior:
 
 ```text
 selected synthesis
-  -> skill-creator scaffold and metadata, only for a new package
-  -> $writing-great-skills Author semantic extraction
-  -> canonical proof and Return
-  -> separately authorized installation or delivery
+  -> Deploy Prompt 1 debate, unless its explicit skip gate passes
+  -> Deploy Prompt 2 synthesis finalization
+  -> Deploy Prompt 3 inactive candidate
+  -> Deploy Prompt 4 audit, repair, and behavioral evaluation
+  -> Deploy Prompt 5 canonical promotion, proof, and separately owned install
+  -> optional Deploy Prompt 6 Git delivery
 ```
 
 `plan-only` work ends with synthesis artifacts and a patch-ready shape; it does
-not mutate runtime files. `apply-edit` explicitly enters
-`$writing-great-skills` Author and changes only the requested canonical package
-plus directly affected proof or relationship surfaces. A new unscaffolded skill
-first uses the bundled `skill-creator`; that owner does not decide semantic
-quality. Writing Great Skills stops after canonical proof. Installation,
-installed mirrors, publishing, staging, commits, and pushes remain outside the
-authoring completion criterion.
+not mutate runtime files. Optional source-distillation work returns important
+concepts, usable techniques, provenance, limitations, and evidence gaps to
+synthesis; it does not draft, extract, promote, install, or deliver runtime
+skills. A new unscaffolded skill uses the bundled
+`skill-creator` only for structure and metadata when the deployment prompt
+requires it. Writing Great Skills owns semantic quality and stops after
+canonical proof; installation and delivery retain their separate owners.
 
-[`methods/source-to-skill-flow.md`](methods/source-to-skill-flow.md) owns the
-cadence, and Prompt 12 owns this final plan-only or canonical-edit branch. The
-synthesis note supplies selected behavior, placement, preservation, and proof
-obligations; it never becomes executable authority itself.
+The synthesis note supplies selected behavior, placement, preservation, and
+proof obligations; it never becomes executable authority itself.
 
 ## Note Types
 
@@ -98,12 +93,6 @@ selected design contract, decision-to-evidence trace, material rejected and
 deferred alternatives, runtime ownership map, extraction order, and validation
 plan after the behavior is chosen. Collapse any duplicate representation that
 adds no distinct decision, ownership, or proof value.
-
-Facet timelines may remain narrower because their earlier and later prompt
-artifacts preserve the rest of the trace. Candidate runtime drafts, detailed
-skill-context drafts, plain-language candidates, and final-prune plans remain
-compact at their owning steps; they do not redefine the whole-skill synthesis
-record.
 
 Some older notes are source-map synthesis: they preserve source pressure and
 concept maps for established skills or tightly coupled skill families. Keep

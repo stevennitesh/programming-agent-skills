@@ -1,8 +1,6 @@
 # Prompt 10: Plain-Language Validation Candidate For Implement Facet 1
 
-This executes
-[`docs/synthesis/methods/prompts/10-plain-language-validation-candidate.md`](../../../methods/prompts/10-plain-language-validation-candidate.md)
-for `implement`.
+Historical source-to-skill Prompt 10 artifact for `implement`.
 
 ## Prompt Inputs
 

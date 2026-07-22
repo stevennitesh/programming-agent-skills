@@ -1,5 +1,9 @@
 # Source-To-Skill Flow
 
+> Archived: this twelve-stage source-to-runtime pipeline is historical. Use
+> [`docs/synthesis/methods/source-distillation-flow.md`](../../../../docs/synthesis/methods/source-distillation-flow.md)
+> for source evidence and Deploy Prompts for downstream skill work.
+
 Use this flow to build or deepen a skill without turning research into runtime
 bloat.
 

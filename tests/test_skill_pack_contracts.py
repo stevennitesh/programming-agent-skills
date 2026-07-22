@@ -484,7 +484,7 @@ def test_grill_with_docs_package_and_relationship_contract() -> None:
         encoding="utf-8"
     )
 
-    assert not implicit_policy(CUSTOM / "grill-with-docs")
+    assert implicit_policy(CUSTOM / "grill-with-docs")
     assert {
         path.relative_to(CUSTOM / "grill-with-docs").as_posix()
         for path in (CUSTOM / "grill-with-docs").rglob("*")
@@ -1683,15 +1683,8 @@ def test_router_and_synthesis_keep_active_ownership_unambiguous() -> None:
     router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
     tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
     synthesis_index = (ROOT / "docs/synthesis/README.md").read_text(encoding="utf-8")
-    language = (ROOT / "docs/synthesis/language-direction.md").read_text(
-        encoding="utf-8"
-    )
-    spine = (ROOT / "docs/synthesis/target-spine.md").read_text(encoding="utf-8")
 
-    assert "Historical upstream-language decision record" in synthesis_index
-    assert "Status: historical synthesis snapshot." in language
-    assert "Do not execute the Proposed Changes." in language
-    assert "in-scope findings are fixed" not in spine
-    assert "every finding is actionable and source-backed" in spine
+    assert "target-spine.md" not in synthesis_index
+    assert "language-direction.md" not in synthesis_index
     assert "support tickets" not in tickets
     assert "support slices" in tickets

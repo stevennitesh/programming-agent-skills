@@ -2,9 +2,7 @@
 
 Durable upstream source and reconstruction: [`UPSTREAM-SOURCE.md`](../../language/UPSTREAM-SOURCE.md).
 
-This executes
-[`docs/synthesis/methods/prompts/01-intent-and-keywords.md`](../../../synthesis/methods/prompts/01-intent-and-keywords.md)
-for `implement`.
+Historical source-to-skill Prompt 01 artifact for `implement`.
 
 ## Prompt Inputs
 

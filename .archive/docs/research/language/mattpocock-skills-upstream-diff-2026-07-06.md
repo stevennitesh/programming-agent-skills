@@ -120,7 +120,9 @@ New skill shape:
 - Investigate against primary sources.
 - Save a cited Markdown file where the repo already keeps notes.
 
-Migration watchpoint: this overlaps with our source-to-skill research loop but is much smaller and more general. Could be useful as a standalone reading lane if routed carefully.
+Migration watchpoint: this reading lane overlaps with source distillation but
+is much smaller and more general. Use it only when that narrower lane answers
+the source question.
 
 ### `wayfinder`
 

@@ -438,7 +438,7 @@ The later rewrite should re-read and reconcile at least:
 - the Router Skill, invocation, leading-word, semantic-surface, pruning, completion, and legwork definitions in Writing Great Skills;
 - `docs/synthesis/README.md` and `docs/synthesis/skill-context-relationships.md`;
 - `docs/synthesis/skills/parallel-implement.md` and `wayfinder.md` for the four-layer authority and extraction pattern;
-- `docs/synthesis/methods/source-to-skill-flow.md` for the later runtime-draft, reality-validation, and prune sequence;
+- `docs/synthesis/methods/deploy-prompts.md` for later candidate extraction, behavioral evaluation, and promotion;
 - each consumer synthesis whose relationship row or admission predicate changes;
 - `tests/test_skill_pack_contracts.py`, `tests/test_validate_skills.py`, and installer tests that protect bootstrap discovery or invocation policy;
 - `docs/validation/evals/core-workflows.md` and any new Router behavior transcript; and

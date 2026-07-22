@@ -131,10 +131,8 @@ Use these pairings when writing or editing skills.
 - `evidence` + "source, tests, fixtures, logs, diffs, commands, CI, screenshots"
 - `fixed-point review` + "compare HEAD against the starting ref"
 
-## Synthesis Promotion
+## Current Ownership
 
-The accepted target sequence and skill-writing formula now live in
-[`../../synthesis/target-spine.md`](../../synthesis/target-spine.md).
-
-This file owns candidate agentic terms, weak terms, and bridge patterns.
-Synthesis owns the accepted formula and runtime-facing wording decisions.
+This file preserves candidate agentic terms, weak terms, and bridge patterns.
+It defines no universal sequence or skill-writing formula. Current synthesis
+and canonical skill owners decide whether any term or pattern applies.

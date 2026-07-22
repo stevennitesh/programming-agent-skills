@@ -583,7 +583,7 @@ Historical behavior evidence is useful but hash-bound:
 
 The current Convergent `SKILL.md` hash differs from those July 18 candidate hashes. These transcripts support the design choices they directly tested but are not fresh proof of current or future wording. Historical narration that says a stale review automatically reruns is also superseded by the current terminal drift rule: Review returns `incomplete`; only the caller starts another snapshot.
 
-`docs/synthesis/families/issue-pipeline.md` remains useful source-map synthesis for Review's fixed point, separate Standards and Spec axes, actionable findings, missing requirements, scope creep, and acceptance-proof pressure. It does not own the proposed runtime procedure and needs revision only if its stable family concepts change.
+The incorporated source pressure supports Review's fixed point, separate Standards and Spec axes, actionable findings, missing requirements, scope creep, and acceptance-proof expectations. This synthesis owns the resulting Review design; the sources do not own its runtime procedure.
 
 ## Current Gaps The Rewrite Must Close
 

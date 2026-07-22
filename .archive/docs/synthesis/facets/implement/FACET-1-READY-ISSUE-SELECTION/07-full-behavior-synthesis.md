@@ -1,8 +1,6 @@
 # Prompt 07: Full Behavior Synthesis For Implement Facet 1
 
-This executes
-[`docs/synthesis/methods/prompts/07-full-behavior-synthesis.md`](../../../methods/prompts/07-full-behavior-synthesis.md)
-for `implement`.
+Historical source-to-skill Prompt 07 artifact for `implement`.
 
 ## Prompt Inputs
 

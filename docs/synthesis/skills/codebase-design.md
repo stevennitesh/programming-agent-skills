@@ -485,7 +485,7 @@ Codebase Design is incomplete when it merely names a pattern, produces cosmetic 
 
 ## Source Pressure
 
-The detailed source map remains in [Codebase Improvement And Design Family Synthesis](../families/codebase-architecture.md). This table records only the design pressure that affects the future rewrite:
+This table records the incorporated design pressure that affects the future rewrite:
 
 | Source tradition | Pressure retained in the design |
 | --- | --- |

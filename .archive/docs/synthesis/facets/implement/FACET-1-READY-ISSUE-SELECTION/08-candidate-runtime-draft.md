@@ -1,8 +1,6 @@
 # Prompt 08: Candidate Runtime Draft For Implement Facet 1
 
-This executes
-[`docs/synthesis/methods/prompts/08-candidate-runtime-draft.md`](../../../methods/prompts/08-candidate-runtime-draft.md)
-for `implement`.
+Historical source-to-skill Prompt 08 artifact for `implement`.
 
 ## Prompt Inputs
 

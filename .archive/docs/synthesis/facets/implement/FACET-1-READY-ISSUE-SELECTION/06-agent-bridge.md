@@ -1,8 +1,6 @@
 # Prompt 06: Agent Bridge For Implement Facet 1
 
-This executes
-[`docs/synthesis/methods/prompts/06-agent-bridge.md`](../../../methods/prompts/06-agent-bridge.md)
-for `implement`.
+Historical source-to-skill Prompt 06 artifact for `implement`.
 
 ## Prompt Inputs
 
@@ -85,8 +83,8 @@ Owner-conflict severities:
 
 Revision feedback:
 
-- Rerun Prompt 06 from the refreshed Prompt 05 triage packet using the current
-  `docs/synthesis/methods/prompts/06-agent-bridge.md` schema.
+- Rerun Prompt 06 from the refreshed Prompt 05 triage packet using the
+  then-current Prompt 06 schema.
 - Use three subagents to check template/schema compliance, owner-boundary
   pressure, and behavior/gate quality.
 

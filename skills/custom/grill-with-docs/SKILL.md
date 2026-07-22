@@ -1,6 +1,6 @@
 ---
 name: grill-with-docs
-description: Compose one repo-backed decision through $grilling and $domain-modeling.
+description: Use when a request combines grilling one repo-backed decision with keeping its domain language, invariants, or relationships current; exclude conversation-only grilling and settled-domain-only work.
 ---
 
 # Grill With Docs
@@ -11,11 +11,11 @@ Return one intact Grilling packet and Domain Modeling's current cumulative Domai
 Admit -> Compose [Grill <-> Relay <-> Model] -> Return
 ```
 
-1. **Admit.** Accept only the direct user's explicit invocation when the decision needs both components. Align their bounded subject and Source Trace. Default the context action to `render only` unless the user separately authorizes persistence; default the ADR action to `offer only` unless the user separately approves an identified candidate.
+1. **Admit.** Accept only a direct-user request when the decision needs both components. Align their bounded subject and Source Trace. Default the context action to `render only` unless the user separately authorizes persistence; default the ADR action to `offer only` unless the user separately approves an identified candidate.
 
    Before Grilling asks its first question, state the effective context action, separate ADR approval gate, possibility that a domain collision may reopen or block a branch, and that confirmation starts no downstream work. If the request needs only one component, name that narrower owner and stop without invoking it. Return a missing or contradictory requirement as `Blocked` with the exact blocker and re-entry condition before starting either component.
 
-2. **Compose.** Run one Grilling session with Domain Modeling active. Relay every settled material answer and returned collision before dependent progress, carrying Domain Modeling's current cumulative Domain Delta opaquely. Grilling owns the interview and materiality; Domain Modeling owns domain consequences, mutation, ADR handling, and delta accumulation. A no-change delta is valid; a missing current delta is `Blocked`.
+2. **Compose.** Run one `$grilling` session with `$domain-modeling` active. Relay every settled material answer and returned collision before dependent progress, carrying Domain Modeling's current cumulative Domain Delta opaquely. Grilling owns the interview and materiality; Domain Modeling owns domain consequences, mutation, ADR handling, and delta accumulation. A no-change delta is valid; a missing current delta is `Blocked`.
 
 3. **Return.** When Grilling reaches a terminal result, derive one status without re-performing either component's completion criterion or asking for another confirmation:
 

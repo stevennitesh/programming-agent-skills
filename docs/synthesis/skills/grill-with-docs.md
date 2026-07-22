@@ -1,6 +1,6 @@
 # Grill With Docs Composition Synthesis
 
-Status: Prompt 5 complete. Accepted candidate `09438242574437c91ed631a1dd59010f3c02752b51b8eb93d096259fab65def7` is canonical and installed with matching hashes; its experimental package and manifest entry are removed. Prompt 4 evidence was reused because bytes and claims were unchanged.
+Status: Prompt 5 promotion is complete. The canonical runtime now carries a post-promotion invocation revision: narrow implicit discovery for direct-user requests needing both components. The runtime body, caller boundaries, and component ownership remain otherwise unchanged. Current invocation evidence is recorded in [`2026-07-22-grill-with-docs-implicit-invocation-eval.md`](../../validation/transcripts/2026-07-22-grill-with-docs-implicit-invocation-eval.md).
 
 Runtime authority currently remains in:
 
@@ -27,7 +27,7 @@ When another layer conflicts with Normative Design, correct the other layer. A c
 
 ## North Star
 
-Grill With Docs is an explicit, direct-user composer for one bounded repo-backed decision that needs both relentless Grilling and active Domain Modeling. It returns the intact Grilling packet and Domain Modeling's current cumulative Domain Delta as one result, then stops.
+Grill With Docs is a narrowly discoverable, direct-user composer for one bounded repo-backed decision that needs both relentless Grilling and active Domain Modeling. It returns the intact Grilling packet and Domain Modeling's current cumulative Domain Delta as one result, then stops.
 
 The composer owns only admission, pre-question disclosure, scheduling, Relay, combined status, and Return. It does not own questioning, semantic judgment, persistence, ADR approval, component payloads, caller continuation, or downstream execution.
 
@@ -39,7 +39,7 @@ The selected design control is Matt Pocock's complete one-line skill:
 Run a /grilling session, using the /domain-modeling skill.
 ```
 
-That is the smallest credible expression of the core outcome: compose Grilling with Domain Modeling. The repository adapts the slash-command vocabulary to `$grilling` and `$domain-modeling`, and the Codex platform requires `agents/openai.yaml` to make the composer explicit-only. Everything else must earn admission as a delta from this baseline.
+That is the smallest credible expression of the core outcome: compose Grilling with Domain Modeling. The repository adapts the slash-command vocabulary to `$grilling` and `$domain-modeling`; `agents/openai.yaml` permits implicit discovery, while the description limits discovery to requests observably needing both components. Everything else must earn admission as a delta from this baseline.
 
 ## Minimum Viable Runtime
 
@@ -47,7 +47,7 @@ That is the smallest credible expression of the core outcome: compose Grilling w
 Admit -> Compose [Grill <-> Relay <-> Model] -> Return
 ```
 
-- **Admit** accepts only an explicit direct-user request needing both components, locks mutation authority, and gives the required disclosure before the first question.
+- **Admit** accepts only a direct-user request needing both components, locks mutation authority, and gives the required disclosure before the first question.
 - **Compose** runs one Grilling session with Domain Modeling active.
 - **Relay** carries each settled material answer to Domain Modeling and any collision back before dependent progress.
 - **Return** derives one combined status, preserves both component payloads intact, reports an exact blocker and re-entry condition when blocked, and stops.
@@ -58,7 +58,7 @@ Admit -> Compose [Grill <-> Relay <-> Model] -> Return
 
 | Term | Meaning |
 | --- | --- |
-| **Composition fit** | One explicit direct-user request needs both a bounded Grilling interview and active Domain Modeling |
+| **Composition fit** | One direct-user request needs both a bounded Grilling interview and active Domain Modeling |
 | **Settled material answer** | An answer Grilling has integrated as decision-bearing under its own rules |
 | **Relay** | Opaque transport of each settled material answer to Domain Modeling and any returned collision or blocker to Grilling before dependent progress |
 | **Component payload** | The complete Grilling exit packet or authoritative cumulative Domain Delta, preserved under its owner's schema |
@@ -72,7 +72,7 @@ These are composer-local terms, not additions to the repository domain model.
 
 | Concern | Owner | Destination | Failure return |
 | --- | --- | --- | --- |
-| Explicit-only platform policy | Grill With Docs metadata | `agents/openai.yaml` | Candidate is not extractable without `allow_implicit_invocation: false` |
+| Narrow implicit discovery | Grill With Docs metadata and description | `agents/openai.yaml` and `SKILL.md` frontmatter | Adjacent single-component work is routed to its narrower owner |
 | Direct composition fit, modes, and pre-question disclosure | Grill With Docs | [Admit](#admit) | Exact mismatch or `Blocked` with exact blocker and re-entry condition |
 | Interview and exit packet | Grilling | Component-owned | Preserve its result intact |
 | Domain semantics, mutation, ADR handling, and cumulative Domain Delta | Domain Modeling | Component-owned | Preserve its collision, blocker, and delta intact |
@@ -82,7 +82,7 @@ These are composer-local terms, not additions to the repository domain model.
 
 ## Admit
 
-Grill With Docs is explicit-only and admits only a direct user. Admit when the user explicitly invokes it for one bounded repo-backed decision that needs both user-owned ambiguity resolution through Grilling and active Domain Modeling.
+Grill With Docs is narrowly implicitly invocable and admits only a direct user. Admit one bounded repo-backed decision that needs both user-owned ambiguity resolution through Grilling and active Domain Modeling. Conversation-only grilling and settled-domain-only work remain with their narrower owners.
 
 Reject a mismatch before starting either component. Name the narrower owner when the work needs only Grilling or only Domain Modeling, but do not invoke that owner. The composer is not a router.
 
@@ -177,7 +177,7 @@ Prompt 1 inspected all required checked-out upstreams and the complete current c
 
 | Candidate | Observed state | Result |
 | --- | --- | --- |
-| Matt Pocock | clean `ed37663cc5fbef691ddfecd080dff42f7e7e350d`, dated 2026-07-21 | Matching one-line package selected as simplest credible baseline; its explicit invocation is retained, while slash-command and write-authority assumptions are adapted to this repository and platform |
+| Matt Pocock | clean `ed37663cc5fbef691ddfecd080dff42f7e7e350d`, dated 2026-07-21 | Matching one-line package selected as simplest credible baseline; Prompt 1 initially retained explicit invocation, while slash-command and write-authority assumptions were adapted to this repository and platform |
 | Superpowers | clean `d884ae04edebef577e82ff7c4e143debd0bbec99`, dated 2026-07-02 | No matching or equivalent package found |
 | Ponytail | clean `16f29800fd2681bdf24f3eb4ccffe38be3baec6b`, dated 2026-07-15 | No matching or equivalent package found |
 | Prior canonical | one-file implicit composer with direct, Wayfinder, Triage, and Improve Codebase admission | Historical composition evidence, not current authority |
@@ -194,14 +194,14 @@ Admit -> Disclose -> Compose [Grill <-> Relay <-> Model] -> Join -> Return
 
 It was implicitly invocable, admitted three workflow callers in addition to direct use, transported caller identifiers and return ownership, and named Disclose and Join as peer stages.
 
-The promoted design changes those points deliberately: explicit-only, direct-user-only, no caller packet, disclosure folded into Admit, and joint eligibility folded into Return. It preserves render-only default, separate ADR approval, every-answer Relay, Domain Modeling's cumulative-delta ownership, intact component payloads, three combined statuses, exact blocked re-entry, and no downstream execution.
+The Prompt 5 promoted design changed those points deliberately: explicit-only, direct-user-only, no caller packet, disclosure folded into Admit, and joint eligibility folded into Return. The post-promotion invocation revision changes only explicit-only discovery to a narrow dual-condition predicate. It preserves direct-user-only admission, render-only default, separate ADR approval, every-answer Relay, Domain Modeling's cumulative-delta ownership, intact component payloads, three combined statuses, exact blocked re-entry, and no downstream execution.
 
 ## Mechanism-Admission Ledger
 
 | Mechanism beyond one-line baseline | Baseline failure or required contract | Owner | Cheaper alternative | Load | Admission and destination |
 | --- | --- | --- | --- | --- | --- |
 | Codex component names | Slash-command syntax is not this repository's skill vocabulary | Platform adaptation | Keep slash syntax | Two names | **admit**: inline composition sentence |
-| Explicit-only metadata | Human judgment must select every use | `agents/openai.yaml` | Implicit dual-condition description | Human cognitive load, lower ambient context load | **admit**: metadata |
+| Narrow implicit metadata and description | Saved prompts should not need to name the composer when both components are observable | `agents/openai.yaml` and `SKILL.md` frontmatter | Explicit-only invocation | Small ambient context load; adjacent false-fire risk | **admit**: dual-condition predicate plus nearest exclusions |
 | Direct dual-capability admission | One-line baseline can run for single-capability work | Grill With Docs | Trust user selection alone | Small entry gate | **admit**: inline Admit |
 | Render-only default and separate ADR approval | Composition is not mutation consent | Domain Modeling owns action; composer locks it | Always write | Small authority gate | **admit**: inline Admit; detailed procedure component-owned |
 | Pre-question disclosure | User must know mutation and no-execution boundaries before answering | Grill With Docs | Separate Disclose stage | Four compact facts | **admit**: fold into Admit |
@@ -220,7 +220,7 @@ The promoted design changes those points deliberately: explicit-only, direct-use
 
 ## Rejected, Deferred, And Residual Complexity
 
-Rejected runtime hypotheses are implicit invocation, universal entry or return schemas, caller identity plumbing, a bridge ledger, callback history, a normative state machine, separate Disclose and Join phases, component restatement, and automatic continuation.
+Rejected runtime hypotheses are broad or single-condition implicit invocation, universal entry or return schemas, caller identity plumbing, a bridge ledger, callback history, a normative state machine, separate Disclose and Join phases, component restatement, and automatic continuation.
 
 Deferred caller integrations are Wayfinder, Triage, and Improve Codebase. Each would require its own observable trigger, supplied authority, identity, Return contract, relationship edge, and behavioral proof before admission. Prompt 3 must not prebuild extension fields for them.
 
@@ -255,6 +255,7 @@ The smallest coordinated experimental cohort is only `grill-with-docs`. Grilling
 | Prompt 3 structural proof | Deploy Prompt 3 | Complete package inventory, explicit-only metadata, exact admitted surfaces, no undeclared files, readable candidate, and structural integrity | That wording changes multi-turn behavior |
 | Prompt 4 behavior proof | Deploy Prompt 4 | Direct admission, disclosure timing, Relay order, collision pause, delta ownership, statuses, intact Return, blocked re-entry, and no execution against fresh controls | Promotion or installed parity |
 | Prompt 5 promotion proof | Deploy Prompt 5 | Accepted candidate becomes canonical; affected current relationship and policy surfaces are reconciled; canonical tests and validation pass; installed mirror is synchronized when authorized by that prompt | New caller integrations |
+| Post-promotion invocation proof | Writing Great Skills | Narrow dual-condition discovery and adjacent-negative exclusion across five fresh control and five candidate contexts | Live saved-prompt routing telemetry |
 
 Structural tests may assert machine-consumed policy and package shape. Semantic outcomes require behavior evaluation; they must not be encoded as brittle phrase-presence tests.
 

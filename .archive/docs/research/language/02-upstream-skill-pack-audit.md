@@ -209,12 +209,11 @@ The repo's operational terms are good, but the Kent Beck phrase is memorable and
 | `red-green-refactor` | `RED` / `GREEN` / `REFACTOR` | Restore the named method. |
 | `Make the change easy...` | `prefactoring` / `support issue` | Keep both, with the quote as the teaching phrase. |
 
-## Synthesis Promotion
+## Current Ownership
 
-The audit findings that became chosen language direction now live in
-[`../../synthesis/language-direction.md`](../../synthesis/language-direction.md).
-This file stays as the research comparison; synthesis owns the canonical
-language recommendations and proposed changes.
+This file remains research comparison only. `CONTEXT.md` owns active pack
+vocabulary, and canonical skills own behavior. Re-verify any outside-source
+claim through source distillation before using it in a new synthesis.
 
 ## Final Judgment
 
@@ -230,5 +229,5 @@ But the active folder should borrow back selected Matt vocabulary. Those words a
 - what makes an issue safe for an agent,
 - and why shared language matters.
 
-The target is a hybrid: Matt's memorable vocabulary plus this repo's stronger
-contracts. The accepted direction is tracked in synthesis, not here.
+The target is a hybrid: memorable vocabulary plus this repo's stronger
+contracts. Current owners decide which terms remain active.

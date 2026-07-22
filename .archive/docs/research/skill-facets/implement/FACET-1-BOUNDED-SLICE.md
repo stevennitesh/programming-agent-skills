@@ -1,7 +1,7 @@
 # Facet 1 Research: Bounded Slice
 
 Status note: this is historical first-pass research. Facet 1 has been demoted
-for rerun through the current source-to-skill prompt pipeline so the source
+for rerun through the now-archived source-to-skill prompt pipeline so the source
 search, extraction, triage, behavior flow, synthesis, audit, validation, and
 final prune steps can confirm or replace this packet before runtime wording is
 changed.
