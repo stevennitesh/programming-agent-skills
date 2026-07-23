@@ -1,11 +1,11 @@
 # TDD Minimum-Runtime Synthesis
 
-Status: Deploy Prompt 5 complete. Canonical and installed TDD are byte-identical
-at accepted hash `35bbe08d4f3ce1d137ae12bf3fd1e2a8bc1b75dd3f234d2266c020467e1e3e7c`.
+Status: Complete. Canonical and installed TDD are byte-identical at accepted
+hash `35bbe08d4f3ce1d137ae12bf3fd1e2a8bc1b75dd3f234d2266c020467e1e3e7c`.
 
-This document supersedes the earlier future-rewrite design. Canonical runtime
-authority is `skills/custom/tdd/` at the behaviorally accepted pruned hash;
-installed parity is recorded by Deploy Prompt 5 after managed synchronization.
+This synthesis owns the completed pruning decision and its durable rationale.
+Validation owns campaign chronology, raw evaluations, and installation proof.
+Canonical runtime authority remains `skills/custom/tdd/`.
 
 ## Outcome And Decision
 
@@ -19,19 +19,16 @@ It proves one observable behavior through an observed behavioral RED, the
 smallest GREEN implementation, GREEN-only refactoring, and an inspectable
 packet returned to the original caller.
 
-Prompt 2 resolves the minimum-runtime fork as follows:
+The completed minimum-runtime decision is:
 
-- the current canonical package is behaviorally close to B0 but is not exact
-  B0 because `tests.md` still contains the deferred `## Async Waiting`
-  mechanism;
-- B0 therefore requires one behavior-preserving pruning candidate;
-- C1 is exactly B0, with no behavior-changing additions;
+- the pre-prune package was behaviorally close to B0 but contained the
+  unadmitted `## Async Waiting` mechanism;
+- exact B0 removes only that complete section from `tests.md`;
+- the accepted C1 was exactly B0, with no behavior-changing additions;
 - typed result schemas, transition tables, and expanded packet machinery are
   rejected from runtime; and
-- async-waiting mechanics remain deferred until an observed baseline failure
-  supplies an admission basis.
-
-The terminal decision is `ready-for-prompt-3`, not `no-change`.
+- async-waiting mechanics remain deferred until an observed canonical failure
+  supplies a new admission basis.
 
 ## Viability Floor
 
@@ -66,15 +63,16 @@ B0 must preserve all of the following:
 
 | Evidence | Identity or access depth | Role | Freshness limit |
 | --- | --- | --- | --- |
-| Current repository | `781f6b654feadf08bdfcd79ce33493a19025cf5e`; clean at Prompt 2 start | Canonical and relationship authority | Local checkout only |
-| Canonical TDD package | All five files read completely | Current behavior and exact B0 source | Current at Prompt 2 start |
+| Canonical TDD package | `skills/custom/tdd/`; tree hash `35bbe08d4f3ce1d137ae12bf3fd1e2a8bc1b75dd3f234d2266c020467e1e3e7c` | Current runtime authority and accepted B0/C1 | Recompute after any byte change |
+| Pre-prune control | `docs/validation/evals/tdd-pruning-pre-prune/`; tree hash `2c54693e3c51ed5785430943786bfdd578a6fc4e99f0746de2f027ee16f286ae` | Behavior-complete control and exact deletion source | Immutable campaign evidence |
 | Matt Pocock TDD | `.tmp/mattpocock-skills` at `ed37663cc5fbef691ddfecd080dff42f7e7e350d`; complete package and named documentation read | Simplest credible baseline | Clean local `main`; not network-refreshed |
 | Superpowers TDD | `.tmp/superpowers` at `d884ae04edebef577e82ff7c4e143debd0bbec99`; complete package read | Stricter comparison | Clean local `main`; not network-refreshed |
 | Ponytail | `.tmp/ponytail` at `16f29800fd2681bdf24f3eb4ccffe38be3baec6b`; no TDD equivalent found | Absence check | Clean local `main`; not network-refreshed |
 | Upper-bound engineering language | Applicable TDD, tracer-bullet, seam, proof, completion, and pruning rows read with their evidence pointers | Research pressure and semantic correction | Document states 2026-07-22 freshness |
-| Runtime relationships | Complete `docs/synthesis/skill-context-relationships.md` and affected caller surfaces read | Accepted caller and callee contracts | Current local checkout |
-| Structural proof | TDD-focused, disjoint bug-routing, and runtime-composition tests | Machine-contract evidence only | Passed during Prompt 1; not behavioral contribution proof |
-| Behavioral definitions | `docs/validation/evals/core-workflows.md`, especially cases 23 and 36 | Future case and rubric source | Definitions only; no fresh TDD campaign result |
+| Runtime relationships | `docs/synthesis/skill-context-relationships.md` | Accepted caller and callee contracts | Unchanged by this pruning |
+| Structural proof | `tests/test_experimental_skill_contracts.py::test_canonical_tdd_is_the_exact_single_cut_baseline` | Exact inventory and single-cut identity | Passed at promotion Lock |
+| Pruning-equivalence decision | [`docs/validation/evals/tdd-pruning-results/decision.md`](../../validation/evals/tdd-pruning-results/decision.md) | Fixed-case non-regression result | Five fresh samples per arm; bounded to recorded runtime and cases |
+| Campaign and installation record | [`docs/validation/transcripts/2026-07-22-tdd-candidate-evidence.md`](../../validation/transcripts/2026-07-22-tdd-candidate-evidence.md) | Package identities, promotion, installation, and parity | Historical proof record |
 
 No skill-specific source packet beyond the prior synthesis source list was
 found. The book and article references below are rationale, not current local
@@ -113,7 +111,7 @@ matching baseline.
 
 This ledger classifies the complete current package by behavior-bearing unit.
 
-| Surface and behavior | Disposition | B0 treatment |
+| Surface and behavior | Disposition | Canonical treatment |
 | --- | --- | --- |
 | `agents/openai.yaml`: implicit invocation | Protect | Preserve exact bytes |
 | `SKILL.md` description: new-behavior trigger, four bug facts, Diagnosis and Prototype exclusions | Protect | Preserve exact bytes |
@@ -136,7 +134,7 @@ This ledger classifies the complete current package by behavior-bearing unit.
 | `tests.md`: tracer-bullet example | Disclose | Preserve exact bytes |
 | `tests.md`: public-behavior contrast and stable-module qualification | Disclose | Preserve exact bytes |
 | `tests.md`: independent-oracle contrast | Disclose | Preserve exact bytes |
-| `tests.md`: Async Waiting section | Defer | Remove the complete section from B0 |
+| Pre-prune `tests.md`: Async Waiting section | Defer | Removed canonically as one complete section |
 | `tests.md`: test-shape red flags | Disclose | Preserve exact bytes |
 | `mocking.md`: real-to-mock substitute order | Protect and disclose | Preserve exact bytes |
 | `mocking.md`: boundary-fake example | Disclose | Preserve exact bytes |
@@ -161,7 +159,7 @@ Original labels are retained where available.
 | Independent oracle | Upstream corroboration; no separate efficacy proof | Core outcome | Keep independent expectation requirement and examples |
 | Deep module, depth, leverage, locality | `synthesis`; Matt corroborated; broader professional history unvalidated | Supporting rationale only | Retain compact refactor pressure without mandating abstraction |
 | Classicist | Prior synthesis inference from Fowler and local design | Defer the term | Observable double mechanics already express the protected behavior |
-| Async condition waiting | Prior synthesis proposal; no current baseline failure or source packet | Defer | Exclude from B0 and C1 |
+| Async condition waiting | Prior synthesis proposal; no observed canonical failure or source packet | Defer | Remains absent from canonical runtime |
 | Evidence before claims and completion criterion | `synthesis`; upstream corroborated | Required local contract | Existing Return and completion remain |
 | Context pointer and progressive disclosure | Matt direct for authoring semantics | Required local information hierarchy | Existing three pointers remain |
 | Source books and articles | Thin links and prior synthesis interpretation | Supporting rationale only | Keep here, never load at runtime |
@@ -201,23 +199,22 @@ improve this skill.
 | Compact proof packet | Missing | Protect | Evidence before claims; synthesis | Required local contract | TDD | Existing six fields | B0 `SKILL.md` | Complete and incomplete Return cases | Admit to B0 |
 | Typed outcome schemas | Missing | Remove from proposal | Prior local synthesis only | None | None | Existing compact packet | Non-runtime rationale only | Not applicable | Reject |
 | Transition and operation tables | Missing | Remove from proposal | Prior local synthesis only | None | None | Five-operation spine and local gates | Non-runtime rationale only | Not applicable | Reject |
-| Async waiting mechanics | Missing from Matt core; present locally | Defer | Prior local synthesis only | None; no observed baseline failure | `tests.md` if later admitted | No runtime expression now | Deferred | A failing B0 control before any candidate arm | Defer and remove from B0 |
+| Async waiting mechanics | Missing from Matt core; present pre-prune | Defer | Prior local synthesis only | None; no observed canonical failure | `tests.md` only if later admitted | No runtime expression now | Deferred | Observed canonical failure plus fresh claim-matched proof | Defer; absent canonically |
 | Persistent ledger, helper, or schema | Missing | Reject | No supporting local evidence | None | None | Plain Markdown Return | None | Not applicable | Reject |
 
-## Exact B0 Identity
+## Exact Canonical Pruning Identity
 
-B0 is not a conceptual rewrite. It is the canonical TDD package at fixed point
-`781f6b654feadf08bdfcd79ce33493a19025cf5e`, transformed by exactly one deletion:
+The accepted runtime is not a conceptual rewrite. It is the pre-prune TDD
+package transformed by exactly one deletion:
 
 > Remove from `skills/custom/tdd/tests.md` the complete section beginning with
 > `## Async Waiting` and ending immediately before `## Red Flags`, including
 > its two explanatory paragraphs and both Python examples. Make no other byte
 > change in the five-file package.
 
-The resulting Prompt 3 package must contain exactly these paths and target
-hashes:
+The canonical package contains exactly these paths and hashes:
 
-| Relative path | B0 SHA-256 | Identity rule |
+| Relative path | Canonical SHA-256 | Identity rule |
 | --- | --- | --- |
 | `SKILL.md` | `3c40b46601971434c5a0ab437e3172b02ad59880c06d3c50e6058f74251c3806` | Preserve current bytes |
 | `tests.md` | `b3738122d3b3b72a66d9e40bd22ec252549ef7077b4d9914cb68f5b8dea67465` | Exact deletion above |
@@ -225,18 +222,17 @@ hashes:
 | `refactoring.md` | `4d1ae71d594a02cdd09f0cef42224969d5deab39091149ab057edae5838097e4` | Preserve current bytes |
 | `agents/openai.yaml` | `d9ef3372e04c488b227009cd14ef0ed84fa4335056d48219bc6cbf8a80a970bd` | Preserve current bytes |
 
-The current canonical package tree hash is
+The frozen pre-prune package tree hash is
 `2c54693e3c51ed5785430943786bfdd578a6fc4e99f0746de2f027ee16f286ae`.
-Applying only the specified deletion yields the exact B0 and C1 tree hash
+Applying only the specified deletion yields the canonical B0/C1 tree hash
 `35bbe08d4f3ce1d137ae12bf3fd1e2a8bc1b75dd3f234d2266c020467e1e3e7c`
 under the repository's format-1 tree-hash algorithm.
 
-This exact identity makes B0 runnable, locally compatible, and implementable
-without authoring judgment. Prompt 3 must recompute these identities from the
-materialized bytes; this synthesis does not manufacture that future artifact
-or claim it already exists.
+The canonical structural proof recomputes this identity from materialized
+bytes and requires every non-`tests.md` file to remain byte-identical to the
+pre-prune control.
 
-## C1 Delta Set
+## Pruning-Only Decision
 
 C1 has no additions:
 
@@ -244,11 +240,10 @@ C1 has no additions:
 C1 = exact B0
 ```
 
-There is therefore no mechanism-contribution claim and no C1-only entry
-condition, failure Return, owner, destination, or proof arm. The campaign is a
-behavior-preserving baseline-pruning campaign. Prompt 4 must compare the exact
-current behavior-complete package with B0/C1 for preservation and pruning
-equivalence; it must not invent a candidate benefit claim.
+There is no mechanism-contribution claim and no C1-only entry condition,
+failure Return, owner, destination, or proof arm. The accepted claim is only
+that removing Async Waiting did not meaningfully regress the protected TDD
+behavior on the fixed evaluation cases.
 
 ## Protected Behavior Set
 
@@ -274,20 +269,19 @@ The protected set is:
 Exact current sentences and the Async Waiting section are not protected merely
 because they exist.
 
-## Placement And Ownership
+## Current Placement And Ownership
 
-| Concern | Owner and destination | Prompt 3 action |
-| --- | --- | --- |
-| Invocation, common path, gates, Return, completion | `skills/experimental/tdd/SKILL.md` | Copy exact canonical bytes |
-| Test-shape, seam, and oracle examples | `skills/experimental/tdd/tests.md` | Copy canonical bytes minus the exact Async Waiting section |
-| Double order and fidelity | `skills/experimental/tdd/mocking.md` | Copy exact canonical bytes |
-| GREEN refactor and scoped recommendations | `skills/experimental/tdd/refactoring.md` | Copy exact canonical bytes |
-| Invocation policy | `skills/experimental/tdd/agents/openai.yaml` | Copy exact canonical bytes |
-| Candidate identity | `skills/experimental/manifest.json` | Add one TDD entry using B0/C1 tree hash `35bbe08d4f3ce1d137ae12bf3fd1e2a8bc1b75dd3f234d2266c020467e1e3e7c` and current canonical tree hash `2c54693e3c51ed5785430943786bfdd578a6fc4e99f0746de2f027ee16f286ae` |
-| Pre-prune control | `docs/validation/evals/tdd-pruning-pre-prune/` | Freeze the complete current canonical package once |
-| Candidate record | `docs/validation/transcripts/2026-07-22-tdd-candidate-evidence.md` | Record inventories, hashes, exact deletion, ledgers, protected set, relationships, proof matrix, and gaps |
-| Accepted relationship delta | This synthesis and candidate record only | Record no relationship change; do not edit the current relationship index before promotion |
-| Structural candidate proof | `tests/test_experimental_skill_contracts.py` only if required by existing experimental package contracts | Protect exact inventory and metadata, not behavioral improvement |
+| Concern | Owner and destination |
+| --- | --- |
+| Invocation, common path, gates, Return, completion | `skills/custom/tdd/SKILL.md` |
+| Test shape, seams, and independent-oracle examples | `skills/custom/tdd/tests.md` |
+| Double order and fidelity | `skills/custom/tdd/mocking.md` |
+| GREEN refactor and scoped recommendations | `skills/custom/tdd/refactoring.md` |
+| Invocation policy | `skills/custom/tdd/agents/openai.yaml` |
+| Pre-prune control and raw equivalence evidence | `docs/validation/evals/tdd-pruning-pre-prune/` and `docs/validation/evals/tdd-pruning-results/` |
+| Campaign, promotion, and installation record | `docs/validation/transcripts/2026-07-22-tdd-candidate-evidence.md` |
+| Accepted relationship index | `docs/synthesis/skill-context-relationships.md`; unchanged by this decision |
+| Canonical single-cut proof | `tests/test_experimental_skill_contracts.py::test_canonical_tdd_is_the_exact_single_cut_baseline` |
 
 Foreign ownership remains unchanged:
 
@@ -311,33 +305,25 @@ Foreign ownership remains unchanged:
 | Disclosed | Test taste and oracle examples; double fidelity; GREEN refactor guidance and scoped recommendations |
 | Caller-owned | Scope, acceptance, review, staging, commit, trackers, external mutation, publishing, deployment, closeout |
 | Owned elsewhere | Engineering/domain procedure; Diagnosis, Prototype, Simplify Code, Codebase Design, Improve Codebase procedures |
-| Non-runtime | Source rationale, baseline comparison, ledgers, evaluation design, candidate lifecycle, installation, delivery |
+| Non-runtime | Source rationale, baseline comparison, decision ledgers, and validation-owned proof records |
 | Rejected | Typed statuses, transition tables, helper/schema/ledger, universal deletion and no-exceptions rhetoric |
 | Deferred | Async condition-waiting mechanics, Classicist term contribution, specialist test taxonomies |
 
 ## Claim-To-Proof Matrix
 
-| Claim lane | Exact claim | Prompt 3 evidence | Prompt 4 evidence | Limit |
-| --- | --- | --- | --- | --- |
-| Semantic fidelity | B0 accurately expresses observed RED, tracer bullet, independent oracle, and GREEN-only refactor without conflating task size or review | Read-back against this synthesis and cited source pressure | Exact wording/source comparison only when meaning changed | Does not prove efficacy |
-| Mechanism contribution | None; C1 equals B0 | Record `not applicable` | Do not run B0/C1 contribution arms | No improvement claim exists |
-| Current-contract preservation | Every protected behavior remains discoverable in B0 | Per-file hashes, inventory, structural tests, relationship trace | Representative positive, failure, and wrong-condition cases | Structural checks alone are insufficient |
-| Pruning equivalence | Removing Async Waiting does not regress admitted TDD behavior | Freeze current package and exact B0/C1 | Compare pre-prune control with B0/C1 under the same tasks and rubric | Supports only tested tasks and runtime |
-| Invocation and context loading | Metadata and three remaining pointers retain correct routing and conditional loading | Metadata parity and pointer resolution | Should/should-not invoke plus branch retrieval/application cases | Installed reach remains Prompt 5 work |
-| Deterministic package identity | B0/C1 bytes equal the exact five-file manifest above | Recomputed file and tree hashes; inventory check | Recheck after any repair | Any byte change invalidates affected evidence |
-
-Prompt 4 should minimally cover the existing TDD tracer-bullet cases: immediate
-pass, setup error, unrelated baseline failure, correct-assertion pressure,
-nearby regression, behavior-changing refactor, distinct boundary behavior,
-circular oracle, owned-module mock, low-fidelity boundary fake, out-of-slice
-cleanup, incomplete Return, and reference-loading pressure. It must keep expected
-candidate behavior out of neutral contexts and record variance and residual
-limits under the current `BEHAVIOR-EVALS.md` contract.
+| Claim lane | Exact claim | Current evidence | Limit |
+| --- | --- | --- | --- |
+| Semantic fidelity | Canonical TDD retains observed RED, tracer bullet, independent oracle, GREEN-only refactor, and compact Return | Exact preservation of four files and the non-Async-Waiting bytes of `tests.md`; protected-behavior trace | Does not prove behavior outside the recorded contract |
+| Mechanism contribution | None; accepted C1 equals B0 | Exact shared hash and no C1-only mechanism | No improvement claim exists |
+| Current-contract preservation | Every protected behavior remains discoverable after the cut | Structural identity proof, relationship trace, and fixed behavioral cases | Structural checks alone are insufficient |
+| Pruning equivalence | Removing Async Waiting caused no meaningful regression on the fixed cases | Control 45/45 and accepted package 45/45; async cases 10/10 per arm; zero critical failures | Supports only the recorded tasks, runtime, rubric, and sample size |
+| Invocation and context loading | Metadata and the three remaining pointers retain their routing and conditional loading | Exact metadata and pointer-byte preservation plus fixed branch cases | No claim beyond tested invocation and branch pressure |
+| Deterministic package identity | Canonical bytes equal the exact five-file manifest above | Tree hash, per-file hashes, and canonical single-cut test | Any byte change invalidates affected evidence |
 
 ## Rejected And Deferred Design
 
-Rejected from B0, C1, and future extraction unless a new Prompt 1 admission
-reopens them:
+Rejected from canonical runtime unless a new evidence-backed admission reopens
+them:
 
 - typed `proved-tdd`, `after-the-fact`, `support-gap`, `handoff`, and
   `decision-needed` schemas;
@@ -352,7 +338,7 @@ reopens them:
 - automatic tracker mutation, formal review, Git, or release procedure; and
 - Superpowers' broad delete-and-restart and no-exceptions language.
 
-Deferred pending an observed B0 failure and a new admission decision:
+Deferred pending an observed canonical failure and a new admission decision:
 
 - async condition-waiting and elapsed-time mechanics;
 - explicit property, metamorphic, mutation, contract, performance,
@@ -361,84 +347,46 @@ Deferred pending an observed B0 failure and a new admission decision:
 - a machine-readable proof packet; and
 - any additional split of test-taste reference material.
 
-## Candidate Lifecycle And Residual Gaps
+## Completed Decision And Proof
 
-Prompt 3 materialized one experimental package serving as both B0 and C1 at
-`skills/experimental/tdd/`, froze the behavior-complete current canonical
-package once at `docs/validation/evals/tdd-pruning-pre-prune/`, recorded both
-tree hashes in `skills/experimental/manifest.json`, and created
-`docs/validation/transcripts/2026-07-22-tdd-candidate-evidence.md`. No separate
-C1 copy exists. Canonical runtime and the accepted relationship index remain
-unchanged.
+The completed decision is pruning-only:
 
-Residual gaps are intentionally assigned to later prompts:
-
-1. Prompt 4 must prove current-contract preservation and pruning equivalence,
-   with explicit asynchronous scenarios capable of exposing any behavior lost
-   by removing the deferred section.
-   It has no mechanism-contribution lane because C1 equals B0.
-2. Prompt 5 alone may promote, remove the experimental candidate, update
-   current relationships if necessary, and install after acceptance.
-3. No installed-mirror identity, behavioral-equivalence, or live-remote
-   freshness claim is made here.
-
-## Prompt 4 Readiness
-
-Prompt 3 established:
-
-- the immutable pre-prune tree hash
+- pre-prune control hash:
   `2c54693e3c51ed5785430943786bfdd578a6fc4e99f0746de2f027ee16f286ae`;
-- the shared B0/C1 tree hash
+- canonical and installed hash:
   `35bbe08d4f3ce1d137ae12bf3fd1e2a8bc1b75dd3f234d2266c020467e1e3e7c`;
-- exact five-file inventories and per-file identities;
-- one delimited removal and no relationship delta; and
-- candidate-owned structural evidence without behavioral evaluation.
+- canonical delta: delete only the complete Async Waiting section from
+  `tests.md`;
+- every other package byte and every relationship: unchanged; and
+- behavioral claim: pruning equivalence on the fixed evaluation cases, not an
+  improvement or universal async-testing claim.
 
-Decision: `ready-for-prompt-4`.
+The control and accepted package each passed 45/45 protected case judgments
+and 10/10 async judgments, with zero critical failures. One accepted-package
+sample contained a contradictory but noncritical wording advisory; it did not
+change the protected decision, was not applied to runtime, and remains part of
+the recorded evidence limit.
 
-## Prompt 4 Pruning-Equivalence Result
+Proof is owned by validation:
 
-Prompt 4 compared the frozen behavior-complete pre-prune control with final C1
-on one neutral nine-case task using five fresh contexts per arm. The fixed
-cases directly pressured observable bounded async completion, trigger-relative
-fake-clock timing, invalid RED, uncertain-bug routing, degraded baselines,
-assertion strength, owned-module and boundary-double choices, GREEN-only scope,
-and complete Return evidence.
+- [pruning-equivalence decision](../../validation/evals/tdd-pruning-results/decision.md);
+- [fixed protocol](../../validation/evals/tdd-pruning-results/protocol.md),
+  [rubric](../../validation/evals/tdd-pruning-results/rubric.md), and adjacent
+  raw responses;
+- [promotion, installation, and parity record](../../validation/transcripts/2026-07-22-tdd-candidate-evidence.md); and
+- frozen pre-prune package at
+  `docs/validation/evals/tdd-pruning-pre-prune/`.
 
-Both arms passed all 45 protected case judgments and all 10 async judgments,
-with zero critical failures. One C1 response contained a noncritical sentence
-that contradicted its own correct refusal to claim completion; it did not alter
-the protected decision and remained within the frozen one-sample noncritical
-variance bound. The full protocol, rubric, decision, and raw responses are in
-`docs/validation/evals/tdd-pruning-results/`.
+## Residual Limits
 
-This is a pruning-equivalence result. Control failure was not required, equal
-behavior supports removing the complete Async Waiting section, and no
-mechanism-contribution claim is made.
-
-Decision: `accepted`; ready for Prompt 5 promotion review. Canonical bytes,
-relationships, installed mirrors, and Git delivery remain unchanged.
-
-## Prompt 5 Promotion Result
-
-Complete. Prompt 5 promoted accepted C1 hash
-`35bbe08d4f3ce1d137ae12bf3fd1e2a8bc1b75dd3f234d2266c020467e1e3e7c`
-byte-for-byte into `skills/custom/tdd/`. The only canonical behavior-text delta
-is deletion of the complete Async Waiting section from `tests.md`; all other
-package bytes and every relationship remain unchanged. The Prompt 4 wording
-advisory was deliberately not applied, so its accepted pruning-equivalence
-evidence was reused without another behavioral wave.
-
-Only TDD's experimental directory and manifest entry were retired. The frozen
-pre-prune package and Prompt 4 artifacts remain durable validation evidence,
-while every unrelated experimental candidate remains active. The structural
-proof now protects the canonical single-cut identity.
-
-The managed installation dry-run proposed exactly TDD as changed, with 24
-managed skills unchanged and the global bootstrap skipped. Synchronization
-completed through the supported installer; canonical and installed TDD share
-the accepted tree hash, installed-root validation passed, and the clean
-post-install dry-run reports all 25 managed skills unchanged.
-
-Deploy Prompt 5 made no relationship, advisory, global bootstrap, staging,
-commit, or push change. Git delivery remains separately authorized.
+- Non-regression is bounded to the recorded tasks, runtime, rubric, and five
+  fresh samples per arm; it is not universal equivalence.
+- Removing Async Waiting does not establish that its mechanics are wrong. It
+  establishes that they lacked an admission basis and caused no meaningful
+  regression under the fixed pressure cases.
+- The inspected upstream checkouts were local fixed points and were not
+  network-refreshed for this campaign.
+- Any canonical byte or affected behavioral-claim change invalidates the
+  corresponding hash and behavioral evidence.
+- Reintroducing async-specific mechanics requires an observed canonical
+  failure, a new admission decision, and fresh claim-matched proof.
