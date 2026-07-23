@@ -39,12 +39,6 @@
       "candidate_sha256": "7d36b43411bfc6146d9390465b845ff251893d309cdae09690db921b56cc8376",
       "active_baseline_sha256": "163d76f3468f2301c6cddeead5cca34b08afaf9ae370f457157707c12e010158"
     },
-    "to-tickets": {
-      "origin": "skills/custom/to-tickets at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f before the installed-baseline restore",
-      "reason": "Preserve the divergent candidate while the installed managed version remains active.",
-      "candidate_sha256": "73162c29e0dee4620be7f70b403a8ba8ddd682ef7c07ecf3b94e6d02baafe5a1",
-      "active_baseline_sha256": "e75b45e4086e817800fc4678efbb0c4dfa0d442d1382436102daaec2f7cdf9a4"
-    },
     "wayfinder": {
       "origin": "skills/custom/wayfinder at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f before the installed-baseline restore",
       "reason": "Preserve the divergent candidate while the installed managed version remains active.",
