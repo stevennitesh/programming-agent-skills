@@ -833,15 +833,14 @@ def test_implement_selects_one_risk_scaled_review_route() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
 
     review_section = implement.split("## Review", 1)[1].split("## Lock", 1)[0]
-    assert re.findall(r"(?m)^- `\$(review|convergent-pr-review)`", review_section) == [
+    assert "Invoke exactly one campaign route" in review_section
+    assert re.findall(r"`\$(review|convergent-pr-review)`", review_section)[:2] == [
         "review",
         "convergent-pr-review",
     ]
-    repair_section = implement.split("## Repair", 1)[1].split("## Lock", 1)[0]
-    assert "FINDING-CONTRACT.md" in repair_section
-    assert {"automatic-in-scope", "decision-required"} <= set(
-        re.findall(r"`([^`]+)`", repair_section)
-    )
+    assert "FINDING-CONTRACT.md" in review_section
+    assert "`automatic-in-scope`" in review_section
+    assert "without a partial fix" in review_section
 
 
 def test_improve_codebase_separates_survey_from_selected_candidate() -> None:
@@ -1266,7 +1265,11 @@ def test_triage_branches_share_the_authoritative_brief_schema() -> None:
 def test_mutating_workflows_require_readback() -> None:
     for name in ("implement", "parallel-implement", "to-spec", "to-tickets", "triage", "wayfinder"):
         text = (CUSTOM / name / "SKILL.md").read_text(encoding="utf-8")
-        assert "Mutation read-back" in text, name
+        if name == "implement":
+            assert "read back the mutation" in text
+            assert "Partial or failed read-back" in text
+        else:
+            assert "Mutation read-back" in text, name
 
 
 def test_to_tickets_preserves_approval_coverage_and_frontier_contract() -> None:
@@ -1406,7 +1409,7 @@ def test_worker_modes_have_distinct_completion_artifacts() -> None:
 
     assert "**staged worker**" in contract
     assert "**lane worker**" in contract
-    assert "**Staged worker:**" in implement
+    assert "**Staged worker:" in implement
     assert "**Lane worker:**" in parallel
 
 
@@ -1709,21 +1712,19 @@ def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -
     assert worker_route.group(1).endswith("Return")
     assert "Review" not in worker_route.group(1)
     assert "Lock" not in worker_route.group(1)
-    assert re.findall(r"(?m)^- \*\*([^*]+):\*\*", implement)[:2] == [
-        "Owner",
-        "Staged worker",
-    ]
+    assert "The owner holds tracker claim and release" in implement
+    assert "An explicitly assigned staged worker owns only its" in implement
 
 
 def test_local_tracker_closeout_enters_the_lock_snapshot() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
 
-    review_tree = implement.index("Capture the immutable **review tree**")
-    closeout = implement.index("For repo-local trackers, record it")
-    lock_tree = implement.index("Capture the **lock tree**")
+    review_tree = implement.index("captures one immutable review tree")
+    closeout = implement.index("For a repo-local tracker, write the")
+    lock_tree = implement.index("Capture the lock tree")
 
     assert review_tree < closeout < lock_tree
-    assert "Mutation read-back" in implement
+    assert "read back the mutation" in implement
     assert "git diff <review-tree> <lock-tree>" in implement
 
 

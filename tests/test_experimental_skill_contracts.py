@@ -500,3 +500,64 @@ assert events.contains("SEARCH_REQUESTED")
 
     assert pre_prune_tests.count(async_waiting) == 1
     assert canonical_tests == pre_prune_tests.replace(async_waiting, "", 1)
+
+
+def test_promoted_implement_matches_accepted_pruning_contract() -> None:
+    canonical_dir = CUSTOM / "implement"
+    pre_prune_dir = ROOT / "docs/validation/evals/implement-pruning-pre-prune"
+    inventory = {"SKILL.md", "agents/openai.yaml"}
+
+    for package in (canonical_dir, pre_prune_dir):
+        assert {
+            path.relative_to(package).as_posix()
+            for path in package.rglob("*")
+            if path.is_file()
+        } == inventory
+
+    assert tree_hash(canonical_dir) == (
+        "b918d2762505a69d1ba577533a2b9bd040133188b0e0c6dee4cb7e78351b4f7c"
+    )
+    assert tree_hash(pre_prune_dir) == (
+        "ef2a52520462266ad0af171869d516c709ba57e737dcf9658e0a3cbb643af8bc"
+    )
+    assert (canonical_dir / "agents/openai.yaml").read_bytes() == (
+        pre_prune_dir / "agents/openai.yaml"
+    ).read_bytes()
+
+    pre_prune = (pre_prune_dir / "SKILL.md").read_text(encoding="utf-8")
+    promoted = (canonical_dir / "SKILL.md").read_text(encoding="utf-8")
+    normalized = " ".join(promoted.split())
+    assert len(promoted.encode("utf-8")) < len(pre_prune.encode("utf-8"))
+    assert len(promoted.split()) < len(pre_prune.split())
+
+    for contract in (
+        "Deliver exactly one selected ready work item.",
+        "a named target is binding",
+        "does not determine one item",
+        "without splitting, relabeling, promoting, reprioritizing",
+        "a staged worker verifies it",
+        "Hold one bounded slice and proof story inside it",
+        "invoke `$diagnosing-bugs` in fix mode",
+        "Only owner acceptance completes the handoff",
+        "Invoke exactly one campaign route",
+        "`automatic-in-scope`",
+        "without a partial fix",
+        "One Repair generation batches every eligible ID",
+        "Only verified closeout metadata may differ",
+        "commit once",
+        "`HEAD^{tree}` to equal the lock tree",
+        "Partial or failed read-back",
+        "Return exactly one:",
+        "A staged handoff is not implementation completion",
+    ):
+        assert contract in normalized
+
+    assert promoted.count("unsliced or shaping-unready") == 1
+    for rejected in (
+        "## Normative State And Transition Contract",
+        "## Operation And Completion Contracts",
+        "## Artifact Authority Contract",
+        "## Proof levels",
+        "facet-consolidation-register",
+    ):
+        assert rejected not in promoted

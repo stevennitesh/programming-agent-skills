@@ -5,92 +5,129 @@ description: Implement one selected ready work item automatically through bounde
 
 # Implement
 
-Implement exactly one selected ready work item.
+Deliver exactly one selected ready work item.
 
-Owner mode is the default. Staged-worker mode requires an explicit assignment and accepting owner.
-
-**Owner: Select -> Charter -> Patch -> Review -> Repair -> Lock -> Close.**
+**Owner: Select -> Charter -> Patch -> Review -> Repair -> Lock -> Close -> Return.**
 
 **Staged worker: Select -> Patch -> Return.**
 
-- **Owner:** owns tracker claim and release, review, commit, Lock, and closeout.
-- **Staged worker:** owns only its assigned patch, focused proof, staging, and handoff; it never mutates tracker state.
+The owner holds tracker claim and release, accepted scope, review, Repair,
+commit, Lock, and closeout. An explicitly assigned staged worker owns only its
+patch, focused proof, staging, and handoff to a named accepting owner; it never
+mutates tracker state.
 
-Owner-mode invocation authorizes in-scope staging, Repair within the recorded Budget, one commit, and repo-policy closeout. Push, deployment, PR creation, destructive Git, and unrelated external mutations require separate authority.
+Owner invocation authorizes selected-work staging, budgeted Repair, one commit,
+and repo-policy closeout. Push, deployment, PR creation, destructive Git, and
+unrelated external mutation require separate authority.
 
 ## Select
 
-Read `docs/agents/engineering-contract.md`. If it or another required setup surface is absent or incompatible with this skill, recommend `$repo-bootstrap` and stop. Read tracker docs only for tracker-backed work.
+Read `docs/agents/engineering-contract.md` and, only for tracker-backed work,
+tracker guidance. Missing or incompatible setup Returns a `$repo-bootstrap`
+precondition without mutation.
 
-A parent spec, plan, queue, batch, list, or bare source path is context, not implementation scope. When it identifies several ready items and repository policy does not select one, ask for the target. Return only unsliced or shaping-unready work to `$to-tickets`.
+Select one ready item:
 
-- An explicit target is binding. Report a live dependency blocker or target-identity ambiguity instead of substituting another item.
-- Without a target, follow repo readiness, dependency, and ordering policy. Ask when it does not identify one next item.
-- Selection reads state; it does not split, relabel, promote, reprioritize, or otherwise repair it. Return unsliced or shaping-unready work to `$to-tickets` with the exact readiness defects.
+- a named target is binding; Return its dependency or identity blocker without
+  substitution;
+- a parent spec, plan, queue, batch, list, or bare path is context, not scope;
+  Return unsliced or shaping-unready work to `$to-tickets` with its defects;
+- otherwise follow repository readiness, dependency, and ordering policy; ask
+  when it does not determine one item; and
+- read selection state without splitting, relabeling, promoting,
+  reprioritizing, or making work ready.
 
-Ready means expected behavior and acceptance criteria are settled, the item is unblocked, and an observable proof seam exists. Tracker-backed items must also satisfy tracker eligibility.
+Ready means settled behavior and acceptance, satisfied dependencies, an
+observable proof seam, and applicable tracker eligibility.
 
-For tracker-backed work, the owner claims the item before editing or dispatch. A staged worker verifies that claim and does not mutate tracker state. Capture the fixed point, worktree, and index; preserve unrelated work and isolate the selected diff.
+Before editing or dispatch, the owner acquires and reads back any required
+claim; a staged worker verifies it. Capture the fixed point, worktree, and
+index, preserve unrelated work, and isolate the selected diff.
 
-## Charter
+## Charter And Patch
 
-Record one implementation **Charter** from the selected item and Source Trace: outcome, acceptance criteria, supported workflows and environments, required validation, commitment boundary, non-goals, fixed point, review route, and Repair Budget. Default the Budget to two generations unless the caller explicitly sets a smaller bound.
+Record one immutable **Charter**: selected item and source, outcome, acceptance,
+supported workflows and environments, required proof, commitment boundary,
+non-goals, fixed point, review route, and Repair Budget. Default to two
+generations unless the caller sets a smaller bound.
 
-The Charter controls every review and Repair generation. Technique may change inside it; a product, acceptance, public or data contract, security or privacy posture, dependency-authority, supported-environment, or scope change requires a caller decision before mutation.
+Hold one bounded slice and proof story inside it: behavior or support purpose,
+acceptance link, highest meaningful proof seam, non-goals, and required coupled
+surfaces. A change to product intent, acceptance, public or data contracts,
+security or privacy posture, dependency authority, supported environment, or
+scope Returns for caller judgment before mutation.
 
-## Patch
+Invoke `$tdd` for settled red-testable behavior. For a bug, use `$tdd` only
+when expected behavior, exact symptom, cause, and a trusted red-capable
+reproduction are known; otherwise invoke `$diagnosing-bugs` in fix mode and
+resume from its causal packet.
 
-Keep changes inside the selected item.
+When RED is unsuitable, record why and use the strongest focused semantic
+evidence through the highest meaningful supported seam. Tie every changed
+artifact to acceptance or the proof story; Return optional adjacent work.
 
-Invoke `$tdd` for red-testable new behavior. For bugs, use `$tdd` only when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known. When a bug's exact symptom, cause, or trusted red-capable reproduction is uncertain, invoke `$diagnosing-bugs` in fix mode and resume here after regression proof.
+A staged worker stages only its assignment, runs focused proof and
+`git diff --cached --check`, then Returns staged paths, proof, skips, risk,
+unrelated state, and the exact owner action. Only owner acceptance completes
+the handoff.
 
-When RED is unsuitable, name the proof seam and use the strongest focused evidence.
+## Review And Repair
 
-A staged worker stages only its assigned patch, runs focused proof plus `git diff --cached --check`, and returns status, staged diff summary, validation, skipped checks, residual risk, and unrelated dirty files. Only owner acceptance completes the handoff.
+The owner runs canonical acceptance, stages only the selected-work diff, runs
+`git diff --cached --check`, and captures one immutable review tree.
 
-## Review
+Invoke exactly one campaign route: `$review` for an ordinary diff or
+`$convergent-pr-review` for a local PR or matching high-risk diff. Pass
+`Spec required: yes`, `Review mode: initial`, the Charter, item, Source Trace,
+acceptance, fixed point, review tree and diff, validation, skips, and risk.
 
-The owner runs canonical acceptance and risk-scaled proof on the assembled diff.
+Accept only a complete current review with no admitted blocker.
+`pass with residual risk` also requires every residual to be nonblocking under
+the Charter and no separate repository-policy acceptance.
 
-Stage the complete selected-work diff, exclude unrelated hunks, and run `git diff --cached --check`. Capture the immutable **review tree** with `git write-tree`.
+Before editing, read `$review`'s disclosed `FINDING-CONTRACT.md` and validate
+the complete report. Repair only when every blocker is admitted,
+`automatic-in-scope`, Charter-preserving, proof-bounded, and within Budget;
+otherwise Return the whole decision packet without a partial fix.
 
-Invoke exactly one route for the campaign:
+One Repair generation batches every eligible ID, proves the patch, captures
+one successor tree, and invokes the same route in `Review mode: remediation`
+with the original Charter, generation, prior tree, IDs, delta, and remaining
+acceptance. Stop on acceptable review, caller decision, proof or isolation
+blocker, or exhausted Budget.
 
-- `$review` for an ordinary diff;
-- `$convergent-pr-review` for a local PR or matching high-risk diff.
+## Lock And Close
 
-Pass `Spec required: yes`, `Review mode: initial`, the Charter, selected work item, Source Trace, acceptance criteria, fixed point, review tree, and its diff.
+After acceptable review, prepare closeout. For a repo-local tracker, write the
+final note, mark `implemented`, release the claim, read back the mutation, and
+stage the tracker file before Lock.
 
-Review is acceptable only when complete and no admitted blocker remains. `pass with residual risk` is acceptable automatically only when every residual is nonblocking under the Charter and repo policy requires no separate acceptance. An incomplete review, unresolved Spec, missing required validation, or admitted blocker keeps Lock closed.
+Capture the lock tree and inspect
+`git diff <review-tree> <lock-tree>`. Only verified closeout metadata may
+differ; any implementation, behavior, scope, or contract delta Returns to
+Review. Require index-tree equality, run `git diff --cached --check`, commit
+once, and require `HEAD^{tree}` to equal the lock tree.
 
-The recorded Charter and remaining Budget control Repair.
+For a connector-backed tracker, add the commit SHA, apply repo-policy closeout
+after Lock, and refetch every intended field. Partial or failed read-back
+Returns blocked with applied, failed, and safest recovery actions.
 
-## Repair
+## Return
 
-Read [FINDING-CONTRACT.md](../review/FINDING-CONTRACT.md) and independently validate the complete report before editing.
+Return exactly one:
 
-Continue automatically only when every blocker is admitted, marked `automatic-in-scope`, preserves the Charter, has bounded proof, and the Budget remains. If any blocker is ambiguous or `decision-required`, return the whole decision packet without partially repairing it. An `incomplete` review is not repair authority.
+| Result | Required Evidence |
+| --- | --- |
+| Setup precondition | Missing surface, state, `$repo-bootstrap`, no mutation |
+| Selection gate | Checked target or candidates, failed gate, preserved tracker, exact question or `$to-tickets` repair |
+| Assignment blocker | Missing worker authority and owner action |
+| Staged handoff | Staged diff, proof, skips, risk, unrelated state, owner action |
+| Decision required | Immutable target, complete choices, consequences, resume point |
+| Blocked | Item, preserved work, blocker owner, release condition, resume operation |
+| Complete | Item, commit and tree identity, review, proof, risk, tracker read-back, next boundary |
 
-Batch every eligible blocker into one Repair generation. Patch only those finding IDs, run their required proof plus regression proof, restage, and capture one successor review tree. Invoke the same route with `Review mode: remediation`, the original Charter, generation number, prior snapshot, carried finding IDs, repair delta, and remaining original acceptance.
-
-Stop when the review is acceptable, a decision is required, or the recorded Budget is exhausted.
-
-After acceptable review, prepare the closeout packet: summary, review result, validation, skipped checks, and residual risk. For repo-local trackers, record it, move the item to `implemented`, release the claim, apply Mutation read-back, and stage the tracker file.
-
-## Lock
-
-Capture the **lock tree** with `git write-tree`.
-
-Inspect `git diff <review-tree> <lock-tree>`. Only verified closeout metadata may differ from the reviewed tree. Any implementation, behavior, scope, or contract delta returns to Review.
-
-Require the index tree to equal the approved lock tree, run `git diff --cached --check`, and commit once to the current branch. Then require `HEAD^{tree}` to equal the approved lock tree.
-
-A mismatch blocks external closeout. Add the commit SHA to the closeout packet.
-
-## Close
-
-After Lock, apply connector-backed tracker closeout through repo policy and Mutation read-back. Failed read-back is blocked, not done.
-
-Done means the selected item is proven, the current snapshot has no admitted blocker, the approved tree is committed, and, when tracker-backed, the item is moved to `implemented`.
-
-Return the mode, selected item, final status, commit SHA or staged-handoff summary, review result, validation, skipped checks, residual risk, tracker read-back or `not applicable`, current Git state, and the exact next action for any blocked outcome.
+Complete only when the selected item is proved, the current review has no
+admitted blocker, the approved tree is committed exactly once, and applicable
+closeout reads back. A staged handoff is not implementation completion. Stop
+before push, deployment, PR creation, parent closure, or another item without
+separate authority.
