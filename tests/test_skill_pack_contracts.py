@@ -1317,10 +1317,14 @@ def test_to_tickets_preserves_approval_coverage_and_frontier_contract() -> None:
     ]
 
     slice_contract = process_section("Slice")
-    for concept in ("vertical behavior slice", "tracer bullet", "support slices"):
-        assert concept in slice_contract
-    assert re.search(r"tracer bullet.*(?:not synonyms|distinct)", slice_contract, re.S)
-    assert re.search(r"support slices.*delivery slice.*(?:proof|de-risks)", slice_contract, re.S)
+    assert "vertical behavior slice" in slice_contract
+    for rejected_mechanism in (
+        "tracer bullet",
+        "support slices",
+        "blast radius",
+        "progressive exposure",
+    ):
+        assert rejected_mechanism not in slice_contract
 
     assert "blocking edge" in slice_contract
     assert re.search(r"dependent consumes.*predecessor.*outcome", slice_contract, re.S)
@@ -1343,19 +1347,6 @@ def test_to_tickets_preserves_approval_coverage_and_frontier_contract() -> None:
     assert "expand-migrate-contract" in slice_contract
     assert "backward-compatible" in slice_contract
     assert re.search(r"contract only after old usage ends", slice_contract)
-    assert "blast radius" in slice_contract
-    for exposure_control in ("progressive exposure", "health checks", "rollback proof"):
-        assert exposure_control in slice_contract
-    assert re.search(
-        r"blast radius.*separately|separately.*blast radius", slice_contract, re.S
-    )
-    assert re.search(
-        r"(?=.*(?:migration|backfill))(?=.*risk[- ]bearing operation)"
-        r"(?=.*health)(?=.*compatibility)(?=.*rollback)"
-        r"(?=.*before expan.*boundar)",
-        slice_contract,
-        re.S,
-    )
 
     approve_contract = process_section("Approve")
     assert "proposal revision" in approve_contract
@@ -1867,4 +1858,4 @@ def test_router_and_synthesis_keep_active_ownership_unambiguous() -> None:
     assert "target-spine.md" not in synthesis_index
     assert "language-direction.md" not in synthesis_index
     assert "support tickets" not in tickets
-    assert "support slices" in tickets
+    assert "support slices" not in tickets

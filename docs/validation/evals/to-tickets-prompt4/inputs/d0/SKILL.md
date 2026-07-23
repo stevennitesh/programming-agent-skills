@@ -48,9 +48,6 @@ silently override settled intent.
 
 ### 3. Slice
 
-Default to one fresh-session-sized **vertical behavior slice**: one request or
-behavior across the real components or concerns needed for its selected value.
-
 **Local proof policy:** every ticket has observable proof through its claimed
 boundary, and completion can be judged without unrelated sibling completion.
 This independence is a To Tickets completion gate; it does not establish
@@ -70,30 +67,9 @@ when distinct proof, authority, rollback, dependency unlock, permission, state,
 migration, or ownership makes separate completion valuable; do not split by
 layer, filename, team, or available agent slot.
 
-Use a **blocking edge** only when the dependent consumes a required predecessor
-outcome. Tracker order, predicted overlap, and serial tripwires are not
-blockers. Keep the graph acyclic. Ready-for-agent means shaped completely, not
-unblocked: the locally defined **ready frontier** is open, ready-for-agent,
-unclaimed work whose true blockers are satisfied, in tracker order.
-
 For stateful work, include the engineering contract's state-boundary matrix:
 put every applicable branch and any evidenced non-applicable axis in acceptance
 and its proof lane.
-
-When a parent-delivery run is requested or at least two substantial slices may
-be independent, add the execution profile: blockers, semantic owner, expected
-production scope and exclusions, public proof seam and focused proof, size,
-shared seam or scarce resource, and serial tripwire. Parallel eligibility
-requires substantial work plus semantic, production-scope, and proof
-isolation. Disjoint filenames or open slots do not establish it; uncertainty
-defaults to serial. Parallel Implement owns runtime width.
-
-For an incompatible interface, schema, client, or data change that cannot
-switch atomically, use **expand-migrate-contract**: expand the compatible new
-form beside the old; migrate through operable, releasable, backward-compatible
-stages; contract only after old usage ends and compatibility proof passes.
-Migration dependencies do not waive intermediate operability. These are
-technical phases, not automatically vertical product slices.
 
 Apply the **coverage gate**: map every source-visible implementation commitment
 and scope boundary to a ticket, an explicit deferral or exclusion, or a
