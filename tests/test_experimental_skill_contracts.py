@@ -391,66 +391,6 @@ def test_experimental_aggregate_marker_cannot_hide_stale_setup_file() -> None:
     ]
 
 
-def test_experimental_research_preserves_bounded_evidence_leaf_contract() -> None:
-    skill_dir = EXPERIMENTAL / "research"
-    skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
-    policy = (skill_dir / "agents/openai.yaml").read_text(encoding="utf-8")
-    baseline = (CUSTOM / "research" / "SKILL.md").read_text(encoding="utf-8")
-    baseline_policy = (CUSTOM / "research" / "agents/openai.yaml").read_text(
-        encoding="utf-8"
-    )
-    normalized_skill = " ".join(skill.split())
-
-    assert skill.splitlines()[2] == baseline.splitlines()[2]
-    assert policy == baseline_policy
-
-    for contract in (
-        "Authorized note: Admit -> Lock -> Trace -> Scout -> Classify -> Gate -> Write -> Verify -> Return",
-        "Inline or blocker: Admit -> Lock -> Trace -> Scout -> Classify -> Gate -> Verify -> Return",
-        "one bounded question can be answered from",
-        "Status: not-admitted",
-        "every failed or missing predicate",
-        "settled information",
-        "actual need shape",
-        "available evidence",
-        "match is deterministic",
-        "classification without",
-        "choosing or invoking its next route",
-        'fork_turns="none"',
-        "do not call the result independent",
-        "render only the applicable semantic fields",
-        "evidence depth and stopping basis",
-        "adjacent claim-level citations",
-        "caller-use boundary and return owner",
-        "Omit empty conditional sections",
-        "durable evidence, not a settled answer",
-        "Tracked mutation: none",
-        "mutation result, and return owner",
-        "For an admitted standalone result",
-    ):
-        assert contract in normalized_skill
-
-    assert {
-        path.relative_to(skill_dir).as_posix()
-        for path in skill_dir.rglob("*")
-        if path.is_file()
-    } == {"SKILL.md", "agents/openai.yaml"}
-    assert policy.endswith("policy:\n  allow_implicit_invocation: true\n")
-    for rejected in (
-        "primary or governing sources",
-        "ordinary lookup stays outside this skill",
-        "ordinary | heightened",
-        "final bounded pass",
-        "default_prompt:",
-        "interface:",
-        "## Completion",
-        "```markdown",
-        "Write when authorized",
-        "Next: none",
-    ):
-        assert rejected not in skill
-
-
 def test_canonical_tdd_is_the_exact_single_cut_baseline() -> None:
     canonical_dir = ROOT / "skills/custom/tdd"
     pre_prune_dir = ROOT / "docs/validation/evals/tdd-pruning-pre-prune"

@@ -16,7 +16,7 @@ caller migration, installation, or Git delivery.
 | Package | Tree hash | `SKILL.md` | Metadata |
 | --- | --- | --- | --- |
 | Canonical baseline | `7cb171f1459d3f7efa1e26dccbd04264340eb9304a315391f9341b924c949f5f` | 61 lines, 579 words | policy-only YAML |
-| Fresh experimental candidate | `c230f0ccabce2c0c23679eb7ac55a2a572655f62ddaf48b0441ed8daf2f1a35f` | 81 lines, 656 words | byte-identical policy-only YAML |
+| Prompt 3 experimental candidate | `c230f0ccabce2c0c23679eb7ac55a2a572655f62ddaf48b0441ed8daf2f1a35f` | 81 lines, 656 words | byte-identical policy-only YAML |
 
 The candidate adds 20 lines and 77 words. Counts are diagnostic; the ledgers
 below determine scope and readiness for Prompt 4.
@@ -104,7 +104,7 @@ that Prompt 4 must reperform.
 | W01 | Existing note convention or default research path | Baseline | Keep | Authorized destination |
 | W02 | Second tracked publication mutation returns blocker | Baseline | Keep | Mutation ceiling |
 | W03 | Render only applicable semantic fields | Add | Keep | Proportional output rather than a rigid template |
-| W04 | Question, status, supported caller use, scope, and freshness | Add | Keep | Note identity and relevance |
+| W04 | Question, research status, supported caller use, scope, and freshness | Baseline + Add | Keep | Preserve `answered | conflicted | blocked`; add proportional identity and relevance |
 | W05 | Concise answer with adjacent claim-level citations | Add | Keep | Inspectable support |
 | W06 | Evidence depth and stopping basis | Add | Keep | Expose why the result is sufficient or bounded |
 | W07 | Material conflicts, unknowns, and limits | Add | Keep | Preserve uncertainty only when present |
@@ -163,4 +163,23 @@ Prompt 3 proof is mechanical only:
 Behavioral equivalence, improvement, invocation, live research, promotion,
 installation, and mirror parity remain Prompt 4 or later obligations.
 
-**Decision: extraction complete; behavioral acceptance not yet evaluated.**
+**Prompt 3 decision: extraction complete; behavioral acceptance not yet
+evaluated.**
+
+## Prompt 4 Continuation
+
+Prompt 4 found that the initial candidate rendered claim status `supported` as
+the note and terminal research status in 5/5 samples. That regressed the
+protected canonical `answered | conflicted | blocked` result vocabulary. The
+smallest repair made those research statuses explicit in the existing Write
+field without adding a mechanism, file, relationship, or caller delta.
+
+The repaired exact package is 82 lines and 661 words at tree hash
+`ad6f263d5674742376bea80b31a90cff6130ba8777cca9685f7c8286cb67c64a`.
+Its `SKILL.md` hash is
+`cb67adacfff45a0215f0553d43f22a42efc91b8e221e6606c2120f088a16572f`;
+metadata remains byte-identical to the baseline. The complete current
+counterfactual result is
+[`2026-07-23-research-canonical-first-promotion-eval.md`](2026-07-23-research-canonical-first-promotion-eval.md).
+
+**Prompt 4 decision: accepted exact repaired candidate; ready for Prompt 5.**

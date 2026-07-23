@@ -1082,6 +1082,7 @@ def test_independent_scouts_receive_curated_fresh_context() -> None:
 
 def test_research_owns_one_authorized_cited_note() -> None:
     research = (CUSTOM / "research/SKILL.md").read_text(encoding="utf-8")
+    normalized = " ".join(research.split())
 
     authorized = re.search(r"(?m)^\*\*Authorized note: (.+)\.\*\*$", research)
     inline = re.search(r"(?m)^\*\*Inline or blocker: (.+)\.\*\*$", research)
@@ -1096,16 +1097,25 @@ def test_research_owns_one_authorized_cited_note() -> None:
         < inline.group(1).index("Verify")
         < inline.group(1).index("Return")
     )
-    assert research.index("7. **Verify.**") < research.index("8. **Return.**")
-    template = research.split("```markdown", 1)[1].split("```", 1)[0]
-    assert re.findall(r"(?m)^## (.+)$", template) == [
-        "Answer",
-        "Findings",
-        "Conflicts and Uncertainty",
-        "Source Trace",
-        "Next",
-    ]
-    assert "Status: answered | conflicted | blocked" in template
+    assert research.index("8. **Verify.**") < research.index("9. **Return.**")
+    for contract in (
+        "Status: not-admitted",
+        "every failed or missing predicate",
+        "settled information",
+        "actual need shape",
+        "available evidence",
+        "Tracked mutation: none",
+        "research status `answered`, `conflicted`, or `blocked`",
+        "render only the applicable semantic fields",
+        "evidence depth and stopping basis",
+        "adjacent claim-level citations",
+        "caller-use boundary and return owner",
+        "Omit empty conditional sections",
+        "durable evidence, not a settled answer",
+        "mutation result, and return owner",
+    ):
+        assert contract in normalized
+    assert "```markdown" not in research
 
 
 def test_writing_great_skills_keeps_promoted_package_and_relationship_boundary() -> None:

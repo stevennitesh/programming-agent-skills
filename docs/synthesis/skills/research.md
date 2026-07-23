@@ -1,8 +1,7 @@
 # Research Evidence And Runtime Design Synthesis
 
-Status: Deploy Prompt 3 extracted a fresh canonical-first experimental
-candidate; awaiting Prompt 4 audit and behavioral evaluation; not an executable
-contract.
+Status: Deploy Prompt 5 promoted and installed the exact Prompt 4 candidate;
+Git delivery pending; this synthesis is not an executable contract.
 
 Runtime authority remains in:
 
@@ -14,35 +13,35 @@ Runtime authority remains in:
 - tests and behavior evaluations; and
 - the installed mirror.
 
-The current canonical and installed Research skill family remain identical and
-unchanged. The 579-word canonical `SKILL.md` is the simplest credible baseline.
-Deploy Prompt 1 admitted only two deltas beyond it: typed `not-admitted`
-capability mismatch, and proportional note/Return semantics. Deploy Prompt 3
-created the fresh 656-word inactive candidate at tree hash
+The canonical and installed Research packages are now identical to the
+promoted candidate. The 579-word pre-promotion canonical `SKILL.md` remains B0.
+Deploy Prompt 1 admitted two deltas beyond it: typed `not-admitted` capability
+mismatch, and proportional note/Return semantics. Deploy Prompt 3 created C1
+from exactly B0 and those deltas. Prompt 4 repaired one protected-status
+omission and accepted the 661-word candidate at tree hash
+`ad6f263d5674742376bea80b31a90cff6130ba8777cca9685f7c8286cb67c64a`.
+Prompt 5 promoted and installed those exact bytes. The initial fresh hash
 `c230f0ccabce2c0c23679eb7ac55a2a572655f62ddaf48b0441ed8daf2f1a35f`
-from exactly that baseline and those deltas. The former 846-word candidate and
-its evaluations remain useful evidence, but it is superseded as an extraction
-source. This decision authorizes no canonical runtime edit, installation, or
-Git delivery.
+and former 846-word candidate remain historical evidence. Prompt 6 owns the
+pending Git delivery.
 
 ## How To Read This Document
 
 This synthesis uses four layers:
 
 1. **Orientation** states the outcome, selected design, vocabulary, and explanatory flow.
-2. **Minimum Normative Design** is the sole authority for the next experimental
-   extraction.
+2. **Minimum Normative Design** records the promoted minimum.
 3. **Evidence And Rationale** preserves the former detailed design, current
    runtime evidence, rejected machinery, and deferred hypotheses without
    admitting runtime rules.
-4. **Extraction And Verification** places only the minimum design into a fresh
-   candidate and defines the proof required before promotion.
+4. **Extraction And Verification** records how the minimum entered the accepted
+   candidate and was proved before promotion.
 
-Change proposed runtime behavior only in Layer Two; explain it in Layer Three;
-place and prove it in Layer Four. Historical headings or imperative prose in
-Layer Three preserve prior reasoning and create no current runtime authority.
-The Design Verdict summarizes what is selected but creates no runtime
-authority.
+Change promoted runtime behavior by reopening Layer Two through a new bounded
+campaign; explain historical evidence in Layer Three and record extraction and
+proof in Layer Four. Historical headings or imperative prose in Layer Three
+preserve prior reasoning and create no current runtime authority. The Design
+Verdict summarizes what is selected but creates no runtime authority.
 
 Use this index for direct navigation:
 
@@ -58,7 +57,7 @@ Use this index for direct navigation:
 | How should the fresh candidate read? | [Proposed Runtime Semantic Surface](#proposed-runtime-semantic-surface) |
 | Where does each rewrite change belong? | [Runtime Ownership And Change Map](#runtime-ownership-and-change-map) |
 | What must pass before promotion? | [Staged Extraction And Proof](#staged-extraction-and-proof), [Migration And Acceptance Matrix](#migration-and-acceptance-matrix), and [Promotion Gate And Residual Gaps](#promotion-gate-and-residual-gaps) |
-| Is the design ready for a fresh extraction? | [Experimental Extraction Readiness Decision](#experimental-extraction-readiness-decision) |
+| What was promoted? | [Experimental Acceptance Decision](#experimental-acceptance-decision) |
 
 When any diagram, rationale, ownership row, or acceptance case disagrees with Layer Two, correct that other surface.
 
@@ -201,26 +200,25 @@ Only Layer Two decides which of its concepts enter the fresh candidate.
 
 # Layer Two: Minimum Normative Design
 
-This layer is the sole authority for the next experimental extraction. The
-minimum is the canonical baseline plus two admitted deltas; confirmation of a
-larger historical design does not admit its mechanisms.
+This layer records the promoted minimum. The minimum is B0 plus two admitted
+deltas; confirmation of a larger historical design did not admit its
+mechanisms.
 
 ## Simplest Credible Baseline
 
-Use the current `skills/custom/research/` package unchanged as the extraction
-base:
+The pre-promotion canonical package is the frozen B0 extraction base:
 
 - `SKILL.md`: 61 lines and 579 words;
 - `agents/openai.yaml`: implicit-invocation policy only; and
 - tree hash
   `7cb171f1459d3f7efa1e26dccbd04264340eb9304a315391f9341b924c949f5f`.
 
-It already owns one source question, source legwork, claim classification,
+It owned one source question, source legwork, claim classification,
 fresh-context read-only scouts, one authorized note or no-write return,
 citation and work-state verification, and caller return. Current upstream is
 smaller and note-oriented, but it omits this pack's no-write, caller, conflict,
-containment, and verification contracts; canonical Research is therefore the
-simplest credible control.
+containment, and verification contracts; B0 was therefore the simplest
+credible control.
 
 ## Mechanism Admission Ledger
 
@@ -239,7 +237,7 @@ simplest credible control.
 
 ## Minimum Viable Runtime
 
-Prompt 3 must make the smallest coherent patch to the baseline:
+The promoted runtime is the smallest coherent patch to B0:
 
 1. **Preserve the baseline.** Keep its description, policy, two branch spines,
    Boundary, Lock, Trace, Scout, Classify, Gate, verification, one-note/no-write
@@ -253,11 +251,12 @@ Prompt 3 must make the smallest coherent patch to the baseline:
    existing owner without invocation; caller use returns classification without
    choosing its next route.
 3. **Make Write proportional.** Keep the one-note authority but replace the
-   fixed Markdown template with semantic minimum fields: question, status,
-   supported caller use, scope and freshness, concise cited answer, applicable
-   evidence-depth and stopping basis, material conflict/unknown/limit detail,
-   and caller-use boundary. Omit empty conditional sections. A conflicted or
-   blocked note is durable evidence, not a settled answer.
+   fixed Markdown template with semantic minimum fields: question, research
+   status `answered`, `conflicted`, or `blocked`, supported caller use, scope
+   and freshness, concise cited answer, applicable evidence-depth and stopping
+   basis, material conflict/unknown/limit detail, and caller-use boundary. Omit
+   empty conditional sections. A conflicted or blocked note is durable
+   evidence, not a settled answer.
 4. **Complete Return proportionally.** Return the status, concise answer or
    blocker, direct citations or absolute note path, material limits and stopping
    basis, mutation result, caller-use boundary, and return owner. Preserve the
@@ -773,7 +772,7 @@ runtime rule.
 
 | Source | Evidence retained for synthesis |
 | --- | --- |
-| Current canonical `skills/custom/research/SKILL.md` | Compact one-question boundary; primary-source trace; optional fresh-context scouts; supported/conflicted/unknown claim classification; one authorized note or no-write return; verification and caller return |
+| Promoted canonical `skills/custom/research/SKILL.md` | B0 behavior plus typed non-admission, proportional note/Return semantics, and preserved `answered | conflicted | blocked` research status |
 | `skills/custom/research/agents/openai.yaml` | Research is currently narrowly implicitly invocable |
 | Git history for Research | The skill was deliberately simplified from explicit ownership and completion sections into one linear leading-word spine, then hardened around source authority, fresh scout context, one-file publication, verification, and caller return |
 | Current upstream `mattpocock/skills` Research | Retains the seed idea: background reading against primary sources and one cited Markdown file in the repo; it does not supply this pack's authority, no-write, conflict, caller-return, or verification contracts |
@@ -784,6 +783,28 @@ runtime rule.
 | Behavior-evaluation fixtures 11 and 35 | Protect no-write versus approved-note authority, pre-dirty containment, primary-source claims, conflicts, blocked lanes, second-file prohibition, citation verification, and caller decision ownership |
 
 The upstream source inspected for this synthesis is the [current primary repository file](https://raw.githubusercontent.com/mattpocock/skills/main/skills/engineering/research/SKILL.md). Future extraction must refresh that comparison rather than treating this snapshot as permanently current.
+
+### Prompt 1 Mandatory Upstream Registry
+
+All identities below are local checkout observations from 2026-07-23. No
+network refresh ran, so equality with each local `origin/main` does not prove
+the remote state after the recorded fetch evidence.
+
+| Upstream | Inspected identity and access | Freshness limit | Research disposition |
+| --- | --- | --- | --- |
+| Matt Pocock | `.tmp/mattpocock-skills` at `ed37663cc5fbef691ddfecd080dff42f7e7e350d`; clean `main`; full clone; complete current two-file Research package plus directly related docs and change records | Local fetch evidence ended 2026-07-22T02:34:37Z | Simplest external note-oriented baseline candidate, but reject as B0 because it omits required no-write, caller, conflict, containment, safe-failure, and verification contracts; primary-source and claim-owner language is supporting rationale |
+| Superpowers | `.tmp/superpowers` at `d884ae04edebef577e82ff7c4e143debd0bbec99` (`v6.1.1`); clean `main`; no current Research package; complete historical `tracing-knowledge-lineages` package and removal/restore records inspected | Local fetch evidence ended 2026-07-17T22:33:40Z; separately named `obra/superpowers-skills` was not checked out | Historical lineage archaeology is a specialized evidence technique, not a general baseline; retain as `historical-admission-only` and defer any lineage mechanism |
+| Ponytail | `.tmp/ponytail` at `16f29800fd2681bdf24f3eb4ccffe38be3baec6b`; clean `main`; full clone; all six current skills inspected with no Research equivalent | Local fetch evidence ended 2026-07-17T22:33:39Z | No credible Research baseline; comprehension-first tracing is supporting rationale only and its coding-only minimality ladder is owned elsewhere |
+
+Two applicable Upper-Bound Language rows were also inspected with their
+evidence pointers. `Qualified parallel investigation` is synthesis pressure
+from Superpowers' direct parallel-dispatch contract with Matt's blocker and
+frontier language as corroboration; it supports the protected compact Scout
+gate but admits no expansion. `Human judgment and agent legwork should be
+separated` is corroborated cross-pack pressure for the protected caller/root
+authority boundary, not a new mechanism. No unresolved source question could
+change an admission decision, so no Conditional Research Interlude was
+admitted.
 
 ## Current Strengths To Preserve
 
@@ -827,12 +848,16 @@ is diagnostic only.
 
 Deploy Prompt 4 resolved these hypotheses. The canonical control failed typed
 capability non-admission and proportional note/Return shape in 5/5 contexts;
-the final candidate corrected both in 5/5. Controls already passed governing
-source selection, version applicability, aggregate empirical judgment, direct
-citations, one-note containment, caller return, and the compact scout contract,
-so expanded guidance for those behaviors was pruned. Live network, inaccessible
-source, dirty-update, and actual scout execution remain promotion evidence, not
-newly accepted runtime machinery.
+the final candidate corrected both in 5/5. The first fresh candidate generation
+used claim status `supported` as its terminal research status in 5/5 note
+samples. Prompt 4 restored the protected `answered | conflicted | blocked`
+status vocabulary in the existing Write field and the affected candidate arm
+then passed 5/5. Controls already passed governing source selection, version
+applicability, direct citations, one-note containment, caller return, and the
+compact scout contract, so expanded guidance for those behaviors remains
+pruned. Live network, inaccessible-source, dirty-update, and actual scout
+execution remain residual validation gaps, not newly accepted runtime
+machinery.
 
 ## Confirmed Deployment Decisions
 
@@ -1146,12 +1171,12 @@ dirty-update behavior, actual scout execution, caller migration, canonical
 replacement, installation, and mirror parity remain coordinated promotion and
 E4 obligations. Runtime, installation, and Git delivery remain unauthorized.
 
-# Layer Four: Fresh Extraction And Verification
+# Layer Four: Promoted Extraction And Verification
 
-Prompt 3 must create a fresh inactive candidate from the canonical package and
-the two admitted deltas in Layer Two. The historical candidate may supply test
-ideas and exact evidence records, but no wording may be copied merely because
-it survived the former broader extraction.
+Prompt 3 created the fresh inactive candidate from B0 and the two admitted
+deltas in Layer Two. The historical candidate supplied test ideas and evidence
+records but no wording entered merely because it survived the former broader
+extraction.
 
 ## Proposed Runtime Semantic Surface
 
@@ -1171,10 +1196,10 @@ reference, asset, interface metadata, caller migration, or relationship edge.
 
 ## Runtime Ownership And Change Map
 
-| Surface | Current owner | Prompt 3 action | Deliberate non-change |
+| Surface | Campaign owner | Executed action | Deliberate non-change |
 | --- | --- | --- | --- |
-| `skills/experimental/research/SKILL.md` | Inactive candidate | Rebuild from canonical; add compact `Admit`; revise only Write and Return as required by proportional output | Preserve all other canonical behavior and structure |
-| `skills/experimental/research/agents/openai.yaml` | Inactive candidate metadata | Restore the canonical policy-only bytes | No broader trigger or interface metadata |
+| Historical `skills/experimental/research/SKILL.md` | Prompt 3/4 candidate | Rebuilt from B0; added compact `Admit`; revised only Write and Return as required by proportional output; repaired protected research status | Preserve all other B0 behavior and structure |
+| Historical `skills/experimental/research/agents/openai.yaml` | Prompt 3/4 metadata | Preserved B0 policy-only bytes | No broader trigger or interface metadata |
 | Prompt 3 extraction record | Validation evidence | Record baseline bytes, both admitted deltas, every local edit, cut decisions, and residual complexity | Do not rewrite historical Prompt 4 evidence as current |
 | `tests/test_experimental_skill_contracts.py` | Structural proof | Protect only the package shape and machine-relevant admitted contracts | Do not encode exact prose, headings, or the rejected broad design |
 | Caller and relationship surfaces | Their existing owners | No change | The two deltas alter no edge or caller authority |
@@ -1204,7 +1229,7 @@ inform fixtures but do not replace fresh proof of the rebuilt candidate.
 | Proportional note | A simple authorized note omits empty sections and states evidence depth, stopping basis, limits when present, and caller-use boundary | Rigid empty headings, hidden limits, or a claimed decision | Current-canonical control versus fresh candidate, note reread in five contexts per arm |
 | Proportional Return | Written and no-write results state status, output identity, mutation, material limits, stopping basis, caller-use boundary, and return owner as applicable | Missing ownership or durability, invented path, or downstream continuation | Packet inspection across both output branches |
 | Baseline preservation | Governing-version, aggregate-evidence, conflict, blocked-source, scout, one-note, and caller-return cases remain correct | Added taxonomy, assurance tiers, metadata, files, or changed caller behavior | Frozen canonical comparison, regression scenarios, structural inventory |
-| Integrated promotion | Canonical replacement, callers, tests, validation, installation, and mirror agree | Partial promotion or stale historical candidate identity | Prompt 5 only after fresh Prompt 4 acceptance |
+| Integrated promotion | Canonical replacement, callers, tests, validation, installation, and mirror agree | Partial promotion or stale historical candidate identity | Prompt 5 completed after fresh Prompt 4 acceptance |
 
 ## Promotion Gate And Residual Gaps
 
@@ -1228,18 +1253,23 @@ instruction-bearing change maps to one admitted delta; the two-file inventory
 is exact; no rejected or deferred mechanism enters; structural proof passes;
 and Prompt 3 stops before behavior evaluation or promotion.
 
-## Experimental Extraction Readiness Decision
+## Experimental Acceptance Decision
 
-**Decision: fresh experimental extraction complete; ready for Prompt 4 audit
-and behavioral evaluation.** The canonical baseline is explicit, the aggregate
-design is smaller than the superseded candidate, both runtime deltas have
-counterfactual admission evidence, their destinations are local, no
-branch-specific support file exists, callers and relationships remain
-unchanged, and residual complexity is named.
+**Decision: promoted and installed; Git delivery pending.** B0 is explicit, the
+aggregate design is smaller than the superseded candidate, both runtime deltas
+reproduced their B0 failures and corrected them 5/5, the protected
+research-status regression was repaired and passed 5/5, no critical failure
+remains, no branch-specific support file exists, and callers and relationships
+remain unchanged.
 
 The former inactive candidate at hash
 `1478a8ac6d50cae052802f8778a6addea9021366f3c36130385339f9fb54c099`
-is historical evidence. Prompt 3 replaced it with current inactive candidate
-hash `c230f0ccabce2c0c23679eb7ac55a2a572655f62ddaf48b0441ed8daf2f1a35f`.
-Prompt 4 must independently reperform minimality, pruning, and behavior proof.
-Canonical runtime, installation, and Git delivery remain unauthorized.
+and Prompt 3 candidate at hash
+`c230f0ccabce2c0c23679eb7ac55a2a572655f62ddaf48b0441ed8daf2f1a35f`
+are historical evidence. The accepted exact candidate is
+`ad6f263d5674742376bea80b31a90cff6130ba8777cca9685f7c8286cb67c64a`.
+Current counterfactual proof is recorded in
+[`2026-07-23-research-canonical-first-promotion-eval.md`](../../validation/transcripts/2026-07-23-research-canonical-first-promotion-eval.md).
+The canonical and installed tree hashes both equal the accepted C1 hash. The
+experimental Research directory and manifest entry are removed. Prompt 6 owns
+the remaining Git delivery.

@@ -21,12 +21,6 @@
       "candidate_sha256": "3e8f1f909172a3aab97974daa71447b0cc67b8444b742a5dc7261398d7e9679e",
       "active_baseline_sha256": "2e0adaeb731132ca7f2208a372b9509f996d79161d16ea5f72656b83f4243051"
     },
-    "research": {
-      "origin": "skills/custom/research at c456e83c0e39 as the active baseline for synthesis-driven extraction",
-      "reason": "Preserve the canonical-first inactive Research candidate containing only typed non-admission and proportional Write/Return deltas, pending Prompt 4.",
-      "candidate_sha256": "c230f0ccabce2c0c23679eb7ac55a2a572655f62ddaf48b0441ed8daf2f1a35f",
-      "active_baseline_sha256": "7cb171f1459d3f7efa1e26dccbd04264340eb9304a315391f9341b924c949f5f"
-    },
     "skill-router": {
       "origin": "skills/custom/skill-router at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f before the installed-baseline restore",
       "reason": "Preserve the divergent candidate while the installed managed version remains active.",
