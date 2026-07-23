@@ -1,6 +1,6 @@
 ---
 name: prototype
-description: Prototype one bounded design question with a disposable runnable probe; exclude production proof, uncertain defects, and multi-decision design.
+description: Answer one bounded design question with a disposable runnable probe. Use for logic, state, data, API or interface shape, structurally different UI bets, or predeclared comparative measurement. Not for production proof, uncertain defect diagnosis, or multi-decision design.
 ---
 
 # Prototype

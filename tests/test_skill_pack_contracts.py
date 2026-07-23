@@ -410,14 +410,27 @@ def test_wayfinder_prototype_participation_matches_judgment() -> None:
     ]
     assert "objective verdict criteria" in rules[1][2]
     assert "explicitly reserves the verdict for a human" in rules[2][2]
-    assert "reconciled verdict packet and cleanup or preservation state" in tickets
+    assert "pass its decision owner, claim level, judgment mode" in tickets
+    assert "supported result, evidence, limits, and cleanup state" in tickets
 
     approve = wayfinder.split("4. **Approve.**", 1)[1].split("5. **Chart.**", 1)[0]
-    for field in ("claim level", "human judge", "objective verdict criteria"):
+    for field in (
+        "decision owner",
+        "claim level",
+        "judgment mode",
+        "human judge",
+        "objective verdict criteria",
+    ):
         assert field in approve
     assert "reject" in approve and "participation rule" in approve
 
-    for field in ("Claim level:", "Human judge:", "Verdict criteria:"):
+    for field in (
+        "Decision owner:",
+        "Claim level:",
+        "Judgment mode:",
+        "Human judge:",
+        "Verdict criteria:",
+    ):
         assert field in map_format
 
 
@@ -551,41 +564,53 @@ def test_grilling_preserves_one_decision_confirmed_exit_and_evidence_routes() ->
 
 
 def test_prototype_preserves_lifecycle_boundaries_and_branch_gates() -> None:
-    prototype = (CUSTOM / "prototype/SKILL.md").read_text(encoding="utf-8")
-    logic = (CUSTOM / "prototype/LOGIC.md").read_text(encoding="utf-8")
-    ui = (CUSTOM / "prototype/UI.md").read_text(encoding="utf-8")
+    skill_dir = CUSTOM / "prototype"
+    prototype = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    logic = (skill_dir / "LOGIC.md").read_text(encoding="utf-8")
+    ui = (skill_dir / "UI.md").read_text(encoding="utf-8")
+    measure = (skill_dir / "MEASURE.md").read_text(encoding="utf-8")
 
-    judge = prototype.split("## 5. Judge", 1)[1].split("## 6. Reconcile", 1)[0]
-    reconcile = prototype.split("## 6. Reconcile", 1)[1].split("## Completion", 1)[0]
-    assert "Record the verdict fields" in judge
-    assert "return the verdict packet" not in judge
-    assert reconcile.index("Finalize the cleanup or preservation state") < reconcile.index(
-        "return the verdict packet"
-    )
-    assert "[LOGIC.md](LOGIC.md)" in prototype
-    assert "[UI.md](UI.md)" in prototype
-    assert set(re.findall(r"`(answered|awaiting-verdict|blocked)`", prototype)) == {
-        "answered",
-        "awaiting-verdict",
-        "blocked",
+    for contract in (
+        "Before mutation, read back:",
+        "claim level: shape/feel | design evidence",
+        "judgment mode: human | rule-based",
+        "Decision owner and human judge are independent authorities",
+        ".tmp/prototype/<question-slug>/",
+        "Read only the decision-bearing branch",
+        "[MEASURE.md](MEASURE.md)",
+        "preserve-for-verdict",
+        "authorized-durable-evidence",
+        "No terminal return leaves a live resource",
+        "Never carry caller identity from a preceding request or supplied result",
+        "Do not select, recommend, or invoke a downstream route",
+    ):
+        assert contract in prototype
+
+    for removed in (
+        "[RESUME.md](RESUME.md)",
+        "$handoff",
+        "$domain-modeling",
+        "status: answered | awaiting-verdict | blocked | not-admitted",
+    ):
+        assert removed not in prototype
+
+    assert "happy, boundary, and rejected cases" in logic
+    assert "repeated runs are equivalent" in logic
+    assert "positively isolates the whole prototype surface" in ui
+    assert "actual browser or target UI" in ui
+    assert "variance and worst observed result" in measure
+    assert "does not diagnose an unexplained slowdown" in measure
+    assert {
+        path.relative_to(skill_dir).as_posix()
+        for path in skill_dir.rglob("*")
+        if path.is_file()
+    } == {
+        "LOGIC.md",
+        "MEASURE.md",
+        "SKILL.md",
+        "UI.md",
+        "agents/openai.yaml",
     }
-    assert {"Model", "Surface", "Smoke"} <= set(
-        re.findall(r"(?m)^## (.+)$", logic)
-    )
-    assert re.findall(r"(?m)^## (.+)$", ui) == ["Host", "Bet", "Switch", "Smoke"]
-    assert "smallest explicit decision interface" in logic
-    surface = logic.split("## Surface", 1)[1].split("## Smoke", 1)[0]
-    interactive = surface.split("### Interactive", 1)[1].split(
-        "### Deterministic", 1
-    )[0]
-    deterministic = surface.split("### Deterministic", 1)[1]
-    assert "Read one command" in interactive and "until quit" in interactive
-    assert "caller-locked objective criteria" in deterministic
-    assert "without prompts" in deterministic
-    assert "Human judgment" in judge and "human-reserved design verdict" in judge
-    assert "Objective design evidence" in judge and "criterion results" in judge
-    assert "entire prototype surface" in ui
-    assert "unreachable in production builds" in ui
 
 
 def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
@@ -856,6 +881,18 @@ def test_improve_codebase_separates_survey_from_selected_candidate() -> None:
     assert "`Eliminate` -> `$simplify-code`" in survey
     assert "$domain-modeling" not in survey
     assert "never `$tdd` or `$implement`" in report
+    for prototype_field in (
+        "Improve Codebase as result recipient",
+        "named decision owner",
+        "explicit claim level and judgment mode",
+        "named human judge when human",
+        ".tmp/prototype/<question-slug>/",
+        "authorized effects and dispositions",
+        "one recipe and finite bound",
+        "known limits",
+    ):
+        assert prototype_field in selected
+    assert ".tmp/improvement-prototypes/" not in selected
 
     assert re.findall(r"(?m)^## (.+)$", report) == [
         "Portability",

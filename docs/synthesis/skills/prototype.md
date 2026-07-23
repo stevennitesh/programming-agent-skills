@@ -1,17 +1,26 @@
 # Prototype Skill Synthesis
 
-Status: pruned experimental candidate accepted after Deploy Prompts 3 and 4 coverage, independent pruning audit, repair, pruning-equivalence evaluation, and a fresh metadata-equivalence check for the shortened description. Candidate tree hash `4d9ca65a05d5b174b8eefbbc9396f00020ce267932b628415004575e03ff329d` preserves direct leaf return, `claim level`, separate `judgment mode`, truthful rejected Resume, current-invocation identity, arbitrary frozen-rule verdicts, partial Freeze fields, and the tested invocation boundary. Live branch execution, platform-level auto-discovery, caller migration, and installed-parity proof remain promotion obligations. This exhaustive synthesis remains a design reference, not executable runtime authority. Until one atomic rewrite is promoted, the canonical files under `skills/custom/prototype/`, their tests, and the installed mirror remain authoritative.
+Status: Deploy Prompt 5 `complete`. Exact accepted C1 `ed5832972cbd1a093656087a7efc61e679f4068b3bea330204ba6559fb78ce33` is now the canonical and installed Prototype package; the experimental package and manifest entry are retired. `RESUME.md` and the rejected mechanisms remain absent. Canonical Wayfinder and Improve Codebase carry the accepted caller fields, Prototype's Handoff and Domain Modeling relationship edges are removed, and post-install dry-run is clean. Executable B0 remains frozen at `c1a79fa3a144e1cac39be80233e1a3a2756c2f5130af14d3bc20c53418c6d307`; the longer-description pruning control remains frozen at `22614fe625ec8ecbb176ef8af07cb4c0b186e92dee1348f9efb85be10120f668`. The historical `1/25` versus `25/25` result remains aggregate admission evidence, not exact B0 contribution proof.
 
 ## How To Read This Document
 
-This synthesis uses the same four-layer architecture as the Parallel Implement and Wayfinder syntheses while keeping Prototype proportionate to a bounded leaf capability.
+This synthesis preserves the four-layer history used to reach the accepted
+Prototype package. Deploy Prompts 4 and 5 supersede the earlier selected-design
+and extraction layers wherever they differ from exact canonical hash
+`ed5832972cbd1a093656087a7efc61e679f4068b3bea330204ba6559fb78ce33`.
 
-- Layer One orients: the outcome, boundary, selected design, vocabulary, and explanatory flow.
-- Layer Two is the sole authority inside this synthesis for behavior selected for later extraction. It is not executable authority.
-- Layer Three records evidence, rationale, rejected alternatives, and deliberate non-changes. It cannot create runtime rules.
-- Layer Four maps the selected design into runtime files and behavioral proof. It cannot redefine Layer Two.
+- Layer One records the original orientation.
+- Layer Two records the superseded Prompt 2 selected design for traceability;
+  it is historical evidence, not current authority.
+- Layer Three records evidence, rationale, rejected alternatives, and
+  deliberate non-changes.
+- Layer Four records the superseded extraction plan and historical proof.
 
-Future editors should change behavior in Layer Two, explain it in Layer Three, and place or prove it in Layer Four.
+Current behavior is owned by `skills/custom/prototype/`. The exact accepted
+decision and promotion history is
+[`2026-07-22-prototype-b0-first-acceptance.md`](../../validation/transcripts/2026-07-22-prototype-b0-first-acceptance.md).
+Future changes must begin from those current surfaces rather than restoring a
+historical Layer Two or Four mechanism.
 
 ## Decision Trace Index
 
@@ -34,14 +43,14 @@ The four layers separate orientation, selected behavior, evidence, and extractio
 | P13 | Behavior-family counterfactual evaluation | [Behavior Evaluation](#behavior-evaluation-protocol) | repository behavior-evaluation contract; `repository-contract`, `behavioral-validation` | evaluation owner | E0-E4 |
 | P14 | Staged construction and atomic promotion | [Staged Extraction](#staged-extraction) | runtime-authority boundary; `repository-contract`, `local-design-judgment` | rewrite caller | E4 |
 | P15 | Historical source pressure is background until verified | [Source Pressure](#source-pressure-behind-the-model) | source-distillation method; `repository-contract`, `unverified-historical-pressure` | synthesis owner | research refresh |
-| P16 | Every non-admission returns directly to the invoker or user and stops | [Relationships](#relationship-ownership) | [Leaf rationale](#why-prototype-is-a-leaf); `repository-contract`, `local-design-judgment`; confirmed by Deploy Prompt 1 | `SKILL.md`, relationship index | E1-E4 |
+| P16 | Every terminal result returns directly to the invoker or user; Prototype removes its `$handoff` and `$domain-modeling` recommendations and starts no downstream route | [Relationships](#relationship-ownership) | [Leaf rationale](#why-prototype-is-a-leaf); `repository-contract`, `local-design-judgment`; confirmed by Deploy Prompt 1 | `SKILL.md`, relationship index | E1-E4 |
 
 ## Navigation
 
 - [Layer One: Orientation](#layer-one-orientation)
-- [Layer Two: Selected Design Contract](#layer-two-selected-design-contract)
+- [Layer Two: Historical Selected Design Contract](#layer-two-historical-selected-design-contract-superseded)
 - [Layer Three: Evidence And Rationale](#layer-three-evidence-and-rationale)
-- [Layer Four: Extraction And Verification](#layer-four-extraction-and-verification)
+- [Layer Four: Historical Extraction And Verification](#layer-four-historical-extraction-and-verification-superseded)
 - [Promotion Gate And Residual Gaps](#promotion-gate-and-residual-gaps)
 
 # Layer One: Orientation
@@ -97,7 +106,7 @@ It does not own:
 13. Accept one primary entry point or the smallest ordered run recipe rather than manufacturing a wrapper.
 14. Separate Smoke, verdict evidence, and production proof mechanically in wording and evaluations.
 15. Use progressive disclosure: universal behavior in `SKILL.md`; branch mechanics in `LOGIC.md`, `UI.md`, and proposed `MEASURE.md`.
-16. Every non-admission returns directly to its caller or the user and stops. Prototype never delegates rejected work to Router or selects a downstream destination.
+16. Every terminal result returns directly to its caller or the user and stops. Prototype removes its `$handoff` and `$domain-modeling` recommendations, never delegates rejected work to Router, and selects no downstream destination.
 17. Build in stages, evaluate by behavior family, and promote canonical surfaces atomically before any installed synchronization.
 
 ### Deliberately Deferred
@@ -110,7 +119,7 @@ It does not own:
 ### Rejected
 
 - A multi-question Prototype campaign.
-- Automatic chaining into Codebase Design, To Spec, To Tickets, Implement, TDD, or Parallel Implement.
+- Automatic recommendation or chaining into Handoff, Domain Modeling, Codebase Design, To Spec, To Tickets, Implement, TDD, or Parallel Implement.
 - Treating prototype code, assertions, metrics, or visual acceptance as production proof.
 - Committing prototypes to throwaway branches as the normal persistence mechanism.
 - Default tracked app-tree mutation, dependency installation, service provisioning, or external side effects.
@@ -170,14 +179,19 @@ flowchart TD
     Q --> E["Caller or user owns every next route"]
 ```
 
-# Layer Two: Selected Design Contract
+# Layer Two: Historical Selected Design Contract (Superseded)
 
-Layer Two is the sole authority inside this synthesis for behavior selected for later extraction. It is not executable runtime authority. Tables elsewhere may place or test these rules but may not add to them.
+This layer records the Prompt 2 design that Prompt 4 later tested. It is
+superseded historical evidence. Five-lock Freeze, exact packet schemas,
+packet-backed Resume, and other rejected mechanisms below are not current
+instructions and must not be restored without a new accepted deployment
+campaign.
 
 ## Selected Design Home Index
 
 | Concern | Sole selected-design home |
 | --- | --- |
+| Viability floor, baseline, B0/C1 boundary, dispositions, and claim-to-proof outline | `Minimum-Runtime Decision` |
 | Outcome and boundary | `Outcome And Invariants` |
 | Admission, question Freeze, and bounds | `Admit And Freeze Contract` |
 | Mutation and artifact authority | `Authority And Mutation Contract` |
@@ -191,6 +205,231 @@ Layer Two is the sole authority inside this synthesis for behavior selected for 
 | Status, packet, resume, and final return | `Return And Resume Contract` |
 | Caller and cross-skill authority | `Relationship Ownership` |
 | Invocation completion | `Prototype Completion` |
+
+## Minimum-Runtime Decision
+
+Deploy Prompt 1 selected the current canonical Prototype as the simplest
+credible baseline and confirmed the following corrected B0/C1 packet. No
+research interlude is required. Prompt 2 makes this packet durable; Prompt 3
+must construct its exact executable artifacts without importing mechanisms
+across the B0/C1 boundary.
+
+### Viability Floor
+
+The minimum runtime MUST:
+
+- answer one bounded design question with one disposable runnable probe;
+- remain implicitly discoverable for that positive request shape;
+- establish the question, decision, judgment basis, mutation authority, run
+  boundary, and return owner before mutation;
+- preserve caller authority over adoption, durable truth, later routing,
+  implementation, and production proof;
+- select one evidence surface, run it, distinguish Smoke from a verdict, and
+  state only the supported claim;
+- reconcile Prototype-owned artifacts and live resources before Return;
+- return truthfully when the question is answered, awaits human judgment,
+  cannot proceed, or does not fit Prototype; and
+- return every result directly to the current caller or user and stop without
+  recommending or invoking `$handoff`, `$domain-modeling`, or another
+  downstream route.
+
+Freeze before mutation and Reconcile before Return are the minimum irreversible
+orders. The viability floor requires those semantics, not C1's five-lock
+presentation, exact four-status packet schema, or four named artifact
+dispositions.
+
+### Verified Evidence Registry And Freshness
+
+| Evidence | Identity and access depth | Role | Freshness limit |
+| --- | --- | --- | --- |
+| Current canonical Prototype | Complete `skills/custom/prototype/` package; tree hash `ecba1e84f0e0df9a0b32b2febdac4e1d7f096dcbf468f9c054c0d5bf7d95a3ef` | Selected baseline and current local compatibility authority | Current worktree read-back; installed parity not refreshed in Prompt 1 |
+| Matt Pocock Prototype | Complete package, engineering page, and prototype-primary-source change record at clean HEAD `ed37663cc5fbef691ddfecd080dff42f7e7e350d`, locally `0/0` against the checked-out `origin/main` ref | Equivalent upstream pressure | No remote fetch; checked-out ref may lag the remote after 2026-07-21 |
+| Superpowers Brainstorming | Complete package and Visual Companion implementation at clean HEAD `d884ae04edebef577e82ff7c4e143debd0bbec99`, locally `0/0` against the checked-out `origin/main` ref | Broader adjacent design workflow, not a Prototype baseline | No remote fetch; checked-out ref may lag the remote after 2026-07-02 |
+| Ponytail | All skill descriptions and ignored-path equivalent search at clean HEAD `16f29800fd2681bdf24f3eb4ccffe38be3baec6b`, locally `0/0` against the checked-out `origin/main` ref; no equivalent package found | Simplification pressure only | No remote fetch; checked-out ref may lag the remote after 2026-07-15 |
+| Inactive experimental Prototype | Complete package; current manifest and actual tree hash `4d9ca65a05d5b174b8eefbbc9396f00020ce267932b628415004575e03ff329d` | Provisional C1 destination plus historical and pruning evidence | Exact current bytes; not an exact adapted-B0 comparison |
+| Language upper bound | Applicable Prototype, question-driven design, pruning, and cross-pack rows with their local pointers | `synthesis` or corroborated pressure only | Repository snapshot; no external source refresh |
+| Historical design sources below | Synthesis links and summaries only | `unverified-historical-pressure` | Not load-bearing until independently refreshed |
+
+### Simplest-Baseline Comparison
+
+| Candidate | Core outcome | Local compatibility | Extra or missing load | Decision |
+| --- | --- | --- | --- | --- |
+| Current canonical Prototype | Yes | Highest; already owns local paths, callers, Logic/UI surfaces, Smoke, judgment, and reconciliation | Omits explicit admission, Measure, safe Resume, role precision, and exhaustive artifact accounting | **Select** |
+| Matt Pocock Prototype | Yes | Requires substantial adaptation | Adds detailed TUI/UI procedure and default throwaway-branch preservation; lacks local caller and mutation contracts | Reject as B0; retain design pressure |
+| Superpowers Brainstorming | No; it designs and approves a specification rather than answering one runnable question | Low | Mandatory questioning, design approval, documentation, commit, and planning transition | Reject as a different workflow |
+| Ponytail | No equivalent | Not applicable | General simplicity pressure only | Reject as a package baseline |
+
+The canonical package is the smallest complete local starting point. Selection
+does not protect every current sentence or permit the word `adapt` to hide
+mandatory B0 changes.
+
+### Current-Runtime Disposition Ledger
+
+| Current behavior | Disposition | Reason and destination |
+| --- | --- | --- |
+| One-question disposable probe and durable verdict | `protect` | Core outcome in B0 |
+| Narrow implicit invocation and implicit policy | `protect` | Required platform contract in B0 |
+| Caller owns adoption, durable publication, implementation, and production proof | `protect` | Required authority contract in B0 |
+| Default `.tmp/`, authorized `.scratch/`, and explicit app-tree authority | `protect` | Required mutation boundary in B0 |
+| One pre-mutation Lock over decision, judgment, paths, and cleanup intent | `replace` | B0 uses one flat minimum Freeze; C1 may add the five-lock mechanism |
+| Logic and UI selected by evidence need | `protect` and `disclose` | B0 retains the two branches behind pointers |
+| One repo-native command, in-memory default, and smallest judgeable probe | `protect` | B0 common path |
+| Branch Smoke gates | `protect` and `disclose` | B0 branch files; C1 may sharpen proof-level naming |
+| Human shape/feel and caller-locked objective evidence | `protect` | B0 judgment semantics; C1 separates named roles and modes |
+| `answered`, `awaiting-verdict`, and `blocked` returns | `replace` | B0 requires truthful semantic outcomes without a packet schema; C1 adds exact status-owned packets |
+| File cleanup or preservation before Return | `replace` | B0 retains minimum owned cleanup; C1 adds exhaustive inventory and four dispositions |
+| `$handoff` recommendation for cross-session verdicts | `remove` | Return directly; the caller may separately choose Handoff |
+| `$domain-modeling` recommendation for durable terms or ADR candidates | `remove` | Return the surfaced candidate directly; the caller owns any later Domain Modeling use |
+| Direct caller/user Return | `protect` and strengthen | Mandatory B0 leaf contract for every terminal result |
+| Current completion criterion | `replace` | B0 gets the viability-floor criterion; C1 may add operation-specific precision |
+
+### Research Disposition Ledger
+
+| Research item and original claim label | Local disposition | Reason |
+| --- | --- | --- |
+| Matt Pocock: one question, realistic runnable surface, one command, visible state, structural UI variants; corroborated upstream behavior | `supporting rationale only` | Supports the selected baseline core but does not override local authority |
+| Matt Pocock / language upper bound: Prototype as primary source; `synthesis`, M corroborated | `reject` as a default mechanism | Off-main preservation conflicts with local reconciliation; explicitly authorized durable evidence remains possible |
+| Language upper bound: question-driven prototype; `synthesis` | `supporting rationale only` | Names the core outcome without adding a runtime mechanism |
+| Language upper bound: no-op pruning; `synthesis` | `supporting rationale only` | Governs Prompt 4 pruning proof, not C1 behavior |
+| Superpowers mandatory design ceremony; corroborated adjacent behavior | `reject` | Solves a broader specification-and-approval problem |
+| Ponytail simplicity and one-runnable-check pressure; `synthesis` | `supporting rationale only` | Reinforces minimum size but cannot set Prototype completion |
+| Historical books and websites below; `unverified-historical-pressure` | `defer` | No selected mechanism depends on them; no research interlude is needed |
+
+### Executable B0 Semantic Surface
+
+Prompt 3 MUST construct B0 as an executable package, not copy C1 and delete
+headings. B0 is the canonical baseline core plus only mandatory local
+adaptations:
+
+| Canonical baseline state | Mandatory B0 adaptation | Explicit C1 exclusion |
+| --- | --- | --- |
+| `Lock` starts from an assumed question | Add a mutation-free fit decision, then use one flat minimum `Freeze` | No four-predicate Admit or five-lock grouping |
+| Three named statuses plus a common verdict-field list | Require truthful semantic outcomes with only applicable facts | No exact four-status enum, shared envelope, status-owned deltas, identity read-back, or sole-`verdict` schema |
+| File-oriented cleanup or preservation | Require minimum owned file and live-resource cleanup before Return | No continuous exhaustive inventory or four named dispositions |
+| Prototype recommends Handoff or Domain Modeling in two closeout cases | Remove both outbound recommendations; return the artifact/candidate context directly | No replacement route map or automatic successor |
+| Logic/UI branch selection and one command | Preserve both branches, branch Smoke, and one entry point or smallest recipe | No Measure branch or exactly-one-contract Load mechanism |
+| Human versus caller-locked objective judgment | Preserve the decider, verdict basis, and unavailable-human truthfulness | No full claim/mode/decision-owner/judge/custody matrix |
+
+1. **Outcome and reach.** One implicitly invocable bounded design question,
+   one disposable runnable probe, one durable verdict.
+2. **Fit.** Before mutation, decide whether one runnable-evidence question
+   exists. A mismatch returns truthfully with no mutation.
+3. **Flat minimum Freeze.** Record and read back the question, informed
+   decision, selected Logic or UI evidence surface, who decides, who receives
+   the result, verdict basis, authorized paths and effects, run command or
+   smallest recipe, finite bound, and known limitation. B0 does not group these
+   facts into five locks or require C1's role schema.
+4. **Probe.** Build the smallest judgeable artifact with repository-native
+   tooling, in-memory state by default, and only authorized real-context paths.
+5. **Smoke and Judge.** Run the selected branch gate, distinguish runnable
+   evidence from the answer, preserve human-reserved judgment, and state the
+   supported direction and limits without production-proof language.
+6. **Minimum safe Reconcile.** Stop Prototype-created live resources; delete or
+   restore Prototype-owned disposable changes; preserve only the minimum
+   artifact needed for a pending human verdict under a named owner; verify the
+   resulting paths and resource state. B0 does not require an exhaustive
+   continuous inventory or four named dispositions.
+7. **Truthful Return.** State whether the question was answered, awaits human
+   judgment, could not proceed, or did not fit; include only applicable
+   question, evidence, residual, and artifact facts. B0 does not prescribe
+   C1's four exact status-owned packet deltas, shared envelope, or sole
+   `verdict` field.
+8. **Direct leaf exit.** Return every result to the current caller or user and
+   stop. Remove Prototype's `$handoff` and `$domain-modeling` recommendations;
+   preserve inbound caller relationships and caller-owned later routing.
+
+B0 completion is: fit is resolved; every mutation followed the flat Freeze;
+the selected Logic or UI surface ran when admitted; evidence or truthful
+residual is returned; Prototype-owned artifacts and live resources are safely
+reconciled; and the current caller or user receives the result with no
+downstream recommendation or execution.
+
+Prompt 3 froze B0's exact package bytes, hash, source provenance, adaptation
+delta, and known limitations at
+`docs/validation/evals/prototype-b0/`, tree hash
+`c1a79fa3a144e1cac39be80233e1a3a2756c2f5130af14d3bc20c53418c6d307`.
+
+### Admitted C1 Delta Set
+
+C1 begins from the exact Prompt 3 B0 and adds only these behavior-changing
+mechanisms:
+
+| C1 mechanism | Exact addition beyond B0 | Admission basis | Owner and cheapest expression | Entry and failure Return | Required proof |
+| --- | --- | --- | --- | --- | --- |
+| Four-predicate Admit and fit/readiness split | Replaces B0's simple fit decision with explicit one-decision, discriminating-question, runnable-comparison, and safe-reconciliation predicates; missing execution facts block Freeze rather than becoming non-fit | `observed baseline failure` | `SKILL.md`; one compact gate | Invocation; mismatch returns `not-admitted`, readiness failure returns `blocked` | B0 first exhibits misclassification; C1 positive, mismatch, and missing-readiness cases |
+| Five-lock Freeze | Replaces B0's flat minimum facts with ownership, question/evidence, mutation, execution/bound, and limitation groups plus completeness read-back | `observed baseline failure`, `non-intuitive safety or authority boundary` | `SKILL.md`; one grouped gate | Admitted work; incomplete or materially ambiguous lock returns `blocked` before mutation | B0 omission control and C1 complete/partial-lock cases |
+| Measure and one-contract Load | Adds variable comparative evidence, exactly one decision-bearing branch, and branch-only context loading beyond B0's Logic/UI choice | `observed baseline failure`, `required local contract` | `SKILL.md` pointer plus `MEASURE.md` | Frozen comparative design question; uncertain symptom or production certification returns non-admission or `blocked` without Measure overclaim | B0 Measure failure, C1 Logic/UI/Measure positives, wrong-branch negatives, live harness evidence |
+| Claim/mode/role matrix | Separates `claim level`, `judgment mode`, `decision_owner`, human judge, return owner, and custody instead of B0's generic decider/receiver facts | `observed baseline failure`, `non-intuitive safety or authority boundary` | `SKILL.md`; compact matrix and role clauses | Freeze and Judge; invalid pairing or missing authority returns `blocked`, unavailable human yields `awaiting-verdict` | B0 role-inference case; C1 wrong-pairing, unavailable-human, and independent-owner cases |
+| Three explicit proof levels | Names Smoke, verdict evidence, and production proof and assigns the last to the real coding owner beyond B0's basic non-claim | `required local contract`, `non-intuitive safety or authority boundary` | `SKILL.md` plus branch Smoke sections | Smoke/Judge; nondiscriminating evidence returns `blocked` | Green-Smoke/false-answer control and production-overclaim negative |
+| Four status-owned Markdown packets | Formalizes B0's semantic outcomes as `answered`, `awaiting-verdict`, `blocked`, and `not-admitted`, with one shared envelope, one status delta and predicate, current-invocation identity read-back, and one authoritative `verdict` | `observed baseline failure`, `non-intuitive safety or authority boundary` | `SKILL.md`; compact envelope and four deltas | Return; inconsistent or incomplete packet cannot claim completion | B0 padding, stale-identity, duplicate-result, and false-answer controls; C1 sequential-caller cases |
+| Exhaustive artifact accounting | Replaces B0's minimum owned cleanup with continuous file/non-file inventory, unique invocation root, exact `delete`, `restore`, `preserve-for-verdict`, and `authorized-durable-evidence` dispositions, stale-pointer removal, and conflict-safe read-back | `non-intuitive safety or authority boundary`, `observed baseline failure` | `SKILL.md`; one Reconcile section | First mutation through Return; ambiguity preserves the conflict and returns `blocked` | B0 cleanup-gap control, live process/path/dirty-work cases, deterministic path proof |
+| Awaiting-only Resume | Adds packet-backed fresh Resume, custody and drift checks, restart and Smoke, and rejection of blocked Resume beyond B0's pending-human preservation | `observed baseline failure`, `non-intuitive safety or authority boundary` | `SKILL.md` pointer plus `RESUME.md` | Explicit Resume request; non-awaiting packet returns `not-admitted`, changed Freeze requires fresh Admit/Freeze | B0 blocked-Resume failure, C1 awaiting/blocked/drift/custody cases |
+
+The leading-word spine
+`Admit -> Freeze -> Load -> Probe -> Smoke -> Judge -> Reconcile -> Return`
+is the minimum expression coordinating these admitted deltas, not a separate
+behavioral mechanism.
+
+### Pruning-Equivalence Transformations
+
+The shortened description
+`Prototype one bounded design question with a disposable runnable probe;
+exclude production proof, uncertain defects, and multi-decision design.` is
+not a C1 behavioral addition. It is a later metadata pruning-equivalence
+transformation over an otherwise accepted candidate. Five old-description and
+five shortened-description samples each passed 45/45 fixed invocation
+decisions with zero variance. Prompt 3 must preserve its classification as
+pruning evidence rather than use it to define or justify a C1 mechanism.
+Prompt 3 did so by freezing the longer-description full package independently
+at `efe811896...`.
+
+The prior root and branch pruning is likewise a Prompt 4
+behavior-preserving transformation, not an admission basis for C1.
+
+### Protected Behavior Set
+
+Protect across B0, C1, pruning, and promotion:
+
+- one question, one decision, and a disposable probe;
+- narrow implicit invocation;
+- caller-owned adoption, later routing, implementation, and production proof;
+- Logic and UI judgeability in real repository context;
+- human-reserved shape/feel and caller-locked objective evidence;
+- Smoke before verdict and no production-proof substitution;
+- authorized paths, preservation of unrelated work, and cleanup before Return;
+- truthful residuals without false `answered`;
+- direct Return to the current caller or user; and
+- no Prototype recommendation or invocation of Handoff, Domain Modeling,
+  Router, or another downstream route.
+
+Common-path behavior belongs in `SKILL.md`; Logic, UI, Measure, and Resume
+mechanics are disclosed; adoption and routing stay caller-owned; evaluation,
+installation, and Git delivery remain non-runtime. Helpers, registries,
+machine-readable packets, and automated cleanup remain deferred. Multi-question
+campaigns, default probe branches, production promotion, generic one-branch
+instructions, and automatic downstream continuation remain rejected.
+
+### Claim-To-Proof Outline
+
+| Claim lane | Existing evidence | Prompt 3/4 requirement |
+| --- | --- | --- |
+| Semantic fidelity | Current and upstream complete-package read-back; no load-bearing external semantic substitution | Preserve source labels; no research interlude |
+| Mechanism contribution | Historical canonical-versus-aggregate-candidate result `1/25` versus `25/25` admits the problem families only | Construct exact B0; run B0 first for each C1 claim; the historical aggregate result is not an exact B0 contribution control |
+| Current-contract preservation | Canonical contract tests and caller/relationship traces | Prove the protected behavior set against exact B0 and C1 |
+| Pruning equivalence | Pre-prune/final candidate `35/35`; old/short description `45/45` | Reuse only for unchanged bytes, tasks, and claims; otherwise rerun affected pruning lanes |
+| Invocation and context loading | Metadata-only `45/45` simulation | Prove platform discovery, adjacent negatives, and branch-pointer retrieval |
+| Deterministic and live behavior | Structural anchors and simulated packets | Execute Logic, UI, Measure, cleanup, dirty-work, Resume, and caller-integration cases |
+
+### Candidate Lifecycle
+
+Prompt 3 derived the revised C1 clause-by-clause from exact B0 and verified
+that the existing inactive `4d9ca65a...` package already has the required
+bytes. No candidate reconciliation or evidence invalidation was required.
+The longer-description variant is independently frozen at `efe811896...`, so
+description shortening remains pruning-equivalence rather than a C1
+mechanism. Aggregate behavioral evidence remains attached to its exact
+snapshots and is not mechanism-by-mechanism contribution proof. Prompt 4 is
+the earliest unmet unit.
 
 ## Outcome And Invariants
 
@@ -534,13 +773,12 @@ This table is the sole authority for proposed Prototype relationships.
 | TDD hands off a design question | Production behavior, red-green flow, and implementation authority | The design question only | Return verdict; do not resume or mutate TDD work automatically |
 | Audit Codebase recommends a performance experiment | Finding authority, audit state, and follow-up route | One bounded Measure question | Return design evidence; never upgrade it to an audit proof |
 | To Spec consumes a verdict | Durable synthesis and specification authority | Nothing after Return | Verdict is input evidence, not a direct invocation edge |
-| Domain Modeling receives a candidate | Durable vocabulary and ADR authority | Identify the candidate only | Recommend or return the candidate; do not edit domain artifacts |
 
 Prototype MUST preserve caller identity through nested composition. A caller-invoked Prototype always returns to that caller even if another skill seems like the obvious next route.
 
-Prototype MUST NOT select or invoke Skill Router, Codebase Design, To Spec, To Tickets, Implement, Parallel Implement, TDD, or Domain Modeling as a closeout action. It does not carry a route map. Every terminal result returns directly to the caller or user, who owns any later route.
+Prototype MUST NOT recommend, select, or invoke Handoff, Domain Modeling, Skill Router, Codebase Design, To Spec, To Tickets, Implement, Parallel Implement, or TDD as a closeout action. It does not carry a route map. Every terminal result returns directly to the caller or user, who owns any later route and receives any surfaced durable-language or ADR candidate as ordinary verdict context.
 
-Cross-session transfer of an `awaiting-verdict` packet MAY be recommended when the environment supports handoff, but Prototype does not own thread creation, task routing, or automatic continuation.
+A caller MAY separately choose Handoff for cross-session transfer of an `awaiting-verdict` packet or Domain Modeling for a surfaced durable-language or ADR candidate after Return. Prototype neither recommends those routes nor owns thread creation, durable capture, task routing, or continuation.
 
 ## Prototype Completion
 
@@ -601,14 +839,34 @@ Current language rejects production proof, but runtime behavior is safer when Sm
 
 ## Confirmed Deploy Prompt 1 Debate
 
-The six-category pressure test closed every material design choice while retaining an evidence gap for runtime proof:
+The six-category pressure test closed every material design choice while
+retaining an evidence gap for runtime proof. The final confirmation corrected
+four ledger boundaries:
 
-- **Ambiguity and ownership:** cut the proposed Prototype-to-Router residual edge. Every terminal status returns directly to the caller or user, preserving Prototype as a leaf.
+- **Ambiguity and ownership:** cut the proposed Prototype-to-Router residual
+  edge and remove current Prototype recommendations to `$handoff` and
+  `$domain-modeling`. Every terminal status returns directly to the caller or
+  user, preserving Prototype as a leaf while leaving later route selection with
+  that owner.
 - **Simplification and leading words:** preserve the established `claim level` vocabulary, replace the overloaded judgment-authority label with `judgment mode`, and keep `decision owner` as the authority.
 - **Navigation and invocation:** keep implicit invocation, but make positive and adjacent-negative invocation behavior a promotion-blocking evaluation family.
-- **Unnecessary complexity:** retain Measure, the four terminal statuses, awaiting-only Resume, five-lock Freeze, and artifact reconciliation because the fixed control exposed concrete failures those mechanisms address.
+- **Unnecessary complexity:** keep B0's flat minimum Freeze, truthful semantic
+  outcomes, minimum safe reconciliation, and direct Return distinct from C1's
+  five-lock Freeze, exact four status-owned packets, exhaustive four-disposition
+  accounting, and awaiting-only Resume. Retain Measure and the C1 mechanisms
+  because historical aggregate evidence admits their problem families, while
+  requiring new exact-B0 contribution proof.
 
-The confirmed packet made no domain-record or ADR change. It deferred live Logic, UI, and Measure execution, filesystem cleanup, browser isolation, invocation behavior, caller migration, and installed parity to experimental proof. Those gaps prevent promotion claims but do not leave a synthesis decision unresolved.
+The shortened description is a pruning-equivalence change, not a
+behavior-changing C1 mechanism. The historical `1/25` versus `25/25` result is
+aggregate admission evidence, not an exact B0 contribution control. No research
+interlude, domain-record change, or ADR change is required.
+
+The confirmed packet defers executable B0 construction, mechanism-specific
+contribution proof, live Logic/UI/Measure execution, filesystem cleanup,
+browser isolation, platform invocation, caller migration, and installed parity.
+Those gaps require Prompt 3 and Prompt 4 proof but leave no synthesis decision
+unresolved.
 
 ## Upstream Comparison
 
@@ -747,6 +1005,11 @@ The very qualities that make a prototype economical—limited cases, isolated da
 
 Rejected because the correct next step depends on the caller's larger workflow. A Wayfinder resolver must return to Wayfinder; an Improvement candidate must return to Improve Codebase; a direct user may simply stop. Prototype returns every terminal result directly and never delegates non-admission to Router.
 
+The same boundary removes Prototype's current Handoff recommendation for
+cross-session judgment and Domain Modeling recommendation for a surfaced term
+or ADR candidate. Prototype returns the awaiting packet or durable candidate
+context directly; the caller may separately select either skill afterward.
+
 ### Promote The Winning Probe
 
 Rejected because it rewards prototype shortcuts with production authority. The supported direction should be reimplemented under normal design, testing, and review contracts.
@@ -776,9 +1039,11 @@ These ideas remain hypotheses until repeated runtime evidence justifies them:
 
 Promotion would require observed repeated friction across unrelated repositories, a smaller total operator burden than the manual contract, and proof that the helper does not absorb question, judgment, or cleanup authority.
 
-# Layer Four: Extraction And Verification
+# Layer Four: Historical Extraction And Verification (Superseded)
 
-Layer Four maps and proves Layer Two. It does not add runtime behavior.
+This layer records the superseded extraction plan and its historical proof.
+Current package shape, callers, relationships, tests, and installation evidence
+are owned by the promoted canonical package and Prompt 4/5 acceptance record.
 
 ## Proposed Runtime Semantic Surface
 
@@ -838,7 +1103,7 @@ MEASURE.md
 
 | Surface | Owns | Proposed delta | Must not absorb |
 | --- | --- | --- | --- |
-| `skills/custom/prototype/SKILL.md` | Universal admission, five-lock Freeze, authority, lifecycle, proof levels, reconciliation, status, and direct caller or user return | Rewrite around `Admit -> Freeze -> Load -> Probe -> Smoke -> Judge -> Reconcile -> Return`, status-owned Markdown packets, one `verdict`, invocation root, custody and dispositions, caller authority, and terminal return without Router delegation | Branch mechanics, Resume restart procedure, a route map, production implementation, durable domain/spec/tracker ownership |
+| `skills/custom/prototype/SKILL.md` | Universal admission, five-lock Freeze, authority, lifecycle, proof levels, reconciliation, status, and direct caller or user return | Rewrite around `Admit -> Freeze -> Load -> Probe -> Smoke -> Judge -> Reconcile -> Return`, status-owned Markdown packets, one `verdict`, invocation root, custody and dispositions, caller authority, and terminal return without Handoff, Domain Modeling, or Router recommendations | Branch mechanics, Resume restart procedure, a route map, production implementation, durable domain/spec/tracker ownership |
 | `skills/custom/prototype/RESUME.md` | Awaiting-only Resume admission, identity and custody checks, restart, and return to main Judge | Add as branch-only disclosure loaded for Resume requests | Universal reconciliation, terminal Return, or hidden campaign state |
 | `skills/custom/prototype/LOGIC.md` | Logic probe mechanics | Clarify representative cases, driver choice, deterministic evidence, Smoke, and explicit return to main Judge | Measurement variability, UI rules, universal cleanup or return |
 | `skills/custom/prototype/UI.md` | UI probe mechanics | Clarify real-route authority, positive isolation, structural variant bounds, browser inspection, Smoke, and explicit return to main Judge | Production UI implementation, universal judgment mode, caller routing |
@@ -849,7 +1114,7 @@ MEASURE.md
 | `skills/custom/improve-codebase/SELECTED-CANDIDATE.md` | Candidate evidence request and reclassification | Preserve one-terminal-question invocation; update packet field names only if needed | Prototype procedure |
 | `skills/custom/tdd/SKILL.md` | Design-question handoff from red-green work | Preserve handoff and caller ownership; update only for exact return wording | Prototype execution or automatic resumption |
 | `skills/custom/audit-codebase/DEFECT-CONTRACT.md` | Audit follow-up classification | Route one comparative design experiment to Measure and uncertain symptoms to Diagnosing Bugs | Prototype proof claims or measurement mechanics |
-| `docs/synthesis/skill-context-relationships.md` | Pack-wide relationship registry | Keep every Prototype terminal return local and remove the proposed Prototype-to-Router edge | Operational procedure or unrelated Router caller policy |
+| `docs/synthesis/skill-context-relationships.md` | Pack-wide relationship registry | At atomic promotion, preserve inbound callers, keep every Prototype terminal return local, and remove Prototype's outbound `$handoff` and `$domain-modeling` recommendation rows; until then the registry continues to describe the active canonical skill | Operational procedure, caller-owned later routing, or unrelated Router policy |
 | `tests/test_skill_pack_contracts.py` | Structural and semantic contract protection | Extend for admission, Measure, proof levels, resume, cleanup, and caller return | Behavioral evaluation by substring alone |
 | `docs/validation/evals/core-workflows.md` | Fresh-context behavioral scenarios | Add behavior-family controls and branch/caller/authority cases | Selected or executable runtime behavior |
 | Installed `C:\Users\steve\.agents\skills\prototype\` mirror | Installed runtime parity | Synchronize only after canonical rewrite and promotion are authorized and pass | Independent edits or early authority |
@@ -858,7 +1123,7 @@ No Repo Bootstrap, tracker-policy, domain-document, ticketing, implementation, o
 
 ## Staged Extraction
 
-Current candidate state: Deploy Prompt 4 first accepted hash `eb6d161906b02c0e8d8a63eabde589bf47d261d46471d52c912a48df281af171`. Deploy Prompts 3 and 4 then rebuilt coverage before pruning, repaired two independently found P09 precision losses, and accepted pruned hash `efe81189617f7a179d7ba00639c5f64b2e98a606b76049f0131dacaad99e0d85` after five fresh pre-prune and five fresh pruned samples each passed 35/35 fixed cases with no critical failure. A later description-only prune produced current hash `4d9ca65a05d5b174b8eefbbc9396f00020ce267932b628415004575e03ff329d`; five fresh old-description and five fresh shortened-description samples each passed 45/45 fixed invocation decisions. Live branch execution, platform-level invocation discovery, caller migration, and atomic E4 promotion remain unproved.
+Historical candidate state: Deploy Prompt 4 first accepted hash `eb6d161906b02c0e8d8a63eabde589bf47d261d46471d52c912a48df281af171`. Deploy Prompts 3 and 4 then rebuilt coverage before pruning, repaired two independently found P09 precision losses, and accepted pruned hash `efe81189617f7a179d7ba00639c5f64b2e98a606b76049f0131dacaad99e0d85` after five fresh pre-prune and five fresh pruned samples each passed 35/35 fixed cases with no critical failure. A later description-only pruning-equivalence transformation produced current hash `4d9ca65a05d5b174b8eefbbc9396f00020ce267932b628415004575e03ff329d`; five fresh old-description and five fresh shortened-description samples each passed 45/45 fixed invocation decisions. Under the baseline-first deployment model, these exact snapshots remain reusable evidence but do not substitute for construction of an executable adapted B0 or mechanism-specific B0/C1 contribution proof.
 
 ### Pruning Ledger
 
@@ -869,21 +1134,41 @@ Current candidate state: Deploy Prompt 4 first accepted hash `eb6d161906b02c0e8d
 
 The universal `SKILL.md` surface fell from 1,497 to 1,237 words. `RESUME.md` adds 112 branch-only words. Raw count is diagnostic; the acceptance claim rests on distinct ownership plus structural and fresh behavioral proof.
 
+### Stage I0: Exact B0
+
+Complete. The executable locally adapted B0 was constructed independently from
+the selected canonical baseline and frozen at
+`c1a79fa3a144e1cac39be80233e1a3a2756c2f5130af14d3bc20c53418c6d307`
+before candidate comparison.
+
+Checkpoint: B0 independently satisfies the viability floor, preserves the
+protected behavior set, removes Prototype's Handoff and Domain Modeling
+recommendations, and contains none of C1's five-lock, packet-schema,
+four-disposition, Measure, or Resume mechanics.
+
 ### Stage I1: Universal Leaf Contract
 
-Construct the outcome, Admit and five-lock Freeze gates, mutation envelope, lifecycle, proof levels, status-owned return, Reconcile, and direct caller-or-user return rule in the experimental `SKILL.md` candidate.
+Construction complete; proof pending Prompt 4. C1 was derived from exact B0 by
+adding the four-predicate Admit gate, five-lock Freeze, judgment matrix, proof
+levels, status-owned Return, exhaustive Reconcile, and current-invocation
+identity while preserving direct caller-or-user Return. Exact existing bytes
+already matched the derivation.
 
 Checkpoint: focused structural tests and fresh-context cases prove one-question admission, non-admission without mutation, caller return, and production-proof refusal before branch expansion proceeds.
 
 ### Stage I2: Branch Contracts
 
-Update Logic and UI, add Measure, make every branch return to main Judge, and align only the caller surfaces whose existing contracts require field or branch parity.
+Construction complete; proof pending Prompt 4. Exact C1 retains updated Logic
+and UI, adds Measure, and returns every branch to main Judge. Caller and active
+relationship surfaces remain unchanged until atomic promotion.
 
 Checkpoint: each branch proves correct selection, restricted context loading, branch-specific Smoke, discriminating evidence, and its negative boundary.
 
 ### Stage I3: Resume, Reconciliation, And Integrated Promotion
 
-Complete awaiting-verdict resume, dirty-work and side-effect cases, relationship-map parity, full behavior evaluations, canonical validation, and installed-mirror synchronization.
+Resume and reconciliation bytes are constructed. Prompt 4 owns
+awaiting-verdict, dirty-work, side-effect, contribution, and relationship-trace
+proof. Prompt 5 owns atomic promotion and installed-mirror synchronization.
 
 Promotion condition: E0-E4 evaluation passes, including positive and adjacent-negative invocation tests; critical failures are absent; canonical checks are green; every caller and field migration is complete; and the installed mirror is byte-equivalent after authorized sync.
 
@@ -946,18 +1231,20 @@ Score each candidate on observable behavior:
 
 ### Executed Candidate Evaluation
 
-The 2026-07-21 fixed-scenario run used five fresh control and five fresh
-candidate contexts. The active package at tree hash
+The 2026-07-21 fixed-scenario run used five fresh canonical and five fresh
+aggregate-candidate contexts. The active package at tree hash
 `ecba1e84f0e0df9a0b32b2febdac4e1d7f096dcbf468f9c054c0d5bf7d95a3ef`
 scored 1/25 behavior-family passes and exposed unsafe blocked-packet Resume
 intent in all five samples. The experimental package at tree hash
 `69435f142f98e858c302532ce93854b67a2785d49198faa2a3f50695fb155907`
 scored 25/25 with no critical failure.
 
-The counterfactual accepted that inactive snapshot for admission and Freeze,
-branch selection and evidence, judgment and custody, reconciliation and Resume,
-and caller return. The later confirmed decisions invalidate exact-hash candidate
-acceptance while preserving this evidence for unchanged behavior. The run did
+This is historical aggregate admission evidence: it demonstrates problem
+families in the canonical package and supports continued investigation of the
+combined candidate. It is not an exact B0 contribution control for any
+individual C1 mechanism because the canonical arm lacks the mandatory local B0
+adaptations and the candidate arm changes several mechanisms together. The
+later confirmed decisions preserve the result only at that scope. The run did
 not execute real probes or prove implicit invocation, filesystem cleanup,
 browser behavior, measurement validity, caller migration, installer behavior,
 or installed parity. See
@@ -1037,7 +1324,7 @@ caller-migration, installer, and parity proof remains outstanding.
 3. A microbenchmark does not diagnose an unexplained production slowdown or certify an SLO.
 4. A successful Smoke does not produce `answered` without discriminating verdict evidence.
 5. Prototype does not edit production tests, dependencies, tracker issues, ADRs, specs, branches, commits, or releases.
-6. Prototype does not select or start Skill Router, Codebase Design, To Spec, To Tickets, Implement, TDD, Parallel Implement, or Domain Modeling at Return.
+6. Prototype does not recommend, select, or start Handoff, Domain Modeling, Skill Router, Codebase Design, To Spec, To Tickets, Implement, TDD, or Parallel Implement at Return.
 7. Reconcile does not delete a pre-existing `.tmp` directory or a concurrently modified authorized file.
 8. Resume does not accept `blocked`, inspect its artifact, or fabricate admitted-only fields; it returns `not-admitted` and requires fresh Admit and Freeze. An awaiting Resume does not trust stale custody or use preserved artifacts without checking Freeze identity, drift, ownership, restartability, and Smoke.
 9. Logic does not absorb noisy measurement rules, UI does not absorb production implementation, and Measure does not absorb diagnosis.
@@ -1107,6 +1394,39 @@ The synthesis-to-runtime rewrite is complete only when:
 
 Until all ten conditions hold, this document remains a design reference for a future rewrite rather than a claim that the Prototype runtime already implements the complete model.
 
-## Experimental Extraction Readiness
+## Promotion And Installation
 
-**Decision: `experimental-candidate-accepted`.** The pruned inactive candidate retains one owner for every selected behavior, removes the Prototype-specific Router edge, preserves `claim level`, separates `judgment mode`, decision owner, human judge, and custody, and keeps rejected Resume and sequential caller identity rules. Fresh pruning- and description-equivalence evaluations accepted the current hash chain without a critical failure. Prompt 5 may coordinate canonical promotion and installation, but must still prove live branch behavior, platform invocation, caller migration, canonical validation, installer behavior, and installed parity before claiming promotion complete.
+**Decision: `complete`.** Prompt 4 ran exact B0 first for every
+claimed mechanism. B0 failed only the variable comparative evidence case, and
+exact accepted C1 corrected it through `MEASURE.md` in all five fresh samples.
+The four-predicate Admit expansion, five-lock presentation, three-level proof
+taxonomy, exact packet schema, and Resume branch were removed after B0 showed
+no failure. Exactly-one wording was demoted to B0-equivalent context control;
+role labels and four artifact dispositions remain only as deterministic
+authority and safety contracts.
+
+The promoted canonical and installed package is
+`ed5832972cbd1a093656087a7efc61e679f4068b3bea330204ba6559fb78ce33`.
+Five fresh final-package samples passed all 45 representative Logic, UI,
+Measure, cleanup, Resume, and caller-return cases. Fresh metadata-only
+pre-prune and shortened-description arms each passed 45/45, establishing
+pruning equivalence rather than a C1 mechanism. Live Logic, UI, Measure, and
+cleanup probes passed their declared checks. Exact results, hashes, invalidated
+evidence, and structural proof live in
+[`2026-07-22-prototype-b0-first-acceptance.md`](../../validation/transcripts/2026-07-22-prototype-b0-first-acceptance.md).
+
+Prompt 5 reused that evidence without a new behavior wave because the exact
+candidate bytes, tasks, claims, and evidence contracts were unchanged.
+Canonical Wayfinder now passes Prototype decision authority, claim level,
+judgment mode, and the human judge when applicable. Prototype's outbound
+Handoff and Domain Modeling relationships are removed; direct current-caller
+Return remains.
+
+The experimental Prototype package and manifest entry are retired. Gated
+dry-runs proposed only the cumulative accepted cohort of Prototype, Wayfinder,
+and Improve Codebase; canonical and installed inventories are byte-identical,
+and the post-install dry-run reports all 25 managed skills unchanged.
+Promotion and installation evidence is
+appended to
+[`2026-07-22-prototype-b0-first-acceptance.md`](../../validation/transcripts/2026-07-22-prototype-b0-first-acceptance.md).
+The historical aggregate behavior result remains admission evidence only.

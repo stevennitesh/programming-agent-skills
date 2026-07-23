@@ -20,7 +20,7 @@ Enter only for an explicit `Candidate N` and verified improvement report. [`SKIL
 
 - **Repository:** inspect the missing source, caller, test, history, or configuration evidence.
 - **Source:** invoke `$research` with one question, supported decision, scope, freshness, and `authorized note path: none` unless one path is approved. Receive cited evidence, one note pointer, or a blocker.
-- **Runnable:** invoke `$prototype` with one terminal question, judgment authority, objective criteria when applicable, and a disposable `.tmp/improvement-prototypes/` path. App-tree or durable paths require explicit authority. Treat its reconciled verdict as design evidence, never production proof.
+- **Runnable:** invoke `$prototype` with one terminal question; Improve Codebase as result recipient; a named decision owner; explicit claim level and judgment mode; a named human judge when human; a predeclared verdict basis and representatives; one `.tmp/prototype/<question-slug>/` root with authorized effects and dispositions; one recipe and finite bound; and known limits. App-tree or durable paths require explicit authority. Treat its supported result as design evidence, never production proof.
 - **User decision:** return one bounded user-decision question, recommend explicit `$grill-with-docs`, and stop. Resume the same candidate in a later Improve Codebase invocation with its complete packet; `Evidence gap` stops resolution.
 - **Design:** invoke `$codebase-design` only for a supported `Concentrate` candidate needing dependency, seam, ownership, interface, migration, or replacement design. Receive its design packet.
 

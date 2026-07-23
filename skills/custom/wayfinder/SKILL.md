@@ -25,7 +25,7 @@ Before any tracker mutation, read `docs/agents/issue-tracker.md`, section `Wayfi
 Every ticket declares one type and participation mode:
 
 - **Research — AFK:** Invoke `$research` with one approved note path; return its cited note pointer.
-- **Prototype — HITL or AFK:** Invoke `$prototype` when the question needs a runnable probe; apply the participation rule below and return its reconciled verdict packet and cleanup or preservation state.
+- **Prototype — HITL or AFK:** Invoke `$prototype` when the question needs a runnable probe; pass its decision owner, claim level, judgment mode, and human judge when human, then return its supported result, evidence, limits, and cleanup state.
 - **Grilling — HITL:** When the user owns the resolution because it depends on preference, contested terminology, or a material tradeoff not settled by accepted repository contracts, return the ticket bound, recommend explicit `$grill-with-docs`, and stop. Resume the ticket in a later Wayfinder invocation with the returned decision.
 - **Task — AFK or HITL:** Use AFK when accepted repository contracts and objective proof determine the resolution; return the supported answer, affected boundary, and proof criteria. Use HITL only when completing the prerequisite requires live human action.
 
@@ -35,9 +35,9 @@ Classify by resolution authority, not whether the ticket is phrased as a decisio
 
 For Prototype tickets, participation follows the locked judgment:
 
-- `shape/feel` — HITL with a human judge.
-- `design evidence` — AFK when the ticket locks objective verdict criteria.
-- `design evidence` — HITL only when the caller explicitly reserves the verdict for a human.
+- `shape/feel` — HITL with judgment mode `human` and a human judge.
+- `design evidence` — AFK with judgment mode `rule-based` and objective verdict criteria.
+- `design evidence` — HITL with judgment mode `human` only when the caller explicitly reserves the verdict for a human.
 
 ## Modes
 
@@ -50,7 +50,7 @@ Use Chart for a loose idea without a map.
 1. **Bound.** Return a **charting bound** that settles only the destination, scope, and route-closing condition; recommend explicit `$grill-with-docs` and stop. Resume Chart in a later Wayfinder invocation with the returned decision.
 2. **Sweep.** Surface material decisions breadth-first. For each material decision: Defer it explicitly to a named Wayfinder ticket rather than resolving it during Chart.
 3. **Gate.** If the route is already clear, name the closing route and stop without creating a map.
-4. **Approve.** Show the destination, map title, child titles, questions, types, modes, approved research note paths, fog, scope boundary, and blocking edges as one mutation packet. For each Prototype ticket, also show its claim level and either the human judge or objective verdict criteria; reject a packet whose claim level, judgment, and mode disagree with the participation rule. Obtain explicit approval; any changed packet requires fresh approval.
+4. **Approve.** Show the destination, map title, child titles, questions, types, modes, approved research note paths, fog, scope boundary, and blocking edges as one mutation packet. For each Prototype ticket, also show its decision owner, claim level, judgment mode, and either the human judge or objective verdict criteria; reject a packet whose claim level, judgment, and mode disagree with the participation rule. Obtain explicit approval; any changed packet requires fresh approval.
 5. **Chart.** Read [MAP-FORMAT.md](MAP-FORMAT.md), then create the map with destination, notes, empty resolution index, fog, and scope boundary.
 6. **Wire.** Create every sharp child ticket before adding known blocking edges.
 7. **Verify.** Apply the tracker's **Mutation read-back** rule to the map, children, and edges.

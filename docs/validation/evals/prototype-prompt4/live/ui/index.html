@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prototype UI Variants</title>
+  <style>
+    body { font: 16px system-ui; margin: 0; color: #172033; background: #eef2f7; }
+    header, main { max-width: 960px; margin: auto; padding: 20px; }
+    nav { display: flex; gap: 8px; align-items: center; }
+    button { padding: 8px 12px; }
+    #surface { min-height: 320px; background: white; border-radius: 12px; padding: 20px; }
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .card { border: 1px solid #ccd5e2; border-radius: 8px; padding: 16px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px; border-bottom: 1px solid #ccd5e2; text-align: left; }
+    .timeline { border-left: 3px solid #5078d2; padding-left: 20px; }
+    .event { margin: 0 0 24px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Work overview</h1>
+    <nav aria-label="Prototype variants">
+      <button id="previous">Previous</button>
+      <strong id="active"></strong>
+      <button id="next">Next</button>
+    </nav>
+  </header>
+  <main><section id="surface"></section></main>
+  <script>
+    const variants = ["cards", "table", "timeline"];
+    const items = [
+      ["Intake", "3 waiting"], ["Review", "2 active"], ["Done", "8 today"]
+    ];
+    const selected = () => {
+      const requested = new URLSearchParams(location.search).get("variant");
+      return variants.includes(requested) ? requested : variants[0];
+    };
+    const render = () => {
+      const variant = selected();
+      document.querySelector("#active").textContent = variant;
+      const surface = document.querySelector("#surface");
+      surface.dataset.variant = variant;
+      if (variant === "cards") {
+        surface.innerHTML = `<div class="cards">${items.map(
+          ([name, value]) => `<article class="card"><h2>${name}</h2><p>${value}</p></article>`
+        ).join("")}</div>`;
+      } else if (variant === "table") {
+        surface.innerHTML = `<table><thead><tr><th>Stage</th><th>Status</th></tr></thead><tbody>${items.map(
+          ([name, value]) => `<tr><td>${name}</td><td>${value}</td></tr>`
+        ).join("")}</tbody></table>`;
+      } else {
+        surface.innerHTML = `<div class="timeline">${items.map(
+          ([name, value]) => `<article class="event"><h2>${name}</h2><p>${value}</p></article>`
+        ).join("")}</div>`;
+      }
+    };
+    const move = (delta) => {
+      const index = variants.indexOf(selected());
+      const next = variants[(index + delta + variants.length) % variants.length];
+      history.pushState({}, "", `?variant=${next}`);
+      render();
+    };
+    document.querySelector("#previous").addEventListener("click", () => move(-1));
+    document.querySelector("#next").addEventListener("click", () => move(1));
+    addEventListener("popstate", render);
+    render();
+  </script>
+</body>
+</html>

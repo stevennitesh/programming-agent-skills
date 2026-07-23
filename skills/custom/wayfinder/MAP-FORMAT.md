@@ -46,4 +46,4 @@ Prefer the ticket that owns future work. When none exists, link the resolution o
 
 Record type, HITL/AFK mode, parent relationship, blocking edges, claim state, and resolution state through the repo's `Wayfinding operations` convention.
 For Research tickets, also record the caller-approved repo-local note path.
-For Prototype tickets, put `Claim level: shape/feel | design evidence` and either `Human judge: <who>` or `Verdict criteria: <objective caller-locked criteria>` near `Participation`.
+For Prototype tickets, put `Decision owner: <who>`, `Claim level: shape/feel | design evidence`, `Judgment mode: human | rule-based`, and either `Human judge: <who>` or `Verdict criteria: <objective caller-locked criteria>` near `Participation`.

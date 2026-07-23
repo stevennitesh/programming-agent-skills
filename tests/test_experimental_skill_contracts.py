@@ -4,6 +4,8 @@ import re
 import runpy
 from pathlib import Path
 
+from scripts.skill_pack_contract import tree_hash
+
 
 ROOT = Path(__file__).resolve().parents[1]
 CUSTOM = ROOT / "skills/custom"
@@ -164,20 +166,17 @@ def test_experimental_to_questionnaire_preserves_admitted_leaf_contract() -> Non
     assert policy.endswith("policy:\n  allow_implicit_invocation: true\n")
 
 
-def test_experimental_prototype_preserves_selected_leaf_contract() -> None:
-    skill_dir = EXPERIMENTAL / "prototype"
+def test_promoted_prototype_preserves_selected_leaf_contract() -> None:
+    skill_dir = CUSTOM / "prototype"
     skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     logic = (skill_dir / "LOGIC.md").read_text(encoding="utf-8")
     ui = (skill_dir / "UI.md").read_text(encoding="utf-8")
     measure = (skill_dir / "MEASURE.md").read_text(encoding="utf-8")
-    resume = (skill_dir / "RESUME.md").read_text(encoding="utf-8")
     policy = (skill_dir / "agents/openai.yaml").read_text(encoding="utf-8")
-    wayfinder_map = (EXPERIMENTAL / "wayfinder" / "MAP-FORMAT.md").read_text(
+    wayfinder_map = (CUSTOM / "wayfinder" / "MAP-FORMAT.md").read_text(
         encoding="utf-8"
     )
-    wayfinder_operations = (
-        EXPERIMENTAL / "wayfinder" / "OPERATIONS.md"
-    ).read_text(encoding="utf-8")
+    wayfinder = (CUSTOM / "wayfinder" / "SKILL.md").read_text(encoding="utf-8")
 
     assert (
         "description: Prototype one bounded design question with a disposable "
@@ -187,47 +186,32 @@ def test_experimental_prototype_preserves_selected_leaf_contract() -> None:
     )
 
     for contract in (
-        "Admit -> Freeze -> Load -> Probe -> Smoke -> Judge -> Reconcile -> Return",
-        "request_subject",
-        "Before mutation, read back five locks",
+        "Before mutation, read back:",
         "claim level: shape/feel | design evidence",
         "judgment mode: human | rule-based",
-        "The decision owner and human judge are independent roles",
+        "Decision owner and human judge are independent authorities",
         ".tmp/prototype/<question-slug>/",
-        "Load exactly one branch reference",
+        "Read only the decision-bearing branch",
         "[MEASURE.md](MEASURE.md)",
         "preserve-for-verdict",
         "authorized-durable-evidence",
         "No terminal return leaves a live resource",
-        "read back the current invocation identity",
-        "never carry them from a preceding request or supplied packet",
-        "Return and stop without selecting or invoking a downstream route",
-        "one `verdict`",
-        "another answer defined by the frozen rule",
-        "Freeze fields reached",
-        "every started operation either meets its criterion or returns `blocked`",
+        "Never carry caller identity from a preceding request or supplied result",
+        "Do not select, recommend, or invoke a downstream route",
+        "Production correctness remains with the real coding workflow",
     ):
         assert contract in skill
 
-    for contract in (
-        "Resume is permitted only from an `awaiting-verdict` packet",
-        "A request to Resume any other status returns `not-admitted`",
-        "never the rejected packet's subject",
-        "require fresh Admit and Freeze",
-        "return to Judge in [SKILL.md](SKILL.md)",
-    ):
-        assert contract in resume
-
     for removed in (
         "supported_direction",
-        "Admit -> Freeze -> Branch",
+        "Before mutation, read back five locks",
+        "status: answered | awaiting-verdict | blocked | not-admitted",
+        "[RESUME.md](RESUME.md)",
         "$skill-router",
+        "$handoff",
+        "$domain-modeling",
     ):
         assert removed not in skill
-    assert (
-        "Do not add universal `last_operation` or `next_required_action` fields"
-        in skill
-    )
 
     assert "happy, boundary, and rejected cases" in logic
     assert "repeated runs are equivalent" in logic
@@ -237,13 +221,11 @@ def test_experimental_prototype_preserves_selected_leaf_contract() -> None:
     assert "variance and worst observed result" in measure
     assert "known confounders and unsupported extrapolations" in measure
     assert "does not diagnose an unexplained slowdown" in measure
-    assert "Prototype claim level: shape/feel | design evidence" in wayfinder_map
-    assert "Prototype judgment mode: human | rule-based" in wayfinder_map
-    assert "Resolution authority (Prototype decision owner when applicable)" in wayfinder_map
-    assert "pass Resolution authority as the decision owner" in wayfinder_operations
-    assert "never infer either role from the other" in wayfinder_operations
-    assert "claim level `shape/feel` plus judgment mode `human`" in wayfinder_operations
-    assert "claim level `design evidence` plus `rule-based`" in wayfinder_operations
+    assert "Decision owner: <who>" in wayfinder_map
+    assert "Claim level: shape/feel | design evidence" in wayfinder_map
+    assert "Judgment mode: human | rule-based" in wayfinder_map
+    assert "pass its decision owner, claim level, judgment mode" in wayfinder
+    assert "human judge when human" in wayfinder
     for branch in (logic, ui, measure):
         assert "Return to `Judge` in [SKILL.md](SKILL.md)" in branch
         assert "this branch does not Reconcile or Return" in branch
@@ -255,12 +237,95 @@ def test_experimental_prototype_preserves_selected_leaf_contract() -> None:
     } == {
         "LOGIC.md",
         "MEASURE.md",
-        "RESUME.md",
         "SKILL.md",
         "UI.md",
         "agents/openai.yaml",
     }
     assert policy == "policy:\n  allow_implicit_invocation: true\n"
+
+
+def test_prototype_b0_and_description_pruning_controls_are_exact() -> None:
+    b0_dir = ROOT / "docs/validation/evals/prototype-b0"
+    candidate_dir = CUSTOM / "prototype"
+    description_control_dir = (
+        ROOT / "docs/validation/evals/prototype-description-pre-prune"
+    )
+
+    assert tree_hash(b0_dir) == (
+        "c1a79fa3a144e1cac39be80233e1a3a2756c2f5130af14d3bc20c53418c6d307"
+    )
+    assert tree_hash(candidate_dir) == (
+        "ed5832972cbd1a093656087a7efc61e679f4068b3bea330204ba6559fb78ce33"
+    )
+    assert tree_hash(description_control_dir) == (
+        "22614fe625ec8ecbb176ef8af07cb4c0b186e92dee1348f9efb85be10120f668"
+    )
+
+    assert {
+        path.relative_to(b0_dir).as_posix()
+        for path in b0_dir.rglob("*")
+        if path.is_file()
+    } == {"LOGIC.md", "SKILL.md", "UI.md", "agents/openai.yaml"}
+    assert {
+        path.relative_to(description_control_dir).as_posix()
+        for path in description_control_dir.rglob("*")
+        if path.is_file()
+    } == {
+        "LOGIC.md",
+        "MEASURE.md",
+        "SKILL.md",
+        "UI.md",
+        "agents/openai.yaml",
+    }
+
+    b0 = (b0_dir / "SKILL.md").read_text(encoding="utf-8")
+    for required in (
+        "Before mutation, read back:",
+        "the selected Logic or UI evidence surface",
+        "Stop Prototype-created processes",
+        "State truthfully whether the question was answered",
+        "Return directly to the current caller",
+        "Do not select, recommend, or invoke a downstream route",
+    ):
+        assert required in b0
+    for c1_only in (
+        "Admit without mutation only when all are true",
+        "Before mutation, read back five locks",
+        "Load exactly one branch reference",
+        "[MEASURE.md](MEASURE.md)",
+        "status: answered | awaiting-verdict | blocked | not-admitted",
+        "`authorized-durable-evidence`",
+        "[RESUME.md](RESUME.md)",
+    ):
+        assert c1_only not in b0
+
+    for forbidden_recommendation in ("$handoff", "$domain-modeling"):
+        assert forbidden_recommendation not in b0
+        assert forbidden_recommendation not in (
+            candidate_dir / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+    candidate_files = {
+        path.relative_to(candidate_dir).as_posix(): path
+        for path in candidate_dir.rglob("*")
+        if path.is_file()
+    }
+    control_files = {
+        path.relative_to(description_control_dir).as_posix(): path
+        for path in description_control_dir.rglob("*")
+        if path.is_file()
+    }
+    assert candidate_files.keys() == control_files.keys()
+    for relative in candidate_files.keys() - {"SKILL.md"}:
+        assert candidate_files[relative].read_bytes() == control_files[
+            relative
+        ].read_bytes()
+
+    old_skill = control_files["SKILL.md"].read_text(encoding="utf-8")
+    new_skill = candidate_files["SKILL.md"].read_text(encoding="utf-8")
+    old_description = old_skill.splitlines()[2]
+    new_description = new_skill.splitlines()[2]
+    assert old_skill.replace(old_description, new_description, 1) == new_skill
 
 
 def test_experimental_repo_bootstrap_preserves_per_file_reconciliation() -> None:

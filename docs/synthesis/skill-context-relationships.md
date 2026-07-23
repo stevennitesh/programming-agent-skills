@@ -44,8 +44,6 @@ flowchart TD
   Wayfinder -. "recommend and stop" .-> GrillDocs
   Wayfinder --> Prototype["prototype"]
   Wayfinder --> Research["research"]
-  Prototype -. "verdict crosses sessions" .-> Handoff["handoff"]
-  Prototype -. "resolved Domain Delta" .-> DomainModel
   Prototype -. "promotion or production proof" .-> Contract
 
   Shape --> ToSpec["to-spec"]
@@ -219,7 +217,7 @@ Use one verb for each accepted relationship:
 | `research` | Recommend and stop | `$codebase-design` | One bounded interface, seam, adapter, ownership, or migration design must be chosen. |
 | `research` | Recommend and stop | `$wayfinder` | Several interdependent decisions and non-conversational prerequisites need a durable route; the user must start Wayfinder later. |
 | `wayfinder` | Invoke | `$research` | Resolve one AFK research ticket, then record its pointer. |
-| `wayfinder` | Invoke | `$prototype` | Resolve one HITL or AFK runnable probe, then receive its reconciled verdict packet and cleanup or preservation state. |
+| `wayfinder` | Invoke | `$prototype` | Pass decision authority, claim level, judgment mode, and the human judge when human; receive the supported result, evidence, limits, and cleanup state. |
 | `wayfinder` | Recommend and stop | `$grill-with-docs` | One HITL decision ticket or Chart bound needs a direct user decision with durable capture; resume Wayfinder later with the returned decision. |
 | `wayfinder` | Recommend and stop | `$domain-modeling` | A closing decision changes durable language or warrants an ADR offer. |
 | `wayfinder` | Recommend and stop | `$to-spec` | The closed map produced settled parent-spec source. |
@@ -257,7 +255,7 @@ Use one verb for each accepted relationship:
 | `audit-codebase` finding contract | Suggest only | `$grill-with-docs` | A read-only finding exposes a user-owned term, rule, preference, or trade-off; the caller chooses any later route and Audit neither invokes the composer nor resumes. |
 | `improve-codebase` | Load | `$codebase-design` | Apply shared module, interface, seam, depth, leverage, and locality vocabulary during the Survey. |
 | `improve-codebase` | Invoke | `$research` | A selected candidate needs one source question; return cited evidence or a blocker to the caller. |
-| `improve-codebase` | Invoke | `$prototype` | A selected candidate needs one runnable design verdict; return its reconciled verdict and cleanup state. |
+| `improve-codebase` | Invoke | `$prototype` | A selected candidate needs one runnable design verdict; pass the complete Freeze authority and receive its supported result, evidence, limits, and cleanup state. |
 | `improve-codebase` | Recommend and stop | `$grill-with-docs` | A selected candidate needs a direct user decision with durable capture; resume the same candidate later with the result. |
 | `improve-codebase` | Invoke | `$codebase-design` | A selected `Concentrate` candidate needs dependency, seam, ownership, interface, migration, or replacement design. |
 | `improve-codebase` | Recommend and stop | `$wayfinder` | Multiple interdependent unresolved decisions or prerequisites need a tracker-backed route. |
@@ -268,12 +266,10 @@ Use one verb for each accepted relationship:
 | `improve-codebase` | Recommend and stop | `$repo-bootstrap` | The disposable report boundary is missing or incompatible. |
 | `simplify-code` | Recommend and stop | `$improve-codebase` | The request needs wide discovery, ranking, or multi-region sequencing. |
 | `simplify-code` | Recommend and stop | `$codebase-design` | The best next move requires one new interface or ownership decision. |
-| `prototype` | Recommend and stop | `$handoff` | An awaiting verdict must cross sessions. |
-| `prototype` | Recommend and stop | `$domain-modeling` | The verdict exposes a durable term or ADR candidate. |
 | `codebase-design` | Recommend and stop | `$improve-codebase` | The request needs codebase-wide improvement discovery and classification. |
 | `handoff` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 
-The accepted future Domain Modeling promotion changes Wayfinder's durability edge to `Invoke`, with the locked context action and complete Domain Delta returned to the same campaign. Domain Modeling remains a leaf: direct use may ask focused domain-expert questions, composed use receives settled answers from Grilling, and every residual returns to the user or caller without invoking Skill Router, its composer, or downstream execution. Prototype likewise returns every `not-admitted` result directly to its caller or the user.
+The accepted future Domain Modeling promotion changes Wayfinder's durability edge to `Invoke`, with the locked context action and complete Domain Delta returned to the same campaign. Domain Modeling remains a leaf: direct use may ask focused domain-expert questions, composed use receives settled answers from Grilling, and every residual returns to the user or caller without invoking Skill Router, its composer, or downstream execution. Prototype likewise returns every terminal result directly to its current caller or the user.
 
 The experimental To Questionnaire candidate is behaviorally accepted for the
 leaf side of the proposed Wayfinder Questionnaire edge: complete packet
@@ -302,7 +298,7 @@ Pruning evidence:
 | `docs/agents/triage-labels.md` | Category/state role to label mapping and fixed wayfinding labels | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
 | `docs/agents/domain.md` | Routing to `CONTEXT.md`, `CONTEXT-MAP.md`, ADRs | `to-spec`, `triage`, `tdd`, `diagnosing-bugs`, `simplify-code`, `improve-codebase`, `audit-codebase`, `parallel-implement` |
 | `docs/agents/engineering-contract.md` | Engineering taste, shared runtime language, Charter, commitment boundary, change-created fallout, fresh, negative-control, and state-boundary proof, work-state policy, fixed-snapshot Spec/Standards review, Repair generation, and Lock | `to-tickets`, `implement`, `tdd`, `diagnosing-bugs`, `prototype`, `simplify-code`, `improve-codebase`, `audit-codebase`, `parallel-implement`, `resolving-merge-conflicts`, `review`, `convergent-pr-review` |
-| `domain-modeling` | Resolves domain semantics; exclusively accumulates and returns the authoritative current cumulative Domain Delta; renders or persists routed `CONTEXT.md` and `CONTEXT-MAP.md` changes under `render only` or `persist authorized`; assesses plausible ADR candidates; and records approved ADR truth | `skill-router`, `grill-with-docs`, `wayfinder`, `prototype`, `repo-bootstrap` |
+| `domain-modeling` | Resolves domain semantics; exclusively accumulates and returns the authoritative current cumulative Domain Delta; renders or persists routed `CONTEXT.md` and `CONTEXT-MAP.md` changes under `render only` or `persist authorized`; assesses plausible ADR candidates; and records approved ADR truth | `skill-router`, `grill-with-docs`, `wayfinder`, `repo-bootstrap` |
 | `codebase-design` | Interface, seam, adapter, depth, leverage, locality, and bounded replacement vocabulary | `to-spec`, `improve-codebase`, `tdd`, architecture/design follow-ups |
 | `research` | Claim-owning source legwork and one authorized cited note or verified inline evidence | `skill-router`, `grilling`, `wayfinder`, `improve-codebase` |
 | `to-questionnaire` | One recipient-ready async discovery artifact for one external stakeholder and downstream decision | `skill-router`, `grilling`, humans collecting stakeholder evidence |
@@ -319,7 +315,7 @@ Pruning evidence:
 | `codebase-design` | `DIRECT-DESIGN.md`: direct pass and packet; `DEEPENING.md`: dependency/seam discipline; `DESIGN-IT-TWICE.md`: alternative interface exploration |
 | `domain-modeling` | `CONTEXT-FORMAT.md`: glossary and context-map format; `ADR-FORMAT.md`: ADR gate and format |
 | `tdd` | `tests.md`, `mocking.md`, `refactoring.md`: examples and branch mechanics |
-| `prototype` | `LOGIC.md`, `UI.md`, and `MEASURE.md`: decision-bearing branch mechanics. `RESUME.md`: resumed-verdict admission and restart checks. Exactly one decision branch loads and returns to main Judge; `SKILL.md` owns the universal lifecycle, reconciliation, and Return. |
+| `prototype` | `LOGIC.md`, `UI.md`, and `MEASURE.md`: decision-bearing branch mechanics. One decision branch loads; `SKILL.md` owns the universal lifecycle, reconciliation, and Return. |
 | `triage` | `ATTENTION-SCAN.md`, `SPECIFIC-ITEM.md`, `QUICK-OVERRIDE.md`: branch procedures; `AGENT-BRIEF.md`: ready-contract rendering; `AGENT-BRIEF-EXAMPLES.md`: branch evidence emphasis; `OUT-OF-SCOPE.md`: rejected-work knowledge base |
 | `repo-bootstrap` | Tracker, label, domain, and engineering-contract seeds; `setup-schema.json`: aggregate compatibility fingerprint; per-file source markers and `scripts/validate_setup.py`: complete target-repo setup-surface reconciliation and validation |
 | `wayfinder` | `MAP-FORMAT.md`: canonical map and ticket shape, empty-fog sentinel, and exclusion pointers; `SKILL.md`: Chart, Advance, Maintain, Closure, and foggy map lifecycle semantics |
@@ -340,7 +336,7 @@ Pruning evidence:
 - `to-questionnaire` owns async stakeholder elicitation into one verified artifact only after its admissibility gate; source-answerable gaps return to `$research`, and a direct current-user mismatch recommends `$grilling` for conversation-only work or `$grill-with-docs` when repo-backed durable domain capture must remain active. Delegated mismatches return classification to their caller. It does not contact the recipient, ingest answers, mutate trackers or domain truth, or synthesize a specification.
 - `domain-modeling` is the only skill that writes `CONTEXT.md`, `CONTEXT-MAP.md`, or approved ADR truth; `repo-bootstrap` configures and verifies routing before persistence across a required topology transition, and vocabulary consumers follow `docs/agents/domain.md`.
 - `to-spec` owns parent spec synthesis and tracker publication; `to-tickets` owns implementation issue slicing.
-- `wayfinder` owns foggy multi-session maps, ticket resolution authority, consequence-only Maintain repairs, fog disposition, and Prototype ticket participation; tracker docs own transport, child and map claim identity, stale-claim recovery, blocking, and resolution mechanics. `prototype` owns judgment mechanics, probe execution, verdict assembly, artifact reconciliation, and its own terminal non-admission packet. Every Prototype return stays local to its caller or the user; Prototype never delegates non-admission to Router.
+- `wayfinder` owns foggy multi-session maps, ticket resolution authority, consequence-only Maintain repairs, fog disposition, and Prototype ticket participation; tracker docs own transport, child and map claim identity, stale-claim recovery, blocking, and resolution mechanics. `prototype` owns judgment mechanics, probe execution, supported results, artifact reconciliation, and truthful terminal Return. Every Prototype return stays local to its current caller or the user; Prototype starts no downstream route.
 - `research` owns one bounded source question, claim-owning evidence judgment, and one authorized cited note or verified inline result. A user request or caller packet must authorize one note path before that tracked mutation; otherwise Research returns cited inline evidence, a blocker, or typed `not-admitted` classification without choosing the caller's next route.
 - `resolving-merge-conflicts` inspects State and Trace read-only by default. Reconciliation authority permits edits only to in-scope conflicts; finish authority separately permits staging and continuation. Abort, hard reset, or discarding a side requires explicit approval.
 - Tracker docs own transport, tracker commands, the shared Ready-for-agent contract, and Mutation read-back. `triage` owns incoming classification, verification, brief rendering, state transitions, and the AI disclaimer; `$to-tickets` owns slicing and dependency order. Do not re-triage valid `$to-tickets` output.
