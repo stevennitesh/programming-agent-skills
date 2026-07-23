@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["cases"],
+  "properties": {
+    "cases": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["case_id", "next_action", "proof", "references_loaded", "claim_boundary"],
+        "properties": {
+          "case_id": {
+            "type": "string",
+            "enum": ["A", "B", "C", "D", "E", "F", "G", "H", "I"]
+          },
+          "next_action": {"type": "string"},
+          "proof": {"type": "string"},
+          "references_loaded": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "claim_boundary": {"type": "string"}
+        }
+      }
+    }
+  }
+}

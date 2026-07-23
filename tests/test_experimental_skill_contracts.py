@@ -384,3 +384,54 @@ def test_experimental_research_preserves_bounded_evidence_leaf_contract() -> Non
         "Next: none",
     ):
         assert rejected not in skill
+
+
+def test_canonical_tdd_is_the_exact_single_cut_baseline() -> None:
+    canonical_dir = ROOT / "skills/custom/tdd"
+    pre_prune_dir = ROOT / "docs/validation/evals/tdd-pruning-pre-prune"
+    inventory = {
+        "SKILL.md",
+        "tests.md",
+        "mocking.md",
+        "refactoring.md",
+        "agents/openai.yaml",
+    }
+
+    for package in (canonical_dir, pre_prune_dir):
+        assert {
+            path.relative_to(package).as_posix()
+            for path in package.rglob("*")
+            if path.is_file()
+        } == inventory
+
+    for relative in inventory - {"tests.md"}:
+        assert (canonical_dir / relative).read_bytes() == (
+            pre_prune_dir / relative
+        ).read_bytes()
+
+    async_waiting = """## Async Waiting
+
+Wait for the observable condition or event with a bounded timeout and useful failure diagnostic.
+
+```python
+wait_for(
+    lambda: job.status == "complete",
+    timeout=5,
+    description="job to complete",
+)
+```
+
+Use elapsed delay only when time is the behavior. Observe the trigger first, derive the duration from the contract, and state why that duration proves it.
+
+```python
+wait_for(lambda: events.contains("DEBOUNCE_STARTED"), timeout=1)
+advance_clock(DEBOUNCE_INTERVAL)
+assert events.contains("SEARCH_REQUESTED")
+```
+
+"""
+    pre_prune_tests = (pre_prune_dir / "tests.md").read_text(encoding="utf-8")
+    canonical_tests = (canonical_dir / "tests.md").read_text(encoding="utf-8")
+
+    assert pre_prune_tests.count(async_waiting) == 1
+    assert canonical_tests == pre_prune_tests.replace(async_waiting, "", 1)

@@ -1,0 +1,67 @@
+{
+  "cases": [
+    {
+      "case_id": "A",
+      "next_action": "Lock one public tracer bullet: submit a job through the public seam, drive the deterministic scheduler, and use wait_for(lambda: job.status == \"complete\", timeout, description). Run it before implementation, make the smallest completion change, rerun, then refactor only while green.",
+      "proof": "RED must be an observed timeout or assertion showing the submitted job never exposes the literal status \"complete\", not a setup error. GREEN requires the focused command passing; after each refactor move rerun it, then run the nearest relevant group and record results and residual risk.",
+      "references_loaded": ["SKILL.md", "tests.md"],
+      "claim_boundary": "May claim TDD completion only after observed behavioral RED, focused GREEN, nearby validation, and recorded refactor and residual evidence; may not infer completion from scheduler internals."
+    },
+    {
+      "case_id": "B",
+      "next_action": "Test through the observable event seam: trigger debounce, record DEBOUNCE_STARTED time, advance the fake clock to just before DEBOUNCE_INTERVAL and assert no SEARCH_REQUESTED, then advance to the exact boundary and assert exactly one request timestamped started_at + DEBOUNCE_INTERVAL.",
+      "proof": "Observe RED because the request is early, late, absent, or duplicated. Apply the smallest timing change, observe focused GREEN, then run the nearest relevant group; any refactor requires repeated focused GREEN.",
+      "references_loaded": ["SKILL.md", "tests.md"],
+      "claim_boundary": "May claim only the exact deterministic timing behavior proved through observable events, not general real-clock or concurrency correctness."
+    },
+    {
+      "case_id": "C",
+      "next_action": "Hand off to $diagnosing-bugs because the cause and trusted red-capable reproduction are uncertain.",
+      "proof": "Require diagnosis to return a trusted regression reproduction and cause, or a decision-needed packet, before entering a TDD mutation cycle.",
+      "references_loaded": ["SKILL.md"],
+      "claim_boundary": "Do not mutate production code under TDD and do not claim RED, a fix, or regression coverage."
+    },
+    {
+      "case_id": "D",
+      "next_action": "Repair the missing event-loop fixture or test setup, then rerun the focused test until it fails for the expected missing behavior.",
+      "proof": "Only an observed behavioral failure at the chosen seam passes RED; a fixture/setup error does not.",
+      "references_loaded": ["SKILL.md"],
+      "claim_boundary": "May claim only an invalid test setup was observed, not RED or TDD progress on the behavior."
+    },
+    {
+      "case_id": "E",
+      "next_action": "Record the focused failure as valid RED and the documented unrelated group failure separately as degraded baseline evidence. Implement minimally, rerun the focused test, and rerun the same nearby group.",
+      "proof": "Require focused GREEN plus the nearby command result identifying the unchanged pre-existing failure and a residual-risk or skipped-validation explanation.",
+      "references_loaded": ["SKILL.md"],
+      "claim_boundary": "May claim the focused behavior turned green; may not claim the nearby group passes or full TDD completion while required relevant validation is not green."
+    },
+    {
+      "case_id": "F",
+      "next_action": "Preserve the correct retry-count assertion and keep the repository-owned scheduler real. Use its deterministic seam or improve test setup within scope; if no safe red-capable seam exists, return the support gap instead of weakening proof.",
+      "proof": "The original assertion must pass through the tested public seam with owned in-process behavior real; any boundary double must satisfy the fidelity gate.",
+      "references_loaded": ["SKILL.md", "mocking.md"],
+      "claim_boundary": "May not weaken a correct oracle, mock an owned scheduler for convenience, or claim behavior proved by an implementation-coupled shortcut."
+    },
+    {
+      "case_id": "G",
+      "next_action": "Use a local substitute or higher-fidelity boundary test that reproduces consumed timeout behavior. If adapter contract tests exist, run the same timeout contract against the fake and real or local implementation; otherwise record the unverified fidelity risk.",
+      "proof": "Require an observed timeout-path RED and GREEN through a fidelity-checked boundary, or explicit evidence that the fake cannot validate that path.",
+      "references_loaded": ["SKILL.md", "mocking.md"],
+      "claim_boundary": "The current fake proves successful receipt only; it cannot support a claim about the real queue's consumed timeout failure mode."
+    },
+    {
+      "case_id": "H",
+      "next_action": "Refactor only behavior-preserving code inside the tracer-bullet slice, one meaningful move at a time, rerunning the focused test after each and the nearest group before leaving the slice. Return the broader seam redesign as residual follow-up and stop; recommend $codebase-design for the framed seam question.",
+      "proof": "Every permitted move must preserve the current public contract and keep focused and nearby tests green.",
+      "references_loaded": ["SKILL.md", "refactoring.md"],
+      "claim_boundary": "May claim only bounded cleanup completed under GREEN; may not widen scope, mutate a tracker, or claim the broader redesign was performed."
+    },
+    {
+      "case_id": "I",
+      "next_action": "Refuse the completion claim and return an incomplete evidence decision.",
+      "proof": "Minimum packet: Source Trace with behavior, source, seam, and oracle; RED command, observed expected behavioral failure, and reason; GREEN command and passing result; nearby relevant validation or justified skip; refactor result or none; and residual risk or blocker.",
+      "references_loaded": ["SKILL.md"],
+      "claim_boundary": "Expected RED alone supports no completion claim; without observed RED, GREEN, relevant coverage, and residual-risk evidence, TDD completion cannot be claimed."
+    }
+  ]
+}

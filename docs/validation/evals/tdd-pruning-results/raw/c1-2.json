@@ -1,0 +1,79 @@
+{
+  "cases": [
+    {
+      "case_id": "A",
+      "next_action": "Lock one tracer bullet through the public submission seam: submit a worker job, use the deterministic scheduler, and call wait_for(lambda: job.status == \"complete\", timeout=..., description=...). Run it before implementation; implement only completion publication; then refactor while green.",
+      "proof": "RED must be an observed timeout or false predicate caused by missing completion publication. GREEN requires the focused command to observe status \"complete\", followed by the nearest relevant group. After each refactor, rerun the focused test and finally the nearby group; return commands and observed results.",
+      "references_loaded": [
+        "tests.md",
+        "refactoring.md"
+      ],
+      "claim_boundary": "May claim TDD completion only after observed behavioral RED, focused GREEN, nearby validation, green-preserving refactor evidence, and residual-risk disclosure; may not use sleeps or an after-the-fact passing test as RED."
+    },
+    {
+      "case_id": "B",
+      "next_action": "Record the fake-clock time when DEBOUNCE_STARTED is observed, advance to just before DEBOUNCE_INTERVAL and assert no SEARCH_REQUESTED event, then advance to the exact interval and assert exactly one SEARCH_REQUESTED whose timestamp differs by precisely DEBOUNCE_INTERVAL. Run this test before implementation.",
+      "proof": "RED must fail because the request is missing, early, late, or duplicated rather than because of setup. Make the smallest timing change, rerun for GREEN, run the nearest relevant group, and preserve GREEN through any refactor.",
+      "references_loaded": [
+        "tests.md",
+        "refactoring.md"
+      ],
+      "claim_boundary": "May claim only the specified observable timing behavior through the fake-clock seam; may not infer exact timing from wall-clock sleeps or weaken the exact-one/exact-interval oracle."
+    },
+    {
+      "case_id": "C",
+      "next_action": "Hand off to $diagnosing-bugs because the cause and trusted red-capable reproduction are uncertain.",
+      "proof": "Require diagnosis evidence that establishes the symptom and cause plus a trusted regression reproduction, or a decision-needed packet if that cannot be established.",
+      "references_loaded": [],
+      "claim_boundary": "Do not mutate production code or claim TDD, a regression fix, or root cause until the diagnostic route returns trustworthy red-capable evidence and implementation is authorized."
+    },
+    {
+      "case_id": "D",
+      "next_action": "Repair the missing event-loop fixture or test setup, then rerun the focused test before changing production code.",
+      "proof": "A valid RED is an observed failure for the expected missing or wrong behavior; a setup error does not pass the RED gate.",
+      "references_loaded": [],
+      "claim_boundary": "May claim only an invalid test setup was found; may not claim RED or begin GREEN implementation."
+    },
+    {
+      "case_id": "E",
+      "next_action": "Record the focused failure as valid behavioral RED and separately record the documented unrelated baseline failure. Implement the smallest change, rerun the focused test, and rerun the nearest relevant group.",
+      "proof": "Require observed focused GREEN and evidence that the remaining group failure is the same documented pre-existing unrelated failure, with no new relevant regressions.",
+      "references_loaded": [],
+      "claim_boundary": "May claim the focused behavior crossed RED and GREEN and disclose degraded nearby validation; may not claim the nearby group is green or full TDD completion while its required validation still fails."
+    },
+    {
+      "case_id": "F",
+      "next_action": "Preserve the correct retry-count assertion and keep the repository-owned scheduler real. Use or improve a bounded real seam if safely protected; otherwise return the seam problem as support or design work instead of weakening proof.",
+      "proof": "Require the original behavioral assertion to pass through owned in-process code. Any double must replace a real external boundary and pass the fidelity gate.",
+      "references_loaded": [
+        "mocking.md"
+      ],
+      "claim_boundary": "May not weaken a correct oracle, mock the owned scheduler for convenience, or claim behavior proved by an implementation-coupled shortcut."
+    },
+    {
+      "case_id": "G",
+      "next_action": "Extend the fake to preserve the consumed timeout failure mode and run the same adapter contract against the fake and real or local implementation; if that is unavailable, add higher-fidelity boundary proof or explicitly record the gap.",
+      "proof": "Require contract parity for successful receipt and consumed timeout behavior, or concrete real-boundary evidence for the timeout path. Otherwise record unverified fake-fidelity risk.",
+      "references_loaded": [
+        "mocking.md"
+      ],
+      "claim_boundary": "May claim successful receipt only from the current fake; may not claim the real queue timeout behavior is covered without fidelity proof, and any broader completion claim must disclose the residual risk."
+    },
+    {
+      "case_id": "H",
+      "next_action": "Refactor only behavior-preserving code inside the tracer-bullet slice, one meaningful move at a time, rerunning the focused test after each move. Stop before the broader seam redesign and return it as residual follow-up; recommend $codebase-design for the already-framed seam question.",
+      "proof": "Require focused GREEN after every permitted move and the nearest relevant group GREEN before leaving the tracer bullet.",
+      "references_loaded": [
+        "refactoring.md"
+      ],
+      "claim_boundary": "May claim only the bounded cleanup proved green; may not widen the slice, alter the public contract, mutate a tracker, or claim the broader redesign completed."
+    },
+    {
+      "case_id": "I",
+      "next_action": "Reject the completion claim and return the work as incomplete until the full proof packet is observed.",
+      "proof": "Minimum packet: Source Trace with behavior, source, seam, and independent oracle; RED command, observed expected behavioral failure, and explanation; GREEN command and passing result; nearby coverage result or justified skip; refactor result or \"none\"; and residual risk or blocker.",
+      "references_loaded": [],
+      "claim_boundary": "May claim only that an expected RED was observed. May not claim GREEN, validated implementation, completed refactoring, TDD completion, or overall completion."
+    }
+  ]
+}
