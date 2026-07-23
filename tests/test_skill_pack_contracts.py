@@ -1105,6 +1105,9 @@ def test_research_owns_one_authorized_cited_note() -> None:
         "actual need shape",
         "available evidence",
         "Tracked mutation: none",
+        "owning authoritative source",
+        "methodologically relevant systematic review for an aggregate claim",
+        "Use non-owning secondary sources only for discovery",
         "research status `answered`, `conflicted`, or `blocked`",
         "render only the applicable semantic fields",
         "evidence depth and stopping basis",
@@ -1113,9 +1116,13 @@ def test_research_owns_one_authorized_cited_note() -> None:
         "Omit empty conditional sections",
         "durable evidence, not a settled answer",
         "mutation result, and return owner",
+        "return `Next: none` when the answer is complete",
+        "otherwise recommend at most one next route",
     ):
         assert contract in normalized
     assert "```markdown" not in research
+    assert "Use secondary sources only for discovery" not in research
+    assert "recommend exactly one next route" not in research
 
 
 def test_writing_great_skills_keeps_promoted_package_and_relationship_boundary() -> None:

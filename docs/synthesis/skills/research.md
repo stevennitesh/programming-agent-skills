@@ -1,7 +1,7 @@
 # Research Evidence And Runtime Design Synthesis
 
-Status: Deploy Prompt 5 promoted and installed the exact Prompt 4 candidate;
-Git delivery pending; this synthesis is not an executable contract.
+Status: Promoted runtime plus accepted post-promotion contract alignment; this
+synthesis is not an executable contract.
 
 Runtime authority remains in:
 
@@ -13,17 +13,19 @@ Runtime authority remains in:
 - tests and behavior evaluations; and
 - the installed mirror.
 
-The canonical and installed Research packages are now identical to the
-promoted candidate. The 579-word pre-promotion canonical `SKILL.md` remains B0.
-Deploy Prompt 1 admitted two deltas beyond it: typed `not-admitted` capability
-mismatch, and proportional note/Return semantics. Deploy Prompt 3 created C1
-from exactly B0 and those deltas. Prompt 4 repaired one protected-status
-omission and accepted the 661-word candidate at tree hash
+The canonical and installed Research packages are identical at tree hash
+`ae255d2b12e88bfa8882c7c5c00116b0267df3fa88345b75819bf95112c477b2`.
+The 579-word pre-promotion canonical `SKILL.md` remains B0. Deploy Prompt 1
+admitted typed `not-admitted` capability mismatch and proportional note/Return
+semantics. Deploy Prompt 3 created C1 from exactly B0 and those deltas. Prompt
+4 repaired one protected-status omission and accepted the 661-word candidate
+at tree hash
 `ad6f263d5674742376bea80b31a90cff6130ba8777cca9685f7c8286cb67c64a`.
-Prompt 5 promoted and installed those exact bytes. The initial fresh hash
+Prompt 5 promoted and installed those exact bytes. A bounded post-promotion
+repair then aligned source authority with claim ownership and allowed complete
+standalone answers to return `Next: none`. The initial fresh hash
 `c230f0ccabce2c0c23679eb7ac55a2a572655f62ddaf48b0441ed8daf2f1a35f`
-and former 846-word candidate remain historical evidence. Prompt 6 owns the
-pending Git delivery.
+and former 846-word candidate remain historical evidence.
 
 ## How To Read This Document
 
@@ -57,7 +59,7 @@ Use this index for direct navigation:
 | How should the fresh candidate read? | [Proposed Runtime Semantic Surface](#proposed-runtime-semantic-surface) |
 | Where does each rewrite change belong? | [Runtime Ownership And Change Map](#runtime-ownership-and-change-map) |
 | What must pass before promotion? | [Staged Extraction And Proof](#staged-extraction-and-proof), [Migration And Acceptance Matrix](#migration-and-acceptance-matrix), and [Promotion Gate And Residual Gaps](#promotion-gate-and-residual-gaps) |
-| What was promoted? | [Experimental Acceptance Decision](#experimental-acceptance-decision) |
+| What is the accepted current package? | [Current Acceptance Decision](#current-acceptance-decision) |
 
 When any diagram, rationale, ownership row, or acceptance case disagrees with Layer Two, correct that other surface.
 
@@ -201,8 +203,8 @@ Only Layer Two decides which of its concepts enter the fresh candidate.
 # Layer Two: Minimum Normative Design
 
 This layer records the promoted minimum. The minimum is B0 plus two admitted
-deltas; confirmation of a larger historical design did not admit its
-mechanisms.
+campaign deltas and two later contract corrections; confirmation of a larger
+historical design did not admit its mechanisms.
 
 ## Simplest Credible Baseline
 
@@ -226,6 +228,8 @@ credible control.
 | --- | --- | --- | --- | --- | --- |
 | Typed capability non-admission | Canonical treated a user-owned preference as admitted evidence blockage | Canonical 0/5; candidate 5/5 | Research owns Admission; add one compact `Admit` branch before `Lock` | Small runtime and proof delta; no caller or maintenance surface | **Admit** |
 | Proportional note and Return semantics | Canonical forced empty sections and omitted evidence depth, stopping basis, mutation, and caller-use ownership | Canonical 0/5; candidate 5/5 | Research owns Write and Return; revise those existing steps rather than replace the skill | Small runtime and proof delta; no support file | **Admit** |
+| Claim-owned source authority | The absolute secondary-source clause contradicted the selected aggregate-synthesis rule | Control and aligned candidate both 5/5; no behavioral-improvement credit | Research owns Trace; replace the absolute with one claim-ownership correction | Equal procedure and package surface; one clarifying example | **Source-correcting** |
+| Terminal standalone answer | One complete control answer forced an unnecessary route | Control 4/5; aligned candidate 5/5 | Research owns standalone Return; allow `Next: none`, otherwise at most one route | Smaller continuation demand; no router or caller change | **Admit** |
 | Broader implicit invocation and ordinary-lookup exclusion | No host-level canonical discovery failure was demonstrated | Candidate-description pruning was 45/45 against another candidate, not canonical | Keep the canonical description; explicit `$research` and caller invocation remain available | Permanent context and E1 proof load | **Defer** |
 | Display name, short description, and default-prompt metadata | No canonical interface failure was demonstrated | Structural presence only | Keep canonical policy-only YAML | Interface and mirror maintenance | **Defer** |
 | Formal caller-packet schema and missing-field machinery | Callers must retain supported-use, scope, freshness, note authority, and return ownership | Current callers already supply their owned fields | Keep caller fields with callers and let baseline `Lock` infer direct-user facts; `Admit` returns material omissions | Caller coupling and migration proof | **Caller-owned / collapse** |
@@ -240,9 +244,9 @@ credible control.
 The promoted runtime is the smallest coherent patch to B0:
 
 1. **Preserve the baseline.** Keep its description, policy, two branch spines,
-   Boundary, Lock, Trace, Scout, Classify, Gate, verification, one-note/no-write
-   containment, and caller Return behavior unless one admitted delta requires a
-   local edit.
+   Boundary, Lock, Scout, Classify, Gate, verification, one-note/no-write
+   containment, and caller Return behavior unless an admitted delta or accepted
+   contract correction requires a local edit.
 2. **Add typed Admission.** Before `Lock`, require one source-answerable bounded
    question and the material baseline fields needed to research or return. A
    mismatch returns `Status: not-admitted`, every failed or missing predicate,
@@ -250,17 +254,22 @@ The promoted runtime is the smallest coherent patch to B0:
    mutation: none`, and return owner. Direct use may recommend one deterministic
    existing owner without invocation; caller use returns classification without
    choosing its next route.
-3. **Make Write proportional.** Keep the one-note authority but replace the
+3. **Align source authority.** Trace each load-bearing claim to its owning
+   authoritative source. A methodologically relevant systematic review may own
+   an aggregate claim; secondary sources that do not own the claim remain
+   discovery-only.
+4. **Make Write proportional.** Keep the one-note authority but replace the
    fixed Markdown template with semantic minimum fields: question, research
    status `answered`, `conflicted`, or `blocked`, supported caller use, scope
    and freshness, concise cited answer, applicable evidence-depth and stopping
    basis, material conflict/unknown/limit detail, and caller-use boundary. Omit
    empty conditional sections. A conflicted or blocked note is durable
    evidence, not a settled answer.
-4. **Complete Return proportionally.** Return the status, concise answer or
+5. **Complete Return proportionally.** Return the status, concise answer or
    blocker, direct citations or absolute note path, material limits and stopping
    basis, mutation result, caller-use boundary, and return owner. Preserve the
-   caller's decision and next transition.
+   caller's decision and next transition. A complete standalone answer returns
+   `Next: none`; otherwise it recommends at most one next route.
 
 No formal assurance tier, expanded source taxonomy, new metadata, support file,
 helper, caller schema, or replacement spine enters this candidate.
@@ -1245,31 +1254,34 @@ expanded source or claim machinery, scout expansion, support files, and caller
 migration remain outside this candidate. Their missing proof is a deliberate
 scope boundary, not a blocker to extracting the two admitted deltas.
 
-## Completion Criterion For The Fresh Rewrite
+## Completion Criterion For The Promoted Minimum
 
-The fresh candidate is complete when it is reconstructible as canonical bytes
-plus only the compact Admission and proportional Write/Return edits; every
-instruction-bearing change maps to one admitted delta; the two-file inventory
-is exact; no rejected or deferred mechanism enters; structural proof passes;
-and Prompt 3 stops before behavior evaluation or promotion.
+The promoted minimum is complete when it is reconstructible from B0 plus the
+compact Admission, proportional Write/Return, claim-owned source, and terminal
+standalone-answer edits; every instruction-bearing change maps to one admitted
+or source-correcting unit; the two-file inventory is exact; and no rejected or
+deferred mechanism enters.
 
-## Experimental Acceptance Decision
+## Current Acceptance Decision
 
-**Decision: promoted and installed; Git delivery pending.** B0 is explicit, the
-aggregate design is smaller than the superseded candidate, both runtime deltas
-reproduced their B0 failures and corrected them 5/5, the protected
-research-status regression was repaired and passed 5/5, no critical failure
-remains, no branch-specific support file exists, and callers and relationships
-remain unchanged.
+**Decision: aligned, promoted, and installed.** B0 is explicit, both campaign
+deltas reproduced their B0 failures and corrected them 5/5, the protected
+research-status regression was repaired and passed 5/5, source ownership is
+now semantically consistent without claiming a measured gain, standalone
+completion improved from 4/5 to 5/5, and callers and relationships remain
+unchanged.
 
 The former inactive candidate at hash
 `1478a8ac6d50cae052802f8778a6addea9021366f3c36130385339f9fb54c099`
 and Prompt 3 candidate at hash
 `c230f0ccabce2c0c23679eb7ac55a2a572655f62ddaf48b0441ed8daf2f1a35f`
-are historical evidence. The accepted exact candidate is
+are historical evidence. The Prompt 4 candidate is
 `ad6f263d5674742376bea80b31a90cff6130ba8777cca9685f7c8286cb67c64a`.
-Current counterfactual proof is recorded in
+Its counterfactual proof is recorded in
 [`2026-07-23-research-canonical-first-promotion-eval.md`](../../validation/transcripts/2026-07-23-research-canonical-first-promotion-eval.md).
-The canonical and installed tree hashes both equal the accepted C1 hash. The
-experimental Research directory and manifest entry are removed. Prompt 6 owns
-the remaining Git delivery.
+The current aligned package is
+`ae255d2b12e88bfa8882c7c5c00116b0267df3fa88345b75819bf95112c477b2`;
+its focused proof is recorded in
+[`2026-07-23-research-source-and-terminal-alignment-eval.md`](../../validation/transcripts/2026-07-23-research-source-and-terminal-alignment-eval.md).
+Canonical and installed tree hashes equal that current identity. The
+experimental Research directory and manifest entry remain removed.

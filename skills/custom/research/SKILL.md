@@ -35,11 +35,12 @@ return cited inline evidence or a blocker.
    freshness requirement, target repo, authorized note path, write authority,
    and return owner. The path must be publishable under the repo's convention
    without another tracked mutation.
-3. **Trace.** Trace every load-bearing claim to its owning primary source: repo
+3. **Trace.** Trace every load-bearing claim to its owning authoritative source: repo
    source, tests, config, governing docs, or ADRs; versioned official docs,
    specifications, tagged source, or release notes; the issuing standards
-   body; or the original paper, dataset, and method. Use secondary sources only
-   for discovery.
+   body; the original paper, dataset, and method; or a methodologically relevant
+   systematic review for an aggregate claim. Use non-owning secondary sources
+   only for discovery.
 4. **Scout.** When independent lanes materially improve breadth or speed, start
    direct fresh-context read-only scouts with `fork_turns="none"`, one complete
    research contract, and one lane each. Require claims, citations, authority,
@@ -79,4 +80,5 @@ return cited inline evidence or a blocker.
    cited inline evidence or the blocker with the same applicable fields and
    `Tracked mutation: none`. When caller-invoked, return to that caller; it owns
    the supported decision and next route. For an admitted standalone result,
-   recommend exactly one next route.
+   return `Next: none` when the answer is complete; otherwise recommend at most
+   one next route.
