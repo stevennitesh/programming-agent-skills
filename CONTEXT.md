@@ -117,6 +117,17 @@ _Avoid_: duplicated contract
 An explicit-only skill that returns one next route and leaves downstream work unstarted.
 _Avoid_: dispatcher, automatic router
 
+**Deploy Campaign**
+
+An explicitly invoked one-skill controller, owned by
+[`deploy-prompts.md`](docs/synthesis/methods/deploy-prompts.md), that verifies
+and serially advances Prompts 1 through 5 for one fresh campaign epoch while
+retaining user interaction. A prior campaign may supply exact reusable
+evidence but cannot skip a numbered unit. Bare runs include promotion/install;
+Git delivery must be named. It authorizes bounded fresh-context delegation;
+each unit keeps its own authority and stop.
+_Avoid_: mega-prompt, self-chaining prompt, pack-wide campaign
+
 **Global AGENTS template**
 
 The pack-owned bootstrap section merged into a user's global `AGENTS.md` without replacing personal rules.

@@ -21,6 +21,10 @@ Explore imaginatively. Converge under proof. Simplify ruthlessly.
 
 - Stable vocabulary and repo invariants: `CONTEXT.md`
 - Active plans and runbooks: `docs/plans/README.md`
+- One-skill deployment: each `Run Deploy Campaign on <skill>` starts a fresh
+  Prompts 1-5 campaign epoch under
+  `docs/synthesis/methods/deploy-prompts.md` and explicitly authorizes its
+  bounded fresh-context delegation.
 - Before nontrivial coding, read `docs/agents/engineering-contract.md`.
 - Tracker and labels: `docs/agents/issue-tracker.md`,
   `docs/agents/triage-labels.md`

@@ -61,15 +61,21 @@ Synthesis is design authority only until implemented. Canonical runtime files re
 
 ## Canonical Extraction
 
-Start every selected skill with Deploy Prompt 1. It compares current runtime,
-matching upstreams, existing synthesis, and applicable research before routing
-the earliest justified unit:
+Start manually with Deploy Prompt 1, or use `Run Deploy Campaign on <skill>`
+for one initiating prompt that runs a fresh Prompts 1-5 campaign epoch,
+including no-op promotion and installation-parity verification when accepted
+bytes are already canonical. Prior campaign artifacts may supply exact
+reusable evidence but cannot skip a numbered unit. Every path begins with
+Prompt 1:
 
 ```text
-current skill state + upstream minimum candidates + research intake
-  -> Deploy Prompt 1 minimum-runtime decision
-       |-> if admitted: one source-distillation interlude, then Prompt 1 again
-       `-> runtime-no-change, evidence-gap, or the earliest justified later prompt
+Run Deploy Campaign on <skill> (optional controller)
+  -> local intent authorities + upstream/research candidates
+  -> Deploy Prompt 1 blind intent and evidence pass
+       |-> fuzzy intended contract: one behavior-decision interlude
+       |-> source gap: one Research interlude
+       |-> agent-owned design gap: one Prototype interlude
+       `-> current reconciliation and Prompt 2
   -> Deploy Prompt 2 in-place synthesis reconciliation
   -> Deploy Prompt 3 executable B0 control and exact C1 candidate
   -> Deploy Prompt 4 minimality, contribution, preservation, and pruning proof
@@ -77,36 +83,80 @@ current skill state + upstream minimum candidates + research intake
   -> optional Deploy Prompt 6 Git delivery
 ```
 
-`B0` is the runnable locally compatible minimum: the simplest credible
-baseline core plus mandatory local contracts and source-correct semantic
-substitutions that make no behavioral-improvement claim. `C1` is exact `B0`
-plus admitted behavior-changing mechanisms. Cuts relative to the current or
-pre-prune package belong to baseline selection and pruning-equivalence proof,
-not mechanism contribution. The current runtime supplies a protected behavior
-set, not a presumption that every existing mechanism stays.
+The campaign root retains state transitions, verification, and user
+interaction. It dispatches one fresh-context unit owner at a time and
+serializes writers. Prompt 1 and Research may use read-only source
+grandchildren; Prompt 4 may use fresh evaluation grandchildren. The unit owner
+keeps synthesis and judgment. Prompt 4 revalidates and reuses proof only when
+the exact bytes, behavior or wording, task, protocol, configuration, tools,
+authority, evidence, runtime, rubric, and proof lane match; it reruns affected
+evidence rather than identical samples. Bare campaign invocation excludes Git
+delivery; append `and commit` or `and push` to authorize Prompt 6.
+
+`B0` is a new runnable minimum rewrite: the intersection of the local intended
+contract—outcome, invocation, authority, Return, completion, relationships,
+exclusions, and safety boundaries—and the strongest applicable source meaning,
+mechanics, conditions, and vocabulary. Add only the cheapest independently
+required local compatibility. Never define B0 as current-minus-cuts or preserve
+a clause because it is already canonical. Prompt 1 freezes B0 semantic behavior
+units and source identities before opening current runtime or synthesis.
+Unchanged re-entry verifies that checkpoint and revisits only affected units.
+
+Outside research should prefer relevant sources with documented professional
+acclaim, strong ratings or durable popularity, broad adoption, and explicit
+upper-bound engineering discipline. Those signals order discovery; they do not
+prove correctness, local fit, or behavioral effect. Source conditions,
+counterpressure, disagreement, and limitations remain part of the evidence.
+
+Before C1 comparison, B0 must pass its minimum-runtime controls. Compare every
+source-derived steering unit without exact behavioral evidence against `D0`
+no-guidance, reusing the B0 viability arm. Independently required contracts use
+owner-matched proof unless efficacy is claimed. A nonviable B0 is a baseline
+defect, not useful red evidence.
+
+`C1` is exact `B0` plus admitted behavior hypotheses discovered from current
+runtime (`current-retention`), a concrete caller/callee gap
+(`pack-composition`), credible evidence beyond minimum viability
+(`source-mechanism`), or a counterexample to the settled intent
+(`intent-counterexample`). Origin invites inspection but does not prove
+adoption. A counterexample that disproves minimum viability reopens B0; C1
+receives no credit for repairing it. Every hypothesis needs an owner, expected
+B0 failure, cheapest expression, wrong-condition case, and proof. Cuts relative
+to current receive no mechanism-contribution credit.
 
 The current/B0/C1 identity determines the campaign:
 
 | Shape | Identity | Route |
 | --- | --- | --- |
-| `runtime-no-change` | current = B0 = C1 | Reconcile synthesis through Prompt 2, then stop. |
-| `pruning-only` | current != B0 = C1 | Build one shared B0/C1 package, prove non-regression, then promote. |
-| `behavioral-candidate` | B0 != C1 | Prove each admitted mechanism against B0 before promotion. |
+| `runtime-no-change` | current = B0 = C1 | A standalone run may stop after Prompt 2 when B0 proof is exact. A Deploy Campaign still runs Prompts 3, 4, and 5 without claiming a runtime delta. |
+| `pruning-only` | current != B0 = C1 | Retained lifecycle label for a source-derived rewrite with no C1 delta. Prove B0 viability and independently protected behavior before promotion. |
+| `behavioral-candidate` | B0 != C1 | Prove each admitted hypothesis from any of the four origins against B0 before promotion. |
 
 Prompt 1 confirms its packet through an internal integrity gate. It asks the
 user only when a material user-owned design choice remains, not to approve a
 fully determined audit packet. Prior evidence is classified as
 `exact-reusable`, `lane-limited`, `historical-admission-only`, `invalidated`,
-or `missing` before it can affect a new campaign.
+or `missing` before it can affect a new campaign. Source and interlude re-entry
+reuse exact checkpoint identities instead of repeating unchanged reads.
+
+A Conditional Behavior Decision Interlude uses `$grill-with-docs` for one
+bounded intended-contract decision: either a fuzzy minimum-viability axis or a
+C1 hypothesis that would change outcome, invocation, authority, Return,
+completion, exclusion, or relationships. It never chooses agent technique or
+proves efficacy.
+
+A Conditional Research Interlude resolves one admitted source question. A
+Conditional Prototype Interlude resolves one agent-owned technical design
+question with a disposable runnable probe. Research can establish meaning and
+Prototype can select a construction; neither proves skill-steering effect.
 
 `plan-only` work ends after Prompt 2 with decision-complete synthesis; it does
-not mutate runtime files. Conditional source distillation returns provenance,
-limitations, and a bounded source decision to Prompt 1; it does not design or
-evaluate behavior. A new unscaffolded skill uses the bundled `skill-creator`
-only for structure and metadata when Prompt 3 requires it. Writing Great
-Skills owns semantic quality and stops after canonical proof; installation and
-delivery retain their separate owners. Every prompt executes exactly one unit,
-recommends at most one successor, and stops without starting it.
+not mutate runtime files. A new unscaffolded skill uses the bundled
+`skill-creator` only for structure and metadata when Prompt 3 requires it.
+Writing Great Skills owns semantic quality and stops after canonical proof;
+installation and delivery retain their separate owners. Every leaf prompt
+executes exactly one unit, recommends at most one successor, and stops. Only
+the active campaign coordinator may dispatch the verified successor.
 
 Proof is proportional to the unit: early read-only and documentation prompts
 use inspection and affected checks; exact behavioral arms belong to Prompt 4;
@@ -143,10 +193,13 @@ become; move pure source lists or broad search targets back to
 A whole-skill synthesis note should contain:
 
 - an orientation, viability floor, and hard ownership boundary;
-- a verified simplest-baseline comparison and executable `B0` definition;
+- a verified source-derived minimum comparison and executable `B0` definition;
+- one ledger row per semantic behavior unit, with source or owner provenance
+  and a runtime-clause map;
 - the current/B0/C1 campaign shape;
 - dispositions for current behavior and applicable research, including the
-  protected behavior set and original research claim labels;
+  independently supported protected behavior set, all four C1 hypothesis
+  origins, and original research claim labels;
 - dispositions for prior evidence and the exact proof lane in which any result
   remains reusable;
 - admitted `C1` deltas with basis, owner, cheapest expression, destination,
@@ -154,9 +207,9 @@ A whole-skill synthesis note should contain:
 - a decision trace connecting evidence, rationale, runtime owner, and proof;
 - explicit rejected, deferred, and deliberately unchanged behavior;
 - an extraction and affected-surface map;
-- a claim-to-proof matrix that separates semantic fidelity, mechanism
-  contribution, invocation and context loading, current-contract preservation,
-  pruning equivalence, and deterministic proof;
+- a claim-to-proof matrix separating B0 fidelity, conditional D0 comparison,
+  B0 viability, C1 contribution, invocation, protection, pruning, and
+  deterministic proof;
 - the remaining research and evidence gaps.
 
 ## Rule
