@@ -129,14 +129,18 @@ decision label `no-change`.
 
 Run the cheapest proof that can establish the current unit:
 
+**Affected Markdown gate:** whenever Deploy Prompt 2, 5, or 6 changes
+Markdown, verify every affected file's local links, internal anchors, balanced
+code fences, and consistent table columns.
+
 | Unit | Default Proof |
 | --- | --- |
 | Deploy Prompt 1 | Read-back, identities, and existing evidence inspection. Read tests but do not execute them unless a current-state fact cannot be established more cheaply; never run the full suite by default. |
-| Deploy Prompt 2 | Complete synthesis read-back, local links and table structure, directly affected documentation checks, and both diff checks. Do not run the full suite unless a machine-consumed contract changed. |
+| Deploy Prompt 2 | Complete synthesis read-back, the affected Markdown gate, directly affected documentation checks, and both diff checks. Do not run the full suite unless a machine-consumed contract changed. |
 | Deploy Prompt 3 | Candidate inventory, hashes, focused structural and relationship checks, skill validation, and both diff checks. Run the full suite only when a shared machine contract or test harness changed. |
 | Deploy Prompt 4 | Exact behavioral or equivalence arms, affected focused checks, and one full suite only after final accepted bytes when repository test or pack contracts changed. Do not repeat the full suite after every repair. |
-| Deploy Prompt 5 | Canonical read-back, affected focused proof, one full suite after final integration, install dry-run, synchronization, parity, and clean post-install dry-run. |
-| Deploy Prompt 6 | Scoped final diff, required current mechanical checks, both diff checks, intentional staging, commit, and an explicitly authorized push. Do not rerun unchanged behavioral evidence. |
+| Deploy Prompt 5 | Canonical and reconciled-synthesis read-back, the affected Markdown gate, affected focused proof, one full suite after final integration, install dry-run, synchronization, parity, and clean post-install dry-run. |
+| Deploy Prompt 6 | Scoped final diff, the affected Markdown gate, required current mechanical checks, both diff checks, intentional staging, commit, and an explicitly authorized push. Do not rerun unchanged behavioral evidence. |
 
 ## Deploy Prompt 1: Establish The Minimum-Runtime Decision
 

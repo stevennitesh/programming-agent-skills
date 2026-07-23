@@ -109,7 +109,7 @@ though most were not behavior-changing C1 mechanisms:
 | --- | --- |
 | One-question fit | One bounded runnable-evidence question may compare alternatives; multiple independent evidence needs return as separate questions. |
 | Mutation-before-Freeze guard | Prototype does not mutate until every material authority, evidence, path, effect, and finite-bound fact is known. |
-| Claim and judgment authority | `claim level: shape/feel | design evidence` and `judgment mode: human | rule-based` remain compatible with callers; `shape/feel` requires human judgment. |
+| Claim and judgment authority | Claim level is either `shape/feel` or `design evidence`, and judgment mode is either `human` or `rule-based`; `shape/feel` requires human judgment. |
 | Independent roles | Decision owner and human judge are separate authorities and are never inferred from one another. |
 | Branch isolation | One decision-bearing Logic, UI, or Measure contract loads; branch files do not own Reconcile or Return. |
 | Evidence boundary | Smoke proves that the probe runs and is judgeable; the verdict answers only the frozen question; production proof remains elsewhere. |
