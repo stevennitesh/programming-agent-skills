@@ -534,7 +534,7 @@ ledger, or helper schema.
 | --- | --- | --- |
 | Required setup missing or incompatible | Recommend `$repo-bootstrap` and stop | Editing setup opportunistically or starting implementation |
 | Staged-worker assignment or accepting owner is absent | Return assignment blocker | Treating delegation or user mention as worker authority |
-| No issue-equivalent target selected | **Select** one through explicit or repo-visible authority, ask, or recommend `$to-tickets` | Treating a parent source as the slice or selecting by taste |
+| No issue-equivalent target selected | **Select** one through explicit or repo-visible authority; ask when eligible items remain unselected; recommend `$to-tickets` only when the work is unsliced or shaping-unready | Treating a parent source as the slice, selecting by taste, or exporting ordinary selection ambiguity |
 | Explicit target is unready, blocked, ambiguous, or ineligible | Return the exact gate on that target | Substituting another item or mutating readiness state |
 | Owner target is tracker-backed and claim is absent | Acquire and read back the claim | Editing or dispatching first |
 | Selection is admitted but Charter is incomplete | **Charter** | Using issue text or a review prompt as an implicit Charter |
@@ -557,7 +557,7 @@ never weakens the current completion gate.
 
 | Operation | Enter when | Complete when | Legal nonterminal Return |
 | --- | --- | --- | --- |
-| **Select** | Admission has compatible setup and needs one target | Exactly one item, checked surface, authority, readiness facts, tracker eligibility, and selection result are recorded; or one exact selection gate is returned | Ask for one target, recommend To Tickets, or return blocked/unready target |
+| **Select** | Admission has compatible setup and needs one target | Exactly one item, checked surface, authority, readiness facts, tracker eligibility, and selection result are recorded; or one exact selection gate is returned | Ask for one target when selection remains local, return a blocked/unready target, or recommend To Tickets only for unsliced or shaping-unready work |
 | **Charter** | Owner has one admitted item and claim when required | Every Charter field is resolved or one named commitment decision blocks it | Decision-required or blocked packet with no production implementation |
 | **Bound** | Charter is fixed but implementation seam or proof boundary is not | Behavior path or support purpose, proof target/story, non-goals, expected edit surface, focused evidence, and required coupling are checkable | Exact discovery, proof-seam, or commitment blocker |
 | **Patch / Prove** | Slice lock permits implementation | Selected acceptance passes through the highest meaningful supported seam; required nearby and canonical checks run or skips become residual risk; scope pressure and scratch cleanup pass | Decision-required, proof blocker, or bounded residual-risk packet |
@@ -834,7 +834,7 @@ Every invocation returns exactly one form:
 | Return | Use when | Required content |
 | --- | --- | --- |
 | Setup precondition | Required setup is absent or incompatible | Missing surface, evidence, `$repo-bootstrap` recommendation, and no mutation |
-| Selection gate | No item is ready, the explicit item has a live dependency blocker, target or order identity is ambiguous, or work is unsliced or shaping-unready | Checked surface, target or candidates, failed readiness fact, no-substitution evidence, and either the local blocker or exact `$to-tickets` repair return |
+| Selection gate | No item is ready, the explicit item has a live dependency blocker, target or order identity is ambiguous, or work is unsliced or shaping-unready | Checked surface, target or candidates, failed readiness fact, and no-substitution evidence; use a local question or blocker for target/order ambiguity and an exact `$to-tickets` repair return only for unsliced or shaping-unready work |
 | Assignment blocker | Staged-worker authority or accepting owner is incomplete | Missing assignment field, current state, and required owner action |
 | Staged handoff | The explicit staged worker completed or cannot complete its bounded assignment | The complete staged-worker packet; never implementation completion |
 | Decision required | Charter, commitment, review, Repair, residual risk, or Budget needs caller judgment | Immutable target, complete decision set, options, consequences, and exact continuation |
@@ -850,7 +850,7 @@ attempt alone is never complete.
 | Caller | Verb | Callee | Trigger and return boundary |
 | --- | --- | --- | --- |
 | Direct user | Invoke | `$implement` | The user selects singleton delivery; Implement still applies Admission |
-| `$to-tickets` | Recommend and stop | `$implement` | The ready frontier is singular or write-overlapping; the user starts Implement later |
+| `$to-tickets` | Recommend and stop | `$implement` | The verified To Tickets next-action decision selects one serial ticket; the user starts Implement later |
 | `$diagnosing-bugs` | Recommend and stop | `$implement` | Standalone diagnosis proved a cause and production work now needs one implementation owner |
 | `$improve-codebase` | Recommend and stop | `$implement` | One selected Concentrate candidate is a ready singleton slice |
 | `$implement` | Invoke | `$tdd` | New behavior is red-testable, or every required bug fact and trusted red-capable reproduction is already known |

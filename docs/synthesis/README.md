@@ -35,10 +35,10 @@ source question
 | [`skills/`](skills/) | One whole-skill synthesis note per skill as coverage expands. |
 
 [`methods/deploy-prompts.md`](methods/deploy-prompts.md) owns the default
-whole-skill workflow from synthesis debate through candidate evaluation,
-promotion, installation, and optional Git delivery. The source-distillation
-method is an optional evidence lane for primary and outside sources, upstream
-skills, books, and engineering practice.
+one-skill workflow from minimum-runtime comparison and research intake through
+synthesis, candidate evaluation, promotion, installation, and optional Git
+delivery. The source-distillation method is a conditional evidence lane for a
+decision-changing source gap, not a required campaign before every skill.
 
 ## Synthesis Ownership
 
@@ -61,26 +61,36 @@ Synthesis is design authority only until implemented. Canonical runtime files re
 
 ## Canonical Extraction
 
-Use Deploy Prompts to turn selected whole-skill synthesis into runtime behavior:
+Start every selected skill with Deploy Prompt 1. It compares current runtime,
+matching upstreams, existing synthesis, and applicable research before routing
+the earliest justified unit:
 
 ```text
-selected synthesis
-  -> Deploy Prompt 1 debate, unless its explicit skip gate passes
-  -> Deploy Prompt 2 synthesis finalization
-  -> Deploy Prompt 3 inactive candidate
-  -> Deploy Prompt 4 audit, repair, and behavioral evaluation
+current skill state + upstream minimum candidates + research intake
+  -> Deploy Prompt 1 minimum-runtime decision
+       |-> if admitted: one source-distillation interlude, then Prompt 1 again
+       `-> no-change, evidence-gap, or the earliest justified later prompt
+  -> Deploy Prompt 2 in-place synthesis reconciliation
+  -> Deploy Prompt 3 executable B0 control and exact C1 candidate
+  -> Deploy Prompt 4 minimality, contribution, preservation, and pruning proof
   -> Deploy Prompt 5 canonical promotion, proof, and separately owned install
   -> optional Deploy Prompt 6 Git delivery
 ```
 
-`plan-only` work ends with synthesis artifacts and a patch-ready shape; it does
-not mutate runtime files. Optional source-distillation work returns important
-concepts, usable techniques, provenance, limitations, and evidence gaps to
-synthesis; it does not draft, extract, promote, install, or deliver runtime
-skills. A new unscaffolded skill uses the bundled
-`skill-creator` only for structure and metadata when the deployment prompt
-requires it. Writing Great Skills owns semantic quality and stops after
-canonical proof; installation and delivery retain their separate owners.
+`B0` is the runnable locally compatible minimum: the simplest credible
+baseline core plus mandatory local contracts and source-correct semantic
+substitutions that make no behavioral-improvement claim. `C1` is exact `B0`
+plus admitted behavior-changing mechanisms. The current runtime supplies a
+protected behavior set, not a presumption that every existing mechanism stays.
+
+`plan-only` work ends after Prompt 2 with decision-complete synthesis; it does
+not mutate runtime files. Conditional source distillation returns provenance,
+limitations, and a bounded source decision to Prompt 1; it does not design or
+evaluate behavior. A new unscaffolded skill uses the bundled `skill-creator`
+only for structure and metadata when Prompt 3 requires it. Writing Great
+Skills owns semantic quality and stops after canonical proof; installation and
+delivery retain their separate owners. Every prompt executes exactly one unit,
+recommends at most one successor, and stops without starting it.
 
 The synthesis note supplies selected behavior, placement, preservation, and
 proof obligations; it never becomes executable authority itself.
@@ -89,10 +99,16 @@ proof obligations; it never becomes executable authority itself.
 
 Use whole-skill synthesis when source pressure and current-runtime evidence are
 strong enough to select a coordinated design. Preserve the orientation,
-selected design contract, decision-to-evidence trace, material rejected and
-deferred alternatives, runtime ownership map, extraction order, and validation
-plan after the behavior is chosen. Collapse any duplicate representation that
-adds no distinct decision, ownership, or proof value.
+viability floor, baseline comparison, current-behavior and research
+dispositions, selected `B0` and `C1` contract, decision-to-evidence trace,
+material rejected and deferred alternatives, runtime ownership map, and
+claim-to-proof design. Collapse any duplicate representation that adds no
+distinct decision, ownership, or proof value.
+
+Existing synthesis notes are reconciled in place only when their skill enters
+the workflow. Do not mass-rewrite them or fabricate a historical baseline,
+minimality comparison, or behavioral control for a campaign that did not
+create one. Preserve that absence as an evidence gap.
 
 Some older notes are source-map synthesis: they preserve source pressure and
 concept maps for established skills or tightly coupled skill families. Keep
@@ -104,12 +120,18 @@ become; move pure source lists or broad search targets back to
 
 A whole-skill synthesis note should contain:
 
-- an orientation and hard ownership boundary;
-- one selected design contract for proposed behavior;
+- an orientation, viability floor, and hard ownership boundary;
+- a verified simplest-baseline comparison and executable `B0` definition;
+- dispositions for current behavior and applicable research, including the
+  protected behavior set and original research claim labels;
+- admitted `C1` deltas with basis, owner, cheapest expression, destination,
+  entry condition, failure Return, and proof;
 - a decision trace connecting evidence, rationale, runtime owner, and proof;
 - explicit rejected, deferred, and deliberately unchanged behavior;
 - an extraction and affected-surface map;
-- a validation plan that distinguishes behavioral from deterministic proof;
+- a claim-to-proof matrix that separates semantic fidelity, mechanism
+  contribution, invocation and context loading, current-contract preservation,
+  pruning equivalence, and deterministic proof;
 - the remaining research and evidence gaps.
 
 ## Rule

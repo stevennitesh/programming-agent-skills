@@ -1,6 +1,13 @@
 # Parallel Implement Efficiency Synthesis
 
-Status: lean design reference and extraction map. The Stage 1 and Stage 2 candidate is preserved under `skills/experimental/parallel-implement/`; custom and installed copies remain the unchanged active control.
+Status: lean design reference and extraction map. The Stage 1 and Stage 2
+candidate remains preserved but inactive under
+`skills/experimental/parallel-implement/`. The active canonical and installed
+runtimes advanced through the bounded To Tickets compatibility campaign and
+currently match. Because the active baseline changed after the experimental
+candidate was locked, that experiment is not a current immutable control; it
+requires reconciliation and a fresh E0 control lock before any future
+promotion claim.
 
 Runtime authority remains in:
 
@@ -12,7 +19,7 @@ Runtime authority remains in:
 - `$review`, `$convergent-pr-review`, and `$resolving-merge-conflicts` at their owned boundaries; and
 - the relationship map, pack tests, behavior evaluations, and installed mirror.
 
-This note specifies a small efficiency change: retain one warm primary implementer, add independent actors only when their likely implementation savings exceed visible coordination cost, and measure results passively from the existing ledger. Five concurrent subagents remain the session ceiling, not a target. The experimental extraction does not become active runtime until it is promoted into `skills/custom/`, validated, and separately synchronized.
+This note specifies a small efficiency change: retain one warm primary implementer, add independent actors only when their likely implementation savings exceed visible coordination cost, and measure results passively from the existing ledger. Five concurrent subagents remain the session ceiling, not a target. The preserved experimental extraction is historical candidate evidence, not a current control. A future campaign must first reconcile it with the active baseline and lock a new control identity before promotion into `skills/custom/`, validation, and separate synchronization.
 
 ## How To Read This Document
 

@@ -1,11 +1,14 @@
 # To Tickets Runtime Design Synthesis
 
-Status: exhaustive design reference, not an executable contract. Stage I1 / T1
-has been applied to the canonical `skills/custom/to-tickets/` runtime, and the
-bounded I2 consumer repairs described below have been applied to their
-canonical surfaces. The installed copy remains the earlier control until a
-separately authorized installation pass. These changes establish source and
-contract alignment, not behavioral effectiveness.
+Status: exhaustive design reference, not an executable contract. The I1-I3
+extraction and promotion campaign is complete for canonical
+`skills/custom/to-tickets/SKILL.md` hash
+`E4D07BC78CD55E0DC5572105732800D2A6C1F2DCC6CF8D7DB1AB56C206653F1F`.
+The promotion record owns the bounded behavioral results, control-clean no-op
+dispositions, residual gaps, and installation evidence. After separately
+authorized synchronization, the canonical and installed runtimes match.
+Support-work comparative economics and live-provider behavior remain residual
+gaps and are not part of the promotion claim.
 
 Runtime authority remains in:
 
@@ -21,24 +24,24 @@ Runtime authority remains in:
 - the installed mirror only as the validated runtime copy after authorized
   synchronization.
 
-This synthesis defines the complete design target for a later `to-tickets`
-rewrite. It does not change the current skill, publish tickets, mutate tracker
-state, or authorize installed-mirror synchronization.
+This synthesis preserves the selected design and completed extraction record
+for `to-tickets`. It does not replace runtime authority, publish tickets,
+mutate tracker state, or authorize a future installed-mirror synchronization.
 
 ## How To Read This Document
 
 This document is exhaustive for accepted behavior, ownership boundaries,
-material alternatives, extraction placement, and proof needed for a future
-rewrite. It has four layers:
+material alternatives, extraction placement, completed promotion evidence, and
+future proof obligations. It has four layers:
 
 1. **Orientation** states the outcome, boundary, vocabulary, and explanatory
    end-to-end flow.
-2. **Normative Design** is the sole authority for proposed runtime behavior and
-   relationships.
+2. **Normative Design** is the sole synthesis authority for selected runtime
+   behavior and relationships.
 3. **Evidence And Rationale** preserves source pressure, deliberate
    non-changes, and deferred hypotheses without creating additional rules.
-4. **Extraction And Verification** places the design into owned surfaces and
-   defines staged proof and promotion.
+4. **Extraction And Verification** records placement into owned surfaces, the
+   completed staged promotion, and the proof required after future changes.
 
 When a diagram, rationale, ownership row, or acceptance case disagrees with
 Normative Design, correct the non-normative surface. The Normative Home Index
@@ -48,7 +51,7 @@ rules.
 
 | Question | Owning section |
 | --- | --- |
-| What outcome governs the rewrite? | [North Star](#north-star) |
+| What outcome governs the runtime? | [North Star](#north-star) |
 | What is selected, preserved, deferred, or rejected? | [Design Verdict](#design-verdict) |
 | What may `to-tickets` accept as source? | [Invocation And Admission](#invocation-and-admission) |
 | Which gates prevent premature publication? | [Authority Gates](#authority-gates) |
@@ -68,8 +71,8 @@ rules.
 | Which implementation route is returned? | [Next-Action Selection](#next-action-selection) |
 | What does every invocation return? | [Return Contract](#return-contract) |
 | Which skill owns each handoff? | [Relationship Ownership](#relationship-ownership) |
-| How should the future runtime be arranged? | [Proposed Runtime Semantic Surface](#proposed-runtime-semantic-surface) |
-| What must pass before promotion? | [Staged Behavior-Evaluation Protocol](#staged-behavior-evaluation-protocol), [Migration And Acceptance Matrix](#migration-and-acceptance-matrix), and [Promotion Gate And Residual Gaps](#promotion-gate-and-residual-gaps) |
+| How is the promoted runtime arranged? | [Promoted Runtime Semantic Surface](#promoted-runtime-semantic-surface) |
+| What governed promotion, and what remains? | [Staged Behavior-Evaluation Protocol](#staged-behavior-evaluation-protocol), [Migration And Acceptance Matrix](#migration-and-acceptance-matrix), [Promotion Gate And Residual Gaps](#promotion-gate-and-residual-gaps), and [Extraction And Promotion Completion](#extraction-and-promotion-completion) |
 
 # Layer One: Orientation
 
@@ -101,7 +104,7 @@ creates uneconomic lanes, or cannot prove what each slice means.
 
 ## Design Verdict
 
-| Stratum | Selected shape | Status for a future rewrite |
+| Stratum | Selected shape | Disposition and promotion status |
 | --- | --- | --- |
 | Core | Preserve the five-verb `Trace -> Map -> Slice -> Approve -> Publish` spine, but make each verb's authority and completion criterion explicit | Selected |
 | Invocation | Explicit-only; a user deliberately selects ticket shaping, while upstream skills recommend it and stop | Preserve `allow_implicit_invocation: false` |
@@ -113,7 +116,7 @@ creates uneconomic lanes, or cannot prove what each slice means.
 | Publication | Require approval of the exact proposal, publish blockers first, preserve parent intent and lifecycle, and apply Mutation read-back to the graph and frontier | Selected |
 | Downstream route | Return exactly one of blocker resolution, Implement, or Parallel Implement according to the verified frontier and caller intent | Selected |
 | Runtime surfaces | Keep one compact `SKILL.md` plus `agents/openai.yaml`; use existing owning docs instead of adding a ticket template or operation file initially | Selected |
-| Required coordinated deltas | Relationship text, receiving-skill assumptions, structural tests, behavior evaluations, and mirror parity | Required before promotion |
+| Required coordinated deltas | Relationship text, receiving-skill assumptions, structural tests, behavior evaluations, and mirror parity | Completed for the promoted cohort |
 | Deferred hypotheses | A mandatory draft file, graph visualizer, coverage validator, numeric sizing score, and auto-generated ticket schema | Deferred pending observed need |
 | Rejected machinery | Tracker-provider procedure in the skill, implementation plans, file-by-file task choreography, automatic publication, automatic implementation, and parallelism based only on open slots or disjoint filenames | Reject |
 
@@ -147,8 +150,7 @@ the delivery owner.
 
 ## Leading-Word Runtime Model
 
-The future skill should keep the existing compact vocabulary and make it
-operational:
+The promoted skill keeps the compact vocabulary operational:
 
 | Leading word | Runtime meaning |
 | --- | --- |
@@ -631,7 +633,10 @@ service, consumer, schema generation unit, or deployable rather than arbitrary
 ticket count. Each boundary names its health, compatibility, and rollback
 proof. Broadness or failed vertical slicing is not an entry condition for
 expand-migrate-contract, and blast-radius boundaries do not define product
-slice shape.
+slice shape. The gates constrain the risk-bearing operation itself: when a
+migration or backfill creates the risk, run it in batches through the stable
+boundaries and require health, compatibility, and rollback evidence before
+expanding from one boundary to the next.
 
 ## Approval Packet
 
@@ -691,7 +696,7 @@ from current source, proposal, approval, and tracker evidence:
 | Publication is partially applied, unreadable, or mismatched | Stop normal publication and return recovery-complete blocked state | Claiming success, duplicating unknown items, or continuing to implementation |
 | Complete graph and frontier read back exactly | Select one next action and Return | Returning several possible routes or starting the selected skill |
 
-This table is the sole proposed transition authority. The flowchart and
+This table is the sole synthesis transition authority. The flowchart and
 acceptance cases explain or test it but do not add legal movement.
 
 ## Operation And Completion Contracts
@@ -832,7 +837,7 @@ by a later explicit user choice.
 | Direct user | Invoke | `$to-tickets` | Shape one bounded settled source set; admission and publication gates still apply |
 | `$to-spec` | Recommend and stop | `$to-tickets` | A verified parent spec is published and implementation slicing is next |
 | `$improve-codebase` | Recommend and stop | `$to-tickets` | A settled selected improvement requires several delivery slices rather than one bounded implementation |
-| `$implement` | Recommend and stop | `$to-tickets` | The supplied parent, plan, or source is unsliced or does not identify one ready item |
+| `$implement` | Recommend and stop | `$to-tickets` | The supplied work is unsliced or shaping-unready; ordinary target or order ambiguity remains local to Implement |
 | `$parallel-implement` | Recommend and stop | `$to-tickets` | One exhaustive parent graph is incomplete, ambiguous, uneconomically sliced, missing supported state branches, or not Ready-for-agent; return the complete repair set |
 | `$to-tickets` | Recommend and stop | `$repo-bootstrap` | A required setup or tracker surface is missing or incompatible |
 | `$to-tickets` | Recommend and stop | `$implement` | The verified routing table selects one ready item |
@@ -896,19 +901,21 @@ read-back, and composition contracts.
 
 | Evidence surface | Classification | Design use |
 | --- | --- | --- |
-| `skills/custom/to-tickets/SKILL.md` and `agents/openai.yaml` | Canonical runtime at the applied I1 revision | Five-verb behavior, explicit-only reach, corrected slicing vocabulary, local proof policy, execution profile, approval, publication, and typed Return |
+| `skills/custom/to-tickets/SKILL.md` and `agents/openai.yaml` | Promoted canonical runtime | Five-verb behavior, explicit-only reach, corrected slicing vocabulary, local proof policy, execution profile, approval, publication, and typed Return |
 | `docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md` | Current owner contracts | Ready fields, roles, graph representation, ready query, mutation, and read-back |
 | `docs/agents/engineering-contract.md` and `docs/agents/domain.md` | Current shared contracts | Source Trace, semantic proof, state-boundary coverage, domain pointers, and ADR conflict handling |
 | `skills/custom/to-spec/SKILL.md` | Current source producer | Parent-spec completeness, grounding, proof expectations, and recommendation boundary |
 | `skills/custom/triage/SKILL.md` and `AGENT-BRIEF.md` | Current peer producer | Shared Ready-contract parity and triage-only verification evidence |
 | `skills/custom/implement/SKILL.md` | Current single-item consumer | Selection gate, parent-as-context rule, proof input, and unsliced-work return |
-| `skills/custom/parallel-implement/SKILL.md` and its synthesis | Current parent-graph consumer and candidate design | Exhaustive repair return, state-branch admission, execution economics, and serial/parallel ownership boundary |
+| `skills/custom/parallel-implement/SKILL.md` and its synthesis | Current parent-graph consumer plus inactive candidate design | Exhaustive repair return, state-branch admission, execution economics, and serial/parallel ownership boundary |
 | `docs/synthesis/skill-context-relationships.md` | Current relationship index | Inbound and outbound recommendation-and-stop edges and prohibited direct routes |
 | Git commits `4d1b816`, `66095cd`, `f72d5e8`, `c646d99`, and `c613df9` | Historical runtime lineage | Detailed baseline, support-slice naming, lean spine, parent-graph routing, and state-boundary strengthening |
-| `tests/test_skill_pack_contracts.py` | Current structural evidence | Invocation, spine, read-back, state-boundary consumption, execution-profile terms, and relationship edges |
+| Git commit `98c628c` | Promoted delivery snapshot | The reviewed and delivered canonical cohort, structural proof, promotion record, and synchronized installed mirror |
+| `tests/test_skill_pack_contracts.py` | Current structural evidence | Invocation, spine, read-back, state-boundary consumption, execution-profile terms, relationship edges, and migration/backfill gate ordering |
 | `docs/validation/evals/core-workflows.md` | Current behavior-evaluation definitions | Coverage, shared readiness, state branches, and critical-failure expectations |
 | `docs/validation/transcripts/2026-07-13-whole-pack-workflow-traces.md` | Historical contract simulation | One-run workflow evidence and explicit live-execution gaps |
-| Installed `C:\Users\steve\.agents\skills\to-tickets` | Earlier control runtime | Installation parity remains separately owned; never edit this mirror as the canonical source |
+| [To Tickets I3 promotion record](../../validation/transcripts/2026-07-22-to-tickets-i3-promotion-eval.md) | Bounded promotion authority | Control/candidate dispositions, aggregate results, exact hashes, residual gaps, and authorized installation evidence |
+| Installed `C:\Users\steve\.agents\skills\to-tickets` | Validated installed runtime | Exact parity with the promoted canonical runtime after separately authorized synchronization; never edit this mirror as the canonical source |
 
 ## Upstream Comparison
 
@@ -933,9 +940,12 @@ read-back, and composition contracts.
 | Recommend working the frontier one ticket at a time | Refine | Return one route based on caller intent and verified graph; Parallel Implement may own a complete parent campaign while remaining serial |
 | Non-overlapping files imply parallel work | Reject | Semantic ownership, production scope, public proof seams, shared resources, and economics govern eligibility |
 
-These are semantic corrections to source meaning. Whether their exact wording
-improves slicing, proof, dependency, or migration behavior remains untested and
-deferred to the fixed-control behavior protocol below.
+These are semantic corrections to source meaning. The bounded campaign tested
+the promoted formulations on registered clusters, credited improvement only
+where a control failed and the candidate passed, and classified control-clean
+clusters as structural or no-op rather than behavioral gains. The promotion
+record owns those results; they do not establish universal transfer or every
+future wording variant.
 
 ## Why Coverage Precedes Approval
 
@@ -999,7 +1009,7 @@ fresh approval because they do not change the approved meaning.
 
 ## Deferred Hypotheses
 
-The following ideas remain outside the first rewrite:
+The following ideas remain outside the promoted runtime:
 
 | Hypothesis | Evidence required before admission |
 | --- | --- |
@@ -1011,26 +1021,35 @@ The following ideas remain outside the first rewrite:
 | Dedicated `TICKET-FORMAT.md` | The main skill cannot remain legible after accepted behavior is compressed and sharp owner pointers are tested |
 | Automatic category classification | Settled source and tracker mappings expose one deterministic role across representative providers without hiding ambiguity |
 
-## Current Evidence Limits
+## Promoted Evidence And Remaining Limits
 
-Current contract tests and workflow traces establish structural presence and
-representative contract consistency. They do not prove that fresh agents:
+The [promotion record](../../validation/transcripts/2026-07-22-to-tickets-i3-promotion-eval.md)
+owns the bounded result for the exact canonical hash named in this document.
 
-- discover every commitment rather than only repeating the coverage language;
-- distinguish true blockers from scheduling overlap reliably;
-- choose the right proof seam and state branches;
-- make consistent session-fit and substantial-work judgments;
-- preserve exact approval through realistic revisions; or
-- recover correctly from live partial tracker publication.
+| Evidence disposition | What the campaign established |
+| --- | --- |
+| Accepted improvement | Candidate samples passed the registered vertical/tracer/support, blocker/frontier, execution-economics ownership, admission/coverage, and repaired state/migration clusters after their controls exposed the targeted failures |
+| Structural or no-op | Next-action routing, approval/publication/recovery, and integrated handoffs were already correct in their controls; they received no behavioral-improvement credit |
+| Structural and installation proof | Contract tests, pack validation, diff checks, canonical hash identity, and installed-mirror parity passed for the promoted cohort |
 
-These are behavior-promotion gaps, not permission to weaken the design. The
-evaluation protocol below makes them explicit.
+Two residual gaps remain explicit:
+
+- support-work comparative economics when the source does not supply the
+  comparative facts; and
+- live-provider publication and recovery behavior, because the campaign used
+  fixtures and performed no live tracker mutation.
+
+The record preserves aggregate scores and root judgments, but the raw E0 sample
+outputs were ephemeral and unavailable for later inspection. The sampled
+models, fixtures, and tasks also do not establish universal transfer, external
+professional validity, or the effect of later semantic edits. Any material
+runtime change creates a new candidate and proof obligation.
 
 # Layer Four: Extraction And Verification
 
-## Proposed Runtime Semantic Surface
+## Promoted Runtime Semantic Surface
 
-The eventual main skill should read approximately as:
+The promoted main skill follows this semantic arrangement:
 
 ```text
 Outcome and explicit-only boundary
@@ -1050,8 +1069,9 @@ Return
 Completion
 ```
 
-This is a semantic target, not approved final wording. The runtime should use
-strong leading words and sharp completion criteria, not copy this synthesis.
+This is a semantic map, not a sentence-level runtime authority. The runtime
+uses strong leading words and sharp completion criteria rather than copying
+this synthesis.
 Tracker procedure, rationale, exhaustive examples, evaluation matrices, and
 downstream implementation mechanics stay out of `SKILL.md`.
 
@@ -1060,22 +1080,22 @@ downstream implementation mechanics stay out of `SKILL.md`.
 The `Must not absorb` column is part of the design. It preserves one owner per
 behavior during extraction.
 
-| Bundle | Surface | Owns | Proposed delta | Must not absorb |
+| Bundle | Surface | Owns | Extraction direction | Must not absorb |
 | --- | --- | --- | --- | --- |
-| `T1` | `skills/custom/to-tickets/SKILL.md` | Outcome, admission, five-verb process, local slicing and coverage contracts, sharp owner pointers, approval, publication boundary, Return, and completion | Compress the normative design into the Proposed Runtime Semantic Surface; distinguish blockers from scheduling; make proposal revision, freshness, partial recovery, and route priority explicit | Tracker-provider procedure, label tables, downstream runtime mechanics, rationale, file-by-file patch design, or evaluation protocol |
+| `T1` | `skills/custom/to-tickets/SKILL.md` | Outcome, admission, five-verb process, local slicing and coverage contracts, sharp owner pointers, approval, publication boundary, Return, and completion | Compress the normative design into the Promoted Runtime Semantic Surface; distinguish blockers from scheduling; make proposal revision, freshness, partial recovery, and route priority explicit | Tracker-provider procedure, label tables, downstream runtime mechanics, rationale, file-by-file patch design, or evaluation protocol |
 | `T1` | `skills/custom/to-tickets/agents/openai.yaml` | Invocation policy and human-facing capability summary | Preserve `allow_implicit_invocation: false`; describe settled-source, dependency-ordered, approved publication concisely | Runtime process, branch rules, or tracker details |
 | `T2` | `docs/agents/issue-tracker.md`, label mapping, and Repo Bootstrap-owned provider templates | Common Ready contract, category/state roles, packet and relationship representation, ready query, provider transport, and Mutation read-back | Change only an observed capability mismatch; keep the shared contract aligned across GitHub, GitLab, and Local Markdown | Coverage judgment, slice semantics, approval, execution economics, or next-route selection |
 | `T2` | `docs/agents/engineering-contract.md` and installed setup seed | Shared Source Trace, commitment boundary, proof seam/lane, state-boundary matrix, evidence, and Lock vocabulary | No planned delta; verify To Tickets uses current owners without copying them | Ticket procedure or tracker behavior |
 | `T2` | `$to-spec` and its synthesis | Parent-spec completeness, settled source, proof expectations, and handoff | Verify the returned parent is sufficient input and the recommendation stops | Ticket graph design or readiness mutation |
 | `T2` | `$triage` and `AGENT-BRIEF.md` | Equivalent Ready-contract production from raw incoming work plus verification evidence | Verify field equivalence and preserve the rule that valid To Tickets output is not retriaged | To Tickets coverage, parent order, or source slicing |
-| `T2` | `$implement` | Selection and delivery of exactly one ready item | Preserve return of unsliced or unready parent work to To Tickets and consumption of Source Trace, acceptance, proof, and scope | Ticket repair, graph mutation, or parent campaign execution |
+| `T2` | `$implement` | Selection and delivery of exactly one ready item | Preserve return of unsliced or shaping-unready work to To Tickets, keep ordinary target or order ambiguity local, and consume Source Trace, acceptance, proof, and scope | Ticket repair, graph mutation, or parent campaign execution |
 | `T2` | `$parallel-implement`, its worker contract, and synthesis | Exhaustive parent-graph admission, runtime serial/parallel decisions, dispatch, landing, loop-close proof, Review, Lock, and Release | Consume the compact execution profile and return one exhaustive graph-repair packet on readiness defects | To Tickets approval, tracker publication, or source decisions |
 | `T3` | `docs/synthesis/skill-context-relationships.md`, Skill Router, and human-facing route docs | One authoritative edge per caller/callee and accurate public routing | Reconcile triggers and stop boundaries; remove stale direct Wayfinder-to-delivery claims where in scope | Skill-local procedure or duplicated admission predicates |
 | `T3` | `tests/test_skill_pack_contracts.py` | Structural ownership, invocation, required terms, relationship edges, and reference resolution | Protect semantic surface and owner boundaries without snapshotting incidental prose | Claims that static strings prove slicing quality |
-| `T3` | `docs/validation/evals/core-workflows.md` and transcripts | Counterfactual behavior proof and historical observations | Add the complete positive/negative cases below, fixed control, repeated fresh samples, variance, and live partial-publication scenario | Runtime rules or simulated claims of improvement |
+| `T3` | `docs/validation/evals/core-workflows.md` and transcripts | Counterfactual behavior proof and historical observations | Preserve complete positive/negative cases, fixed controls, repeated fresh samples, and variance; retain live partial-publication behavior as a residual until separately authorized | Runtime rules or simulated claims of improvement |
 | `T3` | Installed mirror `C:\Users\steve\.agents\skills\to-tickets` | Validated runtime copy | Synchronize only after canonical source and coordinated proof pass with separate authorization | Independent edits or partial family synchronization |
 
-## Staged Extraction Plan
+## Staged Extraction Record
 
 | Stage | Bundles | Extraction outcome | Stage boundary |
 | --- | --- | --- | --- |
@@ -1083,8 +1103,9 @@ behavior during extraction.
 | `I2` | `T2` | Reconcile shared tracker, engineering, source-producer, and delivery-consumer capabilities | Each foreign owner supplies the required outcome and Return without absorbing To Tickets authority |
 | `I3` | `T3` | Reconcile relationships, tests, behavior evaluations, public routing, validation, and mirror parity | All positive and negative cases pass; residual gaps satisfy promotion; installed hashes match after authorization |
 
-Stages order coordinated work; they are not separately promotable runtime
-families. Build and validate the canonical candidate before synchronization.
+The stages ordered coordinated work; they were not separately promotable
+runtime families. The canonical candidate was built and validated before
+synchronization.
 
 ## Staged Behavior-Evaluation Protocol
 
@@ -1161,17 +1182,20 @@ A critical failure blocks promotion regardless of averages:
 Promote only when the control demonstrates the targeted failure, the candidate
 materially reduces it, variance does not expose a new unstable tail, no new
 critical failure appears, and all authority and ownership boundaries remain
-invariant. A residual gap blocks promotion when it affects admission, source
-completeness, coverage, ticket meaning, dependency truth, state coverage,
-approval, mutation scope, read-back, recovery, frontier truth, Return, or
-relationship ownership. Noncritical uncertainty may remain only with its
-evidence limit, operational consequence, and later validation owner named.
+invariant. A residual gap blocks promotion when it leaves the candidate's
+claimed semantic behavior unresolved for admission, source completeness,
+coverage, ticket meaning, dependency truth, state coverage, approval, mutation
+scope, read-back, recovery, frontier truth, Return, or relationship ownership.
+Noncritical uncertainty or behavior explicitly outside the promotion claim may
+remain only with its evidence limit, operational consequence, and later
+validation owner named.
 
-## Completion Criterion For The Future Rewrite
+## Extraction And Promotion Completion
 
-The rewrite is complete only when the selected Design Verdict is extracted
-without deferred or rejected machinery; every normative concern has one
-indexed home; the main skill follows the Proposed Runtime Semantic Surface;
+The extraction and promotion are complete only when the selected Design
+Verdict is extracted without deferred or rejected machinery; every normative
+concern has one indexed home; the main skill follows the Promoted Runtime
+Semantic Surface;
 the transition table alone selects the next step; the completion table alone
 ends it; every source commitment receives one coverage disposition; every
 ticket passes fresh-session, semantic-cohesion, proof, dependency, state,
@@ -1182,3 +1206,12 @@ behaviorally proved; every `I1` through `I3` stage and applicable `E0` through
 residual gap remains; canonical validation succeeds; and the installed mirror
 matches the validated source exactly after separately authorized
 synchronization.
+
+The campaign recorded this criterion as satisfied for canonical hash
+`E4D07BC78CD55E0DC5572105732800D2A6C1F2DCC6CF8D7DB1AB56C206653F1F`
+under the bounded claims in the
+[promotion record](../../validation/transcripts/2026-07-22-to-tickets-i3-promotion-eval.md).
+The I1-I3 extraction, applicable E0-E4 evidence, canonical proof, and installed
+parity are complete. The two named residual gaps and the record's raw-output
+and transfer limits remain outside the promotion claim. A future semantic
+change must establish a new candidate identity and proportionate proof.
