@@ -1,199 +1,122 @@
 # Prototype Skill Synthesis
 
-Status: promoted and closed. The canonical and installed Prototype package is
-exact accepted C1
+## Current Decision
+
+Status: `promoted-current` for the 2026-07-23 Deploy Campaign epoch.
+
+Campaign shape: `runtime-no-change`. Canonical runtime, executable `B0`, and
+accepted final `C1` are the same five-file package:
 `ed5832972cbd1a093656087a7efc61e679f4068b3bea330204ba6559fb78ce33`.
-The experimental package and manifest entry are retired. This document records
-the final design; the canonical runtime owns executable behavior, and the
-validation record owns campaign evidence and chronology.
+The Pruning Pass disposition is `pruning-not-needed`; promotion was a no-op
+integration read-back, not a runtime rewrite.
 
-## Final Decision
-
-Prototype is an implicitly invocable leaf that answers one bounded design
-question with a disposable runnable probe. Its durable output is supported
-design evidence with stated limits, not production implementation or proof.
-
-The final lifecycle is:
+Prototype answers one bounded design question with one disposable runnable
+probe:
 
 ```text
 Fit -> Freeze -> Branch -> Probe -> Smoke and Judge -> Reconcile -> Return
 ```
 
-- **Fit** admits only one material design decision answerable by one bounded
-  runnable-evidence question and mutates nothing on mismatch.
-- **Freeze** establishes the question, decision, evidence surface, authorities,
-  verdict basis, representatives, mutation boundary, artifact disposition,
-  run recipe, finite bound, and known limits before mutation.
-- **Branch** loads only the decision-bearing Logic, UI, or Measure contract.
-- **Probe** builds the smallest artifact capable of changing the verdict.
-- **Smoke and Judge** separates runnable, judgeable evidence from a supported
-  result and from unsupported production claims.
-- **Reconcile** accounts for every effect and leaves no live resource.
-- **Return** reports the truthful result or residual directly to the current
-  caller or user and starts no downstream route.
+It admits one material design decision answerable by one bounded runnable
+question. Production work or proof, uncertain defects, source research,
+conversation-only preference decisions, and multi-decision design do not fit.
+Authority, evidence, paths, effects, and dispositions freeze before mutation;
+human-reserved judgment remains human; the result is bounded design evidence;
+every effect is reconciled; and the supported result or residual returns
+directly without downstream execution.
 
-Executable authority lives in:
+## Canonical Surface
 
-- [`SKILL.md`](../../../skills/custom/prototype/SKILL.md) for Fit, Freeze,
-  mutation authority, lifecycle, reconciliation, Return, and completion;
-- [`LOGIC.md`](../../../skills/custom/prototype/LOGIC.md) for deterministic
-  state, rule, data, API, and interface-behavior probes;
-- [`UI.md`](../../../skills/custom/prototype/UI.md) for structural visual and
-  interaction probes; and
-- [`MEASURE.md`](../../../skills/custom/prototype/MEASURE.md) for predeclared
-  comparative measurement.
-
-## Identity And Campaign Shape
-
-| Role | Exact identity | Final disposition |
-| --- | --- | --- |
-| Frozen executable B0 | `c1a79fa3a144e1cac39be80233e1a3a2756c2f5130af14d3bc20c53418c6d307` | Preserved at [`prototype-b0/`](../../validation/evals/prototype-b0/). |
-| Exact accepted C1 | `ed5832972cbd1a093656087a7efc61e679f4068b3bea330204ba6559fb78ce33` | Promoted byte-for-byte. |
-| Current canonical runtime | `ed5832972cbd1a093656087a7efc61e679f4068b3bea330204ba6559fb78ce33` | Identical to accepted C1. |
-| Installed runtime | `ed5832972cbd1a093656087a7efc61e679f4068b3bea330204ba6559fb78ce33` | Canonical parity proved at promotion. |
-| Description pre-prune control | `22614fe625ec8ecbb176ef8af07cb4c0b186e92dee1348f9efb85be10120f668` | Frozen at [`prototype-description-pre-prune/`](../../validation/evals/prototype-description-pre-prune/). |
-
-The closed campaign shape is `behavioral-candidate`: frozen B0 differs from
-accepted C1, and current canonical runtime equals C1. Description shortening is
-a separately proved pruning-equivalence change, not a C1 behavioral mechanism.
-
-The historical aggregate `1/25` versus `25/25` result is
-`historical-admission-only`. It motivated inspection but is not an exact B0
-control or exact C1 contribution result.
-
-## Sole Demonstrated Contribution
-
-**Measure is the only behavior-changing mechanism admitted beyond B0.**
-
-Exact B0 selected Logic for variable comparative evidence in all five controls
-and never selected the required measurement branch. Exact accepted C1 selected
-Measure and applied the frozen comparison rule in all five candidate samples.
-`MEASURE.md` therefore owns the added behavior:
-
-- compare predeclared directions under one frozen workload;
-- record the metric, unit, environment, warmup and sample rules, threshold,
-  confounders, variance, and worst observation when material;
-- keep conditions equivalent across directions;
-- apply only the frozen verdict rule; and
-- return a bounded design result without claiming a production baseline, SLO,
-  or diagnosis.
-
-All other retained differences are B0-equivalent wording, mandatory local
-authority or safety contracts, or pruning. They receive no contribution
-credit.
-
-## Ownership And Relationships
-
-| Concern | Owner |
+| Surface | Final responsibility |
 | --- | --- |
-| Question, Freeze, authorized probe effects, branch Smoke, supported result, reconciliation, and truthful Return | Prototype |
-| Material thresholds, priorities, adoption, later routing, durable truth, production implementation, and production proof | Current caller or user |
-| Decision authority | Named decision owner supplied at Freeze |
-| Human-reserved judgment | Named human judge; never inferred from decision ownership or replaced by a proxy |
-| Logic, UI, and Measure mechanics | Their disclosed branch files |
-| Wayfinder participation | Wayfinder passes decision owner, claim level, judgment mode, and human judge when applicable, then receives the supported result, evidence, limits, and cleanup state |
-| Improve Codebase participation | Improve Codebase supplies the complete Freeze authority and receives design evidence without treating it as production proof |
+| [`SKILL.md`](../../../skills/custom/prototype/SKILL.md) | Implicit-invocation predicate; Fit, Freeze, mutation authority, lifecycle, reconciliation, direct Return, and completion. |
+| [`LOGIC.md`](../../../skills/custom/prototype/LOGIC.md) | Deterministic state, rule, data, API, and interface-behavior Probe, Smoke, and evidence mechanics. |
+| [`UI.md`](../../../skills/custom/prototype/UI.md) | Structural visual and interaction Probe, Smoke, production-isolation, and evidence mechanics. |
+| [`MEASURE.md`](../../../skills/custom/prototype/MEASURE.md) | Predeclared comparative measurement Probe, Smoke, and evidence mechanics. |
+| [`agents/openai.yaml`](../../../skills/custom/prototype/agents/openai.yaml) | Implicit-invocation policy. |
 
-The canonical relationship map is
+Exactly one decision-bearing branch loads. The root retains Freeze, authority,
+Reconcile, Return, and completion; branch-local reminders preserve that owner
+boundary when a disclosed leaf is read alone.
+
+## Final Behavior Decisions
+
+The source-first checkpoint is
+`sha256:67e3830df1782869a47b572a29212a9c9cda9786388005d08607aecd25023bc0`
+at starting Git `HEAD` `4359f7afeeec29a9c8692b18c1586afb041f9bf4`.
+It froze eight semantic units before current-runtime retention was considered:
+
+| Unit | Final decision and owner |
+| --- | --- |
+| Admission | Keep one-question Fit and nearest exclusions; Prototype returns a mismatch without mutation. |
+| Authority and evidence lock | Keep Freeze-before-mutation over caller-owned roles, criteria, representatives, paths, effects, finite bound, and limits. |
+| Disposable safety | Keep one invocation-owned `.tmp` root by default; durable or application-tree work requires exact authority and positive isolation. |
+| Runnable probe | Keep exactly one Logic, UI, or Measure branch and the smallest verdict-changing artifact. |
+| Judgment | Keep observe-before-judge, the frozen rule, and the named human's exclusive authority for human judgment. |
+| Claim ceiling | Keep Smoke, bounded design verdict, and production proof distinct. |
+| Reconciliation | Keep exhaustive effect disposition, conflict-safe preservation, and no live resource at Return. |
+| Return and completion | Keep the fresh current caller, truthful direct Return, no outbound route, and exact completion. |
+
+Fresh D0 controls passed all fixed tasks (`25/25`), so the five tested
+incremental efficacy claims are `reject-no-control-failure`: one-question
+steering, Freeze-before-mutation, one smallest decision-bearing branch,
+observe-before-judge, and the claim ceiling are not credited with incremental
+steering effect on that packet. Their meanings remain because settled intent,
+source fidelity, mutation and judgment authority, irreversible order, and
+caller or engineering proof ownership independently require them.
+
+No `C1` mechanism was admitted. The following alternatives remain rejected:
+
+- side-branch commit and later production absorption;
+- mandatory design ceremony, browser-server use, design-doc commit, or
+  automatic continuation;
+- production TDD inside the disposable probe;
+- resume packets or a multi-state status taxonomy;
+- outbound Grilling, Research, Handoff, or Domain Modeling routing; and
+- generic multi-question or all-purpose branches.
+
+The complete cut audit retained every instruction-bearing passage. No runtime
+surface, candidate fixture, pre-prune corpus, or pruning-equivalence wave was
+needed because accepted bytes did not change.
+
+## Relationships
+
+| Concern | Final owner and observable relationship |
+| --- | --- |
+| Question, decision authority, result recipient, claim and judgment mode, judge, criteria, representatives, effects, dispositions, adoption, production implementation, and production proof | The current caller or user supplies the applicable facts and receives the Return. |
+| Fit, Freeze enforcement, selected probe, Smoke, evidence, reconciliation, and truthful Return | Prototype owns the admitted bounded run. |
+| Human-reserved judgment | The named human judge; decision ownership never implies judging authority. |
+| Logic, UI, and Measure mechanics | The selected leaf returns evidence to the root and never owns Reconcile or Return. |
+| Wayfinder and Improve Codebase | May supply complete Freeze authority and receive bounded evidence; neither may treat it as production proof. |
+| Grilling, Research, diagnosis, implementation, adoption, and production proof | Remain with their own owners; Prototype returns a mismatch or result and stops. |
+
+The relationship authority is
 [`skill-context-relationships.md`](../skill-context-relationships.md).
-Prototype has no outbound Handoff or Domain Modeling recommendation. It
-returns directly to its current caller or the user and never selects or invokes
-a downstream route.
+The campaign changed no relationship edge and no relationship surface.
 
-## Protected Contracts
+## Proof And Evidence
 
-These contracts are part of the promoted minimum and remain protected even
-though most were not behavior-changing C1 mechanisms:
-
-| Contract | Protected meaning |
+| Record | Current evidence |
 | --- | --- |
-| One-question fit | One bounded runnable-evidence question may compare alternatives; multiple independent evidence needs return as separate questions. |
-| Mutation-before-Freeze guard | Prototype does not mutate until every material authority, evidence, path, effect, and finite-bound fact is known. |
-| Claim and judgment authority | Claim level is either `shape/feel` or `design evidence`, and judgment mode is either `human` or `rule-based`; `shape/feel` requires human judgment. |
-| Independent roles | Decision owner and human judge are separate authorities and are never inferred from one another. |
-| Branch isolation | One decision-bearing Logic, UI, or Measure contract loads; branch files do not own Reconcile or Return. |
-| Evidence boundary | Smoke proves that the probe runs and is judgeable; the verdict answers only the frozen question; production proof remains elsewhere. |
-| Artifact authority | Disposable work defaults to one invocation-owned `.tmp/prototype/<question-slug>/`; app-tree and durable paths require explicit authority and positive isolation. |
-| Safe reconciliation | Every artifact receives `delete`, `restore`, `preserve-for-verdict`, or `authorized-durable-evidence`; concurrent work is preserved and no terminal Return leaves a live resource. |
-| Fresh continuation | A retained artifact is re-frozen as a current invocation with current identity and authority; stale packet state is not trusted. |
-| Direct Return | Every result or residual goes to the current caller or user without inherited caller identity or downstream execution. |
-| Production separation | Prototype code, tests, metrics, visual acceptance, and successful startup are never promoted into production authority. |
+| [Construction](../../validation/transcripts/2026-07-23-prototype-runtime-no-change-construction-evidence.md) | Exact five-file inventory, component and tree hashes, runtime map, focused structure and relationship proof. |
+| [Behavior](../../validation/transcripts/2026-07-23-prototype-runtime-no-change-behavior-eval.md) | Fresh B0 `25/25`, D0 `25/25`, deterministic protected-contract traces, and live Logic, Measure, and cleanup seams. |
+| [Pruning](../../validation/transcripts/2026-07-23-prototype-runtime-no-change-pruning.md) | Complete cut ledger and `pruning-not-needed` decision at the accepted C1 hash. |
+| [Prior acceptance](../../validation/transcripts/2026-07-22-prototype-b0-first-acceptance.md) | Lane-limited prior description, actual-browser UI, and closeout evidence for the same final package. |
 
-The protected behavior set was exercised across representative Logic, UI,
-Measure, cleanup, continuation, and caller-return cases. Exact outcomes and
-limits live in the acceptance record rather than here.
+Prompt 5 promotion and managed-install evidence is appended to the current
+construction record so exact identity and lifecycle parity remain in one
+candidate-owned record.
 
-## Rejected And Demoted Mechanisms
+## Deliberate Non-Changes And Residuals
 
-The following campaign mechanisms were rejected after exact B0 showed no
-failure. They are not latent future work:
-
-| Mechanism | Final disposition |
-| --- | --- |
-| Four-predicate Admit expansion | Removed; compact Fit preserves the required distinction. |
-| Five-lock Freeze presentation | Removed; flat minimum Freeze is sufficient. |
-| Exact four-packet schema | Removed; Return includes only applicable truthful facts. |
-| Three named proof levels | Removed; the Smoke, verdict, and production boundary remains without the taxonomy. |
-| Awaiting-only packet-backed Resume and `RESUME.md` | Removed; continued evidence is safely re-frozen as a current invocation. |
-| Strong exactly-one wording | Demoted to compact branch context control. |
-| Claim, mode, and role labels as a contribution claim | Retained only as deterministic caller-compatibility and authority contracts. |
-| Four artifact dispositions as a contribution claim | Retained only as a mandatory deterministic safety contract. |
-| Outbound `$handoff` and `$domain-modeling` recommendations | Removed; direct current-caller Return is authoritative. |
-
-The design also rejects multi-question campaigns, automatic downstream
-continuation, promotion of the winning probe, a generic all-purpose branch,
-default tracked application mutation, production-proof claims, and
-Wayfinder-style ledgers or correction generations. Disposable assertions and
-case drivers remain allowed when they improve prototype evidence; production
-test mutation remains outside Prototype authority.
-
-## Proof
-
-The authoritative closeout is
-[`2026-07-22-prototype-b0-first-acceptance.md`](../../validation/transcripts/2026-07-22-prototype-b0-first-acceptance.md).
-It records exact hashes, B0-first contribution controls, accepted C1 behavior,
-description-pruning equivalence, deterministic and live probes, caller and
-relationship checks, promotion, installation scope, and installed parity.
-
-Supporting immutable evidence:
-
-- [`prototype-b0/`](../../validation/evals/prototype-b0/) — executable B0;
-- [`prototype-description-pre-prune/`](../../validation/evals/prototype-description-pre-prune/)
-  — behavior-complete longer-description control;
-- [`prototype-prompt4/`](../../validation/evals/prototype-prompt4/) — fixed
-  protocols and live Logic, UI, Measure, and cleanup probes; and
-- [`2026-07-22-prototype-b0-c1-construction-evidence.md`](../../validation/transcripts/2026-07-22-prototype-b0-c1-construction-evidence.md)
-  — package provenance and the pre-evaluation construction ledger. Its
-  superseded candidate identity and future Prompt 4 instructions are
-  historical only; the acceptance record governs final decisions.
-
-Accepted proof established:
-
-- exact B0-first contribution for Measure;
-- `45/45` representative final-package cases with no observed critical failure;
-- `5/5` exact Measure contribution cases;
-- `45/45` in both description pre-prune and shortened-description arms;
-- live Logic, UI, Measure, cleanup, continuation, and caller-return behavior;
-- deterministic authority, safety, inventory, relationship, and absence
-  contracts; and
-- exact canonical-to-installed parity for the affected cohort.
-
-## Residual Gaps And Limits
-
-No residual gap blocks the promoted design.
-
-- Behavioral evidence is bounded to the recorded tasks, package bytes,
-  protocols, runtime, and rubrics; it does not establish universal behavior.
-- Measure evidence is design evidence under a frozen local workload, not a
-  production performance baseline, SLO, or diagnosis.
-- Description testing proves equivalence across the registered request
-  families, not host-level discovery telemetry or universal invocation recall.
-- Human-reserved shape and feel remains unresolved when the named judge is
-  unavailable; truthful Return and safe artifact reconciliation are the
-  supported result in that case.
-- Promotion and installed parity are historical closeout facts from the linked
-  record. A future runtime change requires fresh proportionate proof and normal
-  installation ownership.
-
-Prototype has no open extraction, evaluation, promotion, installation, or Git
-delivery unit. Future work begins only from a new decision-changing request.
+- Canonical runtime was not rewritten because it already equaled accepted C1.
+- The relationship index, README and routing/index surfaces, tests, and other
+  skills were not changed because read-back found no stale Prototype pointer.
+- No experimental Prototype directory or manifest entry existed to remove.
+- Accepted behavioral evidence was reused unchanged; no behavior wave was
+  rerun for lifecycle promotion.
+- Remote source freshness remains limited to the named local refs.
+- Host-level discovery and fresh actual-browser UI telemetry remain
+  unavailable; the 2026-07-22 exact-package browser evidence is lane-limited.
+- The D0 packet supports no incremental efficacy claim for the five tested
+  expressions despite full B0 viability.

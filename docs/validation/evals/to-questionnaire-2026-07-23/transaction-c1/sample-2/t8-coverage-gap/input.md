@@ -1,0 +1,24 @@
+# T8 input
+
+- Sender and return owner: Priya Shah, product owner
+- Recipient: Morgan Lee, launch operations lead and owner of production-readiness facts
+- Relationship: Morgan advises Priya's launch authorization decision
+- Downstream decision: whether and under what conditions Priya should authorize the Atlas launch
+- Needed-back ledger:
+  - viable launch windows unlock scheduling
+  - mandatory readiness gate unlocks authorization
+  - observable rollback trigger unlocks the rollback decision
+  - rollback authority unlocks incident command
+  - support coverage unlocks staffing
+  - communication constraints unlock the communication plan
+  - largest unlisted risk unlocks final risk acceptance
+- Answer use: launch authorization review
+- Deadline: 2026-07-25 17:00 America/Chicago
+- Effort budget: 12 minutes
+- Response format: Markdown
+- Delivery authority: Priya; delivery is not requested
+- Authorized output root: `authorized/`
+- Requested target: `authorized/incomplete.md`
+- Overwrite authority: no
+- Sensitivity: internal operational information; placement inside the authorized root is approved
+- Supplied-render constraint: assess the supplied `render.md` as-is; do not invent or add a question

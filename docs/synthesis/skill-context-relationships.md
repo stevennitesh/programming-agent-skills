@@ -208,12 +208,10 @@ Use one verb for each accepted relationship:
 | `grilling` | Recommend and stop | `$handoff` | Evidence work must cross into a fresh session. |
 | `to-questionnaire` | Recommend and stop | `$research` | Inspectable primary sources can answer the gap. |
 | `to-questionnaire` | Recommend and stop | `$grilling` | The current user owns the unresolved conversation-only decision. |
-| `to-questionnaire` | Recommend and stop | `$grill-with-docs` | The current user owns the unresolved repo-backed decision and durable domain capture must remain active. |
 | `research` | Recommend and stop | `$diagnosing-bugs` | Admission shows the missing authority is causal reproduction or diagnosis rather than source evidence. |
 | `research` | Recommend and stop | `$prototype` | Admission shows the question needs one runnable design or behavior verdict. |
 | `research` | Recommend and stop | `$grilling` | The current user owns the unresolved conversation-only decision. |
 | `research` | Recommend and stop | `$grill-with-docs` | The current user owns the unresolved repo-backed decision and durable domain capture must remain active. |
-| `research` | Recommend and stop | `$to-questionnaire` | One identifiable external stakeholder owns unavailable material knowledge. |
 | `research` | Recommend and stop | `$codebase-design` | One bounded interface, seam, adapter, ownership, or migration design must be chosen. |
 | `research` | Recommend and stop | `$wayfinder` | Several interdependent decisions and non-conversational prerequisites need a durable route; the user must start Wayfinder later. |
 | `wayfinder` | Invoke | `$research` | Resolve one AFK research ticket, then record its pointer. |
@@ -271,20 +269,16 @@ Use one verb for each accepted relationship:
 
 The accepted future Domain Modeling promotion changes Wayfinder's durability edge to `Invoke`, with the locked context action and complete Domain Delta returned to the same campaign. Domain Modeling remains a leaf: direct use may ask focused domain-expert questions, composed use receives settled answers from Grilling, and every residual returns to the user or caller without invoking Skill Router, its composer, or downstream execution. Prototype likewise returns every terminal result directly to its current caller or the user.
 
-The experimental To Questionnaire candidate is behaviorally accepted for the
-leaf side of the proposed Wayfinder Questionnaire edge: complete packet
-validation, durable `.scratch` identity, typed status, matched Return, and
-classification-only delegated mismatches passed five fresh contexts without a
-critical failure. Its bounded prune also passed five frozen pre-prune and five
-final-candidate contexts without a critical failure or post-first-Save repair.
-The edge remains non-executable under active policy and is
-not promotion-ready until the experimental Wayfinder packet, waiting
-transition, and later answer-reconciliation owner match it and integrated proof
-passes. The active graph, invocation table, and context-owner rows therefore
-continue to describe the canonical explicit-only leaf. Evidence:
-[`2026-07-21-to-questionnaire-post-candidate-behavior-eval.md`](../validation/transcripts/2026-07-21-to-questionnaire-post-candidate-behavior-eval.md).
-Pruning evidence:
-[`2026-07-21-to-questionnaire-pruning-equivalence-eval.md`](../validation/transcripts/2026-07-21-to-questionnaire-pruning-equivalence-eval.md).
+To Questionnaire is an explicit-only Direct leaf. Skill Router and Grilling
+may recommend it and stop; the user decides whether to invoke it. On a proven
+terminal mismatch, To Questionnaire may recommend Research for inspectable
+source work or Grilling for a current-user-owned decision, then stop.
+Wayfinder packets, delegated Return adapters, durable `.scratch` identity,
+waiting, answer reconciliation, and continuation are outside the active
+relationship surface. Current evidence:
+[`2026-07-23-to-questionnaire-behavior-eval.md`](../validation/transcripts/2026-07-23-to-questionnaire-behavior-eval.md)
+and
+[`2026-07-23-to-questionnaire-pruning.md`](../validation/transcripts/2026-07-23-to-questionnaire-pruning.md).
 
 ## Context Owners
 
@@ -332,8 +326,8 @@ Pruning evidence:
 - The global template exposes bootstrap handles; `skill-router` routes; neither teaches downstream workflow procedures.
 - The bundled system `skill-creator` owns new-package scaffolding and metadata mechanics. `$writing-great-skills` owns semantic quality for new and existing canonical skill instructions, stops after canonical proof, and does not absorb installation or delivery.
 - Setup docs own tracker, labels, domain routing, and engineering-contract details. Skills should point there instead of restating those mechanics.
-- `$grill-with-docs` is the narrowly implicitly invocable, direct-user composer of `$grilling` and `$domain-modeling`; the owned skills do not invoke each other. Direct Domain Modeling may ask focused questions only about terms, invariants, bounded contexts, and relationships. Missing context authority defaults to `render only`, while ADR approval remains separate. During composition every settled material answer crosses Relay, Domain Modeling alone accumulates the current Domain Delta, and collisions return before dependent questioning. The composer returns only `Confirmed`, `Evidence gap`, or `Blocked` with intact component payloads and starts no downstream route. Wayfinder, Triage, Improve Codebase, Skill Router, Research, and To Questionnaire may recommend it and stop; Audit Codebase may suggest it only. Domain Modeling returns every residual to its direct user or caller and stops.
-- `to-questionnaire` owns async stakeholder elicitation into one verified artifact only after its admissibility gate; source-answerable gaps return to `$research`, and a direct current-user mismatch recommends `$grilling` for conversation-only work or `$grill-with-docs` when repo-backed durable domain capture must remain active. Delegated mismatches return classification to their caller. It does not contact the recipient, ingest answers, mutate trackers or domain truth, or synthesize a specification.
+- `$grill-with-docs` is the narrowly implicitly invocable, direct-user composer of `$grilling` and `$domain-modeling`; the owned skills do not invoke each other. Direct Domain Modeling may ask focused questions only about terms, invariants, bounded contexts, and relationships. Missing context authority defaults to `render only`, while ADR approval remains separate. During composition every settled material answer crosses Relay, Domain Modeling alone accumulates the current Domain Delta, and collisions return before dependent questioning. The composer returns only `Confirmed`, `Evidence gap`, or `Blocked` with intact component payloads and starts no downstream route. Wayfinder, Triage, Improve Codebase, Skill Router, and Research may recommend it and stop; Audit Codebase may suggest it only. Domain Modeling returns every residual to its direct user or caller and stops.
+- `to-questionnaire` owns Direct async stakeholder elicitation into one verified artifact only after its admissibility gate; source-answerable gaps recommend `$research` and stop, while a current-user-owned decision recommends `$grilling` and stops. It does not accept delegated packets, contact the recipient, ingest answers, mutate trackers or domain truth, or synthesize a specification.
 - `domain-modeling` is the only skill that writes `CONTEXT.md`, `CONTEXT-MAP.md`, or approved ADR truth; `repo-bootstrap` configures and verifies routing before persistence across a required topology transition, and vocabulary consumers follow `docs/agents/domain.md`.
 - `to-spec` owns parent spec synthesis and tracker publication; `to-tickets` owns implementation issue slicing.
 - `wayfinder` owns foggy multi-session maps, ticket resolution authority, consequence-only Maintain repairs, fog disposition, and Prototype ticket participation; tracker docs own transport, child and map claim identity, stale-claim recovery, blocking, and resolution mechanics. `prototype` owns judgment mechanics, probe execution, supported results, artifact reconciliation, and truthful terminal Return. Every Prototype return stays local to its current caller or the user; Prototype starts no downstream route.

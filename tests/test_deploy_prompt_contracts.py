@@ -27,12 +27,12 @@ def test_prompt_1_builds_b0_from_intent_and_evidence_before_current() -> None:
     prompt_3 = _section(
         deploy,
         "## Deploy Prompt 3: Build B0 And C1",
-        "## Deploy Prompt 4: Audit, Prune, And Prove",
+        "## Deploy Prompt 4: Audit And Prove Behavior",
     )
     prompt_4 = _section(
         deploy,
-        "## Deploy Prompt 4: Audit, Prune, And Prove",
-        "## Deploy Prompt 5: Promote And Install",
+        "## Deploy Prompt 4: Audit And Prove Behavior",
+        "## Deploy Pruning Pass: Minimize Accepted Candidate",
     )
 
     blind_pass = prompt_1.index("Blind intent and evidence pass:")
@@ -97,6 +97,37 @@ def test_c1_has_four_discovery_origins_and_b0_first_admission() -> None:
         assert term in deploy
 
 
+def test_prompt_4_rejects_c1_units_without_terminating_viable_b0() -> None:
+    deploy = _normalized(DEPLOY_PROMPTS)
+    prompt_4 = _section(
+        deploy,
+        "## Deploy Prompt 4: Audit And Prove Behavior",
+        "## Deploy Pruning Pass: Minimize Accepted Candidate",
+    )
+    campaign = _section(
+        deploy,
+        "## Deploy Campaign: Orchestrate One Skill",
+        "## Deploy Prompt 1: Establish The Minimum-Runtime Decision",
+    )
+
+    for term in (
+        "`rejected-no-control-failure`",
+        "do not run that C1 arm",
+        "`rejected-regression`",
+        "rederive exact C1 as B0 plus surviving units",
+        "Do not rerun identical B0 arms",
+        "If no C1 units survive, set C1 = B0",
+        "Viable B0 remains the behavior-complete candidate",
+        "unit dispositions, not terminal Prompt 4 decisions",
+        "Return `accepted`, `needs-more-evidence`, or `blocked`",
+    ):
+        assert term in prompt_4
+
+    assert "unit-level C1 rejection cannot terminate" in campaign
+    assert "legacy terminal rejection may re-enter Prompt 4" in campaign
+    assert "`evidence-gap`, `blocked`, `needs-more-evidence`" in campaign
+
+
 def test_checkpoint_reentry_d0_and_missing_b0_proof_are_explicit() -> None:
     deploy = _normalized(DEPLOY_PROMPTS)
 
@@ -152,9 +183,10 @@ def test_deploy_campaign_is_discoverable_bounded_and_repeatable() -> None:
         "`ready-for-prompt-N`",
         "`research-gap` and `prototype-gap`",
         "Prompt 4 `accepted`",
+        "unit-level C1 rejection cannot terminate",
         "Prompt 5 `complete`",
         "Before returning a successful terminal",
-        "runs every numbered unit again",
+        "runs every numbered unit plus the Pruning Pass again",
         "Do not ask the user to authorize ordinary unit transitions",
     ):
         assert term in campaign
@@ -163,7 +195,7 @@ def test_deploy_campaign_is_discoverable_bounded_and_repeatable() -> None:
     assert "unit invocation performs exactly one" in shared
 
 
-def test_each_campaign_runs_prompts_1_through_5_and_reuses_only_exact_proof() -> None:
+def test_each_campaign_runs_all_units_and_reuses_only_exact_proof() -> None:
     deploy = _normalized(DEPLOY_PROMPTS)
     prompt_1 = _section(
         deploy,
@@ -178,11 +210,16 @@ def test_each_campaign_runs_prompts_1_through_5_and_reuses_only_exact_proof() ->
     prompt_3 = _section(
         deploy,
         "## Deploy Prompt 3: Build B0 And C1",
-        "## Deploy Prompt 4: Audit, Prune, And Prove",
+        "## Deploy Prompt 4: Audit And Prove Behavior",
     )
     prompt_4 = _section(
         deploy,
-        "## Deploy Prompt 4: Audit, Prune, And Prove",
+        "## Deploy Prompt 4: Audit And Prove Behavior",
+        "## Deploy Pruning Pass: Minimize Accepted Candidate",
+    )
+    pruning = _section(
+        deploy,
+        "## Deploy Pruning Pass: Minimize Accepted Candidate",
         "## Deploy Prompt 5: Promote And Install",
     )
     prompt_5 = _section(
@@ -194,10 +231,49 @@ def test_each_campaign_runs_prompts_1_through_5_and_reuses_only_exact_proof() ->
     assert "always returns `ready-for-prompt-2`" in prompt_1
     assert "always returns `ready-for-prompt-3`" in prompt_2
     assert "current-epoch B0/C1 identities" in prompt_3
-    assert "does not rerun identical samples" in prompt_4
-    assert "always recommends Prompt 5" in prompt_4
+    assert "do not rerun identical samples" in prompt_4
+    assert "recommends the Deploy Pruning Pass" in prompt_4
+    assert "`complete` always recommends Prompt 5" in pruning
     assert "no-op integration read-back" in prompt_5
     assert "record no-op installation parity" in prompt_5
+
+
+def test_pruning_is_a_separate_bounded_non_regression_unit() -> None:
+    deploy = _normalized(DEPLOY_PROMPTS)
+    prompt_4 = _section(
+        deploy,
+        "## Deploy Prompt 4: Audit And Prove Behavior",
+        "## Deploy Pruning Pass: Minimize Accepted Candidate",
+    )
+    pruning = _section(
+        deploy,
+        "## Deploy Pruning Pass: Minimize Accepted Candidate",
+        "## Deploy Prompt 5: Promote And Install",
+    )
+    prompt_5 = _section(
+        deploy,
+        "## Deploy Prompt 5: Promote And Install",
+        "## Deploy Prompt 6: Git Delivery",
+    )
+
+    assert "Never prune" in prompt_4
+    assert "behavior-complete C1 hash" in prompt_4
+    for term in (
+        "`keep`, `collapse`, `disclose`, or `delete`",
+        "Word count is diagnostic, never the objective",
+        "If no material cut exists",
+        "create no pre-prune fixture or behavioral wave",
+        "Build one final C1, group proposed cuts by affected proof lane",
+        "Run only the affected final-C1 arms",
+        "no-control-failure rejection does not apply",
+        "Revert any regressing, ambiguous, or unproved cut group",
+        "do not search combinations",
+        "`pruned`, `pruning-not-needed`, or `cuts-rejected`",
+        "failed cuts fall back to the proved pre-prune candidate",
+    ):
+        assert term in pruning
+    assert "completed Pruning Pass record" in prompt_5
+    assert "final bytes differ from the pruning record" in prompt_5
 
 
 def test_campaign_uses_nested_agents_only_for_independent_evidence() -> None:
@@ -295,12 +371,12 @@ def test_prompts_2_through_4_preserve_intent_source_and_proof_roles() -> None:
     prompt_3 = _section(
         deploy,
         "## Deploy Prompt 3: Build B0 And C1",
-        "## Deploy Prompt 4: Audit, Prune, And Prove",
+        "## Deploy Prompt 4: Audit And Prove Behavior",
     )
     prompt_4 = _section(
         deploy,
-        "## Deploy Prompt 4: Audit, Prune, And Prove",
-        "## Deploy Prompt 5: Promote And Install",
+        "## Deploy Prompt 4: Audit And Prove Behavior",
+        "## Deploy Pruning Pass: Minimize Accepted Candidate",
     )
 
     for term in (
@@ -348,5 +424,6 @@ def test_synthesis_method_summaries_match_the_revised_workflow() -> None:
         assert "Conditional Behavior Decision Interlude" in text
         assert "Conditional Prototype Interlude" in text
         assert "Conditional Research Interlude" in text
+        assert "Pruning Pass" in text
         assert "Run Deploy Campaign on <skill>" in text
         assert "fresh-context unit" in text

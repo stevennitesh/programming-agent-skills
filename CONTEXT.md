@@ -121,11 +121,11 @@ _Avoid_: dispatcher, automatic router
 
 An explicitly invoked one-skill controller, owned by
 [`deploy-prompts.md`](docs/synthesis/methods/deploy-prompts.md), that verifies
-and serially advances Prompts 1 through 5 for one fresh campaign epoch while
-retaining user interaction. A prior campaign may supply exact reusable
-evidence but cannot skip a numbered unit. Bare runs include promotion/install;
-Git delivery must be named. It authorizes bounded fresh-context delegation;
-each unit keeps its own authority and stop.
+and serially advances Prompts 1 through 4, a behavior-preserving Pruning Pass,
+and Prompt 5 for one fresh campaign epoch while retaining user interaction. A
+prior campaign may supply exact reusable evidence but cannot skip a unit. Bare
+runs include promotion/install; Git delivery must be named. It authorizes
+bounded fresh-context delegation; each unit keeps its own authority and stop.
 _Avoid_: mega-prompt, self-chaining prompt, pack-wide campaign
 
 **Global AGENTS template**

@@ -64,6 +64,9 @@ def test_handoff_compacts_context_without_advancing_work() -> None:
 def test_to_questionnaire_owns_one_safe_recipient_artifact() -> None:
     skill_dir = CUSTOM / "to-questionnaire"
     questionnaire = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    policy = (skill_dir / "agents/openai.yaml").read_text(encoding="utf-8")
+    router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
+    grilling = (CUSTOM / "grilling/SKILL.md").read_text(encoding="utf-8")
 
     assert not implicit_policy(skill_dir)
     assert re.findall(r"(?m)^\*\*([A-Za-z]+)\.\*\*", questionnaire) == [
@@ -77,7 +80,34 @@ def test_to_questionnaire_owns_one_safe_recipient_artifact() -> None:
         "Verify",
         "Return",
     ]
-    assert "<work-root>/.tmp/to-questionnaire/<slug>.md" in questionnaire
+    for contract in (
+        "Grill the send, not the subject.",
+        "The catch-all does not cover a known ledger item.",
+        "<work-root>/.tmp/to-questionnaire/<slug>.md",
+        "resolve the absolute `.md` target",
+        "overwrite of that exact target is authorized",
+        "Refresh that state immediately before Save.",
+        "Render and reread the complete candidate",
+        "changed only the authorized file",
+        "Status: Questionnaire ready | Not admitted | Incomplete",
+        "Artifact path: <absolute path> | none",
+        "Delivery: not performed",
+        "`Questionnaire ready` requires one verified artifact",
+        "`Not admitted` requires a proven failed Admit predicate",
+        "`Incomplete` names missing intake",
+    ):
+        assert contract in questionnaire
+    for rejected in ("Wayfinder", ".scratch/to-questionnaire"):
+        assert rejected not in questionnaire
+    assert policy.endswith("policy:\n  allow_implicit_invocation: false\n")
+    assert skill_pack_contract.tree_hash(skill_dir) == (
+        "a5c63f7c0ecbe2971dbbd20bb1774ece83990e08fa97d3df6d9f49c3b41cf3c4"
+    )
+    assert (
+        "| One external stakeholder holds missing knowledge and needs an async "
+        "discovery questionnaire | `$to-questionnaire` |"
+    ) in router
+    assert "`$to-questionnaire` for an external stakeholder" in grilling
 
 
 def test_tracker_templates_share_ready_and_readback_contracts() -> None:
@@ -953,54 +983,54 @@ def test_tdd_routes_improvement_followups_by_scope() -> None:
 def test_simplify_code_is_explicit_bounded_and_behavior_preserving() -> None:
     skill_dir = CUSTOM / "simplify-code"
     skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    skill_flat = " ".join(skill.split())
 
     assert not implicit_policy(skill_dir)
-    assert "one proved reduction in total codebase complexity" in skill
+    assert "one unstaged, behavior-preserving reduction" in skill
     assert "No safe simplification" in skill
-    assert "trusted focused proof" in skill
+    assert "smallest trusted proof" in skill
     assert "before and after" in skill
-    assert "After the last proof command, refresh worktree status" in skill
-    assert "proves that no use remains" in skill
-    assert "git ls-files --stage" in skill
-    assert "status text alone is not index proof" in skill
-    assert "Leave the index, commits, trackers, external systems" in skill
-    assert "Without a bounded target, recommend `$improve-codebase` and stop" in skill
-    assert "Candidate N" in skill and "verified `$improve-codebase` report" in skill
-    assert "Enter this branch only when the invocation explicitly says `until-clean`" in skill
-    assert "rerun the complete Trace, Baseline, Hunt, Choose, Cut, Prove, Lock cycle" in skill
-    assert re.findall(r"(?m)^\d\. \*\*([A-Za-z]+)\.\*\*", skill) == [
+    assert "Refresh changed paths and work state after proof" in skill
+    assert "evidence proves no use remains" in skill
+    assert "staged-state shape" in skill
+    assert "keeps the index and unrelated state as found" in skill_flat
+    assert "Without a bounded target, recommend `$improve-codebase` and stop" in skill_flat
+    assert "still-valid candidate" in skill and "verified `$improve-codebase` report" in skill
+    assert "Enter only when the user explicitly requests `until-clean`" in skill
+    assert "`Trace -> Baseline -> Choose -> Cut -> Prove -> Lock`" in skill
+    assert re.findall(r"(?m)^\d\. \*\*([^*]+)\*\*", skill.split("## Choose", 1)[1])[:5] == [
         "Delete",
         "Reuse",
-        "Standardize",
+        "Standardize, native-first",
         "Collapse",
         "Shrink",
     ]
 
-    standardize = skill.split("3. **Standardize.**", 1)[1].split("4. **Collapse.**", 1)[0]
-    assert "**Native-first.**" in standardize
-    assert standardize.index("standard-library") < standardize.index("browser")
-    assert standardize.index("browser") < standardize.index("already-installed dependency")
-
-    collapse = skill.split("4. **Collapse.**", 1)[1].split("5. **Shrink.**", 1)[0]
-    assert "narrowest existing owner" in collapse
-
-    cut = skill.split("## Cut", 1)[1].split("## Prove", 1)[0]
-    assert "ceiling" in cut and "revisit trigger" in cut
+    standardize = skill.split("3. **Standardize, native-first**", 1)[1].split(
+        "4. **Collapse**", 1
+    )[0]
+    assert standardize.index("standard/runtime") < standardize.index(
+        "platform/framework"
+    )
+    assert standardize.index("platform/framework") < standardize.index(
+        "already-installed dependency"
+    )
 
 
 def test_simplify_code_until_clean_has_a_finite_convergence_contract() -> None:
     skill = (CUSTOM / "simplify-code/SKILL.md").read_text(encoding="utf-8")
-    branch = skill.split("## Until Clean", 1)[1].split("## Return", 1)[0]
+    branch = skill.split("## Until Clean", 1)[1].split("## Return And Completion", 1)[0]
+    branch_flat = " ".join(branch.split())
 
-    for contract_field in ("**Region:**", "**Budget:**", "**Progress unit:**", "**Clean criterion:**"):
-        assert contract_field in branch
-    assert "`3` successful cuts by default" in branch
-    assert "Never infer, extend, or reset the budget" in branch
-    assert "strict net reduction" in branch
-    assert "all five rungs" in branch
-    assert "line-count reduction alone never keeps a campaign open" in branch
-    assert "one Cut or Prove attempt" in branch
-    assert "continuation requires a new explicit invocation and budget" in branch
+    assert "names one region" in branch
+    assert "finite positive successful-cut budget" in branch
+    assert "Hold one invariant behavior contract and proof seam" in branch_flat
+    assert "`3` successful cuts by default" in branch_flat
+    assert "strict monotonic reduction" in branch_flat
+    assert "complete five-rung inspection" in branch_flat
+    assert "presentation-only changes as progress" in branch_flat
+    assert "A failed attempt consumes no successful-cut budget" in branch_flat
+    assert "Do not widen or parallelize the region, renew the budget" in branch_flat
     assert re.findall(r"(?m)^\d\. \*\*([^*]+):\*\*", branch) == [
         "Clean",
         "Budget exhausted",
@@ -1010,9 +1040,9 @@ def test_simplify_code_until_clean_has_a_finite_convergence_contract() -> None:
         "Boundary stop",
     ]
 
-    returned = skill.split("## Return", 1)[1].split("## Completion", 1)[0]
-    assert "Campaign: <region; cut budget, used, and remaining | n/a>" in returned
-    assert "Progress ledger:" in returned
+    returned = skill.split("## Return And Completion", 1)[1]
+    returned_flat = " ".join(returned.split())
+    assert "campaign budget and ledger when applicable" in returned_flat
 
 
 def test_codebase_design_compares_replacement_with_incremental_evolution() -> None:
@@ -1076,53 +1106,32 @@ def test_independent_scouts_receive_curated_fresh_context() -> None:
     research = (CUSTOM / "research/SKILL.md").read_text(encoding="utf-8")
     improvement = (CUSTOM / "improve-codebase/SKILL.md").read_text(encoding="utf-8")
 
-    for text in (design, research, improvement):
+    for text in (design, improvement):
         assert 'fork_turns="none"' in text
+    assert 'fork_turns="none"' not in research
 
 
 def test_research_owns_one_authorized_cited_note() -> None:
-    research = (CUSTOM / "research/SKILL.md").read_text(encoding="utf-8")
-    normalized = " ".join(research.split())
+    skill_dir = CUSTOM / "research"
+    research = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
 
-    authorized = re.search(r"(?m)^\*\*Authorized note: (.+)\.\*\*$", research)
-    inline = re.search(r"(?m)^\*\*Inline or blocker: (.+)\.\*\*$", research)
-    assert authorized is not None and inline is not None
-    assert (
-        authorized.group(1).index("Write")
-        < authorized.group(1).index("Verify")
-        < authorized.group(1).index("Return")
+    assert implicit_policy(skill_dir)
+    assert re.findall(r"(?m)^## (.+)$", research) == [
+        "Admission And Lock",
+        "Evidence",
+        "Output",
+        "Verify And Return",
+    ]
+    assert {"`supported`", "`conflicted`", "`unknown`"} <= set(
+        re.findall(r"`[^`]+`", research)
     )
-    assert (
-        inline.group(1).index("Gate")
-        < inline.group(1).index("Verify")
-        < inline.group(1).index("Return")
-    )
-    assert research.index("8. **Verify.**") < research.index("9. **Return.**")
-    for contract in (
-        "Status: not-admitted",
-        "every failed or missing predicate",
-        "settled information",
-        "actual need shape",
-        "available evidence",
-        "Tracked mutation: none",
-        "owning authoritative source",
-        "methodologically relevant systematic review for an aggregate claim",
-        "Use non-owning secondary sources only for discovery",
-        "research status `answered`, `conflicted`, or `blocked`",
-        "render only the applicable semantic fields",
-        "evidence depth and stopping basis",
-        "adjacent claim-level citations",
-        "caller-use boundary and return owner",
-        "Omit empty conditional sections",
-        "durable evidence, not a settled answer",
-        "mutation result, and return owner",
-        "return `Next: none` when the answer is complete",
-        "otherwise recommend at most one next route",
-    ):
-        assert contract in normalized
-    assert "```markdown" not in research
-    assert "Use secondary sources only for discovery" not in research
-    assert "recommend exactly one next route" not in research
+    for status in ("answered", "conflicted", "blocked", "not-admitted"):
+        assert f"`{status}`" in research
+    assert "create or update only that Markdown file" in research
+    assert re.search(r"make no\s+tracked mutation", research)
+    assert research.index("## Output") < research.index("## Verify And Return")
+    assert "Return to the caller without deciding its artifact" in research
+    assert "starting downstream work" in research
 
 
 def test_writing_great_skills_keeps_promoted_package_and_relationship_boundary() -> None:
@@ -1830,6 +1839,8 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
     assert ("convergent-pr-review", "Hand off", "review") not in edges
     assert ("wayfinder", "Recommend and stop", "to-tickets") not in edges
     assert ("wayfinder", "Recommend and stop", "implement") not in edges
+    assert ("to-questionnaire", "Recommend and stop", "grill-with-docs") not in edges
+    assert ("research", "Recommend and stop", "to-questionnaire") not in edges
 
     wayfinder = (CUSTOM / "wayfinder/SKILL.md").read_text(encoding="utf-8")
     closure = wayfinder.split("## Closure", 1)[1].split("\n## ", 1)[0]

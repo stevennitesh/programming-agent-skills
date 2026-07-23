@@ -1,5 +1,0 @@
-interface:
-  display_name: "To Questionnaire"
-  short_description: "Create one stakeholder questionnaire artifact"
-policy:
-  allow_implicit_invocation: true

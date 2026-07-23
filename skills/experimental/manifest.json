@@ -27,12 +27,6 @@
       "candidate_sha256": "4a85be0938e0752e31fd52c2791298421f8545d5d9e51972cef74208b76e6663",
       "active_baseline_sha256": "aa2cefdfc76d82e260efc2272f1ed01098b5b77a5e38a9f159eba66b947ffeff"
     },
-    "to-questionnaire": {
-      "origin": "skills/custom/to-questionnaire at c456e83c0e3976e3e1adb5bf46b2204a824cf682 as the Control Lock baseline for synthesis-driven extraction",
-      "reason": "Preserve the inactive pruned leaf with its shorter invocation description until coordinated Wayfinder integration and E4 proof pass.",
-      "candidate_sha256": "7d36b43411bfc6146d9390465b845ff251893d309cdae09690db921b56cc8376",
-      "active_baseline_sha256": "163d76f3468f2301c6cddeead5cca34b08afaf9ae370f457157707c12e010158"
-    },
     "wayfinder": {
       "origin": "skills/custom/wayfinder at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f before the installed-baseline restore",
       "reason": "Preserve the divergent candidate while the installed managed version remains active.",

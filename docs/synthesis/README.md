@@ -62,11 +62,11 @@ Synthesis is design authority only until implemented. Canonical runtime files re
 ## Canonical Extraction
 
 Start manually with Deploy Prompt 1, or use `Run Deploy Campaign on <skill>`
-for one initiating prompt that runs a fresh Prompts 1-5 campaign epoch,
-including no-op promotion and installation-parity verification when accepted
-bytes are already canonical. Prior campaign artifacts may supply exact
-reusable evidence but cannot skip a numbered unit. Every path begins with
-Prompt 1:
+for one initiating prompt that runs a fresh Prompts 1-4, Pruning Pass, and
+Prompt 5 campaign epoch, including no-op pruning, promotion, and
+installation-parity verification when no changes are justified. Prior campaign
+artifacts may supply exact reusable evidence but cannot skip a unit. Every path
+begins with Prompt 1:
 
 ```text
 Run Deploy Campaign on <skill> (optional controller)
@@ -78,7 +78,8 @@ Run Deploy Campaign on <skill> (optional controller)
        `-> current reconciliation and Prompt 2
   -> Deploy Prompt 2 in-place synthesis reconciliation
   -> Deploy Prompt 3 executable B0 control and exact C1 candidate
-  -> Deploy Prompt 4 minimality, contribution, preservation, and pruning proof
+  -> Deploy Prompt 4 B0 viability, C1 contribution, and preservation proof
+  -> Deploy Pruning Pass behavior-preserving runtime minimization
   -> Deploy Prompt 5 canonical promotion, proof, and separately owned install
   -> optional Deploy Prompt 6 Git delivery
 ```
@@ -86,12 +87,13 @@ Run Deploy Campaign on <skill> (optional controller)
 The campaign root retains state transitions, verification, and user
 interaction. It dispatches one fresh-context unit owner at a time and
 serializes writers. Prompt 1 and Research may use read-only source
-grandchildren; Prompt 4 may use fresh evaluation grandchildren. The unit owner
-keeps synthesis and judgment. Prompt 4 revalidates and reuses proof only when
-the exact bytes, behavior or wording, task, protocol, configuration, tools,
-authority, evidence, runtime, rubric, and proof lane match; it reruns affected
-evidence rather than identical samples. Bare campaign invocation excludes Git
-delivery; append `and commit` or `and push` to authorize Prompt 6.
+grandchildren; Prompt 4 and the Pruning Pass may use fresh evaluation
+grandchildren. The unit owner keeps synthesis and judgment. Exact proof is
+reused only when bytes, task, protocol, configuration, tools, authority,
+evidence, runtime, rubric, and proof lane match. The Pruning Pass always audits
+the accepted runtime, but creates an equivalence arm only for material cuts.
+Bare campaign invocation excludes Git delivery; append `and commit` or
+`and push` to authorize Prompt 6.
 
 `B0` is a new runnable minimum rewrite: the intersection of the local intended
 contract—outcome, invocation, authority, Return, completion, relationships,
@@ -124,13 +126,17 @@ receives no credit for repairing it. Every hypothesis needs an owner, expected
 B0 failure, cheapest expression, wrong-condition case, and proof. Cuts relative
 to current receive no mechanism-contribution credit.
 
+A C1 no-control-failure or regression rejects only that hypothesis. Prompt 4
+removes it, rederives C1 as B0 plus surviving units, and continues with viable
+B0; if no C1 units survive, C1 = B0 before the Pruning Pass.
+
 The current/B0/C1 identity determines the campaign:
 
 | Shape | Identity | Route |
 | --- | --- | --- |
-| `runtime-no-change` | current = B0 = C1 | A standalone run may stop after Prompt 2 when B0 proof is exact. A Deploy Campaign still runs Prompts 3, 4, and 5 without claiming a runtime delta. |
-| `pruning-only` | current != B0 = C1 | Retained lifecycle label for a source-derived rewrite with no C1 delta. Prove B0 viability and independently protected behavior before promotion. |
-| `behavioral-candidate` | B0 != C1 | Prove each admitted hypothesis from any of the four origins against B0 before promotion. |
+| `runtime-no-change` | current = B0 = C1 | A standalone run may stop after Prompt 2 when B0 proof is exact. A Deploy Campaign still runs Prompts 3 and 4, the Pruning Pass, and Prompt 5 without claiming a runtime delta. |
+| `pruning-only` | current != B0 = C1 | Prove B0 viability and protected behavior, then run the Pruning Pass before promotion. |
+| `behavioral-candidate` | B0 != C1 | Prove each admitted hypothesis against B0, then run the Pruning Pass before promotion. |
 
 Prompt 1 confirms its packet through an internal integrity gate. It asks the
 user only when a material user-owned design choice remains, not to approve a
@@ -159,10 +165,12 @@ executes exactly one unit, recommends at most one successor, and stops. Only
 the active campaign coordinator may dispatch the verified successor.
 
 Proof is proportional to the unit: early read-only and documentation prompts
-use inspection and affected checks; exact behavioral arms belong to Prompt 4;
+use inspection and affected checks; exact behavior proof belongs to Prompt 4;
+cut equivalence belongs to the Pruning Pass and runs only for material cuts;
 one final integration suite, install dry-run, synchronization, and parity
-belong to Prompt 5. Prompts 1 through 5 never stage or commit and must preserve
-their starting Git HEAD. Prompt 6 alone owns intentional Git delivery.
+belong to Prompt 5. Prompts 1 through 5 and the Pruning Pass never stage or
+commit and must preserve their starting Git HEAD. Prompt 6 alone owns
+intentional Git delivery.
 
 The synthesis note supplies selected behavior, placement, preservation, and
 proof obligations; it never becomes executable authority itself.
@@ -208,8 +216,8 @@ A whole-skill synthesis note should contain:
 - explicit rejected, deferred, and deliberately unchanged behavior;
 - an extraction and affected-surface map;
 - a claim-to-proof matrix separating B0 fidelity, conditional D0 comparison,
-  B0 viability, C1 contribution, invocation, protection, pruning, and
-  deterministic proof;
+  B0 viability, C1 contribution, invocation, protection, deterministic proof,
+  and the separate pre-prune/final-C1 equivalence lane;
 - the remaining research and evidence gaps.
 
 ## Rule

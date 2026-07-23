@@ -9,19 +9,19 @@ families.
 
 | File | Role |
 | --- | --- |
-| [`deploy-prompts.md`](deploy-prompts.md) | One-skill campaign controller and bounded numbered units for synthesizing a locally intended, source-derived executable minimum, evaluating an exact candidate, promoting and installing it, and optionally delivering it through Git. |
+| [`deploy-prompts.md`](deploy-prompts.md) | One-skill campaign controller and bounded units for synthesizing a source-derived executable minimum, proving behavior, pruning by non-regression, promoting and installing, and optionally delivering through Git. |
 | [`source-distillation-flow.md`](source-distillation-flow.md) | Optional flow for distilling primary and outside sources into important concepts and usable techniques. |
 | [`prompts/`](prompts/) | Optional prompts supporting source distillation. |
 
 ## Routing
 
 Use `Run Deploy Campaign on <skill>` for one initiating prompt and a fresh
-Prompts 1-5 campaign epoch, including no-op promotion and installation-parity
-verification when the accepted bytes are already canonical, or invoke Deploy
-Prompt 1 for one manual unit. A prior campaign may supply exact reusable
-artifacts and proof but cannot skip a numbered unit. The campaign root retains
-transitions, verification, and user interaction; fresh-context unit owners
-stop after one unit, writers are serialized, and nested workers are limited to
+Prompts 1-4, Pruning Pass, and Prompt 5 campaign epoch, including no-op pruning,
+promotion, and installation-parity verification when no changes are justified,
+or invoke Deploy Prompt 1 for one manual unit. A prior campaign may supply exact
+reusable artifacts and proof but cannot skip a unit. The campaign root retains
+transitions, verification, and user interaction; fresh-context unit owners stop
+after one unit, writers are serialized, and nested workers are limited to
 independent source or evaluation evidence. Bare invocation excludes Git
 delivery; append `and commit` or `and push` to authorize Prompt 6.
 
@@ -38,8 +38,9 @@ Route by exact campaign shape: current = B0 = C1 is
 lane-limited, historical-admission-only, invalidated, or missing. Pruning is a
 non-regression lane and never receives mechanism-contribution credit. Exact
 byte identity does not waive missing B0 proof. Inside a campaign, Prompts 3 and
-4 always run; exact unchanged proof is revalidated and reused rather than
-resampled.
+4 and the Pruning Pass always run. The pass audits every runtime-facing
+candidate but runs equivalence samples only for material cuts, reusing exact
+Prompt 4 evidence as its control.
 
 Current runtime is an inventory and evidence source, never B0 by existence.
 C1 hypotheses may originate from current retention, one concrete pack
@@ -48,6 +49,11 @@ counterexample to settled intent. Origin triggers inspection; every admitted
 hypothesis still needs an owner, expected B0 failure, cheapest expression,
 wrong-condition case, and proof. A counterexample that disproves minimum
 viability reopens B0 instead of becoming C1.
+
+A C1 no-control-failure or regression rejects that hypothesis, not the viable
+campaign. Prompt 4 removes the unit, rederives exact C1 as B0 plus survivors,
+and continues; if none survive, C1 = B0 and the campaign proceeds to the
+Pruning Pass.
 
 B0 must pass its minimum-runtime suite before C1 evaluation. Compare unproved
 source steering against `D0` no-guidance and reuse the matching B0 viability
@@ -77,9 +83,11 @@ Every leaf prompt performs one unit, recommends at most one successor, and
 stops. Only an active Deploy Campaign coordinator may dispatch the verified
 successor. Use the proportionate proof budget in
 [`deploy-prompts.md`](deploy-prompts.md): do not run a full suite at every
-documentation or construction step. Prompts 1 through 5 preserve Git HEAD and
-never stage or commit; optional Prompt 6 is the sole Git-delivery owner. Load
-the shared sections plus the controller or named unit, not every prompt body.
+documentation or construction step. Prompt 4 owns behavior proof; the Pruning
+Pass owns cut equivalence and skips behavioral waves when no material cut
+exists. Prompts 1 through 5 and the Pruning Pass preserve Git HEAD and never
+stage or commit; optional Prompt 6 is the sole Git-delivery owner. Load the
+shared sections plus the controller or named unit, not every prompt body.
 
 ## Boundary
 

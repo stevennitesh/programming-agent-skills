@@ -127,45 +127,6 @@ def test_promoted_grilling_and_domain_modeling_preserve_composer_inputs() -> Non
     ) == "policy:\n  allow_implicit_invocation: true\n"
 
 
-def test_experimental_to_questionnaire_preserves_admitted_leaf_contract() -> None:
-    skill_dir = EXPERIMENTAL / "to-questionnaire"
-    skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
-    policy = (skill_dir / "agents/openai.yaml").read_text(encoding="utf-8")
-
-    for contract in (
-        "Direct | Wayfinder -> Admit -> Lock -> Gap -> Draft -> Cover -> Save -> Verify -> Direct | Wayfinder Return",
-        "Default the current user as return and reconciliation owner",
-        "Recipient knowledge and disclosure authority:",
-        "Do not infer Wayfinder-owned authority",
-        "missing or unverified recipient identity or authority: return `Incomplete`",
-        "proven route, owner, or coherence mismatch: return `Not admitted`",
-        "do not select or recommend its next route",
-        "Every admitted item maps to at least one atomic question",
-        "every substantive question maps back to an admitted item",
-        "optional final catch-all",
-        "return `Incomplete` before writing",
-        ".scratch/to-questionnaire/<slug>.md",
-        ".tmp` is invalid",
-        "resolve an absolute `.md` target",
-        "Capture the pre-write identity",
-        "unrelated baseline or concurrent drift is recorded separately",
-        "Status: Questionnaire ready | Not admitted | Incomplete",
-        "Reason or exact blocking predicate:",
-        "Artifact identity: <absolute path + SHA-256> | none",
-        "Wayfinder retains: waiting, delivery, answer reconciliation",
-        "Never represent a partial, stale, or unverified artifact as `Questionnaire ready`",
-    ):
-        assert contract in skill
-
-    assert {
-        path.relative_to(skill_dir).as_posix()
-        for path in skill_dir.rglob("*")
-        if path.is_file()
-    } == {"SKILL.md", "agents/openai.yaml"}
-    assert "final catch-all." not in skill
-    assert policy.endswith("policy:\n  allow_implicit_invocation: true\n")
-
-
 def test_promoted_prototype_preserves_selected_leaf_contract() -> None:
     skill_dir = CUSTOM / "prototype"
     skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")

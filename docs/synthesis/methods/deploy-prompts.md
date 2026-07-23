@@ -4,7 +4,8 @@ Use these prompts to reconcile, create, or improve one skill at a time. Invoke
 Deploy Prompt 1 for a standalone unit or Deploy Campaign for verified
 start-to-finish orchestration. A standalone unit may reuse later durable gates.
 Every new Deploy Campaign starts a fresh campaign epoch and runs Prompts 1
-through 5 in order, even when the named skill completed an earlier campaign.
+through 4, the Pruning Pass, then Prompt 5, even when the named skill completed
+an earlier campaign.
 
 Invoke with, for example:
 
@@ -27,7 +28,8 @@ Deploy Prompt 1: establish the minimum-runtime decision
   -> when admitted: one Conditional Behavior Decision Interlude, then Prompt 1 again
   -> Deploy Prompt 2: finalize decision-complete synthesis
   -> Deploy Prompt 3: build B0 and C1
-  -> Deploy Prompt 4: audit, prune, and prove
+  -> Deploy Prompt 4: audit and prove behavior
+  -> Deploy Pruning Pass: minimize the accepted candidate
   -> Deploy Prompt 5: promote and install
   -> optional Deploy Prompt 6: Git delivery
 ```
@@ -35,9 +37,9 @@ Deploy Prompt 1: establish the minimum-runtime decision
 Outside a campaign, Prompt 1 may recommend a later prompt when exact durable
 artifacts and hashes prove that every earlier gate passes. Inside a new
 campaign, prior artifacts and proof are evidence, not lifecycle completion:
-they may reduce repeated work but never skip Prompts 1 through 5. A missing or
-older synthesis is reconciled in place by Prompt 2; do not rewrite every
-synthesis document before its skill is selected.
+they may reduce repeated work but never skip a numbered prompt or the Pruning
+Pass. A missing or older synthesis is reconciled in place by Prompt 2; do not
+rewrite every synthesis document before its skill is selected.
 
 ## Shared Model
 
@@ -95,9 +97,9 @@ Use these shared artifacts:
   behavior hypotheses. Each must name an owner, expected B0 failure, cheapest
   expression, wrong-condition case, and proof. Source-correct substitutions
   belong in B0; cuts receive no contribution credit.
-- **Behavior-complete pre-prune package:** the immutable package compared with
-  final `C1` when a material cut needs pruning-equivalence proof. Store it once
-  even when it also serves another evidence role.
+- **Behavior-complete pre-prune package:** exact Prompt 4-accepted `C1`, used
+  as the Pruning Pass control. Store a separate immutable fixture only when a
+  material cut changes its bytes.
 - **Semantic substitution:** a source-supported correction that replaces
   misleading language at equal or lower runtime load. Source fidelity can
   justify it; do not claim behavioral improvement without candidate proof.
@@ -111,9 +113,9 @@ Record the identity relationship among current canonical runtime, `B0`, and
 
 | Campaign Shape | Exact Identity | Meaning | Default Route |
 | --- | --- | --- | --- |
-| `runtime-no-change` | current = `B0` = `C1` | The canonical runtime already expresses the minimum and no candidate delta exists. Proof may still be missing. | A standalone run may stop after Prompt 2 when B0 proof is exact. A Deploy Campaign still runs Prompts 3, 4, and 5 as fresh construction, proof-review, and integration-parity units. |
-| `pruning-only` | current != `B0` = `C1` | Retained lifecycle label for a source-derived rewrite with no C1 delta. Differences from current may include reconstruction, semantic substitution, and unsupported-behavior cuts; none receives mechanism-contribution credit. | Prompts 3, 4, and 5. |
-| `behavioral-candidate` | `B0` != `C1` | At least one admitted mechanism needs exact B0-first contribution proof. | Prompts 3, 4, and 5. |
+| `runtime-no-change` | current = `B0` = `C1` | The canonical runtime already expresses the minimum and no candidate delta exists. Proof may still be missing. | A standalone run may stop after Prompt 2 when B0 proof is exact. A Deploy Campaign still runs Prompts 3, 4, the Pruning Pass, and 5 as fresh construction, proof-review, minimization, and integration-parity units. |
+| `pruning-only` | current != `B0` = `C1` | Retained lifecycle label for a source-derived rewrite with no C1 delta. Differences from current may include reconstruction, semantic substitution, and unsupported-behavior cuts; none receives mechanism-contribution credit. | Prompts 3 and 4, the Pruning Pass, then Prompt 5. |
+| `behavioral-candidate` | `B0` != `C1` | At least one admitted mechanism needs exact B0-first contribution proof. | Prompts 3 and 4, the Pruning Pass, then Prompt 5. |
 
 An exact existing artifact may justify a later standalone prompt, but it does
 not change the campaign shape or skip a unit in a new Deploy Campaign.
@@ -136,10 +138,10 @@ Under an active Deploy Campaign, the coordinator alone may dispatch a verified
 successor after the unit stops. Preserve unrelated work and every unit's
 mutation boundary.
 
-Prompts 1 through 5 and all three Conditional Interludes record Git `HEAD` before
-work and read it back before Return. They never stage or commit. If `HEAD`
-changed, return `blocked` with the observed transition; Deploy Prompt 6 is the
-sole Git-delivery owner.
+Prompts 1 through 5, the Pruning Pass, and all three Conditional Interludes
+record Git `HEAD` before work and read it back before Return. They never stage
+or commit. If `HEAD` changed, return `blocked` with the observed transition;
+Deploy Prompt 6 is the sole Git-delivery owner.
 
 End every run with:
 
@@ -179,7 +181,8 @@ code fences, and consistent table columns.
 | Deploy Prompt 1 | Read-back, identities, and existing evidence inspection. Read tests but do not execute them unless a current-state fact cannot be established more cheaply; never run the full suite by default. |
 | Deploy Prompt 2 | Complete synthesis read-back, the affected Markdown gate, directly affected documentation checks, and both diff checks. Do not run the full suite unless a machine-consumed contract changed. |
 | Deploy Prompt 3 | Candidate inventory, hashes, focused structural and relationship checks, skill validation, and both diff checks. Run the full suite only when a shared machine contract or test harness changed. |
-| Deploy Prompt 4 | Exact behavioral or equivalence arms, affected focused checks, and one full suite only after final accepted bytes when repository test or pack contracts changed. Do not repeat the full suite after every repair. |
+| Deploy Prompt 4 | Exact B0 viability and C1 contribution arms, affected focused checks, and no pruning-equivalence work. Run one full suite only after final behavior-complete bytes when repository test or pack contracts changed. |
+| Deploy Pruning Pass | Complete cut audit. If no material cut exists, use read-back, hashes, and focused structural proof only. Otherwise reuse the exact Prompt 4 control, run only affected final-candidate equivalence and invocation/context arms, then verify final hashes and both diff checks. |
 | Deploy Prompt 5 | Canonical and reconciled-synthesis read-back, the affected Markdown gate, affected focused proof, one full suite after final integration, install dry-run, synchronization, parity, and clean post-install dry-run. |
 | Deploy Prompt 6 | Scoped final diff, the affected Markdown gate, required current mechanical checks, both diff checks, intentional staging, commit, and an explicitly authorized push. Do not rerun unchanged behavioral evidence. |
 
@@ -190,15 +193,16 @@ Runs the bounded units under one continuing user authorization.
 ```text
 Coordinate only one Deploy Campaign for the named skill. Invoking `Run Deploy
 Campaign on <skill>` explicitly authorizes bounded fresh-context delegation,
-one fresh campaign epoch containing Prompts 1 through 5, and any admitted
-Conditional Interludes. This remains true when the skill completed an earlier
-campaign. It includes canonical promotion and managed installation but not Git
-delivery.
+one fresh campaign epoch containing Prompts 1 through 5, the Pruning Pass, and
+any admitted Conditional Interludes. This remains true when the skill completed
+an earlier campaign. It includes canonical promotion and managed installation
+but not Git delivery.
 
 Parse optional delivery wording once:
 
-- bare invocation: run Prompts 1 through 5, then stop with Git delivery pending
-  when bounded artifacts remain;
+- bare invocation: run Prompts 1 through 5 with the Pruning Pass between
+  Prompts 4 and 5, then stop with Git delivery pending when bounded artifacts
+  remain;
 - `and commit`: also authorize Prompt 6 to commit, without push; or
 - `and push`: also authorize Prompt 6 to commit and push.
 
@@ -218,9 +222,9 @@ Nested delegation is evidence-only:
 
 - Prompt 1 and Research owners may use bounded fresh-context grandchildren for
   independent source lanes.
-- Prompt 4 may use fresh-context evaluation grandchildren in capacity-aware
-  waves under `BEHAVIOR-EVALS.md`; the Prompt 4 owner fixes the packet and
-  rubric, inspects every output, and makes the judgment.
+- Prompt 4 and the Pruning Pass may use fresh-context evaluation grandchildren
+  in capacity-aware waves under `BEHAVIOR-EVALS.md`; the unit owner fixes the
+  packet and rubric, inspects every output, and makes the judgment.
 - Other grandchildren require a concrete independent read-only check.
 
 Give grandchildren factual briefs without parent conclusions or peer outputs.
@@ -257,21 +261,29 @@ Advance only through these transitions:
   the campaign across the user's answers. A confirmed result returns to a
   fresh Prompt 1. Surface an exact Prototype human-verdict question the same
   way.
-- Prompt 4 `accepted` dispatches Prompt 5, including when C1 already equals
-  canonical. Prompt 5 `complete` is the campaign's successful terminal.
+- Prompt 4 `accepted` dispatches the Pruning Pass. A successful Pruning Pass
+  dispatches Prompt 5 with its exact final C1, including when no cut was
+  justified or C1 already equals canonical. Prompt 5 `complete` is the
+  campaign's successful terminal.
+- A no-control-failure or regression rejects only the affected C1 unit inside
+  Prompt 4. While viable B0 remains, unit-level C1 rejection cannot terminate
+  the campaign; Prompt 4 rederives C1 and continues. A legacy terminal
+  rejection may re-enter Prompt 4 only after explicit user authorization and
+  exact identity read-back.
 - Before returning a successful terminal, dispatch Prompt 6 only when the
   initial delivery mode authorized it and bounded campaign artifacts remain
   pending. Prompt 6 is always terminal.
-- `evidence-gap`, `blocked`, rejection, `needs-more-evidence`, or an Interlude
-  with no re-entry recommendation is terminal. A `none` recommendation starts
-  nothing; its owning decision determines success or failure.
+- `evidence-gap`, `blocked`, `needs-more-evidence`, or an Interlude with no
+  re-entry recommendation is terminal. A `none` recommendation starts nothing;
+  its owning decision determines success or failure.
 
 Within one campaign epoch, never dispatch the same unit twice against
 unchanged checkpoint, bytes, evidence, and user decision except the explicit
 Prompt 1 re-entry after an Interlude. A later top-level `Run Deploy Campaign`
-invocation creates a new epoch and runs every numbered unit again. Do not ask
-the user to authorize ordinary unit transitions. Ask only for an admitted
-intended-contract decision, an exact human verdict, or new external authority.
+invocation creates a new epoch and runs every numbered unit plus the Pruning
+Pass again. Do not ask the user to authorize ordinary unit transitions. Ask
+only for an admitted intended-contract decision, an exact human verdict, or
+new external authority.
 
 Give a concise update at each unit boundary. When awaiting the user, ask the
 exact question and say the campaign remains active; do not emit a terminal
@@ -579,7 +591,10 @@ branches behind trigger-bearing pointers, and point to foreign owners. Mark
 trial units provisional with their expected B0 failure. A Prototype verdict
 may select a technical expression; it is not behavioral-effect evidence.
 
-When B0 = C1, store one corpus and one hash. Otherwise record the exact unit-level transformation. Keep current canonical separate as comparison evidence. Freeze a pre-prune package only when a material equivalence claim needs it.
+When B0 = C1, store one corpus and one hash. Otherwise record the exact
+unit-level transformation. Keep current canonical separate as comparison
+evidence. Do not manufacture a pre-prune fixture here: exact Prompt 4-accepted
+C1 becomes that control only if the later Pruning Pass finds a material cut.
 
 Pre-register the B0 minimum-runtime suite for its outcome, invocation, authority, required contracts, safe failure, completion, order, and safety. Keep these controls separate from C1's expected B0 failures.
 
@@ -587,7 +602,7 @@ For `D0-required` units, freeze the smallest causally coherent no-guidance contr
 
 Write one candidate record containing the intended contract, checkpoint,
 interlude dispositions, unit ledger and runtime map, exact package identities,
-B0 suite, D0 controls, C1 proof plan, pruning control when needed, affected
+B0 suite, D0 controls, C1 proof plan, Pruning Pass boundary, affected
 relationships, and residual load. Store each corpus once.
 
 Update candidate-specific structural proof only for machine-consumed contracts. Record proposed invocation, caller, ownership, and Return deltas in synthesis and candidate evidence; do not change the current relationship index before promotion. Read back every created or changed surface and run proportionate mechanical and candidate-relationship checks.
@@ -599,13 +614,13 @@ Use the Shared Run Contract and stop.
 Skill name: CHANGE_ME
 ```
 
-## Deploy Prompt 4: Audit, Prune, And Prove
+## Deploy Prompt 4: Audit And Prove Behavior
 
-Establishes minimality, contribution, and preservation for exact candidate
-bytes.
+Establishes B0 viability, C1 contribution, and protected behavior for exact
+candidate bytes. Pruning is a later non-regression unit.
 
 ```text
-Perform only Deploy Prompt 4 for the named skill. Never promote, install, deliver through Git, or start the recommended successor.
+Perform only Deploy Prompt 4 for the named skill. Never prune, promote, install, deliver through Git, or start the recommended successor.
 
 Use $writing-great-skills in Author mode. Verify the complete B0 and C1
 packages, hashes, inventories, intended contract, B0 provenance, synthesis
@@ -628,7 +643,28 @@ behavioral contribution proof. If the challenge would reverse a material user
 decision rather than enforce it, return `blocked` and recommend a fresh
 Prompt 1 decision pass.
 
-Repair only genuine omissions relative to B0, admitted C1 deltas, and the protected behavior set. Every repair creates new C1 bytes and invalidates only behaviorally affected candidate evidence.
+Resolve C1 one unit at a time:
+
+- Run the exact B0 control first. When B0 does not exhibit the registered
+  failure, record `rejected-no-control-failure`, do not run that C1 arm, and
+  remove the unit from C1.
+- When a C1 arm regresses protected behavior or fails its contribution rubric,
+  record `rejected-regression` and remove that unit from C1.
+- After each rejection, rederive exact C1 as B0 plus surviving units, refreeze
+  its hash, preserve unchanged evidence, and run only affected integrated
+  proof. Do not rerun identical B0 arms.
+- If no C1 units survive, set C1 = B0 and reclassify the campaign as
+  `pruning-only` when current differs or `runtime-no-change` when it does not.
+  Viable B0 remains the behavior-complete candidate.
+
+These are unit dispositions, not terminal Prompt 4 decisions. If a rejected
+unit is asserted to be required by the intended contract, it was misclassified
+as C1; return `blocked` to a fresh Prompt 1 rather than retaining it without
+proof.
+
+Repair only genuine omissions relative to B0, surviving C1 deltas, and the
+protected behavior set. Every repair creates new C1 bytes and invalidates only
+behaviorally affected candidate evidence.
 
 Use separate proof lanes:
 
@@ -639,33 +675,90 @@ Use separate proof lanes:
    source-mechanism, and intent-counterexample hypotheses, run B0 first and run
    C1 only when the expected failure appears. Test pack composition against the
    exact caller/callee scenario.
-4. **Protection and pruning:** prove only independently protected and admitted behavior; pre-prune extras gain no protection.
-5. **Invocation and context:** test positive reach, adjacent negatives, false competition, body loading, and branch pointers only when affected.
-6. **Machine and relationship contracts:** use deterministic checks and ownership traces.
+4. **Protected behavior:** prove only independently supported and admitted behavior.
+5. **Invocation, context, machine, and relationships:** test affected routing
+   and context loading; use deterministic checks and ownership traces for
+   machine and relationship contracts.
 
 Use read-back and deterministic checks for exact bytes and machine contracts, relationship traces for ownership, and the current `BEHAVIOR-EVALS.md` contract for behavioral claims. Test positive, failure-revealing, and wrong-condition pressure only to the breadth claimed. A required caller contract or non-intuitive safety boundary may be admitted through contract-matched deterministic or relationship proof; do not invent a red behavioral claim merely to justify it.
-
-Pruning is non-regression, not contribution; its control need not fail. Description shortening also needs invocation proof.
 
 Minimize cost without weakening attribution. Cluster units only when one fixed
 fixture and rubric genuinely exercise them. Reuse exact unchanged arms when
 bytes, behavior or wording, task, protocol, configuration, tools, authority,
-evidence, runtime, rubric, and proof lane match. The current Prompt 4 must
-recheck that identity and judgment, but it does not rerun identical samples.
-Preserve controls after repairs and rerun only affected candidate arms. Keep
-candidate language and conclusions out of neutral contexts.
+evidence, runtime, rubric, and proof lane match. Recheck that identity and
+judgment, but do not rerun identical samples. Preserve controls after repairs
+and rerun only affected candidate arms. Keep candidate language and
+conclusions out of neutral contexts.
 
 Inspect every result. Record per-sample outcomes, variance, worst result, critical failures, deviations, unavailable telemetry, process cost when decision-relevant, raw-artifact pointers, and residual gaps. A screening result supports only its tested tasks, model, harness, and claim.
 
-Reperform the cut test. Source provenance alone does not preserve runtime text. Retain a B0 unit only when the viable source-derived outcome or local contract requires it and any behavior-change claim passes D0. Retain C1 only with exact evidence, demonstrated contribution, contract-matched proof, a proved safety or authority role, or minimum execution context.
+Refresh the synthesis and candidate-owned validation surfaces with the exact learned decisions and evidence dispositions. Record the accepted relationship delta without publishing it before Prompt 5. Keep raw evaluation and campaign ledgers in validation.
 
-Refresh the synthesis and candidate-owned validation surfaces with the exact learned decisions and final evidence dispositions. Record the accepted relationship delta without publishing it into the current relationship index before Prompt 5. Keep raw evaluation and campaign ledgers in validation; do not copy evaluation procedure into synthesis.
+Return `accepted`, `needs-more-evidence`, or `blocked`, plus every rejected C1
+unit disposition. `accepted` names the exact behavior-complete C1 hash and
+recommends the Deploy Pruning Pass.
 
-Return `accepted`, `reject-no-control-failure`, `reject-regression`,
-`needs-more-evidence`, or `blocked`. `accepted` names the exact final C1 hash.
-Under a fresh Deploy Campaign it always recommends Prompt 5; standalone work
-recommends Prompt 5 only when canonical integration, relationship publication,
-or installation remains.
+Use the Shared Run Contract and stop.
+
+Skill name: CHANGE_ME
+```
+
+## Deploy Pruning Pass: Minimize Accepted Candidate
+
+Tests whether Prompt 4-accepted behavior survives a cheaper runtime expression.
+
+```text
+Perform only the Deploy Pruning Pass for the named skill. Never add behavior, promote, install, deliver through Git, or start the recommended successor.
+
+Use $writing-great-skills in Author mode. Require the exact Prompt 4 acceptance
+record, behavior-complete C1 package and hash, protected behavior set, and
+registered proof. Drift returns `blocked` with Prompt 4 as the only
+recommendation.
+
+Audit the complete runtime-facing candidate package. Classify every
+instruction-bearing unit and distinct passage once as `keep`, `collapse`,
+`disclose`, or `delete`. Target duplication, no-ops, sediment, scattered
+meaning, inline branch-only reference, negative restatements, copied foreign
+procedure, and unused candidate-owned support. Protect admitted behavior,
+non-intuitive safety and authority, irreversible order, proof, safe failure
+Return, completion, invocation, and relationship triggers.
+
+Ask of every proposed cut: "If I cut this, what behavior may change?" A valid
+cut must reduce at least one named load: always-loaded description, common-path
+instructions, duplicated semantic ownership, branch load, or unused package
+surface. Word count is diagnostic, never the objective.
+
+If no material cut exists, keep C1 byte-identical, create no pre-prune fixture
+or behavioral wave, record `pruning-not-needed`, and recommend Prompt 5.
+
+For material cuts:
+
+1. Freeze Prompt 4-accepted C1 once as the behavior-complete pre-prune control.
+2. Build one final C1, group proposed cuts by affected proof lane, and do not
+   search combinations.
+3. Reuse a Prompt 4 control arm only when bytes, task, protocol, configuration,
+   tools, authority, evidence, runtime, rubric, and proof lane match. Run only
+   the affected final-C1 arms. Description or pointer cuts also require
+   invocation and context-loading proof.
+4. Treat pruning as non-regression, not contribution: the pre-prune control
+   need not fail and no-control-failure rejection does not apply.
+5. Revert any regressing, ambiguous, or unproved cut group. Do not weaken the
+   rubric or iterate micro-cuts. Prove the surviving final bytes once.
+
+Use deterministic or relationship proof for nonbehavioral machine and owner
+changes; claim no behavioral equivalence from structural proof. Accept a cut
+only when the registered affected behaviors show no critical or meaningful
+regression and the named load is lower. Scope equivalence to the exact cases,
+runtime, and sample size.
+
+Update the synthesis and candidate record with the cut ledger, pre-prune and
+final hashes, load delta, reused and fresh proof, rejected cuts, and residual
+gaps. Keep raw outputs in validation.
+
+Return `complete`, `evidence-gap`, or `blocked`, plus pruning disposition
+`pruned`, `pruning-not-needed`, or `cuts-rejected` and the exact final C1 hash.
+`complete` always recommends Prompt 5; failed cuts fall back to the proved
+pre-prune candidate rather than blocking promotion.
 
 Use the Shared Run Contract and stop.
 
@@ -680,7 +773,11 @@ installation phase.
 ```text
 Perform only Deploy Prompt 5 for the named skill. Never perform Git delivery or start another skill.
 
-Require the accepted Prompt 4 record, exact final C1 hash, complete candidate package, and unchanged affected behavioral claims. If candidate bytes or a tested claim changed, stop and recommend Deploy Prompt 4 without promoting.
+Require the accepted Prompt 4 record, completed Pruning Pass record, exact
+final C1 hash, complete candidate package, and unchanged affected claims. If
+behavior-complete bytes or claims drifted before pruning, stop and recommend
+Deploy Prompt 4. If final bytes differ from the pruning record, stop and
+recommend the Deploy Pruning Pass.
 
 First use $writing-great-skills in Author mode to promote the accepted
 candidate into the canonical skill and update only directly affected canonical
