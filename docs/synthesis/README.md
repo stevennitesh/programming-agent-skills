@@ -69,7 +69,7 @@ the earliest justified unit:
 current skill state + upstream minimum candidates + research intake
   -> Deploy Prompt 1 minimum-runtime decision
        |-> if admitted: one source-distillation interlude, then Prompt 1 again
-       `-> no-change, evidence-gap, or the earliest justified later prompt
+       `-> runtime-no-change, evidence-gap, or the earliest justified later prompt
   -> Deploy Prompt 2 in-place synthesis reconciliation
   -> Deploy Prompt 3 executable B0 control and exact C1 candidate
   -> Deploy Prompt 4 minimality, contribution, preservation, and pruning proof
@@ -80,8 +80,24 @@ current skill state + upstream minimum candidates + research intake
 `B0` is the runnable locally compatible minimum: the simplest credible
 baseline core plus mandatory local contracts and source-correct semantic
 substitutions that make no behavioral-improvement claim. `C1` is exact `B0`
-plus admitted behavior-changing mechanisms. The current runtime supplies a
-protected behavior set, not a presumption that every existing mechanism stays.
+plus admitted behavior-changing mechanisms. Cuts relative to the current or
+pre-prune package belong to baseline selection and pruning-equivalence proof,
+not mechanism contribution. The current runtime supplies a protected behavior
+set, not a presumption that every existing mechanism stays.
+
+The current/B0/C1 identity determines the campaign:
+
+| Shape | Identity | Route |
+| --- | --- | --- |
+| `runtime-no-change` | current = B0 = C1 | Reconcile synthesis through Prompt 2, then stop. |
+| `pruning-only` | current != B0 = C1 | Build one shared B0/C1 package, prove non-regression, then promote. |
+| `behavioral-candidate` | B0 != C1 | Prove each admitted mechanism against B0 before promotion. |
+
+Prompt 1 confirms its packet through an internal integrity gate. It asks the
+user only when a material user-owned design choice remains, not to approve a
+fully determined audit packet. Prior evidence is classified as
+`exact-reusable`, `lane-limited`, `historical-admission-only`, `invalidated`,
+or `missing` before it can affect a new campaign.
 
 `plan-only` work ends after Prompt 2 with decision-complete synthesis; it does
 not mutate runtime files. Conditional source distillation returns provenance,
@@ -91,6 +107,12 @@ only for structure and metadata when Prompt 3 requires it. Writing Great
 Skills owns semantic quality and stops after canonical proof; installation and
 delivery retain their separate owners. Every prompt executes exactly one unit,
 recommends at most one successor, and stops without starting it.
+
+Proof is proportional to the unit: early read-only and documentation prompts
+use inspection and affected checks; exact behavioral arms belong to Prompt 4;
+one final integration suite, install dry-run, synchronization, and parity
+belong to Prompt 5. Prompts 1 through 5 never stage or commit and must preserve
+their starting Git HEAD. Prompt 6 alone owns intentional Git delivery.
 
 The synthesis note supplies selected behavior, placement, preservation, and
 proof obligations; it never becomes executable authority itself.
@@ -122,8 +144,11 @@ A whole-skill synthesis note should contain:
 
 - an orientation, viability floor, and hard ownership boundary;
 - a verified simplest-baseline comparison and executable `B0` definition;
+- the current/B0/C1 campaign shape;
 - dispositions for current behavior and applicable research, including the
   protected behavior set and original research claim labels;
+- dispositions for prior evidence and the exact proof lane in which any result
+  remains reusable;
 - admitted `C1` deltas with basis, owner, cheapest expression, destination,
   entry condition, failure Return, and proof;
 - a decision trace connecting evidence, rationale, runtime owner, and proof;
@@ -141,3 +166,6 @@ transcript-complete; candidate runtime wording and final skills should compress
 hard. Prune a synthesis representation when removing it changes no selected
 behavior, ownership boundary, material alternative, or proof obligation, and
 preserve its provenance through source pointers or explicit historical notes.
+After promotion, reconcile the active synthesis to the canonical result and
+remove superseded future-tense construction detail and raw campaign chronology.
+Keep exact outputs, per-sample history, and run chronology in validation.

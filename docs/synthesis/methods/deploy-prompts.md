@@ -51,7 +51,13 @@ Use these shared artifacts:
   adapted only with mandatory local contracts and source-correct semantic
   substitutions that make no behavioral-improvement claim.
 - **`C1` experimental candidate:** exact `B0` plus only admitted
-  behavior-changing mechanisms.
+  behavior-changing mechanisms. Source-correct substitutions and
+  behavior-preserving cuts relative to the current or pre-prune package belong
+  to baseline selection or the pruning lane, not the mechanism delta. A cut
+  never receives mechanism-contribution credit.
+- **Behavior-complete pre-prune package:** the immutable package compared with
+  final `C1` when a material cut needs pruning-equivalence proof. Store it once
+  even when it also serves another evidence role.
 - **Semantic substitution:** a source-supported correction that replaces
   misleading language at equal or lower runtime load. Source fidelity can
   justify it; do not claim behavioral improvement without candidate proof.
@@ -63,26 +69,74 @@ Use these shared artifacts:
 Minimum means the smallest behavior-complete runtime under the accepted
 contract, not the shortest file or shortest upstream package.
 
+Record the identity relationship among current canonical runtime, `B0`, and
+`C1` before routing:
+
+| Campaign Shape | Exact Identity | Meaning | Default Route |
+| --- | --- | --- | --- |
+| `runtime-no-change` | current = `B0` = `C1` | The canonical runtime already is the executable minimum and no candidate delta exists. Synthesis may still need reconciliation. | Stop after Prompt 2 unless exact later lifecycle work already exists. |
+| `pruning-only` | current != `B0` = `C1` | The minimum differs only through a source-correct substitution or behavior-preserving cut; there is no mechanism-contribution claim. | Prompts 3, 4, and 5. |
+| `behavioral-candidate` | `B0` != `C1` | At least one admitted mechanism needs exact B0-first contribution proof. | Prompts 3, 4, and 5. |
+
+An exact existing artifact may justify a later prompt, but it does not change
+the campaign shape.
+
+Classify each prior evidence item or arm before reuse:
+
+| Evidence Disposition | Meaning |
+| --- | --- |
+| `exact-reusable` | Bytes, task, protocol, configuration, tools, authority, evidence, runtime, rubric, and proof lane all match. |
+| `lane-limited` | The evidence remains exact for one named lane, such as metadata invocation or current-contract preservation, but proves nothing outside it. |
+| `historical-admission-only` | The result can justify inspecting or admitting a mechanism but is not a control or candidate result for the current exact packages. |
+| `invalidated` | A behaviorally relevant identity changed. |
+| `missing` | The required evidence has not been produced. |
+
 ## Shared Run Contract
 
 Every invocation performs exactly one named prompt or one Conditional Research
 Interlude. Never start, simulate, or partially execute the recommended
 successor. Preserve unrelated work and stop at the prompt's mutation boundary.
 
+Prompts 1 through 5 and the Conditional Research Interlude record Git `HEAD`
+before work and read it back before Return. They never stage or commit. If
+`HEAD` changed, return `blocked` with the observed transition; Deploy Prompt 6
+is the sole Git-delivery owner.
+
 End every run with:
 
 ```text
 Authorized unit completed:
 Decision:
+Campaign shape:
+Runtime decision:
 Artifacts changed:
 Evidence used or reused:
 Residual gaps:
 Recommended next unit:
+Git HEAD: <start> -> <end>
+Git delivery: not-applicable | pending | committed | pushed
 Exact stop reason:
 ```
 
 Use `none` when no next unit is justified. A recommendation is not permission
-to begin it.
+to begin it. `Git delivery: pending` records uncommitted authorized artifacts;
+it makes Deploy Prompt 6 available but does not recommend or authorize it.
+`runtime-no-change` means no canonical runtime delta is justified even when a
+synthesis document changed. Completed historical records may retain the older
+decision label `no-change`.
+
+## Proportionate Proof Budget
+
+Run the cheapest proof that can establish the current unit:
+
+| Unit | Default Proof |
+| --- | --- |
+| Deploy Prompt 1 | Read-back, identities, and existing evidence inspection. Read tests but do not execute them unless a current-state fact cannot be established more cheaply; never run the full suite by default. |
+| Deploy Prompt 2 | Complete synthesis read-back, local links and table structure, directly affected documentation checks, and both diff checks. Do not run the full suite unless a machine-consumed contract changed. |
+| Deploy Prompt 3 | Candidate inventory, hashes, focused structural and relationship checks, skill validation, and both diff checks. Run the full suite only when a shared machine contract or test harness changed. |
+| Deploy Prompt 4 | Exact behavioral or equivalence arms, affected focused checks, and one full suite only after final accepted bytes when repository test or pack contracts changed. Do not repeat the full suite after every repair. |
+| Deploy Prompt 5 | Canonical read-back, affected focused proof, one full suite after final integration, install dry-run, synchronization, parity, and clean post-install dry-run. |
+| Deploy Prompt 6 | Scoped final diff, required current mechanical checks, both diff checks, intentional staging, commit, and an explicitly authorized push. Do not rerun unchanged behavioral evidence. |
 
 ## Deploy Prompt 1: Establish The Minimum-Runtime Decision
 
@@ -109,6 +163,8 @@ Classify every distinct current-runtime behavior as `protect`, `replace`, `remov
 
 Classify every applicable research item as `semantic substitution`, `candidate mechanism`, `supporting rationale only`, `reject`, `defer`, or `evidence gap`. A semantic substitution may enter B0 only when it corrects meaning at equal or lower load without an efficacy claim. A candidate mechanism belongs beyond B0 and requires an admission basis.
 
+Classify every prior evaluation, deterministic check, relationship trace, or promotion record as `exact-reusable`, `lane-limited`, `historical-admission-only`, `invalidated`, or `missing`. Name the exact bytes, task, protocol, configuration, authority, rubric, and proof lane behind any reuse. An aggregate result may admit a mechanism for inspection without serving as the current B0 or C1 arm.
+
 Build one unified baseline-delta ledger:
 
 | Mechanism | Baseline State | Current Disposition | Research Pressure And Claim Label | Admission Basis | Owner | Cheaper Expression | Runtime Destination | Required Proof | Decision |
@@ -116,17 +172,21 @@ Build one unified baseline-delta ledger:
 
 Admission basis is exactly one or more of: `core outcome`, `required local contract`, `non-intuitive safety or authority boundary`, or `observed baseline failure`. Existing prose, a conceivable edge case, polished rationale, term frequency, a confirmed recommendation, or an existing structural test is not an admission basis by itself.
 
-Specify B0 as an executable locally compatible minimum, not a conceptual slogan. Specify C1 only as B0 plus admitted behavioral additions. For each addition, name the exact failure or contract, cheapest operational expression, owner, positive or wrong-condition cases, and proof type. Translate retained steering research into `professional term + observable action + evidence or completion gate`; keep provenance and rationale in synthesis rather than runtime.
+Specify B0 as an executable locally compatible minimum, not a conceptual slogan. Specify C1 only as B0 plus admitted behavioral additions. Classify substitutions and cuts relative to the current runtime separately from those additions. For each addition, name the exact failure or contract, cheapest operational expression, owner, positive or wrong-condition cases, and proof type. Translate retained steering research into `professional term + observable action + evidence or completion gate`; keep provenance and rationale in synthesis rather than runtime.
+
+Record the expected campaign shape from the current/B0/C1 identity: `runtime-no-change`, `pruning-only`, or `behavioral-candidate`. Prompt 3 must later confirm any not-yet-materialized identity with exact hashes. Do not route a pruning-only campaign through mechanism-contribution claims.
 
 Challenge the aggregate design through ambiguity, ownership trace, inversion, counterexample, cut test, common-path versus branch-only load, and comparison with B0. Individual admissions do not justify aggregate complexity.
 
 If an unresolved semantic, professional-validity, or pack-intent question can change one exact ledger decision and stronger current evidence cannot decide it, return one Conditional Research Interlude admission containing the exact question, affected row or mechanism, evidence boundary, source lanes, finite stop, output path, and consequence of no answer. Do not browse, reopen remote repositories, contact people, run behavioral evaluations, or edit files in this prompt. Behavioral uncertainty without exact candidate bytes is not a source-research admission.
 
-When evidence is sufficient but material design choices remain, use $grill-with-docs one question at a time. Recommend one answer and state the decisive tradeoff. Use domain context `render only` and ADR action `offer only`; do not edit. Acceptance of one answer confirms only that decision. After the frontier closes, reconstruct and explicitly confirm the complete B0/C1 packet.
+When evidence is sufficient but material user-owned design choices remain, use $grill-with-docs one question at a time. Recommend one answer and state the decisive tradeoff. Use domain context `render only` and ADR action `offer only`; do not edit. Acceptance of one answer confirms only that decision.
+
+After the frontier closes, run an internal packet-integrity gate. Require every viability-floor behavior to have one exact B0 expression and owner; every C1 delta to be absent from B0 and have one admission basis and proof lane; every substitution or cut to be separated from mechanism contribution; every prior evidence item to have one reuse disposition; every affected relationship to have one owner; every gap to preserve its consequence; and the campaign shape to agree with the current/B0/C1 identity. When this gate passes and no material user-owned choice remains, mark the packet confirmed and return it without asking for ceremonial confirmation.
 
 Inspect any existing synthesis, candidate, and evidence hashes against this model. Recommend the earliest unmet unit. A later prompt may be recommended only when its durable prerequisites are exact and uncontested.
 
-Return the viability floor, source registry and freshness limits, selected baseline, current-runtime disposition ledger, research disposition ledger, unified baseline-delta ledger, B0 specification, C1 delta set, protected behavior set, affected owners and relationships, claim-to-proof outline, rejected and deferred mechanisms, residual gaps, and one decision: `ready-for-prompt-2`, `ready-for-prompt-3`, `ready-for-prompt-4`, `ready-for-prompt-5`, `research-gap`, `no-change`, `evidence-gap`, or `blocked`.
+Return the viability floor, source registry and freshness limits, selected baseline, current-runtime disposition ledger, research disposition ledger, prior-evidence disposition ledger, unified baseline-delta ledger, B0 specification, C1 delta set, protected behavior set, campaign shape, affected owners and relationships, claim-to-proof outline, rejected and deferred mechanisms, residual gaps, packet-integrity result, and one decision: `ready-for-prompt-2`, `ready-for-prompt-3`, `ready-for-prompt-4`, `ready-for-prompt-5`, `research-gap`, `runtime-no-change`, `evidence-gap`, or `blocked`.
 
 Use the Shared Run Contract and stop.
 
@@ -159,12 +219,14 @@ Creates or reconciles the selected skill's synthesis in place.
 ```text
 Perform only Deploy Prompt 2 for the named skill. Never edit runtime skills, create an experimental candidate, run behavioral evaluations, install, or start the recommended successor.
 
-Use $writing-great-skills in Author mode. Require the confirmed Prompt 1 packet and every admitted source packet. Create the named whole-skill synthesis if none exists; otherwise reconcile it in place. Preserve decision-changing provenance, material alternatives, rejection reasons, ownership, and evidence limits. Collapse superseded or duplicate representations and do not rewrite historical evidence as current authority.
+Use $writing-great-skills in Author mode. Require a Prompt 1 packet whose internal packet-integrity gate passed and every admitted source packet. Do not require a separate user confirmation unless Prompt 1 preserved a material user-owned decision. Create the named whole-skill synthesis if none exists; otherwise reconcile it in place. Preserve decision-changing provenance, material alternatives, rejection reasons, ownership, and evidence limits. Collapse superseded or duplicate representations and do not rewrite historical evidence as current authority.
 
 Make these decisions discoverable without requiring exact headings:
 
 - status, outcome, and viability floor;
+- campaign shape and current/B0/C1 identity;
 - verified evidence registry and freshness limits;
+- prior-evidence dispositions and their exact proof lanes;
 - exact simplest-baseline comparison;
 - current-runtime behavior dispositions and protected behavior set;
 - research intake with original claim labels and local dispositions;
@@ -178,11 +240,15 @@ Make these decisions discoverable without requiring exact headings:
 
 Keep source facts separate from synthesis and inference. Research can correct language or propose a mechanism; it does not decide local adoption. Keep evaluation procedure, installer procedure, worker topology, and Git delivery in their shared owners rather than copying them into the synthesis.
 
-Dry-read the finished synthesis as Prompt 3 input. Block readiness unless every distinct current behavior and applicable research item has one disposition; every C1 addition has an admission basis, owner, cheapest expression, destination, entry condition, failure Return, and proof; B0 is implementable without invention; the protected behavior set is explicit; every foreign behavior points to its owner; competing prose is reconciled; and the aggregate design remains the minimum coherent runtime under the accepted contract.
+Make the synthesis decision-complete, not campaign-transcript-complete. Keep raw outputs, per-sample chronology, repeated hash progressions, and operational run logs in validation. Retain only the provenance, alternatives, dispositions, identities, proof pointers, and gaps that can change a future decision. Reconcile one active design instead of appending a new architecture beside superseded proposals.
+
+Dry-read the finished synthesis as Prompt 3 input. Block readiness unless every distinct current behavior and applicable research item has one disposition; every prior evidence item has one reuse disposition; every C1 addition has an admission basis, owner, cheapest expression, destination, entry condition, failure Return, and proof; substitutions and cuts remain outside mechanism contribution; B0 is implementable without invention; the protected behavior set is explicit; every foreign behavior points to its owner; competing prose is reconciled; the campaign shape agrees with the current/B0/C1 identity; and the aggregate design remains the minimum coherent runtime under the accepted contract.
 
 If exact existing candidate and evidence artifacts already satisfy the revised synthesis, preserve their hashes and recommend the earliest applicable later prompt. Do not manufacture historical B0 or behavioral proof for a campaign that did not create it; record minimality or contribution as untested instead.
 
-Return `ready-for-prompt-3`, `ready-for-prompt-4`, `ready-for-prompt-5`, `no-change`, `evidence-gap`, or `blocked`, plus the final B0/C1 decision and every preserved residual.
+If current = B0 = C1, return `runtime-no-change` even when the synthesis changed. If current != B0 = C1, return `ready-for-prompt-3` for a pruning-only campaign. If B0 != C1, return `ready-for-prompt-3` for a behavioral-candidate campaign. An exact later artifact may justify the corresponding later prompt only when every earlier durable gate is already proved.
+
+Return `ready-for-prompt-3`, `ready-for-prompt-4`, `ready-for-prompt-5`, `runtime-no-change`, `evidence-gap`, or `blocked`, plus the campaign shape, final B0/C1 decision, prior-evidence dispositions, and every preserved residual.
 
 Use the Shared Run Contract and stop.
 
@@ -200,13 +266,15 @@ Use $writing-great-skills in Author mode. Require a synthesis that passed Prompt
 
 Inventory the complete current canonical package, the selected upstream baseline, and every owned or disclosed surface the synthesis assigns to B0 or C1, including `SKILL.md`, metadata, references, scripts, templates, assets, and machine-consumed schemas. Preserve unrelated work.
 
-Construct B0 first. It must be runnable, locally compatible, and behavior-complete for the viability floor. Include only the selected baseline core, mandatory local caller/platform/safety contracts, and source-correct semantic substitutions that add no behavioral-improvement claim. Do not leak C1 wording, mechanisms, expected failures, or evaluator conclusions into B0. Freeze its exact package bytes or an equivalent reproducible immutable fixture, hash, source provenance, local adaptation delta, and known limitations.
+Construct B0 first. It must be runnable, locally compatible, and behavior-complete for the viability floor. Include only the selected baseline core, mandatory local caller/platform/safety contracts, and source-correct semantic substitutions that add no behavioral-improvement claim; reflect any explicitly classified cut relative to the current or pre-prune package. Do not leak C1 wording, mechanisms, expected failures, or evaluator conclusions into B0. Freeze its exact package bytes or an equivalent reproducible immutable fixture, hash, source provenance, local adaptation delta, and known limitations.
 
 Construct C1 from the exact B0 plus only the synthesis-admitted behavioral additions. Preserve the protected behavior set. Keep common-path behavior inline; disclose irreducible branch-only reference behind a context pointer that names the trigger; point to caller-owned and foreign procedure instead of copying it. Do not add a mechanism and hope Prompt 4 later removes it.
 
+When B0 = C1, store one immutable package corpus and let both roles reference its one hash; do not create duplicate B0 and C1 package trees. Keep the behavior-complete pre-prune package distinct only when a material cut requires an equivalence control. When B0 != C1, record the exact transformation from B0 to C1 and keep behavioral additions separate from substitutions and cuts.
+
 Classify every instruction-bearing paragraph, list item, table row, schema field, and distinct clause in C1 as `B0`, `admitted addition`, `minimum context or pointer`, `collapse`, `disclose`, or `delete`. Apply the cut test only after behavior coverage is complete. When material pruning is claimed, freeze one behavior-complete pre-prune package for later pruning-equivalence proof.
 
-Write one candidate-owned validation record containing B0 and C1 hashes, package inventories, baseline adaptation delta, current-runtime disposition ledger, research disposition ledger, unified mechanism ledger, protected behavior set, pruning ledger, affected relationships, claim-to-proof matrix, and residual unavoidable load. Store each raw corpus or immutable fixture once and reference it.
+Write one candidate-owned validation record containing the campaign shape, B0 and C1 hashes, package inventories, baseline adaptation delta, current-runtime disposition ledger, research disposition ledger, prior-evidence disposition ledger, unified mechanism ledger, protected behavior set, pruning ledger, affected relationships, claim-to-proof matrix, and residual unavoidable load. Store each raw corpus or immutable fixture once and reference it.
 
 Update candidate-specific structural proof only for machine-consumed contracts. Record proposed invocation, caller, ownership, and Return deltas in synthesis and candidate evidence; do not change the current relationship index before promotion. Read back every created or changed surface and run proportionate mechanical and candidate-relationship checks.
 
@@ -242,13 +310,15 @@ Build one claim-to-proof matrix with separate lanes:
 
 Use read-back and deterministic checks for exact bytes and machine contracts, relationship traces for ownership, and the current `BEHAVIOR-EVALS.md` contract for behavioral claims. Test positive, failure-revealing, and wrong-condition pressure only to the breadth claimed. A required caller contract or non-intuitive safety boundary may be admitted through contract-matched deterministic or relationship proof; do not invent a red behavioral claim merely to justify it.
 
-Before dispatch, minimize cost without weakening evidence. Deduplicate cases only when fixed inputs and one root-held rubric genuinely exercise multiple claims. Keep expected behavior, candidate wording, peer outputs, and conclusions out of neutral worker contexts. Reuse an arm only when bytes, task, protocol, configuration, tools, authority, evidence, and runtime remain identical and uncontaminated. After a repair, preserve unchanged controls and rerun only affected candidate arms.
+Pruning equivalence is a non-regression lane, not mechanism contribution. Its pre-prune control need not fail, so `reject-no-control-failure` does not apply to that lane. Accept a cut only when the exact final package preserves the admitted behavior under the registered cases. Treat description shortening as pruning plus invocation/context-loading proof, not as a behavioral mechanism.
+
+Before dispatch, minimize cost without weakening evidence. Deduplicate cases only when fixed inputs and one root-held rubric genuinely exercise multiple claims. Keep expected behavior, candidate wording, peer outputs, and conclusions out of neutral worker contexts. Apply the registered prior-evidence dispositions rather than treating all earlier results as reusable. Reuse an arm only when bytes, task, protocol, configuration, tools, authority, evidence, runtime, and proof lane remain identical and uncontaminated. After a repair, preserve unchanged controls and rerun only affected candidate arms.
 
 Inspect every result. Record per-sample outcomes, variance, worst result, critical failures, deviations, unavailable telemetry, process cost when decision-relevant, raw-artifact pointers, and residual gaps. A screening result supports only its tested tasks, model, harness, and claim.
 
 Reperform the complete cut test after accepted repairs. Every retained C1 unit must be B0-essential, locally required, source-correcting at equal or lower load, behaviorally demonstrated, safety-critical, or the minimum context/pointer needed to execute one. Word count is diagnostic, not proof.
 
-Refresh the synthesis and candidate-owned validation surfaces with the exact learned decisions. Record the accepted relationship delta without publishing it into the current relationship index before Prompt 5. Keep raw evaluation and campaign ledgers in validation; do not copy evaluation procedure into synthesis.
+Refresh the synthesis and candidate-owned validation surfaces with the exact learned decisions and final evidence dispositions. Record the accepted relationship delta without publishing it into the current relationship index before Prompt 5. Keep raw evaluation and campaign ledgers in validation; do not copy evaluation procedure into synthesis.
 
 Return `accepted`, `reject-no-control-failure`, `reject-regression`, `needs-more-evidence`, or `blocked`. Only `accepted` recommends Deploy Prompt 5 and names the exact final C1 hash.
 
@@ -269,11 +339,13 @@ Require the accepted Prompt 4 record, exact final C1 hash, complete candidate pa
 
 First use $writing-great-skills in Author mode to promote the accepted candidate into the canonical skill and update only directly affected canonical proof, relationship, and synthesis surfaces. Reuse accepted behavioral evidence when bytes, tasks, claims, and evidence contracts are unchanged; do not rerun a wave solely because the lifecycle stage changed. Read back the complete canonical package and run proportionate canonical proof. Writing Great Skills stops after that proof.
 
+Reconcile the active synthesis to the promoted state: record the canonical identity, final runtime and relationship surface, admitted and rejected mechanism or cut decisions, exact proof pointers, deliberate non-changes, and residual gaps. Remove duplicated future-tense construction instructions, superseded candidate representations, and raw campaign chronology from the active design. Preserve decision-changing history concisely; validation remains the owner of raw outputs and chronological run evidence.
+
 Only after canonical proof passes, complete the separately owned experimental and installation lifecycle authorized by this prompt: remove only the promoted skill's entire experimental directory and manifest entry; preserve every other candidate; run the managed installation dry-run; require the proposed changed cohort to match the authorized scope; synchronize through the supported installer; and verify canonical-to-installed parity and a clean post-install dry-run. Never edit the installed mirror as canonical source.
 
 Append promotion and installation evidence to the candidate-owned record. Update research only when separately authorized: an exact downstream evidence pointer may narrow a stale universal gap, but it must not duplicate results or generalize beyond the tested candidate.
 
-Return `complete`, `evidence-gap`, or `blocked`, with canonical and installed identities, validation, residual gaps, and deliberate non-changes. Recommend Deploy Prompt 6 only when Git delivery is wanted; otherwise recommend `none`.
+Return `complete`, `evidence-gap`, or `blocked`, with canonical and installed identities, validation, residual gaps, deliberate non-changes, and `Git delivery: pending` when authorized artifacts remain uncommitted. Recommend Deploy Prompt 6 only when Git delivery is wanted; otherwise recommend `none`.
 
 Use the Shared Run Contract and stop.
 
@@ -289,7 +361,7 @@ Perform only Deploy Prompt 6 for the named skill. Never begin another skill or u
 
 Deliver only the bounded synthesis, validation, baseline/candidate lifecycle, canonical, relationship, proof, and installation-record changes belonging to the completed skill campaign. Preserve unrelated work. Review the final scoped diff, run required current checks, stage intentionally, and commit the verified result. Push only when the user explicitly requests it.
 
-Return `complete`, `evidence-gap`, or `blocked`, including the delivered commit identity when created, remote state when a push was authorized, residual gaps, and exact stop reason.
+Record the starting Git HEAD before delivery. Return `complete`, `evidence-gap`, or `blocked`, including the starting and ending HEAD, delivered commit identity when created, remote state when a push was authorized, residual gaps, and exact stop reason. Any HEAD transition must be wholly explained by this bounded delivery.
 
 Use the Shared Run Contract and stop.
 
