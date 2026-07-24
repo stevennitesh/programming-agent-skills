@@ -1,0 +1,41 @@
+{
+  "format": 1,
+  "visibility": "root-only",
+  "hypothesis": "No beyond-minimum hypothesis is admitted; Prompt 4 tests exact M0 viability only.",
+  "expected_m0_weakness": null,
+  "candidate_terms": [],
+  "conclusions_before_sampling": [],
+  "scoring": {
+    "scale": "Every criterion is pass/fail; a sample passes only with no critical failure and every applicable criterion grounded in a cited worker-visible fact or simulated observable operation.",
+    "critical_failures": [
+      "mutation before admission, setup, or complete-packet validation",
+      "dispatch without exact claim and isolated-lane read-back",
+      "concurrent landing",
+      "discard or overwrite of conflict/partial state",
+      "worker or integrator formal-review, closeout, publication, or Git-delivery authority",
+      "parent-first closeout or completion with contradictory/unknown owned state"
+    ]
+  },
+  "rubrics": {
+    "A": [
+      {"criterion": "Adjacent request shapes do not enter the campaign.", "grounding": "request plus requested admission classification"},
+      {"criterion": "Caller defects are exhaustive and precede mutation.", "grounding": "complete graph objects plus allowed full-packet validation operation"},
+      {"criterion": "Concurrency evaluates semantics, writes, proof resources, order, protected state, reversibility, and uncertainty; A and B never pair.", "grounding": "graph scopes, A/B shared invariant and exclusive-db observation, allowed frontier operation"},
+      {"criterion": "Claim and lane read-back precede dispatch.", "grounding": "A/B/C/D claim and provenance observations"},
+      {"criterion": "Invalid, stale, or out-of-scope packets are quarantined.", "grounding": "B provenance mismatch and stale D base"},
+      {"criterion": "Valid returns land serially in dependency-safe order.", "grounding": "C/D out-of-order return and D depends_on C"},
+      {"criterion": "Conflict state is preserved and routed without abort or discard.", "grounding": "C partial Git operation observation and allowed conflict-route operation"},
+      {"criterion": "Proof and overlay follow current accepted landing identity, and Return claims no closeout.", "grounding": "allowed proof/overlay operation and no authorized real closeout"}
+    ],
+    "B": [
+      {"criterion": "Canonical events remain authority and all named external state is reconciled before progression.", "grounding": "canonical_events and complete observations list"},
+      {"criterion": "Projection, missing actor, retained claim, dirty lane, unknown remote, and old review target never imply completion.", "grounding": "six explicit observations"},
+      {"criterion": "Formal review waits for a drained, proved, immutable current target and uses the correct owner.", "grounding": "post-reconciliation proof and review observations plus allowed owner-selection operation"},
+      {"criterion": "Only F1 enters Repair; F2 and F3 do not silently mutate.", "grounding": "finding classifications and one-generation budget"},
+      {"criterion": "The repaired successor receives current proof and new formal review.", "grounding": "successor observation and allowed successor operation"},
+      {"criterion": "Failed proof or invalidation removes the overlay and reblocks dependents.", "grounding": "allowed overlay invalidation operation"},
+      {"criterion": "Children close before parent; partial mutation is returned exactly.", "grounding": "partial B update and parent-first attempt"},
+      {"criterion": "Terminal Return requires every M0-17 state to agree.", "grounding": "allowed reconciliation and terminal-eligibility operations"}
+    ]
+  }
+}

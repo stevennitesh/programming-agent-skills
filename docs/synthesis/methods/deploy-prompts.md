@@ -163,13 +163,41 @@ Use `none` when no successor is justified. A recommendation never authorizes a
 leaf owner to start its successor. `Git delivery: pending` records uncommitted
 authorized artifacts.
 
+Persist one authoritative decision record per unit. One schema-validated,
+machine-readable campaign manifest owns shared semantic and identity state
+across units; compact results manifests and raw captures may remain separate.
+Link these owners instead of repeating hashes, sample tables, or chronology
+across results, transcripts, and synthesis.
+
+Synthesis owns only the active decision and final dispositions, reconciled in
+place. Research notes own source provenance, transcripts own unit chronology,
+the campaign manifest owns shared identities and semantic state, results
+manifests own per-sample judgments, and raw captures own outputs. Do not append
+dated unit logs to synthesis.
+
+Use exact byte or tree hashes for executable runtimes, dispatched fixtures,
+and machine-consumed contracts. When human-readable Markdown becomes a
+downstream input, bound all decision-bearing content with markers and use that
+content fingerprint as its semantic identity. Validate the record before
+freezing the fingerprint; do not make formatting or commentary outside the
+bounded content invalidate downstream evidence.
+
 ## Proportionate Proof Budget
 
 Run the cheapest proof that establishes the current unit.
 
-**Affected Markdown gate:** whenever Prompt 2, 5, or 6 changes Markdown, verify
-every affected file's local links, internal anchors, balanced code fences, and
-consistent table columns.
+**Writing gates:** whenever any unit changes Markdown, verify every affected
+file's local links, internal anchors, balanced code fences, and consistent
+table columns. After any unit writes repository artifacts, run
+`python -m scripts.validate_skills` before freezing final identities or
+returning. A unit must correct every failure it introduced; preserve and name
+unrelated ambient failures.
+
+**Contract-check form:** prove prose through heading-bounded normalized
+semantics, owner and pointer relationships, and required order. Prove machine
+interfaces through parsed schemas or executable behavior. Do not snapshot
+sentences or line wrapping; require an exact phrase only when that literal is
+a machine-consumed token, path, field, or command.
 
 | Unit | Default Proof |
 | --- | --- |
@@ -206,10 +234,18 @@ Parse optional delivery wording once:
 - `and commit`: also authorize Prompt 6 to commit without push; or
 - `and push`: also authorize Prompt 6 to commit and push.
 
+Before Prompt 1, run `python -m scripts.validate_skills` and one read-only
+managed-install dry-run with global bootstrap skipped. Record ambient
+validation failures and the ambient changed cohort. If the cohort includes a
+non-target skill, ask once for the exact Prompt 5 install cohort before
+dispatching expensive units; never infer that authority. Prompt 5 rechecks
+the cohort, and newly appeared unrelated drift is a fresh scope gap.
+
 The root owns transitions, user interaction, verification, and the terminal
 decision. Track only skill, delivery mode, starting HEAD/worktree, campaign
 epoch, current unit, M0 and research checkpoints, runtime identities, pending
-decision, and stop reason. Do not create a controller ledger.
+decision, and stop reason. Do not create a narrative controller ledger; the
+machine-readable campaign manifest contains no orchestration chronology.
 
 Dispatch one unit at a time. Start one direct child with `fork_turns="none"`
 and a self-contained brief containing repository, skill, delivery mode, method
@@ -311,6 +347,13 @@ irreversible order, compatibility, and safety. If one axis is materially
 fuzzy, return `behavior-decision-gap` with one Conditional Behavior Decision
 Interlude admission. Ask no agent-owned technique question.
 
+When the skill reads, mutates, publishes, or reconciles durable state, build a
+state-location ledger before specifying M0. For each applicable state or
+artifact, record its owner, authoritative location, allowed transition,
+required order, read-back, and failure Return. Inspect working tree, index,
+committed tree, connector, and remote locations only when applicable; omit
+irrelevant locations. Map every transition to an M0 unit and viability case.
+
 Specify M0 from that settled floor. Include one semantic behavior unit per
 independently owned trigger, action, judgment, branch, gate, Return, or
 completion condition. Every unit names its local authority, cheapest neutral
@@ -324,9 +367,10 @@ required local contract. Define the complete M0 viability suite separately
 from any later improvement claim.
 
 Freeze one M0 checkpoint containing the intended contract, unit ledger,
-runtime-clause specification, viability suite, local source identities and
-hashes, limitations, research questions grouped by intended behavior, one
-authorized research-note path, and a content fingerprint.
+runtime-clause specification, applicable state-location ledger, viability
+suite, local source identity manifest, limitations, research questions grouped
+by intended behavior, one authorized research-note path, and a content
+fingerprint.
 
 Re-entry verifies the checkpoint's HEAD, local authorities, identities, and
 fingerprint. Revisit only the exact decision delta; unexpected drift requires
@@ -396,6 +440,9 @@ inspected or their access failure recorded, and another credible source is
 unlikely to change the method, conditions, classification, or hypothesis.
 Reuse an existing packet only when claim, conditions, source identity,
 freshness, and intended application match; still verify applicability.
+After a same-campaign `intent-reopen`, carry exact unaffected research lanes
+forward by identity and write only the affected decision delta; do not restate
+unchanged discovery.
 
 If evidence shows M0 omitted behavior essential to its settled intent, do not
 repair it here. Return `intent-reopen` with the exact affected unit, evidence,
@@ -537,6 +584,15 @@ Build one decision ledger:
 | Unit | M0 Obligation Or H1 Origin | Method Evidence | Current State | Owner | Contribution Mode And Expected M0 Weakness | Cheapest Expression | Wrong Condition | Proof | Decision |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
+Seed one schema-validated, machine-readable campaign manifest before Prompt 3.
+It owns the fixed point; M0, research, and synthesis fingerprints; M0 clauses
+and gates; required and forbidden semantic IDs; current and H1 dispositions;
+protected helpers and compatibility surfaces; carried-forward evidence
+identities, dispositions, and invalidations; and the M0/H1/V1/P1, canonical,
+and installed identity slots. Every `remove` or rejected behavior receives one
+forbidden semantic ID and absence-proof obligation. The manifest contains no
+narrative chronology.
+
 Make the synthesis decision-complete: intended contract, M0 checkpoint and
 clause map, research registry and classifications, current dispositions, H1
 transformations, protected behavior, relationships, affected surfaces, proof
@@ -547,7 +603,8 @@ Dry-read the synthesis as Prompt 3 input. Block unless M0 is implementable
 without research or current-only behavior; every current unit has a safe
 disposition; every H1 unit has one origin, evidence classification, owner,
 contribution mode, expected weakness, wrong-condition case, and proof; and
-unresolved removal risk cannot reach promotion.
+unresolved removal risk cannot reach promotion. Validate the campaign manifest
+against this decision before returning.
 
 Under a Deploy Campaign, successful completion returns only
 `ready-for-prompt-3`. A standalone `plan-only` request may stop here. Return
@@ -569,14 +626,21 @@ Perform only Deploy Prompt 3 for the named skill. Never run behavioral
 evaluation, promote, install, deliver through Git, or start a successor.
 
 Use $writing-great-skills in Author mode. Require Prompt 2-ready synthesis,
-intact M0 and research fingerprints, and closed Interlude decisions. For a new
-unscaffolded skill, use $skill-creator only for package structure and metadata.
+the matching campaign manifest, intact M0 and research fingerprints, and
+closed Interlude decisions. For a new unscaffolded skill, use $skill-creator
+only for package structure and metadata.
 
 Materialize exact M0 solely from the frozen M0 checkpoint. Do not import
 research language, current-only behavior, H1 expected weaknesses, or evaluator
 conclusions. Map every instruction-bearing passage to one M0 unit. Freeze
 package inventory, bytes, hash, clause map, fingerprint, and limitations.
 Block to Prompt 1 if the specification cannot produce one unambiguous runtime.
+
+Extend the campaign manifest with the exact package inventory, passage map,
+runtime identities, and proof IDs. Every required semantic must have one
+owner, runtime passage, and proof. Every forbidden semantic must have an
+absence check across the complete runtime-facing package. A prose claim that a
+rejected behavior was removed is insufficient.
 
 Construct exact H1 from M0 plus only admitted additions and substitutions.
 Keep common behavior inline, disclose irreducible branches behind
@@ -597,16 +661,32 @@ Pre-register:
   wrong-condition case, and expected M0 weakness; and
 - protected-behavior, relationship, invocation, context, and machine proof.
 
+For every behavioral fixture, keep task and source facts, authority, initial
+state and observations, tools or operations, mutation boundary, and requested
+output worker-visible as applicable. Keep the hypothesis, expected weakness,
+rubric, scoring, candidate terms, and conclusions root-only. Trace every
+scored criterion to one worker-visible source fact or observable operation;
+those facts must uniquely determine the expected branch. If an adjacent rubric
+outcome remains valid from the supplied facts, the fixture is defective and
+blocks Prompt 4.
+
+Match fixture-family coverage to claim scope. Spread the existing minimum
+five samples for a broad claim across at least two realistic families. A
+narrow condition-specific claim may use one family and must bound transfer.
+Do not add samples solely for diversity.
+
 Cluster hypotheses only when one fixture and rubric isolate their joint
 effect. Do not create a separate no-guidance control when M0 already supplies
 the causal comparison.
 
-Write one candidate record containing intended contract, M0 checkpoint,
-research and Interlude dispositions, semantic ledger, runtime maps, exact
-identities, proof plan, Pruning Pass boundary, affected relationships, and
-residual load. Update candidate-specific structural proof only for
-machine-consumed contracts; do not publish relationship changes before
-promotion.
+Write one candidate record that references rather than copies the authoritative
+intended contract, M0 checkpoint, research and Interlude dispositions,
+campaign manifest, and semantic ledger. Add only candidate-specific proof
+plan, Pruning Pass boundary, affected relationships, and residual load. Store
+distinct bytes once; when a frozen template plus recorded parameters
+reconstructs an exact dispatch, do not copy the full payload per sample.
+Update candidate-specific structural proof only for machine-consumed
+contracts; do not publish relationship changes before promotion.
 
 Return `ready-for-prompt-4`, `evidence-gap`, or `blocked`. M0 must be exact and
 executable; H1 must be exact and fully classified.
@@ -624,10 +704,10 @@ Establishes M0 viability, H1 contribution, and exact V1. Pruning is separate.
 Perform only Deploy Prompt 4 for the named skill. Never prune, promote,
 install, deliver through Git, or start a successor.
 
-Use $writing-great-skills in Author mode. Verify complete M0/H1 packages,
-hashes, inventories, checkpoints, synthesis, research classifications,
-semantic ledger, protected behavior, relationships, fixed evaluation
-configuration, and existing evidence.
+Use $writing-great-skills in Author mode. Verify the campaign manifest,
+complete M0/H1 packages, hashes, inventories, checkpoints, synthesis, research
+classifications, semantic ledger, protected behavior, relationships, fixed
+evaluation configuration, and existing evidence.
 
 Audit M0 first. Every M0 unit must realize one settled local obligation using
 the cheapest neutral behavior consistent with that obligation. Reject current
@@ -637,6 +717,12 @@ within the frozen specification, refreeze affected identities, and rerun
 affected M0 proof. If repair requires new intent, authority, or evidence,
 return `blocked` to Prompt 1. H1 never receives credit for making M0 viable.
 
+Before dispatch, build a minimum proof-coverage matrix across M0 units. Use
+deterministic structural or relationship checks for machine and ownership
+claims, and let one realistic behavioral scenario cover multiple units when it
+proves them. Do not dispatch one behavioral sample per semantic unit; every
+behavior-dependent unit must still have current evidence.
+
 Before any comparison dispatch, freeze one neutral worker-visible task fixture
 and one root-only evaluation fixture containing the hypothesis, expected
 weakness, rubric, scoring, candidate terms, and conclusions. Hash and diff both
@@ -645,6 +731,18 @@ delta. Stop before sampling on any other delta or candidate cue. Samples from
 a leaked fixture are protocol deviations and provide no behavioral credit.
 
 Only after M0 passes, resolve H1 by causally coherent cluster:
+
+For each distinct fixture family, dispatch and inspect one control before its
+remaining wave. Verify source sufficiency, tool and operation fidelity,
+capture integrity, and payload isolation. A valid first sample counts toward
+the required minimum. An invalid sample receives zero credit; refreeze and
+rerun a source-completeness repair only when task and rubric stay fixed,
+otherwise return to Prompt 3. Do not batch the remaining samples before this
+gate passes.
+
+Keep reconstructible per-sample payloads disposable. Persist the frozen
+runtime, fixture, template, parameters, and dispatch hash once instead of
+copying the full payload into every sample record.
 
 1. Run at least five fresh exact M0 samples under the pre-registered task and
    rubric.
@@ -681,9 +779,11 @@ Follow `BEHAVIOR-EVALS.md`. Keep candidate language and conclusions out of M0
 contexts. Alternate or randomize arms when practical. Extend samples only for
 material variance or borderline effect and stop early for a critical
 regression. Reuse exact arms only when the complete identity tuple matches.
-Inspect every output and record per-sample results, aggregate, variance, worst
-case, critical failures, deviations, model, host, tools, configuration,
-unavailable telemetry, and residual transfer gaps.
+Inspect every output. Store per-sample identities and results once in a compact
+results manifest. Store model, host, tools, configuration, and dispatch
+evidence there as well. Keep only the aggregate, variance, worst case, critical
+failures, deviations, decision, unavailable telemetry, and residual transfer
+gaps in the human decision record.
 
 Current behavior has no protection by existence. If removing a current-only
 unit carries unresolved material safety, authority, compatibility, or
@@ -691,8 +791,9 @@ relationship risk, return `needs-more-evidence` and preserve the active
 runtime. If all H1 units are cleanly rejected and M0 is viable, V1 = M0 may
 continue.
 
-Refresh synthesis and validation with exact dispositions and V1 identity.
-Record but do not publish relationship changes. Return `accepted`,
+Refresh the campaign manifest, synthesis, and validation with exact
+dispositions and V1 identity. Record but do not publish relationship changes.
+Return `accepted`,
 `needs-more-evidence`, or `blocked`. `accepted` names exact V1 and recommends
 the Pruning Pass.
 
@@ -720,6 +821,10 @@ restatements, copied foreign procedure, and unused support. Protect M0,
 accepted H1, safety and authority, irreversible order, proof, safe failure
 Return, completion, invocation, and relationship triggers.
 
+Reuse the exact runtime-clause map for this audit. Record only plausible cut
+groups and their dispositions; do not restate every `keep` mapping when the
+runtime identity and clause map remain exact.
+
 For every proposed cut, name the affected semantic units, expected unchanged
 behavior, and reduced load. Word count is diagnostic, never the objective.
 
@@ -742,8 +847,9 @@ regression and the named load is lower. Structural proof cannot establish
 behavioral equivalence. If all cuts fail, set P1 = V1 and continue rather than
 blocking promotion.
 
-Update synthesis and candidate evidence with cut ledger, V1/P1 hashes, load
-delta, reused and fresh proof, rejected cuts, and residual gaps. Return
+Update the campaign manifest, synthesis, and candidate evidence with cut
+ledger, V1/P1 hashes, load delta, reused and fresh proof, rejected cuts, and
+residual gaps. Return
 `complete`, `evidence-gap`, or `blocked`, plus `pruned`,
 `pruning-not-needed`, or `cuts-rejected` and exact P1. `complete` recommends
 Prompt 5.
@@ -779,11 +885,17 @@ relationships, proof pointers, deliberate non-changes, and residual
 professional, behavioral, model, host, and transfer gaps. Remove superseded
 future-tense construction and raw chronology; validation owns raw outputs.
 
+Update the campaign manifest with canonical and installed identities plus
+final evidence dispositions; do not copy its identity tables into synthesis or
+the promotion record.
+
 After canonical proof, remove only this skill's experimental package and
 manifest entry; preserve every other candidate. Run managed-install dry-run,
-require the changed cohort to match scope, synchronize through the supported
-installer when needed, and verify canonical/installed parity plus a clean
-post-install dry-run. Never edit the installed mirror as canonical source.
+compare it with the controller's ambient cohort, require the changed cohort to
+match exact authority, and treat newly appeared unrelated drift as a fresh
+scope gap. Synchronize through the supported installer when needed, then
+verify canonical/installed parity plus a clean post-install dry-run. Never
+edit the installed mirror as canonical source.
 
 Append promotion and installation evidence to the candidate record. Do not
 rewrite research as behavioral proof or generalize beyond tested conditions.

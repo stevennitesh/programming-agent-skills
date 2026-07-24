@@ -1,0 +1,104 @@
+{
+  "format": 1,
+  "campaign": "implement-2026-07-24-prompt4",
+  "configuration": {
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "high",
+    "host": "Codex fresh-context subagents on Windows/PowerShell",
+    "runtime_m0_sha256": "1f61b9880b881771b579372075dd89e3bccb7ce9c94ae3bd0e30f1f43ae8724f",
+    "runtime_h1_sha256": "3960bc073a49022faaf581c4829653e16d470e3c9a727066d8a755a1086b5e8d",
+    "worker_payload_isolation": "passed",
+    "comparison_arm_delta": "exact runtime package only",
+    "tools": "Assigned payload read plus isolated capture write; fixture operations remained simulated.",
+    "decision_bearing_telemetry": "available",
+    "unavailable_telemetry": [
+      "Exact backend build and sampling seed were not exposed.",
+      "Several workers did not echo the configured model or reasoning effort; dispatch records supply them."
+    ]
+  },
+  "m0_viability": {
+    "decision": "passed",
+    "valid_samples": 17,
+    "invalid_samples": 1,
+    "passes": 17,
+    "critical_failures": 0,
+    "variance": "0/17 valid samples failed",
+    "worst_case": "V-08 stopped on an additional omitted Charter prerequisite while still preserving the required proof-safety behavior.",
+    "protocol_deviations": [
+      {
+        "capture": "V-01.md",
+        "credit": 0,
+        "reason": "Original fixture omitted the finite Repair budget required for its requested successful owner sequence."
+      },
+      {
+        "capture": "V-01-repair.md",
+        "credit": 1,
+        "reason": "Source-completeness-only repair added one settled finite Repair budget; task and rubric stayed fixed."
+      }
+    ],
+    "samples": [
+      {"id": "V-01-repair", "result": "pass", "dimensions": ["outcome", "authority", "contracts", "completion", "order"]},
+      {"id": "V-02", "result": "pass", "dimensions": ["invocation", "compatibility", "safe failure"]},
+      {"id": "V-03", "result": "pass", "dimensions": ["invocation", "authority", "safe failure"]},
+      {"id": "V-04", "result": "pass", "dimensions": ["compatibility", "safe failure"]},
+      {"id": "V-05", "result": "pass", "dimensions": ["authority", "contracts", "safe failure"]},
+      {"id": "V-06", "result": "pass", "dimensions": ["authority", "contracts", "safe failure"]},
+      {"id": "V-07", "result": "pass", "dimensions": ["authority", "contracts", "order"]},
+      {"id": "V-08", "result": "pass", "dimensions": ["outcome", "safety", "completion", "order"]},
+      {"id": "V-09", "result": "pass", "dimensions": ["authority", "contracts", "safe failure", "order"]},
+      {"id": "V-10", "result": "pass", "dimensions": ["contracts", "safe failure", "completion", "order"]},
+      {"id": "V-11", "result": "pass", "dimensions": ["contracts", "safe failure", "completion", "order"]},
+      {"id": "V-12", "result": "pass", "dimensions": ["contracts", "safe failure", "completion", "order"]},
+      {"id": "V-13", "result": "pass", "dimensions": ["contracts", "completion", "order"]},
+      {"id": "V-14", "result": "pass", "dimensions": ["contracts", "safe failure", "completion", "order"]},
+      {"id": "V-15", "result": "pass", "dimensions": ["authority", "completion"]},
+      {"id": "V-16", "result": "pass", "dimensions": ["contracts", "safe failure", "completion"]},
+      {"id": "V-17", "result": "pass", "dimensions": ["authority", "compatibility", "safety", "safe failure"]}
+    ]
+  },
+  "clusters": {
+    "H1-01": {
+      "mode": "quality-lift",
+      "decision": "rejected-no-control-deficit",
+      "m0_samples": 5,
+      "h1_samples": 0,
+      "families": ["horizontal-fragment", "adjacent-work"],
+      "score_scale": "0-5 grounded criteria satisfied",
+      "aggregate": {"mean": 5, "range": [5, 5], "variance": 0, "worst": 5},
+      "critical_failures": 0,
+      "samples": [
+        {"id": "Q1-HF-01", "score": 5},
+        {"id": "Q1-HF-02", "score": 5},
+        {"id": "Q1-HF-03", "score": 5},
+        {"id": "Q1-AW-01", "score": 5},
+        {"id": "Q1-AW-02", "score": 5}
+      ],
+      "deviations": [],
+      "residual_transfer_gap": "Bounded to supplied multi-surface and adjacent-work slice-selection fixtures on the configured model and host."
+    },
+    "H1-02": {
+      "mode": "quality-lift",
+      "decision": "rejected-no-control-deficit",
+      "m0_samples": 5,
+      "h1_samples": 0,
+      "families": ["lost-response", "partial-concurrent-state"],
+      "score_scale": "0-6 grounded criteria satisfied",
+      "aggregate": {"mean": 6, "range": [6, 6], "variance": 0, "worst": 6},
+      "critical_failures": 0,
+      "samples": [
+        {"id": "Q2-LR-01", "score": 6},
+        {"id": "Q2-LR-02", "score": 6},
+        {"id": "Q2-PC-01", "score": 6},
+        {"id": "Q2-PC-02", "score": 6},
+        {"id": "Q2-PC-03", "score": 6}
+      ],
+      "deviations": [],
+      "residual_transfer_gap": "Simulated provider observations only; no claim for live connector transport, other providers, models, hosts, or replay guarantees."
+    }
+  },
+  "v1": {
+    "derivation": "M0 plus no surviving H1 transformations",
+    "sha256": "1f61b9880b881771b579372075dd89e3bccb7ce9c94ae3bd0e30f1f43ae8724f",
+    "relationship": "V1 = M0"
+  }
+}

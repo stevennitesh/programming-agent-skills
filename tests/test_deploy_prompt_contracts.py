@@ -49,6 +49,9 @@ def test_prompt_1_freezes_intent_derived_m0_before_research_or_current() -> None
     for term in (
         "Never inspect research, upstream packages, or the target's current skill body",
         "behavior-minimal, not word-count-minimal",
+        "state-location ledger",
+        "working tree, index, committed tree, connector, and remote",
+        "Map every transition to an M0 unit and viability case",
         "complete M0 viability suite",
         "authorized research-note path",
         "`ready-for-research`",
@@ -77,6 +80,8 @@ def test_research_pass_is_mandatory_independent_and_non_self_validating() -> Non
         "Never fabricate or generalize a conversation",
         "`independently-supported`, `contested`, `pack-specific`, or `unverified`",
         "Use decision saturation, not a source quota",
+        "same-campaign `intent-reopen`",
+        "write only the affected decision delta",
         "`research-complete`, `intent-reopen`, `evidence-gap`, or `blocked`",
     ):
         assert term in research
@@ -134,6 +139,11 @@ def test_prompt_2_builds_h1_from_five_discovery_lanes_with_honest_authority() ->
         "fixed rubric",
         "H1 cannot make M0 viable",
         "`unresolved removal risk`",
+        "Seed one schema-validated, machine-readable campaign manifest",
+        "required and forbidden semantic IDs",
+        "protected helpers and compatibility surfaces",
+        "carried-forward evidence identities",
+        "forbidden semantic ID and absence-proof obligation",
     ):
         assert term in prompt_2
 
@@ -165,6 +175,16 @@ def test_prompt_3_materializes_m0_without_research_leakage_and_builds_exact_h1()
         "Construct exact H1 from M0 plus only admitted additions and substitutions",
         "Store M0 once as the immutable control and H1 once as the candidate",
         "Do not create a separate no-guidance control when M0 already supplies",
+        "Trace every scored criterion to one worker-visible source fact or observable operation",
+        "Spread the existing minimum five samples for a broad claim across at least two realistic families",
+        "Do not add samples solely for diversity",
+        "matching campaign manifest",
+        "Every forbidden semantic must have an absence check",
+        "A prose claim that a rejected behavior was removed is insufficient",
+        "uniquely determine the expected branch",
+        "If an adjacent rubric outcome remains valid",
+        "do not copy the full payload per sample",
+        "references rather than copies the authoritative intended contract",
         "M0 must be exact and executable",
     ):
         assert term in prompt_3
@@ -180,9 +200,12 @@ def test_prompt_4_proves_m0_then_defect_correction_or_quality_lift() -> None:
 
     audit_m0 = prompt_4.index("Audit M0 first")
     fixture_gate = prompt_4.index("Before any comparison dispatch")
+    first_sample_gate = prompt_4.index(
+        "For each distinct fixture family, dispatch and inspect one control"
+    )
     m0_passes = prompt_4.index("Only after M0 passes")
     h1_samples = prompt_4.index("run at least five fresh H1 samples")
-    assert audit_m0 < fixture_gate < m0_passes < h1_samples
+    assert audit_m0 < fixture_gate < m0_passes < first_sample_gate < h1_samples
 
     for term in (
         "H1 never receives credit for making M0 viable",
@@ -191,6 +214,14 @@ def test_prompt_4_proves_m0_then_defect_correction_or_quality_lift() -> None:
         "the only allowed arm delta",
         "Stop before sampling",
         "protocol deviations and provide no behavioral credit",
+        "A valid first sample counts toward the required minimum",
+        "An invalid sample receives zero credit",
+        "Do not batch the remaining samples before this gate passes",
+        "minimum proof-coverage matrix",
+        "Do not dispatch one behavioral sample per semantic unit",
+        "Keep reconstructible per-sample payloads disposable",
+        "Store per-sample identities and results once in a compact results manifest",
+        "Refresh the campaign manifest",
         "`defect-correction`",
         "`quality-lift`",
         "`rejected-no-control-deficit`",
@@ -222,6 +253,8 @@ def test_pruning_freezes_v1_and_promotes_only_regression_checked_p1() -> None:
         "Build one P1",
         "Treat pruning as non-regression",
         "Revert every regressing, ambiguous, or unproved cut group",
+        "Reuse the exact runtime-clause map",
+        "do not restate every `keep` mapping",
         "If all cuts fail, set P1 = V1",
         "`pruned`, `pruning-not-needed`, or `cuts-rejected`",
     ):
@@ -230,6 +263,7 @@ def test_pruning_freezes_v1_and_promotes_only_regression_checked_p1() -> None:
     assert "Promotes only exact P1" in prompt_5
     assert "promote P1 into the canonical skill" in prompt_5
     assert "verify canonical/installed parity" in prompt_5
+    assert "Update the campaign manifest with canonical and installed identities" in prompt_5
 
 
 def test_campaign_runs_mandatory_research_and_every_runtime_stage() -> None:
@@ -246,6 +280,11 @@ def test_campaign_runs_mandatory_research_and_every_runtime_stage() -> None:
         "Prompt 1, Research Pass, Prompts 2 through 4, Pruning Pass, and Prompt 5",
         "`and commit`",
         "`and push`",
+        "read-only managed-install dry-run",
+        "`python -m scripts.validate_skills`",
+        "ambient validation failures",
+        "ambient changed cohort",
+        "newly appeared unrelated drift is a fresh scope gap",
         "The root owns transitions",
         '`fork_turns="none"`',
         "Serialize all writers",
@@ -260,6 +299,46 @@ def test_campaign_runs_mandatory_research_and_every_runtime_stage() -> None:
     assert "Research Pass" in agents
     assert "**Deploy Campaign**" in context
     assert "**Deploy runtime identities**" in context
+
+
+def test_campaign_records_one_authoritative_unit_decision_without_duplication() -> None:
+    deploy = _normalized(DEPLOY_PROMPTS)
+    shared = _section(deploy, "## Shared Run Contract", "## Proportionate Proof Budget")
+    proof = _section(
+        deploy,
+        "## Proportionate Proof Budget",
+        "## Deploy Campaign: Orchestrate One Skill",
+    )
+    prompt_5 = _section(
+        deploy,
+        "## Deploy Prompt 5: Promote And Install P1",
+        "## Deploy Prompt 6: Git Delivery",
+    )
+
+    for term in (
+        "one authoritative decision record per unit",
+        "One schema-validated, machine-readable campaign manifest",
+        "Synthesis owns only the active decision and final dispositions",
+        "Do not append dated unit logs to synthesis",
+        "repeating hashes, sample tables, or chronology",
+        "bound all decision-bearing content with markers",
+        "content fingerprint as its semantic identity",
+    ):
+        assert term in shared
+
+    for term in (
+        "whenever any unit changes Markdown",
+        "After any unit writes repository artifacts",
+        "before freezing final identities",
+        "correct every failure it introduced",
+        "heading-bounded normalized semantics",
+        "Do not snapshot sentences or line wrapping",
+        "machine-consumed token, path, field, or command",
+    ):
+        assert term in proof
+
+    assert "compare it with the controller's ambient cohort" in prompt_5
+    assert "newly appeared unrelated drift as a fresh scope gap" in prompt_5
 
 
 def test_interludes_own_only_contract_or_technical_uncertainty() -> None:

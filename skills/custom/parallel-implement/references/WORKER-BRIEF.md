@@ -34,11 +34,11 @@ Implement exactly the assigned acceptance slice. Discoveries outside it are scop
 
 Include the regression event ID, prior integration HEAD, correction route, authorized owner and actor, structured write-scope IDs, trusted RED, and required proof. Start from that HEAD, select only authorized IDs, reproduce or reconcile the RED, and prove failing and affected paths. Return selected IDs, actual changed files, one clean correction commit, and evidence. Do not land it.
 
-The original worker may receive this as its one narrow continuation only when the root records that route and supplies a reconciled correction lane. Otherwise use a fresh lane.
+An existing worker may receive this correction only while the root-recorded route, reconciled lane, authority, and bounded assignment remain current. Otherwise use a fresh lane.
 
 ### Review repair
 
-Include the repair generation, blocked reviewed HEAD, complete assigned finding IDs, scopes, and required proof. Change only those admitted findings under the original Charter. Prove each remedy and regression. Adjacent observations authorize no work.
+Include the caller admission record, repair generation, blocked reviewed HEAD, complete blocking finding set, exact admitted IDs, automatic classification and Charter-preservation evidence for every blocker, both frozen budget states, scopes, and required proof. Accept the assignment only when the admitted IDs equal every blocking ID and every blocker passes all gates. Change only those admitted findings under the original Charter. Prove each remedy and regression. Adjacent observations authorize no work.
 
 ## Return packet
 

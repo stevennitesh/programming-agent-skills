@@ -20,7 +20,7 @@
 **Landing route and mode:** `<harness or manual gate / cherry-pick, merge, squash, or patch>`
 **Validation route:** `<commands or policy>`
 **Review route:** `<$review / $convergent-pr-review>`
-**Repair authorization:** `<none / generation, reviewed HEAD, admitted finding IDs, write scope, required proof>`
+**Repair authorization:** `<none / caller admission, generation, reviewed HEAD, complete blocking set, exact admitted IDs, per-blocker automatic and Charter evidence, both frozen budgets, write scope, required proof>`
 
 ## Contract
 
@@ -54,4 +54,4 @@ For each orchestrator-accepted worker packet:
 
 Return the candidate `HEAD`, clean status, integrated worker SHAs, final validation, closeout metadata, skipped checks, residual risk, tracker readiness, and blockers. Return a review-route escalation when integrated risk exceeds the selected route. Then become idle; the orchestrator pins the target and invokes formal review.
 
-**Repair bound:** for an authorized Repair generation, inspect `<reviewed-head>..<current-head>` and require every delta to map to an admitted finding ID. Apply a tiny routed fix only when the Repair authorization names the ID, write scope, and required proof. Otherwise return the finding packet for a fresh worker without editing. Return any Charter change as `needs-feedback`.
+**Repair bound:** accept an authorized Repair generation only after the caller admission names the complete blocking set, the admitted IDs equal every blocker, every blocker is automatic-in-scope and individually Charter-preserving, and both frozen budgets permit the successor. Inspect `<reviewed-head>..<current-head>` and require every delta to map to an admitted finding ID. Apply a tiny routed fix only when the Repair authorization names the ID, write scope, and required proof. Otherwise return the complete finding packet without editing. Return any Charter change as `needs-feedback`.

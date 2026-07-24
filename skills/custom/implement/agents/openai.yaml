@@ -3,5 +3,5 @@ policy:
 
 interface:
   display_name: "Implement"
-  short_description: "Deliver one item through bounded repair"
-  default_prompt: "Use $implement to deliver this one ready item end to end. Record its Charter, review one immutable tree at a time, repair only admitted in-scope blockers within the Budget, then Lock and close out."
+  short_description: "Deliver one ready item exactly"
+  default_prompt: "Use $implement to deliver this one selected Ready-for-agent item through its Charter, proof, formal review, tracker-kind closeout, Lock, and one exact commit."

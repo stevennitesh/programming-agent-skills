@@ -1,0 +1,433 @@
+{
+  "format": 1,
+  "campaign": "parallel-implement-2026-07-24-prompt4-r2",
+  "campaign_shape": "minimum-candidate",
+  "fixed_point": "94d68e78d8812e9a2ceffd093e729402cac1cff2",
+  "inputs": {
+    "m0_checkpoint_content_sha256": "ac7e81bdeb9ea05b929aa9c39af703521bd5b2b10979ad2c646132fec8f76715",
+    "research_r2_content_sha256": "0a4284ca7d4c06bb91b4d7aa47ff4362ffab4411ba5463862353355f9fe66b85",
+    "research_carried_content_sha256": "3d8ad3acb1aedaf5a3c857d2a2ca573b67472072149ed7df71e8e07bc52b0d54",
+    "prompt2_content_sha256": "a9c50ed8c7f61a4adeb9f187360fb6c90294059da2146969986a87bbcfe6dbb6",
+    "current_canonical_tree_sha256": "036dfdb8afc4bb34968c83a9bbd429e14d63819f2041c61b9518336d0e4770dc",
+    "failed_candidate_tree_sha256": "bbaf9558628dc5370d6b5f5770785746763eee63ca93f84113e18cb75307ed05"
+  },
+  "runtime": {
+    "inventory": [
+      "SKILL.md",
+      "agents/openai.yaml",
+      "references/CODEX-WORKTREE-LAUNCH.md",
+      "references/INTEGRATOR-BRIEF.md",
+      "references/RUN-LEDGER.md",
+      "references/WORKER-BRIEF.md",
+      "scripts/lane_worktree.py",
+      "scripts/run_ledger.py"
+    ],
+    "files_sha256": {
+      "SKILL.md": "7865a223b1e724142c3afd31912151ca0ee4ba8f2a61c01c52fea7e9e920019c",
+      "agents/openai.yaml": "e209a55b28a7700bc6cf895277f4553cb4d7feac57021f810335d4581c6e038e",
+      "references/CODEX-WORKTREE-LAUNCH.md": "b43a96214fcbeffd1a80fffcc2d00411a2deed4f9e2ea9318693b9727a62d18c",
+      "references/INTEGRATOR-BRIEF.md": "8635d2f6d1e7febadbe21e29a3c1df89887709057b134409047f1a5c46d584f8",
+      "references/RUN-LEDGER.md": "b0aa0288d58f5bcd5eda6328cfc6332bd820f32788404b8442570efad993b370",
+      "references/WORKER-BRIEF.md": "9f5bdc155ebc3fc5b33276f19938063c89321532aa7b5b5178853f95f763ec0f",
+      "scripts/lane_worktree.py": "0884edd628114a9101c3e9d544ee03699fbbef93b3c3ff2a35dcb915e0897ce8",
+      "scripts/run_ledger.py": "caa174522351d903985dbe94632bb54f6beb16e5eb3dcdcd31e64ee2bbae1f2d"
+    },
+    "tree_sha256": "c347c36f782f401d770709bf0170dc9a5ac1a77a97038ea42f6d5b163b4c6a0d",
+    "m0_sha256": "c347c36f782f401d770709bf0170dc9a5ac1a77a97038ea42f6d5b163b4c6a0d",
+    "h1_sha256": "c347c36f782f401d770709bf0170dc9a5ac1a77a97038ea42f6d5b163b4c6a0d",
+    "h1_relation": "H1 byte-identical to M0; one corpus stored once",
+    "current_relation": "current != M0 = H1"
+  },
+  "runtime_clause_map": {
+    "C01": [
+      "SKILL.md#Admission",
+      "agents/openai.yaml#policy"
+    ],
+    "C02": [
+      "SKILL.md#Trace"
+    ],
+    "C03": [
+      "SKILL.md#Admission",
+      "SKILL.md#Trace"
+    ],
+    "C04": [
+      "SKILL.md#Trace"
+    ],
+    "C05": [
+      "SKILL.md#Trace",
+      "references/RUN-LEDGER.md"
+    ],
+    "C06": [
+      "SKILL.md#Select"
+    ],
+    "C07": [
+      "SKILL.md#Open"
+    ],
+    "C08": [
+      "SKILL.md#Admission",
+      "SKILL.md#Open",
+      "references/WORKER-BRIEF.md",
+      "references/INTEGRATOR-BRIEF.md"
+    ],
+    "C09": [
+      "SKILL.md#Open",
+      "references/WORKER-BRIEF.md"
+    ],
+    "C10": [
+      "SKILL.md#Drain",
+      "references/INTEGRATOR-BRIEF.md"
+    ],
+    "C11": [
+      "SKILL.md#Drain",
+      "references/INTEGRATOR-BRIEF.md"
+    ],
+    "C12": [
+      "SKILL.md#Drain",
+      "references/WORKER-BRIEF.md",
+      "references/INTEGRATOR-BRIEF.md"
+    ],
+    "C13": [
+      "SKILL.md#Review",
+      "references/INTEGRATOR-BRIEF.md"
+    ],
+    "C14": [
+      "SKILL.md#Review",
+      "references/WORKER-BRIEF.md",
+      "references/INTEGRATOR-BRIEF.md",
+      "references/RUN-LEDGER.md"
+    ],
+    "C15": [
+      "SKILL.md#Select",
+      "references/RUN-LEDGER.md"
+    ],
+    "C16": [
+      "SKILL.md#Lock",
+      "references/RUN-LEDGER.md"
+    ],
+    "C17": [
+      "SKILL.md#Trace",
+      "SKILL.md#Lock",
+      "references/CODEX-WORKTREE-LAUNCH.md",
+      "references/RUN-LEDGER.md"
+    ]
+  },
+  "instruction_passage_map": {
+    "SKILL.md#Admission": [
+      "M0-01",
+      "M0-03",
+      "M0-08"
+    ],
+    "SKILL.md#Trace": [
+      "M0-02",
+      "M0-03",
+      "M0-04",
+      "M0-05",
+      "M0-17"
+    ],
+    "SKILL.md#Select": [
+      "M0-06",
+      "M0-15"
+    ],
+    "SKILL.md#Open": [
+      "M0-07",
+      "M0-08",
+      "M0-09",
+      "M0-10"
+    ],
+    "SKILL.md#Drain": [
+      "M0-10",
+      "M0-11",
+      "M0-12"
+    ],
+    "SKILL.md#Review": [
+      "M0-13",
+      "M0-14"
+    ],
+    "SKILL.md#Lock": [
+      "M0-16",
+      "M0-17"
+    ],
+    "agents/openai.yaml#interface": [
+      "K-01"
+    ],
+    "agents/openai.yaml#policy": [
+      "M0-01",
+      "K-01"
+    ],
+    "references/CODEX-WORKTREE-LAUNCH.md": [
+      "M0-08",
+      "M0-09",
+      "M0-10",
+      "M0-12",
+      "M0-17",
+      "K-04",
+      "K-05",
+      "K-07"
+    ],
+    "references/WORKER-BRIEF.md": [
+      "M0-08",
+      "M0-09",
+      "M0-10",
+      "M0-12",
+      "M0-14",
+      "K-05",
+      "K-08"
+    ],
+    "references/INTEGRATOR-BRIEF.md": [
+      "M0-08",
+      "M0-10",
+      "M0-11",
+      "M0-12",
+      "M0-13",
+      "M0-14",
+      "K-05",
+      "K-08"
+    ],
+    "references/RUN-LEDGER.md": [
+      "M0-04",
+      "M0-05",
+      "M0-06",
+      "M0-07",
+      "M0-08",
+      "M0-10",
+      "M0-13",
+      "M0-14",
+      "M0-15",
+      "M0-16",
+      "M0-17",
+      "K-02",
+      "K-03",
+      "K-05"
+    ],
+    "scripts/lane_worktree.py": [
+      "K-04"
+    ],
+    "scripts/run_ledger.py": [
+      "K-02",
+      "K-03"
+    ]
+  },
+  "compatibility_map": {
+    "K-01": [
+      "agents/openai.yaml",
+      "SKILL.md"
+    ],
+    "K-02": [
+      "scripts/run_ledger.py",
+      "references/RUN-LEDGER.md"
+    ],
+    "K-03": [
+      "scripts/run_ledger.py",
+      "references/RUN-LEDGER.md"
+    ],
+    "K-04": [
+      "scripts/lane_worktree.py",
+      "references/CODEX-WORKTREE-LAUNCH.md"
+    ],
+    "K-05": [
+      "references/CODEX-WORKTREE-LAUNCH.md",
+      "references/INTEGRATOR-BRIEF.md",
+      "references/RUN-LEDGER.md",
+      "references/WORKER-BRIEF.md"
+    ],
+    "K-06": [
+      "SKILL.md#Select",
+      "references/RUN-LEDGER.md"
+    ],
+    "K-07": [
+      "SKILL.md#Trace",
+      "SKILL.md#Drain",
+      "references/CODEX-WORKTREE-LAUNCH.md"
+    ],
+    "K-08": [
+      "SKILL.md#Open",
+      "SKILL.md#Drain",
+      "SKILL.md#Review"
+    ]
+  },
+  "helper_identity": {
+    "lane_worktree.py": "byte-identical to current canonical",
+    "run_ledger.py": "byte-identical to current canonical"
+  },
+  "relationships": [
+    {
+      "from": "to-tickets",
+      "trigger": "explicit top-level complete non-empty exhaustive parent graph",
+      "to": "parallel-implement",
+      "return": "root campaign"
+    },
+    {
+      "from": "parallel-implement",
+      "trigger": "settled red-testable lane behavior or fully known red-capable bug",
+      "to": "tdd",
+      "return": "same lane"
+    },
+    {
+      "from": "parallel-implement",
+      "trigger": "any required bug fact unsettled",
+      "to": "diagnosing-bugs",
+      "return": "same lane"
+    },
+    {
+      "from": "parallel-implement",
+      "trigger": "drained proved ordinary immutable target",
+      "to": "review",
+      "return": "root"
+    },
+    {
+      "from": "parallel-implement",
+      "trigger": "drained proved local PR or bounded high-risk immutable target",
+      "to": "convergent-pr-review",
+      "return": "root"
+    },
+    {
+      "from": "parallel-implement",
+      "trigger": "preserved conflict or partial Git operation during serial landing",
+      "to": "resolving-merge-conflicts",
+      "return": "root at exact verified boundary"
+    },
+    {
+      "from": "parallel-implement",
+      "trigger": "incomplete or contradictory graph/readiness/profile/matrix/order/scope/frontier",
+      "to": "to-tickets",
+      "return": "one exhaustive repair packet; stop without mutation"
+    },
+    {
+      "from": "parallel-implement",
+      "trigger": "missing or incompatible required setup",
+      "to": "repo-bootstrap",
+      "return": "stop before external or production mutation"
+    }
+  ],
+  "protected": {
+    "units": [
+      "M0-01",
+      "M0-02",
+      "M0-03",
+      "M0-04",
+      "M0-05",
+      "M0-06",
+      "M0-07",
+      "M0-08",
+      "M0-09",
+      "M0-10",
+      "M0-11",
+      "M0-12",
+      "M0-13",
+      "M0-14",
+      "M0-15",
+      "M0-16",
+      "M0-17"
+    ],
+    "clauses": [
+      "C01",
+      "C02",
+      "C03",
+      "C04",
+      "C05",
+      "C06",
+      "C07",
+      "C08",
+      "C09",
+      "C10",
+      "C11",
+      "C12",
+      "C13",
+      "C14",
+      "C15",
+      "C16",
+      "C17"
+    ],
+    "compatibility": [
+      "K-01",
+      "K-02",
+      "K-03",
+      "K-04",
+      "K-05",
+      "K-06",
+      "K-07",
+      "K-08"
+    ],
+    "excluded_authority": [
+      "installation",
+      "publication",
+      "push",
+      "Git delivery",
+      "unrelated cleanup"
+    ],
+    "preserved_surfaces": [
+      "skills/custom/parallel-implement/**",
+      "docs/validation/evals/parallel-implement-prompt4/**",
+      "all prior transcripts, results, raw captures, research, synthesis, checkpoints, relationships, tests, installation, and unrelated implement work"
+    ]
+  },
+  "affected_surfaces": [
+    "skills/experimental/parallel-implement/SKILL.md#Review",
+    "skills/experimental/parallel-implement/references/WORKER-BRIEF.md#Review repair",
+    "skills/experimental/parallel-implement/references/INTEGRATOR-BRIEF.md#Repair authorization and Repair bound",
+    "skills/experimental/manifest.json#skills.parallel-implement",
+    "docs/validation/evals/parallel-implement-prompt4-r2/**",
+    "docs/validation/transcripts/2026-07-24-parallel-implement-prompt3-construction-r2.md"
+  ],
+  "evaluation": {
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "high",
+    "host": "Codex fresh-context subagents on Windows/PowerShell",
+    "tools": "Read the exact candidate package and assigned worker-visible fixture; write only the assigned disposable capture. All tracker, Git, worktree, remote, publication, installation, and destructive operations remain simulated.",
+    "repository_fixed_point": "94d68e78d8812e9a2ceffd093e729402cac1cff2",
+    "worker_fixture": {
+      "path": "worker-fixtures.json",
+      "sha256": "fc7132e44d07f69443fc5d99129b1afba33455882c0cd4db3da89697cd9e820e"
+    },
+    "root_fixture": {
+      "path": "evaluator-fixture.json",
+      "sha256": "bd6cbb84ff79f9ffbda6ba3630f7f470fb3392543af2a426f1a6ff75e68504fb"
+    },
+    "payload_isolation": "Workers receive no hypothesis, expected weakness, rubric, score, candidate term, prior output, or conclusion.",
+    "expected_captures": [
+      {
+        "id": "O-01",
+        "family": "ordinary",
+        "arm": "M0"
+      },
+      {
+        "id": "O-02",
+        "family": "ordinary",
+        "arm": "M0"
+      },
+      {
+        "id": "O-03",
+        "family": "ordinary",
+        "arm": "M0"
+      },
+      {
+        "id": "H-01",
+        "family": "high-risk",
+        "arm": "M0"
+      },
+      {
+        "id": "H-02",
+        "family": "high-risk",
+        "arm": "M0"
+      }
+    ],
+    "h1_samples": 0,
+    "behavioral_evaluation_status": "not-started"
+  },
+  "evidence_dispositions": {
+    "prior_research": "exact-reusable",
+    "run_ledger_helper": "exact-reusable for K-02 mechanics; lane-limited for corrected semantics",
+    "lane_worktree_helper": "lane-limited after exact identity read-back",
+    "unaffected_units_and_relationships": "lane-limited after exact identity read-back",
+    "failed_r1_candidate_and_behavioral_samples": "invalidated for affected proof; historical-admission-only otherwise",
+    "current_canonical_runtime": "historical-admission-only",
+    "live_provider_and_irreversible_closeout": "missing"
+  },
+  "limitations": [
+    "No behavioral sample has run.",
+    "Fixtures simulate provider and Git observations; no live tracker, connector partial failure, remote publication, or irreversible closeout is authorized.",
+    "Provider-specific mutation idempotency remains unverified.",
+    "Worktree containment does not establish process, credential, network, cache, submodule, or scarce-resource isolation.",
+    "Future results remain bounded to the frozen bytes, fixtures, model, host, reasoning configuration, tools, and sample count."
+  ]
+}

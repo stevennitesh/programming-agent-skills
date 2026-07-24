@@ -1,0 +1,143 @@
+{
+  "format": 1,
+  "campaign": "parallel-implement-2026-07-24-prompt4",
+  "campaign_shape": "minimum-candidate",
+  "fixed_point": "94d68e78d8812e9a2ceffd093e729402cac1cff2",
+  "inputs": {
+    "m0_checkpoint_content_sha256": "c91962879ff9bd03b48c34fa422974fff8a2aee8362c8a879627ebc66039271a",
+    "research_content_sha256": "3d8ad3acb1aedaf5a3c857d2a2ca573b67472072149ed7df71e8e07bc52b0d54",
+    "prompt2_content_sha256": "d231c314136f6795008bed1f9d9d860626978cfac829327cc35bbc385e9f3e62",
+    "current_canonical_tree_sha256": "036dfdb8afc4bb34968c83a9bbd429e14d63819f2041c61b9518336d0e4770dc"
+  },
+  "runtime": {
+    "inventory": [
+      "SKILL.md",
+      "agents/openai.yaml",
+      "references/CODEX-WORKTREE-LAUNCH.md",
+      "references/INTEGRATOR-BRIEF.md",
+      "references/RUN-LEDGER.md",
+      "references/WORKER-BRIEF.md",
+      "scripts/lane_worktree.py",
+      "scripts/run_ledger.py"
+    ],
+    "files_sha256": {
+      "SKILL.md": "9a60784cd48f04bf7ac324d5050a785625b7e0d2740565c73d0dd0d77eaba157",
+      "agents/openai.yaml": "e209a55b28a7700bc6cf895277f4553cb4d7feac57021f810335d4581c6e038e",
+      "references/CODEX-WORKTREE-LAUNCH.md": "b43a96214fcbeffd1a80fffcc2d00411a2deed4f9e2ea9318693b9727a62d18c",
+      "references/INTEGRATOR-BRIEF.md": "cd6e1c03a02ac0ebefb8b634e8435bbaa3dc0b5c697e14dc193a18b9c4b48750",
+      "references/RUN-LEDGER.md": "b0aa0288d58f5bcd5eda6328cfc6332bd820f32788404b8442570efad993b370",
+      "references/WORKER-BRIEF.md": "3dd8e5f203591a730880adb29283628c6c255a6b9bb63de7ef4ce8e1b356980b",
+      "scripts/lane_worktree.py": "0884edd628114a9101c3e9d544ee03699fbbef93b3c3ff2a35dcb915e0897ce8",
+      "scripts/run_ledger.py": "caa174522351d903985dbe94632bb54f6beb16e5eb3dcdcd31e64ee2bbae1f2d"
+    },
+    "tree_sha256": "bbaf9558628dc5370d6b5f5770785746763eee63ca93f84113e18cb75307ed05",
+    "m0_sha256": "bbaf9558628dc5370d6b5f5770785746763eee63ca93f84113e18cb75307ed05",
+    "h1_sha256": "bbaf9558628dc5370d6b5f5770785746763eee63ca93f84113e18cb75307ed05",
+    "h1_relation": "H1 byte-identical to M0; one corpus stored once",
+    "current_relation": "current != M0 = H1"
+  },
+  "runtime_clause_map": {
+    "C01": ["SKILL.md#Admission", "agents/openai.yaml#policy"],
+    "C02": ["SKILL.md#Trace"],
+    "C03": ["SKILL.md#Admission", "SKILL.md#Trace"],
+    "C04": ["SKILL.md#Trace"],
+    "C05": ["SKILL.md#Trace", "references/RUN-LEDGER.md"],
+    "C06": ["SKILL.md#Select"],
+    "C07": ["SKILL.md#Open"],
+    "C08": ["SKILL.md#Admission", "SKILL.md#Open", "references/WORKER-BRIEF.md", "references/INTEGRATOR-BRIEF.md"],
+    "C09": ["SKILL.md#Open", "references/WORKER-BRIEF.md"],
+    "C10": ["SKILL.md#Drain", "references/INTEGRATOR-BRIEF.md"],
+    "C11": ["SKILL.md#Drain", "references/INTEGRATOR-BRIEF.md"],
+    "C12": ["SKILL.md#Drain", "references/WORKER-BRIEF.md", "references/INTEGRATOR-BRIEF.md"],
+    "C13": ["SKILL.md#Review", "references/INTEGRATOR-BRIEF.md"],
+    "C14": ["SKILL.md#Review", "references/WORKER-BRIEF.md", "references/INTEGRATOR-BRIEF.md"],
+    "C15": ["SKILL.md#Select", "references/RUN-LEDGER.md"],
+    "C16": ["SKILL.md#Lock", "references/RUN-LEDGER.md"],
+    "C17": ["SKILL.md#Trace", "SKILL.md#Lock", "references/CODEX-WORKTREE-LAUNCH.md", "references/RUN-LEDGER.md"]
+  },
+  "instruction_passage_map": {
+    "SKILL.md#Admission": ["M0-01", "M0-03", "M0-08"],
+    "SKILL.md#Trace": ["M0-02", "M0-03", "M0-04", "M0-05", "M0-17"],
+    "SKILL.md#Select": ["M0-06", "M0-15"],
+    "SKILL.md#Open": ["M0-07", "M0-08", "M0-09", "M0-10"],
+    "SKILL.md#Drain": ["M0-10", "M0-11", "M0-12"],
+    "SKILL.md#Review": ["M0-13", "M0-14"],
+    "SKILL.md#Lock": ["M0-16", "M0-17"],
+    "agents/openai.yaml#interface": ["K-01"],
+    "agents/openai.yaml#policy": ["M0-01", "K-01"],
+    "references/CODEX-WORKTREE-LAUNCH.md#Open": ["M0-08", "M0-10", "K-04", "K-05", "K-07"],
+    "references/CODEX-WORKTREE-LAUNCH.md#Startup proof": ["M0-08", "M0-09", "M0-12", "K-04", "K-05"],
+    "references/CODEX-WORKTREE-LAUNCH.md#Dispatch and liveness": ["M0-08", "M0-10", "M0-17", "K-04", "K-05"],
+    "references/CODEX-WORKTREE-LAUNCH.md#Recovery commands": ["M0-08", "M0-10", "M0-17", "K-04", "K-05"],
+    "references/CODEX-WORKTREE-LAUNCH.md#Cleanup": ["M0-10", "M0-17", "K-04", "K-05"],
+    "references/WORKER-BRIEF.md#Common assignment": ["M0-08", "M0-09", "M0-12", "K-05"],
+    "references/WORKER-BRIEF.md#Mode additions": ["M0-09", "M0-10", "M0-12", "M0-14", "K-05", "K-08"],
+    "references/WORKER-BRIEF.md#Return packet": ["M0-09", "M0-10", "K-05"],
+    "references/INTEGRATOR-BRIEF.md#Assignment": ["M0-08", "M0-10", "M0-12", "M0-13", "M0-14", "K-05"],
+    "references/INTEGRATOR-BRIEF.md#Contract": ["M0-08", "M0-10", "K-05"],
+    "references/INTEGRATOR-BRIEF.md#Integrate": ["M0-10", "M0-11", "M0-12", "M0-14", "K-05", "K-08"],
+    "references/INTEGRATOR-BRIEF.md#Review-Ready Handoff": ["M0-12", "M0-13", "M0-14", "K-05", "K-08"],
+    "references/RUN-LEDGER.md#Normal path": ["M0-04", "M0-05", "M0-08", "M0-09", "M0-17", "K-02", "K-03", "K-05"],
+    "references/RUN-LEDGER.md#Phases and decisions": ["M0-04", "M0-05", "M0-06", "M0-07", "M0-08", "M0-10", "M0-13", "M0-14", "M0-16", "M0-17", "K-02", "K-05"],
+    "references/RUN-LEDGER.md#Branch packets": ["M0-05", "M0-10", "M0-12", "M0-13", "M0-14", "M0-15", "M0-16", "M0-17", "K-02", "K-03", "K-05"],
+    "references/RUN-LEDGER.md#Advanced and compatibility surface": ["M0-05", "M0-17", "K-02", "K-03", "K-05"],
+    "scripts/lane_worktree.py": ["K-04"],
+    "scripts/run_ledger.py": ["K-02", "K-03"]
+  },
+  "compatibility_map": {
+    "K-01": ["agents/openai.yaml", "SKILL.md"],
+    "K-02": ["scripts/run_ledger.py", "references/RUN-LEDGER.md"],
+    "K-03": ["scripts/run_ledger.py", "references/RUN-LEDGER.md"],
+    "K-04": ["scripts/lane_worktree.py", "references/CODEX-WORKTREE-LAUNCH.md"],
+    "K-05": ["references/CODEX-WORKTREE-LAUNCH.md", "references/INTEGRATOR-BRIEF.md", "references/RUN-LEDGER.md", "references/WORKER-BRIEF.md"],
+    "K-06": ["SKILL.md#Select", "references/RUN-LEDGER.md"],
+    "K-07": ["SKILL.md#Trace", "SKILL.md#Drain", "references/CODEX-WORKTREE-LAUNCH.md"],
+    "K-08": ["SKILL.md#Open", "SKILL.md#Drain", "SKILL.md#Review"]
+  },
+  "helper_identity": {
+    "lane_worktree.py": "byte-identical to current canonical",
+    "run_ledger.py": "byte-identical to current canonical"
+  },
+  "relationships": [
+    {"from": "to-tickets", "trigger": "explicit top-level complete non-empty exhaustive parent graph", "to": "parallel-implement", "return": "root campaign"},
+    {"from": "parallel-implement", "trigger": "settled red-testable lane behavior or fully known red-capable bug", "to": "tdd", "return": "same lane"},
+    {"from": "parallel-implement", "trigger": "any required bug fact unsettled", "to": "diagnosing-bugs", "return": "same lane"},
+    {"from": "parallel-implement", "trigger": "drained proved ordinary immutable target", "to": "review", "return": "root"},
+    {"from": "parallel-implement", "trigger": "drained proved local PR or bounded high-risk immutable target", "to": "convergent-pr-review", "return": "root"},
+    {"from": "parallel-implement", "trigger": "preserved conflict or partial Git operation during serial landing", "to": "resolving-merge-conflicts", "return": "root at exact verified boundary"},
+    {"from": "parallel-implement", "trigger": "incomplete or contradictory graph/readiness/profile/matrix/order/scope/frontier", "to": "to-tickets", "return": "one exhaustive repair packet; stop without mutation"},
+    {"from": "parallel-implement", "trigger": "missing or incompatible required setup", "to": "repo-bootstrap", "return": "stop before external or production mutation"}
+  ],
+  "protected": {
+    "units": ["M0-01", "M0-02", "M0-03", "M0-04", "M0-05", "M0-06", "M0-07", "M0-08", "M0-09", "M0-10", "M0-11", "M0-12", "M0-13", "M0-14", "M0-15", "M0-16", "M0-17"],
+    "clauses": ["C01", "C02", "C03", "C04", "C05", "C06", "C07", "C08", "C09", "C10", "C11", "C12", "C13", "C14", "C15", "C16", "C17"],
+    "compatibility": ["K-01", "K-02", "K-03", "K-04", "K-05", "K-06", "K-07", "K-08"],
+    "excluded_authority": ["installation", "publication", "push", "Git delivery", "unrelated cleanup"]
+  },
+  "evaluation": {
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "high",
+    "host": "Codex fresh-context subagents on Windows/PowerShell",
+    "tools": "Read exact candidate package and worker fixture; write only assigned disposable capture. All tracker, Git, worktree, remote, publication, installation, and destructive operations remain simulated.",
+    "repository_fixed_point": "94d68e78d8812e9a2ceffd093e729402cac1cff2",
+    "worker_fixture": {"path": "worker-fixtures.json", "sha256": "e86f2b9ece2522c5ae2833b65696cb16c7cd5e36ab6fc6d74b8e25c1287069e3"},
+    "root_fixture": {"path": "evaluator-fixture.json", "sha256": "0961527e5409b14912808e5a1db02364b6799b5b6f7c4c41f945d59d98a0e89c"},
+    "payload_isolation": "Worker receives no hypothesis, weakness, rubric, score, candidate term, or conclusion.",
+    "expected_captures": [
+      {"id": "A-01", "family": "A", "arm": "M0"},
+      {"id": "A-02", "family": "A", "arm": "M0"},
+      {"id": "A-03", "family": "A", "arm": "M0"},
+      {"id": "B-01", "family": "B", "arm": "M0"},
+      {"id": "B-02", "family": "B", "arm": "M0"}
+    ],
+    "h1_samples": 0,
+    "behavioral_evaluation_status": "not-started"
+  },
+  "limitations": [
+    "No behavioral sample has run.",
+    "Fixtures simulate provider and Git observations; no live tracker, connector partial failure, remote publication, or irreversible closeout is authorized.",
+    "Provider-specific mutation idempotency remains unverified.",
+    "Worktree containment does not establish process, credential, network, cache, submodule, or scarce-resource isolation.",
+    "Future results remain bounded to the frozen bytes, fixtures, model, host, reasoning configuration, tools, and sample count."
+  ]
+}

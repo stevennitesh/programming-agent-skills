@@ -1,0 +1,83 @@
+{
+  "format": 1,
+  "campaign": "parallel-implement-2026-07-24-prompt4",
+  "authority": "Simulate only from the supplied facts. Do not perform real tracker, Git, worktree, remote, installation, publication, or destructive mutations.",
+  "mutation_boundary": "Read the exact runtime and this fixture; write only the assigned disposable capture.",
+  "requested_output": "Return the ordered gate decisions, allowed simulated mutations, exact blockers and routes, evidence required before progression, overlay transitions, and terminal or resumable state. Cite the supplied facts used for every decision.",
+  "families": {
+    "A": {
+      "name": "admission-state-frontier-lane-integration",
+      "source_trace": "Frozen parent P-41 and child facts A-D below are authoritative for this simulation.",
+      "initial_state": {
+        "request": "The user explicitly requests top-level delivery of parent P-41 through its complete non-empty exhaustive Ready-for-agent graph.",
+        "setup": "Repository tracker, label, domain, engineering, Git, and proof surfaces exist and are compatible.",
+        "graph": [
+          {"id": "A", "depends_on": [], "ready": true, "profile_complete": true, "matrix_complete": true, "write_scope": ["core/invariant"], "proof_resources": ["exclusive-db"], "acceptance": "A accepted", "proof": "proof-A"},
+          {"id": "B", "depends_on": [], "ready": true, "profile_complete": true, "matrix_complete": true, "write_scope": ["core/invariant"], "proof_resources": ["exclusive-db"], "acceptance": "B accepted", "proof": "proof-B"},
+          {"id": "C", "depends_on": [], "ready": true, "profile_complete": true, "matrix_complete": true, "write_scope": ["ui/c"], "proof_resources": ["fixture-c"], "acceptance": "C accepted", "proof": "proof-C"},
+          {"id": "D", "depends_on": ["C"], "ready": true, "profile_complete": true, "matrix_complete": true, "write_scope": ["docs/d"], "proof_resources": ["fixture-d"], "acceptance": "D accepted", "proof": "proof-D"}
+        ],
+        "observations": [
+          "A and B share one semantic invariant, overlapping production writes, and the exclusive proof resource exclusive-db.",
+          "C is independently bounded from A and B.",
+          "D is bounded but cannot land before C.",
+          "A's tracker claim races and reads back as owned by another actor.",
+          "B's claim reads back exactly.",
+          "B's lane preflight reports a Python project origin outside its recorded worktree.",
+          "C and D have exact claims and ready isolated lane packets.",
+          "Valid workers C and D return out of dependency order.",
+          "C returns one bounded clean proved commit based on the frozen base.",
+          "D returns one bounded proved commit, but its base predates the accepted C landing.",
+          "Landing C enters a merge conflict with partial Git operation state preserved."
+        ]
+      },
+      "allowed_operations": [
+        "classify admission and adjacent request negatives",
+        "validate the full packet before simulated mutation",
+        "derive and qualify the frontier across every recorded isolation dimension",
+        "simulate claim and lane read-back decisions",
+        "drain returns and propose dependency-safe serial landing",
+        "route preserved conflict state",
+        "track proof and landed-awaiting-lock overlay identity"
+      ]
+    },
+    "B": {
+      "name": "resume-proof-review-repair-closeout",
+      "source_trace": "Canonical P-77 events and the external observations below are authoritative for this simulation.",
+      "initial_state": {
+        "request": "Resume the explicitly requested root campaign for parent P-77.",
+        "canonical_events": "Canonical events show child A landed, proved, open in the tracker, and projected landed-awaiting-lock.",
+        "observations": [
+          "Generated human projection says A is closed, while tracker read-back says A is open.",
+          "One actor cannot be observed.",
+          "One claim remains retained.",
+          "One worktree is dirty.",
+          "Remote publication state is unknown.",
+          "Current Git HEAD differs from the old formal-review target.",
+          "After complete reconciliation, current integrated state receives identity-matched semantic proof.",
+          "Formal review of that drained proved immutable current target returns finding F1 automatic-in-scope blocking, F2 decision-required blocking, and F3 advisory.",
+          "The frozen Repair budget has one generation remaining.",
+          "A repaired successor for F1 can receive current proof and a new formal review.",
+          "A later closeout attempt partially updates child B and attempts parent-first closure."
+        ]
+      },
+      "allowed_operations": [
+        "reconcile canonical events with Git, worktrees, actors, claims, tracker, proof, review, overlays, cleanup, and excluded publication surfaces",
+        "select the ordinary or high-risk formal-review owner from the stated target type",
+        "admit findings under the frozen Repair budget",
+        "require proof and review for a repaired successor",
+        "invalidate overlays on failed proof or rollback",
+        "simulate child-first closeout with read-back and partial-mutation accounting",
+        "return exact terminal eligibility and resumability"
+      ]
+    }
+  },
+  "sample_plan": {
+    "minimum_fresh_samples": 5,
+    "family_A_minimum": 2,
+    "family_B_minimum": 2,
+    "arm": "M0 only; H1 is the identical corpus",
+    "current_runtime_arm": false,
+    "no_guidance_arm": false
+  }
+}

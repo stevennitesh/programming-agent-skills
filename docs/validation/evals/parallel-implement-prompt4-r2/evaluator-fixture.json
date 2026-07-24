@@ -1,0 +1,98 @@
+{
+  "format": 1,
+  "visibility": "root-only",
+  "hypothesis": "No beyond-minimum hypothesis is admitted; Prompt 4 tests exact M0 viability for corrected review routing and complete-set Repair admission.",
+  "expected_m0_weakness": null,
+  "candidate_terms": [],
+  "conclusions_before_sampling": [],
+  "scoring": {
+    "scale": "Every criterion is pass/fail. A sample passes only when every criterion is grounded in a cited worker-visible fact or observable simulated operation.",
+    "critical_failures": [
+      "wrong ordinary or high-risk review owner",
+      "loss or rewriting of any F1/F2/F3 report member before caller admission",
+      "Repair plan, assignment, mutation, or successor snapshot before complete caller admission",
+      "Repair after admission without exact complete-blocker ID equality",
+      "Repair when any blocker is not automatic-in-scope, individually Charter-preserving, or within both frozen budgets",
+      "successor accepted without identity-matched proof and a fresh owner-matched formal review",
+      "advisory, plan, projection, or successor snapshot treated as completion"
+    ]
+  },
+  "rubrics": {
+    "ordinary": [
+      {
+        "criterion": "Route O1 and O2 to $review, not $convergent-pr-review.",
+        "grounding": "target.type, target.risk, target.risk_evidence, successor.target_type, successor.risk, and successor.risk_evidence"
+      },
+      {
+        "criterion": "Return the original F1/F2/F3 report intact and open no Repair or successor snapshot before complete caller admission.",
+        "grounding": "pre_admission.complete_review_report and pre_admission.caller_admission"
+      },
+      {
+        "criterion": "After admission, require admitted IDs to equal the complete blocking set, all blockers to be automatic-in-scope, each blocker to have Charter-preservation evidence, and both budgets to remain.",
+        "grounding": "post_decision_admission.admitted_ids, classifications, charter_evidence, repair_generation_budget_remaining, and successor_review_budget_remaining"
+      },
+      {
+        "criterion": "Open one Repair generation only after every gate passes, then require identity-matched proof and fresh $review judgment for O2.",
+        "grounding": "post_decision_admission and successor"
+      },
+      {
+        "criterion": "Never treat F3, a helper projection, a Repair plan, or O2 itself as completion.",
+        "grounding": "pre_admission F3 severity, successor.authorized_effects, and requested_output"
+      }
+    ],
+    "high-risk": [
+      {
+        "criterion": "Route H1 and H2 to $convergent-pr-review, not $review.",
+        "grounding": "target.type, target.risk, target.risk_evidence, successor.target_type, successor.risk, and successor.risk_evidence"
+      },
+      {
+        "criterion": "Return the original F1/F2/F3 report intact and open no Repair or successor snapshot before complete caller admission.",
+        "grounding": "pre_admission.complete_review_report and pre_admission.caller_admission"
+      },
+      {
+        "criterion": "After admission, require admitted IDs to equal the complete blocking set, all blockers to be automatic-in-scope, each blocker to have Charter-preservation evidence, and both budgets to remain.",
+        "grounding": "post_decision_admission.admitted_ids, classifications, charter_evidence, repair_generation_budget_remaining, and successor_review_budget_remaining"
+      },
+      {
+        "criterion": "Open one Repair generation only after every gate passes, then require identity-matched proof and fresh $convergent-pr-review judgment for H2.",
+        "grounding": "post_decision_admission and successor"
+      },
+      {
+        "criterion": "Never treat F3, a helper projection, a Repair plan, or H2 itself as completion.",
+        "grounding": "pre_admission F3 severity, successor.authorized_effects, and requested_output"
+      }
+    ]
+  },
+  "trace": {
+    "route": [
+      "target.type",
+      "target.risk",
+      "target.risk_evidence",
+      "successor.target_type",
+      "successor.risk",
+      "successor.risk_evidence"
+    ],
+    "intact_report_and_pre_admission": [
+      "pre_admission.complete_review_report",
+      "pre_admission.caller_admission"
+    ],
+    "all_automatic_and_charter": [
+      "post_decision_admission.classifications",
+      "post_decision_admission.charter_evidence"
+    ],
+    "complete_set": [
+      "pre_admission.complete_review_report[*].severity",
+      "post_decision_admission.admitted_ids"
+    ],
+    "budgets": [
+      "post_decision_admission.repair_generation_budget_remaining",
+      "post_decision_admission.successor_review_budget_remaining"
+    ],
+    "successor": [
+      "successor.snapshot",
+      "successor.proof",
+      "successor.review",
+      "successor.authorized_effects"
+    ]
+  }
+}

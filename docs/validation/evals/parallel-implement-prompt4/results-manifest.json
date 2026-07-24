@@ -1,0 +1,193 @@
+{
+  "format": 1,
+  "campaign": "parallel-implement-2026-07-24-prompt4",
+  "decision": "blocked",
+  "campaign_shape": "minimum-candidate",
+  "configuration": {
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "high",
+    "host": "Codex fresh-context subagents on Windows/PowerShell",
+    "tools": "Read the exact runtime and assigned worker fixture; write only the assigned capture. All tracker, Git, worktree, remote, publication, installation, and destructive operations remained simulated.",
+    "repository_fixed_point": "94d68e78d8812e9a2ceffd093e729402cac1cff2",
+    "current_runtime_tree_sha256": "036dfdb8afc4bb34968c83a9bbd429e14d63819f2041c61b9518336d0e4770dc",
+    "runtime_m0_sha256": "bbaf9558628dc5370d6b5f5770785746763eee63ca93f84113e18cb75307ed05",
+    "runtime_h1_sha256": "bbaf9558628dc5370d6b5f5770785746763eee63ca93f84113e18cb75307ed05",
+    "runtime_relation": "current != M0 = H1",
+    "protocol_manifest_sha256": "45bc793a9c51185041c5e1edb9bb0f86c81ad6e6259e777d1b2098d7589014f6",
+    "worker_fixture_sha256": "e86f2b9ece2522c5ae2833b65696cb16c7cd5e36ab6fc6d74b8e25c1287069e3",
+    "evaluator_fixture_sha256": "0961527e5409b14912808e5a1db02364b6799b5b6f7c4c41f945d59d98a0e89c",
+    "worker_payload_isolation": "passed",
+    "decision_bearing_telemetry": "available",
+    "unavailable_telemetry": [
+      "Exact backend build and sampling seed were not exposed.",
+      "Token counts and latency were not exposed.",
+      "Workers did not echo model and reasoning identities; dispatch records supply the fixed configuration."
+    ]
+  },
+  "m0_viability": {
+    "decision": "failed-baseline-construction",
+    "valid_samples": 5,
+    "invalid_samples": 0,
+    "sample_passes": 3,
+    "sample_failures": 2,
+    "critical_failures": 0,
+    "protocol_deviations": [],
+    "aggregate": {
+      "criteria_passed": 37,
+      "criteria_total": 40,
+      "mean_score": 7.4,
+      "score_range": [6, 8],
+      "population_variance": 0.64,
+      "sample_pass_rate": 0.6
+    },
+    "families": {
+      "A": {
+        "samples": 3,
+        "passes": 3,
+        "mean_score": 8.0,
+        "score_range": [8, 8],
+        "population_variance": 0.0,
+        "worst": "A-01, A-02, and A-03 each satisfied 8/8 criteria.",
+        "decision_changing_variance": "none"
+      },
+      "B": {
+        "samples": 2,
+        "passes": 0,
+        "mean_score": 6.5,
+        "score_range": [6, 7],
+        "population_variance": 0.25,
+        "worst": "B-02 satisfied 6/8 criteria; it deferred the ordinary/high-risk review route and blocked F1 Repair.",
+        "decision_changing_variance": "B-01 selected the ordinary review owner while B-02 deferred for target-type evidence. Both independently failed the F1-only Repair criterion."
+      }
+    },
+    "systematic_failure": {
+      "unit": "M0-14",
+      "criterion": "B-04",
+      "observed": "Both B samples refused to admit F1 while F2 remained decision-required, preserving the Repair budget until F2 was resolved.",
+      "required": "Admit only F1 to the bounded Repair generation while F2 returns through the decision-required branch and F3 remains advisory.",
+      "deterministic_trace": "run_ledger.py requires every blocking finding to be automatic-in-scope and requires finding_ids to equal every blocker, so exact K-02 helper compatibility rejects an F1-only plan when F2 is also blocking.",
+      "classification": "frozen M0 and compatibility construction contradiction"
+    },
+    "protected_behavior": {
+      "passed": [
+        "M0-01",
+        "M0-02",
+        "M0-03",
+        "M0-04",
+        "M0-05",
+        "M0-06",
+        "M0-07",
+        "M0-08",
+        "M0-09",
+        "M0-10",
+        "M0-11",
+        "M0-12",
+        "M0-15",
+        "M0-16",
+        "M0-17"
+      ],
+      "variable": ["M0-13"],
+      "failed": ["M0-14"],
+      "compatibility": "K-01 through K-08 passed deterministic identity and helper checks, but unchanged K-02 behavior conflicts with M0-14.",
+      "relationships": "All eight relationships passed deterministic ownership traces; behavioral review-owner selection varied in B-02."
+    },
+    "samples": [
+      {
+        "id": "A-01",
+        "family": "A",
+        "arm": "M0",
+        "path": "raw/A-01.md",
+        "sha256": "f54ff53684624f2d7b9b8eb981a5866d3efd9db6b04debe88a5e4366a1aecae4",
+        "bytes": 13819,
+        "score": 8,
+        "total": 8,
+        "result": "pass",
+        "criteria": {"A-01": true, "A-02": true, "A-03": true, "A-04": true, "A-05": true, "A-06": true, "A-07": true, "A-08": true}
+      },
+      {
+        "id": "A-02",
+        "family": "A",
+        "arm": "M0",
+        "path": "raw/A-02.md",
+        "sha256": "0c035710c62cd70883e71d3222f5a317a98c5d5dbc944b73ba2bc0072996306c",
+        "bytes": 15670,
+        "score": 8,
+        "total": 8,
+        "result": "pass",
+        "criteria": {"A-01": true, "A-02": true, "A-03": true, "A-04": true, "A-05": true, "A-06": true, "A-07": true, "A-08": true},
+        "note": "Withheld D dispatch until C's dependency overlay existed; this did not change any registered criterion or landing safety."
+      },
+      {
+        "id": "A-03",
+        "family": "A",
+        "arm": "M0",
+        "path": "raw/A-03.md",
+        "sha256": "5cd8704db95359fd95ebe7a74b19fc225164ba926f005ed141fc82d2bb0f6d3e",
+        "bytes": 12059,
+        "score": 8,
+        "total": 8,
+        "result": "pass",
+        "criteria": {"A-01": true, "A-02": true, "A-03": true, "A-04": true, "A-05": true, "A-06": true, "A-07": true, "A-08": true}
+      },
+      {
+        "id": "B-01",
+        "family": "B",
+        "arm": "M0",
+        "path": "raw/B-01.md",
+        "sha256": "81d321ad482c23ff19dfd0b1c92d2981b98be2527be7c335962a36389410dd75",
+        "bytes": 16910,
+        "score": 7,
+        "total": 8,
+        "result": "fail",
+        "criteria": {"B-01": true, "B-02": true, "B-03": true, "B-04": false, "B-05": true, "B-06": true, "B-07": true, "B-08": true},
+        "failure": "Blocked F1 Repair until F2 was resolved instead of admitting only F1."
+      },
+      {
+        "id": "B-02",
+        "family": "B",
+        "arm": "M0",
+        "path": "raw/B-02.md",
+        "sha256": "1064ef1bf2eff1a0c66d951ac74fcdf7dbece86455d1e07855bf6795bd9ad06e",
+        "bytes": 13570,
+        "score": 6,
+        "total": 8,
+        "result": "fail",
+        "criteria": {"B-01": true, "B-02": true, "B-03": false, "B-04": false, "B-05": true, "B-06": true, "B-07": true, "B-08": true},
+        "failure": "Deferred review-owner selection and blocked F1 Repair until F2 was resolved."
+      }
+    ]
+  },
+  "h1_contribution": {
+    "admitted_units": 0,
+    "samples": 0,
+    "decision": "not-applicable",
+    "claim": "none; H1 is byte-identical to M0"
+  },
+  "current_only_dispositions": {
+    "runtime_owned_push": "rejected from M0 as owned elsewhere; no sampled regression observed",
+    "same_actor_once_limit": "rejected from M0 in favor of state-and-authority continuation; no sampled regression observed",
+    "promotion_effect": "neither disposition establishes V1 because M0 viability failed"
+  },
+  "v1": {
+    "established": false,
+    "sha256": null,
+    "relationship": "none",
+    "reason": "Exact M0 failed protected behavioral viability; H1 is identical and cannot repair the baseline."
+  },
+  "proof": {
+    "candidate_checker": "passed",
+    "helper_tests": "46 passed before dispatch",
+    "final_focused_checks": "69 passed",
+    "skill_validation": "passed",
+    "full_pytest": "206 passed, 4 skipped",
+    "markdown_gates": "passed",
+    "diff_checks": "git diff --check and git diff --cached --check passed",
+    "git_head": "94d68e78d8812e9a2ceffd093e729402cac1cff2"
+  },
+  "residual_transfer_gaps": [
+    "Fixtures simulate provider and Git observations; no live tracker, connector partial failure, remote publication, or irreversible closeout ran.",
+    "Provider-specific mutation idempotency remains unverified.",
+    "Worktree containment does not establish process, credential, network, cache, submodule, or scarce-resource isolation.",
+    "Results remain bounded to the frozen bytes, fixtures, model, host, reasoning configuration, tools, and five samples."
+  ]
+}

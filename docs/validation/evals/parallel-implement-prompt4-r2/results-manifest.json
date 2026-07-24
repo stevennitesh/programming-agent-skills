@@ -1,0 +1,221 @@
+{
+  "format": 1,
+  "campaign": "parallel-implement-2026-07-24-prompt4-r2",
+  "decision": "accepted",
+  "campaign_shape": "minimum-candidate",
+  "configuration": {
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "high",
+    "host": "Codex fresh-context subagents on Windows/PowerShell",
+    "tools": "Read the exact frozen runtime and assigned worker-visible fixture; write only the assigned capture. All tracker, Git, worktree, remote, publication, installation, and destructive operations remained simulated.",
+    "repository_fixed_point": "94d68e78d8812e9a2ceffd093e729402cac1cff2",
+    "current_runtime_tree_sha256": "036dfdb8afc4bb34968c83a9bbd429e14d63819f2041c61b9518336d0e4770dc",
+    "failed_r1_runtime_tree_sha256": "bbaf9558628dc5370d6b5f5770785746763eee63ca93f84113e18cb75307ed05",
+    "runtime_m0_sha256": "c347c36f782f401d770709bf0170dc9a5ac1a77a97038ea42f6d5b163b4c6a0d",
+    "runtime_h1_sha256": "c347c36f782f401d770709bf0170dc9a5ac1a77a97038ea42f6d5b163b4c6a0d",
+    "runtime_relation": "current != M0 = H1",
+    "protocol_manifest_sha256": "d97e25316c6bb5fbdf30c4290e87b68cd330c9d1b36f3127190a648618fa0278",
+    "worker_fixture_sha256": "fc7132e44d07f69443fc5d99129b1afba33455882c0cd4db3da89697cd9e820e",
+    "evaluator_fixture_sha256": "bd6cbb84ff79f9ffbda6ba3630f7f470fb3392543af2a426f1a6ff75e68504fb",
+    "worker_payload_isolation": "passed",
+    "decision_bearing_telemetry": "available",
+    "unavailable_telemetry": [
+      "Exact backend build and sampling seed were not exposed.",
+      "Token counts and latency were not exposed.",
+      "Workers did not echo model and reasoning identities; dispatch records supply the fixed configuration."
+    ]
+  },
+  "m0_viability": {
+    "decision": "passed",
+    "valid_samples": 5,
+    "invalid_samples": 0,
+    "sample_passes": 5,
+    "sample_failures": 0,
+    "critical_failures": [],
+    "protocol_deviations": [
+      {
+        "sample": "O-03",
+        "observation": "The worker reported running a read-only git diff --check after writing its capture.",
+        "disposition": "decision-neutral; it did not expose the evaluator fixture, candidate conclusions, prior or peer outputs, did not mutate state, and did not alter the completed capture"
+      },
+      {
+        "sample": "O-02 and O-03",
+        "observation": "Root mechanically removed Markdown hard-break trailing spaces after scoring so repository validation would accept the captures.",
+        "disposition": "decision-neutral; only trailing spaces changed, semantic text and root scores were unchanged, and the manifest records the normalized final capture identities"
+      }
+    ],
+    "aggregate": {
+      "criteria_passed": 25,
+      "criteria_total": 25,
+      "mean_score": 5.0,
+      "score_range": [5, 5],
+      "population_variance": 0.0,
+      "sample_pass_rate": 1.0
+    },
+    "families": {
+      "ordinary": {
+        "samples": 3,
+        "passes": 3,
+        "mean_score": 5.0,
+        "score_range": [5, 5],
+        "population_variance": 0.0,
+        "worst": "O-01, O-02, and O-03 each satisfied 5/5 criteria.",
+        "decision_changing_variance": "none"
+      },
+      "high-risk": {
+        "samples": 2,
+        "passes": 2,
+        "mean_score": 5.0,
+        "score_range": [5, 5],
+        "population_variance": 0.0,
+        "worst": "H-01 and H-02 each satisfied 5/5 criteria.",
+        "decision_changing_variance": "none"
+      }
+    },
+    "protected_behavior": {
+      "passed_units": [
+        "M0-01",
+        "M0-02",
+        "M0-03",
+        "M0-04",
+        "M0-05",
+        "M0-06",
+        "M0-07",
+        "M0-08",
+        "M0-09",
+        "M0-10",
+        "M0-11",
+        "M0-12",
+        "M0-13",
+        "M0-14",
+        "M0-15",
+        "M0-16",
+        "M0-17"
+      ],
+      "compatibility": "K-01 through K-08 passed at their registered exact-reusable or lane-limited boundary after identity read-back.",
+      "relationships": "All eight owner, trigger, and Return rows passed; ordinary and high-risk route facts and wrong-route exclusions received fresh behavioral proof.",
+      "authority": "Fresh samples preserved caller admission, root review and Repair ownership, reviewer no-mutation authority, helper non-authority, and successor proof/review boundaries."
+    },
+    "samples": [
+      {
+        "id": "O-01",
+        "family": "ordinary",
+        "arm": "M0",
+        "path": "raw/O-01.md",
+        "sha256": "471c3c6cebd8cbb10b009de2ca1f91f8debf5b9568fccf761462d4def40af116",
+        "bytes": 4648,
+        "score": 5,
+        "total": 5,
+        "result": "pass",
+        "criteria": {
+          "route": true,
+          "intact_pre_admission": true,
+          "complete_set_gates": true,
+          "successor_proof_review": true,
+          "completion_boundary": true
+        }
+      },
+      {
+        "id": "O-02",
+        "family": "ordinary",
+        "arm": "M0",
+        "path": "raw/O-02.md",
+        "sha256": "11f29b42d57d74d07f0f945a36ae47dc46a7dac8e6a27d64bc8d3cd27f1d7e32",
+        "bytes": 6108,
+        "score": 5,
+        "total": 5,
+        "result": "pass",
+        "criteria": {
+          "route": true,
+          "intact_pre_admission": true,
+          "complete_set_gates": true,
+          "successor_proof_review": true,
+          "completion_boundary": true
+        }
+      },
+      {
+        "id": "O-03",
+        "family": "ordinary",
+        "arm": "M0",
+        "path": "raw/O-03.md",
+        "sha256": "07933e54f0738aacae27d2e56d4bae6b20155d5916058d78abcabc6a405709cc",
+        "bytes": 5269,
+        "score": 5,
+        "total": 5,
+        "result": "pass",
+        "criteria": {
+          "route": true,
+          "intact_pre_admission": true,
+          "complete_set_gates": true,
+          "successor_proof_review": true,
+          "completion_boundary": true
+        }
+      },
+      {
+        "id": "H-01",
+        "family": "high-risk",
+        "arm": "M0",
+        "path": "raw/H-01.md",
+        "sha256": "747545804beeabb1e6c17395dfd0565ced4d79e693068a87c16ef06a8bfb294c",
+        "bytes": 3529,
+        "score": 5,
+        "total": 5,
+        "result": "pass",
+        "criteria": {
+          "route": true,
+          "intact_pre_admission": true,
+          "complete_set_gates": true,
+          "successor_proof_review": true,
+          "completion_boundary": true
+        }
+      },
+      {
+        "id": "H-02",
+        "family": "high-risk",
+        "arm": "M0",
+        "path": "raw/H-02.md",
+        "sha256": "2ca75cf2806cda2aa2249d5201fb988ae9b7d6ebd4862763969eed8dd114325f",
+        "bytes": 3789,
+        "score": 5,
+        "total": 5,
+        "result": "pass",
+        "criteria": {
+          "route": true,
+          "intact_pre_admission": true,
+          "complete_set_gates": true,
+          "successor_proof_review": true,
+          "completion_boundary": true
+        }
+      }
+    ]
+  },
+  "h1_contribution": {
+    "admitted_units": 0,
+    "samples": 0,
+    "decision": "not-applicable",
+    "claim": "none; H1 is byte-identical to M0"
+  },
+  "v1": {
+    "established": true,
+    "sha256": "c347c36f782f401d770709bf0170dc9a5ac1a77a97038ea42f6d5b163b4c6a0d",
+    "relationship": "V1 = M0 = H1",
+    "reason": "Every M0 unit and protected compatibility and relationship lane passed; no H1 unit exists."
+  },
+  "proof": {
+    "candidate_checker": "passed",
+    "helper_and_experimental_tests": "55 passed",
+    "unaffected_parallel_overlay_state_boundary_tests": "6 passed",
+    "skill_validation": "passed",
+    "full_pytest": "206 passed, 4 skipped after final behavior-complete bytes",
+    "markdown_and_json_gates": "passed",
+    "diff_checks": "git diff --check and git diff --cached --check passed",
+    "git_head": "94d68e78d8812e9a2ceffd093e729402cac1cff2"
+  },
+  "residual_transfer_gaps": [
+    "Fixtures simulate provider and Git observations; no live tracker, connector partial failure, remote publication, or irreversible closeout ran.",
+    "Provider-specific mutation idempotency remains unverified.",
+    "Worktree containment does not establish process, credential, network, cache, submodule, or scarce-resource isolation.",
+    "Results remain bounded to the frozen bytes, fixtures, model, host, reasoning configuration, tools, and five samples.",
+    "The O-03 post-capture read-only diff check and root-only trailing-space normalization of O-02/O-03 are recorded decision-neutral protocol deviations."
+  ]
+}

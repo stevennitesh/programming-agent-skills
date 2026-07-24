@@ -79,7 +79,7 @@ Progressive evidence belongs at the gate where it becomes actionable:
 - **Integration correction:** matching regression, owner and lane actor, selected scope-ID subset, worker or correction commit, actual changed files, ancestry, clean successor HEAD, and bounded regression proof.
 - **Review:** drained graph, loop-close proof, immutable target, `review-invocation` identity, route, mode, classified findings, decision, and residual risk.
 - **Repair:** blocked snapshot, one complete eligible finding set, generation, owners, scopes, proof, successor HEAD, and completion evidence.
-- **Lock:** approved HEAD, verified child packets, child-first mutation read-backs, parent closeout, applicable push/remote proof, and lane dispositions.
+- **Lock:** approved HEAD, verified child packets, child-first mutation read-backs, parent closeout, publication evidence supplied under separate authority when applicable, and lane dispositions.
 
 Runtime contract 3 uses `checkpoint` for resumable `partial` or `blocked`. After `resume`, authority stays closed until `reconcile` records Git, worktree, actor, tracker, and remote observations. Its compatibility `release` event is terminal and accepts only `complete`; the skill's semantic phase is Lock.
 

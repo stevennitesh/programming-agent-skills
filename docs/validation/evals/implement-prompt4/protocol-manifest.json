@@ -1,0 +1,386 @@
+{
+  "format": 1,
+  "source_manifest_sha256": "a96a8222f44ea8b5b2db98a782d5a7a071f8fcdd94bf1df879ed75befb825cb3",
+  "runtime_packages": {
+    "m0": "1f61b9880b881771b579372075dd89e3bccb7ce9c94ae3bd0e30f1f43ae8724f",
+    "h1": "3960bc073a49022faaf581c4829653e16d470e3c9a727066d8a755a1086b5e8d"
+  },
+  "worker_template_sha256": "9d29ea79dc421fa28c991488e9e7ded3547815d47a18f048e36000bbf6dce32b",
+  "root_only_evaluation_fixture_sha256": "9e3d9f155ce82a53f6a52227af075eae9568636d32441509cd0bf2fd7825649e",
+  "records": [
+    {
+      "fixture_id": "V-01",
+      "family": "outcome-invocation",
+      "cluster": "m0-viability",
+      "worker_visible_fixture_sha256": "660f03f1c0fd46441f03cf1908e956e72bf57f8085f0ecebbbb2bb359aee2ebd",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/V-01.md",
+          "sha256": "b3a577eff2bc1c5448b2bc0779710be24cb7cb84d4a730a7d12a06e5a7457e6b"
+        }
+      }
+    },
+    {
+      "fixture_id": "V-02",
+      "family": "invocation-exclusion",
+      "cluster": "m0-viability",
+      "worker_visible_fixture_sha256": "5ae0b05a864136949d7d2f87f2720157f4880d1c482d454e9b6b2a151aaa8b47",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/V-02.md",
+          "sha256": "ca1b3f596dfc77cae5a8da57714e4b79fdf794dd0b4e6ed399acd9ab283968d1"
+        }
+      }
+    },
+    {
+      "fixture_id": "V-03",
+      "family": "invocation-exclusion",
+      "cluster": "m0-viability",
+      "worker_visible_fixture_sha256": "c5bf4f8ae92e625b7b9d47e543c5f86448b067b176a6a4ab01a253af09af7126",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/V-03.md",
+          "sha256": "d6cd79074875a0df3c5bbed5beac4723ce23211cdb22854ff1487aeb2ffc337f"
+        }
+      }
+    },
+    {
+      "fixture_id": "V-04",
+      "family": "setup-compatibility",
+      "cluster": "m0-viability",
+      "worker_visible_fixture_sha256": "ee4aba6a82c724666ef6011fa3ab2a78c560b545930e83173042e0de1e2526a5",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/V-04.md",
+          "sha256": "07f413bc367a2b73d86962749c4fd8e3f77d3dbe8542f568f90ec0c500c71b71"
+        }
+      }
+    },
+    {
+      "fixture_id": "V-05",
+      "family": "claim-authority",
+      "cluster": "m0-viability",
+      "worker_visible_fixture_sha256": "3dac588943604e6ab013f8cf6bc1d54c52c6faf854f142e1df38ceaf480870b0",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/V-05.md",
+          "sha256": "aeeb19da30a0f8a07207266d39ba5bfbc12f7d7cf5aed3a28bc091897020da5f"
+        }
+      }
+    },
+    {
+      "fixture_id": "V-06",
+      "family": "charter-authority",
+      "cluster": "m0-viability",
+      "worker_visible_fixture_sha256": "0283966029774ea1bc1e5af68d0b1f7ee56602247adac389293d0ce8443ca833",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/V-06.md",
+          "sha256": "83de1a26b7fa492cb41ea389cf830a0219d7b10a86e5c10968b958cdef38b7c5"
+        }
+      }
+    },
+    {
+      "fixture_id": "V-07",
+      "family": "inner-owner-routing",
+      "cluster": "m0-viability",
+      "worker_visible_fixture_sha256": "d105dd46b20d799b37e058b52ef04c5acd6268edecef77337861da0d8ee7fed2",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/V-07.md",
+          "sha256": "54809f1fce3751c0e74126a9c007e815c6aeb3cb0bc25c36fab83e3baa970a5e"
+        }
+      }
+    },
+    {
+      "fixture_id": "V-08",
+      "family": "proof-safety",
+      "cluster": "m0-viability",
+      "worker_visible_fixture_sha256": "d305f13cface1b663b83d48f48654c053501941a4333ec5d97e745c4f101520d",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/V-08.md",
+          "sha256": "e7593ded989c49b8c72b85eb90ad6d9e6e87409021d39d08c25575ce68fc8661"
+        }
+      }
+    },
+    {
+      "fixture_id": "V-09",
+      "family": "review-repair",
+      "cluster": "m0-viability",
+      "worker_visible_fixture_sha256": "fab1fd72e7bfb73f7f3bfc2c48e4f9f2b55b4eab3c282f922ca23ce35946a5e2",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/V-09.md",
+          "sha256": "edfece9e223d6756c8e57a41af7b4b57404730ff0f87a324c07d68059c8eac8c"
+        }
+      }
+    },
+    {
+      "fixture_id": "V-10",
+      "family": "local-closeout-order",
+      "cluster": "m0-viability",
+      "worker_visible_fixture_sha256": "bcf8c037860f33351f7728c052099af421e86bf615689b4f0d72a0796c541ad4",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/V-10.md",
+          "sha256": "5860d5f0965da7f0a93cfc411054b4377442505b843f04b32cbf965b532ec8dd"
+        }
+      }
+    },
+    {
+      "fixture_id": "V-11",
+      "family": "lock-identity",
+      "cluster": "m0-viability",
+      "worker_visible_fixture_sha256": "b62336ad91741fb31edcd6304adc29cb4f2640ef51e01b415671b58cefc9293a",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/V-11.md",
+          "sha256": "4f528875315a9783a4f5db357813a153198ee36270bf2e4dea0d2c493ab9190b"
+        }
+      }
+    },
+    {
+      "fixture_id": "V-12",
+      "family": "commit-identity",
+      "cluster": "m0-viability",
+      "worker_visible_fixture_sha256": "fa24ccbc7e034f58a83296df97024f13f2b7e45c310dead4e39a71e91513ac53",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/V-12.md",
+          "sha256": "843c9490d38c1cf9d6ab7d0b666c41a85b9edf21c92e1e698e0115442cb29a2e"
+        }
+      }
+    },
+    {
+      "fixture_id": "V-13",
+      "family": "connector-order",
+      "cluster": "m0-viability",
+      "worker_visible_fixture_sha256": "8737b288c04f07b4cd1602b1d22e56897caec323df4b08a0e5a726f18e7c26b7",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/V-13.md",
+          "sha256": "a044adb74a528e179541a13eb387d7ef52ca0d6a316aec629ad5007bf7c769c9"
+        }
+      }
+    },
+    {
+      "fixture_id": "V-14",
+      "family": "connector-safe-failure",
+      "cluster": "m0-viability",
+      "worker_visible_fixture_sha256": "42688cca0cc6009e47b3222e6163b732db24e499144b2d5f4815b39e4b39e050",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/V-14.md",
+          "sha256": "3d2b1af4c1cec63dee1d30126f7236953b845998cac14558b26273d15b936e68"
+        }
+      }
+    },
+    {
+      "fixture_id": "V-15",
+      "family": "push-authority",
+      "cluster": "m0-viability",
+      "worker_visible_fixture_sha256": "bfe37a4423756812bbd90b079fe8341f4ec61c9d1eef9b63f6edfe31b774d319",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/V-15.md",
+          "sha256": "7a9f57aec2d780b20c4a72e664287e095591314856d7640fa24649375525b16f"
+        }
+      }
+    },
+    {
+      "fixture_id": "V-16",
+      "family": "completion",
+      "cluster": "m0-viability",
+      "worker_visible_fixture_sha256": "be705e0a6a015bcf0d5c45ab1acadba860f71c8446877b224755c1e7dd8987a4",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/V-16.md",
+          "sha256": "de3d723be2e75875f727af86f159a82dab6efd5054ca7df81941e143fe455da1"
+        }
+      }
+    },
+    {
+      "fixture_id": "V-17",
+      "family": "safety",
+      "cluster": "m0-viability",
+      "worker_visible_fixture_sha256": "9abf0ffee17782b9fc7a577dc6070335a2c1259e3039bc9006d0c973aa7ac52e",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/V-17.md",
+          "sha256": "fd55d283b11fd9475556a73ac02dff89f151a3b7bd1f13b9aa54da7c8386fc4e"
+        }
+      }
+    },
+    {
+      "fixture_id": "Q1-HF-01",
+      "family": "horizontal-fragment",
+      "cluster": "H1-01",
+      "worker_visible_fixture_sha256": "bae1b7ecfcdfbe5474644ffe49c50baa814bdac1d0d0a74ece5df18528b64fef",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/Q1-HF-01.md",
+          "sha256": "229e6efc8460ed559cc76b953a77b94e3a8d57a57fd9301fb054ee3b6f4abd29"
+        },
+        "h1": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/h1/Q1-HF-01.md",
+          "sha256": "9d3b880833fc40c0fe0320d7f8e4b6886778194ae04a6768aadc75364022c3e4"
+        }
+      },
+      "arm_delta_only_runtime": true
+    },
+    {
+      "fixture_id": "Q1-HF-02",
+      "family": "horizontal-fragment",
+      "cluster": "H1-01",
+      "worker_visible_fixture_sha256": "73a3eda9c348c8c80a1d3cfc0f5dbae0e3f01805abec514b45c844124e21bf47",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/Q1-HF-02.md",
+          "sha256": "214287146b8facb9836ab8d35faaea4d99edf2c37d6193fa2980b0588a147bef"
+        },
+        "h1": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/h1/Q1-HF-02.md",
+          "sha256": "b5ae2f43053f1e4df34aa7b9ecf8143146f1413b16ff60a8c30154f25d9ed964"
+        }
+      },
+      "arm_delta_only_runtime": true
+    },
+    {
+      "fixture_id": "Q1-HF-03",
+      "family": "horizontal-fragment",
+      "cluster": "H1-01",
+      "worker_visible_fixture_sha256": "eb5f898da2d291f7c3b4a1bcb8110f2f1ecaba1f93b0a459e0d5de9a3071b3c6",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/Q1-HF-03.md",
+          "sha256": "493410308d6deebb17780a84e82f25fb69770b721edb665e24d600fb02c12962"
+        },
+        "h1": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/h1/Q1-HF-03.md",
+          "sha256": "626e2fb596d8942d357cd16f52d7c9ec0d9c69423e74fd2de3f1e22753ae4877"
+        }
+      },
+      "arm_delta_only_runtime": true
+    },
+    {
+      "fixture_id": "Q1-AW-01",
+      "family": "adjacent-work",
+      "cluster": "H1-01",
+      "worker_visible_fixture_sha256": "5d5e435c7e23d65af86fae669a025890f2c1994d0ee924b5c5bc3e052a513f30",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/Q1-AW-01.md",
+          "sha256": "bea05bb30b95aab69fb096bbefad959a4a3abef1225192a71d3e97507c8b1a9d"
+        },
+        "h1": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/h1/Q1-AW-01.md",
+          "sha256": "c8bf4500b27a0942784845be6a4484b4377f96a796adddb670d7d1887db4fc03"
+        }
+      },
+      "arm_delta_only_runtime": true
+    },
+    {
+      "fixture_id": "Q1-AW-02",
+      "family": "adjacent-work",
+      "cluster": "H1-01",
+      "worker_visible_fixture_sha256": "4c9f14764075e5508fff4bf5e22c94d8025341d54a704d83beae5ddeb59761d7",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/Q1-AW-02.md",
+          "sha256": "546d1666fe9f03de353e237e8aa883b6ff2400389e4ba12a12871ba0afeac3b4"
+        },
+        "h1": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/h1/Q1-AW-02.md",
+          "sha256": "b38dd756cd699a5a6ce3c89016d7d438258182445529e79e113f20c3624037d6"
+        }
+      },
+      "arm_delta_only_runtime": true
+    },
+    {
+      "fixture_id": "Q2-LR-01",
+      "family": "lost-response",
+      "cluster": "H1-02",
+      "worker_visible_fixture_sha256": "0bf6d42781d4773be0d03742c599b4104abb6bdeac5e8103fc12924719df902f",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/Q2-LR-01.md",
+          "sha256": "40951322c16a654b3039466e0a1ca9afad91d559b93c9d53364ccbaef148d08a"
+        },
+        "h1": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/h1/Q2-LR-01.md",
+          "sha256": "94989cb2fced3782d9d09e39793102c81b48f87f55dbe7003b1c23d22a630d84"
+        }
+      },
+      "arm_delta_only_runtime": true
+    },
+    {
+      "fixture_id": "Q2-LR-02",
+      "family": "lost-response",
+      "cluster": "H1-02",
+      "worker_visible_fixture_sha256": "0a5ce30111117d37411ed0d28dab2310e4cfd11170f71d9efda4c52189946aae",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/Q2-LR-02.md",
+          "sha256": "218201ea75776f047d09828c97fa94e733eaaa2b8dc0c1a79f461e5f12871681"
+        },
+        "h1": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/h1/Q2-LR-02.md",
+          "sha256": "23245114157523889736ee76a73185c70d7d258209793916b51e4c5450d2e553"
+        }
+      },
+      "arm_delta_only_runtime": true
+    },
+    {
+      "fixture_id": "Q2-PC-01",
+      "family": "partial-concurrent-state",
+      "cluster": "H1-02",
+      "worker_visible_fixture_sha256": "c52093f550f0e22adc5a399d9f84e5fd80701867fe0e837c3a192f8e84fbcf7d",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/Q2-PC-01.md",
+          "sha256": "e45c15f37032bc07612f974c86e14c632f8d11495fcb1ee9d84b6a919ad65d23"
+        },
+        "h1": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/h1/Q2-PC-01.md",
+          "sha256": "00b22e297c780d69743e68759b7f5bc034e30d975c11399996ee100b94d5e4cb"
+        }
+      },
+      "arm_delta_only_runtime": true
+    },
+    {
+      "fixture_id": "Q2-PC-02",
+      "family": "partial-concurrent-state",
+      "cluster": "H1-02",
+      "worker_visible_fixture_sha256": "179029a743a4be158bf5513495b23daff1d42326a61fb1b89c97e3e5f8de4149",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/Q2-PC-02.md",
+          "sha256": "f8c5daa72ba4e558cbedb1d99629cea9c913c82324aa8930125adad60c5aeaa6"
+        },
+        "h1": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/h1/Q2-PC-02.md",
+          "sha256": "86d9a5e6ba38177b2d55d5e2ec1a29d10f5c37e86882f1e54f99d72cafe8f2cc"
+        }
+      },
+      "arm_delta_only_runtime": true
+    },
+    {
+      "fixture_id": "Q2-PC-03",
+      "family": "partial-concurrent-state",
+      "cluster": "H1-02",
+      "worker_visible_fixture_sha256": "1396921a1d8d969e48dc59d722d9c553d19d7672180f079d3a39c2c7d185420c",
+      "payloads": {
+        "m0": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/m0/Q2-PC-03.md",
+          "sha256": "3a63dd07f2f6026bb989ef182a42563729986448bd201079cde9624bef979833"
+        },
+        "h1": {
+          "path": "docs/validation/evals/implement-prompt4/payloads/h1/Q2-PC-03.md",
+          "sha256": "f7dc28ab1e0dbd0b02c17eb762f4adfdb6f45b2ea6cc0f0651818a3746e3333c"
+        }
+      },
+      "arm_delta_only_runtime": true
+    }
+  ]
+}

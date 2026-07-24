@@ -1,4 +1,6 @@
-"""Focused Prompt 4 structural, invocation, and relationship proof."""
+"""Deterministic Prompt 3 proof for the frozen parallel-implement candidate."""
+
+from __future__ import annotations
 
 import hashlib
 import json
@@ -13,36 +15,42 @@ from scripts.skill_pack_contract import tree_hash
 
 
 CANDIDATE = ROOT / "skills/experimental/parallel-implement"
-EXPECTED_TREE = "036dfdb8afc4bb34968c83a9bbd429e14d63819f2041c61b9518336d0e4770dc"
-EXPECTED_FILES = {
-    "SKILL.md",
-    "agents/openai.yaml",
-    "references/CODEX-WORKTREE-LAUNCH.md",
-    "references/INTEGRATOR-BRIEF.md",
-    "references/RUN-LEDGER.md",
-    "references/WORKER-BRIEF.md",
-    "scripts/lane_worktree.py",
-    "scripts/run_ledger.py",
-}
+EVAL = ROOT / "docs/validation/evals/parallel-implement-prompt4"
+MANIFEST = json.loads((EVAL / "protocol-manifest.json").read_text("utf-8"))
+RUNTIME = MANIFEST["runtime"]
 
 
-def require(text: str, *needles: str) -> None:
-    normalized = " ".join(text.split())
-    for needle in needles:
-        assert " ".join(needle.split()) in normalized, needle
+def sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-actual_files = {
+def normalized_contains(text: str, value: str) -> None:
+    assert " ".join(value.split()) in " ".join(text.split()), value
+
+
+actual_inventory = sorted(
     path.relative_to(CANDIDATE).as_posix()
     for path in CANDIDATE.rglob("*")
     if path.is_file() and "__pycache__" not in path.parts
-}
-assert actual_files == EXPECTED_FILES, (actual_files - EXPECTED_FILES, EXPECTED_FILES - actual_files)
-assert tree_hash(CANDIDATE) == EXPECTED_TREE
+)
+assert actual_inventory == RUNTIME["inventory"]
+assert tree_hash(CANDIDATE) == RUNTIME["tree_sha256"]
+assert RUNTIME["m0_sha256"] == RUNTIME["h1_sha256"] == RUNTIME["tree_sha256"]
+for relative, expected in RUNTIME["files_sha256"].items():
+    assert sha256(CANDIDATE / relative) == expected, relative
 
-manifest = json.loads((ROOT / "skills/experimental/manifest.json").read_text("utf-8"))
-entry = manifest["skills"]["parallel-implement"]
-assert entry["candidate_sha256"] == EXPECTED_TREE
+for helper in ("scripts/lane_worktree.py", "scripts/run_ledger.py"):
+    assert (CANDIDATE / helper).read_bytes() == (
+        ROOT / "skills/custom/parallel-implement" / helper
+    ).read_bytes(), helper
+
+worker_path = EVAL / MANIFEST["evaluation"]["worker_fixture"]["path"]
+root_path = EVAL / MANIFEST["evaluation"]["root_fixture"]["path"]
+assert sha256(worker_path) == MANIFEST["evaluation"]["worker_fixture"]["sha256"]
+assert sha256(root_path) == MANIFEST["evaluation"]["root_fixture"]["sha256"]
+worker_text = worker_path.read_text("utf-8").lower()
+for forbidden in ("expected_m0_weakness", "candidate_terms", '"rubrics"', '"scoring"'):
+    assert forbidden not in worker_text
 
 skill = (CANDIDATE / "SKILL.md").read_text("utf-8")
 metadata = (CANDIDATE / "agents/openai.yaml").read_text("utf-8")
@@ -50,68 +58,59 @@ ledger = (CANDIDATE / "references/RUN-LEDGER.md").read_text("utf-8")
 worker = (CANDIDATE / "references/WORKER-BRIEF.md").read_text("utf-8")
 integrator = (CANDIDATE / "references/INTEGRATOR-BRIEF.md").read_text("utf-8")
 
-require(
-    skill,
-    "explicitly requested parent",
-    "Root-only",
-    "If invocation is delegated, return a routing blocker before mutation.",
-    "Return one selected item to `$implement`",
-    "return an incomplete, ambiguous, unsettled, or unready graph to `$to-tickets`",
-    "recommend\n`$repo-bootstrap` and stop",
-    "events.jsonl` is authority",
+for required in (
+    "explicit request to deliver one parent",
+    "exhaustive associated non-empty Ready-for-agent graph",
+    "recommend `$repo-bootstrap` and stop",
+    "complete repair packet",
+    "`events.jsonl` is authority",
     "Missing state is not completed state.",
     "semantic ownership",
     "proof seams and scarce proof resources",
-    "otherwise dispatch serially",
-    "`landed-awaiting-lock`, but it never closes the tracker item",
+    "Claim each selected item and read back the claim.",
     "Land accepted commits one at a time at the root.",
-    "`$tdd`",
-    "`$diagnosing-bugs`",
-    "`$review`",
-    "`$convergent-pr-review`",
     "`$resolving-merge-conflicts`",
     "Every repaired successor receives fresh formal review.",
-    "close every child with mutation read-back, then\nclose the parent",
-    "Return `complete` only when",
+    "close every child with mutation read-back",
+    "close the parent only after",
     "nonterminal `partial` or `blocked` return",
+    "Publication and Git delivery remain with their separately authorized owners.",
+):
+    normalized_contains(skill, required)
+
+assert "allow_implicit_invocation: false" in metadata
+assert "Continue the same actor once" not in skill
+assert "Push only when authorized" not in skill
+normalized_contains(
+    skill,
+    "Continue an actor only while its reconciled lane, authority, and bounded assignment remain current",
 )
-require(metadata, "allow_implicit_invocation: false")
-require(ledger, "runtime contract 3", "events.jsonl", "checkpoint", "closeout")
-require(
-    worker,
-    "Never spawn, integrate, formally review, mutate trackers, push, or widen scope.",
+normalized_contains(
+    ledger,
+    "publication evidence supplied under separate authority when applicable",
 )
-require(
+normalized_contains(worker, "Never spawn, integrate, formally review, mutate trackers, push, or widen scope.")
+normalized_contains(
     integrator,
     "Return dispatch, formal review, tracker mutation, push, and run closeout to the orchestrator.",
 )
 
-for reference in (
-    "references/RUN-LEDGER.md",
-    "references/CODEX-WORKTREE-LAUNCH.md",
-    "references/WORKER-BRIEF.md",
-    "references/INTEGRATOR-BRIEF.md",
-):
-    assert (CANDIDATE / reference).is_file(), reference
+for mapping in ("runtime_clause_map", "compatibility_map"):
+    for surfaces in MANIFEST[mapping].values():
+        for surface in surfaces:
+            path_text = surface.split("#", 1)[0]
+            assert (CANDIDATE / path_text).is_file(), surface
+for passage, owners in MANIFEST["instruction_passage_map"].items():
+    assert (CANDIDATE / passage.split("#", 1)[0]).is_file(), passage
+    assert owners and all(owner.startswith(("M0-", "K-")) for owner in owners), passage
 
-for relative in (
-    "agents/openai.yaml",
-    "references/CODEX-WORKTREE-LAUNCH.md",
-    "scripts/lane_worktree.py",
-    "scripts/run_ledger.py",
-):
-    candidate_bytes = (CANDIDATE / relative).read_bytes()
-    canonical_bytes = (ROOT / "skills/custom/parallel-implement" / relative).read_bytes()
-    assert candidate_bytes == canonical_bytes, relative
+for relative in re.findall(r"\[[^\]]+\]\(([^)#]+)(?:#[^)]+)?\)", skill):
+    assert (CANDIDATE / relative).resolve().is_file(), relative
 
-affected_markdown = [
-    ROOT / "docs/synthesis/skills/parallel-implement.md",
-    ROOT / "docs/validation/transcripts/2026-07-23-parallel-implement-prompt4-behavior-audit.md",
-    ROOT / "docs/validation/evals/parallel-implement-prompt4/recovery-raw.md",
-    ROOT / "docs/validation/evals/parallel-implement-prompt4/concurrency-raw.md",
-    ROOT / "docs/validation/evals/parallel-implement-prompt4/viability-raw.md",
+markdown = list(CANDIDATE.rglob("*.md")) + [
+    ROOT / "docs/validation/transcripts/2026-07-24-parallel-implement-prompt3-construction.md"
 ]
-for path in affected_markdown:
+for path in markdown:
     text = path.read_text("utf-8")
     assert len(re.findall(r"(?m)^```", text)) % 2 == 0, path
     in_fence = False
@@ -120,24 +119,26 @@ for path in affected_markdown:
         if line.startswith("```"):
             in_fence = not in_fence
             table_width = None
-            continue
-        if in_fence:
-            continue
-        if line.startswith("|") and line.endswith("|"):
+        elif not in_fence and line.startswith("|") and line.endswith("|"):
             width = line.count("|")
-            if table_width is None:
-                table_width = width
+            table_width = width if table_width is None else table_width
             assert width == table_width, (path, line)
-        else:
+        elif not in_fence:
             table_width = None
     for target in re.findall(r"\[[^\]]+\]\(([^)#]+)(?:#[^)]+)?\)", text):
         if "://" not in target:
             assert (path.parent / target).resolve().exists(), (path, target)
 
-print(f"tree_sha256={EXPECTED_TREE}")
-for relative in sorted(EXPECTED_FILES):
-    data = (CANDIDATE / relative).read_bytes()
-    print(f"{hashlib.sha256(data).hexdigest()}  {relative}")
-print("structural_invocation_context_return_completion_relationship=pass")
-print("protected_byte_parity=pass")
-print("affected_markdown_gate=pass")
+experimental_manifest = json.loads(
+    (ROOT / "skills/experimental/manifest.json").read_text("utf-8")
+)
+assert (
+    experimental_manifest["skills"]["parallel-implement"]["candidate_sha256"]
+    == RUNTIME["tree_sha256"]
+)
+
+print(f"tree_sha256={RUNTIME['tree_sha256']}")
+print("inventory_hashes_h1_equality=pass")
+print("helper_identity=pass")
+print("clauses_compatibility_invocation_relationships=pass")
+print("fixture_isolation_and_markdown=pass")

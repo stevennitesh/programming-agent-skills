@@ -871,15 +871,15 @@ def test_convergent_review_checks_snapshot_drift_not_baseline_drift() -> None:
 def test_implement_selects_one_risk_scaled_review_route() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
 
-    review_section = implement.split("## Review", 1)[1].split("## Lock", 1)[0]
-    assert "Invoke exactly one campaign route" in review_section
+    review_section = implement.split("## Review", 1)[1].split("## Close", 1)[0]
+    assert "Invoke exactly one formal route" in review_section
     assert re.findall(r"`\$(review|convergent-pr-review)`", review_section)[:2] == [
         "review",
         "convergent-pr-review",
     ]
-    assert "FINDING-CONTRACT.md" in review_section
-    assert "`automatic-in-scope`" in review_section
-    assert "without a partial fix" in review_section
+    assert "Finding Contract" in review_section
+    assert "complete caller-admitted" in review_section
+    assert "mixed-authority, partial, out-of-scope, or" in review_section
 
 
 def test_improve_codebase_separates_survey_from_selected_candidate() -> None:
@@ -1104,8 +1104,8 @@ def test_implementation_closeout_requires_the_spec_axis() -> None:
 
     for text in (review, convergent):
         assert "`Spec required: yes | no`" in text
-    for text in (implement, parallel):
-        assert "`Spec required: yes`" in " ".join(text.split())
+    assert "Supply the required Spec" in " ".join(implement.split())
+    assert "`Spec required: yes`" in " ".join(parallel.split())
 
 
 def test_independent_scouts_receive_curated_fresh_context() -> None:
@@ -1301,8 +1301,8 @@ def test_mutating_workflows_require_readback() -> None:
     for name in ("implement", "parallel-implement", "to-spec", "to-tickets", "triage", "wayfinder"):
         text = (CUSTOM / name / "SKILL.md").read_text(encoding="utf-8")
         if name == "implement":
-            assert "read back the mutation" in text
-            assert "Partial or failed read-back" in text
+            assert "Mutation read-back" in text
+            assert "partial or failed closeout Returns" in " ".join(text.split())
         elif name == "parallel-implement":
             assert "mutation read-back" in text
             assert "read that mutation back" in text
@@ -1430,8 +1430,9 @@ def test_worker_modes_have_distinct_completion_artifacts() -> None:
 
     assert "**staged worker**" in contract
     assert "**lane worker**" in contract
-    assert "**Staged worker:" in implement
-    assert "A lane worker or child integrator" in parallel
+    assert "staged worker" not in implement
+    assert "exhaustive parent graph to\n`$parallel-implement`" in implement
+    assert "A lane worker or child integrator" in " ".join(parallel.split())
 
 
 def test_parallel_implement_separates_context_checkout_and_review_ownership() -> None:
@@ -1567,6 +1568,9 @@ def test_parallel_implement_has_root_receipt_budget_and_windows_contracts() -> N
         encoding="utf-8"
     )
     worker = (skill_dir / "references/WORKER-BRIEF.md").read_text(encoding="utf-8")
+    integrator = (skill_dir / "references/INTEGRATOR-BRIEF.md").read_text(
+        encoding="utf-8"
+    )
     script = (skill_dir / "scripts/run_ledger.py").read_text(encoding="utf-8")
     lane_script = (skill_dir / "scripts/lane_worktree.py").read_text(encoding="utf-8")
 
@@ -1596,7 +1600,7 @@ def test_parallel_implement_has_root_receipt_budget_and_windows_contracts() -> N
     assert "repo-owned configuration" in launch
     assert "namespace-package locations" in launch
     assert "--python-provenance-file" in launch and "--python-provenance-file" in lane_script
-    assert "original worker" in parallel
+    assert "`original-worker`" in integrator
     assert "### Integration correction" in worker
     assert "regression event ID" in worker
     assert "prior integration HEAD" in worker
@@ -1718,29 +1722,23 @@ def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
 
     assert not implicit_policy(CUSTOM / "implement")
-    owner_route = re.search(r"(?m)^\*\*Owner: (.+)\.\*\*$", implement)
-    worker_route = re.search(r"(?m)^\*\*Staged worker: (.+)\.\*\*$", implement)
-    assert owner_route is not None and worker_route is not None
-    assert {"Charter", "Review", "Repair", "Lock"} <= set(
-        part.strip() for part in owner_route.group(1).split("->")
-    )
-    assert worker_route.group(1).endswith("Return")
-    assert "Review" not in worker_route.group(1)
-    assert "Lock" not in worker_route.group(1)
-    assert "The owner holds tracker claim and release" in implement
-    assert "An explicitly assigned staged worker owns only its" in implement
+    assert "Accept one caller-selected item only" in implement
+    assert "A named target remains binding" in implement
+    assert "do not substitute another item" in implement
+    assert "exhaustive parent graph to\n`$parallel-implement`" in implement
+    assert "staged worker" not in implement
 
 
 def test_local_tracker_closeout_enters_the_lock_snapshot() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
 
-    review_tree = implement.index("captures one immutable review tree")
-    closeout = implement.index("For a repo-local tracker, write the")
-    lock_tree = implement.index("Capture the lock tree")
+    review_tree = implement.index("pin one immutable proved candidate")
+    closeout = implement.index("For Local Markdown, append the final closeout")
+    lock_tree = implement.index("Lock the exact reviewed candidate")
 
     assert review_tree < closeout < lock_tree
-    assert "read back the mutation" in implement
-    assert "git diff <review-tree> <lock-tree>" in implement
+    assert "apply Mutation read-back" in implement
+    assert "Any other review-to-lock delta Returns to formal review" in implement
 
 
 def test_diagnosis_returns_to_one_implementation_owner() -> None:

@@ -25,9 +25,9 @@ and invocation based only on available concurrency.
 The root alone admits scope, reconciles durable state, qualifies concurrency,
 claims and dispatches work, accepts returns, lands commits, routes conflicts
 and corrections, invokes formal review, admits findings, mutates the tracker,
-accepts residual risk, closes items, pushes when authorized, and declares
-completion. A lane worker or child integrator never widens or dispatches the
-campaign.
+accepts residual risk, closes items, and declares completion. A lane worker or
+child integrator never widens or dispatches the campaign. Publication and Git
+delivery remain with their separately authorized owners.
 
 ## Trace
 
@@ -92,9 +92,9 @@ returns landing and review authority to the root.
 
 Accept a worker return only when its scope, acceptance, proof, commit and final
 state, skipped checks, risk, and next need are fully accounted for. A blocker
-retries only after its condition changes. Continue the same actor once only
-when it must complete or explain its own bounded result; otherwise reconcile
-and open a fresh lane.
+retries only after its condition changes. Continue an actor only while its
+reconciled lane, authority, and bounded assignment remain current; otherwise
+open a fresh lane.
 
 Land accepted commits one at a time at the root. Inspect the actual diff,
 expected scope, stale-base overlap, conflicts, and focused proof. After each
@@ -106,10 +106,11 @@ state-boundary branches and high-risk interactions on the current integration
 Preserve stale or conflicted packets without landing. Choose a safe serial
 route or invoke `$resolving-merge-conflicts` from the preserved operation.
 When a landing exposes a trusted integration regression, record it and choose
-one authorized correction route: the original worker once, a fresh bounded
-lane, or an explicitly authorized tiny root fix. Start from the recorded
-integration `HEAD`, prove the RED and affected paths, and invalidate superseded
-drained or review-ready evidence.
+one authorized correction route: a reconciled existing lane whose authority
+and bounded assignment remain current, a fresh bounded lane, or an explicitly
+authorized tiny root fix. Start from the recorded integration `HEAD`, prove the
+RED and affected paths, and invalidate superseded drained or review-ready
+evidence.
 
 Repeat Select, Open, and Drain until the exhaustive graph is drained.
 
@@ -123,9 +124,17 @@ required: yes`, the Charter, Source Trace, fixed point, target, and required
 proof.
 
 Review grants no mutation. The root may admit only one complete bounded batch
-of Charter-preserving `automatic-in-scope` findings within the recorded Repair
-and successor-review budgets. Return ambiguous or decision-required findings
-as one decision packet. Every repaired successor receives fresh formal review.
+after preserving and returning the complete blocking report intact for caller
+decision. Open no Repair plan, assignment, mutation, or successor snapshot
+before the caller admits the complete blocking set. After admission, require
+the admitted IDs to equal every blocking ID and require every blocker to be
+`automatic-in-scope`, individually Charter-preserving, and within both the
+frozen Repair-generation and successor-review budgets. A mixed, partial,
+decision-required, speculative, commitment-changing, or over-budget set
+returns intact with its exact decision or budget gap and grants no Repair
+authority. Every admitted repaired successor receives identity-matched proof
+and fresh formal review through the owner selected from its target type and
+risk facts.
 
 ## Lock
 
@@ -133,14 +142,15 @@ Open Lock only when the accepted reviewed `HEAD` equals current integration
 `HEAD`, required final proof passes, and the review requirement is complete.
 Generate the closeout plan, close every child with mutation read-back, then
 close the parent only after its rule passes and read that mutation back.
-Release every claim. Push only when authorized, then verify the approved
-closeout SHA at the remote. Make every lane `removed`, `provider-preserved`, or
-an explicitly accepted safe residual.
+Release every claim. Reconcile publication evidence only when a separately
+authorized owner supplies it. Make every lane `removed`, `provider-preserved`,
+or an explicitly accepted safe residual.
 
 Return `complete` only when the exhaustive graph is drained; every accepted
 change is in the reviewed current integration `HEAD`; proof and independent
 review pass; children and parent are closed in order with read-back; claims are
-released; lanes are safe; and applicable push evidence is verified.
+released; lanes are safe; and applicable publication evidence supplied under
+separate authority is verified.
 
 For every nonterminal `partial` or `blocked` return, preserve accepted and
 unrelated state, halt unsafe progression, quiesce or account for actors,
