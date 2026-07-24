@@ -1,0 +1,22 @@
+{"sample_id":"V01","arm":"M0","capture":"published-spec; GitHub issue 41; one create; exact title/body/state/relationship read-back; draft removed; issue 9 preserved"}
+{"sample_id":"V02","arm":"M0","capture":"published-spec; GitLab issue 73; one create; exact description/notes/state/relationship read-back; draft removed"}
+{"sample_id":"V03","arm":"M0","capture":"published-spec; .scratch/cache-key/SPEC.md; one create; exact file read-back; draft removed; unrelated scratch preserved"}
+{"sample_id":"V04","arm":"M0","capture":"published-spec; repaired complete WF-204 source; R1-R4 traced; one create; full read-back; draft removed; Wayfinder unchanged"}
+{"sample_id":"V05","arm":"M0","capture":"published-spec; selected IC-7 packet traced without candidate mutation; one create/read-back; draft removed; no downstream execution"}
+{"sample_id":"V06","arm":"M0","capture":"explicit settled request admitted; adjacent conversational unsettled request not admitted; no mutation for adjacent case"}
+{"sample_id":"V07","arm":"M0","capture":"setup-precondition; missing tracker.md/create/read-back; unchanged state; repo-bootstrap recommendation"}
+{"sample_id":"V08","arm":"M0","capture":"source-gap; decision://retention access denied; retention/deletion/data/acceptance affected; no mutation"}
+{"sample_id":"V09","arm":"M0","capture":"source-gap; upload size materially changes API acceptance and limits; product owner; no mutation"}
+{"sample_id":"V10","arm":"M0","capture":"source-gap; packet Workspace conflicts with ADR-12 Project; domain owner; no mutation"}
+{"sample_id":"V11","arm":"M0","capture":"source-gap; events-versus-polling public decision unresolved; codebase-design vocabulary transfers no authority"}
+{"sample_id":"V12","arm":"M0","capture":"existing-state-conflict; matching parent 18; no duplicate create or reconciliation"}
+{"sample_id":"V13","arm":"M0","capture":"existing-state-conflict; divergent parent 19 retention; no overwrite or reconciliation"}
+{"sample_id":"V14","arm":"M0","capture":"existing-state-conflict; state unknown after one timeout; no draft/create; read-only inspection next"}
+{"sample_id":"V15","arm":"M0","capture":"coverage defect H4 identified; repaired from complete source to audit export ID/timestamp plus observable proof and failure; corrected draft reread; no durable mutation in fixture"}
+{"sample_id":"V16","arm":"M0","capture":"draft-ready interim; new v2, bounded v1 reuse, expiry reauthentication, admin/user revocation, no migration; all material branches covered"}
+{"sample_id":"V17","arm":"M0","capture":"publication-recovery; authenticated rejection before application; absence read back; frozen draft preserved; no retry"}
+{"sample_id":"V18","arm":"M0","capture":"publication-recovery; parent 22 omits R3; exact delta; draft preserved; no second create or overwrite"}
+{"sample_id":"V19","arm":"M0","capture":"publication-recovery; sent create then connection close; query unavailable; durable state unknown; draft preserved; no retry"}
+{"sample_id":"V20","arm":"M0","capture":"published-spec; parent 27/S27 exact match; verified draft cleanup; to-tickets recommended only"}
+{"sample_id":"V21","arm":"M0","capture":"published-spec; parent verified; zero children; to-tickets recommended but not invoked"}
+{"sample_id":"V22","arm":"M0","capture":"published-spec; exact parent read-back; modified code.py and issue 99 preserved unchanged"}

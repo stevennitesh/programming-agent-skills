@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "campaign": "convergent-pr-review-2026-07-24",
+  "unit": "Prompt 4 entry-predicate reconciliation",
+  "fixed_head": "f3be70c31dd8f2ae9f12a75248065ef313790bda",
+  "runtime": {
+    "m0_tree": "6c419036d5cb8000d47666f2e02d414330c2369933a75654bac786bd8cff7280",
+    "h1_tree": "379474917dc540ef9704a74628af11e123db11fc9e800a94b797278c1ab05c82",
+    "arm_delta": "runtime package only"
+  },
+  "telemetry": {
+    "host": "Codex desktop",
+    "model": "inherited campaign model; exact service identifier unavailable",
+    "reasoning": "inherited campaign setting; exact identifier unavailable",
+    "temperature": "unavailable",
+    "seed": "unavailable",
+    "fresh_context": "fork_turns=none",
+    "tools": "read exact runtime and one resolved envelope only"
+  },
+  "h1_03": {
+    "contribution_mode": "quality-lift",
+    "applicability": "situational",
+    "entry_positive": {
+      "m0_count": 5,
+      "registered_deficit_count": 0,
+      "scores": {
+        "H103-EP01": 10,
+        "H103-EP02": 10,
+        "H103-EP03": 10,
+        "H103-EP04": 10,
+        "H103-EP05": 10
+      },
+      "h1_count": 0,
+      "gate": "candidate wave not authorized"
+    },
+    "wrong_condition": {
+      "m0_count": 2,
+      "h1_count": 2,
+      "false_firings": 0,
+      "critical_failures": 0,
+      "cases": {
+        "H103-WC01": "both arms pass without invented dependency or demotion",
+        "H103-WC02": "both arms record irrelevant compiler sharing without demotion"
+      }
+    },
+    "variance": "none material across controls",
+    "worst_entry_positive_control": "10/10",
+    "decision": "reject-no-control-deficit",
+    "claim_limit": "conditional exact-fixture behavior only; applicability is not inferred from fixture frequency"
+  },
+  "h1_05": {
+    "contribution_mode": "quality-lift",
+    "applicability": "situational",
+    "entry_positive": {
+      "m0_count": 5,
+      "registered_deficit_count": 3,
+      "scores": {
+        "H105-EP01": 7,
+        "H105-EP02": 7,
+        "H105-EP03": 10,
+        "H105-EP04": 7,
+        "H105-EP05": 10
+      },
+      "h1_count": 0,
+      "gate": "candidate efficacy wave not authorized because the preregistered 4/5 control-deficit floor was not met"
+    },
+    "wrong_condition": {
+      "m0_count": 5,
+      "h1_count": 5,
+      "false_firings": 1,
+      "critical_failures": 1,
+      "cases": {
+        "H105-WC01": "both arms decline contaminated recovery",
+        "H105-WC02": "both arms decline consumed recovery",
+        "H105-WC03": "both arms decline broad search",
+        "H105-WC04": "M0 declines after drift; H1 authorizes field completion despite failed same-snapshot predicate",
+        "H105-WC05": "both arms decline cross-invocation reuse"
+      }
+    },
+    "variance": "control behavior split: three full reruns and two exact origin-only completions",
+    "worst_entry_positive_control": "7/10",
+    "decision": "reject-regression",
+    "decision_basis": "entry-positive efficacy was not released; independently required wrong-condition testing found an actual protected conditional regression in H105-WC04",
+    "claim_limit": "origin-only omitted-field branch only; no replacement, challenge, debate, broad search, drift, or new-invocation claim"
+  },
+  "preserved": {
+    "m0_viability": "25/25",
+    "h1_01": "reject-no-control-deficit",
+    "h1_02": "reject-no-control-deficit",
+    "h1_04": "reject-no-control-deficit",
+    "original_raw_outputs": "unchanged",
+    "pruning_and_prompt5": "historical evidence unchanged"
+  },
+  "v1": {
+    "accepted_h1_units": [],
+    "identity": "6c419036d5cb8000d47666f2e02d414330c2369933a75654bac786bd8cff7280",
+    "path": "docs/validation/evals/convergent-pr-review-2026-07-24/runtime/m0",
+    "materialized_reconciled_package": false,
+    "reason": "neither reevaluated H1 unit was accepted"
+  },
+  "deviations": [
+    "No entry-positive H1 samples were run because neither independent control cohort met its preregistered deficit gate.",
+    "Wrong-condition M0/H1 pairs were still run because the reconciliation authorization required them independently of efficacy."
+  ],
+  "decision": "accepted"
+}

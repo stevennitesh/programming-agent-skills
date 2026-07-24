@@ -1,0 +1,458 @@
+{
+  "schema_version": 1,
+  "artifact_type": "review-prompt4-preregistration",
+  "campaign": "2026-07-24-review-f3be70c",
+  "evaluation_status": "not-started",
+  "campaign_shape": "minimum-candidate",
+  "inputs": {
+    "checkpoint_head": "f3be70c31dd8f2ae9f12a75248065ef313790bda",
+    "m0_checkpoint_sha256": "3fa19cd24076c25090adc1921dc1e5f1c21e74749e4179a6c59c17a523330366",
+    "research_sha256": "ba36096f6a7dc2862d721dac0f4931984de14a41ba1145152c0c89bbda49c754",
+    "prompt2_content_sha256": "c0f6f293db5c7607128ff2fcaf462b0d4dd9928e5b8c071e1a96889dc67b2894",
+    "prompt2_transcript_path": "docs/validation/transcripts/2026-07-24-review-prompt2-synthesis.md",
+    "prompt2_transcript_sha256": "2b3b54765c221b525f9b738def8b98f2caa6c81191bc7974b5fc3d40fca6f756",
+    "prompt2_manifest_sha256": "e74c201541481ede0d5d193e0b7490056a69c966885a2dce2951c9e8190bf52a",
+    "specification_sha256": "9adc5608bad387df9314df185d7de67b11eb6efb1f9a608e7f7a5c5409213268",
+    "current_runtime_tree_sha256": "4bc1ce43eaa00a9ad7a7482a639793b286fde27c14ba0c5e41e1f73364eb9786"
+  },
+  "runtime": {
+    "path": "docs/validation/evals/review-2026-07-24-prompt4/runtime/p1/review",
+    "identity": "m0-h1-shared",
+    "m0_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+    "h1_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+    "inventory": [
+      "ADVISORY-CONTRACT.md",
+      "FINDING-CONTRACT.md",
+      "SKILL.md",
+      "SMELL-BASELINE.md",
+      "agents/openai.yaml"
+    ],
+    "files_sha256": {
+      "ADVISORY-CONTRACT.md": "5edf5100cd8ff6d924d93866100f0c2c80f17751c999985105eb5bf0a6003972",
+      "FINDING-CONTRACT.md": "f99446f46d3f6f31b58d0dfecb31c3602742d1e7f8b14f43414f0575b7a6cc95",
+      "SKILL.md": "a78aa310f340ffd4cdfa8e721b4bcf3ea99f89be01c834c01d4c1efee27d8153",
+      "SMELL-BASELINE.md": "966b35b7da2690a5df33d697b43b3c0bd41891b1a5e554c2f0b266610ac2259f",
+      "agents/openai.yaml": "5b344e7c178aeb37da631a640704dcc71d24c67442f7a9a5bc054586e9453ca4"
+    },
+    "compatibility_byte_identity": [
+      "ADVISORY-CONTRACT.md",
+      "FINDING-CONTRACT.md",
+      "SMELL-BASELINE.md",
+      "agents/openai.yaml"
+    ],
+    "h1_transformations": [],
+    "h1_contribution_arms": []
+  },
+  "instruction_passage_map": [
+    {
+      "id": "P-01",
+      "surface": "SKILL.md#description",
+      "selector": "Review one ordinary branch, WIP, staged",
+      "semantic_ids": ["M0-R01", "M0-R06", "M0-R07", "M0-R14"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-02",
+      "surface": "SKILL.md#sequence",
+      "selector": "Route -> Pin -> Trace -> Judge -> Admit -> Return",
+      "semantic_ids": ["M0-R01", "M0-R02", "M0-R03", "M0-R04", "M0-R05", "M0-R06", "M0-R07", "M0-R08", "M0-R09", "M0-R10", "M0-R11", "M0-R12", "M0-R13", "M0-R14"],
+      "origin": "frozen-checkpoint"
+    },
+    {
+      "id": "P-03",
+      "surface": "SKILL.md#universal-read-only",
+      "selector": "Read-only constrains the whole sequence.",
+      "semantic_ids": ["M0-R14"],
+      "origin": "frozen-checkpoint"
+    },
+    {
+      "id": "P-04",
+      "surface": "SKILL.md#route-owner",
+      "selector": "Select exactly one owner before capture.",
+      "semantic_ids": ["M0-R01", "M0-R14"],
+      "origin": "frozen-checkpoint"
+    },
+    {
+      "id": "P-05",
+      "surface": "SKILL.md#route-packet",
+      "selector": "Carry every caller-supplied Charter field",
+      "semantic_ids": ["M0-R01", "M0-R04"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-06",
+      "surface": "SKILL.md#fixed-point",
+      "selector": "Use the caller-supplied fixed point.",
+      "semantic_ids": ["M0-R02"],
+      "origin": "frozen-checkpoint"
+    },
+    {
+      "id": "P-07",
+      "surface": "SKILL.md#target-precedence",
+      "selector": "Select exactly one target in this precedence:",
+      "semantic_ids": ["M0-R03"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-08",
+      "surface": "SKILL.md#snapshot-tuple",
+      "selector": "Before inspection, capture one state-location snapshot tuple.",
+      "semantic_ids": ["M0-R03"],
+      "origin": "frozen-checkpoint"
+    },
+    {
+      "id": "P-09",
+      "surface": "SKILL.md#snapshot-tuple-cells",
+      "selector": "for every in-scope untracked byte, a deterministic path, mode, and content identity.",
+      "semantic_ids": ["M0-R03", "M0-R12"],
+      "origin": "frozen-checkpoint"
+    },
+    {
+      "id": "P-10",
+      "surface": "SKILL.md#snapshot-failure",
+      "selector": "Record the commands and ref resolutions that produced every tuple cell.",
+      "semantic_ids": ["M0-R03"],
+      "origin": "frozen-checkpoint"
+    },
+    {
+      "id": "P-11",
+      "surface": "SKILL.md#review-mode",
+      "selector": "Record `Review mode: initial | remediation`",
+      "semantic_ids": ["M0-R11", "M0-R14"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-12",
+      "surface": "SKILL.md#remediation",
+      "selector": "For remediation, require the original Charter",
+      "semantic_ids": ["M0-R08", "M0-R09", "M0-R10", "M0-R11", "M0-R13", "M0-R14"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-13",
+      "surface": "SKILL.md#source-trace",
+      "selector": "Trace the applicable user request, Charter, Source Trace",
+      "semantic_ids": ["M0-R04"],
+      "origin": "frozen-checkpoint"
+    },
+    {
+      "id": "P-14",
+      "surface": "SKILL.md#spec-precedence",
+      "selector": "Trace Spec in this precedence:",
+      "semantic_ids": ["M0-R04", "M0-R07"],
+      "origin": "frozen-checkpoint"
+    },
+    {
+      "id": "P-15",
+      "surface": "SKILL.md#spec-required",
+      "selector": "The caller supplies `Spec required: yes | no`",
+      "semantic_ids": ["M0-R04", "M0-R07", "M0-R11", "M0-R13"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-16",
+      "surface": "SKILL.md#standards-sources",
+      "selector": "Trace Standards from repository instructions",
+      "semantic_ids": ["M0-R04", "M0-R06"],
+      "origin": "frozen-checkpoint"
+    },
+    {
+      "id": "P-17",
+      "surface": "SKILL.md#coverage-ledger",
+      "selector": "Maintain an in-context coverage ledger",
+      "semantic_ids": ["M0-R05", "M0-R13"],
+      "origin": "frozen-checkpoint"
+    },
+    {
+      "id": "P-18",
+      "surface": "SKILL.md#judge-standards",
+      "selector": "Judge Standards first:",
+      "semantic_ids": ["M0-R06", "M0-R11"],
+      "origin": "frozen-checkpoint"
+    },
+    {
+      "id": "P-19",
+      "surface": "SKILL.md#judge-spec",
+      "selector": "Judge applicable Spec separately:",
+      "semantic_ids": ["M0-R07", "M0-R11"],
+      "origin": "frozen-checkpoint"
+    },
+    {
+      "id": "P-20",
+      "surface": "SKILL.md#candidate-observations",
+      "selector": "Generate candidate observations during judgment.",
+      "semantic_ids": ["M0-R08"],
+      "origin": "frozen-checkpoint"
+    },
+    {
+      "id": "P-21",
+      "surface": "SKILL.md#finding-load",
+      "selector": "Load [FINDING-CONTRACT.md](FINDING-CONTRACT.md).",
+      "semantic_ids": ["M0-R08", "M0-R09", "M0-R10"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-22",
+      "surface": "SKILL.md#evidence-gap",
+      "selector": "A target's omission of contract-required proof is a potential finding",
+      "semantic_ids": ["M0-R08", "M0-R13"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-23",
+      "surface": "SKILL.md#drift",
+      "selector": "Before Return, recompute every applicable snapshot-tuple cell",
+      "semantic_ids": ["M0-R12", "M0-R13"],
+      "origin": "frozen-checkpoint"
+    },
+    {
+      "id": "P-24",
+      "surface": "SKILL.md#terminal-stop",
+      "selector": "Return exactly one complete or incomplete report, then stop.",
+      "semantic_ids": ["M0-R13", "M0-R14"],
+      "origin": "frozen-checkpoint"
+    },
+    {
+      "id": "P-25",
+      "surface": "SKILL.md#complete-report",
+      "selector": "Review status: complete",
+      "semantic_ids": ["M0-R09", "M0-R11", "M0-R13", "M0-R14"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-26",
+      "surface": "SKILL.md#incomplete-report",
+      "selector": "Review status: incomplete",
+      "semantic_ids": ["M0-R09", "M0-R11", "M0-R13", "M0-R14"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-27",
+      "surface": "SKILL.md#completion",
+      "selector": "Completion requires Route, Pin, Trace, Judge, Admit, and Return",
+      "semantic_ids": ["M0-R05", "M0-R11", "M0-R12", "M0-R13", "M0-R14"],
+      "origin": "frozen-checkpoint"
+    },
+    {
+      "id": "P-28",
+      "surface": "FINDING-CONTRACT.md#load-condition",
+      "selector": "Load this contract after judgment has generated candidate observations.",
+      "semantic_ids": ["M0-R08"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-29",
+      "surface": "FINDING-CONTRACT.md#five-gates",
+      "selector": "Admit a finding only when all five gates close:",
+      "semantic_ids": ["M0-R08"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-30",
+      "surface": "FINDING-CONTRACT.md#admission-exclusions",
+      "selector": "Admission precedes severity.",
+      "semantic_ids": ["M0-R08"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-31",
+      "surface": "FINDING-CONTRACT.md#evidence-gap",
+      "selector": "Reviewer inability to obtain evidence",
+      "semantic_ids": ["M0-R08", "M0-R13"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-32",
+      "surface": "FINDING-CONTRACT.md#record",
+      "selector": "Every admitted finding records:",
+      "semantic_ids": ["M0-R09"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-33",
+      "surface": "FINDING-CONTRACT.md#lineage",
+      "selector": "Keep IDs stable through remediation.",
+      "semantic_ids": ["M0-R08", "M0-R09", "M0-R10"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-34",
+      "surface": "FINDING-CONTRACT.md#severity",
+      "selector": "`P0`: catastrophic production",
+      "semantic_ids": ["M0-R10"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-35",
+      "surface": "FINDING-CONTRACT.md#blocking",
+      "selector": "`P0` and `P1` block.",
+      "semantic_ids": ["M0-R10"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-36",
+      "surface": "FINDING-CONTRACT.md#remediation-class",
+      "selector": "Classify remediation independently:",
+      "semantic_ids": ["M0-R10", "M0-R14"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-37",
+      "surface": "FINDING-CONTRACT.md#no-mutation",
+      "selector": "Classification grants no mutation.",
+      "semantic_ids": ["M0-R10", "M0-R14"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-38",
+      "surface": "SMELL-BASELINE.md#fallback",
+      "selector": "Fallback only:",
+      "semantic_ids": ["M0-R06", "M0-R08"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-39",
+      "surface": "SMELL-BASELINE.md#prompts",
+      "selector": "Mysterious Name:",
+      "semantic_ids": ["M0-R06", "M0-R08"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-40",
+      "surface": "ADVISORY-CONTRACT.md#foreign-load",
+      "selector": "Read this only when a review or audit Charter enables advisories.",
+      "semantic_ids": [],
+      "origin": "permitted-foreign-compatibility"
+    },
+    {
+      "id": "P-41",
+      "surface": "ADVISORY-CONTRACT.md#foreign-admission",
+      "selector": "An advisory is a verified, nonblocking opportunity",
+      "semantic_ids": [],
+      "origin": "permitted-foreign-compatibility"
+    },
+    {
+      "id": "P-42",
+      "surface": "ADVISORY-CONTRACT.md#foreign-no-demotion",
+      "selector": "No demotion:",
+      "semantic_ids": [],
+      "origin": "permitted-foreign-compatibility"
+    },
+    {
+      "id": "P-43",
+      "surface": "ADVISORY-CONTRACT.md#foreign-return",
+      "selector": "Advisory ID:",
+      "semantic_ids": [],
+      "origin": "permitted-foreign-compatibility"
+    },
+    {
+      "id": "P-44",
+      "surface": "ADVISORY-CONTRACT.md#foreign-nonblocking",
+      "selector": "advisories have no severity",
+      "semantic_ids": [],
+      "origin": "permitted-foreign-compatibility"
+    },
+    {
+      "id": "P-45",
+      "surface": "agents/openai.yaml#policy",
+      "selector": "allow_implicit_invocation: true",
+      "semantic_ids": ["M0-R01"],
+      "origin": "permitted-required-compatibility"
+    },
+    {
+      "id": "P-46",
+      "surface": "agents/openai.yaml#interface",
+      "selector": "Terminal review of one fixed snapshot",
+      "semantic_ids": ["M0-R01", "M0-R14"],
+      "origin": "permitted-required-compatibility"
+    }
+  ],
+  "semantic_trace": {
+    "M0-R01": {"passages": ["P-01", "P-02", "P-04", "P-05", "P-45", "P-46"], "proof_ids": ["INV-01", "REL-01", "V-14", "V-15"]},
+    "M0-R02": {"passages": ["P-02", "P-06"], "proof_ids": ["V-01", "V-05", "V-06"]},
+    "M0-R03": {"passages": ["P-02", "P-07", "P-08", "P-09", "P-10"], "proof_ids": ["V-01", "V-02", "V-03", "V-04", "V-05", "MACH-01"]},
+    "M0-R04": {"passages": ["P-02", "P-05", "P-13", "P-14", "P-15", "P-16"], "proof_ids": ["V-07", "CTX-01", "REL-02", "REL-03"]},
+    "M0-R05": {"passages": ["P-02", "P-17", "P-27"], "proof_ids": ["V-12", "COV-01", "COV-02", "COV-03", "COV-04", "COV-05"]},
+    "M0-R06": {"passages": ["P-02", "P-16", "P-18", "P-38", "P-39"], "proof_ids": ["V-01", "V-02", "V-08", "CTX-01"]},
+    "M0-R07": {"passages": ["P-02", "P-14", "P-15", "P-19"], "proof_ids": ["V-01", "V-03", "V-07"]},
+    "M0-R08": {"passages": ["P-02", "P-12", "P-20", "P-21", "P-22", "P-28", "P-29", "P-30", "P-31", "P-33", "P-38", "P-39"], "proof_ids": ["V-08", "V-09", "V-10", "V-11"]},
+    "M0-R09": {"passages": ["P-02", "P-12", "P-21", "P-25", "P-26", "P-32", "P-33"], "proof_ids": ["V-02", "V-03", "V-10", "V-17", "MACH-02"]},
+    "M0-R10": {"passages": ["P-02", "P-12", "P-21", "P-33", "P-34", "P-35", "P-36", "P-37"], "proof_ids": ["V-10", "V-11", "MACH-02"]},
+    "M0-R11": {"passages": ["P-02", "P-11", "P-12", "P-15", "P-18", "P-19", "P-25", "P-26", "P-27"], "proof_ids": ["V-01", "V-02", "V-03", "V-17"]},
+    "M0-R12": {"passages": ["P-02", "P-09", "P-23", "P-27"], "proof_ids": ["V-13", "DRIFT-ENDPOINT", "DRIFT-HEAD", "DRIFT-INDEX", "DRIFT-STAGED", "DRIFT-UNSTAGED", "DRIFT-STATUS", "DRIFT-UNTRACKED-INVENTORY", "DRIFT-UNTRACKED-PATH", "DRIFT-UNTRACKED-MODE", "DRIFT-UNTRACKED-CONTENT"]},
+    "M0-R13": {"passages": ["P-02", "P-12", "P-15", "P-17", "P-22", "P-23", "P-24", "P-25", "P-26", "P-27", "P-31"], "proof_ids": ["V-01", "V-06", "V-07", "V-12", "V-13", "V-17", "COV-05"]},
+    "M0-R14": {"passages": ["P-01", "P-02", "P-03", "P-04", "P-11", "P-12", "P-24", "P-25", "P-26", "P-27", "P-36", "P-37", "P-46"], "proof_ids": ["V-10", "V-14", "V-15", "V-16", "V-17", "AUTH-01"]}
+  },
+  "forbidden_absence_checks": {
+    "FORBID-ORDINARY-ADVISORY": "SKILL.md has no ADVISORY-CONTRACT pointer, advisory heading, or advisory report field.",
+    "FORBID-PERSISTENT-COVERAGE-LEDGER": "SKILL.md states the ledger remains in context only and no runtime file defines ledger persistence.",
+    "FORBID-AUTOMATIC-RECAPTURE": "SKILL.md requires incomplete and forbids recapture on drift.",
+    "FORBID-EVIDENCE-LADDER": "The deferred evidence-ladder expression is absent from every runtime-facing file.",
+    "FORBID-MAJOR-FIRST": "Major-first and exhaustive-tail traversal language is absent from every runtime-facing file.",
+    "FORBID-STRONGER-AXIS-ISOLATION": "No fresh-agent, parallel-axis, or multi-reviewer ordinary Review instruction exists.",
+    "FORBID-COPIED-REVIEW-PACKAGE": "No mandatory copied review package or file-backed transfer is required.",
+    "FORBID-PONYTAIL-TAGS": "No Ponytail tag vocabulary exists.",
+    "FORBID-REMOVABLE-LINE-TOTAL": "No removable-line estimate or total exists.",
+    "FORBID-ALTERNATE-SEVERITY": "FINDING-CONTRACT.md preserves only P0, P1, P2, and P3 severity tokens.",
+    "FORBID-MUTATION-OR-REPAIR": "Read-only and literal mutation authority forbid Review-owned mutation; remediation classification grants none.",
+    "FORBID-SUCCESSOR-REVIEW": "The runtime states Successor snapshot authority: none and stops after one report."
+  },
+  "proof_registration": {
+    "viability_suite": {
+      "worker_fixture": {
+        "path": "fixtures/worker-visible.json",
+        "sha256": "b6750ac8c30b3d25c7bb1652e1ff8a1735d5369c5475ba11417e7f987e411074"
+      },
+      "root_evaluator": {
+        "path": "fixtures/root-only-evaluation.json",
+        "sha256": "15e6a82f8992ae6826df67d2b728b03be03eca739fbbac2356ff6163ac58e5de"
+      },
+      "registered_samples": 32,
+      "families": ["authority", "complete-judgment", "coverage", "drift", "finding-admission", "machine-interface", "routing", "safe-failure", "snapshot-targets"]
+    },
+    "fixed_configuration": {
+      "model": "gpt-5.6-sol",
+      "reasoning": "high",
+      "host": "Codex fresh-context subagents on Windows PowerShell",
+      "tools": "Read exact frozen runtime and assigned worker-visible fixture; simulate named read-only observations; write assigned disposable capture only.",
+      "authority": "Review read-only judgment only",
+      "evidence": "Only assigned worker-visible source facts and simulated observations",
+      "runtime": "exact m0-h1-shared tree identity",
+      "mutation_boundary": "assigned disposable capture only; all external and repository mutations forbidden"
+    },
+    "invocation": [
+      {"id": "INV-01", "claim": "Implicit invocation remains enabled and the description distinguishes ordinary, high-risk/PR, and baseline-audit targets.", "lane": "parsed metadata plus positive and adjacent-negative routing fixtures"}
+    ],
+    "relationships": [
+      {"id": "REL-01", "caller": "skill-router", "callee": "review", "trigger": "ordinary branch, WIP, staged, or since-X diff", "return": "router stops after selection", "source": "skills/custom/skill-router/SKILL.md"},
+      {"id": "REL-02", "caller": "implement", "callee": "review", "trigger": "complete ordinary fixed target packet", "return": "one terminal report to Implement", "source": "skills/custom/implement/SKILL.md"},
+      {"id": "REL-03", "caller": "parallel-implement", "callee": "review", "trigger": "drained proved ordinary target and complete packet", "return": "one terminal report to idle root", "source": "skills/custom/parallel-implement/SKILL.md"},
+      {"id": "REL-04", "caller": "review", "callee": "convergent-pr-review", "trigger": "local PR, release candidate, or bounded high-risk diff", "return": "transfer once and stop", "source": "SKILL.md"},
+      {"id": "REL-05", "caller": "review", "callee": "audit-codebase", "trigger": "immutable repository-baseline audit", "return": "recommend and stop", "source": "SKILL.md"}
+    ],
+    "context": [
+      {"id": "CTX-01", "claim": "SMELL-BASELINE.md loads only when repository Standards are thin."},
+      {"id": "CTX-02", "claim": "FINDING-CONTRACT.md loads only after judgment generates candidates."},
+      {"id": "CTX-03", "claim": "ADVISORY-CONTRACT.md is preserved for foreign consumers and has no ordinary Review pointer."}
+    ],
+    "machine": [
+      {"id": "MACH-01", "claim": "Exact inventory, per-file hashes, tree hash, and M0/H1 identity equality parse and match."},
+      {"id": "MACH-02", "claim": "Finding fields, P0-P3 order, remediation values, complete interface, ordered incomplete interface, and literal authority lines parse exactly."}
+    ],
+    "safety": [
+      {"id": "AUTH-01", "claim": "Before/after state and successor-pressure fixtures preserve repository and external state and end after one terminal report."}
+    ]
+  },
+  "prior_evidence": {
+    "current_behavior": "historical-admission-only",
+    "current_structural_interfaces": "lane-limited",
+    "unchanged_helper_bytes": "lane-limited",
+    "candidate_owned_behavior": "missing"
+  },
+  "limitations": [
+    "Behavioral evaluation has not started.",
+    "No H1 contribution claim or arm exists because H1 is byte-identical to M0.",
+    "Exact model build, token counts, sampler seed, and per-sample latency may remain unavailable.",
+    "Future conclusions are bounded to the frozen runtime, fixtures, model, host, reasoning, tools, authority, and sample count."
+  ]
+}

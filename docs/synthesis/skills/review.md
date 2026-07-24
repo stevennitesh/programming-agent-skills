@@ -1,108 +1,203 @@
 # Review Deployment Synthesis
 
-Status: `promoted`; installation proof is recorded in
-`docs/validation/transcripts/2026-07-23-review-prompt5-promotion.md`.
+Status: `complete; promoted-and-installed`
 
-## Canonical Identity And Contract
+Campaign epoch: `2026-07-24-review-f3be70c`
 
-The canonical package is `skills/custom/review` at tree SHA-256
-`4bc1ce43eaa00a9ad7a7482a639793b286fde27c14ba0c5e41e1f73364eb9786`.
-It contains exactly:
+<!-- REVIEW-DEPLOY-DECISION:START -->
 
-| Surface | SHA-256 | Runtime role |
-| --- | --- | --- |
-| `SKILL.md` | `03235a5bf4ade1f6d9c580e9210f2d0d7ee3ce8a7f773be0bd39b940ad625fdd` | Ordinary diff routing, immutable capture, Standards/Spec judgment, admission, drift, terminal Return |
-| `FINDING-CONTRACT.md` | `f99446f46d3f6f31b58d0dfecb31c3602742d1e7f8b14f43414f0575b7a6cc95` | Five-gate finding admission, record, severity, remediation classification |
-| `SMELL-BASELINE.md` | `966b35b7da2690a5df33d697b43b3c0bd41891b1a5e554c2f0b266610ac2259f` | Conditional fallback when repository Standards are thin |
-| `ADVISORY-CONTRACT.md` | `5edf5100cd8ff6d924d93866100f0c2c80f17751c999985105eb5bf0a6003972` | Foreign Convergent/Audit compatibility; ordinary Review does not load it |
-| `agents/openai.yaml` | `5b344e7c178aeb37da631a640704dcc71d24c67442f7a9a5bc054586e9453ca4` | Implicit invocation metadata |
+## Decision
 
-Review judges one bounded ordinary branch, WIP, staged, or since-X diff from
-one complete immutable snapshot. It runs:
+Campaign shape: `minimum-candidate`.
 
 ```text
-Route -> Pin -> Trace -> Judge -> Admit -> Return
+current != M0 = H1 = V1 = P1
 ```
 
-Read-only constrains the entire sequence. Standards ("built right?") and
-applicable Spec ("right thing?") are separate axes. The safe failure is
-`incomplete`; `complete` means coverage closed, not release acceptance. The
-caller retains the Charter, target inputs, proof and risk decisions, Repair,
-Lock, successor snapshots, delivery, trackers, and every mutation.
+The pre-promotion canonical tree remains comparison-only at
+`4bc1ce43eaa00a9ad7a7482a639793b286fde27c14ba0c5e41e1f73364eb9786`.
+The exact accepted V1 is the shared M0/H1 tree
+`37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8`.
+H1 admitted no additions or substitutions, so no contribution arm existed.
+V1 equals M0 because the minimum runtime passed its complete registered proof.
+The complete pruning audit accepted no material cut, so P1 is V1
+byte-for-byte. Exact P1 is now both canonical and installed at
+`37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8`.
 
-## Relationships And Ownership
+## Intended Contract And M0
 
-| Relationship | Observable trigger and Return |
+Review returns one terminal, read-only judgment of one immutable ordinary
+branch, WIP, staged, or caller-bounded since-X diff against a fixed point.
+Standards and Spec are judged separately. Every admitted finding is verified
+and actionable. Local PRs, release candidates, and bounded high-risk diffs
+transfer to Convergent PR Review; immutable repository-baseline audits return
+to Audit Codebase; implementation and repair requests return to their caller
+without mutation.
+
+The caller owns the Spec, Charter, Source Trace, commitment boundary, supplied
+fixed point, risk classification, Repair admission, residual-risk acceptance,
+mutation, and successor snapshots. Review owns only bounded read-only
+inspection, evidence-backed judgment, finding admission into the report,
+coverage accounting, and terminal status for the pinned snapshot.
+
+The authoritative durable campaign record is
+`docs/validation/evals/review-2026-07-24-prompt4/campaign-manifest.json`; its
+M0 checkpoint remains
+`sha256:3fa19cd24076c25090adc1921dc1e5f1c21e74749e4179a6c59c17a523330366`.
+All fourteen semantic units remain protected:
+
+| Clause | M0 units |
 | --- | --- |
-| Implement / Parallel Implement -> Review | A complete ordinary fixed target with Charter, `Spec required`, Source Trace, fixed point, target, and required proof needs Standards/Spec judgment; one terminal report returns to the caller |
-| Review -> Convergent PR Review | A local PR or high-risk local diff transfers once with the complete caller packet; Review stops |
-| Review -> Audit Codebase | An immutable repository-baseline request receives one recommendation; Review stops and does not start Audit |
-| Foreign consumers -> Review contracts | Convergent, Audit, Implement, and Parallel Implement use the finding, fallback, or advisory contracts under their recorded load conditions |
+| Invocation and exclusions | `M0-R01` |
+| Fixed point and immutable snapshot | `M0-R02`, `M0-R03`, `M0-R12` |
+| Source Trace and coverage | `M0-R04`, `M0-R05` |
+| Separate Standards and Spec judgment | `M0-R06`, `M0-R07`, `M0-R11` |
+| Finding admission and contract | `M0-R08`, `M0-R09`, `M0-R10` |
+| Terminal status and authority boundary | `M0-R13`, `M0-R14` |
 
-There is no reverse Convergent-to-Review handoff, duplicate ordinary pass,
-automatic Audit run, or Review-owned Repair, Lock, or successor state. The
-concurrent Parallel Implement promotion preserves the same caller packet,
-one-route choice, idle-root Repair authority, and fresh successor review.
-No relationship-index wording change was required by Review promotion.
+The accepted runtime implements the frozen `Route -> Pin -> Trace -> Judge ->
+Admit -> Return` order, caller-fixed-point precedence, exactly-one-best-merge-
+base gate, state-location snapshot tuple, immutable captured-byte judgment,
+per-cell drift read-back without recapture, in-context coverage ledger,
+separate axes, exact Finding Contract, exact complete/incomplete interfaces,
+and caller-only terminal authority.
 
-## Decisions
+## Current And Research Dispositions
 
-Campaign shape was `pruning-only`: prior canonical
-`ec62f904a12779de948dcfbbbc7c72c5b79470cc0edac8cfb1b1f017f9180080`
-differed from source-derived `B0`, while accepted `C1 = B0`. No beyond-minimum
-C1 mechanism was admitted.
+Current behavior has no protection by existence. The route, read-only
+boundary, source precedence, separate axes, finding contract, remediation
+lineage, terminal schemas, conditional smell fallback, implicit invocation,
+and caller relationships are M0-equivalent or required compatibility. Generic
+current capture and coverage wording is replaced by the exact M0 tuple and
+in-context ledger. `ADVISORY-CONTRACT.md` remains unchanged for foreign
+consumers and has no ordinary Review pointer. No current clause carries
+unresolved removal risk.
 
-Accepted steering claims:
+Research supports bounded coverage accounting, separate requirements and
+Standards judgment, evidence over preference, reviewer/repair authority
+separation, explicit readiness and completion, separate Git state-location
+identities, and merge-base ambiguity detection under recorded limits. Those
+methods admitted the tuple and ledger as minimum expressions, not H1 behavior.
 
-- complete live-content and identity capture (`3/5` D0 to `5/5` B0);
-- identity recomputation and drift-to-incomplete (`3/5` D0, including two
-  stale-current critical failures, to `5/5` B0); and
-- the exact authority footer plus one-report terminal stop (`0/5` D0 to `5/5`
-  B0).
+The evidence-ladder phrase and major-first traversal remain deferred and
+forbidden in this epoch because no registered M0 deficit justified them.
+Stronger or parallel ordinary-review axes remain owned by Convergent PR
+Review. Mandatory copied review packages, Ponytail tags, removable-line
+totals, and alternate severity labels remain rejected. Ordinary advisory
+mode, persistent repository ledgers, automatic recapture, mutation, Repair,
+tracker changes, delivery, and successor review remain forbidden.
 
-Rejected steering-efficacy claims:
+## Protected Behavior And Relationships
 
-- Route select-before-capture;
-- the Standards-to-Spec lens reset;
-- admission before severity; and
-- the target-required/reviewer-required/optional proof-gap distinction.
+Protected behavior is all fourteen M0 units plus exact report and finding
+interfaces, P0-P3 order, remediation values, conditional helper loading,
+implicit invocation, caller-owned Repair and successor state, and the literal
+authority footer.
 
-Each rejected claim had `5/5` control and `5/5` B0 compliance. Its clause
-remains only because an independent relationship, axis, finding, or truthful
-coverage contract requires it.
+| Relationship | Trigger, authority, and Return |
+| --- | --- |
+| Skill Router -> Review | Ordinary branch, WIP, staged, or since-X diff needing judgment; router stops after selection. |
+| Implement -> Review | Complete ordinary fixed target packet; one terminal report returns to Implement. |
+| Parallel Implement -> Review | Drained proved ordinary target and complete packet; one terminal report returns to the idle root. |
+| Review -> Convergent PR Review | Local PR, release candidate, or bounded high-risk target transfers once; Review stops. |
+| Review -> Audit Codebase | Immutable repository-baseline audit receives one recommendation; Review does not start Audit. |
+| Foreign consumers -> shared contracts | Finding, Smell, and Advisory contracts load only under their recorded conditions. |
 
-The Pruning Pass retained every passage and made no material cut. Apparent
-proof-gap overlap has separate owners: `SKILL.md` owns coverage and safe
-failure, while `FINDING-CONTRACT.md` owns candidate admission for Review and
-foreign consumers. No no-op, sediment, scattered meaning, inline branch-only
-reference, copied foreign procedure, or unused runtime surface was found.
-
-Rejected or deliberately absent behavior remains outside canonical Review:
-ordinary advisory mode, a required finding title, same-axis deduplication,
-artifact-authority tables, detailed snapshot-manifest vocabulary, helpers,
-operations files, persistent ledgers, report renderers, automatic recapture,
-cross-axis consensus, synthetic confidence scores, mutation, and delivery.
+Promotion publishes these relationships through the canonical Review runtime.
+No caller, callee, relationship index, shared contract, or test byte changed;
+existing owners already expressed the required topology and interfaces.
 
 ## Proof
 
-- Construction and semantic-unit ledger:
-  `docs/validation/transcripts/2026-07-23-review-prompt3-construction.md`
-- Behavior audit and exact results:
-  `docs/validation/transcripts/2026-07-23-review-prompt4-behavior-audit.md`
-- Exact 95 raw outputs and per-sample SHA-256 pointers:
-  `docs/validation/evals/review-prompt4/`
-- Passage-level pruning decision:
-  `docs/validation/transcripts/2026-07-23-review-pruning.md`
-- Promotion, canonical integration, installation, parity, and final checks:
-  `docs/validation/transcripts/2026-07-23-review-prompt5-promotion.md`
+The Prompt 4 result owner is
+`docs/validation/evals/review-2026-07-24-prompt4/results-manifest.json`.
+Frozen Prompt 2 content is verified through its immutable Prompt 2 transcript
+and recorded decision fingerprint; the active synthesis is the Prompt 4
+decision and is not reused as a historical Prompt 2 input.
+Five accepted fresh M0 controls used `gpt-5.6-sol`, high reasoning, fresh
+Windows/PowerShell Codex contexts, one fixed worker fixture, one root-only
+evaluator, one exact runtime, and one fixed dispatch envelope parameterized
+only by sample ID. All 160 accepted case outcomes passed; the worst accepted
+sample was 32 of 32, variance in scored outcomes was zero, and the accepted
+set had no critical failure.
 
-Behavior evidence is exact only for the promoted bytes, fixed tasks, supplied
-context, inherited runtime, tools, authority, evidence, and recorded rubrics.
-Unavailable telemetry remains exact model build ID, token counts, sampler seed,
-and per-sample latency. The initial mixed Route packet and first remediation
-fixture's disposition-vocabulary subcase remain superseded protocol
-deviations; the valid Route and remediation reruns own those judgments.
+The behavior matrix covers every M0 unit through the registered complete,
+safe-failure, routing, snapshot, coverage, finding, authority, machine, and
+per-cell drift cases. Deterministic proof separately passed exact inventory,
+tree identity, M0/H1 equality, semantic passages, forbidden absences,
+invocation metadata, owner relationships, context pointers, and machine
+interfaces.
 
-Residual gaps are external generalization beyond the recorded packets and
-unavailable telemetry. No new behavior wave was required or run for promotion.
-Git delivery remains outside this synthesis.
+The first control exposed missing worker-visible finding facts. A permitted
+source-completeness repair added only those facts; task, rubric, runtime,
+model, host, tools, authority, and mutation boundary stayed fixed. Outputs
+with source insufficiency, critical report omissions, wrong branch selection,
+or non-common dispatch envelopes receive zero behavioral credit and do not
+enter the aggregate.
+
+Method evidence remains admission-only. Historical current-runtime behavior
+remains historical-admission-only. Existing parsed contracts and unchanged
+helper bytes remain lane-limited.
+
+## V1 And Residuals
+
+V1 is exactly
+`37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8`.
+No H1 unit survived or needed rejection because no H1 unit was admitted.
+Protected behavior passes and current-only removal risk is closed.
+
+## P1 Pruning Decision
+
+All 46 runtime-facing instruction passages were classified against the exact
+Prompt 4 clause map: 46 `keep`, zero `collapse`, zero `disclose`, and zero
+`delete`. The two plausible cut groups were rejected. Collapsing the similar
+evidence-gap passages would cross the Review-coverage and Finding-admission
+owner boundary. Removing the shared Finding Contract load condition would
+weaken its ordering contract for foreign consumers. Neither proposed cut
+reduced a material named load.
+
+P1 is durably preserved at
+`docs/validation/evals/review-2026-07-24-prompt4/runtime/p1/review`, with
+legacy package tree
+`37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8`.
+The description, common skill, disclosed contracts, conditional fallback, and
+metadata have zero byte and word delta. Exact identity preserves all protected
+behavior, so no fresh behavioral wave was created; the five accepted Prompt 4
+controls and 160/160 outcomes remain the exact behavioral evidence.
+
+Residual gaps are generalization beyond the exact runtime, fixtures, model
+family, host, tools, authority, and sample count; live Git execution beyond
+the fixed simulated observations; and unavailable exact model build, sampler
+seed, token counts, and per-sample latency.
+
+## Promotion, Installation, And Lifecycle
+
+Prompt 5 promoted exact P1 into `skills/custom/review`. Only canonical
+`SKILL.md` required a byte change; `FINDING-CONTRACT.md`,
+`SMELL-BASELINE.md`, `ADVISORY-CONTRACT.md`, and `agents/openai.yaml` already
+matched P1 exactly. The canonical package passed complete read-back, affected
+focused proof, the full integration suite, skill-pack validation, and
+Markdown and diff gates.
+
+The pre-install managed cohort was exactly `review`, matching the controller's
+empty ambient cohort plus the authorized target. Synchronization used only the
+repo-supported installer. Canonical and installed trees now have exact parity
+at `37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8`,
+and the post-install dry-run reports all 25 managed skills unchanged.
+
+No `skills/experimental/review` package or `review` manifest entry existed at
+promotion time, so experimental cleanup was a verified no-op. Other
+experimental packages, campaigns, candidates, and concurrent artifacts were
+preserved. Prompt 4 behavior evidence remains exact-reusable for P1; no
+lifecycle-only behavioral wave ran.
+
+Residual gaps remain generalization beyond the exact Prompt 4 runtime,
+fixtures, model family, host, tools, authority, and sample count; live Git
+execution beyond fixed simulated observations; and unavailable exact model
+build, sampler seed, token counts, and per-sample latency. Git delivery is not
+authorized. Recommended next unit: none.
+
+<!-- REVIEW-DEPLOY-DECISION:END -->
+
+Decision content fingerprint:
+`sha256:3d1736f15ba3dfb3b6da182a5090e20f2ea4eba6d95e67911f621285aea3fa02`

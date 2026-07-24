@@ -7,6 +7,7 @@
 *.ps1 text eol=lf
 *.toml text eol=lf
 *.json text eol=lf
+*.jsonl text eol=lf
 *.yaml text eol=lf
 *.yml text eol=lf
 *.txt text eol=lf
@@ -14,7 +15,8 @@ LICENSE text eol=lf
 
 # Raw evaluation outputs preserve exact model-produced bytes, including
 # whitespace that would normally be rejected by git diff --check.
-docs/validation/evals/review-prompt4/raw/** whitespace=-trailing-space,-blank-at-eof
+docs/validation/evals/**/raw/** whitespace=-trailing-space,-blank-at-eof
+.scratch/deploy-campaigns/**/evals/**/disposable/** whitespace=-trailing-space,-blank-at-eof
 
 # Preserve the byte identity of installed active policy baselines.
 skills/custom/codebase-design/agents/openai.yaml text eol=crlf

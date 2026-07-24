@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "artifact_type": "review-prompt4-results",
+  "campaign": "2026-07-24-review-f3be70c",
+  "decision": "accepted",
+  "campaign_shape": "minimum-candidate",
+  "runtime": {
+    "identity": "m0-h1-shared",
+    "durable_path": "docs/validation/evals/review-2026-07-24-prompt4/runtime/p1/review",
+    "m0_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+    "h1_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+    "v1_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+    "p1_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+    "campaign_tree_v1_sha256": "7a093e4c79710ef7c06a9c578a82a7992061fd8709a04be55eee6cbd08dce37b",
+    "h1_units": [],
+    "h1_contribution_arms": []
+  },
+  "frozen_inputs": {
+    "worker_fixture_path": "docs/validation/evals/review-2026-07-24-prompt4/fixtures/worker-visible.json",
+    "worker_fixture_sha256": "b6750ac8c30b3d25c7bb1652e1ff8a1735d5369c5475ba11417e7f987e411074",
+    "root_evaluator_path": "docs/validation/evals/review-2026-07-24-prompt4/fixtures/root-only-evaluation.json",
+    "root_evaluator_sha256": "15e6a82f8992ae6826df67d2b728b03be03eca739fbbac2356ff6163ac58e5de",
+    "protocol_path": "docs/validation/evals/review-2026-07-24-prompt4/protocol-original.json",
+    "protocol_sha256": "f9963235386e839e5db787a9a64009934264da82c102b91f5e113231f1cc607e",
+    "durable_protocol_path": "docs/validation/evals/review-2026-07-24-prompt4/protocol-durable.json",
+    "durable_protocol_sha256": "f6c2452e7f12a403626514cdcae8a9c7dd1c85ea999a8acab141514bcb43aed9",
+    "verifier_sha256": "14542b897000bfe8228b3fa203bf0f2c7308c70ddfd746b21a4ff095dd781b76",
+    "dispatch_template_path": "dispatch-template.txt",
+    "dispatch_template_sha256": "b4c88986fd69f6cd57efd74d023c7ffe349c3b702fa66003fa7318e3838d7366",
+    "dispatch_template_disposition": "historical exact bytes; embedded scratch paths record the original dispatch and are not an active evidence dependency",
+    "parameterization": [
+      "sample_id"
+    ]
+  },
+  "configuration": {
+    "model": "gpt-5.6-sol",
+    "reasoning": "high",
+    "host": "Codex fresh-context subagents on Windows PowerShell",
+    "tools": "Read exact frozen runtime and worker fixture; simulate named read-only observations; write one disposable capture.",
+    "authority": "Review read-only judgment only",
+    "evidence": "Only assigned worker-visible facts and simulated observations",
+    "mutation_boundary": "One assigned disposable capture; repository and external state unchanged",
+    "unavailable_telemetry": [
+      "exact model build",
+      "sampler seed",
+      "token counts",
+      "per-sample latency"
+    ]
+  },
+  "source_completeness_repair": {
+    "reason": "The first control showed that V-02, V-03, V-10, and V-11 did not expose every fact needed to render the frozen Finding Contract.",
+    "scope": "Added only missing finding-axis, anchor, scenario, evidence, impact, location, remediation, and required-proof facts.",
+    "task_changed": false,
+    "rubric_changed": false,
+    "runtime_changed": false,
+    "old_worker_fixture_sha256": "7dd3658bc41ce956ac320bb7e808867089c3976edbe906402d7e095ad64ccfc2",
+    "new_worker_fixture_sha256": "b6750ac8c30b3d25c7bb1652e1ff8a1735d5369c5475ba11417e7f987e411074"
+  },
+  "accepted_samples": [
+    {
+      "id": "sample-2",
+      "capture_disposition": "disposable-not-retained; hash and root judgment are durable",
+      "capture_sha256": "5d9bf78819f3857a769d18fbc9c2f448443c1b3116182f9f2da5739a0b1b0850",
+      "cases_passed": 32,
+      "cases_total": 32,
+      "critical_failures": []
+    },
+    {
+      "id": "sample-3",
+      "capture_disposition": "disposable-not-retained; hash and root judgment are durable",
+      "capture_sha256": "cc5e303015e4f2800d14acc926c146dfdb1a54eabb3bbc89e4277e83637ddfeb",
+      "cases_passed": 32,
+      "cases_total": 32,
+      "critical_failures": []
+    },
+    {
+      "id": "sample-4",
+      "capture_disposition": "disposable-not-retained; hash and root judgment are durable",
+      "capture_sha256": "e51ec5fbf3e8c95b836bff173d3c2d0f5483299579cf9dd98bbac14b55033362",
+      "cases_passed": 32,
+      "cases_total": 32,
+      "critical_failures": []
+    },
+    {
+      "id": "sample-8",
+      "capture_disposition": "disposable-not-retained; hash and root judgment are durable",
+      "capture_sha256": "5433b36f5c2249489833d04c1f464dc94034cafecdcb7955ca801956e033ca90",
+      "cases_passed": 32,
+      "cases_total": 32,
+      "critical_failures": []
+    },
+    {
+      "id": "sample-9",
+      "capture_disposition": "disposable-not-retained; hash and root judgment are durable",
+      "capture_sha256": "8c6d405ec489574394937f2e23a45e96f85926a04406d11659b6390b39c177dd",
+      "cases_passed": 32,
+      "cases_total": 32,
+      "critical_failures": []
+    }
+  ],
+  "zero_credit_outputs": [
+    {
+      "id": "sample-1",
+      "capture_sha256": "ebbe64daaad42acbecc9d6ec2d9ec5372b7730d00864920820eabacbe2d5b789",
+      "reason": "invalid-source-insufficiency-before-fixture-repair"
+    },
+    {
+      "id": "sample-1-redo",
+      "capture_sha256": "4ded2d13218c339ba3b4ab54c1ece4aff6629f663b7a8ccaba6472a639869dde",
+      "reason": "valid-outcome-excluded-from-fixed-envelope-set"
+    },
+    {
+      "id": "sample-5",
+      "capture_sha256": "7703caba2781d6557714e6380f7862d5b3a80bd80c4af613c62c0b2bdc7a20d3",
+      "reason": "critical-finding-records-omitted-literal-ID-field"
+    },
+    {
+      "id": "sample-6",
+      "capture_sha256": "142123263c6e66ac706c4c7fc60673113dac1ab82a5215336be6f59eb6f2a21d",
+      "reason": "critical-routed-cases-omitted-authority-lines-and-machine-interface-case-took-wrong-branch"
+    },
+    {
+      "id": "sample-7",
+      "capture_sha256": "28deb1d76230a0e8cfaa315f6addeff56675174bf6dfb748e3cef4954871663f",
+      "reason": "valid-outcome-excluded-from-fixed-envelope-set"
+    }
+  ],
+  "aggregate": {
+    "accepted_samples": 5,
+    "accepted_case_outcomes": 160,
+    "accepted_case_passes": 160,
+    "worst_case": "32 of 32 passed",
+    "variance": "none across scored outcomes",
+    "critical_failures_in_accepted_set": 0,
+    "decision": "accept",
+    "h1_decision": "not-applicable-no-units"
+  },
+  "minimum_proof_coverage": {
+    "M0-R01": ["INV-01", "REL-01", "V-14", "V-15"],
+    "M0-R02": ["V-01", "V-05", "V-06"],
+    "M0-R03": ["V-01", "V-02", "V-03", "V-04", "V-05", "MACH-01"],
+    "M0-R04": ["V-07", "CTX-01", "REL-02", "REL-03"],
+    "M0-R05": ["V-12", "COV-01", "COV-02", "COV-03", "COV-04", "COV-05"],
+    "M0-R06": ["V-01", "V-02", "V-08", "CTX-01"],
+    "M0-R07": ["V-01", "V-03", "V-07"],
+    "M0-R08": ["V-08", "V-09", "V-10", "V-11"],
+    "M0-R09": ["V-02", "V-03", "V-10", "V-17", "MACH-02"],
+    "M0-R10": ["V-10", "V-11", "MACH-02"],
+    "M0-R11": ["V-01", "V-02", "V-03", "V-17"],
+    "M0-R12": ["V-13", "DRIFT-ENDPOINT", "DRIFT-HEAD", "DRIFT-INDEX", "DRIFT-STAGED", "DRIFT-UNSTAGED", "DRIFT-STATUS", "DRIFT-UNTRACKED-INVENTORY", "DRIFT-UNTRACKED-PATH", "DRIFT-UNTRACKED-MODE", "DRIFT-UNTRACKED-CONTENT"],
+    "M0-R13": ["V-01", "V-06", "V-07", "V-12", "V-13", "V-17", "COV-05"],
+    "M0-R14": ["V-10", "V-14", "V-15", "V-16", "V-17", "AUTH-01"]
+  },
+  "protected_behavior": {
+    "result": "pass",
+    "critical_regressions": [],
+    "current_only_protection": "none-by-existence",
+    "unresolved_removal_risk": false
+  },
+  "residual_transfer_gaps": [
+    "generalization beyond the exact runtime, fixtures, model family, host, tools, authority, and sample count",
+    "live Git execution was simulated by pre-registered observations rather than mutating repositories",
+    "unavailable model-build and sampler telemetry"
+  ]
+}

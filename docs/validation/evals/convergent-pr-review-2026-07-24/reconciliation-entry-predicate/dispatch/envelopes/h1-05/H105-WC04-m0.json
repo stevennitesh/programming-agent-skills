@@ -1,0 +1,20 @@
+{
+    "task":  "Apply the supplied convergent-pr-review runtime after all initial blind reports have closed. Decide whether one recovery action is authorized, then return the exact action, completed-packet and capacity effect, evidence disposition, decision boundary, and stop point.",
+    "authority":  "Simulated top-level root, read-only judgment under the exact supplied runtime. At most one recovery action may be taken when authorized.",
+    "initial_state":  "The caller packet, review mode, immutable snapshot, assignment, sealed blind reports, candidate ledger exposure, and recovery budget are fixed by the case facts.",
+    "tools_operations":  [
+                             "read the exact runtime",
+                             "apply the case facts",
+                             "authorize or decline recovery",
+                             "return the supported boundary"
+                         ],
+    "mutation_boundary":  "none",
+    "requested_output":  "Recovery disposition, evidence and capacity effect, terminal boundary, and concise log.",
+    "facts":  {
+                  "F1":  "One otherwise valid origin report omits blockers.",
+                  "F2":  "The target bytes changed after the report was sealed.",
+                  "F3":  "The caller has not authorized recapture or a successor snapshot.",
+                  "F4":  "No prior recovery occurred."
+              },
+    "runtime":  "docs/validation/evals/convergent-pr-review-2026-07-24/runtime/m0"
+}

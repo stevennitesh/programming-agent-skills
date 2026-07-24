@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "artifact_type": "deploy-prompt3-candidate-record",
+  "campaign": "2026-07-24-review-f3be70c",
+  "skill": "review",
+  "decision": "accepted",
+  "campaign_shape": "minimum-candidate",
+  "authoritative_references": {
+    "intended_contract_and_m0_checkpoint": "campaign.json#m0_checkpoint",
+    "research": "../../../docs/research/review-deploy-2026-07-24.md",
+    "prompt2_decision": "../../../docs/synthesis/skills/review.md#review-deploy-decisionstart",
+    "interludes": "campaign.json#prompt_2_decision.interludes",
+    "semantic_ledger": "campaign.json#prompt_3_construction.semantic_trace",
+    "protocol": "evals/prompt4/protocol-manifest.json"
+  },
+  "runtime": {
+    "path": "runtime/m0-h1/review",
+    "m0_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+    "h1_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+    "stored_once": true,
+    "h1_transformations": []
+  },
+  "candidate_specific_proof_plan": {
+    "m0_first": true,
+    "h1_contribution_arms": [],
+    "behavioral_evaluation_status": "complete",
+    "registered_protocol": "evals/prompt4/protocol-manifest.json"
+  },
+  "prompt_4_result": {
+    "decision": "accepted",
+    "results": "../../../docs/validation/evals/review-2026-07-24-prompt4/results-manifest.json",
+    "accepted_m0_samples": 5,
+    "accepted_case_outcomes": 160,
+    "critical_failures_in_accepted_set": 0,
+    "h1_contribution": "not-applicable-no-units",
+    "v1_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+    "recommended_next_unit": "pruning-pass"
+  },
+  "pruning_pass_result": {
+    "decision": "complete",
+    "disposition": "pruning-not-needed",
+    "v1_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+    "p1_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+    "p1_runtime": "runtime/m0-h1/review",
+    "stored_once": true,
+    "material_cuts": [],
+    "rejected_cut_groups": [
+      "CG-01-review-versus-finding-evidence-gap",
+      "CG-02-shared-finding-load-condition"
+    ],
+    "fresh_behavioral_wave": "not-run-no-material-cut",
+    "reused_proof": "../../../docs/validation/evals/review-2026-07-24-prompt4/results-manifest.json",
+    "transcript": "../../../docs/validation/transcripts/2026-07-24-review-pruning.md",
+    "recommended_next_unit": "prompt-5"
+  },
+  "prompt_5_result": {
+    "decision": "complete",
+    "p1_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+    "canonical_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+    "installed_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+    "behavior_evidence": "exact-reused-from-prompt-4",
+    "fresh_behavioral_wave": "not-run-lifecycle-only",
+    "canonical_proof": {
+      "complete_read_back": "pass",
+      "focused_affected_proof": "8 passed",
+      "full_integration_suite": "pass",
+      "skill_validation": "pass"
+    },
+    "installation": {
+      "pre_install_changed_cohort": [
+        "review"
+      ],
+      "managed_sync": "pass",
+      "canonical_installed_parity": "pass",
+      "post_install_dry_run": "25 unchanged"
+    },
+    "experimental_cleanup": "no-op-review-package-and-manifest-entry-not-present",
+    "promotion_transcript": "../../../docs/validation/transcripts/2026-07-24-review-prompt5-promotion.md",
+    "recommended_next_unit": "none",
+    "git_delivery": "pending"
+  },
+  "pruning_pass_boundary": "After Prompt 4 establishes V1, protect every accepted M0 semantic, exact machine interface, required relationship, context-loading condition, and authority boundary. Compare any cut only against exact V1; do not prune or promote in Prompt 3.",
+  "affected_relationships": [
+    "skill-router -> review",
+    "implement -> review",
+    "parallel-implement -> review",
+    "review -> convergent-pr-review",
+    "review -> audit-codebase",
+    "foreign consumers -> shared review contracts"
+  ],
+  "relationship_publication": "none before promotion",
+  "residual_load": [
+    "behavioral proof is bounded to the exact registered fixtures and configuration",
+    "host/model telemetry may be unavailable",
+    "generalization beyond fixed fixtures and runtime remains unproved"
+  ]
+}

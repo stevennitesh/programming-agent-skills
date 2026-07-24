@@ -1,0 +1,281 @@
+{
+  "schema": {
+    "name": "programming-agent-skills.deploy-campaign-final-manifest",
+    "version": 1
+  },
+  "campaign": {
+    "skill": "review",
+    "epoch": "2026-07-24-review-f3be70c",
+    "decision": "prompt5-complete",
+    "campaign_shape": "minimum-candidate",
+    "delivery_mode": "bare",
+    "chronology_present": false
+  },
+  "fixed_point": {
+    "git_head": "f3be70c31dd8f2ae9f12a75248065ef313790bda",
+    "head_must_remain": "f3be70c31dd8f2ae9f12a75248065ef313790bda"
+  },
+  "fingerprints": {
+    "m0_checkpoint_path": "docs/validation/transcripts/2026-07-24-review-prompt1-m0.md",
+    "m0_checkpoint_semantic_sha256": "3fa19cd24076c25090adc1921dc1e5f1c21e74749e4179a6c59c17a523330366",
+    "m0_checkpoint_file_sha256": "b5cec2ee6e21b64b2f99be36909e670101b630158c973986deee7fb650d1eb62",
+    "research_path": "docs/research/review-deploy-2026-07-24.md",
+    "research_sha256": "ba36096f6a7dc2862d721dac0f4931984de14a41ba1145152c0c89bbda49c754",
+    "prompt2_record_path": "docs/validation/transcripts/2026-07-24-review-prompt2-synthesis.md",
+    "prompt2_record_sha256": "2b3b54765c221b525f9b738def8b98f2caa6c81191bc7974b5fc3d40fca6f756",
+    "prompt2_decision_content_sha256": "c0f6f293db5c7607128ff2fcaf462b0d4dd9928e5b8c071e1a96889dc67b2894",
+    "m0_h1_specification_sha256": "9adc5608bad387df9314df185d7de67b11eb6efb1f9a608e7f7a5c5409213268",
+    "prompt3_record_path": "docs/validation/transcripts/2026-07-24-review-prompt3-construction.md",
+    "prompt3_record_sha256": "9346374a87b534571b027687b5961692b3ca5fb4dc12a4bfbc7d347d309da70a",
+    "prompt3_decision_content_sha256": "f1279dea97aec497017b9893d5475d0ca0cee65503de71e88d41a8480b1b7882",
+    "active_synthesis_path": "docs/synthesis/skills/review.md",
+    "active_synthesis_sha256": "d062adf727ab6f41369a6a9112f911a371004e2782d01333784187a69603b14f",
+    "active_synthesis_bounded_sha256": "3d1736f15ba3dfb3b6da182a5090e20f2ea4eba6d95e67911f621285aea3fa02"
+  },
+  "identity_slots": {
+    "previous_canonical": {
+      "status": "comparison-only",
+      "legacy_package_tree_sha256": "4bc1ce43eaa00a9ad7a7482a639793b286fde27c14ba0c5e41e1f73364eb9786"
+    },
+    "m0": {
+      "status": "materialized-and-accepted",
+      "legacy_package_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8"
+    },
+    "h1": {
+      "status": "exact-identity-alias-of-m0; zero transformations",
+      "legacy_package_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8"
+    },
+    "v1": {
+      "status": "exact-identity-alias-of-m0",
+      "legacy_package_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8"
+    },
+    "p1": {
+      "status": "exact-identity-alias-of-v1",
+      "legacy_package_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+      "campaign_tree_v1_sha256": "7a093e4c79710ef7c06a9c578a82a7992061fd8709a04be55eee6cbd08dce37b"
+    },
+    "canonical_promoted": {
+      "status": "exact-p1-promoted",
+      "path": "skills/custom/review",
+      "legacy_package_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+      "campaign_tree_v1_sha256": "7a093e4c79710ef7c06a9c578a82a7992061fd8709a04be55eee6cbd08dce37b"
+    },
+    "installed": {
+      "status": "supported-installer-synchronized",
+      "legacy_package_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+      "campaign_tree_v1_sha256": "7a093e4c79710ef7c06a9c578a82a7992061fd8709a04be55eee6cbd08dce37b"
+    }
+  },
+  "construction": {
+    "durable_runtime_path": "docs/validation/evals/review-2026-07-24-prompt4/runtime/p1/review",
+    "legacy_tree_algorithm": "scripts.skill_pack_contract.tree_hash format-1: Path-sorted relative name, NUL, raw content, NUL",
+    "legacy_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+    "campaign_tree_v1_algorithm": "SHA-256 of UTF-8 lines sorted by ordinal UTF-8 POSIX path: path<TAB>byte_count<TAB>file_sha256<LF>",
+    "campaign_tree_v1_sha256": "7a093e4c79710ef7c06a9c578a82a7992061fd8709a04be55eee6cbd08dce37b",
+    "inventory": [
+      {
+        "path": "ADVISORY-CONTRACT.md",
+        "bytes": 1050,
+        "sha256": "5edf5100cd8ff6d924d93866100f0c2c80f17751c999985105eb5bf0a6003972"
+      },
+      {
+        "path": "FINDING-CONTRACT.md",
+        "bytes": 2423,
+        "sha256": "f99446f46d3f6f31b58d0dfecb31c3602742d1e7f8b14f43414f0575b7a6cc95"
+      },
+      {
+        "path": "SKILL.md",
+        "bytes": 7407,
+        "sha256": "a78aa310f340ffd4cdfa8e721b4bcf3ea99f89be01c834c01d4c1efee27d8153"
+      },
+      {
+        "path": "SMELL-BASELINE.md",
+        "bytes": 2003,
+        "sha256": "966b35b7da2690a5df33d697b43b3c0bd41891b1a5e554c2f0b266610ac2259f"
+      },
+      {
+        "path": "agents/openai.yaml",
+        "bytes": 317,
+        "sha256": "5b344e7c178aeb37da631a640704dcc71d24c67442f7a9a5bc054586e9453ca4"
+      }
+    ],
+    "fixtures": {
+      "worker_visible_path": "docs/validation/evals/review-2026-07-24-prompt4/fixtures/worker-visible.json",
+      "worker_visible_sha256": "b6750ac8c30b3d25c7bb1652e1ff8a1735d5369c5475ba11417e7f987e411074",
+      "root_only_path": "docs/validation/evals/review-2026-07-24-prompt4/fixtures/root-only-evaluation.json",
+      "root_only_sha256": "15e6a82f8992ae6826df67d2b728b03be03eca739fbbac2356ff6163ac58e5de",
+      "original_protocol_path": "docs/validation/evals/review-2026-07-24-prompt4/protocol-original.json",
+      "original_protocol_sha256": "f9963235386e839e5db787a9a64009934264da82c102b91f5e113231f1cc607e",
+      "original_protocol_disposition": "exact historical bytes; any embedded disposable path is provenance only and not an active dependency",
+      "durable_protocol_path": "docs/validation/evals/review-2026-07-24-prompt4/protocol-durable.json",
+      "durable_protocol_sha256": "f6c2452e7f12a403626514cdcae8a9c7dd1c85ea999a8acab141514bcb43aed9"
+    }
+  },
+  "semantic_state": {
+    "required_m0_semantic_ids": [
+      "M0-R01",
+      "M0-R02",
+      "M0-R03",
+      "M0-R04",
+      "M0-R05",
+      "M0-R06",
+      "M0-R07",
+      "M0-R08",
+      "M0-R09",
+      "M0-R10",
+      "M0-R11",
+      "M0-R12",
+      "M0-R13",
+      "M0-R14"
+    ],
+    "h1_units": [],
+    "forbidden_semantic_ids": [
+      "FORBID-ORDINARY-ADVISORY",
+      "FORBID-PERSISTENT-COVERAGE-LEDGER",
+      "FORBID-AUTOMATIC-RECAPTURE",
+      "FORBID-EVIDENCE-LADDER",
+      "FORBID-MAJOR-FIRST",
+      "FORBID-STRONGER-AXIS-ISOLATION",
+      "FORBID-COPIED-REVIEW-PACKAGE",
+      "FORBID-PONYTAIL-TAGS",
+      "FORBID-REMOVABLE-LINE-TOTAL",
+      "FORBID-ALTERNATE-SEVERITY",
+      "FORBID-MUTATION-OR-REPAIR",
+      "FORBID-SUCCESSOR-REVIEW"
+    ],
+    "instruction_passage_count": 46,
+    "passage_and_absence_owner": "docs/validation/evals/review-2026-07-24-prompt4/protocol-durable.json"
+  },
+  "protected": {
+    "behavior": "all M0 units plus exact finding/report interfaces, conditional helper loads, caller relationships, read-only authority, safe failure, drift without recapture, and one terminal Return",
+    "relationships": [
+      "skill-router -> review",
+      "implement -> review",
+      "parallel-implement -> review",
+      "review -> convergent-pr-review",
+      "review -> audit-codebase",
+      "foreign consumers -> shared review contracts"
+    ],
+    "unresolved_current_removal_risk": false
+  },
+  "proof_registry": {
+    "candidate_path": "docs/validation/evals/review-2026-07-24-prompt4/candidate.md",
+    "candidate_sha256": "a905002be6aa9c71a5252a89408142636c4354eeaa4ec7d471d238d5a752738d",
+    "results_path": "docs/validation/evals/review-2026-07-24-prompt4/results-manifest.json",
+    "results_sha256": "c138a065e72fb1b37bc8fb82116c6ceb8a44039e81de7d919cf117c693d2bac3",
+    "prompt4_decision_path": "docs/validation/evals/review-2026-07-24-prompt4/prompt4-decision.md",
+    "prompt4_decision_sha256": "10f0b1130f60cfed8fd5f5b4a5c55e0c26819d5f71000d4ed4212438b00d7cf6",
+    "prompt4_coverage_path": "docs/validation/evals/review-2026-07-24-prompt4/prompt4-proof-coverage.md",
+    "prompt4_coverage_sha256": "971c3ac4d87bb9d46fa938c2e2b04a4716f3f75f683ad9af8a4105fa23058394",
+    "pruning_results_path": "docs/validation/evals/review-2026-07-24-prompt4/pruning-results.json",
+    "pruning_results_sha256": "6095b19bf657204e1e4652301e3e328d17841edd9795c7c8cae64b88eabd3d5a",
+    "pruning_decision_path": "docs/validation/evals/review-2026-07-24-prompt4/pruning-decision.md",
+    "pruning_decision_sha256": "709927dccef11fd1ae6db51020bae51d68865ea22e994fa71e48a0bfd6356716",
+    "prompt5_decision_path": "docs/validation/evals/review-2026-07-24-prompt4/prompt5-decision.md",
+    "prompt5_decision_sha256": "68049d8c571221496a70526129db26a162c50bae20b5fe2840284aa2eb6e9f43",
+    "prompt4_transcript_path": "docs/validation/transcripts/2026-07-24-review-prompt4-behavior-audit.md",
+    "prompt4_transcript_sha256": "63e6115033867388eee0b4428976b3d508d0e3deb75816bb372835824dd2dc3f",
+    "pruning_transcript_path": "docs/validation/transcripts/2026-07-24-review-pruning.md",
+    "pruning_transcript_sha256": "bc45cffc640b7694d16cd789a8e21d2b7fdff991ff6d7076d9988c7dce9b56fb",
+    "prompt5_transcript_path": "docs/validation/transcripts/2026-07-24-review-prompt5-promotion.md",
+    "prompt5_transcript_sha256": "3934664f3d4386a29be2dbd43c0906d47ec23b0aa4f162bb559efd3a8a09b51e"
+  },
+  "prompt4": {
+    "decision": "accepted",
+    "m0_viability": {
+      "registered_cases": 32,
+      "accepted_samples": 5,
+      "accepted_case_outcomes": 160,
+      "accepted_case_passes": 160,
+      "worst_sample": "32 of 32",
+      "scored_variance": "none",
+      "critical_failures_in_accepted_set": 0
+    },
+    "fixture_repair": {
+      "disposition": "source-completeness-only",
+      "task_changed": false,
+      "rubric_changed": false,
+      "runtime_changed": false
+    },
+    "h1_contribution": "not-applicable-zero-units",
+    "v1_legacy_package_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8"
+  },
+  "pruning": {
+    "decision": "complete",
+    "disposition": "pruning-not-needed",
+    "passage_classification": {
+      "total": 46,
+      "keep": 46,
+      "collapse": 0,
+      "disclose": 0,
+      "delete": 0
+    },
+    "fresh_behavioral_wave": false,
+    "v1_equals_p1": true
+  },
+  "prompt5": {
+    "decision": "complete",
+    "p1_equals_canonical_equals_installed": true,
+    "changed_canonical_files": ["skills/custom/review/SKILL.md"],
+    "authorized_install_cohort": ["review"],
+    "post_install_unchanged_count": 25,
+    "focused_tests": "8 passed",
+    "full_suite": "206 passed, 4 skipped",
+    "skill_validation": "passed",
+    "git_delivery": "pending",
+    "recommended_next_unit": "none"
+  },
+  "raw_captures": {
+    "retention": "disposable",
+    "durable_replacement": "results-manifest.json retains every capture SHA-256, credit disposition, case count, critical-failure judgment, aggregate, variance, and residual gap",
+    "capture_paths_required": false
+  },
+  "prior_evidence": [
+    {
+      "id": "PROMPT4-BEHAVIOR",
+      "disposition": "exact-reusable",
+      "lane": "M0 viability for exact runtime and fixtures"
+    },
+    {
+      "id": "PRUNING",
+      "disposition": "exact-reusable",
+      "lane": "complete cut audit and V1/P1 identity"
+    },
+    {
+      "id": "PROMPT5-CANONICAL-INSTALLED",
+      "disposition": "exact-reusable",
+      "lane": "promotion, integration proof, and install parity"
+    },
+    {
+      "id": "LIVE-GIT-EXECUTION",
+      "disposition": "missing",
+      "lane": "behavioral transfer beyond simulated observations"
+    }
+  ],
+  "durability_repair": {
+    "status": "complete",
+    "behavioral_evaluation_rerun": false,
+    "runtime_changed": false,
+    "promotion_repeated": false,
+    "active_scratch_dependency": false,
+    "raw_capture_hashes_and_judgments_preserved": true
+  },
+  "residual_gaps": [
+    "generalization beyond the exact runtime, fixtures, model family, host, tools, authority, and sample count",
+    "live Git execution beyond fixed simulated observations",
+    "exact model build, sampler seed, token counts, and per-sample latency",
+    "Git delivery remains pending and unauthorized"
+  ],
+  "invariants": [
+    "fixed_point.git_head equals fixed_point.head_must_remain",
+    "M0, H1, V1, P1, canonical, installed, and durable runtime share one legacy package-tree identity",
+    "the durable runtime inventory contains exactly five files with recorded SHA-256 identities",
+    "every M0 semantic ID M0-R01 through M0-R14 is present",
+    "H1 contains zero units and no contribution arm",
+    "all twelve forbidden semantic IDs retain complete-package absence ownership",
+    "results record five accepted samples, 160 accepted outcomes, and every zero-credit judgment",
+    "pruning classified all 46 passages and made no byte change",
+    "Prompt 5 promoted exact P1 and verified canonical-installed parity",
+    "active synthesis and promotion-critical records have no disposable evidence dependency"
+  ]
+}

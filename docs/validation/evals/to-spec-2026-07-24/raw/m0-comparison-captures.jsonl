@@ -1,0 +1,35 @@
+{"sample_id":"Q01-A","arm":"M0","capture":"published-spec; all seven reconstruction fields recovered; Quorum defined through stable ADR-31; no unsupported acceptance inference or copied owner truth"}
+{"sample_id":"Q01-B","arm":"M0","capture":"published-spec; Cooling Window, operator, scheduling/rollback commitments, acceptance, exclusions, owners, and integration proof recovered"}
+{"sample_id":"Q01-C","arm":"M0","capture":"published-spec; Safe Hold meaning inline; operator/API-client behavior, exclusion, status, and integration proof recovered"}
+{"sample_id":"Q01-D","arm":"M0","capture":"published-spec; at-least-once premise, ADR-44 owner, caller/failure acceptance, exclusions, and proof recovered"}
+{"sample_id":"Q01-E","arm":"M0","capture":"published-spec; UTC premise, strict late threshold, quarantine, operator notice, owner pointer, and proof recovered"}
+{"sample_id":"Q02-A","arm":"M0","capture":"published-spec after source-supported TODO-to-30-days repair; no new approval or decision"}
+{"sample_id":"Q02-B","arm":"M0","capture":"published-spec after contradiction repaired to at most two retries"}
+{"sample_id":"Q02-C","arm":"M0","capture":"published-spec after invented administrator export removed and recorded as excluded"}
+{"sample_id":"Q02-D","arm":"M0","capture":"published-spec unchanged; concise house-style difference correctly not treated as a material defect"}
+{"sample_id":"Q02-E","arm":"M0","capture":"published-spec unchanged; owned nonblocking note correctly retained without false block"}
+{"sample_id":"Q03-A","arm":"M0","capture":"published-spec; email deletion and availability included; migration excluded; no invented concern obligation"}
+{"sample_id":"Q03-B","arm":"M0","capture":"published-spec; v1-to-v2 backfill/rollback covered; personal-data privacy obligation omitted"}
+{"sample_id":"Q03-C","arm":"M0","capture":"complete artifact; bearer rotation/overlap/401/no-mutation covered; migration excluded"}
+{"sample_id":"Q03-D","arm":"M0","capture":"published-spec; local formatter input/output/failures covered; network/persistence/credential/privacy obligations omitted"}
+{"sample_id":"Q03-E","arm":"M0","capture":"complete artifact; local report input/output/failures covered; network/identity/migration/extra-state obligations omitted"}
+{"sample_id":"Q04-A","arm":"M0","capture":"published-spec; vault reference through injection to billing client, rotation, sandbox proof, and no literal secret"}
+{"sample_id":"Q04-B","arm":"M0","capture":"published-spec; gateway-generated ID preserved through queue/worker/retries; seven-day correlation retention/deletion; endpoint proof with residual transient-queue proxy risk"}
+{"sample_id":"Q04-C","arm":"M0","capture":"source-gap for unresolved destination consumer and security acceptance; no publication or invention"}
+{"sample_id":"Q04-D","arm":"M0","capture":"published-spec; tenant profile through API/scheduler/job retention to UTC observation; no invented configuration"}
+{"sample_id":"Q04-E","arm":"M0","capture":"published-spec; total one-to-one mapping, cutover, in-flight legacy lookup, rollback, invoicing consumer, and before/after association/totals proof all preserved"}
+{"sample_id":"Q05-A","arm":"M0","capture":"API, caller, and terminal-status oracles; parser remains private; scope-matched unit/API/E2E portfolio"}
+{"sample_id":"Q05-B","arm":"M0","capture":"public property and caller proof; private cache replaceable; full-stack correctly omitted"}
+{"sample_id":"Q05-C","arm":"M0","capture":"response plus durable-event proof; retry caller-visible; queue internals not contractual"}
+{"sample_id":"Q05-D","arm":"M0","capture":"browser outcome plus state-contract proof; no serialization coupling"}
+{"sample_id":"Q05-E","arm":"M0","capture":"API integration plus worker component portfolio; no forced single broad harness"}
+{"sample_id":"Q06-A","arm":"M0","capture":"buyer/support benefits and encryption-at-rest non-story constraint all traced; no invented actor"}
+{"sample_id":"Q06-B","arm":"M0","capture":"author/reader benefits and legacy-slug constraint all traced; no migration persona"}
+{"sample_id":"Q06-C","arm":"M0","capture":"operator/customer benefits and regulatory retention constraint all traced"}
+{"sample_id":"Q06-D","arm":"M0","capture":"service owner/dependent service benefits and internal rollback constraint traced; no end-user persona"}
+{"sample_id":"Q06-E","arm":"M0","capture":"analyst/admin benefits and schema compatibility constraint traced; actor set exact"}
+{"sample_id":"Q07-A","arm":"M0","capture":"published-spec; design lead, excluded dark-mode consequence, tokens-v3 trigger"}
+{"sample_id":"Q07-B","arm":"M0","capture":"source-gap; upload size changes acceptance and limits; product owner; no publication"}
+{"sample_id":"Q07-C","arm":"M0","capture":"published-spec; product-design owner, desktop-only consequence, mobile-traffic trigger"}
+{"sample_id":"Q07-D","arm":"M0","capture":"published-spec; reliability owner, single-region consequence, second-region-funding trigger"}
+{"sample_id":"Q07-E","arm":"M0","capture":"source-gap; retention changes deletion/legal posture; privacy owner; no publication"}

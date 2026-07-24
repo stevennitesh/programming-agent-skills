@@ -11,6 +11,25 @@ import pytest
 from scripts import install_skills, skill_pack_contract
 
 
+def test_campaign_install_cli_flags_remain_supported(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "install_skills",
+            "--dry-run",
+            "--skip-global-agents",
+        ],
+    )
+
+    args = install_skills.parse_args()
+
+    assert args.dry_run is True
+    assert args.skip_global_agents is True
+
+
 def write_source_skill(root: Path, name: str, marker: str) -> None:
     skill = root / "skills/custom" / name
     skill.mkdir(parents=True)

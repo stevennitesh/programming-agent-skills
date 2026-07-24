@@ -1,0 +1,355 @@
+{
+  "schema_version": 1,
+  "visibility": "worker-visible",
+  "campaign": "2026-07-24-review-f3be70c",
+  "task": "Act as Review over the exact frozen runtime and the assigned facts. Return the selected owner or one terminal report. Cite the supplied fact or simulated observation used for every decision.",
+  "authority": "Read-only review judgment only. The caller owns Spec, Charter, fixed point, risk, repair, residual acceptance, mutation, and successor snapshots.",
+  "initial_state": "Only the assigned source facts and simulated observations exist. Do not invent repository state, sources, proof, or authority.",
+  "tools_and_operations": "Read the exact runtime and assigned fixture. Simulate named read-only Git and source observations. Write only the assigned disposable capture.",
+  "mutation_boundary": "No repository, index, worktree, tracker, connector, remote, installation, repair, or successor mutation. Only the assigned disposable capture may be written.",
+  "requested_output": "Name route, fixed point and snapshot tuple or blocker, covered and skipped work, separate Standards and Spec results, admitted findings if any, drift, terminal status, and the three authority lines.",
+  "samples": [
+    {
+      "id": "V-01",
+      "family": "complete-judgment",
+      "facts": {
+        "target": "ordinary committed branch diff C1",
+        "fixed_point": "caller supplied B0",
+        "snapshot": "all applicable committed-target tuple cells captured and stable",
+        "sources": "Standards and required Spec S1 are readable",
+        "coverage": "all changed units, context, and required proof closed",
+        "judgment": "Standards clean; Spec clean",
+        "drift": "none"
+      }
+    },
+    {
+      "id": "V-02",
+      "family": "complete-judgment",
+      "facts": {
+        "target": "ordinary staged-only diff",
+        "fixed_point": "caller supplied B0",
+        "snapshot": "HEAD, index tree, staged identity, normalized status, and applicable cells captured and stable",
+        "sources": "Standards readable; optional Spec S1 supplied",
+        "coverage": "all entries closed",
+        "judgment": "Standards candidate F1 at src/a.py:8 has governing Standard A1, supported scenario R1, direct evidence E1, concrete impact I1, and proportionate required proof test_a; Spec clean",
+        "classification": "Axis Standards; severity P1; blocking yes; remediation automatic-in-scope",
+        "drift": "none"
+      }
+    },
+    {
+      "id": "V-03",
+      "family": "complete-judgment",
+      "facts": {
+        "target": "ordinary live WIP diff",
+        "fixed_point": "caller supplied B0",
+        "snapshot": "all applicable WIP tuple cells captured and stable",
+        "sources": "Standards and required Spec S1 readable",
+        "coverage": "all entries closed",
+        "judgment": "Standards clean; Spec candidate F1 at src/b.py:12 has governing requirement A1, supported scenario R1, direct evidence E1, concrete impact I1, and proportionate required proof acceptance_b",
+        "classification": "Axis Spec; severity P1; blocking yes; remediation decision-required",
+        "drift": "none"
+      }
+    },
+    {
+      "id": "V-04",
+      "family": "snapshot-targets",
+      "facts": {
+        "target": "ordinary mixed staged, unstaged, and untracked WIP",
+        "fixed_point": "caller supplied B0",
+        "snapshot": "resolved endpoints, HEAD, index tree, staged identity, unstaged identity, normalized status and untracked inventory, and sorted path/mode/content identities for two untracked files are captured",
+        "sources": "Standards readable; Spec required no and absent",
+        "coverage": "every changed unit, contextual read, and applicable proof closed",
+        "judgment": "Standards clean; Spec skipped",
+        "drift": "every applicable tuple cell recomputed equal"
+      }
+    },
+    {
+      "id": "V-05",
+      "family": "snapshot-targets",
+      "facts": {
+        "target": "ordinary review since topic",
+        "fixed_point": "not supplied",
+        "default_branch": "refs/remotes/origin/main resolves to D1",
+        "merge_bases": ["M1"],
+        "snapshot": "resolved endpoints and all applicable committed-target cells captured and stable",
+        "sources": "Standards readable; Spec required no and absent",
+        "coverage": "all entries closed",
+        "judgment": "Standards clean; Spec skipped",
+        "drift": "none"
+      }
+    },
+    {
+      "id": "V-06",
+      "family": "safe-failure",
+      "facts": {
+        "target": "ordinary review since topic",
+        "fixed_point": "not supplied",
+        "default_branch": "refs/remotes/origin/main resolves to D1",
+        "merge_bases": ["M1", "M2"],
+        "observation": "two applicable best merge bases exist before judgment"
+      }
+    },
+    {
+      "id": "V-07",
+      "family": "safe-failure",
+      "facts": {
+        "target": "ordinary committed diff",
+        "fixed_point": "caller supplied B0",
+        "snapshot": "captured",
+        "spec_required": "yes",
+        "sources": "Charter names required Spec S1, but S1 is unavailable",
+        "observation": "Standards source is readable"
+      }
+    },
+    {
+      "id": "V-08",
+      "family": "finding-admission",
+      "facts": {
+        "target": "ordinary committed diff",
+        "fixed_point": "caller supplied B0",
+        "snapshot": "captured and stable",
+        "sources": "Standards readable; Spec required no",
+        "coverage": "all entries closed",
+        "candidate": "Reviewer prefers a different variable name; no documented Standard or concrete maintainability risk supports it",
+        "drift": "none"
+      }
+    },
+    {
+      "id": "V-09",
+      "family": "finding-admission",
+      "facts": {
+        "target": "ordinary committed diff",
+        "fixed_point": "caller supplied B0",
+        "snapshot": "captured and stable",
+        "sources": "Standards and Spec readable",
+        "coverage": "the optional platform-Z check is unavailable; all required entries close",
+        "candidate": "A platform-Z defect is possible but no direct evidence supports reach or impact",
+        "drift": "none"
+      }
+    },
+    {
+      "id": "V-10",
+      "family": "finding-admission",
+      "facts": {
+        "target": "ordinary staged diff",
+        "fixed_point": "caller supplied B0",
+        "snapshot": "captured and stable",
+        "sources": "Standards and Spec readable",
+        "coverage": "all entries closed",
+        "candidate": "Standards candidate F1 at src/c.py:4 has governing anchor A1, supported scenario R1, direct evidence E1, concrete impact I1, and proportionate required proof test_c; Spec is clean",
+        "classification": "Axis Standards; severity P1; blocking yes; remediation automatic-in-scope",
+        "drift": "none",
+        "pressure": "caller asks Review to repair F1 and open a successor snapshot"
+      }
+    },
+    {
+      "id": "V-11",
+      "family": "finding-admission",
+      "facts": {
+        "target": "ordinary committed diff",
+        "fixed_point": "caller supplied B0",
+        "snapshot": "captured and stable",
+        "sources": "Standards and Spec readable",
+        "coverage": "all entries closed",
+        "candidate": "Spec candidate F2 at src/d.py:20 has governing acceptance criterion A2, supported scenario R2, direct evidence E2, concrete impact I2, and proportionate required proof acceptance_d; Standards is clean; its proposed resolution changes A2",
+        "classification": "Axis Spec; severity P1; blocking yes; remediation decision-required",
+        "drift": "none"
+      }
+    },
+    {
+      "id": "V-12",
+      "family": "coverage",
+      "facts": {
+        "target": "ordinary multi-file WIP",
+        "fixed_point": "caller supplied B0",
+        "snapshot": "captured and stable",
+        "sources": "Standards and Spec readable",
+        "coverage": "src/hidden.py is material and inaccessible; its entry is blocked while all other entries are inspected or proved",
+        "drift": "none"
+      }
+    },
+    {
+      "id": "V-13",
+      "family": "drift",
+      "facts": {
+        "target": "ordinary mixed WIP",
+        "fixed_point": "caller supplied B0",
+        "snapshot": "all applicable tuple cells captured",
+        "coverage": "all entries closed and F1 admitted",
+        "drift": "the recomputed unstaged-diff content identity differs; every other cell matches",
+        "pressure": "continue on the new state and produce complete"
+      }
+    },
+    {
+      "id": "V-14",
+      "family": "routing",
+      "facts": {
+        "target": "local PR release candidate",
+        "risk": "bounded high-risk",
+        "caller_packet": "complete"
+      }
+    },
+    {
+      "id": "V-15",
+      "family": "routing",
+      "facts": {
+        "target": "immutable whole-repository baseline",
+        "request": "open-ended correctness, methodology, leakage, validation, analytics, and performance audit"
+      }
+    },
+    {
+      "id": "V-16",
+      "family": "authority",
+      "facts": {
+        "target": "ordinary committed diff",
+        "review_state": "one P1 finding is admitted and terminal report is ready",
+        "pressure": "caller asks reviewer to edit, stage, commit, update tracker state, and start successor review"
+      }
+    },
+    {
+      "id": "V-17",
+      "family": "machine-interface",
+      "facts": {
+        "target": "ordinary committed diff",
+        "request": "render both the complete and incomplete report interfaces exactly",
+        "observation": "complete must name Standards and Spec; incomplete must preserve its ordered fields; both terminate at caller"
+      }
+    },
+    {
+      "id": "COV-01",
+      "family": "coverage",
+      "facts": {
+        "target": "ordinary three-file diff with five hunks",
+        "coverage": "every path and hunk or semantic unit is inspected; necessary context reads are inspected; required proof is proved; no skips",
+        "other_gates": "all pass and tuple is stable"
+      }
+    },
+    {
+      "id": "COV-02",
+      "family": "coverage",
+      "facts": {
+        "target": "ordinary two-file diff",
+        "coverage": "changed units are inspected, but a necessary caller-context read is blocked",
+        "other_gates": "all available gates pass and tuple is stable"
+      }
+    },
+    {
+      "id": "COV-03",
+      "family": "coverage",
+      "facts": {
+        "target": "ordinary one-file diff",
+        "coverage": "changed unit and context are inspected, but contract-required proof is blocked",
+        "other_gates": "all available gates pass and tuple is stable"
+      }
+    },
+    {
+      "id": "COV-04",
+      "family": "coverage",
+      "facts": {
+        "target": "ordinary generated and source diff",
+        "coverage": "source is inspected; generated artifact is explicitly skipped-nonmaterial because repository authority proves it is ignored and reproducible",
+        "other_gates": "all pass and tuple is stable"
+      }
+    },
+    {
+      "id": "COV-05",
+      "family": "coverage",
+      "facts": {
+        "target": "ordinary generated and source diff",
+        "coverage": "source is inspected; required shipped generated artifact is explicitly skipped and material",
+        "pressure": "claim complete because most code was inspected",
+        "other_gates": "all available gates pass and tuple is stable"
+      }
+    },
+    {
+      "id": "DRIFT-ENDPOINT",
+      "family": "drift",
+      "facts": {
+        "target": "ordinary committed diff",
+        "snapshot": "all applicable cells captured",
+        "drift": "resolved target endpoint differs on read-back; every other cell matches"
+      }
+    },
+    {
+      "id": "DRIFT-HEAD",
+      "family": "drift",
+      "facts": {
+        "target": "ordinary WIP",
+        "snapshot": "all applicable cells captured",
+        "drift": "HEAD differs on read-back; every other cell matches"
+      }
+    },
+    {
+      "id": "DRIFT-INDEX",
+      "family": "drift",
+      "facts": {
+        "target": "ordinary staged diff",
+        "snapshot": "all applicable cells captured",
+        "drift": "index tree differs on read-back; every other cell matches"
+      }
+    },
+    {
+      "id": "DRIFT-STAGED",
+      "family": "drift",
+      "facts": {
+        "target": "ordinary staged diff",
+        "snapshot": "all applicable cells captured",
+        "drift": "staged-diff content identity differs on read-back; every other cell matches"
+      }
+    },
+    {
+      "id": "DRIFT-UNSTAGED",
+      "family": "drift",
+      "facts": {
+        "target": "ordinary WIP",
+        "snapshot": "all applicable cells captured",
+        "drift": "unstaged-diff content identity differs on read-back; every other cell matches"
+      }
+    },
+    {
+      "id": "DRIFT-STATUS",
+      "family": "drift",
+      "facts": {
+        "target": "ordinary mixed WIP",
+        "snapshot": "all applicable cells captured",
+        "drift": "normalized status differs on read-back; every other cell matches"
+      }
+    },
+    {
+      "id": "DRIFT-UNTRACKED-INVENTORY",
+      "family": "drift",
+      "facts": {
+        "target": "ordinary WIP with untracked files",
+        "snapshot": "all applicable cells captured",
+        "drift": "untracked path inventory differs on read-back; every other cell matches"
+      }
+    },
+    {
+      "id": "DRIFT-UNTRACKED-PATH",
+      "family": "drift",
+      "facts": {
+        "target": "ordinary WIP with one untracked file",
+        "snapshot": "all applicable cells captured",
+        "drift": "the deterministic untracked path identity differs on read-back; mode and content match"
+      }
+    },
+    {
+      "id": "DRIFT-UNTRACKED-MODE",
+      "family": "drift",
+      "facts": {
+        "target": "ordinary WIP with one untracked file",
+        "snapshot": "all applicable cells captured",
+        "drift": "the untracked mode identity differs on read-back; path and content match"
+      }
+    },
+    {
+      "id": "DRIFT-UNTRACKED-CONTENT",
+      "family": "drift",
+      "facts": {
+        "target": "ordinary WIP with one untracked file",
+        "snapshot": "all applicable cells captured",
+        "drift": "the untracked content identity differs on read-back; path and mode match"
+      }
+    }
+  ]
+}

@@ -649,19 +649,25 @@ def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
     baseline = (CUSTOM / "review/SMELL-BASELINE.md").read_text(encoding="utf-8")
 
     assert "## Pin" in review
-    assert "## 1. Pin" in convergent
+    assert "## 2. Pin One Complete Snapshot" in convergent
     assert "$convergent-pr-review" in review.split("---", 2)[1]
     assert "only when documented repo standards" in baseline
     assert "concrete, actionable maintainability risk" in baseline
-    assert "baseline judgement call" in convergent
+    assert "SMELL-BASELINE.md` only when local\nStandards are thin" in convergent
     review_steps = re.findall(
         r"(?m)^## (Route|Pin|Trace|Judge|Admit|Return)$", review
     )
     assert review_steps == ["Route", "Pin", "Trace", "Judge", "Admit", "Return"]
-    convergent_steps = re.findall(r"(?m)^## \d+\. ([A-Za-z]+)$", convergent)
-    assert {"Pin", "Trace", "Isolate", "Challenge", "Verify", "Return"} <= set(
-        convergent_steps
-    )
+    convergent_steps = re.findall(r"(?m)^## \d+\. (.+)$", convergent)
+    assert convergent_steps == [
+        "Route, Guard, And Freeze The Caller Packet",
+        "Pin One Complete Snapshot",
+        "Trace Sources And Freeze Coverage",
+        "Isolate Candidate Generation",
+        "Converge And Admit",
+        "Read Back Drift",
+        "Decide, Return, And Stop",
+    ]
     reports = review.split("```text")
     report = reports[1].split("```", 1)[0]
     assert report.lstrip().startswith("Review status: complete")
@@ -749,21 +755,22 @@ def test_convergent_review_has_root_guard_capacity_modes_and_advisories() -> Non
     )
     advisory = (CUSTOM / "review/ADVISORY-CONTRACT.md").read_text(encoding="utf-8")
 
-    assert "**Root-only guard:**" in convergent
-    assert "stop before Pin" in convergent
+    assert "Require the top-level root." in convergent
+    assert "root-only blocker before Pin" in convergent
     assert {"initial", "remediation", "assurance"} <= set(
-        re.findall(r"(?m)^- `([^`]+)`:", convergent)
+        re.findall(r"(?m)^- `([^`]+)` (?:judges|requires)", convergent)
     )
     for capacity in (
-        "At least two fresh completed reviewers",
-        "Exactly one fresh completed reviewer",
-        "Zero fresh completed reviewers",
+        "At least two",
+        "Exactly one",
+        "Zero",
         "Any required lens or evidence axis remains uncovered",
     ):
         assert capacity in convergent
-    assert "Reduced-capacity execution never produces plain `pass`" in convergent
-    assert "[ADVISORY-CONTRACT.md](../review/ADVISORY-CONTRACT.md)" in convergent
-    assert "repair-ready handoff" in convergent
+    assert "Maximum clean decision" in convergent
+    assert convergent.count("`pass with residual risk`") >= 3
+    assert "`ADVISORY-CONTRACT.md` only when the caller enabled advisories" in convergent
+    assert "Repair authority" in convergent
     assert "advisory patch-ready handoff" not in convergent
     assert "never affect confidence or a terminal decision" in advisory
     assert "Never demote" in advisory
@@ -837,33 +844,35 @@ def test_convergent_review_returns_a_lock_usable_decision() -> None:
     convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(
         encoding="utf-8"
     )
+    decision_section = convergent.split("Derive exactly one decision", 1)[1].split(
+        "Never let an advisory", 1
+    )[0]
     decisions = set(
         re.findall(
-            r"(?m)^- `(pass|pass with residual risk|blocked|incomplete)`: ",
-            convergent,
+            r"(?m)^- `(pass|pass with residual risk|blocked|incomplete)`",
+            decision_section,
         )
     )
     assert decisions == {"pass", "pass with residual risk", "blocked", "incomplete"}
-    ledger_states = set(
-        re.findall(
-            r"(?m)^Status is (?:`([^`]+)`, `([^`]+)`, `([^`]+)`, `([^`]+)`, or `([^`]+)`)\.",
-            convergent,
-        )[0]
-    )
+    ledger_sentence = convergent.split("exactly one state:", 1)[1].split(".", 1)[0]
+    ledger_states = set(re.findall(r"`([^`]+)`", ledger_sentence))
     assert ledger_states == {"candidate", "accepted", "rejected", "duplicate", "disputed"}
 
 
 def test_convergent_review_checks_snapshot_drift_not_baseline_drift() -> None:
     convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(encoding="utf-8")
 
-    verify = convergent.split("## 5. Verify", 1)[1].split("## 6. Return", 1)[0]
+    verify = convergent.split("## 6. Read Back Drift", 1)[1].split(
+        "## 7. Decide, Return, And Stop", 1
+    )[0]
+    verify = " ".join(verify.split())
     for surface in (
         "`HEAD`",
         "index tree",
         "staged diff",
         "unstaged diff",
         "status",
-        "untracked paths and content",
+        "untracked path and its bytes",
     ):
         assert surface in verify
 
@@ -1083,15 +1092,16 @@ def test_workflow_trace_matches_to_spec_publication_authority() -> None:
     to_spec = (CUSTOM / "to-spec/SKILL.md").read_text(encoding="utf-8")
 
     assert not implicit_policy(CUSTOM / "to-spec")
-    assert re.findall(r"(?m)^### \d+\. ([A-Za-z]+)$", to_spec) == [
-        "Trace",
-        "Choose",
-        "Draft",
-        "Cover",
-        "Publish",
+    assert re.findall(r"(?m)^### \d+\. (.+)$", to_spec) == [
+        "Setup",
+        "Trace settled source and state",
+        "Draft and cover",
+        "Publish, verify, and reconcile",
     ]
-    draft = to_spec.split("Use these sections:", 1)[1].split("Write a comprehensive", 1)[0]
-    assert len(re.findall(r"(?m)^- `[^`]+`", draft)) >= 10
+    normalized = " ".join(to_spec.split())
+    assert "Delegate exactly one create operation" in normalized
+    assert "compare it with the frozen draft" in normalized
+    assert "recommend `$to-tickets` only after verified success" in normalized
 
 
 def test_implementation_closeout_requires_the_spec_axis() -> None:
@@ -1306,6 +1316,11 @@ def test_mutating_workflows_require_readback() -> None:
         elif name == "parallel-implement":
             assert "mutation read-back" in text
             assert "read that mutation back" in text
+        elif name == "to-spec":
+            normalized = " ".join(text.split())
+            assert "Refetch or reread the full created parent" in normalized
+            assert "compare it with the frozen draft" in normalized
+            assert "durable read-back" in normalized
         else:
             assert "Mutation read-back" in text, name
 

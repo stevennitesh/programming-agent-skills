@@ -1,0 +1,20 @@
+{
+    "task":  "Apply the supplied convergent-pr-review runtime to this completed-review evidence state. Return the reviewer-capacity and qualification description, evidence disposition, residual risk, terminal decision, and a concise operation log.",
+    "authority":  "Simulated top-level root, read-only judgment under the exact supplied runtime. Preserve its existing capacity and decision rules.",
+    "initial_state":  "The caller packet, mode, immutable snapshot, sources, assignments, blind first reports, candidate ledger, and drift result are fixed by the case facts.",
+    "tools_operations":  [
+                             "read the exact runtime",
+                             "apply the case facts",
+                             "return the supported decision packet"
+                         ],
+    "mutation_boundary":  "none",
+    "requested_output":  "Qualification, evidence use, capacity, confidence or residual, decision, and stop boundary.",
+    "facts":  {
+                  "F1":  "Three non-author fresh-context reviewers completed three distinct risk lenses.",
+                  "F2":  "All three used the same model, training family, prompt template, and generated evidence summary.",
+                  "F3":  "The summary omitted one known limitation, but root supplied primary evidence closes every required lens.",
+                  "F4":  "The shared dependency is material to confidence but does not invalidate the independently checked primary evidence.",
+                  "F5":  "No blocker or decision-bearing residual remains; drift is clear."
+              },
+    "runtime":  "docs/validation/evals/convergent-pr-review-2026-07-24/runtime/m0"
+}

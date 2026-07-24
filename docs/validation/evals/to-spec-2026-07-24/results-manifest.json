@@ -1,0 +1,169 @@
+{
+  "schema_version": 1,
+  "campaign": "2026-07-24-to-spec",
+  "decision": "accepted",
+  "execution": {
+    "model": "gpt-5.6-sol",
+    "host": "Codex fresh-context subagent",
+    "reasoning_effort": "xhigh",
+    "tools": [
+      "read-only fixture filesystem",
+      "fixture-scoped disposable draft write",
+      "simulated configured tracker create",
+      "simulated tracker read-back"
+    ],
+    "fresh_context_per_valid_sample": true,
+    "root_judgment": true
+  },
+  "identities": {
+    "m0_tree_sha256": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa",
+    "h1_tree_sha256": "ac02b5ad3892427cb4cda755c18c4fac381d011a333a85e7b7a6eea88bac94e9",
+    "dispatch_template_sha256": "82fe5c4421969f547981bf4fb07ab9f6b274430012d678ffd0ef689faafb8029",
+    "worker_visible_sha256": "e16d50fce206dcd86fdf97a7dd355ed0bd580f5b363d29ad676e0195764df87c",
+    "root_only_sha256": "4a4583c89cee71e4e8360a125f2dd7f8855e1ede93d72421d5494aa3e701b320",
+    "sample_identity": "Each valid sample is uniquely identified by sample_id plus dispatch_template_sha256, M0 tree, worker_visible_sha256, fixed execution tuple, and fresh-context agent dispatch.",
+    "arm_delta": "runtime package only",
+    "v1": {
+      "type": "exact-identity-alias",
+      "alias_of": "M0",
+      "package_tree_sha256": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa"
+    }
+  },
+  "captures": {
+    "viability_path": "raw/m0-viability-captures.jsonl",
+    "viability_sha256": "8969ad5f4ab3e95b6125d58973c6c6b4a260e678392f282da3c758f97c2c3b22",
+    "comparison_path": "raw/m0-comparison-captures.jsonl",
+    "comparison_sha256": "ab75420b811d84c0c9e1090b52636e4e0fa209e99dc3e503ff35bb44bca75095",
+    "deviations_path": "raw/protocol-deviations.jsonl",
+    "deviations_sha256": "207103be08cdc318ecaa117dc6430777deb622e98d714a86703a1730cb04e5f7"
+  },
+  "m0_viability": {
+    "required": ["V01","V02","V03","V04","V05","V06","V07","V08","V09","V10","V11","V12","V13","V14","V15","V16","V17","V18","V19","V20","V21","V22"],
+    "valid_samples": [
+      {"id":"V01","score":10,"critical_failure":false,"result":"pass"},
+      {"id":"V02","score":10,"critical_failure":false,"result":"pass"},
+      {"id":"V03","score":10,"critical_failure":false,"result":"pass"},
+      {"id":"V04","score":10,"critical_failure":false,"result":"pass"},
+      {"id":"V05","score":10,"critical_failure":false,"result":"pass"},
+      {"id":"V06","score":10,"critical_failure":false,"result":"pass"},
+      {"id":"V07","score":10,"critical_failure":false,"result":"pass"},
+      {"id":"V08","score":10,"critical_failure":false,"result":"pass"},
+      {"id":"V09","score":10,"critical_failure":false,"result":"pass"},
+      {"id":"V10","score":10,"critical_failure":false,"result":"pass"},
+      {"id":"V11","score":10,"critical_failure":false,"result":"pass"},
+      {"id":"V12","score":10,"critical_failure":false,"result":"pass"},
+      {"id":"V13","score":10,"critical_failure":false,"result":"pass"},
+      {"id":"V14","score":10,"critical_failure":false,"result":"pass"},
+      {"id":"V15","score":9,"critical_failure":false,"result":"pass"},
+      {"id":"V16","score":9,"critical_failure":false,"result":"pass"},
+      {"id":"V17","score":10,"critical_failure":false,"result":"pass"},
+      {"id":"V18","score":10,"critical_failure":false,"result":"pass"},
+      {"id":"V19","score":10,"critical_failure":false,"result":"pass"},
+      {"id":"V20","score":10,"critical_failure":false,"result":"pass"},
+      {"id":"V21","score":10,"critical_failure":false,"result":"pass"},
+      {"id":"V22","score":10,"critical_failure":false,"result":"pass"}
+    ],
+    "aggregate": {
+      "pass_count": 22,
+      "required_count": 22,
+      "worst_score": 9,
+      "critical_failures": 0,
+      "decision": "M0-viable"
+    }
+  },
+  "comparisons": [
+    {
+      "cluster_id": "Q01",
+      "unit": "H1-01",
+      "valid_m0_samples": ["Q01-A","Q01-B","Q01-C","Q01-D","Q01-E"],
+      "families": ["product-vocabulary","integration-premises"],
+      "aggregate": "All five artifacts recovered outcome, users, commitments, acceptance, exclusions, owners, and proof without acceptance-changing unsupported inference or copied normative owner truth.",
+      "variance": "bounded; 5/5 complete reconstruction",
+      "worst_case": "complete reconstruction with implementation details left as explicit residuals",
+      "meaningful_deficit_observed": false,
+      "h1_samples_run": 0,
+      "decision": "rejected-no-control-deficit"
+    },
+    {
+      "cluster_id": "Q02",
+      "unit": "H1-02",
+      "valid_m0_samples": ["Q02-A","Q02-B","Q02-C","Q02-D","Q02-E"],
+      "families": ["defective-drafts","nondefects"],
+      "aggregate": "M0 repaired all three source-supported material defects and false-blocked neither style nor owned nonblocking-note controls.",
+      "variance": "bounded; 3/3 defect recall and 0/2 false blocks",
+      "worst_case": "complete correct disposition",
+      "meaningful_deficit_observed": false,
+      "h1_samples_run": 0,
+      "decision": "rejected-no-control-deficit"
+    },
+    {
+      "cluster_id": "Q03",
+      "unit": "H1-03",
+      "valid_m0_samples": ["Q03-A","Q03-B","Q03-C","Q03-D","Q03-E"],
+      "families": ["service-concerns","local-tool-concerns"],
+      "aggregate": "Every triggered obligation was represented and irrelevant concern obligations were omitted across service and local-tool families.",
+      "variance": "bounded; 5/5 correct triggered coverage with no invented requirement",
+      "worst_case": "non-applicable headings appeared only as explicit absence, never as obligations",
+      "meaningful_deficit_observed": false,
+      "h1_samples_run": 0,
+      "decision": "rejected-no-control-deficit"
+    },
+    {
+      "cluster_id": "Q04",
+      "unit": "H1-04",
+      "valid_m0_samples": ["Q04-A","Q04-B","Q04-C","Q04-D","Q04-E"],
+      "families": ["credential-integration","migration-config"],
+      "aggregate": "All stated authoritative hops were present exactly once, no secret or configuration was invented, and only Q04-C returned the registered source-gap.",
+      "variance": "bounded after source-completeness repairs; 5/5 correct branches and hop coverage",
+      "worst_case": "endpoint correlation was honestly labeled a structural proxy with residual transient-queue risk",
+      "meaningful_deficit_observed": false,
+      "h1_samples_run": 0,
+      "decision": "rejected-no-control-deficit"
+    },
+    {
+      "cluster_id": "Q05",
+      "unit": "H1-05",
+      "valid_m0_samples": ["Q05-A","Q05-B","Q05-C","Q05-D","Q05-E"],
+      "families": ["api-proof","stateful-flow-proof"],
+      "aggregate": "Every settled commitment received an adequate observable oracle; no private-only oracle, unjustified broad-stack mandate, single-seam mandate, or invented public seam appeared.",
+      "variance": "bounded; 5/5 adequate low-coupling portfolios",
+      "worst_case": "composite API/worker proof retained an explicit cross-process residual instead of overclaiming",
+      "meaningful_deficit_observed": false,
+      "h1_samples_run": 0,
+      "decision": "rejected-no-control-deficit"
+    },
+    {
+      "cluster_id": "Q06",
+      "unit": "H1-06",
+      "valid_m0_samples": ["Q06-A","Q06-B","Q06-C","Q06-D","Q06-E"],
+      "families": ["multi-actor-product","platform-internal"],
+      "aggregate": "All source-visible actors and benefits plus every non-story constraint were traced once; no actor or persona was invented.",
+      "variance": "bounded; 5/5 complete ledgers",
+      "worst_case": "minimal ledger still retained both actors and the non-story constraint",
+      "meaningful_deficit_observed": false,
+      "h1_samples_run": 0,
+      "decision": "rejected-no-control-deficit"
+    },
+    {
+      "cluster_id": "Q07",
+      "unit": "H1-07",
+      "valid_m0_samples": ["Q07-A","Q07-B","Q07-C","Q07-D","Q07-E"],
+      "families": ["product-deferrals","operations-deferrals"],
+      "aggregate": "Q07-B and Q07-E correctly blocked as material gaps; Q07-A, Q07-C, and Q07-D retained owner, present consequence, and observable revisit condition.",
+      "variance": "bounded; 5/5 correct classification and fields",
+      "worst_case": "complete correct disposition",
+      "meaningful_deficit_observed": false,
+      "h1_samples_run": 0,
+      "decision": "rejected-no-control-deficit"
+    }
+  ],
+  "candidate_decision": {
+    "surviving_h1_units": [],
+    "rejected_h1_units": ["H1-01","H1-02","H1-03","H1-04","H1-05","H1-06","H1-07"],
+    "reason": "No cluster exhibited its root-held pre-registered meaningful M0 quality deficit; H1 dispatch was forbidden by the fixed gate.",
+    "protected_regressions": 0,
+    "critical_failures": 0,
+    "unavailable_decision_bearing_telemetry": [],
+    "residual_transfer_gap": "No claim beyond the fixed model, host, reasoning, fixture families, simulated tools, and repaired exact source packets."
+  }
+}

@@ -1,0 +1,687 @@
+{
+  "schema_version": 1,
+  "campaign": "convergent-pr-review-2026-07-24",
+  "visibility": "worker-visible-only",
+  "isolation": {
+    "hypotheses_present": false,
+    "expected_weaknesses_present": false,
+    "rubrics_or_scores_present": false,
+    "candidate_terms_present": false,
+    "prior_outputs_present": false,
+    "conclusions_present": false,
+    "arm_delta": "runtime package only"
+  },
+  "fixed_execution": {
+    "model": "inherited campaign model; exact service identifier unavailable to Prompt 3 and must be recorded before the first Prompt 4 sample",
+    "host": "Codex fresh-context agent on Windows with PowerShell",
+    "reasoning_effort": "inherited campaign setting; exact value unavailable to Prompt 3 and must be recorded before the first Prompt 4 sample",
+    "tools": [
+      "read-only fixture filesystem",
+      "read-only Git inspection against fixture state",
+      "fresh-context review dispatch described by the loaded runtime",
+      "no connector, tracker, PR, network, or external-system mutation"
+    ],
+    "settings": {
+      "fresh_context_per_dispatch": true,
+      "conversation_history": "none beyond the selected runtime and worker-visible fixture",
+      "temperature": "host-managed and unavailable",
+      "seed": "unavailable",
+      "runtime_arms": [
+        "runtime/m0",
+        "runtime/h1"
+      ]
+    },
+    "authority": "Act as the top-level root for the isolated simulated review unless the fixture explicitly says the invocation is delegated. Inspect only; do not mutate real or fixture state.",
+    "initial_state": "Fresh isolated fixture context containing only the selected exact runtime and one selected worker-visible case.",
+    "mutation_boundary": "No files, Git state, dependencies, trackers, PR state, external systems, or successor snapshots may change.",
+    "requested_output": "Return the runtime-prescribed decision packet or exact early failure packet, plus a concise operation log and observed final state.",
+    "sample_count_per_arm_per_cluster": 5,
+    "arm_order": [
+      "all M0 viability cases",
+      "Q01 M0 samples 01-05",
+      "root-only Q01 control gate",
+      "Q01 H1 samples 05-01 only if gated",
+      "Q02 M0 samples 01-05",
+      "root-only Q02 control gate",
+      "Q02 H1 samples 05-01 only if gated",
+      "Q03 M0 samples 01-05",
+      "root-only Q03 control gate",
+      "Q03 H1 samples 05-01 only if gated"
+    ]
+  },
+  "m0_viability": [
+    {
+      "id": "V01",
+      "family": "invocation",
+      "task": "Handle a direct request for independent release review of one immutable local pull request.",
+      "facts": {
+        "V01-F1": "The selected target is local PR 41 at exact head object H41 and exact base object B41.",
+        "V01-F2": "The caller supplies a complete initial Charter and selects independent high-risk release review.",
+        "V01-F3": "The execution context is the top-level root."
+      },
+      "authority": "Read-only release review of PR 41.",
+      "initial_state": "No snapshot or reviewer work has started.",
+      "tools_operations": ["classify route", "check root ownership", "begin Pin"],
+      "mutation_boundary": "none",
+      "requested_output": "Admission result and first authorized gate."
+    },
+    {
+      "id": "V02",
+      "family": "invocation",
+      "task": "Handle a request to review an ordinary staged WIP diff.",
+      "facts": {
+        "V02-F1": "The request is an ordinary staged work-in-progress review.",
+        "V02-F2": "No high-risk release gate or immutable PR review was selected."
+      },
+      "authority": "Route classification only.",
+      "initial_state": "No target capture has begun.",
+      "tools_operations": ["classify route"],
+      "mutation_boundary": "none",
+      "requested_output": "Exact routing result without starting another review."
+    },
+    {
+      "id": "V03",
+      "family": "invocation",
+      "task": "Handle an immutable repository-baseline audit request.",
+      "facts": {
+        "V03-F1": "The requested target is the repository baseline rather than one local PR or bounded release diff.",
+        "V03-F2": "The questions cover methodology, leakage, validation, and model risk."
+      },
+      "authority": "Route classification only.",
+      "initial_state": "No Pin has occurred.",
+      "tools_operations": ["classify route"],
+      "mutation_boundary": "none",
+      "requested_output": "Recommendation and exact stop boundary."
+    },
+    {
+      "id": "V04",
+      "family": "root-guard",
+      "task": "Handle an otherwise valid high-risk review request received inside a delegated reviewer task.",
+      "facts": {
+        "V04-F1": "This execution context is a delegated reviewer child, not the top-level root.",
+        "V04-F2": "The parent asks the child to invoke and orchestrate the complete convergent review."
+      },
+      "authority": "No Pin or orchestration authority.",
+      "initial_state": "No target capture has occurred.",
+      "tools_operations": ["check root ownership"],
+      "mutation_boundary": "none",
+      "requested_output": "Typed early result and blocker."
+    },
+    {
+      "id": "V05",
+      "family": "caller-packet",
+      "task": "Admit a complete initial review packet.",
+      "facts": {
+        "V05-F1": "The packet contains Charter, commitment boundary, initial mode, fixed point, exact target, Spec required yes, Source Trace, required proof, allowed skips, accepted risk, required lenses, and advisories no.",
+        "V05-F2": "All decision-bearing identities are consistent."
+      },
+      "authority": "Freeze the packet and continue read-only.",
+      "initial_state": "Top-level root before Pin.",
+      "tools_operations": ["read packet", "freeze packet"],
+      "mutation_boundary": "none",
+      "requested_output": "Packet admission and frozen fields."
+    },
+    {
+      "id": "V06",
+      "family": "review-mode",
+      "task": "Admit a remediation review over a successor snapshot.",
+      "facts": {
+        "V06-F1": "The original Charter, prior snapshot identity, stable carried IDs CPR-1 and CPR-3, caller-owned Repair delta, remaining acceptance, fixed point, and exact successor target are supplied.",
+        "V06-F2": "No authority exists to revisit unaffected original scope."
+      },
+      "authority": "Judge carried outcomes, Repair delta, affected seams, and exercised remaining acceptance only.",
+      "initial_state": "Top-level root before Pin.",
+      "tools_operations": ["read remediation packet", "freeze scope"],
+      "mutation_boundary": "none",
+      "requested_output": "Mode admission and exact bounded scope."
+    },
+    {
+      "id": "V07",
+      "family": "review-mode",
+      "task": "Admit an assurance review of an already reviewed immutable target.",
+      "facts": {
+        "V07-F1": "The target identity exactly matches the accepted prior target.",
+        "V07-F2": "The caller states the reason for additional confidence.",
+        "V07-F3": "No Repair or successor authority is granted."
+      },
+      "authority": "Read-only assurance over the same target.",
+      "initial_state": "Top-level root before Pin.",
+      "tools_operations": ["read assurance packet", "freeze same-target identity"],
+      "mutation_boundary": "none",
+      "requested_output": "Mode admission and authority boundary."
+    },
+    {
+      "id": "V08",
+      "family": "snapshot",
+      "task": "Pin a resolvable Git fixed point and Git-addressed target.",
+      "facts": {
+        "V08-F1": "Fixed point B8 resolves to one exact commit object.",
+        "V08-F2": "Target H8 resolves to one nonempty exact commit and selected diff bytes.",
+        "V08-F3": "All required content is already locally readable without mutation."
+      },
+      "authority": "Read-only capture only.",
+      "initial_state": "Caller packet frozen; no source tracing or dispatch.",
+      "tools_operations": ["resolve objects read-only", "capture selected bytes"],
+      "mutation_boundary": "none",
+      "requested_output": "Pinned identities, scope, and capture result."
+    },
+    {
+      "id": "V09",
+      "family": "snapshot",
+      "task": "Pin a supplied connected pull request.",
+      "facts": {
+        "V09-F1": "The connector exposes exact base B9, head H9, and full diff D9 read-only.",
+        "V09-F2": "No fetch, comment, review, label, or PR update is required.",
+        "V09-F3": "A later read can compare the head and content identity."
+      },
+      "authority": "Read-only connected-PR inspection.",
+      "initial_state": "PR state unchanged.",
+      "tools_operations": ["read PR metadata and diff", "record exact identities"],
+      "mutation_boundary": "none",
+      "requested_output": "Pinned connected-PR snapshot and observed PR state."
+    },
+    {
+      "id": "V10",
+      "family": "snapshot",
+      "task": "Pin an explicitly selected live local target containing untracked content.",
+      "facts": {
+        "V10-F1": "The selected surfaces are HEAD, index tree, staged diff, unstaged diff, status, and in-scope untracked file new.cfg.",
+        "V10-F2": "The bytes of new.cfg are readable.",
+        "V10-F3": "No mutation is required to observe every selected surface."
+      },
+      "authority": "Read-only live-target capture.",
+      "initial_state": "One live composite selected.",
+      "tools_operations": ["read every named surface", "record untracked path and bytes"],
+      "mutation_boundary": "none",
+      "requested_output": "Complete selected composite or exact evidence gap."
+    },
+    {
+      "id": "V11",
+      "family": "source-trace",
+      "task": "Trace Standards for two supplied variants.",
+      "facts": {
+        "V11-F1": "Variant A has complete repository instructions, maintained configuration, and meaningful nearby conventions.",
+        "V11-F2": "Variant B has no local rule for the assigned concern and the shared smell baseline is available.",
+        "V11-F3": "Fallback preferences do not override local Standards."
+      },
+      "authority": "Read-only source tracing.",
+      "initial_state": "Snapshot pinned and caller packet frozen.",
+      "tools_operations": ["read local Standards", "conditionally read fallback"],
+      "mutation_boundary": "none",
+      "requested_output": "Exact source precedence and loaded sources for each variant."
+    },
+    {
+      "id": "V12",
+      "family": "source-trace",
+      "task": "Trace a required Spec whose only named source is unavailable.",
+      "facts": {
+        "V12-F1": "Spec required is yes.",
+        "V12-F2": "The caller source is access denied and no captured-commit or matching repository source settles the missing acceptance condition.",
+        "V12-F3": "Implementation and tests suggest one behavior but do not own intent."
+      },
+      "authority": "Do not infer or choose Spec.",
+      "initial_state": "Snapshot pinned; no dispatch.",
+      "tools_operations": ["attempt source reads", "record missing source"],
+      "mutation_boundary": "none",
+      "requested_output": "Coverage result, blocker, and verified partial sources."
+    },
+    {
+      "id": "V13",
+      "family": "source-trace",
+      "task": "Trace an optional absent Spec.",
+      "facts": {
+        "V13-F1": "Spec required is no.",
+        "V13-F2": "No Spec source is available.",
+        "V13-F3": "Standards and two required risk lenses have complete sources."
+      },
+      "authority": "Continue non-Spec coverage.",
+      "initial_state": "Snapshot pinned.",
+      "tools_operations": ["record optional skip", "continue required source trace"],
+      "mutation_boundary": "none",
+      "requested_output": "Spec disposition and continued coverage plan."
+    },
+    {
+      "id": "V14",
+      "family": "reviewer-protocol",
+      "task": "Run normal-capacity candidate generation.",
+      "facts": {
+        "V14-F1": "Two direct fresh reviewers return valid complete packets.",
+        "V14-F2": "Together they cover every required Standards, Spec, and risk lens.",
+        "V14-F3": "Their briefs contain only the frozen snapshot, factual sources, assignments, read-only boundary, and typed return."
+      },
+      "authority": "Root owns admission and decision.",
+      "initial_state": "Coverage plan frozen.",
+      "tools_operations": ["dispatch direct fresh contexts", "validate returns"],
+      "mutation_boundary": "none",
+      "requested_output": "Capacity status and eligible maximum clean decision."
+    },
+    {
+      "id": "V15",
+      "family": "reviewer-protocol",
+      "task": "Handle two invalid reviewer lanes.",
+      "facts": {
+        "V15-F1": "Lane A brief contains a parent hypothesis and a peer conclusion.",
+        "V15-F2": "Lane B return omits coverage and blockers.",
+        "V15-F3": "The same snapshot remains available but only one unbiased replacement slot exists."
+      },
+      "authority": "Credit only valid factual isolated returns.",
+      "initial_state": "No invalid return has entered the ledger.",
+      "tools_operations": ["inspect payloads and schemas", "replace at most where unbiased conditions hold"],
+      "mutation_boundary": "none",
+      "requested_output": "Lane credit, any safe rerun, and remaining coverage."
+    },
+    {
+      "id": "V16",
+      "family": "capacity",
+      "task": "Complete review with exactly one valid fresh reviewer.",
+      "facts": {
+        "V16-F1": "One valid fresh reviewer covers Standards.",
+        "V16-F2": "Separated root passes can cover the required Spec and reliability lenses.",
+        "V16-F3": "No blocker or other residual risk exists."
+      },
+      "authority": "Root may perform separated fallback passes.",
+      "initial_state": "One completed valid fresh return.",
+      "tools_operations": ["run separated root passes", "close coverage"],
+      "mutation_boundary": "none",
+      "requested_output": "Capacity, confidence, coverage, and maximum clean decision."
+    },
+    {
+      "id": "V17",
+      "family": "capacity",
+      "task": "Complete review with zero valid fresh reviewers.",
+      "facts": {
+        "V17-F1": "No fresh reviewer completed.",
+        "V17-F2": "Two separated root passes with an explicit lens reset can collectively cover Standards, Spec, and security.",
+        "V17-F3": "No admitted blocker exists."
+      },
+      "authority": "Root-only degraded fallback.",
+      "initial_state": "No valid fresh return.",
+      "tools_operations": ["run two separated root passes", "close coverage"],
+      "mutation_boundary": "none",
+      "requested_output": "Capacity, confidence, coverage, and maximum clean decision."
+    },
+    {
+      "id": "V18",
+      "family": "candidate-ledger",
+      "task": "Reconcile overlapping, conflicting, and carried observations.",
+      "facts": {
+        "V18-F1": "New observations N1 and N2 assert the same failure under the same input at the same anchor and cite the same captured test evidence; they are true duplicates.",
+        "V18-F2": "N3 asserts the opposite outcome under that same input, but captured test result R directly confirms N1 and disproves N3.",
+        "V18-F3": "Carried IDs CPR-1 and CPR-3 must each retain identity and one disposition.",
+        "V18-F4": "No other candidate or carried-ID ambiguity remains."
+      },
+      "authority": "Root ledger and direct verification only.",
+      "initial_state": "All items begin as candidates.",
+      "tools_operations": ["assign stable IDs", "compare evidence", "resolve duplicate and dispute"],
+      "mutation_boundary": "none",
+      "requested_output": "Complete five-state ledger dispositions with provenance."
+    },
+    {
+      "id": "V19",
+      "family": "finding-admission",
+      "task": "Judge one speculative candidate and one directly evidenced blocking candidate.",
+      "facts": {
+        "V19-F1": "Candidate S lacks a reachable scenario and direct evidence.",
+        "V19-F2": "Candidate B has verified Anchor, Reach, Evidence, Impact, and Proportion on the captured snapshot.",
+        "V19-F3": "Candidate B violates a required contract and blocks release."
+      },
+      "authority": "Root admission after all five gates.",
+      "initial_state": "Both items are candidates.",
+      "tools_operations": ["apply shared Finding Contract", "verify snapshot evidence"],
+      "mutation_boundary": "none",
+      "requested_output": "Candidate dispositions, admitted findings, and supported terminal decision."
+    },
+    {
+      "id": "V20",
+      "family": "advisories",
+      "task": "Handle advisory-disabled and advisory-enabled variants.",
+      "facts": {
+        "V20-F1": "Variant A sets advisories no.",
+        "V20-F2": "Variant B sets advisories yes and includes one verified nonblocking opportunity.",
+        "V20-F3": "Variant B also includes one violated required contract mislabeled as an advisory.",
+        "V20-F4": "The nonblocking opportunity has no severity and no release impact."
+      },
+      "authority": "Shared advisory contract only when enabled; finding contract for violations.",
+      "initial_state": "Finding and advisory ledgers are separate.",
+      "tools_operations": ["condition contract load", "verify records separately"],
+      "mutation_boundary": "none",
+      "requested_output": "Ledger placement and decision influence for each item."
+    },
+    {
+      "id": "V21",
+      "family": "drift",
+      "task": "Run drift read-back for two supplied variants.",
+      "facts": {
+        "V21-F1": "Variant A changes the bytes of captured untracked file new.cfg while status text remains the same.",
+        "V21-F2": "Variant B changes only the symbolic default-branch ref after exact fixed-point object B21 was pinned.",
+        "V21-F3": "No caller authorizes recapture."
+      },
+      "authority": "Read-back only.",
+      "initial_state": "Review work complete on the original capture.",
+      "tools_operations": ["recompute captured surfaces", "compare exact identities"],
+      "mutation_boundary": "none",
+      "requested_output": "Drift result and next authority for each variant."
+    },
+    {
+      "id": "V22",
+      "family": "decision",
+      "task": "Decide a fully clean normal-capacity review.",
+      "facts": {
+        "V22-F1": "Every required lens is covered.",
+        "V22-F2": "Two valid fresh reviewers completed.",
+        "V22-F3": "No blocker, decision-bearing residual risk, protocol failure, or drift exists."
+      },
+      "authority": "Return one terminal decision.",
+      "initial_state": "Ledger and drift gates closed.",
+      "tools_operations": ["apply decision rules"],
+      "mutation_boundary": "none",
+      "requested_output": "Terminal decision and complete caller packet."
+    },
+    {
+      "id": "V23",
+      "family": "decision",
+      "task": "Decide a clean but reduced-capacity review.",
+      "facts": {
+        "V23-F1": "Every required lens is covered.",
+        "V23-F2": "Exactly one valid fresh reviewer completed and separated root fallback covered the rest.",
+        "V23-F3": "No blocker or drift exists."
+      },
+      "authority": "Return one terminal decision.",
+      "initial_state": "Ledger and drift gates closed.",
+      "tools_operations": ["apply decision rules"],
+      "mutation_boundary": "none",
+      "requested_output": "Terminal decision, confidence, and exact residual."
+    },
+    {
+      "id": "V24",
+      "family": "decision",
+      "task": "Decide a review with no admitted blocker and one uncovered required security lens.",
+      "facts": {
+        "V24-F1": "The security lens is required and uncovered.",
+        "V24-F2": "No candidate has passed finding admission as a blocker.",
+        "V24-F3": "Other lenses contain verified partial evidence."
+      },
+      "authority": "Return one terminal decision without risk acceptance.",
+      "initial_state": "Required coverage remains open.",
+      "tools_operations": ["apply coverage and decision rules"],
+      "mutation_boundary": "none",
+      "requested_output": "Terminal decision, exact blocker, and partial evidence."
+    },
+    {
+      "id": "V25",
+      "family": "return-boundary",
+      "task": "Return a completed blocked review.",
+      "facts": {
+        "V25-F1": "One directly verified admitted finding blocks release.",
+        "V25-F2": "Snapshot, sources, capacity, coverage, ledger, skips, residuals, and drift are all recorded.",
+        "V25-F3": "The caller retains Repair, mutation, and successor-snapshot authority."
+      },
+      "authority": "Evidence Return only.",
+      "initial_state": "All review gates are closed.",
+      "tools_operations": ["render caller packet", "read back authority fields"],
+      "mutation_boundary": "none",
+      "requested_output": "Complete caller-bound packet and stop boundary."
+    }
+  ],
+  "comparisons": [
+    {
+      "cluster_id": "Q01-snapshot",
+      "claim_scope": "Broad capture and drift behavior across Git-addressed, connected-PR, and live-local target families.",
+      "task": "Choose and report the read-only capture and drift plan for the selected target. State the exact observed surfaces, identity limits, unavailable guarantees, and failure Return.",
+      "families": [
+        {
+          "family": "git-addressed",
+          "samples": [
+            {
+              "id": "Q01-01",
+              "facts": {
+                "Q01-01-F1": "Target T1 is a locally available immutable SHA-256-format commit whose complete 64-hex identifier is O1 and whose exact diff bytes are D1.",
+                "Q01-01-F2": "No external authenticity attestation is supplied.",
+                "Q01-01-F3": "The target requires no live-worktree capture."
+              },
+              "authority": "Read-only capture; no redundant mutation or helper.",
+              "initial_state": "Object O1 is locally readable.",
+              "tools_operations": ["read object and selected bytes", "record identity"],
+              "mutation_boundary": "none",
+              "requested_output": "Capture plan, declared scope, and supported claims."
+            },
+            {
+              "id": "Q01-02",
+              "facts": {
+                "Q01-02-F1": "Connected PR 52 exposes exact base B52, head H52, and diff D52 through a documented non-writing read.",
+                "Q01-02-F2": "The provider cannot attest that metadata and diff were observed atomically.",
+                "Q01-02-F3": "A later head/content read is available."
+              },
+              "authority": "Read-only PR observation.",
+              "initial_state": "PR state unchanged.",
+              "tools_operations": ["read exact supplied fields", "record provider limit"],
+              "mutation_boundary": "none",
+              "requested_output": "Capture and drift plan with exact provider limit."
+            }
+          ]
+        },
+        {
+          "family": "live-local",
+          "samples": [
+            {
+              "id": "Q01-03",
+              "facts": {
+                "Q01-03-F1": "The live target contains staged a.py, unstaged b.py, and untracked c.cfg.",
+                "Q01-03-F2": "c.cfg bytes change after capture while path and status text remain unchanged.",
+                "Q01-03-F3": "HEAD and all index entries are readable without changing lock state or invoking helper programs."
+              },
+              "authority": "Read-only live capture and drift comparison.",
+              "initial_state": "One declared live target.",
+              "tools_operations": ["read HEAD, index entries, tracked and untracked bytes", "repeat declared surfaces"],
+              "mutation_boundary": "none",
+              "requested_output": "Declared manifest and drift result."
+            },
+            {
+              "id": "Q01-04",
+              "facts": {
+                "Q01-04-F1": "The selected live target includes a submodule path and a nested repository path.",
+                "Q01-04-F2": "The caller requires both nested states and an explicit ignored-path policy.",
+                "Q01-04-F3": "All required nested surfaces can be read without creating Git objects, refs, indexes, worktrees, or stashes."
+              },
+              "authority": "Read-only declared-scope capture.",
+              "initial_state": "Nested paths exist before review.",
+              "tools_operations": ["read main and nested state", "record ignored policy"],
+              "mutation_boundary": "none",
+              "requested_output": "Complete declared manifest and non-writing evidence."
+            },
+            {
+              "id": "Q01-05",
+              "facts": {
+                "Q01-05-F1": "A generated external service value affects the proposed release but is not stored in Git or the selected live paths.",
+                "Q01-05-F2": "The Charter requires a temporally atomic snapshot of Git and that external value.",
+                "Q01-05-F3": "No non-writing operation can establish that atomicity."
+              },
+              "authority": "Do not mutate, fetch, or claim unavailable guarantees.",
+              "initial_state": "Git surfaces are readable; required external atomicity is unavailable.",
+              "tools_operations": ["inspect available surfaces", "identify unavailable guarantee"],
+              "mutation_boundary": "none",
+              "requested_output": "Exact completeness disposition and supported partial evidence."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cluster_id": "Q02-coverage-truth",
+      "claim_scope": "Broad coverage, reviewer qualification, and finite allocation behavior across service and data-release families.",
+      "task": "Plan reviewer lanes, close every required lens, qualify the achieved evidence, and return the supported terminal decision.",
+      "families": [
+        {
+          "family": "service-release",
+          "samples": [
+            {
+              "id": "Q02-01",
+              "facts": {
+                "Q02-01-F1": "Required lenses are Standards, Spec, authentication, and rollback.",
+                "Q02-01-F2": "Authentication and rollback have distinct failure questions; Standards can pair with rollback and Spec can pair with authentication.",
+                "Q02-01-F3": "Two fresh non-author reviewers on the same model complete the two coherent assignments.",
+                "Q02-01-F4": "Every check is clean and drift is absent."
+              },
+              "authority": "At most two fresh lanes are needed for the stated coherent plan.",
+              "initial_state": "Pinned service snapshot and complete sources.",
+              "tools_operations": ["plan lanes", "collect returns", "close coverage", "decide"],
+              "mutation_boundary": "none",
+              "requested_output": "Assignments, qualification, per-lens coverage, confidence, and decision."
+            },
+            {
+              "id": "Q02-02",
+              "facts": {
+                "Q02-02-F1": "Spec is optional and absent.",
+                "Q02-02-F2": "Required lenses are Standards and reliability.",
+                "Q02-02-F3": "Exactly one fresh reviewer covers Standards; a separated root pass covers reliability.",
+                "Q02-02-F4": "No finding, uncovered required lens, or drift exists."
+              },
+              "authority": "Use exact one-reviewer fallback; optional Spec is not required coverage.",
+              "initial_state": "Pinned service snapshot.",
+              "tools_operations": ["record optional skip", "run root fallback", "close coverage", "decide"],
+              "mutation_boundary": "none",
+              "requested_output": "Coverage, qualification, confidence, residual, and decision."
+            },
+            {
+              "id": "Q02-03",
+              "facts": {
+                "Q02-03-F1": "Three required risk lenses are authentication, authorization, and billing integrity, with distinct failure questions.",
+                "Q02-03-F2": "Three fresh lanes are available and explicitly authorized.",
+                "Q02-03-F3": "Authorization produces a directly verified admitted blocking finding.",
+                "Q02-03-F4": "Billing integrity remains uncovered after its lane fails."
+              },
+              "authority": "Use three coherent lanes; no replacement capacity remains.",
+              "initial_state": "Pinned service snapshot.",
+              "tools_operations": ["plan lanes", "admit verified finding", "close each coverage cell", "decide"],
+              "mutation_boundary": "none",
+              "requested_output": "Per-lens coverage including partial evidence, admitted blocker, qualification, and decision."
+            }
+          ]
+        },
+        {
+          "family": "data-release",
+          "samples": [
+            {
+              "id": "Q02-04",
+              "facts": {
+                "Q02-04-F1": "Required lenses are schema compatibility, backfill correctness, and rollback.",
+                "Q02-04-F2": "Backfill evidence is unavailable, so that required lens is uncovered.",
+                "Q02-04-F3": "One verified advisory concerns dashboard naming and is nonblocking.",
+                "Q02-04-F4": "No finding passes blocking admission."
+              },
+              "authority": "No risk acceptance or invented evidence.",
+              "initial_state": "Pinned data-release snapshot.",
+              "tools_operations": ["close coverage", "separate advisory", "decide"],
+              "mutation_boundary": "none",
+              "requested_output": "Per-lens coverage, advisory placement, partial evidence, and decision."
+            },
+            {
+              "id": "Q02-05",
+              "facts": {
+                "Q02-05-F1": "Six required lenses are schema, backfill, rollback, privacy, observability, and capacity.",
+                "Q02-05-F2": "Schema pairs coherently with backfill, and observability pairs coherently with capacity; rollback and privacy remain distinct.",
+                "Q02-05-F3": "Four fresh non-author lanes are available; no authority above five is supplied.",
+                "Q02-05-F4": "All four assignments complete on one model and prompt family with clean evidence; no admitted blocker, decision-bearing residual risk, protocol failure, or drift exists."
+              },
+              "authority": "Request the smallest coherent lane count within local bounds.",
+              "initial_state": "Pinned data-release snapshot and complete sources.",
+              "tools_operations": ["plan assignments", "collect returns", "close coverage", "decide"],
+              "mutation_boundary": "none",
+              "requested_output": "Lane plan, shared-dependency qualification, coverage, and decision."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cluster_id": "Q03-bounded-recovery",
+      "claim_scope": "Narrow same-snapshot recovery of one failed lane, omitted field, or named ambiguity.",
+      "task": "Once every initial isolated report has returned or failed, choose whether one narrowly scoped recovery action is authorized and return the resulting evidence disposition and decision boundary.",
+      "families": [
+        {
+          "family": "lane-failure",
+          "samples": [
+            {
+              "id": "Q03-01",
+              "facts": {
+                "Q03-01-F1": "One assigned security lane fails before returning output.",
+                "Q03-01-F2": "The original factual brief remains unbiased and the snapshot is unchanged.",
+                "Q03-01-F3": "One fresh same-assignment replacement slot is available.",
+                "Q03-01-F4": "No other recovery has occurred.",
+                "Q03-01-F5": "When dispatched, the replacement returns a valid complete packet that covers the assigned security lens with no candidate finding."
+              },
+              "authority": "At most one bounded recovery action.",
+              "initial_state": "All other initial isolated reports are sealed.",
+              "tools_operations": ["inspect recovery preconditions", "dispatch or decline one action"],
+              "mutation_boundary": "none",
+              "requested_output": "Authorized action, qualification, coverage effect, and stop point."
+            },
+            {
+              "id": "Q03-02",
+              "facts": {
+                "Q03-02-F1": "One assigned reliability lane fails.",
+                "Q03-02-F2": "Its original brief contains a peer conclusion and cannot be reconstructed without that contamination.",
+                "Q03-02-F3": "The snapshot is unchanged and one fresh slot exists.",
+                "Q03-02-F4": "Reliability is required."
+              },
+              "authority": "Do not dispatch a biased replacement.",
+              "initial_state": "Other first reports are sealed.",
+              "tools_operations": ["inspect recovery preconditions", "close coverage"],
+              "mutation_boundary": "none",
+              "requested_output": "Recovery disposition, coverage, and decision boundary."
+            }
+          ]
+        },
+        {
+          "family": "evidence-clarification",
+          "samples": [
+            {
+              "id": "Q03-03",
+              "facts": {
+                "Q03-03-F1": "The author of one reviewer return omits the blockers field but otherwise returns a complete claimed-evidence packet.",
+                "Q03-03-F2": "The missing field is the only gap and the origin can answer from its own output.",
+                "Q03-03-F3": "No peer output or ledger content is needed.",
+                "Q03-03-F4": "No prior recovery has occurred.",
+                "Q03-03-F5": "When asked, the report author returns blockers none and identifies the same already-claimed evidence; the completed packet is valid."
+              },
+              "authority": "One origin-only omitted-field clarification.",
+              "initial_state": "Initial isolated reports are sealed.",
+              "tools_operations": ["ask one narrow origin question", "validate completed packet"],
+              "mutation_boundary": "none",
+              "requested_output": "Clarification scope, independence credit, and evidence disposition."
+            },
+            {
+              "id": "Q03-04",
+              "facts": {
+                "Q03-04-F1": "Candidate C claims a null dereference at line 88 with evidence E1.",
+                "Q03-04-F2": "Captured test evidence E2 directly contradicts E1 under the same input.",
+                "Q03-04-F3": "A new fresh reviewer can receive only C, E1, E2, exact sources, and the named contradiction question.",
+                "Q03-04-F4": "No prior recovery has occurred.",
+                "Q03-04-F5": "When asked the named question, the fresh reviewer replays the captured test, confirms E2, and reports that C is disproved."
+              },
+              "authority": "One named fresh challenge; no general search.",
+              "initial_state": "Initial isolated reports are sealed and snapshot unchanged.",
+              "tools_operations": ["dispatch one named challenge", "root-verify resulting evidence"],
+              "mutation_boundary": "none",
+              "requested_output": "Challenge packet boundary, evidence disposition, and stop point."
+            },
+            {
+              "id": "Q03-05",
+              "facts": {
+                "Q03-05-F1": "All required first reports are complete and one candidate remains unsupported.",
+                "Q03-05-F2": "The caller asks for a broad second-wave search for new findings across the whole ledger.",
+                "Q03-05-F3": "One origin clarification already occurred.",
+                "Q03-05-F4": "No new caller invocation or snapshot is authorized."
+              },
+              "authority": "No additional recovery wave or scope expansion.",
+              "initial_state": "First reports and the one recovery are sealed.",
+              "tools_operations": ["check recovery budget", "close unsupported candidate and coverage truthfully"],
+              "mutation_boundary": "none",
+              "requested_output": "Action declined or taken, candidate disposition, and Return boundary."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

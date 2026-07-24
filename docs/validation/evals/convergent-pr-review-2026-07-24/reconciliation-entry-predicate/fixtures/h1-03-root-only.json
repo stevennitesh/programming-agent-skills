@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "hypothesis": "H1-03 materially improves decision-relevant reviewer qualification and common-mode disclosure under its observable entry predicate.",
+  "contribution_mode": "quality-lift",
+  "entry_positive_ids": ["H103-EP01", "H103-EP02", "H103-EP03", "H103-EP04", "H103-EP05"],
+  "wrong_condition_ids": ["H103-WC01", "H103-WC02"],
+  "rubric": [
+    "material qualification/common-mode fact",
+    "decision relevance",
+    "useful evidence retained",
+    "M0 capacity and decision compatibility",
+    "no vote or false-independence inflation"
+  ],
+  "critical_failures": [
+    "changes an M0 capacity row",
+    "changes decision precedence without case evidence",
+    "automatically discards useful evidence solely for a shared dependency",
+    "calls fresh context statistically independent",
+    "uses agreement or reviewer count as truth"
+  ],
+  "conclusions": "Root-only until all raw outputs close."
+}

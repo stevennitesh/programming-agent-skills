@@ -135,6 +135,12 @@ def test_prompt_2_builds_h1_from_five_discovery_lanes_with_honest_authority() ->
         "`defect-correction`",
         "`quality-lift`",
         "expected M0 weakness",
+        "observable entry predicate",
+        "`common`, `situational`, `rare`, or `unknown` applicability",
+        "Fixture frequency does not establish real-world prevalence",
+        "weak-but-still-M0-compliant counterexample",
+        "`M0-recruited`",
+        "discriminate under realistic difficulty",
         "wrong-condition cases",
         "fixed rubric",
         "H1 cannot make M0 viable",
@@ -183,6 +189,15 @@ def test_prompt_3_materializes_m0_without_research_leakage_and_builds_exact_h1()
         "A prose claim that a rejected behavior was removed is insufficient",
         "uniquely determine the expected branch",
         "If an adjacent rubric outcome remains valid",
+        "root-only fixture-lint map",
+        "required output semantic references nonempty worker-visible fact IDs",
+        "A decision-bearing pointer includes its required content",
+        "payload equality after removing the runtime slot",
+        "`python -m scripts.campaign_artifacts lint-fixture WORKER_FIXTURE.json`",
+        "`python -m scripts.campaign_artifacts compare-payloads WORKER_FIXTURE.json CASE_ID M0_PAYLOAD.json H1_PAYLOAD.json`",
+        "one resolved JSON dispatch envelope per arm",
+        "share one entry predicate, arm delta, rubric, and joint disposition",
+        "do not infer per-unit contribution from one bundled arm",
         "do not copy the full payload per sample",
         "references rather than copies the authoritative intended contract",
         "M0 must be exact and executable",
@@ -204,7 +219,7 @@ def test_prompt_4_proves_m0_then_defect_correction_or_quality_lift() -> None:
         "For each distinct fixture family, dispatch and inspect one control"
     )
     m0_passes = prompt_4.index("Only after M0 passes")
-    h1_samples = prompt_4.index("run at least five fresh H1 samples")
+    h1_samples = prompt_4.index("run at least five fresh entry-positive H1 samples")
     assert audit_m0 < fixture_gate < m0_passes < first_sample_gate < h1_samples
 
     for term in (
@@ -218,14 +233,24 @@ def test_prompt_4_proves_m0_then_defect_correction_or_quality_lift() -> None:
         "An invalid sample receives zero credit",
         "Do not batch the remaining samples before this gate passes",
         "minimum proof-coverage matrix",
+        "Run deterministic schema, identity, relationship, ordering, and exact-literal checks once",
+        "do not place the complete viability suite in every sample",
+        "Five samples replicate one causally coherent behavioral claim",
+        "`writing-great-skills/BEHAVIOR-EVALS.md`",
+        "five-entry-positive-control floor",
+        "Applicability evidence and conditional efficacy remain separate",
         "Do not dispatch one behavioral sample per semantic unit",
         "Keep reconstructible per-sample payloads disposable",
         "Store per-sample identities and results once in a compact results manifest",
         "Refresh the campaign manifest",
         "`defect-correction`",
         "`quality-lift`",
-        "`rejected-no-control-deficit`",
-        "`rejected-regression`",
+        "`reject-no-control-deficit`",
+        "`reject-insufficient-contribution`",
+        "`reject-regression`",
+        "wrong-condition M0/H1 pairs before acceptance",
+        "candidate rejected before that gate receives no further samples",
+        "Reserve `reject-regression` for an actual critical or protected-behavior regression",
         "`needs-more-evidence`",
         "If no H1 units survive, set V1 = M0",
         "Unit rejection never terminates a campaign while viable M0",
@@ -281,6 +306,12 @@ def test_campaign_runs_mandatory_research_and_every_runtime_stage() -> None:
         "`and commit`",
         "`and push`",
         "read-only managed-install dry-run",
+        "same-worktree Deploy Campaign lease",
+        "use a separate worktree or return `blocked`",
+        "`python -m scripts.install_skills --help`",
+        "`python -m scripts.install_skills --dry-run --skip-global-agents`",
+        "one fixed child-brief envelope",
+        "exact allowed source paths and forbidden source categories",
         "`python -m scripts.validate_skills`",
         "ambient validation failures",
         "ambient changed cohort",
@@ -320,9 +351,14 @@ def test_campaign_records_one_authoritative_unit_decision_without_duplication() 
         "One schema-validated, machine-readable campaign manifest",
         "Synthesis owns only the active decision and final dispositions",
         "Do not append dated unit logs to synthesis",
+        "immutable marker-bounded stage capsule",
+        "never on mutable active synthesis, candidate, or whole campaign-manifest bytes",
+        "manifest names the active verifier",
         "repeating hashes, sample tables, or chronology",
         "bound all decision-bearing content with markers",
         "content fingerprint as its semantic identity",
+        "`python -m scripts.campaign_artifacts hash-tree PATH`",
+        "do not reimplement path ordering",
     ):
         assert term in shared
 
@@ -339,6 +375,8 @@ def test_campaign_records_one_authoritative_unit_decision_without_duplication() 
 
     assert "compare it with the controller's ambient cohort" in prompt_5
     assert "newly appeared unrelated drift as a fresh scope gap" in prompt_5
+    assert "persist one compact final manifest" in prompt_5
+    assert "must not depend on an untracked, ignored, or disposable path" in prompt_5
 
 
 def test_interludes_own_only_contract_or_technical_uncertainty() -> None:
@@ -378,10 +416,20 @@ def test_behavior_evaluation_contract_supports_quality_lift_and_adaptive_cost() 
     for term in (
         "`defect-correction` or `quality-lift`",
         "meaningful rubric deficit",
-        "at least five independent control samples",
+        "observable entry predicate",
+        "`common`, `situational`, `rare`, or `unknown` applicability",
+        "Fixture frequency does not establish real-world prevalence",
+        "separate entry-positive and wrong-condition cohorts",
+        "at least five independent entry-positive control samples",
         "candidate samples only when the registered control deficit appears",
+        "wrong-condition control/candidate pairs only after",
+        "candidate rejected earlier receives no further samples",
+        "never dilute a situational effect with non-triggering cases",
+        "Judge conditional efficacy on entry-positive cases",
         "Extend sampling only for material variance",
         "`reject-no-control-deficit`",
+        "`reject-insufficient-contribution`",
+        "Reserve `reject-regression` for an actual critical or protected behavior regression",
         "residual transfer gap",
     ):
         assert term in evals

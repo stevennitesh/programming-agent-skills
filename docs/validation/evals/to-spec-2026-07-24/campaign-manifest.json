@@ -1,0 +1,667 @@
+{
+  "schema": {
+    "name": "programming-agent-skills.deploy-campaign-manifest",
+    "version": 1,
+    "required_top_level": [
+      "schema",
+      "campaign",
+      "fixed_point",
+      "fingerprints",
+      "identity_slots",
+      "m0",
+      "construction",
+      "semantic_state",
+      "protected",
+      "proof_registry",
+      "prior_evidence",
+      "invariants"
+    ],
+    "allowed_dispositions": [
+      "M0-equivalent",
+      "required compatibility",
+      "H1 hypothesis",
+      "replace",
+      "remove",
+      "disclose",
+      "owned elsewhere",
+      "defer",
+      "unresolved removal risk",
+      "rejected"
+    ],
+    "allowed_evidence_dispositions": [
+      "exact-reusable",
+      "lane-limited",
+      "historical-admission-only",
+      "invalidated",
+      "missing"
+    ],
+    "allowed_contribution_modes": [
+      "defect-correction",
+      "quality-lift"
+    ],
+    "allowed_method_evidence": [
+      "independently-supported",
+      "contested",
+      "pack-specific",
+      "unverified"
+    ]
+  },
+  "campaign": {
+    "skill": "to-spec",
+    "epoch": "2026-07-24-to-spec",
+    "decision": "prompt5-complete",
+    "campaign_shape": "hypothesis-candidate",
+    "delivery_mode": "bare",
+    "chronology_present": false
+  },
+  "fixed_point": {
+    "git_head": "f3be70c31dd8f2ae9f12a75248065ef313790bda",
+    "head_must_remain": "f3be70c31dd8f2ae9f12a75248065ef313790bda"
+  },
+  "fingerprints": {
+    "m0_checkpoint_path": "docs/validation/transcripts/2026-07-24-to-spec-prompt1-m0.md",
+    "m0_bounded_sha256": "b19edb0b03a176b0e4f903c001f1705587d04a4306bbd05be8c3d625d3f7a726",
+    "research_path": "docs/research/2026-07-24-to-spec.md",
+    "research_sha256": "2fecf286bdcdfa8a40269ee59a57e4d996736f447a88db5af15d54cb71215f37",
+    "synthesis_path": "docs/synthesis/skills/to-spec.md",
+    "synthesis_bounded_sha256": "14d068151078eb8a8ae0b706a6dcc565dc5b6c3333bae91d7367a92a625acafd",
+    "prompt2_record_path": "docs/validation/transcripts/2026-07-24-to-spec-prompt2-synthesis.md",
+    "current_skill_sha256": "b7e05a55f30aa16a385360183281c516cf10223ec27f348c50f9039315bac86e",
+    "current_openai_yaml_sha256": "3bf863a8856d04a6a1c4f23b3aae6cbf5388544129662c55cc733c2d9c23bbbf"
+  },
+  "identity_slots": {
+    "current": {
+      "status": "observed",
+      "skill_sha256": "b7e05a55f30aa16a385360183281c516cf10223ec27f348c50f9039315bac86e",
+      "openai_yaml_sha256": "3bf863a8856d04a6a1c4f23b3aae6cbf5388544129662c55cc733c2d9c23bbbf"
+    },
+    "m0": {
+      "status": "materialized-immutable-control",
+      "package_tree_sha256": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa",
+      "skill_sha256": "00e26469482d657f6201ad33051f2d4c1d3554c91d6780e7402f41ca8158d7fd",
+      "openai_yaml_sha256": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94"
+    },
+    "h1": {
+      "status": "evaluated-rejected-no-control-deficit",
+      "package_tree_sha256": "ac02b5ad3892427cb4cda755c18c4fac381d011a333a85e7b7a6eea88bac94e9",
+      "skill_sha256": "f38c0e39905958e8b4cb3218e4901d0d747504ce5e02d7a51b42501d32d0b4c8",
+      "openai_yaml_sha256": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94"
+    },
+    "v1": {
+      "status": "exact-identity-alias-of-m0",
+      "package_tree_sha256": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa",
+      "identity_record": "docs/validation/evals/to-spec-2026-07-24/runtime/v1-identity.json"
+    },
+    "p1": {
+      "status": "exact-identity-alias-of-v1-and-m0",
+      "package_tree_sha256": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa",
+      "identity_record": "docs/validation/evals/to-spec-2026-07-24/runtime/p1-identity.json",
+      "identity_record_sha256": "c7bec96fcac067197b23a9ce54a1b0e8b1a5c6dc52621d552c473cd14e697b43"
+    },
+    "canonical_promoted": {
+      "status": "exact-p1-promoted",
+      "package_tree_sha256": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa",
+      "inventory": [
+        {"path":"agents/openai.yaml","bytes":43,"sha256":"a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94"},
+        {"path":"SKILL.md","bytes":5621,"sha256":"00e26469482d657f6201ad33051f2d4c1d3554c91d6780e7402f41ca8158d7fd"}
+      ]
+    },
+    "installed": {
+      "status": "supported-installer-synchronized",
+      "package_tree_sha256": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa",
+      "inventory": [
+        {"path":"agents/openai.yaml","bytes":43,"sha256":"a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94"},
+        {"path":"SKILL.md","bytes":5621,"sha256":"00e26469482d657f6201ad33051f2d4c1d3554c91d6780e7402f41ca8158d7fd"}
+      ]
+    }
+  },
+  "m0": {
+    "clause_ids": [
+      "C01", "C02", "C03", "C04", "C05", "C06", "C07", "C08",
+      "C09", "C10", "C11", "C12", "C13", "C14", "C15", "C16"
+    ],
+    "required_semantic_ids": [
+      "M0-01", "M0-02", "M0-03", "M0-04", "M0-05", "M0-06",
+      "M0-07", "M0-08", "M0-09", "M0-10", "M0-11", "M0-12",
+      "M0-13", "M0-14", "M0-15", "M0-16", "M0-17"
+    ],
+    "gates_in_order": [
+      "setup",
+      "complete-source-and-repository-trace",
+      "settledness-and-target-state",
+      "commitment-coverage",
+      "disposable-draft",
+      "draft-exact-readback",
+      "one-configured-publication",
+      "durable-mutation-readback",
+      "draft-cleanup-or-named-preservation",
+      "typed-return-and-stop"
+    ],
+    "viability_cases": [
+      "V01", "V02", "V03", "V04", "V05", "V06", "V07", "V08",
+      "V09", "V10", "V11", "V12", "V13", "V14", "V15", "V16",
+      "V17", "V18", "V19", "V20", "V21", "V22"
+    ]
+  },
+  "construction": {
+    "tree_hash_algorithm": "SHA-256 of UTF-8 lines sorted by package-relative POSIX path, each line path<TAB>byte_count<TAB>file_sha256<LF>",
+    "m0": {
+      "root": "docs/validation/evals/to-spec-2026-07-24/runtime/m0",
+      "tree_sha256": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa",
+      "inventory": [
+        {"path":"agents/openai.yaml","bytes":43,"sha256":"a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94"},
+        {"path":"SKILL.md","bytes":5621,"sha256":"00e26469482d657f6201ad33051f2d4c1d3554c91d6780e7402f41ca8158d7fd"}
+      ],
+      "source": {
+        "type": "exact materialization solely from frozen checkpoint",
+        "checkpoint_fingerprint": "b19edb0b03a176b0e4f903c001f1705587d04a4306bbd05be8c3d625d3f7a726"
+      },
+      "limitations": [
+        "No behavioral viability has been run.",
+        "GitLab and Local Markdown transports are contract-derived and unexecuted.",
+        "Provider mutation and indeterminate-recovery behavior remains simulated.",
+        "The runtime is behavior-minimal, not claimed wording-minimal."
+      ],
+      "passage_map": [
+        {"passage":"frontmatter.description","units":["M0-01"],"clauses":["C01"]},
+        {"passage":"intro.outcome","units":["M0-01","M0-13","M0-14","M0-17"],"clauses":["C01","C12","C13","C15"]},
+        {"passage":"intro.authority","units":["M0-06","M0-07","M0-09","M0-12","M0-13","M0-14","M0-15","M0-16","M0-17"],"clauses":["C03","C05","C07","C08","C11","C12","C13","C14","C15"]},
+        {"passage":"gates.setup.p1","units":["M0-02"],"clauses":["C02"]},
+        {"passage":"gates.trace.p1","units":["M0-03","M0-04","M0-06"],"clauses":["C03"]},
+        {"passage":"gates.trace.p2","units":["M0-05"],"clauses":["C04"]},
+        {"passage":"gates.trace.p3","units":["M0-07","M0-08"],"clauses":["C05","C06"]},
+        {"passage":"gates.trace.p4","units":["M0-06","M0-09"],"clauses":["C07"]},
+        {"passage":"gates.draft.p1","units":["M0-09","M0-10","M0-11"],"clauses":["C08"]},
+        {"passage":"gates.draft.p2","units":["M0-10"],"clauses":["C09"]},
+        {"passage":"gates.draft.p3","units":["M0-11"],"clauses":["C10"]},
+        {"passage":"gates.draft.p4","units":["M0-12"],"clauses":["C11"]},
+        {"passage":"gates.publish.p1","units":["M0-13"],"clauses":["C12"]},
+        {"passage":"gates.publish.p2","units":["M0-14","M0-15","M0-16"],"clauses":["C13","C14"]},
+        {"passage":"gates.publish.p3","units":["M0-16","M0-17"],"clauses":["C15"]},
+        {"passage":"completion.p1","units":["M0-01","M0-02","M0-03","M0-04","M0-05","M0-06","M0-07","M0-08","M0-09","M0-10","M0-11","M0-12","M0-13","M0-14","M0-15","M0-16","M0-17"],"clauses":["C16"]},
+        {"passage":"agents.openai.policy.allow_implicit_invocation","units":["M0-01"],"clauses":["C01"]}
+      ]
+    },
+    "h1": {
+      "root": "docs/validation/evals/to-spec-2026-07-24/runtime/h1",
+      "tree_sha256": "ac02b5ad3892427cb4cda755c18c4fac381d011a333a85e7b7a6eea88bac94e9",
+      "inventory": [
+        {"path":"agents/openai.yaml","bytes":43,"sha256":"a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94"},
+        {"path":"SKILL.md","bytes":7571,"sha256":"f38c0e39905958e8b4cb3218e4901d0d747504ce5e02d7a51b42501d32d0b4c8"}
+      ],
+      "derivation": "Exact M0 common passages plus only H1-01 through H1-07 additions or substitutions.",
+      "common_passages": [
+        "frontmatter.description","intro.outcome","intro.authority",
+        "gates.setup.p1","gates.trace.p1","gates.trace.p2","gates.trace.p3",
+        "gates.trace.p4","gates.draft.p1","gates.draft.p3","gates.draft.p4",
+        "gates.publish.p1","gates.publish.p2","gates.publish.p3",
+        "agents.openai.policy.allow_implicit_invocation"
+      ],
+      "h1_passage_map": [
+        {"passage":"gates.draft.fresh-reader","unit":"H1-01","origin":["professional-method","current-observed"],"method_evidence":"independently-supported","contribution_mode":"quality-lift"},
+        {"passage":"gates.draft.actor-value","unit":"H1-06","origin":["professional-method","pack-observed","current-observed"],"method_evidence":"independently-supported","contribution_mode":"quality-lift"},
+        {"passage":"gates.draft.proof-portfolio","unit":"H1-05","origin":["professional-method","current-observed"],"method_evidence":"independently-supported","contribution_mode":"quality-lift","substitutes_for":"gates.draft.p2"},
+        {"passage":"gates.draft.applicability","unit":"H1-03","origin":["professional-method","intent-adjacent"],"method_evidence":"independently-supported","contribution_mode":"quality-lift"},
+        {"passage":"gates.draft.value-flow","unit":"H1-04","origin":["professional-method","current-observed"],"method_evidence":"independently-supported","contribution_mode":"quality-lift"},
+        {"passage":"gates.draft.deferral-trigger","unit":"H1-07","origin":["professional-method","pack-observed"],"method_evidence":"independently-supported","contribution_mode":"quality-lift"},
+        {"passage":"gates.draft.material-defect-review","unit":"H1-02","origin":["professional-method","pack-observed"],"method_evidence":"independently-supported","contribution_mode":"quality-lift"},
+        {"passage":"completion.h1-qualification","units":["H1-01","H1-02","H1-03","H1-04","H1-05","H1-06","H1-07"],"origin":["admitted-h1-registry"],"method_evidence":"independently-supported","contribution_mode":"quality-lift","substitutes_for":"completion.p1"}
+      ]
+    },
+    "fixtures": {
+      "worker_visible_path": "docs/validation/evals/to-spec-2026-07-24/fixtures/worker-visible.json",
+      "worker_visible_sha256": "e16d50fce206dcd86fdf97a7dd355ed0bd580f5b363d29ad676e0195764df87c",
+      "root_only_path": "docs/validation/evals/to-spec-2026-07-24/fixtures/root-only-evaluation.json",
+      "root_only_sha256": "4a4583c89cee71e4e8360a125f2dd7f8855e1ede93d72421d5494aa3e701b320",
+      "candidate_path": "docs/validation/evals/to-spec-2026-07-24/candidate.md",
+      "candidate_sha256": "1059bac7534306f34ec82e465fc8f7c9d1565b17ca32146b0473b7996cfc33ec",
+      "dispatch_template_path": "docs/validation/evals/to-spec-2026-07-24/dispatch-template.json",
+      "dispatch_template_sha256": "82fe5c4421969f547981bf4fb07ab9f6b274430012d678ffd0ef689faafb8029",
+      "results_manifest_path": "docs/validation/evals/to-spec-2026-07-24/results-manifest.json",
+      "results_manifest_sha256": "90d3ea30f5ee5dc20e4507aedbb2ab7c56c17b2b78cda9694d230cae246fd42d",
+      "prompt4_decision_path": "docs/validation/evals/to-spec-2026-07-24/prompt4-decision.md",
+      "prompt4_decision_sha256": "880f8aeb80dacfa449a617265ba65b5302f2482b2266458b4cf170d3fbd18624"
+    },
+    "fixed_runtime": {
+      "model":"gpt-5.6-sol",
+      "host":"Codex fresh-context subagent",
+      "reasoning_effort":"xhigh",
+      "tools":["read-only fixture filesystem","fixture-scoped disposable draft write","simulated configured tracker create","simulated tracker read-back"],
+      "sample_count_per_arm_per_cluster":5,
+      "arm_order":["M0-01","M0-02","M0-03","M0-04","M0-05","deficit-gate","H1-05","H1-04","H1-03","H1-02","H1-01"],
+      "third_no_guidance_arm":false
+    }
+  },
+  "pruning": {
+    "decision": "complete",
+    "disposition": "pruning-not-needed",
+    "v1_tree_sha256": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa",
+    "p1_tree_sha256": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa",
+    "instruction_bearing_passage_count": 17,
+    "classifications": {
+      "keep": 17,
+      "collapse": 0,
+      "disclose": 0,
+      "delete": 0
+    },
+    "plausible_cut_groups": [],
+    "rejected_cut_groups": [],
+    "load_delta": {
+      "package_bytes": 0,
+      "skill_words": 0
+    },
+    "reused_proof": [
+      "V01-V22",
+      "P-STRUCT-01",
+      "P-STRUCT-02",
+      "P-ABS-01",
+      "P-REL-01",
+      "P-INV-01",
+      "P-SAFE-01",
+      "P-CONTEXT-01"
+    ],
+    "fresh_behavioral_arms": [],
+    "results_path": "docs/validation/evals/to-spec-2026-07-24/pruning-results.json",
+    "results_sha256": "25c63b2f319a0294be3342071484ad5f0fe8ef9af4ea7981edeedf1805af3b43",
+    "decision_path": "docs/validation/evals/to-spec-2026-07-24/pruning-decision.md",
+    "decision_sha256": "beb855b6ccf847f918a87099e9c92d601209ef4baab0b65e1c7f6688dd28a577",
+    "recommended_next_unit": "Deploy Prompt 5 for to-spec"
+  },
+  "prompt5": {
+    "decision": "complete",
+    "p1_tree_sha256": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa",
+    "canonical_tree_sha256": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa",
+    "installed_tree_sha256": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa",
+    "experimental_cleanup": {
+      "package_path": "skills/experimental/to-spec",
+      "package_status": "absent-no-op",
+      "manifest_entry_status": "absent-no-op"
+    },
+    "install": {
+      "controller_baseline_managed": 25,
+      "controller_baseline_unchanged": 25,
+      "authorized_changed_cohort": ["to-spec"],
+      "pre_install_changed_cohort": ["to-spec"],
+      "pre_install_unchanged": 24,
+      "post_install_unchanged": 25,
+      "global_bootstrap": "skipped"
+    },
+    "proof": {
+      "focused_contract_tests": "59 passed",
+      "full_integration_suite": "206 passed, 4 skipped",
+      "skill_validation": "ambient unrelated trailing-whitespace failure only",
+      "canonical_installed_parity": "passed"
+    },
+    "decision_path": "docs/validation/evals/to-spec-2026-07-24/prompt5-decision.md",
+    "decision_sha256": "e4f6417d4ad2715b44fb12f939ec0af2d17675916fa4937321fd1c61b8ea20a6",
+    "transcript_path": "docs/validation/transcripts/2026-07-24-to-spec-prompt5-promotion.md",
+    "transcript_sha256": "b6671b43fb69c58eb255fffc584c2f2d431203a4ce22229d9cd15aad6648c639",
+    "recommended_next_unit": "none",
+    "git_delivery": "pending"
+  },
+  "semantic_state": {
+    "research_candidate_dispositions": [
+      {"id": "R01", "candidate": "bidirectional commitment ledger", "maps_to": ["M0-06", "M0-09"], "disposition": "M0-equivalent"},
+      {"id": "R02", "candidate": "atomic outcome-oriented requirements and verification", "maps_to": ["M0-09", "M0-10"], "disposition": "M0-equivalent"},
+      {"id": "R03", "candidate": "settledness by decision consequence", "maps_to": ["M0-04", "M0-06"], "disposition": "M0-equivalent"},
+      {"id": "R04", "candidate": "proportionate applicability scan", "maps_to": ["H1-03"], "disposition": "H1 hypothesis"},
+      {"id": "R05", "candidate": "fresh-session recovery and owner pointers", "maps_to": ["H1-01"], "disposition": "H1 hypothesis"},
+      {"id": "R06", "candidate": "pre-publication material-defect review", "maps_to": ["H1-02"], "disposition": "H1 hypothesis"},
+      {"id": "R07", "candidate": "triggered external-value flow", "maps_to": ["H1-04"], "disposition": "H1 hypothesis"},
+      {"id": "R08", "candidate": "observable public or caller proof points", "maps_to": ["H1-05"], "disposition": "H1 hypothesis"},
+      {"id": "R09", "candidate": "always highest or ideally one seam", "maps_to": ["F02"], "disposition": "rejected"},
+      {"id": "R10", "candidate": "source-visible actor value scenarios", "maps_to": ["H1-06"], "disposition": "H1 hypothesis"},
+      {"id": "R11", "candidate": "every branch in exhaustive story syntax", "maps_to": ["F03"], "disposition": "rejected"},
+      {"id": "R12", "candidate": "self-contained parent with authoritative references", "maps_to": ["H1-01"], "disposition": "H1 hypothesis"},
+      {"id": "R13", "candidate": "BCP 14 uppercase vocabulary", "maps_to": ["F04"], "disposition": "defer"},
+      {"id": "R14", "candidate": "one disposable draft exact readback and publication", "maps_to": ["M0-12", "M0-13", "M0-14"], "disposition": "M0-equivalent"},
+      {"id": "R15", "candidate": "read before create and reconcile unknown create", "maps_to": ["M0-05", "M0-14", "M0-15"], "disposition": "M0-equivalent"},
+      {"id": "R16", "candidate": "deferral owner consequence and trigger", "maps_to": ["H1-07"], "disposition": "H1 hypothesis"},
+      {"id": "R17", "candidate": "renewed approval commit label or automatic handoff", "maps_to": ["F05"], "disposition": "rejected"},
+      {"id": "R18", "candidate": "fixed five-verb spine", "maps_to": ["F01"], "disposition": "remove"},
+      {"id": "R19", "candidate": "exact state matrix form", "maps_to": ["F07"], "disposition": "rejected"},
+      {"id": "R20", "candidate": "generic provider idempotency key", "maps_to": ["F06"], "disposition": "defer"},
+      {"id": "R21", "candidate": "new disclosed format or schema helper", "maps_to": ["F08"], "disposition": "rejected"}
+    ],
+    "current_dispositions": [
+      {"id": "CUR-01", "maps_to": ["M0-01"], "disposition": "M0-equivalent"},
+      {"id": "CUR-02", "maps_to": ["M0-02"], "disposition": "M0-equivalent"},
+      {"id": "CUR-03", "maps_to": ["M0-03", "M0-07"], "disposition": "M0-equivalent"},
+      {"id": "CUR-04", "maps_to": ["M0-03", "M0-06"], "disposition": "replace"},
+      {"id": "CUR-05", "maps_to": ["M0-08"], "disposition": "required compatibility"},
+      {"id": "CUR-06", "maps_to": ["M0-04", "M0-06"], "disposition": "M0-equivalent"},
+      {"id": "CUR-07", "maps_to": ["F01"], "disposition": "remove"},
+      {"id": "CUR-08", "maps_to": ["M0-10", "H1-05", "F02"], "disposition": "replace"},
+      {"id": "CUR-09", "maps_to": ["M0-12", "M0-16"], "disposition": "required compatibility"},
+      {"id": "CUR-10", "maps_to": ["H1-01"], "disposition": "H1 hypothesis"},
+      {"id": "CUR-11", "maps_to": ["M0-09", "M0-10", "M0-11"], "disposition": "M0-equivalent"},
+      {"id": "CUR-12", "maps_to": ["H1-06", "F03"], "disposition": "replace"},
+      {"id": "CUR-13", "maps_to": ["M0-06", "M0-09", "M0-10"], "disposition": "M0-equivalent"},
+      {"id": "CUR-14", "maps_to": ["H1-04"], "disposition": "H1 hypothesis"},
+      {"id": "CUR-15", "maps_to": ["M0-13", "M0-14", "M0-15", "M0-16"], "disposition": "M0-equivalent"},
+      {"id": "CUR-16", "maps_to": ["M0-17"], "disposition": "M0-equivalent"},
+      {"id": "CUR-17", "maps_to": ["M0-17", "H1-01", "H1-04", "H1-05"], "disposition": "replace"},
+      {"id": "CUR-18", "maps_to": ["TRACKER-CONTRACT"], "disposition": "owned elsewhere"}
+    ],
+    "h1_required_semantic_ids": [
+      "H1-01", "H1-02", "H1-03", "H1-04", "H1-05", "H1-06", "H1-07"
+    ],
+    "prompt4_h1_dispositions": [
+      {"id":"H1-01","cluster_id":"Q01","disposition":"rejected-no-control-deficit","valid_m0_samples":5,"h1_samples":0},
+      {"id":"H1-02","cluster_id":"Q02","disposition":"rejected-no-control-deficit","valid_m0_samples":5,"h1_samples":0},
+      {"id":"H1-03","cluster_id":"Q03","disposition":"rejected-no-control-deficit","valid_m0_samples":5,"h1_samples":0},
+      {"id":"H1-04","cluster_id":"Q04","disposition":"rejected-no-control-deficit","valid_m0_samples":5,"h1_samples":0},
+      {"id":"H1-05","cluster_id":"Q05","disposition":"rejected-no-control-deficit","valid_m0_samples":5,"h1_samples":0},
+      {"id":"H1-06","cluster_id":"Q06","disposition":"rejected-no-control-deficit","valid_m0_samples":5,"h1_samples":0},
+      {"id":"H1-07","cluster_id":"Q07","disposition":"rejected-no-control-deficit","valid_m0_samples":5,"h1_samples":0}
+    ],
+    "h1_units": [
+      {
+        "id": "H1-01",
+        "origin": ["professional-method", "current-observed"],
+        "method_evidence": "independently-supported",
+        "owner": "to-spec with domain and ADR truth retained by routed owners",
+        "contribution_mode": "quality-lift",
+        "expected_m0_weakness": "artifact may rely on session-held terms or premises",
+        "cheapest_expression": "first-use meaning or sharp owner pointer plus reconstruction test",
+        "positive_case": "fresh reader reconstructs every registered field",
+        "wrong_condition_case": "copies normative owner truth or false-blocks on a sufficient pointer",
+        "fixed_rubric": "reconstruction fields, unsupported inference, duplicate owner truth",
+        "proof": "paired M0/H1 fresh-context samples",
+        "claim_limits": "fixed artifact and reader conditions only"
+      },
+      {
+        "id": "H1-02",
+        "origin": ["professional-method", "pack-observed"],
+        "method_evidence": "independently-supported",
+        "owner": "to-spec",
+        "contribution_mode": "quality-lift",
+        "expected_m0_weakness": "exact draft readback may miss semantic publication defects",
+        "cheapest_expression": "one bounded pre-publication material-defect scan",
+        "positive_case": "seeded material defects are found and repaired or returned",
+        "wrong_condition_case": "style or nonblocking notes prevent publication",
+        "fixed_rubric": "material-defect recall, false blocks, authority leaks, truthful publication",
+        "proof": "seeded clean and defective corpus",
+        "claim_limits": "does not replace specialist or human review"
+      },
+      {
+        "id": "H1-03",
+        "origin": ["professional-method", "intent-adjacent"],
+        "method_evidence": "independently-supported",
+        "owner": "to-spec with commitments retained by source owners",
+        "contribution_mode": "quality-lift",
+        "expected_m0_weakness": "broad content list may cause boilerplate or miss a triggered concern",
+        "cheapest_expression": "triggered applicability scan without invented content",
+        "positive_case": "all triggered concerns included and irrelevant prose omitted",
+        "wrong_condition_case": "fixed template filled for ceremony",
+        "fixed_rubric": "missed obligations, invention, boilerplate, false gaps",
+        "proof": "paired triggered and irrelevant fixtures",
+        "claim_limits": "no exhaustive universal concern taxonomy"
+      },
+      {
+        "id": "H1-04",
+        "origin": ["professional-method", "current-observed"],
+        "method_evidence": "independently-supported",
+        "owner": "to-spec with security and data truth retained by source owners",
+        "contribution_mode": "quality-lift",
+        "expected_m0_weakness": "ordinary coverage may miss a boundary-sensitive value hop",
+        "cheapest_expression": "triggered authoritative hop trace through verification",
+        "positive_case": "every required hop exists and no sensitive literal appears",
+        "wrong_condition_case": "universal table or invented configuration",
+        "fixed_rubric": "hop coverage, disclosure, invention, correct source-gap return",
+        "proof": "complete and missing-hop integration pair",
+        "claim_limits": "no universal schema or threat-model claim"
+      },
+      {
+        "id": "H1-05",
+        "origin": ["professional-method", "current-observed"],
+        "method_evidence": "independently-supported",
+        "counterpressure": "categorical highest or one-seam wording is contested and forbidden by F02",
+        "owner": "to-spec with new public seam authority retained by source owner",
+        "contribution_mode": "quality-lift",
+        "expected_m0_weakness": "proof may be generic while current highest-seam wording may overreach",
+        "cheapest_expression": "scope-matched caller or public proof points",
+        "positive_case": "adequate oracles survive refactor-only changes",
+        "wrong_condition_case": "private helper or unjustified one-broad-seam mandate",
+        "fixed_rubric": "oracle adequacy, coupling, breadth, authority, regression risk",
+        "proof": "fixed requirements-to-proof fixture",
+        "claim_limits": "no universal test level or count"
+      },
+      {
+        "id": "H1-06",
+        "origin": ["professional-method", "pack-observed", "current-observed"],
+        "method_evidence": "independently-supported",
+        "counterpressure": "exhaustive all-concern story syntax is pack-specific and forbidden by F03",
+        "owner": "to-spec with actors and value retained by source owners",
+        "contribution_mode": "quality-lift",
+        "expected_m0_weakness": "neutral scenarios may lose value while current form may invent personas",
+        "cheapest_expression": "real actor/value scenarios plus non-story commitment ledger",
+        "positive_case": "all real actors, benefits, and non-story constraints are traceable",
+        "wrong_condition_case": "invented persona or dropped non-story constraint",
+        "fixed_rubric": "omitted actors, benefits, commitments, invented actors, duplicates",
+        "proof": "multi-actor stateful fixture",
+        "claim_limits": "no universal story template or story-only completeness"
+      },
+      {
+        "id": "H1-07",
+        "origin": ["professional-method", "pack-observed"],
+        "method_evidence": "independently-supported",
+        "counterpressure": "Skipped / Add when wording is pack-specific; H1 uses a neutral expression",
+        "owner": "source owner with to-spec recording the disposition",
+        "contribution_mode": "quality-lift",
+        "expected_m0_weakness": "nonblocking deferral may lack an observable revisit condition",
+        "cheapest_expression": "deferral owner, consequence, and observable trigger",
+        "positive_case": "every nonblocking deferral has complete fields and preserves acceptance",
+        "wrong_condition_case": "material decision hidden as deferral or future design invented",
+        "fixed_rubric": "classification, fields, invention, typed return",
+        "proof": "paired blocking and nonblocking unknowns",
+        "claim_limits": "no prediction or authorization of future work"
+      }
+    ],
+    "forbidden_semantics": [
+      {"id": "F01", "behavior": "exact five-verb spine required", "decision": "remove", "absence_proof": "no exact token-sequence contract while M0 order remains"},
+      {"id": "F02", "behavior": "always highest or ideal one proof seam", "decision": "rejected", "absence_proof": "no categorical highest or one-seam mandate"},
+      {"id": "F03", "behavior": "every concern forced into exhaustive story syntax", "decision": "rejected", "absence_proof": "non-story commitments remain representable without invented actors"},
+      {"id": "F04", "behavior": "BCP 14 capitals used by default", "decision": "rejected", "absence_proof": "no unadopted normative-capital requirement"},
+      {"id": "F05", "behavior": "renewed approval, Git commit, label assignment, or automatic handoff", "decision": "rejected", "absence_proof": "relationship and mutation checks show no absorbed owner"},
+      {"id": "F06", "behavior": "generic provider idempotency key requirement", "decision": "defer", "absence_proof": "no assumed provider primitive"},
+      {"id": "F07", "behavior": "exact state matrix form required", "decision": "rejected", "absence_proof": "semantic branches are required without fixed rendering"},
+      {"id": "F08", "behavior": "new to-spec helper or schema", "decision": "rejected", "absence_proof": "package tree contains no new disclosed runtime surface"}
+    ]
+  },
+  "protected": {
+    "helpers": [],
+    "compatibility_surfaces": [
+      "skills/custom/to-spec/agents/openai.yaml explicit-only policy",
+      "GitHub issue creation through configured tracker contract",
+      "GitLab issue creation through configured tracker contract",
+      "Local Markdown .scratch/<feature-slug>/SPEC.md creation through configured tracker contract",
+      ".tmp/to-spec/<feature-slug>.md exact-byte draft and recovery",
+      "read-before-create and unknown-create reconciliation",
+      "complete Mutation read-back",
+      "parent intent remains authoritative after child tickets exist"
+    ],
+    "relationships": [
+      "skill-router recommend-and-stop to to-spec",
+      "wayfinder recommend-and-stop to to-spec after successful closure",
+      "improve-codebase recommend-and-stop to to-spec for settled specification-ready candidate",
+      "to-spec Load codebase-design vocabulary",
+      "to-spec recommend-and-stop to repo-bootstrap on setup incompatibility",
+      "to-spec recommend-and-stop to to-tickets after verified success"
+    ],
+    "forbidden_mutations": [
+      "source artifacts",
+      "domain truth",
+      "code",
+      "Git index, commits, or remotes",
+      "child tickets",
+      "labels not required by the parent create contract",
+      "installed skills",
+      "downstream execution"
+    ]
+  },
+  "proof_registry": {
+    "m0_semantic_realization": [
+      {"semantic_id":"M0-01","owner":"Skill Router and invocation policy","runtime_passages":["frontmatter.description","completion.p1","agents.openai.policy.allow_implicit_invocation"],"proof_ids":["P-INV-01","V06"]},
+      {"semantic_id":"M0-02","owner":"repository setup owners","runtime_passages":["gates.setup.p1"],"proof_ids":["V07","P-SAFE-01"]},
+      {"semantic_id":"M0-03","owner":"Source Trace contract","runtime_passages":["gates.trace.p1"],"proof_ids":["V04","V05","V08"]},
+      {"semantic_id":"M0-04","owner":"bounded-slice and tracker contracts","runtime_passages":["gates.trace.p1"],"proof_ids":["V08","V09"]},
+      {"semantic_id":"M0-05","owner":"tracker Mutation read-back and state-boundary contract","runtime_passages":["gates.trace.p2"],"proof_ids":["V12","V13","V14"]},
+      {"semantic_id":"M0-06","owner":"source owners and commitment-boundary contract","runtime_passages":["gates.trace.p1","gates.trace.p4"],"proof_ids":["V04","V05","V09","V15"]},
+      {"semantic_id":"M0-07","owner":"domain routing and ADR owners","runtime_passages":["gates.trace.p3"],"proof_ids":["V10","P-REL-01"]},
+      {"semantic_id":"M0-08","owner":"codebase-design vocabulary relationship with to-spec retaining decision authority","runtime_passages":["gates.trace.p3"],"proof_ids":["V11","P-REL-01"]},
+      {"semantic_id":"M0-09","owner":"to-spec artifact owner","runtime_passages":["gates.trace.p4","gates.draft.p1"],"proof_ids":["V04","V05","V15","P-STRUCT-02"]},
+      {"semantic_id":"M0-10","owner":"engineering proof contract","runtime_passages":["gates.draft.p1","gates.draft.p2"],"proof_ids":["V15","P-STRUCT-02"]},
+      {"semantic_id":"M0-11","owner":"engineering state-boundary contract","runtime_passages":["gates.draft.p1","gates.draft.p3"],"proof_ids":["V16","P-ABS-01"]},
+      {"semantic_id":"M0-12","owner":"to-spec work-state policy","runtime_passages":["gates.draft.p4"],"proof_ids":["V01","V02","V03","V15","P-SAFE-01"]},
+      {"semantic_id":"M0-13","owner":"configured tracker transport","runtime_passages":["intro.outcome","intro.authority","gates.publish.p1"],"proof_ids":["V01","V02","V03","P-REL-01"]},
+      {"semantic_id":"M0-14","owner":"configured tracker Mutation read-back","runtime_passages":["intro.outcome","intro.authority","gates.publish.p2"],"proof_ids":["V18","V20","P-SAFE-01"]},
+      {"semantic_id":"M0-15","owner":"configured tracker partial-mutation contract","runtime_passages":["intro.authority","gates.publish.p2"],"proof_ids":["V17","V18","V19","P-SAFE-01"]},
+      {"semantic_id":"M0-16","owner":"to-spec work-state policy","runtime_passages":["intro.authority","gates.publish.p2","gates.publish.p3"],"proof_ids":["V17","V18","V19","V20"]},
+      {"semantic_id":"M0-17","owner":"to-spec Return and relationship owner","runtime_passages":["intro.outcome","intro.authority","gates.publish.p3","completion.p1"],"proof_ids":["V20","V21","P-REL-01"]}
+    ],
+    "h1_comparative": [
+      {"semantic_id":"H1-01","cluster_id":"Q01","control_proof_id":"Q01-M0-05","candidate_proof_id":"Q01-H1-05","sample_count_each":5,"families":["product-vocabulary","integration-premises"]},
+      {"semantic_id":"H1-02","cluster_id":"Q02","control_proof_id":"Q02-M0-05","candidate_proof_id":"Q02-H1-05","sample_count_each":5,"families":["defective-drafts","nondefects"]},
+      {"semantic_id":"H1-03","cluster_id":"Q03","control_proof_id":"Q03-M0-05","candidate_proof_id":"Q03-H1-05","sample_count_each":5,"families":["service-concerns","local-tool-concerns"]},
+      {"semantic_id":"H1-04","cluster_id":"Q04","control_proof_id":"Q04-M0-05","candidate_proof_id":"Q04-H1-05","sample_count_each":5,"families":["credential-integration","migration-config"]},
+      {"semantic_id":"H1-05","cluster_id":"Q05","control_proof_id":"Q05-M0-05","candidate_proof_id":"Q05-H1-05","sample_count_each":5,"families":["api-proof","stateful-flow-proof"]},
+      {"semantic_id":"H1-06","cluster_id":"Q06","control_proof_id":"Q06-M0-05","candidate_proof_id":"Q06-H1-05","sample_count_each":5,"families":["multi-actor-product","platform-internal"]},
+      {"semantic_id":"H1-07","cluster_id":"Q07","control_proof_id":"Q07-M0-05","candidate_proof_id":"Q07-H1-05","sample_count_each":5,"families":["product-deferrals","operations-deferrals"]}
+    ],
+    "machine_and_relationship": [
+      "P-STRUCT-01","P-STRUCT-02","P-ABS-01","P-REL-01",
+      "P-INV-01","P-SAFE-01","P-CONTEXT-01","P-H1-CLASS-01"
+    ],
+    "forbidden_absence_checks": [
+      {"proof_id":"A-F01","forbidden_id":"F01","packages":["m0","h1"],"scope":"all runtime-facing files","method":"normalized semantic check: no required Trace-Choose-Draft-Cover-Publish five-token contract; separately prove checkpoint order"},
+      {"proof_id":"A-F02","forbidden_id":"F02","packages":["m0","h1"],"scope":"all runtime-facing files","method":"normalized semantic check: no rule requiring highest possible or exactly one proof seam"},
+      {"proof_id":"A-F03","forbidden_id":"F03","packages":["m0","h1"],"scope":"all runtime-facing files","method":"normalized semantic check: no rule forces architecture, security, migration, or internal constraints into actor stories"},
+      {"proof_id":"A-F04","forbidden_id":"F04","packages":["m0","h1"],"scope":"all runtime-facing files","method":"literal and semantic check: no BCP 14 adoption or uppercase MUST/SHOULD requirement vocabulary"},
+      {"proof_id":"A-F05","forbidden_id":"F05","packages":["m0","h1"],"scope":"all runtime-facing files","method":"owner/operation check: no renewed approval, commit, label assignment, or automatic downstream invocation"},
+      {"proof_id":"A-F06","forbidden_id":"F06","packages":["m0","h1"],"scope":"all runtime-facing files","method":"provider-capability check: no idempotency key/request ID requirement; durable query and no-blind-retry remain"},
+      {"proof_id":"A-F07","forbidden_id":"F07","packages":["m0","h1"],"scope":"all runtime-facing files","method":"normalized rendering check: state semantics present without mandatory matrix/table shape"},
+      {"proof_id":"A-F08","forbidden_id":"F08","packages":["m0","h1"],"scope":"complete package inventories","method":"tree check: exactly SKILL.md and agents/openai.yaml; no helper, schema, format, or disclosed runtime file"}
+    ]
+  },
+  "prior_evidence": [
+    {
+      "id": "M0-CHECKPOINT",
+      "identity": "b19edb0b03a176b0e4f903c001f1705587d04a4306bbd05be8c3d625d3f7a726",
+      "disposition": "exact-reusable",
+      "lane": "Prompt 2 specification control only"
+    },
+    {
+      "id": "RESEARCH-PACKET",
+      "identity": "2fecf286bdcdfa8a40269ee59a57e4d996736f447a88db5af15d54cb71215f37",
+      "disposition": "exact-reusable",
+      "lane": "method admission only"
+    },
+    {
+      "id": "CURRENT-RUNTIME",
+      "identity": "b7e05a55f30aa16a385360183281c516cf10223ec27f348c50f9039315bac86e",
+      "disposition": "historical-admission-only",
+      "lane": "current observation and compatibility after construction"
+    },
+    {
+      "id": "COHESION-2026-07-12-13",
+      "identity": "multiple historical runtime identities",
+      "disposition": "invalidated",
+      "lane": "future candidate proof"
+    },
+    {
+      "id": "WHOLE-PACK-2026-07-13",
+      "identity": "87dc9325e749bf2e5c05527ee3f9c612233bef8fbfe623c9cbae228ce534553f",
+      "disposition": "lane-limited",
+      "lane": "historical relationship and contract simulation"
+    },
+    {
+      "id": "IMPROVE-ROUTING-2026-07-18",
+      "identity": "271da3773112e5ea3bc56830fb3c29ba9dc613ba52fb647c6e8b40064670731b",
+      "disposition": "lane-limited",
+      "lane": "improve-codebase caller route predicate"
+    },
+    {
+      "id": "CURRENT-STRUCTURAL-FIXTURES",
+      "identity": "fixed point repository tests and core-workflows",
+      "disposition": "historical-admission-only",
+      "lane": "proof design and relationship structure"
+    },
+    {
+      "id": "FUTURE-M0-H1-BEHAVIOR",
+      "identity": "results-manifest 90d3ea30f5ee5dc20e4507aedbb2ab7c56c17b2b78cda9694d230cae246fd42d",
+      "disposition": "exact-reusable",
+      "lane": "Prompt 4 M0 viability and no-control-deficit decisions; H1 arms correctly not run"
+    },
+    {
+      "id": "PRUNING-PASS",
+      "identity": "pruning-results 25c63b2f319a0294be3342071484ad5f0fe8ef9af4ea7981edeedf1805af3b43",
+      "disposition": "exact-reusable",
+      "lane": "complete V1 cut audit and exact V1/P1 identity"
+    },
+    {
+      "id": "PROMPT5-CANONICAL",
+      "identity": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa",
+      "disposition": "exact-reusable",
+      "lane": "canonical complete-tree identity and focused/integration proof"
+    },
+    {
+      "id": "PROMPT5-INSTALLED",
+      "identity": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa",
+      "disposition": "exact-reusable",
+      "lane": "supported installation, complete-tree parity, and clean managed preview"
+    },
+    {
+      "id": "LIVE-PROVIDER-RECOVERY",
+      "identity": "not-recorded",
+      "disposition": "missing",
+      "lane": "safe provider mutation and recovery"
+    }
+  ],
+  "prompt4": {
+    "decision": "accepted",
+    "m0_viability": {
+      "valid_cases": 22,
+      "required_cases": 22,
+      "worst_score": 9,
+      "critical_failures": 0
+    },
+    "comparison": {
+      "clusters": 7,
+      "valid_m0_samples_per_cluster": 5,
+      "valid_m0_samples_total": 35,
+      "h1_samples_total": 0,
+      "reason": "No pre-registered meaningful M0 quality deficit appeared."
+    },
+    "v1_tree_sha256": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa",
+    "relationship_changes": [],
+    "relationship_publication": "not-performed",
+    "live_provider_recovery": "missing",
+    "recommended_next_unit": "Deploy Pruning Pass for to-spec"
+  },
+  "invariants": [
+    {"id": "I01", "assertion": "fixed_point.git_head equals fixed_point.head_must_remain"},
+    {"id": "I02", "assertion": "all M0 clause IDs C01-C16 are present exactly once"},
+    {"id": "I03", "assertion": "all M0 semantic IDs M0-01 through M0-17 are present exactly once"},
+    {"id": "I04", "assertion": "all H1 semantic IDs H1-01 through H1-07 are present exactly once"},
+    {"id": "I05", "assertion": "every H1 contribution_mode is quality-lift"},
+    {"id": "I06", "assertion": "every current disposition is in schema.allowed_dispositions"},
+    {"id": "I07", "assertion": "every prior evidence disposition is in schema.allowed_evidence_dispositions"},
+    {"id": "I08", "assertion": "every remove or rejected behavior has one forbidden ID and absence_proof"},
+    {"id": "I09", "assertion": "M0 and H1 exact runtime identity slots match construction package inventories and tree hashes"},
+    {"id": "I10", "assertion": "campaign.chronology_present is false"},
+    {"id": "I11", "assertion": "protected.helpers is empty and F08 forbids a new helper"},
+    {"id": "I12", "assertion": "synthesis bounded fingerprint is 14d068151078eb8a8ae0b706a6dcc565dc5b6c3333bae91d7367a92a625acafd after Prompt 5 reconciliation"},
+    {"id": "I13", "assertion": "research and M0 identities match their verified inputs"},
+    {"id": "I14", "assertion": "Prompt 4 decision remains accepted; the campaign decision is prompt5-complete; V1 and P1 alias exact M0; canonical and installed alias exact P1; no successor work is represented"},
+    {"id": "I15", "assertion": "every required M0 semantic has exactly one semantic realization row with one owner, one or more runtime passages, and one or more proof IDs"},
+    {"id": "I16", "assertion": "every H1 semantic has exactly one comparative cluster, five valid M0 controls across at least two fixture families, rejected-no-control-deficit disposition, and zero H1 samples"},
+    {"id": "I17", "assertion": "every instruction-bearing M0 passage is mapped and every H1-only passage has origin, method evidence, and quality-lift classification"},
+    {"id": "I18", "assertion": "every F01-F08 semantic has one package-wide absence check over both complete runtime packages"},
+    {"id": "I19", "assertion": "the exact M0 viability suite contains V01 through V22 from the frozen checkpoint and no unowned V23"},
+    {"id": "I20", "assertion": "worker-visible fixtures exclude hypotheses, expected weakness, rubrics, scoring, candidate terms, and conclusions"},
+    {"id": "I21", "assertion": "M0 is the only control and construction defines no third no-guidance arm"},
+    {"id": "I22", "assertion": "the complete 17-passage cut audit classified every passage keep, proposed no material cut group, ran no fresh behavioral arm, and fixed P1 byte-for-byte to V1"},
+    {"id": "I23", "assertion": "Prompt 5 promoted exact P1, changed only authorized to-spec in the managed preview, synchronized through the supported installer, proved canonical-installed parity, and left a clean 25-unchanged preview"}
+  ]
+}

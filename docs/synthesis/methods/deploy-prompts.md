@@ -175,12 +175,22 @@ the campaign manifest owns shared identities and semantic state, results
 manifests own per-sample judgments, and raw captures own outputs. Do not append
 dated unit logs to synthesis.
 
+Freeze each unit's authoritative decision as one immutable marker-bounded stage
+capsule. Historical verifiers may depend only on that capsule and exact frozen
+executable inputs, never on mutable active synthesis, candidate, or whole
+campaign-manifest bytes. The manifest names the active verifier, its proof
+scope and immutable inputs, and the verifier that superseded each prior owner.
+
 Use exact byte or tree hashes for executable runtimes, dispatched fixtures,
 and machine-consumed contracts. When human-readable Markdown becomes a
 downstream input, bound all decision-bearing content with markers and use that
 content fingerprint as its semantic identity. Validate the record before
 freezing the fingerprint; do not make formatting or commentary outside the
 bounded content invalidate downstream evidence.
+
+Use `python -m scripts.campaign_artifacts hash-tree PATH` for campaign
+artifact trees. Record its versioned algorithm and digest; do not reimplement
+path ordering in a campaign.
 
 ## Proportionate Proof Budget
 
@@ -234,12 +244,20 @@ Parse optional delivery wording once:
 - `and commit`: also authorize Prompt 6 to commit without push; or
 - `and push`: also authorize Prompt 6 to commit and push.
 
-Before Prompt 1, run `python -m scripts.validate_skills` and one read-only
-managed-install dry-run with global bootstrap skipped. Record ambient
-validation failures and the ambient changed cohort. If the cohort includes a
-non-target skill, ask once for the exact Prompt 5 install cohort before
-dispatching expensive units; never infer that authority. Prompt 5 rechecks
-the cohort, and newly appeared unrelated drift is a fresh scope gap.
+Before Prompt 1, atomically acquire one same-worktree Deploy Campaign lease.
+If another live campaign owns it, use a separate worktree or return `blocked`
+before expensive work; never overwrite an unverified lease. Release it only
+at terminal Return.
+
+Read `python -m scripts.install_skills --help`, require the current CLI to
+admit `python -m scripts.install_skills --dry-run --skip-global-agents` and
+`python -m scripts.install_skills --skip-global-agents`, then use those exact
+commands. Run `python -m scripts.validate_skills` and the read-only dry-run.
+Treat that command as the read-only managed-install dry-run.
+Record ambient validation failures and the ambient changed cohort. If the
+cohort includes a non-target skill, ask once for the exact Prompt 5 install
+cohort before dispatching expensive units; never infer that authority. Prompt
+5 rechecks the cohort, and newly appeared unrelated drift is a fresh scope gap.
 
 The root owns transitions, user interaction, verification, and the terminal
 decision. Track only skill, delivery mode, starting HEAD/worktree, campaign
@@ -247,11 +265,14 @@ epoch, current unit, M0 and research checkpoints, runtime identities, pending
 decision, and stop reason. Do not create a narrative controller ledger; the
 machine-readable campaign manifest contains no orchestration chronology.
 
-Dispatch one unit at a time. Start one direct child with `fork_turns="none"`
-and a self-contained brief containing repository, skill, delivery mode, method
-path and unit, input and artifact pointers, allowed mutation paths, starting
-state, proof budget, and Return contract. It loads the shared sections plus its
-unit, executes only that unit, and stops. Serialize all writers.
+Dispatch one unit at a time from one fixed child-brief envelope. Include the
+unit text without paraphrasing its scope and name repository, skill, delivery
+mode, method path and unit, input and artifact pointers, allowed mutation
+paths, starting state, proof budget, and Return contract. Prompt 1 also lists
+its exact allowed source paths and forbidden source categories; root verifies
+that allowlist before dispatch. Start one direct child with
+`fork_turns="none"`. It loads the shared sections plus its unit, executes only
+that unit, and stops. Serialize all writers.
 
 Nested delegation is evidence-only:
 
@@ -569,10 +590,16 @@ For each H1 unit choose one contribution mode:
   lower on one pre-registered skill-specific dimension.
 
 Every H1 unit records origin, method-evidence classification, intended value,
-owner, expected M0 weakness, contribution mode, cheapest expression, positive
-and wrong-condition cases, fixed rubric, proof, and residual professional or
-transfer claim limits. A hypothesis may add or substitute behavior while
-preserving the intended contract.
+owner, observable entry predicate, expected M0 weakness, one
+weak-but-still-M0-compliant counterexample, contribution mode, cheapest
+expression, `common`, `situational`, `rare`, or `unknown` applicability and
+its evidence basis, positive and wrong-condition cases, fixed rubric, proof,
+and residual professional or transfer claim limits. Fixture frequency does
+not establish real-world prevalence. If the weaker outcome would violate M0,
+classify the behavior `M0-recruited` and reject H1 before construction. A
+`quality-lift` fixture must discriminate under realistic difficulty rather
+than make the preferred behavior obvious. A hypothesis may add or substitute
+behavior while preserving the intended contract.
 
 When a hypothesis changes outcome, invocation, authority, Return, completion,
 exclusion, or relationship, return `behavior-decision-gap`. When one
@@ -581,7 +608,7 @@ agent-owned technical construction blocks executable H1, return
 
 Build one decision ledger:
 
-| Unit | M0 Obligation Or H1 Origin | Method Evidence | Current State | Owner | Contribution Mode And Expected M0 Weakness | Cheapest Expression | Wrong Condition | Proof | Decision |
+| Unit | M0 Obligation Or H1 Origin | Method Evidence | Current State | Owner | Entry Predicate, Applicability, M0-Compliant Counterexample, Contribution Mode, And Expected Weakness | Cheapest Expression | Wrong Condition | Proof | Decision |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 Seed one schema-validated, machine-readable campaign manifest before Prompt 3.
@@ -670,14 +697,29 @@ those facts must uniquely determine the expected branch. If an adjacent rubric
 outcome remains valid from the supplied facts, the fixture is defective and
 blocks Prompt 4.
 
+Create a root-only fixture-lint map before freezing: every criterion, decision
+input, and required output semantic references nonempty worker-visible fact IDs
+or observable operations. A decision-bearing pointer includes its required
+content or a guaranteed reachable operation, not merely a name. Verify
+referential coverage, requested-output coverage, worker/root separation, and
+payload equality after removing the runtime slot. A prose sufficiency claim
+does not pass this gate.
+
+Run `python -m scripts.campaign_artifacts lint-fixture WORKER_FIXTURE.json`.
+Materialize one resolved JSON dispatch envelope per arm and run
+`python -m scripts.campaign_artifacts compare-payloads WORKER_FIXTURE.json
+CASE_ID M0_PAYLOAD.json H1_PAYLOAD.json` before sampling. Both executable
+checks must pass; a manual equivalence claim is insufficient.
+
 Match fixture-family coverage to claim scope. Spread the existing minimum
 five samples for a broad claim across at least two realistic families. A
 narrow condition-specific claim may use one family and must bound transfer.
 Do not add samples solely for diversity.
 
-Cluster hypotheses only when one fixture and rubric isolate their joint
-effect. Do not create a separate no-guidance control when M0 already supplies
-the causal comparison.
+Cluster hypotheses only when they share one entry predicate, arm delta, rubric,
+and joint disposition. Otherwise isolate them; do not infer per-unit
+contribution from one bundled arm. Do not create a separate no-guidance control
+when M0 already supplies the causal comparison.
 
 Write one candidate record that references rather than copies the authoritative
 intended contract, M0 checkpoint, research and Interlude dispositions,
@@ -720,8 +762,15 @@ return `blocked` to Prompt 1. H1 never receives credit for making M0 viable.
 Before dispatch, build a minimum proof-coverage matrix across M0 units. Use
 deterministic structural or relationship checks for machine and ownership
 claims, and let one realistic behavioral scenario cover multiple units when it
-proves them. Do not dispatch one behavioral sample per semantic unit; every
-behavior-dependent unit must still have current evidence.
+proves them. Run deterministic schema, identity, relationship, ordering, and
+exact-literal checks once outside behavioral sampling. Distribute
+behavior-dependent coverage across the wave; do not place the complete
+viability suite in every sample merely to meet replication. Five samples
+replicate one causally coherent behavioral claim, not every M0 case. Score
+semantic judgment, action, Return, and completion behaviorally; exact headings,
+field spellings, and machine-consumed literals remain deterministic checks. Do
+not dispatch one behavioral sample per semantic unit; every behavior-dependent
+unit must still have current evidence.
 
 Before any comparison dispatch, freeze one neutral worker-visible task fixture
 and one root-only evaluation fixture containing the hypothesis, expected
@@ -730,7 +779,11 @@ worker payloads; the exact M0 versus H1 runtime package is the only allowed arm
 delta. Stop before sampling on any other delta or candidate cue. Samples from
 a leaked fixture are protocol deviations and provide no behavioral credit.
 
-Only after M0 passes, resolve H1 by causally coherent cluster:
+Only after M0 passes, resolve H1 by causally coherent cluster. Apply
+`writing-great-skills/BEHAVIOR-EVALS.md` to entry-positive and wrong-condition
+cohorts. Its five-entry-positive-control floor governs candidate credit.
+Applicability evidence and conditional efficacy remain separate; fixture
+frequency is not real-world prevalence.
 
 For each distinct fixture family, dispatch and inspect one control before its
 remaining wave. Verify source sufficiency, tool and operation fidelity,
@@ -749,14 +802,18 @@ copying the full payload into every sample record.
 2. For `defect-correction`, require the registered failure. For
    `quality-lift`, require a meaningful pre-registered deficit while M0 remains
    viable.
-3. When neither appears, record `rejected-no-control-deficit`, do not run H1
+3. When neither appears, record `reject-no-control-deficit`, do not run H1
    for that cluster, and remove its units.
-4. When the deficit appears, run at least five fresh H1 samples. Accept only
-   repeatable material improvement with acceptably bounded variance and no new
-   critical or protected-behavior regression.
-5. Record `rejected-regression` for failed contribution or regression.
-   Borderline effect, material variance, or unavailable decision-bearing
-   telemetry returns `needs-more-evidence`; do not presume adoption.
+4. When the deficit appears, run at least five fresh entry-positive H1 samples.
+   If H1 clears the contribution bar, run its frozen wrong-condition M0/H1
+   pairs before acceptance. A candidate rejected before that gate receives no
+   further samples. Accept only repeatable material improvement with acceptably
+   bounded variance and no new critical or protected-behavior regression.
+5. Record `reject-insufficient-contribution` when H1 fails the material
+   contribution bar without regression. Reserve `reject-regression` for an
+   actual critical or protected-behavior regression. Borderline effect,
+   material variance, or unavailable decision-bearing telemetry returns
+   `needs-more-evidence`; do not presume adoption.
 6. After rejection, rederive H1 from M0 plus surviving transformations,
    refreeze its identity, and rerun only affected integrated proof.
 
@@ -889,6 +946,13 @@ Update the campaign manifest with canonical and installed identities plus
 final evidence dispositions; do not copy its identity tables into synthesis or
 the promotion record.
 
+Before Return, persist one compact final manifest and every promotion-critical
+stage capsule under a non-disposable repository validation path. Scratch may
+hold working runtimes and disposable captures only. Active synthesis,
+transcripts, decisions, and Prompt 6 scope must not depend on an untracked,
+ignored, or disposable path; durable results may retain capture hashes and
+judgments without retaining capture paths.
+
 After canonical proof, remove only this skill's experimental package and
 manifest entry; preserve every other candidate. Run managed-install dry-run,
 compare it with the controller's ambient cohort, require the changed cohort to
@@ -922,7 +986,8 @@ Deliver only bounded research, synthesis, validation, M0/H1/V1/P1 lifecycle,
 canonical, relationship, proof, and installation-record changes belonging to
 the completed campaign. Preserve unrelated work. Review the scoped diff, run
 required current checks, stage intentionally, and commit. Push only when the
-user explicitly requested it.
+user explicitly requested it. Block delivery when any authoritative record
+still depends on a scratch, ignored, untracked, or otherwise disposable path.
 
 Record starting Git HEAD. Return `complete`, `evidence-gap`, or `blocked`,
 including starting and ending HEAD, commit identity, remote state when pushed,

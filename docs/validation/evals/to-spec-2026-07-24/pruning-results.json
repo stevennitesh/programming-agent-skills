@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "campaign": "2026-07-24-to-spec",
+  "decision": "complete",
+  "pruning_disposition": "pruning-not-needed",
+  "input_verification": {
+    "prompt4_decision": "accepted",
+    "prompt4_manifest_sha256": "3a312034b468fb212d229013953da1593d5c975a4504b7763d22e444d4242ec9",
+    "prompt4_results_sha256": "90d3ea30f5ee5dc20e4507aedbb2ab7c56c17b2b78cda9694d230cae246fd42d",
+    "prompt4_decision_sha256": "880f8aeb80dacfa449a617265ba65b5302f2482b2266458b4cf170d3fbd18624",
+    "prompt4_synthesis_bounded_sha256": "84eee89c376ee5e003428e06fa1a53315dd93241e4137b505e620d56435aed72",
+    "v1_tree_sha256": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa",
+    "v1_inventory_verified": true,
+    "registered_proof_verified": true
+  },
+  "cut_audit": {
+    "runtime_clause_map": "campaign-manifest.json construction.m0.passage_map",
+    "instruction_bearing_passage_count": 17,
+    "classification": {
+      "keep": "all 17 exact passage-map entries",
+      "collapse": [],
+      "disclose": [],
+      "delete": []
+    },
+    "plausible_cut_groups": [],
+    "audit_findings": [
+      "The outcome and authority passages are compact common-path contracts whose removal would weaken early discoverability of ownership, mutation, Return, or downstream-stop behavior.",
+      "Each gate passage realizes at least one protected M0 semantic; apparent negative restatements are necessary safe-action, authority, state-boundary, no-blind-retry, or completion guardrails.",
+      "The explicit-only machine policy is the sole invocation control and cannot be collapsed into prose.",
+      "The complete two-file package contains no duplicated helper, sediment, unused support, copied provider procedure, or branch-only inline reference suitable for disclosure."
+    ]
+  },
+  "identities": {
+    "v1": {
+      "type": "exact-identity-alias",
+      "alias_of": "runtime/m0",
+      "package_tree_sha256": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa"
+    },
+    "p1": {
+      "type": "exact-identity-alias",
+      "alias_of": "runtime/m0",
+      "identity_record": "runtime/p1-identity.json",
+      "package_tree_sha256": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa"
+    }
+  },
+  "load_delta": {
+    "package_bytes_v1": 5664,
+    "package_bytes_p1": 5664,
+    "package_bytes_delta": 0,
+    "skill_words_v1": 745,
+    "skill_words_p1": 745,
+    "skill_words_delta": 0
+  },
+  "proof": {
+    "reused": [
+      "Prompt 4 V01-V22 M0 viability",
+      "Prompt 4 P-STRUCT-01 and P-STRUCT-02",
+      "Prompt 4 P-ABS-01",
+      "Prompt 4 P-REL-01",
+      "Prompt 4 P-INV-01",
+      "Prompt 4 P-SAFE-01",
+      "Prompt 4 P-CONTEXT-01"
+    ],
+    "fresh_behavioral_arms": [],
+    "reason_no_fresh_behavioral_wave": "P1 is V1 byte-for-byte and no material cut was proposed.",
+    "fresh_deterministic": [
+      "V1 and P1 alias read-back",
+      "two-file inventory and package-tree hash",
+      "manifest and identity consistency",
+      "affected Markdown gates",
+      "focused checks",
+      "skill-pack validation",
+      "working-tree and cached diff checks",
+      "Git HEAD read-back"
+    ]
+  },
+  "rejected_cuts": [],
+  "residual_gaps": [
+    "Live provider mutation and recovery remain simulated rather than proved.",
+    "Behavioral evidence does not transfer beyond the fixed Prompt 4 model, host, reasoning, tools, and fixture families."
+  ],
+  "recommended_next_unit": "Deploy Prompt 5 for to-spec"
+}

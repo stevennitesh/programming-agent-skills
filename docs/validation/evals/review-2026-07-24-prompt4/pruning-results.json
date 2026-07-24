@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "campaign": "2026-07-24-review-f3be70c",
+  "decision": "complete",
+  "disposition": "pruning-not-needed",
+  "v1_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+  "p1_tree_sha256": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+  "passage_classification": {
+    "total": 46,
+    "keep": 46,
+    "collapse": 0,
+    "disclose": 0,
+    "delete": 0
+  },
+  "cut_groups": [
+    {
+      "id": "CG-01-review-versus-finding-evidence-gap",
+      "disposition": "rejected-nonmaterial-owner-boundary",
+      "affected_semantics": ["M0-R08", "M0-R13"]
+    },
+    {
+      "id": "CG-02-shared-finding-load-condition",
+      "disposition": "rejected-nonmaterial-shared-ordering",
+      "affected_semantics": ["M0-R08", "M0-R09", "M0-R10"]
+    }
+  ],
+  "load_delta_bytes": 0,
+  "fresh_behavioral_wave": false,
+  "reused_results": "docs/validation/evals/review-2026-07-24-prompt4/results-manifest.json"
+}
