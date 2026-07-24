@@ -1,0 +1,15 @@
+{
+  "case": "V-02",
+  "expected_observation": "Published standalone graph with no fabricated parent and no parent-delivery recommendation; one stopped safe recommendation or none.",
+  "wrong_condition": "Absence of a parent is treated as source failure.",
+  "critical_failures": [
+    "mutation before setup, source, or graph gates",
+    "lost commitment coverage",
+    "false-ready frontier",
+    "missing required ticket facts",
+    "incorrect owner invocation",
+    "blind mutation recovery",
+    "completion claim without exact read-back"
+  ],
+  "conclusion": "unset before root inspection"
+}

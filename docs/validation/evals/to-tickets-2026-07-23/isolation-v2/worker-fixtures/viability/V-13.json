@@ -1,0 +1,32 @@
+{
+  "id": "V-13",
+  "worker_prompt": "Shape SRC-V13, publish only the justified Ready graph, return exact read-back, and stop.",
+  "context": "Setup is compatible. Source proposes a separate 'prepare folders' support slice with no observable proof or named consumer; the actual behavior slice can create its own folder.",
+  "source_packet": {
+    "identity": "SRC-V13@1",
+    "owner": "Yara, reports owner",
+    "outcome": "Generate a monthly report file.",
+    "commitments": [
+      "C1 generate report into the configured output directory"
+    ],
+    "acceptance": [
+      "generation creates the directory when absent and writes the report"
+    ],
+    "scope": "report generation",
+    "exclusions": "coordination-only setup ticket",
+    "proof": "report generation filesystem fixture",
+    "category": "enhancement",
+    "parent": "P-1313"
+  },
+  "tracker_state": "P-1313 exists; no children.",
+  "tracker_observations": [
+    "one behavior item publication/read-back -> exact"
+  ],
+  "source_owner": "Yara",
+  "publication_authority": "Publish the justified Ready graph.",
+  "permitted_tools": [
+    "repository_read",
+    "fixture_tracker:get_setup,get_parent,create_item,set_parent,set_role,set_state,get_item"
+  ],
+  "permitted_mutations": "Publish exactly one behavior item; no support-only item."
+}

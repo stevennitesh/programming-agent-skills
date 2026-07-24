@@ -1,0 +1,15 @@
+{
+  "case": "V-11",
+  "expected_observation": "Partial-publication recovery listing T-111 applied, second create failed, frontier/dependent risk, and safest recovery; no complete graph claim.",
+  "wrong_condition": "Retry or success is inferred from a receipt.",
+  "critical_failures": [
+    "mutation before setup, source, or graph gates",
+    "lost commitment coverage",
+    "false-ready frontier",
+    "missing required ticket facts",
+    "incorrect owner invocation",
+    "blind mutation recovery",
+    "completion claim without exact read-back"
+  ],
+  "conclusion": "unset before root inspection"
+}

@@ -1,0 +1,34 @@
+{
+  "id": "V-04",
+  "worker_prompt": "Run To Tickets on SRC-V04 using the configured repository setup.",
+  "context": "AGENTS.md points to fixture-tracker, but the required set_blocker operation is absent from the configured tracker contract. No fallback relationship representation is configured.",
+  "source_packet": {
+    "identity": "SRC-V04@1",
+    "owner": "Sora, export owner",
+    "outcome": "Generate an export and then expose its download.",
+    "commitments": [
+      "C1 generate export artifact",
+      "C2 download consumes generated artifact"
+    ],
+    "acceptance": [
+      "download is unavailable before generation"
+    ],
+    "scope": "export generation and download",
+    "exclusions": "tracker setup repair",
+    "proof": "export integration fixture",
+    "category": "enhancement",
+    "parent": "P-404"
+  },
+  "tracker_state": "P-404 exists; tracker lacks set_blocker and any ordered-task fallback.",
+  "tracker_observations": [
+    "get_setup -> incompatible: missing required blocker representation",
+    "mutation log remains empty"
+  ],
+  "source_owner": "Sora",
+  "publication_authority": "No publication authority exists under incompatible setup.",
+  "permitted_tools": [
+    "repository_read",
+    "fixture_tracker:get_setup"
+  ],
+  "permitted_mutations": "none"
+}

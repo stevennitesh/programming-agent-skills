@@ -1,0 +1,15 @@
+{
+  "case": "V-12",
+  "expected_observation": "Partial/mismatch result naming backlog versus ready-for-agent; no success claim; stop.",
+  "wrong_condition": "A provider receipt substitutes for refetch.",
+  "critical_failures": [
+    "mutation before setup, source, or graph gates",
+    "lost commitment coverage",
+    "false-ready frontier",
+    "missing required ticket facts",
+    "incorrect owner invocation",
+    "blind mutation recovery",
+    "completion claim without exact read-back"
+  ],
+  "conclusion": "unset before root inspection"
+}

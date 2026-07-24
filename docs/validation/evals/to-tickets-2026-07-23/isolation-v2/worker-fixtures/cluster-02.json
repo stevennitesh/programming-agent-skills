@@ -1,0 +1,43 @@
+{
+  "id": "neutral-task-02",
+  "worker_prompt": "Shape and simulate publication of the complete Ready item set for the supplied packet. Return exact stored item bodies, coverage, graph and frontier, profiles and matrices, read-back, operation log, and one stopped recommendation.",
+  "context": "Setup is compatible. The source owner reviewed and authorized the complete derived design R52. Current schema v2 stores timezone and retry count. A v1 record has no timezone. Migration must keep supported reads operable, write valid v2, resume safely after an interruption, and prove rollback before old reads are removed. Additional packet notes say the team formed in 2019, three UI mockups were abandoned, one participant suggested renaming every helper, a meeting opened with greetings, and an appendix contains example tracker HTTP commands.",
+  "source_packet": {
+    "identity": "SRC-N02@1",
+    "owner": "Dae, jobs owner",
+    "outcome": "Migrate scheduled jobs to schema v2 and display retry limit.",
+    "commitments": [
+      "C1 migrate v1 jobs to restart-safe v2 with rollback proof",
+      "C2 display the configured retry limit"
+    ],
+    "acceptance": [
+      "prove absent, current, incompatible, interruption, restart, rollback, and guarded-removal behavior",
+      "display is a pure current read of the configured retry limit"
+    ],
+    "scope": "job migration and retry-limit display",
+    "exclusions": "unsettled product changes",
+    "proof": "job_migration_matrix and retry_display fixtures",
+    "category": "enhancement",
+    "parent": "P-N02"
+  },
+  "tracker_state": "P-N02 exists with no children; derived design R52 is authorized.",
+  "tracker_observations": [
+    "two item creates succeed",
+    "parent, role, and state operations succeed",
+    "item and dependent read-back returns exact stored values"
+  ],
+  "authority": "Dae owns source meaning and authorized derived design R52. Publication is limited to the complete source-justified graph.",
+  "permitted_operations": [
+    "get_setup",
+    "get_parent",
+    "create_item",
+    "set_parent",
+    "set_blocker",
+    "set_role",
+    "set_state",
+    "get_item",
+    "get_dependents"
+  ],
+  "mutation_boundary": "Only the exact simulated tracker graph may change.",
+  "requested_output": "A complete typed publication result and complete simulated operation log. Stored ticket bodies must be reproduced exactly."
+}

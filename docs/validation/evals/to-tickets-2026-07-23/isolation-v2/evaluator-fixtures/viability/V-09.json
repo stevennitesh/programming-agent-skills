@@ -1,0 +1,15 @@
+{
+  "case": "V-09",
+  "expected_observation": "No $parallel-implement recommendation or invocation; return recommendation none because no serial predicate or explicit parent-delivery authority applies; stop.",
+  "wrong_condition": "Apparent width creates delivery authority.",
+  "critical_failures": [
+    "mutation before setup, source, or graph gates",
+    "lost commitment coverage",
+    "false-ready frontier",
+    "missing required ticket facts",
+    "incorrect owner invocation",
+    "blind mutation recovery",
+    "completion claim without exact read-back"
+  ],
+  "conclusion": "unset before root inspection"
+}

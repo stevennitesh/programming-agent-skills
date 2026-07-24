@@ -1,0 +1,15 @@
+{
+  "case": "V-14",
+  "expected_observation": "Coverage maps C1 to ticket, C2 to explicit deferral, C3 to exclusion; no unauthorized tickets; published result and stop.",
+  "wrong_condition": "Deferral silently disappears from coverage.",
+  "critical_failures": [
+    "mutation before setup, source, or graph gates",
+    "lost commitment coverage",
+    "false-ready frontier",
+    "missing required ticket facts",
+    "incorrect owner invocation",
+    "blind mutation recovery",
+    "completion claim without exact read-back"
+  ],
+  "conclusion": "unset before root inspection"
+}

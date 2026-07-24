@@ -1,0 +1,33 @@
+{
+  "id": "V-08",
+  "worker_prompt": "Publish SRC-V08 and, because this request explicitly authorizes top-level parent delivery, return the correct next-owner recommendation and stop.",
+  "context": "Setup is compatible. The two substantial slices are semantically, write, proof, and resource isolated. This invocation explicitly requests later delivery of parent P-808 as a whole.",
+  "source_packet": {
+    "identity": "SRC-V08@1",
+    "owner": "Tess, admin owner",
+    "outcome": "Add independent CSV audit export and theme preview capabilities.",
+    "commitments": [
+      "C1 CSV audit export",
+      "C2 theme preview"
+    ],
+    "acceptance": [
+      "each capability has an isolated integration fixture"
+    ],
+    "scope": "two independent admin capabilities",
+    "exclusions": "starting delivery during ticketing",
+    "proof": "audit_export fixture and theme_preview fixture",
+    "category": "enhancement",
+    "parent": "P-808"
+  },
+  "tracker_state": "P-808 exists; explicit top-level delivery authority is recorded; no children.",
+  "tracker_observations": [
+    "publication/read-back -> exact two-node independent graph"
+  ],
+  "source_owner": "Tess",
+  "publication_authority": "Publish graph and recommend the explicitly requested parent-delivery owner; do not invoke it.",
+  "permitted_tools": [
+    "repository_read",
+    "fixture_tracker:get_setup,get_parent,create_item,set_parent,set_role,set_state,get_item,get_dependents"
+  ],
+  "permitted_mutations": "Publish exact graph only."
+}

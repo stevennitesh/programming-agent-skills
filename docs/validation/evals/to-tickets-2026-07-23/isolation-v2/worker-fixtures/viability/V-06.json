@@ -1,0 +1,33 @@
+{
+  "id": "V-06",
+  "worker_prompt": "Shape and publish one standalone Ready item for SRC-V06, return exact read-back, and stop.",
+  "context": "Setup is compatible. The transformation is a pure function with no cache, persistence, session, grouping, projection, or lifecycle state.",
+  "source_packet": {
+    "identity": "SRC-V06@1",
+    "owner": "Omar, formatting owner",
+    "outcome": "Normalize phone display strings.",
+    "commitments": [
+      "C1 format validated digits by locale"
+    ],
+    "acceptance": [
+      "same input and locale always produce same output",
+      "invalid digits return the existing validation error"
+    ],
+    "scope": "display formatting only",
+    "exclusions": "storage, lookup, validation redesign",
+    "proof": "pure function table fixture phone_display",
+    "category": "enhancement",
+    "parent": null
+  },
+  "tracker_state": "No related items; standalone publication is authorized.",
+  "tracker_observations": [
+    "standalone item publication and read-back -> exact"
+  ],
+  "source_owner": "Omar",
+  "publication_authority": "Publish the one standalone Ready item.",
+  "permitted_tools": [
+    "repository_read",
+    "fixture_tracker:get_setup,create_item,set_role,set_state,get_item"
+  ],
+  "permitted_mutations": "Publish exactly one standalone item."
+}

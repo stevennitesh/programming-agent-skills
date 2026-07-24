@@ -1,0 +1,37 @@
+{
+  "id": "V-02",
+  "worker_prompt": "Run To Tickets on standalone source SRC-V02, publish justified tickets, and stop.",
+  "context": "Setup is compatible. No parent exists. The source owner authorizes standalone items and forbids creating a parent. The stable JSON contract always emits exactly name (string), status (string), and details (object or null), in that order.",
+  "source_packet": {
+    "identity": "SRC-V02@1",
+    "owner": "Inez, CLI owner",
+    "outcome": "Add JSON output to the existing inspect command.",
+    "commitments": [
+      "C1 serialize the existing inspect result as stable JSON",
+      "C2 document the flag and invalid-format error"
+    ],
+    "acceptance": [
+      "--format json emits exactly name:string, status:string, and details:object|null, with every key present in that order",
+      "unknown formats exit nonzero without partial output"
+    ],
+    "scope": "inspect output formatting",
+    "exclusions": "new parent issue, YAML output, command redesign",
+    "proof": "CLI subprocess fixture inspect_json",
+    "category": "enhancement",
+    "parent": null
+  },
+  "tracker_state": "No related parent or child items exist.",
+  "tracker_observations": [
+    "create_item -> T-201",
+    "create_item -> T-202",
+    "set_role/set_state -> ok",
+    "get_item -> exact standalone bodies and state"
+  ],
+  "source_owner": "Inez",
+  "publication_authority": "Inez authorizes standalone Ready items only.",
+  "permitted_tools": [
+    "repository_read",
+    "fixture_tracker:get_setup,list_items,create_item,set_role,set_state,get_item"
+  ],
+  "permitted_mutations": "Create justified standalone items; no parent mutation is authorized."
+}

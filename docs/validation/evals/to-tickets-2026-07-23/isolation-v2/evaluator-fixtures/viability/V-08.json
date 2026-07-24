@@ -1,0 +1,15 @@
+{
+  "case": "V-08",
+  "expected_observation": "Published graph recommending $parallel-implement with P-808 and stopping before delivery.",
+  "wrong_condition": "A standalone or empty graph receives the parent route.",
+  "critical_failures": [
+    "mutation before setup, source, or graph gates",
+    "lost commitment coverage",
+    "false-ready frontier",
+    "missing required ticket facts",
+    "incorrect owner invocation",
+    "blind mutation recovery",
+    "completion claim without exact read-back"
+  ],
+  "conclusion": "unset before root inspection"
+}

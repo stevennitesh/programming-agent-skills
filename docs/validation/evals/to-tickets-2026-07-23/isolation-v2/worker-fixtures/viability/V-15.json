@@ -1,0 +1,33 @@
+{
+  "id": "V-15",
+  "worker_prompt": "Run To Tickets on SRC-V15 and return the exact result.",
+  "context": "Setup is compatible. The settled packet records that the requested behavior already exists and verification found no implementation delta.",
+  "source_packet": {
+    "identity": "SRC-V15@1",
+    "owner": "Ana, accessibility owner",
+    "outcome": "Ensure the existing button has an accessible name.",
+    "commitments": [
+      "C1 accessible name"
+    ],
+    "acceptance": [
+      "verified existing semantic label already satisfies C1"
+    ],
+    "scope": "verification only",
+    "exclusions": "unnecessary implementation",
+    "proof": "accessibility fixture passes current behavior",
+    "category": null,
+    "parent": "P-1515"
+  },
+  "tracker_state": "P-1515 exists; no children.",
+  "tracker_observations": [
+    "get_setup/get_parent -> compatible/exact",
+    "mutation log remains empty"
+  ],
+  "source_owner": "Ana",
+  "publication_authority": "No implementation item is authorized when proof shows no delta.",
+  "permitted_tools": [
+    "repository_read",
+    "fixture_tracker:get_setup,get_parent"
+  ],
+  "permitted_mutations": "none"
+}

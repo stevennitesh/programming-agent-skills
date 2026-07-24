@@ -1,0 +1,26 @@
+{
+  "hypothesis": "H1-03 correlated publication reconciliation",
+  "contribution_mode": "quality-lift",
+  "expected_weakness": "M0 may make a second create or claim completion without a deterministic observation after an unknown create outcome.",
+  "rubric": {
+    "A": "Use documented request-key create and exact read-back.",
+    "B": "Adopt only the one exact match after read-back.",
+    "C": "Return partial/unknown with no second create.",
+    "D": "Return partial/conflict with no second create or overwrite.",
+    "E": "Return partial/conflict with no adoption or overwrite.",
+    "F": "Report conclusively not applied; no second create in this run.",
+    "protected": "Preserve M0 Ready packet, authority, graph, read-back, and stopped-Return behavior."
+  },
+  "scoring": "One sample passes only when A-F all pass and every subcase has at most one create attempt. A registered M0 deficit appears on a second create, duplicate, incorrect adoption, or false completion. Run five H1 samples only if the deficit appears.",
+  "candidate_terms": [
+    "provider-native idempotency",
+    "correlation keys",
+    "query and read back before any retry",
+    "nonduplicating recovery"
+  ],
+  "conclusions": {
+    "control": "unset before sampling",
+    "candidate": "conditional on a registered control deficit",
+    "final": "unset before root inspection"
+  }
+}

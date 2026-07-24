@@ -1310,16 +1310,8 @@ def test_mutating_workflows_require_readback() -> None:
             assert "Mutation read-back" in text, name
 
 
-def test_to_tickets_preserves_approval_coverage_and_frontier_contract() -> None:
+def test_to_tickets_preserves_coverage_readiness_and_frontier_contract() -> None:
     tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
-
-    def process_section(name: str) -> str:
-        match = re.search(
-            rf"(?ms)^### \d+\. {re.escape(name)}\n(.*?)(?=^### \d+\. |^## |\Z)",
-            tickets,
-        )
-        assert match is not None, name
-        return re.sub(r"\s+", " ", match.group(1).lower())
 
     def level_two_section(name: str) -> str:
         match = re.search(
@@ -1329,106 +1321,106 @@ def test_to_tickets_preserves_approval_coverage_and_frontier_contract() -> None:
         return re.sub(r"\s+", " ", match.group(1).lower())
 
     assert not implicit_policy(CUSTOM / "to-tickets")
-    assert re.findall(r"(?m)^### \d+\. ([A-Za-z]+)$", tickets) == [
-        "Trace",
-        "Map",
-        "Slice",
-        "Approve",
+    assert re.findall(r"(?m)^## ([A-Za-z]+)$", tickets) == [
+        "Shape",
         "Publish",
+        "Return",
     ]
 
-    slice_contract = process_section("Slice")
-    assert "vertical behavior slice" in slice_contract
+    shape_contract = level_two_section("Shape")
+    assert "vertical behavior slice" in shape_contract
     for rejected_mechanism in (
         "tracer bullet",
-        "support slices",
         "blast radius",
         "progressive exposure",
     ):
-        assert rejected_mechanism not in slice_contract
+        assert rejected_mechanism not in shape_contract
 
-    assert "blocking edge" in slice_contract
-    assert re.search(r"dependent consumes.*predecessor.*outcome", slice_contract, re.S)
-    assert re.search(r"serial tripwires.*not blockers", slice_contract, re.S)
-    assert "state-boundary matrix" in slice_contract
-    assert "applicable branch" in slice_contract
-    assert "non-applicable axis" in slice_contract
+    assert "commitment ledger" in shape_contract
+    assert re.search(
+        r"every source-visible implementation commitment.*ticket acceptance.*"
+        r"deferral or exclusion.*no-ticket reason",
+        shape_contract,
+        re.S,
+    )
+    assert "blocking edge" in shape_contract
+    assert re.search(r"dependent consumes.*predecessor.*outcome", shape_contract, re.S)
+    assert re.search(
+        r"tracker order and serial constraints are not blockers", shape_contract
+    )
+    assert "state-boundary matrix" in shape_contract
+    assert "supported variants" in shape_contract
+    assert "not applicable" in shape_contract
     for profile_field in (
         "execution profile",
-        "blockers",
-        "semantic owner",
-        "production scope",
-        "public proof seam",
-        "size",
-        "scarce resource",
+        "semantic ownership",
+        "production writes",
+        "proof seams",
+        "scarce proof resources",
         "serial tripwire",
     ):
-        assert profile_field in slice_contract
+        assert profile_field in shape_contract
 
-    assert "expand-migrate-contract" in slice_contract
-    assert "backward-compatible" in slice_contract
-    assert re.search(r"contract only after old usage ends", slice_contract)
+    assert "expand-migrate-contract" in shape_contract
+    assert re.search(r"contract only after old usage ends", shape_contract)
+    assert re.search(
+        r"no implementation ticket.*preserve tracker state.*recommend `none`.*stop",
+        shape_contract,
+        re.S,
+    )
 
-    approve_contract = process_section("Approve")
-    assert "proposal revision" in approve_contract
-    assert re.search(r"explicit approval.*exact revision", approve_contract, re.S)
-    assert re.search(r"material change.*fresh approval", approve_contract, re.S)
-
-    publish_contract = process_section("Publish")
-    assert re.search(r"before mutation.*reconcile", publish_contract, re.S)
-    assert re.search(r"material drift.*approve", publish_contract, re.S)
+    publish_contract = level_two_section("Publish")
+    assert re.search(r"freeze and audit.*before external mutation", publish_contract, re.S)
+    assert re.search(
+        r"create the items first.*relationships.*roles.*mapped state",
+        publish_contract,
+        re.S,
+    )
     for observed_surface in (
-        "parent",
-        "ordered children",
-        "bodies",
-        "roles",
-        "state",
+        "created or changed item",
+        "affected dependent",
+        "body",
         "relationships",
-        "blocking edges",
-        "affected dependents",
-        "ready frontier",
+        "roles",
+        "assignee",
+        "state",
+        "frontier",
     ):
         assert observed_surface in publish_contract
-    assert "provider receipts do not prove completion" in publish_contract
     for recovery_fact in (
-        "applied and failed operations",
-        "unknown state",
-        "frontier risk",
-        "non-duplicating recovery",
+        "applied operations",
+        "failed operations",
+        "affected dependents",
+        "observed frontier",
+        "safest recovery",
     ):
         assert recovery_fact in publish_contract
-
-    route_order = [
-        "empty frontier",
-        "parent-delivery run",
-        "one ready ticket",
-        "overlapping semantic ownership",
-        "at least two substantial",
-        "uncertain independence or economics",
-    ]
-    route_positions = [publish_contract.index(route) for route in route_order]
-    assert route_positions == sorted(route_positions)
-    assert "recommend and stop" in publish_contract
-    assert re.search(r"never begin.*implementation route", publish_contract, re.S)
+    assert "claim no complete graph" in publish_contract
 
     return_contract = level_two_section("Return")
     for result_kind in (
         "setup precondition",
         "source-gap packet",
-        "no-ticket result",
-        "proposal awaiting approval",
+        "no-ticket coverage result",
+        "consumer repair packet",
         "partial-publication recovery",
         "published graph",
     ):
         assert result_kind in return_contract
     assert "exactly one typed result" in return_contract
     assert "exact safe continuation" in return_contract
-
-    completion_contract = level_two_section("Completion")
-    assert "distinct blockers and serial constraints" in completion_contract
-    assert "state matrices and execution profiles" in completion_contract
-    assert "one verified next action" in completion_contract
-    assert "without starting it" in completion_contract
+    assert re.search(
+        r"`\$parallel-implement` only when the user explicitly requested "
+        r"top-level delivery",
+        return_contract,
+    )
+    assert re.search(r"`\$implement` for a single ready item", return_contract)
+    assert "recommend and stop without invoking the owner" in return_contract
+    assert "every commitment has a disposition" in return_contract
+    assert "every authorized mutation and affected relationship reads back" in (
+        return_contract
+    )
+    assert "without starting it" in return_contract
 
 
 def test_worker_modes_have_distinct_completion_artifacts() -> None:
@@ -1710,7 +1702,10 @@ def test_state_boundary_proof_has_one_owner_and_explicit_consumers() -> None:
     )
     assert owner_text in contract
     assert owner_text in seed
-    assert "engineering contract's state-boundary matrix" in tickets
+    assert "engineering contract owns shared Source Trace, proof, and state-boundary" in (
+        tickets
+    )
+    assert "include the applicable state-boundary matrix" in tickets
     assert "graph defect" in parallel
     assert "final proof across all applicable\nstate-boundary branches" in parallel
     assert "State-boundary matrix:" in worker

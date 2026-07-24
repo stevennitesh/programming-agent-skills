@@ -1,0 +1,15 @@
+{
+  "case": "V-06",
+  "expected_observation": "One published ticket with state matrix recorded as not applicable because behavior is pure/stateless; stop.",
+  "wrong_condition": "Stateful behavior silently omits a matrix.",
+  "critical_failures": [
+    "mutation before setup, source, or graph gates",
+    "lost commitment coverage",
+    "false-ready frontier",
+    "missing required ticket facts",
+    "incorrect owner invocation",
+    "blind mutation recovery",
+    "completion claim without exact read-back"
+  ],
+  "conclusion": "unset before root inspection"
+}

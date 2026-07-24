@@ -1,0 +1,413 @@
+{
+  "format": 1,
+  "runtime_slot": {
+    "start": "<!-- EXACT-RUNTIME-PACKAGE-SLOT-BEGIN -->",
+    "end": "<!-- EXACT-RUNTIME-PACKAGE-SLOT-END -->",
+    "normalization": "replace only exact delimited runtime package slot"
+  },
+  "clusters": {
+    "cluster-01": {
+      "worker_fixture_sha256": "6a9cbd49505e3e9dfb71bd7f27d3b2194582a09563277a61aab33621e5544017",
+      "evaluator_fixture_sha256": "0fea938266670d0a079c14af97a6090781848f232a6135021093139b4aeee554",
+      "sample_pairs": {
+        "sample-01": {
+          "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/cluster-01/sample-01.md",
+          "payloads": {
+            "m0": {
+              "sha256": "b5e5b123fcff8b408b2f6c138542260d4448161efb3401137b9e95f205d57995",
+              "bytes": 11807,
+              "path": "payloads/b5e5b123fcff8b408b2f6c138542260d4448161efb3401137b9e95f205d57995.md"
+            },
+            "h1": {
+              "sha256": "0d8ad79af9d8f105938f0c53ef228f728cad3587c4d37782a4ade5288f715953",
+              "bytes": 13120,
+              "path": "payloads/0d8ad79af9d8f105938f0c53ef228f728cad3587c4d37782a4ade5288f715953.md"
+            }
+          },
+          "normalized_sha256": "6649676dd8d0d9d95c01a9c04fe2f3bd8733996858faa61fa3b390d9484479a2",
+          "normalized_equal": true
+        },
+        "sample-02": {
+          "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/cluster-01/sample-02.md",
+          "payloads": {
+            "m0": {
+              "sha256": "aef2bf0d8f97d96ca3865dabc0e2bed950209e1d889331bafcfdd65ed35da5eb",
+              "bytes": 11807,
+              "path": "payloads/aef2bf0d8f97d96ca3865dabc0e2bed950209e1d889331bafcfdd65ed35da5eb.md"
+            },
+            "h1": {
+              "sha256": "d7cd5bd6a8deb57caea9acb8246c5c2ba86bc675c896986eebc2419d01c9b65f",
+              "bytes": 13120,
+              "path": "payloads/d7cd5bd6a8deb57caea9acb8246c5c2ba86bc675c896986eebc2419d01c9b65f.md"
+            }
+          },
+          "normalized_sha256": "69e63246106a3335b244e55511e0af7e564ee8840e5d92199e2909bd4dcb964d",
+          "normalized_equal": true
+        },
+        "sample-03": {
+          "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/cluster-01/sample-03.md",
+          "payloads": {
+            "m0": {
+              "sha256": "0653265bd08b4038f87aa309ec1530c47892a70722e1f30d6ffb8f74385097a2",
+              "bytes": 11807,
+              "path": "payloads/0653265bd08b4038f87aa309ec1530c47892a70722e1f30d6ffb8f74385097a2.md"
+            },
+            "h1": {
+              "sha256": "d34c8aac75a095fcd5161f3c9e2186fcbbe6aafc7c8a677e2bbea7ef9cce9d4d",
+              "bytes": 13120,
+              "path": "payloads/d34c8aac75a095fcd5161f3c9e2186fcbbe6aafc7c8a677e2bbea7ef9cce9d4d.md"
+            }
+          },
+          "normalized_sha256": "2b08185489dfb3aceaca5543055825656b048f777ee5779ee9a96f0af6e5b63f",
+          "normalized_equal": true
+        },
+        "sample-04": {
+          "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/cluster-01/sample-04.md",
+          "payloads": {
+            "m0": {
+              "sha256": "08d5da25ec09684b6da4e703f2fc06dd1dfb4915ae5fb8e89f6528cfe3940d7c",
+              "bytes": 11807,
+              "path": "payloads/08d5da25ec09684b6da4e703f2fc06dd1dfb4915ae5fb8e89f6528cfe3940d7c.md"
+            },
+            "h1": {
+              "sha256": "9e8bd400fc9a82c90ed061249278b2c671a940880cbaae194d408d90089f0187",
+              "bytes": 13120,
+              "path": "payloads/9e8bd400fc9a82c90ed061249278b2c671a940880cbaae194d408d90089f0187.md"
+            }
+          },
+          "normalized_sha256": "33433f85c27705cfdcec170b91ba1d44737f589e173cbb8854f8ba4c99e9e2dc",
+          "normalized_equal": true
+        },
+        "sample-05": {
+          "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/cluster-01/sample-05.md",
+          "payloads": {
+            "m0": {
+              "sha256": "371ccae828ff38a99f9b981ca4649bf3dbad802ec096211cf21777fbc9657a25",
+              "bytes": 11807,
+              "path": "payloads/371ccae828ff38a99f9b981ca4649bf3dbad802ec096211cf21777fbc9657a25.md"
+            },
+            "h1": {
+              "sha256": "889bc5c47e94c90e556ec8863d34244f7b66b4d700390dc5cfc11e538863537b",
+              "bytes": 13120,
+              "path": "payloads/889bc5c47e94c90e556ec8863d34244f7b66b4d700390dc5cfc11e538863537b.md"
+            }
+          },
+          "normalized_sha256": "746f83c7b3dbae845c62d5567d1503f888d053ac4e4144e881383841e119adbb",
+          "normalized_equal": true
+        }
+      }
+    },
+    "cluster-02": {
+      "worker_fixture_sha256": "29c48688ed279bb59fb6c08f03956ee5730e17e86aad376bbd0805c5d35e1f73",
+      "evaluator_fixture_sha256": "3db1823bd081ee04ed6cb14c45fc9e44b79a5f2f38eca2fdb9fc48fc875bbac2",
+      "sample_pairs": {
+        "sample-01": {
+          "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/cluster-02/sample-01.md",
+          "payloads": {
+            "m0": {
+              "sha256": "10df7a3beef76062c379454be8dd09dc833683392a1ce34b7eb4769e0a13149e",
+              "bytes": 11734,
+              "path": "payloads/10df7a3beef76062c379454be8dd09dc833683392a1ce34b7eb4769e0a13149e.md"
+            },
+            "h1": {
+              "sha256": "03f35ac1da69f955e890e126aedc8a08ed9fdefd0cf925d090244997f6d22983",
+              "bytes": 13047,
+              "path": "payloads/03f35ac1da69f955e890e126aedc8a08ed9fdefd0cf925d090244997f6d22983.md"
+            }
+          },
+          "normalized_sha256": "b9cd082e6c100e914cc9c0a0df5a8f6f870c4bcabec958e1f51c9cc8ed2149f8",
+          "normalized_equal": true
+        },
+        "sample-02": {
+          "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/cluster-02/sample-02.md",
+          "payloads": {
+            "m0": {
+              "sha256": "4fce25edee1de6c043cc809adaae8d514092560cab0bb9ad46a9d814805d450b",
+              "bytes": 11734,
+              "path": "payloads/4fce25edee1de6c043cc809adaae8d514092560cab0bb9ad46a9d814805d450b.md"
+            },
+            "h1": {
+              "sha256": "d27d51f8d87191a861c1c8498439ab7e798053ee5b865d186a71dd7115fadaee",
+              "bytes": 13047,
+              "path": "payloads/d27d51f8d87191a861c1c8498439ab7e798053ee5b865d186a71dd7115fadaee.md"
+            }
+          },
+          "normalized_sha256": "164aef5cac74e8fd8e9ece21acdf47a41a4cb434fd40f91e03a58b40a04191f9",
+          "normalized_equal": true
+        },
+        "sample-03": {
+          "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/cluster-02/sample-03.md",
+          "payloads": {
+            "m0": {
+              "sha256": "1bb9bd2c6f8bd6cece0bff6b6614bb4332807cb355c594b24dee605f8260bb4b",
+              "bytes": 11734,
+              "path": "payloads/1bb9bd2c6f8bd6cece0bff6b6614bb4332807cb355c594b24dee605f8260bb4b.md"
+            },
+            "h1": {
+              "sha256": "058a806791fae4d6f8ffe5bb0c6f579fa4a527b30a5d70189092811f2b20028d",
+              "bytes": 13047,
+              "path": "payloads/058a806791fae4d6f8ffe5bb0c6f579fa4a527b30a5d70189092811f2b20028d.md"
+            }
+          },
+          "normalized_sha256": "5d3031d7557dbc9c85552237b01992dd1819f8da0b3fd4689ee0fffcd0b73923",
+          "normalized_equal": true
+        },
+        "sample-04": {
+          "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/cluster-02/sample-04.md",
+          "payloads": {
+            "m0": {
+              "sha256": "6e589f9de4c57f22a561fd1638a9b5c129bc5ea50bda3666997c74b3798f5c44",
+              "bytes": 11734,
+              "path": "payloads/6e589f9de4c57f22a561fd1638a9b5c129bc5ea50bda3666997c74b3798f5c44.md"
+            },
+            "h1": {
+              "sha256": "109da45cfbc2d0879f271f7949ce7b624d9e60577bff6c2675b8f6bbf485cfed",
+              "bytes": 13047,
+              "path": "payloads/109da45cfbc2d0879f271f7949ce7b624d9e60577bff6c2675b8f6bbf485cfed.md"
+            }
+          },
+          "normalized_sha256": "a3afd0888150c3bd1cec822e73b12bb3fa566cc11618e2a234c96d4bc8211879",
+          "normalized_equal": true
+        },
+        "sample-05": {
+          "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/cluster-02/sample-05.md",
+          "payloads": {
+            "m0": {
+              "sha256": "dd87e1e889e572aceffe1f6cba40653585ee224b0f1006cce1c31464dbf3fb19",
+              "bytes": 11734,
+              "path": "payloads/dd87e1e889e572aceffe1f6cba40653585ee224b0f1006cce1c31464dbf3fb19.md"
+            },
+            "h1": {
+              "sha256": "6b352415ca08aa6f0cb480d68edc490f55268bb8296bbfcc9fb3fc73508edf5d",
+              "bytes": 13047,
+              "path": "payloads/6b352415ca08aa6f0cb480d68edc490f55268bb8296bbfcc9fb3fc73508edf5d.md"
+            }
+          },
+          "normalized_sha256": "17ee5180de61be58d4ca9b8d3b3ae26e23ecb7eba7d7f9e4640c76ed9555557a",
+          "normalized_equal": true
+        }
+      }
+    },
+    "cluster-03": {
+      "worker_fixture_sha256": "d0035ebcfd4ca0aa8306be9f92b8ac63a9a5d26eb324c1d250159a9565bb9437",
+      "evaluator_fixture_sha256": "d9f809a4dc28337966b226b6e4a849cb28f697e8e711b1e24cf943d20c60d05d",
+      "sample_pairs": {
+        "sample-01": {
+          "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/cluster-03/sample-01.md",
+          "payloads": {
+            "m0": {
+              "sha256": "8abd2a84e87dc892479cf09e3b79e6bd270c8219afe171158363146cfa05aeec",
+              "bytes": 11905,
+              "path": "payloads/8abd2a84e87dc892479cf09e3b79e6bd270c8219afe171158363146cfa05aeec.md"
+            },
+            "h1": {
+              "sha256": "70c5bfb4e1a915c91f78db9c24423156e7922759cbbadf7bfcf7df0f8359d4ab",
+              "bytes": 13218,
+              "path": "payloads/70c5bfb4e1a915c91f78db9c24423156e7922759cbbadf7bfcf7df0f8359d4ab.md"
+            }
+          },
+          "normalized_sha256": "71aeda66032a8be034869e971b867d382e5c7c5ab11a79b63910f1ddbe833d56",
+          "normalized_equal": true
+        },
+        "sample-02": {
+          "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/cluster-03/sample-02.md",
+          "payloads": {
+            "m0": {
+              "sha256": "3545138007f2df5564b0d78b57cd48943cb22f3439fe82038aa14e1e45b44d25",
+              "bytes": 11905,
+              "path": "payloads/3545138007f2df5564b0d78b57cd48943cb22f3439fe82038aa14e1e45b44d25.md"
+            },
+            "h1": {
+              "sha256": "1fba4773534c8a2aa5c714b6b6df82ba81f9e71264050d2301abba18ce9927e0",
+              "bytes": 13218,
+              "path": "payloads/1fba4773534c8a2aa5c714b6b6df82ba81f9e71264050d2301abba18ce9927e0.md"
+            }
+          },
+          "normalized_sha256": "04a49a243b4479ac7f748dfc1a90d776d8772e644d0d30ec977fa95a4ef83a98",
+          "normalized_equal": true
+        },
+        "sample-03": {
+          "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/cluster-03/sample-03.md",
+          "payloads": {
+            "m0": {
+              "sha256": "bd930da1d9669d8d2462d9e5d68f8c95a8613487d6bbe75f11a7c359734ccfc9",
+              "bytes": 11905,
+              "path": "payloads/bd930da1d9669d8d2462d9e5d68f8c95a8613487d6bbe75f11a7c359734ccfc9.md"
+            },
+            "h1": {
+              "sha256": "c075e5a2eaebd04cb41ed46b01f1e6c51acc41074c3ab8257bf83daba2142a4a",
+              "bytes": 13218,
+              "path": "payloads/c075e5a2eaebd04cb41ed46b01f1e6c51acc41074c3ab8257bf83daba2142a4a.md"
+            }
+          },
+          "normalized_sha256": "57fad269c3c2d12845d9ac0e06bb6fff2018c2fe77a6ee97435e2a83b9d8af38",
+          "normalized_equal": true
+        },
+        "sample-04": {
+          "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/cluster-03/sample-04.md",
+          "payloads": {
+            "m0": {
+              "sha256": "5ff8cf28f22701e85b16a43716caa479db3989f8ce99317c35ccc59021bbf753",
+              "bytes": 11905,
+              "path": "payloads/5ff8cf28f22701e85b16a43716caa479db3989f8ce99317c35ccc59021bbf753.md"
+            },
+            "h1": {
+              "sha256": "636cc08927aec83d4e0c8f3ad35c6fd1125ad3572eab3d1d468cc281f1777303",
+              "bytes": 13218,
+              "path": "payloads/636cc08927aec83d4e0c8f3ad35c6fd1125ad3572eab3d1d468cc281f1777303.md"
+            }
+          },
+          "normalized_sha256": "2751f29ff2d4a7edc9bf21a8788652d0c31fea731f24c3646bb1018faff57116",
+          "normalized_equal": true
+        },
+        "sample-05": {
+          "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/cluster-03/sample-05.md",
+          "payloads": {
+            "m0": {
+              "sha256": "584cf8919091509abb8ff6e76335f4e05700a5a090c10c1ea69571bf04961184",
+              "bytes": 11905,
+              "path": "payloads/584cf8919091509abb8ff6e76335f4e05700a5a090c10c1ea69571bf04961184.md"
+            },
+            "h1": {
+              "sha256": "642eac8fc6c0be027c135b1a3f9ab0a66151df9ec96b8ca5a3fbc8ae65707005",
+              "bytes": 13218,
+              "path": "payloads/642eac8fc6c0be027c135b1a3f9ab0a66151df9ec96b8ca5a3fbc8ae65707005.md"
+            }
+          },
+          "normalized_sha256": "cebb8ba0299cef62706e268a503f8875dc48e80d67a0ca076d708a4a5102b186",
+          "normalized_equal": true
+        }
+      }
+    }
+  },
+  "viability": {
+    "V-01": {
+      "worker_fixture_sha256": "fd693bde7c985fb446aa2ceb7f9b75159b317509997a1396cfcd6f3c77f71228",
+      "evaluator_fixture_sha256": "8ccff240da6bfb6a960b462d975619401b889e762b04b9aed29efde456425f25",
+      "payload_sha256": "1144b06f5ee2ec646c0e702efa2fc7b09124f546ea97002f5222bff3c56ee6d0",
+      "payload_bytes": 11406,
+      "payload_path": "payloads/1144b06f5ee2ec646c0e702efa2fc7b09124f546ea97002f5222bff3c56ee6d0.md",
+      "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/viability/V-01.md"
+    },
+    "V-02": {
+      "worker_fixture_sha256": "39014ed93a1c324a0e769f60d072c3fc0800577e7d472c6ffcb8b475e832500b",
+      "evaluator_fixture_sha256": "a5bc8cfd3ba1a956f68cdcbd1c209b4b40aab6b549faeda2765897322c7ce81d",
+      "payload_sha256": "27d911f160cef4f1a33316d90c8e3a24ad6f717a78ae874ce5b8e4852f154f9b",
+      "payload_bytes": 11001,
+      "payload_path": "payloads/27d911f160cef4f1a33316d90c8e3a24ad6f717a78ae874ce5b8e4852f154f9b.md",
+      "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/viability/V-02.md"
+    },
+    "V-03": {
+      "worker_fixture_sha256": "fcb0ffd4fdc901cc489517b880f5cf533e212b0e6e1d2ccea914e21d3fcafdc8",
+      "evaluator_fixture_sha256": "6effde0f402c9e54a375abd7f3006b1e41995753ef6944cf5534ee72bec976c0",
+      "payload_sha256": "6a40ad585d9b2e8df0ce87e7c3dcdd3fcc8ae39e1db18777d388d42263803904",
+      "payload_bytes": 10599,
+      "payload_path": "payloads/6a40ad585d9b2e8df0ce87e7c3dcdd3fcc8ae39e1db18777d388d42263803904.md",
+      "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/viability/V-03.md"
+    },
+    "V-04": {
+      "worker_fixture_sha256": "80b1cfad04eacf69118120a1d69138a5c72bc019267718974b96dd8f9cbb7dae",
+      "evaluator_fixture_sha256": "38f8a7bc2464136ce348785637a366846402459393c27213fb001715bec6955f",
+      "payload_sha256": "5a37c97f7e0361ec80827933c28e5a1f11e5b6d7c276424f1a10416d7dc6db00",
+      "payload_bytes": 10625,
+      "payload_path": "payloads/5a37c97f7e0361ec80827933c28e5a1f11e5b6d7c276424f1a10416d7dc6db00.md",
+      "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/viability/V-04.md"
+    },
+    "V-05": {
+      "worker_fixture_sha256": "ff4dabdced62489af6f252a0f97a9d404758a628511c7d882cd99bc3ff0f400d",
+      "evaluator_fixture_sha256": "e3a6ad1bb2c6352b7d9b9185e934c289659befeba75a1c6da78d66b79781209c",
+      "payload_sha256": "8267611df50971f792cf5338a3f775ab5aa3c00a11a4423cacf1dd77aa484af2",
+      "payload_bytes": 10746,
+      "payload_path": "payloads/8267611df50971f792cf5338a3f775ab5aa3c00a11a4423cacf1dd77aa484af2.md",
+      "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/viability/V-05.md"
+    },
+    "V-06": {
+      "worker_fixture_sha256": "daee7c0f4ef64a3889a7395042c564c59cdd17b51e4d07281a820ce90432b4cc",
+      "evaluator_fixture_sha256": "3e7d07939d8fb41d653c787c016af70f3f6970da1d5039787ce2cad363679e2e",
+      "payload_sha256": "34ceaab8d39a42c401d0d9fea48c73a7d09ff90b6849d1a14b7fa8f6f9f7a2aa",
+      "payload_bytes": 10635,
+      "payload_path": "payloads/34ceaab8d39a42c401d0d9fea48c73a7d09ff90b6849d1a14b7fa8f6f9f7a2aa.md",
+      "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/viability/V-06.md"
+    },
+    "V-07": {
+      "worker_fixture_sha256": "8659ed075f313260c1fa985bc08eec8eacf51745c415ea4f8ebec3a366305674",
+      "evaluator_fixture_sha256": "ae1d238b03e4bdc334841d6b6b59e5e4d4fa43a9a516adaa32430baa8a3b0a82",
+      "payload_sha256": "2fe07920bb0828c0dea21a03e4d6be1d18fa212f981304709b8e19c2825717d4",
+      "payload_bytes": 10731,
+      "payload_path": "payloads/2fe07920bb0828c0dea21a03e4d6be1d18fa212f981304709b8e19c2825717d4.md",
+      "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/viability/V-07.md"
+    },
+    "V-08": {
+      "worker_fixture_sha256": "6865c9e322b278cf96775366be7a03b9cc884e4bb2bd572a0fde0b14035261be",
+      "evaluator_fixture_sha256": "e1128a525f69542d7c4494538e7092d436119f00010a4c040e4b21e94a7a4ac5",
+      "payload_sha256": "74cb6123a40c80fd448a7b2eaf139718a05805882dcca6d10204073485807493",
+      "payload_bytes": 10839,
+      "payload_path": "payloads/74cb6123a40c80fd448a7b2eaf139718a05805882dcca6d10204073485807493.md",
+      "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/viability/V-08.md"
+    },
+    "V-09": {
+      "worker_fixture_sha256": "5f5c77e04428e38e364c4423862f8fd9ce323ca32b644ad09fac369de6697245",
+      "evaluator_fixture_sha256": "f090cae2c26686639db059483f7aec89984983c660934adc674153ff61af14ab",
+      "payload_sha256": "d1e09e30e7881d31f6929bbef166d63e9e3377dc76ade0ac24c3d98012026e5f",
+      "payload_bytes": 10568,
+      "payload_path": "payloads/d1e09e30e7881d31f6929bbef166d63e9e3377dc76ade0ac24c3d98012026e5f.md",
+      "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/viability/V-09.md"
+    },
+    "V-10": {
+      "worker_fixture_sha256": "675237899bf0409d384fbca777845568f14f692f2bc0cdb8aacee01f0e45efc2",
+      "evaluator_fixture_sha256": "5129abb485e4fd238657f5571c39bf7cd8061c8343dacab7a8767702f92d76b6",
+      "payload_sha256": "2d3668c2d5d463a133723d5cc7123c715c55dd732bc17e79993a2931d2a13b66",
+      "payload_bytes": 10653,
+      "payload_path": "payloads/2d3668c2d5d463a133723d5cc7123c715c55dd732bc17e79993a2931d2a13b66.md",
+      "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/viability/V-10.md"
+    },
+    "V-11": {
+      "worker_fixture_sha256": "d7b4fbc230f3067a5c9dc0a5d64035a5b2ab7e7a2a30265a8682bbe7386aa20d",
+      "evaluator_fixture_sha256": "0fed8130b9f0f3eb0b39846e5bec92df91e56a2bbe7158afcd84a6cff4f984fb",
+      "payload_sha256": "43960feff5417c03a0f86d6eb83ef51ada8091f84f38efcd5dddc7e06dc6bad1",
+      "payload_bytes": 10655,
+      "payload_path": "payloads/43960feff5417c03a0f86d6eb83ef51ada8091f84f38efcd5dddc7e06dc6bad1.md",
+      "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/viability/V-11.md"
+    },
+    "V-12": {
+      "worker_fixture_sha256": "b04c63dbfcc124921edf511d0dc86b101ea2990dc20fa767c5c05a32395e6ea2",
+      "evaluator_fixture_sha256": "0fdedb6878b53a8e367816314a1fa1b322083ae04792a3ba1743b8d26a0f77f1",
+      "payload_sha256": "4a8b2f7f04a525f4cc3af1b732d85091afc011423a2e95c3b53ec71abec7c88b",
+      "payload_bytes": 10515,
+      "payload_path": "payloads/4a8b2f7f04a525f4cc3af1b732d85091afc011423a2e95c3b53ec71abec7c88b.md",
+      "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/viability/V-12.md"
+    },
+    "V-13": {
+      "worker_fixture_sha256": "626f8186c5fbbd4acfeea7c0409144506ee4b5bc8aca0c6cbd0460f1bd49431c",
+      "evaluator_fixture_sha256": "02c4f2118c07cf0b8f43289294bec0a433251d4161b341c3be863aa87e9e1564",
+      "payload_sha256": "856b55afee9faf9512b6211918981f6652486b93a1e934fdcb7c232d807b074f",
+      "payload_bytes": 10639,
+      "payload_path": "payloads/856b55afee9faf9512b6211918981f6652486b93a1e934fdcb7c232d807b074f.md",
+      "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/viability/V-13.md"
+    },
+    "V-14": {
+      "worker_fixture_sha256": "d86055ffbabae3f47b394525d3aa8810c0ce56e327eeb5aa0447fbc856707b33",
+      "evaluator_fixture_sha256": "279c23dbff37e5961ccc6f73bc5cb5d101b812aa02294565e1835865dcaeaba3",
+      "payload_sha256": "b40f5d2bb34cf40526e95ed41d37b57de579b08e73dd5a4aa12018c1010e9248",
+      "payload_bytes": 10589,
+      "payload_path": "payloads/b40f5d2bb34cf40526e95ed41d37b57de579b08e73dd5a4aa12018c1010e9248.md",
+      "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/viability/V-14.md"
+    },
+    "V-15": {
+      "worker_fixture_sha256": "398d8e7cfd49b8c2595d2d1e0b5dd1d110fec065265f0b2e5d671686a6bc9b74",
+      "evaluator_fixture_sha256": "78c1e366a84191bab83d7e59b2fff5dcc752f7704295c86fa75826a3d1aeffde",
+      "payload_sha256": "aa2ad5d863a276bf077e7b67fe6cc2d3d3f2820652acdc975a90607e08e619b6",
+      "payload_bytes": 10488,
+      "payload_path": "payloads/aa2ad5d863a276bf077e7b67fe6cc2d3d3f2820652acdc975a90607e08e619b6.md",
+      "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/viability/V-15.md"
+    },
+    "V-16": {
+      "worker_fixture_sha256": "c51cc552ca3b2a33d28031d5e43aa19d06b5c599924126be0388fc14bdff7924",
+      "evaluator_fixture_sha256": "8bd5bc2e0f4e43d83619830c33b4b8326c5a784a8ca15980f51c46b958948efa",
+      "payload_sha256": "f5be75fd4d764f6d2c956e704dcb31cf26b37da15366f81546cd91e1d16d6751",
+      "payload_bytes": 10793,
+      "payload_path": "payloads/f5be75fd4d764f6d2c956e704dcb31cf26b37da15366f81546cd91e1d16d6751.md",
+      "capture_target": "docs/validation/evals/to-tickets-2026-07-23/isolation-v2/capture-slots/viability/V-16.md"
+    }
+  }
+}

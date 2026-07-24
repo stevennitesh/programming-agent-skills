@@ -1,0 +1,35 @@
+{
+  "id": "V-03",
+  "worker_prompt": "Run To Tickets on SRC-V03. Do not ask the user a question; return the exact bounded result.",
+  "context": "Repository setup is compatible. The source contains one explicit unresolved decision that changes persistence and acceptance.",
+  "source_packet": {
+    "identity": "SRC-V03@1",
+    "owner": "Ravi, notifications owner",
+    "outcome": "Allow users to mute project notifications.",
+    "commitments": [
+      "C1 store mute preference",
+      "C2 suppress matching delivery"
+    ],
+    "acceptance": [
+      "UNSET: whether mute applies to email only or email plus in-app notifications"
+    ],
+    "scope": "project notification mute",
+    "exclusions": "organization-wide mute",
+    "proof": "notification delivery integration fixture",
+    "category": "enhancement",
+    "parent": "P-303"
+  },
+  "tracker_state": "P-303 exists; no children.",
+  "tracker_observations": [
+    "get_setup -> compatible",
+    "get_parent P-303 -> exact parent",
+    "mutation log remains empty"
+  ],
+  "source_owner": "Ravi",
+  "publication_authority": "Ravi withholds publication until channel scope is settled.",
+  "permitted_tools": [
+    "repository_read",
+    "fixture_tracker:get_setup,get_parent"
+  ],
+  "permitted_mutations": "none"
+}

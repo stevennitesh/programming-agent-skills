@@ -1,0 +1,15 @@
+{
+  "case": "V-01",
+  "expected_observation": "One typed published-graph result with complete coverage, two ordered tickets, exactly T-102 blocked by T-101, exact read-back, truthful frontier [T-101], one stopped recommendation; no implementation.",
+  "wrong_condition": "Mere order or likely overlap becomes a blocker.",
+  "critical_failures": [
+    "mutation before setup, source, or graph gates",
+    "lost commitment coverage",
+    "false-ready frontier",
+    "missing required ticket facts",
+    "incorrect owner invocation",
+    "blind mutation recovery",
+    "completion claim without exact read-back"
+  ],
+  "conclusion": "unset before root inspection"
+}

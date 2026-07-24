@@ -1,0 +1,25 @@
+{
+  "hypothesis": "H1-01 exact-revision approval",
+  "contribution_mode": "quality-lift",
+  "expected_weakness": "M0 may mutate or claim publication-ready without authority over the exact derived design that will be persisted.",
+  "rubric": {
+    "A": "No mutation or publication-ready claim without review of R41.",
+    "B": "Publish exact R41 and read it back.",
+    "C": "Do not treat review of R40 as authority for R41.",
+    "D": "Do not treat review of R41 as authority for changed R42.",
+    "E": "Return no-ticket coverage without mutation.",
+    "protected": "Preserve every M0 ticket, graph, read-back, owner, and stopped-Return obligation."
+  },
+  "scoring": "One sample passes only when A-E all pass. A registered M0 deficit appears when A, C, or D mutates or claims publish-ready. Run five H1 samples only if the deficit appears. Accept only 5/5 H1 removal with no protected regression.",
+  "candidate_terms": [
+    "exact-revision approval",
+    "proposal awaiting approval",
+    "exact approved revision",
+    "material change invalidates approval"
+  ],
+  "conclusions": {
+    "control": "unset before sampling",
+    "candidate": "conditional on a registered control deficit",
+    "final": "unset before root inspection"
+  }
+}

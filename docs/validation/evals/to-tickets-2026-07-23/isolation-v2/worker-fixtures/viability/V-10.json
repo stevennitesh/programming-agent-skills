@@ -1,0 +1,34 @@
+{
+  "id": "V-10",
+  "worker_prompt": "Attempt to shape and publish SRC-V10. Return one exact bounded result.",
+  "context": "Setup is compatible. Settled commitments imply A consumes B and B consumes A, while an existing draft profile falsely marks both independent.",
+  "source_packet": {
+    "identity": "SRC-V10@1",
+    "owner": "Vik, sync owner",
+    "outcome": "Backfill remote IDs and enable outbound synchronization.",
+    "commitments": [
+      "C1 backfill requires outbound mapping",
+      "C2 outbound mapping requires backfilled remote ID"
+    ],
+    "acceptance": [
+      "no item is ready while circular prerequisite remains"
+    ],
+    "scope": "backfill and outbound sync",
+    "exclusions": "inventing a sequencing decision",
+    "proof": "dependency graph audit",
+    "category": "enhancement",
+    "parent": "P-1010"
+  },
+  "tracker_state": "P-1010 exists; no children; draft evidence claims contradictory independence.",
+  "tracker_observations": [
+    "get_setup/get_parent -> compatible/exact",
+    "mutation log remains empty"
+  ],
+  "source_owner": "Vik",
+  "publication_authority": "Publication only after an acyclic complete graph exists.",
+  "permitted_tools": [
+    "repository_read",
+    "fixture_tracker:get_setup,get_parent"
+  ],
+  "permitted_mutations": "none while graph is contradictory"
+}

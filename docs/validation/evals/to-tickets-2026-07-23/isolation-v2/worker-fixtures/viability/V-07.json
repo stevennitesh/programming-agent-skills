@@ -1,0 +1,34 @@
+{
+  "id": "V-07",
+  "worker_prompt": "Publish the SRC-V07 graph and recommend one next owner without starting it.",
+  "context": "Setup is compatible. Two tickets change different files but share the pricing invariant and the only licensed reconciliation fixture.",
+  "source_packet": {
+    "identity": "SRC-V07@1",
+    "owner": "Nia, billing owner",
+    "outcome": "Apply the same proration rule to invoice preview and finalization.",
+    "commitments": [
+      "C1 preview uses rule R7",
+      "C2 finalization uses rule R7"
+    ],
+    "acceptance": [
+      "both paths match the shared reconciliation fixture"
+    ],
+    "scope": "preview and finalization",
+    "exclusions": "parallel execution authority",
+    "proof": "scarce licensed fixture billing_reconciliation",
+    "category": "enhancement",
+    "parent": "P-707"
+  },
+  "tracker_state": "P-707 exists; no children; no explicit parent-delivery request.",
+  "tracker_observations": [
+    "all create/link/role/state operations -> ok",
+    "read-back -> exact graph with both nodes initially unblocked"
+  ],
+  "source_owner": "Nia",
+  "publication_authority": "Publish the complete graph; no delivery or dispatch authority.",
+  "permitted_tools": [
+    "repository_read",
+    "fixture_tracker:get_setup,get_parent,create_item,set_parent,set_role,set_state,get_item,get_dependents"
+  ],
+  "permitted_mutations": "Publish exact graph only."
+}

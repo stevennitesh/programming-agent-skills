@@ -1,0 +1,33 @@
+{
+  "id": "V-12",
+  "worker_prompt": "Publish SRC-V12 and apply mandatory read-back before returning.",
+  "context": "Setup/source are complete. Connector accepts writes but read-back changes the requested ready state to backlog.",
+  "source_packet": {
+    "identity": "SRC-V12@1",
+    "owner": "Xia, search owner",
+    "outcome": "Add prefix search.",
+    "commitments": [
+      "C1 prefix query returns matching names"
+    ],
+    "acceptance": [
+      "case-normalized prefix is covered"
+    ],
+    "scope": "prefix search",
+    "exclusions": "fuzzy search",
+    "proof": "search integration fixture",
+    "category": "enhancement",
+    "parent": "P-1212"
+  },
+  "tracker_state": "P-1212 exists; no children.",
+  "tracker_observations": [
+    "create/link/role/state -> receipts ok",
+    "get_item -> exact body/parent/role but status backlog, not ready-for-agent"
+  ],
+  "source_owner": "Xia",
+  "publication_authority": "Publish and verify exact state.",
+  "permitted_tools": [
+    "repository_read",
+    "fixture_tracker:get_setup,get_parent,create_item,set_parent,set_role,set_state,get_item"
+  ],
+  "permitted_mutations": "Publish the one item and its intended metadata once."
+}

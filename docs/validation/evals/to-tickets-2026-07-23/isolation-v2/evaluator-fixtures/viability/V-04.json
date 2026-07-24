@@ -1,0 +1,15 @@
+{
+  "case": "V-04",
+  "expected_observation": "Setup precondition naming blocker representation, recommend $repo-bootstrap, preserve source/tracker, stop.",
+  "wrong_condition": "A compatible optional capability is treated as required.",
+  "critical_failures": [
+    "mutation before setup, source, or graph gates",
+    "lost commitment coverage",
+    "false-ready frontier",
+    "missing required ticket facts",
+    "incorrect owner invocation",
+    "blind mutation recovery",
+    "completion claim without exact read-back"
+  ],
+  "conclusion": "unset before root inspection"
+}

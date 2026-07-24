@@ -1,0 +1,15 @@
+{
+  "case": "V-13",
+  "expected_observation": "Reject separate support slice, publish one behavior ticket with folder creation inline, and stop.",
+  "wrong_condition": "Necessary observable migration is rejected merely for being technical.",
+  "critical_failures": [
+    "mutation before setup, source, or graph gates",
+    "lost commitment coverage",
+    "false-ready frontier",
+    "missing required ticket facts",
+    "incorrect owner invocation",
+    "blind mutation recovery",
+    "completion claim without exact read-back"
+  ],
+  "conclusion": "unset before root inspection"
+}

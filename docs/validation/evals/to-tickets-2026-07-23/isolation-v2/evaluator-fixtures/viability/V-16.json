@@ -1,0 +1,15 @@
+{
+  "case": "V-16",
+  "expected_observation": "Published graph packet naming parent, ordered IDs, coverage, A->B blocker, frontier [T-161,T-163], profiles/matrices, exact read-back, one safe stopped recommendation.",
+  "wrong_condition": "Any partial or mismatched state is called complete.",
+  "critical_failures": [
+    "mutation before setup, source, or graph gates",
+    "lost commitment coverage",
+    "false-ready frontier",
+    "missing required ticket facts",
+    "incorrect owner invocation",
+    "blind mutation recovery",
+    "completion claim without exact read-back"
+  ],
+  "conclusion": "unset before root inspection"
+}

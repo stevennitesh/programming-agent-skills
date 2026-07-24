@@ -1,171 +1,133 @@
 ---
 name: to-tickets
-description: Create and publish approved, dependency-ordered ready-for-agent tickets from settled source material.
+description: Create dependency-ordered ready-for-agent tickets from settled source material.
 ---
 
 # To Tickets
 
-Own one outcome: one approved, dependency-ordered graph of independently
-grabbable **ready-for-agent tickets** from one bounded body of settled source,
-with exhaustive coverage and one verified next action.
+Transform one bounded packet of settled source into an exhaustive,
+dependency-ordered set of **Ready-for-agent tickets**.
 
-`docs/agents/issue-tracker.md` and its pointers own tracker transport, the
-Ready-for-agent contract, roles, relationships, ready queries, packet
-mechanics, and Mutation read-back. The engineering contract owns shared Source
-Trace, proof-seam, and state-boundary rules. This skill owns admission,
-coverage, slicing, approval, publication scope, and Return.
+Admit only an explicit request to slice settled source. Preserve the source
+owner's outcome, commitments, acceptance, scope, exclusions, domain meaning,
+and Source Trace. Leave product decisions, parent-spec creation, raw-intake
+triage, implementation, parent delivery, worker dispatch, closeout,
+installation, and Git delivery to their owners.
 
-Admit only settled implementation source with an identifiable owner and
-publication authority, stable outcome, decisions, scope, exclusions, and proof
-expectations. Apply the setup gate through the target repo's `AGENTS.md`. Return
-the exact `$repo-bootstrap` precondition when its tracker surface is absent or
-incompatible.
+`docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md` own tracker
+transport, relationships, roles, lifecycle mappings, and Mutation read-back.
+The engineering contract owns shared Source Trace, proof, and state-boundary
+semantics. This skill owns slicing, coverage, blocker order, ticket readiness,
+execution profiles, publication scope, and Return.
 
-## Process
+## Shape
 
-### 1. Trace
+Apply the setup gate through the target repository's `AGENTS.md`. Load the
+routed tracker, label, domain, and engineering contracts. When a required
+surface or operation is missing or incompatible, name it, recommend
+`$repo-bootstrap`, preserve source and tracker state, and stop before tracker
+access or mutation.
 
-Trace the complete bounded source: the request and approvals, repo
-instructions, every supplied parent artifact, decision-bearing comments, and
-directly required durable owners. Record source identity and owner, outcome,
-accepted decisions, deferrals and rejections, scope and exclusions, evidence,
-proof expectations, and material gaps.
+Read the complete supplied source packet and every decision-bearing pointer.
+Record its identity and owner, accepted decisions, commitments, deferrals,
+exclusions, domain terms, proof seams, and unresolved but nonblocking notes.
+When a missing or conflicting decision could change a commitment, return that
+decision and every affected slice without mutation. Leave implementation
+technique to the delivery owner.
 
-Return one complete **source-gap packet** and stop before slicing when a missing
-or conflicting decision could change intent, contracts, architecture,
-supported state, migration, acceptance, proof, or scope. Leave
-implementation-owned technique to implementation.
+Build an in-memory commitment ledger and exhaustive slice graph. Account for
+every source-visible implementation commitment and scope boundary as ticket
+acceptance, an explicit deferral or exclusion, or a no-ticket reason.
 
-### 2. Map
+Prefer one independently completable vertical behavior slice. Admit a support
+slice or migration stage only when it has observable proof and names the
+behavior slice, compatibility obligation, or risk it unlocks. Split only when
+separate proof, authority, rollback, dependency unlock, permission, state,
+migration, or ownership makes separate completion valuable.
 
-Inspect repository reality only far enough to name stable seams, supported
-state branches, **proof lanes**, expected production scope, overlap, migration
-constraints, and durable domain, ADR, glossary, or prototype pointers.
+Give every ticket:
 
-Leave patch design, exact file selection, helpers, and test implementation to
-the delivery owner. Return a source conflict rather than letting current code
-silently override settled intent.
+- one bounded slice and work-unit form, including any learning or migration
+  role;
+- its parent or bounded-source reference and relevant Source Trace pointers;
+- observable desired behavior, edge and error cases, and acceptance;
+- relevant seams, expected durable write scope, and a scope fence;
+- dependency state, true blockers or `none`, and stable tracker order;
+- proof lane plus verification authority and evidence; and
+- a parallel-safety judgment.
 
-### 3. Slice
+Every ticket must also satisfy the configured tracker's Ready-for-agent
+contract. Keep a ticket unready and return all defects when any required
+acceptance, blocker, proof, scope, or verification fact is missing.
 
-Default to one fresh-session-sized **vertical behavior slice**: one request or
-behavior across the real components or concerns needed for its selected value.
+Derive a blocking edge only when the dependent consumes a required predecessor
+outcome. Detect cycles, missing edges, contradictory order, and nodes made
+falsely ready by unresolved blockers. Tracker order and serial constraints are
+not blockers. The ready frontier is open, ready-for-agent, unclaimed work whose
+true blockers are satisfied, in tracker order.
 
-**Local proof policy:** every ticket has observable proof through its claimed
-boundary, and completion can be judged without unrelated sibling completion.
-This independence is a To Tickets completion gate; it does not establish
-concurrency.
+Give every ticket an execution profile covering semantic ownership, expected
+production writes, proof seams and scarce proof resources, ordering, serial
+tripwires, and evidenced independence or serialization. Treat expected write
+overlap, shared proof resources, trust boundaries, migrations, cutovers,
+permissions, protected data, irreversible state, and uncertain independence as
+serial constraints.
 
-Every ticket satisfies the tracker's Ready-for-agent contract and adds:
-
-- parent or bounded-source reference;
-- work-unit form and migration phase when applicable;
-- why this slice, what to build, and covered commitments; and
-- relevant Source Trace and durable context pointers.
-
-Acceptance names observable behavior and the highest meaningful proof seam.
-Each ticket also names true blockers or `none`, expected write scope, semantic
-ownership, shared resources and serial tripwires, and a scope fence. Split only
-when distinct proof, authority, rollback, dependency unlock, permission, state,
-migration, or ownership makes separate completion valuable; do not split by
-layer, filename, team, or available agent slot.
-
-Use a **blocking edge** only when the dependent consumes a required predecessor
-outcome. Tracker order, predicted overlap, and serial tripwires are not
-blockers. Keep the graph acyclic. Ready-for-agent means shaped completely, not
-unblocked: the locally defined **ready frontier** is open, ready-for-agent,
-unclaimed work whose true blockers are satisfied, in tracker order.
-
-For stateful work, include the engineering contract's state-boundary matrix:
-put every applicable branch and any evidenced non-applicable axis in acceptance
-and its proof lane.
-
-When a parent-delivery run is requested or at least two substantial slices may
-be independent, add the execution profile: blockers, semantic owner, expected
-production scope and exclusions, public proof seam and focused proof, size,
-shared seam or scarce resource, and serial tripwire. Parallel eligibility
-requires substantial work plus semantic, production-scope, and proof
-isolation. Disjoint filenames or open slots do not establish it; uncertainty
-defaults to serial. Parallel Implement owns runtime width.
+For each stateful ticket, include the applicable state-boundary matrix:
+absent or initial state, current reusable state, legacy or incompatible state,
+public access paths, supported variants, and relevant lifecycle transitions,
+reduced to distinct supported branches and high-risk interactions. For a
+stateless ticket, record `not applicable` and the reason.
 
 For an incompatible interface, schema, client, or data change that cannot
-switch atomically, use **expand-migrate-contract**: expand the compatible new
-form beside the old; migrate through operable, releasable, backward-compatible
-stages; contract only after old usage ends and compatibility proof passes.
-Migration dependencies do not waive intermediate operability. These are
-technical phases, not automatically vertical product slices.
+switch atomically, use expand-migrate-contract: expand a compatible new form,
+migrate through operable and releasable stages, then contract only after old
+usage ends and compatibility proof passes.
 
-Apply the **coverage gate**: map every source-visible implementation commitment
-and scope boundary to a ticket, an explicit deferral or exclusion, or a
-no-ticket reason.
+If exhaustive coverage justifies no implementation ticket, return the complete
+coverage result, preserve tracker state, recommend `none`, and stop.
 
-If exhaustive coverage requires no ticket, return the coverage map and
-no-ticket result without approval or mutation. Otherwise Slice completes only
-when every commitment has exactly one disposition, every ticket has source
-justification, and the graph, predicted frontier, and applicable execution
-profiles are coherent.
+## Publish
 
-### 4. Approve
+Apply the configured `ready-for-agent` state only after a ticket passes every
+ready gate. Apply a category role only when settled source authorizes it.
 
-Present one identified proposal revision containing the Source Trace summary,
-complete coverage map, ordered graph, predicted frontier, intended tracker
-mutations, and every ticket's form and roles, blockers and consumed outcome,
-commitments, acceptance, proof, rationale, write scope, parallel safety,
-applicable execution profile and state matrix, and scope fence.
+Freeze and audit the complete commitment ledger, ticket bodies, graph, stable
+order, predicted frontier, roles, readiness, execution profiles, state
+matrices, and intended mutations before external mutation. Publish only a
+complete non-contradictory design. Through tracker-owned operations, create the
+items first, then apply parent and dependency relationships, authorized roles,
+and mapped state. Preserve the parent as intent owner and do not fabricate a
+parent for authorized standalone tickets.
 
-Obtain explicit approval of that exact revision before publication. A material
-change to coverage, a ticket, edge, acceptance, proof, state, scope, readiness,
-or relationship requires reconciliation and fresh approval. Return the complete
-proposal awaiting approval when approval is absent.
-
-### 5. Publish
-
-Immediately before mutation, reconcile the source, proposal, tracker target,
-and parent relationships. Material drift returns to Approve. Publish only the
-fresh approved parent, tickets, relationships, roles, state, and packet
-metadata, blockers first, through the tracker owner.
-
-Preserve the parent's intent and lifecycle. Change its body only for approved,
-tracker-required child or ordering metadata. Stop before implementation,
-review, claim, or closeout.
-
-Apply **Mutation read-back** to the parent, ordered children, bodies, roles,
-state, relationships, blocking edges, affected dependents, and resulting ready
-frontier. Provider receipts do not prove completion. A failed, unknown, or
-mismatched mutation is blocked; return the approved revision, observed applied
-and failed operations, unknown state, frontier risk, and safest non-duplicating
-recovery.
-
-For a completely verified graph, return its references, packet path when
-applicable, coverage summary, ready frontier, and exactly one next action in
-this priority order:
-
-- empty frontier: resolve the named blocker;
-- explicitly requested non-empty parent-delivery run: recommend
-  `$parallel-implement` with the parent, regardless of initial frontier width;
-- one ready ticket: recommend `$implement` for it;
-- overlapping semantic ownership, production scope, public seam, fixture,
-  proof resource, or serial tripwire: recommend `$implement` for the first
-  ticket in tracker order;
-- at least two substantial, semantically independent, production-isolated,
-  proof-isolated tickets: recommend `$parallel-implement` with the parent; or
-- uncertain independence or economics: recommend `$implement` for the first
-  ticket in tracker order.
-
-Recommend and stop; never begin the selected implementation route.
+Refetch every created or changed item and every affected dependent. Verify the
+exact body, relationships, roles, assignee, status, and resulting frontier.
+A failed, unknown, or mismatched mutation returns applied operations, failed
+operations, affected dependents, observed frontier, and the safest recovery;
+claim no complete graph.
 
 ## Return
 
 Return exactly one typed result: setup precondition, source-gap packet,
-no-ticket result, proposal awaiting approval, partial-publication recovery, or
-published graph. Each result names its evidence, unchanged or observed tracker
-state, and exact safe continuation.
+no-ticket coverage result, consumer repair packet, partial-publication
+recovery, or published graph. Each result names its evidence, unchanged or
+observed tracker state, gaps, and exact safe continuation.
 
-## Completion
+A published graph includes the source or parent, ordered ticket references,
+coverage map, dependency graph and frontier, execution profiles, applicable
+state matrices, and mutation read-back. Recommend exactly one next owner:
 
-Successful publication requires setup, source, coverage, proposal, approval,
-freshness, publication, and read-back gates; tracker-owned readiness and this
-skill's artifact fields; distinct blockers and serial constraints; applicable
-state matrices and execution profiles; an exact observed graph without partial
-failure; and one verified next action returned without starting it. Earlier
-typed Returns are bounded stops, not successful publication.
+- `$parallel-implement` only when the user explicitly requested top-level
+  delivery of the verified parent and its non-empty exhaustive graph;
+- `$implement` for a single ready item or the first ready item in tracker order
+  when overlap, a serial tripwire, uncertainty, or uneconomic parallel
+  dispatch requires serial work; or
+- `none` when neither delivery relationship applies.
+
+Recommend and stop without invoking the owner.
+
+Complete only when source is settled; every commitment has a disposition;
+every ticket passes Ready-for-agent; the graph, profiles, and applicable
+matrices are complete and non-contradictory; every authorized mutation and
+affected relationship reads back; the frontier is truthful; and one
+recommendation or `none` is returned without starting it.

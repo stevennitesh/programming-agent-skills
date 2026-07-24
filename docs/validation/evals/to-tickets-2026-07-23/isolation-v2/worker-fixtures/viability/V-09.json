@@ -1,0 +1,34 @@
+{
+  "id": "V-09",
+  "worker_prompt": "Publish SRC-V09 and return the safe next owner. No parent-delivery run has been requested.",
+  "context": "Setup is compatible. Three tickets appear independent and ready, but invocation carries no top-level parent-delivery authority.",
+  "source_packet": {
+    "identity": "SRC-V09@1",
+    "owner": "Uma, settings owner",
+    "outcome": "Add three independent settings toggles.",
+    "commitments": [
+      "C1 compact mode",
+      "C2 timezone display",
+      "C3 digest opt-in"
+    ],
+    "acceptance": [
+      "each toggle has isolated proof"
+    ],
+    "scope": "settings toggles",
+    "exclusions": "parent-delivery campaign",
+    "proof": "three isolated settings fixtures",
+    "category": "enhancement",
+    "parent": "P-909"
+  },
+  "tracker_state": "P-909 exists; no explicit delivery request; no children.",
+  "tracker_observations": [
+    "publication/read-back -> exact three-node graph"
+  ],
+  "source_owner": "Uma",
+  "publication_authority": "Ticket publication only.",
+  "permitted_tools": [
+    "repository_read",
+    "fixture_tracker:get_setup,get_parent,create_item,set_parent,set_role,set_state,get_item,get_dependents"
+  ],
+  "permitted_mutations": "Publish exact graph only."
+}

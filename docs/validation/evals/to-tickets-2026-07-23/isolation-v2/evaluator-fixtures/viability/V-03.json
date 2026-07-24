@@ -1,0 +1,15 @@
+{
+  "case": "V-03",
+  "expected_observation": "Source-gap packet naming the email-only versus email-plus-in-app decision and both affected commitments; unchanged tracker; stop.",
+  "wrong_condition": "A nonblocking note is mistaken for a commitment gap.",
+  "critical_failures": [
+    "mutation before setup, source, or graph gates",
+    "lost commitment coverage",
+    "false-ready frontier",
+    "missing required ticket facts",
+    "incorrect owner invocation",
+    "blind mutation recovery",
+    "completion claim without exact read-back"
+  ],
+  "conclusion": "unset before root inspection"
+}

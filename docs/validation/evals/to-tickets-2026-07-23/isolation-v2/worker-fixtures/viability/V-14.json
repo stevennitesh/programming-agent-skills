@@ -1,0 +1,34 @@
+{
+  "id": "V-14",
+  "worker_prompt": "Shape and publish the authorized portion of SRC-V14 while preserving all dispositions.",
+  "context": "Setup is compatible. One commitment is authorized now, one is explicitly deferred to Q4, and one is explicitly outside product scope.",
+  "source_packet": {
+    "identity": "SRC-V14@1",
+    "owner": "Zed, analytics owner",
+    "outcome": "Expose basic usage totals.",
+    "commitments": [
+      "C1 daily total authorized now",
+      "C2 cohort breakdown deferred to Q4",
+      "C3 user-level export out of scope for privacy"
+    ],
+    "acceptance": [
+      "daily total matches aggregate fixture"
+    ],
+    "scope": "daily aggregate only",
+    "exclusions": "user-level export",
+    "proof": "aggregate fixture",
+    "category": "enhancement",
+    "parent": "P-1414"
+  },
+  "tracker_state": "P-1414 exists; no children.",
+  "tracker_observations": [
+    "one item publication/read-back -> exact"
+  ],
+  "source_owner": "Zed",
+  "publication_authority": "Publish only C1; record C2 and C3 dispositions.",
+  "permitted_tools": [
+    "repository_read",
+    "fixture_tracker:get_setup,get_parent,create_item,set_parent,set_role,set_state,get_item"
+  ],
+  "permitted_mutations": "Create exactly one Ready item for C1."
+}

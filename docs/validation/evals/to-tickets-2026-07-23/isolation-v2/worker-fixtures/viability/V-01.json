@@ -1,0 +1,41 @@
+{
+  "id": "V-01",
+  "worker_prompt": "Run To Tickets on source packet SRC-V01 and publish the justified graph to fixture-tracker. Return the complete typed result and stop.",
+  "context": "Repository setup is compatible. Parent P-101 exists, is open, and owns the settled enhancement. Tracker order follows source commitment order.",
+  "source_packet": {
+    "identity": "SRC-V01@1",
+    "owner": "Mira, checkout product owner",
+    "outcome": "A signed-in buyer can save one shipping address and then select it during checkout.",
+    "commitments": [
+      "C1 persist one validated shipping address for the signed-in buyer",
+      "C2 expose the persisted address as a selectable checkout option"
+    ],
+    "acceptance": [
+      "invalid postal code is rejected without persistence",
+      "checkout lists only the current buyer's saved address",
+      "selection cannot succeed until persistence exists"
+    ],
+    "scope": "shipping address save and checkout selection",
+    "exclusions": "address editing, multiple addresses, guest checkout",
+    "proof": "repository integration fixture checkout_saved_address",
+    "category": "enhancement",
+    "parent": "P-101"
+  },
+  "tracker_state": "P-101 exists; no children; no relationships; no claims.",
+  "tracker_observations": [
+    "create_item -> T-101",
+    "create_item -> T-102",
+    "set_parent T-101 P-101 -> ok",
+    "set_parent T-102 P-101 -> ok",
+    "set_blocker T-102 T-101 -> ok",
+    "set_role/set_state for both -> ok",
+    "get_item/get_dependents -> exact intended bodies, roles, state, and one blocker"
+  ],
+  "source_owner": "Mira",
+  "publication_authority": "Mira authorizes creation of complete Ready items under P-101 and their settled relationships, roles, and state.",
+  "permitted_tools": [
+    "repository_read",
+    "fixture_tracker:get_setup,get_parent,create_item,set_parent,set_blocker,set_role,set_state,get_item,get_dependents"
+  ],
+  "permitted_mutations": "Create exactly the justified children and apply their exact parent, blocker, enhancement role, and ready state after all gates."
+}

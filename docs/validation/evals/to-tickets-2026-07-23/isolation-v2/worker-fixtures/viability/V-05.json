@@ -1,0 +1,36 @@
+{
+  "id": "V-05",
+  "worker_prompt": "Shape and publish the complete Ready graph for SRC-V05, return exact read-back, and stop.",
+  "context": "Setup is compatible. This fixture tests persisted session restoration across all distinct supported branches.",
+  "source_packet": {
+    "identity": "SRC-V05@1",
+    "owner": "Leah, session owner",
+    "outcome": "Restore a saved analysis session safely.",
+    "commitments": [
+      "C1 initialize when no snapshot exists",
+      "C2 reuse current schema snapshot",
+      "C3 reject and rebuild incompatible snapshot",
+      "C4 invalidate expired snapshot after restart"
+    ],
+    "acceptance": [
+      "each branch has observable proof",
+      "corrupt data never becomes current"
+    ],
+    "scope": "analysis-session snapshot lifecycle",
+    "exclusions": "cross-account sharing",
+    "proof": "state fixture snapshot_restore_matrix",
+    "category": "enhancement",
+    "parent": "P-505"
+  },
+  "tracker_state": "P-505 exists; no children.",
+  "tracker_observations": [
+    "single item publication and exact matrix read-back -> ok"
+  ],
+  "source_owner": "Leah",
+  "publication_authority": "Publish the complete Ready graph and verify it.",
+  "permitted_tools": [
+    "repository_read",
+    "fixture_tracker:get_setup,get_parent,create_item,set_parent,set_role,set_state,get_item"
+  ],
+  "permitted_mutations": "Publish the one justified ticket after every gate."
+}

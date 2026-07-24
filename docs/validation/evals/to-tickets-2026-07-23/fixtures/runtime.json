@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "high",
+  "host": "Codex desktop fresh-context worker",
+  "samples_per_arm": 5,
+  "context_policy": "Start a fresh worker for every sample. Give it only the selected exact M0 or H1 package, tracker-contract.md, and the selected fixture packet. Do not provide synthesis, research, hypothesis labels, expected weakness, rubric, prior samples, candidate conclusions, or the other arm.",
+  "tool_policy": "Expose only the fixture's permitted_tools. The simulated tracker accepts only fixture-scoped mutations and returns only the listed tracker_observations in operation order.",
+  "authority_policy": "The fixture's source_owner settles product meaning. The fixture's publication_authority permits only the listed tracker mutations. To Tickets owns slicing, readiness, dependency order, execution profiles, proposal identity when present in the selected runtime, publication judgment, typed Return, and one stopped recommendation.",
+  "sample_policy": "Keep every byte of prompt, context, source_packet, tracker_state, tracker_observations, authority, tools, mutations, and expected_output_boundary fixed across samples and arms. Alternate arm order where an H1 arm is admitted.",
+  "output_capture": "Capture the complete worker response and simulated tracker operation log verbatim. Root judges them against protocol.md after the worker exits."
+}

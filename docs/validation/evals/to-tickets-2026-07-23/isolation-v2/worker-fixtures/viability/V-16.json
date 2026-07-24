@@ -1,0 +1,36 @@
+{
+  "id": "V-16",
+  "worker_prompt": "Complete publication for SRC-V16 and return the entire verified packet.",
+  "context": "Setup/source are complete. Three ordered tickets form A -> B while C is independent. No top-level parent-delivery request exists.",
+  "source_packet": {
+    "identity": "SRC-V16@1",
+    "owner": "Bo, media owner",
+    "outcome": "Upload media, generate thumbnails, and expose independent alt-text editing.",
+    "commitments": [
+      "C1 upload media",
+      "C2 thumbnail consumes upload",
+      "C3 edit alt text independently"
+    ],
+    "acceptance": [
+      "each behavior has its named integration proof"
+    ],
+    "scope": "upload, thumbnail, alt text",
+    "exclusions": "delivery execution",
+    "proof": "media_upload, thumbnail_job, alt_text fixtures",
+    "category": "enhancement",
+    "parent": "P-1616"
+  },
+  "tracker_state": "P-1616 exists; no children.",
+  "tracker_observations": [
+    "create -> T-161,T-162,T-163",
+    "parent/one blocker/roles/states -> ok",
+    "get_item/get_dependents -> exact complete graph; frontier T-161,T-163"
+  ],
+  "source_owner": "Bo",
+  "publication_authority": "Publish exact complete graph; no delivery authority.",
+  "permitted_tools": [
+    "repository_read",
+    "fixture_tracker:get_setup,get_parent,create_item,set_parent,set_blocker,set_role,set_state,get_item,get_dependents"
+  ],
+  "permitted_mutations": "Create exactly three items and settled metadata after full audit."
+}

@@ -637,6 +637,13 @@ within the frozen specification, refreeze affected identities, and rerun
 affected M0 proof. If repair requires new intent, authority, or evidence,
 return `blocked` to Prompt 1. H1 never receives credit for making M0 viable.
 
+Before any comparison dispatch, freeze one neutral worker-visible task fixture
+and one root-only evaluation fixture containing the hypothesis, expected
+weakness, rubric, scoring, candidate terms, and conclusions. Hash and diff both
+worker payloads; the exact M0 versus H1 runtime package is the only allowed arm
+delta. Stop before sampling on any other delta or candidate cue. Samples from
+a leaked fixture are protocol deviations and provide no behavioral credit.
+
 Only after M0 passes, resolve H1 by causally coherent cluster:
 
 1. Run at least five fresh exact M0 samples under the pre-registered task and

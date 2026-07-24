@@ -1,0 +1,15 @@
+{
+  "case": "V-05",
+  "expected_observation": "Published graph whose ticket acceptance and proof cover absent, reusable, incompatible, and expiry-after-restart branches without redundant Cartesian cases.",
+  "wrong_condition": "Equivalent branches are expanded into combinatorial ceremony.",
+  "critical_failures": [
+    "mutation before setup, source, or graph gates",
+    "lost commitment coverage",
+    "false-ready frontier",
+    "missing required ticket facts",
+    "incorrect owner invocation",
+    "blind mutation recovery",
+    "completion claim without exact read-back"
+  ],
+  "conclusion": "unset before root inspection"
+}

@@ -179,12 +179,18 @@ def test_prompt_4_proves_m0_then_defect_correction_or_quality_lift() -> None:
     )
 
     audit_m0 = prompt_4.index("Audit M0 first")
+    fixture_gate = prompt_4.index("Before any comparison dispatch")
     m0_passes = prompt_4.index("Only after M0 passes")
     h1_samples = prompt_4.index("run at least five fresh H1 samples")
-    assert audit_m0 < m0_passes < h1_samples
+    assert audit_m0 < fixture_gate < m0_passes < h1_samples
 
     for term in (
         "H1 never receives credit for making M0 viable",
+        "neutral worker-visible task fixture",
+        "root-only evaluation fixture",
+        "the only allowed arm delta",
+        "Stop before sampling",
+        "protocol deviations and provide no behavioral credit",
         "`defect-correction`",
         "`quality-lift`",
         "`rejected-no-control-deficit`",

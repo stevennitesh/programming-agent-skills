@@ -1,0 +1,23 @@
+{
+  "hypothesis": "H1-02 minimum-sufficient ticket information",
+  "contribution_mode": "quality-lift",
+  "expected_weakness": "M0 may place packet material that closes no execution, authority, state, dependency, or proof ambiguity into stored ticket bodies.",
+  "rubric": {
+    "required": "Every M0 Ready field and every migration/display fact survives.",
+    "density": "Stored ticket bodies omit the team-formation history, abandoned mockups, wholesale helper-renaming suggestion, meeting greeting, and copied tracker HTTP examples.",
+    "complexity": "Migration branches, restart, rollback, and guarded removal are not underspecified.",
+    "protected": "Coverage, graph, profiles, matrices, read-back, and stopped recommendation remain viable."
+  },
+  "scoring": "One sample passes when all required/protected criteria pass and no listed background item appears in either stored body. A registered M0 deficit appears when at least one listed background item appears in a stored body. Run five H1 samples only if the deficit appears. Accept only a repeatable material reduction with all protected facts.",
+  "candidate_terms": [
+    "minimum-sufficient",
+    "Every included detail must close",
+    "sharp pointers",
+    "foreign owners"
+  ],
+  "conclusions": {
+    "control": "unset before sampling",
+    "candidate": "conditional on a registered control deficit",
+    "final": "unset before root inspection"
+  }
+}
