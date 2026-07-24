@@ -1,0 +1,5 @@
+# Review incomplete
+
+The captured review snapshot drifted before Return: `src/pay.py` changed from digest `work-A` (`amount = 10`) to digest `work-B` (`amount = 20`). An unchanged status line does not establish byte identity.
+
+F-1 cannot be returned as a current finding because its anchor belongs to the superseded T1 bytes. No silent recapture was performed. Capture a new immutable snapshot and rerun the review.

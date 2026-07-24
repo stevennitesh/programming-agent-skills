@@ -1,0 +1,5 @@
+INCOMPLETE
+
+The reviewed snapshot is no longer current. The captured identity changed from `work-A` to `work-B`, and `src/pay.py` changed from `amount = 10` to `amount = 20`, even though the porcelain status remained ` M src/pay.py`.
+
+F-1 is anchored to the T1 bytes and cannot be returned as a current finding. A silent recapture would create a different review target. Freeze and review a new immutable snapshot before issuing a terminal finding report.

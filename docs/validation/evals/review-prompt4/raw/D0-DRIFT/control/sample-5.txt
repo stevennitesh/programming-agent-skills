@@ -1,0 +1,3 @@
+Review complete.
+
+F-1 remains a current finding against `src/pay.py`. The working-tree status is unchanged (` M src/pay.py`), so the captured review identity is treated as stable and the finding is returned as verified.

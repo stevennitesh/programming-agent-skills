@@ -1,0 +1,5 @@
+Review incomplete: the live target drifted after capture.
+
+At return, `src/pay.py` still has status ` M`, but its identity changed from digest `work-A` (`amount = 10`) to digest `work-B` (`amount = 20`). Finding F-1 was produced from the earlier captured surface and is not current for the live target.
+
+No findings are returned, and the target was not silently recaptured. Start a new review against the current surface.

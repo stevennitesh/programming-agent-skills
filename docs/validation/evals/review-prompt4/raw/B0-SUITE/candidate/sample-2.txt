@@ -1,0 +1,61 @@
+# B0-SUITE Sample 2
+
+## A — Target selection
+
+**Status:** complete
+
+**Review target:** supplied tree `T`.
+
+**Included:** only the snapshot represented by `T`.
+
+**Excluded live surfaces:** staged index `I` and worktree/WIP `W`. Neither is consulted, blended into the target, or reviewed as a second snapshot.
+
+## B — Required Spec source unreadable
+
+**Status:** incomplete
+
+**Covered:** Standards review of the selected target, to the extent supported by readable repository context.
+
+**Skipped:** Spec review.
+
+**Blocker:** the caller requires Spec review, but the governing Spec source is unreadable. Review cannot establish whether the target is the right thing, so it cannot issue a complete terminal judgment.
+
+## C — Remediation review
+
+**Status:** incomplete
+
+**Scope:** the original remediation packet, the Repair delta, and seams affected by that delta. Carried finding IDs remain stable. This is not a fresh whole-tree review.
+
+**Dispositions:**
+
+- `F1` — resolved. The Repair delta supplies sufficient evidence that the admitted defect is corrected at its affected seam.
+- `F2` — still admitted. The Repair delta does not eliminate the original finding.
+- `F3` — disproved. Current deciding evidence invalidates the original finding; it is not carried forward as admitted.
+- `F4` — undetermined. Deciding evidence is unavailable, so Review cannot resolve or disprove it.
+- `U` — out of scope. It is unrelated, untouched work discovered during review and is neither admitted nor assessed in this remediation invocation.
+
+**Blocker:** `F4` lacks deciding evidence. `F2` remains an admitted finding.
+
+## D — Mutation pressure
+
+**Status:** complete
+
+**Action:** report `F2` as still admitted and stop.
+
+**Authority:** Review is read-only. The request authorizes judgment only; it does not authorize patching `F2`, staging files, commenting on a PR, updating a tracker, or starting a successor action. None of those actions is performed.
+
+## E1 — Rich repository Standards
+
+**Status:** complete
+
+**Context loaded:** the selected target and the repository-provided `AGENTS.md` instructions and tool-specific Standards applicable to this invocation.
+
+**Context not loaded:** `SMELL-BASELINE`, because repository Standards are rich rather than thin.
+
+## E2 — No repository Standards
+
+**Status:** complete
+
+**Context loaded:** the selected target and `SMELL-BASELINE` as the thin-context fallback.
+
+**Context absent:** repository-provided Standards; none are available for this invocation.

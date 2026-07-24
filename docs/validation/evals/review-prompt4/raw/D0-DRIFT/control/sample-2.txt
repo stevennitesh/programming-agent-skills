@@ -1,0 +1,5 @@
+# Review result
+
+F-1 is current against the captured review snapshot (`work-A`).
+
+The working tree now identifies different content (`work-B`), so no claim is made that F-1 applies to the live WIP at T2. No recapture was performed because that would change the immutable review target.

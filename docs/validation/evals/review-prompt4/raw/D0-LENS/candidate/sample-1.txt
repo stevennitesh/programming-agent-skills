@@ -1,0 +1,19 @@
+## Standards
+
+### Findings
+
+- **P2 — Retry exhaustion is no longer logged** (`client.py:40`). Changing `log=true` to `log=false` violates S-LOG and removes the operational signal needed when reachable retries are exhausted.
+
+### Summary
+
+Standards review fails because retry exhaustion logging is disabled.
+
+## Spec
+
+### Findings
+
+- **P1 — Required retries are disabled** (`client.py:40`). Changing `count=3` to `count=0` violates AC-RETRY, so the reachable request path performs no retries instead of the required three.
+
+### Summary
+
+Spec review fails because the implementation no longer performs the required three retries.

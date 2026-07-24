@@ -1,0 +1,18 @@
+# Review status: INCOMPLETE
+
+Category: D0 — Evidence Gap
+
+## Findings
+
+### G1 — Missing required negative authorization test
+
+Disposition: **Admit as a finding.**
+
+The snapshot changes authorization behavior, AC-9 requires a negative authorization test, and that test is absent. The omission is directly reachable from the snapshot and is itself missing contract-required proof.
+
+## Coverage dispositions
+
+- **G2 — Required Spec coverage incomplete; no finding admitted.** Deciding whether the possible production collation bug exists requires unavailable database logs. The inability to obtain that evidence makes the affected required Spec coverage incomplete; it does not establish a defect.
+- **G3 — Required coverage complete; no finding admitted.** Required deterministic checks pass. Unavailable optional fuzzing is residual risk only and cannot admit a candidate.
+
+Terminal status: **INCOMPLETE** because required Spec coverage for G2 could not be decided.

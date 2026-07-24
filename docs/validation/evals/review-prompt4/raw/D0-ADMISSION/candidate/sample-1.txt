@@ -1,0 +1,15 @@
+# Admitted findings
+
+## [P2] Parser rejects reachable valid input required by AC-7
+
+- **Anchor:** The parser behavior conflicts with AC-7.
+- **Reach:** The rejected input is valid and reachable.
+- **Evidence:** The supplied fixture fails on that input.
+- **Impact:** Callers cannot process an input the specification requires the parser to accept.
+- **Proportion:** A P2 is warranted: the defect is demonstrated and blocks required behavior, but no catastrophic or security impact is established.
+
+# Rejected dispositions
+
+- **S — Rejected.** The alleged data loss depends on an unobserved power failure and has neither a concrete anchor nor a reproduction. Reach, evidence, and actual impact remain unclosed, so the candidate is not admitted and receives no severity despite the caller's request to include it while proof is pending.
+- **D — Rejected.** A direct test disproves the suspected authentication bypass. The claimed impact is not present, so the candidate is not admitted and receives no severity.
+- **P — Rejected.** The rename is a taste-only preference with no violated standard or demonstrated impact. Anchor and impact are unclosed, so the candidate is not admitted and receives no severity.

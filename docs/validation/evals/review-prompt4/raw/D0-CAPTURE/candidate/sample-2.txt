@@ -1,0 +1,27 @@
+Snapshot capture:
+- Review mode: initial
+- Review target: fixed point `111aaa` | `git diff HEAD` | live working tree
+- Resolved ref: `HEAD` -> `111aaa`
+- Selected diff command: `git diff HEAD`
+- Status command: `git status --short`
+- Stable status:
+  ```text
+   M src/config.py
+  ?? config/feature.flags
+  ```
+- Relevant commit: `111aaa` (`HEAD`)
+- Index identity: `idx-77`
+- Tracked working-tree identity: `work-88`
+- Untracked content identity: `untracked-99`
+- Captured tracked change from `git diff HEAD`:
+  ```diff
+  -timeout=30
+  +timeout=5
+  ```
+- Captured untracked file `config/feature.flags` (exact bytes):
+  ```text
+  new_parser=true
+  ```
+  Final byte: `\n`
+
+Review status: complete

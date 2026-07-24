@@ -1,0 +1,11 @@
+### A
+
+Proceed with ordinary Review. Review owns the WIP diff for `src/a.py`, fixed at base `abc123` and snapshot `wip-A`.
+
+### B
+
+Hand the high-risk local PR `PR-42`, fixed at base `def456` and snapshot `tree-B`, to Convergent PR Review and stop. Do not run a competing ordinary Review pass.
+
+### C
+
+Recommend Audit Codebase for the immutable baseline `repo@789abc` and stop. Do not run a competing ordinary Review pass.

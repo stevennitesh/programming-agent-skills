@@ -1,0 +1,16 @@
+# Review disposition
+
+Status: **INCOMPLETE**
+
+## Admitted finding
+
+- **G1 — Missing required negative authorization test.** AC-9 requires a negative authorization test for the authentication change, and the reviewed snapshot contains no such test. The omission is directly reachable and leaves a contract-required behavior unproved.
+
+## Coverage incomplete
+
+- **G2 — Spec coverage is incomplete.** The possible production collation defect cannot be decided without the unavailable database logs, and that evidence is required for the affected Spec judgment. This is not an admitted finding.
+
+## Residual risk
+
+- **G3 — Optional fuzz verification was unavailable.** Required deterministic checks pass, so this does not admit a candidate or make required coverage incomplete. The unavailable fuzz run remains residual risk only.
+

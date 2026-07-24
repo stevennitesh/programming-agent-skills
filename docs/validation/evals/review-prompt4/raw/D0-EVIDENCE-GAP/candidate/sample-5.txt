@@ -1,0 +1,11 @@
+# Review status: Incomplete
+
+## Dispositions
+
+- **G1 — Finding:** The authorization change omits the AC-9-required negative authorization test. This is a direct, reachable, contract-required proof gap.
+- **G2 — Required coverage incomplete:** The possible production collation defect cannot be decided without the unavailable database logs. No finding is admitted from the missing evidence.
+- **G3 — Residual risk:** Optional fuzz verification is unavailable. The required deterministic checks pass, so this does not admit a finding or make required coverage incomplete.
+
+## All findings
+
+1. **G1: Missing required negative authorization test (AC-9).**

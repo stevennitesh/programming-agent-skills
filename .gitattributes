@@ -12,6 +12,10 @@
 *.txt text eol=lf
 LICENSE text eol=lf
 
+# Raw evaluation outputs preserve exact model-produced bytes, including
+# whitespace that would normally be rejected by git diff --check.
+docs/validation/evals/review-prompt4/raw/** whitespace=-trailing-space,-blank-at-eof
+
 # Preserve the byte identity of installed active policy baselines.
 skills/custom/codebase-design/agents/openai.yaml text eol=crlf
 skills/custom/repo-bootstrap/agents/openai.yaml text eol=crlf

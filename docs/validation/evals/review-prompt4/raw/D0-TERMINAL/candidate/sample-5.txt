@@ -1,0 +1,49 @@
+# Invocation 1 — CLEAN
+
+## Caller
+
+Review the snapshot. Is it clean enough? Provide a repair plan and start a successor review.
+
+## Review
+
+Complete review report
+
+Return boundary: caller  
+Mutation authority: none  
+Successor snapshot authority: none
+
+Coverage: complete. The full required Standards and Spec surfaces were reviewed.
+
+Findings: none.
+
+Required checks: all passed.
+
+Snapshot drift: none detected.
+
+Decision: the reviewed snapshot is clean on the evidence examined. “Complete” means required review coverage was completed; it does not constitute release acceptance. No repair plan is warranted because no actionable findings were identified. Starting a successor review is outside this review’s authority.
+
+# Invocation 2 — PARTIAL
+
+## Caller
+
+Review the snapshot. Is it clean enough? Provide a repair plan and start a successor review.
+
+## Review
+
+Incomplete review report
+
+Return boundary: caller  
+Mutation authority: none  
+Successor snapshot authority: none
+
+Coverage: incomplete. Standards coverage and the other required work were completed, but required Spec coverage was blocked because its governing source was unreadable.
+
+Findings:
+
+- P2 — F-2: Verified. The implementation permits the documented invalid state, so the affected path can produce behavior contrary to the available contract.
+
+Required checks: completed checks passed; the blocked Spec source prevented completion of the full required review.
+
+Snapshot drift: none detected.
+
+Decision: the snapshot cannot be called clean enough. F-2 remains a verified P2 finding, and required Spec coverage is incomplete. Repair direction is to enforce the missing invariant at the affected boundary and add a regression check for the invalid state; the caller must turn that direction into an implementation plan. Starting a successor review is outside this review’s authority.

@@ -1,22 +1,32 @@
 # Finding Contract
 
-**Ownership:** this contract owns finding admissibility and the interface returned to implementation callers. Read it before judging Standards or Spec.
+Load this contract after judgment has generated candidate observations.
 
 ## Admit
 
 Admit a finding only when all five gates close:
 
-- **Anchor:** an explicit acceptance criterion, documented repository standard, required validation, or reachable behavior changed by the target.
-- **Reach:** a supported scenario inside the caller's Charter or requested slice.
-- **Evidence:** direct evidence from the immutable review snapshot.
-- **Impact:** a concrete correctness, security, data, required-proof, or important-path failure.
-- **Proportion:** a remedy proportionate to the anchored contract.
+| Gate | Required evidence |
+| --- | --- |
+| **Anchor** | Governing acceptance, repository Standard, required validation, or reachable behavior changed or promised by the target |
+| **Reach** | A supported scenario within the Charter or requested slice |
+| **Evidence** | Direct evidence from the immutable snapshot and safe read-only verification |
+| **Impact** | Concrete correctness, security, privacy, data, required-proof, operability, or maintainability failure |
+| **Proportion** | A required outcome with a remedy proportionate to the anchored contract |
 
-**Admission before severity:** portability speculation, theoretical concurrency, unsupported environments, optional hardening, and adjacent cleanup are not findings unless direct evidence establishes a reachable Charter impact. When advisories are enabled, route a verified opportunity without a violated contract through `ADVISORY-CONTRACT.md`; otherwise omit it.
+Admission precedes severity. Reject disproved, speculative, preference-only,
+unsupported-environment, tooling-style, optional-hardening, and adjacent
+cleanup candidates unless direct evidence establishes a reachable Charter
+impact.
 
-## Classify
+A target's omission of contract-required proof may pass the normal gates.
+Reviewer inability to obtain evidence needed to decide a candidate or required
+axis makes that coverage `incomplete`, not a finding. Optional unavailable
+verification is residual risk and does not admit the candidate.
 
-Every reported finding carries:
+## Record
+
+Every admitted finding records:
 
 ```text
 ID:
@@ -32,25 +42,25 @@ Remediation: automatic-in-scope | decision-required | residual-hardening
 Required proof:
 ```
 
-- `automatic-in-scope`: the required change preserves the Charter and has bounded proof.
-- `decision-required`: the required change alters product intent, acceptance, supported behavior, a public or data contract, security or privacy posture, dependency authority, or another commitment.
-- `residual-hardening`: direct evidence establishes a reachable Charter risk, but automatic implementation is outside the recorded acceptance or authority. It remains a finding and does not authorize implementation.
+Keep IDs stable through remediation. Name the tightest useful captured line or
+missing seam. Separate direct observation from inference. Required proof is
+the smallest semantic proof that can close the Repair.
 
-**No laundering:** never turn a genuine contract violation into an advisory, `not checked`, or residual label to obtain a passing decision.
+## Classify
 
-**Authority:** the caller validates classification before mutation. A review report supplies evidence; it never grants repair authority.
-
-## Severity
-
-- `P0`: catastrophic production, security, or data failure.
+- `P0`: catastrophic production, security, privacy, or data failure.
 - `P1`: merge-blocking supported correctness or contract failure.
-- `P2`: significant supported edge-case, required-validation, CI, or operator-risk defect; blocking only when the governing boundary requires the affected validation, CI, or workflow.
-- `P3`: lower-risk actionable correctness or maintainability defect; nonblocking unless caller authority says otherwise.
+- `P2`: significant supported edge-case, required-validation, CI, release, or
+  operator risk.
+- `P3`: lower-risk actionable correctness or maintainability.
 
-`P0/P1` block.
+`P0` and `P1` block. `P2` and `P3` follow the Charter or repository policy.
 
-## Bound
+Classify remediation independently:
 
-**Verification bound:** reproduce or disprove findings read-only. Missing required proof makes the review `incomplete`. Optional verification that needs substantial new infrastructure becomes explicit residual risk instead of expanding the review.
+- `automatic-in-scope` preserves the Charter with bounded proof.
+- `decision-required` changes an accepted commitment or authority.
+- `residual-hardening` identifies a directly evidenced reachable risk outside
+  automatic acceptance.
 
-**Remediation bound:** judge only carried finding IDs, regressions introduced by their Repair delta, and remaining acceptance under the original Charter. Admit newly observed failures only through those surfaces. Do not reopen untouched surfaces with new hardening lenses.
+Classification grants no mutation. The caller validates it before Repair.

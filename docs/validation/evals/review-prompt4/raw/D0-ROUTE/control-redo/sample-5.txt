@@ -1,0 +1,11 @@
+## A
+
+Review the ordinary WIP at snapshot `wip-A` against base `abc123`, scoped to `src/a.py`.
+
+## B
+
+Route the high-risk local PR `PR-42` at snapshot `tree-B` against base `def456` to Convergent PR Review. Do not perform an ordinary Review pass.
+
+## C
+
+Route the immutable whole-repository baseline `repo@789abc` to Audit Codebase. Do not perform an ordinary Review pass.

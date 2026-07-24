@@ -648,31 +648,40 @@ def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
     convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(encoding="utf-8")
     baseline = (CUSTOM / "review/SMELL-BASELINE.md").read_text(encoding="utf-8")
 
-    assert "## 1. Pin" in review
+    assert "## Pin" in review
     assert "## 1. Pin" in convergent
     assert "$convergent-pr-review" in review.split("---", 2)[1]
     assert "only when documented repo standards" in baseline
     assert "concrete, actionable maintainability risk" in baseline
-    assert "baseline judgement call" in review
     assert "baseline judgement call" in convergent
-    review_steps = re.findall(r"(?m)^## \d+\. ([A-Za-z]+)$", review)
-    assert {"Pin", "Trace", "Admit", "Judge", "Return"} <= set(review_steps)
-    assert review_steps.index("Pin") < review_steps.index("Trace") < review_steps.index("Admit")
-    assert review_steps.index("Admit") < review_steps.index("Judge") < review_steps.index("Return")
+    review_steps = re.findall(
+        r"(?m)^## (Route|Pin|Trace|Judge|Admit|Return)$", review
+    )
+    assert review_steps == ["Route", "Pin", "Trace", "Judge", "Admit", "Return"]
     convergent_steps = re.findall(r"(?m)^## \d+\. ([A-Za-z]+)$", convergent)
     assert {"Pin", "Trace", "Isolate", "Challenge", "Verify", "Return"} <= set(
         convergent_steps
     )
-    report = review.split("```markdown", 1)[1].split("```", 1)[0]
+    reports = review.split("```text")
+    report = reports[1].split("```", 1)[0]
     assert report.lstrip().startswith("Review status: complete")
-    assert re.findall(r"(?m)^## (Standards|Spec)$", report) == ["Standards", "Spec"]
-    incomplete = review.split("```text", 1)[1].split("```", 1)[0]
+    assert "Standards findings:" in report
+    assert "Spec findings:" in report
+    incomplete = reports[2].split("```", 1)[0]
     assert re.findall(r"(?m)^([A-Za-z ]+):", incomplete) == [
         "Review status",
-        "Review target",
+        "Review mode",
+        "Fixed point",
+        "Snapshot identity",
+        "Target",
         "Sources",
+        "Covered work",
+        "Verified findings",
+        "Carried dispositions",
         "Blocker",
-        "Skipped",
+        "Skipped work",
+        "Residual risk",
+        "Drift",
         "Return boundary",
         "Mutation authority",
         "Successor snapshot authority",
@@ -704,8 +713,8 @@ def test_review_finding_interface_and_return_boundary_are_shared() -> None:
         "automatic-in-scope",
         "decision-required",
         "residual-hardening",
-    } <= set(re.findall(r"(?m)^- `([^`]+)`:", finding))
-    severity = finding.split("## Severity", 1)[1].split("## Bound", 1)[0]
+    } <= set(re.findall(r"(?m)^- `([^`]+)`(?:\:| )", finding))
+    severity = finding.split("## Classify", 1)[1]
     assert re.findall(r"(?m)^- `(P[0-3])`:", severity) == ["P0", "P1", "P2", "P3"]
     for skill in (review, convergent):
         assert "FINDING-CONTRACT.md" in skill
@@ -1096,7 +1105,7 @@ def test_implementation_closeout_requires_the_spec_axis() -> None:
     for text in (review, convergent):
         assert "`Spec required: yes | no`" in text
     for text in (implement, parallel):
-        assert "`Spec required: yes`" in text
+        assert "`Spec required: yes`" in " ".join(text.split())
 
 
 def test_independent_scouts_receive_curated_fresh_context() -> None:
@@ -1294,6 +1303,9 @@ def test_mutating_workflows_require_readback() -> None:
         if name == "implement":
             assert "read back the mutation" in text
             assert "Partial or failed read-back" in text
+        elif name == "parallel-implement":
+            assert "mutation read-back" in text
+            assert "read that mutation back" in text
         else:
             assert "Mutation read-back" in text, name
 
@@ -1427,7 +1439,7 @@ def test_worker_modes_have_distinct_completion_artifacts() -> None:
     assert "**staged worker**" in contract
     assert "**lane worker**" in contract
     assert "**Staged worker:" in implement
-    assert "**Lane worker:**" in parallel
+    assert "A lane worker or child integrator" in parallel
 
 
 def test_parallel_implement_separates_context_checkout_and_review_ownership() -> None:
@@ -1446,19 +1458,19 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
     )
     parallel_steps = re.findall(r"(?m)^## (.+)$", parallel)
     expected_steps = [
+        "Admission",
         "Trace",
         "Select",
         "Open",
         "Drain",
         "Review",
         "Lock",
-        "Release",
     ]
     assert all(step in parallel_steps for step in expected_steps)
     assert [parallel_steps.index(step) for step in expected_steps] == sorted(
         parallel_steps.index(step) for step in expected_steps
     )
-    assert 'fork_turns="none"' in parallel
+    assert "isolated\nfresh-context lane" in parallel
     assert "## Review-Ready Handoff" in integrator
     assert re.findall(r"(?m)^## (.+)$", launch) == [
         "Open",
@@ -1487,7 +1499,6 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
         "next need",
         "scope notes",
         "final status",
-        "skill feedback",
     ]
     assert "criterion -> evidence" in report
     assert "$diagnosing-bugs" in worker
@@ -1524,9 +1535,8 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
         str(CUSTOM / "parallel-implement/scripts/run_ledger.py")
     )["EVENT_TYPES"]
     drain = parallel.split("## Drain", 1)[1].split("## Review", 1)[0]
-    assert {"done", "needs-feedback", "blocker"} <= set(
-        re.findall(r"`([^`]+)`", drain)
-    )
+    assert "Accept a worker return only when" in drain
+    assert "A blocker" in drain
     report_status = re.search(r"(?m)^status: <([^>]+)>$", worker)
     assert report_status is not None
     assert {status.strip() for status in report_status.group(1).split("/")} == {
@@ -1549,10 +1559,10 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
         "repair-complete",
     } <= event_types
     assert "## Cleanup" in launch
-    lock = parallel.split("## Lock", 1)[1].split("## Release", 1)[0]
+    lock = parallel.split("## Lock", 1)[1]
     assert "claim" in parallel.split("## Open", 1)[1].split("## Drain", 1)[0]
     assert "read back" in parallel.lower()
-    assert "closeout plan" in lock and "Mutation read-back" in lock
+    assert "closeout plan" in lock and "mutation read-back" in lock
     review = parallel.split("## Review", 1)[1].split("## Lock", 1)[0]
     assert "idle" in review
 
@@ -1568,8 +1578,8 @@ def test_parallel_implement_has_root_receipt_budget_and_windows_contracts() -> N
     script = (skill_dir / "scripts/run_ledger.py").read_text(encoding="utf-8")
     lane_script = (skill_dir / "scripts/lane_worktree.py").read_text(encoding="utf-8")
 
-    assert "**Root only.**" in parallel
-    assert "stop before mutation" in parallel
+    assert "The root alone admits scope" in parallel
+    assert "before mutation" in parallel
     for field in (
         "repair_generation_budget",
         "review_invocation_budget",
@@ -1584,8 +1594,8 @@ def test_parallel_implement_has_root_receipt_budget_and_windows_contracts() -> N
     assert "maximum path `320`" in launch
     assert "WINDOWS_DEFAULT_MAX_PATH = 320" in lane_script
     assert "--proof-command-file" in launch and "--proof-command-file" in lane_script
-    assert "none_observed" in parallel
-    assert "runtime contract 3" in parallel.lower()
+    assert "none_observed" in ledger
+    assert "runtime contract 3" in ledger.lower()
     assert "Integration correction" in ledger
     assert "correction_authorization" in script
     assert "runtime contract 3" in ledger
@@ -1626,14 +1636,14 @@ def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts
     assert "recommend `$implement` and stop" not in parallel
 
     gate = parallel.split("## Select", 1)[1].split("## Open", 1)[0]
-    assert "Select one ticket" in gate
-    assert "Select up to three" in gate
-    assert "Stop with exact blockers" in gate
+    assert "Dispatch concurrently only when" in gate
+    assert "otherwise dispatch serially" in gate
+    assert "return the exact blockers" in gate
 
     review = parallel.split("## Review", 1)[1].split("## Lock", 1)[0]
-    lock = parallel.split("## Lock", 1)[1].split("## Release", 1)[0]
+    lock = parallel.split("## Lock", 1)[1]
     assert "$review" in review
-    assert "Mutation read-back" in lock
+    assert "mutation read-back" in lock
     assert lock.index("child") < lock.index("parent")
 
     assert closeout_fields == {
@@ -1654,7 +1664,7 @@ def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts
         "child-closeout",
         "parent-closeout",
     } <= event_types
-    assert "**Tripwire:**" in gate and "**Downshift:**" in gate
+    assert "serial tripwires" in gate and "otherwise dispatch serially" in gate
 
     assert re.search(r"(?m)^\| One parent spec or PRD .* \| `\$parallel-implement` \|$", router)
     assert tickets.index("`$parallel-implement`") < tickets.index("`$implement`")
@@ -1701,19 +1711,12 @@ def test_state_boundary_proof_has_one_owner_and_explicit_consumers() -> None:
     assert owner_text in contract
     assert owner_text in seed
     assert "engineering contract's state-boundary matrix" in tickets
-    assert "Ready-for-agent defect" in parallel
-    assert "Loop-close proof recombines applicable state-boundary matrices" in parallel
+    assert "graph defect" in parallel
+    assert "final proof across all applicable\nstate-boundary branches" in parallel
     assert "State-boundary matrix:" in worker
     assert "return it as `needs-feedback`" in worker
-    assert "**Adjudicate before synthesis.**" in ledger
-    for disposition in (
-        "generic-skill-gap",
-        "repo-contract-gap",
-        "run-specific",
-        "already-satisfied",
-    ):
-        assert f"`{disposition}`" in ledger
-    assert "Synthesis is adjudication, not transcription." in ledger
+    assert "This compatibility field is not a campaign" in ledger
+    assert "outcome or completion proxy" in ledger
 
 
 def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -> None:

@@ -1,0 +1,21 @@
+## Standards
+
+### Findings
+
+- **[P2] Preserve retry-exhaustion logging — `client.py:40`**  
+  Changing `log=true` to `log=false` suppresses the required exhaustion log on a directly reachable retry path. This violates S-LOG and removes operational visibility when all attempts fail.
+
+### Summary
+
+Standards: **Fail**. One P2 operability finding.
+
+## Spec
+
+### Findings
+
+- **[P1] Preserve the required three retries — `client.py:40`**  
+  Changing `count=3` to `count=0` eliminates all retries on a directly reachable path. This violates AC-RETRY, which explicitly requires three retries, and changes failure-handling behavior.
+
+### Summary
+
+Spec: **Fail**. One P1 correctness finding.

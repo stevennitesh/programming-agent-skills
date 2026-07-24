@@ -1,0 +1,22 @@
+## Snapshot capture
+
+- Base ref: `HEAD` at `111aaa`.
+- Captured status:
+  - ` M src/config.py`
+  - `?? config/feature.flags`
+- Captured tracked worktree change: `src/config.py` changes `timeout=30` to `timeout=5`.
+- Captured untracked content: `config/feature.flags` contains exactly `new_parser=true\n`.
+- Content identities:
+  - Index: `idx-77`
+  - Tracked worktree: `work-88`
+  - Untracked content: `untracked-99`
+- Capture commands/surfaces:
+  - Resolve `HEAD` to `111aaa`.
+  - Record stable porcelain status, including untracked paths.
+  - Record the unstaged tracked diff.
+  - Read and record the exact bytes of every in-scope untracked file.
+  - Record identities for the index, tracked worktree content, and untracked content.
+
+## Resulting status
+
+`COMPLETE` — the review target includes the fixed ref, index, tracked worktree change, and exact in-scope untracked bytes. Stable status alone would have been incomplete because it identifies the untracked path but not its content.

@@ -121,12 +121,23 @@ _Avoid_: dispatcher, automatic router
 
 An explicitly invoked one-skill controller, owned by
 [`deploy-prompts.md`](docs/synthesis/methods/deploy-prompts.md), that verifies
-and serially advances Prompts 1 through 4, a behavior-preserving Pruning Pass,
-and Prompt 5 for one fresh campaign epoch while retaining user interaction. A
-prior campaign may supply exact reusable evidence but cannot skip a unit. Bare
-runs include promotion/install; Git delivery must be named. It authorizes
-bounded fresh-context delegation; each unit keeps its own authority and stop.
+and serially advances Prompt 1, the Research Pass, Prompts 2 through 4, a
+behavior-preserving Pruning Pass, and Prompt 5 for one fresh campaign epoch
+while retaining user interaction. It freezes intent-derived M0 before
+research, tests research-informed H1 into V1, prunes V1 into P1, and promotes
+only P1. A prior campaign may supply exact reusable evidence but cannot skip a
+unit. Bare runs include promotion/install; Git delivery must be named. It
+authorizes bounded fresh-context delegation; each unit keeps its own authority
+and stop.
 _Avoid_: mega-prompt, self-chaining prompt, pack-wide campaign
+
+**Deploy runtime identities**
+
+M0 is the intent-derived, behavior-minimal runtime; H1 is the
+research-informed hypothesis runtime; V1 is the behavior-verified runtime; and
+P1 is the regression-checked pruned runtime and sole promotion candidate.
+Historical B0/C1 records keep their original campaign meaning.
+_Avoid_: current baseline, source-derived minimum, final C1
 
 **Global AGENTS template**
 
@@ -135,6 +146,7 @@ _Avoid_: pack manual, copied route map
 
 ## Vocabulary Owners
 
+- Deploy-campaign vocabulary—M0, H1, V1, P1, and intent-adjacent steering hypotheses—belongs to [`docs/synthesis/methods/deploy-prompts.md`](docs/synthesis/methods/deploy-prompts.md).
 - Skill-authoring vocabulary—Predictability, invocation, information hierarchy, leading words, completion criteria, and pruning—belongs to [`skills/custom/writing-great-skills/GLOSSARY.md`](skills/custom/writing-great-skills/GLOSSARY.md).
 - Runtime engineering vocabulary—Source Trace, bounded slice, commitment boundary, proof seam, proof lane, fixed point, review snapshot, Spec / Standards, Lock, and residual risk—belongs to `docs/agents/engineering-contract.md`.
 - Parallel-delivery roles, gates, and packets belong to `$parallel-implement` and its disclosed references.

@@ -1,0 +1,54 @@
+# Invocation 1 — CLEAN
+
+Complete review report
+
+Coverage: complete. All required Standards and Spec surfaces were reviewed.
+
+Findings: none.
+
+Required checks: passed.
+
+Drift: none.
+
+Terminal decision: CLEAN.
+
+The reviewed snapshot is clean within the completed coverage. “Complete” describes review coverage; it is not release acceptance. The caller owns the release decision.
+
+Return boundary: caller
+
+Mutation authority: none
+
+Successor snapshot authority: none
+
+# Invocation 2 — PARTIAL
+
+Incomplete review report
+
+Coverage: incomplete. Standards and the readable review surfaces were covered, but required Spec coverage is blocked because a required source is unreadable.
+
+Verified finding:
+
+- P2 — F-2.
+
+Required checks: the checks available within the readable surface were completed; required Spec coverage could not be completed.
+
+Drift: none observed in the covered work.
+
+Terminal decision: PARTIAL.
+
+This is not clean enough to support a clean terminal result: F-2 remains verified and required Spec coverage is blocked. “Incomplete” describes review coverage; it is not release acceptance.
+
+Repair plan for the caller:
+
+1. Repair F-2.
+2. Restore readable access to the blocked Spec source.
+3. Create a new immutable successor snapshot after those changes.
+4. Invoke a new review against that successor snapshot.
+
+I cannot perform the repair or start the successor review under this invocation.
+
+Return boundary: caller
+
+Mutation authority: none
+
+Successor snapshot authority: none

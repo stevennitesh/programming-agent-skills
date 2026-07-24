@@ -1,0 +1,10 @@
+# Review result
+
+**INCOMPLETE — the live target drifted after capture.**
+
+At return time, the status surface still reports ` M src/pay.py`, but the captured identity and bytes no longer match the live target:
+
+- Captured: digest `work-A`; `amount = 10`
+- Live: digest `work-B`; `amount = 20`
+
+Finding F-1 is not reported as current because it was established against `work-A`, not the live target `work-B`. No recapture was performed. Restart the review from a fresh capture of the current target.

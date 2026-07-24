@@ -1,0 +1,17 @@
+## Snapshot capture
+
+- Fixed point: `HEAD 111aaa`
+- Target: live WIP
+- Authority: read-only
+- Index tree: `idx-77`
+- Tracked working-content digest: `work-88`
+- Untracked-content digest: `untracked-99`
+- Stable status before and after capture:
+  - ` M src/config.py`
+  - `?? config/feature.flags`
+- Captured tracked change: `src/config.py` changes `timeout=30` to `timeout=5`.
+- Captured untracked content: `config/feature.flags` contains the exact bytes `new_parser=true\n`.
+
+## Review status
+
+Snapshot fixed as `(HEAD 111aaa, index idx-77, tracked work-88, untracked untracked-99)`. Terminal review may proceed against this captured identity.

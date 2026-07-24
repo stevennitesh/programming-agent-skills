@@ -1,0 +1,9 @@
+## Dispositions
+
+- **G1 — Admitted finding.** The snapshot changes authentication behavior, AC-9 requires a negative authentication test, and the snapshot contains no such test. The omission is directly proven, reachable, material, and repairable.
+- **G2 — Not admitted as a finding.** The possible production-only collation defect is a candidate concern, but Review lacks the database logs needed to establish it. Because those logs are also necessary for required Spec coverage, the review cannot complete.
+- **G3 — Not admitted as a finding.** Fuzzing is optional here, and all required deterministic checks passed. Its unavailability neither establishes a defect nor prevents completion of required coverage.
+
+## Terminal status
+
+**INCOMPLETE.** G1 is an actionable finding, but required Spec coverage for G2 could not be obtained within Review's authority. The caller's preference to classify every missing proof as a finding does not override the finding-admission gates.

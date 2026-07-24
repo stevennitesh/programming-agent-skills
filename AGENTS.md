@@ -22,7 +22,7 @@ Explore imaginatively. Converge under proof. Simplify ruthlessly.
 - Stable vocabulary and repo invariants: `CONTEXT.md`
 - Active plans and runbooks: `docs/plans/README.md`
 - One-skill deployment: each `Run Deploy Campaign on <skill>` starts a fresh
-  Prompts 1-4, Pruning Pass, and Prompt 5 campaign epoch under
+  Prompt 1, Research Pass, Prompts 2-4, Pruning Pass, and Prompt 5 epoch under
   `docs/synthesis/methods/deploy-prompts.md` and explicitly authorizes its
   bounded fresh-context delegation.
 - Before nontrivial coding, read `docs/agents/engineering-contract.md`.

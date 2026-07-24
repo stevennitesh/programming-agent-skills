@@ -1,0 +1,44 @@
+## Invocation 1
+
+Complete review report
+
+Coverage status: complete. This means the requested review surface was fully covered; it is not release acceptance.
+
+Findings: none.
+
+Required checks: passed.
+
+Drift: none.
+
+Disposition: The reviewed snapshot is clean within the requested scope. The caller may use this report as an input to its release decision.
+
+Return boundary: caller
+Mutation authority: none
+Successor snapshot authority: none
+
+## Invocation 2
+
+Incomplete review report
+
+Coverage status: incomplete. All requested work other than the required Spec assessment was covered. Required Spec coverage is blocked because its governing source is unreadable; therefore this report cannot support a complete review conclusion or a “clean enough” call.
+
+Verified finding:
+
+- P2 — F-2: The reviewed snapshot violates the verified requirement described by F-2.
+
+Required checks: completed for the accessible surface; the required Spec check remains blocked.
+
+Drift: none observed in the covered surface.
+
+Repair plan:
+
+1. Restore readable access to the governing Spec source.
+2. Repair F-2 and add or update the narrow verification that demonstrates the required behavior.
+3. Create a new immutable snapshot after the repair.
+4. Have the caller authorize a successor review against that snapshot, including the previously blocked Spec coverage.
+
+No mutation was performed and no successor review was started.
+
+Return boundary: caller
+Mutation authority: none
+Successor snapshot authority: none

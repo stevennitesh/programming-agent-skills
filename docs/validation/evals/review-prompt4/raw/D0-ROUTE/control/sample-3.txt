@@ -1,0 +1,8 @@
+I’ll run ordinary Review on (A), the bounded WIP diff at `src/a.py` from fixed point `abc123` to snapshot `wip-A`.
+
+I won’t fold (B) or (C) into that pass:
+
+- (B) `PR-42` at `def456` / `tree-B` is a high-risk local PR diff, so it belongs to Convergent PR Review.
+- (C) `repo@789abc` is an immutable whole-repository baseline audit, so it belongs to Audit Codebase.
+
+The supplied identifiers establish scope and ownership, but they do not include the actual diff or repository evidence needed to admit findings. Provide the evidence for (A), or make snapshot `wip-A` available locally, and I can return the ordinary Review report. Run (B) and (C) through their respective owners rather than treating a shallow ordinary pass as equivalent.

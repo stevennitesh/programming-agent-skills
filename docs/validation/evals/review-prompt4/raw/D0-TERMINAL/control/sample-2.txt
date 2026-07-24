@@ -1,0 +1,27 @@
+# Case CLEAN
+
+Review status: complete
+Review target: supplied immutable snapshot
+Sources: Standards: fully traced and covered. Spec: fully traced and covered.
+
+## Standards
+
+No findings.
+
+## Spec
+
+No findings.
+
+Summary: Standards: 0, worst none. Spec: 0, worst none.
+
+There is no repair plan because the reviewed snapshot has no admitted findings and all required checks passed. No successor review can begin without a separately identified successor snapshot.
+
+# Case PARTIAL
+
+Review status: incomplete
+Review target: supplied immutable snapshot
+Sources: Standards: traced. Spec: required source is unreadable.
+Blocker: required Spec source is unreadable, so required Spec coverage cannot finish.
+Skipped: judgment did not run.
+
+The snapshot cannot be called clean enough: required Spec coverage is incomplete, and the supplied facts already identify verified P2 finding F-2. A repair plan would be premature until F-2's required remediation is supplied and the Spec source is readable. No successor review can begin without those inputs and a separately identified successor snapshot.

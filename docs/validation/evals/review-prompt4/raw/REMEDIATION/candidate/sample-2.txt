@@ -1,0 +1,6 @@
+Scope: caller-owned Repair delta, its affected seams, and the remaining acceptance exercised at those seams; no untouched scope reopened.
+
+- F1 — resolved
+- F2 — still admitted
+- F3 — disproved
+- F4 — incomplete

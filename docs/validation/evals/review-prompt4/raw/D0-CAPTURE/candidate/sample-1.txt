@@ -1,0 +1,26 @@
+# Snapshot capture
+
+- Target: live WIP at `HEAD 111aaa`.
+- Scope: the tracked baseline at `111aaa`, index state `idx-77`, the unstaged tracked worktree state, and the in-scope untracked file.
+- Stable status (`git status --short`):
+
+  ```text
+   M src/config.py
+  ?? config/feature.flags
+  ```
+
+- Tracked worktree content:
+  - Command/evidence: unstaged diff for `src/config.py`.
+  - Change: `timeout=30` → `timeout=5`.
+  - Content identity: `work-88`.
+- Untracked content:
+  - Path: `config/feature.flags`.
+  - Exact bytes: `new_parser=true\n`.
+  - Content identity: `untracked-99`.
+- Reference identities:
+  - Baseline ref: `HEAD 111aaa`.
+  - Index identity: `idx-77`.
+
+## Resulting status
+
+`CAPTURE COMPLETE` — the judged snapshot is fixed by its baseline ref, index identity, tracked-worktree identity, untracked-content identity, stable status, diff, and exact untracked bytes.

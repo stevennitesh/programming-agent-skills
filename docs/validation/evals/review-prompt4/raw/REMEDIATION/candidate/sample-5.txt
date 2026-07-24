@@ -1,0 +1,10 @@
+# Remediation Scope
+
+Review is limited to carried outcomes `F1`–`F4`, the caller-owned Repair delta and its affected seams, and the remaining acceptance exercised at those seams. Unrelated untouched outcome `U` is outside scope and is not reopened.
+
+# Carried Dispositions
+
+- `F1`: `resolved`
+- `F2`: `still admitted`
+- `F3`: `disproved`
+- `F4`: `incomplete`

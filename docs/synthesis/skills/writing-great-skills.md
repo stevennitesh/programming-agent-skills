@@ -319,8 +319,10 @@ Use the lowest evidence that proves the claim:
 
 `BEHAVIOR-EVALS.md` alone owns Diagnose, Control, Sample, Stress, Judge, and
 Record mechanics. The runtime skill states only the predicate for loading it and
-the required result. When a realistic no-guidance control does not exhibit the
-claimed failure, reject the guidance as a no-op candidate.
+the required result. Register defect correction or quality lift before
+sampling. When a realistic control exhibits neither the expected defect nor a
+meaningful pre-registered quality deficit, reject the guidance as a no-op
+candidate.
 
 Writing Great Skills owns evidence independence: fixed task evidence and
 rubrics, fresh contexts when sampling, no candidate leakage into controls, and
@@ -420,7 +422,7 @@ candidate removes more variance than complexity it adds.
 | --- | --- | --- |
 | `SKILL.md` | Defines strict Audit and bounded Author; carries the admitted authoring behaviors without treating their current labels or fixed sequence as a mechanism; makes outcome, authority, applicable action, Return, and completion discoverable; shapes the trigger-only description; returns typed canonical-only completion. | The deferred five-word mnemonic or fixed semantic-role order, glossary definitions, experiment procedure, scaffolding, relationship catalog, installation, or delivery. |
 | `GLOSSARY.md` | Carries only accepted durable authoring concepts and failure modes. Preserve Codex's `implicitly invocable` / `explicit-only` vocabulary and `policy.allow_implicit_invocation` mechanics rather than copying upstream runtime terms. The experimental candidate must remove the `Semantic Skill Surface` name and fixed-order requirement while preserving any admitted underlying meaning in `SKILL.md`. | Upstream `model-invoked`, `user-invoked`, or `disable-model-invocation` as local mechanics; runtime steps; operation contracts; proof procedure; Return packets; temporary candidate wording; or a renamed replacement for the deferred surface. |
-| `BEHAVIOR-EVALS.md` | Owns complete counterfactual mechanics, invocation and premature-completion diagnoses, contamination controls, record fields, and evidence-independence rules. | Canonical editing, generic worker mechanics, installation, or language ontology. |
+| `BEHAVIOR-EVALS.md` | Owns complete counterfactual mechanics, defect-correction and quality-lift controls, invocation and premature-completion diagnoses, contamination controls, record fields, and evidence-independence rules. | Canonical editing, generic worker mechanics, installation, or language ontology. |
 | `agents/openai.yaml` and frontmatter | Set Codex `policy.allow_implicit_invocation: true` and preserve concise create/edit, audit/review, and behavioral-proof triggers. | Upstream `disable-model-invocation`, runtime workflow, or output procedure. |
 | Relationship map | Indexes the `skill-creator` scaffolding versus semantic-quality boundary once. | Copied owner procedures or invented invocation. |
 | Tests and evaluation fixtures | During Prompt 3, update structural proof only for machine-consumed policy, metadata, links, and schemas; record semantic obligations for Prompt 4 instead of encoding them as prose assertions. Keep canonical literal tests untouched during extraction. If promotion later changes their owned runtime, replace prose-coupled protection for the deferred exact spine, named surface, fixed order, or unproved wording with the least brittle structural or behavioral evidence appropriate to the admitted contract. | Prompt 3 structural assertions for semantic behavior; claims that strings prove behavior or admission; or claims that installation belongs to this skill. |

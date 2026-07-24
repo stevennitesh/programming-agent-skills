@@ -38,6 +38,12 @@ advice is correct. A book title, abstract, search snippet, review, or metadata
 record proves only what was actually visible there. Label access depth and do
 not upgrade an indirect source into a direct claim.
 
+When an upstream-observed behavior could influence a skill, first search
+independently from the intended behavior, then inspect the upstream mechanic,
+alternatives, counterevidence, and applicable professional support. Attribute
+only the observed behavior to the pack. Do not infer that its author made a
+professional or upper-bound claim.
+
 For current or changeable claims, verify the live source and record the check
 date. For a checked-out upstream package, record the repository, revision or
 commit, worktree state, files inspected, and whether referenced files, scripts,

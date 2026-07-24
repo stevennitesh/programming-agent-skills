@@ -1,0 +1,11 @@
+### Case A
+
+Action: Run an ordinary Review of `src/a.py` at fixed snapshot `wip-A`, comparing against base `abc123`.
+
+### Case B
+
+Action: Transfer review of high-risk local PR `PR-42` at fixed snapshot `tree-B`, comparing against base `def456`, to Convergent PR Review.
+
+### Case C
+
+Action: Transfer review of immutable whole-repository baseline `repo@789abc` to Audit Codebase.

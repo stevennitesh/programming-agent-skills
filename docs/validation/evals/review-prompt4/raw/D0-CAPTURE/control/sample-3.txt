@@ -1,0 +1,21 @@
+Snapshot capture:
+- Fixed point: `111aaa`
+- Review target: working tree
+- Diff command: `git diff 111aaa`
+- Status before capture: ` M src/config.py` and `?? config/feature.flags`
+- Tracked change: `src/config.py` changes `timeout=30` to `timeout=5`
+- Untracked content: `config/feature.flags` contains exact bytes `new_parser=true\n`
+- Status after capture: unchanged
+- Index tree identity: `idx-77`
+- Working tracked-content digest: `work-88`
+- Untracked-content digest: `untracked-99`
+- Capture result: incomplete; stable status does not prove that live working-tree content remained identical throughout capture.
+
+Review status: incomplete
+Review target: 111aaa | git diff 111aaa | working tree
+Sources: Standards: not traced. Spec: unresolved.
+Blocker: complete immutable live target was not captured
+Skipped: judgment did not run.
+Return boundary: caller
+Mutation authority: none
+Successor snapshot authority: none

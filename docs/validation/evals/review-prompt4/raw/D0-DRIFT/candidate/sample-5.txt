@@ -1,0 +1,3 @@
+INCOMPLETE — the live target drifted during review.
+
+At capture, the target was ` M src/pay.py` with digest `work-A` and `amount = 10`. Before return, the same path and status had digest `work-B` and `amount = 20`. Finding F-1 belongs to the stale captured surface and is not reported as current. No recapture was performed.

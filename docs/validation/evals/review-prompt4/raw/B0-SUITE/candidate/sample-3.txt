@@ -1,0 +1,48 @@
+# Case A
+
+Status: complete
+
+Target: supplied tree `T`.
+
+Covered: the immutable supplied tree `T`.
+
+Excluded live surfaces: staged index `I` and working tree/WIP `W`. They are lower-precedence live surfaces and are not part of this invocation.
+
+# Case B
+
+Status: incomplete
+
+Covered: repository Standards available independently of the missing Spec, if any.
+
+Skipped: Spec judgment.
+
+Blocker: the caller requires a Spec judgment, but the specified Spec source is unreadable. The review cannot decide whether the change is the right thing without that required source.
+
+# Case C
+
+Status: incomplete
+
+Scope: remediation review of the original packet only, limited to the carried findings, the Repair delta, and affected seams. The unrelated untouched issue `U` is excluded and is not admitted as a new finding in this remediation invocation.
+
+Carried dispositions:
+
+- `F1`: resolved. The Repair delta corrects the admitted defect.
+- `F2`: still admitted. The Repair delta does not resolve the original finding.
+- `F3`: disproved. Re-evaluation against the original packet shows the carried finding was not valid.
+- `F4`: undecidable. Deciding evidence is unavailable, so this carried finding cannot be closed or disproved.
+
+Blocker: `F4` lacks required deciding evidence. The remediation cannot receive a terminal pass while `F2` remains admitted and `F4` remains undecidable.
+
+# Case D
+
+Action: decline all requested mutations. This Review remains read-only: it will not patch `F2`, stage files, comment on the PR, update the tracker, or start a successor action.
+
+Authority: the caller authorized Review only. That authority permits inspection and a terminal review report, not repair, repository/index mutation, external comments, tracker changes, PR actions, or successor workflow initiation.
+
+# Case E1
+
+Context loaded: repository-provided rich Standards from `AGENTS.md` and the applicable tool-specific standards. These govern the Standards judgment; `SMELL-BASELINE` is not loaded because the repository Standards are not thin.
+
+# Case E2
+
+Context loaded: no repository Standards were available, so the fallback `SMELL-BASELINE` was loaded for the Standards judgment.

@@ -1,0 +1,19 @@
+# Case CLEAN
+
+## Review result: CLEAN
+
+The fixed snapshot is fully covered. I found no actionable issues, all required checks pass, and there is no drift.
+
+There is no verified defect to repair, so a repair plan would invent work unsupported by this review. A successor review would also add no new evidence unless the snapshot or review scope changes.
+
+# Case PARTIAL
+
+## Review result: INCOMPLETE — one verified finding
+
+### [P2] F-2
+
+F-2 is verified in the fixed snapshot and remains actionable.
+
+Required Spec coverage could not be completed because the necessary source is unreadable. All other required work was covered, but the missing Spec evidence prevents a clean decision.
+
+I cannot call this clean enough: the snapshot has a verified P2 finding and incomplete required coverage. A repair plan should address F-2, but starting a successor review now would not resolve the unreadable-source gap; restore access to that source and provide a repaired fixed snapshot first.

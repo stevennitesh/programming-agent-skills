@@ -1,0 +1,7 @@
+I’m not running an ordinary review on this mixed packet. Its items have different owners:
+
+- A — `src/a.py` at fixed point `abc123`, target snapshot `wip-A`: Review owns this bounded ordinary WIP diff.
+- B — `PR-42` at fixed point `def456`, snapshot `tree-B`: Convergent PR Review owns this high-risk local PR diff.
+- C — `repo@789abc`: Audit Codebase owns this immutable whole-repository baseline audit.
+
+Because the packet includes the high-risk local PR, I’m handing the complete caller packet to Convergent PR Review and stopping. No competing ordinary pass will run. Submit A separately to Review, and submit C separately to Audit Codebase.

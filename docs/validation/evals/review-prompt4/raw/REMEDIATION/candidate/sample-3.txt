@@ -1,0 +1,6 @@
+Scope: original Charter and prior snapshot identity, limited to the caller-owned Repair delta, its affected seams, and the remaining acceptance exercised there. Successor target: the specified successor snapshot at the fixed point. Untouched scope is not reopened; U is out of scope.
+
+- F1: resolved
+- F2: still admitted
+- F3: disproved
+- F4: incomplete

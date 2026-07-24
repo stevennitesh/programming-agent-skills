@@ -1,0 +1,17 @@
+Snapshot capture:
+Fixed point: 111aaa
+Review target: working tree
+Diff command: git diff 111aaa
+Status before:
+ M src/config.py
+?? config/feature.flags
+Tracked change: src/config.py changes timeout=30 to timeout=5.
+Untracked content: config/feature.flags has exact bytes `new_parser=true\n`.
+Index tree identity: idx-77
+Working tracked-content digest: work-88
+Untracked-content digest: untracked-99
+Status after:
+ M src/config.py
+?? config/feature.flags
+
+Review status: complete

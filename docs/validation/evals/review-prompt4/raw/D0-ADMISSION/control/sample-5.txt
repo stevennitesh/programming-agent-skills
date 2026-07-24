@@ -1,0 +1,15 @@
+## Admitted findings
+
+### [P2] Parser rejects reachable valid input
+
+- **Anchor:** The changed parser behavior.
+- **Reach:** The rejected input is valid and reaches the changed parser.
+- **Evidence:** A direct failing fixture reproduces the rejection.
+- **Impact:** The implementation violates AC-7 and prevents valid input from being accepted.
+- **Proportion:** P2; the defect is concrete and user-reachable, but the evidence does not support catastrophic severity.
+
+## Rejected dispositions
+
+- **S — Rejected:** No observed or changed-code anchor and no reproduction or evidence connects the imagined power-failure scenario to data loss. The caller’s request to include it pending proof does not satisfy the Anchor or Evidence gates.
+- **D — Rejected:** Direct testing disproves the suspected authorization bypass by showing that authorization rejects the attempt, so the Evidence gate is not met.
+- **P — Rejected:** The variable rename is a taste preference with no documented standard or material impact, so it fails the Anchor, Impact, and Proportion gates.

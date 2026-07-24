@@ -1,0 +1,10 @@
+Selected owner: Review.
+
+This run is scoped only to item A: the bounded ordinary WIP diff `src/a.py`, fixed point `abc123`, target snapshot `wip-A`.
+
+Items B and C are out of scope for an ordinary Review:
+
+- Hand the complete `PR-42` packet (`def456`, `tree-B`) to Convergent PR Review because it is a high-risk local PR diff.
+- Run a separate Audit Codebase engagement for the immutable whole-repository baseline `repo@789abc`.
+
+I will not run competing ordinary passes over B or C. The packet does not include the contents or findings for `src/a.py`, so no evidence-based review findings can be reported for A from the supplied material.

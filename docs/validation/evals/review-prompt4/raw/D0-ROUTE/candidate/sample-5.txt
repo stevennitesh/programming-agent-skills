@@ -1,0 +1,5 @@
+I can take item A as an ordinary Review of the bounded WIP diff at `abc123` / `wip-A`.
+
+Item B belongs to Convergent PR Review because `PR-42` is a high-risk local PR diff. Hand it the complete caller packet, including fixed point `def456` and snapshot `tree-B`, and stop; I will not run a competing ordinary pass.
+
+Item C belongs to Audit Codebase because `repo@789abc` is an immutable whole-repository baseline audit. Please route it there; I will not run an ordinary Review pass over it.

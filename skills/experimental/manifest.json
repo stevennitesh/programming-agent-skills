@@ -9,12 +9,6 @@
       "candidate_sha256": "18c226fea230fe510422e3cdd07b61063291916485d08aeff2aff65f116e5cc4",
       "active_baseline_sha256": "72223008a4b2f8a3ad540be60aa9af5cc87806918f24c5c49f3936181d7470b2"
     },
-    "parallel-implement": {
-      "origin": "skills/custom/parallel-implement at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f before the installed-baseline restore",
-      "reason": "Preserve the divergent candidate while the installed managed version remains active.",
-      "candidate_sha256": "64cc2617fcf37faa311053fbc5f96e0d35bf4a6e1be3f7b18bfb3e81c054fd3e",
-      "active_baseline_sha256": "a0d1665f9bfbcb8cfe37f159e2c5f6731b2f970984ec1255a9ad81f8d013796c"
-    },
     "repo-bootstrap": {
       "origin": "skills/custom/repo-bootstrap at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f before the installed-baseline restore",
       "reason": "Preserve the divergent candidate while the installed managed version remains active.",

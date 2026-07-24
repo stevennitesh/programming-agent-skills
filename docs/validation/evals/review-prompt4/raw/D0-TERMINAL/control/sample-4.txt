@@ -1,0 +1,19 @@
+## Case CLEAN
+
+Decision: PASS
+
+The fixed snapshot is fully covered. I found no actionable findings, every required check passed, and there is no drift.
+
+There is nothing to repair, so a repair plan would invent work unsupported by the review evidence. I also have not started a successor review: this invocation has completed its review of the specified snapshot.
+
+## Case PARTIAL
+
+Decision: INCOMPLETE
+
+### Verified finding
+
+- **F-2 — P2:** The snapshot contains the verified defect described by F-2.
+
+All other review work was covered, but required Spec coverage could not be completed because its source is unreadable. I therefore cannot call this snapshot clean enough or issue a terminal pass.
+
+The appropriate repair direction is to address F-2 and restore readable access to the required Spec source before reviewing a new immutable snapshot. I have not begun repairs or a successor review because this invocation is read-only and its evidence is incomplete.

@@ -1,7 +1,0 @@
-interface:
-  display_name: "Parallel Implement"
-  short_description: "Drain one ticket graph to verified release"
-  default_prompt: "Use $parallel-implement from the root to drain this parent graph with one warm primary, adaptive justified width up to five, serial landing, formal review, and Release at the verified reviewed HEAD."
-
-policy:
-  allow_implicit_invocation: false

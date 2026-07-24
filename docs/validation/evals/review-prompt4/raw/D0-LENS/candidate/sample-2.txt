@@ -1,0 +1,19 @@
+# Standards
+
+## Finding
+
+- **P2 — Retry exhaustion is no longer logged** (`client.py:40`). Changing `log=true` to `log=false` suppresses the required exhaustion log on a reachable retry path, violating S-LOG and reducing operability when retries fail.
+
+## Summary
+
+Standards review fails on one direct, reachable P2 operability regression.
+
+# Spec
+
+## Finding
+
+- **P1 — Required retries are disabled** (`client.py:40`). Changing `count=3` to `count=0` eliminates all three retries required by AC-RETRY on a reachable path, causing immediate failure instead of the specified retry behavior.
+
+## Summary
+
+Spec review fails on one direct, reachable P1 correctness regression.

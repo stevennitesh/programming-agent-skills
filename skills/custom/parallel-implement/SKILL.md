@@ -1,96 +1,149 @@
 ---
 name: parallel-implement
-description: Implement one root-owned parent ticket graph through dependency-ready isolated lanes, serial landing, formal review, and verified closeout. Root-only; delegated invocation is a routing blocker.
+description: Deliver one explicitly requested parent through its exhaustive non-empty Ready-for-agent ticket graph using qualified isolated lanes, serial integration, independent review, and child-first closeout. Root-only; exclude single-item delivery, graph shaping, generic parallel work, and delegated invocation.
 ---
 
 # Parallel Implement
 
-**Trace -> Select -> Open -> Drain -> Review -> Lock -> Release**
+**Trace -> Select -> Open -> Drain -> Review -> Lock**
 
-Drain one parent-backed implementation graph without confusing parallel activity with completion.
+Deliver one parent-backed Ready-for-agent graph. Parallel activity is optional;
+the reviewed, proved, and closed parent outcome is the result.
 
-**Root only.** The root owns scope, dispatch, landing, formal review, tracker mutation, and release. If invoked by a delegated agent, stop before mutation and return a routing blocker.
+## Admission
 
-**Lane worker:** a direct fresh-context child with one isolated worktree, one clean commit, and focused proof. Workers do not spawn, integrate, review themselves, mutate trackers, or push. The root normally integrates; use a child integrator only when the integration branch itself is a bounded independent lane. Formal review stays separate from implementation.
+Run only at the top-level root after an explicit request to deliver one parent
+and its exhaustive associated non-empty Ready-for-agent graph. The parent is
+the delivery boundary, not direct implementation scope.
 
-`events.jsonl` is canonical and `LEDGER.md` is generated. Use [RUN-LEDGER.md](references/RUN-LEDGER.md) and `scripts/run_ledger.py`; do not hand-author event IDs, receipts, or rendered state on the normal path. The reducer remains the authority: a helper suggestion never overrides a failed gate.
+If invocation is delegated, return a routing blocker before mutation. Return
+one selected item to `$implement`; return an incomplete, ambiguous, unsettled,
+or unready graph to `$to-tickets` as one exhaustive repair packet. Exclude
+graph creation or repair, generic parallel investigation, review-only work,
+and invocation based only on available concurrency.
+
+The root alone admits scope, reconciles durable state, qualifies concurrency,
+claims and dispatches work, accepts returns, lands commits, routes conflicts
+and corrections, invokes formal review, admits findings, mutates the tracker,
+accepts residual risk, closes items, pushes when authorized, and declares
+completion. A lane worker or child integrator never widens or dispatches the
+campaign.
 
 ## Trace
 
-Apply `docs/agents/engineering-contract.md`. Read tracker and domain guidance before touching those surfaces. If required setup is missing or incompatible, recommend `$repo-bootstrap` and stop.
+Apply `docs/agents/engineering-contract.md` and the repository's tracker and
+domain guidance. If required setup is missing or incompatible, recommend
+`$repo-bootstrap` and stop.
 
-Resolve exactly one parent and its exhaustive child and follow-up graph. Record the Source Trace, parent outcome, fixed point, child snapshot, dependency edges, acceptance, required proof, commitment boundary, non-goals, review route, and parent closeout rule. The parent selects work; it is not direct implementation scope.
+Freeze the parent outcome, exhaustive child and follow-up graph, Charter,
+Source Trace, fixed point, acceptance, required proof, commitment boundary,
+non-goals, review route, closeout rule, dependency edges, and each ticket's To
+Tickets execution profile. A stateful ticket must carry its applicable
+state-boundary matrix. Missing or contradictory graph, readiness, profile, or
+matrix information is a graph defect; return the complete repair packet
+instead of reconstructing its owner's judgment.
 
-Start through `run_ledger.py start` with one scope packet. Runtime contract 3 is the default. Repair generations default to two, review invocations to three, and required completed reviews to one. These are ceilings, not quotas; change them only from explicit caller authority and never below consumption.
-
-When an existing stream is present, use `status`. Resume a checkpoint only after fresh Git, worktree, actor, tracker, claim, and remote reconciliation. A missing actor is not completion.
-
-If the graph is incomplete, ambiguous, or not Ready-for-agent, return one exhaustive repair packet and recommend `$to-tickets`; do not dispatch a partial interpretation.
-
-For any stateful ticket, verify that acceptance carries the applicable state-boundary matrix. Missing supported branches are a Ready-for-agent defect: include them in the exhaustive graph-repair packet rather than treating them as optional worker discovery.
-
-For a parent-delivery run, require each ticket's To Tickets execution profile:
-blocking dependencies; semantic owner; expected production scope and
-exclusions; highest meaningful public proof seam and focused proof; size as
-`small` or `substantial`; shared seam or scarce proof resource; and serial
-tripwire. A missing or contradictory field is a Ready-for-agent defect: include
-the complete profile repair in the exhaustive packet rather than reconstructing
-To Tickets judgment here.
+Use one canonical event stream through
+[RUN-LEDGER.md](references/RUN-LEDGER.md) and `scripts/run_ledger.py`.
+`events.jsonl` is authority; generated projections and helper suggestions are
+not. Start one stream from the frozen scope. On resume or after interaction,
+reconcile Git, worktrees, actors, claims, tracker, remote, and derived state
+before progression. Missing state is not completed state.
 
 ## Select
 
-Choose the next dependency-ready frontier from reconciled tracker and ledger state. A verified landing may satisfy an in-campaign execution dependency as `landed-awaiting-lock`; tracker closure still waits for Lock. Rollback, invalidation, or failed proof reblocks it.
+Derive the next dependency-ready set from reconciled tracker and ledger state.
+A proved same-campaign landing may satisfy readiness as
+`landed-awaiting-lock`, but it never closes the tracker item. Rollback,
+invalidation, or failed proof removes that overlay and reblocks dependents.
 
-Apply the frontier gate across semantics, acceptance, the execution profile,
-dependencies, live slots, and root review bandwidth. Small work stays serial;
-its likely implementation savings do not repay separate concurrent dispatch,
-inspection, landing, and proof recombination. Disjoint files alone do not prove
-independence.
+Qualify every pair across semantic ownership, expected production writes,
+proof seams and scarce proof resources, ordering, and serial tripwires.
+Dispatch concurrently only when these dimensions are independently bounded
+and every packet remains inspectable; otherwise dispatch serially. Protected
+data, permissions, trust boundaries, irreversible state, migrations, and
+cutovers require one production-path tracer first with retry, rollback, and
+partial-state proof.
 
-- Select one ticket when independence or review capacity is uncertain.
-- Select up to three only when at least two tickets are substantial, have
-  independent semantic owners, isolated production scopes, and proof lanes
-  that do not contend for a shared seam or scarce resource; honor every serial
-  tripwire unless stronger current evidence proves isolation. Every packet must
-  remain inspectable before the next frontier.
-- Stop with exact blockers when nothing is executable.
-
-**Tripwire:** protected data, permissions, trust boundaries, irreversible state, migrations, and cutovers require one production-path tracer first, including retry, rollback, and partial-state proof.
-
-**Downshift:** serialize whenever independence, scope, slots, or review bandwidth is uncertain. Reopen parallelism only from evidence.
+When nothing is executable, return the exact blockers without widening scope.
 
 ## Open
 
-Claim each selected ticket and read back the claim. Open its lane through `lane_worktree.py open` using [CODEX-WORKTREE-LAUNCH.md](references/CODEX-WORKTREE-LAUNCH.md). Dispatch only from `ok: true` preflight evidence for the exact base, actor, checkout, startup proof, and Python import provenance.
+Claim each selected item and read back the claim. Open one isolated
+fresh-context lane from the exact base through `scripts/lane_worktree.py` and
+[CODEX-WORKTREE-LAUNCH.md](references/CODEX-WORKTREE-LAUNCH.md). Dispatch only
+from `ok: true, state: ready` evidence that accounts for containment,
+provenance, startup proof, actor, checkout, and cleanup.
 
-Apply the lane packet to the ledger, generate the mode-specific brief with `run_ledger.py brief`, then launch one direct child with `fork_turns="none"`, the absolute worktree, stable temp roots, and an observable liveness checkpoint.
+Generate the complete bounded assignment from
+[WORKER-BRIEF.md](references/WORKER-BRIEF.md). The worker owns only that item
+and returns one typed packet; it does not spawn, integrate, formally review,
+mutate trackers, push, or declare campaign completion. Use `$tdd` for
+red-testable new behavior or a fully known red-capable bug. Use
+`$diagnosing-bugs` when expected behavior, symptom, cause, or a trusted
+reproduction is unsettled.
 
-A proposed concrete write set is useful when shared fixtures or generated artifacts are plausible. Require it before deep work only when expected scopes do not expose likely overlap.
+The root normally integrates. Use
+[INTEGRATOR-BRIEF.md](references/INTEGRATOR-BRIEF.md) only when serial
+integration itself is a genuinely bounded independent lane. The integrator
+returns landing and review authority to the root.
 
 ## Drain
 
-Classify every worker return. Accept only a clean committed `done` with criterion-to-proof evidence. A `blocker` retries only after its condition changes. A `needs-feedback` packet may continue once when the same actor must complete or explain its own bounded result. Otherwise open a fresh reconciled lane.
+Accept a worker return only when its scope, acceptance, proof, commit and final
+state, skipped checks, risk, and next need are fully accounted for. A blocker
+retries only after its condition changes. Continue the same actor once only
+when it must complete or explain its own bounded result; otherwise reconcile
+and open a fresh lane.
 
-Land accepted packets serially. Inspect the worker diff, expected and actual scope, stale-base overlap, conflicts, and focused proof. Then run touched-area integration proof, record the new integration HEAD, refetch the dependency fingerprint, and select again. Loop-close proof recombines applicable state-boundary matrices across landed interfaces, especially where access paths, configuration variants, or lifecycle transitions interact. Broad loop-close proof is required before Review.
+Land accepted commits one at a time at the root. Inspect the actual diff,
+expected scope, stale-base overlap, conflicts, and focused proof. After each
+landing, run affected recombined proof, record the new integration `HEAD`, and
+rederive readiness. Before Review, run final proof across all applicable
+state-boundary branches and high-risk interactions on the current integration
+`HEAD`.
 
-If integration proof fails after landing and before formal review, record one trusted regression and choose an authorized correction route: the original worker once, a fresh correction lane, or an explicitly authorized tiny root fix. The correction must start from the recorded integration HEAD, stay within structured scope IDs, prove the RED and affected paths, descend from that HEAD, and leave integration clean. It advances integration HEAD and invalidates prior drained or review-ready evidence; it does not consume a Review Repair generation.
+Preserve stale or conflicted packets without landing. Choose a safe serial
+route or invoke `$resolving-merge-conflicts` from the preserved operation.
+When a landing exposes a trusted integration regression, record it and choose
+one authorized correction route: the original worker once, a fresh bounded
+lane, or an explicitly authorized tiny root fix. Start from the recorded
+integration `HEAD`, prove the RED and affected paths, and invalidate superseded
+drained or review-ready evidence.
 
-Stale or conflicted packets do not land. Rebase, redispatch, serialize, reject, or invoke `$resolving-merge-conflicts` from preserved state.
-
-When execution must stop before the graph drains, quiesce all actors and record a nonterminal checkpoint with outcome `partial` or `blocked`. Account for current HEAD, safe lane dispositions, continuation, frontier, blockers, tracker and remote state, and every retained or released claim. Resume only through fresh reconciliation. Release is never used for a resumable partial campaign.
+Repeat Select, Open, and Drain until the exhaustive graph is drained.
 
 ## Review
 
-Pin one immutable candidate only after the graph is drained, lanes are idle, integration is clean, child dispositions are complete, and loop-close proof passes. Invoke `$review` by default or `$convergent-pr-review` for high risk, with `Spec required: yes`, the Charter, Source Trace, fixed point, target, and required proof.
+Pin one immutable candidate only after all implementation actors are idle, the
+integration worktree is clean, every child disposition is complete, and final
+current-`HEAD` proof passes. Invoke `$review` for an ordinary candidate or
+`$convergent-pr-review` for a local PR or bounded high-risk diff. Supply `Spec
+required: yes`, the Charter, Source Trace, fixed point, target, and required
+proof.
 
-The review report grants no mutation. Automatically repair only one complete batch whose blockers are admitted, `automatic-in-scope`, Charter-preserving, bounded by proof, and within both the Repair and successor-review budgets. Any ambiguous or decision-required blocker returns the whole decision packet. Every repaired successor receives a fresh formal review.
+Review grants no mutation. The root may admit only one complete bounded batch
+of Charter-preserving `automatic-in-scope` findings within the recorded Repair
+and successor-review budgets. Return ambiguous or decision-required findings
+as one decision packet. Every repaired successor receives fresh formal review.
 
 ## Lock
 
-Open Lock only when the accepted reviewed HEAD equals current integration HEAD and the required review count is complete. Generate the closeout plan from the ledger; mutate trackers child first, perform **Mutation read-back** after every change, close the parent only after its rule passes, and release claims. Push only the approved closeout SHA and verify the remote.
+Open Lock only when the accepted reviewed `HEAD` equals current integration
+`HEAD`, required final proof passes, and the review requirement is complete.
+Generate the closeout plan, close every child with mutation read-back, then
+close the parent only after its rule passes and read that mutation back.
+Release every claim. Push only when authorized, then verify the approved
+closeout SHA at the remote. Make every lane `removed`, `provider-preserved`, or
+an explicitly accepted safe residual.
 
-## Release
+Return `complete` only when the exhaustive graph is drained; every accepted
+change is in the reviewed current integration `HEAD`; proof and independent
+review pass; children and parent are closed in order with read-back; claims are
+released; lanes are safe; and applicable push evidence is verified.
 
-Quiesce every actor and clean or explicitly preserve every lane. Apply structured friction observations; `run_ledger.py finish` records `none_observed` when there are none, validates terminal completion, and renders `LEDGER.md`. Observed friction still requires deliberate synthesis.
-
-Runtime-contract-3 Release is terminal and accepts only `complete`: approved current HEAD, accepted formal review, required review count, final proof, verified child and parent closeout, applicable push proof, friction synthesis, no open repair, and safe lanes. Return recovery-ready state for every nonterminal outcome.
+For every nonterminal `partial` or `blocked` return, preserve accepted and
+unrelated state, halt unsafe progression, quiesce or account for actors,
+release ended claims, invalidate unsafe dependency overlays, leave incomplete
+items open, and report the blocker, exact retained state, and safest recovery
+or resume action. A checkpoint is nonterminal.

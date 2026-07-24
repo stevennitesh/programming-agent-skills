@@ -1,0 +1,10 @@
+## Scope
+
+Remediation is limited to the caller-owned Repair delta, its affected seams, and the remaining acceptance exercised at those seams. The original Charter, prior snapshot identity, carried IDs, fixed point, and successor target remain unchanged. Untouched scope is not reopened.
+
+## Carried dispositions
+
+- F1: `resolved`
+- F2: `still admitted`
+- F3: `disproved`
+- F4: `incomplete`

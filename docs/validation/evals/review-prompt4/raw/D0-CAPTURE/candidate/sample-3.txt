@@ -1,0 +1,26 @@
+## Snapshot capture
+
+- Fixed point: `HEAD` resolved to `111aaa`.
+- Review target: live working tree at `HEAD`, including tracked, indexed, and in-scope untracked content.
+- Capture commands/surfaces: resolve `HEAD`; capture `git status --short`; capture the working-tree diff from `111aaa`; read `config/feature.flags` as exact bytes; record the index, tracked-worktree, and untracked-content identities.
+- Captured status:
+
+  ```text
+   M src/config.py
+  ?? config/feature.flags
+  ```
+
+- Captured tracked delta:
+
+  ```diff
+  -timeout=30
+  +timeout=5
+  ```
+
+- Captured untracked bytes for `config/feature.flags`: `new_parser=true\n`.
+- Index identity: `idx-77`.
+- Tracked worktree content identity: `work-88`.
+- Untracked content identity: `untracked-99`.
+- Captured target identity: `HEAD=111aaa | index=idx-77 | tracked=work-88 | untracked=untracked-99`.
+
+Review status: complete

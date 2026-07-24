@@ -1,0 +1,5 @@
+INCOMPLETE — LIVE TARGET DRIFT
+
+The live target changed after capture: its digest moved from `work-A` to `work-B`, even though `git status --short` remained ` M src/pay.py`. The captured surface (`amount = 10`) no longer identifies the current live surface (`amount = 20`).
+
+F-1 is not returned as a current finding. No recapture was performed.

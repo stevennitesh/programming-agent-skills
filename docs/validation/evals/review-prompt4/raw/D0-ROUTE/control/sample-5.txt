@@ -1,0 +1,8 @@
+I can review item A as an ordinary bounded WIP diff, fixed at `abc123` / `wip-A`.
+
+I would not run an ordinary Review pass on the other two items:
+
+- Item B, high-risk local PR `PR-42` fixed at `def456` / `tree-B`, belongs to Convergent PR Review.
+- Item C, immutable baseline `repo@789abc`, belongs to Audit Codebase.
+
+Those workflows use different evidence and decision standards, so treating them as ordinary WIP reviews would produce misleading conclusions. The packet does not include the actual `src/a.py` diff, so I cannot issue evidence-backed findings for item A from the identifiers alone. Provide the fixed diff for A; route B to Convergent PR Review and C to Audit Codebase.

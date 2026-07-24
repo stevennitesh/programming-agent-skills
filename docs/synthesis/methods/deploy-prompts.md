@@ -2,10 +2,9 @@
 
 Use these prompts to reconcile, create, or improve one skill at a time. Invoke
 Deploy Prompt 1 for a standalone unit or Deploy Campaign for verified
-start-to-finish orchestration. A standalone unit may reuse later durable gates.
-Every new Deploy Campaign starts a fresh campaign epoch and runs Prompts 1
-through 4, the Pruning Pass, then Prompt 5, even when the named skill completed
-an earlier campaign.
+start-to-finish orchestration. Every new Deploy Campaign runs a fresh Prompt 1,
+Research Pass, Prompts 2 through 4, Pruning Pass, and Prompt 5 epoch even when
+the skill completed an earlier campaign.
 
 Invoke with, for example:
 
@@ -22,126 +21,127 @@ dispatch or verify it.
 The ordinary sequence is:
 
 ```text
-Deploy Prompt 1: establish the minimum-runtime decision
-  -> when admitted: one Conditional Research Interlude, then Prompt 1 again
-  -> when admitted: one Conditional Prototype Interlude, then Prompt 1 again
-  -> when admitted: one Conditional Behavior Decision Interlude, then Prompt 1 again
-  -> Deploy Prompt 2: finalize decision-complete synthesis
-  -> Deploy Prompt 3: build B0 and C1
-  -> Deploy Prompt 4: audit and prove behavior
-  -> Deploy Pruning Pass: minimize the accepted candidate
-  -> Deploy Prompt 5: promote and install
+Deploy Prompt 1: freeze the intent-derived M0 specification
+  -> when admitted: one Conditional Behavior Decision Interlude
+  -> Deploy Research Pass: investigate the same intended behavior
+  -> Deploy Prompt 2: reconcile evidence, current behavior, and H1 design
+       |-> when admitted: one Conditional Prototype Interlude
+       `-> when admitted: one Conditional Behavior Decision Interlude
+  -> Deploy Prompt 3: materialize exact M0 and H1
+  -> Deploy Prompt 4: prove M0 viability and H1 contribution; freeze V1
+  -> Deploy Pruning Pass: prove a cheaper P1 without V1 regression
+  -> Deploy Prompt 5: promote and install P1
   -> optional Deploy Prompt 6: Git delivery
 ```
 
-Outside a campaign, Prompt 1 may recommend a later prompt when exact durable
-artifacts and hashes prove that every earlier gate passes. Inside a new
-campaign, prior artifacts and proof are evidence, not lifecycle completion:
-they may reduce repeated work but never skip a numbered prompt or the Pruning
-Pass. A missing or older synthesis is reconciled in place by Prompt 2; do not
-rewrite every synthesis document before its skill is selected.
+Prior artifacts and proof are evidence, not lifecycle completion. They may
+reduce repeated legwork but never skip a numbered prompt, the Research Pass, or
+the Pruning Pass in a fresh campaign. Historical B0/C1 records retain their
+original meaning; current campaigns use M0/H1/V1/P1.
 
 ## Shared Model
 
-The workflow keeps four evidence roles distinct:
+Keep these authorities separate:
 
-| Input | Role | Not Authority For |
+| Input | Authority | Not Authority For |
 | --- | --- | --- |
-| Local intent authorities | The user, caller contracts, domain decisions, and relationship owners settle the skill's outcome, invocation, authority, Return, completion, exclusions, and relationships | Agent-owned technique or proof of behavioral effectiveness |
-| Upstream packages and credible research | Source meaning, professional counterpressure, conditions, mechanics, and vocabulary for a new minimum rewrite | The local intended contract, wholesale copying, or behavioral effectiveness |
-| Current canonical runtime | Inventory of local behavior, compatibility, callers, and prior evidence to challenge after B0 is defined | Baseline selection, protection by existence, or carrying inherited wording into B0 |
-| Candidate-owned proof | Contribution, preservation, pruning, invocation, and completion evidence for exact bytes | Broader wording, models, tasks, or hosts than it tested |
+| Local intent authorities | The user, caller contracts, domain decisions, relationship owners, required compatibility, and safety boundaries settle outcome, invocation, authority, Return, completion, exclusions, and relationships | Professional technique or behavioral effectiveness |
+| Independent professional evidence | Applicable methods, vocabulary, conditions, alternatives, counterpressure, and limits | Local intent, exact runtime wording, or behavioral effectiveness |
+| Upstream packages | What the inspected package instructs, names, tests, or implements at one revision | A professional claim the author did not make, professional correctness, local fit, or efficacy |
+| Current canonical runtime | Existing behavior, compatibility, composition, and prior evidence inspected after M0 freezes | M0 by existence, automatic protection, or professional validity |
+| Candidate-owned proof | Viability, contribution, preservation, pruning, invocation, and completion for exact bytes and fixed conditions | Untested models, hosts, tasks, configurations, or broader professional validity |
 
-For outside research, prefer relevant books, papers, standards, documentation,
-practitioner material, and projects with documented high ratings, professional
-acclaim, durable adoption, and explicit upper-bound engineering discipline.
-Use acclaim, ratings, and popularity to order discovery, never as proof of
-correctness, mechanism value, or local fit. Preserve primary meaning,
-conditions, counterpressure, disagreements, and limitations.
+For independent research, prefer governing standards, primary sources,
+respected books, original research, official documentation, and credible
+practitioner evidence. Acclaim, ratings, popularity, and adoption order
+discovery; they do not prove correctness or local fit. Preserve source meaning,
+conditions, counterevidence, disagreement, applicability, and limitations.
+Never simulate a practitioner conversation or attribute a professional claim
+to an upstream author unless the inspected source makes it.
 
-Use these shared artifacts:
+Use these artifacts:
 
-- **Viability floor:** the minimum local intended contract: outcome, invocation
-  and exclusions, authority, caller and relationship obligations, safe failure
-  Return, completion, irreversible order, and safety boundaries. Local intent
-  authorities settle it; upstream and current runtime do not.
+- **Viability floor:** the minimum intended contract: outcome, invocation and
+  exclusions, authority, caller and relationship obligations, safe failure
+  Return, completion, irreversible order, required compatibility, and safety.
 - **Semantic behavior unit:** the smallest independently owned observable
-  trigger, action, branch, gate, Return, or completion condition with one proof
-  obligation. Classify it once and map its runtime clauses to that ledger key;
-  split only when meaning, owner, or proof differs.
-- **Source-first checkpoint:** the frozen B0 semantic units plus exact upstream,
-  research, and independent-owner identities produced before current runtime,
-  synthesis conclusions, or historical evaluations are opened. Return it as
-  one exact block with a content fingerprint. Re-entry verifies its identities
-  and revisits only affected rows.
-- **`B0` source-derived executable minimum:** a new minimum rewrite from the
-  intersection of the viability floor and the strongest applicable source
-  meaning, mechanics, conditions, and vocabulary, plus the cheapest required
-  local compatibility. It is never current-minus-cuts and must pass its
-  minimum-runtime controls before C1 testing.
-- **`D0` no-guidance control:** the same fixed task, context, tools, authority,
-  and evidence as B0, with invocation held constant and only the
-  source-derived steering under test omitted. Invocation uses its own proof
-  lane. Use D0 for source steering without exact behavioral evidence; skip
-  independently required contracts unless efficacy is also claimed.
-- **Protected behavior set:** behavior independently supported by an owning
-  contract, exact accepted evidence, or a non-intuitive safety or authority
-  boundary. Current presence is discovery only and never creates protection.
-- **C1 behavior hypothesis:** behavior beyond B0 discovered from current
-  canonical (`current-retention`), skill-pack use (`pack-composition`),
-  credible sources (`source-mechanism`), or a bounded beyond-minimum
-  counterexample (`intent-counterexample`). Origin invites inspection; it
-  never proves adoption. A counterexample that disproves minimum viability
-  reopens B0 instead.
-- **`C1` experimental candidate:** exact `B0` plus only admitted
-  behavior hypotheses. Each must name an owner, expected B0 failure, cheapest
-  expression, wrong-condition case, and proof. Source-correct substitutions
-  belong in B0; cuts receive no contribution credit.
-- **Behavior-complete pre-prune package:** exact Prompt 4-accepted `C1`, used
-  as the Pruning Pass control. Store a separate immutable fixture only when a
-  material cut changes its bytes.
-- **Semantic substitution:** a source-supported correction that replaces
-  misleading language at equal or lower runtime load. Source fidelity can
-  justify it; do not claim behavioral improvement without candidate proof.
+  trigger, action, judgment, branch, gate, Return, or completion condition with
+  one proof obligation.
+- **M0 checkpoint:** a pre-research, behavior-complete specification of the
+  minimum viable runtime, its semantic units, neutral cheapest expressions,
+  clause map, viability suite, local authorities, limitations, and fingerprint.
+- **`M0` minimum viable runtime:** the exact runtime later materialized only
+  from the M0 checkpoint. M0 is behavior-minimal: every behavior maps to the
+  viability floor or a required local contract. It is not claimed to be
+  wording-minimal.
+- **Research packet:** the decision-ready evidence for the same intended
+  behavior, produced after M0 freezes. It separates independent discovery,
+  upstream and current observations, targeted verification, alternatives,
+  conditions, counterpressure, and gaps.
+- **Intent-adjacent steering hypothesis:** vocabulary or a method that preserves
+  the intended contract while recruiting a stronger action, judgment, gate,
+  sequence, or completion behavior for the same problem. Map it as
+  `term -> recruited behavior -> expected M0 weakness -> observable gate ->
+  comparative proof`.
+- **`H1` hypothesis runtime:** exact M0 transformed only by admitted additions
+  or substitutions from research, current behavior, pack composition, or an
+  intent-adjacent opportunity. H1 remains provisional.
+- **`V1` verified runtime:** exact Prompt 4 result containing M0 plus only H1
+  behavior that demonstrated defect correction or a meaningful quality lift
+  without protected-behavior regression.
+- **`P1` pruned final runtime:** exact V1 or a cheaper expression proved
+  non-regressing against V1. P1 is the only promotion candidate.
+- **Protected behavior set:** M0 behavior plus accepted H1 behavior,
+  independently required contracts, and non-intuitive safety or authority
+  boundaries. Current presence alone creates no protection.
 
-Minimum means the smallest source-derived, behavior-complete rewrite under the
-accepted local contract, not the shortest file, the shortest upstream package,
-or the smallest edit to current.
+M0 is minimal by behavioral scope. P1 is minimal by proved wording and package
+load. Research may admit a hypothesis but never proves that exact skill wording
+changes behavior.
 
-Record the identity relationship among current canonical runtime, `B0`, and
-`C1` before routing:
+Classify independent method support separately from source claim labels:
 
-| Campaign Shape | Exact Identity | Meaning | Default Route |
-| --- | --- | --- | --- |
-| `runtime-no-change` | current = `B0` = `C1` | The canonical runtime already expresses the minimum and no candidate delta exists. Proof may still be missing. | A standalone run may stop after Prompt 2 when B0 proof is exact. A Deploy Campaign still runs Prompts 3, 4, the Pruning Pass, and 5 as fresh construction, proof-review, minimization, and integration-parity units. |
-| `pruning-only` | current != `B0` = `C1` | Retained lifecycle label for a source-derived rewrite with no C1 delta. Differences from current may include reconstruction, semantic substitution, and unsupported-behavior cuts; none receives mechanism-contribution credit. | Prompts 3 and 4, the Pruning Pass, then Prompt 5. |
-| `behavioral-candidate` | `B0` != `C1` | At least one admitted mechanism needs exact B0-first contribution proof. | Prompts 3 and 4, the Pruning Pass, then Prompt 5. |
+| Method Evidence | Meaning |
+| --- | --- |
+| `independently-supported` | Applicable independent evidence supports the method under recorded conditions |
+| `contested` | Applicable credible evidence materially disagrees |
+| `pack-specific` | The behavior is observed in a pack but lacks broader independent support |
+| `unverified` | Access, freshness, applicability, or evidence is insufficient |
 
-An exact existing artifact may justify a later standalone prompt, but it does
-not change the campaign shape or skip a unit in a new Deploy Campaign.
+Pack-specific or unverified behavior may be a clearly labeled local experiment
+when no decisive contradiction exists. It cannot inherit professional or
+upper-bound authority.
 
-Classify each prior evidence item or arm before reuse:
+Record the pre-evaluation identity relationship:
+
+| Campaign Shape | Exact Identity | Meaning |
+| --- | --- | --- |
+| `runtime-no-change` | current = M0 = H1 | Current already matches the proposed minimum and no hypothesis changes bytes; proof may still be missing |
+| `minimum-candidate` | current != M0 = H1 | The intent-derived minimum differs from current but no beyond-minimum hypothesis is admitted |
+| `hypothesis-candidate` | M0 != H1 | At least one admitted addition or substitution needs M0-first contribution proof |
+
+Classify prior evidence before reuse:
 
 | Evidence Disposition | Meaning |
 | --- | --- |
-| `exact-reusable` | Bytes, task, protocol, configuration, tools, authority, evidence, runtime, rubric, and proof lane all match. |
-| `lane-limited` | The evidence remains exact for one named lane, such as metadata invocation or current-contract preservation, but proves nothing outside it. |
-| `historical-admission-only` | The result can justify inspecting or admitting a mechanism but is not a control or candidate result for the current exact packages. |
-| `invalidated` | A behaviorally relevant identity changed. |
-| `missing` | The required evidence has not been produced. |
+| `exact-reusable` | Bytes, claim, task, protocol, model, host, configuration, tools, authority, evidence, runtime, rubric, and proof lane match |
+| `lane-limited` | Exact for one named lane only |
+| `historical-admission-only` | Useful for discovery or admission, not current control or candidate proof |
+| `invalidated` | A behaviorally relevant identity changed |
+| `missing` | Required evidence does not exist |
 
 ## Shared Run Contract
 
-A unit invocation performs exactly one numbered prompt or Conditional
-Interlude. It never starts, simulates, or partially executes its successor.
-Under an active Deploy Campaign, the coordinator alone may dispatch a verified
-successor after the unit stops. Preserve unrelated work and every unit's
-mutation boundary.
+A unit invocation performs exactly one numbered prompt, the Research Pass, the
+Pruning Pass, or one Conditional Interlude. It never starts or partially
+executes its successor. Under an active Deploy Campaign, only the coordinator
+dispatches a verified successor.
 
-Prompts 1 through 5, the Pruning Pass, and all three Conditional Interludes
-record Git `HEAD` before work and read it back before Return. They never stage
-or commit. If `HEAD` changed, return `blocked` with the observed transition;
-Deploy Prompt 6 is the sole Git-delivery owner.
+Prompts 1 through 5, the Research Pass, the Pruning Pass, and both Conditional
+Interludes record Git `HEAD` before work and read it back before Return. They
+never stage or commit. If `HEAD` changes, return `blocked` with the observed
+transition. Prompt 6 is the sole Git-delivery owner. Preserve unrelated work
+and every unit's mutation boundary.
 
 End every run with:
 
@@ -149,7 +149,7 @@ End every run with:
 Authorized unit completed:
 Decision:
 Campaign shape:
-Runtime decision:
+Runtime identities:
 Artifacts changed:
 Evidence used or reused:
 Residual gaps:
@@ -159,141 +159,123 @@ Git delivery: not-applicable | pending | committed | pushed
 Exact stop reason:
 ```
 
-Use `none` when no next unit is justified. A recommendation never permits its
-unit owner to begin the successor; an active campaign coordinator or later
-user invocation owns dispatch. `Git delivery: pending` records uncommitted
-authorized artifacts. Prompt 6 requires the initial campaign delivery mode or
-a later explicit user request.
-`runtime-no-change` means no canonical runtime delta is justified even when a
-synthesis document changed. Completed historical records may retain the older
-decision label `no-change`.
+Use `none` when no successor is justified. A recommendation never authorizes a
+leaf owner to start its successor. `Git delivery: pending` records uncommitted
+authorized artifacts.
 
 ## Proportionate Proof Budget
 
-Run the cheapest proof that can establish the current unit:
+Run the cheapest proof that establishes the current unit.
 
-**Affected Markdown gate:** whenever Deploy Prompt 2, 5, or 6 changes
-Markdown, verify every affected file's local links, internal anchors, balanced
-code fences, and consistent table columns.
+**Affected Markdown gate:** whenever Prompt 2, 5, or 6 changes Markdown, verify
+every affected file's local links, internal anchors, balanced code fences, and
+consistent table columns.
 
 | Unit | Default Proof |
 | --- | --- |
-| Deploy Prompt 1 | Read-back, identities, and existing evidence inspection. Read tests but do not execute them unless a current-state fact cannot be established more cheaply; never run the full suite by default. |
-| Deploy Prompt 2 | Complete synthesis read-back, the affected Markdown gate, directly affected documentation checks, and both diff checks. Do not run the full suite unless a machine-consumed contract changed. |
-| Deploy Prompt 3 | Candidate inventory, hashes, focused structural and relationship checks, skill validation, and both diff checks. Run the full suite only when a shared machine contract or test harness changed. |
-| Deploy Prompt 4 | Exact B0 viability and C1 contribution arms, affected focused checks, and no pruning-equivalence work. Run one full suite only after final behavior-complete bytes when repository test or pack contracts changed. |
-| Deploy Pruning Pass | Complete cut audit. If no material cut exists, use read-back, hashes, and focused structural proof only. Otherwise reuse the exact Prompt 4 control, run only affected final-candidate equivalence and invocation/context arms, then verify final hashes and both diff checks. |
-| Deploy Prompt 5 | Canonical and reconciled-synthesis read-back, the affected Markdown gate, affected focused proof, one full suite after final integration, install dry-run, synchronization, parity, and clean post-install dry-run. |
-| Deploy Prompt 6 | Scoped final diff, the affected Markdown gate, required current mechanical checks, both diff checks, intentional staging, commit, and an explicitly authorized push. Do not rerun unchanged behavioral evidence. |
+| Prompt 1 | Complete intent-source read-back, M0 checkpoint integrity, and existing local evidence inspection; no full suite |
+| Research Pass | Citation and source-identity verification, independent-search and counterpressure coverage, packet read-back, and tracked-mutation boundary |
+| Prompt 2 | Complete synthesis read-back, affected Markdown gate, directly affected documentation checks, and both diff checks |
+| Prompt 3 | Exact M0/H1 inventories and hashes, focused structural and relationship checks, skill validation, and both diff checks |
+| Prompt 4 | M0 viability first, then only registered H1 contribution arms; affected focused checks and one full suite only after final behavior-complete bytes when repository contracts changed |
+| Pruning Pass | Complete cut audit; for material cuts reuse V1 controls and run only affected P1 equivalence, invocation, and context arms |
+| Prompt 5 | Canonical and synthesis read-back, affected Markdown gate, affected focused proof, one full integration suite, install dry-run, synchronization, parity, and clean post-install dry-run |
+| Prompt 6 | Scoped final diff, affected Markdown gate, required current checks, both diff checks, intentional staging, commit, and explicitly authorized push |
+
+Behavioral claims follow `writing-great-skills/BEHAVIOR-EVALS.md`. Run at least
+five fresh M0 samples for a causally coherent hypothesis cluster. Run H1 only
+when the pre-registered defect or quality deficit appears. Extend sampling only
+for material variance, borderline effect, or protocol deviation; stop early
+for a critical regression. Structural and owner-matched claims do not require
+behavioral samples.
 
 ## Deploy Campaign: Orchestrate One Skill
 
-Runs the bounded units under one continuing user authorization.
+Runs one skill's bounded units under continuing user authorization.
 
 ```text
-Coordinate only one Deploy Campaign for the named skill. Invoking `Run Deploy
-Campaign on <skill>` explicitly authorizes bounded fresh-context delegation,
-one fresh campaign epoch containing Prompts 1 through 5, the Pruning Pass, and
-any admitted Conditional Interludes. This remains true when the skill completed
-an earlier campaign. It includes canonical promotion and managed installation
-but not Git delivery.
+Coordinate only one Deploy Campaign for the named skill. `Run Deploy Campaign
+on <skill>` authorizes bounded fresh-context delegation and one fresh epoch:
+Prompt 1, Research Pass, Prompts 2 through 4, Pruning Pass, and Prompt 5,
+including canonical promotion and managed installation but not Git delivery.
 
 Parse optional delivery wording once:
 
-- bare invocation: run Prompts 1 through 5 with the Pruning Pass between
-  Prompts 4 and 5, then stop with Git delivery pending when bounded artifacts
-  remain;
-- `and commit`: also authorize Prompt 6 to commit, without push; or
+- bare invocation: complete Prompt 5 and stop with Git delivery pending when
+  bounded artifacts remain;
+- `and commit`: also authorize Prompt 6 to commit without push; or
 - `and push`: also authorize Prompt 6 to commit and push.
 
 The root owns transitions, user interaction, verification, and the terminal
 decision. Track only skill, delivery mode, starting HEAD/worktree, campaign
-epoch, current unit, checkpoint and identities, pending decision, and stop
-reason. Do not create a controller ledger.
+epoch, current unit, M0 and research checkpoints, runtime identities, pending
+decision, and stop reason. Do not create a controller ledger.
 
 Dispatch one unit at a time. Start one direct child with `fork_turns="none"`
-and a self-contained brief: repository, skill, delivery mode, method path and
-unit, input and artifact pointers, allowed mutation paths, starting state,
-proof budget, and Return contract. It loads the shared sections plus its unit,
-executes only that unit, and stops. Serialize all writers; only the current
-unit owner may mutate the shared workspace.
+and a self-contained brief containing repository, skill, delivery mode, method
+path and unit, input and artifact pointers, allowed mutation paths, starting
+state, proof budget, and Return contract. It loads the shared sections plus its
+unit, executes only that unit, and stops. Serialize all writers.
 
 Nested delegation is evidence-only:
 
 - Prompt 1 and Research owners may use bounded fresh-context grandchildren for
-  independent source lanes.
+  independent read-only source lanes.
 - Prompt 4 and the Pruning Pass may use fresh-context evaluation grandchildren
   in capacity-aware waves under `BEHAVIOR-EVALS.md`; the unit owner fixes the
-  packet and rubric, inspects every output, and makes the judgment.
+  task, runtime, rubric, and identities, inspects every output, and judges.
 - Other grandchildren require a concrete independent read-only check.
 
 Give grandchildren factual briefs without parent conclusions or peer outputs.
 Source and check grandchildren are filesystem-read-only; evaluation
 grandchildren may write only assigned isolated or disposable outputs. None
 edits shared sources, decides adoption, interacts with the user, or spawns.
-Respect the active-slot budget.
 
-After every unit, verify its allowed status, complete Return, current HEAD and
-worktree, changed artifacts, hashes, and claimed proof by read-back. A summary
-alone is not evidence. Reject unauthorized scope, malformed packets, or
-unexplained drift.
+After every unit, verify its allowed status, Return, current HEAD/worktree,
+changed artifacts, hashes, and proof by read-back. A summary alone is not
+evidence. Reject unauthorized scope, malformed packets, or unexplained drift.
 
-Prior campaign artifacts never satisfy the current epoch's numbered-unit
-completion. They may be reused as inputs. Exact prior proof is reusable only
-when bytes, behavior or wording, task, protocol, configuration, tools,
-authority, evidence, runtime, rubric, and proof lane all match. Prompt 4 must
-recheck that identity and judgment; it reruns only missing, drifted,
-contaminated, newly claimed, or explicitly fresh evidence.
+Prior campaign artifacts never satisfy the current epoch's unit completion.
+Reuse exact prior proof only when the complete identity tuple matches. Recheck
+identity and judgment; rerun only missing, drifted, contaminated, newly
+claimed, or explicitly fresh evidence.
 
 Advance only through these transitions:
 
-- A campaign `ready-for-prompt-N` status is valid only when N is the immediate
-  numbered successor.
-- Start with Prompt 1. After a successful gate, dispatch Prompt 2 even if an
-  earlier campaign left exact later artifacts.
-- Successful Prompt 2 dispatches Prompt 3; successful Prompt 3 dispatches
-  Prompt 4. A campaign-mode unit reports that immediate successor rather than
-  skipping ahead.
-- `research-gap` and `prototype-gap` dispatch their exact fresh-context
-  Interlude; a closing result returns only to a fresh Prompt 1.
-- `behavior-decision-gap` stays root-held: run the exact
-  `$grill-with-docs` Interlude, ask one material question at a time, and retain
-  the campaign across the user's answers. A confirmed result returns to a
-  fresh Prompt 1. Surface an exact Prototype human-verdict question the same
-  way.
-- Prompt 4 `accepted` dispatches the Pruning Pass. A successful Pruning Pass
-  dispatches Prompt 5 with its exact final C1, including when no cut was
-  justified or C1 already equals canonical. Prompt 5 `complete` is the
-  campaign's successful terminal.
-- A no-control-failure or regression rejects only the affected C1 unit inside
-  Prompt 4. While viable B0 remains, unit-level C1 rejection cannot terminate
-  the campaign; Prompt 4 rederives C1 and continues. A legacy terminal
-  rejection may re-enter Prompt 4 only after explicit user authorization and
-  exact identity read-back.
-- Before returning a successful terminal, dispatch Prompt 6 only when the
-  initial delivery mode authorized it and bounded campaign artifacts remain
-  pending. Prompt 6 is always terminal.
-- `evidence-gap`, `blocked`, `needs-more-evidence`, or an Interlude with no
-  re-entry recommendation is terminal. A `none` recommendation starts nothing;
-  its owning decision determines success or failure.
+- Start with Prompt 1.
+- Prompt 1 `ready-for-research` dispatches the Research Pass.
+- Research `research-complete` dispatches Prompt 2.
+- Research `intent-reopen` dispatches a fresh Prompt 1 with only the new
+  authoritative evidence added to its blind input.
+- Prompt 2 `ready-for-prompt-3` dispatches Prompt 3; Prompt 3
+  `ready-for-prompt-4` dispatches Prompt 4.
+- `prototype-gap` dispatches the exact Prototype Interlude; a closing verdict
+  returns only to Prompt 2.
+- `behavior-decision-gap` stays root-held. Run the exact `$grill-with-docs`
+  Interlude one material question at a time. A minimum-contract decision
+  returns to Prompt 1; an H1-only decision returns to Prompt 2.
+- Prompt 4 `accepted` dispatches the Pruning Pass. The pass `complete`
+  dispatches Prompt 5 with exact P1. Prompt 5 `complete` is successful.
+- A missing M0 defect or quality deficit rejects only the affected H1 unit.
+  A viable M0 keeps Prompt 4 running; if none survive, V1 = M0.
+- `evidence-gap`, `blocked`, or `needs-more-evidence` is terminal. Inconclusive
+  removal risk preserves the current active runtime.
+- Before successful terminal Return, dispatch Prompt 6 only when initial
+  delivery wording authorized it and bounded artifacts remain pending.
 
-Within one campaign epoch, never dispatch the same unit twice against
-unchanged checkpoint, bytes, evidence, and user decision except the explicit
-Prompt 1 re-entry after an Interlude. A later top-level `Run Deploy Campaign`
-invocation creates a new epoch and runs every numbered unit plus the Pruning
-Pass again. Do not ask the user to authorize ordinary unit transitions. Ask
-only for an admitted intended-contract decision, an exact human verdict, or
-new external authority.
+Every fresh campaign runs every ordinary unit once. Repeat a unit only after an
+explicit Interlude return or a changed identity that its transition contract
+names. Do not ask the user to authorize ordinary transitions. Ask only for an
+admitted intended-contract decision, an exact human verdict, or new external
+authority.
 
-Give a concise update at each unit boundary. When awaiting the user, ask the
-exact question and say the campaign remains active; do not emit a terminal
-campaign result. At terminal Return, report:
+At terminal Return, report:
 
 Campaign:
 Skill:
 Terminal decision:
 Units completed:
-Canonical and installed identities:
+M0, H1, V1, P1, canonical, and installed identities:
 Evidence:
 Residual gaps:
 Git HEAD: <campaign start> -> <campaign end>
@@ -306,161 +288,152 @@ Use the Shared Run Contract and stop.
 Skill name: CHANGE_ME
 ```
 
-## Deploy Prompt 1: Establish The Minimum-Runtime Decision
+## Deploy Prompt 1: Freeze M0
 
-Universal read-only entry point.
+Universal read-only intent entry.
 
 ```text
-Perform only Deploy Prompt 1 for the named skill. Never start its recommended successor.
+Perform only Deploy Prompt 1 for the named skill. Never inspect research,
+upstream packages, or the target's current skill body, and never start a
+successor.
 
 Use $writing-great-skills in Audit mode.
 
-Re-entry: when an earlier source-first checkpoint is supplied, verify its Git HEAD, local intent authorities, upstream revisions and relevant file hashes, and research pointers before opening current runtime or synthesis. Reuse settled units when identities match except for the exact admitted interlude delta; apply only that delta and issue a successor checkpoint. Unexpected drift requires a new blind pass.
+Read local intent authorities: the user, domain decisions, relationship
+owners, caller contracts, required compatibility, and safety contracts. Read a
+complete caller package when it can alter the target contract. Do not open the
+target synthesis conclusions, historical evaluations, experimental candidates,
+promotion records, upstream skills, outside research, or current skill body.
 
-Blind intent and evidence pass: do not open the current canonical skill body, current synthesis conclusions, historical evaluations, experimental candidates, or promotion records until the source-first checkpoint is frozen.
+Settle the viability floor: outcome, invocation and exclusions, authority,
+caller and relationship obligations, safe failure Return, completion,
+irreversible order, compatibility, and safety. If one axis is materially
+fuzzy, return `behavior-decision-gap` with one Conditional Behavior Decision
+Interlude admission. Ask no agent-owned technique question.
 
-Intent pass: establish the viability floor only from local intent authorities.
-Read the applicable user, domain, relationship-owner, and caller-owned contract
-surfaces; read a complete caller package when context can alter the contract.
-Settle the outcome, invocation and exclusions, authority, caller and
-relationship obligations, safe failure Return, completion, irreversible order,
-and safety boundaries. Upstream packages, research, and the target's current
-implementation cannot settle local intent.
+Specify M0 from that settled floor. Include one semantic behavior unit per
+independently owned trigger, action, judgment, branch, gate, Return, or
+completion condition. Every unit names its local authority, cheapest neutral
+expression, entry and wrong-condition cases, failure Return, and proof. Use
+locally owned vocabulary when required; do not import source-derived methods or
+leading terms.
 
-When any minimum-viability axis is materially fuzzy, stop before source selection and return a Conditional Behavior Decision Interlude admission. Include the bounded intended-contract decision, unresolved axes, available authority and evidence, recommendation, decisive tradeoffs, and consequences. Do not ask about agent-owned mechanics.
+M0 is behavior-minimal, not word-count-minimal. Apply a clause-to-intent cut
+audit: remove any behavior that maps to neither the viability floor nor a
+required local contract. Define the complete M0 viability suite separately
+from any later improvement claim.
 
-Evidence pass: inspect all three checked-out upstreams as source candidates:
+Freeze one M0 checkpoint containing the intended contract, unit ledger,
+runtime-clause specification, viability suite, local source identities and
+hashes, limitations, research questions grouped by intended behavior, one
+authorized research-note path, and a content fingerprint.
 
-- Matt Pocock under `.tmp/mattpocock-skills`;
-- Superpowers under `.tmp/superpowers`; and
-- Ponytail under `.tmp/ponytail`.
+Re-entry verifies the checkpoint's HEAD, local authorities, identities, and
+fingerprint. Revisit only the exact decision delta; unexpected drift requires
+a fresh blind pass.
 
-Search ignored paths explicitly. For each upstream, record HEAD, worktree state, access depth, and freshness. Completely read each plausible equivalent package and any named exclusion or change record that can alter its meaning. A verified absence needs only the search evidence; unchanged exact source evidence may be reused through the checkpoint.
-
-Read the applicable rows of `docs/research/language/upper-bound-engineering-language.md`, their decision-relevant evidence pointers, and any independently discoverable skill-specific source packet. Preserve `direct`, `corroborated`, `synthesis`, `inference`, and `thin`. Upstream usage proves what a pack instructs, not professional correctness, local intent, or efficacy.
-
-Draft B0 from the intersection of the settled viability floor and credible source mechanics. Select only what is needed to realize the intended contract plus the cheapest required local compatibility. Merge equivalent language under one semantic owner. Retain a leading term only when it more precisely recruits an observable action, gate, Return, or completion condition; repetition across packs is not support.
-
-Freeze one source-first checkpoint before opening current. It contains the viability floor; settled B0 semantic units; each unit's intent obligation, source mechanic, conditions, limitations, and cheapest expression; source identities and hashes; at most one admitted unresolved row; known gaps; and a content fingerprint. Every settled B0 unit has exactly one or more of these bases:
-
-- settled intent realized through a source-supported mechanic;
-- a source-correct semantic substitution; or
-- independently required local compatibility.
-
-If source authority, meaning, conditions, or professional validity can change
-one unit, return a Conditional Research Interlude with the checkpoint, exact
-question, affected row, evidence boundary, authorized note path, finite stop,
-and consequence of no answer. If one agent-owned technical choice prevents
-executable B0 or C1 and a disposable runnable probe can decide it, return a
-Conditional Prototype Interlude with the checkpoint, frozen design question,
-verdict basis, authorized disposable boundary, affected row, and consequence.
-Behavioral wording or efficacy waits for exact D0/B0/C1 evaluation.
-
-Current reconciliation: only now completely read the target's current
-synthesis, canonical package, disclosed runtime surfaces, current caller
-implementations beyond the contract surfaces already inspected, relevant tests
-and evaluations, candidates, promotion records, and explicit gaps. Headings
-and excerpts are navigation only.
-
-Map current runtime clauses to semantic behavior units and classify each unit once as `B0`, `required compatibility`, `C1 hypothesis`, `replace`, `remove`, `disclose`, `owned elsewhere`, or `defer`. Split only when meaning, owner, or proof differs. Current presence creates neither intent, B0, nor protection.
-
-If reconciliation exposes a previously missed intent authority or mandatory
-compatibility, record its exact owner, invalidate the checkpoint, and return a
-`blocked` result with fresh Prompt 1 as the only recommendation and that new
-blind input. Never retrofit B0 after current or credit C1 for the omission.
-
-Discover C1 hypotheses from four lanes:
-
-- `current-retention`: current behavior absent from B0;
-- `pack-composition`: a concrete caller/callee workflow exposes a missing owner, action, gate, Return, or completion condition;
-- `source-mechanism`: credible evidence suggests a useful mechanic beyond minimum viability; or
-- `intent-counterexample`: a normal, edge, failure, inclusion, or exclusion
-  scenario exposes a useful beyond-minimum behavior under settled intent. If
-  it disproves minimum viability, reopen B0 instead.
-
-Symmetry, aesthetic completeness, frequency, and an interesting idea do not create a hypothesis. Classify prior proof as `exact-reusable`, `lane-limited`, `historical-admission-only`, `invalidated`, or `missing`, naming the exact identity and proof lane.
-
-Build one ledger with one row per semantic behavior unit:
-
-| Unit | Intent Or Source Support | Origin Or Current State | Prior Evidence | B0 Or C1 Basis | Owner | Cheapest Expression | Destination | Required Proof | Decision |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-
-B0 basis is `settled intent + source mechanic`, `semantic substitution`, or
-`required local compatibility`. C1 origin is one of the four discovery lanes;
-admission requires exact prior contribution evidence or a bounded trial with
-intended value, owner, and an exact expected B0 failure. A required local
-contract or minimum safety or authority boundary belongs in B0. Origin is not
-admission.
-
-Specify executable B0 and exact C1 = B0 plus admitted hypotheses. Every C1 unit records origin, intended value, owner, exposing evidence, expected B0 failure, cheapest expression, positive and wrong-condition cases, and proof. Mark every B0 steering unit without exact behavioral evidence `D0-required`; required contracts receive owner-matched proof unless efficacy is claimed.
-
-Record `runtime-no-change`, `pruning-only`, or `behavioral-candidate`; Prompt 3 later confirms unmaterialized identities. Challenge ambiguity, ownership, counterexamples, branch load, and the cut test.
-
-Apply the same bounded Research or Prototype admission to a C1 hypothesis when
-its source validity or agent-owned mechanic remains decision-changing.
-Preserve the checkpoint because minimum viability is unchanged.
-
-When adopting a C1 hypothesis changes the intended outcome, invocation, authority, Return, completion, exclusion, or relationship, return a Conditional Behavior Decision Interlude. Include its origin, affected contract axis, alternatives, local authority, recommendation, tradeoff, expected B0 failure, and consequences. Grill intent and ownership only; agent-owned technique goes to Prototype or evaluation.
-
-Gate the packet: local authorities settle intent; the checkpoint precedes current loading; every B0 unit joins an intent obligation to a source mechanic or required compatibility; every current unit and prior proof has one disposition; every C1 hypothesis has one origin, owner, expected failure, wrong-condition case, and proof; relationships have owners; gaps retain consequences; and campaign shape agrees with the identities.
-
-For a standalone invocation, recommend the earliest unmet unit only when
-earlier durable prerequisites are exact. Under a fresh Deploy Campaign,
-successful completion always returns `ready-for-prompt-2`; prior campaign
-artifacts remain classified evidence and cannot skip this epoch's synthesis
-unit.
-
-Return the intended contract, checkpoint, ledger, B0, C1, protected behavior, campaign shape, owners and relationships, proof outline including D0 decisions, rejected and deferred units, gaps, gate result, and one decision: `ready-for-prompt-2`, `ready-for-prompt-3`, `ready-for-prompt-4`, `ready-for-prompt-5`, `research-gap`, `prototype-gap`, `behavior-decision-gap`, `runtime-no-change`, `evidence-gap`, or `blocked`.
+Under a Deploy Campaign, successful completion returns only
+`ready-for-research`. A standalone run may also return `ready-for-research`;
+later artifacts cannot waive this checkpoint. Return the intended contract,
+M0 checkpoint, proof outline, research clusters, gaps, and exactly one of
+`ready-for-research`, `behavior-decision-gap`, `evidence-gap`, or `blocked`.
 
 Use the Shared Run Contract and stop.
 
 Skill name: CHANGE_ME
 ```
 
-## Conditional Research Interlude
+## Deploy Research Pass: Investigate The Intended Behavior
 
-Run only when Prompt 1 returns `research-gap` with a complete admission packet.
+Mandatory read-only evidence and discovery unit after M0 freezes. It may write
+only the Prompt 1-authorized research note.
 
 ```text
-Perform only the Conditional Research Interlude for the named skill and the exact Prompt 1 admission packet. Never edit synthesis or runtime and never start Deploy Prompt 1 afterward.
+Perform only the Deploy Research Pass for the named skill and exact M0
+checkpoint. Never alter M0, synthesis, runtime, relationships, evaluation,
+installation, or Git state, and never start a successor.
 
-Use $research for exactly the admitted source question and authorized note path.
-Apply the Shared Model source priority and favor original or primary evidence
-for factual claims. When the result is a concept or technique packet, apply
-`docs/synthesis/methods/source-distillation-flow.md` as its output standard.
-Record why sources were selected and preserve source meaning before
-application, claim labels, access depth, freshness, counterpressure,
-limitations, contradictions, rejected lanes, and the finite stop.
+Use $research for the bounded question: which methods, vocabulary, conditions,
+and alternatives best support this skill's settled intended behavior? Apply
+`docs/synthesis/methods/source-distillation-flow.md` when concept or technique
+distillation is needed. Keep one authorized note; use facets or bounded
+read-only source grandchildren for genuinely independent clusters.
 
-Use the smallest source set that settles the row under credible counterpressure;
-stop when another acclaimed or popular source cannot change its disposition.
-Do not expand into adjacent research, skill design, candidate wording,
-behavioral evaluation, synthesis edits, runtime edits, installation, or
-delivery. Preserve the source-first checkpoint fingerprint and identify only
-the affected ledger row. Return exactly `source-packet-complete`,
-`evidence-gap`, or `blocked`.
+First perform independent online discovery from the intended behavior without
+opening upstream skill packages, the current target skill body, its synthesis,
+or historical candidate conclusions. Search for the strongest applicable
+method, credible alternatives, falsifying evidence, conditions, failure modes,
+and professional counterpressure.
 
-Recommend Deploy Prompt 1 only when the returned packet can now change the admitted ledger decision. Otherwise recommend `none` and name the unresolved condition.
+Only after recording that blind search, inspect:
+
+- Matt Pocock under `.tmp/mattpocock-skills`;
+- Superpowers under `.tmp/superpowers`;
+- Ponytail under `.tmp/ponytail`;
+- the complete current canonical target package; and
+- applicable local language packets as historical source intake.
+
+For every upstream, record revision, worktree state, access depth, files
+inspected, and limits. Attribute only observed behavior to the pack. Then run
+targeted independent online verification for any newly observed mechanic that
+could affect H1. Search alternatives and counterevidence, not merely
+corroboration. Upstream repetition proves shared pack usage only.
+
+For practitioner evidence, prefer identifiable inspected material. Use an
+actual practitioner conversation only when published evidence leaves one
+material operational condition unresolved; record speaker authority, context,
+date, and limits. Never fabricate or generalize a conversation.
+
+Classify source claims with their original labels and each proposed method as
+`independently-supported`, `contested`, `pack-specific`, or `unverified`.
+Record applicability, freshness, alternative methods, rejected lanes, and the
+consequence for H1. Pack-specific or unverified behavior may be proposed only
+as a clearly labeled local experiment when no decisive contradiction exists.
+
+Use decision saturation, not a source quota. Stop when every load-bearing
+claim is classified, the strongest applicable owners and counterposition were
+inspected or their access failure recorded, and another credible source is
+unlikely to change the method, conditions, classification, or hypothesis.
+Reuse an existing packet only when claim, conditions, source identity,
+freshness, and intended application match; still verify applicability.
+
+If evidence shows M0 omitted behavior essential to its settled intent, do not
+repair it here. Return `intent-reopen` with the exact affected unit, evidence,
+and consequence. Otherwise return one research packet containing independent
+discovery, pack and current observations, targeted verification, method
+classifications, intent-adjacent candidates, conflicts, gaps, and stopping
+basis.
+
+Return exactly `research-complete`, `intent-reopen`, `evidence-gap`, or
+`blocked`. `research-complete` recommends Prompt 2; `intent-reopen` recommends
+Prompt 1. An ordinary unverified idea is a disclosed disposition, not
+automatically an evidence gap.
 
 Use the Shared Run Contract and stop.
 
 Skill name: CHANGE_ME
-Research admission: CHANGE_ME
+M0 checkpoint: CHANGE_ME
 ```
 
 ## Conditional Prototype Interlude
 
-Run only when Prompt 1 returns `prototype-gap` with one complete admission
-packet.
+Run only when Prompt 2 returns `prototype-gap`.
 
 ```text
-Perform only the Conditional Prototype Interlude for the named skill and exact Prompt 1 admission packet. Never edit synthesis or runtime, evaluate skill wording, or start Deploy Prompt 1 afterward.
+Perform only the Conditional Prototype Interlude for the named skill and exact
+Prompt 2 admission packet. Never alter M0, edit synthesis or runtime, evaluate
+skill wording, or start a successor.
 
-Use $prototype for the one frozen agent-owned design question. Prompt 1 remains the decision owner and result recipient. Keep the intended contract, source conditions, representative cases, verdict basis, and authorized disposable boundary fixed. Build only the smallest runnable probe needed to distinguish the candidate mechanics; production correctness and behavioral steering remain untested.
+Use $prototype for one frozen agent-owned technical choice blocking executable
+H1. Prompt 2 owns the decision and result. Keep intended contract, M0,
+research conditions, representative cases, verdict basis, and disposable
+boundary fixed. Build only the smallest runnable probe that distinguishes the
+candidate mechanics. Production correctness and behavioral steering remain
+untested.
 
-Preserve the source-first checkpoint fingerprint and identify only the affected ledger row. Return the intact Prototype result plus exactly one wrapper status: `prototype-complete`, `awaiting-human-verdict`, `evidence-gap`, or `blocked`.
-
-Recommend Deploy Prompt 1 only when the verdict can close the admitted row. Otherwise recommend `none` and name the re-entry condition.
+Return the intact Prototype result plus exactly `prototype-complete`,
+`awaiting-human-verdict`, `evidence-gap`, or `blocked`. Recommend Prompt 2 only
+when the result can close the admitted choice.
 
 Use the Shared Run Contract and stop.
 
@@ -470,21 +443,28 @@ Prototype admission: CHANGE_ME
 
 ## Conditional Behavior Decision Interlude
 
-Run only when Prompt 1 returns `behavior-decision-gap` with one complete
-minimum-viability or C1 contract admission packet.
+Run only for one admitted M0 or H1 contract decision.
 
 ```text
-Perform only the Conditional Behavior Decision Interlude for the named skill and exact Prompt 1 behavior packet. Never edit synthesis or runtime, run behavioral evaluation, or start Deploy Prompt 1 afterward.
+Perform only the Conditional Behavior Decision Interlude for the named skill
+and exact admission packet. Never edit synthesis or runtime, run behavioral
+evaluation, or start a successor.
 
-Use $grill-with-docs for exactly one bounded intended-contract decision. It may clarify minimum viability or judge a C1 hypothesis originating from current runtime, pack composition, credible sources, or an intent counterexample. Before questioning, state context action `render only`, ADR action `offer only`, the possibility that a domain collision may reopen or block the decision, and that confirmation starts no downstream work. Ask one material question at a time with one recommendation and decisive tradeoff. Relay every settled answer through Domain Modeling and return the intact Grilling packet plus current cumulative Domain Delta.
+Use $grill-with-docs for exactly one bounded intended-contract decision. Before
+questioning, state context action `render only`, ADR action `offer only`, the
+possibility that a domain collision may reopen or block the decision, and that
+confirmation starts no downstream work. Ask one material question at a time
+with one recommendation and decisive tradeoff. Relay every settled answer
+through Domain Modeling.
 
-Settle only outcome, invocation or exclusion, authority, Return, completion, relationship, ownership, meaning, or boundary. Do not decide agent-owned technique, candidate wording, or efficacy. A confirmed minimum-viability answer becomes local intent for a new blind pass. A confirmed beyond-minimum behavior remains provisional C1 until Prompt 4 proof.
+Settle only outcome, invocation or exclusion, authority, Return, completion,
+relationship, ownership, meaning, or boundary. Do not choose agent technique,
+candidate wording, or efficacy. A minimum-viability answer returns to Prompt 1.
+An H1-only contract answer preserves M0 and research identities and returns to
+Prompt 2.
 
-When a checkpoint exists, preserve it when the answer affects only C1 and
-invalidate it when minimum viability changes. Return exactly `Confirmed`,
-`Evidence gap`, or `Blocked`. Recommend Deploy Prompt 1 only when the result
-can close the admitted decision; otherwise recommend `none` and name the
-re-entry condition.
+Return exactly `Confirmed`, `Evidence gap`, or `Blocked`, the intact Grilling
+packet, current cumulative Domain Delta, and the owning resume target.
 
 Use the Shared Run Contract and stop.
 
@@ -492,317 +472,319 @@ Skill name: CHANGE_ME
 Behavior decision admission: CHANGE_ME
 ```
 
-## Deploy Prompt 2: Finalize Decision-Complete Synthesis
+## Deploy Prompt 2: Finalize H1 Synthesis
 
-Creates or reconciles the selected skill's synthesis in place.
+Reconciles the selected skill's synthesis around exact M0 and research
+decisions.
 
 ```text
-Perform only Deploy Prompt 2 for the named skill. Never edit runtime skills, create an experimental candidate, run behavioral evaluations, install, or start the recommended successor.
+Perform only Deploy Prompt 2 for the named skill. Never edit runtime skills,
+create an experimental candidate, evaluate behavior, install, or start a
+successor.
 
-Use $writing-great-skills in Author mode. Require a gated Prompt 1 packet with
-its intended contract, source-first checkpoint, ledger, and every admitted
-interlude result. Match checkpoint fingerprints wherever one existed; a
-minimum-viability decision requires the successor checkpoint created by
-Prompt 1. Create or reconcile the whole-skill synthesis in place. Preserve
-decision-changing provenance, material alternatives, rejection reasons,
-ownership, and evidence limits; collapse duplicate or superseded
-representations.
+Use $writing-great-skills in Author mode. Require an intact M0 checkpoint and
+`research-complete` packet with matching intended contract and identities.
+Now completely read the target synthesis, canonical package, disclosed runtime
+surfaces, callers, relationships, relevant tests and evaluations, candidates,
+promotion records, and explicit gaps.
 
-Make these decisions discoverable without requiring exact headings:
+Map every current clause and research candidate to one semantic behavior unit.
+Classify current behavior as `M0-equivalent`, `required compatibility`,
+`H1 hypothesis`, `replace`, `remove`, `disclose`, `owned elsewhere`, `defer`,
+or `unresolved removal risk`. Current presence creates neither intent nor
+protection.
 
-- status, outcome, and viability floor;
-- checkpoint fingerprint, source identities, claim labels, and limits;
-- one semantic-unit ledger joining each B0 unit to its intended-contract
-  obligation and source mechanic or required compatibility, and recording
-  current, research, Prototype, protected-behavior, and C1 dispositions;
-- every C1 hypothesis's origin, owner, expected B0 failure, cheapest
-  expression, wrong-condition case, proof, destination, and decision;
-- executable B0, exact C1 delta, campaign identity, relationships, and affected
-  runtime surfaces;
-- proof matrix separating B0 viability, conditional D0 no-op comparison, C1
-  contribution, invocation, protected contracts, pruning, and deterministic
-  proof;
-- candidate lifecycle state and residual gaps.
+If current inspection or research exposes a missed minimum authority,
+compatibility, safety, or relationship obligation, invalidate M0 and return
+`blocked` with Prompt 1 as the only recommendation. H1 cannot make M0 viable.
 
-Keep facts, synthesis, and inference separate. Research can establish source
-meaning, a grill can settle intent, and a Prototype can choose one runnable
-technical design; none proves skill-steering effect. Keep evaluation,
-installation, worker, and Git procedure with their owners.
+Discover H1 hypotheses through these lanes:
 
-Keep the synthesis decision-complete, not chronological. Raw outputs and run history belong in validation.
+- `professional-method`: independently supported method or vocabulary;
+- `current-observed`: useful current behavior absent from M0;
+- `pack-observed`: upstream-observed behavior considered under its explicit
+  method-evidence classification;
+- `pack-composition`: a concrete caller/callee scenario exposes useful
+  beyond-minimum behavior; or
+- `intent-adjacent`: a new action, judgment, gate, sequence, completion
+  behavior, or leading term that may solve the same problem better.
 
-Dry-read it as Prompt 3 input. Block unless the checkpoint is intact; every B0
-unit maps a settled intended-contract obligation to a credible source mechanic
-or required compatibility; every semantic unit has one basis, owner,
-disposition, destination, and proof; B0 is implementable without current-only
-behavior; each C1 hypothesis has one origin and names an expected failure and
-wrong-condition case; D0 decisions are explicit; foreign behavior points to
-its owner; Prototype evidence is construction evidence only; and campaign
-identity is coherent.
+Pack observation, frequency, aesthetics, and source prestige are discovery,
+not admission. A pack-specific, unverified, current, composition, or novel
+hypothesis may proceed as `locally-justified experimental` only when broader
+research found no decisive contradiction.
 
-Preserve exact qualifying candidate and evidence hashes. Never manufacture historical B0 or proof.
+For each H1 unit choose one contribution mode:
 
-Under a fresh Deploy Campaign, successful completion always returns
-`ready-for-prompt-3`; exact prior artifacts remain inputs to the current
-epoch's construction unit. For a standalone invocation, if current = B0 = C1
-and all B0 proof is exact, return `runtime-no-change`. If those bytes match but
-B0 viability or D0 evidence is missing, return `ready-for-prompt-3` for an
-evidence-only route with no runtime delta. Other unmaterialized identities also
-return `ready-for-prompt-3`. Skip forward only outside a campaign and only when
-every earlier durable gate is exact.
+- `defect-correction`: M0 is expected to fail required behavior in a named
+  representative condition; or
+- `quality-lift`: M0 remains viable but is expected to score meaningfully
+  lower on one pre-registered skill-specific dimension.
 
-Return `ready-for-prompt-3`, `ready-for-prompt-4`, `ready-for-prompt-5`, `runtime-no-change`, `evidence-gap`, or `blocked`, plus the campaign shape, final B0/C1 decision, prior-evidence dispositions, and every preserved residual.
+Every H1 unit records origin, method-evidence classification, intended value,
+owner, expected M0 weakness, contribution mode, cheapest expression, positive
+and wrong-condition cases, fixed rubric, proof, and residual professional or
+transfer claim limits. A hypothesis may add or substitute behavior while
+preserving the intended contract.
+
+When a hypothesis changes outcome, invocation, authority, Return, completion,
+exclusion, or relationship, return `behavior-decision-gap`. When one
+agent-owned technical construction blocks executable H1, return
+`prototype-gap`. Do not use either Interlude to prove efficacy.
+
+Build one decision ledger:
+
+| Unit | M0 Obligation Or H1 Origin | Method Evidence | Current State | Owner | Contribution Mode And Expected M0 Weakness | Cheapest Expression | Wrong Condition | Proof | Decision |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+Make the synthesis decision-complete: intended contract, M0 checkpoint and
+clause map, research registry and classifications, current dispositions, H1
+transformations, protected behavior, relationships, affected surfaces, proof
+matrix, rejected and deferred alternatives, lifecycle state, and residual
+gaps. Preserve facts, synthesis, inference, and behavioral proof separately.
+
+Dry-read the synthesis as Prompt 3 input. Block unless M0 is implementable
+without research or current-only behavior; every current unit has a safe
+disposition; every H1 unit has one origin, evidence classification, owner,
+contribution mode, expected weakness, wrong-condition case, and proof; and
+unresolved removal risk cannot reach promotion.
+
+Under a Deploy Campaign, successful completion returns only
+`ready-for-prompt-3`. A standalone `plan-only` request may stop here. Return
+exactly `ready-for-prompt-3`, `prototype-gap`, `behavior-decision-gap`,
+`evidence-gap`, or `blocked`, plus campaign shape, M0/H1 decision, prior
+evidence dispositions, and residuals.
 
 Use the Shared Run Contract and stop.
 
 Skill name: CHANGE_ME
 ```
 
-## Deploy Prompt 3: Build B0 And C1
+## Deploy Prompt 3: Build M0 And H1
 
-Builds the executable minimum control and experimental candidate.
+Builds the exact minimum control and hypothesis runtime.
 
 ```text
-Perform only Deploy Prompt 3 for the named skill. Never run behavioral evaluation, promote, install, deliver through Git, or start the recommended successor.
+Perform only Deploy Prompt 3 for the named skill. Never run behavioral
+evaluation, promote, install, deliver through Git, or start a successor.
 
-Use $writing-great-skills in Author mode. Require a synthesis that passed Prompt 2 readiness. For a new unscaffolded skill, use the bundled $skill-creator only for package structure and metadata mechanics; semantic authoring remains here.
+Use $writing-great-skills in Author mode. Require Prompt 2-ready synthesis,
+intact M0 and research fingerprints, and closed Interlude decisions. For a new
+unscaffolded skill, use $skill-creator only for package structure and metadata.
 
-Verify the source-first checkpoint and source identities; reread a source only when its identity drifted or the synthesis does not preserve enough exact meaning to author its unit. Inventory the complete current package and every B0/C1-owned surface. Preserve unrelated work.
+Materialize exact M0 solely from the frozen M0 checkpoint. Do not import
+research language, current-only behavior, H1 expected weaknesses, or evaluator
+conclusions. Map every instruction-bearing passage to one M0 unit. Freeze
+package inventory, bytes, hash, clause map, fingerprint, and limitations.
+Block to Prompt 1 if the specification cannot produce one unambiguous runtime.
 
-Under a fresh Deploy Campaign, reperform the construction audit and freeze
-current-epoch B0/C1 identities even when an earlier candidate is byte-identical.
-Reuse identical package bytes rather than rewriting them, but do not treat the
-earlier Prompt 3 completion as this epoch's completion.
+Construct exact H1 from M0 plus only admitted additions and substitutions.
+Keep common behavior inline, disclose irreducible branches behind
+trigger-bearing pointers, and point to foreign owners. Map each H1 passage to
+its unit, origin, method-evidence classification, and contribution mode. A
+Prototype verdict may select construction but is not behavioral evidence.
 
-Construct B0 from the frozen intersection of the intended contract and credible
-source mechanics, not by pruning canonical or experimental bytes. Keep the
-viability floor complete and exclude current-only behavior, C1 language,
-expected failures, and evaluator conclusions. Map every B0 unit to its local
-intent obligation and source mechanic or required compatibility. Map each
-instruction-bearing runtime passage to one unit key; many passages may share a
-key, and text needs a separate classification only when its behavior, owner,
-or proof differs. Freeze exact package bytes, inventory, hash, checkpoint
-fingerprint, unit map, and limitations.
+Store M0 once as the immutable control and H1 once as the candidate. When
+M0 = H1, use one corpus and identity. Keep current canonical separate as
+comparison evidence.
 
-Construct exact C1 from B0 plus only admitted hypotheses from
-`current-retention`, `pack-composition`, `source-mechanism`, and
-`intent-counterexample`. Keep common behavior inline, disclose irreducible
-branches behind trigger-bearing pointers, and point to foreign owners. Mark
-trial units provisional with their expected B0 failure. A Prototype verdict
-may select a technical expression; it is not behavioral-effect evidence.
+Pre-register:
 
-When B0 = C1, store one corpus and one hash. Otherwise record the exact
-unit-level transformation. Keep current canonical separate as comparison
-evidence. Do not manufacture a pre-prune fixture here: exact Prompt 4-accepted
-C1 becomes that control only if the later Pruning Pass finds a material cut.
+- the complete M0 viability suite for outcome, invocation, authority,
+  contracts, safe failure, completion, order, compatibility, and safety;
+- each H1 defect-correction or quality-lift control with fixed task, model,
+  host, reasoning configuration, tools, authority, evidence, runtime, rubric,
+  wrong-condition case, and expected M0 weakness; and
+- protected-behavior, relationship, invocation, context, and machine proof.
 
-Pre-register the B0 minimum-runtime suite for its outcome, invocation, authority, required contracts, safe failure, completion, order, and safety. Keep these controls separate from C1's expected B0 failures.
+Cluster hypotheses only when one fixture and rubric isolate their joint
+effect. Do not create a separate no-guidance control when M0 already supplies
+the causal comparison.
 
-For `D0-required` units, freeze the smallest causally coherent no-guidance controls with task, context, tools, authority, evidence, and invocation held fixed. Cluster units only when one fixture and rubric isolate their joint effect. Reuse the matching B0 viability arm as the candidate arm. Do not create D0 for owner-required contracts unless efficacy is also claimed.
+Write one candidate record containing intended contract, M0 checkpoint,
+research and Interlude dispositions, semantic ledger, runtime maps, exact
+identities, proof plan, Pruning Pass boundary, affected relationships, and
+residual load. Update candidate-specific structural proof only for
+machine-consumed contracts; do not publish relationship changes before
+promotion.
 
-Write one candidate record containing the intended contract, checkpoint,
-interlude dispositions, unit ledger and runtime map, exact package identities,
-B0 suite, D0 controls, C1 proof plan, Pruning Pass boundary, affected
-relationships, and residual load. Store each corpus once.
-
-Update candidate-specific structural proof only for machine-consumed contracts. Record proposed invocation, caller, ownership, and Return deltas in synthesis and candidate evidence; do not change the current relationship index before promotion. Read back every created or changed surface and run proportionate mechanical and candidate-relationship checks.
-
-Return `ready-for-prompt-4`, `evidence-gap`, or `blocked`. B0 must be an executable control and C1 must be exact; a conceptual baseline or unclassified candidate cannot pass.
+Return `ready-for-prompt-4`, `evidence-gap`, or `blocked`. M0 must be exact and
+executable; H1 must be exact and fully classified.
 
 Use the Shared Run Contract and stop.
 
 Skill name: CHANGE_ME
 ```
 
-## Deploy Prompt 4: Audit And Prove Behavior
+## Deploy Prompt 4: Prove M0 And H1
 
-Establishes B0 viability, C1 contribution, and protected behavior for exact
-candidate bytes. Pruning is a later non-regression unit.
+Establishes M0 viability, H1 contribution, and exact V1. Pruning is separate.
 
 ```text
-Perform only Deploy Prompt 4 for the named skill. Never prune, promote, install, deliver through Git, or start the recommended successor.
+Perform only Deploy Prompt 4 for the named skill. Never prune, promote,
+install, deliver through Git, or start a successor.
 
-Use $writing-great-skills in Author mode. Verify the complete B0 and C1
-packages, hashes, inventories, intended contract, B0 provenance, synthesis
-decisions, protected behavior set, all four C1 hypothesis origins, semantic
-ledger, interlude dispositions, and existing evidence. Refresh a source or
-control only when its identity, contract, or configuration drifted.
+Use $writing-great-skills in Author mode. Verify complete M0/H1 packages,
+hashes, inventories, checkpoints, synthesis, research classifications,
+semantic ledger, protected behavior, relationships, fixed evaluation
+configuration, and existing evidence.
 
-Audit B0 first. Reject or rebuild a unit that does not realize one settled
-intended-contract obligation through a credible source mechanic or required
-compatibility, copies current, weakens a source condition, or uses a heavier
-local expression than needed. Reputation and popularity never substitute for
-unit-level support.
+Audit M0 first. Every M0 unit must realize one settled local obligation using
+the cheapest neutral behavior consistent with that obligation. Reject current
+or research leakage and any beyond-minimum behavior. Run the complete M0
+viability suite before H1. A failing M0 is a baseline defect: rebuild only
+within the frozen specification, refreeze affected identities, and rerun
+affected M0 proof. If repair requires new intent, authority, or evidence,
+return `blocked` to Prompt 1. H1 never receives credit for making M0 viable.
 
-Run each required D0 control before its matching B0 arm, then complete the B0 minimum-runtime suite. D0 and B0 follow `BEHAVIOR-EVALS.md` when the claim is behavioral. If D0 matches B0 without a meaningful variance benefit, remove or demote the unproven steering unless an independent contract requires it, refreeze B0 and derived C1, and rerun only affected B0 proof. If B0 fails the viability floor, treat that as a baseline defect, not useful red evidence. Rebuild within settled units, rederive C1 and hashes, and invalidate affected proof; if repair requires new intent, source, or design authority, return `blocked` to Prompt 1. C1 never receives credit for making B0 viable.
+Only after M0 passes, resolve H1 by causally coherent cluster:
 
-Only after B0 passes, challenge each C1 unit against its origin, basis, owner,
-cheaper expression, branch load, aggregate cost, and expected failure. Intent
-confirmation and Prototype construction evidence never substitute for
-behavioral contribution proof. If the challenge would reverse a material user
-decision rather than enforce it, return `blocked` and recommend a fresh
-Prompt 1 decision pass.
+1. Run at least five fresh exact M0 samples under the pre-registered task and
+   rubric.
+2. For `defect-correction`, require the registered failure. For
+   `quality-lift`, require a meaningful pre-registered deficit while M0 remains
+   viable.
+3. When neither appears, record `rejected-no-control-deficit`, do not run H1
+   for that cluster, and remove its units.
+4. When the deficit appears, run at least five fresh H1 samples. Accept only
+   repeatable material improvement with acceptably bounded variance and no new
+   critical or protected-behavior regression.
+5. Record `rejected-regression` for failed contribution or regression.
+   Borderline effect, material variance, or unavailable decision-bearing
+   telemetry returns `needs-more-evidence`; do not presume adoption.
+6. After rejection, rederive H1 from M0 plus surviving transformations,
+   refreeze its identity, and rerun only affected integrated proof.
 
-Resolve C1 one unit at a time:
-
-- Run the exact B0 control first. When B0 does not exhibit the registered
-  failure, record `rejected-no-control-failure`, do not run that C1 arm, and
-  remove the unit from C1.
-- When a C1 arm regresses protected behavior or fails its contribution rubric,
-  record `rejected-regression` and remove that unit from C1.
-- After each rejection, rederive exact C1 as B0 plus surviving units, refreeze
-  its hash, preserve unchanged evidence, and run only affected integrated
-  proof. Do not rerun identical B0 arms.
-- If no C1 units survive, set C1 = B0 and reclassify the campaign as
-  `pruning-only` when current differs or `runtime-no-change` when it does not.
-  Viable B0 remains the behavior-complete candidate.
-
-These are unit dispositions, not terminal Prompt 4 decisions. If a rejected
-unit is asserted to be required by the intended contract, it was misclassified
-as C1; return `blocked` to a fresh Prompt 1 rather than retaining it without
-proof.
-
-Repair only genuine omissions relative to B0, surviving C1 deltas, and the
-protected behavior set. Every repair creates new C1 bytes and invalidates only
-behaviorally affected candidate evidence.
+If no H1 units survive, set V1 = M0. Otherwise V1 is exact M0 transformed by
+accepted H1 units. Unit rejection never terminates a campaign while viable M0
+and safe current-behavior dispositions remain.
 
 Use separate proof lanes:
 
-1. **B0 intent and source fidelity:** exact unit-to-intent and source-mechanic
-   or compatibility trace, including conditions and limits.
-2. **B0 effect and viability:** conditional D0 comparison plus the complete minimum-runtime suite.
-3. **C1 contribution:** for current-retention, pack-composition,
-   source-mechanism, and intent-counterexample hypotheses, run B0 first and run
-   C1 only when the expected failure appears. Test pack composition against the
-   exact caller/callee scenario.
-4. **Protected behavior:** prove only independently supported and admitted behavior.
-5. **Invocation, context, machine, and relationships:** test affected routing
-   and context loading; use deterministic checks and ownership traces for
-   machine and relationship contracts.
+1. **M0 intent fidelity and viability:** exact local obligation trace and
+   complete minimum-runtime suite.
+2. **Method evidence:** independent support, pack/current observation, limits,
+   and professional claim boundary; admission only.
+3. **H1 contribution:** defect correction or quality lift against exact M0.
+4. **Protected behavior:** M0 plus accepted H1 and required contracts.
+5. **Invocation, context, machine, and relationships:** behavioral proof when
+   wording claims effect; deterministic checks and ownership traces otherwise.
 
-Use read-back and deterministic checks for exact bytes and machine contracts, relationship traces for ownership, and the current `BEHAVIOR-EVALS.md` contract for behavioral claims. Test positive, failure-revealing, and wrong-condition pressure only to the breadth claimed. A required caller contract or non-intuitive safety boundary may be admitted through contract-matched deterministic or relationship proof; do not invent a red behavioral claim merely to justify it.
+Follow `BEHAVIOR-EVALS.md`. Keep candidate language and conclusions out of M0
+contexts. Alternate or randomize arms when practical. Extend samples only for
+material variance or borderline effect and stop early for a critical
+regression. Reuse exact arms only when the complete identity tuple matches.
+Inspect every output and record per-sample results, aggregate, variance, worst
+case, critical failures, deviations, model, host, tools, configuration,
+unavailable telemetry, and residual transfer gaps.
 
-Minimize cost without weakening attribution. Cluster units only when one fixed
-fixture and rubric genuinely exercise them. Reuse exact unchanged arms when
-bytes, behavior or wording, task, protocol, configuration, tools, authority,
-evidence, runtime, rubric, and proof lane match. Recheck that identity and
-judgment, but do not rerun identical samples. Preserve controls after repairs
-and rerun only affected candidate arms. Keep candidate language and
-conclusions out of neutral contexts.
+Current behavior has no protection by existence. If removing a current-only
+unit carries unresolved material safety, authority, compatibility, or
+relationship risk, return `needs-more-evidence` and preserve the active
+runtime. If all H1 units are cleanly rejected and M0 is viable, V1 = M0 may
+continue.
 
-Inspect every result. Record per-sample outcomes, variance, worst result, critical failures, deviations, unavailable telemetry, process cost when decision-relevant, raw-artifact pointers, and residual gaps. A screening result supports only its tested tasks, model, harness, and claim.
-
-Refresh the synthesis and candidate-owned validation surfaces with the exact learned decisions and evidence dispositions. Record the accepted relationship delta without publishing it before Prompt 5. Keep raw evaluation and campaign ledgers in validation.
-
-Return `accepted`, `needs-more-evidence`, or `blocked`, plus every rejected C1
-unit disposition. `accepted` names the exact behavior-complete C1 hash and
-recommends the Deploy Pruning Pass.
+Refresh synthesis and validation with exact dispositions and V1 identity.
+Record but do not publish relationship changes. Return `accepted`,
+`needs-more-evidence`, or `blocked`. `accepted` names exact V1 and recommends
+the Pruning Pass.
 
 Use the Shared Run Contract and stop.
 
 Skill name: CHANGE_ME
 ```
 
-## Deploy Pruning Pass: Minimize Accepted Candidate
+## Deploy Pruning Pass: Derive P1
 
-Tests whether Prompt 4-accepted behavior survives a cheaper runtime expression.
+Tests whether V1 behavior survives a cheaper runtime expression.
 
 ```text
-Perform only the Deploy Pruning Pass for the named skill. Never add behavior, promote, install, deliver through Git, or start the recommended successor.
+Perform only the Deploy Pruning Pass for the named skill. Never add behavior,
+promote, install, deliver through Git, or start a successor.
 
-Use $writing-great-skills in Author mode. Require the exact Prompt 4 acceptance
-record, behavior-complete C1 package and hash, protected behavior set, and
-registered proof. Drift returns `blocked` with Prompt 4 as the only
-recommendation.
+Use $writing-great-skills in Author mode. Require exact Prompt 4 acceptance,
+V1 package and hash, protected behavior, and registered proof. Drift returns
+`blocked` with Prompt 4 as the only recommendation.
 
-Audit the complete runtime-facing candidate package. Classify every
-instruction-bearing unit and distinct passage once as `keep`, `collapse`,
-`disclose`, or `delete`. Target duplication, no-ops, sediment, scattered
-meaning, inline branch-only reference, negative restatements, copied foreign
-procedure, and unused candidate-owned support. Protect admitted behavior,
-non-intuitive safety and authority, irreversible order, proof, safe failure
+Audit the complete runtime-facing package. Classify each instruction-bearing
+passage as `keep`, `collapse`, `disclose`, or `delete`. Target duplication,
+no-ops, sediment, scattered meaning, inline branch-only reference, negative
+restatements, copied foreign procedure, and unused support. Protect M0,
+accepted H1, safety and authority, irreversible order, proof, safe failure
 Return, completion, invocation, and relationship triggers.
 
-Ask of every proposed cut: "If I cut this, what behavior may change?" A valid
-cut must reduce at least one named load: always-loaded description, common-path
-instructions, duplicated semantic ownership, branch load, or unused package
-surface. Word count is diagnostic, never the objective.
+For every proposed cut, name the affected semantic units, expected unchanged
+behavior, and reduced load. Word count is diagnostic, never the objective.
 
-If no material cut exists, keep C1 byte-identical, create no pre-prune fixture
-or behavioral wave, record `pruning-not-needed`, and recommend Prompt 5.
+If no material cut exists, set P1 = V1 byte-for-byte, create no new behavioral
+wave, record `pruning-not-needed`, and recommend Prompt 5.
 
 For material cuts:
 
-1. Freeze Prompt 4-accepted C1 once as the behavior-complete pre-prune control.
-2. Build one final C1, group proposed cuts by affected proof lane, and do not
-   search combinations.
-3. Reuse a Prompt 4 control arm only when bytes, task, protocol, configuration,
-   tools, authority, evidence, runtime, rubric, and proof lane match. Run only
-   the affected final-C1 arms. Description or pointer cuts also require
-   invocation and context-loading proof.
-4. Treat pruning as non-regression, not contribution: the pre-prune control
-   need not fail and no-control-failure rejection does not apply.
-5. Revert any regressing, ambiguous, or unproved cut group. Do not weaken the
-   rubric or iterate micro-cuts. Prove the surviving final bytes once.
+1. Freeze V1 once as the immutable behavior-complete control.
+2. Build one P1 and group cuts by affected proof lane; do not search
+   combinations.
+3. Reuse exact Prompt 4 V1 arms and run only affected P1 behavior,
+   M0-viability, invocation, context, machine, or relationship proof.
+4. Treat pruning as non-regression: V1 need not fail.
+5. Revert every regressing, ambiguous, or unproved cut group. Do not weaken
+   the rubric or iterate micro-cuts. Prove surviving P1 once.
 
-Use deterministic or relationship proof for nonbehavioral machine and owner
-changes; claim no behavioral equivalence from structural proof. Accept a cut
-only when the registered affected behaviors show no critical or meaningful
-regression and the named load is lower. Scope equivalence to the exact cases,
-runtime, and sample size.
+Accept a cut only when affected behavior has no critical or meaningful
+regression and the named load is lower. Structural proof cannot establish
+behavioral equivalence. If all cuts fail, set P1 = V1 and continue rather than
+blocking promotion.
 
-Update the synthesis and candidate record with the cut ledger, pre-prune and
-final hashes, load delta, reused and fresh proof, rejected cuts, and residual
-gaps. Keep raw outputs in validation.
-
-Return `complete`, `evidence-gap`, or `blocked`, plus pruning disposition
-`pruned`, `pruning-not-needed`, or `cuts-rejected` and the exact final C1 hash.
-`complete` always recommends Prompt 5; failed cuts fall back to the proved
-pre-prune candidate rather than blocking promotion.
+Update synthesis and candidate evidence with cut ledger, V1/P1 hashes, load
+delta, reused and fresh proof, rejected cuts, and residual gaps. Return
+`complete`, `evidence-gap`, or `blocked`, plus `pruned`,
+`pruning-not-needed`, or `cuts-rejected` and exact P1. `complete` recommends
+Prompt 5.
 
 Use the Shared Run Contract and stop.
 
 Skill name: CHANGE_ME
 ```
 
-## Deploy Prompt 5: Promote And Install
+## Deploy Prompt 5: Promote And Install P1
 
-Promotes only the accepted exact candidate, then performs the separately owned
-installation phase.
+Promotes only exact P1, then performs the separately owned installation phase.
 
 ```text
-Perform only Deploy Prompt 5 for the named skill. Never perform Git delivery or start another skill.
+Perform only Deploy Prompt 5 for the named skill. Never perform Git delivery
+or start another skill.
 
-Require the accepted Prompt 4 record, completed Pruning Pass record, exact
-final C1 hash, complete candidate package, and unchanged affected claims. If
-behavior-complete bytes or claims drifted before pruning, stop and recommend
-Deploy Prompt 4. If final bytes differ from the pruning record, stop and
-recommend the Deploy Pruning Pass.
+Require Prompt 4 acceptance, completed Pruning Pass, exact V1 and P1 hashes,
+complete P1 package, unchanged claims, and no unresolved current-removal risk.
+Behavior-complete drift returns to Prompt 4; P1 drift returns to the Pruning
+Pass.
 
-First use $writing-great-skills in Author mode to promote the accepted
-candidate into the canonical skill and update only directly affected canonical
-proof, relationship, and synthesis surfaces. When accepted C1 already equals
-canonical, perform a no-op integration read-back instead of rewriting it.
-Reuse accepted behavioral evidence when bytes, tasks, claims, and evidence
-contracts are unchanged; do not rerun a wave solely because the lifecycle
-stage changed. Read back the complete canonical package and run proportionate
-canonical proof. Writing Great Skills stops after that proof.
+First use $writing-great-skills in Author mode to promote P1 into the canonical
+skill and update only directly affected canonical proof, relationships, and
+synthesis. When P1 already equals canonical, perform no-op integration
+read-back. Reuse exact accepted behavior evidence; do not rerun merely because
+the lifecycle stage changed. Read back the complete canonical package and run
+proportionate proof. Writing Great Skills stops after canonical proof.
 
-Reconcile the active synthesis to the promoted state: record the canonical identity, final runtime and relationship surface, admitted and rejected mechanism or cut decisions, exact proof pointers, deliberate non-changes, and residual gaps. Remove duplicated future-tense construction instructions, superseded candidate representations, and raw campaign chronology from the active design. Preserve decision-changing history concisely; validation remains the owner of raw outputs and chronological run evidence.
+Reconcile synthesis to active state: M0, research classifications, accepted and
+rejected H1 units, V1, pruning decisions, P1, canonical identity,
+relationships, proof pointers, deliberate non-changes, and residual
+professional, behavioral, model, host, and transfer gaps. Remove superseded
+future-tense construction and raw chronology; validation owns raw outputs.
 
-Only after canonical proof passes, complete the separately owned experimental
-and installation lifecycle authorized by this prompt: remove only the promoted
-skill's entire experimental directory and manifest entry; preserve every other
-candidate; run the managed installation dry-run; require the proposed changed
-cohort to match the authorized scope; synchronize through the supported
-installer when drift exists; and verify canonical-to-installed parity and a
-clean post-install dry-run. When canonical and installed already match and the
-dry-run is clean, record no-op installation parity without rewriting either.
-Never edit the installed mirror as canonical source.
+After canonical proof, remove only this skill's experimental package and
+manifest entry; preserve every other candidate. Run managed-install dry-run,
+require the changed cohort to match scope, synchronize through the supported
+installer when needed, and verify canonical/installed parity plus a clean
+post-install dry-run. Never edit the installed mirror as canonical source.
 
-Append promotion and installation evidence to the candidate-owned record. Update research only when separately authorized: an exact downstream evidence pointer may narrow a stale universal gap, but it must not duplicate results or generalize beyond the tested candidate.
+Append promotion and installation evidence to the candidate record. Do not
+rewrite research as behavioral proof or generalize beyond tested conditions.
 
-Return `complete`, `evidence-gap`, or `blocked`, with canonical and installed identities, validation, residual gaps, deliberate non-changes, and `Git delivery: pending` when authorized artifacts remain uncommitted. Recommend Deploy Prompt 6 only when Git delivery is wanted; otherwise recommend `none`.
+Return `complete`, `evidence-gap`, or `blocked`, with P1, canonical, and
+installed identities, validation, residual gaps, deliberate non-changes, and
+`Git delivery: pending` when artifacts remain uncommitted. Recommend Prompt 6
+only when delivery was authorized.
 
 Use the Shared Run Contract and stop.
 
@@ -811,14 +793,22 @@ Skill name: CHANGE_ME
 
 ## Deploy Prompt 6: Git Delivery
 
-Optional and separately invoked.
+Optional and separately authorized.
 
 ```text
-Perform only Deploy Prompt 6 for the named skill. Never begin another skill or unrelated cleanup.
+Perform only Deploy Prompt 6 for the named skill. Never begin another skill or
+unrelated cleanup.
 
-Deliver only the bounded synthesis, validation, baseline/candidate lifecycle, canonical, relationship, proof, and installation-record changes belonging to the completed skill campaign. Preserve unrelated work. Review the final scoped diff, run required current checks, stage intentionally, and commit the verified result. Push only when the user explicitly requests it.
+Deliver only bounded research, synthesis, validation, M0/H1/V1/P1 lifecycle,
+canonical, relationship, proof, and installation-record changes belonging to
+the completed campaign. Preserve unrelated work. Review the scoped diff, run
+required current checks, stage intentionally, and commit. Push only when the
+user explicitly requested it.
 
-Record the starting Git HEAD before delivery. Return `complete`, `evidence-gap`, or `blocked`, including the starting and ending HEAD, delivered commit identity when created, remote state when a push was authorized, residual gaps, and exact stop reason. Any HEAD transition must be wholly explained by this bounded delivery.
+Record starting Git HEAD. Return `complete`, `evidence-gap`, or `blocked`,
+including starting and ending HEAD, commit identity, remote state when pushed,
+residual gaps, and exact stop reason. Every HEAD transition must be wholly
+explained by this delivery.
 
 Use the Shared Run Contract and stop.
 

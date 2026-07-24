@@ -1,0 +1,11 @@
+# Review result
+
+## Dispositions
+
+- **G1 — Admitted finding.** The snapshot changes authorization behavior, AC-9 requires a negative authorization test, and the snapshot contains no such test. The omission is directly proven and the affected path is reachable. Repair should add the required negative test.
+- **G2 — Not admitted as a finding.** The suspected production-only collation problem cannot be decided from the available evidence because the necessary database logs are outside Review's authority. Because required Spec coverage depends on that evidence, this is an incomplete-authority gap, not a proven defect.
+- **G3 — Not admitted.** Fuzzing is optional here. Its unavailability does not create a finding because every required deterministic check passed.
+
+## Terminal status
+
+**INCOMPLETE AUTHORITY — no release decision.** G1 is actionable, but required Spec coverage for G2 remains undecidable without the production database logs. Obtain those logs or route that question to an authority that can inspect them, then rerun the review.

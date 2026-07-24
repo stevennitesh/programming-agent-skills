@@ -46,7 +46,7 @@ Protect non-intuitive mechanics, semantic and safety contracts, authority, proof
 
 ## Claim-Matched Proof
 
-Use read-back and focused structural checks for exact bytes or machine contracts, relationship traces for ownership, and [BEHAVIOR-EVALS.md](BEHAVIOR-EVALS.md) when a direct test or claim says wording changes invocation, judgment, action, context loading, Return, or completion. Reject candidate guidance when a realistic control does not exhibit its claimed failure.
+Use read-back and focused structural checks for exact bytes or machine contracts, relationship traces for ownership, and [BEHAVIOR-EVALS.md](BEHAVIOR-EVALS.md) when a direct test or claim says wording changes invocation, judgment, action, context loading, Return, or completion. Reject candidate guidance when a realistic control exhibits neither its registered defect nor its pre-registered quality deficit.
 
 Keep behavioral controls uncontaminated: fixed tasks and rubrics, fresh contexts, no candidate leakage, and root-held judgment. Ambient collaboration policy owns dispatch mechanics.
 

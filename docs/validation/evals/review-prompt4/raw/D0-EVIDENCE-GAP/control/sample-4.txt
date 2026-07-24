@@ -1,0 +1,7 @@
+# Review dispositions
+
+- **G1 — Finding.** The snapshot changes authorization behavior, AC-9 requires a negative authorization test, and the snapshot contains no such test. The required omission is directly proven and reachable, so it passes admission.
+- **G2 — Inconclusive.** Required Spec coverage depends on production database logs that are unavailable to Review. The suspected production-only collation problem is therefore not proven and must not be admitted as a finding; authority remains incomplete until the required evidence is obtained.
+- **G3 — No finding.** Fuzzing is optional here. Its unavailability does not create a required-proof gap, and all required deterministic checks passed.
+
+**Terminal status: INCONCLUSIVE.** G1 is an admitted repairable finding, but the review cannot issue a complete release decision while required evidence for G2 remains unavailable.

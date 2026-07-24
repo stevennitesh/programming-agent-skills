@@ -1,0 +1,19 @@
+# Admitted findings
+
+## T — Reachable valid input is rejected
+
+Admission: **Admitted.**
+
+- **Anchor:** AC-7 requires the parser to accept this input.
+- **Reach:** The input reaches the parser through a supported path.
+- **Evidence:** The failing fixture directly reproduces the rejection.
+- **Impact:** A valid, required input cannot be processed.
+- **Proportion:** The claim is limited to the demonstrated input and parser behavior.
+
+Severity: **P2.** This is a reproducible functional defect, but the evidence does not establish catastrophic or system-wide impact.
+
+# Rejected dispositions
+
+- **S — Rejected as speculative.** The imagined data loss depends on an unobserved power failure and has neither an anchored code path nor a reproduction. Proof pending is not sufficient for admission, so the claimed P0 is not assigned.
+- **D — Rejected as disproved.** The direct test shows the suspected authentication bypass does not occur. The claimed P1 is not assigned.
+- **P — Rejected as taste-only.** The rename preference identifies no violated standard and no concrete impact, so it is not an actionable finding.

@@ -1,0 +1,34 @@
+# Invocation 1
+
+Review status: complete
+
+Coverage is complete. No findings were identified. All required checks passed, and no snapshot drift was detected.
+
+This is a coverage conclusion, not release acceptance. Whether the result is clean enough to release remains with the caller. No repair plan is needed because the review found nothing to repair, and no successor review was started.
+
+Return boundary: caller
+
+Mutation authority: none
+
+Successor snapshot authority: none
+
+# Invocation 2
+
+Review status: incomplete
+
+Verified finding:
+
+- P2 F-2 is confirmed.
+
+Coverage:
+
+- All review work other than the required Spec assessment was completed.
+- Required Spec coverage is blocked because its source is unreadable.
+
+Because required coverage is incomplete, this report does not make a clean-enough or release-acceptance decision. Repair planning and successor-review execution remain with the caller; neither was performed.
+
+Return boundary: caller
+
+Mutation authority: none
+
+Successor snapshot authority: none

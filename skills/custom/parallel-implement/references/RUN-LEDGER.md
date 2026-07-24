@@ -48,9 +48,11 @@ Finish only after terminal `complete` has been recorded:
 python <skill-dir>/scripts/run_ledger.py finish --events <events.jsonl> --repo <repo> --output <run-dir>/LEDGER.md
 ```
 
-When no friction observations exist, `finish` appends the canonical `none_observed` synthesis. When observations exist, it requires deliberate synthesis. It then validates complete authority and renders the ledger. It never closes trackers, pushes, or fabricates Release.
-
-**Adjudicate before synthesis.** Compare each observation and suggestion with the current canonical skill, helper behavior, and owning repository contract. Classify it as `generic-skill-gap`, `repo-contract-gap`, `run-specific`, or `already-satisfied`. Preserve every observation as historical evidence, but include only verified unresolved generic skill gaps in deduplicated improvement themes. Synthesis is adjudication, not transcription.
+For runtime-contract-3 compatibility, `finish` supplies `none_observed` when
+the stream contains no friction observations and requires an explicit
+historical synthesis when it does. This compatibility field is not a campaign
+outcome or completion proxy. `finish` validates complete authority and renders
+the ledger; it never closes trackers, pushes, or fabricates completion.
 
 ## Phases and decisions
 
@@ -62,13 +64,13 @@ When no friction observations exist, `finish` appends the canonical `none_observ
 | Drain | accept/reject, stale-base route, correction route | landing authority, integration HEAD, invalidation |
 | Review | route, finding admission, repair eligibility | immutable target, counters, successor requirements |
 | Lock | external mutation approval | closeout plan, approved HEAD, missing read-backs |
-| Release | terminal disposition | completeness, safe lanes, friction synthesis |
+| Completion | terminal disposition | completeness and safe lanes |
 
 If `status.next_action` is surprising, inspect the state and canonical events. Do not force the suggested command.
 
 ## Branch packets
 
-Use an `events` packet for checkpoint/resume, integration correction, formal review, Repair, Lock, and Release. These branches are explicit because they carry judgment or external evidence, not because the operator must calculate IDs or receipts.
+Use an `events` packet for checkpoint/resume, integration correction, formal review, Repair, Lock, and the compatibility `release` event. These branches are explicit because they carry judgment or external evidence, not because the operator must calculate IDs or receipts.
 
 Progressive evidence belongs at the gate where it becomes actionable:
 
@@ -79,7 +81,7 @@ Progressive evidence belongs at the gate where it becomes actionable:
 - **Repair:** blocked snapshot, one complete eligible finding set, generation, owners, scopes, proof, successor HEAD, and completion evidence.
 - **Lock:** approved HEAD, verified child packets, child-first mutation read-backs, parent closeout, applicable push/remote proof, and lane dispositions.
 
-Runtime contract 3 uses `checkpoint` for resumable `partial` or `blocked`. After `resume`, authority stays closed until `reconcile` records Git, worktree, actor, tracker, and remote observations. `release` is terminal and accepts only `complete`.
+Runtime contract 3 uses `checkpoint` for resumable `partial` or `blocked`. After `resume`, authority stays closed until `reconcile` records Git, worktree, actor, tracker, and remote observations. Its compatibility `release` event is terminal and accepts only `complete`; the skill's semantic phase is Lock.
 
 `landed-awaiting-lock` is a derived, campaign-scoped execution state. It satisfies in-scope dependency readiness only while the accepted landing remains in current integration history with valid proof. It does not close an issue or alter the tracker dependency. Rollback, invalidation, or failed proof removes the overlay and reblocks dependents.
 

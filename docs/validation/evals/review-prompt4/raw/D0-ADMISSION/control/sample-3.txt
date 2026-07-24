@@ -1,0 +1,16 @@
+# Admitted findings
+
+## T — P2
+
+- **Anchor:** AC-7 requires the parser to accept this valid input.
+- **Reach:** The changed parser executes on the affected input.
+- **Evidence:** A direct failing fixture reproduces the rejection.
+- **Impact:** Reachable valid input is rejected.
+- **Proportion:** P2 matches the demonstrated functional regression.
+- **Finding:** The changed parser rejects reachable valid input required by AC-7.
+
+# Rejected dispositions
+
+- **S — Rejected:** No concrete anchor or reproduction establishes the imagined power-failure data loss. Pending proof and requested catastrophic-risk emphasis do not satisfy the admission gates.
+- **D — Rejected:** Direct testing disproves the suspected bypass by showing that authorization rejects the attempt.
+- **P — Rejected:** The rename is preference-only, with no documented standard or material impact.

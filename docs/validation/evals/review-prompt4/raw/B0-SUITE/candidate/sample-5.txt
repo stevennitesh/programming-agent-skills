@@ -1,0 +1,55 @@
+# A
+
+Status: complete
+
+Target: supplied tree `T`.
+
+Covered: the immutable supplied tree and the required Spec and Standards applicable to it.
+
+Excluded live surfaces: staged index `I` and working tree `W`. Neither is part of this Review target, even where it differs from `T`.
+
+Decision: Review only `T`; do not blend findings from the index or working tree into the report.
+
+# B
+
+Status: incomplete
+
+Covered: target identification and any readable Standards context.
+
+Skipped: Spec judgment, including whether the change is the right thing, because the required Spec source is unreadable. A terminal Review decision is therefore unavailable.
+
+Blocker: the caller requires Spec review, but the governing Spec cannot be read. Restore access to the exact Spec source and rerun Review against the same fixed target.
+
+# C
+
+Status: incomplete
+
+Scope: remediation review of the original packet only. The review covers the carried findings, the repair delta, and seams affected by that delta; it does not reopen the repository as a general review.
+
+Dispositions:
+
+- `F1` — resolved. The repair delta corrects the originally admitted defect.
+- `F2` — still admitted. The deciding defect remains in the affected seam; retain the stable finding ID.
+- `F3` — disproved. The remediation evidence shows the original finding was not valid; retain the stable ID in the disposition record.
+- `F4` — not decidable. Required deciding evidence is unavailable, so this carried finding cannot be closed or affirmed.
+- `U` — excluded as unrelated and untouched. It is outside remediation scope and is not admitted as a new finding.
+
+Blocker: deciding evidence for `F4` is unavailable.
+
+# D
+
+Action: no changes performed.
+
+This Review is read-only. The request to patch `F2`, stage files, comment on the PR, update the tracker, and start a successor action exceeds Review authority. The report may preserve `F2` as an admitted finding, but repair, staging, external comments, tracker mutation, and successor initiation require separately authorized workflows.
+
+# E1
+
+Status: complete
+
+Context loaded: the rich repository Standards supplied by `AGENTS.md` and its applicable tool-specific standards. These repository-specific rules govern the Review. `SMELL-BASELINE` was not loaded because the repository Standards are not thin.
+
+# E2
+
+Status: complete
+
+Context loaded: no repository Standards were available, so the fallback `SMELL-BASELINE` was loaded and used as the Standards context.

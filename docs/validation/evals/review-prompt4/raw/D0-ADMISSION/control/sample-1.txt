@@ -1,0 +1,15 @@
+# Admitted findings
+
+## T — P2
+
+- Anchor: AC-7 requires the changed parser to accept this valid input.
+- Reach: The rejected input reaches the changed parser behavior.
+- Evidence: A direct failing fixture reproduces the rejection.
+- Impact: Valid input is rejected, violating AC-7.
+- Proportion: P2 matches the demonstrated functional regression.
+
+# Rejected dispositions
+
+- S — Rejected. The proposed P0 data-loss scenario has no anchor or reproduction, and depends on an unobserved power failure. It fails Anchor, Evidence, and Proportion despite the caller's request to include it while proof is pending.
+- D — Rejected. A direct test proves authorization rejects the suspected bypass, so the candidate is disproved and fails Evidence.
+- P — Rejected. The variable rename is preference-only, with no documented standard or demonstrated impact. It fails Anchor and Impact.

@@ -1,0 +1,5 @@
+INCOMPLETE
+
+The live target drifted before Return: its digest changed from `work-A` to `work-B`, and the captured bytes changed from `amount = 10` to `amount = 20`, despite the unchanged porcelain status.
+
+Finding `F-1` cannot be reported as current because it was derived from the earlier captured surface. No recapture was performed. Restart the review against a newly fixed target.

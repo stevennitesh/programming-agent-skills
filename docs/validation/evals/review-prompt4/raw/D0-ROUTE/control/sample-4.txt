@@ -1,0 +1,8 @@
+I can review (A) as an ordinary bounded WIP diff, using `abc123` as the fixed point and `wip-A` as the target snapshot.
+
+I would not run an ordinary pass on the other two:
+
+- (B) `PR-42` is a high-risk local PR diff and belongs to Convergent PR Review, using fixed point `def456` and snapshot `tree-B`.
+- (C) `repo@789abc` is an immutable whole-repository baseline audit and belongs to Audit Codebase.
+
+The supplied identifiers establish scope and routing, but they do not contain the diff or audit evidence needed for substantive findings. I therefore cannot honestly issue findings or a release decision for any item from this packet alone.

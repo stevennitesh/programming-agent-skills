@@ -1,0 +1,24 @@
+## Snapshot capture
+
+- Base ref: `HEAD`
+- Base commit: `111aaa`
+- Target: live WIP
+- Repository status:
+  - ` M src/config.py`
+  - `?? config/feature.flags`
+- Captured commands:
+  - `git status --short`
+  - `git diff -- src/config.py`
+  - exact-byte read of `config/feature.flags`
+  - index identity capture
+  - working-tree digest capture for `src/config.py`
+  - untracked-content digest capture for `config/feature.flags`
+- Captured unstaged change in `src/config.py`: `timeout=30` → `timeout=5`
+- Captured untracked content in `config/feature.flags`: `new_parser=true\n`
+- Index identity: `idx-77`
+- Tracked working-tree digest: `work-88`
+- Untracked-content digest: `untracked-99`
+
+## Status
+
+COMPLETE

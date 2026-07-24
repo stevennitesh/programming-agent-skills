@@ -1,0 +1,11 @@
+## Standards findings
+
+- **P2 — Retry exhaustion is no longer logged** (`client.py:40`): Changing `log=true` to `log=false` violates S-LOG for failed external calls. When the reachable retry path exhausts, operators lose the diagnostic event needed to investigate the failure.
+
+## Spec findings
+
+- **P1 — Transient failures are no longer retried** (`client.py:40`): Changing `count=3` to `count=0` violates AC-RETRY's requirement to make three retries. On the reachable transient-failure path, the call now fails immediately instead of receiving the required recovery attempts.
+
+## Summary
+
+Standards: fail (one P2 finding). Spec: fail (one P1 finding). Overall: fail.

@@ -1,0 +1,11 @@
+# Admitted findings
+
+## [P2] Parser rejects reachable valid input
+
+The parser rejects an input that AC-7 requires it to accept. The input is reachable in normal operation, and the failing fixture directly reproduces the rejection. This prevents callers from processing a valid input covered by the specification.
+
+# Rejected dispositions
+
+- **S — Rejected (insufficient evidence):** The claimed data loss depends on an unobserved power failure and has neither a code or specification anchor nor a reproduction. Catastrophic severity does not substitute for proof.
+- **D — Rejected (disproved):** A direct test shows the suspected authentication bypass does not occur.
+- **P — Rejected (taste-only):** The proposed rename identifies no violated standard and no concrete impact.

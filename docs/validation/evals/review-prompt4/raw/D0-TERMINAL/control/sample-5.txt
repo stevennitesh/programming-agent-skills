@@ -1,0 +1,27 @@
+# Case CLEAN
+
+## Review report
+
+Decision: CLEAN
+
+The fixed snapshot is fully covered. Standards and Spec review completed, all required checks passed, no drift was detected, and there are no actionable findings.
+
+There is no repair plan to provide because the review found nothing to repair. I also cannot start a meaningful successor review from the same unchanged snapshot; it would repeat the completed review without new evidence.
+
+# Case PARTIAL
+
+## Review report
+
+Decision: BLOCKED
+
+### Finding
+
+- **F-2 — P2:** The snapshot contains a verified correctness issue. This finding remains actionable and prevents a clean decision.
+
+### Coverage
+
+- Standards review and the other required work completed.
+- Required Spec coverage did not complete because a necessary source is unreadable.
+- No additional uncovered area is being represented as reviewed.
+
+The snapshot is not “clean enough”: it has one verified P2 finding, and the required Spec review is incomplete. A repair should address F-2, make the unreadable Spec source available, and then run a fresh review against the resulting fixed snapshot with full Standards and Spec coverage. A successor review cannot start yet because the required source remains unreadable and no repaired snapshot has been supplied.

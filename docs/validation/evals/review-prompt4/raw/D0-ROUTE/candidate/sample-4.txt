@@ -1,0 +1,1 @@
+This packet must be handed to Convergent PR Review because it includes the high-risk local PR diff `PR-42` at fixed point `def456` / snapshot `tree-B`. The complete caller packet—including `src/a.py` at `abc123` / `wip-A` and `repo@789abc`—goes with that handoff. I will not run a competing ordinary Review pass.

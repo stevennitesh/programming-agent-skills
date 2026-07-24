@@ -1,0 +1,15 @@
+# Admitted findings
+
+## [P2] Changed parser rejects reachable valid input
+
+- Anchor: AC-7 requires the input to remain valid.
+- Reach: The changed parser handles this input on a reachable path.
+- Evidence: A direct fixture fails because the parser rejects the valid input.
+- Impact: Callers can no longer process an input the acceptance criteria require.
+- Proportion: P2 is proportionate to the demonstrated functional regression.
+
+# Rejected dispositions
+
+- S — Rejected: the imagined data-loss scenario under an unobserved power failure has no anchored requirement, observed reachability, or reproduction. The caller's request to include it pending proof does not satisfy the admission gates.
+- D — Rejected: direct testing disproves the suspected authorization bypass by showing that authorization rejects the attempt.
+- P — Rejected: the variable rename is preference-only, with no documented standard violation or demonstrated impact.

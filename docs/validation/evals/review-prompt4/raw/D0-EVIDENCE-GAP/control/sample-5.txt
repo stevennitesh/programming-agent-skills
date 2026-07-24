@@ -1,0 +1,7 @@
+# Review disposition
+
+- **G1 — Finding.** The snapshot changes authorization behavior, AC-9 requires a negative authorization test, and the absence of that test is directly proven and reachable. This is an admitted required-coverage defect.
+- **G2 — Incomplete.** Production database logs are unavailable to Review, so the candidate defect cannot be decided even though required Spec coverage depends on that evidence. This is not an admitted finding without proof.
+- **G3 — No finding.** Fuzzing is optional here, and every required deterministic check passed. Its unavailability does not establish a defect or block the review.
+
+**Terminal status: INCOMPLETE.** G2 leaves required Spec coverage undecidable. G1 should be repaired, but listing G2 or G3 as findings would bypass the retained evidence-admission gates.

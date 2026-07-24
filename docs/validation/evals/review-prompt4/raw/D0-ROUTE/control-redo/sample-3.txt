@@ -1,0 +1,11 @@
+A — Ordinary WIP
+
+Run an ordinary Review of `src/a.py` against base `abc123` from fixed snapshot `wip-A`, then return the terminal review report.
+
+B — High-risk local PR
+
+Hand off `PR-42` at base `def456` and fixed snapshot `tree-B` to Convergent PR Review. Do not run an ordinary Review pass.
+
+C — Immutable whole-repository baseline
+
+Hand off the immutable baseline `repo@789abc` to Audit Codebase. Do not run an ordinary Review pass.

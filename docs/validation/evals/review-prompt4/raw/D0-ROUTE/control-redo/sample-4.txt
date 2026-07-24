@@ -1,0 +1,17 @@
+## A — Ordinary WIP
+
+Action: Review `src/a.py` as ordinary WIP, fixed at base `abc123` and snapshot `wip-A`.
+
+Report: Perform the ordinary Review pass and return its terminal findings and verdict.
+
+## B — High-risk local PR
+
+Action: Hand off `PR-42`, fixed at base `def456` and snapshot `tree-B`, to Convergent PR Review.
+
+Report: Do not run a separate ordinary Review pass; Convergent PR Review owns the terminal review of this high-risk local PR.
+
+## C — Immutable whole-repository baseline
+
+Action: Route `repo@789abc` to Audit Codebase.
+
+Report: Do not run an ordinary Review pass; Audit Codebase owns the immutable repository-baseline audit.

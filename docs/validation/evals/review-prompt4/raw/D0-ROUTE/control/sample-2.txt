@@ -1,0 +1,7 @@
+I can take item A as an ordinary Review because it is a bounded WIP diff. The packet identifies its fixed point (`abc123`) and snapshot (`wip-A`), but it does not include the contents of the `src/a.py` diff, so I cannot issue evidence-backed findings or a terminal review report yet.
+
+Item B should be reviewed with Convergent PR Review because `PR-42` is a high-risk local PR diff. Its fixed point is `def456` and its snapshot is `tree-B`.
+
+Item C should be handled by Audit Codebase because `repo@789abc` is an immutable whole-repository baseline audit.
+
+Please provide the actual diff for item A. Route B and C to their respective owners rather than treating an ordinary pass as a substitute for the required review method.

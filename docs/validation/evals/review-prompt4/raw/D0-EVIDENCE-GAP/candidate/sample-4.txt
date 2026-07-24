@@ -1,0 +1,11 @@
+# D0 — Evidence Gap
+
+## Dispositions
+
+- **G1 — Finding:** The snapshot contains an authentication change, AC-9 requires a negative authorization test, and that test is absent. This is a direct, reachable omission of contract-required proof and is admitted as a finding.
+- **G2 — Incomplete required coverage, not a finding:** The possible production collation defect cannot be decided without the unavailable database logs. Because required Spec coverage depends on that evidence, the affected coverage remains incomplete; inability to obtain deciding evidence does not itself admit a finding.
+- **G3 — Residual risk, not a finding:** Optional fuzz verification is unavailable, while the required deterministic checks pass. The unavailable optional verification is recorded only as residual risk and does not admit a candidate.
+
+## Status
+
+**Incomplete.** One finding is admitted for G1, but the review cannot reach a complete terminal coverage decision because required Spec coverage for G2 remains undecidable.

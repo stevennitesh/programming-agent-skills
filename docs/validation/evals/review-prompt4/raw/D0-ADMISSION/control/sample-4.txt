@@ -1,0 +1,35 @@
+# Admitted findings
+
+## T — P2: Changed parser rejects reachable valid input
+
+- Anchor: AC-7 requires the parser to accept this valid input.
+- Reach: The changed parser path is reachable.
+- Evidence: A direct failing fixture reproduces the rejection.
+- Impact: Valid input required by AC-7 is rejected.
+- Proportion: P2; the demonstrated functional regression is material but not catastrophic.
+
+# Rejected dispositions
+
+## S — Rejected
+
+- Anchor: None establishes the imagined power-failure data-loss behavior.
+- Reach: The relevant power-failure condition was not observed.
+- Evidence: No reproduction or direct evidence supports the claim.
+- Impact: Catastrophic data loss is speculative.
+- Proportion: A P0 severity is unsupported.
+
+## D — Rejected
+
+- Anchor: Authorization behavior is directly testable.
+- Reach: The suspected bypass path was exercised.
+- Evidence: The direct test proves authorization rejects the attempt.
+- Impact: No authentication bypass was demonstrated.
+- Proportion: P1 is disproved by the available evidence.
+
+## P — Rejected
+
+- Anchor: No documented naming standard requires the rename.
+- Reach: The variable name has no demonstrated behavioral reach.
+- Evidence: The request is based only on taste.
+- Impact: No correctness, maintainability, or user impact is established.
+- Proportion: No finding severity is warranted.

@@ -1,0 +1,19 @@
+# Review result
+
+## Findings
+
+### Contract-required proof
+
+- **G1 — Missing negative authorization test for the authorization change.** AC-9 requires negative authorization coverage, and the reviewed snapshot contains no such test on the directly reachable changed path. The snapshot therefore omits contract-required proof for the change.
+
+## Dispositions
+
+- **G1:** Admitted finding — direct omission of contract-required proof.
+- **G2:** No finding — the unavailable database logs prevent a decision about the suspected production collation bug. Required Spec coverage is **incomplete**.
+- **G3:** No finding — fuzzing is optional, and all required deterministic checks pass. The unavailable fuzz run is **residual risk** only.
+
+## Status
+
+- **Standards:** Fail — G1.
+- **Spec:** Incomplete — G2 lacks deciding evidence.
+- **Overall:** Findings present; required review coverage is incomplete.

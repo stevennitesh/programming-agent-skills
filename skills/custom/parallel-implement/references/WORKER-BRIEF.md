@@ -59,9 +59,6 @@ risk or blocker:
 next need:
 scope notes:
 final status: <clean / dirty + reason>
-skill feedback: <none, or surface | evidence | impact | suggestion>
 ```
 
 `done` requires reconciled preflight, every criterion accounted for, one commit, focused proof, and clean status. `blocker` and `needs-feedback` claim no completion and preserve exact state.
-
-Skill feedback is process evidence only. The root may record it as friction; it grants no implementation authority.

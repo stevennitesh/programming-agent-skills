@@ -1,0 +1,8 @@
+I can review item A (`src/a.py`, fixed point `abc123`, snapshot `wip-A`) as an ordinary bounded WIP diff.
+
+Items B and C require different review owners:
+
+- Route `PR-42` (`def456`, snapshot `tree-B`) to Convergent PR Review because it is a high-risk local PR diff.
+- Route `repo@789abc` to Audit Codebase because it is an immutable whole-repository baseline audit.
+
+I would not substitute an ordinary Review pass for either routed item. No diff contents or findings are included in this packet, so there are no evidence-backed findings to report for item A yet.

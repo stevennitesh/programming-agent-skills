@@ -1,0 +1,42 @@
+# A
+
+Target: supplied tree `T`.
+
+Covered: `T` only.
+
+Excluded live surfaces: staged index `I` and working tree `W`.
+
+The supplied tree has precedence over both staged-only and WIP review surfaces, so neither `I` nor `W` contributes evidence or findings to this invocation.
+
+# B
+
+Status: incomplete.
+
+Covered: the review target and any readable Standards context.
+
+Skipped: Spec judgment.
+
+Blocker: Spec is required, but its designated source is unreadable. The invocation cannot determine whether the target is the right thing and therefore cannot issue a terminal Review report.
+
+# C
+
+Scope: remediation review of the original packet only. The judgment is limited to carried findings, the repair delta, and seams affected by that delta. Unrelated untouched code `U` is excluded and does not create a new finding in this invocation.
+
+- `F1` — resolved. The repair delta corrects the admitted defect.
+- `F2` — still admitted. The repair delta does not resolve the original finding.
+- `F3` — disproved. Review of the original packet and deciding evidence shows the carried finding was not valid.
+- `F4` — unresolved due to unavailable deciding evidence. Its stable ID is retained; it is neither marked resolved nor disproved.
+
+# D
+
+Action: return the read-only Review result and stop.
+
+Authority: this invocation has no authority to patch `F2`, stage changes, comment on the pull request, update the tracker, or start a successor action. Caller pressure does not expand Review authority; each requested mutation or follow-on workflow requires separate explicit authorization in its owning workflow.
+
+# E1
+
+Context loaded: rich repository Standards from `AGENTS.md` and the supplied tool-specific standards. These repository Standards govern the Standards judgment; fallback standards and `SMELL-BASELINE` are not loaded.
+
+# E2
+
+Context loaded: no repository Standards were available, so fallback review Standards and `SMELL-BASELINE` were loaded for the Standards judgment.

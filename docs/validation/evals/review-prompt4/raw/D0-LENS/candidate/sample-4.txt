@@ -1,0 +1,25 @@
+# Review
+
+## Standards
+
+### Findings
+
+- **[P2] Preserve retry-exhaustion logging — `client.py:40`**
+
+  Changing `retry(count=3, log=true)` to `retry(count=0, log=false)` disables the required retry-exhaustion log on a directly reachable path. This violates S-LOG and removes operational evidence needed to diagnose exhausted requests.
+
+### Summary
+
+Standards does not pass because the change violates the P2 operability requirement in S-LOG.
+
+## Spec
+
+### Findings
+
+- **[P1] Keep the required three retries — `client.py:40`**
+
+  Setting `count=0` eliminates retries on a directly reachable path, while AC-RETRY requires three retries. Requests that would have recovered during the specified retry window now fail immediately.
+
+### Summary
+
+Spec does not pass because the change violates the P1 correctness requirement in AC-RETRY.

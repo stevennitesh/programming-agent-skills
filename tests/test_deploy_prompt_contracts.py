@@ -7,6 +7,21 @@ CONTEXT = ROOT / "CONTEXT.md"
 DEPLOY_PROMPTS = ROOT / "docs" / "synthesis" / "methods" / "deploy-prompts.md"
 SYNTHESIS_README = ROOT / "docs" / "synthesis" / "README.md"
 METHODS_README = ROOT / "docs" / "synthesis" / "methods" / "README.md"
+SOURCE_FLOW = (
+    ROOT / "docs" / "synthesis" / "methods" / "source-distillation-flow.md"
+)
+SOURCE_SEARCH = (
+    ROOT
+    / "docs"
+    / "synthesis"
+    / "methods"
+    / "prompts"
+    / "03-search-and-verify-sources.md"
+)
+WRITING_SKILL = ROOT / "skills" / "custom" / "writing-great-skills" / "SKILL.md"
+BEHAVIOR_EVALS = (
+    ROOT / "skills" / "custom" / "writing-great-skills" / "BEHAVIOR-EVALS.md"
+)
 
 
 def _normalized(path: Path) -> str:
@@ -17,299 +32,232 @@ def _section(text: str, heading: str, next_heading: str) -> str:
     return text.split(heading, 1)[1].split(next_heading, 1)[0]
 
 
-def test_prompt_1_builds_b0_from_intent_and_evidence_before_current() -> None:
+def test_prompt_1_freezes_intent_derived_m0_before_research_or_current() -> None:
     deploy = _normalized(DEPLOY_PROMPTS)
     prompt_1 = _section(
         deploy,
-        "## Deploy Prompt 1: Establish The Minimum-Runtime Decision",
-        "## Conditional Research Interlude",
-    )
-    prompt_3 = _section(
-        deploy,
-        "## Deploy Prompt 3: Build B0 And C1",
-        "## Deploy Prompt 4: Audit And Prove Behavior",
-    )
-    prompt_4 = _section(
-        deploy,
-        "## Deploy Prompt 4: Audit And Prove Behavior",
-        "## Deploy Pruning Pass: Minimize Accepted Candidate",
+        "## Deploy Prompt 1: Freeze M0",
+        "## Deploy Research Pass: Investigate The Intended Behavior",
     )
 
-    blind_pass = prompt_1.index("Blind intent and evidence pass:")
-    intent_pass = prompt_1.index("Intent pass:")
-    evidence_pass = prompt_1.index("Evidence pass:")
-    frozen_checkpoint = prompt_1.index(
-        "Freeze one source-first checkpoint before opening current."
-    )
-    current_reconciliation = prompt_1.index(
-        "Current reconciliation: only now completely read"
-    )
+    local_intent = prompt_1.index("Read local intent authorities")
+    specify_m0 = prompt_1.index("Specify M0 from that settled floor")
+    cut_audit = prompt_1.index("clause-to-intent cut audit")
+    checkpoint = prompt_1.index("Freeze one M0 checkpoint")
 
-    assert (
-        blind_pass
-        < intent_pass
-        < evidence_pass
-        < frozen_checkpoint
-        < current_reconciliation
-    )
+    assert local_intent < specify_m0 < cut_audit < checkpoint
     for term in (
-        "intersection",
-        "settled viability floor",
-        "credible source mechanics",
-        "Current presence creates neither intent",
-        "Never retrofit B0 after current",
+        "Never inspect research, upstream packages, or the target's current skill body",
+        "behavior-minimal, not word-count-minimal",
+        "complete M0 viability suite",
+        "authorized research-note path",
+        "`ready-for-research`",
     ):
         assert term in prompt_1
-    for term in (
-        "frozen intersection",
-        "intended contract",
-        "source mechanics",
-        "B0 minimum-runtime suite",
-    ):
-        assert term in prompt_3
-    assert "Only after B0 passes" in prompt_4
-    assert "C1 never receives credit for making B0 viable" in prompt_4
-    assert "Select the simplest credible baseline" not in deploy
 
 
-def test_c1_has_four_discovery_origins_and_b0_first_admission() -> None:
+def test_research_pass_is_mandatory_independent_and_non_self_validating() -> None:
     deploy = _normalized(DEPLOY_PROMPTS)
+    research = _section(
+        deploy,
+        "## Deploy Research Pass: Investigate The Intended Behavior",
+        "## Conditional Prototype Interlude",
+    )
+
+    independent = research.index("First perform independent online discovery")
+    inspect_packs = research.index("Only after recording that blind search")
+    targeted = research.index("targeted independent online verification")
+    assert independent < inspect_packs < targeted
+
+    for term in (
+        "Mandatory read-only evidence and discovery unit",
+        "alternatives and counterevidence",
+        "Attribute only observed behavior to the pack",
+        "Upstream repetition proves shared pack usage only",
+        "Never fabricate or generalize a conversation",
+        "`independently-supported`, `contested`, `pack-specific`, or `unverified`",
+        "Use decision saturation, not a source quota",
+        "`research-complete`, `intent-reopen`, `evidence-gap`, or `blocked`",
+    ):
+        assert term in research
+
+
+def test_shared_model_separates_intent_research_pack_current_and_proof() -> None:
+    deploy = _normalized(DEPLOY_PROMPTS)
+    shared = _section(deploy, "## Shared Model", "## Shared Run Contract")
+
+    for role in (
+        "| Local intent authorities |",
+        "| Independent professional evidence |",
+        "| Upstream packages |",
+        "| Current canonical runtime |",
+        "| Candidate-owned proof |",
+    ):
+        assert role in shared
+
+    for term in (
+        "not prove correctness or local fit",
+        "Never simulate a practitioner conversation",
+        "M0 is minimal by behavioral scope",
+        "P1 is minimal by proved wording and package load",
+        "Pack-specific or unverified behavior may be a clearly labeled local experiment",
+    ):
+        assert term in shared
+
+    assert "Upstream packages and credible research" not in shared
+    assert "source-derived executable minimum" not in shared
+
+
+def test_prompt_2_builds_h1_from_five_discovery_lanes_with_honest_authority() -> None:
+    deploy = _normalized(DEPLOY_PROMPTS)
+    prompt_2 = _section(
+        deploy,
+        "## Deploy Prompt 2: Finalize H1 Synthesis",
+        "## Deploy Prompt 3: Build M0 And H1",
+    )
 
     for origin in (
-        "`current-retention`",
+        "`professional-method`",
+        "`current-observed`",
+        "`pack-observed`",
         "`pack-composition`",
-        "`source-mechanism`",
-        "`intent-counterexample`",
+        "`intent-adjacent`",
     ):
-        assert origin in deploy
+        assert origin in prompt_2
 
     for term in (
-        "Origin invites inspection",
-        "expected B0 failure",
-        "wrong-condition case",
-        "required local contract",
-        "belongs in B0",
-        "disproves minimum viability",
-        "reopen B0 instead",
-        "run B0 first",
-        "exact caller/callee scenario",
+        "`locally-justified experimental`",
+        "`defect-correction`",
+        "`quality-lift`",
+        "expected M0 weakness",
+        "wrong-condition cases",
+        "fixed rubric",
+        "H1 cannot make M0 viable",
+        "`unresolved removal risk`",
     ):
-        assert term in deploy
+        assert term in prompt_2
 
 
-def test_prompt_4_rejects_c1_units_without_terminating_viable_b0() -> None:
+def test_intent_adjacent_vocabulary_maps_to_observable_contribution() -> None:
+    deploy = _normalized(DEPLOY_PROMPTS)
+    shared = _section(deploy, "## Shared Model", "## Shared Run Contract")
+
+    assert "**Intent-adjacent steering hypothesis:**" in shared
+    assert (
+        "`term -> recruited behavior -> expected M0 weakness -> observable gate -> "
+        "comparative proof`"
+        in shared
+    )
+    assert "preserves the intended contract" in shared
+
+
+def test_prompt_3_materializes_m0_without_research_leakage_and_builds_exact_h1() -> None:
+    deploy = _normalized(DEPLOY_PROMPTS)
+    prompt_3 = _section(
+        deploy,
+        "## Deploy Prompt 3: Build M0 And H1",
+        "## Deploy Prompt 4: Prove M0 And H1",
+    )
+
+    for term in (
+        "Materialize exact M0 solely from the frozen M0 checkpoint",
+        "Do not import research language",
+        "Construct exact H1 from M0 plus only admitted additions and substitutions",
+        "Store M0 once as the immutable control and H1 once as the candidate",
+        "Do not create a separate no-guidance control when M0 already supplies",
+        "M0 must be exact and executable",
+    ):
+        assert term in prompt_3
+
+
+def test_prompt_4_proves_m0_then_defect_correction_or_quality_lift() -> None:
     deploy = _normalized(DEPLOY_PROMPTS)
     prompt_4 = _section(
         deploy,
-        "## Deploy Prompt 4: Audit And Prove Behavior",
-        "## Deploy Pruning Pass: Minimize Accepted Candidate",
-    )
-    campaign = _section(
-        deploy,
-        "## Deploy Campaign: Orchestrate One Skill",
-        "## Deploy Prompt 1: Establish The Minimum-Runtime Decision",
+        "## Deploy Prompt 4: Prove M0 And H1",
+        "## Deploy Pruning Pass: Derive P1",
     )
 
+    audit_m0 = prompt_4.index("Audit M0 first")
+    m0_passes = prompt_4.index("Only after M0 passes")
+    h1_samples = prompt_4.index("run at least five fresh H1 samples")
+    assert audit_m0 < m0_passes < h1_samples
+
     for term in (
-        "`rejected-no-control-failure`",
-        "do not run that C1 arm",
+        "H1 never receives credit for making M0 viable",
+        "`defect-correction`",
+        "`quality-lift`",
+        "`rejected-no-control-deficit`",
         "`rejected-regression`",
-        "rederive exact C1 as B0 plus surviving units",
-        "Do not rerun identical B0 arms",
-        "If no C1 units survive, set C1 = B0",
-        "Viable B0 remains the behavior-complete candidate",
-        "unit dispositions, not terminal Prompt 4 decisions",
-        "Return `accepted`, `needs-more-evidence`, or `blocked`",
+        "`needs-more-evidence`",
+        "If no H1 units survive, set V1 = M0",
+        "Unit rejection never terminates a campaign while viable M0",
+        "model, host, tools, configuration",
+        "preserve the active runtime",
     ):
         assert term in prompt_4
 
-    assert "unit-level C1 rejection cannot terminate" in campaign
-    assert "legacy terminal rejection may re-enter Prompt 4" in campaign
-    assert "`evidence-gap`, `blocked`, `needs-more-evidence`" in campaign
 
-
-def test_checkpoint_reentry_d0_and_missing_b0_proof_are_explicit() -> None:
+def test_pruning_freezes_v1_and_promotes_only_regression_checked_p1() -> None:
     deploy = _normalized(DEPLOY_PROMPTS)
+    pruning = _section(
+        deploy,
+        "## Deploy Pruning Pass: Derive P1",
+        "## Deploy Prompt 5: Promote And Install P1",
+    )
+    prompt_5 = _section(
+        deploy,
+        "## Deploy Prompt 5: Promote And Install P1",
+        "## Deploy Prompt 6: Git Delivery",
+    )
 
     for term in (
-        "load `Shared Model`, `Shared Run Contract`, `Proportionate Proof Budget`",
-        "standalone or delegated unit",
-        "opens another unit only to dispatch or verify it",
-        "**Semantic behavior unit:**",
-        "**Source-first checkpoint:**",
-        "**`D0` no-guidance control:**",
-        "verify its Git HEAD, local intent authorities, upstream revisions",
-        "apply only that delta and issue a successor checkpoint",
-        "Map each instruction-bearing runtime passage to one unit key",
-        "Reuse the matching B0 viability arm as the candidate arm",
-        "If D0 matches B0 without a meaningful variance benefit",
-        "return `ready-for-prompt-3` for an evidence-only route",
+        "Freeze V1 once as the immutable behavior-complete control",
+        "Build one P1",
+        "Treat pruning as non-regression",
+        "Revert every regressing, ambiguous, or unproved cut group",
+        "If all cuts fail, set P1 = V1",
+        "`pruned`, `pruning-not-needed`, or `cuts-rejected`",
     ):
-        assert term in deploy
+        assert term in pruning
+
+    assert "Promotes only exact P1" in prompt_5
+    assert "promote P1 into the canonical skill" in prompt_5
+    assert "verify canonical/installed parity" in prompt_5
 
 
-def test_deploy_campaign_is_discoverable_bounded_and_repeatable() -> None:
+def test_campaign_runs_mandatory_research_and_every_runtime_stage() -> None:
     deploy = _normalized(DEPLOY_PROMPTS)
     agents = _normalized(AGENTS)
     context = _normalized(CONTEXT)
-    shared = _section(deploy, "## Shared Run Contract", "## Proportionate Proof Budget")
     campaign = _section(
         deploy,
         "## Deploy Campaign: Orchestrate One Skill",
-        "## Deploy Prompt 1: Establish The Minimum-Runtime Decision",
+        "## Deploy Prompt 1: Freeze M0",
     )
 
-    assert "Run Deploy Campaign on <skill>" in agents
-    assert "docs/synthesis/methods/deploy-prompts.md" in agents
-    assert "**Deploy Campaign**" in context
-    assert "one-skill controller" in context
-    assert "mega-prompt" in context
-
     for term in (
-        "Prompts 1 through 5",
-        "fresh campaign epoch",
-        "not Git delivery",
-        "Prior campaign artifacts never satisfy",
-        "reruns only missing, drifted, contaminated",
+        "Prompt 1, Research Pass, Prompts 2 through 4, Pruning Pass, and Prompt 5",
         "`and commit`",
         "`and push`",
         "The root owns transitions",
-        "Do not create a controller ledger",
         '`fork_turns="none"`',
-        "method path and unit",
-        "loads the shared sections plus its unit",
         "Serialize all writers",
-        "verify its allowed status",
-        "`ready-for-prompt-N`",
-        "`research-gap` and `prototype-gap`",
-        "Prompt 4 `accepted`",
-        "unit-level C1 rejection cannot terminate",
-        "Prompt 5 `complete`",
-        "Before returning a successful terminal",
-        "runs every numbered unit plus the Pruning Pass again",
-        "Do not ask the user to authorize ordinary unit transitions",
+        "Prompt 1 `ready-for-research` dispatches the Research Pass",
+        "Research `research-complete` dispatches Prompt 2",
+        "Prompt 4 `accepted` dispatches the Pruning Pass",
+        "Every fresh campaign runs every ordinary unit once",
     ):
         assert term in campaign
 
-    assert "coordinator alone may dispatch a verified successor" in shared
-    assert "unit invocation performs exactly one" in shared
+    assert "Run Deploy Campaign on <skill>" in agents
+    assert "Research Pass" in agents
+    assert "**Deploy Campaign**" in context
+    assert "**Deploy runtime identities**" in context
 
 
-def test_each_campaign_runs_all_units_and_reuses_only_exact_proof() -> None:
+def test_interludes_own_only_contract_or_technical_uncertainty() -> None:
     deploy = _normalized(DEPLOY_PROMPTS)
-    prompt_1 = _section(
-        deploy,
-        "## Deploy Prompt 1: Establish The Minimum-Runtime Decision",
-        "## Conditional Research Interlude",
-    )
-    prompt_2 = _section(
-        deploy,
-        "## Deploy Prompt 2: Finalize Decision-Complete Synthesis",
-        "## Deploy Prompt 3: Build B0 And C1",
-    )
-    prompt_3 = _section(
-        deploy,
-        "## Deploy Prompt 3: Build B0 And C1",
-        "## Deploy Prompt 4: Audit And Prove Behavior",
-    )
-    prompt_4 = _section(
-        deploy,
-        "## Deploy Prompt 4: Audit And Prove Behavior",
-        "## Deploy Pruning Pass: Minimize Accepted Candidate",
-    )
-    pruning = _section(
-        deploy,
-        "## Deploy Pruning Pass: Minimize Accepted Candidate",
-        "## Deploy Prompt 5: Promote And Install",
-    )
-    prompt_5 = _section(
-        deploy,
-        "## Deploy Prompt 5: Promote And Install",
-        "## Deploy Prompt 6: Git Delivery",
-    )
-
-    assert "always returns `ready-for-prompt-2`" in prompt_1
-    assert "always returns `ready-for-prompt-3`" in prompt_2
-    assert "current-epoch B0/C1 identities" in prompt_3
-    assert "do not rerun identical samples" in prompt_4
-    assert "recommends the Deploy Pruning Pass" in prompt_4
-    assert "`complete` always recommends Prompt 5" in pruning
-    assert "no-op integration read-back" in prompt_5
-    assert "record no-op installation parity" in prompt_5
-
-
-def test_pruning_is_a_separate_bounded_non_regression_unit() -> None:
-    deploy = _normalized(DEPLOY_PROMPTS)
-    prompt_4 = _section(
-        deploy,
-        "## Deploy Prompt 4: Audit And Prove Behavior",
-        "## Deploy Pruning Pass: Minimize Accepted Candidate",
-    )
-    pruning = _section(
-        deploy,
-        "## Deploy Pruning Pass: Minimize Accepted Candidate",
-        "## Deploy Prompt 5: Promote And Install",
-    )
-    prompt_5 = _section(
-        deploy,
-        "## Deploy Prompt 5: Promote And Install",
-        "## Deploy Prompt 6: Git Delivery",
-    )
-
-    assert "Never prune" in prompt_4
-    assert "behavior-complete C1 hash" in prompt_4
-    for term in (
-        "`keep`, `collapse`, `disclose`, or `delete`",
-        "Word count is diagnostic, never the objective",
-        "If no material cut exists",
-        "create no pre-prune fixture or behavioral wave",
-        "Build one final C1, group proposed cuts by affected proof lane",
-        "Run only the affected final-C1 arms",
-        "no-control-failure rejection does not apply",
-        "Revert any regressing, ambiguous, or unproved cut group",
-        "do not search combinations",
-        "`pruned`, `pruning-not-needed`, or `cuts-rejected`",
-        "failed cuts fall back to the proved pre-prune candidate",
-    ):
-        assert term in pruning
-    assert "completed Pruning Pass record" in prompt_5
-    assert "final bytes differ from the pruning record" in prompt_5
-
-
-def test_campaign_uses_nested_agents_only_for_independent_evidence() -> None:
-    deploy = _normalized(DEPLOY_PROMPTS)
-    campaign = _section(
-        deploy,
-        "## Deploy Campaign: Orchestrate One Skill",
-        "## Deploy Prompt 1: Establish The Minimum-Runtime Decision",
-    )
-
-    for term in (
-        "Prompt 1 and Research owners",
-        "filesystem-read-only",
-        "Prompt 4",
-        "evaluation grandchildren",
-        "capacity-aware waves",
-        "owner fixes the packet and rubric",
-        "without parent conclusions or peer outputs",
-        "isolated or disposable outputs",
-        "None edits shared sources",
-        "interacts with the user, or spawns",
-        "`behavior-decision-gap` stays root-held",
-        "retain the campaign across the user's answers",
-        "A summary alone is not evidence",
-    ):
-        assert term in campaign
-
-
-def test_three_interludes_separate_source_design_and_intent_uncertainty() -> None:
-    deploy = _normalized(DEPLOY_PROMPTS)
-    shared = _section(deploy, "## Shared Model", "## Shared Run Contract")
-    research = _section(
-        deploy,
-        "## Conditional Research Interlude",
-        "## Conditional Prototype Interlude",
-    )
     prototype = _section(
         deploy,
         "## Conditional Prototype Interlude",
@@ -318,112 +266,76 @@ def test_three_interludes_separate_source_design_and_intent_uncertainty() -> Non
     behavior = _section(
         deploy,
         "## Conditional Behavior Decision Interlude",
-        "## Deploy Prompt 2: Finalize Decision-Complete Synthesis",
+        "## Deploy Prompt 2: Finalize H1 Synthesis",
     )
 
-    assert deploy.count("## Conditional ") == 3
-
-    for term in (
-        "books, papers, standards, documentation",
-        "documented high ratings, professional acclaim, durable adoption",
-        "upper-bound engineering discipline",
-        "order discovery, never as proof",
-    ):
-        assert term in shared
-
-    for term in (
-        "$research",
-        "source question",
-        "Shared Model source priority",
-        "original or primary evidence",
-        "smallest source set",
-        "credible counterpressure",
-    ):
-        assert term in research
-
+    assert deploy.count("## Conditional ") == 2
     for term in (
         "$prototype",
-        "frozen agent-owned design question",
-        "smallest runnable probe",
-        "production correctness",
-        "behavioral steering remain untested",
+        "one frozen agent-owned technical choice",
+        "Production correctness and behavioral steering remain untested",
     ):
         assert term in prototype
-
     for term in (
         "$grill-with-docs",
-        "bounded intended-contract decision",
-        "minimum viability",
-        "C1 hypothesis",
-        "agent-owned technique",
-        "efficacy",
+        "one bounded intended-contract decision",
+        "Do not choose agent technique",
+        "minimum-viability answer returns to Prompt 1",
+        "H1-only contract answer",
     ):
         assert term in behavior
 
 
-def test_prompts_2_through_4_preserve_intent_source_and_proof_roles() -> None:
-    deploy = _normalized(DEPLOY_PROMPTS)
-    prompt_2 = _section(
-        deploy,
-        "## Deploy Prompt 2: Finalize Decision-Complete Synthesis",
-        "## Deploy Prompt 3: Build B0 And C1",
-    )
-    prompt_3 = _section(
-        deploy,
-        "## Deploy Prompt 3: Build B0 And C1",
-        "## Deploy Prompt 4: Audit And Prove Behavior",
-    )
-    prompt_4 = _section(
-        deploy,
-        "## Deploy Prompt 4: Audit And Prove Behavior",
-        "## Deploy Pruning Pass: Minimize Accepted Candidate",
-    )
+def test_behavior_evaluation_contract_supports_quality_lift_and_adaptive_cost() -> None:
+    evals = _normalized(BEHAVIOR_EVALS)
+    writing = _normalized(WRITING_SKILL)
 
     for term in (
-        "intended-contract obligation",
-        "credible source mechanic",
-        "Research can establish source meaning",
-        "grill can settle intent",
-        "Prototype can choose",
-        "construction evidence only",
+        "`defect-correction` or `quality-lift`",
+        "meaningful rubric deficit",
+        "at least five independent control samples",
+        "candidate samples only when the registered control deficit appears",
+        "Extend sampling only for material variance",
+        "`reject-no-control-deficit`",
+        "residual transfer gap",
     ):
-        assert term in prompt_2
-    for term in (
-        "local intent obligation",
-        "source mechanic",
-        "Prototype verdict",
-        "not behavioral-effect evidence",
-    ):
-        assert term in prompt_3
-    for term in (
-        "all four C1 hypothesis origins",
-        "**B0 intent and source fidelity:**",
-        "Prototype construction evidence",
-        "behavioral contribution proof",
-    ):
-        assert term in prompt_4
+        assert term in evals
+
+    assert "registered defect" in writing
+    assert "pre-registered quality deficit" in writing
 
 
-def test_synthesis_method_summaries_match_the_revised_workflow() -> None:
+def test_source_method_and_indexes_match_independent_verification_model() -> None:
+    source_flow = _normalized(SOURCE_FLOW)
+    source_search = _normalized(SOURCE_SEARCH)
     synthesis = _normalized(SYNTHESIS_README)
     methods = _normalized(METHODS_README)
 
+    for text in (source_flow, source_search):
+        assert "search independently" in text
+        assert "professional" in text
+        assert "upstream" in text or "skill pack" in text
+        assert "counterevidence" in text
+
     for text in (synthesis, methods):
-        assert "source-derived" in text
-        assert "local intended contract" in text
-        assert "blind intent" in text
-        assert "semantic behavior" in text or "semantic units" in text
-        assert "D0" in text
-        assert "current-retention" in text or "current retention" in text
-        assert "pack-composition" in text or "pack composition" in text
-        assert "source-mechanism" in text or "source mechanism" in text
-        assert (
-            "intent-counterexample" in text
-            or "counterexample to settled intent" in text
-        )
-        assert "Conditional Behavior Decision Interlude" in text
-        assert "Conditional Prototype Interlude" in text
-        assert "Conditional Research Interlude" in text
-        assert "Pruning Pass" in text
-        assert "Run Deploy Campaign on <skill>" in text
-        assert "fresh-context unit" in text
+        for term in ("M0", "H1", "V1", "P1", "Research Pass"):
+            assert term in text
+        assert "intent-derived" in text
+        assert "pack-specific" in text
+        assert "quality lift" in text
+
+
+def test_live_workflow_avoids_legacy_source_derived_baseline_contract() -> None:
+    deploy = _normalized(DEPLOY_PROMPTS)
+    methods = _normalized(METHODS_README)
+
+    for stale in (
+        "Conditional Research Interlude",
+        "source-derived executable minimum",
+        "Draft B0 from the intersection",
+        "D0 no-guidance control",
+        "Build B0 And C1",
+    ):
+        assert stale not in deploy
+
+    assert "source-derived executable minimum" not in methods

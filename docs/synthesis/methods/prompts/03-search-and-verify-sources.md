@@ -16,6 +16,13 @@ Search the requested lanes. Prefer sources closest to each claim and verify
 changeable claims live. Use credible secondary sources only for comparison,
 adoption evidence, or context they uniquely add.
 
+When supplied sources include a skill pack, first search independently from
+the intended behavior without using that pack's terminology. Then inspect the
+pack and run targeted verification for each newly observed mechanic that could
+affect the answer. Search for credible alternatives and counterevidence rather
+than only corroboration. A pack establishes its own behavior, not professional
+correctness or a professional claim its author did not make.
+
 Apply these lane rules:
 
 - Online: prefer official documentation, standards, original research, and
@@ -55,7 +62,9 @@ available.
 | --- | --- | --- | --- | --- |
 
 Choose the smallest set that covers the question without over-weighting one
-author, organization, era, or tool.
+author, organization, era, or tool. Stop at decision saturation: another
+credible source should be unlikely to change the mechanic, conditions,
+classification, or answer.
 
 ## Source-Search Decision
 

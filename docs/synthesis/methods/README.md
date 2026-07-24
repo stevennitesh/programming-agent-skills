@@ -2,92 +2,79 @@
 
 Methods are reusable ways to distill sources or deploy selected synthesis.
 
-Use this folder for process docs that apply across multiple skills or skill
-families.
-
 ## Files
 
 | File | Role |
 | --- | --- |
-| [`deploy-prompts.md`](deploy-prompts.md) | One-skill campaign controller and bounded units for synthesizing a source-derived executable minimum, proving behavior, pruning by non-regression, promoting and installing, and optionally delivering through Git. |
-| [`source-distillation-flow.md`](source-distillation-flow.md) | Optional flow for distilling primary and outside sources into important concepts and usable techniques. |
-| [`prompts/`](prompts/) | Optional prompts supporting source distillation. |
+| [`deploy-prompts.md`](deploy-prompts.md) | One-skill controller and bounded units for deriving an intent-minimum runtime, investigating professional methods, proving hypotheses, pruning without regression, promoting, installing, and optionally delivering through Git |
+| [`source-distillation-flow.md`](source-distillation-flow.md) | Evidence-only flow for distilling primary and outside sources into important concepts and usable techniques |
+| [`prompts/`](prompts/) | Optional prompts supporting source distillation |
 
-## Routing
+## Deploy Routing
 
 Use `Run Deploy Campaign on <skill>` for one initiating prompt and a fresh
-Prompts 1-4, Pruning Pass, and Prompt 5 campaign epoch, including no-op pruning,
-promotion, and installation-parity verification when no changes are justified,
-or invoke Deploy Prompt 1 for one manual unit. A prior campaign may supply exact
-reusable artifacts and proof but cannot skip a unit. The campaign root retains
-transitions, verification, and user interaction; fresh-context unit owners stop
-after one unit, writers are serialized, and nested workers are limited to
-independent source or evaluation evidence. Bare invocation excludes Git
-delivery; append `and commit` or `and push` to authorize Prompt 6.
+Prompt 1, Research Pass, Prompts 2 through 4, Pruning Pass, and Prompt 5 epoch.
+The campaign includes no-op research reuse, pruning audit, promotion, and
+installation-parity verification when no changes are justified. A prior
+campaign may supply exact evidence but cannot skip a unit. Bare invocation
+excludes Git delivery; append `and commit` or `and push` to authorize Prompt 6.
 
-Every path begins with Prompt 1. Its blind intent-and-evidence pass settles the
-minimum local intended contract, extracts credible source mechanics, and
-freezes `B0` from their intersection before opening current runtime or
-synthesis conclusions. Re-entry verifies the checkpoint and revisits only
-affected semantic units. Prompt 2 reconciles that skill's synthesis in place;
-no pack-wide migration is required.
+The lifecycle is:
 
-Route by exact campaign shape: current = B0 = C1 is
-`runtime-no-change`; current != B0 = C1 is `pruning-only`; and B0 != C1 is a
-`behavioral-candidate`. Classify prior evidence as exact-reusable,
-lane-limited, historical-admission-only, invalidated, or missing. Pruning is a
-non-regression lane and never receives mechanism-contribution credit. Exact
-byte identity does not waive missing B0 proof. Inside a campaign, Prompts 3 and
-4 and the Pruning Pass always run. The pass audits every runtime-facing
-candidate but runs equivalence samples only for material cuts, reusing exact
-Prompt 4 evidence as its control.
+```text
+M0 intent-derived minimum
+  -> independent Research Pass
+  -> H1 hypothesis runtime
+  -> V1 behavior-verified runtime
+  -> P1 regression-checked pruning
+  -> active canonical and installed runtime
+```
 
-Current runtime is an inventory and evidence source, never B0 by existence.
-C1 hypotheses may originate from current retention, one concrete pack
-composition gap, a credible source mechanism beyond minimum viability, or a
-counterexample to settled intent. Origin triggers inspection; every admitted
-hypothesis still needs an owner, expected B0 failure, cheapest expression,
-wrong-condition case, and proof. A counterexample that disproves minimum
-viability reopens B0 instead of becoming C1.
+Prompt 1 freezes a behavior-complete M0 specification from local intent,
+callers, relationships, compatibility, authority, and safety before upstream
+packages, outside research, or current skill bodies are opened. M0 is minimal
+by behavioral scope. Prompt 3 later materializes its exact bytes only from that
+checkpoint.
 
-A C1 no-control-failure or regression rejects that hypothesis, not the viable
-campaign. Prompt 4 removes the unit, rederives exact C1 as B0 plus survivors,
-and continues; if none survive, C1 = B0 and the campaign proceeds to the
-Pruning Pass.
+The mandatory Research Pass searches independently from the intended behavior
+before inspecting upstream and current runtimes. It then verifies newly
+observed mechanics against applicable online professional evidence,
+alternatives, conditions, and counterpressure. An upstream pack establishes
+what it instructs, not professional correctness or a professional claim its
+author did not make. Evidence is classified `independently-supported`,
+`contested`, `pack-specific`, or `unverified`.
 
-B0 must pass its minimum-runtime suite before C1 evaluation. Compare unproved
-source steering against `D0` no-guidance and reuse the matching B0 viability
-arm; independently required contracts use owner-matched proof unless efficacy
-is claimed.
+Prompt 2 reconciles research, current behavior, pack composition, and
+intent-adjacent opportunities into H1. A local experimental hypothesis may
+proceed without professional support only when it is labeled honestly and
+research found no decisive contradiction. Every H1 unit has an owner, expected
+M0 weakness, contribution mode, cheapest expression, wrong-condition case,
+and proof.
 
-Use the Conditional Research Interlude only when Prompt 1 admits one exact
-decision-changing source gap. Source distillation returns one evidence packet
-and stops before behavior design, runtime authoring, or deployment; rerun
-Prompt 1 against the unchanged checkpoint to apply only that delta. Behavioral
-uncertainty waits for exact candidate bytes and candidate-owned evaluation.
-Prefer relevant, verifiably acclaimed, highly rated, or widely adopted sources
-that model upper-bound engineering discipline, but treat those signals as
-discovery priorities rather than evidence of correctness or local fit.
+Prompt 4 proves M0 viability first. H1 may demonstrate either defect correction
+or a pre-registered quality lift. A missing control deficit rejects only that
+hypothesis; viable M0 remains. Exact behavior proof is scoped to the tested
+model, host, configuration, tasks, and rubric.
 
-Use the Conditional Behavior Decision Interlude only when Prompt 1 admits one
-exact intended-contract decision: a fuzzy minimum-viability axis or a C1
-hypothesis that would alter outcome, invocation, authority, Return, completion,
-exclusion, or relationships. It never selects agent technique or proves
-efficacy.
+The Pruning Pass freezes V1 and derives P1 only through non-regression proof.
+When a cut is ambiguous or unproved, retain V1. Prompt 5 promotes and installs
+only P1.
 
-Use the Conditional Prototype Interlude only for one agent-owned technical
-choice blocking executable B0 or C1. Its disposable runnable probe may select a
-construction but is not skill-wording, production, or behavioral-effect proof.
+Current runtime is discovery evidence, never M0 by existence. Required local
+contracts belong in M0; current-only ideas belong in H1. If removing current
+behavior carries unresolved material safety, authority, compatibility, or
+relationship risk, preserve active runtime and close the gap before promotion.
 
-Every leaf prompt performs one unit, recommends at most one successor, and
-stops. Only an active Deploy Campaign coordinator may dispatch the verified
-successor. Use the proportionate proof budget in
-[`deploy-prompts.md`](deploy-prompts.md): do not run a full suite at every
-documentation or construction step. Prompt 4 owns behavior proof; the Pruning
-Pass owns cut equivalence and skips behavioral waves when no material cut
-exists. Prompts 1 through 5 and the Pruning Pass preserve Git HEAD and never
-stage or commit; optional Prompt 6 is the sole Git-delivery owner. Load the
-shared sections plus the controller or named unit, not every prompt body.
+Use the Conditional Behavior Decision Interlude only for one user-owned
+contract choice. Use the Conditional Prototype Interlude only for one
+agent-owned technical construction choice. Neither proves skill-steering
+effect.
+
+Every leaf performs one unit and stops. Only the campaign coordinator advances
+verified transitions. Prompt 4 owns contribution proof; the Pruning Pass owns
+cut equivalence; Prompt 5 owns final integration and installation; Prompt 6
+alone owns Git delivery. Load the shared sections plus the controller or named
+unit, not every prompt body.
 
 ## Boundary
 
