@@ -1,0 +1,41 @@
+{
+  "task": "Using the exact assigned Writing Great Skills runtime and only the supplied facts, recommend the smallest reliable repair for the reference-loading problem. Explain the ordered actions, the evidence gate for each action, what remains branch-only, and how to validate the result.",
+  "authority": "Advisory semantic skill-authoring judgment only. The reference owner controls SECURITY.md; the caller controls any canonical edit. Do not mutate files or claim completed proof.",
+  "initial_state": "Only the assigned facts and exact runtime are available. No prior candidate output, evaluation conclusion, or hidden repository state may be assumed.",
+  "tools_operations": [
+    "Read the exact assigned runtime package.",
+    "Read the assigned fact IDs.",
+    "Reason about the smallest reliable semantic repair.",
+    "Return one advisory response; perform no mutation."
+  ],
+  "mutation_boundary": "Read-only. No repository, reference, runtime, installation, Git, connector, or external mutation.",
+  "requested_output": [
+    "Diagnosis tied to supplied observations.",
+    "Ordered repair actions with evidence gates.",
+    "Branch-only and ownership disposition.",
+    "Fresh validation plan and safe fallback boundary."
+  ],
+  "facts": [
+    {
+      "id": "F-WC-01",
+      "text": "SECURITY.md is the authoritative owner of mandatory secret-handling steps, which apply only when a task handles secrets."
+    },
+    {
+      "id": "F-WC-02",
+      "text": "The current pointer says: When a task handles secrets, load SECURITY.md and apply its mandatory secret-handling steps before mutation."
+    },
+    {
+      "id": "F-WC-03",
+      "text": "Five recent secret-handling runs followed that pointer, loaded SECURITY.md, and applied every mandatory step."
+    },
+    {
+      "id": "F-WC-04",
+      "text": "The caller requires working branch-only material to remain unduplicated and unchanged."
+    }
+  ],
+  "runtime": {
+    "id": "H1",
+    "path": "../../../h1-runtime",
+    "tree_sha256": "95c45d53a6e853bad3a74981634b2bdf8c0e3bc7fc8a11f5a568fc3b0efad577"
+  }
+}

@@ -1,0 +1,821 @@
+{
+  "schema": "deploy-campaign-manifest/v1",
+  "campaign_epoch": "2026-07-24-writing-great-skills-7d0da40",
+  "skill": "writing-great-skills",
+  "active_unit": "prompt-5",
+  "decision": "evidence-gap",
+  "campaign_shape": "hypothesis-candidate",
+  "starting_head": "7d0da40a218114aa138265557ea2454361dcd147",
+  "ending_head": "7d0da40a218114aa138265557ea2454361dcd147",
+  "successor_started": false,
+  "git_delivery": "pending",
+  "exact_stop_reason": "Exact P1 failed a frozen heading-bounded canonical compatibility contract, so canonical C0 was restored before installation and Prompt 5 stopped with evidence-gap; Prompt 1 is the required route.",
+  "fixed_point": {
+    "git_head": "7d0da40a218114aa138265557ea2454361dcd147",
+    "current_runtime_path": "skills/custom/writing-great-skills",
+    "current_runtime_algorithm": "campaign-tree-v1",
+    "current_runtime_sha256": "559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032",
+    "current_runtime_file_count": 4
+  },
+  "authoritative_artifacts": {
+    "campaign_manifest": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/campaign-manifest.json",
+    "m0_checkpoint": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/m0-checkpoint.json",
+    "research_packet": "docs/research/writing-great-skills-deploy-2026-07-24-7d0da40.md",
+    "active_synthesis": "docs/synthesis/skills/writing-great-skills.md",
+    "prompt2_transcript": "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-prompt2-synthesis.md",
+    "prompt3_transcript": "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-prompt3-construction.md",
+    "prompt4_transcript": "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-prompt4-evaluation.md",
+    "m0_freeze": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/m0-freeze.json",
+    "m0_runtime": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/m0-runtime",
+    "h1_runtime": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/h1-runtime",
+    "candidate_record": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/candidate.json",
+    "prompt4_protocol": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/evals/prompt4/protocol-manifest.json",
+    "prompt4_results": "docs/validation/evals/writing-great-skills-2026-07-24-7d0da40-prompt4/results-manifest.json",
+    "prompt4_verifier": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/verify-prompt4.py",
+    "pruning_results": "docs/validation/evals/writing-great-skills-2026-07-24-7d0da40-pruning/results-manifest.json",
+    "pruning_transcript": "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-pruning.md",
+    "pruning_verifier": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/verify-pruning.py",
+    "prompt5_transcript": "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-prompt5-promotion.md",
+    "final_manifest": "docs/validation/evals/writing-great-skills-2026-07-24-7d0da40-prompt5/final-manifest.json",
+    "prompt3_verifier": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/verify-prompt3.py",
+    "predecessor_evidence": "docs/validation/evals/2026-07-24-writing-great-skills-incumbent-reconciliation.md"
+  },
+  "artifact_identities": {
+    "m0_checkpoint": {
+      "algorithm": "sha256-file-bytes",
+      "sha256": "33b6bb9b9e4a5571f92552ada39870588b4272a62d4111bfaef0b1b00c8d0aac"
+    },
+    "research_packet": {
+      "algorithm": "sha256-file-bytes",
+      "sha256": "d9057096c3b044fac57290af8a115693e3b1550cb3d78a89b754b7d4d5a3c596",
+      "status": "research-complete"
+    },
+    "active_synthesis": {
+      "algorithm": "sha256-utf8-marker-bounded-content-including-marker-lines-with-lf",
+      "start_marker": "<!-- WRITING-GREAT-SKILLS-DEPLOY-DECISION:START -->",
+      "end_marker": "<!-- WRITING-GREAT-SKILLS-DEPLOY-DECISION:END -->",
+      "sha256": "1acb3c84726d5b9d64cadf96d058a3cfbdf2f9a81c33983a4e918176ed8fe456",
+      "file_sha256": "f0f4b76db7a0ce1ebaf68d800e184a8e47ceb98e5828349f88d8c7ebae5ae87c"
+    },
+    "prompt2_transcript": {
+      "algorithm": "sha256-file-bytes",
+      "sha256": "7c7193aed13537d7de1394fc5847bd14ebc15e752ec612df041cf15026992a36"
+    },
+    "prompt3_transcript": {
+      "algorithm": "sha256-file-bytes",
+      "sha256": "6f4d9fb4d546c86e7da84727b73976cdc4351d6ae2284347685e2deb26984b27",
+      "stage_capsule_sha256": "2ba62a2d2b09e52f05c4eeab67d6ebc1b72db71963639e0a730f4c8849bb65b4"
+    },
+    "prompt4_transcript": {
+      "algorithm": "sha256-file-bytes",
+      "sha256": "82c18279954b8388ec1e147d24fb7b8d806e12e4d703121b43ab615ad286873c",
+      "stage_capsule_sha256": "10ce4c30f2baa0225d11853bf5f9c751184766ffd005cdf40197d35aea8084b8"
+    },
+    "m0_freeze": {
+      "algorithm": "sha256-file-bytes",
+      "sha256": "ec26fa5b9dc6795314691185e7ef80821838a5249ff816fd0f6e75fe763a7226"
+    },
+    "m0_runtime": {
+      "algorithm": "campaign-tree-v1",
+      "file_count": 4,
+      "sha256": "175c70bbe0ee79fad197f44ba32f0786b9bb94250ef22da21e66ded47d9e0341"
+    },
+    "h1_runtime": {
+      "algorithm": "campaign-tree-v1",
+      "file_count": 4,
+      "sha256": "95c45d53a6e853bad3a74981634b2bdf8c0e3bc7fc8a11f5a568fc3b0efad577"
+    },
+    "candidate_record": {
+      "algorithm": "sha256-file-bytes",
+      "sha256": "10126829704aab7e12c28b3913e1405e1dcffb790ad8bdfbb1c09c5f75a84eaa"
+    },
+    "prompt4_protocol": {
+      "algorithm": "sha256-file-bytes",
+      "sha256": "abec7ab79e589900ce22de33db02684c1285ad718b3466e1205f902b3076a36d"
+    },
+    "prompt4_results": {
+      "algorithm": "sha256-file-bytes",
+      "sha256": "ece74b8484a5d3462a4fe84fc8a6d80b5b6c5907c7ca9ff16784e67113dc593a"
+    },
+    "prompt4_verifier": {
+      "algorithm": "sha256-file-bytes",
+      "sha256": "b2acb4a7a9a8e475843a73954c70df6be976e351d92018ea075af6740ea96e2f"
+    },
+    "pruning_results": {
+      "algorithm": "sha256-file-bytes",
+      "sha256": "ce0858a6caa6af77aa66e33a2e3d338e38f5d298a15bb7e5d0d0adc0488e08ce"
+    },
+    "pruning_transcript": {
+      "algorithm": "sha256-file-bytes",
+      "sha256": "b02af50de20d366774f82687e14518acf484cabfe99ed6af7627a56bcfc33014",
+      "stage_capsule_sha256": "f35135207c835f27991665f9a47949442d685b9901792b4edaa978ca251caad6"
+    },
+    "pruning_verifier": {
+      "algorithm": "sha256-file-bytes",
+      "sha256": "c78bfaa341164fe6244ba6bd5b905e365ad4a74fa62a9ba67728a9d47ca09da7"
+    },
+    "prompt5_transcript": {
+      "algorithm": "sha256-file-bytes",
+      "sha256": "c11630f5234885aaa550d087e7c8a2747e9eea7052f9e0564aadda7efac99619",
+      "stage_capsule_sha256": "587c88cdb16384564eedd996c305de8fc957030e7bc36b1097c7fc5c8989b384"
+    },
+    "prompt3_verifier": {
+      "algorithm": "sha256-file-bytes",
+      "sha256": "2d4a2741721c023db64be8b259a571a36fa299eda1af5d3f3168d5bc39df29ef"
+    },
+    "predecessor_evidence": {
+      "algorithm": "sha256-file-bytes",
+      "sha256": "cc89700b9d5634f9d252e18f21d8fad5e55989ddf816b9daf91e5964f1f779c2"
+    },
+    "relationships": {
+      "algorithm": "sha256-file-bytes",
+      "sha256": "15bb4ab6cd4cda5256b45aae4c7bb887a153f62cc63dbd2203d0f3b68ea1ad69"
+    },
+    "focused_skill_contract": {
+      "algorithm": "sha256-file-bytes",
+      "sha256": "cf81c18e4a30ad2aeadaccc5606d488dea2d15bda51fab6552433eb9bcd19755"
+    },
+    "focused_deploy_contract": {
+      "algorithm": "sha256-file-bytes",
+      "sha256": "bbf85dbea08aa50c6a3f429a4acda9bf5bcc8eacdb4b3388526ded17c3d04965"
+    }
+  },
+  "stage_capsule": {
+    "path": "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-prompt5-promotion.md",
+    "start_marker": "<!-- DEPLOY-STAGE-CAPSULE:prompt5:start -->",
+    "end_marker": "<!-- DEPLOY-STAGE-CAPSULE:prompt5:end -->",
+    "algorithm": "sha256-utf8-marker-bounded-content-including-marker-lines-with-lf",
+    "sha256": "587c88cdb16384564eedd996c305de8fc957030e7bc36b1097c7fc5c8989b384",
+    "proof_scope": "Exact predecessor replay, provisional exact-P1 canonical promotion, heading-bounded compatibility failure, canonical rollback, installed read-only parity, and pre-install stop",
+    "immutable_inputs": [
+      "artifact_identities.m0_runtime",
+      "artifact_identities.prompt4_protocol",
+      "artifact_identities.prompt4_results",
+      "artifact_identities.prompt4_transcript",
+      "artifact_identities.prompt4_verifier",
+      "artifact_identities.pruning_results",
+      "artifact_identities.candidate_record",
+      "artifact_identities.active_synthesis",
+      "artifact_identities.pruning_transcript",
+      "artifact_identities.pruning_verifier",
+      "artifact_identities.prompt5_transcript"
+    ],
+    "active_verifier": {
+      "id": "writing-great-skills-prompt5-evidence-gap-v1",
+      "kind": "canonical-compatibility-failure-and-rollback-record",
+      "path": "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-prompt5-promotion.md",
+      "sha256": "c11630f5234885aaa550d087e7c8a2747e9eea7052f9e0564aadda7efac99619",
+      "proof_scope": "P1 identity, canonical semantic failure classification, rollback, installed read-only parity, and pre-install stop"
+    },
+    "supersedes": {
+      "path": "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-pruning.md",
+      "capsule_sha256": "f35135207c835f27991665f9a47949442d685b9901792b4edaa978ca251caad6",
+      "scope": "active lifecycle decision only; Pruning remains exact P1 and cut-audit authority"
+    }
+  },
+  "runtime_identities": {
+    "current": {
+      "status": "exact",
+      "path": "skills/custom/writing-great-skills",
+      "algorithm": "campaign-tree-v1",
+      "sha256": "559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032"
+    },
+    "M0": {
+      "status": "exact-materialized-control",
+      "path": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/m0-runtime",
+      "algorithm": "campaign-tree-v1",
+      "identity": "175c70bbe0ee79fad197f44ba32f0786b9bb94250ef22da21e66ded47d9e0341",
+      "source": "m0_checkpoint",
+      "file_count": 4
+    },
+    "H1": {
+      "status": "exact-frozen-candidate-rejected-no-control-deficit",
+      "path": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/h1-runtime",
+      "algorithm": "campaign-tree-v1",
+      "identity": "95c45d53a6e853bad3a74981634b2bdf8c0e3bc7fc8a11f5a568fc3b0efad577",
+      "file_count": 4,
+      "relation_to_M0": "different-by-H1-POINTER-REPAIR-01-only",
+      "evaluation_disposition": "reject-no-control-deficit",
+      "samples_run": 0
+    },
+    "post_decision_H1": {
+      "status": "exact-rederived-no-surviving-transformations",
+      "path": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/m0-runtime",
+      "algorithm": "campaign-tree-v1",
+      "identity": "175c70bbe0ee79fad197f44ba32f0786b9bb94250ef22da21e66ded47d9e0341",
+      "equals": "M0"
+    },
+    "V1": {
+      "status": "exact-verified-runtime",
+      "path": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/m0-runtime",
+      "algorithm": "campaign-tree-v1",
+      "identity": "175c70bbe0ee79fad197f44ba32f0786b9bb94250ef22da21e66ded47d9e0341",
+      "equals": "M0"
+    },
+    "P1": {
+      "status": "exact-pruned-final-runtime-byte-identical-to-v1",
+      "path": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/m0-runtime",
+      "algorithm": "campaign-tree-v1",
+      "identity": "175c70bbe0ee79fad197f44ba32f0786b9bb94250ef22da21e66ded47d9e0341",
+      "equals": "V1",
+      "stored_once": true
+    },
+    "canonical": {
+      "status": "preserved-C0-after-provisional-P1-promotion-rollback",
+      "identity": "559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032"
+    },
+    "installed": {
+      "status": "read-only-unmutated-exact-canonical-parity",
+      "identity": "559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032"
+    }
+  },
+  "m0": {
+    "decision": "exact-materialized-fidelity-and-complete-viability-passed",
+    "construction_authority": "m0-checkpoint-only",
+    "freeze_record": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/m0-freeze.json",
+    "runtime_path": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/m0-runtime",
+    "tree_sha256": "175c70bbe0ee79fad197f44ba32f0786b9bb94250ef22da21e66ded47d9e0341",
+    "file_count": 4,
+    "semantic_state_owner": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/m0-checkpoint.json",
+    "required_semantic_ids": [
+      "M0-01",
+      "M0-02",
+      "M0-03",
+      "M0-04",
+      "M0-05",
+      "M0-06",
+      "M0-07",
+      "M0-08",
+      "M0-09",
+      "M0-10"
+    ],
+    "clauses": {
+      "M0-01": {
+        "owner": "Local invocation and Skill Router contracts",
+        "passage": "metadata description and implicit policy",
+        "gates": ["positive-routing", "closest-wrong-condition-routing"]
+      },
+      "M0-02": {
+        "owner": "Requested operation authority",
+        "passage": "Audit and Author selection",
+        "gates": ["audit-no-write", "author-bounded-mutation"]
+      },
+      "M0-03": {
+        "owner": "Canonical ownership chain",
+        "passage": "canonical source and foreign lifecycle boundary",
+        "gates": ["canonical-source", "unchanged-foreign-state"]
+      },
+      "M0-04": {
+        "owner": "Writing Great Skills coverage contract",
+        "passage": "behavior-capable surface coverage",
+        "gates": ["complete-affected-surface-ledger"]
+      },
+      "M0-05": {
+        "owner": "Repository context trace and relationship owners",
+        "passage": "one-owner semantic and relationship contract",
+        "gates": ["owner-trace", "foreign-procedure-pointer"]
+      },
+      "M0-06": {
+        "owner": "Runtime package information hierarchy",
+        "passage": "common-inline and conditional support pointers",
+        "gates": ["resolved-links", "target-and-condition-pointer", "representative-loading-cases"]
+      },
+      "M0-07": {
+        "owner": "Behavior-preserving cut discipline",
+        "passage": "protect behavior and remove semantic absence only",
+        "gates": ["clause-to-intent", "protected-behavior", "absence-proof"]
+      },
+      "M0-08": {
+        "owner": "Claim-matched proof",
+        "passage": "structural, relationship, and direct behavioral proof",
+        "gates": ["claim-to-proof-separation", "uncontaminated-controls"]
+      },
+      "M0-09": {
+        "owner": "Writing Great Skills Return contract",
+        "passage": "typed operation-specific Return",
+        "gates": ["return-semantic-schema", "truthful-limits"]
+      },
+      "M0-10": {
+        "owner": "Canonical extraction boundary",
+        "passage": "completion, read-back, and stop",
+        "gates": ["complete-ownership", "work-state-read-back", "no-delivery"]
+      }
+    },
+    "missed_minimum_obligation": false,
+    "prompt1_reopen_required": false,
+    "viability_suite_status": "passed",
+    "proof_coverage_count": 11,
+    "behavioral_entry_positive_control_scores": [8, 8, 8, 8, 8],
+    "critical_failures": [],
+    "protocol_deviations": []
+  },
+  "current_dispositions": [
+    {
+      "surface": "frontmatter-and-implicit-policy",
+      "semantic_ids": ["M0-01"],
+      "dispositions": ["M0-equivalent", "required compatibility"]
+    },
+    {
+      "surface": "authority-source-and-lifecycle-stop",
+      "semantic_ids": ["M0-02", "M0-03", "M0-09", "M0-10"],
+      "dispositions": ["M0-equivalent", "required compatibility"]
+    },
+    {
+      "surface": "coverage-and-classifications",
+      "semantic_ids": ["M0-04"],
+      "dispositions": ["M0-equivalent"]
+    },
+    {
+      "surface": "semantic-ownership-and-relationships",
+      "semantic_ids": ["M0-05"],
+      "dispositions": ["M0-equivalent", "required compatibility"]
+    },
+    {
+      "surface": "information-hierarchy-glossary-and-pointers",
+      "semantic_ids": ["M0-06"],
+      "dispositions": ["M0-equivalent", "disclose"]
+    },
+    {
+      "surface": "behavior-preserving-cuts",
+      "semantic_ids": ["M0-07"],
+      "dispositions": ["M0-equivalent"]
+    },
+    {
+      "surface": "claim-matched-proof-and-behavior-evals",
+      "semantic_ids": ["M0-08"],
+      "dispositions": ["M0-equivalent", "required compatibility", "disclose"]
+    },
+    {
+      "surface": "C0-G04-weak-pointer-repair",
+      "semantic_ids": ["H1-POINTER-REPAIR-01"],
+      "dispositions": ["reject-no-control-deficit", "not protected", "removed from V1"]
+    },
+    {
+      "surface": "foreign-lifecycle-and-dispatch-mechanics",
+      "semantic_ids": [],
+      "dispositions": ["owned elsewhere"]
+    },
+    {
+      "surface": "historical-candidates-promotion-evaluations-and-transcripts",
+      "semantic_ids": [],
+      "dispositions": ["historical evidence", "defer"]
+    }
+  ],
+  "current_only_causal_dispositions": {
+    "C0-G04": {
+      "decision": "reject-no-control-deficit",
+      "h1_id": "H1-POINTER-REPAIR-01",
+      "entry_boundary": "observed misses of must-have branch material behind a weak pointer",
+      "wrong_condition_boundary": "already precise target-condition-action pointer with no observed miss remains unchanged and does not inline",
+      "m0_entry_positive_scores": [8, 8, 8, 8, 8],
+      "h1_samples_run": 0,
+      "wrong_condition_pairs_run": 0,
+      "behavioral_credit": "none"
+    },
+    "all_other_C0_units": {
+      "decision": "predecessor-dispositions-final-not-reopened",
+      "authority": "docs/validation/evals/2026-07-24-writing-great-skills-incumbent-reconciliation.md"
+    },
+    "unresolved_removal_risk": false
+  },
+  "h1": {
+    "decision": "reject-no-control-deficit",
+    "runtime_path": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/h1-runtime",
+    "tree_sha256": "95c45d53a6e853bad3a74981634b2bdf8c0e3bc7fc8a11f5a568fc3b0efad577",
+    "file_count": 4,
+    "admitted_units": [
+      {
+        "id": "H1-POINTER-REPAIR-01",
+        "origin": ["current-observed"],
+        "professional_basis": "Agent Skills target-plus-condition guidance and Anthropic observed-miss repair/escalation guidance as synthesized in the current research packet",
+        "method_evidence": "independently-supported",
+        "claim_boundary": "The bounded repair method is supported; exact ordering is synthesis and exact local wording efficacy is unproved.",
+        "intended_value": "Preserve conditional loading while giving a complete, low-load escalation path after an observed must-have reference miss.",
+        "owner": "GLOSSARY.md information-hierarchy vocabulary",
+        "entry_predicate": "Observed runs miss must-have branch material behind a weak pointer.",
+        "applicability": "situational",
+        "applicability_basis": "Supplied observed-miss case and predecessor discovery; real-world prevalence unknown.",
+        "m0_compliant_counterexample": "M0 sharpens target, condition, and load/apply action and preserves branch loading but omits the contingent smallest inline fallback after a fresh persistent miss.",
+        "contribution_mode": "quality-lift",
+        "expected_m0_weakness": "The control may stop after sharpening and omit what to do if fresh entry-positive checks still miss must-have material.",
+        "cheapest_expression": "When observed runs miss must-have branch material behind a weak pointer, sharpen it to name the target, condition, and load/apply action; inline only if a fresh entry-positive check still misses.",
+        "construction": {
+          "target": "GLOSSARY.md",
+          "placement": "immediately after the Branch-only reference definition",
+          "passage_count": 1,
+          "word_budget_maximum": 32,
+          "always_loaded_delta": "none",
+          "SKILL_md_delta": "none",
+          "description_delta": "none"
+        },
+        "positive_case": "Branch-only SECURITY.md is mandatory for secret-handling runs, a vague pointer was skipped in observed runs, and the task asks for the smallest reliable repair without making branch material common.",
+        "wrong_condition_case": "The pointer already names SECURITY.md, the secrets condition, and the load/apply action, and observations show no miss.",
+        "fixed_rubric": {
+          "maximum": 8,
+          "dimensions": [
+            "Diagnoses the observed must-have loading miss: 2",
+            "Sharpens exact target, condition, and load/apply action first: 2",
+            "Requires fresh entry-positive observation and inlines only after persistent miss: 2",
+            "Preserves branch-only scope and authority: 2"
+          ]
+        },
+        "fresh_proof_registration": {
+          "minimum_M0_entry_positive_samples": 5,
+          "open_H1_gate": "fewer than four of five M0 controls score 8 because the contingent fallback is absent, or any M0 control inlines immediately",
+          "minimum_H1_entry_positive_samples": 5,
+          "acceptance": "at least four of five H1 samples score 8, mean improves by at least 1.0, variance remains acceptably bounded, no critical or protected regression, and load budget holds",
+          "wrong_condition_pairs_after_entry_gate": 2,
+          "wrong_condition_acceptance": "no rewrite and no inlining of the precise working pointer",
+          "fixture_guard": "Worker-visible fixture must not state the candidate rule or make the contingent fallback answer explicit."
+        },
+        "residual_limits": [
+          "No H1 contribution sample ran because the registered M0 deficit did not appear.",
+          "No real-world prevalence claim is made.",
+          "No transfer claim extends beyond the future frozen model, host, task, protocol, tools, authority, evidence, runtime, and rubric."
+        ],
+        "decision": "reject-no-control-deficit"
+      }
+    ],
+    "rejected_or_deferred_units": [
+      {
+        "id": "REJECT-DIRECT-C0-WORDING-RESTORE",
+        "decision": "reject",
+        "reason": "Current intent requires a cheaper current-compatible expression, not byte restoration."
+      },
+      {
+        "id": "REJECT-PREEMPTIVE-INLINE",
+        "decision": "reject",
+        "reason": "Inlining before an observed sharpened-pointer failure increases wrong-condition load and duplicates ownership."
+      },
+      {
+        "id": "REJECT-OTHER-H1-THIS-EPOCH",
+        "decision": "reject",
+        "reason": "User authorization admits no other H1 candidate and predecessor dispositions remain final."
+      }
+    ],
+    "required_semantic_ids": [],
+    "transformation_count": 1,
+    "surviving_transformation_count": 0,
+    "surviving_transformations": [],
+    "post_decision_runtime_path": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/m0-runtime",
+    "post_decision_tree_sha256": "175c70bbe0ee79fad197f44ba32f0786b9bb94250ef22da21e66ded47d9e0341",
+    "v1_equals_m0": true
+  },
+  "forbidden_semantics": [
+    {
+      "id": "FORBID-DIRECT-C0-G04-BYTE-RESTORE",
+      "absence_obligation": "H1 must use the registered current-compatible expression, not the predecessor sentence."
+    },
+    {
+      "id": "FORBID-INLINE-BEFORE-PERSISTENT-MISS",
+      "absence_obligation": "No H1 passage may make must-have branch material common before fresh evidence shows the sharpened pointer still misses."
+    },
+    {
+      "id": "FORBID-WORKING-POINTER-CHURN",
+      "absence_obligation": "A precise working target-condition-action pointer with no observed miss must remain unchanged and must not inline."
+    },
+    {
+      "id": "FORBID-SECOND-H1-CANDIDATE",
+      "absence_obligation": "H1 contains no admitted transformation other than H1-POINTER-REPAIR-01."
+    },
+    {
+      "id": "FORBID-HISTORICAL-EVIDENCE-AS-CURRENT-PROOF",
+      "absence_obligation": "Prompt 4 contribution and wrong-condition decisions must not reuse predecessor samples."
+    },
+    {
+      "id": "FORBID-FOREIGN-AUTHORITY-EXPANSION",
+      "absence_obligation": "No change to invocation, Audit/Author authority, relationships, installation, dispatch, or Git delivery."
+    }
+  ],
+  "protected_behavior_and_compatibility": {
+    "semantic_ids": [
+      "M0-01",
+      "M0-02",
+      "M0-03",
+      "M0-04",
+      "M0-05",
+      "M0-06",
+      "M0-07",
+      "M0-08",
+      "M0-09",
+      "M0-10"
+    ],
+    "package_inventory": [
+      "SKILL.md",
+      "GLOSSARY.md",
+      "BEHAVIOR-EVALS.md",
+      "agents/openai.yaml"
+    ],
+    "local_markdown_references": ["GLOSSARY.md", "BEHAVIOR-EVALS.md"],
+    "implicit_invocation": true,
+    "protected_relationships": [
+      "skill-router recommends writing-great-skills and stops",
+      "skill-creator owns scaffolding and metadata mechanics",
+      "writing-great-skills stops after canonical semantic proof",
+      "installer, publisher, synchronization, and Git owners remain foreign"
+    ],
+    "protected_helpers": [
+      "GLOSSARY.md remains the vocabulary owner",
+      "BEHAVIOR-EVALS.md remains the counterfactual wording-evaluation owner"
+    ],
+    "wrong_condition_boundary": "Precise working pointers with no observed miss remain unchanged and do not inline."
+  },
+  "runtime_load_profiles": {
+    "current_C0": {
+      "description_words_proxy": 38,
+      "SKILL_md_words_proxy": 660,
+      "GLOSSARY_md_words_proxy": 230,
+      "BEHAVIOR_EVALS_md_words_proxy": 376,
+      "metadata_words_proxy": 3,
+      "basis": "exact current file word-count proxies inherited from the exact matching canonical package identity"
+    },
+    "M0": {
+      "status": "exact-v1",
+      "package_bytes": 4872,
+      "tree_sha256": "175c70bbe0ee79fad197f44ba32f0786b9bb94250ef22da21e66ded47d9e0341",
+      "basis": "exact file-byte proxy; no token or latency claim"
+    },
+    "H1_rejected_delta": {
+      "conditional_glossary_passages": 1,
+      "conditional_glossary_words": 30,
+      "conditional_glossary_bytes": 202,
+      "always_loaded_description_delta": 0,
+      "always_loaded_SKILL_body_delta": 0,
+      "accepted_into_v1": false,
+      "basis": "exact file-byte proxy for frozen rejected H1; no token or latency claim"
+    },
+    "V1": {
+      "equals": "M0",
+      "delta_from_M0_bytes": 0,
+      "accepted_h1_units": []
+    },
+    "P1": {
+      "equals": "V1",
+      "package_bytes": 4872,
+      "delta_from_V1_bytes": 0,
+      "tree_sha256": "175c70bbe0ee79fad197f44ba32f0786b9bb94250ef22da21e66ded47d9e0341",
+      "basis": "exact byte-identical V1/P1 package; no token or latency claim"
+    }
+  },
+  "pruning": {
+    "decision": "complete",
+    "disposition": "pruning-not-needed",
+    "prompt4_acceptance_verified": true,
+    "runtime_identities": {
+      "V1": "175c70bbe0ee79fad197f44ba32f0786b9bb94250ef22da21e66ded47d9e0341",
+      "P1": "175c70bbe0ee79fad197f44ba32f0786b9bb94250ef22da21e66ded47d9e0341",
+      "relation": "P1-byte-identical-to-V1"
+    },
+    "complete_cut_audit": {
+      "clause_map": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/evals/prompt4/protocol-manifest.json#instruction_passage_map",
+      "v1_instruction_passages": 27,
+      "keep": 27,
+      "collapse": 0,
+      "disclose": 0,
+      "delete": 0
+    },
+    "cut_ledger": [
+      {
+        "id": "CG-01-routing-predicate-compression",
+        "affected_units": ["M0-01"],
+        "disposition": "rejected-nonmaterial-and-unproved"
+      },
+      {
+        "id": "CG-02-conditional-owner-consolidation",
+        "affected_units": ["M0-01", "M0-06", "M0-07", "M0-08", "M0-10"],
+        "disposition": "rejected-nonmaterial-and-protected"
+      },
+      {
+        "id": "CG-03-return-completion-consolidation",
+        "affected_units": ["M0-07", "M0-08", "M0-09", "M0-10"],
+        "disposition": "rejected-nonmaterial-and-protected"
+      }
+    ],
+    "material_cuts": [],
+    "reintroduced_c0_units": [],
+    "h1_pointer_repair_reintroduced": false,
+    "load_delta_bytes": 0,
+    "fresh_behavioral_wave": "not-run-no-material-cut",
+    "results": "docs/validation/evals/writing-great-skills-2026-07-24-7d0da40-pruning/results-manifest.json",
+    "transcript": "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-pruning.md",
+    "recommended_next_unit": "Deploy Prompt 5"
+  },
+  "prompt5": {
+    "decision": "evidence-gap",
+    "p1_tree_sha256": "175c70bbe0ee79fad197f44ba32f0786b9bb94250ef22da21e66ded47d9e0341",
+    "provisional_canonical_promotion": "exact-P1-read-back-passed",
+    "canonical_proof": {
+      "command": "python -m pytest tests/test_skill_pack_contracts.py::test_writing_great_skills_keeps_promoted_package_and_relationship_boundary tests/test_deploy_prompt_contracts.py -q",
+      "result": "14-passed-1-failed",
+      "failed_test": "tests/test_deploy_prompt_contracts.py::test_behavior_evaluation_contract_supports_quality_lift_and_adaptive_cost",
+      "classification": "frozen-semantic-compatibility-failure-not-prose-snapshot",
+      "route": "Deploy Prompt 1"
+    },
+    "canonical_rollback": {
+      "status": "complete-before-installation",
+      "tree_sha256": "559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032"
+    },
+    "installed": {
+      "status": "read-only-unmutated",
+      "tree_sha256": "559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032"
+    },
+    "final_preserved_state_validation": {
+      "focused": "15-passed",
+      "full_suite": "213-passed-4-skipped",
+      "skill_validation": "passed",
+      "does_not_prove_p1": true
+    },
+    "installer_phase_started": false,
+    "behavioral_evidence_rerun": false,
+    "experimental_target_present": false,
+    "final_manifest": "docs/validation/evals/writing-great-skills-2026-07-24-7d0da40-prompt5/final-manifest.json"
+  },
+  "evidence_dispositions": [
+    {
+      "identity": "m0-checkpoint@33b6bb9b9e4a5571f92552ada39870588b4272a62d4111bfaef0b1b00c8d0aac",
+      "disposition": "exact-reusable",
+      "scope": "M0 specification only"
+    },
+    {
+      "identity": "research-packet@d9057096c3b044fac57290af8a115693e3b1550cb3d78a89b754b7d4d5a3c596",
+      "disposition": "exact-reusable",
+      "scope": "method admission, conditions, alternatives, and limits only"
+    },
+    {
+      "identity": "current-runtime@559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032",
+      "disposition": "lane-limited",
+      "scope": "exact bytes, inventory, links, policy, and compatibility"
+    },
+    {
+      "identity": "predecessor-C0-G04@cc89700b9d5634f9d252e18f21d8fad5e55989ddf816b9daf91e5964f1f779c2",
+      "disposition": "historical-admission-only",
+      "scope": "candidate discovery and plausible causal admission",
+      "invalidations": [
+        "candidate wording is not byte-identical",
+        "fresh epoch runtime and protocol identities do not exist",
+        "exact model-build telemetry unavailable",
+        "sampler seed telemetry unavailable"
+      ]
+    },
+    {
+      "identity": "other-predecessor-C0-units@cc89700b9d5634f9d252e18f21d8fad5e55989ddf816b9daf91e5964f1f779c2",
+      "disposition": "final-predecessor-dispositions",
+      "scope": "not reopened and not candidates"
+    },
+    {
+      "identity": "prompt4-results@ece74b8484a5d3462a4fe84fc8a6d80b5b6c5907c7ca9ff16784e67113dc593a",
+      "disposition": "exact-current-lane",
+      "scope": "complete M0 viability and five fresh exact M0 entry-positive controls under the frozen fixture, model family, host, reasoning configuration, tools, authority, runtime, and rubric"
+    }
+  ],
+  "claim_slots": {
+    "semantic_contract": {
+      "status": "prompt5-not-promotable",
+      "claim": "Exact P1 passed its frozen Prompt 4 lane but failed the canonical heading-bounded behavior-evaluation compatibility contract."
+    },
+    "behavioral_contribution": {
+      "status": "reject-no-control-deficit",
+      "claim": "All five fresh exact M0 controls scored 8/8 without immediate inline, so the frozen adaptive gate prohibited H1 sampling and no H1 contribution claim is made."
+    },
+    "runtime_load": {
+      "status": "exact-byte-and-word-proxy-p1-only",
+      "claim": "P1 equals V1 and M0 at 4,872 package bytes and 639 whitespace-delimited words with zero pruning delta. It was not installed; no token or latency claim is made."
+    }
+  },
+  "proof_registration": {
+    "prompt2": [
+      "complete-synthesis-read-back",
+      "m0-independent-implementation-dry-read",
+      "complete-current-and-evidence-disposition-read-back",
+      "manifest-schema-and-decision-assertions",
+      "affected-markdown-gates",
+      "directly-affected-documentation-checks",
+      "skill-validation",
+      "both-diff-checks",
+      "scoped-status",
+      "head-read-back"
+    ],
+    "prompt3": [
+      "exact-m0-checkpoint-only-freeze",
+      "exact-m0-h1-inventories-and-tree-hashes",
+      "instruction-passage-and-semantic-owner-map",
+      "forbidden-semantic-absence-checks",
+      "fixture-lint-map",
+      "lint-fixture-executable",
+      "entry-positive-compare-payloads-executable",
+      "wrong-condition-compare-payloads-executable",
+      "candidate-aware-compatibility-preflight",
+      "affected-markdown-gates",
+      "focused-structural-and-relationship-checks",
+      "skill-validation",
+      "both-diff-checks",
+      "scoped-status",
+      "head-read-back"
+    ],
+    "prompt4": [
+      "complete-m0-fidelity-and-viability-audit",
+      "minimum-proof-coverage-matrix",
+      "exact-runtime-and-protocol-identity-read-back",
+      "fixture-lint-executable",
+      "entry-positive-payload-isolation-executable",
+      "one-valid-family-pilot",
+      "five-fresh-exact-m0-entry-positive-controls",
+      "root-only-fixed-rubric-scoring",
+      "adaptive-gate-reject-no-control-deficit",
+      "exact-v1-equals-m0",
+      "focused-machine-and-relationship-verifier",
+      "affected-markdown-gates",
+      "skill-validation",
+      "both-diff-checks",
+      "scoped-status",
+      "head-read-back"
+    ],
+    "prompt4_fresh_comparisons": ["H1-POINTER-REPAIR-01-entry-positive-M0-controls-only"],
+    "prompt4_protocol": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/evals/prompt4/protocol-manifest.json",
+    "adaptive_gate": {
+      "minimum_m0_entry_positive_samples": 5,
+      "open_h1_only_if_registered_deficit_appears": true,
+      "minimum_h1_entry_positive_samples_if_opened": 5,
+      "wrong_condition_pairs_after_entry_gate": 2
+    },
+    "behavior_sampling_status": "complete",
+    "m0_entry_positive_samples": 5,
+    "m0_entry_positive_scores": [8, 8, 8, 8, 8],
+    "registered_deficit_observed": false,
+    "h1_entry_positive_samples": 0,
+    "wrong_condition_pairs": 0,
+    "h1_disposition": "reject-no-control-deficit",
+    "pruning": [
+      "exact-prompt4-acceptance-replay",
+      "complete-27-passage-v1-cut-audit",
+      "three-plausible-cut-groups-disposed",
+      "no-material-cut",
+      "exact-v1-p1-tree-identity",
+      "no-fresh-behavioral-wave",
+      "candidate-manifest-synthesis-read-back",
+      "affected-markdown-gates",
+      "skill-validation",
+      "both-diff-checks",
+      "scoped-status",
+      "head-read-back"
+    ],
+    "prompt5": [
+      "exact-predecessor-capsule-and-runtime-read-back",
+      "provisional-exact-p1-canonical-promotion",
+      "exact-provisional-canonical-tree-read-back",
+      "directly-affected-heading-bounded-semantic-proof",
+      "proof-failure-classification",
+      "canonical-c0-rollback-before-installation",
+      "canonical-and-installed-read-only-parity",
+      "compact-final-manifest-and-stage-capsules",
+      "affected-markdown-gates",
+      "skill-validation",
+      "both-diff-checks",
+      "scoped-status",
+      "head-read-back"
+    ]
+  },
+  "affected_surfaces": {
+    "changed": [
+      ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/campaign-manifest.json",
+      ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/candidate.json",
+      ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/evals/prompt4/outputs/",
+      ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/verify-prompt4.py",
+      ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/verify-pruning.py",
+      "docs/synthesis/skills/writing-great-skills.md",
+      "docs/validation/evals/writing-great-skills-2026-07-24-7d0da40-prompt4/results-manifest.json",
+      "docs/validation/evals/writing-great-skills-2026-07-24-7d0da40-pruning/results-manifest.json",
+      "docs/validation/evals/writing-great-skills-2026-07-24-7d0da40-prompt5/final-manifest.json",
+      "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-prompt4-evaluation.md",
+      "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-pruning.md",
+      "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-prompt5-promotion.md"
+    ],
+    "preserved": [
+      "skills/custom/writing-great-skills/",
+      ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/m0-checkpoint.json",
+      ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/m0-freeze.json",
+      ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/m0-runtime/",
+      ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/h1-runtime/",
+      ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/evals/prompt4/protocol-manifest.json",
+      ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/evals/prompt4/worker-fixture.json",
+      ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/evals/prompt4/root-only-evaluation.json",
+      "docs/research/writing-great-skills-deploy-2026-07-24-7d0da40.md",
+      "docs/validation/evals/2026-07-24-writing-great-skills-incumbent-reconciliation.md",
+      "docs/synthesis/skill-context-relationships.md",
+      "tests/",
+      "skills/experimental/manifest.json",
+      "installed state",
+      "Git index"
+    ]
+  },
+  "residual_gaps": [
+    "H1 exact wording efficacy remains untested because the registered M0 deficit did not appear and the adaptive gate prohibited H1 sampling.",
+    "Exact model-build, sampler seed, token counts, and latency telemetry were unavailable.",
+    "No conclusion transfers beyond the frozen runtime, fixture, model family, host, reasoning configuration, tools, authority, evidence, protocol, rubric, and sample count.",
+    "Real-world prevalence of observed must-have pointer misses is unknown.",
+    "Live-host implicit discovery remains unrun.",
+    "P1 omits the required canonical behavior-evaluation registration, adaptive-sampling, wrong-condition, judgment, and terminal-disposition compatibility semantics.",
+    "Installer dry-run, cohort proof, synchronization, post-sync parity, and clean post-install dry-run were not reached because canonical proof failed."
+  ],
+  "recommended_next_unit": "Deploy Prompt 1"
+}

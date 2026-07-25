@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "artifact_type": "deploy-prompt4-preregistration",
+  "campaign": "2026-07-24-writing-great-skills-7d0da40",
+  "skill": "writing-great-skills",
+  "behavioral_evaluation_status": "not-started",
+  "runtime": {
+    "m0": {
+      "path": "../../m0-runtime",
+      "algorithm": "campaign-tree-v1",
+      "tree_sha256": "175c70bbe0ee79fad197f44ba32f0786b9bb94250ef22da21e66ded47d9e0341",
+      "file_count": 4
+    },
+    "h1": {
+      "path": "../../h1-runtime",
+      "algorithm": "campaign-tree-v1",
+      "tree_sha256": "95c45d53a6e853bad3a74981634b2bdf8c0e3bc7fc8a11f5a568fc3b0efad577",
+      "file_count": 4
+    },
+    "only_arm_delta": "H1-POINTER-REPAIR-01 in GLOSSARY.md"
+  },
+  "instruction_passage_map": [
+    {"id": "P-01", "runtime": "M0+H1", "surface": "SKILL.md#description", "selector": "Create or edit canonical Codex skill behavior", "semantic_ids": ["M0-01"], "origin": "m0-checkpoint"},
+    {"id": "P-02", "runtime": "M0+H1", "surface": "SKILL.md#authority-operation", "selector": "Choose exactly one operation", "semantic_ids": ["M0-02"], "origin": "m0-checkpoint"},
+    {"id": "P-03", "runtime": "M0+H1", "surface": "SKILL.md#authority-gate", "selector": "Before judgment or mutation, resolve", "semantic_ids": ["M0-02", "M0-03"], "origin": "m0-checkpoint"},
+    {"id": "P-04", "runtime": "M0+H1", "surface": "SKILL.md#foreign-owners", "selector": "Point to the owners of scaffolding", "semantic_ids": ["M0-03", "M0-05", "M0-10"], "origin": "m0-checkpoint"},
+    {"id": "P-05", "runtime": "M0+H1", "surface": "SKILL.md#coverage", "selector": "Inspect and classify every surface capable", "semantic_ids": ["M0-04"], "origin": "m0-checkpoint"},
+    {"id": "P-06", "runtime": "M0+H1", "surface": "SKILL.md#semantic-owner", "selector": "Give each behavior and relationship one owner", "semantic_ids": ["M0-05"], "origin": "m0-checkpoint"},
+    {"id": "P-07", "runtime": "M0+H1", "surface": "SKILL.md#glossary-pointer", "selector": "Load [GLOSSARY.md]", "semantic_ids": ["M0-06"], "origin": "m0-checkpoint"},
+    {"id": "P-08", "runtime": "M0+H1", "surface": "SKILL.md#behavior-evals-pointer", "selector": "Load [BEHAVIOR-EVALS.md]", "semantic_ids": ["M0-06", "M0-08"], "origin": "m0-checkpoint"},
+    {"id": "P-09", "runtime": "M0+H1", "surface": "SKILL.md#branch-guidance-failure", "selector": "When required branch guidance is unavailable", "semantic_ids": ["M0-06"], "origin": "m0-checkpoint"},
+    {"id": "P-10", "runtime": "M0+H1", "surface": "SKILL.md#cuts-keep", "selector": "Keep clauses that change intended behavior", "semantic_ids": ["M0-07"], "origin": "m0-checkpoint"},
+    {"id": "P-11", "runtime": "M0+H1", "surface": "SKILL.md#cuts-remove", "selector": "Remove only clauses without a local intent", "semantic_ids": ["M0-07"], "origin": "m0-checkpoint"},
+    {"id": "P-12", "runtime": "M0+H1", "surface": "SKILL.md#cuts-failure", "selector": "When a behavior-changing cut is not proved safe", "semantic_ids": ["M0-07"], "origin": "m0-checkpoint"},
+    {"id": "P-13", "runtime": "M0+H1", "surface": "SKILL.md#structural-proof", "selector": "Use exact read-back and deterministic checks", "semantic_ids": ["M0-08"], "origin": "m0-checkpoint"},
+    {"id": "P-14", "runtime": "M0+H1", "surface": "SKILL.md#behavioral-proof", "selector": "For claims that exact wording changes observable behavior", "semantic_ids": ["M0-08"], "origin": "m0-checkpoint"},
+    {"id": "P-15", "runtime": "M0+H1", "surface": "SKILL.md#proof-failure", "selector": "When required safe proof cannot run", "semantic_ids": ["M0-08"], "origin": "m0-checkpoint"},
+    {"id": "P-16", "runtime": "M0+H1", "surface": "SKILL.md#return", "selector": "Return `complete`, `partial`, or `blocked`", "semantic_ids": ["M0-09"], "origin": "m0-checkpoint"},
+    {"id": "P-17", "runtime": "M0+H1", "surface": "SKILL.md#completion", "selector": "Complete only when every affected semantic", "semantic_ids": ["M0-10"], "origin": "m0-checkpoint"},
+    {"id": "P-18", "runtime": "M0+H1", "surface": "GLOSSARY.md#invocation", "selector": "**Invocation:**", "semantic_ids": ["M0-01", "M0-06"], "origin": "m0-checkpoint"},
+    {"id": "P-19", "runtime": "M0+H1", "surface": "GLOSSARY.md#information-hierarchy", "selector": "**Information hierarchy:**", "semantic_ids": ["M0-06"], "origin": "m0-checkpoint"},
+    {"id": "P-20", "runtime": "M0+H1", "surface": "GLOSSARY.md#pruning", "selector": "**Pruning:**", "semantic_ids": ["M0-07"], "origin": "m0-checkpoint"},
+    {"id": "P-21", "runtime": "M0+H1", "surface": "GLOSSARY.md#completion", "selector": "**Completion:**", "semantic_ids": ["M0-10"], "origin": "m0-checkpoint"},
+    {"id": "P-22", "runtime": "M0+H1", "surface": "BEHAVIOR-EVALS.md#load-condition", "selector": "Use this procedure only for a claim", "semantic_ids": ["M0-06", "M0-08"], "origin": "m0-checkpoint"},
+    {"id": "P-23", "runtime": "M0+H1", "surface": "BEHAVIOR-EVALS.md#freeze", "selector": "Freeze the task, full context, model", "semantic_ids": ["M0-08"], "origin": "m0-checkpoint"},
+    {"id": "P-24", "runtime": "M0+H1", "surface": "BEHAVIOR-EVALS.md#isolation", "selector": "only arm difference is the exact runtime", "semantic_ids": ["M0-08"], "origin": "m0-checkpoint"},
+    {"id": "P-25", "runtime": "M0+H1", "surface": "BEHAVIOR-EVALS.md#judge", "selector": "Inspect every output against the fixed rubric", "semantic_ids": ["M0-08"], "origin": "m0-checkpoint"},
+    {"id": "P-26", "runtime": "M0+H1", "surface": "BEHAVIOR-EVALS.md#report", "selector": "Report the tested bounds", "semantic_ids": ["M0-08", "M0-09"], "origin": "m0-checkpoint"},
+    {"id": "P-27", "runtime": "M0+H1", "surface": "agents/openai.yaml#policy", "selector": "allow_implicit_invocation: true", "semantic_ids": ["M0-01"], "origin": "m0-checkpoint"},
+    {"id": "P-28", "runtime": "H1", "surface": "GLOSSARY.md#information-hierarchy", "selector": "When observed runs miss must-have branch material", "semantic_ids": ["H1-POINTER-REPAIR-01"], "origin": "prompt2-admitted-current-observed", "method_evidence": "independently-supported", "contribution_mode": "quality-lift"}
+  ],
+  "semantic_trace": {
+    "M0-01": {"owner": "Local invocation and Skill Router contracts", "passages": ["P-01", "P-18", "P-27"], "proof_ids": ["V-01", "V-10", "INV-01"]},
+    "M0-02": {"owner": "Requested operation authority", "passages": ["P-02", "P-03"], "proof_ids": ["V-02", "V-11", "AUTH-01"]},
+    "M0-03": {"owner": "Canonical ownership chain", "passages": ["P-03", "P-04"], "proof_ids": ["V-02", "V-10", "V-11", "REL-01"]},
+    "M0-04": {"owner": "Writing Great Skills coverage contract", "passages": ["P-05"], "proof_ids": ["V-03", "COV-01"]},
+    "M0-05": {"owner": "Repository context trace and relationship owners", "passages": ["P-04", "P-06"], "proof_ids": ["V-04", "REL-01"]},
+    "M0-06": {"owner": "Runtime package information hierarchy", "passages": ["P-07", "P-08", "P-09", "P-18", "P-19", "P-22"], "proof_ids": ["V-05", "V-10", "CTX-01", "CTX-02"]},
+    "M0-07": {"owner": "Behavior-preserving cut discipline", "passages": ["P-10", "P-11", "P-12", "P-20"], "proof_ids": ["V-06", "CUT-01"]},
+    "M0-08": {"owner": "Claim-matched proof", "passages": ["P-08", "P-13", "P-14", "P-15", "P-22", "P-23", "P-24", "P-25", "P-26"], "proof_ids": ["V-07", "MACH-01", "BEH-01"]},
+    "M0-09": {"owner": "Writing Great Skills Return contract", "passages": ["P-16", "P-26"], "proof_ids": ["V-08", "RET-01"]},
+    "M0-10": {"owner": "Canonical extraction boundary", "passages": ["P-04", "P-17", "P-21"], "proof_ids": ["V-09", "V-11", "STOP-01"]},
+    "H1-POINTER-REPAIR-01": {"owner": "GLOSSARY.md information-hierarchy vocabulary", "passages": ["P-28"], "proof_ids": ["H1-EP-01", "H1-WC-01"]}
+  },
+  "forbidden_absence_checks": {
+    "FORBID-DIRECT-C0-G04-BYTE-RESTORE": "The complete M0-to-H1 tree delta is exactly one registered Prompt 2 sentence; no other incumbent wording is present.",
+    "FORBID-INLINE-BEFORE-PERSISTENT-MISS": "P-28 says inline only after a fresh entry-positive check still misses.",
+    "FORBID-WORKING-POINTER-CHURN": "P-28 is gated by observed misses; WC-01 requires no rewrite and no inline for a precise working pointer.",
+    "FORBID-SECOND-H1-CANDIDATE": "H1 differs from M0 only at P-28 and the transformation ledger contains exactly one ID.",
+    "FORBID-HISTORICAL-EVIDENCE-AS-CURRENT-PROOF": "Behavior status is not-started and Prompt 4 registration requires fresh M0, H1, and wrong-condition samples.",
+    "FORBID-FOREIGN-AUTHORITY-EXPANSION": "SKILL.md, description, BEHAVIOR-EVALS.md, and agents/openai.yaml are byte-identical across M0 and H1; P-28 preserves the foreign owner."
+  },
+  "proof_registration": {
+    "m0_viability_suite": [
+      {"id": "V-01", "units": ["M0-01"], "lane": "invocation and exclusion behavior"},
+      {"id": "V-02", "units": ["M0-02", "M0-03"], "lane": "authority and canonical boundary"},
+      {"id": "V-03", "units": ["M0-04"], "lane": "coverage classification"},
+      {"id": "V-04", "units": ["M0-05"], "lane": "owner and foreign-pointer trace"},
+      {"id": "V-05", "units": ["M0-06"], "lane": "conditional context loading"},
+      {"id": "V-06", "units": ["M0-07"], "lane": "cut preservation"},
+      {"id": "V-07", "units": ["M0-08"], "lane": "claim-matched proof"},
+      {"id": "V-08", "units": ["M0-09"], "lane": "typed Return"},
+      {"id": "V-09", "units": ["M0-10"], "lane": "completion stop"},
+      {"id": "V-10", "units": ["M0-01", "M0-03", "M0-06"], "lane": "package compatibility"},
+      {"id": "V-11", "units": ["M0-02", "M0-03", "M0-08", "M0-10"], "lane": "state-location transitions and safe failure"}
+    ],
+    "h1_cluster": {
+      "id": "H1-POINTER-REPAIR-01",
+      "mode": "quality-lift",
+      "entry_predicate": "Observed runs miss must-have branch material behind a weak pointer.",
+      "fixture_family": "observed-must-have-branch-miss",
+      "transfer_boundary": "Narrow condition-specific claim; one family only; prevalence and broader transfer unknown.",
+      "minimum_m0_entry_positive_samples": 5,
+      "open_h1_gate": "Fewer than four of five M0 controls score 8 because the contingent fallback is absent, or any M0 control inlines immediately.",
+      "minimum_h1_entry_positive_samples_if_opened": 5,
+      "acceptance": "At least four of five H1 samples score 8, mean improves by at least 1.0, variance remains acceptably bounded, no critical or protected regression, and load budget holds.",
+      "wrong_condition_pairs_after_entry_gate": 2,
+      "wrong_condition_acceptance": "No rewrite and no inlining of the precise working pointer.",
+      "always_loaded_budget": "zero bytes",
+      "conditional_file_budget": "one sentence, maximum 32 words"
+    },
+    "fixed_configuration": {
+      "task": "Exact worker-fixture task",
+      "model": "gpt-5.6-sol",
+      "host": "Codex fresh-context subagents on Windows PowerShell",
+      "reasoning": "high",
+      "tools": "Read exact runtime and worker fixture; return advisory response only",
+      "authority": "Read-only semantic skill-authoring judgment",
+      "evidence": "Only assigned worker-visible fact IDs",
+      "runtime": "Exact M0 or H1 tree identity",
+      "rubric": "Exact root-only evaluator",
+      "mutation_boundary": "No mutation"
+    },
+    "protected_behavior": ["M0-01", "M0-02", "M0-03", "M0-04", "M0-05", "M0-06", "M0-07", "M0-08", "M0-09", "M0-10"],
+    "relationships": [
+      {"id": "REL-01", "claim": "Skill Router recommends Writing Great Skills for semantic skill creation, editing, or review and then stops."},
+      {"id": "REL-02", "claim": "skill-creator retains package scaffolding and metadata mechanics."},
+      {"id": "REL-03", "claim": "Installer and Git delivery retain foreign lifecycle ownership."}
+    ],
+    "invocation": [{"id": "INV-01", "claim": "Implicit invocation remains true and the routing description is unchanged between M0 and H1."}],
+    "context": [
+      {"id": "CTX-01", "claim": "GLOSSARY.md loads only for invocation, information hierarchy, pruning, or completion work."},
+      {"id": "CTX-02", "claim": "BEHAVIOR-EVALS.md loads only for exact wording-effect claims."}
+    ],
+    "machine": [{"id": "MACH-01", "claim": "Exact inventory, links, YAML policy, runtimes, payloads, and hashes parse and match."}]
+  },
+  "candidate_aware_compatibility_preflight": [
+    {
+      "id": "CP-01",
+      "classification": "semantic-prose",
+      "assertion": "The normalized metadata predicate admits semantic skill work and excludes prompt rewriting, code review, scaffolding, installation, and delivery.",
+      "lane": "heading-bounded normalized semantic verifier"
+    },
+    {
+      "id": "CP-02",
+      "classification": "semantic-prose",
+      "assertion": "Authority, Coverage, Semantic Contract, Cuts, Proof, and Return sections preserve M0-01 through M0-10.",
+      "lane": "heading-bounded normalized semantic verifier"
+    },
+    {
+      "id": "CP-03",
+      "classification": "machine-consumed-contract",
+      "assertion": "Both runtime packages contain exactly SKILL.md, GLOSSARY.md, BEHAVIOR-EVALS.md, and agents/openai.yaml.",
+      "lane": "parsed inventory and campaign-tree identity"
+    },
+    {
+      "id": "CP-04",
+      "classification": "machine-consumed-contract",
+      "assertion": "SKILL.md links to exactly GLOSSARY.md and BEHAVIOR-EVALS.md and every local target resolves.",
+      "lane": "parsed Markdown links"
+    },
+    {
+      "id": "CP-05",
+      "classification": "machine-consumed-contract",
+      "assertion": "agents/openai.yaml contains exactly one allow_implicit_invocation: true policy and runtime instructions contain no fork_turns.",
+      "lane": "parsed policy and complete-package absence check"
+    },
+    {
+      "id": "CP-06",
+      "classification": "semantic-prose",
+      "assertion": "Skill Router, skill-creator, support-file, installer, and Git-delivery ownership edges remain unchanged and unpublished.",
+      "lane": "relationship owner and pointer trace"
+    }
+  ],
+  "fixtures": {
+    "worker": {"path": "worker-fixture.json", "sha256": "fd99a6586905cb6a2e1eafa6f1ea3916a0f7dac5aafb27a3af31a4349860b12d"},
+    "root_only": {"path": "root-only-evaluation.json", "sha256": "e25955d4a60972620d9cb0c54b721e9329bd0ba427b4735cdd115b5f73ce9cac"},
+    "lint_map": {"path": "fixture-lint-map.json", "sha256": "e55e2b1e721e80793f068eb144a3d967aa421288c06b70d88877c41192a4b0b2"},
+    "payloads": {
+      "entry_positive_m0": {"path": "payloads/entry-positive-m0.json", "sha256": "92324c0c8bbdd6041fb455d3e444e32040b63ba9a84f5fe3e970c25f1f657ae9", "shared_payload_sha256_without_runtime": "f4ea07177d332bd5734b62179b944fbbbb3d01594b2d7cdb7630b9397bad2852"},
+      "entry_positive_h1": {"path": "payloads/entry-positive-h1.json", "sha256": "87d9b8f0c57d7055b2c1970b148b4656ff08ef9ab5bf6f37280e06e7f54f0768", "shared_payload_sha256_without_runtime": "f4ea07177d332bd5734b62179b944fbbbb3d01594b2d7cdb7630b9397bad2852"},
+      "wrong_condition_m0": {"path": "payloads/wrong-condition-m0.json", "sha256": "17960f485fb7ca96ba64f405cf7130ff0c3cef1f34cf9dfdd9dfecf44877a79e", "shared_payload_sha256_without_runtime": "0d56d2fff56eb70e90844f71de33604fe8c1d8039e3e79e8ef3ffdced67ce120"},
+      "wrong_condition_h1": {"path": "payloads/wrong-condition-h1.json", "sha256": "84d5940b38131fc43e9a30ffe7fed83c7103c00946c36400325e36e66c9ed5e2", "shared_payload_sha256_without_runtime": "0d56d2fff56eb70e90844f71de33604fe8c1d8039e3e79e8ef3ffdced67ce120"}
+    }
+  },
+  "prior_evidence": {
+    "predecessor_c0_g04": "historical-admission-only",
+    "candidate_owned_behavior": "missing",
+    "reuse_for_prompt4_sampling": "forbidden"
+  },
+  "limitations": [
+    "No behavioral sample has run.",
+    "The narrow fixture family does not establish prevalence.",
+    "Exact model build, sampler seed, tokens, latency, and cross-host transfer may remain unavailable."
+  ]
+}

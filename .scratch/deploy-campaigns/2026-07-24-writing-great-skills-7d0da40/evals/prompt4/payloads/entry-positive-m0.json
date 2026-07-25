@@ -1,0 +1,49 @@
+{
+  "task": "Using the exact assigned Writing Great Skills runtime and only the supplied facts, recommend the smallest reliable repair for the reference-loading problem. Explain the ordered actions, the evidence gate for each action, what remains branch-only, and how to validate the result.",
+  "authority": "Advisory semantic skill-authoring judgment only. The reference owner controls SECURITY.md; the caller controls any canonical edit. Do not mutate files or claim completed proof.",
+  "initial_state": "Only the assigned facts and exact runtime are available. No prior candidate output, evaluation conclusion, or hidden repository state may be assumed.",
+  "tools_operations": [
+    "Read the exact assigned runtime package.",
+    "Read the assigned fact IDs.",
+    "Reason about the smallest reliable semantic repair.",
+    "Return one advisory response; perform no mutation."
+  ],
+  "mutation_boundary": "Read-only. No repository, reference, runtime, installation, Git, connector, or external mutation.",
+  "requested_output": [
+    "Diagnosis tied to supplied observations.",
+    "Ordered repair actions with evidence gates.",
+    "Branch-only and ownership disposition.",
+    "Fresh validation plan and safe fallback boundary."
+  ],
+  "facts": [
+    {
+      "id": "F-EP-01",
+      "text": "SECURITY.md is the authoritative owner of mandatory secret-handling steps, and those steps apply only when a task handles secrets."
+    },
+    {
+      "id": "F-EP-02",
+      "text": "The current pointer says only: Consult security guidance when relevant."
+    },
+    {
+      "id": "F-EP-03",
+      "text": "In three recent secret-handling runs, workers skipped SECURITY.md and omitted mandatory steps."
+    },
+    {
+      "id": "F-EP-04",
+      "text": "The caller requires SECURITY.md to remain the owner and its branch-only body to stay out of common runtime unless a smaller repair is freshly shown unreliable."
+    },
+    {
+      "id": "F-EP-05",
+      "text": "No observation exists for a revised pointer that explicitly names SECURITY.md, the secret-handling condition, and the load-and-apply action."
+    },
+    {
+      "id": "F-EP-06",
+      "text": "If a revised pointer is freshly exercised on secret-handling runs and still skips mandatory material, the owner permits moving only the smallest must-have instruction inline."
+    }
+  ],
+  "runtime": {
+    "id": "M0",
+    "path": "../../../m0-runtime",
+    "tree_sha256": "175c70bbe0ee79fad197f44ba32f0786b9bb94250ef22da21e66ded47d9e0341"
+  }
+}

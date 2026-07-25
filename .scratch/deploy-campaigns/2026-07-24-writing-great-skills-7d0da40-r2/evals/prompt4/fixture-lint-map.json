@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "visibility": "root-only",
+  "worker_fixture": "worker-fixture.json",
+  "criterion_grounding": {
+    "R01": ["A01", "A04", "B01", "B03"],
+    "R02": ["A02", "A04", "A05"],
+    "R03": ["B02"],
+    "R04": ["A03", "B04"],
+    "R05": ["A05", "B04", "B05"]
+  },
+  "decision_input_grounding": {
+    "operation": ["A01", "B01"],
+    "coverage": ["A02", "A04", "A05"],
+    "cut_safety": ["B02"],
+    "proof_lane": ["A03", "B04"],
+    "mutation_and_return": ["B03", "B05"]
+  },
+  "requested_output_grounding": {
+    "Selected operation and authority boundary.": ["A01", "B01", "B03"],
+    "Affected-surface and ownership classification.": ["A02", "A04", "A05"],
+    "Proof plan matched to each claim.": ["A03", "B04"],
+    "Truthful Return, completion state, deliberate non-changes, and residual limits.": ["A05", "B03", "B04", "B05"]
+  },
+  "worker_root_separation": "passed-by-executable-lint-and-key-absence-check",
+  "payload_comparison": {
+    "status": "not-applicable",
+    "reason": "No H1 transformation was admitted; M0 and H1 are one stored corpus and Prompt 4 has no contribution or comparison arm."
+  }
+}

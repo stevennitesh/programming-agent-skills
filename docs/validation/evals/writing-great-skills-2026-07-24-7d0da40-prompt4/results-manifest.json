@@ -1,0 +1,173 @@
+{
+  "schema_version": 1,
+  "artifact_type": "deploy-prompt4-results",
+  "campaign": "2026-07-24-writing-great-skills-7d0da40",
+  "skill": "writing-great-skills",
+  "prompt4_decision": "accepted",
+  "h1_disposition": "reject-no-control-deficit",
+  "configuration": {
+    "model": "gpt-5.6-sol",
+    "host": "Codex fresh-context subagents on Windows PowerShell",
+    "reasoning": "high",
+    "fork_turns": "none",
+    "tools_operations": [
+      "Read the exact assigned resolved payload.",
+      "Read only its exact assigned runtime package.",
+      "Reason from the supplied worker-visible facts.",
+      "Return one read-only advisory response."
+    ],
+    "authority": "Advisory semantic skill-authoring judgment only.",
+    "worker_mutation_boundary": "Read-only; no repository or external mutation.",
+    "unavailable_telemetry": [
+      "exact model build",
+      "sampler seed",
+      "token counts",
+      "latency"
+    ]
+  },
+  "fixed_inputs": {
+    "git_head": "7d0da40a218114aa138265557ea2454361dcd147",
+    "protocol_sha256": "abec7ab79e589900ce22de33db02684c1285ad718b3466e1205f902b3076a36d",
+    "worker_fixture_sha256": "fd99a6586905cb6a2e1eafa6f1ea3916a0f7dac5aafb27a3af31a4349860b12d",
+    "root_only_evaluation_sha256": "e25955d4a60972620d9cb0c54b721e9329bd0ba427b4735cdd115b5f73ce9cac",
+    "entry_positive_m0_payload_sha256": "92324c0c8bbdd6041fb455d3e444e32040b63ba9a84f5fe3e970c25f1f657ae9",
+    "entry_positive_shared_payload_sha256_without_runtime": "f4ea07177d332bd5734b62179b944fbbbb3d01594b2d7cdb7630b9397bad2852",
+    "evaluated_m0_path": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/m0-runtime",
+    "evaluated_m0_tree_sha256": "175c70bbe0ee79fad197f44ba32f0786b9bb94250ef22da21e66ded47d9e0341",
+    "unevaluated_h1_path": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/h1-runtime",
+    "unevaluated_h1_tree_sha256": "95c45d53a6e853bad3a74981634b2bdf8c0e3bc7fc8a11f5a568fc3b0efad577",
+    "arm_delta": "The frozen H1 adds H1-POINTER-REPAIR-01 in GLOSSARY.md only; H1 was not sampled because the adaptive gate stayed closed."
+  },
+  "m0_viability": {
+    "status": "passed",
+    "fidelity_audit": {
+      "result": "pass",
+      "checkpoint_sha256": "33b6bb9b9e4a5571f92552ada39870588b4272a62d4111bfaef0b1b00c8d0aac",
+      "runtime_tree_sha256": "175c70bbe0ee79fad197f44ba32f0786b9bb94250ef22da21e66ded47d9e0341",
+      "research_or_current_leakage": false,
+      "beyond_minimum_behavior": false,
+      "missed_minimum_obligation": false,
+      "repair_required": false
+    },
+    "proof_coverage": [
+      {"proof_id": "V-01", "units": ["M0-01"], "evidence": "Description/exclusion predicate, implicit policy, and Skill Router owner trace.", "result": "pass"},
+      {"proof_id": "V-02", "units": ["M0-02", "M0-03"], "evidence": "Authority and canonical-boundary read-back plus five read-only Audit outputs.", "result": "pass"},
+      {"proof_id": "V-03", "units": ["M0-04"], "evidence": "Heading-bounded coverage semantic requires every behavior-capable affected surface and truthful partial/blocked failure.", "result": "pass"},
+      {"proof_id": "V-04", "units": ["M0-05"], "evidence": "Relationship trace and all five outputs preserve SECURITY.md ownership and caller edit authority.", "result": "pass"},
+      {"proof_id": "V-05", "units": ["M0-06"], "evidence": "Resolved conditional support pointers plus all five outputs keep branch-only guidance out of common runtime.", "result": "pass"},
+      {"proof_id": "V-06", "units": ["M0-07"], "evidence": "Clause-to-intent audit plus all five outputs choose the smallest pointer repair and reject pre-evidence inlining.", "result": "pass"},
+      {"proof_id": "V-07", "units": ["M0-08"], "evidence": "Exact proof split plus all five outputs require fresh uncontaminated direct controls and reject structural proxy credit.", "result": "pass"},
+      {"proof_id": "V-08", "units": ["M0-09"], "evidence": "Return semantic read-back plus five truthful partial Returns naming missing proof or residual risk.", "result": "pass"},
+      {"proof_id": "V-09", "units": ["M0-10"], "evidence": "Completion semantic read-back plus five outputs stop before mutation, installation, or delivery.", "result": "pass"},
+      {"proof_id": "V-10", "units": ["M0-01", "M0-03", "M0-06"], "evidence": "Exact four-file tree, two resolved Markdown support links, implicit policy true, and complete-package fork_turns absence.", "result": "pass"},
+      {"proof_id": "V-11", "units": ["M0-02", "M0-03", "M0-08", "M0-10"], "evidence": "State/ownership order read-back and five safe read-only partial Returns without mutation.", "result": "pass"}
+    ],
+    "critical_failures": [],
+    "protocol_deviations": []
+  },
+  "h1_contribution": {
+    "unit": "H1-POINTER-REPAIR-01",
+    "mode": "quality-lift",
+    "entry_predicate": "Observed runs miss must-have branch material behind a weak pointer.",
+    "applicability": "situational",
+    "registered_control_deficit": "Fewer than four of five M0 controls score 8 because the contingent fallback is absent, or any M0 control inlines immediately.",
+    "entry_positive_counts": {
+      "m0": 5,
+      "h1": 0
+    },
+    "wrong_condition_counts": {
+      "m0": 0,
+      "h1": 0
+    },
+    "m0": {
+      "scores": [8, 8, 8, 8, 8],
+      "mean": 8.0,
+      "population_variance": 0.0,
+      "range": 0,
+      "worst": 8,
+      "immediate_inline_count": 0,
+      "full_score_count": 5
+    },
+    "registered_deficit_observed": false,
+    "h1_gate": "closed",
+    "wrong_condition_gate": "not-opened-because-h1-entry-positive-gate-never-opened",
+    "decision": "reject-no-control-deficit",
+    "decision_basis": "All five fresh exact M0 controls scored 8/8 and none inlined immediately; H1 therefore received no samples under the frozen adaptive gate.",
+    "critical_failures": [],
+    "protected_behavior_regressions": [],
+    "protocol_deviations": [],
+    "samples": [
+      {
+        "sample_id": "M0-EP-01",
+        "pilot": true,
+        "agent_identity": "/root/deploy_wgs_7d0da40_prompt4/p4_m0_pilot",
+        "output": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/evals/prompt4/outputs/M0-EP-01.md",
+        "output_sha256": "2f6a218d38cc6c22e14987e5a400cc135600e619cc240818d4b0bcaf879e5993",
+        "scores": {"R-EP-01": 2, "R-EP-02": 2, "R-EP-03": 2, "R-EP-04": 2, "total": 8},
+        "immediate_inline": false,
+        "valid": true
+      },
+      {
+        "sample_id": "M0-EP-02",
+        "pilot": false,
+        "agent_identity": "/root/deploy_wgs_7d0da40_prompt4/p4_m0_02",
+        "output": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/evals/prompt4/outputs/M0-EP-02.md",
+        "output_sha256": "73b98a90b8b6faf11bcea06dcdc5facc57f21462c6897cbc43edf2a2a4da3d36",
+        "scores": {"R-EP-01": 2, "R-EP-02": 2, "R-EP-03": 2, "R-EP-04": 2, "total": 8},
+        "immediate_inline": false,
+        "valid": true
+      },
+      {
+        "sample_id": "M0-EP-03",
+        "pilot": false,
+        "agent_identity": "/root/deploy_wgs_7d0da40_prompt4/p4_m0_03",
+        "output": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/evals/prompt4/outputs/M0-EP-03.md",
+        "output_sha256": "7b046fc27987827ed07b9bf83904d160fd9c1a216e8445999910df15b6272c3c",
+        "scores": {"R-EP-01": 2, "R-EP-02": 2, "R-EP-03": 2, "R-EP-04": 2, "total": 8},
+        "immediate_inline": false,
+        "valid": true
+      },
+      {
+        "sample_id": "M0-EP-04",
+        "pilot": false,
+        "agent_identity": "/root/deploy_wgs_7d0da40_prompt4/p4_m0_04",
+        "output": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/evals/prompt4/outputs/M0-EP-04.md",
+        "output_sha256": "ef9da522cf948dafbf67a01c21d8f2c0e996480179d4f44aefb56f71eea70d95",
+        "scores": {"R-EP-01": 2, "R-EP-02": 2, "R-EP-03": 2, "R-EP-04": 2, "total": 8},
+        "immediate_inline": false,
+        "valid": true
+      },
+      {
+        "sample_id": "M0-EP-05",
+        "pilot": false,
+        "agent_identity": "/root/deploy_wgs_7d0da40_prompt4/p4_m0_05",
+        "output": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/evals/prompt4/outputs/M0-EP-05.md",
+        "output_sha256": "180cef0d8f9194c4eeb4b2b519942599d800725d58ccbd1034a9c7e0d0bbf1ed",
+        "scores": {"R-EP-01": 2, "R-EP-02": 2, "R-EP-03": 2, "R-EP-04": 2, "total": 8},
+        "immediate_inline": false,
+        "valid": true
+      }
+    ]
+  },
+  "final_runtime": {
+    "surviving_h1_units": [],
+    "post_decision_h1_equals": "M0",
+    "post_decision_h1_tree_sha256": "175c70bbe0ee79fad197f44ba32f0786b9bb94250ef22da21e66ded47d9e0341",
+    "v1_path": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/m0-runtime",
+    "v1_tree_sha256": "175c70bbe0ee79fad197f44ba32f0786b9bb94250ef22da21e66ded47d9e0341",
+    "v1_equals": "M0",
+    "relationship_changes": []
+  },
+  "evidence_dispositions": {
+    "predecessor_c0_g04": "historical-admission-only",
+    "prompt3_structural_and_isolation_proof": "exact-reusable",
+    "fresh_m0_entry_positive_controls": "exact-current-lane",
+    "h1_entry_positive": "not-run-adaptive-gate-closed",
+    "wrong_condition": "not-run-adaptive-gate-closed"
+  },
+  "residual_transfer_gaps": [
+    "The five controls cover one narrow observed must-have branch-miss family and do not establish prevalence.",
+    "No claim extends beyond the frozen task, model family, host, reasoning configuration, tools, authority, evidence, runtime, rubric, and sample count.",
+    "Exact model build, sampler seed, token counts, latency, cross-host transfer, and broader pointer-repair transfer remain unavailable or unproved."
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "artifact_type": "deploy-stage-capsule",
+  "campaign": "2026-07-24-writing-great-skills-7d0da40-r2",
+  "unit": "Deploy Prompt 5",
+  "decision": "complete",
+  "campaign_shape": "minimum-candidate",
+  "runtime_identities": {
+    "p1": "campaign-tree-v1:eee3e8ce88820a074f42bd388505d4274014c5bbd59246f81876ce6c309584fb",
+    "canonical_final": "campaign-tree-v1:eee3e8ce88820a074f42bd388505d4274014c5bbd59246f81876ce6c309584fb",
+    "installed_final": "campaign-tree-v1:eee3e8ce88820a074f42bd388505d4274014c5bbd59246f81876ce6c309584fb"
+  },
+  "canonical_proof": {
+    "initial": "14 passed, 1 failed after exact P1 promotion",
+    "failure_classification": "human-prose-heading-snapshot",
+    "repair": "section boundaries and wording-aligned token order only; all semantic assertions preserved",
+    "repaired_focused": "15 passed"
+  },
+  "final_proof": {
+    "full_integration": "213 passed, 4 skipped",
+    "skill_validation": "passed"
+  },
+  "installation": {
+    "ambient_cohort": "25 unchanged",
+    "promotion_dry_run": "writing-great-skills updated; 24 unchanged",
+    "sync": "completed",
+    "parity": "canonical=installed=exact P1",
+    "post_install_dry_run": "25 unchanged"
+  },
+  "behavioral_evidence": "exact Prompt 4 evidence reused; no rerun",
+  "experimental_cleanup": "no-op-target-package-and-manifest-entry-absent",
+  "recommended_next_unit": "none",
+  "successor_started": false,
+  "git_delivery": "pending"
+}

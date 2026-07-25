@@ -1,0 +1,36 @@
+{
+  "schema": "deploy-campaign-runtime-freeze/v1",
+  "campaign": "2026-07-24-writing-great-skills-7d0da40-r2",
+  "runtime": "M0=H1",
+  "sole_construction_authority": {
+    "path": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40-r2/m0-checkpoint.json",
+    "file_sha256": "91cbc7118903226cf22a6e41f8123343c1ef3be1c1ac73a294057566362d61c9",
+    "semantic_sha256": "05e00f6d0b189165c0ef321bcc753d265e204b864bff3804cb64cfb8aa6ae8f0"
+  },
+  "package": {
+    "path": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40-r2/runtime",
+    "algorithm": "campaign-tree-v1",
+    "file_count": 4,
+    "tree_sha256": "eee3e8ce88820a074f42bd388505d4274014c5bbd59246f81876ce6c309584fb",
+    "stored_once": true,
+    "identities": ["M0", "H1"],
+    "inventory": [
+      {"path": "BEHAVIOR-EVALS.md", "byte_count": 3154, "sha256": "376dd9b3f7de7041f07e79d5a9927e40392269ec679f05403a7de7f130749a7a"},
+      {"path": "GLOSSARY.md", "byte_count": 1657, "sha256": "73397064f51504f128c559c6a037dcd0d491f7950cffdecf226a535188002278"},
+      {"path": "SKILL.md", "byte_count": 4510, "sha256": "b3a4ec9fd5c7059d566c27fca3da133b21e0d392a8cb035b4213a2a44930d1fe"},
+      {"path": "agents/openai.yaml", "byte_count": 42, "sha256": "8619a54e8c098122a7f3881394f84ca89b684366e848233a29ad18b6ec363935"}
+    ]
+  },
+  "construction_boundary": {
+    "research_language_imported": false,
+    "current_only_behavior_imported": false,
+    "h1_expected_weakness_imported": false,
+    "evaluator_conclusions_imported": false,
+    "c0_g04_imported": false
+  },
+  "limitations": [
+    "M0 is behavior-minimal, not claimed wording-minimal.",
+    "No behavioral evaluation ran in Prompt 3.",
+    "No H1 transformation was admitted, so H1 is the stored M0 corpus by identity."
+  ]
+}

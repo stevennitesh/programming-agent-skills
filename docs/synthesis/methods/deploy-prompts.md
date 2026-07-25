@@ -762,13 +762,20 @@ distinct bytes once; when a frozen template plus recorded parameters
 reconstructs an exact dispatch, do not copy the full payload per sample.
 
 Before Prompt 4, run one candidate-aware focused compatibility preflight
-against the exact M0/H1 packages. Classify each directly affected assertion as
-semantic prose or a machine-consumed contract. Repair a human-prose sentence
-snapshot to heading-bounded normalized semantics; do not change candidate
-wording merely to satisfy a prose snapshot. If the candidate misses a frozen
-M0 semantic, correct the construction and refreeze affected identities. If M0
-itself omitted a required intended or compatibility contract, return to
-Prompt 1.
+against the exact M0/H1 packages. Bind every assertion to the explicit
+candidate root and recorded tree identity. A test or verifier that still
+resolves the canonical package is canonical proof, not candidate proof. When
+an existing test hardcodes canonical, parameterize its semantic assertions or
+run an equivalent heading-bounded checker against each exact candidate path;
+record the checked root and hash in the result. Never provisionally promote a
+candidate to obtain Prompt 3 proof.
+
+Classify each directly affected assertion as semantic prose or a
+machine-consumed contract. Repair a human-prose sentence snapshot to
+heading-bounded normalized semantics; do not change candidate wording merely
+to satisfy a prose snapshot. If the candidate misses a frozen M0 semantic,
+correct the construction and refreeze affected identities. If M0 itself
+omitted a required intended or compatibility contract, return to Prompt 1.
 
 Update candidate-specific structural proof only for machine-consumed
 contracts; do not publish relationship changes before promotion.

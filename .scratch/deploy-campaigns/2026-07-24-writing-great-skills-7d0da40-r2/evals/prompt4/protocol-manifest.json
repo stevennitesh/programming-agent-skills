@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "artifact_type": "deploy-prompt4-preregistration",
+  "campaign": "2026-07-24-writing-great-skills-7d0da40-r2",
+  "status": "completed",
+  "behavioral_evaluation_status": "accepted-five-valid-m0-samples",
+  "runtime": {
+    "m0": {"path": "../../runtime", "tree_sha256": "eee3e8ce88820a074f42bd388505d4274014c5bbd59246f81876ce6c309584fb"},
+    "h1": {"path": "../../runtime", "tree_sha256": "eee3e8ce88820a074f42bd388505d4274014c5bbd59246f81876ce6c309584fb", "equals": "M0", "stored_once": true}
+  },
+  "fixed_configuration": {
+    "model": "gpt-5.6-sol",
+    "host": "Codex desktop fresh-context worker",
+    "reasoning_configuration": "high; fresh context with campaign conclusions withheld",
+    "tools": "read-only assigned runtime and supplied facts; no mutation tools",
+    "authority": "advisory evaluation only",
+    "evidence": "worker-fixture.json facts and observable operations",
+    "runtime": "exact M0 tree above",
+    "rubric": "root-only-evaluation.json",
+    "unavailable_telemetry": ["exact future model build", "sampler seed", "token count", "latency"]
+  },
+  "m0_viability_suite": [
+    {"id": "V01", "semantic_ids": ["M0-01", "M0-02", "M0-09"], "lane": "behavioral-M0-AUDIT"},
+    {"id": "V02", "semantic_ids": ["M0-01", "M0-08", "M0-10"], "lane": "deterministic-owner-boundary"},
+    {"id": "V03", "semantic_ids": ["M0-02", "M0-03"], "lane": "behavioral-M0-AUDIT"},
+    {"id": "V04", "semantic_ids": ["M0-03", "M0-10"], "lane": "deterministic-relationship"},
+    {"id": "V05", "semantic_ids": ["M0-04"], "lane": "deterministic-routing-metadata"},
+    {"id": "V06", "semantic_ids": ["M0-04"], "lane": "deterministic-context-pointer"},
+    {"id": "V07", "semantic_ids": ["M0-05"], "lane": "behavioral-M0-AUTHOR"},
+    {"id": "V08", "semantic_ids": ["M0-06"], "lane": "behavioral-both-families"},
+    {"id": "V09", "semantic_ids": ["M0-07"], "lane": "deterministic-heading-bounded"},
+    {"id": "V10", "semantic_ids": ["M0-07"], "lane": "deterministic-heading-bounded"},
+    {"id": "V11", "semantic_ids": ["M0-07"], "lane": "deterministic-heading-bounded"},
+    {"id": "V12", "semantic_ids": ["M0-08", "M0-10"], "lane": "behavioral-M0-AUTHOR-plus-state-readback"},
+    {"id": "V13", "semantic_ids": ["M0-01", "M0-02", "M0-09"], "lane": "behavioral-both-families"}
+  ],
+  "instruction_passage_map": [
+    {"id": "P01", "surface": "SKILL.md#description", "semantic_ids": ["M0-04", "M0-10"], "origin": "m0-checkpoint", "proof_ids": ["V05"]},
+    {"id": "P02", "surface": "SKILL.md#Authority", "semantic_ids": ["M0-01", "M0-08", "M0-10"], "origin": "m0-checkpoint", "proof_ids": ["V01", "V02", "V12"]},
+    {"id": "P03", "surface": "SKILL.md#Coverage", "semantic_ids": ["M0-02"], "origin": "m0-checkpoint", "proof_ids": ["V01", "V03", "V13"]},
+    {"id": "P04", "surface": "SKILL.md#Semantic Contract", "semantic_ids": ["M0-03", "M0-04"], "origin": "m0-checkpoint", "proof_ids": ["V04", "V05", "V06"]},
+    {"id": "P05", "surface": "SKILL.md#Behavior-Preserving Cuts", "semantic_ids": ["M0-05"], "origin": "m0-checkpoint", "proof_ids": ["V07"]},
+    {"id": "P06", "surface": "SKILL.md#Claim-Matched Proof", "semantic_ids": ["M0-06"], "origin": "m0-checkpoint", "proof_ids": ["V08"]},
+    {"id": "P07", "surface": "SKILL.md#Author Lock", "semantic_ids": ["M0-08"], "origin": "m0-checkpoint", "proof_ids": ["V02", "V12"]},
+    {"id": "P08", "surface": "SKILL.md#Return", "semantic_ids": ["M0-09"], "origin": "m0-checkpoint", "proof_ids": ["V01", "V13"]},
+    {"id": "P09", "surface": "GLOSSARY.md#Invocation", "semantic_ids": ["M0-04"], "origin": "m0-checkpoint", "proof_ids": ["V05", "V06"]},
+    {"id": "P10", "surface": "GLOSSARY.md#Information hierarchy", "semantic_ids": ["M0-03", "M0-04"], "origin": "m0-checkpoint", "proof_ids": ["V04", "V06"]},
+    {"id": "P11", "surface": "GLOSSARY.md#Completion", "semantic_ids": ["M0-04", "M0-09"], "origin": "m0-checkpoint", "proof_ids": ["V06", "V13"]},
+    {"id": "P12", "surface": "GLOSSARY.md#Pruning", "semantic_ids": ["M0-05"], "origin": "m0-checkpoint", "proof_ids": ["V07"]},
+    {"id": "P13", "surface": "BEHAVIOR-EVALS.md#Register the control", "semantic_ids": ["M0-07"], "origin": "m0-checkpoint", "proof_ids": ["V09"]},
+    {"id": "P14", "surface": "BEHAVIOR-EVALS.md#Freeze the cohorts", "semantic_ids": ["M0-06", "M0-07"], "origin": "m0-checkpoint", "proof_ids": ["V08", "V10"]},
+    {"id": "P15", "surface": "BEHAVIOR-EVALS.md#Apply the adaptive gate", "semantic_ids": ["M0-07"], "origin": "m0-checkpoint", "proof_ids": ["V10"]},
+    {"id": "P16", "surface": "BEHAVIOR-EVALS.md#Judge conditional efficacy", "semantic_ids": ["M0-06", "M0-07"], "origin": "m0-checkpoint", "proof_ids": ["V08", "V10"]},
+    {"id": "P17", "surface": "BEHAVIOR-EVALS.md#Record the result", "semantic_ids": ["M0-07"], "origin": "m0-checkpoint", "proof_ids": ["V11"]},
+    {"id": "P18", "surface": "agents/openai.yaml#policy", "semantic_ids": ["M0-10"], "origin": "m0-checkpoint", "proof_ids": ["V05"]}
+  ],
+  "semantic_trace": {
+    "M0-01": {"owner": "m0-checkpoint.json#/semantic_units/0", "passages": ["P02"], "proof_ids": ["V01", "V02", "V13"]},
+    "M0-02": {"owner": "m0-checkpoint.json#/semantic_units/1", "passages": ["P03"], "proof_ids": ["V01", "V03", "V13"]},
+    "M0-03": {"owner": "m0-checkpoint.json#/semantic_units/2", "passages": ["P04", "P10"], "proof_ids": ["V03", "V04"]},
+    "M0-04": {"owner": "m0-checkpoint.json#/semantic_units/3", "passages": ["P01", "P04", "P09", "P10", "P11"], "proof_ids": ["V05", "V06"]},
+    "M0-05": {"owner": "m0-checkpoint.json#/semantic_units/4", "passages": ["P05", "P12"], "proof_ids": ["V07"]},
+    "M0-06": {"owner": "m0-checkpoint.json#/semantic_units/5", "passages": ["P06", "P14", "P16"], "proof_ids": ["V08"]},
+    "M0-07": {"owner": "m0-checkpoint.json#/semantic_units/6", "passages": ["P13", "P14", "P15", "P16", "P17"], "proof_ids": ["V09", "V10", "V11"]},
+    "M0-08": {"owner": "m0-checkpoint.json#/semantic_units/7", "passages": ["P02", "P07"], "proof_ids": ["V02", "V12"]},
+    "M0-09": {"owner": "m0-checkpoint.json#/semantic_units/8", "passages": ["P08", "P11"], "proof_ids": ["V01", "V13"]},
+    "M0-10": {"owner": "m0-checkpoint.json#/semantic_units/9", "passages": ["P01", "P02", "P18"], "proof_ids": ["V02", "V04", "V12"]}
+  },
+  "behavior_dependent_m0": {
+    "worker_fixture": "worker-fixture.json",
+    "root_only_evaluation": "root-only-evaluation.json",
+    "fixture_lint_map": "fixture-lint-map.json",
+    "minimum_fresh_samples": 5,
+    "families": ["semantic-audit", "bounded-authoring"]
+  },
+  "h1_contribution": {
+    "status": "not-applicable",
+    "reason": "No H1 unit or transformation was admitted; exact H1 equals exact M0.",
+    "fixtures": [],
+    "comparison_arms": [],
+    "payload_comparisons": []
+  },
+  "incumbent_removal": {
+    "status": "not-applicable",
+    "reason": "Prompt 2 found no plausible current-only unit and no unresolved removal risk.",
+    "c0_arm": "not-materialized"
+  },
+  "deterministic_proof": {
+    "compatibility": ["M0-07 heading-bounded semantics", "M0-10 package, links, implicit policy, absent dispatch mechanics"],
+    "relationships": ["skill-router recommends writing-great-skills and stops", "writing-great-skills points to GLOSSARY.md and BEHAVIOR-EVALS.md", "skill-creator owns scaffolding", "installation and Git delivery remain foreign"],
+    "invocation_context_machine": ["observable routing predicate and exclusions", "conditional support-file pointers", "allow_implicit_invocation: true"],
+    "forbidden_absence": ["F-01 through F-07 across the complete runtime-facing package"],
+    "candidate_binding": "Each assertion receives the explicit candidate root and recorded campaign-tree-v1 hash."
+  },
+  "protected_behavior": {
+    "semantic_ids": ["M0-01", "M0-02", "M0-03", "M0-04", "M0-05", "M0-06", "M0-07", "M0-08", "M0-09", "M0-10"],
+    "required_relationships": ["skill-router -> writing-great-skills", "writing-great-skills -> skill-creator", "writing-great-skills -> GLOSSARY.md", "writing-great-skills -> BEHAVIOR-EVALS.md", "writing-great-skills -> installation and Git-delivery owners"],
+    "accepted_h1": []
+  },
+  "prompt4_dispatch_status": "completed",
+  "results_manifest": "results-manifest.json",
+  "verifier_result": "verifier-result.json",
+  "dispatch_summary": {
+    "valid_samples": 5,
+    "allocation": {"semantic-audit": 3, "bounded-authoring": 2},
+    "invalid_zero_credit_attempts": 2,
+    "source_completeness_repair": "clarified B01 and B04 without changing task, facts, rubric, or runtime",
+    "h1_samples": 0,
+    "wrong_condition_pairs": 0
+  },
+  "decision": "accepted",
+  "v1": {
+    "path": "../../runtime",
+    "tree_sha256": "eee3e8ce88820a074f42bd388505d4274014c5bbd59246f81876ce6c309584fb",
+    "equals": "M0=H1"
+  }
+}

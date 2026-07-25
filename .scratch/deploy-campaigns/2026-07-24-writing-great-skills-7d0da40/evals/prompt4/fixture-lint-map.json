@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "visibility": "root-only",
+  "worker_fixture": "worker-fixture.json",
+  "root_evaluator": "root-only-evaluation.json",
+  "criterion_grounding": {
+    "R-EP-01": ["F-EP-01", "F-EP-02", "F-EP-03"],
+    "R-EP-02": ["F-EP-01", "F-EP-02", "F-EP-05", "operation:Return ordered repair actions"],
+    "R-EP-03": ["F-EP-04", "F-EP-05", "F-EP-06", "operation:Return fresh validation plan and safe fallback boundary"],
+    "R-EP-04": ["F-EP-01", "F-EP-04", "F-EP-06"],
+    "R-WC-01": ["F-WC-02", "F-WC-03", "F-WC-04"],
+    "R-WC-02": ["F-WC-01", "F-WC-03", "F-WC-04"]
+  },
+  "decision_input_grounding": {
+    "entry_predicate": ["F-EP-02", "F-EP-03"],
+    "branch_authority": ["F-EP-01", "F-WC-01"],
+    "smallest_first_action": ["F-EP-02", "F-EP-04", "F-EP-05"],
+    "fallback_permission": ["F-EP-04", "F-EP-06"],
+    "wrong_condition": ["F-WC-02", "F-WC-03", "F-WC-04"]
+  },
+  "requested_output_grounding": {
+    "Diagnosis tied to supplied observations.": ["F-EP-02", "F-EP-03", "F-WC-02", "F-WC-03"],
+    "Ordered repair actions with evidence gates.": ["F-EP-04", "F-EP-05", "F-EP-06"],
+    "Branch-only and ownership disposition.": ["F-EP-01", "F-EP-04", "F-WC-01", "F-WC-04"],
+    "Fresh validation plan and safe fallback boundary.": ["F-EP-05", "F-EP-06", "F-WC-03"]
+  },
+  "separation": {
+    "worker_contains_hypothesis": false,
+    "worker_contains_expected_weakness": false,
+    "worker_contains_rubric_or_scoring": false,
+    "worker_contains_candidate_terms": false,
+    "worker_contains_conclusions": false,
+    "root_only_fields_are_not_dispatchable": true
+  },
+  "uniqueness": {
+    "entry_positive": "The facts require a smaller untested precise-pointer repair before any permitted inline fallback, while preserving SECURITY.md ownership.",
+    "wrong_condition": "The facts establish a precise successful pointer and forbid churn or duplication; no adjacent rewrite or inline outcome remains valid."
+  }
+}

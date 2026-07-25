@@ -223,6 +223,12 @@ def test_prompt_3_materializes_m0_without_research_leakage_and_builds_exact_h1()
         "do not copy the full payload per sample",
         "references rather than copies the authoritative intended contract",
         "candidate-aware focused compatibility preflight",
+        "Bind every assertion to the explicit candidate root and recorded tree identity",
+        "resolves the canonical package is canonical proof, not candidate proof",
+        "parameterize its semantic assertions",
+        "heading-bounded checker against each exact candidate path",
+        "record the checked root and hash",
+        "Never provisionally promote a candidate to obtain Prompt 3 proof",
         "Classify each directly affected assertion as semantic prose or a machine-consumed contract",
         "do not change candidate wording merely to satisfy a prose snapshot",
         "If M0 itself omitted a required intended or compatibility contract",
@@ -469,11 +475,11 @@ def test_interludes_own_only_contract_or_technical_uncertainty() -> None:
 def test_behavior_evaluation_contract_supports_quality_lift_and_adaptive_cost() -> None:
     evals = _normalized(BEHAVIOR_EVALS)
     writing = _normalized(WRITING_SKILL)
-    register = _section(evals, "## Register the control", "## Freeze and sample")
-    sample = _section(evals, "## Freeze and sample", "## Judge")
-    judge = _section(evals, "## Judge", "## Record")
-    record = evals.split("## Record", 1)[1]
-    claim_proof = _section(writing, "## Claim-Matched Proof", "## Return")
+    register = _section(evals, "## Register the control", "## Freeze the cohorts")
+    sample = _section(evals, "## Freeze the cohorts", "## Judge conditional efficacy")
+    judge = _section(evals, "## Judge conditional efficacy", "## Record the result")
+    record = evals.split("## Record the result", 1)[1]
+    claim_proof = _section(writing, "## Claim-Matched Proof", "## Author Lock")
 
     def assert_tokens_in_order(section: str, *tokens: str) -> None:
         cursor = 0
@@ -494,13 +500,24 @@ def test_behavior_evaluation_contract_supports_quality_lift_and_adaptive_cost() 
         "does not",
         "appear",
         "stop",
-        "candidate",
+        "H1",
         "`reject-no-control-deficit`",
     )
 
     assert_tokens_in_order(sample, "entry-positive", "wrong-condition", "cohorts")
-    assert_tokens_in_order(sample, "five", "M0", "controls", "fresh", "contexts")
-    assert_tokens_in_order(sample, "five", "H1", "samples", "only", "deficit", "appears")
+    assert_tokens_in_order(sample, "fresh", "contexts")
+    assert_tokens_in_order(sample, "five", "fresh", "M0", "entry-positive", "controls")
+    assert_tokens_in_order(
+        sample,
+        "five",
+        "fresh",
+        "H1",
+        "entry-positive",
+        "samples",
+        "only",
+        "deficit",
+        "appears",
+    )
     assert_tokens_in_order(
         sample,
         "wrong-condition",
@@ -515,9 +532,10 @@ def test_behavior_evaluation_contract_supports_quality_lift_and_adaptive_cost() 
     assert_tokens_in_order(sample, "do not", "dilute", "situational", "non-triggering")
     assert_tokens_in_order(sample, "Extend", "variance", "borderline", "protocol")
     assert_tokens_in_order(sample, "Five", "minimum", "not", "automatic", "sufficiency")
+    assert_tokens_in_order(sample, "rejected", "candidate", "no", "wrong-condition")
 
     assert_tokens_in_order(judge, "conditional", "efficacy", "entry-positive")
-    assert_tokens_in_order(judge, "rejected", "candidate", "no", "wrong-condition")
+    assert_tokens_in_order(judge, "applicability", "separate", "efficacy")
 
     for token in (
         "`accept`",
@@ -542,8 +560,8 @@ def test_behavior_evaluation_contract_supports_quality_lift_and_adaptive_cost() 
     assert "[BEHAVIOR-EVALS.md](BEHAVIOR-EVALS.md)" in claim_proof
     assert_tokens_in_order(
         claim_proof,
-        "wording",
-        "changes",
+        "attributes",
+        "changed",
         "invocation",
         "judgment",
         "action",

@@ -3,333 +3,278 @@
 Status: Deploy Prompt 5 complete; exact P1 is canonical and installed.
 
 This synthesis owns the active semantic decision for campaign
-`2026-07-24-writing-great-skills-55dd681`. Historical research, promotion,
-evaluation, and pruning records remain evidence in their own files and do not
-define the current lifecycle state.
+`2026-07-24-writing-great-skills-7d0da40-r2`. Research provenance, unit
+chronology, shared machine state, future candidate identities, per-sample
+judgments, and raw outputs remain owned by their research packet, transcript,
+campaign manifest, candidate records, results manifests, and captures.
 
 <!-- WRITING-GREAT-SKILLS-DEPLOY-DECISION:START -->
 
 ## Decision
 
-- Decision: `accepted`
-- Campaign shape: `minimum-candidate` after H1 rejection.
-- Exact identity relation: evaluated M0
-  `559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032`
-  differed from evaluated H1
-  `1021d8c5d9d20a81e4ab33a0b014cf71826b818a02153041b7845aac245cf553`;
-  rederived H1 = V1 = M0
-  `559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032`.
-- M0 decision: intent-faithful and viable; all nine units passed their minimum
-  deterministic and behavioral coverage.
-- H1 decision: `H1-UNCERTAINTY-01` is
-  `reject-insufficient-contribution`.
-- Wrong-condition gate: not opened because H1 was rejected at entry-positive
-  contribution.
-- Pruning decision: `complete`; `pruning-not-needed`.
-- Exact P1 is V1 byte-for-byte at
-  `559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032`.
-- Canonical decision: exact P1 was materialized without byte drift. A
-  human-prose snapshot failure was repaired to heading-bounded normalized
-  semantic proof without changing P1; focused and full integration proof then
-  passed.
-- Installation decision: the managed dry-run named exactly
-  `writing-great-skills`; supported synchronization completed, canonical and
-  installed identities match
-  `559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032`,
-  and the post-install dry-run reports all 25 skills unchanged.
-- Successor state: none. Git delivery was not authorized.
+- Decision: `accepted`.
+- Campaign shape: `minimum-candidate`; exact construction satisfies
+  `current != M0 = H1`.
+- M0 and H1 are stored once at
+  `.scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40-r2/runtime`,
+  tree
+  `campaign-tree-v1:eee3e8ce88820a074f42bd388505d4274014c5bbd59246f81876ce6c309584fb`.
+- M0 decision: intact, behavior-complete, and implementable solely from the
+  checkpoint at semantic fingerprint
+  `05e00f6d0b189165c0ef321bcc753d265e204b864bff3804cb64cfb8aa6ae8f0`.
+- H1 decision: no unit admitted. Research and current inspection expose no
+  beyond-minimum entry-positive deficit.
+- C0 identity:
+  `campaign-tree-v1:559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032`.
+- Interludes: none. No behavior decision or executable-construction gap exists.
+- V1 is exact M0=H1 at
+  `campaign-tree-v1:eee3e8ce88820a074f42bd388505d4274014c5bbd59246f81876ce6c309584fb`.
+- Pruning decision: `complete`; `pruning-not-needed`. P1 is exact V1,
+  stored at the same runtime root and tree. No distinct P1 runtime or fresh
+  behavioral wave was created.
 
-## Facts
+## Intended Contract And M0
 
-### Fixed Inputs
+Writing Great Skills creates or edits canonical Codex skill semantics, audits
+or reviews them read-only, or directly tests whether exact wording changes
+invocation, judgment, action, context loading, Return, or completion. General
+prompt rewriting, ordinary code review, new-package scaffolding, installation,
+publishing, synchronization, and Git delivery remain excluded or foreign-owned.
 
-| Artifact | Identity | Authority in this decision |
-| --- | --- | --- |
-| Git fixed point | `55dd6818182caf75e85de713a13ed76996336a27` | Repository state for this campaign epoch |
-| M0 checkpoint | `sha256-canonical-json-v1:49d8890b655be04129baf67ad729e031fd926d9bd3d332c5bb4dc9cf271a2f03` | Minimum intended behavior |
-| Prompt 1 transcript | `sha256-file-bytes-v1:a8fa70e5dc6d14e81c4afa038c594305341a85f4c66f0f1509710939ea4555e9` | Prompt 1 chronology and frozen capsule |
-| Research packet | `sha256-file-bytes-v1:3aae141d4b10e4c0fb77b199edf0b002b105e3b7fe94b003fbf15322a6110c31` | Decision-ready method evidence and candidate discovery |
-| Active canonical package | `skills/custom/writing-great-skills/` at `campaign-tree-v1:559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032` | Exact promoted P1 |
-| Historical pre-prune fixture | `docs/validation/evals/writing-great-skills-pruning-pre-prune/` | Historical pruning control only |
+Audit is read-only. Author is limited to the requested canonical skill or
+skill-design artifact and directly affected proof or relationship surfaces.
+Target, operation, canonical source, and mutation boundary resolve before
+judgment or mutation. Unsafe or unresolved authority returns `blocked`;
+incomplete admitted coverage or current proof returns `partial`.
 
-The current canonical package has exactly `SKILL.md`, `GLOSSARY.md`,
-`BEHAVIOR-EVALS.md`, and `agents/openai.yaml`. `SKILL.md` has exactly two
-Markdown references, to `GLOSSARY.md` and `BEHAVIOR-EVALS.md`, and policy
-`allow_implicit_invocation` is true.
+M0 consists of `M0-01` through `M0-10` from the frozen checkpoint. It covers
+operation and authority, behavior-capable coverage, one-owner relationships,
+implicit routing and conditional disclosure, behavior-preserving cuts,
+claim-matched proof, evaluation compatibility, bounded mutation and foreign
+owner stops, typed Return and completion, and four-file package compatibility.
+Its thirteen viability cases remain the complete minimum proof registration.
 
-There is no active `skills/experimental/writing-great-skills/` package and no
-target entry in `skills/experimental/manifest.json`. The 2026-07-21 candidate
-was promoted and retired. The pre-prune fixture is frozen historical evidence,
-not an experimental target or extraction source.
+`M0-07` is mandatory compatibility, never H1. `BEHAVIOR-EVALS.md` must retain:
 
-### Intended Contract
+- `defect-correction` and `quality-lift` registration;
+- separate entry-positive and wrong-condition cohorts;
+- at least five fresh M0 controls, deficit-gated H1 samples, and
+  contribution-gated wrong-condition pairs;
+- extension for variance, borderline effect, or protocol deviation;
+- conditional-efficacy judgment before bounded-applicability judgment; and
+- exactly `accept`, `reject-no-control-deficit`,
+  `reject-insufficient-contribution`, `reject-regression`,
+  `needs-more-evidence`, and `blocked`.
 
-Writing Great Skills judges or authors the semantic behavior of one requested
-Codex skill or skill-design artifact so invocation, authority, actions,
-branches, ownership, proof, Return, and completion are coherent, locally
-owned, and proportionately proved.
+Five is a minimum rather than automatic sufficiency. A rejected entry-positive
+candidate receives no wrong-condition credit, and `reject-regression` remains
+reserved for an observed critical or protected-behavior regression.
 
-It enters for canonical skill creation or editing, semantic audit or review,
-and direct wording-behavior tests. General prompt rewriting, ordinary code
-review, new-package scaffolding, installation, publishing, synchronization,
-and Git delivery remain outside its authority.
+## Current Clause Dispositions
 
-Audit is read-only. Author may mutate only the requested canonical semantic
-surface and directly affected authorized proof or relationship surfaces.
-Canonical source, operation, and mutation authority resolve before judgment or
-write. Proof follows the exact candidate. Completion stops after canonical
-proof and returns `complete`, `partial`, or `blocked` truthfully.
-
-## M0 Checkpoint And Clause Map
-
-M0 remains viable without research language, current-only vocabulary, or H1.
-No inspected current, caller, relationship, safety, or compatibility surface
-exposed a missed minimum obligation.
-
-| Clause | Units | Required M0 semantics | Cheapest neutral expression | Gate |
-| --- | --- | --- | --- | --- |
-| `M0-C01` | `M0-U01` | Implicit entry for create/edit, audit/review, and wording-behavior testing with closest exclusions | One precise description predicate plus implicit policy | Positive and adjacent-negative routing |
-| `M0-C02` | `M0-U02`, `M0-U03` | Audit/Author authority, canonical source, and foreign-owner stop | One two-branch authority block and one ownership boundary | Audit no-write, bounded Author, unchanged foreign state |
-| `M0-C03` | `M0-U04` | Behavior-capable affected-surface coverage and explicit classification | One bounded coverage rule | Complete affected-surface ledger |
-| `M0-C04` | `M0-U05`, `M0-U06` | Discoverable outcome, authority, action or branch, Return, completion, one owner, local vocabulary, common-path locality, and conditional loading | One semantic authoring block and one conditional pointer rule | Owner/pointer trace and context-loading cases |
-| `M0-C05` | `M0-U07` | Behavior-preserving cuts protect safety, authority, proof, order, Return, and completion | One cut gate using the behavior-change question | Clause-to-intent and protected-behavior audit |
-| `M0-C06` | `M0-U08` | Claim-matched proof and uncontaminated direct controls | One claim-to-proof block plus the required disclosed evaluation contract | Structural, relationship, and direct-test lanes remain distinct |
-| `M0-C07` | `M0-U09` | Typed operation-specific Return, completion ledger, truthful gaps, and canonical stop | One Return block and one completion condition | Return/work-state read-back and absence of delivery |
-
-The required semantic set is `M0-U01` through `M0-U09`. Required compatibility
-also protects the four-file package, the two `SKILL.md` references, implicit
-policy, absence of skill-owned `fork_turns` mechanics, the router boundary, the
-`skill-creator` boundary, and the contribution-mode/adaptive-cost behavior
-contract exercised by focused deploy tests.
-
-## Research Registry
-
-| Candidate or method | Origin | Method evidence | Disposition |
+| Current unit | M0 mapping | Classification | Causal disposition |
 | --- | --- | --- | --- |
-| Description as observable what-and-when predicate with near misses | `professional-method`, `intent-adjacent` | `independently-supported` | M0-recruited by `M0-U01`; reject as H1 |
-| Bounded ownership and affected-surface classification | `professional-method`, `pack-composition` | `independently-supported` in substance; exact labels local | M0-equivalent under `M0-U03` and `M0-U04` |
-| Shallow progressive disclosure with common obligations inline | `professional-method`, `pack-observed` | `independently-supported` under actual loading conditions | M0-equivalent under `M0-U06` |
-| Co-location of definition, rule, caveat, and consequence | `professional-method`, `current-observed` | `independently-supported` by information-hiding practice; direct skill effect not isolated | M0-equivalent structural expression under `M0-U05` and `M0-U06` |
-| Clause-to-behavior cut audit | `professional-method`, `current-observed` | `independently-supported` | M0-equivalent under `M0-U07` |
-| Positive target first with necessary paired guardrail | `professional-method`, `current-observed` | `independently-supported`; universal negation mechanism contested | M0-equivalent after replacing the causal claim |
-| Fixed comparable controls, fresh contexts, and claim-matched graders | `professional-method`, `current-observed`, `pack-observed` | `independently-supported` | M0-equivalent and required compatibility under `M0-U08` |
-| Uncertainty and decision-margin stop rationale | `professional-method`, `intent-adjacent` | `independently-supported` | Admit as `H1-UNCERTAINTY-01` |
-| Failure-shaped guidance taxonomy | `pack-observed`, `current-observed` | `pack-specific` with partial independent support | Defer; no distinct M0 deficit demonstrated |
-| Conceptual leading word as stable prior recruiter | `pack-observed`, `current-observed` | `unverified` beyond syntactic starters | Reject for this epoch; no M0 weakness demonstrated |
-| Context split to hide visible later steps | `pack-observed`, `current-observed` | `unverified` | Defer until a persistent early-stop defect survives a sharper criterion |
-| Five samples as sufficient evidence | `current-observed`, `pack-observed` | `contested` | Reject sufficiency claim; retain five only as a minimum floor |
-| Exact `complete` / `partial` / `blocked` vocabulary | local contract | `pack-specific` / local | Required M0 compatibility, not a professional universal |
+| C0-01 frontmatter description and implicit policy | M0-01, M0-04, M0-10 | `M0-equivalent`, `required compatibility` | Preserve observable routing, exclusions, and implicit invocation. |
+| C0-02 Authority | M0-01, M0-08 | `M0-equivalent`, `required compatibility` | Preserve Audit/Author authority, safe `blocked`, and foreign lifecycle owners. |
+| C0-03 Coverage | M0-02 | `M0-equivalent` | Preserve behavior-capable scope and complete classification; installed-state inspection remains conditional. |
+| C0-04 semantic ownership and relationships | M0-03 | `M0-equivalent`, `required compatibility` | Preserve one owner, caller trigger, authority, Return, and foreign-procedure pointer. |
+| C0-05 routing and information hierarchy | M0-04 | `M0-equivalent`, `disclose` | Preserve description discipline and conditional `GLOSSARY.md` loading. |
+| C0-06 behavior-preserving cuts | M0-05 | `M0-equivalent` | Preserve behavior-based cuts, positive targets, and safe guardrail actions. |
+| C0-07 claim-matched proof | M0-06 | `M0-equivalent`, `disclose` | Preserve structural, relationship, and direct-control proof lanes plus the `BEHAVIOR-EVALS.md` pointer. |
+| C0-08 Return and completion | M0-09 | `M0-equivalent`, `required compatibility` | Preserve typed truthful Return, exact read-back, unrelated-state preservation, and the foreign-owner stop. |
+| C0-09 Glossary vocabulary | M0-04, M0-05 | `M0-equivalent`, `disclose` | Preserve the branch-only vocabulary owner; no pointer-repair escalation is present. |
+| C0-10 Behavioral Skill Evaluation | M0-06, M0-07 | `M0-equivalent`, `required compatibility`, `disclose` | Preserve the complete mandatory evaluation contract without weakening any gate or disposition. |
+| C0-11 package, caller, and relationship surfaces | M0-03, M0-10 | `required compatibility`, `owned elsewhere` | Preserve four files, two local Markdown links, router handoff, relationship ownership, and absent dispatch mechanics. |
+| C0-12 installation, publication, synchronization, and Git procedure | M0-08, M0-10 | `owned elsewhere` | Keep procedure out of the runtime and stop with an exact handoff. |
+
+No current-only behavioral unit remains after this mapping, no clause requires
+removal, and no unresolved removal risk exists. Current presence supplied
+comparison evidence only; the checkpoint and local authorities supply M0.
+
+## Research Registry And H1 Decision
+
+Independent evidence supports observable routing metadata, conditional
+disclosure, one-owner local contract slices, requirement-traced cuts, isolated
+wording controls, pre-registered adaptive gates, negative wrong-condition
+controls, and conditional-efficacy judgment under the limits recorded in the
+research packet. Exact wording efficacy, prevalence, a universal five-sample
+threshold, model or host transfer, and unbiased root judgment remain unproved.
+
+No H1 is admitted. `C0-G04` remains outside M0 and is
+`not-admitted-no-current-entry-observation`: the current package already names
+both support-file targets and their activation conditions, and this campaign
+has no fresh must-have pointer miss. Its prior exact-M0 result at tree
+`175c70bbe0ee79fad197f44ba32f0786b9bb94250ef22da21e66ded47d9e0341`
+is `historical-admission-only`. That prior five-control
+`reject-no-control-deficit` disposition cannot admit or reject newly
+materialized bytes. No other predecessor C0 unit is reopened.
+
+Deferred alternatives are pointer repair after a fresh observed miss, routing
+strengthening after positive and close-negative controls expose a deficit,
+leading-word compression after a registered steering deficit,
+prohibition/rationalization hardening after a demonstrated discipline failure,
+and quantitative sample-size language only after a defensible estimand exists.
+Rejected alternatives are ungated candidate sampling, mixed triggering and
+non-triggering averages, automatic acceptance after five, structural proxy
+credit for behavioral claims, pre-evidence inlining, and shortest-bytes-first
+pruning.
 
 ## Decision Ledger
 
 | Unit | M0 Obligation Or H1 Origin | Method Evidence | Current State | Owner | Entry Predicate, Applicability, M0-Compliant Counterexample, Contribution Mode, And Expected Weakness | Cheapest Expression | Wrong Condition | Proof | Decision |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `M0-U01` | Minimum invocation and exclusion obligation | Independently supported plus local compatibility | Frontmatter and implicit policy are M0-equivalent and required compatibility | Frontmatter and `agents/openai.yaml` | Create/edit, audit/review, or wording-behavior request; common routing obligation; no H1 mode | One what-and-when predicate with closest exclusions | General prompting, code review, scaffolding, or delivery invokes the skill | Metadata parsing plus repeated positive and near-miss cases | Keep as M0; trigger-validation candidate is M0-recruited |
-| `M0-U02` | Minimum Audit/Author authority | Local safety and caller authority | Current two-operation split is M0-equivalent | `SKILL.md` Authority | Audit or authorized canonical semantic persistence; common; no H1 mode | Two compact branches plus persistence gate | Audit writes or Author expands beyond the authorized semantic surface | Mutation-boundary and work-state read-back | Keep as M0 |
-| `M0-U03` | Minimum source and owner boundary | Independently supported modularity analogy plus local contract | `skill-creator`, canonical, mirror, installer, and delivery boundaries are M0-equivalent | `SKILL.md`, `CONTEXT.md`, relationship owner | Any semantic action or affected relationship; common; no H1 mode | Resolve canonical source and point to foreign owners | Mirror becomes edit source or semantic work absorbs scaffolding/delivery | Source trace, relationship trace, unchanged foreign state | Keep as M0 and required compatibility |
-| `M0-U04` | Minimum affected-surface coverage | Independently supported bounded self-contained change; labels local | Current bounded/full-audit coverage is M0-equivalent; historical refresh procedure is not runtime authority | `SKILL.md` Coverage | Full audit or bounded semantic edit; situational/full-audit branch; no H1 mode | One affected-surface rule and explicit classifications | Unrelated scan or omitted affected caller/pointer/proof | Coverage-ledger read-back | Keep as M0; preserve full-audit branch only if cheapest |
-| `M0-U05` | Minimum discoverable semantic contract and one owner | Independently supported in substance plus local ADRs | Discoverable roles, co-location, and local vocabulary are M0-equivalent; named universal surfaces and fixed orders remain absent | `SKILL.md` and narrowly required glossary concepts | Any semantic judgment; common; no H1 mode | Name outcome, trigger, authority, action/branch, Return, completion, and owner without imposing presentation | Runtime copies foreign procedure or substitutes a universal template for behavior | Normalized semantic and owner trace | Keep as M0; remove current-only exposition that adds no behavior |
-| `M0-U06` | Minimum common-path locality and conditional loading | Independently supported, shallow and conditional | Context-pointer, information-hierarchy, progressive-disclosure, and co-location clauses are M0-equivalent; general context-split causal theory is deferred | `SKILL.md` plus required glossary slice | Branch-only reference exists; situational; no H1 mode | Inline common obligations and disclose one branch behind a precise condition | Hide authority/safety/Return or add deeper routing without evidence | Link/pointer checks and representative loading cases | Keep M0 semantics; remove or defer unsupported context-split mechanism |
-| `M0-U07` | Minimum behavior-preserving cut gate | Independently supported for comparative cuts and positive-target clarity | Cut question, protected contracts, ownership restoration, and paired guardrails are M0-equivalent; sprawl-as-length and causal negation claims require replacement | `SKILL.md` Cuts plus minimal glossary definitions | Clause is considered for removal; common during authoring; no H1 mode | Protect, restore owner, ask what behavior changes, then cut/collapse/disclose | Word count decides semantics or a needed prohibition is removed | Clause-to-intent audit and negative controls | Keep M0; forbid universal shorter-is-better and prohibition-activates claims |
-| `M0-U08` | Minimum claim-matched proof and required contribution-mode compatibility | Independently supported | Structural/relationship/behavior separation, uncontaminated controls, contribution modes, applicability, wrong-condition cohorts, and adaptive extension are required compatibility | `SKILL.md` plus `BEHAVIOR-EVALS.md` | Any proof claim; direct behavioral claims load the reference; common proof boundary | One claim-to-proof pointer plus one disclosed protocol | Structural strings are treated as behavior or candidate runs without a control deficit | Focused contracts and M0-first direct controls | Keep as M0 and protected compatibility |
-| `H1-UNCERTAINTY-01` | `professional-method`, `intent-adjacent` | `independently-supported`; transfer limited to the tested runtime | Evaluated as the only H1 transformation | `BEHAVIOR-EVALS.md` evidence owner | A behavioral evaluation reaches a stop/accept decision, especially with non-zero variance or a narrow margin; situational; `quality-lift`; M0 sometimes omitted an explicit distance from the decision boundary | Require the record and judgment to state uncertainty, decision margin, and why stopping or extending is justified | Deterministic schema/link checks are forced into statistical language, or a no-control-deficit candidate runs anyway | Six fresh M0 and six fresh H1 entry-positive samples under the fixed rubric | `reject-insufficient-contribution`; remove from rederived H1 and V1 |
-| `M0-U09` | Minimum typed Return and canonical completion | Independently supported for explicit outputs/checks; exact statuses local | Current Return and completion are M0-equivalent and required compatibility | `SKILL.md` Return and Completion | Terminal Audit or Author state; common; no H1 mode | Typed operation-specific packet with proof, gaps, non-changes, risk, and canonical stop | Complete with missing affected owner/proof or continue into install/delivery | Return schema, work-state read-back, and absence of downstream mutation | Keep as M0 |
-| `REJECT-FAILURE-FORM` | `pack-observed`, `current-observed` | `pack-specific` with partial independent support | Current Diagnose taxonomy is useful discovery but no distinct M0 weakness is established | Future evaluation-method owner | Only after a named failure-form mismatch appears; applicability unknown; proposed quality lift lacks a live control deficit | None in H1 | Taxonomy becomes universal ceremony | Future fixed control required | Defer and forbid promotion this epoch |
-| `REJECT-LEADING-WORD` | `pack-observed`, `current-observed` | `unverified` for conceptual recruitment | Glossary asserts broad stable recruitment without current causal proof | Future candidate owner | Only after a specific default-behavior weakness; applicability unknown; no contribution mode admitted | None in H1 | Aesthetic terminology or repetition is credited as efficacy | Future M0-first comparative test | Reject and forbid this epoch |
-| `REJECT-CONTEXT-SPLIT` | `pack-observed`, `current-observed` | `unverified` | Current glossary states a visible-later-step causal mechanism; research supports sharpening completion but not hiding as the cause/cure | Future context-loading owner | Persistent early stopping after a sharper bound; rare or unknown; no contribution mode admitted now | Sharpen criterion only in M0 | Split without observed persistent defect or claim an inline invocation clears context | Future fixed boundary comparison | Defer and forbid promotion this epoch |
+| M0-01 | Resolved operation and authority | local intent | C0-01/C0-02 equivalent | SKILL.md Authority | Applicable to semantic skill work; exclusions remain foreign; no weaker H1 outcome is viable | Frozen neutral clause | Unresolved or excluded request | V01, V02, V13 | required M0 |
+| M0-02 | Complete affected coverage | local intent; requirements trace independently supported | C0-03 equivalent | SKILL.md Coverage | Full audit; installed mirror absent unless requested; no H1 | Frozen neutral clause | Unrequested mirror | V03, V13 | required M0 |
+| M0-03 | One owner and relationship preservation | independently supported at software-method level | C0-04/C0-11 equivalent | SKILL.md Semantic Contract | Relationship affects caller behavior; adjacent foreign procedure does not; no H1 | Frozen neutral clause | Behaviorally irrelevant foreign procedure | V03, V04 | required M0 |
+| M0-04 | Observable implicit routing and conditional disclosure | independently supported with contested “when only” absolute | C0-01/C0-05/C0-09 equivalent | SKILL.md plus GLOSSARY.md | Routing or disclosure vocabulary affects work; routine semantic edit need not load glossary; no H1 | Frozen neutral clause | No vocabulary dependency | V05, V06 | required M0 |
+| M0-05 | Behavior-preserving cuts | independently supported | C0-06/C0-09 equivalent | SKILL.md Cuts plus Glossary pruning terms | Simplification request; protected concise clause is a valid M0 counterexample; no H1 | Frozen neutral clause | Clause owns safety or completion | V07 | required M0 |
+| M0-06 | Claim-matched proof | independently supported | C0-07/C0-10 equivalent | SKILL.md Proof plus BEHAVIOR-EVALS.md | Exact-wording causal claim; structural existence claim is wrong condition; no H1 | Frozen neutral clause | Machine structure only | V08 | required M0 |
+| M0-07 | Mandatory evaluation compatibility | local compatibility; method distinctions independently supported under recorded limits | C0-10 exact semantic coverage | BEHAVIOR-EVALS.md | Registered wording hypothesis; no-deficit control is valid M0 and closes H1; not an H1 contribution mode | Frozen neutral clause | Entry absent or deficit absent | V09, V10, V11 | required compatibility |
+| M0-08 | Mutation boundary and foreign-owner stop | local safety and lifecycle authority | C0-02/C0-08/C0-12 equivalent | SKILL.md Author and Return | Authorized semantic edit; stale installed mirror is wrong condition; no H1 | Frozen neutral clause | Installation not authorized | V02, V12 | required M0 |
+| M0-09 | Typed Return and completion | local intent | C0-08 equivalent | SKILL.md Return | Complete coverage and proof; incomplete admitted proof returns partial; no H1 | Frozen neutral clause | Missing affected proof | V01, V13 | required M0 |
+| M0-10 | Four-file package and owner boundary | local compatibility | C0-01/C0-11 equivalent | Package policy and relationship owners | Canonical Author change; dispatch or installation absorption is wrong condition; no H1 | Frozen neutral clause | Foreign mechanics proposed | V02, V04, V12 | required compatibility |
+| C0-G04 | `current-observed` predecessor discovery lane | repair method independently supported; current entry evidence absent | no escalation clause in C0; prior result historical only | GLOSSARY.md if ever admitted | Entry predicate would be a fresh observed must-have pointer miss; applicability unknown; M0-compliant counterexample is the current precise pointer with no miss; a future mode could be quality-lift, but no current expected weakness exists | None in this campaign | Precise target-condition-action pointer with no observed miss | Candidate-owned fresh controls only after future admission | `not-admitted-no-current-entry-observation` |
 
-## Current Dispositions
+## Protected Behavior, Relationships, And Affected Surfaces
 
-| Current surface | Semantic mapping | Disposition |
-| --- | --- | --- |
-| Frontmatter description and implicit policy | `M0-U01` | `M0-equivalent`, `required compatibility` |
-| Audit/Author selector, persistence gate, canonical stop | `M0-U02`, `M0-U03`, `M0-U09` | `M0-equivalent` |
-| Bounded and full-audit coverage classifications | `M0-U04` | `M0-equivalent`; compress only under proof |
-| Ownership and relationship facts | `M0-U03`, `M0-U05` | `M0-equivalent`, `required compatibility` |
-| Discoverable contract and no fixed universal order | `M0-U05` | `M0-equivalent` |
-| Common path, conditional pointers, progressive disclosure, co-location | `M0-U06` | `M0-equivalent`; `disclose` evaluation procedure |
-| Cut question, protected contracts, no-op comparison, paired guardrails | `M0-U07` | `M0-equivalent`; replace contested causal explanation |
-| General Predictability/leading-word recruitment, legwork, sprawl-as-length | `M0-U05` through `M0-U07` | `defer` or `remove` unless Prompt 3 maps exact language to M0; current presence gives no protection |
-| Visible-post-completion causal split theory | `M0-U06`, `M0-U09` | `defer`; sharper completion remains M0 |
-| Claim-to-proof mapping and `BEHAVIOR-EVALS.md` pointer | `M0-U08` | `M0-equivalent`, `required compatibility`, `disclose` |
-| Contribution modes, applicability, positive/wrong-condition cohorts, adaptive extension | `M0-U08`, `V10` compatibility | `required compatibility` |
-| Uncertainty and decision-margin rationale | `H1-UNCERTAINTY-01` | `reject-insufficient-contribution`; absent from V1 |
-| Typed Return and completion | `M0-U09` | `M0-equivalent`, `required compatibility` |
-| Scaffolding, installation, mirror repair, publishing, Git delivery, dispatch mechanics | `M0-U03`, `M0-U09` | `owned elsewhere` |
-| Historical synthesis, transcripts, fixtures, and promotion records | Evidence only | `defer` as history; never runtime authority |
+Protected behavior is M0-01 through M0-10, including the full M0-07 contract.
+Protected helpers are `GLOSSARY.md` as conditional vocabulary owner and
+`BEHAVIOR-EVALS.md` as conditional wording-evaluation owner. Protected
+relationships are the Skill Router handoff, `skill-creator` scaffolding
+boundary, two support pointers, implicit policy, and the stop before installer,
+publisher, synchronization, or Git owners.
 
-There is no `unresolved removal risk`. Every removal or rejected behavior has a
-forbidden semantic ID and an absence-proof obligation in the campaign
-manifest.
+Prompt 2 affects only this synthesis, the r2 campaign manifest, and the r2
+Prompt 2 transcript. Canonical runtime, callers, relationships, tests,
+method/research documents, evaluations, candidates, promotion records,
+installed state, and Git state are preserved.
 
-## H1 Evaluation
+## Prompt 3 Proof Result
 
-The evaluated H1 was exact M0 plus `H1-UNCERTAINTY-01`. The registered M0
-quality deficit appeared, so six matched H1 entry-positive samples ran.
+Prompt 3 materialized exact M0 solely from the checkpoint and set exact H1
+equal to M0 because no transformation was admitted. The one stored corpus has
+four files and 9,363 bytes. Its inventory, file hashes, instruction passage
+map, M0-01 through M0-10 semantic trace, V01 through V13 viability
+registration, protected behavior, and limitations are frozen in the candidate
+records.
 
-M0 scored `43/48` (mean `7.167`, population variance `0.139`, worst `7`).
-H1 scored `46/48` (mean `7.667`, population variance `0.222`, worst `7`).
-Paired deltas were `1, 1, 0, 0, 0, 1`: three improvements and three ties.
-There was no critical or protected-behavior regression, but the worst result
-did not improve and variance increased. The effect did not meet the
-repeatable-material-contribution bar.
+The focused verifier accepted an explicit candidate root and recorded tree
+hash, independently recomputed that same tree, and did not resolve canonical.
+Heading-bounded normalized checks passed M0-01 through M0-10, V01 through V13,
+M0-07, M0-10, relationships, invocation/context/machine contracts, and F-01
+through F-07 absence. Compatibility tests and method semantics were not
+changed.
 
-`H1-UNCERTAINTY-01` is therefore `reject-insufficient-contribution`.
-Wrong-condition pairs were not dispatched. H1 was rederived with no surviving
-transformation, so exact V1 is M0.
+| Proof lane | Candidate-bound obligation |
+| --- | --- |
+| M0 fidelity and viability | Passed candidate-bound structure; behavioral M0 viability remains registered for Prompt 4 |
+| H1 identity | Passed; exact H1 equals exact M0 with no admitted transformation and one stored corpus |
+| Package and relationships | Passed four-file inventory, two links, implicit policy, no dispatch mechanics, and owner traces |
+| M0-07 semantics | Passed heading-bounded registration, cohorts, adaptive order, judgment, and six dispositions |
+| Forbidden absence | Passed F-01 through F-07, including no C0-G04 escalation |
+
+## Prompt 4 Decision
+
+Exact M0 passed fidelity without research/current leakage, beyond-minimum
+behavior, a missed obligation, or repair. The explicit-root candidate verifier
+recomputed the frozen tree and passed M0-01 through M0-10, V01 through V13,
+M0-07, M0-10, relationships, invocation, context, machine contracts, and
+F-01 through F-07 without resolving canonical.
+
+Five valid fresh-context M0 samples passed every applicable root-only
+criterion:
+
+| Family | Valid samples | Result |
+| --- | ---: | --- |
+| semantic-audit | 3 | 3/3 complete applicable-criterion passes |
+| bounded-authoring | 2 | 2/2 complete applicable-criterion passes |
+
+The first two bounded-authoring attempts invented unavailable target or byte
+access contrary to B01/B04. They received zero credit and are retained only as
+protocol-deviation captures. A source-completeness clarification made explicit
+that B01 defines the abstract target and B04 grants exact-byte/link inspection;
+it changed no task, fact, rubric, runtime, or candidate language. The
+replacement pilot and remaining sample passed. Across the five valid samples
+there was no material variance, critical failure, protected-behavior
+regression, or need for further extension.
+
+No H1 unit or transformation was admitted, so H1 contribution,
+wrong-condition pairs, and an incumbent-removal arm are not applicable.
+`C0-G04` remains `not-admitted-no-current-entry-observation`, its predecessor
+result remains historical-only, and no other C0 unit reopens. Exact
+V1=M0=H1 at the same one-corpus tree. No relationship change is published.
 
 ## Pruning Decision
 
-The exact 41-passage Prompt 4 runtime-clause map was reused for a complete
-package audit. All 41 instruction-bearing passages are `keep`; there are zero
-`collapse`, `disclose`, or `delete` classifications. Three apparent
-compression opportunities were rejected because they would remove distinct
-authority, context-loading, or proof-admission gates for only a nonmaterial
-word reduction.
+The complete Prompt 4 passage map was audited against the exact four-file V1.
+`P01` through `P08` and `P18` are `keep`: they own always-loaded M0 behavior
+or the implicit-invocation machine policy. `P09` through `P17` are
+`disclose`: they remain in the exact conditionally loaded vocabulary and
+behavior-evaluation owners. There are zero `collapse` and zero `delete`
+passages.
 
-No material cut exists. P1 is the stored V1/M0 runtime byte-for-byte, the
-package load delta is zero, and no fresh behavioral wave ran. Exact Prompt 4
-acceptance, three passing M0 viability cases, six accepted M0 controls, the
-protected-behavior result, and the deterministic construction checks remain
-the reused proof for the identical runtime.
+No plausible material cut group survived the clause-to-intent audit. Every
+passage owns M0-01 through M0-10 behavior, conditional disclosure, or machine
+compatibility. In particular, M0-07 retains both registration modes, separate
+cohorts, adaptive gates, conditional-efficacy judgment, and all six exact
+terminal dispositions; M0-10 retains the four-file package, two local links,
+implicit policy, absent dispatch mechanics, and relationship ownership.
+`C0-G04` remains absent and not admitted.
 
-## Protected Behavior And Compatibility
+P1 therefore equals exact V1 byte-for-byte at
+`campaign-tree-v1:eee3e8ce88820a074f42bd388505d4274014c5bbd59246f81876ce6c309584fb`,
+9,363 bytes by exact file-byte proxy. Delta is zero bytes and zero
+whitespace-delimited words. Prompt 4 proof is reused only for the unchanged
+identity. Fresh candidate-bound proof recomputed the tree from the explicit P1
+root, passed the protected semantic and compatibility lanes, and did not
+resolve canonical. No changed-wording equivalence claim or behavioral wave
+applies.
 
-Protected before Prompt 4:
+## Prompt 5 Disposition
 
-- every `M0-U01` through `M0-U09` obligation;
-- the four-file package shape and exactly two `SKILL.md` Markdown references;
-- implicit invocation policy and the three positive request families with
-  closest exclusions;
-- strict read-only Audit and bounded canonical Author;
-- `skill-creator` scaffolding ownership and canonical semantic stop;
-- conditional mirror observation only when installation-state evidence is
-  explicitly requested;
-- one owner per behavior and relationship;
-- common obligations inline and behavior evaluation disclosed;
-- behavior-preserving cuts and the positive-target/necessary-guardrail form;
-- structural, relationship, and behavioral proof separation;
-- contribution modes, applicability, positive/wrong-condition cohorts,
-  uncontaminated fresh controls, adaptive extension, and terminal evaluation
-  dispositions;
-- typed Return and stop before installation or delivery; and
-- absence of skill-owned worker dispatch mechanics.
+Exact P1 was promoted and read back at its frozen four-file tree. The first
+focused canonical run produced `14 passed, 1 failed` because one test sliced
+`BEHAVIOR-EVALS.md` through the incumbent prose headings `Freeze and sample`
+and `Judge`. P1 retains the complete M0-07 registration, cohort, adaptive
+gate, conditional-efficacy, and six-disposition semantics under renamed
+headings, so this was classified as a human-prose snapshot rather than a
+missing frozen M0 semantic.
 
-`H1-UNCERTAINTY-01` is not protected because Prompt 4 rejected it for
-insufficient contribution.
+Only the section-boundary extraction and wording-aligned token order in that
+test were repaired. Every semantic assertion, required token, ordering
+constraint, terminal disposition, and the pre-existing Prompt 3
+candidate-root method assertions remain. Exact P1 was re-read unchanged and
+the affected suite passed 15 tests.
 
-## Relationships And Affected Surfaces
+The required managed-install dry-run then reported only
+`writing-great-skills` updated relative to the controller's all-unchanged
+ambient cohort. The supported installer synchronized the managed pack.
+Canonical and installed packages now share exact P1 identity, and the
+post-install dry-run reports all 25 skills unchanged. The full integration
+suite passed 213 tests with 4 skipped; skill validation and both diff checks
+passed. No target experimental package or manifest entry existed.
 
-| Caller or owner | Trigger | Authority and Return |
-| --- | --- | --- |
-| `skill-router` | Create, edit, or review a Codex skill | Recommend Writing Great Skills and stop; no semantic work starts in the router |
-| bundled `skill-creator` | A new package needs scaffolding or metadata mechanics | Creator owns package mechanics; Writing Great Skills may later judge canonical semantics |
-| Writing Great Skills Audit | Read-only semantic review or direct wording-behavior test | Returns judgment/evidence only and performs no durable mutation |
-| Writing Great Skills Author | Explicitly authorized canonical semantic change | May edit only the requested canonical and directly affected proof/relationship surfaces; stops after canonical proof |
-| installer, publisher, Git owner | Canonical proof is complete and separate authority exists | Downstream owner resumes; Writing Great Skills never performs or authorizes the work |
+Terminal claims remain separate:
 
-Deploy Prompt 5 leaves only the active synthesis, campaign/candidate records,
-durable final validation, promotion transcript, exact canonical package, and
-the directly affected semantic contract test changed. The installed mirror was
-synchronized only through the supported installer. Relationship rules,
-research, other skills, experimental candidates, and Git delivery remain
-unchanged.
-
-## Proof Matrix
-
-| Claim | Final proof | Disposition |
-| --- | --- | --- |
-| M0 checkpoint and research decisions remain intact | Durable stage capsules retain their frozen identities and final dispositions | `exact-reusable` for promotion identity and decision only |
-| P1 equals accepted V1/M0 | Campaign-tree read-back and exact materialized comparison | Passed |
-| P1 satisfies current focused contract | Heading-bounded semantic contract repair plus 15 affected focused tests | Passed |
-| Active canonical compatibility remains valid | Exact P1 identity, full suite, Markdown gates, and skill validation | Passed |
-| Experimental removal is scoped | No target package or manifest entry existed; removal was a verified no-op | Passed |
-| Installed mirror equals active canonical | Exact changed cohort, supported synchronization, parity read-back, and clean post-install dry-run | Passed |
-| Prompt 5 mutation is bounded | Scoped status/diff/HEAD read-back and both diff checks | Passed |
-
-## Prior Evidence Dispositions
-
-| Evidence identity | Disposition | Use and limit |
-| --- | --- | --- |
-| 2026-07-21 authoring-boundary evaluation | `historical-admission-only` | Supports discovery of the owner/canonical-stop behavior; old arms, bytes, and protocol do not prove new M0/H1 |
-| 2026-07-21 post-candidate behavioral evaluation | `historical-admission-only` | Supports current-behavior discovery and risk selection; old candidate/pre-prune comparisons are not current controls |
-| 2026-07-21 extraction/pruning record | `historical-admission-only` | Clause inventory and historical disposition aid coverage only |
-| Pre-prune four-file fixture | `lane-limited` | Exact frozen historical pruning lane only; not a current candidate |
-| Current canonical file hashes and four-file inventory | `lane-limited` | Exact bytes/package inventory only; no wording-effect claim |
-| Focused package, deploy, validator, and installer tests | `lane-limited` | Parsed compatibility, ownership, schema, and install-boundary claims only |
-| Prompt 4 M0/H1 behavioral controls | `exact-reusable` | Exact for accepted V1/P1 identity and registered Prompt 4 lane only |
-
-No prior evidence is `exact-reusable` for `H1-UNCERTAINTY-01`.
-
-## Rejected And Deferred Alternatives
-
-Forbidden in this epoch:
-
-- explicit-only conversion;
-- body-summary or explicit-name routing text;
-- Audit persistence or Author scope expansion;
-- scaffolding, installation, mirror repair, publication, or Git delivery;
-- skill-owned `fork_turns` or worker topology;
-- named universal semantic surface, mandatory heading template, or fixed
-  authoring sequence;
-- universal shorter-is-better, line-count, word-count, or token-count verdict;
-- causal claim that prohibition itself activates behavior;
-- universal conceptual leading-word recruitment or transfer claim;
-- automatic context splitting based on visible later steps;
-- five samples treated as automatic sufficiency;
-- failure-form taxonomy admitted without a registered M0 deficit;
-- new helper, schema, template, generated trigger, or runtime ledger without an
-  observed failure; and
-- historical candidate or promotion status treated as current lifecycle proof.
-
-Deferred outside this epoch are a future demonstrated failure-form quality
-lift, a conceptual leading word with an observed control deficit, and a real
-context-boundary split after persistent premature completion survives a sharper
-criterion.
+- Semantic contract: P1 retains the protected M0 semantics and directly
+  affected heading-bounded compatibility proof passes without weakened
+  assertions.
+- Bounded behavior: exact Prompt 4 evidence is reused only for its frozen
+  tasks, runtime, model family, host, reasoning configuration, tools,
+  authority, and rubric; no Prompt 5 behavioral rerun or broader transfer
+  claim applies.
+- Runtime load: P1 is 9,363 exact package bytes and 1,219
+  whitespace-delimited words, equal to V1. These are byte/word proxies; token
+  and latency telemetry remain unavailable.
 
 ## Lifecycle And Residual Gaps
 
-Deploy Prompt 5 is complete. Exact P1 equals V1, M0, canonical, and installed
-at `559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032`.
-The target experimental package and manifest entry were already absent, so
-removal was a verified no-op.
+M0, H1, V1, and P1 are exact, executable, byte-identical, and stored once.
+Canonical and installed state now equal exact P1.
 
-Residual gaps:
-
-- live-host implicit discovery;
-- exact model build, token, seed, and latency telemetry;
-- transfer beyond the fixed tasks, host, reasoning configuration, tools,
-  authority, evidence, rubric, and runtime.
-
-Wrong-condition H1 pairs are not a residual gap: the candidate was rejected
-before that gate.
-
-## Pre-Round Incumbent Reconciliation
-
-The fixed-baseline reconciliation against
-`55dd6818182caf75e85de713a13ed76996336a27` is `reopen-required`.
-`C0-G04`, the exact weak-pointer repair sequence “fix the wording first, and
-inline the material only if sharpening fails,” is
-`incumbent-unit-contributes`: five exact P1 controls scored 6/8, five isolated
-P1-plus-unit samples scored 8/8, and two fresh wrong-condition pairs preserved
-an already precise working pointer without false firing. The removed Diagnose
-table and Stress-selection paragraph are `safe-removal` because five fresh P1
-controls per affected family showed no registered deficit. The exact C0
-Leading Word and Negation units are also `safe-removal`: five fresh P1 controls
-per lane scored 8/8 without either unit. The exact C0 Premature Completion unit
-is `safe-removal` for its gated fixture because all five P1 controls satisfied
-the sharpened six-row completion criterion without starting visible later
-steps, so no incumbent arm was eligible. These results are bounded to the
-exact wording, P1 identity, fixtures, rubric, workers, and host tested; they do
-not prove or disprove universal leading-word, negation, or context-split
-theories. Every other C0 unit is finally disposed as preserved-equivalent,
-safe-removal, or incompatible; there is no required-contract omission or
-unresolved unit.
-
-The authoritative record is
-[`2026-07-24-writing-great-skills-incumbent-reconciliation.md`](../../validation/evals/2026-07-24-writing-great-skills-incumbent-reconciliation.md).
-Canonical and installed runtime remain unchanged. A fresh
-`Run Deploy Campaign on writing great skills` is recommended; this
-reconciliation does not authorize direct restoration.
+Residual gaps are live-host invocation; exact model build, sampler seed, token
+and latency telemetry; real-world prevalence; and cross-model, host, task, and
+broader transfer. H1 contribution and wrong-condition comparison are not
+applicable because no H1 was admitted.
 
 <!-- WRITING-GREAT-SKILLS-DEPLOY-DECISION:END -->

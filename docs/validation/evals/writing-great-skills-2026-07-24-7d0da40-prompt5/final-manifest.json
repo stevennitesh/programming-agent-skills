@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "artifact_type": "deploy-prompt5-final-manifest",
+  "campaign": "2026-07-24-writing-great-skills-7d0da40",
+  "skill": "writing-great-skills",
+  "decision": "evidence-gap",
+  "campaign_shape": "hypothesis-candidate",
+  "git_head": "7d0da40a218114aa138265557ea2454361dcd147",
+  "runtime_identities": {
+    "p1": {
+      "algorithm": "campaign-tree-v1",
+      "sha256": "175c70bbe0ee79fad197f44ba32f0786b9bb94250ef22da21e66ded47d9e0341",
+      "equals": ["M0", "post-decision H1", "V1"]
+    },
+    "rejected_h1": {
+      "algorithm": "campaign-tree-v1",
+      "sha256": "95c45d53a6e853bad3a74981634b2bdf8c0e3bc7fc8a11f5a568fc3b0efad577",
+      "unit": "H1-POINTER-REPAIR-01",
+      "disposition": "reject-no-control-deficit",
+      "present_in_p1": false
+    },
+    "canonical": {
+      "algorithm": "campaign-tree-v1",
+      "sha256": "559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032",
+      "status": "preserved-C0-after-provisional-promotion-rollback"
+    },
+    "installed": {
+      "algorithm": "campaign-tree-v1",
+      "sha256": "559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032",
+      "status": "read-only-unmutated"
+    }
+  },
+  "terminal_claims": {
+    "semantic_contract": {
+      "status": "not-promotable",
+      "basis": "P1 failed the frozen heading-bounded canonical behavior-evaluation compatibility contract."
+    },
+    "bounded_behavior": {
+      "status": "exact-reusable-prompt4-lane-only",
+      "basis": "Five exact M0 controls scored 8/8; no Prompt 5 behavioral rerun and no broader transfer claim."
+    },
+    "runtime_load": {
+      "status": "proxy-only",
+      "basis": "Exact file bytes and whitespace-delimited words; token and latency telemetry unavailable.",
+      "p1_package_bytes": 4872,
+      "p1_words": 639
+    }
+  },
+  "canonical_proof": {
+    "focused_command": "python -m pytest tests/test_skill_pack_contracts.py::test_writing_great_skills_keeps_promoted_package_and_relationship_boundary tests/test_deploy_prompt_contracts.py -q",
+    "result": "14 passed, 1 failed",
+    "failed_test": "tests/test_deploy_prompt_contracts.py::test_behavior_evaluation_contract_supports_quality_lift_and_adaptive_cost",
+    "classification": "frozen-semantic-compatibility-failure-not-prose-snapshot",
+    "route": "Deploy Prompt 1"
+  },
+  "final_preserved_state_validation": {
+    "focused": "15 passed",
+    "full_suite": "213 passed, 4 skipped",
+    "skill_validation": "passed",
+    "scope": "Canonical and installed C0 preservation only; does not prove P1 promotable."
+  },
+  "installation": {
+    "started": false,
+    "reason": "Canonical proof failed before the installer phase.",
+    "dry_run": "not-run",
+    "cohort_proof": "not-run",
+    "synchronization": "not-run",
+    "post_install_dry_run": "not-run"
+  },
+  "stage_capsules": [
+    {
+      "unit": "prompt1",
+      "path": "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-prompt1-m0.md",
+      "sha256": "a502d889f60652f524cf6a38b8c7edfb0b7ca1f7ac1833ab5300dd450d1bfe0f"
+    },
+    {
+      "unit": "prompt2",
+      "path": "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-prompt2-synthesis.md",
+      "sha256": "b4eb44452aac8ff8c2a870e8458a4d30532f063eaf5822d137f493ca2e77954e"
+    },
+    {
+      "unit": "prompt3",
+      "path": "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-prompt3-construction.md",
+      "sha256": "2ba62a2d2b09e52f05c4eeab67d6ebc1b72db71963639e0a730f4c8849bb65b4"
+    },
+    {
+      "unit": "prompt4",
+      "path": "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-prompt4-evaluation.md",
+      "sha256": "10ce4c30f2baa0225d11853bf5f9c751184766ffd005cdf40197d35aea8084b8"
+    },
+    {
+      "unit": "pruning",
+      "path": "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-pruning.md",
+      "sha256": "f35135207c835f27991665f9a47949442d685b9901792b4edaa978ca251caad6"
+    },
+    {
+      "unit": "prompt5",
+      "path": "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-prompt5-promotion.md",
+      "sha256": "587c88cdb16384564eedd996c305de8fc957030e7bc36b1097c7fc5c8989b384"
+    }
+  ],
+  "promotion_critical_paths": [
+    ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/campaign-manifest.json",
+    ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/candidate.json",
+    ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/m0-checkpoint.json",
+    ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/m0-runtime",
+    ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/evals/prompt4/protocol-manifest.json",
+    ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/verify-prompt4.py",
+    ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40/verify-pruning.py",
+    "docs/research/writing-great-skills-deploy-2026-07-24-7d0da40.md",
+    "docs/synthesis/skills/writing-great-skills.md",
+    "docs/validation/evals/writing-great-skills-2026-07-24-7d0da40-prompt4/results-manifest.json",
+    "docs/validation/evals/writing-great-skills-2026-07-24-7d0da40-pruning/results-manifest.json",
+    "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-prompt1-m0.md",
+    "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-prompt2-synthesis.md",
+    "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-prompt3-construction.md",
+    "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-prompt4-evaluation.md",
+    "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-pruning.md",
+    "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-prompt5-promotion.md",
+    "skills/custom/writing-great-skills"
+  ],
+  "path_verification": {
+    "repository_root": "E:/GitHub/code/programming-agent-skills",
+    "all_resolve_inside_repository": true,
+    "all_exist": true,
+    "none_ignored": true,
+    "scratch_disposition": "durable campaign state intentionally included in possible Prompt 6 scope"
+  },
+  "experimental_cleanup": {
+    "target_package_present": false,
+    "target_manifest_entry_present": false,
+    "other_candidates_preserved": true
+  },
+  "recommended_next_unit": "Deploy Prompt 1",
+  "git_delivery": "pending",
+  "exact_stop_reason": "Exact P1 failed a frozen canonical compatibility semantic, so canonical C0 was restored before installation and Prompt 5 stopped with evidence-gap."
+}

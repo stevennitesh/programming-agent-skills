@@ -1,0 +1,285 @@
+{
+  "schema_version": 1,
+  "artifact_type": "deploy-prompt1-m0-checkpoint",
+  "campaign": "2026-07-24-writing-great-skills-7d0da40-r2",
+  "skill": "writing-great-skills",
+  "unit": "Deploy Prompt 1",
+  "operation": "Audit",
+  "git_head": "7d0da40a218114aa138265557ea2454361dcd147",
+  "decision": "ready-for-research",
+  "authorized_research_note": "docs/research/writing-great-skills-deploy-2026-07-24-7d0da40-r2.md",
+  "intended_contract": {
+    "outcome": "Make canonical Codex skill behavior predictable and semantically sound by auditing, authoring, or directly testing only the behaviorally affected skill surfaces, with claim-matched proof and an exact stop before installation, publishing, or Git delivery.",
+    "invocation": [
+      "Create or edit canonical Codex skill behavior or an explicitly requested skill-design artifact.",
+      "Audit or review canonical skill semantics.",
+      "Test whether exact skill wording changes invocation, judgment, action, context loading, Return, or completion."
+    ],
+    "exclusions": [
+      "General prompt rewriting.",
+      "Ordinary code review.",
+      "New-package scaffolding and metadata mechanics, which belong to the bundled skill-creator.",
+      "Installation, publishing, synchronization, and Git delivery."
+    ],
+    "authority": {
+      "Audit": "Read-only judgment; exact replacement wording is advisory.",
+      "Author": "Mutation is limited to the requested canonical skill or skill-design artifact and directly affected proof or relationship surfaces.",
+      "unresolved": "Return blocked when target, operation, canonical source, or mutation boundary cannot be resolved safely."
+    },
+    "caller_and_relationship_obligations": [
+      "Skill Router recommends writing-great-skills for creating, editing, or reviewing Codex skills and then stops; writing-great-skills does not continue the router.",
+      "The target is implicitly invocable for observable semantic skill work and preserves the closest exclusions in its routing predicate.",
+      "The bundled skill-creator owns new-package scaffolding and metadata mechanics.",
+      "GLOSSARY.md owns conditional skill-authoring vocabulary.",
+      "BEHAVIOR-EVALS.md owns conditional counterfactual wording evaluation.",
+      "Installation, publishing, synchronization, and Git delivery remain foreign owners."
+    ],
+    "safe_failure_return": "Return blocked when authority or mutation safety is unresolved; return partial when useful bounded judgment exists but admitted coverage or current proof is incomplete; name every skipped proof, evidence limit, unchanged foreign state, and residual risk.",
+    "completion": "Complete only after every affected surface is classified; each affected trigger, owner, relationship, pointer, gate, output, mutation boundary, Return, and completion condition has one home; required differences are decided; proportionate proof and read-back are recorded; unrelated work is preserved; and execution stops before installation or delivery.",
+    "irreversible_order": [
+      "Resolve target, operation, canonical source, and mutation boundary before judgment or mutation.",
+      "Inspect and classify only behaviorally capable surfaces before changing canonical behavior.",
+      "Use claim-matched proof on exact bytes before reporting completion.",
+      "Stop before installation, publishing, synchronization, or Git delivery."
+    ],
+    "required_compatibility": [
+      "The canonical package remains SKILL.md, GLOSSARY.md, BEHAVIOR-EVALS.md, and agents/openai.yaml, with SKILL.md linking both Markdown owners and no ambient dispatch mechanics.",
+      "Implicit invocation remains enabled.",
+      "The relationship surface continues to assign semantic quality to writing-great-skills and scaffolding mechanics to skill-creator.",
+      "BEHAVIOR-EVALS.md preserves defect-correction and quality-lift registration, entry-positive and wrong-condition cohorts, adaptive M0/H1 sampling gates, conditional-efficacy judgment, and the full terminal disposition vocabulary."
+    ],
+    "safety": [
+      "Preserve unrelated dirty work.",
+      "Do not infer mutation, installation, publication, synchronization, staging, commit, or push authority.",
+      "Use fresh uncontaminated controls for wording-caused behavior claims.",
+      "Do not claim efficacy outside the exact tested task, runtime, model, host, tools, configuration, rubric, and proof lane."
+    ]
+  },
+  "semantic_units": [
+    {
+      "id": "M0-01",
+      "owner": "User contract and writing-great-skills authority boundary",
+      "behavior": "Resolve exactly one operation, the target, canonical source, and mutation boundary before judgment or mutation.",
+      "neutral_runtime_clause": "Select Audit or Author from the request. Audit is read-only; Author may edit only the requested canonical skill or skill-design artifact and directly affected proof or relationship surfaces. Return blocked when the target, operation, canonical source, or mutation boundary cannot be resolved safely.",
+      "entry_case": "A request clearly asks to audit an existing canonical skill and supplies a resolvable source.",
+      "wrong_condition_case": "A request asks only for general prompt rewriting, code review, installation, delivery, or unresolved new-package scaffolding.",
+      "failure_return": "blocked",
+      "proof": "Direct cases establish the selected operation, mutation boundary, and exclusion/foreign-owner branch."
+    },
+    {
+      "id": "M0-02",
+      "owner": "Writing-great-skills coverage contract",
+      "behavior": "Inspect only behaviorally capable surfaces and classify complete admitted coverage.",
+      "neutral_runtime_clause": "Inspect the canonical package, applicable intent and decisions, callers, relationships, owned gates, outputs, mutations, failure branches, completion, and smallest relevant proof only when capable of changing the requested behavior. Classify each inspected surface as affected, preserve, owned elsewhere, historical evidence, drift, or not applicable; a full audit covers the complete canonical package and every behaviorally affected caller, relationship, proof, and publication surface.",
+      "entry_case": "A full semantic audit needs the complete canonical package and affected relationship/proof surfaces.",
+      "wrong_condition_case": "An installed mirror is present but installation-state evidence was not requested.",
+      "failure_return": "partial when admitted coverage is incomplete; blocked when the mutation boundary is unsafe",
+      "proof": "A coverage ledger includes every admitted surface and excludes unrelated or unrequested mirrors."
+    },
+    {
+      "id": "M0-03",
+      "owner": "Local contract-slice and relationship decisions",
+      "behavior": "Give each semantic behavior one owner and preserve observable relationship contracts.",
+      "neutral_runtime_clause": "Give each behavior one owner for its rule, admission, authority, inputs, outputs, evidence, failure Return, and completion. Preserve every relationship's callee, observable trigger, authority, and Return; keep only the local contract slice and point to foreign procedure.",
+      "entry_case": "A skill invokes or points to a branch owner whose trigger and Return affect caller behavior.",
+      "wrong_condition_case": "A foreign procedure is merely adjacent and does not alter the target behavior.",
+      "failure_return": "partial with the unresolved owner or relationship named",
+      "proof": "Relationship trace maps caller trigger through callee authority and Return without duplicated procedure."
+    },
+    {
+      "id": "M0-04",
+      "owner": "Routing and information-hierarchy compatibility",
+      "behavior": "Keep implicit invocation observable and load branch-only reference only under its named condition.",
+      "neutral_runtime_clause": "Treat an implicitly invocable description as the routing predicate: name observable request or caller triggers and closest exclusions, without runtime procedure or body-summary detail. Keep common behavior inline. Point to GLOSSARY.md only when invocation, information hierarchy, pruning, or completion vocabulary affects the work. Split only for independent invocation, irreducible branch load, or an observed persistent early-stop defect after sharpening completion.",
+      "entry_case": "A request asks to audit whether wording changes invocation or completion vocabulary.",
+      "wrong_condition_case": "A routine semantic edit does not depend on glossary vocabulary or branch-only reference.",
+      "failure_return": "partial with the invocation or loading gap named",
+      "proof": "Positive and exclusion routing cases plus pointer-condition checks."
+    },
+    {
+      "id": "M0-05",
+      "owner": "Behavior-preserving cut contract",
+      "behavior": "Remove only clauses whose absence changes no intended behavior or required local contract.",
+      "neutral_runtime_clause": "Keep clauses that change intended behavior, safety, authority, proof, irreversible order, safe failure, Return, or completion. For every proposed cut, identify the behavior that changes if removed; restore one owner and remove no-ops, duplicate meaning, stale exposition, and ownerless clauses. State the positive target first and pair each necessary guardrail with its safe action.",
+      "entry_case": "An Author request seeks to shorten or simplify a canonical skill.",
+      "wrong_condition_case": "A clause is concise but owns a safety, authority, Return, or completion distinction.",
+      "failure_return": "partial with the unproved cut preserved",
+      "proof": "Clause-to-intent audit maps every retained clause and proves every cut has no behavioral owner."
+    },
+    {
+      "id": "M0-06",
+      "owner": "Claim-matched proof and BEHAVIOR-EVALS.md pointer",
+      "behavior": "Use the smallest proof matched to each claim and load counterfactual evaluation only for wording-caused behavior claims.",
+      "neutral_runtime_clause": "Use read-back for exact bytes and mutations, focused structural checks for machine contracts, and relationship traces for ownership. When a claim attributes changed invocation, judgment, action, context loading, Return, or completion to exact wording, load BEHAVIOR-EVALS.md and use uncontaminated direct controls with fixed tasks and rubrics, fresh contexts, candidate language absent from control inputs, and root-owned judgment.",
+      "entry_case": "The requested conclusion says exact skill wording changes a named agent behavior.",
+      "wrong_condition_case": "The claim is only that a required file, link, owner, or literal machine token exists.",
+      "failure_return": "partial when direct behavioral proof is incomplete; blocked when a safe uncontaminated protocol cannot be formed",
+      "proof": "Each claim maps to read-back, structural, relationship, or counterfactual proof without extrapolation."
+    },
+    {
+      "id": "M0-07",
+      "owner": "BEHAVIOR-EVALS.md required compatibility contract",
+      "behavior": "Register and judge conditional wording efficacy through adaptive entry-positive and wrong-condition cohorts with complete terminal dispositions.",
+      "neutral_runtime_clause": "For each wording hypothesis, register defect-correction or quality-lift, a meaningful fixed rubric and control deficit, an observable entry predicate, applicability as common, situational, rare, or unknown, and its evidence basis. Sample entry-positive and wrong-condition cohorts separately. Run at least five fresh M0 controls; run at least five fresh H1 entry-positive samples only when the registered deficit appears; run wrong-condition M0/H1 pairs only after the entry-positive contribution gate. Do not dilute situational effects with non-triggering cases. Extend only for material variance, a borderline effect, or protocol deviation; five is a minimum, not automatic sufficiency. Judge conditional efficacy on entry-positive cases, and give a rejected candidate no wrong-condition credit. Record exactly accept, reject-no-control-deficit, reject-insufficient-contribution, reject-regression, needs-more-evidence, or blocked, plus residual transfer gaps; reserve reject-regression for an observed critical or protected-behavior regression.",
+      "entry_case": "A registered defect-correction or quality-lift hypothesis has an entry-positive control cohort in which the fixed-rubric deficit appears.",
+      "wrong_condition_case": "The entry predicate is absent, or the control deficit does not appear; candidate sampling stops with reject-no-control-deficit rather than treating non-triggering cases as failed efficacy.",
+      "failure_return": "needs-more-evidence for material unresolved variance; blocked for invalid or unsafe protocol",
+      "proof": "Heading-bounded normalized semantic checks cover registration, cohort separation, adaptive gates, judgment, and all six terminal tokens; direct controls prove only exact conditional efficacy.",
+      "compatibility_class": "mandatory-M0"
+    },
+    {
+      "id": "M0-08",
+      "owner": "Author mutation and foreign-owner boundary",
+      "behavior": "Limit mutation to authorized canonical and directly affected proof/relationship surfaces, read back exact state, and stop before foreign work.",
+      "neutral_runtime_clause": "After authorized semantic edits, read back exact mutations and current work state, preserve unrelated work, run proportionate canonical proof, and stop with an exact handoff before installation, publishing, synchronization, staging, commit, push, or other delivery.",
+      "entry_case": "Author authority names an existing canonical skill and a directly affected proof surface.",
+      "wrong_condition_case": "A successful canonical proof leaves an installed mirror stale, but installation was not authorized.",
+      "failure_return": "blocked when mutation safety or exact read-back cannot be established",
+      "proof": "Scoped status, exact file read-back, affected checks, both diff checks, and unchanged HEAD."
+    },
+    {
+      "id": "M0-09",
+      "owner": "Writing-great-skills Return and completion contract",
+      "behavior": "Return complete, partial, or blocked with operation-specific evidence and explicit limits.",
+      "neutral_runtime_clause": "Return complete, partial, or blocked with the selected operation and coverage. Audit reports verdict, impact-ordered findings, useful exact candidates, deliberate non-changes, behavior at risk, and evidence limits. Author reports changed canonical surfaces, behavior added, changed, or removed, proof, preserved unrelated state, deliberate non-changes, and residual risk. Complete only when coverage, ownership, relationships, pointers, gates, outputs, mutation boundary, Return, completion, proof, read-back, and foreign-owner stop are all satisfied.",
+      "entry_case": "A bounded full audit has classified complete coverage and completed proportionate proof.",
+      "wrong_condition_case": "Useful findings exist but a required affected caller or proof lane was not inspected.",
+      "failure_return": "partial for incomplete admitted coverage or proof; blocked for unresolved authority or mutation safety",
+      "proof": "Return packet contains the operation-specific fields and completion gate truthfully matches the evidence."
+    },
+    {
+      "id": "M0-10",
+      "owner": "Canonical package and relationship compatibility",
+      "behavior": "Preserve the required package shape, pointers, implicit invocation policy, and relationship ownership.",
+      "neutral_runtime_clause": "Keep SKILL.md, GLOSSARY.md, BEHAVIOR-EVALS.md, and agents/openai.yaml as the canonical package; SKILL.md points to both Markdown owners and contains no dispatch mechanics; implicit invocation remains enabled; the relationship owner assigns semantic quality to writing-great-skills, scaffolding mechanics to skill-creator, and installation and delivery to their foreign owners.",
+      "entry_case": "A canonical Author change modifies SKILL.md or either conditional owner.",
+      "wrong_condition_case": "A proposed edit adds dispatch mechanics or absorbs installation into writing-great-skills.",
+      "failure_return": "blocked until the compatibility regression is removed",
+      "proof": "Candidate-root structural checks and relationship trace prove exact file set, links, policy, absent dispatch mechanics, and owner boundaries."
+    }
+  ],
+  "clause_to_intent_audit": [
+    {"unit": "M0-01", "intent": ["authority", "safe failure", "exclusions"]},
+    {"unit": "M0-02", "intent": ["coverage", "completion", "safety"]},
+    {"unit": "M0-03", "intent": ["caller relationships", "ownership", "Return"]},
+    {"unit": "M0-04", "intent": ["invocation", "conditional loading", "compatibility"]},
+    {"unit": "M0-05", "intent": ["behavior-minimality", "safety", "completion"]},
+    {"unit": "M0-06", "intent": ["proof", "behavioral claims", "safe failure"]},
+    {"unit": "M0-07", "intent": ["required compatibility", "proof", "conditional efficacy"]},
+    {"unit": "M0-08", "intent": ["mutation safety", "irreversible order", "foreign-owner stop"]},
+    {"unit": "M0-09", "intent": ["Return", "completion", "evidence limits"]},
+    {"unit": "M0-10", "intent": ["required compatibility", "caller relationships", "ownership"]}
+  ],
+  "state_location_ledger": [
+    {
+      "state": "Canonical target package",
+      "owner": "writing-great-skills Author",
+      "authoritative_location": "skills/custom/writing-great-skills/",
+      "allowed_transition": "Edit only under Author authority during a later authorized unit; Prompt 1 is read-only.",
+      "required_order": "Resolve authority and mutation boundary, inspect affected state, edit, prove, read back, stop.",
+      "read_back": "Exact candidate-root bytes/tree identity and scoped Git state.",
+      "failure_return": "blocked",
+      "mapped_units": ["M0-01", "M0-02", "M0-08", "M0-10"],
+      "viability_cases": ["V01", "V02", "V12"]
+    },
+    {
+      "state": "Directly affected proof and relationship surfaces",
+      "owner": "Their repository owners; writing-great-skills may edit only when directly affected and Author-authorized.",
+      "authoritative_location": "Affected tests, relationship documentation, or skill-design artifact explicitly in scope.",
+      "allowed_transition": "Smallest directly affected mutation only; Prompt 1 is read-only.",
+      "required_order": "Trace owner and dependency before edit; run affected proof and read back.",
+      "read_back": "Exact affected files, focused proof, scoped status, and diff checks.",
+      "failure_return": "blocked for unsafe scope; partial for skipped current proof",
+      "mapped_units": ["M0-02", "M0-03", "M0-08"],
+      "viability_cases": ["V03", "V11", "V12"]
+    },
+    {
+      "state": "Working tree and index",
+      "owner": "User and Git-delivery owner",
+      "authoritative_location": "Repository worktree and index",
+      "allowed_transition": "Preserve unrelated work; do not stage or commit.",
+      "required_order": "Read status before work and before Return; run both diff checks.",
+      "read_back": "git status --short, git diff --check, git diff --cached --check",
+      "failure_return": "blocked on unexplained in-scope drift or HEAD transition",
+      "mapped_units": ["M0-08", "M0-09"],
+      "viability_cases": ["V12"]
+    },
+    {
+      "state": "Installed mirror, connector, and remote state",
+      "owner": "Installation, connector, remote, and Git-delivery owners",
+      "authoritative_location": "Outside canonical source",
+      "allowed_transition": "None; inspect installed mirror only when installation-state evidence is explicitly requested.",
+      "required_order": "Canonical proof and exact handoff precede any separately authorized foreign transition.",
+      "read_back": "Not applicable in Prompt 1.",
+      "failure_return": "blocked if completion would require ungranted foreign authority",
+      "mapped_units": ["M0-08", "M0-10"],
+      "viability_cases": ["V02", "V12"]
+    }
+  ],
+  "viability_suite": [
+    {"id": "V01", "case": "Audit entry selects read-only authority and produces operation-specific coverage and verdict.", "proves": ["M0-01", "M0-02", "M0-09"]},
+    {"id": "V02", "case": "Scaffolding, installation, publishing, synchronization, and Git delivery requests remain with their owners and are not started.", "proves": ["M0-01", "M0-08", "M0-10"]},
+    {"id": "V03", "case": "Full audit classifies the complete canonical package and all behaviorally affected caller, relationship, proof, and publication surfaces.", "proves": ["M0-02", "M0-03"]},
+    {"id": "V04", "case": "Skill Router's create/edit/review route enters writing-great-skills and the callee returns without continuing routing.", "proves": ["M0-03", "M0-10"]},
+    {"id": "V05", "case": "Implicit positive and exclusion cases resolve from observable description language without body procedure in metadata.", "proves": ["M0-04"]},
+    {"id": "V06", "case": "GLOSSARY.md is loaded only when invocation, information hierarchy, pruning, or completion vocabulary affects the work.", "proves": ["M0-04"]},
+    {"id": "V07", "case": "A proposed cut that changes authority, safety, proof, Return, or completion is preserved; ownerless duplicate exposition is removable.", "proves": ["M0-05"]},
+    {"id": "V08", "case": "Structural and owner claims use read-back/checks while wording-caused behavior claims enter uncontaminated direct controls.", "proves": ["M0-06"]},
+    {"id": "V09", "case": "Defect-correction and quality-lift registrations name fixed rubric, meaningful deficit, observable entry predicate, applicability, and evidence basis.", "proves": ["M0-07"]},
+    {"id": "V10", "case": "Entry-positive M0 first, gated H1 next, and gated wrong-condition pairs preserve adaptive sampling and conditional-efficacy judgment.", "proves": ["M0-07"]},
+    {"id": "V11", "case": "The evaluation record accepts exactly the six terminal dispositions and reserves reject-regression for observed critical or protected-behavior regression.", "proves": ["M0-07"]},
+    {"id": "V12", "case": "Authorized edits remain in the canonical/directly affected boundary, exact state is read back, unrelated dirty work and HEAD are preserved, and foreign mutation is not started.", "proves": ["M0-08", "M0-10"]},
+    {"id": "V13", "case": "Incomplete admitted coverage or proof returns partial; unresolved authority or mutation safety returns blocked; complete requires every terminal gate.", "proves": ["M0-01", "M0-02", "M0-09"]}
+  ],
+  "research_questions": {
+    "invocation_and_information_hierarchy": [
+      "Which observable metadata formulations most reliably distinguish semantic skill work from general prompt rewriting and ordinary code review?",
+      "Under what conditions do branch-only references improve execution without producing missed loading or premature completion?"
+    ],
+    "semantic_ownership_and_pruning": [
+      "Which independently supported practices improve one-owner semantic contracts, relationship preservation, and behavior-preserving compression?",
+      "What evidence distinguishes useful local contract slices from duplicated foreign procedure?"
+    ],
+    "claim_matched_behavior_evaluation": [
+      "Which independent methods support fixed-task counterfactual wording evaluation, entry-predicate sampling, adaptive stopping, and conditional-efficacy judgment?",
+      "What counterpressure or limits apply to five-sample minimums, wrong-condition cohorts, transfer claims, and root-owned judgment?"
+    ],
+    "safe_authoring_and_completion": [
+      "Which methods best support exact mutation boundaries, read-back, proof proportionality, and stopping before installation or delivery?"
+    ]
+  },
+  "source_identity_manifest": [
+    {"path": "user-supplied Prompt 1 contract", "identity": "conversation brief for campaign 2026-07-24-writing-great-skills-7d0da40-r2"},
+    {"path": "C:/Users/steve/.agents/skills/writing-great-skills/SKILL.md", "sha256": "a97f2f20b9482c5acc4bca4c5f323521c355703cbaa7d49f228debd8cc88d311"},
+    {"path": "AGENTS.md", "sha256": "d93d25a1e8bf09f01fb9eee054682940539a072c5f489e99435dbe6e10cde314"},
+    {"path": "CONTEXT.md", "sha256": "bae0de4372439edc96e91c5132967755797bc4628c8b2fef03591b6779fde8e1"},
+    {"path": "docs/agents/engineering-contract.md", "sha256": "c3d52491ca8b98f229965e2602212fc4474ef2fedf8be73bc8f08c24300ef829"},
+    {"path": "docs/agents/domain.md", "sha256": "94ccdc414542b44be2fe38d7ebe2e59fd809c09848642243c3a805749c6adb99"},
+    {"path": "docs/adr/0001-agents-primes-contract-teaches-skills-execute.md", "sha256": "eb0ca5b54a8dbdd35a2fd170734006460e7f7a5a0f93ad8ce29264c8bcc76b75"},
+    {"path": "docs/adr/0003-skills-encode-local-contract-slices.md", "sha256": "5c043765d4679a272e096fa492b0b52b71f4c519216e98630e11031149177f34"},
+    {"path": "docs/adr/0004-validator-enforces-publishing-hygiene-not-language.md", "sha256": "9e769eb02eec437867cd59e90553bb6dc981352b2a424f3eaadbae4bc354684e"},
+    {"path": "docs/adr/0006-domain-modeling-records-approved-adrs.md", "sha256": "1ce3289aaacf00e93fb1239f39504bab7d7724fd59c27cda6b22d1b6805822ef"},
+    {"path": "docs/adr/0007-synthesis-preserves-exhaustive-research-runtime-skills-compress.md", "sha256": "a8b37fa83c820a08bf0e10998e1301d537cefa5d797b49edcabbb308644c8962"},
+    {"path": "docs/synthesis/README.md", "sha256": "9cc130b9996e44a072f625935dffa422626cb27e578a404e79e349f6b357ea51"},
+    {"path": "docs/synthesis/skill-context-relationships.md", "sha256": "15bb4ab6cd4cda5256b45aae4c7bb887a153f62cc63dbd2203d0f3b68ea1ad69"},
+    {"path": "docs/synthesis/methods/deploy-prompts.md", "sha256": "cde6faf7d3fe1ad91a7fddc3c1a4973f8bdaf632d4181974ab0d2599bd605a75"},
+    {"path": "skills/custom/skill-router/SKILL.md", "sha256": "2bbf8e9c2b9c0c86d8aa3abff2a66bdfb946a9a120dbff3d5d640966398d7c05"},
+    {"path": "skills/custom/skill-router/agents/openai.yaml", "sha256": "3bf863a8856d04a6a1c4f23b3aae6cbf5388544129662c55cc733c2d9c23bbbf"},
+    {"path": "tests/test_skill_pack_contracts.py", "sha256": "cf81c18e4a30ad2aeadaccc5606d488dea2d15bda51fab6552433eb9bcd19755"},
+    {"path": "tests/test_deploy_prompt_contracts.py", "sha256": "7e565b31760846fa9206137c6c0f1a78409a7901beacfc6ed640c7a2147d170b"},
+    {"path": "docs/validation/evals/writing-great-skills-2026-07-24-7d0da40-prompt5/final-manifest.json", "sha256": "824c1db641131741aa7381fead9e2e955cd1ddfa81f73747d26e9f3a2580befd", "use": "correction evidence for M0-07 only"},
+    {"path": "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-prompt5-promotion.md", "sha256": "c11630f5234885aaa550d087e7c8a2747e9eea7052f9e0564aadda7efac99619", "use": "correction evidence for M0-07 only"}
+  ],
+  "limitations": [
+    "The target current skill body/package, target active synthesis, research, upstream packages, outside research, and unauthorized predecessor artifacts were not inspected.",
+    "The two authorized predecessor records supply only correction evidence for M0-07; they do not establish H1, wording efficacy, or any other prior conclusion.",
+    "C0-G04 and its prior reject-no-control-deficit disposition are outside M0 and were not used as authority.",
+    "M0 is a neutral behavior-complete specification, not an exact runtime tree; Prompt 3 owns materialization.",
+    "No behavioral efficacy, prevalence, model transfer, host transfer, token, or latency claim is made."
+  ],
+  "content_fingerprint": {
+    "algorithm": "sha256-canonical-json-v1",
+    "scope": "All checkpoint fields except content_fingerprint, serialized as UTF-8 JSON with sorted keys and separators comma/colon.",
+    "sha256": "05e00f6d0b189165c0ef321bcc753d265e204b864bff3804cb64cfb8aa6ae8f0"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "artifact_type": "deploy-prompt4-candidate-bound-verifier-result",
+  "campaign": "2026-07-24-writing-great-skills-7d0da40-r2",
+  "status": "pass",
+  "candidate_root": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40-r2/runtime",
+  "expected_tree_sha256": "eee3e8ce88820a074f42bd388505d4274014c5bbd59246f81876ce6c309584fb",
+  "independently_recomputed_tree_sha256": "eee3e8ce88820a074f42bd388505d4274014c5bbd59246f81876ce6c309584fb",
+  "algorithm": "campaign-tree-v1",
+  "file_count": 4,
+  "identity_binding": "explicit-candidate-root",
+  "canonical_runtime_resolved": false,
+  "checks": {
+    "m0_fidelity": ["M0-01", "M0-02", "M0-03", "M0-04", "M0-05", "M0-06", "M0-07", "M0-08", "M0-09", "M0-10"],
+    "viability_registration": ["V01", "V02", "V03", "V04", "V05", "V06", "V07", "V08", "V09", "V10", "V11", "V12", "V13"],
+    "compatibility": ["M0-07", "M0-10"],
+    "relationships": ["skill-router", "skill-creator", "GLOSSARY.md", "BEHAVIOR-EVALS.md", "installation-and-delivery-owners"],
+    "invocation_context_machine": ["observable description and exclusions", "conditional local support pointers", "allow_implicit_invocation: true", "no dispatch mechanics"],
+    "forbidden_absence": ["F-01", "F-02", "F-03", "F-04", "F-05", "F-06", "F-07"]
+  },
+  "fixture_lint": {"status": "ok", "case_count": 2},
+  "h1_payload_comparison": "not-applicable-one-corpus-M0-equals-H1"
+}
