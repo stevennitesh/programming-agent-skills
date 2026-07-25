@@ -84,11 +84,18 @@ STAGE_ORDER = (
 )
 STAGE_PROFILES = frozenset(STAGE_ORDER)
 PREFLIGHT_KINDS = frozenset(
-    {"behavioral-comparison", "installation", "markdown", "research"}
+    {
+        "behavioral-comparison",
+        "git-delivery",
+        "installation",
+        "markdown",
+        "research",
+    }
 )
 REQUIRED_PREFLIGHT_KINDS = {
     "prompt-3": frozenset({"behavioral-comparison", "markdown"}),
     "prompt-5": frozenset({"installation"}),
+    "prompt-6": frozenset({"git-delivery"}),
     "research": frozenset({"markdown", "research"}),
 }
 SAFE_ID = re.compile(r"^[a-z0-9][a-z0-9-]*$")
@@ -547,6 +554,79 @@ def _control_identity(
     return campaign_id, manifest
 
 
+def _git_delivery_status(
+    worktree: Path,
+    delivery_mode: object,
+) -> dict[str, object]:
+    result: dict[str, object] = {
+        "delivery_mode": delivery_mode,
+        "local_head": None,
+        "branch": "unavailable",
+        "tracking_ref": None,
+        "remote_head": None,
+        "parity": "unavailable",
+    }
+    if delivery_mode not in {"commit", "push"}:
+        return result
+    head = subprocess.run(
+        ["git", "rev-parse", "--verify", "HEAD"],
+        cwd=worktree,
+        check=False,
+        capture_output=True,
+        text=True,
+        shell=False,
+    )
+    if head.returncode != 0 or not head.stdout.strip():
+        return result
+    result["local_head"] = head.stdout.strip()
+    branch = subprocess.run(
+        ["git", "symbolic-ref", "--quiet", "--short", "HEAD"],
+        cwd=worktree,
+        check=False,
+        capture_output=True,
+        text=True,
+        shell=False,
+    )
+    if branch.returncode != 0 or not branch.stdout.strip():
+        result["branch"] = "detached"
+        return result
+    result["branch"] = branch.stdout.strip()
+    tracking = subprocess.run(
+        [
+            "git",
+            "rev-parse",
+            "--abbrev-ref",
+            "--symbolic-full-name",
+            "@{upstream}",
+        ],
+        cwd=worktree,
+        check=False,
+        capture_output=True,
+        text=True,
+        shell=False,
+    )
+    if tracking.returncode != 0 or not tracking.stdout.strip():
+        return result
+    result["tracking_ref"] = tracking.stdout.strip()
+    remote = subprocess.run(
+        ["git", "rev-parse", "--verify", tracking.stdout.strip()],
+        cwd=worktree,
+        check=False,
+        capture_output=True,
+        text=True,
+        shell=False,
+    )
+    if remote.returncode != 0 or not remote.stdout.strip():
+        return result
+    result["remote_head"] = remote.stdout.strip()
+    result["parity"] = (
+        "match"
+        if result["local_head"] == result["remote_head"]
+        else "diverged"
+    )
+    return result
+
+
 def campaign_status(
     manifest_path: Path,
     *,
@@ -584,6 +664,11 @@ def campaign_status(
     _replace_json_file(lease_path, lease)
     semantic = manifest.get("semantic")
     stage = semantic.get("declared_stage") if isinstance(semantic, dict) else None
+    campaign = manifest.get("campaign")
+    delivery_status = _git_delivery_status(
+        resolved_worktree,
+        campaign.get("delivery_mode") if isinstance(campaign, dict) else None,
+    )
     mechanical = manifest.get("mechanical")
     if isinstance(mechanical, dict):
         receipts = mechanical.get("receipts", [])
@@ -625,6 +710,7 @@ def campaign_status(
                     ),
                     "owner_token": lease.get("owner_token"),
                     "lease": "owned",
+                    "git_delivery": delivery_status,
                 }
     return {
         "status": "verified",
@@ -632,6 +718,7 @@ def campaign_status(
         "stage": stage,
         "owner_token": lease.get("owner_token"),
         "lease": "owned",
+        "git_delivery": delivery_status,
     }
 
 
@@ -1544,6 +1631,7 @@ def _verify_registered_proof(
     force_proof: str | None,
     force_reason: str | None,
     no_execute: bool,
+    read_only: bool = False,
 ) -> dict[str, object]:
     mechanical = manifest["mechanical"]
     assert isinstance(mechanical, dict)
@@ -1763,6 +1851,49 @@ def _verify_registered_proof(
             if isinstance(value, dict) and value.get("id") in blocked
         ]
         return result
+    if read_only:
+        if force_proof is not None:
+            return _proof_failure(
+                manifest_path,
+                "force-proof",
+                "Frozen verification cannot execute a forced proof",
+            )
+        reused: list[str] = []
+        missing: list[dict[str, str]] = []
+        for registration, _, identity_tuple in planned:
+            exact = _exact_receipt(
+                typed_receipts,
+                identity_tuple,
+                stale,
+            )
+            if exact is None:
+                missing.append(
+                    {
+                        "registration": str(registration["id"]),
+                        "message": "current durable proof receipt is missing",
+                    }
+                )
+            else:
+                reused.append(str(exact["id"]))
+        if missing:
+            return _proof_failure(
+                manifest_path,
+                "proof-receipt",
+                "Frozen verification requires current durable proof receipts",
+                missing,
+            )
+        return {
+            "status": "verified",
+            "proof": {
+                "reused_receipts": reused,
+                "reused_cache": [],
+                "cache_rejections": [],
+                "executed": [],
+                "deduplicated": [],
+                "not_applicable": not_applicable,
+                "stale_receipts": sorted(stale),
+            },
+        }
     if no_execute:
         result = _failure(
             "stale",
@@ -1981,6 +2112,21 @@ def _verify_preflight_registrations(
         if isinstance(value, dict)
         and value.get("stage", declared_stage) == declared_stage
     ]
+    if declared_stage == "prompt-6":
+        delivery_registrations = [
+            value
+            for value in stage_registrations
+            if value.get("kind") == "git-delivery"
+        ]
+        if (
+            len(delivery_registrations) != 1
+            or delivery_registrations[0].get("applicability") != "required"
+        ):
+            return _proof_failure(
+                manifest_path,
+                "preflight-registration",
+                "Prompt 6 requires exactly one applicable Git delivery registration",
+            )
     present_kinds = {
         str(value.get("kind"))
         for value in stage_registrations
@@ -1998,6 +2144,7 @@ def _verify_preflight_registrations(
     skipped: list[str] = []
     blocked: list[str] = []
     failures: list[dict[str, str]] = []
+    git_delivery: dict[str, object] | None = None
     for registration in stage_registrations:
         registration_id = registration.get("id")
         kind = registration.get("kind")
@@ -2056,7 +2203,14 @@ def _verify_preflight_registrations(
             continue
         try:
             candidate_root = _registration_candidate_root(registration, worktree)
-            if kind == "behavioral-comparison":
+            if kind == "git-delivery":
+                git_delivery = _verify_git_delivery_preflight(
+                    manifest_path,
+                    manifest,
+                    registration,
+                    candidate_root=candidate_root,
+                )
+            elif kind == "behavioral-comparison":
                 output_root = (
                     worktree
                     / ".tmp"
@@ -2174,12 +2328,262 @@ def _verify_preflight_registrations(
         )
         result["blocked"] = blocked
         return result
-    return {
+    result: dict[str, object] = {
         "status": "verified",
         "preflight": {
             "completed": completed,
             "not_applicable": skipped,
         },
+    }
+    if git_delivery is not None:
+        result["preflight"]["git_delivery"] = git_delivery  # type: ignore[index]
+    return result
+
+
+def _git_read(
+    candidate_root: Path,
+    argv: list[str],
+    *,
+    label: str,
+    allowed_codes: frozenset[int] = frozenset({0}),
+) -> subprocess.CompletedProcess[str]:
+    completed = subprocess.run(
+        ["git", *argv],
+        cwd=candidate_root,
+        check=False,
+        capture_output=True,
+        text=True,
+        shell=False,
+    )
+    if completed.returncode not in allowed_codes:
+        raise ValueError(f"{label} failed")
+    return completed
+
+
+def _delivery_path(value: object, candidate_root: Path) -> str:
+    if not isinstance(value, str) or not value or Path(value).is_absolute():
+        raise ValueError("Git delivery paths must be nonempty and relative")
+    path = Path(value)
+    if value != path.as_posix() or any(part in {"", ".", ".."} for part in path.parts):
+        raise ValueError("Git delivery paths must be normalized POSIX paths")
+    resolved = (candidate_root / path).resolve()
+    if not _is_within(resolved, candidate_root):
+        raise ValueError("Git delivery path escapes the candidate root")
+    if ".tmp" in path.parts:
+        raise ValueError("Git delivery cannot depend on a .tmp path")
+    return value
+
+
+def _git_object_at_path(
+    candidate_root: Path,
+    path: str,
+    *,
+    state: str,
+) -> str:
+    revision = f":{path}" if state == "staged" else f"HEAD:{path}"
+    completed = _git_read(
+        candidate_root,
+        ["rev-parse", "--verify", revision],
+        label=f"Required {state} Git object for {path}",
+    )
+    digest = completed.stdout.strip()
+    if not re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", digest):
+        raise ValueError(f"Required {state} Git object for {path} is invalid")
+    return digest
+
+
+def _verify_git_delivery_preflight(
+    manifest_path: Path,
+    manifest: dict[str, object],
+    registration: dict[str, object],
+    *,
+    candidate_root: Path,
+) -> dict[str, object]:
+    campaign = manifest["campaign"]
+    assert isinstance(campaign, dict)
+    if candidate_root != Path(str(campaign["worktree"])).resolve():
+        raise ValueError("Git delivery candidate root must be the worktree root")
+    mode = registration.get("delivery_mode")
+    if mode not in {"commit", "push"} or mode != campaign.get("delivery_mode"):
+        raise ValueError("Git delivery mode must exactly match commit or push authority")
+
+    allowlist_value = registration.get("allowlist")
+    required_value = registration.get("required_paths")
+    if (
+        not isinstance(allowlist_value, list)
+        or not allowlist_value
+        or not isinstance(required_value, list)
+        or not required_value
+    ):
+        raise ValueError("Git delivery requires an exact nonempty allowlist")
+    allowlist = [_delivery_path(value, candidate_root) for value in allowlist_value]
+    if allowlist != sorted(set(allowlist)):
+        raise ValueError("Git delivery allowlist must be sorted and unique")
+
+    required: dict[str, str] = {}
+    for entry in required_value:
+        if not isinstance(entry, dict) or set(entry) != {"path", "state"}:
+            raise ValueError("Required Git delivery paths must declare path and state")
+        path = _delivery_path(entry.get("path"), candidate_root)
+        state = entry.get("state")
+        if state not in {"staged", "committed", "deleted"} or path in required:
+            raise ValueError("Required Git delivery path state is invalid or duplicated")
+        required[path] = str(state)
+    if set(required) != set(allowlist):
+        raise ValueError("Required Git delivery paths must exactly match the allowlist")
+
+    manifest_relative = manifest_path.resolve().relative_to(candidate_root).as_posix()
+    if (
+        registration.get("prompt5_manifest") != manifest_relative
+        or manifest_relative not in required
+    ):
+        raise ValueError("Frozen Prompt 5 manifest must be an exact required path")
+    for path, state in required.items():
+        if state != "deleted" and not (candidate_root / path).is_file():
+            raise ValueError(f"Required Git delivery path is missing: {path}")
+
+    promoted_p1 = registration.get("promoted_p1")
+    if (
+        not isinstance(promoted_p1, dict)
+        or promoted_p1.get("algorithm") != "campaign-tree-v1"
+    ):
+        raise ValueError("Git delivery requires the promoted P1 identity")
+    p1_path = _delivery_path(promoted_p1.get("path"), candidate_root)
+    p1_root = _contained_artifact_path(candidate_root, p1_path)
+    p1_files = {
+        (Path(p1_path) / relative).as_posix()
+        for relative, (kind, _) in tree_entries(p1_root).items()
+        if kind == "file"
+    }
+    omitted_p1 = sorted(
+        path
+        for path in p1_files
+        if path not in required or required[path] == "deleted"
+    )
+    if omitted_p1:
+        raise ValueError(
+            "Promoted P1 files are omitted from the delivery allowlist: "
+            + ", ".join(omitted_p1)
+        )
+    ignored = _git_read(
+        candidate_root,
+        ["check-ignore", "--no-index", "--", p1_path],
+        label=f"Ignore check for promoted P1 {p1_path}",
+        allowed_codes=frozenset({0, 1}),
+    )
+    if ignored.returncode == 0:
+        raise ValueError("Promoted P1 identity depends on an ignored path")
+    for dependency in sorted(p1_files):
+        ignored_dependency = _git_read(
+            candidate_root,
+            ["check-ignore", "--no-index", "--", dependency],
+            label=f"Ignore check for promoted P1 dependency {dependency}",
+            allowed_codes=frozenset({0, 1}),
+        )
+        if ignored_dependency.returncode == 0:
+            raise ValueError("Promoted P1 identity depends on an ignored path")
+    _verified_identity(
+        promoted_p1,
+        candidate_root=candidate_root,
+        label="Promoted P1",
+    )
+
+    staged_result = _git_read(
+        candidate_root,
+        ["diff", "--cached", "--name-only", "-z", "--diff-filter=ACDMRTUXB"],
+        label="Staged scope read",
+    )
+    staged = {line for line in staged_result.stdout.split("\0") if line}
+    unauthorized = sorted(staged.difference(allowlist))
+    if unauthorized:
+        raise ValueError(
+            "Unauthorized staged paths are outside the delivery allowlist: "
+            + ", ".join(unauthorized)
+        )
+
+    campaign_directory = manifest_path.parent.relative_to(candidate_root).as_posix()
+    tracked_campaign = _git_read(
+        candidate_root,
+        ["ls-files", "-z", "--", campaign_directory],
+        label="Tracked campaign artifact read",
+    )
+    allowed_campaign_paths = {
+        f"{campaign_directory}/{name}"
+        for name in ("decisions.md", "manifest.json", "results.json")
+    }
+    raw_campaign_paths = sorted(
+        path
+        for path in tracked_campaign.stdout.split("\0")
+        if path and path not in allowed_campaign_paths
+    )
+    if raw_campaign_paths:
+        raise ValueError(
+            "Completed campaign contains a tracked raw campaign artifact: "
+            + ", ".join(raw_campaign_paths)
+        )
+
+    for path, state in required.items():
+        artifact = candidate_root / path
+        if state == "deleted":
+            if path not in staged or artifact.exists():
+                raise ValueError(
+                    f"Required Git delivery path is not deleted: {path}"
+                )
+            index_entry = _git_read(
+                candidate_root,
+                ["--literal-pathspecs", "ls-files", "--error-unmatch", "--", path],
+                label=f"Deleted path index check for {path}",
+                allowed_codes=frozenset({0, 1}),
+            )
+            if index_entry.returncode == 0:
+                raise ValueError(
+                    f"Deleted Git delivery path index still contains: {path}"
+                )
+            _git_object_at_path(
+                candidate_root,
+                path,
+                state=state,
+            )
+            continue
+        assert artifact.is_file()
+        ignored = _git_read(
+            candidate_root,
+            ["check-ignore", "--no-index", "--", path],
+            label=f"Ignore check for {path}",
+            allowed_codes=frozenset({0, 1}),
+        )
+        if ignored.returncode == 0:
+            raise ValueError(f"Git delivery cannot depend on ignored path: {path}")
+        if (state == "staged") != (path in staged):
+            raise ValueError(f"Required Git delivery path is not {state}: {path}")
+        expected = _git_object_at_path(
+            candidate_root,
+            path,
+            state=state,
+        )
+        actual = _git_read(
+            candidate_root,
+            ["hash-object", f"--path={path}", "--", path],
+            label=f"Worktree Git object for {path}",
+        ).stdout.strip()
+        if actual != expected:
+            raise ValueError(
+                f"Required Git delivery path identity does not match {state}: {path}"
+            )
+
+    _git_read(
+        candidate_root,
+        ["diff", "--check"],
+        label="Worktree diff check",
+    )
+    _git_read(
+        candidate_root,
+        ["diff", "--cached", "--check"],
+        label="Staged diff check",
+    )
+    return {
+        "delivery_mode": mode,
+        "diff_checks": {"staged": "passed", "worktree": "passed"},
     }
 
 
@@ -2481,6 +2885,7 @@ def verify_campaign(
             force_proof=force_proof,
             force_reason=force_reason,
             no_execute=no_execute,
+            read_only=declared_stage == "prompt-6",
         )
         if proof_verification["status"] != "verified":
             return proof_verification
@@ -2497,16 +2902,17 @@ def verify_campaign(
 
     semantic_before = copy.deepcopy(semantic)
     observed_at = _now()
-    update_mechanical_state(
-        supplied_manifest,
-        {
-            "last_verification": {
-                "stage": declared_stage,
-                "status": "verified",
-                "observed_at": observed_at,
-            }
-        },
-    )
+    if declared_stage != "prompt-6":
+        update_mechanical_state(
+            supplied_manifest,
+            {
+                "last_verification": {
+                    "stage": declared_stage,
+                    "status": "verified",
+                    "observed_at": observed_at,
+                }
+            },
+        )
     lease["observed_at"] = observed_at
     _replace_json_file(lease_path, lease)
     verified = _read_json(supplied_manifest)

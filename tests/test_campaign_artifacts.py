@@ -3561,6 +3561,619 @@ def _installation_preflight(
     }
 
 
+def _git(worktree: Path, *args: str) -> str:
+    completed = subprocess.run(
+        ["git", *args],
+        cwd=worktree,
+        check=True,
+        capture_output=True,
+        text=True,
+        shell=False,
+    )
+    return completed.stdout.strip()
+
+
+def _init_git_delivery_campaign(
+    worktree: Path,
+    *,
+    delivery_mode: str = "commit",
+) -> tuple[Path, dict[str, object]]:
+    worktree.mkdir()
+    _git(worktree, "init")
+    _git(worktree, "config", "user.email", "campaign@example.com")
+    _git(worktree, "config", "user.name", "Campaign Fixture")
+    (worktree / "base.txt").write_text("base\n", encoding="utf-8")
+    _git(worktree, "add", "base.txt")
+    _git(worktree, "commit", "-m", "base")
+
+    p1 = worktree / "p1"
+    p1.mkdir()
+    (p1 / "SKILL.md").write_text("P1\n", encoding="utf-8")
+    started = campaign_artifacts.start_campaign(
+        "review",
+        delivery_mode,
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest_relative = manifest_path.relative_to(worktree).as_posix()
+    decision_relative = manifest_path.with_name("decisions.md").relative_to(
+        worktree
+    ).as_posix()
+    allowlist = sorted(
+        [manifest_relative, decision_relative, "p1/SKILL.md"]
+    )
+    registration = {
+        "id": "prompt6-delivery",
+        "kind": "git-delivery",
+        "stage": "prompt-6",
+        "applicability": "required",
+        "decision_pointer": "decisions.md#prompt6-delivery",
+        "candidate_root": ".",
+        "delivery_mode": delivery_mode,
+        "allowlist": allowlist,
+        "required_paths": [
+            {"path": path, "state": "staged"} for path in allowlist
+        ],
+        "prompt5_manifest": manifest_relative,
+        "promoted_p1": _identity_spec(
+            worktree,
+            "p1",
+            "campaign-tree-v1",
+        ),
+    }
+    manifest["semantic"]["declared_stage"] = "prompt-6"
+    manifest["mechanical"]["preflight_registrations"] = [registration]
+    write_json(manifest_path, manifest)
+    _git(worktree, "add", *allowlist)
+    return manifest_path, registration
+
+
+def test_prompt6_verify_accepts_exact_staged_scope_without_mutating_git(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    manifest_path, _ = _init_git_delivery_campaign(worktree)
+    before_status = _git(worktree, "status", "--porcelain=v1")
+    before_manifest = manifest_path.read_bytes()
+    before_index = _git(worktree, "write-tree")
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "verified", json.dumps(result, indent=2)
+    assert result["preflight"] == {
+        "completed": ["prompt6-delivery"],
+        "not_applicable": [],
+        "git_delivery": {
+            "delivery_mode": "commit",
+            "diff_checks": {"staged": "passed", "worktree": "passed"},
+        },
+    }
+    assert manifest_path.read_bytes() == before_manifest
+    assert _git(worktree, "write-tree") == before_index
+    assert _git(worktree, "status", "--porcelain=v1") == before_status
+
+
+def test_prompt6_status_reads_committed_tracking_parity_without_git_mutation(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    manifest_path, registration = _init_git_delivery_campaign(worktree)
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    for required in registration["required_paths"]:
+        required["state"] = "committed"
+    manifest["mechanical"]["preflight_registrations"] = [registration]
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    _git(worktree, "add", *registration["allowlist"])
+    _git(worktree, "commit", "-m", "deliver campaign")
+    verified = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    assert verified["status"] == "verified"
+    branch = _git(worktree, "symbolic-ref", "--short", "HEAD")
+    _git(worktree, "remote", "add", "origin", ".")
+    _git(worktree, "config", f"branch.{branch}.remote", "origin")
+    _git(worktree, "config", f"branch.{branch}.merge", f"refs/heads/{branch}")
+    tracking_ref = f"refs/remotes/origin/{branch}"
+    _git(worktree, "update-ref", tracking_ref, "HEAD")
+    head = _git(worktree, "rev-parse", "HEAD")
+    before_status = _git(worktree, "status", "--porcelain=v1")
+
+    result = campaign_artifacts.campaign_status(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "verified"
+    assert result["git_delivery"] == {
+        "delivery_mode": "commit",
+        "local_head": head,
+        "branch": branch,
+        "tracking_ref": f"origin/{branch}",
+        "remote_head": head,
+        "parity": "match",
+    }
+    assert _git(worktree, "status", "--porcelain=v1") == before_status
+
+
+@pytest.mark.parametrize(
+    ("case", "message"),
+    [
+        ("unauthorized-staged", "Unauthorized staged paths"),
+        ("missing-required", "path is missing"),
+        ("ignored-required", "ignored path"),
+        ("p1-drift", "Promoted P1 identity"),
+        ("manifest-drift", "identity does not match staged"),
+    ],
+)
+def test_prompt6_verify_rejects_scope_and_identity_drift_without_mutation(
+    tmp_path: Path,
+    case: str,
+    message: str,
+) -> None:
+    worktree = tmp_path / case
+    manifest_path, _ = _init_git_delivery_campaign(worktree)
+    if case == "unauthorized-staged":
+        (worktree / "unrelated.txt").write_text("unrelated\n", encoding="utf-8")
+        _git(worktree, "add", "unrelated.txt")
+    elif case == "missing-required":
+        (worktree / "p1" / "SKILL.md").unlink()
+    elif case == "ignored-required":
+        (worktree / ".git" / "info" / "exclude").write_text(
+            "p1/SKILL.md\n",
+            encoding="utf-8",
+        )
+    elif case == "p1-drift":
+        (worktree / "p1" / "SKILL.md").write_text("drift\n", encoding="utf-8")
+    else:
+        manifest_path.write_text(
+            manifest_path.read_text("utf-8") + " ",
+            encoding="utf-8",
+        )
+    before_status = _git(worktree, "status", "--porcelain=v1")
+    before_index = _git(worktree, "write-tree")
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "preflight-validation"
+    assert message in result["failures"][0]["message"]
+    assert _git(worktree, "write-tree") == before_index
+    assert _git(worktree, "status", "--porcelain=v1") == before_status
+
+
+def test_prompt6_verify_rejects_disposable_dependency_and_failed_diff_check(
+    tmp_path: Path,
+) -> None:
+    omitted_root = tmp_path / "omitted"
+    omitted_manifest, registration = _init_git_delivery_campaign(omitted_root)
+    _git(omitted_root, "reset", "HEAD", "--", "p1/SKILL.md")
+    registration["allowlist"].remove("p1/SKILL.md")
+    registration["required_paths"] = [
+        value
+        for value in registration["required_paths"]
+        if value["path"] != "p1/SKILL.md"
+    ]
+    manifest = json.loads(omitted_manifest.read_text("utf-8"))
+    manifest["mechanical"]["preflight_registrations"] = [registration]
+    omitted_manifest.write_text(json.dumps(manifest), encoding="utf-8")
+    _git(
+        omitted_root,
+        "add",
+        omitted_manifest.relative_to(omitted_root).as_posix(),
+    )
+
+    omitted = campaign_artifacts.verify_campaign(
+        omitted_manifest,
+        worktree=omitted_root,
+    )
+
+    assert omitted["status"] == "failed"
+    assert "P1 files are omitted" in omitted["failures"][0]["message"]
+
+    disposable_root = tmp_path / "disposable"
+    manifest_path, registration = _init_git_delivery_campaign(disposable_root)
+    _git(disposable_root, "reset", "HEAD", "--", "p1/SKILL.md")
+    evidence = disposable_root / ".tmp" / "evidence.txt"
+    evidence.parent.mkdir(exist_ok=True)
+    evidence.write_text("evidence\n", encoding="utf-8")
+    registration["allowlist"][-1] = ".tmp/evidence.txt"
+    registration["allowlist"].sort()
+    for required in registration["required_paths"]:
+        if required["path"] == "p1/SKILL.md":
+            required["path"] = ".tmp/evidence.txt"
+    registration["required_paths"].sort(key=lambda value: value["path"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["mechanical"]["preflight_registrations"] = [registration]
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    _git(disposable_root, "add", manifest_path.relative_to(disposable_root).as_posix())
+    _git(disposable_root, "add", "-f", ".tmp/evidence.txt")
+
+    disposable = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=disposable_root,
+    )
+
+    assert disposable["status"] == "failed"
+    assert ".tmp" in disposable["failures"][0]["message"]
+
+    diff_root = tmp_path / "diff-check"
+    manifest_path, _ = _init_git_delivery_campaign(diff_root)
+    (diff_root / "p1" / "SKILL.md").write_text("P1 \n", encoding="utf-8")
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    registration = manifest["mechanical"]["preflight_registrations"][0]
+    registration["promoted_p1"] = _identity_spec(
+        diff_root,
+        "p1",
+        "campaign-tree-v1",
+    )
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    _git(diff_root, "add", "p1/SKILL.md", manifest_path.relative_to(diff_root).as_posix())
+
+    failed_diff = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=diff_root,
+    )
+
+    assert failed_diff["status"] == "failed"
+    assert failed_diff["failures"][0]["message"] == "Staged diff check failed"
+
+
+def test_prompt6_verify_accepts_allowlisted_cleanup_deletion(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    manifest_path, registration = _init_git_delivery_campaign(worktree)
+    _git(worktree, "commit", "-m", "campaign before cleanup")
+    raw_relative = "obsolete.txt"
+    raw_path = worktree / raw_relative
+    raw_path.write_text('{"raw": true}\n', encoding="utf-8")
+    _git(worktree, "add", raw_relative)
+    _git(worktree, "commit", "-m", "tracked raw output")
+
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    registration = manifest["mechanical"]["preflight_registrations"][0]
+    for required in registration["required_paths"]:
+        required["state"] = (
+            "staged"
+            if required["path"] == manifest_path.relative_to(worktree).as_posix()
+            else "committed"
+        )
+    registration["allowlist"].append(raw_relative)
+    registration["allowlist"].sort()
+    registration["required_paths"].append(
+        {"path": raw_relative, "state": "deleted"}
+    )
+    registration["required_paths"].sort(key=lambda value: value["path"])
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    raw_path.unlink()
+    _git(
+        worktree,
+        "add",
+        manifest_path.relative_to(worktree).as_posix(),
+        raw_relative,
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "verified", result
+
+
+def test_prompt6_verify_treats_deleted_path_as_literal_pathspec(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    manifest_path, _ = _init_git_delivery_campaign(worktree)
+    _git(worktree, "commit", "-m", "campaign before cleanup")
+    raw_relative = "obsolete[1].txt"
+    raw_path = worktree / raw_relative
+    raw_path.write_text('{"raw": true}\n', encoding="utf-8")
+    matching_path = worktree / "obsolete1.txt"
+    matching_path.write_text("keep\n", encoding="utf-8")
+    _git(worktree, "add", raw_relative, matching_path.name)
+    _git(worktree, "commit", "-m", "tracked cleanup candidates")
+
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    registration = manifest["mechanical"]["preflight_registrations"][0]
+    for required in registration["required_paths"]:
+        required["state"] = (
+            "staged"
+            if required["path"] == manifest_path.relative_to(worktree).as_posix()
+            else "committed"
+        )
+    registration["allowlist"].append(raw_relative)
+    registration["allowlist"].sort()
+    registration["required_paths"].append(
+        {"path": raw_relative, "state": "deleted"}
+    )
+    registration["required_paths"].sort(key=lambda value: value["path"])
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    raw_path.unlink()
+    _git(
+        worktree,
+        "add",
+        manifest_path.relative_to(worktree).as_posix(),
+        raw_relative,
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "verified", result
+
+
+def test_prompt6_verify_rejects_worktree_only_cleanup_deletion(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    manifest_path, _ = _init_git_delivery_campaign(worktree)
+    _git(worktree, "commit", "-m", "campaign before cleanup")
+    raw_relative = "obsolete.txt"
+    raw_path = worktree / raw_relative
+    raw_path.write_text('{"raw": true}\n', encoding="utf-8")
+    _git(worktree, "add", raw_relative)
+    _git(worktree, "commit", "-m", "tracked raw output")
+
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    registration = manifest["mechanical"]["preflight_registrations"][0]
+    manifest_relative = manifest_path.relative_to(worktree).as_posix()
+    for required in registration["required_paths"]:
+        required["state"] = (
+            "staged"
+            if required["path"] == manifest_relative
+            else "committed"
+        )
+    registration["allowlist"].append(raw_relative)
+    registration["allowlist"].sort()
+    registration["required_paths"].append(
+        {"path": raw_relative, "state": "deleted"}
+    )
+    registration["required_paths"].sort(key=lambda value: value["path"])
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    raw_path.write_text('{"raw": "modified"}\n', encoding="utf-8")
+    _git(worktree, "add", manifest_relative, raw_relative)
+    raw_path.unlink()
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert "index still contains" in result["failures"][0]["message"]
+
+
+def test_prompt6_verify_rejects_allowlisted_tracked_raw_campaign_output(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    manifest_path, _ = _init_git_delivery_campaign(worktree)
+    raw_relative = manifest_path.with_name("sample-output.json").relative_to(
+        worktree
+    ).as_posix()
+    raw_path = worktree / raw_relative
+    raw_path.write_text('{"raw": true}\n', encoding="utf-8")
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    registration = manifest["mechanical"]["preflight_registrations"][0]
+    registration["allowlist"].append(raw_relative)
+    registration["allowlist"].sort()
+    registration["required_paths"].append(
+        {"path": raw_relative, "state": "staged"}
+    )
+    registration["required_paths"].sort(key=lambda value: value["path"])
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    _git(
+        worktree,
+        "add",
+        manifest_path.relative_to(worktree).as_posix(),
+        raw_relative,
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert "raw campaign artifact" in result["failures"][0]["message"]
+
+
+def test_prompt6_verify_requires_exact_delivery_authority_and_accepts_push(
+    tmp_path: Path,
+) -> None:
+    none_root = tmp_path / "none"
+    none_manifest, _ = _init_git_delivery_campaign(
+        none_root,
+        delivery_mode="none",
+    )
+    none = campaign_artifacts.verify_campaign(
+        none_manifest,
+        worktree=none_root,
+    )
+    assert none["status"] == "failed"
+    assert "commit or push authority" in none["failures"][0]["message"]
+
+    push_root = tmp_path / "push"
+    push_manifest, _ = _init_git_delivery_campaign(
+        push_root,
+        delivery_mode="push",
+    )
+    pushed = campaign_artifacts.verify_campaign(
+        push_manifest,
+        worktree=push_root,
+    )
+    assert pushed["status"] == "verified"
+    assert pushed["preflight"]["git_delivery"]["delivery_mode"] == "push"
+
+    duplicate_root = tmp_path / "duplicate"
+    duplicate_manifest, registration = _init_git_delivery_campaign(duplicate_root)
+    manifest = json.loads(duplicate_manifest.read_text("utf-8"))
+    duplicate = dict(registration)
+    duplicate["id"] = "prompt6-delivery-two"
+    manifest["mechanical"]["preflight_registrations"].append(duplicate)
+    duplicate_manifest.write_text(json.dumps(manifest), encoding="utf-8")
+    _git(
+        duplicate_root,
+        "add",
+        duplicate_manifest.relative_to(duplicate_root).as_posix(),
+    )
+    duplicate_result = campaign_artifacts.verify_campaign(
+        duplicate_manifest,
+        worktree=duplicate_root,
+    )
+    assert duplicate_result["status"] == "failed"
+    assert duplicate_result["gate"] == "preflight-registration"
+
+
+def test_prompt6_verify_requires_frozen_proof_receipts_without_execution(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    manifest_path, registration = _init_git_delivery_campaign(worktree)
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["mechanical"]["proof_registrations"] = [
+        {
+            "id": "prompt6-current-checks",
+            "stage": "prompt-6",
+            "profile": "campaign-artifacts-focused-v1",
+            "applicability": "required",
+            "decision_pointer": "decisions.md#prompt6-current-checks",
+            "candidate_root": ".",
+            "target": _identity_spec(
+                worktree,
+                "p1",
+                "campaign-tree-v1",
+            ),
+            "inputs": [
+                {
+                    "name": "promoted-p1",
+                    **_identity_spec(
+                        worktree,
+                        "p1",
+                        "campaign-tree-v1",
+                    ),
+                }
+            ],
+        }
+    ]
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    decision_path = manifest_path.with_name("decisions.md")
+    decision_path.write_text(
+        decision_path.read_text("utf-8")
+        + "<!-- campaign-decision:prompt6-current-checks -->\n",
+        encoding="utf-8",
+    )
+    _git(worktree, "add", *registration["allowlist"])
+    before_manifest = manifest_path.read_bytes()
+    monkeypatch.setattr(
+        campaign_artifacts,
+        "_run_profile",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            AssertionError("Prompt 6 must not execute proof")
+        ),
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "proof-receipt"
+    assert manifest_path.read_bytes() == before_manifest
+
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    proof_registration = manifest["mechanical"]["proof_registrations"][0]
+    identity_tuple = campaign_artifacts.proof_identity_tuple(
+        proof_registration,
+        candidate_root=worktree,
+    )
+    receipt = campaign_artifacts.make_receipt(
+        proof_registration,
+        identity_tuple,
+        exit_code=0,
+        output_digest="0" * 64,
+        source="execution",
+    )
+    manifest["mechanical"]["receipts"] = [receipt]
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    _git(worktree, "add", manifest_path.relative_to(worktree).as_posix())
+    before_manifest = manifest_path.read_bytes()
+
+    restored = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert restored["status"] == "verified"
+    assert restored["proof"]["reused_receipts"] == [receipt["id"]]
+    assert restored["proof"]["executed"] == []
+    assert manifest_path.read_bytes() == before_manifest
+
+
+def test_prompt6_status_reports_unavailable_detached_and_diverged_tracking(
+    tmp_path: Path,
+) -> None:
+    missing_root = tmp_path / "missing"
+    missing_manifest, _ = _init_git_delivery_campaign(missing_root)
+    missing = campaign_artifacts.campaign_status(
+        missing_manifest,
+        worktree=missing_root,
+    )
+    assert missing["git_delivery"]["parity"] == "unavailable"
+    assert missing["git_delivery"]["tracking_ref"] is None
+
+    detached_root = tmp_path / "detached"
+    detached_manifest, _ = _init_git_delivery_campaign(detached_root)
+    _git(detached_root, "checkout", "--detach")
+    detached = campaign_artifacts.campaign_status(
+        detached_manifest,
+        worktree=detached_root,
+    )
+    assert detached["git_delivery"]["branch"] == "detached"
+    assert detached["git_delivery"]["parity"] == "unavailable"
+
+    diverged_root = tmp_path / "diverged"
+    diverged_manifest, registration = _init_git_delivery_campaign(diverged_root)
+    manifest = json.loads(diverged_manifest.read_text("utf-8"))
+    for required in registration["required_paths"]:
+        required["state"] = "committed"
+    manifest["mechanical"]["preflight_registrations"] = [registration]
+    write_json(diverged_manifest, manifest)
+    _git(diverged_root, "add", *registration["allowlist"])
+    _git(diverged_root, "commit", "-m", "deliver campaign")
+    branch = _git(diverged_root, "symbolic-ref", "--short", "HEAD")
+    _git(diverged_root, "remote", "add", "origin", ".")
+    _git(diverged_root, "config", f"branch.{branch}.remote", "origin")
+    _git(diverged_root, "config", f"branch.{branch}.merge", f"refs/heads/{branch}")
+    _git(diverged_root, "update-ref", f"refs/remotes/origin/{branch}", "HEAD^")
+
+    diverged = campaign_artifacts.campaign_status(
+        diverged_manifest,
+        worktree=diverged_root,
+    )
+
+    assert diverged["git_delivery"]["parity"] == "diverged"
+    assert diverged["git_delivery"]["local_head"] != diverged["git_delivery"][
+        "remote_head"
+    ]
+
+
 def test_prompt5_plan_verifies_exact_declared_cohort_without_installing(
     tmp_path: Path,
 ) -> None:
