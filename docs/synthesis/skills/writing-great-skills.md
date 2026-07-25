@@ -304,4 +304,32 @@ Residual gaps:
 Wrong-condition H1 pairs are not a residual gap: the candidate was rejected
 before that gate.
 
+## Pre-Round Incumbent Reconciliation
+
+The fixed-baseline reconciliation against
+`55dd6818182caf75e85de713a13ed76996336a27` is `reopen-required`.
+`C0-G04`, the exact weak-pointer repair sequence “fix the wording first, and
+inline the material only if sharpening fails,” is
+`incumbent-unit-contributes`: five exact P1 controls scored 6/8, five isolated
+P1-plus-unit samples scored 8/8, and two fresh wrong-condition pairs preserved
+an already precise working pointer without false firing. The removed Diagnose
+table and Stress-selection paragraph are `safe-removal` because five fresh P1
+controls per affected family showed no registered deficit. The exact C0
+Leading Word and Negation units are also `safe-removal`: five fresh P1 controls
+per lane scored 8/8 without either unit. The exact C0 Premature Completion unit
+is `safe-removal` for its gated fixture because all five P1 controls satisfied
+the sharpened six-row completion criterion without starting visible later
+steps, so no incumbent arm was eligible. These results are bounded to the
+exact wording, P1 identity, fixtures, rubric, workers, and host tested; they do
+not prove or disprove universal leading-word, negation, or context-split
+theories. Every other C0 unit is finally disposed as preserved-equivalent,
+safe-removal, or incompatible; there is no required-contract omission or
+unresolved unit.
+
+The authoritative record is
+[`2026-07-24-writing-great-skills-incumbent-reconciliation.md`](../../validation/evals/2026-07-24-writing-great-skills-incumbent-reconciliation.md).
+Canonical and installed runtime remain unchanged. A fresh
+`Run Deploy Campaign on writing great skills` is recommended; this
+reconciliation does not authorize direct restoration.
+
 <!-- WRITING-GREAT-SKILLS-DEPLOY-DECISION:END -->
