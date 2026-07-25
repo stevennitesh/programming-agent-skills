@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -11,6 +12,29 @@ from scripts import campaign_artifacts
 
 def write_json(path: Path, payload: object) -> None:
     path.write_text(json.dumps(payload), encoding="utf-8")
+    if (
+        path.name == "manifest.json"
+        and isinstance(payload, dict)
+        and isinstance(payload.get("mechanical"), dict)
+        and isinstance(payload["mechanical"].get("proof_registrations"), list)
+    ):
+        pointers = {
+            registration.get("decision_pointer")
+            for registration in payload["mechanical"]["proof_registrations"]
+            if isinstance(registration, dict)
+            and isinstance(registration.get("decision_pointer"), str)
+            and registration["decision_pointer"].startswith("decisions.md#")
+        }
+        decision_path = path.parent / "decisions.md"
+        if pointers and decision_path.exists():
+            markers = "".join(
+                f"<!-- campaign-decision:{pointer.split('#', 1)[1]} -->\n"
+                for pointer in sorted(pointers)
+            )
+            decision_path.write_text(
+                decision_path.read_text("utf-8") + markers,
+                encoding="utf-8",
+            )
 
 
 def valid_case() -> dict[str, object]:
@@ -875,3 +899,2295 @@ def test_verify_rejects_unknown_stage_and_never_selects_latest(
     assert missing["gate"] == "manifest-read"
     assert malformed["status"] == "failed"
     assert malformed["gate"] == "manifest-read"
+
+
+def test_bounded_identity_algorithms_are_stable_and_explicit(
+    tmp_path: Path,
+) -> None:
+    candidate = tmp_path / "candidate"
+    candidate.mkdir()
+    (candidate / "package").mkdir()
+    (candidate / "package" / "SKILL.md").write_text(
+        "name: review\n",
+        encoding="utf-8",
+    )
+    structured = candidate / "record.json"
+    structured.write_text('{"b": 2, "a": 1}', encoding="utf-8")
+    decisions = candidate / "decisions.md"
+    decisions.write_text(
+        "ignored before\n"
+        "<!-- campaign-semantic:prompt-1:begin -->\n"
+        "accepted meaning\n"
+        "<!-- campaign-semantic:prompt-1:end -->\n"
+        "ignored after\n",
+        encoding="utf-8",
+    )
+
+    tree = campaign_artifacts.artifact_identity(
+        {
+            "algorithm": "campaign-tree-v1",
+            "path": "package",
+        },
+        candidate_root=candidate,
+    )
+    canonical = campaign_artifacts.artifact_identity(
+        {
+            "algorithm": "canonical-json-v1",
+            "path": "record.json",
+        },
+        candidate_root=candidate,
+    )
+    semantic = campaign_artifacts.artifact_identity(
+        {
+            "algorithm": "marker-semantic-v1",
+            "path": "decisions.md",
+            "marker": "prompt-1",
+        },
+        candidate_root=candidate,
+    )
+    structured.write_text('{\n  "a": 1,\n  "b": 2\n}\n', encoding="utf-8")
+
+    assert tree["algorithm"] == "campaign-tree-v1"
+    assert tree["digest"] == campaign_artifacts.campaign_tree_hash(
+        candidate / "package"
+    )["sha256"]
+    assert canonical == campaign_artifacts.artifact_identity(
+        {
+            "algorithm": "canonical-json-v1",
+            "path": "record.json",
+        },
+        candidate_root=candidate,
+    )
+    assert semantic["digest"] == hashlib.sha256(
+        b"accepted meaning\n"
+    ).hexdigest()
+
+
+def test_git_object_identity_requires_explicit_candidate_root_and_revision(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    observed: dict[str, object] = {}
+
+    def fake_run(
+        argv: list[str],
+        **kwargs: object,
+    ) -> subprocess.CompletedProcess[str]:
+        observed.setdefault("calls", []).append(argv)  # type: ignore[union-attr]
+        observed["kwargs"] = kwargs
+        output = f"{tmp_path}\n" if "--show-toplevel" in argv else "abc123\n"
+        return subprocess.CompletedProcess(argv, 0, output, "")
+
+    monkeypatch.setattr(campaign_artifacts.subprocess, "run", fake_run)
+    result = campaign_artifacts.artifact_identity(
+        {
+            "algorithm": "git-object-v1",
+            "revision": "HEAD",
+        },
+        candidate_root=tmp_path,
+    )
+
+    assert result == {"algorithm": "git-object-v1", "digest": "abc123"}
+    assert observed["calls"][-1] == [  # type: ignore[index]
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD^{tree}",
+    ]
+    assert observed["kwargs"]["cwd"] == tmp_path.resolve()  # type: ignore[index]
+    with pytest.raises(ValueError, match="candidate root"):
+        campaign_artifacts.artifact_identity(
+            {"algorithm": "git-object-v1", "revision": "HEAD"},
+            candidate_root=None,
+        )
+
+
+def test_transitive_receipt_invalidation_preserves_history() -> None:
+    receipts = [
+        {
+            "id": "receipt-a",
+            "inputs": [{"name": "skill-tree", "digest": "old"}],
+            "supersedes": None,
+        },
+        {
+            "id": "receipt-b",
+            "inputs": [{"name": "receipt:receipt-a", "digest": "output-a"}],
+            "supersedes": None,
+        },
+        {
+            "id": "receipt-c",
+            "inputs": [{"name": "other", "digest": "same"}],
+            "supersedes": None,
+        },
+    ]
+    before = json.loads(json.dumps(receipts))
+
+    stale = campaign_artifacts.transitively_stale_receipts(
+        receipts,
+        {"skill-tree"},
+    )
+
+    assert stale == {"receipt-a", "receipt-b"}
+    assert receipts == before
+
+
+def _tree_target(worktree: Path) -> dict[str, object]:
+    return {
+        "algorithm": "campaign-tree-v1",
+        "path": "target",
+        "digest": campaign_artifacts.campaign_tree_hash(
+            worktree / "target"
+        )["sha256"],
+    }
+
+
+def _git_target(worktree: Path) -> dict[str, object]:
+    if not (worktree / ".git").exists():
+        subprocess.run(
+            ["git", "init", "--quiet", str(worktree)],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    subprocess.run(
+        ["git", "add", "--", "target"],
+        cwd=worktree,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    tree = subprocess.run(
+        ["git", "write-tree"],
+        cwd=worktree,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    return {
+        "algorithm": "git-object-v1",
+        "revision": tree,
+        "digest": tree,
+    }
+
+
+def _registration(
+    worktree: Path,
+    *,
+    registration_id: str = "focused",
+    profile: str = "campaign-artifacts-focused-v1",
+    tier: str | None = None,
+    cache_bundle: str | None = None,
+    fresh_behavior: bool = False,
+) -> dict[str, object]:
+    registration: dict[str, object] = {
+        "id": registration_id,
+        "profile": profile,
+        "applicability": "required",
+        "decision_pointer": "decisions.md#prompt-1",
+        "candidate_root": ".",
+        "target": (
+            _git_target(worktree)
+            if profile == "full-suite-v1"
+            else _tree_target(worktree)
+        ),
+        "inputs": [
+            {
+                "name": "skill-tree",
+                "algorithm": "campaign-tree-v1",
+                "path": "target",
+                "digest": campaign_artifacts.campaign_tree_hash(
+                    worktree / "target"
+                )["sha256"],
+            }
+        ],
+        "fresh_behavior": fresh_behavior,
+    }
+    if tier is not None:
+        registration["tier"] = tier
+    if cache_bundle is not None:
+        registration["cache_bundle"] = cache_bundle
+    return registration
+
+
+def test_verify_reuses_exact_durable_receipt_before_execution(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    target = worktree / "target"
+    target.mkdir()
+    (target / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree)
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    identity_tuple = campaign_artifacts.proof_identity_tuple(
+        registration,
+        candidate_root=worktree,
+    )
+    manifest["mechanical"]["receipts"] = [
+        campaign_artifacts.make_receipt(
+            registration,
+            identity_tuple,
+            exit_code=0,
+            output_digest=hashlib.sha256(b"output-a").hexdigest(),
+            source="execution",
+            receipt_id="receipt-existing",
+            observed_at="2026-07-25T00:00:00Z",
+        )
+    ]
+    write_json(manifest_path, manifest)
+
+    def should_not_run(*args: object, **kwargs: object) -> object:
+        raise AssertionError("exact receipt should be reused")
+
+    monkeypatch.setattr(campaign_artifacts.subprocess, "run", should_not_run)
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "verified"
+    assert result["proof"]["reused_receipts"] == ["receipt-existing"]
+    after = json.loads(manifest_path.read_text("utf-8"))
+    assert after["mechanical"]["receipts"] == manifest["mechanical"]["receipts"]
+
+
+def test_verify_rejects_corrupt_cache_then_executes_allowlisted_profile(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    cache_path = worktree / ".tmp" / "proof-cache.json"
+    cache_path.parent.mkdir()
+    cache_path.write_text("{", encoding="utf-8")
+    registration = _registration(
+        worktree,
+        cache_bundle=".tmp/proof-cache.json",
+    )
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    write_json(manifest_path, manifest)
+    calls: list[list[str]] = []
+
+    def fake_run(
+        registration: dict[str, object],
+        identity_tuple: dict[str, object],
+        **kwargs: object,
+    ) -> dict[str, object]:
+        calls.append([str(registration["id"])])
+        return campaign_artifacts.make_receipt(
+            registration,
+            identity_tuple,
+            exit_code=0,
+            output_digest=hashlib.sha256(b"passed").hexdigest(),
+            source="execution",
+        )
+
+    monkeypatch.setattr(campaign_artifacts, "_run_profile", fake_run)
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "verified"
+    assert result["proof"]["executed"] == ["focused"]
+    assert result["proof"]["cache_rejections"] == ["focused"]
+    assert len(calls) == 1
+    assert isinstance(calls[0], list)
+    assert after_receipt_source(manifest_path) == "execution"
+
+
+def after_receipt_source(manifest_path: Path) -> str:
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    return str(manifest["mechanical"]["receipts"][-1]["source"])
+
+
+def test_verify_reuses_exact_self_describing_tmp_bundle(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(
+        worktree,
+        cache_bundle=".tmp/proof-cache.json",
+    )
+    identity_tuple = campaign_artifacts.proof_identity_tuple(
+        registration,
+        candidate_root=worktree,
+    )
+    cache_path = worktree / ".tmp" / "proof-cache.json"
+    cache_path.parent.mkdir()
+    output_path = worktree / ".tmp" / "proof-output.txt"
+    output_path.write_text("cached output", encoding="utf-8")
+    write_json(
+        cache_path,
+        {
+            "schema_version": 1,
+            "proof_profile": registration["profile"],
+            "proof_lane": registration["id"],
+            "identity_tuple": identity_tuple,
+            "exit_state": {"code": 0, "status": "passed"},
+            "output_path": ".tmp/proof-output.txt",
+            "output_digest": hashlib.sha256(b"cached output").hexdigest(),
+            "completed_at": "2026-07-25T00:00:00Z",
+        },
+    )
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    write_json(manifest_path, manifest)
+
+    monkeypatch.setattr(
+        campaign_artifacts.subprocess,
+        "run",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            AssertionError("valid cache should be reused")
+        ),
+    )
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "verified"
+    assert result["proof"]["reused_cache"] == ["focused"]
+    assert after_receipt_source(manifest_path) == "tmp-cache"
+
+
+def test_fresh_behavior_rejects_cached_evidence_without_execution(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree, fresh_behavior=True)
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    write_json(manifest_path, manifest)
+    monkeypatch.setattr(
+        campaign_artifacts.subprocess,
+        "run",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            AssertionError("behavioral sampling is not deterministic proof")
+        ),
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "fresh-behavior"
+
+
+def test_forced_rerun_requires_reason_and_supersedes_exact_receipt(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree)
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    identity_tuple = campaign_artifacts.proof_identity_tuple(
+        registration,
+        candidate_root=worktree,
+    )
+    manifest["mechanical"]["receipts"] = [
+        campaign_artifacts.make_receipt(
+            registration,
+            identity_tuple,
+            exit_code=0,
+            output_digest=hashlib.sha256(b"old").hexdigest(),
+            source="execution",
+            receipt_id="receipt-old",
+            observed_at="2026-07-25T00:00:00Z",
+        )
+    ]
+    write_json(manifest_path, manifest)
+    monkeypatch.setattr(
+        campaign_artifacts.subprocess,
+        "run",
+        lambda argv, **kwargs: subprocess.CompletedProcess(
+            argv,
+            0,
+            "new",
+            "",
+        ),
+    )
+
+    missing_reason = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+        force_proof="focused",
+    )
+    forced = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+        force_proof="focused",
+        force_reason="diagnose nondeterminism",
+    )
+
+    assert missing_reason["status"] == "failed"
+    assert missing_reason["gate"] == "force-proof"
+    assert forced["status"] == "verified"
+    receipts = json.loads(manifest_path.read_text("utf-8"))["mechanical"][
+        "receipts"
+    ]
+    assert receipts[0] == manifest["mechanical"]["receipts"][0]
+    assert receipts[1]["supersedes"] == "receipt-old"
+    assert receipts[1]["forced_reason"] == "diagnose nondeterminism"
+
+
+def test_verification_aggregates_cheap_failures_and_short_circuits_later_tiers(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    first = _registration(worktree, registration_id="cheap-a")
+    second = _registration(worktree, registration_id="cheap-b")
+    first["target"]["digest"] = "wrong-a"  # type: ignore[index]
+    second["target"]["digest"] = "wrong-b"  # type: ignore[index]
+    later = _registration(
+        worktree,
+        registration_id="moderate",
+        profile="validate-skills-v1",
+    )
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [first, second, later]
+    write_json(manifest_path, manifest)
+    monkeypatch.setattr(
+        campaign_artifacts.subprocess,
+        "run",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            AssertionError("identity tier failure must skip proof")
+        ),
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "proof-identity"
+    assert [failure["registration"] for failure in result["failures"]] == [
+        "cheap-a",
+        "cheap-b",
+    ]
+    assert result["expensive_work_skipped"] is True
+
+
+def test_applicability_requires_pointer_and_full_suite_deduplicates_by_identity(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    skipped = _registration(worktree, registration_id="skip")
+    skipped["applicability"] = "not-applicable"
+    skipped["decision_pointer"] = "decisions.md#not-applicable"
+    first = _registration(
+        worktree,
+        registration_id="suite-a",
+        profile="full-suite-v1",
+    )
+    second = _registration(
+        worktree,
+        registration_id="suite-b",
+        profile="full-suite-v1",
+    )
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [skipped, first, second]
+    write_json(manifest_path, manifest)
+    calls: list[list[str]] = []
+
+    def fake_run(
+        registration: dict[str, object],
+        identity_tuple: dict[str, object],
+        **kwargs: object,
+    ) -> dict[str, object]:
+        calls.append([str(registration["id"])])
+        return campaign_artifacts.make_receipt(
+            registration,
+            identity_tuple,
+            exit_code=0,
+            output_digest=hashlib.sha256(b"passed").hexdigest(),
+            source="execution",
+        )
+
+    monkeypatch.setattr(campaign_artifacts, "_run_profile", fake_run)
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "verified"
+    assert len(calls) == 1
+    assert result["proof"]["not_applicable"] == ["skip"]
+    assert set(result["proof"]["executed"] + result["proof"]["deduplicated"]) == {
+        "suite-a",
+        "suite-b",
+    }
+
+
+def test_cache_bundle_digest_mismatch_falls_through_to_execution(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(
+        worktree,
+        cache_bundle=".tmp/proof-cache.json",
+    )
+    identity_tuple = campaign_artifacts.proof_identity_tuple(
+        registration,
+        candidate_root=worktree,
+    )
+    output_path = worktree / ".tmp" / "proof-output.txt"
+    output_path.parent.mkdir()
+    output_path.write_text("actual output", encoding="utf-8")
+    write_json(
+        worktree / ".tmp" / "proof-cache.json",
+        {
+            "schema_version": 1,
+            "proof_profile": registration["profile"],
+            "proof_lane": registration["id"],
+            "identity_tuple": identity_tuple,
+            "exit_state": {"code": 0, "status": "passed"},
+            "output_path": ".tmp/proof-output.txt",
+            "output_digest": hashlib.sha256(b"different output").hexdigest(),
+            "completed_at": "2026-07-25T00:00:00Z",
+        },
+    )
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    write_json(manifest_path, manifest)
+    calls: list[list[str]] = []
+    monkeypatch.setattr(
+        campaign_artifacts.subprocess,
+        "run",
+        lambda argv, **kwargs: (
+            calls.append(argv)
+            or subprocess.CompletedProcess(argv, 0, "fresh", "")
+        ),
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "verified"
+    assert result["proof"]["cache_rejections"] == ["focused"]
+    assert len(calls) == 1
+    assert after_receipt_source(manifest_path) == "execution"
+
+
+def test_repair_stales_only_dependent_receipts_and_reuses_unrelated_proof(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    dependent = _registration(worktree, registration_id="dependent")
+    unrelated = _registration(worktree, registration_id="unrelated")
+    unrelated["inputs"][0]["name"] = "other-tree"  # type: ignore[index]
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [dependent, unrelated]
+    manifest["mechanical"]["receipts"] = [
+        campaign_artifacts.make_receipt(
+            registration,
+            campaign_artifacts.proof_identity_tuple(
+                registration,
+                candidate_root=worktree,
+            ),
+            exit_code=0,
+            output_digest=hashlib.sha256(
+                f"output-{registration['id']}".encode()
+            ).hexdigest(),
+            source="execution",
+            receipt_id=f"receipt-{registration['id']}",
+            observed_at="2026-07-25T00:00:00Z",
+        )
+        for registration in (dependent, unrelated)
+    ]
+    write_json(manifest_path, manifest)
+    repaired = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        owner_token="owner-a",
+        continuation="repair",
+        from_manifest=manifest_path,
+        changed_inputs=["skill-tree"],
+    )
+    calls: list[list[str]] = []
+    monkeypatch.setattr(
+        campaign_artifacts.subprocess,
+        "run",
+        lambda argv, **kwargs: (
+            calls.append(argv)
+            or subprocess.CompletedProcess(argv, 0, "fresh", "")
+        ),
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    repeated = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert repaired["status"] == "stale"
+    assert result["status"] == "verified"
+    assert result["proof"]["stale_receipts"] == ["receipt-dependent"]
+    assert result["proof"]["reused_receipts"] == ["receipt-unrelated"]
+    assert len(calls) == 1
+    assert repeated["status"] == "verified"
+    assert len(calls) == 1
+
+
+def test_blocked_applicability_returns_pointer_without_execution(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    blocked = _registration(worktree, registration_id="blocked-proof")
+    blocked["applicability"] = "blocked"
+    blocked["decision_pointer"] = "decisions.md#blocked-proof"
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [blocked]
+    write_json(manifest_path, manifest)
+    monkeypatch.setattr(
+        campaign_artifacts.subprocess,
+        "run",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            AssertionError("blocked proof must not execute")
+        ),
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "stale"
+    assert result["gate"] == "proof-applicability"
+    assert result["blocked"] == ["blocked-proof"]
+    assert result["decision_pointers"] == ["decisions.md#blocked-proof"]
+
+
+@pytest.mark.parametrize("field", ["argv", "command", "environment", "env", "network"])
+def test_registration_rejects_command_environment_and_network_overrides(
+    tmp_path: Path,
+    field: str,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree)
+    registration[field] = ["untrusted"] if field == "argv" else "untrusted"
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    write_json(manifest_path, manifest)
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "proof-profile"
+
+
+def test_no_execute_returns_cost_only_plan_and_cli_parses_force_controls(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree)
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    write_json(manifest_path, manifest)
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+        no_execute=True,
+    )
+    parsed = campaign_artifacts.parse_args(
+        [
+            "verify",
+            "manifest.json",
+            "--force-proof",
+            "focused",
+            "--force-reason",
+            "diagnostic",
+            "--no-execute",
+        ]
+    )
+
+    assert result["status"] == "stale"
+    assert result["plan"] == [
+        {
+            "registration": "focused",
+            "profile": "campaign-artifacts-focused-v1",
+            "tier": "cheap",
+        }
+    ]
+    assert "time" not in json.dumps(result["plan"])
+    assert "money" not in json.dumps(result["plan"])
+    assert "token" not in json.dumps(result["plan"])
+    assert parsed.force_proof == "focused"
+    assert parsed.force_reason == "diagnostic"
+    assert parsed.no_execute is True
+
+
+def test_corrupt_or_legacy_durable_receipt_fails_before_execution(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree)
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    manifest["mechanical"]["receipts"] = [{"schema_version": 0}]
+    write_json(manifest_path, manifest)
+    monkeypatch.setattr(
+        campaign_artifacts.subprocess,
+        "run",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            AssertionError("corrupt durable state must not execute")
+        ),
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "proof-receipt"
+
+
+def test_status_reports_earliest_stale_stage_without_semantic_routing(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    later = _registration(worktree, registration_id="later")
+    later["stage"] = "prompt-4"
+    earlier = _registration(worktree, registration_id="earlier")
+    earlier["stage"] = "prompt-2"
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-4"
+    manifest["mechanical"]["proof_registrations"] = [later, earlier]
+    manifest["mechanical"]["receipts"] = [
+        campaign_artifacts.make_receipt(
+            registration,
+            campaign_artifacts.proof_identity_tuple(
+                registration,
+                candidate_root=worktree,
+            ),
+            exit_code=0,
+            output_digest=hashlib.sha256(
+                f"output-{registration['id']}".encode()
+            ).hexdigest(),
+            source="execution",
+            receipt_id=f"receipt-{registration['id']}",
+            observed_at="2026-07-25T00:00:00Z",
+        )
+        for registration in (later, earlier)
+    ]
+    write_json(manifest_path, manifest)
+    campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        owner_token="owner-a",
+        continuation="repair",
+        from_manifest=manifest_path,
+        changed_inputs=["skill-tree"],
+    )
+
+    result = campaign_artifacts.campaign_status(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "stale"
+    assert result["earliest_stale_stage"] == "prompt-2"
+    assert "route" not in result
+
+
+def test_decision_pointer_must_resolve_to_the_exact_decision_record(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree)
+    registration["decision_pointer"] = "../foreign.md#proof"
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    write_json(manifest_path, manifest)
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "proof-applicability"
+
+
+def test_proof_launch_error_returns_stable_execution_error(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree)
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    write_json(manifest_path, manifest)
+    monkeypatch.setattr(
+        campaign_artifacts.subprocess,
+        "run",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            OSError("executable unavailable")
+        ),
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "execution-error"
+    assert result["gate"] == "proof-execution"
+    assert result["exit_code"] == 5
+
+
+def test_forced_proof_rejects_not_applicable_registration(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree)
+    registration["applicability"] = "not-applicable"
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    write_json(manifest_path, manifest)
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+        force_proof="focused",
+        force_reason="diagnostic",
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "force-proof"
+
+
+def test_identity_registry_rejects_caller_trusted_literal_digest(
+    tmp_path: Path,
+) -> None:
+    with pytest.raises(ValueError, match="foreign or legacy"):
+        campaign_artifacts.artifact_identity(
+            {"algorithm": "literal-v1", "digest": "trusted"},
+            candidate_root=tmp_path,
+        )
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        lambda receipt: receipt["exit_state"].update(status="failed"),
+        lambda receipt: receipt.update(output_digest=""),
+        lambda receipt: receipt.update(observed_at="not-a-time"),
+        lambda receipt: receipt.update(forced_reason="reason"),
+    ],
+)
+def test_shape_valid_corrupt_receipt_fails_closed(
+    tmp_path: Path,
+    mutation: object,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree)
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    receipt = campaign_artifacts.make_receipt(
+        registration,
+        campaign_artifacts.proof_identity_tuple(
+            registration,
+            candidate_root=worktree,
+        ),
+        exit_code=0,
+        output_digest=hashlib.sha256(b"output").hexdigest(),
+        source="execution",
+        receipt_id="receipt-existing",
+        observed_at="2026-07-25T00:00:00Z",
+    )
+    mutation(receipt)  # type: ignore[operator]
+    manifest["mechanical"]["receipts"] = [receipt]
+    write_json(manifest_path, manifest)
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "proof-receipt"
+
+
+def test_duplicate_receipt_ids_fail_closed(tmp_path: Path) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree)
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    receipt = campaign_artifacts.make_receipt(
+        registration,
+        campaign_artifacts.proof_identity_tuple(
+            registration,
+            candidate_root=worktree,
+        ),
+        exit_code=0,
+        output_digest=hashlib.sha256(b"output").hexdigest(),
+        source="execution",
+        receipt_id="receipt-existing",
+        observed_at="2026-07-25T00:00:00Z",
+    )
+    manifest["mechanical"]["receipts"] = [receipt, receipt.copy()]
+    write_json(manifest_path, manifest)
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "proof-receipt"
+
+
+def test_decision_pointer_fragment_must_resolve(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree)
+    registration["decision_pointer"] = "decisions.md#missing"
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    path = manifest_path.parent / "decisions.md"
+    path.write_text("# Deploy Campaign Decisions\n", encoding="utf-8")
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "proof-applicability"
+
+
+def test_environment_identity_binds_interpreter_and_dependencies(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    (worktree / "pyproject.toml").write_text("[project]\nname='one'\n", "utf-8")
+    registration = _registration(worktree)
+    first = campaign_artifacts.proof_identity_tuple(
+        registration,
+        candidate_root=worktree,
+    )
+    (worktree / "pyproject.toml").write_text("[project]\nname='two'\n", "utf-8")
+    second = campaign_artifacts.proof_identity_tuple(
+        registration,
+        candidate_root=worktree,
+    )
+
+    assert first["environment"]["executable"]
+    assert first["environment"]["installed_packages_sha256"]
+    assert first["environment"]["dependency_files_sha256"] != second[
+        "environment"
+    ]["dependency_files_sha256"]
+
+
+def test_off_stage_forced_proof_is_rejected_instead_of_ignored(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree)
+    registration["stage"] = "prompt-2"
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    write_json(manifest_path, manifest)
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+        force_proof="focused",
+        force_reason="diagnostic",
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "force-proof"
+
+
+def test_expensive_tier_failure_reports_that_expensive_work_ran(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree, profile="full-suite-v1")
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    write_json(manifest_path, manifest)
+    monkeypatch.setattr(
+        campaign_artifacts,
+        "_run_profile",
+        lambda registration, identity_tuple, **kwargs: (
+            campaign_artifacts.make_receipt(
+                registration,
+                identity_tuple,
+                exit_code=1,
+                output_digest=hashlib.sha256(b"failed").hexdigest(),
+                source="execution",
+            )
+        ),
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "proof-execution"
+    assert result["expensive_work_skipped"] is False
+
+
+def test_marker_semantic_identity_rejects_reversed_markers(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "decisions.md"
+    path.write_text(
+        "<!-- campaign-semantic:prompt-1:end -->\n"
+        "meaning\n"
+        "<!-- campaign-semantic:prompt-1:begin -->\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match="ordered"):
+        campaign_artifacts.artifact_identity(
+            {
+                "algorithm": "marker-semantic-v1",
+                "path": "decisions.md",
+                "marker": "prompt-1",
+            },
+            candidate_root=tmp_path,
+        )
+
+
+def test_future_cache_timestamp_is_rejected_and_cannot_bypass_repair(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(
+        worktree,
+        cache_bundle=".tmp/proof-cache.json",
+    )
+    identity_tuple = campaign_artifacts.proof_identity_tuple(
+        registration,
+        candidate_root=worktree,
+    )
+    output_path = worktree / ".tmp" / "proof-output.txt"
+    output_path.parent.mkdir()
+    output_path.write_text("cached", encoding="utf-8")
+    write_json(
+        worktree / ".tmp" / "proof-cache.json",
+        {
+            "schema_version": 1,
+            "proof_profile": registration["profile"],
+            "proof_lane": registration["id"],
+            "identity_tuple": identity_tuple,
+            "exit_state": {"code": 0, "status": "passed"},
+            "output_path": ".tmp/proof-output.txt",
+            "output_digest": hashlib.sha256(b"cached").hexdigest(),
+            "completed_at": "2999-01-01T00:00:00Z",
+        },
+    )
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    write_json(manifest_path, manifest)
+    calls: list[list[str]] = []
+    monkeypatch.setattr(
+        campaign_artifacts.subprocess,
+        "run",
+        lambda argv, **kwargs: (
+            calls.append(argv)
+            or subprocess.CompletedProcess(argv, 0, "fresh", "")
+        ),
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "verified"
+    assert result["proof"]["cache_rejections"] == ["focused"]
+    assert len(calls) == 1
+
+
+def test_full_suite_deduplicates_by_repository_target_even_when_inputs_differ(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    first = _registration(
+        worktree,
+        registration_id="suite-a",
+        profile="full-suite-v1",
+    )
+    second = _registration(
+        worktree,
+        registration_id="suite-b",
+        profile="full-suite-v1",
+    )
+    second["inputs"][0]["name"] = "other-tree"  # type: ignore[index]
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [first, second]
+    write_json(manifest_path, manifest)
+    calls: list[list[str]] = []
+    def fake_full_suite(
+        registration: dict[str, object],
+        identity_tuple: dict[str, object],
+        **kwargs: object,
+    ) -> dict[str, object]:
+        calls.append([str(registration["id"])])
+        return campaign_artifacts.make_receipt(
+            registration,
+            identity_tuple,
+            exit_code=0,
+            output_digest=hashlib.sha256(b"passed").hexdigest(),
+            source="execution",
+        )
+
+    monkeypatch.setattr(campaign_artifacts, "_run_profile", fake_full_suite)
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "verified"
+    assert len(calls) == 1
+    assert result["proof"]["deduplicated"] == ["suite-b"]
+
+
+def test_git_object_identity_rejects_nested_candidate_root(
+    tmp_path: Path,
+) -> None:
+    subprocess.run(
+        ["git", "init", "--quiet", str(tmp_path)],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    nested = tmp_path / "nested"
+    nested.mkdir()
+
+    with pytest.raises(ValueError, match="worktree root"):
+        campaign_artifacts.artifact_identity(
+            {"algorithm": "git-object-v1", "revision": "HEAD"},
+            candidate_root=nested,
+        )
+
+
+def test_automatic_rerun_supersedes_failed_exact_receipt_without_rewrite(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree)
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    identity_tuple = campaign_artifacts.proof_identity_tuple(
+        registration,
+        candidate_root=worktree,
+    )
+    failed = campaign_artifacts.make_receipt(
+        registration,
+        identity_tuple,
+        exit_code=1,
+        output_digest=hashlib.sha256(b"failed").hexdigest(),
+        source="execution",
+        receipt_id="receipt-failed",
+        observed_at="2026-07-25T00:00:00Z",
+    )
+    manifest["mechanical"]["receipts"] = [failed]
+    write_json(manifest_path, manifest)
+    monkeypatch.setattr(
+        campaign_artifacts.subprocess,
+        "run",
+        lambda argv, **kwargs: subprocess.CompletedProcess(
+            argv,
+            0,
+            "passed",
+            "",
+        ),
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    receipts = json.loads(manifest_path.read_text("utf-8"))["mechanical"][
+        "receipts"
+    ]
+
+    assert result["status"] == "verified"
+    assert receipts[0] == failed
+    assert receipts[1]["supersedes"] == "receipt-failed"
+    assert receipts[1]["id"] != "receipt-failed"
+
+
+def test_first_forced_run_records_null_supersession_and_remains_reusable(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree)
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    write_json(manifest_path, manifest)
+    calls: list[list[str]] = []
+    monkeypatch.setattr(
+        campaign_artifacts.subprocess,
+        "run",
+        lambda argv, **kwargs: (
+            calls.append(argv)
+            or subprocess.CompletedProcess(argv, 0, "passed", "")
+        ),
+    )
+
+    first = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+        force_proof="focused",
+        force_reason="diagnostic",
+    )
+    second = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    receipt = json.loads(manifest_path.read_text("utf-8"))["mechanical"][
+        "receipts"
+    ][0]
+
+    assert first["status"] == "verified"
+    assert second["status"] == "verified"
+    assert receipt["supersedes"] is None
+    assert receipt["forced_reason"] == "diagnostic"
+    assert len(calls) == 1
+
+
+def test_receipt_self_digest_detects_coherent_field_tampering(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree)
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    receipt = campaign_artifacts.make_receipt(
+        registration,
+        campaign_artifacts.proof_identity_tuple(
+            registration,
+            candidate_root=worktree,
+        ),
+        exit_code=0,
+        output_digest=hashlib.sha256(b"output").hexdigest(),
+        source="execution",
+        receipt_id="receipt-existing",
+        observed_at="2026-07-25T00:00:00Z",
+    )
+    receipt["output_digest"] = hashlib.sha256(b"tampered").hexdigest()
+    manifest["mechanical"]["receipts"] = [receipt]
+    write_json(manifest_path, manifest)
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "proof-receipt"
+
+
+@pytest.mark.parametrize("mode", ["duplicate", "missing-file"])
+def test_decision_pointer_resolution_fails_closed(
+    tmp_path: Path,
+    mode: str,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree)
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    write_json(manifest_path, manifest)
+    decision_path = manifest_path.parent / "decisions.md"
+    if mode == "duplicate":
+        marker = "<!-- campaign-decision:prompt-1 -->\n"
+        decision_path.write_text(marker + marker, encoding="utf-8")
+    else:
+        decision_path.unlink()
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] in {"manifest-path", "proof-applicability"}
+
+
+def test_environment_identity_binds_ambient_execution_state(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree)
+    monkeypatch.setenv("PYTEST_ADDOPTS", "-q")
+    first = campaign_artifacts.proof_identity_tuple(
+        registration,
+        candidate_root=worktree,
+    )
+    monkeypatch.setenv("PYTEST_ADDOPTS", "-x")
+    second = campaign_artifacts.proof_identity_tuple(
+        registration,
+        candidate_root=worktree,
+    )
+
+    assert first["environment"]["ambient_environment_sha256"] != second[
+        "environment"
+    ]["ambient_environment_sha256"]
+
+
+def test_timestamp_invalidation_compares_instants_not_strings() -> None:
+    receipts = [
+        {
+            "id": "receipt-a",
+            "observed_at": "2026-07-25T00:00:00Z",
+            "inputs": [{"name": "skill-tree"}],
+        }
+    ]
+    invalidations = [
+        {
+            "observed_at": "2026-07-25T00:00:00.100000Z",
+            "changed_inputs": ["skill-tree"],
+        }
+    ]
+
+    stale = campaign_artifacts._stale_receipts_from_invalidations(
+        receipts,
+        invalidations,
+    )
+
+    assert stale == {"receipt-a"}
+
+
+def test_pre_repair_cache_bundle_is_rejected(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(
+        worktree,
+        cache_bundle=".tmp/proof-cache.json",
+    )
+    identity_tuple = campaign_artifacts.proof_identity_tuple(
+        registration,
+        candidate_root=worktree,
+    )
+    output_path = worktree / ".tmp" / "proof-output.txt"
+    output_path.parent.mkdir()
+    output_path.write_text("cached", encoding="utf-8")
+    write_json(
+        worktree / ".tmp" / "proof-cache.json",
+        {
+            "schema_version": 1,
+            "proof_profile": registration["profile"],
+            "proof_lane": registration["id"],
+            "identity_tuple": identity_tuple,
+            "exit_state": {"code": 0, "status": "passed"},
+            "output_path": ".tmp/proof-output.txt",
+            "output_digest": hashlib.sha256(b"cached").hexdigest(),
+            "completed_at": "2026-07-25T00:00:00Z",
+        },
+    )
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    manifest["mechanical"]["invalidations"] = [
+        {
+            "changed_inputs": ["skill-tree"],
+            "observed_at": "2026-07-25T01:00:00Z",
+        }
+    ]
+    write_json(manifest_path, manifest)
+    calls: list[list[str]] = []
+    monkeypatch.setattr(
+        campaign_artifacts.subprocess,
+        "run",
+        lambda argv, **kwargs: (
+            calls.append(argv)
+            or subprocess.CompletedProcess(argv, 0, "fresh", "")
+        ),
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "verified"
+    assert result["proof"]["cache_rejections"] == ["focused"]
+    assert len(calls) == 1
+
+
+def test_failed_forced_full_suite_does_not_resurrect_superseded_pass(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree, profile="full-suite-v1")
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    identity_tuple = campaign_artifacts.proof_identity_tuple(
+        registration,
+        candidate_root=worktree,
+    )
+    passed = campaign_artifacts.make_receipt(
+        registration,
+        identity_tuple,
+        exit_code=0,
+        output_digest=hashlib.sha256(b"passed").hexdigest(),
+        source="execution",
+        receipt_id="receipt-passed",
+        observed_at="2026-07-25T00:00:00Z",
+    )
+    manifest["mechanical"]["receipts"] = [passed]
+    write_json(manifest_path, manifest)
+    calls: list[str] = []
+
+    def run_profile(
+        selected: dict[str, object],
+        selected_identity: dict[str, object],
+        **kwargs: object,
+    ) -> dict[str, object]:
+        forced_reason = kwargs.get("forced_reason")
+        calls.append("forced" if forced_reason else "automatic")
+        return campaign_artifacts.make_receipt(
+            selected,
+            selected_identity,
+            exit_code=1 if forced_reason else 0,
+            output_digest=hashlib.sha256(
+                b"failed" if forced_reason else b"recovered"
+            ).hexdigest(),
+            source="forced-execution" if forced_reason else "execution",
+            supersedes=kwargs.get("supersedes"),  # type: ignore[arg-type]
+            forced_reason=forced_reason,  # type: ignore[arg-type]
+        )
+
+    monkeypatch.setattr(campaign_artifacts, "_run_profile", run_profile)
+    forced = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+        force_proof="focused",
+        force_reason="diagnostic",
+    )
+    forced_receipts = json.loads(manifest_path.read_text("utf-8"))["mechanical"][
+        "receipts"
+    ]
+    assert campaign_artifacts._valid_receipt_history(
+        forced_receipts
+    ), forced_receipts
+    recovered = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert forced["status"] == "failed"
+    assert recovered["status"] == "verified", recovered.get("message")
+    assert calls == ["forced", "automatic"]
+
+
+def test_full_suite_rejects_non_repository_target_identity(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree, profile="full-suite-v1")
+    registration["target"] = _tree_target(worktree)
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    write_json(manifest_path, manifest)
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "proof-identity"
+
+
+def test_expensive_profile_launch_error_records_expensive_work_attempted(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree, profile="full-suite-v1")
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    write_json(manifest_path, manifest)
+    monkeypatch.setattr(
+        campaign_artifacts,
+        "_run_profile",
+        lambda *args, **kwargs: (_ for _ in ()).throw(OSError("unavailable")),
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "execution-error"
+    assert result["expensive_work_skipped"] is False
+
+
+def test_canonical_json_identity_rejects_non_finite_numbers(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "record.json"
+    path.write_text('{"value": NaN}', encoding="utf-8")
+
+    with pytest.raises(ValueError, match="JSON compliant"):
+        campaign_artifacts.artifact_identity(
+            {"algorithm": "canonical-json-v1", "path": "record.json"},
+            candidate_root=tmp_path,
+        )
+
+
+def test_input_identity_tuple_records_exact_locator(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    for name in ("target", "same-bytes"):
+        (worktree / name).mkdir()
+        (worktree / name / "value.txt").write_text("current", encoding="utf-8")
+    first_registration = _registration(worktree)
+    second_registration = json.loads(json.dumps(first_registration))
+    second_registration["inputs"][0]["path"] = "same-bytes"
+    first = campaign_artifacts.proof_identity_tuple(
+        first_registration,
+        candidate_root=worktree,
+    )
+    second = campaign_artifacts.proof_identity_tuple(
+        second_registration,
+        candidate_root=worktree,
+    )
+
+    assert first["inputs"][0]["digest"] == second["inputs"][0]["digest"]
+    assert first["inputs"][0]["path"] != second["inputs"][0]["path"]
+
+
+def test_full_suite_rejects_live_worktree_bytes_that_differ_from_target(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    value_path = worktree / "target" / "value.txt"
+    value_path.write_text("recorded", encoding="utf-8")
+    registration = _registration(worktree, profile="full-suite-v1")
+    value_path.write_text("different live bytes", encoding="utf-8")
+    registration["inputs"][0]["digest"] = campaign_artifacts.campaign_tree_hash(
+        worktree / "target"
+    )["sha256"]
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    write_json(manifest_path, manifest)
+    monkeypatch.setattr(
+        campaign_artifacts,
+        "_run_profile",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            AssertionError("mismatched worktree must fail before execution")
+        ),
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "proof-identity"
+    assert "worktree" in result["failures"][0]["message"].lower()
+
+
+def test_full_suite_rejects_non_excluded_untracked_file_before_execution(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("recorded", encoding="utf-8")
+    registration = _registration(worktree, profile="full-suite-v1")
+    (worktree / "rogue.py").write_text("untracked", encoding="utf-8")
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    write_json(manifest_path, manifest)
+    monkeypatch.setattr(
+        campaign_artifacts,
+        "_run_profile",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            AssertionError("untracked worktree must fail before execution")
+        ),
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "proof-identity"
+    assert "worktree" in result["failures"][0]["message"].lower()
+
+
+def test_cached_dependent_of_stale_receipt_is_rejected_transitively(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    upstream = _registration(worktree, registration_id="upstream")
+    downstream = _registration(
+        worktree,
+        registration_id="downstream",
+        cache_bundle=".tmp/downstream-cache.json",
+    )
+    downstream["inputs"][0]["name"] = "receipt:receipt-upstream"  # type: ignore[index]
+    upstream_identity = campaign_artifacts.proof_identity_tuple(
+        upstream,
+        candidate_root=worktree,
+    )
+    upstream_receipt = campaign_artifacts.make_receipt(
+        upstream,
+        upstream_identity,
+        exit_code=0,
+        output_digest=hashlib.sha256(b"upstream").hexdigest(),
+        source="execution",
+        receipt_id="receipt-upstream",
+        observed_at="2026-07-25T00:00:00Z",
+    )
+    downstream_identity = campaign_artifacts.proof_identity_tuple(
+        downstream,
+        candidate_root=worktree,
+    )
+    output_path = worktree / ".tmp" / "downstream-output.txt"
+    output_path.parent.mkdir()
+    output_path.write_text("cached downstream", encoding="utf-8")
+    write_json(
+        worktree / ".tmp" / "downstream-cache.json",
+        {
+            "schema_version": 1,
+            "proof_profile": downstream["profile"],
+            "proof_lane": downstream["id"],
+            "identity_tuple": downstream_identity,
+            "exit_state": {"code": 0, "status": "passed"},
+            "output_path": ".tmp/downstream-output.txt",
+            "output_digest": hashlib.sha256(b"cached downstream").hexdigest(),
+            "completed_at": "2026-07-25T00:30:00Z",
+        },
+    )
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [downstream]
+    manifest["mechanical"]["receipts"] = [upstream_receipt]
+    manifest["mechanical"]["invalidations"] = [
+        {
+            "changed_inputs": ["skill-tree"],
+            "observed_at": "2026-07-25T01:00:00Z",
+        }
+    ]
+    write_json(manifest_path, manifest)
+    calls: list[str] = []
+
+    def run_profile(
+        selected: dict[str, object],
+        identity_tuple: dict[str, object],
+        **kwargs: object,
+    ) -> dict[str, object]:
+        calls.append(str(selected["id"]))
+        return campaign_artifacts.make_receipt(
+            selected,
+            identity_tuple,
+            exit_code=0,
+            output_digest=hashlib.sha256(b"fresh downstream").hexdigest(),
+            source="execution",
+        )
+
+    monkeypatch.setattr(campaign_artifacts, "_run_profile", run_profile)
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    repeated = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "proof-identity"
+    assert "stale receipt" in result["failures"][0]["message"].lower()
+    assert repeated["status"] == "failed"
+    assert calls == []
+
+
+def test_non_finite_nested_receipt_corruption_returns_proof_receipt_failure(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree)
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    receipt = campaign_artifacts.make_receipt(
+        registration,
+        campaign_artifacts.proof_identity_tuple(
+            registration,
+            candidate_root=worktree,
+        ),
+        exit_code=0,
+        output_digest=hashlib.sha256(b"output").hexdigest(),
+        source="execution",
+    )
+    receipt["unexpected"] = {"value": float("nan")}
+    manifest["mechanical"]["receipts"] = [receipt]
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "proof-receipt"
+
+
+def test_legacy_receipt_history_is_preserved_but_never_reused(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree)
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    current = campaign_artifacts.make_receipt(
+        registration,
+        campaign_artifacts.proof_identity_tuple(
+            registration,
+            candidate_root=worktree,
+        ),
+        exit_code=0,
+        output_digest=hashlib.sha256(b"legacy output").hexdigest(),
+        source="execution",
+        receipt_id="receipt-legacy",
+        observed_at="2026-07-25T00:00:00Z",
+    )
+    legacy = json.loads(json.dumps(current))
+    legacy["schema_version"] = 1
+    legacy["environment"].pop("ambient_environment_sha256")
+    legacy.pop("receipt_digest")
+    manifest["mechanical"]["receipts"] = [legacy]
+    write_json(manifest_path, manifest)
+    calls: list[str] = []
+
+    def run_profile(
+        selected: dict[str, object],
+        identity_tuple: dict[str, object],
+        **kwargs: object,
+    ) -> dict[str, object]:
+        calls.append(str(selected["id"]))
+        return campaign_artifacts.make_receipt(
+            selected,
+            identity_tuple,
+            exit_code=0,
+            output_digest=hashlib.sha256(b"fresh output").hexdigest(),
+            source="execution",
+        )
+
+    monkeypatch.setattr(campaign_artifacts, "_run_profile", run_profile)
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    receipts = json.loads(manifest_path.read_text("utf-8"))["mechanical"][
+        "receipts"
+    ]
+
+    assert result["status"] == "verified"
+    assert calls == ["focused"]
+    assert receipts[0] == legacy
+    assert receipts[1]["schema_version"] == 2
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        lambda receipt: receipt["inputs"][0].update(unexpected="field"),
+        lambda receipt: receipt["environment"].update(value=float("nan")),
+        lambda receipt: receipt.update(stage="foreign"),
+    ],
+)
+def test_malformed_legacy_receipt_fails_closed(
+    tmp_path: Path,
+    mutation: object,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "target").mkdir()
+    (worktree / "target" / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree)
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    receipt = campaign_artifacts.make_receipt(
+        registration,
+        campaign_artifacts.proof_identity_tuple(
+            registration,
+            candidate_root=worktree,
+        ),
+        exit_code=0,
+        output_digest=hashlib.sha256(b"legacy output").hexdigest(),
+        source="execution",
+    )
+    receipt["schema_version"] = 1
+    receipt["environment"].pop("ambient_environment_sha256")
+    receipt.pop("receipt_digest")
+    assert callable(mutation)
+    mutation(receipt)
+    manifest["mechanical"]["receipts"] = [receipt]
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "proof-receipt"

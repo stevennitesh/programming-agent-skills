@@ -5,13 +5,15 @@ from __future__ import annotations
 import argparse
 import copy
 import hashlib
+import importlib.metadata
 import json
 import os
 import re
 import shutil
+import subprocess
 import sys
 import tempfile
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
@@ -66,22 +68,61 @@ CAMPAIGN_SCHEMA_VERSION = 1
 CAMPAIGN_ROOT = Path("docs/validation/campaigns")
 LEASE_PATH = Path(".tmp/deploy-campaign-lease.json")
 DELIVERY_MODES = frozenset({"none", "commit", "push"})
-STAGE_PROFILES = frozenset(
-    {
-        "prompt-1",
-        "research",
-        "prompt-2",
-        "prompt-3",
-        "prompt-4",
-        "pruning",
-        "prompt-5",
-        "prompt-6",
-    }
+STAGE_ORDER = (
+    "prompt-1",
+    "research",
+    "prompt-2",
+    "prompt-3",
+    "prompt-4",
+    "pruning",
+    "prompt-5",
+    "prompt-6",
 )
+STAGE_PROFILES = frozenset(STAGE_ORDER)
 SAFE_ID = re.compile(r"^[a-z0-9][a-z0-9-]*$")
+SHA256_HEX = re.compile(r"^[0-9a-f]{64}$")
 MECHANICAL_STATUSES = frozenset(
     {"verified", "failed", "stale", "lease-conflict", "execution-error"}
 )
+IDENTITY_ALGORITHMS = frozenset(
+    {
+        "campaign-tree-v1",
+        "canonical-json-v1",
+        "marker-semantic-v1",
+        "git-object-v1",
+    }
+)
+LEGACY_PROOF_RECEIPT_SCHEMA_VERSION = 1
+PROOF_RECEIPT_SCHEMA_VERSION = 2
+PROOF_CACHE_SCHEMA_VERSION = 1
+PROOF_PROFILE_SCHEMA_VERSION = 1
+PROOF_TIERS = ("cheap", "moderate", "expensive")
+PROOF_PROFILES: dict[str, dict[str, object]] = {
+    "campaign-artifacts-focused-v1": {
+        "schema_version": PROOF_PROFILE_SCHEMA_VERSION,
+        "tier": "cheap",
+        "argv": (
+            sys.executable,
+            "-m",
+            "pytest",
+            "tests/test_campaign_artifacts.py",
+            "-q",
+        ),
+        "full_suite": False,
+    },
+    "validate-skills-v1": {
+        "schema_version": PROOF_PROFILE_SCHEMA_VERSION,
+        "tier": "moderate",
+        "argv": (sys.executable, "-m", "scripts.validate_skills"),
+        "full_suite": False,
+    },
+    "full-suite-v1": {
+        "schema_version": PROOF_PROFILE_SCHEMA_VERSION,
+        "tier": "expensive",
+        "argv": (sys.executable, "-m", "pytest"),
+        "full_suite": True,
+    },
+}
 
 
 def _now() -> str:
@@ -231,6 +272,7 @@ def start_campaign(
             "created_at": created_at,
             "evidence_state": "current",
             "last_verification": None,
+            "proof_registrations": [],
             "receipts": [],
             "invalidations": [],
         },
@@ -437,6 +479,8 @@ def _failure(
     gate: str,
     manifest_path: Path,
     message: str,
+    *,
+    expensive_work_skipped: bool = True,
 ) -> dict[str, object]:
     if status not in MECHANICAL_STATUSES:
         raise ValueError(f"Unknown mechanical status: {status}")
@@ -445,7 +489,9 @@ def _failure(
         "gate": gate,
         "artifact": str(manifest_path),
         "message": message,
-        "expensive_work_skipped": True,
+        "expected_state": "verified",
+        "actual_state": status,
+        "expensive_work_skipped": expensive_work_skipped,
         "exit_code": {
             "failed": 2,
             "stale": 3,
@@ -526,6 +572,48 @@ def campaign_status(
     _replace_json_file(lease_path, lease)
     semantic = manifest.get("semantic")
     stage = semantic.get("declared_stage") if isinstance(semantic, dict) else None
+    mechanical = manifest.get("mechanical")
+    if isinstance(mechanical, dict):
+        receipts = mechanical.get("receipts", [])
+        invalidations = mechanical.get("invalidations", [])
+        registrations = mechanical.get("proof_registrations", [])
+        if (
+            isinstance(receipts, list)
+            and isinstance(invalidations, list)
+            and isinstance(registrations, list)
+            and all(isinstance(receipt, dict) for receipt in receipts)
+        ):
+            stale_receipts = _stale_receipts_from_invalidations(
+                receipts,
+                invalidations,
+            )
+            receipt_registrations = {
+                str(receipt.get("registration_id"))
+                for receipt in receipts
+                if receipt.get("id") in stale_receipts
+            }
+            stale_stages = {
+                registration.get("stage", stage)
+                for registration in registrations
+                if isinstance(registration, dict)
+                and registration.get("id") in receipt_registrations
+                and registration.get("stage", stage) in STAGE_PROFILES
+            }
+            if mechanical.get("evidence_state") == "stale" and not stale_stages:
+                if stage in STAGE_PROFILES:
+                    stale_stages.add(stage)
+            if stale_stages:
+                return {
+                    "status": "stale",
+                    "campaign_id": campaign_id,
+                    "stage": stage,
+                    "earliest_stale_stage": min(
+                        stale_stages,
+                        key=STAGE_ORDER.index,
+                    ),
+                    "owner_token": lease.get("owner_token"),
+                    "lease": "owned",
+                }
     return {
         "status": "verified",
         "campaign_id": campaign_id,
@@ -594,11 +682,1258 @@ def release_campaign(
     }
 
 
+def _contained_artifact_path(candidate_root: Path, value: object) -> Path:
+    if not isinstance(value, str) or not value or Path(value).is_absolute():
+        raise ValueError("Identity path must be a nonempty relative path")
+    path = (candidate_root / value).resolve()
+    if not _is_within(path, candidate_root):
+        raise ValueError("Identity path escapes the explicit candidate root")
+    return path
+
+
+def artifact_identity(
+    specification: dict[str, object],
+    *,
+    candidate_root: Path | None,
+) -> dict[str, str]:
+    """Compute one versioned identity at its explicitly bounded artifact."""
+
+    if candidate_root is None:
+        raise ValueError("Identity requires an explicit candidate root")
+    root = candidate_root.resolve()
+    algorithm = specification.get("algorithm")
+    if algorithm not in IDENTITY_ALGORITHMS:
+        raise ValueError("Identity algorithm is foreign or legacy")
+    if algorithm == "git-object-v1":
+        revision = specification.get("revision")
+        if not isinstance(revision, str) or not revision:
+            raise ValueError("Git object identity requires an explicit revision")
+        top_level = subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"],
+            cwd=root,
+            check=False,
+            capture_output=True,
+            text=True,
+            shell=False,
+        )
+        if (
+            top_level.returncode != 0
+            or Path(top_level.stdout.strip()).resolve() != root
+        ):
+            raise ValueError(
+                "Git object identity candidate root must be the worktree root"
+            )
+        completed = subprocess.run(
+            ["git", "rev-parse", "--verify", f"{revision}^{{tree}}"],
+            cwd=root,
+            check=False,
+            capture_output=True,
+            text=True,
+            shell=False,
+        )
+        if completed.returncode != 0:
+            raise ValueError(
+                "Git object identity cannot resolve the explicit candidate root"
+            )
+        digest = completed.stdout.strip()
+        if not digest:
+            raise ValueError("Git object identity returned an empty object")
+        return {"algorithm": algorithm, "digest": digest}
+
+    path = _contained_artifact_path(root, specification.get("path"))
+    if algorithm == "campaign-tree-v1":
+        result = campaign_tree_hash(path)
+        return {"algorithm": algorithm, "digest": str(result["sha256"])}
+    if algorithm == "canonical-json-v1":
+        return {
+            "algorithm": algorithm,
+            "digest": _canonical_json_sha256(_read_json(path)),
+        }
+
+    marker = specification.get("marker")
+    if not isinstance(marker, str) or not SAFE_ID.fullmatch(marker):
+        raise ValueError("Semantic identity requires a bounded marker ID")
+    content = path.read_text(encoding="utf-8")
+    begin = f"<!-- campaign-semantic:{marker}:begin -->\n"
+    end = f"<!-- campaign-semantic:{marker}:end -->"
+    if content.count(begin) != 1 or content.count(end) != 1:
+        raise ValueError("Semantic identity markers must each occur exactly once")
+    begin_at = content.index(begin) + len(begin)
+    end_at = content.index(end)
+    if end_at < begin_at:
+        raise ValueError("Semantic identity markers must be ordered")
+    bounded = content[begin_at:end_at]
+    return {
+        "algorithm": algorithm,
+        "digest": hashlib.sha256(bounded.encode("utf-8")).hexdigest(),
+    }
+
+
+def _environment_identity(candidate_root: Path) -> dict[str, str]:
+    dependency_digest = hashlib.sha256()
+    for name in ("pyproject.toml", "requirements-dev.txt"):
+        path = candidate_root / name
+        if path.is_file():
+            content = path.read_bytes()
+            dependency_digest.update(name.encode("utf-8"))
+            dependency_digest.update(b"\0")
+            dependency_digest.update(hashlib.sha256(content).digest())
+    packages = sorted(
+        (
+            (distribution.metadata.get("Name") or "").lower(),
+            distribution.version,
+        )
+        for distribution in importlib.metadata.distributions()
+    )
+    return {
+        "python": sys.version.split()[0],
+        "implementation": sys.implementation.name,
+        "platform": sys.platform,
+        "executable": str(Path(sys.executable).resolve()),
+        "dependency_files_sha256": dependency_digest.hexdigest(),
+        "installed_packages_sha256": _canonical_json_sha256(packages),
+        "ambient_environment_sha256": _canonical_json_sha256(
+            sorted(os.environ.items())
+        ),
+    }
+
+
+def _registration_candidate_root(
+    registration: dict[str, object],
+    worktree: Path,
+) -> Path:
+    value = registration.get("candidate_root")
+    if not isinstance(value, str) or not value or Path(value).is_absolute():
+        raise ValueError("Proof registration requires a relative candidate root")
+    root = (worktree / value).resolve()
+    if not _is_within(root, worktree) or not root.is_dir():
+        raise ValueError("Proof candidate root escapes or does not exist")
+    return root
+
+
+def _full_suite_worktree_matches(
+    candidate_root: Path,
+    target_digest: str,
+) -> bool:
+    excluded = (
+        ":(exclude).tmp/**",
+        f":(exclude){CAMPAIGN_ROOT.as_posix()}/**",
+    )
+    tracked = subprocess.run(
+        ["git", "diff", "--quiet", target_digest, "--", ".", *excluded],
+        cwd=candidate_root,
+        check=False,
+        capture_output=True,
+        text=True,
+        shell=False,
+    )
+    if tracked.returncode != 0:
+        return False
+    untracked = subprocess.run(
+        ["git", "ls-files", "--others", "--exclude-standard", "-z"],
+        cwd=candidate_root,
+        check=False,
+        capture_output=True,
+        text=True,
+        shell=False,
+    )
+    if untracked.returncode != 0:
+        return False
+    for value in untracked.stdout.split("\0"):
+        if not value:
+            continue
+        path = Path(value)
+        if path.parts[:1] == (".tmp",):
+            continue
+        if path.parts[: len(CAMPAIGN_ROOT.parts)] == CAMPAIGN_ROOT.parts:
+            continue
+        return False
+    return True
+
+
+def proof_identity_tuple(
+    registration: dict[str, object],
+    *,
+    candidate_root: Path,
+) -> dict[str, object]:
+    """Return the complete reusable identity tuple for one registration."""
+
+    profile_name = registration.get("profile")
+    profile = PROOF_PROFILES.get(str(profile_name))
+    if (
+        profile is None
+        or profile.get("schema_version") != PROOF_PROFILE_SCHEMA_VERSION
+    ):
+        raise ValueError("Proof profile is not versioned and allowlisted")
+    inputs = registration.get("inputs")
+    target = registration.get("target")
+    if not isinstance(inputs, list) or not inputs or not isinstance(target, dict):
+        raise ValueError("Proof registration inputs and target are incomplete")
+    normalized_inputs: list[dict[str, str]] = []
+    for item in inputs:
+        if not isinstance(item, dict):
+            raise ValueError("Proof input identity must be an object")
+        name = item.get("name")
+        if not isinstance(name, str) or not name:
+            raise ValueError("Proof input identity requires a name")
+        computed = artifact_identity(item, candidate_root=candidate_root)
+        expected = item.get("digest")
+        if expected != computed["digest"]:
+            raise ValueError(f"Proof input identity mismatch: {name}")
+        normalized_input = {
+            "name": name,
+            **computed,
+            "candidate_root": str(candidate_root.resolve()),
+        }
+        for locator in ("path", "revision", "marker"):
+            value = item.get(locator)
+            if isinstance(value, str):
+                normalized_input[locator] = value
+        normalized_inputs.append(normalized_input)
+    computed_target = artifact_identity(target, candidate_root=candidate_root)
+    if target.get("digest") != computed_target["digest"]:
+        raise ValueError("Proof target identity mismatch")
+    target_identity: dict[str, str] = {
+        **computed_target,
+        "candidate_root": str(candidate_root.resolve()),
+    }
+    for locator in ("path", "revision", "marker"):
+        value = target.get(locator)
+        if isinstance(value, str):
+            target_identity[locator] = value
+    return {
+        "proof_profile": profile_name,
+        "inputs": sorted(normalized_inputs, key=lambda item: item["name"]),
+        "target": target_identity,
+        "environment": _environment_identity(candidate_root),
+    }
+
+
+def make_receipt(
+    registration: dict[str, object],
+    identity_tuple: dict[str, object],
+    *,
+    exit_code: int,
+    output_digest: str,
+    source: str,
+    receipt_id: str | None = None,
+    observed_at: str | None = None,
+    supersedes: str | None = None,
+    forced_reason: str | None = None,
+) -> dict[str, object]:
+    """Create one compact receipt; callers append it without rewriting history."""
+
+    receipt: dict[str, object] = {
+        "schema_version": PROOF_RECEIPT_SCHEMA_VERSION,
+        "id": receipt_id or f"receipt-{uuid4().hex}",
+        "registration_id": registration.get("id"),
+        "stage": registration.get("stage"),
+        "proof_profile": identity_tuple["proof_profile"],
+        "inputs": copy.deepcopy(identity_tuple["inputs"]),
+        "target": copy.deepcopy(identity_tuple["target"]),
+        "environment": copy.deepcopy(identity_tuple["environment"]),
+        "exit_state": {
+            "code": exit_code,
+            "status": "passed" if exit_code == 0 else "failed",
+        },
+        "output_digest": output_digest,
+        "observed_at": observed_at or _now(),
+        "source": source,
+        "supersedes": supersedes,
+        "forced_reason": forced_reason,
+    }
+    _seal_receipt(receipt)
+    return receipt
+
+
+def _seal_receipt(receipt: dict[str, object]) -> None:
+    payload = {
+        key: value
+        for key, value in receipt.items()
+        if key != "receipt_digest"
+    }
+    receipt["receipt_digest"] = _canonical_json_sha256(payload)
+
+
+def _parse_timestamp(value: object) -> datetime | None:
+    if not isinstance(value, str) or not value.endswith("Z"):
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return parsed if parsed.tzinfo is not None else None
+
+
+def _valid_timestamp(value: object, *, allow_future: bool = False) -> bool:
+    parsed = _parse_timestamp(value)
+    return parsed is not None and (
+        allow_future
+        or parsed <= datetime.now(UTC) + timedelta(minutes=5)
+    )
+
+
+def _valid_identity_record(value: object, *, require_name: bool) -> bool:
+    if not isinstance(value, dict):
+        return False
+    name_valid = (
+        isinstance(value.get("name"), str) and bool(value.get("name"))
+        if require_name
+        else True
+    )
+    algorithm = value.get("algorithm")
+    digest = value.get("digest")
+    digest_valid = (
+        isinstance(digest, str)
+        and (
+            bool(re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", digest))
+            if algorithm == "git-object-v1"
+            else bool(SHA256_HEX.fullmatch(digest))
+        )
+    )
+    return name_valid and algorithm in IDENTITY_ALGORITHMS and digest_valid
+
+
+def _valid_legacy_identity_record(
+    value: object,
+    *,
+    require_name: bool,
+) -> bool:
+    if not _valid_identity_record(value, require_name=require_name):
+        return False
+    assert isinstance(value, dict)
+    algorithm = value["algorithm"]
+    expected = {"algorithm", "digest", "candidate_root"}
+    if require_name:
+        expected.add("name")
+    if algorithm == "git-object-v1":
+        expected.add("revision")
+    else:
+        expected.add("path")
+        if algorithm == "marker-semantic-v1":
+            expected.add("marker")
+    return (
+        set(value) == expected
+        and isinstance(value.get("candidate_root"), str)
+        and bool(value.get("candidate_root"))
+        and all(
+            isinstance(value.get(locator), str) and bool(value.get(locator))
+            for locator in expected.intersection({"path", "revision", "marker"})
+        )
+    )
+
+
+def _valid_receipt(receipt: object) -> bool:
+    if not isinstance(receipt, dict):
+        return False
+    receipt_id = receipt.get("id")
+    registration_id = receipt.get("registration_id")
+    inputs = receipt.get("inputs")
+    target = receipt.get("target")
+    environment = receipt.get("environment")
+    exit_state = receipt.get("exit_state")
+    source = receipt.get("source")
+    supersedes = receipt.get("supersedes")
+    forced_reason = receipt.get("forced_reason")
+    try:
+        computed_receipt_digest = _canonical_json_sha256(
+            {
+                key: value
+                for key, value in receipt.items()
+                if key != "receipt_digest"
+            }
+        )
+    except (TypeError, ValueError):
+        return False
+    if not (
+        isinstance(inputs, list)
+        and inputs
+        and all(_valid_identity_record(value, require_name=True) for value in inputs)
+        and len({str(value["name"]) for value in inputs}) == len(inputs)
+        and _valid_identity_record(target, require_name=False)
+        and isinstance(target, dict)
+        and isinstance(target.get("candidate_root"), str)
+        and bool(target.get("candidate_root"))
+        and isinstance(environment, dict)
+        and all(
+            isinstance(environment.get(field), str)
+            and bool(environment.get(field))
+            for field in (
+                "python",
+                "implementation",
+                "platform",
+                "executable",
+                "dependency_files_sha256",
+                "installed_packages_sha256",
+                "ambient_environment_sha256",
+            )
+        )
+        and SHA256_HEX.fullmatch(
+            str(environment["dependency_files_sha256"])
+        )
+        and SHA256_HEX.fullmatch(
+            str(environment["installed_packages_sha256"])
+        )
+        and isinstance(exit_state, dict)
+        and set(exit_state) == {"code", "status"}
+        and isinstance(exit_state.get("code"), int)
+        and exit_state.get("status")
+        == ("passed" if exit_state.get("code") == 0 else "failed")
+    ):
+        return False
+    return (
+        receipt.get("schema_version") == PROOF_RECEIPT_SCHEMA_VERSION
+        and isinstance(receipt_id, str)
+        and bool(SAFE_ID.fullmatch(receipt_id))
+        and isinstance(registration_id, str)
+        and bool(SAFE_ID.fullmatch(registration_id))
+        and isinstance(receipt.get("proof_profile"), str)
+        and isinstance(receipt.get("output_digest"), str)
+        and bool(SHA256_HEX.fullmatch(str(receipt["output_digest"])))
+        and isinstance(receipt.get("receipt_digest"), str)
+        and receipt.get("receipt_digest")
+        == computed_receipt_digest
+        and _valid_timestamp(receipt.get("observed_at"))
+        and (
+            receipt.get("stage") is None
+            or receipt.get("stage") in STAGE_PROFILES
+        )
+        and source in {"execution", "forced-execution", "tmp-cache"}
+        and (supersedes is None or isinstance(supersedes, str))
+        and (
+            (
+                source == "forced-execution"
+                and isinstance(forced_reason, str)
+                and bool(forced_reason)
+            )
+            or (
+                source != "forced-execution"
+                and forced_reason is None
+            )
+        )
+    )
+
+
+def _valid_legacy_receipt(receipt: object) -> bool:
+    if not isinstance(receipt, dict):
+        return False
+    legacy_fields = {
+        "schema_version",
+        "id",
+        "registration_id",
+        "stage",
+        "proof_profile",
+        "inputs",
+        "target",
+        "environment",
+        "exit_state",
+        "output_digest",
+        "observed_at",
+        "source",
+        "supersedes",
+        "forced_reason",
+    }
+    if set(receipt) != legacy_fields:
+        return False
+    try:
+        _canonical_json_sha256(receipt)
+    except (TypeError, ValueError):
+        return False
+    inputs = receipt.get("inputs")
+    target = receipt.get("target")
+    environment = receipt.get("environment")
+    exit_state = receipt.get("exit_state")
+    source = receipt.get("source")
+    forced_reason = receipt.get("forced_reason")
+    return (
+        receipt.get("schema_version") == LEGACY_PROOF_RECEIPT_SCHEMA_VERSION
+        and isinstance(receipt.get("id"), str)
+        and bool(SAFE_ID.fullmatch(str(receipt["id"])))
+        and isinstance(receipt.get("registration_id"), str)
+        and bool(SAFE_ID.fullmatch(str(receipt["registration_id"])))
+        and isinstance(receipt.get("proof_profile"), str)
+        and isinstance(inputs, list)
+        and bool(inputs)
+        and all(
+            _valid_legacy_identity_record(value, require_name=True)
+            for value in inputs
+        )
+        and len({str(value["name"]) for value in inputs}) == len(inputs)
+        and _valid_legacy_identity_record(target, require_name=False)
+        and isinstance(target, dict)
+        and isinstance(target.get("candidate_root"), str)
+        and bool(target.get("candidate_root"))
+        and isinstance(environment, dict)
+        and set(environment)
+        == {
+            "python",
+            "implementation",
+            "platform",
+            "executable",
+            "dependency_files_sha256",
+            "installed_packages_sha256",
+        }
+        and all(
+            isinstance(environment.get(field), str)
+            and bool(environment.get(field))
+            for field in environment
+        )
+        and bool(
+            SHA256_HEX.fullmatch(
+                str(environment["dependency_files_sha256"])
+            )
+        )
+        and bool(
+            SHA256_HEX.fullmatch(
+                str(environment["installed_packages_sha256"])
+            )
+        )
+        and isinstance(exit_state, dict)
+        and set(exit_state) == {"code", "status"}
+        and isinstance(exit_state.get("code"), int)
+        and exit_state.get("status")
+        == ("passed" if exit_state.get("code") == 0 else "failed")
+        and isinstance(receipt.get("output_digest"), str)
+        and bool(SHA256_HEX.fullmatch(str(receipt["output_digest"])))
+        and _valid_timestamp(receipt.get("observed_at"))
+        and (
+            receipt.get("stage") is None
+            or receipt.get("stage") in STAGE_PROFILES
+        )
+        and source in {"execution", "forced-execution", "tmp-cache"}
+        and (
+            receipt.get("supersedes") is None
+            or isinstance(receipt.get("supersedes"), str)
+        )
+        and (
+            (
+                source == "forced-execution"
+                and isinstance(forced_reason, str)
+                and bool(forced_reason)
+            )
+            or (source != "forced-execution" and forced_reason is None)
+        )
+    )
+
+
+def _valid_receipt_history(receipts: list[object]) -> bool:
+    seen: set[str] = set()
+    for receipt in receipts:
+        if not (_valid_receipt(receipt) or _valid_legacy_receipt(receipt)):
+            return False
+        assert isinstance(receipt, dict)
+        receipt_id = str(receipt["id"])
+        supersedes = receipt.get("supersedes")
+        if receipt_id in seen:
+            return False
+        if supersedes is not None and supersedes not in seen:
+            return False
+        seen.add(receipt_id)
+    return True
+
+
+def transitively_stale_receipts(
+    receipts: list[dict[str, object]],
+    changed_inputs: set[str],
+) -> set[str]:
+    """Derive transitive staleness without deleting or rewriting receipts."""
+
+    stale: set[str] = set()
+    changed = set(changed_inputs)
+    while True:
+        prior = set(stale)
+        for receipt in receipts:
+            receipt_id = receipt.get("id")
+            inputs = receipt.get("inputs")
+            if not isinstance(receipt_id, str) or not isinstance(inputs, list):
+                continue
+            names = {
+                item.get("name")
+                for item in inputs
+                if isinstance(item, dict) and isinstance(item.get("name"), str)
+            }
+            if names.intersection(changed) or any(
+                name == f"receipt:{dependency}" for dependency in stale
+                for name in names
+            ):
+                stale.add(receipt_id)
+        if stale == prior:
+            return stale
+
+
+def _stale_receipts_from_invalidations(
+    receipts: list[dict[str, object]],
+    invalidations: list[object],
+) -> set[str]:
+    stale = {
+        str(receipt["id"])
+        for receipt in receipts
+        if receipt.get("schema_version") == LEGACY_PROOF_RECEIPT_SCHEMA_VERSION
+        and isinstance(receipt.get("id"), str)
+    }
+    for event in invalidations:
+        if not isinstance(event, dict):
+            continue
+        changed = {
+            value
+            for value in event.get("changed_inputs", [])
+            if isinstance(value, str)
+        }
+        cutoff = event.get("observed_at")
+        cutoff_time = _parse_timestamp(cutoff)
+        if not changed or cutoff_time is None:
+            continue
+        event_stale: set[str] = set()
+        for receipt in receipts:
+            receipt_id = receipt.get("id")
+            observed_at = receipt.get("observed_at")
+            observed_time = _parse_timestamp(observed_at)
+            inputs = receipt.get("inputs")
+            if (
+                not isinstance(receipt_id, str)
+                or observed_time is None
+                or observed_time > cutoff_time
+                or not isinstance(inputs, list)
+            ):
+                continue
+            names = {
+                item.get("name")
+                for item in inputs
+                if isinstance(item, dict) and isinstance(item.get("name"), str)
+            }
+            if names.intersection(changed):
+                event_stale.add(receipt_id)
+        while True:
+            prior = set(event_stale)
+            for receipt in receipts:
+                receipt_id = receipt.get("id")
+                inputs = receipt.get("inputs")
+                if not isinstance(receipt_id, str) or not isinstance(inputs, list):
+                    continue
+                names = {
+                    item.get("name")
+                    for item in inputs
+                    if isinstance(item, dict)
+                    and isinstance(item.get("name"), str)
+                }
+                if any(
+                    f"receipt:{dependency}" in names
+                    for dependency in event_stale
+                ):
+                    event_stale.add(receipt_id)
+            if event_stale == prior:
+                break
+        stale.update(event_stale)
+    while True:
+        prior = set(stale)
+        for receipt in receipts:
+            receipt_id = receipt.get("id")
+            inputs = receipt.get("inputs")
+            if not isinstance(receipt_id, str) or not isinstance(inputs, list):
+                continue
+            names = {
+                item.get("name")
+                for item in inputs
+                if isinstance(item, dict) and isinstance(item.get("name"), str)
+            }
+            if any(f"receipt:{dependency}" in names for dependency in stale):
+                stale.add(receipt_id)
+        if stale == prior:
+            return stale
+
+
+def _superseded_receipts(receipts: list[dict[str, object]]) -> set[str]:
+    return {
+        str(receipt["supersedes"])
+        for receipt in receipts
+        if isinstance(receipt.get("supersedes"), str)
+    }
+
+
+def _identity_key(identity_tuple: dict[str, object]) -> str:
+    return _canonical_json_sha256(identity_tuple)
+
+
+def _full_suite_key(identity_tuple: dict[str, object]) -> str:
+    return _canonical_json_sha256(
+        {
+            "proof_profile": identity_tuple["proof_profile"],
+            "target": identity_tuple["target"],
+            "environment": identity_tuple["environment"],
+        }
+    )
+
+
+def _exact_receipt(
+    receipts: list[dict[str, object]],
+    identity_tuple: dict[str, object],
+    stale: set[str],
+) -> dict[str, object] | None:
+    superseded = _superseded_receipts(receipts)
+    for receipt in reversed(receipts):
+        if (
+            receipt.get("schema_version") == PROOF_RECEIPT_SCHEMA_VERSION
+            and str(receipt.get("id")) not in stale
+            and str(receipt.get("id")) not in superseded
+            and receipt.get("proof_profile") == identity_tuple["proof_profile"]
+            and receipt.get("inputs") == identity_tuple["inputs"]
+            and receipt.get("target") == identity_tuple["target"]
+            and receipt.get("environment") == identity_tuple["environment"]
+            and isinstance(receipt.get("exit_state"), dict)
+            and receipt["exit_state"].get("code") == 0
+        ):
+            return receipt
+    return None
+
+
+def _latest_matching_receipt(
+    receipts: list[dict[str, object]],
+    identity_tuple: dict[str, object],
+) -> dict[str, object] | None:
+    for receipt in reversed(receipts):
+        if (
+            receipt.get("proof_profile") == identity_tuple["proof_profile"]
+            and receipt.get("inputs") == identity_tuple["inputs"]
+            and receipt.get("target") == identity_tuple["target"]
+            and receipt.get("environment") == identity_tuple["environment"]
+        ):
+            return receipt
+    return None
+
+
+def _cache_receipt(
+    registration: dict[str, object],
+    identity_tuple: dict[str, object],
+    *,
+    worktree: Path,
+) -> dict[str, object] | None:
+    value = registration.get("cache_bundle")
+    if value is None:
+        return None
+    if not isinstance(value, str) or Path(value).is_absolute():
+        raise ValueError("Proof cache bundle path is malformed")
+    cache_path = (worktree / value).resolve()
+    tmp_root = (worktree / ".tmp").resolve()
+    if not _is_within(cache_path, tmp_root):
+        raise ValueError("Proof cache bundle must stay inside .tmp")
+    bundle = _read_json(cache_path)
+    output_value = bundle.get("output_path") if isinstance(bundle, dict) else None
+    if not isinstance(output_value, str) or Path(output_value).is_absolute():
+        raise ValueError("Proof cache output path is malformed")
+    output_path = (worktree / output_value).resolve()
+    if not _is_within(output_path, tmp_root):
+        raise ValueError("Proof cache output must stay inside .tmp")
+    actual_output_digest = hashlib.sha256(output_path.read_bytes()).hexdigest()
+    if (
+        not isinstance(bundle, dict)
+        or bundle.get("schema_version") != PROOF_CACHE_SCHEMA_VERSION
+        or bundle.get("proof_profile") != identity_tuple["proof_profile"]
+        or bundle.get("proof_lane") != registration.get("id")
+        or bundle.get("identity_tuple") != identity_tuple
+        or bundle.get("exit_state") != {"code": 0, "status": "passed"}
+        or not isinstance(bundle.get("output_digest"), str)
+        or bundle.get("output_digest") != actual_output_digest
+        or not _valid_timestamp(bundle.get("completed_at"))
+    ):
+        raise ValueError("Proof cache bundle is corrupt or identity-mismatched")
+    return make_receipt(
+        registration,
+        identity_tuple,
+        exit_code=0,
+        output_digest=str(bundle["output_digest"]),
+        source="tmp-cache",
+        observed_at=str(bundle["completed_at"]),
+    )
+
+
+def _run_profile(
+    registration: dict[str, object],
+    identity_tuple: dict[str, object],
+    *,
+    candidate_root: Path,
+    supersedes: str | None = None,
+    forced_reason: str | None = None,
+) -> dict[str, object]:
+    profile = PROOF_PROFILES[str(registration["profile"])]
+    argv = profile["argv"]
+    if (
+        not isinstance(argv, tuple)
+        or not argv
+        or any(not isinstance(value, str) or not value for value in argv)
+    ):
+        raise ValueError("Allowlisted proof profile argv is invalid")
+    completed = subprocess.run(
+        list(argv),
+        cwd=candidate_root,
+        check=False,
+        capture_output=True,
+        text=True,
+        shell=False,
+    )
+    raw = completed.stdout.encode("utf-8") + completed.stderr.encode("utf-8")
+    return make_receipt(
+        registration,
+        identity_tuple,
+        exit_code=completed.returncode,
+        output_digest=hashlib.sha256(raw).hexdigest(),
+        source="forced-execution" if forced_reason else "execution",
+        supersedes=supersedes,
+        forced_reason=forced_reason,
+    )
+
+
+def _proof_failure(
+    manifest_path: Path,
+    gate: str,
+    message: str,
+    failures: list[dict[str, str]] | None = None,
+    *,
+    expensive_work_skipped: bool = True,
+) -> dict[str, object]:
+    result = _failure(
+        "failed",
+        gate,
+        manifest_path,
+        message,
+        expensive_work_skipped=expensive_work_skipped,
+    )
+    if failures is not None:
+        result["failures"] = failures
+    return result
+
+
+def _decision_pointer_resolves(
+    manifest_path: Path,
+    pointer: object,
+) -> bool:
+    if (
+        not isinstance(pointer, str)
+        or not pointer.startswith("decisions.md#")
+    ):
+        return False
+    fragment = pointer.split("#", 1)[1]
+    if not SAFE_ID.fullmatch(fragment):
+        return False
+    try:
+        content = (manifest_path.parent / "decisions.md").read_text(
+            encoding="utf-8"
+        )
+    except (OSError, UnicodeError):
+        return False
+    marker = f"<!-- campaign-decision:{fragment} -->"
+    return content.count(marker) == 1
+
+
+def _verify_registered_proof(
+    manifest_path: Path,
+    manifest: dict[str, object],
+    *,
+    worktree: Path,
+    force_proof: str | None,
+    force_reason: str | None,
+    no_execute: bool,
+) -> dict[str, object]:
+    mechanical = manifest["mechanical"]
+    assert isinstance(mechanical, dict)
+    registrations = mechanical.get("proof_registrations", [])
+    receipts = mechanical.get("receipts", [])
+    invalidations = mechanical.get("invalidations", [])
+    if (
+        not isinstance(registrations, list)
+        or not isinstance(receipts, list)
+        or not isinstance(invalidations, list)
+    ):
+        return _proof_failure(
+            manifest_path,
+            "proof-schema",
+            "Proof registrations, receipts, and invalidations must be lists",
+        )
+    if not _valid_receipt_history(receipts):
+        return _proof_failure(
+            manifest_path,
+            "proof-receipt",
+            "A durable proof receipt is corrupt or legacy",
+        )
+    typed_receipts = [receipt for receipt in receipts if isinstance(receipt, dict)]
+    stale = _stale_receipts_from_invalidations(typed_receipts, invalidations)
+    seen_ids: set[str] = set()
+    required_ids: set[str] = set()
+    planned: list[tuple[dict[str, object], Path, dict[str, object]]] = []
+    not_applicable: list[str] = []
+    blocked: list[str] = []
+    cheap_failures: list[dict[str, str]] = []
+    profile_failures: list[dict[str, str]] = []
+    forbidden_profile_fields = {
+        "argv",
+        "command",
+        "environment",
+        "env",
+        "network",
+        "tier",
+    }
+    semantic = manifest.get("semantic")
+    declared_stage = (
+        semantic.get("declared_stage") if isinstance(semantic, dict) else None
+    )
+    for value in registrations:
+        if not isinstance(value, dict):
+            cheap_failures.append(
+                {"registration": "<unknown>", "message": "registration is not an object"}
+            )
+            continue
+        registration_id = value.get("id")
+        applicability = value.get("applicability")
+        pointer = value.get("decision_pointer")
+        if (
+            not isinstance(registration_id, str)
+            or not SAFE_ID.fullmatch(registration_id)
+            or registration_id in seen_ids
+        ):
+            cheap_failures.append(
+                {
+                    "registration": str(registration_id),
+                    "message": "registration ID is invalid or duplicated",
+                }
+            )
+            continue
+        seen_ids.add(registration_id)
+        forbidden = forbidden_profile_fields.intersection(value)
+        if forbidden:
+            profile_failures.append(
+                {
+                    "registration": registration_id,
+                    "message": (
+                        "registration cannot override "
+                        + ", ".join(sorted(forbidden))
+                    ),
+                }
+            )
+            continue
+        if applicability not in {"required", "not-applicable", "blocked"}:
+            cheap_failures.append(
+                {
+                    "registration": registration_id,
+                    "message": "applicability is invalid",
+                }
+            )
+            continue
+        if not _decision_pointer_resolves(manifest_path, pointer):
+            cheap_failures.append(
+                {
+                    "registration": registration_id,
+                    "message": (
+                        "applicability requires an exact decision-record pointer"
+                    ),
+                }
+            )
+            continue
+        registration_stage = value.get("stage", declared_stage)
+        if registration_stage not in STAGE_PROFILES:
+            cheap_failures.append(
+                {
+                    "registration": registration_id,
+                    "message": "registration stage is invalid",
+                }
+            )
+            continue
+        if registration_stage != declared_stage:
+            continue
+        if applicability == "not-applicable":
+            not_applicable.append(registration_id)
+            continue
+        if applicability == "blocked":
+            blocked.append(registration_id)
+            continue
+        required_ids.add(registration_id)
+        if value.get("fresh_behavior") is True:
+            return _proof_failure(
+                manifest_path,
+                "fresh-behavior",
+                "Explicitly fresh behavioral sampling cannot use cached deterministic proof",
+            )
+        try:
+            candidate_root = _registration_candidate_root(value, worktree)
+            selected_profile = PROOF_PROFILES.get(str(value.get("profile")))
+            target = value.get("target")
+            if (
+                isinstance(selected_profile, dict)
+                and selected_profile.get("full_suite") is True
+                and (
+                    candidate_root != worktree
+                    or not isinstance(target, dict)
+                    or target.get("algorithm") != "git-object-v1"
+                )
+            ):
+                raise ValueError(
+                    "Full-suite proof requires the exact Git worktree identity"
+                )
+            identity_tuple = proof_identity_tuple(
+                value,
+                candidate_root=candidate_root,
+            )
+            if (
+                isinstance(selected_profile, dict)
+                and selected_profile.get("full_suite") is True
+                and not _full_suite_worktree_matches(
+                    candidate_root,
+                    str(identity_tuple["target"]["digest"]),  # type: ignore[index]
+                )
+            ):
+                raise ValueError(
+                    "Full-suite target does not match the live worktree bytes"
+                )
+            stale_dependencies = {
+                str(item["name"]).removeprefix("receipt:")
+                for item in identity_tuple["inputs"]  # type: ignore[union-attr]
+                if isinstance(item, dict)
+                and isinstance(item.get("name"), str)
+                and str(item["name"]).startswith("receipt:")
+                and str(item["name"]).removeprefix("receipt:") in stale
+            }
+            if stale_dependencies:
+                raise ValueError(
+                    "Proof depends on stale receipt(s): "
+                    + ", ".join(sorted(stale_dependencies))
+                )
+        except (OSError, json.JSONDecodeError, ValueError) as error:
+            cheap_failures.append(
+                {"registration": registration_id, "message": str(error)}
+            )
+            continue
+        planned.append((value, candidate_root, identity_tuple))
+    if profile_failures:
+        return _proof_failure(
+            manifest_path,
+            "proof-profile",
+            "Proof registrations cannot inject commands, environment, or network",
+            profile_failures,
+        )
+    if cheap_failures:
+        return _proof_failure(
+            manifest_path,
+            (
+                "proof-applicability"
+                if any("pointer" in failure["message"] for failure in cheap_failures)
+                else "proof-identity"
+            ),
+            "One or more cheap proof registration checks failed",
+            cheap_failures,
+        )
+    if force_proof is not None and force_proof not in required_ids:
+        return _proof_failure(
+            manifest_path,
+            "force-proof",
+            "Forced proof names no required registration",
+        )
+    if force_proof is not None and not force_reason:
+        return _proof_failure(
+            manifest_path,
+            "force-proof",
+            "Forced proof requires an owner-supplied reason",
+        )
+    if force_reason and force_proof is None:
+        return _proof_failure(
+            manifest_path,
+            "force-proof",
+            "Forced proof reason requires an exact registration",
+        )
+    if blocked:
+        result = _failure(
+            "stale",
+            "proof-applicability",
+            manifest_path,
+            "Owner-declared proof remains blocked",
+        )
+        result["blocked"] = blocked
+        result["decision_pointers"] = [
+            value["decision_pointer"]
+            for value in registrations
+            if isinstance(value, dict) and value.get("id") in blocked
+        ]
+        return result
+    if no_execute:
+        result = _failure(
+            "stale",
+            "proof-plan",
+            manifest_path,
+            "Proof plan requires execution",
+        )
+        result["plan"] = [
+            {
+                "registration": value["id"],
+                "profile": value["profile"],
+                "tier": PROOF_PROFILES[str(value["profile"])]["tier"],
+            }
+            for value, _, _ in planned
+        ]
+        return result
+
+    proof_result: dict[str, object] = {
+        "reused_receipts": [],
+        "reused_cache": [],
+        "cache_rejections": [],
+        "executed": [],
+        "deduplicated": [],
+        "not_applicable": not_applicable,
+        "stale_receipts": sorted(stale),
+    }
+    appended: list[dict[str, object]] = []
+    completed_keys: set[str] = set()
+    superseded_receipts = _superseded_receipts(typed_receipts)
+    completed_full_suites = {
+        _full_suite_key(
+            {
+                "proof_profile": receipt["proof_profile"],
+                "target": receipt["target"],
+                "environment": receipt["environment"],
+            }
+        )
+        for receipt in typed_receipts
+        if receipt.get("schema_version") == PROOF_RECEIPT_SCHEMA_VERSION
+        and receipt.get("proof_profile") == "full-suite-v1"
+        and receipt.get("id") not in stale
+        and receipt.get("id") not in superseded_receipts
+        and isinstance(receipt.get("exit_state"), dict)
+        and receipt["exit_state"].get("code") == 0
+    }
+    for tier in PROOF_TIERS:
+        tier_failures: list[dict[str, str]] = []
+        for registration, candidate_root, identity_tuple in planned:
+            profile = PROOF_PROFILES[str(registration["profile"])]
+            if profile["tier"] != tier:
+                continue
+            registration_id = str(registration["id"])
+            key = _identity_key(identity_tuple)
+            full_suite_key = (
+                _full_suite_key(identity_tuple)
+                if profile.get("full_suite") is True
+                else None
+            )
+            exact = _exact_receipt(
+                typed_receipts + appended,
+                identity_tuple,
+                stale,
+            )
+            latest = _latest_matching_receipt(
+                typed_receipts + appended,
+                identity_tuple,
+            )
+            forced = force_proof == registration_id
+            if exact is not None and not forced:
+                collection = (
+                    "deduplicated" if key in completed_keys else "reused_receipts"
+                )
+                proof_result[collection].append(str(exact["id"]))  # type: ignore[union-attr]
+                if collection == "deduplicated":
+                    proof_result[collection][-1] = registration_id  # type: ignore[index]
+                completed_keys.add(key)
+                continue
+            if (
+                full_suite_key is not None
+                and full_suite_key in completed_full_suites
+                and not forced
+            ):
+                proof_result["deduplicated"].append(registration_id)  # type: ignore[union-attr]
+                continue
+            if not forced:
+                try:
+                    cached = _cache_receipt(
+                        registration,
+                        identity_tuple,
+                        worktree=worktree,
+                    )
+                except (
+                    FileNotFoundError,
+                    OSError,
+                    json.JSONDecodeError,
+                    ValueError,
+                ):
+                    proof_result["cache_rejections"].append(registration_id)  # type: ignore[union-attr]
+                    cached = None
+                if (
+                    cached is not None
+                    and _stale_receipts_from_invalidations(
+                        typed_receipts + appended + [cached],
+                        invalidations,
+                    )
+                    .intersection({str(cached["id"])})
+                ):
+                    proof_result["cache_rejections"].append(registration_id)  # type: ignore[union-attr]
+                    cached = None
+                if cached is not None:
+                    if latest is not None:
+                        cached["supersedes"] = str(latest["id"])
+                        _seal_receipt(cached)
+                    appended.append(cached)
+                    proof_result["reused_cache"].append(registration_id)  # type: ignore[union-attr]
+                    completed_keys.add(key)
+                    if full_suite_key is not None:
+                        completed_full_suites.add(full_suite_key)
+                    continue
+            supersedes = str(latest["id"]) if latest is not None else None
+            try:
+                receipt = _run_profile(
+                    registration,
+                    identity_tuple,
+                    candidate_root=candidate_root,
+                    supersedes=supersedes,
+                    forced_reason=force_reason if forced else None,
+                )
+            except OSError as error:
+                result = _failure(
+                    "execution-error",
+                    "proof-execution",
+                    manifest_path,
+                    f"Allowlisted proof profile could not start: {error}",
+                    expensive_work_skipped=tier != "expensive",
+                )
+                result["proof"] = proof_result
+                return result
+            appended.append(receipt)
+            if receipt["exit_state"]["code"] != 0:  # type: ignore[index]
+                tier_failures.append(
+                    {
+                        "registration": registration_id,
+                        "message": "allowlisted proof profile failed",
+                    }
+                )
+            else:
+                proof_result["executed"].append(registration_id)  # type: ignore[union-attr]
+                completed_keys.add(key)
+                if full_suite_key is not None:
+                    completed_full_suites.add(full_suite_key)
+        if tier_failures:
+            update_mechanical_state(
+                manifest_path,
+                {"receipts": typed_receipts + appended},
+            )
+            return _proof_failure(
+                manifest_path,
+                "proof-execution",
+                f"{tier} proof tier failed; later tiers were skipped",
+                tier_failures,
+                expensive_work_skipped=tier != "expensive",
+            )
+
+    if appended or mechanical.get("evidence_state") == "stale":
+        update_mechanical_state(
+            manifest_path,
+            {
+                "receipts": typed_receipts + appended,
+                "evidence_state": "current",
+            },
+        )
+    return {"status": "verified", "proof": proof_result}
+
+
 def verify_campaign(
     manifest_path: Path,
     *,
     worktree: Path | None = None,
     stage_override: str | None = None,
+    force_proof: str | None = None,
+    force_reason: str | None = None,
+    no_execute: bool = False,
 ) -> dict[str, object]:
     """Verify one supplied campaign manifest without selecting or advancing it."""
 
@@ -775,6 +2110,21 @@ def verify_campaign(
             manifest_path,
             "Advanced stage override does not match the owner-declared stage",
         )
+    proof_verification: dict[str, object] | None = None
+    if mechanical.get("proof_registrations"):
+        proof_verification = _verify_registered_proof(
+            supplied_manifest,
+            manifest,
+            worktree=resolved_worktree,
+            force_proof=force_proof,
+            force_reason=force_reason,
+            no_execute=no_execute,
+        )
+        if proof_verification["status"] != "verified":
+            return proof_verification
+        manifest = _read_json(supplied_manifest)
+        mechanical = manifest["mechanical"]
+        assert isinstance(mechanical, dict)
     if mechanical.get("evidence_state") == "stale":
         return _failure(
             "stale",
@@ -805,12 +2155,15 @@ def verify_campaign(
             manifest_path,
             "Verification altered owner-written semantic state",
         )
-    return {
+    result = {
         "status": "verified",
         "campaign_id": campaign_id,
         "stage": declared_stage,
         "manifest": str(supplied_manifest),
     }
+    if proof_verification is not None:
+        result["proof"] = proof_verification["proof"]
+    return result
 
 
 def _nonempty(value: object) -> bool:
@@ -831,6 +2184,7 @@ def _canonical_json_sha256(payload: object) -> str:
         payload,
         sort_keys=True,
         separators=(",", ":"),
+        allow_nan=False,
     ).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
 
@@ -1345,6 +2699,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     verify.add_argument("manifest", type=Path)
     verify.add_argument("--worktree", type=Path, default=Path.cwd())
     verify.add_argument("--stage", dest="stage_override")
+    verify.add_argument("--force-proof")
+    verify.add_argument("--force-reason")
+    verify.add_argument("--no-execute", action="store_true")
     verify.add_argument("--json", action="store_true")
 
     status = commands.add_parser("status")
@@ -1440,6 +2797,9 @@ def main(argv: list[str] | None = None) -> int:
                     args.manifest,
                     worktree=args.worktree,
                     stage_override=args.stage_override,
+                    force_proof=args.force_proof,
+                    force_reason=args.force_reason,
+                    no_execute=args.no_execute,
                 )
             elif args.command == "status":
                 result = campaign_status(
