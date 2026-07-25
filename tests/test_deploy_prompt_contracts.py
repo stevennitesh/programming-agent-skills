@@ -389,14 +389,11 @@ def test_campaign_runs_mandatory_research_and_every_runtime_stage() -> None:
         "read-only managed-install dry-run",
         "same-worktree Deploy Campaign lease",
         "use a separate worktree or return `blocked`",
-        "`python -m scripts.install_skills --help`",
-        "`python -m scripts.install_skills --dry-run --skip-global-agents`",
         "one fixed child-brief envelope",
         "canonical method path, exact unit heading, bounded content fingerprint",
         "Do not copy the unit body into the brief",
         "manifest identity keys",
         "exact allowed source paths and forbidden source categories",
-        "`python -m scripts.validate_skills`",
         "ambient validation failures",
         "ambient changed cohort",
         "newly appeared unrelated drift is a fresh scope gap",
@@ -414,6 +411,79 @@ def test_campaign_runs_mandatory_research_and_every_runtime_stage() -> None:
     assert "Research Pass" in agents
     assert "**Deploy Campaign**" in context
     assert "**Deploy runtime identities**" in context
+
+
+def test_campaign_ordinary_path_uses_the_narrow_control_interface() -> None:
+    deploy = _normalized(DEPLOY_PROMPTS)
+    campaign = _section(
+        deploy,
+        "## Deploy Campaign: Orchestrate One Skill",
+        "## Deploy Prompt 1: Freeze M0",
+    )
+
+    start = "`python -m scripts.campaign_artifacts start SKILL [DELIVERY_MODE]`"
+    verify = "`python -m scripts.campaign_artifacts verify MANIFEST`"
+    assert campaign.count(start) == 1
+    assert campaign.count(verify) == 1
+    assert "Invoke `verify MANIFEST` once at each applicable boundary" in campaign
+
+    for advanced in (
+        "`status`",
+        "`release`",
+        "`--force-proof`",
+        "`--stage`",
+        "`--no-execute`",
+        "low-level lint and comparison commands",
+        "advanced or recovery",
+    ):
+        assert advanced in campaign
+
+    for duplicated_command in (
+        "scripts.install_skills",
+        "scripts.validate_skills",
+        "campaign_artifacts hash-tree",
+        "campaign_artifacts lint-fixture",
+        "campaign_artifacts lint-registration",
+        "campaign_artifacts lint-payload",
+        "campaign_artifacts compare-payloads",
+    ):
+        assert duplicated_command not in campaign
+
+
+def test_campaign_adoption_preserves_semantic_authority_and_proves_ceremony() -> None:
+    deploy = _normalized(DEPLOY_PROMPTS)
+    campaign = _section(
+        deploy,
+        "## Deploy Campaign: Orchestrate One Skill",
+        "## Deploy Prompt 1: Freeze M0",
+    )
+
+    for term in (
+        "never invents missing semantic state",
+        "Existing manual campaigns remain operable",
+        "changed intent requires Restart",
+        "failed verification",
+        "re-entry command",
+        "Prompt 5 still owns promotion and installation",
+        "Prompt 6 still owns Git delivery",
+        "Representative ceremony comparison",
+        "manual commands",
+        "copied identities",
+        "proof executions",
+        "no authored per-stage artifact",
+        "runtime-no-change",
+        "minimum-only",
+        "hypothesis",
+        "pruning-no-op",
+        "material-pruning",
+        "terminal success",
+        "terminal failure",
+        "no behavioral arms",
+        "exact reusable evidence",
+        "fresh behavioral sampling",
+        "concurrent unrelated work",
+    ):
+        assert term in campaign
 
 
 def test_campaign_records_one_authoritative_unit_decision_without_duplication() -> None:

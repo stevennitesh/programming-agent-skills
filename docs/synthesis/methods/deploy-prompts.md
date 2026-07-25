@@ -366,20 +366,39 @@ Parse optional delivery wording once:
 - `and commit`: also authorize Prompt 6 to commit without push; or
 - `and push`: also authorize Prompt 6 to commit and push.
 
-Before Prompt 1, atomically acquire one same-worktree Deploy Campaign lease.
-If another live campaign owns it, use a separate worktree or return `blocked`
-before expensive work; never overwrite an unverified lease. Release it only
-at terminal Return.
+The ordinary campaign-control interface is exactly:
 
-Read `python -m scripts.install_skills --help`, require the current CLI to
-admit `python -m scripts.install_skills --dry-run --skip-global-agents` and
-`python -m scripts.install_skills --skip-global-agents`, then use those exact
-commands. Run `python -m scripts.validate_skills` and the read-only dry-run.
-Treat that command as the read-only managed-install dry-run.
-Record ambient validation failures and the ambient changed cohort. If the
-cohort includes a non-target skill, ask once for the exact Prompt 5 install
-cohort before dispatching expensive units; never infer that authority. Prompt
-5 rechecks the cohort, and newly appeared unrelated drift is a fresh scope gap.
+1. Run
+   `python -m scripts.campaign_artifacts start SKILL [DELIVERY_MODE]` once
+   before Prompt 1. Retain the returned exact `MANIFEST` pointer and owner
+   token; do not copy campaign, artifact, or proof identities into coordinator
+   state.
+2. After the unit owner records its semantic decision and owned manifest
+   fields, run
+   `python -m scripts.campaign_artifacts verify MANIFEST`. Invoke
+   `verify MANIFEST` once at each applicable boundary. Use its mechanical
+   status, receipts, invalidations, and re-entry command as evidence; never
+   treat them as a semantic decision or stage advancement.
+
+`start` atomically acquires the same-worktree Deploy Campaign lease and runs
+the campaign preflights. If another live campaign owns the lease, use a
+separate worktree or return `blocked` before expensive work; never overwrite an
+unverified lease. Verification selects the declared stage profile, including
+the read-only managed-install dry-run and authorized changed-cohort checks at
+Prompt 5. Record ambient validation failures and the ambient changed cohort.
+If the cohort includes a non-target skill, ask once for the exact Prompt 5
+install cohort before dispatching expensive units; never infer that authority.
+Prompt 5 rechecks the cohort, and newly appeared unrelated drift is a fresh
+scope gap.
+
+Keep `status`, `release`, `--force-proof`, `--stage`, `--no-execute`, and the
+low-level lint and comparison commands as advanced or recovery capabilities.
+They are not ordinary-stage procedure. Use `status` to inspect detached or
+failed state, `release` only under the lease contract, `--force-proof` only
+with an explicit fresh-proof reason, `--stage` only to diagnose or recover a
+declared-stage mismatch, and `--no-execute` only to inspect the verification
+plan. Low-level commands remain available for legacy manual campaigns and
+targeted debugging.
 
 The root owns transitions, user interaction, verification, and the terminal
 decision. Track only skill, delivery mode, starting HEAD/worktree, campaign
@@ -412,14 +431,59 @@ Source and check grandchildren are filesystem-read-only; evaluation
 grandchildren may write only assigned isolated or disposable outputs. None
 edits shared sources, decides adoption, interacts with the user, or spawns.
 
-After every unit, verify its allowed status, Return, current HEAD/worktree,
-changed artifacts, hashes, and proof by read-back. A summary alone is not
-evidence. Reject unauthorized scope, malformed packets, or unexplained drift.
+After every unit, first inspect its allowed semantic status and Return, then
+invoke the one ordinary verification call. The verifier checks current
+HEAD/worktree, declared artifacts and identities, registered deterministic
+proof, Markdown integrity, changed cohort, parity, and applicable Git scope by
+read-back. A summary alone is not evidence. Reject unauthorized scope,
+malformed packets, unexplained drift, or failed verification. Follow only the
+returned re-entry command for mechanical recovery; the owning prompt still
+chooses whether semantic re-entry is valid.
 
 Prior campaign artifacts never satisfy the current epoch's unit completion.
-Reuse exact prior proof only when the complete identity tuple matches. Recheck
-identity and judgment; rerun only missing, drifted, contaminated, newly
-claimed, or explicitly fresh evidence.
+The verifier may reuse exact reusable evidence only when the complete identity
+tuple matches. Fresh behavioral sampling remains explicitly fresh and cannot
+be satisfied by a deterministic receipt. The unit owner still rechecks
+judgment and requests new evidence when proof is missing, drifted,
+contaminated, newly claimed, or explicitly fresh.
+
+The interface never invents missing semantic state. Existing manual campaigns
+remain operable through the retained low-level commands and semantic records;
+adoption adds no migration rewrite. A rollback restores the prior prompt
+references without invalidating those records or their exact receipts. Resume
+continues unchanged intent, Repair invalidates mechanically dependent proof,
+and changed intent requires Restart. Any concurrent unrelated work remains
+excluded and is reported as ambient drift rather than absorbed into campaign
+authority.
+
+Supported campaign shapes keep their semantic owners and truthful outcomes:
+
+- runtime-no-change, minimum-only, and hypothesis paths are selected by the
+  recorded Prompt 2 decision, never by the verifier;
+- no behavioral arms, exact reusable evidence, and fresh behavioral sampling
+  are distinguished by owner-authored registrations and freshness policy;
+- pruning-no-op and material-pruning remain Pruning Pass decisions, including
+  regression and unresolved outcomes;
+- terminal success requires the owning unit's accepted decision plus verified
+  mechanical state; terminal failure, stale state, lease conflict, and
+  execution error stop with their exact status and recovery evidence; and
+- Prompt 5 still owns promotion and installation. Prompt 6 still owns Git
+  delivery. Verification may prove their declared mechanical boundaries but
+  cannot perform or authorize either mutation.
+
+Representative ceremony comparison:
+
+The ordinary path reduces manual commands, copied identities, and proof
+executions without changing the campaign's authored records.
+
+| Path | Manual commands | Copied identities | Proof executions | New authored artifact |
+| --- | ---: | ---: | ---: | --- |
+| Before adoption | Per-check hashing, payload, cache, Markdown, cohort, parity, and Git-scope commands at applicable stages | Repeated across coordinator briefs and checks | Repeated unless the coordinator reconstructed cache validity | None |
+| Ordinary interface | One `start` plus one `verify MANIFEST` at each applicable boundary | Zero; the exact manifest pointer resolves them | Missing, stale, or explicitly fresh proof only | None |
+
+This reduction requires no authored per-stage artifact: existing unit capsules,
+the consolidated decisions record, and the campaign manifest keep their
+current ownership.
 
 Advance only through these transitions:
 
