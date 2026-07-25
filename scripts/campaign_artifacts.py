@@ -17,6 +17,7 @@ TREE_ALGORITHM = (
     "campaign-tree-v1: SHA-256 of UTF-8 lines sorted by ordinal UTF-8 "
     "POSIX path; path<TAB>byte_count<TAB>file_sha256<LF>"
 )
+CURRENT_FIXTURE_SCHEMA_VERSION = 2
 REQUIRED_CASE_FIELDS = (
     "task",
     "authority",
@@ -25,6 +26,14 @@ REQUIRED_CASE_FIELDS = (
     "mutation_boundary",
     "requested_output",
 )
+DECISION_STATE_VALUES = {
+    "target_resolution": frozenset({"resolved", "unresolved", "not-applicable"}),
+    "evidence_availability": frozenset(
+        {"inspectable", "unavailable", "not-applicable"}
+    ),
+    "mutation_permission": frozenset({"allowed", "forbidden", "not-applicable"}),
+}
+CASE_CONTEXT_FIELDS = REQUIRED_CASE_FIELDS + ("decision_state",)
 SOURCE_FIELDS = ("facts", "source_facts")
 ISOLATION_FALSE_FIELDS = (
     "candidate_terms_present",
@@ -62,6 +71,36 @@ def _read_json(path: Path) -> Any:
         return json.load(source)
 
 
+def _canonical_json_sha256(payload: object) -> str:
+    encoded = json.dumps(
+        payload,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def _validate_decision_state(value: object, label: str) -> None:
+    if not isinstance(value, dict):
+        raise ValueError(f"{label} decision_state must be an object")
+    missing = sorted(set(DECISION_STATE_VALUES).difference(value))
+    unexpected = sorted(set(value).difference(DECISION_STATE_VALUES))
+    invalid = sorted(
+        field
+        for field, allowed in DECISION_STATE_VALUES.items()
+        if field in value and value[field] not in allowed
+    )
+    failures: list[str] = []
+    if missing:
+        failures.append("missing " + ", ".join(missing))
+    if unexpected:
+        failures.append("unexpected " + ", ".join(unexpected))
+    if invalid:
+        failures.append("invalid " + ", ".join(invalid))
+    if failures:
+        raise ValueError(f"{label} decision_state is invalid: {'; '.join(failures)}")
+
+
 def campaign_tree_hash(directory: Path) -> dict[str, object]:
     entries = tree_entries(directory)
     files = [
@@ -89,7 +128,7 @@ def _case_nodes(
     context = dict(inherited or {})
     cases: list[tuple[str, dict[str, object]]] = []
     if isinstance(value, dict):
-        for field in REQUIRED_CASE_FIELDS:
+        for field in CASE_CONTEXT_FIELDS:
             if field in value:
                 context[field] = value[field]
         if "id" in value and any(field in value for field in SOURCE_FIELDS):
@@ -108,6 +147,13 @@ def lint_worker_fixture(path: Path) -> dict[str, object]:
     payload = _read_json(path)
     if not isinstance(payload, dict):
         raise ValueError("Worker fixture must be a JSON object")
+    schema_version = payload.get("schema_version", 1)
+    if schema_version not in (1, CURRENT_FIXTURE_SCHEMA_VERSION):
+        raise ValueError(
+            "Worker fixture schema_version must be 1 or "
+            f"{CURRENT_FIXTURE_SCHEMA_VERSION}"
+        )
+    requires_decision_state = schema_version >= CURRENT_FIXTURE_SCHEMA_VERSION
 
     isolation = payload.get("isolation")
     if not isinstance(isolation, dict):
@@ -153,14 +199,23 @@ def lint_worker_fixture(path: Path) -> dict[str, object]:
         missing = [
             field for field in REQUIRED_CASE_FIELDS if not _nonempty(case.get(field))
         ]
+        if requires_decision_state and not _nonempty(case.get("decision_state")):
+            missing.append("decision_state")
         if not any(_nonempty(case.get(field)) for field in SOURCE_FIELDS):
             missing.append("facts|source_facts")
         if missing:
             failures.append(f"{case_id}: {', '.join(missing)}")
     if failures:
         raise ValueError("Worker fixture cases are incomplete: " + "; ".join(failures))
+    for case_id, case in cases:
+        if "decision_state" in case:
+            _validate_decision_state(case["decision_state"], f"Case {case_id}")
 
-    return {"status": "ok", "case_count": len(cases)}
+    return {
+        "status": "ok",
+        "schema_version": schema_version,
+        "case_count": len(cases),
+    }
 
 
 def _fixture_case(path: Path, case_id: str) -> dict[str, object]:
@@ -216,16 +271,28 @@ def _forbidden_dispatch_keys(value: object) -> set[str]:
     return found
 
 
-def _lint_dispatch_payload(payload: object, label: str) -> None:
+def _lint_dispatch_payload(
+    payload: object,
+    label: str,
+    *,
+    require_decision_state: bool,
+) -> None:
     if not isinstance(payload, dict):
         raise ValueError(f"{label} dispatch payload must be a JSON object")
     missing = [
         field for field in REQUIRED_CASE_FIELDS if not _nonempty(payload.get(field))
     ]
+    if require_decision_state and not _nonempty(payload.get("decision_state")):
+        missing.append("decision_state")
     if not any(_nonempty(payload.get(field)) for field in SOURCE_FIELDS):
         missing.append("facts|source_facts")
     if missing:
         raise ValueError(f"{label} dispatch payload is incomplete: {', '.join(missing)}")
+    if "decision_state" in payload:
+        _validate_decision_state(
+            payload["decision_state"],
+            f"{label} dispatch payload",
+        )
     forbidden = _forbidden_dispatch_keys(payload)
     if forbidden:
         raise ValueError(
@@ -240,6 +307,8 @@ def _verify_fixture_fidelity(
     label: str,
 ) -> None:
     fields = list(REQUIRED_CASE_FIELDS)
+    if "decision_state" in fixture_case:
+        fields.append("decision_state")
     fields.extend(field for field in SOURCE_FIELDS if field in fixture_case)
     mismatched = [
         field
@@ -253,6 +322,36 @@ def _verify_fixture_fidelity(
         )
 
 
+def lint_dispatch_payload(
+    fixture_path: Path,
+    case_id: str,
+    payload_path: Path,
+    runtime_pointer: str = "/runtime",
+) -> dict[str, object]:
+    fixture_result = lint_worker_fixture(fixture_path)
+    fixture_case = _fixture_case(fixture_path, case_id)
+    payload = _read_json(payload_path)
+    _lint_dispatch_payload(
+        payload,
+        "Resolved",
+        require_decision_state=(
+            fixture_result["schema_version"] >= CURRENT_FIXTURE_SCHEMA_VERSION
+        ),
+    )
+    _verify_fixture_fidelity(payload, fixture_case, "Resolved")
+
+    runtime_check = copy.deepcopy(payload)
+    runtime = _remove_json_pointer(runtime_check, runtime_pointer)
+    if not _nonempty(runtime):
+        raise ValueError("Resolved dispatch payload must name a nonempty runtime")
+    return {
+        "status": "ok",
+        "case_id": case_id,
+        "runtime_pointer": runtime_pointer,
+        "dispatch_payload_sha256": _canonical_json_sha256(payload),
+    }
+
+
 def compare_payloads(
     fixture_path: Path,
     case_id: str,
@@ -260,12 +359,23 @@ def compare_payloads(
     candidate_path: Path,
     runtime_pointer: str = "/runtime",
 ) -> dict[str, object]:
-    lint_worker_fixture(fixture_path)
+    fixture_result = lint_worker_fixture(fixture_path)
     fixture_case = _fixture_case(fixture_path, case_id)
     control = _read_json(control_path)
     candidate = _read_json(candidate_path)
-    _lint_dispatch_payload(control, "Control")
-    _lint_dispatch_payload(candidate, "Candidate")
+    require_decision_state = (
+        fixture_result["schema_version"] >= CURRENT_FIXTURE_SCHEMA_VERSION
+    )
+    _lint_dispatch_payload(
+        control,
+        "Control",
+        require_decision_state=require_decision_state,
+    )
+    _lint_dispatch_payload(
+        candidate,
+        "Candidate",
+        require_decision_state=require_decision_state,
+    )
     _verify_fixture_fidelity(control, fixture_case, "Control")
     _verify_fixture_fidelity(candidate, fixture_case, "Candidate")
 
@@ -282,15 +392,10 @@ def compare_payloads(
             "Control and candidate dispatch payloads differ outside the runtime slot"
         )
 
-    encoded = json.dumps(
-        normalized_control,
-        sort_keys=True,
-        separators=(",", ":"),
-    ).encode("utf-8")
     return {
         "status": "ok",
         "runtime_pointer": runtime_pointer,
-        "shared_payload_sha256": hashlib.sha256(encoded).hexdigest(),
+        "shared_payload_sha256": _canonical_json_sha256(normalized_control),
     }
 
 
@@ -305,6 +410,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
     lint_fixture = commands.add_parser("lint-fixture")
     lint_fixture.add_argument("path", type=Path)
+
+    lint_payload = commands.add_parser("lint-payload")
+    lint_payload.add_argument("fixture", type=Path)
+    lint_payload.add_argument("case_id")
+    lint_payload.add_argument("payload", type=Path)
+    lint_payload.add_argument("--runtime-pointer", default="/runtime")
 
     compare = commands.add_parser("compare-payloads")
     compare.add_argument("fixture", type=Path)
@@ -322,6 +433,13 @@ def main(argv: list[str] | None = None) -> int:
             result = campaign_tree_hash(args.path)
         elif args.command == "lint-fixture":
             result = lint_worker_fixture(args.path)
+        elif args.command == "lint-payload":
+            result = lint_dispatch_payload(
+                args.fixture,
+                args.case_id,
+                args.payload,
+                args.runtime_pointer,
+            )
         else:
             result = compare_payloads(
                 args.fixture,

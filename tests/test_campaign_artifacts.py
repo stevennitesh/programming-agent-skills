@@ -20,6 +20,11 @@ def valid_case() -> dict[str, object]:
         "facts": {"F1": "The registered condition holds."},
         "authority": "Read-only judgment.",
         "initial_state": "Frozen fixture.",
+        "decision_state": {
+            "target_resolution": "resolved",
+            "evidence_availability": "inspectable",
+            "mutation_permission": "forbidden",
+        },
         "tools_operations": ["read fixture"],
         "mutation_boundary": "none",
         "requested_output": "Decision and evidence.",
@@ -28,7 +33,7 @@ def valid_case() -> dict[str, object]:
 
 def valid_fixture() -> dict[str, object]:
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "isolation": {
             "candidate_terms_present": False,
             "prior_outputs_present": False,
@@ -99,6 +104,11 @@ def test_fixture_lint_allows_cluster_fields_to_supply_variant_context(
             "task": "Judge the selected variant.",
             "authority": "Read-only judgment.",
             "initial_state": "Frozen fixture.",
+            "decision_state": {
+                "target_resolution": "resolved",
+                "evidence_availability": "inspectable",
+                "mutation_permission": "forbidden",
+            },
             "tools_operations": ["read fixture"],
             "mutation_boundary": "none",
             "requested_output": "Decision and evidence.",
@@ -113,6 +123,76 @@ def test_fixture_lint_allows_cluster_fields_to_supply_variant_context(
     write_json(fixture, payload)
 
     assert campaign_artifacts.lint_worker_fixture(fixture)["case_count"] == 1
+
+
+def test_fixture_lint_requires_valid_decision_state(tmp_path: Path) -> None:
+    fixture = tmp_path / "worker.json"
+    payload = valid_fixture()
+    del payload["cases"][0]["decision_state"]  # type: ignore[index]
+    write_json(fixture, payload)
+
+    with pytest.raises(ValueError, match="Q01: decision_state"):
+        campaign_artifacts.lint_worker_fixture(fixture)
+
+    payload = valid_fixture()
+    payload["cases"][0]["decision_state"]["target_resolution"] = "guess"  # type: ignore[index]
+    write_json(fixture, payload)
+
+    with pytest.raises(ValueError, match="target_resolution"):
+        campaign_artifacts.lint_worker_fixture(fixture)
+
+
+def test_fixture_schema_one_remains_replayable_without_decision_state(
+    tmp_path: Path,
+) -> None:
+    fixture = tmp_path / "worker.json"
+    payload = valid_fixture()
+    payload["schema_version"] = 1
+    del payload["cases"][0]["decision_state"]  # type: ignore[index]
+    write_json(fixture, payload)
+
+    assert campaign_artifacts.lint_worker_fixture(fixture)["schema_version"] == 1
+
+
+def test_single_payload_lint_freezes_resolved_dispatch_identity(
+    tmp_path: Path,
+) -> None:
+    fixture = tmp_path / "worker.json"
+    dispatch = tmp_path / "dispatch.json"
+    payload = valid_payload("runtime/m0")
+    write_json(fixture, valid_fixture())
+    write_json(dispatch, payload)
+
+    result = campaign_artifacts.lint_dispatch_payload(
+        fixture,
+        "Q01",
+        dispatch,
+    )
+
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+    assert result == {
+        "status": "ok",
+        "case_id": "Q01",
+        "runtime_pointer": "/runtime",
+        "dispatch_payload_sha256": hashlib.sha256(encoded).hexdigest(),
+    }
+
+
+def test_lint_payload_cli_uses_the_single_arm_gate(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    fixture = tmp_path / "worker.json"
+    dispatch = tmp_path / "dispatch.json"
+    write_json(fixture, valid_fixture())
+    write_json(dispatch, valid_payload("runtime/m0"))
+
+    result = campaign_artifacts.main(
+        ["lint-payload", str(fixture), "Q01", str(dispatch)]
+    )
+
+    assert result == 0
+    assert json.loads(capsys.readouterr().out)["case_id"] == "Q01"
 
 
 def test_payload_comparison_allows_only_the_runtime_slot(tmp_path: Path) -> None:

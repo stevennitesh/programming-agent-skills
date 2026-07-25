@@ -170,9 +170,10 @@ Git delivery: not-applicable | pending | committed | pushed
 Exact stop reason:
 ```
 
-Use `none` when no successor is justified. A recommendation never authorizes a
-leaf owner to start its successor. `Git delivery: pending` records uncommitted
-authorized artifacts.
+This packet is the user-facing Return. Keep it in the conversation; do not copy
+it verbatim into a durable transcript. Use `none` when no successor is
+justified. A recommendation never authorizes a leaf owner to start its
+successor. `Git delivery: pending` records uncommitted authorized artifacts.
 
 Persist one authoritative decision record per unit. One schema-validated,
 machine-readable campaign manifest owns shared semantic and identity state
@@ -181,10 +182,13 @@ Link these owners instead of repeating hashes, sample tables, or chronology
 across results, transcripts, and synthesis.
 
 Synthesis owns only the active decision and final dispositions, reconciled in
-place. Research notes own source provenance, transcripts own unit chronology,
-the campaign manifest owns shared identities and semantic state, results
-manifests own per-sample judgments, and raw captures own outputs. Do not append
-dated unit logs to synthesis.
+place. Research notes own source provenance, the stage capsule owns the ordinary
+unit decision and delta, the campaign manifest owns shared identities and
+semantic state, results manifests own per-sample judgments, and raw captures
+own outputs. Transcripts own only exceptional chronology needed to explain a
+deviation, invalidation, repair, or disputed judgment. When none exists, the
+capsule is sufficient and the transcript may be omitted. Do not append dated
+unit logs to synthesis.
 
 Freeze each unit's authoritative decision as one immutable marker-bounded stage
 capsule. Historical verifiers may depend only on that capsule and exact frozen
@@ -730,6 +734,13 @@ those facts must uniquely determine the expected branch. If an adjacent rubric
 outcome remains valid from the supplied facts, the fixture is defective and
 blocks Prompt 4.
 
+Use worker-fixture schema version 2. Every case also carries a worker-visible
+`decision_state` with exactly:
+`target_resolution` (`resolved`, `unresolved`, or `not-applicable`);
+`evidence_availability` (`inspectable`, `unavailable`, or `not-applicable`);
+and `mutation_permission` (`allowed`, `forbidden`, or `not-applicable`). Do not
+expose the expected terminal class, operation, score, or conclusion.
+
 Create a root-only fixture-lint map before freezing: every criterion, decision
 input, and required output semantic references nonempty worker-visible fact IDs
 or observable operations. A decision-bearing pointer includes its required
@@ -739,10 +750,13 @@ payload equality after removing the runtime slot. A prose sufficiency claim
 does not pass this gate.
 
 Run `python -m scripts.campaign_artifacts lint-fixture WORKER_FIXTURE.json`.
-Materialize one resolved JSON dispatch envelope per arm and run
+Materialize one resolved JSON dispatch envelope per behavioral arm, including
+an M0-only or no-H1 arm. Before sampling each arm, run
+`python -m scripts.campaign_artifacts lint-payload WORKER_FIXTURE.json CASE_ID
+PAYLOAD.json` and freeze its returned dispatch hash. For comparisons, also run
 `python -m scripts.campaign_artifacts compare-payloads WORKER_FIXTURE.json
-CASE_ID M0_PAYLOAD.json H1_PAYLOAD.json` before sampling. Both executable
-checks must pass; a manual equivalence claim is insufficient.
+CASE_ID M0_PAYLOAD.json H1_PAYLOAD.json`. Every applicable executable check
+must pass; a manual identity or equivalence claim is insufficient.
 
 Match fixture-family coverage to claim scope. Spread the existing minimum
 five samples for a broad claim across at least two realistic families. A
@@ -762,12 +776,16 @@ distinct bytes once; when a frozen template plus recorded parameters
 reconstructs an exact dispatch, do not copy the full payload per sample.
 
 Before Prompt 4, run one candidate-aware focused compatibility preflight
-against the exact M0/H1 packages. Bind every assertion to the explicit
-candidate root and recorded tree identity. A test or verifier that still
-resolves the canonical package is canonical proof, not candidate proof. When
-an existing test hardcodes canonical, parameterize its semantic assertions or
-run an equivalent heading-bounded checker against each exact candidate path;
-record the checked root and hash in the result. Never provisionally promote a
+against the exact M0/H1 packages. First locate or factor one shared,
+parameterized semantic assertion owner that accepts an explicit package root
+and expected tree identity. Run it against unchanged current canonical bytes to
+prove the factorization preserved the incumbent contract, then against every
+exact candidate; Prompts 4 and 5 and the Pruning Pass reuse that same owner.
+Bind every assertion to the explicit candidate root and recorded tree identity.
+A test or verifier that still resolves the canonical package is canonical
+proof, not candidate proof. Use a separately implemented equivalent
+heading-bounded checker only when shared parameterization is infeasible, and
+record the reason and residual duplication. Never provisionally promote a
 candidate to obtain Prompt 3 proof.
 
 Classify each directly affected assertion as semantic prose or a
@@ -813,7 +831,8 @@ Before dispatch, build a minimum proof-coverage matrix across M0 units. Use
 deterministic structural or relationship checks for machine and ownership
 claims, and let one realistic behavioral scenario cover multiple units when it
 proves them. Run deterministic schema, identity, relationship, ordering, and
-exact-literal checks once outside behavioral sampling. Distribute
+exact-literal checks once outside behavioral sampling, reusing Prompt 3's
+shared parameterized semantic assertion owner. Distribute
 behavior-dependent coverage across the wave; do not place the complete
 viability suite in every sample merely to meet replication. Five samples
 replicate one causally coherent behavioral claim, not every M0 case. Score
@@ -849,6 +868,13 @@ the required minimum. An invalid sample receives zero credit; refreeze and
 rerun a source-completeness repair only when task and rubric stay fixed,
 otherwise return to Prompt 3. Do not batch the remaining samples before this
 gate passes.
+
+Before every behavioral dispatch, rerun `lint-payload` on the resolved
+envelope. Record its dispatch hash with the sampled output and require it to
+match the frozen arm identity. Any worker-visible clarification changes the
+fixture or payload identity: refreeze it, invalidate every affected sample, and
+restart that fixture family at its first-sample gate. Never record
+`facts_changed: false` when dispatched worker-visible bytes changed.
 
 Keep reconstructible per-sample payloads disposable. Persist the frozen
 runtime, fixture, template, parameters, and dispatch hash once instead of
@@ -941,11 +967,16 @@ Reuse the exact runtime-clause map for this audit. Record only plausible cut
 groups and their dispositions; do not restate every `keep` mapping when the
 runtime identity and clause map remain exact.
 
+Reuse Prompt 3's shared parameterized semantic assertion owner for every exact
+package checked here. Do not create a Pruning-specific equivalent verifier.
+
 For every proposed cut, name the affected semantic units, expected unchanged
 behavior, and reduced load. Word count is diagnostic, never the objective.
 
 If no material cut exists, set P1 = V1 byte-for-byte, create no new behavioral
-wave, record `pruning-not-needed`, and recommend Prompt 5.
+wave, record `pruning-not-needed` in the campaign manifest and one compact stage
+capsule, and recommend Prompt 5. Create no standalone verifier or transcript
+unless a deviation or disputed judgment requires exceptional chronology.
 
 For material cuts:
 
@@ -993,7 +1024,10 @@ skill and update only directly affected canonical proof, relationships, and
 synthesis. When P1 already equals canonical, perform no-op integration
 read-back. Reuse exact accepted behavior evidence; do not rerun merely because
 the lifecycle stage changed. Read back the complete canonical package and run
-proportionate proof. Writing Great Skills stops after canonical proof.
+Prompt 3's shared parameterized semantic assertion owner against canonical P1
+at its expected tree identity, then run proportionate proof. Do not replace it
+with a Prompt 5-specific semantic checker. Writing Great Skills stops after
+canonical proof.
 
 Classify any proof failure before routing it. When P1 preserves the tested
 semantic contract but a directly affected test snapshots human prose, repair
