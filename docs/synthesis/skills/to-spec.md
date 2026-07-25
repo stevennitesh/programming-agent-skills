@@ -7,7 +7,7 @@ This file owns the active synthesis decision. Source provenance remains in
 minimum remains in
 [`2026-07-24-to-spec-prompt1-m0.md`](../../validation/transcripts/2026-07-24-to-spec-prompt1-m0.md),
 and shared semantic identities remain in
-[`campaign-manifest.json`](../../validation/evals/to-spec-2026-07-24/campaign-manifest.json).
+[`campaign-decision.json`](../../validation/evals/to-spec-2026-07-24/campaign-decision.json).
 
 <!-- TO-SPEC-SYNTHESIS-DECISION:START -->
 
@@ -393,8 +393,8 @@ Prompt 4 is accepted, pruning is complete, and exact P1 is the canonical and
 installed runtime. Promotion changed no relationships or proof claims; the
 experimental target package and exact manifest entry were absent, so cleanup
 was a no-op. Git delivery remains pending under the bare campaign invocation.
-The proof owners are the Prompt 4 results and decision, pruning results and
-decision, campaign manifest, and Prompt 5 promotion transcript.
+The compact campaign decision owns Prompt 4, pruning, promotion, installation,
+and evidence dispositions.
 
 <!-- TO-SPEC-SYNTHESIS-DECISION:END -->
 
@@ -403,4 +403,4 @@ between the marker lines, including the newline immediately after the start
 marker and immediately before the end marker.
 
 Content fingerprint:
-`14d068151078eb8a8ae0b706a6dcc565dc5b6c3333bae91d7367a92a625acafd`
+`9a89ff13692b3b9325ff11081799ed86da6dc47ac2facbfa4de4a0f2008fdbba`

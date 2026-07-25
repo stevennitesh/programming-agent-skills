@@ -1,23 +1,16 @@
 # To Tickets Prompt 4 Isolation V2
 
-This directory is the clean continuation of Deploy Prompt 4. It replaces no
-historical capture. The original fixtures and raw outputs remain preserved one
-level above, but they receive zero decision credit because worker-visible
-output boundaries leaked evaluator conclusions.
+This directory is the clean continuation of Deploy Prompt 4. The original
+zero-credit protocol remains summarized one level above; its contaminated raw
+outputs were retired because worker-visible boundaries leaked evaluator
+conclusions.
 
-`generate_fixtures.py` separated each complete worker packet from root-only
-evaluator material. Worker packets contain the task, source, authority,
-simulated runtime, exact arm package, permitted tools and mutations, neutral
-output shape, and assigned capture path. Root evaluator fixtures contain the
-hypothesis, expected weakness, rubric, scoring rule, candidate terms, and
-conclusions. For every comparison pair, replacing only the exact delimited
-runtime-package slot makes the M0 and H1 packets byte-identical. The generator
-now refuses to overwrite these payloads after the package root was rederived
-to V1; `registry.json` and `payloads/**` are the immutable entering-arm
-evidence.
-
-`registry.json` freezes fixture, payload, and normalized-pair identities.
-The three comparison fixture pairs are:
+The campaign generator separated each complete worker packet from root-only
+evaluator material. For every comparison pair, replacing only the exact
+delimited runtime-package slot made the M0 and H1 packets byte-identical.
+Per-sample packets, captures, the registry, and generator are archived locally
+under ignored `.tmp/campaign-evidence/`; they are not durable authority. The
+three retained normalized-pair identities are:
 
 | Cluster | Worker fixture | Root evaluator fixture | Normalized pairs |
 | --- | --- | --- | ---: |
@@ -29,15 +22,6 @@ All credited samples used fresh contexts at exact `gpt-5.6-sol`, high
 reasoning, Codex desktop, fixture-scoped simulated tools, and no live provider.
 The root inspected every complete credited response and operation log.
 
-Capture layout:
-
-- `capture-slots/viability/`: credited clean M0 viability outputs;
-- `raw/current/cluster-01/`: credited H1-01 M0 controls;
-- `raw/current/cluster-02/m0/` and `h1/`: credited paired H1-02 arms;
-- `raw/current/cluster-03/m0/`: credited H1-03 M0 controls;
-- `raw/deviations/pre-viability/`: zero-credit samples dispatched before the
-  viability gate; and
-- `raw/deviations/viability-fixture-defect/`: zero-credit first V-02 attempt
-  against an under-specified source contract.
-
 The terminal judgments and V1 refreeze are in [`results.md`](results.md).
+Those aggregates are historical-admission-only; future behavioral credit
+requires a fresh run from newly validated fixtures.

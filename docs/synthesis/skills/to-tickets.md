@@ -109,13 +109,13 @@ All H1 passages were removed before V1 refreeze. V1 package identity is
 `c226ca3541cf336fa606799b5e9f7ca538609575e3d73576bacbfda728bff7e9`.
 The clean M0 viability suite passed `16/16` with zero critical failures.
 
-The first Prompt 4 protocol and all pre-viability or fixture-defect captures
-remain preserved with zero decision credit. Raw results, deviations, fixture
-identities, per-sample judgment, and telemetry belong to validation:
+The first Prompt 4 protocol failure and later zero-credit deviations remain
+recorded without retaining their invalid raw captures. Credited raw results,
+fixture identities, per-sample judgment, and telemetry belong to validation:
 
 - [Prompt 4 clean continuation](../../validation/transcripts/2026-07-23-to-tickets-prompt4-continuation.md)
 - [Credited isolation-v2 results](../../validation/evals/to-tickets-2026-07-23/isolation-v2/results.md)
-- [Original Prompt 4 stop](../../validation/transcripts/2026-07-23-to-tickets-prompt4.md)
+- [Original zero-credit stop](../../validation/evals/to-tickets-2026-07-23/results.md)
 
 ## Pruning And P1
 

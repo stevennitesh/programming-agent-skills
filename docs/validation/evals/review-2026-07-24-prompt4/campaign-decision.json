@@ -1,0 +1,54 @@
+{
+  "schema": "programming-agent-skills.compact-campaign-decision.v1",
+  "skill": "review",
+  "epoch": "2026-07-24-review-f3be70c",
+  "decision": "complete",
+  "fixed_git_head": "f3be70c31dd8f2ae9f12a75248065ef313790bda",
+  "sources": {
+    "research": "docs/research/review-deploy-2026-07-24.md",
+    "synthesis": "docs/synthesis/skills/review.md",
+    "reusable_fixtures": "docs/validation/evals/review-2026-07-24-prompt4/fixtures"
+  },
+  "identities": {
+    "incumbent": "4bc1ce43eaa00a9ad7a7482a639793b286fde27c14ba0c5e41e1f73364eb9786",
+    "m0": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+    "h1": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+    "v1": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+    "p1": "37a670dbe0748f5f89d7d8e0b61ff30b0241fffd81b1861da5f5838af6dd98c8",
+    "canonical_campaign_tree": "7a093e4c79710ef7c06a9c578a82a7992061fd8709a04be55eee6cbd08dce37b",
+    "installed_campaign_tree": "7a093e4c79710ef7c06a9c578a82a7992061fd8709a04be55eee6cbd08dce37b"
+  },
+  "behavior": {
+    "m0_viability": "160/160 accepted case outcomes; worst sample 32/32; zero critical failures",
+    "fixture_repair": "source-completeness-only; task, rubric, and runtime unchanged",
+    "h1": "no H1 units admitted",
+    "claim_boundary": "historical-admission-only after raw-output retirement; rerun for new behavioral credit"
+  },
+  "pruning": {
+    "decision": "pruning-not-needed",
+    "passages": 46,
+    "v1_equals_p1": true
+  },
+  "promotion": {
+    "canonical_installed_parity": true,
+    "focused_tests": "8 passed",
+    "full_suite": "206 passed, 4 skipped",
+    "post_install_dry_run": "25 unchanged",
+    "git_delivery": "pending"
+  },
+  "retention": {
+    "kept": [
+      "research",
+      "active synthesis",
+      "reusable fixtures",
+      "this compact terminal decision"
+    ],
+    "raw_outputs": "moved to ignored .tmp/campaign-evidence",
+    "copied_runtimes_protocol_copies_and_routine_transcripts": "retired"
+  },
+  "residual_gaps": [
+    "transfer beyond recorded runtime, fixtures, model, host, tools, and sample count",
+    "live Git execution beyond simulated observations",
+    "exact backend build, seed, token, and latency telemetry"
+  ]
+}

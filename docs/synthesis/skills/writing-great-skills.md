@@ -4,9 +4,9 @@ Status: Deploy Prompt 5 complete; exact P1 is canonical and installed.
 
 This synthesis owns the active semantic decision for campaign
 `2026-07-24-writing-great-skills-7d0da40-r2`. Research provenance, unit
-chronology, shared machine state, future candidate identities, per-sample
-judgments, and raw outputs remain owned by their research packet, transcript,
-campaign manifest, candidate records, results manifests, and captures.
+identities, aggregate judgments, promotion, and installation remain owned by
+the research packet and compact final manifest. Raw outputs and campaign work
+state are local `.tmp/` material, not tracked authority.
 
 <!-- WRITING-GREAT-SKILLS-DEPLOY-DECISION:START -->
 
@@ -15,9 +15,7 @@ campaign manifest, candidate records, results manifests, and captures.
 - Decision: `accepted`.
 - Campaign shape: `minimum-candidate`; exact construction satisfies
   `current != M0 = H1`.
-- M0 and H1 are stored once at
-  `.scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40-r2/runtime`,
-  tree
+- M0 and H1 shared exact tree identity:
   `campaign-tree-v1:eee3e8ce88820a074f42bd388505d4274014c5bbd59246f81876ce6c309584fb`.
 - M0 decision: intact, behavior-complete, and implementable solely from the
   checkpoint at semantic fingerprint
@@ -30,8 +28,8 @@ campaign manifest, candidate records, results manifests, and captures.
 - V1 is exact M0=H1 at
   `campaign-tree-v1:eee3e8ce88820a074f42bd388505d4274014c5bbd59246f81876ce6c309584fb`.
 - Pruning decision: `complete`; `pruning-not-needed`. P1 is exact V1,
-  stored at the same runtime root and tree. No distinct P1 runtime or fresh
-  behavioral wave was created.
+  promoted at the same tree identity. No distinct P1 runtime or fresh
+  behavioral wave was created; canonical Git history owns the bytes.
 
 ## Intended Contract And M0
 

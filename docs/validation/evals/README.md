@@ -19,15 +19,15 @@ Change one instruction, example, tool group, or runtime setting at a time. Rerun
 the same fixtures and preserve behavior-bearing context, hard constraints,
 approval boundaries, evidence requirements, and completion criteria.
 
+Track reusable fixtures, rubrics, protocols, compact result summaries, and
+terminal decisions. Do not track raw model outputs, per-sample payloads,
+generated worktrees, copied historical runtimes, or tests whose only purpose is
+to preserve a past campaign identity. During active work, place locally useful
+raw evidence under ignored `.tmp/campaign-evidence/`; later campaigns must rerun
+behavioral proof instead of treating that local archive as authority.
+
 ## Current Suite
 
 - [`core-workflows.md`](core-workflows.md): pack-level routing, handoff, proof, mutation, and reconciliation fixtures.
-- [`prototype-b0/`](prototype-b0/): immutable executable minimum control for
-  Prototype's baseline-first candidate proof.
-- [`prototype-description-pre-prune/`](prototype-description-pre-prune/):
-  frozen full-package control that differs from the Prompt 4 Prototype
-  candidate only in the longer pre-prune description.
 - [`prototype-prompt4/`](prototype-prompt4/): fixed B0-first behavior,
   contribution, authority, and live-probe protocols for Prototype acceptance.
-- [`research-pruning-pre-prune/`](research-pruning-pre-prune/): immutable
-  behavior-complete Research package used as the pruning-equivalence control.

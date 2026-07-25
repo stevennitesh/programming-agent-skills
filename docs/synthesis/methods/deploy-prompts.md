@@ -1042,7 +1042,17 @@ Reconcile synthesis to active state: M0, research classifications, accepted and
 rejected H1 units, V1, pruning decisions, P1, canonical identity,
 relationships, proof pointers, deliberate non-changes, and residual
 professional, behavioral, model, host, and transfer gaps. Remove superseded
-future-tense construction and raw chronology; validation owns raw outputs.
+future-tense construction and raw chronology.
+
+Compact the completed campaign before promotion. Keep the research packet,
+active synthesis, reusable fixture and rubric definitions, incumbent and final
+identities, one compact results owner, and the terminal decision. Remove
+per-sample payloads, captures, generated worktrees, copied runtime packages,
+routine transcripts, and historical-only verifiers or tests. Move raw outputs
+that remain useful for local audit to ignored `.tmp/campaign-evidence/`; delete
+the rest. Raw files and `.tmp/` paths never become promotion-critical evidence.
+If a future claim would require a removed output, label prior proof
+`historical-admission-only` and rerun it rather than retaining campaign exhaust.
 
 Update the campaign manifest with canonical and installed identities plus
 final evidence dispositions. Record three separate terminal claims: semantic
@@ -1096,8 +1106,10 @@ required current checks, stage intentionally, and commit. Push only when the
 user explicitly requested it. Block delivery when any authoritative record
 still depends on an ignored, omitted, or disposable path. Before commit, verify
 every promotion-critical path named by the final manifest is staged or already
-tracked at its recorded identity. A required `.scratch/` path belongs in the
-commit; a `.tmp/` path cannot.
+tracked at its recorded identity. Require the completed campaign to contain no
+tracked raw output, per-sample payload, generated worktree, or routine
+transcript. A required `.scratch/` path belongs in the commit; a `.tmp/` path
+cannot.
 
 Record starting Git HEAD. Return `complete`, `evidence-gap`, or `blocked`,
 including starting and ending HEAD, commit identity, remote state when pushed,

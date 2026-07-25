@@ -9,7 +9,7 @@ behavior supports removal; the control was not required to fail.
 
 | Field | Frozen value |
 | --- | --- |
-| Pre-prune control | `docs/validation/evals/tdd-pruning-pre-prune/` |
+| Pre-prune control | Retired after terminal decision; identity retained below |
 | Control tree SHA-256 | `2c54693e3c51ed5785430943786bfdd578a6fc4e99f0746de2f027ee16f286ae` |
 | Final C1 | `skills/experimental/tdd/` |
 | C1 tree SHA-256 | `35bbe08d4f3ce1d137ae12bf3fd1e2a8bc1b75dd3f234d2266c020467e1e3e7c` |
@@ -67,12 +67,12 @@ criterion or critical-failure variance. This is within the predeclared bound
 of at most one sample on a noncritical criterion. No async-specific variance
 was observed.
 
-## Raw Evidence
+## Evidence Retention
 
-The ten schema-valid responses are preserved under `raw/` as
-`control-1.json` through `control-5.json` and `c1-1.json` through `c1-5.json`.
-Every file contains exactly nine cases in A-through-I order. The neutral task,
-schema, and predeclared rubric are adjacent to this decision.
+The ten schema-valid responses were archived locally under ignored
+`.tmp/campaign-evidence/`; they are not durable authority. The neutral task,
+schema, predeclared rubric, aggregate result, and exact arm identities remain
+tracked. Any future behavioral claim must rerun the comparison.
 
 ## Decision Basis And Limits
 

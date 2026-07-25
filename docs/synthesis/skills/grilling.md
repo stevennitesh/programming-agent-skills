@@ -2,7 +2,7 @@
 
 Status: Deploy Prompt 5 complete. Canonical and installed Grilling are byte-identical at tree hash `5c6ab5e504123fdaa79db33fc436f361e8e9383bf028892970a9efee4b54cf63`, and Grilling's experimental package and manifest entry are removed. Canonical Grilling is executable authority; this document authorizes no downstream execution by itself.
 
-Executable authority is `skills/custom/grilling/SKILL.md` and `skills/custom/grilling/agents/openai.yaml`. `C:\Users\steve\.agents\skills\grilling` is the verified managed distribution copy, never independent authority. The accepted evaluation fixture remains under `docs/validation/evals/grilling-pruning-pre-prune/` as evidence, not runtime.
+Executable authority is `skills/custom/grilling/SKILL.md` and `skills/custom/grilling/agents/openai.yaml`. `C:\Users\steve\.agents\skills\grilling` is the verified managed distribution copy, never independent authority. The retired evaluation fixture is historical-admission-only; the accepted identity and decision remain in this synthesis.
 
 ## Design Verdict
 

@@ -20,10 +20,10 @@ final C1 = B0 + C1-TRANSACTION + C1-DIRECT-RETURN
 C1-LEDGER = rejected-no-control-failure
 ```
 
-`B0` was the exact pre-promotion canonical package and is frozen for this epoch at
-`docs/validation/evals/to-questionnaire-b0`, package SHA-256
+`B0` was the exact pre-promotion canonical package. Its retired fixture has
+package SHA-256
 `163d76f3468f2301c6cddeead5cca34b08afaf9ae370f457157707c12e010158`.
-It is now a historical exact control, not active runtime.
+The identity is historical evidence, not a live control or active runtime.
 Final `C1` is promoted at `skills/custom/to-questionnaire`, package SHA-256
 `a5c63f7c0ecbe2971dbbd20bb1774ece83990e08fa97d3df6d9f49c3b41cf3c4`.
 Its `SKILL.md` SHA-256 is
@@ -131,8 +131,8 @@ Prompt 1 grill settled the local intended contract; it is not efficacy proof.
 
 | Surface | Exact identity |
 | --- | --- |
-| `docs/validation/evals/to-questionnaire-b0/SKILL.md` | SHA-256 `0310B4EDBED253A641C3DCD44320E8703A73234DBECC7B7F87290492ACE479FB` |
-| `docs/validation/evals/to-questionnaire-b0/agents/openai.yaml` | SHA-256 `DC1585512A0C63A93D69421C2AFAE62EBC94B0EAB91A792A41D2859219CE0B9A` |
+| Retired B0 `SKILL.md` | SHA-256 `0310B4EDBED253A641C3DCD44320E8703A73234DBECC7B7F87290492ACE479FB` |
+| Retired B0 `agents/openai.yaml` | SHA-256 `DC1585512A0C63A93D69421C2AFAE62EBC94B0EAB91A792A41D2859219CE0B9A` |
 | Historical control package identity | `163d76f3468f2301c6cddeead5cca34b08afaf9ae370f457157707c12e010158` |
 
 Its executable order is:

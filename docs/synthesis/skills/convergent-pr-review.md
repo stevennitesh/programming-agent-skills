@@ -7,7 +7,7 @@ Its fingerprint is SHA-256 over the exact UTF-8 bytes between the marker
 lines, excluding both marker lines and their adjacent single line feeds.
 
 Active synthesis fingerprint:
-`sha256:1e7b3fe8d1c45ec32848fb28642d25f878c2b74f62fccc25a72f3c6c4ec8323b`
+`sha256:9d9de00150052bd817547d731478c5de045efa2f1a06905f9a7efcf8235e3e8a`
 
 <!-- BEGIN ACTIVE SYNTHESIS -->
 
@@ -22,7 +22,7 @@ The frozen minimum is the bounded checkpoint in
 Professional and upstream evidence comes from the bounded
 [research packet](../../research/convergent-pr-review-2026-07-24.md). The
 campaign manifest at
-[campaign-manifest.json](../../validation/evals/convergent-pr-review-2026-07-24/campaign-manifest.json)
+[campaign-decision.json](../../validation/evals/convergent-pr-review-2026-07-24/campaign-decision.json)
 owns shared semantic and identity state. The
 [Prompt 2 record](../../validation/transcripts/2026-07-24-convergent-pr-review-prompt2-synthesis.md)
 owns unit chronology and proof.
@@ -354,9 +354,10 @@ regression without extrapolation.
 ## Prompt 4 Decision
 
 M0 passed all 25 viability cases. The active per-sample owner is the
-[results manifest](../../validation/evals/convergent-pr-review-2026-07-24/results.json);
-its raw-output pointers preserve all 50 valid samples and the one zero-credit
-protocol-deviation output.
+[campaign decision](../../validation/evals/convergent-pr-review-2026-07-24/campaign-decision.json);
+it preserves the exact arm identities, aggregate results, dispositions, and
+residual limits. Per-sample outputs are local disposable evidence; rerun for
+new behavioral credit.
 
 | Unit | Control observation | Candidate result | Final disposition |
 | --- | --- | --- | --- |
@@ -444,8 +445,8 @@ portable atomic/external-state guarantees. Git delivery remains pending.
 
 The current reconciliation supersedes only the earlier H1-03 and H1-05
 judgments. It preserves M0 viability `25/25`, frozen runtime identities,
-H1-01/H1-02/H1-04 decisions, original raw chronology, and historical pruning
-and Prompt 5 proof.
+H1-01/H1-02/H1-04 decisions, recorded aggregate judgments, and historical
+pruning and Prompt 5 proof.
 
 H1-03 is `reject-no-control-deficit`: all five entry-positive M0 controls
 already made the decision-relevant qualification/common-mode fact explicit.

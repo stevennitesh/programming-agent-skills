@@ -64,7 +64,7 @@ B0 must preserve all of the following:
 | Evidence | Identity or access depth | Role | Freshness limit |
 | --- | --- | --- | --- |
 | Canonical TDD package | `skills/custom/tdd/`; tree hash `35bbe08d4f3ce1d137ae12bf3fd1e2a8bc1b75dd3f234d2266c020467e1e3e7c` | Current runtime authority and accepted B0/C1 | Recompute after any byte change |
-| Pre-prune control | `docs/validation/evals/tdd-pruning-pre-prune/`; tree hash `2c54693e3c51ed5785430943786bfdd578a6fc4e99f0746de2f027ee16f286ae` | Behavior-complete control and exact deletion source | Immutable campaign evidence |
+| Retired pre-prune control | Tree hash `2c54693e3c51ed5785430943786bfdd578a6fc4e99f0746de2f027ee16f286ae` | Historical control identity and exact deletion source | Fixture retired after terminal decision |
 | Matt Pocock TDD | `.tmp/mattpocock-skills` at `ed37663cc5fbef691ddfecd080dff42f7e7e350d`; complete package and named documentation read | Simplest credible baseline | Clean local `main`; not network-refreshed |
 | Superpowers TDD | `.tmp/superpowers` at `d884ae04edebef577e82ff7c4e143debd0bbec99`; complete package read | Stricter comparison | Clean local `main`; not network-refreshed |
 | Ponytail | `.tmp/ponytail` at `16f29800fd2681bdf24f3eb4ccffe38be3baec6b`; no TDD equivalent found | Absence check | Clean local `main`; not network-refreshed |
@@ -278,7 +278,7 @@ because they exist.
 | Double order and fidelity | `skills/custom/tdd/mocking.md` |
 | GREEN refactor and scoped recommendations | `skills/custom/tdd/refactoring.md` |
 | Invocation policy | `skills/custom/tdd/agents/openai.yaml` |
-| Pre-prune control and raw equivalence evidence | `docs/validation/evals/tdd-pruning-pre-prune/` and `docs/validation/evals/tdd-pruning-results/` |
+| Pre-prune control identity and compact equivalence evidence | Retired tree hash `2c54693e3c51ed5785430943786bfdd578a6fc4e99f0746de2f027ee16f286ae` and `docs/validation/evals/tdd-pruning-results/` |
 | Campaign, promotion, and installation record | `docs/validation/transcripts/2026-07-22-tdd-candidate-evidence.md` |
 | Accepted relationship index | `docs/synthesis/skill-context-relationships.md`; unchanged by this decision |
 | Canonical single-cut proof | `tests/test_experimental_skill_contracts.py::test_canonical_tdd_is_the_exact_single_cut_baseline` |
@@ -370,12 +370,11 @@ the recorded evidence limit.
 Proof is owned by validation:
 
 - [pruning-equivalence decision](../../validation/evals/tdd-pruning-results/decision.md);
-- [fixed protocol](../../validation/evals/tdd-pruning-results/protocol.md),
-  [rubric](../../validation/evals/tdd-pruning-results/rubric.md), and adjacent
-  raw responses;
+- [fixed protocol](../../validation/evals/tdd-pruning-results/protocol.md) and
+  [rubric](../../validation/evals/tdd-pruning-results/rubric.md);
 - [promotion, installation, and parity record](../../validation/transcripts/2026-07-22-tdd-candidate-evidence.md); and
-- frozen pre-prune package at
-  `docs/validation/evals/tdd-pruning-pre-prune/`.
+- retired pre-prune control identity
+  `2c54693e3c51ed5785430943786bfdd578a6fc4e99f0746de2f027ee16f286ae`.
 
 ## Residual Limits
 

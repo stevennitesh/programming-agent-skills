@@ -17,33 +17,19 @@
     "runtime_load": "P1 equals V1 at 9363 exact file bytes and 1219 whitespace-delimited words; token and latency telemetry unavailable."
   },
   "promotion_critical_paths": [
-    ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40-r2/campaign-manifest.json",
-    ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40-r2/candidate.json",
-    ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40-r2/m0-checkpoint.json",
-    ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40-r2/runtime",
-    ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40-r2/evals/prompt4/protocol-manifest.json",
-    ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-7d0da40-r2/evals/prompt4/results-manifest.json",
     "docs/research/writing-great-skills-deploy-2026-07-24-7d0da40-r2.md",
     "docs/synthesis/skills/writing-great-skills.md",
-    "docs/validation/evals/writing-great-skills-2026-07-24-7d0da40-r2-pruning/results-manifest.json",
-    "docs/validation/evals/writing-great-skills-2026-07-24-7d0da40-r2-pruning/verifier-result.json",
-    "docs/validation/evals/writing-great-skills-2026-07-24-7d0da40-r2-prompt5/prompt5-stage-capsule.json",
     "docs/validation/evals/writing-great-skills-2026-07-24-7d0da40-r2-prompt5/final-manifest.json",
-    "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-r2-prompt1-m0.md",
-    "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-r2-prompt2-synthesis.md",
-    "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-r2-prompt3-construction.md",
-    "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-r2-prompt4-validation.md",
-    "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-r2-pruning.md",
-    "docs/validation/transcripts/2026-07-24-writing-great-skills-7d0da40-r2-prompt5-promotion.md",
     "skills/custom/writing-great-skills",
     "tests/test_deploy_prompt_contracts.py"
   ],
+  "record_compaction": "Research, active synthesis, this terminal manifest, canonical runtime, and current semantic contract tests own the surviving decision. Raw outputs and campaign work state moved to ignored .tmp/campaign-evidence and are not authority.",
   "path_verification": {
     "repository_root": "E:/GitHub/code/programming-agent-skills",
     "all_resolve_inside_repository": true,
     "all_exist": true,
     "none_ignored": true,
-    "scratch_disposition": "durable campaign state intentionally included in possible Prompt 6 scope"
+    "scratch_disposition": "no tracked scratch dependency"
   },
   "installation": {
     "ambient_pre_promotion_dry_run": "25 unchanged",

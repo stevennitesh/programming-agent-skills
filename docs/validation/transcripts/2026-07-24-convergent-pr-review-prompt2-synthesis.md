@@ -13,7 +13,7 @@ Campaign shape: `hypothesis-candidate`
 This record covers only Prompt 2 for `convergent-pr-review`. The unit reconciled
 the frozen minimum and bounded research into the active
 [synthesis](../../synthesis/skills/convergent-pr-review.md) and the shared
-[campaign manifest](../evals/convergent-pr-review-2026-07-24/campaign-manifest.json).
+[compact campaign decision](../evals/convergent-pr-review-2026-07-24/campaign-decision.json).
 It did not edit runtime, create candidates, evaluate behavior, promote,
 install, stage, commit, or start Prompt 3.
 
@@ -21,7 +21,7 @@ The authorized mutation paths were exactly:
 
 - `docs/synthesis/skills/convergent-pr-review.md`
 - `docs/validation/transcripts/2026-07-24-convergent-pr-review-prompt2-synthesis.md`
-- `docs/validation/evals/convergent-pr-review-2026-07-24/campaign-manifest.json`
+- `docs/validation/evals/convergent-pr-review-2026-07-24/campaign-decision.json`
 
 Unrelated pre-existing and concurrent worktree changes were preserved.
 
@@ -138,7 +138,7 @@ V1 = pending; P1 = pending.
 Artifacts changed:
 `docs/synthesis/skills/convergent-pr-review.md`;
 `docs/validation/transcripts/2026-07-24-convergent-pr-review-prompt2-synthesis.md`;
-`docs/validation/evals/convergent-pr-review-2026-07-24/campaign-manifest.json`.
+`docs/validation/evals/convergent-pr-review-2026-07-24/campaign-decision.json`.
 
 Evidence used or reused: exact M0 and research inputs; complete current, caller,
 and relationship inspection; current structural and caller evidence

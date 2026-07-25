@@ -50,8 +50,9 @@ specifies the required JSON contract.
 Aggregate: `16/16` pass, `0` critical failures. Variance did not change a
 registered semantic judgment. The first clean V-02 attempt correctly returned
 a source gap because the packet referred to unspecified object keys. That
-zero-credit fixture defect is preserved; only the source fixture was repaired,
-and exact M0 was rerun unchanged.
+zero-credit fixture defect remains recorded by identity; its raw output was
+retired. Only the source fixture was repaired, and exact M0 was rerun
+unchanged.
 
 ## H1-01 Exact-Revision Approval
 
@@ -100,7 +101,8 @@ control deficit was absent. Disposition: `rejected-no-control-deficit`.
 
 ## Deviations And Zero-Credit Evidence
 
-The following evidence is preserved but excluded from every aggregate above:
+The following deviations are recorded but excluded from every aggregate
+above; their zero-credit raw files were retired:
 
 1. The original 16 viability and all original comparison captures expose
    worker-visible `expected_output_boundary` conclusions.
@@ -117,8 +119,10 @@ was used to accept, reject, or refreeze a behavior unit.
 - Fixed: model `gpt-5.6-sol`, high reasoning, Codex desktop, fresh context,
   complete selected arm, identical full paired context after exact runtime-slot
   normalization, fixture tools, mutation authority, and simulated runtime.
-- Available: declared configuration, fixture and payload identities, complete
-  responses, complete simulated operation logs, and root judgments.
+- Retained: declared configuration, fixture and payload identities, aggregate
+  results, and root judgments. Per-sample responses and simulated operation
+  logs are archived locally under ignored `.tmp/campaign-evidence/` and are
+  not durable authority.
 - Unavailable: backend build, seed, temperature, token counts, hidden system
   prompt, per-sample wall duration, independent host attestation, and live
   provider observations.

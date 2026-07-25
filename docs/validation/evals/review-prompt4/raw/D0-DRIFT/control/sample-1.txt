@@ -1,9 +1,0 @@
-# Review complete
-
-## Finding
-
-- F-1 — Current and verified against `src/pay.py` (`amount = 10`).
-
-## Decision
-
-Changes requested.

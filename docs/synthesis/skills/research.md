@@ -113,7 +113,6 @@ Current-epoch proof records:
 - [Prompt 4 behavior evaluation](../../validation/transcripts/2026-07-23-research-behavior-eval.md)
 - [Pruning Pass](../../validation/transcripts/2026-07-23-research-pruning.md)
 - [Promotion and installation](../../validation/transcripts/2026-07-23-research-promotion-install.md)
-- [Frozen B0 package](../../validation/evals/research-b0/)
 
 ## Deliberate Non-Changes
 

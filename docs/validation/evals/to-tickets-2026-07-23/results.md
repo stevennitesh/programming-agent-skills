@@ -2,9 +2,10 @@
 
 ## Terminal Continuation
 
-This file preserves the original `needs-more-evidence` judgment and its
-contaminated captures as history. Deploy Prompt 4 subsequently resumed with
-clean worker/evaluator isolation. The authoritative terminal result is
+This file preserves the original `needs-more-evidence` judgment, capture
+identities, and root judgments as history. The contaminated raw files were
+retired during branch consolidation. Deploy Prompt 4 subsequently resumed
+with clean worker/evaluator isolation. The authoritative terminal result is
 [`isolation-v2/results.md`](isolation-v2/results.md):
 
 - decision `accepted`;
@@ -210,8 +211,8 @@ Structural proof does not cure the behavioral control contamination.
 - Fixed configuration used: `gpt-5.6-sol`, high reasoning, Codex desktop,
   fresh independent context per sample, exact selected arm, fixture tracker,
   and fixture-scoped tools and mutation authority.
-- Raw capture inventory: 36 files — 16 M0 viability, 15 M0 comparative
-  controls, and five conditional H1 samples for `H1-02`.
+- Retired raw capture inventory: 36 files — 16 M0 viability, 15 M0
+  comparative controls, and five conditional H1 samples for `H1-02`.
 - Capture normalization: eight Markdown hard-break trailing-space pairs in
   three raw files were removed after capture so the repository whitespace
   contract could pass; response text and operation-log meaning are unchanged.

@@ -1,5 +1,6 @@
 {
   "format": 1,
+  "artifact_retention": "Per-sample payloads and captures moved to ignored .tmp/campaign-evidence. Aggregate results are historical-admission-only; rerun for new behavioral credit.",
   "campaign": "implement-2026-07-24-prompt4",
   "configuration": {
     "model": "gpt-5.6-sol",

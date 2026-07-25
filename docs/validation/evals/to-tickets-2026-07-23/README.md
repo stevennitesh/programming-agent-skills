@@ -8,15 +8,15 @@ Its terminal decision is `accepted`; all three H1 units were rejected, and V1
 is exact M0 package
 `c226ca3541cf336fa606799b5e9f7ca538609575e3d73576bacbfda728bff7e9`.
 
-The original fixtures and raw captures below remain immutable historical
-evidence but receive zero contribution credit because their worker-visible
+The original protocol and fixture identities remain as a compact historical
+record, but their zero-credit raw captures were retired because worker-visible
 boundaries leaked evaluator conclusions. See
 [`isolation-v2/results.md`](isolation-v2/results.md) for the credited sample
 inventory, dispositions, deviations, and V1 refreeze.
 
-This directory preserves Prompt 4's frozen inputs, deterministic structural
-proof, raw behavioral captures, and root judgment for the exact M0 control and
-H1 candidate constructed by Deploy Prompt 3.
+This directory preserves Prompt 4's frozen input definitions, deterministic
+structural proof, capture identities, and root judgment for the exact M0
+control and H1 candidate constructed by Deploy Prompt 3.
 
 - `protocol.md` fixes every M0 viability scenario and H1 comparative control.
 - `fixtures/runtime.json` fixes callable model, reasoning, host, isolation,
@@ -26,10 +26,12 @@ H1 candidate constructed by Deploy Prompt 3.
 - `verify_candidate.py` checks package structure, exact identity, H1 deltas,
   explicit-only metadata, protected relationship language, and fixture
   identity/completeness.
-- `raw/` contains the 36 isolated worker captures.
-- `results.md` contains the root's per-sample judgment, aggregate, variance,
-  deviations, telemetry limits, and `needs-more-evidence` decision.
+- `results.md` contains the retired capture inventory, root judgment,
+  aggregate, variance, deviations, telemetry limits, and
+  `needs-more-evidence` decision.
 
-The frozen protocol and fixture bytes remain unchanged. Prompt 4 did not
-freeze V1 because candidate outcomes in the worker-visible output boundaries
-contaminate the comparative controls.
+The frozen protocol and fixture bytes remain unchanged. The invalid captures
+remain recoverable from the campaign's historical Git commit when needed but
+are not active validation dependencies. Prompt 4 did not freeze V1 because
+candidate outcomes in the worker-visible output boundaries contaminate the
+comparative controls.

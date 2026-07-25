@@ -1,5 +1,6 @@
 {
   "format": 1,
+  "artifact_retention": "Per-sample payloads and captures moved to ignored .tmp/campaign-evidence. Their paths and hashes are historical identities only; rerun for new behavioral credit.",
   "source_manifest_sha256": "a96a8222f44ea8b5b2db98a782d5a7a071f8fcdd94bf1df879ed75befb825cb3",
   "runtime_packages": {
     "m0": "1f61b9880b881771b579372075dd89e3bccb7ce9c94ae3bd0e30f1f43ae8724f",

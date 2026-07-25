@@ -15,11 +15,11 @@ Status: complete; terminal decision `reopen-required`.
 | C0 complete package | `skills/custom/writing-great-skills/` at fixed commit `55dd6818182caf75e85de713a13ed76996336a27`; four files; `campaign-tree-v1:2a83a9655d1f5f9ff8647d2c9d8fc8a74916b78727b11857bd9bf24e52f364d2` | Discovery and incumbent-comparison evidence only |
 | Current canonical/P1 | `skills/custom/writing-great-skills/`; four files; `campaign-tree-v1:559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032` | Exact current behavior and compatibility |
 | Installed | `C:/Users/steve/.agents/skills/writing-great-skills/`; four files; `campaign-tree-v1:559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032` | Exact parity evidence; read-only |
-| Completed campaign | `.scratch/deploy-campaigns/2026-07-24-writing-great-skills-55dd681/campaign.json`; canonical-JSON identity `2af0006b0cfe0461110a676371924101c9cadfaefc16f9495f6ee7f5089e4b18` | Historical lifecycle and semantic mapping |
+| Completed campaign | Historical commit `e70f4519b5612341c181ec54d3763856af2dce07`; campaign canonical-JSON identity `2af0006b0cfe0461110a676371924101c9cadfaefc16f9495f6ee7f5089e4b18` | Historical lifecycle and semantic mapping; superseded working artifacts retired |
 | Active synthesis | `docs/synthesis/skills/writing-great-skills.md`; bounded campaign decision recorded by the completed campaign | Current intent and final campaign dispositions |
-| Prompt 4 result | `docs/validation/evals/writing-great-skills-2026-07-24-prompt4/results-manifest.json`; file SHA-256 `f29592c3ec7c3cacd5cdbba83ad452b99d100089a913f1d80aa964c5a0ecd926` | Exact-reusable only for its M0/H1 lane, not for removed C0 units |
-| Pruning result | `docs/validation/evals/writing-great-skills-2026-07-24-pruning/results-manifest.json`; file SHA-256 `fa0ef7d119b702be0da5203bb530a3488db9539707b19692a8c192d234f02121` | Exact-reusable only for unchanged V1/P1 |
-| Final manifest | `docs/validation/evals/writing-great-skills-2026-07-24-final/final-manifest.json`; file SHA-256 `698b4806a6d8279b350d448193ff8bd93fe1d177cb9f21d5162a81c4a3de0a7d` | Exact P1/canonical/installed and completed-stage evidence |
+| Prompt 4 result | Historical commit `e70f4519b5612341c181ec54d3763856af2dce07`; file SHA-256 `f29592c3ec7c3cacd5cdbba83ad452b99d100089a913f1d80aa964c5a0ecd926` | Exact-reusable only for its M0/H1 lane, not for removed C0 units |
+| Pruning result | Historical commit `e70f4519b5612341c181ec54d3763856af2dce07`; file SHA-256 `fa0ef7d119b702be0da5203bb530a3488db9539707b19692a8c192d234f02121` | Exact-reusable only for unchanged V1/P1 |
+| Final manifest | Historical commit `e70f4519b5612341c181ec54d3763856af2dce07`; file SHA-256 `698b4806a6d8279b350d448193ff8bd93fe1d177cb9f21d5162a81c4a3de0a7d` | Exact P1/canonical/installed and completed-stage evidence |
 
 C0 exists at the fixed baseline. No immediate pre-campaign substitute is used.
 The completed campaign's prior behavioral samples do not match any candidate
