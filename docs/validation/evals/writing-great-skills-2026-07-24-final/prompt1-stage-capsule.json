@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "artifact_type": "deploy-stage-capsule",
+  "campaign": "2026-07-24-writing-great-skills-55dd681",
+  "skill": "writing-great-skills",
+  "unit": "prompt-1",
+  "decision": "complete",
+  "m0_checkpoint_algorithm": "sha256-canonical-json-v1",
+  "m0_checkpoint_sha256": "49d8890b655be04129baf67ad729e031fd926d9bd3d332c5bb4dc9cf271a2f03",
+  "required_semantic_units": [
+    "M0-U01",
+    "M0-U02",
+    "M0-U03",
+    "M0-U04",
+    "M0-U05",
+    "M0-U06",
+    "M0-U07",
+    "M0-U08",
+    "M0-U09"
+  ],
+  "next_unit": "research-pass"
+}

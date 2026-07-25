@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "artifact_type": "deploy-stage-capsule",
+  "campaign": "2026-07-24-writing-great-skills-55dd681",
+  "skill": "writing-great-skills",
+  "unit": "prompt-3",
+  "decision": "accepted",
+  "campaign_shape": "hypothesis-candidate",
+  "tree_algorithm": "campaign-tree-v1",
+  "m0_tree_sha256": "559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032",
+  "h1_tree_sha256": "1021d8c5d9d20a81e4ab33a0b014cf71826b818a02153041b7845aac245cf553",
+  "only_h1_transformation": "H1-UNCERTAINTY-01",
+  "next_unit": "prompt-4"
+}

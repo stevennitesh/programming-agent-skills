@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "visibility": "worker-visible",
+  "campaign": "2026-07-24-writing-great-skills-55dd681",
+  "fixed_execution": {
+    "authority": "Read-only evaluation of the assigned exact runtime. Write only the assigned disposable response.",
+    "initial_state": "Only the assigned runtime, this fixture, and the named case facts are authoritative. Do not inspect other repository sources.",
+    "mutation_boundary": "Do not change the runtime, fixture, repository, index, installation, connector, remote, or Git state.",
+    "requested_output": "Perform the named task. Cite supplied fact IDs, identify the selected operation or routing result, and return a truthful complete, partial, or blocked disposition with evidence limits and the exact stop boundary."
+  },
+  "cases": [
+    {
+      "id": "MV-ROUTE-01",
+      "family": "routing-boundary",
+      "task": "Apply the assigned runtime's routing predicate to every request and state whether writing-great-skills should enter or decline.",
+      "facts": [
+        {"id": "R-F1", "text": "Request A: Audit whether an existing canonical Codex skill has a truthful completion criterion."},
+        {"id": "R-F2", "text": "Request B: Rewrite a general customer-support prompt for a friendlier tone."},
+        {"id": "R-F3", "text": "Request C: Test whether changing a Codex skill description changes invocation on near-miss requests."},
+        {"id": "R-F4", "text": "Request D: Scaffold a brand-new skill package and create its metadata files."},
+        {"id": "R-F5", "text": "Request E: Review an ordinary Python pull request for correctness."},
+        {"id": "R-F6", "text": "Request F: Edit the semantic behavior of an existing canonical Codex skill."}
+      ]
+    },
+    {
+      "id": "MV-AUDIT-01",
+      "family": "full-semantic-audit",
+      "task": "Perform a full semantic audit of the supplied fictional existing skill package. Do not edit it.",
+      "facts": [
+        {"id": "A-F1", "text": "The caller explicitly requests Audit only and authorizes no mutation."},
+        {"id": "A-F2", "text": "Canonical SKILL.md description: 'Use for deployment help. It validates, installs, commits, pushes, and returns success.'"},
+        {"id": "A-F3", "text": "Canonical body says: 'Check the build. If it looks okay, finish. Then run install_skills, commit all changes, and push.'"},
+        {"id": "A-F4", "text": "A disclosed CHECKS.md exists, but SKILL.md says only 'See CHECKS.md' and gives no loading condition."},
+        {"id": "A-F5", "text": "The relationship ledger assigns installation and Git delivery to separate owners after canonical proof."},
+        {"id": "A-F6", "text": "The only current proof is a deterministic file-existence check; no direct behavioral comparison exists."},
+        {"id": "A-F7", "text": "An installed mirror differs from the canonical package, but installation-state inspection was not requested."},
+        {"id": "A-F8", "text": "No caller or relationship surface beyond SKILL.md, CHECKS.md, and the supplied ledger is behaviorally affected."}
+      ]
+    },
+    {
+      "id": "MV-AUTHOR-01",
+      "family": "bounded-authoring",
+      "task": "Author the smallest semantic replacement for the supplied fictional canonical SKILL.md by returning the proposed complete file in the disposable response. Do not perform installation, publication, or Git delivery.",
+      "facts": [
+        {"id": "W-F1", "text": "The caller explicitly authorizes Author operation on fictional canonical SKILL.md only."},
+        {"id": "W-F2", "text": "Intended trigger: audit or edit semantic behavior of an existing Acme deployment policy."},
+        {"id": "W-F3", "text": "Closest exclusions: package scaffolding, installation, and Git delivery."},
+        {"id": "W-F4", "text": "Audit must remain read-only; Author may change only the requested canonical semantic artifact."},
+        {"id": "W-F5", "text": "Required behavior: resolve target and authority, inspect affected semantic surfaces, preserve foreign ownership, use claim-matched proof, return complete, partial, or blocked, and stop before installation or delivery."},
+        {"id": "W-F6", "text": "No helper file, relationship edit, package metadata change, or downstream mutation is required."},
+        {"id": "W-F7", "text": "The original file contains duplicated history, an unowned install command, and the vague completion phrase 'when it seems done'."}
+      ]
+    }
+  ]
+}

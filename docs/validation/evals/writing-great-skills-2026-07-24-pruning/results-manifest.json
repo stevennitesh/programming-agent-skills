@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "artifact_type": "deploy-pruning-results",
+  "campaign": "2026-07-24-writing-great-skills-55dd681",
+  "skill": "writing-great-skills",
+  "decision": "complete",
+  "disposition": "pruning-not-needed",
+  "campaign_shape": "minimum-candidate",
+  "identity_relationship": "current != M0 = rederived H1 = V1 = P1",
+  "runtime": {
+    "v1_path": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-55dd681/runtime/m0/writing-great-skills",
+    "p1_path": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-55dd681/runtime/m0/writing-great-skills",
+    "tree_algorithm": "campaign-tree-v1",
+    "v1_tree_sha256": "559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032",
+    "p1_tree_sha256": "559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032",
+    "stored_once": true
+  },
+  "passage_classification": {
+    "map": ".scratch/deploy-campaigns/2026-07-24-writing-great-skills-55dd681/protocol/prompt4/protocol-manifest.json#instruction_passage_map",
+    "total": 41,
+    "keep": 41,
+    "collapse": 0,
+    "disclose": 0,
+    "delete": 0
+  },
+  "cut_groups": [
+    {
+      "id": "CG-01-authority-selection",
+      "affected_passages": ["P02", "P03", "P04", "P05"],
+      "affected_semantic_units": ["M0-U02"],
+      "expected_unchanged_behavior": "Select exactly one operation, keep Audit read-only, bound Author mutation, and require Author authority for persistence.",
+      "proposed_load_reduction": "Collapse the selection and persistence gates into the two operation bullets.",
+      "disposition": "rejected-nonmaterial-authority-gates",
+      "reason": "The passages own distinct admission, branch, and persistence gates; collapsing them would make exact authority and safe blocked Return less discoverable for a negligible reduction."
+    },
+    {
+      "id": "CG-02-context-vocabulary",
+      "affected_passages": ["P18", "P22", "P23", "P24", "P26"],
+      "affected_semantic_units": ["M0-U05", "M0-U06"],
+      "expected_unchanged_behavior": "Load vocabulary conditionally, keep common behavior inline, disclose branch-only reference, co-locate concepts, and split only after a persistent sharpened-criterion defect.",
+      "proposed_load_reduction": "Collapse the conditional-load and information-hierarchy definitions into the SKILL.md context paragraph.",
+      "disposition": "rejected-nonmaterial-context-boundary",
+      "reason": "The glossary is already disclosed behind a precise condition; moving or deleting its compact definitions increases common-path load or removes the branch-only vocabulary owner."
+    },
+    {
+      "id": "CG-03-evaluation-admission",
+      "affected_passages": ["P31", "P32", "P33", "P34", "P35", "P38", "P40"],
+      "affected_semantic_units": ["M0-U08"],
+      "expected_unchanged_behavior": "Load direct evaluation only for wording-effect claims, pre-register a contribution mode and applicability, separate wrong-condition cohorts, gate them on entry-positive contribution, and return one terminal disposition.",
+      "proposed_load_reduction": "Merge evaluation admission, cohort, and terminal rules into fewer sentences.",
+      "disposition": "rejected-nonmaterial-proof-gates",
+      "reason": "Each passage owns a distinct proof transition and the procedure is already conditionally disclosed; compression would blur registered stopping and wrong-condition order without reducing always-loaded context."
+    }
+  ],
+  "load_delta": {
+    "description": {"v1_words": 38, "p1_words": 38, "v1_bytes": 296, "p1_bytes": 296, "delta_bytes": 0},
+    "skill": {"v1_words": 660, "p1_words": 660, "v1_bytes": 5007, "p1_bytes": 5007, "delta_bytes": 0},
+    "glossary": {"v1_words": 230, "p1_words": 230, "v1_bytes": 1631, "p1_bytes": 1631, "delta_bytes": 0},
+    "behavior_evals": {"v1_words": 376, "p1_words": 376, "v1_bytes": 2990, "p1_bytes": 2990, "delta_bytes": 0},
+    "metadata": {"v1_words": 3, "p1_words": 3, "v1_bytes": 42, "p1_bytes": 42, "delta_bytes": 0}
+  },
+  "proof": {
+    "prompt4_acceptance": "reused-exact",
+    "prompt4_results": "docs/validation/evals/writing-great-skills-2026-07-24-prompt4/results-manifest.json",
+    "prompt4_verifier": "passed",
+    "m0_viability_cases": 3,
+    "m0_control_samples": 6,
+    "protected_behavior_regressions": 0,
+    "complete_cut_audit": "passed",
+    "fresh_behavioral_wave": "not-run-no-material-cut"
+  },
+  "residual_gaps": [
+    "No live-host implicit-discovery trial was run.",
+    "Exact model-build, sampler seed, token, and latency telemetry were unavailable.",
+    "No conclusion transfers beyond the frozen Prompt 4 identity.",
+    "Prompt 5 canonical reconciliation, integration proof, and install parity remain."
+  ],
+  "recommended_next_unit": "prompt-5"
+}

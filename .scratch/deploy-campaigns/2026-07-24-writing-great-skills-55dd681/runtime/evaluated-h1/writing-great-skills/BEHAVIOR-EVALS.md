@@ -43,6 +43,11 @@ only when M0 demonstrates the registered defect or meaningful quality deficit,
 H1 materially improves it, variance narrows or remains acceptably bounded,
 and no critical or protected-behavior regression appears.
 
+For every accept, stop, extension, or `needs-more-evidence` decision, state the
+available uncertainty signal, the material decision margin, and why that
+relationship supports stopping or extending. Five samples remain only the
+minimum floor.
+
 Judge conditional efficacy on entry-positive cases before judging whether its
 bounded applicability justifies runtime load. A rejected entry-positive
 candidate receives no wrong-condition samples.
@@ -54,7 +59,8 @@ registered control deficit, fixed inputs, entry-positive and wrong-condition
 counts, model, host, reasoning configuration, tools, authority, evidence,
 runtime identities, hashes, rubric, per-sample results, aggregate, variance,
 worst result, critical failures, protocol deviations, unavailable telemetry,
-decision, and residual transfer gap.
+decision, residual transfer gap, available uncertainty signal, material
+decision margin, and stop-or-extend rationale.
 
 Complete with exactly one of `accept`, `reject-no-control-deficit`,
 `reject-insufficient-contribution`, `reject-regression`,

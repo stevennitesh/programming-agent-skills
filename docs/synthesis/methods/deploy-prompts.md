@@ -74,6 +74,10 @@ Use these artifacts:
   from the M0 checkpoint. M0 is behavior-minimal: every behavior maps to the
   viability floor or a required local contract. It is not claimed to be
   wording-minimal.
+- **`C0` incumbent runtime:** the exact current canonical package frozen before
+  reconciliation. C0 is comparison evidence, not M0 authority. Use it only
+  when a plausibly behavioral current-only unit cannot be isolated more
+  cheaply.
 - **Research packet:** the decision-ready evidence for the same intended
   behavior, produced after M0 freezes. It separates independent discovery,
   upstream and current observations, targeted verification, alternatives,
@@ -93,7 +97,14 @@ Use these artifacts:
   non-regressing against V1. P1 is the only promotion candidate.
 - **Protected behavior set:** M0 behavior plus accepted H1 behavior,
   independently required contracts, and non-intuitive safety or authority
-  boundaries. Current presence alone creates no protection.
+  boundaries. Current presence alone creates no protection, but a plausibly
+  observable current-only behavior still requires preservation, bounded
+  ablation, or an unresolved-risk disposition before removal.
+- **Runtime load profile:** always-loaded metadata and description, common
+  inline instructions, conditional files with evidenced applicability, and
+  observed execution or tool overhead. Prefer exact token or latency telemetry
+  when available; otherwise label bytes or words as proxies. Never invent
+  prevalence or probability weights.
 
 M0 is minimal by behavioral scope. P1 is minimal by proved wording and package
 load. Research may admit a hypothesis but never proves that exact skill wording
@@ -562,6 +573,15 @@ Classify current behavior as `M0-equivalent`, `required compatibility`,
 or `unresolved removal risk`. Current presence creates neither intent nor
 protection.
 
+For each current-only unit, decide whether it could plausibly change observable
+invocation, judgment, action, context loading, Return, completion, safety,
+compatibility, or relationship behavior. If not, `remove` it with semantic
+absence proof. If yes, choose the cheapest causal disposition: preserve it
+under an independently required contract; isolate `M0 + incumbent unit` as a
+`current-observed` H1; use exact C0 only when isolation is impossible; or mark
+`unresolved removal risk`. Never protect all of C0 or require a full C0
+behavioral wave by default.
+
 If current inspection or research exposes a missed minimum authority,
 compatibility, safety, or relationship obligation, invalidate M0 and return
 `blocked` with Prompt 1 as the only recommendation. H1 cannot make M0 viable.
@@ -589,17 +609,24 @@ For each H1 unit choose one contribution mode:
 - `quality-lift`: M0 remains viable but is expected to score meaningfully
   lower on one pre-registered skill-specific dimension.
 
+`quality-lift` is the bounded exploratory lane. It needs no previously observed
+defect, but it does need a plausible measurable deficit, realistic
+discriminating cases, and a pre-registered pilot control. Do not reject it in
+Prompt 2 merely because the deficit is unobserved; Prompt 4's control decides.
+Do not create hypotheses to satisfy a quota.
+
 Every H1 unit records origin, method-evidence classification, intended value,
 owner, observable entry predicate, expected M0 weakness, one
 weak-but-still-M0-compliant counterexample, contribution mode, cheapest
-expression, `common`, `situational`, `rare`, or `unknown` applicability and
-its evidence basis, positive and wrong-condition cases, fixed rubric, proof,
-and residual professional or transfer claim limits. Fixture frequency does
-not establish real-world prevalence. If the weaker outcome would violate M0,
-classify the behavior `M0-recruited` and reject H1 before construction. A
-`quality-lift` fixture must discriminate under realistic difficulty rather
-than make the preferred behavior obvious. A hypothesis may add or substitute
-behavior while preserving the intended contract.
+expression, expected load effect and acceptance budget, `common`,
+`situational`, `rare`, or `unknown` applicability and its evidence basis,
+positive and wrong-condition cases, fixed rubric, proof, and residual
+professional or transfer claim limits. Fixture frequency does not establish
+real-world prevalence. If the weaker outcome would violate M0, classify the
+behavior `M0-recruited` and reject H1 before construction. A `quality-lift`
+fixture must discriminate under realistic difficulty rather than make the
+preferred behavior obvious. A hypothesis may add or substitute behavior while
+preserving the intended contract.
 
 When a hypothesis changes outcome, invocation, authority, Return, completion,
 exclusion, or relationship, return `behavior-decision-gap`. When one
@@ -612,13 +639,14 @@ Build one decision ledger:
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 Seed one schema-validated, machine-readable campaign manifest before Prompt 3.
-It owns the fixed point; M0, research, and synthesis fingerprints; M0 clauses
-and gates; required and forbidden semantic IDs; current and H1 dispositions;
-protected helpers and compatibility surfaces; carried-forward evidence
-identities, dispositions, and invalidations; and the M0/H1/V1/P1, canonical,
-and installed identity slots. Every `remove` or rejected behavior receives one
-forbidden semantic ID and absence-proof obligation. The manifest contains no
-narrative chronology.
+It owns the fixed point; C0 identity; M0, research, and synthesis fingerprints;
+M0 clauses and gates; required and forbidden semantic IDs; current-only causal
+dispositions; current and H1 dispositions; protected helpers and compatibility
+surfaces; carried-forward evidence identities, dispositions, and
+invalidations; runtime load profiles; separate semantic, behavioral, and load
+claim slots; and the M0/H1/V1/P1, canonical, and installed identity slots.
+Every `remove` or rejected behavior receives one forbidden semantic ID and
+absence-proof obligation. The manifest contains no narrative chronology.
 
 Make the synthesis decision-complete: intended contract, M0 checkpoint and
 clause map, research registry and classifications, current dispositions, H1
@@ -677,7 +705,9 @@ Prototype verdict may select construction but is not behavioral evidence.
 
 Store M0 once as the immutable control and H1 once as the candidate. When
 M0 = H1, use one corpus and identity. Keep current canonical separate as
-comparison evidence.
+exact C0 comparison evidence. For an admitted incumbent-removal ablation,
+prefer the isolated `M0 + incumbent unit` arm. Materialize a C0 arm only when
+the unit cannot be isolated and restrict it to the affected cases.
 
 Pre-register:
 
@@ -685,7 +715,10 @@ Pre-register:
   contracts, safe failure, completion, order, compatibility, and safety;
 - each H1 defect-correction or quality-lift control with fixed task, model,
   host, reasoning configuration, tools, authority, evidence, runtime, rubric,
-  wrong-condition case, and expected M0 weakness; and
+  wrong-condition case, expected M0 weakness, expected load effect, and
+  acceptance budget;
+- each incumbent-removal ablation or bounded C0 comparison with the observable
+  behavior at risk, affected cases, and non-inferiority bound; and
 - protected-behavior, relationship, invocation, context, and machine proof.
 
 For every behavioral fixture, keep task and source facts, authority, initial
@@ -727,6 +760,16 @@ campaign manifest, and semantic ledger. Add only candidate-specific proof
 plan, Pruning Pass boundary, affected relationships, and residual load. Store
 distinct bytes once; when a frozen template plus recorded parameters
 reconstructs an exact dispatch, do not copy the full payload per sample.
+
+Before Prompt 4, run one candidate-aware focused compatibility preflight
+against the exact M0/H1 packages. Classify each directly affected assertion as
+semantic prose or a machine-consumed contract. Repair a human-prose sentence
+snapshot to heading-bounded normalized semantics; do not change candidate
+wording merely to satisfy a prose snapshot. If the candidate misses a frozen
+M0 semantic, correct the construction and refreeze affected identities. If M0
+itself omitted a required intended or compatibility contract, return to
+Prompt 1.
+
 Update candidate-specific structural proof only for machine-consumed
 contracts; do not publish relationship changes before promotion.
 
@@ -785,6 +828,13 @@ cohorts. Its five-entry-positive-control floor governs candidate credit.
 Applicability evidence and conditional efficacy remain separate; fixture
 frequency is not real-world prevalence.
 
+Resolve plausible incumbent-removal units through the same adaptive gate.
+Prefer an isolated `M0 + incumbent unit` arm. Use exact C0 only for affected
+cases when isolation is impossible, and do not attribute a whole-C0 result to
+one clause. A current-only unit with plausible observable effect and no
+preservation, causal comparison, or resolved non-inferiority proof remains
+`unresolved removal risk`.
+
 For each distinct fixture family, dispatch and inspect one control before its
 remaining wave. Verify source sufficiency, tool and operation fidelity,
 capture integrity, and payload isolation. A valid first sample counts toward
@@ -808,7 +858,8 @@ copying the full payload into every sample record.
    If H1 clears the contribution bar, run its frozen wrong-condition M0/H1
    pairs before acceptance. A candidate rejected before that gate receives no
    further samples. Accept only repeatable material improvement with acceptably
-   bounded variance and no new critical or protected-behavior regression.
+   bounded variance, no new critical or protected-behavior regression, and no
+   violation of its registered load budget.
 5. Record `reject-insufficient-contribution` when H1 fails the material
    contribution bar without regression. Reserve `reject-regression` for an
    actual critical or protected-behavior regression. Borderline effect,
@@ -843,9 +894,10 @@ failures, deviations, decision, unavailable telemetry, and residual transfer
 gaps in the human decision record.
 
 Current behavior has no protection by existence. If removing a current-only
-unit carries unresolved material safety, authority, compatibility, or
-relationship risk, return `needs-more-evidence` and preserve the active
-runtime. If all H1 units are cleanly rejected and M0 is viable, V1 = M0 may
+unit carries unresolved material safety, authority, compatibility,
+relationship, capability, or quality risk, return `needs-more-evidence` and
+preserve the active runtime. If all H1 units are cleanly rejected, M0 is
+viable, and every plausible incumbent-removal risk is resolved, V1 = M0 may
 continue.
 
 Refresh the campaign manifest, synthesis, and validation with exact
@@ -936,6 +988,15 @@ read-back. Reuse exact accepted behavior evidence; do not rerun merely because
 the lifecycle stage changed. Read back the complete canonical package and run
 proportionate proof. Writing Great Skills stops after canonical proof.
 
+Classify any proof failure before routing it. When P1 preserves the tested
+semantic contract but a directly affected test snapshots human prose, repair
+that proof to heading-bounded normalized semantics and rerun it without
+changing P1 or invalidating accepted behavior. Return to Prompt 3 when the
+executable candidate fails a frozen M0 semantic, Prompt 1 when M0 itself
+omitted a required intended or compatibility contract, the Pruning Pass when
+P1 drifted from accepted V1, and Prompt 4 only when behavioral evidence is
+invalid or insufficient.
+
 Reconcile synthesis to active state: M0, research classifications, accepted and
 rejected H1 units, V1, pruning decisions, P1, canonical identity,
 relationships, proof pointers, deliberate non-changes, and residual
@@ -943,15 +1004,20 @@ professional, behavioral, model, host, and transfer gaps. Remove superseded
 future-tense construction and raw chronology; validation owns raw outputs.
 
 Update the campaign manifest with canonical and installed identities plus
-final evidence dispositions; do not copy its identity tables into synthesis or
-the promotion record.
+final evidence dispositions. Record three separate terminal claims: semantic
+contract status; behavioral contribution or non-regression with tested bounds;
+and runtime-load direction with its telemetry or labeled proxy basis. Do not
+merge these claims or imply unavailable measurement. Do not copy the
+manifest's identity tables into synthesis or the promotion record.
 
 Before Return, persist one compact final manifest and every promotion-critical
-stage capsule under a non-disposable repository validation path. Scratch may
-hold working runtimes and disposable captures only. Active synthesis,
-transcripts, decisions, and Prompt 6 scope must not depend on an untracked,
-ignored, or disposable path; durable results may retain capture hashes and
-judgments without retaining capture paths.
+stage capsule under a repository path authorized for Prompt 6. List every
+promotion-critical path once in the final manifest, then verify that each path
+resolves inside the repository, exists, and is not ignored. `.scratch/` is
+durable only when intentionally included in Prompt 6 scope; `.tmp/` and
+discarded captures may appear only by hash, never as required dependencies.
+Active synthesis, transcripts, decisions, and Prompt 6 scope must not depend on
+an omitted or disposable path.
 
 After canonical proof, remove only this skill's experimental package and
 manifest entry; preserve every other candidate. Run managed-install dry-run,
@@ -987,7 +1053,10 @@ canonical, relationship, proof, and installation-record changes belonging to
 the completed campaign. Preserve unrelated work. Review the scoped diff, run
 required current checks, stage intentionally, and commit. Push only when the
 user explicitly requested it. Block delivery when any authoritative record
-still depends on a scratch, ignored, untracked, or otherwise disposable path.
+still depends on an ignored, omitted, or disposable path. Before commit, verify
+every promotion-critical path named by the final manifest is staged or already
+tracked at its recorded identity. A required `.scratch/` path belongs in the
+commit; a `.tmp/` path cannot.
 
 Record starting Git HEAD. Return `complete`, `evidence-gap`, or `blocked`,
 including starting and ending HEAD, commit identity, remote state when pushed,

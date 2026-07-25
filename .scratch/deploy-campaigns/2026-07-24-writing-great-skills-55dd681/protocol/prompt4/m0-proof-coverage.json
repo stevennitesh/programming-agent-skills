@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "campaign": "2026-07-24-writing-great-skills-55dd681",
+  "status": "pre-dispatch",
+  "matrix": [
+    {"unit": "M0-U01", "obligation": "routing predicate and exclusions", "deterministic": ["P01", "P11", "P19", "P20", "P21", "P41", "INV-01", "MACH-02"], "behavioral": ["MV-ROUTE-01"]},
+    {"unit": "M0-U02", "obligation": "Audit read-only and Author bounded", "deterministic": ["P02", "P03", "P04", "P05", "ABS-03", "ABS-04"], "behavioral": ["MV-AUDIT-01", "MV-AUTHOR-01"]},
+    {"unit": "M0-U03", "obligation": "canonical and foreign-owner boundary", "deterministic": ["P06", "P08", "REL-01", "REL-02", "REL-03", "ABS-05", "ABS-06"], "behavioral": ["MV-ROUTE-01", "MV-AUDIT-01", "MV-AUTHOR-01"]},
+    {"unit": "M0-U04", "obligation": "complete bounded coverage classification", "deterministic": ["P07"], "behavioral": ["MV-AUDIT-01", "MV-AUTHOR-01"]},
+    {"unit": "M0-U05", "obligation": "discoverable contract and one owner", "deterministic": ["P09", "P10", "P24", "P27", "REL-04", "ABS-07"], "behavioral": ["MV-AUDIT-01", "MV-AUTHOR-01"]},
+    {"unit": "M0-U06", "obligation": "common behavior and conditional branch loading", "deterministic": ["P12", "P18", "P22", "P23", "P26", "CTX-01", "CTX-02", "ABS-11"], "behavioral": ["MV-AUDIT-01"]},
+    {"unit": "M0-U07", "obligation": "behavior-preserving cuts", "deterministic": ["P13", "P28", "P29", "P30", "ABS-08", "ABS-09", "ABS-10", "ABS-13", "ABS-14"], "behavioral": ["MV-AUDIT-01", "MV-AUTHOR-01"]},
+    {"unit": "M0-U08", "obligation": "claim-matched proof and clean controls", "deterministic": ["P14", "P31-P40", "ISO-01", "ABS-12", "ABS-15"], "behavioral": ["MV-AUDIT-01", "MV-AUTHOR-01", "EP-CLEAR-01", "EP-CLEAR-02", "EP-CLEAR-03", "EP-BORDER-01", "EP-BORDER-02", "EP-BORDER-03"]},
+    {"unit": "M0-U09", "obligation": "truthful typed Return and bounded completion", "deterministic": ["P15", "P16", "P17", "P25"], "behavioral": ["MV-ROUTE-01", "MV-AUDIT-01", "MV-AUTHOR-01"]}
+  ],
+  "one_time_checks": ["construction verifier", "tree and file identities", "inventory", "one-file arm delta", "semantic trace", "relationships", "ordering", "exact machine literals", "forbidden absence checks", "fixture lint", "payload isolation", "Markdown gates"],
+  "sampling": {
+    "m0_viability_cases": ["MV-ROUTE-01", "MV-AUDIT-01", "MV-AUTHOR-01"],
+    "h1_cluster_m0_controls": ["EP-CLEAR-01", "EP-CLEAR-02", "EP-CLEAR-03", "EP-BORDER-01", "EP-BORDER-02", "EP-BORDER-03"],
+    "family_first_controls": ["EP-CLEAR-01", "EP-BORDER-01"]
+  }
+}

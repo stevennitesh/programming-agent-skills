@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "artifact_type": "deploy-stage-capsule",
+  "campaign": "2026-07-24-writing-great-skills-55dd681",
+  "skill": "writing-great-skills",
+  "unit": "prompt-5",
+  "decision": "complete",
+  "campaign_shape": "minimum-candidate",
+  "tree_algorithm": "campaign-tree-v1",
+  "p1_tree_sha256": "559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032",
+  "materialized_p1_tree_sha256": "559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032",
+  "canonical_before_tree_sha256": "2a83a9655d1f5f9ff8647d2c9d8fc8a74916b78727b11857bd9bf24e52f364d2",
+  "canonical_after_tree_sha256": "559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032",
+  "installed_before_tree_sha256": "2a83a9655d1f5f9ff8647d2c9d8fc8a74916b78727b11857bd9bf24e52f364d2",
+  "installed_after_tree_sha256": "559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032",
+  "proof_failure_classification": {
+    "kind": "human-prose-snapshot",
+    "repair": "heading-bounded-normalized-semantics",
+    "p1_changed": false,
+    "accepted_behavior_evidence_invalidated": false
+  },
+  "canonical_proof": {
+    "p1_tree_identity": "passed",
+    "markdown_gates": "passed",
+    "skill_validation": "passed",
+    "affected_focused_tests": "15 passed",
+    "full_suite": "213 passed, 4 skipped",
+    "both_diff_checks": "passed"
+  },
+  "experimental_removal": "no-op-target-package-and-manifest-entry-absent",
+  "installation": {
+    "pre_install_dry_run": "exact-changed-cohort-writing-great-skills",
+    "supported_installer": "complete",
+    "canonical_installed_parity": "passed",
+    "post_install_dry_run": "25 unchanged"
+  },
+  "recommended_next_unit": "none",
+  "git_delivery": "pending"
+}

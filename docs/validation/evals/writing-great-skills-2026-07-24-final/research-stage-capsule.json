@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "artifact_type": "deploy-stage-capsule",
+  "campaign": "2026-07-24-writing-great-skills-55dd681",
+  "skill": "writing-great-skills",
+  "unit": "research-pass",
+  "decision": "answered",
+  "research_file_sha256": "3aae141d4b10e4c0fb77b199edf0b002b105e3b7fe94b003fbf15322a6110c31",
+  "method_dispositions": {
+    "independently_supported": [
+      "observable routing predicate",
+      "bounded ownership",
+      "shallow conditional disclosure",
+      "co-location",
+      "clause-to-behavior cut audit",
+      "positive target with necessary guardrail",
+      "fixed comparable controls",
+      "uncertainty and decision-margin rationale"
+    ],
+    "pack_specific": [
+      "failure-shaped guidance taxonomy"
+    ],
+    "unverified": [
+      "conceptual leading-word recruitment",
+      "context split as a general cure"
+    ],
+    "contested": [
+      "five samples as automatic sufficiency"
+    ]
+  },
+  "next_unit": "prompt-2"
+}

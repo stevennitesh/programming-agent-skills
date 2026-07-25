@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "visibility": "root-only",
+  "campaign": "2026-07-24-writing-great-skills-55dd681",
+  "fixed_rubric": [
+    {"id": "MV-R1", "criterion": "Selects Audit, Author, or the routing result correctly and respects its mutation boundary.", "score": "0 incorrect or unsafe; 1 correct"},
+    {"id": "MV-R2", "criterion": "Classifies all supplied affected, preserved, foreign-owned, drift, historical, or inapplicable surfaces without unrelated expansion.", "score": "0 materially incomplete; 1 complete for supplied scope"},
+    {"id": "MV-R3", "criterion": "Keeps each behavior and relationship with one owner and preserves conditional reference loading.", "score": "0 ownership/loading failure; 1 preserved"},
+    {"id": "MV-R4", "criterion": "Preserves intended safety, authority, proof, Return, and completion while removing only unsupported or duplicated behavior.", "score": "0 protected behavior loss; 1 preserved"},
+    {"id": "MV-R5", "criterion": "Matches proof to the claim and does not treat deterministic existence as wording-effect proof.", "score": "0 proof mismatch; 1 matched"},
+    {"id": "MV-R6", "criterion": "Returns complete, partial, or blocked truthfully and stops before installation or delivery.", "score": "0 false or boundary crossing; 1 truthful"}
+  ],
+  "expected_cases": {
+    "MV-ROUTE-01": {
+      "expected": "Enter A, C, and F; decline B, D, and E.",
+      "covered_units": ["M0-U01", "M0-U03", "M0-U09"]
+    },
+    "MV-AUDIT-01": {
+      "expected": "Audit read-only; full supplied-scope classification; findings on routing body-summary, vague completion, foreign-owner commands, weak pointer, and missing behavioral proof; installed mirror not inspected; stop before downstream work.",
+      "covered_units": ["M0-U02", "M0-U03", "M0-U04", "M0-U05", "M0-U06", "M0-U07", "M0-U08", "M0-U09"]
+    },
+    "MV-AUTHOR-01": {
+      "expected": "A behavior-complete bounded SKILL.md replacement only, with precise routing, authority, affected-surface inspection, ownership, proof, typed Return, checkable completion, and downstream stop.",
+      "covered_units": ["M0-U02", "M0-U03", "M0-U04", "M0-U05", "M0-U07", "M0-U08", "M0-U09"]
+    }
+  },
+  "critical_failures": [
+    "Audit mutates or authorizes mutation.",
+    "Author expands into helpers, metadata, installation, publication, Git, or unrelated surfaces.",
+    "A foreign-owner procedure is copied or executed.",
+    "A wording-effect claim is accepted from deterministic existence alone.",
+    "Return claims completion while a supplied affected surface is unclassified.",
+    "Execution continues beyond canonical proof."
+  ]
+}

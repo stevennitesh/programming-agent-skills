@@ -103,8 +103,12 @@ def test_shared_model_separates_intent_research_pack_current_and_proof() -> None
     for term in (
         "not prove correctness or local fit",
         "Never simulate a practitioner conversation",
+        "**`C0` incumbent runtime:**",
+        "C0 is comparison evidence, not M0 authority",
         "M0 is minimal by behavioral scope",
         "P1 is minimal by proved wording and package load",
+        "**Runtime load profile:**",
+        "Never invent prevalence or probability weights",
         "Pack-specific or unverified behavior may be a clearly labeled local experiment",
     ):
         assert term in shared
@@ -145,7 +149,19 @@ def test_prompt_2_builds_h1_from_five_discovery_lanes_with_honest_authority() ->
         "fixed rubric",
         "H1 cannot make M0 viable",
         "`unresolved removal risk`",
+        "For each current-only unit",
+        "isolate `M0 + incumbent unit` as a `current-observed` H1",
+        "use exact C0 only when isolation is impossible",
+        "Never protect all of C0 or require a full C0 behavioral wave",
+        "`quality-lift` is the bounded exploratory lane",
+        "needs no previously observed defect",
+        "Prompt 4's control decides",
+        "Do not create hypotheses to satisfy a quota",
+        "expected load effect and acceptance budget",
         "Seed one schema-validated, machine-readable campaign manifest",
+        "C0 identity",
+        "current-only causal dispositions",
+        "separate semantic, behavioral, and load claim slots",
         "required and forbidden semantic IDs",
         "protected helpers and compatibility surfaces",
         "carried-forward evidence identities",
@@ -180,6 +196,12 @@ def test_prompt_3_materializes_m0_without_research_leakage_and_builds_exact_h1()
         "Do not import research language",
         "Construct exact H1 from M0 plus only admitted additions and substitutions",
         "Store M0 once as the immutable control and H1 once as the candidate",
+        "exact C0 comparison evidence",
+        "prefer the isolated `M0 + incumbent unit` arm",
+        "Materialize a C0 arm only when the unit cannot be isolated",
+        "incumbent-removal ablation or bounded C0 comparison",
+        "expected load effect",
+        "non-inferiority bound",
         "Do not create a separate no-guidance control when M0 already supplies",
         "Trace every scored criterion to one worker-visible source fact or observable operation",
         "Spread the existing minimum five samples for a broad claim across at least two realistic families",
@@ -200,6 +222,10 @@ def test_prompt_3_materializes_m0_without_research_leakage_and_builds_exact_h1()
         "do not infer per-unit contribution from one bundled arm",
         "do not copy the full payload per sample",
         "references rather than copies the authoritative intended contract",
+        "candidate-aware focused compatibility preflight",
+        "Classify each directly affected assertion as semantic prose or a machine-consumed contract",
+        "do not change candidate wording merely to satisfy a prose snapshot",
+        "If M0 itself omitted a required intended or compatibility contract",
         "M0 must be exact and executable",
     ):
         assert term in prompt_3
@@ -239,6 +265,10 @@ def test_prompt_4_proves_m0_then_defect_correction_or_quality_lift() -> None:
         "`writing-great-skills/BEHAVIOR-EVALS.md`",
         "five-entry-positive-control floor",
         "Applicability evidence and conditional efficacy remain separate",
+        "Resolve plausible incumbent-removal units through the same adaptive gate",
+        "Use exact C0 only for affected cases when isolation is impossible",
+        "do not attribute a whole-C0 result to one clause",
+        "no preservation, causal comparison, or resolved non-inferiority proof",
         "Do not dispatch one behavioral sample per semantic unit",
         "Keep reconstructible per-sample payloads disposable",
         "Store per-sample identities and results once in a compact results manifest",
@@ -250,10 +280,13 @@ def test_prompt_4_proves_m0_then_defect_correction_or_quality_lift() -> None:
         "`reject-regression`",
         "wrong-condition M0/H1 pairs before acceptance",
         "candidate rejected before that gate receives no further samples",
+        "no violation of its registered load budget",
         "Reserve `reject-regression` for an actual critical or protected-behavior regression",
         "`needs-more-evidence`",
         "If no H1 units survive, set V1 = M0",
         "Unit rejection never terminates a campaign while viable M0",
+        "capability, or quality risk",
+        "every plausible incumbent-removal risk is resolved",
         "model, host, tools, configuration",
         "preserve the active runtime",
     ):
@@ -289,6 +322,22 @@ def test_pruning_freezes_v1_and_promotes_only_regression_checked_p1() -> None:
     assert "promote P1 into the canonical skill" in prompt_5
     assert "verify canonical/installed parity" in prompt_5
     assert "Update the campaign manifest with canonical and installed identities" in prompt_5
+    for term in (
+        "three separate terminal claims",
+        "semantic contract status",
+        "behavioral contribution or non-regression",
+        "runtime-load direction",
+        "List every promotion-critical path once in the final manifest",
+        "resolves inside the repository, exists, and is not ignored",
+        "`.scratch/` is durable only when intentionally included in Prompt 6 scope",
+        "`.tmp/` and discarded captures may appear only by hash",
+        "Classify any proof failure before routing it",
+        "repair that proof to heading-bounded normalized semantics",
+        "Return to Prompt 3 when the executable candidate fails a frozen M0 semantic",
+        "Prompt 1 when M0 itself omitted a required intended or compatibility contract",
+        "Prompt 4 only when behavioral evidence is invalid or insufficient",
+    ):
+        assert term in prompt_5
 
 
 def test_campaign_runs_mandatory_research_and_every_runtime_stage() -> None:
@@ -345,6 +394,7 @@ def test_campaign_records_one_authoritative_unit_decision_without_duplication() 
         "## Deploy Prompt 5: Promote And Install P1",
         "## Deploy Prompt 6: Git Delivery",
     )
+    prompt_6 = deploy.split("## Deploy Prompt 6: Git Delivery", 1)[1]
 
     for term in (
         "one authoritative decision record per unit",
@@ -376,7 +426,14 @@ def test_campaign_records_one_authoritative_unit_decision_without_duplication() 
     assert "compare it with the controller's ambient cohort" in prompt_5
     assert "newly appeared unrelated drift as a fresh scope gap" in prompt_5
     assert "persist one compact final manifest" in prompt_5
-    assert "must not depend on an untracked, ignored, or disposable path" in prompt_5
+    assert "must not depend on an omitted or disposable path" in prompt_5
+    for term in (
+        "every promotion-critical path named by the final manifest",
+        "staged or already tracked at its recorded identity",
+        "A required `.scratch/` path belongs in the commit",
+        "a `.tmp/` path cannot",
+    ):
+        assert term in prompt_6
 
 
 def test_interludes_own_only_contract_or_technical_uncertainty() -> None:
@@ -412,30 +469,89 @@ def test_interludes_own_only_contract_or_technical_uncertainty() -> None:
 def test_behavior_evaluation_contract_supports_quality_lift_and_adaptive_cost() -> None:
     evals = _normalized(BEHAVIOR_EVALS)
     writing = _normalized(WRITING_SKILL)
+    register = _section(evals, "## Register the control", "## Freeze and sample")
+    sample = _section(evals, "## Freeze and sample", "## Judge")
+    judge = _section(evals, "## Judge", "## Record")
+    record = evals.split("## Record", 1)[1]
+    claim_proof = _section(writing, "## Claim-Matched Proof", "## Return")
 
-    for term in (
-        "`defect-correction` or `quality-lift`",
-        "meaningful rubric deficit",
-        "observable entry predicate",
-        "`common`, `situational`, `rare`, or `unknown` applicability",
-        "Fixture frequency does not establish real-world prevalence",
-        "separate entry-positive and wrong-condition cohorts",
-        "at least five independent entry-positive control samples",
-        "candidate samples only when the registered control deficit appears",
-        "wrong-condition control/candidate pairs only after",
-        "candidate rejected earlier receives no further samples",
-        "never dilute a situational effect with non-triggering cases",
-        "Judge conditional efficacy on entry-positive cases",
-        "Extend sampling only for material variance",
+    def assert_tokens_in_order(section: str, *tokens: str) -> None:
+        cursor = 0
+        for token in tokens:
+            cursor = section.index(token, cursor) + len(token)
+
+    for token in ("`defect-correction`", "`quality-lift`"):
+        assert token in register
+    assert_tokens_in_order(register, "meaningful", "rubric", "deficit")
+    assert_tokens_in_order(register, "observable", "entry", "predicate")
+    assert_tokens_in_order(register, "applicability", "`common`", "`situational`", "`rare`", "`unknown`")
+    assert_tokens_in_order(register, "evidence", "basis")
+    assert_tokens_in_order(
+        register,
+        "registered",
+        "control",
+        "deficit",
+        "does not",
+        "appear",
+        "stop",
+        "candidate",
+        "`reject-no-control-deficit`",
+    )
+
+    assert_tokens_in_order(sample, "entry-positive", "wrong-condition", "cohorts")
+    assert_tokens_in_order(sample, "five", "M0", "controls", "fresh", "contexts")
+    assert_tokens_in_order(sample, "five", "H1", "samples", "only", "deficit", "appears")
+    assert_tokens_in_order(
+        sample,
+        "wrong-condition",
+        "M0/H1",
+        "pairs",
+        "only",
+        "after",
+        "entry-positive",
+        "contribution",
+        "gate",
+    )
+    assert_tokens_in_order(sample, "do not", "dilute", "situational", "non-triggering")
+    assert_tokens_in_order(sample, "Extend", "variance", "borderline", "protocol")
+    assert_tokens_in_order(sample, "Five", "minimum", "not", "automatic", "sufficiency")
+
+    assert_tokens_in_order(judge, "conditional", "efficacy", "entry-positive")
+    assert_tokens_in_order(judge, "rejected", "candidate", "no", "wrong-condition")
+
+    for token in (
+        "`accept`",
         "`reject-no-control-deficit`",
         "`reject-insufficient-contribution`",
-        "Reserve `reject-regression` for an actual critical or protected behavior regression",
-        "residual transfer gap",
+        "`reject-regression`",
+        "`needs-more-evidence`",
+        "`blocked`",
     ):
-        assert term in evals
+        assert token in record
+    assert_tokens_in_order(record, "residual", "transfer", "gap")
+    assert_tokens_in_order(
+        record,
+        "`reject-regression`",
+        "observed",
+        "critical",
+        "protected",
+        "behavior",
+        "regression",
+    )
 
-    assert "registered defect" in writing
-    assert "pre-registered quality deficit" in writing
+    assert "[BEHAVIOR-EVALS.md](BEHAVIOR-EVALS.md)" in claim_proof
+    assert_tokens_in_order(
+        claim_proof,
+        "wording",
+        "changes",
+        "invocation",
+        "judgment",
+        "action",
+        "context loading",
+        "Return",
+        "completion",
+    )
+    assert_tokens_in_order(claim_proof, "uncontaminated", "direct", "controls")
 
 
 def test_source_method_and_indexes_match_independent_verification_model() -> None:

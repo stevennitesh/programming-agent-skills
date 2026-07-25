@@ -1,548 +1,307 @@
-# Writing Great Skills Design Synthesis
+# Writing Great Skills Deploy Synthesis
 
-Status: Deploy Prompt 5 promoted the behaviorally accepted candidate into the
-canonical package on 2026-07-21 at tree hash
-`c7c02f4f9896cd5bf6e6c25886e77785a9f80c0ccea0d02f7aaa6fc85076dcc4`.
-The Author phase migrated directly affected structural proof and stopped after
-canonical proof. The separately owned continuation retired the experimental
-copy and manifest entry, then synchronized the managed installed mirror at the
-same hash. Git delivery was not performed.
+Status: Deploy Prompt 5 complete; exact P1 is canonical and installed.
 
-Canonical runtime authority remains in:
+This synthesis owns the active semantic decision for campaign
+`2026-07-24-writing-great-skills-55dd681`. Historical research, promotion,
+evaluation, and pruning records remain evidence in their own files and do not
+define the current lifecycle state.
 
-- `skills/custom/writing-great-skills/SKILL.md`;
-- `skills/custom/writing-great-skills/GLOSSARY.md`;
-- `skills/custom/writing-great-skills/BEHAVIOR-EVALS.md`; and
-- `skills/custom/writing-great-skills/agents/openai.yaml`.
+<!-- WRITING-GREAT-SKILLS-DEPLOY-DECISION:START -->
 
-`CONTEXT.md` owns pack artifact and vocabulary boundaries,
-`docs/synthesis/skill-context-relationships.md` indexes accepted relationships,
-and ADR 0004 keeps semantic language judgment out of mechanical validation.
-Tests and behavioral evaluations prove the canonical design; they do not define
-it. Installation, mirror synchronization, publishing, and Git delivery remain
-with their existing owners.
+## Decision
 
-`docs/synthesis/methods/deploy-prompts.md` owns rewrite cadence. This
-synthesis owns the selected design and its acceptance obligations, not a second
-implementation runbook.
+- Decision: `accepted`
+- Campaign shape: `minimum-candidate` after H1 rejection.
+- Exact identity relation: evaluated M0
+  `559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032`
+  differed from evaluated H1
+  `1021d8c5d9d20a81e4ab33a0b014cf71826b818a02153041b7845aac245cf553`;
+  rederived H1 = V1 = M0
+  `559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032`.
+- M0 decision: intent-faithful and viable; all nine units passed their minimum
+  deterministic and behavioral coverage.
+- H1 decision: `H1-UNCERTAINTY-01` is
+  `reject-insufficient-contribution`.
+- Wrong-condition gate: not opened because H1 was rejected at entry-positive
+  contribution.
+- Pruning decision: `complete`; `pruning-not-needed`.
+- Exact P1 is V1 byte-for-byte at
+  `559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032`.
+- Canonical decision: exact P1 was materialized without byte drift. A
+  human-prose snapshot failure was repaired to heading-bounded normalized
+  semantic proof without changing P1; focused and full integration proof then
+  passed.
+- Installation decision: the managed dry-run named exactly
+  `writing-great-skills`; supported synchronization completed, canonical and
+  installed identities match
+  `559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032`,
+  and the post-install dry-run reports all 25 skills unchanged.
+- Successor state: none. Git delivery was not authorized.
 
-The evidence snapshot is the working tree inspected through 2026-07-21, the
-2026-07-21 authoring-boundary evaluation, the Prompt 4 metadata, full-package,
-and pruning-equivalence studies, and freshly fetched upstream HEAD
-`ed37663cc5fbef691ddfecd080dff42f7e7e350d`. The promoted package under
-`skills/custom/writing-great-skills/` is now executable authority; the prior
-active baseline and Prompt 4 candidate remain historical evidence.
+## Facts
 
-# Verdict
+### Fixed Inputs
 
-## Outcome
+| Artifact | Identity | Authority in this decision |
+| --- | --- | --- |
+| Git fixed point | `55dd6818182caf75e85de713a13ed76996336a27` | Repository state for this campaign epoch |
+| M0 checkpoint | `sha256-canonical-json-v1:49d8890b655be04129baf67ad729e031fd926d9bd3d332c5bb4dc9cf271a2f03` | Minimum intended behavior |
+| Prompt 1 transcript | `sha256-file-bytes-v1:a8fa70e5dc6d14e81c4afa038c594305341a85f4c66f0f1509710939ea4555e9` | Prompt 1 chronology and frozen capsule |
+| Research packet | `sha256-file-bytes-v1:3aae141d4b10e4c0fb77b199edf0b002b105e3b7fe94b003fbf15322a6110c31` | Decision-ready method evidence and candidate discovery |
+| Active canonical package | `skills/custom/writing-great-skills/` at `campaign-tree-v1:559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032` | Exact promoted P1 |
+| Historical pre-prune fixture | `docs/validation/evals/writing-great-skills-pruning-pre-prune/` | Historical pruning control only |
 
-Writing Great Skills owns one outcome:
+The current canonical package has exactly `SKILL.md`, `GLOSSARY.md`,
+`BEHAVIOR-EVALS.md`, and `agents/openai.yaml`. `SKILL.md` has exactly two
+Markdown references, to `GLOSSARY.md` and `BEHAVIOR-EVALS.md`, and policy
+`allow_implicit_invocation` is true.
 
-> Make a canonical Codex skill produce a predictable process through the
-> smallest behavior-changing semantic surface.
+There is no active `skills/experimental/writing-great-skills/` package and no
+target entry in `skills/experimental/manifest.json`. The 2026-07-21 candidate
+was promoted and retired. The pre-prune fixture is frozen historical evidence,
+not an experimental target or extraction source.
 
-Predictability means a stable process, not identical output. Concision,
-discoverability, context cost, and maintainability serve that outcome. A short
-skill is worse when it hides authority or weakens completion; a long skill is
-worse when it dilutes attention, duplicates meaning, or keeps branch-only
-material in the common path.
+### Intended Contract
 
-## Ownership Boundary
+Writing Great Skills judges or authors the semantic behavior of one requested
+Codex skill or skill-design artifact so invocation, authority, actions,
+branches, ownership, proof, Return, and completion are coherent, locally
+owned, and proportionately proved.
 
-Writing Great Skills supplies the instructions and judgment for creating,
-auditing, and improving canonical skill behavior. It may edit the requested
-canonical skill package and the smallest proof surfaces needed to establish the
-change. It stops after canonical proof.
+It enters for canonical skill creation or editing, semantic audit or review,
+and direct wording-behavior tests. General prompt rewriting, ordinary code
+review, new-package scaffolding, installation, publishing, synchronization,
+and Git delivery remain outside its authority.
 
-It does not own:
+Audit is read-only. Author may mutate only the requested canonical semantic
+surface and directly affected authorized proof or relationship surfaces.
+Canonical source, operation, and mutation authority resolve before judgment or
+write. Proof follows the exact candidate. Completion stops after canonical
+proof and returns `complete`, `partial`, or `blocked` truthfully.
 
-- new-package scaffolding, generated metadata, or generic package mechanics;
-- installation, installed mirrors, manifests, synchronization, or promotion;
-- publishing, staging, commits, pushes, or other delivery work; or
-- generic subagent dispatch policy, worker topology, or collaboration settings.
+## M0 Checkpoint And Clause Map
 
-Installation requires separate user or caller authority. Writing Great Skills
-neither grants nor consumes that authority.
+M0 remains viable without research language, current-only vocabulary, or H1.
+No inspected current, caller, relationship, safety, or compatibility surface
+exposed a missed minimum obligation.
 
-The bundled `skill-creator` remains installed. It leads new skill packages and
-structural scaffolding; Writing Great Skills supplies semantic-quality judgment.
-For an existing skill, Writing Great Skills leads behavior, wording, ownership,
-context disclosure, and pruning. A structural branch uses `skill-creator` only
-for its package mechanics. Neither owner copies the other's procedure.
+| Clause | Units | Required M0 semantics | Cheapest neutral expression | Gate |
+| --- | --- | --- | --- | --- |
+| `M0-C01` | `M0-U01` | Implicit entry for create/edit, audit/review, and wording-behavior testing with closest exclusions | One precise description predicate plus implicit policy | Positive and adjacent-negative routing |
+| `M0-C02` | `M0-U02`, `M0-U03` | Audit/Author authority, canonical source, and foreign-owner stop | One two-branch authority block and one ownership boundary | Audit no-write, bounded Author, unchanged foreign state |
+| `M0-C03` | `M0-U04` | Behavior-capable affected-surface coverage and explicit classification | One bounded coverage rule | Complete affected-surface ledger |
+| `M0-C04` | `M0-U05`, `M0-U06` | Discoverable outcome, authority, action or branch, Return, completion, one owner, local vocabulary, common-path locality, and conditional loading | One semantic authoring block and one conditional pointer rule | Owner/pointer trace and context-loading cases |
+| `M0-C05` | `M0-U07` | Behavior-preserving cuts protect safety, authority, proof, order, Return, and completion | One cut gate using the behavior-change question | Clause-to-intent and protected-behavior audit |
+| `M0-C06` | `M0-U08` | Claim-matched proof and uncontaminated direct controls | One claim-to-proof block plus the required disclosed evaluation contract | Structural, relationship, and direct-test lanes remain distinct |
+| `M0-C07` | `M0-U09` | Typed operation-specific Return, completion ledger, truthful gaps, and canonical stop | One Return block and one completion condition | Return/work-state read-back and absence of delivery |
 
-## Selected Design
+The required semantic set is `M0-U01` through `M0-U09`. Required compatibility
+also protects the four-file package, the two `SKILL.md` references, implicit
+policy, absence of skill-owned `fork_turns` mechanics, the router boundary, the
+`skill-creator` boundary, and the contribution-mode/adaptive-cost behavior
+contract exercised by focused deploy tests.
 
-| Decision | Selected design |
-| --- | --- |
-| Invocation | Keep implicit invocation as a required local discovery contract. Treat the description as an always-loaded routing predicate: name observable request or caller triggers, add the closest exclusion only when necessary, and omit explicit-name reach, runtime procedure, and body-summary detail. |
-| Package | Keep one short `SKILL.md`, one authoring glossary, one behavioral-evaluation reference, and one policy file. |
-| Operations | Use `Audit` for strictly read-only judgment and `Author` for explicitly authorized canonical persistence. |
-| Authoring behavior | Require source and authority resolution, single ownership, a discoverable caller-facing contract, behavior-preserving pruning, and claim-matched proof. The exact `Trace -> Own -> Shape -> Prune -> Prove` labels and fixed sequence are not independently admitted runtime mechanisms. |
-| Semantic roles | Make outcome, authority, applicable action, Return, and completion discoverable. Defer the invented `Semantic Skill Surface` name and any fixed role order. |
-| Behavioral evaluation | Make counterfactual evaluation a triggered behavior-proof branch, not a peer operation. A direct evaluation request may enter that branch without authoring authority. |
-| Vocabulary | Keep `GLOSSARY.md` limited to durable authoring concepts and failure modes. |
-| Proof | Match proof to the claim and stop after canonical structural, relationship, and behavioral evidence. |
-| Delegation | Retain independence requirements for evidence, not permission or mechanics for dispatching workers. |
-| Growth | Add no helper, schema, ledger, template, or new reference until observed variance proves the current package insufficient. |
+## Research Registry
 
-The local design intentionally differs from upstream. Upstream remains source
-pressure, not runtime authority. This pack needs Codex-specific invocation,
-single-owner composition, canonical editing, and counterfactual proof; it does
-not need to copy upstream invocation policy or runtime shape.
-
-## Simplest Credible Baseline
-
-The design control is Matt Pocock's current upstream
-[`writing-great-skills`](https://github.com/mattpocock/skills/blob/ed37663cc5fbef691ddfecd080dff42f7e7e350d/skills/productivity/writing-great-skills/SKILL.md)
-package at `ed37663cc5fbef691ddfecd080dff42f7e7e350d`. It expresses the core
-Predictability outcome through one explicit-only, all-reference `SKILL.md`, one
-glossary, and one policy file. It already owns invocation cost, description
-pressure, information hierarchy, split pressure, leading words, no-op pruning,
-and positive targets.
-
-Use it as the baseline for aggregate load and behavioral controls, not as local
-runtime authority. The local design adds only Codex discovery, action and
-mutation authority, pack ownership, counterfactual proof, and a typed
-canonical-only Return. Upstream's examples and exact file shape remain source
-evidence rather than required runtime.
-
-## Minimum Viable Runtime
-
-The smallest coherent local runtime is the baseline's Predictability,
-information-hierarchy, pruning, and leading-word core plus these admitted
-deltas:
-
-- an implicitly invocable, trigger-only routing description;
-- a read-only Audit path and explicitly authorized canonical Author path;
-- source and authority resolution before judgment or mutation;
-- one owner for each affected behavior and relationship;
-- discoverable outcome, authority, applicable action, Return, and completion;
-- preservation of non-intuitive safety and ownership contracts while no-ops
-  and duplicated meaning are removed;
-- claim-matched proof, with counterfactual mechanics loaded only for behavioral
-  claims; and
-- a typed Return that stops after canonical proof.
-
-Only irreversible order is normative: authority and source resolution precede
-judgment or mutation, and proof follows the candidate it evaluates. The exact
-five-word spine and a universal semantic-role order are not runtime contracts.
-The compact full-audit inventory may stay inside the conditionally inline
-`full audit` branch in `SKILL.md`: creating another reference would cost more
-pointer and maintenance load than this branch saves. `BEHAVIOR-EVALS.md`
-remains the sole disclosed procedure for counterfactual evaluation.
-
-## Mechanism Admission Ledger
-
-| Mechanism | Baseline failure or required caller contract | Evidence | Owner | Cheaper alternative | Runtime, caller, proof, and maintenance load | Admission and destination |
-| --- | --- | --- | --- | --- | --- | --- |
-| Implicit invocation | Ordinary create/edit, audit/review, and behavioral-proof requests must reach the semantic owner without the human remembering its name. | Confirmed Prompt 1 caller contract; invocation behavior remains unproved. | Frontmatter and `agents/openai.yaml` | Upstream explicit-only policy | One always-loaded description; invocation evaluation | `admit` in metadata; evidence gap |
-| Codex invocation vocabulary and policy | Upstream's `model-invoked` / `user-invoked` and `disable-model-invocation` contracts describe a different runtime and would misstate local reachability. | Current Codex `policy.allow_implicit_invocation` contract and confirmed local discovery decision. | `GLOSSARY.md`, frontmatter, and `agents/openai.yaml` | Copy upstream terminology literally | Small glossary adaptation and policy proof | `admit` local `implicitly invocable` / `explicit-only` vocabulary and `allow_implicit_invocation`; `reject` upstream runtime terms |
-| Trigger-only description predicate | An implicit description must select observable requests without carrying runtime procedure or body summary. | Confirmed Prompt 1 contract; current literal tests are structural only. | Frontmatter description, shaped by `SKILL.md` | Upstream identity-plus-branches description | Small common-path rule; positive and adjacent-negative evaluation | `admit` in `SKILL.md` and metadata; evidence gap |
-| Audit and Author authority | Review wording must not grant mutation; canonical persistence must stay bounded. | Non-intuitive safety boundary; Author boundary partly supported by the 2026-07-21 evaluation. | `SKILL.md` | Repeated ad hoc authority prose | Two compact modes; Audit and leakage evaluation | `admit` in `SKILL.md` |
-| Source and coverage resolution | Full audits and bounded edits need current authority and affected-surface coverage. | Required Audit/Author caller contract. | `SKILL.md` | Unclassified repository scan | Compact bounded rule plus conditionally inline full-audit inventory | `admit`; full-audit branch inline because a new pointer costs more |
-| Single ownership and relationship facts | Pack composition requires one rule, authority, evidence, Return, and completion owner. | Relationship map; `skill-creator` boundary evaluation. | `SKILL.md` and relationship map | Copy foreign procedure | Small common rule and relationship trace | `admit` |
-| Five authoring behaviors | Local authoring needs resolution, ownership, shaping, pruning, and proof. | Required caller and safety contracts; exact labels add no measured value. | `SKILL.md` | Upstream flat reference | Compact behavior rules; scenario proof | `admit` behaviors; `defer` exact mnemonic and fixed sequence |
-| Discoverable semantic roles | Authority, action, Return, and completion must not disappear into presentation. | Ownership and safety contracts; structural proof only for presentation. | `SKILL.md` | Fixed template or named surface | One compact rule; no separate vocabulary mechanism | `admit` roles; `defer` `Semantic Skill Surface` name and fixed order |
-| Cut test and protected contracts | Relevance alone does not distinguish no-ops from safety-bearing guidance. | Baseline no-op rule, fixture 46, and non-intuitive safety boundary. | `SKILL.md` | Word-count or relevance-only pruning | Small runtime rule; behavior evaluation for claims | `admit` |
-| Counterfactual behavior protocol | Static prose and tests cannot prove wording changes behavior. | ADR 0004, fixture 51, and successful repository evaluations. | `BEHAVIOR-EVALS.md` | Inline procedure or one-shot judgment | Branch-only reference; at least five fresh samples per arm for a behavioral claim | `disclose` |
-| `skill-creator` and canonical stop | The baseline can absorb scaffolding, installation, and delivery into semantic completion. | 2026-07-21 evaluation improved 10/25 to 25/25 with zero candidate critical failures. | `skill-creator`, `SKILL.md`, and caller | One undifferentiated workflow | Compact boundary; relationship proof | `admit` boundary; scaffolding and delivery are `caller-owned` |
-| Typed Return and completion | Generic completion leaked post-edit ownership. | 2026-07-21 evaluation. | `SKILL.md` | Unstructured prose return | Compact status and evidence shape | `admit` |
-| Mirror inspection | Installation-state evidence is sometimes requested but repair belongs elsewhere. | Ownership contract. | Installation owner; Audit may report | Default mirror scan | Conditional read-only clause | `admit` as a conditionally inline boundary; repair is `caller-owned` |
-| Evidence independence | Candidate leakage can invalidate a behavioral control. | Fixture 28 history and behavioral-evaluation contract. | Writing Great Skills for evidence; ambient policy for dispatch | Skill-owned worker topology | Branch-only proof discipline | `admit` boundary; mechanics are `caller-owned` |
-| Literal tests, synthesis ledgers, helpers, and schemas | These can protect or explain behavior but do not create it. | ADR 0004 and Prompt 1 cut test. | Tests, synthesis, or future owning tool | Treat them as runtime guidance | Maintenance and coupling without demonstrated behavior | `non-runtime`; reject new machinery until observed failure |
-
-## Residual Unavoidable Complexity
-
-The local package necessarily carries one always-loaded description, two
-authority modes, one compact condition for full-audit coverage, one ownership
-boundary with `skill-creator`, one typed Return, and one disclosed behavioral
-protocol. These mechanisms buy Codex discovery, mutation safety, pack
-composition, and valid behavioral evidence that the explicit-only reference
-baseline does not supply.
-
-The design admits no additional helper, schema, ledger, template, reference,
-generated trigger, line ceiling, or token ceiling. The behavioral protocol is
-the largest proof load, but placing it behind one observable predicate keeps it
-off the common path. Aggregate runtime load remains one compact instruction
-surface plus the baseline glossary and one branch-only evaluation reference.
-
-# Contract
-
-## Admission And Authority
-
-Invoke Writing Great Skills when the primary object is a Codex skill's
-invocation, instructions, ownership, composition, context loading, leading
-words, completion, pruning, or behavioral proof. General prompt rewriting,
-ordinary code review, repository implementation, plugin scaffolding, and
-post-edit delivery remain with their own owners.
-
-Select one primary operation from the requested authority:
-
-| Operation | Entry | Mutation | Return |
+| Candidate or method | Origin | Method evidence | Disposition |
 | --- | --- | --- | --- |
-| **Audit** | Inspect, review, compare, explain, or design without write authority | None. Exact replacement wording remains advisory. | Verdict, impact-ordered findings, exact candidates when useful, deliberate non-changes, behavior at risk, and evidence limits. |
-| **Author** | Create or edit an explicitly authorized canonical skill or skill-design artifact | Only the requested canonical package and smallest directly affected proof or relationship surfaces. | Changed canonical surfaces, behavior changed, proof, deliberate non-changes, and residual gaps. |
+| Description as observable what-and-when predicate with near misses | `professional-method`, `intent-adjacent` | `independently-supported` | M0-recruited by `M0-U01`; reject as H1 |
+| Bounded ownership and affected-surface classification | `professional-method`, `pack-composition` | `independently-supported` in substance; exact labels local | M0-equivalent under `M0-U03` and `M0-U04` |
+| Shallow progressive disclosure with common obligations inline | `professional-method`, `pack-observed` | `independently-supported` under actual loading conditions | M0-equivalent under `M0-U06` |
+| Co-location of definition, rule, caveat, and consequence | `professional-method`, `current-observed` | `independently-supported` by information-hiding practice; direct skill effect not isolated | M0-equivalent structural expression under `M0-U05` and `M0-U06` |
+| Clause-to-behavior cut audit | `professional-method`, `current-observed` | `independently-supported` | M0-equivalent under `M0-U07` |
+| Positive target first with necessary paired guardrail | `professional-method`, `current-observed` | `independently-supported`; universal negation mechanism contested | M0-equivalent after replacing the causal claim |
+| Fixed comparable controls, fresh contexts, and claim-matched graders | `professional-method`, `current-observed`, `pack-observed` | `independently-supported` | M0-equivalent and required compatibility under `M0-U08` |
+| Uncertainty and decision-margin stop rationale | `professional-method`, `intent-adjacent` | `independently-supported` | Admit as `H1-UNCERTAINTY-01` |
+| Failure-shaped guidance taxonomy | `pack-observed`, `current-observed` | `pack-specific` with partial independent support | Defer; no distinct M0 deficit demonstrated |
+| Conceptual leading word as stable prior recruiter | `pack-observed`, `current-observed` | `unverified` beyond syntactic starters | Reject for this epoch; no M0 weakness demonstrated |
+| Context split to hide visible later steps | `pack-observed`, `current-observed` | `unverified` | Defer until a persistent early-stop defect survives a sharper criterion |
+| Five samples as sufficient evidence | `current-observed`, `pack-observed` | `contested` | Reject sufficiency claim; retain five only as a minimum floor |
+| Exact `complete` / `partial` / `blocked` vocabulary | local contract | `pack-specific` / local | Required M0 compatibility, not a professional universal |
 
-Any persisted artifact uses bounded Author authority. Authorizing a synthesis or
-report does not authorize runtime edits. Authorizing canonical edits does not
-authorize installation or delivery. Preserve unrelated work throughout.
+## Decision Ledger
 
-A direct request to test whether wording changes behavior enters the read-only
-behavior-proof branch. It does not create a third operation or grant canonical
-mutation.
+| Unit | M0 Obligation Or H1 Origin | Method Evidence | Current State | Owner | Entry Predicate, Applicability, M0-Compliant Counterexample, Contribution Mode, And Expected Weakness | Cheapest Expression | Wrong Condition | Proof | Decision |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `M0-U01` | Minimum invocation and exclusion obligation | Independently supported plus local compatibility | Frontmatter and implicit policy are M0-equivalent and required compatibility | Frontmatter and `agents/openai.yaml` | Create/edit, audit/review, or wording-behavior request; common routing obligation; no H1 mode | One what-and-when predicate with closest exclusions | General prompting, code review, scaffolding, or delivery invokes the skill | Metadata parsing plus repeated positive and near-miss cases | Keep as M0; trigger-validation candidate is M0-recruited |
+| `M0-U02` | Minimum Audit/Author authority | Local safety and caller authority | Current two-operation split is M0-equivalent | `SKILL.md` Authority | Audit or authorized canonical semantic persistence; common; no H1 mode | Two compact branches plus persistence gate | Audit writes or Author expands beyond the authorized semantic surface | Mutation-boundary and work-state read-back | Keep as M0 |
+| `M0-U03` | Minimum source and owner boundary | Independently supported modularity analogy plus local contract | `skill-creator`, canonical, mirror, installer, and delivery boundaries are M0-equivalent | `SKILL.md`, `CONTEXT.md`, relationship owner | Any semantic action or affected relationship; common; no H1 mode | Resolve canonical source and point to foreign owners | Mirror becomes edit source or semantic work absorbs scaffolding/delivery | Source trace, relationship trace, unchanged foreign state | Keep as M0 and required compatibility |
+| `M0-U04` | Minimum affected-surface coverage | Independently supported bounded self-contained change; labels local | Current bounded/full-audit coverage is M0-equivalent; historical refresh procedure is not runtime authority | `SKILL.md` Coverage | Full audit or bounded semantic edit; situational/full-audit branch; no H1 mode | One affected-surface rule and explicit classifications | Unrelated scan or omitted affected caller/pointer/proof | Coverage-ledger read-back | Keep as M0; preserve full-audit branch only if cheapest |
+| `M0-U05` | Minimum discoverable semantic contract and one owner | Independently supported in substance plus local ADRs | Discoverable roles, co-location, and local vocabulary are M0-equivalent; named universal surfaces and fixed orders remain absent | `SKILL.md` and narrowly required glossary concepts | Any semantic judgment; common; no H1 mode | Name outcome, trigger, authority, action/branch, Return, completion, and owner without imposing presentation | Runtime copies foreign procedure or substitutes a universal template for behavior | Normalized semantic and owner trace | Keep as M0; remove current-only exposition that adds no behavior |
+| `M0-U06` | Minimum common-path locality and conditional loading | Independently supported, shallow and conditional | Context-pointer, information-hierarchy, progressive-disclosure, and co-location clauses are M0-equivalent; general context-split causal theory is deferred | `SKILL.md` plus required glossary slice | Branch-only reference exists; situational; no H1 mode | Inline common obligations and disclose one branch behind a precise condition | Hide authority/safety/Return or add deeper routing without evidence | Link/pointer checks and representative loading cases | Keep M0 semantics; remove or defer unsupported context-split mechanism |
+| `M0-U07` | Minimum behavior-preserving cut gate | Independently supported for comparative cuts and positive-target clarity | Cut question, protected contracts, ownership restoration, and paired guardrails are M0-equivalent; sprawl-as-length and causal negation claims require replacement | `SKILL.md` Cuts plus minimal glossary definitions | Clause is considered for removal; common during authoring; no H1 mode | Protect, restore owner, ask what behavior changes, then cut/collapse/disclose | Word count decides semantics or a needed prohibition is removed | Clause-to-intent audit and negative controls | Keep M0; forbid universal shorter-is-better and prohibition-activates claims |
+| `M0-U08` | Minimum claim-matched proof and required contribution-mode compatibility | Independently supported | Structural/relationship/behavior separation, uncontaminated controls, contribution modes, applicability, wrong-condition cohorts, and adaptive extension are required compatibility | `SKILL.md` plus `BEHAVIOR-EVALS.md` | Any proof claim; direct behavioral claims load the reference; common proof boundary | One claim-to-proof pointer plus one disclosed protocol | Structural strings are treated as behavior or candidate runs without a control deficit | Focused contracts and M0-first direct controls | Keep as M0 and protected compatibility |
+| `H1-UNCERTAINTY-01` | `professional-method`, `intent-adjacent` | `independently-supported`; transfer limited to the tested runtime | Evaluated as the only H1 transformation | `BEHAVIOR-EVALS.md` evidence owner | A behavioral evaluation reaches a stop/accept decision, especially with non-zero variance or a narrow margin; situational; `quality-lift`; M0 sometimes omitted an explicit distance from the decision boundary | Require the record and judgment to state uncertainty, decision margin, and why stopping or extending is justified | Deterministic schema/link checks are forced into statistical language, or a no-control-deficit candidate runs anyway | Six fresh M0 and six fresh H1 entry-positive samples under the fixed rubric | `reject-insufficient-contribution`; remove from rederived H1 and V1 |
+| `M0-U09` | Minimum typed Return and canonical completion | Independently supported for explicit outputs/checks; exact statuses local | Current Return and completion are M0-equivalent and required compatibility | `SKILL.md` Return and Completion | Terminal Audit or Author state; common; no H1 mode | Typed operation-specific packet with proof, gaps, non-changes, risk, and canonical stop | Complete with missing affected owner/proof or continue into install/delivery | Return schema, work-state read-back, and absence of downstream mutation | Keep as M0 |
+| `REJECT-FAILURE-FORM` | `pack-observed`, `current-observed` | `pack-specific` with partial independent support | Current Diagnose taxonomy is useful discovery but no distinct M0 weakness is established | Future evaluation-method owner | Only after a named failure-form mismatch appears; applicability unknown; proposed quality lift lacks a live control deficit | None in H1 | Taxonomy becomes universal ceremony | Future fixed control required | Defer and forbid promotion this epoch |
+| `REJECT-LEADING-WORD` | `pack-observed`, `current-observed` | `unverified` for conceptual recruitment | Glossary asserts broad stable recruitment without current causal proof | Future candidate owner | Only after a specific default-behavior weakness; applicability unknown; no contribution mode admitted | None in H1 | Aesthetic terminology or repetition is credited as efficacy | Future M0-first comparative test | Reject and forbid this epoch |
+| `REJECT-CONTEXT-SPLIT` | `pack-observed`, `current-observed` | `unverified` | Current glossary states a visible-later-step causal mechanism; research supports sharpening completion but not hiding as the cause/cure | Future context-loading owner | Persistent early stopping after a sharper bound; rare or unknown; no contribution mode admitted now | Sharpen criterion only in M0 | Split without observed persistent defect or claim an inline invocation clears context | Future fixed boundary comparison | Defer and forbid promotion this epoch |
 
-## Source And Coverage Resolution
+## Current Dispositions
 
-Resolve the request, operation, canonical source, affected surfaces, current
-upstream when relevant, relationships, and available evidence before judgment
-or mutation.
-
-Bounded work follows only surfaces capable of changing the requested
-behavior. It still includes the canonical line, invocation policy when affected,
-the disclosed target behind an affected pointer, each affected owner or
-relationship, and the smallest relevant structural or behavioral proof.
-
-A full audit inventories before judgment:
-
-- every file in the canonical skill package, including policy, disclosed
-  references, scripts, templates, assets, and schemas;
-- current upstream and recorded upstream decisions;
-- callers, routers, composers, handoffs, return consumers, and relationship
-  records;
-- every owned gate, output, mutation boundary, failure branch, and completion
-  criterion;
-- structural tests, behavioral fixtures, current evidence records, and known
-  residual gaps; and
-- documentation or setup surfaces that publish or route the canonical skill.
-
-Installed mirrors and manifests are outside default source and coverage
-resolution. Inspect them only
-when the user explicitly requests installation-state evidence, report what is
-observed, and leave repair to the installation owner.
-
-An inventory is not completion. Mark each item `affected`, `preserve`, `owned
-elsewhere`, `historical evidence`, `drift`, or `not applicable`. Classify each
-relevant upstream difference as `keep local`, `adapt`, `adopt`, `reject`, or
-`defer`. A full audit refreshes upstream rather than trusting an old checkout,
-package label, or transcript.
-
-## Single Ownership
-
-Give each behavior one owner for its rule, admission predicate, authority,
-inputs, outputs, evidence, failure return, and completion. Another surface may
-name only its own trigger, expected outcome, and return boundary.
-
-Check every relationship through four facts:
-
-| Fact | Requirement |
-| --- | --- |
-| Callee | Name the skill or reference that owns the behavior. |
-| Trigger | State the observable condition that selects it. |
-| Authority | Preserve the owner's output, mutation, and completion authority. |
-| Return | State what comes back and where the caller resumes or stops. |
-
-Use the pack's accepted relationship verbs: `Load`, `Invoke`, `Compose`, `Hand
-off`, and `Recommend and stop`. Routers select one next skill or `none` and stop.
-Do not copy relationship catalogs into runtime skills.
-
-The `skill-creator` relationship is an ownership boundary, not an invitation to
-duplicate its scaffolding workflow. Writing Great Skills may judge the resulting
-canonical instructions; it does not absorb initialization or metadata-generation
-mechanics owned by the bundled creator.
-
-## Discoverable Contract
-
-Make the applicable outcome, boundary and authority, current action or branch,
-Return, and completion criterion discoverable. These are behavior obligations,
-not a named surface, mandatory headings, or a fixed order. Linear procedures,
-routers, composers, state machines, templates, and flat reference keep the
-form their behavior needs. Authority must precede mutation and proof must
-follow the candidate it evaluates; no other universal sequence is admitted.
-
-Treat an implicitly invocable description as an always-loaded routing
-predicate. Name observable request or caller triggers, add the closest
-exclusion only when an adjacent false positive needs separating, and omit
-explicit-name reach, runtime procedure, and body-summary detail. Each distinct
-trigger must select a real branch rather than rename another trigger.
-
-Keep common-path steps and compact universal reference in `SKILL.md`. Put
-branch-only reference behind a pointer that names both the target and the
-observable condition for loading it. Co-locate a concept's definition, rule,
-caveat, and failure consequence. Split a skill only for independent invocation,
-irreducible branch load, or observed premature completion that survives a
-sharper local completion criterion.
-
-The compact full-audit inventory is the one justified inline branch: the
-condition is explicit, the checklist is shorter than a new reference plus its
-pointer and ownership contract, and full-audit omission would weaken the
-promised coverage. Reopen this exception only if observed context competition
-or maintenance drift makes disclosure cheaper.
-
-Use a leading word only when it recruits a useful prior, changes behavior
-against the current default, and stays precise at each use. Prefer established
-language, define ambiguity once, repeat the word rather than its explanation,
-and test behavior in realistic context. Decorative metaphors, generic quality
-adjectives, and synonyms without distinct gates are no-op candidates.
-
-## Behavior-Preserving Pruning
-
-Apply behavior-preserving cuts in this order:
-
-1. Protect non-intuitive mechanics, semantic and safety rules, authority,
-   required outputs and proof, irreversible sequencing, safe failure actions,
-   and completion criteria.
-2. Restore single ownership before deleting duplicated foreign behavior.
-3. Remove stale exposition and disclose live branch-only material.
-4. Ask, "If I cut this, what behavior changes?" Delete the sentence when the
-   answer is none.
-5. Collapse repeated meaning into one rule and intentional emphasis into a
-   leading word.
-6. Co-locate, disclose, or split remaining sprawl only when the earlier cuts
-   preserve behavior.
-7. State the positive target first; keep negation only for a necessary hard
-   guardrail paired with the safe action.
-
-Line count, word count, headings, and validator tokens are not pruning verdicts.
-ADR 0004 keeps semantic language judgment outside mechanical validation.
-
-## Claim-Matched Proof
-
-Use the lowest evidence that proves the claim:
-
-| Claim | Required evidence |
-| --- | --- |
-| Exact bytes, links, policy, or parser-consumed fields | Read-back and focused structural checks. |
-| Ownership or composition | Caller/callee trace and representative relationship workflow. |
-| Wording changes invocation, judgment, action, context loading, Return, or completion | Counterfactual evaluation through `BEHAVIOR-EVALS.md`. |
-| Canonical package is coherent | Relevant focused tests, skill validation, diff checks, and changed-file read-back. |
-
-`BEHAVIOR-EVALS.md` alone owns Diagnose, Control, Sample, Stress, Judge, and
-Record mechanics. The runtime skill states only the predicate for loading it and
-the required result. Register defect correction or quality lift before
-sampling. When a realistic control exhibits neither the expected defect nor a
-meaningful pre-registered quality deficit, reject the guidance as a no-op
-candidate.
-
-Writing Great Skills owns evidence independence: fixed task evidence and
-rubrics, fresh contexts when sampling, no candidate leakage into controls, and
-root-held judgment. Ambient collaboration policy owns whether and how workers
-are dispatched.
-
-Proof stops at canonical quality. Name skipped checks and residual risk, then
-return. Do not install, synchronize, publish, stage, commit, or push.
-
-## Return And Completion
-
-Audit returns `complete`, `partial`, or `blocked`; resolved authority and
-coverage; verdict; impact-ordered findings; exact candidates when useful;
-deliberate non-changes; behavior at risk; and evidence limits.
-
-Author returns `complete`, `partial`, or `blocked`; canonical files changed;
-behavior added, changed, or removed; structural, relationship, and behavioral
-proof; preserved unrelated state; deliberate non-changes; and residual risk.
-
-Complete only when the selected operation's coverage is accounted for; every
-affected invocation surface, owner, relationship, pointer, gate, output,
-mutation boundary, Return, and completion criterion has one classified home;
-current upstream differences are decided; claimed relationships and behavior
-have proportionate current evidence; canonical checks pass or skips are named;
-unrelated work is preserved; and the Return states the actual terminal
-condition without extrapolating into installation or delivery.
-
-# Evidence And Extraction
-
-## Decision Evidence
-
-| Evidence | Design consequence | Limit |
+| Current surface | Semantic mapping | Disposition |
 | --- | --- | --- |
-| Current canonical package | Preserve Predictability, compact disclosure, pruning discipline, source-first canonical edits, explicit Audit/Author authority, and typed Return. | Canonical bytes and structural checks do not prove the behavioral gaps below. |
-| `CONTEXT.md` and relationship map | Keep vocabulary, runtime, synthesis, and relationship owners separate. | The `skill-creator` boundary is indexed; broader caller coverage still needs scenario evidence. |
-| ADR 0004 | Keep language quality under judgment and behavioral proof. | Mechanical tests cannot prove semantic quality. |
-| Structural contract tests | Preserve implicit policy, disclosed references, and machine-consumed or deliberately literal contracts. | Literal assertions protect wording and shape, not agent behavior or admission. Current canonical description assertions outran this synthesis; treat them as canonical-only structural evidence, not experimental design authority. |
-| Core fixtures 28, 46, and 51 | Preserve evidence independence, pruning counterfactuals, and counterfactual instruction forms. | Only fixture 28 has inspected historical live-child evidence. |
-| 2026-07-13 validation transcript | Preserve bounded independent evidence and then-current validation facts. | Its runtime and hashes predate the promoted rewrite. |
-| Upstream HEAD `ed37663cc5fbef691ddfecd080dff42f7e7e350d`, inspected 2026-07-21 | Retain Predictability, information hierarchy, split pressure, leading words, no-op pruning, and positive targets as the simplest credible baseline. | Its user-invoked policy and all-reference runtime target a different environment. |
-| Promoted concise canonical package | Preserve useful Audit/Author authority, authoring behaviors, typed Return, and canonical-only completion as evidence for extraction. | Current bytes do not automatically admit the exact five-word spine, named semantic surface, fixed order, or later un-synthesized wording. |
-| 2026-07-21 authoring-boundary evaluation | Accept the `skill-creator` scaffolding boundary, Writing Great Skills semantic ownership, and canonical stop for the tested new-package scenario. | One 5-by-5 scenario does not prove Audit, invocation recall, existing-skill rewriting, or cross-model stability. |
-| Confirmed Deploy Prompt 1 packet, 2026-07-21 | Admit implicit discovery and the trigger-only description as required local contracts; retain semantic roles while deferring the exact spine mnemonic, named surface, and fixed role order. | Participant confirmation settles design and caller contracts, not behavioral effectiveness. |
-| Deploy Prompt 4 evaluation, 2026-07-21 | Accept metadata routing at 45/45, the full-package candidate at 55/55 versus upstream's 10/55, and pruning equivalence at 25/25 per arm. | Inactive metadata routing and action sequences were simulated; canonical integration, installation, and delivery remain later proof. |
+| Frontmatter description and implicit policy | `M0-U01` | `M0-equivalent`, `required compatibility` |
+| Audit/Author selector, persistence gate, canonical stop | `M0-U02`, `M0-U03`, `M0-U09` | `M0-equivalent` |
+| Bounded and full-audit coverage classifications | `M0-U04` | `M0-equivalent`; compress only under proof |
+| Ownership and relationship facts | `M0-U03`, `M0-U05` | `M0-equivalent`, `required compatibility` |
+| Discoverable contract and no fixed universal order | `M0-U05` | `M0-equivalent` |
+| Common path, conditional pointers, progressive disclosure, co-location | `M0-U06` | `M0-equivalent`; `disclose` evaluation procedure |
+| Cut question, protected contracts, no-op comparison, paired guardrails | `M0-U07` | `M0-equivalent`; replace contested causal explanation |
+| General Predictability/leading-word recruitment, legwork, sprawl-as-length | `M0-U05` through `M0-U07` | `defer` or `remove` unless Prompt 3 maps exact language to M0; current presence gives no protection |
+| Visible-post-completion causal split theory | `M0-U06`, `M0-U09` | `defer`; sharper completion remains M0 |
+| Claim-to-proof mapping and `BEHAVIOR-EVALS.md` pointer | `M0-U08` | `M0-equivalent`, `required compatibility`, `disclose` |
+| Contribution modes, applicability, positive/wrong-condition cohorts, adaptive extension | `M0-U08`, `V10` compatibility | `required compatibility` |
+| Uncertainty and decision-margin rationale | `H1-UNCERTAINTY-01` | `reject-insufficient-contribution`; absent from V1 |
+| Typed Return and completion | `M0-U09` | `M0-equivalent`, `required compatibility` |
+| Scaffolding, installation, mirror repair, publishing, Git delivery, dispatch mechanics | `M0-U03`, `M0-U09` | `owned elsewhere` |
+| Historical synthesis, transcripts, fixtures, and promotion records | Evidence only | `defer` as history; never runtime authority |
 
-Current upstream classification:
+There is no `unresolved removal risk`. Every removal or rejected behavior has a
+forbidden semantic ID and an absence-proof obligation in the campaign
+manifest.
 
-- keep or adapt Predictability, information hierarchy, observed split pressure,
-  leading-word collapse, no-op pruning, and positive targets;
-- adapt upstream invocation concepts to Codex's `implicitly invocable` and
-  `explicit-only` vocabulary and `policy.allow_implicit_invocation` mechanics;
-  reject upstream `model-invoked`, `user-invoked`, and
-  `disable-model-invocation` as local runtime terms;
-- adopt one distinct description trigger per real branch;
-- reject upstream's explicit-only policy and all-reference runtime shape; and
-- treat examples as evidence, not runtime obligations.
+## H1 Evaluation
 
-## Deliberate Non-Changes And Rejections
+The evaluated H1 was exact M0 plus `H1-UNCERTAINTY-01`. The registered M0
+quality deficit appeared, so six matched H1 entry-positive samples ran.
 
-- Keep one `SKILL.md`, one glossary, one behavioral-evaluation reference, and
-  one invocation policy file.
-- Keep implicit invocation as a required local caller contract; explicit-only
-  conversion would remove ordinary natural-language discovery.
-- Keep the description trigger-only. Do not let runtime procedure, explicit
-  name reach, or body-summary detail consume its routing surface.
-- Keep outcome, authority, applicable action, Return, and completion
-  discoverable without imposing a named semantic surface or fixed order.
-- Keep the five authoring behaviors, but do not protect the exact
-  `Trace -> Own -> Shape -> Prune -> Prove` mnemonic or sequence as an
-  independently admitted behavior.
-- Keep behavioral mechanics in `BEHAVIOR-EVALS.md`; do not restate them in the
-  synthesis or runtime skill.
-- Keep durable authoring concepts in `GLOSSARY.md`; do not add operation, proof,
-  mutation, or Return procedure.
-- Add no helper, schema, ledger, generated trigger, semantic duplication lint,
-  line ceiling, or token ceiling without observed recurring failure.
-- Keep generic delegation mechanics outside the skill.
-- Keep installation, mirrors, manifests, promotion, publishing, and Git delivery
-  outside the skill and outside its default source and coverage resolution.
-- Do not copy `skill-creator` scaffolding instructions into this package.
-- Do not synchronize experimental or installed drift as part of synthesis or
-  canonical skill authoring.
+M0 scored `43/48` (mean `7.167`, population variance `0.139`, worst `7`).
+H1 scored `46/48` (mean `7.667`, population variance `0.222`, worst `7`).
+Paired deltas were `1, 1, 0, 0, 0, 1`: three improvements and three ties.
+There was no critical or protected-behavior regression, but the worst result
+did not improve and variance increased. The effect did not meet the
+repeatable-material-contribution bar.
 
-Deferred hypotheses remain the exact five-word spine as a behavior-changing
-mechanism, the `Semantic Skill Surface` name, a fixed semantic-role order,
-explicit-only conversion, separate Audit and Author skills, machine-readable
-evaluation records, per-model no-op profiles, automatic trigger or
-context-pointer scoring, semantic duplication detection, and a pack-wide
-inventory helper. Reject a universal heading template and any new helper,
-schema, ledger, or reference without an observed failure. Adopt a deferred
-hypothesis only after a fixed control shows a recurring failure and the
-candidate removes more variance than complexity it adds.
+`H1-UNCERTAINTY-01` is therefore `reject-insufficient-contribution`.
+Wrong-condition pairs were not dispatched. H1 was rederived with no surviving
+transformation, so exact V1 is M0.
 
-## Extraction Ownership
+## Pruning Decision
 
-| Surface | Promoted canonical delta | Must not absorb |
+The exact 41-passage Prompt 4 runtime-clause map was reused for a complete
+package audit. All 41 instruction-bearing passages are `keep`; there are zero
+`collapse`, `disclose`, or `delete` classifications. Three apparent
+compression opportunities were rejected because they would remove distinct
+authority, context-loading, or proof-admission gates for only a nonmaterial
+word reduction.
+
+No material cut exists. P1 is the stored V1/M0 runtime byte-for-byte, the
+package load delta is zero, and no fresh behavioral wave ran. Exact Prompt 4
+acceptance, three passing M0 viability cases, six accepted M0 controls, the
+protected-behavior result, and the deterministic construction checks remain
+the reused proof for the identical runtime.
+
+## Protected Behavior And Compatibility
+
+Protected before Prompt 4:
+
+- every `M0-U01` through `M0-U09` obligation;
+- the four-file package shape and exactly two `SKILL.md` Markdown references;
+- implicit invocation policy and the three positive request families with
+  closest exclusions;
+- strict read-only Audit and bounded canonical Author;
+- `skill-creator` scaffolding ownership and canonical semantic stop;
+- conditional mirror observation only when installation-state evidence is
+  explicitly requested;
+- one owner per behavior and relationship;
+- common obligations inline and behavior evaluation disclosed;
+- behavior-preserving cuts and the positive-target/necessary-guardrail form;
+- structural, relationship, and behavioral proof separation;
+- contribution modes, applicability, positive/wrong-condition cohorts,
+  uncontaminated fresh controls, adaptive extension, and terminal evaluation
+  dispositions;
+- typed Return and stop before installation or delivery; and
+- absence of skill-owned worker dispatch mechanics.
+
+`H1-UNCERTAINTY-01` is not protected because Prompt 4 rejected it for
+insufficient contribution.
+
+## Relationships And Affected Surfaces
+
+| Caller or owner | Trigger | Authority and Return |
 | --- | --- | --- |
-| `SKILL.md` | Defines strict Audit and bounded Author; carries the admitted authoring behaviors without treating their current labels or fixed sequence as a mechanism; makes outcome, authority, applicable action, Return, and completion discoverable; shapes the trigger-only description; returns typed canonical-only completion. | The deferred five-word mnemonic or fixed semantic-role order, glossary definitions, experiment procedure, scaffolding, relationship catalog, installation, or delivery. |
-| `GLOSSARY.md` | Carries only accepted durable authoring concepts and failure modes. Preserve Codex's `implicitly invocable` / `explicit-only` vocabulary and `policy.allow_implicit_invocation` mechanics rather than copying upstream runtime terms. The experimental candidate must remove the `Semantic Skill Surface` name and fixed-order requirement while preserving any admitted underlying meaning in `SKILL.md`. | Upstream `model-invoked`, `user-invoked`, or `disable-model-invocation` as local mechanics; runtime steps; operation contracts; proof procedure; Return packets; temporary candidate wording; or a renamed replacement for the deferred surface. |
-| `BEHAVIOR-EVALS.md` | Owns complete counterfactual mechanics, defect-correction and quality-lift controls, invocation and premature-completion diagnoses, contamination controls, record fields, and evidence-independence rules. | Canonical editing, generic worker mechanics, installation, or language ontology. |
-| `agents/openai.yaml` and frontmatter | Set Codex `policy.allow_implicit_invocation: true` and preserve concise create/edit, audit/review, and behavioral-proof triggers. | Upstream `disable-model-invocation`, runtime workflow, or output procedure. |
-| Relationship map | Indexes the `skill-creator` scaffolding versus semantic-quality boundary once. | Copied owner procedures or invented invocation. |
-| Tests and evaluation fixtures | During Prompt 3, update structural proof only for machine-consumed policy, metadata, links, and schemas; record semantic obligations for Prompt 4 instead of encoding them as prose assertions. Keep canonical literal tests untouched during extraction. If promotion later changes their owned runtime, replace prose-coupled protection for the deferred exact spine, named surface, fixed order, or unproved wording with the least brittle structural or behavioral evidence appropriate to the admitted contract. | Prompt 3 structural assertions for semantic behavior; claims that strings prove behavior or admission; or claims that installation belongs to this skill. |
-| `CONTEXT.md` and ADR 0004 | No change unless a later rewrite changes durable vocabulary or artifact ownership. | Skill-local procedure or candidate wording. |
-| Installer, manifests, installed mirror, publishing, and Git | No change during the Author phase. Promotion lifecycle and managed installation continue only under their separate authority. | Writing-quality judgment or canonical authoring authority. |
+| `skill-router` | Create, edit, or review a Codex skill | Recommend Writing Great Skills and stop; no semantic work starts in the router |
+| bundled `skill-creator` | A new package needs scaffolding or metadata mechanics | Creator owns package mechanics; Writing Great Skills may later judge canonical semantics |
+| Writing Great Skills Audit | Read-only semantic review or direct wording-behavior test | Returns judgment/evidence only and performs no durable mutation |
+| Writing Great Skills Author | Explicitly authorized canonical semantic change | May edit only the requested canonical and directly affected proof/relationship surfaces; stops after canonical proof |
+| installer, publisher, Git owner | Canonical proof is complete and separate authority exists | Downstream owner resumes; Writing Great Skills never performs or authorizes the work |
 
-The earlier pre-Deploy promotion record from 2026-07-21 remains historical
-evidence. Deploy Prompts 1 and 2 supersede its exact-spine and named-surface
-decisions for this promoted candidate while preserving the admitted operations,
-behaviors, references, policy, ownership, and Return. Follow
-[`deploy-prompts.md`](../methods/deploy-prompts.md) for later
-rewrites. Installation and delivery never enter the authoring order.
+Deploy Prompt 5 leaves only the active synthesis, campaign/candidate records,
+durable final validation, promotion transcript, exact canonical package, and
+the directly affected semantic contract test changed. The installed mirror was
+synchronized only through the supported installer. Relationship rules,
+research, other skills, experimental candidates, and Git delivery remain
+unchanged.
 
-## Promotion Acceptance Obligations
+## Proof Matrix
 
-Prompt 4 assessed these obligations against the inactive candidate. Promotion
-must preserve them while moving the accepted bytes onto the canonical surface:
+| Claim | Final proof | Disposition |
+| --- | --- | --- |
+| M0 checkpoint and research decisions remain intact | Durable stage capsules retain their frozen identities and final dispositions | `exact-reusable` for promotion identity and decision only |
+| P1 equals accepted V1/M0 | Campaign-tree read-back and exact materialized comparison | Passed |
+| P1 satisfies current focused contract | Heading-bounded semantic contract repair plus 15 affected focused tests | Passed |
+| Active canonical compatibility remains valid | Exact P1 identity, full suite, Markdown gates, and skill validation | Passed |
+| Experimental removal is scoped | No target package or manifest entry existed; removal was a verified no-op | Passed |
+| Installed mirror equals active canonical | Exact changed cohort, supported synchronization, parity read-back, and clean post-install dry-run | Passed |
+| Prompt 5 mutation is bounded | Scoped status/diff/HEAD read-back and both diff checks | Passed |
 
-1. create/edit, audit/review, and direct behavioral-proof prompts invoke the
-   skill without false-firing on general prompts, code review, plugins, or
-   delivery work;
-2. the description selects observable request or caller triggers, uses the
-   nearest necessary exclusion, and carries no explicit-name reach, runtime
-   procedure, or body-summary detail;
-3. Audit remains read-only and exact suggestions grant no mutation authority;
-4. Author changes only the requested canonical skill and directly affected
-   proof or relationship surfaces;
-5. new-package scaffolding stays with `skill-creator`, while semantic judgment
-   for both new and existing skills stays with Writing Great Skills;
-6. full-audit coverage accounts for every canonical, disclosed, upstream, relationship,
-   test, evaluation, and routing surface without requiring mirror inspection;
-7. source and authority resolution, single ownership, discoverable outcome and
-   authority, behavior-preserving pruning, and claim-matched proof remain
-   behaviorally complete without relying on the exact five-word mnemonic,
-   `Semantic Skill Surface` name, or fixed semantic-role order;
-8. glossary concepts, runtime operations, evaluation mechanics, collaboration
-   policy, and delivery mechanics each have one owner;
-9. no-op, duplicated meaning, branch disclosure, and safety preservation pass
-   positive and negative cases;
-10. behavioral claims load `BEHAVIOR-EVALS.md`, run uncontaminated controls and
-   candidates, and record variance and residual gaps;
-11. canonical structural and relationship checks pass, unrelated work is
-    preserved, and Return stops before installation or delivery.
+## Prior Evidence Dispositions
 
-## Prompt 4 Behavioral Acceptance
+| Evidence identity | Disposition | Use and limit |
+| --- | --- | --- |
+| 2026-07-21 authoring-boundary evaluation | `historical-admission-only` | Supports discovery of the owner/canonical-stop behavior; old arms, bytes, and protocol do not prove new M0/H1 |
+| 2026-07-21 post-candidate behavioral evaluation | `historical-admission-only` | Supports current-behavior discovery and risk selection; old candidate/pre-prune comparisons are not current controls |
+| 2026-07-21 extraction/pruning record | `historical-admission-only` | Clause inventory and historical disposition aid coverage only |
+| Pre-prune four-file fixture | `lane-limited` | Exact frozen historical pruning lane only; not a current candidate |
+| Current canonical file hashes and four-file inventory | `lane-limited` | Exact bytes/package inventory only; no wording-effect claim |
+| Focused package, deploy, validator, and installer tests | `lane-limited` | Parsed compatibility, ownership, schema, and install-boundary claims only |
+| Prompt 4 M0/H1 behavioral controls | `exact-reusable` | Exact for accepted V1/P1 identity and registered Prompt 4 lane only |
 
-The refreshed upstream remained
-`ed37663cc5fbef691ddfecd080dff42f7e7e350d`. Prompt 4 independently challenged
-every admitted mechanism, froze the expanded pre-prune package at
-`208491d50213134b0190143e7928319dcba2ddc0313e47539df068f8593e52af`,
-reperformed the instruction-unit cut audit, and accepted final candidate hash
-`9822b2eb486e7e4a31589cd02a0667981639ef3c2df810da3d6945f6e650f77c`.
+No prior evidence is `exact-reusable` for `H1-UNCERTAINTY-01`.
 
-Commit preflight then removed one trailing blank line from each of two support
-files and corrected the frozen fixture's UTF-8 representation. No instruction,
-gate, pointer, policy, or rubric changed. The current candidate hash is
-`c7c02f4f9896cd5bf6e6c25886e77785a9f80c0ccea0d02f7aaa6fc85076dcc4`;
-the current pre-prune fixture hash is
-`23fb951a230df6c929803f02d3ad16586471a14f4169632eddaf39c725c34bc2`.
+## Rejected And Deferred Alternatives
 
-Fresh-context evidence established:
+Forbidden in this epoch:
 
-- metadata-level routing: upstream 25/45 versus candidate 45/45, with all four
-  positive natural-language families and all five adjacent negatives stable
-  across five contexts;
-- full-package behavior: upstream 10/55 versus candidate 55/55 for typed Audit
-  and Author returns, source and ownership resolution, the `skill-creator`
-  boundary, full-audit classifications, conditional mirror handling, and
-  counterfactual proof; and
-- pruning equivalence: 25/25 fixed cases for both the admitted pre-prune
-  control and final candidate, with zero observed critical failures.
+- explicit-only conversion;
+- body-summary or explicit-name routing text;
+- Audit persistence or Author scope expansion;
+- scaffolding, installation, mirror repair, publication, or Git delivery;
+- skill-owned `fork_turns` or worker topology;
+- named universal semantic surface, mandatory heading template, or fixed
+  authoring sequence;
+- universal shorter-is-better, line-count, word-count, or token-count verdict;
+- causal claim that prohibition itself activates behavior;
+- universal conceptual leading-word recruitment or transfer claim;
+- automatic context splitting based on visible later steps;
+- five samples treated as automatic sufficiency;
+- failure-form taxonomy admitted without a registered M0 deficit;
+- new helper, schema, template, generated trigger, or runtime ledger without an
+  observed failure; and
+- historical candidate or promotion status treated as current lifecycle proof.
 
-The evaluation record is
-[`2026-07-21-writing-great-skills-post-candidate-behavior-eval.md`](../../validation/transcripts/2026-07-21-writing-great-skills-post-candidate-behavior-eval.md).
-The exact five-word mnemonic, `Semantic Skill Surface` name, and fixed role
-order remain unadmitted; no sampled failure justified a helper, schema, ledger,
-template, new reference, generated trigger, or ceiling.
+Deferred outside this epoch are a future demonstrated failure-form quality
+lift, a conceptual leading word with an observed control deficit, and a real
+context-boundary split after persistent premature completion survives a sharper
+criterion.
 
-## Prompt 5 Promotion Evidence
+## Lifecycle And Residual Gaps
 
-Prompt 5 read back the accepted experimental and promoted canonical trees at
-the same hash,
-`c7c02f4f9896cd5bf6e6c25886e77785a9f80c0ccea0d02f7aaa6fc85076dcc4`.
-The canonical package retained the accepted four-file shape. Its policy file
-now follows the repository's default LF contract, so the obsolete active-
-baseline CRLF exception was removed from `.gitattributes` without changing
-policy meaning.
+Deploy Prompt 5 is complete. Exact P1 equals V1, M0, canonical, and installed
+at `559a03933cc1abdb91d02bf06d4f6dcf45743cd3a23144c4f9641e92ebf38032`.
+The target experimental package and manifest entry were already absent, so
+removal was a verified no-op.
 
-Canonical proof passed 59 focused skill-pack contract tests, direct custom-skill
-validation, and diff checks. The managed-install preview reported only
-`writing-great-skills` updated and 24 managed skills unchanged. The scoped
-install skipped the unchanged global bootstrap, installed 25 managed skills,
-and source-to-installed validation and direct tree-hash comparison passed.
+Residual gaps:
 
-The first parallel full-suite run had one unrelated empty-subprocess-output
-failure in a Parallel Implement helper test. That exact test passed serially,
-and a fresh full-suite rerun passed 191 tests with 4 skips. The transient result
-does not affect the promoted package but remains recorded rather than hidden.
+- live-host implicit discovery;
+- exact model build, token, seed, and latency telemetry;
+- transfer beyond the fixed tasks, host, reasoning configuration, tools,
+  authority, evidence, rubric, and runtime.
 
-## Remaining Integration Gaps
+Wrong-condition H1 pairs are not a residual gap: the candidate was rejected
+before that gate.
 
-- Metadata routing was simulated during Prompt 4. Canonical policy, package,
-  reference, and relationship structure now have promotion-time proof; live
-  host discovery remains unobserved.
-- Fixed cases simulated action sequences and terminal packets rather than
-  mutating representative skill packages.
-- The grouped Audit case proved strict read-only behavior and typed Return but
-  did not add a separate contradictory-authority stress wave; that additional
-  ten-context study was disproportionate after the broader suite passed.
-- Exact model, reasoning, token, and timing telemetry was unavailable and must
-  not be inferred.
-
-## Promotion Readiness
-
-Decision: `promoted-canonical-and-installed`.
-
-Prompt 5 promoted the accepted bytes without changing their tree hash and
-replaced prose-coupled protection for the deferred exact spine and named
-surface with package, policy, reference, and relationship checks. After the
-canonical Author Return, the separately owned lifecycle retired the
-experimental copy and manifest entry, ran the managed installer, and proved
-source-to-mirror parity. No promotion-blocking integration gap remains. Git
-delivery remains unauthorized.
+<!-- WRITING-GREAT-SKILLS-DEPLOY-DECISION:END -->
