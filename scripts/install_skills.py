@@ -6,7 +6,6 @@ import argparse
 import hashlib
 import json
 import os
-import re
 import shutil
 import sys
 from contextlib import ExitStack, contextmanager
@@ -43,6 +42,8 @@ ACTIVE_TRANSACTION_NAME = f"{TRANSACTION_PREFIX}active"
 PREPARING_TRANSACTION_NAME = ".programming-agent-skills-preparing-transaction"
 INSTALL_LOCK_NAME = ".programming-agent-skills-install.lock"
 OPERATION_CLAIM_NAME = ".programming-agent-skills-operation-claim.json"
+INSTALL_EVIDENCE_SCHEMA_VERSION = 1
+SKILL_IDENTITY_ALGORITHM = "skill-tree-v1"
 TRANSACTION_PLAN_KEYS = (
     "format",
     "skills_dir",
@@ -1669,6 +1670,42 @@ def install(
         )
 
 
+def _install_evidence(
+    *,
+    skills_dir: Path,
+    active_names: set[str],
+    source_hashes: dict[str, str],
+    new_names: list[str],
+    updated_names: list[str],
+    unchanged_names: list[str],
+    retired_names: list[str],
+    bootstrap_status: str,
+    dry_run: bool,
+) -> dict[str, object]:
+    identity_names = sorted(active_names.union(retired_names))
+    resulting_identities: dict[str, str | None] = {}
+    for name in identity_names:
+        destination = managed_skill_path(skills_dir, name)
+        resulting_identities[name] = (
+            skill_tree_hash(destination) if destination.is_dir() else None
+        )
+    return {
+        "schema_version": INSTALL_EVIDENCE_SCHEMA_VERSION,
+        "dry_run": dry_run,
+        "skills": sorted(active_names),
+        "new": new_names,
+        "updated": updated_names,
+        "unchanged": unchanged_names,
+        "retired": retired_names,
+        "global_bootstrap": bootstrap_status,
+        "identity_algorithm": SKILL_IDENTITY_ALGORITHM,
+        "planned_identities": {
+            name: source_hashes.get(name) for name in identity_names
+        },
+        "resulting_identities": resulting_identities,
+    }
+
+
 def _install_locked(
     root: Path,
     skills_dir: Path,
@@ -1762,14 +1799,17 @@ def _install_locked(
         )
 
     if dry_run:
-        return {
-            "skills": sorted(active_names),
-            "new": new_names,
-            "updated": updated_names,
-            "unchanged": unchanged_names,
-            "retired": retired_names,
-            "global_bootstrap": bootstrap_status,
-        }
+        return _install_evidence(
+            skills_dir=skills_dir,
+            active_names=active_names,
+            source_hashes=source_hashes,
+            new_names=new_names,
+            updated_names=updated_names,
+            unchanged_names=unchanged_names,
+            retired_names=retired_names,
+            bootstrap_status=bootstrap_status,
+            dry_run=True,
+        )
 
     manifest = {
         "format": MANIFEST_FORMAT,
@@ -1829,14 +1869,17 @@ def _install_locked(
         )
     )
     if not mutated_names and manifest_is_planned and global_is_planned:
-        return {
-            "skills": sorted(active_names),
-            "new": new_names,
-            "updated": updated_names,
-            "unchanged": unchanged_names,
-            "retired": retired_names,
-            "global_bootstrap": bootstrap_status,
-        }
+        return _install_evidence(
+            skills_dir=skills_dir,
+            active_names=active_names,
+            source_hashes=source_hashes,
+            new_names=new_names,
+            updated_names=updated_names,
+            unchanged_names=unchanged_names,
+            retired_names=retired_names,
+            bootstrap_status=bootstrap_status,
+            dry_run=False,
+        )
     for name in mutated_names:
         reject_coordination_collision(
             skills_dir / f".{name}.installing",
@@ -2045,14 +2088,17 @@ def _install_locked(
         "Skill-pack install committed and verified",
     )
 
-    return {
-        "skills": sorted(active_names),
-        "new": new_names,
-        "updated": updated_names,
-        "unchanged": unchanged_names,
-        "retired": retired_names,
-        "global_bootstrap": bootstrap_status,
-    }
+    return _install_evidence(
+        skills_dir=skills_dir,
+        active_names=active_names,
+        source_hashes=source_hashes,
+        new_names=new_names,
+        updated_names=updated_names,
+        unchanged_names=unchanged_names,
+        retired_names=retired_names,
+        bootstrap_status=bootstrap_status,
+        dry_run=False,
+    )
 
 
 def parse_args() -> argparse.Namespace:
@@ -2070,6 +2116,11 @@ def parse_args() -> argparse.Namespace:
         help="Global AGENTS.md that receives the minimal bootstrap section.",
     )
     parser.add_argument("--skip-global-agents", action="store_true")
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Emit stable machine-readable installer evidence.",
+    )
     action = parser.add_mutually_exclusive_group()
     action.add_argument("--dry-run", action="store_true")
     action.add_argument(
@@ -2123,6 +2174,9 @@ def main() -> int:
     except (OSError, ValueError, RuntimeError) as error:
         print(f"Install failed: {error}", file=sys.stderr)
         return 1
+    if args.json:
+        print(json.dumps(result, sort_keys=True))
+        return 0
     if args.dry_run:
         print(f"Managed skills: {len(result['skills'])} in {args.skills_dir.expanduser()}")
         if result["new"]:

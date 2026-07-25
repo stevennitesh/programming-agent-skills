@@ -19,6 +19,7 @@ from typing import Any
 from urllib.parse import unquote, urlsplit
 from uuid import uuid4
 
+from scripts import install_skills
 from scripts.skill_pack_contract import tree_entries
 
 
@@ -83,10 +84,11 @@ STAGE_ORDER = (
 )
 STAGE_PROFILES = frozenset(STAGE_ORDER)
 PREFLIGHT_KINDS = frozenset(
-    {"behavioral-comparison", "markdown", "research"}
+    {"behavioral-comparison", "installation", "markdown", "research"}
 )
 REQUIRED_PREFLIGHT_KINDS = {
     "prompt-3": frozenset({"behavioral-comparison", "markdown"}),
+    "prompt-5": frozenset({"installation"}),
     "research": frozenset({"markdown", "research"}),
 }
 SAFE_ID = re.compile(r"^[a-z0-9][a-z0-9-]*$")
@@ -2038,6 +2040,14 @@ def _verify_preflight_registrations(
                 }
             )
             continue
+        if kind == "installation" and applicability == "not-applicable":
+            failures.append(
+                {
+                    "registration": registration_id,
+                    "message": "Prompt 5 installation verification is always required",
+                }
+            )
+            continue
         if applicability == "not-applicable":
             skipped.append(registration_id)
             continue
@@ -2116,7 +2126,7 @@ def _verify_preflight_registrations(
                         candidate_root=candidate_root,
                         hard_break_policy=str(policy),
                     )
-            else:
+            elif kind == "research":
                 registry_spec = registration.get("registry")
                 _verified_identity(
                     registry_spec,
@@ -2131,7 +2141,18 @@ def _verify_preflight_registrations(
                     ),
                     candidate_root=candidate_root,
                 )
-        except (OSError, UnicodeError, json.JSONDecodeError, ValueError) as error:
+            else:
+                _verify_installation_preflight(
+                    registration,
+                    candidate_root=candidate_root,
+                )
+        except (
+            OSError,
+            RuntimeError,
+            UnicodeError,
+            json.JSONDecodeError,
+            ValueError,
+        ) as error:
             failures.append(
                 {"registration": registration_id, "message": str(error)}
             )
@@ -2160,6 +2181,104 @@ def _verify_preflight_registrations(
             "not_applicable": skipped,
         },
     }
+
+
+def _verify_installation_preflight(
+    registration: dict[str, object],
+    *,
+    candidate_root: Path,
+) -> None:
+    cohort = registration.get("cohort")
+    if (
+        not isinstance(cohort, list)
+        or not cohort
+        or any(
+            not isinstance(name, str) or not SAFE_ID.fullmatch(name)
+            for name in cohort
+        )
+        or len(set(cohort)) != len(cohort)
+        or cohort != sorted(cohort)
+    ):
+        raise ValueError(
+            "Installation cohort must be a nonempty sorted list of unique skill names"
+        )
+    state = registration.get("state")
+    if state not in {"plan", "post-install"}:
+        raise ValueError("Installation state must be plan or post-install")
+    installed_value = registration.get("installed_root")
+    if not isinstance(installed_value, str) or not installed_value:
+        raise ValueError("Installation preflight requires an exact installed root")
+    installed_root = Path(installed_value).expanduser()
+    if not installed_root.is_absolute():
+        raise ValueError("Installation installed root must be absolute")
+
+    evidence = install_skills.install(
+        candidate_root,
+        installed_root,
+        None,
+        dry_run=True,
+    )
+    if (
+        evidence.get("schema_version")
+        != install_skills.INSTALL_EVIDENCE_SCHEMA_VERSION
+        or evidence.get("dry_run") is not True
+        or evidence.get("identity_algorithm")
+        != install_skills.SKILL_IDENTITY_ALGORITHM
+    ):
+        raise ValueError("Installer evidence schema is incompatible")
+    cohort_fields: dict[str, list[str]] = {}
+    for field in ("new", "updated", "unchanged", "retired"):
+        values = evidence.get(field)
+        if (
+            not isinstance(values, list)
+            or any(
+                not isinstance(name, str) or not SAFE_ID.fullmatch(name)
+                for name in values
+            )
+            or values != sorted(set(values))
+        ):
+            raise ValueError(f"Installer {field} evidence is malformed")
+        cohort_fields[field] = values
+    retired = cohort_fields["retired"]
+    if retired:
+        raise ValueError(
+            "Installer dry-run found unexpected retirement drift: "
+            + ", ".join(str(name) for name in retired)
+        )
+    changed = sorted(
+        [
+            *cohort_fields["new"],
+            *cohort_fields["updated"],
+        ]
+    )
+    if state == "plan":
+        if changed != cohort:
+            raise ValueError(
+                "Installer dry-run cohort differs from the owner-declared cohort: "
+                f"expected {cohort}, actual {changed}"
+            )
+        return
+
+    if changed:
+        raise ValueError(
+            "Post-install dry-run is not unchanged for the declared cohort: "
+            + ", ".join(changed)
+        )
+    planned = evidence.get("planned_identities")
+    resulting = evidence.get("resulting_identities")
+    if not isinstance(planned, dict) or not isinstance(resulting, dict):
+        raise ValueError("Installer identity evidence is malformed")
+    mismatches = [
+        name
+        for name in cohort
+        if not isinstance(planned.get(name), str)
+        or planned.get(name) != resulting.get(name)
+    ]
+    if mismatches:
+        raise ValueError(
+            "Canonical and installed identities differ for declared cohort: "
+            + ", ".join(mismatches)
+        )
 
 
 def verify_campaign(

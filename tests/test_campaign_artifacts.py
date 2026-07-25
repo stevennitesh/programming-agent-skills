@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from scripts import campaign_artifacts
+from scripts import campaign_artifacts, install_skills
 
 
 def write_json(path: Path, payload: object) -> None:
@@ -3533,6 +3533,398 @@ def _not_applicable_preflight(kind: str, stage: str) -> dict[str, object]:
         "applicability": "not-applicable",
         "decision_pointer": f"decisions.md#{registration_id}",
     }
+
+
+def _write_campaign_skill(root: Path, name: str, content: str) -> None:
+    skill = root / "skills" / "custom" / name
+    skill.mkdir(parents=True)
+    (skill / "SKILL.md").write_text(content, encoding="utf-8")
+
+
+def _installation_preflight(
+    worktree: Path,
+    installed: Path,
+    cohort: list[str],
+    *,
+    state: str,
+) -> dict[str, object]:
+    return {
+        "id": "prompt5-installation",
+        "kind": "installation",
+        "stage": "prompt-5",
+        "applicability": "required",
+        "decision_pointer": "decisions.md#prompt5-installation",
+        "candidate_root": ".",
+        "installed_root": str(installed.resolve()),
+        "cohort": cohort,
+        "state": state,
+    }
+
+
+def test_prompt5_plan_verifies_exact_declared_cohort_without_installing(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    installed = tmp_path / "installed"
+    _write_campaign_skill(worktree, "alpha", "v1")
+    manifest_path = _start_preflight_campaign(
+        worktree,
+        stage="prompt-5",
+        registrations=[
+            _installation_preflight(
+                worktree,
+                installed,
+                ["alpha"],
+                state="plan",
+            )
+        ],
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "verified"
+    assert result["preflight"]["completed"] == ["prompt5-installation"]
+    assert not installed.exists()
+
+
+def test_prompt5_installation_preflight_cannot_be_not_applicable(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    installed = tmp_path / "installed"
+    _write_campaign_skill(worktree, "alpha", "v1")
+    registration = _installation_preflight(
+        worktree,
+        installed,
+        ["alpha"],
+        state="plan",
+    )
+    registration["applicability"] = "not-applicable"
+    manifest_path = _start_preflight_campaign(
+        worktree,
+        stage="prompt-5",
+        registrations=[registration],
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "preflight-validation"
+    assert "required" in result["failures"][0]["message"]
+    assert not installed.exists()
+
+
+def test_prompt5_plan_accepts_updated_multi_skill_declared_cohort(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    installed = tmp_path / "installed"
+    _write_campaign_skill(worktree, "alpha", "old")
+    _write_campaign_skill(worktree, "beta", "old")
+    install_skills.install(worktree, installed, None)
+    (worktree / "skills/custom/alpha/SKILL.md").write_text("new", encoding="utf-8")
+    (worktree / "skills/custom/beta/SKILL.md").write_text("new", encoding="utf-8")
+    manifest_path = _start_preflight_campaign(
+        worktree,
+        stage="prompt-5",
+        registrations=[
+            _installation_preflight(
+                worktree,
+                installed,
+                ["alpha", "beta"],
+                state="plan",
+            )
+        ],
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "verified"
+    assert (installed / "alpha/SKILL.md").read_text("utf-8") == "old"
+    assert (installed / "beta/SKILL.md").read_text("utf-8") == "old"
+
+
+@pytest.mark.parametrize(
+    ("declared", "extra_skill"),
+    [
+        (["alpha"], "beta"),
+        (["alpha", "beta"], None),
+    ],
+)
+def test_prompt5_plan_rejects_additions_and_omissions(
+    tmp_path: Path,
+    declared: list[str],
+    extra_skill: str | None,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    installed = tmp_path / "installed"
+    _write_campaign_skill(worktree, "alpha", "v1")
+    if extra_skill is not None:
+        _write_campaign_skill(worktree, extra_skill, "unexpected")
+    manifest_path = _start_preflight_campaign(
+        worktree,
+        stage="prompt-5",
+        registrations=[
+            _installation_preflight(
+                worktree,
+                installed,
+                declared,
+                state="plan",
+            )
+        ],
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "preflight-validation"
+    assert "cohort" in result["failures"][0]["message"]
+    assert not installed.exists()
+
+
+def test_prompt5_rejects_retirement_drift(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    installed = tmp_path / "installed"
+    _write_campaign_skill(worktree, "alpha", "v1")
+    _write_campaign_skill(worktree, "retired", "old")
+    install_skills.install(worktree, installed, None)
+    (worktree / "skills/custom/retired/SKILL.md").unlink()
+    (worktree / "skills/custom/retired").rmdir()
+    manifest_path = _start_preflight_campaign(
+        worktree,
+        stage="prompt-5",
+        registrations=[
+            _installation_preflight(
+                worktree,
+                installed,
+                ["alpha"],
+                state="post-install",
+            )
+        ],
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert "retirement" in result["failures"][0]["message"]
+    assert (installed / "retired/SKILL.md").read_text("utf-8") == "old"
+
+
+def test_prompt5_post_install_proves_parity_and_ignores_unmanaged_skill(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    installed = tmp_path / "installed"
+    _write_campaign_skill(worktree, "alpha", "v1")
+    install_skills.install(worktree, installed, None)
+    personal = installed / "personal"
+    personal.mkdir()
+    (personal / "SKILL.md").write_text("unmanaged", encoding="utf-8")
+    manifest_path = _start_preflight_campaign(
+        worktree,
+        stage="prompt-5",
+        registrations=[
+            _installation_preflight(
+                worktree,
+                installed,
+                ["alpha"],
+                state="post-install",
+            )
+        ],
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "verified"
+    assert (personal / "SKILL.md").read_text("utf-8") == "unmanaged"
+
+
+@pytest.mark.parametrize("mirror_state", ["missing", "drifted"])
+def test_prompt5_post_install_rejects_missing_or_drifted_mirror(
+    tmp_path: Path,
+    mirror_state: str,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    installed = tmp_path / "installed"
+    _write_campaign_skill(worktree, "alpha", "v1")
+    if mirror_state == "drifted":
+        install_skills.install(worktree, installed, None)
+        (installed / "alpha/SKILL.md").write_text("drift", encoding="utf-8")
+    manifest_path = _start_preflight_campaign(
+        worktree,
+        stage="prompt-5",
+        registrations=[
+            _installation_preflight(
+                worktree,
+                installed,
+                ["alpha"],
+                state="post-install",
+            )
+        ],
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "preflight-validation"
+
+
+def test_prompt5_rejects_incompatible_installer_evidence(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    installed = tmp_path / "installed"
+    _write_campaign_skill(worktree, "alpha", "v1")
+    manifest_path = _start_preflight_campaign(
+        worktree,
+        stage="prompt-5",
+        registrations=[
+            _installation_preflight(
+                worktree,
+                installed,
+                ["alpha"],
+                state="plan",
+            )
+        ],
+    )
+    monkeypatch.setattr(
+        install_skills,
+        "install",
+        lambda *args, **kwargs: {
+            "schema_version": 1,
+            "dry_run": True,
+            "identity_algorithm": "skill-tree-v1",
+            "new": None,
+            "updated": [],
+            "unchanged": [],
+            "retired": [],
+        },
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "preflight-validation"
+    assert "malformed" in result["failures"][0]["message"]
+
+
+def test_prompt5_wraps_installer_recovery_error(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    installed = tmp_path / "installed"
+    _write_campaign_skill(worktree, "alpha", "v1")
+    manifest_path = _start_preflight_campaign(
+        worktree,
+        stage="prompt-5",
+        registrations=[
+            _installation_preflight(
+                worktree,
+                installed,
+                ["alpha"],
+                state="plan",
+            )
+        ],
+    )
+    monkeypatch.setattr(
+        install_skills,
+        "install",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            RuntimeError("unfinished transaction")
+        ),
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "preflight-validation"
+    assert "unfinished transaction" in result["failures"][0]["message"]
+
+
+def test_prompt5_rejects_planned_resulting_identity_mismatch(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    installed = tmp_path / "installed"
+    _write_campaign_skill(worktree, "alpha", "v1")
+    manifest_path = _start_preflight_campaign(
+        worktree,
+        stage="prompt-5",
+        registrations=[
+            _installation_preflight(
+                worktree,
+                installed,
+                ["alpha"],
+                state="post-install",
+            )
+        ],
+    )
+    monkeypatch.setattr(
+        install_skills,
+        "install",
+        lambda *args, **kwargs: {
+            "schema_version": 1,
+            "dry_run": True,
+            "identity_algorithm": "skill-tree-v1",
+            "new": [],
+            "updated": [],
+            "unchanged": ["alpha"],
+            "retired": [],
+            "planned_identities": {"alpha": "a" * 64},
+            "resulting_identities": {"alpha": "b" * 64},
+        },
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "preflight-validation"
+    assert "identities differ" in result["failures"][0]["message"]
 
 
 def test_prompt3_verify_generates_isolated_payloads_before_proof(
