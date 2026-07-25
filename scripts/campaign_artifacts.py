@@ -16,6 +16,7 @@ import tempfile
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
+from urllib.parse import unquote, urlsplit
 from uuid import uuid4
 
 from scripts.skill_pack_contract import tree_entries
@@ -56,6 +57,8 @@ FORBIDDEN_DISPATCH_KEYS = frozenset(
         "conclusions",
         "expected_weakness",
         "expected_weaknesses",
+        "expected_terminal",
+        "expected_terminals",
         "hypothesis",
         "prior_outputs",
         "rubric",
@@ -79,6 +82,13 @@ STAGE_ORDER = (
     "prompt-6",
 )
 STAGE_PROFILES = frozenset(STAGE_ORDER)
+PREFLIGHT_KINDS = frozenset(
+    {"behavioral-comparison", "markdown", "research"}
+)
+REQUIRED_PREFLIGHT_KINDS = {
+    "prompt-3": frozenset({"behavioral-comparison", "markdown"}),
+    "research": frozenset({"markdown", "research"}),
+}
 SAFE_ID = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 SHA256_HEX = re.compile(r"^[0-9a-f]{64}$")
 MECHANICAL_STATUSES = frozenset(
@@ -1926,6 +1936,232 @@ def _verify_registered_proof(
     return {"status": "verified", "proof": proof_result}
 
 
+def _verify_preflight_registrations(
+    manifest_path: Path,
+    manifest: dict[str, object],
+    *,
+    worktree: Path,
+) -> dict[str, object]:
+    mechanical = manifest["mechanical"]
+    semantic = manifest["semantic"]
+    assert isinstance(mechanical, dict)
+    assert isinstance(semantic, dict)
+    declared_stage = str(semantic["declared_stage"])
+    registrations = mechanical.get("preflight_registrations", [])
+    if not isinstance(registrations, list):
+        return _proof_failure(
+            manifest_path,
+            "preflight-registration",
+            "Preflight registrations must be a list",
+        )
+    if any(not isinstance(value, dict) for value in registrations):
+        return _proof_failure(
+            manifest_path,
+            "preflight-registration",
+            "Every preflight registration must be an object",
+        )
+    invalid_stages = [
+        str(value.get("stage"))
+        for value in registrations
+        if isinstance(value, dict)
+        and value.get("stage", declared_stage) not in STAGE_PROFILES
+    ]
+    if invalid_stages:
+        return _proof_failure(
+            manifest_path,
+            "preflight-registration",
+            "Preflight registration stage is invalid",
+        )
+    required_kinds = REQUIRED_PREFLIGHT_KINDS.get(declared_stage, frozenset())
+    stage_registrations = [
+        value
+        for value in registrations
+        if isinstance(value, dict)
+        and value.get("stage", declared_stage) == declared_stage
+    ]
+    present_kinds = {
+        str(value.get("kind"))
+        for value in stage_registrations
+        if value.get("kind") in PREFLIGHT_KINDS
+    }
+    if not required_kinds.issubset(present_kinds):
+        return _proof_failure(
+            manifest_path,
+            "preflight-registration",
+            "Owner-declared stage is missing its required preflight registration",
+        )
+
+    seen: set[str] = set()
+    completed: list[str] = []
+    skipped: list[str] = []
+    blocked: list[str] = []
+    failures: list[dict[str, str]] = []
+    for registration in stage_registrations:
+        registration_id = registration.get("id")
+        kind = registration.get("kind")
+        applicability = registration.get("applicability")
+        pointer = registration.get("decision_pointer")
+        if (
+            not isinstance(registration_id, str)
+            or not SAFE_ID.fullmatch(registration_id)
+            or registration_id in seen
+        ):
+            failures.append(
+                {
+                    "registration": str(registration_id),
+                    "message": "registration ID is invalid or duplicated",
+                }
+            )
+            continue
+        seen.add(registration_id)
+        if kind not in PREFLIGHT_KINDS:
+            failures.append(
+                {
+                    "registration": registration_id,
+                    "message": "preflight kind is invalid",
+                }
+            )
+            continue
+        if applicability not in {"required", "not-applicable", "blocked"}:
+            failures.append(
+                {
+                    "registration": registration_id,
+                    "message": "applicability is invalid",
+                }
+            )
+            continue
+        if not _decision_pointer_resolves(manifest_path, pointer):
+            failures.append(
+                {
+                    "registration": registration_id,
+                    "message": "applicability requires an exact decision-record pointer",
+                }
+            )
+            continue
+        if applicability == "not-applicable":
+            skipped.append(registration_id)
+            continue
+        if applicability == "blocked":
+            blocked.append(registration_id)
+            continue
+        try:
+            candidate_root = _registration_candidate_root(registration, worktree)
+            if kind == "behavioral-comparison":
+                output_root = (
+                    worktree
+                    / ".tmp"
+                    / "campaign-payloads"
+                    / str(manifest["campaign"]["id"])  # type: ignore[index]
+                    / registration_id
+                )
+                generated = build_behavioral_payloads(
+                    registration,
+                    candidate_root=candidate_root,
+                    output_root=output_root,
+                )
+                results = registration.get("results")
+                if results is not None:
+                    if not isinstance(results, dict) or set(results) != {"m0", "h1"}:
+                        raise ValueError(
+                            "Behavioral comparison results must name exact m0 and h1 envelopes"
+                        )
+                    for arm in ("m0", "h1"):
+                        result_spec = results[arm]
+                        result_identity = _verified_identity(
+                            result_spec,
+                            candidate_root=candidate_root,
+                            label=f"{arm} result envelope",
+                        )
+                        del result_identity
+                        assert isinstance(result_spec, dict)
+                        result_path = _contained_artifact_path(
+                            candidate_root,
+                            result_spec.get("path"),
+                        )
+                        payload = generated["payloads"][arm]  # type: ignore[index]
+                        assert isinstance(payload, dict)
+                        runtimes = registration["runtimes"]
+                        assert isinstance(runtimes, dict)
+                        runtime = runtimes[arm]
+                        assert isinstance(runtime, dict)
+                        lint_result_envelope(
+                            _read_json(result_path),
+                            case_id=str(generated["case_id"]),
+                            arm=arm,
+                            candidate_root=candidate_root,
+                            candidate_identity=str(runtime["digest"]),
+                            fixture_identity=str(generated["fixture_identity"]),
+                            dispatch_payload_sha256=str(
+                                payload["dispatch_payload_sha256"]
+                            ),
+                            require_fresh=registration.get("require_fresh") is True,
+                        )
+            elif kind == "markdown":
+                _verified_identity(
+                    registration.get("target"),
+                    candidate_root=candidate_root,
+                    label="Markdown target",
+                )
+                paths = registration.get("paths")
+                if (
+                    not isinstance(paths, list)
+                    or not paths
+                    or any(not isinstance(path, str) for path in paths)
+                ):
+                    raise ValueError("Markdown preflight requires nonempty paths")
+                policy = registration.get("hard_break_policy")
+                for path in paths:
+                    lint_markdown(
+                        _contained_artifact_path(candidate_root, path),
+                        candidate_root=candidate_root,
+                        hard_break_policy=str(policy),
+                    )
+            else:
+                registry_spec = registration.get("registry")
+                _verified_identity(
+                    registry_spec,
+                    candidate_root=candidate_root,
+                    label="Research registry",
+                )
+                assert isinstance(registry_spec, dict)
+                lint_research_registry(
+                    _contained_artifact_path(
+                        candidate_root,
+                        registry_spec.get("path"),
+                    ),
+                    candidate_root=candidate_root,
+                )
+        except (OSError, UnicodeError, json.JSONDecodeError, ValueError) as error:
+            failures.append(
+                {"registration": registration_id, "message": str(error)}
+            )
+            continue
+        completed.append(registration_id)
+    if failures:
+        return _proof_failure(
+            manifest_path,
+            "preflight-validation",
+            "One or more deterministic preflight checks failed",
+            failures,
+        )
+    if blocked:
+        result = _failure(
+            "stale",
+            "preflight-applicability",
+            manifest_path,
+            "Owner-declared preflight remains blocked",
+        )
+        result["blocked"] = blocked
+        return result
+    return {
+        "status": "verified",
+        "preflight": {
+            "completed": completed,
+            "not_applicable": skipped,
+        },
+    }
+
+
 def verify_campaign(
     manifest_path: Path,
     *,
@@ -2110,6 +2346,13 @@ def verify_campaign(
             manifest_path,
             "Advanced stage override does not match the owner-declared stage",
         )
+    preflight_verification = _verify_preflight_registrations(
+        supplied_manifest,
+        manifest,
+        worktree=resolved_worktree,
+    )
+    if preflight_verification["status"] != "verified":
+        return preflight_verification
     proof_verification: dict[str, object] | None = None
     if mechanical.get("proof_registrations"):
         proof_verification = _verify_registered_proof(
@@ -2163,6 +2406,10 @@ def verify_campaign(
     }
     if proof_verification is not None:
         result["proof"] = proof_verification["proof"]
+    if preflight_verification["preflight"]["completed"] or preflight_verification[
+        "preflight"
+    ]["not_applicable"]:
+        result["preflight"] = preflight_verification["preflight"]
     return result
 
 
@@ -2187,6 +2434,417 @@ def _canonical_json_sha256(payload: object) -> str:
         allow_nan=False,
     ).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
+
+
+def _verified_identity(
+    specification: object,
+    *,
+    candidate_root: Path,
+    label: str,
+) -> dict[str, str]:
+    if not isinstance(specification, dict):
+        raise ValueError(f"{label} identity must be an object")
+    expected = specification.get("digest")
+    if not isinstance(expected, str) or not SHA256_HEX.fullmatch(expected):
+        raise ValueError(f"{label} identity digest is invalid")
+    actual = artifact_identity(specification, candidate_root=candidate_root)
+    if actual["digest"] != expected:
+        raise ValueError(f"{label} identity does not match its candidate root")
+    return {
+        "algorithm": str(specification["algorithm"]),
+        "digest": str(actual["digest"]),
+    }
+
+
+def _set_json_pointer(payload: object, pointer: str, value: object) -> None:
+    if not pointer.startswith("/") or pointer == "/":
+        raise ValueError(f"Runtime pointer must name one nested value: {pointer!r}")
+    parts = [
+        part.replace("~1", "/").replace("~0", "~")
+        for part in pointer.removeprefix("/").split("/")
+    ]
+    parent = payload
+    for part in parts[:-1]:
+        if isinstance(parent, dict):
+            if part not in parent:
+                parent[part] = {}
+            parent = parent[part]
+        elif isinstance(parent, list) and part.isdigit() and int(part) < len(parent):
+            parent = parent[int(part)]
+        else:
+            raise ValueError(f"Runtime pointer cannot be created: {pointer}")
+    leaf = parts[-1]
+    if isinstance(parent, dict):
+        if leaf in parent:
+            raise ValueError(f"Runtime pointer already exists: {pointer}")
+        parent[leaf] = value
+    elif isinstance(parent, list) and leaf.isdigit() and int(leaf) == len(parent):
+        parent.append(value)
+    else:
+        raise ValueError(f"Runtime pointer cannot be created: {pointer}")
+
+
+def build_behavioral_payloads(
+    registration: dict[str, object],
+    *,
+    candidate_root: Path,
+    output_root: Path,
+) -> dict[str, object]:
+    """Derive isolated M0/H1 payloads from one schema-v2 worker fixture."""
+
+    root = candidate_root.resolve()
+    fixture_spec = registration.get("fixture")
+    fixture_identity = _verified_identity(
+        fixture_spec,
+        candidate_root=root,
+        label="Worker fixture",
+    )
+    assert isinstance(fixture_spec, dict)
+    fixture_path = _contained_artifact_path(root, fixture_spec.get("path"))
+    fixture_result = lint_worker_fixture(fixture_path)
+    if fixture_result["schema_version"] != CURRENT_FIXTURE_SCHEMA_VERSION:
+        raise ValueError("Behavioral comparison requires worker-fixture schema version 2")
+    terminal_spec = registration.get("terminal_registration")
+    _verified_identity(
+        terminal_spec,
+        candidate_root=root,
+        label="Terminal registration",
+    )
+    assert isinstance(terminal_spec, dict)
+    lint_terminal_registration(
+        fixture_path,
+        _contained_artifact_path(root, terminal_spec.get("path")),
+    )
+    case_id = registration.get("case_id")
+    if not isinstance(case_id, str) or not case_id:
+        raise ValueError("Behavioral comparison requires one fixture case")
+    fixture_case = _fixture_case(fixture_path, case_id)
+    runtime_pointer = registration.get("runtime_pointer")
+    if not isinstance(runtime_pointer, str):
+        raise ValueError("Behavioral comparison requires one runtime pointer")
+    runtimes = registration.get("runtimes")
+    if not isinstance(runtimes, dict) or set(runtimes) != {"m0", "h1"}:
+        raise ValueError("Behavioral comparison requires exact m0 and h1 runtimes")
+
+    resolved_output = output_root.resolve()
+    if not _is_within(resolved_output, root / ".tmp"):
+        raise ValueError("Generated behavioral payloads must stay inside .tmp")
+    resolved_output.mkdir(parents=True, exist_ok=True)
+    generated: dict[str, dict[str, str]] = {}
+    for arm in ("m0", "h1"):
+        runtime_spec = runtimes[arm]
+        runtime_identity = _verified_identity(
+            runtime_spec,
+            candidate_root=root,
+            label=f"{arm} runtime",
+        )
+        assert isinstance(runtime_spec, dict)
+        payload = copy.deepcopy(fixture_case)
+        _set_json_pointer(
+            payload,
+            runtime_pointer,
+            {
+                "candidate_root": str(root),
+                "path": runtime_spec.get("path"),
+                "identity": runtime_identity,
+            },
+        )
+        _lint_dispatch_payload(
+            payload,
+            arm.upper(),
+            require_decision_state=True,
+        )
+        _verify_fixture_fidelity(payload, fixture_case, arm.upper())
+        output_path = resolved_output / f"{case_id}-{arm}.json"
+        _write_json_file(output_path, payload)
+        generated[arm] = {
+            "path": str(output_path),
+            "candidate_identity": runtime_identity["digest"],
+            "dispatch_payload_sha256": _canonical_json_sha256(payload),
+        }
+
+    m0_payload = _read_json(Path(generated["m0"]["path"]))
+    h1_payload = _read_json(Path(generated["h1"]["path"]))
+    normalized_m0 = copy.deepcopy(m0_payload)
+    normalized_h1 = copy.deepcopy(h1_payload)
+    _remove_json_pointer(normalized_m0, runtime_pointer)
+    _remove_json_pointer(normalized_h1, runtime_pointer)
+    if normalized_m0 != normalized_h1:
+        raise ValueError("Generated payloads differ outside the runtime slot")
+    return {
+        "status": "ok",
+        "case_id": case_id,
+        "fixture_identity": fixture_identity["digest"],
+        "runtime_pointer": runtime_pointer,
+        "shared_payload_sha256": _canonical_json_sha256(normalized_m0),
+        "payloads": generated,
+    }
+
+
+def lint_result_envelope(
+    envelope: object,
+    *,
+    case_id: str,
+    arm: str,
+    candidate_root: Path,
+    candidate_identity: str,
+    fixture_identity: str,
+    dispatch_payload_sha256: str,
+    require_fresh: bool,
+) -> dict[str, object]:
+    """Validate result provenance and shape without interpreting its output."""
+
+    required = {
+        "schema_version",
+        "case_id",
+        "arm",
+        "candidate_root",
+        "candidate_identity",
+        "fixture_identity",
+        "dispatch_payload_sha256",
+        "fresh",
+        "output",
+    }
+    if not isinstance(envelope, dict) or set(envelope) != required:
+        raise ValueError("Result envelope fields are incomplete or unexpected")
+    checks = (
+        (envelope["schema_version"] == 1, "schema version"),
+        (envelope["case_id"] == case_id, "case identity"),
+        (envelope["arm"] == arm, "arm identity"),
+        (
+            envelope["candidate_root"] == str(candidate_root.resolve()),
+            "candidate root",
+        ),
+        (
+            envelope["candidate_identity"] == candidate_identity,
+            "candidate identity",
+        ),
+        (envelope["fixture_identity"] == fixture_identity, "fixture identity"),
+        (
+            envelope["dispatch_payload_sha256"] == dispatch_payload_sha256,
+            "dispatch payload identity",
+        ),
+        (isinstance(envelope["fresh"], bool), "fresh state"),
+        (_nonempty(envelope["output"]), "output"),
+    )
+    for valid, label in checks:
+        if not valid:
+            raise ValueError(f"Result envelope {label} is invalid")
+    if require_fresh and envelope["fresh"] is not True:
+        raise ValueError("Result envelope is not a fresh behavioral sample")
+    return {"status": "ok", "case_id": case_id, "arm": arm}
+
+
+def _markdown_anchors(content: str) -> set[str]:
+    anchors: set[str] = set()
+    counts: dict[str, int] = {}
+    for line in content.splitlines():
+        match = re.match(r"^\s{0,3}#{1,6}\s+(.+?)\s*#*\s*$", line)
+        if not match:
+            continue
+        text = re.sub(r"<[^>]+>", "", match.group(1)).strip().lower()
+        slug = re.sub(r"[^\w\s-]", "", text, flags=re.UNICODE)
+        slug = re.sub(r"[\s-]+", "-", slug).strip("-")
+        if not slug:
+            continue
+        count = counts.get(slug, 0)
+        anchors.add(slug if count == 0 else f"{slug}-{count}")
+        counts[slug] = count + 1
+    return anchors
+
+
+def _markdown_table_columns(line: str) -> int:
+    stripped = line.strip()
+    if not stripped.startswith("|") or not stripped.endswith("|"):
+        return 0
+    return len(re.split(r"(?<!\\)\|", stripped)) - 2
+
+
+def lint_markdown(
+    path: Path,
+    *,
+    candidate_root: Path,
+    hard_break_policy: str,
+) -> dict[str, object]:
+    """Check deterministic Markdown structure without judging its prose."""
+
+    root = candidate_root.resolve()
+    resolved = path.resolve()
+    if not _is_within(resolved, root) or resolved.suffix.lower() != ".md":
+        raise ValueError("Markdown path escapes candidate root or is not Markdown")
+    if hard_break_policy not in {"allow", "forbid"}:
+        raise ValueError("Markdown hard break policy must be allow or forbid")
+    try:
+        raw = resolved.read_bytes()
+        if raw.startswith(b"\xef\xbb\xbf"):
+            raise ValueError("Markdown encoding must be UTF-8 without BOM")
+        content = raw.decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise ValueError("Markdown encoding is not valid UTF-8") from error
+
+    for number, line in enumerate(content.splitlines(), start=1):
+        trailing = re.search(r"([ \t]+)$", line)
+        if not trailing:
+            continue
+        whitespace = trailing.group(1)
+        if whitespace == "  ":
+            if hard_break_policy == "forbid":
+                raise ValueError(f"Markdown hard break is forbidden at line {number}")
+        else:
+            raise ValueError(f"Markdown trailing whitespace at line {number}")
+
+    fence: tuple[str, int] | None = None
+    for line in content.splitlines():
+        match = re.match(r"^\s{0,3}(`{3,}|~{3,})", line)
+        if not match:
+            continue
+        run = match.group(1)
+        marker = run[0]
+        if fence is None:
+            fence = (marker, len(run))
+        elif (
+            fence[0] == marker
+            and len(run) >= fence[1]
+            and not line[match.end() :].strip()
+        ):
+            fence = None
+    if fence is not None:
+        raise ValueError("Markdown fence is unbalanced")
+
+    table_rows: list[int] = []
+    for line in content.splitlines() + [""]:
+        columns = _markdown_table_columns(line)
+        if columns:
+            table_rows.append(columns)
+            continue
+        if len(table_rows) >= 2 and len(set(table_rows)) != 1:
+            raise ValueError("Markdown table columns are inconsistent")
+        table_rows = []
+
+    for match in re.finditer(r"!?\[[^\]]*\]\(([^)\s]+)", content):
+        target = unquote(match.group(1))
+        parsed = urlsplit(target)
+        if parsed.scheme or target.startswith("//"):
+            continue
+        path_text, _, fragment = target.partition("#")
+        target_path = resolved if not path_text else (resolved.parent / path_text).resolve()
+        if not _is_within(target_path, root) or not target_path.is_file():
+            raise ValueError(f"Markdown local link does not resolve: {target}")
+        if fragment:
+            try:
+                target_content = target_path.read_text(encoding="utf-8")
+            except UnicodeError as error:
+                raise ValueError("Markdown linked file encoding is invalid") from error
+            if fragment not in _markdown_anchors(target_content):
+                raise ValueError(f"Markdown anchor does not resolve: {target}")
+    return {"status": "ok", "path": str(resolved)}
+
+
+def lint_research_registry(
+    path: Path,
+    *,
+    candidate_root: Path,
+) -> dict[str, object]:
+    """Check research provenance records without assessing evidence quality."""
+
+    root = candidate_root.resolve()
+    resolved = path.resolve()
+    if not _is_within(resolved, root):
+        raise ValueError("Research registry path escapes candidate root")
+    registry = _read_json(resolved)
+    if not isinstance(registry, dict) or registry.get("schema_version") != 1:
+        raise ValueError("Research registry shape or schema version is invalid")
+    claims = registry.get("claims")
+    evidence = registry.get("evidence")
+    if not isinstance(claims, list) or not claims:
+        raise ValueError("Research registry claims are missing")
+    if not isinstance(evidence, list) or not evidence:
+        raise ValueError("Research registry evidence is missing")
+    claim_map = {
+        item.get("id"): item
+        for item in claims
+        if isinstance(item, dict) and isinstance(item.get("id"), str)
+    }
+    evidence_map = {
+        item.get("id"): item
+        for item in evidence
+        if isinstance(item, dict) and isinstance(item.get("id"), str)
+    }
+    if len(claim_map) != len(claims) or len(evidence_map) != len(evidence):
+        raise ValueError("Research registry IDs are missing or duplicated")
+    for claim_id, claim in claim_map.items():
+        refs = claim.get("evidence")
+        if (
+            not isinstance(refs, list)
+            or not refs
+            or any(ref not in evidence_map for ref in refs)
+        ):
+            raise ValueError(f"Research claim {claim_id} evidence pointer is invalid")
+        if any(
+            not isinstance(evidence_map[ref].get("claim_ids"), list)
+            or claim_id not in evidence_map[ref]["claim_ids"]
+            for ref in refs
+        ):
+            raise ValueError(
+                f"Research claim {claim_id} pointer is not bidirectional"
+            )
+    for evidence_id, record in evidence_map.items():
+        claim_ids = record.get("claim_ids")
+        if (
+            not isinstance(claim_ids, list)
+            or not claim_ids
+            or any(claim_id not in claim_map for claim_id in claim_ids)
+        ):
+            raise ValueError(f"Research evidence {evidence_id} claim pointer is invalid")
+        if any(evidence_id not in claim_map[claim_id]["evidence"] for claim_id in claim_ids):
+            raise ValueError(f"Research evidence {evidence_id} pointer is not bidirectional")
+        revision = record.get("revision")
+        if not isinstance(revision, str) or not revision:
+            raise ValueError(f"Research evidence {evidence_id} revision is missing")
+        url = record.get("url")
+        parsed = urlsplit(url) if isinstance(url, str) else None
+        if parsed is None or parsed.scheme not in {"http", "https"} or not parsed.netloc:
+            raise ValueError(f"Research evidence {evidence_id} URL is invalid")
+        if not _nonempty(record.get("classification")):
+            raise ValueError(f"Research evidence {evidence_id} classification is missing")
+        limitations = record.get("limitations")
+        if (
+            not isinstance(limitations, list)
+            or not limitations
+            or any(not isinstance(item, str) or not item for item in limitations)
+        ):
+            raise ValueError(f"Research evidence {evidence_id} limitations are missing")
+        capture = record.get("capture")
+        try:
+            _verified_identity(capture, candidate_root=root, label="Local capture")
+        except (OSError, ValueError) as error:
+            raise ValueError(
+                f"Research evidence {evidence_id} capture identity is invalid: {error}"
+            ) from error
+        pointer = record.get("pointer")
+        if not isinstance(pointer, str) or "#" not in pointer:
+            raise ValueError(f"Research evidence {evidence_id} local pointer is invalid")
+        pointer_path, fragment = pointer.split("#", 1)
+        capture_path = (root / pointer_path).resolve()
+        assert isinstance(capture, dict)
+        bounded_capture = _contained_artifact_path(root, capture.get("path"))
+        if (
+            not _is_within(capture_path, root)
+            or not (
+                capture_path == bounded_capture
+                or (bounded_capture.is_dir() and _is_within(capture_path, bounded_capture))
+            )
+            or not capture_path.is_file()
+            or fragment not in _markdown_anchors(
+                capture_path.read_text(encoding="utf-8")
+            )
+        ):
+            raise ValueError(f"Research evidence {evidence_id} local pointer is dangling")
+    return {
+        "status": "ok",
+        "claim_count": len(claim_map),
+        "evidence_count": len(evidence_map),
+    }
 
 
 def _validate_decision_state(value: object, label: str) -> None:

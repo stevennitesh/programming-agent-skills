@@ -20,7 +20,10 @@ def write_json(path: Path, payload: object) -> None:
     ):
         pointers = {
             registration.get("decision_pointer")
-            for registration in payload["mechanical"]["proof_registrations"]
+            for registration in (
+                payload["mechanical"]["proof_registrations"]
+                + payload["mechanical"].get("preflight_registrations", [])
+            )
             if isinstance(registration, dict)
             and isinstance(registration.get("decision_pointer"), str)
             and registration["decision_pointer"].startswith("decisions.md#")
@@ -3191,3 +3194,735 @@ def test_malformed_legacy_receipt_fails_closed(
 
     assert result["status"] == "failed"
     assert result["gate"] == "proof-receipt"
+
+
+def _identity_spec(
+    root: Path,
+    path: str,
+    algorithm: str = "canonical-json-v1",
+) -> dict[str, str]:
+    specification = {"algorithm": algorithm, "path": path}
+    return {
+        **specification,
+        "digest": campaign_artifacts.artifact_identity(
+            specification,
+            candidate_root=root,
+        )["digest"],
+    }
+
+
+def test_build_behavioral_payloads_injects_only_registered_runtime(
+    tmp_path: Path,
+) -> None:
+    write_json(tmp_path / "fixture.json", valid_fixture())
+    write_json(tmp_path / "registration.json", valid_registration())
+    for name in ("m0", "h1"):
+        runtime = tmp_path / name
+        runtime.mkdir()
+        (runtime / "SKILL.md").write_text(name, encoding="utf-8")
+    registration = {
+        "fixture": _identity_spec(tmp_path, "fixture.json"),
+        "terminal_registration": _identity_spec(
+            tmp_path,
+            "registration.json",
+        ),
+        "case_id": "Q01",
+        "runtime_pointer": "/runtime",
+        "runtimes": {
+            name: _identity_spec(tmp_path, name, "campaign-tree-v1")
+            for name in ("m0", "h1")
+        },
+    }
+
+    result = campaign_artifacts.build_behavioral_payloads(
+        registration,
+        candidate_root=tmp_path,
+        output_root=tmp_path / ".tmp" / "payloads",
+    )
+    m0 = json.loads(Path(result["payloads"]["m0"]["path"]).read_text("utf-8"))
+    h1 = json.loads(Path(result["payloads"]["h1"]["path"]).read_text("utf-8"))
+    assert m0.pop("runtime") != h1.pop("runtime")
+    assert m0 == h1 == valid_case()
+    assert result["shared_payload_sha256"] == hashlib.sha256(
+        json.dumps(
+            valid_case(),
+            allow_nan=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        ).encode("utf-8")
+    ).hexdigest()
+
+
+def test_result_envelope_rejects_foreign_candidate_and_cached_fresh_sample(
+    tmp_path: Path,
+) -> None:
+    envelope = {
+        "schema_version": 1,
+        "case_id": "Q01",
+        "arm": "h1",
+        "candidate_root": str(tmp_path.resolve()),
+        "candidate_identity": "a" * 64,
+        "fixture_identity": "b" * 64,
+        "dispatch_payload_sha256": "c" * 64,
+        "fresh": True,
+        "output": {"artifact": "sample-1"},
+    }
+    campaign_artifacts.lint_result_envelope(
+        envelope,
+        case_id="Q01",
+        arm="h1",
+        candidate_root=tmp_path,
+        candidate_identity="a" * 64,
+        fixture_identity="b" * 64,
+        dispatch_payload_sha256="c" * 64,
+        require_fresh=True,
+    )
+
+    envelope["candidate_identity"] = "d" * 64
+    with pytest.raises(ValueError, match="candidate identity"):
+        campaign_artifacts.lint_result_envelope(
+            envelope,
+            case_id="Q01",
+            arm="h1",
+            candidate_root=tmp_path,
+            candidate_identity="a" * 64,
+            fixture_identity="b" * 64,
+            dispatch_payload_sha256="c" * 64,
+            require_fresh=True,
+        )
+    envelope["candidate_identity"] = "a" * 64
+    envelope["candidate_root"] = str((tmp_path / "foreign").resolve())
+    with pytest.raises(ValueError, match="candidate root"):
+        campaign_artifacts.lint_result_envelope(
+            envelope,
+            case_id="Q01",
+            arm="h1",
+            candidate_root=tmp_path,
+            candidate_identity="a" * 64,
+            fixture_identity="b" * 64,
+            dispatch_payload_sha256="c" * 64,
+            require_fresh=True,
+        )
+    envelope["candidate_root"] = str(tmp_path.resolve())
+    envelope["fresh"] = False
+    with pytest.raises(ValueError, match="fresh"):
+        campaign_artifacts.lint_result_envelope(
+            envelope,
+            case_id="Q01",
+            arm="h1",
+            candidate_root=tmp_path,
+            candidate_identity="a" * 64,
+            fixture_identity="b" * 64,
+            dispatch_payload_sha256="c" * 64,
+            require_fresh=True,
+        )
+    envelope.pop("output")
+    with pytest.raises(ValueError, match="fields"):
+        campaign_artifacts.lint_result_envelope(
+            envelope,
+            case_id="Q01",
+            arm="h1",
+            candidate_root=tmp_path,
+            candidate_identity="a" * 64,
+            fixture_identity="b" * 64,
+            dispatch_payload_sha256="c" * 64,
+            require_fresh=False,
+        )
+
+
+@pytest.mark.parametrize(
+    ("name", "content", "message"),
+    [
+        ("broken.md", "[missing](nope.md)\n", "local link"),
+        ("anchor.md", "[missing](#nope)\n", "anchor"),
+        ("fence.md", "```python\npass\n", "fence"),
+        ("table.md", "| A | B |\n| --- | --- |\n| 1 |\n", "table"),
+        ("space.md", "trailing \n", "trailing whitespace"),
+        ("break.md", "hard break  \n", "hard break"),
+    ],
+)
+def test_lint_markdown_rejects_named_structural_defects(
+    tmp_path: Path,
+    name: str,
+    content: str,
+    message: str,
+) -> None:
+    path = tmp_path / name
+    path.write_text(content, encoding="utf-8", newline="\n")
+    with pytest.raises(ValueError, match=message):
+        campaign_artifacts.lint_markdown(
+            path,
+            candidate_root=tmp_path,
+            hard_break_policy="forbid",
+        )
+
+
+def test_lint_markdown_accepts_local_links_anchors_tables_and_allowed_breaks(
+    tmp_path: Path,
+) -> None:
+    (tmp_path / "target.md").write_text("# Target Heading\n", encoding="utf-8")
+    source = tmp_path / "source.md"
+    source.write_text(
+        "# Source\n\n"
+        "[local](target.md#target-heading)\n\n"
+        "| A | B |\n"
+        "| --- | --- |\n"
+        "| 1 | 2 |\n\n"
+        "allowed break  \n"
+        "next line\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    result = campaign_artifacts.lint_markdown(
+        source,
+        candidate_root=tmp_path,
+        hard_break_policy="allow",
+    )
+    assert result["status"] == "ok"
+
+
+def _valid_research_registry(root: Path) -> dict[str, object]:
+    capture_root = root / "capture"
+    capture_root.mkdir()
+    capture = capture_root / "source.md"
+    capture.write_text("# Evidence\n", encoding="utf-8")
+    return {
+        "schema_version": 1,
+        "claims": [{"id": "C1", "evidence": ["E1"]}],
+        "evidence": [
+            {
+                "id": "E1",
+                "claim_ids": ["C1"],
+                "pointer": "capture/source.md#evidence",
+                "capture": _identity_spec(root, "capture", "campaign-tree-v1"),
+                "revision": "rev-1",
+                "url": "https://example.com/source",
+                "classification": "primary",
+                "limitations": ["Bounded to the inspected revision."],
+            }
+        ],
+    }
+
+
+@pytest.mark.parametrize(
+    ("mutate", "message"),
+    [
+        (lambda value: value["claims"][0].update(evidence=["E404"]), "evidence pointer"),
+        (lambda value: value["evidence"][0].pop("revision"), "revision"),
+        (lambda value: value["evidence"][0].update(url="not-a-url"), "URL"),
+        (lambda value: value["evidence"][0].pop("classification"), "classification"),
+        (lambda value: value["evidence"][0].update(limitations=[]), "limitations"),
+        (
+            lambda value: value["evidence"][0]["capture"].update(digest="0" * 64),
+            "capture identity",
+        ),
+        (
+            lambda value: value["claims"].append(
+                {"id": "C2", "evidence": ["E1"]}
+            ),
+            "bidirectional",
+        ),
+    ],
+)
+def test_lint_research_registry_rejects_structural_defects(
+    tmp_path: Path,
+    mutate: object,
+    message: str,
+) -> None:
+    registry = _valid_research_registry(tmp_path)
+    assert callable(mutate)
+    mutate(registry)
+    write_json(tmp_path / "registry.json", registry)
+    with pytest.raises(ValueError, match=message):
+        campaign_artifacts.lint_research_registry(
+            tmp_path / "registry.json",
+            candidate_root=tmp_path,
+        )
+
+
+def test_prompt3_verify_requires_registered_preflight_before_proof(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-3"
+    write_json(manifest_path, manifest)
+    monkeypatch.setattr(
+        campaign_artifacts,
+        "_verify_registered_proof",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            AssertionError("preflight must fail before proof")
+        ),
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    assert result["status"] == "failed"
+    assert result["gate"] == "preflight-registration"
+
+
+def _start_preflight_campaign(
+    worktree: Path,
+    *,
+    stage: str,
+    registrations: list[dict[str, object]],
+) -> Path:
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-epoch-1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = stage
+    manifest["mechanical"]["preflight_registrations"] = registrations
+    write_json(manifest_path, manifest)
+    return manifest_path
+
+
+def _behavioral_preflight_registration(
+    worktree: Path,
+    *,
+    applicability: str = "required",
+) -> dict[str, object]:
+    write_json(worktree / "fixture.json", valid_fixture())
+    write_json(worktree / "registration.json", valid_registration())
+    for name in ("m0", "h1"):
+        runtime = worktree / name
+        runtime.mkdir()
+        (runtime / "SKILL.md").write_text(name, encoding="utf-8")
+    return {
+        "id": "prompt3-comparison",
+        "kind": "behavioral-comparison",
+        "stage": "prompt-3",
+        "applicability": applicability,
+        "decision_pointer": "decisions.md#prompt3-comparison",
+        "candidate_root": ".",
+        "fixture": _identity_spec(worktree, "fixture.json"),
+        "terminal_registration": _identity_spec(
+            worktree,
+            "registration.json",
+        ),
+        "case_id": "Q01",
+        "runtime_pointer": "/runtime",
+        "runtimes": {
+            name: _identity_spec(worktree, name, "campaign-tree-v1")
+            for name in ("m0", "h1")
+        },
+    }
+
+
+def _not_applicable_preflight(kind: str, stage: str) -> dict[str, object]:
+    registration_id = f"{stage}-{kind}"
+    return {
+        "id": registration_id,
+        "kind": kind,
+        "stage": stage,
+        "applicability": "not-applicable",
+        "decision_pointer": f"decisions.md#{registration_id}",
+    }
+
+
+def test_prompt3_verify_generates_isolated_payloads_before_proof(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    registration = _behavioral_preflight_registration(worktree)
+    manifest_path = _start_preflight_campaign(
+        worktree,
+        stage="prompt-3",
+        registrations=[
+            registration,
+            _not_applicable_preflight("markdown", "prompt-3"),
+        ],
+    )
+    monkeypatch.setattr(
+        campaign_artifacts,
+        "_verify_registered_proof",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            AssertionError("no proof was registered")
+        ),
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    payload_root = (
+        worktree
+        / ".tmp"
+        / "campaign-payloads"
+        / "review-epoch-1"
+        / "prompt3-comparison"
+    )
+    m0 = json.loads((payload_root / "Q01-m0.json").read_text("utf-8"))
+    h1 = json.loads((payload_root / "Q01-h1.json").read_text("utf-8"))
+    assert result["status"] == "verified"
+    assert result["preflight"]["completed"] == ["prompt3-comparison"]
+    assert result["preflight"]["not_applicable"] == ["prompt-3-markdown"]
+    assert m0.pop("runtime") != h1.pop("runtime")
+    assert m0 == h1 == valid_case()
+
+
+def test_prompt3_verify_accepts_explicit_no_comparison_applicability(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    manifest_path = _start_preflight_campaign(
+        worktree,
+        stage="prompt-3",
+        registrations=[
+            _not_applicable_preflight(
+                "behavioral-comparison",
+                "prompt-3",
+            ),
+            _not_applicable_preflight("markdown", "prompt-3"),
+        ],
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    assert result["status"] == "verified"
+    assert result["preflight"]["not_applicable"] == [
+        "prompt-3-behavioral-comparison",
+        "prompt-3-markdown",
+    ]
+
+
+def test_prompt3_verify_rejects_omitted_markdown_applicability(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    (worktree / "changed.md").write_text(
+        "[broken](missing.md)\n",
+        encoding="utf-8",
+    )
+    manifest_path = _start_preflight_campaign(
+        worktree,
+        stage="prompt-3",
+        registrations=[_behavioral_preflight_registration(worktree)],
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    assert result["status"] == "failed"
+    assert result["gate"] == "preflight-registration"
+
+
+def test_prompt3_verify_rejects_contaminated_fixture_before_proof(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    registration = _behavioral_preflight_registration(worktree)
+    fixture = json.loads((worktree / "fixture.json").read_text("utf-8"))
+    fixture["cases"][0]["expected_terminal"] = "preferred"
+    write_json(worktree / "fixture.json", fixture)
+    registration["fixture"] = _identity_spec(worktree, "fixture.json")
+    manifest_path = _start_preflight_campaign(
+        worktree,
+        stage="prompt-3",
+        registrations=[
+            registration,
+            _not_applicable_preflight("markdown", "prompt-3"),
+        ],
+    )
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    assert result["status"] == "failed"
+    assert result["gate"] == "preflight-validation"
+    assert "root-only fields" in result["failures"][0]["message"]
+
+
+def test_prompt3_verify_rejects_missing_terminal_registration_and_fixture_fact(
+    tmp_path: Path,
+) -> None:
+    for name, mutate in (
+        (
+            "missing-registration",
+            lambda registration, fixture: registration.pop(
+                "terminal_registration"
+            ),
+        ),
+        (
+            "missing-fact",
+            lambda registration, fixture: fixture["cases"][0].pop(
+                "requested_output"
+            ),
+        ),
+    ):
+        worktree = tmp_path / name
+        worktree.mkdir()
+        registration = _behavioral_preflight_registration(worktree)
+        fixture = json.loads((worktree / "fixture.json").read_text("utf-8"))
+        mutate(registration, fixture)
+        write_json(worktree / "fixture.json", fixture)
+        registration["fixture"] = _identity_spec(worktree, "fixture.json")
+        manifest_path = _start_preflight_campaign(
+            worktree,
+            stage="prompt-3",
+            registrations=[
+                registration,
+                _not_applicable_preflight("markdown", "prompt-3"),
+            ],
+        )
+        result = campaign_artifacts.verify_campaign(
+            manifest_path,
+            worktree=worktree,
+        )
+        assert result["status"] == "failed"
+        assert result["gate"] == "preflight-validation"
+
+
+def test_lint_markdown_rejects_non_utf8_and_bom(tmp_path: Path) -> None:
+    invalid = tmp_path / "invalid.md"
+    invalid.write_bytes(b"\xff")
+    with pytest.raises(ValueError, match="encoding"):
+        campaign_artifacts.lint_markdown(
+            invalid,
+            candidate_root=tmp_path,
+            hard_break_policy="forbid",
+        )
+    invalid.write_bytes(b"\xef\xbb\xbf# Heading\n")
+    with pytest.raises(ValueError, match="BOM"):
+        campaign_artifacts.lint_markdown(
+            invalid,
+            candidate_root=tmp_path,
+            hard_break_policy="forbid",
+        )
+
+
+def test_lint_markdown_requires_equal_or_longer_closing_fence(
+    tmp_path: Path,
+) -> None:
+    document = tmp_path / "fences.md"
+    document.write_text(
+        "````python\n"
+        "```\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="fence"):
+        campaign_artifacts.lint_markdown(
+            document,
+            candidate_root=tmp_path,
+            hard_break_policy="forbid",
+        )
+
+    document.write_text(
+        "````python\n"
+        "```\n"
+        "`````\n",
+        encoding="utf-8",
+    )
+    assert campaign_artifacts.lint_markdown(
+        document,
+        candidate_root=tmp_path,
+        hard_break_policy="forbid",
+    )["status"] == "ok"
+
+
+def test_lint_research_registry_accepts_exact_local_provenance(
+    tmp_path: Path,
+) -> None:
+    registry = _valid_research_registry(tmp_path)
+    write_json(tmp_path / "registry.json", registry)
+    result = campaign_artifacts.lint_research_registry(
+        tmp_path / "registry.json",
+        candidate_root=tmp_path,
+    )
+    assert result == {"status": "ok", "claim_count": 1, "evidence_count": 1}
+
+
+def test_verify_runs_applicable_markdown_and_research_preflights(
+    tmp_path: Path,
+) -> None:
+    markdown_worktree = tmp_path / "markdown"
+    markdown_worktree.mkdir()
+    document_root = markdown_worktree / "documents"
+    document_root.mkdir()
+    (document_root / "target.md").write_text("# Target\n", encoding="utf-8")
+    (document_root / "source.md").write_text(
+        "[target](target.md#target)\n",
+        encoding="utf-8",
+    )
+    registrations = [
+        _behavioral_preflight_registration(markdown_worktree),
+        {
+            "id": "markdown-documents",
+            "kind": "markdown",
+            "stage": "prompt-3",
+            "applicability": "required",
+            "decision_pointer": "decisions.md#markdown-documents",
+            "candidate_root": ".",
+            "target": _identity_spec(
+                markdown_worktree,
+                "documents",
+                "campaign-tree-v1",
+            ),
+            "paths": ["documents/source.md", "documents/target.md"],
+            "hard_break_policy": "forbid",
+        },
+    ]
+    markdown_manifest = _start_preflight_campaign(
+        markdown_worktree,
+        stage="prompt-3",
+        registrations=registrations,
+    )
+    markdown_result = campaign_artifacts.verify_campaign(
+        markdown_manifest,
+        worktree=markdown_worktree,
+    )
+    assert markdown_result["status"] == "verified"
+    assert markdown_result["preflight"]["completed"] == [
+        "prompt3-comparison",
+        "markdown-documents",
+    ]
+
+    research_worktree = tmp_path / "research"
+    research_worktree.mkdir()
+    registry = _valid_research_registry(research_worktree)
+    write_json(research_worktree / "registry.json", registry)
+    research_registration = {
+        "id": "research-registry",
+        "kind": "research",
+        "stage": "research",
+        "applicability": "required",
+        "decision_pointer": "decisions.md#research-registry",
+        "candidate_root": ".",
+        "registry": _identity_spec(research_worktree, "registry.json"),
+    }
+    research_manifest = _start_preflight_campaign(
+        research_worktree,
+        stage="research",
+        registrations=[
+            research_registration,
+            _not_applicable_preflight("markdown", "research"),
+        ],
+    )
+    research_result = campaign_artifacts.verify_campaign(
+        research_manifest,
+        worktree=research_worktree,
+    )
+    assert research_result["status"] == "verified"
+    assert research_result["preflight"]["completed"] == ["research-registry"]
+    assert research_result["preflight"]["not_applicable"] == [
+        "research-markdown"
+    ]
+
+
+def test_research_verify_requires_registration_and_rejects_dangling_pointer(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "missing"
+    worktree.mkdir()
+    missing_manifest = _start_preflight_campaign(
+        worktree,
+        stage="research",
+        registrations=[],
+    )
+    missing = campaign_artifacts.verify_campaign(
+        missing_manifest,
+        worktree=worktree,
+    )
+    assert missing["gate"] == "preflight-registration"
+
+    worktree = tmp_path / "dangling"
+    worktree.mkdir()
+    registry = _valid_research_registry(worktree)
+    registry["evidence"][0]["pointer"] = "capture/source.md#missing"
+    write_json(worktree / "registry.json", registry)
+    registration = {
+        "id": "research-registry",
+        "kind": "research",
+        "stage": "research",
+        "applicability": "required",
+        "decision_pointer": "decisions.md#research-registry",
+        "candidate_root": ".",
+        "registry": _identity_spec(worktree, "registry.json"),
+    }
+    manifest_path = _start_preflight_campaign(
+        worktree,
+        stage="research",
+        registrations=[
+            registration,
+            _not_applicable_preflight("markdown", "research"),
+        ],
+    )
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    assert result["gate"] == "preflight-validation"
+    assert "dangling" in result["failures"][0]["message"]
+
+
+def test_research_verify_wraps_malformed_claim_ids_and_restores(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    registry = _valid_research_registry(worktree)
+    registry["evidence"][0]["claim_ids"] = None
+    registry_path = worktree / "registry.json"
+    write_json(registry_path, registry)
+    registration = {
+        "id": "research-registry",
+        "kind": "research",
+        "stage": "research",
+        "applicability": "required",
+        "decision_pointer": "decisions.md#research-registry",
+        "candidate_root": ".",
+        "registry": _identity_spec(worktree, "registry.json"),
+    }
+    manifest_path = _start_preflight_campaign(
+        worktree,
+        stage="research",
+        registrations=[
+            registration,
+            _not_applicable_preflight("markdown", "research"),
+        ],
+    )
+
+    malformed = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    assert malformed["status"] == "failed"
+    assert malformed["gate"] == "preflight-validation"
+    assert "bidirectional" in malformed["failures"][0]["message"]
+
+    registry["evidence"][0]["claim_ids"] = ["C1"]
+    write_json(registry_path, registry)
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["mechanical"]["preflight_registrations"][0][
+        "registry"
+    ] = _identity_spec(worktree, "registry.json")
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    restored = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    assert restored["status"] == "verified"
