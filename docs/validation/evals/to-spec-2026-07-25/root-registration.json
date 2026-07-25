@@ -1,0 +1,191 @@
+{
+  "schema": "to-spec-prompt3-root-registration-v1",
+  "worker_fixture": "worker-fixture.json",
+  "worker_fixture_schema_version": 2,
+  "sampling_status": "not-started",
+  "fixed_execution": {
+    "model": "gpt-5.6-sol",
+    "host": "Codex fresh-context subagent",
+    "reasoning_configuration": "high",
+    "tools": [
+      "read-only assigned runtime package",
+      "read-only worker fixture facts",
+      "simulated draft and tracker operations only",
+      "no live tracker or repository mutation tools"
+    ],
+    "authority": "Simulate one to-spec judgment and requested packet from supplied facts only; do not resolve source-owned decisions or start successors.",
+    "evidence": "Worker-visible source, setup, tracker, and operation facts in worker-fixture.json.",
+    "mutation_boundary": "No durable mutation.",
+    "runtime_slot": "/runtime",
+    "arm_order": "M0 viability runs first. Alternate M0/H1 order across an H1 wave only after its registered M0 deficit gate opens."
+  },
+  "runtime_arms": {
+    "m0": {
+      "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+      "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb",
+      "role": "immutable-control",
+      "transformations": []
+    },
+    "h1_01": {
+      "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/h1-01",
+      "campaign_tree_v1": "47c223639318b041e6c86e6144b7fb23399634ead73e18ddcf306ab8242effeb",
+      "role": "isolated-candidate",
+      "transformations": ["H1-01"]
+    },
+    "h1_02": {
+      "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/h1-02",
+      "campaign_tree_v1": "aab3d073179fcedcc18845d950073db2ccd2b1b4dd2f8ac6f76da982ad87f68d",
+      "role": "isolated-candidate",
+      "transformations": ["H1-02"]
+    },
+    "h1_combined": {
+      "package_root": "skills/experimental/to-spec",
+      "campaign_tree_v1": "059fd225266a521fdd61ac74ef86c8fcf471e6477b74ea70e62c5d2e8298cbf1",
+      "role": "inactive-integrated-candidate",
+      "transformations": ["H1-01", "H1-02"]
+    },
+    "current_canonical": {
+      "package_root": "skills/custom/to-spec",
+      "campaign_tree_v1": "3cdb41fbca411d8c2332c4e9cff52b5ef1000dd28a27422615ac6f150133e06b",
+      "role": "current-comparison-only"
+    },
+    "historical_c0": {
+      "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/incumbent-root/skills/custom/to-spec",
+      "campaign_tree_v1": "9d1a3e45416b8a36a1cdf4cf155de0a193e78df4aa107a9af25608c1b1fc918c",
+      "commit": "f3be70c31dd8f2ae9f12a75248065ef313790bda",
+      "role": "historical-comparison-only"
+    }
+  },
+  "m0_viability": {
+    "claim": "Exact M0 viability under the fixed Prompt 4 conditions only.",
+    "cases": [
+      {"id": "V01", "dimensions": ["invocation", "outcome", "completion"], "expected_terminal": "ready-spec"},
+      {"id": "V02", "dimensions": ["invocation", "exclusion", "safety"], "expected_terminal": "not-invoked"},
+      {"id": "V03", "dimensions": ["authority", "safe-failure", "safety"], "expected_terminal": "source-gap"},
+      {"id": "V04", "dimensions": ["setup", "safe-failure", "relationship"], "expected_terminal": "setup-precondition"},
+      {"id": "V05", "dimensions": ["caller-compatibility", "authority", "safe-failure"], "expected_terminal": "per-packet-admission-or-source-gap"},
+      {"id": "V06", "dimensions": ["domain-authority", "safe-failure", "safety"], "expected_terminal": "source-gap"},
+      {"id": "V07", "dimensions": ["contracts", "coverage", "compatibility"], "expected_terminal": "ready-spec"},
+      {"id": "V08", "dimensions": ["existing-state", "order", "safety"], "expected_terminal": "per-case-create-reuse-or-conflict"},
+      {"id": "V09", "dimensions": ["draft-identity", "authority", "order"], "expected_terminal": "frozen-before-publication"},
+      {"id": "V10", "dimensions": ["publication-recovery", "safe-failure", "order"], "expected_terminal": "publication-recovery"},
+      {"id": "V11", "dimensions": ["read-back", "compatibility", "completion"], "expected_terminal": "ready-spec"},
+      {"id": "V12", "dimensions": ["return", "relationship", "completion"], "expected_terminal": "ready-spec"},
+      {"id": "V13", "dimensions": ["mutation-boundary", "safety", "completion"], "expected_terminal": "ready-spec"}
+    ],
+    "acceptance": "All V01-V13 satisfy their fixed terminal class or explicitly registered multi-case classifications, required output semantics, operation order, mutation boundary, and no-successor condition. Any invented commitment, authority transfer, false success, duplicate create, foreign mutation, or completion without full read-back is critical."
+  },
+  "h1_01": {
+    "registration": "quality-lift",
+    "origin": ["professional-method", "intent-adjacent"],
+    "method_evidence": "independently-supported",
+    "contribution_mode": "quality-lift",
+    "entry_predicate": "At least two aspect families are applicable and at least three are explicitly irrelevant.",
+    "applicability": "situational",
+    "applicability_basis": "Independent tailoring and applicability evidence; fixture frequency is not prevalence.",
+    "fixed_task": "Produce one complete parent specification from supplied settled source facts.",
+    "positive_cases": ["A01", "A02", "A03", "A04", "A05"],
+    "fixture_families": {
+      "service-aspects": ["A01", "A02", "A03"],
+      "local-tool-aspects": ["A04", "A05"]
+    },
+    "wrong_condition_cases": ["AW01"],
+    "expected_m0_weakness": "A complete and accurate M0 packet may contain substantial ceremonial non-applicable prose.",
+    "m0_compliant_counterexample": "Every required obligation is present and every irrelevant family is marked not applicable, with no invention or omission.",
+    "expected_load_effect": {
+      "new_files": 0,
+      "new_sections": 0,
+      "always_loaded_words": 33,
+      "maximum_allowed_words": 45
+    },
+    "pilot_gate": "Run five fresh exact-M0 positive samples. Open H1-01 only if M0 remains viable and at least three samples contain three or more ceremonial irrelevant-family passages, or the median irrelevant-family passage count is at least three.",
+    "rubric": {
+      "criteria": [
+        "all source-triggered obligations retained",
+        "zero invented obligations",
+        "zero false source-gap returns",
+        "irrelevant-section and ceremonial-prose count",
+        "material aspect families and acceptance remain identifiable"
+      ],
+      "scoring": "0 critical M0 violation; 1 invention, omission, or false gap; 2 viable with at least three ceremonial irrelevant-family passages; 3 viable with one or two; 4 viable with none."
+    },
+    "acceptance_budget": {
+      "critical_failures": 0,
+      "h1_scores_at_least_3": "at least 4 of 5",
+      "median_lift": "at least 1 when the pilot gate opens",
+      "variance": "must narrow or remain acceptably bounded",
+      "wrong_condition": "all material families retained with no ambiguous compression or protected-behavior regression"
+    },
+    "claim_limit": "Exact fixed service and local-tool facts, model, host, reasoning configuration, tools, authority, evidence, and runtime bytes only; no universal taxonomy, prevalence, or professional completeness claim."
+  },
+  "h1_02": {
+    "registration": "quality-lift",
+    "origin": ["professional-method", "intent-adjacent"],
+    "method_evidence": "independently-supported",
+    "contribution_mode": "quality-lift",
+    "entry_predicate": "At least two commitments have materially distinct existing proof objectives or one adequate broad harness is materially expensive or brittle.",
+    "applicability": "situational",
+    "applicability_basis": "Independent distinction among test objectives; fixture frequency is not prevalence.",
+    "fixed_task": "Produce the verification portion of one parent specification from supplied commitments and existing harness facts.",
+    "positive_cases": ["P01", "P02", "P03", "P04", "P05"],
+    "fixture_families": {
+      "api-worker-proof": ["P01", "P02", "P03"],
+      "browser-state-proof": ["P04", "P05"]
+    },
+    "wrong_condition_cases": ["PW01"],
+    "expected_m0_weakness": "Adequate and truthful M0 may choose a needlessly broad or privately coupled proof plan.",
+    "m0_compliant_counterexample": "One end-to-end harness observes every outcome but is materially broader and more implementation-sensitive than an available mixed portfolio.",
+    "expected_load_effect": {
+      "new_files": 0,
+      "new_sections": 0,
+      "always_loaded_words": 38,
+      "maximum_allowed_words": 55
+    },
+    "pilot_gate": "Run five fresh exact-M0 positive samples. Open H1-02 only if M0 remains viable and at least three samples use one private-only oracle or unjustified broad harness, or the median has at least one such deficit.",
+    "rubric": {
+      "criteria": [
+        "every commitment has an observing oracle",
+        "zero private-only oracles",
+        "zero invented public seams",
+        "unjustified broad-stack mandate count",
+        "residual uncovered risk is explicit"
+      ],
+      "scoring": "0 critical M0 or authority violation; 1 missing oracle or invented seam; 2 viable with private-only or unjustifiably broad proof; 3 adequate with one non-material coupling concern; 4 adequate, scope-matched, public or caller-visible, and explicit about residual risk."
+    },
+    "acceptance_budget": {
+      "critical_failures": 0,
+      "h1_scores_at_least_3": "at least 4 of 5",
+      "median_lift": "at least 1 when the pilot gate opens",
+      "variance": "must narrow or remain acceptably bounded",
+      "wrong_condition": "retain the one adequate harness without manufactured portfolio, lower-level test, public seam, or protected-behavior regression"
+    },
+    "claim_limit": "Exact fixed API-worker and browser-state facts, model, host, reasoning configuration, tools, authority, evidence, and runtime bytes only; no universal test level, count, cost, latency, or prevalence claim."
+  },
+  "incumbent_removal": {
+    "isolated_ablations": [],
+    "bounded_c0_comparisons": [],
+    "disposition": "Prompt 2 resolved all plausible current-only removal risk. Current and historical C0 remain exact comparison evidence and are not behavioral arms."
+  },
+  "protected_proof": {
+    "semantic_ids": ["U01", "U02", "U03", "U04", "U05", "U06", "U07", "U08", "U09", "U10", "U11", "U12", "U13", "U14", "U15", "U16"],
+    "relationship_cases": ["V04", "V05", "V12"],
+    "invocation_cases": ["V01", "V02"],
+    "context_checks": ["runtime package only arm delta", "candidate terms absent", "prior outputs absent", "conclusions absent"],
+    "machine_checks": ["explicit-only policy", "frontmatter name", "exact package tree identity", "typed Return tokens", "forbidden semantic absence across the complete runtime-facing package"]
+  },
+  "proof_ids": {
+    "fixture_lint": "P3-FIXTURE-LINT-01",
+    "fixture_lint_map": "P3-FIXTURE-MAP-01",
+    "payload_lint": "P3-PAYLOAD-LINT-01",
+    "payload_compare": "P3-PAYLOAD-COMPARE-01",
+    "candidate_compatibility": "P3-CANDIDATE-COMPAT-01",
+    "forbidden_absence": "P3-FORBIDDEN-ABSENCE-01",
+    "relationship": "P3-RELATIONSHIP-01",
+    "invocation": "P3-INVOCATION-01",
+    "markdown": "P3-MARKDOWN-01",
+    "skill_validation": "P3-SKILL-VALIDATION-01",
+    "diff": "P3-DIFF-01",
+    "mutation_boundary": "P3-MUTATION-BOUNDARY-01",
+    "head": "P3-HEAD-01"
+  }
+}

@@ -159,6 +159,7 @@ def test_prompt_2_builds_h1_from_five_discovery_lanes_with_honest_authority() ->
         "Do not create hypotheses to satisfy a quota",
         "expected load effect and acceptance budget",
         "Seed one schema-validated, machine-readable campaign manifest",
+        "one versioned final shape with nullable later-stage sections",
         "C0 identity",
         "current-only causal dispositions",
         "separate semantic, behavioral, and load claim slots",
@@ -183,6 +184,55 @@ def test_intent_adjacent_vocabulary_maps_to_observable_contribution() -> None:
     assert "preserves the intended contract" in shared
 
 
+def test_shared_behavior_protocol_owns_fixture_isolation_and_sampling() -> None:
+    deploy = _normalized(DEPLOY_PROMPTS)
+    protocol = _section(
+        deploy,
+        "## Shared Behavioral Evaluation Protocol",
+        "## Deploy Campaign: Orchestrate One Skill",
+    )
+
+    for term in (
+        "minimum proof-coverage matrix",
+        "Run deterministic schema, identity, relationship, ordering",
+        "collapse cases that exercise the same decision mechanism",
+        "specific independent branch or proof reason",
+        "worker-fixture schema version 2",
+        "worker-visible `decision_state`",
+        "`target_resolution`",
+        "`evidence_availability`",
+        "`mutation_permission`",
+        "Do not expose expected terminal",
+        "required feasibility roles and adjacent terminals",
+        "root judgment still owns whether the cited evidence",
+        "python -m scripts.campaign_artifacts lint-fixture WORKER_FIXTURE.json",
+        "python -m scripts.campaign_artifacts lint-registration WORKER_FIXTURE.json ROOT_REGISTRATION.json",
+        "python -m scripts.campaign_artifacts lint-payload WORKER_FIXTURE.json CASE_ID PAYLOAD.json",
+        "python -m scripts.campaign_artifacts compare-payloads WORKER_FIXTURE.json CASE_ID M0_PAYLOAD.json H1_PAYLOAD.json",
+        "remove the exact runtime slot and require byte-identical",
+        "Immediately before each dispatch, rerun `lint-payload`",
+        "record its dispatch hash",
+        "Spread the existing minimum five samples for a broad claim",
+        "share one entry predicate, arm delta, rubric, and joint disposition",
+        "Do not infer per-unit contribution from a bundled arm",
+        "dispatch and inspect one control before the remaining wave",
+        "A valid first sample counts",
+        "an invalid sample receives zero credit",
+        "Any worker-visible clarification changes the fixture or payload identity",
+        "five fresh exact M0 controls",
+        "`reject-no-control-deficit`",
+        "five fresh entry-positive H1 samples",
+        "wrong-condition M0/H1 pairs",
+        "no registered-load-budget violation",
+        "`reject-insufficient-contribution`",
+        "`reject-regression`",
+        "unavailable decision-bearing telemetry returns `needs-more-evidence`",
+        "Keep reconstructible per-sample payloads disposable",
+        "including model, host, and tools",
+    ):
+        assert term in protocol
+
+
 def test_prompt_3_materializes_m0_without_research_leakage_and_builds_exact_h1() -> None:
     deploy = _normalized(DEPLOY_PROMPTS)
     prompt_3 = _section(
@@ -203,33 +253,17 @@ def test_prompt_3_materializes_m0_without_research_leakage_and_builds_exact_h1()
         "expected load effect",
         "non-inferiority bound",
         "Do not create a separate no-guidance control when M0 already supplies",
-        "Trace every scored criterion to one worker-visible source fact or observable operation",
-        "Spread the existing minimum five samples for a broad claim across at least two realistic families",
-        "Do not add samples solely for diversity",
         "matching campaign manifest",
+        "Populate only the Prompt 3-owned manifest fields",
         "Every forbidden semantic must have an absence check",
         "A prose claim that a rejected behavior was removed is insufficient",
-        "uniquely determine the expected branch",
-        "If an adjacent rubric outcome remains valid",
-        "root-only fixture-lint map",
-        "required output semantic references nonempty worker-visible fact IDs",
-        "A decision-bearing pointer includes its required content",
-        "payload equality after removing the runtime slot",
-        "`python -m scripts.campaign_artifacts lint-fixture WORKER_FIXTURE.json`",
-        "`python -m scripts.campaign_artifacts lint-payload WORKER_FIXTURE.json CASE_ID PAYLOAD.json`",
-        "`python -m scripts.campaign_artifacts compare-payloads WORKER_FIXTURE.json CASE_ID M0_PAYLOAD.json H1_PAYLOAD.json`",
-        "one resolved JSON dispatch envelope per behavioral arm",
+        "Under the Shared Behavioral Evaluation Protocol",
+        "Freeze the worker fixture, root registration, resolved dispatch envelopes",
+        "all required Shared Behavioral Evaluation Protocol command results",
         "an M0-only or no-H1 arm",
-        "worker-fixture schema version 2",
-        "worker-visible `decision_state`",
-        "`target_resolution`",
-        "`evidence_availability`",
-        "`mutation_permission`",
-        "Do not expose the expected terminal class",
-        "share one entry predicate, arm delta, rubric, and joint disposition",
-        "do not infer per-unit contribution from one bundled arm",
-        "do not copy the full payload per sample",
-        "references rather than copies the authoritative intended contract",
+        "Prompt 3 samples nothing",
+        "terminal feasibility, family coverage, or arm isolation fails",
+        "Reference rather than copy the authoritative intended contract",
         "candidate-aware focused compatibility preflight",
         "one shared, parameterized semantic assertion owner",
         "accepts an explicit package root and expected tree identity",
@@ -257,34 +291,16 @@ def test_prompt_4_proves_m0_then_defect_correction_or_quality_lift() -> None:
     )
 
     audit_m0 = prompt_4.index("Audit M0 first")
-    fixture_gate = prompt_4.index("Before any comparison dispatch")
-    first_sample_gate = prompt_4.index(
-        "For each distinct fixture family, dispatch and inspect one control"
-    )
     m0_passes = prompt_4.index("Only after M0 passes")
-    h1_samples = prompt_4.index("run at least five fresh entry-positive H1 samples")
-    assert audit_m0 < fixture_gate < m0_passes < first_sample_gate < h1_samples
+    no_h1 = prompt_4.index("If no H1 units survive")
+    assert audit_m0 < m0_passes < no_h1
 
     for term in (
         "H1 never receives credit for making M0 viable",
-        "neutral worker-visible task fixture",
-        "root-only evaluation fixture",
-        "the only allowed arm delta",
-        "Stop before sampling",
-        "protocol deviations and provide no behavioral credit",
-        "A valid first sample counts toward the required minimum",
-        "An invalid sample receives zero credit",
-        "Do not batch the remaining samples before this gate passes",
-        "rerun `lint-payload` on the resolved envelope",
-        "require it to match the frozen arm identity",
-        "Any worker-visible clarification changes the fixture or payload identity",
-        "invalidate every affected sample",
-        "`facts_changed: false`",
+        "verify Prompt 3's frozen proof matrix",
+        "Execute the Shared Behavioral Evaluation Protocol",
+        "bounded source-completeness repair",
         "shared parameterized semantic assertion owner",
-        "minimum proof-coverage matrix",
-        "Run deterministic schema, identity, relationship, ordering, and exact-literal checks once",
-        "do not place the complete viability suite in every sample",
-        "Five samples replicate one causally coherent behavioral claim",
         "`writing-great-skills/BEHAVIOR-EVALS.md`",
         "five-entry-positive-control floor",
         "Applicability evidence and conditional efficacy remain separate",
@@ -292,26 +308,14 @@ def test_prompt_4_proves_m0_then_defect_correction_or_quality_lift() -> None:
         "Use exact C0 only for affected cases when isolation is impossible",
         "do not attribute a whole-C0 result to one clause",
         "no preservation, causal comparison, or resolved non-inferiority proof",
-        "Do not dispatch one behavioral sample per semantic unit",
-        "Keep reconstructible per-sample payloads disposable",
-        "Store per-sample identities and results once in a compact results manifest",
-        "Refresh the campaign manifest",
-        "`defect-correction`",
-        "`quality-lift`",
-        "`reject-no-control-deficit`",
-        "`reject-insufficient-contribution`",
-        "`reject-regression`",
-        "wrong-condition M0/H1 pairs before acceptance",
-        "candidate rejected before that gate receives no further samples",
-        "no violation of its registered load budget",
-        "Reserve `reject-regression` for an actual critical or protected-behavior regression",
-        "`needs-more-evidence`",
+        "Apply the shared first-sample gate",
+        "A protocol deviation receives no behavioral credit",
         "If no H1 units survive, set V1 = M0",
         "Unit rejection never terminates a campaign while viable M0",
         "capability, or quality risk",
         "every plausible incumbent-removal risk is resolved",
-        "model, host, tools, configuration",
         "preserve the active runtime",
+        "Populate only the Prompt 4-owned manifest fields",
     ):
         assert term in prompt_4
 
@@ -339,7 +343,7 @@ def test_pruning_freezes_v1_and_promotes_only_regression_checked_p1() -> None:
         "If all cuts fail, set P1 = V1",
         "`pruned`, `pruning-not-needed`, or `cuts-rejected`",
         "Do not create a Pruning-specific equivalent verifier",
-        "one compact stage capsule",
+        "Pruning capsule in the consolidated decisions record",
         "Create no standalone verifier or transcript",
     ):
         assert term in pruning
@@ -347,7 +351,7 @@ def test_pruning_freezes_v1_and_promotes_only_regression_checked_p1() -> None:
     assert "Promotes only exact P1" in prompt_5
     assert "promote P1 into the canonical skill" in prompt_5
     assert "verify canonical/installed parity" in prompt_5
-    assert "Update the campaign manifest with canonical and installed identities" in prompt_5
+    assert "Populate only the Prompt 5-owned manifest fields" in prompt_5
     for term in (
         "three separate terminal claims",
         "semantic contract status",
@@ -388,6 +392,9 @@ def test_campaign_runs_mandatory_research_and_every_runtime_stage() -> None:
         "`python -m scripts.install_skills --help`",
         "`python -m scripts.install_skills --dry-run --skip-global-agents`",
         "one fixed child-brief envelope",
+        "canonical method path, exact unit heading, bounded content fingerprint",
+        "Do not copy the unit body into the brief",
+        "manifest identity keys",
         "exact allowed source paths and forbidden source categories",
         "`python -m scripts.validate_skills`",
         "ambient validation failures",
@@ -411,11 +418,11 @@ def test_campaign_runs_mandatory_research_and_every_runtime_stage() -> None:
 
 def test_campaign_records_one_authoritative_unit_decision_without_duplication() -> None:
     deploy = _normalized(DEPLOY_PROMPTS)
-    shared = _section(deploy, "## Shared Run Contract", "## Proportionate Proof Budget")
+    shared = _section(deploy, "## Shared Run Contract", "## Shared Proof Core")
     proof = _section(
         deploy,
-        "## Proportionate Proof Budget",
-        "## Deploy Campaign: Orchestrate One Skill",
+        "## Shared Proof Core",
+        "## Shared Behavioral Evaluation Protocol",
     )
     prompt_5 = _section(
         deploy,
@@ -426,6 +433,8 @@ def test_campaign_records_one_authoritative_unit_decision_without_duplication() 
 
     for term in (
         "one authoritative decision record per unit",
+        "Prefer one `decisions.md` with immutable marker-bounded unit capsules",
+        "seed its versioned final shape with nullable lifecycle sections",
         "user-facing Return",
         "do not copy it verbatim into a durable transcript",
         "One schema-validated, machine-readable campaign manifest",
@@ -442,6 +451,11 @@ def test_campaign_records_one_authoritative_unit_decision_without_duplication() 
         "content fingerprint as its semantic identity",
         "`python -m scripts.campaign_artifacts hash-tree PATH`",
         "do not reimplement path ordering",
+        "manifest keys such as `runtime_identities.m0`",
+        "Never make a manually copied digest authoritative",
+        "Manifest field ownership is fixed",
+        "| Prompt 2 | Fixed point, C0, M0 and research fingerprints",
+        "| Prompt 6 | No manifest mutation",
     ):
         assert term in shared
 
@@ -453,18 +467,25 @@ def test_campaign_records_one_authoritative_unit_decision_without_duplication() 
         "heading-bounded normalized semantics",
         "Do not snapshot sentences or line wrapping",
         "machine-consumed token, path, field, or command",
+        "proof once as a receipt keyed by command",
+        "Do not duplicate a full suite",
     ):
         assert term in proof
 
     assert "compare it with the controller's ambient cohort" in prompt_5
     assert "newly appeared unrelated drift as a fresh scope gap" in prompt_5
-    assert "persist one compact final manifest" in prompt_5
+    assert "Persist one compact final manifest" in prompt_5
+    assert "one consolidated marker-bounded decisions record" in prompt_5
+    assert "Freeze it as the terminal Prompt 5 state" in prompt_5
+    assert "never transiently delete active synthesis" in prompt_5
     assert "must not depend on an omitted or disposable path" in prompt_5
     for term in (
         "every promotion-critical path named by the final manifest",
         "staged or already tracked at its recorded identity",
         "A required `.scratch/` path belongs in the commit",
         "a `.tmp/` path cannot",
+        "The frozen Prompt 5 manifest remains unchanged",
+        "the Git commit and this Prompt 6 Return are delivery authority",
     ):
         assert term in prompt_6
 

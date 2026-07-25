@@ -1,0 +1,189 @@
+{
+  "schema": "to-spec-prompt4-results-v1",
+  "decision": "accepted",
+  "campaign_shape": "hypothesis-candidate",
+  "execution": {
+    "model": "gpt-5.6-sol",
+    "host": "Codex fresh-context evaluation grandchild",
+    "reasoning_configuration": "high",
+    "tools": [
+      "read-only assigned runtime package",
+      "read-only resolved worker envelope",
+      "simulated draft and tracker operations only",
+      "isolated disposable capture write"
+    ],
+    "authority": "Simulate one to-spec judgment from supplied facts only; do not resolve source-owned decisions or start successors.",
+    "mutation_boundary": "Disposable captures only under .tmp/campaign-evidence/to-spec-2026-07-25/prompt4/."
+  },
+  "frozen_inputs": {
+    "m0_tree": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb",
+    "h1_01_tree": "47c223639318b041e6c86e6144b7fb23399634ead73e18ddcf306ab8242effeb",
+    "h1_02_tree": "aab3d073179fcedcc18845d950073db2ccd2b1b4dd2f8ac6f76da982ad87f68d",
+    "worker_fixture_sha256": "5ad982d84268fde9496131d5b18c9bf8b2d7be24508f0e9b7b03df5845234b5a",
+    "root_registration_sha256": "a9d81bebb1289b15b952e40a5a1e85722756da8b6708e3acd707a46d0cbe76b0",
+    "fixture_lint_map_sha256": "527472e458b0b8b2a29586377ac0498412bc0c7367d8c3634e7813563fe751b1",
+    "dispatch_plan_sha256": "7791b324ac08466f1f56f39c77caca727da1926ce55bb903568467a129953b41",
+    "payload_isolation": "Only /runtime differs within every sampled comparison pair."
+  },
+  "m0_viability": {
+    "decision": "pass",
+    "valid_samples": 13,
+    "invalid_samples": 0,
+    "critical_failures": 0,
+    "covered_units": [
+      "U01",
+      "U02",
+      "U03",
+      "U04",
+      "U05",
+      "U06",
+      "U07",
+      "U08",
+      "U09",
+      "U10",
+      "U11",
+      "U12",
+      "U13",
+      "U14",
+      "U15",
+      "U16"
+    ],
+    "samples": [
+      ["V01", "f1efa40623fccdcd41ec829ef7e62bcee19c15f10e788ee99e04f7a10aed59ad", "e710c4d27e7530ce114d60fb0dffdfd9131d8a21a7253f323096a5d847c47f70", "pass-ready-spec"],
+      ["V02", "64ad5f64a4b7ad433ef07628d0b5253b1608bfed88a0687cceb5970a8e3780a7", "d4982538a8ea8c2590de2da289ed98d5a6841e88187905edc00a532378655df2", "pass-not-invoked"],
+      ["V03", "f4c38adab5af66a6dde475f0e1e7b1b984ab6242321482cde5a17035ed1a6d93", "d7afc10e1be66fe9f479b7e54285f2bd01ba93c6d33f3280c512bf3e26b2dbb1", "pass-source-gap"],
+      ["V04", "973b06bb0224d85df4c982e07f897f1cd0e09327b3fd128ec0142873e022c543", "85cfffcc86288fae8f8ae154f6d305ce7b7d90eeb05f2597affc5a7982956287", "pass-setup-precondition"],
+      ["V05", "6bf29f269cce157c75a8776b9e1ce117cf991936f37b2e72c922c0ef437d1b76", "3791d7b8c9dffe4f0f4821587e2e19d9529c0cd05d40d97e4099e8c95701d9b3", "pass-per-packet"],
+      ["V06", "ca6643c19f15238f92f57971ea1e2a3136b5a0cef77183446a49f764d0cf7f13", "aac1d6421cd14bf16b60ac5cec4266937e940eb05a19043486b473bd79d1309b", "pass-source-gap"],
+      ["V07", "fa7f9b044543abdba6d5bbd45a9e4884568ac6472b2a08e98311ef592505788e", "cd4186b2c8de85d53021cc572b86bd7d56b66e139738021821e6c122a0436688", "pass-ready-spec"],
+      ["V08", "ad21d9b50a17e92d2743dc6451d3863662d6e0805531233d999d7f8574f6d092", "5530876bbbc71d60cc401631a19c18cc800d00aea6086faf21810c176e26189d", "pass-four-branches"],
+      ["V09", "ebe6f5f2e669dddf5515adc51f5d7f99fa8db769270d0b636dfceaccbf267ecb", "42d21bdbc360931089f1e0251cda57d19e15d3abc1e04b4827657b9f07f3b615", "pass-frozen-before-publication"],
+      ["V10", "fd9f2afb058b2dc31430071f31c9ba2cce74ddeb09b1fd55ac6d169072729615", "7ac5c26d0c3e265372a21d2d5791cbc92021225a3bf542b823582a76b912b88d", "pass-publication-recovery"],
+      ["V11", "d6c0d9baeb9ae7c86c23c7e6d02a77debf9d5172898f2ad0de6bdff642cade0d", "83e2e0fa93d80a1d420087754d8ec1e558887df9f5c52b1551c7a7baf9142666", "pass-ready-spec"],
+      ["V12", "9091adfdff398f5eefa9ee76a8e85daeea462d276f8fb626b521e1719a95c890", "b7f3f86bb1e18dbdf6dd9326f0646a9b3cea405ef6e4c23d38206a0bdea47817", "pass-ready-spec"],
+      ["V13", "26f507534f687b0ea7207aab404066c122059822538638a642d3c5cf2da87825", "8ddeead421b21d6a1c0ad0231f207860834c8b2f123a0287c611200add39481f", "pass-ready-spec"]
+    ]
+  },
+  "h1_01": {
+    "decision": "accept",
+    "contribution_mode": "quality-lift",
+    "entry_predicate": "At least two aspect families are applicable and at least three are explicitly irrelevant.",
+    "applicability": "situational",
+    "applicability_basis": "Independent tailoring and applicability evidence; fixture frequency is not prevalence.",
+    "registered_control_deficit": "Viable M0 output contains at least three ceremonial irrelevant-family passages in at least three of five samples or at the median.",
+    "control_scores": [2, 3, 2, 2, 3],
+    "candidate_scores": [3, 3, 3, 3, 3],
+    "control_median": 2,
+    "candidate_median": 3,
+    "median_lift": 1,
+    "control_range": [2, 3],
+    "candidate_range": [3, 3],
+    "critical_failures": 0,
+    "protected_behavior_regressions": 0,
+    "load_words_added": 33,
+    "registered_load_maximum": 45,
+    "entry_positive_samples": [
+      ["A01", "m0", "88c2bcafc37a2078d7486a11c214ec7040bdcc6bf4303ba7384ae1ae076cb4f6", "dfb54f34e0624e85940d89adcd253cf9fd18c7ce9df9f4cfa737e28e1e2091e7", 2],
+      ["A01", "h1-01", "f6131db915a9b053c8561c0e2671291b9256a7a3ae9d130b48b8d2315f0dfce2", "b95314d97390de2bd6a41713eb53b0b90e53f042751a16f15dd5232c449cb2f3", 3],
+      ["A02", "m0", "79628ae98f23df2e8bf37dd653b3509dc6c3f2995fd4bfb188aef4435e5e40dd", "d7b02ad17c8ff416dc87f506ed82bc93b6915cb621d4591e66e573cec0c87008", 3],
+      ["A02", "h1-01", "24b83955c506328dec55c01014c32bc49822d9924422cd7c8d30c16e8b0ec101", "04f855439ff203c358f7a00aa9242bfd4bc41df840d8f360eda771ca2b4a7d4c", 3],
+      ["A03", "m0", "c7cdd109a0a8ae65373db3a8f4750bc82639a5b76475a2d646699e4e973b84dd", "faba2f8be1fc75cc99f207053905bd8538def4c83dbd846bfd31023cdf220b3e", 2],
+      ["A03", "h1-01", "cf2f3ecd5ceb0a01c632ee7e95dafc72ecb26b104078b564eac854802cb2a8a7", "89cf63c2067790e12a1df7a20583af541000a1620e77ed88c5a90d4eb6235bb9", 3],
+      ["A04", "m0", "0e34d89fb3f9d18084d0067e48f6fb2cb2a109a6fb55701d0fa1b6046ea8d03c", "beb62e610a5f63d40cc62a23e04ac9d1998ead69bef137ba975581ab2584f1bb", 2],
+      ["A04", "h1-01", "f48e1a10b0e956318d4893a26049281cffa2b190228306ec8165d49ef5149432", "b241a8debf5f839b9cf96427a3ba21363961049211545b5d7174fa9402e67d91", 3],
+      ["A05", "m0", "bc3d709491c310b0ff288c275a4fccd521990a3b8db3998d20fdf5b7a47ea1bb", "e9a73374340c3de5551731fdab4ff5db50842aca20143384fe617b35adff3703", 3],
+      ["A05", "h1-01", "78cb8b271c4fdb9fa16445ea4c901b3d15a7867c269615fb92aca7b9bc1ab848", "0899202c8cf4826e87b7bbadd8f32d8edad3ce55f34d9ceebc3f4a656c5f706f", 3]
+    ],
+    "wrong_condition": {
+      "case": "AW01",
+      "control_dispatch_sha256": "ee5cdfac1d18e7b42000b6c754bcb20ce8946708d73537027ec7a435255cb13b",
+      "control_output_sha256": "0a48c0737d4746a87c99533014130b09c4c6765630d4882f523598c4e56a2aaa",
+      "candidate_dispatch_sha256": "6140660ac2402e0e06e295a1794c0fb00a07f60d4000277395e4291c99213ac3",
+      "candidate_output_sha256": "891d7e713c0d295f6efe7fd9b55d13ffd030c4b9ddd9380bafab25efc037ab7e",
+      "control_score": 4,
+      "candidate_score": 4,
+      "all_material_families_retained": true,
+      "ambiguous_compression": false,
+      "protected_behavior_regression": false
+    },
+    "claim_limit": "Exact fixed service, local-tool, and repaired dense-platform facts under the recorded model, host, reasoning, tools, authority, evidence, and runtime bytes only."
+  },
+  "h1_02": {
+    "decision": "reject-no-control-deficit",
+    "contribution_mode": "quality-lift",
+    "entry_predicate": "At least two commitments have materially distinct existing proof objectives or one adequate broad harness is materially expensive or brittle.",
+    "applicability": "situational",
+    "valid_control_samples": 5,
+    "control_scores": [4, 4, 4, 4, 4],
+    "critical_failures": 0,
+    "private_only_oracles": 0,
+    "unjustified_broad_mandates": 0,
+    "candidate_samples": 0,
+    "wrong_condition_samples": 0,
+    "samples": [
+      ["P01", "f800a36fa85546d113b953783bcfc7976b6e1dbd3aaa7b20d4d586e90ef77cb5", "2573109f9e731ee29561ecaef143b5e1e512390b0878e2c11e2e97bd61aa8a61", 4],
+      ["P02", "8b8174694425754e8d2494215125cc0f428d719eefc25eb2c7a9f2ba911a8456", "aca2af3f4867d122bb7298e8a3565a9f170f72553fad64d96870fa3779fe7a2a", 4],
+      ["P03", "285d61c7a48f7e360cb02ed312821ec77a5524d0b37451f33a7fa8107fcf9470", "8edbb0c77ce9604fb85c47aaa1bd9b9c997e859788f4c04765c28aed7336766d", 4],
+      ["P04", "2bc16de197d60d26961fd837a3e1fa54f36cc22de309bc8f24b6fef8d8c8f3fd", "3c46b6709e627a7f6749bb69686689a16dd1e898bbcb21fc1301185d9e979637", 4],
+      ["P05", "92054b787b9840dd29e0a2224a416f1a997fc49d0ca7212d5260b1aa4a5c545c", "49bc40a5f503a9d468e15aba2455e645fd9795f04ef21200e9eb69d5df6d3c69", 4]
+    ],
+    "claim_limit": "The registered M0 deficit did not appear under the five fixed positive cases; no broader efficacy or prevalence conclusion is made."
+  },
+  "protocol_deviations": [
+    {
+      "id": "AW01-source-completeness",
+      "facts_changed": true,
+      "initial_fixture_sha256": "9c8e2f0cfcdc9d87fbdf1fc7eea88eef07448906eabdeb497c2f4822fd0a1ead",
+      "repaired_fixture_sha256": "5ad982d84268fde9496131d5b18c9bf8b2d7be24508f0e9b7b03df5845234b5a",
+      "invalid_output_sha256": "0aa7290ebcb11d67e60ae336095b8c3a9ea2b936e31bf603b76f360ab5b5b462",
+      "disposition": "zero-credit; AW01 facts repaired with task and rubric fixed; AW01 M0/H1 payloads refrozen and family restarted"
+    },
+    {
+      "id": "AW01-operation-fidelity-r1",
+      "facts_changed": false,
+      "dispatch_sha256": "ee5cdfac1d18e7b42000b6c754bcb20ce8946708d73537027ec7a435255cb13b",
+      "invalid_output_sha256": "750668840c3e62f60c778276ad3e668606e462f7a12fc0d6e640d7f3c0d98d55",
+      "disposition": "zero-credit; worker omitted the requested packet; exact payload rerun fresh"
+    },
+    {
+      "id": "worktree-provenance-mistaken-reversal",
+      "facts_changed": false,
+      "behavioral_evidence_affected": false,
+      "paths": [
+        "docs/synthesis/methods/deploy-prompts.md",
+        "scripts/campaign_artifacts.py",
+        "tests/test_campaign_artifacts.py"
+      ],
+      "disposition": "Prompt 4 owner mistakenly reversed unrelated concurrent diffs after a scope alert; the failed git restore changed no bytes, the manual reversals were detected, and the exact captured external diffs were restored before finalization. No Prompt 4 runtime, fixture, payload, sample, score, or conclusion changed."
+    }
+  ],
+  "ambient_changed_cohort": {
+    "preserved_unrelated_concurrent": [
+      "docs/synthesis/methods/deploy-prompts.md",
+      "scripts/campaign_artifacts.py",
+      "tests/test_campaign_artifacts.py",
+      "tests/test_deploy_prompt_contracts.py"
+    ],
+    "campaign_preexisting_or_prior_unit": [
+      "docs/research/skill-facets/to-spec/",
+      "docs/validation/campaigns/to-spec-2026-07-25/",
+      "docs/validation/evals/to-spec-2026-07-25/",
+      "skills/experimental/to-spec/",
+      "tests/test_skill_pack_contracts.py"
+    ]
+  },
+  "aggregate": {
+    "valid_behavioral_samples": 30,
+    "invalid_zero_credit_samples": 2,
+    "critical_failures": 0,
+    "accepted_h1_units": ["H1-01"],
+    "rejected_h1_units": ["H1-02"],
+    "v1_tree": "47c223639318b041e6c86e6144b7fb23399634ead73e18ddcf306ab8242effeb",
+    "worst_valid_result": "viable score 2 M0 ceremonial-density controls",
+    "unavailable_telemetry": ["tokens", "latency", "cost", "prevalence"],
+    "residual_transfer_gaps": [
+      "live-provider recovery, idempotency, eventual consistency, and mutation durability",
+      "untested models, hosts, reasoning configurations, tools, trackers, source families, and authority variants"
+    ]
+  }
+}

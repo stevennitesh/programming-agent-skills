@@ -50,6 +50,32 @@ def valid_payload(runtime: str) -> dict[str, object]:
     return case
 
 
+def valid_registration() -> dict[str, object]:
+    return {
+        "terminal_profiles": {
+            "ready": {
+                "required_roles": ["authority", "completion"],
+                "adjacent_terminals": ["blocked"],
+            }
+        },
+        "cases": [
+            {
+                "id": "Q01",
+                "expected_terminal": "ready",
+                "feasibility": {
+                    "role_evidence": {
+                        "authority": ["field:authority"],
+                        "completion": ["fact:F1", "operation:read fixture"],
+                    },
+                    "adjacent_terminal_exclusions": {
+                        "blocked": ["fact:F1"],
+                    },
+                },
+            }
+        ],
+    }
+
+
 def test_campaign_tree_hash_uses_explicit_ordinal_utf8_path_order(
     tmp_path: Path,
 ) -> None:
@@ -152,6 +178,60 @@ def test_fixture_schema_one_remains_replayable_without_decision_state(
     write_json(fixture, payload)
 
     assert campaign_artifacts.lint_worker_fixture(fixture)["schema_version"] == 1
+
+
+def test_terminal_registration_requires_complete_unique_branch_evidence(
+    tmp_path: Path,
+) -> None:
+    fixture = tmp_path / "worker.json"
+    registration = tmp_path / "root.json"
+    worker = valid_fixture()
+    root = valid_registration()
+    write_json(fixture, worker)
+    write_json(registration, root)
+
+    result = campaign_artifacts.lint_terminal_registration(fixture, registration)
+
+    assert result["status"] == "ok"
+    assert result["case_count"] == 1
+
+    del root["cases"][0]["feasibility"]["role_evidence"]["completion"]  # type: ignore[index]
+    write_json(registration, root)
+    with pytest.raises(ValueError, match="role evidence must match"):
+        campaign_artifacts.lint_terminal_registration(fixture, registration)
+
+
+def test_terminal_registration_rejects_unknown_worker_evidence(
+    tmp_path: Path,
+) -> None:
+    fixture = tmp_path / "worker.json"
+    registration = tmp_path / "root.json"
+    root = valid_registration()
+    root["cases"][0]["feasibility"]["adjacent_terminal_exclusions"]["blocked"] = [  # type: ignore[index]
+        "fact:F404"
+    ]
+    write_json(fixture, valid_fixture())
+    write_json(registration, root)
+
+    with pytest.raises(ValueError, match="unknown worker evidence: fact:F404"):
+        campaign_artifacts.lint_terminal_registration(fixture, registration)
+
+
+def test_lint_registration_cli_checks_worker_root_pair(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    fixture = tmp_path / "worker.json"
+    registration = tmp_path / "root.json"
+    write_json(fixture, valid_fixture())
+    write_json(registration, valid_registration())
+
+    result = campaign_artifacts.main(
+        ["lint-registration", str(fixture), str(registration)]
+    )
+
+    assert result == 0
+    assert json.loads(capsys.readouterr().out)["case_count"] == 1
 
 
 def test_single_payload_lint_freezes_resolved_dispatch_identity(

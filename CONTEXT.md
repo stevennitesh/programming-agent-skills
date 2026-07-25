@@ -12,6 +12,7 @@ This repository packages a shared engineering discipline as skills, setup contra
 - `skills/custom/` is the active supported install set and the only source for managed installation. `skills/experimental/` holds inactive named alternatives to active skills. `skills/extra/` is optional, and `skills/.archive/` is retired history.
 - Historical research, synthesis, transcripts, issue notes, and run logs remain evidence. They become current instructions only when an owning README or `docs/plans/README.md` says so.
 - Mechanical rules belong in scripts or config. Prose owns routing, judgment, and behavior that cannot be enforced directly.
+- Deploy-campaign automation may write only reproducible mechanical evidence state. The campaign owner alone settles semantic decision state and advances the semantic lifecycle.
 
 ## Context Trace
 
@@ -139,6 +140,41 @@ P1 is the regression-checked pruned runtime and sole promotion candidate.
 Historical B0/C1 records keep their original campaign meaning.
 _Avoid_: current baseline, source-derived minimum, final C1
 
+**Campaign control manifest**
+
+The machine-readable control plane for one exact Deploy Campaign epoch. It owns
+campaign identity, artifact pointers and identities, proof registrations and
+receipts, invalidations, and mechanical lifecycle state. It points to semantic
+decisions in synthesis and the decision record instead of copying their
+meaning or rationale.
+_Avoid_: second synthesis, campaign diary, latest campaign
+
+**Mechanical evidence state**
+
+Reproducible campaign state that automation may compute and write
+transactionally, such as leases, bounded identities, deterministic proof
+receipts, cache validity, isolation checks, and parity. Optional `.tmp` data
+may recover exact reusable evidence but is never promotion-critical authority
+and cannot replace explicitly fresh behavioral proof.
+_Avoid_: automated judgment, inferred decision
+
+**Semantic decision state**
+
+The campaign owner's settled intent, research interpretation, hypothesis,
+applicability, evaluation judgment, proof sufficiency, disposition, pruning,
+promotion, and lifecycle decision. Automation may verify referenced mechanical
+facts but cannot manufacture, alter, or advance this state.
+_Avoid_: verifier decision, test-determined adoption
+
+**Campaign continuation modes**
+
+Resume continues one epoch with unchanged semantic inputs and identities.
+Repair changes an authorized artifact in that epoch and mechanically stales
+dependent proof. Restart creates a new epoch that explicitly supersedes the
+old manifest when the target, intended contract, delivery authority, or a
+terminal campaign changes.
+_Avoid_: silent reopen, latest-run recovery
+
 **Global AGENTS template**
 
 The pack-owned bootstrap section merged into a user's global `AGENTS.md` without replacing personal rules.
@@ -147,6 +183,7 @@ _Avoid_: pack manual, copied route map
 ## Vocabulary Owners
 
 - Deploy-campaign vocabulary—M0, H1, V1, P1, and intent-adjacent steering hypotheses—belongs to [`docs/synthesis/methods/deploy-prompts.md`](docs/synthesis/methods/deploy-prompts.md).
+- Deploy-campaign automation authority and control-plane vocabulary belong to [ADR-0008](docs/adr/0008-deploy-campaign-automation-separates-mechanical-evidence-from-semantic-decisions.md) and this context.
 - Skill-authoring vocabulary—Predictability, invocation, information hierarchy, leading words, completion criteria, and pruning—belongs to [`skills/custom/writing-great-skills/GLOSSARY.md`](skills/custom/writing-great-skills/GLOSSARY.md).
 - Runtime engineering vocabulary—Source Trace, bounded slice, commitment boundary, proof seam, proof lane, fixed point, review snapshot, Spec / Standards, Lock, and residual risk—belongs to `docs/agents/engineering-contract.md`.
 - Parallel-delivery roles, gates, and packets belong to `$parallel-implement` and its disclosed references.

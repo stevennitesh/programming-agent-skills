@@ -14,9 +14,10 @@ Run Deploy Campaign on diagnosing-bugs.
 ```
 
 For a standalone or delegated unit, load `Shared Model`, `Shared Run Contract`,
-`Proportionate Proof Budget`, and that unit only. A campaign coordinator loads
-those shared sections plus `Deploy Campaign`; it opens another unit only to
-dispatch or verify it.
+`Shared Proof Core`, and that unit only. Prompt 3, Prompt 4, and the Pruning
+Pass also load `Shared Behavioral Evaluation Protocol`. A campaign coordinator
+loads the three universal shared sections plus `Deploy Campaign`; it opens
+another unit only to dispatch or verify it.
 
 The ordinary sequence is:
 
@@ -175,11 +176,14 @@ it verbatim into a durable transcript. Use `none` when no successor is
 justified. A recommendation never authorizes a leaf owner to start its
 successor. `Git delivery: pending` records uncommitted authorized artifacts.
 
-Persist one authoritative decision record per unit. One schema-validated,
-machine-readable campaign manifest owns shared semantic and identity state
-across units; compact results manifests and raw captures may remain separate.
-Link these owners instead of repeating hashes, sample tables, or chronology
-across results, transcripts, and synthesis.
+Persist one authoritative decision record per unit. Prefer one
+`decisions.md` with immutable marker-bounded unit capsules over one file per
+unit. One schema-validated, machine-readable campaign manifest owns shared
+semantic and identity state across units; seed its versioned final shape with
+nullable lifecycle sections, then let each unit fill only its owned fields.
+Compact results manifests and raw captures may remain separate. Link these
+owners instead of repeating hashes, sample tables, or chronology across
+results, transcripts, and synthesis.
 
 Synthesis owns only the active decision and final dispositions, reconciled in
 place. Research notes own source provenance, the stage capsule owns the ordinary
@@ -207,7 +211,23 @@ Use `python -m scripts.campaign_artifacts hash-tree PATH` for campaign
 artifact trees. Record its versioned algorithm and digest; do not reimplement
 path ordering in a campaign.
 
-## Proportionate Proof Budget
+The manifest owns authoritative identity values. Dispatch and unit records
+refer to manifest keys such as `runtime_identities.m0`; the coordinator resolves
+and verifies each key immediately before use. Never make a manually copied
+digest authoritative for a successor.
+
+Manifest field ownership is fixed:
+
+| Unit | Manifest Fields Owned |
+| --- | --- |
+| Prompt 2 | Fixed point, C0, M0 and research fingerprints, semantic IDs, current dispositions, H1 registrations, and nullable later-stage sections |
+| Prompt 3 | M0/H1 inventories and identities, fixture and registration identities, clause map, and proof registrations |
+| Prompt 4 | Deviations, sample results and dispositions, surviving transformations, removal-risk decision, and V1 |
+| Pruning Pass | Cut ledger, P1, load delta, and pruning proof |
+| Prompt 5 | Canonical and installed identities, evidence retention, terminal claims, and residual limits |
+| Prompt 6 | No manifest mutation; Git and the Prompt 6 Return own delivery evidence |
+
+## Shared Proof Core
 
 Run the cheapest proof that establishes the current unit.
 
@@ -224,6 +244,12 @@ interfaces through parsed schemas or executable behavior. Do not snapshot
 sentences or line wrapping; require an exact phrase only when that literal is
 a machine-consumed token, path, field, or command.
 
+Record deterministic proof once as a receipt keyed by command, target tree or
+bounded content identity, relevant environment, and result. A coordinator
+reuses a verified receipt when that tuple is unchanged; it reruns only missing,
+drifted, unverifiable, or explicitly fresh proof. Do not duplicate a full suite
+merely to independently confirm an unchanged worktree.
+
 | Unit | Default Proof |
 | --- | --- |
 | Prompt 1 | Complete intent-source read-back, M0 checkpoint integrity, and existing local evidence inspection; no full suite |
@@ -235,12 +261,93 @@ a machine-consumed token, path, field, or command.
 | Prompt 5 | Canonical and synthesis read-back, affected Markdown gate, affected focused proof, one full integration suite, install dry-run, synchronization, parity, and clean post-install dry-run |
 | Prompt 6 | Scoped final diff, affected Markdown gate, required current checks, both diff checks, intentional staging, commit, and explicitly authorized push |
 
+## Shared Behavioral Evaluation Protocol
+
+Load this section only for Prompt 3, Prompt 4, the Pruning Pass, or a delegated
+evaluation. Prompt 3 freezes the protocol without sampling; Prompt 4 executes
+it and freezes V1; Pruning reuses exact V1 evidence and adds only affected P1
+non-regression proof.
+
+Build one minimum proof-coverage matrix across semantic units. Run deterministic
+schema, identity, relationship, ordering, exact-literal, and owner checks once.
+Use one realistic behavioral scenario to cover multiple units when it proves
+them. Before freezing, collapse cases that exercise the same decision mechanism
+and terminal when a shared scenario or deterministic check preserves semantic
+coverage. Require a specific independent branch or proof reason for every
+remaining behavioral case. Do not place the complete viability suite in every
+sample or dispatch one behavioral sample per semantic unit.
+
+For every behavioral fixture, keep task and source facts, authority, initial
+state and observations, tools or operations, mutation boundary, and requested
+output worker-visible as applicable. Keep the hypothesis, expected weakness,
+rubric, scoring, candidate terms, expected terminal, and conclusions root-only.
+Trace every scored criterion to worker-visible fact IDs or observable
+operations. Those facts must uniquely determine the registered branch; an
+adjacent valid outcome makes the fixture defective.
+
+Use worker-fixture schema version 2. Every case carries worker-visible
+`decision_state`: `target_resolution` (`resolved`, `unresolved`, or
+`not-applicable`), `evidence_availability` (`inspectable`, `unavailable`, or
+`not-applicable`), and `mutation_permission` (`allowed`, `forbidden`, or
+`not-applicable`). Do not expose expected terminal, operation, score, or
+conclusion.
+
+Create one root-only registration. Define each terminal profile's required
+feasibility roles and adjacent terminals. For every case, map every role and
+adjacent-terminal exclusion to worker-visible `fact:`, `operation:`, or
+`field:` references. Run:
+
+```text
+python -m scripts.campaign_artifacts lint-fixture WORKER_FIXTURE.json
+python -m scripts.campaign_artifacts lint-registration WORKER_FIXTURE.json ROOT_REGISTRATION.json
+python -m scripts.campaign_artifacts lint-payload WORKER_FIXTURE.json CASE_ID PAYLOAD.json
+python -m scripts.campaign_artifacts compare-payloads WORKER_FIXTURE.json CASE_ID M0_PAYLOAD.json H1_PAYLOAD.json
+```
+
+The mechanical registration gate proves reference completeness; root judgment
+still owns whether the cited evidence makes the terminal uniquely attainable.
+For every comparison, remove the exact runtime slot and require byte-identical
+remaining payloads. A leaked candidate cue, conclusion, prior output, or other
+arm delta invalidates the sample. Immediately before each dispatch, rerun
+`lint-payload`, record its dispatch hash, and require the frozen arm identity;
+comparisons also rerun `compare-payloads`.
+
+Match fixture-family coverage to claim scope. Spread the existing minimum five
+samples for a broad claim across at least two realistic families; a narrow
+condition-specific claim may use one family and must bound transfer. Cluster
+hypotheses only when they share one entry predicate, arm delta, rubric, and
+joint disposition. Otherwise isolate them. Do not infer per-unit contribution
+from a bundled arm or add samples solely for diversity.
+
+For each distinct fixture family, dispatch and inspect one control before the
+remaining wave. Verify source sufficiency, tool and operation fidelity, capture
+integrity, and payload isolation. A valid first sample counts; an invalid
+sample receives zero credit. Refreeze and rerun a source-completeness repair
+only when task and rubric stay fixed. Any worker-visible clarification changes
+the fixture or payload identity, invalidates affected samples, and restarts
+that family at its first-sample gate.
+
 Behavioral claims follow `writing-great-skills/BEHAVIOR-EVALS.md`. Run at least
-five fresh M0 samples for a causally coherent hypothesis cluster. Run H1 only
-when the pre-registered defect or quality deficit appears. Extend sampling only
-for material variance, borderline effect, or protocol deviation; stop early
-for a critical regression. Structural and owner-matched claims do not require
-behavioral samples.
+five fresh exact M0 controls for each causally coherent H1 cluster. For
+`defect-correction`, require the registered failure. For `quality-lift`,
+require a meaningful pre-registered deficit while M0 remains viable. When
+neither appears, record `reject-no-control-deficit` and do not run H1. When it
+appears, run at least five fresh entry-positive H1 samples; only a candidate
+clearing its contribution bar proceeds to frozen wrong-condition M0/H1 pairs.
+Accept only repeatable material improvement with bounded variance, no critical
+or protected-behavior regression, and no registered-load-budget violation.
+Record `reject-insufficient-contribution` separately from
+`reject-regression`. Borderline effect, material variance, or unavailable
+decision-bearing telemetry returns `needs-more-evidence`; extend sampling only
+for those conditions or a protocol deviation, and stop early for a critical
+regression.
+
+Keep reconstructible per-sample payloads disposable. Store each frozen runtime,
+fixture, template, parameters, dispatch identity, configuration, and result
+once, including model, host, and tools. The compact results owner records
+aggregates, variance, worst case, critical failures, deviations, decision,
+unavailable telemetry, and residual transfer gaps. Structural and owner-matched
+claims do not require behavioral samples.
 
 ## Deploy Campaign: Orchestrate One Skill
 
@@ -280,12 +387,14 @@ epoch, current unit, M0 and research checkpoints, runtime identities, pending
 decision, and stop reason. Do not create a narrative controller ledger; the
 machine-readable campaign manifest contains no orchestration chronology.
 
-Dispatch one unit at a time from one fixed child-brief envelope. Include the
-unit text without paraphrasing its scope and name repository, skill, delivery
-mode, method path and unit, input and artifact pointers, allowed mutation
-paths, starting state, proof budget, and Return contract. Prompt 1 also lists
-its exact allowed source paths and forbidden source categories; root verifies
-that allowlist before dispatch. Start one direct child with
+Dispatch one unit at a time from one fixed child-brief envelope. Name the
+canonical method path, exact unit heading, bounded content fingerprint,
+repository, skill, delivery mode, manifest identity keys, input and artifact
+pointers, allowed mutation paths, starting state, proof budget, and Return
+contract. Do not copy the unit body into the brief; the child reads the named
+shared sections and exact unit from the verified method file. Prompt 1 also
+lists its exact allowed source paths and forbidden source categories; root
+verifies that allowlist before dispatch. Start one direct child with
 `fork_turns="none"`. It loads the shared sections plus its unit, executes only
 that unit, and stops. Serialize all writers.
 
@@ -643,12 +752,14 @@ Build one decision ledger:
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 Seed one schema-validated, machine-readable campaign manifest before Prompt 3.
-It owns the fixed point; C0 identity; M0, research, and synthesis fingerprints;
-M0 clauses and gates; required and forbidden semantic IDs; current-only causal
+Use one versioned final shape with nullable later-stage sections. Populate only
+the Prompt 2-owned fields in the Shared Run Contract's ownership table:
+fixed point; C0 identity; M0, research, and synthesis fingerprints; M0 clauses
+and gates; required and forbidden semantic IDs; current-only causal
 dispositions; current and H1 dispositions; protected helpers and compatibility
 surfaces; carried-forward evidence identities, dispositions, and
 invalidations; runtime load profiles; separate semantic, behavioral, and load
-claim slots; and the M0/H1/V1/P1, canonical, and installed identity slots.
+claim slots; and the nullable lifecycle identity slots.
 Every `remove` or rejected behavior receives one forbidden semantic ID and
 absence-proof obligation. The manifest contains no narrative chronology.
 
@@ -695,11 +806,12 @@ conclusions. Map every instruction-bearing passage to one M0 unit. Freeze
 package inventory, bytes, hash, clause map, fingerprint, and limitations.
 Block to Prompt 1 if the specification cannot produce one unambiguous runtime.
 
-Extend the campaign manifest with the exact package inventory, passage map,
-runtime identities, and proof IDs. Every required semantic must have one
-owner, runtime passage, and proof. Every forbidden semantic must have an
-absence check across the complete runtime-facing package. A prose claim that a
-rejected behavior was removed is insufficient.
+Populate only the Prompt 3-owned manifest fields: exact package inventories,
+runtime identities, fixture and registration identities, clause map, and proof
+registrations. Every required semantic must have one owner, runtime passage,
+and proof. Every forbidden semantic must have an absence check across the
+complete runtime-facing package. A prose claim that a rejected behavior was
+removed is insufficient.
 
 Construct exact H1 from M0 plus only admitted additions and substitutions.
 Keep common behavior inline, disclose irreducible branches behind
@@ -713,7 +825,7 @@ exact C0 comparison evidence. For an admitted incumbent-removal ablation,
 prefer the isolated `M0 + incumbent unit` arm. Materialize a C0 arm only when
 the unit cannot be isolated and restrict it to the affected cases.
 
-Pre-register:
+Under the Shared Behavioral Evaluation Protocol, pre-register:
 
 - the complete M0 viability suite for outcome, invocation, authority,
   contracts, safe failure, completion, order, compatibility, and safety;
@@ -725,55 +837,23 @@ Pre-register:
   behavior at risk, affected cases, and non-inferiority bound; and
 - protected-behavior, relationship, invocation, context, and machine proof.
 
-For every behavioral fixture, keep task and source facts, authority, initial
-state and observations, tools or operations, mutation boundary, and requested
-output worker-visible as applicable. Keep the hypothesis, expected weakness,
-rubric, scoring, candidate terms, and conclusions root-only. Trace every
-scored criterion to one worker-visible source fact or observable operation;
-those facts must uniquely determine the expected branch. If an adjacent rubric
-outcome remains valid from the supplied facts, the fixture is defective and
-blocks Prompt 4.
+Freeze the worker fixture, root registration, resolved dispatch envelopes, and
+all required Shared Behavioral Evaluation Protocol command results. Include an
+M0-only or no-H1 arm. Every applicable gate must pass before Return; a manual
+sufficiency, identity, or equivalence claim is insufficient. Prompt 3 samples
+nothing. If terminal feasibility, family coverage, or arm isolation fails,
+repair it before freezing or return `blocked`.
 
-Use worker-fixture schema version 2. Every case also carries a worker-visible
-`decision_state` with exactly:
-`target_resolution` (`resolved`, `unresolved`, or `not-applicable`);
-`evidence_availability` (`inspectable`, `unavailable`, or `not-applicable`);
-and `mutation_permission` (`allowed`, `forbidden`, or `not-applicable`). Do not
-expose the expected terminal class, operation, score, or conclusion.
+Do not create a separate no-guidance control when M0 already supplies the
+causal comparison.
 
-Create a root-only fixture-lint map before freezing: every criterion, decision
-input, and required output semantic references nonempty worker-visible fact IDs
-or observable operations. A decision-bearing pointer includes its required
-content or a guaranteed reachable operation, not merely a name. Verify
-referential coverage, requested-output coverage, worker/root separation, and
-payload equality after removing the runtime slot. A prose sufficiency claim
-does not pass this gate.
-
-Run `python -m scripts.campaign_artifacts lint-fixture WORKER_FIXTURE.json`.
-Materialize one resolved JSON dispatch envelope per behavioral arm, including
-an M0-only or no-H1 arm. Before sampling each arm, run
-`python -m scripts.campaign_artifacts lint-payload WORKER_FIXTURE.json CASE_ID
-PAYLOAD.json` and freeze its returned dispatch hash. For comparisons, also run
-`python -m scripts.campaign_artifacts compare-payloads WORKER_FIXTURE.json
-CASE_ID M0_PAYLOAD.json H1_PAYLOAD.json`. Every applicable executable check
-must pass; a manual identity or equivalence claim is insufficient.
-
-Match fixture-family coverage to claim scope. Spread the existing minimum
-five samples for a broad claim across at least two realistic families. A
-narrow condition-specific claim may use one family and must bound transfer.
-Do not add samples solely for diversity.
-
-Cluster hypotheses only when they share one entry predicate, arm delta, rubric,
-and joint disposition. Otherwise isolate them; do not infer per-unit
-contribution from one bundled arm. Do not create a separate no-guidance control
-when M0 already supplies the causal comparison.
-
-Write one candidate record that references rather than copies the authoritative
-intended contract, M0 checkpoint, research and Interlude dispositions,
-campaign manifest, and semantic ledger. Add only candidate-specific proof
-plan, Pruning Pass boundary, affected relationships, and residual load. Store
-distinct bytes once; when a frozen template plus recorded parameters
-reconstructs an exact dispatch, do not copy the full payload per sample.
+Write the candidate decision in the consolidated marker-bounded decisions
+record. Reference rather than copy the authoritative intended contract, M0
+checkpoint, research and Interlude dispositions, campaign manifest, and
+semantic ledger. Add only candidate-specific proof plan, Pruning Pass boundary,
+affected relationships, and residual load. Store distinct bytes once; when a
+frozen template plus recorded parameters reconstructs an exact dispatch, do
+not copy the full payload per sample.
 
 Before Prompt 4, run one candidate-aware focused compatibility preflight
 against the exact M0/H1 packages. First locate or factor one shared,
@@ -827,26 +907,11 @@ within the frozen specification, refreeze affected identities, and rerun
 affected M0 proof. If repair requires new intent, authority, or evidence,
 return `blocked` to Prompt 1. H1 never receives credit for making M0 viable.
 
-Before dispatch, build a minimum proof-coverage matrix across M0 units. Use
-deterministic structural or relationship checks for machine and ownership
-claims, and let one realistic behavioral scenario cover multiple units when it
-proves them. Run deterministic schema, identity, relationship, ordering, and
-exact-literal checks once outside behavioral sampling, reusing Prompt 3's
-shared parameterized semantic assertion owner. Distribute
-behavior-dependent coverage across the wave; do not place the complete
-viability suite in every sample merely to meet replication. Five samples
-replicate one causally coherent behavioral claim, not every M0 case. Score
-semantic judgment, action, Return, and completion behaviorally; exact headings,
-field spellings, and machine-consumed literals remain deterministic checks. Do
-not dispatch one behavioral sample per semantic unit; every behavior-dependent
-unit must still have current evidence.
-
-Before any comparison dispatch, freeze one neutral worker-visible task fixture
-and one root-only evaluation fixture containing the hypothesis, expected
-weakness, rubric, scoring, candidate terms, and conclusions. Hash and diff both
-worker payloads; the exact M0 versus H1 runtime package is the only allowed arm
-delta. Stop before sampling on any other delta or candidate cue. Samples from
-a leaked fixture are protocol deviations and provide no behavioral credit.
+Before dispatch, verify Prompt 3's frozen proof matrix, worker fixture, root
+registration, dispatch envelopes, identities, and command results. Execute the
+Shared Behavioral Evaluation Protocol without rebuilding those inputs except
+for its bounded source-completeness repair. Reuse Prompt 3's shared
+parameterized semantic assertion owner for deterministic proof.
 
 Only after M0 passes, resolve H1 by causally coherent cluster. Apply
 `writing-great-skills/BEHAVIOR-EVALS.md` to entry-positive and wrong-condition
@@ -861,45 +926,11 @@ one clause. A current-only unit with plausible observable effect and no
 preservation, causal comparison, or resolved non-inferiority proof remains
 `unresolved removal risk`.
 
-For each distinct fixture family, dispatch and inspect one control before its
-remaining wave. Verify source sufficiency, tool and operation fidelity,
-capture integrity, and payload isolation. A valid first sample counts toward
-the required minimum. An invalid sample receives zero credit; refreeze and
-rerun a source-completeness repair only when task and rubric stay fixed,
-otherwise return to Prompt 3. Do not batch the remaining samples before this
-gate passes.
-
-Before every behavioral dispatch, rerun `lint-payload` on the resolved
-envelope. Record its dispatch hash with the sampled output and require it to
-match the frozen arm identity. Any worker-visible clarification changes the
-fixture or payload identity: refreeze it, invalidate every affected sample, and
-restart that fixture family at its first-sample gate. Never record
-`facts_changed: false` when dispatched worker-visible bytes changed.
-
-Keep reconstructible per-sample payloads disposable. Persist the frozen
-runtime, fixture, template, parameters, and dispatch hash once instead of
-copying the full payload into every sample record.
-
-1. Run at least five fresh exact M0 samples under the pre-registered task and
-   rubric.
-2. For `defect-correction`, require the registered failure. For
-   `quality-lift`, require a meaningful pre-registered deficit while M0 remains
-   viable.
-3. When neither appears, record `reject-no-control-deficit`, do not run H1
-   for that cluster, and remove its units.
-4. When the deficit appears, run at least five fresh entry-positive H1 samples.
-   If H1 clears the contribution bar, run its frozen wrong-condition M0/H1
-   pairs before acceptance. A candidate rejected before that gate receives no
-   further samples. Accept only repeatable material improvement with acceptably
-   bounded variance, no new critical or protected-behavior regression, and no
-   violation of its registered load budget.
-5. Record `reject-insufficient-contribution` when H1 fails the material
-   contribution bar without regression. Reserve `reject-regression` for an
-   actual critical or protected-behavior regression. Borderline effect,
-   material variance, or unavailable decision-bearing telemetry returns
-   `needs-more-evidence`; do not presume adoption.
-6. After rejection, rederive H1 from M0 plus surviving transformations,
-   refreeze its identity, and rerun only affected integrated proof.
+Apply the shared first-sample gate, adaptive M0/H1 sampling, arm-isolation
+checks, acceptance rules, and disposable-output policy. A protocol deviation
+receives no behavioral credit. After a rejection, rederive H1 from M0 plus
+surviving transformations, refreeze its identity, and rerun only affected
+integrated proof.
 
 If no H1 units survive, set V1 = M0. Otherwise V1 is exact M0 transformed by
 accepted H1 units. Unit rejection never terminates a campaign while viable M0
@@ -916,16 +947,6 @@ Use separate proof lanes:
 5. **Invocation, context, machine, and relationships:** behavioral proof when
    wording claims effect; deterministic checks and ownership traces otherwise.
 
-Follow `BEHAVIOR-EVALS.md`. Keep candidate language and conclusions out of M0
-contexts. Alternate or randomize arms when practical. Extend samples only for
-material variance or borderline effect and stop early for a critical
-regression. Reuse exact arms only when the complete identity tuple matches.
-Inspect every output. Store per-sample identities and results once in a compact
-results manifest. Store model, host, tools, configuration, and dispatch
-evidence there as well. Keep only the aggregate, variance, worst case, critical
-failures, deviations, decision, unavailable telemetry, and residual transfer
-gaps in the human decision record.
-
 Current behavior has no protection by existence. If removing a current-only
 unit carries unresolved material safety, authority, compatibility,
 relationship, capability, or quality risk, return `needs-more-evidence` and
@@ -933,9 +954,10 @@ preserve the active runtime. If all H1 units are cleanly rejected, M0 is
 viable, and every plausible incumbent-removal risk is resolved, V1 = M0 may
 continue.
 
-Refresh the campaign manifest, synthesis, and validation with exact
-dispositions and V1 identity. Record but do not publish relationship changes.
-Return `accepted`,
+Populate only the Prompt 4-owned manifest fields: protocol deviations, sample
+results and dispositions, surviving transformations, removal-risk decision,
+and exact V1 identity. Refresh synthesis and validation, and record but do not
+publish relationship changes. Return `accepted`,
 `needs-more-evidence`, or `blocked`. `accepted` names exact V1 and recommends
 the Pruning Pass.
 
@@ -974,9 +996,10 @@ For every proposed cut, name the affected semantic units, expected unchanged
 behavior, and reduced load. Word count is diagnostic, never the objective.
 
 If no material cut exists, set P1 = V1 byte-for-byte, create no new behavioral
-wave, record `pruning-not-needed` in the campaign manifest and one compact stage
-capsule, and recommend Prompt 5. Create no standalone verifier or transcript
-unless a deviation or disputed judgment requires exceptional chronology.
+wave, record `pruning-not-needed` in the campaign manifest and the Pruning
+capsule in the consolidated decisions record, and recommend Prompt 5. Create no
+standalone verifier or transcript unless a deviation or disputed judgment
+requires exceptional chronology.
 
 For material cuts:
 
@@ -994,9 +1017,9 @@ regression and the named load is lower. Structural proof cannot establish
 behavioral equivalence. If all cuts fail, set P1 = V1 and continue rather than
 blocking promotion.
 
-Update the campaign manifest, synthesis, and candidate evidence with cut
-ledger, V1/P1 hashes, load delta, reused and fresh proof, rejected cuts, and
-residual gaps. Return
+Populate only the Pruning-owned manifest fields: cut ledger, exact P1 identity,
+load delta, and pruning proof. Update synthesis and the Pruning decision
+capsule with reused and fresh proof, rejected cuts, and residual gaps. Return
 `complete`, `evidence-gap`, or `blocked`, plus `pruned`,
 `pruning-not-needed`, or `cuts-rejected` and exact P1. `complete` recommends
 Prompt 5.
@@ -1045,8 +1068,11 @@ professional, behavioral, model, host, and transfer gaps. Remove superseded
 future-tense construction and raw chronology.
 
 Compact the completed campaign before promotion. Keep the research packet,
-active synthesis, reusable fixture and rubric definitions, incumbent and final
-identities, one compact results owner, and the terminal decision. Remove
+active synthesis, M0 checkpoint, one consolidated marker-bounded decisions
+record, reusable fixture and rubric definitions, incumbent and final
+identities, one compact results owner, and the terminal decision. Do not keep a
+separate candidate or per-stage file when the same decision is represented in
+that record. Remove
 per-sample payloads, captures, generated worktrees, copied runtime packages,
 routine transcripts, and historical-only verifiers or tests. Move raw outputs
 that remain useful for local audit to ignored `.tmp/campaign-evidence/`; delete
@@ -1054,15 +1080,21 @@ the rest. Raw files and `.tmp/` paths never become promotion-critical evidence.
 If a future claim would require a removed output, label prior proof
 `historical-admission-only` and rerun it rather than retaining campaign exhaust.
 
-Update the campaign manifest with canonical and installed identities plus
-final evidence dispositions. Record three separate terminal claims: semantic
+Populate only the Prompt 5-owned manifest fields: canonical and installed
+identities, final evidence dispositions, terminal claims, and residual limits.
+Freeze it as the terminal Prompt 5 state; Git
+delivery is separately owned by Prompt 6 and must not be represented as mutable
+post-freeze manifest status. Record three separate terminal claims: semantic
 contract status; behavioral contribution or non-regression with tested bounds;
 and runtime-load direction with its telemetry or labeled proxy basis. Do not
 merge these claims or imply unavailable measurement. Do not copy the
 manifest's identity tables into synthesis or the promotion record.
 
-Before Return, persist one compact final manifest and every promotion-critical
-stage capsule under a repository path authorized for Prompt 6. List every
+Before Return, update promotion-critical Markdown in place with `apply_patch`,
+or validate a complete replacement before one atomic swap; never transiently
+delete active synthesis or another promotion-critical artifact. Persist one
+compact final manifest and the consolidated decisions record under repository
+paths authorized for Prompt 6. List every
 promotion-critical path once in the final manifest, then verify that each path
 resolves inside the repository, exists, and is not ignored. `.scratch/` is
 durable only when intentionally included in Prompt 6 scope; `.tmp/` and
@@ -1078,8 +1110,9 @@ scope gap. Synchronize through the supported installer when needed, then
 verify canonical/installed parity plus a clean post-install dry-run. Never
 edit the installed mirror as canonical source.
 
-Append promotion and installation evidence to the candidate record. Do not
-rewrite research as behavioral proof or generalize beyond tested conditions.
+Append promotion and installation evidence to the Prompt 5 decision capsule.
+Do not rewrite research as behavioral proof or generalize beyond tested
+conditions.
 
 Return `complete`, `evidence-gap`, or `blocked`, with P1, canonical, and
 installed identities, validation, residual gaps, deliberate non-changes, and
@@ -1114,7 +1147,8 @@ cannot.
 Record starting Git HEAD. Return `complete`, `evidence-gap`, or `blocked`,
 including starting and ending HEAD, commit identity, remote state when pushed,
 residual gaps, and exact stop reason. Every HEAD transition must be wholly
-explained by this delivery.
+explained by this delivery. The frozen Prompt 5 manifest remains unchanged;
+the Git commit and this Prompt 6 Return are delivery authority.
 
 Use the Shared Run Contract and stop.
 

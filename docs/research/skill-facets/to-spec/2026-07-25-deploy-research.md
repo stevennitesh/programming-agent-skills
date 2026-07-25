@@ -1,0 +1,333 @@
+# To Spec Deploy Research
+
+## Research contract
+
+- Question: Which methods, vocabulary, conditions, and alternatives best
+  support `to-spec`'s settled intended behavior in the
+  `to-spec-2026-07-25` M0 checkpoint?
+- Caller use: decision-ready evidence for Deploy Prompt 2; this note does not
+  choose H1 wording or change the intended contract.
+- Fixed point: campaign epoch `2026-07-25`; Git `HEAD`
+  `b9750babea998c4bc0f5809972a8651934218eca`; bounded M0 fingerprint
+  `94521f7c73c756fbeb53de3a04a551007fa473a44108683dd760e42ff5b185b1`.
+- Scope: source admission and authority, parent-specification semantics,
+  traceability, interface/state vocabulary, durable tracker publication,
+  recovery, typed completion, alternatives, and counterpressure.
+- Exclusions: changing M0, runtime design or wording, behavioral efficacy,
+  evaluation, tracker mutation, installation, and Git delivery.
+- Note authority: create and update only this file.
+- Return owner: Deploy Campaign coordinator.
+- Research status: `answered`; Deploy Research status:
+  `research-complete`.
+
+## M0 re-entry verification
+
+Before source discovery, all 20 repository authority rows and all three
+external language-packet rows in M0 matched their recorded byte lengths and
+SHA-256 identities; the repository rows also matched their Git blob IDs.
+`HEAD` matched the fixed point, the bounded M0 content matched its recorded
+fingerprint, and `git status --short` showed only the untracked Prompt 1
+campaign directory. No current or historical `to-spec` package, target
+synthesis/research/evaluation material, or upstream package had been opened.
+
+## Blind independent discovery
+
+This section was frozen on `2026-07-25` before opening Matt Pocock,
+Superpowers, Ponytail, the canonical `to-spec` package, historical C0, target
+synthesis/research/evaluations, or candidate conclusions. Searches began from
+M0's intended behavior. Discovery queries covered requirements source
+authority, quality and traceability, acceptance and abstraction, controlled
+natural language, issue-create idempotency, GitHub issue read-back, and
+counterevidence to comprehensive templates. Search snippets and indexes were
+used only for discovery.
+
+### Independently discovered answer
+
+The strongest supported method is a proportionate, source-bound
+requirements baseline:
+
+1. Admit only an identity-bearing, current source whose relevant stakeholders
+   have agreed the requirements. Treat vague needs, unresolved conflict, and
+   unconfirmed assumptions as elicitation or decision work, not as a
+   publishable baseline.
+2. Preserve backward traceability from every retained requirement to its
+   source and forward traceability to an acceptance or verification seam.
+   Also reverse-check the source set against the specification to detect
+   omissions and the specification against its sources to detect invention.
+3. Describe observable behavior at the parent artifact's abstraction level.
+   Cover functional behavior, data/structure, flow, state-dependent behavior,
+   quality concerns, constraints, interfaces, failure/recovery, and evidence
+   only when applicable. Keep design choices out unless the source makes them
+   constraints.
+4. Validate adequacy, shared understanding, consistency, completeness at the
+   chosen level, and verifiability before baselining. Use acceptance criteria
+   and concrete examples where they remove ambiguity, but do not force every
+   item into one sentence template or quantify low-risk quality guidance when
+   shared understanding and short feedback loops make that wasteful.
+5. Freeze the intended tracker representation before the non-idempotent
+   create. A GitHub issue create is HTTP `POST`; without an independently
+   documented idempotency key, an indeterminate create must be reconciled by
+   observation, not blindly repeated. Read the returned identifier, refetch
+   the resource, and inspect separately managed state before declaring
+   success.
+
+This supports M0 rather than reopening intent. The main opportunity for H1 is
+to recruit stronger judgment with compact vocabulary: `baseline`,
+`bidirectional traceability`, `applicable-aspect matrix`, `verification
+method`, `abstraction level`, and `reconcile-before-retry`.
+
+### Blind claim ledger
+
+| ID | Source claim and original label | Research judgment | Applicability and consequence for H1 |
+| --- | --- | --- | --- |
+| B1 | `direct`: IREB defines a requirements specification as a systematic collection and distinguishes functional requirements, quality requirements, and constraints; functional aspects include structure/data, function/flow, and state/behavior. | `independently-supported` | Use an applicability check across these aspects rather than a universal prose template. This supports M0's parent sections and suggests a compact H1 matrix. |
+| B2 | `direct`: IREB says requirements should be adequate, necessary, unambiguous, complete, understandable, and verifiable; multi-requirement work products should be consistent, non-redundant, and complete. | `independently-supported` | Validate source agreement, comprehensibility, conflict freedom, and observable acceptance before publication. |
+| B3 | `direct`: IREB says quality criteria are value-oriented, requirements need not fully satisfy every criterion, and some criteria matter more than others. | `independently-supported` | Counterpressure against cargo-cult completeness. H1 should say “when applicable” and test material gaps, not require empty headings. |
+| B4 | `direct`: IREB distinguishes prescriptive requirements that form a binding contract from explorative requirements whose details remain to be elicited; NASA treats stakeholder expectations as initial until refined and agreed. | `corroborated` | A settled parent source is a baseline; unresolved needs return to their owner. A source-authorized deferral survives only when it is explicitly outside the binding commitment, names its authority, and creates no contradiction or material acceptance gap. |
+| B5 | `direct`: IREB requires source identity/version/status for documentary sources and describes backward, forward, and inter-requirement traceability; NASA's verification matrix assigns unique requirement IDs and definitive sources and its checklist requires bidirectional traceability. | `corroborated` | Preserve exact source identities and use a two-direction coverage ledger. Avoid reducing traceability to links without coverage judgment. |
+| B6 | `direct`: NASA says validated requirements are clear, complete against stakeholder needs, consistent, individually verifiable, and traceable; assumptions should be confirmed before baselining. | `independently-supported` | The publication gate should reject unresolved assumptions and specify a verification method or observable seam. |
+| B7 | `direct`: NASA distinguishes requirements from implementation and task assignment and checks interfaces, performance, error handling, recovery, undesired events, and sequence assumptions. | `independently-supported` | Maintain parent-level “what” and constraints, while leaving child task slicing and implementation mechanics downstream. |
+| B8 | `direct`: IREB says acceptance criteria make a user story more concrete and less ambiguous; use-case specifications can record preconditions, trigger, actions, postconditions, and actors. | `independently-supported` | Prefer observable examples or criteria for risky branches. Do not require user-story form for a parent specification. |
+| B9 | `direct`: EARS imposes five controlled natural-language patterns; its original study reported improvement on 36 high-level safety requirements but disclaimed universal applicability and semantic coverage, and cautioned that missing requirements were not proven eliminated. | `contested` | EARS is an optional sentence-level aid for event/state/unwanted behavior, not a complete parent-spec method or automatic H1 requirement. |
+| B10 | `direct`: RFC 9110 defines POST processing semantics and says clients should not automatically retry a non-idempotent request without knowing it is idempotent or detecting that the original was never applied. | `independently-supported` | Recruit `reconcile-before-retry`; after an indeterminate GitHub create, observe and stop unless non-application is proven. |
+| B11 | `direct`: GitHub's current REST documentation defines issue creation as `POST /repos/{owner}/{repo}/issues`, returns `201` with an issue identity, offers `GET` and `PATCH` for the issue, and exposes labels, assignees, fields, dependencies, and timeline through separate endpoints. No idempotency-key facility appears in the inspected create endpoint. | `independently-supported` for endpoint behavior; `thin` for absence across all GitHub surfaces | Refetch the created issue and every separately managed applicable state. Treat “GitHub has no idempotency mechanism anywhere” as unverified; H1 needs only the narrower create-endpoint condition. |
+| B12 | `synthesis`: A frozen content identity plus verified-absence preflight, unique-create identity capture, complete read-back, and stop-on-uncertainty is the safest available publication protocol under the observed API. | `independently-supported` | This is an application of RFC retry constraints and GitHub's observable endpoints, not a GitHub-authored workflow. |
+
+### Alternatives and counterpressure found blind
+
+- **EARS controlled natural language** is useful when an event, state, optional
+  feature, or unwanted behavior is hard to express. Its primary paper is a
+  small, domain-limited case study and explicitly does not establish
+  completeness or universal applicability. Disposition: optional H1 experiment,
+  not the parent template.
+- **User stories plus acceptance criteria** provide goal and example language
+  suitable for later slices. They do not represent the whole parent contract,
+  non-functional constraints, migration, or publication safety. Disposition:
+  use examples selectively; reject as the sole parent form.
+- **Comprehensive standards/templates** can supply an aspect checklist, but
+  IREB's governing counterpressure is to tailor process and detail to value,
+  shared understanding, criticality, volatility, and feedback-loop length.
+  Disposition: keep an applicability matrix, prune empty or immaterial sections.
+- **Quantify every quality requirement** increases testability but can be
+  costly, can force premature design, and is not always valuable. IREB supports
+  risk-based depth and qualitative guidance under sufficient shared
+  understanding and short feedback loops. Disposition: quantify material,
+  acceptance-bearing constraints; preserve source-owned qualitative direction
+  when its conditions hold.
+- **Blind retry after create timeout** is contradicted by RFC 9110 for
+  non-idempotent requests whose prior effect is unknown. Disposition: reject.
+- **Trusting the create response alone** does not establish later metadata or
+  relationship state. GitHub exposes these as independently observable
+  resources. Disposition: reject; reconcile complete applicable state.
+
+### Blind verified source registry
+
+| Source identity and authority | Access depth and freshness | Claims used and limits |
+| --- | --- | --- |
+| [IREB CPRE Foundation Level Handbook 1.2.0, 2024-05-15](https://cockpit-v1.ireb.org/media/pages/downloads/cpre-foundation-level-handbook/2e6dfb2912-1733311662/cpre_foundationlevel_handbook_en_v1.2.pdf), Glinz, van Loenhoud, Staal, Bühne; IREB's official handbook | Full searchable 158-page PDF inspected on `2026-07-25`: §§1.1, 3.1-3.5, 4.1, 4.3-4.4, 5.1-5.3, 6.4-6.6 | Owns its recommended foundation practice, not a mandatory process for this repository. Direct support for quality, applicability, abstraction, source identity, conflict, baselines, attributes, and traceability. |
+| [NASA Systems Engineering Handbook, NASA/SP-2016-6105 Rev 2](https://www.nasa.gov/wp-content/uploads/2018/09/nasa_systems_engineering_handbook_0.pdf) | Full searchable 297-page NASA PDF inspected on `2026-07-25`: §§4.1-4.2; Appendix B; Appendix C; Appendix D | NASA says it is top-level guidance, not a directive. Direct support for agreement/baselining, traceability, requirement quality, implementation exclusion, interfaces, recovery behavior, and verification matrices. Aerospace examples require proportional adaptation. |
+| [ISO/IEC/IEEE 29148:2018 official ISO record](https://www.iso.org/cms/%20render/live/en/sites/isoorg/contents/data/standard/07/20/72089.html) | Official abstract/status page inspected `2026-07-25`; standard body not accessible | Confirms the current 2018 edition was confirmed in 2024 and owns requirements processes, information-item contents, and format guidance. No detailed method claim is based on the unseen body. |
+| [Mavin et al., “Easy Approach to Requirements Syntax,” RE'09](https://www.researchgate.net/profile/Alistair_Mavin/publication/224079416_Easy_approach_to_requirements_syntax_EARS/links/568ce3bf08aeb488ea311990/Easy-approach-to-requirements-syntax-EARS.pdf) | Complete accepted six-page paper inspected `2026-07-25` | Primary support for EARS mechanics, case results, explicit limitations, and its authors' claims. Does not establish semantic completeness or universal fit. |
+| [RFC 9110, HTTP Semantics, §§9.2.2 and 9.3.3](https://www.rfc-editor.org/rfc/rfc9110.html) | Complete current RFC HTML, exact sections inspected `2026-07-25` | Governing source for HTTP method idempotence and retry conditions. It does not define GitHub's application-level identity or reconciliation procedure. |
+| [GitHub REST API: Issues](https://docs.github.com/en/rest/issues/issues) and [timeline events](https://docs.github.com/en/rest/issues/timeline) | Current official endpoint documentation, API version shown as `2026-03-10`, inspected `2026-07-25` | Owns endpoint, method, response, and observable field behavior. The create-endpoint inspection found no idempotency key; absence from every GitHub interface was not established. |
+
+### Blind rejected lanes and remaining verification targets
+
+- Search-result summaries, Wikipedia, commercial EARS guides, and generic issue
+  template blogs were rejected because stronger original or governing sources
+  were accessible.
+- ISO/IEC/IEEE 29148's body was paywalled; no detailed contents were inferred
+  from its abstract.
+- Agile Alliance material was discovery-only because IREB provided a stronger,
+  inspectable synthesis for acceptance criteria, abstraction, and process
+  tailoring.
+- No practitioner conversation was needed; the operational conditions were
+  resolved in identifiable published evidence.
+- Historical intake may expose mechanics needing targeted verification:
+  plan-versus-task boundaries, exact status vocabularies, draft lifecycle,
+  context-loading gates, or alternate duplicate-prevention schemes.
+
+<!-- BLIND-INDEPENDENT-DISCOVERY-FROZEN: 2026-07-25 -->
+
+## Required historical intake
+
+Historical intake began only after the preceding blind section was written and
+marked frozen.
+
+### Upstream registry and observations
+
+| Upstream | Exact state and access depth | Observed behavior | Limits and disposition |
+| --- | --- | --- | --- |
+| Matt Pocock, `https://github.com/mattpocock/skills.git` | Revision `ed37663cc5fbef691ddfecd080dff42f7e7e350d`; clean worktree; 145 paths enumerated. Inspected the complete two-file `skills/engineering/to-spec/` package (`SKILL.md`, `agents/openai.yaml`) and `docs/engineering/to-spec.md`. | Explicit-only invocation; synthesize the current conversation without another interview; explore repo/domain/ADRs; ask the user to approve test seams; emit problem, solution, a deliberately extensive user-story list, implementation decisions, testing decisions, exclusions, and notes; publish and apply `ready-for-agent`. The prose doc adds “deep module,” high-seam, and one-seam preferences. | Primary evidence only for this pack. No pack tests were present in the two-file package, and no behavioral-effect claim was inspected. Its direct-to-`ready-for-agent` parent state, conversation-only source, forced extensive stories, and seam-confirmation step conflict with this campaign's local ownership or minimum. Rejected as runtime authority. |
+| Superpowers, `https://github.com/obra/superpowers.git` | Revision `d884ae04edebef577e82ff7c4e143debd0bbec99`; clean worktree; 153 paths enumerated. Inspected `skills/brainstorming/SKILL.md`, `skills/brainstorming/spec-document-reviewer-prompt.md`, and the complete two-file `skills/writing-plans/` package (`SKILL.md`, `plan-document-reviewer-prompt.md`). Visual-companion files/scripts, historical example specs/plans, execution skills, and tests were not opened because they do not define the spec handoff under study. | Brainstorming owns question-by-question shaping, alternatives, design approval, a written design spec, self-review for placeholders/contradiction/ambiguity/scope, user review, and then a transition to detailed planning. The reviewer calibrates blocking findings to defects that would materially mislead planning. Writing-plans rechecks every spec requirement against a task and separates a spec from file- and code-level implementation steps. | There is no tracker-publishing `to-spec` package. This is evidence for Superpowers' design-to-plan boundary and review mechanics only. Its shaping, commit, successor invocation, and automatic choice of an ambiguous meaning are outside or contrary to M0. Material-defect calibration and spec/plan separation are useful intake. |
+| Ponytail, `https://github.com/DietrichGebert/ponytail` | Revision `16f29800fd2681bdf24f3eb4ccffe38be3baec6b`; clean worktree; 123 paths enumerated. A whole-pack filename and `SKILL.md` content scan found no spec-producing package. Inspected the complete one-file `skills/ponytail/` package and the README's method/benchmark disclosure. | Applies a YAGNI/minimum-solution ladder only after reading and tracing the real problem; forbids simplifying away trust-boundary validation, data-loss error handling, security, accessibility, or explicit requirements. | Not a requirements or publication method. Its simplicity rule is `pack-specific` counterpressure against bloated templates; its own coding benchmark cannot establish spec quality or local agent behavior. |
+
+Repeated vocabulary among Matt Pocock, Superpowers, and the local packages
+shows common package lineage or practice only. It is not counted as independent
+professional corroboration.
+
+### Complete current and historical package intake
+
+The current canonical package was read completely: `skills/custom/to-spec/SKILL.md`
+and `agents/openai.yaml`. Its `campaign-tree-v1` identity is
+`3cdb41fbca411d8c2332c4e9cff52b5ef1000dd28a27422615ac6f150133e06b`
+(two files). It already uses an explicit-only source gate, bidirectional
+commitment ledger, applicable parent aspects, exact draft read-back,
+create-only-from-verified-absence, complete durable read-back, preserved
+recovery evidence, typed returns, and no successor invocation. It also uses
+the local terms `proof seam`, `structural proxy`, and material state branches.
+Current behavior is compatibility evidence, not M0 or professional authority.
+
+The user-designated historical C0 package was read completely only from
+`.tmp/campaign-evidence/to-spec-2026-07-25/incumbent-root/skills/custom/to-spec/`.
+The repository's versioned tree hasher confirmed two files and exact
+`campaign-tree-v1` digest
+`9d1a3e45416b8a36a1cdf4cf155de0a193e78df4aa107a9af25608c1b1fc918c`.
+The materialized Git blobs
+`ee4e95f0b17520710b9d31c5b5ab55c2217f07ce` (`SKILL.md`) and
+`5b1f887a9138416870f64ba2fe21602e4a59cfa7` (`agents/openai.yaml`)
+match those exact paths at commit
+`f3be70c31dd8f2ae9f12a75248065ef313790bda`. No synthesis, tests, or
+surrounding repository state from that commit was inspected.
+
+C0 contributes the historical names `fresh-session test`, `grounding test`,
+`coverage gate`, `value-flow gate`, and `material gap`; it also distinguishes
+parent-spec ownership from `$to-tickets`. Those names do not inherit
+professional support. The underlying target-reader completeness and source
+trace are independently supported. The universal form of C0's value-flow gate
+and the “highest proof seam” preference require narrower conditions.
+
+### Applicable local language packets
+
+- `C:\Users\steve\.agents\skills\codebase-design\SKILL.md` was read completely
+  in its vocabulary-only mode. It defines module, interface, implementation,
+  seam, adapter, depth, leverage, and locality; it explicitly leaves artifact,
+  mutation, and completion authority with the caller. `DIRECT-DESIGN.md` and
+  its conditional references were not loaded because no direct design pass is
+  admitted.
+- `C:\Users\steve\.agents\skills\writing-great-skills\GLOSSARY.md` was read
+  completely for explicit-only invocation, completion, information hierarchy,
+  and pruning vocabulary. It is local language authority, not independent
+  evidence that any wording changes behavior.
+
+### Targeted independent verification after intake
+
+Newly observed mechanics were verified against alternatives and
+counterpressure:
+
+| Mechanic observed after blind discovery | Targeted evidence and claim label | Classification and consequence |
+| --- | --- | --- |
+| “Highest existing proof seam,” ideally one | `direct`: [ISTQB CTFL 4.0.1](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf) distinguishes component, component-integration, system, system-integration, and acceptance levels by test object, objective, basis, defects, approach, and responsibility. It gives different levels different purposes and does not prescribe one universally highest seam. | `pack-specific` as stated. Keep M0's outcome-oriented proof seams and lanes. An H1 experiment may prefer a caller-visible seam when it proves the requirement, but must preserve interface, integration, non-functional, and recovery lanes whose distinct objectives require them. |
+| Fresh-session or target-reader handoff test | `direct`: IREB defines understandable as comprehensible to the target audience, requires complete/self-contained requirements, identifies abstraction by specification purpose, and says documentary sources need stable identity/version/status. `corroborated`: NASA requires complete, understandable, traceable, verifiable baselines. | `independently-supported` underlying method; `pack-specific` name. A target-reader check can test whether `$to-tickets` can recover commitments without inventing or rediscovering them. |
+| Self-review followed by user review | `direct`: IREB §4.4 calls for validating stakeholder coverage, agreement, and assumptions before handoff and discusses validator independence. Superpowers separately calibrates its review to material planning defects. | `independently-supported` for validation; pack-specific sequence. The agent may repair editorial, trace, and internal-consistency defects, but decision-bearing ambiguity must return to source authority rather than be “picked.” |
+| Value-flow gate for external inputs | `direct`: [OWASP Threat Modeling Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html) requires understanding the particular system and, for security modeling, making trust boundaries, data flows, data stores, processes, and external entities visible. [NIST SSDF 1.1](https://csrc.nist.gov/projects/ssdf) calls for tracking applicable security requirements, risks, and design decisions and explicitly says to tailor practices by risk, cost, feasibility, and applicability rather than use a checklist. | `independently-supported` only for security/privacy-sensitive or trust-boundary flows. C0's unconditional form for every setup, CI, migration, or external value is `unverified`. H1 may test a conditional sensitive-data/trust-flow trace, not a universal value inventory. |
+| Idempotency key as an alternative to reconcile-before-retry | `direct`: [Stripe's API](https://docs.stripe.com/api/idempotent_requests?lang=curl) documents server-enforced keys for all its POST endpoints. `direct/thin`: the IETF HTTPAPI group's [draft-ietf-httpapi-idempotency-key-header-07](https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-idempotency-key-header-07) describes the pattern but expired on `2026-04-18` and is not an RFC. GitHub's inspected issue-create endpoint documents no such key. | `independently-supported` only when the configured server publishes and enforces the contract. `unverified` and unavailable for this GitHub create surface. Do not send an invented key; retain verified absence, identity capture, read-back, and stop-on-uncertainty. |
+| Exact local draft as recovery evidence | `synthesis`: IREB's stable validated baseline, RFC 9110's non-idempotent retry constraint, and GitHub's returned/retrievable issue identity together support freezing what was intended and comparing observed state after failure. | `independently-supported` as a bounded application under those conditions. The `.tmp` location and cleanup policy remain local, not a general professional standard. |
+
+No practitioner conversation was warranted: the target-reader, test-level,
+security-flow, and retry conditions were resolvable from identifiable
+published owners. The expired idempotency-key draft was retained only as a
+disclosed work-in-progress alternative; Stripe demonstrates an actual
+server-enforced implementation, not GitHub capability.
+
+## Final method classifications and H1 consequences
+
+### Decision-ready method ledger
+
+| Method | Source claim label | Classification | Conditions, alternatives, and H1 consequence |
+| --- | --- | --- | --- |
+| Settled-source baseline gate | `corroborated` | `independently-supported` | Require agreement, confirmed assumptions, conflict freedom, and exact source identity. Explorative or contradictory material returns to its decision owner. Preserve M0. |
+| Bidirectional commitment trace | `corroborated` | `independently-supported` | Trace source-to-spec for omission and spec-to-source for invention; add verification/acceptance links when defined. Prefer explicit IDs for material requirements. Admit as core H1 vocabulary. |
+| Applicable-aspect matrix | `synthesis` from IREB/NASA | `independently-supported` | Check functional behavior, structure/data, flow, state, quality, constraints, interfaces, failure/recovery, and proof by applicability and risk. Alternative is a fixed comprehensive template; reject empty-section compliance. |
+| Parent abstraction boundary | `corroborated` | `independently-supported` | State observable “what,” source-owned constraints, interfaces, and acceptance at the parent level. Keep task assignment, implementation steps, and child readiness downstream. |
+| Acceptance examples and verification method | `corroborated` | `independently-supported` | Use concrete criteria or examples where ambiguity or risk warrants; choose test/inspection/analysis/demonstration or another honest seam. Alternative EARS form is optional and narrower. |
+| One highest proof seam | `direct` pack observation plus ISTQB counterposition | `pack-specific` | A caller-visible seam can have leverage, but distinct test objectives may require multiple levels. Do not make “one” or “highest” a general H1 gate. |
+| EARS sentence patterns | `direct` | `contested` | Useful for event/state/optional/unwanted behavior; small high-level safety case, no semantic-completeness result. Only a labeled local experiment if M0 samples show ambiguity those patterns could correct. |
+| Extremely extensive user stories | `direct` pack observation with IREB counterpressure | `contested` | Acceptance examples can help, but exhaustive stories can duplicate requirements and conceal quality/constraint gaps. Do not admit as the sole or mandatory parent form. |
+| Target-reader handoff check | `inference` from IREB/NASA; C0 name is pack observation | `independently-supported` | Test whether a fresh `$to-tickets` reader can identify source, commitments, boundaries, and proof without rediscovery. This checks artifact usability, not skill-wording efficacy. |
+| Material-defect-calibrated spec review | `corroborated` | `independently-supported` | Block placeholders, contradictions, source gaps, and ambiguity that could change implementation; leave style advisory. Never let the reviewer invent a missing commitment. |
+| Conditional sensitive-data/trust-flow trace | `corroborated` | `independently-supported` | Apply when security, privacy, credentials, external integration, or a trust boundary is in scope. Universal tracing of every supplied value is `unverified` and rejected. |
+| Freeze and reconcile before retry | `synthesis` from RFC/GitHub/IREB | `independently-supported` | Freeze exact intent, create once only from verified absence, capture unique identity, refetch all applicable state, and never repeat an indeterminate create. If a configured service documents an idempotency key, that is a credible alternative; GitHub does not here. |
+| Exact draft cleanup/preservation path | `inference` | `pack-specific` | Locally coherent and uncontradicted: delete only after verified success; preserve exact identity for named recovery. It remains a local experiment to prove with tracker-failure fixtures. |
+| Parent `ready-for-agent` label | `direct` Matt-pack observation | `pack-specific` and locally contradicted | Reject. Local intent assigns child readiness and slicing to `$to-tickets`. |
+| Typed failure statuses and explicit-only invocation | `direct` local intent/language | `pack-specific` | Required by M0 because local authorities settle routing, safety, and Return. Independent professional evidence neither adds nor removes this requirement. |
+
+### Intent-adjacent candidates for Prompt 2
+
+These candidates preserve M0; they are not runtime decisions or efficacy
+claims.
+
+| Term | Recruited behavior | Expected M0 weakness | Observable gate | Comparative proof |
+| --- | --- | --- | --- | --- |
+| `settled baseline` | Distinguish agreed, identity-bound requirements from exploration, conflict, and assumptions. | A procedural source checklist may admit a polished but unapproved packet. | One unresolved-assumption, one conflicting-authority, and one approved-deferral control must select the correct source outcome without mutation. | M0 versus H1 source-admission cases; H1 must improve wrong admissions without rejecting complete sources. |
+| `bidirectional commitment trace` | Check omissions in one direction and inventions in the other. | “Account for everything” may be executed as a one-way checklist. | Controlled missing-source-commitment and orphan-spec-commitment cases both fail; a complete mapping passes. | Compare defect detection and false positives on the same fixed ledgers. |
+| `applicable-aspect matrix` | Prompt risk-based coverage of behavior, data, flow, state, quality, constraints, interfaces, failures, and proof without mandatory empty sections. | A long section list can induce cargo-cult headings or omit an applicable branch hidden by generic prose. | Each single-applicable-aspect omission fails; explicitly non-applicable aspects do not create empty content. | Compare semantic completeness and irrelevant-section rate on matched parent sources. |
+| `target-reader handoff check` | Make the parent independently usable by `$to-tickets` while retaining source pointers. | Internal coherence may still leave downstream readers needing hidden conversational context. | A fresh reader identifies outcome, source identity, commitments, boundaries, and proof lanes without inventing or reopening settled facts. | Blind handoff judgment against M0 and H1 artifacts from the same source. |
+| `reconcile before retry` | Recruit safe behavior after timeout, partial metadata, or stale read-back. | A general “never repeat” prohibition may not elicit systematic observation of the possible result. | Timeout and partial-state fixtures preserve frozen identity, inspect complete applicable state, perform no second create, and return exact recovery evidence. | Trace mutation calls and recovery packet completeness for M0/H1. |
+| `trust-flow trace when applicable` | Follow sensitive data/credentials across external entities, trust boundaries, stores, consumers, and proof. | Generic security/privacy headings may remain declarative on integration-heavy sources. | A security-sensitive integration case accounts for source, sensitivity, boundary, destination, consumer, and verification; a non-sensitive control does not expand. | Compare missing security-flow commitments and irrelevant expansion. |
+
+EARS, singular-highest-seam language, universal value-flow coverage,
+extremely extensive user stories, and parent `ready-for-agent` state are
+rejected H1 lanes unless later candidate-owned proof reopens a narrowly
+labeled experiment without contradicting M0.
+
+## Conflicts, gaps, and stopping basis
+
+### Conflicts and exact gaps
+
+- The accessible ISO page establishes scope and currency of
+  ISO/IEC/IEEE 29148:2018 but not its detailed clauses; the paywalled body was
+  not used for a load-bearing detail.
+- No current GitHub-wide assertion about idempotency support was established.
+  The narrower official create endpoint contains no documented idempotency-key
+  parameter. RFC 9110 controls retry behavior under that observed condition.
+- The latest IETF idempotency-key draft is expired and explicitly
+  work-in-progress. Stripe is an existence proof for the alternative, not
+  evidence of GitHub support.
+- Pack mechanics have no behavioral efficacy evidence in the inspected
+  package files. Exact wording effects remain for Prompt 4; ordinary
+  `pack-specific` or `unverified` ideas do not constitute an evidence gap.
+- The local draft's exact path and cleanup are locally coherent but not a
+  general professional standard. Later viability fixtures must prove safe
+  preservation and deletion.
+- “Highest seam” and “ideal one seam” lack general independent support;
+  ISTQB provides the material counterposition that distinct test levels serve
+  distinct objectives.
+
+### Research answer and intent disposition
+
+Every load-bearing professional-method claim is supported under explicit
+conditions or disclosed as contested, pack-specific, or unverified. Evidence
+does not show a behavior essential to M0's settled intent was omitted. The
+security value-flow, target-reader, terminology, and review opportunities are
+methods for executing or steering existing M0 commitments, not new local
+outcomes, authorities, Returns, or completion obligations. No
+`intent-reopen` is justified.
+
+Research status is `answered`. Deploy Research status is
+`research-complete`.
+
+### Stopping basis
+
+Decision saturation was reached because:
+
+1. the governing and primary owners for requirements quality, source
+   identity, abstraction, traceability, validation, test levels, HTTP retry
+   semantics, GitHub issue state, and conditional security data flows were
+   inspected;
+2. the required three upstream fixed revisions, complete current package,
+   exact historical C0 package, and applicable local language packets were
+   inspected with states, paths, depth, and limits recorded;
+3. alternatives and counterpositions changed dispositions where material:
+   proportionate applicability over a fixed template, multiple objective-led
+   proof levels over a singular highest seam, conditional trust-flow coverage
+   over a universal value inventory, and server-published idempotency over an
+   invented header;
+4. every load-bearing claim has an original claim label and a separate method
+   classification; and
+5. another bounded source is unlikely to change the recommended method,
+   conditions, classification, M0 disposition, or Prompt 2 candidates.
+
+Caller-use boundary: this packet may support Prompt 2 reconciliation and H1
+admission. It does not choose runtime wording, prove behavior, alter M0, or
+authorize a successor.

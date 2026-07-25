@@ -1,406 +1,410 @@
-# To Spec Active Runtime Synthesis
+# To Spec Deploy Synthesis
 
-Status: exact P1 promoted and installed for campaign `2026-07-24-to-spec`.
+Status: Deploy Prompt 4 decision for campaign `to-spec-2026-07-25`;
+`accepted`.
 
-This file owns the active synthesis decision. Source provenance remains in
-[`2026-07-24-to-spec.md`](../../research/2026-07-24-to-spec.md), the frozen
-minimum remains in
-[`2026-07-24-to-spec-prompt1-m0.md`](../../validation/transcripts/2026-07-24-to-spec-prompt1-m0.md),
-and shared semantic identities remain in
-[`campaign-decision.json`](../../validation/evals/to-spec-2026-07-24/campaign-decision.json).
+This file owns the active semantic decision. Source provenance remains in
+[`2026-07-25-deploy-research.md`](../../research/skill-facets/to-spec/2026-07-25-deploy-research.md),
+the frozen minimum remains in
+[`prompt1-m0.md`](../../validation/campaigns/to-spec-2026-07-25/prompt1-m0.md),
+and machine-readable identities and dispositions remain in
+[`manifest.json`](../../validation/campaigns/to-spec-2026-07-25/manifest.json).
+Prompt 4 aggregate judgment remains in
+[`prompt4-decision.md`](../../validation/campaigns/to-spec-2026-07-25/prompt4-decision.md),
+with per-sample identities in
+[`prompt4-results.json`](../../validation/evals/to-spec-2026-07-25/prompt4-results.json).
+The prior campaign is historical evidence, not lifecycle completion.
 
-<!-- TO-SPEC-SYNTHESIS-DECISION:START -->
+<!-- BEGIN TO-SPEC-2026-07-25-SYNTHESIS-DECISION -->
 
 ## Decision
 
-The frozen M0 is viable and is exact V1. All V01-V22 viability cases passed.
-Five fresh M0 controls in each Q01-Q07 cluster exhibited none of the
-pre-registered meaningful quality deficits, so every H1 unit is
-`rejected-no-control-deficit` and no H1 sample was eligible to run.
+- Campaign shape: `hypothesis-candidate`; current canonical differs from the
+  M0 specification, and admitted H1 transforms M0.
+- M0: retain U01-U16 and every Prompt 1 clause without amendment. M0 is
+  implementable from the checkpoint without research, current behavior, or
+  historical C0.
+- H1-01: `accept`; the registered M0 ceremonial-content deficit appeared,
+  exact H1-01 materially improved density with bounded variance, and the dense
+  wrong-condition pair preserved every material family.
+- H1-02: `reject-no-control-deficit`; all five exact M0 controls already chose
+  adequate scope-matched public or caller-visible proof portfolios, so H1-02
+  received no candidate samples and contributes no V1 behavior.
+- V1: exact M0 plus H1-01 only at `campaign-tree-v1`
+  `47c223639318b041e6c86e6144b7fb23399634ead73e18ddcf306ab8242effeb`.
+- Current: preserve M0-equivalent and required compatibility behavior; replace
+  the incomplete caller/reuse surface and `published-spec` Return; remove
+  exact current heading-shape protection.
+- Historical C0: comparison evidence only. Its source coverage and
+  target-reader behavior are recruited into M0 where required; its exact
+  five-stage spine, highest-seam rule, exhaustive stories, and universal
+  value-flow form are not protected.
+- Relationships: no topology change. The existing Load and
+  Recommend-and-stop edges remain authoritative.
+- Interludes: none. Accepted H1-01 changes no outcome, invocation, authority,
+  Return, completion, exclusion, or relationship.
+- Current-removal risk: none unresolved.
 
-The campaign shape is `hypothesis-candidate` at specification level:
+## Facts And Fixed Identities
+
+| Input | Exact identity | Fact boundary |
+| --- | --- | --- |
+| Git fixed point | `b9750babea998c4bc0f5809972a8651934218eca` | Prompt 2 start; Git delivery remains unauthorized. |
+| M0 checkpoint | Full-file SHA-256 `449a834273817d47a37f3d2bb6a203d4e86a31bada89558340810408346dd9bf`; bounded fingerprint `94521f7c73c756fbeb53de3a04a551007fa473a44108683dd760e42ff5b185b1` | Exact Prompt 1 decision; `ready-for-research`. |
+| Research packet | SHA-256 `fff827f6482fafb891968cb8a095ccd1aa4de0ab0ea6ed091526298e63deebc0` | Exact `research-complete` method evidence; no wording efficacy. |
+| Current canonical | `campaign-tree-v1` `3cdb41fbca411d8c2332c4e9cff52b5ef1000dd28a27422615ac6f150133e06b` | Separate current observation; two files read completely. |
+| User-designated C0 | Commit `f3be70c31dd8f2ae9f12a75248065ef313790bda`; `campaign-tree-v1` `9d1a3e45416b8a36a1cdf4cf155de0a193e78df4aa107a9af25608c1b1fc918c` | Exact isolated package only; no surrounding historical repository authority. |
+| Experimental target | absent | No current `skills/experimental/to-spec` package or manifest entry. |
+| Prior compact decision | SHA-256 `71b173494a1c51806a329afea03523beb068cbf2cbcd4a6113ed5ec33deb7d43` | Historical admission and protocol evidence only. |
+| Prior worker fixture | SHA-256 `e16d50fce206dcd86fdf97a7dd355ed0bd580f5b363d29ad676e0195764df87c` | Historical fixture design; not a current executable control. |
+| Prior root fixture | SHA-256 `4a4583c89cee71e4e8360a125f2dd7f8855e1ede93d72421d5494aa3e701b320` | Historical rubric design; not current behavioral proof. |
+
+Facts above establish bytes, observed surfaces, and prior records. Research
+supports method admission under its stated conditions. The H1 decision below
+is synthesis. No Prompt 2 observation proves exact wording behavior.
+
+## Intended Contract
+
+`to-spec` is explicit-only. It turns one identity-bearing, settled source into
+one durable, verified parent specification in the configured issue tracker.
+It preserves source and domain authority, may use one disposable draft, makes
+at most one authorized create or exact reuse transition, reconciles the full
+affected parent state, returns one typed status, recommends `$to-tickets` only
+after verified success, and stops.
+
+The source owns outcome, commitments, acceptance, scope, exclusions, supported
+behavior and state, public and data contracts, security/privacy, compatibility,
+migration, rollback, and tradeoffs. Repository domain and ADR owners retain
+truth. Tracker and label contracts own transport and role mapping.
+`codebase-design` supplies vocabulary only. `to-spec` owns source coverage,
+specification synthesis, draft and packet identity, authorized publication,
+read-back, recovery evidence, Return, and completion. `$to-tickets` owns
+slicing and child readiness; `$repo-bootstrap` owns setup repair.
+
+The only Returns are `setup-precondition`, `source-gap`,
+`existing-state-conflict`, `publication-recovery`, and `ready-spec`. Success
+requires exact publication or reuse proof, complete applicable state
+reconciliation, truthful draft disposition, preserved unrelated state, and
+one unstarted `$to-tickets` recommendation.
+
+## M0 Checkpoint And Clause Map
+
+M0 retains Prompt 1 U01-U16 exactly:
+
+| Units | Clause group | Required behavior |
+| --- | --- | --- |
+| U01 | Description and invocation | Explicit direct selection for one parent spec; nearest exclusions remain shaping, slicing, implementation, and delivery. |
+| U02 | Setup | Verify tracker create/inspect/read-back, labels, domain routing, and applicable owner surfaces before draft-backed mutation. |
+| U03-U06 | Source and authority | Bind one exact source and every decision-bearing pointer; preserve commitment, domain, ADR, and vocabulary-only design authority. |
+| U07 | Existing state | Distinguish verified absence, exact reuse, divergence, and unknown state before publication. |
+| U08-U10 | Synthesis and validity | Produce the complete parent contract, bidirectional coverage, observable acceptance and proof, and no ownerless, invented, child-level, or false-ready work. |
+| U11-U12 | Freeze and authority | Write/read one safe disposable draft, freeze packet and operations, and confirm exact mutation authority. |
+| U13-U15 | Publish and reconcile | Create once or reuse exact state, refetch unique creates and complete state, stop on uncertainty, and delete or preserve the draft truthfully. |
+| U16 | Return and completion | Return exactly one typed status; on success recommend `$to-tickets` and stop with `HEAD`, foreign state, and unrelated work unchanged. |
+
+The irreversible M0 gates remain:
 
 ```text
-current specification != M0 specification
-M0 specification != H1 specification
-```
-
-Exact active runtime identities:
-
-- M0/V1/P1/canonical/installed tree:
-  `548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa`;
-- evaluated H1 tree:
-  `ac02b5ad3892427cb4cda755c18c4fac381d011a333a85e7b7a6eea88bac94e9`.
-
-H1 remains historical evaluated construction only. Current presence supplies
-neither intent nor protection.
-
-The complete runtime-clause audit found no material behavior-preserving cut.
-All 17 instruction-bearing passages remain necessary owners of M0 behavior or
-invocation, authority, irreversible order, safe failure, Return, completion,
-and relationship guardrails. P1 is therefore V1 byte-for-byte:
-`548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa`.
-The pruning disposition is `pruning-not-needed`; no behavioral wave ran.
-Canonical promotion copied the exact two-file P1 package without semantic
-adaptation. Managed installation changed only `to-spec`; complete canonical
-and installed read-back proved the same tree, and the post-install dry-run
-reported all 25 managed skills unchanged.
-
-## Intended Contract And M0
-
-`to-spec` explicitly turns one bounded packet of settled source into one
-verified durable parent specification through the configured GitHub, GitLab,
-or Local Markdown tracker contract, then recommends `$to-tickets` and stops.
-The user and settled source retain commitment authority; routed repository,
-domain, ADR, engineering, tracker, and relationship owners retain their named
-authority. The skill owns faithful synthesis, one disposable draft, one parent
-publication, read-back, recovery evidence, typed Return, and completion.
-
-The M0 checkpoint fingerprint is
-`b19edb0b03a176b0e4f903c001f1705587d04a4306bbd05be8c3d625d3f7a726`.
-Its C01-C16 clause map and M0-01 through M0-17 unit ledger are incorporated by
-reference without semantic change in active P1.
-
-The M0 gates, in irreversible order, are:
-
-```text
-setup
--> complete source and repository trace
--> settledness and target-state
--> commitment coverage
--> disposable draft and exact read-back
--> one configured publication
--> durable mutation read-back
--> cleanup or named preservation
+explicit invocation
+-> compatible setup
+-> exact settled source and authority
+-> existing-state classification
+-> complete bidirectional parent packet
+-> exact draft and operation freeze
+-> one authorized create or exact reuse
+-> complete durable-state reconciliation
+-> truthful draft disposition
 -> typed Return and stop
 ```
 
-M0 success requires a verified durable parent identity and complete semantic
-read-back. Setup incompatibility, source gaps, existing-state conflicts, and
-partial or unknown publication each use the checkpoint's safe typed Return.
+M0 viability remains Prompt 1 V01-V13. Prompt 3 must materialize M0 only from
+the checkpoint, preserve the above order and owners, and add no H1 wording to
+the M0 package.
 
-## Canonical Dispositions
+## Current Canonical Dispositions
 
-Active P1 retains every M0-01 through M0-17 semantic and the required
-explicit-only policy, tracker compatibility, draft/recovery contract, routed
-owner boundaries, typed Returns, irreversible order, and recommend-and-stop
-relationships. It removes the old fixed five-verb spine, categorical
-highest-seam rule, exhaustive story form, and other F01-F08 semantics recorded
-in the campaign manifest. H1-01 through H1-07 remain rejected evaluated
-alternatives and are absent from canonical P1.
+Every instruction-bearing current clause and metadata behavior has one
+disposition:
 
-There is no disclosed `to-spec` runtime helper and none is admitted. Tracker
-provider procedure remains `owned elsewhere` in routed setup contracts.
+| Current unit | Observed clause | Semantic owner | Plausible observable effect | Disposition |
+| --- | --- | --- | --- | --- |
+| CUR-01 | Description plus `allow_implicit_invocation: false` | U01; invocation map | Invocation and exclusion | `required compatibility`; preserve explicit-only policy and M0 routing predicate. |
+| CUR-02 | Outcome and ownership preamble | U03-U06, U16 | Authority, action, completion | `M0-equivalent`; re-express from the checkpoint. |
+| CUR-03 | Setup gate and `$repo-bootstrap` stop | U02 | Safety, Return, relationship | `M0-equivalent`; preserve. |
+| CUR-04 | Direct, Wayfinder, and selected-improvement source admission | U03-U04 | Admission and action | `replace`; retain these inputs and add the checkpoint's confirmed Grill and verified audit forms. |
+| CUR-05 | Existing-state inspection but create-only success | U07, U12-U13 | Mutation safety and compatibility | `replace`; M0 also admits exact verified reuse and keeps divergence/unknown safe. |
+| CUR-06 | Domain/ADR preservation and vocabulary-only `$codebase-design` load | U05-U06 | Authority and relationship | `required compatibility`; preserve without importing foreign procedure. |
+| CUR-07 | Bidirectional commitment ledger | U09 | Judgment and source fidelity | `M0-equivalent`; preserve semantics. |
+| CUR-08 | Parent content list with source-tailored headings | U08-U10 | Context loading and artifact completeness | `M0-equivalent`; preserve applicable semantics, not a fixed filled form. |
+| CUR-09 | Acceptance, proof authority, structural-proxy honesty | U08-U10; engineering contract | Judgment and safety | `required compatibility`; preserve semantic proof honesty and residual-risk disclosure. |
+| CUR-10 | Material state branches without Cartesian padding | U08-U10; engineering contract | Judgment and compatibility | `required compatibility`; preserve source-supported branch semantics. |
+| CUR-11 | Safe ignored draft and exact-byte read-back | U11 | Action, safety, recovery | `M0-equivalent`; preserve. |
+| CUR-12 | One configured create and no foreign mutation | U12-U13 | Action and safety | `replace`; preserve one-create safety while adding exact reuse and source-authorized applicable metadata from M0. |
+| CUR-13 | Full refetch, mismatch recovery, preserved draft, no blind retry | U13-U15 | Return, safety, completion | `M0-equivalent`; preserve. |
+| CUR-14 | `published-spec` success Return | U16 | Machine-visible Return compatibility | `replace` with checkpoint-owned `ready-spec`; exact current token is not protected. |
+| CUR-15 | Completion gate and downstream stop | U15-U16 | Completion and relationship | `M0-equivalent`; preserve. |
+| CUR-16 | Exact four numbered heading names | none beyond mapped M0 order | Context organization only | `remove`; F01 absence plus U01-U16/order proof establishes semantic absence without protecting headings. |
+| CUR-17 | No disclosed helper or conditional runtime file | information hierarchy owner | Context load | `disclose`; Prompt 3 adds no helper unless exact construction proves an irreducible branch need, which is not currently present. |
 
-## Research Candidate Dispositions
+No current-only unit remains plausibly behavior-bearing without preservation,
+replacement, M0 recruitment, or an absence obligation. `unresolved removal
+risk` is therefore empty.
 
-Every decision-ready research method and intent-adjacent candidate has one
-semantic owner and disposition:
+## Research Registry And Classifications
 
-| Research candidate | Semantic unit | Disposition |
+| Research method or candidate | Method evidence | Semantic disposition |
 | --- | --- | --- |
-| Bidirectional commitment/source/destination ledger | M0-06, M0-09 | `M0-equivalent` |
-| Atomic, unambiguous, outcome-oriented requirements with rationale, assumptions, and verification | M0-09, M0-10 | `M0-equivalent` |
-| Settledness by decision consequence | M0-04, M0-06 | `M0-equivalent` |
-| Proportionate concern applicability scan | H1-03 | `admitted; rejected-no-control-deficit` |
-| Fresh-session recovery and sharp normative pointers | H1-01 | `admitted; rejected-no-control-deficit` |
-| Cheap pre-publication defect review | H1-02 | `admitted; rejected-no-control-deficit` |
-| Triggered external-value/data flow | H1-04 | `admitted; rejected-no-control-deficit` |
-| Observable public/caller-facing proof points | H1-05 | `admitted; rejected-no-control-deficit` |
-| Always highest or ideally one seam | F02 | `rejected` |
-| Source-visible actor/goal/outcome scenarios | H1-06 | `admitted; rejected-no-control-deficit` |
-| Every acceptance branch in exhaustive story syntax | F03 | `rejected` |
-| Self-contained parent with authoritative references | H1-01 | `admitted; rejected-no-control-deficit` |
-| BCP 14 uppercase vocabulary | F04 | `defer` unless explicitly adopted; forbidden as a default |
-| One disposable draft, exact read-back, one publication | M0-12 through M0-14 | `M0-equivalent` |
-| Read-before-create and reconcile indeterminate creation before retry | M0-05, M0-14, M0-15 | `M0-equivalent` |
-| Deferral owner, consequence, and observable trigger | H1-07 | `admitted; rejected-no-control-deficit` |
-| Renewed approval, commit, label, or automatic downstream handoff | F05 | `rejected` |
-| Fixed five-verb spine | F01 | `remove` |
-| Exact state-boundary matrix form | F07 | `rejected`; semantic M0 branches remain |
-| Generic provider idempotency key | F06 | `defer` to an exposing tracker owner |
-| New disclosed format/schema helper | F08 | `rejected` |
+| Settled-source baseline gate | `independently-supported` | `M0-recruited` by U03-U04; an admission error would violate M0. |
+| Bidirectional commitment trace | `independently-supported` | `M0-recruited` by U09; an omission or invention would violate M0. |
+| Applicable-aspect matrix | `independently-supported` | H1-01 `quality-lift`; M0 can remain viable yet be needlessly verbose. |
+| Parent abstraction boundary | `independently-supported` | `M0-equivalent` in U06, U08, and U10. |
+| Acceptance examples and verification method | `independently-supported` | `M0-equivalent` in U08-U10; examples remain conditional. |
+| One highest or singular proof seam | `pack-specific` with material counterposition | `remove`/reject as F02; distinct objectives may require a portfolio. |
+| EARS sentence patterns | `contested` | `defer`; no distinct realistic deficit justifies runtime load. |
+| Extremely extensive user stories | `contested` | `remove`/reject as F03; actor examples cannot replace non-story commitments. |
+| Target-reader handoff check | `independently-supported` underlying method | `M0-recruited` by U08-U10 and downstream compatibility; use as M0 proof, not H1 rescue. |
+| Material-defect-calibrated review | `independently-supported` | `M0-recruited` for material defects by U09-U10; style review remains outside runtime. |
+| Conditional sensitive-data/trust-flow trace | `independently-supported` under narrow triggers | `defer`; all source-owned hops remain M0, while the proposed single-chain form lacks a reliably discriminating M0-compliant deficit. |
+| Freeze and reconcile before retry | `independently-supported` | `M0-recruited` by U11-U15. |
+| Exact local draft cleanup/preservation path | `pack-specific` professionally; locally required | `required compatibility` in U11 and U15. |
+| Parent `ready-for-agent` label | `pack-specific` and locally contradicted | `remove`/reject as F04; child readiness belongs to `$to-tickets`. |
+| Typed statuses and explicit-only invocation | local authority / `pack-specific` | `M0-equivalent`; local authority, not professional evidence, settles them. |
+| Scope-matched verification portfolio | `independently-supported` synthesis from distinct test objectives and observable proof | H1-02 `quality-lift`; preserve source authority for new public seams. |
 
-The eight intent-adjacent rows map respectively to M0-06
-(`commitment ledger`) and H1-01 through H1-07. None remains unowned.
+Pack observation, current presence, and prior campaign frequency supplied
+discovery only. No source claims the H1 wording is effective.
 
-## H1 Registry
+## H1 Transformations
 
-All admitted units preserve the intended outcome, invocation, authority,
-Return, completion boundary, exclusions, and relationships. Each uses
-`quality-lift`; none predicts an M0 viability defect.
+### H1-01: Proportionate Applicable-Aspect Expression
 
-### H1-01 — Fresh-session grounding
-
-- Prompt 4 disposition: `rejected-no-control-deficit`; 5/5 M0 controls
-  reconstructed all registered fields.
-- Origin/lane: research `professional-method`, corroborated by current
-  observation.
+- Prompt 4 disposition: `accept`; M0 median `2`, H1 median `3`, lift `+1`,
+  H1 range `3..3`, zero critical or protected-behavior regression, and dense
+  wrong-condition non-inferiority `4` to `4`.
+- Origin: `professional-method` plus `intent-adjacent`.
 - Method evidence: `independently-supported`.
-- Intended value and owner: `to-spec` makes the parent understandable without
-  conversation memory while domain and ADR owners remain the normative homes.
-- Expected M0 weakness: a viable M0 may preserve every commitment yet rely on
-  undefined terms or session-held premises.
-- Cheapest expression: require first-use meaning or a sharp durable owner
-  pointer, then test reconstruction from the artifact alone.
-- Positive case: an independent reader recovers outcome, actors, commitments,
-  acceptance, exclusions, owners, and proof.
-- Wrong condition: it copies full domain truth or blocks on context that a
-  stable authoritative pointer already supplies.
-- Fixed rubric/proof: paired M0/H1 fresh-context reconstruction; score every
-  named field, unsupported inference, and duplicated owner truth.
-- Limits: proves only the fixed artifact and reader conditions, not universal
-  readability or professional completeness.
-
-### H1-02 — Publication-material defect review
-
-- Prompt 4 disposition: `rejected-no-control-deficit`; M0 repaired all three
-  seeded material defects and false-blocked neither nondefect.
-- Origin/lane: research `professional-method`, also `pack-observed` in
-  Superpowers.
-- Method evidence: `independently-supported`.
-- Intended value and owner: `to-spec` catches semantic drafting defects before
-  irreversible publication.
-- Expected M0 weakness: exact draft read-back may confirm bytes without finding
-  ambiguity, contradiction, placeholders, scope drift, missing source or
-  acceptance, implementation leakage, or invented content.
-- Cheapest expression: one inline pre-publication scan limited to those
-  material defects; no reviewer or renewed approval loop.
-- Positive case: all seeded publication-material defects are found and repaired
-  or returned as a source gap.
-- Wrong condition: style preferences or harmless nonblocking notes prevent
-  publication.
-- Fixed rubric/proof: seeded clean/defective corpus; recall of material defects,
-  false-block count, authority leaks, and publication truthfulness.
-- Limits: local defect taxonomy only; no claim that one scan replaces domain,
-  security, or human review.
-
-### H1-03 — Proportionate applicability scan
-
-- Prompt 4 disposition: `rejected-no-control-deficit`; 5/5 M0 controls covered
-  triggered obligations without invented concern requirements.
-- Origin/lane: research `professional-method` and `intent-adjacent`.
-- Method evidence: `independently-supported`.
-- Intended value and owner: `to-spec` tailors quality, security/privacy,
-  compatibility, state, migration/rollback, and operability concerns to actual
-  triggers.
-- Expected M0 weakness: M0's broad content list may invite boilerplate or miss a
-  triggered obligation.
-- Cheapest expression: consider each concern, include only applicable
-  obligations, and record a material source gap rather than invent content.
-- Positive case: paired fixtures include every triggered concern and omit
-  irrelevant prose.
-- Wrong condition: a fixed template is filled merely to appear complete.
-- Fixed rubric/proof: triggered/irrelevant pairs; count missed obligations,
-  invented requirements, boilerplate, and false gaps.
-- Limits: does not establish an exhaustive universal concern taxonomy.
-
-### H1-04 — Triggered external-value flow
-
-- Prompt 4 disposition: `rejected-no-control-deficit`; 5/5 M0 controls
-  preserved every authoritative hop and the uniquely required gap branch.
-- Origin/lane: research `professional-method`, corroborated by
-  `current-observed`.
-- Method evidence: `independently-supported`; the exact current field list is
-  only a local expression.
-- Intended value and owner: `to-spec` traces boundary-sensitive values without
-  exposing secrets or inventing configuration.
-- Expected M0 weakness: ordinary commitment coverage may miss a source,
-  sensitivity, destination, consumer, lifecycle, or verification hop.
-- Cheapest expression: trigger only for sensitive data, credentials, generated
-  IDs, external integrations, migration, or cross-boundary configuration and
-  trace authoritative hops through proof.
-- Positive case: the integration fixture contains every authoritative hop and
-  verification path with no sensitive literal.
-- Wrong condition: ordinary internal values receive ceremonial flow tables or
-  missing configuration is guessed.
-- Fixed rubric/proof: paired complete/missing-hop integration cases; score hop
-  coverage, secret exposure, invented behavior, and correct source-gap Return.
-- Limits: no universal data-flow schema or threat-model completeness claim.
-
-### H1-05 — Scope-matched observable proof portfolio
-
-- Prompt 4 disposition: `rejected-no-control-deficit`; 5/5 M0 controls chose
-  adequate low-coupling proof portfolios without a new or private seam.
-- Origin/lane: research `professional-method` plus `current-observed`
-  substitution.
-- Method evidence: `independently-supported`; categorical highest/one-seam
-  wording is `contested`.
-- Intended value and owner: `to-spec` maps each commitment to observable proof
-  without private implementation coupling or a needlessly broad-stack mandate.
-- Expected M0 weakness: M0 may name proof authority generically; current wording
-  may overfit one highest seam.
-- Cheapest expression: choose adequate caller/public proof points and a
-  scope-matched portfolio; a new public seam remains source-owned.
-- Positive case: every requirement has an adequate oracle and refactor-only
-  changes do not invalidate behavior proof.
-- Wrong condition: one broad seam is mandated despite cost/brittleness, or a
-  private helper substitutes for observable behavior.
-- Fixed rubric/proof: fixed requirements-to-proof fixture; score oracle
-  adequacy, coupling, unjustified breadth, authority, and regression risk.
-- Limits: does not prescribe test counts, universal levels, or implementation.
-
-### H1-06 — Actor/value scenarios plus non-story commitments
-
-- Prompt 4 disposition: `rejected-no-control-deficit`; 5/5 M0 controls retained
-  every real actor, benefit, and non-story constraint without invention.
-- Origin/lane: research `professional-method`, `pack-observed`, and
-  `current-observed` substitution.
-- Method evidence: actor/value scenarios are `independently-supported`;
-  exhaustive all-concern story syntax is `pack-specific`.
-- Intended value and owner: `to-spec` preserves real user value without
-  counterfeiting actors for architecture, security, migration, or internal
-  constraints.
-- Expected M0 weakness: neutral users/scenarios content may lose actor value;
-  current exhaustive story wording may distort non-story commitments.
-- Cheapest expression: use source-visible actor/value scenarios and keep all
-  remaining commitments in the same bidirectional ledger.
-- Positive case: every real actor and benefit is represented and every
-  non-story constraint remains traceable.
-- Wrong condition: personas are invented or a constraint disappears because it
-  does not fit story syntax.
-- Fixed rubric/proof: multi-actor/stateful fixture; count omitted actors,
-  benefits, commitments, invented actors, and duplicate dispositions.
-- Limits: no universal story template or claim that stories alone establish
+- Intended value and owner: `to-spec` expresses only source-relevant behavior,
+  data/flow/state, quality, constraint, interface, failure/recovery, and proof
+  aspects while source owners retain every obligation.
+- Entry predicate: a settled source makes at least two aspect families
+  applicable and at least three others explicitly irrelevant.
+- Applicability: `situational`; basis is the research tailoring and
+  applicability evidence. Fixture balance cannot establish prevalence.
+- Expected M0 weakness: M0 may remain complete and accurate but render several
+  empty or ceremonial sections, reducing decision density and obscuring the
+  material aspects.
+- Weak but M0-compliant counterexample: the parent includes every required
+  obligation and explicitly marks every irrelevant aspect `not applicable`;
+  nothing is invented or omitted, but the artifact carries substantial
+  non-decision prose.
+- Contribution mode: `quality-lift`.
+- Cheapest expression: one inline instruction to test listed aspect families
+  against source-visible triggers, include applicable obligations, and omit
+  ceremonial empty sections.
+- Expected load effect and acceptance budget: no file, helper, or new section;
+  at most 45 whitespace-delimited runtime words. Accept only if decision
+  density improves materially without missed obligations, invented
+  requirements, false gaps, or M0 regression.
+- Entry-positive cases: matched service and local-tool sources with multiple
+  settled applicable aspects and several explicit non-applicable aspects.
+- Wrong-condition case: a dense source where nearly every aspect is material;
+  H1 must not delete, compress ambiguously, or relabel required content merely
+  to appear concise.
+- Fixed rubric: all source-triggered obligations retained; zero invented
+  obligations; zero false `source-gap`; irrelevant-section/ceremonial-prose
+  count; reader identifies material aspect families and their acceptance.
+- Proof: five fresh exact-M0 entry-positive controls first. Run H1 only if M0
+  remains viable yet exceeds the registered irrelevant-content threshold.
+  After material improvement, run frozen wrong-condition M0/H1 pairs.
+- Claim limits: only the fixed source families, model, host, tools, and rubric;
+  no claim of a universal aspect taxonomy, prevalence, or professional
   completeness.
 
-### H1-07 — Observable deferral triggers
+### H1-02: Scope-Matched Verification Portfolio
 
-- Prompt 4 disposition: `rejected-no-control-deficit`; 5/5 M0 controls
-  correctly classified material gaps and complete nonblocking deferrals.
-- Origin/lane: research `professional-method` principle with `pack-observed`
-  wording alternatives.
-- Method evidence: the principle is `independently-supported`; `Skipped / Add
-  when` wording is `pack-specific`.
-- Intended value and owner: source owners retain deferred choice while
-  `to-spec` makes its consequence and reconsideration condition actionable.
-- Expected M0 weakness: M0 may list an owned nonblocking deferral without an
-  observable revisit condition.
-- Cheapest expression: record deferral, owner, consequence, and `defer until
-  <observable trigger>`.
-- Positive case: every retained deferral has an owner, consequence, and trigger
-  and cannot alter current acceptance.
-- Wrong condition: an unresolved acceptance-changing decision is disguised as a
-  deferral or a speculative future design is added.
-- Fixed rubric/proof: settled packet with blocking and nonblocking unknowns;
-  score correct classification, complete trigger fields, invention, and Return.
-- Limits: no claim that every future condition is predictable or that a
-  deferral authorizes later work.
+- Prompt 4 disposition: `reject-no-control-deficit`; five M0 controls scored
+  `[4, 4, 4, 4, 4]` with zero private-only oracle and zero unjustified broad
+  mandate. No candidate or wrong-condition sample ran.
+- Origin: `professional-method` plus `intent-adjacent`; it substitutes for
+  current/C0 highest-seam pressure.
+- Method evidence: `independently-supported` for observable, objective-led
+  proof; the singular-highest formulation is `pack-specific` and rejected.
+- Intended value and owner: `to-spec` maps each commitment to an adequate
+  caller-visible or public oracle at the least coupled set of available proof
+  levels. The source owns any new public contract; repository proof owners
+  retain commands and harnesses.
+- Entry predicate: a settled source has at least two commitments whose
+  observable outcomes require different existing proof objectives or whose
+  one broad harness is materially expensive or brittle.
+- Applicability: `situational`; basis is the independently supported
+  distinction among test objectives. Fixture frequency is not prevalence.
+- Expected M0 weakness: M0 can name an honest and adequate broad proof seam
+  yet leave a needlessly coupled, slow, or brittle verification plan when an
+  existing mixed portfolio proves the same commitments more directly.
+- Weak but M0-compliant counterexample: one available end-to-end harness
+  observes every required outcome and is truthful, but it is substantially
+  broader and more implementation-sensitive than the available API plus
+  component portfolio.
+- Contribution mode: `quality-lift`.
+- Cheapest expression: one inline instruction to choose a scope-matched
+  portfolio by proof objective, prefer caller/public behavior, avoid
+  private-only change detectors, and return a source gap before inventing a
+  public seam.
+- Expected load effect and acceptance budget: no file, helper, or new section;
+  at most 55 whitespace-delimited runtime words. Accept only if oracle
+  adequacy stays complete while unjustified breadth or private coupling falls
+  materially and no new authority decision appears.
+- Entry-positive cases: API-plus-worker and stateful user-flow sources with
+  explicit existing harness capabilities and materially distinct objectives.
+- Wrong-condition case: one low-cost existing harness is the only adequate
+  oracle; H1 must not manufacture a portfolio, new interface, or lower-level
+  test.
+- Fixed rubric: every commitment has an observing oracle; zero private-only
+  oracles; zero invented public seams; count unjustified broad-stack
+  mandates; record residual uncovered risk.
+- Proof: five fresh exact-M0 entry-positive controls first. Run H1 only if M0
+  remains viable but selects the registered overbroad or privately coupled
+  plan. After material improvement, run frozen wrong-condition M0/H1 pairs.
+- Claim limits: no universal test level, count, pyramid, cost, or latency
+  claim; transfer is bounded to the fixed harness descriptions and execution
+  environment.
+
+The two H1 units have different entry predicates, arm deltas, rubrics, and
+wrong-condition cohorts and must not be clustered.
 
 ## Decision Ledger
 
-| Unit | M0 Obligation Or H1 Origin | Method Evidence | Current State | Owner | Contribution Mode And Expected M0 Weakness | Cheapest Expression | Wrong Condition | Proof | Decision |
+| Unit | M0 Obligation Or H1 Origin | Method Evidence | Current State | Owner | Entry Predicate, Applicability, M0-Compliant Counterexample, Contribution Mode, And Expected Weakness | Cheapest Expression | Wrong Condition | Proof | Decision |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M0-01..M0-05 | C01-C04 admission, setup, source identity, existing state | local authority | Active P1 | Source, setup, tracker, `to-spec` | n/a | Checkpoint clauses | Implicit reach or mutation from unknown state | V01-V07 | retained |
-| M0-06..M0-11 | C05-C10 fidelity, content, acceptance, state | local authority | Active P1 | Source/domain/engineering, `to-spec` | n/a | Checkpoint clauses | Invention, omission, blind matrix | V08-V14 | retained |
-| M0-12..M0-17 | C11-C16 draft, publish, recovery, Return | local authority | Active P1 | `to-spec`, tracker, work-state, `to-tickets` | n/a | Checkpoint clauses | Unknown mutation, lost draft, successor starts | V15-V22 | retained |
-| H1-01 | Fresh-session grounding | independently-supported | Absent from P1 | `to-spec`; domain owners retain truth | quality-lift: M0 may rely on session context | First-use meaning or sharp pointer | Copies owner truth or false-blocks | Fresh-context reconstruction | `rejected-no-control-deficit` |
-| H1-02 | Material defect review | independently-supported | Absent from P1 | `to-spec` | quality-lift: byte read-back misses semantic defects | One bounded scan | Style policing or approval loop | Seeded defect corpus | `rejected-no-control-deficit` |
-| H1-03 | Applicability scan | independently-supported | Absent from P1 | `to-spec`; source owns commitments | quality-lift: boilerplate or missed trigger | Triggered concern scan | Filled-template ceremony | Paired concern fixtures | `rejected-no-control-deficit` |
-| H1-04 | External-value flow | independently-supported | Absent from P1 | `to-spec`; security/data owners retain truth | quality-lift: missing boundary hop | Triggered hop trace | Universal table or invented config | Complete/missing-hop pair | `rejected-no-control-deficit` |
-| H1-05 | Observable proof portfolio | independently-supported; categorical form contested | Absent from P1 | `to-spec`; source owns new public seam | quality-lift: generic or overbroad proof | Scope-matched public or caller proof points | Private helper or one-seam mandate | Requirements-to-proof map | `rejected-no-control-deficit` |
-| H1-06 | Actor/value plus non-story ledger | independently-supported / pack-specific split | Absent from P1 | `to-spec`; source owns actors/value | quality-lift: lost value or invented personas | Real scenarios plus ledger | Constraint omission or fake actor | Multi-actor/stateful corpus | `rejected-no-control-deficit` |
-| H1-07 | Deferral trigger | independently-supported principle | Absent from P1 | Source owner; `to-spec` records | quality-lift: inert open note | Owner, consequence, trigger | Hidden material decision | Blocking/nonblocking pair | `rejected-no-control-deficit` |
-| F01 | Exact five-verb spine | pack-specific | Present | none required | n/a | Preserve M0 order without token contract | Exact wording treated as necessary | Absence plus M0 order check | remove |
-| F02 | Highest/one-seam categorical rule | contested | Present in highest form | none | n/a | H1-05 qualified alternative | Broad seam mandated | Absence plus H1-05 rubric | reject |
-| F03 | Exhaustive stories for every concern | pack-specific | Present | none | n/a | H1-06 split | Invented actors | Absence plus H1-06 rubric | reject |
-| F04 | BCP 14 capitals by default | independently-supported only when adopted | Absent | source/profile owner | n/a | Ordinary semantic requirements | Unadopted capitals imply force | Absence check | reject |
-| F05 | Renewed approval, commit, labels, automatic handoff | pack-specific and locally inapplicable | Absent | foreign owners | n/a | Typed Return and stop | Authority transfer | Absence and relationship checks | reject |
-| F06 | Generic idempotency key requirement | unverified availability | Absent | tracker contract | n/a | Query durable state; conditional provider support | Assumed provider primitive | Absence and recovery cases | defer |
-| F07 | Exact state matrix form | unverified | Absent | engineering contract | n/a | Preserve M0 semantic branches | Form mistaken for coverage | Semantic branch proof | reject exact form |
-| F08 | New `SPEC-FORMAT.md` or schema helper | no observed branch need | Absent | no owner admitted | n/a | Keep universal behavior inline | Context hop before required material | Package-tree absence | reject |
+| U01-U02 | Invocation and setup | Local authority | Present | Invocation map, setup, `to-spec` | Direct explicit selection; common; counterexample n/a; M0; missing setup must stop before mutation. | Checkpoint description and Setup clause | Implicit request or incompatible setup | V01-V04 | `M0-equivalent` / required |
+| U03-U07 | Source, authority, vocabulary, existing state | Local authority; settled-baseline method independently supported | Partial | Source/domain/ADR/tracker owners; `to-spec` | One exact settled source and classified target; common; counterexample n/a; M0; incomplete caller/reuse surface is unsafe. | Checkpoint source and state clauses | Missing authority, design verdict, divergent or unknown target | V03, V05-V08 | `replace` current with complete M0 |
+| U08-U10 | Parent packet, trace, validity | Local authority; supporting methods independently supported | Present | Source, `to-spec`, downstream consumer | Complete bidirectional parent semantics; common; counterexample n/a; M0; omission, invention, or unusable acceptance violates viability. | Checkpoint synthesis and validity clauses | Child slicing, ownerless content, false acceptance | V07, V09 | `M0-equivalent` / required compatibility |
+| U11-U15 | Freeze, authorize, publish/reuse, reconcile, draft disposition | Local authority; retry method independently supported | Partial | `to-spec`, tracker, work-state owner | Frozen exact operation; common on successful or attempted publication; counterexample n/a; M0; current omits exact reuse. | Checkpoint Freeze and Publish clauses | Drifted packet, unknown create, partial state | V08-V11 | `replace` current with complete M0 |
+| U16 | Typed Return, completion, stop | Local authority | Present with wrong success token | `to-spec`, relationship owner | Every terminal branch; common; counterexample n/a; M0; `published-spec` breaks the frozen Return contract. | Checkpoint Return and Completion | Success without read-back or successor starts | V12-V13 | `replace` with `ready-spec` |
+| H1-01 | `professional-method` + `intent-adjacent`: applicable-aspect expression | `independently-supported` | Broad current content list; no compact trigger rule | `to-spec`; source owns obligations | Multiple applicable and multiple irrelevant aspects; situational; fully correct artifact with ceremonial N/A prose; `quality-lift`; M0 may be verbose and low-density. | 33 inline words; no helper/section | Dense source with nearly all aspects material | Five M0 controls, five H1 samples, repaired wrong-condition pair | `accept` |
+| H1-02 | `professional-method` + `intent-adjacent`: verification portfolio | `independently-supported`; singular-highest form `pack-specific` | Current uses honest proof; C0 used highest-seam pressure | `to-spec`; source owns new public seam; proof owners retain harnesses | Distinct proof objectives or overbroad harness; situational; adequate but broad/coupled M0 plan; `quality-lift`; M0 may choose costly proof. | 38 inline words; no helper/section | One low-cost harness is the only adequate oracle | Five M0 controls; deficit absent, so no H1 sample | `reject-no-control-deficit` |
+| F01 | Exact four current numbered headings | `pack-specific` | Present | none beyond M0 owners | No independent entry; exact titles add no behavior beyond required order. | Omit exact shape; preserve U01-U16 order | M0 order disappears | Package-wide absence plus M0 clause/order assertions | remove |
+| F02 | Highest/one-seam categorical rule | `pack-specific` with counterposition | C0 only | none | No safe universal predicate; may suppress distinct proof objectives. | H1-02 qualified alternative | Multiple objectives need multiple levels | Absence plus H1-02 wrong-condition rubric | remove/reject |
+| F03 | Exhaustive story form for all commitments | `contested` | C0 only | none | Constraint and risk commitments need no invented actor. | U09 ledger plus optional examples | Non-story security/migration constraint | Absence plus commitment coverage | remove/reject |
+| F04 | Parent `ready-for-agent` state | `pack-specific`, locally contradicted | Absent current; observed upstream | `$to-tickets` | Parent readiness would transfer child owner authority. | `ready-spec` plus unstarted recommendation | Parent exists but no child graph | Absence, relationship and label checks | remove/reject |
+| F05 | `published-spec` success token | Current-observed | Present | U16 | Exact token conflicts with frozen machine Return. | `ready-spec` | Any non-success branch | Return enum structural check | remove/replace |
+| F06 | Universal trust/value-flow table | `unverified` outside narrow conditions | C0 broad form only | source/security/data owners | No reliably discriminating M0-compliant deficit registered. | M0 trace; deferred conditional experiment | Ordinary internal value | Absence plus U09/U10 coverage | defer and forbid in M0/H1 |
+| F07 | EARS as universal sentence syntax | `contested` | Absent | none | Narrow aid lacks a registered local deficit. | Ordinary source-faithful prose | Non-event requirement | Package absence | defer and forbid in current H1 |
+| F08 | New helper/schema or copied tracker procedure | no observed branch need; owned elsewhere | Absent | tracker/information hierarchy owners | Common behavior fits inline and foreign procedure remains reachable. | Inline clauses plus owner pointers | Irreducible branch later proved | Package inventory and pointer audit | remove/reject |
 
-## Protected Behavior And Relationships
+## Protected Behavior, Compatibility, And Relationships
 
-Protected in active P1:
+Protected before H1 evaluation:
 
-- every M0-01 through M0-17 behavior and C01-C16 gate;
-- explicit-only `agents/openai.yaml`;
-- GitHub, GitLab, and Local Markdown creation compatibility through configured
-  tracker contracts;
-- `.tmp/to-spec/<feature-slug>.md` exact-byte draft/recovery behavior;
-- read-before-create, full Mutation read-back, unknown-create reconciliation,
-  and no blind retry;
-- vocabulary-only Load of `$codebase-design`;
-- recommendation-and-stop edges to `$repo-bootstrap` and `$to-tickets`;
-- caller inputs from Skill Router, Wayfinder, and Improve Codebase;
-- parent-spec intent authority after later child tickets exist; and
-- absence of source, domain, code, Git, child-ticket, label, installation, and
-  downstream mutation outside the authorized parent publication.
+- U01-U16 and every Prompt 1 clause, gate, Return, and viability obligation;
+- explicit-only metadata and nearest routing exclusions;
+- exact source and caller-payload identity, including intact confirmed Grill
+  and current Domain Delta, Wayfinder resolution pointers, selected-improvement
+  evidence, and verified audit finding evidence;
+- configured tracker durable ownership, exact reuse, create-once safety,
+  complete Mutation read-back, reconcile-before-retry, and recovery evidence;
+- mapped roles only when source-authorized and applicable, with no parent
+  Ready-for-agent state;
+- accepted domain terms, ADR conflict disclosure, and no domain mutation;
+- vocabulary-only Load of `$codebase-design`, with artifact and completion
+  retained by `to-spec`;
+- identity-checkable downstream source for `$to-tickets`;
+- safe `.tmp/to-spec/<source-slug>.md` cleanup or named preservation;
+- recommend-and-stop edges to `$repo-bootstrap` and `$to-tickets`; and
+- no source, domain, code, child-ticket, Git, installation, or downstream
+  mutation outside the authorized parent transition.
 
-No current-only helper or exact leading-word sequence is protected.
+Relationship delta is `none`. Current relationship owners remain:
+Wayfinder and Improve Codebase may recommend `$to-spec` and stop;
+`to-spec` may Load `$codebase-design`; `to-spec` may recommend
+`$repo-bootstrap` or `$to-tickets` and stop. Direct user invocation may supply
+the other checkpoint-approved source forms without creating a new runtime edge.
 
-## Evidence Dispositions
-
-| Evidence | Disposition | Use |
-| --- | --- | --- |
-| M0 checkpoint and local-source identity manifest | `exact-reusable` for Prompt 2 specification lanes | Controls M0 clauses and viability gates; not runtime proof |
-| Research packet | `exact-reusable` for method admission only | Controls origins, classifications, conditions, alternatives, and limits |
-| Pre-campaign canonical package | `historical-admission-only` | Current observations and compatibility discovery only |
-| 2026-07-12 and 2026-07-13 cohesion records | `invalidated` for candidate proof | Different `to-spec` hashes, reduced-confidence or simulated protocols |
-| 2026-07-13 whole-pack traces | `lane-limited` to historical relationship/contract simulation | Discovery of ownership and residual cases only |
-| 2026-07-18 Improve Codebase routing evaluation | `lane-limited` to the caller route predicate | It does not prove `to-spec` runtime behavior |
-| Current structural tests and core-workflow fixtures | `historical-admission-only` | Define affected gates and future proof cases, not wording efficacy |
-| Exact M0 V01-V22 and Q01-Q07 controls | `exact-reusable` for Prompt 4 fixed lanes | Proves M0 viability and absence of every registered H1 control deficit |
-| Exact V1/P1 identity and complete cut audit | `exact-reusable` for pruning | Proves no runtime byte delta and no affected behavioral lane |
-| H1 samples | `missing` by required gate | No H1 arm was eligible after every control deficit was absent |
-| Live provider publication and recovery | `missing` | Simulated controls do not establish live provider behavior |
-
-Prompt 4 proof was reused because canonical P1 is byte-identical to the
-evaluated V1 runtime; no behavior claim or execution condition changed.
+Protected helpers: none. Disclosed runtime files remain `SKILL.md` and
+`agents/openai.yaml`; H1 adds neither a helper nor a conditional reference.
 
 ## Affected Surfaces And Proof Matrix
 
-Prompt 4 fixed exact M0 as V1 and rejected every H1 unit. Relationship and
-setup owners remain unchanged; no relationship change is published.
-
-| Claim | M0 proof | H1 contribution proof |
+| Surface | Classification | Prompt 3/4 obligation |
 | --- | --- | --- |
-| Admission, authority, mutation, Return, completion | V01-V22 viability suite passed | n/a |
-| H1-01 | Five complete M0 reconstruction controls | `rejected-no-control-deficit` |
-| H1-02 | Three defects repaired; two nondefects not blocked | `rejected-no-control-deficit` |
-| H1-03 | Five correctly tailored M0 controls | `rejected-no-control-deficit` |
-| H1-04 | Five correct M0 hop/branch controls | `rejected-no-control-deficit` |
-| H1-05 | Five adequate M0 proof portfolios | `rejected-no-control-deficit` |
-| H1-06 | Five complete M0 actor/constraint ledgers | `rejected-no-control-deficit` |
-| H1-07 | Five correct M0 deferral classifications | `rejected-no-control-deficit` |
-| Removed or rejected semantics | M0 viability preserved | Forbidden-ID absence checks |
+| Active synthesis | `affected` | Read complete bounded decision and match the manifest. |
+| Prompt 1 checkpoint | `preserve` | Exact fingerprint; sole M0 construction authority. |
+| Research packet | `preserve` | Method admission and limits only. |
+| Current canonical package and metadata | `historical evidence` for construction | Compare clauses and compatibility; never mutate in Prompt 2 or substitute for M0. |
+| Exact isolated C0 | `historical evidence` | Comparison only; use no whole-C0 behavioral wave by default. |
+| Experimental target and manifest entry | `not applicable` | Absent; Prompt 3 may create only its authorized candidate surfaces. |
+| Relationship map and callers | `preserve` | No topology delta; prove owner and payload compatibility. |
+| Tracker, label, domain, and engineering contracts | `owned elsewhere` | Point to foreign procedure; preserve local contract slices. |
+| Current focused tests | `historical-admission-only` | Heading snapshots are not semantic authority; Prompt 3 must use candidate-root semantic checks. |
+| Core workflow evaluations | `historical-admission-only` | Seed relationship and future fixture cases; no wording efficacy. |
+| 2026-07-24 decision and fixtures | `historical-admission-only` | Protocol and discovery only; runtime/M0 identities and success token differ. |
+| Installation and Git delivery | `owned elsewhere` | Prompt 5 and Prompt 6; untouched. |
 
-Behavioral evaluation followed `writing-great-skills/BEHAVIOR-EVALS.md`: fixed
-tasks and root-held rubrics, fresh uncontaminated valid contexts, M0-first
-controls, five samples for every cluster across both registered families, and
-root-held judgment. Invalid attempts received zero credit. Source-completeness
-repairs changed no task or rubric and were refrozen before fresh reruns.
+| Claim | Prompt 2 proof | Later executable proof |
+| --- | --- | --- |
+| M0 integrity and implementability | Exact checkpoint fingerprint and complete clause/unit read-back | Candidate-root semantic assertions and V01-V13 viability |
+| Current safe dispositions | Complete current package and clause ledger | Current-root factorization, M0/H1 semantic inventories, forbidden-ID absence |
+| H1 admission | Research classification plus complete registered controls | M0-first adaptive behavioral evaluation per H1 |
+| Relationship preservation | Complete relationship and caller trace | Parameterized relationship checks on both candidates |
+| Context-load budget | Package inventory and word-count caps | Exact candidate bytes/words/files; unavailable token/latency telemetry disclosed |
+| Behavioral efficacy | none in Prompt 2 | Fresh uncontaminated controls under `BEHAVIOR-EVALS.md` |
 
-## Rejected, Deferred, And Residual
+## Evidence Dispositions
 
-Rejected: H1-01 through H1-07 for no registered control deficit; exact
-five-verb protection; categorical highest/one-seam proof; all-concern story
-syntax; default BCP 14 capitals; renewed approval/commit/label steps; automatic
-downstream execution; exact state-matrix form; and a new helper/schema.
-Provider idempotency remains deferred to a tracker contract that actually
-exposes it.
+| Evidence | Disposition | Allowed use |
+| --- | --- | --- |
+| Current M0 checkpoint | `exact-reusable` for specification | Sole M0 units, clauses, gates, and viability plan. |
+| Current research packet | `exact-reusable` for method admission | H1 origins, classifications, conditions, alternatives, and limits. |
+| Current canonical package | `historical-admission-only` | Current behavior, compatibility, and load observation; not M0 or efficacy proof. |
+| Exact C0 package | `historical-admission-only` | Incumbent comparison and discovery only; no surrounding commit authority. |
+| 2026-07-24 compact campaign decision | `historical-admission-only` | Prior lifecycle outcome and evidence limits; cannot complete this campaign. |
+| 2026-07-24 worker/root fixtures | `lane-limited` to fixture and rubric design | May inform new fixtures after identities, Returns, and M0 clauses are refrozen. |
+| 2026-07-24 M0/H1 behavioral result | `invalidated` for current behavioral credit | Runtime identity, M0 specification, Return token, caller forms, and campaign epoch changed. |
+| Current structural tests and core workflow evals | `historical-admission-only` | Affected semantic/relationship cases; exact prose snapshots are not candidate proof. |
+| Live provider recovery, idempotency, and eventual consistency | `missing` | Residual behavioral evidence only. |
+| Installed runtime identity | `missing` for this campaign | Prompt 5 owner; no installed-mirror inspection requested in Prompt 2. |
 
-Residual evidence gaps are live provider mutation/recovery and transfer beyond
-the fixed model, host, reasoning, tools, and fixture families. They do not
-block exact V1/P1. There is no behavior-decision gap, prototype gap, unresolved
-removal risk, missed M0 obligation, surviving H1 unit, unavailable
-decision-bearing telemetry, or unproved cut.
+## Rejected, Deferred, And Removed Alternatives
 
-## Active State
+Rejected or removed: exact current four-heading protection; C0's exact
+five-stage spine; categorical highest/one-seam proof; mandatory extensive
+stories; parent Ready-for-agent state; renewed interview/approval, commit,
+label, or automatic successor steps; copied provider procedure; a new helper
+or schema; and blind retry.
 
-Prompt 4 is accepted, pruning is complete, and exact P1 is the canonical and
-installed runtime. Promotion changed no relationships or proof claims; the
-experimental target package and exact manifest entry were absent, so cleanup
-was a no-op. Git delivery remains pending under the bare campaign invocation.
-The compact campaign decision owns Prompt 4, pruning, promotion, installation,
-and evidence dispositions.
+Deferred: EARS sentence patterns, provider idempotency keys until an owning
+tracker documents support, and a conditional trust-flow rendering experiment
+until it has a realistic M0-compliant deficit distinct from required source
+coverage. Deferral grants no runtime semantic.
 
-<!-- TO-SPEC-SYNTHESIS-DECISION:END -->
+Every removal or rejection has F01-F08 in the manifest and an absence-proof
+obligation. No rejected behavior may enter M0 or H1 through paraphrase.
 
-Content fingerprint algorithm: SHA-256 of the exact UTF-8 bytes strictly
-between the marker lines, including the newline immediately after the start
-marker and immediately before the end marker.
+## Lifecycle State And Residual Gaps
+
+Prompt 4 is accepted. M0 is viable, H1-01 is accepted, H1-02 is rejected, and
+exact V1 is frozen. The experimental package now equals V1 byte-for-byte.
+Canonical promotion, installation, and Git delivery have not started.
+
+One source-completeness deviation affected only AW01. With task and rubric
+fixed, its worker facts and two payloads were refrozen, affected outputs were
+invalidated, and the family restarted. The compact results owner records the
+complete identities and zero-credit dispositions.
+
+Residual professional limits are source applicability, method prevalence, and
+transfer beyond cited conditions. Residual behavioral limits are live-provider
+recovery, idempotency, eventual consistency, and mutation durability. Residual
+load limits are unavailable token, latency, cost, and prevalence telemetry.
+Residual transfer limits include untested models, hosts, reasoning
+configurations, tools, trackers, source families, and authority variants.
+
+The Deploy Pruning Pass may start only from exact V1 and must protect U01-U16
+plus accepted H1-01. It may not revive H1-02 or infer broader efficacy.
+
+<!-- END TO-SPEC-2026-07-25-SYNTHESIS-DECISION -->
+
+Content fingerprint algorithm: SHA-256 over the exact UTF-8 bytes after the LF
+ending the start marker through the byte immediately before the end marker.
 
 Content fingerprint:
-`9a89ff13692b3b9325ff11081799ed86da6dc47ac2facbfa4de4a0f2008fdbba`
+`78453e43cdd5fe881c06d20a1d2d0f0f9401cf8822a46bad7276c1dfe6c6b355`

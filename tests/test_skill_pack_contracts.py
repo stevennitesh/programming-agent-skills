@@ -1508,6 +1508,185 @@ def test_to_tickets_preserves_coverage_readiness_and_frontier_contract() -> None
         )
 
 
+def assert_to_spec_semantic_contract(
+    package_root: Path,
+    expected_tree_sha256: str,
+    *,
+    profile: str,
+) -> None:
+    assert campaign_artifacts.campaign_tree_hash(package_root)["sha256"] == (
+        expected_tree_sha256
+    )
+    assert sorted(
+        path.relative_to(package_root).as_posix()
+        for path in package_root.rglob("*")
+        if path.is_file()
+    ) == ["SKILL.md", "agents/openai.yaml"]
+    skill = (package_root / "SKILL.md").read_text(encoding="utf-8")
+    normalized = re.sub(r"\s+", " ", skill.lower())
+    assert re.search(r"(?m)^name: to-spec$", skill)
+    assert not implicit_policy(package_root)
+
+    if profile == "incumbent":
+        assert re.findall(r"(?m)^### \d+\. ([A-Za-z ,]+)$", skill) == [
+            "Setup",
+            "Trace settled source and state",
+            "Draft and cover",
+            "Publish, verify, and reconcile",
+        ]
+        for incumbent_semantic in (
+            "one durable parent specification",
+            "bidirectional commitment ledger",
+            "mutation read-back",
+            "publication-recovery",
+            "published-spec",
+            "$repo-bootstrap",
+            "$to-tickets",
+        ):
+            assert incumbent_semantic in normalized
+        return
+
+    assert profile in {
+        "m0",
+        "h1-01",
+        "h1-02",
+        "h1-combined",
+    }
+    headings = re.findall(r"(?m)^## ([A-Za-z]+)$", skill)
+    assert headings == [
+        "Ownership",
+        "Admit",
+        "Synthesize",
+        "Freeze",
+        "Publish",
+        "Return",
+        "Completion",
+    ]
+
+    def section(name: str) -> str:
+        span = skill_pack_contract.level_two_section_span(skill, f"## {name}")
+        assert span is not None, (package_root, name)
+        return re.sub(r"\s+", " ", skill[slice(*span)].lower())
+
+    ownership = section("Ownership")
+    admit = section("Admit")
+    synthesize = section("Synthesize")
+    freeze = section("Freeze")
+    publish = section("Publish")
+    return_contract = section("Return")
+    completion = section("Completion")
+
+    for owner_semantic in (
+        "user and accepted source own",
+        "without changing domain truth",
+        "issue-tracker.md",
+        "triage-labels.md",
+        "$codebase-design",
+        "$to-tickets",
+        "$repo-bootstrap",
+    ):
+        assert owner_semantic in ownership
+    for caller_semantic in (
+        "direct explicit request",
+        "$grill-with-docs",
+        "current domain delta",
+        "closed wayfinder map",
+        "selected improvement",
+        "verified audit finding",
+        "caller payload identities",
+    ):
+        assert caller_semantic in admit
+    assert re.search(
+        r"verified absence.*exact existing equality.*divergence.*unknown state",
+        admit,
+    )
+    assert "source-gap" in admit and "existing-state-conflict" in admit
+
+    for packet_semantic in (
+        "source trace",
+        "supported paths, states, transitions",
+        "security, privacy, permissions",
+        "compatibility, migration, rollback",
+        "proof seams, proof lanes",
+        "map every in-scope commitment",
+        "map every specification commitment back",
+        "child implementation ticket",
+    ):
+        assert packet_semantic in synthesize
+    assert ".tmp/to-spec/<source-slug>.md" in freeze
+    assert re.search(r"read back.*exact bytes.*freeze", freeze)
+    assert re.search(r"explicit invocation authorizes.*one-parent", freeze)
+    assert re.search(r"reuse only.*exact.*otherwise create once", publish)
+    assert re.search(r"immediately refetch.*before applying", publish)
+    for observable in (
+        "title",
+        "body",
+        "roles",
+        "labels",
+        "assignee",
+        "relationships",
+        "affected frontier",
+    ):
+        assert observable in publish
+    assert "never repeat an indeterminate create" in publish
+    assert re.search(r"delete the draft only after verified", publish)
+
+    return_types = (
+        "setup-precondition",
+        "source-gap",
+        "existing-state-conflict",
+        "publication-recovery",
+        "ready-spec",
+    )
+    for return_type in return_types:
+        assert f"`{return_type}`" in return_contract
+    assert "`published-spec`" not in return_contract
+    assert "exactly one status" in return_contract
+    assert "complete only on `ready-spec`" in completion
+    assert "no successor starts" in completion
+    assert "git index" in completion and "`head`" in completion
+
+    assert "highest existing" not in normalized
+    assert "comprehensive, numbered set of user stories" not in normalized
+    assert "value-flow gate" not in normalized
+    assert "ears" not in normalized
+    assert not re.findall(r"(?m)^### \d+\.", skill)
+    assert re.search(
+        r"never invent a label, category, or parent ready-for-agent state",
+        publish,
+    )
+
+    aspect_delta = "test each listed aspect family against source-visible triggers"
+    portfolio_delta = "choose an adequate scope-matched portfolio by proof objective"
+    assert (aspect_delta in synthesize) == (
+        profile in {"h1-01", "h1-combined"}
+    )
+    assert (portfolio_delta in synthesize) == (
+        profile in {"h1-02", "h1-combined"}
+    )
+
+
+def test_to_spec_prompt3_packages_share_the_parameterized_semantic_owner() -> None:
+    packages = (
+        (
+            CUSTOM / "to-spec",
+            "3cdb41fbca411d8c2332c4e9cff52b5ef1000dd28a27422615ac6f150133e06b",
+            "incumbent",
+        ),
+        (
+            ROOT / "skills/experimental/to-spec",
+            "47c223639318b041e6c86e6144b7fb23399634ead73e18ddcf306ab8242effeb",
+            "h1-01",
+        ),
+    )
+    for package_root, expected_tree_sha256, profile in packages:
+        assert_to_spec_semantic_contract(
+            package_root,
+            expected_tree_sha256,
+            profile=profile,
+        )
+
+
 def test_worker_modes_have_distinct_completion_artifacts() -> None:
     contract = (ROOT / "docs/agents/engineering-contract.md").read_text(encoding="utf-8")
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")

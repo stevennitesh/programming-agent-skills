@@ -218,6 +218,168 @@ def lint_worker_fixture(path: Path) -> dict[str, object]:
     }
 
 
+def _worker_evidence_refs(case: dict[str, object]) -> set[str]:
+    refs = {
+        f"field:{field}"
+        for field in REQUIRED_CASE_FIELDS + ("decision_state",)
+        if _nonempty(case.get(field))
+    }
+    decision_state = case.get("decision_state")
+    if isinstance(decision_state, dict):
+        refs.update(
+            f"field:decision_state.{field}"
+            for field, value in decision_state.items()
+            if _nonempty(value)
+        )
+    for source_field in SOURCE_FIELDS:
+        source = case.get(source_field)
+        if isinstance(source, dict):
+            refs.update(f"fact:{fact_id}" for fact_id in source)
+        elif isinstance(source, list):
+            refs.update(f"fact:{index}" for index, _value in enumerate(source))
+    operations = case.get("tools_operations")
+    if isinstance(operations, dict):
+        refs.update(f"operation:{operation_id}" for operation_id in operations)
+    elif isinstance(operations, list):
+        refs.update(f"operation:{operation}" for operation in operations)
+    return refs
+
+
+def _evidence_list(
+    value: object,
+    label: str,
+    allowed: set[str],
+) -> list[str]:
+    if (
+        not isinstance(value, list)
+        or not value
+        or any(not isinstance(item, str) or not item for item in value)
+    ):
+        raise ValueError(f"{label} must be a nonempty list of evidence references")
+    unknown = sorted(set(value).difference(allowed))
+    if unknown:
+        raise ValueError(f"{label} names unknown worker evidence: {', '.join(unknown)}")
+    return value
+
+
+def lint_terminal_registration(
+    fixture_path: Path,
+    registration_path: Path,
+) -> dict[str, object]:
+    """Verify root-only terminal feasibility against worker-visible evidence."""
+
+    fixture_result = lint_worker_fixture(fixture_path)
+    fixture = _read_json(fixture_path)
+    registration = _read_json(registration_path)
+    if not isinstance(fixture, dict) or not isinstance(registration, dict):
+        raise ValueError("Fixture and terminal registration must be JSON objects")
+
+    inherited = fixture.get("fixed_execution")
+    worker_cases = {
+        case_id: case
+        for case_id, case in _case_nodes(
+            fixture,
+            inherited if isinstance(inherited, dict) else None,
+        )
+    }
+    profiles = registration.get("terminal_profiles")
+    registered = registration.get("cases")
+    if not isinstance(profiles, dict) or not profiles:
+        raise ValueError("Terminal registration must define terminal_profiles")
+    if not isinstance(registered, list) or not registered:
+        raise ValueError("Terminal registration must define cases")
+
+    registered_cases: dict[str, dict[str, object]] = {}
+    for item in registered:
+        if not isinstance(item, dict) or not _nonempty(item.get("id")):
+            raise ValueError("Every terminal registration case must name an id")
+        case_id = str(item["id"])
+        if case_id in registered_cases:
+            raise ValueError(f"Terminal registration contains duplicate case: {case_id}")
+        registered_cases[case_id] = item
+
+    missing = sorted(set(worker_cases).difference(registered_cases))
+    unexpected = sorted(set(registered_cases).difference(worker_cases))
+    if missing or unexpected:
+        details = []
+        if missing:
+            details.append("missing " + ", ".join(missing))
+        if unexpected:
+            details.append("unexpected " + ", ".join(unexpected))
+        raise ValueError("Terminal registration case mismatch: " + "; ".join(details))
+
+    for case_id, item in registered_cases.items():
+        terminal = item.get("expected_terminal")
+        if not isinstance(terminal, str) or terminal not in profiles:
+            raise ValueError(
+                f"Case {case_id} expected_terminal must name a terminal profile"
+            )
+        profile = profiles[terminal]
+        if not isinstance(profile, dict):
+            raise ValueError(f"Terminal profile {terminal} must be an object")
+        roles = profile.get("required_roles")
+        adjacent = profile.get("adjacent_terminals")
+        if (
+            not isinstance(roles, list)
+            or not roles
+            or any(not isinstance(role, str) or not role for role in roles)
+            or len(set(roles)) != len(roles)
+        ):
+            raise ValueError(
+                f"Terminal profile {terminal} required_roles must be unique and nonempty"
+            )
+        if (
+            not isinstance(adjacent, list)
+            or not adjacent
+            or any(not isinstance(name, str) or not name for name in adjacent)
+            or terminal in adjacent
+            or len(set(adjacent)) != len(adjacent)
+        ):
+            raise ValueError(
+                f"Terminal profile {terminal} adjacent_terminals must be unique, "
+                "nonempty, and exclude itself"
+            )
+
+        feasibility = item.get("feasibility")
+        if not isinstance(feasibility, dict):
+            raise ValueError(f"Case {case_id} must define feasibility")
+        role_evidence = feasibility.get("role_evidence")
+        exclusions = feasibility.get("adjacent_terminal_exclusions")
+        if not isinstance(role_evidence, dict):
+            raise ValueError(f"Case {case_id} feasibility.role_evidence must be an object")
+        if not isinstance(exclusions, dict):
+            raise ValueError(
+                f"Case {case_id} feasibility.adjacent_terminal_exclusions "
+                "must be an object"
+            )
+        if set(role_evidence) != set(roles):
+            raise ValueError(
+                f"Case {case_id} role evidence must match terminal profile roles"
+            )
+        if set(exclusions) != set(adjacent):
+            raise ValueError(
+                f"Case {case_id} adjacent exclusions must match terminal profile"
+            )
+
+        allowed = _worker_evidence_refs(worker_cases[case_id])
+        for role, evidence in role_evidence.items():
+            _evidence_list(evidence, f"Case {case_id} role {role}", allowed)
+        for other_terminal, evidence in exclusions.items():
+            _evidence_list(
+                evidence,
+                f"Case {case_id} exclusion {other_terminal}",
+                allowed,
+            )
+
+    return {
+        "status": "ok",
+        "schema_version": fixture_result["schema_version"],
+        "case_count": len(worker_cases),
+        "fixture_sha256": _canonical_json_sha256(fixture),
+        "registration_sha256": _canonical_json_sha256(registration),
+    }
+
+
 def _fixture_case(path: Path, case_id: str) -> dict[str, object]:
     payload = _read_json(path)
     if not isinstance(payload, dict):
@@ -401,7 +563,7 @@ def compare_payloads(
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Verify deploy-campaign artifact identities and isolation."
+        description="Verify campaign identities, fixture feasibility, and isolation."
     )
     commands = parser.add_subparsers(dest="command", required=True)
 
@@ -410,6 +572,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
     lint_fixture = commands.add_parser("lint-fixture")
     lint_fixture.add_argument("path", type=Path)
+
+    lint_registration = commands.add_parser("lint-registration")
+    lint_registration.add_argument("fixture", type=Path)
+    lint_registration.add_argument("registration", type=Path)
 
     lint_payload = commands.add_parser("lint-payload")
     lint_payload.add_argument("fixture", type=Path)
@@ -433,6 +599,11 @@ def main(argv: list[str] | None = None) -> int:
             result = campaign_tree_hash(args.path)
         elif args.command == "lint-fixture":
             result = lint_worker_fixture(args.path)
+        elif args.command == "lint-registration":
+            result = lint_terminal_registration(
+                args.fixture,
+                args.registration,
+            )
         elif args.command == "lint-payload":
             result = lint_dispatch_payload(
                 args.fixture,

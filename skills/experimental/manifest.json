@@ -21,6 +21,12 @@
       "candidate_sha256": "4a85be0938e0752e31fd52c2791298421f8545d5d9e51972cef74208b76e6663",
       "active_baseline_sha256": "aa2cefdfc76d82e260efc2272f1ed01098b5b77a5e38a9f159eba66b947ffeff"
     },
+    "to-spec": {
+      "origin": "Deploy campaign to-spec-2026-07-25 Prompt 3 from M0 checkpoint 94521f7c73c756fbeb53de3a04a551007fa473a44108683dd760e42ff5b185b1",
+      "reason": "Prompt 4 accepted exact M0 plus H1-01 as V1; H1-02 was rejected because its registered M0 deficit did not appear.",
+      "candidate_sha256": "d929ef2794e539033d424506bf13af376ff84094efe20b2a9a7e3d5409acbbcd",
+      "active_baseline_sha256": "06b0779b026ce951cf2015a5c341c54d13dd724ff6f6c9b3028f7654d420ace7"
+    },
     "wayfinder": {
       "origin": "skills/custom/wayfinder at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f before the installed-baseline restore",
       "reason": "Preserve the divergent candidate while the installed managed version remains active.",
