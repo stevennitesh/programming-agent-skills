@@ -1,0 +1,296 @@
+{
+  "schema": {
+    "name": "deploy-campaign-final-manifest",
+    "version": 5,
+    "profile": "compact-prompt5-final"
+  },
+  "campaign": {
+    "skill": "to-tickets",
+    "epoch": "2026-07-25",
+    "delivery_mode": "bare",
+    "current_unit": "prompt-5",
+    "status": "complete",
+    "decision": "complete",
+    "campaign_shape": "minimum-candidate",
+    "relationship_delta": "none",
+    "starting_head": "8752406cf437629787c2abec5f66c3c0e6eda8b1",
+    "ending_head": "8752406cf437629787c2abec5f66c3c0e6eda8b1",
+    "git_delivery": "pending",
+    "recommended_next_unit": "none"
+  },
+  "runtime_identities": {
+    "tree_algorithm": "campaign-tree-v1",
+    "m0": {
+      "specification_fingerprint": "16b6fbd4bde2486c29ab3bb5d5e246f2be305f1d6cfe6f3609a98ec5b61a1006",
+      "tree_sha256": "480f837cde4088e41ff7a4ada97be9df634e0ba73cba55fb9c786873d95e40d3",
+      "disposition": "viable-24-of-24"
+    },
+    "h1_original": {
+      "tree_sha256": "53cefaa38d159937655dabf58123a7215ab8d88112abf2732ce7f982d5f03e91",
+      "transformation_ids": ["H1-01"],
+      "disposition": "historical-admission-only-rejected-no-control-deficit"
+    },
+    "h1_final": {
+      "tree_sha256": "480f837cde4088e41ff7a4ada97be9df634e0ba73cba55fb9c786873d95e40d3",
+      "transformation_ids": [],
+      "identity_relationship": "equals-m0"
+    },
+    "v1": {
+      "tree_sha256": "480f837cde4088e41ff7a4ada97be9df634e0ba73cba55fb9c786873d95e40d3",
+      "identity_relationship": "equals-m0-and-final-h1"
+    },
+    "p1": {
+      "tree_sha256": "480f837cde4088e41ff7a4ada97be9df634e0ba73cba55fb9c786873d95e40d3",
+      "identity_relationship": "equals-v1",
+      "disposition": "pruning-not-needed"
+    },
+    "canonical_before": {
+      "tree_sha256": "d37418df65f5306d8f69450b90232c9776e20c7e53429a205ad4ffe7eb49fa1c",
+      "disposition": "historical-comparison"
+    },
+    "canonical": {
+      "path_refs": ["canonical_skill", "canonical_metadata"],
+      "tree_sha256": "480f837cde4088e41ff7a4ada97be9df634e0ba73cba55fb9c786873d95e40d3",
+      "identity_relationship": "equals-p1",
+      "files": {
+        "SKILL.md": "c9430f9b873d1ba33cc9072fc5453e11097b6df482c2c5a1dd687744b3808ad1",
+        "agents/openai.yaml": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94"
+      }
+    },
+    "installed": {
+      "managed_root": "C:\\Users\\steve\\.agents\\skills\\to-tickets",
+      "tree_sha256": "480f837cde4088e41ff7a4ada97be9df634e0ba73cba55fb9c786873d95e40d3",
+      "identity_relationship": "equals-canonical-byte-for-byte",
+      "status": "synchronized"
+    },
+    "historical_c0": {
+      "commit": "b2df62a1879ffe4c5624656f63712c723fcdb44a",
+      "tree_sha256": "7694956e1e90f415b1f6ba668153fa5c83677c2ac7797cf8665f1030dacc2ba4",
+      "disposition": "historical-admission-only-ignored-local-audit",
+      "durable_dependency": false
+    }
+  },
+  "decision_records": {
+    "prompt_1": {
+      "path_ref": "prompt1_capsule",
+      "fingerprint": "16b6fbd4bde2486c29ab3bb5d5e246f2be305f1d6cfe6f3609a98ec5b61a1006",
+      "decision": "ready-for-research"
+    },
+    "prompt_2": {
+      "path_ref": "prompt2_capsule",
+      "fingerprint": "bb3ca5e160f5c0c1d484971c55ca64dc2b2e74e94909bb0373fe1e8ece1f0b3a",
+      "decision": "ready-for-prompt-3"
+    },
+    "prompt_3": {
+      "path_ref": "prompt3_capsule",
+      "fingerprint": "8c7de55182c509cad48f6fc03c1f4a9cd747c46fd19e7aecfd1ec28a06fe7614",
+      "decision": "ready-for-prompt-4"
+    },
+    "prompt_4": {
+      "path_ref": "prompt4_capsule",
+      "fingerprint": "8e90fcd7621fa80b0a9536b5806bfb5b53694bd0e273a485515d0e1965d38518",
+      "decision": "accepted"
+    },
+    "pruning": {
+      "path_ref": "pruning_capsule",
+      "fingerprint": "d778e0f373d15d3425ad0d0e167c73c46b39a243d62f341d6830d639bdf46c3a",
+      "decision": "pruning-not-needed"
+    },
+    "prompt_5": {
+      "path_ref": "prompt5_capsule",
+      "fingerprint": "a5f69b313029cb5b5af06499c61231fa433ad5c4d96cb524c22542cbaf95d348",
+      "decision": "complete"
+    },
+    "active_synthesis": {
+      "path_ref": "active_synthesis",
+      "fingerprint": "dec341ed3c00811333f277ae306d37cdeec8375b746a2c57a4a992720cc4dd07"
+    }
+  },
+  "semantic_state": {
+    "required_ids": [
+      "M01", "M02", "M03", "M04", "M05", "M06", "M07", "M08", "M09", "M10", "M11",
+      "M12", "M13", "M14", "M15", "M16", "M17", "M18", "M19", "M20", "M21", "M22"
+    ],
+    "forbidden_ids": [
+      "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08",
+      "F09", "F10", "F11", "F12", "F13", "F14", "F15", "F16"
+    ],
+    "return_types": [
+      "setup-precondition",
+      "source-gap",
+      "existing-state-conflict",
+      "publication-recovery",
+      "ready-graph"
+    ],
+    "h1_dispositions": {
+      "accepted": [],
+      "rejected": [
+        {
+          "id": "H1-01",
+          "method_evidence": "independently-supported",
+          "applicability": "situational",
+          "decision": "reject-no-control-deficit",
+          "m0_scores": [4, 4, 4, 4, 4],
+          "h1_samples": 0,
+          "wrong_condition_pairs": 0
+        }
+      ]
+    },
+    "unresolved_current_removal_risk": false
+  },
+  "research_classifications": {
+    "packet_sha256": "64496ba822ec0c0eaee1726b21b811868a047f6522332e7e237c284933b3e5a7",
+    "status": "research-complete",
+    "accepted_runtime_transformations": [],
+    "rejected_or_m0_recruited": [
+      "learning-tracer-versus-vertical-delivery",
+      "preparatory-refactoring",
+      "coordination-versus-dependency-readiness",
+      "transitive-reduction-as-runtime-authority",
+      "mutation-journal-as-second-runtime-schema"
+    ]
+  },
+  "relationships": {
+    "delta": "none",
+    "preserved": [
+      "to-spec-to-to-tickets",
+      "improve-or-audit-to-to-tickets",
+      "implement-repair-to-to-tickets",
+      "parallel-implement-repair-to-to-tickets",
+      "to-tickets-to-repo-bootstrap",
+      "to-tickets-to-implement",
+      "to-tickets-to-parallel-implement"
+    ]
+  },
+  "terminal_claims": {
+    "semantic_contract": {
+      "status": "passed-canonical-shared-owner",
+      "scope": "M01-M22, required compatibility, unchanged relationships, F01-F16 absence, typed Return, and completion",
+      "basis": "exact canonical identity, immutable stage decisions, complete read-back, and shared parameterized semantic owner"
+    },
+    "behavioral_contribution_or_non_regression": {
+      "status": "passed-with-tested-bounds",
+      "scope": "exact M0/P1 under fixed Prompt 4 model, host, reasoning configuration, tools, tasks, authority, evidence, and runtime bytes",
+      "basis": "24-of-24 viability with zero critical failures; five M0 H1-01 controls scored 4; no H1 efficacy arm ran"
+    },
+    "runtime_load_direction": {
+      "status": "proxy-only",
+      "basis": "exact bytes and whitespace-delimited words",
+      "p1": {"bytes": 9547, "words": 1234, "lines": 171},
+      "v1_to_p1_delta": {"bytes": 0, "words": 0, "lines": 0, "files": 0},
+      "rejected_h1_delta_removed": {"bytes": 319, "words": 47},
+      "canonical_before_to_p1_delta": {"bytes": 2673, "words": 323, "lines": 36},
+      "unavailable_telemetry": ["tokens", "latency", "cost", "prevalence"]
+    }
+  },
+  "evidence_dispositions": {
+    "retained": [
+      {
+        "path_ref": "worker_fixture",
+        "sha256": "9028a74e9e9519463b0a00b350098c8750d4cbbdb08d231a66ad6ebae80cd8ec",
+        "disposition": "reusable-fixture"
+      },
+      {
+        "path_ref": "root_registration",
+        "sha256": "5e14a5932cfa5e9719a20752b7b068b247fe42456b1ca762b530082531415049",
+        "disposition": "root-rubric-and-registration"
+      },
+      {
+        "path_ref": "prompt4_results",
+        "sha256": "fbd4117a56a446c7761f196a0c63d7a004f7913691bff00dd7cc29a80f91e3e4",
+        "disposition": "exact-reusable-fixed-bounds"
+      }
+    ],
+    "historical": [
+      "prior-current-runtime-behavior: historical-admission-only",
+      "prior-current-load-audit: lane-limited",
+      "prior-installation-record: historical-admission-only",
+      "earlier-nonmatching-candidates: invalidated"
+    ],
+    "removed_campaign_exhaust": [
+      "copied M0 and original-H1 runtime packages",
+      "dispatch materializer and dispatch plan",
+      "fixture-lint map",
+      "Prompt 3 and Prompt 4 routine historical verifiers",
+      "duplicated Prompt 4 proof-coverage record",
+      "per-sample payloads and captures",
+      "routine transcripts and generated worktrees"
+    ],
+    "removed_output_dependency": false
+  },
+  "proof": {
+    "shared_semantic_owner": {
+      "path_ref": "shared_semantic_owner",
+      "owner": "assert_to_tickets_semantic_contract",
+      "root": "skills/custom/to-tickets",
+      "expected_tree_sha256": "480f837cde4088e41ff7a4ada97be9df634e0ba73cba55fb9c786873d95e40d3",
+      "status": "passed"
+    },
+    "directly_affected_snapshot_repairs": [
+      "mutation-read-back",
+      "canonical-package-target",
+      "delivery-route-order-independence",
+      "state-boundary-ownership"
+    ],
+    "affected_contract_file": "59 passed",
+    "full_suite": "215 passed, 4 skipped",
+    "skill_validation": "passed",
+    "markdown_gates": "passed",
+    "diff_checks": "passed",
+    "canonical_read_back": "passed",
+    "installation": {
+      "pre_install_dry_run": "25 managed; updated to-tickets only; 24 unchanged; global bootstrap skipped",
+      "synchronization": "supported installer completed exact authorized cohort",
+      "canonical_installed_parity": "passed-byte-for-byte",
+      "post_install_dry_run": "25 managed; 25 unchanged; global bootstrap skipped"
+    },
+    "head_read_back": "8752406cf437629787c2abec5f66c3c0e6eda8b1"
+  },
+  "compaction": {
+    "retained_eval_path_refs": ["worker_fixture", "root_registration", "prompt4_results"],
+    "experimental_to_tickets_package": "removed-after-canonical-proof",
+    "experimental_manifest_entry": "removed-after-canonical-proof",
+    "other_experimental_candidates": "preserved",
+    "tmp_paths_required": false,
+    "scratch_paths_required": false
+  },
+  "deliberate_non_changes": [
+    "relationship topology",
+    "foreign owner procedures",
+    "research provenance",
+    "Prompt 1 through Pruning capsules",
+    "other experimental candidates",
+    "global AGENTS bootstrap",
+    "Git index",
+    "Git HEAD",
+    "remotes",
+    "Git delivery"
+  ],
+  "residual_gaps": {
+    "professional": ["method prevalence", "transfer beyond cited conditions"],
+    "behavioral": ["live-provider behavior", "idempotency", "eventual consistency", "mutation durability", "duplicate avoidance"],
+    "model": ["transfer beyond fixed Prompt 4 model and reasoning configuration"],
+    "host": ["transfer beyond fixed Codex fresh-context host and tools"],
+    "runtime_load": ["token telemetry", "latency telemetry", "cost telemetry"],
+    "transfer": ["untested trackers", "configurations", "task families", "authority variants", "evidence variants"]
+  },
+  "promotion_critical_paths": [
+    {"id": "research_packet", "path": "docs/research/to-tickets-deploy-2026-07-25.md", "role": "research-provenance"},
+    {"id": "active_synthesis", "path": "docs/synthesis/skills/to-tickets.md", "role": "active-decision"},
+    {"id": "prompt1_capsule", "path": "docs/validation/campaigns/to-tickets-2026-07-25/prompt1-m0.md", "role": "stage-capsule"},
+    {"id": "prompt2_capsule", "path": "docs/validation/campaigns/to-tickets-2026-07-25/prompt2-h1.md", "role": "stage-capsule"},
+    {"id": "prompt3_capsule", "path": "docs/validation/campaigns/to-tickets-2026-07-25/prompt3-build.md", "role": "stage-capsule"},
+    {"id": "prompt4_capsule", "path": "docs/validation/campaigns/to-tickets-2026-07-25/prompt4-decision.md", "role": "stage-capsule"},
+    {"id": "pruning_capsule", "path": "docs/validation/campaigns/to-tickets-2026-07-25/pruning.md", "role": "stage-capsule"},
+    {"id": "prompt5_capsule", "path": "docs/validation/campaigns/to-tickets-2026-07-25/prompt5-final.md", "role": "stage-capsule"},
+    {"id": "candidate_record", "path": "docs/validation/campaigns/to-tickets-2026-07-25/candidate.md", "role": "candidate-promotion-install-evidence"},
+    {"id": "final_manifest", "path": "docs/validation/campaigns/to-tickets-2026-07-25/manifest.json", "role": "final-machine-state"},
+    {"id": "worker_fixture", "path": "docs/validation/evals/to-tickets-2026-07-25/worker-fixture.json", "role": "reusable-worker-fixture"},
+    {"id": "root_registration", "path": "docs/validation/evals/to-tickets-2026-07-25/root-registration.json", "role": "root-rubric-registration"},
+    {"id": "prompt4_results", "path": "docs/validation/evals/to-tickets-2026-07-25/prompt4-results.json", "role": "compact-results-owner"},
+    {"id": "shared_semantic_owner", "path": "tests/test_skill_pack_contracts.py", "role": "canonical-semantic-proof"},
+    {"id": "canonical_skill", "path": "skills/custom/to-tickets/SKILL.md", "role": "canonical-runtime"},
+    {"id": "canonical_metadata", "path": "skills/custom/to-tickets/agents/openai.yaml", "role": "canonical-runtime-metadata"},
+    {"id": "experimental_manifest", "path": "skills/experimental/manifest.json", "role": "candidate-removal-state"}
+  ]
+}

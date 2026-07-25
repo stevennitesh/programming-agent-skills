@@ -5,7 +5,7 @@ import re
 import runpy
 from pathlib import Path
 
-from scripts import skill_pack_contract, validate_skills
+from scripts import campaign_artifacts, skill_pack_contract, validate_skills
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -1321,50 +1321,55 @@ def test_mutating_workflows_require_readback() -> None:
             assert "Refetch or reread the full created parent" in normalized
             assert "compare it with the frozen draft" in normalized
             assert "durable read-back" in normalized
+        elif name == "to-tickets":
+            publish_span = skill_pack_contract.level_two_section_span(
+                text, "## Publish"
+            )
+            assert publish_span is not None
+            publish = " ".join(text[slice(*publish_span)].split()).lower()
+            assert re.search(
+                r"refetch .*complete affected graph.*compare .*verify",
+                publish,
+            )
+            assert "reading back each transition" in publish
         else:
             assert "Mutation read-back" in text, name
 
 
-def test_to_tickets_preserves_coverage_readiness_and_frontier_contract() -> None:
-    tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
+def assert_to_tickets_semantic_contract(
+    package_root: Path,
+    expected_tree_sha256: str,
+    *,
+    profile: str,
+) -> None:
+    assert campaign_artifacts.campaign_tree_hash(package_root)["sha256"] == (
+        expected_tree_sha256
+    )
+    tickets = (package_root / "SKILL.md").read_text(encoding="utf-8")
+    normalized_runtime = re.sub(r"\s+", " ", tickets.lower())
 
     def level_two_section(name: str) -> str:
         match = re.search(
             rf"(?ms)^## {re.escape(name)}\n(.*?)(?=^## |\Z)", tickets
         )
-        assert match is not None, name
+        assert match is not None, (package_root, name)
         return re.sub(r"\s+", " ", match.group(1).lower())
 
-    assert not implicit_policy(CUSTOM / "to-tickets")
-    assert re.findall(r"(?m)^## ([A-Za-z]+)$", tickets) == [
-        "Shape",
-        "Publish",
-        "Return",
-    ]
+    assert not implicit_policy(package_root)
+    assert "explicit" in normalized_runtime and "settled" in normalized_runtime
+    assert "source" in normalized_runtime and "ready-for-agent" in normalized_runtime
+    assert "$repo-bootstrap" in tickets
 
     shape_contract = level_two_section("Shape")
     assert "vertical behavior slice" in shape_contract
-    for rejected_mechanism in (
-        "tracer bullet",
-        "blast radius",
-        "progressive exposure",
-    ):
-        assert rejected_mechanism not in shape_contract
-
     assert "commitment ledger" in shape_contract
-    assert re.search(
-        r"every source-visible implementation commitment.*ticket acceptance.*"
-        r"deferral or exclusion.*no-ticket reason",
-        shape_contract,
-        re.S,
-    )
     assert "blocking edge" in shape_contract
-    assert re.search(r"dependent consumes.*predecessor.*outcome", shape_contract, re.S)
+    assert re.search(r"dependent consumes.*predecessor outcome", shape_contract, re.S)
     assert re.search(
         r"tracker order and serial constraints are not blockers", shape_contract
     )
     assert "state-boundary matrix" in shape_contract
-    assert "supported variants" in shape_contract
+    assert "supported" in shape_contract and "variant" in shape_contract
     assert "not applicable" in shape_contract
     for profile_field in (
         "execution profile",
@@ -1375,26 +1380,19 @@ def test_to_tickets_preserves_coverage_readiness_and_frontier_contract() -> None
         "serial tripwire",
     ):
         assert profile_field in shape_contract
-
     assert "expand-migrate-contract" in shape_contract
     assert re.search(r"contract only after old usage ends", shape_contract)
-    assert re.search(
-        r"no implementation ticket.*preserve tracker state.*recommend `none`.*stop",
-        shape_contract,
-        re.S,
-    )
 
     publish_contract = level_two_section("Publish")
-    assert re.search(r"freeze and audit.*before external mutation", publish_contract, re.S)
+    assert re.search(r"freeze .*before .*mutation", publish_contract, re.S)
     assert re.search(
-        r"create the items first.*relationships.*roles.*mapped state",
+        r"create .*relationship.*(?:mapped state|activate mapped ready-for-agent)",
         publish_contract,
         re.S,
     )
     for observed_surface in (
-        "created or changed item",
         "affected dependent",
-        "body",
+        "bodies",
         "relationships",
         "roles",
         "assignee",
@@ -1403,39 +1401,111 @@ def test_to_tickets_preserves_coverage_readiness_and_frontier_contract() -> None
     ):
         assert observed_surface in publish_contract
     for recovery_fact in (
-        "applied operations",
-        "failed operations",
-        "affected dependents",
-        "observed frontier",
-        "safest recovery",
+        "applied",
+        "failed operation",
+        "observed",
+        "frontier",
+        "safest",
+        "recovery",
     ):
         assert recovery_fact in publish_contract
-    assert "claim no complete graph" in publish_contract
 
     return_contract = level_two_section("Return")
+    assert "exactly one" in return_contract
+    assert "$parallel-implement" in return_contract
+    assert "$implement" in return_contract
+    assert "explicitly requested" in return_contract
+    assert "top-level" in return_contract
+    assert "non-empty" in return_contract
+    assert "parent" in return_contract
+    assert "no successor" in return_contract or "without starting" in return_contract
+
+    if profile == "incumbent":
+        assert re.findall(r"(?m)^## ([A-Za-z]+)$", tickets) == [
+            "Shape",
+            "Publish",
+            "Return",
+        ]
+        assert re.search(
+            r"every source-visible implementation commitment.*ticket acceptance.*"
+            r"deferral or exclusion.*no-ticket reason",
+            shape_contract,
+            re.S,
+        )
+        assert re.search(
+            r"no implementation ticket.*preserve tracker state.*recommend `none`.*stop",
+            shape_contract,
+            re.S,
+        )
+        for result_kind in (
+            "setup precondition",
+            "source-gap packet",
+            "no-ticket coverage result",
+            "consumer repair packet",
+            "partial-publication recovery",
+            "published graph",
+        ):
+            assert result_kind in return_contract
+        assert "claim no complete graph" in publish_contract
+        assert "exact safe continuation" in return_contract
+        assert "recommend and stop without invoking the owner" in return_contract
+        assert "every commitment has a disposition" in return_contract
+        assert "every authorized mutation and affected relationship reads back" in (
+            return_contract
+        )
+        return
+
+    assert profile == "prompt3-candidate"
+    assert re.findall(r"(?m)^## ([A-Za-z]+)$", tickets) == [
+        "Admit",
+        "Shape",
+        "Publish",
+        "Return",
+    ]
     for result_kind in (
-        "setup precondition",
-        "source-gap packet",
-        "no-ticket coverage result",
-        "consumer repair packet",
-        "partial-publication recovery",
-        "published graph",
+        "`setup-precondition`",
+        "`source-gap`",
+        "`existing-state-conflict`",
+        "`publication-recovery`",
+        "`ready-graph`",
     ):
         assert result_kind in return_contract
-    assert "exactly one typed result" in return_contract
-    assert "exact safe continuation" in return_contract
-    assert re.search(
-        r"`\$parallel-implement` only when the user explicitly requested "
-        r"top-level delivery",
-        return_contract,
+    assert "one or more implementation tickets" in shape_contract
+    assert "non-empty ready frontier" in shape_contract
+    assert "consumer repair" not in return_contract
+    assert "no-ticket" not in return_contract
+    assert "exact body" not in publish_contract
+    assert "normalized-semantic" in publish_contract
+    for forbidden_literal in (
+        "approved source",
+        "tracer bullet",
+        "one fresh session",
+        "proposal approval",
+        "blockers-first",
+        "invest checklist",
+        "implementation script",
+        "preparatory refactoring",
+        "coordination requirements",
+        "transitive reduction",
+        "mutation journal",
+    ):
+        assert forbidden_literal not in normalized_runtime
+
+
+def test_to_tickets_preserves_coverage_readiness_and_frontier_contract() -> None:
+    packages = (
+        (
+            CUSTOM / "to-tickets",
+            "480f837cde4088e41ff7a4ada97be9df634e0ba73cba55fb9c786873d95e40d3",
+            "prompt3-candidate",
+        ),
     )
-    assert re.search(r"`\$implement` for a single ready item", return_contract)
-    assert "recommend and stop without invoking the owner" in return_contract
-    assert "every commitment has a disposition" in return_contract
-    assert "every authorized mutation and affected relationship reads back" in (
-        return_contract
-    )
-    assert "without starting it" in return_contract
+    for package_root, expected_tree_sha256, profile in packages:
+        assert_to_tickets_semantic_contract(
+            package_root,
+            expected_tree_sha256,
+            profile=profile,
+        )
 
 
 def test_worker_modes_have_distinct_completion_artifacts() -> None:
@@ -1678,7 +1748,13 @@ def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts
     assert "serial tripwires" in gate and "otherwise dispatch serially" in gate
 
     assert re.search(r"(?m)^\| One parent spec or PRD .* \| `\$parallel-implement` \|$", router)
-    assert tickets.index("`$parallel-implement`") < tickets.index("`$implement`")
+    return_span = skill_pack_contract.level_two_section_span(tickets, "## Return")
+    assert return_span is not None
+    ticket_return = " ".join(tickets[slice(*return_span)].split()).lower()
+    assert "$implement" in ticket_return
+    assert "$parallel-implement" in ticket_return
+    assert "only when the user explicitly requested" in ticket_return
+    assert "verified graph" in ticket_return
     assert "`to-tickets` | Recommend and stop | `$parallel-implement`" in relationships
     assert "| `parallel-implement` | Recommend and stop | `$implement` |" not in relationships
 
@@ -1721,10 +1797,15 @@ def test_state_boundary_proof_has_one_owner_and_explicit_consumers() -> None:
     )
     assert owner_text in contract
     assert owner_text in seed
-    assert "engineering contract owns shared Source Trace, proof, and state-boundary" in (
-        tickets
-    )
-    assert "include the applicable state-boundary matrix" in tickets
+    admit_span = skill_pack_contract.level_two_section_span(tickets, "## Admit")
+    shape_span = skill_pack_contract.level_two_section_span(tickets, "## Shape")
+    assert admit_span is not None and shape_span is not None
+    admit = " ".join(tickets[slice(*admit_span)].split()).lower()
+    shape = " ".join(tickets[slice(*shape_span)].split()).lower()
+    assert "engineering contracts" in admit
+    assert "foreign contracts" in admit
+    assert "state-boundary matrix" in shape
+    assert "supported" in shape and "not applicable" in shape
     assert "graph defect" in parallel
     assert "final proof across all applicable\nstate-boundary branches" in parallel
     assert "State-boundary matrix:" in worker

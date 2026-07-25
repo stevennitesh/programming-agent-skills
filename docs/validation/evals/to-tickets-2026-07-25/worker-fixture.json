@@ -1,0 +1,603 @@
+{
+  "schema_version": 2,
+  "fixture_id": "to-tickets-2026-07-25-prompt4-source-completeness-v2",
+  "isolation": {
+    "candidate_terms_present": false,
+    "prior_outputs_present": false,
+    "conclusions_present": false,
+    "arm_delta": "runtime package only"
+  },
+  "fixed_execution": {
+    "authority": "Read the supplied facts and the assigned runtime package. Produce a read-only simulated result; do not access or mutate a live tracker, repository, Git state, or external system. The supplied facts are exhaustive at the requested abstraction: when they state that a source, packet, operation, or read-back is settled, complete, exact, matching, authorized, or successful, treat that statement as inspectable evidence and do not demand omitted underlying bytes. A read-only simulation may report the terminal supported by supplied simulated outcomes without live mutation.",
+    "tools_operations": [
+      "read the assigned runtime package",
+      "read the supplied source and tracker facts",
+      "derive a proposed ticket graph or typed safe-failure result",
+      "report only the requested output"
+    ],
+    "mutation_boundary": "No durable mutation. Tracker operations and read-backs are supplied observations or requested simulated plans only."
+  },
+  "cases": [
+    {
+      "id": "V01",
+      "family": "invocation",
+      "task": "Apply the assigned runtime to the supplied settled source and report the resulting graph packet.",
+      "facts": {
+        "V01-F1": "The user explicitly selected to-tickets.",
+        "V01-F2": "Parent specification S-V01 is settled, has digest sv01-a, and has implementation slicing as its only remaining work.",
+        "V01-F3": "S-V01 contains one implementation commitment whose Source Trace, desired behavior, acceptance, edge and error treatment, scope fence, stateless not-applicable state matrix, execution profile, proof lane, and no-blocker dependency state are complete.",
+        "V01-F4": "The exact one-ticket graph is source-authorized for this simulation; child T-V01 is created non-ready, read back exactly, activated Ready-for-agent, and the complete final graph read-back matches.",
+        "V01-F5": "No delivery or successor execution is requested or started."
+      },
+      "initial_state": "Compatible simulated tracker; no related child tickets exist.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result with source identity, proposed graph, evidence, recommendation if qualified, and whether any successor started."
+    },
+    {
+      "id": "V02",
+      "family": "setup",
+      "task": "Apply the assigned runtime to the supplied repository and tracker setup facts.",
+      "facts": {
+        "V02-F1": "The user explicitly selected to-tickets with a settled source.",
+        "V02-F2": "The configured tracker exposes create and label operations but no parent or blocking relationship operation and no relationship read-back.",
+        "V02-F3": "No tracker operation has been attempted."
+      },
+      "initial_state": "Tracker and worktree are unchanged.",
+      "decision_state": {
+        "target_resolution": "unresolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result naming the failed gate, exact evidence, unchanged state, and one qualified recommendation."
+    },
+    {
+      "id": "V03",
+      "family": "source",
+      "task": "Create a complete proposed ticket graph from the supplied parent-backed source facts.",
+      "facts": {
+        "V03-F1": "Parent P-17 is settled and has digest parent-17-a.",
+        "V03-F2": "Commitments C1, C2, and C3 are all in scope and each has a complete Ready-for-agent packet with Source Trace, desired behavior, acceptance, edge and error treatment, seams, expected write scope, scope fence, proof, state treatment, execution profile, and role authority.",
+        "V03-F3": "C3 consumes the delivered outcome of C1; C2 is independent.",
+        "V03-F4": "The configured tracker can safely represent and read back all required state.",
+        "V03-F5": "The exact three-ticket graph is source-authorized for this simulation; all children, the C1-to-C3 blocker, roles, Ready-for-agent transitions, and the complete final graph read back exactly."
+      },
+      "initial_state": "No existing children or relationships under P-17.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result with bidirectional commitment coverage, parent identity, ordered tickets, edges, frontier, and evidence."
+    },
+    {
+      "id": "V04",
+      "family": "source",
+      "task": "Create a complete proposed ticket graph from the supplied direct settled packet.",
+      "facts": {
+        "V04-F1": "Packet D-9 is settled, identity-bearing, and authorizes two implementation slices.",
+        "V04-F2": "No authoritative parent relationship exists.",
+        "V04-F3": "The user did not request top-level parent delivery.",
+        "V04-F4": "The configured tracker admits standalone child tickets.",
+        "V04-F5": "Both slices have complete Ready-for-agent packets, and the exact standalone graph is source-authorized for this simulation; child creation, readiness, and the final graph read-back succeed and match."
+      },
+      "initial_state": "No matching tracker items exist.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result with source identity, proposed graph, parent treatment, recommendation if qualified, and evidence."
+    },
+    {
+      "id": "V05",
+      "family": "source",
+      "task": "Apply the assigned runtime when the supplied source facts disagree.",
+      "facts": {
+        "V05-F1": "The source acceptance section says mixed-validity batches are atomic.",
+        "V05-F2": "The source migration appendix says valid records from a mixed-validity batch must persist.",
+        "V05-F3": "The source owner is identified but has supplied no reconciliation.",
+        "V05-F4": "No tracker mutation has occurred."
+      },
+      "initial_state": "Target tracker state is unchanged and inspectable.",
+      "decision_state": {
+        "target_resolution": "unresolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result naming affected fields and owner, observed state, exact safe continuation, and evidence."
+    },
+    {
+      "id": "V06",
+      "family": "reconciliation",
+      "task": "Reconcile the frozen proposed graph with the supplied existing tracker graph.",
+      "facts": {
+        "V06-F1": "The frozen graph identity is graph-a9.",
+        "V06-F2": "Every existing child body, role, state, relationship, claim, and frontier normalizes exactly to graph-a9.",
+        "V06-F3": "All existing item identities and read-backs are inspectable.",
+        "V06-F4": "No mutation is needed."
+      },
+      "initial_state": "An exact complete existing graph is present.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result stating reuse or planned mutation, graph identity, read-back evidence, frontier, and recommendation if qualified."
+    },
+    {
+      "id": "V07",
+      "family": "reconciliation",
+      "task": "Reconcile the frozen proposed graph with the supplied target observations.",
+      "facts": {
+        "V07-F1": "Child T-44 has the planned title but a different body digest.",
+        "V07-F2": "T-44 is claimed by another actor.",
+        "V07-F3": "The invocation does not authorize overwriting or reconciling claimed work.",
+        "V07-F4": "No new create has occurred."
+      },
+      "initial_state": "A divergent claimed child is present.",
+      "decision_state": {
+        "target_resolution": "unresolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result with observed identities, conflicting facts, unchanged state, and the smallest needed authorization or source delta."
+    },
+    {
+      "id": "V08",
+      "family": "graph",
+      "task": "Derive the complete ordered dependency graph and ready frontier.",
+      "facts": {
+        "V08-F1": "Ticket A has no predecessor.",
+        "V08-F2": "Ticket B consumes A's delivered API.",
+        "V08-F3": "Ticket C is independent of A and B.",
+        "V08-F4": "All three tickets otherwise pass Ready-for-agent gates and are unclaimed.",
+        "V08-F5": "The exact graph is source-authorized for this simulation; the A-to-B blocker, stable order, readiness transitions, and complete final read-back all succeed and match."
+      },
+      "initial_state": "Three proposed non-ready tickets; no edges applied.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result with all nodes, true blocker edges, stable order, derived non-empty frontier, and evidence."
+    },
+    {
+      "id": "V09",
+      "family": "graph",
+      "task": "Correct the proposed dependency graph from the supplied source consumption facts and produce the resulting graph packet.",
+      "facts": {
+        "V09-F1": "The proposed graph contains A blocked by B and B blocked by A.",
+        "V09-F2": "The source states that B consumes A's result and A does not consume B.",
+        "V09-F3": "No graph publication has occurred.",
+        "V09-F4": "All other source, ticket, setup, authority, and Ready-for-agent gates are complete and the configured tracker observations are simulated.",
+        "V09-F5": "The corrected graph is source-authorized for this simulation; its children, corrected A-to-B blocker, stable order, Ready-for-agent transitions, and final graph read-back succeed and match."
+      },
+      "initial_state": "A cyclic unpublished proposal exists in memory.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result with the original graph defect, corrected edges, stable order, non-empty frontier, publication disposition, and evidence."
+    },
+    {
+      "id": "V10",
+      "family": "state",
+      "task": "Build the ticket packet for the supplied stateful behavior.",
+      "facts": {
+        "V10-F1": "The feature behaves differently for absent state, reusable current state, and incompatible legacy state.",
+        "V10-F2": "Public API and background-job access paths both invoke the behavior.",
+        "V10-F3": "The source supports variants standard and regulated.",
+        "V10-F4": "Lifecycle transitions create and resume are in scope; delete is excluded.",
+        "V10-F5": "For every named state, access path, variant, and lifecycle branch, the source supplies complete observable behavior, acceptance, edge/error treatment, and proof authority; the exact ticket packet and final simulated graph read-back match."
+      },
+      "initial_state": "No ticket packet has been drafted.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result including the applicable state-boundary matrix, acceptance and proof coverage, exclusions, and evidence."
+    },
+    {
+      "id": "V11",
+      "family": "state",
+      "task": "Build the ticket packet for the supplied stateless behavior.",
+      "facts": {
+        "V11-F1": "The pure formatting function depends only on its explicit input.",
+        "V11-F2": "No persisted, cached, resumed, variant, lifecycle, or access-path state changes semantics.",
+        "V11-F3": "Acceptance and proof are fully specified."
+      },
+      "initial_state": "No ticket packet has been drafted.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result including state-boundary treatment, ticket acceptance, proof, and evidence."
+    },
+    {
+      "id": "V12",
+      "family": "risk",
+      "task": "Order and specify tickets for the supplied irreversible migration.",
+      "facts": {
+        "V12-F1": "The source authorizes a protected-data schema migration and later cutover.",
+        "V12-F2": "The migration cannot switch atomically.",
+        "V12-F3": "Old readers must remain operable until usage ends.",
+        "V12-F4": "Retry, rollback, and partial-state behavior are source-settled.",
+        "V12-F5": "The exact migration graph is source-authorized for this simulation; every child, blocker, compatibility stage, Ready-for-agent transition, and final graph read-back succeeds and matches."
+      },
+      "initial_state": "No migration ticket or dependency order exists.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result with production-path risk ordering, compatibility stages, retry/rollback/partial-state proof, blockers, and evidence."
+    },
+    {
+      "id": "V13",
+      "family": "execution-profile",
+      "task": "Qualify execution ordering for the supplied pair of tickets.",
+      "facts": {
+        "V13-F1": "Tickets A and B both write the same authorization policy module.",
+        "V13-F2": "Both require the sole destructive migration test environment.",
+        "V13-F3": "No evidence proves safe concurrent use.",
+        "V13-F4": "Neither ticket consumes the other's delivered behavior."
+      },
+      "initial_state": "Two proposed tickets have no execution-profile judgment.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result with per-ticket execution profiles, blocker distinction, serialization judgment, and evidence."
+    },
+    {
+      "id": "V14",
+      "family": "publication",
+      "task": "Interpret the supplied simulated create-operation observations.",
+      "facts": {
+        "V14-F1": "The frozen graph planned creates A then B in recoverable non-ready state.",
+        "V14-F2": "Create A returned ID T-1 and immediate read-back matched.",
+        "V14-F3": "Create B timed out and the tracker cannot establish whether it applied.",
+        "V14-F4": "No relationships or readiness transitions ran after the timeout."
+      },
+      "initial_state": "T-1 is observed non-ready; B's existence is unknown.",
+      "decision_state": {
+        "target_resolution": "unresolved",
+        "evidence_availability": "unavailable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result with frozen graph identity, applied and failed operations, exact observed items, duplicate-create treatment, frontier, and safest recovery."
+    },
+    {
+      "id": "V15",
+      "family": "publication",
+      "task": "Interpret the supplied simulated relationship-operation observations.",
+      "facts": {
+        "V15-F1": "Children T-1 and T-2 exist non-ready and their bodies match the frozen packets.",
+        "V15-F2": "The parent link for T-1 read back correctly.",
+        "V15-F3": "The blocking edge T-1 to T-2 failed and the dependent shows no edge.",
+        "V15-F4": "No readiness transition has run."
+      },
+      "initial_state": "Both children are non-ready; one relationship is missing.",
+      "decision_state": {
+        "target_resolution": "unresolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result with both-end relationship observations, readiness decision, current frontier, applied/failed operations, and safest recovery."
+    },
+    {
+      "id": "V16",
+      "family": "publication",
+      "task": "Interpret the supplied simulated readiness-operation observations.",
+      "facts": {
+        "V16-F1": "All child bodies and relationships matched before activation.",
+        "V16-F2": "T-1 activated Ready-for-agent and read back correctly.",
+        "V16-F3": "T-2 activation failed and T-2 remains non-ready.",
+        "V16-F4": "T-3 is blocked by T-2."
+      },
+      "initial_state": "T-1 is ready; T-2 and T-3 are non-ready.",
+      "decision_state": {
+        "target_resolution": "unresolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result with exact ready/non-ready sets, derived exposed frontier, applied/failed operations, and safest recovery."
+    },
+    {
+      "id": "V17",
+      "family": "local-tracker",
+      "task": "Audit the supplied simulated Local Markdown publication observations.",
+      "facts": {
+        "V17-F1": "The configured tracker root is .scratch/payments/issues.",
+        "V17-F2": "Only the two frozen child files changed and exact read-back passed.",
+        "V17-F3": "All unrelated worktree paths are byte-identical.",
+        "V17-F4": "The Git index and HEAD are unchanged."
+      },
+      "initial_state": "A complete Local Markdown graph has been simulated and read back.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result with allowed-path comparison, graph read-back, Git-state evidence, frontier, and recommendation if qualified."
+    },
+    {
+      "id": "V18",
+      "family": "role-authority",
+      "task": "Apply category-role authority to the proposed ticket.",
+      "facts": {
+        "V18-F1": "The source settles all ticket acceptance but names no category role.",
+        "V18-F2": "The tracker offers enhancement, bug, and maintenance roles.",
+        "V18-F3": "No other authority supplies a role.",
+        "V18-F4": "The tracker category role is optional, a roleless ticket is valid, and the exact roleless packet, Ready-for-agent activation, and final simulated graph read-back succeed and match."
+      },
+      "initial_state": "The proposed ticket has no role.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result stating role treatment, authority evidence, proposed packet, and any failed gate."
+    },
+    {
+      "id": "V19",
+      "family": "readback",
+      "task": "Judge completion from the supplied final read-back observations.",
+      "facts": {
+        "V19-F1": "All planned operations reported success.",
+        "V19-F2": "Final refetch shows child T-2 has a different body digest.",
+        "V19-F3": "The observed frontier includes T-2 as ready.",
+        "V19-F4": "The frozen packet and graph identity are available."
+      },
+      "initial_state": "Reported success conflicts with final observable state.",
+      "decision_state": {
+        "target_resolution": "unresolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result with mismatched observations, success decision, recommendation treatment, current frontier, and safest recovery."
+    },
+    {
+      "id": "V20",
+      "family": "mutation-boundary",
+      "task": "Audit the supplied simulated side effects against the runtime mutation boundary.",
+      "facts": {
+        "V20-F1": "Configured tracker publication and read-back succeeded.",
+        "V20-F2": "A source document and one production code file also changed.",
+        "V20-F3": "The Git index and remote are unchanged.",
+        "V20-F4": "The extra file changes were not authorized."
+      },
+      "initial_state": "Tracker state is complete, but unrelated durable changes are observed.",
+      "decision_state": {
+        "target_resolution": "unresolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result with allowed and unauthorized effects, completion decision, exact observed state, and safest continuation."
+    },
+    {
+      "id": "V21",
+      "family": "routing",
+      "task": "Choose the one qualified next-owner recommendation from the verified graph facts.",
+      "facts": {
+        "V21-F1": "The graph is verified, non-empty, exhaustive, and Ready-for-agent.",
+        "V21-F2": "Tickets T-2 and T-4 are ready; T-2 is first in tracker order.",
+        "V21-F3": "The user did not request top-level parent delivery.",
+        "V21-F4": "No successor has started."
+      },
+      "initial_state": "Verified graph with a truthful non-empty frontier.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result with exactly one recommendation, selected ticket if applicable, supporting facts, and whether the successor started."
+    },
+    {
+      "id": "V22",
+      "family": "routing",
+      "task": "Choose the one qualified next-owner recommendation from the verified parent graph facts.",
+      "facts": {
+        "V22-F1": "The graph is parent-backed, verified, non-empty, exhaustive, and Ready-for-agent.",
+        "V22-F2": "The user explicitly requested a top-level parent-delivery run.",
+        "V22-F3": "The request is not delegated and the parent identity is exact.",
+        "V22-F4": "No successor has started."
+      },
+      "initial_state": "Verified parent graph with a truthful non-empty frontier.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result with exactly one recommendation, supporting qualification facts, and whether the successor started."
+    },
+    {
+      "id": "V23",
+      "family": "routing",
+      "task": "Choose the one qualified next-owner recommendation from the direct graph facts.",
+      "facts": {
+        "V23-F1": "The direct graph is verified, non-empty, exhaustive, and Ready-for-agent.",
+        "V23-F2": "No authoritative parent relationship exists.",
+        "V23-F3": "The user expressed a generic preference for concurrency but did not request top-level parent delivery.",
+        "V23-F4": "T-7 is the first ready ticket in tracker order."
+      },
+      "initial_state": "Verified direct graph with a truthful non-empty frontier.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result with exactly one recommendation, selected ticket if applicable, disqualifying and qualifying facts, and whether a successor started."
+    },
+    {
+      "id": "V24",
+      "family": "completion",
+      "task": "Judge whether the supplied run is complete and produce its terminal packet.",
+      "facts": {
+        "V24-F1": "Setup and source authority resolve.",
+        "V24-F2": "Every commitment, ticket, profile, matrix, edge, order, and frontier check passed.",
+        "V24-F3": "Every authorized transition and final full-graph read-back matched.",
+        "V24-F4": "Unrelated state is preserved and no successor started."
+      },
+      "initial_state": "All recorded gates are closed with inspectable evidence.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "Exactly one typed result with evidence, observed state, residual gaps, exactly one qualified recommendation, and explicit successor status."
+    },
+    {
+      "id": "H1P01",
+      "family": "permission-boundary",
+      "task": "Using the assigned runtime, draft the Ready-for-agent ticket packet for this settled authorization change.",
+      "facts": {
+        "H1P01-F1": "The source permits account owners to view invoices and denies billing delegates unless they hold invoice:read.",
+        "H1P01-F2": "A delegate without invoice:read receives HTTP 403 and no invoice metadata.",
+        "H1P01-F3": "A delegate with invoice:read receives only invoices for the delegated account.",
+        "H1P01-F4": "The ticket must preserve both role and permission rules without choosing new policy."
+      },
+      "initial_state": "No ticket packet exists; source and tracker setup are complete.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One proposed Ready-for-agent ticket packet with Source Trace, acceptance, edge/error treatment, proof, scope, dependency state, and any source-owner questions."
+    },
+    {
+      "id": "H1P02",
+      "family": "permission-boundary",
+      "task": "Using the assigned runtime, draft the Ready-for-agent ticket packet for this settled record-export change.",
+      "facts": {
+        "H1P02-F1": "Administrators may export all project records; members may export only records they created.",
+        "H1P02-F2": "Suspended users are denied export regardless of role.",
+        "H1P02-F3": "A denied export creates no file and no download token.",
+        "H1P02-F4": "Audit logging is required for both successful and denied attempts."
+      },
+      "initial_state": "No ticket packet exists; source and tracker setup are complete.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One proposed Ready-for-agent ticket packet with Source Trace, acceptance, edge/error treatment, proof, scope, dependency state, and any source-owner questions."
+    },
+    {
+      "id": "H1P03",
+      "family": "batch-atomicity",
+      "task": "Using the assigned runtime, draft the Ready-for-agent ticket packet for this settled import change.",
+      "facts": {
+        "H1P03-F1": "A batch with only valid rows persists every row.",
+        "H1P03-F2": "A batch containing any invalid row persists no rows.",
+        "H1P03-F3": "The response reports every invalid row and its settled validation code.",
+        "H1P03-F4": "Duplicate external IDs within the same batch are invalid."
+      },
+      "initial_state": "No ticket packet exists; source and tracker setup are complete.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One proposed Ready-for-agent ticket packet with Source Trace, acceptance, edge/error treatment, proof, scope, dependency state, and any source-owner questions."
+    },
+    {
+      "id": "H1P04",
+      "family": "batch-atomicity",
+      "task": "Using the assigned runtime, draft the Ready-for-agent ticket packet for this settled bulk-update change.",
+      "facts": {
+        "H1P04-F1": "Every item must match the supplied version before any item is updated.",
+        "H1P04-F2": "If one item has a stale version, no item changes.",
+        "H1P04-F3": "The response identifies all stale item IDs.",
+        "H1P04-F4": "An empty request is rejected and performs no writes."
+      },
+      "initial_state": "No ticket packet exists; source and tracker setup are complete.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One proposed Ready-for-agent ticket packet with Source Trace, acceptance, edge/error treatment, proof, scope, dependency state, and any source-owner questions."
+    },
+    {
+      "id": "H1P05",
+      "family": "migration-state",
+      "task": "Using the assigned runtime, draft the Ready-for-agent ticket packet for this settled compatibility migration.",
+      "facts": {
+        "H1P05-F1": "Legacy records may omit region; new records must contain a supported region.",
+        "H1P05-F2": "During migration, reads of legacy records derive region from the owning account.",
+        "H1P05-F3": "A legacy record whose account has no supported region is unreadable and must surface error REGION_UNRESOLVED.",
+        "H1P05-F4": "Contracting the fallback is allowed only after no legacy record omits region."
+      },
+      "initial_state": "No ticket packet exists; source and tracker setup are complete.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One proposed Ready-for-agent ticket packet with Source Trace, acceptance, state-boundary treatment, proof, scope, dependency state, and any source-owner questions."
+    },
+    {
+      "id": "H1W01",
+      "family": "fully-discriminating-rule",
+      "task": "Using the assigned runtime, draft the Ready-for-agent ticket packet for this settled pure validation change.",
+      "facts": {
+        "H1W01-F1": "Input is accepted if and only if it is exactly eight ASCII decimal digits.",
+        "H1W01-F2": "All other inputs return INVALID_CODE and produce no writes.",
+        "H1W01-F3": "The function is stateless and has no variants or external effects.",
+        "H1W01-F4": "The source declares this predicate and error behavior complete."
+      },
+      "initial_state": "No ticket packet exists; source and tracker setup are complete.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One proposed Ready-for-agent ticket packet with Source Trace, acceptance, proof, scope, dependency state, and any source-owner questions."
+    },
+    {
+      "id": "H1W02",
+      "family": "authority-gap",
+      "task": "Using the assigned runtime, handle this source packet for a permission change.",
+      "facts": {
+        "H1W02-F1": "The packet says project guests may sometimes download attachments.",
+        "H1W02-F2": "No rule identifies which attachments or conditions apply.",
+        "H1W02-F3": "The source owner is identified but unavailable in this run.",
+        "H1W02-F4": "No tracker mutation has occurred."
+      },
+      "initial_state": "Source authority is incomplete; tracker state is unchanged.",
+      "decision_state": {
+        "target_resolution": "unresolved",
+        "evidence_availability": "unavailable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result with source gaps, affected fields, owner, tracker state, safe continuation, and evidence."
+    },
+    {
+      "id": "H1W03",
+      "family": "fully-discriminating-table",
+      "task": "Using the assigned runtime, draft the Ready-for-agent ticket packet from the settled decision table.",
+      "facts": {
+        "H1W03-F1": "The source provides an exhaustive four-row truth table for two Boolean inputs.",
+        "H1W03-F2": "Each row uniquely specifies the output and error code.",
+        "H1W03-F3": "The source states there are no other inputs, states, variants, or effects.",
+        "H1W03-F4": "The supplied table is the acceptance authority."
+      },
+      "initial_state": "No ticket packet exists; source and tracker setup are complete.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One proposed Ready-for-agent ticket packet with Source Trace, acceptance, proof, scope, dependency state, and any source-owner questions."
+    }
+  ]
+}
