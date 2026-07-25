@@ -6,9 +6,15 @@ import argparse
 import copy
 import hashlib
 import json
+import os
+import re
+import shutil
 import sys
+import tempfile
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+from uuid import uuid4
 
 from scripts.skill_pack_contract import tree_entries
 
@@ -56,6 +62,755 @@ FORBIDDEN_DISPATCH_KEYS = frozenset(
         "scoring",
     }
 )
+CAMPAIGN_SCHEMA_VERSION = 1
+CAMPAIGN_ROOT = Path("docs/validation/campaigns")
+LEASE_PATH = Path(".tmp/deploy-campaign-lease.json")
+DELIVERY_MODES = frozenset({"none", "commit", "push"})
+STAGE_PROFILES = frozenset(
+    {
+        "prompt-1",
+        "research",
+        "prompt-2",
+        "prompt-3",
+        "prompt-4",
+        "pruning",
+        "prompt-5",
+        "prompt-6",
+    }
+)
+SAFE_ID = re.compile(r"^[a-z0-9][a-z0-9-]*$")
+MECHANICAL_STATUSES = frozenset(
+    {"verified", "failed", "stale", "lease-conflict", "execution-error"}
+)
+
+
+def _now() -> str:
+    return datetime.now(UTC).isoformat().replace("+00:00", "Z")
+
+
+def _validate_id(value: str, label: str) -> str:
+    if not SAFE_ID.fullmatch(value):
+        raise ValueError(
+            f"{label} must contain only lowercase letters, digits, and hyphens"
+        )
+    return value
+
+
+def _write_json_file(path: Path, payload: object) -> None:
+    path.write_text(
+        json.dumps(payload, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+
+
+def _replace_json_file(path: Path, payload: object) -> None:
+    descriptor, temporary_name = tempfile.mkstemp(
+        dir=path.parent,
+        prefix=f".{path.name}.",
+        suffix=".tmp",
+    )
+    temporary = Path(temporary_name)
+    try:
+        with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as stream:
+            json.dump(payload, stream, indent=2, sort_keys=True)
+            stream.write("\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def _install_exclusive_json(path: Path, payload: object) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    descriptor, temporary_name = tempfile.mkstemp(
+        dir=path.parent,
+        prefix=f".{path.name}.",
+        suffix=".tmp",
+    )
+    temporary = Path(temporary_name)
+    try:
+        with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as stream:
+            json.dump(payload, stream, indent=2, sort_keys=True)
+            stream.write("\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.link(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def _campaign_manifest_path(worktree: Path, campaign_id: str) -> Path:
+    return worktree / CAMPAIGN_ROOT / campaign_id / "manifest.json"
+
+
+def _campaign_id(skill: str) -> str:
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+    return f"{skill}-{stamp}-{uuid4().hex[:8]}"
+
+
+def start_campaign(
+    skill: str,
+    delivery_mode: str = "none",
+    *,
+    worktree: Path | None = None,
+    campaign_id: str | None = None,
+    owner_token: str | None = None,
+    continuation: str | None = None,
+    from_manifest: Path | None = None,
+    changed_inputs: list[str] | None = None,
+    _supersedes: str | None = None,
+    _held_lease: dict[str, object] | None = None,
+) -> dict[str, object]:
+    """Create one exact campaign epoch and acquire its worktree lease."""
+
+    skill = _validate_id(skill, "Skill")
+    if delivery_mode not in DELIVERY_MODES:
+        raise ValueError("Delivery mode must be one of: none, commit, push")
+    resolved_worktree = (worktree or Path.cwd()).resolve()
+    if continuation is not None:
+        if from_manifest is None:
+            raise ValueError("Continuation requires an exact source manifest")
+        return _continue_campaign(
+            skill,
+            delivery_mode,
+            continuation=continuation,
+            from_manifest=from_manifest,
+            worktree=resolved_worktree,
+            campaign_id=campaign_id,
+            owner_token=owner_token,
+            changed_inputs=changed_inputs or [],
+        )
+    selected_campaign_id = _validate_id(
+        campaign_id or _campaign_id(skill),
+        "Campaign ID",
+    )
+    selected_owner_token = owner_token or f"codex/{uuid4()}"
+    manifest_path = _campaign_manifest_path(
+        resolved_worktree,
+        selected_campaign_id,
+    )
+    lease_path = resolved_worktree / LEASE_PATH
+    created_at = _now()
+    lease = {
+        "schema_version": CAMPAIGN_SCHEMA_VERSION,
+        "worktree": str(resolved_worktree),
+        "campaign_id": selected_campaign_id,
+        "owner_token": selected_owner_token,
+        "acquired_at": created_at,
+        "observed_at": created_at,
+        "status_read_at": None,
+    }
+    if _held_lease is None:
+        try:
+            _install_exclusive_json(lease_path, lease)
+        except FileExistsError:
+            return _failure(
+                "lease-conflict",
+                "lease",
+                manifest_path,
+                "Another Deploy Campaign owns this worktree lease",
+            )
+
+    manifest = {
+        "schema_version": CAMPAIGN_SCHEMA_VERSION,
+        "campaign": {
+            "id": selected_campaign_id,
+            "skill": skill,
+            "delivery_mode": delivery_mode,
+            "worktree": str(resolved_worktree),
+            "supersedes": _supersedes,
+        },
+        "semantic": {
+            "declared_stage": None,
+            "terminal": False,
+            "decision_record": "decisions.md",
+        },
+        "mechanical": {
+            "created_at": created_at,
+            "evidence_state": "current",
+            "last_verification": None,
+            "receipts": [],
+            "invalidations": [],
+        },
+    }
+    campaign_parent = manifest_path.parent.parent
+    campaign_parent.mkdir(parents=True, exist_ok=True)
+    temporary = Path(
+        tempfile.mkdtemp(
+            dir=campaign_parent,
+            prefix=f".{selected_campaign_id}.",
+        )
+    )
+    try:
+        _write_json_file(temporary / "manifest.json", manifest)
+        (temporary / "decisions.md").write_text(
+            "# Deploy Campaign Decisions\n\n"
+            "<!-- campaign-owner: append immutable marker-bounded stage capsules -->\n",
+            encoding="utf-8",
+            newline="\n",
+        )
+        os.replace(temporary, manifest_path.parent)
+        if _held_lease is not None:
+            _replace_json_file(lease_path, lease)
+    except BaseException:
+        shutil.rmtree(temporary, ignore_errors=True)
+        if _held_lease is None:
+            lease_path.unlink(missing_ok=True)
+        raise
+
+    relative_manifest = manifest_path.relative_to(resolved_worktree).as_posix()
+    return {
+        "status": "verified",
+        "campaign_id": selected_campaign_id,
+        "owner_token": selected_owner_token,
+        "manifest": relative_manifest,
+        "next_command": (
+            f"python -m scripts.campaign_artifacts verify {relative_manifest}"
+        ),
+    }
+
+
+def _continue_campaign(
+    skill: str,
+    delivery_mode: str,
+    *,
+    continuation: str,
+    from_manifest: Path,
+    worktree: Path,
+    campaign_id: str | None,
+    owner_token: str | None,
+    changed_inputs: list[str],
+) -> dict[str, object]:
+    if continuation not in {"resume", "repair", "restart"}:
+        raise ValueError("Continuation must be one of: resume, repair, restart")
+    try:
+        prior_campaign_id, manifest = _control_identity(from_manifest, worktree)
+        lease_path = worktree / LEASE_PATH
+        lease = _read_json(lease_path)
+    except (OSError, json.JSONDecodeError, ValueError) as error:
+        return _failure(
+            "failed",
+            "continuation",
+            from_manifest,
+            f"Continuation source is invalid: {error}",
+        )
+    campaign = manifest["campaign"]
+    semantic = manifest.get("semantic")
+    mechanical = manifest.get("mechanical")
+    assert isinstance(campaign, dict)
+    if not isinstance(semantic, dict) or not isinstance(mechanical, dict):
+        return _failure(
+            "failed",
+            "manifest-schema",
+            from_manifest,
+            "Continuation ownership sections are invalid",
+        )
+    if (
+        not isinstance(lease, dict)
+        or lease.get("worktree") != str(worktree)
+        or lease.get("campaign_id") != prior_campaign_id
+        or owner_token is None
+        or lease.get("owner_token") != owner_token
+    ):
+        return _failure(
+            "lease-conflict",
+            "lease",
+            from_manifest,
+            "Continuation does not own the exact source campaign lease",
+        )
+
+    identity_unchanged = (
+        campaign.get("skill") == skill
+        and campaign.get("delivery_mode") == delivery_mode
+    )
+    relative_manifest = from_manifest.resolve().relative_to(worktree).as_posix()
+    if continuation == "resume":
+        if not identity_unchanged or semantic.get("terminal") is True:
+            return _failure(
+                "failed",
+                "continuation",
+                from_manifest,
+                "Resume requires unchanged identity and a nonterminal campaign",
+            )
+        return {
+            "status": "verified",
+            "campaign_id": prior_campaign_id,
+            "manifest": relative_manifest,
+            "continuation": "resume",
+        }
+
+    if continuation == "repair":
+        if not identity_unchanged or semantic.get("terminal") is True:
+            return _failure(
+                "failed",
+                "continuation",
+                from_manifest,
+                "Repair requires unchanged identity and a nonterminal campaign",
+            )
+        if not changed_inputs or any(
+            not isinstance(value, str) or not value for value in changed_inputs
+        ):
+            return _failure(
+                "failed",
+                "continuation",
+                from_manifest,
+                "Repair requires at least one changed mechanical input",
+            )
+        invalidations = mechanical.get("invalidations")
+        if not isinstance(invalidations, list):
+            return _failure(
+                "failed",
+                "manifest-schema",
+                from_manifest,
+                "Mechanical invalidations must be a list",
+            )
+        invalidations.append(
+            {
+                "changed_inputs": sorted(set(changed_inputs)),
+                "observed_at": _now(),
+            }
+        )
+        update_mechanical_state(
+            from_manifest,
+            {
+                "evidence_state": "stale",
+                "invalidations": invalidations,
+            },
+        )
+        return {
+            "status": "stale",
+            "campaign_id": prior_campaign_id,
+            "manifest": relative_manifest,
+            "continuation": "repair",
+            "changed_inputs": sorted(set(changed_inputs)),
+        }
+
+    if identity_unchanged and semantic.get("terminal") is not True:
+        return _failure(
+            "failed",
+            "continuation",
+            from_manifest,
+            "Restart requires changed identity, delivery authority, or terminal state",
+        )
+    return start_campaign(
+        skill,
+        delivery_mode,
+        worktree=worktree,
+        campaign_id=campaign_id,
+        owner_token=owner_token,
+        _supersedes=relative_manifest,
+        _held_lease=lease,
+    )
+
+
+def update_mechanical_state(
+    manifest_path: Path,
+    updates: dict[str, object],
+) -> dict[str, object]:
+    """Atomically update only the automation-owned manifest section."""
+
+    forbidden = {"campaign", "semantic", "schema_version"}.intersection(updates)
+    if forbidden:
+        raise ValueError(
+            "Mechanical updates cannot write "
+            + ", ".join(sorted(forbidden))
+            + " fields"
+        )
+    manifest = _read_json(manifest_path)
+    if not isinstance(manifest, dict) or not isinstance(
+        manifest.get("mechanical"),
+        dict,
+    ):
+        raise ValueError("Campaign manifest mechanical section is invalid")
+    semantic_before = copy.deepcopy(manifest.get("semantic"))
+    manifest["mechanical"].update(copy.deepcopy(updates))
+    if manifest.get("semantic") != semantic_before:
+        raise ValueError("Mechanical updates cannot alter semantic fields")
+    _replace_json_file(manifest_path, manifest)
+    return manifest
+
+
+def _failure(
+    status: str,
+    gate: str,
+    manifest_path: Path,
+    message: str,
+) -> dict[str, object]:
+    if status not in MECHANICAL_STATUSES:
+        raise ValueError(f"Unknown mechanical status: {status}")
+    return {
+        "status": status,
+        "gate": gate,
+        "artifact": str(manifest_path),
+        "message": message,
+        "expensive_work_skipped": True,
+        "exit_code": {
+            "failed": 2,
+            "stale": 3,
+            "lease-conflict": 4,
+            "execution-error": 5,
+        }.get(status, 0),
+        "reentry_command": (
+            f"python -m scripts.campaign_artifacts verify {manifest_path}"
+        ),
+    }
+
+
+def _is_within(path: Path, root: Path) -> bool:
+    try:
+        path.resolve().relative_to(root.resolve())
+    except ValueError:
+        return False
+    return True
+
+
+def _control_identity(
+    manifest_path: Path,
+    worktree: Path,
+) -> tuple[str, dict[str, object]]:
+    supplied_manifest = manifest_path.resolve()
+    manifest = _read_json(supplied_manifest)
+    if not isinstance(manifest, dict):
+        raise ValueError("Manifest must be a JSON object")
+    campaign = manifest.get("campaign")
+    if not isinstance(campaign, dict):
+        raise ValueError("Manifest campaign section is invalid")
+    campaign_id = campaign.get("id")
+    if (
+        manifest.get("schema_version") != CAMPAIGN_SCHEMA_VERSION
+        or campaign.get("worktree") != str(worktree)
+        or not isinstance(campaign_id, str)
+        or not SAFE_ID.fullmatch(campaign_id)
+        or supplied_manifest != _campaign_manifest_path(worktree, campaign_id).resolve()
+    ):
+        raise ValueError("Manifest identity does not match its exact worktree path")
+    return campaign_id, manifest
+
+
+def campaign_status(
+    manifest_path: Path,
+    *,
+    worktree: Path | None = None,
+) -> dict[str, object]:
+    """Read one exact campaign and record the observation needed for abandon."""
+
+    resolved_worktree = (worktree or Path.cwd()).resolve()
+    try:
+        campaign_id, manifest = _control_identity(
+            manifest_path,
+            resolved_worktree,
+        )
+        lease_path = resolved_worktree / LEASE_PATH
+        lease = _read_json(lease_path)
+    except (OSError, json.JSONDecodeError, ValueError) as error:
+        return _failure(
+            "failed",
+            "status-read",
+            manifest_path,
+            f"Campaign status is unavailable: {error}",
+        )
+    if (
+        not isinstance(lease, dict)
+        or lease.get("worktree") != str(resolved_worktree)
+        or lease.get("campaign_id") != campaign_id
+    ):
+        return _failure(
+            "lease-conflict",
+            "lease",
+            manifest_path,
+            "A different campaign owns the worktree lease",
+        )
+    lease["status_read_at"] = _now()
+    _replace_json_file(lease_path, lease)
+    semantic = manifest.get("semantic")
+    stage = semantic.get("declared_stage") if isinstance(semantic, dict) else None
+    return {
+        "status": "verified",
+        "campaign_id": campaign_id,
+        "stage": stage,
+        "owner_token": lease.get("owner_token"),
+        "lease": "owned",
+    }
+
+
+def release_campaign(
+    manifest_path: Path,
+    *,
+    worktree: Path | None = None,
+    owner_token: str | None = None,
+    abandon: bool = False,
+) -> dict[str, object]:
+    """Release an exact-owner lease or explicitly abandon after status read-back."""
+
+    resolved_worktree = (worktree or Path.cwd()).resolve()
+    try:
+        campaign_id, manifest = _control_identity(
+            manifest_path,
+            resolved_worktree,
+        )
+        lease_path = resolved_worktree / LEASE_PATH
+        lease = _read_json(lease_path)
+    except (OSError, json.JSONDecodeError, ValueError) as error:
+        return _failure(
+            "failed",
+            "lease",
+            manifest_path,
+            f"Campaign lease cannot be released: {error}",
+        )
+    if (
+        not isinstance(lease, dict)
+        or lease.get("worktree") != str(resolved_worktree)
+        or lease.get("campaign_id") != campaign_id
+    ):
+        return _failure(
+            "lease-conflict",
+            "lease",
+            manifest_path,
+            "A different campaign owns the worktree lease",
+        )
+    exact_owner = owner_token is not None and owner_token == lease.get("owner_token")
+    if not exact_owner and not abandon:
+        return _failure(
+            "lease-conflict",
+            "lease",
+            manifest_path,
+            "Owner token does not match the campaign lease",
+        )
+    if abandon and lease.get("status_read_at") is None:
+        return _failure(
+            "failed",
+            "status-read",
+            manifest_path,
+            "Explicit abandon requires a prior status read-back",
+        )
+    lease_path.unlink()
+    return {
+        "status": "verified",
+        "campaign_id": campaign_id,
+        "released": True,
+        "abandoned": abandon and not exact_owner,
+    }
+
+
+def verify_campaign(
+    manifest_path: Path,
+    *,
+    worktree: Path | None = None,
+    stage_override: str | None = None,
+) -> dict[str, object]:
+    """Verify one supplied campaign manifest without selecting or advancing it."""
+
+    resolved_worktree = (worktree or Path.cwd()).resolve()
+    supplied_manifest = manifest_path.resolve()
+    campaign_root = (resolved_worktree / CAMPAIGN_ROOT).resolve()
+    if not _is_within(supplied_manifest, campaign_root):
+        return _failure(
+            "failed",
+            "manifest-path",
+            manifest_path,
+            "Manifest is outside the configured campaign root",
+        )
+    try:
+        manifest = _read_json(supplied_manifest)
+    except FileNotFoundError:
+        return _failure(
+            "failed",
+            "manifest-read",
+            manifest_path,
+            "Manifest does not exist",
+        )
+    except (OSError, json.JSONDecodeError) as error:
+        return _failure(
+            "failed",
+            "manifest-read",
+            manifest_path,
+            f"Manifest cannot be read: {error}",
+        )
+    if not isinstance(manifest, dict):
+        return _failure(
+            "failed",
+            "manifest-schema",
+            manifest_path,
+            "Manifest must be a JSON object",
+        )
+    if manifest.get("schema_version") != CAMPAIGN_SCHEMA_VERSION:
+        return _failure(
+            "failed",
+            "manifest-schema",
+            manifest_path,
+            "Manifest schema is foreign or legacy",
+        )
+    campaign = manifest.get("campaign")
+    semantic = manifest.get("semantic")
+    mechanical = manifest.get("mechanical")
+    if not all(
+        isinstance(section, dict)
+        for section in (campaign, semantic, mechanical)
+    ):
+        return _failure(
+            "failed",
+            "manifest-schema",
+            manifest_path,
+            "Manifest ownership sections are incomplete",
+        )
+    assert isinstance(campaign, dict)
+    assert isinstance(semantic, dict)
+    assert isinstance(mechanical, dict)
+    if campaign.get("worktree") != str(resolved_worktree):
+        return _failure(
+            "failed",
+            "manifest-worktree",
+            manifest_path,
+            "Manifest belongs to a different worktree",
+        )
+    skill = campaign.get("skill")
+    delivery_mode = campaign.get("delivery_mode")
+    if (
+        not isinstance(skill, str)
+        or not SAFE_ID.fullmatch(skill)
+        or delivery_mode not in DELIVERY_MODES
+    ):
+        return _failure(
+            "failed",
+            "manifest-schema",
+            manifest_path,
+            "Campaign skill or delivery mode is invalid",
+        )
+    campaign_id = campaign.get("id")
+    if (
+        not isinstance(campaign_id, str)
+        or not SAFE_ID.fullmatch(campaign_id)
+        or supplied_manifest
+        != _campaign_manifest_path(resolved_worktree, campaign_id).resolve()
+    ):
+        return _failure(
+            "failed",
+            "manifest-path",
+            manifest_path,
+            "Manifest path does not match its exact campaign identity",
+        )
+    decision_record = semantic.get("decision_record")
+    supersedes = campaign.get("supersedes")
+    if supersedes is not None:
+        supersedes_path = resolved_worktree / str(supersedes)
+        if (
+            not isinstance(supersedes, str)
+            or Path(supersedes).is_absolute()
+            or not _is_within(supersedes_path, campaign_root)
+            or supersedes_path.name != "manifest.json"
+            or not supersedes_path.is_file()
+        ):
+            return _failure(
+                "failed",
+                "manifest-path",
+                manifest_path,
+                "Superseded manifest pointer escapes or is malformed",
+            )
+    decision_path = supplied_manifest.parent / str(decision_record)
+    if (
+        not isinstance(decision_record, str)
+        or Path(decision_record).is_absolute()
+        or not _is_within(decision_path, supplied_manifest.parent)
+        or decision_path.resolve()
+        != (supplied_manifest.parent / "decisions.md").resolve()
+        or not decision_path.is_file()
+    ):
+        return _failure(
+            "failed",
+            "manifest-path",
+            manifest_path,
+            "Decision record pointer escapes or names a foreign artifact",
+        )
+
+    lease_path = resolved_worktree / LEASE_PATH
+    try:
+        lease = _read_json(lease_path)
+    except (OSError, json.JSONDecodeError):
+        return _failure(
+            "failed",
+            "lease",
+            manifest_path,
+            "Campaign lease is absent or unreadable",
+        )
+    owner_token = lease.get("owner_token") if isinstance(lease, dict) else None
+    if (
+        not isinstance(lease, dict)
+        or lease.get("worktree") != str(resolved_worktree)
+        or lease.get("campaign_id") != campaign_id
+        or not isinstance(owner_token, str)
+        or not owner_token
+    ):
+        return _failure(
+            "lease-conflict",
+            "lease",
+            manifest_path,
+            "A different campaign owns the worktree lease",
+        )
+
+    declared_stage = semantic.get("declared_stage")
+    if declared_stage is None:
+        return _failure(
+            "stale",
+            "semantic-stage",
+            manifest_path,
+            "Campaign owner has not declared a stage",
+        )
+    if (
+        not isinstance(declared_stage, str)
+        or declared_stage not in STAGE_PROFILES
+        or not isinstance(semantic.get("terminal"), bool)
+    ):
+        return _failure(
+            "failed",
+            "semantic-stage",
+            manifest_path,
+            "Owner-declared stage or terminal state is invalid",
+        )
+    if stage_override is not None and stage_override != declared_stage:
+        return _failure(
+            "failed",
+            "semantic-stage",
+            manifest_path,
+            "Advanced stage override does not match the owner-declared stage",
+        )
+    if mechanical.get("evidence_state") == "stale":
+        return _failure(
+            "stale",
+            "mechanical-evidence",
+            manifest_path,
+            "Repair invalidated mechanical evidence for this epoch",
+        )
+
+    semantic_before = copy.deepcopy(semantic)
+    observed_at = _now()
+    update_mechanical_state(
+        supplied_manifest,
+        {
+            "last_verification": {
+                "stage": declared_stage,
+                "status": "verified",
+                "observed_at": observed_at,
+            }
+        },
+    )
+    lease["observed_at"] = observed_at
+    _replace_json_file(lease_path, lease)
+    verified = _read_json(supplied_manifest)
+    if verified.get("semantic") != semantic_before:
+        return _failure(
+            "execution-error",
+            "semantic-ownership",
+            manifest_path,
+            "Verification altered owner-written semantic state",
+        )
+    return {
+        "status": "verified",
+        "campaign_id": campaign_id,
+        "stage": declared_stage,
+        "manifest": str(supplied_manifest),
+    }
 
 
 def _nonempty(value: object) -> bool:
@@ -563,9 +1318,46 @@ def compare_payloads(
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Verify campaign identities, fixture feasibility, and isolation."
+        description="Control Deploy Campaign records and verify campaign artifacts."
     )
     commands = parser.add_subparsers(dest="command", required=True)
+
+    start = commands.add_parser("start")
+    start.add_argument("skill")
+    start.add_argument(
+        "delivery_mode",
+        nargs="?",
+        default="none",
+        choices=sorted(DELIVERY_MODES),
+    )
+    start.add_argument("--worktree", type=Path, default=Path.cwd())
+    start.add_argument("--campaign-id")
+    start.add_argument("--owner-token")
+    start.add_argument(
+        "--continuation",
+        choices=("resume", "repair", "restart"),
+    )
+    start.add_argument("--from-manifest", type=Path)
+    start.add_argument("--changed-input", action="append", default=[])
+    start.add_argument("--json", action="store_true")
+
+    verify = commands.add_parser("verify")
+    verify.add_argument("manifest", type=Path)
+    verify.add_argument("--worktree", type=Path, default=Path.cwd())
+    verify.add_argument("--stage", dest="stage_override")
+    verify.add_argument("--json", action="store_true")
+
+    status = commands.add_parser("status")
+    status.add_argument("manifest", type=Path)
+    status.add_argument("--worktree", type=Path, default=Path.cwd())
+    status.add_argument("--json", action="store_true")
+
+    release = commands.add_parser("release")
+    release.add_argument("manifest", type=Path)
+    release.add_argument("--worktree", type=Path, default=Path.cwd())
+    release.add_argument("--owner-token")
+    release.add_argument("--abandon", action="store_true")
+    release.add_argument("--json", action="store_true")
 
     hash_tree = commands.add_parser("hash-tree")
     hash_tree.add_argument("path", type=Path)
@@ -592,8 +1384,86 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
+def _print_control_result(result: dict[str, object], as_json: bool) -> None:
+    if as_json:
+        print(json.dumps(result, sort_keys=True))
+        return
+    status = str(result["status"])
+    if status != "verified":
+        detail = result.get("message") or result.get("gate") or "mechanical state"
+        print(f"{status}: {detail}")
+        reentry = result.get("reentry_command")
+        if reentry:
+            print(str(reentry))
+        return
+    identity = result.get("manifest") or result.get("campaign_id")
+    stage = result.get("stage")
+    suffix = f" stage={stage}" if stage is not None else ""
+    print(f"verified: {identity}{suffix}")
+    owner_token = result.get("owner_token")
+    if owner_token:
+        print(f"owner-token: {owner_token}")
+    next_command = result.get("next_command")
+    if next_command:
+        print(str(next_command))
+
+
+def _control_exit_code(result: dict[str, object]) -> int:
+    if "exit_code" in result:
+        return int(result["exit_code"])
+    return {
+        "verified": 0,
+        "failed": 2,
+        "stale": 3,
+        "lease-conflict": 4,
+        "execution-error": 5,
+    }[str(result["status"])]
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
+    if args.command in {"start", "verify", "status", "release"}:
+        try:
+            if args.command == "start":
+                result = start_campaign(
+                    args.skill,
+                    args.delivery_mode,
+                    worktree=args.worktree,
+                    campaign_id=args.campaign_id,
+                    owner_token=args.owner_token,
+                    continuation=args.continuation,
+                    from_manifest=args.from_manifest,
+                    changed_inputs=args.changed_input,
+                )
+            elif args.command == "verify":
+                result = verify_campaign(
+                    args.manifest,
+                    worktree=args.worktree,
+                    stage_override=args.stage_override,
+                )
+            elif args.command == "status":
+                result = campaign_status(
+                    args.manifest,
+                    worktree=args.worktree,
+                )
+            else:
+                result = release_campaign(
+                    args.manifest,
+                    worktree=args.worktree,
+                    owner_token=args.owner_token,
+                    abandon=args.abandon,
+                )
+        except (OSError, json.JSONDecodeError, ValueError) as error:
+            artifact = getattr(args, "manifest", Path("<start>"))
+            result = _failure(
+                "execution-error",
+                args.command,
+                artifact,
+                str(error),
+            )
+        _print_control_result(result, args.json)
+        return _control_exit_code(result)
+
     try:
         if args.command == "hash-tree":
             result = campaign_tree_hash(args.path)
