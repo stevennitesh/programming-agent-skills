@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import posixpath
 import re
+import subprocess
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -145,6 +147,810 @@ def exact_content_fingerprint(content: bytes) -> str:
     """Return the v1 exact-byte identity used by mutable epoch artifacts."""
 
     return f"sha256-v1:{hashlib.sha256(content).hexdigest()}"
+
+
+MIGRATION_DISPOSITIONS = frozenset(
+    {
+        "preserve-in-place",
+        "move",
+        "extract-and-preserve",
+        "merge-index",
+        "supersede",
+        "archive",
+        "remove",
+        "owner-gap",
+    }
+)
+EPOCH_DISPOSITIONS = frozenset(
+    {
+        "exact-reusable",
+        "method-evidence-only",
+        "historical-admission-only",
+        "superseded",
+        "unverifiable",
+        "duplicate",
+    }
+)
+CATALOG_QUERY_DISPOSITIONS = frozenset(
+    {
+        "relevant-evidence",
+        "already-represented",
+        "not-applicable",
+        "counterevidence",
+        "unverified-gap",
+    }
+)
+PROOF_REUSE_DISPOSITIONS = frozenset(
+    {"exact-reusable", "lane-limited", "invalidated", "missing"}
+)
+MIGRATION_STATUSES = frozenset(
+    {
+        "inventoried",
+        "prepared",
+        "moved",
+        "references-reconciled",
+        "verified",
+        "blocked",
+    }
+)
+UNSAFE_REMOVAL_BASES = frozenset(
+    {"age", "old", "verbose", "verbosity", "low-link-count", "non-adoption"}
+)
+MARKDOWN_LINK_RE = re.compile(r"!?\[[^\]]*\]\((?P<target>[^)]+)\)")
+
+
+def _migration_rows(
+    payload: dict[str, object],
+    *,
+    visibility: str,
+    failures: list[str],
+) -> list[dict[str, object]]:
+    rows = payload.get("rows")
+    if not isinstance(rows, list):
+        failures.append(f"{visibility.title()} migration rows must be a list.")
+        return []
+    result: list[dict[str, object]] = []
+    for index, row in enumerate(rows):
+        if not isinstance(row, dict):
+            failures.append(
+                f"{visibility.title()} migration row {index} must be an object."
+            )
+            continue
+        result.append(row)
+    return result
+
+
+def _validate_migration_row(
+    row: dict[str, object],
+    *,
+    visibility: str,
+    seen_ids: set[str],
+    seen_sources: set[str],
+    failures: list[str],
+) -> None:
+    migration_id = row.get("migration_id")
+    if (
+        not isinstance(migration_id, str)
+        or re.fullmatch(r"MIG-[0-9]{4}", migration_id) is None
+    ):
+        failures.append(f"Invalid migration ID: {migration_id!r}")
+    elif migration_id in seen_ids:
+        failures.append(f"Duplicate migration ID: {migration_id}")
+    else:
+        seen_ids.add(migration_id)
+
+    source = row.get("source")
+    if not isinstance(source, dict):
+        failures.append(f"Migration row has no source: {migration_id}")
+        return
+    source_key = source.get("key")
+    if not isinstance(source_key, str) or not source_key:
+        failures.append(f"Migration row has no source key: {migration_id}")
+        return
+    if source_key in seen_sources:
+        failures.append(f"Duplicate migration source: {source_key}")
+    else:
+        seen_sources.add(source_key)
+
+    state = source.get("state")
+    is_private = state in {"private-ignored", "ignored", "local-residue"}
+    if visibility == "public" and is_private:
+        failures.append(f"Private inventory leaked into public ledger: {migration_id}")
+
+    fingerprint = source.get("fingerprint")
+    if fingerprint is None:
+        if row.get("status") != "blocked":
+            failures.append(f"Unreadable source must be blocked: {migration_id}")
+        if source.get("identity") is not None:
+            failures.append(
+                f"Unreadable source identity must not be inferred: {migration_id}"
+            )
+    elif (
+        not isinstance(fingerprint, str)
+        or re.fullmatch(r"sha256-v1:[0-9a-f]{64}", fingerprint) is None
+    ):
+        failures.append(f"Invalid source fingerprint: {migration_id}")
+    if (
+        row.get("artifact_class") == "campaign"
+        and source.get("identity") is None
+    ):
+        failures.append(
+            f"Campaign member has no applicable identity: {migration_id}"
+        )
+
+    axes = (
+        ("migration_disposition", MIGRATION_DISPOSITIONS),
+        ("epoch_disposition", EPOCH_DISPOSITIONS),
+        ("catalog_query_disposition", CATALOG_QUERY_DISPOSITIONS),
+        ("proof_reuse_disposition", PROOF_REUSE_DISPOSITIONS),
+    )
+    if any(row.get(name) not in allowed for name, allowed in axes):
+        failures.append(
+            f"Migration row requires distinct disposition axes: {migration_id}"
+        )
+
+    owner = row.get("owner")
+    owner_gap = row.get("owner_gap")
+    disposition = row.get("migration_disposition")
+    if disposition == "owner-gap":
+        if not isinstance(owner_gap, str) or not owner_gap:
+            failures.append(f"Owner-gap row must explain the gap: {migration_id}")
+    elif not isinstance(owner, str) or not owner:
+        failures.append(f"Migration row has no owner: {migration_id}")
+
+    status = row.get("status")
+    if status not in MIGRATION_STATUSES:
+        failures.append(f"Invalid migration status: {migration_id} -> {status!r}")
+    if status == "verified":
+        required_proof = row.get("required_proof")
+        observed_result = row.get("observed_result")
+        if (
+            not isinstance(required_proof, list)
+            or not required_proof
+            or not isinstance(observed_result, dict)
+            or observed_result.get("passed") is not True
+        ):
+            failures.append(f"Migration row verified before proof: {migration_id}")
+
+    recovery = row.get("recovery")
+    if not isinstance(recovery, dict) or not recovery.get("pointer"):
+        failures.append(f"Migration row has no recovery pointer: {migration_id}")
+    elif disposition in {"move", "remove"} and not recovery.get("applicable_lock"):
+        failures.append(
+            f"Migration move/remove row requires an applicable Lock: {migration_id}"
+        )
+
+    basis = row.get("basis")
+    if disposition == "remove" and isinstance(basis, list):
+        normalized_basis = {
+            item.casefold() for item in basis if isinstance(item, str)
+        }
+        unsafe = sorted(normalized_basis & UNSAFE_REMOVAL_BASES)
+        if unsafe:
+            failures.append(
+                f"Migration row has unsafe removal basis: "
+                f"{migration_id} -> {', '.join(unsafe)}"
+            )
+
+
+def validate_migration_control(
+    public: dict[str, object],
+    private: dict[str, object],
+    observed: dict[str, object],
+) -> list[str]:
+    """Validate one complete public/private migration fixed point."""
+
+    failures: list[str] = []
+    if public.get("format") != 1:
+        failures.append("Public migration control must use format 1.")
+    if private.get("format") != 1:
+        failures.append("Private migration control must use format 1.")
+
+    fixed_point = public.get("fixed_point")
+    if not isinstance(fixed_point, dict):
+        failures.append("Migration control has no fixed point.")
+        fixed_point = {}
+    source_head = fixed_point.get("source_head")
+    if (
+        not isinstance(source_head, str)
+        or re.fullmatch(r"[0-9a-f]{40}", source_head) is None
+    ):
+        failures.append("Migration control has no valid source HEAD.")
+    private_fixed_point = private.get("fixed_point")
+    if (
+        not isinstance(private_fixed_point, dict)
+        or private_fixed_point.get("source_head") != source_head
+    ):
+        failures.append("Private migration source HEAD does not match.")
+    for key in (
+        "public_inventory_fingerprint",
+        "private_inventory_fingerprint",
+    ):
+        if fixed_point.get(key) != observed.get(key):
+            failures.append(f"Fixed point drift: {key}")
+
+    public_rows = _migration_rows(
+        public,
+        visibility="public",
+        failures=failures,
+    )
+    private_rows = _migration_rows(
+        private,
+        visibility="private",
+        failures=failures,
+    )
+    seen_ids: set[str] = set()
+    seen_sources: set[str] = set()
+    public_sources: set[str] = set()
+    private_sources: set[str] = set()
+    for row in public_rows:
+        _validate_migration_row(
+            row,
+            visibility="public",
+            seen_ids=seen_ids,
+            seen_sources=seen_sources,
+            failures=failures,
+        )
+        source = row.get("source")
+        if isinstance(source, dict) and isinstance(source.get("key"), str):
+            public_sources.add(str(source["key"]))
+    for row in private_rows:
+        _validate_migration_row(
+            row,
+            visibility="private",
+            seen_ids=seen_ids,
+            seen_sources=seen_sources,
+            failures=failures,
+        )
+        source = row.get("source")
+        if isinstance(source, dict) and isinstance(source.get("key"), str):
+            private_sources.add(str(source["key"]))
+
+    observed_public = {
+        str(item) for item in observed.get("public_source_keys", [])
+    }
+    observed_private = {
+        str(item) for item in observed.get("private_source_keys", [])
+    }
+    for source_key in sorted(observed_public - public_sources):
+        failures.append(f"Missing migration row: {source_key}")
+    for source_key in sorted(public_sources - observed_public):
+        failures.append(f"Stale migration row: {source_key}")
+    for source_key in sorted(observed_private - private_sources):
+        failures.append(f"Missing private migration row: {source_key}")
+    for source_key in sorted(private_sources - observed_private):
+        failures.append(f"Stale private migration row: {source_key}")
+    return failures
+
+
+def _path_fingerprint(path: Path) -> str | None:
+    try:
+        if path.is_file():
+            return exact_content_fingerprint(path.read_bytes())
+        if path.is_dir():
+            if (path / ".git").exists():
+                repository_fingerprint = _repository_fingerprint(path)
+                if repository_fingerprint is not None:
+                    return repository_fingerprint
+            digest = hashlib.sha256()
+            for child in sorted(
+                (item for item in path.rglob("*") if item.is_file()),
+                key=lambda item: item.relative_to(path).as_posix(),
+            ):
+                relative = child.relative_to(path).as_posix().encode("utf-8")
+                content = child.read_bytes()
+                digest.update(len(relative).to_bytes(8, "big"))
+                digest.update(relative)
+                digest.update(len(content).to_bytes(8, "big"))
+                digest.update(content)
+            return f"sha256-v1:{digest.hexdigest()}"
+    except OSError:
+        return None
+    return None
+
+
+def _repository_fingerprint(path: Path) -> str | None:
+    """Fingerprint a local Git evidence root without hashing unchanged objects."""
+
+    try:
+        head = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=path,
+            check=True,
+            capture_output=True,
+        ).stdout.strip()
+        diff = subprocess.run(
+            ["git", "diff", "--binary", "HEAD", "--"],
+            cwd=path,
+            check=True,
+            capture_output=True,
+        ).stdout
+        untracked_output = subprocess.run(
+            ["git", "ls-files", "--others", "--exclude-standard", "-z"],
+            cwd=path,
+            check=True,
+            capture_output=True,
+        ).stdout
+        untracked = [
+            item
+            for item in untracked_output.split(b"\0")
+            if item
+        ]
+        digest = hashlib.sha256()
+        for label, content in ((b"HEAD", head), (b"DIFF", diff)):
+            digest.update(label)
+            digest.update(len(content).to_bytes(8, "big"))
+            digest.update(content)
+        for encoded_relative in sorted(untracked):
+            relative = encoded_relative.decode(
+                "utf-8",
+                errors="surrogateescape",
+            )
+            content = (path / relative).read_bytes()
+            digest.update(b"UNTRACKED")
+            digest.update(len(encoded_relative).to_bytes(8, "big"))
+            digest.update(encoded_relative)
+            digest.update(len(content).to_bytes(8, "big"))
+            digest.update(content)
+        return f"sha256-v1:{digest.hexdigest()}"
+    except (OSError, subprocess.SubprocessError, UnicodeError):
+        return None
+
+
+def _artifact_identity(path: Path) -> str | None:
+    try:
+        if path.name == "manifest.json":
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            campaign = payload.get("campaign") if isinstance(payload, dict) else None
+            if isinstance(campaign, dict):
+                skill = campaign.get("skill")
+                epoch = campaign.get("epoch")
+                if isinstance(skill, str) and isinstance(epoch, str):
+                    return f"campaign:{skill}:{epoch}"
+                campaign_id = campaign.get("id")
+                if isinstance(campaign_id, str):
+                    return f"campaign:{campaign_id}"
+        if path.suffix == ".json":
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            if isinstance(payload, dict):
+                artifact_id = payload.get("artifact_id")
+                if isinstance(artifact_id, str):
+                    return artifact_id
+        if path.suffix == ".md":
+            metadata = _artifact_metadata(path)
+            artifact_id = metadata.get("artifact_id")
+            if isinstance(artifact_id, str):
+                return artifact_id
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return None
+    return None
+
+
+def _artifact_class(relative: str, state: str) -> str:
+    if state in {"private-ignored", "ignored"}:
+        return "private-evidence"
+    if state == "local-residue":
+        return "local-residue"
+    for prefix, artifact_class in (
+        (".archive/docs/", "historical-documentation"),
+        ("docs/research/", "research"),
+        ("docs/synthesis/", "synthesis"),
+        ("docs/validation/campaigns/", "campaign"),
+        ("docs/validation/evals/", "evaluation"),
+        ("docs/validation/transcripts/", "validation-transcript"),
+        ("docs/validation/", "validation"),
+        ("skills/custom/", "active-runtime"),
+        ("skills/experimental/", "experimental-runtime"),
+        ("skills/extra/", "optional-runtime"),
+        ("skills/.archive/", "retired-runtime"),
+        ("docs/agents/", "control-plane"),
+        ("docs/adr/", "decision"),
+        ("docs/plans/", "control-plane"),
+    ):
+        if relative.startswith(prefix):
+            return artifact_class
+    return "control-plane"
+
+
+def _migration_plan(
+    relative: str,
+    *,
+    state: str,
+) -> tuple[str, str | None, str | None, str | None, list[str]]:
+    if state in {"private-ignored", "ignored"}:
+        return (
+            "preserve-in-place",
+            "ignored-private-evidence",
+            None,
+            None,
+            ["private-boundary", "preserve-first"],
+        )
+    if state == "local-residue":
+        return (
+            "remove",
+            "local-residue-cleanup",
+            None,
+            None,
+            ["empty-local-residue", "separately-authorized-cleanup"],
+        )
+    if relative.startswith("docs/research/skill-facets/"):
+        parts = PurePosixPath(relative).parts
+        skill = parts[3] if len(parts) > 3 else "unknown"
+        return (
+            "merge-index",
+            f"docs/research/skills/{skill}/README.md",
+            None,
+            f"docs/research/skills/{skill}/<pending-packet-id>.md",
+            ["issue-34-current-to-target-mapping"],
+        )
+    if relative.startswith("docs/research/language/skill pack ideas/"):
+        return (
+            "extract-and-preserve",
+            "docs/research/skill-pack-composition/README.md",
+            None,
+            "docs/research/skill-pack-composition/sources/<pending-source-id>.md",
+            ["issue-34-current-to-target-mapping"],
+        )
+    if relative == "docs/research/catalog-contract-research.md":
+        return (
+            "move",
+            "docs/research/skill-pack-composition/README.md",
+            None,
+            "docs/research/skill-pack-composition/sources/<pending-source-id>.md",
+            ["issue-34-current-to-target-mapping"],
+        )
+    if (
+        relative.startswith("docs/research/")
+        and len(PurePosixPath(relative).parts) == 3
+        and PurePosixPath(relative).name.casefold() != "readme.md"
+    ):
+        return (
+            "move",
+            "docs/research/skills/README.md",
+            None,
+            "docs/research/skills/<owner-gap>/<pending-packet-id>.md",
+            ["issue-34-current-to-target-mapping"],
+        )
+    if relative.startswith("docs/validation/campaigns/"):
+        parts = PurePosixPath(relative).parts
+        epoch = parts[3] if len(parts) > 3 else "<pending-epoch>"
+        skill = epoch.rsplit("-", 3)[0] if "-" in epoch else "<owner-gap>"
+        suffix = "/".join(parts[4:])
+        target = f"docs/validation/skills/{skill}/campaigns/{epoch}"
+        if suffix:
+            target += f"/{suffix}"
+        return (
+            "move",
+            f"docs/validation/skills/{skill}/README.md",
+            None,
+            target,
+            ["issue-34-current-to-target-mapping"],
+        )
+    if relative.startswith(("docs/validation/evals/", "docs/validation/transcripts/")):
+        return (
+            "owner-gap",
+            None,
+            "Per-skill versus pack-level validation owner is not yet proved.",
+            None,
+            ["issue-34-owner-gap-rule"],
+        )
+    return (
+        "preserve-in-place",
+        _default_owner(relative),
+        None,
+        None,
+        ["issue-34-preserve-first"],
+    )
+
+
+def _default_owner(relative: str) -> str:
+    for prefix, owner in (
+        ("docs/research/", "docs/research/README.md"),
+        ("docs/synthesis/", "docs/synthesis/README.md"),
+        ("docs/validation/", "docs/validation/README.md"),
+        ("skills/custom/", "skills/custom"),
+        ("skills/experimental/", "skills/experimental"),
+        ("skills/extra/", "skills/extra"),
+        ("skills/.archive/", "skills/.archive"),
+        (".archive/docs/", ".archive/docs"),
+        ("docs/agents/", "AGENTS.md"),
+        ("docs/adr/", "docs/adr"),
+        ("docs/plans/", "docs/plans/README.md"),
+    ):
+        if relative.startswith(prefix):
+            return owner
+    return relative
+
+
+def _current_authority(relative: str) -> bool:
+    return (
+        relative in {"AGENTS.md", "CONTEXT.md", "README.md", ".gitignore"}
+        or relative.startswith(("docs/agents/", "docs/adr/", "docs/plans/"))
+        or relative
+        in {
+            "docs/research/README.md",
+            "docs/synthesis/README.md",
+            "docs/synthesis/skill-context-relationships.md",
+            "docs/validation/README.md",
+        }
+        or relative.startswith("docs/synthesis/methods/")
+        or relative
+        in {
+            "scripts/campaign_artifacts.py",
+            "scripts/install_skills.py",
+            "scripts/skill_pack_contract.py",
+            "scripts/validate_skills.py",
+        }
+    )
+
+
+def _observation_fingerprint(
+    observations: list[dict[str, object]],
+) -> str:
+    content = json.dumps(
+        observations,
+        ensure_ascii=False,
+        separators=(",", ":"),
+        sort_keys=True,
+    ).encode("utf-8")
+    return exact_content_fingerprint(content)
+
+
+def _resolved_markdown_targets(
+    referrer: str,
+    content: str,
+) -> set[str]:
+    targets: set[str] = set()
+    parent = PurePosixPath(referrer).parent.as_posix()
+    for match in MARKDOWN_LINK_RE.finditer(content):
+        raw_target = match.group("target").strip()
+        if raw_target.startswith("<") and ">" in raw_target:
+            raw_target = raw_target[1 : raw_target.index(">")]
+        else:
+            raw_target = re.split(r"\s+[\"']", raw_target, maxsplit=1)[0]
+        raw_target = raw_target.split("#", 1)[0].split("?", 1)[0]
+        if (
+            not raw_target
+            or raw_target.startswith(("/", "#"))
+            or re.match(r"^[a-zA-Z][a-zA-Z0-9+.-]*:", raw_target)
+        ):
+            continue
+        resolved = posixpath.normpath(posixpath.join(parent, raw_target))
+        if resolved != ".." and not resolved.startswith("../"):
+            targets.add(PurePosixPath(resolved).as_posix())
+    return targets
+
+
+def _container_identities(
+    root: Path,
+    public_paths: list[str],
+) -> dict[str, str]:
+    identities: dict[str, str] = {}
+    for relative in public_paths:
+        if (
+            relative.startswith("docs/validation/campaigns/")
+            and PurePosixPath(relative).name == "manifest.json"
+        ):
+            identity = _artifact_identity(root / PurePosixPath(relative))
+            if identity is not None:
+                identities[PurePosixPath(relative).parent.as_posix()] = identity
+    return identities
+
+
+def _container_identity(
+    relative: str,
+    identities: dict[str, str],
+) -> str | None:
+    path = PurePosixPath(relative)
+    for parent in (path.parent, *path.parents):
+        identity = identities.get(parent.as_posix())
+        if identity is not None:
+            return identity
+    return None
+
+
+def build_migration_control(
+    root: Path,
+    *,
+    public_paths: list[str],
+    private_paths: list[str],
+    reference_paths: list[str],
+    head: str,
+    public_states: dict[str, str] | None = None,
+    private_states: dict[str, str] | None = None,
+) -> tuple[dict[str, object], dict[str, object], dict[str, object]]:
+    """Build deterministic public control and private ignored sidecar payloads."""
+
+    public_states = public_states or {}
+    private_states = private_states or {}
+    reference_text: dict[str, str] = {}
+    reference_targets: dict[str, set[str]] = {}
+    for relative in sorted(set(reference_paths)):
+        try:
+            reference_text[relative] = (root / relative).read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        reference_targets[relative] = _resolved_markdown_targets(
+            relative,
+            reference_text[relative],
+        )
+    container_identities = _container_identities(root, public_paths)
+
+    public_observations: list[dict[str, object]] = []
+    private_observations: list[dict[str, object]] = []
+    public_rows: list[dict[str, object]] = []
+    private_rows: list[dict[str, object]] = []
+    next_id = 1
+    for visibility, paths, states, observations, rows in (
+        (
+            "public",
+            public_paths,
+            public_states,
+            public_observations,
+            public_rows,
+        ),
+        (
+            "private",
+            private_paths,
+            private_states,
+            private_observations,
+            private_rows,
+        ),
+    ):
+        for relative in sorted(set(paths)):
+            state = states.get(
+                relative,
+                "tracked" if visibility == "public" else "private-ignored",
+            )
+            path = root / PurePosixPath(relative)
+            fingerprint = _path_fingerprint(path)
+            identity = (
+                _artifact_identity(path) or _container_identity(
+                    relative,
+                    container_identities,
+                )
+                if fingerprint is not None
+                else None
+            )
+            inbound_references = (
+                sorted(
+                    reference
+                    for reference, content in reference_text.items()
+                    if reference != relative
+                    and (
+                        relative in content
+                        or relative in reference_targets.get(reference, set())
+                    )
+                )
+                if visibility == "public"
+                else []
+            )
+            observation = {
+                "key": relative,
+                "state": state,
+                "fingerprint": fingerprint,
+                "identity": identity,
+                "inbound_references": inbound_references,
+            }
+            observations.append(observation)
+            disposition, owner, owner_gap, target_path, basis = _migration_plan(
+                relative,
+                state=state,
+            )
+            changing = disposition in {
+                "move",
+                "extract-and-preserve",
+                "merge-index",
+                "supersede",
+                "archive",
+                "remove",
+            }
+            status = "inventoried" if fingerprint is not None else "blocked"
+            row: dict[str, object] = {
+                "migration_id": f"MIG-{next_id:04d}",
+                "source": {
+                    "key": relative,
+                    "state": state,
+                    "fingerprint": fingerprint,
+                    "identity": identity,
+                },
+                "artifact_class": _artifact_class(relative, state),
+                "inbound_references": inbound_references,
+                "owner": owner,
+                "owner_gap": owner_gap,
+                "migration_disposition": disposition,
+                "epoch_disposition": (
+                    "exact-reusable"
+                    if visibility == "public" and _current_authority(relative)
+                    else (
+                        "unverifiable"
+                        if visibility == "private"
+                        else "historical-admission-only"
+                    )
+                ),
+                "catalog_query_disposition": "unverified-gap",
+                "proof_reuse_disposition": "missing",
+                "target": {"semantic_id": None, "path": target_path},
+                "basis": basis,
+                "reference_rewrite_set": (
+                    inbound_references if changing else []
+                ),
+                "required_proof": (
+                    [
+                        "target-read-back",
+                        "reference-reconciliation",
+                        "owner-routing",
+                        "validator-proof",
+                        "old-path-disposition",
+                    ]
+                    if changing
+                    else ["fixed-point-identity"]
+                ),
+                "observed_result": None,
+                "status": status,
+                "residual_risk": (
+                    "source access or hashing failed"
+                    if fingerprint is None
+                    else (
+                        "future migration proof and semantic identity remain pending"
+                        if changing
+                        else "epoch admission and proof reuse remain unassessed"
+                    )
+                ),
+                "recovery": {
+                    "pointer": (
+                        f"git:{head}:{relative}@{fingerprint}"
+                        if state == "tracked"
+                        else relative
+                    ),
+                    "applicable_lock": (
+                        "FCE-pack-lock"
+                        if changing and state != "local-residue"
+                        else (
+                            "authorized-cleanup-lock"
+                            if state == "local-residue"
+                            else None
+                        )
+                    ),
+                },
+            }
+            rows.append(row)
+            next_id += 1
+
+    public_inventory_fingerprint = _observation_fingerprint(public_observations)
+    private_inventory_fingerprint = _observation_fingerprint(private_observations)
+    private: dict[str, object] = {
+        "format": 1,
+        "fixed_point": {
+            "source_head": head,
+            "private_inventory_fingerprint": private_inventory_fingerprint,
+        },
+        "rows": private_rows,
+    }
+    private_bytes = (
+        json.dumps(private, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
+    ).encode("utf-8")
+    public: dict[str, object] = {
+        "format": 1,
+        "fixed_point": {
+            "source_head": head,
+            "public_inventory_fingerprint": public_inventory_fingerprint,
+            "private_inventory_fingerprint": private_inventory_fingerprint,
+        },
+        "private_sidecar": {
+            "path": ".tmp/fresh-composition-epoch/migration-ledger-private.json",
+            "fingerprint": exact_content_fingerprint(private_bytes),
+        },
+        "rows": public_rows,
+    }
+    observed: dict[str, object] = {
+        "current_head": head,
+        "public_inventory_fingerprint": public_inventory_fingerprint,
+        "private_inventory_fingerprint": private_inventory_fingerprint,
+        "public_source_keys": sorted(set(public_paths)),
+        "private_source_keys": sorted(set(private_paths)),
+    }
+    return public, private, observed
 
 
 def _read_json(path: Path, failures: list[str], label: str) -> Any | None:
