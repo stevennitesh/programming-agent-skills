@@ -1,0 +1,342 @@
+{
+  "$id": "urn:programming-agent-skills:research-card:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "alternative_labels": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "applicability_conditions": {
+      "$ref": "#/$defs/nonemptyStrings"
+    },
+    "behavior": {
+      "$ref": "#/$defs/nonemptyString"
+    },
+    "card_id": {
+      "pattern": "^RC-[0-9]{4}$",
+      "type": "string"
+    },
+    "claim_limits": {
+      "$ref": "#/$defs/nonemptyStrings"
+    },
+    "claims": {
+      "items": {
+        "$ref": "#/$defs/claim"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "counterconditions": {
+      "$ref": "#/$defs/nonemptyStrings"
+    },
+    "dimensions": {
+      "additionalProperties": false,
+      "properties": {
+        "behaviors": {
+          "$ref": "#/$defs/nonemptyStrings"
+        },
+        "conditions": {
+          "$ref": "#/$defs/nonemptyStrings"
+        },
+        "lifecycle_stages": {
+          "$ref": "#/$defs/nonemptyStrings"
+        },
+        "problems": {
+          "$ref": "#/$defs/nonemptyStrings"
+        },
+        "relationships": {
+          "$ref": "#/$defs/nonemptyStrings"
+        },
+        "roles": {
+          "$ref": "#/$defs/nonemptyStrings"
+        },
+        "source_classes": {
+          "$ref": "#/$defs/nonemptyStrings"
+        }
+      },
+      "required": [
+        "problems",
+        "behaviors",
+        "conditions",
+        "roles",
+        "lifecycle_stages",
+        "source_classes",
+        "relationships"
+      ],
+      "type": "object"
+    },
+    "failure_prevented": {
+      "$ref": "#/$defs/nonemptyString"
+    },
+    "hidden_labels": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "method_evidence": {
+      "enum": [
+        "independently-supported",
+        "contested",
+        "pack-specific",
+        "unverified"
+      ]
+    },
+    "preferred_label": {
+      "$ref": "#/$defs/nonemptyString"
+    },
+    "record_state": {
+      "enum": [
+        "verified",
+        "superseded",
+        "retired"
+      ]
+    },
+    "recruited_behavior": {
+      "$ref": "#/$defs/nonemptyString"
+    },
+    "refresh_triggers": {
+      "$ref": "#/$defs/nonemptyStrings"
+    },
+    "relations": {
+      "items": {
+        "$ref": "#/$defs/relation"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "scope_note": {
+      "$ref": "#/$defs/nonemptyString"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/source"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "unknowns": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "verified_at": {
+      "$ref": "#/$defs/nonemptyString"
+    },
+    "wrong_condition": {
+      "$ref": "#/$defs/nonemptyString"
+    }
+  },
+  "required": [
+    "schema_version",
+    "card_id",
+    "preferred_label",
+    "alternative_labels",
+    "hidden_labels",
+    "record_state",
+    "behavior",
+    "failure_prevented",
+    "recruited_behavior",
+    "scope_note",
+    "applicability_conditions",
+    "counterconditions",
+    "wrong_condition",
+    "method_evidence",
+    "claims",
+    "sources",
+    "verified_at",
+    "refresh_triggers",
+    "relations",
+    "dimensions",
+    "unknowns",
+    "claim_limits"
+  ],
+  "title": "Research Card v1",
+  "type": "object",
+  "$defs": {
+    "claim": {
+      "additionalProperties": false,
+      "properties": {
+        "applicability": {
+          "$ref": "#/$defs/nonemptyStrings"
+        },
+        "claim_id": {
+          "pattern": "^RC-[0-9]{4}-C[0-9]{2}$",
+          "type": "string"
+        },
+        "counterevidence": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "limits": {
+          "$ref": "#/$defs/nonemptyStrings"
+        },
+        "source_ids": {
+          "items": {
+            "pattern": "^SRC-[0-9]{4}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "statement": {
+          "$ref": "#/$defs/nonemptyString"
+        },
+        "status": {
+          "enum": [
+            "supported",
+            "conflicted",
+            "unknown"
+          ]
+        }
+      },
+      "required": [
+        "claim_id",
+        "statement",
+        "status",
+        "source_ids",
+        "counterevidence",
+        "applicability",
+        "limits"
+      ],
+      "type": "object"
+    },
+    "nonemptyString": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "nonemptyStrings": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "relation": {
+      "additionalProperties": false,
+      "properties": {
+        "target_card_id": {
+          "pattern": "^RC-[0-9]{4}$",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "broader",
+            "narrower",
+            "related",
+            "exact-match",
+            "close-match",
+            "conflicts-with",
+            "revision-of",
+            "supersedes"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "target_card_id"
+      ],
+      "type": "object"
+    },
+    "source": {
+      "additionalProperties": false,
+      "properties": {
+        "access_depth": {
+          "$ref": "#/$defs/nonemptyString"
+        },
+        "accessed_at": {
+          "$ref": "#/$defs/nonemptyString"
+        },
+        "authority_class": {
+          "$ref": "#/$defs/nonemptyString"
+        },
+        "fixed_point": {
+          "additionalProperties": false,
+          "properties": {
+            "date": {
+              "$ref": "#/$defs/nonemptyString"
+            },
+            "jurisdiction": {
+              "$ref": "#/$defs/nonemptyString"
+            },
+            "method": {
+              "$ref": "#/$defs/nonemptyString"
+            },
+            "population": {
+              "$ref": "#/$defs/nonemptyString"
+            },
+            "revision": {
+              "$ref": "#/$defs/nonemptyString"
+            },
+            "version": {
+              "$ref": "#/$defs/nonemptyString"
+            }
+          },
+          "required": [
+            "revision",
+            "date",
+            "version",
+            "jurisdiction",
+            "population",
+            "method"
+          ],
+          "type": "object"
+        },
+        "inspected_anchors": {
+          "$ref": "#/$defs/nonemptyStrings"
+        },
+        "limits": {
+          "$ref": "#/$defs/nonemptyStrings"
+        },
+        "locator": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/nonemptyString"
+            },
+            {
+              "not": {
+                "pattern": "^(?:(?:[.][\\\\/])*[sS][oO][uU][rR][cC][eE][sS][\\\\/]|(?:[.][\\\\/])*[dD][oO][cC][sS][\\\\/][rR][eE][sS][eE][aA][rR][cC][hH][\\\\/][sS][oO][uU][rR][cC][eE][sS][\\\\/]|(?:[A-Za-z]:)?[\\\\/]|[fF][iI][lL][eE]:)"
+              }
+            }
+          ]
+        },
+        "source_id": {
+          "pattern": "^SRC-[0-9]{4}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "authority_class",
+        "locator",
+        "fixed_point",
+        "inspected_anchors",
+        "accessed_at",
+        "access_depth",
+        "limits"
+      ],
+      "type": "object"
+    }
+  }
+}

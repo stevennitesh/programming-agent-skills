@@ -1,0 +1,14 @@
+{
+  "catalog_fixed_point": "sha256-v1:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "entries": [],
+  "generated_at": "2026-07-26T13:42:04Z",
+  "integrity": {
+    "canonical_equivalence": true,
+    "claim_source_links": true,
+    "relation_targets": true,
+    "resolvable_paths": true,
+    "unique_ids": true
+  },
+  "schema_version": 1,
+  "taxonomy_version": 1
+}

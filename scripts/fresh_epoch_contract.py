@@ -128,6 +128,16 @@ REQUIRED_SCHEMAS = {
     ("fresh-epoch-topology", 1): (
         "docs/validation/shared/schemas/fresh-epoch-topology-v1.schema.json"
     ),
+    ("research-card", 1): (
+        "docs/validation/shared/schemas/research-card-v1.schema.json"
+    ),
+    ("research-catalog", 1): (
+        "docs/validation/shared/schemas/research-catalog-v1.schema.json"
+    ),
+    ("independent-research-packet", 1): (
+        "docs/validation/shared/schemas/"
+        "independent-research-packet-v1.schema.json"
+    ),
 }
 IDENTITY_SCAN_RULES = {
     "research-card": ("metadata", "*", True),
@@ -669,10 +679,16 @@ def _current_authority(relative: str) -> bool:
         or relative
         in {
             "docs/research/README.md",
+            "docs/research/skill-pack-composition/README.md",
+            "docs/research/skill-pack-composition/cards/README.md",
+            "docs/research/skill-pack-composition/catalog.json",
             "docs/synthesis/README.md",
             "docs/synthesis/skill-context-relationships.md",
             "docs/validation/README.md",
+            "docs/validation/shared/README.md",
         }
+        or relative.startswith("docs/validation/shared/schemas/")
+        or relative.startswith("docs/validation/shared/fixtures/")
         or relative.startswith("docs/synthesis/methods/")
         or relative
         in {

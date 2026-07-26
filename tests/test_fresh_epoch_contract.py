@@ -91,6 +91,29 @@ def write_contract_tree(root: Path) -> dict[str, object]:
                 "exact-content-fingerprint-v1.schema.json"
             ),
         },
+        {
+            "id": "independent-research-packet",
+            "version": 1,
+            "path": (
+                "docs/validation/shared/schemas/"
+                "independent-research-packet-v1.schema.json"
+            ),
+        },
+        {
+            "id": "research-card",
+            "version": 1,
+            "path": (
+                "docs/validation/shared/schemas/research-card-v1.schema.json"
+            ),
+        },
+        {
+            "id": "research-catalog",
+            "version": 1,
+            "path": (
+                "docs/validation/shared/schemas/"
+                "research-catalog-v1.schema.json"
+            ),
+        },
     ]
     schema_registry = root / "docs/validation/shared/schemas/registry.json"
     schema_registry.write_text(

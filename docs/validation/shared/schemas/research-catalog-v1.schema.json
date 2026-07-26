@@ -1,0 +1,135 @@
+{
+  "$id": "urn:programming-agent-skills:research-catalog:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "catalog_fixed_point": {
+      "pattern": "^sha256-v1:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "entries": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "alternative_labels": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "canonical_family_id": {
+            "pattern": "^RC-[0-9]{4}$",
+            "type": "string"
+          },
+          "card_id": {
+            "pattern": "^RC-[0-9]{4}$",
+            "type": "string"
+          },
+          "dimensions": {
+            "type": "object"
+          },
+          "fingerprint": {
+            "pattern": "^sha256-v1:[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "freshness_state": {
+            "enum": [
+              "verified-for-fixed-point",
+              "refresh-required",
+              "unknown"
+            ]
+          },
+          "hidden_labels": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "method_evidence": {
+            "enum": [
+              "independently-supported",
+              "contested",
+              "pack-specific",
+              "unverified"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "preferred_label": {
+            "type": "string"
+          },
+          "relations": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "card_id",
+          "canonical_family_id",
+          "path",
+          "fingerprint",
+          "preferred_label",
+          "alternative_labels",
+          "hidden_labels",
+          "dimensions",
+          "method_evidence",
+          "freshness_state",
+          "relations"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "generated_at": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "integrity": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_equivalence": {
+          "const": true
+        },
+        "claim_source_links": {
+          "const": true
+        },
+        "relation_targets": {
+          "const": true
+        },
+        "resolvable_paths": {
+          "const": true
+        },
+        "unique_ids": {
+          "const": true
+        }
+      },
+      "required": [
+        "unique_ids",
+        "resolvable_paths",
+        "relation_targets",
+        "claim_source_links",
+        "canonical_equivalence"
+      ],
+      "type": "object"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "taxonomy_version": {
+      "const": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "taxonomy_version",
+    "catalog_fixed_point",
+    "generated_at",
+    "entries",
+    "integrity"
+  ],
+  "title": "Research Catalog v1",
+  "type": "object"
+}

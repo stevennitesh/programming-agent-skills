@@ -1,0 +1,77 @@
+{
+  "$id": "urn:programming-agent-skills:independent-research-packet:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "alternatives": {
+      "$ref": "#/$defs/nonemptyStrings"
+    },
+    "counterpressure": {
+      "$ref": "#/$defs/nonemptyStrings"
+    },
+    "discovered_methods": {
+      "$ref": "#/$defs/nonemptyStrings"
+    },
+    "failures": {
+      "$ref": "#/$defs/nonemptyStrings"
+    },
+    "fingerprint": {
+      "pattern": "^sha256-v1:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "intended_essence": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "m0_units": {
+      "$ref": "#/$defs/nonemptyStrings"
+    },
+    "packet_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "unresolved_named_gaps": {
+      "$ref": "#/$defs/strings"
+    },
+    "wrong_conditions": {
+      "$ref": "#/$defs/nonemptyStrings"
+    }
+  },
+  "required": [
+    "schema_version",
+    "packet_id",
+    "intended_essence",
+    "m0_units",
+    "failures",
+    "discovered_methods",
+    "alternatives",
+    "counterpressure",
+    "wrong_conditions",
+    "unresolved_named_gaps",
+    "fingerprint"
+  ],
+  "title": "Independent problem-first research packet v1",
+  "type": "object",
+  "$defs": {
+    "nonemptyStrings": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "strings": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    }
+  }
+}
