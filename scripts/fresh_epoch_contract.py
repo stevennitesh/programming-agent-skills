@@ -121,6 +121,10 @@ REQUIRED_OWNERS = {
     },
 }
 REQUIRED_SCHEMAS = {
+    ("deploy-campaign-manifest", 2): (
+        "docs/validation/shared/schemas/"
+        "deploy-campaign-manifest-v2.schema.json"
+    ),
     ("exact-content-fingerprint", 1): (
         "docs/validation/shared/schemas/"
         "exact-content-fingerprint-v1.schema.json"
@@ -776,6 +780,7 @@ def build_migration_control(
     private_paths: list[str],
     reference_paths: list[str],
     head: str,
+    head_paths: set[str] | None = None,
     public_states: dict[str, str] | None = None,
     private_states: dict[str, str] | None = None,
 ) -> tuple[dict[str, object], dict[str, object], dict[str, object]]:
@@ -783,6 +788,7 @@ def build_migration_control(
 
     public_states = public_states or {}
     private_states = private_states or {}
+    head_paths = head_paths or set()
     reference_text: dict[str, str] = {}
     reference_targets: dict[str, set[str]] = {}
     for relative in sorted(set(reference_paths)):
@@ -920,7 +926,7 @@ def build_migration_control(
                 "recovery": {
                     "pointer": (
                         f"git:{head}:{relative}@{fingerprint}"
-                        if state == "tracked"
+                        if state == "tracked" and relative in head_paths
                         else relative
                     ),
                     "applicable_lock": (
@@ -1399,8 +1405,11 @@ def _validate_compatibility(
         failures.append("Fresh-epoch compatibility must be an object.")
         return
     versions = compatibility.get("campaign_manifest_versions")
-    if versions != [1]:
-        failures.append("Fresh-epoch compatibility must preserve manifest version 1.")
+    if versions != [1, 2]:
+        failures.append(
+            "Fresh-epoch compatibility must preserve manifest version 1 "
+            "and admit version 2."
+        )
 
     fixture = _record_path(
         compatibility.get("legacy_fixture"),

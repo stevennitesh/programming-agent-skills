@@ -19,7 +19,9 @@ from typing import Any
 from urllib.parse import unquote, urlsplit
 from uuid import uuid4
 
-from scripts import install_skills
+from jsonschema import Draft202012Validator
+
+from scripts import install_skills, pack_contract
 from scripts.skill_pack_contract import tree_entries
 
 
@@ -69,7 +71,19 @@ FORBIDDEN_DISPATCH_KEYS = frozenset(
     }
 )
 CAMPAIGN_SCHEMA_VERSION = 1
+FRESH_CAMPAIGN_SCHEMA_VERSION = 2
+MAX_RESTART_LINEAGE_DEPTH = 64
 CAMPAIGN_ROOT = Path("docs/validation/campaigns")
+FRESH_CAMPAIGN_ROOT = Path("docs/validation/skills")
+FRESH_CAMPAIGN_SCHEMA_PATH = (
+    Path(__file__).resolve().parents[1]
+    / "docs"
+    / "validation"
+    / "shared"
+    / "schemas"
+    / "deploy-campaign-manifest-v2.schema.json"
+)
+CANONICAL_PACK_CONTRACT_PATH = "docs/synthesis/skill-pack.md"
 LEASE_PATH = Path(".tmp/deploy-campaign-lease.json")
 DELIVERY_MODES = frozenset({"none", "commit", "push"})
 STAGE_ORDER = (
@@ -83,6 +97,14 @@ STAGE_ORDER = (
     "prompt-6",
 )
 STAGE_PROFILES = frozenset(STAGE_ORDER)
+FRESH_TERMINAL_LIFECYCLE = {
+    "m0": "ready-for-research",
+    "research": "research-complete",
+    "h1": "ready-for-prompt-3",
+    "proof": "accepted",
+    "pruning": "complete",
+    "p1": "promoted-installed",
+}
 PREFLIGHT_KINDS = frozenset(
     {
         "behavioral-comparison",
@@ -100,6 +122,7 @@ REQUIRED_PREFLIGHT_KINDS = {
 }
 SAFE_ID = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 SHA256_HEX = re.compile(r"^[0-9a-f]{64}$")
+EXACT_FINGERPRINT = re.compile(r"^sha256-v1:[0-9a-f]{64}$")
 MECHANICAL_STATUSES = frozenset(
     {"verified", "failed", "stale", "lease-conflict", "execution-error"}
 )
@@ -201,13 +224,729 @@ def _install_exclusive_json(path: Path, payload: object) -> None:
         temporary.unlink(missing_ok=True)
 
 
-def _campaign_manifest_path(worktree: Path, campaign_id: str) -> Path:
+def _campaign_manifest_path(
+    worktree: Path,
+    campaign_id: str,
+    skill: str | None = None,
+) -> Path:
+    if skill is not None:
+        return (
+            worktree
+            / FRESH_CAMPAIGN_ROOT
+            / skill
+            / "campaigns"
+            / campaign_id
+            / "manifest.json"
+        )
     return worktree / CAMPAIGN_ROOT / campaign_id / "manifest.json"
 
 
 def _campaign_id(skill: str) -> str:
     stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     return f"{skill}-{stamp}-{uuid4().hex[:8]}"
+
+
+def _require_nonempty_string(value: object, label: str) -> str:
+    if not isinstance(value, str) or not value:
+        raise ValueError(f"Fresh epoch {label} must be a nonempty string")
+    return value
+
+
+def _valid_owner_token(value: object) -> bool:
+    return isinstance(value, str) and bool(value)
+
+
+def _validate_fresh_epoch_admission(payload: object) -> None:
+    if not isinstance(payload, dict):
+        raise ValueError("Fresh epoch admission must be an object")
+    expected_sections = {"campaign", "contract", "semantic"}
+    if set(payload) != expected_sections:
+        raise ValueError(
+            "Fresh epoch admission requires only campaign, contract, and semantic"
+        )
+    campaign = payload.get("campaign")
+    contract = payload.get("contract")
+    semantic = payload.get("semantic")
+    if not all(
+        isinstance(section, dict) for section in (campaign, contract, semantic)
+    ):
+        raise ValueError(
+            "Fresh epoch admission requires campaign, contract, and semantic"
+        )
+    assert isinstance(campaign, dict)
+    assert isinstance(contract, dict)
+    assert isinstance(semantic, dict)
+    composition_epoch_id = _require_nonempty_string(
+        campaign.get("composition_epoch_id"),
+        "composition_epoch_id",
+    )
+    if not re.fullmatch(r"FCE-[0-9]{8}-[0-9]{2}", composition_epoch_id):
+        raise ValueError("Fresh epoch composition_epoch_id is malformed")
+    if set(campaign) != {
+        "composition_epoch_id",
+        "continuation",
+        "supersession",
+    }:
+        raise ValueError("Fresh epoch campaign admission fields are invalid")
+    for nullable in ("continuation", "supersession"):
+        if campaign.get(nullable) is not None and not isinstance(
+            campaign.get(nullable), str
+        ):
+            raise ValueError(f"Fresh epoch {nullable} must be a pointer or null")
+
+    required_contract = {
+        "pack_contract",
+        "slice",
+        "independent_m0",
+        "selected_capability_ids",
+        "selected_relationship_ids",
+        "selected_scenario_ids",
+        "proof_predecessors",
+        "schedule_pointer",
+        "schedule_fingerprint",
+    }
+    missing_contract = required_contract.difference(contract)
+    if missing_contract:
+        raise ValueError(
+            "Fresh epoch contract is missing "
+            + ", ".join(sorted(missing_contract))
+        )
+    if set(contract) != required_contract:
+        raise ValueError("Fresh epoch contract contains foreign fields")
+    pack_contract = contract["pack_contract"]
+    slice_contract = contract["slice"]
+    predecessors = contract["proof_predecessors"]
+    independent_m0 = contract["independent_m0"]
+    if not isinstance(pack_contract, dict):
+        raise ValueError("Fresh epoch pack_contract is invalid")
+    if pack_contract.get("path") != CANONICAL_PACK_CONTRACT_PATH:
+        raise ValueError(
+            "Fresh epoch requires the canonical Pack Contract owner"
+        )
+    if not isinstance(slice_contract, dict):
+        raise ValueError("Fresh epoch slice is invalid")
+    if not isinstance(independent_m0, dict):
+        raise ValueError("Fresh epoch independent_m0 is invalid")
+    if not isinstance(predecessors, list):
+        raise ValueError("Fresh epoch proof_predecessors are invalid")
+    for value, label in (
+        (pack_contract.get("path"), "pack_contract.path"),
+        (pack_contract.get("revision"), "pack_contract.revision"),
+        (slice_contract.get("id"), "slice.id"),
+        (slice_contract.get("path"), "slice.path"),
+        (independent_m0.get("path"), "independent_m0.path"),
+        (contract.get("schedule_pointer"), "schedule_pointer"),
+    ):
+        _require_nonempty_string(value, label)
+    for value, label in (
+        (pack_contract.get("fingerprint"), "pack_contract.fingerprint"),
+        (slice_contract.get("fingerprint"), "slice.fingerprint"),
+        (independent_m0.get("fingerprint"), "independent_m0.fingerprint"),
+        (contract.get("schedule_fingerprint"), "schedule_fingerprint"),
+    ):
+        if not isinstance(value, str) or not EXACT_FINGERPRINT.fullmatch(value):
+            raise ValueError(f"Fresh epoch {label} is malformed")
+    predecessor_ids: list[str] = []
+    for predecessor in predecessors:
+        if not isinstance(predecessor, dict) or set(predecessor) != {
+            "id",
+            "p1",
+            "installed",
+        }:
+            raise ValueError("Fresh epoch proof predecessor shape is invalid")
+        predecessor_id = _require_nonempty_string(
+            predecessor.get("id"),
+            "proof_predecessors.id",
+        )
+        predecessor_ids.append(predecessor_id)
+        for state in ("p1", "installed"):
+            identity = predecessor.get(state)
+            if not isinstance(identity, dict) or set(identity) != {
+                "path",
+                "fingerprint",
+            }:
+                raise ValueError(
+                    f"Fresh epoch proof_predecessors.{state} is invalid"
+                )
+            _require_nonempty_string(
+                identity.get("path"),
+                f"proof_predecessors.{state}.path",
+            )
+            fingerprint = identity.get("fingerprint")
+            if not isinstance(
+                fingerprint,
+                str,
+            ) or not EXACT_FINGERPRINT.fullmatch(fingerprint):
+                raise ValueError(
+                    f"Fresh epoch proof_predecessors.{state}.fingerprint "
+                    "is malformed"
+                )
+    if predecessor_ids != sorted(set(predecessor_ids)):
+        raise ValueError(
+            "Fresh epoch proof predecessor IDs must be sorted and unique"
+        )
+    for field in (
+        "selected_capability_ids",
+        "selected_relationship_ids",
+        "selected_scenario_ids",
+    ):
+        values = contract[field]
+        if (
+            not isinstance(values, list)
+            or not all(isinstance(value, str) and value for value in values)
+            or values != sorted(set(values))
+        ):
+            raise ValueError(
+                f"Fresh epoch {field} must be a sorted unique list"
+            )
+
+    required_semantic = {"stage_token", "terminal_token", "lifecycle", "pointers"}
+    if set(semantic) != required_semantic:
+        raise ValueError("Fresh epoch semantic fields are invalid")
+    if semantic.get("stage_token") not in STAGE_ORDER[:-1]:
+        raise ValueError("Fresh epoch stage_token is invalid")
+    if semantic.get("terminal_token") is not None and not isinstance(
+        semantic.get("terminal_token"), str
+    ):
+        raise ValueError("Fresh epoch terminal_token is invalid")
+    lifecycle = semantic.get("lifecycle")
+    pointers = semantic.get("pointers")
+    if not isinstance(lifecycle, dict) or not isinstance(pointers, dict):
+        raise ValueError("Fresh epoch lifecycle or pointers are invalid")
+    required_lifecycle = {"m0", "research", "h1", "proof", "pruning", "p1"}
+    if set(lifecycle) != required_lifecycle or not all(
+        isinstance(value, str) and value for value in lifecycle.values()
+    ):
+        raise ValueError("Fresh epoch lifecycle tokens are invalid")
+    required_pointers = {
+        "decision_capsule",
+        "research_packet",
+        "skill_synthesis",
+        "claim_adjacency",
+        "pack_synthesis",
+    }
+    if set(pointers) != required_pointers or not all(
+        isinstance(value, str) and value for value in pointers.values()
+    ):
+        raise ValueError("Fresh epoch semantic pointers are invalid")
+
+
+def _admission_path(
+    worktree: Path,
+    value: object,
+    label: str,
+    *,
+    fragment: bool = False,
+) -> tuple[Path, str | None]:
+    pointer = _require_nonempty_string(value, label)
+    path_value, separator, anchor = pointer.partition("#")
+    if fragment and (not separator or not anchor):
+        raise ValueError(f"Fresh epoch {label} requires a fragment")
+    if not fragment and separator:
+        raise ValueError(f"Fresh epoch {label} cannot contain a fragment")
+    relative = Path(path_value)
+    if (
+        relative.is_absolute()
+        or path_value != relative.as_posix()
+        or ".." in relative.parts
+    ):
+        raise ValueError(f"Fresh epoch {label} must be a canonical relative path")
+    resolved = (worktree / relative).resolve()
+    if not _is_within(resolved, worktree):
+        raise ValueError(f"Fresh epoch {label} escapes the worktree")
+    return resolved, anchor or None
+
+
+def _verify_admission_identity(
+    worktree: Path,
+    identity: object,
+    label: str,
+) -> bytes:
+    if not isinstance(identity, dict):
+        raise ValueError(f"Fresh epoch {label} identity is invalid")
+    path, _ = _admission_path(worktree, identity.get("path"), f"{label}.path")
+    try:
+        content = path.read_bytes()
+    except OSError as error:
+        raise ValueError(
+            f"Fresh epoch {label} pointer is unreadable: {error}"
+        ) from error
+    observed = f"sha256-v1:{hashlib.sha256(content).hexdigest()}"
+    if identity.get("fingerprint") != observed:
+        raise ValueError(f"Fresh epoch {label} fingerprint does not match its pointer")
+    return content
+
+
+def _validate_fresh_epoch_references(
+    payload: dict[str, object],
+    *,
+    worktree: Path,
+    skill: str,
+) -> None:
+    contract = payload["contract"]
+    semantic = payload["semantic"]
+    assert isinstance(contract, dict)
+    assert isinstance(semantic, dict)
+    pack_content = _verify_admission_identity(
+        worktree,
+        contract["pack_contract"],
+        "pack_contract",
+    )
+    slice_content = _verify_admission_identity(
+        worktree,
+        contract["slice"],
+        "slice",
+    )
+    slice_identity = contract["slice"]
+    assert isinstance(slice_identity, dict)
+    try:
+        slice_payload = json.loads(slice_content)
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ValueError("Fresh epoch slice must be a JSON identity record") from error
+    required_slice_fields = {
+        "slice_id",
+        "selected_capability_ids",
+        "selected_relationship_ids",
+        "selected_scenario_ids",
+        "hard_proof_predecessor_ids",
+    }
+    if (
+        not isinstance(slice_payload, dict)
+        or set(slice_payload) != required_slice_fields
+    ):
+        raise ValueError("Fresh epoch slice must be a JSON identity record")
+    admitted_slice_id = slice_identity["id"]
+    observed_slice_id = slice_payload["slice_id"]
+    if observed_slice_id != admitted_slice_id:
+        raise ValueError("Fresh epoch slice ID does not match its pointer")
+    campaign = payload["campaign"]
+    assert isinstance(campaign, dict)
+    pack_identity = contract["pack_contract"]
+    assert isinstance(pack_identity, dict)
+    slice_parts = observed_slice_id.split(":")
+    if (
+        len(slice_parts) != 4
+        or slice_parts[0] != campaign["composition_epoch_id"]
+        or slice_parts[1] != f"r{pack_identity['revision']}"
+        or not slice_parts[2]
+        or slice_parts[3] != skill
+    ):
+        raise ValueError(
+            "Fresh epoch slice does not bind the selected skill, epoch, "
+            "and Pack Contract revision"
+        )
+    semantic_fingerprint = (
+        f"sha256-v1:{_canonical_json_sha256(slice_payload)}"
+    )
+    if slice_identity["fingerprint"] != semantic_fingerprint:
+        raise ValueError(
+            "Fresh epoch slice fingerprint is not the canonical envelope"
+        )
+    try:
+        canonical_contract = pack_contract.parse_contract(
+            pack_content.decode("utf-8")
+        )
+        produced = pack_contract.campaign_admission_slice(
+            canonical_contract,
+            slice_parts[2],
+        )
+    except (UnicodeDecodeError, pack_contract.PackContractError) as error:
+        raise ValueError(
+            "Fresh epoch slice is not derived from the Pack Contract"
+        ) from error
+    if (
+        produced.get("status") != "campaign-admission-slice"
+        or produced.get("slice") != slice_payload
+    ):
+        raise ValueError(
+            "Fresh epoch slice is not derived from the Pack Contract"
+        )
+    for selected_field in (
+        "selected_capability_ids",
+        "selected_relationship_ids",
+        "selected_scenario_ids",
+    ):
+        selected_ids = slice_payload[selected_field]
+        if (
+            not isinstance(selected_ids, list)
+            or not all(
+                isinstance(selected_id, str) and selected_id
+                for selected_id in selected_ids
+            )
+            or selected_ids != sorted(set(selected_ids))
+        ):
+            raise ValueError(
+                f"Fresh epoch slice {selected_field} are invalid"
+            )
+        if selected_ids != contract[selected_field]:
+            raise ValueError(
+                f"Fresh epoch {selected_field} do not match the frozen slice"
+            )
+    hard_predecessor_ids = slice_payload.get("hard_proof_predecessor_ids")
+    if (
+        not isinstance(hard_predecessor_ids, list)
+        or not all(
+            isinstance(predecessor_id, str) and predecessor_id
+            for predecessor_id in hard_predecessor_ids
+        )
+        or hard_predecessor_ids != sorted(set(hard_predecessor_ids))
+    ):
+        raise ValueError(
+            "Fresh epoch slice hard proof predecessor IDs are invalid"
+        )
+    predecessors = contract["proof_predecessors"]
+    assert isinstance(predecessors, list)
+    admitted_predecessor_ids = [
+        predecessor["id"]
+        for predecessor in predecessors
+        if isinstance(predecessor, dict)
+    ]
+    if admitted_predecessor_ids != hard_predecessor_ids:
+        raise ValueError(
+            "Fresh epoch proof predecessors do not match the frozen slice"
+        )
+    _verify_admission_identity(
+        worktree,
+        contract["independent_m0"],
+        "independent_m0",
+    )
+    for index, predecessor in enumerate(predecessors):
+        assert isinstance(predecessor, dict)
+        _verify_admission_identity(
+            worktree,
+            predecessor["p1"],
+            f"proof_predecessors[{index}].p1",
+        )
+        _verify_admission_identity(
+            worktree,
+            predecessor["installed"],
+            f"proof_predecessors[{index}].installed",
+        )
+    schedule, anchor = _admission_path(
+        worktree,
+        contract["schedule_pointer"],
+        "schedule_pointer",
+        fragment=True,
+    )
+    try:
+        schedule_content = schedule.read_text(encoding="utf-8")
+    except OSError as error:
+        raise ValueError(
+            f"Fresh epoch schedule pointer is unreadable: {error}"
+        ) from error
+    try:
+        schedule_payload = json.loads(schedule_content)
+    except json.JSONDecodeError:
+        schedule_payload = None
+    if not (
+        (
+            isinstance(schedule_payload, dict)
+            and anchor in schedule_payload
+        )
+        or (
+            isinstance(anchor, str)
+            and _markdown_fragment_resolves(schedule, anchor)
+        )
+    ):
+        raise ValueError("Fresh epoch schedule fragment does not resolve")
+    observed_schedule = f"sha256-v1:{hashlib.sha256(schedule.read_bytes()).hexdigest()}"
+    if contract["schedule_fingerprint"] != observed_schedule:
+        raise ValueError("Fresh epoch schedule fingerprint does not match its pointer")
+
+    pointers = semantic["pointers"]
+    assert isinstance(pointers, dict)
+    decision = pointers["decision_capsule"]
+    decision_path, decision_anchor = _admission_path(
+        worktree,
+        decision,
+        "decision_capsule",
+        fragment=True,
+    )
+    if (
+        decision_path.relative_to(worktree).as_posix() != "decisions.md"
+        or not isinstance(decision_anchor, str)
+        or not SAFE_ID.fullmatch(decision_anchor)
+    ):
+        raise ValueError("Fresh epoch decision_capsule pointer is malformed")
+    research_prefix = f"docs/research/skills/{skill}/"
+    research = pointers["research_packet"]
+    research_path, _ = _admission_path(
+        worktree,
+        research,
+        "research_packet",
+    )
+    if not research_path.relative_to(worktree).as_posix().startswith(
+        research_prefix
+    ):
+        raise ValueError("Fresh epoch research_packet pointer has the wrong owner")
+    synthesis = f"docs/synthesis/skills/{skill}.md"
+    synthesis_path, _ = _admission_path(
+        worktree,
+        pointers["skill_synthesis"],
+        "skill_synthesis",
+    )
+    if synthesis_path.relative_to(worktree).as_posix() != synthesis:
+        raise ValueError("Fresh epoch skill_synthesis pointer has the wrong owner")
+    adjacency = pointers["claim_adjacency"]
+    adjacency_path, adjacency_anchor = _admission_path(
+        worktree,
+        adjacency,
+        "claim_adjacency",
+        fragment=True,
+    )
+    if (
+        adjacency_path.relative_to(worktree).as_posix() != synthesis
+        or not isinstance(adjacency_anchor, str)
+        or not SAFE_ID.fullmatch(adjacency_anchor)
+    ):
+        raise ValueError("Fresh epoch claim_adjacency pointer has the wrong owner")
+    pack_pointer = contract["pack_contract"]
+    assert isinstance(pack_pointer, dict)
+    if pointers["pack_synthesis"] != pack_pointer["path"]:
+        raise ValueError("Fresh epoch pack_synthesis pointer disagrees with contract")
+
+
+def _validate_v2_manifest_schema(manifest: dict[str, object]) -> None:
+    schema = _read_json(FRESH_CAMPAIGN_SCHEMA_PATH)
+    errors = sorted(
+        Draft202012Validator(schema).iter_errors(manifest),
+        key=lambda error: list(error.absolute_path),
+    )
+    if errors:
+        error = errors[0]
+        pointer = ".".join(str(part) for part in error.absolute_path) or "<root>"
+        raise ValueError(f"Fresh campaign manifest {pointer}: {error.message}")
+
+
+def read_campaign_manifest(manifest_path: Path) -> dict[str, object]:
+    """Read a supported manifest without rewriting historical evidence."""
+
+    manifest = _read_json(manifest_path)
+    if not isinstance(manifest, dict):
+        raise ValueError("Campaign manifest must be an object")
+    version = manifest.get("schema_version")
+    if version == CAMPAIGN_SCHEMA_VERSION:
+        campaign = manifest.get("campaign")
+        mechanical = manifest.get("mechanical")
+        if not isinstance(campaign, dict) or not isinstance(mechanical, dict):
+            raise ValueError("Historical campaign manifest is malformed")
+        return manifest
+    if version == FRESH_CAMPAIGN_SCHEMA_VERSION:
+        campaign = manifest.get("campaign")
+        mechanical = manifest.get("mechanical")
+        if not isinstance(campaign, dict) or not isinstance(mechanical, dict):
+            raise ValueError("Fresh campaign section is malformed")
+        admission = {
+            "campaign": {
+                key: campaign.get(key)
+                for key in (
+                    "composition_epoch_id",
+                    "continuation",
+                    "supersession",
+                )
+            },
+            "contract": manifest.get("contract"),
+            "semantic": manifest.get("semantic"),
+        }
+        _validate_fresh_epoch_admission(admission)
+        _validate_v2_manifest_schema(manifest)
+        supersession_digest = mechanical.get("supersession_digest")
+        if (
+            mechanical.get("campaign_digest")
+            != _campaign_lineage_digest(campaign, supersession_digest)
+            or campaign.get("epoch") != campaign.get("id")
+            or (
+                campaign.get("continuation") is None
+                and (
+                    campaign.get("supersession") is not None
+                    or supersession_digest is not None
+                )
+            )
+            or (
+                campaign.get("continuation") == "restart"
+                and (
+                    not isinstance(campaign.get("supersession"), str)
+                    or not isinstance(supersession_digest, str)
+                )
+            )
+        ):
+            raise ValueError("Fresh campaign identity or Restart lineage is invalid")
+        return manifest
+    raise ValueError("Campaign manifest schema is foreign")
+
+
+def _contract_differences(
+    expected: object,
+    observed: object,
+    prefix: str = "",
+) -> list[str]:
+    if isinstance(expected, dict) and isinstance(observed, dict):
+        keys = sorted(set(expected).union(observed))
+        differences: list[str] = []
+        for key in keys:
+            child = f"{prefix}.{key}" if prefix else str(key)
+            if key not in expected or key not in observed:
+                differences.append(child)
+            else:
+                differences.extend(
+                    _contract_differences(expected[key], observed[key], child)
+                )
+        return differences
+    return [] if expected == observed else [prefix]
+
+
+def _observed_fresh_contract(
+    contract: dict[str, object],
+    *,
+    worktree: Path,
+) -> dict[str, object]:
+    observed = copy.deepcopy(contract)
+
+    def refresh(identity: object, label: str) -> None:
+        if not isinstance(identity, dict):
+            raise ValueError(f"Fresh epoch {label} identity is invalid")
+        path, _ = _admission_path(
+            worktree,
+            identity.get("path"),
+            f"{label}.path",
+        )
+        try:
+            content = path.read_bytes()
+        except OSError:
+            identity["fingerprint"] = "missing"
+        else:
+            identity["fingerprint"] = (
+                f"sha256-v1:{hashlib.sha256(content).hexdigest()}"
+            )
+
+    refresh(observed["pack_contract"], "pack_contract")
+    refresh(observed["slice"], "slice")
+    refresh(observed["independent_m0"], "independent_m0")
+    predecessors = observed["proof_predecessors"]
+    assert isinstance(predecessors, list)
+    for index, predecessor in enumerate(predecessors):
+        assert isinstance(predecessor, dict)
+        refresh(predecessor["p1"], f"proof_predecessors[{index}].p1")
+        refresh(
+            predecessor["installed"],
+            f"proof_predecessors[{index}].installed",
+        )
+    schedule, _ = _admission_path(
+        worktree,
+        observed["schedule_pointer"],
+        "schedule_pointer",
+        fragment=True,
+    )
+    try:
+        schedule_content = schedule.read_bytes()
+    except OSError:
+        observed["schedule_fingerprint"] = "missing"
+    else:
+        observed["schedule_fingerprint"] = (
+            f"sha256-v1:{hashlib.sha256(schedule_content).hexdigest()}"
+        )
+    return observed
+
+
+def check_fresh_contract(
+    manifest_path: Path,
+    observed_contract: dict[str, object],
+) -> dict[str, object]:
+    """Detect immutable contract drift and return the choice to its owner."""
+
+    manifest = read_campaign_manifest(manifest_path)
+    if manifest.get("schema_version") != FRESH_CAMPAIGN_SCHEMA_VERSION:
+        raise ValueError("Contract drift checks require a v2 manifest")
+    contract = manifest.get("contract")
+    mechanical = manifest.get("mechanical")
+    if not isinstance(contract, dict) or not isinstance(mechanical, dict):
+        raise ValueError("Fresh campaign ownership sections are invalid")
+    differences = _contract_differences(contract, observed_contract)
+    if not differences:
+        return {
+            "status": "verified",
+            "changed_contract_fields": [],
+        }
+    receipts = mechanical.get("receipts")
+    if not isinstance(receipts, list):
+        raise ValueError("Fresh campaign receipts must be a list")
+    invalidations = mechanical.get("invalidations")
+    if not isinstance(invalidations, list):
+        raise ValueError("Fresh campaign invalidations must be a list")
+    def depends_on_drift(receipt: object) -> bool:
+        if not isinstance(receipt, dict):
+            return False
+        identity = receipt.get("fresh_epoch_identity")
+        if not isinstance(identity, dict):
+            return False
+        selective = {
+            "selected_relationship_ids": "relationship_ids",
+            "selected_scenario_ids": "scenario_ids",
+        }
+        nonselective = [
+            difference
+            for difference in differences
+            if difference not in selective
+        ]
+        if nonselective:
+            return True
+        for contract_field, identity_field in selective.items():
+            if contract_field not in differences:
+                continue
+            expected_values = contract.get(contract_field)
+            observed_values = observed_contract.get(contract_field)
+            relevant_values = identity.get(identity_field)
+            if not all(
+                isinstance(values, list)
+                for values in (
+                    expected_values,
+                    observed_values,
+                    relevant_values,
+                )
+            ):
+                return True
+            changed_values = set(expected_values).symmetric_difference(
+                observed_values
+            )
+            if changed_values.intersection(relevant_values):
+                return True
+        return False
+
+    receipt_ids = sorted(
+        str(receipt["id"])
+        for receipt in receipts
+        if (
+            isinstance(receipt, dict)
+            and isinstance(receipt.get("id"), str)
+            and depends_on_drift(receipt)
+        )
+    )
+    invalidations.append(
+        {
+            "changed_contract_fields": differences,
+            "receipt_ids": receipt_ids,
+            "observed_at": _now(),
+        }
+    )
+    update_mechanical_state(
+        manifest_path,
+        {
+            "evidence_state": "stale",
+            "invalidations": invalidations,
+        },
+    )
+    result = _failure(
+        "stale",
+        "contract-drift",
+        manifest_path,
+        "Immutable Fresh campaign contract drifted",
+    )
+    result.update({
+        "changed_contract_fields": differences,
+        "stale_receipts": receipt_ids,
+        "owner_action_required": ["resume", "repair", "restart"],
+    })
+    return result
 
 
 def start_campaign(
@@ -220,15 +959,139 @@ def start_campaign(
     continuation: str | None = None,
     from_manifest: Path | None = None,
     changed_inputs: list[str] | None = None,
+    fresh_epoch: dict[str, object] | None = None,
     _supersedes: str | None = None,
     _held_lease: dict[str, object] | None = None,
+    _restart_source: Path | None = None,
 ) -> dict[str, object]:
     """Create one exact campaign epoch and acquire its worktree lease."""
 
     skill = _validate_id(skill, "Skill")
+    if owner_token is not None and not _valid_owner_token(owner_token):
+        raise ValueError("Campaign owner token must be a nonempty string")
     if delivery_mode not in DELIVERY_MODES:
         raise ValueError("Delivery mode must be one of: none, commit, push")
     resolved_worktree = (worktree or Path.cwd()).resolve()
+    authenticated_restart_lease: dict[str, object] | None = None
+    restart_source_manifest: dict[str, object] | None = None
+    if _held_lease is not None:
+        if _restart_source is None:
+            raise ValueError(
+                "Internal Restart handoff requires an authenticated source"
+            )
+        try:
+            source_campaign_id, restart_source_manifest = _control_identity(
+                _restart_source,
+                resolved_worktree,
+            )
+            live_lease = _read_json(resolved_worktree / LEASE_PATH)
+            source_pointer = (
+                _restart_source.resolve()
+                .relative_to(resolved_worktree)
+                .as_posix()
+            )
+            if (
+                restart_source_manifest.get("schema_version")
+                == FRESH_CAMPAIGN_SCHEMA_VERSION
+                and isinstance(live_lease, dict)
+            ):
+                _validate_v2_campaign_identity(
+                    restart_source_manifest,
+                    worktree=resolved_worktree,
+                    manifest_path=_restart_source,
+                    lease=live_lease,
+                )
+        except (OSError, json.JSONDecodeError, ValueError) as error:
+            raise ValueError(
+                "Internal Restart handoff requires an authenticated source"
+            ) from error
+        if (
+            not isinstance(live_lease, dict)
+            or live_lease != _held_lease
+            or live_lease.get("worktree") != str(resolved_worktree)
+            or live_lease.get("campaign_id") != source_campaign_id
+            or not _valid_owner_token(owner_token)
+            or not _valid_owner_token(live_lease.get("owner_token"))
+            or live_lease.get("owner_token") != owner_token
+            or _supersedes != source_pointer
+        ):
+            raise ValueError(
+                "Internal Restart handoff requires an authenticated source"
+            )
+        authenticated_restart_lease = copy.deepcopy(live_lease)
+        if (
+            restart_source_manifest.get("schema_version")
+            == FRESH_CAMPAIGN_SCHEMA_VERSION
+            and fresh_epoch is None
+        ):
+            raise ValueError(
+                "Fresh Restart requires a new Fresh admission"
+            )
+    if fresh_epoch is not None:
+        _validate_fresh_epoch_admission(fresh_epoch)
+        _validate_fresh_epoch_references(
+            fresh_epoch,
+            worktree=resolved_worktree,
+            skill=skill,
+        )
+        fresh_campaign = fresh_epoch["campaign"]
+        assert isinstance(fresh_campaign, dict)
+        if continuation is None:
+            if _held_lease is None and (
+                fresh_campaign.get("continuation") is not None
+                or fresh_campaign.get("supersession") is not None
+            ):
+                raise ValueError(
+                    "An ordinary Fresh start requires null continuation "
+                    "and supersession"
+                )
+            if _held_lease is not None and (
+                fresh_campaign.get("continuation") != "restart"
+                or fresh_campaign.get("supersession") != _supersedes
+            ):
+                raise ValueError(
+                    "Fresh Restart requires the exact source supersession"
+                )
+    if authenticated_restart_lease is not None:
+        assert isinstance(restart_source_manifest, dict)
+        source_campaign = restart_source_manifest.get("campaign")
+        source_semantic = restart_source_manifest.get("semantic")
+        if not isinstance(source_campaign, dict):
+            raise ValueError(
+                "Internal Restart handoff requires an authenticated source"
+            )
+        restart_identity_unchanged = (
+            source_campaign.get("skill") == skill
+            and source_campaign.get("delivery_mode") == delivery_mode
+        )
+        if (
+            restart_source_manifest.get("schema_version")
+            == FRESH_CAMPAIGN_SCHEMA_VERSION
+        ):
+            fresh_campaign = (
+                fresh_epoch.get("campaign")
+                if isinstance(fresh_epoch, dict)
+                else None
+            )
+            fresh_contract = (
+                fresh_epoch.get("contract")
+                if isinstance(fresh_epoch, dict)
+                else None
+            )
+            restart_identity_unchanged = (
+                restart_identity_unchanged
+                and isinstance(fresh_campaign, dict)
+                and fresh_campaign.get("composition_epoch_id")
+                == source_campaign.get("composition_epoch_id")
+                and fresh_contract == restart_source_manifest.get("contract")
+            )
+        if restart_identity_unchanged and not _semantic_terminal(
+            source_semantic,
+        ):
+            raise ValueError(
+                "Restart requires changed identity, delivery authority, "
+                "or terminal state"
+            )
     if continuation is not None:
         if from_manifest is None:
             raise ValueError("Continuation requires an exact source manifest")
@@ -241,15 +1104,17 @@ def start_campaign(
             campaign_id=campaign_id,
             owner_token=owner_token,
             changed_inputs=changed_inputs or [],
+            fresh_epoch=fresh_epoch,
         )
     selected_campaign_id = _validate_id(
         campaign_id or _campaign_id(skill),
         "Campaign ID",
     )
-    selected_owner_token = owner_token or f"codex/{uuid4()}"
+    selected_owner_token = owner_token if owner_token is not None else f"codex/{uuid4()}"
     manifest_path = _campaign_manifest_path(
         resolved_worktree,
         selected_campaign_id,
+        skill if fresh_epoch is not None else None,
     )
     lease_path = resolved_worktree / LEASE_PATH
     created_at = _now()
@@ -262,6 +1127,91 @@ def start_campaign(
         "observed_at": created_at,
         "status_read_at": None,
     }
+    if fresh_epoch is None:
+        manifest = {
+            "schema_version": CAMPAIGN_SCHEMA_VERSION,
+            "campaign": {
+                "id": selected_campaign_id,
+                "skill": skill,
+                "delivery_mode": delivery_mode,
+                "worktree": str(resolved_worktree),
+                "supersedes": _supersedes,
+            },
+            "semantic": {
+                "declared_stage": None,
+                "terminal": False,
+                "decision_record": "decisions.md",
+            },
+            "mechanical": {
+                "created_at": created_at,
+                "evidence_state": "current",
+                "last_verification": None,
+                "proof_registrations": [],
+                "receipts": [],
+                "invalidations": [],
+            },
+        }
+    else:
+        campaign_input = fresh_epoch.get("campaign")
+        contract_input = fresh_epoch.get("contract")
+        semantic_input = fresh_epoch.get("semantic")
+        if not all(
+            isinstance(section, dict)
+            for section in (campaign_input, contract_input, semantic_input)
+        ):
+            raise ValueError(
+                "Fresh epoch admission requires campaign, contract, and semantic"
+            )
+        assert isinstance(campaign_input, dict)
+        campaign_record = {
+            "id": selected_campaign_id,
+            "skill": skill,
+            "epoch": selected_campaign_id,
+            "composition_epoch_id": campaign_input.get(
+                "composition_epoch_id"
+            ),
+            "delivery_mode": delivery_mode,
+            "continuation": campaign_input.get("continuation"),
+            "supersession": campaign_input.get("supersession"),
+            "worktree": str(resolved_worktree),
+        }
+        supersession_digest = (
+            restart_source_manifest["mechanical"]["campaign_digest"]
+            if isinstance(restart_source_manifest, dict)
+            and isinstance(restart_source_manifest.get("mechanical"), dict)
+            and isinstance(
+                restart_source_manifest["mechanical"].get("campaign_digest"),
+                str,
+            )
+            else None
+        )
+        campaign_digest = _campaign_lineage_digest(
+            campaign_record,
+            supersession_digest,
+        )
+        manifest = {
+            "schema_version": FRESH_CAMPAIGN_SCHEMA_VERSION,
+            "campaign": campaign_record,
+            "contract": copy.deepcopy(contract_input),
+            "semantic": copy.deepcopy(semantic_input),
+            "mechanical": {
+                "created_at": created_at,
+                "verified_at": None,
+                "campaign_digest": campaign_digest,
+                "supersession_digest": supersession_digest,
+                "contract_digest": _canonical_json_sha256(contract_input),
+                "artifact_identities": [],
+                "proof_registrations": [],
+                "preflight_registrations": [],
+                "receipts": [],
+                "invalidations": [],
+                "parity": None,
+                "evidence_state": "current",
+            },
+        }
+        lease["campaign_digest"] = campaign_digest
+        lease["supersession_digest"] = supersession_digest
+        _validate_v2_manifest_schema(manifest)
     if _held_lease is None:
         try:
             _install_exclusive_json(lease_path, lease)
@@ -272,30 +1222,6 @@ def start_campaign(
                 manifest_path,
                 "Another Deploy Campaign owns this worktree lease",
             )
-
-    manifest = {
-        "schema_version": CAMPAIGN_SCHEMA_VERSION,
-        "campaign": {
-            "id": selected_campaign_id,
-            "skill": skill,
-            "delivery_mode": delivery_mode,
-            "worktree": str(resolved_worktree),
-            "supersedes": _supersedes,
-        },
-        "semantic": {
-            "declared_stage": None,
-            "terminal": False,
-            "decision_record": "decisions.md",
-        },
-        "mechanical": {
-            "created_at": created_at,
-            "evidence_state": "current",
-            "last_verification": None,
-            "proof_registrations": [],
-            "receipts": [],
-            "invalidations": [],
-        },
-    }
     campaign_parent = manifest_path.parent.parent
     campaign_parent.mkdir(parents=True, exist_ok=True)
     temporary = Path(
@@ -312,6 +1238,17 @@ def start_campaign(
             encoding="utf-8",
             newline="\n",
         )
+        if authenticated_restart_lease is not None:
+            try:
+                current_lease = _read_json(lease_path)
+            except (OSError, json.JSONDecodeError) as error:
+                raise ValueError(
+                    "Internal Restart handoff lost its authenticated source"
+                ) from error
+            if current_lease != authenticated_restart_lease:
+                raise ValueError(
+                    "Internal Restart handoff lost its authenticated source"
+                )
         os.replace(temporary, manifest_path.parent)
         if _held_lease is not None:
             _replace_json_file(lease_path, lease)
@@ -343,6 +1280,7 @@ def _continue_campaign(
     campaign_id: str | None,
     owner_token: str | None,
     changed_inputs: list[str],
+    fresh_epoch: dict[str, object] | None,
 ) -> dict[str, object]:
     if continuation not in {"resume", "repair", "restart"}:
         raise ValueError("Continuation must be one of: resume, repair, restart")
@@ -372,7 +1310,8 @@ def _continue_campaign(
         not isinstance(lease, dict)
         or lease.get("worktree") != str(worktree)
         or lease.get("campaign_id") != prior_campaign_id
-        or owner_token is None
+        or not _valid_owner_token(owner_token)
+        or not _valid_owner_token(lease.get("owner_token"))
         or lease.get("owner_token") != owner_token
     ):
         return _failure(
@@ -381,6 +1320,21 @@ def _continue_campaign(
             from_manifest,
             "Continuation does not own the exact source campaign lease",
         )
+    if manifest.get("schema_version") == FRESH_CAMPAIGN_SCHEMA_VERSION:
+        try:
+            _validate_v2_campaign_identity(
+                manifest,
+                worktree=worktree,
+                manifest_path=from_manifest,
+                lease=lease,
+            )
+        except ValueError as error:
+            return _failure(
+                "failed",
+                "manifest-schema",
+                from_manifest,
+                str(error),
+            )
 
     identity_unchanged = (
         campaign.get("skill") == skill
@@ -388,13 +1342,67 @@ def _continue_campaign(
     )
     relative_manifest = from_manifest.resolve().relative_to(worktree).as_posix()
     if continuation == "resume":
-        if not identity_unchanged or semantic.get("terminal") is True:
+        if not identity_unchanged or _semantic_terminal(semantic):
             return _failure(
                 "failed",
                 "continuation",
                 from_manifest,
                 "Resume requires unchanged identity and a nonterminal campaign",
             )
+        if manifest.get("schema_version") == FRESH_CAMPAIGN_SCHEMA_VERSION:
+            contract = manifest.get("contract")
+            if (
+                not isinstance(contract, dict)
+                or mechanical.get("evidence_state") != "current"
+                or mechanical.get("contract_digest")
+                != _canonical_json_sha256(contract)
+            ):
+                return _failure(
+                    "failed",
+                    "continuation",
+                    from_manifest,
+                    "Fresh Resume requires current sealed contract evidence",
+                )
+            try:
+                observed_contract = _observed_fresh_contract(
+                    contract,
+                    worktree=worktree,
+                )
+            except (OSError, ValueError) as error:
+                return _failure(
+                    "failed",
+                    "continuation",
+                    from_manifest,
+                    f"Fresh Resume cannot resolve current contract: {error}",
+                )
+            fresh_campaign = (
+                fresh_epoch.get("campaign")
+                if isinstance(fresh_epoch, dict)
+                else None
+            )
+            fresh_contract = (
+                fresh_epoch.get("contract")
+                if isinstance(fresh_epoch, dict)
+                else None
+            )
+            if (
+                observed_contract != contract
+                or (
+                    fresh_epoch is not None
+                    and (
+                        not isinstance(fresh_campaign, dict)
+                        or fresh_campaign.get("composition_epoch_id")
+                        != campaign.get("composition_epoch_id")
+                        or fresh_contract != contract
+                    )
+                )
+            ):
+                return _failure(
+                    "failed",
+                    "continuation",
+                    from_manifest,
+                    "Fresh Resume requires unchanged live and admitted contract identity",
+                )
         return {
             "status": "verified",
             "campaign_id": prior_campaign_id,
@@ -403,7 +1411,7 @@ def _continue_campaign(
         }
 
     if continuation == "repair":
-        if not identity_unchanged or semantic.get("terminal") is True:
+        if not identity_unchanged or _semantic_terminal(semantic):
             return _failure(
                 "failed",
                 "continuation",
@@ -448,13 +1456,47 @@ def _continue_campaign(
             "changed_inputs": sorted(set(changed_inputs)),
         }
 
-    if identity_unchanged and semantic.get("terminal") is not True:
+    restart_identity_unchanged = identity_unchanged
+    if (
+        manifest.get("schema_version") == FRESH_CAMPAIGN_SCHEMA_VERSION
+        and fresh_epoch is not None
+    ):
+        fresh_campaign = fresh_epoch.get("campaign")
+        fresh_contract = fresh_epoch.get("contract")
+        restart_identity_unchanged = (
+            restart_identity_unchanged
+            and isinstance(fresh_campaign, dict)
+            and fresh_campaign.get("composition_epoch_id")
+            == campaign.get("composition_epoch_id")
+            and fresh_contract == manifest.get("contract")
+        )
+    if restart_identity_unchanged and not _semantic_terminal(semantic):
         return _failure(
             "failed",
             "continuation",
             from_manifest,
             "Restart requires changed identity, delivery authority, or terminal state",
         )
+    if manifest.get("schema_version") == FRESH_CAMPAIGN_SCHEMA_VERSION:
+        if fresh_epoch is None:
+            return _failure(
+                "failed",
+                "continuation",
+                from_manifest,
+                "Fresh Restart requires a new owner-authored admission packet",
+            )
+        fresh_campaign = fresh_epoch.get("campaign")
+        if (
+            not isinstance(fresh_campaign, dict)
+            or fresh_campaign.get("continuation") != "restart"
+            or fresh_campaign.get("supersession") != relative_manifest
+        ):
+            return _failure(
+                "failed",
+                "continuation",
+                from_manifest,
+                "Fresh Restart admission must point to the exact source manifest",
+            )
     return start_campaign(
         skill,
         delivery_mode,
@@ -463,6 +1505,8 @@ def _continue_campaign(
         owner_token=owner_token,
         _supersedes=relative_manifest,
         _held_lease=lease,
+        _restart_source=from_manifest,
+        fresh_epoch=fresh_epoch,
     )
 
 
@@ -472,7 +1516,19 @@ def update_mechanical_state(
 ) -> dict[str, object]:
     """Atomically update only the automation-owned manifest section."""
 
-    forbidden = {"campaign", "semantic", "schema_version"}.intersection(updates)
+    forbidden = {
+        "campaign",
+        "contract",
+        "semantic",
+        "schema_version",
+    }.intersection(updates)
+    forbidden.update(
+        {
+            "campaign_digest",
+            "contract_digest",
+            "supersession_digest",
+        }.intersection(updates)
+    )
     if forbidden:
         raise ValueError(
             "Mechanical updates cannot write "
@@ -485,10 +1541,66 @@ def update_mechanical_state(
         dict,
     ):
         raise ValueError("Campaign manifest mechanical section is invalid")
-    semantic_before = copy.deepcopy(manifest.get("semantic"))
+    version = manifest.get("schema_version")
+    campaign = manifest.get("campaign")
+    if version not in {
+        CAMPAIGN_SCHEMA_VERSION,
+        FRESH_CAMPAIGN_SCHEMA_VERSION,
+    } or not isinstance(campaign, dict):
+        raise ValueError("Campaign mechanical-update identity is invalid")
+    worktree_value = campaign.get("worktree")
+    campaign_id = campaign.get("id")
+    skill = campaign.get("skill")
+    if (
+        not isinstance(worktree_value, str)
+        or not isinstance(campaign_id, str)
+        or not SAFE_ID.fullmatch(campaign_id)
+        or not isinstance(skill, str)
+        or not SAFE_ID.fullmatch(skill)
+        or (
+            version == FRESH_CAMPAIGN_SCHEMA_VERSION
+            and not isinstance(skill, str)
+        )
+    ):
+        raise ValueError("Campaign mechanical-update identity is invalid")
+    worktree = Path(worktree_value).resolve()
+    if worktree_value != str(worktree):
+        raise ValueError("Campaign mechanical-update identity is invalid")
+    expected_manifest = _campaign_manifest_path(
+        worktree,
+        campaign_id,
+        skill if version == FRESH_CAMPAIGN_SCHEMA_VERSION else None,
+    ).resolve()
+    try:
+        lease = _read_json(worktree / LEASE_PATH)
+    except (OSError, json.JSONDecodeError) as error:
+        raise ValueError(
+            "Mechanical update requires its exact live lease"
+        ) from error
+    if (
+        manifest_path.resolve() != expected_manifest
+        or not isinstance(lease, dict)
+        or lease.get("worktree") != str(worktree)
+        or lease.get("campaign_id") != campaign_id
+        or not isinstance(lease.get("owner_token"), str)
+        or not lease.get("owner_token")
+    ):
+        raise ValueError("Mechanical update requires its exact live lease")
+    protected_before = {
+        key: copy.deepcopy(manifest.get(key))
+        for key in ("campaign", "contract", "semantic")
+    }
     manifest["mechanical"].update(copy.deepcopy(updates))
-    if manifest.get("semantic") != semantic_before:
-        raise ValueError("Mechanical updates cannot alter semantic fields")
+    if any(manifest.get(key) != value for key, value in protected_before.items()):
+        raise ValueError("Mechanical updates cannot alter protected fields")
+    if manifest.get("schema_version") == FRESH_CAMPAIGN_SCHEMA_VERSION:
+        _validate_v2_manifest_schema(manifest)
+        _validate_v2_campaign_identity(
+            manifest,
+            worktree=worktree,
+            manifest_path=manifest_path,
+            lease=lease,
+        )
     _replace_json_file(manifest_path, manifest)
     return manifest
 
@@ -531,6 +1643,115 @@ def _is_within(path: Path, root: Path) -> bool:
     return True
 
 
+def _validate_v2_campaign_identity(
+    manifest: dict[str, object],
+    *,
+    worktree: Path,
+    manifest_path: Path,
+    lease: dict[str, object] | None = None,
+    lineage_seen: frozenset[Path] = frozenset(),
+    lineage_depth: int = 0,
+) -> None:
+    resolved_manifest = manifest_path.resolve()
+    if (
+        resolved_manifest in lineage_seen
+        or lineage_depth >= MAX_RESTART_LINEAGE_DEPTH
+    ):
+        raise ValueError("Fresh campaign Restart lineage is cyclic or too deep")
+    lineage_seen = lineage_seen.union({resolved_manifest})
+    campaign = manifest.get("campaign")
+    mechanical = manifest.get("mechanical")
+    if not isinstance(campaign, dict) or not isinstance(mechanical, dict):
+        raise ValueError("Fresh campaign identity or Restart lineage is invalid")
+    campaign_id = campaign.get("id")
+    skill = campaign.get("skill")
+    continuation = campaign.get("continuation")
+    supersession = campaign.get("supersession")
+    supersession_digest = mechanical.get("supersession_digest")
+    campaign_digest = _campaign_lineage_digest(
+        campaign,
+        supersession_digest,
+    )
+    if (
+        mechanical.get("campaign_digest") != campaign_digest
+        or campaign.get("epoch") != campaign_id
+        or campaign.get("worktree") != str(worktree)
+        or not isinstance(campaign_id, str)
+        or not SAFE_ID.fullmatch(campaign_id)
+        or not isinstance(skill, str)
+        or not SAFE_ID.fullmatch(skill)
+    ):
+        raise ValueError("Fresh campaign identity or Restart lineage is invalid")
+    if lease is not None and (
+        lease.get("campaign_digest") != campaign_digest
+        or lease.get("campaign_id") != campaign_id
+        or lease.get("supersession_digest") != supersession_digest
+    ):
+        raise ValueError("Fresh campaign identity or Restart lineage is invalid")
+    if continuation is None and supersession is None:
+        if supersession_digest is not None:
+            raise ValueError(
+                "Fresh campaign identity or Restart lineage is invalid"
+            )
+        return
+    if (
+        continuation != "restart"
+        or not isinstance(supersession, str)
+        or not isinstance(supersession_digest, str)
+    ):
+        raise ValueError("Fresh campaign identity or Restart lineage is invalid")
+    source = (worktree / supersession).resolve()
+    expected_source_root = (worktree / FRESH_CAMPAIGN_ROOT / skill / "campaigns").resolve()
+    if (
+        not _is_within(source, expected_source_root)
+        or source == manifest_path.resolve()
+        or not source.is_file()
+    ):
+        raise ValueError("Fresh campaign identity or Restart lineage is invalid")
+    try:
+        source_manifest = read_campaign_manifest(source)
+    except (OSError, json.JSONDecodeError, ValueError) as error:
+        raise ValueError(
+            "Fresh campaign identity or Restart lineage is invalid"
+        ) from error
+    source_campaign = (
+        source_manifest.get("campaign")
+        if isinstance(source_manifest, dict)
+        else None
+    )
+    source_id = (
+        source_campaign.get("id")
+        if isinstance(source_campaign, dict)
+        else None
+    )
+    if (
+        not isinstance(source_manifest, dict)
+        or source_manifest.get("schema_version") != FRESH_CAMPAIGN_SCHEMA_VERSION
+        or not isinstance(source_campaign, dict)
+        or source_campaign.get("epoch") != source_id
+        or source_campaign.get("skill") != skill
+        or source_campaign.get("worktree") != str(worktree)
+        or not isinstance(source_id, str)
+        or not SAFE_ID.fullmatch(source_id)
+        or source
+        != _campaign_manifest_path(worktree, source_id, skill).resolve()
+    ):
+        raise ValueError("Fresh campaign identity or Restart lineage is invalid")
+    _validate_v2_campaign_identity(
+        source_manifest,
+        worktree=worktree,
+        manifest_path=source,
+        lineage_seen=lineage_seen,
+        lineage_depth=lineage_depth + 1,
+    )
+    source_mechanical = source_manifest.get("mechanical")
+    if (
+        not isinstance(source_mechanical, dict)
+        or supersession_digest != source_mechanical.get("campaign_digest")
+    ):
+        raise ValueError("Fresh campaign identity or Restart lineage is invalid")
+
+
 def _control_identity(
     manifest_path: Path,
     worktree: Path,
@@ -543,15 +1764,44 @@ def _control_identity(
     if not isinstance(campaign, dict):
         raise ValueError("Manifest campaign section is invalid")
     campaign_id = campaign.get("id")
+    version = manifest.get("schema_version")
+    skill = campaign.get("skill")
+    expected_path = _campaign_manifest_path(
+        worktree,
+        str(campaign_id),
+        str(skill) if version == FRESH_CAMPAIGN_SCHEMA_VERSION else None,
+    )
     if (
-        manifest.get("schema_version") != CAMPAIGN_SCHEMA_VERSION
+        version not in {CAMPAIGN_SCHEMA_VERSION, FRESH_CAMPAIGN_SCHEMA_VERSION}
         or campaign.get("worktree") != str(worktree)
         or not isinstance(campaign_id, str)
         or not SAFE_ID.fullmatch(campaign_id)
-        or supplied_manifest != _campaign_manifest_path(worktree, campaign_id).resolve()
+        or not isinstance(skill, str)
+        or not SAFE_ID.fullmatch(skill)
+        or supplied_manifest != expected_path.resolve()
     ):
         raise ValueError("Manifest identity does not match its exact worktree path")
+    if version == FRESH_CAMPAIGN_SCHEMA_VERSION:
+        _validate_v2_campaign_identity(
+            manifest,
+            worktree=worktree,
+            manifest_path=supplied_manifest,
+        )
     return campaign_id, manifest
+
+
+def _semantic_stage(semantic: object) -> object:
+    if not isinstance(semantic, dict):
+        return None
+    return semantic.get("stage_token", semantic.get("declared_stage"))
+
+
+def _semantic_terminal(semantic: object) -> bool:
+    if not isinstance(semantic, dict):
+        return False
+    if "terminal_token" in semantic:
+        return semantic.get("terminal_token") is not None
+    return semantic.get("terminal") is True
 
 
 def _git_delivery_status(
@@ -653,6 +1903,7 @@ def campaign_status(
         not isinstance(lease, dict)
         or lease.get("worktree") != str(resolved_worktree)
         or lease.get("campaign_id") != campaign_id
+        or not _valid_owner_token(lease.get("owner_token"))
     ):
         return _failure(
             "lease-conflict",
@@ -660,10 +1911,25 @@ def campaign_status(
             manifest_path,
             "A different campaign owns the worktree lease",
         )
+    if manifest.get("schema_version") == FRESH_CAMPAIGN_SCHEMA_VERSION:
+        try:
+            _validate_v2_campaign_identity(
+                manifest,
+                worktree=resolved_worktree,
+                manifest_path=manifest_path,
+                lease=lease,
+            )
+        except ValueError as error:
+            return _failure(
+                "failed",
+                "manifest-schema",
+                manifest_path,
+                str(error),
+            )
     lease["status_read_at"] = _now()
     _replace_json_file(lease_path, lease)
     semantic = manifest.get("semantic")
-    stage = semantic.get("declared_stage") if isinstance(semantic, dict) else None
+    stage = _semantic_stage(semantic)
     campaign = manifest.get("campaign")
     delivery_status = _git_delivery_status(
         resolved_worktree,
@@ -750,6 +2016,7 @@ def release_campaign(
         not isinstance(lease, dict)
         or lease.get("worktree") != str(resolved_worktree)
         or lease.get("campaign_id") != campaign_id
+        or not _valid_owner_token(lease.get("owner_token"))
     ):
         return _failure(
             "lease-conflict",
@@ -757,7 +2024,26 @@ def release_campaign(
             manifest_path,
             "A different campaign owns the worktree lease",
         )
-    exact_owner = owner_token is not None and owner_token == lease.get("owner_token")
+    if manifest.get("schema_version") == FRESH_CAMPAIGN_SCHEMA_VERSION:
+        try:
+            _validate_v2_campaign_identity(
+                manifest,
+                worktree=resolved_worktree,
+                manifest_path=manifest_path,
+                lease=lease,
+            )
+        except ValueError as error:
+            return _failure(
+                "failed",
+                "manifest-schema",
+                manifest_path,
+                str(error),
+            )
+    exact_owner = (
+        _valid_owner_token(owner_token)
+        and _valid_owner_token(lease.get("owner_token"))
+        and owner_token == lease.get("owner_token")
+    )
     if not exact_owner and not abandon:
         return _failure(
             "lease-conflict",
@@ -917,6 +2203,7 @@ def _full_suite_worktree_matches(
     excluded = (
         ":(exclude).tmp/**",
         f":(exclude){CAMPAIGN_ROOT.as_posix()}/**",
+        f":(exclude){FRESH_CAMPAIGN_ROOT.as_posix()}/*/campaigns/**",
     )
     tracked = subprocess.run(
         ["git", "diff", "--quiet", target_digest, "--", ".", *excluded],
@@ -945,6 +2232,13 @@ def _full_suite_worktree_matches(
         if path.parts[:1] == (".tmp",):
             continue
         if path.parts[: len(CAMPAIGN_ROOT.parts)] == CAMPAIGN_ROOT.parts:
+            continue
+        if (
+            path.parts[: len(FRESH_CAMPAIGN_ROOT.parts)]
+            == FRESH_CAMPAIGN_ROOT.parts
+            and len(path.parts) >= len(FRESH_CAMPAIGN_ROOT.parts) + 3
+            and path.parts[len(FRESH_CAMPAIGN_ROOT.parts) + 1] == "campaigns"
+        ):
             continue
         return False
     return True
@@ -1000,12 +2294,44 @@ def proof_identity_tuple(
         value = target.get(locator)
         if isinstance(value, str):
             target_identity[locator] = value
-    return {
+    result = {
         "proof_profile": profile_name,
         "inputs": sorted(normalized_inputs, key=lambda item: item["name"]),
         "target": target_identity,
         "environment": _environment_identity(candidate_root),
     }
+    fresh_identity = registration.get("fresh_epoch_identity")
+    if fresh_identity is not None:
+        required = {
+            "composition_epoch_id",
+            "pack_contract_revision",
+            "slice_fingerprint",
+            "relationship_ids",
+            "scenario_ids",
+        }
+        if not isinstance(fresh_identity, dict) or set(fresh_identity) != required:
+            raise ValueError("Fresh proof identity tuple is incomplete")
+        if not re.fullmatch(
+            r"FCE-[0-9]{8}-[0-9]{2}",
+            str(fresh_identity.get("composition_epoch_id")),
+        ):
+            raise ValueError("Fresh proof composition epoch is malformed")
+        if not isinstance(fresh_identity.get("pack_contract_revision"), str):
+            raise ValueError("Fresh proof pack contract revision is malformed")
+        if not EXACT_FINGERPRINT.fullmatch(
+            str(fresh_identity.get("slice_fingerprint"))
+        ):
+            raise ValueError("Fresh proof slice fingerprint is malformed")
+        for field in ("relationship_ids", "scenario_ids"):
+            values = fresh_identity.get(field)
+            if (
+                not isinstance(values, list)
+                or values != sorted(set(values))
+                or not all(isinstance(value, str) and value for value in values)
+            ):
+                raise ValueError(f"Fresh proof {field} are malformed")
+        result["fresh_epoch_identity"] = copy.deepcopy(fresh_identity)
+    return result
 
 
 def make_receipt(
@@ -1041,6 +2367,10 @@ def make_receipt(
         "supersedes": supersedes,
         "forced_reason": forced_reason,
     }
+    if "fresh_epoch_identity" in identity_tuple:
+        receipt["fresh_epoch_identity"] = copy.deepcopy(
+            identity_tuple["fresh_epoch_identity"]
+        )
     _seal_receipt(receipt)
     return receipt
 
@@ -1134,6 +2464,7 @@ def _valid_receipt(receipt: object) -> bool:
     source = receipt.get("source")
     supersedes = receipt.get("supersedes")
     forced_reason = receipt.get("forced_reason")
+    fresh_epoch_identity = receipt.get("fresh_epoch_identity")
     try:
         computed_receipt_digest = _canonical_json_sha256(
             {
@@ -1208,6 +2539,20 @@ def _valid_receipt(receipt: object) -> bool:
             or (
                 source != "forced-execution"
                 and forced_reason is None
+            )
+        )
+        and (
+            fresh_epoch_identity is None
+            or (
+                isinstance(fresh_epoch_identity, dict)
+                and set(fresh_epoch_identity)
+                == {
+                    "composition_epoch_id",
+                    "pack_contract_revision",
+                    "slice_fingerprint",
+                    "relationship_ids",
+                    "scenario_ids",
+                }
             )
         )
     )
@@ -1373,6 +2718,11 @@ def _stale_receipts_from_invalidations(
     for event in invalidations:
         if not isinstance(event, dict):
             continue
+        event_stale = {
+            value
+            for value in event.get("receipt_ids", [])
+            if isinstance(value, str)
+        }
         changed = {
             value
             for value in event.get("changed_inputs", [])
@@ -1380,28 +2730,27 @@ def _stale_receipts_from_invalidations(
         }
         cutoff = event.get("observed_at")
         cutoff_time = _parse_timestamp(cutoff)
-        if not changed or cutoff_time is None:
-            continue
-        event_stale: set[str] = set()
-        for receipt in receipts:
-            receipt_id = receipt.get("id")
-            observed_at = receipt.get("observed_at")
-            observed_time = _parse_timestamp(observed_at)
-            inputs = receipt.get("inputs")
-            if (
-                not isinstance(receipt_id, str)
-                or observed_time is None
-                or observed_time > cutoff_time
-                or not isinstance(inputs, list)
-            ):
-                continue
-            names = {
-                item.get("name")
-                for item in inputs
-                if isinstance(item, dict) and isinstance(item.get("name"), str)
-            }
-            if names.intersection(changed):
-                event_stale.add(receipt_id)
+        if changed and cutoff_time is not None:
+            for receipt in receipts:
+                receipt_id = receipt.get("id")
+                observed_at = receipt.get("observed_at")
+                observed_time = _parse_timestamp(observed_at)
+                inputs = receipt.get("inputs")
+                if (
+                    not isinstance(receipt_id, str)
+                    or observed_time is None
+                    or observed_time > cutoff_time
+                    or not isinstance(inputs, list)
+                ):
+                    continue
+                names = {
+                    item.get("name")
+                    for item in inputs
+                    if isinstance(item, dict)
+                    and isinstance(item.get("name"), str)
+                }
+                if names.intersection(changed):
+                    event_stale.add(receipt_id)
         while True:
             prior = set(event_stale)
             for receipt in receipts:
@@ -1441,6 +2790,35 @@ def _stale_receipts_from_invalidations(
             return stale
 
 
+def _valid_invalidation_history(invalidations: object) -> bool:
+    if not isinstance(invalidations, list):
+        return False
+    list_fields = {
+        "receipt_ids",
+        "changed_inputs",
+        "changed_contract_fields",
+    }
+    for event in invalidations:
+        if (
+            not isinstance(event, dict)
+            or not set(event).issubset({"observed_at", *list_fields})
+            or not list_fields.intersection(event)
+            or _parse_timestamp(event.get("observed_at")) is None
+        ):
+            return False
+        for field in list_fields:
+            if field not in event:
+                continue
+            values = event[field]
+            if (
+                not isinstance(values, list)
+                or not all(isinstance(value, str) and value for value in values)
+                or values != sorted(set(values))
+            ):
+                return False
+    return True
+
+
 def _superseded_receipts(receipts: list[dict[str, object]]) -> set[str]:
     return {
         str(receipt["supersedes"])
@@ -1454,17 +2832,19 @@ def _identity_key(identity_tuple: dict[str, object]) -> str:
 
 
 def _full_suite_key(identity_tuple: dict[str, object]) -> str:
-    return _canonical_json_sha256(
-        {
-            "proof_profile": identity_tuple["proof_profile"],
-            "target": identity_tuple["target"],
-            "environment": identity_tuple["environment"],
-        }
-    )
+    key = {
+        "proof_profile": identity_tuple["proof_profile"],
+        "target": identity_tuple["target"],
+        "environment": identity_tuple["environment"],
+    }
+    if "fresh_epoch_identity" in identity_tuple:
+        key["fresh_epoch_identity"] = identity_tuple["fresh_epoch_identity"]
+    return _canonical_json_sha256(key)
 
 
 def _exact_receipt(
     receipts: list[dict[str, object]],
+    registration: dict[str, object],
     identity_tuple: dict[str, object],
     stale: set[str],
 ) -> dict[str, object] | None:
@@ -1474,10 +2854,14 @@ def _exact_receipt(
             receipt.get("schema_version") == PROOF_RECEIPT_SCHEMA_VERSION
             and str(receipt.get("id")) not in stale
             and str(receipt.get("id")) not in superseded
+            and receipt.get("registration_id") == registration.get("id")
+            and receipt.get("stage") == registration.get("stage")
             and receipt.get("proof_profile") == identity_tuple["proof_profile"]
             and receipt.get("inputs") == identity_tuple["inputs"]
             and receipt.get("target") == identity_tuple["target"]
             and receipt.get("environment") == identity_tuple["environment"]
+            and receipt.get("fresh_epoch_identity")
+            == identity_tuple.get("fresh_epoch_identity")
             and isinstance(receipt.get("exit_state"), dict)
             and receipt["exit_state"].get("code") == 0
         ):
@@ -1487,14 +2871,19 @@ def _exact_receipt(
 
 def _latest_matching_receipt(
     receipts: list[dict[str, object]],
+    registration: dict[str, object],
     identity_tuple: dict[str, object],
 ) -> dict[str, object] | None:
     for receipt in reversed(receipts):
         if (
-            receipt.get("proof_profile") == identity_tuple["proof_profile"]
+            receipt.get("registration_id") == registration.get("id")
+            and receipt.get("stage") == registration.get("stage")
+            and receipt.get("proof_profile") == identity_tuple["proof_profile"]
             and receipt.get("inputs") == identity_tuple["inputs"]
             and receipt.get("target") == identity_tuple["target"]
             and receipt.get("environment") == identity_tuple["environment"]
+            and receipt.get("fresh_epoch_identity")
+            == identity_tuple.get("fresh_epoch_identity")
         ):
             return receipt
     return None
@@ -1623,6 +3012,89 @@ def _decision_pointer_resolves(
     return content.count(marker) == 1
 
 
+def _markdown_fragment_resolves(path: Path, fragment: str) -> bool:
+    try:
+        content = path.read_text(encoding="utf-8")
+    except (OSError, UnicodeError):
+        return False
+    explicit = f"<!-- campaign-section:{fragment} -->"
+    if content.count(explicit) == 1:
+        return True
+    for line in content.splitlines():
+        heading = re.match(r"^#{1,6}\s+(.+?)\s*#*\s*$", line)
+        if heading is None:
+            continue
+        normalized = re.sub(
+            r"[\s-]+",
+            "-",
+            re.sub(r"[^\w\s-]", "", heading.group(1).lower()),
+        ).strip("-")
+        if normalized == fragment:
+            return True
+    return False
+
+
+def _terminal_semantic_pointers_resolve(
+    manifest_path: Path,
+    semantic: dict[str, object],
+    *,
+    contract: dict[str, object],
+    skill: str,
+    worktree: Path,
+) -> bool:
+    pointers = semantic.get("pointers")
+    if not isinstance(pointers, dict):
+        return False
+    try:
+        research, _ = _admission_path(
+            worktree,
+            pointers.get("research_packet"),
+            "research_packet",
+        )
+        synthesis, _ = _admission_path(
+            worktree,
+            pointers.get("skill_synthesis"),
+            "skill_synthesis",
+        )
+        adjacency, fragment = _admission_path(
+            worktree,
+            pointers.get("claim_adjacency"),
+            "claim_adjacency",
+            fragment=True,
+        )
+        pack_synthesis, _ = _admission_path(
+            worktree,
+            pointers.get("pack_synthesis"),
+            "pack_synthesis",
+        )
+    except ValueError:
+        return False
+    research_relative = research.relative_to(worktree).as_posix()
+    synthesis_relative = synthesis.relative_to(worktree).as_posix()
+    expected_synthesis = f"docs/synthesis/skills/{skill}.md"
+    pack_contract = contract.get("pack_contract")
+    return (
+        _decision_pointer_resolves(
+            manifest_path,
+            pointers.get("decision_capsule"),
+        )
+        and research.is_file()
+        and research_relative.startswith(
+            f"docs/research/skills/{skill}/"
+        )
+        and synthesis.is_file()
+        and synthesis_relative == expected_synthesis
+        and adjacency == synthesis
+        and isinstance(fragment, str)
+        and _markdown_fragment_resolves(adjacency, fragment)
+        and isinstance(pack_contract, dict)
+        and pack_contract.get("path") == CANONICAL_PACK_CONTRACT_PATH
+        and pointers.get("pack_synthesis") == pack_contract.get("path")
+        and pointers.get("pack_synthesis") == CANONICAL_PACK_CONTRACT_PATH
+        and pack_synthesis.is_file()
+    )
+
+
 def _verify_registered_proof(
     manifest_path: Path,
     manifest: dict[str, object],
@@ -1654,6 +3126,12 @@ def _verify_registered_proof(
             "proof-receipt",
             "A durable proof receipt is corrupt or legacy",
         )
+    if not _valid_invalidation_history(invalidations):
+        return _proof_failure(
+            manifest_path,
+            "proof-schema",
+            "Proof invalidation history is malformed",
+        )
     typed_receipts = [receipt for receipt in receipts if isinstance(receipt, dict)]
     stale = _stale_receipts_from_invalidations(typed_receipts, invalidations)
     seen_ids: set[str] = set()
@@ -1672,9 +3150,7 @@ def _verify_registered_proof(
         "tier",
     }
     semantic = manifest.get("semantic")
-    declared_stage = (
-        semantic.get("declared_stage") if isinstance(semantic, dict) else None
-    )
+    declared_stage = _semantic_stage(semantic)
     for value in registrations:
         if not isinstance(value, dict):
             cheap_failures.append(
@@ -1863,6 +3339,7 @@ def _verify_registered_proof(
         for registration, _, identity_tuple in planned:
             exact = _exact_receipt(
                 typed_receipts,
+                registration,
                 identity_tuple,
                 stale,
             )
@@ -1929,6 +3406,15 @@ def _verify_registered_proof(
                 "proof_profile": receipt["proof_profile"],
                 "target": receipt["target"],
                 "environment": receipt["environment"],
+                **(
+                    {
+                        "fresh_epoch_identity": receipt[
+                            "fresh_epoch_identity"
+                        ]
+                    }
+                    if "fresh_epoch_identity" in receipt
+                    else {}
+                ),
             }
         )
         for receipt in typed_receipts
@@ -1954,11 +3440,13 @@ def _verify_registered_proof(
             )
             exact = _exact_receipt(
                 typed_receipts + appended,
+                registration,
                 identity_tuple,
                 stale,
             )
             latest = _latest_matching_receipt(
                 typed_receipts + appended,
+                registration,
                 identity_tuple,
             )
             forced = force_proof == registration_id
@@ -2079,7 +3567,7 @@ def _verify_preflight_registrations(
     semantic = manifest["semantic"]
     assert isinstance(mechanical, dict)
     assert isinstance(semantic, dict)
-    declared_stage = str(semantic["declared_stage"])
+    declared_stage = str(_semantic_stage(semantic))
     registrations = mechanical.get("preflight_registrations", [])
     if not isinstance(registrations, list):
         return _proof_failure(
@@ -2145,6 +3633,7 @@ def _verify_preflight_registrations(
     blocked: list[str] = []
     failures: list[dict[str, str]] = []
     git_delivery: dict[str, object] | None = None
+    installations: list[dict[str, object]] = []
     for registration in stage_registrations:
         registration_id = registration.get("id")
         kind = registration.get("kind")
@@ -2296,9 +3785,11 @@ def _verify_preflight_registrations(
                     candidate_root=candidate_root,
                 )
             else:
-                _verify_installation_preflight(
-                    registration,
-                    candidate_root=candidate_root,
+                installations.append(
+                    _verify_installation_preflight(
+                        registration,
+                        candidate_root=candidate_root,
+                    )
                 )
         except (
             OSError,
@@ -2337,6 +3828,8 @@ def _verify_preflight_registrations(
     }
     if git_delivery is not None:
         result["preflight"]["git_delivery"] = git_delivery  # type: ignore[index]
+    if installations:
+        result["preflight"]["installations"] = installations  # type: ignore[index]
     return result
 
 
@@ -2591,7 +4084,7 @@ def _verify_installation_preflight(
     registration: dict[str, object],
     *,
     candidate_root: Path,
-) -> None:
+) -> dict[str, object]:
     cohort = registration.get("cohort")
     if (
         not isinstance(cohort, list)
@@ -2661,7 +4154,7 @@ def _verify_installation_preflight(
                 "Installer dry-run cohort differs from the owner-declared cohort: "
                 f"expected {cohort}, actual {changed}"
             )
-        return
+        return {"state": "plan", "cohort": cohort}
 
     if changed:
         raise ValueError(
@@ -2683,6 +4176,400 @@ def _verify_installation_preflight(
             "Canonical and installed identities differ for declared cohort: "
             + ", ".join(mismatches)
         )
+    return {
+        "state": "post-install",
+        "cohort": cohort,
+        "identities": {name: planned[name] for name in cohort},
+    }
+
+
+def _verify_fresh_campaign(
+    manifest_path: Path,
+    manifest: dict[str, object],
+    *,
+    worktree: Path,
+    stage_override: str | None,
+    force_proof: str | None,
+    force_reason: str | None,
+    no_execute: bool,
+) -> dict[str, object]:
+    try:
+        read_campaign_manifest(manifest_path)
+        campaign_id, controlled = _control_identity(manifest_path, worktree)
+    except (OSError, json.JSONDecodeError, ValueError) as error:
+        return _failure("failed", "manifest-schema", manifest_path, str(error))
+    campaign = controlled["campaign"]
+    semantic = controlled["semantic"]
+    mechanical = controlled["mechanical"]
+    assert isinstance(campaign, dict)
+    assert isinstance(semantic, dict)
+    assert isinstance(mechanical, dict)
+    stage = _semantic_stage(semantic)
+    if stage_override is not None and stage_override != stage:
+        return _failure(
+            "failed",
+            "semantic-stage",
+            manifest_path,
+            "Advanced stage override does not match the owner-written stage token",
+        )
+    pointers = semantic.get("pointers")
+    assert isinstance(pointers, dict)
+    decision_pointer = pointers.get("decision_capsule")
+    decision_record = str(decision_pointer).split("#", 1)[0]
+    decision_path = manifest_path.parent / decision_record
+    if (
+        not isinstance(decision_pointer, str)
+        or Path(decision_record).is_absolute()
+        or not _is_within(decision_path, manifest_path.parent)
+        or decision_path.resolve()
+        != (manifest_path.parent / "decisions.md").resolve()
+        or not decision_path.is_file()
+    ):
+        return _failure(
+            "failed",
+            "manifest-path",
+            manifest_path,
+            "Decision capsule pointer escapes or names a foreign artifact",
+        )
+    lease_path = worktree / LEASE_PATH
+    try:
+        lease = _read_json(lease_path)
+    except (OSError, json.JSONDecodeError):
+        return _failure(
+            "failed",
+            "lease",
+            manifest_path,
+            "Campaign lease is absent or unreadable",
+        )
+    if (
+        not isinstance(lease, dict)
+        or lease.get("worktree") != str(worktree)
+        or lease.get("campaign_id") != campaign_id
+        or not _valid_owner_token(lease.get("owner_token"))
+    ):
+        return _failure(
+            "lease-conflict",
+            "lease",
+            manifest_path,
+            "A different campaign owns the worktree lease",
+        )
+    try:
+        _validate_v2_campaign_identity(
+            controlled,
+            worktree=worktree,
+            manifest_path=manifest_path,
+            lease=lease,
+        )
+    except ValueError as error:
+        return _failure(
+            "failed",
+            "manifest-schema",
+            manifest_path,
+            str(error),
+        )
+    contract = controlled.get("contract")
+    assert isinstance(contract, dict)
+    if mechanical.get("contract_digest") != _canonical_json_sha256(contract):
+        receipts = mechanical.get("receipts")
+        invalidations = mechanical.get("invalidations")
+        if not isinstance(receipts, list) or not isinstance(invalidations, list):
+            return _failure(
+                "failed",
+                "manifest-schema",
+                manifest_path,
+                "Fresh campaign receipt or invalidation state is malformed",
+            )
+        stale_ids = sorted(
+            str(receipt["id"])
+            for receipt in receipts
+            if (
+                isinstance(receipt, dict)
+                and isinstance(receipt.get("id"), str)
+                and isinstance(receipt.get("fresh_epoch_identity"), dict)
+            )
+        )
+        invalidations.append(
+            {
+                "changed_contract_fields": ["contract.digest"],
+                "receipt_ids": stale_ids,
+                "observed_at": _now(),
+            }
+        )
+        update_mechanical_state(
+            manifest_path,
+            {
+                "evidence_state": "stale",
+                "invalidations": invalidations,
+            },
+        )
+        result = _failure(
+            "stale",
+            "contract-drift",
+            manifest_path,
+            "Immutable Fresh campaign contract changed after admission",
+        )
+        result.update(
+            {
+                "changed_contract_fields": ["contract.digest"],
+                "stale_receipts": stale_ids,
+                "owner_action_required": ["resume", "repair", "restart"],
+            }
+        )
+        return result
+    observed_contract = _observed_fresh_contract(
+        contract,
+        worktree=worktree,
+    )
+    drift = check_fresh_contract(manifest_path, observed_contract)
+    if drift["status"] != "verified":
+        return drift
+    terminal_token = semantic.get("terminal_token")
+    if terminal_token is not None and stage != "prompt-5":
+        return _failure(
+            "failed",
+            "semantic-terminal",
+            manifest_path,
+            "Only Prompt 5 may write a terminal campaign token",
+        )
+    if stage == "prompt-5" and terminal_token is not None:
+        lifecycle = semantic.get("lifecycle")
+        if (
+            terminal_token != "campaign-complete"
+            or not isinstance(lifecycle, dict)
+            or lifecycle != FRESH_TERMINAL_LIFECYCLE
+        ):
+            return _failure(
+                "stale",
+                "semantic-terminal",
+                manifest_path,
+                "Prompt 5 terminal state requires the exact completed lifecycle",
+            )
+        if not _terminal_semantic_pointers_resolve(
+            manifest_path,
+            semantic,
+            contract=contract,
+            skill=str(campaign["skill"]),
+            worktree=worktree,
+        ):
+            return _failure(
+                "stale",
+                "semantic-terminal",
+                manifest_path,
+                "Prompt 5 terminal semantic pointers must resolve exactly",
+            )
+        preflight_registrations = mechanical.get("preflight_registrations")
+        if not isinstance(preflight_registrations, list) or not any(
+            isinstance(registration, dict)
+            and registration.get("kind") == "installation"
+            and registration.get("stage", stage) == "prompt-5"
+            and registration.get("state") == "post-install"
+            for registration in preflight_registrations
+        ):
+            return _failure(
+                "stale",
+                "semantic-terminal",
+                manifest_path,
+                "Prompt 5 terminal state requires post-install verification",
+            )
+        proof_registrations = mechanical.get("proof_registrations")
+        if not isinstance(proof_registrations, list) or not proof_registrations:
+            return _failure(
+                "stale",
+                "semantic-terminal",
+                manifest_path,
+                "Prompt 5 terminal state requires registered proof and receipts",
+            )
+    pack_contract = contract.get("pack_contract")
+    slice_contract = contract.get("slice")
+    assert isinstance(pack_contract, dict)
+    assert isinstance(slice_contract, dict)
+    expected_proof_base = {
+        "composition_epoch_id": campaign["composition_epoch_id"],
+        "pack_contract_revision": pack_contract["revision"],
+        "slice_fingerprint": slice_contract["fingerprint"],
+    }
+    registrations = mechanical.get("proof_registrations")
+    if not isinstance(registrations, list):
+        return _failure(
+            "failed",
+            "manifest-schema",
+            manifest_path,
+            "Fresh campaign proof registrations must be a list",
+        )
+    invalid_registration = False
+    for registration in registrations:
+        identity = (
+            registration.get("fresh_epoch_identity")
+            if isinstance(registration, dict)
+            else None
+        )
+        if not isinstance(identity, dict) or any(
+            identity.get(field) != value
+            for field, value in expected_proof_base.items()
+        ):
+            invalid_registration = True
+            break
+        for identity_field, contract_field in (
+            ("relationship_ids", "selected_relationship_ids"),
+            ("scenario_ids", "selected_scenario_ids"),
+        ):
+            values = identity.get(identity_field)
+            selected = contract[contract_field]
+            if (
+                not isinstance(values, list)
+                or values != sorted(set(values))
+                or not set(values).issubset(selected)
+            ):
+                invalid_registration = True
+                break
+        if invalid_registration:
+            break
+    if invalid_registration:
+        return _failure(
+            "stale",
+            "proof-identity",
+            manifest_path,
+            "Fresh proof registration omits or drifts from the exact epoch tuple",
+        )
+    if terminal_token is not None:
+        current_required = [
+            registration
+            for registration in registrations
+            if (
+                isinstance(registration, dict)
+                and registration.get("applicability") == "required"
+                and registration.get("stage") == stage
+            )
+        ]
+        if not current_required:
+            return _failure(
+                "stale",
+                "semantic-terminal",
+                manifest_path,
+                "Prompt 5 terminal state requires current required proof",
+            )
+        covered_relationships: set[str] = set()
+        covered_scenarios: set[str] = set()
+        for registration in current_required:
+            identity = registration.get("fresh_epoch_identity")
+            assert isinstance(identity, dict)
+            covered_relationships.update(identity["relationship_ids"])
+            covered_scenarios.update(identity["scenario_ids"])
+        if (
+            covered_relationships
+            != set(contract["selected_relationship_ids"])
+            or covered_scenarios != set(contract["selected_scenario_ids"])
+        ):
+            return _failure(
+                "stale",
+                "semantic-terminal",
+                manifest_path,
+                "Prompt 5 terminal proof lacks exact relationship and scenario coverage",
+            )
+    preflight = _verify_preflight_registrations(
+        manifest_path,
+        controlled,
+        worktree=worktree,
+    )
+    if preflight["status"] != "verified":
+        return preflight
+    if terminal_token is not None:
+        preflight_result = preflight.get("preflight")
+        installations = (
+            preflight_result.get("installations")
+            if isinstance(preflight_result, dict)
+            else None
+        )
+        skill = campaign["skill"]
+        if (
+            not isinstance(installations, list)
+            or len(installations) != 1
+            or installations[0].get("state") != "post-install"
+            or installations[0].get("cohort") != [skill]
+            or not isinstance(installations[0].get("identities"), dict)
+        ):
+            return _failure(
+                "stale",
+                "semantic-terminal",
+                manifest_path,
+                "Prompt 5 terminal installation is not bound to this skill",
+            )
+        installed_identities = installations[0]["identities"]
+        assert isinstance(installed_identities, dict)
+        installer_digest = installed_identities.get(str(skill))
+        installer_fingerprint = (
+            f"sha256-v1:{installer_digest}"
+            if isinstance(installer_digest, str)
+            else None
+        )
+        artifact_identities = mechanical.get("artifact_identities")
+        identities = {
+            str(identity.get("name")): identity.get("fingerprint")
+            for identity in (
+                artifact_identities if isinstance(artifact_identities, list) else []
+            )
+            if isinstance(identity, dict)
+        }
+        if (
+            identities.get("canonical-p1") != installer_fingerprint
+            or identities.get("installed-p1") != installer_fingerprint
+            or mechanical.get("parity")
+            != {
+                "canonical_installed": "match",
+                "relationship_ids": contract["selected_relationship_ids"],
+            }
+        ):
+            return _failure(
+                "stale",
+                "semantic-terminal",
+                manifest_path,
+                "Prompt 5 terminal identities do not match installer evidence",
+            )
+    proof: dict[str, object] | None = None
+    if mechanical.get("proof_registrations"):
+        proof = _verify_registered_proof(
+            manifest_path,
+            controlled,
+            worktree=worktree,
+            force_proof=force_proof,
+            force_reason=force_reason,
+            no_execute=no_execute,
+            read_only=terminal_token is not None,
+        )
+        if proof["status"] != "verified":
+            return proof
+        controlled = _read_json(manifest_path)
+        mechanical = controlled["mechanical"]
+        assert isinstance(mechanical, dict)
+    if mechanical.get("evidence_state") == "stale":
+        return _failure(
+            "stale",
+            "mechanical-evidence",
+            manifest_path,
+            "Contract drift invalidated mechanical evidence for this epoch",
+        )
+    semantic_before = copy.deepcopy(semantic)
+    observed_at = _now()
+    update_mechanical_state(manifest_path, {"verified_at": observed_at})
+    lease["observed_at"] = observed_at
+    _replace_json_file(lease_path, lease)
+    if _read_json(manifest_path).get("semantic") != semantic_before:
+        return _failure(
+            "execution-error",
+            "semantic-ownership",
+            manifest_path,
+            "Verification altered owner-written semantic state",
+        )
+    result: dict[str, object] = {
+        "status": "verified",
+        "campaign_id": campaign_id,
+        "stage": stage,
+        "manifest": str(manifest_path),
+        "terminal": semantic.get("terminal_token"),
+    }
+    if proof is not None:
+        result["proof"] = proof["proof"]
+    return result
 
 
 def verify_campaign(
@@ -2699,7 +4586,11 @@ def verify_campaign(
     resolved_worktree = (worktree or Path.cwd()).resolve()
     supplied_manifest = manifest_path.resolve()
     campaign_root = (resolved_worktree / CAMPAIGN_ROOT).resolve()
-    if not _is_within(supplied_manifest, campaign_root):
+    fresh_campaign_root = (resolved_worktree / FRESH_CAMPAIGN_ROOT).resolve()
+    if not (
+        _is_within(supplied_manifest, campaign_root)
+        or _is_within(supplied_manifest, fresh_campaign_root)
+    ):
         return _failure(
             "failed",
             "manifest-path",
@@ -2728,6 +4619,16 @@ def verify_campaign(
             "manifest-schema",
             manifest_path,
             "Manifest must be a JSON object",
+        )
+    if manifest.get("schema_version") == FRESH_CAMPAIGN_SCHEMA_VERSION:
+        return _verify_fresh_campaign(
+            supplied_manifest,
+            manifest,
+            worktree=resolved_worktree,
+            stage_override=stage_override,
+            force_proof=force_proof,
+            force_reason=force_reason,
+            no_execute=no_execute,
         )
     if manifest.get("schema_version") != CAMPAIGN_SCHEMA_VERSION:
         return _failure(
@@ -2959,6 +4860,18 @@ def _canonical_json_sha256(payload: object) -> str:
         allow_nan=False,
     ).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
+
+
+def _campaign_lineage_digest(
+    campaign: dict[str, object],
+    supersession_digest: object,
+) -> str:
+    return _canonical_json_sha256(
+        {
+            "campaign": campaign,
+            "supersession_digest": supersession_digest,
+        }
+    )
 
 
 def _verified_identity(
@@ -3876,6 +5789,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     start.add_argument("--from-manifest", type=Path)
     start.add_argument("--changed-input", action="append", default=[])
+    start.add_argument(
+        "--fresh-epoch",
+        type=Path,
+        help="Owner-authored Fresh admission packet for a v2 campaign",
+    )
     start.add_argument("--json", action="store_true")
 
     verify = commands.add_parser("verify")
@@ -3974,6 +5892,11 @@ def main(argv: list[str] | None = None) -> int:
                     continuation=args.continuation,
                     from_manifest=args.from_manifest,
                     changed_inputs=args.changed_input,
+                    fresh_epoch=(
+                        _read_json(args.fresh_epoch)
+                        if args.fresh_epoch is not None
+                        else None
+                    ),
                 )
             elif args.command == "verify":
                 result = verify_campaign(

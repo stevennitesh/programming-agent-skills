@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from scripts import campaign_artifacts, install_skills
+from scripts import campaign_artifacts, install_skills, pack_contract
 
 
 def write_json(path: Path, payload: object) -> None:
@@ -30,12 +30,17 @@ def write_json(path: Path, payload: object) -> None:
         }
         decision_path = path.parent / "decisions.md"
         if pointers and decision_path.exists():
+            current = decision_path.read_text("utf-8")
             markers = "".join(
                 f"<!-- campaign-decision:{pointer.split('#', 1)[1]} -->\n"
                 for pointer in sorted(pointers)
+                if (
+                    f"<!-- campaign-decision:{pointer.split('#', 1)[1]} -->"
+                    not in current
+                )
             )
             decision_path.write_text(
-                decision_path.read_text("utf-8") + markers,
+                current + markers,
                 encoding="utf-8",
             )
 
@@ -101,6 +106,1781 @@ def valid_registration() -> dict[str, object]:
             }
         ],
     }
+
+
+def _admission_file(worktree: Path, relative: str, content: str) -> str:
+    path = worktree / relative
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(content.encode("utf-8"))
+    return f"sha256-v1:{hashlib.sha256(content.encode()).hexdigest()}"
+
+
+def _pack_contract_for_admission(
+    *,
+    ticket: str,
+    predecessor_ids: list[str],
+    capability_ids: list[str],
+    relationship_ids: list[str],
+    scenario_ids: list[str],
+) -> dict[str, object]:
+    draft = pack_contract.create_draft()
+    placeholder_scenario_id = "PS-999"
+    scenario_owner = (
+        predecessor_ids[0]
+        if predecessor_ids
+        else ("SK-900" if relationship_ids else ticket)
+    )
+    contract_scenario_ids = scenario_ids or [placeholder_scenario_id]
+    header = draft["epoch_header"]
+    header.update(  # type: ignore[union-attr]
+        {
+            "composition_epoch_id": "FCE-20260725-01",
+            "contract_revision": 1,
+            "fixed_point": {
+                "repository_tree": "a" * 40,
+                "environment": "test/windows/python-3.12",
+                "timestamp": "2026-07-25T00:00:00Z",
+            },
+            "intended_pack_outcome": "Exercise one Fresh campaign",
+            "scope": ["Fresh campaign admission"],
+            "exclusions": ["automatic semantic acceptance"],
+            "source_pointers": ["issue-44"],
+            "acceptance_scenarios": [
+                {
+                    "scenario_id": scenario_id,
+                    "description": f"Exercise {scenario_id}",
+                    "expected_owner_skill_id": (
+                        ticket if scenario_ids else scenario_owner
+                    ),
+                }
+                for scenario_id in contract_scenario_ids
+            ],
+            "load_budget_policy": {
+                "metric": "runtime instruction class",
+                "ceiling_or_class": "conditional",
+                "status": "set",
+            },
+            "campaign_proof_graph": [
+                {
+                    "predecessor_skill_id": predecessor_id,
+                    "successor_skill_id": ticket,
+                }
+                for predecessor_id in predecessor_ids
+            ],
+        }
+    )
+
+    def selected_skill(
+        skill_id: str,
+        name: str,
+        order: int,
+        *,
+        owned: list[str] | None = None,
+        relationships: list[str] | None = None,
+        state: str = "not-started",
+    ) -> dict[str, object]:
+        return {
+            "skill_id": skill_id,
+            "canonical_name": name,
+            "essential_outcome": f"Complete {name}",
+            "primary_role": "leaf",
+            "contract_order": order,
+            "invocation_mode": "implicit",
+            "positive_entry_predicate": f"{name} is needed",
+            "negative_exclusion_predicates": [f"{name} is not needed"],
+            "owned_authority_mutation_surfaces": [f"{name} local state"],
+            "prohibited_ownership": ["foreign semantic decisions"],
+            "required_input": f"{name} request",
+            "return_packet": f"{name} result",
+            "completion_condition": f"{name} complete",
+            "failure_return": f"{name} blocked",
+            "owned_capability_ids": owned or [],
+            "relationship_ids": relationships or [],
+            "acceptance_scenario_ids": (
+                scenario_ids
+                if skill_id == ticket
+                else (
+                    contract_scenario_ids
+                    if not scenario_ids and skill_id == scenario_owner
+                    else []
+                )
+            ),
+            "load_budget_class": "conditional",
+            "campaign_state": {
+                "status": state,
+                "campaign_id": (
+                    f"{skill_id.lower()}-complete" if state == "terminal" else None
+                ),
+                "terminal_evidence_pointer": (
+                    f"evidence://{skill_id}" if state == "terminal" else None
+                ),
+            },
+        }
+
+    relation_targets = [
+        f"SK-{899 + index:03d}"
+        for index, _ in enumerate(relationship_ids, start=1)
+    ]
+    other_ids = [*predecessor_ids, *relation_targets]
+    draft["selected_skills"] = [
+        *[
+            selected_skill(
+                predecessor_id,
+                predecessor_id.lower(),
+                index,
+            )
+            for index, predecessor_id in enumerate(predecessor_ids, start=1)
+        ],
+        *[
+            selected_skill(
+                relation_target,
+                relation_target.lower(),
+                len(predecessor_ids) + index,
+            )
+            for index, relation_target in enumerate(relation_targets, start=1)
+        ],
+        selected_skill(
+            ticket,
+            "implement",
+            len(other_ids) + 1,
+            owned=capability_ids,
+            relationships=relationship_ids,
+        ),
+    ]
+    draft["capabilities"] = [
+        {
+            "capability_id": capability_id,
+            "essential": True,
+            "observable_outcome": f"{capability_id} outcome",
+            "entry_conditions": ["A bounded request exists"],
+            "completion_return": f"{capability_id} result",
+            "required_authority_mutation": ["local owner"],
+            "primary_owner_skill_id": ticket,
+            "allowed_contributor_skill_ids": [],
+            "exclusions": ["foreign ownership"],
+            "acceptance_scenario_ids": scenario_ids,
+            "proof_class": "structural",
+            "disposition": "selected",
+        }
+        for capability_id in capability_ids
+    ]
+    draft["relationships"] = [
+        {
+            "relationship_id": relationship_id,
+            "caller_skill_id": ticket,
+            "verb": "Invoke",
+            "target_skill_id": target_id,
+            "entry_condition": "The target result is required",
+            "wrong_condition": "The caller can complete locally",
+            "input_packet": "bounded request",
+            "callee_owned_gates_mutations": ["target local gates"],
+            "return_packet": "typed target result",
+            "resume_owner_skill_id": ticket,
+            "combined_exit_owner_skill_id": ticket,
+            "failure_behavior": "return the exact target blocker",
+            "context_loaded": ["target interface only"],
+            "affected_capability_ids": capability_ids,
+            "ordering_impact": "none",
+            "required_proof_ids": [f"PROOF-{relationship_id}"],
+        }
+        for relationship_id, target_id in zip(
+            relationship_ids,
+            relation_targets,
+            strict=True,
+        )
+    ]
+    frozen = pack_contract.freeze_contract(draft)
+    assert frozen["status"] == "contract-frozen", frozen
+    frozen_contract = frozen["contract"]
+    for selected in frozen_contract["selected_skills"]:
+        if selected["skill_id"] not in predecessor_ids:
+            continue
+        selected["campaign_state"] = {
+            "status": "terminal",
+            "campaign_id": f"{selected['skill_id'].lower()}-complete",
+            "terminal_evidence_pointer": f"evidence://{selected['skill_id']}",
+        }
+    return frozen_contract
+
+
+def valid_fresh_epoch_admission(
+    worktree: Path,
+    *,
+    ticket: str = "T05",
+    predecessor_ids: list[str] | None = None,
+) -> dict[str, object]:
+    selected_predecessor_tickets = (
+        ["T04"] if predecessor_ids is None else predecessor_ids
+    )
+    pack_skill_id = f"SK-{int(ticket.removeprefix('T')):03d}"
+    selected_predecessors = [
+        f"SK-{int(value.removeprefix('T').removeprefix('SK-')):03d}"
+        for value in selected_predecessor_tickets
+    ]
+    slice_id = f"FCE-20260725-01:r1:{pack_skill_id}:implement"
+    selected_capability_ids = ["CAP-005"]
+    selected_relationship_ids = ["REL-005"]
+    selected_scenario_ids = ["PS-005"]
+    pack_path = "docs/synthesis/skill-pack.md"
+    slice_path = (
+        f"docs/validation/skill-pack/FCE-20260725-01/slices/{ticket}.json"
+    )
+    schedule_path = "docs/validation/skill-pack/FCE-20260725-01/schedule.json"
+    m0_path = "docs/validation/skill-pack/FCE-20260725-01/m0/implement.json"
+    schedule_fingerprint = _admission_file(
+        worktree,
+        schedule_path,
+        json.dumps({ticket: "implement"}, separators=(",", ":")) + "\n",
+    )
+    proof_predecessors = []
+    for predecessor_id in selected_predecessors:
+        p1_path = (
+            f"docs/validation/skills/{predecessor_id.lower()}/p1.json"
+        )
+        installed_path = (
+            f"docs/validation/skills/{predecessor_id.lower()}/installed.json"
+        )
+        proof_predecessors.append(
+            {
+                "id": predecessor_id,
+                "p1": {
+                    "path": p1_path,
+                    "fingerprint": _admission_file(
+                        worktree,
+                        p1_path,
+                        f"{predecessor_id} p1 predecessor\n",
+                    ),
+                },
+                "installed": {
+                    "path": installed_path,
+                    "fingerprint": _admission_file(
+                        worktree,
+                        installed_path,
+                        f"{predecessor_id} installed predecessor\n",
+                    ),
+                },
+            }
+        )
+    frozen_pack = _pack_contract_for_admission(
+        ticket=pack_skill_id,
+        predecessor_ids=selected_predecessors,
+        capability_ids=selected_capability_ids,
+        relationship_ids=selected_relationship_ids,
+        scenario_ids=selected_scenario_ids,
+    )
+    pack_content = pack_contract.render_contract(frozen_pack)
+    admission = {
+        "campaign": {
+            "composition_epoch_id": "FCE-20260725-01",
+            "continuation": None,
+            "supersession": None,
+        },
+        "contract": {
+            "pack_contract": {
+                "path": pack_path,
+                "revision": "1",
+                "fingerprint": _admission_file(
+                    worktree,
+                    pack_path,
+                    pack_content,
+                ),
+            },
+            "slice": {
+                "id": slice_id,
+                "path": slice_path,
+                "fingerprint": _admission_file(
+                    worktree,
+                    slice_path,
+                    json.dumps(
+                        {
+                            "slice_id": slice_id,
+                            "selected_capability_ids": selected_capability_ids,
+                            "selected_relationship_ids": (
+                                selected_relationship_ids
+                            ),
+                            "selected_scenario_ids": selected_scenario_ids,
+                            "hard_proof_predecessor_ids": selected_predecessors,
+                        },
+                        separators=(",", ":"),
+                        sort_keys=True,
+                    )
+                ),
+            },
+            "independent_m0": {
+                "path": m0_path,
+                "fingerprint": _admission_file(
+                    worktree,
+                    m0_path,
+                    '{"skill":"implement"}\n',
+                ),
+            },
+            "selected_capability_ids": selected_capability_ids,
+            "selected_relationship_ids": selected_relationship_ids,
+            "selected_scenario_ids": selected_scenario_ids,
+            "proof_predecessors": proof_predecessors,
+            "schedule_pointer": (
+                f"{schedule_path}#{ticket}"
+            ),
+            "schedule_fingerprint": schedule_fingerprint,
+        },
+        "semantic": {
+            "stage_token": "prompt-1",
+            "terminal_token": None,
+            "lifecycle": {
+                "m0": "pending",
+                "research": "pending",
+                "h1": "pending",
+                "proof": "pending",
+                "pruning": "pending",
+                "p1": "pending",
+            },
+            "pointers": {
+                "decision_capsule": "decisions.md#prompt-1",
+                "research_packet": (
+                    "docs/research/skills/implement/"
+                    "RP-implement-20260725-01.md"
+                ),
+                "skill_synthesis": "docs/synthesis/skills/implement.md",
+                "claim_adjacency": (
+                    "docs/synthesis/skills/implement.md#claim-adjacency"
+                ),
+                "pack_synthesis": "docs/synthesis/skill-pack.md",
+            },
+        },
+    }
+    return admission
+
+
+def _sync_slice_projection(
+    worktree: Path,
+    admission: dict[str, object],
+) -> None:
+    contract = admission["contract"]  # type: ignore[index]
+    slice_identity = contract["slice"]
+    slice_payload = json.loads(
+        (worktree / slice_identity["path"]).read_text("utf-8")
+    )
+    ticket = slice_payload["slice_id"].split(":")[2]
+    predecessor_ids = [
+        predecessor["id"]
+        for predecessor in contract["proof_predecessors"]
+    ]
+    frozen_pack = _pack_contract_for_admission(
+        ticket=ticket,
+        predecessor_ids=predecessor_ids,
+        capability_ids=contract["selected_capability_ids"],
+        relationship_ids=contract["selected_relationship_ids"],
+        scenario_ids=contract["selected_scenario_ids"],
+    )
+    pack_identity = contract["pack_contract"]
+    pack_identity["fingerprint"] = _admission_file(
+        worktree,
+        pack_identity["path"],
+        pack_contract.render_contract(frozen_pack),
+    )
+    produced = pack_contract.campaign_admission_slice(frozen_pack, ticket)
+    assert produced["status"] == "campaign-admission-slice"
+    slice_payload = produced["slice"]
+    slice_identity["id"] = slice_payload["slice_id"]
+    slice_identity["fingerprint"] = _admission_file(
+        worktree,
+        slice_identity["path"],
+        json.dumps(
+            slice_payload,
+            separators=(",", ":"),
+            sort_keys=True,
+        ),
+    )
+
+
+def test_fresh_start_creates_pointer_oriented_v2_manifest_and_firewall(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_fresh_epoch_admission(worktree)
+
+    result = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-epoch-1",
+        owner_token="owner-a",
+        fresh_epoch=admission,
+    )
+
+    expected = (
+        "docs/validation/skills/implement/campaigns/"
+        "implement-epoch-1/manifest.json"
+    )
+    assert result["status"] == "verified"
+    assert result["manifest"] == expected
+    manifest_path = worktree / expected
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    assert manifest["schema_version"] == 2
+    assert manifest["campaign"]["composition_epoch_id"] == "FCE-20260725-01"
+    assert manifest["contract"] == admission["contract"]
+    assert manifest["semantic"] == admission["semantic"]
+    assert manifest["mechanical"]["evidence_state"] == "current"
+    assert manifest["mechanical"]["campaign_digest"] == (
+        campaign_artifacts._campaign_lineage_digest(
+            manifest["campaign"],
+            manifest["mechanical"]["supersession_digest"],
+        )
+    )
+    lease = json.loads(
+        (worktree / campaign_artifacts.LEASE_PATH).read_text("utf-8")
+    )
+    assert lease["campaign_digest"] == manifest["mechanical"]["campaign_digest"]
+    assert lease["supersession_digest"] is None
+
+    for protected in ("campaign", "contract", "semantic"):
+        with pytest.raises(ValueError, match=protected):
+            campaign_artifacts.update_mechanical_state(
+                manifest_path,
+                {protected: {}},
+            )
+    with pytest.raises(ValueError, match="campaign_digest"):
+        campaign_artifacts.update_mechanical_state(
+            manifest_path,
+            {"campaign_digest": "0" * 64},
+        )
+
+
+def test_fresh_start_accepts_semantic_pack_revision_in_git_worktree(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    _git(worktree, "init", "--quiet")
+    admission = valid_fresh_epoch_admission(worktree)
+
+    result = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-git-epoch-1",
+        owner_token="owner-a",
+        fresh_epoch=admission,
+    )
+
+    assert result["status"] == "verified"
+    assert (worktree / str(result["manifest"])).exists()
+
+
+def test_fresh_git_worktree_still_rejects_pack_fingerprint_drift(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    _git(worktree, "init", "--quiet")
+    admission = valid_fresh_epoch_admission(worktree)
+    pack_path = worktree / admission["contract"]["pack_contract"]["path"]  # type: ignore[index]
+    pack_path.write_text("drifted pack contract\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="pack_contract fingerprint"):
+        campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id="implement-git-epoch-1",
+            owner_token="owner-a",
+            fresh_epoch=admission,
+        )
+
+    assert not (worktree / campaign_artifacts.LEASE_PATH).exists()
+
+
+def test_fresh_start_requires_canonical_pack_contract_owner_before_lease(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_fresh_epoch_admission(worktree)
+    foreign_path = "docs/synthesis/foreign-pack.md"
+    admission["contract"]["pack_contract"]["path"] = foreign_path  # type: ignore[index]
+    admission["contract"]["pack_contract"]["fingerprint"] = _admission_file(  # type: ignore[index]
+        worktree,
+        foreign_path,
+        "foreign pack contract\n",
+    )
+    admission["semantic"]["pointers"]["pack_synthesis"] = foreign_path  # type: ignore[index]
+
+    with pytest.raises(ValueError, match="canonical Pack Contract"):
+        campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id="implement-epoch-1",
+            fresh_epoch=admission,
+        )
+
+    assert not (worktree / campaign_artifacts.LEASE_PATH).exists()
+
+
+@pytest.mark.parametrize(
+    ("canonical_name", "accepted"),
+    [("implement", True), ("review", False)],
+)
+def test_fresh_start_consumes_pack_owned_canonical_slice_envelope(
+    tmp_path: Path,
+    canonical_name: str,
+    accepted: bool,
+) -> None:
+    worktree = tmp_path / canonical_name
+    worktree.mkdir()
+    fixture = (
+        Path(__file__).parents[1]
+        / "docs/validation/shared/fixtures/"
+        "pack-composition-contract-v1/contract.json"
+    )
+    draft = json.loads(fixture.read_text("utf-8"))
+    draft["epoch_header"]["composition_epoch_id"] = "FCE-20260725-01"
+    draft["selected_skills"][0]["canonical_name"] = canonical_name
+    frozen = pack_contract.freeze_contract(draft)
+    assert frozen["status"] == "contract-frozen"
+    envelope = pack_contract.campaign_admission_slice(
+        frozen["contract"],
+        "SK-001",
+    )
+    assert envelope["status"] == "campaign-admission-slice"
+    admission = valid_fresh_epoch_admission(
+        worktree,
+        ticket="T01",
+        predecessor_ids=[],
+    )
+    contract = admission["contract"]  # type: ignore[assignment]
+    contract["pack_contract"]["revision"] = "1"
+    contract["pack_contract"]["fingerprint"] = _admission_file(
+        worktree,
+        contract["pack_contract"]["path"],
+        pack_contract.render_contract(frozen["contract"]),
+    )
+    projected = envelope["slice"]
+    for field in (
+        "selected_capability_ids",
+        "selected_relationship_ids",
+        "selected_scenario_ids",
+    ):
+        contract[field] = projected[field]
+    slice_identity = contract["slice"]
+    slice_identity["id"] = projected["slice_id"]
+    slice_identity["fingerprint"] = _admission_file(
+        worktree,
+        slice_identity["path"],
+        json.dumps(projected, separators=(",", ":"), sort_keys=True),
+    )
+
+    if accepted:
+        result = campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id="implement-canonical-slice",
+            owner_token="owner-a",
+            fresh_epoch=admission,
+        )
+        assert result["status"] == "verified"
+    else:
+        with pytest.raises(ValueError, match="selected skill"):
+            campaign_artifacts.start_campaign(
+                "implement",
+                worktree=worktree,
+                campaign_id="implement-wrong-slice",
+                owner_token="owner-a",
+                fresh_epoch=admission,
+            )
+        assert not (worktree / campaign_artifacts.LEASE_PATH).exists()
+
+
+def test_fresh_start_rejects_self_consistent_slice_not_derived_from_pack(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_fresh_epoch_admission(
+        worktree,
+        ticket="T01",
+        predecessor_ids=[],
+    )
+    slice_path = worktree / admission["contract"]["slice"]["path"]  # type: ignore[index]
+    projected = json.loads(slice_path.read_text("utf-8"))
+    projected["selected_capability_ids"] = ["CAP-forged"]
+    admission["contract"]["selected_capability_ids"] = ["CAP-forged"]  # type: ignore[index]
+    admission["contract"]["slice"]["fingerprint"] = _admission_file(  # type: ignore[index]
+        worktree,
+        admission["contract"]["slice"]["path"],  # type: ignore[index]
+        json.dumps(projected, separators=(",", ":"), sort_keys=True),
+    )
+
+    with pytest.raises(ValueError, match="derived from the Pack Contract"):
+        campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id="implement-forged-slice",
+            owner_token="owner-a",
+            fresh_epoch=admission,
+        )
+
+    assert not (worktree / campaign_artifacts.LEASE_PATH).exists()
+
+
+def test_fresh_root_start_accepts_explicitly_empty_proof_predecessors(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_fresh_epoch_admission(
+        worktree,
+        ticket="T01",
+        predecessor_ids=[],
+    )
+
+    result = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-root-epoch-1",
+        owner_token="owner-a",
+        fresh_epoch=admission,
+    )
+
+    assert result["status"] == "verified"
+    manifest_path = worktree / str(result["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    assert manifest["contract"]["proof_predecessors"] == []
+    assert (worktree / campaign_artifacts.LEASE_PATH).exists()
+
+
+@pytest.mark.parametrize(
+    ("continuation", "supersession"),
+    [
+        ("restart", "docs/validation/skills/implement/campaigns/missing/manifest.json"),
+        (None, "docs/validation/skills/implement/campaigns/missing/manifest.json"),
+        ("repair", None),
+    ],
+)
+def test_ordinary_fresh_start_rejects_forged_continuation_before_lease(
+    tmp_path: Path,
+    continuation: str | None,
+    supersession: str | None,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_fresh_epoch_admission(worktree)
+    admission["campaign"]["continuation"] = continuation  # type: ignore[index]
+    admission["campaign"]["supersession"] = supersession  # type: ignore[index]
+
+    with pytest.raises(ValueError, match="ordinary Fresh start"):
+        campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id="implement-forged-continuation",
+            owner_token="owner-a",
+            fresh_epoch=admission,
+        )
+
+    assert not (worktree / campaign_artifacts.LEASE_PATH).exists()
+
+
+@pytest.mark.parametrize(
+    "field",
+    [
+        "selected_capability_ids",
+        "selected_relationship_ids",
+        "selected_scenario_ids",
+    ],
+)
+def test_fresh_start_accepts_authoritative_empty_selected_sets(
+    tmp_path: Path,
+    field: str,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_fresh_epoch_admission(worktree)
+    admission["contract"][field] = []  # type: ignore[index]
+    _sync_slice_projection(worktree, admission)
+
+    result = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id=f"implement-empty-{field.replace('_', '-')}",
+        owner_token="owner-a",
+        fresh_epoch=admission,
+    )
+
+    assert result["status"] == "verified"
+    manifest = json.loads(
+        (worktree / str(result["manifest"])).read_text("utf-8")
+    )
+    assert manifest["contract"][field] == []
+
+
+@pytest.mark.parametrize("case", ["omitted", "extra", "duplicate", "mismatch"])
+def test_fresh_start_refuses_predecessor_set_drift_before_lease(
+    tmp_path: Path,
+    case: str,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_fresh_epoch_admission(worktree)
+    predecessors = admission["contract"]["proof_predecessors"]  # type: ignore[index]
+    if case == "omitted":
+        predecessors.clear()
+    elif case == "extra":
+        predecessors.append(
+            {
+                "id": "T03",
+                "p1": {
+                    "path": "docs/validation/skills/t03/p1.json",
+                    "fingerprint": _admission_file(
+                        worktree,
+                        "docs/validation/skills/t03/p1.json",
+                        "T03 p1 predecessor\n",
+                    ),
+                },
+                "installed": {
+                    "path": "docs/validation/skills/t03/installed.json",
+                    "fingerprint": _admission_file(
+                        worktree,
+                        "docs/validation/skills/t03/installed.json",
+                        "T03 installed predecessor\n",
+                    ),
+                },
+            }
+        )
+        predecessors.sort(key=lambda predecessor: predecessor["id"])
+    elif case == "duplicate":
+        predecessors.append(json.loads(json.dumps(predecessors[0])))
+    else:
+        predecessors[0]["id"] = "T03"
+
+    with pytest.raises(ValueError, match="predecessor"):
+        campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id="implement-epoch-1",
+            fresh_epoch=admission,
+        )
+
+    assert not (worktree / campaign_artifacts.LEASE_PATH).exists()
+
+
+@pytest.mark.parametrize(
+    "field",
+    [
+        "selected_capability_ids",
+        "selected_relationship_ids",
+        "selected_scenario_ids",
+    ],
+)
+def test_fresh_start_refuses_selected_set_drift_from_slice_before_lease(
+    tmp_path: Path,
+    field: str,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_fresh_epoch_admission(worktree)
+    admission["contract"][field] = [f"{field}-foreign"]  # type: ignore[index]
+
+    with pytest.raises(ValueError, match="frozen slice"):
+        campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id="implement-epoch-1",
+            fresh_epoch=admission,
+        )
+
+    assert not (worktree / campaign_artifacts.LEASE_PATH).exists()
+
+
+def test_fresh_start_refuses_cross_graph_slice_identity_before_lease(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_fresh_epoch_admission(worktree)
+    admission["contract"]["slice"]["id"] = (  # type: ignore[index]
+        "OTHER-GRAPH:T05"
+    )
+
+    with pytest.raises(ValueError, match="slice ID"):
+        campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id="implement-epoch-1",
+            fresh_epoch=admission,
+        )
+
+    assert not (worktree / campaign_artifacts.LEASE_PATH).exists()
+
+
+@pytest.mark.parametrize(
+    "schedule_content",
+    [
+        '{"note":"T05"}\n',
+        '{"T050":"implement"}\n',
+    ],
+)
+def test_fresh_start_requires_exact_schedule_fragment_before_lease(
+    tmp_path: Path,
+    schedule_content: str,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_fresh_epoch_admission(worktree)
+    contract = admission["contract"]  # type: ignore[assignment]
+    schedule_path = str(contract["schedule_pointer"]).split("#", 1)[0]
+    contract["schedule_fingerprint"] = _admission_file(
+        worktree,
+        schedule_path,
+        schedule_content,
+    )
+
+    with pytest.raises(ValueError, match="schedule fragment"):
+        campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id="implement-epoch-1",
+            fresh_epoch=admission,
+        )
+
+    assert not (worktree / campaign_artifacts.LEASE_PATH).exists()
+
+
+def test_fresh_start_refuses_incomplete_admission_before_acquiring_lease(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_fresh_epoch_admission(worktree)
+    del admission["contract"]["slice"]  # type: ignore[index]
+
+    with pytest.raises(ValueError, match="slice"):
+        campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id="implement-epoch-1",
+            fresh_epoch=admission,
+        )
+
+    assert not (worktree / campaign_artifacts.LEASE_PATH).exists()
+
+
+def test_fresh_start_resolves_admitted_identity_before_acquiring_lease(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_fresh_epoch_admission(worktree)
+    slice_path = worktree / admission["contract"]["slice"]["path"]  # type: ignore[index]
+    slice_path.write_text('{"ticket":"drifted"}\n', encoding="utf-8")
+
+    with pytest.raises(ValueError, match="slice fingerprint"):
+        campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id="implement-epoch-1",
+            fresh_epoch=admission,
+        )
+
+    assert not (worktree / campaign_artifacts.LEASE_PATH).exists()
+
+
+@pytest.mark.parametrize(
+    ("pointer", "value"),
+    [
+        (
+            "research_packet",
+            "docs/research/skills/implement/../other.md",
+        ),
+        (
+            "research_packet",
+            r"docs\research\skills\implement\packet.md",
+        ),
+        (
+            "claim_adjacency",
+            "docs/synthesis/skills/implement.md#../claim-adjacency",
+        ),
+    ],
+)
+def test_fresh_start_refuses_noncanonical_semantic_pointer_before_lease(
+    tmp_path: Path,
+    pointer: str,
+    value: str,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_fresh_epoch_admission(worktree)
+    admission["semantic"]["pointers"][pointer] = value  # type: ignore[index]
+
+    with pytest.raises(ValueError, match="pointer|canonical|owner"):
+        campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id="implement-epoch-1",
+            fresh_epoch=admission,
+        )
+
+    assert not (worktree / campaign_artifacts.LEASE_PATH).exists()
+
+
+def test_fresh_verify_reads_owner_tokens_without_advancing_lifecycle(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-epoch-1",
+        owner_token="owner-a",
+        fresh_epoch=valid_fresh_epoch_admission(worktree),
+    )
+    manifest_path = worktree / str(started["manifest"])
+    semantic_before = json.loads(manifest_path.read_text("utf-8"))["semantic"]
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "verified"
+    assert result["stage"] == "prompt-1"
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    assert manifest["semantic"] == semantic_before
+    assert manifest["mechanical"]["verified_at"].endswith("Z")
+
+
+def test_fresh_verify_detects_live_contract_drift_and_returns_owner(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_fresh_epoch_admission(worktree)
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-epoch-1",
+        owner_token="owner-a",
+        fresh_epoch=admission,
+    )
+    slice_path = worktree / admission["contract"]["slice"]["path"]  # type: ignore[index]
+    slice_path.write_text('{"ticket":"drifted"}\n', encoding="utf-8")
+
+    result = campaign_artifacts.verify_campaign(
+        worktree / str(started["manifest"]),
+        worktree=worktree,
+    )
+
+    assert result["status"] == "stale"
+    assert result["gate"] == "contract-drift"
+    assert result["changed_contract_fields"] == ["slice.fingerprint"]
+    assert result["owner_action_required"] == ["resume", "repair", "restart"]
+    resumed = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        owner_token="owner-a",
+        continuation="resume",
+        from_manifest=worktree / str(started["manifest"]),
+    )
+    assert resumed["status"] == "failed"
+    assert resumed["gate"] == "continuation"
+
+
+def test_fresh_verify_detects_direct_contract_identity_rewrite(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-epoch-1",
+        owner_token="owner-a",
+        fresh_epoch=valid_fresh_epoch_admission(worktree),
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["contract"]["pack_contract"]["revision"] = "fabricated"
+    write_json(manifest_path, manifest)
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "stale"
+    assert result["gate"] == "contract-drift"
+    assert result["changed_contract_fields"] == ["contract.digest"]
+
+
+def _complete_fresh_lifecycle(manifest: dict[str, object]) -> None:
+    manifest["semantic"]["lifecycle"] = {  # type: ignore[index]
+        "m0": "ready-for-research",
+        "research": "research-complete",
+        "h1": "ready-for-prompt-3",
+        "proof": "accepted",
+        "pruning": "complete",
+        "p1": "promoted-installed",
+    }
+
+
+def _write_fresh_semantic_artifacts(
+    worktree: Path,
+    manifest: dict[str, object],
+    *,
+    claim_adjacency: bool = True,
+) -> tuple[Path, Path]:
+    pointers = manifest["semantic"]["pointers"]  # type: ignore[index]
+    research = worktree / pointers["research_packet"]
+    research.parent.mkdir(parents=True, exist_ok=True)
+    research.write_text("# Research Packet\n", encoding="utf-8")
+    synthesis = worktree / pointers["skill_synthesis"]
+    synthesis.parent.mkdir(parents=True, exist_ok=True)
+    synthesis.write_text(
+        "# Implement Synthesis\n"
+        + ("## Claim Adjacency\n" if claim_adjacency else "## Evidence\n"),
+        encoding="utf-8",
+    )
+    return research, synthesis
+
+
+def test_fresh_terminal_is_prompt5_post_install_only(tmp_path: Path) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-epoch-1",
+        owner_token="owner-a",
+        fresh_epoch=valid_fresh_epoch_admission(worktree),
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["terminal_token"] = "campaign-complete"
+    write_json(manifest_path, manifest)
+
+    wrong_stage = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert wrong_stage["status"] == "failed"
+    assert wrong_stage["gate"] == "semantic-terminal"
+
+    manifest["semantic"]["stage_token"] = "prompt-5"
+    _complete_fresh_lifecycle(manifest)
+    _write_fresh_semantic_artifacts(worktree, manifest)
+    decisions_path = manifest_path.parent / "decisions.md"
+    decisions_path.write_text(
+        decisions_path.read_text("utf-8")
+        + "<!-- campaign-decision:prompt-1 -->\n",
+        encoding="utf-8",
+    )
+    manifest["mechanical"]["preflight_registrations"] = [
+        {
+            "kind": "installation",
+            "stage": "prompt-5",
+            "state": "plan",
+        }
+    ]
+    write_json(manifest_path, manifest)
+    planned_only = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert planned_only["status"] == "stale"
+    assert planned_only["gate"] == "semantic-terminal"
+    assert "post-install" in str(planned_only["message"])
+
+
+def test_fresh_terminal_binds_installer_identity_to_campaign_skill(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    installed = tmp_path / "installed"
+    _write_campaign_skill(worktree, "implement", "runtime")
+    install_skills.install(worktree, installed, None)
+    admission = valid_fresh_epoch_admission(worktree)
+    admission["contract"]["selected_relationship_ids"] = [  # type: ignore[index]
+        "REL-005",
+        "REL-006",
+    ]
+    admission["contract"]["selected_scenario_ids"] = [  # type: ignore[index]
+        "PS-005",
+        "PS-006",
+    ]
+    _sync_slice_projection(worktree, admission)
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-epoch-1",
+        owner_token="owner-a",
+        fresh_epoch=admission,
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    research_path, synthesis_path = _write_fresh_semantic_artifacts(
+        worktree,
+        manifest,
+    )
+    decisions_path = manifest_path.parent / "decisions.md"
+    decisions_path.write_text(
+        decisions_path.read_text("utf-8")
+        + "<!-- campaign-decision:prompt-1 -->\n",
+        encoding="utf-8",
+    )
+    digest = install_skills.skill_tree_hash(
+        worktree / "skills" / "custom" / "implement"
+    )
+    fingerprint = f"sha256-v1:{digest}"
+    manifest["semantic"]["terminal_token"] = "campaign-complete"
+    manifest["semantic"]["stage_token"] = "prompt-5"
+    _complete_fresh_lifecycle(manifest)
+    manifest["mechanical"]["preflight_registrations"] = [
+        _installation_preflight(
+            worktree,
+            installed,
+            ["implement"],
+            state="post-install",
+        )
+    ]
+    manifest["mechanical"]["artifact_identities"] = [
+        {"name": "canonical-p1", "fingerprint": fingerprint},
+        {"name": "installed-p1", "fingerprint": fingerprint},
+    ]
+    manifest["mechanical"]["parity"] = {
+        "canonical_installed": "match",
+        "relationship_ids": manifest["contract"]["selected_relationship_ids"],
+    }
+    write_json(manifest_path, manifest)
+
+    missing_proof = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert missing_proof["status"] == "stale"
+    assert missing_proof["gate"] == "semantic-terminal"
+    assert "proof" in str(missing_proof["message"])
+
+    target = worktree / "target"
+    target.mkdir()
+    (target / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree)
+    registration["fresh_epoch_identity"] = {
+        "composition_epoch_id": manifest["campaign"]["composition_epoch_id"],
+        "pack_contract_revision": manifest["contract"]["pack_contract"][
+            "revision"
+        ],
+        "slice_fingerprint": manifest["contract"]["slice"]["fingerprint"],
+        "relationship_ids": manifest["contract"]["selected_relationship_ids"],
+        "scenario_ids": manifest["contract"]["selected_scenario_ids"],
+    }
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    manifest["mechanical"]["receipts"] = [
+        campaign_artifacts.make_receipt(
+            registration,
+            campaign_artifacts.proof_identity_tuple(
+                registration,
+                candidate_root=worktree,
+            ),
+            exit_code=0,
+            output_digest=hashlib.sha256(b"terminal-proof").hexdigest(),
+            source="execution",
+            receipt_id="receipt-terminal-unstaged",
+        )
+    ]
+    write_json(manifest_path, manifest)
+
+    unstaged = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert unstaged["status"] == "stale"
+    assert unstaged["gate"] == "semantic-terminal"
+    assert "current required proof" in str(unstaged["message"])
+
+    registration["stage"] = "prompt-4"
+    manifest["mechanical"]["proof_registrations"] = [registration]
+    manifest["mechanical"]["receipts"] = [
+        campaign_artifacts.make_receipt(
+            registration,
+            campaign_artifacts.proof_identity_tuple(
+                registration,
+                candidate_root=worktree,
+            ),
+            exit_code=0,
+            output_digest=hashlib.sha256(b"terminal-proof").hexdigest(),
+            source="execution",
+            receipt_id="receipt-terminal",
+        )
+    ]
+    write_json(manifest_path, manifest)
+
+    off_stage = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert off_stage["status"] == "stale"
+    assert off_stage["gate"] == "semantic-terminal"
+    assert "current required proof" in str(off_stage["message"])
+
+    registration["stage"] = "prompt-5"
+    write_json(manifest_path, manifest)
+    wrong_stage_receipt = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert wrong_stage_receipt["status"] in {"failed", "stale"}
+    assert wrong_stage_receipt["gate"] == "proof-receipt"
+
+    registration["fresh_epoch_identity"]["relationship_ids"] = [  # type: ignore[index]
+        "REL-005"
+    ]
+    registration["fresh_epoch_identity"]["scenario_ids"] = [  # type: ignore[index]
+        "PS-005"
+    ]
+    manifest["mechanical"]["receipts"] = [
+        campaign_artifacts.make_receipt(
+            registration,
+            campaign_artifacts.proof_identity_tuple(
+                registration,
+                candidate_root=worktree,
+            ),
+            exit_code=0,
+            output_digest=hashlib.sha256(b"terminal-proof").hexdigest(),
+            source="execution",
+            receipt_id="receipt-terminal-subset",
+        )
+    ]
+    write_json(manifest_path, manifest)
+    incomplete_coverage = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert incomplete_coverage["status"] == "stale"
+    assert incomplete_coverage["gate"] == "semantic-terminal"
+    assert "relationship and scenario coverage" in str(
+        incomplete_coverage["message"]
+    )
+
+    registration["fresh_epoch_identity"]["relationship_ids"] = manifest[  # type: ignore[index]
+        "contract"
+    ]["selected_relationship_ids"]
+    registration["fresh_epoch_identity"]["scenario_ids"] = manifest[  # type: ignore[index]
+        "contract"
+    ]["selected_scenario_ids"]
+    manifest["mechanical"]["receipts"] = [
+        campaign_artifacts.make_receipt(
+            registration,
+            campaign_artifacts.proof_identity_tuple(
+                registration,
+                candidate_root=worktree,
+            ),
+            exit_code=0,
+            output_digest=hashlib.sha256(b"terminal-proof").hexdigest(),
+            source="execution",
+            receipt_id="receipt-terminal",
+        )
+    ]
+    write_json(manifest_path, manifest)
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "verified"
+    assert result["terminal"] == "campaign-complete"
+
+    research_path.unlink()
+    missing_research = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    assert missing_research["status"] == "stale"
+    assert missing_research["gate"] == "semantic-terminal"
+    _write_fresh_semantic_artifacts(worktree, manifest)
+
+    synthesis_path.unlink()
+    missing_synthesis = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    assert missing_synthesis["status"] == "stale"
+    assert missing_synthesis["gate"] == "semantic-terminal"
+    _write_fresh_semantic_artifacts(
+        worktree,
+        manifest,
+        claim_adjacency=False,
+    )
+
+    missing_adjacency = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    assert missing_adjacency["status"] == "stale"
+    assert missing_adjacency["gate"] == "semantic-terminal"
+    _write_fresh_semantic_artifacts(worktree, manifest)
+
+    restored = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    assert restored["status"] == "verified"
+
+    original_pointers = json.loads(
+        json.dumps(manifest["semantic"]["pointers"])
+    )
+    foreign_research = worktree / "docs/research/skills/other/packet.md"
+    foreign_research.parent.mkdir(parents=True, exist_ok=True)
+    foreign_research.write_text("# Foreign Research\n", encoding="utf-8")
+    foreign_synthesis = worktree / "docs/synthesis/skills/other.md"
+    foreign_synthesis.parent.mkdir(parents=True, exist_ok=True)
+    foreign_synthesis.write_text(
+        "# Other\n## Claim Adjacency\n",
+        encoding="utf-8",
+    )
+    manifest["semantic"]["pointers"].update(  # type: ignore[index]
+        {
+            "research_packet": (
+                "docs/research/skills/other/packet.md"
+            ),
+            "skill_synthesis": "docs/synthesis/skills/other.md",
+            "claim_adjacency": (
+                "docs/synthesis/skills/other.md#claim-adjacency"
+            ),
+        }
+    )
+    write_json(manifest_path, manifest)
+    foreign_owner = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    assert foreign_owner["status"] == "stale"
+    assert foreign_owner["gate"] == "semantic-terminal"
+
+    manifest["semantic"]["pointers"] = json.loads(  # type: ignore[index]
+        json.dumps(original_pointers)
+    )
+    manifest["semantic"]["pointers"]["decision_capsule"] = (  # type: ignore[index]
+        "decisions.md#missing-decision"
+    )
+    write_json(manifest_path, manifest)
+    missing_decision = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    assert missing_decision["status"] == "stale"
+    assert missing_decision["gate"] == "semantic-terminal"
+
+    manifest["semantic"]["pointers"] = json.loads(  # type: ignore[index]
+        json.dumps(original_pointers)
+    )
+    manifest["semantic"]["pointers"]["pack_synthesis"] = (  # type: ignore[index]
+        "docs/synthesis/missing-pack.md"
+    )
+    write_json(manifest_path, manifest)
+    missing_pack = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    assert missing_pack["status"] == "stale"
+    assert missing_pack["gate"] == "semantic-terminal"
+
+    manifest["semantic"]["pointers"] = original_pointers  # type: ignore[index]
+    write_json(manifest_path, manifest)
+    owner_restored = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    assert owner_restored["status"] == "verified"
+
+
+def test_campaign_reader_preserves_historical_v1_without_upgrade(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "manifest.json"
+    legacy = {
+        "campaign": {
+            "id": "legacy-v1-compatibility-fixture",
+            "skill": "example",
+        },
+        "mechanical": {"evidence_state": "historical-read-only"},
+        "schema_version": 1,
+    }
+    write_json(path, legacy)
+    before = path.read_bytes()
+
+    result = campaign_artifacts.read_campaign_manifest(path)
+
+    assert result == legacy
+    assert path.read_bytes() == before
+    assert "contract" not in result
+    assert "semantic" not in result
+
+
+def test_fresh_contract_drift_stales_receipts_and_returns_owner_choice(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_fresh_epoch_admission(worktree)
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-epoch-1",
+        owner_token="owner-a",
+        fresh_epoch=admission,
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["mechanical"]["receipts"] = [
+        {
+            "id": "receipt-a",
+            "fresh_epoch_identity": {
+                "composition_epoch_id": "FCE-20260725-01"
+            },
+        },
+        {"id": "receipt-unrelated"},
+    ]
+    write_json(manifest_path, manifest)
+    observed = json.loads(json.dumps(admission["contract"]))
+    observed["slice"]["fingerprint"] = f"sha256-v1:{'9' * 64}"
+
+    result = campaign_artifacts.check_fresh_contract(
+        manifest_path,
+        observed,
+    )
+
+    assert result["status"] == "stale"
+    assert result["owner_action_required"] == [
+        "resume",
+        "repair",
+        "restart",
+    ]
+    assert result["changed_contract_fields"] == ["slice.fingerprint"]
+    updated = json.loads(manifest_path.read_text("utf-8"))
+    assert updated["contract"] == admission["contract"]
+    assert updated["semantic"] == admission["semantic"]
+    assert updated["mechanical"]["evidence_state"] == "stale"
+    assert updated["mechanical"]["invalidations"][-1]["receipt_ids"] == [
+        "receipt-a"
+    ]
+
+
+def test_relationship_drift_stales_only_receipts_for_changed_edge(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_fresh_epoch_admission(worktree)
+    admission["contract"]["selected_relationship_ids"] = [  # type: ignore[index]
+        "REL-005",
+        "REL-006",
+    ]
+    _sync_slice_projection(worktree, admission)
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-epoch-1",
+        owner_token="owner-a",
+        fresh_epoch=admission,
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["mechanical"]["receipts"] = [
+        {
+            "id": "receipt-review",
+            "fresh_epoch_identity": {
+                "relationship_ids": ["REL-006"]
+            },
+        },
+        {
+            "id": "receipt-tdd",
+            "fresh_epoch_identity": {
+                "relationship_ids": ["REL-005"]
+            },
+        },
+    ]
+    write_json(manifest_path, manifest)
+    observed = json.loads(json.dumps(admission["contract"]))
+    observed["selected_relationship_ids"] = ["REL-005"]
+
+    result = campaign_artifacts.check_fresh_contract(
+        manifest_path,
+        observed,
+    )
+
+    assert result["stale_receipts"] == ["receipt-review"]
+
+
+def test_fresh_resume_repair_and_restart_remain_distinct(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_fresh_epoch_admission(worktree)
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-epoch-1",
+        owner_token="owner-a",
+        fresh_epoch=admission,
+    )
+    manifest_path = worktree / str(started["manifest"])
+    before = manifest_path.read_bytes()
+
+    resumed = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        owner_token="owner-a",
+        continuation="resume",
+        from_manifest=manifest_path,
+    )
+    after_resume = manifest_path.read_bytes()
+    repaired = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        owner_token="owner-a",
+        continuation="repair",
+        from_manifest=manifest_path,
+        changed_inputs=["slice.fingerprint"],
+    )
+
+    assert resumed["status"] == "verified"
+    assert after_resume == before
+    assert before != manifest_path.read_bytes()
+    assert repaired["status"] == "stale"
+
+    terminal = json.loads(manifest_path.read_text("utf-8"))
+    terminal["semantic"]["terminal_token"] = "campaign-complete"
+    terminal["semantic"]["stage_token"] = "prompt-5"
+    terminal["semantic"]["lifecycle"]["p1"] = "promoted-installed"
+    write_json(manifest_path, terminal)
+    next_admission = valid_fresh_epoch_admission(worktree)
+    next_admission["campaign"]["continuation"] = "restart"  # type: ignore[index]
+    next_admission["campaign"]["supersession"] = str(  # type: ignore[index]
+        manifest_path.relative_to(worktree)
+    ).replace("\\", "/")
+
+    restarted = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-epoch-2",
+        owner_token="owner-a",
+        continuation="restart",
+        from_manifest=manifest_path,
+        fresh_epoch=next_admission,
+    )
+
+    assert restarted["status"] == "verified"
+    new_manifest = json.loads(
+        (worktree / str(restarted["manifest"])).read_text("utf-8")
+    )
+    assert new_manifest["campaign"]["continuation"] == "restart"
+    assert new_manifest["campaign"]["supersession"] == str(
+        manifest_path.relative_to(worktree)
+    ).replace("\\", "/")
+
+
+def test_fresh_restart_accepts_changed_contract_identity_while_nonterminal(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-epoch-1",
+        owner_token="owner-a",
+        fresh_epoch=valid_fresh_epoch_admission(worktree),
+    )
+    manifest_path = worktree / str(started["manifest"])
+    next_admission = valid_fresh_epoch_admission(worktree)
+    next_admission["campaign"]["continuation"] = "restart"  # type: ignore[index]
+    next_admission["campaign"]["supersession"] = str(  # type: ignore[index]
+        manifest_path.relative_to(worktree)
+    ).replace("\\", "/")
+    m0_identity = next_admission["contract"]["independent_m0"]  # type: ignore[index]
+    m0_identity["fingerprint"] = _admission_file(
+        worktree,
+        m0_identity["path"],
+        "# Independent M0\n\nChanged intent for the successor epoch.\n",
+    )
+
+    not_resumed = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        owner_token="owner-a",
+        continuation="resume",
+        from_manifest=manifest_path,
+        fresh_epoch=next_admission,
+    )
+    restarted = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-epoch-2",
+        owner_token="owner-a",
+        continuation="restart",
+        from_manifest=manifest_path,
+        fresh_epoch=next_admission,
+    )
+
+    assert not_resumed["status"] == "failed"
+    assert not_resumed["gate"] == "continuation"
+    assert restarted["status"] == "verified"
+    assert restarted["campaign_id"] == "implement-epoch-2"
+
+
+@pytest.mark.parametrize(
+    "supersession",
+    [
+        None,
+        "docs/validation/skills/implement/campaigns/missing/manifest.json",
+        "docs/validation/skills/other/campaigns/implement-epoch-1/manifest.json",
+    ],
+)
+def test_fresh_restart_rejects_nonexact_source_supersession(
+    tmp_path: Path,
+    supersession: str | None,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-epoch-1",
+        owner_token="owner-a",
+        fresh_epoch=valid_fresh_epoch_admission(worktree),
+    )
+    manifest_path = worktree / str(started["manifest"])
+    admission = valid_fresh_epoch_admission(worktree)
+    admission["campaign"]["continuation"] = "restart"  # type: ignore[index]
+    admission["campaign"]["supersession"] = supersession  # type: ignore[index]
+
+    result = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-epoch-2",
+        owner_token="owner-a",
+        continuation="restart",
+        from_manifest=manifest_path,
+        fresh_epoch=admission,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "continuation"
+    assert not (
+        worktree
+        / "docs/validation/skills/implement/campaigns/implement-epoch-2"
+    ).exists()
+
+def test_direct_restart_handoff_requires_authenticated_source_and_preserves_lease(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-epoch-1",
+        owner_token="owner-a",
+        fresh_epoch=valid_fresh_epoch_admission(worktree),
+    )
+    source_manifest = worktree / str(started["manifest"])
+    source_pointer = source_manifest.relative_to(worktree).as_posix()
+    admission = valid_fresh_epoch_admission(worktree)
+    admission["campaign"]["continuation"] = "restart"  # type: ignore[index]
+    admission["campaign"]["supersession"] = source_pointer  # type: ignore[index]
+    lease_path = worktree / campaign_artifacts.LEASE_PATH
+    lease_bytes = lease_path.read_bytes()
+    held_lease = json.loads(lease_bytes)
+
+    with pytest.raises(ValueError, match="authenticated source"):
+        campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id="implement-epoch-2",
+            owner_token="owner-a",
+            fresh_epoch=admission,
+            _supersedes=source_pointer,
+            _held_lease=held_lease,
+        )
+
+    assert lease_path.read_bytes() == lease_bytes
+    assert not (
+        worktree
+        / "docs/validation/skills/implement/campaigns/implement-epoch-2"
+    ).exists()
+
+    with pytest.raises(ValueError, match="changed identity"):
+        campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id="implement-epoch-2",
+            owner_token="owner-a",
+            fresh_epoch=admission,
+            _supersedes=source_pointer,
+            _held_lease=held_lease,
+            _restart_source=source_manifest,
+        )
+
+    assert lease_path.read_bytes() == lease_bytes
+    assert not (
+        worktree
+        / "docs/validation/skills/implement/campaigns/implement-epoch-2"
+    ).exists()
+
+
+@pytest.mark.parametrize("authorized_change", ["terminal-source", "delivery-mode"])
+def test_v2_restart_handoff_requires_new_fresh_admission_before_mutation(
+    tmp_path: Path,
+    authorized_change: str,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-epoch-1",
+        owner_token="owner-a",
+        fresh_epoch=valid_fresh_epoch_admission(worktree),
+    )
+    source_manifest = worktree / str(started["manifest"])
+    source_pointer = source_manifest.relative_to(worktree).as_posix()
+    if authorized_change == "terminal-source":
+        source = json.loads(source_manifest.read_text("utf-8"))
+        source["semantic"]["terminal_token"] = "campaign-complete"
+        write_json(source_manifest, source)
+    delivery_mode = "commit" if authorized_change == "delivery-mode" else "none"
+    lease_path = worktree / campaign_artifacts.LEASE_PATH
+    lease_bytes = lease_path.read_bytes()
+
+    with pytest.raises(ValueError, match="new Fresh admission"):
+        campaign_artifacts.start_campaign(
+            "implement",
+            delivery_mode,
+            worktree=worktree,
+            campaign_id="implement-epoch-2",
+            owner_token="owner-a",
+            fresh_epoch=None,
+            _supersedes=source_pointer,
+            _held_lease=json.loads(lease_bytes),
+            _restart_source=source_manifest,
+        )
+
+    assert lease_path.read_bytes() == lease_bytes
+    assert not (
+        worktree
+        / "docs/validation/campaigns/implement-epoch-2"
+    ).exists()
+    assert not (
+        worktree
+        / "docs/validation/skills/implement/campaigns/implement-epoch-2"
+    ).exists()
 
 
 def test_campaign_tree_hash_uses_explicit_ordinal_utf8_path_order(
@@ -462,6 +2242,627 @@ def test_verify_campaign_reads_exact_owner_stage_without_advancing_it(
     verified = json.loads(manifest_path.read_text("utf-8"))
     assert verified["semantic"] == semantic_before
     assert verified["mechanical"]["last_verification"]["stage"] == "prompt-1"
+
+
+def test_historical_v1_verify_and_repair_are_read_only_without_live_lease(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        campaign_id="review-historical-v1",
+        owner_token="owner-a",
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["declared_stage"] = "prompt-1"
+    write_json(manifest_path, manifest)
+    active = campaign_artifacts.update_mechanical_state(
+        manifest_path,
+        {"evidence_state": "current"},
+    )
+    assert active["mechanical"]["evidence_state"] == "current"
+    before = manifest_path.read_bytes()
+    lease_path = worktree / campaign_artifacts.LEASE_PATH
+    lease_bytes = lease_path.read_bytes()
+    lease_path.unlink()
+
+    verified = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    repaired = campaign_artifacts.start_campaign(
+        "review",
+        worktree=worktree,
+        owner_token="owner-a",
+        continuation="repair",
+        from_manifest=manifest_path,
+        changed_inputs=["runtime:m0"],
+    )
+    with pytest.raises(ValueError, match="exact live lease"):
+        campaign_artifacts.update_mechanical_state(
+            manifest_path,
+            {"evidence_state": "stale"},
+        )
+
+    assert verified["status"] == "failed"
+    assert verified["gate"] == "lease"
+    assert repaired["status"] == "failed"
+    assert repaired["gate"] == "continuation"
+    assert manifest_path.read_bytes() == before
+    assert json.loads(before)["schema_version"] == 1
+    lease_path.write_bytes(lease_bytes)
+    restored = campaign_artifacts.update_mechanical_state(
+        manifest_path,
+        {"evidence_state": "stale"},
+    )
+    assert restored["mechanical"]["evidence_state"] == "stale"
+
+
+@pytest.mark.parametrize("lease_state", ["absent", "foreign", "noncanonical"])
+def test_fresh_mechanical_update_requires_exact_live_lease_and_path(
+    tmp_path: Path,
+    lease_state: str,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-epoch-1",
+        owner_token="owner-a",
+        fresh_epoch=valid_fresh_epoch_admission(worktree),
+    )
+    manifest_path = worktree / str(started["manifest"])
+    active = campaign_artifacts.update_mechanical_state(
+        manifest_path,
+        {"verified_at": "2026-07-26T00:00:00Z"},
+    )
+    assert active["mechanical"]["verified_at"] == "2026-07-26T00:00:00Z"
+    lease_path = worktree / campaign_artifacts.LEASE_PATH
+    lease_bytes = lease_path.read_bytes()
+    target = manifest_path
+    if lease_state == "absent":
+        lease_path.unlink()
+    elif lease_state == "foreign":
+        foreign_lease = json.loads(lease_bytes)
+        foreign_lease["campaign_id"] = "foreign-epoch"
+        write_json(lease_path, foreign_lease)
+    else:
+        target = manifest_path.parent / "copied-manifest.json"
+        target.write_bytes(manifest_path.read_bytes())
+    before = target.read_bytes()
+
+    with pytest.raises(ValueError, match="exact live lease"):
+        campaign_artifacts.update_mechanical_state(
+            target,
+            {"verified_at": "2026-07-27T00:00:00Z"},
+        )
+
+    assert target.read_bytes() == before
+    lease_path.write_bytes(lease_bytes)
+    restored = campaign_artifacts.update_mechanical_state(
+        manifest_path,
+        {"verified_at": "2026-07-28T00:00:00Z"},
+    )
+    assert restored["mechanical"]["verified_at"] == "2026-07-28T00:00:00Z"
+
+
+@pytest.mark.parametrize(
+    ("campaign_id", "worktree_value"),
+    [
+        ("../escaped", None),
+        ("review-epoch-1", "noncanonical"),
+    ],
+)
+def test_v1_mechanical_update_rejects_noncanonical_identity(
+    tmp_path: Path,
+    campaign_id: str,
+    worktree_value: str | None,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    manifest_path = worktree / "outside" / "manifest.json"
+    manifest_path.parent.mkdir()
+    manifest = {
+        "schema_version": 1,
+        "campaign": {
+            "id": campaign_id,
+            "skill": "review",
+            "delivery_mode": "none",
+            "worktree": (
+                str(worktree) + "\\."
+                if worktree_value == "noncanonical"
+                else str(worktree)
+            ),
+            "supersedes": None,
+        },
+        "semantic": {},
+        "mechanical": {},
+    }
+    write_json(manifest_path, manifest)
+    lease_path = worktree / campaign_artifacts.LEASE_PATH
+    lease_path.parent.mkdir(parents=True)
+    write_json(
+        lease_path,
+        {
+            "worktree": str(worktree),
+            "campaign_id": campaign_id,
+            "owner_token": "owner-a",
+        },
+    )
+    before = manifest_path.read_bytes()
+
+    with pytest.raises(ValueError, match="identity"):
+        campaign_artifacts.update_mechanical_state(
+            manifest_path,
+            {"evidence_state": "stale"},
+        )
+
+    assert manifest_path.read_bytes() == before
+
+
+def test_v2_mechanical_update_rejects_malformed_invalidation_before_write(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-epoch-1",
+        owner_token="owner-a",
+        fresh_epoch=valid_fresh_epoch_admission(worktree),
+    )
+    manifest_path = worktree / str(started["manifest"])
+    before = manifest_path.read_bytes()
+
+    with pytest.raises(ValueError, match="invalidations"):
+        campaign_artifacts.update_mechanical_state(
+            manifest_path,
+            {
+                "invalidations": [
+                    {
+                        "receipt_ids": "receipt-a",
+                        "observed_at": "2026-07-26T00:00:00Z",
+                    }
+                ]
+            },
+        )
+
+    assert manifest_path.read_bytes() == before
+
+
+@pytest.mark.parametrize("operation", ["verify", "resume", "repair", "restart", "release"])
+def test_empty_owner_token_fails_closed_before_campaign_mutation(
+    tmp_path: Path,
+    operation: str,
+) -> None:
+    worktree = tmp_path / operation
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-epoch-1",
+        owner_token="owner-a",
+        fresh_epoch=valid_fresh_epoch_admission(worktree),
+    )
+    manifest_path = worktree / str(started["manifest"])
+    lease_path = worktree / campaign_artifacts.LEASE_PATH
+    lease = json.loads(lease_path.read_text("utf-8"))
+    lease["owner_token"] = ""
+    write_json(lease_path, lease)
+    manifest_before = manifest_path.read_bytes()
+    lease_before = lease_path.read_bytes()
+
+    if operation == "verify":
+        result = campaign_artifacts.verify_campaign(
+            manifest_path,
+            worktree=worktree,
+        )
+    elif operation == "release":
+        result = campaign_artifacts.release_campaign(
+            manifest_path,
+            worktree=worktree,
+            owner_token="",
+        )
+    else:
+        kwargs: dict[str, object] = {
+            "worktree": worktree,
+            "owner_token": "",
+            "continuation": operation,
+            "from_manifest": manifest_path,
+        }
+        if operation == "repair":
+            kwargs["changed_inputs"] = ["slice.fingerprint"]
+        if operation == "restart":
+            kwargs["campaign_id"] = "implement-epoch-2"
+            next_admission = valid_fresh_epoch_admission(worktree)
+            next_admission["campaign"]["continuation"] = "restart"  # type: ignore[index]
+            next_admission["campaign"]["supersession"] = (  # type: ignore[index]
+                manifest_path.relative_to(worktree).as_posix()
+            )
+            kwargs["fresh_epoch"] = next_admission
+        try:
+            result = campaign_artifacts.start_campaign("implement", **kwargs)
+        except ValueError as error:
+            assert "owner token" in str(error)
+            result = {"status": "failed"}
+
+    assert result["status"] in {"failed", "lease-conflict"}
+    assert manifest_path.read_bytes() == manifest_before
+    assert lease_path.read_bytes() == lease_before
+
+
+@pytest.mark.parametrize("version", [1, 2])
+def test_empty_owner_cannot_record_status_or_abandon_campaign(
+    tmp_path: Path,
+    version: int,
+) -> None:
+    worktree = tmp_path / f"v{version}"
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "implement" if version == 2 else "review",
+        worktree=worktree,
+        campaign_id=f"campaign-v{version}",
+        owner_token="owner-a",
+        fresh_epoch=(
+            valid_fresh_epoch_admission(worktree)
+            if version == 2
+            else None
+        ),
+    )
+    manifest_path = worktree / str(started["manifest"])
+    lease_path = worktree / campaign_artifacts.LEASE_PATH
+    lease = json.loads(lease_path.read_text("utf-8"))
+    lease["owner_token"] = ""
+    write_json(lease_path, lease)
+    before = lease_path.read_bytes()
+
+    status = campaign_artifacts.campaign_status(
+        manifest_path,
+        worktree=worktree,
+    )
+    abandoned = campaign_artifacts.release_campaign(
+        manifest_path,
+        worktree=worktree,
+        owner_token="",
+        abandon=True,
+    )
+
+    assert status["status"] == "lease-conflict"
+    assert abandoned["status"] == "lease-conflict"
+    assert lease_path.read_bytes() == before
+
+
+@pytest.mark.parametrize("mutation", ["epoch", "forged-restart"])
+def test_v2_verify_rejects_forged_campaign_identity_before_write(
+    tmp_path: Path,
+    mutation: str,
+) -> None:
+    worktree = tmp_path / mutation
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-epoch-1",
+        owner_token="owner-a",
+        fresh_epoch=valid_fresh_epoch_admission(worktree),
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    if mutation == "epoch":
+        manifest["campaign"]["epoch"] = "other-epoch"
+    else:
+        manifest["campaign"]["continuation"] = "restart"
+        manifest["campaign"]["supersession"] = (
+            "docs/validation/skills/implement/campaigns/"
+            "missing-epoch/manifest.json"
+        )
+    write_json(manifest_path, manifest)
+    before = manifest_path.read_bytes()
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "manifest-schema"
+    assert manifest_path.read_bytes() == before
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    ["ordinary-to-real-restart", "restart-to-ordinary"],
+)
+def test_v2_verify_rejects_creation_lineage_drift_before_write(
+    tmp_path: Path,
+    mutation: str,
+) -> None:
+    worktree = tmp_path / mutation
+    worktree.mkdir()
+    source = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-source",
+        owner_token="owner-a",
+        fresh_epoch=valid_fresh_epoch_admission(worktree),
+    )
+    source_manifest = worktree / str(source["manifest"])
+    source_pointer = source_manifest.relative_to(worktree).as_posix()
+    if mutation == "ordinary-to-real-restart":
+        released = campaign_artifacts.release_campaign(
+            source_manifest,
+            worktree=worktree,
+            owner_token="owner-a",
+        )
+        assert released["status"] == "verified"
+        target = campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id="implement-target",
+            owner_token="owner-b",
+            fresh_epoch=valid_fresh_epoch_admission(worktree),
+        )
+    else:
+        terminal = json.loads(source_manifest.read_text("utf-8"))
+        terminal["semantic"]["terminal_token"] = "campaign-complete"
+        write_json(source_manifest, terminal)
+        admission = valid_fresh_epoch_admission(worktree)
+        admission["campaign"]["continuation"] = "restart"  # type: ignore[index]
+        admission["campaign"]["supersession"] = source_pointer  # type: ignore[index]
+        target = campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id="implement-target",
+            owner_token="owner-a",
+            continuation="restart",
+            from_manifest=source_manifest,
+            fresh_epoch=admission,
+        )
+    target_manifest = worktree / str(target["manifest"])
+    forged = json.loads(target_manifest.read_text("utf-8"))
+    if mutation == "ordinary-to-real-restart":
+        forged["campaign"]["continuation"] = "restart"
+        forged["campaign"]["supersession"] = source_pointer
+        source_payload = json.loads(source_manifest.read_text("utf-8"))
+        forged["mechanical"]["supersession_digest"] = source_payload[
+            "mechanical"
+        ]["campaign_digest"]
+    else:
+        forged["campaign"]["continuation"] = None
+        forged["campaign"]["supersession"] = None
+        forged["mechanical"]["supersession_digest"] = None
+    forged["mechanical"]["campaign_digest"] = (
+        campaign_artifacts._campaign_lineage_digest(
+            forged["campaign"],
+            forged["mechanical"]["supersession_digest"],
+        )
+    )
+    write_json(target_manifest, forged)
+    before = target_manifest.read_bytes()
+
+    result = campaign_artifacts.verify_campaign(
+        target_manifest,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "manifest-schema"
+    assert target_manifest.read_bytes() == before
+
+
+def test_v2_restart_rejects_drifted_source_lineage_before_write(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "source-drift"
+    worktree.mkdir()
+    source = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-source",
+        owner_token="owner-a",
+        fresh_epoch=valid_fresh_epoch_admission(worktree),
+    )
+    source_manifest = worktree / str(source["manifest"])
+    source_pointer = source_manifest.relative_to(worktree).as_posix()
+    terminal = json.loads(source_manifest.read_text("utf-8"))
+    terminal["semantic"]["terminal_token"] = "campaign-complete"
+    write_json(source_manifest, terminal)
+    admission = valid_fresh_epoch_admission(worktree)
+    admission["campaign"]["continuation"] = "restart"  # type: ignore[index]
+    admission["campaign"]["supersession"] = source_pointer  # type: ignore[index]
+    target = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-target",
+        owner_token="owner-a",
+        continuation="restart",
+        from_manifest=source_manifest,
+        fresh_epoch=admission,
+    )
+    target_manifest = worktree / str(target["manifest"])
+    source_payload = json.loads(source_manifest.read_text("utf-8"))
+    source_payload["campaign"]["continuation"] = "restart"
+    source_payload["campaign"]["supersession"] = (
+        target_manifest.relative_to(worktree).as_posix()
+    )
+    target_payload = json.loads(target_manifest.read_text("utf-8"))
+    source_payload["mechanical"]["supersession_digest"] = target_payload[
+        "mechanical"
+    ]["campaign_digest"]
+    source_payload["mechanical"]["campaign_digest"] = (
+        campaign_artifacts._campaign_lineage_digest(
+            source_payload["campaign"],
+            source_payload["mechanical"]["supersession_digest"],
+        )
+    )
+    write_json(source_manifest, source_payload)
+    target_before = target_manifest.read_bytes()
+    lease_path = worktree / campaign_artifacts.LEASE_PATH
+    lease_before = lease_path.read_bytes()
+
+    result = campaign_artifacts.verify_campaign(
+        target_manifest,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "manifest-schema"
+    assert target_manifest.read_bytes() == target_before
+    assert lease_path.read_bytes() == lease_before
+
+
+def _three_epoch_restart_chain(
+    worktree: Path,
+) -> tuple[Path, Path, Path]:
+    first = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-first",
+        owner_token="owner-a",
+        fresh_epoch=valid_fresh_epoch_admission(worktree),
+    )
+    first_manifest = worktree / str(first["manifest"])
+
+    def restart(source_manifest: Path, campaign_id: str) -> Path:
+        terminal = json.loads(source_manifest.read_text("utf-8"))
+        terminal["semantic"]["terminal_token"] = "campaign-complete"
+        write_json(source_manifest, terminal)
+        admission = valid_fresh_epoch_admission(worktree)
+        admission["campaign"]["continuation"] = "restart"  # type: ignore[index]
+        admission["campaign"]["supersession"] = (  # type: ignore[index]
+            source_manifest.relative_to(worktree).as_posix()
+        )
+        started = campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id=campaign_id,
+            owner_token="owner-a",
+            continuation="restart",
+            from_manifest=source_manifest,
+            fresh_epoch=admission,
+        )
+        return worktree / str(started["manifest"])
+
+    second_manifest = restart(first_manifest, "implement-second")
+    third_manifest = restart(second_manifest, "implement-third")
+    return first_manifest, second_manifest, third_manifest
+
+
+@pytest.mark.parametrize(
+    "operation",
+    ["verify", "resume", "status", "release", "mechanical-update"],
+)
+def test_chained_restart_rejects_predecessor_drift_on_every_active_path(
+    tmp_path: Path,
+    operation: str,
+) -> None:
+    worktree = tmp_path / operation
+    worktree.mkdir()
+    first_manifest, _, active_manifest = _three_epoch_restart_chain(worktree)
+    predecessor = json.loads(first_manifest.read_text("utf-8"))
+    predecessor["campaign"]["delivery_mode"] = "commit"
+    predecessor["mechanical"]["campaign_digest"] = (
+        campaign_artifacts._canonical_json_sha256(
+            {
+                "campaign": predecessor["campaign"],
+                "supersession_digest": predecessor["mechanical"].get(
+                    "supersession_digest"
+                ),
+            }
+        )
+    )
+    write_json(first_manifest, predecessor)
+    active_before = active_manifest.read_bytes()
+    lease_path = worktree / campaign_artifacts.LEASE_PATH
+    lease_before = lease_path.read_bytes()
+
+    if operation == "verify":
+        result = campaign_artifacts.verify_campaign(
+            active_manifest,
+            worktree=worktree,
+        )
+    elif operation == "resume":
+        result = campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            owner_token="owner-a",
+            continuation="resume",
+            from_manifest=active_manifest,
+        )
+    elif operation == "status":
+        result = campaign_artifacts.campaign_status(
+            active_manifest,
+            worktree=worktree,
+        )
+    elif operation == "release":
+        result = campaign_artifacts.release_campaign(
+            active_manifest,
+            worktree=worktree,
+            owner_token="owner-a",
+        )
+    else:
+        with pytest.raises(ValueError, match="lineage"):
+            campaign_artifacts.update_mechanical_state(
+                active_manifest,
+                {"verified_at": "2026-07-27T00:00:00Z"},
+            )
+        result = {"status": "failed"}
+
+    assert result["status"] == "failed"
+    assert active_manifest.read_bytes() == active_before
+    assert lease_path.read_bytes() == lease_before
+
+
+def test_restart_lineage_cycle_fails_closed_before_write(tmp_path: Path) -> None:
+    worktree = tmp_path / "cycle"
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-cycle",
+        owner_token="owner-a",
+        fresh_epoch=valid_fresh_epoch_admission(worktree),
+    )
+    manifest_path = worktree / str(started["manifest"])
+    payload = json.loads(manifest_path.read_text("utf-8"))
+    payload["campaign"]["continuation"] = "restart"
+    payload["campaign"]["supersession"] = (
+        manifest_path.relative_to(worktree).as_posix()
+    )
+    payload["mechanical"]["supersession_digest"] = payload["mechanical"][
+        "campaign_digest"
+    ]
+    payload["mechanical"]["campaign_digest"] = (
+        campaign_artifacts._campaign_lineage_digest(
+            payload["campaign"],
+            payload["mechanical"]["supersession_digest"],
+        )
+    )
+    write_json(manifest_path, payload)
+    lease_path = worktree / campaign_artifacts.LEASE_PATH
+    lease = json.loads(lease_path.read_text("utf-8"))
+    lease["campaign_digest"] = payload["mechanical"]["campaign_digest"]
+    lease["supersession_digest"] = payload["mechanical"][
+        "supersession_digest"
+    ]
+    write_json(lease_path, lease)
+    manifest_before = manifest_path.read_bytes()
+    lease_before = lease_path.read_bytes()
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "manifest-schema"
+    assert manifest_path.read_bytes() == manifest_before
+    assert lease_path.read_bytes() == lease_before
 
 
 @pytest.mark.parametrize(
@@ -1034,6 +3435,21 @@ def test_transitive_receipt_invalidation_preserves_history() -> None:
     assert receipts == before
 
 
+def test_contract_receipt_invalidation_is_exact_and_transitive() -> None:
+    receipts = [
+        {"id": "receipt-a", "inputs": [{"name": "slice"}]},
+        {"id": "receipt-b", "inputs": [{"name": "receipt:receipt-a"}]},
+        {"id": "receipt-unrelated", "inputs": [{"name": "other"}]},
+    ]
+
+    stale = campaign_artifacts._stale_receipts_from_invalidations(
+        receipts,
+        [{"receipt_ids": ["receipt-a"], "observed_at": "2026-07-25T00:00:00Z"}],
+    )
+
+    assert stale == {"receipt-a", "receipt-b"}
+
+
 def _tree_target(worktree: Path) -> dict[str, object]:
     return {
         "algorithm": "campaign-tree-v1",
@@ -1110,6 +3526,44 @@ def _registration(
     if cache_bundle is not None:
         registration["cache_bundle"] = cache_bundle
     return registration
+
+
+def test_fresh_proof_reuse_identity_binds_epoch_slice_and_relationships(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    target = worktree / "target"
+    target.mkdir()
+    (target / "value.txt").write_text("current", encoding="utf-8")
+    registration = _registration(worktree)
+    registration["fresh_epoch_identity"] = {
+        "composition_epoch_id": "FCE-20260725-01",
+        "pack_contract_revision": "f8115df444ab",
+        "slice_fingerprint": f"sha256-v1:{'2' * 64}",
+        "relationship_ids": ["REL-005"],
+        "scenario_ids": ["PS-005"],
+    }
+
+    identity = campaign_artifacts.proof_identity_tuple(
+        registration,
+        candidate_root=worktree,
+    )
+    receipt = campaign_artifacts.make_receipt(
+        registration,
+        identity,
+        exit_code=0,
+        output_digest=hashlib.sha256(b"output").hexdigest(),
+        source="execution",
+        receipt_id="receipt-fresh",
+    )
+
+    assert identity["fresh_epoch_identity"] == registration[
+        "fresh_epoch_identity"
+    ]
+    assert receipt["fresh_epoch_identity"] == registration[
+        "fresh_epoch_identity"
+    ]
 
 
 def test_verify_reuses_exact_durable_receipt_before_execution(
@@ -2307,6 +4761,15 @@ def test_full_suite_deduplicates_by_repository_target_even_when_inputs_differ(
         registration_id="suite-b",
         profile="full-suite-v1",
     )
+    fresh_identity = {
+        "composition_epoch_id": "FCE-20260725-01",
+        "pack_contract_revision": "f8115df444ab",
+        "slice_fingerprint": f"sha256-v1:{'a' * 64}",
+        "relationship_ids": ["REL-review"],
+        "scenario_ids": ["SCN-review"],
+    }
+    first["fresh_epoch_identity"] = json.loads(json.dumps(fresh_identity))
+    second["fresh_epoch_identity"] = json.loads(json.dumps(fresh_identity))
     second["inputs"][0]["name"] = "other-tree"  # type: ignore[index]
     started = campaign_artifacts.start_campaign(
         "review",
@@ -2344,6 +4807,15 @@ def test_full_suite_deduplicates_by_repository_target_even_when_inputs_differ(
     assert result["status"] == "verified"
     assert len(calls) == 1
     assert result["proof"]["deduplicated"] == ["suite-b"]
+
+    repeated = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert repeated["status"] == "verified"
+    assert len(calls) == 1
+    assert repeated["proof"]["deduplicated"] == ["suite-b"]
 
 
 def test_git_object_identity_rejects_nested_candidate_root(

@@ -75,6 +75,12 @@ def _head(root: Path) -> str:
     return completed.stdout.strip()
 
 
+def _head_paths(root: Path, head: str) -> set[str]:
+    paths = set(_git(root, "ls-tree", "-r", "--name-only", head))
+    changed = set(_git(root, "diff", "--name-only", head))
+    return paths.difference(changed)
+
+
 def _is_public_path(relative: str) -> bool:
     return relative in PUBLIC_EXACT or relative.startswith(PUBLIC_PREFIXES)
 
@@ -209,12 +215,14 @@ def build_current(
         public_states,
         private_states,
     ) = discover_inventory(root)
+    selected_head = source_head or _head(root)
     return fresh_epoch_contract.build_migration_control(
         root,
         public_paths=public_paths,
         private_paths=private_paths,
         reference_paths=reference_paths,
-        head=source_head or _head(root),
+        head=selected_head,
+        head_paths=_head_paths(root, selected_head),
         public_states=public_states,
         private_states=private_states,
     )

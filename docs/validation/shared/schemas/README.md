@@ -11,3 +11,8 @@ the Card schema governs their YAML frontmatter record.
 `pack-composition-contract-v1.schema.json` governs the marker-bounded five-part
 Pack Contract. Its schema proves shape and vocabulary only; the controller
 enforces cross-ledger ownership, graph, freeze, slice, and amendment invariants.
+
+`deploy-campaign-manifest-v2.schema.json` governs pointer-oriented Fresh
+one-skill campaign ownership. Version 2 separates immutable `contract`,
+owner-written `semantic`, and automation-only `mechanical` state. Historical
+manifest v1 remains an exact read-only compatibility format.

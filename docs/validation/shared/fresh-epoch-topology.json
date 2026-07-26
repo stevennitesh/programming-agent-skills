@@ -1,7 +1,8 @@
 {
   "compatibility": {
     "campaign_manifest_versions": [
-      1
+      1,
+      2
     ],
     "legacy_fixture": "docs/validation/shared/fixtures/campaign-manifest-v1.json",
     "relationship_index": "docs/synthesis/skill-context-relationships.md"

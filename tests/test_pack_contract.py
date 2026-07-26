@@ -233,6 +233,18 @@ def test_freeze_returns_deterministic_order_and_immutable_slice() -> None:
     ]
     assert first["slice"]["slice_id"] == "FCE-20260726-01:r1:SK-002"
     assert first["slice_fingerprint"].startswith("sha256-v1:")
+    admission = contract.campaign_admission_slice(
+        frozen["contract"],
+        "SK-002",
+    )
+    assert admission["status"] == "campaign-admission-slice"
+    assert admission["slice"] == {
+        "slice_id": "FCE-20260726-01:r1:SK-002:aggregate",
+        "selected_capability_ids": ["CAP-002"],
+        "selected_relationship_ids": ["REL-001"],
+        "selected_scenario_ids": ["PS-001"],
+        "hard_proof_predecessor_ids": ["SK-001"],
+    }
     semantic_base = contract.freeze_contract(valid_contract())["contract"]
     runtime = deepcopy(semantic_base)
     runtime["epoch_header"]["status"] = "campaign-active"

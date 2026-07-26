@@ -84,6 +84,14 @@ def write_contract_tree(root: Path) -> dict[str, object]:
 
     schemas = [
         {
+            "id": "deploy-campaign-manifest",
+            "version": 2,
+            "path": (
+                "docs/validation/shared/schemas/"
+                "deploy-campaign-manifest-v2.schema.json"
+            ),
+        },
+        {
             "id": "fresh-epoch-topology",
             "version": 1,
             "path": (
@@ -141,7 +149,10 @@ def write_contract_tree(root: Path) -> dict[str, object]:
             json.dumps(
                 {
                     "$schema": "https://json-schema.org/draft/2020-12/schema",
-                    "$id": f"urn:programming-agent-skills:{schema['id']}:v1",
+                    "$id": (
+                        f"urn:programming-agent-skills:{schema['id']}:"
+                        f"v{schema['version']}"
+                    ),
                     "type": "object",
                 }
             ),
@@ -241,7 +252,7 @@ def write_contract_tree(root: Path) -> dict[str, object]:
             {"name": "migration-entry", "pattern": "^MIG-[0-9]{4}$"},
         ],
         "compatibility": {
-            "campaign_manifest_versions": [1],
+            "campaign_manifest_versions": [1, 2],
             "legacy_fixture": (
                 "docs/validation/shared/fixtures/campaign-manifest-v1.json"
             ),

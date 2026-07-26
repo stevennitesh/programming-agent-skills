@@ -2,6 +2,11 @@
   "format": 1,
   "schemas": [
     {
+      "id": "deploy-campaign-manifest",
+      "path": "docs/validation/shared/schemas/deploy-campaign-manifest-v2.schema.json",
+      "version": 2
+    },
+    {
       "id": "exact-content-fingerprint",
       "path": "docs/validation/shared/schemas/exact-content-fingerprint-v1.schema.json",
       "version": 1

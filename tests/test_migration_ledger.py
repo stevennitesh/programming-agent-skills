@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import json
 from pathlib import Path
 import subprocess
 
@@ -186,6 +187,53 @@ def test_migration_check_survives_control_only_commit_and_rejects_source_drift(
     research.write_text("# Drifted\n", encoding="utf-8")
 
     assert migration_ledger.check(tmp_path) == 1
+
+
+def test_staged_new_file_never_claims_recovery_from_absent_head(
+    tmp_path: Path,
+) -> None:
+    (tmp_path / "README.md").write_text("# Fixture\n", encoding="utf-8")
+    subprocess.run(["git", "init"], cwd=tmp_path, check=True, capture_output=True)
+    subprocess.run(
+        ["git", "config", "user.email", "fixture@example.invalid"],
+        cwd=tmp_path,
+        check=True,
+    )
+    subprocess.run(
+        ["git", "config", "user.name", "Fixture"],
+        cwd=tmp_path,
+        check=True,
+    )
+    subprocess.run(["git", "add", "."], cwd=tmp_path, check=True)
+    subprocess.run(
+        ["git", "commit", "-m", "source fixed point"],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+    )
+    relative = "docs/validation/new-schema.json"
+    added = tmp_path / relative
+    added.parent.mkdir(parents=True)
+    added.write_text("{}\n", encoding="utf-8")
+    (tmp_path / "README.md").write_text("# Changed\n", encoding="utf-8")
+    subprocess.run(
+        ["git", "add", relative, "README.md"],
+        cwd=tmp_path,
+        check=True,
+    )
+
+    assert migration_ledger.freeze(tmp_path) == 0
+    ledger = json.loads(
+        (tmp_path / migration_ledger.PUBLIC_LEDGER).read_text("utf-8")
+    )
+    row = next(item for item in ledger["rows"] if item["source"]["key"] == relative)
+    changed_row = next(
+        item for item in ledger["rows"] if item["source"]["key"] == "README.md"
+    )
+
+    assert row["source"]["state"] == "tracked"
+    assert row["recovery"]["pointer"] == relative
+    assert changed_row["recovery"]["pointer"] == "README.md"
 
 
 def test_migration_control_preserves_axes_privacy_and_lock_boundaries() -> None:

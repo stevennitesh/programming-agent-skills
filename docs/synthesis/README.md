@@ -38,6 +38,12 @@ Canonical owner paths are `docs/synthesis/skill-pack.md`,
 `docs/synthesis/skills`, and `docs/synthesis/methods/README.md`. This README
 routes to those owners without supplying their procedures or decisions.
 
+For a Fresh one-skill Deploy campaign, `skills/<skill>.md` owns H1 and its
+adjacent capability, relationship, and scenario claims. Manifest v2 points to
+that note and its claim-adjacency section; it never copies the decision
+narrative. Prompt 2 alone authors those claims, while the pack synthesis keeps
+the frozen integration-side relationship.
+
 ## Synthesis Ownership
 
 Give every decision one owner:

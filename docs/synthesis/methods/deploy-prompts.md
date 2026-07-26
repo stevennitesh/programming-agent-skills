@@ -370,9 +370,11 @@ The ordinary campaign-control interface is exactly:
 
 1. Run
    `python -m scripts.campaign_artifacts start SKILL [DELIVERY_MODE]` once
-   before Prompt 1. Retain the returned exact `MANIFEST` pointer and owner
-   token; do not copy campaign, artifact, or proof identities into coordinator
-   state.
+   before Prompt 1 for a standalone invocation. When the Fresh Composition
+   Epoch controller dispatched the skill, append
+   `--fresh-epoch ADMISSION.json`. Retain the returned exact `MANIFEST` pointer
+   and owner token; do not copy campaign, artifact, or proof identities into
+   coordinator state. Standalone admission retains its current contract.
 2. After the unit owner records its semantic decision and owned manifest
    fields, run
    `python -m scripts.campaign_artifacts verify MANIFEST`. Invoke
@@ -455,6 +457,136 @@ continues unchanged intent, Repair invalidates mechanically dependent proof,
 and changed intent requires Restart. Any concurrent unrelated work remains
 excluded and is reported as ambient drift rather than absorbed into campaign
 authority.
+
+Fresh dispatch uses campaign manifest v2 at
+`docs/validation/skills/<skill>/campaigns/<campaign-epoch>/manifest.json`.
+Before `start`, the Fresh Composition Epoch owner supplies one schema-valid
+admission packet with the exact composition epoch, canonical Pack Composition
+Contract path/revision/fingerprint, immutable selected slice ID/fingerprint,
+selected capability/relationship/scenario IDs, an explicit proof-predecessor
+list with exact canonical P1 and installed identities for every declared
+predecessor, an exact independent M0 pointer/fingerprint, and an owner-authored
+schedule pointer/fingerprint. The list is empty only for a root slice with no
+hard proof predecessors. The frozen slice contains exactly the full `slice_id`
+and sorted unique `selected_capability_ids`, `selected_relationship_ids`,
+`selected_scenario_ids`, and `hard_proof_predecessor_ids`; admission must match
+every identity and set exactly. Any selected-ID array may be explicitly empty;
+empty is authoritative rather than missing and remains subject to exact
+projection equality. `scripts.pack_contract.campaign_admission_slice` is the
+only canonical producer of this five-field envelope: it derives the envelope
+from `contract_slice`, binds its ID to the composition epoch, Pack Contract
+revision, selected skill ID, and canonical skill name, and fingerprints the
+canonical compact JSON projection. The controller rejects a hand-authored
+substitute, a wrong-skill projection, or noncanonical envelope bytes.
+Missing or mismatched slice, predecessor, schedule, contract revision, or
+independent M0 fingerprint refuses Fresh start; the one-skill controller never
+reconstructs them. Start resolves every admitted path inside the worktree,
+reads the referenced bytes, and matches each exact fingerprint before
+acquiring the lease. A schedule fragment resolves only as an exact JSON key,
+Markdown heading, or explicit section marker, never as a substring.
+Standalone non-Fresh admission remains unchanged.
+The Pack Contract revision is the semantic owner's revision identity, not an
+implicit Git treeish. A Git-fixed byte source requires its own explicitly
+named identity rather than overloading `pack_contract.revision`.
+
+Manifest v2 has four ownership sections:
+
+- `campaign` identifies this skill epoch, its Fresh composition epoch,
+  delivery mode, continuation/supersession pointers, and worktree.
+- `contract` contains only immutable pointers and identities admitted by the
+  Fresh owner.
+- `semantic` contains owner-written stage and terminal tokens, lifecycle
+  status tokens, and exact pointers to the decision capsule, independent
+  research packet, per-skill synthesis, Prompt 2 claim adjacency, and pack
+synthesis.
+All semantic pointers are canonical relative paths inside the worktree.
+Research stays under `docs/research/skills/<skill>/`; skill synthesis and
+claim adjacency stay on that skill's exact synthesis path.
+- `mechanical` contains timestamps, artifact identities, proof/preflight
+  registrations, receipts, invalidations, parity, evidence state, and the
+  immutable creation-time campaign and supersession digests.
+
+Do not copy rationale, research narratives, rubrics, sample judgments, or
+acceptance explanations into the manifest. Automation may update only
+`mechanical`; it must reject writes to `campaign`, `contract`, or `semantic`.
+Historical manifest v1 without its exact live lease is exactly readable and
+read-only. Never rewrite such a v1 record or infer a v2 relationship,
+lifecycle, or acceptance claim from it. A currently leased standalone v1
+campaign remains operational through the retained non-Fresh commands. The
+mechanical writer itself enforces that lease boundary; bypassing Verify or
+Repair cannot rewrite lease-less historical evidence. The same exact canonical
+manifest-path and live-lease requirement protects v2 mechanical state,
+receipts, and invalidations after release or supersession.
+Every lease-consuming entry point requires a nonempty owner token; malformed
+empty credentials fail before proof execution, manifest mutation, or release.
+The mechanical writer also rejects unsafe campaign/skill IDs and noncanonical
+worktree text for both supported manifest versions.
+
+For Fresh work, Prompt 1 reads the immutable selected slice first and freezes
+and fingerprints independent M0 before opening the Catalog, prior conclusions,
+current runtime/history, or upstream packs. The Research Pass then owns one
+finite sequence: one independent problem-first packet, Catalog lookup, bounded
+source retrieval, and at most one named evidence gap. Prompt 2 alone may
+compare that packet with M0 and write H1 plus claim adjacency. A required
+capability, relationship, or scenario decision missing from the slice is
+`behavior-decision-gap`; it blocks promotion and returns to the Fresh owner
+rather than being invented here.
+
+Prompts 3 and 4 prove only this skill and its selected relationship side.
+Pruning protects every recruited semantic ID and scenario before it may remove
+wording or evidence. Prompt 5 promotes and installs the exact P1, records exact
+canonical and installed identities, mirrors only the frozen selected
+relationships, writes the terminal token for this one campaign, and stops. It
+cannot select or schedule another skill, accept the pack, advance the Fresh
+epoch, or write Lock. Terminal verification requires the exact completed
+lifecycle (`ready-for-research`, `research-complete`, `ready-for-prompt-3`,
+`accepted`, `complete`, `promoted-installed`), registered proof with a current
+receipt, complete union coverage of every frozen relationship and scenario,
+resolved research/synthesis/claim-adjacency pointers, and exact post-install
+identity/parity. A non-applicable or off-stage registration cannot satisfy
+terminal proof, and a receipt matches only its exact registration ID and stage.
+Terminal pointer verification reasserts the campaign skill's exact research
+and synthesis owners, decision capsule, claim-adjacency fragment, and Pack
+Contract path. The Pack Contract owner is always the canonical
+`docs/synthesis/skill-pack.md`; a matching fingerprint at a foreign path is
+not admissible. Every terminal required proof registration names
+`stage: prompt-5` explicitly; a missing stage never inherits the current
+stage.
+
+Reusable evidence must match the complete prior tuple plus composition epoch,
+Pack Contract revision, slice fingerprint, and selected scenario and
+relationship identities. Evidence marked fresh is always rerun. Contract
+revision or slice drift stales the receipts that depend on it, preserves their
+history, and returns `Resume | Repair | Restart` to the semantic owner:
+`Resume` requires unchanged sealed and live contract identities, current
+evidence, and a nonterminal epoch; `Repair`
+records changed mechanical inputs and invalidates their dependent receipts;
+each invalidation is a schema-valid timestamped event with typed, unique ID
+arrays, and malformed history fails before any receipt can be reused;
+`Restart` requires changed identity, authority, or terminal state and creates
+a superseding epoch. Automation reports these choices but never chooses one,
+repairs semantic state, advances a stage, promotes, installs, delivers,
+cleans up, accepts the pack, or writes Lock.
+An ordinary Fresh start admits only null continuation and supersession. Only
+the Restart entry point may create `continuation: restart`, and it must bind
+the exact existing source-manifest path while holding that source campaign's
+lease. The internal handoff rereads and matches both source identity and live
+lease before mutation, rechecks lease bytes at replacement, and independently
+enforces Restart's changed-identity, changed-authority, or terminal-source
+gate. A v2 source always requires a new Fresh admission in that handoff; it
+cannot fall back to standalone manifest v1.
+For every v2 read, `campaign.epoch` equals `campaign.id`. Ordinary campaigns
+retain null continuation and supersession; Restart manifests must resolve
+their exact same-skill canonical source manifest before verification or any
+mechanical write. The creation-time campaign digest seals that original
+lineage in the automation-owned section and is independently anchored in the
+live lease; a Restart lease also anchors the exact source campaign digest.
+Neither anchor can be changed through the mechanical writer. Every active read
+requires manifest, lease, and source identities to agree, so paired manifest
+rewrites or later source-lineage drift fail before verification or mutation.
+Validation walks the complete supersession chain, rejects repeated paths, and
+fails closed at the bounded lineage-depth ceiling rather than recursing
+without limit.
 
 Supported campaign shapes keep their semantic owners and truthful outcomes:
 
@@ -612,25 +744,29 @@ and alternatives best support this skill's settled intended behavior? Apply
 distillation is needed. Keep one authorized note; use facets or bounded
 read-only source grandchildren for genuinely independent clusters.
 
-First perform independent online discovery from the intended behavior without
-opening upstream skill packages, the current target skill body, its synthesis,
-or historical candidate conclusions. Search for the strongest applicable
-method, credible alternatives, falsifying evidence, conditions, failure modes,
-and professional counterpressure.
+Execute this finite sequence once:
 
-Only after recording that blind search, inspect:
-
-- Matt Pocock under `.tmp/mattpocock-skills`;
-- Superpowers under `.tmp/superpowers`;
-- Ponytail under `.tmp/ponytail`;
-- the complete current canonical target package; and
-- applicable local language packets as historical source intake.
-
-For every upstream, record revision, worktree state, access depth, files
-inspected, and limits. Attribute only observed behavior to the pack. Then run
-targeted independent online verification for any newly observed mechanic that
-could affect H1. Search alternatives and counterevidence, not merely
-corroboration. Upstream repetition proves shared pack usage only.
+1. Write one independent problem-first packet from the intended behavior
+   without opening the Research Catalog, upstream skill packages, the current
+   target skill body, its synthesis, or historical candidate conclusions.
+   Search for the strongest applicable method, credible alternatives,
+   falsifying evidence, conditions, failure modes, and professional
+   counterpressure. Freeze the packet fingerprint before continuing.
+2. Query the canonical Research Catalog only after that freeze. For every
+   matched claim record exact Card ID, claim ID, Card fingerprint, claim
+   relation (`supports`, `contradicts`, `qualifies`, or `unrelated`), source
+   fixed point, and whether the proposed local application is source fact,
+   `synthesis`, or `inference`. A Catalog miss is an explicit result.
+3. Perform bounded retrieval only for matched claims and one material
+   unresolved condition. An admitted retrieval may inspect Matt Pocock under
+   `.tmp/mattpocock-skills`, Superpowers under `.tmp/superpowers`, Ponytail
+   under `.tmp/ponytail`, the current canonical target package, or governing
+   primary sources. For each source record revision, worktree state, access
+   depth, exact files, and limits. Attribute only observed behavior to the pack
+   and search alternatives and counterevidence, not merely corroboration.
+4. Close with either no gap or exactly one named evidence gap. Do not widen
+   retrieval, reopen independent discovery, or inspect another source merely
+   because it is available.
 
 For practitioner evidence, prefer identifiable inspected material. Use an
 actual practitioner conversation only when published evidence leaves one
@@ -643,22 +779,20 @@ Record applicability, freshness, alternative methods, rejected lanes, and the
 consequence for H1. Pack-specific or unverified behavior may be proposed only
 as a clearly labeled local experiment when no decisive contradiction exists.
 
-Use decision saturation, not a source quota. Stop when every load-bearing
-claim is classified, the strongest applicable owners and counterposition were
-inspected or their access failure recorded, and another credible source is
-unlikely to change the method, conditions, classification, or hypothesis.
-Reuse an existing packet only when claim, conditions, source identity,
-freshness, and intended application match; still verify applicability.
+Stop after the finite sequence. Reuse an existing packet only when claim,
+conditions, source identity, freshness, intended application, independent
+packet fingerprint, Catalog result, and source fixed point all match; still
+verify applicability.
 After a same-campaign `intent-reopen`, carry exact unaffected research lanes
 forward by identity and write only the affected decision delta; do not restate
 unchanged discovery.
 
 If evidence shows M0 omitted behavior essential to its settled intent, do not
 repair it here. Return `intent-reopen` with the exact affected unit, evidence,
-and consequence. Otherwise return one research packet containing independent
-discovery, pack and current observations, targeted verification, method
-classifications, intent-adjacent candidates, conflicts, gaps, and stopping
-basis.
+and consequence. Otherwise return one research packet containing the
+independent packet and fingerprint, exact Catalog claim-adjacency records,
+bounded retrieval observations, method classifications, intent-adjacent
+candidates, conflicts, zero or one named gap, and the finite stopping basis.
 
 Return exactly `research-complete`, `intent-reopen`, `evidence-gap`, or
 `blocked`. `research-complete` recommends Prompt 2; `intent-reopen` recommends
@@ -740,6 +874,10 @@ successor.
 
 Use $writing-great-skills in Author mode. Require an intact M0 checkpoint and
 `research-complete` packet with matching intended contract and identities.
+Reject a packet that lacks its independent fingerprint or any applicable exact
+Card ID, claim ID, Card fingerprint, claim relation, source fixed point, or
+local-application label. Prompt 2 alone owns the H1 and claim-adjacency
+decision; Research observations never pre-admit either.
 Now completely read the target synthesis, canonical package, disclosed runtime
 surfaces, callers, relationships, relevant tests and evaluations, candidates,
 promotion records, and explicit gaps.
@@ -804,6 +942,19 @@ behavior `M0-recruited` and reject H1 before construction. A `quality-lift`
 fixture must discriminate under realistic difficulty rather than make the
 preferred behavior obvious. A hypothesis may add or substitute behavior while
 preserving the intended contract.
+
+Its claim-adjacency record also contains `h1_id`, the behavioral proposition,
+exact Card ID and claim ID when present, Card fingerprint, claim relation,
+applicability bridge to the named M0 weakness, counterconditions and wrong
+condition, freshness result, source fixed point, local-inference label,
+method-evidence class, claim limits, synthesis disposition, and proof IDs.
+Prompt 2 maps Research observations into exactly one adjacency relation:
+`supports-method`, `contests`, `limits`, or `informs-only`; Research's
+`supports`, `contradicts`, `qualifies`, and `unrelated` labels are evidence
+inputs, not valid H1 adjacency values.
+Use explicit null or `locally-justified experimental` dispositions when no
+independent claim exists; never replace missing adjacency with a broad Card
+pointer or treat method evidence as efficacy proof.
 
 When a hypothesis changes outcome, invocation, authority, Return, completion,
 exclusion, or relationship, return `behavior-decision-gap`. When one

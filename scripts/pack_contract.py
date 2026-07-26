@@ -842,6 +842,73 @@ def contract_slice(
     }
 
 
+def campaign_admission_slice(
+    contract: dict[str, object],
+    skill_id: str,
+) -> dict[str, object]:
+    """Derive the exact five-field campaign envelope from one canonical slice."""
+
+    canonical = contract_slice(contract, skill_id)
+    if canonical.get("status") != "contract-slice":
+        return canonical
+    projection = canonical["slice"]
+    assert isinstance(projection, dict)
+    selected_skill = projection.get("skill")
+    if not isinstance(selected_skill, dict):
+        raise PackContractError("canonical slice has no selected skill")
+    canonical_name = selected_skill.get("canonical_name")
+    canonical_slice_id = projection.get("slice_id")
+    if not isinstance(canonical_name, str) or not canonical_name:
+        raise PackContractError("canonical slice selected skill has no name")
+    if not isinstance(canonical_slice_id, str) or not canonical_slice_id:
+        raise PackContractError("canonical slice has no identity")
+
+    def identities(rows: object, field: str) -> list[str]:
+        if not isinstance(rows, list):
+            raise PackContractError(f"canonical slice {field} rows are invalid")
+        values = [
+            row.get(field)
+            for row in rows
+            if isinstance(row, dict)
+        ]
+        if len(values) != len(rows) or not all(
+            isinstance(value, str) and value for value in values
+        ):
+            raise PackContractError(f"canonical slice {field} rows are invalid")
+        return sorted(set(values))
+
+    envelope = {
+        "slice_id": f"{canonical_slice_id}:{canonical_name}",
+        "selected_capability_ids": identities(
+            projection.get("capabilities"),
+            "capability_id",
+        ),
+        "selected_relationship_ids": identities(
+            projection.get("relationships"),
+            "relationship_id",
+        ),
+        "selected_scenario_ids": identities(
+            projection.get("acceptance_scenarios"),
+            "scenario_id",
+        ),
+        "hard_proof_predecessor_ids": sorted(
+            {
+                edge["predecessor_skill_id"]
+                for edge in projection.get("campaign_proof_edges", [])
+                if isinstance(edge, dict)
+                and edge.get("successor_skill_id") == skill_id
+                and isinstance(edge.get("predecessor_skill_id"), str)
+                and edge["predecessor_skill_id"]
+            }
+        ),
+    }
+    return {
+        "status": "campaign-admission-slice",
+        "slice": envelope,
+        "slice_fingerprint": exact_fingerprint(envelope),
+    }
+
+
 def _descendants(contract: dict[str, object], roots: Iterable[str]) -> set[str]:
     successors, _ = _graph(contract)
     affected = set(roots)

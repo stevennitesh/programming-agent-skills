@@ -67,19 +67,19 @@ def test_research_pass_is_mandatory_independent_and_non_self_validating() -> Non
         "## Conditional Prototype Interlude",
     )
 
-    independent = research.index("First perform independent online discovery")
-    inspect_packs = research.index("Only after recording that blind search")
-    targeted = research.index("targeted independent online verification")
-    assert independent < inspect_packs < targeted
+    independent = research.index("independent problem-first packet")
+    catalog = research.index("Query the canonical Research Catalog")
+    retrieval = research.index("Perform bounded retrieval")
+    assert independent < catalog < retrieval
 
     for term in (
         "Mandatory read-only evidence and discovery unit",
         "alternatives and counterevidence",
         "Attribute only observed behavior to the pack",
-        "Upstream repetition proves shared pack usage only",
         "Never fabricate or generalize a conversation",
         "`independently-supported`, `contested`, `pack-specific`, or `unverified`",
-        "Use decision saturation, not a source quota",
+        "Stop after the finite sequence",
+        "zero or one named gap",
         "same-campaign `intent-reopen`",
         "write only the affected decision delta",
         "`research-complete`, `intent-reopen`, `evidence-gap`, or `blocked`",
@@ -448,6 +448,54 @@ def test_campaign_ordinary_path_uses_the_narrow_control_interface() -> None:
         "campaign_artifacts compare-payloads",
     ):
         assert duplicated_command not in campaign
+
+
+def test_fresh_research_is_finite_and_prompt2_owns_claim_adjacency() -> None:
+    deploy = _normalized(DEPLOY_PROMPTS)
+    research = _section(
+        deploy,
+        "## Deploy Research Pass: Investigate The Intended Behavior",
+        "## Conditional Prototype Interlude",
+    )
+    prompt_2 = _section(
+        deploy,
+        "## Deploy Prompt 2: Finalize H1 Synthesis",
+        "## Deploy Prompt 3: Build M0 And H1",
+    )
+
+    for phrase in (
+        "Execute this finite sequence once",
+        "independent problem-first packet",
+        "Query the canonical Research Catalog only after that freeze",
+        "exact Card ID, claim ID, Card fingerprint, claim relation",
+        "source fixed point",
+        "exactly one named evidence gap",
+    ):
+        assert phrase in research
+    assert "Prompt 2 alone owns the H1 and claim-adjacency decision" in prompt_2
+    for relation in (
+        "`supports-method`",
+        "`contests`",
+        "`limits`",
+        "`informs-only`",
+    ):
+        assert relation in prompt_2
+    assert (
+        "Research's `supports`, `contradicts`, `qualifies`, and `unrelated` "
+        "labels are evidence inputs, not valid H1 adjacency values"
+    ) in prompt_2
+    for field in (
+        "`h1_id`",
+        "exact Card ID and claim ID",
+        "applicability bridge to the named M0 weakness",
+        "counterconditions and wrong condition",
+        "source fixed point",
+        "local-inference label",
+        "claim limits",
+        "synthesis disposition",
+        "proof IDs",
+    ):
+        assert field in prompt_2
 
 
 def test_campaign_adoption_preserves_semantic_authority_and_proves_ceremony() -> None:
