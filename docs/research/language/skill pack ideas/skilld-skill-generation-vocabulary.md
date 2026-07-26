@@ -1,0 +1,327 @@
+# What Distinctive, Operationally Meaningful Skill-Generation Language Does Skilld Use?
+
+Status: answered
+
+Supports: later deploy-campaign synthesis without selecting canonical local
+language or changing the campaign method
+
+Scope: the complete checked-out `skilld-dev/skilld` repository, with detailed
+inspection of its authoring prompts, generated-skill examples, source
+resolution, caching, installation, portability, trust controls, validation,
+audit gating, and representative unit and end-to-end tests
+
+Freshness: checkout and `origin/main` verified at
+`c8368441070e2c0c29af6d2f8c9425f62e8b9afb` on 2026-07-25; no fetch, update,
+checkout, or upstream mutation performed during extraction
+
+## Question And Boundary
+
+**Question:** What distinctive, operationally meaningful language does Skilld
+use to describe generating, enhancing, validating, distributing, and refreshing
+agent skills?
+
+**Intended use:** provide provenance-backed research input for deciding whether
+Skilld exposes mechanics that could improve this repository's skill deploy
+campaigns.
+
+The Skilld vocabulary was extracted from the pinned upstream checkout before
+comparison with the local deploy method. Upstream claims describe what Skilld
+says, names, implements, and tests. They do not prove professional correctness,
+behavioral effectiveness, or local fit. Every local comparison below is labeled
+`synthesis` or `inference`.
+
+Excluded from admission were dependency-specific advice inside generated
+example skills, ordinary CLI plumbing, library and framework names, raw protocol
+field names without a workflow consequence, generic verbs, and terms retained
+only because they were frequent. No raw corpus, concordance, or copied source
+tree is persisted in this packet.
+
+## Source Identity
+
+| Pack | Origin | Revision | Worktree State | Verified | Authority | Limitation |
+| --- | --- | --- | --- | --- | --- | --- |
+| Skilld | `https://github.com/skilld-dev/skilld.git` | `c8368441070e2c0c29af6d2f8c9425f62e8b9afb` (`main`; commit date 2026-07-22) | Clean tracked diff; `origin/main` resolved to the same commit | 2026-07-25 | Canonical repository is primary evidence for Skilld's language and implemented workflow | Source inspection proves the checked-in contract, not generated-skill efficacy, registry availability, or security completeness. Tests were inspected but not executed. |
+
+All upstream locators below are relative to the Skilld repository at the pinned
+commit. Line ranges refer to that revision.
+
+## Coverage
+
+The tracked tree contained 320 files. Every file was inventoried and assigned to
+a surface. Vocabulary-bearing files were inspected directly; implementation-only
+files were searched through names, interfaces, comments, and test descriptions,
+then excluded where they added no distinct language.
+
+| Surface | Inspected / Skipped / Not Applicable | Files Or Count | Consequence |
+| --- | --- | --- | --- |
+| Root documentation, manifests, and configuration | Inspected, with generated dependency detail skipped | 13 | `README.md`, `CLAUDE.md`, package/build/test configuration, and release metadata establish the public product frame and architecture. The dependency lock body added no vocabulary. |
+| Generated project skills and lock | Inspected for generated structure; dependency-specific advice pruned | 6 under `.claude/` | Confirmed version metadata, reference headers, search guidance, `API Changes`, `Best Practices`, source links, and marker-bounded sections across five examples. |
+| Workflows and logo | Inspected / no vocabulary | 3 under `.github/` | Workflows corroborate build/test/release surfaces; the logo is not applicable. |
+| Agent targeting and generation | Inspected | 53 under `src/agent/` | Covered target-agent definitions, base skill construction, section prompts, LLM execution, output cleaning, caching, retry, and merge order. |
+| Source acquisition | Inspected | 49 under `src/sources/` | Covered URL, content, and timeline cascades; resolver attempts; fallbacks; documentation indexes; and source-specific cache behavior. |
+| Commands and lifecycle | Inspected | 37 under `src/commands/` | Covered add, author, enhance, validate, assemble, install, prepare, update, eject, pull, and audit-gated routing. |
+| Core, cache, search, auth, registry, and CLI support | Inspected for semantic interfaces; algorithm-only detail pruned | 56 | Confirmed exact-version cache keys, lock semantics, prompt sanitization, registry fallback, semantic search, target detection, and path safety. |
+| Protocol package | Inspected | 17 | Confirmed audit wire data, deliberately local status aggregation, schema boundaries, and test fixtures. |
+| Unit tests | Inspected by inventory and semantic suites | 54 | Directly checked sanitizer, validation, assembly, lockfile, content-step, timeline-step, audit, cache, and agent-skill contracts; remaining implementation cases added no distinct vocabulary. |
+| End-to-end and agent tests | Inspected | 21 | Confirmed preset matrices, crosschecks, portable prompt assembly, source-resolution expectations, and multi-agent generation coverage. |
+| Test fixtures | Inspected for fixture role; fixture prose pruned | 11 | Confirmed nested skill discovery and import-detection cases without treating placeholder skill wording as product language. |
+
+No vocabulary-bearing surface was inaccessible. The checkout has no separate
+design-doc or release-note directory; `README.md`, `CLAUDE.md`, source comments,
+prompt templates, generated examples, and tests jointly own the language.
+
+## Vocabulary Clusters
+
+### 1. Selective, Version-Local Skill Acquisition
+
+Skilld frames a package skill as a response to an agent **knowledge cutoff**,
+not as something every dependency automatically deserves. Its public guidance
+is **be selective**: add skills only where the agent struggles. The promised
+result is **version-aware**, **local-first**, and **curated**, tied to the
+installed package version rather than fetched afresh per prompt.
+(`README.md:9-26,68-72,125-134,315-335`)
+
+### 2. Curated, Shipped, Base, And Enhanced Skill States
+
+The acquisition hierarchy distinguishes a registry **curated skill**, a
+package-author **shipped skill**, and a generated **base skill**. A base skill
+works without an LLM; selected **LLM sections** may later **enhance** it.
+Registry misses and unavailable shipped skills fall through to documentation
+generation rather than becoming fatal absence. (`CLAUDE.md:58-88`;
+`src/commands/sync/phases.ts:61-72,103-151,328-370`; `README.md:59-71`)
+
+### 3. Resolution Cascades, Attempts, And Fallbacks
+
+Skilld uses **cascade** as load-bearing ordered routing language. URL resolution,
+content resolution, and timeline collection are separate cascades. Each step can
+declare `canResolve`, mutate shared state, commit a result, skip, or leave a
+later fallback available. A **ResolveAttempt** preserves which lane succeeded,
+missed, or failed instead of collapsing failure into one message.
+(`src/sources/resolver-registry.ts:2-10,27-80,83-118`;
+`src/sources/resolvers/default.ts:2-35`;
+`src/sources/resolvers/content/index.ts:2-29`;
+`src/sources/types.ts:67-78`)
+
+### 4. Reference-Guided Progressive Disclosure
+
+Generated `SKILL.md` files keep references separate and instruct the agent to
+search indexed material rather than grep the reference tree. **Reference
+weights** change by question: documentation owns best-practice claims, while
+releases and changelogs own API-change claims. `_INDEX.md` files are routing
+surfaces, and exact **source links** move full examples and provenance out of
+the always-loaded instruction. (`README.md:30-40`;
+`src/agent/prompts/prompt.ts:109-165,210-218`;
+`src/agent/prompts/optional/best-practices.ts:23-39,89-100`;
+`src/agent/prompts/optional/api-changes.ts:40-58`)
+
+### 5. Sectioned Enhancement And Context Budgets
+
+Enhancement is decomposed into named sections such as **Best Practices**, **API
+Changes**, and **Custom**. Budgets divide a roughly 500-line target across
+enabled sections and scale with **release density** or **release churn**.
+Prompts explicitly stop source exploration once enough high-quality items fill
+the budget. Successful sections may be cached independently, generated in
+parallel, retried sequentially, and merged in a fixed order.
+(`src/agent/prompts/optional/budget.ts:1-58`;
+`src/commands/llm-prompts.ts:75-113`;
+`src/agent/prompts/prompt.ts:210-247`;
+`src/agent/llm-enhancer.ts:98-121,137-217,227-253`)
+
+### 6. Pinpoint Evidence And Change Labels
+
+The generated-content vocabulary distinguishes **BREAKING**, **DEPRECATED**, and
+**NEW** API changes. Every detailed item is expected to carry a pinpoint
+`[source]` link. Best-practice prompts reject obvious, generic, inferred, or
+unconfirmed advice; issue and discussion evidence is admitted only when
+maintainer-confirmed or otherwise strongly supported. This is evidence
+adjacency at the generated-item level. (`src/agent/prompts/optional/api-changes.ts:61-73,80-100,118-140`;
+`src/agent/prompts/optional/best-practices.ts:46-67,89-102`)
+
+### 7. Untrusted Content, Cleaning, Validation, And Audit
+
+External documentation is explicitly **untrusted** reference data. Skilld
+separates **sanitization** of source Markdown, **cleaning** of LLM section
+output, section **validation** against quality heuristics, and an upstream
+security **audit gate** for install decisions. Audit statuses aggregate as
+`pass`, `warn`, `fail`, or `unaudited`; they do not claim behavioral quality.
+(`src/agent/prompts/prompt.ts:146-165`;
+`src/core/sanitize.ts:5-13,15-117,185-225`;
+`src/agent/clis/clean-output.ts:12-90`;
+`src/commands/validate.ts:1-65`;
+`src/registry/client.ts:78-118`)
+
+### 8. Marker-Bounded Assembly And Portable Handoffs
+
+Each generated section is enclosed by `skilld` markers. **Assemble** cleans and
+validates separately produced output, replaces existing marked sections in
+place, and appends new ones in merge order. **Prompt-only** mode exports work
+for a human or any LLM; **eject** turns linked references into a portable,
+self-contained directory. (`src/agent/prompts/prompt.ts:21-35,260-314`;
+`src/commands/assemble.ts:80-175`; `README.md:205-252`)
+
+### 9. Lock, Prepare, Restore, Update, And Outdated State
+
+The generated skill is per project while references are cached by exact
+`name@version`. A lock records package, version, source, synchronization date,
+generator, and Git identity when applicable. **Prepare** restores reference
+links and shipped skills; **update** regenerates outdated enhancements. For an
+already enhanced small version bump, the interactive default is to skip fresh
+enhancement. (`src/cache/internal/version.ts:13-35`;
+`src/core/lockfile.ts:8-22`; `README.md:100-112,136-138,285-303`;
+`src/commands/llm-prompts.ts:195-235`)
+
+### 10. Presets, Crosschecks, And Resolver Invariants
+
+Testing language is organized around ecosystem **presets**, top-package
+**crosschecks**, source expectations, and step-level `canResolve` **invariants**.
+The matrix tests whether the acquisition machinery works across package and
+agent families; it does not test whether generated prose improves agent
+behavior. (`test/e2e/matrix.ts:12-25,57-520`;
+`test/e2e/run-preset.ts:1-6,56-228`;
+`test/unit/content-steps.test.ts:1-9`;
+`test/unit/timeline-steps.test.ts:1-8,52-73`)
+
+## Retained Vocabulary
+
+| Term | Variants | Class | Meaning In This Pack | Behavior Or Distinction Recruited | Spread | Claim Label | Best Provenance | Conditions / Limits |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Be selective | selective installation | workflow-control; failure-exclusion | Generate a package skill only where the agent needs help | Prevents dependency-count-driven context growth | README guidance | direct | `README.md:68-72` | User advice, not an enforced admission gate |
+| Version-aware / local-first | exact package version; local | artifact-state; candidate-leading-word | Keep skill references and cache state tied to an installed version and available locally | Reduces per-prompt fetch drift and stale API use | README, cache, lock, update | corroborated | `README.md:24-38,125-138`; `src/cache/internal/version.ts:13-35` | Some resolution lanes may fall back to a repository default branch |
+| Curated skill | registry skill | artifact-state; pack-specific | Pre-authored registry result preferred over generated fallback | Separates supplied skill content from LLM generation | README, registry client, install routing | corroborated | `CLAUDE.md:58-66`; `src/registry/client.ts:1-13` | Registry availability and curation quality were not verified |
+| Shipped skill | package-authored skill; skills-npm | artifact-state; relationship-handoff | Skill distributed by the dependency itself | Gives package authors priority and avoids generation | README, sync phase, installer | corroborated | `README.md:269-303`; `src/commands/sync/phases.ts:117-126` | Presence proves authorship, not local suitability |
+| Base skill / enhance | generated base; optimized section | artifact-state; workflow-control | Immediately usable skeleton plus optional generated additions | Makes LLM work additive and optional | README, phases, enhancer | corroborated | `README.md:59-71,205-220`; `src/commands/sync/phases.ts:103-370` | “Enhanced” or “optimized” does not prove behavioral improvement |
+| Resolution cascade | resolver; step; fallback | workflow-control; pack-specific | Ordered source discovery with state passed between lanes | Preserves priority while allowing graceful fallback | source registry, three resolver families, tests | corroborated | `src/sources/resolver-registry.ts:2-10,27-80`; `src/sources/resolvers/default.ts:27-35` | Order is product-specific and explicitly load-bearing |
+| ResolveAttempt | attempt ledger | evidence-completion; artifact-state | Per-lane resolution outcome retained for diagnosis | Makes misses and failures observable | source types, resolver, CLI errors | corroborated | `src/sources/types.ts:67-78`; `src/sources/resolver-registry.ts:83-118` | Operational evidence only; not source-quality judgment |
+| Reference weight | source priority; use-for | workflow-control; evidence-completion | Question-specific source ranking | Directs API and best-practice research to different owners | both generated section families | corroborated | `src/agent/prompts/optional/best-practices.ts:23-39`; `src/agent/prompts/optional/api-changes.ts:40-58` | Numeric weights are heuristics and create false precision outside this bounded task |
+| Pinpoint source link | `[source]`; anchor; line reference | evidence-completion | Adjacent path and locator for each generated item | Makes a claim traceable and discourages invented APIs | prompts, validators, generated examples | corroborated | `src/agent/prompts/optional/best-practices.ts:89-100` | Assembly reports some citation problems as warnings rather than hard rejection |
+| Dynamic budget | release density; release churn; section budget | workflow-control; failure-exclusion | Allocate item and line limits by section count and release activity | Bounds context while allowing more room for change-heavy packages | budget module, UI, prompts | corroborated | `src/agent/prompts/optional/budget.ts:1-58`; `src/commands/llm-prompts.ts:75-113` | Fixed line count is a proxy, not measured runtime effectiveness |
+| Untrusted external content | reference data only; sanitizer | failure-exclusion; evidence-completion | Treat fetched text as facts to inspect, never agent instructions to obey | Creates a source-to-runtime trust boundary | README, generation prompt, sanitizer, tests | corroborated | `README.md:129-134`; `src/agent/prompts/prompt.ts:156-165`; `src/core/sanitize.ts:5-13` | Regex sanitization is defense in depth, not a complete security proof |
+| Clean section output | strip preamble; normalize; reject narration | workflow-control; failure-exclusion | Convert heterogeneous LLM output into one admissible section shape | Prevents reasoning, fake tool calls, and wrappers from entering assembly | cleaner, assembly, tests | corroborated | `src/agent/clis/clean-output.ts:12-90`; `src/commands/assemble.ts:80-115` | Shape validation cannot establish truth or efficacy |
+| Marker-bounded assembly | section marker; re-assembly; merge order | artifact-state; workflow-control | Replace only named generated regions in an existing skill | Enables bounded refresh without rewriting the whole artifact | prompt helpers, enhancer, assembler, tests | corroborated | `src/agent/prompts/prompt.ts:21-35`; `src/commands/assemble.ts:126-175` | Marker identity owns placement, not semantic equivalence |
+| Prompt-only | no-agent mode; portable prompts | relationship-handoff; workflow-control | Export generation work for another LLM or human-operated environment | Decouples authoring from a specific agent CLI | README, agent resolution, portable flow | corroborated | `README.md:59-66,205-220`; `src/cli/agent-prompt.ts:58-69` | Manual output still needs validation and assembly |
+| Eject | portable; self-contained | artifact-state; pack-specific | Replace linked internal references with real files for distribution | Converts installed state into a shareable package | README, portable sync, cache | corroborated | `README.md:242-252`; `src/commands/sync/portable.ts` | Export semantics, not deletion |
+| Prepare / restore | prepare hook; auto-restore | workflow-control; relationship-handoff | Reconstruct reference links and install shipped skills after dependency installation | Makes disposable links recoverable from durable lock/cache state | README, prepare command, installer tests | corroborated | `README.md:100-112,285-303` | Does not itself regenerate all LLM content |
+| Audit gate | pass; warn; fail; unaudited; receipts | evidence-completion; failure-exclusion | Security-oriented admission decision before installing registry or Git skills | Blocks known failures and exposes audit evidence | protocol, registry, install routing, tests | corroborated | `src/registry/client.ts:78-118`; `src/commands/sync/install-many.ts:27-35,47-82` | `warn` installs; unaudited behavior varies by source kind; audit is not behavioral evaluation |
+| Preset / crosscheck / invariant | ecosystem preset; source expectation | evidence-completion | Repeat acquisition checks across package and agent families | Tests breadth of resolver and generator compatibility | E2E and unit test matrices | corroborated | `test/e2e/matrix.ts:12-25,57-520`; `test/e2e/run-preset.ts:56-228` | Coverage concerns pipeline operation, not generated-skill quality |
+
+## Techniques Encoded By The Language
+
+| Vocabulary | Technique | Essential Mechanics | Use Context In The Pack | Failure / Misuse Risk | Claim Label | Provenance |
+| --- | --- | --- | --- | --- | --- | --- |
+| Curated / shipped / base | Prefer authored content, then generate a usable fallback | Registry lookup, shipped-skill detection, base generation | Package-skill acquisition | Treating source priority as proof of quality | corroborated | `CLAUDE.md:58-88`; `src/commands/sync/phases.ts:103-151` |
+| Cascade / attempt / fallback | Preserve ordered discovery with observable misses | `canResolve`, shared state, per-step outcome, attempt ledger | Documentation and timeline resolution | Adding lanes without preserving order or failure evidence | corroborated | `src/sources/resolver-registry.ts:27-118` |
+| Base / opt-in section / enhance | Separate minimum utility from optional LLM contribution | Base skill first; independently generated sections; fixed merge order | Skill authoring | Calling additions “enhancements” before causal proof | corroborated | `README.md:59-71`; `src/agent/llm-enhancer.ts:98-253` |
+| Reference weight / source link | Route each claim type to its likely owner and cite it adjacently | Question-specific priorities, indexes, exact anchors, export checks | Best Practices and API Changes | Numeric prestige replacing applicability judgment | corroborated | `src/agent/prompts/optional/best-practices.ts:23-39,89-102`; `src/agent/prompts/optional/api-changes.ts:40-58` |
+| Dynamic budget / stop exploring | Bound context generation by capacity and source churn | Subtract overhead, divide by sections, boost for releases, stop at fill | Generated runtime size | Quota completion replacing claim saturation | corroborated | `src/agent/prompts/optional/budget.ts:1-58`; `src/agent/prompts/prompt.ts:210-218` |
+| Untrusted / sanitize / clean | Put two filters between outside text and assembled runtime | Source warning, Markdown sanitizer, output normalizer, structure rejection | External docs and LLM output | Assuming regex filtering is a security proof | corroborated | `src/agent/prompts/prompt.ts:156-165`; `src/core/sanitize.ts:5-13`; `src/agent/clis/clean-output.ts:12-90` |
+| Marker / assemble | Update generated regions without whole-file replacement | Named markers, reverse-offset replacement, append new sections | Manual and automatic enhancement | Marker correctness mistaken for semantic correctness | corroborated | `src/commands/assemble.ts:126-175` |
+| Exact version / lock / prepare | Reconstruct ephemeral links from durable identity | `name@version` cache, source/commit lock fields, restore hook | Installation and update | A version key with stale or fallback source content | corroborated | `src/cache/internal/version.ts:13-35`; `src/core/lockfile.ts:8-22`; `README.md:285-303` |
+| Prompt-only / eject | Preserve authoring across agents and environments | Portable prompts, output files, assembly, real reference files | No-agent and distribution flows | Manual outputs bypassing the same evidence gates | corroborated | `README.md:205-252`; `src/agent/prompts/prompt.ts:260-314` |
+| Preset / crosscheck / invariant | Test a source pipeline across families instead of one exemplar | Package matrix, source expectations, shared runner, step-level gates | Resolution and agent compatibility | Generalizing pipeline success to skill efficacy | corroborated | `test/e2e/run-preset.ts:1-6,56-228`; `test/unit/timeline-steps.test.ts:1-8,52-73` |
+
+## Aliases, Collisions, And Inconsistencies
+
+| Terms | Relationship | Evidence | Consequence For Interpretation |
+| --- | --- | --- | --- |
+| Curated skill / shipped skill / generated skill / base skill | Related but distinct artifact origins and maturity states | `CLAUDE.md:58-88`; `src/commands/sync/phases.ts:61-72` | Do not collapse “existing skill” into one authority class. |
+| Enhance / optimize / generate | Partly aliased implementation language | `src/agent/llm-enhancer.ts:1-9`; `src/commands/sync/phases.ts:328-370` | These names describe processing state, not demonstrated behavioral gain. |
+| Source | Collides among package origin, documentation owner, resolver lane, and `[source]` citation | `src/core/lockfile.ts:8-22`; `src/sources/types.ts:67-78`; generated prompts | Any borrowed schema should qualify source as origin, evidence owner, or locator. |
+| Validate / audit | Adjacent but non-equivalent gates | `src/commands/validate.ts:1-65`; `src/registry/client.ts:78-118` | Validation checks generated-section heuristics; audit gates installation security. Neither proves efficacy. |
+| Install / prepare / restore / update / assemble | Sequentially related but separately owned transitions | `README.md:184-203,285-303` | A campaign should not treat one successful transition as lifecycle completion. |
+| Opt-in / no opt-in | Public wording collision | `README.md:32,319-328` | “Opt-in” may mean user source selection, while “No Opt-in” means no maintainer participation; the unqualified term is ambiguous. |
+| Safe & Versioned / always be cautious | Claim and explicit limitation coexist | `README.md:38,129-134` | Preserve the caveat; safety is a defended posture, not a guarantee. |
+| 11 agents / target registry of 12 | Documentation drift | `CLAUDE.md:92-94`; `src/agent/targets/index.ts:12-39` | Use the executable registry, not the prose count, for current support claims. |
+| Validation warning / assembly acceptance | Contract mismatch between commands | `src/commands/validate.ts:45-65`; `src/commands/assemble.ts:108-124` | Standalone validation exits nonzero on warnings, while assembly prints warnings and continues. |
+
+## Inferred Applications
+
+These are local comparisons, not upstream claims.
+
+1. **Source firewall — `synthesis`.** Add an explicit Research Pass rule that
+   upstream files are untrusted evidence, never instructions to execute. Require
+   every source-derived runtime mechanic to pass the existing admission ledger
+   rather than crossing directly from source text into H1. Skilld's two-layer
+   warning and sanitization model supplies the premise; local source authority
+   and H1 admission remain locally owned.
+
+2. **Evidence adjacency — `synthesis`.** Require every research-derived H1 unit
+   to carry a research claim ID plus exact revision, path, and anchor. Extend the
+   campaign manifest validator to reject a missing pointer. This adapts Skilld's
+   item-level source link while keeping citations in the research/decision
+   owners rather than bloating canonical runtime.
+
+3. **Question-specific source routes — `inference`.** A research lock could name
+   the expected source owner and fallback order for each claim cluster. Do not
+   import Skilld's numeric weights; local authority and applicability should
+   remain qualitative and claim-specific.
+
+4. **Marker assembly and exact fixed points — `synthesis`, no change
+   recommended.** Skilld corroborates bounded section replacement, version
+   identity, and reconstructible state. The local deploy method already uses
+   marker-bounded decision capsules, hashes, research fingerprints, and
+   stage-owned manifest fields with stronger semantic proof.
+
+5. **Fixed line budgets and quota stopping — `synthesis`, reject for deploy
+   research.** Skilld's 500-line target and “stop when full” rule are useful for
+   generated package references. Local deploy research should retain decision
+   saturation and measured or explicitly proxied runtime load; a quota cannot
+   classify a load-bearing claim.
+
+6. **Small-update skip — `synthesis`, reject for campaign lifecycle.** Skilld
+   defaults an already enhanced patch/prerelease update to skip enhancement.
+   Local fresh campaigns should continue running every required stage while
+   reusing exact unaffected evidence by identity.
+
+7. **Preset matrices — `inference`.** Where a skill makes broad invocation or
+   compatibility claims, borrow the matrix idea only as a family-coverage
+   design aid. Keep the existing behavioral controls and wrong-condition
+   cohorts; source-resolution breadth alone cannot prove behavior.
+
+## Prune Log
+
+| Removed Or Merged Material | Reason | Stronger Retained Owner | Reconsider Only If |
+| --- | --- | --- | --- |
+| Domain advice in the five generated dependency skills | Describes TypeScript, SQLite, logging, and CLI packages rather than Skilld's authoring language | Generated-skill structure and evidence format | The question changes to generated-content quality |
+| Individual agent target names and paths | Compatibility inventory, not a reusable technique | Target-agent / portable handoff | A deployment portability decision needs exact target coverage |
+| Embedding, search-worker, auth, telemetry, and UI implementation vocabulary | Product plumbing without a distinct skill-authoring decision | Local-first references and semantic search | The question changes to product architecture |
+| Raw protocol and registry field names | Data transport details | Audit gate and lock identity | A schema compatibility decision requires them |
+| Emojis and presentation labels | Decorative and inconsistent across old/new generated examples | BREAKING / DEPRECATED / NEW | Presentation style becomes the research question |
+| Generic cache, retry, parallel, and fallback words | Retained only where Skilld assigns a precise lifecycle meaning | Exact-version cache, section retry, resolution cascade | Another surface defines a materially different contract |
+| Per-package preset names and top-package list | Coverage samples, not vocabulary | Preset / crosscheck / invariant | Matrix composition becomes a design input |
+
+## Evidence Gaps
+
+- Tests were inspected but not executed. This packet does not claim the checked-in
+  implementation currently passes.
+- No live call was made to `skilld.dev`, npm, the audit service, or generated
+  semantic search. Registry curation, remote audit availability, and runtime
+  output are outside the fixed checkout evidence.
+- The repository demonstrates deterministic structure and source traceability,
+  but contains no causal evaluation that its generated skills improve agent
+  behavior.
+- Numeric source weights, line budgets, and release-churn boosts are implemented
+  heuristics; their calibration is not independently justified in the checkout.
+- The sanitizer has substantial tests and an explicit threat model, but the
+  README itself preserves residual caution. No claim of complete prompt-injection
+  prevention is supported.
+- Some human-facing architecture text has drifted from executable state, including
+  the documented agent count and an older `src/commands/sync.ts` path. Commit and
+  executable source remain the stronger identity owners.
+
+## Stopping Basis
+
+The full tracked tree was inventoried; all vocabulary-bearing source families,
+generated examples, lifecycle commands, trust controls, validators, audit
+shapes, and representative tests were inspected; retained terms have exact
+provenance and limits; local applications are labeled; and additional
+implementation-only files repeat already classified mechanics.
+
+## Caller-Use Boundary
+
+This packet is research input only. It does not authorize edits to
+`docs/synthesis/methods/deploy-prompts.md`, campaign schemas or validators,
+`CONTEXT.md`, `docs/agents/`, runtime skills, installed mirrors, or Git delivery.
+
+## Final Decision
+
+`source-packet-complete`

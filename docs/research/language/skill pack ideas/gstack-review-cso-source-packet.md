@@ -1,0 +1,172 @@
+# Which gstack Ideas Matter For Matt-Style Skill Enhancement?
+
+Status: answered
+
+Supports: later enhancement of the local `review` and `audit-codebase` skills
+without importing gstack's runtime composition
+
+Freshness: gstack checkout verified 2026-07-25 at
+`a3259400a366593e0c909dd9ac3e59752efd2488`; clean shallow clone under
+`.tmp/repos/gstack`
+
+## Answer
+
+gstack contributes four useful review heuristics:
+
+1. **change-family completeness** — when a diff adds an enum value, status,
+   tier, or type constant, trace every consumer of the value family, including
+   consumers outside the diff;
+2. **attack-surface model** — before a security audit, map trust boundaries,
+   entry points, privileged operations, sensitive data, and external systems;
+3. **reachable exploit path** — require a concrete attacker, entry condition,
+   path through the affected boundary, and resulting capability or loss; and
+4. **verified variant search** — after verifying one security defect, search
+   the bounded audit region for the same causal pattern and verify each sibling
+   independently.
+
+These should enhance our skills using Matt Pocock's composition principles.
+They should not become imported gstack skills, extra workflow phases, mandatory
+specialist passes, or a second review system.
+
+## Enhancement Map
+
+| Candidate | Local Owner | Smallest Useful Enhancement | Why It Belongs There |
+| --- | --- | --- | --- |
+| Change-family completeness | `skills/custom/review/SKILL.md` | In `Trace`, conditionally require sibling-value discovery and consumer closure when a captured change adds a finite value such as an enum member, status, tier, or type constant. Close each applicable consumer as inspected, proved, skipped-nonmaterial, or blocked in the existing coverage ledger. | This is a diff-review discovery heuristic. It sharpens existing coverage without changing Review's fixed point, read-only boundary, two axes, finding contract, or Return. |
+| Attack-surface model | Future security lens disclosed by `skills/custom/audit-codebase/SKILL.md` | When the Charter requires security, map trust boundaries, attacker-controlled inputs, privileged operations, sensitive data, and external dependencies before generating candidates. | This is repository-baseline security context, not a universal ordinary-review step. A conditional lens preserves the small common path. |
+| Reachable exploit path | The same future security lens | Require each security candidate to name the supported attacker, entry condition, boundary path, and concrete effect before it can reach the audit defect contract. | This specializes existing `Reach`, `Evidence`, and `Impact` gates without weakening or duplicating them. Keeping it lens-local avoids imposing exploit language on non-security defects. |
+| Verified variant search | The same future security lens | After one security defect reaches `verified`, extract its causal pattern, search only the named Charter region, and send each match independently through verification. | Variant search is valuable only after a real defect is established. This ordering prevents speculative pattern matching and unbounded scope expansion. |
+
+## Matt-Style Composition
+
+The enhancement should preserve the strongest properties of the Matt Pocock
+pack rather than copy gstack's large generated procedures.
+
+### Use Leading Ideas, Not New Machinery
+
+`change-family completeness`, `attack surface`, `exploit path`, and `variant
+analysis` are compact candidate leading ideas with established technical
+meaning. They can recruit the intended judgment without importing gstack's
+1,852-line generated Review or 1,285-line generated CSO skill.
+
+### Keep Common Behavior Inline
+
+Change-family completeness is short, conditional, and relevant to ordinary
+diff review, so it belongs inline in Review's existing Trace and coverage
+ledger.
+
+### Disclose The Security Branch
+
+Attack-surface modeling, exploit paths, and variant analysis form one coherent
+security-only branch. They should live in one disclosed security-lens reference
+loaded only when the audit Charter selects security. This follows Matt's
+information hierarchy: the caller-facing audit skill owns routing and
+completion; the lens owns specialized examination.
+
+### Reuse Existing Gates
+
+Do not create gstack-style confidence scoring or a parallel finding format.
+The existing local contracts already own admission:
+
+- ordinary Review requires `Anchor`, `Reach`, `Evidence`, `Impact`, and
+  `Proportion` (`skills/custom/review/FINDING-CONTRACT.md:5-17`);
+- Audit Codebase requires `Expectation`, `Reach`, `Evidence`, `Impact`, and
+  `Proportion`, followed by terminal verification
+  (`skills/custom/audit-codebase/DEFECT-CONTRACT.md:5-27`;
+  `skills/custom/audit-codebase/SKILL.md:66-82`).
+
+The gstack ideas should supply better discovery and security-specific evidence,
+not replace these contracts.
+
+## What Does Not Improve The Pack
+
+Do not adopt:
+
+- gstack's fix-first Review; our Review is read-only over an immutable snapshot;
+- automatic base-branch fetching; our reviewer resolves and pins local
+  identities without mutating the comparison state;
+- subjective numeric confidence thresholds;
+- plan or intent inference from commits, TODOs, or PR prose when Spec is absent;
+- a universal security checklist across every review;
+- review armies, dashboards, telemetry, persistent learnings, Greptile replies,
+  or automatic secondary reviewer passes;
+- a standalone local CSO skill; the useful security behavior is one conditional
+  audit lens;
+- `.gstack/` reports or other competing evidence locations.
+
+These additions would increase context, process, ownership, and proof cost
+without adding a distinct local capability.
+
+## Why The Other gstack Ideas Are Not Enhancements
+
+- **Active verification** is already required by local Review and Audit
+  Codebase. gstack corroborates it but adds no missing semantic behavior.
+- **Plan completion and scope drift** overlap local Standards/Spec separation
+  and Charter coverage. gstack's fallback intent inference would weaken the
+  local source hierarchy.
+- **Broad specialist checklists** provide occasional research vocabulary, but
+  they are not universally applicable standards and have no demonstrated
+  false-positive bound.
+- **Pre-emit code quotation** is already subsumed by exact location, direct
+  evidence, supported reach, and impact requirements.
+
+## Evidence And Proof Boundary
+
+The four retained ideas are source-supported enhancement candidates, not
+behaviorally proven improvements.
+
+- gstack directly instructs enum/value consumer tracing in
+  `review/checklist.md:61-66` and `review/SKILL.md.tmpl:123-137`.
+- It directly instructs attack-surface modeling in
+  `cso/SKILL.md.tmpl:81-163`, variant analysis in
+  `cso/SKILL.md.tmpl:233-241`, and stepwise exploit scenarios in
+  `cso/SKILL.md.tmpl:253-285`.
+- gstack's enum E2E prompt names the value and tells the model what consumer
+  omission to seek (`test/skill-e2e-review.test.ts:128-157`).
+- its CSO E2E fixtures explicitly plant or name the vulnerabilities
+  (`test/skill-e2e-cso.test.ts:21-256`);
+- its pre-emit and CSO preservation tests prove generated structure and phrase
+  retention, not general finding accuracy
+  (`test/regression-1539-review-self-verify.test.ts:1-20`;
+  `test/cso-preserved.test.ts:1-106`).
+
+No inspected result artifact establishes repeated recall, precision,
+false-positive rate, completion cost, or transfer to our skills.
+
+Before canonical adoption:
+
+1. test change-family completeness on paired review tasks where the prompt does
+   not name the new value or omitted consumer;
+2. test the security lens on paired repository fixtures with both real and
+   tempting-but-safe patterns;
+3. score verified recall, false positives, scope discipline, context cost, and
+   completion; and
+4. compare candidate wording against the unchanged local skill in fresh
+   contexts.
+
+## Retained Evidence
+
+The ignored clone at `.tmp/repos/gstack/` remains the fixed upstream evidence.
+It retains templates, generated skills, shared resolvers, tests,
+acknowledgements, and the MIT license. Copying only `review/` and `cso/` would
+lose relevant generation and proof context.
+
+This tracked note is the enhancement distillation. The clone is evidence, not
+a dependency or runtime input.
+
+## Final Decision
+
+`enhancement-distillation-complete`
+
+Prioritize one small Review enhancement and one conditional Audit Codebase
+security lens:
+
+1. add change-family completeness to Review;
+2. compose the security lens from attack-surface modeling, reachable exploit
+   paths, and verified variant search;
+3. preserve the existing local evidence contracts and completion boundaries;
+4. import no gstack workflow machinery; and
+5. require clean behavioral comparisons before canonical wording changes.
+
+Return owner: caller. This note supports later authoring but authorizes no
+canonical skill mutation, installation, or delivery.

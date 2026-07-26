@@ -11,6 +11,7 @@ This repository packages a shared engineering discipline as skills, setup contra
 - `docs/agents/issue-tracker.md`, `triage-labels.md`, and `domain.md` own tracker mechanics, state roles, and domain routing.
 - `skills/custom/` is the active supported install set and the only source for managed installation. `skills/experimental/` holds inactive named alternatives to active skills. `skills/extra/` is optional, and `skills/.archive/` is retired history.
 - Historical research, synthesis, transcripts, issue notes, and run logs remain evidence. They become current instructions only when an owning README or `docs/plans/README.md` says so.
+- A Fresh Composition Epoch treats prior research, synthesis, validation, and campaign conclusions as historical by default. It admits them only after independent rediscovery or explicit revalidation against the epoch's fixed identities and claims.
 - Mechanical rules belong in scripts or config. Prose owns routing, judgment, and behavior that cannot be enforced directly.
 - Deploy-campaign automation may write only reproducible mechanical evidence state. The campaign owner alone settles semantic decision state and advances the semantic lifecycle.
 
@@ -76,6 +77,43 @@ The installer records pack-managed names in `.programming-agent-skills-manifest.
 
 A coordinated set of skills, setup contracts, validators, and reference that produces one engineering operating model.
 _Avoid_: prompt collection, script bundle
+
+**Fresh Composition Epoch**
+
+A pack-wide epistemic reset that freezes intended composition before prior
+research, synthesis, validation, campaign conclusions, or current skill bodies
+can steer discovery. It rebuilds a Pack Composition Contract and Research
+Catalog, runs fresh one-skill Deploy Campaigns under that contract, proves the
+composed pack, and cleans up superseded material only after Lock. Prior
+artifacts are historical intake until independently rediscovered or explicitly
+revalidated.
+_Avoid_: clean slate, destructive reset, pack-wide Deploy Campaign
+
+**Pack Composition Contract**
+
+The pack-level synthesis contract for selected capabilities, each skill's
+essential outcome and router, executable-aggregate, or leaf role, ownership
+boundaries, relationships, exclusions, collisions, gaps, and required
+integration proof. It constrains one-skill Deploy Campaigns without selecting
+their H1 behavior or copying their procedures.
+_Avoid_: skill inventory, route list, campaign charter
+
+**Research Catalog**
+
+The campaign-facing index of reusable Research Cards, organized by the
+behavior or failure they address, conditions, evidence class, freshness,
+limits, and source pointers. A Fresh Composition Epoch opens it only after
+recording an M0-derived problem-first discovery pass. It supports retrieval
+and never selects skill composition or admits H1.
+_Avoid_: recommendation engine, synthesis index, source dump
+
+**Research Card**
+
+A reusable evidence unit describing one behavior or method, the failure it may
+prevent, applicability and counterconditions, claim-owning evidence,
+freshness, limits, and source-packet pointers. Per-skill synthesis decides
+whether a card contributes to H1.
+_Avoid_: adopted behavior, H1 unit, source summary
 
 **Active skill**
 
@@ -182,6 +220,7 @@ _Avoid_: pack manual, copied route map
 
 ## Vocabulary Owners
 
+- Fresh Composition Epoch, Pack Composition Contract, Research Catalog, and Research Card vocabulary belongs to this context and [ADR-0009](docs/adr/0009-fresh-composition-epochs-revalidate-skill-pack-knowledge.md). The accepted `docs/synthesis/skill-pack.md` owner remains to be materialized by the separately authorized topology migration.
 - Deploy-campaign vocabulary—M0, H1, V1, P1, and intent-adjacent steering hypotheses—belongs to [`docs/synthesis/methods/deploy-prompts.md`](docs/synthesis/methods/deploy-prompts.md).
 - Deploy-campaign automation authority and control-plane vocabulary belong to [ADR-0008](docs/adr/0008-deploy-campaign-automation-separates-mechanical-evidence-from-semantic-decisions.md) and this context.
 - Skill-authoring vocabulary—Predictability, invocation, information hierarchy, leading words, completion criteria, and pruning—belongs to [`skills/custom/writing-great-skills/GLOSSARY.md`](skills/custom/writing-great-skills/GLOSSARY.md).
