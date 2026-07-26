@@ -10,12 +10,12 @@ publishes no private source locators.
 
 ## Fixed point
 
-- Source Git HEAD: `338e62adaa964f8ab771d7d060d716f6ce54f7fd`
-- Public inventory fingerprint: `sha256-v1:7fb812f56c00b63f4c3b16dcd594a9ea28cca350c2c1c639e88b9de3e43df0f8`
+- Source Git HEAD: `f2fe6d3342781ac6e7031c553d5493f84da8d15f`
+- Public inventory fingerprint: `sha256-v1:6d590c2d9de4a060b22e698bbf438130916ae8dcc54ca300f284988a5e51b08d`
 - Private inventory fingerprint: `sha256-v1:ea2a555b40dfca4e3690c56b14975029425a6e71d7edec314eec8e3cb997ce5e`
-- Public rows: 472
+- Public rows: 476
 - Private/local rows: 70
-- Public migration dispositions: `extract-and-preserve` 7, `merge-index` 5, `move` 23, `owner-gap` 132, `preserve-in-place` 305
+- Public migration dispositions: `extract-and-preserve` 7, `merge-index` 5, `move` 23, `owner-gap` 132, `preserve-in-place` 309
 - Private/local source states: `local-residue` 44, `private-ignored` 26
 
 ## Contract

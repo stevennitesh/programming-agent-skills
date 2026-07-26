@@ -8,3 +8,7 @@ It is not a catalog member and conveys no adoption or H1 decision.
 
 `independent-research-packet-v1/packet.json` proves the packet schema, exact
 fingerprint, and catalog-sequestering input.
+
+`pack-composition-contract-v1/contract.json` is a complete one-leaf positive
+fixture. It proves schema, cross-ledger freeze, deterministic order, and slice
+projection without selecting any real pack skill.

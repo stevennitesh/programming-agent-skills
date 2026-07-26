@@ -29,7 +29,7 @@ A Deploy Campaign always performs its bounded Research Pass.
 
 | File Or Folder | Role |
 | --- | --- |
-| [`skill-pack.md`](skill-pack.md) | Deferred Pack Composition Contract and pack-acceptance owner; materialized by its selected implementation ticket |
+| [`skill-pack.md`](skill-pack.md) | Canonical marker-bounded Pack Composition Contract and pack-acceptance decision owner |
 | [`methods/`](methods/) | Reusable deployment, Fresh Composition Epoch, and source-distillation methods |
 | [`skill-context-relationships.md`](skill-context-relationships.md) | Current context pointers, cross-skill relationships, and boundary owners |
 | [`skills/`](skills/) | One whole-skill synthesis note per skill as coverage expands |

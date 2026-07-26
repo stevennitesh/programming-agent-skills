@@ -85,7 +85,7 @@ REQUIRED_OWNERS = {
     "pack-composition-contract": {
         "path": "docs/synthesis/skill-pack.md",
         "route": "docs/synthesis/README.md",
-        "required": False,
+        "required": True,
     },
     "per-skill-synthesis": {
         "path": "docs/synthesis/skills",
@@ -95,7 +95,7 @@ REQUIRED_OWNERS = {
     "fresh-epoch-controller": {
         "path": "docs/synthesis/methods/fresh-composition-epoch.md",
         "route": "docs/synthesis/methods/README.md",
-        "required": False,
+        "required": True,
     },
     "one-skill-controller": {
         "path": "docs/synthesis/methods/deploy-prompts.md",
@@ -137,6 +137,10 @@ REQUIRED_SCHEMAS = {
     ("independent-research-packet", 1): (
         "docs/validation/shared/schemas/"
         "independent-research-packet-v1.schema.json"
+    ),
+    ("pack-composition-contract", 1): (
+        "docs/validation/shared/schemas/"
+        "pack-composition-contract-v1.schema.json"
     ),
 }
 IDENTITY_SCAN_RULES = {

@@ -67,7 +67,7 @@
     {
       "information_class": "pack-composition-contract",
       "path": "docs/synthesis/skill-pack.md",
-      "required": false,
+      "required": true,
       "route": "docs/synthesis/README.md"
     },
     {
@@ -79,7 +79,7 @@
     {
       "information_class": "fresh-epoch-controller",
       "path": "docs/synthesis/methods/fresh-composition-epoch.md",
-      "required": false,
+      "required": true,
       "route": "docs/synthesis/methods/README.md"
     },
     {

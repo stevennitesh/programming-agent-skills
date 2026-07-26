@@ -7,3 +7,7 @@ compatibility identities.
 Research Catalog generation uses the registered Research Card, thin Catalog,
 and independent problem-first packet schemas. Canonical Cards remain Markdown;
 the Card schema governs their YAML frontmatter record.
+
+`pack-composition-contract-v1.schema.json` governs the marker-bounded five-part
+Pack Contract. Its schema proves shape and vocabulary only; the controller
+enforces cross-ledger ownership, graph, freeze, slice, and amendment invariants.

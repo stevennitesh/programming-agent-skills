@@ -6,7 +6,7 @@ Methods are reusable ways to distill sources or deploy selected synthesis.
 
 | File | Role |
 | --- | --- |
-| [`fresh-composition-epoch.md`](fresh-composition-epoch.md) | Deferred parent controller for one Fresh Composition Epoch; materialized by its selected implementation ticket |
+| [`fresh-composition-epoch.md`](fresh-composition-epoch.md) | Parent controller for one Fresh Composition Epoch: schedule, integration, Lock, and cleanup handoff |
 | [`deploy-prompts.md`](deploy-prompts.md) | One-skill controller and bounded units for deriving an intent-minimum runtime, investigating professional methods, proving hypotheses, pruning without regression, promoting, installing, and optionally delivering through Git |
 | [`source-distillation-flow.md`](source-distillation-flow.md) | Evidence-only flow for distilling primary and outside sources into important concepts and usable techniques |
 | [`prompts/`](prompts/) | Optional prompts supporting source distillation |

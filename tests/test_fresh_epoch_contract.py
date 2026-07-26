@@ -66,6 +66,14 @@ def write_contract_tree(root: Path) -> dict[str, object]:
         "# One-skill Deploy Campaign\n",
         encoding="utf-8",
     )
+    (root / "docs/synthesis/skill-pack.md").write_text(
+        "# Pack Composition Contract\n",
+        encoding="utf-8",
+    )
+    (root / "docs/synthesis/methods/fresh-composition-epoch.md").write_text(
+        "# Fresh Composition Epoch\n",
+        encoding="utf-8",
+    )
     legacy_fixture = (
         root / "docs/validation/shared/fixtures/campaign-manifest-v1.json"
     )
@@ -112,6 +120,14 @@ def write_contract_tree(root: Path) -> dict[str, object]:
             "path": (
                 "docs/validation/shared/schemas/"
                 "research-catalog-v1.schema.json"
+            ),
+        },
+        {
+            "id": "pack-composition-contract",
+            "version": 1,
+            "path": (
+                "docs/validation/shared/schemas/"
+                "pack-composition-contract-v1.schema.json"
             ),
         },
     ]
@@ -168,7 +184,7 @@ def write_contract_tree(root: Path) -> dict[str, object]:
                 "information_class": "pack-composition-contract",
                 "path": "docs/synthesis/skill-pack.md",
                 "route": "docs/synthesis/README.md",
-                "required": False,
+                "required": True,
             },
             {
                 "information_class": "per-skill-synthesis",
@@ -180,7 +196,7 @@ def write_contract_tree(root: Path) -> dict[str, object]:
                 "information_class": "fresh-epoch-controller",
                 "path": "docs/synthesis/methods/fresh-composition-epoch.md",
                 "route": "docs/synthesis/methods/README.md",
-                "required": False,
+                "required": True,
             },
             {
                 "information_class": "one-skill-controller",

@@ -18,6 +18,12 @@
       "version": 1
     },
     {
+      "fingerprint": "sha256-v1:15e33c2f6ace6005a5cee58d157c1750e7c78616380a01d7007db782c86318d3",
+      "id": "pack-composition-contract",
+      "path": "docs/validation/shared/schemas/pack-composition-contract-v1.schema.json",
+      "version": 1
+    },
+    {
       "fingerprint": "sha256-v1:c989ee318816b753a273cd14f0a72b481bf58592890e7e6fbfba8287091d92d0",
       "id": "research-card",
       "path": "docs/validation/shared/schemas/research-card-v1.schema.json",
