@@ -1,0 +1,10 @@
+{
+  "campaign": {
+    "id": "legacy-v1-compatibility-fixture",
+    "skill": "example"
+  },
+  "mechanical": {
+    "evidence_state": "historical-read-only"
+  },
+  "schema_version": 1
+}

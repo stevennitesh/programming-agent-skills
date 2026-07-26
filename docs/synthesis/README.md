@@ -29,9 +29,14 @@ A Deploy Campaign always performs its bounded Research Pass.
 
 | File Or Folder | Role |
 | --- | --- |
-| [`methods/`](methods/) | Reusable deployment and source-distillation methods |
+| [`skill-pack.md`](skill-pack.md) | Deferred Pack Composition Contract and pack-acceptance owner; materialized by its selected implementation ticket |
+| [`methods/`](methods/) | Reusable deployment, Fresh Composition Epoch, and source-distillation methods |
 | [`skill-context-relationships.md`](skill-context-relationships.md) | Current context pointers, cross-skill relationships, and boundary owners |
 | [`skills/`](skills/) | One whole-skill synthesis note per skill as coverage expands |
+
+Canonical owner paths are `docs/synthesis/skill-pack.md`,
+`docs/synthesis/skills`, and `docs/synthesis/methods/README.md`. This README
+routes to those owners without supplying their procedures or decisions.
 
 ## Synthesis Ownership
 

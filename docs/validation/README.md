@@ -19,6 +19,9 @@ diffs, and failure observations over impressions.
 
 | Lane | Role |
 | --- | --- |
+| [`shared/`](shared/) | Shared protocols, fixtures, schemas, and the mechanical Fresh Composition Epoch envelope. |
+| [`skills/`](skills/) | Per-skill campaign and evaluation evidence under stable identities. |
+| [`skill-pack/`](skill-pack/) | Pack-integration evidence for one composition epoch. |
 | [`transcripts/`](transcripts/) | Transcript reviews that show how agents actually behaved. |
 | [`evals/`](evals/) | Repeatable fixtures and scoring rubrics, starting with [`core-workflows.md`](evals/core-workflows.md). |
 
@@ -39,3 +42,8 @@ Validation should name:
 - evidence;
 - failure modes;
 - follow-up changes.
+
+Canonical Fresh Composition Epoch routes are
+`docs/validation/shared/README.md`, `docs/validation/skills/README.md`, and
+`docs/validation/skill-pack/README.md`. Validation owns evidence and tested
+bounds; pack acceptance remains a synthesis decision.

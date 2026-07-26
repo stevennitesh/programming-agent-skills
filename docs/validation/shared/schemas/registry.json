@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "schemas": [
+    {
+      "id": "exact-content-fingerprint",
+      "path": "docs/validation/shared/schemas/exact-content-fingerprint-v1.schema.json",
+      "version": 1
+    },
+    {
+      "id": "fresh-epoch-topology",
+      "path": "docs/validation/shared/schemas/fresh-epoch-topology-v1.schema.json",
+      "version": 1
+    }
+  ]
+}

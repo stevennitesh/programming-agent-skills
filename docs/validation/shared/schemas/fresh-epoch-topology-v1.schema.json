@@ -1,0 +1,42 @@
+{
+  "$id": "urn:programming-agent-skills:fresh-epoch-topology:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "compatibility": {
+      "type": "object"
+    },
+    "fingerprint": {
+      "type": "object"
+    },
+    "format": {
+      "const": 1
+    },
+    "identity_families": {
+      "type": "array"
+    },
+    "owners": {
+      "type": "array"
+    },
+    "privacy": {
+      "type": "object"
+    },
+    "routes": {
+      "type": "array"
+    },
+    "schema_registry": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "format",
+    "fingerprint",
+    "routes",
+    "owners",
+    "identity_families",
+    "compatibility",
+    "privacy",
+    "schema_registry"
+  ],
+  "type": "object"
+}
