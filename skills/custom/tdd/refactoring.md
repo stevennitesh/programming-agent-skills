@@ -15,4 +15,9 @@ Make one meaningful move at a time. Rerun the focused test after each move and t
 
 Stop when the intended material cleanup is complete and the focused plus nearest relevant tests are GREEN, or when the next improvement would expand scope.
 
-If refactoring reveals work outside the tracer bullet, return it as residual follow-up evidence without mutating a tracker or widening the slice. Recommend `$simplify-code` and stop for one settled, bounded, behavior-preserving cleanup. Recommend `$codebase-design` and stop for one already-framed interface or seam question. Recommend `$improve-codebase` and stop when the best improvement still needs wide discovery or classification.
+If refactoring reveals work outside the tracer bullet, return it as residual
+follow-up evidence without mutating a tracker or widening the slice. Recommend
+`$simplify-code` and stop for one settled, bounded, behavior-preserving
+cleanup. Recommend `$codebase-design` and stop for one already-framed
+interface or seam question. Recommend `$audit-codebase` and stop when the best
+improvement still needs repository mapping or wide discovery.

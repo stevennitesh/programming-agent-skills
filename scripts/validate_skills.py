@@ -112,6 +112,7 @@ STALE_ACTIVE_TOKENS = (
     "skills/current",
     "skills/matt-pocock",
     "improve-codebase-architecture",
+    "$improve-codebase",
 )
 
 

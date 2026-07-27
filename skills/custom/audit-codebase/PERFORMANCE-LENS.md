@@ -1,14 +1,26 @@
 # Performance Lens
 
-Read this only when the Charter includes speed, latency, throughput, scalability, memory, storage, network, CPU, GPU, or other resource behavior.
+Read this only when the declared audit scope or a governing requirement
+includes speed, latency, throughput, scalability, memory, storage, network,
+CPU, GPU, or other resource behavior.
 
 ## Classify
 
-- **Performance defect:** measured behavior violates a Charter budget, requirement, invariant, comparison basis, or supported operational expectation.
-- **Performance opportunity:** measured evidence supports a likely beneficial change, but no governing expectation is violated. Admit it only as an advisory when enabled.
-- **Performance evidence gap:** the required workload, environment, benchmark, profile, instrumentation, budget, or comparison baseline is unavailable or cannot be captured read-only.
+- **Performance defect:** like-for-like measured behavior violates an
+  authoritative budget, requirement, invariant, or accepted operational
+  threshold. A comparison baseline counts only when authority defines
+  pass/fail against it.
+- **Performance opportunity:** measured evidence supports a likely beneficial
+  change, but no governing expectation is violated. Admit it under
+  `QUALITY-LENS.md` with the measurement and proof seam preserved.
+- **Performance evidence gap:** the required workload, environment, benchmark,
+  profile, instrumentation, budget, or comparison baseline is unavailable
+  within Audit authority.
 
-**Like-for-like:** bound every claim to its workload, environment, build, method, sample count, and variance. A smell alone proves neither defect nor benefit; static evidence may locate a bottleneck, but measurement must establish impact.
+**Like-for-like:** bind every claim to its workload, environment, build,
+method, sample count, and variance. A smell alone proves neither defect nor
+benefit; static evidence may locate a bottleneck, but measurement must
+establish impact.
 
 ## Measure
 
@@ -31,8 +43,14 @@ Confidence:
 Required proof:
 ```
 
-Materially different environments, datasets, builds, or methods become evidence gaps. Noisy or under-sampled results support only the uncertainty they resolve.
+Materially different environments, datasets, builds, or methods become gaps.
+Noisy or under-sampled results support only the uncertainty they resolve. If
+the required measurement is available but unfinished, keep the subsystem
+`incomplete`.
 
 ## Bound
 
-Run only read-only benchmarks and profilers that preserve the immutable target and authorized environment. New production instrumentation, benchmark infrastructure, tuning patches, and load-generating external mutations remain outside the audit. Route resulting gaps through the audit finding contract.
+Run only commands proven not to mutate audited paths or external systems. If a
+benchmark or profiler requires workspace caches, new infrastructure,
+production instrumentation, tuning patches, or load-generating external
+effects, record a gap instead. Route gaps through `DEFECT-CONTRACT.md`.

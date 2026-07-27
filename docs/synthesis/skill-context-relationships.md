@@ -97,6 +97,7 @@ flowchart TD
   Review --> StandardsSources["repo standards / configs / test docs"]
   Review --> FindingContract
   Review -. "local PR / high risk" .-> CPR
+  Review -. "repository-baseline audit" .-> Audit
   CPR --> Contract
   CPR --> SpecSources
   CPR --> StandardsSources
@@ -106,9 +107,16 @@ flowchart TD
   Audit --> Contract
   Audit --> DomainRouter
   Audit --> AuditDefects["DEFECT-CONTRACT.md"]
-  Audit --> AuditPerformance["PERFORMANCE-LENS.md<br/>only for performance Charters"]
-  Audit --> AuditReport["HTML-REPORT.md"]
-  Audit --> AdvisoryContract
+  Audit --> AuditQuality["QUALITY-LENS.md<br/>concept triage"]
+  Audit --> AuditCandidates["CANDIDATE-CONTRACT.md"]
+  Audit --> AuditReliability["RELIABILITY-LENS.md"]
+  Audit --> AuditDomain["DOMAIN-LENS.md"]
+  Audit --> AuditDesign["DESIGN-LENS.md"]
+  Audit --> AuditSimplify["SIMPLIFICATION-LENS.md"]
+  Audit --> AuditPractices["CODING-PRACTICES-LENS.md"]
+  Audit --> AuditPerformance["PERFORMANCE-LENS.md<br/>only for performance scope"]
+  Audit --> AuditReport["HTML-REPORT.md<br/>sole durable artifact"]
+  Audit -. "current-user decision" .-> GrillDocs
 
   Research --> ResearchDocs["docs/research/*"]
   Conflict["resolving-merge-conflicts"] --> Contract
@@ -122,21 +130,7 @@ flowchart TD
   Conflict -. "uncertain post-resolution failure" .-> Debug
   Simplify["simplify-code"] --> Contract
   Simplify -. "interface question" .-> CodeDesign
-  Simplify -. "wide improvement search" .-> Improve
-  Improve["improve-codebase"] --> Contract
-  Improve --> DomainRouter
-  Improve --> CodeDesign["codebase-design"]
-  Improve --> HtmlReport["HTML-REPORT.md / .tmp/improvement-reviews/"]
-  Improve --> SelectedCandidate["SELECTED-CANDIDATE.md"]
-  SelectedCandidate -. "source evidence" .-> Research
-  SelectedCandidate -. "runnable evidence" .-> Prototype
-  SelectedCandidate -. "user or domain decision" .-> GrillDocs
-  SelectedCandidate -. "interface design" .-> CodeDesign
-  SelectedCandidate -. "eliminate" .-> Simplify
-  SelectedCandidate --> Implement
-  SelectedCandidate --> ToTickets
-  SelectedCandidate --> ToSpec
-  Improve -. "setup gate" .-> Setup
+  Simplify -. "wide repository audit" .-> Audit
 
   Handoff -. "setup gate" .-> Setup
 
@@ -144,10 +138,10 @@ flowchart TD
   TddRefs -. "uncertain repro" .-> Debug
   TddRefs -. "standalone bounded cleanup" .-> Simplify
   TddRefs -. "larger design follow-up" .-> CodeDesign
-  TddRefs -. "wide improvement follow-up" .-> Improve
+  TddRefs -. "wide audit follow-up" .-> Audit
   CodeDesign --> DirectDesign["DIRECT-DESIGN.md"]
   DirectDesign --> DesignRefs["DEEPENING.md / DESIGN-IT-TWICE.md"]
-  CodeDesign -. "wide scan" .-> Improve
+  CodeDesign -. "wide scan" .-> Audit
   Writing["writing-great-skills"] --> Glossary["GLOSSARY.md<br/>authoring vocabulary"]
   Writing --> BehaviorEvals["BEHAVIOR-EVALS.md<br/>counterfactual wording evaluation"]
 ```
@@ -167,7 +161,6 @@ Source: `skills/custom/*/agents/openai.yaml`.
 | `handoff` | explicit-only |
 | `implement` | explicit-only |
 | `audit-codebase` | explicit-only |
-| `improve-codebase` | explicit-only |
 | `parallel-implement` | explicit-only |
 | `prototype` | implicitly invocable |
 | `repo-bootstrap` | explicit-only |
@@ -245,27 +238,28 @@ Use one verb for each accepted relationship:
 | `tdd` | Hand off | `$prototype` | The question is design evidence rather than production proof. |
 | `tdd` | Recommend and stop | `$simplify-code` | A GREEN refactor exposes settled, bounded, behavior-preserving cleanup outside the tracer bullet. |
 | `tdd` | Recommend and stop | `$codebase-design` | A GREEN refactor exposes one bounded interface or seam question outside the slice. |
-| `tdd` | Recommend and stop | `$improve-codebase` | A GREEN refactor exposes wide or unclassified improvement work outside the slice. |
+| `tdd` | Recommend and stop | `$audit-codebase` | A GREEN refactor exposes repository-wide or unclassified audit work outside the slice. |
 | `diagnosing-bugs` | Hand off | `$tdd` | Only when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known before Trace; retain the original caller. |
 | `diagnosing-bugs` | Recommend and stop | `$implement` | Standalone diagnosis proved the cause and needs an implementation owner. |
 | `resolving-merge-conflicts` | Invoke | `$diagnosing-bugs` | Diagnose an uncertain proof failure, return the causal packet, then resume Prove. |
 | `review` | Hand off | `$convergent-pr-review` | The target is a local PR or needs independent high-risk review. |
+| `review` | Recommend and stop | `$audit-codebase` | The request targets an immutable repository baseline rather than an ordinary branch, WIP, staged, or since-X diff. |
 | `convergent-pr-review` | Recommend and stop | `$audit-codebase` | The request targets a bounded repository correctness, domain-robustness, methodology, or performance baseline rather than a pending release diff. |
-| `audit-codebase` finding contract | Suggest only | `$grill-with-docs` | A read-only finding exposes a user-owned term, rule, preference, or trade-off; the caller chooses any later route and Audit neither invokes the composer nor resumes. |
-| `improve-codebase` | Load | `$codebase-design` | Apply shared module, interface, seam, depth, leverage, and locality vocabulary during the Survey. |
-| `improve-codebase` | Invoke | `$research` | A selected candidate needs one source question; return cited evidence or a blocker to the caller. |
-| `improve-codebase` | Invoke | `$prototype` | A selected candidate needs one runnable design verdict; pass the complete Freeze authority and receive its supported result, evidence, limits, and cleanup state. |
-| `improve-codebase` | Recommend and stop | `$grill-with-docs` | A selected candidate needs a direct user decision with durable capture; resume the same candidate later with the result. |
-| `improve-codebase` | Invoke | `$codebase-design` | A selected `Concentrate` candidate needs dependency, seam, ownership, interface, migration, or replacement design. |
-| `improve-codebase` | Recommend and stop | `$wayfinder` | Multiple interdependent unresolved decisions or prerequisites need a tracker-backed route. |
-| `improve-codebase` | Recommend and stop | `$simplify-code` | A selected candidate reclassifies to `Eliminate`; return its report pickup without edits. |
-| `improve-codebase` | Recommend and stop | `$implement` | A selected `Concentrate` candidate is one ready slice. |
-| `improve-codebase` | Recommend and stop | `$to-tickets` | A selected `Concentrate` candidate needs dependency-ordered slices. |
-| `improve-codebase` | Recommend and stop | `$to-spec` | A selected `Concentrate` candidate has a settled direction that needs a durable parent spec before slicing. |
-| `improve-codebase` | Recommend and stop | `$repo-bootstrap` | The disposable report boundary is missing or incompatible. |
-| `simplify-code` | Recommend and stop | `$improve-codebase` | The request needs wide discovery, ranking, or multi-region sequencing. |
+| `audit-codebase` | Recommend and stop | `$grill-with-docs` | One candidate decision belongs to the current user and also requires current domain language, Invariants, relationships, or ADR handling; Audit publishes the decision brief and exact Analyze re-entry, then leaves composition unstarted. |
+| `audit-codebase` | Recommend and stop | `$grilling` | One candidate decision belongs to the current user but needs no domain-record maintenance; Audit publishes the decision brief and exact Analyze re-entry, then leaves Grilling unstarted. |
+| `audit-codebase` | Recommend and stop | `$research` | One analyzed candidate needs one non-diagnostic source-answerable authoritative fact; Audit publishes an exact report-backed pickup and leaves Research unstarted. |
+| `audit-codebase` | Recommend and stop | `$prototype` | One settled candidate design question needs one disposable runnable probe or performance experiment; Audit publishes an exact report-backed pickup and leaves Prototype unstarted. |
+| `audit-codebase` | Recommend and stop | `$diagnosing-bugs` | One candidate has broken or slow behavior with uncertain expected behavior, symptom, cause, or trusted reproduction; Audit publishes an exact report-backed pickup and leaves Diagnosis unstarted. |
+| `audit-codebase` | Recommend and stop | `$to-questionnaire` | One identifiable external stakeholder holds candidate knowledge unavailable from sources or the current user; Audit publishes an exact report-backed pickup and leaves questionnaire creation unstarted. |
+| `audit-codebase` | Recommend and stop | `$codebase-design` | After user decisions settle, one bounded code Module, Interface, Seam, Adapter, or caller-facing test-surface design remains; Audit publishes an exact pickup and leaves design unstarted. |
+| `audit-codebase` | Recommend and stop | `$wayfinder` | Multiple interdependent unresolved candidate decisions or prerequisites need a configured tracker-backed route; Audit publishes an exact pickup and leaves Wayfinder unstarted. |
+| `audit-codebase` | Recommend and stop | `$to-spec` | One analyzed candidate has settled direction and commitments but needs a durable parent specification; Audit publishes an exact report-backed pickup and leaves specification work unstarted. |
+| `audit-codebase` | Recommend and stop | `$to-tickets` | One analyzed candidate has settled direction, authority, commitments, acceptance, dependency meaning, and supported states; requires multiple implementation slices; and either needs no new parent specification or already has one. Audit publishes an exact report-backed pickup and leaves ticket creation unstarted. |
+| `audit-codebase` | Recommend and stop | `$simplify-code` | One analyzed candidate has a bounded behavior-preserving reduction, current report identity, supported behavior, Source Trace, and proof seam; Audit publishes an exact report-backed pickup and leaves simplification unstarted. |
+| `audit-codebase` | Recommend and stop | `$implement` | One analyzed non-reduction item has settled outcome, acceptance, commitment boundary, scope and write authority, Source Trace, proof, and finite Repair budget; Audit publishes an exact report-backed pickup and leaves implementation unstarted. |
+| `simplify-code` | Recommend and stop | `$audit-codebase` | The request needs repository mapping, wide discovery, or multi-subsystem audit coverage. |
 | `simplify-code` | Recommend and stop | `$codebase-design` | The best next move requires one new interface or ownership decision. |
-| `codebase-design` | Recommend and stop | `$improve-codebase` | The request needs codebase-wide improvement discovery and classification. |
+| `codebase-design` | Recommend and stop | `$audit-codebase` | The request needs codebase-wide mapping and improvement discovery. |
 | `handoff` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 
 The accepted future Domain Modeling promotion changes Wayfinder's durability edge to `Invoke`, with the locked context action and complete Domain Delta returned to the same campaign. Domain Modeling remains a leaf: direct use may ask focused domain-expert questions, composed use receives settled answers from Grilling, and every residual returns to the user or caller without invoking Skill Router, its composer, or downstream execution. Prototype likewise returns every terminal result directly to its current caller or the user.
@@ -291,16 +285,16 @@ and
 | `repo-bootstrap` | Provisions and verifies the repo setup surface | `skill-router`, setup gates in planning/tracker skills |
 | `docs/agents/issue-tracker.md` | Tracker interface, work-item lifecycle, PR-as-request rules, wayfinding operations, and the campaign-scoped `landed-awaiting-lock` dependency overlay | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `review`, `convergent-pr-review`, `wayfinder` |
 | `docs/agents/triage-labels.md` | Category/state role to label mapping and fixed wayfinding labels | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
-| `docs/agents/domain.md` | Routing to `CONTEXT.md`, `CONTEXT-MAP.md`, ADRs | `to-spec`, `triage`, `tdd`, `diagnosing-bugs`, `simplify-code`, `improve-codebase`, `audit-codebase`, `parallel-implement` |
-| `docs/agents/engineering-contract.md` | Engineering taste, shared runtime language, Charter, commitment boundary, change-created fallout, fresh, negative-control, and state-boundary proof, work-state policy, fixed-snapshot Spec/Standards review, Repair generation, and Lock | `to-tickets`, `implement`, `tdd`, `diagnosing-bugs`, `prototype`, `simplify-code`, `improve-codebase`, `audit-codebase`, `parallel-implement`, `resolving-merge-conflicts`, `review`, `convergent-pr-review` |
+| `docs/agents/domain.md` | Routing to `CONTEXT.md`, `CONTEXT-MAP.md`, ADRs | `to-spec`, `triage`, `tdd`, `diagnosing-bugs`, `simplify-code`, `audit-codebase`, `parallel-implement` |
+| `docs/agents/engineering-contract.md` | Engineering taste, shared runtime language, Charter, commitment boundary, change-created fallout, fresh, negative-control, and state-boundary proof, work-state policy, fixed-snapshot Spec/Standards review, Repair generation, and Lock | `to-tickets`, `implement`, `tdd`, `diagnosing-bugs`, `prototype`, `simplify-code`, `audit-codebase`, `parallel-implement`, `resolving-merge-conflicts`, `review`, `convergent-pr-review` |
 | `domain-modeling` | Resolves domain semantics; exclusively accumulates and returns the authoritative current cumulative Domain Delta; renders or persists routed `CONTEXT.md` and `CONTEXT-MAP.md` changes under `render only` or `persist authorized`; assesses plausible ADR candidates; and records approved ADR truth | `skill-router`, `grill-with-docs`, `wayfinder`, `repo-bootstrap` |
-| `codebase-design` | Interface, seam, adapter, depth, leverage, locality, and bounded replacement vocabulary | `to-spec`, `improve-codebase`, `tdd`, architecture/design follow-ups |
-| `research` | Claim-owning source legwork and one authorized cited note or verified inline evidence | `skill-router`, `grilling`, `wayfinder`, `improve-codebase` |
+| `codebase-design` | Interface, seam, adapter, depth, leverage, locality, and bounded replacement vocabulary | `to-spec`, `tdd`, architecture/design follow-ups |
+| `research` | Claim-owning source legwork and one authorized cited note or verified inline evidence | `skill-router`, `grilling`, `wayfinder` |
 | `to-questionnaire` | One recipient-ready async discovery artifact for one external stakeholder and downstream decision | `skill-router`, `grilling`, humans collecting stakeholder evidence |
 | `resolving-merge-conflicts` | Read-only three-way inspection, authorized reconciliation, and the separate finish boundary | Git operations and implementation or integration work that enters a conflicted state |
 | `review` | Ordinary fixed-snapshot Standards/Spec review | `implement`, `parallel-implement`; escalates once to `convergent-pr-review` for high risk |
-| `audit-codebase` | Bounded immutable repository-baseline correctness, domain robustness, performance, advisories, evidence gaps, coverage, and one verified HTML report without a release decision | `skill-router`, `convergent-pr-review`, humans explicitly invoking repository audits |
-| `simplify-code` | One unstaged, behavior-preserving simplification patch, an explicit finite and bounded `until-clean` campaign, or a proved no-safe-cut verdict | `skill-router`, `tdd`, `improve-codebase`, humans invoking bounded cleanup |
+| `audit-codebase` | Immutable repository system map plus serial user-selected subsystem audits and improvement-candidate analyses for correctness, robustness, domain fidelity, module design, simplification, coding practices, performance, gaps, retained complexity, and one durable HTML report without a release decision | `skill-router`, `review`, `convergent-pr-review`, `tdd`, `simplify-code`, `$grill-with-docs` decision returns, and humans explicitly invoking repository audits |
+| `simplify-code` | One unstaged, behavior-preserving simplification patch, an explicit finite and bounded `until-clean` campaign, or a proved no-safe-cut verdict | `skill-router`, `tdd`, `audit-codebase`, humans invoking bounded cleanup |
 
 ## Supporting Files
 
@@ -317,9 +311,8 @@ and
 | `research` | One cited repo-local Markdown note per source question |
 | `resolving-merge-conflicts` | Three-way merge/rebase/cherry-pick/revert and marker-only conflict process, proof, return packet, and finish boundary |
 | `review`, `convergent-pr-review`, `implement`, `parallel-implement` | `review/FINDING-CONTRACT.md`: shared diff-finding admission, remediation classes, and remediation-review bound; `review/SMELL-BASELINE.md`: fallback Standards reference when repo standards are thin |
-| `convergent-pr-review`, `audit-codebase` | `review/ADVISORY-CONTRACT.md`: verified nonblocking opportunities kept outside decision-bearing ledgers |
-| `audit-codebase` | `DEFECT-CONTRACT.md`: finding admission, gaps, and zero-or-one suggested-owner interface; `PERFORMANCE-LENS.md`: conditional measurement and classification rules; `HTML-REPORT.md`: terminal offline audit artifact |
-| `improve-codebase` | `HTML-REPORT.md`: report format and visual style; `SELECTED-CANDIDATE.md`: explicit candidate resolution, reclassification, routing, and report reconciliation |
+| `convergent-pr-review` | `review/ADVISORY-CONTRACT.md`: optional verified nonblocking observations kept outside the decision-bearing finding ledger |
+| `audit-codebase` | `DEFECT-CONTRACT.md`: defects and gaps; `QUALITY-LENS.md`: concept triage and opportunity admission; `RELIABILITY-LENS.md`, `DOMAIN-LENS.md`, `DESIGN-LENS.md`, `SIMPLIFICATION-LENS.md`, and `CODING-PRACTICES-LENS.md`: classified audit concepts; `CANDIDATE-CONTRACT.md`: improvement-candidate admission, analysis, decision briefs, and one next-step suggestion; `PERFORMANCE-LENS.md`: conditional measurement; `HTML-REPORT.md`: sole durable linked report |
 | `parallel-implement` | `WORKER-BRIEF.md`, `INTEGRATOR-BRIEF.md`, `CODEX-WORKTREE-LAUNCH.md`: compact lane contracts and one-step checkout opening; `run_ledger.py` and `RUN-LEDGER.md`: intuitive campaign facade over canonical event state, strict authority validation, generated ledger, and closeout plan |
 
 ## Boundary Notes
@@ -327,7 +320,7 @@ and
 - The global template exposes bootstrap handles; `skill-router` routes; neither teaches downstream workflow procedures.
 - The bundled system `skill-creator` owns new-package scaffolding and metadata mechanics. `$writing-great-skills` owns semantic quality for new and existing canonical skill instructions, stops after canonical proof, and does not absorb installation or delivery.
 - Setup docs own tracker, labels, domain routing, and engineering-contract details. Skills should point there instead of restating those mechanics.
-- `$grill-with-docs` is the narrowly implicitly invocable, direct-user composer of `$grilling` and `$domain-modeling`; the owned skills do not invoke each other. Direct Domain Modeling may ask focused questions only about terms, invariants, bounded contexts, and relationships. Missing context authority defaults to `render only`, while ADR approval remains separate. During composition every settled material answer crosses Relay, Domain Modeling alone accumulates the current Domain Delta, and collisions return before dependent questioning. The composer returns only `Confirmed`, `Evidence gap`, or `Blocked` with intact component payloads and starts no downstream route. Wayfinder, Triage, Improve Codebase, Skill Router, and Research may recommend it and stop; Audit Codebase may suggest it only. Domain Modeling returns every residual to its direct user or caller and stops.
+- `$grill-with-docs` is the narrowly implicitly invocable, direct-user composer of `$grilling` and `$domain-modeling`; the owned skills do not invoke each other. Direct Domain Modeling may ask focused questions only about terms, invariants, bounded contexts, and relationships. Missing context authority defaults to `render only`, while ADR approval remains separate. During composition every settled material answer crosses Relay, Domain Modeling alone accumulates the current Domain Delta, and collisions return before dependent questioning. The composer returns only `Confirmed`, `Evidence gap`, or `Blocked` with intact component payloads and starts no downstream route. Wayfinder, Triage, Skill Router, Research, and Audit Codebase may recommend it and stop; Audit Analyze may later consume the intact direct-user packet without claiming the composer's mutations. Domain Modeling returns every residual to its direct user or caller and stops.
 - `to-questionnaire` owns Direct async stakeholder elicitation into one verified artifact only after its admissibility gate; source-answerable gaps recommend `$research` and stop, while a current-user-owned decision recommends `$grilling` and stops. It does not accept delegated packets, contact the recipient, ingest answers, mutate trackers or domain truth, or synthesize a specification.
 - `domain-modeling` is the only skill that writes `CONTEXT.md`, `CONTEXT-MAP.md`, or approved ADR truth; `repo-bootstrap` configures and verifies routing before persistence across a required topology transition, and vocabulary consumers follow `docs/agents/domain.md`.
 - `to-spec` owns parent spec synthesis and tracker publication; `to-tickets` owns implementation issue slicing.
@@ -340,8 +333,7 @@ and
 - `review` is the ordinary fixed-snapshot gate and may hand off once to `convergent-pr-review`; the high-risk route never hands back.
 - `review` and `convergent-pr-review` return terminal read-only evidence. Their reports grant no mutation or successor-snapshot authority; the implementation caller's pre-recorded Charter and Repair Budget govern continuation.
 - `convergent-pr-review` may run its own bounded read-only reviewer passes only when selected as the review route; it is not a second implementation orchestrator.
-- `audit-codebase` owns caller-bounded correctness, domain robustness, methodology, and performance judgment over one immutable repository baseline. It reports every verified in-scope item in one offline HTML artifact. Its `complete / incomplete` status reports coverage, never release acceptance; each item may suggest one immediate owner, but the audit ranks no improvement, starts no downstream work, and returns to the caller.
-- `improve-codebase` owns read-only improvement discovery, exhaustive region classification, overlap sequencing, ranking, a disposable report, and one explicitly resumed candidate through conditional evidence or design resolution. It never starts explicit mutation or delivery skills.
+- `audit-codebase` owns the exhaustive system/subsystem map, one user-selected subsystem audit, and one user-selected improvement-candidate analysis per invocation over one immutable repository baseline. It accumulates verified items, retained complexity, candidate strength, decision briefs, returned decision packets, and coverage state in one durable offline HTML report. It ranks candidates only inside an audited subsystem, ranks no subsystem, suggests exactly zero or one candidate next step, starts no downstream work, and returns selection authority to the user.
 - `simplify-code` owns one standalone cleanup patch or an explicitly bounded serial `until-clean` campaign with a finite cut budget, strict net-reduction ledger, and terminal stop condition under before-and-after proof gates. It does not own feature work, bug diagnosis, public-contract decisions, wide improvement surveys, staging, commits, or tracker closeout.
 - `handoff` carries pointers across sessions; it should reference durable artifacts, not duplicate specs, issues, ADRs, commits, or diffs.
 - `.tmp/` artifacts are disposable unless a skill explicitly preserves them for the user or next session.

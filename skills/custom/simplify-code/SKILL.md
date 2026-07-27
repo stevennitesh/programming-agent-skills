@@ -14,11 +14,13 @@ simplification** result.
 
 ## Admit
 
-Accept one bounded target by this precedence: a still-valid candidate from a
-verified `$improve-codebase` report, the user-named target, then one coherent
-current diff. Return a missing, stale, absorbed, or incomplete report to
-Improve Codebase unchanged. Without a bounded target, recommend
-`$improve-codebase` and stop.
+Accept one bounded target by this precedence: a current analyzed candidate
+from a verified `$audit-codebase` report whose direction is one
+behavior-preserving reduction and whose subsystem, Source Trace, supported
+behavior, proof seam, and snapshot identity are complete; the user-named
+target; then one coherent current diff. Return a missing, stale, blocked,
+disproved, or incomplete candidate or report to the caller unchanged. Without
+a bounded target, recommend `$audit-codebase` and stop.
 
 Return feature work, public-contract decisions, reviews, Git delivery, tracker
 mutation, installation, and external-system work to their owners. Return
@@ -31,10 +33,17 @@ owns selection, local edits, proof, and Return only inside the admitted region.
 
 ## Trace And Baseline
 
-Read the repository instructions and authoritative behavior, domain, and
-compatibility commitments. Trace operational callers, callees, entries,
-configuration, registration paths, relevant work state, and one caller-facing
-proof seam.
+For an admitted Audit candidate, verify the report and snapshot against the
+current target bytes. Reuse its Source Trace, supported behavior, proof seam,
+and selected reduction direction; refresh only its affected files, callers,
+entries, configuration, authoritative commitments, and work state. If those
+checks invalidate or materially change the candidate, return it to Audit
+unchanged. Do not repeat wide tracing or reopen the full reduction ladder.
+
+For a user-named target or coherent current diff, read the repository
+instructions and authoritative behavior, domain, and compatibility
+commitments. Trace operational callers, callees, entries, configuration,
+registration paths, relevant work state, and one caller-facing proof seam.
 
 Record the starting ref, status, relevant diff, and staged-state shape without
 disturbing existing work. Run the smallest trusted proof that can detect a
@@ -45,14 +54,20 @@ semantically inadequate baseline cannot authorize production mutation; return
 ## Choose
 
 Prefer source-supported deletion and an already-sufficient owner or native
-capability over locally attractive rewriting. Inspect the region in this
-order; the first admissible rung wins:
+capability over locally attractive rewriting. For an admitted Audit candidate,
+choose the smallest concrete cut inside its selected reduction direction;
+resurvey the ladder only when refreshed evidence invalidates that direction.
+For other targets, inspect the region in this order; the first admissible rung
+wins:
 
-1. **Delete** behavior proved unreachable or expired.
+1. **Delete** behavior, configuration, compatibility, or abstraction proved
+   unreachable, expired, or unsupported within preserved contracts.
 2. **Reuse** an existing project-owned semantic match.
 3. **Standardize, native-first** through standard/runtime, platform/framework,
    then already-installed dependency capability.
-4. **Collapse** an abstraction or duplicated decision that earns no boundary.
+4. **Collapse** an unearned abstraction or duplicated decision at its
+   narrowest existing owner; deepen, merge, or inline only within settled
+   existing boundaries.
 5. **Shrink** branching or data movement with ordinary readable constructs.
 
 An earlier rung yields when its semantics, compatibility, edge behavior,
@@ -74,7 +89,9 @@ reconcile its manifest, lockfile, and repository-owned installation proof.
 
 If no candidate passes, return **No safe simplification** with the bounded
 region, credible candidates, rejection reasons, work state, proof or proof
-gap, and owning residual.
+gap, and owning residual. When evidence justifies retaining the current shape,
+also name its **Known Ceiling** and concrete **Revisit Trigger**; invent
+neither when no limit is evidenced.
 
 ## Cut
 

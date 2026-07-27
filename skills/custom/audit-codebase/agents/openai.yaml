@@ -1,7 +1,7 @@
 interface:
   display_name: "Audit Codebase"
-  short_description: "Audit correctness, robustness, and performance"
-  default_prompt: "Use $audit-codebase to audit this immutable repository snapshot for domain correctness, robustness, and performance, then return the HTML report."
+  short_description: "Map, audit one subsystem, or analyze one candidate"
+  default_prompt: "Use $audit-codebase for exactly the requested path. Build, continue, or explicitly refresh the durable linked HTML map when no report-backed selection is supplied; otherwise audit one user-selected subsystem or analyze one user-selected candidate or returned evidence. Reject an invalid or stale supplied selection without substituting Map. Publish the report and stop without selecting or starting the next path."
 
 policy:
   allow_implicit_invocation: false

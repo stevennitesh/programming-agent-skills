@@ -412,10 +412,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-017",
-      "completion_return": "A complete or incomplete immutable-baseline audit ledger",
+      "completion_return": "One verified durable immutable-baseline HTML report for exactly one Map, Audit, or Analyze invocation",
       "disposition": "selected",
       "entry_conditions": [
-        "A repository baseline needs bounded correctness, robustness, methodology, model-risk, analytics, or performance coverage"
+        "A repository needs a new, continued, or refreshed exhaustive system map; one selected subsystem audit; or analysis of one selected candidate or returned packet"
       ],
       "essential": true,
       "exclusions": [
@@ -423,11 +423,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Audit one immutable repository baseline against a bounded Charter without a release decision",
+      "observable_outcome": "Map one immutable repository, audit one user-selected subsystem, or analyze one user-selected candidate or returned packet per invocation without a release decision",
       "primary_owner_skill_id": "SK-017",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
-        "Baseline pinning, evidence-backed findings, coverage ledger, and HTML audit report"
+        "Baseline pinning and manifest verification, linked system map, subsystem coverage, verified items, improvement candidates, candidate analysis, returned-evidence judgment, exact next-step pickups, and one atomic durable HTML report"
       ]
     },
     {
@@ -593,34 +593,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     },
     {
       "acceptance_scenario_ids": [
-        "PS-024"
-      ],
-      "allowed_contributor_skill_ids": [
-        "SK-003",
-        "SK-004",
-        "SK-007"
-      ],
-      "capability_id": "CAP-024",
-      "completion_return": "A verified improvement report or one selected candidate's exact route",
-      "disposition": "selected",
-      "entry_conditions": [
-        "A bounded codebase is hard to change and the strongest eliminate, concentrate, retain, or investigate move is uncertain"
-      ],
-      "essential": true,
-      "exclusions": [
-        "Shared or implicit final authority",
-        "Unbounded foreign procedure loading",
-        "Automated semantic acceptance"
-      ],
-      "observable_outcome": "Survey a bounded codebase and route one explicitly selected evidence-backed improvement candidate",
-      "primary_owner_skill_id": "SK-024",
-      "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
-      "required_authority_mutation": [
-        "Survey coverage, classification, ranking, evidence resolution, reclassification, and routing"
-      ]
-    },
-    {
-      "acceptance_scenario_ids": [
         "PS-025"
       ],
       "allowed_contributor_skill_ids": [],
@@ -727,7 +699,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-016"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for audit-codebase: Audit one immutable repository baseline against a bounded Charter without a release decision",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for audit-codebase: Map one immutable repository, audit one user-selected subsystem, or analyze one user-selected candidate or returned packet without a release decision",
         "expected_owner_skill_id": "SK-017",
         "scenario_id": "PS-017"
       },
@@ -762,11 +734,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-023"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for improve-codebase: Survey a bounded codebase and route one explicitly selected evidence-backed improvement candidate",
-        "expected_owner_skill_id": "SK-024",
-        "scenario_id": "PS-024"
-      },
-      {
         "description": "Positive entry, nearest-negative exclusion, material failure, and completion for skill-router: Choose exactly one next engineering skill from the current situation and stop",
         "expected_owner_skill_id": "SK-025",
         "scenario_id": "PS-025"
@@ -791,19 +758,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       },
       {
         "predecessor_skill_id": "SK-003",
-        "successor_skill_id": "SK-024"
-      },
-      {
-        "predecessor_skill_id": "SK-003",
         "successor_skill_id": "SK-025"
       },
       {
         "predecessor_skill_id": "SK-004",
         "successor_skill_id": "SK-021"
-      },
-      {
-        "predecessor_skill_id": "SK-004",
-        "successor_skill_id": "SK-024"
       },
       {
         "predecessor_skill_id": "SK-004",
@@ -840,10 +799,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       {
         "predecessor_skill_id": "SK-007",
         "successor_skill_id": "SK-011"
-      },
-      {
-        "predecessor_skill_id": "SK-007",
-        "successor_skill_id": "SK-024"
       },
       {
         "predecessor_skill_id": "SK-007",
@@ -940,10 +895,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       {
         "predecessor_skill_id": "SK-023",
         "successor_skill_id": "SK-025"
-      },
-      {
-        "predecessor_skill_id": "SK-024",
-        "successor_skill_id": "SK-025"
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
@@ -992,7 +943,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "github-issue-comment-body:stevennitesh/programming-agent-skills#36:5081636826#sha256-v1:b48d5b27ed87d0c651fa46d7859e6724be3a9a581a05e0997b6461fec1c82428",
       "github-issue-body:stevennitesh/programming-agent-skills#39#sha256-v1:f8115df444ab80f15fdb49610d96152cdff2edc12a5f03bb50efaba308a840a3",
       "github-issue-body:stevennitesh/programming-agent-skills#50#sha256-v1:21d89976101c1815c6e08f921d6045f97615bfdad8b3a3babc6ed40ca9d463bb",
-      "docs/synthesis/skill-context-relationships.md#sha256-v1:087ed5ad926db67b2e7644fd2674f8efb81cda5b1c519c99e76227cee50942b0"
+        "docs/synthesis/skill-context-relationships.md#sha256-v1:99935160bc0b4053282763dd6857add487425cf7c9fc3c55f5284de7f6bd027e"
     ],
     "status": "frozen"
   },
@@ -1027,7 +978,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "SK-021",
         "SK-022",
         "SK-023",
-        "SK-024",
         "SK-025"
       ],
       "issue_id": "ECG-001",
@@ -1086,7 +1036,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "CAP-021",
         "CAP-022",
         "CAP-023",
-        "CAP-024",
         "CAP-025"
       ],
       "involved_skill_ids": [
@@ -1113,7 +1062,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "SK-021",
         "SK-022",
         "SK-023",
-        "SK-024",
         "SK-025"
       ],
       "issue_id": "ECG-003",
@@ -1153,7 +1101,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "CAP-021",
         "CAP-022",
         "CAP-023",
-        "CAP-024",
         "CAP-025"
       ],
       "involved_skill_ids": [
@@ -1180,7 +1127,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "SK-021",
         "SK-022",
         "SK-023",
-        "SK-024",
         "SK-025"
       ],
       "issue_id": "ECG-004",
@@ -1201,8 +1147,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "SK-020",
         "SK-021",
         "SK-022",
-        "SK-023",
-        "SK-024"
+        "SK-023"
       ],
       "issue_id": "ECG-005",
       "negative_control_scenario_id": "PS-022",
@@ -1263,7 +1208,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "SK-021",
         "SK-022",
         "SK-023",
-        "SK-024",
         "SK-025"
       ],
       "issue_id": "ECG-007",
@@ -1304,7 +1248,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "SK-021",
         "SK-022",
         "SK-023",
-        "SK-024",
         "SK-025"
       ],
       "issue_id": "ECG-008",
@@ -1326,7 +1269,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "CAP-006",
         "CAP-015",
         "CAP-014",
-        "CAP-024",
         "CAP-018",
         "CAP-007",
         "CAP-008",
@@ -1340,13 +1282,13 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "SK-006",
         "SK-015",
         "SK-014",
-        "SK-024",
         "SK-018",
         "SK-007",
         "SK-008",
         "SK-020",
         "SK-022",
-        "SK-023"
+        "SK-023",
+        "SK-017"
       ],
       "issue_id": "ECG-009",
       "negative_control_scenario_id": "PS-025",
@@ -1369,7 +1311,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     {
       "affected_capability_ids": [
         "CAP-007",
-        "CAP-024"
+        "CAP-017"
       ],
       "callee_owned_gates_mutations": [
         "No callee execution, mutation, resumption, or completion is authorized by this edge"
@@ -1377,9 +1319,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-007",
       "combined_exit_owner_skill_id": "SK-007",
       "context_loaded": [],
-      "entry_condition": "The request needs codebase-wide improvement discovery and classification.",
+      "entry_condition": "The request needs codebase-wide mapping and improvement discovery.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for codebase-design and the declared improve-codebase input",
+      "input_packet": "Caller-owned bounded Source Trace and declared audit-codebase input",
       "ordering_impact": "none",
       "relationship_id": "REL-001",
       "required_proof_ids": [
@@ -1387,7 +1329,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "resume_owner_skill_id": "SK-007",
       "return_packet": "One named target and reason with downstream work unstarted",
-      "target_skill_id": "SK-024",
+      "target_skill_id": "SK-017",
       "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     },
@@ -1832,284 +1774,301 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     },
     {
       "affected_capability_ids": [
-        "CAP-024",
-        "CAP-007"
+        "CAP-017",
+        "CAP-003"
       ],
       "callee_owned_gates_mutations": [
-        "The target retains all target-local admission, evidence, mutation, Return, and completion gates"
+        "No callee execution, mutation, resumption, or completion is authorized by this edge"
       ],
-      "caller_skill_id": "SK-024",
-      "combined_exit_owner_skill_id": "SK-024",
-      "context_loaded": [
-        "codebase-design caller-facing interface and branch-required reference only"
-      ],
-      "entry_condition": "A selected `Concentrate` candidate needs dependency, seam, ownership, interface, migration, or replacement design.",
-      "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for improve-codebase and the declared codebase-design input",
-      "ordering_impact": "callee-before-caller",
+      "caller_skill_id": "SK-017",
+      "combined_exit_owner_skill_id": "SK-017",
+      "context_loaded": [],
+      "entry_condition": "One analyzed candidate needs one non-diagnostic source-answerable authoritative fact; Audit publishes an exact report-backed pickup and leaves Research unstarted.",
+      "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
+      "input_packet": "Immutable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
+      "ordering_impact": "none",
       "relationship_id": "REL-019",
       "required_proof_ids": [
         "PROOF-REL-019"
       ],
-      "resume_owner_skill_id": "SK-024",
-      "return_packet": "The declared codebase-design Return packet plus evidence, limits, and residual state",
-      "target_skill_id": "SK-007",
-      "verb": "Invoke",
+      "resume_owner_skill_id": "SK-017",
+      "return_packet": "One exact target, reason, prerequisite, and invocation with downstream work unstarted",
+      "target_skill_id": "SK-003",
+      "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     },
     {
       "affected_capability_ids": [
-        "CAP-024",
-        "CAP-007"
+        "CAP-017",
+        "CAP-004"
       ],
       "callee_owned_gates_mutations": [
-        "The target retains all target-local admission, evidence, mutation, Return, and completion gates"
+        "No callee execution, mutation, resumption, or completion is authorized by this edge"
       ],
-      "caller_skill_id": "SK-024",
-      "combined_exit_owner_skill_id": "SK-024",
-      "context_loaded": [
-        "codebase-design caller-facing interface and branch-required reference only"
-      ],
-      "entry_condition": "Apply shared module, interface, seam, depth, leverage, and locality vocabulary during the Survey.",
-      "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for improve-codebase and the declared codebase-design input",
-      "ordering_impact": "callee-before-caller",
+      "caller_skill_id": "SK-017",
+      "combined_exit_owner_skill_id": "SK-017",
+      "context_loaded": [],
+      "entry_condition": "One settled candidate design question needs one disposable runnable probe or performance experiment; Audit publishes an exact report-backed pickup and leaves Prototype unstarted.",
+      "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
+      "input_packet": "Immutable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
+      "ordering_impact": "none",
       "relationship_id": "REL-020",
       "required_proof_ids": [
         "PROOF-REL-020"
       ],
-      "resume_owner_skill_id": "SK-024",
-      "return_packet": "The declared codebase-design Return packet plus evidence, limits, and residual state",
-      "target_skill_id": "SK-007",
-      "verb": "Load",
+      "resume_owner_skill_id": "SK-017",
+      "return_packet": "One exact target, reason, prerequisite, and invocation with downstream work unstarted",
+      "target_skill_id": "SK-004",
+      "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     },
     {
       "affected_capability_ids": [
-        "CAP-024",
+        "CAP-017",
         "CAP-020"
       ],
       "callee_owned_gates_mutations": [
         "No callee execution, mutation, resumption, or completion is authorized by this edge"
       ],
-      "caller_skill_id": "SK-024",
-      "combined_exit_owner_skill_id": "SK-024",
+      "caller_skill_id": "SK-017",
+      "combined_exit_owner_skill_id": "SK-017",
       "context_loaded": [],
-      "entry_condition": "A selected candidate needs a direct user decision with durable capture; resume the same candidate later with the result.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for improve-codebase and the declared grill-with-docs input",
+      "entry_condition": "One candidate decision belongs to the current user and also requires current domain language, Invariants, relationships, or ADR handling; Audit publishes the decision brief and exact Analyze re-entry, then leaves composition unstarted.",
+      "failure_behavior": "Publish the decision brief and return the recommendation without invoking the target; preserve the candidate for later Analyze",
+      "input_packet": "One immutable audit snapshot, candidate identity, and complete decision brief",
       "ordering_impact": "none",
       "relationship_id": "REL-021",
       "required_proof_ids": [
         "PROOF-REL-021"
       ],
-      "resume_owner_skill_id": "SK-024",
-      "return_packet": "One named target and reason with downstream work unstarted",
+      "resume_owner_skill_id": "SK-017",
+      "return_packet": "One intact direct-user Grilling exit packet and current Domain Delta for later Audit Analyze",
       "target_skill_id": "SK-020",
       "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     },
     {
       "affected_capability_ids": [
-        "CAP-024",
-        "CAP-022"
+        "CAP-017",
+        "CAP-005"
       ],
       "callee_owned_gates_mutations": [
         "No callee execution, mutation, resumption, or completion is authorized by this edge"
       ],
-      "caller_skill_id": "SK-024",
-      "combined_exit_owner_skill_id": "SK-024",
+      "caller_skill_id": "SK-017",
+      "combined_exit_owner_skill_id": "SK-017",
       "context_loaded": [],
-      "entry_condition": "A selected `Concentrate` candidate is one ready slice.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for improve-codebase and the declared implement input",
+      "entry_condition": "One candidate has broken or slow behavior with uncertain expected behavior, symptom, cause, or trusted reproduction; Audit publishes an exact report-backed pickup and leaves Diagnosis unstarted.",
+      "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
+      "input_packet": "Immutable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
       "ordering_impact": "none",
       "relationship_id": "REL-022",
       "required_proof_ids": [
         "PROOF-REL-022"
       ],
-      "resume_owner_skill_id": "SK-024",
-      "return_packet": "One named target and reason with downstream work unstarted",
-      "target_skill_id": "SK-022",
+      "resume_owner_skill_id": "SK-017",
+      "return_packet": "One exact target, reason, prerequisite, and invocation with downstream work unstarted",
+      "target_skill_id": "SK-005",
       "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     },
     {
       "affected_capability_ids": [
-        "CAP-024",
-        "CAP-004"
-      ],
-      "callee_owned_gates_mutations": [
-        "The target retains all target-local admission, evidence, mutation, Return, and completion gates"
-      ],
-      "caller_skill_id": "SK-024",
-      "combined_exit_owner_skill_id": "SK-024",
-      "context_loaded": [
-        "prototype caller-facing interface and branch-required reference only"
-      ],
-      "entry_condition": "A selected candidate needs one runnable design verdict; pass the complete Freeze authority and receive its supported result, evidence, limits, and cleanup state.",
-      "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for improve-codebase and the declared prototype input",
-      "ordering_impact": "callee-before-caller",
-      "relationship_id": "REL-023",
-      "required_proof_ids": [
-        "PROOF-REL-023"
-      ],
-      "resume_owner_skill_id": "SK-024",
-      "return_packet": "The declared prototype Return packet plus evidence, limits, and residual state",
-      "target_skill_id": "SK-004",
-      "verb": "Invoke",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-024",
-        "CAP-001"
+        "CAP-017",
+        "CAP-009"
       ],
       "callee_owned_gates_mutations": [
         "No callee execution, mutation, resumption, or completion is authorized by this edge"
       ],
-      "caller_skill_id": "SK-024",
-      "combined_exit_owner_skill_id": "SK-024",
+      "caller_skill_id": "SK-017",
+      "combined_exit_owner_skill_id": "SK-017",
       "context_loaded": [],
-      "entry_condition": "The disposable report boundary is missing or incompatible.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for improve-codebase and the declared repo-bootstrap input",
+      "entry_condition": "One identifiable external stakeholder holds candidate knowledge unavailable from sources or the current user; Audit publishes an exact report-backed pickup and leaves questionnaire creation unstarted.",
+      "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
+      "input_packet": "Immutable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
+      "ordering_impact": "none",
+      "relationship_id": "REL-023",
+      "required_proof_ids": [
+        "PROOF-REL-023"
+      ],
+      "resume_owner_skill_id": "SK-017",
+      "return_packet": "One exact target, reason, prerequisite, and invocation with downstream work unstarted",
+      "target_skill_id": "SK-009",
+      "verb": "Recommend and stop",
+      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-017",
+        "CAP-007"
+      ],
+      "callee_owned_gates_mutations": [
+        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-017",
+      "combined_exit_owner_skill_id": "SK-017",
+      "context_loaded": [],
+      "entry_condition": "After user decisions settle, one bounded code Module, Interface, Seam, Adapter, or caller-facing test-surface design remains; Audit publishes an exact pickup and leaves design unstarted.",
+      "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
+      "input_packet": "Immutable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
       "ordering_impact": "none",
       "relationship_id": "REL-024",
       "required_proof_ids": [
         "PROOF-REL-024"
       ],
-      "resume_owner_skill_id": "SK-024",
-      "return_packet": "One named target and reason with downstream work unstarted",
-      "target_skill_id": "SK-001",
+      "resume_owner_skill_id": "SK-017",
+      "return_packet": "One exact target, reason, prerequisite, and invocation with downstream work unstarted",
+      "target_skill_id": "SK-007",
       "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     },
     {
       "affected_capability_ids": [
-        "CAP-024",
-        "CAP-003"
-      ],
-      "callee_owned_gates_mutations": [
-        "The target retains all target-local admission, evidence, mutation, Return, and completion gates"
-      ],
-      "caller_skill_id": "SK-024",
-      "combined_exit_owner_skill_id": "SK-024",
-      "context_loaded": [
-        "research caller-facing interface and branch-required reference only"
-      ],
-      "entry_condition": "A selected candidate needs one source question; return cited evidence or a blocker to the caller.",
-      "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for improve-codebase and the declared research input",
-      "ordering_impact": "callee-before-caller",
-      "relationship_id": "REL-025",
-      "required_proof_ids": [
-        "PROOF-REL-025"
-      ],
-      "resume_owner_skill_id": "SK-024",
-      "return_packet": "The declared research Return packet plus evidence, limits, and residual state",
-      "target_skill_id": "SK-003",
-      "verb": "Invoke",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-024",
-        "CAP-018"
+        "CAP-017",
+        "CAP-021"
       ],
       "callee_owned_gates_mutations": [
         "No callee execution, mutation, resumption, or completion is authorized by this edge"
       ],
-      "caller_skill_id": "SK-024",
-      "combined_exit_owner_skill_id": "SK-024",
+      "caller_skill_id": "SK-017",
+      "combined_exit_owner_skill_id": "SK-017",
       "context_loaded": [],
-      "entry_condition": "A selected candidate reclassifies to `Eliminate`; return its report pickup without edits.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for improve-codebase and the declared simplify-code input",
+      "entry_condition": "Multiple interdependent unresolved candidate decisions or prerequisites need a configured tracker-backed route; Audit publishes an exact pickup and leaves Wayfinder unstarted.",
+      "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
+      "input_packet": "Immutable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
+      "ordering_impact": "none",
+      "relationship_id": "REL-025",
+      "required_proof_ids": [
+        "PROOF-REL-025"
+      ],
+      "resume_owner_skill_id": "SK-017",
+      "return_packet": "One exact target, reason, prerequisite, and invocation with downstream work unstarted",
+      "target_skill_id": "SK-021",
+      "verb": "Recommend and stop",
+      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-017",
+        "CAP-008"
+      ],
+      "callee_owned_gates_mutations": [
+        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-017",
+      "combined_exit_owner_skill_id": "SK-017",
+      "context_loaded": [],
+      "entry_condition": "One candidate decision belongs to the current user but needs no domain-record maintenance; Audit publishes the decision brief and exact Analyze re-entry, then leaves Grilling unstarted.",
+      "failure_behavior": "Publish the decision brief and return the recommendation without invoking the target; preserve the candidate for later Analyze",
+      "input_packet": "One immutable audit snapshot, candidate identity, and complete decision brief",
       "ordering_impact": "none",
       "relationship_id": "REL-026",
       "required_proof_ids": [
         "PROOF-REL-026"
       ],
-      "resume_owner_skill_id": "SK-024",
-      "return_packet": "One named target and reason with downstream work unstarted",
-      "target_skill_id": "SK-018",
+      "resume_owner_skill_id": "SK-017",
+      "return_packet": "One intact direct-user Grilling exit packet for later Audit Analyze",
+      "target_skill_id": "SK-008",
       "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     },
     {
       "affected_capability_ids": [
-        "CAP-024",
+        "CAP-017",
         "CAP-011"
       ],
       "callee_owned_gates_mutations": [
         "No callee execution, mutation, resumption, or completion is authorized by this edge"
       ],
-      "caller_skill_id": "SK-024",
-      "combined_exit_owner_skill_id": "SK-024",
+      "caller_skill_id": "SK-017",
+      "combined_exit_owner_skill_id": "SK-017",
       "context_loaded": [],
-      "entry_condition": "A selected `Concentrate` candidate has a settled direction that needs a durable parent spec before slicing.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for improve-codebase and the declared to-spec input",
+      "entry_condition": "One analyzed candidate has settled direction and commitments but needs a durable parent specification; Audit publishes an exact report-backed pickup and leaves specification work unstarted.",
+      "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
+      "input_packet": "Immutable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
       "ordering_impact": "none",
       "relationship_id": "REL-027",
       "required_proof_ids": [
         "PROOF-REL-027"
       ],
-      "resume_owner_skill_id": "SK-024",
-      "return_packet": "One named target and reason with downstream work unstarted",
+      "resume_owner_skill_id": "SK-017",
+      "return_packet": "One exact target, reason, prerequisite, and invocation with downstream work unstarted",
       "target_skill_id": "SK-011",
       "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     },
     {
       "affected_capability_ids": [
-        "CAP-024",
+        "CAP-017",
         "CAP-012"
       ],
       "callee_owned_gates_mutations": [
         "No callee execution, mutation, resumption, or completion is authorized by this edge"
       ],
-      "caller_skill_id": "SK-024",
-      "combined_exit_owner_skill_id": "SK-024",
+      "caller_skill_id": "SK-017",
+      "combined_exit_owner_skill_id": "SK-017",
       "context_loaded": [],
-      "entry_condition": "A selected `Concentrate` candidate needs dependency-ordered slices.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for improve-codebase and the declared to-tickets input",
+      "entry_condition": "One analyzed candidate has settled direction, authority, commitments, acceptance, dependency meaning, and supported states; requires multiple implementation slices; and either needs no new parent specification or already has one. Audit publishes an exact report-backed pickup and leaves ticket creation unstarted.",
+      "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
+      "input_packet": "Immutable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
       "ordering_impact": "none",
       "relationship_id": "REL-028",
       "required_proof_ids": [
         "PROOF-REL-028"
       ],
-      "resume_owner_skill_id": "SK-024",
-      "return_packet": "One named target and reason with downstream work unstarted",
+      "resume_owner_skill_id": "SK-017",
+      "return_packet": "One exact target, reason, prerequisite, and invocation with downstream work unstarted",
       "target_skill_id": "SK-012",
       "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     },
     {
       "affected_capability_ids": [
-        "CAP-024",
-        "CAP-021"
+        "CAP-017",
+        "CAP-018"
       ],
       "callee_owned_gates_mutations": [
         "No callee execution, mutation, resumption, or completion is authorized by this edge"
       ],
-      "caller_skill_id": "SK-024",
-      "combined_exit_owner_skill_id": "SK-024",
+      "caller_skill_id": "SK-017",
+      "combined_exit_owner_skill_id": "SK-017",
       "context_loaded": [],
-      "entry_condition": "Multiple interdependent unresolved decisions or prerequisites need a tracker-backed route.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for improve-codebase and the declared wayfinder input",
+      "entry_condition": "One analyzed candidate has a bounded behavior-preserving reduction, current report identity, supported behavior, Source Trace, and proof seam; Audit publishes an exact report-backed pickup and leaves simplification unstarted.",
+      "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
+      "input_packet": "Immutable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
       "ordering_impact": "none",
       "relationship_id": "REL-029",
       "required_proof_ids": [
         "PROOF-REL-029"
       ],
-      "resume_owner_skill_id": "SK-024",
-      "return_packet": "One named target and reason with downstream work unstarted",
-      "target_skill_id": "SK-021",
+      "resume_owner_skill_id": "SK-017",
+      "return_packet": "One exact target, reason, prerequisite, and invocation with downstream work unstarted",
+      "target_skill_id": "SK-018",
+      "verb": "Recommend and stop",
+      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-017",
+        "CAP-022"
+      ],
+      "callee_owned_gates_mutations": [
+        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-017",
+      "combined_exit_owner_skill_id": "SK-017",
+      "context_loaded": [],
+      "entry_condition": "One analyzed non-reduction item has settled outcome, acceptance, commitment boundary, scope and write authority, Source Trace, proof, and finite Repair budget; Audit publishes an exact report-backed pickup and leaves implementation unstarted.",
+      "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
+      "input_packet": "Immutable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
+      "ordering_impact": "none",
+      "relationship_id": "REL-056",
+      "required_proof_ids": [
+        "PROOF-REL-056"
+      ],
+      "resume_owner_skill_id": "SK-017",
+      "return_packet": "One exact target, reason, prerequisite, and invocation with downstream work unstarted",
+      "target_skill_id": "SK-022",
       "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     },
@@ -2530,7 +2489,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     {
       "affected_capability_ids": [
         "CAP-018",
-        "CAP-024"
+        "CAP-017"
       ],
       "callee_owned_gates_mutations": [
         "No callee execution, mutation, resumption, or completion is authorized by this edge"
@@ -2538,9 +2497,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-018",
       "combined_exit_owner_skill_id": "SK-018",
       "context_loaded": [],
-      "entry_condition": "The request needs wide discovery, ranking, or multi-region sequencing.",
+      "entry_condition": "The request needs repository mapping, wide discovery, or multi-subsystem audit coverage.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for simplify-code and the declared improve-codebase input",
+      "input_packet": "Caller-owned bounded Source Trace and declared audit-codebase input",
       "ordering_impact": "none",
       "relationship_id": "REL-046",
       "required_proof_ids": [
@@ -2548,7 +2507,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "resume_owner_skill_id": "SK-018",
       "return_packet": "One named target and reason with downstream work unstarted",
-      "target_skill_id": "SK-024",
+      "target_skill_id": "SK-017",
       "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     },
@@ -2563,7 +2522,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-025",
       "combined_exit_owner_skill_id": "SK-025",
       "context_loaded": [],
-      "entry_condition": "The situation satisfies a repository baseline needs bounded correctness, robustness, methodology, model-risk, analytics, or performance coverage; return that route and leave it unstarted.",
+      "entry_condition": "The situation satisfies a repository needs an exhaustive system map and serial subsystem audit for correctness, robustness, code quality, architecture, methodology, data, analytics, or performance; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
       "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared audit-codebase input",
       "ordering_impact": "callee-before-caller",
@@ -2774,31 +2733,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "resume_owner_skill_id": "SK-025",
       "return_packet": "One named target and reason with downstream work unstarted",
       "target_skill_id": "SK-022",
-      "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-025",
-        "CAP-024"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-025",
-      "combined_exit_owner_skill_id": "SK-025",
-      "context_loaded": [],
-      "entry_condition": "The situation satisfies a bounded codebase is hard to change and the strongest eliminate, concentrate, retain, or investigate move is uncertain; return that route and leave it unstarted.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared improve-codebase input",
-      "ordering_impact": "callee-before-caller",
-      "relationship_id": "REL-056",
-      "required_proof_ids": [
-        "PROOF-REL-056"
-      ],
-      "resume_owner_skill_id": "SK-025",
-      "return_packet": "One named target and reason with downstream work unstarted",
-      "target_skill_id": "SK-024",
       "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     },
@@ -3207,7 +3141,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     {
       "affected_capability_ids": [
         "CAP-006",
-        "CAP-024"
+        "CAP-017"
       ],
       "callee_owned_gates_mutations": [
         "No callee execution, mutation, resumption, or completion is authorized by this edge"
@@ -3215,9 +3149,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-006",
       "combined_exit_owner_skill_id": "SK-006",
       "context_loaded": [],
-      "entry_condition": "A GREEN refactor exposes wide or unclassified improvement work outside the slice.",
+      "entry_condition": "A GREEN refactor exposes repository-wide or unclassified audit work outside the slice.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for tdd and the declared improve-codebase input",
+      "input_packet": "Caller-owned bounded Source Trace and declared audit-codebase input",
       "ordering_impact": "none",
       "relationship_id": "REL-073",
       "required_proof_ids": [
@@ -3225,7 +3159,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "resume_owner_skill_id": "SK-006",
       "return_packet": "One named target and reason with downstream work unstarted",
-      "target_skill_id": "SK-024",
+      "target_skill_id": "SK-017",
       "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     },
@@ -3684,6 +3618,31 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "resume_owner_skill_id": "SK-021",
       "return_packet": "One named target and reason with downstream work unstarted",
       "target_skill_id": "SK-011",
+      "verb": "Recommend and stop",
+      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-015",
+        "CAP-017"
+      ],
+      "callee_owned_gates_mutations": [
+        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-015",
+      "combined_exit_owner_skill_id": "SK-015",
+      "context_loaded": [],
+      "entry_condition": "The request targets an immutable repository baseline rather than an ordinary branch, WIP, staged, or since-X diff.",
+      "failure_behavior": "Return the recommendation or suggestion without executing the target",
+      "input_packet": "Caller-owned bounded Source Trace for review and the declared audit-codebase input",
+      "ordering_impact": "none",
+      "relationship_id": "REL-092",
+      "required_proof_ids": [
+        "PROOF-REL-092"
+      ],
+      "resume_owner_skill_id": "SK-015",
+      "return_packet": "One named target and reason with downstream work unstarted",
+      "target_skill_id": "SK-017",
       "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     }
@@ -4312,7 +4271,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
       "relationship_ids": [
-        "REL-044"
+        "REL-044",
+        "REL-092"
       ],
       "required_input": "A bounded caller-owned Source Trace and authority for: Review one ordinary fixed-snapshot diff with separate Spec and Standards judgment",
       "return_packet": "One terminal ordinary review report",
@@ -4369,33 +4329,46 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "terminal_evidence_pointer": null
       },
       "canonical_name": "audit-codebase",
-      "completion_condition": "Every Charter region is covered or explicitly marked as an evidence gap",
+      "completion_condition": "The selected Map, Audit, or Analyze path is terminal for this invocation; the complete snapshot manifest and sole durable HTML report pass atomic publication verification; and any next-step suggestion has one exact uninvoked pickup",
       "contract_order": 17,
-      "essential_outcome": "Audit one immutable repository baseline against a bounded Charter without a release decision",
-      "failure_return": "Return incomplete coverage without mutating the repository baseline",
+      "essential_outcome": "Map one immutable repository, audit one user-selected subsystem, or analyze one user-selected candidate or returned packet",
+      "failure_return": "Return current, incomplete, or stale report coverage without mutating the repository baseline",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: A repository baseline needs bounded correctness, robustness, methodology, model-risk, analytics, or performance coverage",
+        "The request does not satisfy: A repository needs a whole-system map or serial subsystem baseline and improvement audit",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Baseline pinning, evidence-backed findings, coverage ledger, and HTML audit report"
+        "Baseline pinning and manifest verification, linked system map, correctness and robustness defects, classified opportunities, retained complexity, candidate presentation and analysis, returned-evidence judgment, exact next-step pickups, coverage state, and the sole atomic durable HTML report"
       ],
       "owned_capability_ids": [
         "CAP-017"
       ],
-      "positive_entry_predicate": "A repository baseline needs bounded correctness, robustness, methodology, model-risk, analytics, or performance coverage",
+      "positive_entry_predicate": "A repository needs a whole-system map or serial subsystem baseline and improvement audit",
       "primary_role": "leaf",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
         "Per-skill H1 outside this immutable contract slice",
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
-      "relationship_ids": [],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Audit one immutable repository baseline against a bounded Charter without a release decision",
-      "return_packet": "A complete or incomplete immutable-baseline audit ledger",
+      "relationship_ids": [
+        "REL-019",
+        "REL-020",
+        "REL-021",
+        "REL-022",
+        "REL-023",
+        "REL-024",
+        "REL-025",
+        "REL-026",
+        "REL-027",
+        "REL-028",
+        "REL-029",
+        "REL-056"
+      ],
+      "required_input": "A repository baseline for Map; one current complete report and selected subsystem for Audit; or one current report and selected candidate or returned packet for Analyze",
+      "return_packet": "A complete, incomplete, or blocked invocation result with snapshot and Map state, absolute report path or none, current selection, coverage, and any exact uninvoked pickup",
       "skill_id": "SK-017"
     },
     {
@@ -4662,57 +4635,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     },
     {
       "acceptance_scenario_ids": [
-        "PS-024"
-      ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
-      "canonical_name": "improve-codebase",
-      "completion_condition": "Every bounded region is accounted for and the selected candidate is evidence-backed",
-      "contract_order": 24,
-      "essential_outcome": "Survey a bounded codebase and route one explicitly selected evidence-backed improvement candidate",
-      "failure_return": "Return the evidence gap, decision owner, setup defect, or no-candidate result",
-      "invocation_mode": "explicit-only",
-      "load_budget_class": "conditional-aggregate",
-      "negative_exclusion_predicates": [
-        "The request does not satisfy: A bounded codebase is hard to change and the strongest eliminate, concentrate, retain, or investigate move is uncertain",
-        "Another selected skill owns the requested outcome",
-        "The action would cross a caller-owned commitment or mutation boundary"
-      ],
-      "owned_authority_mutation_surfaces": [
-        "Survey coverage, classification, ranking, evidence resolution, reclassification, and routing"
-      ],
-      "owned_capability_ids": [
-        "CAP-024"
-      ],
-      "positive_entry_predicate": "A bounded codebase is hard to change and the strongest eliminate, concentrate, retain, or investigate move is uncertain",
-      "primary_role": "executable-aggregate",
-      "prohibited_ownership": [
-        "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
-        "Per-skill H1 outside this immutable contract slice",
-        "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
-      ],
-      "relationship_ids": [
-        "REL-019",
-        "REL-020",
-        "REL-021",
-        "REL-022",
-        "REL-023",
-        "REL-024",
-        "REL-025",
-        "REL-026",
-        "REL-027",
-        "REL-028",
-        "REL-029"
-      ],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Survey a bounded codebase and route one explicitly selected evidence-backed improvement candidate",
-      "return_packet": "A verified improvement report or one selected candidate's exact route",
-      "skill_id": "SK-024"
-    },
-    {
-      "acceptance_scenario_ids": [
         "PS-025"
       ],
       "campaign_state": {
@@ -4755,7 +4677,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-053",
         "REL-054",
         "REL-055",
-        "REL-056",
         "REL-057",
         "REL-058",
         "REL-059",

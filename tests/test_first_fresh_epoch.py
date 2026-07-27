@@ -165,7 +165,7 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
         f"{fixed_point['fixed_point_fingerprint']}"
     )
     assert selected_names == active_names
-    assert len(contract["capabilities"]) == len(selected_names) == 25
+    assert len(contract["capabilities"]) == len(selected_names) == 24
     assert {
         skill["primary_role"] for skill in contract["selected_skills"]
     } == {"leaf", "executable-aggregate", "router"}
@@ -210,7 +210,7 @@ def test_first_epoch_schedule_matches_every_immutable_blueprint() -> None:
             "router": 2,
         }.__getitem__,
     )
-    assert len(entries) == len(skill_by_id) == 25
+    assert len(entries) == len(skill_by_id) == 24
     for entry in entries:
         blueprint = json.loads(
             (ROOT / entry["slice_path"]).read_text(encoding="utf-8")
