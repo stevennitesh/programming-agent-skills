@@ -297,7 +297,6 @@ def _validate_fresh_epoch_admission(payload: object) -> None:
     required_contract = {
         "pack_contract",
         "slice",
-        "independent_m0",
         "selected_capability_ids",
         "selected_relationship_ids",
         "selected_scenario_ids",
@@ -316,7 +315,6 @@ def _validate_fresh_epoch_admission(payload: object) -> None:
     pack_contract = contract["pack_contract"]
     slice_contract = contract["slice"]
     predecessors = contract["proof_predecessors"]
-    independent_m0 = contract["independent_m0"]
     if not isinstance(pack_contract, dict):
         raise ValueError("Fresh epoch pack_contract is invalid")
     if pack_contract.get("path") != CANONICAL_PACK_CONTRACT_PATH:
@@ -325,8 +323,6 @@ def _validate_fresh_epoch_admission(payload: object) -> None:
         )
     if not isinstance(slice_contract, dict):
         raise ValueError("Fresh epoch slice is invalid")
-    if not isinstance(independent_m0, dict):
-        raise ValueError("Fresh epoch independent_m0 is invalid")
     if not isinstance(predecessors, list):
         raise ValueError("Fresh epoch proof_predecessors are invalid")
     for value, label in (
@@ -334,14 +330,12 @@ def _validate_fresh_epoch_admission(payload: object) -> None:
         (pack_contract.get("revision"), "pack_contract.revision"),
         (slice_contract.get("id"), "slice.id"),
         (slice_contract.get("path"), "slice.path"),
-        (independent_m0.get("path"), "independent_m0.path"),
         (contract.get("schedule_pointer"), "schedule_pointer"),
     ):
         _require_nonempty_string(value, label)
     for value, label in (
         (pack_contract.get("fingerprint"), "pack_contract.fingerprint"),
         (slice_contract.get("fingerprint"), "slice.fingerprint"),
-        (independent_m0.get("fingerprint"), "independent_m0.fingerprint"),
         (contract.get("schedule_fingerprint"), "schedule_fingerprint"),
     ):
         if not isinstance(value, str) or not EXACT_FINGERPRINT.fullmatch(value):
@@ -420,6 +414,7 @@ def _validate_fresh_epoch_admission(payload: object) -> None:
         raise ValueError("Fresh epoch lifecycle tokens are invalid")
     required_pointers = {
         "decision_capsule",
+        "m0_checkpoint",
         "research_packet",
         "skill_synthesis",
         "claim_adjacency",
@@ -605,11 +600,6 @@ def _validate_fresh_epoch_references(
         raise ValueError(
             "Fresh epoch proof predecessors do not match the frozen slice"
         )
-    _verify_admission_identity(
-        worktree,
-        contract["independent_m0"],
-        "independent_m0",
-    )
     for index, predecessor in enumerate(predecessors):
         assert isinstance(predecessor, dict)
         _verify_admission_identity(
@@ -669,6 +659,15 @@ def _validate_fresh_epoch_references(
     ):
         raise ValueError("Fresh epoch decision_capsule pointer is malformed")
     research_prefix = f"docs/research/skills/{skill}/"
+    m0_path, _ = _admission_path(
+        worktree,
+        pointers["m0_checkpoint"],
+        "m0_checkpoint",
+    )
+    if not m0_path.relative_to(worktree).as_posix().startswith(
+        f"docs/validation/skills/{skill}/"
+    ):
+        raise ValueError("Fresh epoch m0_checkpoint pointer has the wrong owner")
     research = pointers["research_packet"]
     research_path, _ = _admission_path(
         worktree,
@@ -836,7 +835,6 @@ def _observed_fresh_contract(
 
     refresh(observed["pack_contract"], "pack_contract")
     refresh(observed["slice"], "slice")
-    refresh(observed["independent_m0"], "independent_m0")
     predecessors = observed["proof_predecessors"]
     assert isinstance(predecessors, list)
     for index, predecessor in enumerate(predecessors):
@@ -3110,6 +3108,123 @@ def _terminal_semantic_pointers_resolve(
     )
 
 
+def _verify_prompt1_m0_checkpoint(
+    manifest_path: Path,
+    semantic: dict[str, object],
+    mechanical: dict[str, object],
+    *,
+    worktree: Path,
+    skill: str,
+    stage: str,
+) -> dict[str, object]:
+    pointers = semantic.get("pointers")
+    if not isinstance(pointers, dict):
+        return _failure(
+            "failed",
+            "m0-checkpoint",
+            manifest_path,
+            "Prompt 1 M0 checkpoint pointer is missing",
+        )
+    try:
+        checkpoint, _ = _admission_path(
+            worktree,
+            pointers.get("m0_checkpoint"),
+            "m0_checkpoint",
+        )
+    except ValueError as error:
+        return _failure(
+            "failed",
+            "m0-checkpoint",
+            manifest_path,
+            str(error),
+        )
+    relative = checkpoint.relative_to(worktree).as_posix()
+    if not relative.startswith(f"docs/validation/skills/{skill}/"):
+        return _failure(
+            "failed",
+            "m0-checkpoint",
+            manifest_path,
+            "Prompt 1 M0 checkpoint has the wrong owner",
+        )
+    try:
+        content = checkpoint.read_bytes()
+    except OSError:
+        return _failure(
+            "failed",
+            "m0-checkpoint",
+            manifest_path,
+            "Prompt 1 must write its M0 checkpoint after lease acquisition",
+        )
+    observed = {
+        "fingerprint": f"sha256-v1:{hashlib.sha256(content).hexdigest()}",
+        "name": "prompt-1-m0",
+        "path": relative,
+    }
+    identities = mechanical.get("artifact_identities")
+    if not isinstance(identities, list):
+        return _failure(
+            "failed",
+            "manifest-schema",
+            manifest_path,
+            "Fresh campaign artifact identities must be a list",
+        )
+    prior = [
+        identity
+        for identity in identities
+        if isinstance(identity, dict)
+        and identity.get("name") == "prompt-1-m0"
+    ]
+    if len(prior) > 1:
+        return _failure(
+            "failed",
+            "manifest-schema",
+            manifest_path,
+            "Prompt 1 M0 checkpoint identity is duplicated",
+        )
+    if not prior:
+        if stage != "prompt-1":
+            return _failure(
+                "stale",
+                "m0-checkpoint",
+                manifest_path,
+                "Prompt 1 M0 checkpoint was not frozen at its owner stage",
+            )
+        update_mechanical_state(
+            manifest_path,
+            {"artifact_identities": [*identities, observed]},
+        )
+        return {"status": "verified", "identity": observed}
+    if prior[0] == observed:
+        return {"status": "verified", "identity": observed}
+    invalidations = mechanical.get("invalidations")
+    if not isinstance(invalidations, list):
+        return _failure(
+            "failed",
+            "manifest-schema",
+            manifest_path,
+            "Fresh campaign invalidations must be a list",
+        )
+    update_mechanical_state(
+        manifest_path,
+        {
+            "evidence_state": "stale",
+            "invalidations": [
+                *invalidations,
+                {
+                    "changed_inputs": ["semantic.m0_checkpoint"],
+                    "observed_at": _now(),
+                },
+            ],
+        },
+    )
+    return _failure(
+        "stale",
+        "m0-checkpoint",
+        manifest_path,
+        "Frozen Prompt 1 M0 checkpoint drifted",
+    )
+
+
 def _verify_registered_proof(
     manifest_path: Path,
     manifest: dict[str, object],
@@ -4338,6 +4453,21 @@ def _verify_fresh_campaign(
     drift = check_fresh_contract(manifest_path, observed_contract)
     if drift["status"] != "verified":
         return drift
+    m0_checkpoint = _verify_prompt1_m0_checkpoint(
+        manifest_path,
+        semantic,
+        mechanical,
+        worktree=worktree,
+        skill=str(campaign["skill"]),
+        stage=stage,
+    )
+    if m0_checkpoint["status"] != "verified":
+        return m0_checkpoint
+    controlled = _read_json(manifest_path)
+    semantic = controlled["semantic"]
+    mechanical = controlled["mechanical"]
+    assert isinstance(semantic, dict)
+    assert isinstance(mechanical, dict)
     terminal_token = semantic.get("terminal_token")
     if terminal_token is not None and stage != "prompt-5":
         return _failure(

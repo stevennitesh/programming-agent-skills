@@ -69,9 +69,6 @@
         "pack_contract": {
           "$ref": "#/$defs/revisionedPointer"
         },
-        "independent_m0": {
-          "$ref": "#/$defs/artifactPointer"
-        },
         "proof_predecessors": {
           "items": {
             "additionalProperties": false,
@@ -138,7 +135,6 @@
       "required": [
         "pack_contract",
         "slice",
-        "independent_m0",
         "selected_capability_ids",
         "selected_relationship_ids",
         "selected_scenario_ids",
@@ -328,6 +324,10 @@
               "pattern": "^decisions\\.md#.+$",
               "type": "string"
             },
+            "m0_checkpoint": {
+              "minLength": 1,
+              "type": "string"
+            },
             "pack_synthesis": {
               "minLength": 1,
               "type": "string"
@@ -343,6 +343,7 @@
           },
           "required": [
             "decision_capsule",
+            "m0_checkpoint",
             "research_packet",
             "skill_synthesis",
             "claim_adjacency",

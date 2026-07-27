@@ -465,9 +465,9 @@ admission packet with the exact composition epoch, canonical Pack Composition
 Contract path/revision/fingerprint, immutable selected slice ID/fingerprint,
 selected capability/relationship/scenario IDs, an explicit proof-predecessor
 list with exact canonical P1 and installed identities for every declared
-predecessor, an exact independent M0 pointer/fingerprint, and an owner-authored
-schedule pointer/fingerprint. The list is empty only for a root slice with no
-hard proof predecessors. The frozen slice contains exactly the full `slice_id`
+predecessor, a predeclared Prompt 1-owned M0 checkpoint path, and an
+owner-authored schedule pointer/fingerprint. The list is empty only for a root
+slice with no hard proof predecessors. The frozen slice contains exactly the full `slice_id`
 and sorted unique `selected_capability_ids`, `selected_relationship_ids`,
 `selected_scenario_ids`, and `hard_proof_predecessor_ids`; admission must match
 every identity and set exactly. Any selected-ID array may be explicitly empty;
@@ -478,9 +478,9 @@ from `contract_slice`, binds its ID to the composition epoch, Pack Contract
 revision, selected skill ID, and canonical skill name, and fingerprints the
 canonical compact JSON projection. The controller rejects a hand-authored
 substitute, a wrong-skill projection, or noncanonical envelope bytes.
-Missing or mismatched slice, predecessor, schedule, contract revision, or
-independent M0 fingerprint refuses Fresh start; the one-skill controller never
-reconstructs them. Start resolves every admitted path inside the worktree,
+Missing or mismatched slice, predecessor, schedule, or contract revision
+refuses Fresh start; the one-skill controller never reconstructs them. Start
+resolves every admission-owned identity inside the worktree,
 reads the referenced bytes, and matches each exact fingerprint before
 acquiring the lease. A schedule fragment resolves only as an exact JSON key,
 Markdown heading, or explicit section marker, never as a substring.
@@ -522,9 +522,12 @@ empty credentials fail before proof execution, manifest mutation, or release.
 The mechanical writer also rejects unsafe campaign/skill IDs and noncanonical
 worktree text for both supported manifest versions.
 
-For Fresh work, Prompt 1 reads the immutable selected slice first and freezes
-and fingerprints independent M0 before opening the Catalog, prior conclusions,
-current runtime/history, or upstream packs. The Research Pass then owns one
+For Fresh work, admission predeclares one Prompt 1-owned M0 checkpoint path but
+does not require nonexistent M0 bytes. Prompt 1 reads the immutable selected
+slice first, writes independent M0 only after `start` acquires the campaign
+lease, and `verify` freezes its mechanical fingerprint before the Catalog,
+prior conclusions, current runtime/history, or upstream packs can open. Later
+drift stales the campaign. The Research Pass then owns one
 finite sequence: one independent problem-first packet, Catalog lookup, bounded
 source retrieval, and at most one named evidence gap. Prompt 2 alone may
 compare that packet with M0 and write H1 plus claim adjacency. A required

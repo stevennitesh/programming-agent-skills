@@ -253,10 +253,6 @@ def integration_fixture(root: Path) -> Path:
                 "path": "slice.json",
                 "fingerprint": admission["slice_fingerprint"],
             },
-            "independent_m0": {
-                "path": "m0.json",
-                "fingerprint": "sha256-v1:" + "3" * 64,
-            },
             "selected_capability_ids": admission_slice[
                 "selected_capability_ids"
             ],
@@ -278,6 +274,7 @@ def integration_fixture(root: Path) -> Path:
             "lifecycle": deepcopy(campaign_artifacts.FRESH_TERMINAL_LIFECYCLE),
             "pointers": {
                 "decision_capsule": "decisions.md#prompt-5",
+                "m0_checkpoint": "docs/validation/skills/fixture-leaf/m0.md",
                 "research_packet": "research.md",
                 "skill_synthesis": "synthesis.md",
                 "claim_adjacency": "synthesis.md#claims",

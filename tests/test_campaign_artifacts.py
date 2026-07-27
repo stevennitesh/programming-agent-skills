@@ -331,6 +331,7 @@ def valid_fresh_epoch_admission(
     *,
     ticket: str = "T05",
     predecessor_ids: list[str] | None = None,
+    include_m0: bool = True,
 ) -> dict[str, object]:
     selected_predecessor_tickets = (
         ["T04"] if predecessor_ids is None else predecessor_ids
@@ -349,7 +350,7 @@ def valid_fresh_epoch_admission(
         f"docs/validation/skill-pack/FCE-20260725-01/slices/{ticket}.json"
     )
     schedule_path = "docs/validation/skill-pack/FCE-20260725-01/schedule.json"
-    m0_path = "docs/validation/skill-pack/FCE-20260725-01/m0/implement.json"
+    m0_path = "docs/validation/skills/implement/prompt1-m0.md"
     schedule_fingerprint = _admission_file(
         worktree,
         schedule_path,
@@ -429,14 +430,6 @@ def valid_fresh_epoch_admission(
                     )
                 ),
             },
-            "independent_m0": {
-                "path": m0_path,
-                "fingerprint": _admission_file(
-                    worktree,
-                    m0_path,
-                    '{"skill":"implement"}\n',
-                ),
-            },
             "selected_capability_ids": selected_capability_ids,
             "selected_relationship_ids": selected_relationship_ids,
             "selected_scenario_ids": selected_scenario_ids,
@@ -459,6 +452,7 @@ def valid_fresh_epoch_admission(
             },
             "pointers": {
                 "decision_capsule": "decisions.md#prompt-1",
+                "m0_checkpoint": m0_path,
                 "research_packet": (
                     "docs/research/skills/implement/"
                     "RP-implement-20260725-01.md"
@@ -471,6 +465,12 @@ def valid_fresh_epoch_admission(
             },
         },
     }
+    if include_m0:
+        _admission_file(
+            worktree,
+            m0_path,
+            "# Prompt 1 M0\n\nFrozen fixture checkpoint.\n",
+        )
     return admission
 
 
@@ -521,7 +521,7 @@ def test_fresh_start_creates_pointer_oriented_v2_manifest_and_firewall(
 ) -> None:
     worktree = tmp_path / "repo"
     worktree.mkdir()
-    admission = valid_fresh_epoch_admission(worktree)
+    admission = valid_fresh_epoch_admission(worktree, include_m0=False)
 
     result = campaign_artifacts.start_campaign(
         "implement",
@@ -567,6 +567,68 @@ def test_fresh_start_creates_pointer_oriented_v2_manifest_and_firewall(
             manifest_path,
             {"campaign_digest": "0" * 64},
         )
+
+
+def test_fresh_prompt1_freezes_m0_only_after_lease_acquisition(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_fresh_epoch_admission(worktree, include_m0=False)
+
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-epoch-1",
+        owner_token="owner-a",
+        fresh_epoch=admission,
+    )
+    manifest_path = worktree / str(started["manifest"])
+    checkpoint_path = (
+        worktree
+        / admission["semantic"]["pointers"]["m0_checkpoint"]  # type: ignore[index]
+    )
+
+    missing = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+    checkpoint_path.write_text(
+        "frozen prompt 1 M0\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    frozen = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    checkpoint_path.write_text(
+        "drifted prompt 1 M0\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    drifted = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert missing["status"] == "failed"
+    assert missing["gate"] == "m0-checkpoint"
+    assert frozen["status"] == "verified"
+    assert manifest["mechanical"]["artifact_identities"] == [
+        {
+            "fingerprint": (
+                "sha256-v1:"
+                + hashlib.sha256(b"frozen prompt 1 M0\n").hexdigest()
+            ),
+            "name": "prompt-1-m0",
+            "path": checkpoint_path.relative_to(worktree).as_posix(),
+        }
+    ]
+    assert drifted["status"] == "stale"
+    assert drifted["gate"] == "m0-checkpoint"
 
 
 def test_fresh_start_accepts_semantic_pack_revision_in_git_worktree(
@@ -631,6 +693,28 @@ def test_fresh_start_requires_canonical_pack_contract_owner_before_lease(
             "implement",
             worktree=worktree,
             campaign_id="implement-epoch-1",
+            fresh_epoch=admission,
+        )
+
+    assert not (worktree / campaign_artifacts.LEASE_PATH).exists()
+
+
+def test_fresh_start_requires_prompt1_m0_owner_before_lease(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_fresh_epoch_admission(worktree)
+    admission["semantic"]["pointers"]["m0_checkpoint"] = (  # type: ignore[index]
+        "docs/validation/skills/review/prompt1-m0.md"
+    )
+
+    with pytest.raises(ValueError, match="m0_checkpoint.*wrong owner"):
+        campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id="implement-epoch-1",
+            owner_token="owner-a",
             fresh_epoch=admission,
         )
 
@@ -1174,6 +1258,10 @@ def test_fresh_terminal_is_prompt5_post_install_only(tmp_path: Path) -> None:
         fresh_epoch=valid_fresh_epoch_admission(worktree),
     )
     manifest_path = worktree / str(started["manifest"])
+    assert campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )["status"] == "verified"
     manifest = json.loads(manifest_path.read_text("utf-8"))
     manifest["semantic"]["terminal_token"] = "campaign-complete"
     write_json(manifest_path, manifest)
@@ -1239,6 +1327,10 @@ def test_fresh_terminal_binds_installer_identity_to_campaign_skill(
         fresh_epoch=admission,
     )
     manifest_path = worktree / str(started["manifest"])
+    assert campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )["status"] == "verified"
     manifest = json.loads(manifest_path.read_text("utf-8"))
     research_path, synthesis_path = _write_fresh_semantic_artifacts(
         worktree,
@@ -1266,6 +1358,7 @@ def test_fresh_terminal_binds_installer_identity_to_campaign_skill(
         )
     ]
     manifest["mechanical"]["artifact_identities"] = [
+        manifest["mechanical"]["artifact_identities"][0],
         {"name": "canonical-p1", "fingerprint": fingerprint},
         {"name": "installed-p1", "fingerprint": fingerprint},
     ]
@@ -1785,11 +1878,11 @@ def test_fresh_restart_accepts_changed_contract_identity_while_nonterminal(
     next_admission["campaign"]["supersession"] = str(  # type: ignore[index]
         manifest_path.relative_to(worktree)
     ).replace("\\", "/")
-    m0_identity = next_admission["contract"]["independent_m0"]  # type: ignore[index]
-    m0_identity["fingerprint"] = _admission_file(
+    contract = next_admission["contract"]  # type: ignore[assignment]
+    contract["schedule_fingerprint"] = _admission_file(
         worktree,
-        m0_identity["path"],
-        "# Independent M0\n\nChanged intent for the successor epoch.\n",
+        str(contract["schedule_pointer"]).split("#", 1)[0],
+        '{"T05":"implement","revision":2}\n',
     )
 
     not_resumed = campaign_artifacts.start_campaign(
