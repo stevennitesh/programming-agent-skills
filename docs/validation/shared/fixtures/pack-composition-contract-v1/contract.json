@@ -1,18 +1,26 @@
 {
   "capabilities": [
     {
-      "acceptance_scenario_ids": ["PS-001"],
+      "acceptance_scenario_ids": [
+        "PS-001"
+      ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-001",
       "completion_return": "A bounded result",
       "disposition": "selected",
-      "entry_conditions": ["A bounded request exists"],
+      "entry_conditions": [
+        "A bounded request exists"
+      ],
       "essential": true,
-      "exclusions": ["Foreign semantic authority"],
+      "exclusions": [
+        "Foreign semantic authority"
+      ],
       "observable_outcome": "The bounded leaf outcome completes",
       "primary_owner_skill_id": "SK-001",
       "proof_class": "structural",
-      "required_authority_mutation": ["Leaf-local state"]
+      "required_authority_mutation": [
+        "Leaf-local state"
+      ]
     }
   ],
   "epoch_header": {
@@ -27,7 +35,9 @@
     "composition_epoch_id": "FCE-20990101-01",
     "contract_revision": 1,
     "epoch_lock": null,
-    "exclusions": ["Automated semantic acceptance"],
+    "exclusions": [
+      "Automated semantic acceptance"
+    ],
     "fixed_point": {
       "environment": "fixture/python-3.12",
       "repository_tree": "0000000000000000000000000000000000000000",
@@ -49,15 +59,142 @@
       "named_gap_passes": 1
     },
     "schema_version": 1,
-    "scope": ["Pack Contract mechanics"],
-    "source_pointers": ["fixture://pack-composition-contract-v1"],
+    "scope": [
+      "Pack Contract mechanics"
+    ],
+    "source_pointers": [
+      "fixture://pack-composition-contract-v1#sha256-v1:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    ],
     "status": "draft"
   },
-  "exclusions_collisions_gaps": [],
+  "exclusions_collisions_gaps": [
+    {
+      "class": "Return/completion",
+      "essential": true,
+      "future_owner_or_stopping_condition": null,
+      "governing_owner": "fixture pack owner",
+      "involved_capability_ids": [],
+      "involved_skill_ids": [],
+      "issue_id": "ECG-901",
+      "negative_control_scenario_id": "PS-001",
+      "nondependency_proof_ids": [],
+      "observable_conflict": "Fixture Return and completion could overlap",
+      "resolution": "One fixture owner controls completion",
+      "status": "resolved",
+      "terms": []
+    },
+    {
+      "class": "authority",
+      "essential": true,
+      "future_owner_or_stopping_condition": null,
+      "governing_owner": "fixture pack owner",
+      "involved_capability_ids": [],
+      "involved_skill_ids": [],
+      "issue_id": "ECG-902",
+      "negative_control_scenario_id": "PS-001",
+      "nondependency_proof_ids": [],
+      "observable_conflict": "Fixture authority could overlap",
+      "resolution": "One fixture owner holds authority",
+      "status": "resolved",
+      "terms": []
+    },
+    {
+      "class": "capability",
+      "essential": true,
+      "future_owner_or_stopping_condition": null,
+      "governing_owner": "fixture pack owner",
+      "involved_capability_ids": [],
+      "involved_skill_ids": [],
+      "issue_id": "ECG-903",
+      "negative_control_scenario_id": "PS-001",
+      "nondependency_proof_ids": [],
+      "observable_conflict": "Fixture capability could overlap",
+      "resolution": "One fixture owner holds the capability",
+      "status": "resolved",
+      "terms": []
+    },
+    {
+      "class": "context-load",
+      "essential": true,
+      "future_owner_or_stopping_condition": null,
+      "governing_owner": "fixture pack owner",
+      "involved_capability_ids": [],
+      "involved_skill_ids": [],
+      "issue_id": "ECG-904",
+      "negative_control_scenario_id": "PS-001",
+      "nondependency_proof_ids": [],
+      "observable_conflict": "Fixture context could duplicate",
+      "resolution": "Fixture context is conditional",
+      "status": "resolved",
+      "terms": []
+    },
+    {
+      "class": "invocation",
+      "essential": true,
+      "future_owner_or_stopping_condition": null,
+      "governing_owner": "fixture pack owner",
+      "involved_capability_ids": [],
+      "involved_skill_ids": [],
+      "issue_id": "ECG-905",
+      "negative_control_scenario_id": "PS-001",
+      "nondependency_proof_ids": [],
+      "observable_conflict": "Fixture invocation could overlap",
+      "resolution": "Fixture entry is exclusive",
+      "status": "resolved",
+      "terms": []
+    },
+    {
+      "class": "mutation",
+      "essential": true,
+      "future_owner_or_stopping_condition": null,
+      "governing_owner": "fixture pack owner",
+      "involved_capability_ids": [],
+      "involved_skill_ids": [],
+      "issue_id": "ECG-906",
+      "negative_control_scenario_id": "PS-001",
+      "nondependency_proof_ids": [],
+      "observable_conflict": "Fixture mutation could overlap",
+      "resolution": "Fixture mutation has one owner",
+      "status": "resolved",
+      "terms": []
+    },
+    {
+      "class": "relationship",
+      "essential": true,
+      "future_owner_or_stopping_condition": null,
+      "governing_owner": "fixture pack owner",
+      "involved_capability_ids": [],
+      "involved_skill_ids": [],
+      "issue_id": "ECG-907",
+      "negative_control_scenario_id": "PS-001",
+      "nondependency_proof_ids": [],
+      "observable_conflict": "Fixture relationship could overlap",
+      "resolution": "Fixture relationship is typed",
+      "status": "resolved",
+      "terms": []
+    },
+    {
+      "class": "vocabulary",
+      "essential": true,
+      "future_owner_or_stopping_condition": null,
+      "governing_owner": "fixture pack owner",
+      "involved_capability_ids": [],
+      "involved_skill_ids": [],
+      "issue_id": "ECG-908",
+      "negative_control_scenario_id": "PS-001",
+      "nondependency_proof_ids": [],
+      "observable_conflict": "Fixture vocabulary could overlap",
+      "resolution": "Fixture terms have exclusive predicates",
+      "status": "resolved",
+      "terms": []
+    }
+  ],
   "relationships": [],
   "selected_skills": [
     {
-      "acceptance_scenario_ids": ["PS-001"],
+      "acceptance_scenario_ids": [
+        "PS-001"
+      ],
       "campaign_state": {
         "campaign_id": null,
         "status": "not-started",
@@ -70,12 +207,20 @@
       "failure_return": "Return the exact blocker",
       "invocation_mode": "implicit",
       "load_budget_class": "conditional",
-      "negative_exclusion_predicates": ["The request is outside the leaf boundary"],
-      "owned_authority_mutation_surfaces": ["Fixture-local decisions"],
-      "owned_capability_ids": ["CAP-001"],
+      "negative_exclusion_predicates": [
+        "The request is outside the leaf boundary"
+      ],
+      "owned_authority_mutation_surfaces": [
+        "Fixture-local decisions"
+      ],
+      "owned_capability_ids": [
+        "CAP-001"
+      ],
       "positive_entry_predicate": "The fixture leaf is needed",
       "primary_role": "leaf",
-      "prohibited_ownership": ["Foreign semantic decisions"],
+      "prohibited_ownership": [
+        "Foreign semantic decisions"
+      ],
       "relationship_ids": [],
       "required_input": "A bounded fixture request",
       "return_packet": "A bounded fixture result",

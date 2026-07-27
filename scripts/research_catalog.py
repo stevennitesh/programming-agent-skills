@@ -19,6 +19,7 @@ FINGERPRINT_PREFIX = "sha256-v1:"
 INDEPENDENT_PACKET_FIELDS = (
     "schema_version",
     "packet_id",
+    "pre_discovery_fixed_point_fingerprint",
     "intended_essence",
     "m0_units",
     "failures",
@@ -1047,7 +1048,10 @@ def _valid_session(session: object) -> bool:
     packet = session.get("independent_packet")
     if not isinstance(packet, dict):
         return False
-    recorded = record_independent_packet(packet)
+    recorded = record_independent_packet(
+        packet,
+        packet.get("pre_discovery_fixed_point_fingerprint"),
+    )
     if recorded.get("status") != "independent-recorded":
         return False
     if (
@@ -1122,8 +1126,11 @@ def _valid_session(session: object) -> bool:
     )
 
 
-def record_independent_packet(packet: dict[str, object]) -> dict[str, object]:
-    """Record a fingerprinted M0-derived packet without opening the catalog."""
+def record_independent_packet(
+    packet: dict[str, object],
+    pre_discovery_fixed_point_fingerprint: object,
+) -> dict[str, object]:
+    """Record an M0 packet bound to its already-frozen predecessor."""
 
     if _nested_keys(packet) & HISTORICAL_SEED_KEYS:
         return {"status": "historical-seed-rejected"}
@@ -1134,6 +1141,12 @@ def record_independent_packet(packet: dict[str, object]) -> dict[str, object]:
         payload.get("schema_version") != 1
         or not isinstance(payload.get("packet_id"), str)
         or not str(payload["packet_id"]).strip()
+        or FINGERPRINT_RE.fullmatch(
+            str(payload.get("pre_discovery_fixed_point_fingerprint", ""))
+        )
+        is None
+        or payload.get("pre_discovery_fixed_point_fingerprint")
+        != pre_discovery_fixed_point_fingerprint
         or not isinstance(payload.get("intended_essence"), str)
         or not str(payload["intended_essence"]).strip()
         or any(
@@ -1546,7 +1559,10 @@ def validate_repository(root: Path) -> list[str]:
                 failures.append(
                     f"Independent packet schema violation: {error.message}"
                 )
-        recorded = record_independent_packet(packet_fixture)
+        recorded = record_independent_packet(
+            packet_fixture,
+            packet_fixture.get("pre_discovery_fixed_point_fingerprint"),
+        )
         if recorded.get("status") != "independent-recorded":
             failures.append(
                 "Independent packet fixture does not record with its exact "

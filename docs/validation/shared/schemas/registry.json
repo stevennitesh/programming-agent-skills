@@ -17,7 +17,7 @@
       "version": 1
     },
     {
-      "fingerprint": "sha256-v1:e6508f7485206ccbd0185bc2d14486a83417054af63950c114384d4ed41e4aa1",
+      "fingerprint": "sha256-v1:a41e528408ece66c97ded889888037ead24e1fa67a5b7fff59f5de32c2dcb1d4",
       "id": "independent-research-packet",
       "path": "docs/validation/shared/schemas/independent-research-packet-v1.schema.json",
       "version": 1

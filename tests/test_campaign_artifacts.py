@@ -144,7 +144,7 @@ def _pack_contract_for_admission(
             "intended_pack_outcome": "Exercise one Fresh campaign",
             "scope": ["Fresh campaign admission"],
             "exclusions": ["automatic semantic acceptance"],
-            "source_pointers": ["issue-44"],
+            "source_pointers": ["issue-44#sha256-v1:" + "d" * 64],
             "acceptance_scenarios": [
                 {
                     "scenario_id": scenario_id,
@@ -287,6 +287,29 @@ def _pack_contract_for_admission(
             relationship_ids,
             relation_targets,
             strict=True,
+        )
+    ]
+    draft["exclusions_collisions_gaps"] = [
+        {
+            "issue_id": f"ECG-7{index:02d}",
+            "class": collision_class,
+            "essential": True,
+            "involved_skill_ids": [],
+            "involved_capability_ids": [],
+            "terms": [],
+            "observable_conflict": (
+                f"Campaign fixture {collision_class} collision is resolved"
+            ),
+            "governing_owner": "campaign fixture owner",
+            "resolution": "one fixture owner and one explicit boundary",
+            "negative_control_scenario_id": contract_scenario_ids[0],
+            "status": "resolved",
+            "future_owner_or_stopping_condition": None,
+            "nondependency_proof_ids": [],
+        }
+        for index, collision_class in enumerate(
+            sorted(pack_contract.REQUIRED_COLLISION_CLASSES),
+            start=1,
         )
     ]
     frozen = pack_contract.freeze_contract(draft)

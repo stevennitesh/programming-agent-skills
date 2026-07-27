@@ -10,7 +10,11 @@ retirement, or Git delivery.
 
 Begin from either an absent Pack Contract or a marker-bounded draft at
 `docs/synthesis/skill-pack.md`. The epoch owner supplies the intended pack
-outcome and repository/environment fixed point. Research remains bounded to one
+outcome and a fingerprinted pre-discovery fixed point containing exact
+repository, environment/model/tool identity, scope, exclusions, acceptance
+scenario families, load policy, and research bound. Record that fixed point
+before the independent packet, current inventory, incumbent wording, prior
+conclusions, or Catalog can steer discovery. Research remains bounded to one
 independent pass, one Catalog reconciliation pass, and one named-gap pass.
 Only the Pack Contract owner may select a capability or skill, assign its
 primary role, record a relationship, freeze or amend the contract, or record
@@ -24,25 +28,38 @@ context loaded, affected capabilities, ordering impact, and required proofs.
 
 ## Controller sequence
 
-1. Materialize or inspect the inactive draft. If the contract is absent, create
+1. Mint the epoch identity and record its complete fingerprinted pre-discovery
+   fixed point. Record the skill-name-free independent packet under that exact
+   identity; the controller rejects a packet not bound to the supplied
+   predecessor fingerprint. Then and only then open the Catalog for its single
+   reconciliation pass and optional named-gap pass.
+2. Materialize or inspect the inactive draft. If the contract is absent, create
    the schema-shaped draft and stop for owner decisions.
-2. Freeze only after the five ledgers are complete, essential gaps and
+3. Freeze only after the five ledgers are complete, essential gaps and
    authority/mutation/invocation/completion collisions are resolved, and the
-   proof graph is acyclic. Reject H1, admission, recommendation, adoption, or
+   proof graph is acyclic. Every required collision class needs a substantive
+   resolution and a named negative-control scenario. Nondependency proof IDs
+   are reserved for deferred nonessential gaps.
+   Every decision-bearing source pointer must carry an exact content
+   fingerprint. Reject H1, admission, recommendation, adoption, or
    validation-judgment fields.
-3. Derive a deterministic topological order from the frozen graph. Among ready
+4. Derive a deterministic topological order from the frozen graph. Among ready
    nodes, order leaf, executable aggregate, then router; use contract order and
-   stable skill ID as tie breakers.
-4. For each ready node, issue its immutable fingerprinted contract slice to
+   stable skill ID as tie breakers. Emit one immutable fingerprinted blueprint
+   for every selected skill, including its predecessor IDs; a blueprint proves
+   projection only and never proves campaign readiness.
+5. For each ready node, issue its canonical immutable contract slice to
    the one-skill controller at
    `docs/synthesis/methods/deploy-prompts.md`. That controller runs exactly one
-   skill and returns its terminal evidence pointer. It neither chooses nor
+   skill and returns its terminal evidence pointer. Admission recomputes the
+   canonical slice and requires exact terminal predecessor evidence; a stored
+   blueprint cannot satisfy that gate. The controller neither chooses nor
    schedules a successor.
-5. After all required terminal packets exist, run the pack integration
+6. After all required terminal packets exist, run the pack integration
    scenarios and load-budget checks. Validators report evidence only. The
    epoch owner records `integration-accepted`, `needs-more-evidence`, or
    `blocked` with an evidence pointer.
-6. On acceptance, the epoch owner records the epoch Lock and hands cleanup to
+7. On acceptance, the epoch owner records the epoch Lock and hands cleanup to
    its separately authorized owner. Do not install, retire compatibility, or
    deliver Git state here.
 
@@ -50,9 +67,10 @@ context loaded, affected capabilities, ordering impact, and required proofs.
 
 | Observed state | Controller return |
 |---|---|
+| No epoch | Mint and sequester the complete pre-discovery fixed point; return `epoch-fixed` |
 | Contract absent | Create an inactive marker-bounded draft; return `contract-draft` |
 | Draft incomplete or invalid | Return exact gaps; do not freeze |
-| Contract frozen | Return deterministic campaign order and first ready slice |
+| Contract frozen | Return deterministic order, all immutable blueprints, and the first admission-ready slice |
 | Campaign active | Admit only dependency-ready frozen slices; collect terminal pointers |
 | Semantic amendment proposed | Require revision plus one; return `behavior-decision-gap` and affected stale proof IDs |
 | Contract incompatible | Return `contract-incompatible`; do not infer a repair |

@@ -4,6 +4,11 @@
 `FCE-YYYYMMDD-NN` composition epoch. It records protocols, fixtures, results,
 tested bounds, and residual gaps; it cannot accept the pack or declare Lock.
 
+Before campaigns begin, an epoch directory may also contain a frozen
+`schedule.json` and immutable `slices/*.json` blueprints. They prove contract
+projection, fingerprints, predecessors, and acyclic order only; they do not
+prove campaign readiness or behavioral efficacy.
+
 Each epoch keeps shared inputs as separate protocol, rubric, fixture, and
 tested-bound artifacts. `integration-manifest.json` stores only exact
 identities, deterministic check registrations, receipts, invalidations, and

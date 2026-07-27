@@ -1,0 +1,53 @@
+{
+  "application_fixed_point": "sha256-v1:1db4a809a4e65fe499b076f79a1866a3451a690c24f83ab483698a34df7eb186",
+  "cards_loaded": 0,
+  "catalog_fixed_point": "sha256-v1:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "catalog_opened_after_independent_record": true,
+  "discovery_sequence": [
+    {
+      "fingerprint": "sha256-v1:98a9c9f84c788049557fc4f352f8c9b3c862f0d6da083c5751001acd1357e2d9",
+      "kind": "pre-discovery-fixed-point",
+      "sequence": 1
+    },
+    {
+      "fingerprint": "sha256-v1:54c55c9efe02194fb7a350824ffcfa7feca96734ac49c01b478f265c82e2e48d",
+      "kind": "independent-discovery",
+      "sequence": 2
+    },
+    {
+      "fingerprint": "sha256-v1:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "kind": "catalog-open",
+      "sequence": 3
+    }
+  ],
+  "independent_packet_fingerprint": "sha256-v1:54c55c9efe02194fb7a350824ffcfa7feca96734ac49c01b478f265c82e2e48d",
+  "named_gap_passes": 0,
+  "pre_discovery_fixed_point_fingerprint": "sha256-v1:98a9c9f84c788049557fc4f352f8c9b3c862f0d6da083c5751001acd1357e2d9",
+  "pre_discovery_fixed_point_path": "docs/research/skill-pack-composition/epochs/FCE-20260727-01/pre-discovery-fixed-point.json",
+  "query": {
+    "application_fixed_point": "sha256-v1:1db4a809a4e65fe499b076f79a1866a3451a690c24f83ab483698a34df7eb186",
+    "conditions": [
+      "One fresh pack composition epoch is selecting bounded engineering owners"
+    ],
+    "exclusions": [
+      "Incumbent skill wording",
+      "Prior composition conclusions",
+      "Per-skill H1 candidates"
+    ],
+    "freshness": [
+      "unknown"
+    ],
+    "known_terms": [],
+    "maximum_families": 25,
+    "method_evidence": [
+      "independently-supported",
+      "pack-specific"
+    ],
+    "problem": "Fragmented repository-engineering ownership and composition",
+    "refresh_events": [],
+    "source_fixed_points": {}
+  },
+  "reconciliation_passes": 1,
+  "result": "catalog-results",
+  "schema_version": 1
+}

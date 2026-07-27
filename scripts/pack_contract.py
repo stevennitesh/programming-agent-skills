@@ -15,6 +15,7 @@ from jsonschema import Draft202012Validator
 CONTRACT_BEGIN = "<!-- pack-composition-contract:v1:begin -->"
 CONTRACT_END = "<!-- pack-composition-contract:v1:end -->"
 FINGERPRINT_PREFIX = "sha256-v1:"
+FINGERPRINTED_SOURCE_RE = re.compile(r".+#sha256-v1:[0-9a-f]{64}$")
 ROLES = {"router", "executable-aggregate", "leaf"}
 RELATIONSHIP_VERBS = {
     "Load",
@@ -36,6 +37,16 @@ COLLISION_CLASSES = {
     "mutation",
     "invocation",
     "completion",
+    "Return/completion",
+    "relationship",
+    "context-load",
+}
+REQUIRED_COLLISION_CLASSES = {
+    "invocation",
+    "capability",
+    "authority",
+    "mutation",
+    "vocabulary",
     "Return/completion",
     "relationship",
     "context-load",
@@ -262,10 +273,55 @@ def validate_contract(contract: object, *, for_freeze: bool = False) -> list[str
             failures.append("Freeze requires the settled bounded research policy")
         if not header.get("acceptance_scenarios"):
             failures.append("Freeze requires acceptance scenarios")
+        source_pointers = header.get("source_pointers")
+        if (
+            not isinstance(source_pointers, list)
+            or not source_pointers
+            or any(
+                not isinstance(pointer, str)
+                or FINGERPRINTED_SOURCE_RE.fullmatch(pointer) is None
+                for pointer in source_pointers
+            )
+        ):
+            failures.append("Freeze requires content-addressed source pointers")
         load_budget = header.get("load_budget_policy")
         if not isinstance(load_budget, dict) or load_budget.get("status") != "set":
             failures.append("Freeze requires a set load budget policy")
         issues = contract.get("exclusions_collisions_gaps", [])
+        represented_collision_classes = {
+            issue.get("class")
+            for issue in issues
+            if isinstance(issue, dict)
+        }
+        missing_collision_classes = sorted(
+            REQUIRED_COLLISION_CLASSES - represented_collision_classes
+        )
+        if missing_collision_classes:
+            failures.append(
+                "Freeze requires every collision class: "
+                + ", ".join(missing_collision_classes)
+            )
+        for collision_class in sorted(REQUIRED_COLLISION_CLASSES):
+            resolved_rows = [
+                issue
+                for issue in issues
+                if isinstance(issue, dict)
+                and issue.get("class") == collision_class
+                and issue.get("status") == "resolved"
+            ]
+            if not any(
+                isinstance(issue.get("resolution"), str)
+                and bool(issue["resolution"].strip())
+                and isinstance(
+                    issue.get("negative_control_scenario_id"), str
+                )
+                and bool(issue["negative_control_scenario_id"].strip())
+                for issue in resolved_rows
+            ):
+                failures.append(
+                    "Freeze requires substantive resolved evidence for "
+                    f"{collision_class} collision"
+                )
         for issue in issues:
             if not isinstance(issue, dict):
                 continue
@@ -847,6 +903,63 @@ def contract_slice(
     }
 
 
+def contract_blueprint(
+    contract: dict[str, object],
+    skill_id: str,
+) -> dict[str, object]:
+    """Project one immutable slice before its predecessors are campaign-ready."""
+
+    header = contract.get("epoch_header")
+    if (
+        not isinstance(header, dict)
+        or header.get("status") != "frozen"
+        or header.get("epoch_lock") is not None
+    ):
+        return {"status": "contract-not-frozen"}
+    predecessors = sorted(
+        str(edge["predecessor_skill_id"])
+        for edge in header.get("campaign_proof_graph", [])
+        if isinstance(edge, dict)
+        and edge.get("successor_skill_id") == skill_id
+        and isinstance(edge.get("predecessor_skill_id"), str)
+    )
+    projection_state = deepcopy(contract)
+    skills = projection_state.get("selected_skills", [])
+    if not isinstance(skills, list):
+        return {"status": "skill-not-selected", "skill_id": skill_id}
+    selected = False
+    for skill in skills:
+        if not isinstance(skill, dict):
+            continue
+        selected_id = skill.get("skill_id")
+        if selected_id == skill_id:
+            selected = True
+            skill["campaign_state"] = {
+                "status": "not-started",
+                "campaign_id": None,
+                "terminal_evidence_pointer": None,
+            }
+        elif selected_id in predecessors:
+            skill["campaign_state"] = {
+                "status": "terminal",
+                "campaign_id": f"blueprint-predecessor:{selected_id}",
+                "terminal_evidence_pointer": (
+                    f"blueprint://predecessor/{selected_id}"
+                ),
+            }
+    if not selected:
+        return {"status": "skill-not-selected", "skill_id": skill_id}
+    projected = contract_slice(projection_state, skill_id)
+    if projected.get("status") != "contract-slice":
+        return projected
+    return {
+        "status": "contract-slice-blueprint",
+        "slice": projected["slice"],
+        "slice_fingerprint": projected["slice_fingerprint"],
+        "predecessor_skill_ids": predecessors,
+    }
+
+
 def campaign_admission_slice(
     contract: dict[str, object],
     skill_id: str,
@@ -1336,7 +1449,7 @@ def validate_completion(contract: dict[str, object]) -> dict[str, object]:
 
 
 def validate_repository(root: Path) -> list[str]:
-    """Validate the canonical inactive owner and its registered schema."""
+    """Validate the canonical owner state and its registered schema."""
 
     failures: list[str] = []
     owner = root / "docs/synthesis/skill-pack.md"
@@ -1352,10 +1465,22 @@ def validate_repository(root: Path) -> list[str]:
     except (OSError, PackContractError) as error:
         failures.append(f"Canonical Pack Contract cannot be read: {error}")
         return failures
-    if canonical != create_draft():
-        failures.append(
-            "Canonical Pack Contract must remain the exact inactive v1 draft"
-        )
+    header = canonical.get("epoch_header")
+    status = header.get("status") if isinstance(header, dict) else None
+    if status == "draft" and canonical != create_draft():
+        failures.append("Canonical draft must remain the exact inactive v1 draft")
+    if status == "frozen":
+        freeze_input = deepcopy(canonical)
+        freeze_input["epoch_header"]["status"] = "draft"  # type: ignore[index]
+        refrozen = freeze_contract(freeze_input)
+        if (
+            refrozen.get("status") != "contract-frozen"
+            or refrozen.get("contract") != canonical
+        ):
+            failures.append(
+                "Canonical frozen Pack Contract cannot be reproduced from "
+                "its revision draft"
+            )
     failures.extend(
         f"Canonical Pack Contract: {failure}"
         for failure in validate_contract(canonical)

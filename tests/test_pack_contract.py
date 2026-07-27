@@ -110,7 +110,11 @@ def valid_contract() -> dict[str, object]:
             "intended_pack_outcome": "Complete bounded engineering work predictably",
             "scope": ["repository engineering workflows"],
             "exclusions": ["automatic semantic acceptance"],
-            "source_pointers": ["ADR-0008", "ADR-0009", "issue-36"],
+            "source_pointers": [
+                "ADR-0008#sha256-v1:" + "a" * 64,
+                "ADR-0009#sha256-v1:" + "b" * 64,
+                "issue-36#sha256-v1:" + "c" * 64,
+            ],
             "acceptance_scenarios": [
                 {
                     "scenario_id": "PS-001",
@@ -166,6 +170,29 @@ def valid_contract() -> dict[str, object]:
     ]
     contract["relationships"] = [
         relationship("REL-001", "SK-002", "SK-001"),
+    ]
+    contract["exclusions_collisions_gaps"] = [
+        {
+            "issue_id": f"ECG-8{index:02d}",
+            "class": collision_class,
+            "essential": True,
+            "involved_skill_ids": [],
+            "involved_capability_ids": [],
+            "terms": [],
+            "observable_conflict": (
+                f"Fixture {collision_class} collision is resolved"
+            ),
+            "governing_owner": "fixture pack owner",
+            "resolution": "one fixture owner and one explicit boundary",
+            "negative_control_scenario_id": "PS-001",
+            "status": "resolved",
+            "future_owner_or_stopping_condition": None,
+            "nondependency_proof_ids": [],
+        }
+        for index, collision_class in enumerate(
+            sorted(pack_contract().REQUIRED_COLLISION_CLASSES),
+            start=1,
+        )
     ]
     return contract
 
@@ -300,6 +327,24 @@ def test_freeze_returns_deterministic_order_and_immutable_slice() -> None:
     )
 
 
+def test_frozen_contract_projects_unready_immutable_blueprints() -> None:
+    contract = pack_contract()
+    frozen = contract.freeze_contract(valid_contract())["contract"]
+
+    admission = contract.contract_slice(frozen, "SK-002")
+    blueprint = contract.contract_blueprint(frozen, "SK-002")
+
+    assert admission == {
+        "status": "campaign-not-ready",
+        "skill_id": "SK-002",
+        "missing_predecessor_skill_ids": ["SK-001"],
+    }
+    assert blueprint["status"] == "contract-slice-blueprint"
+    assert blueprint["slice"]["slice_id"] == "FCE-20260726-01:r1:SK-002"
+    assert blueprint["predecessor_skill_ids"] == ["SK-001"]
+    assert blueprint["slice_fingerprint"].startswith("sha256-v1:")
+
+
 def test_freeze_rejects_ownership_relationship_cycle_and_semantic_authority() -> None:
     contract = pack_contract()
     draft = valid_contract()
@@ -340,6 +385,27 @@ def test_freeze_rejects_ownership_relationship_cycle_and_semantic_authority() ->
     assert "cycle" in message
     assert "unresolved" in message
     assert "forbidden semantic field" in message
+
+
+def test_freeze_rejects_placeholder_collision_and_mutable_source_pointer() -> None:
+    contract = pack_contract()
+    draft = valid_contract()
+    vocabulary = next(
+        issue
+        for issue in draft["exclusions_collisions_gaps"]
+        if issue["class"] == "vocabulary"
+    )
+    vocabulary["resolution"] = None
+    vocabulary["negative_control_scenario_id"] = None
+    vocabulary["nondependency_proof_ids"] = []
+    draft["epoch_header"]["source_pointers"][0] = "ADR-0008"
+
+    result = contract.freeze_contract(draft)
+
+    assert result["status"] == "contract-invalid"
+    message = "\n".join(result["failures"])
+    assert "substantive resolved evidence for vocabulary collision" in message
+    assert "content-addressed source pointers" in message
 
 
 def test_amendment_reports_localized_invalidation_without_mutation() -> None:
@@ -506,9 +572,11 @@ def test_amendment_reports_localized_invalidation_without_mutation() -> None:
     row_proposed = deepcopy(row_frozen)
     row_proposed["epoch_header"]["contract_revision"] = 2
     row_proposed["relationships"][0]["input_packet"] = "changed relationship"
-    row_proposed["exclusions_collisions_gaps"][0][
-        "future_owner_or_stopping_condition"
-    ] = "new router owner"
+    next(
+        issue
+        for issue in row_proposed["exclusions_collisions_gaps"]
+        if issue["issue_id"] == "ECG-001"
+    )["future_owner_or_stopping_condition"] = "new router owner"
     row_result = contract.assess_amendment(
         row_frozen,
         row_proposed,
@@ -545,10 +613,10 @@ def test_amendment_reports_localized_invalidation_without_mutation() -> None:
             "terms": [],
             "observable_conflict": "Router negative control",
             "governing_owner": "pack owner",
-            "resolution": "resolved",
+            "resolution": None,
             "negative_control_scenario_id": "PS-002",
-            "status": "resolved",
-            "future_owner_or_stopping_condition": None,
+            "status": "deferred",
+            "future_owner_or_stopping_condition": "router owner",
             "nondependency_proof_ids": ["PROOF-PS2"],
         }
     )
@@ -644,6 +712,16 @@ def test_result_state_is_validated_but_never_set_by_automation() -> None:
 
 def test_freeze_enforces_schema_collision_and_graph_parity() -> None:
     contract = pack_contract()
+    missing_vocabulary = valid_contract()
+    missing_vocabulary["exclusions_collisions_gaps"] = [
+        issue
+        for issue in missing_vocabulary["exclusions_collisions_gaps"]
+        if issue["class"] != "vocabulary"
+    ]
+    missing_result = contract.freeze_contract(missing_vocabulary)
+    assert missing_result["status"] == "contract-invalid"
+    assert "vocabulary" in "\n".join(missing_result["failures"])
+
     missing_field = valid_contract()
     del missing_field["selected_skills"][0]["completion_condition"]
     assert contract.freeze_contract(missing_field)["status"] == "contract-invalid"

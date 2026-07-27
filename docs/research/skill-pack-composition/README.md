@@ -39,8 +39,10 @@ validation result, popularity, confidence, or ranking.
 
 ## Admission and finite retrieval
 
-The controller records a fingerprinted M0-derived independent packet before it
-can open the catalog. Early or mismatched access returns
+The controller records a fingerprinted M0-derived independent packet only
+when its embedded pre-discovery fixed-point fingerprint matches the
+caller-supplied already-frozen predecessor identity. It then permits Catalog
+access. Early or mismatched access returns
 `catalog-not-admitted`; historical Card, synthesis, or incumbent fields return
 `historical-seed-rejected`.
 
@@ -68,3 +70,14 @@ The caller-facing pure sequence is
 `record_independent_packet` → `open_catalog` → `query_catalog` →
 `complete_session`. The caller retains each returned session value; the
 controller writes no semantic state and performs no research-tree scan.
+
+## Epoch discovery records
+
+Epoch-scoped independent discovery and Catalog reconciliation records live
+under `epochs/<FCE-ID>/`. A fingerprinted pre-discovery fixed point first binds
+the exact outcome, scope, exclusions, environment/model/tools, research bound,
+scenario families, and load policy. The independent packet is then written and
+fingerprinted with that predecessor identity before its reconciliation record
+may reference the Catalog fixed point.
+These records preserve research order and evidence limits; they do not select
+skills, assign Pack Contract authority, admit H1, or claim efficacy.

@@ -11,12 +11,13 @@
   "failures": [
     "Catalog anchoring"
   ],
-  "fingerprint": "sha256-v1:5c895b23efa3cf0e4b1a795116d8107a7f907302ffb813e5581fe9e880836029",
+  "fingerprint": "sha256-v1:942964038968757190e9c7cf963aba7ab5804324ae49ce2ee82f8b7538948a98",
   "intended_essence": "Bounded evidence discovery",
   "m0_units": [
     "Retrieve evidence only after independent discovery"
   ],
   "packet_id": "M0-fixture-independent",
+  "pre_discovery_fixed_point_fingerprint": "sha256-v1:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
   "schema_version": 1,
   "unresolved_named_gaps": [
     "Whether one authority boundary is reusable"

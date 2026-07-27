@@ -30,6 +30,10 @@
       "minLength": 1,
       "type": "string"
     },
+    "pre_discovery_fixed_point_fingerprint": {
+      "pattern": "^sha256-v1:[0-9a-f]{64}$",
+      "type": "string"
+    },
     "schema_version": {
       "const": 1
     },
@@ -43,6 +47,7 @@
   "required": [
     "schema_version",
     "packet_id",
+    "pre_discovery_fixed_point_fingerprint",
     "intended_essence",
     "m0_units",
     "failures",

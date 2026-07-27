@@ -33,6 +33,7 @@ def independent_packet() -> dict[str, object]:
     payload: dict[str, object] = {
         "schema_version": 1,
         "packet_id": "M0-alpha-independent",
+        "pre_discovery_fixed_point_fingerprint": "sha256-v1:" + "f" * 64,
         "intended_essence": "Bounded evidence discovery",
         "m0_units": ["Retrieve relevant evidence after independent discovery"],
         "failures": ["Catalog anchoring"],
@@ -132,7 +133,10 @@ def write_card(path: Path, payload: dict[str, object]) -> None:
 
 def opened_session(catalog) -> dict[str, object]:
     packet = independent_packet()
-    recorded = catalog.record_independent_packet(packet)
+    recorded = catalog.record_independent_packet(
+        packet,
+        packet["pre_discovery_fixed_point_fingerprint"],
+    )
     return catalog.open_catalog(
         recorded["session"],
         packet["fingerprint"],
@@ -224,10 +228,19 @@ def write_catalog_contract_root(root: Path) -> None:
 
 def test_catalog_is_sequestered_until_independent_packet_fingerprint() -> None:
     catalog = catalog_module()
-    recorded = catalog.record_independent_packet(independent_packet())
+    packet = independent_packet()
+    recorded = catalog.record_independent_packet(
+        packet,
+        packet["pre_discovery_fixed_point_fingerprint"],
+    )
 
     assert recorded["status"] == "independent-recorded"
     session = recorded["session"]
+    wrong_predecessor = catalog.record_independent_packet(
+        packet,
+        "sha256-v1:" + "0" * 64,
+    )
+    assert wrong_predecessor["status"] == "independent-packet-invalid"
     early = catalog.query_catalog(
         cards={},
         catalog={"entries": []},
@@ -251,7 +264,10 @@ def test_catalog_is_sequestered_until_independent_packet_fingerprint() -> None:
     }
     seeded_packet["fingerprint"] = fingerprint(seeded_payload)
 
-    rejected = catalog.record_independent_packet(seeded_packet)
+    rejected = catalog.record_independent_packet(
+        seeded_packet,
+        seeded_packet["pre_discovery_fixed_point_fingerprint"],
+    )
 
     assert rejected["status"] == "historical-seed-rejected"
 
@@ -262,7 +278,10 @@ def test_catalog_is_sequestered_until_independent_packet_fingerprint() -> None:
     }
     no_gap_packet["fingerprint"] = fingerprint(no_gap_payload)
     assert (
-        catalog.record_independent_packet(no_gap_packet)["status"]
+        catalog.record_independent_packet(
+            no_gap_packet,
+            no_gap_packet["pre_discovery_fixed_point_fingerprint"],
+        )["status"]
         == "independent-recorded"
     )
 
@@ -763,7 +782,10 @@ def test_named_gap_must_come_from_the_recorded_packet() -> None:
     packet["fingerprint"] = fingerprint(
         {key: value for key, value in packet.items() if key != "fingerprint"}
     )
-    recorded = catalog.record_independent_packet(packet)
+    recorded = catalog.record_independent_packet(
+        packet,
+        packet["pre_discovery_fixed_point_fingerprint"],
+    )
     opened = catalog.open_catalog(recorded["session"], packet["fingerprint"])
     reconciliation = catalog.query_catalog(
         cards={},
