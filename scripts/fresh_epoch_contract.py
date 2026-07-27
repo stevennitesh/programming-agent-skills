@@ -617,12 +617,14 @@ def _migration_plan(
             "docs/research/skill-pack-composition/sources/<pending-source-id>.md",
             ["issue-34-current-to-target-mapping"],
         )
-    if relative == "docs/research/catalog-contract-research.md":
+    if relative == (
+        "docs/research/skill-pack-composition/catalog-contract-research.md"
+    ):
         return (
             "move",
-            "docs/research/skill-pack-composition/README.md",
+            "docs/research/skill-pack-composition/sources/README.md",
             None,
-            "docs/research/skill-pack-composition/sources/<pending-source-id>.md",
+            "docs/research/skill-pack-composition/sources/SRC-0001.md",
             ["issue-34-current-to-target-mapping"],
         )
     if (
@@ -880,6 +882,20 @@ def build_migration_control(
                 "remove",
             }
             status = "inventoried" if fingerprint is not None else "blocked"
+            target_semantic_id = (
+                "SRC-0001"
+                if relative
+                == (
+                    "docs/research/skill-pack-composition/"
+                    "catalog-contract-research.md"
+                )
+                else None
+            )
+            self_reference = (
+                [relative]
+                if changing and relative in reference_text.get(relative, "")
+                else []
+            )
             row: dict[str, object] = {
                 "migration_id": f"MIG-{next_id:04d}",
                 "source": {
@@ -904,10 +920,15 @@ def build_migration_control(
                 ),
                 "catalog_query_disposition": "unverified-gap",
                 "proof_reuse_disposition": "missing",
-                "target": {"semantic_id": None, "path": target_path},
+                "target": {
+                    "semantic_id": target_semantic_id,
+                    "path": target_path,
+                },
                 "basis": basis,
                 "reference_rewrite_set": (
-                    inbound_references if changing else []
+                    sorted(set((*inbound_references, *self_reference)))
+                    if changing
+                    else []
                 ),
                 "required_proof": (
                     [

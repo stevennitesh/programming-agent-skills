@@ -5,6 +5,8 @@ import json
 from pathlib import Path
 import subprocess
 
+import pytest
+
 from scripts import fresh_epoch_contract, migration_ledger
 
 
@@ -359,3 +361,449 @@ def test_migration_control_propagates_campaign_identity_to_every_member(
         "Campaign member has no applicable identity" in failure
         for failure in validate(public, private, observed)
     )
+
+
+CATALOG_SOURCE = (
+    "docs/research/skill-pack-composition/catalog-contract-research.md"
+)
+CATALOG_TARGET = (
+    "docs/research/skill-pack-composition/sources/SRC-0001.md"
+)
+
+
+def _commit_fixture(root: Path) -> str:
+    subprocess.run(["git", "init"], cwd=root, check=True, capture_output=True)
+    subprocess.run(
+        ["git", "config", "user.email", "fixture@example.invalid"],
+        cwd=root,
+        check=True,
+    )
+    subprocess.run(
+        ["git", "config", "user.name", "Fixture"],
+        cwd=root,
+        check=True,
+    )
+    subprocess.run(["git", "add", "."], cwd=root, check=True)
+    subprocess.run(
+        ["git", "commit", "-m", "migration source"],
+        cwd=root,
+        check=True,
+        capture_output=True,
+    )
+    return subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=root,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+
+
+def _catalog_migration_fixture(
+    tmp_path: Path,
+) -> tuple[dict[str, object], dict[str, object]]:
+    source = tmp_path / CATALOG_SOURCE
+    source.parent.mkdir(parents=True)
+    source.write_text(
+        "# Catalog contract\n\n"
+        f"Canonical note: `{CATALOG_SOURCE}`.\n",
+        encoding="utf-8",
+    )
+    owner = tmp_path / "docs/research/skill-pack-composition/sources/README.md"
+    owner.parent.mkdir(parents=True)
+    owner.write_text("# Public source packets\n", encoding="utf-8")
+    head = _commit_fixture(tmp_path)
+    public, _, _ = fresh_epoch_contract.build_migration_control(
+        tmp_path,
+        public_paths=[
+            CATALOG_SOURCE,
+            "docs/research/skill-pack-composition/sources/README.md",
+        ],
+        private_paths=[],
+        reference_paths=[CATALOG_SOURCE],
+        head=head,
+        head_paths={
+            CATALOG_SOURCE,
+            "docs/research/skill-pack-composition/sources/README.md",
+        },
+    )
+    row = next(
+        item
+        for item in public["rows"]
+        if item["source"]["key"] == CATALOG_SOURCE
+    )
+    return public, row
+
+
+def test_catalog_note_plan_freezes_exact_public_source_migration(
+    tmp_path: Path,
+) -> None:
+    _, row = _catalog_migration_fixture(tmp_path)
+
+    assert row["migration_disposition"] == "move"
+    assert row["owner"] == (
+        "docs/research/skill-pack-composition/sources/README.md"
+    )
+    assert row["target"] == {
+        "semantic_id": "SRC-0001",
+        "path": CATALOG_TARGET,
+    }
+    assert row["reference_rewrite_set"] == [CATALOG_SOURCE]
+    assert row["status"] == "inventoried"
+
+
+def test_catalog_migration_retries_partial_state_and_rolls_back(
+    tmp_path: Path,
+) -> None:
+    _, row = _catalog_migration_fixture(tmp_path)
+    source = tmp_path / CATALOG_SOURCE
+    target = tmp_path / CATALOG_TARGET
+    original = source.read_bytes()
+
+    target.write_bytes(original)
+    source.unlink()
+    applied = migration_ledger.apply_migration(tmp_path, row)
+
+    assert not source.exists()
+    assert target.is_file()
+    assert CATALOG_SOURCE not in target.read_text(encoding="utf-8")
+    assert CATALOG_TARGET in target.read_text(encoding="utf-8")
+    assert applied["status"] == "references-reconciled"
+    assert applied["observed_result"]["moved_fingerprint"] == (
+        fresh_epoch_contract.exact_content_fingerprint(original)
+    )
+
+    rolled_back = migration_ledger.rollback_migration(tmp_path, applied)
+
+    assert source.read_bytes() == original
+    assert not target.exists()
+    assert rolled_back["status"] == "prepared"
+
+    reapplied = migration_ledger.apply_migration(tmp_path, rolled_back)
+
+    assert reapplied["observed_result"]["rollback_proved"] is True
+
+
+def test_catalog_migration_reconciles_exact_duplicate_target(
+    tmp_path: Path,
+) -> None:
+    _, row = _catalog_migration_fixture(tmp_path)
+    source = tmp_path / CATALOG_SOURCE
+    target = tmp_path / CATALOG_TARGET
+    target.write_bytes(source.read_bytes())
+
+    applied = migration_ledger.apply_migration(tmp_path, row)
+
+    assert not source.exists()
+    assert target.is_file()
+    assert applied["observed_result"]["exact_target_reconciled"] is True
+
+
+def test_catalog_migration_collision_preserves_both_files(
+    tmp_path: Path,
+) -> None:
+    _, row = _catalog_migration_fixture(tmp_path)
+    source = tmp_path / CATALOG_SOURCE
+    target = tmp_path / CATALOG_TARGET
+    target.write_text("# Different packet\n", encoding="utf-8")
+    source_before = source.read_bytes()
+    target_before = target.read_bytes()
+
+    with pytest.raises(migration_ledger.MigrationBlocked, match="collision"):
+        migration_ledger.apply_migration(tmp_path, row)
+
+    assert source.read_bytes() == source_before
+    assert target.read_bytes() == target_before
+
+
+def test_catalog_migration_rolls_back_after_reference_failure(
+    tmp_path: Path,
+) -> None:
+    _, row = _catalog_migration_fixture(tmp_path)
+    source = tmp_path / CATALOG_SOURCE
+    target = tmp_path / CATALOG_TARGET
+    original = source.read_bytes()
+    row["reference_rewrite_set"] = [
+        CATALOG_SOURCE,
+        "docs/research/missing-reference.md",
+    ]
+
+    with pytest.raises(
+        migration_ledger.MigrationBlocked,
+        match="declared reference is absent",
+    ):
+        migration_ledger.apply_migration(tmp_path, row)
+
+    assert source.read_bytes() == original
+    assert not target.exists()
+
+
+def test_catalog_migration_verifies_normalized_target_and_old_path_scan(
+    tmp_path: Path,
+) -> None:
+    _, row = _catalog_migration_fixture(tmp_path)
+
+    applied = migration_ledger.apply_migration(tmp_path, row)
+    verified = migration_ledger.verify_migration(tmp_path, applied)
+
+    assert verified["status"] == "verified"
+    assert verified["observed_result"]["passed"] is True
+    assert verified["observed_result"]["source_absent"] is True
+    assert verified["observed_result"]["target_identity"] == "SRC-0001"
+
+
+def test_catalog_migration_verification_rejects_unexplained_old_path(
+    tmp_path: Path,
+) -> None:
+    _, row = _catalog_migration_fixture(tmp_path)
+    applied = migration_ledger.apply_migration(tmp_path, row)
+    stray = tmp_path / "README.md"
+    stray.write_text(f"See `{CATALOG_SOURCE}`.\n", encoding="utf-8")
+
+    with pytest.raises(
+        migration_ledger.MigrationBlocked,
+        match="unexplained old-path reference",
+    ):
+        migration_ledger.verify_migration(tmp_path, applied)
+
+
+def test_migration_check_accepts_one_verified_path_replacement(
+    tmp_path: Path,
+) -> None:
+    public, row = _catalog_migration_fixture(tmp_path)
+    _, private, _ = fresh_epoch_contract.build_migration_control(
+        tmp_path,
+        public_paths=[
+            CATALOG_SOURCE,
+            "docs/research/skill-pack-composition/sources/README.md",
+        ],
+        private_paths=[],
+        reference_paths=[CATALOG_SOURCE],
+        head=public["fixed_point"]["source_head"],
+        head_paths={
+            CATALOG_SOURCE,
+            "docs/research/skill-pack-composition/sources/README.md",
+        },
+    )
+    applied = migration_ledger.apply_migration(tmp_path, row)
+    public["rows"] = [
+        applied if item["migration_id"] == row["migration_id"] else item
+        for item in public["rows"]
+    ]
+    ledger_path = tmp_path / migration_ledger.PUBLIC_LEDGER
+    sidecar_path = tmp_path / migration_ledger.PRIVATE_LEDGER
+    ledger_path.parent.mkdir(parents=True)
+    sidecar_path.parent.mkdir(parents=True)
+    ledger_path.write_text(
+        json.dumps(public, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    sidecar_path.write_text(
+        json.dumps(private, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    verified = migration_ledger.verify_migration(tmp_path, applied)
+    public["rows"] = [
+        verified if item["migration_id"] == row["migration_id"] else item
+        for item in public["rows"]
+    ]
+    ledger_path.write_text(
+        json.dumps(public, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    (tmp_path / migration_ledger.CLOSEOUT).write_bytes(
+        migration_ledger._closeout(public, private).encode("utf-8"),
+    )
+
+    assert migration_ledger.check(tmp_path) == 0
+
+
+def test_catalog_migration_resumes_after_normalization_before_ledger_write(
+    tmp_path: Path,
+) -> None:
+    _, row = _catalog_migration_fixture(tmp_path)
+    first = migration_ledger.apply_migration(tmp_path, row)
+
+    resumed = migration_ledger.apply_migration(tmp_path, row)
+
+    assert resumed["status"] == "references-reconciled"
+    assert resumed["observed_result"]["target_fingerprint"] == (
+        first["observed_result"]["target_fingerprint"]
+    )
+
+
+def test_catalog_rollback_resumes_after_source_restore(
+    tmp_path: Path,
+) -> None:
+    _, row = _catalog_migration_fixture(tmp_path)
+    source = tmp_path / CATALOG_SOURCE
+    original = source.read_bytes()
+    migration_ledger.apply_migration(tmp_path, row)
+    source.write_bytes(original)
+
+    rolled_back = migration_ledger.rollback_migration(tmp_path, row)
+
+    assert source.read_bytes() == original
+    assert not (tmp_path / CATALOG_TARGET).exists()
+    assert rolled_back["observed_result"]["rollback_proved"] is True
+
+
+def test_catalog_verification_rejects_semantic_body_replacement(
+    tmp_path: Path,
+) -> None:
+    _, row = _catalog_migration_fixture(tmp_path)
+    applied = migration_ledger.apply_migration(tmp_path, row)
+    target = tmp_path / CATALOG_TARGET
+    target.write_text(
+        target.read_text(encoding="utf-8").replace(
+            "# Catalog contract",
+            "# Unrelated replacement",
+        ),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(
+        migration_ledger.MigrationBlocked,
+        match="allowed source normalization",
+    ):
+        migration_ledger.verify_migration(tmp_path, applied)
+
+
+def test_catalog_verification_blocks_unreadable_inventory_path(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _, row = _catalog_migration_fixture(tmp_path)
+    applied = migration_ledger.apply_migration(tmp_path, row)
+    unreadable = tmp_path / "README.md"
+    unreadable.write_text("# Inventory\n", encoding="utf-8")
+    real_read_bytes = Path.read_bytes
+
+    def read_bytes(path: Path) -> bytes:
+        if path.resolve() == unreadable.resolve():
+            raise OSError("locked fixture")
+        return real_read_bytes(path)
+
+    monkeypatch.setattr(Path, "read_bytes", read_bytes)
+
+    with pytest.raises(
+        migration_ledger.MigrationBlocked,
+        match="cannot complete old-path scan",
+    ):
+        migration_ledger.verify_migration(tmp_path, applied)
+
+
+def test_operate_reconciles_ledger_closeout_interruption(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    public, row = _catalog_migration_fixture(tmp_path)
+    _, private, _ = fresh_epoch_contract.build_migration_control(
+        tmp_path,
+        public_paths=[
+            CATALOG_SOURCE,
+            "docs/research/skill-pack-composition/sources/README.md",
+        ],
+        private_paths=[],
+        reference_paths=[CATALOG_SOURCE],
+        head=public["fixed_point"]["source_head"],
+        head_paths={
+            CATALOG_SOURCE,
+            "docs/research/skill-pack-composition/sources/README.md",
+        },
+    )
+    applied = migration_ledger.apply_migration(tmp_path, row)
+    public["rows"] = [
+        applied if item["migration_id"] == row["migration_id"] else item
+        for item in public["rows"]
+    ]
+    ledger_path = tmp_path / migration_ledger.PUBLIC_LEDGER
+    sidecar_path = tmp_path / migration_ledger.PRIVATE_LEDGER
+    closeout_path = tmp_path / migration_ledger.CLOSEOUT
+    ledger_path.parent.mkdir(parents=True)
+    sidecar_path.parent.mkdir(parents=True)
+    ledger_path.write_text(
+        json.dumps(public, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    sidecar_path.write_text(
+        json.dumps(private, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    closeout_path.write_bytes(
+        migration_ledger._closeout(public, private).encode("utf-8"),
+    )
+    verified = migration_ledger.verify_migration(tmp_path, applied)
+    public["rows"] = [
+        verified if item["migration_id"] == row["migration_id"] else item
+        for item in public["rows"]
+    ]
+
+    # Simulate process termination after the ledger replacement but before
+    # the closeout replacement.
+    ledger_path.write_text(
+        json.dumps(public, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+    assert migration_ledger.check(tmp_path) == 1
+    assert "Migration closeout differs" in capsys.readouterr().out
+    assert migration_ledger.operate(
+        tmp_path,
+        action="verify",
+        migration_id=str(row["migration_id"]),
+    ) == 0
+    assert migration_ledger.check(tmp_path) == 0
+
+
+def test_operate_preflights_private_control_before_filesystem_mutation(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    public, row = _catalog_migration_fixture(tmp_path)
+    _, private, _ = fresh_epoch_contract.build_migration_control(
+        tmp_path,
+        public_paths=[
+            CATALOG_SOURCE,
+            "docs/research/skill-pack-composition/sources/README.md",
+        ],
+        private_paths=[],
+        reference_paths=[CATALOG_SOURCE],
+        head=public["fixed_point"]["source_head"],
+        head_paths={
+            CATALOG_SOURCE,
+            "docs/research/skill-pack-composition/sources/README.md",
+        },
+    )
+    ledger_path = tmp_path / migration_ledger.PUBLIC_LEDGER
+    sidecar_path = tmp_path / migration_ledger.PRIVATE_LEDGER
+    closeout_path = tmp_path / migration_ledger.CLOSEOUT
+    ledger_path.parent.mkdir(parents=True)
+    sidecar_path.parent.mkdir(parents=True)
+    ledger_path.write_text(
+        json.dumps(public, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    sidecar_path.write_bytes(b"{truncated")
+    closeout_path.write_bytes(
+        migration_ledger._closeout(public, private).encode("utf-8"),
+    )
+    source = tmp_path / CATALOG_SOURCE
+    target = tmp_path / CATALOG_TARGET
+    original_source = source.read_bytes()
+    original_ledger = ledger_path.read_bytes()
+    original_sidecar = sidecar_path.read_bytes()
+    original_closeout = closeout_path.read_bytes()
+
+    assert migration_ledger.operate(
+        tmp_path,
+        action="migrate",
+        migration_id=str(row["migration_id"]),
+    ) == 1
+
+    assert "Cannot read migration control" in capsys.readouterr().out
+    assert source.read_bytes() == original_source
+    assert not target.exists()
+    assert ledger_path.read_bytes() == original_ledger
+    assert sidecar_path.read_bytes() == original_sidecar
+    assert closeout_path.read_bytes() == original_closeout

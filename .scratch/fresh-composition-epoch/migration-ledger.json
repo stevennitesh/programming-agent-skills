@@ -4398,36 +4398,63 @@
     {
       "artifact_class": "research",
       "basis": [
-        "issue-34-preserve-first"
+        "issue-34-current-to-target-mapping"
       ],
       "catalog_query_disposition": "unverified-gap",
       "epoch_disposition": "historical-admission-only",
       "inbound_references": [],
-      "migration_disposition": "preserve-in-place",
+      "migration_disposition": "move",
       "migration_id": "MIG-0107",
-      "observed_result": null,
-      "owner": "docs/research/README.md",
+      "observed_result": {
+        "exact_target_reconciled": false,
+        "explained_historical_references": [
+          ".scratch/fresh-composition-epoch/migration-ledger.json",
+          "scripts/fresh_epoch_contract.py",
+          "scripts/migration_ledger.py",
+          "tests/test_migration_ledger.py"
+        ],
+        "moved_fingerprint": "sha256-v1:aa6cf876d1754727688f14d14ec892b3587eb5c22c32fcfe8f6c4e51b616eb9c",
+        "owner": "docs/research/skill-pack-composition/sources/README.md",
+        "passed": true,
+        "reference_rewrites": [
+          "docs/research/skill-pack-composition/catalog-contract-research.md"
+        ],
+        "rollback_proved": true,
+        "source_absent": true,
+        "target_fingerprint": "sha256-v1:e9ac0834fc32dc0dad0990d9b8b2c32f5fda5616fa9f6b53f58ff8b73bfc8679",
+        "target_identity": "SRC-0001",
+        "target_path": "docs/research/skill-pack-composition/sources/SRC-0001.md",
+        "unexplained_old_path_references": []
+      },
+      "owner": "docs/research/skill-pack-composition/sources/README.md",
       "owner_gap": null,
       "proof_reuse_disposition": "missing",
       "recovery": {
-        "applicable_lock": null,
+        "applicable_lock": "FCE-pack-lock",
         "pointer": "git:2397586d4bbb0774d9b479ccff9f8a5640df705e:docs/research/skill-pack-composition/catalog-contract-research.md@sha256-v1:aa6cf876d1754727688f14d14ec892b3587eb5c22c32fcfe8f6c4e51b616eb9c"
       },
-      "reference_rewrite_set": [],
-      "required_proof": [
-        "fixed-point-identity"
+      "reference_rewrite_set": [
+        "docs/research/skill-pack-composition/catalog-contract-research.md"
       ],
-      "residual_risk": "epoch admission and proof reuse remain unassessed",
+      "required_proof": [
+        "target-read-back",
+        "reference-reconciliation",
+        "owner-routing",
+        "validator-proof",
+        "old-path-disposition",
+        "rollback"
+      ],
+      "residual_risk": "semantic admission and proof reuse remain explicitly unassessed",
       "source": {
         "fingerprint": "sha256-v1:aa6cf876d1754727688f14d14ec892b3587eb5c22c32fcfe8f6c4e51b616eb9c",
         "identity": null,
         "key": "docs/research/skill-pack-composition/catalog-contract-research.md",
         "state": "tracked"
       },
-      "status": "inventoried",
+      "status": "verified",
       "target": {
-        "path": null,
-        "semantic_id": null
+        "path": "docs/research/skill-pack-composition/sources/SRC-0001.md",
+        "semantic_id": "SRC-0001"
       }
     },
     {
