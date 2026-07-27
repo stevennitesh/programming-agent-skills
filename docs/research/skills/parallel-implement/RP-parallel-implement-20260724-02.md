@@ -1,3 +1,7 @@
+---
+artifact_id: RP-parallel-implement-20260724-02
+---
+
 # Parallel Implement Research Packet — Bounded Correction
 
 Campaign epoch: `2026-07-24-r2`
@@ -13,7 +17,7 @@ Campaign epoch: `2026-07-24-r2`
   research and the affected current observations. This packet neither designs
   nor proves H1.
 - Exact M0 checkpoint:
-  [`../validation/transcripts/2026-07-24-parallel-implement-prompt1-m0-r2.md`](../validation/transcripts/2026-07-24-parallel-implement-prompt1-m0-r2.md)
+  [`../validation/transcripts/2026-07-24-parallel-implement-prompt1-m0-r2.md`](../../../validation/transcripts/2026-07-24-parallel-implement-prompt1-m0-r2.md)
 - Verified M0 bounded-content fingerprint:
   `ac7e81bdeb9ea05b929aa9c39af703521bd5b2b10979ad2c646132fec8f76715`.
 - Prior checkpoint bounded-content fingerprint:
@@ -64,9 +68,9 @@ No intended behavior is missing from corrected M0. There is no
 
 | Item | Exact identity | r2 disposition |
 | --- | --- | --- |
-| Prior research packet | [`parallel-implement-2026-07-24.md`](parallel-implement-2026-07-24.md), bounded-content SHA-256 `3d8ad3acb1aedaf5a3c857d2a2ca573b67472072149ed7df71e8e07bc52b0d54`, whole-file SHA-256 `7d32446cc413326ea0656c548fd5beac7825125d71726370da86ce6e7d5f1405` | `exact-reusable` for every unaffected Research Pass lane; incorporated by identity rather than restated |
+| Prior research packet | [`parallel-implement-2026-07-24.md`](RP-parallel-implement-20260724-01.md), bounded-content SHA-256 `3d8ad3acb1aedaf5a3c857d2a2ca573b67472072149ed7df71e8e07bc52b0d54`, whole-file SHA-256 `7d32446cc413326ea0656c548fd5beac7825125d71726370da86ce6e7d5f1405` | `exact-reusable` for every unaffected Research Pass lane; incorporated by identity rather than restated |
 | Prior M0 checkpoint | `2026-07-24-parallel-implement-prompt1-m0.md`, bounded-content SHA-256 `c91962879ff9bd03b48c34fa422974fff8a2aee8362c8a879627ebc66039271a` | Superseded only for M0-14/C14/V23 and the M0-13 fixture-proof sharpening named by r2 |
-| r2 M0 checkpoint | [`../validation/transcripts/2026-07-24-parallel-implement-prompt1-m0-r2.md`](../validation/transcripts/2026-07-24-parallel-implement-prompt1-m0-r2.md), bounded-content SHA-256 `ac7e81bdeb9ea05b929aa9c39af703521bd5b2b10979ad2c646132fec8f76715`, whole-file SHA-256 `cbee1b9ce8ea9318de66a9092b8a3f2c9a686273a2ab51821fe662ca609faa9c` | Exact controlling intended contract |
+| r2 M0 checkpoint | [`../validation/transcripts/2026-07-24-parallel-implement-prompt1-m0-r2.md`](../../../validation/transcripts/2026-07-24-parallel-implement-prompt1-m0-r2.md), bounded-content SHA-256 `ac7e81bdeb9ea05b929aa9c39af703521bd5b2b10979ad2c646132fec8f76715`, whole-file SHA-256 `cbee1b9ce8ea9318de66a9092b8a3f2c9a686273a2ab51821fe662ca609faa9c` | Exact controlling intended contract |
 
 The prior packet's blind independent discovery remains the historical blind
 record. This bounded correction pass did not reopen or simulate that discovery.
@@ -155,10 +159,10 @@ unchanged. In particular:
 ### M0-13 review routing
 
 The current canonical
-[`SKILL.md`](../../skills/custom/parallel-implement/SKILL.md) instructs the root
+[`SKILL.md`](../../../../skills/custom/parallel-implement/SKILL.md) instructs the root
 to invoke `$review` for an ordinary candidate and
 `$convergent-pr-review` for a local PR or bounded high-risk diff. Exact K-02
-[`run_ledger.py`](../../skills/custom/parallel-implement/scripts/run_ledger.py)
+[`run_ledger.py`](../../../../skills/custom/parallel-implement/scripts/run_ledger.py)
 records a `review-invocation` mode and requires a nonempty reason, target
 identity, budget, and valid review sequence; it does not infer or validate the
 ordinary/high-risk owner from target facts.
@@ -179,11 +183,11 @@ affected fixture/protocol identity before Prompt 4 can prove M0-13.
 ### M0-14, V23, and preserved K-02
 
 The current K-02 machine/interface boundary consists of exact
-[`run_ledger.py`](../../skills/custom/parallel-implement/scripts/run_ledger.py)
+[`run_ledger.py`](../../../../skills/custom/parallel-implement/scripts/run_ledger.py)
 SHA-256
 `caa174522351d903985dbe94632bb54f6beb16e5eb3dcdcd31e64ee2bbae1f2d`
 and
-[`RUN-LEDGER.md`](../../skills/custom/parallel-implement/references/RUN-LEDGER.md)
+[`RUN-LEDGER.md`](../../../../skills/custom/parallel-implement/references/RUN-LEDGER.md)
 SHA-256
 `0488c81c3a8608ae4d06fad8eb2ea9ebaf5a161cb0b1926e30019553d78e0627`.
 Its exact relevant behavior is:

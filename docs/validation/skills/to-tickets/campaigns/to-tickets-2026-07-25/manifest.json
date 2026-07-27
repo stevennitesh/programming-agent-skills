@@ -275,7 +275,7 @@
     "transfer": ["untested trackers", "configurations", "task families", "authority variants", "evidence variants"]
   },
   "promotion_critical_paths": [
-    {"id": "research_packet", "path": "docs/research/to-tickets-deploy-2026-07-25.md", "role": "research-provenance"},
+    {"id": "research_packet", "path": "docs/research/skills/to-tickets/RP-to-tickets-20260725-01.md", "role": "research-provenance"},
     {"id": "active_synthesis", "path": "docs/synthesis/skills/to-tickets.md", "role": "active-decision"},
     {"id": "prompt1_capsule", "path": "docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/prompt1-m0.md", "role": "stage-capsule"},
     {"id": "prompt2_capsule", "path": "docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/prompt2-h1.md", "role": "stage-capsule"},

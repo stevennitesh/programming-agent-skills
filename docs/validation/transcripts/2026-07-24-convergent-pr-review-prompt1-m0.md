@@ -210,7 +210,7 @@ intended contract:
    and terminal caller restoration.
 
 Exactly one future research note is authorized:
-`docs/research/convergent-pr-review-2026-07-24.md`.
+`docs/research/skills/convergent-pr-review/RP-convergent-pr-review-20260724-01.md`.
 
 ## Local Source Identity Manifest
 

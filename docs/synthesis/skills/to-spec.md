@@ -4,7 +4,7 @@ Status: Deploy Prompt 4 decision for campaign `to-spec-2026-07-25`;
 `accepted`.
 
 This file owns the active semantic decision. Source provenance remains in
-[`2026-07-25-deploy-research.md`](../../research/skill-facets/to-spec/2026-07-25-deploy-research.md),
+[`2026-07-25-deploy-research.md`](../../research/skills/to-spec/RP-to-spec-20260725-01.md),
 the frozen minimum remains in
 [`prompt1-m0.md`](../../validation/campaigns/to-spec-2026-07-25/prompt1-m0.md),
 and machine-readable identities and dispositions remain in

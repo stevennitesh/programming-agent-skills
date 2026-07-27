@@ -1,3 +1,7 @@
+---
+artifact_id: RP-parallel-implement-20260724-01
+---
+
 # Parallel Implement Research Packet
 
 Campaign epoch: `2026-07-24`

@@ -1,3 +1,7 @@
+---
+artifact_id: RP-to-tickets-20260723-01
+---
+
 # To Tickets Deploy Research Pass
 
 - Date and freshness check: 2026-07-23

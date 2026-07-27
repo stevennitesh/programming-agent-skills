@@ -20,7 +20,7 @@
   },
   "path_refs": {
     "prompt1_checkpoint": "docs/validation/campaigns/to-spec-2026-07-25/prompt1-m0.md",
-    "research_packet": "docs/research/skill-facets/to-spec/2026-07-25-deploy-research.md",
+    "research_packet": "docs/research/skills/to-spec/RP-to-spec-20260725-01.md",
     "active_synthesis": "docs/synthesis/skills/to-spec.md",
     "prompt2_capsule": "docs/validation/campaigns/to-spec-2026-07-25/prompt2-h1.md",
     "manifest": "docs/validation/campaigns/to-spec-2026-07-25/manifest.json",

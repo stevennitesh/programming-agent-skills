@@ -1,3 +1,7 @@
+---
+artifact_id: RP-implement-20260724-02
+---
+
 # Implement Research Pass R2 — 2026-07-24
 
 ## Research lock
@@ -20,7 +24,7 @@
 - **Freshness:** online sources checked 2026-07-24; local and upstream
   repositories are identified below at their inspected revisions.
 - **Write authority:** create only
-  `docs/research/implement-2026-07-24-r2.md`.
+  `docs/research/skills/implement/RP-implement-20260724-02.md`.
 - **Return owner:** Deploy Campaign coordinator.
 
 ## Blind independent discovery
@@ -137,7 +141,7 @@ recovery conditions, not the repository decision itself.
 ## Prior evidence disposition
 
 The prior packet
-`docs/research/implement-2026-07-24.md` was inspected completely after blind
+`docs/research/skills/implement/RP-implement-20260724-01.md` was inspected completely after blind
 discovery; its current whole-file SHA-256 is
 `bfba44c1fb0848da8896e3355855b9b00c9639c3cf6b4c2a222a5a6fe80a145d`.
 It is evidence, not completion of this R2 Research Pass.
@@ -304,7 +308,7 @@ Authorized unit completed: Deploy Research Pass
 Decision: research-complete
 Campaign shape: unclassified; exact M0 runtime and H1 are not materialized
 Runtime identities: current package inspected; corrected M0 checkpoint frozen at sha256:c56d01368a49d19ed33fb4d0c4b926029d6264885e36bea5af820f40c31d5f0c; exact M0 runtime and H1 unmaterialized
-Artifacts changed: docs/research/implement-2026-07-24-r2.md
+Artifacts changed: docs/research/skills/implement/RP-implement-20260724-02.md
 Evidence used or reused: fresh Git, HTTP, GitHub, GitLab, retry, compensation, and review evidence; exact-matching upstream/current observations; prior packet reclassified by lane as recorded; no candidate behavioral proof reused
 Residual gaps: exact candidate wording and behavioral efficacy remain unproved; provider-composite retry idempotence is unverified; exact M0/H1 runtime identities remain for Prompt 2
 Recommended next unit: Deploy Prompt 2

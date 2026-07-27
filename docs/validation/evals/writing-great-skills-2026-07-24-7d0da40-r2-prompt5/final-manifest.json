@@ -17,7 +17,7 @@
     "runtime_load": "P1 equals V1 at 9363 exact file bytes and 1219 whitespace-delimited words; token and latency telemetry unavailable."
   },
   "promotion_critical_paths": [
-    "docs/research/writing-great-skills-deploy-2026-07-24-7d0da40-r2.md",
+    "docs/research/skills/writing-great-skills/RP-writing-great-skills-20260724-01.md",
     "docs/synthesis/skills/writing-great-skills.md",
     "docs/validation/evals/writing-great-skills-2026-07-24-7d0da40-r2-prompt5/final-manifest.json",
     "skills/custom/writing-great-skills",

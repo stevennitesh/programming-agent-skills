@@ -9,3 +9,19 @@ For a Fresh one-skill Deploy campaign, use
 `semantic.pointers.research_packet`. The packet stays independent and finite:
 problem-first evidence, Catalog results, bounded retrieval, and at most one
 named gap. It does not contain H1 or claim-adjacency decisions.
+
+Historical packets migrated into this owner retain their original conclusions
+and limits. Their `RP-*` identity identifies the evidence packet only; it does
+not make the packet current, admit H1, or create a runtime identity.
+
+## Packet owners
+
+| Skill | Owner |
+| --- | --- |
+| Convergent PR Review | [`convergent-pr-review/`](convergent-pr-review/) |
+| Implement | [`implement/`](implement/) |
+| Parallel Implement | [`parallel-implement/`](parallel-implement/) |
+| Review | [`review/`](review/) |
+| To Spec | [`to-spec/`](to-spec/) |
+| To Tickets | [`to-tickets/`](to-tickets/) |
+| Writing Great Skills | [`writing-great-skills/`](writing-great-skills/) |

@@ -1,3 +1,7 @@
+---
+artifact_id: RP-implement-20260724-01
+---
+
 # Implement Research Pass — 2026-07-24
 
 ## Research lock
@@ -13,7 +17,7 @@
 - **Freshness:** online sources checked 2026-07-24; local and upstream
   repositories are identified below at their inspected revisions.
 - **Write authority:** create only
-  `docs/research/implement-2026-07-24.md`.
+  `docs/research/skills/implement/RP-implement-20260724-01.md`.
 - **Return owner:** Deploy Campaign coordinator.
 
 ## Blind independent discovery
@@ -282,7 +286,7 @@ Authorized unit completed: Deploy Research Pass
 Decision: research-complete
 Campaign shape: unclassified; exact M0 runtime and H1 are not materialized
 Runtime identities: current inspected; exact M0 runtime and H1 unmaterialized; exact pre-evaluation identity relationship unavailable
-Artifacts changed: docs/research/implement-2026-07-24.md
+Artifacts changed: docs/research/skills/implement/RP-implement-20260724-01.md
 Evidence used or reused: fresh independent sources and verified upstream/current observations listed above; local implement map was historical-admission-only; no prior candidate proof reused
 Residual gaps: exact candidate wording and behavioral efficacy remain unproved; the numeric repair bound lacks independent support; exact M0/H1 runtime identities remain for Prompt 2
 Recommended next unit: Deploy Prompt 2

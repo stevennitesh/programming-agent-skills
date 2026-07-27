@@ -16,11 +16,11 @@ installation, or Git-delivery changes.
 
 | Repository | Local Evidence | Revision | Detailed Packet |
 | --- | --- | --- | --- |
-| ECC | `.tmp/repos/ECC` | `ac30ff3ea249bf5f94dbc5e9b18ab681cc9af91d` | [Enhancement candidates](ecc-skill-pack-enhancement-candidates.md) |
-| GSD Core | `.tmp/repos/gsd-core` | `6ee43492723dababa4138ceb72fd2cd26d4325d9` | [Skill-pack enhancements](gsd-core-skill-pack-enhancements.md) |
-| gstack | `.tmp/repos/gstack` | `a3259400a366593e0c909dd9ac3e59752efd2488` | [Review and CSO packet](gstack-review-cso-source-packet.md) |
-| React | `.tmp/repos/react` | `b685b40d870b90a975da28c8d22ecf0ba910b1a1` | [Composition note](react-agent-skills-composition-note.md) |
-| Skilld | `.tmp/repos/skilld` | `c8368441070e2c0c29af6d2f8c9425f62e8b9afb` | [Vocabulary packet](skilld-skill-generation-vocabulary.md) and [enhancement candidates](skilld-skill-enhancement-candidates.md) |
+| ECC | `.tmp/repos/ECC` | `ac30ff3ea249bf5f94dbc5e9b18ab681cc9af91d` | [Enhancement candidates](../../skill-pack-composition/sources/SRC-0002.md) |
+| GSD Core | `.tmp/repos/gsd-core` | `6ee43492723dababa4138ceb72fd2cd26d4325d9` | [Skill-pack enhancements](../../skill-pack-composition/sources/SRC-0003.md) |
+| gstack | `.tmp/repos/gstack` | `a3259400a366593e0c909dd9ac3e59752efd2488` | [Review and CSO packet](../../skill-pack-composition/sources/SRC-0004.md) |
+| React | `.tmp/repos/react` | `b685b40d870b90a975da28c8d22ecf0ba910b1a1` | [Composition note](../../skill-pack-composition/sources/SRC-0005.md) |
+| Skilld | `.tmp/repos/skilld` | `c8368441070e2c0c29af6d2f8c9425f62e8b9afb` | [Vocabulary packet](../../skill-pack-composition/sources/SRC-0007.md) and [enhancement candidates](../../skill-pack-composition/sources/SRC-0006.md) |
 
 All five local evidence roots were clean and matched the recorded revisions on
 2026-07-25. The React checkout was added because it was the only missing clone.

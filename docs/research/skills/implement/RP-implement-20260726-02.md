@@ -1,3 +1,7 @@
+---
+artifact_id: RP-implement-20260726-02
+---
+
 # Implement Search Vocabulary
 
 Use this file as optional search support for `implement` facet research.

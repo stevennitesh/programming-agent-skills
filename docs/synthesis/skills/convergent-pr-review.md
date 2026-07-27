@@ -20,7 +20,7 @@ rewrite in this file; it is not executable runtime.
 The frozen minimum is the bounded checkpoint in
 [Prompt 1](../../validation/transcripts/2026-07-24-convergent-pr-review-prompt1-m0.md).
 Professional and upstream evidence comes from the bounded
-[research packet](../../research/convergent-pr-review-2026-07-24.md). The
+[research packet](../../research/skills/convergent-pr-review/RP-convergent-pr-review-20260724-01.md). The
 campaign manifest at
 [campaign-decision.json](../../validation/evals/convergent-pr-review-2026-07-24/campaign-decision.json)
 owns shared semantic and identity state. The

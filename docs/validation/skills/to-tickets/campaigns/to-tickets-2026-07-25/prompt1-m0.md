@@ -6,7 +6,7 @@
 - Campaign epoch: `2026-07-25`
 - Starting Git `HEAD`: `8752406cf437629787c2abec5f66c3c0e6eda8b1`
 - Historical incumbent authority: commit `b2df62a1879ffe4c5624656f63712c723fcdb44a`; not read in Prompt 1
-- Authorized research-note path: `docs/research/to-tickets-deploy-2026-07-25.md`
+- Authorized research-note path: `docs/research/skills/to-tickets/RP-to-tickets-20260725-01.md`
 - Prompt 1 decision: `ready-for-research`
 
 The content strictly between the markers below is the immutable Prompt 1 stage
@@ -435,7 +435,7 @@ history were deliberately not read.
   structural proof?
 
 Authorized research-note path:
-`docs/research/to-tickets-deploy-2026-07-25.md`.
+`docs/research/skills/to-tickets/RP-to-tickets-20260725-01.md`.
 
 ## Re-entry Contract
 

@@ -1,3 +1,7 @@
+---
+artifact_id: RP-writing-great-skills-20260724-01
+---
+
 # Writing Great Skills Deploy Research Packet
 
 ## Research contract

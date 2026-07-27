@@ -306,7 +306,7 @@ inspection.
 ### Authorized Research Note
 
 Exactly one Research Pass note is authorized at:
-`docs/research/skill-facets/to-tickets/2026-07-23-deploy-research.md`.
+`docs/research/skills/to-tickets/RP-to-tickets-20260723-01.md`.
 No other research mutation is authorized by this checkpoint.
 <!-- M0-CHECKPOINT-PAYLOAD-END -->
 

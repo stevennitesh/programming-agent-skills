@@ -157,7 +157,7 @@ relationship index untouched.
 - Corrected M0 checkpoint:
   [`2026-07-24-parallel-implement-prompt1-m0-r2.md`](../../validation/transcripts/2026-07-24-parallel-implement-prompt1-m0-r2.md)
 - Corrected research packet:
-  [`parallel-implement-2026-07-24-r2.md`](../../research/parallel-implement-2026-07-24-r2.md)
+  [`parallel-implement-2026-07-24-r2.md`](../../research/skills/parallel-implement/RP-parallel-implement-20260724-02.md)
 - Exact construction protocol:
   [`protocol-manifest.json`](../../validation/evals/parallel-implement-prompt4-r2/protocol-manifest.json)
 - Accepted behavior decision:

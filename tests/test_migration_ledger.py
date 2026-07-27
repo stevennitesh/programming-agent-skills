@@ -1105,3 +1105,457 @@ def test_operate_preflights_private_control_before_filesystem_mutation(
     assert ledger_path.read_bytes() == original_ledger
     assert sidecar_path.read_bytes() == original_sidecar
     assert closeout_path.read_bytes() == original_closeout
+
+
+def _research_synthesis_migration_fixture(
+    tmp_path: Path,
+) -> tuple[list[dict[str, object]], bytes]:
+    source_key = "docs/research/implement-2026-07-24.md"
+    source = tmp_path / source_key
+    source.parent.mkdir(parents=True)
+    source.write_text(
+        "# Implement research\n\n"
+        "[Language](language/03-high-signal-steering-words.md)\n",
+        encoding="utf-8",
+    )
+    revision = tmp_path / "docs/research/implement-2026-07-24-r2.md"
+    revision.write_text(
+        "# Implement research r2\n\n"
+        "Prior: `docs/research/implement-2026-07-24.md`\n",
+        encoding="utf-8",
+    )
+    language = (
+        tmp_path
+        / "docs/research/language/03-high-signal-steering-words.md"
+    )
+    language.parent.mkdir(parents=True)
+    language.write_text("# Language\n", encoding="utf-8")
+    (language.parent / "README.md").write_text(
+        "# Language research\n",
+        encoding="utf-8",
+    )
+    research_readme = tmp_path / "docs/research/README.md"
+    research_readme.write_text("# Research\n", encoding="utf-8")
+    synthesis_readme = tmp_path / "docs/synthesis/README.md"
+    synthesis_readme.parent.mkdir(parents=True)
+    synthesis_readme.write_text("# Synthesis\n", encoding="utf-8")
+    reference = tmp_path / "docs/synthesis/skills/implement.md"
+    reference.parent.mkdir(parents=True)
+    reference.write_text(
+        "# Implement\n\n"
+        "[Research](../../research/implement-2026-07-24.md)\n",
+        encoding="utf-8",
+    )
+    owner = tmp_path / "docs/research/skills/implement/README.md"
+    owner.parent.mkdir(parents=True)
+    owner.write_text(
+        "# Implement research packets\n\n"
+        "- [RP-implement-20260724-01]"
+        "(RP-implement-20260724-01.md): historical\n"
+        "- [RP-implement-20260724-02]"
+        "(RP-implement-20260724-02.md): historical\n",
+        encoding="utf-8",
+    )
+    original = source.read_bytes()
+    head = _commit_fixture(tmp_path)
+    public, _, _ = fresh_epoch_contract.build_migration_control(
+        tmp_path,
+        public_paths=[
+            source_key,
+            "docs/research/implement-2026-07-24-r2.md",
+            "docs/research/language/03-high-signal-steering-words.md",
+            "docs/synthesis/README.md",
+            "docs/synthesis/skills/implement.md",
+        ],
+        private_paths=[],
+        reference_paths=[
+            source_key,
+            "docs/research/implement-2026-07-24-r2.md",
+            "docs/research/language/03-high-signal-steering-words.md",
+            "docs/synthesis/README.md",
+            "docs/synthesis/skills/implement.md",
+        ],
+        head=head,
+        head_paths={
+            source_key,
+            "docs/research/implement-2026-07-24-r2.md",
+            "docs/research/language/03-high-signal-steering-words.md",
+            "docs/synthesis/README.md",
+            "docs/synthesis/skills/implement.md",
+        },
+    )
+    return public["rows"], original
+
+
+def test_research_synthesis_plan_settles_moves_and_preserved_owners(
+    tmp_path: Path,
+) -> None:
+    rows, _ = _research_synthesis_migration_fixture(tmp_path)
+
+    prepared = migration_ledger.prepare_research_synthesis_migrations(rows)
+    by_source = {row["source"]["key"]: row for row in prepared}
+
+    moved = by_source["docs/research/implement-2026-07-24.md"]
+    assert moved["migration_disposition"] == "move"
+    assert moved["owner"] == "docs/research/skills/implement/README.md"
+    assert moved["target"] == {
+        "semantic_id": "RP-implement-20260724-01",
+        "path": (
+            "docs/research/skills/implement/"
+            "RP-implement-20260724-01.md"
+        ),
+    }
+    assert moved["status"] == "prepared"
+
+    preserved = by_source["docs/synthesis/README.md"]
+    assert preserved["migration_disposition"] == "preserve-in-place"
+    assert preserved["owner"] == "docs/synthesis/README.md"
+    assert preserved["status"] == "prepared"
+
+
+def test_research_synthesis_group_moves_rebases_and_verifies(
+    tmp_path: Path,
+) -> None:
+    rows, original = _research_synthesis_migration_fixture(tmp_path)
+    prepared = migration_ledger.prepare_research_synthesis_migrations(rows)
+
+    applied = migration_ledger.apply_research_synthesis_migrations(
+        tmp_path,
+        prepared,
+    )
+    target = (
+        tmp_path
+        / "docs/research/skills/implement/RP-implement-20260724-01.md"
+    )
+    reference = tmp_path / "docs/synthesis/skills/implement.md"
+
+    assert not (tmp_path / "docs/research/implement-2026-07-24.md").exists()
+    assert target.is_file()
+    assert "artifact_id: RP-implement-20260724-01" in target.read_text("utf-8")
+    assert (
+        "../../language/03-high-signal-steering-words.md"
+        in target.read_text("utf-8")
+    )
+    assert (
+        "../../research/skills/implement/RP-implement-20260724-01.md"
+        in reference.read_text("utf-8")
+    )
+
+    verified = migration_ledger.verify_research_synthesis_migrations(
+        tmp_path,
+        applied,
+    )
+
+    assert all(row["status"] == "verified" for row in verified)
+    assert all(row["observed_result"]["passed"] is True for row in verified)
+
+    rolled_back = migration_ledger.rollback_research_synthesis_migrations(
+        tmp_path,
+        verified,
+    )
+
+    assert (
+        tmp_path / "docs/research/implement-2026-07-24.md"
+    ).read_bytes() == original
+    assert not target.exists()
+    assert (
+        "../../research/implement-2026-07-24.md"
+        in reference.read_text("utf-8")
+    )
+    assert all(row["status"] == "prepared" for row in rolled_back)
+
+
+def test_research_synthesis_verification_rejects_broken_moved_link(
+    tmp_path: Path,
+) -> None:
+    rows, _ = _research_synthesis_migration_fixture(tmp_path)
+    prepared = migration_ledger.prepare_research_synthesis_migrations(rows)
+    applied = migration_ledger.apply_research_synthesis_migrations(
+        tmp_path,
+        prepared,
+    )
+    language = (
+        tmp_path
+        / "docs/research/language/03-high-signal-steering-words.md"
+    )
+    language.unlink()
+    applied = [
+        row
+        for row in applied
+        if row["source"]["key"]
+        != "docs/research/language/03-high-signal-steering-words.md"
+    ]
+
+    with pytest.raises(
+        migration_ledger.MigrationBlocked,
+        match="moved Markdown link is unresolved",
+    ):
+        migration_ledger.verify_research_synthesis_migrations(
+            tmp_path,
+            applied,
+        )
+
+
+def test_research_synthesis_plan_records_specific_preserved_owners(
+    tmp_path: Path,
+) -> None:
+    rows, _ = _research_synthesis_migration_fixture(tmp_path)
+
+    prepared = migration_ledger.prepare_research_synthesis_migrations(rows)
+    by_source = {row["source"]["key"]: row for row in prepared}
+
+    assert by_source[
+        "docs/research/language/03-high-signal-steering-words.md"
+    ]["owner"] == "docs/research/language/README.md"
+    assert by_source["docs/synthesis/skills/implement.md"]["owner"] == (
+        "docs/synthesis/skills/implement.md"
+    )
+
+
+def test_research_synthesis_group_retry_is_idempotent(
+    tmp_path: Path,
+) -> None:
+    rows, _ = _research_synthesis_migration_fixture(tmp_path)
+    prepared = migration_ledger.prepare_research_synthesis_migrations(rows)
+    first = migration_ledger.apply_research_synthesis_migrations(
+        tmp_path,
+        prepared,
+    )
+    target = (
+        tmp_path
+        / "docs/research/skills/implement/RP-implement-20260724-01.md"
+    )
+    first_bytes = target.read_bytes()
+
+    second = migration_ledger.apply_research_synthesis_migrations(
+        tmp_path,
+        prepared,
+    )
+
+    assert target.read_bytes() == first_bytes
+    assert next(
+        row
+        for row in second
+        if row["source"]["key"]
+        == "docs/research/implement-2026-07-24.md"
+    )["status"] == "references-reconciled"
+
+
+def test_research_synthesis_rollback_rejects_target_collision(
+    tmp_path: Path,
+) -> None:
+    rows, _ = _research_synthesis_migration_fixture(tmp_path)
+    prepared = migration_ledger.prepare_research_synthesis_migrations(rows)
+    applied = migration_ledger.apply_research_synthesis_migrations(
+        tmp_path,
+        prepared,
+    )
+    target = (
+        tmp_path
+        / "docs/research/skills/implement/RP-implement-20260724-01.md"
+    )
+    target.write_text("# Intervening edit\n", encoding="utf-8")
+
+    with pytest.raises(
+        migration_ledger.MigrationBlocked,
+        match="rollback target collision",
+    ):
+        migration_ledger.rollback_research_synthesis_migrations(
+            tmp_path,
+            applied,
+        )
+
+    assert target.read_text("utf-8") == "# Intervening edit\n"
+    assert not (tmp_path / "docs/research/implement-2026-07-24.md").exists()
+
+
+def test_research_synthesis_rollback_rejects_source_collision(
+    tmp_path: Path,
+) -> None:
+    rows, _ = _research_synthesis_migration_fixture(tmp_path)
+    prepared = migration_ledger.prepare_research_synthesis_migrations(rows)
+    applied = migration_ledger.apply_research_synthesis_migrations(
+        tmp_path,
+        prepared,
+    )
+    source = tmp_path / "docs/research/implement-2026-07-24.md"
+    source.write_text("# Independent recreation\n", encoding="utf-8")
+
+    with pytest.raises(
+        migration_ledger.MigrationBlocked,
+        match="rollback source collision",
+    ):
+        migration_ledger.rollback_research_synthesis_migrations(
+            tmp_path,
+            applied,
+        )
+
+    assert source.read_text("utf-8") == "# Independent recreation\n"
+
+
+def _add_prior_migration_reference(
+    tmp_path: Path,
+    rows: list[dict[str, object]],
+) -> Path:
+    source_row = next(
+        row
+        for row in rows
+        if row["source"]["key"]
+        == "docs/research/implement-2026-07-24.md"
+    )
+    old_reference = "docs/validation/campaigns/example/candidate.md"
+    current_reference = "docs/validation/skills/example/candidate.md"
+    source_row["inbound_references"] = [
+        *source_row["inbound_references"],
+        old_reference,
+    ]
+    old = tmp_path / old_reference
+    old.parent.mkdir(parents=True)
+    old.write_text(
+        "[Research](../../../research/implement-2026-07-24.md)\n",
+        encoding="utf-8",
+    )
+    owner_key = "docs/validation/skills/example/README.md"
+    owner = tmp_path / owner_key
+    owner.parent.mkdir(parents=True)
+    owner.write_text("# Example campaign\n", encoding="utf-8")
+    original = old.read_bytes()
+    head = _commit_fixture(tmp_path)
+    current = tmp_path / current_reference
+    current.parent.mkdir(parents=True, exist_ok=True)
+    old.replace(current)
+    rows.append(
+        {
+            "migration_id": "MIG-9000",
+            "source": {
+                "key": old_reference,
+                "state": "tracked",
+                "fingerprint": migration_ledger._fingerprint(original),
+                "identity": "campaign:example",
+            },
+            "artifact_class": "campaign",
+            "migration_disposition": "move",
+            "owner": owner_key,
+            "target": {
+                "path": current_reference,
+                "semantic_id": None,
+            },
+            "status": "verified",
+            "observed_result": {"passed": True},
+            "recovery": {
+                "pointer": (
+                    f"git:{head}:{old_reference}@"
+                    f"{migration_ledger._fingerprint(original)}"
+                ),
+                "applicable_lock": "FCE-pack-lock",
+            },
+        }
+    )
+    return current
+
+
+def test_research_synthesis_rollback_restores_prior_migration_reference(
+    tmp_path: Path,
+) -> None:
+    rows, _ = _research_synthesis_migration_fixture(tmp_path)
+    current = _add_prior_migration_reference(tmp_path, rows)
+    prepared = migration_ledger.prepare_research_synthesis_migrations(rows)
+    applied = migration_ledger.apply_research_synthesis_migrations(
+        tmp_path,
+        prepared,
+    )
+
+    rolled_back = migration_ledger.rollback_research_synthesis_migrations(
+        tmp_path,
+        applied,
+    )
+
+    assert (
+        "../../../research/implement-2026-07-24.md"
+        in current.read_text("utf-8")
+    )
+    assert any(row["migration_id"] == "MIG-9000" for row in rolled_back)
+
+
+def test_research_synthesis_verification_checks_prior_migration_links(
+    tmp_path: Path,
+) -> None:
+    rows, _ = _research_synthesis_migration_fixture(tmp_path)
+    current = _add_prior_migration_reference(tmp_path, rows)
+    prepared = migration_ledger.prepare_research_synthesis_migrations(rows)
+    applied = migration_ledger.apply_research_synthesis_migrations(
+        tmp_path,
+        prepared,
+    )
+    current.write_text("[Research](missing.md)\n", encoding="utf-8")
+
+    with pytest.raises(
+        migration_ledger.MigrationBlocked,
+        match="declared reference content mismatch",
+    ):
+        migration_ledger.verify_research_synthesis_migrations(
+            tmp_path,
+            applied,
+        )
+
+
+def test_research_synthesis_verification_rejects_extra_support_bytes(
+    tmp_path: Path,
+) -> None:
+    rows, _ = _research_synthesis_migration_fixture(tmp_path)
+    current = _add_prior_migration_reference(tmp_path, rows)
+    prepared = migration_ledger.prepare_research_synthesis_migrations(rows)
+    applied = migration_ledger.apply_research_synthesis_migrations(
+        tmp_path,
+        prepared,
+    )
+    current.write_text(
+        current.read_text("utf-8") + "\nExtra but link-valid.\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(
+        migration_ledger.MigrationBlocked,
+        match="declared reference content mismatch",
+    ):
+        migration_ledger.verify_research_synthesis_migrations(
+            tmp_path,
+            applied,
+        )
+
+
+def test_research_synthesis_rollback_rejects_alternate_target_locator(
+    tmp_path: Path,
+) -> None:
+    rows, _ = _research_synthesis_migration_fixture(tmp_path)
+    current = _add_prior_migration_reference(tmp_path, rows)
+    prepared = migration_ledger.prepare_research_synthesis_migrations(rows)
+    applied = migration_ledger.apply_research_synthesis_migrations(
+        tmp_path,
+        prepared,
+    )
+    current.write_text(
+        current.read_text("utf-8").replace(
+            "../../../research/skills/implement/"
+            "RP-implement-20260724-01.md",
+            "../../../research/skills/implement/"
+            "./RP-implement-20260724-01.md",
+        ),
+        encoding="utf-8",
+    )
+    target = (
+        tmp_path
+        / "docs/research/skills/implement/RP-implement-20260724-01.md"
+    )
+
+    with pytest.raises(
+        migration_ledger.MigrationBlocked,
+        match="declared reference content mismatch",
+    ):
+        migration_ledger.rollback_research_synthesis_migrations(
+            tmp_path,
+            applied,
+        )
+
+    assert target.is_file()
+    assert not (tmp_path / "docs/research/implement-2026-07-24.md").exists()

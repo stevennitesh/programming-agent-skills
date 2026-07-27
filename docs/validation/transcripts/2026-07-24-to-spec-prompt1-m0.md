@@ -358,7 +358,7 @@ Starting repository identity:
   ticket generation or implementation?
 
 Authorized research-note path:
-`docs/research/2026-07-24-to-spec.md`
+`docs/research/skills/to-spec/RP-to-spec-20260724-01.md`
 
 ## Checkpoint Integrity and Re-entry
 

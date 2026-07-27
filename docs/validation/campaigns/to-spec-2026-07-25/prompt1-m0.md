@@ -15,7 +15,7 @@
 | Starting Git HEAD | `b9750babea998c4bc0f5809972a8651934218eca` |
 | Audit operation | `writing-great-skills` Audit |
 | Decision | `ready-for-research` |
-| Authorized successor mutation | `docs/research/skill-facets/to-spec/2026-07-25-deploy-research.md` only |
+| Authorized successor mutation | `docs/research/skills/to-spec/RP-to-spec-20260725-01.md` only |
 | Historical incumbent constraint | The user identifies commit `f3be70c31dd8f2ae9f12a75248065ef313790bda` as C0 for exact later materialization; it was not inspected and is not M0 authority. |
 
 ## Intended Contract
@@ -259,7 +259,7 @@ Repo-local identities are SHA-256 over exact working-tree bytes plus Git blob ob
 - What direct-control tasks can test each hypothesis without exposing candidate language to controls?
 - What completion failures are most likely when a tracker create succeeds but later metadata or read-back is partial?
 
-Authorized research-note path: `docs/research/skill-facets/to-spec/2026-07-25-deploy-research.md`.
+Authorized research-note path: `docs/research/skills/to-spec/RP-to-spec-20260725-01.md`.
 
 ## Re-entry Contract
 

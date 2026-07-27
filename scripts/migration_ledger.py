@@ -888,6 +888,1104 @@ CAMPAIGN_SUPPORT_PATHS = (
     "scripts/campaign_artifacts.py",
 )
 
+RESEARCH_SYNTHESIS_MOVES = {
+    "docs/research/2026-07-24-to-spec.md": (
+        "docs/research/skills/to-spec/README.md",
+        "docs/research/skills/to-spec/RP-to-spec-20260724-01.md",
+        "RP-to-spec-20260724-01",
+    ),
+    "docs/research/convergent-pr-review-2026-07-24.md": (
+        "docs/research/skills/convergent-pr-review/README.md",
+        (
+            "docs/research/skills/convergent-pr-review/"
+            "RP-convergent-pr-review-20260724-01.md"
+        ),
+        "RP-convergent-pr-review-20260724-01",
+    ),
+    "docs/research/implement-2026-07-24.md": (
+        "docs/research/skills/implement/README.md",
+        "docs/research/skills/implement/RP-implement-20260724-01.md",
+        "RP-implement-20260724-01",
+    ),
+    "docs/research/implement-2026-07-24-r2.md": (
+        "docs/research/skills/implement/README.md",
+        "docs/research/skills/implement/RP-implement-20260724-02.md",
+        "RP-implement-20260724-02",
+    ),
+    "docs/research/parallel-implement-2026-07-24.md": (
+        "docs/research/skills/parallel-implement/README.md",
+        (
+            "docs/research/skills/parallel-implement/"
+            "RP-parallel-implement-20260724-01.md"
+        ),
+        "RP-parallel-implement-20260724-01",
+    ),
+    "docs/research/parallel-implement-2026-07-24-r2.md": (
+        "docs/research/skills/parallel-implement/README.md",
+        (
+            "docs/research/skills/parallel-implement/"
+            "RP-parallel-implement-20260724-02.md"
+        ),
+        "RP-parallel-implement-20260724-02",
+    ),
+    "docs/research/review-deploy-2026-07-24.md": (
+        "docs/research/skills/review/README.md",
+        "docs/research/skills/review/RP-review-20260724-01.md",
+        "RP-review-20260724-01",
+    ),
+    "docs/research/to-tickets-deploy-2026-07-25.md": (
+        "docs/research/skills/to-tickets/README.md",
+        "docs/research/skills/to-tickets/RP-to-tickets-20260725-01.md",
+        "RP-to-tickets-20260725-01",
+    ),
+    "docs/research/writing-great-skills-deploy-2026-07-24-7d0da40-r2.md": (
+        "docs/research/skills/writing-great-skills/README.md",
+        (
+            "docs/research/skills/writing-great-skills/"
+            "RP-writing-great-skills-20260724-01.md"
+        ),
+        "RP-writing-great-skills-20260724-01",
+    ),
+    "docs/research/skill-facets/implement/README.md": (
+        "docs/research/skills/implement/README.md",
+        "docs/research/skills/implement/RP-implement-20260726-01.md",
+        "RP-implement-20260726-01",
+    ),
+    "docs/research/skill-facets/implement/SEARCH-VOCABULARY.md": (
+        "docs/research/skills/implement/README.md",
+        "docs/research/skills/implement/RP-implement-20260726-02.md",
+        "RP-implement-20260726-02",
+    ),
+    "docs/research/skill-facets/to-spec/2026-07-25-deploy-research.md": (
+        "docs/research/skills/to-spec/README.md",
+        "docs/research/skills/to-spec/RP-to-spec-20260725-01.md",
+        "RP-to-spec-20260725-01",
+    ),
+    "docs/research/skill-facets/to-tickets/2026-07-23-deploy-research.md": (
+        "docs/research/skills/to-tickets/README.md",
+        "docs/research/skills/to-tickets/RP-to-tickets-20260723-01.md",
+        "RP-to-tickets-20260723-01",
+    ),
+    "docs/research/language/skill pack ideas/ecc-skill-pack-enhancement-candidates.md": (
+        "docs/research/skill-pack-composition/sources/README.md",
+        "docs/research/skill-pack-composition/sources/SRC-0002.md",
+        "SRC-0002",
+    ),
+    "docs/research/language/skill pack ideas/gsd-core-skill-pack-enhancements.md": (
+        "docs/research/skill-pack-composition/sources/README.md",
+        "docs/research/skill-pack-composition/sources/SRC-0003.md",
+        "SRC-0003",
+    ),
+    "docs/research/language/skill pack ideas/gstack-review-cso-source-packet.md": (
+        "docs/research/skill-pack-composition/sources/README.md",
+        "docs/research/skill-pack-composition/sources/SRC-0004.md",
+        "SRC-0004",
+    ),
+    "docs/research/language/skill pack ideas/react-agent-skills-composition-note.md": (
+        "docs/research/skill-pack-composition/sources/README.md",
+        "docs/research/skill-pack-composition/sources/SRC-0005.md",
+        "SRC-0005",
+    ),
+    "docs/research/language/skill pack ideas/skilld-skill-enhancement-candidates.md": (
+        "docs/research/skill-pack-composition/sources/README.md",
+        "docs/research/skill-pack-composition/sources/SRC-0006.md",
+        "SRC-0006",
+    ),
+    "docs/research/language/skill pack ideas/skilld-skill-generation-vocabulary.md": (
+        "docs/research/skill-pack-composition/sources/README.md",
+        "docs/research/skill-pack-composition/sources/SRC-0007.md",
+        "SRC-0007",
+    ),
+}
+
+RESEARCH_SYNTHESIS_SUPPORT_PATHS = (
+    "docs/research/skills/README.md",
+    "docs/research/skills/convergent-pr-review/README.md",
+    "docs/research/skills/implement/README.md",
+    "docs/research/skills/parallel-implement/README.md",
+    "docs/research/skills/review/README.md",
+    "docs/research/skills/to-spec/README.md",
+    "docs/research/skills/to-tickets/README.md",
+    "docs/research/skills/writing-great-skills/README.md",
+    "docs/research/skill-pack-composition/sources/README.md",
+)
+
+RESEARCH_SYNTHESIS_EXPLAINED_OLD_PATH_OWNERS = frozenset(
+    {
+        PUBLIC_LEDGER.as_posix(),
+        "scripts/fresh_epoch_contract.py",
+        "scripts/migration_ledger.py",
+        "tests/test_migration_ledger.py",
+    }
+)
+
+
+def _is_research_synthesis_row(row: dict[str, object]) -> bool:
+    source = row.get("source")
+    source_key = source.get("key") if isinstance(source, dict) else None
+    return (
+        row.get("artifact_class") in {"research", "synthesis"}
+        and source_key != CATALOG_SOURCE
+    )
+
+
+def _settled_research_synthesis_owner(source_key: str) -> str:
+    if source_key == "docs/research/README.md":
+        return source_key
+    if source_key.startswith("docs/research/backlog/"):
+        return "docs/research/backlog/README.md"
+    if source_key.startswith("docs/research/language/skill pack ideas/"):
+        return "docs/research/language/skill pack ideas/README.md"
+    if source_key.startswith("docs/research/language/"):
+        return "docs/research/language/README.md"
+    if source_key == "docs/research/skill-facets/README.md":
+        return source_key
+    if source_key.startswith(
+        "docs/research/skill-pack-composition/cards/"
+    ):
+        return "docs/research/skill-pack-composition/cards/README.md"
+    if source_key.startswith(
+        "docs/research/skill-pack-composition/sources/"
+    ):
+        return "docs/research/skill-pack-composition/sources/README.md"
+    if source_key.startswith("docs/research/skill-pack-composition/"):
+        return "docs/research/skill-pack-composition/README.md"
+    if source_key.startswith("docs/research/skills/"):
+        return "docs/research/skills/README.md"
+    if source_key == "docs/synthesis/README.md":
+        return source_key
+    if source_key == "docs/synthesis/methods/README.md":
+        return source_key
+    if source_key.startswith("docs/synthesis/methods/prompts/"):
+        return "docs/synthesis/methods/prompts/README.md"
+    if source_key.startswith("docs/synthesis/methods/"):
+        return source_key
+    if source_key.startswith("docs/synthesis/skills/"):
+        return source_key
+    if source_key in {
+        "docs/synthesis/skill-context-relationships.md",
+        "docs/synthesis/skill-pack.md",
+    }:
+        return source_key
+    raise MigrationBlocked(
+        f"research/synthesis owner remains unsettled: {source_key}"
+    )
+
+
+def prepare_research_synthesis_migrations(
+    rows: list[dict[str, object]],
+) -> list[dict[str, object]]:
+    """Settle every research/synthesis row without semantic admission."""
+
+    prepared_rows: list[dict[str, object]] = []
+    for original_row in rows:
+        prepared = copy.deepcopy(original_row)
+        if not _is_research_synthesis_row(prepared):
+            prepared_rows.append(prepared)
+            continue
+        if prepared.get("status") == "verified":
+            prepared_rows.append(prepared)
+            continue
+        source = prepared.get("source")
+        if not isinstance(source, dict):
+            raise MigrationBlocked("research/synthesis source is incomplete")
+        source_key = source.get("key")
+        fingerprint = source.get("fingerprint")
+        if not isinstance(source_key, str) or not isinstance(fingerprint, str):
+            raise MigrationBlocked("research/synthesis source is unreadable")
+        move = RESEARCH_SYNTHESIS_MOVES.get(source_key)
+        if move is None:
+            prepared.update(
+                {
+                    "owner": (
+                        _settled_research_synthesis_owner(source_key)
+                    ),
+                    "owner_gap": None,
+                    "migration_disposition": "preserve-in-place",
+                    "target": {"semantic_id": None, "path": None},
+                    "basis": ["issue-48-settled-existing-owner"],
+                    "reference_rewrite_set": [],
+                    "required_proof": [
+                        "fixed-point-identity",
+                        "owner-routing",
+                    ],
+                    "status": "prepared",
+                    "observed_result": None,
+                    "residual_risk": (
+                        "semantic admission and proof reuse remain unassessed"
+                    ),
+                }
+            )
+        else:
+            owner, target_path, semantic_id = move
+            prepared.update(
+                {
+                    "owner": owner,
+                    "owner_gap": None,
+                    "migration_disposition": "move",
+                    "target": {
+                        "semantic_id": semantic_id,
+                        "path": target_path,
+                    },
+                    "basis": ["issue-48-research-synthesis-owner-mapping"],
+                    "reference_rewrite_set": sorted(
+                        set(
+                            str(item)
+                            for item in prepared.get(
+                                "inbound_references",
+                                [],
+                            )
+                            if isinstance(item, str)
+                        )
+                    ),
+                    "required_proof": [
+                        "target-read-back",
+                        "reference-reconciliation",
+                        "owner-routing",
+                        "old-path-disposition",
+                        "rollback",
+                    ],
+                    "status": "prepared",
+                    "observed_result": None,
+                    "residual_risk": "migration and proof remain pending",
+                }
+            )
+            recovery = prepared.get("recovery")
+            if not isinstance(recovery, dict) or not recovery.get("pointer"):
+                raise MigrationBlocked("research/synthesis row has no recovery")
+            recovery["applicable_lock"] = "FCE-pack-lock"
+        prepared_rows.append(prepared)
+    return prepared_rows
+
+
+def _research_synthesis_mapping(
+    rows: list[dict[str, object]],
+) -> list[tuple[dict[str, object], str, str, str, str]]:
+    mapped: list[tuple[dict[str, object], str, str, str, str]] = []
+    for row in rows:
+        if not _is_research_synthesis_row(row):
+            continue
+        if row.get("migration_disposition") != "move":
+            continue
+        source = row.get("source")
+        target = row.get("target")
+        if not isinstance(source, dict) or not isinstance(target, dict):
+            raise MigrationBlocked("research/synthesis mapping is incomplete")
+        values = (
+            source.get("key"),
+            source.get("fingerprint"),
+            target.get("path"),
+            target.get("semantic_id"),
+        )
+        if not all(isinstance(value, str) and value for value in values):
+            raise MigrationBlocked("research/synthesis mapping is incomplete")
+        mapped.append((row, *[str(value) for value in values]))
+    return mapped
+
+
+def _verified_target_map(
+    rows: list[dict[str, object]],
+) -> dict[str, str]:
+    result: dict[str, str] = {}
+    for row in rows:
+        if (
+            row.get("status") != "verified"
+            or row.get("migration_disposition") != "move"
+        ):
+            continue
+        source = row.get("source")
+        target = row.get("target")
+        source_key = source.get("key") if isinstance(source, dict) else None
+        target_key = target.get("path") if isinstance(target, dict) else None
+        if isinstance(source_key, str) and isinstance(target_key, str):
+            result[source_key] = target_key
+    return result
+
+
+def _research_target_bytes(
+    root: Path,
+    original: bytes,
+    *,
+    source_key: str,
+    target_key: str,
+    target_identity: str,
+    moved_targets: dict[str, str],
+) -> bytes:
+    text = original.decode("utf-8")
+    source_path = PurePosixPath(source_key)
+    target_path = PurePosixPath(target_key)
+
+    def rebase(match: re.Match[str]) -> str:
+        destination = match.group("destination")
+        if destination.startswith(("#", "/", "http:", "https:", "mailto:")):
+            return match.group(0)
+        locator, separator, fragment = destination.partition("#")
+        source_destination = PurePosixPath(
+            posixpath.normpath(
+                posixpath.join(source_path.parent.as_posix(), locator)
+            )
+        )
+        mapped_destination = moved_targets.get(source_destination.as_posix())
+        if mapped_destination is not None:
+            source_destination = PurePosixPath(mapped_destination)
+        elif not _safe_workspace_path(
+            root,
+            source_destination.as_posix(),
+        ).exists():
+            remaining = PurePosixPath(locator)
+            while remaining.parts and remaining.parts[0] == "..":
+                remaining = PurePosixPath(*remaining.parts[1:])
+            candidates = (
+                remaining,
+                PurePosixPath("docs") / remaining,
+            )
+            existing = [
+                candidate
+                for candidate in candidates
+                if _safe_workspace_path(root, candidate.as_posix()).exists()
+            ]
+            if len(existing) == 1:
+                source_destination = existing[0]
+        rebased = posixpath.relpath(
+            source_destination.as_posix(),
+            start=target_path.parent.as_posix(),
+        )
+        if separator:
+            rebased = f"{rebased}#{fragment}"
+        return f"{match.group('prefix')}{rebased}{match.group('suffix')}"
+
+    rebased = MARKDOWN_LINK.sub(rebase, text).replace(source_key, target_key)
+    return (
+        f"---\nartifact_id: {target_identity}\n---\n\n".encode("utf-8")
+        + rebased.encode("utf-8")
+    )
+
+
+def _rewrite_group_reference(
+    content: bytes,
+    *,
+    original_reference: str,
+    actual_reference: str,
+    mapped: list[tuple[dict[str, object], str, str, str, str]],
+    forward: bool,
+) -> bytes:
+    rewritten = content.decode("utf-8")
+    actual_parent = PurePosixPath(actual_reference).parent.as_posix()
+    ordered = sorted(mapped, key=lambda item: len(item[1]), reverse=True)
+    for _, source_key, _, target_key, _ in ordered:
+        source_locator_at_actual = posixpath.relpath(
+            source_key,
+            start=actual_parent,
+        )
+        target_locator = posixpath.relpath(target_key, start=actual_parent)
+        before_key, after_key = (
+            (source_key, target_key) if forward else (target_key, source_key)
+        )
+        before_locator, after_locator = (
+            (source_locator_at_actual, target_locator)
+            if forward
+            else (target_locator, source_locator_at_actual)
+        )
+        rewritten = rewritten.replace(before_key, after_key)
+
+        def replace_link(match: re.Match[str]) -> str:
+            destination = match.group("destination")
+            locator, separator, fragment = destination.partition("#")
+            if locator != before_locator:
+                return match.group(0)
+            replacement = after_locator
+            if separator:
+                replacement = f"{replacement}#{fragment}"
+            return (
+                f"{match.group('prefix')}{replacement}"
+                f"{match.group('suffix')}"
+            )
+
+        rewritten = MARKDOWN_LINK.sub(replace_link, rewritten)
+    return rewritten.encode("utf-8")
+
+
+def _reference_baseline_bytes(
+    root: Path,
+    rows: list[dict[str, object]],
+    *,
+    raw_reference: str,
+    actual_reference: str,
+) -> bytes:
+    source_row = next(
+        (
+            row
+            for row in rows
+            if isinstance(row.get("source"), dict)
+            and row["source"].get("key") == raw_reference
+            and row.get("migration_disposition") != "move"
+        ),
+        None,
+    )
+    if source_row is not None:
+        return _git_recovery_bytes(root, source_row)
+
+    target_row = next(
+        (
+            row
+            for row in rows
+            if isinstance(row.get("target"), dict)
+            and row["target"].get("path") == actual_reference
+            and row.get("migration_disposition") == "move"
+        ),
+        None,
+    )
+    if target_row is not None:
+        if target_row.get("artifact_class") == "campaign":
+            source = target_row.get("source")
+            identity = (
+                source.get("identity") if isinstance(source, dict) else None
+            )
+            campaign_rows = [
+                row
+                for row in rows
+                if row.get("artifact_class") == "campaign"
+                and isinstance(row.get("source"), dict)
+                and row["source"].get("identity") == identity
+            ]
+            source_root, target_root, _, mapped = _campaign_mapping(
+                campaign_rows
+            )
+            campaign_member = next(
+                item
+                for item in mapped
+                if item[2] == actual_reference
+            )
+            row, source_key, target_key, _ = campaign_member
+            return _campaign_target_bytes(
+                _git_recovery_bytes(root, row),
+                source_key=source_key,
+                target_key=target_key,
+                source_root=source_root,
+                target_root=target_root,
+            )
+        source = target_row.get("source")
+        target = target_row.get("target")
+        source_key = source.get("key") if isinstance(source, dict) else None
+        target_key = target.get("path") if isinstance(target, dict) else None
+        identity = (
+            target.get("semantic_id") if isinstance(target, dict) else None
+        )
+        if all(
+            isinstance(value, str) and value
+            for value in (source_key, target_key, identity)
+        ):
+            return _research_target_bytes(
+                root,
+                _git_recovery_bytes(root, target_row),
+                source_key=str(source_key),
+                target_key=str(target_key),
+                target_identity=str(identity),
+                moved_targets={str(source_key): str(target_key)},
+            )
+
+    fallback_row = next(
+        (
+            row
+            for row in rows
+            if isinstance(row.get("source"), dict)
+            and row["source"].get("key") == raw_reference
+        ),
+        None,
+    )
+    if fallback_row is not None:
+        return _git_recovery_bytes(root, fallback_row)
+    raise MigrationBlocked(
+        f"declared reference has no recoverable baseline: {raw_reference}"
+    )
+
+
+def _reference_expected_bytes(
+    root: Path,
+    rows: list[dict[str, object]],
+    mapped: list[tuple[dict[str, object], str, str, str, str]],
+    *,
+    raw_reference: str,
+    actual_reference: str,
+) -> tuple[bytes, bytes]:
+    baseline = _reference_baseline_bytes(
+        root,
+        rows,
+        raw_reference=raw_reference,
+        actual_reference=actual_reference,
+    )
+    expected = _rewrite_group_reference(
+        baseline,
+        original_reference=raw_reference,
+        actual_reference=actual_reference,
+        mapped=mapped,
+        forward=True,
+    )
+    return baseline, expected
+
+
+def _research_synthesis_support_fingerprints(
+    root: Path,
+    rows: list[dict[str, object]],
+) -> dict[str, dict[str, str | None]]:
+    recovery = next(
+        (
+            row.get("recovery")
+            for row in rows
+            if _is_research_synthesis_row(row)
+            and isinstance(row.get("recovery"), dict)
+        ),
+        None,
+    )
+    pointer = recovery.get("pointer") if isinstance(recovery, dict) else None
+    match = re.fullmatch(
+        r"git:(?P<head>[0-9a-f]{40}):.+@sha256-v1:[0-9a-f]{64}",
+        pointer or "",
+    )
+    if match is None:
+        raise MigrationBlocked("research/synthesis support has no fixed point")
+    result: dict[str, dict[str, str | None]] = {}
+    for row in rows:
+        observed = row.get("observed_result")
+        inherited = (
+            observed.get("support_fingerprints")
+            if isinstance(observed, dict)
+            else None
+        )
+        if isinstance(inherited, dict):
+            result.update(
+                {
+                    str(key): value
+                    for key, value in inherited.items()
+                    if isinstance(value, dict)
+                }
+            )
+    reference_paths = {
+        str(reference)
+        for row in rows
+        for reference in row.get("reference_rewrite_set", [])
+        if isinstance(reference, str)
+    }
+    verified_targets = _verified_target_map(rows)
+    reference_paths = {
+        verified_targets.get(relative, relative)
+        for relative in reference_paths
+    }
+    current_targets = {
+        target_key
+        for _, _, _, target_key, _ in _research_synthesis_mapping(rows)
+    }
+    reference_paths.difference_update(current_targets)
+    for relative in sorted(
+        set(RESEARCH_SYNTHESIS_SUPPORT_PATHS) | reference_paths
+    ):
+        path = _safe_workspace_path(root, relative)
+        if not path.is_file():
+            continue
+        completed = subprocess.run(
+            [
+                "git",
+                "cat-file",
+                "--filters",
+                f"--path={relative}",
+                f"{match.group('head')}:{relative}",
+            ],
+            cwd=root,
+            check=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        result[relative] = {
+            "before": (
+                _fingerprint(completed.stdout)
+                if completed.returncode == 0
+                else None
+            ),
+            "after": fresh_epoch_contract._path_fingerprint(path),
+        }
+    return result
+
+
+def apply_research_synthesis_migrations(
+    root: Path,
+    rows: list[dict[str, object]],
+) -> list[dict[str, object]]:
+    """Move the settled research/synthesis lane as one recoverable group."""
+
+    mapped = _research_synthesis_mapping(rows)
+    target_by_source = {
+        source_key: target_key
+        for _, source_key, _, target_key, _ in mapped
+    }
+    target_by_source.update(_verified_target_map(rows))
+    research_targets = {
+        target_key for _, _, _, target_key, _ in mapped
+    }
+    snapshots: dict[Path, bytes | None] = {}
+    reference_contexts: dict[tuple[str, str], Path] = {}
+    reference_states: dict[tuple[str, str], tuple[bytes, bytes]] = {}
+    for row, source_key, fingerprint, target_key, identity in mapped:
+        owner = _safe_workspace_path(root, row.get("owner"))
+        if not owner.is_file():
+            raise MigrationBlocked(f"target owner does not exist: {row.get('owner')}")
+        source_path = _safe_workspace_path(root, source_key)
+        target_path = _safe_workspace_path(root, target_key)
+        original = _git_recovery_bytes(root, row)
+        if _fingerprint(original) != fingerprint:
+            raise MigrationBlocked("research/synthesis recovery mismatch")
+        if source_path.is_file() and source_path.read_bytes() != original:
+            raise MigrationBlocked(f"source fingerprint mismatch: {source_key}")
+        expected = _research_target_bytes(
+            root,
+            original,
+            source_key=source_key,
+            target_key=target_key,
+            target_identity=identity,
+            moved_targets=target_by_source,
+        )
+        expected = _rewrite_group_reference(
+            expected,
+            original_reference=source_key,
+            actual_reference=target_key,
+            mapped=mapped,
+            forward=True,
+        )
+        if target_path.is_file() and target_path.read_bytes() != expected:
+            raise MigrationBlocked(f"target collision: {target_key}")
+        if not source_path.is_file() and not target_path.is_file():
+            raise MigrationBlocked(f"source and target absent: {source_key}")
+        snapshots[source_path] = (
+            source_path.read_bytes() if source_path.is_file() else None
+        )
+        snapshots[target_path] = (
+            target_path.read_bytes() if target_path.is_file() else None
+        )
+        for raw_reference in row.get("reference_rewrite_set", []):
+            if not isinstance(raw_reference, str):
+                continue
+            actual_reference = target_by_source.get(
+                raw_reference,
+                raw_reference,
+            )
+            if actual_reference in research_targets:
+                continue
+            reference_path = _safe_workspace_path(root, actual_reference)
+            reference_contexts[(raw_reference, actual_reference)] = reference_path
+            baseline, expected_reference = _reference_expected_bytes(
+                root,
+                rows,
+                mapped,
+                raw_reference=raw_reference,
+                actual_reference=actual_reference,
+            )
+            reference_states[(raw_reference, actual_reference)] = (
+                baseline,
+                expected_reference,
+            )
+            if (
+                not reference_path.is_file()
+                or reference_path.read_bytes()
+                not in {baseline, expected_reference}
+            ):
+                raise MigrationBlocked(
+                    "declared reference content mismatch: "
+                    f"{actual_reference}"
+                )
+            if reference_path not in snapshots:
+                snapshots[reference_path] = (
+                    reference_path.read_bytes()
+                    if reference_path.is_file()
+                    else None
+                )
+
+    try:
+        for _, source_key, _, target_key, identity in mapped:
+            row = next(item for item in rows if item.get("source", {}).get("key") == source_key)
+            original = _git_recovery_bytes(root, row)
+            source_path = _safe_workspace_path(root, source_key)
+            target_path = _safe_workspace_path(root, target_key)
+            target_path.parent.mkdir(parents=True, exist_ok=True)
+            target_bytes = _research_target_bytes(
+                root,
+                original,
+                source_key=source_key,
+                target_key=target_key,
+                target_identity=identity,
+                moved_targets=target_by_source,
+            )
+            target_bytes = _rewrite_group_reference(
+                target_bytes,
+                original_reference=source_key,
+                actual_reference=target_key,
+                mapped=mapped,
+                forward=True,
+            )
+            _atomic_write_bytes(target_path, target_bytes)
+            if source_path.is_file():
+                source_path.unlink()
+        for (raw_reference, actual_reference), path in reference_contexts.items():
+            _, expected_reference = reference_states[
+                (raw_reference, actual_reference)
+            ]
+            if path.read_bytes() != expected_reference:
+                _atomic_write_bytes(path, expected_reference)
+    except Exception:
+        _restore_paths(snapshots)
+        raise
+
+    results: list[dict[str, object]] = []
+    for row in rows:
+        result = copy.deepcopy(row)
+        if _is_research_synthesis_row(result):
+            result["status"] = (
+                "references-reconciled"
+                if result.get("migration_disposition") == "move"
+                else "prepared"
+            )
+            result["observed_result"] = {
+                "passed": False,
+                "rollback_proved": False,
+            }
+        results.append(result)
+    return results
+
+
+def rollback_research_synthesis_migrations(
+    root: Path,
+    rows: list[dict[str, object]],
+) -> list[dict[str, object]]:
+    """Restore the research/synthesis lane to frozen source bytes."""
+
+    mapped = _research_synthesis_mapping(rows)
+    target_by_source = {
+        source_key: target_key
+        for _, source_key, _, target_key, _ in mapped
+    }
+    target_by_source.update(_verified_target_map(rows))
+    research_targets = {
+        target_key for _, _, _, target_key, _ in mapped
+    }
+    snapshots: dict[Path, bytes | None] = {}
+    reference_contexts: dict[tuple[str, str], Path] = {}
+    reference_states: dict[tuple[str, str], tuple[bytes, bytes]] = {}
+    for row, source_key, fingerprint, target_key, identity in mapped:
+        source_path = _safe_workspace_path(root, source_key)
+        target_path = _safe_workspace_path(root, target_key)
+        original = _git_recovery_bytes(root, row)
+        expected_target = _research_target_bytes(
+            root,
+            original,
+            source_key=source_key,
+            target_key=target_key,
+            target_identity=identity,
+            moved_targets=target_by_source,
+        )
+        expected_target = _rewrite_group_reference(
+            expected_target,
+            original_reference=source_key,
+            actual_reference=target_key,
+            mapped=mapped,
+            forward=True,
+        )
+        if source_path.is_file() and source_path.read_bytes() != original:
+            raise MigrationBlocked(
+                f"rollback source collision: {source_key}"
+            )
+        if target_path.is_file() and target_path.read_bytes() != expected_target:
+            raise MigrationBlocked(
+                f"rollback target collision: {target_key}"
+            )
+        if not source_path.is_file() and not target_path.is_file():
+            raise MigrationBlocked(
+                f"rollback source and target are absent: {source_key}"
+            )
+        snapshots[source_path] = (
+            source_path.read_bytes() if source_path.is_file() else None
+        )
+        snapshots[target_path] = (
+            target_path.read_bytes() if target_path.is_file() else None
+        )
+        for raw_reference in row.get("reference_rewrite_set", []):
+            if isinstance(raw_reference, str):
+                actual_reference = target_by_source.get(
+                    raw_reference,
+                    raw_reference,
+                )
+                path = _safe_workspace_path(root, actual_reference)
+                reference_contexts[(raw_reference, actual_reference)] = path
+                if actual_reference not in research_targets:
+                    baseline, expected_reference = _reference_expected_bytes(
+                        root,
+                        rows,
+                        mapped,
+                        raw_reference=raw_reference,
+                        actual_reference=actual_reference,
+                    )
+                    reference_states[(raw_reference, actual_reference)] = (
+                        baseline,
+                        expected_reference,
+                    )
+                    if (
+                        not path.is_file()
+                        or path.read_bytes()
+                        not in {baseline, expected_reference}
+                    ):
+                        raise MigrationBlocked(
+                            "declared reference content mismatch: "
+                            f"{actual_reference}"
+                        )
+                if path not in snapshots:
+                    snapshots[path] = path.read_bytes() if path.is_file() else None
+    try:
+        for (raw_reference, actual_reference), path in reference_contexts.items():
+            if path.is_file() and actual_reference not in research_targets:
+                baseline, _ = reference_states[
+                    (raw_reference, actual_reference)
+                ]
+                if path.read_bytes() != baseline:
+                    _atomic_write_bytes(path, baseline)
+        for row, source_key, fingerprint, target_key, _ in mapped:
+            original = _git_recovery_bytes(root, row)
+            if _fingerprint(original) != fingerprint:
+                raise MigrationBlocked("research/synthesis recovery mismatch")
+            source_path = _safe_workspace_path(root, source_key)
+            target_path = _safe_workspace_path(root, target_key)
+            source_path.parent.mkdir(parents=True, exist_ok=True)
+            _atomic_write_bytes(source_path, original)
+            if target_path.is_file():
+                target_path.unlink()
+    except Exception:
+        _restore_paths(snapshots)
+        raise
+    results: list[dict[str, object]] = []
+    for row in rows:
+        result = copy.deepcopy(row)
+        if _is_research_synthesis_row(result):
+            result["status"] = "prepared"
+            result["observed_result"] = {
+                "passed": False,
+                "rollback_proved": True,
+            }
+        results.append(result)
+    return results
+
+
+def _verify_markdown_links(root: Path, path: Path, relative: str) -> None:
+    try:
+        text = path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError) as error:
+        raise MigrationBlocked(
+            f"cannot read moved Markdown links: {relative}: {error}"
+        ) from error
+    for match in MARKDOWN_LINK.finditer(text):
+        destination = match.group("destination").strip("<>")
+        if destination.startswith(
+            ("#", "/", "http:", "https:", "mailto:")
+        ):
+            continue
+        locator = destination.partition("#")[0]
+        resolved = _safe_workspace_path(
+            root,
+            PurePosixPath(
+                posixpath.normpath(
+                    posixpath.join(
+                        PurePosixPath(relative).parent.as_posix(),
+                        locator,
+                    )
+                )
+            ).as_posix(),
+        )
+        if not resolved.exists():
+            raise MigrationBlocked(
+                "moved Markdown link is unresolved: "
+                f"{relative} -> {destination}"
+            )
+
+
+def verify_research_synthesis_migrations(
+    root: Path,
+    rows: list[dict[str, object]],
+) -> list[dict[str, object]]:
+    """Prove every research/synthesis move or settled in-place owner."""
+
+    mapped = _research_synthesis_mapping(rows)
+    target_by_source = {
+        source_key: target_key
+        for _, source_key, _, target_key, _ in mapped
+    }
+    target_by_source.update(_verified_target_map(rows))
+    research_targets = {
+        target_key for _, _, _, target_key, _ in mapped
+    }
+    reference_contexts: set[tuple[str, str]] = set()
+    for row, _, _, _, _ in mapped:
+        for raw_reference in row.get("reference_rewrite_set", []):
+            if not isinstance(raw_reference, str):
+                continue
+            actual_reference = target_by_source.get(
+                raw_reference,
+                raw_reference,
+            )
+            if actual_reference not in research_targets:
+                reference_contexts.add((raw_reference, actual_reference))
+    for raw_reference, actual_reference in sorted(reference_contexts):
+        _, expected_reference = _reference_expected_bytes(
+            root,
+            rows,
+            mapped,
+            raw_reference=raw_reference,
+            actual_reference=actual_reference,
+        )
+        path = _safe_workspace_path(root, actual_reference)
+        if (
+            not path.is_file()
+            or path.read_bytes() != expected_reference
+        ):
+            raise MigrationBlocked(
+                "declared reference content mismatch: "
+                f"{actual_reference}"
+            )
+    support = _research_synthesis_support_fingerprints(root, rows)
+    results: list[dict[str, object]] = []
+    for row in rows:
+        verified = copy.deepcopy(row)
+        if not _is_research_synthesis_row(verified):
+            results.append(verified)
+            continue
+        source = verified.get("source")
+        if not isinstance(source, dict):
+            raise MigrationBlocked("research/synthesis source is incomplete")
+        source_key = source.get("key")
+        fingerprint = source.get("fingerprint")
+        if not isinstance(source_key, str) or not isinstance(fingerprint, str):
+            raise MigrationBlocked("research/synthesis source is unreadable")
+        owner = _safe_workspace_path(root, verified.get("owner"))
+        if not owner.is_file():
+            raise MigrationBlocked(f"settled owner is absent: {verified.get('owner')}")
+        observed: dict[str, object]
+        if verified.get("migration_disposition") == "move":
+            target = verified.get("target")
+            if not isinstance(target, dict):
+                raise MigrationBlocked("research/synthesis target is incomplete")
+            target_key = target.get("path")
+            identity = target.get("semantic_id")
+            if not isinstance(target_key, str) or not isinstance(identity, str):
+                raise MigrationBlocked("research/synthesis target is incomplete")
+            source_path = _safe_workspace_path(root, source_key)
+            target_path = _safe_workspace_path(root, target_key)
+            if source_path.exists() or not target_path.is_file():
+                raise MigrationBlocked("research/synthesis move is incomplete")
+            original = _git_recovery_bytes(root, verified)
+            expected = _research_target_bytes(
+                root,
+                original,
+                source_key=source_key,
+                target_key=target_key,
+                target_identity=identity,
+                moved_targets={
+                    source: target
+                    for _, source, _, target, _ in mapped
+                },
+            )
+            expected = _rewrite_group_reference(
+                expected,
+                original_reference=source_key,
+                actual_reference=target_key,
+                mapped=mapped,
+                forward=True,
+            )
+            target_bytes = target_path.read_bytes()
+            if target_bytes != expected:
+                raise MigrationBlocked(f"target content mismatch: {target_key}")
+            if fresh_epoch_contract._artifact_identity(target_path) != identity:
+                raise MigrationBlocked(f"target identity mismatch: {target_key}")
+            owner_text = owner.read_text(encoding="utf-8")
+            if (
+                identity not in owner_text
+                or PurePosixPath(target_key).name not in owner_text
+            ):
+                raise MigrationBlocked(
+                    f"target owner does not index packet: {target_key}"
+                )
+            if target_path.suffix.casefold() == ".md":
+                _verify_markdown_links(root, target_path, target_key)
+            observed = {
+                "passed": True,
+                "source_absent": True,
+                "target_path": target_key,
+                "target_identity": identity,
+                "target_fingerprint": _fingerprint(target_bytes),
+                "owner": str(verified["owner"]),
+                "unexplained_old_path_references": [],
+                "support_fingerprints": support,
+            }
+        else:
+            source_path = _safe_workspace_path(root, source_key)
+            original = _git_recovery_bytes(root, verified)
+            expected = _rewrite_group_reference(
+                original,
+                original_reference=source_key,
+                actual_reference=source_key,
+                mapped=mapped,
+                forward=True,
+            )
+            if not source_path.is_file():
+                raise MigrationBlocked(f"preserved source drift: {source_key}")
+            current = source_path.read_bytes()
+            current_fingerprint = _fingerprint(current)
+            support_entry = support.get(source_key)
+            intentional_support_change = (
+                isinstance(support_entry, dict)
+                and support_entry.get("before") == fingerprint
+                and support_entry.get("after") == current_fingerprint
+            )
+            if current != expected and not intentional_support_change:
+                raise MigrationBlocked(f"preserved source drift: {source_key}")
+            observed = {
+                "passed": True,
+                "preserved_fingerprint": current_fingerprint,
+                "owner": str(verified["owner"]),
+            }
+        verified["status"] = "verified"
+        verified["observed_result"] = observed
+        verified["residual_risk"] = (
+            "semantic admission and proof reuse remain explicitly unassessed"
+        )
+        results.append(verified)
+
+    for relative, fingerprints in support.items():
+        if (
+            not relative.casefold().endswith(".md")
+            or fingerprints.get("before") == fingerprints.get("after")
+        ):
+            continue
+        path = _safe_workspace_path(root, relative)
+        if path.is_file():
+            _verify_markdown_links(root, path, relative)
+
+    needles = {
+        source_key: source_key.encode("utf-8")
+        for _, source_key, _, _, _ in mapped
+    }
+    unexplained: list[str] = []
+    for relative in _text_inventory(root):
+        path = _safe_workspace_path(root, relative)
+        if not path.is_file():
+            continue
+        content = path.read_bytes()
+        for source_key, needle in needles.items():
+            if (
+                needle in content
+                and relative not in RESEARCH_SYNTHESIS_EXPLAINED_OLD_PATH_OWNERS
+            ):
+                unexplained.append(f"{source_key} in {relative}")
+    if unexplained:
+        raise MigrationBlocked(
+            "unexplained research/synthesis old-path reference: "
+            + ", ".join(sorted(unexplained))
+        )
+    return results
+
 
 def _campaign_support_fingerprints(
     root: Path,
@@ -934,6 +2032,7 @@ def _campaign_support_fingerprints(
 def verify_campaign_migration(
     root: Path,
     rows: list[dict[str, object]],
+    allowed_support: dict[str, dict[str, object]] | None = None,
 ) -> list[dict[str, object]]:
     """Prove one moved campaign tree, v1 meaning, and locator closure."""
 
@@ -963,7 +2062,13 @@ def verify_campaign_migration(
             raise MigrationBlocked(
                 f"cannot read campaign migration target: {error}"
             ) from error
-        if target_bytes != expected:
+        supported = (
+            isinstance(allowed_support, dict)
+            and isinstance(allowed_support.get(target_key), dict)
+            and allowed_support[target_key].get("after")
+            == _fingerprint(target_bytes)
+        )
+        if target_bytes != expected and not supported:
             raise MigrationBlocked("campaign target differs from locator-only rewrite")
         source_tree_fingerprints[PurePosixPath(source_key).name] = fingerprint
         target_fingerprints[PurePosixPath(target_key).name] = _fingerprint(
@@ -1385,6 +2490,15 @@ def operate(root: Path, *, action: str, migration_id: str) -> int:
         and selected_identity.startswith("campaign:")
         and bool(campaign_indexes)
     )
+    research_synthesis_indexes = [
+        index
+        for index, row in enumerate(rows)
+        if isinstance(row, dict) and _is_research_synthesis_row(row)
+    ]
+    is_research_synthesis = (
+        _is_research_synthesis_row(selected)
+        and bool(research_synthesis_indexes)
+    )
     try:
         if is_campaign:
             campaign_rows = [rows[index] for index in campaign_indexes]
@@ -1418,6 +2532,32 @@ def operate(root: Path, *, action: str, migration_id: str) -> int:
             ):
                 rows[index] = result_row
             result_status = campaign_result[0]["status"]
+        elif is_research_synthesis:
+            typed_rows = [
+                row for row in rows if isinstance(row, dict)
+            ]
+            prepared_rows = prepare_research_synthesis_migrations(typed_rows)
+            if action == "migrate":
+                group_result = apply_research_synthesis_migrations(
+                    root,
+                    prepared_rows,
+                )
+            elif action == "rollback":
+                group_result = rollback_research_synthesis_migrations(
+                    root,
+                    prepared_rows,
+                )
+            elif action == "verify":
+                group_result = verify_research_synthesis_migrations(
+                    root,
+                    prepared_rows,
+                )
+            else:
+                raise MigrationBlocked(
+                    f"unsupported migration action: {action}"
+                )
+            rows[:] = group_result
+            result_status = rows[selected_index]["status"]
         else:
             if action == "migrate":
                 prepared = prepare_migration(selected)
@@ -1440,6 +2580,17 @@ def operate(root: Path, *, action: str, migration_id: str) -> int:
                     rollback_campaign_migration(root, campaign_result)
                 elif action == "rollback":
                     apply_campaign_migration(root, campaign_result)
+            elif is_research_synthesis:
+                if action == "migrate":
+                    rollback_research_synthesis_migrations(
+                        root,
+                        group_result,
+                    )
+                elif action == "rollback":
+                    apply_research_synthesis_migrations(
+                        root,
+                        group_result,
+                    )
             else:
                 if action == "migrate":
                     rollback_migration(root, result)
@@ -1619,12 +2770,40 @@ def _check_applied(
     expected_public: set[str] = set()
     support_changes: dict[str, dict[str, object]] = {}
     verified_campaigns: dict[str, list[dict[str, object]]] = {}
+    verified_research_synthesis: list[dict[str, object]] = []
     for row in public_rows:
         if not isinstance(row, dict) or not isinstance(row.get("source"), dict):
             continue
         source = row["source"]
         source_key = source.get("key")
         if not isinstance(source_key, str):
+            continue
+        if (
+            row.get("status") == "verified"
+            and _is_research_synthesis_row(row)
+        ):
+            verified_research_synthesis.append(row)
+            target = row.get("target")
+            target_key = (
+                target.get("path") if isinstance(target, dict) else None
+            )
+            expected_public.add(
+                target_key
+                if row.get("migration_disposition") == "move"
+                and isinstance(target_key, str)
+                else source_key
+            )
+            observed_result = row.get("observed_result")
+            if isinstance(observed_result, dict):
+                raw_support = observed_result.get("support_fingerprints")
+                if isinstance(raw_support, dict):
+                    support_changes.update(
+                        {
+                            str(key): value
+                            for key, value in raw_support.items()
+                            if isinstance(value, dict)
+                        }
+                    )
             continue
         if row.get("status") == "verified" and row.get(
             "migration_disposition"
@@ -1640,6 +2819,11 @@ def _check_applied(
                 and source_identity.startswith("campaign:")
             ):
                 verified_campaigns.setdefault(source_identity, []).append(row)
+            elif (
+                isinstance(target_key, str)
+                and target_key in support_changes
+            ):
+                pass
             else:
                 try:
                     reverified = verify_migration(root, row)
@@ -1669,7 +2853,11 @@ def _check_applied(
 
     for campaign_rows in verified_campaigns.values():
         try:
-            reverified_rows = verify_campaign_migration(root, campaign_rows)
+            reverified_rows = verify_campaign_migration(
+                root,
+                campaign_rows,
+                allowed_support=support_changes,
+            )
         except MigrationBlocked as error:
             failures.append(str(error))
             continue
@@ -1677,13 +2865,53 @@ def _check_applied(
             row.get("migration_id"): row.get("observed_result")
             for row in reverified_rows
         }
+        campaign_has_supported_change = any(
+            isinstance(row.get("target"), dict)
+            and row["target"].get("path") in support_changes
+            for row in campaign_rows
+        )
         for row in campaign_rows:
+            target = row.get("target")
+            target_key = (
+                target.get("path") if isinstance(target, dict) else None
+            )
+            if campaign_has_supported_change or (
+                isinstance(target_key, str)
+                and target_key in support_changes
+            ):
+                continue
             if observed_by_id.get(row.get("migration_id")) != row.get(
                 "observed_result"
             ):
                 failures.append(
                     f"Verified migration proof drift: {row.get('migration_id')}"
                 )
+
+    if verified_research_synthesis:
+        try:
+            reverified_rows = verify_research_synthesis_migrations(
+                root,
+                [
+                    row
+                    for row in public_rows
+                    if isinstance(row, dict)
+                ],
+            )
+        except MigrationBlocked as error:
+            failures.append(str(error))
+        else:
+            observed_by_id = {
+                row.get("migration_id"): row.get("observed_result")
+                for row in reverified_rows
+            }
+            for row in verified_research_synthesis:
+                if observed_by_id.get(row.get("migration_id")) != row.get(
+                    "observed_result"
+                ):
+                    failures.append(
+                        "Verified migration proof drift: "
+                        + str(row.get("migration_id"))
+                    )
 
     for relative, support in support_changes.items():
         if support.get("after") is not None:

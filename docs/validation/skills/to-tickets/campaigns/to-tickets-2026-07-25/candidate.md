@@ -3,7 +3,7 @@
 This candidate record references authoritative owners instead of copying
 their identities or decisions. The intended contract and M0 semantic units
 remain in [Prompt 1](prompt1-m0.md), research provenance remains in the
-[research packet](../../../../../research/to-tickets-deploy-2026-07-25.md), active
+[research packet](../../../../../research/skills/to-tickets/RP-to-tickets-20260725-01.md), active
 dispositions remain in the
 [synthesis](../../../../../synthesis/skills/to-tickets.md), and the campaign
 [manifest](manifest.json) owns exact identities, evidence dispositions, and

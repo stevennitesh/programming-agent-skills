@@ -5,7 +5,7 @@
   "decision": "complete",
   "fixed_git_head": "f3be70c31dd8f2ae9f12a75248065ef313790bda",
   "sources": {
-    "research": "docs/research/review-deploy-2026-07-24.md",
+    "research": "docs/research/skills/review/RP-review-20260724-01.md",
     "synthesis": "docs/synthesis/skills/review.md",
     "reusable_fixtures": "docs/validation/evals/review-2026-07-24-prompt4/fixtures"
   },

@@ -1,3 +1,7 @@
+---
+artifact_id: RP-to-tickets-20260725-01
+---
+
 # To Tickets Deploy Research Packet
 
 ## Research lock
@@ -19,7 +23,7 @@
   installation, campaign state, or Git state; shaping unsettled source intent;
   implementation or tracker delivery; claiming exact wording efficacy.
 - **Note and write authority:** create only
-  `docs/research/to-tickets-deploy-2026-07-25.md`.
+  `docs/research/skills/to-tickets/RP-to-tickets-20260725-01.md`.
 - **Return owner:** Deploy Campaign coordinator.
 - **Research status:** answered; `research-complete`.
 

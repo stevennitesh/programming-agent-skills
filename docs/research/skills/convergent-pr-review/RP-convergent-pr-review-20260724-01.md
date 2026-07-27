@@ -1,3 +1,7 @@
+---
+artifact_id: RP-convergent-pr-review-20260724-01
+---
+
 # Convergent PR Review Research Packet
 
 - Campaign epoch: `2026-07-24`
@@ -531,7 +535,7 @@ Authorized unit completed: Deploy Research Pass
 Decision: research-complete
 Campaign shape: pending
 Runtime identities: current=git-tree:d2210fc11b357f1e2f69408a8a21bd9d422c677a; M0=specification-only@sha256:469734af7b346c0f327d07fbd2a001d8b3f76cd985aa7c9468a53c6944326e4e; H1=pending; V1=pending; P1=pending; canonical=pending; installed=pending
-Artifacts changed: docs/research/convergent-pr-review-2026-07-24.md
+Artifacts changed: docs/research/skills/convergent-pr-review/RP-convergent-pr-review-20260724-01.md
 Evidence used or reused: fresh blind primary-source discovery; complete frozen-upstream and current-package inspection; synthesis, historical evaluations, and language packets as historical-admission-only; no behavioral evidence reused
 Residual gaps: optimal reviewer count, statistically independent LLM review, portable atomic dirty-tree capture, exact safe Git recipe, and candidate behavioral effect remain unproved
 Recommended next unit: Deploy Prompt 2

@@ -2,7 +2,7 @@
 
 The intended contract and minimum semantic units remain authoritative in
 [Prompt 1](prompt1-m0.md). Research provenance remains in the
-[research packet](../../../research/skill-facets/to-spec/2026-07-25-deploy-research.md),
+[research packet](../../../research/skills/to-spec/RP-to-spec-20260725-01.md),
 and the active dispositions remain in the
 [synthesis](../../../synthesis/skills/to-spec.md) and campaign
 [manifest](manifest.json).

@@ -410,7 +410,7 @@ separate.
 
 Exactly one tracked research-note path is authorized for the next unit:
 
-`docs/research/parallel-implement-2026-07-24-r2.md`
+`docs/research/skills/parallel-implement/RP-parallel-implement-20260724-02.md`
 
 No Research Pass work has started.
 

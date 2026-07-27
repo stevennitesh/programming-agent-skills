@@ -1,3 +1,7 @@
+---
+artifact_id: RP-implement-20260726-01
+---
+
 # Implement Research Map
 
 Use `../../../synthesis/methods/source-distillation-flow.md` only when
