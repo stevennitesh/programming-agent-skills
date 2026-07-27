@@ -1,15 +1,17 @@
 # Pack Composition Contract
 
 This is the sole composition-decision owner for Fresh Composition Epoch
-`FCE-20260727-01`. The epoch selected 25 skills because the sequestered,
+`FCE-20260727-01`. The epoch initially selected 25 skills because the sequestered,
 skill-name-free M0 discovery decomposed the intended engineering outcome into
 15 problem-first capability families, then split them only where authority,
 proof seam, lifecycle, scale, or interaction mode required a different owner.
 That mapping produced 25 non-overlapping owner capabilities, and the admitted
-Catalog returned zero Cards. Equality with the current package count is
-therefore an observed mapping result, not a selection premise.
+Catalog returned zero Cards.
 
-Revision 1 binds the complete fingerprinted pre-discovery fixed point, then freezes the tested environment, finite research order, capability
+Revision 2 preserves all 25 capabilities while consolidating the former
+`improve-codebase` owner into `audit-codebase`, leaving 24 selected skills.
+It binds the complete fingerprinted pre-discovery fixed point, then freezes the
+tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
 scenarios, load policy, and acyclic campaign proof graph. It contains no H1,
 candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
@@ -898,7 +900,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 1,
+    "contract_revision": 2,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -943,7 +945,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "github-issue-comment-body:stevennitesh/programming-agent-skills#36:5081636826#sha256-v1:b48d5b27ed87d0c651fa46d7859e6724be3a9a581a05e0997b6461fec1c82428",
       "github-issue-body:stevennitesh/programming-agent-skills#39#sha256-v1:f8115df444ab80f15fdb49610d96152cdff2edc12a5f03bb50efaba308a840a3",
       "github-issue-body:stevennitesh/programming-agent-skills#50#sha256-v1:21d89976101c1815c6e08f921d6045f97615bfdad8b3a3babc6ed40ca9d463bb",
-        "docs/synthesis/skill-context-relationships.md#sha256-v1:99935160bc0b4053282763dd6857add487425cf7c9fc3c55f5284de7f6bd027e"
+      "git-commit:2710890325c51a2120656a8d1233d442f6454c1a",
+      "docs/synthesis/skill-context-relationships.md#sha256-v1:99935160bc0b4053282763dd6857add487425cf7c9fc3c55f5284de7f6bd027e"
     ],
     "status": "frozen"
   },

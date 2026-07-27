@@ -61,8 +61,8 @@
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_fingerprint": "sha256-v1:f6ce8f28792341988c9f1e0d7fb2c3e7adc8ff6b4fa2d95cdd6180e4bbaf8af5",
-    "contract_revision": 1,
+    "contract_fingerprint": "sha256-v1:f433bece32b0c3cc7e825718511835ce83048bac961da473ce1be7edd06a16f4",
+    "contract_revision": 2,
     "fixed_point": {
       "environment": "surface=Codex Desktop; model=gpt-5.6-sol; reasoning_effort=medium; thread_id=019f9c92-07fb-7b80-b8a2-a218bbfd9a1f; workspace_kind=project; operating_system=Windows; shell=PowerShell; python=3.12.12; filesystem_authority=workspace-write; request_sandbox=windows_elevated; evidence_tools=workspace exec, GitHub connector/gh read fallback, Node REPL request metadata",
       "repository_tree": "97cb4931b0c91964b5f86ea2931875fd46168be5",
@@ -449,7 +449,7 @@
       "return_packet": "A verified triage state and exact next owner",
       "skill_id": "SK-013"
     },
-    "slice_id": "FCE-20260727-01:r1:SK-013",
+    "slice_id": "FCE-20260727-01:r2:SK-013",
     "source_pointers": [
       "docs/research/skill-pack-composition/epochs/FCE-20260727-01/pre-discovery-fixed-point.json#sha256-v1:98a9c9f84c788049557fc4f352f8c9b3c862f0d6da083c5751001acd1357e2d9",
       "docs/research/skill-pack-composition/epochs/FCE-20260727-01/independent-discovery.json#sha256-v1:54c55c9efe02194fb7a350824ffcfa7feca96734ac49c01b478f265c82e2e48d",
@@ -460,9 +460,10 @@
       "github-issue-comment-body:stevennitesh/programming-agent-skills#36:5081636826#sha256-v1:b48d5b27ed87d0c651fa46d7859e6724be3a9a581a05e0997b6461fec1c82428",
       "github-issue-body:stevennitesh/programming-agent-skills#39#sha256-v1:f8115df444ab80f15fdb49610d96152cdff2edc12a5f03bb50efaba308a840a3",
       "github-issue-body:stevennitesh/programming-agent-skills#50#sha256-v1:21d89976101c1815c6e08f921d6045f97615bfdad8b3a3babc6ed40ca9d463bb",
+      "git-commit:2710890325c51a2120656a8d1233d442f6454c1a",
       "docs/synthesis/skill-context-relationships.md#sha256-v1:99935160bc0b4053282763dd6857add487425cf7c9fc3c55f5284de7f6bd027e"
     ]
   },
-  "slice_fingerprint": "sha256-v1:2d14c0136dee9d991bfef5f1b8b180c3c3dbae691237fc069b78ea5397be1693",
+  "slice_fingerprint": "sha256-v1:63a6f4a0f9e9e23c3c3c573b776090b1e03a867792c7d655301a242688ec83f0",
   "status": "contract-slice-blueprint"
 }

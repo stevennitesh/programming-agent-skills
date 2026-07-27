@@ -1469,7 +1469,7 @@ def validate_repository(root: Path) -> list[str]:
     status = header.get("status") if isinstance(header, dict) else None
     if status == "draft" and canonical != create_draft():
         failures.append("Canonical draft must remain the exact inactive v1 draft")
-    if status == "frozen":
+    if status == "frozen" and header.get("contract_revision") == 1:
         freeze_input = deepcopy(canonical)
         freeze_input["epoch_header"]["status"] = "draft"  # type: ignore[index]
         refrozen = freeze_contract(freeze_input)

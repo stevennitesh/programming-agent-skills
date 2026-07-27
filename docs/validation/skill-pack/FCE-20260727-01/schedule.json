@@ -7,7 +7,7 @@
       "role": "leaf",
       "sequence": 1,
       "skill_id": "SK-001",
-      "slice_fingerprint": "sha256-v1:9407282ee6d956e2c11dca703fbfb83e6bb946dd7561859f248dd6b410cd9242",
+      "slice_fingerprint": "sha256-v1:251b265e302d2a92606df36c6eecf21d9b0399306d619278e1a1fc1c21d2aa7b",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/repo-bootstrap.json",
       "tier": "leaf-provider"
     },
@@ -18,7 +18,7 @@
       "role": "leaf",
       "sequence": 2,
       "skill_id": "SK-002",
-      "slice_fingerprint": "sha256-v1:fab2f703c08ff4b4e5fda44cf0ef8608832d733795814c79f87635fa748adfec",
+      "slice_fingerprint": "sha256-v1:9b6cdd438bc60d35c39fc2f423186ed2900e64fb164c5176f1954296a6aee1ee",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/domain-modeling.json",
       "tier": "leaf-provider"
     },
@@ -29,7 +29,7 @@
       "role": "leaf",
       "sequence": 3,
       "skill_id": "SK-003",
-      "slice_fingerprint": "sha256-v1:cdc7fce82ee427e9cfe2d4a57a44ecdfec5a65116890c1607510c32ee8936f31",
+      "slice_fingerprint": "sha256-v1:7301209775dc35290b073242206f1e822131f081d7d464d2498133fe223f9caf",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/research.json",
       "tier": "leaf-provider"
     },
@@ -40,7 +40,7 @@
       "role": "leaf",
       "sequence": 4,
       "skill_id": "SK-004",
-      "slice_fingerprint": "sha256-v1:8f2f82f3adb88388abbd91c70e16382901ac55a286bf7af17d38966cd8e47519",
+      "slice_fingerprint": "sha256-v1:42209e3f248490d0b4100e573175db23553e07e507461e10ef2a25390b35f36b",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/prototype.json",
       "tier": "leaf-provider"
     },
@@ -51,7 +51,7 @@
       "role": "leaf",
       "sequence": 5,
       "skill_id": "SK-005",
-      "slice_fingerprint": "sha256-v1:0647a902466df244816a3c3ad6fbe64ec7ceebd234f85a688bb4377a41a3a211",
+      "slice_fingerprint": "sha256-v1:21f800798241dd0ecbdb3281e5f1b9ba078a72040f0b6f3dbda2d4a298342dcc",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/diagnosing-bugs.json",
       "tier": "leaf-provider"
     },
@@ -62,7 +62,7 @@
       "role": "leaf",
       "sequence": 6,
       "skill_id": "SK-006",
-      "slice_fingerprint": "sha256-v1:6d1a6d261e3d0d02ea777e63b83a2b9272dc30137da5aa6f59a4d0c6567bc035",
+      "slice_fingerprint": "sha256-v1:b6b56692a15e8d879b1b2706290931f98a73321596b5c991f380908496b772e6",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/tdd.json",
       "tier": "leaf-provider"
     },
@@ -73,7 +73,7 @@
       "role": "leaf",
       "sequence": 7,
       "skill_id": "SK-007",
-      "slice_fingerprint": "sha256-v1:8cb42ef995ca9989a83a13e24e0037202a80590f40e9bc89f91dfe35dc2be394",
+      "slice_fingerprint": "sha256-v1:9b5166a8a2c96d5c0c90f4a91afc0d9958368a56f0f910ec5a66c9d0f68f899c",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/codebase-design.json",
       "tier": "leaf-provider"
     },
@@ -84,7 +84,7 @@
       "role": "leaf",
       "sequence": 8,
       "skill_id": "SK-008",
-      "slice_fingerprint": "sha256-v1:fe07a832383a3906dad4d0b3f831bdcc88cbd21c1e8ffa81769f9dffa4650c07",
+      "slice_fingerprint": "sha256-v1:bc2aac6adcad1839fb6afdb2a45a517aa3849bee47ea1b3003c9c7581d024526",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/grilling.json",
       "tier": "leaf-provider"
     },
@@ -95,7 +95,7 @@
       "role": "leaf",
       "sequence": 9,
       "skill_id": "SK-009",
-      "slice_fingerprint": "sha256-v1:8fa8d2158699add3ad972c41e7b5f1808b258d17936ece36e9d769b913b7ab7f",
+      "slice_fingerprint": "sha256-v1:cccdc0a4bac730ac70105bd2ec20ae5688dba05361fc12a37990d646397edfe1",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/to-questionnaire.json",
       "tier": "leaf-provider"
     },
@@ -106,7 +106,7 @@
       "role": "leaf",
       "sequence": 10,
       "skill_id": "SK-010",
-      "slice_fingerprint": "sha256-v1:7542835e0e8c01be319c0c1a91d1caeccd9b26aa32c95b5ef6b21799b9929581",
+      "slice_fingerprint": "sha256-v1:3a1c104e850f7e3a6d596c6cff29493271ca4f9bb0cd52d787362f20feb9cc7c",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/handoff.json",
       "tier": "leaf-provider"
     },
@@ -119,7 +119,7 @@
       "role": "leaf",
       "sequence": 11,
       "skill_id": "SK-011",
-      "slice_fingerprint": "sha256-v1:54d05ae6928d8fa27da678f01d0c9ad8303ae65c037cb36bba2bbca43cb25a13",
+      "slice_fingerprint": "sha256-v1:578dfdcf966750c8c8c312fe8c24b7cf5867c11b14fb1ff1c3e51d1897971d1d",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/to-spec.json",
       "tier": "leaf-provider"
     },
@@ -130,7 +130,7 @@
       "role": "leaf",
       "sequence": 12,
       "skill_id": "SK-012",
-      "slice_fingerprint": "sha256-v1:7c9fc1dfa6629ec8129414f1cb76e3106829f306afa08d8ef6fb7544a0197458",
+      "slice_fingerprint": "sha256-v1:099b522a10976b1e722e00da9b29354084328f4b31d943971923502a227bfd59",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/to-tickets.json",
       "tier": "leaf-provider"
     },
@@ -141,7 +141,7 @@
       "role": "leaf",
       "sequence": 13,
       "skill_id": "SK-013",
-      "slice_fingerprint": "sha256-v1:2d14c0136dee9d991bfef5f1b8b180c3c3dbae691237fc069b78ea5397be1693",
+      "slice_fingerprint": "sha256-v1:63a6f4a0f9e9e23c3c3c573b776090b1e03a867792c7d655301a242688ec83f0",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/triage.json",
       "tier": "leaf-provider"
     },
@@ -152,7 +152,7 @@
       "role": "leaf",
       "sequence": 14,
       "skill_id": "SK-014",
-      "slice_fingerprint": "sha256-v1:0ba84be338edfa10ed4b32a456996797fd647ab1b1b3a3f5400618216c6c5556",
+      "slice_fingerprint": "sha256-v1:f63062ae3730f72e0ebbe713d6b8da689371c0f539df6d2dab8ff604cb08a255",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/convergent-pr-review.json",
       "tier": "leaf-provider"
     },
@@ -165,7 +165,7 @@
       "role": "leaf",
       "sequence": 15,
       "skill_id": "SK-015",
-      "slice_fingerprint": "sha256-v1:28b0f8b636a7dbaeb23cd35979a76d4a4dc15bd4b0603bd2dbb4ac330604885d",
+      "slice_fingerprint": "sha256-v1:e2fc990f8f8664f7482d6103a38c3c5d0a75ae8c00815ae34bcca0dc13612ec4",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/review.json",
       "tier": "leaf-provider"
     },
@@ -178,7 +178,7 @@
       "role": "leaf",
       "sequence": 16,
       "skill_id": "SK-016",
-      "slice_fingerprint": "sha256-v1:28f9f8490f21c4582f51df5782fc85b16ade96885b50b89990a0722ac195e470",
+      "slice_fingerprint": "sha256-v1:701ee990c5a89c917743a8a662d5b00844a840916c496272b55bb54895d21975",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/resolving-merge-conflicts.json",
       "tier": "leaf-provider"
     },
@@ -189,7 +189,7 @@
       "role": "leaf",
       "sequence": 17,
       "skill_id": "SK-017",
-      "slice_fingerprint": "sha256-v1:12869461ecb06e28d98aec4e781fd98bfe380762f9a551a2c5c8380cc6418a25",
+      "slice_fingerprint": "sha256-v1:bd12fe2f67ede550cf83e510a49daed059d8927ef1d5115f367b20324e7faa9a",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/audit-codebase.json",
       "tier": "leaf-provider"
     },
@@ -200,7 +200,7 @@
       "role": "leaf",
       "sequence": 18,
       "skill_id": "SK-018",
-      "slice_fingerprint": "sha256-v1:1d4adf4e5ce2496b5bf4b657a508a813fffc845495faa3b02de21dff3d186c4a",
+      "slice_fingerprint": "sha256-v1:4587357fd3954e8271823b20512b48dfecb6ddf88537e82f167daad7b46337d4",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/simplify-code.json",
       "tier": "leaf-provider"
     },
@@ -211,7 +211,7 @@
       "role": "leaf",
       "sequence": 19,
       "skill_id": "SK-019",
-      "slice_fingerprint": "sha256-v1:7e13196669265bbc7d6f56ddb6166adc5d8bf7b34f2e695c472afbe8cc922ea9",
+      "slice_fingerprint": "sha256-v1:3cd4cabc6306c5b3f758a9ebccc1efa0ad2424c2bdadbe3ce72de6e5a7d1ab05",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/writing-great-skills.json",
       "tier": "leaf-provider"
     },
@@ -225,7 +225,7 @@
       "role": "executable-aggregate",
       "sequence": 20,
       "skill_id": "SK-020",
-      "slice_fingerprint": "sha256-v1:223079d6cda8f28aec90c6f1bb14a8ae3b8efd3c1716dc8a96d66a55443b585b",
+      "slice_fingerprint": "sha256-v1:67cb7f9024cb885b58b973ef05e6a5dccb163d1e1dc32636c5725d0be9fb30a1",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/grill-with-docs.json",
       "tier": "executable-aggregate"
     },
@@ -239,7 +239,7 @@
       "role": "executable-aggregate",
       "sequence": 21,
       "skill_id": "SK-021",
-      "slice_fingerprint": "sha256-v1:3b76715e9a396fe92b7ad824610647e512658f97b6eab650e309e70ceca11d41",
+      "slice_fingerprint": "sha256-v1:5e0f688d0a23209cc86b1ecefe389f915cef9336b745c23fb77e3df8d4ade723",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/wayfinder.json",
       "tier": "executable-aggregate"
     },
@@ -255,7 +255,7 @@
       "role": "executable-aggregate",
       "sequence": 22,
       "skill_id": "SK-022",
-      "slice_fingerprint": "sha256-v1:7b6f7f942ed9f00e25b4b7afab8fe12a47d86eac1c09fe8442fbff70b1e913cf",
+      "slice_fingerprint": "sha256-v1:55c76293293a4d3bdd8186b5758657d35b5e98a3441813815b5158dd6b88412d",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/implement.json",
       "tier": "executable-aggregate"
     },
@@ -272,7 +272,7 @@
       "role": "executable-aggregate",
       "sequence": 23,
       "skill_id": "SK-023",
-      "slice_fingerprint": "sha256-v1:22c165eca63b1c074cf51632568945c6193da192141178fc8c53763e2a5443a0",
+      "slice_fingerprint": "sha256-v1:53f32d6dabd1a92e718b61260c537d2cdf1ca29c1721748d06fa8dbb68e70328",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/parallel-implement.json",
       "tier": "executable-aggregate"
     },
@@ -307,15 +307,15 @@
       "role": "router",
       "sequence": 24,
       "skill_id": "SK-025",
-      "slice_fingerprint": "sha256-v1:68160aae22877c5e61e843218c016d2d27d512aa6fed464dafe344c4b0414985",
+      "slice_fingerprint": "sha256-v1:df8fe5012d1a145d354be3383b2a2e21c40686f0a6f571744082b6c6f1b9a665",
       "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/skill-router.json",
       "tier": "router"
     }
   ],
   "composition_epoch_id": "FCE-20260727-01",
-  "contract_fingerprint": "sha256-v1:f6ce8f28792341988c9f1e0d7fb2c3e7adc8ff6b4fa2d95cdd6180e4bbaf8af5",
+  "contract_fingerprint": "sha256-v1:f433bece32b0c3cc7e825718511835ce83048bac961da473ce1be7edd06a16f4",
   "contract_path": "docs/synthesis/skill-pack.md",
-  "contract_revision": 1,
+  "contract_revision": 2,
   "fixed_point": {
     "environment": "surface=Codex Desktop; model=gpt-5.6-sol; reasoning_effort=medium; thread_id=019f9c92-07fb-7b80-b8a2-a218bbfd9a1f; workspace_kind=project; operating_system=Windows; shell=PowerShell; python=3.12.12; filesystem_authority=workspace-write; request_sandbox=windows_elevated; evidence_tools=workspace exec, GitHub connector/gh read fallback, Node REPL request metadata",
     "repository_tree": "97cb4931b0c91964b5f86ea2931875fd46168be5",

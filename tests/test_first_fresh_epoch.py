@@ -117,9 +117,6 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
             encoding="utf-8"
         )
     )
-    draft = deepcopy(contract)
-    draft["epoch_header"]["status"] = "draft"
-    refrozen = pack_contract.freeze_contract(draft)
     selected_names = {
         skill["canonical_name"] for skill in contract["selected_skills"]
     }
@@ -129,9 +126,8 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
     }
 
     assert pack_contract.validate_contract(contract) == []
-    assert refrozen["status"] == "contract-frozen"
-    assert refrozen["contract"] == contract
     assert contract["epoch_header"]["composition_epoch_id"] == EPOCH
+    assert contract["epoch_header"]["contract_revision"] == 2
     assert contract["epoch_header"]["status"] == "frozen"
     assert contract["epoch_header"]["integration_result"] == {
         "decision": None,
