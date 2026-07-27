@@ -17,10 +17,11 @@ and its exhaustive associated non-empty Ready-for-agent graph. The parent is
 the delivery boundary, not direct implementation scope.
 
 If invocation is delegated, return a routing blocker before mutation. Return
-one selected item to `$implement`; return an incomplete, ambiguous, unsettled,
-or unready graph to `$to-tickets` as one exhaustive repair packet. Exclude
-graph creation or repair, generic parallel investigation, review-only work,
-and invocation based only on available concurrency.
+one selected item to `$implement`. Return an actually incomplete or
+contradictory ticket graph to `$to-tickets` as one exhaustive repair packet;
+return unsettled source meaning to its source owner. Exclude graph creation or
+repair, generic parallel investigation, review-only work, and invocation based
+only on available concurrency.
 
 The root alone admits scope, reconciles durable state, qualifies concurrency,
 claims and dispatches work, accepts returns, lands commits, routes conflicts
@@ -36,11 +37,16 @@ domain guidance. If required setup is missing or incompatible, recommend
 Freeze the parent outcome, exhaustive child and follow-up graph, Charter,
 Source Trace, fixed point, acceptance, required proof, commitment boundary,
 non-goals, review route, closeout rule, dependency edges, and each ticket's To
-Tickets execution profile and applicable Change Closure facts. A stateful
-ticket must carry its applicable state-boundary matrix. Missing or
-contradictory graph, readiness, profile, required closure, or matrix
-information is a graph defect; return the complete repair packet instead of
-reconstructing its owner's judgment.
+Tickets execution packet and profile, including grounding, correctness and
+robustness obligations, authority prerequisites, expected writes, proof, and
+applicable Change Closure facts. A stateful ticket must carry its applicable
+state-boundary matrix. Resolve authority prerequisites before a ticket becomes
+dispatchable. Missing or contradictory graph, readiness, profile, required
+closure, or matrix information is a graph defect; return the complete repair
+packet instead of reconstructing its owner's judgment.
+
+Freeze an explicit source, caller, or repository campaign Repair budget when
+supplied; otherwise set the campaign Repair-generation budget to exactly `2`.
 
 Use one canonical event stream through
 [RUN-LEDGER.md](references/RUN-LEDGER.md) and `scripts/run_ledger.py`.
@@ -60,10 +66,10 @@ A proved same-campaign landing may satisfy readiness as
 `landed-awaiting-lock`, but it never closes the tracker item. Rollback,
 invalidation, or failed proof removes that overlay and reblocks dependents.
 
-Start from the frozen execution profiles. Requalify only pairs whose semantic
-ownership, expected production writes, proof seams or scarce proof resources,
-ordering, or serial tripwires overlap, remain uncertain, or changed during
-reconciliation. Dispatch concurrently only when these dimensions are
+Start from the frozen graph and execution profiles. Requalify only pairs whose
+semantic ownership, expected production writes, proof seams or scarce proof
+resources, ordering, or serial tripwires overlap, remain uncertain, or changed
+during reconciliation. Dispatch concurrently only when these dimensions are
 independently bounded and every packet remains inspectable; otherwise dispatch
 serially. Protected data, permissions, trust boundaries, irreversible state,
 migrations, and cutovers require one production-path tracer first with retry,
@@ -106,6 +112,12 @@ the drained current `HEAD`, including all applicable state-boundary branches
 and high-risk interactions. Reconcile every assigned Change Closure
 obligation: remove superseded or redundant paths, or verify each intentional
 retention's owner, reason, proof, and Removal Trigger.
+
+If a same-campaign landing or verified external implementation invalidates a
+remaining ticket's commitments or graph facts, return one `$to-tickets` repair
+packet naming the implementation identity, before-and-after evidence,
+invalidated fields, and affected tickets. Keep ordinary blockers, regressions,
+conflicts, and review findings inside this workflow.
 
 Preserve stale or conflicted packets without landing. Choose a safe serial
 route or invoke `$resolving-merge-conflicts` from the preserved operation.

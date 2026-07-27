@@ -24,13 +24,21 @@ tracker-backed work, also require the configured Ready-for-agent facts:
 bounded slice, dependency state, proof lane, expected write scope,
 parallel-safety judgment, and scope fence.
 
-Preserve supplied work-unit, learning, migration, verification, domain or ADR,
-supported edge and error, and exclusion facts. A named target remains binding;
-do not substitute another item or make blocked or incomplete work ready.
+Preserve the complete source-owned packet: grounding and Repository Reuse,
+Commitment Boundary, Invariants and Trust Boundaries, supported states,
+failure, recovery, compatibility, environmental and observability
+obligations, prohibited behavior, proof, closure, scope fence, explicit Repair
+budget, migration, domain or ADR facts, and exclusions. A named target remains
+binding; do not substitute another item or make blocked or incomplete work
+ready.
 
-Return unsettled source, contradictory acceptance, missing readiness, or a
-defective ticket graph to its source, triage, or shaping owner before
-production or tracker mutation. Route an exhaustive parent graph to
+Return ordinary unsettled source, contradictory acceptance, missing readiness,
+or a malformed item to its caller, source, or triage owner before production
+or tracker mutation. Recommend `$to-tickets` only when a verified landed
+predecessor or post-publication implementation change invalidated the current
+ticket's commitments or graph facts. Name the prior ticket or commit,
+before-and-after evidence, invalidated fields, and affected ticket, then stop
+without mutation or widening. Route an exhaustive parent graph to
 `$parallel-implement`, review-only work to `$review` or
 `$convergent-pr-review`, and conflict-only reconciliation to
 `$resolving-merge-conflicts`.
@@ -50,17 +58,18 @@ Mutation read-back. A competing, partial, or mismatched claim blocks
 implementation. A direct item fabricates no tracker state.
 
 Freeze one immutable Charter before production mutation. Reuse settled packet
-facts for outcome, acceptance, supported state branches, proof, non-goals, and
-scope; add only the runtime fixed point, authorized writes, scope fence, and
-finite Repair budget. Select the budget from settled caller, repository, or
-risk authority; if no finite bound is available, Return the decision before
-mutation.
+facts for intent, grounding, correctness, robustness, scope, proof, closure,
+non-goals, prohibited behavior, and any explicit Repair budget. Add only the
+runtime fixed point and confirmed authorized writes. Derive a scope fence only
+when a direct item lacks one. Use the explicit source, caller, or repository
+Repair budget; otherwise default the selected-item budget to exactly `2`.
 
-Inspect the relevant seams and credible alternatives, then choose one narrow
-observable path inside the Charter. Choose under the routed Code Quality
-Contract: test necessity, available reuse, ownership, depth, clarity, proof,
-and domain fidelity. A technique that changes a commitment, permission,
-supported environment, or scope Returns for caller judgment.
+Start from the ticket's grounding. Refresh only a stale, uncertain, or
+contradicted seam. Generate alternatives only when material uncertainty or a
+real tradeoff remains, then choose one narrow observable path under the routed
+Code Quality Contract: test necessity, available reuse, ownership, depth,
+clarity, proof, and domain fidelity. A technique that changes a commitment,
+permission, supported environment, or scope Returns for caller judgment.
 
 Invoke `$tdd` when behavior and a red-capable seam are settled. For a bug, use
 `$tdd` only when expected behavior, exact symptom, cause, and a trusted
@@ -70,9 +79,11 @@ mode. Integrate only a complete bounded Return that preserves the Charter.
 ## Execute
 
 Implement and prove the narrow path, then expand through every assigned
-acceptance and supported state branch. Keep one bounded slice and proof story:
-tie every changed artifact to acceptance or its necessary support purpose,
-include required coupled surfaces, and Return adjacent work.
+acceptance, prohibited behavior, supported state, invariant, Trust Boundary,
+failure, recovery, compatibility, environmental, and observability obligation.
+Keep one bounded slice and proof story: tie every changed artifact to
+acceptance or its necessary support purpose, include required coupled surfaces,
+and Return adjacent work.
 
 Bind proof to the exact candidate and its proof inputs. Reuse it while the
 exact candidate and proof inputs remain unchanged; rerun only invalidated or

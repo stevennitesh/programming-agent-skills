@@ -268,7 +268,7 @@ def test_experimental_aggregate_marker_cannot_hide_stale_setup_file() -> None:
     ]
 
 
-def test_promoted_implement_matches_accepted_pruning_contract() -> None:
+def test_current_implement_preserves_promoted_and_author_contract() -> None:
     canonical_dir = CUSTOM / "implement"
     inventory = {"SKILL.md", "agents/openai.yaml"}
 
@@ -279,7 +279,7 @@ def test_promoted_implement_matches_accepted_pruning_contract() -> None:
     } == inventory
 
     assert tree_hash(canonical_dir) == (
-        "e7a7e9d80185e557271bbe0fd45a40f4a1e1c3b36365b0eaae74444e8c3d5ffc"
+        "8246bb701edcbcf7e773f78c484dc2caf13f2ebc2562c8bf48f77a8c6d64a93d"
     )
     promoted = (canonical_dir / "SKILL.md").read_text(encoding="utf-8")
     normalized = " ".join(promoted.split())
@@ -289,7 +289,7 @@ def test_promoted_implement_matches_accepted_pruning_contract() -> None:
         "A named target remains binding",
         "exhaustive parent graph to `$parallel-implement`",
         "Freeze one immutable Charter",
-        "finite Repair budget",
+        "default the selected-item budget to exactly `2`",
         "Invoke exactly one formal route",
         "complete caller-admitted, Charter-preserving, proof-bounded batch",
         "For Local Markdown, append the final closeout packet",

@@ -223,7 +223,7 @@ def test_first_epoch_schedule_matches_every_immutable_blueprint() -> None:
         assert blueprint["slice"]["skill"] == skill_by_id[entry["skill_id"]]
 
 
-def test_first_epoch_invocation_and_relationship_parity() -> None:
+def test_current_invocation_and_relationship_topology_preserve_first_epoch() -> None:
     contract = pack_contract.parse_contract(
         (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
     )
@@ -252,7 +252,7 @@ def test_first_epoch_invocation_and_relationship_parity() -> None:
     ).read_text(encoding="utf-8")
     runtime_table = relationship_text.split("## Runtime Composition", 1)[1]
     runtime_table = runtime_table.split("The accepted future", 1)[0]
-    expected_runtime: set[tuple[str, str, str, str]] = set()
+    expected_runtime: set[tuple[str, str, str]] = set()
     pattern = re.compile(
         r"^\| `([^`]+)` \| ([^|]+?) \| `\$([^`]+)` \| (.+) \|$"
     )
@@ -266,7 +266,6 @@ def test_first_epoch_invocation_and_relationship_parity() -> None:
                 caller,
                 match.group(2).strip().replace("`", ""),
                 match.group(3),
-                match.group(4),
             )
         )
     actual_runtime = {
@@ -274,7 +273,6 @@ def test_first_epoch_invocation_and_relationship_parity() -> None:
             skill_by_id[row["caller_skill_id"]]["canonical_name"],
             row["verb"],
             skill_by_id[row["target_skill_id"]]["canonical_name"],
-            row["entry_condition"],
         )
         for row in contract["relationships"]
         if row["caller_skill_id"] != id_by_name["skill-router"]

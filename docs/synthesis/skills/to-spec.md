@@ -1,5 +1,16 @@
 # To Spec Deploy Synthesis
 
+> Status (2026-07-27): historical evidence for the exact 2026-07-25 Deploy
+> Campaign bytes. A later authorized Author pass retained the proven four-gate
+> runtime while clarifying the parent decision contract, exact reuse, the To
+> Tickets boundary, source-triggered content, and `ready-spec`. Five fresh
+> fixed-scenario controls exposed no registered broad wording deficit, so a
+> larger rewrite was `reject-no-control-deficit`. Canonical
+> `skills/custom/to-spec/` is current runtime authority at campaign-tree
+> SHA-256
+> `8619f529d374efc08003ba0991757e769e147496653f7ed3f8d0091054992783`.
+> No installed sync is claimed.
+
 Status: Deploy Prompt 4 decision for campaign `to-spec-2026-07-25`;
 `accepted`.
 

@@ -1376,9 +1376,57 @@ def test_workflow_trace_matches_to_spec_publication_authority() -> None:
         "Publish, verify, and reconcile",
     ]
     normalized = " ".join(to_spec.split())
-    assert "Delegate exactly one create operation" in normalized
+    assert "For exact matching state, reuse the verified parent" in normalized
+    assert "delegate exactly one create operation" in normalized
     assert "compare it with the frozen draft" in normalized
     assert "recommend `$to-tickets` only after verified success" in normalized
+
+
+def test_to_spec_handoff_keeps_ticket_design_downstream() -> None:
+    to_spec = (CUSTOM / "to-spec/SKILL.md").read_text(encoding="utf-8")
+    to_tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
+    spec = " ".join(to_spec.split())
+    tickets = " ".join(to_tickets.split())
+    spec_lower = spec.lower()
+    tickets_lower = tickets.lower()
+
+    for owned_concept in (
+        "purpose",
+        "boundaries",
+        "limitations",
+        "decisions and their owners",
+        "required behavioral",
+        "acceptance objectives",
+        "Source Trace",
+        "Removal Trigger",
+    ):
+        assert owned_concept.lower() in spec_lower
+    for downstream_concept in (
+        "bounded repository grounding",
+        "ticket slices",
+        "expected writes",
+        "concrete proof lanes",
+        "dependency graph and ready frontier",
+        "execution profiles",
+        "parallel-safety decisions",
+        "implementation technique",
+        "default Repair budgets",
+    ):
+        assert downstream_concept.lower() in spec_lower
+    for ticket_owner in (
+        "inspect enough code to ground",
+        "ticket boundaries",
+        "expected durable writes",
+        "dependency order",
+        "ready frontier",
+        "execution profiles",
+        "parallel-safety judgment",
+    ):
+        assert ticket_owner.lower() in tickets_lower
+    assert "Paths are evidence, not an implementation plan." in spec
+    assert "## Code Quality Contract" not in to_spec
+    assert "`ready-spec`" in spec
+    assert "`published-spec`" not in spec
 
 
 def test_implementation_closeout_requires_the_spec_axis() -> None:
@@ -1429,7 +1477,7 @@ def test_implementation_workflows_compress_steps_without_repeating_proof() -> No
     assert "Reuse settled packet facts" in implement_flat
     assert "exact candidate and proof inputs remain unchanged" in implement_flat
     assert "rerun only invalidated or repository-required proof" in implement_flat
-    assert "Start from the frozen execution profiles" in parallel_flat
+    assert "Start from the frozen graph and execution profiles" in parallel_flat
     assert "Requalify only" in parallel_flat
     assert "Carry worker proof as slice evidence" in parallel_flat
     assert "only interaction or readiness proof" in parallel_flat
@@ -1439,7 +1487,9 @@ def test_implementation_workflows_compress_steps_without_repeating_proof() -> No
     for synthesis in (implement_synthesis, parallel_synthesis):
         synthesis_flat = " ".join(synthesis.replace("> ", "").split())
         assert "historical evidence for the exact pre-efficiency bytes" in synthesis_flat
-        assert "No fresh behavior evaluation or installed sync is claimed" in synthesis_flat
+        assert "pre-change controls `[1, 1, 1, 1, 1]`" in synthesis_flat
+        assert "exact current candidate `[5, 5, 5, 5, 5]`" in synthesis_flat
+        assert "No installed sync is claimed" in synthesis_flat
 
 
 def test_planning_and_delivery_activate_preventive_code_quality_contract() -> None:
@@ -1498,6 +1548,79 @@ def test_planning_and_delivery_activate_preventive_code_quality_contract() -> No
         if line.startswith("| `docs/agents/engineering-contract.md` |")
     )
     assert "`to-spec`" in contract_owner
+
+
+def test_ticket_and_delivery_packets_preserve_quality_and_route_repairs() -> None:
+    tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
+    implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
+    parallel = (CUSTOM / "parallel-implement/SKILL.md").read_text(
+        encoding="utf-8"
+    )
+    worker = (
+        CUSTOM / "parallel-implement/references/WORKER-BRIEF.md"
+    ).read_text(encoding="utf-8")
+    relationships = (
+        ROOT / "docs/synthesis/skill-context-relationships.md"
+    ).read_text(encoding="utf-8")
+    tickets_flat = " ".join(tickets.split())
+    implement_flat = " ".join(implement.split())
+    parallel_flat = " ".join(parallel.split())
+    worker_flat = " ".join(worker.split())
+
+    for field in (
+        "**Intent:**",
+        "**Grounding:**",
+        "**Correctness:**",
+        "**Scope and proof:**",
+        "**Delivery:**",
+        "**Closure:**",
+    ):
+        assert field in tickets
+    assert "Treat paths as evidence, not ticket boundaries or implementation" in (
+        tickets_flat
+    )
+    assert "non-goal, which is outside delivery scope" in tickets_flat
+    assert "prohibited behavior, which requires an acceptance or proof obligation" in (
+        tickets_flat
+    )
+    assert "Delivery skills own their default budgets" in tickets_flat
+    assert "Dependency edges and tracker order remain graph facts" in tickets_flat
+
+    assert "Preserve the complete source-owned packet" in implement_flat
+    assert "Add only the runtime fixed point and confirmed authorized writes" in (
+        implement_flat
+    )
+    assert "default the selected-item budget to exactly `2`" in implement_flat
+    assert "Refresh only a stale, uncertain, or contradicted seam" in implement_flat
+    assert "Recommend `$to-tickets` only when a verified landed predecessor" in (
+        implement_flat
+    )
+    assert "malformed item to its caller, source, or triage owner" in implement_flat
+
+    assert "Tickets execution packet and profile" in parallel_flat
+    assert "Resolve authority prerequisites before a ticket becomes dispatchable" in (
+        parallel_flat
+    )
+    assert "campaign Repair-generation budget to exactly `2`" in parallel_flat
+    assert "same-campaign landing or verified external implementation invalidates" in (
+        parallel_flat
+    )
+    for field in (
+        "Applicable engineering and domain pointers",
+        "Grounding: current owner",
+        "Commitment Boundary, prohibited behavior",
+        "Applicable Invariants, Trust Boundaries",
+        "Confirmed authority boundary",
+        "routed Code Quality Contract",
+        "return it as `needs-feedback`",
+    ):
+        assert field in worker_flat
+    assert "Ordinary malformed or unsettled source returns to its caller" in (
+        relationships
+    )
+    assert "Ordinary blockers, regressions, conflicts, and review findings remain" in (
+        relationships
+    )
 
 
 def test_interface_alternatives_receive_curated_fresh_context() -> None:
@@ -1741,7 +1864,9 @@ def test_mutating_workflows_require_readback() -> None:
             assert "read that mutation back" in text
         elif name == "to-spec":
             normalized = " ".join(text.split())
-            assert "Refetch or reread the full created parent" in normalized
+            assert (
+                "Refetch or reread the full created or reused parent" in normalized
+            )
             assert "compare it with the frozen draft" in normalized
             assert "durable read-back" in normalized
         elif name == "to-tickets":
@@ -1803,10 +1928,9 @@ def assert_to_tickets_semantic_contract(
         "serial tripwire",
     ):
         assert profile_field in shape_contract
-    assert "finite repair generation budget" in shape_contract
-    assert "settled source or user" in shape_contract
-    assert "otherwise set it to exactly `2`" in shape_contract
-    assert "do not infer a higher budget from ticket size or risk" in shape_contract
+    assert "finite nonnegative repair generation budget" in shape_contract
+    assert "only when the source or caller explicitly supplies one" in shape_contract
+    assert "delivery skills own their default budgets" in shape_contract
     assert "expand-migrate-contract" in shape_contract
     assert re.search(r"contract only after old usage ends", shape_contract)
 
@@ -1923,7 +2047,7 @@ def test_to_tickets_preserves_coverage_readiness_and_frontier_contract() -> None
     packages = (
         (
             CUSTOM / "to-tickets",
-            "1307b851a57815aefb4408a09e81cca80d6ea9f1a5f28c438cbf224e8a7e2c79",
+            "2925b0d1f4a492706c45f131e27d11731172b1a74d8191d0c2bcd2053ec7bd17",
             "prompt3-candidate",
         ),
     )
@@ -1954,23 +2078,28 @@ def assert_to_spec_semantic_contract(
     assert re.search(r"(?m)^name: to-spec$", skill)
     assert not implicit_policy(package_root)
 
-    if profile == "incumbent":
+    if profile == "author-handoff":
         assert re.findall(r"(?m)^### \d+\. ([A-Za-z ,]+)$", skill) == [
             "Setup",
             "Trace settled source and state",
             "Draft and cover",
             "Publish, verify, and reconcile",
         ]
-        for incumbent_semantic in (
-            "one durable parent specification",
+        for current_semantic in (
+            "one durable parent decision contract",
             "bidirectional commitment ledger",
-            "mutation read-back",
+            "source trace",
+            "paths are evidence, not an implementation plan",
+            "bounded repository grounding",
+            "publication-or-reuse proof",
             "publication-recovery",
-            "published-spec",
+            "ready-spec",
             "$repo-bootstrap",
             "$to-tickets",
         ):
-            assert incumbent_semantic in normalized
+            assert current_semantic in normalized
+        assert re.search(r"reuse only an exact match.*verified absence", normalized)
+        assert "published-spec" not in normalized
         return
 
     assert profile in {
@@ -2097,8 +2226,8 @@ def test_to_spec_prompt3_packages_share_the_parameterized_semantic_owner() -> No
     packages = (
         (
             CUSTOM / "to-spec",
-            "0de95bfab13ef2c38018ef3b6d4964db9eabedf5a8b167bcde7cc8931b68c12d",
-            "incumbent",
+            "8619f529d374efc08003ba0991757e769e147496653f7ed3f8d0091054992783",
+            "author-handoff",
         ),
         (
             ROOT / "skills/experimental/to-spec",
@@ -2421,18 +2550,19 @@ def test_state_boundary_proof_has_one_owner_and_explicit_consumers() -> None:
     assert "final required proof once on the drained current `HEAD`" in parallel_flat
     assert "all applicable state-boundary branches" in parallel_flat
     assert "State-boundary matrix:" in worker
-    assert "return it as `needs-feedback`" in worker
+    assert "return it as `needs-feedback`" in " ".join(worker.split())
     assert "This compatibility field is not a campaign" in ledger
     assert "outcome or completion proxy" in ledger
 
 
 def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
+    implement_flat = " ".join(implement.split())
 
     assert not implicit_policy(CUSTOM / "implement")
-    assert "Accept one caller-selected item only" in implement
-    assert "A named target remains binding" in implement
-    assert "do not substitute another item" in implement
+    assert "Accept one caller-selected item only" in implement_flat
+    assert "A named target remains binding" in implement_flat
+    assert "do not substitute another item" in implement_flat
     assert "exhaustive parent graph to\n`$parallel-implement`" in implement
     assert "staged worker" not in implement
 

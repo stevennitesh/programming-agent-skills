@@ -1,6 +1,6 @@
 ---
 name: to-tickets
-description: Explicitly create a verified dependency-ordered Ready-for-agent ticket graph from one settled bounded source; exclude shaping, triage, implementation, and delivery.
+description: Explicitly create or repair a verified dependency-ordered Ready-for-agent ticket graph from one settled bounded source; exclude unsettled intake or product design, triage, implementation, and delivery.
 ---
 
 # To Tickets
@@ -42,25 +42,42 @@ publication, read-back, recovery evidence, Return, and completion. Tracker,
 engineering, domain, ADR, setup, triage, and delivery owners retain their
 foreign contracts.
 
-## Shape
+Classify the requested operation as create or repair. Repair authority exists
+only for an explicit user-selected repair, a verified `$parallel-implement`
+graph-defect packet, or a post-publication implementation invalidation that
+names the landed predecessor or commit, before-and-after evidence, invalidated
+graph fields, and affected tickets. Repair does not settle a source-owned fact.
+Admit repair only while the underlying source commitments remain settled.
 
-Before slicing, inspect the source-relevant current behavior owner,
-representative entry paths and callers, Proof Seams, tests, configuration, and
-available Repository Reuse. Treat paths as evidence, not ticket boundaries.
+Change only configured tracker state, including configured Local Markdown
+tracker files. Do not mutate source or domain truth, code, implementation,
+review, unrelated worktree paths, the Git index, `HEAD`, remotes,
+installation, or delivery.
+
+## Shape
 
 Inspect the exact target parent, related children, relationships, roles, claims,
 open or closed state, and ready frontier before design. Distinguish verified
-absence, a byte-and-semantics-matching reusable graph, divergence, and unknown
-state. Reuse only an exact match. For divergence, a claim, partial authorship,
-or an indeterminate prior create, return `existing-state-conflict` with
-observed identities and the smallest needed authority or source delta, without
-creating anything.
+absence, an exact semantic match, verified unclaimed divergence, and unknown
+state. Create only after verified absence. Reuse only an exact semantic match.
+Repair frozen mismatches only under the admitted repair authority. A claim,
+partial authorship, ambiguous identity, unauthorized divergence, or
+indeterminate prior mutation returns `existing-state-conflict` with observed
+identities and the smallest needed authority or source delta.
+
+Only when graph work remains, inspect enough code to ground the affected
+tickets: the current behavior owner, representative callers and entry paths,
+Proof Seams, tests, configuration, Repository Reuse, and repository
+constraints. Treat paths as evidence, not ticket boundaries or implementation
+technique.
 
 Build a bidirectional commitment ledger. Account exactly once for every
 in-scope requirement, exclusion, deferral, dependency, risk, and proof
 obligation, and map each one to at least one ticket or graph-level fence. The
 result must contain one or more implementation tickets; omitted, duplicated,
 contradictory, or ownerless commitments block publication.
+Distinguish a non-goal, which is outside delivery scope, from prohibited
+behavior, which requires an acceptance or proof obligation.
 Map every source-visible Change Closure obligation, including displaced paths
 and intentionally retained compatibility, to one ticket or graph-level fence.
 
@@ -72,19 +89,28 @@ microtasks; split only where separate proof, authority, rollback, dependency
 unlock, permission, state, migration, or ownership makes separate completion
 valuable.
 
-Give each ticket one bounded slice and Source Trace; observable desired
-behavior, acceptance, edge and error cases; relevant seams, expected durable
-write scope, and scope fence; dependency state, true blockers or `none`, and
-stable tracker order; proof lane, verification authority, and evidence; a
-parallel-safety judgment; a finite Repair generation budget; and applicable
-work-unit, learning, migration, domain, ADR, compatibility, and exclusion
-facts. When applicable, include displaced surfaces and each retained
-compatibility path's owner, reason, proof, and Removal Trigger. Preserve a
-finite nonnegative Repair generation budget explicitly set by the settled
-source or user; otherwise set it to exactly `2`. Do not infer a higher budget
-from ticket size or risk. A ticket that lacks any required Ready-for-agent fact
-remains non-ready; correct locally or return `source-gap` when source authority
-is missing.
+Give each ticket a compact execution packet:
+
+- **Intent:** one bounded outcome, Source Trace, observable acceptance,
+  Commitment Boundary, and explicit non-goals.
+- **Grounding:** current behavior owner, representative callers and entry
+  paths, Repository Reuse, repository constraints, and source-owned
+  prototype, research, domain, ADR, migration, or compatibility facts.
+- **Correctness:** applicable Invariants, Trust Boundaries, supported states,
+  edge and error cases, failure and recovery behavior, compatibility and
+  environmental constraints, observability or measured-claim obligations,
+  and prohibited behavior with negative proof.
+- **Scope and proof:** expected durable writes, scope fence, required authority
+  prerequisites, Proof Seam or lane, and verification authority and evidence.
+- **Delivery:** dependency state, true blockers or `none`, stable tracker
+  order, and a parallel-safety judgment.
+- **Closure:** displaced surfaces and each retained compatibility path's owner,
+  reason, proof, and Removal Trigger.
+
+Transport a finite nonnegative Repair generation budget only when the source
+or caller explicitly supplies one. Delivery skills own their default budgets.
+A ticket that lacks any required Ready-for-agent fact remains non-ready;
+correct locally or return `source-gap` when source authority is missing.
 
 For each stateful ticket, record the distinct supported absent or initial,
 reusable, legacy or incompatible, public access-path, variant, lifecycle, and
@@ -100,10 +126,10 @@ blockers, contradictory order, and empty or false frontiers before
 publication, or return `source-gap` when correction needs source authority.
 
 Give every ticket an execution profile covering semantic ownership, expected
-production writes, proof seams and scarce proof resources, dependency order,
-overlap, serial tripwires, inspectability, and evidenced independence or
-serialization. Treat uncertain independence conservatively as serial; never
-infer it from filenames alone.
+production writes, proof seams and scarce proof resources, overlap, serial
+tripwires, inspectability, and evidenced independence or serialization.
+Dependency edges and tracker order remain graph facts. Treat uncertain
+independence conservatively as serial; never infer it from filenames alone.
 
 For protected data, permissions, trust boundaries, irreversible state,
 migrations, or cutovers, put one production-path tracer before dependent work
@@ -167,11 +193,6 @@ top-level parent-delivery run and the verified graph is parent-backed,
 non-empty, exhaustive, and Ready-for-agent. A direct graph, delegated request,
 generic preference for concurrency, incomplete graph, or missing explicit
 delivery request uses the `$implement` route instead.
-
-Change only configured tracker state, including configured Local Markdown
-tracker files. Do not mutate source or domain truth, code, implementation,
-review, unrelated worktree paths, the Git index, `HEAD`, remotes,
-installation, or delivery.
 
 Return exactly one of `setup-precondition`, `source-gap`,
 `existing-state-conflict`, `publication-recovery`, or `ready-graph`. A

@@ -1,15 +1,23 @@
 # Worker Brief Contract
 
-Generate one assignment with `run_ledger.py brief`, then add the ticket-owned Source Trace, acceptance, expected scope, and focused proof that the ledger cannot infer.
+Generate one assignment with `run_ledger.py brief`, then add the ticket-owned
+execution packet that the ledger cannot infer.
 
 ## Common assignment
 
 - Work item and mode
 - Actor ID and preflight packet
 - Charter and Source Trace
+- Applicable engineering and domain pointers
 - Verified base and absolute worktree
 - Stable temp, pytest, and cache roots
-- Acceptance, exclusions, and dependencies
+- Grounding: current owner, representative callers and entry paths, Repository
+  Reuse, and repository constraints
+- Acceptance, Commitment Boundary, prohibited behavior, exclusions, and
+  dependencies
+- Applicable Invariants, Trust Boundaries, supported states, and failure,
+  recovery, compatibility, environmental, and observability obligations
+- Confirmed authority boundary
 - Change Closure: `<displaced paths and retention obligations / not applicable>`
 - State-boundary matrix: `<applicable branches and interactions / not applicable>`
 - Expected write scope; proposed concrete write set when shared fixtures are plausible
@@ -21,7 +29,15 @@ The assigned worktree is the workspace. Reconcile its root, base, clean status, 
 
 One worker owns one lane and returns one packet. Never spawn, integrate, formally review, mutate trackers, push, or widen scope. Use `$tdd` for red-testable behavior. For an uncertain bug, use `$diagnosing-bugs` in fix mode and return after trusted regression proof.
 
-Prove every assigned matrix branch. If repository inspection reveals a supported semantic branch omitted from the assignment, return it as `needs-feedback`; do not silently narrow acceptance or widen the commitment boundary.
+Choose implementation technique under the routed Code Quality Contract. Start
+from assigned grounding and refresh only facts that current evidence makes
+stale or contradictory.
+
+Prove every assigned acceptance, prohibited behavior, correctness and
+robustness obligation, and matrix branch. If repository inspection contradicts
+the assignment or reveals an omitted supported semantic branch, return it as
+`needs-feedback`; do not silently rewrite the packet, narrow acceptance, or
+widen the commitment boundary.
 
 Run focused proof by default. Run broader proof only for shared-behavior risk or an explicit route. Product intent, public/domain contracts, dependency meaning, security posture, and adjacent work remain outside the lane unless the Source Trace authorizes them.
 
