@@ -147,9 +147,9 @@ Build faster without making the repository harder to trust. Move quickly through
 
 ## Engineering Contract
 
-[`$repo-bootstrap`](skills/custom/repo-bootstrap/SKILL.md) installs a small `docs/agents/engineering-contract.md` in each target repository. The contract owns engineering taste, shared vocabulary, and cross-skill discipline while leaving implementation technique flexible.
+[`$repo-bootstrap`](skills/custom/repo-bootstrap/SKILL.md) installs a small `docs/agents/engineering-contract.md` in each target repository. The contract owns engineering taste, preventive code-quality defaults, shared vocabulary, and cross-skill discipline while leaving implementation technique flexible.
 
-The shared spine is `Explore -> Choose -> Prove -> Expand -> Simplify -> Lock`. Explore opens the solution space. Proof establishes one real tracer bullet. Expand covers requirements and improves the design with what the proof revealed. Simplify removes accidental complexity. **Lock** closes only with separate Spec / Standards review, evidence, and named residual risk.
+The shared spine is `Explore -> Choose -> Prove -> Expand -> Simplify -> Lock`. Explore grounds the work while opening credible alternatives. Choose selects the strongest evidence-backed design. Proof establishes one real tracer bullet. Expand covers requirements and applicable failure, state, trust, compatibility, and performance paths while letting evidence improve the design. Simplify reduces the proved shape without erasing its capability. **Lock** closes only after whole-diff Spec / Standards review, canonical evidence, cleanup, and named residual risk.
 
 For the same core behavior without installing skills, use [`AGENTS_PORTABLE_FALLBACK.md`](AGENTS_PORTABLE_FALLBACK.md) as a standalone repository-level `AGENTS.md`.
 

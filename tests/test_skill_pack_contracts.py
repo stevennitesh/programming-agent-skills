@@ -189,21 +189,126 @@ def test_github_closeout_clears_dependency_frontier_safely() -> None:
     assert "GitLab default: no" in bootstrap
 
 
-def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
-    bootstrap = (CUSTOM / "repo-bootstrap/SKILL.md").read_text(encoding="utf-8")
-    domain = (CUSTOM / "repo-bootstrap/domain.md").read_text(encoding="utf-8")
-    assert re.findall(r"(?m)^## ([A-Za-z]+)$", bootstrap) == [
-        "Inventory",
-        "Reconcile",
-        "Choose",
-        "Draft",
-        "Provision",
-        "Verify",
+def test_github_relationship_modes_are_explicit_before_publication() -> None:
+    github_trackers = (
+        ROOT / "docs/agents/issue-tracker.md",
+        CUSTOM / "repo-bootstrap/issue-tracker-github.md",
+    )
+    for tracker in github_trackers:
+        text = tracker.read_text(encoding="utf-8")
+        assert "**Parent / child mode:** native-sub-issues." in text
+        assert "**Dependency mode:** native-dependencies." in text
+        assert "Resolve the authenticated operation and read-back route before" in text
+        assert "never switch representations during a publication" in text
+        assert "when available" not in text
+
+    tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
+    normalized_tickets = " ".join(tickets.split())
+    assert "resolve their operation and read-back routes once before" in tickets
+    assert "The first authorized child proves the configured" in tickets
+    assert "first applicable blocking edge" in normalized_tickets
+    assert (
+        "Never switch the frozen relationship representation" in normalized_tickets
+    )
+
+
+def test_repo_bootstrap_rejects_unconfigured_github_relationship_modes() -> None:
+    validator = runpy.run_path(
+        str(CUSTOM / "repo-bootstrap/scripts/validate_setup.py")
+    )
+    tracker = (ROOT / "docs/agents/issue-tracker.md").read_text(encoding="utf-8")
+    check = validator["github_relationship_mode_failures"]
+
+    assert check(tracker) == []
+    invalid = tracker.replace("native-sub-issues", "when-available", 1)
+    assert check(invalid) == [
+        "docs/agents/issue-tracker.md must set Parent / child mode "
+        "to one configured GitHub mode"
     ]
-    assert bootstrap.index("## Draft") < bootstrap.index("## Provision")
+    assert check(tracker) == []
+
+
+def assert_repo_bootstrap_semantic_contract(
+    package_root: Path,
+    expected_tree_sha256: str,
+    *,
+    profile: str,
+) -> None:
+    assert (
+        campaign_artifacts.campaign_tree_hash(package_root)["sha256"]
+        == expected_tree_sha256
+    )
+    bootstrap = (package_root / "SKILL.md").read_text(encoding="utf-8")
+    domain = (package_root / "domain.md").read_text(encoding="utf-8")
+    normalized = " ".join(bootstrap.lower().split())
+    assert re.search(r"(?m)^name: repo-bootstrap$", bootstrap)
+    assert not implicit_policy(package_root)
+
+    if profile == "incumbent":
+        assert re.findall(r"(?m)^## ([A-Za-z]+)$", bootstrap) == [
+            "Inventory",
+            "Reconcile",
+            "Choose",
+            "Draft",
+            "Provision",
+            "Verify",
+        ]
+        assert bootstrap.index("## Draft") < bootstrap.index("## Provision")
+    else:
+        assert profile == "m0"
+        headings = [
+            "Entry And Ownership",
+            "Resolve And Inventory",
+            "Compare And Propose",
+            "Preflight And Reconcile",
+            "Read Back And Validate",
+            "Return",
+        ]
+        assert re.findall(r"(?m)^## (.+)$", bootstrap) == headings
+        sections: dict[str, str] = {}
+        for heading in headings:
+            span = skill_pack_contract.level_two_section_span(
+                bootstrap,
+                f"## {heading}",
+            )
+            assert span is not None, (package_root, heading)
+            sections[heading] = " ".join(bootstrap[slice(*span)].lower().split())
+        required = (
+            ("Entry And Ownership", "human explicitly names repo bootstrap|source trace|explicit approval for the exact bounded delta|does not start, resume, or complete this skill|$wayfinder"),
+            ("Resolve And Inventory", "every applicable authoritative location|working tree, index, and `head`|.tmp/|.scratch/|read-only evidence|does not establish semantic compatibility or persisted mutation"),
+            ("Compare And Propose", "compatible:|delta:|conflict:|not applicable:|not a pack version or behavioral proof|one exact local and remote proposal"),
+            ("Preflight And Reconcile", "preflight all required local and external transitions|apply only the exact approved setup-owned delta|create only approved missing labels|refetch the authoritative label state|do not mutate tracker items, domain truth, the git index, `head`|after any partial failure, stop further mutation"),
+            ("Read Back And Validate", "reread every changed file|compare each observed result with the approved proposal|index and `head` to match their pre-run identities|validation is structural proof, not mutation read-back"),
+            ("Return", "compatible, changed, unchanged, blocked, and inapplicable|residual gaps|complete only when every required setup owner is compatible|setup incomplete|downstream work and the recommending workflow remain unstarted"),
+        )
+        for heading, obligations in required:
+            assert all(
+                obligation in sections[heading]
+                for obligation in obligations.split("|")
+            ), heading
+        for forbidden in (
+            "saga",
+            "compensating transaction",
+            "durable workflow state",
+            "telemetry",
+            "browser tooling",
+            "if-match",
+            "claim token:",
+            "wayfinder:map",
+        ):
+            assert forbidden not in normalized
+        assert "do not claim automatic rollback" in normalized
     assert "<context-root>/docs/adr/" in domain
     assert "following the context root recorded in `CONTEXT-MAP.md`" in domain
     assert "src/<context>/docs/adr/" not in domain
+
+
+def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
+    assert_repo_bootstrap_semantic_contract(
+        CUSTOM / "repo-bootstrap",
+        "8f89126f01867d51eeab635dc9721023c1d34d58f94a83824f2ca9e1c479b579",
+        profile="incumbent",
+    )
 
 
 def test_repo_bootstrap_marks_and_validates_setup_schema() -> None:
@@ -1099,15 +1204,18 @@ def test_convergent_review_checks_snapshot_drift_not_baseline_drift() -> None:
 def test_implement_selects_one_risk_scaled_review_route() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
 
-    review_section = implement.split("## Review", 1)[1].split("## Close", 1)[0]
-    assert "Invoke exactly one formal route" in review_section
+    review_section = implement.split("## Review", 1)[1].split(
+        "## Lock And Return", 1
+    )[0]
+    review_flat = " ".join(review_section.split())
+    assert "Invoke exactly one formal route" in review_flat
     assert re.findall(r"`\$(review|convergent-pr-review)`", review_section)[:2] == [
         "review",
         "convergent-pr-review",
     ]
-    assert "Finding Contract" in review_section
-    assert "complete caller-admitted" in review_section
-    assert "mixed-authority, partial, out-of-scope, or" in review_section
+    assert "Finding Contract" in review_flat
+    assert "complete caller-admitted" in review_flat
+    assert "mixed-authority, partial, out-of-scope, or" in review_flat
 
 
 def test_audit_codebase_replaces_improve_codebase() -> None:
@@ -1283,8 +1391,113 @@ def test_implementation_closeout_requires_the_spec_axis() -> None:
 
     for text in (review, convergent):
         assert "`Spec required: yes | no`" in text
-    assert "Supply the required Spec" in " ".join(implement.split())
+    assert "Supply `Spec required: yes`; the required Spec" in " ".join(
+        implement.split()
+    )
     assert "`Spec required: yes`" in " ".join(parallel.split())
+
+
+def test_implementation_workflows_compress_steps_without_repeating_proof() -> None:
+    implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
+    parallel = (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8")
+    integrator = (
+        CUSTOM / "parallel-implement/references/INTEGRATOR-BRIEF.md"
+    ).read_text(encoding="utf-8")
+    implement_synthesis = (
+        ROOT / "docs/synthesis/skills/implement.md"
+    ).read_text(encoding="utf-8")
+    parallel_synthesis = (
+        ROOT / "docs/synthesis/skills/parallel-implement.md"
+    ).read_text(encoding="utf-8")
+    implement_flat = " ".join(implement.split())
+    parallel_flat = " ".join(parallel.split())
+    integrator_flat = " ".join(integrator.split())
+
+    assert re.findall(r"(?m)^## (.+)$", implement) == [
+        "Admit",
+        "Execute",
+        "Review",
+        "Lock And Return",
+    ]
+    assert re.findall(r"(?m)^## (.+)$", parallel) == [
+        "Admit",
+        "Run",
+        "Review",
+        "Lock And Return",
+    ]
+    assert "tracker and label owners only for tracker-backed work" in implement_flat
+    assert "Reuse settled packet facts" in implement_flat
+    assert "exact candidate and proof inputs remain unchanged" in implement_flat
+    assert "rerun only invalidated or repository-required proof" in implement_flat
+    assert "Start from the frozen execution profiles" in parallel_flat
+    assert "Requalify only" in parallel_flat
+    assert "Carry worker proof as slice evidence" in parallel_flat
+    assert "only interaction or readiness proof" in parallel_flat
+    assert "final required proof once on the drained current `HEAD`" in parallel_flat
+    assert "only invalidated interaction or readiness proof" in integrator_flat
+    assert "run touched-area proof" not in integrator_flat
+    for synthesis in (implement_synthesis, parallel_synthesis):
+        synthesis_flat = " ".join(synthesis.replace("> ", "").split())
+        assert "historical evidence for the exact pre-efficiency bytes" in synthesis_flat
+        assert "No fresh behavior evaluation or installed sync is claimed" in synthesis_flat
+
+
+def test_planning_and_delivery_activate_preventive_code_quality_contract() -> None:
+    to_spec = (CUSTOM / "to-spec/SKILL.md").read_text(encoding="utf-8")
+    to_tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
+    implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
+    review = (CUSTOM / "review/SKILL.md").read_text(encoding="utf-8")
+    parallel = (CUSTOM / "parallel-implement/SKILL.md").read_text(
+        encoding="utf-8"
+    )
+    worker = (
+        CUSTOM / "parallel-implement/references/WORKER-BRIEF.md"
+    ).read_text(encoding="utf-8")
+    convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(
+        encoding="utf-8"
+    )
+    relationships = (
+        ROOT / "docs/synthesis/skill-context-relationships.md"
+    ).read_text(encoding="utf-8")
+
+    normalized = {
+        name: " ".join(text.split())
+        for name, text in {
+            "to-spec": to_spec,
+            "to-tickets": to_tickets,
+            "implement": implement,
+            "review": review,
+            "parallel": parallel,
+            "worker": worker,
+            "convergent": convergent,
+        }.items()
+    }
+
+    assert "implementation-adjacent source claims" in normalized["to-spec"]
+    assert "Removal Trigger" in normalized["to-spec"]
+    assert "Repository Reuse" in normalized["to-tickets"]
+    assert "Change Closure" in normalized["to-tickets"]
+    assert "Removal Trigger" in normalized["to-tickets"]
+    assert "Code Quality Contract" in normalized["implement"]
+    assert "Change Closure" in normalized["implement"]
+    assert "Removal Trigger" in normalized["implement"]
+    assert "`Spec required: yes`" in normalized["implement"]
+    assert "engineering-contract.md" in normalized["review"]
+    assert "Change Closure" in normalized["review"]
+    assert "displaced" in normalized["review"]
+    assert "**Must**" in normalized["review"]
+    assert "**Prefer**" in normalized["review"]
+    assert "Change Closure" in normalized["parallel"]
+    assert "Change Closure" in normalized["worker"]
+    assert "Change Closure" in normalized["convergent"]
+    assert "ToSpec --> Contract" in relationships
+    assert "ToTickets --> Contract" in relationships
+    contract_owner = next(
+        line
+        for line in relationships.splitlines()
+        if line.startswith("| `docs/agents/engineering-contract.md` |")
+    )
+    assert "`to-spec`" in contract_owner
 
 
 def test_interface_alternatives_receive_curated_fresh_context() -> None:
@@ -1394,9 +1607,10 @@ def test_portable_fallback_carries_the_standalone_engineering_contract() -> None
     assert re.findall(r"(?m)^## (.+)$", contract) == [
         "Shared Engineering Language",
         "Engineering Taste",
+        "Code Quality Contract",
         "Tight Engineering Spine",
         "Proof Discipline",
-        "Work State And Workers",
+        "Work State",
         "Lock",
     ]
     north_star = fallback.split("## North Star", 1)[1].split("## Engineering Taste", 1)[0]
@@ -1419,17 +1633,56 @@ def test_portable_fallback_carries_the_standalone_engineering_contract() -> None
     hard_gates = fallback.split("## Hard Gates", 1)[1].split("## Shape Before Build", 1)[0]
     for mutation in ("filesystem", "Git", "tracker", "deployment", "external"):
         assert mutation in hard_gates
+    assert "**Change closure / Stewardship:**" in hard_gates
+    assert "obsolete or duplicate by the slice" in hard_gates
+    assert "Removal Trigger" in hard_gates
     implementation = fallback.split("## Implementation Taste", 1)[1].split(
         "## Review And Report", 1
     )[0]
     assert implementation.index("RED") < implementation.index("GREEN")
     assert "oracle" in implementation
+    assert "trust-boundary validation" in implementation
+    assert "small interfaces" in implementation
+    assert "behavior tests" in implementation
+    assert "measure performance like-for-like" in implementation
     review = fallback.split("## Review And Report", 1)[1]
     assert re.findall(r"(?m)^- \*\*(Standards|Spec):\*\*", review) == [
         "Standards",
         "Spec",
     ]
     assert "Lock" in review
+    assert "Change Closure resolved every superseded or redundant path" in " ".join(
+        review.split()
+    )
+
+    quality = contract.split("## Code Quality Contract", 1)[1].split(
+        "## Tight Engineering Spine", 1
+    )[0]
+    assert "**Must** marks a correctness or safety" in quality
+    assert "deviation alone is not a defect" in quality
+    assert "not another workflow stage" in quality
+    for rule in (
+        "**Grounded implementation — must.**",
+        "**Correct and robust — must.**",
+        "**Domain faithful — must.**",
+        "**Change closure — must.**",
+        "**Deep and local — prefer.**",
+        "**Simple after proof — prefer.**",
+        "**Readable by default — prefer.**",
+        "**Explicit and provable — must.**",
+        "**Measured when relevant — must for claims.**",
+    ):
+        assert rule in quality
+    assert "supported compatibility obligation" in quality
+    assert "Removal Trigger" in quality
+    spine = contract.split("## Tight Engineering Spine", 1)[1].split(
+        "## Proof Discipline", 1
+    )[0]
+    assert "**Simplify:** perform Change Closure" in spine
+    lock = contract.split("## Lock", 1)[1]
+    assert "Change Closure proved every path superseded or made redundant" in " ".join(
+        lock.split()
+    )
 
 
 def test_readme_exposes_both_adoption_paths() -> None:
@@ -1670,7 +1923,7 @@ def test_to_tickets_preserves_coverage_readiness_and_frontier_contract() -> None
     packages = (
         (
             CUSTOM / "to-tickets",
-            "9fcd60991c88bfca2561d588762b812bb64bc0451497d964e40aa7fec2779c7a",
+            "1307b851a57815aefb4408a09e81cca80d6ea9f1a5f28c438cbf224e8a7e2c79",
             "prompt3-candidate",
         ),
     )
@@ -1844,7 +2097,7 @@ def test_to_spec_prompt3_packages_share_the_parameterized_semantic_owner() -> No
     packages = (
         (
             CUSTOM / "to-spec",
-            "3cdb41fbca411d8c2332c4e9cff52b5ef1000dd28a27422615ac6f150133e06b",
+            "0de95bfab13ef2c38018ef3b6d4964db9eabedf5a8b167bcde7cc8931b68c12d",
             "incumbent",
         ),
         (
@@ -1861,13 +2114,13 @@ def test_to_spec_prompt3_packages_share_the_parameterized_semantic_owner() -> No
         )
 
 
-def test_worker_modes_have_distinct_completion_artifacts() -> None:
+def test_parallel_delivery_roles_stay_out_of_the_shared_contract() -> None:
     contract = (ROOT / "docs/agents/engineering-contract.md").read_text(encoding="utf-8")
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
     parallel = (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8")
 
-    assert "**staged worker**" in contract
-    assert "**lane worker**" in contract
+    assert "staged worker" not in contract
+    assert "lane worker" not in contract
     assert "staged worker" not in implement
     assert "exhaustive parent graph to\n`$parallel-implement`" in implement
     assert "A lane worker or child integrator" in " ".join(parallel.split())
@@ -1887,20 +2140,17 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
     ledger = (CUSTOM / "parallel-implement/references/RUN-LEDGER.md").read_text(
         encoding="utf-8"
     )
-    parallel_steps = re.findall(r"(?m)^## (.+)$", parallel)
-    expected_steps = [
-        "Admission",
-        "Trace",
-        "Select",
-        "Open",
-        "Drain",
+    assert re.findall(r"(?m)^## (.+)$", parallel) == [
+        "Admit",
+        "Run",
         "Review",
-        "Lock",
+        "Lock And Return",
     ]
-    assert all(step in parallel_steps for step in expected_steps)
-    assert [parallel_steps.index(step) for step in expected_steps] == sorted(
-        parallel_steps.index(step) for step in expected_steps
-    )
+    run = parallel.split("## Run", 1)[1].split("## Review", 1)[0]
+    assert [
+        match.group(1)
+        for match in re.finditer(r"(?m)^\*\*(Select|Open|Drain)\.\*\*", run)
+    ] == ["Select", "Open", "Drain"]
     assert "isolated\nfresh-context lane" in parallel
     assert "## Review-Ready Handoff" in integrator
     assert re.findall(r"(?m)^## (.+)$", launch) == [
@@ -1965,7 +2215,8 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
     event_types = runpy.run_path(
         str(CUSTOM / "parallel-implement/scripts/run_ledger.py")
     )["EVENT_TYPES"]
-    drain = parallel.split("## Drain", 1)[1].split("## Review", 1)[0]
+    run = parallel.split("## Run", 1)[1].split("## Review", 1)[0]
+    drain = run.split("**Drain.**", 1)[1]
     assert "Accept a worker return only when" in drain
     assert "A blocker" in drain
     report_status = re.search(r"(?m)^status: <([^>]+)>$", worker)
@@ -1990,11 +2241,14 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
         "repair-complete",
     } <= event_types
     assert "## Cleanup" in launch
-    lock = parallel.split("## Lock", 1)[1]
-    assert "claim" in parallel.split("## Open", 1)[1].split("## Drain", 1)[0]
+    lock = parallel.split("## Lock And Return", 1)[1]
+    open_gate = run.split("**Open.**", 1)[1].split("**Drain.**", 1)[0]
+    assert "claim" in open_gate
     assert "read back" in parallel.lower()
     assert "closeout plan" in lock and "mutation read-back" in lock
-    review = parallel.split("## Review", 1)[1].split("## Lock", 1)[0]
+    review = parallel.split("## Review", 1)[1].split(
+        "## Lock And Return", 1
+    )[0]
     assert "idle" in review
 
 
@@ -2069,13 +2323,16 @@ def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts
     assert not implicit_policy(skill_dir)
     assert "recommend `$implement` and stop" not in parallel
 
-    gate = parallel.split("## Select", 1)[1].split("## Open", 1)[0]
-    assert "Dispatch concurrently only when" in gate
-    assert "otherwise dispatch serially" in gate
-    assert "return the exact blockers" in gate
+    gate = parallel.split("## Run", 1)[1].split("**Open.**", 1)[0]
+    gate_flat = " ".join(gate.split())
+    assert "Dispatch concurrently only when" in gate_flat
+    assert "otherwise dispatch serially" in gate_flat
+    assert "return the exact blockers" in gate_flat
 
-    review = parallel.split("## Review", 1)[1].split("## Lock", 1)[0]
-    lock = parallel.split("## Lock", 1)[1]
+    review = parallel.split("## Review", 1)[1].split(
+        "## Lock And Return", 1
+    )[0]
+    lock = parallel.split("## Lock And Return", 1)[1]
     assert "$review" in review
     assert "mutation read-back" in lock
     assert lock.index("child") < lock.index("parent")
@@ -2098,7 +2355,7 @@ def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts
         "child-closeout",
         "parent-closeout",
     } <= event_types
-    assert "serial tripwires" in gate and "otherwise dispatch serially" in gate
+    assert "serial tripwires" in gate_flat
 
     assert re.search(r"(?m)^\| One parent spec or PRD .* \| `\$parallel-implement` \|$", router)
     return_span = skill_pack_contract.level_two_section_span(tickets, "## Return")
@@ -2121,7 +2378,7 @@ def test_parallel_dependency_overlay_is_campaign_scoped_and_reversible() -> None
     ]
 
     for path in tracker_surfaces:
-        text = path.read_text(encoding="utf-8")
+        text = " ".join(path.read_text(encoding="utf-8").split())
         assert "landed-awaiting-lock" in text, path
         assert "same-campaign" in text, path
         assert "until Lock" in text, path
@@ -2148,8 +2405,8 @@ def test_state_boundary_proof_has_one_owner_and_explicit_consumers() -> None:
         "**State-boundary matrix.** When correctness depends on cached, persisted, "
         "resumed, grouped, projected, or session-scoped state"
     )
-    assert owner_text in contract
-    assert owner_text in seed
+    assert owner_text in " ".join(contract.split())
+    assert owner_text in " ".join(seed.split())
     admit_span = skill_pack_contract.level_two_section_span(tickets, "## Admit")
     shape_span = skill_pack_contract.level_two_section_span(tickets, "## Shape")
     assert admit_span is not None and shape_span is not None
@@ -2160,7 +2417,9 @@ def test_state_boundary_proof_has_one_owner_and_explicit_consumers() -> None:
     assert "state-boundary matrix" in shape
     assert "supported" in shape and "not applicable" in shape
     assert "graph defect" in parallel
-    assert "final proof across all applicable\nstate-boundary branches" in parallel
+    parallel_flat = " ".join(parallel.split())
+    assert "final required proof once on the drained current `HEAD`" in parallel_flat
+    assert "all applicable state-boundary branches" in parallel_flat
     assert "State-boundary matrix:" in worker
     assert "return it as `needs-feedback`" in worker
     assert "This compatibility field is not a campaign" in ledger

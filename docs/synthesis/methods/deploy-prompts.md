@@ -1073,11 +1073,21 @@ affected relationships, and residual load. Store distinct bytes once; when a
 frozen template plus recorded parameters reconstructs an exact dispatch, do
 not copy the full payload per sample.
 
+Freeze one candidate dependency set containing the canonical package, every
+referenced contract and every repo-owned acceptance test that governs the
+target skill. Record its fingerprint after candidate construction and recompute
+it immediately before Prompt 4. If the dependency fingerprint changes, stop
+before Prompt 4, rebuild the candidate from the current frozen inputs, and
+rerun compatibility proof.
+
 Before Prompt 4, run one candidate-aware focused compatibility preflight
-against the exact M0/H1 packages. First locate or factor one shared,
-parameterized semantic assertion owner that accepts an explicit package root
-and expected tree identity. Run it against unchanged current canonical bytes to
-prove the factorization preserved the incumbent contract, then against every
+against the exact M0/H1 packages. Prove a complete target-skill acceptance
+selection by tracing every frozen dependency to its governing tests. If
+completeness cannot be proved cheaply, run the full suite. First locate or
+factor one shared, parameterized semantic assertion owner that accepts an
+explicit package root and expected tree identity. Run it against unchanged
+current canonical bytes to prove the factorization preserved the incumbent
+contract, then against every
 exact candidate; Prompts 4 and 5 and the Pruning Pass reuse that same owner.
 Bind every assertion to the explicit candidate root and recorded tree identity.
 A test or verifier that still resolves the canonical package is canonical

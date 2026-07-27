@@ -85,9 +85,14 @@ Spec, or risk lens, name its sources, snapshot surfaces, proof seams, and one
 review owner. A required lens without an evidence seam is uncovered and makes
 the review `incomplete`.
 
-Trace Standards independently from repository instructions, routed guidance,
-maintained configuration, test and tool documentation, and meaningful nearby
-conventions. Load the `review` skill's `SMELL-BASELINE.md` only when local
+Trace Standards independently from repository instructions, the routed
+`docs/agents/engineering-contract.md`, maintained configuration, test and tool
+documentation, and meaningful nearby conventions. Include every displaced
+implementation, caller, registration, export, flag, test, configuration,
+documentation, and migration required by Change Closure. Apply **Must** rules
+as floors; apply **Prefer** rules only when direct evidence shows violated
+repository authority or a concrete supported cost. Load the `review` skill's
+`SMELL-BASELINE.md` only when local
 Standards are thin. Local Standards govern over fallback preferences.
 
 Trace Spec independently under the frozen `Spec required` value, in this

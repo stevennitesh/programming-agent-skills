@@ -15,6 +15,11 @@ Infer the owner and repo from `git remote -v` when the connector needs explicit 
 
 Use the `gh` CLI only as a fallback when the connector cannot perform the required operation in the current environment.
 
+For native issue relationships, use the connector action when exposed;
+otherwise use GitHub's sub-issue and issue-dependency REST endpoints through
+`gh api`. Resolve the authenticated operation and read-back route before the
+first create. Do not create a disposable capability probe.
+
 ## Pull requests as a triage surface
 
 **PRs as a request surface: no.** _(Set to `yes` if this repo treats external PRs as feature requests; `$triage` reads this flag.)_
@@ -43,10 +48,27 @@ Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement
 
 **Close implemented items:** yes.
 
+**Parent / child mode:** native-sub-issues.
+
+**Dependency mode:** native-dependencies.
+
 - **Packet**: the issue body and comments are the durable packet. A parent spec owns intent; child issues own implementation slices and closeout evidence. No separate repo-local packet is required unless `AGENTS.md` points to one. Approved implementation tickets carry the mapped `ready-for-agent` state and one category role when the source settles it.
 - **Ready-for-agent contract**: every ready item names one bounded slice, Source Trace, observable acceptance criteria, dependency state, proof lane, expected write scope, parallel-safety note, and scope fence. `$triage` owns incoming classification and verification; `$to-tickets` owns slicing and dependency order. Both produce this contract.
-- **Parent / child**: use GitHub sub-issues when available. Otherwise keep an ordered task list in the parent and put `Part of #<parent>` near the top of each child.
-- **Blocking**: use native issue dependencies when available. Otherwise put `Blocked by: #<n>, #<n>` near the top of the child body. Normally a work item is unblocked when every blocker is closed. During one recorded `$parallel-implement` campaign, a blocker with an accepted landing that remains in current integration history with valid proof is derived as `landed-awaiting-lock`; it satisfies execution readiness only for in-scope dependents in that campaign. The issue and dependency remain open until Lock. Rollback, invalidation, or failed proof removes the overlay and reblocks dependents.
+- **Parent / child**: `native-sub-issues` uses GitHub sub-issues.
+  `parent-task-list` keeps an ordered task list in the parent and puts
+  `Part of #<parent>` near the top of each child.
+- **Blocking**: `native-dependencies` uses GitHub issue dependencies.
+  `body-links` puts `Blocked by: #<n>, #<n>` near the top of the child body.
+  Normally a work item is unblocked when every blocker is closed. During one
+  recorded `$parallel-implement` campaign, a blocker with an accepted landing
+  that remains in current integration history with valid proof is derived as
+  `landed-awaiting-lock`; it satisfies execution readiness only for in-scope
+  dependents in that campaign. The issue and dependency remain open until
+  Lock. Rollback, invalidation, or failed proof removes the overlay and
+  reblocks dependents.
+- **Publication mode**: freeze both configured modes before the first create.
+  If their operation or read-back route is unavailable, stop before creation;
+  never switch representations during a publication.
 - **Ready query**: list open issues with the mapped `ready-for-agent` state, then drop issues with an unresolved blocker or assignee. Treat an open blocker as resolved only when the verified same-campaign `landed-awaiting-lock` overlay above applies. Within a parent, preserve child order; otherwise choose oldest first.
 - **Claim**: assign the work item to the owner or orchestrator before implementation dispatch; the assignee is the concurrency guard.
 - **Release**: remove the active assignee when work blocks, is abandoned, or reaches closeout.
@@ -59,7 +81,10 @@ Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement
 Used by `$wayfinder`. The **map** is a single GitHub issue with child issues as tickets.
 
 - **Map**: create one issue labelled `wayfinder:map`. Its body follows the invoking Wayfinder's `MAP-FORMAT.md` contract.
-- **Child ticket**: create one issue per ticket, linked to the map as a GitHub sub-issue when available. If sub-issues are unavailable, add the child to a task list in the map body and put `Part of #<map>` at the top of the child body. Put `Participation: HITL | AFK` near the top. Label each ticket with exactly one `wayfinder:<type>` label: `research`, `prototype`, `grilling`, or `task`.
+- **Child ticket**: create one issue per ticket using the configured
+  parent/child mode. Put `Participation: HITL | AFK` near the top. Label each
+  ticket with exactly one `wayfinder:<type>` label: `research`, `prototype`,
+  `grilling`, or `task`.
 - **Blocking**: use the work-item blocking convention. For a blocker still in fog, put `Blocked: fog - <gist>` near the top of the child body. A ticket is unblocked when every blocker is closed and any `Blocked:` marker has been removed.
 - **Frontier query**: list the map's open children, then drop tickets with an open blocker, a `Blocked:` marker, an assignee, or an active `Claim token:`. The remaining tickets in map order are the frontier; the first is the default selection.
 - **Claim**: Advance claims the selected ticket; Maintain claims the map. Use the work-item assignee convention on that item, then put `Claim token: codex/<lowercase UUIDv4>` and `Claimed at: <YYYY-MM-DDTHH:MM:SSZ>` near its top. Generate one fresh UUIDv4 per Wayfinder invocation, reuse it for every claim in that invocation, and never reuse it across invocations. Read back the assignee, exact token, and timestamp; a different token owns the item even when the assignee is the same.

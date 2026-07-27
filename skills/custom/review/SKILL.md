@@ -82,8 +82,9 @@ The caller supplies `Spec required: yes | no`; standalone Review defaults to
 the review `incomplete`. When optional Spec is absent, record it as skipped;
 do not infer intent from tests or implementation.
 
-Trace Standards from repository instructions, routed guidance, test and tool
-configuration, and meaningful nearby conventions. Load
+Trace Standards from repository instructions, the routed
+`docs/agents/engineering-contract.md`, test and tool configuration, and
+meaningful nearby conventions. Load
 [SMELL-BASELINE.md](SMELL-BASELINE.md) only when these Standards are thin.
 Repository Standards override the fallback.
 
@@ -94,11 +95,18 @@ required proof, and explicit skip. Close every entry as `inspected`, `proved`,
 prevents `complete`. Keep this ledger in context only; the terminal report
 summarizes covered and skipped work.
 
+When the target supersedes or makes behavior redundant, extend coverage beyond
+changed hunks to every displaced implementation, caller, registration, export,
+flag, test, configuration, documentation, and migration required by Change
+Closure.
+
 ## Judge
 
 Judge Standards first: whether the captured candidate is built right under
 documented repository Standards, maintainability constraints, and concrete
-actionable risk. Omit unsupported preferences.
+actionable risk. Apply **Must** rules as floors. Apply **Prefer** rules only
+when direct evidence shows violated repository authority or a concrete
+supported cost. Omit unsupported preferences.
 
 Then return attention to the pinned snapshot and Spec sources; discard the
 prior axis's conclusions, severity, counts, and ranking pressure. Judge

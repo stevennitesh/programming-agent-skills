@@ -19,6 +19,8 @@ graph, represent parent and blocking relationships, map roles and
 Ready-for-agent state, inspect claims and the frontier, and read every mutation
 back. Otherwise return `setup-precondition`, name the missing or incompatible
 surface, recommend `$repo-bootstrap`, and preserve state.
+For GitHub, consume the configured parent/child and dependency modes and
+resolve their operation and read-back routes once before the first create.
 
 Accept one exact identity-bearing settled source whose remaining work is
 implementation slicing: a verified parent specification; a direct settled
@@ -42,6 +44,10 @@ foreign contracts.
 
 ## Shape
 
+Before slicing, inspect the source-relevant current behavior owner,
+representative entry paths and callers, Proof Seams, tests, configuration, and
+available Repository Reuse. Treat paths as evidence, not ticket boundaries.
+
 Inspect the exact target parent, related children, relationships, roles, claims,
 open or closed state, and ready frontier before design. Distinguish verified
 absence, a byte-and-semantics-matching reusable graph, divergence, and unknown
@@ -55,6 +61,8 @@ in-scope requirement, exclusion, deferral, dependency, risk, and proof
 obligation, and map each one to at least one ticket or graph-level fence. The
 result must contain one or more implementation tickets; omitted, duplicated,
 contradictory, or ownerless commitments block publication.
+Map every source-visible Change Closure obligation, including displaced paths
+and intentionally retained compatibility, to one ticket or graph-level fence.
 
 Prefer independently completable vertical behavior slices. Admit a support or
 migration slice only when it has observable value and proof and names the
@@ -70,11 +78,13 @@ write scope, and scope fence; dependency state, true blockers or `none`, and
 stable tracker order; proof lane, verification authority, and evidence; a
 parallel-safety judgment; a finite Repair generation budget; and applicable
 work-unit, learning, migration, domain, ADR, compatibility, and exclusion
-facts. Preserve a finite nonnegative Repair generation budget explicitly set
-by the settled source or user; otherwise set it to exactly `2`. Do not infer a
-higher budget from ticket size or risk. A ticket that lacks any required
-Ready-for-agent fact remains non-ready; correct locally or return `source-gap`
-when source authority is missing.
+facts. When applicable, include displaced surfaces and each retained
+compatibility path's owner, reason, proof, and Removal Trigger. Preserve a
+finite nonnegative Repair generation budget explicitly set by the settled
+source or user; otherwise set it to exactly `2`. Do not infer a higher budget
+from ticket size or risk. A ticket that lacks any required Ready-for-agent fact
+remains non-ready; correct locally or return `source-gap` when source authority
+is missing.
 
 For each stateful ticket, record the distinct supported absent or initial,
 reusable, legacy or incompatible, public access-path, variant, lifecycle, and
@@ -112,16 +122,19 @@ configured tracker transition. A read-only request, changed plan, or unclear
 mutation scope leaves state unchanged and returns
 `existing-state-conflict` with the exact authority needed.
 
-Create only verified-missing children in a recoverable non-ready state, or use
-one configured atomic graph operation with equivalent proof. Immediately
-refetch each unique create before any later operation could duplicate it.
-When the tracker lacks a safe route, return `setup-precondition` before
-creation. Never repeat an indeterminate create.
+Create verified-missing children in dependency order and a recoverable
+non-ready state, or use one configured atomic graph operation with equivalent
+proof. Immediately refetch each unique create, attach and read back its frozen
+parent relationship, and attach every now-resolvable blocking edge before
+creating the next child. The first authorized child proves the configured
+parent/child route without a disposable probe; the first applicable blocking
+edge likewise proves the dependency route. When the tracker lacks a safe
+route, return `setup-precondition` before creation. Never repeat an
+indeterminate create.
 
-After all endpoints exist with matching packets, attach and read back the
-frozen parent/child and blocking relationships while new children remain
-non-ready. A missing endpoint or partial or mismatched relationship stops the
-run with `publication-recovery`; preserve created items as non-ready.
+A missing endpoint or partial or mismatched relationship stops the run with
+`publication-recovery`; preserve created items as non-ready. Never switch the
+frozen relationship representation during publication.
 
 Only after every body and relationship verifies, apply source-authorized roles
 and activate mapped Ready-for-agent state in dependency order, reading back

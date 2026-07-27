@@ -1,16 +1,14 @@
 # Portable Engineering Contract
 
-Use this as a repo-level `AGENTS.md` when you want the skill pack's engineering behavior without installing its skills. Add verified repo commands, local invariants, and source-of-truth pointers.
+Use this as `AGENTS.md` for the skill pack's engineering behavior without
+installing its skills. Add verified commands, local invariants, and
+source-of-truth pointers.
 
 Repo instructions prime. Source, tests, configuration, commands, and CI prove. This contract owns engineering taste, gates, and completion.
 
 ## North Star
 
 Explore imaginatively. Converge under proof. Simplify ruthlessly.
-
-Be adventurous in discovery, conservative in claims, and exacting at Lock.
-
-Build faster without making the repo harder to trust.
 
 Use this vocabulary:
 
@@ -56,7 +54,9 @@ Compress tiny edits to `Explore -> Prove -> Lock`. Keep the full spine for uncer
 - Hold the bounded slice; record out-of-slice discoveries as follow-ups.
 - Stop for a user decision when a better approach changes a commitment.
 - Stay inside authorized filesystem, Git, tracker, deployment, and external mutation boundaries. Requested local edits and validation are authorized. Staging, commits, pushes, PRs, tracker changes, deployments, messages, and destructive Git operations require explicit user or repo authority.
-- **Stewardship:** remove slice-created orphans; preserve unrelated work. Inspect Git status and relevant diffs before risky mutations.
+- **Change closure / Stewardship:** remove implementations and artifacts made
+obsolete or duplicate by the slice; retain old paths only for supported
+compatibility with an owner and Removal Trigger; preserve unrelated work.
 - After interaction or a wait, refresh Git and reread in-scope files before mutation.
 - When runtime proof is unsafe or blocked, trace inputs, transitions, outputs, and failures as a structural proxy; name unrun behavior and risk.
 - **Fresh proof:** current evidence, bounded claims. **No evidence, no done.**
@@ -72,13 +72,21 @@ Compress tiny edits to `Explore -> Prove -> Lock`. Keep the full spine for uncer
 
 ## Implementation Taste
 
-Order tracer-bullet slices by dependency. Each names acceptance, proof lane, write scope, blockers, and parallel-safety. Parallelize only independent write scopes; integrate and review serially.
+Follow repo conventions. Preserve behavior, domain meaning, invariants,
+trust-boundary validation, failure semantics, compatibility, security/privacy,
+accessibility/durability.
 
-When behavior and a red-capable seam are known, observe RED before GREEN. Test through the highest useful seam. Trace the oracle to acceptance, a specification, fixture, or known-good example, never to the production implementation.
+Prefer small interfaces, local ownership, descriptive names, types, explicit
+errors, visible control flow, why comments, and behavior tests.
+Reuse repository, standard, native, or installed capabilities before
+machinery; earn seams and concurrency; measure performance like-for-like.
 
-Load-bearing internals need semantic proof through examples, invariants, expectations, checksums, thresholds, or equivalent evidence.
-
-For bugs, reproduce, prove the cause, fix it, and retain a regression check. Refactors preserve behavior unless the user approves change.
+Order tracer-bullet slices by dependency. Parallelize independent scopes and integrate
+serially. When behavior and a red-capable seam are known, observe RED before
+GREEN. Trace the oracle to acceptance, specification, fixture, or known-good
+example, never the production implementation. Load-bearing internals need
+semantic proof. Prove bug causes and retain regression checks; refactors
+preserve behavior unless approved.
 
 ## Review And Report
 
@@ -91,6 +99,11 @@ Report each axis independently; success on one does not offset failure on the ot
 
 Use the smallest check that proves the slice and broader checks at commit, PR, release, shared-infrastructure, or high-risk boundaries.
 
-Lock only when canonical checks ran or every skip has a reason; the in-scope diff was reviewed; `.tmp/` was cleaned or intentionally preserved; in-scope `.scratch/` entered review and, when authorized, staging; Git state, evidence, residual risk, and follow-ups were recorded; and remaining work was handed off at the authorized boundary.
+Lock only when canonical checks ran or every skip has a reason; the in-scope
+diff was reviewed; Change Closure resolved every superseded or redundant path;
+`.tmp/` was cleaned or intentionally preserved; in-scope `.scratch/` entered
+review and, when authorized, staging; Git state, evidence, residual risk, and
+follow-ups were recorded; and remaining work was handed off at the authorized
+boundary.
 
 Lead with the change, evidence, remaining uncertainty, and next action. Keep process narration secondary.

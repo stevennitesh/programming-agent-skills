@@ -37,6 +37,11 @@ bound, and intended parent target. A missing, inaccessible, ambiguous,
 contradictory, or decision-changing gap returns `source-gap` with affected
 contract fields, unchanged tracker state, and the exact decision owner.
 
+Verify implementation-adjacent source claims against their exact code, caller,
+test, configuration, or decision pointers. If a required current-state claim
+has no verifiable pointer, return `source-gap`; do not replace source shaping
+with an independent repository survey or architecture choice.
+
 Inspect the relevant durable parent state before creation and distinguish
 verified absence, matching state, divergent state, and unknown state. Create
 only from verified absence. Updating or reconciling requires an explicitly
@@ -54,6 +59,8 @@ Build a bidirectional commitment ledger. Account once for every requirement,
 exclusion, deferral, constraint, dependency, risk, and nonblocking open note,
 and trace every specification commitment back to source authority. Do not
 invent product choices, implementation results, or a ready child-ticket graph.
+When the source supersedes behavior, carry each displaced surface and retained
+compatibility path with its owner, reason, proof, and Removal Trigger.
 
 ### 3. Draft and cover
 

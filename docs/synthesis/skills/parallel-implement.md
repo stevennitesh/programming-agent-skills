@@ -1,5 +1,11 @@
 # Parallel Implement — Active Synthesis
 
+> Status (2026-07-27): historical evidence for the exact pre-efficiency bytes.
+> A later authorized Author pass changed canonical `parallel-implement` to a
+> four-phase spine with incremental concurrency qualification and
+> identity-aware proof reuse. No fresh behavior evaluation or installed sync
+> is claimed; `skills/custom/parallel-implement/` is runtime authority.
+
 Campaign epoch: `2026-07-24-r2`
 Skill: `parallel-implement`
 Campaign shape: `minimum-candidate`

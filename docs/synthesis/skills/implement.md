@@ -1,5 +1,10 @@
 # Implement Minimum-Runtime Synthesis
 
+> Status (2026-07-27): historical evidence for the exact pre-efficiency bytes.
+> A later authorized Author pass changed canonical `implement` to a four-phase
+> spine with identity-aware proof reuse. No fresh behavior evaluation or
+> installed sync is claimed; `skills/custom/implement/` is runtime authority.
+
 ## Active Promoted And Installed Decision — 2026-07-24
 
 Decision: `complete`; exact P1 is canonical is installed is V1 is M0.

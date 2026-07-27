@@ -40,7 +40,7 @@ For each orchestrator-accepted worker packet:
 2. Inspect the actual `base..head` diff for scope, new files, stale-base overlap, conflicts, and proof.
 3. Return a stale-base, `needs-feedback`, or `blocker` packet when unsafe.
 4. Land exactly one item through the recorded mode.
-5. Verify the landed diff, run touched-area proof, append structured evidence through `run_ledger.py`, and report the work item, worker and integration SHAs, landing mode, changed files, validation, skipped checks, overlap or conflicts, decision, next need, risk, new `HEAD`, and status.
+5. Verify the landed diff, run only invalidated interaction or readiness proof, append structured evidence through `run_ledger.py`, and report the work item, worker and integration SHAs, landing mode, changed files, validation, skipped checks, overlap or conflicts, decision, next need, risk, new `HEAD`, and status.
 
 **Conflict:** stop and preserve partial state. Report the operation, status, unmerged paths, worker commit, current `HEAD`, recorded landing mode, and landing authority; return the conflict packet to the orchestrator's routed recovery boundary.
 
@@ -50,7 +50,11 @@ For each orchestrator-accepted worker packet:
 
 ## Review-Ready Handoff
 
-**Review-ready:** when the orchestrator drains the parent graph, assemble review-visible parent and child closeout metadata, require a clean in-scope state, run final validation on the candidate integration `HEAD`, and preserve the run fixed point as the review base.
+**Review-ready:** when the orchestrator drains the parent graph, assemble
+review-visible parent and child closeout metadata, require a clean in-scope
+state, verify assigned Change Closure, run final validation on the
+candidate integration `HEAD`, and preserve the run fixed point as the review
+base.
 
 Return the candidate `HEAD`, clean status, integrated worker SHAs, final validation, closeout metadata, skipped checks, residual risk, tracker readiness, and blockers. Return a review-route escalation when integrated risk exceeds the selected route. Then become idle; the orchestrator pins the target and invokes formal review.
 

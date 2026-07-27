@@ -279,7 +279,7 @@ def test_promoted_implement_matches_accepted_pruning_contract() -> None:
     } == inventory
 
     assert tree_hash(canonical_dir) == (
-        "1f61b9880b881771b579372075dd89e3bccb7ce9c94ae3bd0e30f1f43ae8724f"
+        "e7a7e9d80185e557271bbe0fd45a40f4a1e1c3b36365b0eaae74444e8c3d5ffc"
     )
     promoted = (canonical_dir / "SKILL.md").read_text(encoding="utf-8")
     normalized = " ".join(promoted.split())
@@ -294,7 +294,7 @@ def test_promoted_implement_matches_accepted_pruning_contract() -> None:
         "complete caller-admitted, Charter-preserving, proof-bounded batch",
         "For Local Markdown, append the final closeout packet",
         "retain the open item and claim through Lock and commit",
-        "commit once",
+        "Commit once",
         "commit tree to equal the locked tree",
         "partial or failed closeout Returns",
         "Return `complete` only after every applicable gate reads back",

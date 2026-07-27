@@ -10,6 +10,7 @@ Generate one assignment with `run_ledger.py brief`, then add the ticket-owned So
 - Verified base and absolute worktree
 - Stable temp, pytest, and cache roots
 - Acceptance, exclusions, and dependencies
+- Change Closure: `<displaced paths and retention obligations / not applicable>`
 - State-boundary matrix: `<applicable branches and interactions / not applicable>`
 - Expected write scope; proposed concrete write set when shared fixtures are plausible
 - Focused proof and validation environment
@@ -61,4 +62,6 @@ scope notes:
 final status: <clean / dirty + reason>
 ```
 
-`done` requires reconciled preflight, every criterion accounted for, one commit, focused proof, and clean status. `blocker` and `needs-feedback` claim no completion and preserve exact state.
+`done` requires reconciled preflight, every criterion and assigned Change
+Closure obligation accounted for, one commit, focused proof, and clean status.
+`blocker` and `needs-feedback` claim no completion and preserve exact state.

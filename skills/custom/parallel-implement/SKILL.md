@@ -5,12 +5,12 @@ description: Deliver one explicitly requested parent through its exhaustive non-
 
 # Parallel Implement
 
-**Trace -> Select -> Open -> Drain -> Review -> Lock**
+**Admit -> Run -> Review -> Lock**
 
 Deliver one parent-backed Ready-for-agent graph. Parallel activity is optional;
 the reviewed, proved, and closed parent outcome is the result.
 
-## Admission
+## Admit
 
 Run only at the top-level root after an explicit request to deliver one parent
 and its exhaustive associated non-empty Ready-for-agent graph. The parent is
@@ -29,8 +29,6 @@ accepts residual risk, closes items, and declares completion. A lane worker or
 child integrator never widens or dispatches the campaign. Publication and Git
 delivery remain with their separately authorized owners.
 
-## Trace
-
 Apply `docs/agents/engineering-contract.md` and the repository's tracker and
 domain guidance. If required setup is missing or incompatible, recommend
 `$repo-bootstrap` and stop.
@@ -38,10 +36,11 @@ domain guidance. If required setup is missing or incompatible, recommend
 Freeze the parent outcome, exhaustive child and follow-up graph, Charter,
 Source Trace, fixed point, acceptance, required proof, commitment boundary,
 non-goals, review route, closeout rule, dependency edges, and each ticket's To
-Tickets execution profile. A stateful ticket must carry its applicable
-state-boundary matrix. Missing or contradictory graph, readiness, profile, or
-matrix information is a graph defect; return the complete repair packet
-instead of reconstructing its owner's judgment.
+Tickets execution profile and applicable Change Closure facts. A stateful
+ticket must carry its applicable state-boundary matrix. Missing or
+contradictory graph, readiness, profile, required closure, or matrix
+information is a graph defect; return the complete repair packet instead of
+reconstructing its owner's judgment.
 
 Use one canonical event stream through
 [RUN-LEDGER.md](references/RUN-LEDGER.md) and `scripts/run_ledger.py`.
@@ -50,26 +49,29 @@ not. Start one stream from the frozen scope. On resume or after interaction,
 reconcile Git, worktrees, actors, claims, tracker, remote, and derived state
 before progression. Missing state is not completed state.
 
-## Select
+## Run
 
-Derive the next dependency-ready set from reconciled tracker and ledger state.
+Repeat the ordered Select, Open, and Drain loop until the exhaustive graph is
+drained.
+
+**Select.** Derive the next dependency-ready set from reconciled tracker and
+ledger state.
 A proved same-campaign landing may satisfy readiness as
 `landed-awaiting-lock`, but it never closes the tracker item. Rollback,
 invalidation, or failed proof removes that overlay and reblocks dependents.
 
-Qualify every pair across semantic ownership, expected production writes,
-proof seams and scarce proof resources, ordering, and serial tripwires.
-Dispatch concurrently only when these dimensions are independently bounded
-and every packet remains inspectable; otherwise dispatch serially. Protected
-data, permissions, trust boundaries, irreversible state, migrations, and
-cutovers require one production-path tracer first with retry, rollback, and
-partial-state proof.
+Start from the frozen execution profiles. Requalify only pairs whose semantic
+ownership, expected production writes, proof seams or scarce proof resources,
+ordering, or serial tripwires overlap, remain uncertain, or changed during
+reconciliation. Dispatch concurrently only when these dimensions are
+independently bounded and every packet remains inspectable; otherwise dispatch
+serially. Protected data, permissions, trust boundaries, irreversible state,
+migrations, and cutovers require one production-path tracer first with retry,
+rollback, and partial-state proof.
 
 When nothing is executable, return the exact blockers without widening scope.
 
-## Open
-
-Claim each selected item and read back the claim. Open one isolated
+**Open.** Claim each selected item and read back the claim. Open one isolated
 fresh-context lane from the exact base through `scripts/lane_worktree.py` and
 [CODEX-WORKTREE-LAUNCH.md](references/CODEX-WORKTREE-LAUNCH.md). Dispatch only
 from `ok: true, state: ready` evidence that accounts for containment,
@@ -88,20 +90,22 @@ The root normally integrates. Use
 integration itself is a genuinely bounded independent lane. The integrator
 returns landing and review authority to the root.
 
-## Drain
-
-Accept a worker return only when its scope, acceptance, proof, commit and final
-state, skipped checks, risk, and next need are fully accounted for. A blocker
-retries only after its condition changes. Continue an actor only while its
-reconciled lane, authority, and bounded assignment remain current; otherwise
-open a fresh lane.
+**Drain.** Accept a worker return only when its scope, acceptance, proof,
+commit and final state, skipped checks, risk, and next need are fully accounted
+for. A blocker retries only after its condition changes. Continue an actor
+only while its reconciled lane, authority, and bounded assignment remain
+current; otherwise open a fresh lane.
 
 Land accepted commits one at a time at the root. Inspect the actual diff,
-expected scope, stale-base overlap, conflicts, and focused proof. After each
-landing, run affected recombined proof, record the new integration `HEAD`, and
-rederive readiness. Before Review, run final proof across all applicable
-state-boundary branches and high-risk interactions on the current integration
-`HEAD`.
+expected scope, stale-base overlap, conflicts, and focused proof. Carry worker
+proof as slice evidence while its landing context, dependencies, and proof
+inputs remain valid. After each landing, run only interaction or readiness
+proof invalidated or required by that landing, record the new integration
+`HEAD`, and rederive readiness. Before Review, run final required proof once on
+the drained current `HEAD`, including all applicable state-boundary branches
+and high-risk interactions. Reconcile every assigned Change Closure
+obligation: remove superseded or redundant paths, or verify each intentional
+retention's owner, reason, proof, and Removal Trigger.
 
 Preserve stale or conflicted packets without landing. Choose a safe serial
 route or invoke `$resolving-merge-conflicts` from the preserved operation.
@@ -111,8 +115,6 @@ and bounded assignment remain current, a fresh bounded lane, or an explicitly
 authorized tiny root fix. Start from the recorded integration `HEAD`, prove the
 RED and affected paths, and invalidate superseded drained or review-ready
 evidence.
-
-Repeat Select, Open, and Drain until the exhaustive graph is drained.
 
 ## Review
 
@@ -136,7 +138,7 @@ authority. Every admitted repaired successor receives identity-matched proof
 and fresh formal review through the owner selected from its target type and
 risk facts.
 
-## Lock
+## Lock And Return
 
 Open Lock only when the accepted reviewed `HEAD` equals current integration
 `HEAD`, required final proof passes, and the review requirement is complete.
@@ -148,9 +150,9 @@ or an explicitly accepted safe residual.
 
 Return `complete` only when the exhaustive graph is drained; every accepted
 change is in the reviewed current integration `HEAD`; proof and independent
-review pass; children and parent are closed in order with read-back; claims are
-released; lanes are safe; and applicable publication evidence supplied under
-separate authority is verified.
+review pass; assigned Change Closure is proved; children and parent are closed
+in order with read-back; claims are released; lanes are safe; and applicable
+publication evidence supplied under separate authority is verified.
 
 For every nonterminal `partial` or `blocked` return, preserve accepted and
 unrelated state, halt unsafe progression, quiesce or account for actors,

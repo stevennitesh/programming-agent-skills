@@ -7,13 +7,14 @@ This repository packages a shared engineering discipline as skills, setup contra
 - `AGENTS.md` is a short agent primer: verified commands, context pointers, and local invariants.
 - `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md` is the minimal global bootstrap for `$skill-router` and `$repo-bootstrap`. Personal environment rules stay outside it.
 - `docs/plans/README.md` routes current work without copying plans or runbooks.
-- `docs/agents/engineering-contract.md` owns engineering taste, shared runtime language, and cross-cutting discipline.
+- `docs/agents/engineering-contract.md` owns engineering taste, preventive code quality, shared runtime language, and cross-cutting discipline.
 - `docs/agents/issue-tracker.md`, `triage-labels.md`, and `domain.md` own tracker mechanics, state roles, and domain routing.
 - `skills/custom/` is the active supported install set and the only source for managed installation. `skills/experimental/` holds inactive named alternatives to active skills. `skills/extra/` is optional, and `skills/.archive/` is retired history.
 - Historical research, synthesis, transcripts, issue notes, and run logs remain evidence. They become current instructions only when an owning README or `docs/plans/README.md` says so.
 - A Fresh Composition Epoch treats prior research, synthesis, validation, and campaign conclusions as historical by default. It admits them only after independent rediscovery or explicit revalidation against the epoch's fixed identities and claims.
 - Mechanical rules belong in scripts or config. Prose owns routing, judgment, and behavior that cannot be enforced directly.
-- Deploy-campaign automation may write only reproducible mechanical evidence state. The campaign owner alone settles semantic decision state and advances the semantic lifecycle.
+- Deploy-campaign automation may write only reproducible mechanical evidence
+  state. The campaign owner alone settles semantic gate decisions.
 
 ## Context Trace
 
@@ -83,10 +84,10 @@ _Avoid_: prompt collection, script bundle
 A pack-wide epistemic reset that freezes intended composition before prior
 research, synthesis, validation, campaign conclusions, or current skill bodies
 can steer discovery. It rebuilds a Pack Composition Contract and Research
-Catalog, runs fresh one-skill Deploy Campaigns under that contract, proves the
-composed pack, and cleans up superseded material only after Lock. Prior
-artifacts are historical intake until independently rediscovered or explicitly
-revalidated.
+Catalog, runs gate-driven one-skill Deploy Campaigns under that contract,
+proves the composed pack, and cleans up superseded material only after Lock.
+Prior artifacts are historical intake until Contract Lock independently binds
+current intent and explicitly revalidates their complete identities.
 _Avoid_: clean slate, destructive reset, pack-wide Deploy Campaign
 
 **Pack Composition Contract**
@@ -102,9 +103,10 @@ _Avoid_: skill inventory, route list, campaign charter
 
 The campaign-facing index of reusable Research Cards, organized by the
 behavior or failure they address, conditions, evidence class, freshness,
-limits, and source pointers. A Fresh Composition Epoch opens it only after
-recording an M0-derived problem-first discovery pass. It supports retrieval
-and never selects skill composition or admits H1.
+limits, and source pointers. A one-skill campaign opens it only when Contract
+Lock finds a decision-relevant method, concept, hypothesis, or source-evidence
+gap, and only after recording an independent problem-first packet. It supports
+retrieval and never selects skill composition or admits H1.
 _Avoid_: recommendation engine, synthesis index, source dump
 
 **Research Card**
@@ -159,30 +161,35 @@ _Avoid_: dispatcher, automatic router
 **Deploy Campaign**
 
 An explicitly invoked one-skill controller, owned by
-[`deploy-prompts.md`](docs/synthesis/methods/deploy-prompts.md), that verifies
-and serially advances Prompt 1, the Research Pass, Prompts 2 through 4, a
-behavior-preserving Pruning Pass, and Prompt 5 for one fresh campaign epoch
-while retaining user interaction. It freezes intent-derived M0 before
-research, tests research-informed H1 into V1, prunes V1 into P1, and promotes
-only P1. A prior campaign may supply exact reusable evidence but cannot skip a
-unit. Bare runs include promotion/install; Git delivery must be named. It
-authorizes bounded fresh-context delegation; each unit keeps its own authority
-and stop.
+[`deploy-prompts.md`](docs/synthesis/methods/deploy-prompts.md), that advances
+one skill only through satisfied proof gates: Contract Lock, Candidate Lock,
+Behavioral Proof, and Release. Research is conditional on a decision-relevant
+evidence gap. Behavioral evaluation runs only for claims that deterministic
+or real-state proof cannot establish. Release performs a cheap cut scan and
+runs pruning proof only for a concrete material cut.
+
+Prior evidence may satisfy a gate only after Contract Lock independently binds
+current intent and dependencies and the complete evidence identity matches.
+Bare runs include promotion/install; Git delivery must be named. The controller
+retains user interaction and bounded fresh-context delegation without making
+research, behavioral sampling, or pruning a mandatory unit.
 _Avoid_: mega-prompt, self-chaining prompt, pack-wide campaign
 
 **Deploy runtime identities**
 
-M0 is the intent-derived, behavior-minimal runtime; H1 is the
-research-informed hypothesis runtime; V1 is the behavior-verified runtime; and
-P1 is the regression-checked pruned runtime and sole promotion candidate.
-Historical B0/C1 records keep their original campaign meaning.
+M0 is an intent-derived, behavior-minimal control; H1 is a method- or
+concept-informed hypothesis; V1 is the behavior-verified runtime; and P1 is
+the exact Release candidate after the cut gate. They are conditional evidence
+identities, not mandatory lifecycle stages. When no material cut exists,
+P1 equals V1 by exact identity. Historical B0/C1 records keep their original
+campaign meaning.
 _Avoid_: current baseline, source-derived minimum, final C1
 
 **Campaign control manifest**
 
 The machine-readable control plane for one exact Deploy Campaign epoch. It owns
 campaign identity, artifact pointers and identities, proof registrations and
-receipts, invalidations, and mechanical lifecycle state. It points to semantic
+receipts, invalidations, and mechanical gate state. It points to semantic
 decisions in synthesis and the decision record instead of copying their
 meaning or rationale.
 _Avoid_: second synthesis, campaign diary, latest campaign
@@ -200,7 +207,7 @@ _Avoid_: automated judgment, inferred decision
 
 The campaign owner's settled intent, research interpretation, hypothesis,
 applicability, evaluation judgment, proof sufficiency, disposition, pruning,
-promotion, and lifecycle decision. Automation may verify referenced mechanical
+promotion, and gate decision. Automation may verify referenced mechanical
 facts but cannot manufacture, alter, or advance this state.
 _Avoid_: verifier decision, test-determined adoption
 
@@ -221,9 +228,18 @@ _Avoid_: pack manual, copied route map
 ## Vocabulary Owners
 
 - Fresh Composition Epoch, Pack Composition Contract, Research Catalog, and Research Card vocabulary belongs to this context and [ADR-0009](docs/adr/0009-fresh-composition-epochs-revalidate-skill-pack-knowledge.md). The accepted `docs/synthesis/skill-pack.md` owner remains to be materialized by the separately authorized topology migration.
-- Deploy-campaign vocabulary—M0, H1, V1, P1, and intent-adjacent steering hypotheses—belongs to [`docs/synthesis/methods/deploy-prompts.md`](docs/synthesis/methods/deploy-prompts.md).
+- Deploy-campaign gate vocabulary and the conditional M0, H1, V1, and P1
+  identities belong to
+  [`deploy-prompts.md`](docs/synthesis/methods/deploy-prompts.md) and
+  [ADR-0010](docs/adr/0010-deploy-campaigns-advance-through-proof-gates.md).
 - Deploy-campaign automation authority and control-plane vocabulary belong to [ADR-0008](docs/adr/0008-deploy-campaign-automation-separates-mechanical-evidence-from-semantic-decisions.md) and this context.
 - Skill-authoring vocabulary—Predictability, invocation, information hierarchy, leading words, completion criteria, and pruning—belongs to [`skills/custom/writing-great-skills/GLOSSARY.md`](skills/custom/writing-great-skills/GLOSSARY.md).
-- Runtime engineering vocabulary—Source Trace, bounded slice, commitment boundary, proof seam, proof lane, fixed point, review snapshot, Spec / Standards, Lock, and residual risk—belongs to `docs/agents/engineering-contract.md`.
+- Runtime engineering vocabulary and preventive code-quality defaults—Source
+  Trace, bounded slice, commitment boundary, proof seam, proof lane, fixed
+  point, Spec / Standards, correctness, robustness, Change Closure, code shape,
+  simplification, implementation clarity, measured performance, Lock, and
+  residual risk—belong to `docs/agents/engineering-contract.md`.
+  Project-specific domain language and decisions remain with routed domain
+  records.
 - Parallel-delivery roles, gates, and packets belong to `$parallel-implement` and its disclosed references.
 - Domain vocabulary belongs to routed `CONTEXT.md` files and ADRs in each target repo.

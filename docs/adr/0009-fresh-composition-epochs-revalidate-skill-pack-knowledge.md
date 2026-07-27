@@ -10,6 +10,11 @@ whether the pack has the right skills, ownership boundaries, or composition.
 
 **Status**: accepted
 
+Per-skill campaign sequencing and research admission are superseded by
+[ADR-0010](0010-deploy-campaigns-advance-through-proof-gates.md). The
+pack-composition freeze, historical-by-default evidence policy, and Fresh
+Composition Epoch boundary remain accepted.
+
 A Fresh Composition Epoch is the pack-wide parent process for rebuilding
 skill-pack knowledge. It freezes intended pack composition before inspecting
 prior research, synthesis, validation, campaign conclusions, or current skill

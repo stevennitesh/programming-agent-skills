@@ -48,6 +48,7 @@ flowchart TD
 
   Shape --> ToSpec["to-spec"]
   ToSpec --> DomainRouter
+  ToSpec --> Contract
   ToSpec --> CodeDesign
   ToSpec --> TmpSpec[".tmp/to-spec/*.md<br/>draft until publication is verified"]
   ToSpec --> Tracker
@@ -56,6 +57,7 @@ flowchart TD
   ToSpec -. "setup gate" .-> Setup
   ToTickets --> Tracker
   ToTickets --> Labels
+  ToTickets --> Contract
   ToTickets --> Ready["ready-for-agent items"]
   ToTickets -. "setup gate" .-> Setup
 
@@ -286,9 +288,9 @@ and
 | `docs/agents/issue-tracker.md` | Tracker interface, work-item lifecycle, PR-as-request rules, wayfinding operations, and the campaign-scoped `landed-awaiting-lock` dependency overlay | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `review`, `convergent-pr-review`, `wayfinder` |
 | `docs/agents/triage-labels.md` | Category/state role to label mapping and fixed wayfinding labels | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
 | `docs/agents/domain.md` | Routing to `CONTEXT.md`, `CONTEXT-MAP.md`, ADRs | `to-spec`, `triage`, `tdd`, `diagnosing-bugs`, `simplify-code`, `audit-codebase`, `parallel-implement` |
-| `docs/agents/engineering-contract.md` | Engineering taste, shared runtime language, Charter, commitment boundary, change-created fallout, fresh, negative-control, and state-boundary proof, work-state policy, fixed-snapshot Spec/Standards review, Repair generation, and Lock | `to-tickets`, `implement`, `tdd`, `diagnosing-bugs`, `prototype`, `simplify-code`, `audit-codebase`, `parallel-implement`, `resolving-merge-conflicts`, `review`, `convergent-pr-review` |
+| `docs/agents/engineering-contract.md` | Engineering taste, preventive code-quality defaults, shared runtime language, commitment boundary, grounded implementation, correctness and robustness floors, Change Closure, brief code-shape and simplification guidance, implementation clarity, measured-performance discipline, fresh, negative-control, and state-boundary proof, work-state policy, fixed-snapshot Spec/Standards review, and Lock | `to-spec`, `to-tickets`, `implement`, `tdd`, `diagnosing-bugs`, `prototype`, `simplify-code`, `audit-codebase`, `parallel-implement`, `resolving-merge-conflicts`, `review`, `convergent-pr-review` |
 | `domain-modeling` | Resolves domain semantics; exclusively accumulates and returns the authoritative current cumulative Domain Delta; renders or persists routed `CONTEXT.md` and `CONTEXT-MAP.md` changes under `render only` or `persist authorized`; assesses plausible ADR candidates; and records approved ADR truth | `skill-router`, `grill-with-docs`, `wayfinder`, `repo-bootstrap` |
-| `codebase-design` | Interface, seam, adapter, depth, leverage, locality, and bounded replacement vocabulary | `to-spec`, `tdd`, architecture/design follow-ups |
+| `codebase-design` | Bounded module-design procedure and detailed Interface, Seam, Adapter, Depth, Leverage, Locality, and replacement vocabulary | `to-spec`, `tdd`, architecture/design follow-ups |
 | `research` | Claim-owning source legwork and one authorized cited note or verified inline evidence | `skill-router`, `grilling`, `wayfinder` |
 | `to-questionnaire` | One recipient-ready async discovery artifact for one external stakeholder and downstream decision | `skill-router`, `grilling`, humans collecting stakeholder evidence |
 | `resolving-merge-conflicts` | Read-only three-way inspection, authorized reconciliation, and the separate finish boundary | Git operations and implementation or integration work that enters a conflicted state |

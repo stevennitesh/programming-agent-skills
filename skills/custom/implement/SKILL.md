@@ -35,59 +35,71 @@ production or tracker mutation. Route an exhaustive parent graph to
 `$convergent-pr-review`, and conflict-only reconciliation to
 `$resolving-merge-conflicts`.
 
-Read the target repository's setup, engineering, tracker, label, and domain
-owners. Missing or incompatible setup Returns a `$repo-bootstrap` precondition
-before work-item or tracker mutation.
+Read the target repository's applicable setup, engineering, and domain owners;
+read tracker and label owners only for tracker-backed work. Missing or
+incompatible setup Returns a `$repo-bootstrap` precondition before work-item
+or tracker mutation.
 
-Reconcile the complete packet, dependencies, repository and tracker state,
-authority, fixed point, worktree, index, and unrelated work. Stop without a
-claim when a blocker, contradiction, unsafe overlap, or unresolved commitment
-remains.
+Reconcile the complete packet, dependencies, repository state, applicable
+tracker state, authority, fixed point, worktree, index, and unrelated work.
+Stop without a claim when a blocker, contradiction, unsafe overlap, or
+unresolved commitment remains.
 
 For tracker-backed work, claim through the configured tracker and apply its
 Mutation read-back. A competing, partial, or mismatched claim blocks
 implementation. A direct item fabricates no tracker state.
 
-## Charter And Choose
-
-Freeze one immutable Charter before production mutation: outcome, acceptance,
-supported state branches, proof, non-goals, fixed point, finite Repair budget,
-authorized writes, and scope fence. Select the budget from settled caller,
-repository, or risk authority; if no finite bound is available, Return the
-decision before mutation.
+Freeze one immutable Charter before production mutation. Reuse settled packet
+facts for outcome, acceptance, supported state branches, proof, non-goals, and
+scope; add only the runtime fixed point, authorized writes, scope fence, and
+finite Repair budget. Select the budget from settled caller, repository, or
+risk authority; if no finite bound is available, Return the decision before
+mutation.
 
 Inspect the relevant seams and credible alternatives, then choose one narrow
-observable path inside the Charter. A technique that changes a commitment,
-permission, supported environment, or scope Returns for caller judgment.
+observable path inside the Charter. Choose under the routed Code Quality
+Contract: test necessity, available reuse, ownership, depth, clarity, proof,
+and domain fidelity. A technique that changes a commitment, permission,
+supported environment, or scope Returns for caller judgment.
 
 Invoke `$tdd` when behavior and a red-capable seam are settled. For a bug, use
 `$tdd` only when expected behavior, exact symptom, cause, and a trusted
 red-capable reproduction are known; otherwise invoke `$diagnosing-bugs` in fix
 mode. Integrate only a complete bounded Return that preserves the Charter.
 
-## Prove And Simplify
+## Execute
 
 Implement and prove the narrow path, then expand through every assigned
 acceptance and supported state branch. Keep one bounded slice and proof story:
 tie every changed artifact to acceptance or its necessary support purpose,
 include required coupled surfaces, and Return adjacent work.
 
+Bind proof to the exact candidate and its proof inputs. Reuse it while the
+exact candidate and proof inputs remain unchanged; rerun only invalidated or
+repository-required proof.
+
 When execution is unsuitable, record why and use the strongest safe
 claim-matched structural proxy. Name the unrun behavior and residual risk.
 
 With proof current, remove authored scaffolding and accidental complexity.
+Perform Change Closure for every path the slice supersedes or makes redundant.
+Remove obsolete or duplicate implementations, callers, registrations, exports,
+flags, tests, configuration, documentation, and migrations. Retain a path only
+for a supported compatibility obligation with a named owner, reason, proof,
+and Removal Trigger.
 Reconcile the candidate, affected proof, complete diff, and disposable state.
 Keep the last proved candidate when cleanup would change commitments or
 unrelated work.
 
-## Review And Repair
+## Review
 
-Stage only selected work, run required acceptance and staged-diff checks, and
-pin one immutable proved candidate. Invoke exactly one formal route:
-`$review` for an ordinary diff or `$convergent-pr-review` for a local PR or
-bounded high-risk diff. Supply the required Spec, Charter, Source Trace, fixed
-point, exact candidate, proof, skips, and risk. The reviewer returns judgment
-only.
+Stage only selected work. Reuse current acceptance proof for the same exact
+staged tree; run only missing, invalidated, or repository-required staged
+checks, then pin one immutable proved candidate. Invoke exactly one formal
+route: `$review` for an ordinary diff or `$convergent-pr-review` for a local PR
+or bounded high-risk diff. Supply `Spec required: yes`; the required Spec,
+Charter, Source Trace, fixed point, exact candidate, proof, skips, and risk.
+The reviewer returns judgment only.
 
 Accept only a complete current review with no admitted blocker and no
 unaccepted residual under repository policy. Before Repair, read `$review`'s
@@ -98,7 +110,7 @@ within the frozen budget. A mixed-authority, partial, out-of-scope, or
 over-budget report Returns intact for decision. Prove each Repair generation,
 pin its successor tree, and obtain fresh formal review through the same route.
 
-## Close, Lock, And Commit
+## Lock And Return
 
 After acceptable final review, branch by tracker kind:
 
@@ -115,10 +127,11 @@ closeout. Reconcile current proof, identities, scope, index, unrelated state,
 and residual risk. Any other review-to-lock delta Returns to formal review.
 
 Intentionally stage the remaining accepted bytes and require the index tree to
-equal the lock tree. Run required staged checks, commit once, and require the
-commit tree to equal the locked tree. Local Markdown commits selected work and
-its tracker closeout together; connector and direct items commit no fabricated
-tracker content.
+equal the lock tree. Reuse exact-tree evidence and run only checks invalidated
+by closeout bytes or required at the commit boundary. Commit once and require
+the commit tree to equal the locked tree. Local Markdown commits selected work
+and its tracker closeout together; connector and direct items commit no
+fabricated tracker content.
 
 After the commit is verified, close GitHub or GitLab through its configured
 connector, apply Mutation read-back, and release the claim. A partial or failed
@@ -129,13 +142,12 @@ direct items perform no post-commit tracker mutation.
 Push only when separately authorized, then verify the exact approved commit at
 the remote.
 
-## Return
-
 Return `complete` only after every applicable gate reads back: selected
 acceptance and supported state branches pass on the exact accepted tree; every
 relevant review generation is accepted; tracker-kind order holds; Lock and
 commit identities match; unrelated state is excluded; applicable Mutation,
-claim, relationship, frontier, cleanup, and push read-backs succeed.
+claim, relationship, frontier, Change Closure, cleanup, and push read-backs
+succeed.
 
 Otherwise Return `partial` or `blocked` with the failed gate, repository and
 tracker state, retained changes and evidence, claim state, skipped checks,

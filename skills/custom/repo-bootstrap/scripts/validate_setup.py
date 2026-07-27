@@ -16,7 +16,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:04d85ba5be57 -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:c5d93a1b6590 -->"
 ENGINEERING_PRIMER_TOKEN = (
     "Explore imaginatively. Converge under proof. Simplify ruthlessly."
 )
@@ -68,25 +68,29 @@ AGENT_POINTERS = (
 CONTRACT_LITERAL_TOKENS = (
     ENGINEERING_PRIMER_TOKEN,
     "## Engineering Taste",
-    "**Imagination before commitment.**",
-    "**Experiments over speculation.**",
-    "**Semantic proof over plausible output.**",
+    "**Explore before commitment.**",
+    "**Prove meaning.**",
     "**Deep simplicity.**",
     "**Stewardship.**",
+    "## Code Quality Contract",
+    "**Grounded implementation — must.**",
+    "**Correct and robust — must.**",
+    "**Domain faithful — must.**",
+    "**Explicit and provable — must.**",
+    "**Change closure — must.**",
+    "**Measured when relevant — must for claims.**",
+    "**Deep and local — prefer.**",
+    "**Simple after proof — prefer.**",
+    "**Readable by default — prefer.**",
     "**Source trace:**",
     "**Bounded slice:**",
     "**Commitment boundary:**",
-    "**Load-bearing internal:**",
     "**Semantic correctness:**",
     "**Semantic proof:**",
     "**Proof seam:**",
     "**Proof lane:**",
-    "**Evidence:**",
     "**Tracer bullet:**",
     "**Fixed point:**",
-    "**Review snapshot:**",
-    "**staged worker**",
-    "**lane worker**",
     "**Spec / Standards:**",
     "**Residual risk:**",
     "Explore -> Choose -> Prove -> Expand -> Simplify -> Lock",
@@ -126,6 +130,17 @@ WAYFINDER_TOKENS = (
     "**Block**",
     "**Out of scope**",
     "**Complete map**",
+)
+
+GITHUB_RELATIONSHIP_MODES = (
+    (
+        "Parent / child mode",
+        ("native-sub-issues", "parent-task-list"),
+    ),
+    (
+        "Dependency mode",
+        ("native-dependencies", "body-links"),
+    ),
 )
 
 LABEL_TOKENS = (
@@ -224,6 +239,25 @@ def engineering_primer_failures(agents: str) -> list[str]:
     ]
 
 
+def github_relationship_mode_failures(tracker: str) -> list[str]:
+    if "issue tracker: github" not in tracker.lower():
+        return []
+
+    failures: list[str] = []
+    for field, choices in GITHUB_RELATIONSHIP_MODES:
+        choice_pattern = "|".join(re.escape(choice) for choice in choices)
+        if not re.search(
+            rf"(?im)^\*\*{re.escape(field)}:\*\*\s*(?:{choice_pattern})"
+            rf"\.?(?:\r?\n|\Z)",
+            tracker,
+        ):
+            failures.append(
+                "docs/agents/issue-tracker.md must set "
+                f"{field} to one configured GitHub mode"
+            )
+    return failures
+
+
 def check_ignore(root: Path, probe: str) -> tuple[bool | None, str]:
     result = subprocess.run(
         ["git", "check-ignore", "-q", "--no-index", probe],
@@ -300,6 +334,7 @@ def main() -> int:
             failures.append(
                 "docs/agents/issue-tracker.md must set Close implemented items to yes or no"
             )
+        failures.extend(github_relationship_mode_failures(tracker))
     else:
         local_tracker = False
 
@@ -326,10 +361,27 @@ def main() -> int:
         contract,
         "docs/agents/engineering-contract.md",
         (
-            ("## Tight Engineering Spine", ("**Expand:**", "bounded slice")),
-            ("## Proof Discipline", ("command authority",)),
-            ("## Work State And Workers", ("**staged worker**", "**lane worker**")),
-            ("## Lock", (".tmp/", ".scratch/", "mutation boundary")),
+            (
+                "## Code Quality Contract",
+                (
+                    "**Must** marks a correctness or safety",
+                    "deviation alone is not a defect",
+                    "not another workflow stage",
+                    "**Change closure — must.**",
+                    "supported compatibility obligation",
+                    "Removal Trigger",
+                ),
+            ),
+            (
+                "## Tight Engineering Spine",
+                ("**Expand:**", "bounded slice", "perform Change Closure"),
+            ),
+            ("## Proof Discipline", ("maintained repo configuration",)),
+            ("## Work State", ("**Refresh after interaction.**",)),
+            (
+                "## Lock",
+                (".tmp/", ".scratch/", "Change Closure", "mutation boundary"),
+            ),
         ),
         failures,
     )
