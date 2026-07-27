@@ -16,3 +16,9 @@ enforces cross-ledger ownership, graph, freeze, slice, and amendment invariants.
 one-skill campaign ownership. Version 2 separates immutable `contract`,
 owner-written `semantic`, and automation-only `mechanical` state. Historical
 manifest v1 remains an exact read-only compatibility format.
+
+`pack-integration-manifest-v1.schema.json` and
+`pack-integration-result-v1.schema.json` govern exact installed-pack inputs,
+ten-gate registrations, mechanical receipts and invalidations, parity, and the
+evidence-only result topology. They expose no scoring, repair, acceptance,
+scheduling, or Lock field.

@@ -146,6 +146,14 @@ REQUIRED_SCHEMAS = {
         "docs/validation/shared/schemas/"
         "pack-composition-contract-v1.schema.json"
     ),
+    ("pack-integration-manifest", 1): (
+        "docs/validation/shared/schemas/"
+        "pack-integration-manifest-v1.schema.json"
+    ),
+    ("pack-integration-result", 1): (
+        "docs/validation/shared/schemas/"
+        "pack-integration-result-v1.schema.json"
+    ),
 }
 IDENTITY_SCAN_RULES = {
     "research-card": ("metadata", "*", True),

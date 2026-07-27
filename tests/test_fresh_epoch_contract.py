@@ -138,6 +138,22 @@ def write_contract_tree(root: Path) -> dict[str, object]:
                 "pack-composition-contract-v1.schema.json"
             ),
         },
+        {
+            "id": "pack-integration-manifest",
+            "version": 1,
+            "path": (
+                "docs/validation/shared/schemas/"
+                "pack-integration-manifest-v1.schema.json"
+            ),
+        },
+        {
+            "id": "pack-integration-result",
+            "version": 1,
+            "path": (
+                "docs/validation/shared/schemas/"
+                "pack-integration-result-v1.schema.json"
+            ),
+        },
     ]
     schema_registry = root / "docs/validation/shared/schemas/registry.json"
     schema_registry.write_text(

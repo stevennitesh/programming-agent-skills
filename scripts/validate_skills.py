@@ -13,6 +13,7 @@ from pathlib import Path
 
 from scripts import fresh_epoch_contract
 from scripts import pack_contract as pack_composition_contract
+from scripts import pack_integration
 from scripts import research_catalog
 from scripts import skill_pack_contract as pack_contract
 
@@ -461,6 +462,10 @@ def validate_research_catalog_contract(root: Path) -> list[str]:
 
 def validate_pack_composition_contract(root: Path) -> list[str]:
     return pack_composition_contract.validate_repository(root)
+
+
+def validate_pack_integration_contract(root: Path) -> list[str]:
+    return pack_integration.validate_repository(root)
 
 
 def validate_required_docs(root: Path) -> list[str]:
@@ -920,6 +925,7 @@ def main(argv: list[str] | None = None) -> int:
     failures.extend(validate_relationship_invocation_map(root))
     failures.extend(validate_fresh_epoch_contract(root))
     failures.extend(validate_pack_composition_contract(root))
+    failures.extend(validate_pack_integration_contract(root))
     failures.extend(validate_research_catalog_contract(root))
     failures.extend(validate_setup_surface(root))
     failures.extend(

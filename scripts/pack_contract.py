@@ -683,6 +683,7 @@ def contract_slice(
     skill_id: str,
     *,
     terminal_evidence: dict[str, str] | None = None,
+    allow_terminal_projection: bool = False,
 ) -> dict[str, object]:
     """Project an immutable skill-local admission packet from a frozen contract."""
 
@@ -704,7 +705,11 @@ def contract_slice(
     if skill is None:
         return {"status": "skill-not-selected", "skill_id": skill_id}
     state = skill.get("campaign_state")
-    if isinstance(state, dict) and state.get("status") in {"active", "terminal"}:
+    if (
+        not allow_terminal_projection
+        and isinstance(state, dict)
+        and state.get("status") in {"active", "terminal"}
+    ):
         return {
             "status": "campaign-already-started",
             "skill_id": skill_id,
@@ -845,10 +850,16 @@ def contract_slice(
 def campaign_admission_slice(
     contract: dict[str, object],
     skill_id: str,
+    *,
+    allow_terminal_projection: bool = False,
 ) -> dict[str, object]:
     """Derive the exact five-field campaign envelope from one canonical slice."""
 
-    canonical = contract_slice(contract, skill_id)
+    canonical = contract_slice(
+        contract,
+        skill_id,
+        allow_terminal_projection=allow_terminal_projection,
+    )
     if canonical.get("status") != "contract-slice":
         return canonical
     projection = canonical["slice"]
