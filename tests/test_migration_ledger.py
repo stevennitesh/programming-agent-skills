@@ -369,6 +369,10 @@ CATALOG_SOURCE = (
 CATALOG_TARGET = (
     "docs/research/skill-pack-composition/sources/SRC-0001.md"
 )
+CAMPAIGN_SOURCE_ROOT = "docs/validation/campaigns/to-tickets-2026-07-25"
+CAMPAIGN_TARGET_ROOT = (
+    "docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25"
+)
 
 
 def _commit_fixture(root: Path) -> str:
@@ -397,6 +401,300 @@ def _commit_fixture(root: Path) -> str:
         capture_output=True,
         text=True,
     ).stdout.strip()
+
+
+def _campaign_migration_fixture(
+    tmp_path: Path,
+    *,
+    manifest_content: bytes | None = None,
+) -> tuple[list[dict[str, object]], dict[str, bytes]]:
+    files = {
+        "manifest.json": manifest_content
+        or (
+            '{"schema":{"name":"deploy-campaign-final-manifest","version":5},'
+            '"campaign":{"skill":"to-tickets","epoch":"2026-07-25"},'
+            '"runtime_identities":{"tree_algorithm":"campaign-tree-v1"},'
+            f'"pointer":"{CAMPAIGN_SOURCE_ROOT}/candidate.md"}}\n'
+        ).encode(),
+        "candidate.md": (
+            f"# Candidate\n\nManifest: `{CAMPAIGN_SOURCE_ROOT}/manifest.json`.\n"
+            "[Research](../../../research/to-tickets-deploy-2026-07-25.md), "
+            "[synthesis](../../../synthesis/skills/to-tickets.md), and "
+            "[results](../../evals/to-tickets-2026-07-25/results.json).\n"
+        ).encode(),
+    }
+    files = {
+        name: content.replace(b"\n", b"\r\n")
+        for name, content in files.items()
+    }
+    for name, content in files.items():
+        path = tmp_path / CAMPAIGN_SOURCE_ROOT / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(content)
+    owner = tmp_path / "docs/validation/skills/to-tickets/README.md"
+    owner.parent.mkdir(parents=True)
+    owner.write_text("# To Tickets validation\n", encoding="utf-8")
+    synthesis = tmp_path / "docs/synthesis/skills/to-tickets.md"
+    synthesis.parent.mkdir(parents=True)
+    synthesis.write_text(
+        f"[manifest](../../validation/campaigns/to-tickets-2026-07-25/manifest.json)\n",
+        encoding="utf-8",
+    )
+    research = tmp_path / "docs/research/to-tickets-deploy-2026-07-25.md"
+    research.parent.mkdir(parents=True, exist_ok=True)
+    research.write_text("# Research\n", encoding="utf-8")
+    results = (
+        tmp_path
+        / "docs/validation/evals/to-tickets-2026-07-25/results.json"
+    )
+    results.parent.mkdir(parents=True, exist_ok=True)
+    results.write_text("{}\n", encoding="utf-8")
+    head = _commit_fixture(tmp_path)
+    rows: list[dict[str, object]] = []
+    for index, (name, content) in enumerate(files.items(), start=1):
+        source = f"{CAMPAIGN_SOURCE_ROOT}/{name}"
+        target = f"{CAMPAIGN_TARGET_ROOT}/{name}"
+        references = (
+            [source, "docs/synthesis/skills/to-tickets.md"]
+            if name == "manifest.json"
+            else [source, f"{CAMPAIGN_SOURCE_ROOT}/manifest.json"]
+        )
+        rows.append(
+            {
+                "migration_id": f"MIG-{index:04d}",
+                "source": {
+                    "key": source,
+                    "state": "tracked",
+                    "fingerprint": fresh_epoch_contract.exact_content_fingerprint(
+                        content
+                    ),
+                    "identity": "campaign:to-tickets:2026-07-25",
+                },
+                "artifact_class": "campaign",
+                "owner": "docs/validation/skills/to-tickets/README.md",
+                "owner_gap": None,
+                "migration_disposition": "move",
+                "target": {"semantic_id": None, "path": target},
+                "reference_rewrite_set": references,
+                "recovery": {
+                    "applicable_lock": "FCE-pack-lock",
+                    "pointer": (
+                        f"git:{head}:{source}@"
+                        f"{fresh_epoch_contract.exact_content_fingerprint(content)}"
+                    ),
+                },
+                "status": "inventoried",
+                "observed_result": None,
+            }
+        )
+    return rows, files
+
+
+def test_campaign_tree_migration_preserves_v1_meaning_and_rewrites_locators(
+    tmp_path: Path,
+) -> None:
+    rows, files = _campaign_migration_fixture(tmp_path)
+
+    applied = migration_ledger.apply_campaign_migration(tmp_path, rows)
+
+    assert all(row["status"] == "references-reconciled" for row in applied)
+    assert not (tmp_path / CAMPAIGN_SOURCE_ROOT).exists()
+    manifest_path = tmp_path / CAMPAIGN_TARGET_ROOT / "manifest.json"
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    assert manifest["schema"]["version"] == 5
+    assert manifest["runtime_identities"]["tree_algorithm"] == "campaign-tree-v1"
+    assert CAMPAIGN_SOURCE_ROOT not in manifest_path.read_text("utf-8")
+    assert CAMPAIGN_TARGET_ROOT in manifest_path.read_text("utf-8")
+    synthesis = tmp_path / "docs/synthesis/skills/to-tickets.md"
+    assert (
+        "../../validation/skills/to-tickets/campaigns/"
+        "to-tickets-2026-07-25/manifest.json"
+        in synthesis.read_text("utf-8")
+    )
+    candidate_path = tmp_path / CAMPAIGN_TARGET_ROOT / "candidate.md"
+    candidate = candidate_path.read_text("utf-8")
+    expected_links = (
+        "../../../../../research/to-tickets-deploy-2026-07-25.md",
+        "../../../../../synthesis/skills/to-tickets.md",
+        "../../../../evals/to-tickets-2026-07-25/results.json",
+    )
+    assert all(link in candidate for link in expected_links)
+    assert all((candidate_path.parent / link).resolve().is_file() for link in expected_links)
+    assert applied[0]["observed_result"]["source_tree_fingerprints"] == {
+        name: fresh_epoch_contract.exact_content_fingerprint(content)
+        for name, content in sorted(files.items())
+    }
+
+
+def test_campaign_tree_migration_retries_exact_target_and_rolls_back(
+    tmp_path: Path,
+) -> None:
+    rows, files = _campaign_migration_fixture(tmp_path)
+    first = migration_ledger.apply_campaign_migration(tmp_path, rows)
+
+    retried = migration_ledger.apply_campaign_migration(tmp_path, first)
+
+    assert all(
+        row["observed_result"]["exact_target_reconciled"] is True
+        for row in retried
+    )
+    rolled_back = migration_ledger.rollback_campaign_migration(
+        tmp_path,
+        retried,
+    )
+    assert all(row["status"] == "prepared" for row in rolled_back)
+    assert all(
+        row["observed_result"]["rollback_proved"] is True
+        for row in rolled_back
+    )
+    assert not (tmp_path / CAMPAIGN_TARGET_ROOT).exists()
+    for name, content in files.items():
+        assert (tmp_path / CAMPAIGN_SOURCE_ROOT / name).read_bytes() == content
+    assert (
+        "../../validation/campaigns/to-tickets-2026-07-25/manifest.json"
+        in (tmp_path / "docs/synthesis/skills/to-tickets.md").read_text(
+            "utf-8"
+        )
+    )
+
+
+def test_campaign_tree_collision_preserves_source_and_target(
+    tmp_path: Path,
+) -> None:
+    rows, _ = _campaign_migration_fixture(tmp_path)
+    source = tmp_path / CAMPAIGN_SOURCE_ROOT / "manifest.json"
+    target = tmp_path / CAMPAIGN_TARGET_ROOT / "manifest.json"
+    target.parent.mkdir(parents=True)
+    target.write_text('{"collision":true}\n', encoding="utf-8")
+    source_before = source.read_bytes()
+    target_before = target.read_bytes()
+
+    with pytest.raises(migration_ledger.MigrationBlocked, match="collision"):
+        migration_ledger.apply_campaign_migration(tmp_path, rows)
+
+    assert source.read_bytes() == source_before
+    assert target.read_bytes() == target_before
+
+
+def test_campaign_tree_unreadable_manifest_blocks_before_move(
+    tmp_path: Path,
+) -> None:
+    rows, files = _campaign_migration_fixture(
+        tmp_path,
+        manifest_content=b'{"schema":\r\n',
+    )
+
+    with pytest.raises(
+        migration_ledger.MigrationBlocked,
+        match="historical campaign manifest is unreadable",
+    ):
+        migration_ledger.apply_campaign_migration(tmp_path, rows)
+
+    assert not (tmp_path / CAMPAIGN_TARGET_ROOT).exists()
+    for name, content in files.items():
+        assert (tmp_path / CAMPAIGN_SOURCE_ROOT / name).read_bytes() == content
+
+
+def test_campaign_tree_rollback_recovers_crash_partial_move(
+    tmp_path: Path,
+) -> None:
+    rows, files = _campaign_migration_fixture(tmp_path)
+    source_manifest = tmp_path / CAMPAIGN_SOURCE_ROOT / "manifest.json"
+    target_manifest = tmp_path / CAMPAIGN_TARGET_ROOT / "manifest.json"
+    target_manifest.parent.mkdir(parents=True)
+    source_manifest.replace(target_manifest)
+
+    rolled_back = migration_ledger.rollback_campaign_migration(
+        tmp_path,
+        rows,
+    )
+
+    assert all(row["status"] == "prepared" for row in rolled_back)
+    assert not (tmp_path / CAMPAIGN_TARGET_ROOT).exists()
+    for name, content in files.items():
+        assert (tmp_path / CAMPAIGN_SOURCE_ROOT / name).read_bytes() == content
+
+
+def test_campaign_tree_reference_write_failure_restores_entire_tree(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    rows, files = _campaign_migration_fixture(tmp_path)
+    synthesis = tmp_path / "docs/synthesis/skills/to-tickets.md"
+    synthesis_before = synthesis.read_bytes()
+    real_atomic_write = migration_ledger._atomic_write_bytes
+    failed = False
+
+    def fail_once(path: Path, content: bytes) -> None:
+        nonlocal failed
+        if path == synthesis and not failed:
+            failed = True
+            raise OSError("simulated reference write failure")
+        real_atomic_write(path, content)
+
+    monkeypatch.setattr(migration_ledger, "_atomic_write_bytes", fail_once)
+
+    with pytest.raises(OSError, match="simulated reference write failure"):
+        migration_ledger.apply_campaign_migration(tmp_path, rows)
+
+    assert not (tmp_path / CAMPAIGN_TARGET_ROOT).exists()
+    for name, content in files.items():
+        assert (tmp_path / CAMPAIGN_SOURCE_ROOT / name).read_bytes() == content
+    assert synthesis.read_bytes() == synthesis_before
+
+
+def test_campaign_tree_verification_proves_reader_and_old_path_closure(
+    tmp_path: Path,
+) -> None:
+    rows, _ = _campaign_migration_fixture(tmp_path)
+    applied = migration_ledger.apply_campaign_migration(tmp_path, rows)
+
+    verified = migration_ledger.verify_campaign_migration(tmp_path, applied)
+
+    assert all(row["status"] == "verified" for row in verified)
+    assert all(row["observed_result"]["passed"] is True for row in verified)
+    assert all(
+        row["observed_result"]["manifest_schema"]
+        == "deploy-campaign-final-manifest:5"
+        for row in verified
+    )
+    assert all(
+        row["observed_result"]["runtime_tree_algorithm"] == "campaign-tree-v1"
+        for row in verified
+    )
+    assert all(
+        row["observed_result"]["unexplained_old_path_references"] == []
+        for row in verified
+    )
+
+
+def test_campaign_operate_updates_every_identity_member_atomically(
+    tmp_path: Path,
+) -> None:
+    rows, _ = _campaign_migration_fixture(tmp_path)
+    public = {"rows": rows}
+    private = {"rows": []}
+    ledger = tmp_path / migration_ledger.PUBLIC_LEDGER
+    sidecar = tmp_path / migration_ledger.PRIVATE_LEDGER
+    closeout = tmp_path / migration_ledger.CLOSEOUT
+    ledger.parent.mkdir(parents=True, exist_ok=True)
+    sidecar.parent.mkdir(parents=True, exist_ok=True)
+    ledger.write_text(json.dumps(public), encoding="utf-8")
+    sidecar.write_text(json.dumps(private), encoding="utf-8")
+    closeout.write_text("# Migration control\n", encoding="utf-8")
+
+    assert migration_ledger.operate(
+        tmp_path,
+        action="migrate",
+        migration_id="MIG-0001",
+    ) == 0
+
+    persisted = json.loads(ledger.read_text("utf-8"))
+    assert {
+        row["status"] for row in persisted["rows"]
+    } == {"references-reconciled"}
+    assert not (tmp_path / CAMPAIGN_SOURCE_ROOT).exists()
+    assert (tmp_path / CAMPAIGN_TARGET_ROOT / "manifest.json").is_file()
 
 
 def _catalog_migration_fixture(

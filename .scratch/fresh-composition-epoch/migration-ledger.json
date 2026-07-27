@@ -6532,7 +6532,58 @@
       ],
       "migration_disposition": "move",
       "migration_id": "MIG-0159",
-      "observed_result": null,
+      "observed_result": {
+        "campaign_identity": "campaign:to-tickets:2026-07-25",
+        "exact_target_reconciled": true,
+        "explained_historical_references": [
+          ".scratch/fresh-composition-epoch/migration-ledger.json",
+          "tests/test_migration_ledger.py"
+        ],
+        "manifest_schema": "deploy-campaign-final-manifest:5",
+        "moved_fingerprint": "sha256-v1:0142aa80dfc39e9ea9eb091e17d163635b9c7c57fee09ddcc493a5d4545243d3",
+        "owner": "docs/validation/skills/to-tickets/README.md",
+        "passed": true,
+        "rollback_proved": false,
+        "runtime_tree_algorithm": "campaign-tree-v1",
+        "source_absent": true,
+        "source_tree_fingerprints": {
+          "candidate.md": "sha256-v1:0142aa80dfc39e9ea9eb091e17d163635b9c7c57fee09ddcc493a5d4545243d3",
+          "manifest.json": "sha256-v1:673b5749e46889ac4d7d6c6810a501e3ffee8afb2b37c67b1da88e85c884c69d",
+          "prompt1-m0.md": "sha256-v1:512a6e120a7f3fb72e1ba93a3802ee0315f2b89d3128034d95e525a5480fb4e4",
+          "prompt2-h1.md": "sha256-v1:0a3a8540234f1adeff22cddacc36dfc335aab5c54339b2c70bcba08a967bf4d7",
+          "prompt3-build.md": "sha256-v1:496cdfcaf8fea59d509dfc01fb5519728b4e97de6a666944b6bff6479cf7ada4",
+          "prompt4-decision.md": "sha256-v1:e2704ee8a4ea38cdcd332985ef6891738ab74b831e8ff6866244be0094d6b918",
+          "prompt5-final.md": "sha256-v1:b2c83b5643793ba1f13ebfa4d615991f6358bf0659b8989fdb05180d315f9e86",
+          "pruning.md": "sha256-v1:d4166595b1b9385d9519a1d84af09722df928db21391fd7960e9f528fbee3ba7"
+        },
+        "support_fingerprints": {
+          "docs/synthesis/skills/to-tickets.md": {
+            "after": "sha256-v1:70a56e3e784f3304f27f7f96dbb0b3b25413ef30aaa18bf8badcd770152e66de",
+            "before": "sha256-v1:2f88e197f09f836498853a68d63d5eda829c9b80194863be0e22241ecf68faaf"
+          },
+          "docs/validation/skills/to-tickets/README.md": {
+            "after": "sha256-v1:51434e5262fd4792e2ab5e75480783ab68e5f12a83641fe4bf3b4ceabc328a68",
+            "before": null
+          },
+          "scripts/campaign_artifacts.py": {
+            "after": "sha256-v1:7cd79713f65bf7e4edf47ff7daff0de33ecd4397438b1737cd8beb38270b55b2",
+            "before": "sha256-v1:384e06a60f1002041a68e91ab7e3d26105a2343c34d141247f3bccdccde50eb0"
+          }
+        },
+        "target_fingerprint": "sha256-v1:24f7db4a06951b6e06150994709b1d669ff9f85c57ae1a01dd9e1ea75b7dd132",
+        "target_path": "docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/candidate.md",
+        "target_tree_fingerprints": {
+          "candidate.md": "sha256-v1:24f7db4a06951b6e06150994709b1d669ff9f85c57ae1a01dd9e1ea75b7dd132",
+          "manifest.json": "sha256-v1:4eccbe7f60ff2ece17f82fe7b600f8e1bf24b8b18a91e056be0feefd1795ba23",
+          "prompt1-m0.md": "sha256-v1:512a6e120a7f3fb72e1ba93a3802ee0315f2b89d3128034d95e525a5480fb4e4",
+          "prompt2-h1.md": "sha256-v1:0a3a8540234f1adeff22cddacc36dfc335aab5c54339b2c70bcba08a967bf4d7",
+          "prompt3-build.md": "sha256-v1:496cdfcaf8fea59d509dfc01fb5519728b4e97de6a666944b6bff6479cf7ada4",
+          "prompt4-decision.md": "sha256-v1:e2704ee8a4ea38cdcd332985ef6891738ab74b831e8ff6866244be0094d6b918",
+          "prompt5-final.md": "sha256-v1:b2c83b5643793ba1f13ebfa4d615991f6358bf0659b8989fdb05180d315f9e86",
+          "pruning.md": "sha256-v1:d4166595b1b9385d9519a1d84af09722df928db21391fd7960e9f528fbee3ba7"
+        },
+        "unexplained_old_path_references": []
+      },
       "owner": "docs/validation/skills/to-tickets/README.md",
       "owner_gap": null,
       "proof_reuse_disposition": "missing",
@@ -6550,14 +6601,14 @@
         "validator-proof",
         "old-path-disposition"
       ],
-      "residual_risk": "future migration proof and semantic identity remain pending",
+      "residual_risk": "semantic admission and proof reuse remain explicitly unassessed",
       "source": {
         "fingerprint": "sha256-v1:0142aa80dfc39e9ea9eb091e17d163635b9c7c57fee09ddcc493a5d4545243d3",
         "identity": "campaign:to-tickets:2026-07-25",
         "key": "docs/validation/campaigns/to-tickets-2026-07-25/candidate.md",
         "state": "tracked"
       },
-      "status": "inventoried",
+      "status": "verified",
       "target": {
         "path": "docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/candidate.md",
         "semantic_id": null
@@ -6577,7 +6628,58 @@
       ],
       "migration_disposition": "move",
       "migration_id": "MIG-0160",
-      "observed_result": null,
+      "observed_result": {
+        "campaign_identity": "campaign:to-tickets:2026-07-25",
+        "exact_target_reconciled": true,
+        "explained_historical_references": [
+          ".scratch/fresh-composition-epoch/migration-ledger.json",
+          "tests/test_migration_ledger.py"
+        ],
+        "manifest_schema": "deploy-campaign-final-manifest:5",
+        "moved_fingerprint": "sha256-v1:673b5749e46889ac4d7d6c6810a501e3ffee8afb2b37c67b1da88e85c884c69d",
+        "owner": "docs/validation/skills/to-tickets/README.md",
+        "passed": true,
+        "rollback_proved": false,
+        "runtime_tree_algorithm": "campaign-tree-v1",
+        "source_absent": true,
+        "source_tree_fingerprints": {
+          "candidate.md": "sha256-v1:0142aa80dfc39e9ea9eb091e17d163635b9c7c57fee09ddcc493a5d4545243d3",
+          "manifest.json": "sha256-v1:673b5749e46889ac4d7d6c6810a501e3ffee8afb2b37c67b1da88e85c884c69d",
+          "prompt1-m0.md": "sha256-v1:512a6e120a7f3fb72e1ba93a3802ee0315f2b89d3128034d95e525a5480fb4e4",
+          "prompt2-h1.md": "sha256-v1:0a3a8540234f1adeff22cddacc36dfc335aab5c54339b2c70bcba08a967bf4d7",
+          "prompt3-build.md": "sha256-v1:496cdfcaf8fea59d509dfc01fb5519728b4e97de6a666944b6bff6479cf7ada4",
+          "prompt4-decision.md": "sha256-v1:e2704ee8a4ea38cdcd332985ef6891738ab74b831e8ff6866244be0094d6b918",
+          "prompt5-final.md": "sha256-v1:b2c83b5643793ba1f13ebfa4d615991f6358bf0659b8989fdb05180d315f9e86",
+          "pruning.md": "sha256-v1:d4166595b1b9385d9519a1d84af09722df928db21391fd7960e9f528fbee3ba7"
+        },
+        "support_fingerprints": {
+          "docs/synthesis/skills/to-tickets.md": {
+            "after": "sha256-v1:70a56e3e784f3304f27f7f96dbb0b3b25413ef30aaa18bf8badcd770152e66de",
+            "before": "sha256-v1:2f88e197f09f836498853a68d63d5eda829c9b80194863be0e22241ecf68faaf"
+          },
+          "docs/validation/skills/to-tickets/README.md": {
+            "after": "sha256-v1:51434e5262fd4792e2ab5e75480783ab68e5f12a83641fe4bf3b4ceabc328a68",
+            "before": null
+          },
+          "scripts/campaign_artifacts.py": {
+            "after": "sha256-v1:7cd79713f65bf7e4edf47ff7daff0de33ecd4397438b1737cd8beb38270b55b2",
+            "before": "sha256-v1:384e06a60f1002041a68e91ab7e3d26105a2343c34d141247f3bccdccde50eb0"
+          }
+        },
+        "target_fingerprint": "sha256-v1:4eccbe7f60ff2ece17f82fe7b600f8e1bf24b8b18a91e056be0feefd1795ba23",
+        "target_path": "docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/manifest.json",
+        "target_tree_fingerprints": {
+          "candidate.md": "sha256-v1:24f7db4a06951b6e06150994709b1d669ff9f85c57ae1a01dd9e1ea75b7dd132",
+          "manifest.json": "sha256-v1:4eccbe7f60ff2ece17f82fe7b600f8e1bf24b8b18a91e056be0feefd1795ba23",
+          "prompt1-m0.md": "sha256-v1:512a6e120a7f3fb72e1ba93a3802ee0315f2b89d3128034d95e525a5480fb4e4",
+          "prompt2-h1.md": "sha256-v1:0a3a8540234f1adeff22cddacc36dfc335aab5c54339b2c70bcba08a967bf4d7",
+          "prompt3-build.md": "sha256-v1:496cdfcaf8fea59d509dfc01fb5519728b4e97de6a666944b6bff6479cf7ada4",
+          "prompt4-decision.md": "sha256-v1:e2704ee8a4ea38cdcd332985ef6891738ab74b831e8ff6866244be0094d6b918",
+          "prompt5-final.md": "sha256-v1:b2c83b5643793ba1f13ebfa4d615991f6358bf0659b8989fdb05180d315f9e86",
+          "pruning.md": "sha256-v1:d4166595b1b9385d9519a1d84af09722df928db21391fd7960e9f528fbee3ba7"
+        },
+        "unexplained_old_path_references": []
+      },
       "owner": "docs/validation/skills/to-tickets/README.md",
       "owner_gap": null,
       "proof_reuse_disposition": "missing",
@@ -6597,14 +6699,14 @@
         "validator-proof",
         "old-path-disposition"
       ],
-      "residual_risk": "future migration proof and semantic identity remain pending",
+      "residual_risk": "semantic admission and proof reuse remain explicitly unassessed",
       "source": {
         "fingerprint": "sha256-v1:673b5749e46889ac4d7d6c6810a501e3ffee8afb2b37c67b1da88e85c884c69d",
         "identity": "campaign:to-tickets:2026-07-25",
         "key": "docs/validation/campaigns/to-tickets-2026-07-25/manifest.json",
         "state": "tracked"
       },
-      "status": "inventoried",
+      "status": "verified",
       "target": {
         "path": "docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/manifest.json",
         "semantic_id": null
@@ -6624,7 +6726,58 @@
       ],
       "migration_disposition": "move",
       "migration_id": "MIG-0161",
-      "observed_result": null,
+      "observed_result": {
+        "campaign_identity": "campaign:to-tickets:2026-07-25",
+        "exact_target_reconciled": true,
+        "explained_historical_references": [
+          ".scratch/fresh-composition-epoch/migration-ledger.json",
+          "tests/test_migration_ledger.py"
+        ],
+        "manifest_schema": "deploy-campaign-final-manifest:5",
+        "moved_fingerprint": "sha256-v1:512a6e120a7f3fb72e1ba93a3802ee0315f2b89d3128034d95e525a5480fb4e4",
+        "owner": "docs/validation/skills/to-tickets/README.md",
+        "passed": true,
+        "rollback_proved": false,
+        "runtime_tree_algorithm": "campaign-tree-v1",
+        "source_absent": true,
+        "source_tree_fingerprints": {
+          "candidate.md": "sha256-v1:0142aa80dfc39e9ea9eb091e17d163635b9c7c57fee09ddcc493a5d4545243d3",
+          "manifest.json": "sha256-v1:673b5749e46889ac4d7d6c6810a501e3ffee8afb2b37c67b1da88e85c884c69d",
+          "prompt1-m0.md": "sha256-v1:512a6e120a7f3fb72e1ba93a3802ee0315f2b89d3128034d95e525a5480fb4e4",
+          "prompt2-h1.md": "sha256-v1:0a3a8540234f1adeff22cddacc36dfc335aab5c54339b2c70bcba08a967bf4d7",
+          "prompt3-build.md": "sha256-v1:496cdfcaf8fea59d509dfc01fb5519728b4e97de6a666944b6bff6479cf7ada4",
+          "prompt4-decision.md": "sha256-v1:e2704ee8a4ea38cdcd332985ef6891738ab74b831e8ff6866244be0094d6b918",
+          "prompt5-final.md": "sha256-v1:b2c83b5643793ba1f13ebfa4d615991f6358bf0659b8989fdb05180d315f9e86",
+          "pruning.md": "sha256-v1:d4166595b1b9385d9519a1d84af09722df928db21391fd7960e9f528fbee3ba7"
+        },
+        "support_fingerprints": {
+          "docs/synthesis/skills/to-tickets.md": {
+            "after": "sha256-v1:70a56e3e784f3304f27f7f96dbb0b3b25413ef30aaa18bf8badcd770152e66de",
+            "before": "sha256-v1:2f88e197f09f836498853a68d63d5eda829c9b80194863be0e22241ecf68faaf"
+          },
+          "docs/validation/skills/to-tickets/README.md": {
+            "after": "sha256-v1:51434e5262fd4792e2ab5e75480783ab68e5f12a83641fe4bf3b4ceabc328a68",
+            "before": null
+          },
+          "scripts/campaign_artifacts.py": {
+            "after": "sha256-v1:7cd79713f65bf7e4edf47ff7daff0de33ecd4397438b1737cd8beb38270b55b2",
+            "before": "sha256-v1:384e06a60f1002041a68e91ab7e3d26105a2343c34d141247f3bccdccde50eb0"
+          }
+        },
+        "target_fingerprint": "sha256-v1:512a6e120a7f3fb72e1ba93a3802ee0315f2b89d3128034d95e525a5480fb4e4",
+        "target_path": "docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/prompt1-m0.md",
+        "target_tree_fingerprints": {
+          "candidate.md": "sha256-v1:24f7db4a06951b6e06150994709b1d669ff9f85c57ae1a01dd9e1ea75b7dd132",
+          "manifest.json": "sha256-v1:4eccbe7f60ff2ece17f82fe7b600f8e1bf24b8b18a91e056be0feefd1795ba23",
+          "prompt1-m0.md": "sha256-v1:512a6e120a7f3fb72e1ba93a3802ee0315f2b89d3128034d95e525a5480fb4e4",
+          "prompt2-h1.md": "sha256-v1:0a3a8540234f1adeff22cddacc36dfc335aab5c54339b2c70bcba08a967bf4d7",
+          "prompt3-build.md": "sha256-v1:496cdfcaf8fea59d509dfc01fb5519728b4e97de6a666944b6bff6479cf7ada4",
+          "prompt4-decision.md": "sha256-v1:e2704ee8a4ea38cdcd332985ef6891738ab74b831e8ff6866244be0094d6b918",
+          "prompt5-final.md": "sha256-v1:b2c83b5643793ba1f13ebfa4d615991f6358bf0659b8989fdb05180d315f9e86",
+          "pruning.md": "sha256-v1:d4166595b1b9385d9519a1d84af09722df928db21391fd7960e9f528fbee3ba7"
+        },
+        "unexplained_old_path_references": []
+      },
       "owner": "docs/validation/skills/to-tickets/README.md",
       "owner_gap": null,
       "proof_reuse_disposition": "missing",
@@ -6644,14 +6797,14 @@
         "validator-proof",
         "old-path-disposition"
       ],
-      "residual_risk": "future migration proof and semantic identity remain pending",
+      "residual_risk": "semantic admission and proof reuse remain explicitly unassessed",
       "source": {
         "fingerprint": "sha256-v1:512a6e120a7f3fb72e1ba93a3802ee0315f2b89d3128034d95e525a5480fb4e4",
         "identity": "campaign:to-tickets:2026-07-25",
         "key": "docs/validation/campaigns/to-tickets-2026-07-25/prompt1-m0.md",
         "state": "tracked"
       },
-      "status": "inventoried",
+      "status": "verified",
       "target": {
         "path": "docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/prompt1-m0.md",
         "semantic_id": null
@@ -6669,7 +6822,58 @@
       ],
       "migration_disposition": "move",
       "migration_id": "MIG-0162",
-      "observed_result": null,
+      "observed_result": {
+        "campaign_identity": "campaign:to-tickets:2026-07-25",
+        "exact_target_reconciled": true,
+        "explained_historical_references": [
+          ".scratch/fresh-composition-epoch/migration-ledger.json",
+          "tests/test_migration_ledger.py"
+        ],
+        "manifest_schema": "deploy-campaign-final-manifest:5",
+        "moved_fingerprint": "sha256-v1:0a3a8540234f1adeff22cddacc36dfc335aab5c54339b2c70bcba08a967bf4d7",
+        "owner": "docs/validation/skills/to-tickets/README.md",
+        "passed": true,
+        "rollback_proved": false,
+        "runtime_tree_algorithm": "campaign-tree-v1",
+        "source_absent": true,
+        "source_tree_fingerprints": {
+          "candidate.md": "sha256-v1:0142aa80dfc39e9ea9eb091e17d163635b9c7c57fee09ddcc493a5d4545243d3",
+          "manifest.json": "sha256-v1:673b5749e46889ac4d7d6c6810a501e3ffee8afb2b37c67b1da88e85c884c69d",
+          "prompt1-m0.md": "sha256-v1:512a6e120a7f3fb72e1ba93a3802ee0315f2b89d3128034d95e525a5480fb4e4",
+          "prompt2-h1.md": "sha256-v1:0a3a8540234f1adeff22cddacc36dfc335aab5c54339b2c70bcba08a967bf4d7",
+          "prompt3-build.md": "sha256-v1:496cdfcaf8fea59d509dfc01fb5519728b4e97de6a666944b6bff6479cf7ada4",
+          "prompt4-decision.md": "sha256-v1:e2704ee8a4ea38cdcd332985ef6891738ab74b831e8ff6866244be0094d6b918",
+          "prompt5-final.md": "sha256-v1:b2c83b5643793ba1f13ebfa4d615991f6358bf0659b8989fdb05180d315f9e86",
+          "pruning.md": "sha256-v1:d4166595b1b9385d9519a1d84af09722df928db21391fd7960e9f528fbee3ba7"
+        },
+        "support_fingerprints": {
+          "docs/synthesis/skills/to-tickets.md": {
+            "after": "sha256-v1:70a56e3e784f3304f27f7f96dbb0b3b25413ef30aaa18bf8badcd770152e66de",
+            "before": "sha256-v1:2f88e197f09f836498853a68d63d5eda829c9b80194863be0e22241ecf68faaf"
+          },
+          "docs/validation/skills/to-tickets/README.md": {
+            "after": "sha256-v1:51434e5262fd4792e2ab5e75480783ab68e5f12a83641fe4bf3b4ceabc328a68",
+            "before": null
+          },
+          "scripts/campaign_artifacts.py": {
+            "after": "sha256-v1:7cd79713f65bf7e4edf47ff7daff0de33ecd4397438b1737cd8beb38270b55b2",
+            "before": "sha256-v1:384e06a60f1002041a68e91ab7e3d26105a2343c34d141247f3bccdccde50eb0"
+          }
+        },
+        "target_fingerprint": "sha256-v1:0a3a8540234f1adeff22cddacc36dfc335aab5c54339b2c70bcba08a967bf4d7",
+        "target_path": "docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/prompt2-h1.md",
+        "target_tree_fingerprints": {
+          "candidate.md": "sha256-v1:24f7db4a06951b6e06150994709b1d669ff9f85c57ae1a01dd9e1ea75b7dd132",
+          "manifest.json": "sha256-v1:4eccbe7f60ff2ece17f82fe7b600f8e1bf24b8b18a91e056be0feefd1795ba23",
+          "prompt1-m0.md": "sha256-v1:512a6e120a7f3fb72e1ba93a3802ee0315f2b89d3128034d95e525a5480fb4e4",
+          "prompt2-h1.md": "sha256-v1:0a3a8540234f1adeff22cddacc36dfc335aab5c54339b2c70bcba08a967bf4d7",
+          "prompt3-build.md": "sha256-v1:496cdfcaf8fea59d509dfc01fb5519728b4e97de6a666944b6bff6479cf7ada4",
+          "prompt4-decision.md": "sha256-v1:e2704ee8a4ea38cdcd332985ef6891738ab74b831e8ff6866244be0094d6b918",
+          "prompt5-final.md": "sha256-v1:b2c83b5643793ba1f13ebfa4d615991f6358bf0659b8989fdb05180d315f9e86",
+          "pruning.md": "sha256-v1:d4166595b1b9385d9519a1d84af09722df928db21391fd7960e9f528fbee3ba7"
+        },
+        "unexplained_old_path_references": []
+      },
       "owner": "docs/validation/skills/to-tickets/README.md",
       "owner_gap": null,
       "proof_reuse_disposition": "missing",
@@ -6687,14 +6891,14 @@
         "validator-proof",
         "old-path-disposition"
       ],
-      "residual_risk": "future migration proof and semantic identity remain pending",
+      "residual_risk": "semantic admission and proof reuse remain explicitly unassessed",
       "source": {
         "fingerprint": "sha256-v1:0a3a8540234f1adeff22cddacc36dfc335aab5c54339b2c70bcba08a967bf4d7",
         "identity": "campaign:to-tickets:2026-07-25",
         "key": "docs/validation/campaigns/to-tickets-2026-07-25/prompt2-h1.md",
         "state": "tracked"
       },
-      "status": "inventoried",
+      "status": "verified",
       "target": {
         "path": "docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/prompt2-h1.md",
         "semantic_id": null
@@ -6712,7 +6916,58 @@
       ],
       "migration_disposition": "move",
       "migration_id": "MIG-0163",
-      "observed_result": null,
+      "observed_result": {
+        "campaign_identity": "campaign:to-tickets:2026-07-25",
+        "exact_target_reconciled": true,
+        "explained_historical_references": [
+          ".scratch/fresh-composition-epoch/migration-ledger.json",
+          "tests/test_migration_ledger.py"
+        ],
+        "manifest_schema": "deploy-campaign-final-manifest:5",
+        "moved_fingerprint": "sha256-v1:496cdfcaf8fea59d509dfc01fb5519728b4e97de6a666944b6bff6479cf7ada4",
+        "owner": "docs/validation/skills/to-tickets/README.md",
+        "passed": true,
+        "rollback_proved": false,
+        "runtime_tree_algorithm": "campaign-tree-v1",
+        "source_absent": true,
+        "source_tree_fingerprints": {
+          "candidate.md": "sha256-v1:0142aa80dfc39e9ea9eb091e17d163635b9c7c57fee09ddcc493a5d4545243d3",
+          "manifest.json": "sha256-v1:673b5749e46889ac4d7d6c6810a501e3ffee8afb2b37c67b1da88e85c884c69d",
+          "prompt1-m0.md": "sha256-v1:512a6e120a7f3fb72e1ba93a3802ee0315f2b89d3128034d95e525a5480fb4e4",
+          "prompt2-h1.md": "sha256-v1:0a3a8540234f1adeff22cddacc36dfc335aab5c54339b2c70bcba08a967bf4d7",
+          "prompt3-build.md": "sha256-v1:496cdfcaf8fea59d509dfc01fb5519728b4e97de6a666944b6bff6479cf7ada4",
+          "prompt4-decision.md": "sha256-v1:e2704ee8a4ea38cdcd332985ef6891738ab74b831e8ff6866244be0094d6b918",
+          "prompt5-final.md": "sha256-v1:b2c83b5643793ba1f13ebfa4d615991f6358bf0659b8989fdb05180d315f9e86",
+          "pruning.md": "sha256-v1:d4166595b1b9385d9519a1d84af09722df928db21391fd7960e9f528fbee3ba7"
+        },
+        "support_fingerprints": {
+          "docs/synthesis/skills/to-tickets.md": {
+            "after": "sha256-v1:70a56e3e784f3304f27f7f96dbb0b3b25413ef30aaa18bf8badcd770152e66de",
+            "before": "sha256-v1:2f88e197f09f836498853a68d63d5eda829c9b80194863be0e22241ecf68faaf"
+          },
+          "docs/validation/skills/to-tickets/README.md": {
+            "after": "sha256-v1:51434e5262fd4792e2ab5e75480783ab68e5f12a83641fe4bf3b4ceabc328a68",
+            "before": null
+          },
+          "scripts/campaign_artifacts.py": {
+            "after": "sha256-v1:7cd79713f65bf7e4edf47ff7daff0de33ecd4397438b1737cd8beb38270b55b2",
+            "before": "sha256-v1:384e06a60f1002041a68e91ab7e3d26105a2343c34d141247f3bccdccde50eb0"
+          }
+        },
+        "target_fingerprint": "sha256-v1:496cdfcaf8fea59d509dfc01fb5519728b4e97de6a666944b6bff6479cf7ada4",
+        "target_path": "docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/prompt3-build.md",
+        "target_tree_fingerprints": {
+          "candidate.md": "sha256-v1:24f7db4a06951b6e06150994709b1d669ff9f85c57ae1a01dd9e1ea75b7dd132",
+          "manifest.json": "sha256-v1:4eccbe7f60ff2ece17f82fe7b600f8e1bf24b8b18a91e056be0feefd1795ba23",
+          "prompt1-m0.md": "sha256-v1:512a6e120a7f3fb72e1ba93a3802ee0315f2b89d3128034d95e525a5480fb4e4",
+          "prompt2-h1.md": "sha256-v1:0a3a8540234f1adeff22cddacc36dfc335aab5c54339b2c70bcba08a967bf4d7",
+          "prompt3-build.md": "sha256-v1:496cdfcaf8fea59d509dfc01fb5519728b4e97de6a666944b6bff6479cf7ada4",
+          "prompt4-decision.md": "sha256-v1:e2704ee8a4ea38cdcd332985ef6891738ab74b831e8ff6866244be0094d6b918",
+          "prompt5-final.md": "sha256-v1:b2c83b5643793ba1f13ebfa4d615991f6358bf0659b8989fdb05180d315f9e86",
+          "pruning.md": "sha256-v1:d4166595b1b9385d9519a1d84af09722df928db21391fd7960e9f528fbee3ba7"
+        },
+        "unexplained_old_path_references": []
+      },
       "owner": "docs/validation/skills/to-tickets/README.md",
       "owner_gap": null,
       "proof_reuse_disposition": "missing",
@@ -6730,14 +6985,14 @@
         "validator-proof",
         "old-path-disposition"
       ],
-      "residual_risk": "future migration proof and semantic identity remain pending",
+      "residual_risk": "semantic admission and proof reuse remain explicitly unassessed",
       "source": {
         "fingerprint": "sha256-v1:496cdfcaf8fea59d509dfc01fb5519728b4e97de6a666944b6bff6479cf7ada4",
         "identity": "campaign:to-tickets:2026-07-25",
         "key": "docs/validation/campaigns/to-tickets-2026-07-25/prompt3-build.md",
         "state": "tracked"
       },
-      "status": "inventoried",
+      "status": "verified",
       "target": {
         "path": "docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/prompt3-build.md",
         "semantic_id": null
@@ -6755,7 +7010,58 @@
       ],
       "migration_disposition": "move",
       "migration_id": "MIG-0164",
-      "observed_result": null,
+      "observed_result": {
+        "campaign_identity": "campaign:to-tickets:2026-07-25",
+        "exact_target_reconciled": true,
+        "explained_historical_references": [
+          ".scratch/fresh-composition-epoch/migration-ledger.json",
+          "tests/test_migration_ledger.py"
+        ],
+        "manifest_schema": "deploy-campaign-final-manifest:5",
+        "moved_fingerprint": "sha256-v1:e2704ee8a4ea38cdcd332985ef6891738ab74b831e8ff6866244be0094d6b918",
+        "owner": "docs/validation/skills/to-tickets/README.md",
+        "passed": true,
+        "rollback_proved": false,
+        "runtime_tree_algorithm": "campaign-tree-v1",
+        "source_absent": true,
+        "source_tree_fingerprints": {
+          "candidate.md": "sha256-v1:0142aa80dfc39e9ea9eb091e17d163635b9c7c57fee09ddcc493a5d4545243d3",
+          "manifest.json": "sha256-v1:673b5749e46889ac4d7d6c6810a501e3ffee8afb2b37c67b1da88e85c884c69d",
+          "prompt1-m0.md": "sha256-v1:512a6e120a7f3fb72e1ba93a3802ee0315f2b89d3128034d95e525a5480fb4e4",
+          "prompt2-h1.md": "sha256-v1:0a3a8540234f1adeff22cddacc36dfc335aab5c54339b2c70bcba08a967bf4d7",
+          "prompt3-build.md": "sha256-v1:496cdfcaf8fea59d509dfc01fb5519728b4e97de6a666944b6bff6479cf7ada4",
+          "prompt4-decision.md": "sha256-v1:e2704ee8a4ea38cdcd332985ef6891738ab74b831e8ff6866244be0094d6b918",
+          "prompt5-final.md": "sha256-v1:b2c83b5643793ba1f13ebfa4d615991f6358bf0659b8989fdb05180d315f9e86",
+          "pruning.md": "sha256-v1:d4166595b1b9385d9519a1d84af09722df928db21391fd7960e9f528fbee3ba7"
+        },
+        "support_fingerprints": {
+          "docs/synthesis/skills/to-tickets.md": {
+            "after": "sha256-v1:70a56e3e784f3304f27f7f96dbb0b3b25413ef30aaa18bf8badcd770152e66de",
+            "before": "sha256-v1:2f88e197f09f836498853a68d63d5eda829c9b80194863be0e22241ecf68faaf"
+          },
+          "docs/validation/skills/to-tickets/README.md": {
+            "after": "sha256-v1:51434e5262fd4792e2ab5e75480783ab68e5f12a83641fe4bf3b4ceabc328a68",
+            "before": null
+          },
+          "scripts/campaign_artifacts.py": {
+            "after": "sha256-v1:7cd79713f65bf7e4edf47ff7daff0de33ecd4397438b1737cd8beb38270b55b2",
+            "before": "sha256-v1:384e06a60f1002041a68e91ab7e3d26105a2343c34d141247f3bccdccde50eb0"
+          }
+        },
+        "target_fingerprint": "sha256-v1:e2704ee8a4ea38cdcd332985ef6891738ab74b831e8ff6866244be0094d6b918",
+        "target_path": "docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/prompt4-decision.md",
+        "target_tree_fingerprints": {
+          "candidate.md": "sha256-v1:24f7db4a06951b6e06150994709b1d669ff9f85c57ae1a01dd9e1ea75b7dd132",
+          "manifest.json": "sha256-v1:4eccbe7f60ff2ece17f82fe7b600f8e1bf24b8b18a91e056be0feefd1795ba23",
+          "prompt1-m0.md": "sha256-v1:512a6e120a7f3fb72e1ba93a3802ee0315f2b89d3128034d95e525a5480fb4e4",
+          "prompt2-h1.md": "sha256-v1:0a3a8540234f1adeff22cddacc36dfc335aab5c54339b2c70bcba08a967bf4d7",
+          "prompt3-build.md": "sha256-v1:496cdfcaf8fea59d509dfc01fb5519728b4e97de6a666944b6bff6479cf7ada4",
+          "prompt4-decision.md": "sha256-v1:e2704ee8a4ea38cdcd332985ef6891738ab74b831e8ff6866244be0094d6b918",
+          "prompt5-final.md": "sha256-v1:b2c83b5643793ba1f13ebfa4d615991f6358bf0659b8989fdb05180d315f9e86",
+          "pruning.md": "sha256-v1:d4166595b1b9385d9519a1d84af09722df928db21391fd7960e9f528fbee3ba7"
+        },
+        "unexplained_old_path_references": []
+      },
       "owner": "docs/validation/skills/to-tickets/README.md",
       "owner_gap": null,
       "proof_reuse_disposition": "missing",
@@ -6773,14 +7079,14 @@
         "validator-proof",
         "old-path-disposition"
       ],
-      "residual_risk": "future migration proof and semantic identity remain pending",
+      "residual_risk": "semantic admission and proof reuse remain explicitly unassessed",
       "source": {
         "fingerprint": "sha256-v1:e2704ee8a4ea38cdcd332985ef6891738ab74b831e8ff6866244be0094d6b918",
         "identity": "campaign:to-tickets:2026-07-25",
         "key": "docs/validation/campaigns/to-tickets-2026-07-25/prompt4-decision.md",
         "state": "tracked"
       },
-      "status": "inventoried",
+      "status": "verified",
       "target": {
         "path": "docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/prompt4-decision.md",
         "semantic_id": null
@@ -6798,7 +7104,58 @@
       ],
       "migration_disposition": "move",
       "migration_id": "MIG-0165",
-      "observed_result": null,
+      "observed_result": {
+        "campaign_identity": "campaign:to-tickets:2026-07-25",
+        "exact_target_reconciled": true,
+        "explained_historical_references": [
+          ".scratch/fresh-composition-epoch/migration-ledger.json",
+          "tests/test_migration_ledger.py"
+        ],
+        "manifest_schema": "deploy-campaign-final-manifest:5",
+        "moved_fingerprint": "sha256-v1:b2c83b5643793ba1f13ebfa4d615991f6358bf0659b8989fdb05180d315f9e86",
+        "owner": "docs/validation/skills/to-tickets/README.md",
+        "passed": true,
+        "rollback_proved": false,
+        "runtime_tree_algorithm": "campaign-tree-v1",
+        "source_absent": true,
+        "source_tree_fingerprints": {
+          "candidate.md": "sha256-v1:0142aa80dfc39e9ea9eb091e17d163635b9c7c57fee09ddcc493a5d4545243d3",
+          "manifest.json": "sha256-v1:673b5749e46889ac4d7d6c6810a501e3ffee8afb2b37c67b1da88e85c884c69d",
+          "prompt1-m0.md": "sha256-v1:512a6e120a7f3fb72e1ba93a3802ee0315f2b89d3128034d95e525a5480fb4e4",
+          "prompt2-h1.md": "sha256-v1:0a3a8540234f1adeff22cddacc36dfc335aab5c54339b2c70bcba08a967bf4d7",
+          "prompt3-build.md": "sha256-v1:496cdfcaf8fea59d509dfc01fb5519728b4e97de6a666944b6bff6479cf7ada4",
+          "prompt4-decision.md": "sha256-v1:e2704ee8a4ea38cdcd332985ef6891738ab74b831e8ff6866244be0094d6b918",
+          "prompt5-final.md": "sha256-v1:b2c83b5643793ba1f13ebfa4d615991f6358bf0659b8989fdb05180d315f9e86",
+          "pruning.md": "sha256-v1:d4166595b1b9385d9519a1d84af09722df928db21391fd7960e9f528fbee3ba7"
+        },
+        "support_fingerprints": {
+          "docs/synthesis/skills/to-tickets.md": {
+            "after": "sha256-v1:70a56e3e784f3304f27f7f96dbb0b3b25413ef30aaa18bf8badcd770152e66de",
+            "before": "sha256-v1:2f88e197f09f836498853a68d63d5eda829c9b80194863be0e22241ecf68faaf"
+          },
+          "docs/validation/skills/to-tickets/README.md": {
+            "after": "sha256-v1:51434e5262fd4792e2ab5e75480783ab68e5f12a83641fe4bf3b4ceabc328a68",
+            "before": null
+          },
+          "scripts/campaign_artifacts.py": {
+            "after": "sha256-v1:7cd79713f65bf7e4edf47ff7daff0de33ecd4397438b1737cd8beb38270b55b2",
+            "before": "sha256-v1:384e06a60f1002041a68e91ab7e3d26105a2343c34d141247f3bccdccde50eb0"
+          }
+        },
+        "target_fingerprint": "sha256-v1:b2c83b5643793ba1f13ebfa4d615991f6358bf0659b8989fdb05180d315f9e86",
+        "target_path": "docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/prompt5-final.md",
+        "target_tree_fingerprints": {
+          "candidate.md": "sha256-v1:24f7db4a06951b6e06150994709b1d669ff9f85c57ae1a01dd9e1ea75b7dd132",
+          "manifest.json": "sha256-v1:4eccbe7f60ff2ece17f82fe7b600f8e1bf24b8b18a91e056be0feefd1795ba23",
+          "prompt1-m0.md": "sha256-v1:512a6e120a7f3fb72e1ba93a3802ee0315f2b89d3128034d95e525a5480fb4e4",
+          "prompt2-h1.md": "sha256-v1:0a3a8540234f1adeff22cddacc36dfc335aab5c54339b2c70bcba08a967bf4d7",
+          "prompt3-build.md": "sha256-v1:496cdfcaf8fea59d509dfc01fb5519728b4e97de6a666944b6bff6479cf7ada4",
+          "prompt4-decision.md": "sha256-v1:e2704ee8a4ea38cdcd332985ef6891738ab74b831e8ff6866244be0094d6b918",
+          "prompt5-final.md": "sha256-v1:b2c83b5643793ba1f13ebfa4d615991f6358bf0659b8989fdb05180d315f9e86",
+          "pruning.md": "sha256-v1:d4166595b1b9385d9519a1d84af09722df928db21391fd7960e9f528fbee3ba7"
+        },
+        "unexplained_old_path_references": []
+      },
       "owner": "docs/validation/skills/to-tickets/README.md",
       "owner_gap": null,
       "proof_reuse_disposition": "missing",
@@ -6816,14 +7173,14 @@
         "validator-proof",
         "old-path-disposition"
       ],
-      "residual_risk": "future migration proof and semantic identity remain pending",
+      "residual_risk": "semantic admission and proof reuse remain explicitly unassessed",
       "source": {
         "fingerprint": "sha256-v1:b2c83b5643793ba1f13ebfa4d615991f6358bf0659b8989fdb05180d315f9e86",
         "identity": "campaign:to-tickets:2026-07-25",
         "key": "docs/validation/campaigns/to-tickets-2026-07-25/prompt5-final.md",
         "state": "tracked"
       },
-      "status": "inventoried",
+      "status": "verified",
       "target": {
         "path": "docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/prompt5-final.md",
         "semantic_id": null
@@ -6841,7 +7198,58 @@
       ],
       "migration_disposition": "move",
       "migration_id": "MIG-0166",
-      "observed_result": null,
+      "observed_result": {
+        "campaign_identity": "campaign:to-tickets:2026-07-25",
+        "exact_target_reconciled": true,
+        "explained_historical_references": [
+          ".scratch/fresh-composition-epoch/migration-ledger.json",
+          "tests/test_migration_ledger.py"
+        ],
+        "manifest_schema": "deploy-campaign-final-manifest:5",
+        "moved_fingerprint": "sha256-v1:d4166595b1b9385d9519a1d84af09722df928db21391fd7960e9f528fbee3ba7",
+        "owner": "docs/validation/skills/to-tickets/README.md",
+        "passed": true,
+        "rollback_proved": false,
+        "runtime_tree_algorithm": "campaign-tree-v1",
+        "source_absent": true,
+        "source_tree_fingerprints": {
+          "candidate.md": "sha256-v1:0142aa80dfc39e9ea9eb091e17d163635b9c7c57fee09ddcc493a5d4545243d3",
+          "manifest.json": "sha256-v1:673b5749e46889ac4d7d6c6810a501e3ffee8afb2b37c67b1da88e85c884c69d",
+          "prompt1-m0.md": "sha256-v1:512a6e120a7f3fb72e1ba93a3802ee0315f2b89d3128034d95e525a5480fb4e4",
+          "prompt2-h1.md": "sha256-v1:0a3a8540234f1adeff22cddacc36dfc335aab5c54339b2c70bcba08a967bf4d7",
+          "prompt3-build.md": "sha256-v1:496cdfcaf8fea59d509dfc01fb5519728b4e97de6a666944b6bff6479cf7ada4",
+          "prompt4-decision.md": "sha256-v1:e2704ee8a4ea38cdcd332985ef6891738ab74b831e8ff6866244be0094d6b918",
+          "prompt5-final.md": "sha256-v1:b2c83b5643793ba1f13ebfa4d615991f6358bf0659b8989fdb05180d315f9e86",
+          "pruning.md": "sha256-v1:d4166595b1b9385d9519a1d84af09722df928db21391fd7960e9f528fbee3ba7"
+        },
+        "support_fingerprints": {
+          "docs/synthesis/skills/to-tickets.md": {
+            "after": "sha256-v1:70a56e3e784f3304f27f7f96dbb0b3b25413ef30aaa18bf8badcd770152e66de",
+            "before": "sha256-v1:2f88e197f09f836498853a68d63d5eda829c9b80194863be0e22241ecf68faaf"
+          },
+          "docs/validation/skills/to-tickets/README.md": {
+            "after": "sha256-v1:51434e5262fd4792e2ab5e75480783ab68e5f12a83641fe4bf3b4ceabc328a68",
+            "before": null
+          },
+          "scripts/campaign_artifacts.py": {
+            "after": "sha256-v1:7cd79713f65bf7e4edf47ff7daff0de33ecd4397438b1737cd8beb38270b55b2",
+            "before": "sha256-v1:384e06a60f1002041a68e91ab7e3d26105a2343c34d141247f3bccdccde50eb0"
+          }
+        },
+        "target_fingerprint": "sha256-v1:d4166595b1b9385d9519a1d84af09722df928db21391fd7960e9f528fbee3ba7",
+        "target_path": "docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/pruning.md",
+        "target_tree_fingerprints": {
+          "candidate.md": "sha256-v1:24f7db4a06951b6e06150994709b1d669ff9f85c57ae1a01dd9e1ea75b7dd132",
+          "manifest.json": "sha256-v1:4eccbe7f60ff2ece17f82fe7b600f8e1bf24b8b18a91e056be0feefd1795ba23",
+          "prompt1-m0.md": "sha256-v1:512a6e120a7f3fb72e1ba93a3802ee0315f2b89d3128034d95e525a5480fb4e4",
+          "prompt2-h1.md": "sha256-v1:0a3a8540234f1adeff22cddacc36dfc335aab5c54339b2c70bcba08a967bf4d7",
+          "prompt3-build.md": "sha256-v1:496cdfcaf8fea59d509dfc01fb5519728b4e97de6a666944b6bff6479cf7ada4",
+          "prompt4-decision.md": "sha256-v1:e2704ee8a4ea38cdcd332985ef6891738ab74b831e8ff6866244be0094d6b918",
+          "prompt5-final.md": "sha256-v1:b2c83b5643793ba1f13ebfa4d615991f6358bf0659b8989fdb05180d315f9e86",
+          "pruning.md": "sha256-v1:d4166595b1b9385d9519a1d84af09722df928db21391fd7960e9f528fbee3ba7"
+        },
+        "unexplained_old_path_references": []
+      },
       "owner": "docs/validation/skills/to-tickets/README.md",
       "owner_gap": null,
       "proof_reuse_disposition": "missing",
@@ -6859,14 +7267,14 @@
         "validator-proof",
         "old-path-disposition"
       ],
-      "residual_risk": "future migration proof and semantic identity remain pending",
+      "residual_risk": "semantic admission and proof reuse remain explicitly unassessed",
       "source": {
         "fingerprint": "sha256-v1:d4166595b1b9385d9519a1d84af09722df928db21391fd7960e9f528fbee3ba7",
         "identity": "campaign:to-tickets:2026-07-25",
         "key": "docs/validation/campaigns/to-tickets-2026-07-25/pruning.md",
         "state": "tracked"
       },
-      "status": "inventoried",
+      "status": "verified",
       "target": {
         "path": "docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/pruning.md",
         "semantic_id": null

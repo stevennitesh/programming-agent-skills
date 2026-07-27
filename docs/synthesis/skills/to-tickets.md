@@ -3,7 +3,7 @@
 The decision-bearing content is bounded below. Its identity is the SHA-256 of
 the exact UTF-8 bytes between the markers, including the first and last
 newline. The campaign
-[manifest](../../validation/campaigns/to-tickets-2026-07-25/manifest.json)
+[manifest](../../validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/manifest.json)
 owns exact runtime identities and promotion-critical paths.
 
 <!-- BEGIN TO-TICKETS ACTIVE SYNTHESIS -->
@@ -16,7 +16,7 @@ H1, V1, P1, and canonical are byte-identical. The complete Pruning Pass found
 no safe material cut, so P1 is `pruning-not-needed`.
 
 M0 remains the intent-derived 22-unit minimum specified by the immutable
-[Prompt 1 capsule](../../validation/campaigns/to-tickets-2026-07-25/prompt1-m0.md).
+[Prompt 1 capsule](../../validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/prompt1-m0.md).
 It passed all 24 registered viability cases with zero critical failures. No
 current-only behavior has unresolved removal risk.
 

@@ -724,6 +724,21 @@ def read_campaign_manifest(manifest_path: Path) -> dict[str, object]:
     manifest = _read_json(manifest_path)
     if not isinstance(manifest, dict):
         raise ValueError("Campaign manifest must be an object")
+    compact_schema = manifest.get("schema")
+    if (
+        isinstance(compact_schema, dict)
+        and compact_schema.get("name") == "deploy-campaign-final-manifest"
+        and compact_schema.get("version") == 5
+    ):
+        campaign = manifest.get("campaign")
+        runtime_identities = manifest.get("runtime_identities")
+        if (
+            not isinstance(campaign, dict)
+            or not isinstance(runtime_identities, dict)
+            or runtime_identities.get("tree_algorithm") != "campaign-tree-v1"
+        ):
+            raise ValueError("Compact historical campaign manifest is malformed")
+        return manifest
     version = manifest.get("schema_version")
     if version == CAMPAIGN_SCHEMA_VERSION:
         campaign = manifest.get("campaign")

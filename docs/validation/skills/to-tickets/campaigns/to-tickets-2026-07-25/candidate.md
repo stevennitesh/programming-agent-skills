@@ -3,9 +3,9 @@
 This candidate record references authoritative owners instead of copying
 their identities or decisions. The intended contract and M0 semantic units
 remain in [Prompt 1](prompt1-m0.md), research provenance remains in the
-[research packet](../../../research/to-tickets-deploy-2026-07-25.md), active
+[research packet](../../../../../research/to-tickets-deploy-2026-07-25.md), active
 dispositions remain in the
-[synthesis](../../../synthesis/skills/to-tickets.md), and the campaign
+[synthesis](../../../../../synthesis/skills/to-tickets.md), and the campaign
 [manifest](manifest.json) owns exact identities, evidence dispositions, and
 promotion-critical paths.
 
@@ -29,7 +29,7 @@ The complete M0 viability suite passed 24 of 24 registered cases with zero
 critical failures. Source-completeness repairs changed only affected worker
 fixtures, invalidated every affected sample, refroze their identities, and
 restarted each affected family gate with task and rubric fixed. The compact
-[Prompt 4 results](../../evals/to-tickets-2026-07-25/prompt4-results.json)
+[Prompt 4 results](../../../../evals/to-tickets-2026-07-25/prompt4-results.json)
 own final sample identities, deviations, judgments, and aggregates.
 
 Candidate and canonical compatibility use the shared parameterized semantic

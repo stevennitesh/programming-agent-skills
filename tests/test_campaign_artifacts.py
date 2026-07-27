@@ -1522,6 +1522,64 @@ def test_campaign_reader_preserves_historical_v1_without_upgrade(
     assert "semantic" not in result
 
 
+def test_campaign_reader_preserves_compact_historical_manifest_without_upgrade(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "manifest.json"
+    historical = {
+        "schema": {
+            "name": "deploy-campaign-final-manifest",
+            "version": 5,
+            "profile": "compact-prompt5-final",
+        },
+        "campaign": {
+            "skill": "to-tickets",
+            "epoch": "2026-07-25",
+            "status": "complete",
+        },
+        "runtime_identities": {
+            "tree_algorithm": "campaign-tree-v1",
+            "v1": {
+                "tree_sha256": "4" * 64,
+                "identity_relationship": "equals-m0-and-final-h1",
+            },
+        },
+    }
+    write_json(path, historical)
+    before = path.read_bytes()
+
+    result = campaign_artifacts.read_campaign_manifest(path)
+
+    assert result == historical
+    assert path.read_bytes() == before
+    assert result["runtime_identities"]["tree_algorithm"] == "campaign-tree-v1"
+    assert "schema_version" not in result
+
+
+def test_campaign_reader_rejects_malformed_compact_historical_manifest(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "manifest.json"
+    historical = {
+        "schema": {
+            "name": "deploy-campaign-final-manifest",
+            "version": 5,
+        },
+        "campaign": {
+            "skill": "to-tickets",
+            "epoch": "2026-07-25",
+        },
+        "runtime_identities": {"tree_algorithm": "invented-v2"},
+    }
+    write_json(path, historical)
+
+    with pytest.raises(
+        ValueError,
+        match="Compact historical campaign manifest is malformed",
+    ):
+        campaign_artifacts.read_campaign_manifest(path)
+
+
 def test_fresh_contract_drift_stales_receipts_and_returns_owner_choice(
     tmp_path: Path,
 ) -> None:

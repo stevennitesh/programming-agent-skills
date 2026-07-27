@@ -1,6 +1,6 @@
 # Fresh Composition Epoch migration control
 
-Status: active control; 1 migration row(s) verified.
+Status: active control; 9 migration row(s) verified.
 
 This durable `.scratch/` control implements issue #41 and remains temporary
 cross-ticket execution state. It is not research, synthesis, validation, or
@@ -21,6 +21,14 @@ publishes no private source locators.
 ## Verified migrations
 
 - `MIG-0107` -> `docs/research/skill-pack-composition/sources/SRC-0001.md`
+- `MIG-0159` -> `docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/candidate.md`
+- `MIG-0160` -> `docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/manifest.json`
+- `MIG-0161` -> `docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/prompt1-m0.md`
+- `MIG-0162` -> `docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/prompt2-h1.md`
+- `MIG-0163` -> `docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/prompt3-build.md`
+- `MIG-0164` -> `docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/prompt4-decision.md`
+- `MIG-0165` -> `docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/prompt5-final.md`
+- `MIG-0166` -> `docs/validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/pruning.md`
 
 ## Contract
 
