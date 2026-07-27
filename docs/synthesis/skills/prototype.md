@@ -98,10 +98,10 @@ The campaign changed no relationship edge and no relationship surface.
 
 | Record | Current evidence |
 | --- | --- |
-| [Construction](../../validation/transcripts/2026-07-23-prototype-runtime-no-change-construction-evidence.md) | Exact five-file inventory, component and tree hashes, runtime map, focused structure and relationship proof. |
-| [Behavior](../../validation/transcripts/2026-07-23-prototype-runtime-no-change-behavior-eval.md) | Fresh B0 `25/25`, D0 `25/25`, deterministic protected-contract traces, and live Logic, Measure, and cleanup seams. |
-| [Pruning](../../validation/transcripts/2026-07-23-prototype-runtime-no-change-pruning.md) | Complete cut ledger and `pruning-not-needed` decision at the accepted C1 hash. |
-| [Prior acceptance](../../validation/transcripts/2026-07-22-prototype-b0-first-acceptance.md) | Lane-limited prior description, actual-browser UI, and closeout evidence for the same final package. |
+| [Construction](../../validation/skills/prototype/evals/EV-prototype-runtime-no-change-construction-evidence-20260723-01/evidence/2026-07-23-prototype-runtime-no-change-construction-evidence.md) | Exact five-file inventory, component and tree hashes, runtime map, focused structure and relationship proof. |
+| [Behavior](../../validation/skills/prototype/evals/EV-prototype-runtime-no-change-behavior-eval-20260723-01/evidence/2026-07-23-prototype-runtime-no-change-behavior-eval.md) | Fresh B0 `25/25`, D0 `25/25`, deterministic protected-contract traces, and live Logic, Measure, and cleanup seams. |
+| [Pruning](../../validation/skills/prototype/evals/EV-prototype-runtime-no-change-pruning-20260723-01/evidence/2026-07-23-prototype-runtime-no-change-pruning.md) | Complete cut ledger and `pruning-not-needed` decision at the accepted C1 hash. |
+| [Prior acceptance](../../validation/skills/prototype/evals/EV-prototype-b0-first-acceptance-20260722-01/evidence/2026-07-22-prototype-b0-first-acceptance.md) | Lane-limited prior description, actual-browser UI, and closeout evidence for the same final package. |
 
 Prompt 5 promotion and managed-install evidence is appended to the current
 construction record so exact identity and lifecycle parity remain in one

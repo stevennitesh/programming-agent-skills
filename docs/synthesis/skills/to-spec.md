@@ -6,13 +6,13 @@ Status: Deploy Prompt 4 decision for campaign `to-spec-2026-07-25`;
 This file owns the active semantic decision. Source provenance remains in
 [`2026-07-25-deploy-research.md`](../../research/skills/to-spec/RP-to-spec-20260725-01.md),
 the frozen minimum remains in
-[`prompt1-m0.md`](../../validation/campaigns/to-spec-2026-07-25/prompt1-m0.md),
+[`prompt1-m0.md`](../../validation/skills/to-spec/campaigns/to-spec-2026-07-25/prompt1-m0.md),
 and machine-readable identities and dispositions remain in
-[`manifest.json`](../../validation/campaigns/to-spec-2026-07-25/manifest.json).
+[`manifest.json`](../../validation/skills/to-spec/campaigns/to-spec-2026-07-25/manifest.json).
 Prompt 4 aggregate judgment remains in
-[`prompt4-decision.md`](../../validation/campaigns/to-spec-2026-07-25/prompt4-decision.md),
+[`prompt4-decision.md`](../../validation/skills/to-spec/campaigns/to-spec-2026-07-25/prompt4-decision.md),
 with per-sample identities in
-[`prompt4-results.json`](../../validation/evals/to-spec-2026-07-25/prompt4-results.json).
+[`prompt4-results.json`](../../validation/skills/to-spec/evals/EV-to-spec-prompt4-20260725-01/prompt4-results.json).
 The prior campaign is historical evidence, not lifecycle completion.
 
 <!-- BEGIN TO-SPEC-2026-07-25-SYNTHESIS-DECISION -->

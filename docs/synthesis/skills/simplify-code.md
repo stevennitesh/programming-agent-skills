@@ -145,10 +145,10 @@ also remain byte-identical to the previous canonical package, B0, D0, and C1.
 ## Exact Proof
 
 The accepted behavior record is
-[2026-07-23-simplify-code-behavior-eval.md](../../validation/transcripts/2026-07-23-simplify-code-behavior-eval.md).
+[2026-07-23-simplify-code-behavior-eval.md](../../validation/skills/simplify-code/evals/EV-simplify-code-behavior-eval-20260723-01/evidence/2026-07-23-simplify-code-behavior-eval.md).
 It owns the fixed protocol, raw-output pointers, sample judgments, variance,
 worst results, deviations, and telemetry limits. The pruning record is
-[2026-07-23-simplify-code-pruning.md](../../validation/transcripts/2026-07-23-simplify-code-pruning.md).
+[2026-07-23-simplify-code-pruning.md](../../validation/skills/simplify-code/evals/EV-simplify-code-pruning-20260723-01/evidence/2026-07-23-simplify-code-pruning.md).
 
 Exact identities:
 

@@ -41,7 +41,7 @@ inspection, evidence-backed judgment, finding admission into the report,
 coverage accounting, and terminal status for the pinned snapshot.
 
 The authoritative durable campaign record is
-`docs/validation/evals/review-2026-07-24-prompt4/campaign-decision.json`; its
+`docs/validation/skills/review/evals/EV-review-prompt4-20260724-01/campaign-decision.json`; its
 M0 checkpoint remains
 `sha256:3fa19cd24076c25090adc1921dc1e5f1c21e74749e4179a6c59c17a523330366`.
 All fourteen semantic units remain protected:
@@ -110,7 +110,7 @@ existing owners already expressed the required topology and interfaces.
 ## Proof
 
 The compact campaign decision owner is
-`docs/validation/evals/review-2026-07-24-prompt4/campaign-decision.json`.
+`docs/validation/skills/review/evals/EV-review-prompt4-20260724-01/campaign-decision.json`.
 Frozen Prompt 2 content is verified through its immutable Prompt 2 transcript
 and recorded decision fingerprint; the active synthesis is the Prompt 4
 decision and is not reused as a historical Prompt 2 input.

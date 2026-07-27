@@ -71,8 +71,8 @@ B0 must preserve all of the following:
 | Upper-bound engineering language | Applicable TDD, tracer-bullet, seam, proof, completion, and pruning rows read with their evidence pointers | Research pressure and semantic correction | Document states 2026-07-22 freshness |
 | Runtime relationships | `docs/synthesis/skill-context-relationships.md` | Accepted caller and callee contracts | Unchanged by this pruning |
 | Structural proof | `tests/test_experimental_skill_contracts.py::test_canonical_tdd_is_the_exact_single_cut_baseline` | Exact inventory and single-cut identity | Passed at promotion Lock |
-| Pruning-equivalence decision | [`docs/validation/evals/tdd-pruning-results/decision.md`](../../validation/evals/tdd-pruning-results/decision.md) | Fixed-case non-regression result | Five fresh samples per arm; bounded to recorded runtime and cases |
-| Campaign and installation record | [`docs/validation/transcripts/2026-07-22-tdd-candidate-evidence.md`](../../validation/transcripts/2026-07-22-tdd-candidate-evidence.md) | Package identities, promotion, installation, and parity | Historical proof record |
+| Pruning-equivalence decision | [`docs/validation/skills/tdd/evals/EV-tdd-pruning-20260722-01/decision.md`](../../validation/skills/tdd/evals/EV-tdd-pruning-20260722-01/decision.md) | Fixed-case non-regression result | Five fresh samples per arm; bounded to recorded runtime and cases |
+| Campaign and installation record | [`docs/validation/skills/tdd/evals/EV-tdd-candidate-evidence-20260722-01/evidence/2026-07-22-tdd-candidate-evidence.md`](../../validation/skills/tdd/evals/EV-tdd-candidate-evidence-20260722-01/evidence/2026-07-22-tdd-candidate-evidence.md) | Package identities, promotion, installation, and parity | Historical proof record |
 
 No skill-specific source packet beyond the prior synthesis source list was
 found. The book and article references below are rationale, not current local
@@ -279,7 +279,7 @@ because they exist.
 | GREEN refactor and scoped recommendations | `skills/custom/tdd/refactoring.md` |
 | Invocation policy | `skills/custom/tdd/agents/openai.yaml` |
 | Pre-prune control identity and compact equivalence evidence | Retired tree hash `2c54693e3c51ed5785430943786bfdd578a6fc4e99f0746de2f027ee16f286ae` and `docs/validation/evals/tdd-pruning-results/` |
-| Campaign, promotion, and installation record | `docs/validation/transcripts/2026-07-22-tdd-candidate-evidence.md` |
+| Campaign, promotion, and installation record | `docs/validation/skills/tdd/evals/EV-tdd-candidate-evidence-20260722-01/evidence/2026-07-22-tdd-candidate-evidence.md` |
 | Accepted relationship index | `docs/synthesis/skill-context-relationships.md`; unchanged by this decision |
 | Canonical single-cut proof | `tests/test_experimental_skill_contracts.py::test_canonical_tdd_is_the_exact_single_cut_baseline` |
 
@@ -369,10 +369,10 @@ the recorded evidence limit.
 
 Proof is owned by validation:
 
-- [pruning-equivalence decision](../../validation/evals/tdd-pruning-results/decision.md);
-- [fixed protocol](../../validation/evals/tdd-pruning-results/protocol.md) and
-  [rubric](../../validation/evals/tdd-pruning-results/rubric.md);
-- [promotion, installation, and parity record](../../validation/transcripts/2026-07-22-tdd-candidate-evidence.md); and
+- [pruning-equivalence decision](../../validation/skills/tdd/evals/EV-tdd-pruning-20260722-01/decision.md);
+- [fixed protocol](../../validation/skills/tdd/evals/EV-tdd-pruning-20260722-01/protocol.md) and
+  [rubric](../../validation/skills/tdd/evals/EV-tdd-pruning-20260722-01/rubric.md);
+- [promotion, installation, and parity record](../../validation/skills/tdd/evals/EV-tdd-candidate-evidence-20260722-01/evidence/2026-07-22-tdd-candidate-evidence.md); and
 - retired pre-prune control identity
   `2c54693e3c51ed5785430943786bfdd578a6fc4e99f0746de2f027ee16f286ae`.
 

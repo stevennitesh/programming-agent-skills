@@ -1,0 +1,57 @@
+{
+  "schema": "programming-agent-skills.compact-campaign-decision.v1",
+  "skill": "to-spec",
+  "epoch": "2026-07-24-to-spec",
+  "decision": "complete",
+  "fixed_git_head": "f3be70c31dd8f2ae9f12a75248065ef313790bda",
+  "sources": {
+    "intent_checkpoint": "docs/validation/skills/to-spec/evals/EV-to-spec-prompt1-m0-20260724-01/evidence/2026-07-24-to-spec-prompt1-m0.md",
+    "research": "docs/research/skills/to-spec/RP-to-spec-20260724-01.md",
+    "synthesis": "docs/synthesis/skills/to-spec.md",
+    "reusable_fixtures": "docs/validation/skills/to-spec/evals/EV-to-spec-prompt4-20260724-01/fixtures"
+  },
+  "identities": {
+    "incumbent_skill": "b7e05a55f30aa16a385360183281c516cf10223ec27f348c50f9039315bac86e",
+    "m0": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa",
+    "h1": "ac02b5ad3892427cb4cda755c18c4fac381d011a333a85e7b7a6eea88bac94e9",
+    "v1": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa",
+    "p1": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa",
+    "canonical": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa",
+    "installed": "548af7fd1dd0c581fd472f5652ee0c294381c082ecfc927604300edaf07ddaaa"
+  },
+  "behavior": {
+    "m0_viability": "22/22 passed; worst score 9; zero critical failures",
+    "h1_controls": "seven clusters, five M0 samples each, no meaningful control deficit",
+    "h1": "all seven units rejected-no-control-deficit; no H1 arm run",
+    "v1": "exact M0",
+    "claim_boundary": "historical-admission-only after raw-output retirement; rerun for new behavioral credit"
+  },
+  "pruning": {
+    "decision": "pruning-not-needed",
+    "passages": 17,
+    "v1_equals_p1": true
+  },
+  "promotion": {
+    "canonical_installed_parity": true,
+    "focused_tests": "59 passed",
+    "full_suite": "206 passed, 4 skipped",
+    "post_install_dry_run": "25 unchanged",
+    "git_delivery": "pending"
+  },
+  "retention": {
+    "kept": [
+      "intent checkpoint",
+      "research",
+      "active synthesis",
+      "reusable fixtures",
+      "this compact terminal decision"
+    ],
+    "raw_outputs": "moved to ignored .tmp/campaign-evidence",
+    "copied_runtimes_payloads_and_routine_transcripts": "retired"
+  },
+  "residual_gaps": [
+    "live provider recovery",
+    "transfer beyond recorded fixtures, model, host, and tools",
+    "exact backend build, seed, token, and latency telemetry"
+  ]
+}

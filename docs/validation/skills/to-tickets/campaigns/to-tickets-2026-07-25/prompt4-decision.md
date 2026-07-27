@@ -101,7 +101,7 @@ package now matches the exact M0 tree, so V1 is exact M0.
 ## Evidence And Limits
 
 The authoritative compact results record is
-`docs/validation/evals/to-tickets-2026-07-25/prompt4-results.json`.
+`docs/validation/skills/to-tickets/evals/EV-to-tickets-prompt4-20260725-01/prompt4-results.json`.
 Prompt 3 evidence was reused only for deterministic construction, identity,
 relationship, machine, and fixture-isolation lanes. Historical behavior
 evidence remained admission-only or lane-limited.

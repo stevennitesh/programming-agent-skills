@@ -272,4 +272,4 @@ Final C1 remains byte-identical at
 `a5c63f7c0ecbe2971dbbd20bb1774ece83990e08fa97d3df6d9f49c3b41cf3c4`.
 The canonical runtime and Direct-only relationship surface now publish that
 exact decision. Promotion and installation evidence is recorded in
-[`2026-07-23-to-questionnaire-promotion-install.md`](../../validation/transcripts/2026-07-23-to-questionnaire-promotion-install.md).
+[`2026-07-23-to-questionnaire-promotion-install.md`](../../validation/skills/to-questionnaire/evals/EV-to-questionnaire-promotion-install-20260723-01/evidence/2026-07-23-to-questionnaire-promotion-install.md).

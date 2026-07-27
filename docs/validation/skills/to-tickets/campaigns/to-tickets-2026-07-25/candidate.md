@@ -29,7 +29,7 @@ The complete M0 viability suite passed 24 of 24 registered cases with zero
 critical failures. Source-completeness repairs changed only affected worker
 fixtures, invalidated every affected sample, refroze their identities, and
 restarted each affected family gate with task and rubric fixed. The compact
-[Prompt 4 results](../../../../evals/to-tickets-2026-07-25/prompt4-results.json)
+[Prompt 4 results](../../evals/EV-to-tickets-prompt4-20260725-01/prompt4-results.json)
 own final sample identities, deviations, judgments, and aggregates.
 
 Candidate and canonical compatibility use the shared parameterized semantic

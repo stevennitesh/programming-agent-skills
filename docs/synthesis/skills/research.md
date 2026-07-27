@@ -109,10 +109,10 @@ Return, or completion obligation. Final C1 remained byte-identical to B0.
 
 Current-epoch proof records:
 
-- [B0/C1 construction evidence](../../validation/transcripts/2026-07-23-research-b0-c1-construction-evidence.md)
-- [Prompt 4 behavior evaluation](../../validation/transcripts/2026-07-23-research-behavior-eval.md)
-- [Pruning Pass](../../validation/transcripts/2026-07-23-research-pruning.md)
-- [Promotion and installation](../../validation/transcripts/2026-07-23-research-promotion-install.md)
+- [B0/C1 construction evidence](../../validation/skills/research/evals/EV-research-b0-c1-construction-evidence-20260723-01/evidence/2026-07-23-research-b0-c1-construction-evidence.md)
+- [Prompt 4 behavior evaluation](../../validation/skills/research/evals/EV-research-behavior-eval-20260723-01/evidence/2026-07-23-research-behavior-eval.md)
+- [Pruning Pass](../../validation/skills/research/evals/EV-research-pruning-20260723-01/evidence/2026-07-23-research-pruning.md)
+- [Promotion and installation](../../validation/skills/research/evals/EV-research-promotion-install-20260723-01/evidence/2026-07-23-research-promotion-install.md)
 
 ## Deliberate Non-Changes
 

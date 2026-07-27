@@ -217,7 +217,7 @@ Prompt 4 owns fresh no-guidance controls, candidate trials, repeated samples whe
 
 ## Prompt 4 Acceptance And Readiness
 
-Fresh controls and candidate samples are recorded in [`2026-07-21-grilling-post-candidate-behavior-eval.md`](../../validation/transcripts/2026-07-21-grilling-post-candidate-behavior-eval.md). Prompt 4 made two evidence-backed repairs inside admitted mechanisms:
+Fresh controls and candidate samples are recorded in [`2026-07-21-grilling-post-candidate-behavior-eval.md`](../../validation/skills/grilling/evals/EV-grilling-post-candidate-behavior-eval-20260721-01/evidence/2026-07-21-grilling-post-candidate-behavior-eval.md). Prompt 4 made two evidence-backed repairs inside admitted mechanisms:
 
 - repeated non-answers now make decision authority unavailable, closing semantic non-progress from 3/5 to 5/5 candidate compliance; and
 - Gap now maps evidence categories to one uninvoked owner, closing authoritative-source selection from 4/5 to 5/5.

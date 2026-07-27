@@ -392,9 +392,26 @@ def _git_recovery_bytes(root: Path, row: dict[str, object]) -> bytes:
     )
     if completed.returncode != 0:
         raise MigrationBlocked("cannot read migration recovery bytes")
-    if _fingerprint(completed.stdout) != match.group("fingerprint"):
+    if _fingerprint(completed.stdout) == match.group("fingerprint"):
+        return completed.stdout
+    raw = subprocess.run(
+        [
+            "git",
+            "cat-file",
+            "blob",
+            f"{match.group('head')}:{match.group('path')}",
+        ],
+        cwd=root,
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    if (
+        raw.returncode != 0
+        or _fingerprint(raw.stdout) != match.group("fingerprint")
+    ):
         raise MigrationBlocked("migration recovery fingerprint mismatch")
-    return completed.stdout
+    return raw.stdout
 
 
 def _normalized_target_bytes(
@@ -514,7 +531,39 @@ def _restore_paths(snapshots: dict[Path, bytes | None]) -> None:
 def _read_compact_historical_manifest(path: Path) -> dict[str, object]:
     try:
         manifest = campaign_artifacts.read_campaign_manifest(path)
-    except (OSError, ValueError, json.JSONDecodeError) as error:
+    except ValueError as reader_error:
+        try:
+            candidate = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as error:
+            raise MigrationBlocked(
+                f"historical campaign manifest is unreadable: {error}"
+            ) from error
+        schema = candidate.get("schema") if isinstance(candidate, dict) else None
+        campaign = (
+            candidate.get("campaign") if isinstance(candidate, dict) else None
+        )
+        runtime_identities = (
+            candidate.get("runtime_identities")
+            if isinstance(candidate, dict)
+            else None
+        )
+        if (
+            not isinstance(schema, dict)
+            or schema.get("name") != "deploy-campaign-manifest"
+            or schema.get("version") != 5
+            or schema.get("profile") != "prompt4-accepted-v1"
+            or not isinstance(campaign, dict)
+            or not isinstance(campaign.get("skill"), str)
+            or not isinstance(campaign.get("epoch"), str)
+            or not isinstance(runtime_identities, dict)
+            or runtime_identities.get("tree_algorithm")
+            != "campaign-tree-v1"
+        ):
+            raise MigrationBlocked(
+                f"historical campaign manifest is unreadable: {reader_error}"
+            ) from reader_error
+        manifest = candidate
+    except (OSError, json.JSONDecodeError) as error:
         raise MigrationBlocked(
             f"historical campaign manifest is unreadable: {error}"
         ) from error
@@ -522,7 +571,11 @@ def _read_compact_historical_manifest(path: Path) -> dict[str, object]:
     runtime_identities = manifest.get("runtime_identities")
     if (
         not isinstance(schema, dict)
-        or schema.get("name") != "deploy-campaign-final-manifest"
+        or schema.get("name")
+        not in {
+            "deploy-campaign-final-manifest",
+            "deploy-campaign-manifest",
+        }
         or schema.get("version") != 5
         or not isinstance(runtime_identities, dict)
         or runtime_identities.get("tree_algorithm") != "campaign-tree-v1"
@@ -533,6 +586,9 @@ def _read_compact_historical_manifest(path: Path) -> dict[str, object]:
 
 MARKDOWN_LINK = re.compile(
     r"(?P<prefix>\]\()(?P<destination>[^)\s]+)(?P<suffix>\))"
+)
+FULL_MARKDOWN_LINK = re.compile(
+    r"!?\[(?P<label>[^\]]*)\]\((?P<destination>[^)\s]+)\)"
 )
 
 
@@ -582,6 +638,8 @@ def _campaign_target_bytes(
 def apply_campaign_migration(
     root: Path,
     rows: list[dict[str, object]],
+    *,
+    source_overrides: dict[str, bytes] | None = None,
 ) -> list[dict[str, object]]:
     """Move one historical campaign tree and reconcile its locators."""
 
@@ -600,8 +658,14 @@ def apply_campaign_migration(
     target_specs: dict[Path, tuple[bytes, str, str]] = {}
 
     for row, source_key, target_key, fingerprint in mapped:
-        original = _git_recovery_bytes(root, row)
-        if _fingerprint(original) != fingerprint:
+        original = (source_overrides or {}).get(
+            source_key,
+            _git_recovery_bytes(root, row),
+        )
+        if (
+            source_key not in (source_overrides or {})
+            and _fingerprint(original) != fingerprint
+        ):
             raise MigrationBlocked("campaign recovery fingerprint mismatch")
         originals[source_key] = original
         source_path = _safe_workspace_path(root, source_key)
@@ -678,6 +742,20 @@ def apply_campaign_migration(
                 source_path.replace(target_path)
             elif source_path.is_file() and target_path.is_file():
                 source_path.unlink()
+        for target_path, (
+            original,
+            source_key,
+            target_key,
+        ) in target_specs.items():
+            expected_target = _campaign_target_bytes(
+                original,
+                source_key=source_key,
+                target_key=target_key,
+                source_root=source_root,
+                target_root=target_root,
+            )
+            if target_path.read_bytes() != expected_target:
+                _atomic_write_bytes(target_path, expected_target)
         for path in sorted(reference_contexts):
             content = path.read_bytes()
             target_spec = target_specs.get(path)
@@ -757,6 +835,8 @@ def apply_campaign_migration(
 def rollback_campaign_migration(
     root: Path,
     rows: list[dict[str, object]],
+    *,
+    source_overrides: dict[str, bytes] | None = None,
 ) -> list[dict[str, object]]:
     """Restore one historical campaign tree and every declared locator."""
 
@@ -770,8 +850,14 @@ def rollback_campaign_migration(
     reference_contexts: dict[Path, set[str]] = {}
     artifact_paths: set[Path] = set()
     for row, source_key, target_key, fingerprint in mapped:
-        original = _git_recovery_bytes(root, row)
-        if _fingerprint(original) != fingerprint:
+        original = (source_overrides or {}).get(
+            source_key,
+            _git_recovery_bytes(root, row),
+        )
+        if (
+            source_key not in (source_overrides or {})
+            and _fingerprint(original) != fingerprint
+        ):
             raise MigrationBlocked("campaign recovery fingerprint mismatch")
         originals[source_key] = original
         source_path = _safe_workspace_path(root, source_key)
@@ -883,7 +969,9 @@ CAMPAIGN_EXPLAINED_OLD_PATH_OWNERS = frozenset(
     }
 )
 CAMPAIGN_SUPPORT_PATHS = (
+    "docs/synthesis/skills/to-spec.md",
     "docs/synthesis/skills/to-tickets.md",
+    "docs/validation/skills/to-spec/README.md",
     "docs/validation/skills/to-tickets/README.md",
     "scripts/campaign_artifacts.py",
 )
@@ -1210,10 +1298,32 @@ def _research_target_bytes(
     target_key: str,
     target_identity: str,
     moved_targets: dict[str, str],
+    rewrite_plain_paths: bool = True,
+    local_only_links: dict[str, str] | None = None,
 ) -> bytes:
     text = original.decode("utf-8")
     source_path = PurePosixPath(source_key)
     target_path = PurePosixPath(target_key)
+
+    def replace_local_only(match: re.Match[str]) -> str:
+        destination = match.group("destination")
+        if destination.startswith(("#", "/", "http:", "https:", "mailto:")):
+            return match.group(0)
+        locator = destination.partition("#")[0]
+        note = (local_only_links or {}).get(locator)
+        label = (
+            "`pre-prune residue`"
+            if locator.startswith("../evals/")
+            else match.group("label")
+        )
+        return (
+            f"{label} ({note})"
+            if note is not None
+            else match.group(0)
+        )
+
+    if local_only_links:
+        text = FULL_MARKDOWN_LINK.sub(replace_local_only, text)
 
     def rebase(match: re.Match[str]) -> str:
         destination = match.group("destination")
@@ -1225,7 +1335,9 @@ def _research_target_bytes(
                 posixpath.join(source_path.parent.as_posix(), locator)
             )
         )
-        mapped_destination = moved_targets.get(source_destination.as_posix())
+        mapped_destination = _mapped_destination(
+            source_destination.as_posix(), moved_targets
+        )
         if mapped_destination is not None:
             source_destination = PurePosixPath(mapped_destination)
         elif not _safe_workspace_path(
@@ -1254,11 +1366,58 @@ def _research_target_bytes(
             rebased = f"{rebased}#{fragment}"
         return f"{match.group('prefix')}{rebased}{match.group('suffix')}"
 
-    rebased = MARKDOWN_LINK.sub(rebase, text).replace(source_key, target_key)
+    rebased = MARKDOWN_LINK.sub(rebase, text)
+    if rewrite_plain_paths:
+        rebased = rebased.replace(source_key, target_key)
     return (
         f"---\nartifact_id: {target_identity}\n---\n\n".encode("utf-8")
         + rebased.encode("utf-8")
     )
+
+
+def _mapped_destination(
+    source: str,
+    moved_targets: dict[str, str],
+) -> str | None:
+    exact = moved_targets.get(source)
+    if exact is not None:
+        return exact
+    source_path = PurePosixPath(source)
+    candidates: set[str] = set()
+    for old, new in moved_targets.items():
+        try:
+            remainder = PurePosixPath(old).relative_to(source_path)
+        except ValueError:
+            continue
+        candidate = PurePosixPath(new)
+        for _ in remainder.parts:
+            candidate = candidate.parent
+        candidates.add(candidate.as_posix())
+    return next(iter(candidates)) if len(candidates) == 1 else None
+
+
+def _mapped_prefixes(
+    mapped: list[tuple[dict[str, object], str, str, str, str]],
+) -> dict[str, str]:
+    candidates: dict[str, set[str]] = {}
+    legacy_roots = {
+        PurePosixPath("docs/validation/evals"),
+        PurePosixPath("docs/validation/transcripts"),
+    }
+    for _, source_key, _, target_key, _ in mapped:
+        source = PurePosixPath(source_key).parent
+        target = PurePosixPath(target_key).parent
+        while source.parts and target.parts and source not in legacy_roots:
+            candidates.setdefault(source.as_posix(), set()).add(
+                target.as_posix()
+            )
+            source = source.parent
+            target = target.parent
+    return {
+        source: next(iter(targets))
+        for source, targets in candidates.items()
+        if len(targets) == 1
+    }
 
 
 def _rewrite_group_reference(
@@ -1268,10 +1427,22 @@ def _rewrite_group_reference(
     actual_reference: str,
     mapped: list[tuple[dict[str, object], str, str, str, str]],
     forward: bool,
+    rewrite_plain_paths: bool = True,
+    rewrite_directory_paths: bool = False,
 ) -> bytes:
     rewritten = content.decode("utf-8")
     actual_parent = PurePosixPath(actual_reference).parent.as_posix()
     ordered = sorted(mapped, key=lambda item: len(item[1]), reverse=True)
+    if rewrite_plain_paths and rewrite_directory_paths:
+        prefixes = _mapped_prefixes(mapped)
+        for source_prefix in sorted(prefixes, key=len, reverse=True):
+            target_prefix = prefixes[source_prefix]
+            before_prefix, after_prefix = (
+                (source_prefix, target_prefix)
+                if forward
+                else (target_prefix, source_prefix)
+            )
+            rewritten = rewritten.replace(before_prefix, after_prefix)
     for _, source_key, _, target_key, _ in ordered:
         source_locator_at_actual = posixpath.relpath(
             source_key,
@@ -1286,7 +1457,8 @@ def _rewrite_group_reference(
             if forward
             else (target_locator, source_locator_at_actual)
         )
-        rewritten = rewritten.replace(before_key, after_key)
+        if rewrite_plain_paths:
+            rewritten = rewritten.replace(before_key, after_key)
 
         def replace_link(match: re.Match[str]) -> str:
             destination = match.group("destination")
@@ -1770,7 +1942,13 @@ def rollback_research_synthesis_migrations(
     return results
 
 
-def _verify_markdown_links(root: Path, path: Path, relative: str) -> None:
+def _verify_markdown_links(
+    root: Path,
+    path: Path,
+    relative: str,
+    *,
+    forbidden_paths: set[str] | None = None,
+) -> None:
     try:
         text = path.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError) as error:
@@ -1784,16 +1962,26 @@ def _verify_markdown_links(root: Path, path: Path, relative: str) -> None:
         ):
             continue
         locator = destination.partition("#")[0]
+        resolved_relative = PurePosixPath(
+            posixpath.normpath(
+                posixpath.join(
+                    PurePosixPath(relative).parent.as_posix(),
+                    locator,
+                )
+            )
+        ).as_posix()
+        if forbidden_paths and any(
+            forbidden == resolved_relative
+            or forbidden.startswith(resolved_relative.rstrip("/") + "/")
+            for forbidden in forbidden_paths
+        ):
+            raise MigrationBlocked(
+                "moved Markdown link targets legacy residue: "
+                f"{relative} -> {destination}"
+            )
         resolved = _safe_workspace_path(
             root,
-            PurePosixPath(
-                posixpath.normpath(
-                    posixpath.join(
-                        PurePosixPath(relative).parent.as_posix(),
-                        locator,
-                    )
-                )
-            ).as_posix(),
+            resolved_relative,
         )
         if not resolved.exists():
             raise MigrationBlocked(
@@ -1805,6 +1993,8 @@ def _verify_markdown_links(root: Path, path: Path, relative: str) -> None:
 def verify_research_synthesis_migrations(
     root: Path,
     rows: list[dict[str, object]],
+    *,
+    allowed_support: dict[str, dict[str, object]] | None = None,
 ) -> list[dict[str, object]]:
     """Prove every research/synthesis move or settled in-place owner."""
 
@@ -1837,10 +2027,15 @@ def verify_research_synthesis_migrations(
             actual_reference=actual_reference,
         )
         path = _safe_workspace_path(root, actual_reference)
-        if (
-            not path.is_file()
-            or path.read_bytes() != expected_reference
-        ):
+        current_bytes = path.read_bytes() if path.is_file() else None
+        supported = (
+            current_bytes is not None
+            and isinstance(allowed_support, dict)
+            and isinstance(allowed_support.get(actual_reference), dict)
+            and allowed_support[actual_reference].get("after")
+            == _fingerprint(current_bytes)
+        )
+        if current_bytes != expected_reference and not supported:
             raise MigrationBlocked(
                 "declared reference content mismatch: "
                 f"{actual_reference}"
@@ -1895,7 +2090,13 @@ def verify_research_synthesis_migrations(
                 forward=True,
             )
             target_bytes = target_path.read_bytes()
-            if target_bytes != expected:
+            supported = (
+                isinstance(allowed_support, dict)
+                and isinstance(allowed_support.get(target_key), dict)
+                and allowed_support[target_key].get("after")
+                == _fingerprint(target_bytes)
+            )
+            if target_bytes != expected and not supported:
                 raise MigrationBlocked(f"target content mismatch: {target_key}")
             if fresh_epoch_contract._artifact_identity(target_path) != identity:
                 raise MigrationBlocked(f"target identity mismatch: {target_key}")
@@ -1939,7 +2140,17 @@ def verify_research_synthesis_migrations(
                 and support_entry.get("before") == fingerprint
                 and support_entry.get("after") == current_fingerprint
             )
-            if current != expected and not intentional_support_change:
+            later_supported = (
+                isinstance(allowed_support, dict)
+                and isinstance(allowed_support.get(source_key), dict)
+                and allowed_support[source_key].get("after")
+                == current_fingerprint
+            )
+            if (
+                current != expected
+                and not intentional_support_change
+                and not later_supported
+            ):
                 raise MigrationBlocked(f"preserved source drift: {source_key}")
             observed = {
                 "passed": True,
@@ -1987,6 +2198,1395 @@ def verify_research_synthesis_migrations(
     return results
 
 
+VALIDATION_EVAL_GROUPS = {
+    "2026-07-24-writing-great-skills-incumbent-reconciliation.md": (
+        "writing-great-skills",
+        "EV-writing-great-skills-incumbent-reconciliation-20260724-01",
+    ),
+    "convergent-pr-review-2026-07-24": (
+        "convergent-pr-review",
+        "EV-convergent-pr-review-prompt4-20260724-01",
+    ),
+    "implement-prompt4": (
+        "implement",
+        "EV-implement-prompt4-20260724-01",
+    ),
+    "parallel-implement-prompt4-r2": (
+        "parallel-implement",
+        "EV-parallel-implement-prompt4-r2-20260724-01",
+    ),
+    "prototype-prompt4": (
+        "prototype",
+        "EV-prototype-prompt4-20260721-01",
+    ),
+    "review-2026-07-24-prompt4": (
+        "review",
+        "EV-review-prompt4-20260724-01",
+    ),
+    "simplify-code-b0-d0": (
+        "simplify-code",
+        "EV-simplify-code-b0-d0-20260723-01",
+    ),
+    "simplify-code-prompt4": (
+        "simplify-code",
+        "EV-simplify-code-prompt4-20260723-01",
+    ),
+    "tdd-pruning-results": (
+        "tdd",
+        "EV-tdd-pruning-20260722-01",
+    ),
+    "to-spec-2026-07-24": (
+        "to-spec",
+        "EV-to-spec-prompt4-20260724-01",
+    ),
+    "to-spec-2026-07-25": (
+        "to-spec",
+        "EV-to-spec-prompt4-20260725-01",
+    ),
+    "to-tickets-2026-07-23": (
+        "to-tickets",
+        "EV-to-tickets-prompt4-20260723-01",
+    ),
+    "to-tickets-2026-07-25": (
+        "to-tickets",
+        "EV-to-tickets-prompt4-20260725-01",
+    ),
+    "writing-great-skills-2026-07-24-7d0da40-r2-prompt5": (
+        "writing-great-skills",
+        "EV-writing-great-skills-prompt5-r2-20260724-01",
+    ),
+}
+
+VALIDATION_TRANSCRIPT_SKILLS = (
+    "writing-great-skills",
+    "convergent-pr-review",
+    "parallel-implement",
+    "improve-codebase",
+    "to-questionnaire",
+    "domain-modeling",
+    "grill-with-docs",
+    "simplify-code",
+    "audit-codebase",
+    "to-tickets",
+    "prototype",
+    "implement",
+    "research",
+    "grilling",
+    "to-spec",
+    "review",
+    "tdd",
+)
+
+VALIDATION_TRANSCRIPT_OVERRIDES = {
+    "2026-07-18-audit-implement-handoff-eval.md": "audit-codebase",
+    "2026-07-18-audit-pruning-equivalence-eval.md": "audit-codebase",
+    "2026-07-18-coordinated-v2-behavior-eval.md": "audit-codebase",
+    "2026-07-18-parallel-checkpoint-correction-eval.md": "parallel-implement",
+    "2026-07-18-root-only-orchestration-eval.md": "convergent-pr-review",
+}
+
+PACK_VALIDATION_OWNER_GAPS = frozenset(
+    {
+        "docs/validation/evals/core-workflows.md",
+        (
+            "docs/validation/transcripts/"
+            "2026-07-12-cohesion-followup-evals.md"
+        ),
+        (
+            "docs/validation/transcripts/"
+            "2026-07-13-cohesion-boundary-evals.md"
+        ),
+        (
+            "docs/validation/transcripts/"
+            "2026-07-13-whole-pack-workflow-traces.md"
+        ),
+        (
+            "docs/validation/transcripts/"
+            "2026-07-21-behavior-evaluation-cost-reduction.md"
+        ),
+    }
+)
+
+VALIDATION_REFERENCE_GAPS = {
+    (
+        "docs/validation/transcripts/"
+        "2026-07-22-prototype-b0-c1-construction-evidence.md"
+    ): (
+        "docs/validation/skills/prototype/README.md",
+        "Historical inactive Prototype runtime locator is no longer present.",
+    )
+}
+
+VALIDATION_REFERENCE_REPAIRS = {
+    "docs/synthesis/skill-context-relationships.md": {
+        (
+            "../validation/transcripts/"
+            "2026-07-23-to-questionnaire-pruning.md"
+        ): (
+            "../validation/skills/to-questionnaire/evals/"
+            "EV-to-questionnaire-pruning-equivalence-eval-20260721-01/"
+            "evidence/"
+            "2026-07-21-to-questionnaire-pruning-equivalence-eval.md"
+        ),
+        "2026-07-23-to-questionnaire-pruning.md": (
+            "2026-07-21-to-questionnaire-pruning-equivalence-eval.md"
+        ),
+    }
+}
+
+VALIDATION_LOCAL_ONLY_LINKS = {
+    (
+        "docs/validation/evals/parallel-implement-prompt4-r2/results.md"
+    ): {
+        "raw/": "retained as unverifiable local residue; not tracked proof"
+    },
+    (
+        "docs/validation/transcripts/"
+        "2026-07-21-research-extraction-pruning-evidence.md"
+    ): {
+        "../evals/research-pruning-pre-prune/": (
+            "retained as unverifiable local residue; not tracked proof"
+        )
+    },
+    (
+        "docs/validation/transcripts/"
+        "2026-07-21-writing-great-skills-post-candidate-behavior-eval.md"
+    ): {
+        "../evals/writing-great-skills-pruning-pre-prune/": (
+            "retained as unverifiable local residue; not tracked proof"
+        )
+    },
+}
+
+VALIDATION_STRUCTURED_REFERENCE_REPAIRS = {
+    (
+        "docs/validation/evals/"
+        "parallel-implement-prompt4-r2/protocol-manifest.json"
+    ): {
+        "docs/validation/evals/parallel-implement-prompt4/**": (
+            "docs/validation/skills/parallel-implement/evals/"
+            "EV-parallel-implement-prompt4-r2-20260724-01/**"
+        )
+    }
+}
+
+VALIDATION_STRUCTURED_REFERENCE_GAPS = {
+    (
+        "docs/validation/evals/"
+        "parallel-implement-prompt4-r2/protocol-manifest.json"
+    ): {
+        "prompt3_construction_transcript": (
+            "blocked-reference-gap; "
+            "docs/validation/transcripts/"
+            "2026-07-24-parallel-implement-prompt3-construction-r2.md "
+            "was absent at the migration fixed point; no target fabricated"
+        )
+    }
+}
+
+
+def _validation_preserved_owner(source_key: str) -> str | None:
+    if source_key == "docs/validation/README.md":
+        return source_key
+    if source_key == "docs/validation/evals/README.md":
+        return source_key
+    if source_key == "docs/validation/transcripts/README.md":
+        return source_key
+    if source_key == "docs/validation/shared/README.md":
+        return source_key
+    if source_key.startswith("docs/validation/shared/schemas/"):
+        return "docs/validation/shared/schemas/README.md"
+    if source_key.startswith("docs/validation/shared/fixtures/"):
+        return "docs/validation/shared/fixtures/README.md"
+    if source_key.startswith("docs/validation/shared/protocols/"):
+        return "docs/validation/shared/protocols/README.md"
+    if source_key.startswith("docs/validation/skill-pack/"):
+        return "docs/validation/skill-pack/README.md"
+    if source_key == "docs/validation/skills/README.md":
+        return source_key
+    if source_key.startswith("docs/validation/skills/"):
+        parts = PurePosixPath(source_key).parts
+        if len(parts) >= 4:
+            return (
+                PurePosixPath(*parts[:4]) / "README.md"
+            ).as_posix()
+    return None
+
+
+def _validation_eval_mapping(
+    source_key: str,
+) -> tuple[str, str, str] | None:
+    prefix = "docs/validation/evals/"
+    if not source_key.startswith(prefix):
+        return None
+    relative = PurePosixPath(source_key).relative_to(prefix)
+    group = relative.parts[0]
+    mapping = VALIDATION_EVAL_GROUPS.get(group)
+    if mapping is None:
+        return None
+    skill, eval_id = mapping
+    if len(relative.parts) == 1:
+        member = f"results{PurePosixPath(group).suffix}"
+    else:
+        member = PurePosixPath(*relative.parts[1:]).as_posix()
+    target = (
+        PurePosixPath("docs/validation/skills")
+        / skill
+        / "evals"
+        / eval_id
+        / member
+    ).as_posix()
+    return skill, eval_id, target
+
+
+def _validation_transcript_mapping(
+    source_key: str,
+) -> tuple[str, str, str] | None:
+    prefix = "docs/validation/transcripts/"
+    if not source_key.startswith(prefix) or source_key.endswith("/README.md"):
+        return None
+    filename = PurePosixPath(source_key).name
+    skill = VALIDATION_TRANSCRIPT_OVERRIDES.get(filename)
+    stem = PurePosixPath(filename).stem
+    match = re.fullmatch(
+        r"(?P<date>\d{4}-\d{2}-\d{2})-(?P<purpose>.+)",
+        stem,
+    )
+    if match is None:
+        return None
+    purpose = match.group("purpose")
+    if skill is None:
+        skill = next(
+            (
+                candidate
+                for candidate in VALIDATION_TRANSCRIPT_SKILLS
+                if candidate in purpose
+            ),
+            None,
+        )
+    if skill is None:
+        return None
+    normalized_purpose = purpose.replace(skill, "").strip("-")
+    if not normalized_purpose:
+        normalized_purpose = "historical-evidence"
+    date = match.group("date").replace("-", "")
+    eval_id = f"EV-{skill}-{normalized_purpose}-{date}-01"
+    target = (
+        PurePosixPath("docs/validation/skills")
+        / skill
+        / "evals"
+        / eval_id
+        / "evidence"
+        / filename
+    ).as_posix()
+    return skill, eval_id, target
+
+
+def prepare_validation_migrations(
+    rows: list[dict[str, object]],
+) -> list[dict[str, object]]:
+    """Assign every remaining validation row to an owner or explicit gap."""
+
+    prepared_rows: list[dict[str, object]] = []
+    for original in rows:
+        prepared = copy.deepcopy(original)
+        source = prepared.get("source")
+        source_key = source.get("key") if isinstance(source, dict) else None
+        if (
+            not isinstance(source_key, str)
+            or not source_key.startswith("docs/validation/")
+            or prepared.get("artifact_class") == "campaign"
+            or prepared.get("status") == "verified"
+        ):
+            prepared_rows.append(prepared)
+            continue
+        if source_key in PACK_VALIDATION_OWNER_GAPS:
+            prepared.update(
+                {
+                    "owner": "docs/validation/skill-pack/README.md",
+                    "owner_gap": (
+                        "Historical pack-result identity is ambiguous; "
+                        "preserved without fabricating a composition epoch."
+                    ),
+                    "migration_disposition": "owner-gap",
+                    "target": {"semantic_id": None, "path": None},
+                    "basis": ["issue-49-explicit-pack-owner-gap"],
+                    "reference_rewrite_set": [],
+                    "required_proof": ["fixed-point-identity"],
+                    "status": "blocked",
+                    "observed_result": {
+                        "passed": False,
+                        "preserved_fingerprint": source.get("fingerprint"),
+                    },
+                    "residual_risk": (
+                        "pack-level historical identity remains unresolved"
+                    ),
+                }
+            )
+            prepared_rows.append(prepared)
+            continue
+        reference_gap = VALIDATION_REFERENCE_GAPS.get(source_key)
+        if reference_gap is not None:
+            owner, gap = reference_gap
+            prepared.update(
+                {
+                    "owner": owner,
+                    "owner_gap": None,
+                    "migration_disposition": "preserve-in-place",
+                    "target": {"semantic_id": None, "path": None},
+                    "basis": ["issue-49-reference-gap"],
+                    "reference_rewrite_set": [],
+                    "required_proof": [
+                        "fixed-point-identity",
+                        "reference-reconciliation",
+                    ],
+                    "status": "blocked",
+                    "observed_result": {
+                        "passed": False,
+                        "preserved_fingerprint": source.get("fingerprint"),
+                    },
+                    "residual_risk": gap,
+                }
+            )
+            prepared_rows.append(prepared)
+            continue
+        mapping = (
+            _validation_eval_mapping(source_key)
+            or _validation_transcript_mapping(source_key)
+        )
+        if mapping is not None:
+            skill, eval_id, target_path = mapping
+            prior_result = prepared.get("observed_result")
+            rollback_proved = (
+                isinstance(prior_result, dict)
+                and prior_result.get("rollback_proved") is True
+            )
+            prepared.update(
+                {
+                    "owner": (
+                        f"docs/validation/skills/{skill}/README.md"
+                    ),
+                    "owner_gap": None,
+                    "migration_disposition": "move",
+                    "target": {
+                        "semantic_id": eval_id,
+                        "path": target_path,
+                    },
+                    "basis": ["issue-49-validation-owner-mapping"],
+                    "reference_rewrite_set": sorted(
+                        {
+                            str(item)
+                            for item in prepared.get(
+                                "inbound_references", []
+                            )
+                            if isinstance(item, str)
+                        }
+                    ),
+                    "required_proof": [
+                        "target-read-back",
+                        "reference-reconciliation",
+                        "owner-routing",
+                        "old-path-disposition",
+                        "rollback",
+                    ],
+                    "status": "prepared",
+                    "observed_result": (
+                        {"passed": False, "rollback_proved": True}
+                        if rollback_proved
+                        else None
+                    ),
+                    "residual_risk": "migration and proof remain pending",
+                }
+            )
+            recovery = prepared.get("recovery")
+            if not isinstance(recovery, dict) or not recovery.get("pointer"):
+                raise MigrationBlocked("validation row has no recovery pointer")
+            recovery["applicable_lock"] = "FCE-pack-lock"
+            prepared_rows.append(prepared)
+            continue
+        owner = _validation_preserved_owner(source_key)
+        if owner is None:
+            prepared.update(
+                {
+                    "owner": "docs/validation/skill-pack/README.md",
+                    "owner_gap": "Validation owner could not be proved.",
+                    "migration_disposition": "owner-gap",
+                    "target": {"semantic_id": None, "path": None},
+                    "basis": ["issue-49-explicit-owner-gap"],
+                    "reference_rewrite_set": [],
+                    "required_proof": ["fixed-point-identity"],
+                    "status": "blocked",
+                    "observed_result": {
+                        "passed": False,
+                        "preserved_fingerprint": source.get("fingerprint"),
+                    },
+                    "residual_risk": "validation owner remains unresolved",
+                }
+            )
+        else:
+            prepared.update(
+                {
+                    "owner": owner,
+                    "owner_gap": None,
+                    "migration_disposition": "preserve-in-place",
+                    "target": {"semantic_id": None, "path": None},
+                    "basis": ["issue-49-settled-existing-owner"],
+                    "reference_rewrite_set": [],
+                    "required_proof": [
+                        "fixed-point-identity",
+                        "owner-routing",
+                    ],
+                    "status": "prepared",
+                    "observed_result": None,
+                    "residual_risk": (
+                        "semantic admission and proof reuse remain unassessed"
+                    ),
+                }
+            )
+        prepared_rows.append(prepared)
+    return prepared_rows
+
+
+def _validation_mapping(
+    rows: list[dict[str, object]],
+) -> list[tuple[dict[str, object], str, str, str, str]]:
+    mapped: list[tuple[dict[str, object], str, str, str, str]] = []
+    targets: set[str] = set()
+    for row in rows:
+        if row.get("migration_disposition") != "move":
+            continue
+        source = row.get("source")
+        target = row.get("target")
+        source_key = source.get("key") if isinstance(source, dict) else None
+        fingerprint = (
+            source.get("fingerprint") if isinstance(source, dict) else None
+        )
+        target_key = target.get("path") if isinstance(target, dict) else None
+        identity = (
+            target.get("semantic_id") if isinstance(target, dict) else None
+        )
+        if (
+            row.get("artifact_class")
+            not in {"evaluation", "validation-transcript"}
+            or not all(
+                isinstance(value, str) and value
+                for value in (
+                    source_key,
+                    fingerprint,
+                    target_key,
+                    identity,
+                )
+            )
+        ):
+            continue
+        if str(target_key) in targets:
+            raise MigrationBlocked(
+                f"duplicate validation target: {target_key}"
+            )
+        targets.add(str(target_key))
+        mapped.append(
+            (
+                row,
+                str(source_key),
+                str(fingerprint),
+                str(target_key),
+                str(identity),
+            )
+        )
+    return mapped
+
+
+def _validation_prior_mapping(
+    rows: list[dict[str, object]],
+) -> list[tuple[dict[str, object], str, str, str, str]]:
+    mapped: list[tuple[dict[str, object], str, str, str, str]] = []
+    for row in rows:
+        if (
+            row.get("migration_disposition") != "move"
+            or row.get("status")
+            not in {"references-reconciled", "verified"}
+            or row.get("artifact_class")
+            in {"evaluation", "validation-transcript"}
+        ):
+            continue
+        source = row.get("source")
+        target = row.get("target")
+        source_key = source.get("key") if isinstance(source, dict) else None
+        fingerprint = (
+            source.get("fingerprint") if isinstance(source, dict) else None
+        )
+        target_key = target.get("path") if isinstance(target, dict) else None
+        identity = (
+            target.get("semantic_id") if isinstance(target, dict) else None
+        )
+        if all(
+            isinstance(value, str) and value
+            for value in (source_key, fingerprint, target_key)
+        ):
+            mapped.append(
+                (
+                    row,
+                    str(source_key),
+                    str(fingerprint),
+                    str(target_key),
+                    str(identity or source.get("identity") or "path-only"),
+                )
+            )
+    return mapped
+
+
+def _validation_recovery_bytes(
+    root: Path,
+    row: dict[str, object],
+    rows: list[dict[str, object]],
+) -> bytes:
+    original = _git_recovery_bytes(root, row)
+    source = row.get("source")
+    source_key = source.get("key") if isinstance(source, dict) else None
+    if not isinstance(source_key, str):
+        raise MigrationBlocked("validation source is incomplete")
+    research_mapping = _research_synthesis_mapping(rows)
+    replayed = _rewrite_group_reference(
+        original,
+        original_reference=source_key,
+        actual_reference=source_key,
+        mapped=research_mapping,
+        forward=True,
+    )
+    if replayed == original:
+        return original
+    support_entry = next(
+        (
+            observed.get("support_fingerprints", {}).get(source_key)
+            for candidate in rows
+            for observed in [candidate.get("observed_result")]
+            if isinstance(observed, dict)
+            and isinstance(observed.get("support_fingerprints"), dict)
+            and isinstance(
+                observed["support_fingerprints"].get(source_key), dict
+            )
+        ),
+        None,
+    )
+    if (
+        not isinstance(support_entry, dict)
+        or support_entry.get("before") != _fingerprint(original)
+        or support_entry.get("after") != _fingerprint(replayed)
+    ):
+        raise MigrationBlocked(
+            f"validation prior-migration baseline is unproved: {source_key}"
+        )
+    return replayed
+
+
+def _validation_target_bytes(
+    root: Path,
+    original: bytes,
+    *,
+    source_key: str,
+    target_key: str,
+    target_identity: str,
+    moved_targets: dict[str, str],
+    mapped: list[tuple[dict[str, object], str, str, str, str]],
+    prior_mapped: list[
+        tuple[dict[str, object], str, str, str, str]
+    ] | None = None,
+) -> bytes:
+    prefix = (
+        f"---\nartifact_id: {target_identity}\n---\n\n".encode("utf-8")
+    )
+    normalized = _research_target_bytes(
+        root,
+        original,
+        source_key=source_key,
+        target_key=target_key,
+        target_identity=target_identity,
+        moved_targets=moved_targets,
+        rewrite_plain_paths=PurePosixPath(target_key).suffix.casefold()
+        != ".md",
+        local_only_links=VALIDATION_LOCAL_ONLY_LINKS.get(source_key),
+    )
+    if not normalized.startswith(prefix):
+        raise MigrationBlocked("validation normalization prefix mismatch")
+    rewritten = _rewrite_group_reference(
+        normalized[len(prefix) :],
+        original_reference=source_key,
+        actual_reference=target_key,
+        mapped=[*(prior_mapped or []), *mapped],
+        forward=True,
+        rewrite_plain_paths=PurePosixPath(target_key).suffix.casefold()
+        != ".md",
+        rewrite_directory_paths=(
+            PurePosixPath(target_key).suffix.casefold() != ".md"
+        ),
+    )
+    campaign_roots = {
+        (
+            PurePosixPath(source_key).parent.as_posix(),
+            PurePosixPath(target_key).parent.as_posix(),
+        )
+        for row, source_key, _, target_key, _ in (prior_mapped or [])
+        if row.get("artifact_class") == "campaign"
+    }
+    if PurePosixPath(target_key).suffix.casefold() != ".md":
+        for source_root, target_root in sorted(
+            campaign_roots,
+            key=lambda item: len(item[0]),
+            reverse=True,
+        ):
+            rewritten = rewritten.replace(
+                source_root.encode("utf-8"),
+                target_root.encode("utf-8"),
+            )
+    for before, after in VALIDATION_STRUCTURED_REFERENCE_REPAIRS.get(
+        source_key, {}
+    ).items():
+        rewritten = rewritten.replace(
+            before.encode("utf-8"),
+            after.encode("utf-8"),
+        )
+    gap_dispositions = VALIDATION_STRUCTURED_REFERENCE_GAPS.get(source_key)
+    if gap_dispositions:
+        try:
+            payload = json.loads(rewritten.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as error:
+            raise MigrationBlocked(
+                f"validation structured reference gap is unreadable: {source_key}"
+            ) from error
+        evidence_dispositions = payload.get("evidence_dispositions")
+        if not isinstance(evidence_dispositions, dict):
+            raise MigrationBlocked(
+                f"validation evidence dispositions are absent: {source_key}"
+            )
+        evidence_dispositions.update(gap_dispositions)
+        rewritten = (
+            json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
+        ).encode("utf-8")
+    return rewritten
+
+
+def _validation_source_head(rows: list[dict[str, object]]) -> str:
+    for row in rows:
+        recovery = row.get("recovery")
+        pointer = (
+            recovery.get("pointer") if isinstance(recovery, dict) else None
+        )
+        match = re.fullmatch(
+            r"git:(?P<head>[0-9a-f]{40}):.+@sha256-v1:[0-9a-f]{64}",
+            pointer or "",
+        )
+        if match is not None:
+            return match.group("head")
+    raise MigrationBlocked("validation migration has no fixed point")
+
+
+def _git_path_bytes(root: Path, head: str, relative: str) -> bytes | None:
+    completed = subprocess.run(
+        [
+            "git",
+            "cat-file",
+            "blob",
+            f"{head}:{relative}",
+        ],
+        cwd=root,
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    return completed.stdout if completed.returncode == 0 else None
+
+
+def _validation_reference_states(
+    root: Path,
+    rows: list[dict[str, object]],
+    mapped: list[tuple[dict[str, object], str, str, str, str]],
+) -> dict[str, tuple[bytes, bytes]]:
+    head = _validation_source_head(rows)
+    moved_targets = {
+        source_key: target_key
+        for _, source_key, _, target_key, _ in mapped
+    }
+    moved_targets.update(_verified_target_map(rows))
+    prior_mapping = _validation_prior_mapping(rows)
+    moved_targets.update(
+        {
+            source_key: target_key
+            for _, source_key, _, target_key, _ in prior_mapping
+        }
+    )
+    validation_sources = {
+        source_key for _, source_key, _, _, _ in mapped
+    }
+    states: dict[str, tuple[bytes, bytes]] = {}
+    for row, _, _, _, _ in mapped:
+        for raw_reference in row.get("reference_rewrite_set", []):
+            if not isinstance(raw_reference, str):
+                raise MigrationBlocked("validation reference is invalid")
+            actual_reference = moved_targets.get(
+                raw_reference, raw_reference
+            )
+            if raw_reference in validation_sources:
+                continue
+            path = _safe_workspace_path(root, actual_reference)
+            baseline = _git_path_bytes(root, head, raw_reference)
+            if baseline is None:
+                if not path.is_file():
+                    raise MigrationBlocked(
+                        "declared validation reference is absent: "
+                        + actual_reference
+                    )
+                baseline = path.read_bytes()
+            prior_target_row = next(
+                (
+                    candidate
+                    for candidate in rows
+                    if isinstance(candidate.get("target"), dict)
+                    and candidate["target"].get("path")
+                    == actual_reference
+                    and candidate.get("migration_disposition") == "move"
+                ),
+                None,
+            )
+            if (
+                prior_target_row is not None
+                and prior_target_row.get("artifact_class") == "campaign"
+            ):
+                source = prior_target_row.get("source")
+                identity = (
+                    source.get("identity")
+                    if isinstance(source, dict)
+                    else None
+                )
+                campaign_rows = [
+                    candidate
+                    for candidate in rows
+                    if candidate.get("artifact_class") == "campaign"
+                    and isinstance(candidate.get("source"), dict)
+                    and candidate["source"].get("identity") == identity
+                ]
+                source_root, target_root, _, campaign_mapping = (
+                    _campaign_mapping(campaign_rows)
+                )
+                member = next(
+                    item
+                    for item in campaign_mapping
+                    if item[2] == actual_reference
+                )
+                campaign_row, source_key, target_key, _ = member
+                overrides = _campaign_source_overrides(
+                    root, rows, campaign_rows
+                )
+                rollback_baseline = _campaign_target_bytes(
+                    overrides.get(
+                        source_key,
+                        _git_recovery_bytes(root, campaign_row),
+                    ),
+                    source_key=source_key,
+                    target_key=target_key,
+                    source_root=source_root,
+                    target_root=target_root,
+                )
+            elif prior_target_row is not None:
+                head_bytes = _git_path_bytes(
+                    root, _head(root), actual_reference
+                )
+                rollback_baseline = (
+                    head_bytes
+                    if head_bytes is not None
+                    else _reference_baseline_bytes(
+                        root,
+                        rows,
+                        raw_reference=raw_reference,
+                        actual_reference=actual_reference,
+                    )
+                )
+            else:
+                rollback_baseline = _rewrite_group_reference(
+                    baseline,
+                    original_reference=raw_reference,
+                    actual_reference=actual_reference,
+                    mapped=prior_mapping,
+                    forward=True,
+                )
+                if path.is_file():
+                    checkout_bytes = path.read_bytes()
+                    if checkout_bytes.replace(b"\r\n", b"\n") == (
+                        rollback_baseline.replace(b"\r\n", b"\n")
+                    ):
+                        rollback_baseline = checkout_bytes
+            expected = _rewrite_group_reference(
+                rollback_baseline,
+                original_reference=raw_reference,
+                actual_reference=actual_reference,
+                mapped=mapped,
+                forward=True,
+            )
+            for before, after in VALIDATION_REFERENCE_REPAIRS.get(
+                actual_reference, {}
+            ).items():
+                expected = expected.replace(
+                    before.encode("utf-8"),
+                    after.encode("utf-8"),
+                )
+            if path.is_file():
+                checkout_bytes = path.read_bytes()
+                if checkout_bytes.replace(b"\r\n", b"\n") == (
+                    expected.replace(b"\r\n", b"\n")
+                ):
+                    if b"\r\n" in checkout_bytes:
+                        rollback_baseline = rollback_baseline.replace(
+                            b"\r\n", b"\n"
+                        ).replace(b"\n", b"\r\n")
+                    else:
+                        rollback_baseline = rollback_baseline.replace(
+                            b"\r\n", b"\n"
+                        )
+                    expected = checkout_bytes
+            prior = states.get(actual_reference)
+            if prior is not None and prior != (rollback_baseline, expected):
+                raise MigrationBlocked(
+                    "validation reference has conflicting baselines: "
+                    + actual_reference
+                )
+            states[actual_reference] = (rollback_baseline, expected)
+    return states
+
+
+def _validation_support_fingerprints(
+    root: Path,
+    rows: list[dict[str, object]],
+    references: Iterable[str],
+) -> dict[str, dict[str, str | None]]:
+    head = _validation_source_head(rows)
+    paths = {
+        str(row.get("owner"))
+        for row in rows
+        if isinstance(row.get("owner"), str)
+        and str(row.get("owner")).startswith("docs/validation/")
+    }
+    paths.update(references)
+    paths.add("docs/validation/skills/README.md")
+    for row in rows:
+        if row.get("migration_disposition") != "move":
+            continue
+        source = row.get("source")
+        target = row.get("target")
+        source_key = source.get("key") if isinstance(source, dict) else None
+        target_key = target.get("path") if isinstance(target, dict) else None
+        if (
+            row.get("artifact_class")
+            in {"evaluation", "validation-transcript"}
+            and isinstance(source_key, str)
+            and isinstance(target_key, str)
+        ):
+            paths.update({source_key, target_key})
+    result: dict[str, dict[str, str | None]] = {}
+    source_fingerprints = {
+        row["source"]["key"]: row["source"].get("fingerprint")
+        for row in rows
+        if isinstance(row.get("source"), dict)
+        and isinstance(row["source"].get("key"), str)
+    }
+    for relative in sorted(paths):
+        path = _safe_workspace_path(root, relative)
+        before = _git_path_bytes(root, head, relative)
+        result[relative] = {
+            "before": (
+                source_fingerprints.get(relative)
+                if relative in source_fingerprints
+                else _fingerprint(before) if before is not None else None
+            ),
+            "after": (
+                fresh_epoch_contract._path_fingerprint(path)
+                if path.is_file()
+                else None
+            ),
+        }
+    return result
+
+
+def _validation_row_support(
+    row: dict[str, object],
+    support: dict[str, dict[str, str | None]],
+    moved_targets: dict[str, str],
+) -> dict[str, dict[str, str | None]]:
+    source = row.get("source")
+    target = row.get("target")
+    paths = {
+        "docs/validation/skills/README.md",
+        str(row.get("owner")),
+        str(source.get("key")) if isinstance(source, dict) else "",
+        str(target.get("path")) if isinstance(target, dict) else "",
+    }
+    paths.update(
+        moved_targets.get(reference, reference)
+        for reference in row.get("reference_rewrite_set", [])
+        if isinstance(reference, str)
+    )
+    return {
+        path: support[path]
+        for path in sorted(paths)
+        if path in support
+    }
+
+
+def apply_validation_migrations(
+    root: Path,
+    rows: list[dict[str, object]],
+) -> list[dict[str, object]]:
+    """Move every settled validation eval as one recoverable transaction."""
+
+    mapped = _validation_mapping(rows)
+    if not mapped:
+        raise MigrationBlocked("validation migration has no settled moves")
+    moved_targets = {
+        source_key: target_key
+        for _, source_key, _, target_key, _ in mapped
+    }
+    moved_targets.update(_verified_target_map(rows))
+    prior_mapping = _validation_prior_mapping(rows)
+    moved_targets.update(
+        {
+            source_key: target_key
+            for _, source_key, _, target_key, _ in prior_mapping
+        }
+    )
+    references = _validation_reference_states(root, rows, mapped)
+    snapshots: dict[Path, bytes | None] = {}
+    expected_targets: dict[str, bytes] = {}
+    for row, source_key, fingerprint, target_key, identity in mapped:
+        owner = _safe_workspace_path(root, row.get("owner"))
+        if not owner.is_file():
+            raise MigrationBlocked(
+                f"validation owner does not exist: {row.get('owner')}"
+            )
+        original = _validation_recovery_bytes(root, row, rows)
+        if (
+            _fingerprint(original) != fingerprint
+            and _fingerprint(_git_recovery_bytes(root, row)) != fingerprint
+        ):
+            raise MigrationBlocked("validation recovery fingerprint mismatch")
+        expected = _validation_target_bytes(
+            root,
+            original,
+            source_key=source_key,
+            target_key=target_key,
+            target_identity=identity,
+            moved_targets=moved_targets,
+            mapped=mapped,
+            prior_mapped=prior_mapping,
+        )
+        expected_targets[target_key] = expected
+        source_path = _safe_workspace_path(root, source_key)
+        target_path = _safe_workspace_path(root, target_key)
+        source_bytes = (
+            source_path.read_bytes() if source_path.is_file() else None
+        )
+        target_bytes = (
+            target_path.read_bytes() if target_path.is_file() else None
+        )
+        prior_result = row.get("observed_result")
+        prior_target_fingerprint = (
+            prior_result.get("target_fingerprint")
+            if isinstance(prior_result, dict)
+            else None
+        )
+        if source_bytes is None and target_bytes is None:
+            raise MigrationBlocked(
+                f"validation source and target are absent: {source_key}"
+            )
+        if source_bytes is not None and source_bytes != original:
+            raise MigrationBlocked(
+                f"validation source fingerprint mismatch: {source_key}"
+            )
+        if (
+            target_bytes is not None
+            and target_bytes != expected
+            and _fingerprint(target_bytes) != prior_target_fingerprint
+        ):
+            raise MigrationBlocked(
+                f"validation target collision: {target_key}"
+            )
+        snapshots[source_path] = source_bytes
+        snapshots[target_path] = target_bytes
+    for relative, (baseline, expected) in references.items():
+        path = _safe_workspace_path(root, relative)
+        if not path.is_file() or path.read_bytes() not in {baseline, expected}:
+            raise MigrationBlocked(
+                "declared validation reference content mismatch: "
+                f"{relative}; current="
+                f"{_fingerprint(path.read_bytes()) if path.is_file() else None}; "
+                f"baseline={_fingerprint(baseline)}; "
+                f"expected={_fingerprint(expected)}"
+            )
+        snapshots.setdefault(path, path.read_bytes())
+
+    try:
+        for _, source_key, _, target_key, _ in mapped:
+            source_path = _safe_workspace_path(root, source_key)
+            target_path = _safe_workspace_path(root, target_key)
+            target_path.parent.mkdir(parents=True, exist_ok=True)
+            if (
+                not target_path.is_file()
+                or target_path.read_bytes() != expected_targets[target_key]
+            ):
+                _atomic_write_bytes(
+                    target_path, expected_targets[target_key]
+                )
+            if source_path.is_file():
+                source_path.unlink()
+        source_parents = {
+            _safe_workspace_path(root, source_key).parent
+            for _, source_key, _, _, _ in mapped
+        }
+        stop_roots = {
+            root / "docs/validation/evals",
+            root / "docs/validation/transcripts",
+        }
+        for parent in sorted(
+            {
+                ancestor
+                for start in source_parents
+                for ancestor in (start, *start.parents)
+                if any(
+                    ancestor == stop or stop in ancestor.parents
+                    for stop in stop_roots
+                )
+            },
+            key=lambda candidate: len(candidate.parts),
+            reverse=True,
+        ):
+            if parent in stop_roots:
+                continue
+            if parent.is_dir() and not any(parent.iterdir()):
+                parent.rmdir()
+        for relative, (_, expected) in references.items():
+            path = _safe_workspace_path(root, relative)
+            if path.read_bytes() != expected:
+                _atomic_write_bytes(path, expected)
+    except Exception:
+        _restore_paths(snapshots)
+        raise
+
+    support = _validation_support_fingerprints(
+        root, rows, references.keys()
+    )
+    results: list[dict[str, object]] = []
+    moved_keys = {source_key for _, source_key, _, _, _ in mapped}
+    for row in rows:
+        result = copy.deepcopy(row)
+        source = result.get("source")
+        source_key = source.get("key") if isinstance(source, dict) else None
+        if source_key in moved_keys:
+            target = result.get("target")
+            target_key = (
+                target.get("path") if isinstance(target, dict) else None
+            )
+            prior = result.get("observed_result")
+            rollback_proved = (
+                prior.get("rollback_proved") is True
+                if isinstance(prior, dict)
+                else False
+            )
+            result["status"] = "references-reconciled"
+            result["observed_result"] = {
+                "passed": False,
+                "rollback_proved": rollback_proved,
+                "source_absent": True,
+                "target_path": target_key,
+                "support_fingerprints": _validation_row_support(
+                    result, support, moved_targets
+                ),
+            }
+            result["residual_risk"] = (
+                "validation identity and old-path proof remain pending"
+            )
+        results.append(result)
+    return results
+
+
+def rollback_validation_migrations(
+    root: Path,
+    rows: list[dict[str, object]],
+) -> list[dict[str, object]]:
+    """Restore validation sources and exact fixed-point references."""
+
+    mapped = _validation_mapping(rows)
+    if not mapped:
+        raise MigrationBlocked("validation migration has no settled moves")
+    moved_targets = {
+        source_key: target_key
+        for _, source_key, _, target_key, _ in mapped
+    }
+    moved_targets.update(_verified_target_map(rows))
+    prior_mapping = _validation_prior_mapping(rows)
+    moved_targets.update(
+        {
+            source_key: target_key
+            for _, source_key, _, target_key, _ in prior_mapping
+        }
+    )
+    references = _validation_reference_states(root, rows, mapped)
+    snapshots: dict[Path, bytes | None] = {}
+    originals: dict[str, bytes] = {}
+    for row, source_key, fingerprint, target_key, identity in mapped:
+        original = _validation_recovery_bytes(root, row, rows)
+        originals[source_key] = original
+        expected = _validation_target_bytes(
+            root,
+            original,
+            source_key=source_key,
+            target_key=target_key,
+            target_identity=identity,
+            moved_targets=moved_targets,
+            mapped=mapped,
+            prior_mapped=prior_mapping,
+        )
+        source_path = _safe_workspace_path(root, source_key)
+        target_path = _safe_workspace_path(root, target_key)
+        source_bytes = (
+            source_path.read_bytes() if source_path.is_file() else None
+        )
+        target_bytes = (
+            target_path.read_bytes() if target_path.is_file() else None
+        )
+        prior_result = row.get("observed_result")
+        prior_target_fingerprint = (
+            prior_result.get("target_fingerprint")
+            if isinstance(prior_result, dict)
+            else None
+        )
+        if source_bytes is not None and source_bytes != original:
+            raise MigrationBlocked(
+                f"validation rollback source collision: {source_key}"
+            )
+        if (
+            target_bytes is not None
+            and target_bytes != expected
+            and _fingerprint(target_bytes) != prior_target_fingerprint
+        ):
+            raise MigrationBlocked(
+                f"validation rollback target collision: {target_key}"
+            )
+        if source_bytes is None and target_bytes is None:
+            raise MigrationBlocked(
+                f"validation rollback source and target absent: {source_key}"
+            )
+        snapshots[source_path] = source_bytes
+        snapshots[target_path] = target_bytes
+    for relative, (baseline, expected) in references.items():
+        path = _safe_workspace_path(root, relative)
+        if not path.is_file() or path.read_bytes() not in {baseline, expected}:
+            raise MigrationBlocked(
+                f"declared validation reference content mismatch: {relative}"
+            )
+        snapshots.setdefault(path, path.read_bytes())
+    try:
+        for relative, (baseline, _) in references.items():
+            path = _safe_workspace_path(root, relative)
+            if path.read_bytes() != baseline:
+                _atomic_write_bytes(path, baseline)
+        for _, source_key, _, target_key, _ in mapped:
+            source_path = _safe_workspace_path(root, source_key)
+            target_path = _safe_workspace_path(root, target_key)
+            source_path.parent.mkdir(parents=True, exist_ok=True)
+            _atomic_write_bytes(source_path, originals[source_key])
+            if target_path.is_file():
+                target_path.unlink()
+    except Exception:
+        _restore_paths(snapshots)
+        raise
+
+    results: list[dict[str, object]] = []
+    moved_keys = {source_key for _, source_key, _, _, _ in mapped}
+    for row in rows:
+        result = copy.deepcopy(row)
+        source = result.get("source")
+        source_key = source.get("key") if isinstance(source, dict) else None
+        if source_key in moved_keys:
+            result["status"] = "prepared"
+            result["observed_result"] = {
+                "passed": False,
+                "rollback_proved": True,
+            }
+            result["residual_risk"] = (
+                "validation migration remains pending after rollback"
+            )
+        results.append(result)
+    return results
+
+
+def verify_validation_migrations(
+    root: Path,
+    rows: list[dict[str, object]],
+) -> list[dict[str, object]]:
+    """Prove validation ownership, identity, references, and recovery."""
+
+    mapped = _validation_mapping(rows)
+    if not mapped:
+        raise MigrationBlocked("validation migration has no settled moves")
+    moved_targets = {
+        source_key: target_key
+        for _, source_key, _, target_key, _ in mapped
+    }
+    moved_targets.update(_verified_target_map(rows))
+    prior_mapping = _validation_prior_mapping(rows)
+    moved_targets.update(
+        {
+            source_key: target_key
+            for _, source_key, _, target_key, _ in prior_mapping
+        }
+    )
+    references = _validation_reference_states(root, rows, mapped)
+    for relative, (_, expected) in references.items():
+        path = _safe_workspace_path(root, relative)
+        if not path.is_file() or path.read_bytes() != expected:
+            raise MigrationBlocked(
+                f"declared validation reference content mismatch: {relative}"
+            )
+    support = _validation_support_fingerprints(
+        root, rows, references.keys()
+    )
+    moved_by_source = {
+        source_key: (row, fingerprint, target_key, identity)
+        for row, source_key, fingerprint, target_key, identity in mapped
+    }
+    results: list[dict[str, object]] = []
+    for row in rows:
+        verified = copy.deepcopy(row)
+        source = verified.get("source")
+        source_key = source.get("key") if isinstance(source, dict) else None
+        move = moved_by_source.get(str(source_key))
+        if move is not None:
+            _, fingerprint, target_key, identity = move
+            source_path = _safe_workspace_path(root, source_key)
+            target_path = _safe_workspace_path(root, target_key)
+            owner = _safe_workspace_path(root, verified.get("owner"))
+            if source_path.exists() or not target_path.is_file():
+                raise MigrationBlocked(
+                    f"validation move is incomplete: {source_key}"
+                )
+            if not owner.is_file() or "EV-" not in owner.read_text("utf-8"):
+                raise MigrationBlocked(
+                    f"validation owner does not route eval identities: {owner}"
+                )
+            expected = _validation_target_bytes(
+                root,
+                _validation_recovery_bytes(root, verified, rows),
+                source_key=str(source_key),
+                target_key=target_key,
+                target_identity=identity,
+                moved_targets=moved_targets,
+                mapped=mapped,
+                prior_mapped=prior_mapping,
+            )
+            target_bytes = target_path.read_bytes()
+            if target_bytes != expected:
+                raise MigrationBlocked(
+                    f"validation target content mismatch: {target_key}"
+                )
+            if identity not in PurePosixPath(target_key).parts:
+                raise MigrationBlocked(
+                    f"validation target identity mismatch: {target_key}"
+                )
+            if target_path.suffix.casefold() == ".md":
+                _verify_markdown_links(
+                    root,
+                    target_path,
+                    target_key,
+                    forbidden_paths=set(moved_by_source),
+                )
+            prior = verified.get("observed_result")
+            rollback_proved = (
+                prior.get("rollback_proved") is True
+                if isinstance(prior, dict)
+                else False
+            )
+            verified["status"] = "verified"
+            verified["observed_result"] = {
+                "passed": True,
+                "rollback_proved": rollback_proved,
+                "source_absent": True,
+                "moved_fingerprint": fingerprint,
+                "target_path": target_key,
+                "target_identity": identity,
+                "target_fingerprint": _fingerprint(target_bytes),
+                "owner": str(verified["owner"]),
+                "support_fingerprints": _validation_row_support(
+                    verified, support, moved_targets
+                ),
+            }
+            verified["residual_risk"] = (
+                "semantic admission and proof reuse remain unassessed"
+            )
+        elif (
+            isinstance(source_key, str)
+            and source_key.startswith("docs/validation/")
+            and verified.get("migration_disposition") == "preserve-in-place"
+            and verified.get("status") != "blocked"
+        ):
+            path = _safe_workspace_path(root, source_key)
+            owner = _safe_workspace_path(root, verified.get("owner"))
+            if not path.is_file() or not owner.is_file():
+                raise MigrationBlocked(
+                    f"preserved validation owner is absent: {source_key}"
+                )
+            expected_fingerprint = source.get("fingerprint")
+            current_fingerprint = fresh_epoch_contract._path_fingerprint(path)
+            support_entry = support.get(source_key)
+            allowed = {
+                expected_fingerprint,
+                (
+                    support_entry.get("after")
+                    if isinstance(support_entry, dict)
+                    else None
+                ),
+            }
+            if current_fingerprint not in allowed:
+                raise MigrationBlocked(
+                    f"preserved validation drift: {source_key}"
+                )
+            verified["status"] = "verified"
+            verified["observed_result"] = {
+                "passed": True,
+                "preserved_fingerprint": current_fingerprint,
+                "owner": str(verified["owner"]),
+                "support_fingerprints": _validation_row_support(
+                    verified, support, moved_targets
+                ),
+            }
+        results.append(verified)
+
+    explained_owners = {
+        PUBLIC_LEDGER.as_posix(),
+        "scripts/migration_ledger.py",
+        "tests/test_migration_ledger.py",
+        *{
+            target_key
+            for _, _, _, target_key, _ in mapped
+            if PurePosixPath(target_key).suffix.casefold() == ".md"
+        },
+    }
+    unexplained: list[str] = []
+    for relative in _text_inventory(root):
+        path = _safe_workspace_path(root, relative)
+        if not path.is_file():
+            continue
+        content = path.read_bytes()
+        for _, source_key, _, _, _ in mapped:
+            if (
+                source_key.encode("utf-8") in content
+                and relative not in explained_owners
+            ):
+                unexplained.append(f"{source_key} in {relative}")
+    if unexplained:
+        raise MigrationBlocked(
+            "unexplained validation old-path reference: "
+            + ", ".join(sorted(unexplained))
+        )
+    return results
+
+
 def _campaign_support_fingerprints(
     root: Path,
     mapped: list[tuple[dict[str, object], str, str, str]],
@@ -2000,25 +3600,18 @@ def _campaign_support_fingerprints(
     if match is None:
         raise MigrationBlocked("campaign support has no recovery fixed point")
     result: dict[str, dict[str, str | None]] = {}
-    for relative in CAMPAIGN_SUPPORT_PATHS:
-        completed = subprocess.run(
-            [
-                "git",
-                "cat-file",
-                "--filters",
-                f"--path={relative}",
-                f"{match.group('head')}:{relative}",
-            ],
-            cwd=root,
-            check=False,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-        before = (
-            _fingerprint(completed.stdout)
-            if completed.returncode == 0
-            else None
-        )
+    controlled_paths = set(CAMPAIGN_SUPPORT_PATHS)
+    controlled_paths.update(
+        source_key
+        for _, source_key, _, _ in mapped
+    )
+    controlled_paths.update(
+        target_key
+        for _, _, target_key, _ in mapped
+    )
+    for relative in sorted(controlled_paths):
+        baseline = _git_path_bytes(root, match.group("head"), relative)
+        before = _fingerprint(baseline) if baseline is not None else None
         path = _safe_workspace_path(root, relative)
         after = (
             fresh_epoch_contract._path_fingerprint(path)
@@ -2033,6 +3626,8 @@ def verify_campaign_migration(
     root: Path,
     rows: list[dict[str, object]],
     allowed_support: dict[str, dict[str, object]] | None = None,
+    *,
+    source_overrides: dict[str, bytes] | None = None,
 ) -> list[dict[str, object]]:
     """Prove one moved campaign tree, v1 meaning, and locator closure."""
 
@@ -2048,7 +3643,10 @@ def verify_campaign_migration(
         target_path = _safe_workspace_path(root, target_key)
         if source_path.exists() or not target_path.is_file():
             raise MigrationBlocked("campaign target/source disposition is incomplete")
-        original = _git_recovery_bytes(root, row)
+        original = (source_overrides or {}).get(
+            source_key,
+            _git_recovery_bytes(root, row),
+        )
         expected = _campaign_target_bytes(
             original,
             source_key=source_key,
@@ -2070,7 +3668,9 @@ def verify_campaign_migration(
         )
         if target_bytes != expected and not supported:
             raise MigrationBlocked("campaign target differs from locator-only rewrite")
-        source_tree_fingerprints[PurePosixPath(source_key).name] = fingerprint
+        source_tree_fingerprints[PurePosixPath(source_key).name] = (
+            _fingerprint(original)
+        )
         target_fingerprints[PurePosixPath(target_key).name] = _fingerprint(
             target_bytes
         )
@@ -2415,16 +4015,172 @@ def verify_migration(
     return verified
 
 
+def terminalize_private_rows(
+    root: Path,
+    rows: list[dict[str, object]],
+) -> list[dict[str, object]]:
+    """Prove preserved private evidence or block Lock-gated residue."""
+
+    results: list[dict[str, object]] = []
+    for row in rows:
+        result = copy.deepcopy(row)
+        source = result.get("source")
+        source_key = source.get("key") if isinstance(source, dict) else None
+        state = source.get("state") if isinstance(source, dict) else None
+        fingerprint = (
+            source.get("fingerprint") if isinstance(source, dict) else None
+        )
+        if not isinstance(source_key, str):
+            raise MigrationBlocked("private migration source is incomplete")
+        current = fresh_epoch_contract._path_fingerprint(
+            _safe_workspace_path(root, source_key)
+        )
+        if state == "private-ignored":
+            if current == fingerprint and isinstance(fingerprint, str):
+                result.update(
+                    {
+                        "owner_gap": None,
+                        "status": "verified",
+                        "observed_result": {
+                            "passed": True,
+                            "preserved_fingerprint": current,
+                        },
+                        "residual_risk": (
+                            "epoch admission and proof reuse remain unassessed"
+                        ),
+                    }
+                )
+            else:
+                result.update(
+                    {
+                        "owner_gap": (
+                            "Private evidence fingerprint could not be proved."
+                        ),
+                        "status": "blocked",
+                        "observed_result": {"passed": False},
+                        "residual_risk": (
+                            "private evidence identity is not currently proved"
+                        ),
+                    }
+                )
+            basis = list(result.get("basis", []))
+            if "issue-49-private-terminal-disposition" not in basis:
+                basis.append("issue-49-private-terminal-disposition")
+            result["basis"] = basis
+        elif state == "local-residue":
+            result.update(
+                {
+                    "owner_gap": (
+                        "Cleanup is Lock-gated; local residue is not a "
+                        "Git artifact."
+                    ),
+                    "status": "blocked",
+                    "observed_result": {
+                        "passed": False,
+                        "preserved_fingerprint": fingerprint,
+                    },
+                    "residual_risk": (
+                        "local residue remains until separately authorized "
+                        "cleanup"
+                    ),
+                }
+            )
+            basis = list(result.get("basis", []))
+            if "issue-49-lock-gated-residue" not in basis:
+                basis.append("issue-49-lock-gated-residue")
+            result["basis"] = basis
+            result["required_proof"] = [
+                "authorized-cleanup-lock",
+                "old-path-disposition",
+            ]
+        results.append(result)
+    return results
+
+
+def _verify_private_terminal_rows(
+    root: Path,
+    rows: list[dict[str, object]],
+) -> list[str]:
+    failures: list[str] = []
+    for row in rows:
+        source = row.get("source")
+        source_key = source.get("key") if isinstance(source, dict) else None
+        state = source.get("state") if isinstance(source, dict) else None
+        migration_id = str(row.get("migration_id"))
+        recovery = row.get("recovery")
+        applicable_lock = (
+            recovery.get("applicable_lock")
+            if isinstance(recovery, dict)
+            else None
+        )
+        if not isinstance(source_key, str):
+            failures.append(
+                f"Private migration source is incomplete: {migration_id}"
+            )
+            continue
+        if state == "private-ignored":
+            if row.get("status") == "verified":
+                current = fresh_epoch_contract._path_fingerprint(
+                    _safe_workspace_path(root, source_key)
+                )
+                if current != source.get("fingerprint"):
+                    failures.append(
+                        f"Private migration proof drift: {migration_id}"
+                    )
+            elif row.get("status") != "blocked" or not row.get("owner_gap"):
+                failures.append(
+                    f"Private migration is non-terminal: {migration_id}"
+                )
+        elif state == "local-residue":
+            if (
+                row.get("status") != "blocked"
+                or not row.get("owner_gap")
+                or applicable_lock != "authorized-cleanup-lock"
+            ):
+                failures.append(
+                    f"Private residue is non-terminal: {migration_id}"
+                )
+                continue
+            observed = row.get("observed_result")
+            preserved = (
+                observed.get("preserved_fingerprint")
+                if isinstance(observed, dict)
+                else None
+            )
+            current = fresh_epoch_contract._path_fingerprint(
+                _safe_workspace_path(root, source_key)
+            )
+            if (
+                not isinstance(preserved, str)
+                or preserved != source.get("fingerprint")
+                or current != preserved
+            ):
+                failures.append(
+                    f"Private residue proof drift: {migration_id}"
+                )
+    return failures
+
+
 def _write_control_state(
     root: Path,
     public: dict[str, object],
     private: dict[str, object],
 ) -> None:
+    private_bytes = _serialize(private).encode("utf-8")
+    private_sidecar = public.get("private_sidecar")
+    if not isinstance(private_sidecar, dict):
+        private_sidecar = {"path": PRIVATE_LEDGER.as_posix()}
+        public["private_sidecar"] = private_sidecar
+    private_sidecar["fingerprint"] = _fingerprint(private_bytes)
     outputs = {
         root / PUBLIC_LEDGER: _serialize(public).encode("utf-8"),
+        root / PRIVATE_LEDGER: private_bytes,
         root / CLOSEOUT: _closeout(public, private).encode("utf-8"),
     }
-    originals = {path: path.read_bytes() for path in outputs}
+    originals = {
+        path: path.read_bytes() if path.is_file() else None
+        for path in outputs
+    }
     temporaries = {
         path: path.with_name(f".{path.name}.new") for path in outputs
     }
@@ -2435,12 +4191,120 @@ def _write_control_state(
             temporaries[path].replace(path)
     except OSError:
         for path, content in originals.items():
-            _atomic_write_bytes(path, content)
+            if content is None:
+                if path.is_file():
+                    path.unlink()
+            else:
+                _atomic_write_bytes(path, content)
         raise
     finally:
         for temporary in temporaries.values():
             if temporary.exists():
                 temporary.unlink()
+
+
+def _campaign_source_overrides(
+    root: Path,
+    all_rows: list[dict[str, object]],
+    campaign_rows: list[dict[str, object]],
+) -> dict[str, bytes]:
+    """Replay prior verified path-only migrations into campaign baselines."""
+
+    research_mapping = _research_synthesis_mapping(all_rows)
+    support: dict[str, list[dict[str, object]]] = {}
+    for row in all_rows:
+        observed = row.get("observed_result")
+        raw_support = (
+            observed.get("support_fingerprints")
+            if isinstance(observed, dict)
+            else None
+        )
+        if isinstance(raw_support, dict):
+            for key, value in raw_support.items():
+                if isinstance(value, dict):
+                    support.setdefault(str(key), []).append(value)
+    overrides: dict[str, bytes] = {}
+    source_root, target_root, _, campaign_mapping = _campaign_mapping(
+        campaign_rows
+    )
+    target_by_source = {
+        source_key: target_key
+        for _, source_key, target_key, _ in campaign_mapping
+    }
+    for row in campaign_rows:
+        source = row.get("source")
+        source_key = source.get("key") if isinstance(source, dict) else None
+        if not isinstance(source_key, str):
+            raise MigrationBlocked("campaign source is incomplete")
+        original = _git_recovery_bytes(root, row)
+        replayed = _rewrite_group_reference(
+            original,
+            original_reference=source_key,
+            actual_reference=source_key,
+            mapped=research_mapping,
+            forward=True,
+        )
+        if replayed == original:
+            continue
+        support_entries = support.get(source_key, [])
+        direct_proof = any(
+            entry.get("before") == _fingerprint(original)
+            and entry.get("after") == _fingerprint(replayed)
+            for entry in support_entries
+        )
+        target_key = target_by_source[source_key]
+        target_proof = any(
+            entry.get("after")
+            == _fingerprint(
+                _campaign_target_bytes(
+                    replayed,
+                    source_key=source_key,
+                    target_key=target_key,
+                    source_root=source_root,
+                    target_root=target_root,
+                )
+            )
+            for entry in support.get(target_key, [])
+        )
+        if not direct_proof and not target_proof:
+            raise MigrationBlocked(
+                f"campaign prior-migration baseline is unproved: {source_key}"
+            )
+        overrides[source_key] = replayed
+    return overrides
+
+
+def _latest_support_fingerprints(
+    rows: Iterable[dict[str, object]],
+) -> dict[str, dict[str, object]]:
+    support: dict[str, dict[str, object]] = {}
+    for row in rows:
+        observed = row.get("observed_result")
+        raw_support = (
+            observed.get("support_fingerprints")
+            if isinstance(observed, dict)
+            else None
+        )
+        if isinstance(raw_support, dict):
+            support.update(
+                {
+                    str(key): value
+                    for key, value in raw_support.items()
+                    if isinstance(value, dict)
+                }
+            )
+    return support
+
+
+def _row_local_proof(observed: object) -> object:
+    """Exclude the aggregate support snapshot from one row's stable proof."""
+    if not isinstance(observed, dict):
+        return observed
+    return {
+        key: value
+        for key, value in observed.items()
+        if key != "support_fingerprints"
+    }
 
 
 def operate(root: Path, *, action: str, migration_id: str) -> int:
@@ -2499,6 +4363,27 @@ def operate(root: Path, *, action: str, migration_id: str) -> int:
         _is_research_synthesis_row(selected)
         and bool(research_synthesis_indexes)
     )
+    selected_source_key = (
+        selected.get("source", {}).get("key")
+        if isinstance(selected.get("source"), dict)
+        else None
+    )
+    validation_indexes = [
+        index
+        for index, row in enumerate(rows)
+        if isinstance(row, dict)
+        and isinstance(row.get("source"), dict)
+        and str(row["source"].get("key", "")).startswith(
+            "docs/validation/"
+        )
+        and row.get("artifact_class") != "campaign"
+    ]
+    is_validation = (
+        isinstance(selected_source_key, str)
+        and selected_source_key.startswith("docs/validation/")
+        and selected.get("artifact_class") != "campaign"
+        and bool(validation_indexes)
+    )
     try:
         if is_campaign:
             campaign_rows = [rows[index] for index in campaign_indexes]
@@ -2506,20 +4391,34 @@ def operate(root: Path, *, action: str, migration_id: str) -> int:
             typed_campaign_rows = [
                 row for row in campaign_rows if isinstance(row, dict)
             ]
+            typed_all_rows = [
+                row for row in rows if isinstance(row, dict)
+            ]
+            campaign_overrides = _campaign_source_overrides(
+                root,
+                typed_all_rows,
+                typed_campaign_rows,
+            )
             if action == "migrate":
                 campaign_result = apply_campaign_migration(
                     root,
                     typed_campaign_rows,
+                    source_overrides=campaign_overrides,
                 )
             elif action == "rollback":
                 campaign_result = rollback_campaign_migration(
                     root,
                     typed_campaign_rows,
+                    source_overrides=campaign_overrides,
                 )
             elif action == "verify":
                 campaign_result = verify_campaign_migration(
                     root,
                     typed_campaign_rows,
+                    allowed_support=_latest_support_fingerprints(
+                        typed_all_rows
+                    ),
+                    source_overrides=campaign_overrides,
                 )
             else:
                 raise MigrationBlocked(
@@ -2558,6 +4457,45 @@ def operate(root: Path, *, action: str, migration_id: str) -> int:
                 )
             rows[:] = group_result
             result_status = rows[selected_index]["status"]
+        elif is_validation:
+            typed_rows = [
+                row for row in rows if isinstance(row, dict)
+            ]
+            prepared_rows = prepare_validation_migrations(typed_rows)
+            if action == "migrate":
+                group_result = apply_validation_migrations(
+                    root,
+                    prepared_rows,
+                )
+            elif action == "rollback":
+                group_result = rollback_validation_migrations(
+                    root,
+                    prepared_rows,
+                )
+            elif action == "verify":
+                group_result = verify_validation_migrations(
+                    root,
+                    prepared_rows,
+                )
+                private_rows = private.get("rows")
+                if not isinstance(private_rows, list):
+                    raise MigrationBlocked(
+                        "private migration control has no rows"
+                    )
+                private["rows"] = terminalize_private_rows(
+                    root,
+                    [
+                        row
+                        for row in private_rows
+                        if isinstance(row, dict)
+                    ],
+                )
+            else:
+                raise MigrationBlocked(
+                    f"unsupported migration action: {action}"
+                )
+            rows[:] = group_result
+            result_status = rows[selected_index]["status"]
         else:
             if action == "migrate":
                 prepared = prepare_migration(selected)
@@ -2577,9 +4515,17 @@ def operate(root: Path, *, action: str, migration_id: str) -> int:
         except OSError:
             if is_campaign:
                 if action == "migrate":
-                    rollback_campaign_migration(root, campaign_result)
+                    rollback_campaign_migration(
+                        root,
+                        campaign_result,
+                        source_overrides=campaign_overrides,
+                    )
                 elif action == "rollback":
-                    apply_campaign_migration(root, campaign_result)
+                    apply_campaign_migration(
+                        root,
+                        campaign_result,
+                        source_overrides=campaign_overrides,
+                    )
             elif is_research_synthesis:
                 if action == "migrate":
                     rollback_research_synthesis_migrations(
@@ -2591,6 +4537,11 @@ def operate(root: Path, *, action: str, migration_id: str) -> int:
                         root,
                         group_result,
                     )
+            elif is_validation:
+                if action == "migrate":
+                    rollback_validation_migrations(root, group_result)
+                elif action == "rollback":
+                    apply_validation_migrations(root, group_result)
             else:
                 if action == "migrate":
                     rollback_migration(root, result)
@@ -2640,7 +4591,9 @@ def _closeout(public: dict[str, object], private: dict[str, object]) -> str:
         or "- None."
     )
     verification_contract = (
-        "Only the listed rows are `verified`; every other row remains pending."
+        "Only the listed public rows are `verified`; every other public row "
+        "remains pending. Private rows retain terminal status only in the "
+        "ignored sidecar, without publishing their source locators."
         if verified_rows
         else "No row is `verified`; owner gaps remain explicit."
     )
@@ -2670,6 +4623,7 @@ publishes no private source locators.
         ),
         "state",
     )}
+- Private/local terminal statuses: {_state_counts(private_rows, "status")}
 
 ## Verified migrations
 
@@ -2765,12 +4719,13 @@ def _check_applied(
         current_private,
         _,
         _,
-        _,
+        current_private_states,
     ) = discover_inventory(root)
     expected_public: set[str] = set()
     support_changes: dict[str, dict[str, object]] = {}
     verified_campaigns: dict[str, list[dict[str, object]]] = {}
     verified_research_synthesis: list[dict[str, object]] = []
+    verified_validation: list[dict[str, object]] = []
     for row in public_rows:
         if not isinstance(row, dict) or not isinstance(row.get("source"), dict):
             continue
@@ -2778,6 +4733,19 @@ def _check_applied(
         source_key = source.get("key")
         if not isinstance(source_key, str):
             continue
+        observed_result = row.get("observed_result")
+        if row.get("status") == "verified" and isinstance(
+            observed_result, dict
+        ):
+            raw_support = observed_result.get("support_fingerprints")
+            if isinstance(raw_support, dict):
+                support_changes.update(
+                    {
+                        str(key): value
+                        for key, value in raw_support.items()
+                        if isinstance(value, dict)
+                    }
+                )
         if (
             row.get("status") == "verified"
             and _is_research_synthesis_row(row)
@@ -2819,6 +4787,11 @@ def _check_applied(
                 and source_identity.startswith("campaign:")
             ):
                 verified_campaigns.setdefault(source_identity, []).append(row)
+            elif row.get("artifact_class") in {
+                "evaluation",
+                "validation-transcript",
+            }:
+                verified_validation.append(row)
             elif (
                 isinstance(target_key, str)
                 and target_key in support_changes
@@ -2853,10 +4826,20 @@ def _check_applied(
 
     for campaign_rows in verified_campaigns.values():
         try:
+            campaign_overrides = _campaign_source_overrides(
+                root,
+                [
+                    row
+                    for row in public_rows
+                    if isinstance(row, dict)
+                ],
+                campaign_rows,
+            )
             reverified_rows = verify_campaign_migration(
                 root,
                 campaign_rows,
                 allowed_support=support_changes,
+                source_overrides=campaign_overrides,
             )
         except MigrationBlocked as error:
             failures.append(str(error))
@@ -2896,6 +4879,7 @@ def _check_applied(
                     for row in public_rows
                     if isinstance(row, dict)
                 ],
+                allowed_support=support_changes,
             )
         except MigrationBlocked as error:
             failures.append(str(error))
@@ -2905,9 +4889,52 @@ def _check_applied(
                 for row in reverified_rows
             }
             for row in verified_research_synthesis:
-                if observed_by_id.get(row.get("migration_id")) != row.get(
-                    "observed_result"
+                target = row.get("target")
+                target_key = (
+                    target.get("path")
+                    if isinstance(target, dict)
+                    else None
+                )
+                source = row.get("source")
+                source_key = (
+                    source.get("key")
+                    if isinstance(source, dict)
+                    else None
+                )
+                if (
+                    target_key in support_changes
+                    or source_key in support_changes
                 ):
+                    continue
+                if _row_local_proof(
+                    observed_by_id.get(row.get("migration_id"))
+                ) != _row_local_proof(row.get("observed_result")):
+                    failures.append(
+                        "Verified migration proof drift: "
+                        + str(row.get("migration_id"))
+                    )
+
+    if verified_validation:
+        try:
+            reverified_rows = verify_validation_migrations(
+                root,
+                [
+                    row
+                    for row in public_rows
+                    if isinstance(row, dict)
+                ],
+            )
+        except MigrationBlocked as error:
+            failures.append(str(error))
+        else:
+            observed_by_id = {
+                row.get("migration_id"): row.get("observed_result")
+                for row in reverified_rows
+            }
+            for row in verified_validation:
+                if _row_local_proof(
+                    observed_by_id.get(row.get("migration_id"))
+                ) != _row_local_proof(row.get("observed_result")):
                     failures.append(
                         "Verified migration proof drift: "
                         + str(row.get("migration_id"))
@@ -2970,8 +4997,24 @@ def _check_applied(
         if isinstance(row, dict)
         and isinstance(row.get("source"), dict)
         and isinstance(row["source"].get("key"), str)
+        and row["source"].get("state") != "local-residue"
     }
-    if set(current_private) != expected_private:
+    current_stable_private = {
+        relative
+        for relative in current_private
+        if current_private_states.get(relative) != "local-residue"
+    }
+    failures.extend(
+        _verify_private_terminal_rows(
+            root,
+            [
+                row
+                for row in private_rows
+                if isinstance(row, dict)
+            ],
+        )
+    )
+    if current_stable_private != expected_private:
         failures.append("Private migration inventory paths changed.")
     private_sidecar = public.get("private_sidecar")
     expected_sidecar_fingerprint = (

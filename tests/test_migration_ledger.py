@@ -490,6 +490,27 @@ def _campaign_migration_fixture(
     return rows, files
 
 
+def test_git_recovery_uses_exact_raw_blob_when_checkout_filter_drifts(
+    tmp_path: Path,
+) -> None:
+    relative = "docs/validation/evals/example/live/index.html"
+    content = b"<html>\n<body>fixture</body>\n</html>\n"
+    path = tmp_path / relative
+    path.parent.mkdir(parents=True)
+    path.write_bytes(content)
+    head = _commit_fixture(tmp_path)
+    row = {
+        "recovery": {
+            "pointer": (
+                f"git:{head}:{relative}@"
+                f"{migration_ledger._fingerprint(content)}"
+            )
+        }
+    }
+
+    assert migration_ledger._git_recovery_bytes(tmp_path, row) == content
+
+
 def test_campaign_tree_migration_preserves_v1_meaning_and_rewrites_locators(
     tmp_path: Path,
 ) -> None:
@@ -524,6 +545,46 @@ def test_campaign_tree_migration_preserves_v1_meaning_and_rewrites_locators(
         name: fresh_epoch_contract.exact_content_fingerprint(content)
         for name, content in sorted(files.items())
     }
+
+
+def test_campaign_tree_migration_preserves_prompt4_manifest_meaning(
+    tmp_path: Path,
+) -> None:
+    manifest = (
+        b'{"schema":{"name":"deploy-campaign-manifest","version":5,'
+        b'"profile":"prompt4-accepted-v1"},'
+        b'"campaign":{"skill":"to-spec","epoch":"2026-07-25"},'
+        b'"runtime_identities":{"tree_algorithm":"campaign-tree-v1"}}\r\n'
+    )
+    rows, _ = _campaign_migration_fixture(
+        tmp_path,
+        manifest_content=manifest,
+    )
+
+    applied = migration_ledger.apply_campaign_migration(tmp_path, rows)
+    verified = migration_ledger.verify_campaign_migration(tmp_path, applied)
+
+    assert all(row["status"] == "verified" for row in verified)
+
+
+def test_campaign_tree_rewrites_each_member_without_an_inbound_reference(
+    tmp_path: Path,
+) -> None:
+    rows, _ = _campaign_migration_fixture(tmp_path)
+    candidate = next(
+        row
+        for row in rows
+        if row["source"]["key"].endswith("/candidate.md")
+    )
+    candidate["reference_rewrite_set"] = []
+
+    migration_ledger.apply_campaign_migration(tmp_path, rows)
+
+    target = tmp_path / CAMPAIGN_TARGET_ROOT / "candidate.md"
+    assert (
+        "../../../../../research/to-tickets-deploy-2026-07-25.md"
+        in target.read_text("utf-8")
+    )
 
 
 def test_campaign_tree_migration_retries_exact_target_and_rolls_back(
@@ -1559,3 +1620,636 @@ def test_research_synthesis_rollback_rejects_alternate_target_locator(
 
     assert target.is_file()
     assert not (tmp_path / "docs/research/implement-2026-07-24.md").exists()
+
+
+def _validation_row(
+    source_key: str,
+    *,
+    artifact_class: str,
+    migration_id: str,
+) -> dict[str, object]:
+    return {
+        "migration_id": migration_id,
+        "source": {
+            "key": source_key,
+            "state": "tracked",
+            "fingerprint": "sha256-v1:" + "a" * 64,
+            "identity": None,
+        },
+        "artifact_class": artifact_class,
+        "inbound_references": ["docs/validation/README.md"],
+        "owner": None,
+        "owner_gap": "Validation owner is not yet proved.",
+        "migration_disposition": "owner-gap",
+        "epoch_disposition": "historical-admission-only",
+        "catalog_query_disposition": "unverified-gap",
+        "proof_reuse_disposition": "missing",
+        "target": {"semantic_id": None, "path": None},
+        "basis": ["issue-34-owner-gap-rule"],
+        "reference_rewrite_set": [],
+        "required_proof": ["fixed-point-identity"],
+        "observed_result": None,
+        "status": "inventoried",
+        "residual_risk": "owner is unsettled",
+        "recovery": {
+            "pointer": (
+                "git:" + "b" * 40 + f":{source_key}@"
+                + "sha256-v1:"
+                + "a" * 64
+            ),
+            "applicable_lock": None,
+        },
+    }
+
+
+def test_prepare_validation_migrations_assigns_eval_and_transcript_owners() -> None:
+    eval_row = _validation_row(
+        (
+            "docs/validation/evals/convergent-pr-review-2026-07-24/"
+            "campaign-decision.json"
+        ),
+        artifact_class="evaluation",
+        migration_id="MIG-0169",
+    )
+    transcript_row = _validation_row(
+        (
+            "docs/validation/transcripts/"
+            "2026-07-23-research-behavior-eval.md"
+        ),
+        artifact_class="validation-transcript",
+        migration_id="MIG-0292",
+    )
+
+    prepared = migration_ledger.prepare_validation_migrations(
+        [eval_row, transcript_row]
+    )
+
+    assert prepared[0]["owner"] == (
+        "docs/validation/skills/convergent-pr-review/README.md"
+    )
+    assert prepared[0]["target"] == {
+        "semantic_id": "EV-convergent-pr-review-prompt4-20260724-01",
+        "path": (
+            "docs/validation/skills/convergent-pr-review/evals/"
+            "EV-convergent-pr-review-prompt4-20260724-01/"
+            "campaign-decision.json"
+        ),
+    }
+    assert prepared[1]["owner"] == (
+        "docs/validation/skills/research/README.md"
+    )
+    assert prepared[1]["target"] == {
+        "semantic_id": "EV-research-behavior-eval-20260723-01",
+        "path": (
+            "docs/validation/skills/research/evals/"
+            "EV-research-behavior-eval-20260723-01/evidence/"
+            "2026-07-23-research-behavior-eval.md"
+        ),
+    }
+
+
+def test_prepare_validation_migrations_keeps_ambiguous_pack_evidence_explicit() -> None:
+    row = _validation_row(
+        (
+            "docs/validation/transcripts/"
+            "2026-07-13-whole-pack-workflow-traces.md"
+        ),
+        artifact_class="validation-transcript",
+        migration_id="MIG-0248",
+    )
+
+    prepared = migration_ledger.prepare_validation_migrations([row])
+
+    assert prepared[0]["migration_disposition"] == "owner-gap"
+    assert prepared[0]["status"] == "blocked"
+    assert prepared[0]["owner"] == "docs/validation/skill-pack/README.md"
+    assert prepared[0]["target"] == {"semantic_id": None, "path": None}
+
+
+def test_prepare_validation_migrations_verifies_settled_shared_inputs() -> None:
+    row = _validation_row(
+        "docs/validation/shared/schemas/registry.json",
+        artifact_class="validation",
+        migration_id="MIG-0241",
+    )
+
+    prepared = migration_ledger.prepare_validation_migrations([row])
+
+    assert prepared[0]["migration_disposition"] == "preserve-in-place"
+    assert prepared[0]["owner"] == "docs/validation/shared/schemas/README.md"
+    assert prepared[0]["status"] == "prepared"
+
+
+def _validation_migration_fixture(
+    root: Path,
+) -> tuple[list[dict[str, object]], bytes]:
+    source = (
+        root
+        / "docs/validation/evals/convergent-pr-review-2026-07-24/"
+        "campaign-decision.json"
+    )
+    owner = root / "docs/validation/skills/convergent-pr-review/README.md"
+    reference = root / "docs/synthesis/skills/convergent-pr-review.md"
+    source.parent.mkdir(parents=True)
+    owner.parent.mkdir(parents=True)
+    reference.parent.mkdir(parents=True)
+    original = (
+        b'{\n  "decision": "historical",\n'
+        b'  "path": "docs/validation/evals/'
+        b'convergent-pr-review-2026-07-24/campaign-decision.json"\n}\n'
+    ).replace(b"\n", b"\r\n")
+    source.write_bytes(original)
+    owner.write_text(
+        "# Convergent PR Review validation\n\n"
+        "Evaluation directories are named by stable `EV-...` identity.\n",
+        encoding="utf-8",
+    )
+    reference.write_text(
+        "[Decision](../../validation/evals/"
+        "convergent-pr-review-2026-07-24/campaign-decision.json)\n",
+        encoding="utf-8",
+    )
+    head = _commit_fixture(root)
+    row = _validation_row(
+        (
+            "docs/validation/evals/convergent-pr-review-2026-07-24/"
+            "campaign-decision.json"
+        ),
+        artifact_class="evaluation",
+        migration_id="MIG-0169",
+    )
+    row["source"]["fingerprint"] = migration_ledger._fingerprint(original)
+    row["inbound_references"] = [
+        "docs/synthesis/skills/convergent-pr-review.md"
+    ]
+    row["recovery"] = {
+        "pointer": (
+            f"git:{head}:{row['source']['key']}@"
+            f"{row['source']['fingerprint']}"
+        ),
+        "applicable_lock": None,
+    }
+    return [row], original
+
+
+def test_validation_migration_is_recoverable_retry_safe_and_verified(
+    tmp_path: Path,
+) -> None:
+    rows, original = _validation_migration_fixture(tmp_path)
+    prepared = migration_ledger.prepare_validation_migrations(rows)
+
+    applied = migration_ledger.apply_validation_migrations(tmp_path, prepared)
+    retried = migration_ledger.apply_validation_migrations(tmp_path, applied)
+    verified = migration_ledger.verify_validation_migrations(tmp_path, retried)
+
+    target = (
+        tmp_path
+        / "docs/validation/skills/convergent-pr-review/evals/"
+        "EV-convergent-pr-review-prompt4-20260724-01/"
+        "campaign-decision.json"
+    )
+    assert not (
+        tmp_path
+        / "docs/validation/evals/convergent-pr-review-2026-07-24/"
+        "campaign-decision.json"
+    ).exists()
+    assert b"EV-convergent-pr-review-prompt4-20260724-01" in (
+        target.parent.as_posix().encode()
+    )
+    assert target.read_bytes() != original
+    assert verified[0]["status"] == "verified"
+    assert verified[0]["observed_result"]["rollback_proved"] is False
+    assert (
+        "../../validation/skills/convergent-pr-review/evals/"
+        "EV-convergent-pr-review-prompt4-20260724-01/"
+        "campaign-decision.json"
+    ) in (
+        tmp_path / "docs/synthesis/skills/convergent-pr-review.md"
+    ).read_text("utf-8")
+
+    rolled_back = migration_ledger.rollback_validation_migrations(
+        tmp_path, verified
+    )
+    assert rolled_back[0]["status"] == "prepared"
+    assert (
+        tmp_path
+        / "docs/validation/evals/convergent-pr-review-2026-07-24/"
+        "campaign-decision.json"
+    ).read_bytes() == original
+    assert not target.exists()
+
+    reprepared = migration_ledger.prepare_validation_migrations(rolled_back)
+    assert reprepared[0]["observed_result"]["rollback_proved"] is True
+    reapplied = migration_ledger.apply_validation_migrations(
+        tmp_path, reprepared
+    )
+    reverified = migration_ledger.verify_validation_migrations(
+        tmp_path, reapplied
+    )
+    assert reverified[0]["observed_result"]["rollback_proved"] is True
+
+
+def test_validation_target_preserves_plain_historical_locators(
+    tmp_path: Path,
+) -> None:
+    source_key = (
+        "docs/validation/transcripts/"
+        "2026-07-23-research-behavior-eval.md"
+    )
+    row = _validation_row(
+        source_key,
+        artifact_class="validation-transcript",
+        migration_id="MIG-0292",
+    )
+    prepared = migration_ledger.prepare_validation_migrations([row])
+    target = prepared[0]["target"]
+    target_key = target["path"]
+    identity = target["semantic_id"]
+    original = (
+        f"Historical locator remained `{source_key}` and was hashed as raw.\n"
+    ).encode()
+
+    rewritten = migration_ledger._validation_target_bytes(
+        tmp_path,
+        original,
+        source_key=source_key,
+        target_key=target_key,
+        target_identity=identity,
+        moved_targets={source_key: target_key},
+        mapped=migration_ledger._validation_mapping(prepared),
+    )
+
+    assert source_key.encode() in rewritten
+    assert target_key.encode() not in rewritten
+
+
+def test_validation_target_rewrites_structured_directory_pointer(
+    tmp_path: Path,
+) -> None:
+    source_key = (
+        "docs/validation/evals/convergent-pr-review-2026-07-24/"
+        "campaign-decision.json"
+    )
+    old_fixtures = (
+        "docs/validation/evals/convergent-pr-review-2026-07-24/fixtures"
+    )
+    row = _validation_row(
+        source_key,
+        artifact_class="evaluation",
+        migration_id="MIG-0169",
+    )
+    prepared = migration_ledger.prepare_validation_migrations([row])
+    target = prepared[0]["target"]
+    target_key = target["path"]
+    identity = target["semantic_id"]
+    mapped = migration_ledger._validation_mapping(prepared)
+
+    rewritten = migration_ledger._validation_target_bytes(
+        tmp_path,
+        json.dumps({"fixtures": old_fixtures}).encode(),
+        source_key=source_key,
+        target_key=target_key,
+        target_identity=identity,
+        moved_targets={source_key: target_key},
+        mapped=mapped,
+    )
+
+    payload = json.loads(rewritten)
+    assert payload["fixtures"] == (
+        "docs/validation/skills/convergent-pr-review/evals/"
+        "EV-convergent-pr-review-prompt4-20260724-01/fixtures"
+    )
+
+
+def test_validation_target_marks_local_only_link_without_live_pointer(
+    tmp_path: Path,
+) -> None:
+    source_key = (
+        "docs/validation/evals/"
+        "parallel-implement-prompt4-r2/results.md"
+    )
+    row = _validation_row(
+        source_key,
+        artifact_class="evaluation",
+        migration_id="MIG-0190",
+    )
+    prepared = migration_ledger.prepare_validation_migrations([row])
+    target = prepared[0]["target"]
+    target_key = target["path"]
+
+    rewritten = migration_ledger._validation_target_bytes(
+        tmp_path,
+        b"The raw captures are in [`raw/`](raw/).\n",
+        source_key=source_key,
+        target_key=target_key,
+        target_identity=target["semantic_id"],
+        moved_targets={source_key: target_key},
+        mapped=migration_ledger._validation_mapping(prepared),
+    )
+
+    assert rewritten == (
+        b"The raw captures are in "
+        b"`raw/` (retained as unverifiable local residue; "
+        b"not tracked proof).\n"
+    )
+
+
+def test_validation_target_redacts_private_residue_label(
+    tmp_path: Path,
+) -> None:
+    source_key = (
+        "docs/validation/transcripts/"
+        "2026-07-21-research-extraction-pruning-evidence.md"
+    )
+    row = _validation_row(
+        source_key,
+        artifact_class="validation-transcript",
+        migration_id="MIG-0271",
+    )
+    prepared = migration_ledger.prepare_validation_migrations([row])
+    target = prepared[0]["target"]
+    private_locator = "PRIVATE-RESIDUE-LOCATOR"
+    original = (
+        f"Frozen at [`{private_locator}`]"
+        "(../evals/research-pruning-pre-prune/).\n"
+    ).encode()
+
+    rewritten = migration_ledger._validation_target_bytes(
+        tmp_path,
+        original,
+        source_key=source_key,
+        target_key=target["path"],
+        target_identity=target["semantic_id"],
+        moved_targets={source_key: target["path"]},
+        mapped=migration_ledger._validation_mapping(prepared),
+    )
+
+    assert private_locator.encode() not in rewritten
+    assert rewritten == (
+        b"Frozen at `pre-prune residue` "
+        b"(retained as unverifiable local residue; not tracked proof).\n"
+    )
+
+
+def test_validation_target_records_missing_structured_reference_gap(
+    tmp_path: Path,
+) -> None:
+    source_key = (
+        "docs/validation/evals/"
+        "parallel-implement-prompt4-r2/protocol-manifest.json"
+    )
+    row = _validation_row(
+        source_key,
+        artifact_class="evaluation",
+        migration_id="MIG-0188",
+    )
+    prepared = migration_ledger.prepare_validation_migrations([row])
+    target = prepared[0]["target"]
+    target_key = target["path"]
+    original = {
+        "protected": {
+            "preserved_surfaces": [
+                "docs/validation/evals/parallel-implement-prompt4/**"
+            ]
+        },
+        "affected_surfaces": [
+            (
+                "docs/validation/transcripts/"
+                "2026-07-24-parallel-implement-prompt3-construction-r2.md"
+            )
+        ],
+        "evidence_dispositions": {},
+    }
+
+    rewritten = migration_ledger._validation_target_bytes(
+        tmp_path,
+        json.dumps(original).encode(),
+        source_key=source_key,
+        target_key=target_key,
+        target_identity=target["semantic_id"],
+        moved_targets={source_key: target_key},
+        mapped=migration_ledger._validation_mapping(prepared),
+    )
+
+    payload = json.loads(rewritten)
+    assert payload["protected"]["preserved_surfaces"] == [
+        (
+            "docs/validation/skills/parallel-implement/evals/"
+            "EV-parallel-implement-prompt4-r2-20260724-01/**"
+        )
+    ]
+    assert payload["evidence_dispositions"][
+        "prompt3_construction_transcript"
+    ].startswith("blocked-reference-gap;")
+
+
+def test_mapped_destination_rebases_a_moved_directory() -> None:
+    old_root = "docs/validation/evals/to-tickets/isolation-v2"
+    new_root = (
+        "docs/validation/skills/to-tickets/evals/"
+        "EV-to-tickets-prompt4/isolation-v2"
+    )
+    moved = {
+        f"{old_root}/README.md": f"{new_root}/README.md",
+        f"{old_root}/results.md": f"{new_root}/results.md",
+    }
+
+    assert migration_ledger._mapped_destination(old_root, moved) == new_root
+
+
+def test_markdown_link_verification_rejects_moved_source_residue(
+    tmp_path: Path,
+) -> None:
+    markdown = tmp_path / "docs/validation/skills/example/evidence.md"
+    residue = tmp_path / "docs/validation/evals/example/fixtures"
+    markdown.parent.mkdir(parents=True)
+    residue.mkdir(parents=True)
+    (residue / "ignored.json").write_text("{}\n", encoding="utf-8")
+    markdown.write_text(
+        "[fixtures](../../evals/example/fixtures)\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(
+        migration_ledger.MigrationBlocked,
+        match="moved Markdown link targets legacy residue",
+    ):
+        migration_ledger._verify_markdown_links(
+            tmp_path,
+            markdown,
+            "docs/validation/skills/example/evidence.md",
+            forbidden_paths={
+                "docs/validation/evals/example/fixtures/ignored.json"
+            },
+        )
+
+
+def test_proof_comparison_allows_later_support_snapshot_evolution() -> None:
+    original = {
+        "target_fingerprint": "sha256-v1:" + "a" * 64,
+        "references_verified": True,
+        "support_fingerprints": {
+            "docs/validation/README.md": {
+                "before": "sha256-v1:" + "b" * 64,
+                "after": "sha256-v1:" + "c" * 64,
+            }
+        },
+    }
+    current = {
+        **original,
+        "support_fingerprints": {
+            "docs/validation/README.md": {
+                "before": "sha256-v1:" + "c" * 64,
+                "after": "sha256-v1:" + "d" * 64,
+            }
+        },
+    }
+
+    assert migration_ledger._row_local_proof(current) == (
+        migration_ledger._row_local_proof(original)
+    )
+    assert migration_ledger._row_local_proof(
+        {**current, "references_verified": False}
+    ) != migration_ledger._row_local_proof(original)
+
+
+def _private_migration_row(
+    relative: str,
+    *,
+    state: str,
+    fingerprint: str,
+    migration_id: str,
+) -> dict[str, object]:
+    return {
+        "migration_id": migration_id,
+        "source": {
+            "key": relative,
+            "state": state,
+            "fingerprint": fingerprint,
+            "identity": None,
+        },
+        "artifact_class": (
+            "local-residue" if state == "local-residue" else "private-evidence"
+        ),
+        "inbound_references": [],
+        "owner": (
+            "local-residue-cleanup"
+            if state == "local-residue"
+            else "ignored-private-evidence"
+        ),
+        "owner_gap": None,
+        "migration_disposition": (
+            "remove" if state == "local-residue" else "preserve-in-place"
+        ),
+        "epoch_disposition": "unverifiable",
+        "catalog_query_disposition": "unverified-gap",
+        "proof_reuse_disposition": "missing",
+        "target": {"semantic_id": None, "path": None},
+        "basis": ["private-boundary"],
+        "reference_rewrite_set": [],
+        "required_proof": ["fixed-point-identity"],
+        "observed_result": None,
+        "status": "inventoried",
+        "residual_risk": "pending",
+        "recovery": {
+            "pointer": relative,
+            "applicable_lock": (
+                "authorized-cleanup-lock"
+                if state == "local-residue"
+                else None
+            ),
+        },
+    }
+
+
+def test_private_rows_become_verified_or_explicitly_blocked(
+    tmp_path: Path,
+) -> None:
+    evidence = tmp_path / ".tmp/private/evidence.txt"
+    residue = tmp_path / ".tmp/private/empty"
+    evidence.parent.mkdir(parents=True)
+    evidence.write_text("private evidence\n", encoding="utf-8")
+    residue.mkdir(parents=True)
+    rows = [
+        _private_migration_row(
+            ".tmp/private/evidence.txt",
+            state="private-ignored",
+            fingerprint=fresh_epoch_contract._path_fingerprint(evidence),
+            migration_id="MIG-0480",
+        ),
+        _private_migration_row(
+            ".tmp/private/empty",
+            state="local-residue",
+            fingerprint=fresh_epoch_contract._path_fingerprint(residue),
+            migration_id="MIG-0503",
+        ),
+    ]
+
+    terminal = migration_ledger.terminalize_private_rows(tmp_path, rows)
+
+    assert terminal[0]["status"] == "verified"
+    assert terminal[0]["observed_result"]["passed"] is True
+    assert terminal[1]["status"] == "blocked"
+    assert terminal[1]["owner_gap"] == (
+        "Cleanup is Lock-gated; local residue is not a Git artifact."
+    )
+    assert terminal[1]["observed_result"]["passed"] is False
+    assert migration_ledger.terminalize_private_rows(
+        tmp_path, terminal
+    ) == terminal
+
+
+def test_private_terminal_verification_rejects_evidence_drift_without_locator(
+    tmp_path: Path,
+) -> None:
+    evidence = tmp_path / ".tmp/private/evidence.txt"
+    evidence.parent.mkdir(parents=True)
+    evidence.write_text("private evidence\n", encoding="utf-8")
+    row = _private_migration_row(
+        ".tmp/private/evidence.txt",
+        state="private-ignored",
+        fingerprint=fresh_epoch_contract._path_fingerprint(evidence),
+        migration_id="MIG-0480",
+    )
+    terminal = migration_ledger.terminalize_private_rows(tmp_path, [row])
+    evidence.write_text("drift\n", encoding="utf-8")
+
+    assert migration_ledger._verify_private_terminal_rows(
+        tmp_path, terminal
+    ) == ["Private migration proof drift: MIG-0480"]
+
+
+def test_private_terminal_verification_rejects_residue_drift_and_deletion(
+    tmp_path: Path,
+) -> None:
+    residue = tmp_path / ".tmp/private/empty"
+    residue.mkdir(parents=True)
+    row = _private_migration_row(
+        ".tmp/private/empty",
+        state="local-residue",
+        fingerprint=fresh_epoch_contract._path_fingerprint(residue),
+        migration_id="MIG-0503",
+    )
+    terminal = migration_ledger.terminalize_private_rows(tmp_path, [row])
+
+    assert migration_ledger._verify_private_terminal_rows(
+        tmp_path, terminal
+    ) == []
+    (residue / "unexpected.txt").write_text("drift\n", encoding="utf-8")
+    assert migration_ledger._verify_private_terminal_rows(
+        tmp_path, terminal
+    ) == ["Private residue proof drift: MIG-0503"]
+    (residue / "unexpected.txt").unlink()
+    residue.rmdir()
+    assert migration_ledger._verify_private_terminal_rows(
+        tmp_path, terminal
+    ) == ["Private residue proof drift: MIG-0503"]
+
+
+def test_local_only_link_rules_do_not_publish_private_absolute_keys() -> None:
+    for link_rules in migration_ledger.VALIDATION_LOCAL_ONLY_LINKS.values():
+        assert all(
+            not locator.startswith(("docs/", ".tmp/"))
+            for locator in link_rules
+        )
+        assert all("docs/" not in note for note in link_rules.values())

@@ -12,7 +12,7 @@ artifact_id: RP-convergent-pr-review-20260724-01
 - Caller use: decision-ready evidence for Deploy Prompt 2; not authority for
   local intent, exact runtime wording, or behavioral efficacy.
 - M0 checkpoint:
-  `docs/validation/transcripts/2026-07-24-convergent-pr-review-prompt1-m0.md`
+  `docs/validation/skills/convergent-pr-review/evals/EV-convergent-pr-review-prompt1-m0-20260724-01/evidence/2026-07-24-convergent-pr-review-prompt1-m0.md`
 - M0 content fingerprint:
   `sha256:469734af7b346c0f327d07fbd2a001d8b3f76cd985aa7c9468a53c6944326e4e`
 - Research packet fingerprint:

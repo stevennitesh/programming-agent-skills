@@ -1,6 +1,6 @@
 # Grill With Docs Composition Synthesis
 
-Status: Prompt 5 promotion is complete. The canonical runtime now carries a post-promotion invocation revision: narrow implicit discovery for direct-user requests needing both components. The runtime body, caller boundaries, and component ownership remain otherwise unchanged. Current invocation evidence is recorded in [`2026-07-22-grill-with-docs-implicit-invocation-eval.md`](../../validation/transcripts/2026-07-22-grill-with-docs-implicit-invocation-eval.md).
+Status: Prompt 5 promotion is complete. The canonical runtime now carries a post-promotion invocation revision: narrow implicit discovery for direct-user requests needing both components. The runtime body, caller boundaries, and component ownership remain otherwise unchanged. Current invocation evidence is recorded in [`2026-07-22-grill-with-docs-implicit-invocation-eval.md`](../../validation/skills/grill-with-docs/evals/EV-grill-with-docs-implicit-invocation-eval-20260722-01/evidence/2026-07-22-grill-with-docs-implicit-invocation-eval.md).
 
 Runtime authority currently remains in:
 
@@ -287,6 +287,6 @@ No extraction choice remained between competing spines, invocation policies, cal
 
 **Accepted and promoted to canonical source** at exact tree hash `09438242574437c91ed631a1dd59010f3c02752b51b8eb93d096259fab65def7`.
 
-The upstream control failed admission/disclosure, one-component non-invocation, and all three combined-status Returns in all five samples. The final candidate passed every fixed case in five fresh contexts, as did the repaired pre-prune control; no critical failure or prune regression appeared. Ordered Relay was already correct in the neutral upstream control, so detailed Relay procedure was removed and only the protected seam remains. Evidence and residual limits are recorded in [`2026-07-22-grill-with-docs-post-candidate-behavior-eval.md`](../../validation/transcripts/2026-07-22-grill-with-docs-post-candidate-behavior-eval.md).
+The upstream control failed admission/disclosure, one-component non-invocation, and all three combined-status Returns in all five samples. The final candidate passed every fixed case in five fresh contexts, as did the repaired pre-prune control; no critical failure or prune regression appeared. Ordered Relay was already correct in the neutral upstream control, so detailed Relay procedure was removed and only the protected seam remains. Evidence and residual limits are recorded in [`2026-07-22-grill-with-docs-post-candidate-behavior-eval.md`](../../validation/skills/grill-with-docs/evals/EV-grill-with-docs-post-candidate-behavior-eval-20260722-01/evidence/2026-07-22-grill-with-docs-post-candidate-behavior-eval.md).
 
 Prompt 5 reused this evidence because candidate bytes and affected claims remained unchanged. Executable caller integrations remain removed; Wayfinder, Triage, and Improve Codebase now recommend the explicit direct-user composer and stop.

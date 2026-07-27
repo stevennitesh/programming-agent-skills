@@ -1,7 +1,8 @@
 # Evals
 
-Use this folder for repeatable validation ideas: fixtures, scoring rubrics,
-task sets, harness notes, and before/after comparisons.
+This is a compatibility owner for historical validation whose exact pack
+identity remains unresolved. Canonical one-skill evaluations live under
+[`../skills/<skill>/evals/<EV-id>/`](../skills/).
 
 An eval note should state:
 
@@ -26,8 +27,8 @@ to preserve a past campaign identity. During active work, place locally useful
 raw evidence under ignored `.tmp/campaign-evidence/`; later campaigns must rerun
 behavioral proof instead of treating that local archive as authority.
 
-## Current Suite
+## Preserved owner gaps
 
-- [`core-workflows.md`](core-workflows.md): pack-level routing, handoff, proof, mutation, and reconciliation fixtures.
-- [`prototype-prompt4/`](prototype-prompt4/): fixed B0-first behavior,
-  contribution, authority, and live-probe protocols for Prototype acceptance.
+- [`core-workflows.md`](core-workflows.md): historical pack-level routing,
+  handoff, proof, mutation, and reconciliation evidence. It remains here
+  without a fabricated composition epoch.

@@ -18,13 +18,13 @@ This is the active decision-complete synthesis for the `2026-07-24`
 rewrite in this file; it is not executable runtime.
 
 The frozen minimum is the bounded checkpoint in
-[Prompt 1](../../validation/transcripts/2026-07-24-convergent-pr-review-prompt1-m0.md).
+[Prompt 1](../../validation/skills/convergent-pr-review/evals/EV-convergent-pr-review-prompt1-m0-20260724-01/evidence/2026-07-24-convergent-pr-review-prompt1-m0.md).
 Professional and upstream evidence comes from the bounded
 [research packet](../../research/skills/convergent-pr-review/RP-convergent-pr-review-20260724-01.md). The
 campaign manifest at
-[campaign-decision.json](../../validation/evals/convergent-pr-review-2026-07-24/campaign-decision.json)
+[campaign-decision.json](../../validation/skills/convergent-pr-review/evals/EV-convergent-pr-review-prompt4-20260724-01/campaign-decision.json)
 owns shared semantic and identity state. The
-[Prompt 2 record](../../validation/transcripts/2026-07-24-convergent-pr-review-prompt2-synthesis.md)
+[Prompt 2 record](../../validation/skills/convergent-pr-review/evals/EV-convergent-pr-review-prompt2-synthesis-20260724-01/evidence/2026-07-24-convergent-pr-review-prompt2-synthesis.md)
 owns unit chronology and proof.
 
 Runtime authority remains with the eventual exact M0/H1 packages and, after
@@ -354,7 +354,7 @@ regression without extrapolation.
 ## Prompt 4 Decision
 
 M0 passed all 25 viability cases. The active per-sample owner is the
-[campaign decision](../../validation/evals/convergent-pr-review-2026-07-24/campaign-decision.json);
+[campaign decision](../../validation/skills/convergent-pr-review/evals/EV-convergent-pr-review-prompt4-20260724-01/campaign-decision.json);
 it preserves the exact arm identities, aggregate results, dispositions, and
 residual limits. Per-sample outputs are local disposable evidence; rerun for
 new behavioral credit.

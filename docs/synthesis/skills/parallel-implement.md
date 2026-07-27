@@ -155,17 +155,17 @@ relationship index untouched.
 ## Evidence Pointers
 
 - Corrected M0 checkpoint:
-  [`2026-07-24-parallel-implement-prompt1-m0-r2.md`](../../validation/transcripts/2026-07-24-parallel-implement-prompt1-m0-r2.md)
+  [`2026-07-24-parallel-implement-prompt1-m0-r2.md`](../../validation/skills/parallel-implement/evals/EV-parallel-implement-prompt1-m0-r2-20260724-01/evidence/2026-07-24-parallel-implement-prompt1-m0-r2.md)
 - Corrected research packet:
   [`parallel-implement-2026-07-24-r2.md`](../../research/skills/parallel-implement/RP-parallel-implement-20260724-02.md)
 - Exact construction protocol:
-  [`protocol-manifest.json`](../../validation/evals/parallel-implement-prompt4-r2/protocol-manifest.json)
+  [`protocol-manifest.json`](../../validation/skills/parallel-implement/evals/EV-parallel-implement-prompt4-r2-20260724-01/protocol-manifest.json)
 - Accepted behavior decision:
-  [`2026-07-24-parallel-implement-prompt4-r2.md`](../../validation/transcripts/2026-07-24-parallel-implement-prompt4-r2.md)
+  [`2026-07-24-parallel-implement-prompt4-r2.md`](../../validation/skills/parallel-implement/evals/EV-parallel-implement-prompt4-r2-20260724-01/evidence/2026-07-24-parallel-implement-prompt4-r2.md)
 - Compact results:
-  [`results-manifest.json`](../../validation/evals/parallel-implement-prompt4-r2/results-manifest.json)
+  [`results-manifest.json`](../../validation/skills/parallel-implement/evals/EV-parallel-implement-prompt4-r2-20260724-01/results-manifest.json)
 - Pruning decision:
-  [`2026-07-24-parallel-implement-pruning-r2.md`](../../validation/transcripts/2026-07-24-parallel-implement-pruning-r2.md)
+  [`2026-07-24-parallel-implement-pruning-r2.md`](../../validation/skills/parallel-implement/evals/EV-parallel-implement-pruning-r2-20260724-01/evidence/2026-07-24-parallel-implement-pruning-r2.md)
 
 The failed r1 candidate, its fixtures, five captures, results, transcript, and
 earlier synthesis remain historical evidence. They identified a missing route

@@ -5,7 +5,7 @@ artifact_id: RP-to-tickets-20260723-01
 # To Tickets Deploy Research Pass
 
 - Date and freshness check: 2026-07-23
-- M0 checkpoint: `docs/validation/transcripts/2026-07-23-to-tickets-prompt1-m0.md`
+- M0 checkpoint: `docs/validation/skills/to-tickets/evals/EV-to-tickets-prompt1-m0-20260723-01/evidence/2026-07-23-to-tickets-prompt1-m0.md`
 - M0 payload fingerprint: `sha256:c4238c81fa861543f492de8db11e5111c8517e4fa071aaf6628b286b2ad90a2f`
 - Research status: answered
 - Note authority: create exactly this file

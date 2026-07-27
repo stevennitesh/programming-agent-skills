@@ -381,5 +381,5 @@ non-decision-changing Implement facet research.
 
 Promotion reused exact accepted behavior evidence because P1 is V1
 byte-for-byte. The authoritative promotion and installation record is
-`docs/validation/transcripts/2026-07-24-implement-prompt5.md`; raw outputs and
+`docs/validation/skills/implement/evals/EV-implement-prompt5-20260724-01/evidence/2026-07-24-implement-prompt5.md`; raw outputs and
 chronology remain in validation, not this active synthesis.

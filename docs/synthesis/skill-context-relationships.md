@@ -277,9 +277,9 @@ source work or Grilling for a current-user-owned decision, then stop.
 Wayfinder packets, delegated Return adapters, durable `.scratch` identity,
 waiting, answer reconciliation, and continuation are outside the active
 relationship surface. Current evidence:
-[`2026-07-23-to-questionnaire-behavior-eval.md`](../validation/transcripts/2026-07-23-to-questionnaire-behavior-eval.md)
+[`2026-07-23-to-questionnaire-behavior-eval.md`](../validation/skills/to-questionnaire/evals/EV-to-questionnaire-behavior-eval-20260723-01/evidence/2026-07-23-to-questionnaire-behavior-eval.md)
 and
-[`2026-07-23-to-questionnaire-pruning.md`](../validation/transcripts/2026-07-23-to-questionnaire-pruning.md).
+[`2026-07-21-to-questionnaire-pruning-equivalence-eval.md`](../validation/skills/to-questionnaire/evals/EV-to-questionnaire-pruning-equivalence-eval-20260721-01/evidence/2026-07-21-to-questionnaire-pruning-equivalence-eval.md).
 
 ## Context Owners
 

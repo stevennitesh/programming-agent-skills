@@ -22,8 +22,8 @@ diffs, and failure observations over impressions.
 | [`shared/`](shared/) | Shared protocols, fixtures, schemas, and the mechanical Fresh Composition Epoch envelope. |
 | [`skills/`](skills/) | Per-skill campaign and evaluation evidence under stable identities. |
 | [`skill-pack/`](skill-pack/) | Pack-integration evidence for one composition epoch. |
-| [`transcripts/`](transcripts/) | Transcript reviews that show how agents actually behaved. |
-| [`evals/`](evals/) | Repeatable fixtures and scoring rubrics, starting with [`core-workflows.md`](evals/core-workflows.md). |
+| [`transcripts/`](transcripts/) | Compatibility pointer for unresolved historical pack evidence. |
+| [`evals/`](evals/) | Compatibility pointer for unresolved historical pack evidence. |
 
 Use this folder for cross-run evidence, transcript reviews, and repeatable eval
 material that should remain durable across runs.

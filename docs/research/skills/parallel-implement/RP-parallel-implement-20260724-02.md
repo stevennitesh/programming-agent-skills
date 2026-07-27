@@ -17,7 +17,7 @@ Campaign epoch: `2026-07-24-r2`
   research and the affected current observations. This packet neither designs
   nor proves H1.
 - Exact M0 checkpoint:
-  [`../validation/transcripts/2026-07-24-parallel-implement-prompt1-m0-r2.md`](../../../validation/transcripts/2026-07-24-parallel-implement-prompt1-m0-r2.md)
+  [`../validation/transcripts/2026-07-24-parallel-implement-prompt1-m0-r2.md`](../../../validation/skills/parallel-implement/evals/EV-parallel-implement-prompt1-m0-r2-20260724-01/evidence/2026-07-24-parallel-implement-prompt1-m0-r2.md)
 - Verified M0 bounded-content fingerprint:
   `ac7e81bdeb9ea05b929aa9c39af703521bd5b2b10979ad2c646132fec8f76715`.
 - Prior checkpoint bounded-content fingerprint:
@@ -70,7 +70,7 @@ No intended behavior is missing from corrected M0. There is no
 | --- | --- | --- |
 | Prior research packet | [`parallel-implement-2026-07-24.md`](RP-parallel-implement-20260724-01.md), bounded-content SHA-256 `3d8ad3acb1aedaf5a3c857d2a2ca573b67472072149ed7df71e8e07bc52b0d54`, whole-file SHA-256 `7d32446cc413326ea0656c548fd5beac7825125d71726370da86ce6e7d5f1405` | `exact-reusable` for every unaffected Research Pass lane; incorporated by identity rather than restated |
 | Prior M0 checkpoint | `2026-07-24-parallel-implement-prompt1-m0.md`, bounded-content SHA-256 `c91962879ff9bd03b48c34fa422974fff8a2aee8362c8a879627ebc66039271a` | Superseded only for M0-14/C14/V23 and the M0-13 fixture-proof sharpening named by r2 |
-| r2 M0 checkpoint | [`../validation/transcripts/2026-07-24-parallel-implement-prompt1-m0-r2.md`](../../../validation/transcripts/2026-07-24-parallel-implement-prompt1-m0-r2.md), bounded-content SHA-256 `ac7e81bdeb9ea05b929aa9c39af703521bd5b2b10979ad2c646132fec8f76715`, whole-file SHA-256 `cbee1b9ce8ea9318de66a9092b8a3f2c9a686273a2ab51821fe662ca609faa9c` | Exact controlling intended contract |
+| r2 M0 checkpoint | [`../validation/transcripts/2026-07-24-parallel-implement-prompt1-m0-r2.md`](../../../validation/skills/parallel-implement/evals/EV-parallel-implement-prompt1-m0-r2-20260724-01/evidence/2026-07-24-parallel-implement-prompt1-m0-r2.md), bounded-content SHA-256 `ac7e81bdeb9ea05b929aa9c39af703521bd5b2b10979ad2c646132fec8f76715`, whole-file SHA-256 `cbee1b9ce8ea9318de66a9092b8a3f2c9a686273a2ab51821fe662ca609faa9c` | Exact controlling intended contract |
 
 The prior packet's blind independent discovery remains the historical blind
 record. This bounded correction pass did not reopen or simulate that discovery.
