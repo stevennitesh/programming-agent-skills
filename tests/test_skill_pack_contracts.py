@@ -1550,6 +1550,10 @@ def assert_to_tickets_semantic_contract(
         "serial tripwire",
     ):
         assert profile_field in shape_contract
+    assert "finite repair generation budget" in shape_contract
+    assert "settled source or user" in shape_contract
+    assert "otherwise set it to exactly `2`" in shape_contract
+    assert "do not infer a higher budget from ticket size or risk" in shape_contract
     assert "expand-migrate-contract" in shape_contract
     assert re.search(r"contract only after old usage ends", shape_contract)
 
@@ -1666,7 +1670,7 @@ def test_to_tickets_preserves_coverage_readiness_and_frontier_contract() -> None
     packages = (
         (
             CUSTOM / "to-tickets",
-            "480f837cde4088e41ff7a4ada97be9df634e0ba73cba55fb9c786873d95e40d3",
+            "9fcd60991c88bfca2561d588762b812bb64bc0451497d964e40aa7fec2779c7a",
             "prompt3-candidate",
         ),
     )

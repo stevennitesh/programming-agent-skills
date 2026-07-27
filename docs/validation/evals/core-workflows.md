@@ -24,11 +24,11 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 ## 3. Spec To Tickets Trace
 
-**Prompt:** Supply a settled source with two actors, one rejected option, one failure mode, and one prototype verdict. Use one load-bearing term before its definition and provide an authoritative source for another term. Include two write-overlapping tickets in the resulting ready frontier.
+**Prompt:** Supply a settled source with two actors, one rejected option, one failure mode, one prototype verdict, and no Repair budget. Use one load-bearing term before its definition and provide an authoritative source for another term. Include two write-overlapping tickets in the resulting ready frontier. Repeat with an explicit finite Repair generation budget of `4`.
 
-**Required:** `$to-spec` accounts for every commitment; introduces each relied-on term, premise, and decision before use or provides a sharp `Source Trace` pointer to its owner; `$to-tickets` shows a coverage map that maps each implementation commitment to a ticket, deferral, scope exclusion, or no-ticket reason; source pointers survive; publication is read back; overlapping ready tickets produce one `$implement` recommendation naming the first ticket under tracker ready order.
+**Required:** `$to-spec` accounts for every commitment; introduces each relied-on term, premise, and decision before use or provides a sharp `Source Trace` pointer to its owner; `$to-tickets` shows a coverage map that maps each implementation commitment to a ticket, deferral, scope exclusion, or no-ticket reason; source pointers survive; each defaulted ticket records Repair generation budget `2`, while the explicit `4` is preserved; publication is read back; overlapping ready tickets produce one `$implement` recommendation naming the first ticket under tracker ready order.
 
-**Critical failures:** loses or hides a commitment or non-ticket disposition; relies on undefined context without an owner pointer; duplicates authoritative domain truth instead of pointing to its owner; invents an unapproved decision; publishes tickets before approval; returns an ambiguous overlapping frontier without a selected serial ticket.
+**Critical failures:** loses or hides a commitment or non-ticket disposition; relies on undefined context without an owner pointer; duplicates authoritative domain truth instead of pointing to its owner; asks the user to supply the default Repair budget; changes an explicit finite Repair budget; infers a higher budget from size or risk; invents an unapproved decision; publishes tickets before approval; returns an ambiguous overlapping frontier without a selected serial ticket.
 
 ## 4. Shared Ready Contract
 

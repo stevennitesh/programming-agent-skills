@@ -68,10 +68,13 @@ Give each ticket one bounded slice and Source Trace; observable desired
 behavior, acceptance, edge and error cases; relevant seams, expected durable
 write scope, and scope fence; dependency state, true blockers or `none`, and
 stable tracker order; proof lane, verification authority, and evidence; a
-parallel-safety judgment; and applicable work-unit, learning, migration,
-domain, ADR, compatibility, and exclusion facts. A ticket that lacks any
-required Ready-for-agent fact remains non-ready; correct locally or return
-`source-gap` when source authority is missing.
+parallel-safety judgment; a finite Repair generation budget; and applicable
+work-unit, learning, migration, domain, ADR, compatibility, and exclusion
+facts. Preserve a finite nonnegative Repair generation budget explicitly set
+by the settled source or user; otherwise set it to exactly `2`. Do not infer a
+higher budget from ticket size or risk. A ticket that lacks any required
+Ready-for-agent fact remains non-ready; correct locally or return `source-gap`
+when source authority is missing.
 
 For each stateful ticket, record the distinct supported absent or initial,
 reusable, legacy or incompatible, public access-path, variant, lifecycle, and
