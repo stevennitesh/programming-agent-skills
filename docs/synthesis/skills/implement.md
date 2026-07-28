@@ -393,3 +393,10 @@ Promotion reused exact accepted behavior evidence because P1 is V1
 byte-for-byte. The authoritative promotion and installation record is
 `docs/validation/skills/implement/evals/EV-implement-prompt5-20260724-01/evidence/2026-07-24-implement-prompt5.md`; raw outputs and
 chronology remain in validation, not this active synthesis.
+
+## 2026-07-27 Review-Route Amendment
+
+The canonical caller now sends ordinary diffs and ordinary PRs to Change
+Review. Release candidates and changes with a supported high-risk trigger go
+to High-Assurance Review. The review still returns judgment only; Implement
+retains Repair, Lock, and mutation authority. Installed parity is not claimed.

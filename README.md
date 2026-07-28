@@ -107,7 +107,9 @@ The portable contract carries the convergence loop, commitment boundaries, shapi
 
 - **Shape before building:** `$grilling`, `$grill-with-docs`, `$wayfinder`, `$to-questionnaire`, `$research`, `$prototype`, `$handoff`
 - **Turn intent into delivery:** `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement`
-- **Prove and protect behavior:** `$tdd`, `$diagnosing-bugs`, `$resolving-merge-conflicts`, `$review`, `$convergent-pr-review`, `$audit-codebase`
+- **Prove and protect behavior:** `$tdd`, `$diagnosing-bugs`,
+  `$resolving-merge-conflicts`, `$change-review`,
+  `$high-assurance-review`, `$audit-codebase`
 - **Improve code and design:** `$audit-codebase`, `$simplify-code`, `$codebase-design`, `$domain-modeling`
 - **Route and maintain the pack:** `$repo-bootstrap`, `$skill-router`, `$writing-great-skills`
 
@@ -129,7 +131,8 @@ Representative routes:
 - Settled red-testable behavior -> `$tdd`; uncertain bug -> `$diagnosing-bugs`; the router owns the exact diagnosis/TDD boundary.
 - Whole-repository correctness, robustness, or quality discovery -> `$audit-codebase` builds, continues, or refreshes one linked HTML map, audits one user-selected subsystem, then can analyze one user-selected improvement candidate or returned evidence
 - Existing behavior in one bounded region -> `$simplify-code` for one proved reduction, a finite `until-clean` campaign, or a no-safe-cut verdict
-- Ordinary diff -> `$review`; local PR or high-risk diff -> `$convergent-pr-review`
+- Ordinary diff or PR -> `$change-review`; release candidate or supported
+  high-risk change -> `$high-assurance-review`
 - Bounded correctness, domain robustness, performance, structural, or simplification discovery over an immutable repository baseline -> `$audit-codebase`, with repo-backed candidate decisions returned through `$grill-with-docs`
 
 These are examples. `$skill-router` owns the complete route map and tie-breakers.

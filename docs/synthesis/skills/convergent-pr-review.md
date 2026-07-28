@@ -1,6 +1,6 @@
 # Convergent PR Review Active Deploy Synthesis
 
-Status: `complete`
+Campaign status: `complete`
 
 Decision-bearing region: the content between the active synthesis markers.
 Its fingerprint is SHA-256 over the exact UTF-8 bytes between the marker
@@ -459,3 +459,17 @@ No H1 unit survives. V1 remains exact M0 at
 No affected pruning or Prompt 5 rerun is required.
 
 <!-- END ACTIVE SYNTHESIS -->
+
+## 2026-07-27 Author Amendment
+
+The canonical High-Assurance Review runtime admits release candidates and
+concretely high-risk diffs or PRs; ordinary PRs remain with Change Review. It
+uses the shared Finding Contract taxonomy, exactly two fresh core lanes, at
+most one risk-triggered specialist, one replacement attempt for an invalid
+lane, root verification, and the existing degraded-capacity decisions. Risk
+is cross-cutting and must name a changed surface, supported scenario,
+reachable path, and concrete impact.
+
+The optional advisory lane was removed. This amendment preserves the
+marker-bounded campaign record above as historical evidence and does not claim
+installed parity.

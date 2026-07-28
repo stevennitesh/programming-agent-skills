@@ -156,7 +156,7 @@ relationships remain:
 | `parallel-implement` → `tdd` | A bounded lane has red-testable new behavior, or a bug with every required fact; proved implementation returns to that lane |
 | `parallel-implement` → `diagnosing-bugs` | A bounded lane lacks a required bug fact; diagnosis or an authorized fix returns to that lane |
 | `parallel-implement` → `review` | A drained proved ordinary immutable candidate or repaired successor needs fixed-snapshot Spec and Standards judgment; judgment returns to root |
-| `parallel-implement` → `convergent-pr-review` | A drained proved local PR or bounded high-risk diff needs terminal release judgment; judgment returns to root |
+| `parallel-implement` → `convergent-pr-review` | A drained proved release candidate or supported high-risk diff or PR needs terminal release judgment; judgment returns to root |
 | `parallel-implement` → `resolving-merge-conflicts` | Serial landing enters preserved conflict or partial Git state; exact verified state returns to root |
 | `parallel-implement` → `to-tickets` | Graph, readiness, profile, matrix, order, scope, or frontier is incomplete or contradictory; one exhaustive repair packet returns and mutation stops |
 | `parallel-implement` → `repo-bootstrap` | Required setup is missing or incompatible; setup is recommended and mutation stops |
@@ -197,3 +197,11 @@ mutation, remote publication, irreversible closeout, and provider-specific
 idempotency remain unproved. Worktree containment does not establish process,
 credential, network, cache, submodule, or scarce-resource isolation. Exact
 backend build, random seed, token counts, and latency were unavailable.
+
+## 2026-07-27 Review-Route Amendment
+
+The drained candidate now uses Change Review for ordinary diffs and ordinary
+PRs. Release candidates and changes with a supported high-risk trigger use
+High-Assurance Review. Parallel Implement remains the sole formal-review
+caller and retains Repair, Lock, and closeout authority. Installed parity is
+not claimed.

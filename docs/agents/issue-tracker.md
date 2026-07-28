@@ -44,7 +44,8 @@ For an external PR when PRs are a request surface, fetch the PR with the GitHub 
 
 ## Work-item operations
 
-Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement`, and `$review`.
+Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`,
+`$parallel-implement`, `$change-review`, and `$high-assurance-review`.
 
 **Close implemented items:** yes.
 

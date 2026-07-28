@@ -132,10 +132,11 @@ evidence.
 
 Pin one immutable candidate only after all implementation actors are idle, the
 integration worktree is clean, every child disposition is complete, and final
-current-`HEAD` proof passes. Invoke `$review` for an ordinary candidate or
-`$convergent-pr-review` for a local PR or bounded high-risk diff. Supply `Spec
-required: yes`, the Charter, Source Trace, fixed point, target, and required
-proof.
+current-`HEAD` proof passes. Invoke `$change-review` for an ordinary candidate,
+including an ordinary PR, or `$high-assurance-review` for a release candidate
+or supported high-risk diff or PR. Supply `Spec required: yes`, the Charter,
+Source Trace, fixed point, target, required proof, and supported risk trigger
+when applicable.
 
 Review grants no mutation. The root may admit only one complete bounded batch
 after preserving and returning the complete blocking report intact for caller

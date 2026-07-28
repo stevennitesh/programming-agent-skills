@@ -19,7 +19,7 @@
 **Ledger:** `<path>`
 **Landing route and mode:** `<harness or manual gate / cherry-pick, merge, squash, or patch>`
 **Validation route:** `<commands or policy>`
-**Review route:** `<$review / $convergent-pr-review>`
+**Review route:** `<$change-review / $high-assurance-review>`
 **Repair authorization:** `<none / caller admission, generation, reviewed HEAD, complete blocking set, exact admitted IDs, per-blocker automatic and Charter evidence, both frozen budgets, write scope, required proof>`
 
 ## Contract

@@ -1,6 +1,11 @@
 # Smell Baseline
 
-**Fallback only:** use this baseline only when documented repo standards and meaningful nearby conventions are thin. Repo standards override it. Treat each smell as a judgement prompt, not a violation or automatic refactoring prescription. Report one only when the diff creates a concrete, actionable maintainability risk; state the required outcome, and leave tooling-enforced style to tooling.
+**Fallback only:** use this baseline only when documented repo standards and
+meaningful nearby conventions are thin. Repo standards override it. A smell
+name alone never admits a finding. Report one only when the target creates or
+worsens a concrete, actionable maintainability risk, or Change Closure brings
+it into scope. State the required outcome and leave tooling-enforced style to
+tooling.
 
 - **Mysterious Name:** names hide intent; rename them around the represented domain behavior.
 - **Duplicated Code:** knowledge or behavior repeats; consolidate it at the narrowest stable owner.

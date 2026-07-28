@@ -317,7 +317,7 @@ def assert_repo_bootstrap_semantic_contract(
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     assert_repo_bootstrap_semantic_contract(
         CUSTOM / "repo-bootstrap",
-        "d16d6236a74ee7cdf9082ddef1c408306b1a97594828e311e1182883407e8675",
+        "8591a56c098c31a9098d8de9862039f2665f6b457457f8cc3124bd675d5f9e62",
         profile="incumbent",
     )
 
@@ -768,73 +768,70 @@ def test_prototype_preserves_lifecycle_boundaries_and_branch_gates() -> None:
 
 
 def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
-    review = (CUSTOM / "review/SKILL.md").read_text(encoding="utf-8")
-    convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(encoding="utf-8")
-    baseline = (CUSTOM / "review/SMELL-BASELINE.md").read_text(encoding="utf-8")
-
-    assert "## Pin" in review
-    assert "## 2. Pin One Complete Snapshot" in convergent
-    assert "$convergent-pr-review" in review.split("---", 2)[1]
-    assert "only when documented repo standards" in baseline
-    assert "concrete, actionable maintainability risk" in baseline
-    assert "SMELL-BASELINE.md` only when local\nStandards are thin" in convergent
-    review_steps = re.findall(
-        r"(?m)^## (Route|Pin|Trace|Judge|Admit|Return)$", review
+    review = (CUSTOM / "change-review/SKILL.md").read_text(encoding="utf-8")
+    convergent = (CUSTOM / "high-assurance-review/SKILL.md").read_text(
+        encoding="utf-8"
     )
-    assert review_steps == ["Route", "Pin", "Trace", "Judge", "Admit", "Return"]
+    baseline = (CUSTOM / "change-review/SMELL-BASELINE.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert not (CUSTOM / "review").exists()
+    assert not (CUSTOM / "convergent-pr-review").exists()
+    assert re.search(r"(?m)^name: change-review$", review)
+    assert re.search(r"(?m)^name: high-assurance-review$", convergent)
+    assert "## Pin" in review
+    assert "## 2. Pin" in convergent
+    assert "$high-assurance-review" in review.split("---", 2)[1]
+    assert "only when documented repo standards" in " ".join(baseline.split())
+    assert "concrete, actionable maintainability risk" in baseline
+    assert (
+        "change-review/SMELL-BASELINE.md` only when Standards are thin"
+        in " ".join(convergent.split())
+    )
+    review_steps = re.findall(r"(?m)^## (Pin|Cover|Judge|Gate)$", review)
+    assert review_steps == ["Pin", "Cover", "Judge", "Gate"]
     convergent_steps = re.findall(r"(?m)^## \d+\. (.+)$", convergent)
     assert convergent_steps == [
-        "Route, Guard, And Freeze The Caller Packet",
-        "Pin One Complete Snapshot",
-        "Trace Sources And Freeze Coverage",
-        "Isolate Candidate Generation",
-        "Converge And Admit",
-        "Read Back Drift",
-        "Decide, Return, And Stop",
+        "Admit",
+        "Pin",
+        "Review",
+        "Converge",
+        "Gate",
     ]
-    reports = review.split("```text")
-    report = reports[1].split("```", 1)[0]
-    assert report.lstrip().startswith("Review status: complete")
+    report = review.split("```text", 2)[2].split("```", 1)[0]
+    assert report.lstrip().startswith("Review mode: initial | remediation")
+    assert "Coverage: complete | incomplete" in report
+    assert (
+        "Decision: pass | pass with residual risk | blocked | incomplete"
+        in report
+    )
     assert "Standards findings:" in report
     assert "Spec findings:" in report
-    incomplete = reports[2].split("```", 1)[0]
-    assert re.findall(r"(?m)^([A-Za-z ]+):", incomplete) == [
-        "Review status",
-        "Review mode",
-        "Fixed point",
-        "Snapshot identity",
-        "Target",
-        "Sources",
-        "Covered work",
-        "Verified findings",
-        "Carried dispositions",
-        "Blocker",
-        "Skipped work",
-        "Residual risk",
-        "Drift",
-        "Return boundary",
-        "Mutation authority",
-        "Successor snapshot authority",
-    ]
 
 
 def test_review_finding_interface_and_return_boundary_are_shared() -> None:
-    review = (CUSTOM / "review/SKILL.md").read_text(encoding="utf-8")
-    convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(
+    review = (CUSTOM / "change-review/SKILL.md").read_text(encoding="utf-8")
+    convergent = (CUSTOM / "high-assurance-review/SKILL.md").read_text(
         encoding="utf-8"
     )
-    finding = (CUSTOM / "review/FINDING-CONTRACT.md").read_text(encoding="utf-8")
+    finding = (CUSTOM / "change-review/FINDING-CONTRACT.md").read_text(
+        encoding="utf-8"
+    )
 
     fields = finding.split("```text", 1)[1].split("```", 1)[0]
     assert set(re.findall(r"(?m)^([A-Za-z ]+):", fields)) == {
         "ID",
         "Axis",
+        "Class",
         "Severity",
         "Location",
         "Anchor",
         "Supported scenario",
+        "Behavior or failure path",
         "Evidence",
         "Impact",
+        "Supported risk trigger",
         "Blocking",
         "Remediation",
         "Required proof",
@@ -844,7 +841,7 @@ def test_review_finding_interface_and_return_boundary_are_shared() -> None:
         "decision-required",
         "residual-hardening",
     } <= set(re.findall(r"(?m)^- `([^`]+)`(?:\:| )", finding))
-    severity = finding.split("## Classify", 1)[1]
+    severity = finding.split("## Severity And Remediation", 1)[1]
     assert re.findall(r"(?m)^- `(P[0-3])`:", severity) == ["P0", "P1", "P2", "P3"]
     for skill in (review, convergent):
         assert "FINDING-CONTRACT.md" in skill
@@ -854,50 +851,109 @@ def test_review_finding_interface_and_return_boundary_are_shared() -> None:
         assert "Successor snapshot authority: none" in skill
 
 
-def test_convergent_review_uses_fresh_context_and_root_only_fanout() -> None:
-    convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(
+def test_review_family_shares_one_bounded_quality_and_risk_model() -> None:
+    review = (CUSTOM / "change-review/SKILL.md").read_text(encoding="utf-8")
+    convergent = (CUSTOM / "high-assurance-review/SKILL.md").read_text(
+        encoding="utf-8"
+    )
+    finding = (CUSTOM / "change-review/FINDING-CONTRACT.md").read_text(
+        encoding="utf-8"
+    )
+    router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
+    finding_flat = " ".join(finding.split())
+    convergent_flat = " ".join(convergent.split())
+
+    for class_name in (
+        "Commitment Fidelity",
+        "Scope and Contracts",
+        "Acceptance and Change Closure",
+        "Semantic Correctness",
+        "Robustness and Operability",
+        "Code Quality and Design",
+        "Proof Discipline",
+        "Stewardship",
+    ):
+        assert finding.count(f"**{class_name}**") == 1
+    assert "Behavior is evidence used by both axes, not another axis." in finding_flat
+    assert "Risk is a cross-cutting modifier." in finding_flat
+    assert "Hypothetical permutations do not qualify." in finding_flat
+    assert "not a blind Cartesian product" in review
+    assert "not a blind Cartesian product" in convergent_flat
+    assert "Reuse proof tied to the exact snapshot" in review
+    assert "Reuse exact-snapshot proof" in convergent
+    assert "ordinary local PRs" in review
+    assert "PR existence, diff size, repository size" in convergent
+    assert "ordinary PR needs fixed-point review" in router
+    assert "release candidate or supported high-risk diff or PR" in router
+
+
+def test_review_assurance_route_has_one_domain_decision() -> None:
+    context = (ROOT / "CONTEXT.md").read_text(encoding="utf-8")
+    adr = (
+        ROOT / "docs/adr/0011-review-assurance-follows-release-risk.md"
+    ).read_text(encoding="utf-8")
+    normalized_adr = " ".join(adr.split())
+
+    for term in (
+        "**Change review candidate**",
+        "**High-assurance review candidate**",
+        "**Supported high-risk trigger**",
+    ):
+        assert context.count(term) == 1
+    assert "ADR-0011" in context
+    assert "**Status**: accepted" in adr
+    assert "PR existence" in normalized_adr
+    assert "choose exactly one review route" in normalized_adr
+    assert "Revision 3" in normalized_adr
+    assert "Behavioral Proof" in normalized_adr
+
+
+def test_high_assurance_review_uses_fresh_context_and_root_only_fanout() -> None:
+    convergent = (CUSTOM / "high-assurance-review/SKILL.md").read_text(
         encoding="utf-8"
     )
 
     assert 'fork_turns="none"' in convergent
-    contract = convergent.split("```text", 1)[1].split("```", 1)[0]
+    contract = (
+        convergent.split("this return contract:", 1)[1]
+        .split("```text", 1)[1]
+        .split("```", 1)[0]
+    )
     assert set(re.findall(r"(?m)^([a-z ]+):", contract)) == {
         "status",
+        "reviewer",
         "axis",
-        "lens",
+        "classes",
         "coverage",
-        "findings",
-        "advisories",
+        "candidates",
         "skipped checks",
         "blockers",
     }
 
 
-def test_convergent_review_has_root_guard_capacity_modes_and_advisories() -> None:
-    convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(
+def test_high_assurance_review_has_root_guard_bounded_capacity_and_risk() -> None:
+    convergent = (CUSTOM / "high-assurance-review/SKILL.md").read_text(
         encoding="utf-8"
     )
-    advisory = (CUSTOM / "review/ADVISORY-CONTRACT.md").read_text(encoding="utf-8")
+    convergent_flat = " ".join(convergent.split())
 
     assert "Require the top-level root." in convergent
     assert "root-only blocker before Pin" in convergent
-    assert {"initial", "remediation", "assurance"} <= set(
-        re.findall(r"(?m)^- `([^`]+)` (?:judges|requires)", convergent)
-    )
+    for mode in ("initial", "remediation", "assurance"):
+        assert f"- `{mode}`" in convergent
     for capacity in (
-        "At least two",
-        "Exactly one",
+        "Two",
+        "One",
         "Zero",
-        "Any required lens or evidence axis remains uncovered",
+        "Any required class, evidence seam, or specialist lane remains uncovered",
     ):
         assert capacity in convergent
     assert "Maximum clean decision" in convergent
     assert convergent.count("`pass with residual risk`") >= 3
-    assert "`ADVISORY-CONTRACT.md` only when the caller enabled advisories" in convergent
-    assert "Repair authority" in convergent
-    assert "advisory patch-ready handoff" not in convergent
-    assert "never affect confidence or a terminal decision" in advisory
-    assert "Never demote" in advisory
+    assert "Repair authority" in convergent_flat
+    assert "at most one specialist" in convergent
+    assert "at most one unbiased replacement" in convergent
+    assert not (CUSTOM / "change-review/ADVISORY-CONTRACT.md").exists()
 
 
 def test_audit_codebase_is_serial_cumulative_html_report() -> None:
@@ -1183,12 +1239,12 @@ def test_audit_codebase_is_serial_cumulative_html_report() -> None:
     )
 
 
-def test_convergent_review_returns_a_lock_usable_decision() -> None:
-    convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(
+def test_high_assurance_review_returns_a_lock_usable_decision() -> None:
+    convergent = (CUSTOM / "high-assurance-review/SKILL.md").read_text(
         encoding="utf-8"
     )
     decision_section = convergent.split("Derive exactly one decision", 1)[1].split(
-        "Never let an advisory", 1
+        "Return one caller-bound packet", 1
     )[0]
     decisions = set(
         re.findall(
@@ -1197,17 +1253,17 @@ def test_convergent_review_returns_a_lock_usable_decision() -> None:
         )
     )
     assert decisions == {"pass", "pass with residual risk", "blocked", "incomplete"}
-    ledger_sentence = convergent.split("exactly one state:", 1)[1].split(".", 1)[0]
+    ledger_sentence = convergent.split("and one state:", 1)[1].split(".", 1)[0]
     ledger_states = set(re.findall(r"`([^`]+)`", ledger_sentence))
     assert ledger_states == {"candidate", "accepted", "rejected", "duplicate", "disputed"}
 
 
-def test_convergent_review_checks_snapshot_drift_not_baseline_drift() -> None:
-    convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(encoding="utf-8")
+def test_high_assurance_review_checks_snapshot_drift_not_baseline_drift() -> None:
+    convergent = (CUSTOM / "high-assurance-review/SKILL.md").read_text(
+        encoding="utf-8"
+    )
 
-    verify = convergent.split("## 6. Read Back Drift", 1)[1].split(
-        "## 7. Decide, Return, And Stop", 1
-    )[0]
+    verify = convergent.split("## 5. Gate", 1)[1]
     verify = " ".join(verify.split())
     for surface in (
         "`HEAD`",
@@ -1228,10 +1284,15 @@ def test_implement_selects_one_risk_scaled_review_route() -> None:
     )[0]
     review_flat = " ".join(review_section.split())
     assert "Invoke exactly one formal route" in review_flat
-    assert re.findall(r"`\$(review|convergent-pr-review)`", review_section)[:2] == [
-        "review",
-        "convergent-pr-review",
+    assert re.findall(
+        r"`\$(change-review|high-assurance-review)`", review_section
+    )[:2] == [
+        "change-review",
+        "high-assurance-review",
     ]
+    assert "ordinary diff or PR" in review_flat
+    assert "release candidate or supported high-risk diff or PR" in review_flat
+    assert "supported risk trigger when applicable" in review_flat
     assert "Finding Contract" in review_flat
     assert "complete caller-admitted" in review_flat
     assert "mixed-authority, partial, out-of-scope, or" in review_flat
@@ -1449,8 +1510,8 @@ def test_to_spec_handoff_keeps_ticket_design_downstream() -> None:
 
 
 def test_implementation_closeout_requires_the_spec_axis() -> None:
-    review = (CUSTOM / "review/SKILL.md").read_text(encoding="utf-8")
-    convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(
+    review = (CUSTOM / "change-review/SKILL.md").read_text(encoding="utf-8")
+    convergent = (CUSTOM / "high-assurance-review/SKILL.md").read_text(
         encoding="utf-8"
     )
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
@@ -1515,14 +1576,14 @@ def test_planning_and_delivery_activate_preventive_code_quality_contract() -> No
     to_spec = (CUSTOM / "to-spec/SKILL.md").read_text(encoding="utf-8")
     to_tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
-    review = (CUSTOM / "review/SKILL.md").read_text(encoding="utf-8")
+    review = (CUSTOM / "change-review/SKILL.md").read_text(encoding="utf-8")
     parallel = (CUSTOM / "parallel-implement/SKILL.md").read_text(
         encoding="utf-8"
     )
     worker = (
         CUSTOM / "parallel-implement/references/WORKER-BRIEF.md"
     ).read_text(encoding="utf-8")
-    convergent = (CUSTOM / "convergent-pr-review/SKILL.md").read_text(
+    convergent = (CUSTOM / "high-assurance-review/SKILL.md").read_text(
         encoding="utf-8"
     )
     relationships = (
@@ -2489,7 +2550,7 @@ def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts
         "## Lock And Return", 1
     )[0]
     lock = parallel.split("## Lock And Return", 1)[1]
-    assert "$review" in review
+    assert "$change-review" in review
     assert "mutation read-back" in lock
     assert lock.index("child") < lock.index("parent")
 
@@ -2657,12 +2718,12 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         ("triage", "Recommend and stop", "grill-with-docs"),
         ("implement", "Invoke", "tdd"),
         ("implement", "Invoke", "diagnosing-bugs"),
-        ("implement", "Invoke", "review"),
-        ("implement", "Invoke", "convergent-pr-review"),
-        ("review", "Hand off", "convergent-pr-review"),
-        ("review", "Recommend and stop", "audit-codebase"),
-        ("convergent-pr-review", "Recommend and stop", "audit-codebase"),
-        ("parallel-implement", "Invoke", "convergent-pr-review"),
+        ("implement", "Invoke", "change-review"),
+        ("implement", "Invoke", "high-assurance-review"),
+        ("change-review", "Hand off", "high-assurance-review"),
+        ("change-review", "Recommend and stop", "audit-codebase"),
+        ("high-assurance-review", "Recommend and stop", "audit-codebase"),
+        ("parallel-implement", "Invoke", "high-assurance-review"),
         ("parallel-implement", "Invoke", "resolving-merge-conflicts"),
         ("resolving-merge-conflicts", "Invoke", "diagnosing-bugs"),
         ("audit-codebase", "Recommend and stop", "grill-with-docs"),
@@ -2701,7 +2762,7 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
     assert required <= edges
     assert ("audit-codebase", "Load", "codebase-design") not in edges
     assert ("audit-codebase", "Invoke", "codebase-design") not in edges
-    assert ("convergent-pr-review", "Hand off", "review") not in edges
+    assert ("high-assurance-review", "Hand off", "change-review") not in edges
     assert ("wayfinder", "Recommend and stop", "to-tickets") not in edges
     assert ("wayfinder", "Recommend and stop", "implement") not in edges
     assert ("to-questionnaire", "Recommend and stop", "grill-with-docs") not in edges

@@ -2,12 +2,16 @@
 
 Status: exhaustive design reference and extraction map, not an executable contract.
 
+Current amendment: the Review-owned Advisory Contract was retired on
+2026-07-27. Advisory passages below remain historical design evidence, not
+current runtime pointers. Current Audit Codebase improvement opportunities are
+owned by its `QUALITY-LENS.md` and `CANDIDATE-CONTRACT.md`.
+
 Runtime authority remains in:
 
 - `skills/custom/audit-codebase/SKILL.md`;
 - `skills/custom/audit-codebase/DEFECT-CONTRACT.md`, `PERFORMANCE-LENS.md`, and `HTML-REPORT.md`;
 - `skills/custom/audit-codebase/agents/openai.yaml`;
-- `skills/custom/review/ADVISORY-CONTRACT.md` when the Charter enables advisories;
 - `docs/agents/engineering-contract.md`, the caller's Charter, and the target repository's domain, methodology, data, validation, and operational contracts;
 - the relationship map, router, review-family owners, pack tests, behavior evaluations, and installed mirror.
 
@@ -88,8 +92,8 @@ One target and requested outcome have one primary owner:
 
 | Target and requested outcome | Owner | Terminal result |
 | --- | --- | --- |
-| Ordinary branch, WIP, staged-only, or since-X diff needing Standards and Spec judgment | `$review` | One complete or incomplete ordinary review report |
-| Local PR, release candidate, or caller-selected bounded high-risk diff needing independent release judgment | `$convergent-pr-review` | One terminal review decision |
+| Ordinary branch, WIP, staged-only, since-X diff, or ordinary PR needing Standards and Spec judgment | `$change-review` | One terminal ordinary review decision |
+| Release candidate or caller-selected bounded high-risk diff or PR needing independent release judgment | `$high-assurance-review` | One terminal release decision |
 | Immutable repository baseline needing bounded correctness, domain, robustness, methodology, model-risk, data, analytics, validation, calibration, metric, performance, or other contract-backed coverage | `$audit-codebase` | One complete or incomplete coverage ledger without a release decision |
 | Broad discovery of structural improvement opportunities, trade-offs, and ranking | `$improve-codebase` | One disposable survey report and no automatic implementation |
 | One uncertain failing symptom, cause, expected behavior, or reproduction | `$diagnosing-bugs` | One causal packet without an implied broad baseline audit |
@@ -220,8 +224,8 @@ Route before Pin:
 | Top-level root receives one bounded immutable repository-baseline audit | Continue to Pin | Turning the audit into a release gate or improvement ranking |
 | Caller explicitly requests whole-codebase coverage | Continue only after Charter partitions finite regions and required lenses | Treating `everything` as an executable unbounded instruction |
 | A delegated task invokes Audit Codebase | Return `incomplete` to the top-level root before Pin, repository inspection, run-ID creation, evidence writes, or lens dispatch | Letting a delegated lens become the audit owner or fan out |
-| Target is an ordinary pending diff | Recommend `$review` and stop | Auditing the repository baseline and pretending it judges the change |
-| Target is a PR, release candidate, or bounded high-risk pending diff | Recommend `$convergent-pr-review` and stop | Issuing a release decision through Audit Codebase |
+| Target is an ordinary pending diff or PR | Recommend `$change-review` and stop | Auditing the repository baseline and pretending it judges the change |
+| Target is a release candidate or bounded high-risk pending diff or PR | Recommend `$high-assurance-review` and stop | Issuing a release decision through Audit Codebase |
 | Request is broad structural discovery or ranking without a violated expectation | Recommend `$improve-codebase` and stop | Converting opportunities into defects to keep the audit route |
 | Request is one uncertain symptom or cause | Recommend `$diagnosing-bugs` and stop | Opening a whole-baseline audit for one causal question |
 | Request is one bounded interface or ownership design | Recommend `$codebase-design` and stop | Treating a design choice as a baseline defect without an expectation |
@@ -652,8 +656,8 @@ This section owns Audit Codebase's composition edges and exclusions. Suggested-o
 | --- | --- | --- | --- |
 | Direct user at top-level root | Invoke | `$audit-codebase` | One immutable repository baseline needs bounded contract-backed coverage and one terminal ledger |
 | `$skill-router` | Recommend and stop | `$audit-codebase` | The request is an immutable repository-baseline audit; the user starts it later |
-| `$review` | Recommend and stop | `$audit-codebase` | The target is a bounded repository baseline rather than an ordinary pending diff |
-| `$convergent-pr-review` | Recommend and stop | `$audit-codebase` | The target is a bounded repository baseline rather than a PR, release candidate, or high-risk pending diff |
+| `$change-review` | Recommend and stop | `$audit-codebase` | The target is a bounded repository baseline rather than an ordinary pending diff or PR |
+| `$high-assurance-review` | Recommend and stop | `$audit-codebase` | The target is a bounded repository baseline rather than a release candidate or high-risk pending diff or PR |
 | `$audit-codebase` | Load | Audit Finding Contract | Every admitted audit uses `DEFECT-CONTRACT.md` for defects, gaps, clusters, and suggestions |
 | `$audit-codebase` | Load conditionally | Performance Lens | A Charter names performance or resource behavior |
 | `$audit-codebase` | Load conditionally | Review-owned Advisory Contract | The Charter enables advisories; Audit retains its own ledger and status |
@@ -831,8 +835,8 @@ The `Must not absorb` column is part of the design. Bundle IDs define coordinate
 | `A1` | `skills/custom/audit-codebase/PERFORMANCE-LENS.md` | Conditional performance classification, like-for-like measurement, evidence fields, and read-only bounds | Preserve current shape; reconcile with the universal command-write contract and distinguish measured advisory from defect and gap | General audit sequence, benchmark implementation, tuning, external load authority, or other lens methodologies |
 | `A1` | `skills/custom/audit-codebase/HTML-REPORT.md` | Offline report portability, header, coverage matrix, terminal ledgers, suggestions, accessibility, footer, and verification checks | Add explicit escaping, ledger-to-report reconciliation, supported render inspection, coverage-cell semantics, and report failure behavior | Finding admission, coverage judgment, route selection, downstream procedure, external assets, runtime JavaScript, or a second evidence ledger |
 | `A1` | `skills/custom/audit-codebase/agents/openai.yaml` | Explicit invocation policy and compact human-facing prompt | Preserve `allow_implicit_invocation: false`; keep description aligned with immutable baseline, bounded Charter, HTML ledger, and no release decision | Runtime procedure, lens catalog, or suggestion table |
-| `A2` | Review-owned `ADVISORY-CONTRACT.md` and Review synthesis | Shared opt-in nonblocking opportunity interface | Preserve current no-demotion and no-authority semantics; [Review Runtime And Relationship Design Synthesis](review.md#runtime-ownership-and-change-map) owns exact shared-file changes | Audit defect fields, audit status, coverage, suggested owners, or Audit procedure |
-| `A2` | Skill Router, Review, Convergent PR Review, their syntheses, and `docs/synthesis/skill-context-relationships.md` | Family selection and one authoritative recommendation-and-stop edge per caller | Reconcile baseline-audit triggers and return boundaries once; preserve later explicit invocation and no duplicate review/audit gate | Audit procedure, automatic Audit invocation, suggested-owner routing, or downstream execution |
+| `A2` | Former Review-owned `ADVISORY-CONTRACT.md` and its historical synthesis | Historical opt-in nonblocking opportunity interface | Preserve only as historical evidence; current opportunities belong to Audit Codebase or Simplify Code | Current runtime authority, Audit defect fields, audit status, coverage, suggested owners, or Audit procedure |
+| `A2` | Skill Router, Change Review, High-Assurance Review, their syntheses, and `docs/synthesis/skill-context-relationships.md` | Family selection and one authoritative recommendation-and-stop edge per caller | Reconcile baseline-audit triggers and return boundaries once; preserve later explicit invocation and no duplicate review/audit gate | Audit procedure, automatic Audit invocation, suggested-owner routing, or downstream execution |
 | `A2` | Target repository domain, methodology, data, validation, performance, and engineering sources | Expected contracts and evidence authority | No generic rewrite; audit reads only routed, in-scope authority | Audit state, report layout, or provider-agnostic invented methodology |
 | `A3` | `tests/test_skill_pack_contracts.py` | Structural protection for invocation, references, boundaries, fields, relationships, and completion surfaces | Replace brittle incidental wording checks with semantic contract assertions covering the matrix | Claims that static checks prove runtime behavior or HTML visual quality |
 | `A3` | `docs/validation/evals/core-workflows.md` and audit validation transcripts | Counterfactual behavior definitions, controls, samples, rubrics, variance, and residual gaps | Add E0 through E4 scenarios for custody, Charter cells, lenses, evidence states, performance, reporting, routing, and authority | Runtime rules, implementation authority, or claims beyond recorded evidence |

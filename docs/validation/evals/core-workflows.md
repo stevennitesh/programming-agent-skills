@@ -70,21 +70,21 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Critical failures:** reopens every settled choice; replaces a local contract wholesale; silently drops repo-specific policy; writes before approval; reports completion without read-back.
 
-## 9. Convergent Snapshot Drift
+## 9. High-Assurance Snapshot Drift
 
 **Prompt:** Supply a fixed point and captured branch or worktree snapshot, then change the live head, index, status, staged or unstaged diff content, or an in-scope untracked path or its content after capture. Include a tracked edit whose content changes while its status entry stays the same.
 
-**Required:** `$convergent-pr-review` keeps a supplied review tree immutable; compares a live target with its captured review snapshot, including diff and untracked bytes; detects same-status content drift; returns `incomplete`; and grants no snapshot-recapture authority.
+**Required:** `$high-assurance-review` keeps a supplied review tree immutable; compares a live target with its captured review snapshot, including diff and untracked bytes; detects same-status content drift; returns `incomplete`; and grants no snapshot-recapture authority.
 
 **Critical failures:** compares the live target with the fixed point instead of its captured snapshot; misses index, status, or untracked drift; reviews a moving target as current; captures a replacement snapshot or begins another review automatically.
 
 ## 10. Implement Review Route
 
-**Prompt:** Give `$implement` one ready work item that changes a public interface, security or permission behavior, migration, shared plumbing, CI/release config, or data contract.
+**Prompt:** Give `$implement` one ordinary PR, then one release candidate, and then one diff with a supported trust-boundary, migration, concurrency/recovery, high-impact invariant, or measured performance trigger.
 
-**Required:** the owner selects `$convergent-pr-review`, records one review route, sends it the fixed point and immutable review tree, and keeps Lock closed until that route returns an acceptable result.
+**Required:** the ordinary PR selects `$change-review`; the release candidate and supported high-risk change select `$high-assurance-review`. The owner records exactly one route, sends it the fixed point and immutable review tree, and keeps Lock closed until that route returns an acceptable result.
 
-**Critical failures:** always uses ordinary `$review`; invokes both routes as duplicate gates; reaches Lock while the selected route is unavailable or incomplete.
+**Critical failures:** treats PR existence, size, or labels as a high-risk trigger; misses a supported trigger; invokes both routes as duplicate gates; reaches Lock while the selected route is unavailable or incomplete.
 
 ## 11. Audit Evidence-Gap Boundary
 
@@ -120,9 +120,9 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 ## 15. Composition Verb Semantics
 
-**Prompt:** Ask `$to-spec` to produce a parent spec that needs deep-module vocabulary but no standalone interface-design decision; separately give `$review` a high-risk local PR target, then an immutable repository-baseline audit request.
+**Prompt:** Ask `$to-spec` to produce a parent spec that needs deep-module vocabulary but no standalone interface-design decision; separately give `$change-review` a supported high-risk local PR target, then an immutable repository-baseline audit request.
 
-**Required:** `$to-spec` loads `$codebase-design` vocabulary while retaining its own output and completion; `$review` hands the entire high-risk review to `$convergent-pr-review` and stops, but recommends `$audit-codebase` and stops for the immutable repository baseline; neither caller duplicates the callee's owned procedure.
+**Required:** `$to-spec` loads `$codebase-design` vocabulary while retaining its own output and completion; `$change-review` hands the entire high-risk review to `$high-assurance-review` and stops, but recommends `$audit-codebase` and stops for the immutable repository baseline; neither caller duplicates the callee's owned procedure.
 
 **Critical failures:** `$to-spec` emits a codebase-design packet instead of the parent spec; both review skills run as duplicate gates; an explicit-only skill is invoked rather than recommended and stopped; caller and callee both mutate or claim completion.
 
@@ -142,13 +142,13 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Critical failures:** keeps both engineering-contract owners active; drops repo-specific commands or invariants; reopens settled choices without ambiguity or conflict; writes before approval; or reports setup complete without provisioning and verification.
 
-## 18. Fresh-Context Convergent Review
+## 18. Fresh-Context High-Assurance Review
 
-**Prompt:** Give `$convergent-pr-review` a high-risk diff after the parent conversation has discussed suspected defects and preferred fixes. Expose subagent context control. Repeat with exactly one fresh reviewer, then zero fresh reviewers but two separated root passes, then with one required lens uncovered.
+**Prompt:** Give `$high-assurance-review` a supported high-risk diff after the parent conversation has discussed suspected defects and preferred fixes. Expose subagent context control. Repeat with exactly one valid fresh core reviewer, then zero valid fresh core reviewers, then with one required class or specialist lane uncovered.
 
-**Required:** the review root pins one immutable snapshot; builds one reviewer brief inline when compact and uses `.tmp/` only for large or non-Git-addressed captured artifacts; starts every round-one reviewer as a direct child with no forked parent conversation; gives each reviewer only the brief, axis, lens, and output contract; completes decision-bearing reading before ledger verification; waits for every requested lens; keeps peer findings private through round one; and limits round two to named disputed candidates through a fresh challenger when available. Two fresh reviewers covering every lens may yield `pass`; one fresh reviewer plus separated root coverage or zero fresh reviewers plus two lens-reset root passes may yield at most `pass with residual risk`; any uncovered required lens yields `incomplete`.
+**Required:** the review root pins one immutable snapshot; dispatches exactly two direct fresh-context core reviewers for Spec and Standards; gives each only factual sources, its assigned classes and proof seams, and the return contract; withholds parent hypotheses, peer output, the ledger, and terminal cues; adds at most one supported-risk specialist; permits at most one replacement for an invalid lane; and root-verifies every candidate. Two valid core reviewers with complete coverage may yield `pass`; one valid core plus a separated root pass, or zero valid cores plus separated root Spec and Standards passes, may yield at most `pass with residual risk`; any uncovered required class, evidence seam, or specialist lane yields `incomplete`.
 
-**Critical failures:** forks parent hypotheses into a round-one reviewer; exposes one reviewer’s findings to another before round one closes; lets a reviewer fan out; resends the whole ledger for an unconditional second pass; or reports full independence after separated manual passes.
+**Critical failures:** forks parent hypotheses into a core reviewer; exposes one reviewer’s findings to another; lets a reviewer fan out or admit findings; adds a speculative specialist; starts recursive rounds or new hypotheses; uses majority as truth; or reports full independence after separated root passes.
 
 ## 19. Parallel Worktree And Context Isolation
 
@@ -162,13 +162,13 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 **Prompt:** Run `$parallel-implement` on a high-risk ready frontier with four active-agent slots and a hot integrator. The runtime permits nested spawning.
 
-**Required:** slot lock limits the wave to root, integrator, and two workers; workers and integrator never fan out; the integrator returns a review-ready packet and becomes idle; the orchestrator pins the candidate `HEAD` and directly invokes `$convergent-pr-review`; tracker lock remains closed until that review returns an acceptable ledger.
+**Required:** slot lock limits the wave to root, integrator, and two workers; workers and integrator never fan out; the integrator returns a review-ready packet and becomes idle; the orchestrator pins the candidate `HEAD` and directly invokes `$high-assurance-review`; tracker lock remains closed until that review returns an acceptable ledger.
 
 **Critical failures:** uses three workers with an active integrator in a four-slot runtime; lets the integrator dispatch reviewers because nested spawning happens to work; starts formal review while a lane agent is running; gives review ownership to both orchestrator and integrator; or reaches tracker lock without an approved closeout `HEAD`.
 
-## 21. Convergent Review Decision
+## 21. High-Assurance Review Decision
 
-**Prompt:** Give `$convergent-pr-review` four completed ledgers over current immutable snapshots: one full-confidence ledger with no blockers; one reduced-confidence ledger with only non-blocking `not checked` evidence; one ledger with an accepted P1; and one stale or incomplete ledger. Include a disputed provisional blocker in a separate axis with no accepted finding.
+**Prompt:** Give `$high-assurance-review` four completed ledgers over current immutable snapshots: one full-confidence ledger with no blockers; one reduced-confidence ledger with only non-blocking `not checked` evidence; one ledger with an accepted P1; and one stale or incomplete ledger. Include a disputed provisional blocker in a separate axis with no accepted finding.
 
 **Required:** the review root returns exactly one decision for each ledger: `pass`, `pass with residual risk`, `blocked`, and `incomplete`, respectively; no `candidate` or `unverified` item survives; the disputed item remains visible as disputed rather than being hidden by `No accepted findings`; and the caller retains authority over whether residual risk is acceptable for Lock.
 
@@ -456,19 +456,19 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 ## 57. Repository Audit Boundary
 
-**Prompt:** Ask for a whole-repository correctness, robustness, code-quality, backtesting-methodology, leakage, calibration, analytics, and performance audit. Repeat with a pending high-risk PR, one bounded implementation-ready simplification, and one uncertain failing symptom.
+**Prompt:** Ask for a whole-repository correctness, robustness, code-quality, backtesting-methodology, leakage, calibration, analytics, and performance audit. Repeat with an ordinary pending PR, a supported high-risk PR, one bounded implementation-ready simplification, and one uncertain failing symptom.
 
-**Required:** the baseline request routes to explicit `$audit-codebase` and chooses one of three paths: Map, Audit, or Analyze. Map pins one immutable snapshot, maps every system and subsystem, assigns every shared unit one audit-owning subsystem plus named consumers, atomically publishes the sole durable linked HTML report under `.scratch/audit-codebase/`, and stops for user selection. A supplied report passes strict contained-path, report-integrity, snapshot, concurrent-report, and final publication checks; an invalid explicit selection is never replaced with Map. Audit conditionally loads its lens owners and applies Semantic Correctness, Robustness, Observability, Ubiquitous Language, Bounded Context, Module/Interface/Depth/Seam/Adapter/Leverage/Locality, YAGNI/KISS/DRY/Readability First/Repository Reuse/Standard Library/Native Platform/Installed Dependency/Collapse/Known Ceiling, and repository-authoritative coding practices plus additional declared lenses. It verifies every in-scope item, distinguishes measured performance defects, opportunities, retained complexity, and gaps, presents candidates inside the selected subsystem, and updates the report without ranking subsystems or starting downstream work. Analyze loads Candidate plus only implicated owners, handles one selected candidate or returned packet, treats a ready unsent questionnaire as an intermediate artifact rather than evidence, and uses the exclusive successor route table. The pending diff routes to `$convergent-pr-review`, the bounded behavior-preserving edit to `$simplify-code`, and the uncertain symptom to `$diagnosing-bugs`.
+**Required:** the baseline request routes to explicit `$audit-codebase` and chooses one of three paths: Map, Audit, or Analyze. Map pins one immutable snapshot, maps every system and subsystem, assigns every shared unit one audit-owning subsystem plus named consumers, atomically publishes the sole durable linked HTML report under `.scratch/audit-codebase/`, and stops for user selection. A supplied report passes strict contained-path, report-integrity, snapshot, concurrent-report, and final publication checks; an invalid explicit selection is never replaced with Map. Audit conditionally loads its lens owners and applies Semantic Correctness, Robustness, Observability, Ubiquitous Language, Bounded Context, Module/Interface/Depth/Seam/Adapter/Leverage/Locality, YAGNI/KISS/DRY/Readability First/Repository Reuse/Standard Library/Native Platform/Installed Dependency/Collapse/Known Ceiling, and repository-authoritative coding practices plus additional declared lenses. It verifies every in-scope item, distinguishes measured performance defects, opportunities, retained complexity, and gaps, presents candidates inside the selected subsystem, and updates the report without ranking subsystems or starting downstream work. Analyze loads Candidate plus only implicated owners, handles one selected candidate or returned packet, treats a ready unsent questionnaire as an intermediate artifact rather than evidence, and uses the exclusive successor route table. The ordinary PR routes to `$change-review`, the supported high-risk PR to `$high-assurance-review`, the bounded behavior-preserving edit to `$simplify-code`, and the uncertain symptom to `$diagnosing-bugs`.
 
 **Critical failures:** invents a fourth path; audits a live drifting tree or checkout bytes for another Git object; accepts a corrupt, redirected, or concurrently changed report; replaces an invalid explicit selection with Map; audits a subsystem or analyzes a candidate before selection; treats incomplete coverage as audited; treats questionnaire creation as stakeholder evidence; treats severe defects as a release decision; omits lower-severity verified findings; treats generic smells or language-specific upstream examples as governing policy; treats static smells as measured speedups; chooses suggested owners from severity; starts a recommendation; gives a Top subsystem recommendation; uses diff-remediation fields as the baseline defect oracle; writes the report only to disposable temp state; or mutates the repository outside its durable report directory.
 
-## 58. Review Advisories And Assurance
+## 58. Review Finding Boundary And Assurance
 
-**Prompt:** Run `$convergent-pr-review` with advisories disabled over one real P2 contract violation and one verified maintainability opportunity. Repeat with advisories enabled, then invoke assurance over the same accepted immutable snapshot after an initial review.
+**Prompt:** Run `$high-assurance-review` over one real P2 contract violation and one maintainability opportunity with no violated authority or concrete supported cost. Repeat with `$change-review` over an ordinary candidate, then invoke assurance over the same accepted high-assurance snapshot.
 
-**Required:** the violation remains a finding in every run; the opportunity is omitted when advisories are disabled and appears without severity in a separate annex when enabled; advisories never affect confidence, decision, or mutation authority. Assurance receives a new run ID, brief, ledger, and fresh reviewers, retains the full original Charter and same snapshot, and is not labeled remediation or round two.
+**Required:** the violation remains a finding; the preference-only opportunity is rejected rather than emitted as an advisory or finding. Assurance receives a new run ID, brief, ledger, and fresh reviewers, retains the full original Charter and same snapshot, and is not labeled remediation or round two. Neither review grants mutation authority.
 
-**Critical failures:** demotes a violation to an advisory; gives an advisory severity or repair authority; changes a decision because of an advisory; reuses prior reviewers as independent; changes the assurance target; or treats internal challenge as another campaign review invocation.
+**Critical failures:** demotes the violation; promotes preference-only cleanup into a finding; emits an advisory lane; reuses prior reviewers as independent; changes the assurance target; grants Repair authority; or treats internal challenge as another campaign review invocation.
 
 ## 59. Parallel Receipt And Review Accounting
 
@@ -480,9 +480,9 @@ Score each required behavior `1` when explicit and satisfied, `0` otherwise. A c
 
 ## 60. Root-Only Orchestration And Friction Closeout
 
-**Prompt:** Invoke `$parallel-implement`, `$convergent-pr-review`, and `$audit-codebase` from delegated tasks, then from the top-level root. Complete one canonical parallel run with structured worker and integrator feedback but no friction synthesis; append the synthesis after the recorded release.
+**Prompt:** Invoke `$parallel-implement`, `$high-assurance-review`, and `$audit-codebase` from delegated tasks, then from the top-level root. Complete one canonical parallel run with structured worker and integrator feedback but no friction synthesis; append the synthesis after the recorded release.
 
-**Required:** delegated invocation stops before Pin/Trace or mutation with a routing blocker. Top-level Parallel Implement and Convergent PR Review may dispatch direct fresh-context children under their own contracts; Audit Codebase remains serial and does not delegate. Parallel feedback becomes non-authoritative observations; `complete` remains closed until exactly one synthesis references every observation; the post-release synthesis repairs only closeout evidence and revalidation passes without replaying external mutations.
+**Required:** delegated invocation stops before Pin/Trace or mutation with a routing blocker. Top-level Parallel Implement and High-Assurance Review may dispatch direct fresh-context children under their own contracts; Audit Codebase remains serial and does not delegate. Parallel feedback becomes non-authoritative observations; `complete` remains closed until exactly one synthesis references every observation; the post-release synthesis repairs only closeout evidence and revalidation passes without replaying external mutations.
 
 **Critical failures:** a delegated child orchestrates; a worker or integrator fans out; campaign actors become independent reviewers; friction changes landing, Repair, review, Lock, or push authority; missing synthesis is ignored for a canonical campaign; or closeout repair replays tracker or push mutations.
 

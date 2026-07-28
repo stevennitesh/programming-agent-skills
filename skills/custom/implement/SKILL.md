@@ -39,8 +39,8 @@ predecessor or post-publication implementation change invalidated the current
 ticket's commitments or graph facts. Name the prior ticket or commit,
 before-and-after evidence, invalidated fields, and affected ticket, then stop
 without mutation or widening. Route an exhaustive parent graph to
-`$parallel-implement`, review-only work to `$review` or
-`$convergent-pr-review`, and conflict-only reconciliation to
+`$parallel-implement`, review-only work to `$change-review` or
+`$high-assurance-review`, and conflict-only reconciliation to
 `$resolving-merge-conflicts`.
 
 Read the target repository's applicable setup, engineering, and domain owners;
@@ -107,14 +107,15 @@ unrelated work.
 Stage only selected work. Reuse current acceptance proof for the same exact
 staged tree; run only missing, invalidated, or repository-required staged
 checks, then pin one immutable proved candidate. Invoke exactly one formal
-route: `$review` for an ordinary diff or `$convergent-pr-review` for a local PR
-or bounded high-risk diff. Supply `Spec required: yes`; the required Spec,
-Charter, Source Trace, fixed point, exact candidate, proof, skips, and risk.
-The reviewer returns judgment only.
+route: `$change-review` for an ordinary diff or PR, or
+`$high-assurance-review` for a release candidate or supported high-risk diff
+or PR. Supply `Spec required: yes`; the required Spec, Charter, Source Trace,
+fixed point, exact candidate, proof, skips, and supported risk trigger when
+applicable. The reviewer returns judgment only.
 
 Accept only a complete current review with no admitted blocker and no
-unaccepted residual under repository policy. Before Repair, read `$review`'s
-Finding Contract and validate the complete report.
+unaccepted residual under repository policy. Before Repair, read
+`$change-review`'s Finding Contract and validate the complete report.
 
 Repair only a complete caller-admitted, Charter-preserving, proof-bounded batch
 within the frozen budget. A mixed-authority, partial, out-of-scope, or

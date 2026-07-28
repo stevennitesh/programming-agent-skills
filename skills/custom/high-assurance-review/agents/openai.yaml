@@ -1,0 +1,7 @@
+policy:
+  allow_implicit_invocation: true
+
+interface:
+  display_name: "High-Assurance Review"
+  short_description: "Root-owned high-risk release review"
+  default_prompt: "Use $high-assurance-review from the top-level root to review one immutable release candidate or supported high-risk diff or PR through bounded fresh reviewers and return one verified read-only release decision."

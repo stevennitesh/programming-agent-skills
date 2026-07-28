@@ -38,7 +38,8 @@ For an external MR when MRs are a request surface, run `glab mr view <number> --
 
 ## Work-item operations
 
-Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement`, and `$review`.
+Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`,
+`$parallel-implement`, `$change-review`, and `$high-assurance-review`.
 
 **Close implemented items:** no.
 

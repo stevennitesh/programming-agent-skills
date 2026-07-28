@@ -10,6 +10,9 @@ Catalog returned zero Cards.
 
 Revision 2 preserves all 25 capabilities while consolidating the former
 `improve-codebase` owner into `audit-codebase`, leaving 24 selected skills.
+Revision 3 renames `review` to `change-review` and `convergent-pr-review` to
+`high-assurance-review`, and records the release-or-supported-risk assurance
+boundary. Earlier revision slices remain immutable historical evidence.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -343,7 +346,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "completion_return": "One terminal release decision with admitted findings and residual risk",
       "disposition": "selected",
       "entry_conditions": [
-        "A local PR or bounded high-risk diff needs independent fresh-context convergence"
+        "A release candidate or supported high-risk diff or PR needs independent fresh-context review"
       ],
       "essential": true,
       "exclusions": [
@@ -351,7 +354,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Return one terminal release decision for an immutable local PR or bounded high-risk candidate",
+      "observable_outcome": "Return one terminal release decision for an immutable release candidate or supported high-risk change",
       "primary_owner_skill_id": "SK-014",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
@@ -367,7 +370,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "completion_return": "One terminal ordinary review report",
       "disposition": "selected",
       "entry_conditions": [
-        "An ordinary branch, WIP, staged, or since-X diff needs read-only judgment"
+        "An ordinary branch, WIP, staged, since-X diff, or ordinary PR needs read-only judgment"
       ],
       "essential": true,
       "exclusions": [
@@ -375,7 +378,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Review one ordinary fixed-snapshot diff with separate Spec and Standards judgment",
+      "observable_outcome": "Review one ordinary fixed-snapshot diff or PR with separate Spec and Standards judgment",
       "primary_owner_skill_id": "SK-015",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
@@ -686,12 +689,12 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-013"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for convergent-pr-review: Return one terminal release decision for an immutable local PR or bounded high-risk candidate",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for high-assurance-review: Return one terminal release decision for an immutable release candidate or supported high-risk change",
         "expected_owner_skill_id": "SK-014",
         "scenario_id": "PS-014"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for review: Review one ordinary fixed-snapshot diff with separate Spec and Standards judgment",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for change-review: Review one ordinary fixed-snapshot diff or PR with separate Spec and Standards judgment",
         "expected_owner_skill_id": "SK-015",
         "scenario_id": "PS-015"
       },
@@ -900,7 +903,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 2,
+    "contract_revision": 3,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -1349,7 +1352,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "The request targets a bounded repository correctness, domain-robustness, methodology, or performance baseline rather than a pending release diff.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for convergent-pr-review and the declared audit-codebase input",
+      "input_packet": "Caller-owned bounded Source Trace for high-assurance-review and the declared audit-codebase input",
       "ordering_impact": "none",
       "relationship_id": "REL-002",
       "required_proof_ids": [
@@ -1628,18 +1631,18 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-022",
       "combined_exit_owner_skill_id": "SK-022",
       "context_loaded": [
-        "convergent-pr-review caller-facing interface and branch-required reference only"
+        "high-assurance-review caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "The selected diff is a local PR or matches a high-risk trigger.",
+      "entry_condition": "The selected target is a release candidate or matches a supported high-risk trigger.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for implement and the declared convergent-pr-review input",
+      "input_packet": "Caller-owned bounded Source Trace for implement and the declared high-assurance-review input",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-013",
       "required_proof_ids": [
         "PROOF-REL-013"
       ],
       "resume_owner_skill_id": "SK-022",
-      "return_packet": "The declared convergent-pr-review Return packet plus evidence, limits, and residual state",
+      "return_packet": "The declared high-assurance-review Return packet plus evidence, limits, and residual state",
       "target_skill_id": "SK-014",
       "verb": "Invoke",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -1707,18 +1710,18 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-022",
       "combined_exit_owner_skill_id": "SK-022",
       "context_loaded": [
-        "review caller-facing interface and branch-required reference only"
+        "change-review caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "The selected diff or bounded Repair generation needs ordinary fixed-snapshot review.",
+      "entry_condition": "The selected ordinary diff or PR, or bounded Repair generation, needs fixed-snapshot review.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for implement and the declared review input",
+      "input_packet": "Caller-owned bounded Source Trace for implement and the declared change-review input",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-016",
       "required_proof_ids": [
         "PROOF-REL-016"
       ],
       "resume_owner_skill_id": "SK-022",
-      "return_packet": "The declared review Return packet plus evidence, limits, and residual state",
+      "return_packet": "The declared change-review Return packet plus evidence, limits, and residual state",
       "target_skill_id": "SK-015",
       "verb": "Invoke",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -2086,18 +2089,18 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-023",
       "combined_exit_owner_skill_id": "SK-023",
       "context_loaded": [
-        "convergent-pr-review caller-facing interface and branch-required reference only"
+        "high-assurance-review caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "The drained proved target is a local PR or bounded high-risk diff; the terminal decision returns to the root.",
+      "entry_condition": "The drained proved target is a release candidate or supported high-risk diff or PR; the terminal decision returns to the root.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for parallel-implement and the declared convergent-pr-review input",
+      "input_packet": "Caller-owned bounded Source Trace for parallel-implement and the declared high-assurance-review input",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-030",
       "required_proof_ids": [
         "PROOF-REL-030"
       ],
       "resume_owner_skill_id": "SK-023",
-      "return_packet": "The declared convergent-pr-review Return packet plus evidence, limits, and residual state",
+      "return_packet": "The declared high-assurance-review Return packet plus evidence, limits, and residual state",
       "target_skill_id": "SK-014",
       "verb": "Invoke",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -2192,18 +2195,18 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-023",
       "combined_exit_owner_skill_id": "SK-023",
       "context_loaded": [
-        "review caller-facing interface and branch-required reference only"
+        "change-review caller-facing interface and branch-required reference only"
       ],
       "entry_condition": "The drained proved ordinary candidate or repaired successor needs fixed-snapshot Spec and Standards review; judgment returns to the root.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for parallel-implement and the declared review input",
+      "input_packet": "Caller-owned bounded Source Trace for parallel-implement and the declared change-review input",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-034",
       "required_proof_ids": [
         "PROOF-REL-034"
       ],
       "resume_owner_skill_id": "SK-023",
-      "return_packet": "The declared review Return packet plus evidence, limits, and residual state",
+      "return_packet": "The declared change-review Return packet plus evidence, limits, and residual state",
       "target_skill_id": "SK-015",
       "verb": "Invoke",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -2448,18 +2451,18 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-015",
       "combined_exit_owner_skill_id": "SK-014",
       "context_loaded": [
-        "convergent-pr-review caller-facing interface and branch-required reference only"
+        "high-assurance-review caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "The target is a local PR or needs independent high-risk review.",
+      "entry_condition": "The target is a release candidate or matches a supported high-risk trigger.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for review and the declared convergent-pr-review input",
+      "input_packet": "Caller-owned bounded Source Trace for change-review and the declared high-assurance-review input",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-044",
       "required_proof_ids": [
         "PROOF-REL-044"
       ],
       "resume_owner_skill_id": "SK-014",
-      "return_packet": "The declared convergent-pr-review Return packet plus evidence, limits, and residual state",
+      "return_packet": "The declared high-assurance-review Return packet plus evidence, limits, and residual state",
       "target_skill_id": "SK-014",
       "verb": "Hand off",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -2575,9 +2578,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-025",
       "combined_exit_owner_skill_id": "SK-025",
       "context_loaded": [],
-      "entry_condition": "The situation satisfies a local PR or bounded high-risk diff needs independent fresh-context convergence; return that route and leave it unstarted.",
+      "entry_condition": "The situation satisfies a release candidate or supported high-risk diff or PR needs independent fresh-context review; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared convergent-pr-review input",
+      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared high-assurance-review input",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-049",
       "required_proof_ids": [
@@ -2877,7 +2880,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "The situation satisfies an ordinary branch, WIP, staged, or since-X diff needs read-only judgment; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared review input",
+      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared change-review input",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-062",
       "required_proof_ids": [
@@ -3637,7 +3640,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "The request targets an immutable repository baseline rather than an ordinary branch, WIP, staged, or since-X diff.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for review and the declared audit-codebase input",
+      "input_packet": "Caller-owned bounded Source Trace for change-review and the declared audit-codebase input",
       "ordering_impact": "none",
       "relationship_id": "REL-092",
       "required_proof_ids": [
@@ -4207,15 +4210,15 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "status": "not-started",
         "terminal_evidence_pointer": null
       },
-      "canonical_name": "convergent-pr-review",
+      "canonical_name": "high-assurance-review",
       "completion_condition": "Independent current review converges on the exact immutable candidate",
       "contract_order": 14,
-      "essential_outcome": "Return one terminal release decision for an immutable local PR or bounded high-risk candidate",
+      "essential_outcome": "Return one terminal release decision for an immutable release candidate or supported high-risk change",
       "failure_return": "Return degraded capacity, incomplete coverage, or admitted blockers without mutation",
       "invocation_mode": "implicit",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: A local PR or bounded high-risk diff needs independent fresh-context convergence",
+        "The request does not satisfy: A release candidate or supported high-risk diff or PR needs independent fresh-context review",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
@@ -4225,7 +4228,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "owned_capability_ids": [
         "CAP-014"
       ],
-      "positive_entry_predicate": "A local PR or bounded high-risk diff needs independent fresh-context convergence",
+      "positive_entry_predicate": "A release candidate or supported high-risk diff or PR needs independent fresh-context review",
       "primary_role": "leaf",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -4235,7 +4238,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "relationship_ids": [
         "REL-002"
       ],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Return one terminal release decision for an immutable local PR or bounded high-risk candidate",
+      "required_input": "A bounded caller-owned Source Trace and authority for: Return one terminal release decision for an immutable release candidate or supported high-risk change",
       "return_packet": "One terminal release decision with admitted findings and residual risk",
       "skill_id": "SK-014"
     },
@@ -4248,15 +4251,15 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "status": "not-started",
         "terminal_evidence_pointer": null
       },
-      "canonical_name": "review",
+      "canonical_name": "change-review",
       "completion_condition": "Every in-scope changed behavior is judged against Spec and Standards",
       "contract_order": 15,
-      "essential_outcome": "Review one ordinary fixed-snapshot diff with separate Spec and Standards judgment",
+      "essential_outcome": "Review one ordinary fixed-snapshot diff or PR with separate Spec and Standards judgment",
       "failure_return": "Hand off high-risk candidates or return incomplete evidence without mutation",
       "invocation_mode": "implicit",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: An ordinary branch, WIP, staged, or since-X diff needs read-only judgment",
+        "The request does not satisfy: An ordinary branch, WIP, staged, since-X diff, or ordinary PR needs read-only judgment",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
@@ -4266,7 +4269,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "owned_capability_ids": [
         "CAP-015"
       ],
-      "positive_entry_predicate": "An ordinary branch, WIP, staged, or since-X diff needs read-only judgment",
+      "positive_entry_predicate": "An ordinary branch, WIP, staged, since-X diff, or ordinary PR needs read-only judgment",
       "primary_role": "leaf",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -4277,7 +4280,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-044",
         "REL-092"
       ],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Review one ordinary fixed-snapshot diff with separate Spec and Standards judgment",
+      "required_input": "A bounded caller-owned Source Trace and authority for: Review one ordinary fixed-snapshot diff or PR with separate Spec and Standards judgment",
       "return_packet": "One terminal ordinary review report",
       "skill_id": "SK-015"
     },

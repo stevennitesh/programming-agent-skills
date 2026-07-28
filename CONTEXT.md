@@ -153,6 +153,28 @@ _Avoid_: style guide, copied philosophy
 The part of a shared contract a skill must enforce because it directly governs that skill's work.
 _Avoid_: duplicated contract
 
+**Change review candidate**
+
+A fixed-snapshot diff or PR that is neither a release candidate nor governed by
+a Supported high-risk trigger. `$change-review` owns its separate Spec and
+Standards gate.
+_Avoid_: non-PR review, low-priority review
+
+**High-assurance review candidate**
+
+A fixed-snapshot release candidate or diff or PR governed by a Supported
+high-risk trigger. `$high-assurance-review` owns its root-only fresh-context
+review and terminal release decision.
+_Avoid_: every PR, large diff, severe-looking change
+
+**Supported high-risk trigger**
+
+A changed surface with a supported scenario, reachable behavior or failure
+path, and concrete impact involving a trust boundary, irreversible effect or
+migration, concurrency or recovery, high-impact domain or model invariant, or
+measured performance obligation. PR existence, size, and labels do not qualify.
+_Avoid_: hypothetical edge case, risk label, PR route
+
 **Router skill**
 
 An explicit-only skill that returns one next route and leaves downstream work unstarted.
@@ -232,6 +254,9 @@ _Avoid_: pack manual, copied route map
   identities belong to
   [`deploy-prompts.md`](docs/synthesis/methods/deploy-prompts.md) and
   [ADR-0010](docs/adr/0010-deploy-campaigns-advance-through-proof-gates.md).
+- Change review candidate, High-assurance review candidate, and Supported
+  high-risk trigger belong to this context and
+  [ADR-0011](docs/adr/0011-review-assurance-follows-release-risk.md).
 - Deploy-campaign automation authority and control-plane vocabulary belong to [ADR-0008](docs/adr/0008-deploy-campaign-automation-separates-mechanical-evidence-from-semantic-decisions.md) and this context.
 - Skill-authoring vocabulary—Predictability, invocation, information hierarchy, leading words, completion criteria, and pruning—belongs to [`skills/custom/writing-great-skills/GLOSSARY.md`](skills/custom/writing-great-skills/GLOSSARY.md).
 - Runtime engineering vocabulary and preventive code-quality defaults—Source

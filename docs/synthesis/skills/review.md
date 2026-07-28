@@ -1,6 +1,6 @@
 # Review Deployment Synthesis
 
-Status: `complete; promoted-and-installed`
+Campaign status: `complete; promoted-and-installed`
 
 Campaign epoch: `2026-07-24-review-f3be70c`
 
@@ -203,3 +203,19 @@ Decision content fingerprint:
 SHA-256 of the exact UTF-8 bytes between the marker lines, including their
 adjacent line feeds:
 `sha256:888f31cc1e4a0957947e6e18b712d4d6ca7e974d3c53543383b1e82442e8587e`
+
+## 2026-07-27 Author Amendment
+
+The canonical Change Review runtime owns ordinary diffs and ordinary PRs
+through `Pin -> Cover -> Judge -> Gate`. Release candidates and supported
+high-risk changes transfer to High-Assurance Review. The shared Finding
+Contract owns the Spec and Standards class taxonomy, supported-risk admission,
+finding fields, severity, and remediation bounds. Change Review returns
+separate coverage and gate decisions; remediation remains limited to carried
+IDs, the Repair delta, affected seams, and remaining acceptance.
+
+The Advisory Contract was retired. Change Review findings remain defects
+against a governing commitment or concrete supported cost; repository-wide
+improvement opportunities remain with Audit Codebase or Simplify Code. This
+amendment does not rewrite the marker-bounded campaign record above or claim
+installed parity.

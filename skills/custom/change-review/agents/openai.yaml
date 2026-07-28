@@ -1,0 +1,7 @@
+policy:
+  allow_implicit_invocation: true
+
+interface:
+  display_name: "Change Review"
+  short_description: "Ordinary fixed-snapshot review gate"
+  default_prompt: "Use $change-review to pin one ordinary diff or PR, cover and judge Spec and Standards separately, and return one read-only gate decision."

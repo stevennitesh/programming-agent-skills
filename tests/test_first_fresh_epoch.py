@@ -127,7 +127,7 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
 
     assert pack_contract.validate_contract(contract) == []
     assert contract["epoch_header"]["composition_epoch_id"] == EPOCH
-    assert contract["epoch_header"]["contract_revision"] == 2
+    assert contract["epoch_header"]["contract_revision"] == 3
     assert contract["epoch_header"]["status"] == "frozen"
     assert contract["epoch_header"]["integration_result"] == {
         "decision": None,
@@ -178,49 +178,48 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
     }
 
 
-def test_first_epoch_schedule_matches_every_immutable_blueprint() -> None:
+def test_first_epoch_revision_preserves_r2_and_derives_r3_blueprints() -> None:
     contract = pack_contract.parse_contract(
         (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
     )
-    schedule = json.loads(
+    historical_schedule = json.loads(
         (
             ROOT / "docs/validation/skill-pack" / EPOCH / "schedule.json"
         ).read_text(encoding="utf-8")
     )
-    entries = schedule["campaign_order"]
     skill_by_id = {
         skill["skill_id"]: skill for skill in contract["selected_skills"]
     }
 
-    assert schedule["contract_fingerprint"] == (
+    historical_entries = historical_schedule["campaign_order"]
+    assert historical_schedule["contract_fingerprint"] != (
         pack_contract.contract_fingerprint(contract)
     )
-    assert [entry["skill_id"] for entry in entries] == (
-        pack_contract.campaign_order(contract)
-    )
-    assert [entry["tier"] for entry in entries] == sorted(
-        (entry["tier"] for entry in entries),
-        key={
-            "leaf-provider": 0,
-            "executable-aggregate": 1,
-            "router": 2,
-        }.__getitem__,
-    )
-    assert len(entries) == len(skill_by_id) == 24
-    for entry in entries:
-        blueprint = json.loads(
-            (ROOT / entry["slice_path"]).read_text(encoding="utf-8")
+    assert all(
+        entry["slice_path"].startswith(
+            f"docs/validation/skill-pack/{EPOCH}/slices/"
         )
+        for entry in historical_entries
+    )
+    assert {"review", "convergent-pr-review"} <= {
+        entry["canonical_name"] for entry in historical_entries
+    }
+
+    order = pack_contract.campaign_order(contract)
+    assert len(order) == len(skill_by_id) == 24
+    for skill_id in order:
         projected = pack_contract.contract_blueprint(
             contract,
-            entry["skill_id"],
+            skill_id,
         )
-        assert blueprint == projected
-        assert entry["slice_fingerprint"] == projected["slice_fingerprint"]
-        assert entry["predecessor_skill_ids"] == (
-            projected["predecessor_skill_ids"]
+        assert projected["slice"]["slice_id"].startswith(
+            f"{EPOCH}:r3:"
         )
-        assert blueprint["slice"]["skill"] == skill_by_id[entry["skill_id"]]
+        assert projected["slice"]["skill"] == skill_by_id[skill_id]
+    assert {
+        skill_by_id["SK-014"]["canonical_name"],
+        skill_by_id["SK-015"]["canonical_name"],
+    } == {"change-review", "high-assurance-review"}
 
 
 def test_current_invocation_and_relationship_topology_preserve_first_epoch() -> None:

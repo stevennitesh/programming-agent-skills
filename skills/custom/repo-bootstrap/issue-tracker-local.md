@@ -27,7 +27,8 @@ Read the file at the referenced path. The user will normally pass the path or th
 
 ## Work-item operations
 
-Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement`, and `$review`.
+Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`,
+`$parallel-implement`, `$change-review`, and `$high-assurance-review`.
 
 **Implemented items remain as tracked files.**
 

@@ -47,14 +47,14 @@ description: Route the current situation to exactly one next skill in this engin
 | A bug's expected behavior, exact symptom, cause, or trusted red-capable reproduction is uncertain | `$diagnosing-bugs` |
 | Settled new behavior has a red-capable proof seam, or for a bug expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known | `$tdd` |
 | A merge, rebase, cherry-pick, or revert is conflicted, or files contain conflict markers | `$resolving-merge-conflicts` |
-| An ordinary branch, WIP, staged, or since-X diff needs fixed-point review | `$review` |
-| A local PR or high-risk local diff needs independent passes and a finding ledger | `$convergent-pr-review` |
+| An ordinary branch, WIP, staged, since-X diff, or ordinary PR needs fixed-point review | `$change-review` |
+| A release candidate or supported high-risk diff or PR needs independent passes and a finding ledger | `$high-assurance-review` |
 | A repository needs an exhaustive system map, serial subsystem audit, or user-selected improvement-candidate analysis for correctness, robustness, code quality, architecture, methodology, data, analytics, or performance | `$audit-codebase` |
 | Existing behavior in one bounded region should be simplified under proof | `$simplify-code` |
 
-**Existing-code tie-breaker:** route a whole-repository map, baseline audit, or wide uncertainty about correctness, robustness, stale code, complexity, or architecture to `$audit-codebase`; one bounded behavior-preserving reduction to `$simplify-code`; and one already-framed interface or seam to `$codebase-design`. A selected ready item belongs to `$implement`, new behavior to `$tdd`, and an existing diff needing judgment rather than edits to `$review` or `$convergent-pr-review`.
+**Existing-code tie-breaker:** route a whole-repository map, baseline audit, or wide uncertainty about correctness, robustness, stale code, complexity, or architecture to `$audit-codebase`; one bounded behavior-preserving reduction to `$simplify-code`; and one already-framed interface or seam to `$codebase-design`. A selected ready item belongs to `$implement`, new behavior to `$tdd`, and an existing diff needing judgment rather than edits to `$change-review` or `$high-assurance-review`.
 
-**Triage / Review:** route incoming work to `$triage`; route an existing diff to `$review` or `$convergent-pr-review`.
+**Triage / Review:** route incoming work to `$triage`; route an existing diff to `$change-review` or `$high-assurance-review`.
 
 ### Design And Pack Maintenance
 
