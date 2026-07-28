@@ -1,6 +1,8 @@
-# Valuation Report Contract
+# Full Valuation Report Contract
 
-Scale detail to the request, but preserve the following order and distinctions.
+Use this contract only for the Full path. Preserve the following order and
+distinctions, while omitting a subsection that is demonstrably immaterial rather
+than filling it with generic prose.
 
 ## Contents
 
@@ -24,9 +26,10 @@ State:
 - valuation date, information cutoff, and current-price timestamp;
 - fair-value range and base-case value per target security on the disclosed
   share and equity-claim basis;
-- price-to-value gap using the named formula;
-- user-defined margin-of-safety threshold and pass/fail, or
-  `not assessed - threshold not supplied`, with no unstated adequacy judgment;
+- observed price discount to estimated value using the named formula;
+- user-defined required margin-of-safety hurdle and pass/fail, or
+  `required hurdle: not supplied; pass/fail: not assessed`, with no unstated
+  adequacy judgment;
 - confidence (`high`, `medium`, or `low`) with one-line reason; and
 - status (`complete`, `partial`, or `blocked`).
 
@@ -122,7 +125,7 @@ Conclude with:
 - fair-value range and current price timestamp;
 - conditions supporting the low and high ends;
 - the price-implied expectation;
-- price-to-value gap and margin-of-safety status;
+- observed price discount and required margin-of-safety hurdle status;
 - the single most important unknown; and
 - what new evidence would trigger a revaluation.
 

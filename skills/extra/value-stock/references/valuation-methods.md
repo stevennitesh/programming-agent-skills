@@ -3,7 +3,9 @@
 ## Contents
 
 - [Method Principles](#method-principles)
+- [Future-Date Valuation](#future-date-valuation)
 - [FCFF DCF](#fcff-dcf)
+- [Stock-Based Compensation Reconciliation](#stock-based-compensation-reconciliation)
 - [FCFE And Dividend Models](#fcfe-and-dividend-models)
 - [Discount Rates, Country Risk, And Timing](#discount-rates-country-risk-and-timing)
 - [Growth, Reinvestment, And Terminal Value](#growth-reinvestment-and-terminal-value)
@@ -32,9 +34,38 @@ discount rate. Do not penalize the same risk again because a simulation also
 shows a wide value distribution:
 [Damodaran: Probabilistic Valuation](https://pages.stern.nyu.edu/~adamodar/pdfiles/DSV2/Ch3.pdf).
 
-Present-value estimates and future target values are different outputs. If
-returning a future value, state the horizon and translate it into present value
-or an annualized return that includes modeled holder distributions:
+## Future-Date Valuation
+
+Present-value estimates and future-date values are different outputs. A
+defensible future-date value rolls the model to that state rather than merely
+compounding today's fair value:
+
+1. remove elapsed forecast cash flows from the remaining valuation;
+2. roll cash, debt, debt-like claims, awards, share count, and other claims
+   through retained cash, distributions, buybacks, issuance, financing,
+   acquisitions, and other explicitly modeled uses;
+3. update the remaining operating drivers, terminal economics, and required
+   returns to assumptions appropriate for the future state;
+4. discount the remaining cash flows from the future date and rebuild the
+   enterprise-to-equity or asset-to-security bridge; and
+5. cross-check the result against normalized forward earnings, cash flow, book
+   value, NAV, or another method appropriate to the business.
+
+Do not automatically add the elapsed year's FCFF to cash: it may fund
+reinvestment, debt service, acquisitions, distributions, or repurchases. Trace
+the modeled use and avoid counting it in both cash flow and the equity bridge.
+
+If evidence supports only a shortcut, label it. Under the simplest one-period
+equity relation:
+
+```text
+future ex-distribution value
+  = present value x (1 + required return) - interim holder distributions
+```
+
+This is a required-return roll-forward, not a new bottom-up fair-value estimate.
+For either approach, state the horizon and translate the result into present
+value or an annualized return that includes modeled holder distributions:
 
 ```text
 annualized holder return = IRR(
@@ -83,6 +114,44 @@ exercise proceeds, vesting, and option time value:
 Discount FCFF at WACC using market-value capital weights and a cost of capital
 consistent with the cash-flow currency. Do not use a stale universal risk-free
 rate, equity risk premium, beta, or debt spread.
+
+## Stock-Based Compensation Reconciliation
+
+Separate two economic questions:
+
+- **existing awards and overhang:** claims already granted as of the valuation
+  date; and
+- **future employee services:** compensation expected to be granted or paid
+  during the forecast.
+
+This separation follows the distinct current-award and future-grant valuation
+questions identified by
+[Damodaran: Management Options and Value](https://pages.stern.nyu.edu/~adamodar/New_Home_Page/valquestions/mgtoption.htm).
+Financial statements recognize share-based payment as compensation cost, so a
+non-cash label does not make it economically free:
+[FASB: Accounting for Share-Based Payment](https://fasb.org/page/getarticle?uid=fasb_NEWS_RELEASE_12_16_04Body_0228221200).
+
+Choose and disclose one internally consistent treatment for each:
+
+- Starting from GAAP EBIT, stock-based compensation is already an operating
+  expense. Do not subtract that same expense again from FCFF.
+- Starting from cash flow from operations, the non-cash stock-based
+  compensation add-back is embedded in cash flow. Reverse the add-back for an
+  owner-economic cash-flow measure, or model the economically equivalent future
+  dilution or equity claim explicitly.
+- Treat material existing options, restricted units, and similar awards as
+  separate equity claims or in a date-consistent diluted-share bridge. Do not
+  use both for the same award population.
+- Model future grants as recurring compensation expense, a cash-equivalent
+  cost, or explicit future dilution. Do not also subtract the same forecast
+  grant cohort as a separate current claim.
+
+Reconcile award cohorts, vesting, forfeitures, exercise proceeds, tax effects,
+and forecast share count when material. Never subtract recurring stock-based
+compensation from cash flow and then deduct all related unvested awards from
+equity without showing why the two adjustments represent different service
+periods or claims. Repurchases offset dilution only through the cash spent and
+shares retired; they are not a free adjustment.
 
 ## FCFE And Dividend Models
 
@@ -277,15 +346,21 @@ upside versus price = (value - price) / price
 price discount to value = (value - price) / value
 ```
 
-Use the second definition when reporting the price-to-value gap in this skill.
-Always name the formula because market practice varies.
+Always report the second measure as the **observed price discount to estimated
+value**. Market practice sometimes calls this observed discount a margin of
+safety, so answer that usage directly when the user asks, but keep it distinct
+from the decision hurdle below. Always name the formula because conventions
+vary.
 
-A required margin of safety is a decision rule layered on an uncertain
-valuation, not another valuation method. Do not invent one threshold for every
-company. A wider cushion is generally warranted when value is more uncertain,
-the balance sheet or business is fragile, terminal value dominates plausible
-cases, or catalysts are weak. Diversification and the source of uncertainty also
-matter:
+A **required margin-of-safety hurdle** is a decision rule layered on an
+uncertain valuation, not another valuation method. Report its pass/fail only
+when the user or a stated policy supplies the hurdle. Without one, report the
+observed discount and `required hurdle: not supplied; pass/fail: not assessed`.
+Do not invent one threshold for every company or automatically print arbitrary
+entry-price thresholds. A wider hurdle is generally warranted when value is
+more uncertain, the balance sheet or business is fragile, terminal value
+dominates plausible cases, or catalysts are weak. Diversification and the
+source of uncertainty also matter:
 [Damodaran: Margin of Safety](https://pages.stern.nyu.edu/~adamodar/pdfiles/blog/MOS.pdf).
 
 ## Audit Checklist
@@ -301,6 +376,10 @@ matter:
 - Enterprise-to-equity bridge includes every material non-operating claim.
 - Options, warrants, convertibles, ADR ratios, and common shares reconcile to
   the exact security; any diluted-share shortcut is disclosed.
+- Existing SBC awards and future grants are separated; cash-flow, claim-value,
+  and diluted-share treatments do not count the same award cohort twice.
+- A future-date value rolls forward cash, distributions, claims, and shares or
+  is explicitly labeled as a required-return shortcut.
 - Sensitivities change the intended inputs and preserve `discount rate > growth`.
 - Scenario differences are causal; probabilities sum to 100% when used; risk
   adjustments are mapped and residual uncertainty is separated from them.

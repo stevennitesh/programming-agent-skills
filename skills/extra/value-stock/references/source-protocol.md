@@ -6,7 +6,8 @@ regulators to the issuer's jurisdiction.
 ## Contents
 
 - [Source Hierarchy](#source-hierarchy)
-- [Minimum Evidence Packet](#minimum-evidence-packet)
+- [Minimum Fair-Value Gate](#minimum-fair-value-gate)
+- [Full Diligence Expansion](#full-diligence-expansion)
 - [Evidence Ledger](#evidence-ledger)
 - [Structured Filing Data](#structured-filing-data)
 - [Earnings And Guidance](#earnings-and-guidance)
@@ -49,23 +50,62 @@ independent proof that the claim is correct. Treat news as primary evidence of
 what the outlet reported, not of an underlying fact it did not independently
 establish.
 
-## Minimum Evidence Packet
+## Minimum Fair-Value Gate
 
-Collect and date:
+Answer length does not lower the evidence standard. Before calling a numerical
+range fair value, collect and date enough primary evidence to establish:
 
-- latest annual and interim filings plus material later event filings;
-- at least three to five years of statements and segment history when available;
-- the latest earnings release, call transcript, guidance, and investor deck;
-- proxy data relevant to dilution, compensation, ownership, and governance;
-- current price, share classes, ADR ratio, actual and diluted shares, security
-  rights, debt, cash, options, warrants, convertibles, and other equity claims;
-- relevant rates, commodity prices, foreign exchange, or industry drivers;
-- peer filings and date-consistent market data;
-- consensus estimates with provider, as-of date, period, and definition; and
-- material news since the latest reported period plus older unresolved events.
+- the exact security, valuation date, and information cutoff, plus a
+  current-price timestamp when assessing market-implied expectations, observed
+  discount, or a margin-of-safety hurdle;
+- the latest annual filing, latest interim filing, and every later event known
+  to be material to cash flows, risk, capital structure, or security claims;
+- enough history to normalize the business and cover relevant economics -
+  normally at least three annual periods, a full cycle for a cyclical business,
+  or the available operating life for a young company;
+- the normalized earnings, cash flow, asset value, or sector-specific value base
+  used by the selected method, including taxes, reinvestment, and working
+  capital when applicable;
+- current cash, debt and debt-like claims, share classes, actual shares, and
+  material dilution, options, warrants, convertibles, minority interests, or
+  other claims needed to bridge value to the target security;
+- explicit forecast anchors and the few causal drivers of revenue, margin,
+  reinvestment, risk, or asset realization that carry the value;
+- current method inputs such as risk-free rates, risk premia, borrowing costs,
+  commodity or foreign-exchange assumptions, or comparable-market data when
+  they are load-bearing; and
+- material post-period developments, including guidance or news only to the
+  extent that they can change those inputs, the selected method, or confidence.
 
-Record access failures. Do not silently replace a missing primary source with an
-aggregator.
+Load earnings-call transcripts, investor decks, proxies, peer filings,
+consensus, and broader news when they contain a load-bearing fact; they are not
+universal ceremonial requirements. Record access failures. Do not silently
+replace a missing primary source with an aggregator.
+
+If exact security identity, current primary financial evidence, or a
+load-bearing input is unavailable, return `blocked`. If a useful range can be
+bracketed without the missing item, label it `partial` or `indicative`, state
+what is missing, and do not imply that the full fair-value gate was satisfied.
+
+## Full Diligence Expansion
+
+For a Full valuation, expand the minimum packet where available with:
+
+- five or more years, a full relevant cycle, and detailed segment history;
+- the latest earnings release, call transcript, investor deck, and a
+  chronological company-guidance-versus-outcome ledger;
+- proxy and compensation disclosures sufficient to reconcile stock-based
+  compensation, outstanding awards, buybacks, and governance;
+- date-consistent consensus history, dispersion, and revisions;
+- fundamentals-controlled peer filings and market data;
+- a deduplicated material-news record, unresolved older events, and
+  corroborated transcript or sentiment evidence; and
+- deeper accounting-quality, country-risk, industry, competitive, regulatory,
+  and security-rights evidence where material.
+
+Full means broader challenge and corroboration, not mandatory filler. Omit a
+lane that cannot credibly affect value, range, confidence, or a thesis breaker,
+and say why only when the omission would otherwise be surprising.
 
 ## Evidence Ledger
 

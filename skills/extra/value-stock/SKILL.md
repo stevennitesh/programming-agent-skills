@@ -53,24 +53,65 @@ Resolve or state:
 - valuation date, information cutoff, and market-price timestamp;
 - requested horizon, whether value is present or future, method, depth, and
   output currency;
-- whether the user supplied an explicit margin-of-safety rule; and
+- whether the user supplied an explicit margin-of-safety rule or a trigger for
+  conditionally deepening the work; and
 - material scope exclusions or unavailable sources.
 
 Resolve harmless ambiguity from authoritative sources. Ask only when different
 answers would value different securities or materially change the result.
 
+## Choose Depth Without Lowering Rigor
+
+Use `Compact` by default for an ordinary request for fair value, intrinsic
+value, or a simple valuation. Use `Full` when the user requests a deep,
+comprehensive, or full analysis.
+
+If the user requests Full only when the stock appears attractive:
+
+1. run Compact first;
+2. apply only the attractiveness hurdle the user supplied before modeling;
+3. continue directly to Full when the hurdle is met; and
+4. otherwise stop after Compact and state why Full did not run.
+
+If no hurdle was supplied, report the Compact result and ask whether to deepen;
+do not invent a universal threshold. A user-supplied required
+margin-of-safety hurdle may serve as the trigger.
+
+Compact and Full change evidence breadth and answer length, not analytical
+honesty. Both must pass the minimum fair-value gate, use a fitting method,
+reconcile the target security, test price-implied expectations, show material
+sensitivity, and expose thesis breakers. Full adds historical depth,
+corroboration, detailed bridges, scenarios, guidance delivery, peers, and news
+where they matter.
+
+Treat a factor as material when it can credibly change cash flows, their timing,
+reinvestment, security claims, the discount rate, the selected method, the
+value range, confidence, or a thesis breaker. Inspect every material factor,
+but do not create a report section for an immaterial research lane. Catalysts,
+tone, and sentiment affect intrinsic value only through a demonstrated
+cash-flow, timing, claim, or risk transmission.
+
 ## Load The Right References
 
-- Always load [source-protocol.md](references/source-protocol.md) before
-  collecting evidence.
-- Always load [valuation-methods.md](references/valuation-methods.md) before
-  selecting or calculating a method.
+- Load [source-protocol.md](references/source-protocol.md) before collecting
+  evidence. Apply the minimum fair-value gate in both paths and its Full
+  expansion only for Full or a material issue.
+- Load the Method Principles, applicable method sections, Margin Of Safety, and
+  Audit Checklist from
+  [valuation-methods.md](references/valuation-methods.md). Load Future-Date
+  Valuation only when a future value is requested and do not load unrelated
+  specialty methods.
 - Load [company-types.md](references/company-types.md) when choosing the model
-  or handling a sector, life-cycle, or accounting exception.
-- Load [report-contract.md](references/report-contract.md) before composing the
-  answer.
+  is uncertain or when handling a sector, life-cycle, or accounting exception.
+- Load [compact-report.md](references/compact-report.md) for Compact or
+  [report-contract.md](references/report-contract.md) for Full before composing
+  the answer.
 
 ## Valuation Spine
+
+Run the numbered spine for both depths. In Compact, keep only load-bearing
+evidence and calculations. In Full, expand each step where additional evidence
+can challenge or materially refine the result.
 
 ### 1. Establish The Evidence Date
 
@@ -84,19 +125,22 @@ memory.
 
 ### 2. Explain The Business Economically
 
-Identify revenue segments, customer and geographic concentration, pricing,
-volume, unit economics, cost structure, capital intensity, reinvestment needs,
-competitive advantages, industry structure, and key regulatory or commodity
-exposures. Assess country and currency risk from revenue, production, assets,
-funding, and legal exposure rather than incorporation or listing venue alone.
-Connect each claimed advantage to observable evidence and a value driver such
-as growth duration, margin, reinvestment efficiency, or risk.
+Identify the few economic drivers that can move value: revenue engines, pricing
+and volume, margins, capital intensity, reinvestment, competitive duration, and
+material concentration, regulatory, commodity, country, or currency exposure.
+Assess country and currency risk from revenue, production, assets, funding, and
+legal exposure rather than incorporation or listing venue alone. Connect each
+claimed advantage to observable evidence and a value driver such as growth
+duration, margin, reinvestment efficiency, or risk. Expand segment, customer,
+industry, and unit-economics detail in Full or when load-bearing.
 
 ### 3. Reconstruct And Normalize History
 
-Use at least three to five annual periods when available and the latest
-trailing period. Reconcile the income statement, balance sheet, cash-flow
-statement, statement of equity, segment data, and footnotes.
+Use enough history to normalize the relevant economics - normally at least
+three annual periods and the latest trailing period, a full cycle for cyclicals,
+or the available life for a young company. Expand to five or more periods in
+Full when available. Reconcile the statements, segment data, and footnotes that
+carry the selected method.
 
 Normalize only with an explicit bridge. Examine:
 
@@ -120,6 +164,12 @@ return measure, incremental returns when supportable, leverage, interest
 coverage, reinvestment, and share-count change. A high growth rate is not value
 creation unless its return on incremental capital exceeds its opportunity cost.
 
+When stock-based compensation is material, show one reconciled bridge separating
+existing awards from future grants. Identify whether the cash-flow starting
+point already expenses or adds back SBC, how current awards enter the equity or
+share-count bridge, how future grants enter forecasts, and why no award cohort
+is counted twice. Treat repurchases through cash spent and shares retired.
+
 ### 4. Build A Driver Forecast
 
 Forecast business drivers before earnings:
@@ -142,22 +192,24 @@ and returns toward economically coherent steady-state levels. Make growth
 consistent with reinvestment and returns on capital. Do not extrapolate a
 temporary margin, tax rate, commodity price, or working-capital benefit forever.
 
-Construct bear, base, and bull cases from distinct causal assumptions. Do not
-create cosmetic percentage offsets. Assign probabilities only when evidence
-supports them; otherwise present unweighted cases. Make assigned probabilities
-sum to 100%. Map each risk explicitly and do not hide the same adjustment in
-scenario odds, a cash-flow haircut, and a discount-rate premium. Reserve the
-margin-of-safety threshold for residual valuation and decision uncertainty.
+In Compact, use a defensible range and targeted sensitivity; add full causal
+bear, base, and bull cases when asymmetric outcomes drive the range. In Full,
+construct distinct causal cases rather than cosmetic percentage offsets.
+Assign probabilities only when evidence supports them; otherwise present
+unweighted cases. Make assigned probabilities sum to 100%. Map each risk
+explicitly and do not hide the same adjustment in scenario odds, a cash-flow
+haircut, and a discount-rate premium. Reserve the required margin-of-safety
+hurdle for residual valuation and decision uncertainty.
 
 ### 5. Choose Methods By Economics
 
-Use the model-selection matrix in `company-types.md`. For a typical
+When `company-types.md` is loaded, use its model-selection matrix. For a typical
 non-financial operating company, default to:
 
 1. FCFF DCF for intrinsic value;
 2. reverse DCF to expose what the current price implies; and
-3. a fundamentals-controlled comparable valuation as a market-pricing
-   cross-check.
+3. a fundamentals-controlled comparable valuation only when it can materially
+   challenge the intrinsic model or the user requests it.
 
 Add or substitute FCFE, DDM, residual-income or excess-return, NAV, SOTP,
 normalized mid-cycle, liquidation, or probability-adjusted methods when the
@@ -183,8 +235,12 @@ company for which the denominator or capital structure has no economic meaning.
 - Run arithmetic, sign, unit, period, and identity checks. Reconcile historical
   values back to the filings before trusting forecasts.
 - If reporting a future fair value, do not compare it directly with today's
-  price as current upside. Show the horizon and either discount it to present
-  value or calculate a cash-distribution-consistent annualized return.
+  price as current upside. Roll the model to the future state: remove elapsed
+  cash flows, trace retained cash and distributions, update cash, debt, claims,
+  and shares, and revalue remaining cash flows from that date. Cross-check
+  against an appropriate normalized forward metric. If merely compounding
+  today's value at the required return, label it a shortcut, reconcile interim
+  holder distributions, and do not present it as a new bottom-up valuation.
 
 Do not mechanically average methods. Explain disagreements: intrinsic value and
 relative value answer different questions and may diverge because a peer group
@@ -192,9 +248,10 @@ or entire sector is mispriced.
 
 ### 7. Interpret Forward Multiples Carefully
 
-Use forward P/E only with positive, sustainable, consistently defined forward
-diluted EPS and a named forecast period and source. Interpret it through growth,
-growth duration, risk, payout or reinvestment, and return on equity.
+Use forward P/E only when selected as a material cross-check and with positive,
+sustainable, consistently defined forward diluted EPS and a named forecast
+period and source. Interpret it through growth, growth duration, risk, payout or
+reinvestment, and return on equity.
 
 Use PEG only as a contextual cross-check among sufficiently comparable firms.
 State the P/E basis, growth metric, horizon, and percent convention. Do not use
@@ -203,15 +260,19 @@ fully controls for risk, payout, or reinvestment quality.
 
 Apply the same denominator definition and time basis to the target and peers.
 Select peers by similar cash-flow economics, growth, risk, margins, capital
-intensity, and geography - not industry label alone.
+intensity, and geography - not industry label alone. Do not add PEG or a peer
+table to Compact when neither changes the range or challenges the model.
 
-### 8. Process Earnings, Guidance, News, And Sentiment
+### 8. Process Material Earnings, Guidance, News, And Sentiment
 
-Maintain a dated guidance ledger: original metric and range, later revisions,
-reported outcome, and management explanation. Compare like-for-like definitions.
-Use this to assess forecasting evidence and execution, not character.
+In Compact, inspect the latest results, guidance, and post-period events and
+include only items that change the model, range, confidence, or thesis breakers.
+In Full, maintain a dated guidance ledger: original metric and range, later
+revisions, reported outcome, and management explanation. Compare like-for-like
+definitions. Use this to assess forecasting evidence and execution, not
+character.
 
-For each material news item or transcript change, classify it as:
+When news, transcript changes, or sentiment are material, classify each as:
 
 - new fundamental information that changes cash flow, reinvestment, or risk;
 - a catalyst or timing signal that may close a price-value gap;
@@ -220,7 +281,8 @@ For each material news item or transcript change, classify it as:
 
 Do not double-count one event across guidance, news, and scenarios. Treat tone,
 evasion, analyst questions, and social sentiment as hypotheses requiring
-corroboration. Positive language is not intrinsic value.
+corroboration. Positive language is not intrinsic value. Omit sentiment
+entirely when no value transmission is demonstrated.
 
 ### 9. Challenge The Thesis
 
@@ -229,26 +291,29 @@ against them, base rates or relevant history, accounting red flags, financing
 or dilution paths, competitive responses, and observable thesis breakers.
 Compare the modeled expectations with those implied by the market price.
 
-Compute:
+Always compute:
 
 ```text
-price-to-value gap = (estimated value - market price) / estimated value
+observed price discount to estimated value
+  = (estimated value - market price) / estimated value
 ```
 
-Call this a margin of safety only when the user or a stated policy supplies the
-required threshold. Otherwise report `margin of safety: not assessed - threshold
-not supplied`; do not characterize the gap as an adequate, inadequate,
-meaningful, or absent margin of safety, and do not substitute equivalent
-`cushion` language. Explain instead how valuation uncertainty, balance-sheet
-risk, business fragility, diversification, and catalyst uncertainty should
-inform a user-chosen threshold.
+Market practice sometimes calls this observed discount a margin of safety, so
+answer that usage directly when the user asks. Keep it distinct from the
+**required margin-of-safety hurdle**, which is a user or policy decision rule.
+If a hurdle was supplied, show it and pass/fail. Otherwise report the observed
+discount plus `required hurdle: not supplied; pass/fail: not assessed`; do not
+judge adequacy or invent a threshold. Explain briefly how valuation uncertainty,
+balance-sheet risk, business fragility, diversification, and catalyst
+uncertainty can inform a user-chosen hurdle. Show threshold-specific entry
+prices only when requested.
 
 ## Return
 
-Follow `report-contract.md`. Lead with the valuation range, current price and
-timestamp, price-implied expectations, confidence, and the two or three
-assumptions that dominate the result. Cite every material current fact and
-number adjacent to its claim.
+Follow the selected Compact or Full return contract. Lead with the valuation
+range, current price and timestamp, price-implied expectations, confidence, and
+the two or three assumptions that dominate the result. Cite every material
+current fact and number adjacent to its claim.
 
 Return `complete`, `partial`, or `blocked`.
 
