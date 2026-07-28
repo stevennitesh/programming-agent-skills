@@ -39,7 +39,10 @@ boundaries, limitations, decisions and their owners, required behavioral,
 migration, cutover, or retirement outcomes, and acceptance objectives that
 apply. A missing, inaccessible, ambiguous, contradictory, or decision-changing
 gap returns `source-gap` with affected contract fields, unchanged tracker
-state, and the exact decision owner.
+state, the exact return owner, and exactly one gap kind:
+`user-decision`, `domain-decision`, `source-evidence`, `runnable-evidence`,
+`stakeholder-evidence`, or `multi-decision-fog`. Preserve the source identity
+and state the exact re-entry condition. Do not invoke or recommend a resolver.
 
 Verify implementation-adjacent source claims against their exact code, caller,
 test, configuration, or decision pointers. If a required current-state claim

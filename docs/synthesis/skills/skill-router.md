@@ -1,13 +1,15 @@
 # Skill Router Residual Routing Synthesis
 
-> Status (2026-07-27): historical design evidence. A later authorized Author
-> pass clarified the active explicit-only routes from settled source to either
-> a parent decision contract or a Ready-for-agent ticket graph. Canonical
-> `skills/custom/skill-router/` is runtime authority at campaign-tree SHA-256
-> `02742a3108ae70de33f2f39298e83296f8cf6e670c1c0cd5359a7116350322b9`.
+> Status (2026-07-28): historical design evidence. Later authorized Author
+> passes clarified the active explicit-only routes from settled source and the
+> destination-before-scale tie-breaker: unresolved user-owned destination
+> shaping precedes Wayfinder, which begins only after a bounded destination
+> still has interdependent multi-session decisions or prerequisites. Canonical
+> `skills/custom/skill-router/` is runtime authority at tree SHA-256
+> `3e152e6231288198a53e673113e570f65938a8ead1f1f352c0eea21a2860f9cf`.
 > Current review routes are `$change-review` and
 > `$high-assurance-review`; later former-name references are historical. No
-> installed sync is claimed.
+> installed sync or fresh wording-efficacy proof is claimed.
 
 Status: design reference and extraction map. The implicit residual-router candidate is preserved under `skills/experimental/skill-router/`; custom and installed copies remain the explicit-only active control. Fresh-context behavior promotion and coordinated caller validation remain outstanding.
 

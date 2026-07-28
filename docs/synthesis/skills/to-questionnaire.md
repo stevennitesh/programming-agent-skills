@@ -2,9 +2,18 @@
 
 ## Status And Decision
 
-Status: canonical-and-installed synthesis for the fresh `to-questionnaire`
-campaign that began at Git
+Historical status: canonical-and-installed synthesis for the fresh
+`to-questionnaire` campaign that began at Git
 `4359f7afeeec29a9c8692b18c1586afb041f9bf4`.
+
+Current amendment (2026-07-28): a later lean Author pass lets a direct user
+supply an origin owner and identity as context, locks where attributable
+answers return, and adds a Wayfinder recommend-and-stop ingress. This grants no
+delegated invocation, waiting, answer ingestion, analysis, or continuation.
+Canonical tree SHA-256 is
+`4b359410bff4a6ab4bbcaa462fffd880f8849ac17fc66b1929fc94dd85379b73`;
+installed parity and fresh wording-efficacy proof are not claimed. Later
+campaign-era exact-body and parity statements are historical.
 
 Decision: Prompt 5 complete after exact final C1 promotion,
 `pruning-not-needed`, and managed installation parity.
@@ -56,8 +65,8 @@ the downstream decision. The recipient owns their answers.
 The leaf is viable only while all of these boundaries hold:
 
 - explicit user invocation selects it;
-- `$skill-router` and `$grilling` may recommend it and stop, but do not invoke
-  or continue it;
+- `$skill-router`, `$grilling`, and `$wayfinder` may recommend it and stop, but
+  do not invoke or continue it;
 - `$research` owns source-answerable gaps, and `$grilling` owns decisions the
   current user can make;
 - one artifact serves one recipient and one downstream decision;
@@ -73,8 +82,8 @@ The leaf is viable only while all of these boundaries hold:
   content.
 
 Implicit invocation, delegated callers, Wayfinder schemas, Wayfinder
-durability and lifetime rules, and caller continuation are outside this
-campaign. They are not deferred C1 behavior.
+durability and lifetime rules, and caller continuation remain outside current
+behavior. A user-supplied origin pointer is context only.
 
 ## Source-First Checkpoint
 
@@ -199,6 +208,7 @@ These deferred items are not residual gaps for this Direct-only campaign.
 | User | Explicitly invoke | `$to-questionnaire` | The user requests one local questionnaire for one identifiable external owner and retains the returned path, delivery, and downstream decision |
 | `$skill-router` | Recommend and stop | `$to-questionnaire` | Route selection identifies this explicit leaf; the user decides whether to start it |
 | `$grilling` | Recommend and stop | `$to-questionnaire` | Grilling reaches a question owned by one external stakeholder; the user decides whether to start the leaf |
+| `$wayfinder` | Recommend and stop | `$to-questionnaire` | One Task/HITL prerequisite needs attributable asynchronous answers; the user starts the leaf and later resumes the same ticket |
 | `$to-questionnaire` | Recommend and stop | `$research` | Authorized inspectable sources own the whole material gap |
 | `$to-questionnaire` | Recommend and stop | `$grilling` | The current user owns the material decision |
 
@@ -206,9 +216,8 @@ Research owns source-answerable investigation; Grilling owns the current
 user's decision conversation. Neither transfers its procedure to this leaf.
 The recipient owns answers. The user owns delivery and subsequent use.
 
-These are the complete active To Questionnaire edges. Wayfinder, delegated
-callers, Grill-with-Docs routing, and a Research-to-Questionnaire edge remain
-excluded; their owners were not changed.
+These are the complete active To Questionnaire edges. Delegated callers,
+Grill-with-Docs routing, and a Research-to-Questionnaire edge remain excluded.
 
 ## Proof Matrix
 

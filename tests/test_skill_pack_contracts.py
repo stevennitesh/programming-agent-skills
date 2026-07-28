@@ -90,6 +90,9 @@ def test_to_questionnaire_owns_one_safe_recipient_artifact() -> None:
         "Render and reread the complete candidate",
         "changed only the authorized file",
         "Status: Questionnaire ready | Not admitted | Incomplete",
+        "origin owner and identity are context for returning answers",
+        "Origin owner and identity:",
+        "Answers return to:",
         "Artifact path: <absolute path> | none",
         "Delivery: not performed",
         "`Questionnaire ready` requires one verified artifact",
@@ -101,7 +104,7 @@ def test_to_questionnaire_owns_one_safe_recipient_artifact() -> None:
         assert rejected not in questionnaire
     assert policy.endswith("policy:\n  allow_implicit_invocation: false\n")
     assert skill_pack_contract.tree_hash(skill_dir) == (
-        "a5c63f7c0ecbe2971dbbd20bb1774ece83990e08fa97d3df6d9f49c3b41cf3c4"
+        "4b359410bff4a6ab4bbcaa462fffd880f8849ac17fc66b1929fc94dd85379b73"
     )
     assert (
         "| One external stakeholder holds missing knowledge and needs an async "
@@ -447,6 +450,17 @@ def test_router_returns_exactly_one_next_skill() -> None:
         "| A `ready-spec` or equivalent settled bounded source needs a "
         "dependency-ordered Ready-for-agent ticket graph | `$to-tickets` |"
     ) in router
+    tie_breaker = " ".join(
+        router.split("**Destination-before-scale tie-breaker:**", 1)[1].split()
+    )
+    for contract in (
+        "still user-owned and unclear",
+        "`$grilling`",
+        "`$grill-with-docs`",
+        "only after the destination is bounded",
+        "`$wayfinder`",
+    ):
+        assert contract in tie_breaker
 
 
 def test_branch_heavy_skills_disclose_branch_procedure() -> None:
@@ -567,6 +581,10 @@ def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
     ]
     assert "At the end of Advance or Maintain" in closure
     assert "zero frontier tickets have substantive outcomes" in maintain
+    bound = chart.split("1. **Bound.**", 1)[1].split("2. **Sweep.**", 1)[0]
+    assert "`$grilling` for a conversation-only decision" in bound
+    assert "`$grill-with-docs` when it may change durable domain terms" in bound
+    assert "intact returned decision" in bound
     map_template = map_format.split("```markdown", 1)[1].split("```", 1)[0]
     assert re.findall(r"(?m)^## (.+)$", map_template) == [
         "Destination",
@@ -629,10 +647,16 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
     map_format = (skill_dir / "MAP-FORMAT.md").read_text(encoding="utf-8")
 
     tickets = wayfinder.split("## Tickets", 1)[1].split("## Modes", 1)[0]
-    assert "user owns the resolution" in tickets
+    assert "user owns one resolution" in tickets
     assert "accepted repository contracts and objective proof" in tickets
     assert "Classify by resolution authority" in tickets
     assert "Split a ticket" in tickets
+    assert "`$grilling` for a conversation-only preference or tradeoff" in tickets
+    assert "`$grill-with-docs` when the decision may change durable domain terms" in (
+        tickets
+    )
+    assert "recommend explicit `$to-questionnaire`" in tickets
+    assert "Resume the same ticket with attributable answers." in tickets
 
     advance = wayfinder.split("### Advance", 1)[1].split("### Maintain", 1)[0]
     claim = advance.split("3. **Claim.**", 1)[1].split("4. **Resolve.**", 1)[0]
@@ -715,6 +739,9 @@ def test_grill_with_docs_package_and_relationship_contract() -> None:
         for caller, verb, callee in rows
         if verb == "Recommend and stop" and callee == "grill-with-docs"
     } >= {"wayfinder", "triage"}
+    assert ("wayfinder", "Recommend and stop", "grilling") in rows
+    assert ("wayfinder", "Recommend and stop", "to-questionnaire") in rows
+    assert ("grilling", "Recommend and stop", "wayfinder") in rows
 
 
 def test_domain_modeling_owns_durable_domain_truth() -> None:
@@ -755,6 +782,9 @@ def test_grilling_preserves_one_decision_confirmed_exit_and_evidence_routes() ->
         "pause dependent progress",
         "a repeated non-answer makes that decision authority unavailable",
         "Choose `$research` for an authoritative source",
+        "recommend uninvoked `$wayfinder`",
+        "original decision owner without changing the gap identity",
+        "required result, and exact re-entry instruction",
         "Downstream execution: none",
     ):
         assert contract in grilling_plain
@@ -1561,6 +1591,17 @@ def test_workflow_trace_matches_to_spec_publication_authority() -> None:
     assert "delegate exactly one create operation" in normalized
     assert "compare it with the frozen draft" in normalized
     assert "recommend `$to-tickets` only after verified success" in normalized
+    for gap_kind in (
+        "user-decision",
+        "domain-decision",
+        "source-evidence",
+        "runnable-evidence",
+        "stakeholder-evidence",
+        "multi-decision-fog",
+    ):
+        assert gap_kind in normalized
+    assert "exact return owner" in normalized
+    assert "do not invoke or recommend a resolver" in normalized.lower()
 
 
 def test_to_spec_handoff_keeps_ticket_design_downstream() -> None:
@@ -2311,6 +2352,8 @@ def assert_to_spec_semantic_contract(
             "material seam belongs in the spec",
             "create no separate design packet",
             "concrete proof lanes and test owners",
+            "exactly one gap kind",
+            "do not invoke or recommend a resolver",
         ):
             assert current_semantic in normalized
         assert re.search(r"reuse only an exact match.*verified absence", normalized)
@@ -2441,7 +2484,7 @@ def test_to_spec_prompt3_packages_share_the_parameterized_semantic_owner() -> No
     packages = (
         (
             CUSTOM / "to-spec",
-            "8ef998ec76994ac26379becb6762b5f91cf0f4a6d36582f4c525c37fa8f40fd5",
+            "e319eb815944530ef30e7fa2cb1ab966fef6a2a9efe05601b7e12ce82795a5cc",
             "author-handoff",
         ),
         (

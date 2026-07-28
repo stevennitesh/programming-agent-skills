@@ -28,6 +28,13 @@ description: Route the current situation to exactly one next skill in this engin
 | One design question needs runnable evidence | `$prototype` |
 | Context must cross into a fresh session or agent thread | `$handoff` |
 
+**Destination-before-scale tie-breaker:** when the destination or scope is
+still user-owned and unclear, route one conversation to `$grilling`, or to
+`$grill-with-docs` when the decision may change durable domain terms,
+Invariants, Context Relationships, or an ADR. Route to `$wayfinder` only after
+the destination is bounded and several interdependent decisions or
+prerequisites need a tracker-backed, multi-session route.
+
 ### Build
 
 | Situation | Route |

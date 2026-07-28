@@ -1,12 +1,23 @@
 # Grilling Runtime Design Synthesis
 
-Status: Deploy Prompt 5 complete. Canonical and installed Grilling are byte-identical at tree hash `5c6ab5e504123fdaa79db33fc436f361e8e9383bf028892970a9efee4b54cf63`, and Grilling's experimental package and manifest entry are removed. Canonical Grilling is executable authority; this document authorizes no downstream execution by itself.
+Historical status: Deploy Prompt 5 completed at tree hash
+`5c6ab5e504123fdaa79db33fc436f361e8e9383bf028892970a9efee4b54cf63`.
+A later lean Author pass added one Route gap to Wayfinder and strengthened
+evidence-detour re-entry with the original decision owner, intact gap identity,
+required result, and exact re-entry instruction. Canonical Grilling is current
+executable authority at tree SHA-256
+`e547aa444e63a6d94325ec9c34f739c6883fc61c5652dc3fb7ca2731741ebf99`.
+Installed parity and fresh wording-efficacy proof are not claimed; later
+campaign-era exact-body and parity statements are historical.
 
-Executable authority is `skills/custom/grilling/SKILL.md` and `skills/custom/grilling/agents/openai.yaml`. `C:\Users\steve\.agents\skills\grilling` is the verified managed distribution copy, never independent authority. The retired evaluation fixture is historical-admission-only; the accepted identity and decision remain in this synthesis.
+Executable authority is `skills/custom/grilling/SKILL.md` and
+`skills/custom/grilling/agents/openai.yaml`. The installed mirror is never
+independent authority. The retired evaluation fixture is
+historical-admission-only.
 
 ## Design Verdict
 
-Rebuild the experimental candidate from Matt Pocock's small Grilling primitive, then admit only the local mechanisms needed for bounded questioning, composition, recoverable gaps, and caller return. Grilling remains one implicitly invocable, conversation-only skill whose purpose is to grill until shared understanding is explicitly confirmed. It writes nothing, invokes no evidence owner, chooses no downstream route, and starts no work.
+Rebuild the experimental candidate from Matt Pocock's small Grilling primitive, then admit only the local mechanisms needed for bounded questioning, composition, recoverable gaps, and caller return. Grilling remains one implicitly invocable, conversation-only skill whose purpose is to grill until shared understanding is explicitly confirmed. It writes nothing, invokes no evidence owner, and starts no work; a gap may name exactly one uninvoked owner.
 
 The simplest credible baseline is the complete upstream package at Matt Pocock checkout `ed37663cc5fbef691ddfecd080dff42f7e7e350d`:
 

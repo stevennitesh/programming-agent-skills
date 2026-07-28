@@ -16,6 +16,9 @@ boundary. Earlier revision slices remain immutable historical evidence.
 Revision 4 folds bounded Codebase Design into To Spec or Audit Analyze when
 those workflows own the artifact, and removes post-workflow design routes from
 Research, TDD, and Simplify Code.
+Revision 5 clarifies destination-before-scale routing, conversation-only versus
+domain-affecting Wayfinder decisions, asynchronous stakeholder prerequisites,
+and typed To Spec source gaps without adding another workflow stage.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -3616,6 +3619,81 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "target_skill_id": "SK-002",
       "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-008",
+        "CAP-021"
+      ],
+      "callee_owned_gates_mutations": [
+        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-008",
+      "combined_exit_owner_skill_id": "SK-008",
+      "context_loaded": [],
+      "entry_condition": "Several interdependent unresolved decisions or non-conversational prerequisites need a tracker-backed multi-session route.",
+      "failure_behavior": "Return the recommendation without invoking the target; preserve the intact bound and exact re-entry instruction",
+      "input_packet": "Grilling bound, confirmed decisions, unresolved branches or prerequisites, return owner, and exact re-entry instruction",
+      "ordering_impact": "none",
+      "relationship_id": "REL-094",
+      "required_proof_ids": [
+        "PROOF-REL-094"
+      ],
+      "resume_owner_skill_id": "SK-008",
+      "return_packet": "One intact Route gap with Wayfinder left unstarted",
+      "target_skill_id": "SK-021",
+      "verb": "Recommend and stop",
+      "wrong_condition": "One bounded conversation can still settle the decision or the destination remains unbounded"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-021",
+        "CAP-008"
+      ],
+      "callee_owned_gates_mutations": [
+        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-021",
+      "combined_exit_owner_skill_id": "SK-021",
+      "context_loaded": [],
+      "entry_condition": "One HITL decision ticket or Chart bound needs a conversation-only user decision with no durable domain-record consequence.",
+      "failure_behavior": "Return the recommendation without invoking the target; preserve the Wayfinder resumption boundary",
+      "input_packet": "Wayfinder ticket or chart bound, decision owner, identifiers, and return owner",
+      "ordering_impact": "none",
+      "relationship_id": "REL-095",
+      "required_proof_ids": [
+        "PROOF-REL-095"
+      ],
+      "resume_owner_skill_id": "SK-021",
+      "return_packet": "One intact decision packet for later Wayfinder resumption with Grilling left unstarted",
+      "target_skill_id": "SK-008",
+      "verb": "Recommend and stop",
+      "wrong_condition": "The decision may change durable domain terms, Invariants, Context Relationships, or an ADR, or does not belong to the user"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-021",
+        "CAP-009"
+      ],
+      "callee_owned_gates_mutations": [
+        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-021",
+      "combined_exit_owner_skill_id": "SK-021",
+      "context_loaded": [],
+      "entry_condition": "One Task or HITL prerequisite needs attributable asynchronous answers from an identifiable external stakeholder.",
+      "failure_behavior": "Return the recommendation without invoking the target; preserve the selected ticket and answer-return destination",
+      "input_packet": "Wayfinder ticket bound, stakeholder identity, needed answers, origin owner and identity, and return destination",
+      "ordering_impact": "none",
+      "relationship_id": "REL-096",
+      "required_proof_ids": [
+        "PROOF-REL-096"
+      ],
+      "resume_owner_skill_id": "SK-021",
+      "return_packet": "One questionnaire route for later resumption of the same ticket with attributable answers; To Questionnaire remains unstarted",
+      "target_skill_id": "SK-009",
+      "verb": "Recommend and stop",
+      "wrong_condition": "Inspectable sources, the current user, or objective AFK proof can resolve the prerequisite"
     }
   ],
   "selected_skills": [
@@ -3947,7 +4025,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-008",
         "REL-009",
         "REL-010",
-        "REL-011"
+        "REL-011",
+        "REL-094"
       ],
       "required_input": "A bounded caller-owned Source Trace and authority for: Stress-test one bounded plan, decision, or idea conversationally until shared understanding is confirmed",
       "return_packet": "A confirmed decision packet or one recommended evidence route",
@@ -4503,7 +4582,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-088",
         "REL-089",
         "REL-090",
-        "REL-091"
+        "REL-091",
+        "REL-095",
+        "REL-096"
       ],
       "required_input": "A bounded caller-owned Source Trace and authority for: Chart and advance one tracker-backed route through a large foggy effort",
       "return_packet": "A verified map/frontier result or one closing route",

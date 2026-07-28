@@ -2,12 +2,17 @@
 
 Status: exhaustive design reference, not an executable contract.
 
-Current amendment: a lean Author pass extracted only the settled-decision
-Durability edge into the active runtime. Wayfinder now invokes Domain Modeling
-once during Closure when no current Domain Delta accounts for the consequence;
-unresolved direct-user decisions still recommend Grill With Docs and stop.
-The broader coordinated candidate remains unpromoted. No installed parity or
-fresh wording-efficacy proof is claimed.
+Current amendment (2026-07-28): lean Author passes extracted only the
+settled-decision Durability edge and three user-authority routes into the active
+runtime. Wayfinder invokes Domain Modeling once during Closure when no current
+Domain Delta accounts for the consequence. A conversation-only user decision
+recommends Grilling; a domain-affecting decision recommends Grill With Docs;
+an asynchronous external-stakeholder prerequisite recommends To Questionnaire.
+Each stops and preserves the Wayfinder resumption bound. The active runtime
+does not invoke To Questionnaire, wait, or reconcile answers. The broader
+coordinated candidate remains unpromoted. Canonical tree SHA-256 is
+`a8260346091d250c455f85260281fb969b02be1c5576a80b06484ee17bdec74e`;
+no installed parity or fresh wording-efficacy proof is claimed.
 
 Runtime authority remains in:
 

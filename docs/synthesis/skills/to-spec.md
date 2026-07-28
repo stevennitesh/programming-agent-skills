@@ -6,13 +6,15 @@
 > Tickets boundary, source-triggered content, and `ready-spec`. The latest lean
 > composition pass lets To Spec settle one source-delegated consequential
 > internal design with Codebase Design, keeps material Seams in the spec, and
-> leaves concrete proof lanes and test owners to To Tickets. Five fresh
+> leaves concrete proof lanes and test owners to To Tickets. The 2026-07-28
+> lean composition pass classifies each `source-gap` as one of six owner-facing
+> kinds, preserves exact re-entry, and invokes or recommends no resolver. Five fresh
 > fixed-scenario controls exposed no registered broad wording deficit, so a
 > larger rewrite was `reject-no-control-deficit`. Canonical
 > `skills/custom/to-spec/` is current runtime authority at campaign-tree
 > SHA-256
-> `8ef998ec76994ac26379becb6762b5f91cf0f4a6d36582f4c525c37fa8f40fd5`.
-> No installed sync is claimed.
+> `e319eb815944530ef30e7fa2cb1ab966fef6a2a9efe05601b7e12ce82795a5cc`.
+> No installed sync or fresh wording-efficacy proof is claimed.
 
 Status: Deploy Prompt 4 decision for campaign `to-spec-2026-07-25`;
 `accepted`.
