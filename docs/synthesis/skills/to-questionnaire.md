@@ -8,10 +8,12 @@ Historical status: canonical-and-installed synthesis for the fresh
 
 Current amendment (2026-07-28): a later lean Author pass lets a direct user
 supply an origin owner and identity as context, locks where attributable
-answers return, and adds a Wayfinder recommend-and-stop ingress. This grants no
-delegated invocation, waiting, answer ingestion, analysis, or continuation.
-Canonical tree SHA-256 is
-`4b359410bff4a6ab4bbcaa462fffd880f8849ac17fc66b1929fc94dd85379b73`;
+answers return, and accepts a complete caller packet. Wayfinder may invoke it
+only after the user approves that exact packet; supplied origin context alone
+grants no invocation authority. The skill creates the questionnaire but does
+not own delivery, waiting, answer ingestion, analysis, or continuation.
+Canonical tree SHA-256
+is `8036aed37d90fb37eab71ce2313f313e08b48864401af1ab1c10f89553dacf7f`;
 installed parity and fresh wording-efficacy proof are not claimed. Later
 campaign-era exact-body and parity statements are historical.
 
@@ -24,8 +26,8 @@ Runtime decision:
 
 ```text
 historical control B0 != current canonical
-current canonical = final C1
 final C1 = B0 + C1-TRANSACTION + C1-DIRECT-RETURN
+current canonical = final C1 + later lean Author amendments
 C1-LEDGER = rejected-no-control-failure
 ```
 
@@ -53,10 +55,10 @@ owned by
 
 To Questionnaire is an explicit-only leaf that creates one local,
 recipient-ready Markdown questionnaire for one identifiable external
-stakeholder who holds material facts or decisions unavailable to the current
-user and authorized inspectable sources. The artifact gathers what one
-downstream decision needs and may be completed asynchronously or used in a
-later meeting.
+stakeholder who owns material facts, judgment, or decision authority
+unavailable to the current user and authorized inspectable sources. The
+artifact asks for what one downstream decision needs and may be completed
+asynchronously or used in a later meeting.
 
 The leaf owns sender-known intake, question design, one artifact, verification,
 and Return. The user owns recipient selection, output authority, delivery, and
@@ -194,7 +196,7 @@ Rejected from B0 and C1:
 Deferred solely to a future Wayfinder-owned decision:
 
 - Wayfinder invocation, packet and result schemas;
-- durable artifact lifetime and retention fields;
+- managed artifact lifetime and retention rules;
 - external-wait state;
 - caller answer reconciliation and continuation; and
 - `.scratch` durability required by such a caller.

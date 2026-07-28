@@ -4,9 +4,11 @@ Historical status: Deploy Prompt 5 completed at tree hash
 `5c6ab5e504123fdaa79db33fc436f361e8e9383bf028892970a9efee4b54cf63`.
 A later lean Author pass added one Route gap to Wayfinder and strengthened
 evidence-detour re-entry with the original decision owner, intact gap identity,
-required result, and exact re-entry instruction. Canonical Grilling is current
-executable authority at tree SHA-256
-`e547aa444e63a6d94325ec9c34f739c6883fc61c5652dc3fb7ca2731741ebf99`.
+required result, and exact re-entry instruction. The current amendment also
+admits one approved caller-owned conversation while retaining the user's
+decision and confirmation authority. Canonical Grilling is current executable
+authority at tree SHA-256
+`fbde5cb5031866b3ccc78015d8ae210042b74400912e7b1e031e5698c6547c32`.
 Installed parity and fresh wording-efficacy proof are not claimed; later
 campaign-era exact-body and parity statements are historical.
 
@@ -14,6 +16,24 @@ Executable authority is `skills/custom/grilling/SKILL.md` and
 `skills/custom/grilling/agents/openai.yaml`. The installed mirror is never
 independent authority. The retired evaluation fixture is
 historical-admission-only.
+
+## Current Runtime Reconciliation
+
+The current lean Author pass keeps the five-part runtime and admits only a
+compact **decision frontier**: ask one highest-leverage unblocked material
+decision, recompute after each answer or fact, and let missing evidence pause
+only dependent branches. It does not adopt frontier batches, question counts,
+durable interview state, or another workflow stage.
+
+When the intended result is a spec source, Grilling now applies readiness as an
+exit test after material exploration. It reports whether the confirmed packet
+is ready, blocked, or not targeting a spec; it does not draft, publish, or
+perform To Spec's final source admission. Grill With Docs preserves that packet
+and now propagates Grilling's existing `Route gap` without reclassifying it.
+
+The historical design and evaluation below remain evidence for the accepted
+candidate at their recorded hashes. They are not proof of these later wording
+changes.
 
 ## Design Verdict
 

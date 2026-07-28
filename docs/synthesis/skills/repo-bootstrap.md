@@ -5,7 +5,7 @@
 > leaving Triage briefs and To Tickets execution packets with their producing
 > skills. Canonical `skills/custom/repo-bootstrap/` is runtime authority at
 > campaign-tree SHA-256
-> `d16d6236a74ee7cdf9082ddef1c408306b1a97594828e311e1182883407e8675`.
+> `0f69340c0b3dffe73b08621e2f0ffad5258fa0807c13d7189b8854322ce7bb7e`.
 > No installed sync is claimed.
 
 <!-- repo-bootstrap-prompt2-synthesis:v1:begin -->

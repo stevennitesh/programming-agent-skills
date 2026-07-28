@@ -94,6 +94,11 @@ def test_to_questionnaire_owns_one_safe_recipient_artifact() -> None:
     ]
     for contract in (
         "Grill the send, not the subject.",
+        "facts, judgment, or decision authority unavailable from inspectable sources",
+        "missing sender-known information that materially changes",
+        "skill defaults are not assumptions",
+        "Invite partial answers and explicit unknowns.",
+        "Treat the default as disposable.",
         "The catch-all does not cover a known ledger item.",
         "<work-root>/.tmp/to-questionnaire/<slug>.md",
         "resolve the absolute `.md` target",
@@ -106,6 +111,7 @@ def test_to_questionnaire_owns_one_safe_recipient_artifact() -> None:
         "Origin owner and identity:",
         "Answers return to:",
         "Artifact path: <absolute path> | none",
+        "Artifact durability: disposable default | authorized durable path | none",
         "Delivery: not performed",
         "`Questionnaire ready` requires one verified artifact",
         "`Not admitted` requires a proven failed Admit predicate",
@@ -116,7 +122,7 @@ def test_to_questionnaire_owns_one_safe_recipient_artifact() -> None:
         assert rejected not in questionnaire
     assert policy.endswith("policy:\n  allow_implicit_invocation: false\n")
     assert skill_pack_contract.tree_hash(skill_dir) == (
-        "a933f364c8afd19cf261536952afbda98a9dc396c985a67bd66f777646e81481"
+        "18fb2f5e88ac8764092605e198c1bb002a7a84a7bdd184592bac18c6a7637ed7"
     )
     assert (
         "| One external stakeholder holds missing knowledge and needs an async "
@@ -173,13 +179,23 @@ def test_wayfinder_tracker_claims_distinguish_sessions_and_recover_explicitly() 
         wayfinding = tracker.read_text(encoding="utf-8").split(
             "## Wayfinding operations", 1
         )[1]
+        wayfinding_flat = " ".join(wayfinding.split())
         for token in (
             "MAP-FORMAT.md",
+            "Resolution owner:",
+            "Re-entry owner: $wayfinder",
+            "diagnosis",
+            "approved map order",
             "Claim token:",
             "Claimed at:",
             "codex/<lowercase UUIDv4>",
             "<YYYY-MM-DDTHH:MM:SSZ>",
             "Maintain claims the map",
+            "claims the map before recording any ticket outcome",
+            "reuse it for both claims",
+            "waiting",
+            "exact return trigger",
+            "through Advance",
             "never reuse it across invocations",
             "different token owns the item",
             "Elapsed time alone never makes a claim stale.",
@@ -187,7 +203,7 @@ def test_wayfinder_tracker_claims_distinguish_sessions_and_recover_explicitly() 
             "takeover reason",
             "Mutation read-back",
         ):
-            assert token in wayfinding, f"{tracker} is missing {token}"
+            assert token in wayfinding_flat, f"{tracker} is missing {token}"
         assert "Its body holds Destination" not in wayfinding
 
 
@@ -335,7 +351,7 @@ def assert_repo_bootstrap_semantic_contract(
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     assert_repo_bootstrap_semantic_contract(
         CUSTOM / "repo-bootstrap",
-        "d351ca9852586b248fd7a4f5045e031050d417da5a33358f2cf2ea78ec3a55ce",
+        "0f69340c0b3dffe73b08621e2f0ffad5258fa0807c13d7189b8854322ce7bb7e",
         profile="incumbent",
     )
 
@@ -595,7 +611,9 @@ def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
     advance, remaining = modes.split("### Maintain", 1)
     maintain, closure = remaining.split("## Closure", 1)
     for earlier, later in (
-        ("**Bound.**", "**Approve.**"),
+        ("**Bound.**", "**Admit.**"),
+        ("**Admit.**", "**Sweep.**"),
+        ("**Sweep.**", "**Approve.**"),
         ("**Approve.**", "**Chart.**"),
         ("**Chart.**", "**Verify.**"),
     ):
@@ -613,13 +631,26 @@ def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
         "Advance",
         "Maintain",
     ]
-    assert "At the end of Advance or Maintain" in closure
-    assert "zero frontier tickets have substantive outcomes" in maintain
-    bound = chart.split("1. **Bound.**", 1)[1].split("2. **Sweep.**", 1)[0]
+    assert "Close only while holding the map claim" in closure
+    assert "zero substantive ticket outcomes" in maintain
+    bound = chart.split("1. **Bound.**", 1)[1].split("2. **Admit.**", 1)[0]
     bound_flat = " ".join(bound.split())
-    assert "`$grilling` for a conversation-only decision" in bound_flat
-    assert "`$grill-with-docs` when it may change durable domain terms" in bound_flat
-    assert "intact returned decision" in bound_flat
+    for field in (
+        "destination owner",
+        "outcome",
+        "scope",
+        "route-closing condition",
+        "terminal kind",
+        "return owner",
+    ):
+        assert field in bound_flat
+    assert "Invoke the applicable conversational resolver" in bound_flat
+    admit = chart.split("2. **Admit.**", 1)[1].split("3. **Sweep.**", 1)[0]
+    admit_flat = " ".join(admit.split())
+    assert "exact destination tuple" in admit_flat
+    assert "at least one non-conversational resolver" in admit_flat
+    assert "Wayfinding not needed" in admit_flat
+    assert "recommend `$to-spec` only when the source is already ready" in admit_flat
     map_template = map_format.split("```markdown", 1)[1].split("```", 1)[0]
     assert re.findall(r"(?m)^## (.+)$", map_template) == [
         "Destination",
@@ -629,13 +660,18 @@ def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
         "Not Yet Specified",
         "Out Of Scope",
     ]
-    assert "caller-approved repo-local note path" in map_format
+    assert "approved repo-local note path" in map_format
     advance_flat = " ".join(advance.split())
-    assert advance_flat.index(
-        "Mutation read-back before resolution work"
-    ) < advance_flat.index(
-        "4. **Resolve.**"
+    assert advance_flat.index("Continue only after its exact owner") < (
+        advance_flat.index("4. **Resolve.**")
     )
+    chart_flat = " ".join(chart.split())
+    assert chart_flat.index("[MAP-FORMAT.md](MAP-FORMAT.md)") < (
+        chart_flat.index("show one complete mutation packet")
+    )
+    assert "repeat the destination-tuple search" in chart_flat
+    assert "sole canonical match" in chart_flat
+    assert "read back their exact identities, then wire" in chart_flat
 
 
 def test_wayfinder_prototype_participation_matches_judgment() -> None:
@@ -645,19 +681,17 @@ def test_wayfinder_prototype_participation_matches_judgment() -> None:
 
     tickets = wayfinder.split("## Tickets", 1)[1].split("## Modes", 1)[0]
     tickets_flat = " ".join(tickets.split())
-    rules = re.findall(
-        r"- `(shape/feel|design evidence)` — (HITL|AFK) (.+?)\.(?= - `|\Z)",
-        tickets_flat,
-    )
-    assert [(claim, mode) for claim, mode, _ in rules] == [
-        ("shape/feel", "HITL"),
-        ("design evidence", "AFK"),
-        ("design evidence", "HITL"),
-    ]
-    assert "objective verdict criteria" in rules[1][2]
-    assert "explicitly reserves the verdict for a human" in rules[2][2]
-    assert "pass its decision owner, claim level, judgment mode" in tickets_flat
-    assert "supported result, evidence, limits, and cleanup state" in tickets_flat
+    for contract in (
+        "`shape/feel` uses HITL, human judgment",
+        "`design evidence` uses AFK and rule-based judgment by default",
+        "`design evidence` uses HITL only when the caller reserves the verdict",
+        "decision owner, claim level, judgment mode",
+    ):
+        assert contract in tickets_flat
+    assert (
+        "supported answer or truthful residual, supported decision implications, "
+        "evidence, limits, and cleanup state"
+    ) in tickets_flat
 
     approve = wayfinder.split("4. **Approve.**", 1)[1].split("5. **Chart.**", 1)[0]
     approve_flat = " ".join(approve.split())
@@ -669,7 +703,7 @@ def test_wayfinder_prototype_participation_matches_judgment() -> None:
         "objective verdict criteria",
     ):
         assert field in approve_flat
-    assert "reject" in approve_flat and "participation rule" in approve_flat
+    assert "Reject" in approve and "incompatible Prototype fields" in approve
 
     for field in (
         "Decision owner:",
@@ -685,28 +719,47 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
     skill_dir = CUSTOM / "wayfinder"
     wayfinder = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     map_format = (skill_dir / "MAP-FORMAT.md").read_text(encoding="utf-8")
+    map_flat = " ".join(map_format.split())
 
     tickets = wayfinder.split("## Tickets", 1)[1].split("## Modes", 1)[0]
     tickets_flat = " ".join(tickets.split())
-    assert "user owns one resolution" in tickets_flat
-    assert "accepted repository contracts and objective proof" in tickets_flat
+    assert "current user owns a conversation-only decision" in tickets_flat
+    assert "repository contracts and objective proof" in tickets_flat
     assert "Classify by resolution authority" in tickets_flat
-    assert "Split a ticket" in tickets_flat
-    assert "`$grilling` for a conversation-only preference or tradeoff" in (
+    assert "Split independently resolvable" in tickets_flat
+    assert "Invoke `$grilling`" in tickets_flat
+    assert "Invoke `$grill-with-docs`" in tickets_flat
+    assert "Pass the user as decision owner" in tickets_flat
+    assert "context action, and separate ADR action" in tickets_flat
+    assert "Invoke `$diagnosing-bugs` in diagnosis mode" in tickets_flat
+    assert "Invoke `$to-questionnaire` only after the user explicitly approves" in (
         tickets_flat
     )
-    assert "`$grill-with-docs` when the decision may change durable domain terms" in (
-        tickets_flat
-    )
-    assert "recommend explicit `$to-questionnaire`" in tickets_flat
-    assert "Resume the same ticket with attributable answers." in tickets_flat
+    assert "`Questionnaire ready` is `Waiting`, never an answer." in tickets_flat
+    for field in (
+        "Resolution owner:",
+        "Resolver:",
+        "Expected return:",
+        "Re-entry owner: $wayfinder",
+        "Type: research | prototype | diagnosis | grilling | task",
+    ):
+        assert field in map_format
 
     advance = wayfinder.split("### Advance", 1)[1].split("### Maintain", 1)[0]
     advance_flat = " ".join(advance.split())
     claim = advance.split("3. **Claim.**", 1)[1].split("4. **Resolve.**", 1)[0]
     claim_flat = " ".join(claim.split())
-    assert "current session's claim identity" in claim_flat
-    assert "exact session identity or claimed-at value" in claim_flat
+    assert "this invocation's token" in claim_flat
+    assert "exact owner, token, and claimed-at value" in claim_flat
+    assert "Waiting and the supplied attributable evidence matches" in advance_flat
+    assert "validate the supplied return for a selected Waiting ticket" in advance_flat
+    assert "claim the map with the same invocation token" in advance_flat
+    assert "record no outcome or shared mutation" in advance_flat
+    assert "Run **Closure** while the map claim is still held" in advance_flat
+    assert "Release the ticket claim and read back its absence" in advance
+    assert "release the map claim, read back its absence" in advance_flat
+    for outcome in ("Resolved", "Blocked", "Waiting", "Out of scope"):
+        assert f"**{outcome}:**" in advance
 
     reconcile = advance.split("5. **Reconcile.**", 1)[1].split(
         "6. **Verify.**", 1
@@ -717,11 +770,11 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
         "Resolve",
         "Exclude",
     ]
-    assert "every affected fog item has exactly one disposition" in advance_flat
-    assert "sole fog container" in map_format
-    assert "None — all remaining in-scope questions are ticket-owned." in map_format
-    assert "future-work owner, governing resolution, or map pointer" in map_format
-    assert "Do not create a ticket solely to supply a link." in map_format
+    assert "give each affected fog item exactly one disposition" in advance_flat
+    assert "sole fog container" in map_flat
+    assert "None - all remaining in-scope questions are ticket-owned." in map_flat
+    assert "future-work owner, governing resolution, or map pointer" in map_flat
+    assert "Do not create a ticket only to supply a link." in map_flat
 
     maintain = wayfinder.split("### Maintain", 1)[1].split("## Closure", 1)[0]
     maintain_flat = " ".join(maintain.split())
@@ -736,21 +789,22 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
     ]
     assert "Record no child outcome" in maintain_flat
     assert "claim the map" in maintain_flat
-    assert "specific predicate takes precedence over Advance" in maintain_flat
-    assert "evidence-backed scope indexing" in maintain_flat
-    assert "every affected fog item exactly one Advance disposition" in maintain_flat
-    assert "linked resolution" in maintain_flat
-    assert "governing exclusion pointer" in maintain_flat
+    assert "representation has drifted and no question needs an answer" in maintain_flat
+    assert "scope indexes" in maintain_flat
+    assert "Give affected fog one disposition" in maintain_flat
 
     closure = wayfinder.split("## Closure", 1)[1].split("## Return", 1)[0]
     closure_flat = " ".join(closure.split())
-    assert "read back the absence of that claim" in closure_flat
+    assert "read back its absence" in closure_flat
     assert "invoke `$domain-modeling` once" in closure_flat
-    assert "no current Domain Delta already accounts for it" in closure_flat
+    assert "no current Domain Delta accounts for it" in closure_flat
     assert "`persist authorized` only with exact domain-write authority" in closure_flat
-    assert "otherwise use `render only`" in closure_flat
+    assert "`render only` otherwise" in closure_flat
     assert "separate explicit approval" in closure_flat
-    assert "an exact blocker leaves the map open" in closure_flat
+    assert "A material Domain Delta blocker leaves the map open" in closure
+    assert "compact closing packet" in closure_flat
+    assert "settled parent-spec source" in closure_flat
+    assert "terminal decision" in closure_flat
 
     returned = wayfinder.split("## Return", 1)[1]
     returned_flat = " ".join(returned.split())
@@ -758,7 +812,8 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
         "Next frontier: [<ticket title>](<link>). Invoke $wayfinder to advance it."
         in returned_flat
     )
-    assert "any Domain Delta produced during Closure" in returned_flat
+    assert "Status: charted | advanced | maintained | waiting | blocked" in returned_flat
+    assert "Domain Delta: <intact packet or not applicable>" in returned_flat
 
 
 def test_grill_with_docs_package_and_relationship_contract() -> None:
@@ -789,10 +844,24 @@ def test_grill_with_docs_package_and_relationship_contract() -> None:
         caller
         for caller, verb, callee in rows
         if verb == "Recommend and stop" and callee == "grill-with-docs"
-    } >= {"wayfinder", "triage"}
-    assert ("wayfinder", "Recommend and stop", "grilling") in rows
-    assert ("wayfinder", "Recommend and stop", "to-questionnaire") in rows
+    } >= {"triage"}
+    assert ("wayfinder", "Invoke", "grill-with-docs") in rows
+    assert ("wayfinder", "Invoke", "grilling") in rows
+    assert ("wayfinder", "Invoke", "to-questionnaire") in rows
     assert ("grilling", "Recommend and stop", "wayfinder") in rows
+    assert ("grilling", "Recommend and stop", "to-spec") not in rows
+    assert "Status: Confirmed | Evidence gap | Route gap | Blocked" in grill_docs
+    assert "Route gap` preserves Grilling's uninvoked" in grill_docs
+    for contract in (
+        "each settled material answer to Domain Modeling",
+        "every returned collision or blocker to Grilling",
+        "never merge or reinterpret it",
+        "Any material blocker in the current Domain Delta makes the "
+        "combined status `Blocked`",
+        "Composition blocker, owner, and re-entry condition",
+        "preserves the originating blocker and owner",
+    ):
+        assert contract in " ".join(grill_docs.split())
 
 
 def test_domain_modeling_owns_durable_domain_truth() -> None:
@@ -830,6 +899,12 @@ def test_grilling_preserves_one_decision_confirmed_exit_and_evidence_routes() ->
         "Return",
     ]
     for contract in (
+        "Maintain the decision frontier",
+        "highest-leverage decision",
+        "Let blocked evidence pause only its dependent branches",
+        "readiness as an exit test, never a question filter",
+        "an owned nonblocking deferral whose answer cannot change the parent commitment",
+        "only when no frontier decision can advance",
         "Relay every settled material answer",
         "pause dependent progress",
         "a repeated non-answer makes that decision authority unavailable",
@@ -840,9 +915,11 @@ def test_grilling_preserves_one_decision_confirmed_exit_and_evidence_routes() ->
         "Handoff neither answers nor owns the gap",
         "Transport: $handoff (uninvoked)",
         "required result, and exact re-entry instruction",
+        "Spec source: ready | not ready | not requested",
         "Downstream execution: none",
     ):
         assert contract in grilling_plain
+    assert "$to-spec" not in grilling
 
 
 def test_prototype_preserves_lifecycle_boundaries_and_branch_gates() -> None:
@@ -850,8 +927,11 @@ def test_prototype_preserves_lifecycle_boundaries_and_branch_gates() -> None:
     prototype = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     prototype_flat = " ".join(prototype.split())
     logic = (skill_dir / "LOGIC.md").read_text(encoding="utf-8")
+    logic_flat = " ".join(logic.split())
     ui = (skill_dir / "UI.md").read_text(encoding="utf-8")
+    ui_flat = " ".join(ui.split())
     measure = (skill_dir / "MEASURE.md").read_text(encoding="utf-8")
+    measure_flat = " ".join(measure.split())
 
     for contract in (
         "Before mutation, read back:",
@@ -866,6 +946,8 @@ def test_prototype_preserves_lifecycle_boundaries_and_branch_gates() -> None:
         "No terminal return leaves a live resource",
         "Never carry caller identity from a preceding request or supplied result",
         "Do not select, recommend, or invoke a downstream route",
+        "resolved by judgeable disposable evidence or returned with a truthful residual",
+        "supported answer or residual, supported decision implications, evidence, limitations, and artifact dispositions",
     ):
         assert contract in prototype_flat
 
@@ -877,12 +959,12 @@ def test_prototype_preserves_lifecycle_boundaries_and_branch_gates() -> None:
     ):
         assert removed not in prototype
 
-    assert "happy, boundary, and rejected cases" in logic
-    assert "repeated runs are equivalent" in logic
-    assert "positively isolates the whole prototype surface" in ui
-    assert "actual browser or target UI" in ui
-    assert "variance and worst observed result" in measure
-    assert "does not diagnose an unexplained slowdown" in measure
+    assert "happy, boundary, and rejected cases" in logic_flat
+    assert "repeated runs are equivalent" in logic_flat
+    assert "positively isolates the whole prototype surface" in ui_flat
+    assert "actual browser or target UI" in ui_flat
+    assert "variance and worst observed result" in measure_flat
+    assert "does not diagnose an unexplained slowdown" in measure_flat
     assert {
         path.relative_to(skill_dir).as_posix()
         for path in skill_dir.rglob("*")
@@ -1949,6 +2031,15 @@ def test_research_owns_one_authorized_cited_note() -> None:
         assert f"`{status}`" in research
     assert "create or update only that Markdown file" in research
     assert re.search(r"make no\s+tracked mutation", research)
+    for contract in (
+        "Treat a source as authoritative only for the claim it owns",
+        "not comparative superiority or real-world reliability",
+        "opinion and case reports own the viewpoint or observed case",
+        "Challenge the strongest plausible answer",
+        "another credible applicable search lane is unlikely to change the answer",
+        "require applicable independent evidence",
+    ):
+        assert contract in " ".join(research.split())
     assert research.index("## Output") < research.index("## Verify And Return")
     assert "Return to the caller without deciding its artifact" in research
     assert "starting downstream work" in research
@@ -2814,6 +2905,7 @@ def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts
     skill_dir = CUSTOM / "parallel-implement"
     parallel = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     ledger = (skill_dir / "references/RUN-LEDGER.md").read_text(encoding="utf-8")
+    ledger_flat = " ".join(ledger.split())
     event_types = runpy.run_path(str(skill_dir / "scripts/run_ledger.py"))["EVENT_TYPES"]
     closeout_fields = runpy.run_path(str(skill_dir / "scripts/run_ledger.py"))[
         "CLOSEOUT_FIELDS"
@@ -2855,7 +2947,7 @@ def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts
         "posted_comment",
         "mutation_readback",
     }
-    assert "Do not copy field-by-field event contracts" in ledger
+    assert "Do not copy field-by-field event contracts" in ledger_flat
     assert {
         "serial-frontier",
         "parallel-frontier",
@@ -3007,8 +3099,11 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         ("to-spec", "Load", "codebase-design"),
         ("wayfinder", "Invoke", "research"),
         ("wayfinder", "Invoke", "prototype"),
+        ("wayfinder", "Invoke", "diagnosing-bugs"),
+        ("wayfinder", "Invoke", "grilling"),
+        ("wayfinder", "Invoke", "grill-with-docs"),
+        ("wayfinder", "Invoke", "to-questionnaire"),
         ("wayfinder", "Invoke", "domain-modeling"),
-        ("wayfinder", "Recommend and stop", "grill-with-docs"),
         ("wayfinder", "Recommend and stop", "to-spec"),
         ("triage", "Recommend and stop", "grilling"),
         ("triage", "Recommend and stop", "grill-with-docs"),
@@ -3075,19 +3170,24 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
     wayfinder = (CUSTOM / "wayfinder/SKILL.md").read_text(encoding="utf-8")
     closure = wayfinder.split("## Closure", 1)[1].split("\n## ", 1)[0]
     assert "`$to-spec`" in closure
-    assert "successfully delivered implementation map" in closure
-    assert "`$to-tickets`" not in closure
-    assert "`$implement`" not in closure
-    assert "`$parallel-implement`" not in closure
+    assert "settled parent-spec source" in closure
+    assert "Never route a closed map directly to" in closure
+    for forbidden in ("`$to-tickets`", "`$implement`", "`$parallel-implement`"):
+        assert forbidden in closure
 
     skill_names = {skill.name for skill in CUSTOM.iterdir() if skill.is_dir()}
+    approved_explicit_invocations = {
+        ("wayfinder", "Invoke", "to-questionnaire"),
+    }
     for caller, verb, callee in rows:
         assert caller in skill_names
         assert callee in skill_names
-        if verb != "Recommend and stop":
+        if verb != "Recommend and stop" and (caller, verb, callee) not in (
+            approved_explicit_invocations
+        ):
             assert implicit_policy(CUSTOM / callee), (
                 f"{caller} cannot {verb} explicit-only skill {callee}; "
-                "recommend it and stop instead"
+                "require an exact user-approved invocation packet or recommend it"
             )
 
 

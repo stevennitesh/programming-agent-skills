@@ -2,15 +2,20 @@
 
 ## Current Decision
 
-Status: `promoted-current` for the 2026-07-23 Deploy Campaign epoch.
-
-Campaign shape: `runtime-no-change`. Canonical runtime, executable `B0`, and
-accepted final `C1` are the same five-file package:
+Historical campaign status: `promoted-current` for the 2026-07-23 Deploy
+Campaign epoch. Its `runtime-no-change` canonical, executable `B0`, and accepted
+final `C1` were the same five-file package:
 `ed5832972cbd1a093656087a7efc61e679f4068b3bea330204ba6559fb78ce33`.
-The Pruning Pass disposition is `pruning-not-needed`; promotion was a no-op
-integration read-back, not a runtime rewrite.
+Its Pruning Pass disposition was `pruning-not-needed`.
 
-Prototype answers one bounded design question with one disposable runnable
+A later lean Author pass aligned Outcome with the existing truthful residual
+branch and made the caller-facing result explicit. Canonical Prototype is
+current executable authority at tree SHA-256
+`e029b7ef47885407fa851b33d79f8ede53440901db5f22b82dc77f9e9de2afdb`.
+Installed parity and fresh wording-efficacy proof are not claimed; campaign-era
+exact-body and parity statements below are historical.
+
+Prototype addresses one bounded design question with one disposable runnable
 probe:
 
 ```text

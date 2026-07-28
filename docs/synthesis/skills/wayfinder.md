@@ -2,17 +2,20 @@
 
 Status: exhaustive design reference, not an executable contract.
 
-Current amendment (2026-07-28): lean Author passes extracted only the
-settled-decision Durability edge and three user-authority routes into the active
-runtime. Wayfinder invokes Domain Modeling once during Closure when no current
-Domain Delta accounts for the consequence. A conversation-only user decision
-recommends Grilling; a domain-affecting decision recommends Grill With Docs;
-an asynchronous external-stakeholder prerequisite recommends To Questionnaire.
-Each stops and preserves the Wayfinder resumption bound. The active runtime
-does not invoke To Questionnaire, wait, or reconcile answers. The broader
-coordinated candidate remains unpromoted. Canonical tree SHA-256 is
-`a8260346091d250c455f85260281fb969b02be1c5576a80b06484ee17bdec74e`;
-no installed parity or fresh wording-efficacy proof is claimed.
+Current amendment (2026-07-28): a lean Author pass makes Wayfinder the finite
+orchestrator for one bounded, interdependent fog-resolution route. It now
+admits only multi-session routes with a non-conversational resolver, invokes
+Research, Prototype, Diagnosis, Grilling, or Grill With Docs for the selected
+ticket, and invokes To Questionnaire only after the user approves its exact
+artifact packet. Wayfinder alone classifies returns, serializes shared map
+reconciliation, records attributable external waits, and closes with one
+compact settled source or terminal decision. It recommends To Spec only for a
+settled source and never routes directly to ticketing or implementation. The
+broader state-machine, budget, Resume, Reopen, and Terminate candidate remains
+unpromoted. Canonical tree SHA-256 is
+`730e6c9f472bb45d58c6e3103c1a01d376be6dfc7945fd0b200cc102358072af`;
+no installed parity
+or fresh wording-efficacy proof is claimed.
 
 Runtime authority remains in:
 
@@ -23,7 +26,10 @@ Runtime authority remains in:
 - `docs/synthesis/skill-context-relationships.md`; and
 - the target repository's domain and engineering contracts.
 
-`skills/custom/wayfinder/` matches the installed active baseline. The coordinated candidate and its `OPERATIONS.md` extraction are preserved under `skills/experimental/wayfinder/`; this synthesis does not claim staged behavior promotion or authorize routing or installation of that candidate.
+`skills/custom/wayfinder/` is canonical runtime authority. Installed parity is
+not assessed in this pass. The coordinated candidate and its `OPERATIONS.md`
+extraction remain under `skills/experimental/wayfinder/`; this synthesis does
+not authorize their promotion, routing, or installation.
 
 ## How To Read This Document
 

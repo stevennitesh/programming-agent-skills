@@ -4,9 +4,10 @@
 > passes clarified the active explicit-only routes from settled source and the
 > destination-before-scale tie-breaker: unresolved user-owned destination
 > shaping precedes Wayfinder, which begins only after a bounded destination
-> still has interdependent multi-session decisions or prerequisites. Canonical
+> still has interdependent decisions or prerequisites, a non-conversational
+> resolver, and a multi-session tracker need. Canonical
 > `skills/custom/skill-router/` is runtime authority at tree SHA-256
-> `3e152e6231288198a53e673113e570f65938a8ead1f1f352c0eea21a2860f9cf`.
+> `bf922ac7439ee7c00a17daa66b57399f17273a3eb57fcb6a791374bd10e7736e`.
 > Current review routes are `$change-review` and
 > `$high-assurance-review`; later former-name references are historical. No
 > installed sync or fresh wording-efficacy proof is claimed.

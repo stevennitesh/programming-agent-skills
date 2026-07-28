@@ -28,6 +28,18 @@ reconcile-before-execute pickup.
 Revision 8 keeps Resolving Merge Conflicts' existing spine while separating
 prepared from finished outcomes, adding one branch-only operations reference,
 and reconciling conflict-only caller packets and routing.
+Revision 9 gives Grilling a compact one-question decision frontier and
+conditional spec-source readiness exit test, and lets Grill With Docs preserve
+Grilling's existing Route gap while keeping Domain Modeling blockers dominant
+and owner-preserving, without adding a workflow stage or relationship.
+Revision 10 aligns Prototype's stated outcome with its existing truthful
+terminal residuals and makes its caller-facing result explicit without changing
+its lifecycle, authority, routing, or proof ceiling.
+Revision 11 makes Wayfinder a finite fog-resolution orchestrator: it admits only
+multi-session interdependent routes, invokes the selected evidence or
+conversation resolver, serializes shared map reconciliation, records external
+waits, and closes with one settled source or terminal decision. It adds no
+delivery stage.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -212,7 +224,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-008",
-      "completion_return": "A confirmed decision packet or one recommended evidence route",
+      "completion_return": "A confirmed decision packet with conditional spec-source readiness or one exact gap route",
       "disposition": "selected",
       "entry_conditions": [
         "The current user owns one material decision that benefits from direct questioning"
@@ -227,7 +239,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "primary_owner_skill_id": "SK-008",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
-        "Question order, contradiction pressure, and conversation-only confirmation"
+        "Question frontier, contradiction pressure, conversation-only confirmation, and conditional spec-source readiness assessment"
       ]
     },
     {
@@ -236,10 +248,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-009",
-      "completion_return": "A verified questionnaire path and delivery-ready summary",
+      "completion_return": "A verified questionnaire path, artifact durability, and delivery-ready summary",
       "disposition": "selected",
       "entry_conditions": [
-        "One external stakeholder holds knowledge the current user cannot supply synchronously"
+        "One external stakeholder holds material facts, judgment, or decision authority unavailable from inspectable sources and the current user"
       ],
       "essential": true,
       "exclusions": [
@@ -247,7 +259,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Create one Markdown questionnaire for an identifiable external stakeholder who owns missing facts or decisions",
+      "observable_outcome": "Create one Markdown questionnaire for an identifiable external stakeholder who owns missing facts, judgment, or decision authority",
       "primary_owner_skill_id": "SK-009",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
@@ -507,7 +519,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "SK-008"
       ],
       "capability_id": "CAP-020",
-      "completion_return": "A confirmed decision plus current Domain Delta or one combined blocker",
+      "completion_return": "A confirmed decision or intact Grilling gap, each with the current Domain Delta, or one owned composition blocker",
       "disposition": "selected",
       "entry_conditions": [
         "One repo-backed decision needs both direct grilling and cumulative domain capture"
@@ -522,7 +534,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "primary_owner_skill_id": "SK-020",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
-        "Composition sequence, relayed settled answers, cumulative Domain Delta, and combined exit"
+        "Composition sequence, bidirectional Relay, cumulative Domain Delta, blocker precedence, and combined exit"
       ]
     },
     {
@@ -530,14 +542,19 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-021"
       ],
       "allowed_contributor_skill_ids": [
+        "SK-002",
         "SK-003",
-        "SK-004"
+        "SK-004",
+        "SK-005",
+        "SK-008",
+        "SK-009",
+        "SK-020"
       ],
       "capability_id": "CAP-021",
-      "completion_return": "A verified map/frontier result or one closing route",
+      "completion_return": "A verified frontier result, wait, settled source, or terminal decision",
       "disposition": "selected",
       "entry_conditions": [
-        "A large interdependent effort needs durable decision tickets and one frontier outcome per advance"
+        "One bounded destination has several interdependent material decisions or prerequisites, at least one non-conversational resolver, and needs tracker-backed multi-session sequencing"
       ],
       "essential": true,
       "exclusions": [
@@ -545,11 +562,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Chart and advance one tracker-backed route through a large foggy effort",
+      "observable_outcome": "Resolve one finite tracker-backed route from bounded fog to a coherent settled source or terminal decision",
       "primary_owner_skill_id": "SK-021",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
-        "Map topology, frontier claims, typed research or prototype resolution, reconciliation, and closure"
+        "Map topology, resolver classification, ticket and shared-map claims, waiting state, reconciliation, and closing packet"
       ]
     },
     {
@@ -679,7 +696,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-008"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for to-questionnaire: Create one Markdown questionnaire for an identifiable external stakeholder who owns missing facts or decisions",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for to-questionnaire: Create one Markdown questionnaire for an identifiable external stakeholder who owns missing facts, judgment, or decision authority",
         "expected_owner_skill_id": "SK-009",
         "scenario_id": "PS-009"
       },
@@ -739,7 +756,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-020"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for wayfinder: Chart and advance one tracker-backed route through a large foggy effort",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for wayfinder: Resolve one finite tracker-backed route from bounded fog to a settled source or terminal decision",
         "expected_owner_skill_id": "SK-021",
         "scenario_id": "PS-021"
       },
@@ -798,6 +815,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       },
       {
         "predecessor_skill_id": "SK-005",
+        "successor_skill_id": "SK-021"
+      },
+      {
+        "predecessor_skill_id": "SK-005",
         "successor_skill_id": "SK-022"
       },
       {
@@ -838,7 +859,15 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       },
       {
         "predecessor_skill_id": "SK-008",
+        "successor_skill_id": "SK-021"
+      },
+      {
+        "predecessor_skill_id": "SK-008",
         "successor_skill_id": "SK-025"
+      },
+      {
+        "predecessor_skill_id": "SK-009",
+        "successor_skill_id": "SK-021"
       },
       {
         "predecessor_skill_id": "SK-009",
@@ -907,6 +936,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       {
         "predecessor_skill_id": "SK-019",
         "successor_skill_id": "SK-025"
+      },
+      {
+        "predecessor_skill_id": "SK-020",
+        "successor_skill_id": "SK-021"
       },
       {
         "predecessor_skill_id": "SK-020",
@@ -1452,8 +1485,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "domain-modeling caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "Relay every settled material answer and receive Domain Modeling's authoritative current cumulative Domain Delta under the explicit context action and separate ADR gate.",
-      "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
+      "entry_condition": "Relay every settled material answer, return each collision or blocker to Grilling before dependent progress, and preserve Domain Modeling's authoritative current cumulative Domain Delta under the explicit context action and separate ADR gate.",
+      "failure_behavior": "Return the target's exact blocker and owner; preserve the caller-owned resumption boundary",
       "input_packet": "Caller-owned bounded Source Trace for grill-with-docs and the declared domain-modeling input",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-005",
@@ -1488,7 +1521,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PROOF-REL-006"
       ],
       "resume_owner_skill_id": "SK-020",
-      "return_packet": "The declared grilling Return packet plus evidence, limits, and residual state",
+      "return_packet": "The declared Grilling Return packet, including readiness or an intact Evidence or Route gap, preserved through the composer without reinterpretation",
       "target_skill_id": "SK-008",
       "verb": "Compose",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -2399,16 +2432,16 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-003",
       "combined_exit_owner_skill_id": "SK-003",
       "context_loaded": [],
-      "entry_condition": "Several interdependent decisions and non-conversational prerequisites need a durable route; the user must start Wayfinder later.",
+      "entry_condition": "Research admission directly identifies several interdependent decisions and non-conversational prerequisites needing a durable route.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for research and the declared wayfinder input",
+      "input_packet": "Deterministic owner match, bounded question, identified decision set and prerequisites, and caller-owned Source Trace",
       "ordering_impact": "none",
       "relationship_id": "REL-042",
       "required_proof_ids": [
         "PROOF-REL-042"
       ],
       "resume_owner_skill_id": "SK-003",
-      "return_packet": "One named target and reason with downstream work unstarted",
+      "return_packet": "One deterministic Wayfinder match with route choice and downstream work left to the caller",
       "target_skill_id": "SK-021",
       "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -2928,7 +2961,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-025",
       "combined_exit_owner_skill_id": "SK-025",
       "context_loaded": [],
-      "entry_condition": "The situation satisfies one external stakeholder holds knowledge the current user cannot supply synchronously; return that route and leave it unstarted.",
+      "entry_condition": "The situation satisfies one external stakeholder holds material facts, judgment, or decision authority unavailable from inspectable sources and the current user; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
       "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared to-questionnaire input",
       "ordering_impact": "callee-before-caller",
@@ -3028,9 +3061,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-025",
       "combined_exit_owner_skill_id": "SK-025",
       "context_loaded": [],
-      "entry_condition": "The situation satisfies a large interdependent effort needs durable decision tickets and one frontier outcome per advance; return that route and leave it unstarted.",
+      "entry_condition": "One bounded destination has several interdependent decisions or prerequisites, at least one non-conversational resolver, and needs tracker-backed multi-session sequencing; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared wayfinder input",
+      "input_packet": "Bounded destination, interdependent decisions or prerequisites, non-conversational resolver need, multi-session reason, and caller-owned Source Trace",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-069",
       "required_proof_ids": [
@@ -3456,24 +3489,26 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "CAP-020"
       ],
       "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+        "Grill With Docs retains composition, Grilling, Domain Modeling, Relay, mutation, Return, and completion gates"
       ],
       "caller_skill_id": "SK-021",
       "combined_exit_owner_skill_id": "SK-021",
-      "context_loaded": [],
-      "entry_condition": "One HITL decision ticket or Chart bound needs a direct user decision with durable capture; resume Wayfinder later with the returned decision.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for wayfinder and the declared grill-with-docs input",
-      "ordering_impact": "none",
+      "context_loaded": [
+        "grill-with-docs caller-facing interface and branch-required domain pointers only"
+      ],
+      "entry_condition": "One HITL decision ticket or Chart bound needs a user decision while durable domain capture remains active.",
+      "failure_behavior": "Return the target's intact decision, gap, Domain Delta, or exact blocker for Wayfinder classification",
+      "input_packet": "Wayfinder ticket or Chart bound, current user as decision owner, return owner, identifiers, Source Trace, context action, and separate ADR action",
+      "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-087",
       "required_proof_ids": [
         "PROOF-REL-087"
       ],
       "resume_owner_skill_id": "SK-021",
-      "return_packet": "One named target and reason with downstream work unstarted",
+      "return_packet": "The intact Grilling packet plus current cumulative Domain Delta",
       "target_skill_id": "SK-020",
-      "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      "verb": "Invoke",
+      "wrong_condition": "The decision has no durable domain consequence, does not belong to the current user, or the caller packet lacks a return owner or locked context and ADR actions"
     },
     {
       "affected_capability_ids": [
@@ -3488,7 +3523,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "prototype caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "Pass decision authority, claim level, judgment mode, and the human judge when human; receive the supported result, evidence, limits, and cleanup state.",
+      "entry_condition": "Pass decision authority, claim level, judgment mode, and the human judge when human; receive the supported answer or truthful residual, supported decision implications, evidence, limits, and cleanup state.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
       "input_packet": "Caller-owned bounded Source Trace for wayfinder and the declared prototype input",
       "ordering_impact": "callee-before-caller",
@@ -3640,7 +3675,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-008",
       "combined_exit_owner_skill_id": "SK-008",
       "context_loaded": [],
-      "entry_condition": "Several interdependent unresolved decisions or non-conversational prerequisites need a tracker-backed multi-session route.",
+      "entry_condition": "The bounded interview cannot close in one conversation because several interdependent unresolved decisions or non-conversational prerequisites need a tracker-backed multi-session route.",
       "failure_behavior": "Return the recommendation without invoking the target; preserve the intact bound and exact re-entry instruction",
       "input_packet": "Grilling bound, confirmed decisions, unresolved branches or prerequisites, return owner, and exact re-entry instruction",
       "ordering_impact": "none",
@@ -3660,23 +3695,25 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "CAP-008"
       ],
       "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+        "Grilling retains interview, materiality, gap, confirmation, Return, and completion gates"
       ],
       "caller_skill_id": "SK-021",
       "combined_exit_owner_skill_id": "SK-021",
-      "context_loaded": [],
+      "context_loaded": [
+        "grilling caller-facing interface only"
+      ],
       "entry_condition": "One HITL decision ticket or Chart bound needs a conversation-only user decision with no durable domain-record consequence.",
-      "failure_behavior": "Return the recommendation without invoking the target; preserve the Wayfinder resumption boundary",
+      "failure_behavior": "Return Grilling's intact decision or gap packet for Wayfinder classification",
       "input_packet": "Wayfinder ticket or chart bound, decision owner, identifiers, and return owner",
-      "ordering_impact": "none",
+      "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-095",
       "required_proof_ids": [
         "PROOF-REL-095"
       ],
       "resume_owner_skill_id": "SK-021",
-      "return_packet": "One intact decision packet for later Wayfinder resumption with Grilling left unstarted",
+      "return_packet": "One intact confirmed decision or Grilling gap packet",
       "target_skill_id": "SK-008",
-      "verb": "Recommend and stop",
+      "verb": "Invoke",
       "wrong_condition": "The decision may change durable domain terms, Invariants, Context Relationships, or an ADR, or does not belong to the user"
     },
     {
@@ -3685,24 +3722,27 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "CAP-009"
       ],
       "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+        "To Questionnaire retains admission, send intake, needed-back ledger, artifact mutation, verification, Return, and completion gates"
       ],
       "caller_skill_id": "SK-021",
       "combined_exit_owner_skill_id": "SK-021",
-      "context_loaded": [],
-      "entry_condition": "One Task or HITL prerequisite needs attributable asynchronous answers from an identifiable external stakeholder.",
-      "failure_behavior": "Return the recommendation without invoking the target; preserve the selected ticket and answer-return destination",
-      "input_packet": "Wayfinder ticket bound, stakeholder identity, needed answers, origin owner and identity, and return destination",
-      "ordering_impact": "none",
+      "context_loaded": [
+        "to-questionnaire caller-facing interface only after exact packet approval"
+      ],
+      "entry_condition": "One Task or HITL prerequisite needs attributable asynchronous answers from an identifiable external stakeholder, and the user approved the exact invocation packet.",
+      "explicit_target_authority": "exact-user-approved-packet",
+      "failure_behavior": "Return To Questionnaire's exact status and artifact state; classify a verified questionnaire only as Waiting",
+      "input_packet": "User-approved recipient, downstream decision, origin and return owner, needed-back ledger, sensitivity, effort, authorized path and durability, overwrite authority, and Delivery not performed",
+      "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-096",
       "required_proof_ids": [
         "PROOF-REL-096"
       ],
       "resume_owner_skill_id": "SK-021",
-      "return_packet": "One questionnaire route for later resumption of the same ticket with attributable answers; To Questionnaire remains unstarted",
+      "return_packet": "One typed questionnaire status, exact artifact path and durability when written, and answer-return destination",
       "target_skill_id": "SK-009",
-      "verb": "Recommend and stop",
-      "wrong_condition": "Inspectable sources, the current user, or objective AFK proof can resolve the prerequisite"
+      "verb": "Invoke",
+      "wrong_condition": "The exact packet lacks user approval, or inspectable sources, the current user, or objective AFK proof can resolve the prerequisite"
     },
     {
       "affected_capability_ids": [
@@ -3805,6 +3845,33 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "target_skill_id": "SK-016",
       "verb": "Hand off",
       "wrong_condition": "The selected ready item remains implementable, the conflict is only a review concern, or behavior failed after the operation ended"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-021",
+        "CAP-005"
+      ],
+      "callee_owned_gates_mutations": [
+        "Diagnosing Bugs retains diagnosis admission, causal loop, evidence, Return, and completion gates; fix authority remains absent"
+      ],
+      "caller_skill_id": "SK-021",
+      "combined_exit_owner_skill_id": "SK-021",
+      "context_loaded": [
+        "diagnosing-bugs diagnosis-mode caller interface and branch-required references only"
+      ],
+      "entry_condition": "One AFK Wayfinder ticket needs causal diagnosis or a trusted reproduction before its question can be resolved.",
+      "failure_behavior": "Return the exact diagnosis packet or blocker for Wayfinder classification without changing production behavior",
+      "input_packet": "Wayfinder ticket identity, bounded Source Trace, expected and actual behavior, known evidence, diagnosis-only authority, and Wayfinder return owner",
+      "ordering_impact": "callee-before-caller",
+      "relationship_id": "REL-101",
+      "required_proof_ids": [
+        "PROOF-REL-101"
+      ],
+      "resume_owner_skill_id": "SK-021",
+      "return_packet": "One diagnosis packet with cause status, reproduction or evidence boundary, smallest recommended fix, regression evidence, limits, and return owner",
+      "target_skill_id": "SK-005",
+      "verb": "Invoke",
+      "wrong_condition": "Expected behavior, cause, and a trusted red-capable reproduction are already settled, or implementation rather than diagnosis is requested"
     }
   ],
   "selected_skills": [
@@ -3941,7 +4008,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "terminal_evidence_pointer": null
       },
       "canonical_name": "prototype",
-      "completion_condition": "The question has one runnable verdict and no prototype state is promoted",
+      "completion_condition": "Fit is resolved, the admitted question has a supported result or truthful residual, and no prototype state is promoted",
       "contract_order": 4,
       "essential_outcome": "Produce one disposable runnable verdict for one bounded design question",
       "failure_return": "Return the untestable question, authority gap, or residual uncertainty",
@@ -3967,7 +4034,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "relationship_ids": [],
       "required_input": "A bounded caller-owned Source Trace and authority for: Produce one disposable runnable verdict for one bounded design question",
-      "return_packet": "A supported design verdict with evidence, limits, and cleanup state",
+      "return_packet": "A supported answer or truthful residual with supported decision implications, evidence, limits, and cleanup state",
       "skill_id": "SK-004"
     },
     {
@@ -4107,7 +4174,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "terminal_evidence_pointer": null
       },
       "canonical_name": "grilling",
-      "completion_condition": "The bounded decision is confirmed or one exact gap is exposed",
+      "completion_condition": "The bounded decision is confirmed with applicable readiness or one exact gap is exposed",
       "contract_order": 8,
       "essential_outcome": "Stress-test one bounded plan, decision, or idea conversationally until shared understanding is confirmed",
       "failure_return": "Recommend one evidence owner and stop when conversation cannot settle the gap",
@@ -4119,12 +4186,12 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Question order, contradiction pressure, and conversation-only confirmation"
+        "Question frontier, contradiction pressure, conversation-only confirmation, and conditional spec-source readiness assessment"
       ],
       "owned_capability_ids": [
         "CAP-008"
       ],
-      "positive_entry_predicate": "The current user owns one material decision that benefits from direct questioning",
+      "positive_entry_predicate": "The current user owns one material decision, directly or through an approved caller packet, that benefits from direct questioning",
       "primary_role": "leaf",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -4140,7 +4207,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-094"
       ],
       "required_input": "A bounded caller-owned Source Trace and authority for: Stress-test one bounded plan, decision, or idea conversationally until shared understanding is confirmed",
-      "return_packet": "A confirmed decision packet or one recommended evidence route",
+      "return_packet": "A confirmed decision packet with conditional spec-source readiness or one exact gap route",
       "skill_id": "SK-008"
     },
     {
@@ -4153,14 +4220,14 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "terminal_evidence_pointer": null
       },
       "canonical_name": "to-questionnaire",
-      "completion_condition": "The questionnaire collects only the bounded stakeholder-owned gap",
+      "completion_condition": "The verified questionnaire asks only for bounded stakeholder-owned input needed by one downstream decision",
       "contract_order": 9,
-      "essential_outcome": "Create one Markdown questionnaire for an identifiable external stakeholder who owns missing facts or decisions",
+      "essential_outcome": "Create one Markdown questionnaire for an identifiable external stakeholder who owns missing facts, judgment, or decision authority",
       "failure_return": "Return the missing stakeholder, scope, or artifact boundary",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: One external stakeholder holds knowledge the current user cannot supply synchronously",
+        "The request does not satisfy: One external stakeholder holds material facts, judgment, or decision authority unavailable from inspectable sources and the current user",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
@@ -4170,7 +4237,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "owned_capability_ids": [
         "CAP-009"
       ],
-      "positive_entry_predicate": "One external stakeholder holds knowledge the current user cannot supply synchronously",
+      "positive_entry_predicate": "One external stakeholder holds material facts, judgment, or decision authority unavailable from inspectable sources and the current user",
       "primary_role": "leaf",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -4181,8 +4248,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-076",
         "REL-077"
       ],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Create one Markdown questionnaire for an identifiable external stakeholder who owns missing facts or decisions",
-      "return_packet": "A verified questionnaire path and delivery-ready summary",
+      "required_input": "A bounded caller-owned Source Trace and authority for: Create one Markdown questionnaire for an identifiable external stakeholder who owns missing facts, judgment, or decision authority",
+      "return_packet": "A verified questionnaire path, artifact durability, and delivery-ready summary",
       "skill_id": "SK-009"
     },
     {
@@ -4629,7 +4696,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "completion_condition": "Both conversational confirmation and durable capture finish under their own gates",
       "contract_order": 20,
       "essential_outcome": "Stress-test one repo-backed decision while keeping durable domain language current",
-      "failure_return": "Return the exact grilling or domain-capture blocker with safe resumption",
+      "failure_return": "Return the intact Grilling gap and current Domain Delta, or the exact owned composition blocker with safe resumption",
       "invocation_mode": "implicit",
       "load_budget_class": "conditional-aggregate",
       "negative_exclusion_predicates": [
@@ -4638,12 +4705,12 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Composition sequence, relayed settled answers, cumulative Domain Delta, and combined exit"
+        "Composition sequence, bidirectional Relay, cumulative Domain Delta, blocker precedence, and combined exit"
       ],
       "owned_capability_ids": [
         "CAP-020"
       ],
-      "positive_entry_predicate": "One repo-backed decision needs both direct grilling and cumulative domain capture",
+      "positive_entry_predicate": "One current-user-owned repo-backed decision needs both direct grilling and cumulative domain capture",
       "primary_role": "executable-aggregate",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -4655,7 +4722,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-006"
       ],
       "required_input": "A bounded caller-owned Source Trace and authority for: Stress-test one repo-backed decision while keeping durable domain language current",
-      "return_packet": "A confirmed decision plus current Domain Delta or one combined blocker",
+      "return_packet": "A confirmed decision or intact Grilling gap plus current Domain Delta, or one composition blocker with its owner",
       "skill_id": "SK-020"
     },
     {
@@ -4668,24 +4735,24 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "terminal_evidence_pointer": null
       },
       "canonical_name": "wayfinder",
-      "completion_condition": "Exactly one frontier outcome advances and all direct map consequences read back",
+      "completion_condition": "Chart returns not-needed or a verified map; Advance records one verified outcome or wait; Closure returns a settled source or terminal decision with no retained claim",
       "contract_order": 21,
-      "essential_outcome": "Chart and advance one tracker-backed route through a large foggy effort",
-      "failure_return": "Return the blocked frontier, fog, claim conflict, or missing setup surface",
+      "essential_outcome": "Resolve one finite tracker-backed route from bounded fog to a coherent settled source or terminal decision",
+      "failure_return": "Return the exact admission gap, frontier, wait, blocker, claim conflict, or missing setup surface",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-aggregate",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: A large interdependent effort needs durable decision tickets and one frontier outcome per advance",
+        "The destination lacks several interdependent material decisions or prerequisites, a non-conversational resolver, or multi-session tracker sequencing",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Map topology, frontier claims, typed research or prototype resolution, reconciliation, and closure"
+        "Map topology, resolver classification, ticket and shared-map claims, waiting state, reconciliation, and closing packet"
       ],
       "owned_capability_ids": [
         "CAP-021"
       ],
-      "positive_entry_predicate": "A large interdependent effort needs durable decision tickets and one frontier outcome per advance",
+      "positive_entry_predicate": "One bounded destination has several interdependent material decisions or prerequisites, at least one non-conversational resolver, and needs tracker-backed multi-session sequencing",
       "primary_role": "executable-aggregate",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -4700,10 +4767,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-090",
         "REL-091",
         "REL-095",
-        "REL-096"
+        "REL-096",
+        "REL-101"
       ],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Chart and advance one tracker-backed route through a large foggy effort",
-      "return_packet": "A verified map/frontier result or one closing route",
+      "required_input": "A bounded destination tuple or existing map, caller-owned Source Trace, and tracker authority for one finite fog-resolution route",
+      "return_packet": "A typed verified map, frontier, wait, blocker, settled source, terminal decision, or not-needed result",
       "skill_id": "SK-021"
     },
     {

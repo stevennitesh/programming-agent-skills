@@ -33,6 +33,7 @@ Edit the right-hand column to match whatever vocabulary you actually use.
 - `wayfinder:map`
 - `wayfinder:research`
 - `wayfinder:prototype`
+- `wayfinder:diagnosis`
 - `wayfinder:grilling`
 - `wayfinder:task`
 

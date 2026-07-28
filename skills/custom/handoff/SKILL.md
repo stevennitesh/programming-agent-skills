@@ -74,7 +74,9 @@ state and return `not-created` or `blocked` without a pickup.
 
 **Return.** Report the absolute path and:
 
-> Continue from `<absolute-path>`. Read the handoff and current repo instructions, refresh its volatile Current State, then execute its Next Step only if its authority and preconditions still hold.
+> Continue from `<absolute-path>`. Read the handoff and current repo
+> instructions, refresh its volatile Current State, then execute its Next Step
+> only if its authority and preconditions still hold.
 
 Append a redacted one-line form of any supplied focus to the pickup prompt. Do
 not create or message the receiving task, invoke a suggested skill, or execute

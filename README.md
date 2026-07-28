@@ -127,7 +127,8 @@ Representative routes:
 - External stakeholder knowledge gap -> `$to-questionnaire` -> human delivery and answer collection
 - One bounded ready item -> `$implement`; one parent-backed ready ticket graph to finish -> `$parallel-implement`, serializing or parallelizing each frontier as needed
 - Incoming issue or configured external PR -> `$triage`; ready-for-agent item -> `$implement`
-- Multi-session fog of war -> `$wayfinder` until the map closes -> `$to-spec`, `$to-tickets`, or `$implement`
+- Bounded multi-session fog -> `$wayfinder` until the map closes -> terminal
+  decision or settled source for `$to-spec`
 - Settled red-testable behavior -> `$tdd`; uncertain bug -> `$diagnosing-bugs`; the router owns the exact diagnosis/TDD boundary.
 - Whole-repository correctness, robustness, or quality discovery -> `$audit-codebase` builds, continues, or refreshes one linked HTML map, audits one user-selected subsystem, then can analyze one user-selected improvement candidate or returned evidence
 - Existing behavior in one bounded region -> `$simplify-code` for one proved reduction, a finite `until-clean` campaign, or a no-safe-cut verdict

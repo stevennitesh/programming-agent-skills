@@ -22,8 +22,9 @@ turning each constraint into a workflow step.
 **Implicitly invocable** means Codex may discover the skill from its
 description and a human may still name it explicitly.
 
-**Explicit-only** means the package disables implicit invocation and requires
-the human to name the skill.
+**Explicit-only** means the package disables semantic auto-invocation. The
+human must name the skill or explicitly approve one exact caller-owned
+invocation packet that names it; otherwise callers recommend it and stop.
 
 **Description** is the machine-readable routing predicate for an implicitly
 invocable skill. It names observable entry triggers and the closest exclusions

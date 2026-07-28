@@ -23,7 +23,7 @@
       "version": 1
     },
     {
-      "fingerprint": "sha256-v1:15e33c2f6ace6005a5cee58d157c1750e7c78616380a01d7007db782c86318d3",
+      "fingerprint": "sha256-v1:5112bd7d985ed695233ebdfaa12741c92ced5564b052d6fae6a746032bfdc1e0",
       "id": "pack-composition-contract",
       "path": "docs/validation/shared/schemas/pack-composition-contract-v1.schema.json",
       "version": 1

@@ -1,6 +1,7 @@
 # Triage Labels
 
-The skills speak in terms of category roles and state roles. This file maps those roles to the actual label strings used in this repo's issue tracker.
+The skills speak in terms of category roles and state roles. This file maps
+those roles to the actual label strings used in this repo's issue tracker.
 
 ## Category Roles
 
@@ -20,22 +21,28 @@ The skills speak in terms of category roles and state roles. This file maps thos
 | `implemented`             | `implemented`        | Implemented, reviewed, committed, and recorded by an implementation skill |
 | `wontfix`                 | `wontfix`            | Will not be actioned                     |
 
-When a skill mentions a role, use the corresponding label string from these tables.
+When a skill mentions a role, use the corresponding label string from these
+tables.
 
-Every triaged work item should carry exactly one category role and one state role.
+Every triaged work item should carry exactly one category role and one state
+role.
 
 Edit the right-hand column to match whatever vocabulary you actually use.
 
 ## Wayfinding Labels
 
-`$wayfinder` uses these fixed labels for map and ticket mechanics. They are not triage roles.
+`$wayfinder` uses these fixed labels for map and ticket mechanics. They are not
+triage roles.
 
 - `wayfinder:map`
 - `wayfinder:research`
 - `wayfinder:prototype`
+- `wayfinder:diagnosis`
 - `wayfinder:grilling`
 - `wayfinder:task`
 
 ## Provisioning
 
-For GitHub or GitLab, `$repo-bootstrap` verifies every mapped and fixed label exists and creates only missing labels after approval. Local Markdown uses these values directly and creates no external labels.
+For GitHub or GitLab, `$repo-bootstrap` verifies every mapped and fixed label
+exists and creates only missing labels after approval. Local Markdown uses these
+values directly and creates no external labels.

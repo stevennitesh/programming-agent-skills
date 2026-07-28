@@ -5,8 +5,9 @@ description: Prototype one bounded design question with a disposable runnable pr
 
 # Prototype
 
-**Outcome:** one bounded design question answered by a judgeable disposable
-probe. The verdict is durable; the probe is not.
+**Outcome:** one bounded design question resolved by judgeable disposable
+evidence or returned with a truthful residual. The supported result is durable;
+the probe is not.
 
 **Ownership.** Prototype owns the frozen question, authorized artifacts, one
 entry point or smallest run recipe, branch Smoke, supported result, and
@@ -104,8 +105,9 @@ cleanup.
 
 Return directly to the current caller, or to the user for direct work, and stop.
 State truthfully whether the question was answered, awaits human judgment, could
-not proceed, or did not fit. Include only applicable identity, question,
-evidence, residual, artifact, limitation, and decision-candidate facts.
+not proceed, or did not fit. Include only the applicable identity, question,
+supported answer or residual, supported decision implications, evidence,
+limitations, and artifact dispositions.
 
 Never carry caller identity from a preceding request or supplied result. Do not
 select, recommend, or invoke a downstream route.

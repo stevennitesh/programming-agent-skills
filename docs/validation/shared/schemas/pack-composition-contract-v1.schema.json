@@ -151,6 +151,7 @@
           "combined_exit_owner_skill_id": {"pattern": "^SK-[0-9]{3}$", "type": "string"},
           "context_loaded": {"items": {"type": "string"}, "type": "array"},
           "entry_condition": {"minLength": 1, "type": "string"},
+          "explicit_target_authority": {"enum": ["exact-user-approved-packet"]},
           "failure_behavior": {"minLength": 1, "type": "string"},
           "input_packet": {"minLength": 1, "type": "string"},
           "ordering_impact": {"minLength": 1, "type": "string"},

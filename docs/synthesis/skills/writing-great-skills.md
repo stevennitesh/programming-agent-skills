@@ -19,6 +19,8 @@ adds one compact Behavior Shape contract:
 - use the fewest meaningful state transitions;
 - keep cross-cutting constraints in gates with condition, passing evidence,
   and safe failure;
+- treat an exact user-approved caller packet as explicit authority for its named
+  explicit-only invocation, never as semantic auto-routing;
 - make completion clear and demanding enough to force required legwork;
 - use an earned pretrained Leading Word without replacing exact contracts;
 - prune changed and adjacent instructions as `Keep`, `Collapse`, `Disclose`,

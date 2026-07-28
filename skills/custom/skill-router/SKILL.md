@@ -28,7 +28,7 @@ their procedures, artifacts, mutations, proof, and completion.
 | --- | --- |
 | One repo-backed decision needs direct grilling and durable domain capture | `$grill-with-docs` |
 | The current user owns one bounded decision needing conversation-only stress-testing | `$grilling` |
-| A large interdependent effort needs a tracker-backed route charted or advanced | `$wayfinder` |
+| A bounded destination has interdependent decisions, a non-conversational resolver, and needs multi-session tracker sequencing | `$wayfinder` |
 | One external stakeholder holds missing knowledge and needs an async discovery questionnaire | `$to-questionnaire` |
 | One bounded source-answerable question needs cited evidence | `$research` |
 | One design question needs disposable runnable evidence | `$prototype` |
@@ -39,7 +39,8 @@ runnable design choice to `$prototype`, an external-stakeholder gap to
 `$to-questionnaire`, and a current-user decision to `$grilling` or
 `$grill-with-docs` when durable domain capture may change. Route to `$wayfinder`
 only after the destination is bounded and several interdependent decisions or
-prerequisites need a tracker-backed, multi-session route.
+prerequisites, including at least one non-conversational resolver, need a
+tracker-backed multi-session route.
 
 ### Build
 

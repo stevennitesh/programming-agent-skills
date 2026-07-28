@@ -17,7 +17,9 @@ def test_promoted_domain_modeling_preserves_compact_ddd_contract() -> None:
     skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     skill_flat = " ".join(skill.split())
     context_format = (skill_dir / "CONTEXT-FORMAT.md").read_text(encoding="utf-8")
+    context_format_flat = " ".join(context_format.split())
     adr_format = (skill_dir / "ADR-FORMAT.md").read_text(encoding="utf-8")
+    adr_format_flat = " ".join(adr_format.split())
     policy = (skill_dir / "agents/openai.yaml").read_text(encoding="utf-8")
 
     for contract in (
@@ -57,7 +59,7 @@ def test_promoted_domain_modeling_preserves_compact_ddd_contract() -> None:
         "A boundary that translates into a distinct local model is an **Anticorruption Layer**, not Conformist",
         "A versioned or published schema alone does not establish it",
     ):
-        assert contract in context_format
+        assert contract in context_format_flat
 
     for contract in (
         "Hard to reverse",
@@ -66,7 +68,7 @@ def test_promoted_domain_modeling_preserves_compact_ddd_contract() -> None:
         "explicit approval",
         "already-settled",
     ):
-        assert contract in adr_format
+        assert contract in adr_format_flat
 
     for rejected in (
         "Trace -> Challenge -> Resolve -> Reconcile",
@@ -101,13 +103,29 @@ def test_promoted_grilling_and_domain_modeling_preserve_composer_inputs() -> Non
     domain_flat = " ".join(domain.split())
 
     for contract in (
+        "Maintain the decision frontier",
+        "Let blocked evidence pause only its dependent branches",
         "Relay every settled material answer",
         "pause dependent progress",
         "domain collision or blocker returns",
         "Grilling owns materiality, not domain consequences",
+        "Spec source: ready | not ready | not requested",
         "Add caller identifiers when supplied",
     ):
         assert contract in grilling_plain
+
+    grill_docs = (CUSTOM / "grill-with-docs/SKILL.md").read_text(
+        encoding="utf-8"
+    )
+    grill_docs_plain = " ".join(grill_docs.split())
+    for contract in (
+        "every returned collision or blocker to Grilling",
+        "never merge or reinterpret it",
+        "Any material blocker in the current Domain Delta makes the "
+        "combined status `Blocked`",
+        "Composition blocker, owner, and re-entry condition",
+    ):
+        assert contract in grill_docs_plain
 
     for contract in (
         "accept every settled material answer",
@@ -134,8 +152,11 @@ def test_promoted_prototype_preserves_selected_leaf_contract() -> None:
     skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     skill_flat = " ".join(skill.split())
     logic = (skill_dir / "LOGIC.md").read_text(encoding="utf-8")
+    logic_flat = " ".join(logic.split())
     ui = (skill_dir / "UI.md").read_text(encoding="utf-8")
+    ui_flat = " ".join(ui.split())
     measure = (skill_dir / "MEASURE.md").read_text(encoding="utf-8")
+    measure_flat = " ".join(measure.split())
     policy = (skill_dir / "agents/openai.yaml").read_text(encoding="utf-8")
     wayfinder_map = (CUSTOM / "wayfinder" / "MAP-FORMAT.md").read_text(
         encoding="utf-8"
@@ -178,20 +199,20 @@ def test_promoted_prototype_preserves_selected_leaf_contract() -> None:
     ):
         assert removed not in skill
 
-    assert "happy, boundary, and rejected cases" in logic
-    assert "repeated runs are equivalent" in logic
-    assert "positively isolates the whole prototype surface" in ui
-    assert "never exceed five" in ui
-    assert "actual browser or target UI" in ui
-    assert "variance and worst observed result" in measure
-    assert "known confounders and unsupported extrapolations" in measure
-    assert "does not diagnose an unexplained slowdown" in measure
+    assert "happy, boundary, and rejected cases" in logic_flat
+    assert "repeated runs are equivalent" in logic_flat
+    assert "positively isolates the whole prototype surface" in ui_flat
+    assert "never exceed five" in ui_flat
+    assert "actual browser or target UI" in ui_flat
+    assert "variance and worst observed result" in measure_flat
+    assert "known confounders and unsupported extrapolations" in measure_flat
+    assert "does not diagnose an unexplained slowdown" in measure_flat
     assert "Decision owner: <who>" in wayfinder_map
     assert "Claim level: shape/feel | design evidence" in wayfinder_map
     assert "Judgment mode: human | rule-based" in wayfinder_map
-    assert "pass its decision owner, claim level, judgment mode" in wayfinder_flat
-    assert "human judge when human" in wayfinder_flat
-    for branch in (logic, ui, measure):
+    assert "with the decision owner, claim level, judgment mode" in wayfinder_flat
+    assert "human judge or objective verdict criteria" in wayfinder_flat
+    for branch in (logic_flat, ui_flat, measure_flat):
         assert "Return to `Judge` in [SKILL.md](SKILL.md)" in branch
         assert "this branch does not Reconcile or Return" in branch
 

@@ -1,6 +1,8 @@
 # Refactoring After GREEN
 
-Refactor only while tests are GREEN. Preserve observable behavior and the current public contract; intended behavior or contract changes start a new RED cycle.
+Refactor only while tests are GREEN. Preserve observable behavior and the
+current public contract; intended behavior or contract changes start a new RED
+cycle.
 
 Prefer moves that increase **depth**, **leverage**, or **locality**:
 
@@ -13,13 +15,16 @@ Prefer moves that increase **depth**, **leverage**, or **locality**:
   the tracer bullet;
 - delete implementation-detail tests after better behavioral coverage exists.
 
-Make one meaningful move at a time. Rerun the focused test after each move and the nearest relevant test group before leaving the tracer bullet. Preserve correct behavior tests and keep test-only hooks out of production interfaces.
+Make one meaningful move at a time. Rerun the focused test after each move and
+the nearest relevant test group before leaving the tracer bullet. Preserve
+correct behavior tests and keep test-only hooks out of production interfaces.
 
 Remove or consolidate a test only after the surviving portfolio proves its
 distinct responsibility. Leave pre-existing portfolio cleanup outside the
 tracer bullet as follow-up evidence.
 
-Stop when the intended material cleanup is complete and the focused plus nearest relevant tests are GREEN, or when the next improvement would expand scope.
+Stop when the intended material cleanup is complete and the focused plus nearest
+relevant tests are GREEN, or when the next improvement would expand scope.
 
 If refactoring reveals work outside the tracer bullet, return it as residual
 follow-up evidence without mutating a tracker or widening the slice. Recommend

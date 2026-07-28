@@ -1,6 +1,7 @@
 # Deepening
 
-Use this branch when dependency shape changes the seam, substitute, test migration, or validation strategy.
+Use this branch when dependency shape changes the seam, substitute, test
+migration, or validation strategy.
 
 [`SKILL.md`](SKILL.md) owns vocabulary and taste.
 [DIRECT-DESIGN.md](DIRECT-DESIGN.md) owns the direct pass and design packet.
@@ -12,7 +13,8 @@ Classify -> Place -> Substitute -> Replace -> Migrate.
 
 ## 1. Classify
 
-Classify every dependency whose shape affects the proposed interface, seam, substitute, migration, or proof:
+Classify every dependency whose shape affects the proposed interface, seam,
+substitute, migration, or proof:
 
 | Category | Design and proof consequence |
 | --- | --- |
@@ -31,7 +33,9 @@ Interface pressure.
 
 ## 3. Substitute
 
-Choose substitutes by behavior risk, not convenience. Prove domain behavior through the deeper interface. Add separate substitute or production-adapter contract tests only when their fidelity or translation carries independent risk.
+Choose substitutes by behavior risk, not convenience. Prove domain behavior
+through the deeper interface. Add separate substitute or production-adapter
+contract tests only when their fidelity or translation carries independent risk.
 
 ## 4. Replace, Don't Layer
 
@@ -43,8 +47,10 @@ isolation. Classify every affected test as **add, rewrite, keep, or delete**:
 
 - **Add** caller-facing behavior proof that is missing.
 - **Rewrite** behavior whose current test surface becomes obsolete.
-- **Keep** dense rules, adapter contracts, regressions, or behavior not yet covered through the deeper interface.
-- **Delete** pass-through, call-order, or implementation-detail assertions superseded by stronger behavior proof.
+- **Keep** dense rules, adapter contracts, regressions, or behavior not yet
+  covered through the deeper interface.
+- **Delete** pass-through, call-order, or implementation-detail assertions
+  superseded by stronger behavior proof.
 
 Assert observable outcomes through the Interface callers use. A test that
 changes only because Implementation moved is testing past the Interface.

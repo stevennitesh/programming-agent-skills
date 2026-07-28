@@ -576,13 +576,24 @@ def _ledger_failures(contract: dict[str, object]) -> list[str]:
                 f"relationship {relationship_id} is not owned by caller {caller}"
             )
         target_row = skill_by_id.get(target)
+        explicit_target_authority = row.get("explicit_target_authority")
         if (
             isinstance(target_row, dict)
             and target_row.get("invocation_mode") == "explicit-only"
             and verb != "Recommend and stop"
+            and explicit_target_authority != "exact-user-approved-packet"
         ):
             failures.append(
                 f"explicit-only target {target} requires Recommend and stop"
+            )
+        if explicit_target_authority is not None and (
+            not isinstance(target_row, dict)
+            or target_row.get("invocation_mode") != "explicit-only"
+            or verb == "Recommend and stop"
+        ):
+            failures.append(
+                f"relationship {relationship_id} has inapplicable "
+                "explicit_target_authority"
             )
         for capability_id in row.get("affected_capability_ids", []):
             if capability_id not in capability_ids:

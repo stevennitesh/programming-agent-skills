@@ -226,6 +226,28 @@ def test_absent_owner_creates_marker_bounded_draft_only() -> None:
     assert freeze["failures"]
 
 
+def test_exact_user_approval_can_authorize_one_explicit_target_invocation() -> None:
+    contract = pack_contract()
+    draft = valid_contract()
+    draft["selected_skills"][0]["invocation_mode"] = "explicit-only"
+
+    assert (
+        "explicit-only target SK-001 requires Recommend and stop"
+        in contract.validate_contract(draft)
+    )
+
+    draft["relationships"][0][
+        "explicit_target_authority"
+    ] = "exact-user-approved-packet"
+    assert contract.validate_contract(draft) == []
+
+    draft["selected_skills"][0]["invocation_mode"] = "implicit"
+    assert (
+        "relationship REL-001 has inapplicable explicit_target_authority"
+        in contract.validate_contract(draft)
+    )
+
+
 def test_freeze_returns_deterministic_order_and_immutable_slice() -> None:
     contract = pack_contract()
     draft = valid_contract()

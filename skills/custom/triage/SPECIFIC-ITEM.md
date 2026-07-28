@@ -2,22 +2,34 @@
 
 ## 1. Trace
 
-Build the **Source Trace** from the current request; tracker and label contracts; full item body, labels, author, dates, decision-bearing comments, and prior triage notes; PR diff when applicable; relevant glossary terms, ADRs, code, verification evidence, and rejected-enhancement records.
+Build the **Source Trace** from the current request; tracker and label
+contracts; full item body, labels, author, dates, decision-bearing comments, and
+prior triage notes; PR diff when applicable; relevant glossary terms, ADRs,
+code, verification evidence, and rejected-enhancement records.
 
 Parse prior triage notes so resolved questions remain resolved.
 
 Run two screens:
 
-- **Redundancy:** search by domain concept for existing behavior and report where you looked.
-- **Prior rejection:** screen `.out-of-scope/` for concept matches and load likely matches in full.
+- **Redundancy:** search by domain concept for existing behavior and report
+  where you looked.
+- **Prior rejection:** screen `.out-of-scope/` for concept matches and load
+  likely matches in full.
 
-Complete when the claim, prior decisions, current roles, implementation surface, and evidence gaps are known.
+Complete when the claim, prior decisions, current roles, implementation surface,
+and evidence gaps are known.
 
 ## 2. Verify
 
-- **Bug:** attempt a trusted reproduction or the strongest safe structural proxy and return `confirmed`, `not-confirmed`, `partial`, or `insufficient-evidence`, with the observed behavior, inspected seam, likely code path, skipped execution, and residual uncertainty. A valid non-reproduction does not prove the report false.
-- **Enhancement:** verify current behavior, relevant seams, plausibility, redundancy, and prior rejection.
-- **PR:** inspect the tracker-provided diff first. When execution is required, use an isolated worktree or approved clean checkout and focused commands.
+- **Bug:** attempt a trusted reproduction or the strongest safe structural proxy
+  and return `confirmed`, `not-confirmed`, `partial`, or
+  `insufficient-evidence`, with the observed behavior, inspected seam, likely
+  code path, skipped execution, and residual uncertainty. A valid
+  non-reproduction does not prove the report false.
+- **Enhancement:** verify current behavior, relevant seams, plausibility,
+  redundancy, and prior rejection.
+- **PR:** inspect the tracker-provided diff first. When execution is required,
+  use an isolated worktree or approved clean checkout and focused commands.
 
 Route code changes to implementation.
 
@@ -45,7 +57,9 @@ slices, return its identity, commitments, evidence, and multi-slice reason,
 recommend explicit `$to-tickets`, and stop before mutation. Do not force it
 into one ready brief.
 
-Return the proposed category and state, reasoning, current behavior and seams, redundancy and prior-rejection results, verification result, and remaining unknowns. Build and display one complete **mutation packet** containing:
+Return the proposed category and state, reasoning, current behavior and seams,
+redundancy and prior-rejection results, verification result, and remaining
+unknowns. Build and display one complete **mutation packet** containing:
 
 - roles and mapped labels before and after;
 - the full comment or brief;
@@ -57,13 +71,17 @@ and Return envelope in [SKILL.md](SKILL.md).
 
 Replace prior role labels so the role invariant holds.
 
-- `ready-for-agent`: post [AGENT-BRIEF.md](AGENT-BRIEF.md), or explicitly reuse an existing brief only after it passes the current Ready Gate.
-- `ready-for-human`: use the same fields under `## Human-Ready Brief` and state why human judgment, access, design, testing, or merge action is required.
+- `ready-for-agent`: post [AGENT-BRIEF.md](AGENT-BRIEF.md), or explicitly reuse
+  an existing brief only after it passes the current Ready Gate.
+- `ready-for-human`: use the same fields under `## Human-Ready Brief` and state
+  why human judgment, access, design, testing, or merge action is required.
 - `needs-info`: post the template below.
 - `wontfix`, already implemented: point to existing behavior, then close.
 - `wontfix`, rejected bug: explain the rejection, then close.
-- `wontfix`, rejected enhancement: update `.out-of-scope/`, link it from the comment, then close.
-- `needs-triage`: apply the state and preserve meaningful partial progress in a comment.
+- `wontfix`, rejected enhancement: update `.out-of-scope/`, link it from the
+  comment, then close.
+- `needs-triage`: apply the state and preserve meaningful partial progress in a
+  comment.
 
 Apply actual label strings through `docs/agents/triage-labels.md`.
 

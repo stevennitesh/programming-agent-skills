@@ -1,12 +1,12 @@
 ---
 name: to-questionnaire
-description: Create one Markdown discovery questionnaire for one external stakeholder who holds facts or decisions the user cannot supply.
+description: Create one Markdown discovery questionnaire for one external stakeholder who holds facts, judgments, or decision authority unavailable to the user.
 ---
 
 # To Questionnaire
 
-**Outcome:** one recipient-ready questionnaire that closes a named knowledge gap
-for one downstream decision.
+**Outcome:** one recipient-ready questionnaire that elicits attributable
+stakeholder facts, judgments, or decisions needed for one downstream decision.
 
 **Boundary.** This skill owns send intake, the needed-back ledger, question
 design, one Markdown artifact, verification, and its returned path. The user
@@ -18,21 +18,22 @@ and external state unchanged. Never contact or answer for the recipient.
 **Grill the send, not the subject.**
 
 **Admit.** Proceed only when one identifiable external stakeholder owns material
-knowledge unavailable from inspectable sources. When sources can answer,
-recommend `$research` and stop. When the current user owns the decision,
-recommend `$grilling` and stop.
+facts, judgment, or decision authority unavailable from inspectable sources and
+the current user. When sources can answer, recommend `$research` and stop. When
+the current user owns the decision, recommend `$grilling` and stop.
 
 **Lock.** Trace supplied context. Lock one recipient; their role, expertise, and
 relationship to the sender; the downstream decision; the origin owner and
 identity; where attributable answers return; what must be learned; how answers
-will be used; the deadline; the effort budget; and the authorized output path.
-Infer available fields. Ask one compact intake only for missing send information
-the user can reasonably know.
+will be used; any applicable deadline; the recipient effort budget or a
+proportionate estimate; and the authorized output path. Infer available fields.
+Ask one compact intake only for missing sender-known information that materially
+changes the recipient, coverage, sensitivity, effort, or output authority.
 
 For a direct request, default the current user as the origin and return owner,
 delivery authority to the user, delivery to not performed, overwrite authority
-to no, and the response format to Markdown. Keep every inference visible as an
-unresolved assumption.
+to no, and the response format to Markdown. State material inferred context as
+unresolved assumptions; skill defaults are not assumptions.
 
 **Gap.** Build a needed-back ledger. Each missing fact, judgment, constraint,
 example, or risk names the downstream decision it unlocks. When materially
@@ -45,7 +46,9 @@ question neutral, recipient-answerable, and about one idea. Add answer space and
 a short “why this matters” only when it prevents misreading.
 
 Use a title; purpose and decision; sender, recipient, and answer use; context;
-answering instructions; themed questions; and a final catch-all.
+answering instructions; themed questions; and a final catch-all. Invite partial
+answers and explicit unknowns. Ask for rationale, examples, sources, or
+constraints only when the downstream decision needs them.
 
 **Cover.** Map every needed-back item to a question. Remove duplicate, compound,
 leading, speculative, source-answerable, and out-of-scope questions. The
@@ -54,7 +57,9 @@ catch-all does not cover a known ledger item.
 **Save.** Write exactly one file. Default to
 `<work-root>/.tmp/to-questionnaire/<slug>.md` after verifying the path is
 ignored. Otherwise recommend `$repo-bootstrap` and stop. An explicitly supplied
-path overrides the default.
+path overrides the default. Treat the default as disposable. When the artifact
+must outlive normal temporary cleanup, require an explicitly authorized durable
+path.
 
 Before the first write, classify the artifact's sensitivity; resolve the
 absolute `.md` target and prove it remains contained in the authorized root
@@ -82,6 +87,7 @@ Downstream decision:
 Origin owner and identity:
 Answers return to:
 Artifact path: <absolute path> | none
+Artifact durability: disposable default | authorized durable path | none
 Covered and excluded needed-back summary:
 Question count and estimated effort:
 Sensitive-context omissions or redactions:

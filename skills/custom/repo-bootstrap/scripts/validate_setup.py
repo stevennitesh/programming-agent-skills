@@ -16,7 +16,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:a556275fb637 -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:b5e891ccfb67 -->"
 ENGINEERING_PRIMER_TOKEN = (
     "Explore imaginatively. Converge under proof. Simplify ruthlessly."
 )
@@ -123,14 +123,14 @@ WAYFINDER_TOKENS = (
     "Claimed at:",
     "codex/<lowercase UUIDv4>",
     "<YYYY-MM-DDTHH:MM:SSZ>",
-    "Maintain claims the map",
+    "Maintain",
+    "claims the map",
     "never reuse it across invocations",
     "Elapsed time alone never makes a claim stale.",
     "explicit user approval",
     "**Release**",
-    "**Resolve**",
-    "**Block**",
-    "**Out of scope**",
+    "**Outcome**",
+    "wait by adding the waiting marker",
     "**Complete map**",
 )
 
@@ -157,6 +157,7 @@ LABEL_TOKENS = (
     "`wayfinder:map`",
     "`wayfinder:research`",
     "`wayfinder:prototype`",
+    "`wayfinder:diagnosis`",
     "`wayfinder:grilling`",
     "`wayfinder:task`",
 )

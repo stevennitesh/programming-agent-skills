@@ -43,6 +43,12 @@ body's applicable text; original study, data, and method; or a methodologically
 relevant synthesis for an aggregate claim. Secondary sources, snippets, indexes,
 and summaries are discovery only unless they own the exact synthesis claim.
 
+Treat a source as authoritative only for the claim it owns. Official material
+owns its published contract, policy, release, or stated position, not
+comparative superiority or real-world reliability. Original studies and
+syntheses own conclusions only within their method and population; opinion and
+case reports own the viewpoint or observed case, not a general fact.
+
 For every load-bearing claim, record:
 
 - `supported`, `conflicted`, or `unknown`;
@@ -53,14 +59,18 @@ For every load-bearing claim, record:
 - answer impact and limits.
 
 Judge authority and applicability before prestige, count, or nominal recency.
-Search for evidence that could falsify or narrow the proposed answer. Reconcile
-differences in scope; preserve applicable conflict and exact unknowns.
+Challenge the strongest plausible answer with contrary results, alternative
+terminology, boundary cases, and known failure conditions. Reconcile differences
+in scope; preserve applicable conflict and exact unknowns.
 
 Stop only when every load-bearing claim is classified, the best known applicable
 owner was inspected or its access failure recorded, material counterevidence and
-limits are explicit, and another bounded lane repeats the evidence or cannot
-close a named gap. A supplied time or source budget may end search but cannot
-convert an unknown into support.
+limits are explicit, and another credible applicable search lane is unlikely to
+change the answer or has exposed a named gap. When no source uniquely owns the
+truth—including empirical, comparative, contested, high-impact, or
+incentive-laden claims—require applicable independent evidence or keep the
+claim `conflicted` or `unknown`. A supplied time or source budget may end search
+but cannot convert an unknown into support.
 
 ## Output
 

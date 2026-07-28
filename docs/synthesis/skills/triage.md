@@ -8,7 +8,7 @@
 > recommends and stops at Grilling, Grill With Docs, Wayfinder, or To Tickets
 > according to decision topology and settled multi-slice need. Canonical
 > `skills/custom/triage/` is runtime authority at campaign-tree SHA-256
-> `0414090ea3ea1505f1b65a100c41f0d501959504168faf3eac83f8c524a30e0d`.
+> `edf73d5afab85c0524541a851d09709e5c8bdb255e6a9e16861c4f124b9c6c18`.
 > Later pre-amendment proposal and gap text is historical when it disagrees
 > with canonical runtime. No installed sync or fresh wording-efficacy proof is
 > claimed.

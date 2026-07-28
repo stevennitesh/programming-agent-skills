@@ -1,19 +1,26 @@
 # Issue tracker: GitHub
 
-Issues and specs for this repo live as GitHub issues. Use the GitHub connector for issue and pull-request operations.
+Issues and specs for this repo live as GitHub issues. Use the GitHub connector
+for issue and pull-request operations.
 
 ## Conventions
 
 - **Create an issue**: use the GitHub connector's issue creation action.
-- **Read an issue**: use the GitHub connector to fetch the issue body, comments, and labels.
-- **List issues**: use the GitHub connector to list open issues with number, title, body, labels, and comments; filter by mapped labels when needed.
+- **Read an issue**: use the GitHub connector to fetch the issue body, comments,
+  and labels.
+- **List issues**: use the GitHub connector to list open issues with number,
+  title, body, labels, and comments; filter by mapped labels when needed.
 - **Comment on an issue**: use the GitHub connector's issue comment action.
-- **Apply / remove labels**: use the GitHub connector's issue edit or label action.
-- **Close**: use the GitHub connector's close issue action with a closing comment when relevant.
+- **Apply / remove labels**: use the GitHub connector's issue edit or label
+  action.
+- **Close**: use the GitHub connector's close issue action with a closing
+  comment when relevant.
 
-Infer the owner and repo from `git remote -v` when the connector needs explicit repository arguments.
+Infer the owner and repo from `git remote -v` when the connector needs explicit
+repository arguments.
 
-Use the `gh` CLI only as a fallback when the connector cannot perform the required operation in the current environment.
+Use the `gh` CLI only as a fallback when the connector cannot perform the
+required operation in the current environment.
 
 For native issue relationships, use the connector action when exposed;
 otherwise use GitHub's sub-issue and issue-dependency REST endpoints through
@@ -22,15 +29,24 @@ first create. Do not create a disposable capability probe.
 
 ## Pull requests as a triage surface
 
-**PRs as a request surface: no.** _(Set to `yes` if this repo treats external PRs as feature requests; `$triage` reads this flag.)_
+**PRs as a request surface: no.** _(Set to `yes` if this repo treats external
+PRs as feature requests; `$triage` reads this flag.)_
 
-When set to `yes`, PRs run through the same labels and states as issues using the GitHub connector:
+When set to `yes`, PRs run through the same labels and states as issues using
+the GitHub connector:
 
-- **Read a PR**: fetch the PR body, comments, labels, author, author association, and diff.
-- **List external PRs for triage**: list open PRs with number, title, body, labels, author, author association, and comments; keep only `CONTRIBUTOR`, `FIRST_TIME_CONTRIBUTOR`, or `NONE` author associations and drop `OWNER`, `MEMBER`, and `COLLABORATOR`.
-- **Comment / label / close**: use the connector's PR comment, edit/label, and close actions.
+- **Read a PR**: fetch the PR body, comments, labels, author, author
+  association, and diff.
+- **List external PRs for triage**: list open PRs with number, title, body,
+  labels, author, author association, and comments; keep only `CONTRIBUTOR`,
+  `FIRST_TIME_CONTRIBUTOR`, or `NONE` author associations and drop `OWNER`,
+  `MEMBER`, and `COLLABORATOR`.
+- **Comment / label / close**: use the connector's PR comment, edit/label, and
+  close actions.
 
-GitHub shares one number space across issues and PRs, so a bare `#42` may be either. Resolve with the GitHub connector's pull-request lookup first, then issue lookup when necessary.
+GitHub shares one number space across issues and PRs, so a bare `#42` may be
+either. Resolve with the GitHub connector's pull-request lookup first, then
+issue lookup when necessary.
 
 ## When a skill says "publish to the issue tracker"
 
@@ -40,7 +56,8 @@ Create a GitHub issue.
 
 Fetch the issue with the GitHub connector, including comments and labels.
 
-For an external PR when PRs are a request surface, fetch the PR with the GitHub connector, including comments, labels, author metadata, and diff.
+For an external PR when PRs are a request surface, fetch the PR with the GitHub
+connector, including comments, labels, author metadata, and diff.
 
 ## Work-item operations
 
@@ -53,7 +70,11 @@ Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`,
 
 **Dependency mode:** native-dependencies.
 
-- **Packet**: the issue body and comments are the durable packet. A parent spec owns intent; child issues own implementation slices and closeout evidence. No separate repo-local packet is required unless `AGENTS.md` points to one. Approved implementation tickets carry the mapped `ready-for-agent` state and one category role when the source settles it.
+- **Packet**: the issue body and comments are the durable packet. A parent spec
+  owns intent; child issues own implementation slices and closeout evidence. No
+  separate repo-local packet is required unless `AGENTS.md` points to one.
+  Approved implementation tickets carry the mapped `ready-for-agent` state and
+  one category role when the source settles it.
 - **Ready-for-agent state**: the configured state marks an item whose producing
   workflow verified its owned packet. The state is navigation metadata, not
   proof of content completeness. `$triage` owns its Codex-ready brief and Ready
@@ -73,36 +94,88 @@ Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`,
 - **Publication mode**: freeze both configured modes before the first create.
   If their operation or read-back route is unavailable, stop before creation;
   never switch representations during a publication.
-- **Ready query**: list open issues with the mapped `ready-for-agent` state, then drop issues with an unresolved blocker or assignee. Treat an open blocker as resolved only when the verified same-campaign `landed-awaiting-lock` overlay above applies. Within a parent, preserve child order; otherwise choose oldest first.
-- **Claim**: assign the work item to the owner or orchestrator before implementation dispatch; the assignee is the concurrency guard.
-- **Release**: remove the active assignee when work blocks, is abandoned, or reaches closeout.
-- **Closeout**: after required review and commits, post the closeout packet, apply or retain `implemented`, remove the prior state-role label, release the claim, and close the implementation issue as completed. Preserve dependency links: closing a completed blocker retains history and removes it from the active blocker set. Close a parent spec only after every in-scope child and follow-up is closed; post a final summary before closing it.
-- **Non-completed closure**: before closing a blocker as not planned, duplicate, or superseded, inspect every dependent. Rewire it, give it an explicit open blocker, or close it for its own reason. Closure must not create a false-ready frontier.
-- **Mutation read-back**: after creating or changing an item, refetch the item and its affected dependents; verify the intended body, relationships, labels or state, assignee, comments, close reason, open/closed status, and resulting frontier. A partial mutation is blocked; report applied operations, failed operations, and the safest recovery action.
+- **Ready query**: list open issues with the mapped `ready-for-agent` state,
+  then drop issues with an unresolved blocker or assignee. Treat an open blocker
+  as resolved only when the verified same-campaign `landed-awaiting-lock`
+  overlay above applies. Within a parent, preserve child order; otherwise choose
+  oldest first.
+- **Claim**: assign the work item to the owner or orchestrator before
+  implementation dispatch; the assignee is the concurrency guard.
+- **Release**: remove the active assignee when work blocks, is abandoned, or
+  reaches closeout.
+- **Closeout**: after required review and commits, post the closeout packet,
+  apply or retain `implemented`, remove the prior state-role label, release the
+  claim, and close the implementation issue as completed. Preserve dependency
+  links: closing a completed blocker retains history and removes it from the
+  active blocker set. Close a parent spec only after every in-scope child and
+  follow-up is closed; post a final summary before closing it.
+- **Non-completed closure**: before closing a blocker as not planned, duplicate,
+  or superseded, inspect every dependent. Rewire it, give it an explicit open
+  blocker, or close it for its own reason. Closure must not create a false-ready
+  frontier.
+- **Mutation read-back**: after creating or changing an item, refetch the item
+  and its affected dependents; verify the intended body, relationships, labels
+  or state, assignee, comments, close reason, open/closed status, and resulting
+  frontier. A partial mutation is blocked; report applied operations, failed
+  operations, and the safest recovery action.
 
 ## Wayfinding operations
 
-Used by `$wayfinder`. The **map** is a single GitHub issue with child issues as tickets.
+Used by `$wayfinder`. The **map** is a single GitHub issue with child issues as
+tickets.
 
-- **Map**: create one issue labelled `wayfinder:map`. Its body follows the invoking Wayfinder's `MAP-FORMAT.md` contract.
+- **Map**: create one issue labelled `wayfinder:map`. Its body follows the
+  invoking Wayfinder's `MAP-FORMAT.md` contract.
 - **Child ticket**: create one issue per ticket using the configured
-  parent/child mode. Put `Participation: HITL | AFK` near the top. Label each
-  ticket with exactly one `wayfinder:<type>` label: `research`, `prototype`,
-  `grilling`, or `task`.
-- **Blocking**: use the work-item blocking convention. For a blocker still in fog, put `Blocked: fog - <gist>` near the top of the child body. A ticket is unblocked when every blocker is closed and any `Blocked:` marker has been removed.
-- **Frontier query**: list the map's open children, then drop tickets with an open blocker, a `Blocked:` marker, an assignee, or an active `Claim token:`. The remaining tickets in map order are the frontier; the first is the default selection.
-- **Claim**: Advance claims the selected ticket; Maintain claims the map. Use the work-item assignee convention on that item, then put `Claim token: codex/<lowercase UUIDv4>` and `Claimed at: <YYYY-MM-DDTHH:MM:SSZ>` near its top. Generate one fresh UUIDv4 per Wayfinder invocation, reuse it for every claim in that invocation, and never reuse it across invocations. Read back the assignee, exact token, and timestamp; a different token owns the item even when the assignee is the same.
-- **Release**: remove the active assignee, `Claim token:`, and `Claimed at:` when active work ends.
-- **Stale claim**: Elapsed time alone never makes a claim stale. Replace a different token only after explicit user approval; first record the prior token, claimed-at value, and takeover reason in a comment, then apply Mutation read-back to the replacement claim.
-- **Resolve**: post the answer as a comment, close the ticket, release the claim, then append one context pointer to the map's Decisions So Far.
-- **Block**: comment with the blocker, wire a sharp blocker or add the fog marker, release the claim, and leave the ticket open.
-- **Out of scope**: comment with the reason, close the ticket, release the claim, then append one linked note to the map's Out Of Scope section.
-- **Complete map**: after the map's closing conditions hold, post the destination and next route as a closing comment, close the map issue, read back the closed state, release any map claim, then read back the claim's absence.
+  parent/child mode. Put `Participation: HITL | AFK`, `Resolution owner:`,
+  `Resolver:`, `Expected return:`, and `Re-entry owner: $wayfinder` near the
+  top. Label each ticket with exactly one `wayfinder:<type>` label: `research`,
+  `prototype`, `diagnosis`, `grilling`, or `task`. During Chart, create children
+  in approved map order, read back their exact identities, then wire edges.
+- **Blocking and waiting**: use the work-item blocking convention. For fog, put
+  `Blocked: fog - <gist>` near the top. For an external return, put
+  `Blocked: waiting - <gist>` near the top and record its exact return trigger,
+  return owner, and any artifact pointer and durability in a comment. Resume
+  through Advance only after the attributable returned evidence matches the
+  exact trigger; remove only the satisfied marker while applying the outcome.
+- **Frontier query**: list the map's open children, then drop tickets with an
+  open blocker, a `Blocked:` marker, an assignee, or an active `Claim token:`.
+  The remaining tickets in map order are the frontier; the first is the default
+  selection.
+- **Claim**: Advance first claims the selected ticket for resolver work, then
+  claims the map before recording any ticket outcome, edge, fog disposition, or
+  other shared map mutation. Closure also requires the map claim. Maintain
+  claims the map. Use the work-item assignee convention, then put
+  `Claim token: codex/<lowercase UUIDv4>` and
+  `Claimed at: <YYYY-MM-DDTHH:MM:SSZ>` near the top. Generate one fresh UUIDv4
+  per Wayfinder invocation, reuse it for both claims in that invocation, and
+  never reuse it across invocations. Read back the assignee, exact token, and
+  timestamp; a different token owns the item even when the assignee is the same.
+- **Release**: remove the active assignee, `Claim token:`, and `Claimed at:`
+  when active work ends.
+- **Stale claim**: Elapsed time alone never makes a claim stale. Replace a
+  different token only after explicit user approval; first record the prior
+  token, claimed-at value, and takeover reason in a comment, then apply Mutation
+  read-back to the replacement claim.
+- **Outcome**: while the map claim is held, post the canonical resolution
+  comment. Resolve by closing the ticket and adding its context pointer to
+  `Decisions So Far`; block by wiring a sharp blocker or adding the fog marker;
+  wait by adding the waiting marker; or close as out of scope and append its
+  linked scope note. Apply map consequences and read back, then release the
+  ticket claim. Keep the map claim through eligible Closure; otherwise release
+  it. Read back every final claim state. A failed map claim records no ticket
+  outcome or shared mutation.
+- **Complete map**: while the map claim is held and no unresolved child, wait,
+  blocker, or fog remains, post the compact closing source or decision packet
+  as a closing comment, close the map, read back its state and empty frontier,
+  release the claim, then read back the claim's absence.
 
 ## When a skill says "post a Codex-ready brief"
 
 Post it as an issue comment with the GitHub connector.
 
-For an external PR when PRs are a request surface, post it as a PR comment with the GitHub connector.
+For an external PR when PRs are a request surface, post it as a PR comment with
+the GitHub connector.
 
-The brief text, including the AI triage disclaimer when required, comes from `$triage`.
+The brief text, including the AI triage disclaimer when required, comes from
+`$triage`.

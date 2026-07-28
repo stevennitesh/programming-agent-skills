@@ -24,7 +24,8 @@ establish impact.
 
 ## Measure
 
-Prefer a repository-owned benchmark, profiler, production trace, or representative end-to-end proof lane. Record one reproducible run:
+Prefer a repository-owned benchmark, profiler, production trace, or
+representative end-to-end proof lane. Record one reproducible run:
 
 ```text
 Workload:

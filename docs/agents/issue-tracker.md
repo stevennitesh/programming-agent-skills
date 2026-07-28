@@ -86,18 +86,44 @@ Used by `$wayfinder`. The **map** is a single GitHub issue with child issues as 
 
 - **Map**: create one issue labelled `wayfinder:map`. Its body follows the invoking Wayfinder's `MAP-FORMAT.md` contract.
 - **Child ticket**: create one issue per ticket using the configured
-  parent/child mode. Put `Participation: HITL | AFK` near the top. Label each
-  ticket with exactly one `wayfinder:<type>` label: `research`, `prototype`,
-  `grilling`, or `task`.
-- **Blocking**: use the work-item blocking convention. For a blocker still in fog, put `Blocked: fog - <gist>` near the top of the child body. A ticket is unblocked when every blocker is closed and any `Blocked:` marker has been removed.
-- **Frontier query**: list the map's open children, then drop tickets with an open blocker, a `Blocked:` marker, an assignee, or an active `Claim token:`. The remaining tickets in map order are the frontier; the first is the default selection.
-- **Claim**: Advance claims the selected ticket; Maintain claims the map. Use the work-item assignee convention on that item, then put `Claim token: codex/<lowercase UUIDv4>` and `Claimed at: <YYYY-MM-DDTHH:MM:SSZ>` near its top. Generate one fresh UUIDv4 per Wayfinder invocation, reuse it for every claim in that invocation, and never reuse it across invocations. Read back the assignee, exact token, and timestamp; a different token owns the item even when the assignee is the same.
+  parent/child mode. Put `Participation: HITL | AFK`, `Resolution owner:`,
+  `Resolver:`, `Expected return:`, and `Re-entry owner: $wayfinder` near the
+  top. Label each ticket with exactly one `wayfinder:<type>` label: `research`,
+  `prototype`, `diagnosis`, `grilling`, or `task`. During Chart, create children
+  in approved map order, read back their exact identities, then wire edges.
+- **Blocking and waiting**: use the work-item blocking convention. For fog, put
+  `Blocked: fog - <gist>` near the top. For an external return, put
+  `Blocked: waiting - <gist>` near the top and record its exact return trigger,
+  return owner, and any artifact pointer and durability in a comment. Resume
+  through Advance only after the attributable returned evidence matches the
+  exact trigger; remove only the satisfied marker while applying the outcome.
+- **Frontier query**: list the map's open children, then drop tickets with an
+  open blocker, a `Blocked:` marker, an assignee, or an active `Claim token:`.
+  The remaining tickets in map order are the frontier; the first is the default
+  selection.
+- **Claim**: Advance first claims the selected ticket for resolver work, then
+  claims the map before recording any ticket outcome, edge, fog disposition, or
+  other shared map mutation. Closure also requires the map claim. Maintain
+  claims the map. Use the work-item assignee convention, then put
+  `Claim token: codex/<lowercase UUIDv4>` and
+  `Claimed at: <YYYY-MM-DDTHH:MM:SSZ>` near the top. Generate one fresh UUIDv4
+  per Wayfinder invocation, reuse it for both claims in that invocation, and
+  never reuse it across invocations. Read back the assignee, exact token, and
+  timestamp; a different token owns the item even when the assignee is the same.
 - **Release**: remove the active assignee, `Claim token:`, and `Claimed at:` when active work ends.
 - **Stale claim**: Elapsed time alone never makes a claim stale. Replace a different token only after explicit user approval; first record the prior token, claimed-at value, and takeover reason in a comment, then apply Mutation read-back to the replacement claim.
-- **Resolve**: post the answer as a comment, close the ticket, release the claim, then append one context pointer to the map's Decisions So Far.
-- **Block**: comment with the blocker, wire a sharp blocker or add the fog marker, release the claim, and leave the ticket open.
-- **Out of scope**: comment with the reason, close the ticket, release the claim, then append one linked note to the map's Out Of Scope section.
-- **Complete map**: after the map's closing conditions hold, post the destination and next route as a closing comment, close the map issue, read back the closed state, release any map claim, then read back the claim's absence.
+- **Outcome**: while the map claim is held, post the canonical resolution
+  comment. Resolve by closing the ticket and adding its context pointer to
+  `Decisions So Far`; block by wiring a sharp blocker or adding the fog marker;
+  wait by adding the waiting marker; or close as out of scope and append its
+  linked scope note. Apply map consequences and read back, then release the
+  ticket claim. Keep the map claim through eligible Closure; otherwise release
+  it. Read back every final claim state. A failed map claim records no ticket
+  outcome or shared mutation.
+- **Complete map**: while the map claim is held and no unresolved child, wait,
+  blocker, or fog remains, post the compact closing source or decision packet
+  as a closing comment, close the map, read back its state and empty frontier,
+  release the claim, then read back the claim's absence.
 
 ## When a skill says "post a Codex-ready brief"
 

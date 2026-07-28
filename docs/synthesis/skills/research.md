@@ -1,14 +1,22 @@
 # Research Evidence And Runtime Design Synthesis
 
-Status: promoted in the 2026-07-23 Deploy Campaign. This synthesis records the
-current decision and concise decision-changing history; it is not an executable
-contract.
+Historical status: promoted in the 2026-07-23 Deploy Campaign. This synthesis
+records the current decision and concise decision-changing history; it is not
+an executable contract.
 
 Runtime authority lives in `skills/custom/research/`, each target repository's
 source and note conventions, caller-owned decision and transition contracts,
 and `docs/synthesis/skill-context-relationships.md`.
 
-## Promoted Identity
+A later lean Author pass clarified source ownership, proportionate
+disconfirmation, independent evidence, and evidence saturation without adding a
+mode or stage. Canonical Research is current executable authority at tree
+SHA-256
+`2b1135c0d77539c92dda3db3df38c5fd3b0b7370017dc70de6c95c9927c732c1`.
+Installed parity and fresh wording-efficacy proof are not claimed; campaign-era
+exact-body and parity statements below are historical.
+
+## Historical Promoted Identity
 
 The canonical Research package contains only `SKILL.md` and
 `agents/openai.yaml`. Its tree hash is:
@@ -52,7 +60,7 @@ Relationship delta: none.
 | --- | --- |
 | Skill Router, Grilling, To Questionnaire | Recommend Research and stop; they do not copy or run its procedure. |
 | Wayfinder | Invokes one bounded AFK Research note and retains map or ticket state and the next transition. |
-| Improve Codebase | Invokes one source gap, normally with note authority `none`, and reclassifies its candidate after Return. |
+| Audit Codebase | Recommends Research for one selected source gap and stops; a later Audit invocation may consume the intact Return. |
 | Direct user | Invokes one admitted question or receives typed non-admission; a complete standalone answer ends `Next: none`. |
 
 Research returns to its caller without deciding the caller's artifact, changing

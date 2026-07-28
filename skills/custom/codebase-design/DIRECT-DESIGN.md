@@ -1,6 +1,8 @@
 # Direct Design Pass
 
-Use this branch for one bounded module, shallow cluster, seam, or interface question. [`SKILL.md`](SKILL.md) owns vocabulary, taste, and the read-only boundary.
+Use this branch for one bounded module, shallow cluster, seam, or interface
+question. [`SKILL.md`](SKILL.md) owns vocabulary, taste, and the read-only
+boundary.
 
 Orient -> Diagnose -> Shape -> Compare -> Recommend.
 
@@ -32,7 +34,10 @@ material problem is proved.
 
 ## 3. Shape
 
-Choose the strongest shape: deepen, merge, inline, retain, replace, or introduce no new seam. Describe its caller-facing contract, hidden behavior and decisions, any earned seam, adapters or substitutes, caller and test surfaces, and first bounded migration step.
+Choose the strongest shape: deepen, merge, inline, retain, replace, or introduce
+no new seam. Describe its caller-facing contract, hidden behavior and decisions,
+any earned seam, adapters or substitutes, caller and test surfaces, and first
+bounded migration step.
 
 For each material Interface concern, state Responsibility and exclusions;
 operations, inputs, outputs, and effects; Invariants and State Lifecycle;
@@ -42,11 +47,17 @@ and authoritative or measured performance constraints; and the Proof Seam.
 Mark a concern not applicable only with evidence. A Proof Seam establishes
 meaning; it does not by itself earn a design Seam or Adapter.
 
-Admit **replace** only when current commitments and caller behavior are traceable, incremental evolution is riskier or more complicated, parity has a proof seam, and migration, cutover, rollback, and one bounded first slice are explicit.
+Admit **replace** only when current commitments and caller behavior are
+traceable, incremental evolution is riskier or more complicated, parity has a
+proof seam, and migration, cutover, rollback, and one bounded first slice are
+explicit.
 
-For an enforceable boundary, require one **boundary proof**: a representative allowed caller, a forbidden caller, and a red-capable check that accepts the first and rejects the second.
+For an enforceable boundary, require one **boundary proof**: a representative
+allowed caller, a forbidden caller, and a red-capable check that accepts the
+first and rejects the second.
 
-Read [DEEPENING.md](DEEPENING.md) when dependency shape changes the seam, substitute, test migration, or validation strategy.
+Read [DEEPENING.md](DEEPENING.md) when dependency shape changes the seam,
+substitute, test migration, or validation strategy.
 
 ## 4. Compare
 
@@ -64,7 +75,8 @@ or evidence gap. For a recommendation, explain why it wins, why credible
 alternatives lose, the first safe migration step, validation proof, risks, and
 follow-ups.
 
-Evidence settles current behavior and constraints. The user or caller settles public-contract changes and accepted trade-offs.
+Evidence settles current behavior and constraints. The user or caller settles
+public-contract changes and accepted trade-offs.
 
 ## Design Packet
 
