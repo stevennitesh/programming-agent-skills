@@ -169,7 +169,8 @@ coverage and one Continue pickup.
 
 ## Incremental Publish Gate
 
-After a passed Entry Gate:
+After a passed Entry Gate, attempt incremental publication exactly once with
+one `update_report.py` call containing every selected region:
 
 1. render only the selected subsystem or candidate plus affected summary
    fragments;
@@ -195,9 +196,11 @@ The helper owns collision detection, changed-section validation, sibling
 cleanup, and atomic replacement. It does not judge codebase evidence, render
 the Map, or maintain another ledger.
 
-A failed incremental publication preserves the last report and is an artifact
-failure, not a codebase gap. Return completed source analysis with `Report
-update: failed`, the failed region, preserved report identity, and retry action.
+If the attempt fails, stop publication immediately. Do not rerun the helper,
+hand-edit the report, use another publication mechanism, or delay the Return.
+Preserve the last report and return completed source analysis with `Report
+update: failed`, the failed region, and the preserved report identity. This is
+an artifact failure, not a codebase gap.
 
 ## Navigation And Footer
 

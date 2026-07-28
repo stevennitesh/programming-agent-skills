@@ -243,10 +243,11 @@ limits, and zero or one uninvoked next-owner suggestion. Then stop.
 ## Publication And Return
 
 Follow [HTML-REPORT.md](HTML-REPORT.md). A failed Map publication preserves the
-last verified report and returns `incomplete`. After a passed Entry Gate, an
-Incremental publication failure does not erase completed source analysis:
-return the analysis, name the failed update and preserved report identity, and
-leave the report unchanged.
+last verified report and returns `incomplete`. Apply its one-attempt
+Incremental Publish Gate after a passed Entry Gate. Failure does not erase
+completed source analysis: return immediately with the analysis, `Report
+update: failed`, the failed update, and the preserved report identity. Leave
+the report unchanged.
 
 State is local:
 

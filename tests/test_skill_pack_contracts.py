@@ -1500,6 +1500,12 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert "## Map Publish Gate" in report
     assert "## Incremental Publish Gate" in report
     assert "scripts/update_report.py" in report
+    assert "attempt incremental publication exactly once" in report
+    assert "Do not rerun the helper" in report
+    assert "hand-edit the report" in report
+    assert "use another publication mechanism" in report
+    assert "delay the Return" in report
+    assert "one-attempt Incremental Publish Gate" in audit_flat
     assert (skill_dir / "scripts/update_report.py").is_file()
     assert "atomically replace" in report
     assert "changed-fragment links" in report
