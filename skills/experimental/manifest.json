@@ -6,7 +6,7 @@
     "codebase-design": {
       "origin": "skills/custom/codebase-design at 586160fafde1cf5da9c87a5a4e0fcaf777f5bb3f before the installed-baseline restore",
       "reason": "Preserve the divergent candidate while the installed managed version remains active.",
-      "candidate_sha256": "18c226fea230fe510422e3cdd07b61063291916485d08aeff2aff65f116e5cc4",
+      "candidate_sha256": "24388407b7e1aa3ebeab1adebb2c0e14a7462acea65eafcdbe3108ad6de95197",
       "active_baseline_sha256": "72223008a4b2f8a3ad540be60aa9af5cc87806918f24c5c49f3936181d7470b2"
     },
     "repo-bootstrap": {

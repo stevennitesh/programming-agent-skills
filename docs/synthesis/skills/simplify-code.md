@@ -1,85 +1,59 @@
-# Simplify Code Promoted Runtime Synthesis
+# Simplify Code Runtime Synthesis
 
 ## Current Decision
 
-Status: promoted in the fresh Deploy Campaign epoch started 2026-07-23.
-The pruning-complete C1 package is now the canonical Simplify Code runtime.
-It remains explicit-only and owns one bounded, behavior-preserving, unstaged
-complexity cut; an explicitly requested finite serial `until-clean` campaign
-inside one named region; or a fully accounted **No safe simplification**
-result.
-
-```text
-current != B0 != C1
-campaign shape = behavioral-candidate
-Prompt 4 decision = accepted
-Pruning Pass = pruning-not-needed
-canonical runtime = exact C1
-```
+Status: Author-reconciled on 2026-07-27 after the historical Deploy Campaign.
+The canonical runtime remains explicit-only. It accepts only a user-selected
+Audit candidate or user-named target, makes one unstaged behavior-preserving
+cut by default, and returns exactly `simplified`, `no-safe-simplification`, or
+`blocked`. An explicit `until-clean` mode may run a finite serial campaign
+inside one named region.
 
 Canonical package identity:
 
 - package: `skills/custom/simplify-code`;
 - inventory: `SKILL.md`, `agents/openai.yaml`;
 - tree SHA-256:
-  `f3fa29e016e1ad88f77088e7b001f80db4a139b51d7da2125146fdda5c8cef06`;
+  `16d5a9b617150aef3fa3a9b443b1ec35ce0f6a972bcf4903968b84d94cdad208`;
 - `SKILL.md` SHA-256:
-  `97c2ab427bd71154c1f04bc72a1ba3e632c72406be52a88c633af86a3d2e68c4`;
+  `1b8bb83eb2355d6a476b5ca7e31710e9bd5de8bd4ecab9142940f51f740a45db`;
 - `agents/openai.yaml` SHA-256:
-  `8ef184a5a1fdf5bb4b325c1e9ec5019bb2ad5536aa583d806c2bc6e1cc3c2a14`.
+  `961e1d3de8909b6eff7d2f9bd4a94936c6206cb5e9354632595867a43608d3f9`.
 
-The promoted package is byte-identical to the Prompt 4-accepted and
-pruning-complete C1. The accepted behavior proof therefore remains exact; the
-lifecycle transition creates no reason to rerun it.
+The hashes and evaluations below are historical evidence for earlier bytes;
+they do not prove the current wording. No installed synchronization is
+claimed for this Author pass.
 
-## Runtime Contract
+## Current Runtime Contract
 
-The runtime has eight source-derived minimum units:
+The common path has five units:
 
-1. **Bounded admission and owner routes.** Admit a still-valid verified
-   Improve Codebase candidate, user-named target, or one coherent current diff,
-   in that order. Return absent or invalid targets and foreign work to the
-   appropriate owner without copying that owner's procedure.
-2. **Trace and before proof.** Trace authoritative commitments, operational
-   paths, relevant work state, and one caller-facing seam. A failing,
-   ambiguous, or semantically inadequate baseline prevents production
-   mutation.
-3. **Safe-cut selection.** Choose one coherent cut only when preserved
-   behavior, proof, scope, strict burden reduction, and work-state boundaries
-   are credible.
-4. **Commitment and safety floor.** Preserve product intent, accepted
-   behavior, public and data contracts, domain decisions, trust-boundary and
-   data-loss controls, security, privacy, accessibility, concurrency,
-   durability, ordering, timing, and compatibility.
-5. **One unstaged cut.** Remove only fallout created by that cut while
-   preserving correct proof, pre-existing dead work, unrelated work, the
-   index, trackers, installed state, and external state.
-6. **After proof and net reduction.** Rerun the same focused seam, widen
-   checks proportionately, and establish a strict reduction in maintenance
-   obligations. Counts are receipts, not correctness or productivity proof.
-7. **Finite serial campaign.** Enter only for an explicit `until-clean`
-   request in one named region with a finite successful-cut budget, one
-   invariant contract and seam, and a monotonic obligation ledger.
-8. **Evidence-bearing Return and completion.** Reconcile proof, obligation
-   reduction, paths, work state, residuals, and the selected terminal outcome;
-   return the result unstaged.
+1. **Bound.** Accept only the exact selected target, trace its commitments and
+   Proof Seam, and return missing, invalid, stale, or foreign work as
+   `blocked`.
+2. **Baseline.** Record work state and run the smallest trusted before proof.
+   Inadequate proof blocks mutation and cannot support a no-safe verdict.
+3. **Reduce.** Inspect the selected Audit direction in default mode or
+   `Delete -> Reuse -> Standardize, native-first -> Collapse -> Shrink` for
+   other targets and `until-clean`; take the first safe cut and preserve the
+   Engineering Contract safety floor.
+4. **Prove.** Rerun the seam and proportionate checks, establish a strict
+   reduction in maintenance obligations, and preserve the index and unrelated
+   work.
+5. **Return.** Reconcile evidence under one typed outcome and leave the result
+   unstaged.
 
 The irreversible order is:
 
 ```text
-Admit -> Trace -> Baseline -> Choose -> Cut -> Prove -> Lock
+Bound -> Baseline -> Reduce -> Prove -> Return
 ```
 
-The promoted C1 adds exactly two behavior-proven units to B0:
+Campaign mode repeats only `Baseline -> Reduce -> Prove` under one named
+region, invariant contract, Proof Seam, finite budget, monotonic ledger, and
+the six established terminal classifications.
 
-- **C1-01 ordered selection:** inspect `Delete -> Reuse -> Standardize,
-  native-first -> Collapse -> Shrink`; the first admissible rung wins.
-- **C1-04 finite campaign completion:** use exactly three successful cuts when
-  the user omits a budget and classify the first applicable terminal as
-  `Clean`, `Budget exhausted`, `Diminishing return`, `Oscillation`,
-  `Failed cut`, or `Boundary stop`.
-
-## Source And Decision Basis
+## Historical Source And Decision Basis
 
 The source-first checkpoint was frozen before the previous canonical runtime
 or synthesis conclusions were opened:
@@ -106,7 +80,7 @@ source manifest SHA-256:
 No network refresh was performed. These identities describe the inspected
 local revisions, not later remote state.
 
-## Candidate Decisions
+## Historical Candidate Decisions
 
 | Unit | Origin | Registered B0 failure | Decision and promoted effect |
 | --- | --- | --- | --- |
@@ -127,22 +101,24 @@ No passage qualified for collapse, disclosure, or deletion without removing
 protected meaning or changing exact accepted behavior. Its disposition was
 `pruning-not-needed`.
 
-## Relationships And Ownership
+## Current Relationships And Ownership
 
 | Caller or owner | Relationship | Trigger and Return |
 | --- | --- | --- |
-| Human | Invoke | Explicitly names Simplify Code and a bounded target; names `until-clean` and optionally a finite budget for campaign mode; receives an unstaged result. |
+| Human | Invoke | Explicitly names Simplify Code and an exact target; names `until-clean` and optionally a finite budget for campaign mode; receives an unstaged typed result. |
 | `$skill-router` | Recommend and stop | Selects one bounded behavior-preserving simplification. |
 | `$tdd` | Recommend and stop | Settled GREEN work exposes separate bounded cleanup. |
-| `$improve-codebase` | Recommend and stop | A verified `Eliminate` candidate is selected; Simplify Code returns stale, absorbed, or incomplete reports unchanged. |
-| Simplify Code | Recommend and stop | Wide discovery or multi-region sequencing goes to Improve Codebase. |
-| Simplify Code | Recommend and stop | A new interface, dependency direction, proof seam, or ownership decision goes to Codebase Design. |
+| `$audit-codebase` | Recommend and stop | A user selects an analyzed bounded behavior-preserving reduction with current report identity, supported behavior, Source Trace, and Proof Seam. |
+| Simplify Code | Recommend and stop | Repository mapping, wide discovery, or multi-subsystem audit coverage goes to Audit Codebase. |
 | Simplify Code | Return and stop | Uncertain bug facts go to Diagnosing Bugs; feature, public-contract, review, Git, tracker, installation, and external work return to their owners. |
 
-Relationship delta is none. The provider interface and explicit-only policy
-also remain byte-identical to the previous canonical package, B0, D0, and C1.
+Relationship topology is unchanged by this Author pass. A required new
+Interface, dependency direction, Proof Seam, or ownership decision returns to
+the caller as a design gap; Simplify Code does not add a design-workflow step.
+The provider prompt now requires an explicitly selected target; the
+explicit-only policy is unchanged.
 
-## Exact Proof
+## Historical Exact Proof
 
 The accepted behavior record is
 [2026-07-23-simplify-code-behavior-eval.md](../../validation/skills/simplify-code/evals/EV-simplify-code-behavior-eval-20260723-01/evidence/2026-07-23-simplify-code-behavior-eval.md).
@@ -157,6 +133,7 @@ Exact identities:
 | Previous canonical | `030c31bf4f880f1d0c66005482ff6aa7b4382bd301dd491563491fd195964054` | Compatibility inventory |
 | Final B0 and D0 | `54aac31397e2a5ab10daf78420906a24459622f144631e0c61e8e02888acd434` | Viable minimum and no-guidance control |
 | Promoted canonical C1 | `f3fa29e016e1ad88f77088e7b001f80db4a139b51d7da2125146fdda5c8cef06` | Accepted final runtime |
+| Current Author bytes | `16d5a9b617150aef3fa3a9b443b1ec35ce0f6a972bcf4903968b84d94cdad208` | Current canonical runtime; structural proof only |
 
 Five fresh integrated C1 samples passed all protected B0 families, ordered
 selection, default and explicit budgets, all six terminals, work-state and
@@ -168,32 +145,19 @@ This lane used read-only synthetic action decisions. It does not prove live
 source mutation, real concurrent interleaving, arbitrary tasks or hosts, or
 later model/runtime builds.
 
-## Deliberate Non-Changes And Residuals
+## Current Deliberate Non-Changes And Residuals
 
-Rejected for this campaign: automation, numeric scoring, source or candidate
-catalogs, parallel cuts, whole-tree cleanup, persistent debt tracking,
-automatic downstream execution, dependency addition, Git delivery, tracker
-mutation, and external mutation.
+Deliberately unchanged: explicit-only and unstaged operation; relationship
+topology; the five-rung ladder; safety and dependency-removal floors; the
+finite serial campaign; and the absence of automation, scoring, parallel cuts,
+whole-tree cleanup, downstream execution, Git delivery, or tracker mutation.
 
-Deferred pending a later source-first admission and exact failure:
+Residual evidence gaps are a fresh wording-efficacy evaluation, live
+filesystem mutation and concurrent-interleaving proof, generalization beyond
+the historical fixed packets, and installed-package parity for the current
+bytes.
 
-- a ceiling-and-revisit comment rule;
-- disclosure of campaign behavior into `UNTIL-CLEAN.md`; and
-- a larger structured Return.
-
-Deliberately preserved: explicit-only and unstaged operation; caller-facing
-before/after proof; commitment and safety floors; report pickup and owner
-routes; finite serial campaigning with a monotonic ledger; index and unrelated
-work safety; first-class no-safe completion; dependency no-addition; and
-repository-wide non-use evidence plus manifest, lock, and repository-owned
-installation proof before dependency removal.
-
-Residual gaps are live filesystem mutation and concurrent-interleaving proof,
-generalization beyond the fixed packets and worker runtime, upstream remote
-freshness, and unavailable backend model, reasoning, token, latency, and host
-invocation telemetry.
-
-## Lifecycle
+## Historical Lifecycle
 
 | Unit | Current epoch state |
 | --- | --- |

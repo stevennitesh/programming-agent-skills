@@ -24,6 +24,10 @@ questions, not universal syntax mandates.
   comments that narrate obvious syntax create drift.
 - **Behavior Tests:** names and assertions describe observable behavior through
   the Proof Seam, including meaningful edge and failure branches.
+- **Behavior-Owned Test Portfolio:** tests form the smallest diagnosable set of
+  distinct responsibilities mapped to supported behavior, Invariants,
+  branches, or risks. Ticket history, test count, and duplicate coverage do
+  not earn retention.
 - **Focused Concurrency:** independent work may run concurrently when ordering,
   resource pressure, cancellation, and failure semantics permit it; sequential
   code is not automatically a defect.
@@ -60,12 +64,29 @@ Weak:  "works"
 Strong: "rejects an overdraft through every debit entry path"
 ```
 
+Behavior-Owned Test Portfolio:
+
+```text
+Weak:  one new test per ticket repeats the same setup, seam, and oracle
+Strong: one behavior test or case table owns equivalent variants; distinct
+        failure and lifecycle behavior stays independently diagnosable
+```
+
 ## Smell Boundaries
 
 Function length, nesting, magic values, comments, mutable state, broad types,
-and low test counts are discovery hints. Admit a finding only when direct
-evidence ties the practice to ambiguity, invalid states, duplicated policy,
-failure exposure, change spread, or proof friction.
+test count, and suite time are discovery hints. Admit a finding only when
+direct evidence ties the practice to ambiguity, invalid states, duplicated
+policy, failure exposure, change spread, proof friction, or avoidable
+maintenance or execution cost.
+
+For suspected test sprawl, map each relevant test to its supported behavior or
+branch, Proof Seam, oracle, distinct risk, and observed cost. Admit
+consolidation only when overlap has no distinct responsibility and the
+surviving portfolio preserves coverage and diagnostic clarity. Retain
+deliberate overlap when different layers prove different risks. Use
+[PERFORMANCE-LENS.md](PERFORMANCE-LENS.md) for measured runtime or resource
+claims.
 
 Framework-specific examples from an upstream source do not override repository
 authority. For example, copying a value is not an unconditional replacement

@@ -56,9 +56,27 @@ assert calculate_total([{"price": 10}, {"price": 5}]) == 15
 
 Trace expectations to a specification, known-good literal, fixture, or worked result—not the production implementation.
 
+## Behavior-Owned Test Portfolio
+
+Extend or parameterize an existing test when the same seam, oracle, and
+outcome prove semantically equivalent inputs. Keep a separate test when it
+owns a distinct behavior, Invariant, state or failure branch, risk, or useful
+failure isolation.
+
+```text
+Weak:   one new test per ticket repeats the same setup, seam, and oracle
+Strong: one behavior test or case table owns equivalent variants; distinct
+        failure and lifecycle behavior stays independently diagnosable
+```
+
+Coverage and diagnostic clarity are floors. Test count is not a target.
+
 ## Red Flags
 
 - the name describes calls, helpers, layers, or storage;
+- the name records a ticket or change instead of durable behavior;
 - a snapshot replaces available semantic assertions;
 - setup is larger than the behavior being proved;
-- semantically equivalent data variants repeat an already-proved behavior and oracle, or horizontal-layer tests split one acceptance behavior.
+- semantically equivalent data variants repeat an already-proved behavior and
+  oracle, horizontal-layer tests split one acceptance behavior, or expensive
+  duplicate paths add no distinct proof responsibility.

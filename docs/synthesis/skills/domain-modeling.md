@@ -2,6 +2,12 @@
 
 Status: Prompt 5 complete. The accepted Domain Modeling package is canonical and globally installed; no experimental lifecycle entry remains.
 
+Current relationship amendment: Wayfinder invokes Domain Modeling for one
+uncovered settled closing consequence, while Audit Codebase recommends it and
+stops for user-selected settled capture. Grill With Docs remains the sole
+composer for unresolved direct-user decisions. The Domain Modeling package is
+unchanged; no new installation or wording-efficacy claim is made.
+
 Before Prompt 3, the canonical and experimental Domain Modeling packages were byte-identical. Prompt 3 replaced the stale lifecycle copy; Prompt 4 repaired direct-user meaning authority and false Context Mapping labels, froze pre-prune package `cfea0f22106e4a8ec231912afadd09ca717189dcb4b53eadb6ec19bdde44c6e0`, and accepted pruned candidate `88413f471ffcedccdf8b4b3a162a3068334c7befbcd28801165add6d29e8941b`. Prompt 5 promoted those exact bytes to `skills/custom/domain-modeling/`; accepted behavioral evidence was reused because no candidate byte or claim changed.
 
 This synthesis has four roles:

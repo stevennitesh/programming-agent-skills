@@ -20,6 +20,8 @@ execution packet that the ledger cannot infer.
 - Confirmed authority boundary
 - Change Closure: `<displaced paths and retention obligations / not applicable>`
 - State-boundary matrix: `<applicable branches and interactions / not applicable>`
+- Proof responsibility: `<behavior or branch, canonical test surface or proof
+  lane, consumers, expected reuse / extend / add>`
 - Expected write scope; proposed concrete write set when shared fixtures are plausible
 - Focused proof and validation environment
 - Observable liveness checkpoint
@@ -34,8 +36,10 @@ from assigned grounding and refresh only facts that current evidence makes
 stale or contradictory.
 
 Prove every assigned acceptance, prohibited behavior, correctness and
-robustness obligation, and matrix branch. If repository inspection contradicts
-the assignment or reveals an omitted supported semantic branch, return it as
+robustness obligation, matrix branch, and proof responsibility. Reuse or extend
+the assigned canonical test owner; add a separate test only for a distinct
+responsibility. If repository inspection contradicts the assignment or reveals
+an omitted supported semantic branch or overlapping test owner, return it as
 `needs-feedback`; do not silently rewrite the packet, narrow acceptance, or
 widen the commitment boundary.
 
@@ -69,6 +73,8 @@ commit:
 changed scope IDs: <when authorized IDs exist>
 actual changed files:
 acceptance proof: <criterion -> evidence>
+test portfolio delta: <reused / extended / added / consolidated / removed +
+  responsibility>
 commands and results:
 skipped checks:
 liveness checkpoint:
@@ -78,6 +84,7 @@ scope notes:
 final status: <clean / dirty + reason>
 ```
 
-`done` requires reconciled preflight, every criterion and assigned Change
-Closure obligation accounted for, one commit, focused proof, and clean status.
-`blocker` and `needs-feedback` claim no completion and preserve exact state.
+`done` requires reconciled preflight, every criterion, proof responsibility,
+and assigned Change Closure obligation accounted for, one commit, focused
+proof, and clean status. `blocker` and `needs-feedback` claim no completion and
+preserve exact state.

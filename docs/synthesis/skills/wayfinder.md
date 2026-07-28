@@ -2,6 +2,13 @@
 
 Status: exhaustive design reference, not an executable contract.
 
+Current amendment: a lean Author pass extracted only the settled-decision
+Durability edge into the active runtime. Wayfinder now invokes Domain Modeling
+once during Closure when no current Domain Delta accounts for the consequence;
+unresolved direct-user decisions still recommend Grill With Docs and stop.
+The broader coordinated candidate remains unpromoted. No installed parity or
+fresh wording-efficacy proof is claimed.
+
 Runtime authority remains in:
 
 - `skills/custom/wayfinder/SKILL.md`;

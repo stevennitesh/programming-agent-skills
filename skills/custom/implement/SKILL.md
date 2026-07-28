@@ -27,10 +27,10 @@ parallel-safety judgment, and scope fence.
 Preserve the complete source-owned packet: grounding and Repository Reuse,
 Commitment Boundary, Invariants and Trust Boundaries, supported states,
 failure, recovery, compatibility, environmental and observability
-obligations, prohibited behavior, proof, closure, scope fence, explicit Repair
-budget, migration, domain or ADR facts, and exclusions. A named target remains
-binding; do not substitute another item or make blocked or incomplete work
-ready.
+obligations, prohibited behavior, proof responsibility, closure, scope fence,
+explicit Repair budget, migration, domain or ADR facts, and exclusions. A
+named target remains binding; do not substitute another item or make blocked
+or incomplete work ready.
 
 Return ordinary unsettled source, contradictory acceptance, missing readiness,
 or a malformed item to its caller, source, or triage owner before production
@@ -70,6 +70,8 @@ real tradeoff remains, then choose one narrow observable path under the routed
 Code Quality Contract: test necessity, available reuse, ownership, depth,
 clarity, proof, and domain fidelity. A technique that changes a commitment,
 permission, supported environment, or scope Returns for caller judgment.
+Honor the packet's canonical proof responsibility; otherwise identify the
+nearest existing Behavior Test or proof lane before adding one.
 
 Invoke `$tdd` when behavior and a red-capable seam are settled. For a bug, use
 `$tdd` only when expected behavior, exact symptom, cause, and a trusted
@@ -87,7 +89,10 @@ and Return adjacent work.
 
 Bind proof to the exact candidate and its proof inputs. Reuse it while the
 exact candidate and proof inputs remain unchanged; rerun only invalidated or
-repository-required proof.
+repository-required proof. Reuse or extend the canonical test owner when it can
+express the responsibility clearly. Add a separate test only for distinct
+behavior, Invariant, oracle, Proof Seam, state or failure branch, risk, or
+failure isolation.
 
 When execution is unsuitable, record why and use the strongest safe
 claim-matched structural proxy. Name the unrun behavior and residual risk.
@@ -95,9 +100,11 @@ claim-matched structural proxy. Name the unrun behavior and residual risk.
 With proof current, remove authored scaffolding and accidental complexity.
 Perform Change Closure for every path the slice supersedes or makes redundant.
 Remove obsolete or duplicate implementations, callers, registrations, exports,
-flags, tests, configuration, documentation, and migrations. Retain a path only
-for a supported compatibility obligation with a named owner, reason, proof,
-and Removal Trigger.
+flags, tests, configuration, documentation, and migrations. Consolidate
+slice-created or superseded tests only after the surviving portfolio preserves
+each distinct responsibility and diagnostic clarity. Retain a path only for a
+supported compatibility obligation with a named owner, reason, proof, and
+Removal Trigger.
 Reconcile the candidate, affected proof, complete diff, and disposable state.
 Keep the last proved candidate when cleanup would change commitments or
 unrelated work.

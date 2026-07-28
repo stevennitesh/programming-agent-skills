@@ -97,11 +97,13 @@ Maintain completes when zero frontier tickets have substantive outcomes, every a
 
 ## Closure
 
-At the end of Advance or Maintain, close the map only when the destination is reached, no unresolved child or in-scope fog remains, and the next durable artifact or action is clear. Apply the tracker's **Complete map** and **Mutation read-back** conventions; while maintaining, keep the map claim through close, release it only after the closed state reads back, then read back the absence of that claim. Closure completes only when the closing comment or state, claim release, and resulting absence of an in-scope frontier are verified. Recommend exactly one route and stop:
+At the end of Advance or Maintain, close the map only when the destination is reached, no unresolved child or in-scope fog remains, and the next durable artifact or action is clear. If a settled closing decision changes durable domain language or warrants ADR assessment and no current Domain Delta already accounts for it, invoke `$domain-modeling` once with the settled decision and return owner. Use `persist authorized` only with exact domain-write authority; otherwise use `render only`. Record an ADR only with separate explicit approval; otherwise use `offer only`. Continue only when the returned Domain Delta accounts for the consequence; an exact blocker leaves the map open.
 
-- settled decision — report it; recommend `$domain-modeling` only for durable language or an ADR;
+Apply the tracker's **Complete map** and **Mutation read-back** conventions; while maintaining, keep the map claim through close, release it only after the closed state reads back, then read back the absence of that claim. Closure completes only when the closing comment or state, claim release, resulting absence of an in-scope frontier, and any required Domain Delta are verified. Recommend exactly one route and stop:
+
+- settled decision — report it;
 - settled parent-spec source or a successfully delivered implementation map — `$to-spec`.
 
 ## Return
 
-Return the map link when one exists, the Chart or Maintain result or selected ticket outcome, linked evidence, direct map changes, and the next frontier or closing route. When a frontier remains, end with `Next frontier: [<ticket title>](<link>). Invoke $wayfinder to advance it.` On closure, also return the destination and decisive resolutions.
+Return the map link when one exists, the Chart or Maintain result or selected ticket outcome, linked evidence, direct map changes, any Domain Delta produced during Closure, and the next frontier or closing route. When a frontier remains, end with `Next frontier: [<ticket title>](<link>). Invoke $wayfinder to advance it.` On closure, also return the destination and decisive resolutions.

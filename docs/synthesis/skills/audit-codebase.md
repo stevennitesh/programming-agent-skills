@@ -5,7 +5,15 @@ Status: exhaustive design reference and extraction map, not an executable contra
 Current amendment: the Review-owned Advisory Contract was retired on
 2026-07-27. Advisory passages below remain historical design evidence, not
 current runtime pointers. Current Audit Codebase improvement opportunities are
-owned by its `QUALITY-LENS.md` and `CANDIDATE-CONTRACT.md`.
+owned by its `QUALITY-LENS.md` and `CANDIDATE-CONTRACT.md`. A later Author pass
+adds Behavior-Owned Test Portfolio to `CODING-PRACTICES-LENS.md`; test count
+and suite time remain discovery hints, and consolidation requires direct
+overlap, cost, and coverage-preserving proof. The latest lean composition pass
+loads Codebase Design inside Analyze for a settled design or mixed candidate,
+folds the result into the HTML, and removes Codebase Design from the successor
+route table. A later lean routing pass adds direct Domain Modeling only for
+already-settled durable domain capture or ADR assessment; unresolved
+current-user decisions still use Grill With Docs.
 
 Runtime authority remains in:
 
@@ -15,7 +23,9 @@ Runtime authority remains in:
 - `docs/agents/engineering-contract.md`, the caller's Charter, and the target repository's domain, methodology, data, validation, and operational contracts;
 - the relationship map, router, review-family owners, pack tests, behavior evaluations, and installed mirror.
 
-The current canonical Audit Codebase package matches its installed mirror. Historical evaluations support its terminal coverage status, root-only guard, defect/advisory/gap separation, performance classification, complete item retention, zero-or-one immediate-owner suggestion, ready-remediation route to `$implement`, and offline HTML-report shape at their recorded hashes. This synthesis does not claim that the future rewrite described below has been extracted or behaviorally promoted. Canonical runtime source remains executable authority until a coordinated candidate passes every applicable gate and is separately synchronized.
+This Author pass claims no installed parity. Historical evaluations support
+their recorded runtime identities, not the latest wording. Canonical runtime
+source remains executable authority.
 
 ## How To Read This Document
 

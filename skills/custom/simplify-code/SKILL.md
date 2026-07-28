@@ -1,64 +1,61 @@
 ---
 name: simplify-code
-description: Simplify one bounded existing-code target without changing behavior, or run a finite serial until-clean campaign in one named region. Use only when explicitly invoked; exclude features, uncertain bugs, public-contract changes, wide discovery, and new interface or ownership design.
+description: Simplify one explicitly selected existing-code target without changing behavior, or run a finite serial until-clean campaign in one named region. Use only when explicitly invoked; exclude features, uncertain bugs, public-contract changes, wide discovery, and new interface or ownership design.
 ---
 
 # Simplify Code
 
-Own one outcome: one unstaged, behavior-preserving reduction in total
-maintenance obligations; an explicitly requested finite serial `until-clean`
-campaign inside one named region; or a fully accounted **No safe
-simplification** result.
+Return exactly one outcome: `simplified`, `no-safe-simplification`, or
+`blocked`. Default to one unstaged, behavior-preserving cut. Run multiple cuts
+only in an explicitly requested finite serial `until-clean` campaign.
 
-**Admit -> Trace -> Baseline -> Choose -> Cut -> Prove -> Lock.**
+**Bound -> Baseline -> Reduce -> Prove -> Return.**
 
-## Admit
+## Bound
 
-Accept one bounded target by this precedence: a current analyzed candidate
-from a verified `$audit-codebase` report whose direction is one
-behavior-preserving reduction and whose subsystem, Source Trace, supported
-behavior, proof seam, and snapshot identity are complete; the user-named
-target; then one coherent current diff. Return a missing, stale, blocked,
-disproved, or incomplete candidate or report to the caller unchanged. Without
-a bounded target, recommend `$audit-codebase` and stop.
+Accept only an exact `$audit-codebase` candidate selected by the user or a
+user-named target. The user may name the current diff as that target; never
+infer or replace the target. Verify an Audit candidate's report, snapshot,
+subsystem, Source Trace, supported behavior, Proof Seam, and selected
+behavior-preserving direction against current bytes. An invalid, stale,
+blocked, disproved, or incomplete target returns `blocked` unchanged.
+Without a target, return `blocked` with the exact target needed; recommend
+`$audit-codebase` only when wide discovery or repository mapping is needed.
 
 Return feature work, public-contract decisions, reviews, Git delivery, tracker
 mutation, installation, and external-system work to their owners. Return
-uncertain symptoms or causes to `$diagnosing-bugs`. Return a new interface,
-dependency direction, proof seam, or ownership decision to
-`$codebase-design`. Stop before copying a foreign owner's procedure.
+uncertain symptoms or causes to `$diagnosing-bugs`. Return a required new
+Interface, dependency direction, Proof Seam, or ownership decision to the
+caller as a design gap. Stop before copying a foreign owner's procedure.
 
 The user owns the target, mode, budget, and commitment decisions. Simplify Code
 owns selection, local edits, proof, and Return only inside the admitted region.
 
-## Trace And Baseline
+Load the applicable repository instructions, Engineering Contract, domain
+commitments, and supported compatibility. Trace the target's operational
+callers, callees, entries, configuration, registration paths, work state, and
+one caller-facing Proof Seam. For a valid Audit candidate, reuse its trace and
+selected direction; refresh only affected evidence. In default mode, do not
+repeat wide tracing or reopen the full ladder unless refreshed evidence
+invalidates that direction. An `until-clean` request names its region and uses
+the full ordered inspection.
 
-For an admitted Audit candidate, verify the report and snapshot against the
-current target bytes. Reuse its Source Trace, supported behavior, proof seam,
-and selected reduction direction; refresh only its affected files, callers,
-entries, configuration, authoritative commitments, and work state. If those
-checks invalidate or materially change the candidate, return it to Audit
-unchanged. Do not repeat wide tracing or reopen the full reduction ladder.
-
-For a user-named target or coherent current diff, read the repository
-instructions and authoritative behavior, domain, and compatibility
-commitments. Trace operational callers, callees, entries, configuration,
-registration paths, relevant work state, and one caller-facing proof seam.
+## Baseline
 
 Record the starting ref, status, relevant diff, and staged-state shape without
 disturbing existing work. Run the smallest trusted proof that can detect a
 behavior change against the exact starting state. A failing, ambiguous, or
-semantically inadequate baseline cannot authorize production mutation; return
-**No safe simplification** with the exact proof gap.
+semantically inadequate baseline returns `blocked` with the exact proof gap
+and no production mutation. An adequate baseline is required for a
+`no-safe-simplification` verdict.
 
-## Choose
+## Reduce
 
 Prefer source-supported deletion and an already-sufficient owner or native
 capability over locally attractive rewriting. For an admitted Audit candidate,
-choose the smallest concrete cut inside its selected reduction direction;
-resurvey the ladder only when refreshed evidence invalidates that direction.
-For other targets, inspect the region in this order; the first admissible rung
-wins:
+choose the smallest concrete cut inside its selected reduction direction in
+default mode. For other targets and each `until-clean` cycle, inspect the
+region in this order. The first safe rung wins:
 
 1. **Delete** behavior, configuration, compatibility, or abstraction proved
    unreachable, expired, or unsupported within preserved contracts.
@@ -87,21 +84,19 @@ Do not add a dependency. Remove one only after repository-wide source,
 configuration, and runtime-entry evidence proves no use remains, then
 reconcile its manifest, lockfile, and repository-owned installation proof.
 
-If no candidate passes, return **No safe simplification** with the bounded
-region, credible candidates, rejection reasons, work state, proof or proof
-gap, and owning residual. When evidence justifies retaining the current shape,
-also name its **Known Ceiling** and concrete **Revisit Trigger**; invent
-neither when no limit is evidenced.
+If the complete applicable inspection finds no safe cut under an adequate
+baseline, return `no-safe-simplification` with candidate rejections. The
+applicable inspection is the selected Audit direction in default mode or the
+full ladder for other targets and `until-clean`. Name an evidenced **Known
+Ceiling** and concrete **Revisit Trigger** when supported; invent neither.
 
-## Cut
+Otherwise make one bounded unstaged cut. Remove only fallout created by that
+cut: imports, helpers, files, configuration, dependencies, and
+implementation-detail tests displaced by stronger caller-facing proof.
+Preserve correct behavior proof, unrelated work, the index, trackers,
+installed state, and external state.
 
-Make one bounded unstaged cut. Remove only fallout created by that cut:
-imports, helpers, files, configuration, dependencies, and implementation-detail
-tests displaced by stronger caller-facing proof. Preserve correct behavior
-proof, pre-existing dead work, unrelated work, the index, trackers, installed
-state, and external state.
-
-## Prove And Lock
+## Prove
 
 Rerun the same focused proof, then the nearest relevant tests and
 proportionate repository checks. Establish a strict net reduction across
@@ -115,24 +110,23 @@ commitments, changes only the admitted cut and its created fallout, keeps the
 index and unrelated state as found, and leaves no invocation-created
 artifacts.
 
+If proof fails, revert only cut-created bytes that can be isolated without
+touching pre-existing or concurrent work; otherwise preserve current state.
+Return `blocked` with the failed proof, changed paths, work state, and exact
+recovery required.
+
 ## Until Clean
 
 Enter only when the user explicitly requests `until-clean`, names one region,
-and holds a finite positive successful-cut budget. Hold one invariant behavior
-contract and proof seam. When the user omits the budget, hold exactly `3`
-successful cuts by default. Run the complete gate serially for one cut at a
-time:
+and has a finite positive successful-cut budget; use exactly `3` successful
+cuts when omitted. Hold one invariant behavior contract and Proof Seam.
+Repeat `Baseline -> Reduce -> Prove` serially, recording removed and introduced
+maintenance obligations after each successful cut, decrementing the budget,
+and using the proved result as the next baseline. Continue only while the
+ledger shows strict monotonic reduction. A failed attempt consumes no
+successful-cut budget.
 
-`Trace -> Baseline -> Choose -> Cut -> Prove -> Lock`
-
-After each successful Lock, record the removed and introduced maintenance
-obligations, decrement the budget, and use the proved result as the next
-starting state. Continue only while the ledger shows a strict monotonic
-reduction. A failed attempt consumes no successful-cut budget.
-
-Stop on budget exhaustion, no admissible cut, proof failure, drift,
-oscillation, or a boundary owned elsewhere. Classify the first applicable
-terminal as:
+Stop at the first applicable terminal:
 
 1. **Clean:** one complete five-rung inspection finds no admissible cut.
 2. **Budget exhausted:** no successful-cut budget remains; report eligible
@@ -149,17 +143,25 @@ terminal as:
 Do not widen or parallelize the region, renew the budget, or count formatting
 and presentation-only changes as progress.
 
-## Return And Completion
+## Return
 
-Return the mode and region; cut or **No safe simplification** result; net
-obligation reduction; preserved contract and observable seam; before and after
-proof; changed paths; starting and ending work state; campaign budget and
-ledger when applicable; rejected or deferred candidates; exact stop reason;
-residual owner; and skipped proof or risk. The result remains unstaged.
+Return exactly one:
 
-Complete only when the admitted region, callers, commitments, proof seam,
-starting state, candidate accounting, after proof, net reduction, changed
-paths, index and unrelated-state preservation, residuals, and selected outcome
-all agree with current evidence. A campaign additionally requires its finite
-budget, serial successful-cut ledger, and one of the six terminal
-classifications with truthful residuals.
+- `simplified`: cut or cuts, net obligation reduction, preserved contract and
+  Proof Seam, before and after proof, changed paths, starting and ending work
+  state, residuals, and any skipped proof or risk.
+- `no-safe-simplification`: target, adequate baseline, complete applicable
+  candidate accounting, rejection reasons, and any supported Known Ceiling
+  and Revisit Trigger.
+- `blocked`: missing or invalid target, drift, proof gap or failure, or foreign
+  owner; include exact state, changed paths if any, and recovery or owner.
+
+For `until-clean`, also return the initial budget, successful-cut ledger,
+remaining budget, and first applicable campaign terminal. A campaign with any
+proved cut returns `simplified`; one with no cut and a `Clean` terminal returns
+`no-safe-simplification`; a failed or boundary stop returns `blocked`.
+
+The result remains unstaged. Complete only when the target, commitments, Proof
+Seam, candidate accounting, proof, work state, changed paths, preservation
+checks, residuals, and selected outcome agree with current evidence. Start no
+successor.

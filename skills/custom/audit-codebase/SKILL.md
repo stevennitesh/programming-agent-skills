@@ -176,8 +176,9 @@ Read each owner below completely:
   [SIMPLIFICATION-LENS.md](SIMPLIFICATION-LENS.md).
 - **Descriptive Naming**, **Type Safety**, **Immutability Default**,
   **Explicit Error Handling**, **Input Validation**, **Clear Control Flow**,
-  **Why Comments**, **Behavior Tests**, and **Focused Concurrency** test
-  whether implementation makes its contract easy to read and prove. Read
+  **Why Comments**, **Behavior Tests**, **Behavior-Owned Test Portfolio**, and
+  **Focused Concurrency** test whether implementation makes its contract easy
+  to read and prove. Read
   [CODING-PRACTICES-LENS.md](CODING-PRACTICES-LENS.md).
 
 Read [QUALITY-LENS.md](QUALITY-LENS.md) for class tie-breakers, opportunity
@@ -259,7 +260,13 @@ Trace the candidate's behavior, callers, dependencies, decisions, member
 findings, alternatives, proof seams, change surface, and conflicts under
 `CANDIDATE-CONTRACT.md`. It owns comparison, confirmation, decision briefs,
 returned-evidence judgment, candidate transitions, and exactly zero or one
-next-owner suggestion. Invoke nothing.
+next-owner suggestion.
+
+For a design or mixed candidate after current-user decisions settle, load
+`$codebase-design` Direct Design as a discipline and fold its comparison,
+material Interface, Seams, Proof Seams, migration, and safe gap into the
+candidate analysis. Audit retains the HTML and Return, creates no second
+design artifact, and does not delegate.
 
 ### 3. Publish And Stop
 

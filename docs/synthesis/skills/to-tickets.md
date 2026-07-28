@@ -2,14 +2,13 @@
 
 > Status (2026-07-27): historical evidence for the exact 2026-07-25 Deploy
 > Campaign bytes. Later authorized Author passes changed canonical
-> `to-tickets`; `skills/custom/to-tickets/` is current runtime authority. The
-> current pass makes the execution packet, repair routing, and delivery-owned
-> default budgets explicit. The registered five-part fixed-scenario evaluation
-> scored pre-change controls `[1, 1, 1, 1, 1]` and the exact current candidate
-> `[5, 5, 5, 5, 5]`, with no critical regression. Current campaign-tree
-> SHA-256 is
-> `2925b0d1f4a492706c45f131e27d11731172b1a74d8191d0c2bcd2053ec7bd17`.
-> No installed sync is claimed.
+> `to-tickets`; the latest adds one graph-level proof-responsibility map so
+> tickets share canonical test owners instead of manufacturing duplicate
+> proof, preserves source-owned Responsibilities, Interfaces, and Seams, and
+> maps source-owned Proof Seams to concrete proof lanes without designing
+> architecture. Prior hashes and evaluations below do not prove current wording.
+> `skills/custom/to-tickets/` is runtime authority. No installed sync is
+> claimed.
 
 The decision-bearing content is bounded below. Its identity is the SHA-256 of
 the exact UTF-8 bytes between the markers, including the first and last

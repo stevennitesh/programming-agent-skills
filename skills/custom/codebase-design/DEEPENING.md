@@ -2,7 +2,11 @@
 
 Use this branch when dependency shape changes the seam, substitute, test migration, or validation strategy.
 
-[`SKILL.md`](SKILL.md) owns vocabulary and taste. [DIRECT-DESIGN.md](DIRECT-DESIGN.md) owns the direct pass and design packet. This file owns dependency classification, seam placement, coverage parity, and bounded migration.
+[`SKILL.md`](SKILL.md) owns vocabulary and taste.
+[DIRECT-DESIGN.md](DIRECT-DESIGN.md) owns the direct pass and design packet.
+This file owns dependency classification, Seam placement, the
+Behavior-Owned Test Portfolio, coverage parity, Change Closure, and bounded
+migration.
 
 Classify -> Place -> Substitute -> Replace -> Migrate.
 
@@ -19,7 +23,11 @@ Classify every dependency whose shape affects the proposed interface, seam, subs
 
 ## 2. Place
 
-Place the narrowest seam earned by locality, dependency isolation, domain ownership, or real variation. Production plus a fake, substitute, emulator, or second integration demonstrates variation. Keep internal seams private and treat a test-only patch point as interface pressure.
+Place the narrowest Seam earned by locality, dependency isolation, domain
+ownership, supported variation, or a real external boundary. A substitute,
+emulator, or second integration can demonstrate variation; a test double alone
+cannot. Keep internal Seams private and treat a test-only patch point as
+Interface pressure.
 
 ## 3. Substitute
 
@@ -27,23 +35,40 @@ Choose substitutes by behavior risk, not convenience. Prove domain behavior thro
 
 ## 4. Replace, Don't Layer
 
-Establish **coverage parity** through the deeper interface before removing shallow tests. Classify every affected test as **add, rewrite, keep, or delete**:
+Establish **coverage parity** through the deeper Interface before removing
+shallow tests. Map each distinct behavior, Invariant, branch, or risk to one
+canonical test owner. Reuse or extend that owner before adding a test; keep a
+separate test only for a distinct responsibility or necessary failure
+isolation. Classify every affected test as **add, rewrite, keep, or delete**:
 
 - **Add** caller-facing behavior proof that is missing.
 - **Rewrite** behavior whose current test surface becomes obsolete.
 - **Keep** dense rules, adapter contracts, regressions, or behavior not yet covered through the deeper interface.
 - **Delete** pass-through, call-order, or implementation-detail assertions superseded by stronger behavior proof.
 
-Assert observable outcomes through the interface callers use. A test that changes only because implementation changed is testing past the interface.
+Assert observable outcomes through the Interface callers use. A test that
+changes only because Implementation moved is testing past the Interface.
+Remove shallow production and test paths only after stronger proof owns their
+Responsibilities.
 
 ## 5. Migrate
 
-Name the first behavior-preserving migration step, validation proof, stop boundary, and follow-ups. Keep the migration inside the bounded slice.
+Name the first behavior-preserving migration step, validation proof, applicable
+Change Closure, stop boundary, and follow-ups. Account for displaced
+Implementation, callers, registrations, exports, flags, tests, configuration,
+docs, and migrations. A retained compatibility path needs an owner, reason,
+proof, and Removal Trigger. Keep migration inside the bounded slice.
 
 ## Contribution To The Design Packet
 
-Return the dependency classifications; seam, adapters, and substitutes; test disposition and coverage-parity evidence; bounded migration; validation proof; and stop boundary.
+Return the dependency classifications; Seam, Adapters, and substitutes;
+canonical test owners, test disposition, and coverage-parity evidence; bounded
+migration and Change Closure; validation proof; and stop boundary.
 
 ## Completion
 
-Complete when every relevant dependency is classified; seam and substitute choices match those categories; the proposed interface is smaller and useful; coverage parity accounts for every affected test; validation proof is named; and migration stops at the bounded-slice edge.
+Complete when every relevant dependency is classified; Seam and substitute
+choices match those categories; the proposed Interface is smaller and useful;
+coverage parity and canonical ownership account for every affected test;
+Change Closure accounts for every displaced path; validation proof is named;
+and migration stops at the bounded-slice edge.

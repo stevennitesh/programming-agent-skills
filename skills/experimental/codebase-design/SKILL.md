@@ -11,7 +11,8 @@ Default to read-only design. The user or caller owns public-contract commitments
 
 For caller-owned early framing or final coherence checking without a design recommendation, read [DESIGN-COHERENCE.md](DESIGN-COHERENCE.md) and use only its `Frame` or `Check` branch. The caller retains artifact, disposition, mutation, and completion authority.
 
-For codebase-wide improvement discovery and classification, recommend `$improve-codebase` and stop.
+For codebase-wide mapping and improvement discovery, recommend
+`$audit-codebase` and stop.
 
 ## Vocabulary
 

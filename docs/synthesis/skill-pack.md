@@ -13,6 +13,9 @@ Revision 2 preserves all 25 capabilities while consolidating the former
 Revision 3 renames `review` to `change-review` and `convergent-pr-review` to
 `high-assurance-review`, and records the release-or-supported-risk assurance
 boundary. Earlier revision slices remain immutable historical evidence.
+Revision 4 folds bounded Codebase Design into To Spec or Audit Analyze when
+those workflows own the artifact, and removes post-workflow design routes from
+Research, TDD, and Simplify Code.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -755,6 +758,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       },
       {
         "predecessor_skill_id": "SK-002",
+        "successor_skill_id": "SK-021"
+      },
+      {
+        "predecessor_skill_id": "SK-002",
         "successor_skill_id": "SK-025"
       },
       {
@@ -804,6 +811,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       {
         "predecessor_skill_id": "SK-007",
         "successor_skill_id": "SK-011"
+      },
+      {
+        "predecessor_skill_id": "SK-007",
+        "successor_skill_id": "SK-017"
       },
       {
         "predecessor_skill_id": "SK-007",
@@ -1909,24 +1920,26 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "CAP-007"
       ],
       "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+        "The target retains all target-local admission, evidence, judgment, Return, and completion gates"
       ],
       "caller_skill_id": "SK-017",
       "combined_exit_owner_skill_id": "SK-017",
-      "context_loaded": [],
-      "entry_condition": "After user decisions settle, one bounded code Module, Interface, Seam, Adapter, or caller-facing test-surface design remains; Audit publishes an exact pickup and leaves design unstarted.",
-      "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
-      "input_packet": "Immutable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
-      "ordering_impact": "none",
+      "context_loaded": [
+        "codebase-design caller-facing interface and DIRECT-DESIGN.md"
+      ],
+      "entry_condition": "During Analyze, one selected design or mixed candidate still needs bounded internal design after user-owned decisions settle.",
+      "failure_behavior": "Fold decision-needed or evidence-gap state into the candidate and preserve the Audit-owned report and resumption boundary",
+      "input_packet": "Immutable audit report, selected candidate identity, settled decisions, Source Trace, proof seams, and implicated contracts",
+      "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-024",
       "required_proof_ids": [
         "PROOF-REL-024"
       ],
       "resume_owner_skill_id": "SK-017",
-      "return_packet": "One exact target, reason, prerequisite, and invocation with downstream work unstarted",
+      "return_packet": "Bounded comparison, material Responsibilities, Interfaces, Seams, Proof Seams, migration, and safe gaps folded into the Audit candidate",
       "target_skill_id": "SK-007",
-      "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      "verb": "Load",
+      "wrong_condition": "The candidate is not design or mixed, a user-owned decision remains unsettled, or Audit does not retain the artifact and completion"
     },
     {
       "affected_capability_ids": [
@@ -2266,31 +2279,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     {
       "affected_capability_ids": [
         "CAP-003",
-        "CAP-007"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-003",
-      "combined_exit_owner_skill_id": "SK-003",
-      "context_loaded": [],
-      "entry_condition": "One bounded interface, seam, adapter, ownership, or migration design must be chosen.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for research and the declared codebase-design input",
-      "ordering_impact": "none",
-      "relationship_id": "REL-037",
-      "required_proof_ids": [
-        "PROOF-REL-037"
-      ],
-      "resume_owner_skill_id": "SK-003",
-      "return_packet": "One named target and reason with downstream work unstarted",
-      "target_skill_id": "SK-007",
-      "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-003",
         "CAP-005"
       ],
       "callee_owned_gates_mutations": [
@@ -2465,31 +2453,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "return_packet": "The declared high-assurance-review Return packet plus evidence, limits, and residual state",
       "target_skill_id": "SK-014",
       "verb": "Hand off",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-018",
-        "CAP-007"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-018",
-      "combined_exit_owner_skill_id": "SK-018",
-      "context_loaded": [],
-      "entry_condition": "The best next move requires one new interface or ownership decision.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for simplify-code and the declared codebase-design input",
-      "ordering_impact": "none",
-      "relationship_id": "REL-045",
-      "required_proof_ids": [
-        "PROOF-REL-045"
-      ],
-      "resume_owner_skill_id": "SK-018",
-      "return_packet": "One named target and reason with downstream work unstarted",
-      "target_skill_id": "SK-007",
-      "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     },
     {
@@ -3095,31 +3058,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     {
       "affected_capability_ids": [
         "CAP-006",
-        "CAP-007"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-006",
-      "combined_exit_owner_skill_id": "SK-006",
-      "context_loaded": [],
-      "entry_condition": "A GREEN refactor exposes one bounded interface or seam question outside the slice.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for tdd and the declared codebase-design input",
-      "ordering_impact": "none",
-      "relationship_id": "REL-071",
-      "required_proof_ids": [
-        "PROOF-REL-071"
-      ],
-      "resume_owner_skill_id": "SK-006",
-      "return_packet": "One named target and reason with downstream work unstarted",
-      "target_skill_id": "SK-007",
-      "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-006",
         "CAP-005"
       ],
       "callee_owned_gates_mutations": [
@@ -3479,23 +3417,25 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "CAP-002"
       ],
       "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+        "The target retains all target-local admission, evidence, mutation, Return, and completion gates"
       ],
       "caller_skill_id": "SK-021",
       "combined_exit_owner_skill_id": "SK-021",
-      "context_loaded": [],
-      "entry_condition": "A closing decision changes durable language or warrants an ADR offer.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for wayfinder and the declared domain-modeling input",
-      "ordering_impact": "none",
+      "context_loaded": [
+        "domain-modeling caller-facing interface and branch-required reference only"
+      ],
+      "entry_condition": "A settled closing decision changes durable domain language or warrants ADR assessment, and no current Domain Delta accounts for it.",
+      "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
+      "input_packet": "Settled Wayfinder decision, return owner, explicit context action, separate ADR action, and declared domain-modeling input",
+      "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-086",
       "required_proof_ids": [
         "PROOF-REL-086"
       ],
       "resume_owner_skill_id": "SK-021",
-      "return_packet": "One named target and reason with downstream work unstarted",
+      "return_packet": "The declared domain-modeling Return packet plus evidence, limits, and residual state",
       "target_skill_id": "SK-002",
-      "verb": "Recommend and stop",
+      "verb": "Invoke",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     },
     {
@@ -3651,6 +3591,31 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "target_skill_id": "SK-017",
       "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-017",
+        "CAP-002"
+      ],
+      "callee_owned_gates_mutations": [
+        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-017",
+      "combined_exit_owner_skill_id": "SK-017",
+      "context_loaded": [],
+      "entry_condition": "One analyzed candidate has settled domain language, Invariants, Bounded Contexts, Context Relationships, or an ADR candidate requiring durable capture or assessment.",
+      "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
+      "input_packet": "Immutable audit report, candidate identity, settled domain consequence and authority, context action, ADR action, and exact Analyze re-entry",
+      "ordering_impact": "none",
+      "relationship_id": "REL-093",
+      "required_proof_ids": [
+        "PROOF-REL-093"
+      ],
+      "resume_owner_skill_id": "SK-017",
+      "return_packet": "One complete Domain Delta for later Audit Analyze with Domain Modeling left unstarted",
+      "target_skill_id": "SK-002",
+      "verb": "Recommend and stop",
+      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     }
   ],
   "selected_skills": [
@@ -3767,7 +3732,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
       "relationship_ids": [
-        "REL-037",
         "REL-038",
         "REL-039",
         "REL-040",
@@ -3894,7 +3858,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
       "relationship_ids": [
-        "REL-071",
         "REL-072",
         "REL-073",
         "REL-074",
@@ -4371,7 +4334,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-027",
         "REL-028",
         "REL-029",
-        "REL-056"
+        "REL-056",
+        "REL-093"
       ],
       "required_input": "A repository baseline for Map; one current complete report and selected subsystem for Audit; or one current report and selected candidate or returned packet for Analyze",
       "return_packet": "A complete, incomplete, or blocked invocation result with snapshot and Map state, absolute report path or none, current selection, coverage, and any exact uninvoked pickup",
@@ -4412,7 +4376,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
       "relationship_ids": [
-        "REL-045",
         "REL-046"
       ],
       "required_input": "A bounded caller-owned Source Trace and authority for: Simplify one bounded existing-code region without changing behavior",

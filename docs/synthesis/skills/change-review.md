@@ -15,4 +15,7 @@ candidates and supported high-risk changes hand off once to
 
 Implement and Parallel Implement select Change Review for ordinary candidates
 and retain Repair, mutation, Lock, and successor-snapshot authority. The rename
-does not claim installed parity or fresh wording efficacy.
+does not claim installed parity or fresh wording efficacy. The shared Finding
+Contract now admits new or changed test overlap only with a violated Standard,
+no distinct proof responsibility, and concrete maintenance or execution cost;
+High Assurance Review consumes that same owner without duplicate wording.

@@ -1,11 +1,16 @@
 # TDD Minimum-Runtime Synthesis
 
-Status: Complete. Canonical and installed TDD are byte-identical at accepted
-hash `35bbe08d4f3ce1d137ae12bf3fd1e2a8bc1b75dd3f234d2266c020467e1e3e7c`.
+> Status (2026-07-27): historical evidence for the exact pruning-campaign
+> bytes. A later authorized Author pass changed canonical TDD so RED reuses or
+> extends a behavior-owned test before adding a distinct responsibility and
+> GREEN refactoring consolidates only proved in-slice overlap. The latest lean
+> composition pass returns an out-of-slice Interface or Seam question to the
+> caller as a design gap instead of recommending a post-TDD Codebase Design
+> step. Prior hashes and evaluations below do not prove current wording.
+> `skills/custom/tdd/` is runtime authority. No installed sync is claimed.
 
 This synthesis owns the completed pruning decision and its durable rationale.
 Validation owns campaign chronology, raw evaluations, and installation proof.
-Canonical runtime authority remains `skills/custom/tdd/`.
 
 ## Outcome And Decision
 

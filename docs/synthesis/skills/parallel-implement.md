@@ -4,11 +4,10 @@
 > Later authorized Author passes changed canonical `parallel-implement` to a
 > four-phase spine with incremental concurrency qualification and
 > identity-aware proof reuse, then aligned graph, worker-packet,
-> default-budget, and repair-routing contracts with To Tickets.
-> The registered five-part fixed-scenario evaluation scored pre-change controls
-> `[1, 1, 1, 1, 1]` and the exact current candidate `[5, 5, 5, 5, 5]`, with no
-> critical regression. Current campaign-tree SHA-256 is
-> `cb58503dd011ceb7faca8a77043c027757019f68480b41a1981a7738a13735c6`.
+> default-budget, and repair-routing contracts with To Tickets. The latest
+> pass preserves graph-level proof ownership, serializes shared test surfaces,
+> and consolidates campaign-created overlap before one final proof run. Prior
+> hashes and evaluations below do not prove current wording.
 > `skills/custom/parallel-implement/` is runtime authority. No installed sync
 > is claimed.
 

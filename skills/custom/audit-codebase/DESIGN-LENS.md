@@ -63,6 +63,7 @@ During subsystem audit, name the friction and change direction, not an exact
 new public Interface. During candidate analysis, compare keep, inline/merge,
 deepening, Seam movement, and earned Adapter alternatives.
 
-If a public Interface or Seam commitment remains a bounded design question,
-suggest `$codebase-design`. If it is a user-owned repo-backed trade-off with
-domain consequences, prepare the `$grill-with-docs` decision brief first.
+For a design or mixed candidate, settle any user-owned trade-off first, then
+load `$codebase-design` Direct Design and fold its result into the candidate.
+Audit retains the HTML and Return; emit no separate design packet or later
+Codebase Design step.

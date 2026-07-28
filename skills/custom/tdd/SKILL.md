@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: "Use for tracer-bullet red-green-refactor on red-testable new behavior. For bugs, use only when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known. Hand off bugs when any of those facts is uncertain to $diagnosing-bugs; hand off throwaway design questions to $prototype."
+description: "Use directly for one bounded red-testable behavior, or as the inner loop of an implementation owner. Exclude whole-ticket delivery and closeout, bugs with uncertain expected behavior, exact symptom, cause, or trusted red-capable reproduction, and throwaway design questions."
 ---
 
 # Test-Driven Development
@@ -13,7 +13,7 @@ Own one inner loop:
 
 The caller owns bounded scope, review, staging, commit, tracker or external mutation, publishing, and closeout.
 
-Hand off to `$diagnosing-bugs` when a bug's expected behavior, exact symptom, cause, or trusted red-capable reproduction is uncertain; it returns regression proof or a decision-needed packet to the original caller. Hand off throwaway design questions to `$prototype`.
+Hand off to `$diagnosing-bugs` when a bug's expected behavior, exact symptom, cause, or trusted red-capable reproduction is uncertain; it returns a bounded diagnosis packet to the original caller, including regression proof, an explicit seam gap, or the exact blocker. Hand off throwaway design questions to `$prototype`.
 
 Read [tests.md](tests.md) only when test shape, oracle, or seam remains unclear after inspecting nearby tests. Read [mocking.md](mocking.md) before adding a test double. Read [refactoring.md](refactoring.md) only while GREEN.
 
@@ -29,6 +29,7 @@ Lock one **tracer bullet**:
 - its source or acceptance criterion;
 - the highest useful public interface or seam;
 - an independent oracle;
+- its existing test owner, if any; and
 - the focused test command.
 
 Choose the seam from repo evidence. Ask only when behavior, public contract, oracle, or a user-owned commitment remains unsettled.
@@ -39,7 +40,10 @@ A GREEN prefactor may expose the seam only when focused tests already protect ex
 
 ## 2. RED
 
-Write one focused behavior test and run it before production implementation.
+Create one focused RED before production implementation. Extend the narrowest
+existing Behavior Test, case table, or contract suite when it can express the
+tracer clearly. Add a test only when the tracer has a distinct proof
+responsibility; do not overload unrelated behavior.
 
 RED passes its gate only when the test fails for the expected missing or wrong behavior—not from setup, imports, fixtures, typos, or unrelated breakage.
 
@@ -70,8 +74,13 @@ Return:
 - **Source Trace:** behavior, source, seam, and oracle;
 - **RED:** command, observed failing result, and why it is the expected behavioral failure;
 - **GREEN:** command and passing result;
+- **Test portfolio:** reused, extended, added, consolidated, or removed proof,
+  with its distinct responsibility;
 - **Coverage:** relevant validation or skipped reason;
 - **Refactor:** material cleanup or `none`;
 - **Residual risk:** remaining uncertainty or blocker.
 
-Complete only when every implemented behavior crossed observed RED before production implementation, crossed GREEN through its chosen seam, stayed GREEN through refactoring, received relevant validation, and appears in the proof packet.
+Complete only when every implemented behavior crossed observed RED before
+production implementation, crossed GREEN through its chosen seam, stayed
+GREEN through refactoring, received relevant validation, has an accounted
+test responsibility, and appears in the proof packet.

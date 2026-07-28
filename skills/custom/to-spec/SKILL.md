@@ -54,10 +54,13 @@ authority; otherwise return `existing-state-conflict` with observed identity,
 unchanged state, and the smallest needed authorization or source delta.
 
 Preserve routed domain terms and ADR decisions and point to their owners;
-change no domain truth. Load `$codebase-design` only for module, interface,
-seam, adapter, depth, leverage, and locality vocabulary whose meaning is
-already settled. Retain artifact and decision authority; when a new public or
-ownership choice is required, return `source-gap`.
+change no domain truth. Load `$codebase-design` for shared design vocabulary.
+When the source delegates internal technical design and one consequential
+Responsibility, Interface, Seam, or Proof Seam must be settled for the
+spec, apply Direct Design before drafting and fold its supported result into
+the specification. Retain artifact and decision authority and create no
+separate design packet. A `decision-needed` or `evidence-gap` result, new
+public or ownership choice, or unsupported trade-off returns `source-gap`.
 
 Build a bidirectional commitment ledger. Account once for every requirement,
 exclusion, deferral, constraint, dependency, risk, and nonblocking open note,
@@ -81,8 +84,9 @@ generic practices.
 Pair every commitment with observable acceptance and an honest proof authority.
 Cover edge, error, and state branches where behavior materially varies. Name
 structural proxies and their residual risk; claim no implementation proof that
-was not run. Describe already-settled interfaces and state without choosing
-new architecture.
+was not run. Record settled or delegated-and-supported material
+Responsibilities, Interfaces, Seams, Proof Seams, and state. Omit
+incidental internal seams.
 
 When state matters, cover only the material initial, reusable,
 legacy-or-incompatible, access-path, variant, and lifecycle branches. Do not
@@ -93,12 +97,15 @@ and coverage gates pass. Read back its exact bytes and correct synthesis
 defects before durable publication. If the path is not safe and ignored, stop
 without durable mutation.
 
-Carry a path, current owner, reuse candidate, or proof seam only when it is a
-binding source decision or evidence pointer. Paths are evidence, not an
-implementation plan. Leave bounded repository grounding, ticket slices,
-expected writes, concrete proof lanes, dependency graph and ready frontier,
-execution profiles, parallel-safety decisions, implementation technique, and
-default Repair budgets to `$to-tickets` and delivery owners.
+Carry a path, current owner, reuse candidate, or Proof Seam only when it is a
+binding source decision, supported design result, or evidence pointer. A
+material Seam belongs in the spec when it affects caller contracts,
+cross-ticket ownership, compatibility or migration, or test strategy. Paths
+are evidence, not an implementation plan. Leave bounded repository grounding,
+ticket slices, expected writes, concrete proof lanes and test owners,
+dependency graph and ready frontier, execution profiles, parallel-safety
+decisions, implementation technique, and default Repair budgets to
+`$to-tickets` and delivery owners.
 
 ### 4. Publish, verify, and reconcile
 

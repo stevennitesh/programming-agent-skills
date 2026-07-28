@@ -8,13 +8,17 @@ Use [`SKILL.md`](SKILL.md) for vocabulary and [DIRECT-DESIGN.md](DIRECT-DESIGN.m
 
 ## 1. Frame
 
-Frame the problem from the Source Trace: candidate module or shallow cluster, spread behavior or decision, constraints, dependencies, painful callers and tests, public-contract commitments, and bounded-slice edge. Use a sketch only to make settled constraints concrete; label it illustrative, not a proposal or evidence.
+Frame the problem from the Source Trace: candidate Module or shallow cluster,
+spread behavior or decision, constraints, dependencies, painful callers and
+tests, public-contract commitments, applicable engineering and domain
+obligations, and bounded-slice edge. Use a sketch only to make settled
+constraints concrete; label it illustrative, not a proposal or evidence.
 
 ## 2. Diverge
 
 Produce at least three genuinely different candidate shapes. Each must make its caller-facing interface explicit; include the current or simplest no-new-seam shape when it is credible.
 
-Use direct fresh-context scouts when independent judgment matters. Start each with `fork_turns="none"` when supported. Give every scout the same self-contained factual brief: objective, settled constraints, scope, source pointers, one distinct design pressure, mutation boundary, and output contract. Exclude parent hypotheses, preferred solutions, other candidates, and peer results.
+Use direct fresh-context scouts when independent judgment matters. Start each with `fork_turns="none"` when supported. Give every scout the same self-contained factual brief: objective, settled constraints, applicable engineering and domain obligations, scope, source pointers, one distinct design pressure, mutation boundary, and output contract. Exclude parent hypotheses, preferred solutions, other candidates, and peer results.
 
 Scouts inspect and propose only; they never edit files, mutate external state, or spawn. Keep alternatives private until every scout returns. The main agent owns comparison, recommendation, and completion.
 
@@ -39,7 +43,11 @@ For each alternative, show:
 
 ## 3. Compare
 
-Compare depth, locality, caller ergonomics, seam placement, dependency strategy, test surface, migration cost, and risk. Merge alternatives that differ only by names, parameter reshuffling, or cosmetic layering; replace fake variety with a genuinely different design.
+Compare Depth, Locality, caller ergonomics, Seam placement, dependency
+strategy, Semantic Correctness, Robustness, test portfolio, Change Closure,
+migration cost, and risk under the same obligations. Merge alternatives that
+differ only by names, parameter reshuffling, or cosmetic layering; replace
+fake variety with a genuinely different design.
 
 ## 4. Recommend
 

@@ -317,7 +317,7 @@ def assert_repo_bootstrap_semantic_contract(
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     assert_repo_bootstrap_semantic_contract(
         CUSTOM / "repo-bootstrap",
-        "8591a56c098c31a9098d8de9862039f2665f6b457457f8cc3124bd675d5f9e62",
+        "2e6b8a7c5306ed8a24ff923879fd7529dc0f36b9fb624c674e5d8aacab67c091",
         profile="incumbent",
     )
 
@@ -479,9 +479,32 @@ def test_codebase_design_preserves_lean_branch_contracts() -> None:
     alternatives = (CUSTOM / "codebase-design/DESIGN-IT-TWICE.md").read_text(
         encoding="utf-8"
     )
+    relationships = (
+        ROOT / "docs/synthesis/skill-context-relationships.md"
+    ).read_text(encoding="utf-8")
+    design_flat = " ".join(design.split())
+    direct_flat = " ".join(direct.split())
+    deepening_flat = " ".join(deepening.split())
+    alternatives_flat = " ".join(alternatives.split())
 
     assert "[DIRECT-DESIGN.md](DIRECT-DESIGN.md)" in design
+    assert (
+        "before planning or implementation only when one consequential"
+        in design_flat
+    )
+    assert "Proof Seam" in design
+    assert "test double alone does not earn one" in design_flat
     assert len(re.findall(r"(?m)^## \d+\. ", direct)) == 5
+    for required in (
+        "decision-needed",
+        "evidence-gap",
+        "Failure Atomicity",
+        "Trust Boundaries",
+        "Proof Seam establishes meaning",
+        "Behavior-Owned Test Portfolio",
+        "Change Closure",
+    ):
+        assert required in direct_flat
     assert len(re.findall(r"(?m)^## \d+\. ", deepening)) == 5
     for category in (
         "In-process",
@@ -492,6 +515,8 @@ def test_codebase_design_preserves_lean_branch_contracts() -> None:
         assert category in deepening
     for disposition in ("Add", "Rewrite", "Keep", "Delete"):
         assert f"**{disposition}**" in deepening
+    assert "canonical test owner" in deepening_flat
+    assert "Removal Trigger" in deepening_flat
     assert re.findall(r"(?m)^## \d+\. ([A-Za-z]+)$", alternatives) == [
         "Frame",
         "Diverge",
@@ -499,6 +524,16 @@ def test_codebase_design_preserves_lean_branch_contracts() -> None:
         "Recommend",
     ]
     assert "**No-new-seam**" in alternatives
+    assert "applicable engineering and domain obligations" in alternatives_flat
+    assert "create no separate workflow step" in design_flat
+    assert 'CodeDesign["codebase-design"] --> Contract' in relationships
+    assert "CodeDesign --> DomainRouter" in relationships
+    assert "| `to-spec` | Load | `$codebase-design` |" in relationships
+    assert "| `audit-codebase` | Load | `$codebase-design` |" in relationships
+    for caller in ("research", "tdd", "simplify-code"):
+        assert f"| `{caller}` | Recommend and stop | `$codebase-design` |" not in (
+            relationships
+        )
 
 
 def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
@@ -638,9 +673,17 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
 
     closure = wayfinder.split("## Closure", 1)[1].split("## Return", 1)[0]
     assert "read back the absence of that claim" in closure
+    closure_flat = " ".join(closure.split())
+    assert "invoke `$domain-modeling` once" in closure_flat
+    assert "no current Domain Delta already accounts for it" in closure_flat
+    assert "`persist authorized` only with exact domain-write authority" in closure_flat
+    assert "otherwise use `render only`" in closure_flat
+    assert "separate explicit approval" in closure_flat
+    assert "an exact blocker leaves the map open" in closure_flat
 
     returned = wayfinder.split("## Return", 1)[1]
     assert "Next frontier: [<ticket title>](<link>). Invoke $wayfinder to advance it." in returned
+    assert "any Domain Delta produced during Closure" in returned
 
 
 def test_grill_with_docs_package_and_relationship_contract() -> None:
@@ -849,6 +892,8 @@ def test_review_finding_interface_and_return_boundary_are_shared() -> None:
         assert "Return boundary: caller" in skill
         assert "Mutation authority: none" in skill
         assert "Successor snapshot authority: none" in skill
+    assert "Test count or runtime alone does not admit a finding" in finding
+    assert "distinct responsibility or justified failure isolation" in finding
 
 
 def test_review_family_shares_one_bounded_quality_and_risk_model() -> None:
@@ -1052,7 +1097,10 @@ def test_audit_codebase_is_serial_cumulative_html_report() -> None:
         assert f"**{severity}:**" in defect
     assert "Downstream execution: none" in audit
     assert "$audit-codebase analyze <candidate-id>" in audit
-    assert "Invoke nothing" in audit
+    assert "load `$codebase-design` Direct Design as a discipline" in " ".join(
+        audit.split()
+    )
+    assert "creates no second design artifact" in " ".join(audit.split())
     assert "decision pending" in audit
     assert "Candidate analysis is optional." in audit
     assert "Never replace an explicit invalid, ambiguous, or stale Audit" in " ".join(
@@ -1063,6 +1111,7 @@ def test_audit_codebase_is_serial_cumulative_html_report() -> None:
     for route in (
         "$research",
         "$prototype",
+        "$domain-modeling",
         "$grill-with-docs",
         "$grilling",
         "$diagnosing-bugs",
@@ -1071,10 +1120,22 @@ def test_audit_codebase_is_serial_cumulative_html_report() -> None:
         "$to-tickets",
         "$implement",
         "$simplify-code",
-        "$codebase-design",
         "$wayfinder",
     ):
         assert route in candidate
+    assert "$codebase-design" not in candidate
+    assert "Domain Modeling for already-settled durable capture" in candidate_flat
+    assert "only when the decision and its Domain Delta are both required" in (
+        candidate_flat
+    )
+    assert (
+        "Material Responsibilities, Interfaces, Seams, and Proof Seams:"
+        in candidate
+    )
+    assert (
+        "material Responsibilities, Interfaces, Seams, and Proof Seams"
+        in report_flat
+    )
     assert "Cross-session transport is not a semantic route" in candidate_flat
     assert "$tdd" not in defect
     assert "One non-reduction direct item has settled outcome" in candidate
@@ -1171,6 +1232,7 @@ def test_audit_codebase_is_serial_cumulative_html_report() -> None:
         "Clear Control Flow",
         "Why Comments",
         "Behavior Tests",
+        "Behavior-Owned Test Portfolio",
     ):
         assert concept in practices
     assert "**Like-for-like:**" in performance
@@ -1318,7 +1380,11 @@ def test_audit_codebase_replaces_improve_codebase() -> None:
 
 def test_tdd_discloses_test_reference_only_for_an_evidence_gap() -> None:
     tdd = (CUSTOM / "tdd/SKILL.md").read_text(encoding="utf-8")
+    tests = (CUSTOM / "tdd/tests.md").read_text(encoding="utf-8")
 
+    assert "Use directly for one bounded red-testable behavior" in tdd
+    assert "inner loop of an implementation owner" in tdd
+    assert "Exclude whole-ticket delivery and closeout" in tdd
     assert re.findall(r"(?m)^## \d+\. ([A-Z]+)$", tdd) == [
         "TRACE",
         "RED",
@@ -1329,13 +1395,22 @@ def test_tdd_discloses_test_reference_only_for_an_evidence_gap() -> None:
     for helper in ("tests.md", "mocking.md", "refactoring.md"):
         assert (CUSTOM / "tdd" / helper).is_file()
         assert f"[{helper}]({helper})" in tdd
+    assert "existing Behavior Test, case table, or contract suite" in tdd
+    assert "Add a test only when the tracer has a distinct proof" in tdd
+    assert "## Behavior-Owned Test Portfolio" in tests
+    assert "Test count is not a target" in tests
 
 
 def test_tdd_routes_improvement_followups_by_scope() -> None:
     refactoring = (CUSTOM / "tdd/refactoring.md").read_text(encoding="utf-8")
+    refactoring_flat = " ".join(refactoring.split())
 
     assert "$simplify-code" in refactoring
-    assert "$codebase-design" in refactoring
+    assert "$codebase-design" not in refactoring
+    assert (
+        "Return an already-framed Interface or Seam question to the caller as "
+        "a design gap"
+    ) in refactoring_flat
     assert "$audit-codebase" in refactoring
 
 
@@ -1343,37 +1418,52 @@ def test_simplify_code_is_explicit_bounded_and_behavior_preserving() -> None:
     skill_dir = CUSTOM / "simplify-code"
     skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     skill_flat = " ".join(skill.split())
-    trace = skill.split("## Trace And Baseline", 1)[1].split("## Choose", 1)[0]
-    choose = skill.split("## Choose", 1)[1].split("## Cut", 1)[0]
-    choose_flat = " ".join(choose.split())
+    bound = skill.split("## Bound", 1)[1].split("## Baseline", 1)[0]
+    bound_flat = " ".join(bound.split())
+    baseline = skill.split("## Baseline", 1)[1].split("## Reduce", 1)[0]
+    reduce = skill.split("## Reduce", 1)[1].split("## Prove", 1)[0]
+    reduce_flat = " ".join(reduce.split())
+    returned = skill.split("## Return", 1)[1]
+    returned_flat = " ".join(returned.split())
 
     assert not implicit_policy(skill_dir)
-    assert "one unstaged, behavior-preserving reduction" in skill
-    assert "No safe simplification" in skill
+    assert "one explicitly selected existing-code target" in skill
+    assert "**Bound -> Baseline -> Reduce -> Prove -> Return.**" in skill
+    assert "Return exactly one outcome" in skill
+    for outcome in ("`simplified`", "`no-safe-simplification`", "`blocked`"):
+        assert outcome in returned
+    assert "The user may name the current diff as that target" in bound
+    assert "never infer or replace the target" in bound_flat.lower()
+    assert "one coherent current diff" not in skill
+    assert "Without a target, return `blocked`" in bound_flat
+    assert "exact `$audit-codebase` candidate selected by the user" in bound
+    assert "reuse its trace and selected direction" in bound_flat
+    assert "In default mode, do not repeat wide tracing" in bound_flat
+    assert "An `until-clean` request names its region" in bound_flat
     assert "smallest trusted proof" in skill
-    assert "before and after" in skill
+    assert "semantically inadequate baseline returns `blocked`" in " ".join(
+        baseline.split()
+    )
+    assert "adequate baseline is required for a `no-safe-simplification`" in " ".join(
+        baseline.split()
+    )
+    assert "before and after proof" in returned_flat
     assert "Refresh changed paths and work state after proof" in skill
     assert "evidence proves no use remains" in skill
     assert "staged-state shape" in skill
     assert "keeps the index and unrelated state as found" in skill_flat
-    assert "Without a bounded target, recommend `$audit-codebase` and stop" in skill_flat
-    assert "current analyzed candidate" in skill
-    assert "verified `$audit-codebase` report" in skill
-    assert "behavior-preserving reduction" in skill
     assert "verified `$audit-codebase` atlas" not in skill
-    assert "Reuse its Source Trace, supported behavior, proof seam" in trace
-    assert "refresh only its affected files, callers" in trace
-    assert "Do not repeat wide tracing or reopen the full reduction ladder" in trace
-    assert "resurvey the ladder only when refreshed evidence invalidates" in choose
-    assert "configuration, compatibility, or abstraction proved" in choose
+    assert "configuration, compatibility, or abstraction proved" in reduce
     assert "deepen, merge, or inline only within settled existing boundaries" in (
-        choose_flat
+        reduce_flat
     )
-    assert "Known Ceiling" in choose
-    assert "Revisit Trigger" in choose
+    assert "Known Ceiling" in reduce_flat
+    assert "Revisit Trigger" in reduce_flat
+    assert "complete applicable inspection" in reduce
+    assert "selected Audit direction in default mode or the" in reduce_flat
+    assert "full ladder for other targets and `until-clean`" in reduce_flat
     assert "Enter only when the user explicitly requests `until-clean`" in skill
-    assert "`Trace -> Baseline -> Choose -> Cut -> Prove -> Lock`" in skill
-    assert re.findall(r"(?m)^\d\. \*\*([^*]+)\*\*", skill.split("## Choose", 1)[1])[:5] == [
+    assert re.findall(r"(?m)^\d\. \*\*([^*]+)\*\*", reduce)[:5] == [
         "Delete",
         "Reuse",
         "Standardize, native-first",
@@ -1394,13 +1484,14 @@ def test_simplify_code_is_explicit_bounded_and_behavior_preserving() -> None:
 
 def test_simplify_code_until_clean_has_a_finite_convergence_contract() -> None:
     skill = (CUSTOM / "simplify-code/SKILL.md").read_text(encoding="utf-8")
-    branch = skill.split("## Until Clean", 1)[1].split("## Return And Completion", 1)[0]
+    branch = skill.split("## Until Clean", 1)[1].split("## Return", 1)[0]
     branch_flat = " ".join(branch.split())
 
     assert "names one region" in branch
     assert "finite positive successful-cut budget" in branch
-    assert "Hold one invariant behavior contract and proof seam" in branch_flat
-    assert "`3` successful cuts by default" in branch_flat
+    assert "Hold one invariant behavior contract and Proof Seam" in branch_flat
+    assert "use exactly `3` successful cuts when omitted" in branch_flat
+    assert "`Baseline -> Reduce -> Prove`" in branch
     assert "strict monotonic reduction" in branch_flat
     assert "complete five-rung inspection" in branch_flat
     assert "presentation-only changes as progress" in branch_flat
@@ -1415,9 +1506,11 @@ def test_simplify_code_until_clean_has_a_finite_convergence_contract() -> None:
         "Boundary stop",
     ]
 
-    returned = skill.split("## Return And Completion", 1)[1]
+    returned = skill.split("## Return", 1)[1]
     returned_flat = " ".join(returned.split())
-    assert "campaign budget and ledger when applicable" in returned_flat
+    assert "initial budget, successful-cut ledger, remaining budget" in returned_flat
+    assert "with no cut and a `Clean` terminal returns" in returned_flat
+    assert "failed or boundary stop returns `blocked`" in returned_flat
 
 
 def test_codebase_design_compares_replacement_with_incremental_evolution() -> None:
@@ -1431,6 +1524,7 @@ def test_codebase_design_compares_replacement_with_incremental_evolution() -> No
 
 def test_bug_routing_is_disjoint_and_non_bouncing() -> None:
     diagnosing = (CUSTOM / "diagnosing-bugs/SKILL.md").read_text(encoding="utf-8")
+    diagnosing_flat = " ".join(diagnosing.split())
     tdd = (CUSTOM / "tdd/SKILL.md").read_text(encoding="utf-8")
     tdd_tests = (CUSTOM / "tdd/tests.md").read_text(encoding="utf-8")
 
@@ -1439,10 +1533,17 @@ def test_bug_routing_is_disjoint_and_non_bouncing() -> None:
         for match in re.finditer(r"(?m)^## \d+\. ([A-Za-z]+)$", diagnosing)
     ] == ["Trace", "Loop", "Minimise", "Hypothesise", "Probe", "Prove", "Return"]
     assert "[SKILL.md](SKILL.md)" in tdd_tests
-    assert "$diagnosing-bugs" in tdd.split("---", 2)[1]
+    assert "Hand off to `$diagnosing-bugs`" in tdd
     assert "expected behavior" in diagnosing.split("---", 2)[1]
     assert "expected behavior" in tdd.split("---", 2)[1]
     assert "observed failing result" in tdd
+    assert "canonical test owner" in diagnosing_flat
+    assert (
+        "distinct proof responsibility or necessary failure isolation" in diagnosing_flat
+    )
+    assert "test-portfolio delta" in diagnosing_flat
+    assert "applicable Change Closure" in diagnosing_flat
+    assert "explicit seam gap" in tdd
 
 
 def test_workflow_trace_matches_to_spec_publication_authority() -> None:
@@ -1564,11 +1665,15 @@ def test_implementation_workflows_compress_steps_without_repeating_proof() -> No
     assert "final required proof once on the drained current `HEAD`" in parallel_flat
     assert "only invalidated interaction or readiness proof" in integrator_flat
     assert "run touched-area proof" not in integrator_flat
+    assert "canonical test owner" in implement_flat
+    assert "proof-responsibility map" in parallel_flat
+    assert "consolidate semantically equivalent campaign-created tests" in parallel_flat
     for synthesis in (implement_synthesis, parallel_synthesis):
         synthesis_flat = " ".join(synthesis.replace("> ", "").split())
         assert "historical evidence for the exact pre-efficiency bytes" in synthesis_flat
-        assert "pre-change controls `[1, 1, 1, 1, 1]`" in synthesis_flat
-        assert "exact current candidate `[5, 5, 5, 5, 5]`" in synthesis_flat
+        assert "Prior hashes and evaluations below do not prove current wording" in (
+            synthesis_flat
+        )
         assert "No installed sync is claimed" in synthesis_flat
 
 
@@ -1665,6 +1770,10 @@ def test_ticket_and_delivery_packets_preserve_quality_and_route_repairs() -> Non
     )
     assert "Delivery skills own their default budgets" in tickets_flat
     assert "Dependency edges and tracker order remain graph facts" in tickets_flat
+    assert "proof-responsibility map" in tickets_flat
+    assert "one canonical responsibility" in tickets_flat
+    assert "adding a test requires a distinct responsibility" in tickets_flat
+    assert "create no second planning artifact" in tickets_flat
 
     assert "Preserve the complete source-owned packet" in implement_flat
     assert "Add only the runtime fixed point and confirmed authorized writes" in (
@@ -1676,6 +1785,10 @@ def test_ticket_and_delivery_packets_preserve_quality_and_route_repairs() -> Non
         implement_flat
     )
     assert "malformed item to its caller, source, or triage owner" in implement_flat
+    assert "canonical proof responsibility" in implement_flat
+    assert "surviving portfolio preserves each distinct responsibility" in (
+        implement_flat
+    )
 
     assert "Tickets execution packet and profile" in parallel_flat
     assert "Resolve authority prerequisites before a ticket becomes dispatchable" in (
@@ -1685,12 +1798,15 @@ def test_ticket_and_delivery_packets_preserve_quality_and_route_repairs() -> Non
     assert "same-campaign landing or verified external implementation invalidates" in (
         parallel_flat
     )
+    assert "proof-responsibility map" in parallel_flat
+    assert "test-portfolio delta" in parallel_flat
     for field in (
         "Applicable engineering and domain pointers",
         "Grounding: current owner",
         "Commitment Boundary, prohibited behavior",
         "Applicable Invariants, Trust Boundaries",
         "Confirmed authority boundary",
+        "Proof responsibility:",
         "routed Code Quality Contract",
         "return it as `needs-feedback`",
     ):
@@ -1876,6 +1992,7 @@ def test_portable_fallback_carries_the_standalone_engineering_contract() -> None
         "**Measured when relevant — must for claims.**",
     ):
         assert rule in quality
+    assert "**Lean test portfolio — prefer.**" in quality
     assert "supported compatibility obligation" in quality
     assert "Removal Trigger" in quality
     spine = contract.split("## Tight Engineering Spine", 1)[1].split(
@@ -2005,6 +2122,12 @@ def assert_to_tickets_semantic_contract(
         r"tracker order and serial constraints are not blockers", shape_contract
     )
     assert "state-boundary matrix" in shape_contract
+    assert "treat source-owned responsibilities, interfaces, and seams as fixed" in (
+        shape_contract
+    )
+    assert "do not create or move a seam" in shape_contract
+    assert "source-owned proof seam" in shape_contract
+    assert "concrete proof lane" in shape_contract
     assert "supported" in shape_contract and "variant" in shape_contract
     assert "not applicable" in shape_contract
     for profile_field in (
@@ -2135,7 +2258,7 @@ def test_to_tickets_preserves_coverage_readiness_and_frontier_contract() -> None
     packages = (
         (
             CUSTOM / "to-tickets",
-            "2925b0d1f4a492706c45f131e27d11731172b1a74d8191d0c2bcd2053ec7bd17",
+            "e5dcfbeb71eff575a85675c416dd229635e3bbbe8dea7df531aa3580e0602637",
             "prompt3-candidate",
         ),
     )
@@ -2184,6 +2307,10 @@ def assert_to_spec_semantic_contract(
             "ready-spec",
             "$repo-bootstrap",
             "$to-tickets",
+            "apply direct design before drafting",
+            "material seam belongs in the spec",
+            "create no separate design packet",
+            "concrete proof lanes and test owners",
         ):
             assert current_semantic in normalized
         assert re.search(r"reuse only an exact match.*verified absence", normalized)
@@ -2314,7 +2441,7 @@ def test_to_spec_prompt3_packages_share_the_parameterized_semantic_owner() -> No
     packages = (
         (
             CUSTOM / "to-spec",
-            "8619f529d374efc08003ba0991757e769e147496653f7ed3f8d0091054992783",
+            "8ef998ec76994ac26379becb6762b5f91cf0f4a6d36582f4c525c37fa8f40fd5",
             "author-handoff",
         ),
         (
@@ -2390,6 +2517,7 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
         "changed scope IDs",
         "actual changed files",
         "acceptance proof",
+        "test portfolio delta",
         "commands and results",
         "skipped checks",
         "liveness checkpoint",
@@ -2633,7 +2761,7 @@ def test_state_boundary_proof_has_one_owner_and_explicit_consumers() -> None:
     assert "foreign contracts" in admit
     assert "state-boundary matrix" in shape
     assert "supported" in shape and "not applicable" in shape
-    assert "graph defect" in parallel
+    assert "graph defect" in " ".join(parallel.split())
     parallel_flat = " ".join(parallel.split())
     assert "final required proof once on the drained current `HEAD`" in parallel_flat
     assert "all applicable state-boundary branches" in parallel_flat
@@ -2682,6 +2810,7 @@ def test_diagnosis_returns_to_one_implementation_owner() -> None:
         )
     )
     assert ("diagnosing-bugs", "Recommend and stop", "implement") in rows
+    assert "regression proof or an explicit seam gap" in relationships
     assert all(
         not (caller == "diagnosing-bugs" and callee == "audit-codebase")
         for caller, _, callee in rows
@@ -2712,8 +2841,8 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         ("to-spec", "Load", "codebase-design"),
         ("wayfinder", "Invoke", "research"),
         ("wayfinder", "Invoke", "prototype"),
+        ("wayfinder", "Invoke", "domain-modeling"),
         ("wayfinder", "Recommend and stop", "grill-with-docs"),
-        ("wayfinder", "Recommend and stop", "domain-modeling"),
         ("wayfinder", "Recommend and stop", "to-spec"),
         ("triage", "Recommend and stop", "grill-with-docs"),
         ("implement", "Invoke", "tdd"),
@@ -2726,24 +2855,23 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         ("parallel-implement", "Invoke", "high-assurance-review"),
         ("parallel-implement", "Invoke", "resolving-merge-conflicts"),
         ("resolving-merge-conflicts", "Invoke", "diagnosing-bugs"),
+        ("audit-codebase", "Recommend and stop", "domain-modeling"),
         ("audit-codebase", "Recommend and stop", "grill-with-docs"),
         ("audit-codebase", "Recommend and stop", "grilling"),
         ("audit-codebase", "Recommend and stop", "research"),
         ("audit-codebase", "Recommend and stop", "prototype"),
         ("audit-codebase", "Recommend and stop", "diagnosing-bugs"),
         ("audit-codebase", "Recommend and stop", "to-questionnaire"),
-        ("audit-codebase", "Recommend and stop", "codebase-design"),
+        ("audit-codebase", "Load", "codebase-design"),
         ("audit-codebase", "Recommend and stop", "wayfinder"),
         ("audit-codebase", "Recommend and stop", "to-spec"),
         ("audit-codebase", "Recommend and stop", "to-tickets"),
         ("audit-codebase", "Recommend and stop", "simplify-code"),
         ("audit-codebase", "Recommend and stop", "implement"),
         ("simplify-code", "Recommend and stop", "audit-codebase"),
-        ("simplify-code", "Recommend and stop", "codebase-design"),
         ("tdd", "Hand off", "diagnosing-bugs"),
         ("tdd", "Hand off", "prototype"),
         ("tdd", "Recommend and stop", "simplify-code"),
-        ("tdd", "Recommend and stop", "codebase-design"),
         ("tdd", "Recommend and stop", "audit-codebase"),
         ("diagnosing-bugs", "Hand off", "tdd"),
         ("diagnosing-bugs", "Recommend and stop", "implement"),
@@ -2760,8 +2888,14 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
     }
 
     assert required <= edges
-    assert ("audit-codebase", "Load", "codebase-design") not in edges
     assert ("audit-codebase", "Invoke", "codebase-design") not in edges
+    for removed_edge in (
+        ("audit-codebase", "Recommend and stop", "codebase-design"),
+        ("research", "Recommend and stop", "codebase-design"),
+        ("simplify-code", "Recommend and stop", "codebase-design"),
+        ("tdd", "Recommend and stop", "codebase-design"),
+    ):
+        assert removed_edge not in edges
     assert ("high-assurance-review", "Hand off", "change-review") not in edges
     assert ("wayfinder", "Recommend and stop", "to-tickets") not in edges
     assert ("wayfinder", "Recommend and stop", "implement") not in edges

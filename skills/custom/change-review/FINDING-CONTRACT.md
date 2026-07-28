@@ -17,7 +17,7 @@ the finding.
 | **Standards** | **Semantic Correctness** | Actual behavior preserves applicable meaning, invariants, state, and data. |
 | **Standards** | **Robustness and Operability** | Failure, recovery, idempotency, concurrency, environmental, and operational behavior are safe where applicable. |
 | **Standards** | **Code Quality and Design** | Ownership, cohesion, depth, clarity, duplication, coupling, complexity, and simplification have a concrete supported shape. |
-| **Standards** | **Proof Discipline** | Required proof exercises the meaningful seam and applicable branches on the reviewed candidate. |
+| **Standards** | **Proof Discipline** | Required proof exercises the meaningful seam and applicable branches; each new or changed test has a distinct responsibility or justified failure isolation. |
 | **Standards** | **Stewardship** | Retained complexity has an owner and reason, unrelated work is preserved, and changed code remains maintainable. |
 
 Behavior is evidence used by both axes, not another axis. Risk is a
@@ -48,6 +48,11 @@ A target's omission of contract-required proof may pass the normal gates.
 Reviewer inability to obtain evidence needed to decide a candidate or required
 axis makes coverage `incomplete`, not a finding. Optional unavailable
 verification is residual risk and does not admit a candidate.
+
+Test count or runtime alone does not admit a finding. For new or changed test
+overlap, require direct evidence that no distinct behavior, branch, seam, risk,
+or diagnostic responsibility remains and that the duplication creates
+concrete maintenance or execution cost.
 
 ## Record
 

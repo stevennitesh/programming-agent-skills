@@ -200,6 +200,7 @@ Append analysis under the same candidate anchor:
 - current shape and cost;
 - Keep, Smallest sufficient change, Structural change, and Replacement;
 - recommended direction and rejected alternatives;
+- material Responsibilities, Interfaces, Seams, and Proof Seams;
 - affected contracts, decisions, compatibility, migration, cutover, and
   rollback when applicable;
 - proof plan and residual risk;

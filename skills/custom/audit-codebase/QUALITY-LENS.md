@@ -12,7 +12,7 @@ one primary concept class and one owning contract.
 | Domain | Ubiquitous Language, Bounded Context, Invariant, Context Relationship, Language Collision, ADR Conflict | [DOMAIN-LENS.md](DOMAIN-LENS.md) | Does code express the accepted model and ownership? |
 | Design | Module, Interface, Implementation, Depth, Seam, Adapter, Leverage, Locality, Deletion Test | [DESIGN-LENS.md](DESIGN-LENS.md) | Does the shape concentrate capability, decisions, and proof? |
 | Simplification | YAGNI, KISS, DRY, Readability First, Repository Reuse, Standard Library, Native Platform, Installed Dependency, Collapse, Surgical Change, Goal-Driven Execution, Known Ceiling, Revisit Trigger | [SIMPLIFICATION-LENS.md](SIMPLIFICATION-LENS.md) | What is the first smaller shape that preserves the contract? |
-| Coding practice | Descriptive Naming, Type Safety, Immutability Default, Explicit Error Handling, Input Validation, Clear Control Flow, Why Comments, Behavior Tests, Focused Concurrency | [CODING-PRACTICES-LENS.md](CODING-PRACTICES-LENS.md) | Does implementation reveal and protect its contract? |
+| Coding practice | Descriptive Naming, Type Safety, Immutability Default, Explicit Error Handling, Input Validation, Clear Control Flow, Why Comments, Behavior Tests, Behavior-Owned Test Portfolio, Focused Concurrency | [CODING-PRACTICES-LENS.md](CODING-PRACTICES-LENS.md) | Does implementation reveal and protect its contract? |
 | Performance | Like-for-like workload, baseline, budget, measurement, variance | [PERFORMANCE-LENS.md](PERFORMANCE-LENS.md) | Is the resource claim measured under comparable conditions? |
 
 A violated authoritative expectation is a defect under
@@ -47,13 +47,13 @@ Use the violated contract to resolve other overlaps:
   implementation-sized surface?
 - **Clear:** Do Descriptive Naming, Clear Control Flow, errors, state
   transitions, comments, and configuration reveal the contract?
-- **Provable:** Is the Interface the Test Surface, including relevant failure
-  and state branches?
+- **Provable:** Is the Interface the Test Surface, and does each test own a
+  distinct behavior, branch, risk, or diagnostic responsibility?
 - **Faithful:** Does code preserve Ubiquitous Language, Invariants, Context
   Relationships, and accepted decisions?
 
 Generic thresholds such as function length, nesting depth, file size, test
-count, or dependency count are discovery hints only.
+count, suite time, or dependency count are discovery hints only.
 
 ## Opportunity Admission
 
@@ -62,8 +62,8 @@ Admit an opportunity only when all five gates close:
 - **Reach:** the code participates in a supported subsystem scenario.
 - **Evidence:** direct snapshot evidence identifies the current shape.
 - **Cost:** the shape creates concrete caller burden, duplicated decisions,
-  change spread, test friction, dependency weight, misleading ownership,
-  failure exposure, or comprehension cost.
+  change spread, test friction or execution cost, dependency weight,
+  misleading ownership, failure exposure, or comprehension cost.
 - **Alternative:** a smaller, deeper, clearer, or more robust local shape
   plausibly removes that cost without weakening the contract.
 - **Proof:** the observable seam and checks needed to preserve behavior are

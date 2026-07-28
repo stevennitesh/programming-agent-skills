@@ -3,12 +3,15 @@
 > Status (2026-07-27): historical evidence for the exact 2026-07-25 Deploy
 > Campaign bytes. A later authorized Author pass retained the proven four-gate
 > runtime while clarifying the parent decision contract, exact reuse, the To
-> Tickets boundary, source-triggered content, and `ready-spec`. Five fresh
+> Tickets boundary, source-triggered content, and `ready-spec`. The latest lean
+> composition pass lets To Spec settle one source-delegated consequential
+> internal design with Codebase Design, keeps material Seams in the spec, and
+> leaves concrete proof lanes and test owners to To Tickets. Five fresh
 > fixed-scenario controls exposed no registered broad wording deficit, so a
 > larger rewrite was `reject-no-control-deficit`. Canonical
 > `skills/custom/to-spec/` is current runtime authority at campaign-tree
 > SHA-256
-> `8619f529d374efc08003ba0991757e769e147496653f7ed3f8d0091054992783`.
+> `8ef998ec76994ac26379becb6762b5f91cf0f4a6d36582f4c525c37fa8f40fd5`.
 > No installed sync is claimed.
 
 Status: Deploy Prompt 4 decision for campaign `to-spec-2026-07-25`;
@@ -317,15 +320,17 @@ Protected before H1 evaluation:
 - mapped roles only when source-authorized and applicable, with no parent
   Ready-for-agent state;
 - accepted domain terms, ADR conflict disclosure, and no domain mutation;
-- vocabulary-only Load of `$codebase-design`, with artifact and completion
-  retained by `to-spec`;
+- conditional Load of `$codebase-design` for shared vocabulary or one
+  source-delegated Direct Design result, folded into the spec with artifact
+  and completion retained by `to-spec`;
 - identity-checkable downstream source for `$to-tickets`;
 - safe `.tmp/to-spec/<source-slug>.md` cleanup or named preservation;
 - recommend-and-stop edges to `$repo-bootstrap` and `$to-tickets`; and
 - no source, domain, code, child-ticket, Git, installation, or downstream
   mutation outside the authorized parent transition.
 
-Relationship delta is `none`. Current relationship owners remain:
+Relationship topology delta is `none`; the existing Load now includes the
+bounded Direct Design branch. Current relationship owners remain:
 Wayfinder and Improve Codebase may recommend `$to-spec` and stop;
 `to-spec` may Load `$codebase-design`; `to-spec` may recommend
 `$repo-bootstrap` or `$to-tickets` and stop. Direct user invocation may supply

@@ -4,11 +4,10 @@
 > Later authorized Author passes changed canonical `implement` to a four-phase
 > spine with identity-aware proof reuse and then aligned its source-packet,
 > default-budget, refresh, proof, and repair-routing contracts with To Tickets.
-> The registered five-part fixed-scenario evaluation scored pre-change controls
-> `[1, 1, 1, 1, 1]` and the exact current candidate `[5, 5, 5, 5, 5]`, with no
-> critical regression. Current campaign-tree SHA-256 is
-> `a898237ede3ba6bb4ad648f6f0ad0bd59aae2bb52b7fe7e8010cf2613d8f8b11`.
-> `skills/custom/implement/` is runtime authority. No installed sync is claimed.
+> The latest pass consumes a canonical proof responsibility and consolidates
+> only proved in-slice test overlap. Prior hashes and evaluations below do not
+> prove current wording. `skills/custom/implement/` is runtime authority. No
+> installed sync is claimed.
 
 ## Active Promoted And Installed Decision — 2026-07-24
 

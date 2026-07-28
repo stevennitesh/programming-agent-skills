@@ -81,9 +81,13 @@ In diagnosis mode, record the recommended causal fix and retain no production be
 
 In fix mode, when a correct regression seam reproduces the real bug pattern:
 
-1. turn the minimised repro into a regression test;
+1. place the minimised repro under its canonical test owner by reusing or
+   extending an existing Behavior Test, case table, or contract suite when it
+   can express the responsibility; add a separate test only for a distinct
+   proof responsibility or necessary failure isolation;
 2. observe RED for the expected reason;
-3. apply the causal fix;
+3. apply the smallest complete causal fix across affected callers and its
+   applicable Change Closure;
 4. observe GREEN;
 5. rerun the original, unminimised Loop.
 
@@ -101,10 +105,11 @@ Return one diagnosis packet containing:
 - Source Trace, tight Loop, and load-bearing repro;
 - hypothesis ledger and cause-gate evidence;
 - applied or recommended fix;
-- regression proof or seam gap;
+- regression target and, in fix mode, either its canonical test owner and
+  test-portfolio delta or the seam gap;
 - original-scenario result;
-- cleanup, validation, residual risk, and skipped checks.
+- Change Closure, cleanup, validation, residual risk, and skipped checks.
 
 Record architecture concerns as follow-up evidence for the caller; do not start architecture work here.
 
-Diagnosis is complete only when the cause gate passes, cleanup is complete, and the packet is returned. Fix work additionally requires authority, regression proof where a correct seam exists, a green original scenario, and relevant flake or performance comparison. A blocked packet names the missing loop, access, evidence, or causal proof and claims no cause or fix.
+Diagnosis is complete only when the cause gate passes, cleanup is complete, and the packet is returned. Fix work additionally requires authority, a complete causal fix and applicable Change Closure, regression proof where a correct seam exists, a green original scenario, and relevant flake or performance comparison. A blocked packet names the missing loop, access, evidence, or causal proof and claims no cause or fix.

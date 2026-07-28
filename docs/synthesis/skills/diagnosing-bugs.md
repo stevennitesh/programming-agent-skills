@@ -1,6 +1,11 @@
 # Diagnosing Bugs Runtime Synthesis
 
-Status: decision-complete; Deploy Prompt 2 result is `no-change`.
+> Status (2026-07-27): historical evidence for the exact no-change campaign
+> bytes. A later authorized Author pass aligned fix-mode regression proof with
+> the Behavior-Owned Test Portfolio and Change Closure, and clarified its
+> Return. Prior hashes and evaluations below do not prove current wording.
+> `skills/custom/diagnosing-bugs/` is runtime authority. No installed sync is
+> claimed.
 
 This synthesis records the confirmed Deploy Prompt 1 decision for
 `$diagnosing-bugs`. It is design and provenance authority, not runtime

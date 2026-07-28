@@ -16,7 +16,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:d6f1f44de85d -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:a556275fb637 -->"
 ENGINEERING_PRIMER_TOKEN = (
     "Explore imaginatively. Converge under proof. Simplify ruthlessly."
 )
@@ -73,6 +73,7 @@ CONTRACT_LITERAL_TOKENS = (
     "**Deep simplicity.**",
     "**Stewardship.**",
     "## Code Quality Contract",
+    "**Lean test portfolio — prefer.**",
     "**Grounded implementation — must.**",
     "**Correct and robust — must.**",
     "**Domain faithful — must.**",
@@ -89,6 +90,7 @@ CONTRACT_LITERAL_TOKENS = (
     "**Semantic proof:**",
     "**Proof seam:**",
     "**Proof lane:**",
+    "**Behavior-owned test portfolio:**",
     "**Tracer bullet:**",
     "**Fixed point:**",
     "**Spec / Standards:**",
@@ -367,6 +369,7 @@ def main() -> int:
                     "**Must** marks a correctness or safety",
                     "deviation alone is not a defect",
                     "not another workflow stage",
+                    "**Lean test portfolio — prefer.**",
                     "**Change closure — must.**",
                     "supported compatibility obligation",
                     "Removal Trigger",

@@ -39,11 +39,13 @@ Source Trace, fixed point, acceptance, required proof, commitment boundary,
 non-goals, review route, closeout rule, dependency edges, and each ticket's To
 Tickets execution packet and profile, including grounding, correctness and
 robustness obligations, authority prerequisites, expected writes, proof, and
-applicable Change Closure facts. A stateful ticket must carry its applicable
-state-boundary matrix. Resolve authority prerequisites before a ticket becomes
-dispatchable. Missing or contradictory graph, readiness, profile, required
-closure, or matrix information is a graph defect; return the complete repair
-packet instead of reconstructing its owner's judgment.
+applicable Change Closure facts. Preserve the graph's proof-responsibility map,
+including canonical test owners and consumers. A stateful ticket must carry
+its applicable state-boundary matrix. Resolve authority prerequisites before a
+ticket becomes dispatchable. Missing or contradictory graph, readiness,
+profile, proof ownership, required closure, or matrix information is a graph
+defect; return the complete repair packet instead of reconstructing its
+owner's judgment.
 
 Freeze an explicit source, caller, or repository campaign Repair budget when
 supplied; otherwise set the campaign Repair-generation budget to exactly `2`.
@@ -67,13 +69,13 @@ A proved same-campaign landing may satisfy readiness as
 invalidation, or failed proof removes that overlay and reblocks dependents.
 
 Start from the frozen graph and execution profiles. Requalify only pairs whose
-semantic ownership, expected production writes, proof seams or scarce proof
-resources, ordering, or serial tripwires overlap, remain uncertain, or changed
-during reconciliation. Dispatch concurrently only when these dimensions are
-independently bounded and every packet remains inspectable; otherwise dispatch
-serially. Protected data, permissions, trust boundaries, irreversible state,
-migrations, and cutovers require one production-path tracer first with retry,
-rollback, and partial-state proof.
+semantic ownership, expected production writes, proof seams, canonical test
+mutations or scarce proof resources, ordering, or serial tripwires overlap,
+remain uncertain, or changed during reconciliation. Dispatch concurrently
+only when these dimensions are independently bounded and every packet remains
+inspectable; otherwise dispatch serially. Protected data, permissions, trust
+boundaries, irreversible state, migrations, and cutovers require one
+production-path tracer first with retry, rollback, and partial-state proof.
 
 When nothing is executable, return the exact blockers without widening scope.
 
@@ -97,21 +99,25 @@ integration itself is a genuinely bounded independent lane. The integrator
 returns landing and review authority to the root.
 
 **Drain.** Accept a worker return only when its scope, acceptance, proof,
-commit and final state, skipped checks, risk, and next need are fully accounted
-for. A blocker retries only after its condition changes. Continue an actor
-only while its reconciled lane, authority, and bounded assignment remain
-current; otherwise open a fresh lane.
+test-portfolio delta, commit and final state, skipped checks, risk, and next
+need are fully accounted for. A blocker retries only after its condition
+changes. Continue an actor only while its reconciled lane, authority, and
+bounded assignment remain current; otherwise open a fresh lane.
 
 Land accepted commits one at a time at the root. Inspect the actual diff,
 expected scope, stale-base overlap, conflicts, and focused proof. Carry worker
 proof as slice evidence while its landing context, dependencies, and proof
 inputs remain valid. After each landing, run only interaction or readiness
 proof invalidated or required by that landing, record the new integration
-`HEAD`, and rederive readiness. Before Review, run final required proof once on
-the drained current `HEAD`, including all applicable state-boundary branches
-and high-risk interactions. Reconcile every assigned Change Closure
-obligation: remove superseded or redundant paths, or verify each intentional
-retention's owner, reason, proof, and Removal Trigger.
+`HEAD`, record the landed proof responsibility and test-portfolio delta, and
+rederive readiness. Before Review, reconcile the graph's proof-responsibility
+map: keep one canonical owner per responsibility, consolidate semantically
+equivalent campaign-created tests, and retain overlap only for distinct seams,
+risks, or useful failure isolation. Then run final required proof once on the
+drained current `HEAD`, including all applicable state-boundary branches and
+high-risk interactions. Reconcile every assigned Change Closure obligation:
+remove superseded or redundant paths, or verify each intentional retention's
+owner, reason, proof, and Removal Trigger.
 
 If a same-campaign landing or verified external implementation invalidates a
 remaining ticket's commitments or graph facts, return one `$to-tickets` repair
@@ -163,9 +169,10 @@ or an explicitly accepted safe residual.
 
 Return `complete` only when the exhaustive graph is drained; every accepted
 change is in the reviewed current integration `HEAD`; proof and independent
-review pass; assigned Change Closure is proved; children and parent are closed
-in order with read-back; claims are released; lanes are safe; and applicable
-publication evidence supplied under separate authority is verified.
+review pass; the proof-responsibility map and assigned Change Closure are
+proved; children and parent are closed in order with read-back; claims are
+released; lanes are safe; and applicable publication evidence supplied under
+separate authority is verified.
 
 For every nonterminal `partial` or `blocked` return, preserve accepted and
 unrelated state, halt unsafe progression, quiesce or account for actors,

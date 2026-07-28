@@ -55,6 +55,7 @@ Replacement:
 Recommended direction:
 Rejected alternatives and why:
 Affected contracts and decisions:
+Material Responsibilities, Interfaces, Seams, and Proof Seams:
 Migration, compatibility, cutover, and rollback:
 Proof plan:
 Residual risk:
@@ -91,10 +92,10 @@ After analysis or returned evidence, suggest exactly zero or one:
 | One non-diagnostic source-answerable authoritative fact is missing | `$research` |
 | One settled design question needs a disposable runnable probe or performance experiment | `$prototype` |
 | Broken or slow behavior still has uncertain expected behavior, symptom, cause, or trusted reproduction | `$diagnosing-bugs` |
+| Settled domain language, an Invariant, Bounded Context, Context Relationship, or ADR candidate needs durable capture or assessment | `$domain-modeling` |
 | One current-user decision also requires current domain language, Invariants, relationships, or ADR handling | `$grill-with-docs` |
 | One current-user decision needs conversation but no domain-record maintenance | `$grilling` |
 | One identifiable external stakeholder holds required knowledge unavailable from sources or the user | `$to-questionnaire` |
-| One bounded code Module, Interface, Seam, Adapter, or caller-facing test-surface design remains unresolved after user decisions settle | `$codebase-design` |
 | Multiple interdependent unresolved decisions or prerequisites need a configured tracker-backed route | `$wayfinder` |
 | Direction and commitments are settled, but a durable parent specification is needed | `$to-spec` |
 | Direction, authority, commitments, acceptance, dependency meaning, and supported states are settled; no parent specification is needed or one exists; and implementation requires multiple slices | `$to-tickets` |
@@ -104,21 +105,24 @@ After analysis or returned evidence, suggest exactly zero or one:
 
 Choose the first unresolved work, not the eventual workflow. Diagnosis wins
 over Prototype for an observed uncertain symptom. A current-user decision
-precedes design. To Spec wins when a parent specification is required;
-otherwise a settled multi-slice candidate may go directly to To Tickets.
-Simplify Code owns a behavior-preserving reduction; Implement owns a settled
-non-reduction correction or addition.
+precedes design. For a design or mixed candidate, Audit loads Codebase Design
+during Analyze and records the result here; it is not a next step. To Spec wins
+when a parent specification is required; otherwise a settled multi-slice
+candidate may go directly to To Tickets. Simplify Code owns a
+behavior-preserving reduction; Implement owns a settled non-reduction
+correction or addition.
 
 `$to-questionnaire` applies only to one external stakeholder. Use Research for
-source-answerable facts, Grilling for a conversation-only current-user
-decision, and Grill With Docs only when its Domain Delta is required.
+source-answerable facts, Domain Modeling for already-settled durable capture,
+Grilling for a conversation-only current-user decision, and Grill With Docs
+only when the decision and its Domain Delta are both required.
 Label every suggestion `user selection required`, invoke nothing, and encode
 no workflow chain. For a non-`none` suggestion, write one complete
 `Suggested invocation` that names the skill, candidate ID, absolute report
 path, and pickup prerequisite. Copy the callee's admission facts into the
 candidate packet without copying its procedure.
 
-Research, Prototype, Diagnosis, Grilling, Grill With Docs, and Codebase Design
+Research, Prototype, Diagnosis, Domain Modeling, Grilling, and Grill With Docs
 return evidence through the user to the exact Audit re-entry. Questionnaire
 returns only an unsent artifact; keep the candidate blocked until the user
 returns attributable stakeholder answers. Planning and execution routes use
@@ -152,12 +156,16 @@ Re-entry invocation:
 ```
 
 For `$grilling`, set domain-only fields to `not applicable`. For
-`$grill-with-docs`, populate the Domain Delta and ADR fields.
+`$domain-modeling`, replace the unresolved question with the settled language
+or decision and its authority. For `$grill-with-docs`, populate the Domain
+Delta and ADR fields.
 
 Publish the brief before recommending:
 
 - `$grilling` when `Documentation effect: none`; its return must include the
   intact Grilling exit packet.
+- `$domain-modeling` when domain meaning is settled and only capture or ADR
+  assessment remains; its return must include the complete Domain Delta.
 - `$grill-with-docs` when a Domain Delta is required; its return must include
   the intact Grilling exit packet and current Domain Delta.
 

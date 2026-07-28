@@ -26,6 +26,9 @@ accepted terms and decisions across specs, issues, code, tests, and docs.
   meaning can be established.
 - **Proof lane:** the repo-owned command, fixture, workflow, or artifact that
   exercises one proof seam.
+- **Behavior-owned test portfolio:** the smallest diagnosable set of tests
+  whose distinct responsibilities map to supported behavior, Invariants,
+  branches, or risks through stable Proof Seams.
 - **Tracer bullet:** one narrow, observable path through the real system.
 - **Fixed point:** the pinned review baseline; it does not mean fixing and
   reviewing until no findings remain.
@@ -74,6 +77,15 @@ own project meaning and specialized procedure.
   contract-derived inputs and protect authentication, authorization, encoding,
   secrets, and external effects. Use Explicit Error Handling and applicable
   Behavior Tests through the Proof Seam.
+- **Lean test portfolio — prefer.** Treat tests as durable owners of behavior,
+  not records of tickets or changes. Reuse or extend an existing Behavior
+  Test, case table, or contract suite before adding one. A separate test is
+  earned by a materially distinct behavior, Invariant, oracle, Proof Seam,
+  state or failure branch, risk, or need for failure isolation. Consolidate or
+  remove superseded and semantically equivalent tests during Change Closure
+  while preserving coverage and diagnostic clarity. Test count is not a
+  target; unique evidence, maintenance burden, and execution cost govern
+  shape.
 - **Change closure — must.** When a change supersedes behavior or makes it
   redundant, trace every displaced implementation, caller, registration,
   export, flag, test, configuration, document, and migration. Remove obsolete
