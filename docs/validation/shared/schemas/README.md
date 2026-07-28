@@ -17,6 +17,11 @@ one-skill campaign ownership. Version 2 separates immutable `contract`,
 owner-written `semantic`, and automation-only `mechanical` state. Historical
 manifest v1 remains an exact read-only compatibility format.
 
+`deploy-campaign-manifest-v3.schema.json` is the explicit non-default
+four-gate control contract. It records owner-written gate decision pointers
+separately from mechanical gate evidence and Repair accounting. Versions 1
+and 2 remain active compatibility formats and are never inferred as v3.
+
 `pack-integration-manifest-v1.schema.json` and
 `pack-integration-result-v1.schema.json` govern exact installed-pack inputs,
 ten-gate registrations, mechanical receipts and invalidations, parity, and the

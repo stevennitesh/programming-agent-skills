@@ -207,6 +207,38 @@ def test_wayfinder_tracker_claims_distinguish_sessions_and_recover_explicitly() 
         assert "Its body holds Destination" not in wayfinding
 
 
+def test_repo_bootstrap_validates_wrapped_provider_specific_wayfinder_prose() -> None:
+    validator = runpy.run_path(
+        str(CUSTOM / "repo-bootstrap/scripts/validate_setup.py")
+    )
+    check = validator["wayfinder_contract_failures"]
+    trackers = (
+        CUSTOM / "repo-bootstrap/issue-tracker-github.md",
+        CUSTOM / "repo-bootstrap/issue-tracker-gitlab.md",
+        CUSTOM / "repo-bootstrap/issue-tracker-local.md",
+    )
+
+    for tracker in trackers:
+        text = tracker.read_text(encoding="utf-8")
+        assert check(text, str(tracker)) == []
+
+    hosted = trackers[0].read_text(encoding="utf-8").replace(
+        "wait by adding the waiting marker", "wait without a marker"
+    )
+    assert any(
+        "wait by adding the waiting marker" in item
+        for item in check(hosted, "hosted")
+    )
+
+    local = " ".join(trackers[2].read_text(encoding="utf-8").split()).replace(
+        "set `Waiting` with its return record", "record an unspecified pause"
+    )
+    assert any(
+        "set `Waiting` with its return record" in item
+        for item in check(local, "local")
+    )
+
+
 def test_triage_label_template_respects_tracker_pr_policy() -> None:
     labels = (CUSTOM / "repo-bootstrap/triage-labels.md").read_text(encoding="utf-8")
     triage = (CUSTOM / "triage/SKILL.md").read_text(encoding="utf-8")
@@ -351,7 +383,7 @@ def assert_repo_bootstrap_semantic_contract(
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     assert_repo_bootstrap_semantic_contract(
         CUSTOM / "repo-bootstrap",
-        "0f69340c0b3dffe73b08621e2f0ffad5258fa0807c13d7189b8854322ce7bb7e",
+        "a1a2a5b9a7ad19a08402d50fbe0a00b4bc5e3cfb7d5f95d28e26dd59461c8622",
         profile="incumbent",
     )
 

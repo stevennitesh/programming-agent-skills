@@ -16,7 +16,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:b5e891ccfb67 -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:1fd4ab9f68e9 -->"
 ENGINEERING_PRIMER_TOKEN = (
     "Explore imaginatively. Converge under proof. Simplify ruthlessly."
 )
@@ -125,14 +125,16 @@ WAYFINDER_TOKENS = (
     "<YYYY-MM-DDTHH:MM:SSZ>",
     "Maintain",
     "claims the map",
-    "never reuse it across invocations",
     "Elapsed time alone never makes a claim stale.",
     "explicit user approval",
     "**Release**",
     "**Outcome**",
-    "wait by adding the waiting marker",
     "**Complete map**",
 )
+
+WAYFINDER_PROSE_TOKENS = ("never reuse it across invocations",)
+HOSTED_WAYFINDER_PROSE_TOKENS = ("wait by adding the waiting marker",)
+LOCAL_WAYFINDER_PROSE_TOKENS = ("set `Waiting` with its return record",)
 
 GITHUB_RELATIONSHIP_MODES = (
     (
@@ -183,6 +185,28 @@ def require_tokens(
     for token in tokens:
         if token not in text:
             failures.append(f"{relative} is missing {token}")
+
+
+def require_prose_tokens(
+    text: str, relative: str, tokens: tuple[str, ...], failures: list[str]
+) -> None:
+    normalized_text = " ".join(text.split())
+    for token in tokens:
+        if " ".join(token.split()) not in normalized_text:
+            failures.append(f"{relative} is missing {token}")
+
+
+def wayfinder_contract_failures(text: str, relative: str) -> list[str]:
+    failures: list[str] = []
+    require_tokens(text, relative, WAYFINDER_TOKENS, failures)
+    require_prose_tokens(text, relative, WAYFINDER_PROSE_TOKENS, failures)
+    provider_tokens = (
+        LOCAL_WAYFINDER_PROSE_TOKENS
+        if "issue tracker: local markdown" in text.lower()
+        else HOSTED_WAYFINDER_PROSE_TOKENS
+    )
+    require_prose_tokens(text, relative, provider_tokens, failures)
+    return failures
 
 
 def require_section_tokens(
@@ -324,7 +348,9 @@ def main() -> int:
     tracker = texts["docs/agents/issue-tracker.md"]
     if tracker:
         require_tokens(tracker, "docs/agents/issue-tracker.md", WORK_ITEM_TOKENS, failures)
-        require_tokens(tracker, "docs/agents/issue-tracker.md", WAYFINDER_TOKENS, failures)
+        failures.extend(
+            wayfinder_contract_failures(tracker, "docs/agents/issue-tracker.md")
+        )
         if "post a codex-ready brief" not in tracker.lower():
             failures.append(
                 "docs/agents/issue-tracker.md is missing Codex-ready brief transport"

@@ -77,7 +77,7 @@ Show the exact proposed delta:
 
 - the `AGENTS.md` patch with the engineering primer, verified commands,
   invariants, pointers, and
-  `<!-- programming-agent-skills setup-schema: 1:b5e891ccfb67 -->`;
+  `<!-- programming-agent-skills setup-schema: 1:1fd4ab9f68e9 -->`;
 - all four `docs/agents/*.md` results;
 - the `.gitignore` delta;
 - preserved repo-specific additions and unresolved conflicts;

@@ -474,6 +474,35 @@ def valid_fresh_epoch_admission(
     return admission
 
 
+def valid_gate_admission(worktree: Path) -> dict[str, object]:
+    admission = valid_fresh_epoch_admission(worktree, include_m0=False)
+    contract = admission["contract"]
+    assert isinstance(contract, dict)
+    contract["candidate_root"] = "."
+    admission["semantic"] = {
+        "current_gate": "contract-lock",
+        "terminal_token": None,
+        "decision_pointers": {
+            "contract_lock": "decisions.md#contract-lock",
+            "candidate_lock": "decisions.md#candidate-lock",
+            "behavioral_proof": "decisions.md#behavioral-proof",
+            "release": "decisions.md#release",
+        },
+    }
+    return admission
+
+
+def append_gate_decision_capsules(manifest_path: Path) -> None:
+    decision_path = manifest_path.with_name("decisions.md")
+    with decision_path.open("a", encoding="utf-8", newline="\n") as stream:
+        for gate in campaign_artifacts.GATE_ORDER:
+            stream.write(
+                f"\n<!-- campaign-decision:{gate}:begin -->\n"
+                f"Owner decision for {gate}.\n"
+                f"<!-- campaign-decision:{gate}:end -->\n"
+            )
+
+
 def _sync_slice_projection(
     worktree: Path,
     admission: dict[str, object],
@@ -514,6 +543,687 @@ def _sync_slice_projection(
             sort_keys=True,
         ),
     )
+
+
+def test_gate_start_creates_nondefault_v3_manifest_and_read_only_control(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_gate_admission(worktree)
+
+    result = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-gates-1",
+        owner_token="owner-a",
+        gate_admission=admission,
+    )
+
+    manifest_path = worktree / str(result["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    assert manifest["schema_version"] == 3
+    assert manifest["campaign"]["controller_profile"] == "four-gate-shadow-v1"
+    assert sorted(manifest["mechanical"]["gates"]) == [
+        "behavioral_proof",
+        "candidate_lock",
+        "contract_lock",
+        "release",
+    ]
+    assert manifest["semantic"] == admission["semantic"]
+    assert manifest["mechanical"]["semantic_repair_generation"] == 0
+
+    semantic_before = json.loads(json.dumps(manifest["semantic"]))
+    gates_before = json.loads(json.dumps(manifest["mechanical"]["gates"]))
+    repair_before = manifest["mechanical"]["semantic_repair_generation"]
+    missing_decision = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    append_gate_decision_capsules(manifest_path)
+    verified = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+    before_status = manifest_path.read_bytes()
+    status = campaign_artifacts.campaign_status(
+        manifest_path,
+        worktree=worktree,
+    )
+    after_status = json.loads(manifest_path.read_text("utf-8"))
+
+    assert missing_decision["status"] == "failed"
+    assert missing_decision["gate"] == "semantic-pointer"
+    assert verified["status"] == "verified", verified
+    assert verified["gate"] == "contract-lock"
+    assert status["status"] == "verified"
+    assert status["gate"] == "contract-lock"
+    assert manifest_path.read_bytes() == before_status
+    assert after_status["semantic"] == semantic_before
+    assert after_status["mechanical"]["gates"] == gates_before
+    assert (
+        after_status["mechanical"]["semantic_repair_generation"]
+        == repair_before
+    )
+
+    released = campaign_artifacts.release_campaign(
+        manifest_path,
+        worktree=worktree,
+        owner_token="owner-a",
+    )
+    assert released["status"] == "verified"
+    assert manifest_path.read_bytes() == before_status
+
+
+def test_gate_status_reports_stale_gate_without_mutating_manifest(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-gates-1",
+        owner_token="owner-a",
+        gate_admission=valid_gate_admission(worktree),
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["mechanical"]["evidence_state"] = "stale"
+    manifest["mechanical"]["gates"]["contract_lock"]["evidence_state"] = "stale"
+    write_json(manifest_path, manifest)
+    before = manifest_path.read_bytes()
+
+    status = campaign_artifacts.campaign_status(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert status["status"] == "stale"
+    assert status["gate"] == "contract-lock"
+    assert status["earliest_stale_gate"] == "contract-lock"
+    assert manifest_path.read_bytes() == before
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        lambda admission: admission["contract"].update(  # type: ignore[index]
+            candidate_root="../escape"
+        ),
+        lambda admission: admission["semantic"].update(  # type: ignore[index]
+            current_gate="invented-gate"
+        ),
+        lambda admission: admission["semantic"]["decision_pointers"].update(  # type: ignore[index]
+            contract_lock="../secret.md#contract-lock"
+        ),
+        lambda admission: admission["contract"].update(  # type: ignore[index]
+            credential="should-not-enter-the-manifest"
+        ),
+    ],
+)
+def test_gate_start_rejects_foreign_or_escaping_admission_before_mutation(
+    tmp_path: Path,
+    mutation: object,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_gate_admission(worktree)
+    mutation(admission)  # type: ignore[operator]
+
+    with pytest.raises(ValueError):
+        campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id="implement-gates-1",
+            owner_token="owner-a",
+            gate_admission=admission,
+        )
+
+    assert not (worktree / campaign_artifacts.LEASE_PATH).exists()
+    assert not (
+        worktree
+        / "docs"
+        / "validation"
+        / "skills"
+        / "implement"
+        / "campaigns"
+        / "implement-gates-1"
+    ).exists()
+
+
+@pytest.mark.parametrize(
+    "current_gate",
+    ["contract-lock", "candidate-lock", "behavioral-proof"],
+)
+def test_gate_start_rejects_completion_before_release_without_mutation(
+    tmp_path: Path,
+    current_gate: str,
+) -> None:
+    worktree = tmp_path / current_gate
+    worktree.mkdir()
+    admission = valid_gate_admission(worktree)
+    admission["semantic"]["current_gate"] = current_gate  # type: ignore[index]
+    admission["semantic"]["terminal_token"] = "campaign-complete"  # type: ignore[index]
+
+    with pytest.raises(ValueError, match="Release"):
+        campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id="implement-gates-1",
+            owner_token="owner-a",
+            gate_admission=admission,
+        )
+
+    assert not (worktree / campaign_artifacts.LEASE_PATH).exists()
+
+
+def test_gate_verify_rejects_drifted_completion_before_release_without_write(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-gates-1",
+        owner_token="owner-a",
+        gate_admission=valid_gate_admission(worktree),
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["semantic"]["terminal_token"] = "campaign-complete"
+    write_json(manifest_path, manifest)
+    manifest_before = manifest_path.read_bytes()
+    lease_path = worktree / campaign_artifacts.LEASE_PATH
+    lease_before = lease_path.read_bytes()
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "manifest-schema"
+    assert manifest_path.read_bytes() == manifest_before
+    assert lease_path.read_bytes() == lease_before
+
+
+def test_gate_release_completion_remains_verifiable(tmp_path: Path) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_gate_admission(worktree)
+    admission["semantic"]["current_gate"] = "release"  # type: ignore[index]
+    admission["semantic"]["terminal_token"] = "campaign-complete"  # type: ignore[index]
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-gates-1",
+        owner_token="owner-a",
+        gate_admission=admission,
+    )
+    manifest_path = worktree / str(started["manifest"])
+    append_gate_decision_capsules(manifest_path)
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "verified"
+    assert result["gate"] == "release"
+    assert result["terminal"] == "campaign-complete"
+
+
+def test_gate_restart_preserves_v3_contract_and_semantic_authority(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_gate_admission(worktree)
+    admission["semantic"]["current_gate"] = "release"  # type: ignore[index]
+    admission["semantic"]["terminal_token"] = "campaign-complete"  # type: ignore[index]
+    source = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-gates-1",
+        owner_token="owner-a",
+        gate_admission=admission,
+    )
+    source_path = worktree / str(source["manifest"])
+    source_manifest = json.loads(source_path.read_text("utf-8"))
+    restart_admission = valid_gate_admission(worktree)
+
+    restarted = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-gates-2",
+        owner_token="owner-a",
+        continuation="restart",
+        from_manifest=source_path,
+        gate_admission=restart_admission,
+    )
+
+    target_path = worktree / str(restarted["manifest"])
+    target = json.loads(target_path.read_text("utf-8"))
+    assert target["schema_version"] == campaign_artifacts.GATE_CAMPAIGN_SCHEMA_VERSION
+    assert target["campaign"]["continuation"] == "restart"
+    assert target["campaign"]["supersession"] == source_path.relative_to(
+        worktree
+    ).as_posix()
+    assert target["contract"] == restart_admission["contract"]
+    assert target["semantic"] == restart_admission["semantic"]
+    assert target["semantic"]["current_gate"] == "contract-lock"
+    assert target["semantic"]["terminal_token"] is None
+    campaign_artifacts._validate_gate_campaign_identity(
+        target,
+        worktree=worktree,
+        manifest_path=target_path,
+        lease=json.loads(
+            (worktree / campaign_artifacts.LEASE_PATH).read_text("utf-8")
+        ),
+    )
+
+
+def test_gate_restart_requires_new_owner_admission_without_source_mutation(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_gate_admission(worktree)
+    admission["semantic"]["current_gate"] = "release"  # type: ignore[index]
+    admission["semantic"]["terminal_token"] = "campaign-complete"  # type: ignore[index]
+    source = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-gates-1",
+        owner_token="owner-a",
+        gate_admission=admission,
+    )
+    source_path = worktree / str(source["manifest"])
+    source_before = source_path.read_bytes()
+    lease_path = worktree / campaign_artifacts.LEASE_PATH
+    lease_before = lease_path.read_bytes()
+
+    result = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-gates-2",
+        owner_token="owner-a",
+        continuation="restart",
+        from_manifest=source_path,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "continuation"
+    assert source_path.read_bytes() == source_before
+    assert lease_path.read_bytes() == lease_before
+
+
+@pytest.mark.parametrize(
+    "updates",
+    [
+        {"artifact_identities": [{"credential": "not-public"}]},
+        {"receipts": [{"nested": {"secret": "not-public"}}]},
+        {"parity": {"private_evaluator": {"result": "not-public"}}},
+        {"parity": {"PrivateSourceInventory": "not-public"}},
+        {"parity": {"root_only_evaluator_conclusion": "not-public"}},
+    ],
+)
+def test_gate_mechanical_update_rejects_nested_sensitive_fields_before_write(
+    tmp_path: Path,
+    updates: dict[str, object],
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-gates-1",
+        owner_token="owner-a",
+        gate_admission=valid_gate_admission(worktree),
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest_before = manifest_path.read_bytes()
+    lease_path = worktree / campaign_artifacts.LEASE_PATH
+    lease_before = lease_path.read_bytes()
+
+    with pytest.raises(ValueError, match="sensitive"):
+        campaign_artifacts.update_mechanical_state(manifest_path, updates)
+
+    assert manifest_path.read_bytes() == manifest_before
+    assert lease_path.read_bytes() == lease_before
+
+
+@pytest.mark.parametrize(
+    "field",
+    ["Secret", "PrivateSourceInventory", "root_only_evaluator_conclusion"],
+)
+def test_gate_verify_rejects_persisted_sensitive_case_variants_before_write(
+    tmp_path: Path,
+    field: str,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-gates-1",
+        owner_token="owner-a",
+        gate_admission=valid_gate_admission(worktree),
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["mechanical"]["artifact_identities"] = [
+        {"nested": {field: "not-public"}}
+    ]
+    write_json(manifest_path, manifest)
+    manifest_before = manifest_path.read_bytes()
+    lease_path = worktree / campaign_artifacts.LEASE_PATH
+    lease_before = lease_path.read_bytes()
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "manifest-schema"
+    assert manifest_path.read_bytes() == manifest_before
+    assert lease_path.read_bytes() == lease_before
+
+
+def test_gate_mechanical_update_rejects_nonfinite_number_before_write(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-gates-1",
+        owner_token="owner-a",
+        gate_admission=valid_gate_admission(worktree),
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest_before = manifest_path.read_bytes()
+    lease_path = worktree / campaign_artifacts.LEASE_PATH
+    lease_before = lease_path.read_bytes()
+
+    with pytest.raises(ValueError, match="non-finite"):
+        campaign_artifacts.update_mechanical_state(
+            manifest_path,
+            {"parity": {"score": float("nan")}},
+        )
+
+    assert manifest_path.read_bytes() == manifest_before
+    assert lease_path.read_bytes() == lease_before
+
+
+def test_gate_start_requires_present_schema_before_mutation(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_gate_admission(worktree)
+    monkeypatch.setattr(
+        campaign_artifacts,
+        "GATE_CAMPAIGN_SCHEMA_PATH",
+        worktree / "missing-schema.json",
+    )
+
+    with pytest.raises(FileNotFoundError):
+        campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id="implement-gates-1",
+            owner_token="owner-a",
+            gate_admission=admission,
+        )
+
+    assert not (worktree / campaign_artifacts.LEASE_PATH).exists()
+
+
+def test_gate_proof_rejects_command_environment_and_network_injection(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-gates-1",
+        owner_token="owner-a",
+        gate_admission=valid_gate_admission(worktree),
+    )
+    manifest_path = worktree / str(started["manifest"])
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["mechanical"]["proof_registrations"] = [
+        {
+            "id": "foreign-proof",
+            "applicability": "required",
+            "decision_pointer": "decisions.md#contract-lock",
+            "profile": "campaign-artifacts-focused-v1",
+            "command": ["powershell", "-Command", "Write-Output secret"],
+            "environment": {"TOKEN": "secret"},
+            "network": True,
+        }
+    ]
+    write_json(manifest_path, manifest)
+    append_gate_decision_capsules(manifest_path)
+    executed = False
+
+    def fail_if_executed(*args: object, **kwargs: object) -> object:
+        nonlocal executed
+        executed = True
+        raise AssertionError("proof execution must remain unreachable")
+
+    monkeypatch.setattr(campaign_artifacts, "_run_profile", fail_if_executed)
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "proof-profile"
+    assert executed is False
+
+
+def test_gate_verify_rejects_post_start_contract_drift_before_mutation(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-gates-1",
+        owner_token="owner-a",
+        gate_admission=valid_gate_admission(worktree),
+    )
+    manifest_path = worktree / str(started["manifest"])
+    append_gate_decision_capsules(manifest_path)
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["contract"]["candidate_root"] = "../escape"
+    write_json(manifest_path, manifest)
+    manifest_before = manifest_path.read_bytes()
+    lease_path = worktree / campaign_artifacts.LEASE_PATH
+    lease_before = lease_path.read_bytes()
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "manifest-schema"
+    assert manifest_path.read_bytes() == manifest_before
+    assert lease_path.read_bytes() == lease_before
+
+
+def test_gate_start_rejects_embedded_restart_before_mutation(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    admission = valid_gate_admission(worktree)
+    campaign = admission["campaign"]
+    assert isinstance(campaign, dict)
+    campaign["continuation"] = "restart"
+    campaign["supersession"] = (
+        "docs/validation/skills/implement/campaigns/prior/manifest.json"
+    )
+
+    with pytest.raises(ValueError, match="ordinary Gate start"):
+        campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id="implement-gates-1",
+            owner_token="owner-a",
+            gate_admission=admission,
+        )
+
+    assert not (worktree / campaign_artifacts.LEASE_PATH).exists()
+
+
+def test_gate_verify_never_skips_legacy_stage_registration(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-gates-1",
+        owner_token="owner-a",
+        gate_admission=valid_gate_admission(worktree),
+    )
+    manifest_path = worktree / str(started["manifest"])
+    append_gate_decision_capsules(manifest_path)
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["mechanical"]["proof_registrations"] = [
+        {
+            "id": "legacy-stage",
+            "stage": "prompt-1",
+            "applicability": "required",
+            "decision_pointer": "decisions.md#contract-lock",
+            "profile": "campaign-artifacts-focused-v1",
+        }
+    ]
+    write_json(manifest_path, manifest)
+    before = manifest_path.read_bytes()
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "stale"
+    assert result["gate"] == "gate-enforcement"
+    assert manifest_path.read_bytes() == before
+
+
+def test_gate_verify_rejects_empty_or_mismatched_decision_before_mutation(
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+    started = campaign_artifacts.start_campaign(
+        "implement",
+        worktree=worktree,
+        campaign_id="implement-gates-1",
+        owner_token="owner-a",
+        gate_admission=valid_gate_admission(worktree),
+    )
+    manifest_path = worktree / str(started["manifest"])
+    decision_path = manifest_path.with_name("decisions.md")
+    decision_path.write_text(
+        decision_path.read_text("utf-8")
+        + "\n<!-- campaign-decision:contract-lock -->\n"
+        + "<!-- campaign-decision:candidate-lock:begin -->\n"
+        + "A decision for the wrong gate.\n"
+        + "<!-- campaign-decision:candidate-lock:end -->\n",
+        encoding="utf-8",
+    )
+    manifest_before = manifest_path.read_bytes()
+    lease_path = worktree / campaign_artifacts.LEASE_PATH
+    lease_before = lease_path.read_bytes()
+
+    result = campaign_artifacts.verify_campaign(
+        manifest_path,
+        worktree=worktree,
+    )
+
+    assert result["status"] == "failed"
+    assert result["gate"] == "semantic-pointer"
+    assert manifest_path.read_bytes() == manifest_before
+    assert lease_path.read_bytes() == lease_before
+
+
+def test_gate_start_cleans_lease_when_temporary_allocation_fails(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worktree = tmp_path / "repo"
+    worktree.mkdir()
+
+    def fail_allocation(*args: object, **kwargs: object) -> str:
+        raise OSError("temporary allocation failed")
+
+    monkeypatch.setattr(campaign_artifacts.tempfile, "mkdtemp", fail_allocation)
+
+    with pytest.raises(OSError, match="temporary allocation failed"):
+        campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id="implement-gates-1",
+            owner_token="owner-a",
+            gate_admission=valid_gate_admission(worktree),
+        )
+
+    assert not (worktree / campaign_artifacts.LEASE_PATH).exists()
+
+
+def test_v1_and_v2_control_paths_release_without_manifest_upgrade(
+    tmp_path: Path,
+) -> None:
+    for version in (1, 2):
+        worktree = tmp_path / f"repo-v{version}"
+        worktree.mkdir()
+        admission = (
+            valid_fresh_epoch_admission(worktree, include_m0=False)
+            if version == 2
+            else None
+        )
+        started = campaign_artifacts.start_campaign(
+            "implement",
+            worktree=worktree,
+            campaign_id=f"implement-v{version}",
+            owner_token="owner-a",
+            fresh_epoch=admission,
+        )
+        manifest_path = worktree / str(started["manifest"])
+        before = manifest_path.read_bytes()
+
+        read_back = campaign_artifacts.read_campaign_manifest(manifest_path)
+        status = campaign_artifacts.campaign_status(
+            manifest_path,
+            worktree=worktree,
+        )
+        released = campaign_artifacts.release_campaign(
+            manifest_path,
+            worktree=worktree,
+            owner_token="owner-a",
+        )
+
+        assert read_back["schema_version"] == version
+        assert "current_gate" not in read_back.get("semantic", {})
+        assert status["status"] == "verified"
+        assert released["status"] == "verified"
+        assert manifest_path.read_bytes() == before
 
 
 def test_fresh_start_creates_pointer_oriented_v2_manifest_and_firewall(

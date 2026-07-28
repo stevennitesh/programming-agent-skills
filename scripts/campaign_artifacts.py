@@ -7,6 +7,7 @@ import copy
 import hashlib
 import importlib.metadata
 import json
+import math
 import os
 import re
 import shutil
@@ -72,6 +73,7 @@ FORBIDDEN_DISPATCH_KEYS = frozenset(
 )
 CAMPAIGN_SCHEMA_VERSION = 1
 FRESH_CAMPAIGN_SCHEMA_VERSION = 2
+GATE_CAMPAIGN_SCHEMA_VERSION = 3
 MAX_RESTART_LINEAGE_DEPTH = 64
 CAMPAIGN_ROOT = Path("docs/validation/campaigns")
 FRESH_CAMPAIGN_ROOT = Path("docs/validation/skills")
@@ -82,6 +84,14 @@ FRESH_CAMPAIGN_SCHEMA_PATH = (
     / "shared"
     / "schemas"
     / "deploy-campaign-manifest-v2.schema.json"
+)
+GATE_CAMPAIGN_SCHEMA_PATH = (
+    Path(__file__).resolve().parents[1]
+    / "docs"
+    / "validation"
+    / "shared"
+    / "schemas"
+    / "deploy-campaign-manifest-v3.schema.json"
 )
 CANONICAL_PACK_CONTRACT_PATH = "docs/synthesis/skill-pack.md"
 LEASE_PATH = Path(".tmp/deploy-campaign-lease.json")
@@ -97,6 +107,13 @@ STAGE_ORDER = (
     "prompt-6",
 )
 STAGE_PROFILES = frozenset(STAGE_ORDER)
+GATE_ORDER = (
+    "contract-lock",
+    "candidate-lock",
+    "behavioral-proof",
+    "release",
+)
+GATE_KEYS = tuple(gate.replace("-", "_") for gate in GATE_ORDER)
 FRESH_TERMINAL_LIFECYCLE = {
     "m0": "ready-for-research",
     "research": "research-complete",
@@ -139,6 +156,13 @@ PROOF_RECEIPT_SCHEMA_VERSION = 2
 PROOF_CACHE_SCHEMA_VERSION = 1
 PROOF_PROFILE_SCHEMA_VERSION = 1
 PROOF_TIERS = ("cheap", "moderate", "expensive")
+PROOF_REGISTRATION_FORBIDDEN_FIELDS = frozenset(
+    {"argv", "command", "environment", "env", "network", "tier"}
+)
+PUBLIC_MECHANICAL_SENSITIVE_FIELD = re.compile(
+    r"(?:credential|secret|private|evaluator)",
+    re.IGNORECASE,
+)
 PROOF_PROFILES: dict[str, dict[str, object]] = {
     "campaign-artifacts-focused-v1": {
         "schema_version": PROOF_PROFILE_SCHEMA_VERSION,
@@ -256,7 +280,11 @@ def _valid_owner_token(value: object) -> bool:
     return isinstance(value, str) and bool(value)
 
 
-def _validate_fresh_epoch_admission(payload: object) -> None:
+def _validate_fresh_epoch_admission(
+    payload: object,
+    *,
+    validate_semantic: bool = True,
+) -> None:
     if not isinstance(payload, dict):
         raise ValueError("Fresh epoch admission must be an object")
     expected_sections = {"campaign", "contract", "semantic"}
@@ -394,6 +422,8 @@ def _validate_fresh_epoch_admission(payload: object) -> None:
                 f"Fresh epoch {field} must be a sorted unique list"
             )
 
+    if not validate_semantic:
+        return
     required_semantic = {"stage_token", "terminal_token", "lifecycle", "pointers"}
     if set(semantic) != required_semantic:
         raise ValueError("Fresh epoch semantic fields are invalid")
@@ -424,6 +454,97 @@ def _validate_fresh_epoch_admission(payload: object) -> None:
         isinstance(value, str) and value for value in pointers.values()
     ):
         raise ValueError("Fresh epoch semantic pointers are invalid")
+
+
+def _validate_gate_admission(
+    payload: object,
+    *,
+    worktree: Path,
+    skill: str,
+) -> None:
+    if not isinstance(payload, dict) or set(payload) != {
+        "campaign",
+        "contract",
+        "semantic",
+    }:
+        raise ValueError(
+            "Gate admission requires only campaign, contract, and semantic"
+        )
+    contract = payload.get("contract")
+    semantic = payload.get("semantic")
+    if not isinstance(contract, dict) or not isinstance(semantic, dict):
+        raise ValueError("Gate admission ownership sections are invalid")
+    candidate_root_value = contract.get("candidate_root")
+    if (
+        not isinstance(candidate_root_value, str)
+        or not candidate_root_value
+        or Path(candidate_root_value).is_absolute()
+        or candidate_root_value != Path(candidate_root_value).as_posix()
+        or ".." in Path(candidate_root_value).parts
+    ):
+        raise ValueError(
+            "Gate admission candidate_root must be a canonical relative path"
+        )
+    candidate_root = (worktree / candidate_root_value).resolve()
+    if not _is_within(candidate_root, worktree) or not candidate_root.is_dir():
+        raise ValueError(
+            "Gate admission candidate_root escapes or does not exist"
+        )
+    if set(semantic) != {
+        "current_gate",
+        "terminal_token",
+        "decision_pointers",
+    }:
+        raise ValueError("Gate admission semantic fields are invalid")
+    if semantic.get("current_gate") not in GATE_ORDER:
+        raise ValueError("Gate admission current_gate is invalid")
+    if semantic.get("terminal_token") not in {None, "campaign-complete"}:
+        raise ValueError("Gate admission terminal_token is invalid")
+    if (
+        semantic.get("terminal_token") == "campaign-complete"
+        and semantic.get("current_gate") != "release"
+    ):
+        raise ValueError(
+            "Gate admission completion is valid only at the Release gate"
+        )
+    pointers = semantic.get("decision_pointers")
+    if (
+        not isinstance(pointers, dict)
+        or set(pointers) != set(GATE_KEYS)
+        or any(
+            not isinstance(pointer, str)
+            or not re.fullmatch(r"decisions\.md#[a-z0-9][a-z0-9-]*", pointer)
+            for pointer in pointers.values()
+        )
+    ):
+        raise ValueError("Gate admission decision pointers are invalid")
+    campaign = payload.get("campaign")
+    assert isinstance(campaign, dict)
+    if (
+        campaign.get("continuation") is not None
+        or campaign.get("supersession") is not None
+    ):
+        raise ValueError(
+            "An ordinary Gate start requires null continuation and supersession"
+        )
+
+    fresh_contract = copy.deepcopy(contract)
+    fresh_contract.pop("candidate_root")
+    compatibility_admission = {
+        "campaign": copy.deepcopy(payload.get("campaign")),
+        "contract": fresh_contract,
+        "semantic": {},
+    }
+    _validate_fresh_epoch_admission(
+        compatibility_admission,
+        validate_semantic=False,
+    )
+    _validate_fresh_epoch_references(
+        compatibility_admission,
+        worktree=worktree,
+        skill=skill,
+        validate_semantic_pointers=False,
+    )
 
 
 def _admission_path(
@@ -477,6 +598,7 @@ def _validate_fresh_epoch_references(
     *,
     worktree: Path,
     skill: str,
+    validate_semantic_pointers: bool = True,
 ) -> None:
     contract = payload["contract"]
     semantic = payload["semantic"]
@@ -643,6 +765,8 @@ def _validate_fresh_epoch_references(
     if contract["schedule_fingerprint"] != observed_schedule:
         raise ValueError("Fresh epoch schedule fingerprint does not match its pointer")
 
+    if not validate_semantic_pointers:
+        return
     pointers = semantic["pointers"]
     assert isinstance(pointers, dict)
     decision = pointers["decision_capsule"]
@@ -717,6 +841,18 @@ def _validate_v2_manifest_schema(manifest: dict[str, object]) -> None:
         raise ValueError(f"Fresh campaign manifest {pointer}: {error.message}")
 
 
+def _validate_gate_manifest_schema(manifest: dict[str, object]) -> None:
+    schema = _read_json(GATE_CAMPAIGN_SCHEMA_PATH)
+    errors = sorted(
+        Draft202012Validator(schema).iter_errors(manifest),
+        key=lambda error: list(error.absolute_path),
+    )
+    if errors:
+        error = errors[0]
+        pointer = ".".join(str(part) for part in error.absolute_path) or "<root>"
+        raise ValueError(f"Gate campaign manifest {pointer}: {error.message}")
+
+
 def read_campaign_manifest(manifest_path: Path) -> dict[str, object]:
     """Read a supported manifest without rewriting historical evidence."""
 
@@ -785,6 +921,34 @@ def read_campaign_manifest(manifest_path: Path) -> dict[str, object]:
             )
         ):
             raise ValueError("Fresh campaign identity or Restart lineage is invalid")
+        return manifest
+    if version == GATE_CAMPAIGN_SCHEMA_VERSION:
+        campaign = manifest.get("campaign")
+        mechanical = manifest.get("mechanical")
+        if not isinstance(campaign, dict) or not isinstance(mechanical, dict):
+            raise ValueError("Gate campaign section is malformed")
+        _validate_gate_manifest_schema(manifest)
+        supersession_digest = mechanical.get("supersession_digest")
+        if (
+            mechanical.get("campaign_digest")
+            != _campaign_lineage_digest(campaign, supersession_digest)
+            or campaign.get("epoch") != campaign.get("id")
+            or (
+                campaign.get("continuation") is None
+                and (
+                    campaign.get("supersession") is not None
+                    or supersession_digest is not None
+                )
+            )
+            or (
+                campaign.get("continuation") == "restart"
+                and (
+                    not isinstance(campaign.get("supersession"), str)
+                    or not isinstance(supersession_digest, str)
+                )
+            )
+        ):
+            raise ValueError("Gate campaign identity or Restart lineage is invalid")
         return manifest
     raise ValueError("Campaign manifest schema is foreign")
 
@@ -973,6 +1137,7 @@ def start_campaign(
     from_manifest: Path | None = None,
     changed_inputs: list[str] | None = None,
     fresh_epoch: dict[str, object] | None = None,
+    gate_admission: dict[str, object] | None = None,
     _supersedes: str | None = None,
     _held_lease: dict[str, object] | None = None,
     _restart_source: Path | None = None,
@@ -985,6 +1150,12 @@ def start_campaign(
     if delivery_mode not in DELIVERY_MODES:
         raise ValueError("Delivery mode must be one of: none, commit, push")
     resolved_worktree = (worktree or Path.cwd()).resolve()
+    if fresh_epoch is not None and gate_admission is not None:
+        raise ValueError("Fresh and gate admissions are mutually exclusive")
+    if gate_admission is not None and continuation not in {None, "restart"}:
+        raise ValueError(
+            "Gate admission is valid only for a start or Restart"
+        )
     authenticated_restart_lease: dict[str, object] | None = None
     restart_source_manifest: dict[str, object] | None = None
     if _held_lease is not None:
@@ -1009,6 +1180,17 @@ def start_campaign(
                 and isinstance(live_lease, dict)
             ):
                 _validate_v2_campaign_identity(
+                    restart_source_manifest,
+                    worktree=resolved_worktree,
+                    manifest_path=_restart_source,
+                    lease=live_lease,
+                )
+            elif (
+                restart_source_manifest.get("schema_version")
+                == GATE_CAMPAIGN_SCHEMA_VERSION
+                and isinstance(live_lease, dict)
+            ):
+                _validate_gate_campaign_identity(
                     restart_source_manifest,
                     worktree=resolved_worktree,
                     manifest_path=_restart_source,
@@ -1040,6 +1222,14 @@ def start_campaign(
             raise ValueError(
                 "Fresh Restart requires a new Fresh admission"
             )
+        if (
+            restart_source_manifest.get("schema_version")
+            == GATE_CAMPAIGN_SCHEMA_VERSION
+            and gate_admission is None
+        ):
+            raise ValueError(
+                "Gate Restart requires preserved Gate admission authority"
+            )
     if fresh_epoch is not None:
         _validate_fresh_epoch_admission(fresh_epoch)
         _validate_fresh_epoch_references(
@@ -1065,6 +1255,12 @@ def start_campaign(
                 raise ValueError(
                     "Fresh Restart requires the exact source supersession"
                 )
+    if gate_admission is not None:
+        _validate_gate_admission(
+            gate_admission,
+            worktree=resolved_worktree,
+            skill=skill,
+        )
     if authenticated_restart_lease is not None:
         assert isinstance(restart_source_manifest, dict)
         source_campaign = restart_source_manifest.get("campaign")
@@ -1118,6 +1314,7 @@ def start_campaign(
             owner_token=owner_token,
             changed_inputs=changed_inputs or [],
             fresh_epoch=fresh_epoch,
+            gate_admission=gate_admission,
         )
     selected_campaign_id = _validate_id(
         campaign_id or _campaign_id(skill),
@@ -1127,7 +1324,7 @@ def start_campaign(
     manifest_path = _campaign_manifest_path(
         resolved_worktree,
         selected_campaign_id,
-        skill if fresh_epoch is not None else None,
+        skill if fresh_epoch is not None or gate_admission is not None else None,
     )
     lease_path = resolved_worktree / LEASE_PATH
     created_at = _now()
@@ -1140,7 +1337,7 @@ def start_campaign(
         "observed_at": created_at,
         "status_read_at": None,
     }
-    if fresh_epoch is None:
+    if fresh_epoch is None and gate_admission is None:
         manifest = {
             "schema_version": CAMPAIGN_SCHEMA_VERSION,
             "campaign": {
@@ -1165,9 +1362,13 @@ def start_campaign(
             },
         }
     else:
-        campaign_input = fresh_epoch.get("campaign")
-        contract_input = fresh_epoch.get("contract")
-        semantic_input = fresh_epoch.get("semantic")
+        admission = (
+            gate_admission if gate_admission is not None else fresh_epoch
+        )
+        assert isinstance(admission, dict)
+        campaign_input = admission.get("campaign")
+        contract_input = admission.get("contract")
+        semantic_input = admission.get("semantic")
         if not all(
             isinstance(section, dict)
             for section in (campaign_input, contract_input, semantic_input)
@@ -1188,6 +1389,16 @@ def start_campaign(
             "supersession": campaign_input.get("supersession"),
             "worktree": str(resolved_worktree),
         }
+        if gate_admission is not None:
+            campaign_record["controller_profile"] = "four-gate-shadow-v1"
+            if (
+                authenticated_restart_lease is not None
+                and isinstance(restart_source_manifest, dict)
+                and restart_source_manifest.get("schema_version")
+                == GATE_CAMPAIGN_SCHEMA_VERSION
+            ):
+                campaign_record["continuation"] = "restart"
+                campaign_record["supersession"] = _supersedes
         supersession_digest = (
             restart_source_manifest["mechanical"]["campaign_digest"]
             if isinstance(restart_source_manifest, dict)
@@ -1203,7 +1414,11 @@ def start_campaign(
             supersession_digest,
         )
         manifest = {
-            "schema_version": FRESH_CAMPAIGN_SCHEMA_VERSION,
+            "schema_version": (
+                GATE_CAMPAIGN_SCHEMA_VERSION
+                if gate_admission is not None
+                else FRESH_CAMPAIGN_SCHEMA_VERSION
+            ),
             "campaign": campaign_record,
             "contract": copy.deepcopy(contract_input),
             "semantic": copy.deepcopy(semantic_input),
@@ -1222,9 +1437,23 @@ def start_campaign(
                 "evidence_state": "current",
             },
         }
+        if gate_admission is not None:
+            manifest["mechanical"]["gates"] = {
+                gate: {
+                    "evidence_state": "current",
+                    "registration_ids": [],
+                    "receipt_ids": [],
+                }
+                for gate in GATE_KEYS
+            }
+            manifest["mechanical"]["semantic_repair_generation"] = 0
+            lease["contract_digest"] = manifest["mechanical"]["contract_digest"]
         lease["campaign_digest"] = campaign_digest
         lease["supersession_digest"] = supersession_digest
-        _validate_v2_manifest_schema(manifest)
+        if gate_admission is not None:
+            _validate_gate_manifest_schema(manifest)
+        else:
+            _validate_v2_manifest_schema(manifest)
     if _held_lease is None:
         try:
             _install_exclusive_json(lease_path, lease)
@@ -1235,19 +1464,32 @@ def start_campaign(
                 manifest_path,
                 "Another Deploy Campaign owns this worktree lease",
             )
-    campaign_parent = manifest_path.parent.parent
-    campaign_parent.mkdir(parents=True, exist_ok=True)
-    temporary = Path(
-        tempfile.mkdtemp(
-            dir=campaign_parent,
-            prefix=f".{selected_campaign_id}.",
-        )
-    )
+    temporary: Path | None = None
     try:
+        campaign_parent = manifest_path.parent.parent
+        campaign_parent.mkdir(parents=True, exist_ok=True)
+        temporary = Path(
+            tempfile.mkdtemp(
+                dir=campaign_parent,
+                prefix=f".{selected_campaign_id}.",
+            )
+        )
         _write_json_file(temporary / "manifest.json", manifest)
-        (temporary / "decisions.md").write_text(
+        decision_scaffold = (
             "# Deploy Campaign Decisions\n\n"
-            "<!-- campaign-owner: append immutable marker-bounded stage capsules -->\n",
+            "## Contract Lock\n\n"
+            "## Candidate Lock\n\n"
+            "## Behavioral Proof\n\n"
+            "## Release\n\n"
+            "<!-- campaign-owner: append immutable gate decision capsules -->\n"
+            if gate_admission is not None
+            else (
+                "# Deploy Campaign Decisions\n\n"
+                "<!-- campaign-owner: append immutable marker-bounded stage capsules -->\n"
+            )
+        )
+        (temporary / "decisions.md").write_text(
+            decision_scaffold,
             encoding="utf-8",
             newline="\n",
         )
@@ -1266,7 +1508,8 @@ def start_campaign(
         if _held_lease is not None:
             _replace_json_file(lease_path, lease)
     except BaseException:
-        shutil.rmtree(temporary, ignore_errors=True)
+        if temporary is not None:
+            shutil.rmtree(temporary, ignore_errors=True)
         if _held_lease is None:
             lease_path.unlink(missing_ok=True)
         raise
@@ -1294,6 +1537,7 @@ def _continue_campaign(
     owner_token: str | None,
     changed_inputs: list[str],
     fresh_epoch: dict[str, object] | None,
+    gate_admission: dict[str, object] | None,
 ) -> dict[str, object]:
     if continuation not in {"resume", "repair", "restart"}:
         raise ValueError("Continuation must be one of: resume, repair, restart")
@@ -1348,7 +1592,21 @@ def _continue_campaign(
                 from_manifest,
                 str(error),
             )
-
+    elif manifest.get("schema_version") == GATE_CAMPAIGN_SCHEMA_VERSION:
+        try:
+            _validate_gate_campaign_identity(
+                manifest,
+                worktree=worktree,
+                manifest_path=from_manifest,
+                lease=lease,
+            )
+        except ValueError as error:
+            return _failure(
+                "failed",
+                "manifest-schema",
+                from_manifest,
+                str(error),
+            )
     identity_unchanged = (
         campaign.get("skill") == skill
         and campaign.get("delivery_mode") == delivery_mode
@@ -1510,6 +1768,21 @@ def _continue_campaign(
                 from_manifest,
                 "Fresh Restart admission must point to the exact source manifest",
             )
+    if manifest.get("schema_version") == GATE_CAMPAIGN_SCHEMA_VERSION:
+        if gate_admission is None:
+            return _failure(
+                "failed",
+                "continuation",
+                from_manifest,
+                "Gate Restart requires a new owner-authored Gate admission",
+            )
+    elif gate_admission is not None:
+        return _failure(
+            "failed",
+            "continuation",
+            from_manifest,
+            "Gate admission can restart only a v3 Gate campaign",
+        )
     return start_campaign(
         skill,
         delivery_mode,
@@ -1520,7 +1793,40 @@ def _continue_campaign(
         _held_lease=lease,
         _restart_source=from_manifest,
         fresh_epoch=fresh_epoch,
+        gate_admission=gate_admission,
     )
+
+
+def _contains_sensitive_public_mechanical_field(value: object) -> bool:
+    if isinstance(value, dict):
+        return any(
+            (
+                isinstance(key, str)
+                and PUBLIC_MECHANICAL_SENSITIVE_FIELD.search(key) is not None
+            )
+            or _contains_sensitive_public_mechanical_field(item)
+            for key, item in value.items()
+        )
+    if isinstance(value, list):
+        return any(
+            _contains_sensitive_public_mechanical_field(item) for item in value
+        )
+    return False
+
+
+def _contains_nonfinite_public_mechanical_number(value: object) -> bool:
+    if isinstance(value, float):
+        return not math.isfinite(value)
+    if isinstance(value, dict):
+        return any(
+            _contains_nonfinite_public_mechanical_number(item)
+            for item in value.values()
+        )
+    if isinstance(value, list):
+        return any(
+            _contains_nonfinite_public_mechanical_number(item) for item in value
+        )
+    return False
 
 
 def update_mechanical_state(
@@ -1555,10 +1861,25 @@ def update_mechanical_state(
     ):
         raise ValueError("Campaign manifest mechanical section is invalid")
     version = manifest.get("schema_version")
+    if (
+        version == GATE_CAMPAIGN_SCHEMA_VERSION
+        and _contains_sensitive_public_mechanical_field(updates)
+    ):
+        raise ValueError(
+            "Gate mechanical updates cannot persist sensitive or private-evaluator fields"
+        )
+    if (
+        version == GATE_CAMPAIGN_SCHEMA_VERSION
+        and _contains_nonfinite_public_mechanical_number(updates)
+    ):
+        raise ValueError(
+            "Gate mechanical updates cannot persist non-finite numbers"
+        )
     campaign = manifest.get("campaign")
     if version not in {
         CAMPAIGN_SCHEMA_VERSION,
         FRESH_CAMPAIGN_SCHEMA_VERSION,
+        GATE_CAMPAIGN_SCHEMA_VERSION,
     } or not isinstance(campaign, dict):
         raise ValueError("Campaign mechanical-update identity is invalid")
     worktree_value = campaign.get("worktree")
@@ -1571,7 +1892,8 @@ def update_mechanical_state(
         or not isinstance(skill, str)
         or not SAFE_ID.fullmatch(skill)
         or (
-            version == FRESH_CAMPAIGN_SCHEMA_VERSION
+            version
+            in {FRESH_CAMPAIGN_SCHEMA_VERSION, GATE_CAMPAIGN_SCHEMA_VERSION}
             and not isinstance(skill, str)
         )
     ):
@@ -1582,7 +1904,12 @@ def update_mechanical_state(
     expected_manifest = _campaign_manifest_path(
         worktree,
         campaign_id,
-        skill if version == FRESH_CAMPAIGN_SCHEMA_VERSION else None,
+        (
+            skill
+            if version
+            in {FRESH_CAMPAIGN_SCHEMA_VERSION, GATE_CAMPAIGN_SCHEMA_VERSION}
+            else None
+        ),
     ).resolve()
     try:
         lease = _read_json(worktree / LEASE_PATH)
@@ -1609,6 +1936,14 @@ def update_mechanical_state(
     if manifest.get("schema_version") == FRESH_CAMPAIGN_SCHEMA_VERSION:
         _validate_v2_manifest_schema(manifest)
         _validate_v2_campaign_identity(
+            manifest,
+            worktree=worktree,
+            manifest_path=manifest_path,
+            lease=lease,
+        )
+    if manifest.get("schema_version") == GATE_CAMPAIGN_SCHEMA_VERSION:
+        _validate_gate_manifest_schema(manifest)
+        _validate_gate_campaign_identity(
             manifest,
             worktree=worktree,
             manifest_path=manifest_path,
@@ -1765,6 +2100,117 @@ def _validate_v2_campaign_identity(
         raise ValueError("Fresh campaign identity or Restart lineage is invalid")
 
 
+def _validate_gate_campaign_identity(
+    manifest: dict[str, object],
+    *,
+    worktree: Path,
+    manifest_path: Path,
+    lease: dict[str, object] | None = None,
+    lineage_seen: frozenset[Path] = frozenset(),
+    lineage_depth: int = 0,
+) -> None:
+    resolved_manifest = manifest_path.resolve()
+    if (
+        resolved_manifest in lineage_seen
+        or lineage_depth >= MAX_RESTART_LINEAGE_DEPTH
+    ):
+        raise ValueError("Gate campaign Restart lineage is cyclic or too deep")
+    lineage_seen = lineage_seen.union({resolved_manifest})
+    campaign = manifest.get("campaign")
+    contract = manifest.get("contract")
+    semantic = manifest.get("semantic")
+    mechanical = manifest.get("mechanical")
+    if (
+        not isinstance(campaign, dict)
+        or not isinstance(contract, dict)
+        or not isinstance(semantic, dict)
+        or not isinstance(mechanical, dict)
+    ):
+        raise ValueError("Gate campaign identity or Restart lineage is invalid")
+    if _contains_sensitive_public_mechanical_field(
+        mechanical
+    ) or _contains_nonfinite_public_mechanical_number(mechanical):
+        raise ValueError(
+            "Gate campaign public mechanical state contains sensitive "
+            "fields or non-finite numbers"
+        )
+    campaign_id = campaign.get("id")
+    skill = campaign.get("skill")
+    supersession = campaign.get("supersession")
+    supersession_digest = mechanical.get("supersession_digest")
+    campaign_digest = _campaign_lineage_digest(campaign, supersession_digest)
+    contract_digest = _canonical_json_sha256(contract)
+    if (
+        campaign.get("controller_profile") != "four-gate-shadow-v1"
+        or mechanical.get("campaign_digest") != campaign_digest
+        or mechanical.get("contract_digest") != contract_digest
+        or campaign.get("epoch") != campaign_id
+        or campaign.get("worktree") != str(worktree)
+        or not isinstance(campaign_id, str)
+        or not SAFE_ID.fullmatch(campaign_id)
+        or not isinstance(skill, str)
+        or not SAFE_ID.fullmatch(skill)
+        or (
+            semantic.get("terminal_token") == "campaign-complete"
+            and semantic.get("current_gate") != "release"
+        )
+    ):
+        raise ValueError("Gate campaign identity or Restart lineage is invalid")
+    if lease is not None and (
+        lease.get("campaign_digest") != campaign_digest
+        or lease.get("campaign_id") != campaign_id
+        or lease.get("supersession_digest") != supersession_digest
+        or lease.get("contract_digest") != contract_digest
+    ):
+        raise ValueError("Gate campaign identity or Restart lineage is invalid")
+    continuation = campaign.get("continuation")
+    if continuation is None and supersession is None:
+        if supersession_digest is not None:
+            raise ValueError(
+                "Gate campaign identity or Restart lineage is invalid"
+            )
+        return
+    if (
+        continuation != "restart"
+        or not isinstance(supersession, str)
+        or not isinstance(supersession_digest, str)
+    ):
+        raise ValueError("Gate campaign identity or Restart lineage is invalid")
+    source = (worktree / supersession).resolve()
+    expected_root = (worktree / FRESH_CAMPAIGN_ROOT / skill / "campaigns").resolve()
+    if (
+        not _is_within(source, expected_root)
+        or source == resolved_manifest
+        or not source.is_file()
+    ):
+        raise ValueError("Gate campaign identity or Restart lineage is invalid")
+    source_manifest = read_campaign_manifest(source)
+    source_campaign = source_manifest.get("campaign")
+    source_mechanical = source_manifest.get("mechanical")
+    source_id = (
+        source_campaign.get("id") if isinstance(source_campaign, dict) else None
+    )
+    if (
+        source_manifest.get("schema_version") != GATE_CAMPAIGN_SCHEMA_VERSION
+        or not isinstance(source_campaign, dict)
+        or not isinstance(source_mechanical, dict)
+        or source_campaign.get("skill") != skill
+        or source_campaign.get("worktree") != str(worktree)
+        or not isinstance(source_id, str)
+        or source
+        != _campaign_manifest_path(worktree, source_id, skill).resolve()
+        or supersession_digest != source_mechanical.get("campaign_digest")
+    ):
+        raise ValueError("Gate campaign identity or Restart lineage is invalid")
+    _validate_gate_campaign_identity(
+        source_manifest,
+        worktree=worktree,
+        manifest_path=source,
+        lineage_seen=lineage_seen,
+        lineage_depth=lineage_depth + 1,
+    )
+
+
 def _control_identity(
     manifest_path: Path,
     worktree: Path,
@@ -1782,10 +2228,20 @@ def _control_identity(
     expected_path = _campaign_manifest_path(
         worktree,
         str(campaign_id),
-        str(skill) if version == FRESH_CAMPAIGN_SCHEMA_VERSION else None,
+        (
+            str(skill)
+            if version
+            in {FRESH_CAMPAIGN_SCHEMA_VERSION, GATE_CAMPAIGN_SCHEMA_VERSION}
+            else None
+        ),
     )
     if (
-        version not in {CAMPAIGN_SCHEMA_VERSION, FRESH_CAMPAIGN_SCHEMA_VERSION}
+        version
+        not in {
+            CAMPAIGN_SCHEMA_VERSION,
+            FRESH_CAMPAIGN_SCHEMA_VERSION,
+            GATE_CAMPAIGN_SCHEMA_VERSION,
+        }
         or campaign.get("worktree") != str(worktree)
         or not isinstance(campaign_id, str)
         or not SAFE_ID.fullmatch(campaign_id)
@@ -1800,13 +2256,23 @@ def _control_identity(
             worktree=worktree,
             manifest_path=supplied_manifest,
         )
+    if version == GATE_CAMPAIGN_SCHEMA_VERSION:
+        _validate_gate_manifest_schema(manifest)
+        _validate_gate_campaign_identity(
+            manifest,
+            worktree=worktree,
+            manifest_path=supplied_manifest,
+        )
     return campaign_id, manifest
 
 
 def _semantic_stage(semantic: object) -> object:
     if not isinstance(semantic, dict):
         return None
-    return semantic.get("stage_token", semantic.get("declared_stage"))
+    return semantic.get(
+        "current_gate",
+        semantic.get("stage_token", semantic.get("declared_stage")),
+    )
 
 
 def _semantic_terminal(semantic: object) -> bool:
@@ -1939,6 +2405,21 @@ def campaign_status(
                 manifest_path,
                 str(error),
             )
+    if manifest.get("schema_version") == GATE_CAMPAIGN_SCHEMA_VERSION:
+        try:
+            _validate_gate_campaign_identity(
+                manifest,
+                worktree=resolved_worktree,
+                manifest_path=manifest_path,
+                lease=lease,
+            )
+        except ValueError as error:
+            return _failure(
+                "failed",
+                "manifest-schema",
+                manifest_path,
+                str(error),
+            )
     lease["status_read_at"] = _now()
     _replace_json_file(lease_path, lease)
     semantic = manifest.get("semantic")
@@ -1991,6 +2472,43 @@ def campaign_status(
                     "lease": "owned",
                     "git_delivery": delivery_status,
                 }
+    if manifest.get("schema_version") == GATE_CAMPAIGN_SCHEMA_VERSION:
+        gates = mechanical.get("gates") if isinstance(mechanical, dict) else None
+        stale_gates = [
+            gate
+            for gate in GATE_ORDER
+            if (
+                isinstance(gates, dict)
+                and isinstance(gates.get(gate.replace("-", "_")), dict)
+                and gates[gate.replace("-", "_")].get("evidence_state")
+                == "stale"
+            )
+        ]
+        if (
+            isinstance(mechanical, dict)
+            and mechanical.get("evidence_state") == "stale"
+            and not stale_gates
+            and stage in GATE_ORDER
+        ):
+            stale_gates.append(str(stage))
+        if stale_gates:
+            return {
+                "status": "stale",
+                "campaign_id": campaign_id,
+                "gate": stage,
+                "earliest_stale_gate": stale_gates[0],
+                "owner_token": lease.get("owner_token"),
+                "lease": "owned",
+                "git_delivery": delivery_status,
+            }
+        return {
+            "status": "verified",
+            "campaign_id": campaign_id,
+            "gate": stage,
+            "owner_token": lease.get("owner_token"),
+            "lease": "owned",
+            "git_delivery": delivery_status,
+        }
     return {
         "status": "verified",
         "campaign_id": campaign_id,
@@ -2040,6 +2558,21 @@ def release_campaign(
     if manifest.get("schema_version") == FRESH_CAMPAIGN_SCHEMA_VERSION:
         try:
             _validate_v2_campaign_identity(
+                manifest,
+                worktree=resolved_worktree,
+                manifest_path=manifest_path,
+                lease=lease,
+            )
+        except ValueError as error:
+            return _failure(
+                "failed",
+                "manifest-schema",
+                manifest_path,
+                str(error),
+            )
+    if manifest.get("schema_version") == GATE_CAMPAIGN_SCHEMA_VERSION:
+        try:
+            _validate_gate_campaign_identity(
                 manifest,
                 worktree=resolved_worktree,
                 manifest_path=manifest_path,
@@ -3025,6 +3558,40 @@ def _decision_pointer_resolves(
     return content.count(marker) == 1
 
 
+def _gate_decision_pointer_resolves(
+    manifest_path: Path,
+    pointer: object,
+    gate: object,
+) -> bool:
+    if (
+        not isinstance(gate, str)
+        or gate not in GATE_ORDER
+        or pointer != f"decisions.md#{gate}"
+    ):
+        return False
+    try:
+        content = (manifest_path.parent / "decisions.md").read_text(
+            encoding="utf-8"
+        )
+    except (OSError, UnicodeError):
+        return False
+    begin = f"<!-- campaign-decision:{gate}:begin -->"
+    end = f"<!-- campaign-decision:{gate}:end -->"
+    if content.count(begin) != 1 or content.count(end) != 1:
+        return False
+    begin_at = content.index(begin) + len(begin)
+    end_at = content.index(end)
+    if end_at <= begin_at:
+        return False
+    decision = re.sub(
+        r"<!--.*?-->",
+        "",
+        content[begin_at:end_at],
+        flags=re.DOTALL,
+    ).strip()
+    return bool(decision)
+
+
 def _markdown_fragment_resolves(path: Path, fragment: str) -> bool:
     try:
         content = path.read_text(encoding="utf-8")
@@ -3271,14 +3838,6 @@ def _verify_registered_proof(
     blocked: list[str] = []
     cheap_failures: list[dict[str, str]] = []
     profile_failures: list[dict[str, str]] = []
-    forbidden_profile_fields = {
-        "argv",
-        "command",
-        "environment",
-        "env",
-        "network",
-        "tier",
-    }
     semantic = manifest.get("semantic")
     declared_stage = _semantic_stage(semantic)
     for value in registrations:
@@ -3303,7 +3862,7 @@ def _verify_registered_proof(
             )
             continue
         seen_ids.add(registration_id)
-        forbidden = forbidden_profile_fields.intersection(value)
+        forbidden = PROOF_REGISTRATION_FORBIDDEN_FIELDS.intersection(value)
         if forbidden:
             profile_failures.append(
                 {
@@ -4717,6 +5276,123 @@ def _verify_fresh_campaign(
     return result
 
 
+def _verify_gate_campaign(
+    manifest_path: Path,
+    *,
+    worktree: Path,
+    stage_override: str | None,
+    force_proof: str | None,
+    force_reason: str | None,
+    no_execute: bool,
+) -> dict[str, object]:
+    try:
+        read_campaign_manifest(manifest_path)
+        campaign_id, manifest = _control_identity(manifest_path, worktree)
+        lease = _read_json(worktree / LEASE_PATH)
+    except (OSError, json.JSONDecodeError, ValueError) as error:
+        return _failure("failed", "manifest-schema", manifest_path, str(error))
+    if (
+        not isinstance(lease, dict)
+        or lease.get("worktree") != str(worktree)
+        or lease.get("campaign_id") != campaign_id
+        or not _valid_owner_token(lease.get("owner_token"))
+    ):
+        return _failure(
+            "lease-conflict",
+            "lease",
+            manifest_path,
+            "A different campaign owns the worktree lease",
+        )
+    try:
+        _validate_gate_campaign_identity(
+            manifest,
+            worktree=worktree,
+            manifest_path=manifest_path,
+            lease=lease,
+        )
+    except ValueError as error:
+        return _failure("failed", "manifest-schema", manifest_path, str(error))
+    semantic = manifest.get("semantic")
+    mechanical = manifest.get("mechanical")
+    assert isinstance(semantic, dict)
+    assert isinstance(mechanical, dict)
+    gate = semantic.get("current_gate")
+    if stage_override is not None and stage_override != gate:
+        return _failure(
+            "failed",
+            "semantic-gate",
+            manifest_path,
+            "Gate override does not match the owner-written current gate",
+        )
+    pointer_key = str(gate).replace("-", "_")
+    pointers = semantic.get("decision_pointers")
+    pointer = pointers.get(pointer_key) if isinstance(pointers, dict) else None
+    if not _gate_decision_pointer_resolves(manifest_path, pointer, gate):
+        return _failure(
+            "failed",
+            "semantic-pointer",
+            manifest_path,
+            "Current gate requires its exact owner-written decision pointer",
+        )
+    if force_proof is not None or force_reason is not None:
+        return _failure(
+            "failed",
+            "gate-enforcement",
+            manifest_path,
+            "Gate proof execution is unavailable before gate enforcement",
+        )
+    if mechanical.get("proof_registrations"):
+        registrations = mechanical["proof_registrations"]
+        assert isinstance(registrations, list)
+        if any(
+            isinstance(registration, dict)
+            and PROOF_REGISTRATION_FORBIDDEN_FIELDS.intersection(registration)
+            for registration in registrations
+        ):
+            return _verify_registered_proof(
+                manifest_path,
+                manifest,
+                worktree=worktree,
+                force_proof=force_proof,
+                force_reason=force_reason,
+                no_execute=no_execute,
+            )
+        return _failure(
+            "stale",
+            "gate-enforcement",
+            manifest_path,
+            "Registered proof cannot run before gate enforcement is active",
+        )
+    semantic_before = copy.deepcopy(semantic)
+    gates_before = copy.deepcopy(mechanical.get("gates"))
+    repair_before = mechanical.get("semantic_repair_generation")
+    observed_at = _now()
+    update_mechanical_state(manifest_path, {"verified_at": observed_at})
+    lease["observed_at"] = observed_at
+    _replace_json_file(worktree / LEASE_PATH, lease)
+    verified = _read_json(manifest_path)
+    verified_mechanical = verified.get("mechanical")
+    if (
+        verified.get("semantic") != semantic_before
+        or not isinstance(verified_mechanical, dict)
+        or verified_mechanical.get("gates") != gates_before
+        or verified_mechanical.get("semantic_repair_generation") != repair_before
+    ):
+        return _failure(
+            "execution-error",
+            "semantic-ownership",
+            manifest_path,
+            "Gate verification altered owner or gate accounting state",
+        )
+    return {
+        "status": "verified",
+        "campaign_id": campaign_id,
+        "gate": gate,
+        "manifest": str(manifest_path),
+        "terminal": semantic.get("terminal_token"),
+    }
+
+
 def verify_campaign(
     manifest_path: Path,
     *,
@@ -4769,6 +5445,15 @@ def verify_campaign(
         return _verify_fresh_campaign(
             supplied_manifest,
             manifest,
+            worktree=resolved_worktree,
+            stage_override=stage_override,
+            force_proof=force_proof,
+            force_reason=force_reason,
+            no_execute=no_execute,
+        )
+    if manifest.get("schema_version") == GATE_CAMPAIGN_SCHEMA_VERSION:
+        return _verify_gate_campaign(
+            supplied_manifest,
             worktree=resolved_worktree,
             stage_override=stage_override,
             force_proof=force_proof,
@@ -5939,6 +6624,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         type=Path,
         help="Owner-authored Fresh admission packet for a v2 campaign",
     )
+    start.add_argument(
+        "--gate-admission",
+        type=Path,
+        help="Owner-authored admission packet for the non-default v3 gate path",
+    )
     start.add_argument("--json", action="store_true")
 
     verify = commands.add_parser("verify")
@@ -6040,6 +6730,11 @@ def main(argv: list[str] | None = None) -> int:
                     fresh_epoch=(
                         _read_json(args.fresh_epoch)
                         if args.fresh_epoch is not None
+                        else None
+                    ),
+                    gate_admission=(
+                        _read_json(args.gate_admission)
+                        if args.gate_admission is not None
                         else None
                     ),
                 )
