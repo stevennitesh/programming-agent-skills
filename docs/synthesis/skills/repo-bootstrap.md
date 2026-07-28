@@ -1,5 +1,13 @@
 # Repo Bootstrap Deploy Synthesis
 
+> Status (2026-07-27): historical campaign evidence. A later authorized Author
+> pass narrowed tracker seeds to Ready-for-agent state and navigation while
+> leaving Triage briefs and To Tickets execution packets with their producing
+> skills. Canonical `skills/custom/repo-bootstrap/` is runtime authority at
+> campaign-tree SHA-256
+> `d16d6236a74ee7cdf9082ddef1c408306b1a97594828e311e1182883407e8675`.
+> No installed sync is claimed.
+
 <!-- repo-bootstrap-prompt2-synthesis:v1:begin -->
 
 Status: Pruning Pass `complete`; `pruning-not-needed` for

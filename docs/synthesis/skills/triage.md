@@ -1,5 +1,12 @@
 # Triage Relationship And Runtime Design Synthesis
 
+> Status (2026-07-27): historical design evidence. A later authorized Author
+> pass made canonical Triage the owner of its Codex-ready brief and Ready Gate;
+> tracker docs retain only Ready-for-agent state and navigation. Canonical
+> `skills/custom/triage/` is runtime authority at campaign-tree SHA-256
+> `12af1971512182f142b40cf183b2fece96b4f417d0682353b6ac138835fb550e`.
+> No installed sync is claimed.
+
 Status: exhaustive design reference for a future coordinated rewrite, not an executable contract.
 
 Runtime authority remains in:

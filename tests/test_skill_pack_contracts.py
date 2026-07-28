@@ -110,7 +110,7 @@ def test_to_questionnaire_owns_one_safe_recipient_artifact() -> None:
     assert "`$to-questionnaire` for an external stakeholder" in grilling
 
 
-def test_tracker_templates_share_ready_and_readback_contracts() -> None:
+def test_tracker_templates_share_ready_state_navigation_and_readback() -> None:
     trackers = [
         ROOT / "docs/agents/issue-tracker.md",
         CUSTOM / "repo-bootstrap/issue-tracker-github.md",
@@ -118,23 +118,34 @@ def test_tracker_templates_share_ready_and_readback_contracts() -> None:
         CUSTOM / "repo-bootstrap/issue-tracker-local.md",
     ]
     required = (
-        "**Ready-for-agent contract**",
-        "bounded slice",
-        "Source Trace",
-        "acceptance criteria",
-        "dependency state",
-        "proof lane",
-        "write scope",
-        "parallel-safety note",
-        "scope fence",
+        "**Ready-for-agent state**",
+        "navigation metadata",
+        "not proof of content completeness",
+        "$triage",
+        "$to-tickets",
+        "**Ready query**",
         "**Mutation read-back**",
         "partial mutation is blocked",
+    )
+    producer_owned = (
+        "Source Trace",
+        "observable acceptance criteria",
+        "proof lane",
+        "expected write scope",
+        "parallel-safety note",
+        "scope fence",
     )
 
     for tracker in trackers:
         text = tracker.read_text(encoding="utf-8")
+        normalized = " ".join(text.split())
         for token in required:
-            assert token in text, f"{tracker} is missing {token}"
+            assert token in normalized, f"{tracker} is missing {token}"
+        work_items = " ".join(
+            text.split("## Work-item operations", 1)[1].split()
+        ).lower()
+        for token in producer_owned:
+            assert token.lower() not in work_items, f"{tracker} still owns {token}"
 
 
 def test_wayfinder_tracker_claims_distinguish_sessions_and_recover_explicitly() -> None:
@@ -306,7 +317,7 @@ def assert_repo_bootstrap_semantic_contract(
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     assert_repo_bootstrap_semantic_contract(
         CUSTOM / "repo-bootstrap",
-        "8f89126f01867d51eeab635dc9721023c1d34d58f94a83824f2ca9e1c479b579",
+        "d16d6236a74ee7cdf9082ddef1c408306b1a97594828e311e1182883407e8675",
         profile="incumbent",
     )
 
@@ -428,6 +439,14 @@ def test_router_returns_exactly_one_next_skill() -> None:
         "Reason",
         "Precondition",
     ]
+    assert (
+        "| Settled source needs a durable parent decision contract before ticket "
+        "slicing | `$to-spec` |"
+    ) in router
+    assert (
+        "| A `ready-spec` or equivalent settled bounded source needs a "
+        "dependency-ordered Ready-for-agent ticket graph | `$to-tickets` |"
+    ) in router
 
 
 def test_branch_heavy_skills_disclose_branch_procedure() -> None:
@@ -1828,6 +1847,7 @@ def test_readme_exposes_both_adoption_paths() -> None:
 
 
 def test_triage_branches_share_the_authoritative_brief_schema() -> None:
+    triage = (CUSTOM / "triage/SKILL.md").read_text(encoding="utf-8")
     specific = (CUSTOM / "triage/SPECIFIC-ITEM.md").read_text(encoding="utf-8")
     quick = (CUSTOM / "triage/QUICK-OVERRIDE.md").read_text(encoding="utf-8")
     examples = (CUSTOM / "triage/AGENT-BRIEF-EXAMPLES.md").read_text(encoding="utf-8")
@@ -1838,6 +1858,11 @@ def test_triage_branches_share_the_authoritative_brief_schema() -> None:
         "explicit maintainer approval"
     )
     assert "## Completion" in quick
+    normalized_triage = " ".join(triage.split())
+    assert "Triage's Codex-ready brief and Ready Gate" in normalized_triage
+    assert "Ready-for-agent state and queries" in normalized_triage
+    assert "tracker's Ready-for-agent contract" not in triage
+    assert "The tracker state records the verified result" in " ".join(brief.split())
     assert brief.count("**Proof lane:**") == 1
     assert "concrete example" not in brief
     assert examples.startswith("# Brief Branch Emphasis")
@@ -1880,6 +1905,8 @@ def test_mutating_workflows_require_readback() -> None:
                 publish,
             )
             assert "reading back each transition" in publish
+        elif name == "triage":
+            assert "Mutation read-back" in " ".join(text.split())
         else:
             assert "Mutation read-back" in text, name
 

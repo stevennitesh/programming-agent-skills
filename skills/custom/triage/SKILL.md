@@ -5,7 +5,12 @@ description: Triage raw tracker issues and configured external PR requests throu
 
 # Triage
 
-Move raw tracker requests to a maintainer-approved state and handoff. Triage owns classification, verification, shaping, approved state transitions, briefs, and rejected-enhancement memory. Tracker docs own transport, label mappings, the Ready-for-agent contract, and Mutation read-back. `$implement` and `$parallel-implement` own code changes and `implemented` closeout.
+Move raw tracker requests to a maintainer-approved state and handoff. Triage
+owns classification, verification, shaping, approved state transitions, its
+Codex-ready brief and Ready Gate, and rejected-enhancement memory. Tracker docs
+own transport, label mappings, Ready-for-agent state and queries, and Mutation
+read-back. `$implement` and `$parallel-implement` own code changes and
+`implemented` closeout.
 
 ## Spine
 
@@ -21,7 +26,11 @@ Move raw tracker requests to a maintainer-approved state and handoff. Triage own
 
 3. **Run.** Follow only the selected branch; its helper owns branch-specific discovery, sequence, and completion criterion. Treat valid `$to-tickets` output as ready; re-enter triage only for an explicit state or brief correction.
 
-   For any mutation branch, keep exactly one mapped category role and one mapped state role; surface missing or conflicting roles before mutation. Mutate only an explicitly approved packet; any packet change requires fresh approval. A `ready-for-agent` outcome satisfies the tracker's Ready-for-agent contract and adds verification evidence.
+   For any mutation branch, keep exactly one mapped category role and one mapped
+   state role; surface missing or conflicting roles before mutation. Mutate
+   only an explicitly approved packet; any packet change requires fresh
+   approval. Before applying `ready-for-agent`, satisfy Triage's Codex-ready
+   brief and Ready Gate and add verification evidence.
 
    Prefix every posted issue or comment with:
 

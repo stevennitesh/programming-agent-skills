@@ -1,5 +1,12 @@
 # Skill Router Residual Routing Synthesis
 
+> Status (2026-07-27): historical design evidence. A later authorized Author
+> pass clarified the active explicit-only routes from settled source to either
+> a parent decision contract or a Ready-for-agent ticket graph. Canonical
+> `skills/custom/skill-router/` is runtime authority at campaign-tree SHA-256
+> `02742a3108ae70de33f2f39298e83296f8cf6e670c1c0cd5359a7116350322b9`.
+> No installed sync is claimed.
+
 Status: design reference and extraction map. The implicit residual-router candidate is preserved under `skills/experimental/skill-router/`; custom and installed copies remain the explicit-only active control. Fresh-context behavior promotion and coordinated caller validation remain outstanding.
 
 Runtime authority remains in:

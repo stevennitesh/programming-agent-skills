@@ -53,7 +53,10 @@ Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement
 **Dependency mode:** native-dependencies.
 
 - **Packet**: the issue body and comments are the durable packet. A parent spec owns intent; child issues own implementation slices and closeout evidence. No separate repo-local packet is required unless `AGENTS.md` points to one. Approved implementation tickets carry the mapped `ready-for-agent` state and one category role when the source settles it.
-- **Ready-for-agent contract**: every ready item names one bounded slice, Source Trace, observable acceptance criteria, dependency state, proof lane, expected write scope, parallel-safety note, and scope fence. `$triage` owns incoming classification and verification; `$to-tickets` owns slicing and dependency order. Both produce this contract.
+- **Ready-for-agent state**: the configured state marks an item whose producing
+  workflow verified its owned packet. The state is navigation metadata, not
+  proof of content completeness. `$triage` owns its Codex-ready brief and Ready
+  Gate; `$to-tickets` owns its execution packets and graph readiness.
 - **Parent / child**: `native-sub-issues` uses GitHub sub-issues.
   `parent-task-list` keeps an ordered task list in the parent and puts
   `Part of #<parent>` near the top of each child.

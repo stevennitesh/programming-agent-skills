@@ -307,7 +307,7 @@ and
 | `domain-modeling` | `CONTEXT-FORMAT.md`: glossary and context-map format; `ADR-FORMAT.md`: ADR gate and format |
 | `tdd` | `tests.md`, `mocking.md`, `refactoring.md`: examples and branch mechanics |
 | `prototype` | `LOGIC.md`, `UI.md`, and `MEASURE.md`: decision-bearing branch mechanics. One decision branch loads; `SKILL.md` owns the universal lifecycle, reconciliation, and Return. |
-| `triage` | `ATTENTION-SCAN.md`, `SPECIFIC-ITEM.md`, `QUICK-OVERRIDE.md`: branch procedures; `AGENT-BRIEF.md`: ready-contract rendering; `AGENT-BRIEF-EXAMPLES.md`: branch evidence emphasis; `OUT-OF-SCOPE.md`: rejected-work knowledge base |
+| `triage` | `ATTENTION-SCAN.md`, `SPECIFIC-ITEM.md`, `QUICK-OVERRIDE.md`: branch procedures; `AGENT-BRIEF.md`: Codex-ready brief and Ready Gate; `AGENT-BRIEF-EXAMPLES.md`: branch evidence emphasis; `OUT-OF-SCOPE.md`: rejected-work knowledge base |
 | `repo-bootstrap` | Tracker, label, domain, and engineering-contract seeds; `setup-schema.json`: aggregate compatibility fingerprint; per-file source markers and `scripts/validate_setup.py`: complete target-repo setup-surface reconciliation and validation |
 | `wayfinder` | `MAP-FORMAT.md`: canonical map and ticket shape, empty-fog sentinel, and exclusion pointers; `SKILL.md`: Chart, Advance, Maintain, Closure, and foggy map lifecycle semantics |
 | `research` | One cited repo-local Markdown note per source question |
@@ -329,7 +329,11 @@ and
 - `wayfinder` owns foggy multi-session maps, ticket resolution authority, consequence-only Maintain repairs, fog disposition, and Prototype ticket participation; tracker docs own transport, child and map claim identity, stale-claim recovery, blocking, and resolution mechanics. `prototype` owns judgment mechanics, probe execution, supported results, artifact reconciliation, and truthful terminal Return. Every Prototype return stays local to its current caller or the user; Prototype starts no downstream route.
 - `research` owns one bounded source question, claim-owning evidence judgment, and one authorized cited note or verified inline result. A user request or caller packet must authorize one note path before that tracked mutation; otherwise Research returns cited inline evidence, a blocker, or typed `not-admitted` classification without choosing the caller's next route.
 - `resolving-merge-conflicts` inspects State and Trace read-only by default. Reconciliation authority permits edits only to in-scope conflicts; finish authority separately permits staging and continuation. Abort, hard reset, or discarding a side requires explicit approval.
-- Tracker docs own transport, tracker commands, the shared Ready-for-agent contract, and Mutation read-back. `triage` owns incoming classification, verification, brief rendering, state transitions, and the AI disclaimer; `$to-tickets` owns slicing and dependency order. Do not re-triage valid `$to-tickets` output.
+- Tracker docs own transport, tracker commands, Ready-for-agent state and
+  navigation, and Mutation read-back. `triage` owns incoming classification,
+  verification, its Codex-ready brief and Ready Gate, state transitions, and
+  the AI disclaimer; `$to-tickets` owns execution packets, slicing, dependency
+  order, and graph readiness. Do not re-triage valid `$to-tickets` output.
 - `implement` owns one standalone selected item and its bounded Repair campaign; `parallel-implement` owns one explicitly requested parent-backed exhaustive Ready-for-agent graph through qualified serial or concurrent frontiers, bounded Repair generations, serial integration, and verified child-first then parent-last closeout.
 - The `parallel-implement` orchestrator is the sole dispatcher and formal-review owner. Lane workers and child integrators never fan out; an integration lane lands, validates, and returns a review-ready packet.
 - `review` is the ordinary fixed-snapshot gate and may hand off once to `convergent-pr-review`; the high-risk route never hands back.

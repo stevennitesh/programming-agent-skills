@@ -16,7 +16,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:c5d93a1b6590 -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:32a47229b431 -->"
 ENGINEERING_PRIMER_TOKEN = (
     "Explore imaginatively. Converge under proof. Simplify ruthlessly."
 )
@@ -102,7 +102,7 @@ CONTRACT_LITERAL_TOKENS = (
 WORK_ITEM_TOKENS = (
     "## Work-item operations",
     "**Packet**",
-    "**Ready-for-agent contract**",
+    "**Ready-for-agent state**",
     "**Mutation read-back**",
     "**Parent / child**",
     "**Blocking**",

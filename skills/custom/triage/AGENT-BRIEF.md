@@ -1,6 +1,9 @@
 # Writing Codex-Ready Briefs
 
-A Codex-ready brief renders the tracker's Ready-for-agent contract when an issue or PR moves to `ready-for-agent`. The original request and discussion remain source context; the brief names one bounded handoff.
+A Codex-ready brief is Triage's packet for an issue or PR moving to
+`ready-for-agent`. The original request and discussion remain source context;
+the brief names one bounded handoff. The tracker state records the verified
+result; it does not own or prove this content.
 
 For an issue, the brief describes the slice to build. For a PR, it describes the slice left to finish on the existing diff.
 

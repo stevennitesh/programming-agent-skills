@@ -43,7 +43,10 @@ Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement
 **Close implemented items:** no.
 
 - **Packet**: the issue description and notes are the durable packet. A parent spec owns intent; child issues own implementation slices and closeout evidence. No separate repo-local packet is required unless `AGENTS.md` points to one. Approved implementation tickets carry the mapped `ready-for-agent` state and one category role when the source settles it.
-- **Ready-for-agent contract**: every ready item names one bounded slice, Source Trace, observable acceptance criteria, dependency state, proof lane, expected write scope, parallel-safety note, and scope fence. `$triage` owns incoming classification and verification; `$to-tickets` owns slicing and dependency order. Both produce this contract.
+- **Ready-for-agent state**: the configured state marks an item whose producing
+  workflow verified its owned packet. The state is navigation metadata, not
+  proof of content completeness. `$triage` owns its Codex-ready brief and Ready
+  Gate; `$to-tickets` owns its execution packets and graph readiness.
 - **Parent / child**: use native child relationships when available. Otherwise keep an ordered task list in the parent and put `Part of #<parent>` near the top of each child.
 - **Blocking**: use native blocking issue links when available. Otherwise put `Blocked by: #<n>, #<n>` near the top of the child description. Normally a work item is unblocked when every blocker is closed. During one recorded `$parallel-implement` campaign, a blocker with an accepted landing that remains in current integration history with valid proof is derived as `landed-awaiting-lock`; it satisfies execution readiness only for in-scope dependents in that campaign. The issue and dependency remain open until Lock. Rollback, invalidation, or failed proof removes the overlay and reblocks dependents.
 - **Ready query**: list open issues with the mapped `ready-for-agent` state, then drop issues with an unresolved blocker or assignee. Treat an open blocker as resolved only when the verified same-campaign `landed-awaiting-lock` overlay above applies. Within a parent, preserve child order; otherwise choose oldest first.
