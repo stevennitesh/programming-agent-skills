@@ -69,7 +69,7 @@ comprehensive, or full analysis.
 If the user requests Full only when the stock appears attractive:
 
 1. run Compact first;
-2. apply only the attractiveness hurdle the user supplied before modeling;
+2. compare the Compact result with the hurdle the user specified in advance;
 3. continue directly to Full when the hurdle is met; and
 4. otherwise stop after Compact and state why Full did not run.
 
@@ -142,7 +142,9 @@ or the available life for a young company. Expand to five or more periods in
 Full when available. Reconcile the statements, segment data, and footnotes that
 carry the selected method.
 
-Normalize only with an explicit bridge. Examine:
+Normalize only with an explicit bridge. Inspect the following items when
+plausibly material to the selected method or security bridge; Full expands the
+review where additional evidence can challenge the result:
 
 - acquisitions, divestitures, discontinued operations, restructuring, and
   genuinely non-recurring items;
@@ -159,8 +161,9 @@ Normalize only with an explicit bridge. Examine:
 - capital allocation at the prices and terms actually paid, not merely the
   amount spent.
 
-Show revenue growth, margins, cash conversion, ROIC or the appropriate sector
-return measure, incremental returns when supportable, leverage, interest
+Show the historical and trailing metrics carrying the valuation, such as
+revenue growth, relevant margins, cash conversion, ROIC or the appropriate
+sector return measure, incremental returns when supportable, leverage and
 coverage, reinvestment, and share-count change. A high growth rate is not value
 creation unless its return on incremental capital exceeds its opportunity cost.
 

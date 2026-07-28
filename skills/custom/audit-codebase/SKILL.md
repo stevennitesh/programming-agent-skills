@@ -1,78 +1,80 @@
 ---
 name: audit-codebase
-description: Build, continue, or refresh one durable linked HTML map of an immutable repository; audit exactly one user-selected subsystem; or analyze exactly one user-selected improvement candidate or returned evidence. Use explicitly from the top-level root for whole-codebase correctness, robustness, quality, and improvement discovery; exclude diffs, implementation, release decisions, and automatic selection.
+description: Build, continue, or refresh one durable linked HTML repository atlas; thoroughly audit one user-selected subsystem against current source; or revalidate and analyze one user-selected improvement candidate or returned evidence. Use explicitly from the top-level root for whole-codebase correctness, robustness, quality, and improvement discovery; exclude diffs, implementation, release decisions, and automatic selection.
 ---
 
 # Audit Codebase
 
-Map before judging. Run exactly one path per invocation:
+Map before the first judgment. Complete one user objective per invocation:
 
 ```text
-Map:     Pin or verify snapshot -> Map remaining repository -> Publish
-Audit:   Verify completed map and user selection -> Audit one subsystem -> Publish
-Analyze: Verify candidate or returned evidence -> Analyze one candidate -> Publish
+Map:     observe current repository -> map remaining ownership -> publish
+Audit:   refresh one selected subsystem Source Trace -> audit -> publish
+Analyze: revalidate one selected candidate -> analyze or disprove -> publish
 ```
 
-A new or refreshed run maps and stops. An incomplete map continues from the same
-report. After mapping completes, the user selects one subsystem and may later
-select one candidate. Audit never selects either and starts no downstream work.
+Audit may perform the selected objective's prerequisite source refresh in the
+same invocation. It never selects a subsystem or candidate and starts no
+downstream work.
 
-**Root-owned:** the top-level root owns the immutable snapshot, report, audit,
-candidate analysis, and Return. A delegated invocation returns a root-only
-blocker before Pin or mutation. Do not delegate, fan out, implement, mutate the
-product, or issue a release decision.
+**Root-owned:** the top-level root owns scope, selection admission, lens
+coverage, findings, candidates, publication, and Return. It may use up to six
+fresh-context read-only delegates for repository inventory or independent
+Source Trace inspection when concurrency is useful. Delegates use
+`fork_turns="none"`, mutate nothing, and return evidence; root repeats decisive
+checks before admitting a judgment. A delegated invocation of this skill
+returns a root-only blocker.
 
-**Artifact boundary:** the sole durable artifact and only lasting worktree
-mutation is `.scratch/audit-codebase/<run-id>/report.html`. Its transient
-atomic-write sibling must be removed before Return. Exclude both paths from the
-audited content and drift calculation. Leave product code, ordinary tracked
-docs, Git refs and index, trackers, reviews, deployments, and external systems
-unchanged.
+**Artifact boundary:** the only lasting mutation is
+`.scratch/audit-codebase/<run-id>/report.html`. Invocation-owned fragments and
+atomic-write siblings are temporary and removed before Return. Exclude them
+from audited content. Leave product code, ordinary tracked docs, Git refs and
+index, trackers, reviews, deployments, and external systems unchanged.
 
-Before using a supplied report, apply the Resume Gate in
-[HTML-REPORT.md](HTML-REPORT.md). Before every report replacement, apply its
-Finalize Gate. Every Return reports the gate result. A failed gate preserves the
-last verified report and returns the exact observed state without continuing
-another path.
+## Entry Gate
 
-Resolve the requested path once. Use Map when no report and no path-local
-selection were supplied. Never replace an explicit invalid, ambiguous, or stale
-Audit or Analyze request with Map; return `blocked` without changing the report
-and expose only state-valid report pickups.
+Choose the requested objective once. Use Map only when no report-backed
+selection was supplied. Never replace an invalid or ambiguous Audit or Analyze
+selection with Map.
+
+For a supplied report, apply the Entry Gate in
+[HTML-REPORT.md](HTML-REPORT.md). Pass only with a contained canonical path,
+supported report version, matching repository and run identities, strict UTF-8,
+and one uniquely resolved selected ID in an admissible state. Record the report
+SHA-256 for publication collision detection.
+
+A failed Entry Gate returns `blocked` with zero writes and the exact invalid
+input. Report-wide age or unrelated repository drift is not an Entry failure;
+Audit and Analyze establish current truth at the selected unit.
+
+**Current source** means the report's repository target: the exact Git object
+for an object-targeted atlas, or the observed live worktree for a live atlas.
+Never substitute checkout bytes for a supplied Git object.
 
 ## Map
 
-### 1. Pin Scope
+### Observe And Scope
 
-Choose one branch:
+Use one branch:
 
-- **New:** no report was supplied. Create one run ID and pin one target.
-- **Continue:** the supplied report has `Snapshot: current`, `Map:
-  incomplete`, and a complete manifest. Reuse its run and map only uncovered
-  content.
-- **Refresh:** the user explicitly supplied a stale report or requested a
-  semantic rebuild or fresh audit of a current report. Create a new run and
-  map the current target from scratch. Carry no map, finding, candidate, or
-  analysis state into the new snapshot.
+- **New:** create one run ID and observe the requested repository target.
+- **Continue:** reuse an incomplete report, reconcile current path changes, and
+  map only missing or affected ownership.
+- **Refresh:** when explicitly requested or when structural change makes the
+  existing system boundaries unusable, remap current source in the same report
+  unless the user requested a new run.
 
-Pin the target as:
-
-- supplied commit or tree: retain the resolved object IDs and read in-scope
-  content only from those objects;
-- branch baseline: resolve its commit and tree once; or
-- live worktree baseline: retain the resolved `HEAD` tree as provenance plus
-  the deterministic working-tree overlay defined by `HTML-REPORT.md`.
-
-Exclude the report and its transient sibling. Store the complete logical
-manifest in the HTML so later invocations can verify audited bytes without
-another ledger. Capture each live byte identity from the same read used as
-evidence. Staging or unstaging unchanged bytes is not drift.
+For a supplied commit or tree, read only that Git-addressed target. For a live
+repository, record the current commit and tree provenance, generation time, and
+one compact digest of the sorted in-scope path, mode, and content identities.
+Do not render a per-file hash ledger. Each subsystem records its owned path list
+and an evidence fingerprint that later objectives may replace.
 
 Record:
 
 ```text
 Repository:
-Snapshot:
+Map observation:
 Regions: whole repository
 Required lenses: correctness, robustness, domain, design, simplification, coding practices
 Additional lenses:
@@ -84,229 +86,193 @@ Required evidence and proof:
 Non-goals:
 ```
 
-The six required classes apply unless the user explicitly excludes one. Missing
-governing authority becomes a report-level gap; do not invent policy. An empty,
-unresolved, or incompletely captured target returns `blocked` with `Report:
-none` when no verified report exists. Never emit Continue without a complete
-manifest. A live worktree continues only while every captured content identity
-matches.
+The six required classes apply unless the user explicitly excludes one.
+Missing governing authority is a report-level gap; do not invent policy.
 
-### 2. Map Repository
+### Map Ownership
 
-Map behavior and ownership, not directories alone. Read repository instructions,
-manifests, entry points, routed domain records and ADRs, implementation,
-representative callers and tests, build and deployment configuration, and data
-or control-flow edges.
+Map behavior and ownership, not directories alone. Read repository
+instructions, manifests, entry points, routed domain records and ADRs,
+implementation, representative callers and tests, build and deployment
+configuration, and data or control-flow edges.
 
-Inventory every in-scope tracked source, test, configuration, and support file
-plus in-scope untracked content. Give each file exactly one primary home:
+Account for every in-scope tracked source, test, configuration, and support file
+plus in-scope untracked content under exactly one:
 
-- one named subsystem;
-- shared infrastructure with one audit-owning subsystem and named consumers;
-  or
-- excluded, with an evidence-backed reason such as generated, vendored, or
-  build output.
+- named subsystem;
+- shared infrastructure with one audit-owning subsystem and named consumers; or
+- excluded ledger entry with an evidence-backed reason.
 
-Group subsystems into systems. Assign stable IDs and record purpose, owned
-behavior, entry points, interfaces, paths, callers, dependencies, dependents,
-flows, domain terms, decisions, and proof seams. Every dependency edge needs
-source evidence. Account for every file before declaring the map complete. Do
-not audit or rank a subsystem during Map.
+Group subsystems into systems. Give each stable IDs, purpose, owned behavior,
+entry points, Interfaces, paths, callers, dependencies, dependents, flows,
+domain terms, decisions, and Proof Seams. Every dependency edge needs source
+evidence. Do not audit or rank a subsystem during Map.
 
-When coverage cannot finish, publish `Map: incomplete` and return one Continue
-pickup. Do not expose subsystem-audit pickups until every file is accounted for
-and the Map is `complete`.
+When mapping cannot finish, publish `Map: incomplete` with exact remaining
+coverage and one Continue pickup. Expose subsystem pickups only after every file
+is accounted for and `Map: complete`.
 
-### 3. Publish And Stop
+### Publish Map
 
-Follow [HTML-REPORT.md](HTML-REPORT.md). A failed report gate preserves the last
-verified report and returns `Invocation outcome: incomplete`.
-
-For a complete map, return the absolute report path, systems, subsystem IDs and
-names, file coverage, and this one selection pattern:
+Apply the Map Publish Gate in `HTML-REPORT.md`. Return the absolute report path,
+systems, subsystem IDs and names, file coverage, and exactly one pattern:
 
 `$audit-codebase audit <subsystem-id> from <absolute-report-path>`
 
-The report contains every fully instantiated subsystem pickup.
-
-For an incomplete map, return:
-
-`$audit-codebase continue the map from <absolute-report-path>`
-
-For a stale report that has not been refreshed, return:
-
-`$audit-codebase refresh the map from <absolute-report-path>`
-
-Then stop.
+Then stop for user selection.
 
 ## Audit One Subsystem
 
-### 1. Verify Selection
+### Current Evidence Gate
 
-Require the supplied absolute report path, `Snapshot: current`, `Map: complete`,
-and one uniquely resolved user-selected `mapped` or `incomplete` subsystem.
-Drift marks the report stale and returns only the Map Refresh pickup. An invalid
-or ambiguous selection returns `blocked` without changing the report. An audited
-subsystem is a complete no-op unless the user requests a fresh audit; a fresh
-audit uses Map Refresh and a new run.
+Require a complete map and one uniquely selected `mapped`, `incomplete`, or
+explicitly re-audited subsystem. Rebuild its Source Trace from current source:
+owned files, consumed shared infrastructure, entry paths, callers, dependents,
+tests, configuration, routed domain records, ADRs, and bounded history when
+compatibility or staleness matters. Discover current callers and paths rather
+than trusting the old fingerprint.
 
-### 2. Load Audit Concepts And Audit
+Record the current evidence identity and update affected local map ownership.
+If structural change makes the selected boundary unresolvable, publish the
+reconciled map as incomplete and return its exact Map continuation instead of
+auditing a guessed subsystem.
 
-Read each owner below completely:
+### Mandatory Lens Gate
 
-- **Semantic Correctness**, **Root Cause**, and **Proof Seam** test observable
-  meaning. **Robustness**, **Trust Boundary**, **Failure Atomicity**,
-  **Recovery**, **Idempotency**, **Concurrency**, **State Lifecycle**,
-  **Compatibility**, **Environmental Variation**, and **Observability** test
-  supported edge, failure, security, operational, and environmental paths.
-  Read [RELIABILITY-LENS.md](RELIABILITY-LENS.md).
-- **Ubiquitous Language**, **Language Collision**, **Bounded Context**,
-  **Invariant**, **Context Relationship**, **Implementation Contradiction**,
-  and **ADR Conflict** test domain meaning and ownership. Read
-  [DOMAIN-LENS.md](DOMAIN-LENS.md).
-- **Module**, **Interface**, **Implementation**, **Depth**, **Deep Module**,
-  **Shallow Module**, **Seam**, **Adapter**, **Leverage**, and **Locality**
-  expose shallow indirection and misplaced ownership. Read
-  [DESIGN-LENS.md](DESIGN-LENS.md).
-- **YAGNI**, **KISS**, **DRY**, **Readability First**, **Repository Reuse**,
-  **Standard Library**, **Native Platform**, **Installed Dependency**,
-  **Collapse**, **Known Ceiling**, and **Revisit Trigger** seek the first
-  sufficient behavior-preserving reduction. Read
-  [SIMPLIFICATION-LENS.md](SIMPLIFICATION-LENS.md).
-- **Descriptive Naming**, **Type Safety**, **Immutability Default**,
-  **Explicit Error Handling**, **Input Validation**, **Clear Control Flow**,
-  **Why Comments**, **Behavior Tests**, **Behavior-Owned Test Portfolio**, and
-  **Focused Concurrency** test whether implementation makes its contract easy
-  to read and prove. Read
-  [CODING-PRACTICES-LENS.md](CODING-PRACTICES-LENS.md).
+Always read:
 
-Read [QUALITY-LENS.md](QUALITY-LENS.md) for class tie-breakers, opportunity
-admission, and retained complexity; [DEFECT-CONTRACT.md](DEFECT-CONTRACT.md) for
-defects and gaps; and [CANDIDATE-CONTRACT.md](CANDIDATE-CONTRACT.md) for
-candidate grouping. Generic smells and thresholds are discovery hints, never
-findings.
+- [RELIABILITY-LENS.md](RELIABILITY-LENS.md) for Semantic Correctness,
+  Robustness, supported state and failure branches, and Proof Seams;
+- [QUALITY-LENS.md](QUALITY-LENS.md) for the mandatory six-class coverage
+  ledger, class ownership, opportunities, and retained complexity; and
+- [DEFECT-CONTRACT.md](DEFECT-CONTRACT.md) for defects and evidence gaps.
 
-Build the subsystem Source Trace from owned files, consumed shared
-infrastructure, entry paths, callers, dependents, tests, configuration, domain
-records, ADRs, and bounded history when staleness or compatibility matters.
-Apply every loaded concept owner and record per-lens coverage. Read
-[PERFORMANCE-LENS.md](PERFORMANCE-LENS.md) only when performance or resource
-behavior is in scope. Apply additional lenses only from their authoritative
-project, domain, methodology, data, validation, or comparison sources.
+Apply every required lens class and record one evidenced disposition. A class
+is never skipped silently.
 
-Before running any evidence command, establish its filesystem and external
-effects. Redirect disposable outputs to an invocation-owned temporary boundary,
-verify scoped state afterward, and record a gap instead when read-only
-containment cannot be proved.
+Load a detailed owner when the Source Trace implicates it, an observation may
+belong to it, exact vocabulary affects judgment, or `not applicable` is not
+obvious:
 
-Verify defects and gaps under `DEFECT-CONTRACT.md`. Admit opportunities and
-retained complexity under `QUALITY-LENS.md`. Convert each cohesive,
-user-selectable improvement into a candidate under `CANDIDATE-CONTRACT.md`; keep
-its member findings visible.
+- [DOMAIN-LENS.md](DOMAIN-LENS.md)
+- [DESIGN-LENS.md](DESIGN-LENS.md)
+- [SIMPLIFICATION-LENS.md](SIMPLIFICATION-LENS.md)
+- [CODING-PRACTICES-LENS.md](CODING-PRACTICES-LENS.md)
+- [PERFORMANCE-LENS.md](PERFORMANCE-LENS.md) when performance or resource
+  behavior is declared, observed, or claimed
+
+Apply additional lenses only from their authoritative project, domain,
+methodology, data, validation, or comparison sources. Generic smells and
+thresholds are discovery hints, never findings.
+
+Before an evidence command, establish its filesystem and external effects.
+Redirect disposable outputs to an invocation-owned temporary boundary, verify
+scoped state afterward, and record a gap when read-only containment cannot be
+proved.
+
+Admit defects and gaps under `DEFECT-CONTRACT.md`; opportunities and retained
+complexity under `QUALITY-LENS.md`. Read
+[CANDIDATE-CONTRACT.md](CANDIDATE-CONTRACT.md) only when grouping admitted
+items into user-selectable candidates. Keep every member finding visible.
 
 Rank candidates only inside this subsystem by verified impact, applicable
 Leverage or Locality, confidence, and proof burden. Use `Strong`, `Worth
-exploring`, or `Speculative` and explain the strength. A subsystem-local
-recommendation is advisory and never selects a candidate.
+exploring`, or `Speculative` with an evidence-backed reason. A local
+recommendation is advisory and selects nothing.
 
-If any required file, lens, or supported branch remains unchecked although it is
-obtainable within Audit authority, mark the subsystem `incomplete`. Preserve
-observations but expose no candidate-analysis pickup until the subsystem is
-`audited`. An evidence gap records unavailable evidence; it does not hide
-unfinished audit work.
+If any required file, lens disposition, or supported branch remains unchecked
+although obtainable, mark the subsystem `incomplete`. Unavailable evidence is a
+gap; unfinished obtainable work is not.
 
-### 3. Publish And Stop
+### Publish Audit
 
-Update only the selected subsystem and report-level coverage. Preserve every
-other completed section exactly as required by `HTML-REPORT.md`, then verify the
-complete report.
-
-For an audited subsystem, return its defects, opportunities, retained
-complexity, gaps, ranked candidate IDs and names, local recommendation,
-remaining coverage, and this one selection pattern:
+Apply the Incremental Publish Gate to the selected subsystem and affected
+summaries. For `audited`, return findings, retained complexity, gaps, candidate
+IDs and names, the local recommendation, coverage, and:
 
 `$audit-codebase analyze <candidate-id> from <absolute-report-path>`
 
-The report contains every fully instantiated candidate pickup.
-
-For an incomplete subsystem, return its exact remaining coverage and:
-
-`$audit-codebase audit <subsystem-id> from <absolute-report-path>`
-
-Preserve other valid subsystem pickups. Then stop.
+For `incomplete`, return exact remaining coverage and the same subsystem Audit
+pickup. Then stop.
 
 ## Analyze One Candidate
 
-### 1. Verify Selection
+### Current Evidence Gate
 
-Require the absolute report path, current snapshot, complete map, audited
-subsystem, and one unambiguous user-selected candidate.
+Require one candidate inside an audited subsystem. Read
+[CANDIDATE-CONTRACT.md](CANDIDATE-CONTRACT.md), then treat the recorded card as
+a hypothesis rather than proof. Reinspect current implicated files, callers,
+contracts, decisions, tests, member findings, and Proof Seams; expand the Source
+Trace when current evidence reveals another causal owner. Load only implicated
+detailed lens owners.
 
-Read [CANDIDATE-CONTRACT.md](CANDIDATE-CONTRACT.md) completely. Load only the
-lens owners implicated by the candidate's recorded classes. Load
-`DEFECT-CONTRACT.md` or `QUALITY-LENS.md` only when returned evidence reopens
-finding admission.
+When revalidation adds, removes, or reclassifies a member finding, reload
+`DEFECT-CONTRACT.md` or `QUALITY-LENS.md` as applicable and repeat its admission
+gate before changing the candidate.
 
-- Analyze `presented`.
-- Resume `decision pending` only with the intact returned decision packet.
-- Resume `blocked` only with its exact re-entry evidence.
-- Reanalyze `analyzed` only when the user explicitly supplies new evidence.
-- Reject stale reports and ambiguous or disproved candidates unconditionally.
+Classify current validity:
 
-### 2. Analyze
+- `confirmed`: evidence and improvement direction still hold;
+- `changed`: revise the evidence, members, or direction and continue only while
+  the candidate remains one coherent improvement;
+- `disproved`: publish the resolving evidence and stop;
+- `blocked`: publish the exact missing evidence or decision and re-entry.
 
-Trace the candidate's behavior, callers, dependencies, decisions, member
-findings, alternatives, proof seams, change surface, and conflicts under
-`CANDIDATE-CONTRACT.md`. It owns comparison, confirmation, decision briefs,
-returned-evidence judgment, candidate transitions, and exactly zero or one
-next-owner suggestion.
+Unrelated repository changes do not block. If current structural change
+destroys the candidate's subsystem boundary or makes its identity ambiguous,
+stop with the exact Map or Audit selection needed.
 
+### Analyze Thoroughly
+
+Apply the complete comparison and proof contract in `CANDIDATE-CONTRACT.md`.
 For a design or mixed candidate after current-user decisions settle, load
-`$codebase-design` Direct Design as a discipline and fold its comparison,
-material Interface, Seams, Proof Seams, migration, and safe gap into the
-candidate analysis. Audit retains the HTML and Return, creates no second design
-artifact, and does not delegate.
+`$codebase-design` Direct Design as a discipline and fold its material
+Responsibilities, Interfaces, Seams, Proof Seams, migration, and safe gaps
+into this candidate. Create no second design artifact.
 
-### 3. Publish And Stop
+Read [CANDIDATE-FOLLOWUP.md](CANDIDATE-FOLLOWUP.md) only when a material user
+decision, returned evidence, or justified next-owner suggestion exists. Suggest
+zero or one next owner labeled `user selection required`; invoke nothing.
 
-Update only the selected candidate and affected coverage summaries. Preserve
-other completed sections exactly as required by `HTML-REPORT.md`, verify the
-complete report, and return the analysis plus exactly zero or one next-owner
-suggestion labeled `user selection required`. Start nothing downstream.
+### Publish Analysis
 
-## State And Completion
+Apply the Incremental Publish Gate to the candidate and affected summaries.
+Return the current validity judgment, complete analysis or disproval, evidence
+limits, and zero or one uninvoked next-owner suggestion. Then stop.
+
+## Publication And Return
+
+Follow [HTML-REPORT.md](HTML-REPORT.md). A failed Map publication preserves the
+last verified report and returns `incomplete`. After a passed Entry Gate, an
+Incremental publication failure does not erase completed source analysis:
+return the analysis, name the failed update and preserved report identity, and
+leave the report unchanged.
+
+State is local:
 
 ```text
-Invocation outcome: complete | incomplete | blocked
-Snapshot: none | current | stale
 Map: none | incomplete | complete
 Subsystem: none | mapped | incomplete | audited
 Candidate: none | presented | decision pending | analyzed | disproved | blocked
+Evidence freshness: map, subsystem, and candidate each record last verified identity
 ```
-
-Selection is invocation-local, not persistent state. Evidence gaps are findings,
-not candidate states. `incomplete` is resumable and never equals `audited`.
-Audit coverage completes only when every mapped subsystem is `audited`.
-Candidate analysis is optional. A complete audit may contain severe defects,
-presented candidates, retained complexity, and evidence gaps. `blocked` means
-the requested path cannot proceed safely without a named authority or state
-change; it never selects another path implicitly.
 
 Every Return includes:
 
 ```text
-Invocation outcome:
-Snapshot status:
-Map status:
-Run ID: <id> | none
+Outcome: complete | incomplete | blocked
+Selected item:
+Result or state:
+Evidence limits:
+Report update: updated | unchanged | failed
 Report: <absolute-path> | none
-Current subsystem:
-Current candidate:
-Audit coverage:
-Candidate-analysis coverage:
-Selection required: subsystem | candidate | decision workflow | next step | none
-Release decision: none
-Product mutation authority: none
-Downstream execution: none
-Next selection authority: user
+Next user selection: <exact action> | none
 ```
+
+Also state once: `Release decision: none; product mutation authority: none;
+downstream execution: none; next selection authority: user.`
+
+Complete only when the selected objective's current Source Trace, mandatory
+coverage, obtainable proof, report update result, and next user selection are
+explicit. A complete audit may contain severe defects, presented candidates,
+retained complexity, and evidence gaps; coverage is not a release decision.

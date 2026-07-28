@@ -1,291 +1,215 @@
-# Durable HTML Audit Report Contract
+# Durable HTML Audit Report
 
 Render one self-contained report at
-`.scratch/audit-codebase/<run-id>/report.html`. It is the sole durable map,
-subsystem selector, candidate selector, finding record, and analysis history.
+`.scratch/audit-codebase/<run-id>/report.html`. It is the durable repository
+atlas, subsystem and candidate selector, finding record, and analysis history.
+The report preserves evidence; current truth comes from each selected
+objective's Source Trace.
 
-## Portability
+## Portable Template
 
-Write strict UTF-8 HTML with `<html lang="en">`, a meaningful `<title>`, and
-`<meta charset="utf-8">`. Open offline with no network requests or runtime
-JavaScript. Embed CSS and static SVG only.
+Write strict UTF-8 HTML that opens offline, with:
 
-Place arbitrary repository, user, and returned-packet content only in escaped
-text nodes. Generate IDs from a strict internal ASCII grammar. Allow only
-report-local fragments and explicitly rendered local file links. Put no
-arbitrary content in CSS, raw HTML, URL schemes, or SVG markup; escape SVG
-text separately.
+- `<html lang="en">`, a meaningful `<title>`, and
+  `<meta charset="utf-8">`;
+- `<meta name="audit-codebase-report-version" content="2">`;
+- no network requests, executable scripts, hidden workflow state, remote
+  fonts, CDN assets, or browser-only persistence;
+- arbitrary repository, user, and returned content only in escaped text nodes;
+- strict internal ASCII IDs and only report fragments or explicit local file
+  links in `href`;
+- one header, labeled map navigation, main region, footer, non-skipping
+  headings, visible focus, high contrast, and narrow-screen layout;
+- captions and scoped headers for tables; and
+- adjacent text alternatives for useful static SVG diagrams.
 
-No Tailwind CDN, Mermaid CDN, remote fonts, executable scripts, hidden app
-state, or browser-only persistence.
+Use dark mode with reusable background, surface, border, text, muted, link,
+focus, positive, warning, and danger tokens. Never encode state by color alone.
+These are template invariants checked at Map publication, not re-proved as a
+separate workflow during every section update.
 
-Use a visible-on-focus skip link, one `<header>`, one labeled map `<nav>`, one
-`<main>`, one `<footer>`, non-skipping headings, stable anchors, visible focus,
-high-contrast text, text labels for color, and a narrow-screen layout.
-Use DOM-order keyboard navigation. Tables need a `<caption>` and scoped header
-cells. Diagrams need an adjacent text alternative; SVG uses `role="img"` and
-`aria-labelledby`.
+## Entry Gate
 
-## Dark Theme
-
-Render dark mode as the only screen theme. Set
-`<meta name="color-scheme" content="dark">` and
-`:root { color-scheme: dark; }`. Do not add a light-theme toggle or
-`prefers-color-scheme` branch.
-
-Define and reuse:
-
-```css
-:root {
-  color-scheme: dark;
-  --background: #0b1020;
-  --surface: #111827;
-  --surface-raised: #1f2937;
-  --border: #374151;
-  --text: #f3f4f6;
-  --text-muted: #cbd5e1;
-  --link: #93c5fd;
-  --focus: #fbbf24;
-  --positive: #34d399;
-  --warning: #fbbf24;
-  --danger: #fb7185;
-}
-```
-
-Use these tokens consistently. Use status colors as text or borders on dark
-surfaces unless a filled badge has verified WCAG AA text contrast. Never
-encode status by color alone.
-
-## Header
-
-Show repository, snapshot status, Map status, run ID, report content identity,
-audit progress,
-candidate-analysis progress, scope, workloads and environments, generation
-time, and a plain-language state legend. State that candidate strength is
-neither global priority nor mutation authority and coverage is not a release
-decision.
-
-## Snapshot Manifest
-
-Store the complete logical identity needed to resume without another durable
-ledger:
-
-- Git-addressed target: resolved commit and tree object IDs;
-- live target: resolved `HEAD` tree plus a sorted overlay for every modified,
-  deleted, or untracked working-tree path.
-
-An overlay entry contains the exact forward-slash repo-relative path, kind or
-mode, and SHA-256 of raw bytes; a deleted path uses an explicit deletion
-marker instead of a hash. Hash a symlink's target bytes; use the resolved
-object ID for a submodule. The base tree plus overlay must derive every
-in-scope path and byte identity. Staging state alone is irrelevant.
-
-Include scope, exclusions, the report path, and its transient sibling. Mark
-both artifact paths excluded from audited content and drift. Render the
-canonical manifest once in native `<details>` with visible counts and summary;
-other sections link to its entries instead of duplicating them.
-
-Every continuation, subsystem audit, candidate analysis, and returned-evidence
-update verifies this manifest before changing the report.
-
-An identity mismatch permits only one atomic status update: set `Snapshot:
-stale`, expose the fully instantiated Refresh pickup, and preserve all prior
-content. Make no map, audit, or candidate judgment against mixed bytes.
-
-### Resume Gate
-
-Before deriving state from a supplied report:
+Before deriving selection state from a supplied report:
 
 1. resolve the repository root and require exactly
    `<root>/.scratch/audit-codebase/<safe-run-id>/report.html`;
-2. reject traversal, redirected or reparse-point parents, a mismatched embedded
-   run or repository identity, and any path outside that root;
-3. decode strict UTF-8 and verify the state block, manifest, counts, file
-   ownership, IDs, member links, and internal links; and
-4. record the source report's SHA-256 for the Finalize Gate.
+2. reject traversal, redirected or reparse-point parents, a path outside that
+   root, or mismatched embedded repository and run identities;
+3. decode strict UTF-8 and require report version `2`, one map state, and one
+   unique selected subsystem or candidate anchor in an admissible state; and
+4. record the report SHA-256 for collision detection.
 
-A corrupt or inconsistent report returns `blocked` with zero writes. It is not
-snapshot drift.
+Do not validate every unrelated count, link, command, or evidence identity at
+Entry. A corrupt or ambiguous selected identity returns `blocked` with zero
+writes. Report age and unrelated source drift pass to the selected objective's
+Current Evidence Gate.
 
-## Scope And Evidence Gaps
+## Provenance And Freshness
 
-Render report-level gaps discovered before any subsystem owns them: unresolved
-scope, missing governing authority or declared-scope evidence, and their
-coverage impact and re-entry requirements. Keep these separate from codebase
-findings and artifact-verification failures.
+The header shows repository, Map state, run ID, map observation identity and
+time, audit progress, candidate-analysis progress, scope, workloads and
+environments, and a plain-language state legend. State that candidate strength
+is neither global priority nor mutation authority and coverage is not a release
+decision.
+
+For a Git-addressed target, record commit and tree. For a live target, record
+HEAD provenance and one compact digest derived from sorted in-scope path, mode,
+and content identities. Do not render a per-file hash ledger.
+
+Each subsystem and candidate shows:
+
+```text
+Last verified identity:
+Current Source Trace or owned paths:
+Evidence fingerprint:
+```
+
+Older sections are historical evidence, not a reason to block current analysis.
+Audit and Analyze replace the selected unit's freshness and evidence after
+reinspection.
 
 ## Linked System Map
 
 Use the map as the table of contents. Give every system
-`<section id="system-<system-id>">` and every subsystem
-`<section id="subsystem-<subsystem-id>">`. Link each nested map node to its
-section and display `mapped`, `incomplete`, or `audited`.
+`<section id="system-<system-id>">` and subsystem
+`<section id="subsystem-<subsystem-id>">`. Display `mapped`, `incomplete`, or
+`audited`.
 
-Keep a map node to ID, name, one-sentence purpose, state, file count, direct
-evidence-backed dependencies, and its valid pickup. Put entry points,
-Interfaces, owned paths, callers, dependents, flows, domain terms, Proof
-Seams, and relationship evidence in the linked detail section.
+Each map node contains stable ID, name, purpose, state, file count, direct
+evidence-backed dependencies, and its valid user pickup. Its detail contains
+entry points, Interfaces, owned paths, shared consumers, callers, dependents,
+flows, domain terms, decisions, Proof Seams, relationship evidence, and
+evidence fingerprint.
 
-Add a concise static SVG overview or per-system diagram only when it makes
-ownership or dependency flow materially easier to understand. Never require
-one diagram to contain the whole repository. Give every diagram a text
-alternative.
-
-Instantiate every command with the actual stable ID and current absolute
-report path; display no placeholder token:
-
-- incomplete Map: show only Continue;
-- stale snapshot: show only Refresh;
-- complete Map: show Audit only for `mapped` or `incomplete` subsystems; and
-- audited subsystem: show no Audit pickup; an explicitly requested fresh audit
-  shows only Refresh.
-
-Never rank subsystems or add a global recommendation.
-
-## File Coverage
-
-Account for every inventoried file under one primary subsystem; shared
-infrastructure with one audit-owning subsystem and named consumers; or an
-excluded ledger with its reason.
+Account for every in-scope file under one primary subsystem, shared
+infrastructure with one audit-owning subsystem and named consumers, or an
+excluded ledger with reason. Never rank subsystems or add a global
+recommendation.
 
 ## Subsystem Audit
 
-An audited or incomplete subsystem additionally renders:
+An audited or incomplete subsystem renders:
 
-- Source Trace and per-lens coverage;
+- current Source Trace and mandatory six-class lens ledger;
 - supported scenarios and checked state or failure branches;
-- verified defects in severity order, each at
-  `item-defect-<subsystem-id>-<item-id>`;
-- opportunities grouped by concept class, each at
-  `item-opportunity-<subsystem-id>-<item-id>`;
-- retained complexity and Revisit Triggers, each at
-  `item-retained-<subsystem-id>-<item-id>`;
-- evidence gaps at `item-gap-<subsystem-id>-<item-id>`, disproved items at
-  `item-disproved-<subsystem-id>-<item-id>`, and duplicates at
-  `item-duplicate-<subsystem-id>-<item-id>`;
-- performance measurements when applicable;
-- a local candidate index when audited;
-- improvement candidate cards plus a subsystem-local recommendation when
-  audited; and
-- exact remaining coverage, with no candidate-analysis pickup, when
-  incomplete.
+- verified defects in severity order;
+- opportunities by primary class;
+- retained complexity and Revisit Triggers;
+- evidence gaps, disproved items, and duplicates;
+- performance evidence when applicable;
+- local candidate index and cards when audited;
+- one advisory subsystem-local recommendation; and
+- exact remaining obtainable coverage when incomplete.
 
-Use exact lens vocabulary and keep every finding visible when it belongs to a
-candidate. The candidate index shows ID, name, strength, state, anchor, and
-valid pickup.
+Keep every member finding visible when it belongs to a candidate. Candidate
+pickups appear only for an audited subsystem.
 
-## Candidate Cards
+## Candidate Card And Analysis
 
-Give each candidate a stable
-`<article id="candidate-<candidate-id>">`. Render:
+Give each candidate `<article id="candidate-<candidate-id>">` with its title,
+strength, class and concepts, files and Modules, member links, problem, current
+evidence, direction, expected benefit, safety floors, required proof, decisions,
+state, and valid pickup.
 
-- title and `Strong`, `Worth exploring`, or `Speculative` badge;
-- primary class and exact concepts;
-- files, Modules, and member item links;
-- problem, snapshot evidence, and improvement direction;
-- expected benefit;
-- behavior and safety floors;
-- required proof and unresolved decisions;
-- candidate state; and
-- one state-valid, fully instantiated pickup or `none`.
+After Analyze, append:
 
-Use a concise static diagram only when structure or flow materially benefits.
-Give every diagram a text alternative. The subsystem-local recommendation
-links to one candidate but never changes candidate state.
-
-## Candidate Analysis
-
-Append analysis under the same candidate anchor:
-
-- current shape and cost;
+- current-source validity and last verified identity;
+- current Source Trace and changed evidence or members;
+- current shape and demonstrated cost;
 - Keep, Smallest sufficient change, Structural change, and Replacement;
-- recommended direction and rejected alternatives;
+- recommendation and rejected alternatives;
 - material Responsibilities, Interfaces, Seams, and Proof Seams;
-- affected contracts, decisions, compatibility, migration, cutover, and
-  rollback when applicable;
-- proof plan and residual risk;
-- exactly zero or one suggested next step labeled `user selection required`;
-- the complete suggested invocation with skill, candidate ID, absolute report
-  path, pickup prerequisite, result recipient, and Audit re-entry when a next
-  step exists; and
-- candidate state.
+- affected contracts and applicable compatibility, migration, cutover, and
+  rollback;
+- proof plan, residual risk, decision status, and candidate state; and
+- conditional decision, evidence, or next-owner content only when
+  `CANDIDATE-FOLLOWUP.md` applies.
 
-Render:
+Show Analyze for `presented`, exact re-entry for `decision pending` or
+`blocked`, zero or one user-selected next-owner pickup for `analyzed`, and no
+pickup for `disproved`.
 
-- Analyze only for `presented`;
-- the complete decision brief and exact `$grilling` or `$grill-with-docs`
-  invocation for `decision pending`;
-- the exact evidence re-entry for `blocked`;
-- the suggested next-owner invocation for `analyzed` when present, otherwise
-  `none`; and
-- no pickup for `disproved`.
+## Stable Update Markers
 
-After returned evidence, preserve its status, intact content or pointer,
-changed judgments, Domain Delta when applicable, and foreign mutation evidence
-without claiming it as Audit work. A Domain Delta that changes an in-scope
-live-baseline path makes the report stale and changes no old-snapshot
-judgment.
+Wrap independently replaceable regions:
 
-## Navigation
+```html
+<!-- audit-codebase:subsystem:<id>:start -->
+<section id="subsystem-<id>">...</section>
+<!-- audit-codebase:subsystem:<id>:end -->
 
-Provide:
+<!-- audit-codebase:candidate:<id>:start -->
+<article id="candidate-<id>">...</article>
+<!-- audit-codebase:candidate:<id>:end -->
 
-- the map as the system and subsystem table of contents;
-- candidate links inside their owning subsystem rather than in the global
-  map;
-- a “back to map” link from every subsystem;
-- a “back to subsystem” link from every candidate;
-- visible visited and focus states; and
-- no link whose target is missing or duplicated.
+<!-- audit-codebase:summary:<id>:start -->
+<section id="summary-<id>">...</section>
+<!-- audit-codebase:summary:<id>:end -->
+```
 
-## Atomic Publish And Verification
+IDs use lowercase ASCII letters, digits, and single hyphens. Marker pairs are
+unique and properly nested. Map publication creates them; later publication
+replaces one or more non-overlapping marked regions atomically.
 
-### Finalize Gate
+## Map Publish Gate
 
-Exclusively create one invocation-owned transient sibling. Render the complete
-next report to it, reread and verify it, then immediately verify that the
-snapshot identity and Resume Gate source-report SHA-256 are unchanged. For
-New, require that the target report did not appear after Pin. Only then
-atomically replace `report.html` and remove the sibling. Remove only the
-invocation-owned sibling. Preserve the last verified report on interruption,
-drift, collision, concurrent report change, or failure.
+For New, Continue, or explicit Refresh:
 
-Verify:
+1. render the complete report to one invocation-owned sibling;
+2. verify template invariants, contained paths, scope, IDs, states, file
+   assignments, evidence-backed edges, member ownership, map navigation,
+   current pickups, marker uniqueness, and internal links;
+3. verify current Map observation identity and target non-collision; and
+4. atomically replace `report.html`, then remove only the invocation sibling.
 
-- the snapshot manifest is complete, the report path is excluded from the
-  baseline, and current identity matches before any resumed update;
-- audit scope, IDs, states, counts, file assignments, edges, items, candidate
-  order, analyses, and suggestions are internally consistent;
-- every internal link resolves exactly once;
-- every advertised system, subsystem, item, candidate, and back-link target
-  exists exactly once;
-- every file and item has one primary home;
-- every candidate belongs to one audited subsystem and retains its member IDs;
-- changing one subsystem or candidate preserves all prior completed content in
-  meaning and stable identity and, outside affected summaries, byte-for-byte;
-- every displayed command uses the current absolute report path;
-- every displayed command is valid for the current state and contains no
-  placeholder token;
-- every non-`none` candidate suggestion has one exact invocation and
-  callee-compatible pickup prerequisite; and
-- no network dependency, executable script, unsafe interpolated text,
-  color-only state, or hidden pending coverage exists.
+On interruption, source change, collision, or failure, preserve the last
+verified report. An incomplete Map may publish only with exact remaining
+coverage and one Continue pickup.
 
-A failed check is an artifact failure. Return `Invocation outcome:
-incomplete`, preserve the last verified report, and do not record the failure
-inside the unverified candidate or misclassify it as a codebase gap.
-The Return names the observed snapshot status, failed update, preserved report
-content identity, and sibling cleanup. Fields inside the preserved report
-describe its last verified publication, not the failed attempt.
+## Incremental Publish Gate
 
-## Footer
+After a passed Entry Gate:
+
+1. render only the selected subsystem or candidate plus affected summary
+   fragments;
+2. require strict UTF-8, safe text, the exact target anchor, no marker
+   injection, and no executable or remote-resource markup;
+3. replace the unique marked regions, parse the complete result, and verify the
+   changed anchors and changed-fragment links;
+4. verify the source report SHA-256 is unchanged; and
+5. atomically replace the report and remove invocation fragments.
+
+Use the package-owned standard-library helper:
+
+```text
+python <audit-codebase>/scripts/update_report.py
+  --repo-root <root>
+  --report <absolute-report-path>
+  --expected-sha256 <sha256>
+  --section <kind> <id> <fragment-path>
+  [--section <kind> <id> <fragment-path> ...]
+```
+
+The helper owns collision detection, changed-section validation, sibling
+cleanup, and atomic replacement. It does not judge codebase evidence, render
+the Map, or maintain another ledger.
+
+A failed incremental publication preserves the last report and is an artifact
+failure, not a codebase gap. Return completed source analysis with `Report
+update: failed`, the failed region, preserved report identity, and retry action.
+
+## Navigation And Footer
+
+Provide the map as the system/subsystem table of contents, candidate links
+inside their subsystem, back-to-map and back-to-subsystem links, and visible
+visited and focus states. Changed-fragment links must resolve exactly once.
 
 End with audit and candidate-analysis coverage, failed or skipped proof, and:
 
 ```text
-Invocation outcome: complete | incomplete | blocked
-Snapshot status: current | stale
-Map status: incomplete | complete
+Outcome: complete | incomplete | blocked
+Report update: updated | unchanged | failed
 Report: <absolute path> | none
 Release decision: none
 Product mutation authority: none

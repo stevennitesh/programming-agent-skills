@@ -1201,13 +1201,13 @@ def test_high_assurance_review_has_root_guard_bounded_capacity_and_risk() -> Non
     assert not (CUSTOM / "change-review/ADVISORY-CONTRACT.md").exists()
 
 
-def test_audit_codebase_is_serial_cumulative_html_report() -> None:
+def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     skill_dir = CUSTOM / "audit-codebase"
     audit = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     defect = (skill_dir / "DEFECT-CONTRACT.md").read_text(encoding="utf-8")
     quality = (skill_dir / "QUALITY-LENS.md").read_text(encoding="utf-8")
     candidate = (skill_dir / "CANDIDATE-CONTRACT.md").read_text(encoding="utf-8")
-    candidate_flat = " ".join(candidate.split())
+    followup = (skill_dir / "CANDIDATE-FOLLOWUP.md").read_text(encoding="utf-8")
     reliability = (skill_dir / "RELIABILITY-LENS.md").read_text(encoding="utf-8")
     domain = (skill_dir / "DOMAIN-LENS.md").read_text(encoding="utf-8")
     design = (skill_dir / "DESIGN-LENS.md").read_text(encoding="utf-8")
@@ -1220,8 +1220,10 @@ def test_audit_codebase_is_serial_cumulative_html_report() -> None:
     performance = (skill_dir / "PERFORMANCE-LENS.md").read_text(encoding="utf-8")
     performance_lower = performance.lower()
     report = (skill_dir / "HTML-REPORT.md").read_text(encoding="utf-8")
-    report_flat = " ".join(report.split())
     router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
+    audit_flat = " ".join(audit.split())
+    quality_flat = " ".join(quality.split())
+    report_flat = " ".join(report.split())
     map_section = audit.split("## Map", 1)[1].split("## Audit One Subsystem", 1)[0]
     audit_section = audit.split("## Audit One Subsystem", 1)[1].split(
         "## Analyze One Candidate", 1
@@ -1230,6 +1232,10 @@ def test_audit_codebase_is_serial_cumulative_html_report() -> None:
 
     assert not implicit_policy(skill_dir)
     assert "**Root-owned:**" in audit
+    assert 'fork_turns="none"' in audit
+    assert "up to six" in audit
+    assert "one user objective per invocation" in audit
+    assert "prerequisite source refresh in the same invocation" in audit_flat
     assert "Release decision: none" in audit
     assert "a complete audit may contain severe defects" in " ".join(
         audit.lower().split()
@@ -1261,7 +1267,7 @@ def test_audit_codebase_is_serial_cumulative_html_report() -> None:
     )
     assert "ADVISORY-CONTRACT.md" not in audit
     assert ".scratch/audit-codebase/<run-id>/report.html" in audit
-    assert "It is the sole durable map" in report
+    assert "durable repository atlas" in report_flat
     assert "atlas.json" not in audit
     assert "atlas.json" not in report
     assert "FINDING-CONTRACT.md" not in audit
@@ -1273,11 +1279,10 @@ def test_audit_codebase_is_serial_cumulative_html_report() -> None:
         "Analyze One Candidate",
     ]
     assert "## Reconcile" not in audit
-    assert "Map:     Pin or verify snapshot -> Map remaining repository -> Publish" in audit
-    assert "Choose one branch:" in audit
+    assert "Map:     observe current repository -> map remaining ownership -> publish" in audit
+    assert "Use one branch:" in audit
     for branch in ("**New:**", "**Continue:**", "**Refresh:**"):
         assert branch in audit
-    assert "Invocation outcome: complete | incomplete | blocked" in audit
     assert "Map: none | incomplete | complete" in audit
     assert "Subsystem: none | mapped | incomplete | audited" in audit
     assert (
@@ -1286,28 +1291,28 @@ def test_audit_codebase_is_serial_cumulative_html_report() -> None:
     )
     assert "shared infrastructure with one audit-owning subsystem" in audit
     assert "Do not audit or rank a subsystem during Map" in " ".join(audit.split())
-    assert "the user selects one subsystem" in audit
-    assert "Audit never selects either" in " ".join(audit.split())
-    assert "Next selection authority: user" in audit
+    assert "never selects a subsystem or candidate" in " ".join(audit.split())
+    assert "next selection authority: user" in audit.lower()
     assert "offline and script-free" not in audit
     assert "## Burden Of Proof" in defect
     assert "Severity orders defects" in defect
     assert "## Suggest One Owner" not in defect
     for severity in ("P0", "P1", "P2", "P3"):
         assert f"**{severity}:**" in defect
-    assert "Downstream execution: none" in audit
+    assert "downstream execution: none" in audit.lower()
     assert "$audit-codebase analyze <candidate-id>" in audit
     assert "load `$codebase-design` Direct Design as a discipline" in " ".join(
         audit.split()
     )
-    assert "creates no second design artifact" in " ".join(audit.split())
+    assert "Create no second design artifact" in audit
     assert "decision pending" in audit
-    assert "Candidate analysis is optional." in audit
-    assert "Never replace an explicit invalid, ambiguous, or stale Audit" in " ".join(
+    assert "Never replace an invalid or ambiguous Audit or Analyze" in " ".join(
         audit.split()
     )
-    assert "semantic rebuild or fresh audit" in audit
-    assert "Snapshot: none | current | stale" in audit
+    assert "Never substitute checkout bytes for a supplied Git object." in audit
+    assert "Snapshot: none | current | stale" not in audit
+    assert "complete logical manifest" not in audit
+    assert "Do not render a per-file hash ledger" in audit
     for route in (
         "$research",
         "$prototype",
@@ -1322,12 +1327,9 @@ def test_audit_codebase_is_serial_cumulative_html_report() -> None:
         "$simplify-code",
         "$wayfinder",
     ):
-        assert route in candidate
-    assert "$codebase-design" not in candidate
-    assert "Domain Modeling for already-settled durable capture" in candidate_flat
-    assert "only when the decision and its Domain Delta are both required" in (
-        candidate_flat
-    )
+        assert route in followup
+        assert route not in candidate
+    assert "$codebase-design" in candidate
     assert (
         "Material Responsibilities, Interfaces, Seams, and Proof Seams:"
         in candidate
@@ -1336,23 +1338,44 @@ def test_audit_codebase_is_serial_cumulative_html_report() -> None:
         "material Responsibilities, Interfaces, Seams, and Proof Seams"
         in report_flat
     )
-    assert "Cross-session transport is not a semantic route" in candidate_flat
     assert "$tdd" not in defect
-    assert "One non-reduction direct item has settled outcome" in candidate
-    assert "Suggested invocation:" in candidate
-    assert "candidate ID, absolute report" in candidate
-    assert "Result recipient:" in candidate
-    assert "Audit re-entry:" in candidate
-    assert "gap-only hypotheses" in candidate.lower()
+    assert "Suggested invocation:" in followup
+    assert "candidate ID" in followup
+    assert "absolute report path" in followup
+    assert "Result recipient:" in followup
+    assert "Audit re-entry:" in followup
+    assert "gap-only hypotheses" in " ".join(candidate.lower().split())
     assert "declared:<lens-id>" in candidate
-    assert "Questionnaire ready` is not answer evidence" in candidate
-    assert "unchanged exhausted or blocked return" in candidate
-    assert "authority, commitments, acceptance, dependency meaning" in candidate_flat
-    assert (
-        "Multiple interdependent unresolved decisions or prerequisites"
-        in candidate_flat
+    assert "`Questionnaire ready` is not answer evidence" in followup
+    assert "unchanged exhausted or blocked return" in followup
+    assert "Multiple interdependent unresolved decisions or prerequisites" in followup
+    assert "## Mandatory Lens Gate" in quality
+    for disposition in (
+        "finding",
+        "retained complexity",
+        "gap",
+        "examined-no-finding",
+        "not applicable",
+    ):
+        assert disposition in quality
+    assert "`not applicable` requires source evidence" in quality
+    for lens in (
+        "Reliability",
+        "Domain",
+        "Design",
+        "Simplification",
+        "Coding practice",
+        "Performance",
+    ):
+        assert f"| {lens} |" in quality
+    assert "A missing disposition keeps the subsystem `incomplete`" in quality_flat
+    assert "Always read:" in audit_section
+    assert "Load a detailed owner when" in audit_section
+    assert "A class is never skipped silently." in " ".join(audit_section.split())
+    assert "Unrelated repository changes do not block." in analyze_section
+    assert "repeat its admission gate before changing the candidate" in (
+        " ".join(analyze_section.split())
     )
-    assert "implementation requires multiple slices" in candidate_flat
     for question in ("Necessary", "Available", "Owned", "Deep", "Clear", "Provable", "Faithful"):
         assert f"**{question}:**" in quality
     for gate in ("Reach", "Evidence", "Cost", "Alternative", "Proof"):
@@ -1370,10 +1393,23 @@ def test_audit_codebase_is_serial_cumulative_html_report() -> None:
         assert state in audit
     for strength in ("Strong", "Worth exploring", "Speculative"):
         assert strength in candidate
+    assert "The card is a lead, not current proof." in candidate
+    for validity in ("confirmed", "changed", "disproved", "blocked"):
+        assert validity in candidate
+    assert "Current shape and demonstrated cost:" in candidate
     assert "Smallest sufficient change:" in candidate
     assert "Structural change:" in candidate
     assert "Replacement:" in candidate
-    assert "Domain Delta" in candidate
+    assert "Recommended direction:" in candidate
+    assert "Rejected alternatives and why:" in candidate
+    assert "Affected contracts and decisions:" in candidate
+    assert "Compatibility, migration, cutover, and rollback:" in candidate
+    assert "Proof plan:" in candidate
+    assert "Residual risk:" in candidate
+    assert "`not applicable` needs evidence" in candidate
+    assert "CANDIDATE-FOLLOWUP.md" in candidate
+    assert "Without one of those conditions" in candidate
+    assert "Domain Delta" in followup
     assert "# Improvement Candidate Contract" in candidate
     assert "Improvement direction:" in candidate
     for concept in (
@@ -1449,52 +1485,35 @@ def test_audit_codebase_is_serial_cumulative_html_report() -> None:
     assert "advisory" not in performance_lower
     assert "advisories" not in report.lower()
     assert "offline" in report
-    assert "runtime JavaScript" in report_flat
-    assert "## Dark Theme" in report
-    assert "## Snapshot Manifest" in report
-    assert "### Resume Gate" in report
-    assert "### Finalize Gate" in report
-    assert "## Scope And Evidence Gaps" in report
-    assert "report path is excluded from the" in report
-    assert '<meta name="color-scheme" content="dark">' in report
-    assert ":root { color-scheme: dark; }" in report
-    assert "--background: #0b1020;" in report
-    assert "--text: #f3f4f6;" in report
-    assert "Do not add a light-theme toggle" in report
-    assert "Never encode status by color alone" in report_flat
+    assert "executable scripts" in report
+    assert "## Portable Template" in report
+    assert "## Entry Gate" in report
+    assert "## Provenance And Freshness" in report
+    assert "Do not validate every unrelated count" in report
+    assert "Do not render a per-file hash ledger" in report
+    assert "Older sections are historical evidence" in report
+    assert "Never encode state by color alone" in report
     assert "## Linked System Map" in report
-    assert "## File Coverage" in report
     assert "## Subsystem Audit" in report
-    assert "## Candidate Cards" in report
-    assert "## Candidate Analysis" in report
-    assert "## Navigation" in report
-    assert "## Atomic Publish And Verification" in report
-    assert "atomically replace `report.html`" in report
-    assert "source-report SHA-256" in report
-    assert "resolved `HEAD` tree plus a sorted overlay" in report
-    assert "explicit deletion marker instead of a hash" in report_flat
-    assert "native `<details>`" in report
-    assert "strict internal ASCII grammar" in report
-    assert "item-defect-<subsystem-id>-<item-id>" in report
-    assert "when present, otherwise" in report
+    assert "## Candidate Card And Analysis" in report
+    assert "## Stable Update Markers" in report
+    assert "## Map Publish Gate" in report
+    assert "## Incremental Publish Gate" in report
+    assert "scripts/update_report.py" in report
+    assert (skill_dir / "scripts/update_report.py").is_file()
+    assert "atomically replace" in report
+    assert "changed-fragment links" in report
+    assert "report SHA-256 is unchanged" in report
+    assert "return completed source analysis" in report.lower()
+    assert 'content="2"' in report
     assert '<html lang="en">' in report
-    assert "<caption>" in report
-    assert 'role="img"' in report
-    assert "An identity mismatch permits only one atomic status update" in report_flat
-    assert "an explicitly requested fresh audit shows only Refresh" in report_flat
     assert '<section id="system-<system-id>">' in report
     assert '<section id="subsystem-<subsystem-id>">' in report
-    assert "display no placeholder token" in report
-    assert "Invocation outcome: complete | incomplete | blocked" in report
-    assert "Snapshot status: current | stale" in report
-    assert "Map status: incomplete | complete" in report
-    assert "candidate links inside their owning subsystem" in report
-    assert "Never require one diagram to contain the whole repository" in " ".join(
-        report.split()
-    )
-    assert "Never rank subsystems or add a global recommendation" in report
-    assert "subsystem-local recommendation" in report
-    assert "user selection required" in report
+    assert "candidate links inside their subsystem" in report_flat
+    assert "Never rank subsystems or add a global recommendation" in report_flat
+    assert "subsystem-local recommendation" in report_flat
+    assert "Snapshot status: current | stale" not in report
+    assert "An identity mismatch permits only one atomic status update" not in report
     assert re.search(
         r"(?m)^\| A repository needs a whole-system map, one selected subsystem "
         r"audit, or one selected audit-candidate analysis \| `\$audit-codebase` \|$",
@@ -1564,6 +1583,10 @@ def test_implement_selects_one_risk_scaled_review_route() -> None:
 def test_audit_codebase_replaces_improve_codebase() -> None:
     audit = (CUSTOM / "audit-codebase/SKILL.md").read_text(encoding="utf-8")
     quality = (CUSTOM / "audit-codebase/QUALITY-LENS.md").read_text(encoding="utf-8")
+    design = (CUSTOM / "audit-codebase/DESIGN-LENS.md").read_text(encoding="utf-8")
+    simplification = (
+        CUSTOM / "audit-codebase/SIMPLIFICATION-LENS.md"
+    ).read_text(encoding="utf-8")
     candidate = (CUSTOM / "audit-codebase/CANDIDATE-CONTRACT.md").read_text(
         encoding="utf-8"
     )
@@ -1571,9 +1594,9 @@ def test_audit_codebase_replaces_improve_codebase() -> None:
     assert not (CUSTOM / "improve-codebase/SKILL.md").exists()
     assert "stale code" in quality.lower()
     assert "complexity" in audit.lower()
-    assert "Deep Module" in audit
-    assert "deepening" in candidate
-    assert "Collapse" in audit
+    assert "Deep Module" in design
+    assert "deepens" in candidate
+    assert "Collapse" in simplification
     assert "retain" in quality
     assert "Top recommendation" in candidate or "Recommendation strength" in candidate
     assert "decision pending" in candidate
@@ -2041,8 +2064,9 @@ def test_interface_alternatives_receive_curated_fresh_context() -> None:
 
     assert 'fork_turns="none"' in design
     assert 'fork_turns="none"' not in research
-    assert 'fork_turns="none"' not in audit
-    assert "Do not delegate, fan out" in audit
+    assert 'fork_turns="none"' in audit
+    assert "read-only delegates" in audit
+    assert "root repeats decisive checks" in " ".join(audit.split())
 
 
 def test_research_owns_one_authorized_cited_note() -> None:

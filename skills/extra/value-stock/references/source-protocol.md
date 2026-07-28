@@ -27,11 +27,13 @@ Prefer the source that owns the claim:
 6. aggregators, search snippets, newsletters, and social media for discovery or
    sentiment only.
 
-For U.S. issuers, start with the latest 10-K, subsequent 10-Q, every material
-later 8-K, the latest proxy, and filed earnings exhibits. The SEC explains that
-a 10-K covers the business, risks, and annual operating and financial results;
-10-Q statements are quarterly and unaudited; and 8-Ks disclose major current
-events. Read MD&A and footnotes, not just headline statements:
+For U.S. issuers, start with the latest 10-K, subsequent 10-Q, material later
+8-Ks, and filed earnings exhibits. Inspect the latest proxy when compensation,
+dilution, governance, ownership, or security rights are material. The SEC
+explains that a 10-K covers the business, risks, and annual operating and
+financial results; 10-Q statements are quarterly and unaudited; and 8-Ks
+disclose major current events. Read MD&A and footnotes, not just headline
+statements:
 
 - [SEC: How to Read a 10-K](https://www.sec.gov/answers/reada10k.htm)
 - [SEC: Beginners' Guide to Financial Statements](https://www.sec.gov/about/reports-publications/beginners-guide-financial-statements)
@@ -145,7 +147,9 @@ comparability; the SEC also directs users to the official filing for decisions:
 
 ## Earnings And Guidance
 
-Create a chronological ledger for explicitly guided metrics:
+In Compact, inspect current guidance only when it is load-bearing. For Full, or
+when guidance revisions or delivery history could materially change the model
+or confidence, create a chronological ledger for explicitly guided metrics:
 
 | Guidance date | Metric and definition | Original range | Revision | Outcome | Status | Explanation |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -180,11 +184,12 @@ For each event, ask:
 4. Was the information already in price or prior guidance?
 5. What evidence would falsify the interpretation?
 
-Use transcript tone longitudinally and in context. Compare guidance revisions,
-specificity, qualifiers, Q&A evasiveness, and subsequent delivery. Generic
-positive/negative word counts are fragile in finance; domain-specific language
-and corroborating quantitative evidence are stronger. Research shows that text
-tone can contain information, but effects and interpretations vary:
+When transcript tone is a selected evidence lane, evaluate it longitudinally
+and in context. Compare guidance revisions, specificity, qualifiers, Q&A
+evasiveness, and subsequent delivery. Generic positive/negative word counts are
+fragile in finance; domain-specific language and corroborating quantitative
+evidence are stronger. Research shows that text tone can contain information,
+but effects and interpretations vary:
 
 - [Tetlock: The Role of Media in the Stock Market](https://doi.org/10.1111/j.1540-6261.2007.01232.x)
 - [Federal Reserve: News versus Sentiment](https://www.federalreserve.gov/econres/feds/news-versus-sentiment-predicting-stock-returns-from-news-stories.htm)
