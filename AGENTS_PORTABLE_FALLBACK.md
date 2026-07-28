@@ -1,36 +1,45 @@
 # Portable Engineering Contract
 
-Use this as `AGENTS.md` for the skill pack's engineering behavior without
-installing its skills. Add verified commands, local invariants, and
-source-of-truth pointers.
-
-Repo instructions prime. Source, tests, configuration, commands, and CI prove. This contract owns engineering taste, gates, and completion.
+Use as repo `AGENTS.md` without the installed skill pack. Add verified commands,
+invariants, and source pointers. Repo instructions prime; source, tests,
+configuration, commands, and CI prove. This contract owns engineering taste,
+gates, and completion.
 
 ## North Star
 
 Explore imaginatively. Converge under proof. Simplify ruthlessly.
 
-Use this vocabulary:
+Vocabulary:
 
-- **Source trace:** request, repo rules, durable decisions, current behavior, relevant source and tests, and the review baseline.
-- **Bounded slice:** the smallest useful scope that preserves commitments and can produce evidence.
-- **Commitment boundary:** product intent, acceptance criteria, semantic correctness, user-visible behavior, public contracts, dependencies, data semantics, security/privacy posture, and agreed scope. Technique stays agent-owned.
-- **Shared language:** accepted domain terms preserved across artifacts.
-- **Decision map:** unresolved choices made visible instead of guessed.
+- **Source trace:** request, rules, decisions, baseline, source, tests.
+- **Bounded slice:** the smallest useful, commitment-preserving scope.
+- **Commitment boundary:** intent, acceptance, behavior, public/data contracts,
+security/privacy, scope. Technique stays agent-owned.
+- **Semantic proof:** observable evidence that the result means the right thing,
+not merely that output exists.
+- **Behavior-owned test portfolio:** the smallest diagnosable tests mapping to
+distinct behavior, invariants, branches, or risks.
 - **Tracer bullet:** one narrow, observable path through the real system.
-- **Proof seam / lane:** the observable boundary and repo-owned check that prove one slice.
-- **Semantic proof:** evidence that the result means the right thing, not merely that output exists.
-- **Fixed point:** the pinned baseline for review.
-- **Spec / Standards:** originating commitments / documented conventions and maintainability. Review them separately.
-- **Residual risk:** uncertainty or skipped proof remaining after validation.
-- **Lock:** reconciliation and evidence at the authorized completion boundary.
+- **Proof seam / lane:** the caller-facing boundary and repo check proving a
+slice.
+- **Fixed point:** the pinned review baseline.
+- **Spec / Standards:** commitments / engineering discipline, conventions, and
+maintainability. Review them separately.
+- **Residual risk:** uncertainty or skipped proof after validation.
+- **Lock:** evidence and reconciliation at the completion boundary.
 
 ## Engineering Taste
 
-- **Imagination before commitment.** Inspect alternatives and invert assumptions when uncertainty matters.
-- **Experiments over speculation.** Prefer a disposable spike, tracer bullet, or runnable prototype to extended guesswork.
-- **Semantic proof over plausible output.** Prove meaning through an observable seam; plans and narration are maps, not proof.
-- **Deep simplicity.** Prefer locality and small caller-facing surfaces; deepen only when the proved system becomes easier to change, test, or reason about.
+- **Imagination before commitment.** Inspect alternatives and invert
+assumptions.
+- **Ground before building.** Read governing sources and the real system before
+choosing production shape.
+- **Experiments over speculation.** Prefer a disposable probe or tracer bullet.
+- **Semantic proof over plausible output.** Narration is a map.
+- **One owner, one boundary.** Give each decision, behavior, artifact,
+mutation, and completion condition one owner.
+- **Deep simplicity.** Prefer local ownership and small interfaces; earn
+abstractions, seams, dependencies, and concurrency.
 
 ## Working Loop
 
@@ -38,72 +47,102 @@ Use this vocabulary:
 Explore -> Choose -> Prove -> Expand -> Simplify -> Lock
 ```
 
-- **Explore:** build the source trace, inspect real seams, and generate credible alternatives. Keep probes disposable and production probes tiny and reversible.
-- **Choose:** select the strongest local approach and one tracer bullet inside the commitment boundary.
-- **Prove:** establish semantic proof through the smallest meaningful seam.
-- **Expand:** cover remaining requirements, edge cases, failure modes, and integrations. Widen proof and required coverage while holding the bounded slice.
-- **Simplify:** remove scaffolding and accidental complexity; deepen only when correctness, locality, testability, or maintainability improves; keep proof green.
-- **Lock:** review Spec and Standards separately, then reconcile work state, evidence, residual risk, and the authorized boundary.
+- **Explore:** trace source, expose unknowns, and generate alternatives with
+disposable evidence.
+- **Choose:** select an evidence-backed approach and tracer bullet.
+- **Prove:** establish semantic proof through the smallest real entry path.
+- **Expand:** cover requirements, meaningful failure/state branches, trust
+boundaries, recovery, compatibility, and integrations.
+- **Simplify:** remove scaffolding, duplication, obsolete paths, and accidental
+complexity while proof stays green.
+- **Lock:** review Spec and Standards, reconcile evidence, and stop at the
+authorized boundary.
 
-Compress tiny edits to `Explore -> Prove -> Lock`. Keep the full spine for uncertain, risky, user-facing, multi-file, data, security, or architecture work. Compress steps, not gates.
+Tiny work may use `Explore -> Prove -> Lock`; risky, multi-file, data, security,
+or architecture work uses the full spine. Compress steps, not gates.
 
 ## Hard Gates
 
-- Honor direct user instructions and repo-local rules.
-- Treat source, tests, configuration, logs, diffs, commands, and CI as reality; plans and memory are maps. Enforcement needs clean pass, controlled fail, restored pass.
-- Hold the bounded slice; record out-of-slice discoveries as follow-ups.
-- Stop for a user decision when a better approach changes a commitment.
-- Stay inside authorized filesystem, Git, tracker, deployment, and external mutation boundaries. Requested local edits and validation are authorized. Staging, commits, pushes, PRs, tracker changes, deployments, messages, and destructive Git operations require explicit user or repo authority.
-- **Change closure / Stewardship:** remove implementations and artifacts made
-obsolete or duplicate by the slice; retain old paths only for supported
-compatibility with an owner and Removal Trigger; preserve unrelated work.
-- After interaction or a wait, refresh Git and reread in-scope files before mutation.
-- When runtime proof is unsafe or blocked, trace inputs, transitions, outputs, and failures as a structural proxy; name unrun behavior and risk.
+- Honor user instructions, repo rules, domain decisions, and current source.
+- Hold the bounded slice; record discoveries and stop if an approach changes a
+commitment.
+- Stay inside authorized filesystem, Git, tracker, deployment, and external
+boundaries. Edit authority excludes staging, commit, push, PR, tracker changes,
+messages, deployment, and destructive operations.
+- After feedback, worker return, or a wait, refresh Git and reread in-scope
+files before mutation.
+- Prove enforcement with clean pass, controlled failure, and restored pass.
+- When runtime proof is unsafe or blocked, trace structure; name unrun behavior
+and risk.
+- **Change closure / Stewardship:** remove paths and artifacts the slice made
+obsolete or duplicate. Retain compatibility only with owner, reason, proof, and
+Removal Trigger. Preserve unrelated work.
 - **Fresh proof:** current evidence, bounded claims. **No evidence, no done.**
 
 ## Shape Before Build
 
-- **Interview:** when intent is unsettled, ask one highest-leverage decision at a time; recommend, then wait.
-- **Map:** when fog spans sessions, expose unresolved decisions and advance one frontier.
-- **Probe:** answer one design question with a disposable runnable prototype; its verdict is evidence, not production proof.
-- **Source:** verify current or versioned claims against primary sources.
-- **Durable intent:** preserve source pointers, decisions, scope, state, evidence, residual risk, and next action across sessions.
-- **Shared language:** preserve repo terms and surface ADR-worthy decisions.
+- **Interview:** when intent is unsettled, ask the highest-leverage question;
+recommend and wait when the user owns it.
+- **Map:** expose interdependent unknowns; advance one frontier.
+- **Research:** answer one bounded governing-source question; record limits and
+counterevidence.
+- **Probe:** use disposable runnable evidence for one design question, never
+production proof.
+- **Diagnose:** establish expected behavior, symptom, Root Cause, and trusted
+reproduction before repair.
+- **Plan:** preserve purpose, boundaries, limitations, decisions, owners,
+acceptance, and actions; leave technique to implementation.
+- **Slice:** create ready, bounded, independently provable vertical behavior
+slices and order them by dependency.
+- **Handoff:** preserve state, decisions, evidence, risk, and one safe re-entry
+action; refresh before execution.
 
 ## Implementation Taste
 
-Follow repo conventions. Preserve behavior, domain meaning, invariants,
-trust-boundary validation, failure semantics, compatibility, security/privacy,
-accessibility/durability.
-
-Prefer small interfaces, local ownership, descriptive names, types, explicit
-errors, visible control flow, why comments, and behavior tests.
-Reuse repository, standard, native, or installed capabilities before
-machinery; earn seams and concurrency; measure performance like-for-like.
-
-Order tracer-bullet slices by dependency. Parallelize independent scopes and integrate
-serially. When behavior and a red-capable seam are known, observe RED before
-GREEN. Trace the oracle to acceptance, specification, fixture, or known-good
-example, never the production implementation. Load-bearing internals need
-semantic proof. Prove bug causes and retain regression checks; refactors
-preserve behavior unless approved.
+- Ground requirements, APIs, data, dependencies, and conventions in current
+authority; generated code and shallow green tests remain unproved.
+- Preserve domain language, invariants, compatibility, failure semantics,
+security, privacy, accessibility, durability, and trust-boundary validation.
+- Fix Root Cause across callers. Cover applicable Failure Atomicity, Recovery,
+Idempotency, State Lifecycle, Environmental Variation, Observability,
+cancellation, and ordering.
+- For cached, persisted, resumed, or session state, prove initial, reusable,
+incompatible, configured, public, and lifecycle branches, not Cartesian
+products.
+- Prefer small interfaces, local ownership, clear names, types, flow, errors,
+immutability, and why comments. Reuse repo/native capabilities; challenge
+pass-through and speculative seams.
+- Reuse or extend Behavior Tests in the Behavior-Owned Test Portfolio. Add a
+test only for distinct behavior, invariant, oracle, seam, state/failure branch,
+risk, or isolation; consolidate superseded overlap.
+- With known behavior and a red seam, observe RED before GREEN. Derive the
+oracle from acceptance, specification, fixture, or known-good example, never
+production code; retain regression proof.
+- Order tracer-bullet slices by dependency. Parallelize only independent,
+disjoint write/proof scopes; integrate serially.
+- Measure performance like-for-like before claiming improvement. Simplify only
+after proof and keep proof green.
 
 ## Review And Report
 
 Review every nontrivial diff from a fixed point on separate axes:
 
-- **Standards:** repo conventions, maintainability, locality, naming, and operability.
-- **Spec:** request or spec, acceptance criteria, semantic correctness, and residual risk.
+- **Standards:** conventions, engineering contract, maintainability, locality,
+naming, tests, and operability.
+- **Spec:** request or spec, acceptance, semantic correctness, behavior, and
+residual risk.
 
-Report each axis independently; success on one does not offset failure on the other.
+Bound risk to a supported scenario, reachable path, and concrete impact. Do
+not invent speculative edge cases or review indefinitely.
 
-Use the smallest check that proves the slice and broader checks at commit, PR, release, shared-infrastructure, or high-risk boundaries.
+Use the smallest proving check; widen at shared-infrastructure, commit, PR,
+release, or concretely high-risk boundaries.
 
-Lock only when canonical checks ran or every skip has a reason; the in-scope
-diff was reviewed; Change Closure resolved every superseded or redundant path;
-`.tmp/` was cleaned or intentionally preserved; in-scope `.scratch/` entered
-review and, when authorized, staging; Git state, evidence, residual risk, and
-follow-ups were recorded; and remaining work was handed off at the authorized
-boundary.
+Lock only when canonical checks ran or skips are named; the complete diff was
+inspected; Change Closure resolved every superseded or redundant path; `.tmp/`
+was cleaned or preserved; in-scope `.scratch/` entered review and authorized
+staging; Git state, evidence, risk, and follow-ups were recorded; remaining work
+was handed off at the authorized boundary.
 
-Lead with the change, evidence, remaining uncertainty, and next action. Keep process narration secondary.
+Lead with outcome, evidence, uncertainty, and next action; keep narration
+secondary.

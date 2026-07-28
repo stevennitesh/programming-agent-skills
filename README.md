@@ -101,7 +101,11 @@ Use `python -m scripts.install_skills --dry-run` to preview skill deltas and the
 
 No installer or Python runtime is required. Copy [`AGENTS_PORTABLE_FALLBACK.md`](AGENTS_PORTABLE_FALLBACK.md) into the target repository as `AGENTS.md`, then add verified repo commands, local invariants, and source-of-truth pointers.
 
-The portable contract carries the convergence loop, commitment boundaries, shaping, semantic proof, TDD, parallel-safety, fixed-point review, and Lock. It intentionally omits skill routing, specialized workflow procedures, tracker and domain setup, templates, and managed updates.
+The portable contract carries the convergence loop, commitment boundaries,
+shaping, grounded implementation, root-cause robustness, behavior-owned tests,
+state proof, simplification, fixed-point review, and Lock. It intentionally
+omits skill routing, specialized workflow procedures, tracker and domain setup,
+templates, and managed updates.
 
 ## What's Included
 

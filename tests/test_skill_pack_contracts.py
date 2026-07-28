@@ -2137,6 +2137,7 @@ def test_merge_conflict_resolution_is_three_way_and_finish_bounded() -> None:
 def test_portable_fallback_carries_the_standalone_engineering_contract() -> None:
     loop = "Explore -> Choose -> Prove -> Expand -> Simplify -> Lock"
     fallback = (ROOT / "AGENTS_PORTABLE_FALLBACK.md").read_text(encoding="utf-8")
+    fallback_flat = " ".join(fallback.split())
     contract = (ROOT / "docs/agents/engineering-contract.md").read_text(encoding="utf-8")
     bootstrap = (CUSTOM / "repo-bootstrap/SKILL.md").read_text(encoding="utf-8")
 
@@ -2166,6 +2167,7 @@ def test_portable_fallback_carries_the_standalone_engineering_contract() -> None
         "Source trace",
         "Bounded slice",
         "Commitment boundary",
+        "Behavior-owned test portfolio",
         "Semantic proof",
         "Fixed point",
         "Spec / Standards",
@@ -2178,29 +2180,69 @@ def test_portable_fallback_carries_the_standalone_engineering_contract() -> None
     assert not any(line.startswith("  ") for line in fallback.splitlines())
 
     hard_gates = fallback.split("## Hard Gates", 1)[1].split("## Shape Before Build", 1)[0]
+    hard_gates_flat = " ".join(hard_gates.split())
     for mutation in ("filesystem", "Git", "tracker", "deployment", "external"):
         assert mutation in hard_gates
     assert "**Change closure / Stewardship:**" in hard_gates
-    assert "obsolete or duplicate by the slice" in hard_gates
+    assert "made obsolete or duplicate" in hard_gates_flat
     assert "Removal Trigger" in hard_gates
+    shape = fallback.split("## Shape Before Build", 1)[1].split(
+        "## Implementation Taste", 1
+    )[0]
+    assert re.findall(r"(?m)^- \*\*([^*]+):\*\*", shape) == [
+        "Interview",
+        "Map",
+        "Research",
+        "Probe",
+        "Diagnose",
+        "Plan",
+        "Slice",
+        "Handoff",
+    ]
+    shape_flat = " ".join(shape.split())
+    for planning_field in (
+        "purpose",
+        "boundaries",
+        "limitations",
+        "decisions",
+        "owners",
+        "acceptance",
+        "actions",
+    ):
+        assert planning_field in shape_flat
     implementation = fallback.split("## Implementation Taste", 1)[1].split(
         "## Review And Report", 1
     )[0]
-    assert implementation.index("RED") < implementation.index("GREEN")
-    assert "oracle" in implementation
-    assert "trust-boundary validation" in implementation
-    assert "small interfaces" in implementation
-    assert "behavior tests" in implementation
-    assert "measure performance like-for-like" in implementation
+    implementation_flat = " ".join(implementation.split())
+    assert implementation_flat.index("RED") < implementation_flat.index("GREEN")
+    for discipline in (
+        "Root Cause",
+        "failure atomicity",
+        "recovery",
+        "idempotency",
+        "state lifecycle",
+        "observability",
+        "oracle",
+        "trust-boundary validation",
+        "small interfaces",
+        "behavior tests",
+        "behavior-owned test portfolio",
+        "consolidate superseded overlap",
+        "measure performance like-for-like",
+    ):
+        assert discipline.lower() in implementation_flat.lower()
     review = fallback.split("## Review And Report", 1)[1]
+    review_flat = " ".join(review.split())
     assert re.findall(r"(?m)^- \*\*(Standards|Spec):\*\*", review) == [
         "Standards",
         "Spec",
     ]
     assert "Lock" in review
-    assert "Change Closure resolved every superseded or redundant path" in " ".join(
-        review.split()
-    )
+    assert "Change Closure resolved every superseded or redundant path" in review_flat
+    for bounded_risk in ("supported scenario", "reachable path", "concrete impact"):
+        assert bounded_risk in review_flat
+    assert "Do not invent speculative edge cases" in review_flat
+    assert "one owner, one boundary" in fallback_flat.lower()
 
     quality = contract.split("## Code Quality Contract", 1)[1].split(
         "## Tight Engineering Spine", 1
