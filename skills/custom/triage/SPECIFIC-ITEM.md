@@ -15,7 +15,7 @@ Complete when the claim, prior decisions, current roles, implementation surface,
 
 ## 2. Verify
 
-- **Bug:** reproduce the behavior and return `confirmed`, `failed`, or `insufficient detail`, with the failing behavior and likely code path.
+- **Bug:** attempt a trusted reproduction or the strongest safe structural proxy and return `confirmed`, `not-confirmed`, `partial`, or `insufficient-evidence`, with the observed behavior, inspected seam, likely code path, skipped execution, and residual uncertainty. A valid non-reproduction does not prove the report false.
 - **Enhancement:** verify current behavior, relevant seams, plausibility, redundancy, and prior rejection.
 - **PR:** inspect the tracker-provided diff first. When execution is required, use an isolated worktree or approved clean checkout and focused commands.
 
@@ -25,9 +25,25 @@ Route code changes to implementation.
 
 Reporter-owned missing facts route directly to `needs-info`.
 
-When maintainer-owned scope, acceptance, domain language, or design decisions remain unresolved, return the exact shaping bound, recommend explicit `$grill-with-docs`, and stop before mutation. Resume this item in a later Triage invocation; add any returned domain paths and ADR outcomes to the refreshed Source Trace and refresh affected verification.
+For one maintainer-owned decision, return the exact shaping bound and stop.
+Recommend explicit `$grilling` for a conversation-only scope, acceptance, or
+tradeoff decision. Recommend explicit `$grill-with-docs` when the decision may
+change durable domain terms, Invariants, Context Relationships, or an ADR.
+
+When the destination is bounded but several interdependent decisions or
+non-conversational prerequisites remain, return their intact identities,
+recommend explicit `$wayfinder`, and stop.
+
+Resume the same item in a later Triage invocation with the intact result. Add
+returned domain paths and ADR outcomes to the refreshed Source Trace and
+refresh affected verification. No shaping route authorizes tracker mutation.
 
 ## 4. Recommend
+
+When settled source requires several independently completable implementation
+slices, return its identity, commitments, evidence, and multi-slice reason,
+recommend explicit `$to-tickets`, and stop before mutation. Do not force it
+into one ready brief.
 
 Return the proposed category and state, reasoning, current behavior and seams, redundancy and prior-rejection results, verification result, and remaining unknowns. Build and display one complete **mutation packet** containing:
 
@@ -36,17 +52,12 @@ Return the proposed category and state, reasoning, current behavior and seams, r
 - `.out-of-scope/` create, update, or delete;
 - open or closed state.
 
-Wait for explicit maintainer approval of that packet.
-
-## 5. Approve
-
-Apply only the explicitly approved mutation packet. Ask again whenever verification, shaping, or any packet detail changes the proposed outcome or mutation.
-
-## 6. Apply
+Use the universal approval, refresh, mutation order, read-back, partial-failure,
+and Return envelope in [SKILL.md](SKILL.md).
 
 Replace prior role labels so the role invariant holds.
 
-- `ready-for-agent`: post [AGENT-BRIEF.md](AGENT-BRIEF.md), unless the maintainer requested label-only.
+- `ready-for-agent`: post [AGENT-BRIEF.md](AGENT-BRIEF.md), or explicitly reuse an existing brief only after it passes the current Ready Gate.
 - `ready-for-human`: use the same fields under `## Human-Ready Brief` and state why human judgment, access, design, testing, or merge action is required.
 - `needs-info`: post the template below.
 - `wontfix`, already implemented: point to existing behavior, then close.
@@ -55,12 +66,6 @@ Replace prior role labels so the role invariant holds.
 - `needs-triage`: apply the state and preserve meaningful partial progress in a comment.
 
 Apply actual label strings through `docs/agents/triage-labels.md`.
-
-## 7. Prove
-
-Apply the tracker's **Mutation read-back** rule. Also verify the disclaimer and required `.out-of-scope/` changes.
-
-Return a **triage packet** containing Source Trace, verification, roles before and after, comment or brief reference, changed local paths, close state, skipped checks, blockers, and next route.
 
 ## Needs-Info Template
 

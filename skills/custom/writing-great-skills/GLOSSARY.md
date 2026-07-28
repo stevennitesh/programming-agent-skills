@@ -1,7 +1,21 @@
 # Writing Great Skills Glossary
 
-Load this file only when invocation, information hierarchy, pruning, or
-completion vocabulary affects the work.
+Load this file only when invocation, behavior shape, information hierarchy,
+pruning, or completion vocabulary affects the work.
+
+## Behavior shape
+
+**Predictable behavior** means Codex follows the intended decision process
+under applicable variation; it does not require identical output.
+
+**Leading word** is a compact pretrained concept that recruits one intended
+behavior. Define it once and reuse the term only where that behavior must stay
+salient. It earns its place only when it changes behavior relative to the
+tested default and never replaces an exact contract.
+
+**Gate** is a boundary check with an applicability condition, passing evidence,
+and safe failure action. Use gates for cross-cutting constraints instead of
+turning each constraint into a workflow step.
 
 ## Invocation
 
@@ -21,13 +35,18 @@ without copying runtime procedure or summarizing the body.
 
 **Branch-only reference** is needed only under a named condition. A context
 pointer names both the reference target and that loading condition.
+When required branch material is observably missed, sharpen the pointer's
+target and loading condition first; inline the material only if the sharpened
+pointer still fails.
 
 **Co-location** keeps one concept's rule, conditions, and caveats together.
 
 ## Completion
 
-**Completion criterion** is the checkable condition that closes a unit of
-work. Sharpen it before considering a context split for early stopping.
+**Completion criterion** is the condition that closes a unit of work. Make it
+clear enough to distinguish pass from fail and demanding enough to force the
+required legwork. Sharpen it before adding a step or considering a context
+split for early stopping.
 
 **Persistent early-stop defect** is observed completion before that criterion
 is met after the criterion has been sharpened. Only such an observed defect

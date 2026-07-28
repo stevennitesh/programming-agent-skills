@@ -4,7 +4,7 @@ Query the configured tracker and present these disjoint buckets oldest first:
 
 1. **Role drift:** unlabeled items and items with missing or conflicting category or state roles.
 2. **`needs-triage`:** evaluation in progress.
-3. **`needs-info` with reporter activity:** reporter activity since the latest triage note.
+3. **`needs-info` with reporter activity:** reporter activity since the latest disclaimer-prefixed triage note. With no identifiable note, report role drift or scan uncertainty rather than inventing an activity boundary.
 
 Assign each item to its first matching bucket. When PR triage is enabled, include configured external PRs and tag every line `[PR]` or `[issue]`.
 

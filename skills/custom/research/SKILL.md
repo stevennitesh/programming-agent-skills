@@ -39,10 +39,9 @@ Decompose the answer into load-bearing claims. For each claim, inspect the
 source that owns it in the applicable state: repository source, tests,
 configuration, governing documentation, or decisions; versioned official
 documentation, specifications, tagged source, or release notes; an issuing
-body's applicable text; original study, data, and method; or a
-methodologically relevant synthesis for an aggregate claim. Secondary sources,
-snippets, indexes, and summaries are discovery only unless they own the exact
-synthesis claim.
+body's applicable text; original study, data, and method; or a methodologically
+relevant synthesis for an aggregate claim. Secondary sources, snippets, indexes,
+and summaries are discovery only unless they own the exact synthesis claim.
 
 For every load-bearing claim, record:
 
@@ -57,11 +56,11 @@ Judge authority and applicability before prestige, count, or nominal recency.
 Search for evidence that could falsify or narrow the proposed answer. Reconcile
 differences in scope; preserve applicable conflict and exact unknowns.
 
-Stop only when every load-bearing claim is classified, the best known
-applicable owner was inspected or its access failure recorded, material
-counterevidence and limits are explicit, and another bounded lane repeats the
-evidence or cannot close a named gap. A supplied time or source budget may end
-search but cannot convert an unknown into support.
+Stop only when every load-bearing claim is classified, the best known applicable
+owner was inspected or its access failure recorded, material counterevidence and
+limits are explicit, and another bounded lane repeats the evidence or cannot
+close a named gap. A supplied time or source budget may end search but cannot
+convert an unknown into support.
 
 ## Output
 
@@ -72,9 +71,9 @@ return the publication blocker instead.
 
 The note proportionally identifies the question, research status, caller use,
 scope, freshness, answer with adjacent citations, conflicts, unknowns, limits,
-source identities and authority, stopping basis, caller-use boundary, and
-return owner. Omit empty conditional material. A `conflicted` or `blocked` note
-is durable evidence, not a settled answer.
+source identities and authority, stopping basis, caller-use boundary, and return
+owner. Omit empty conditional material. A `conflicted` or `blocked` note is
+durable evidence, not a settled answer.
 
 Without note authority, return the same applicable evidence inline and make no
 tracked mutation.
@@ -92,9 +91,9 @@ research status follows the claims:
   access, freshness, applicability, or authority is insufficient.
 
 For a note, reread the file, confirm it is the authorized path, and prove this
-run changed only that note. Otherwise prove tracked mutation is `none`.
-Compare starting and ending work state, preserve pre-existing work, and remove
-or report disposable captures.
+run changed only that note. Otherwise prove tracked mutation is `none`. Compare
+starting and ending work state, preserve pre-existing work, and remove or report
+disposable captures.
 
 Return exactly one `answered`, `conflicted`, `blocked`, or pre-research
 `not-admitted` packet. Include the question, answer or exact evidence boundary,

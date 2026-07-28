@@ -5,14 +5,20 @@ description: Route the current situation to exactly one next skill in this engin
 
 # Skill Router
 
-**Route:** recommend exactly one next skill and stop. Downstream skills own their procedures, artifacts, mutations, proof, and completion.
+**Route:** recommend exactly one next skill and stop. Downstream skills own
+their procedures, artifacts, mutations, proof, and completion.
 
 ## Spine
 
-1. **Inspect.** Use the user's stated situation and visible repo state. Inspect only a fact that could change the route.
-2. **Clarify.** If two routes remain plausible, ask one highest-leverage question and wait.
-3. **Route.** Choose one route below. If the chosen engineering route depends on a missing or outdated setup surface, route to `$repo-bootstrap` instead.
-4. **Stop.** Return `Skill: <skill-name>`, `Reason: <why it wins>`, and `Precondition: <setup or handoff need | none>`. The user starts it; downstream work remains unstarted.
+1. **Inspect.** Use the user's stated situation and visible repo state. Inspect
+   only a fact that could change the route.
+2. **Clarify.** If two routes remain plausible, ask one highest-leverage
+   question and wait.
+3. **Route.** Choose one route below. If it needs a missing, incompatible, or
+   outdated setup surface, route to `$repo-bootstrap` instead.
+4. **Stop.** Return `Skill: <skill-name>`, `Reason: <why it wins>`, and
+   `Precondition: <setup or handoff need | none>`. The user starts it;
+   downstream work remains unstarted.
 
 ## Route Map
 
@@ -20,19 +26,19 @@ description: Route the current situation to exactly one next skill in this engin
 
 | Situation | Route |
 | --- | --- |
-| A repo-backed plan or design needs an interview and durable domain capture | `$grill-with-docs` |
-| A plan or design needs a conversation-only interview | `$grilling` |
-| A large, foggy effort needs a tracker-backed decision map | `$wayfinder` |
+| One repo-backed decision needs direct grilling and durable domain capture | `$grill-with-docs` |
+| The current user owns one bounded decision needing conversation-only stress-testing | `$grilling` |
+| A large interdependent effort needs a tracker-backed route charted or advanced | `$wayfinder` |
 | One external stakeholder holds missing knowledge and needs an async discovery questionnaire | `$to-questionnaire` |
-| One source question needs a cited repo-local note | `$research` |
-| One design question needs runnable evidence | `$prototype` |
-| Context must cross into a fresh session or agent thread | `$handoff` |
+| One bounded source-answerable question needs cited evidence | `$research` |
+| One design question needs disposable runnable evidence | `$prototype` |
+| A fresh context that can read the same work root needs a verified local pickup | `$handoff` |
 
-**Destination-before-scale tie-breaker:** when the destination or scope is
-still user-owned and unclear, route one conversation to `$grilling`, or to
-`$grill-with-docs` when the decision may change durable domain terms,
-Invariants, Context Relationships, or an ADR. Route to `$wayfinder` only after
-the destination is bounded and several interdependent decisions or
+**Unknown-owner tie-breaker:** route a source-answerable fact to `$research`, a
+runnable design choice to `$prototype`, an external-stakeholder gap to
+`$to-questionnaire`, and a current-user decision to `$grilling` or
+`$grill-with-docs` when durable domain capture may change. Route to `$wayfinder`
+only after the destination is bounded and several interdependent decisions or
 prerequisites need a tracker-backed, multi-session route.
 
 ### Build
@@ -42,26 +48,35 @@ prerequisites need a tracker-backed, multi-session route.
 | Settled source needs a durable parent decision contract before ticket slicing | `$to-spec` |
 | A `ready-spec` or equivalent settled bounded source needs a dependency-ordered Ready-for-agent ticket graph | `$to-tickets` |
 | One bounded ready-for-agent item is selected | `$implement` |
-| One parent spec or PRD has an associated ready ticket graph to finish | `$parallel-implement` |
+| One explicitly requested parent has an exhaustive non-empty Ready-for-agent graph | `$parallel-implement` |
 
-`$to-tickets` output is already ready-for-agent. Route one selected item to `$implement`; route an explicitly requested parent-delivery run to `$parallel-implement`, which serializes or parallelizes each frontier until the parent graph closes.
+Route one selected item to `$implement`; route an explicitly requested parent
+delivery through its complete ready graph to `$parallel-implement`.
 
 ### Incoming Work And Quality
 
 | Situation | Route |
 | --- | --- |
-| Raw issues, requests, or configured external PR/MR intake need sorting | `$triage` |
-| A bug's expected behavior, exact symptom, cause, or trusted red-capable reproduction is uncertain | `$diagnosing-bugs` |
-| Settled new behavior has a red-capable proof seam, or for a bug expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known | `$tdd` |
-| A merge, rebase, cherry-pick, or revert is conflicted, or files contain conflict markers | `$resolving-merge-conflicts` |
-| An ordinary branch, WIP, staged, since-X diff, or ordinary PR needs fixed-point review | `$change-review` |
-| A release candidate or supported high-risk diff or PR needs independent passes and a finding ledger | `$high-assurance-review` |
-| A repository needs an exhaustive system map, serial subsystem audit, or user-selected improvement-candidate analysis for correctness, robustness, code quality, architecture, methodology, data, analytics, or performance | `$audit-codebase` |
+| Raw tracker issues or configured external PR/MR requests need sorting and readiness verification | `$triage` |
+| Expected behavior, symptom, cause, reproduction, environment, or performance mechanism is uncertain | `$diagnosing-bugs` |
+| One bounded behavior and a useful red-capable proof seam are settled | `$tdd` |
+| An active merge, rebase, cherry-pick, or revert is conflicted, an index is unmerged, or plausible markers need inspection | `$resolving-merge-conflicts` |
+| An ordinary branch, WIP, staged, since-X diff, or ordinary PR needs read-only judgment | `$change-review` |
+| A release candidate or supported high-risk diff or PR needs a terminal release decision | `$high-assurance-review` |
+| A repository needs a whole-system map, one selected subsystem audit, or one selected audit-candidate analysis | `$audit-codebase` |
 | Existing behavior in one bounded region should be simplified under proof | `$simplify-code` |
 
-**Existing-code tie-breaker:** route a whole-repository map, baseline audit, or wide uncertainty about correctness, robustness, stale code, complexity, or architecture to `$audit-codebase`; one bounded behavior-preserving reduction to `$simplify-code`; and one already-framed interface or seam to `$codebase-design`. A selected ready item belongs to `$implement`, new behavior to `$tdd`, and an existing diff needing judgment rather than edits to `$change-review` or `$high-assurance-review`.
+**Existing-code tie-breaker:** route repository-wide discovery or baseline
+judgment to `$audit-codebase`; one bounded behavior-preserving reduction to
+`$simplify-code`; and one module, interface, or seam decision to
+`$codebase-design`. Route a selected ready item to `$implement`, one standalone
+settled red-testable behavior to `$tdd`, uncertain broken behavior to
+`$diagnosing-bugs`, and an existing diff needing judgment to the applicable
+review.
 
-**Triage / Review:** route incoming work to `$triage`; route an existing diff to `$change-review` or `$high-assurance-review`.
+**Conflict tie-breaker:** route an active unresolved operation or unmerged index
+to `$resolving-merge-conflicts`; an already-resolved candidate to review; and a
+post-operation behavioral failure to `$diagnosing-bugs`.
 
 ### Design And Pack Maintenance
 
@@ -69,8 +84,11 @@ prerequisites need a tracker-backed, multi-session route.
 | --- | --- |
 | Design one bounded module, interface, seam, or adapter | `$codebase-design` |
 | Resolve domain terms, context boundaries, or ADR-worthy decisions | `$domain-modeling` |
-| Create, edit, or review Codex skills | `$writing-great-skills` |
+| Create, edit, audit, or behaviorally test canonical Codex skill semantics | `$writing-great-skills` |
 
-`$domain-modeling` and `$codebase-design` are shared disciplines. Route to them when language or interface shape is the work; otherwise let the owning workflow load them.
+`$domain-modeling` and `$codebase-design` are shared disciplines. Route to them
+when language or interface shape is the work; otherwise let the owning workflow
+load them.
 
-**Handoff / compact:** `$handoff` carries context to a fresh session or agent thread; `/compact` continues the current conversation.
+**Handoff / compact:** `$handoff` starts a fresh same-root context; `/compact`
+continues the current conversation.

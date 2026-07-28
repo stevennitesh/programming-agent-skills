@@ -19,6 +19,15 @@ Research, TDD, and Simplify Code.
 Revision 5 clarifies destination-before-scale routing, conversation-only versus
 domain-affecting Wayfinder decisions, asynchronous stakeholder prerequisites,
 and typed To Spec source gaps without adding another workflow stage.
+Revision 6 aligns Triage with those routes, the single-item implementation
+contract, and one refresh-safe mutation envelope while preserving its four-step
+spine and three branches.
+Revision 7 keeps Handoff as one explicit transport leaf while adding shared-root
+admission, load-prioritized pointers, proof reuse boundaries, and
+reconcile-before-execute pickup.
+Revision 8 keeps Resolving Merge Conflicts' existing spine while separating
+prepared from finished outcomes, adding one branch-only operations reference,
+and reconciling conflict-only caller packets and routing.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -251,10 +260,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-010",
-      "completion_return": "A resumable handoff packet with exact pointers",
+      "completion_return": "One verified local continuation packet and reconcile-before-execute pickup",
       "disposition": "selected",
       "entry_conditions": [
-        "The active context must end while work, state, or proof remains resumable"
+        "A fresh context needs a local pickup and can read the same work root and required sources"
       ],
       "essential": true,
       "exclusions": [
@@ -262,11 +271,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Compact the live task into one exact resumable handoff",
+      "observable_outcome": "Create one verified local continuation packet without advancing the active workflow",
       "primary_owner_skill_id": "SK-010",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
-        "Current objective, state, identities, evidence, blockers, and next safe action"
+        "One ignored disposable packet containing current objective, state, identities, evidence, blockers, and one safe re-entry action"
       ]
     },
     {
@@ -336,7 +345,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Classify incoming tracker work into maintainer-approved executable or human-owned states",
+      "observable_outcome": "Classify incoming configured work into one truthful maintainer-approved state or attention result and preserve its exact handoff",
       "primary_owner_skill_id": "SK-013",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
@@ -399,10 +408,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "SK-005"
       ],
       "capability_id": "CAP-016",
-      "completion_return": "A proved reconciled state or one precise unresolved conflict packet",
+      "completion_return": "One typed inspection, prepared reconciliation, finished operation, decision required, blocked, or route mismatch packet",
       "disposition": "selected",
       "entry_conditions": [
-        "A merge, rebase, cherry-pick, revert, or conflict-marked file needs resolution"
+        "An already-conflicted merge, rebase, cherry-pick, revert, unmerged index, or plausible marker state needs inspection or reconciliation"
       ],
       "essential": true,
       "exclusions": [
@@ -410,11 +419,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Reconcile one in-progress version-control conflict while preserving both intended sides",
+      "observable_outcome": "Inspect or reconcile one observed conflict state while preserving traced intent and finishing only under separate authority",
       "primary_owner_skill_id": "SK-016",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
-        "Conflict state, trace, intent reconciliation, proof, and exact Git-state return"
+        "Conflict inspection, trace, scoped working-tree reconciliation, proof, optional exact-path finish, and typed exact-state return"
       ]
     },
     {
@@ -675,7 +684,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-009"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for handoff: Compact the live task into one exact resumable handoff",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for handoff: Create one verified local continuation packet without advancing the active workflow",
         "expected_owner_skill_id": "SK-010",
         "scenario_id": "PS-010"
       },
@@ -705,7 +714,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-015"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for resolving-merge-conflicts: Reconcile one in-progress version-control conflict while preserving both intended sides",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and typed completion for resolving-merge-conflicts: inspect or reconcile one observed conflict state and finish only under separate authority",
         "expected_owner_skill_id": "SK-016",
         "scenario_id": "PS-016"
       },
@@ -1520,19 +1529,19 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-008",
       "combined_exit_owner_skill_id": "SK-008",
       "context_loaded": [],
-      "entry_condition": "Evidence work must cross into a fresh session.",
+      "entry_condition": "The intact gap must cross into a fresh context while its evidence or decision owner remains unchanged.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for grilling and the declared handoff input",
+      "input_packet": "Intact Grilling gap, original owner, exact re-entry instruction, and the declared handoff input",
       "ordering_impact": "none",
       "relationship_id": "REL-008",
       "required_proof_ids": [
         "PROOF-REL-008"
       ],
       "resume_owner_skill_id": "SK-008",
-      "return_packet": "One named target and reason with downstream work unstarted",
+      "return_packet": "One transport recommendation with the original gap owner and re-entry identity unchanged",
       "target_skill_id": "SK-010",
       "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      "wrong_condition": "The same context continues, the receiver cannot read the same work root, or Handoff would replace the gap owner"
     },
     {
       "affected_capability_ids": [
@@ -1620,19 +1629,19 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-010",
       "combined_exit_owner_skill_id": "SK-010",
       "context_loaded": [],
-      "entry_condition": "A required setup surface is missing or incompatible.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for handoff and the declared repo-bootstrap input",
+      "entry_condition": "The exact Handoff target cannot be proved ignored because the disposable-artifact setup is missing or incompatible.",
+      "failure_behavior": "Return not-created with the exact setup mismatch and leave Repo Bootstrap unstarted",
+      "input_packet": "Resolved work root, exact candidate target, ignore evidence or failure, and the declared repo-bootstrap input",
       "ordering_impact": "none",
       "relationship_id": "REL-012",
       "required_proof_ids": [
         "PROOF-REL-012"
       ],
       "resume_owner_skill_id": "SK-010",
-      "return_packet": "One named target and reason with downstream work unstarted",
+      "return_packet": "One not-created setup return with Repo Bootstrap recommended but unstarted",
       "target_skill_id": "SK-001",
       "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      "wrong_condition": "The exact target is ignored, or admission failed because of receiver access, transport, redaction, or another non-setup condition"
     },
     {
       "affected_capability_ids": [
@@ -2184,18 +2193,18 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-023",
       "combined_exit_owner_skill_id": "SK-023",
       "context_loaded": [
-        "resolving-merge-conflicts caller-facing interface and branch-required reference only"
+        "resolving-merge-conflicts caller-facing interface and only the observed operation and conflict-class branch in OPERATIONS.md"
       ],
       "entry_condition": "Serial landing enters preserved conflict or partial Git state; exact verified state and the authorized next boundary return to the root.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for parallel-implement and the declared resolving-merge-conflicts input",
+      "input_packet": "Operation identity and goal, exact status and unmerged paths, scope, reconciliation and finish authorities, unrelated index and worktree state, proof expectation, and root Return owner",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-033",
       "required_proof_ids": [
         "PROOF-REL-033"
       ],
       "resume_owner_skill_id": "SK-023",
-      "return_packet": "The declared resolving-merge-conflicts Return packet plus evidence, limits, and residual state",
+      "return_packet": "One typed resolver packet with exact current state, evidence, limits, and residual risk; integration resumes only after reconciliation",
       "target_skill_id": "SK-016",
       "verb": "Invoke",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -2419,7 +2428,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "entry_condition": "Diagnose an uncertain proof failure, return the causal packet, then resume Prove.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for resolving-merge-conflicts and the declared diagnosing-bugs input",
+      "input_packet": "Uncertain proof symptom, expected behavior, exact candidate and state, relevant evidence, reconciliation scope, and resolver Return owner",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-043",
       "required_proof_ids": [
@@ -2669,7 +2678,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-025",
       "combined_exit_owner_skill_id": "SK-025",
       "context_loaded": [],
-      "entry_condition": "The situation satisfies the active context must end while work, state, or proof remains resumable; return that route and leave it unstarted.",
+      "entry_condition": "The situation needs a local pickup for a fresh context that can read the same work root and required sources; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
       "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared handoff input",
       "ordering_impact": "callee-before-caller",
@@ -2819,9 +2828,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-025",
       "combined_exit_owner_skill_id": "SK-025",
       "context_loaded": [],
-      "entry_condition": "The situation satisfies a merge, rebase, cherry-pick, revert, or conflict-marked file needs resolution; return that route and leave it unstarted.",
+      "entry_condition": "An active unresolved operation, unmerged index, or plausible marker state needs inspection or reconciliation; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared resolving-merge-conflicts input",
+      "input_packet": "Observed unresolved operation, unmerged index, or plausible marker state and any known authority boundary",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-061",
       "required_proof_ids": [
@@ -2831,7 +2840,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "return_packet": "One named target and reason with downstream work unstarted",
       "target_skill_id": "SK-016",
       "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      "wrong_condition": "The state is an already-resolved candidate or ordinary diff, a clean completed merge, operation planning or start, or a post-operation behavioral failure"
     },
     {
       "affected_capability_ids": [
@@ -3375,16 +3384,16 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-013",
       "combined_exit_owner_skill_id": "SK-013",
       "context_loaded": [],
-      "entry_condition": "Maintainer-owned shaping needs a direct user decision with durable capture; stop before mutation and resume Triage later with the result.",
+      "entry_condition": "One maintainer-owned decision may change durable domain terms, Invariants, Context Relationships, or an ADR; stop before mutation and resume the same item with the intact result.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for triage and the declared grill-with-docs input",
+      "input_packet": "Triage item identity, bounded Source Trace, exact domain-affecting decision, return owner, and the declared grill-with-docs input",
       "ordering_impact": "none",
       "relationship_id": "REL-084",
       "required_proof_ids": [
         "PROOF-REL-084"
       ],
       "resume_owner_skill_id": "SK-013",
-      "return_packet": "One named target and reason with downstream work unstarted",
+      "return_packet": "One intact decision and Domain Delta for later Triage resumption with Grill With Docs left unstarted",
       "target_skill_id": "SK-020",
       "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -3694,6 +3703,108 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "target_skill_id": "SK-009",
       "verb": "Recommend and stop",
       "wrong_condition": "Inspectable sources, the current user, or objective AFK proof can resolve the prerequisite"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-013",
+        "CAP-008"
+      ],
+      "callee_owned_gates_mutations": [
+        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-013",
+      "combined_exit_owner_skill_id": "SK-013",
+      "context_loaded": [],
+      "entry_condition": "One maintainer-owned conversation-only scope, acceptance, or tradeoff decision needs direct resolution.",
+      "failure_behavior": "Return the recommendation without invoking the target; preserve the item and Triage resumption boundary",
+      "input_packet": "Triage item identity, bounded Source Trace, exact decision, caller identifiers, and return owner",
+      "ordering_impact": "none",
+      "relationship_id": "REL-097",
+      "required_proof_ids": [
+        "PROOF-REL-097"
+      ],
+      "resume_owner_skill_id": "SK-013",
+      "return_packet": "One intact decision packet for later Triage resumption with Grilling left unstarted",
+      "target_skill_id": "SK-008",
+      "verb": "Recommend and stop",
+      "wrong_condition": "The decision may change durable domain truth, several interdependent decisions remain, or another owner can resolve it"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-013",
+        "CAP-021"
+      ],
+      "callee_owned_gates_mutations": [
+        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-013",
+      "combined_exit_owner_skill_id": "SK-013",
+      "context_loaded": [],
+      "entry_condition": "The destination is bounded but several interdependent decisions or non-conversational prerequisites remain.",
+      "failure_behavior": "Return the recommendation without invoking the target; preserve the item and every unresolved identity",
+      "input_packet": "Triage item identity, bounded destination, Source Trace, unresolved decisions and prerequisites, and return owner",
+      "ordering_impact": "none",
+      "relationship_id": "REL-098",
+      "required_proof_ids": [
+        "PROOF-REL-098"
+      ],
+      "resume_owner_skill_id": "SK-013",
+      "return_packet": "One intact multi-decision route packet with Wayfinder left unstarted",
+      "target_skill_id": "SK-021",
+      "verb": "Recommend and stop",
+      "wrong_condition": "The destination is still unbounded, one conversation can settle the item, or the remaining work is implementation slicing"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-013",
+        "CAP-012"
+      ],
+      "callee_owned_gates_mutations": [
+        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-013",
+      "combined_exit_owner_skill_id": "SK-013",
+      "context_loaded": [],
+      "entry_condition": "Settled source requires several independently completable implementation slices rather than one ready brief.",
+      "failure_behavior": "Return the recommendation without invoking the target; preserve source authority and leave readiness unchanged",
+      "input_packet": "Triage item identity, settled Source Trace, commitments, acceptance, evidence, and multi-slice reason",
+      "ordering_impact": "none",
+      "relationship_id": "REL-099",
+      "required_proof_ids": [
+        "PROOF-REL-099"
+      ],
+      "resume_owner_skill_id": "SK-013",
+      "return_packet": "One intact settled multi-slice packet for user-selected ticket graph creation with To Tickets left unstarted",
+      "target_skill_id": "SK-012",
+      "verb": "Recommend and stop",
+      "wrong_condition": "The source is unsettled, one bounded slice is ready, or no implementation slicing remains"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-022",
+        "CAP-016"
+      ],
+      "callee_owned_gates_mutations": [
+        "Resolving Merge Conflicts retains inspection, reconciliation, finish, proof, Return, and completion authority within the supplied packet"
+      ],
+      "caller_skill_id": "SK-022",
+      "combined_exit_owner_skill_id": "SK-016",
+      "context_loaded": [
+        "resolving-merge-conflicts caller-facing interface and only the observed operation and conflict-class branch in OPERATIONS.md"
+      ],
+      "entry_condition": "Implement admission finds an existing conflict-only state rather than the selected ready item.",
+      "failure_behavior": "Stop implementation and preserve the exact conflict state; return the resolver's decision or blocker without claiming item delivery",
+      "input_packet": "Operation identity and goal, exact preserved Git state, scope, reconciliation and finish authorities, unrelated state, proof expectation, and Return owner",
+      "ordering_impact": "none",
+      "relationship_id": "REL-100",
+      "required_proof_ids": [
+        "PROOF-REL-100"
+      ],
+      "resume_owner_skill_id": "SK-016",
+      "return_packet": "One typed resolver packet with exact current state, evidence, limits, and residual risk",
+      "target_skill_id": "SK-016",
+      "verb": "Hand off",
+      "wrong_condition": "The selected ready item remains implementable, the conflict is only a review concern, or behavior failed after the operation ended"
     }
   ],
   "selected_skills": [
@@ -4084,24 +4195,26 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "terminal_evidence_pointer": null
       },
       "canonical_name": "handoff",
-      "completion_condition": "A fresh task can resume without reconstructing material state",
+      "completion_condition": "One verified ignored packet and reconcile-before-execute pickup are returned",
       "contract_order": 10,
-      "essential_outcome": "Compact the live task into one exact resumable handoff",
-      "failure_return": "Return the missing state or unsafe-to-summarize uncertainty",
+      "essential_outcome": "Create one verified local continuation packet without advancing the active workflow",
+      "failure_return": "Return not-created or blocked with verified state and the required safe condition",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: The active context must end while work, state, or proof remains resumable",
+        "The request does not satisfy: A fresh context needs a local pickup and can read the same work root and required sources",
+        "The same conversation should continue through /compact or an ordinary active-workflow Return",
+        "The intended receiver cannot access the work root or required local sources",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Current objective, state, identities, evidence, blockers, and next safe action"
+        "One ignored disposable packet containing current objective, state, identities, evidence, blockers, and one safe re-entry action"
       ],
       "owned_capability_ids": [
         "CAP-010"
       ],
-      "positive_entry_predicate": "The active context must end while work, state, or proof remains resumable",
+      "positive_entry_predicate": "A fresh context needs a local pickup and can read the same work root and required sources",
       "primary_role": "leaf",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -4111,8 +4224,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "relationship_ids": [
         "REL-012"
       ],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Compact the live task into one exact resumable handoff",
-      "return_packet": "A resumable handoff packet with exact pointers",
+      "required_input": "A bounded caller-owned Source Trace, active owner and gate, receiver-accessible work root, and authority for one ignored disposable packet",
+      "return_packet": "One verified local continuation packet with exact pointers and a reconcile-before-execute pickup",
       "skill_id": "SK-010"
     },
     {
@@ -4213,7 +4326,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "canonical_name": "triage",
       "completion_condition": "The item has one truthful state and no fabricated readiness",
       "contract_order": 13,
-      "essential_outcome": "Classify incoming tracker work into maintainer-approved executable or human-owned states",
+      "essential_outcome": "Classify incoming configured work into one truthful maintainer-approved state or attention result and preserve its exact handoff",
       "failure_return": "Return the missing reporter fact, maintainer decision, or setup boundary",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-leaf",
@@ -4237,7 +4350,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "relationship_ids": [
         "REL-084",
-        "REL-085"
+        "REL-085",
+        "REL-097",
+        "REL-098",
+        "REL-099"
       ],
       "required_input": "A bounded caller-owned Source Trace and authority for: Classify incoming tracker work into maintainer-approved executable or human-owned states",
       "return_packet": "A verified triage state and exact next owner",
@@ -4336,24 +4452,24 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "terminal_evidence_pointer": null
       },
       "canonical_name": "resolving-merge-conflicts",
-      "completion_condition": "Every in-scope conflict is resolved and the operation state is exact",
+      "completion_condition": "The selected route returns exact unchanged inspection state, a proved prepared reconciliation, or a finished operation with no targeted operation or unmerged entries and current required proof",
       "contract_order": 16,
-      "essential_outcome": "Reconcile one in-progress version-control conflict while preserving both intended sides",
-      "failure_return": "Return the missing intent, unsafe overlap, or uncertain post-resolution failure",
+      "essential_outcome": "Inspect or reconcile one observed conflict state while preserving traced intent and finishing only under separate authority",
+      "failure_return": "Return decision required, blocked, or route mismatch with exact state and the missing evidence, scope, or authority",
       "invocation_mode": "implicit",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: A merge, rebase, cherry-pick, revert, or conflict-marked file needs resolution",
+        "The request is operation planning or start, an ordinary diff, a clean completed merge, or a post-operation behavioral failure",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Conflict state, trace, intent reconciliation, proof, and exact Git-state return"
+        "Conflict inspection, trace, scoped working-tree reconciliation, proof, optional exact-path finish, and typed exact-state return"
       ],
       "owned_capability_ids": [
         "CAP-016"
       ],
-      "positive_entry_predicate": "A merge, rebase, cherry-pick, revert, or conflict-marked file needs resolution",
+      "positive_entry_predicate": "An already-conflicted merge, rebase, cherry-pick, revert, unmerged index, or plausible marker state needs inspection or reconciliation",
       "primary_role": "leaf",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -4363,8 +4479,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "relationship_ids": [
         "REL-043"
       ],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Reconcile one in-progress version-control conflict while preserving both intended sides",
-      "return_packet": "A proved reconciled state or one precise unresolved conflict packet",
+      "required_input": "One repository worktree, observed conflict state, operation goal when known, bounded scope, and separately declared reconciliation and finish authorities",
+      "return_packet": "One typed inspection, prepared reconciliation, finished operation, decision required, blocked, or route mismatch packet with exact state",
       "skill_id": "SK-016"
     },
     {
@@ -4630,7 +4746,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-015",
         "REL-016",
         "REL-017",
-        "REL-018"
+        "REL-018",
+        "REL-100"
       ],
       "required_input": "A bounded caller-owned Source Trace and authority for: Deliver one selected bounded Ready-for-agent item through proof, review, Lock, one commit, and tracker closeout",
       "return_packet": "A complete, partial, or blocked single-item delivery packet",

@@ -1,10 +1,13 @@
 # Resolving Merge Conflicts Runtime And Relationship Design Synthesis
 
-Status: exhaustive design reference, not an executable contract.
+Status: exhaustive design reference. The approved lean slice is extracted into
+canonical runtime; broader proposals and promotion claims remain
+non-authoritative.
 
 Runtime authority remains in:
 
 - `skills/custom/resolving-merge-conflicts/SKILL.md`;
+- `skills/custom/resolving-merge-conflicts/OPERATIONS.md`;
 - `skills/custom/resolving-merge-conflicts/agents/openai.yaml`;
 - Git's current operation metadata, index, working tree, refs, and object database;
 - `docs/agents/engineering-contract.md` and the target repository's Spec, domain, Git, and validation contracts;
@@ -13,7 +16,10 @@ Runtime authority remains in:
 - `docs/synthesis/skill-context-relationships.md`, pack tests, and behavior evaluations; and
 - the installed mirror after a separately authorized validated synchronization.
 
-This note specifies the complete design target for a future rewrite. It does not change the current skill, create a new Git operation, stage a path, continue or abort an operation, or promote the proposed behavior into the installed runtime.
+This note preserves the complete design reference. The canonical skill and its
+conditional operations reference now implement the selected lean contract.
+Remaining proposals here do not change runtime, stage a path, continue or abort
+an operation, or authorize installation.
 
 ## How To Read This Document
 
@@ -46,7 +52,7 @@ Use this index for direct navigation:
 | What evidence surface proves which claim? | [Conflict Artifact Authority Contract](#conflict-artifact-authority-contract) |
 | What does every invocation return? | [Return Contract](#return-contract) |
 | Which skill owns each relationship? | [Relationship Ownership](#relationship-ownership) |
-| What should the future runtime files contain? | [Proposed Runtime Semantic Surface](#proposed-runtime-semantic-surface) and [Runtime Ownership And Change Map](#runtime-ownership-and-change-map) |
+| What do the selected runtime files contain? | [Selected Runtime Semantic Surface](#selected-runtime-semantic-surface) and [Runtime Ownership And Change Map](#runtime-ownership-and-change-map) |
 | What must pass before promotion? | [Staged Behavior-Evaluation Protocol](#staged-behavior-evaluation-protocol), [Migration And Acceptance Matrix](#migration-and-acceptance-matrix), and [Promotion Gate And Residual Gaps](#promotion-gate-and-residual-gaps) |
 
 # Layer One: Orientation
@@ -633,7 +639,9 @@ The design is grounded in current repository surfaces and primary Git behavior:
 - The current `agents/openai.yaml` keeps the skill implicitly invocable.
 - `tests/test_skill_pack_contracts.py` structurally protects the two routes, proof-before-Return, conditional Finish, `git ls-files -u`, Guardrails, and Return.
 - behavior fixtures 16 and 25 protect the Finish boundary and read-only inspection boundary.
-- the current canonical skill and installed mirror matched during synthesis inspection; a future rewrite must verify parity again rather than rely on this snapshot.
+- the canonical skill and installed mirror matched during the earlier synthesis
+  inspection; the canonical extraction now intentionally awaits separately
+  authorized synchronization and parity proof.
 - [Git merge documentation](https://git-scm.com/docs/git-merge) defines the three index stages, conflict presentation, `AUTO_MERGE`, resolution staging, and native continuation.
 - [Git rebase documentation](https://git-scm.com/docs/git-rebase) defines replay behavior, continuation, skip and abort choices, and the reversed `ours` / `theirs` intuition during rebase.
 - [Git cherry-pick documentation](https://git-scm.com/docs/git-cherry-pick) defines the selected-commit delta, `CHERRY_PICK_HEAD`, up-to-three-stage conflict state, sequencer continuation, and recovery commands.
@@ -659,11 +667,13 @@ The current compact skill has valuable invariants:
 9. unrelated dirty and index state are preserved; and
 10. a blocked path never counts as completion.
 
-The rewrite should deepen these concepts, not replace their leading words with a larger generic Git tutorial.
+The lean extraction deepens these concepts without replacing their leading
+words with a generic Git tutorial.
 
-## Current Design Gaps The Rewrite Must Close
+## Pre-Extraction Design Gaps
 
-These are extraction gaps, not claims that the current skill always behaves incorrectly:
+These gaps explain the selected extraction. Remaining rows are evidence for
+later proof or deepening, not additional runtime authority:
 
 | Gap | Behavioral risk |
 | --- | --- |
@@ -740,19 +750,15 @@ Split further only if measured context loading or observed premature completion 
 
 # Layer Four: Extraction And Verification
 
-## Proposed Runtime Semantic Surface
+## Selected Runtime Semantic Surface
 
-The future main skill should read approximately as:
+The canonical main skill now keeps this compact surface:
 
 ```text
 Outcome and delivery boundary
 Invocation and admission predicates
-Inspection, Reconciliation, and Finish authority
-Conflict vocabulary
+Reconciliation and Finish authority
 State -> Trace -> Reconcile -> Prove -> Finish -> Return
-Normative transition table
-Operation completion table
-Operation-aware stage-role summary
 Refresh and unrelated-work gate
 Sharp pointers into OPERATIONS.md
 Diagnosis relationship
@@ -760,7 +766,9 @@ Typed Return
 Completion
 ```
 
-This is a semantic target, not final approved wording. `SKILL.md` keeps universal behavior and the smallest operation-role summary needed to prevent side-label mistakes. It does not absorb an exhaustive Git command catalog, every conflict-class branch, primary-source rationale, or evaluation matrix.
+`SKILL.md` owns universal behavior; `OPERATIONS.md` owns only selected
+operation and conflict-class branches. Neither absorbs an exhaustive Git
+command catalog, primary-source rationale, or evaluation matrix.
 
 ## Runtime Ownership And Change Map
 
@@ -768,14 +776,14 @@ This map alone owns proposed file placement, source bundles, and anti-duplicatio
 
 | Bundle | Surface | Owns | Proposed delta | Must not absorb |
 | --- | --- | --- | --- | --- |
-| `C1` | `skills/custom/resolving-merge-conflicts/SKILL.md` | Human-facing description; outcome; invocation; authority; leading-word spine; transition and completion tables; compact operation-role guard; Refresh; context pointers; Diagnosis edge; typed Return; completion | Rewrite around the Proposed Runtime Semantic Surface while preserving current strengths | Full command catalog, every conflict class, source rationale, caller review/closeout, or provider procedure |
-| `C1` | New `skills/custom/resolving-merge-conflicts/OPERATIONS.md` | State capture; supported-operation detection; full stage-role table; per-path packet; conflict-class contracts; inspection aids; Reconcile details; proof mapping; Finish/index isolation; recovery-risk reference; rerere, attributes, filters, and submodules | Create one disclosed branch reference with stable anchors and explicit returns to universal contracts | Invocation policy, duplicate transition/completion tables, relationship map, Git tutorial, or independent authority |
+| `C1` | `skills/custom/resolving-merge-conflicts/SKILL.md` | Description; outcome; authority; leading-word spine; Refresh; context pointer; Diagnosis edge; typed Return; completion | Extracted into canonical source while preserving the compact spine | Full command catalog, conflict-class detail, source rationale, caller review/closeout, or provider procedure |
+| `C1` | `skills/custom/resolving-merge-conflicts/OPERATIONS.md` | Operation roles; conflict classes; Finish/index checks; recovery decisions | Extracted as one conditional branch reference | Invocation policy, duplicate universal authority, relationship map, Git tutorial, or independent completion |
 | `C1` | `skills/custom/resolving-merge-conflicts/agents/openai.yaml` | Invocation policy | Preserve `policy.allow_implicit_invocation: true`; sharpen only if behavior evidence requires description metadata | Runtime procedure or authority detail |
-| `C2` | `skills/custom/skill-router/SKILL.md` and `docs/synthesis/skill-context-relationships.md` | Router recommendation, accepted runtime edges, and context-owner summary | Preserve the Router's marker/state row plus the existing Parallel Implement invocation and Diagnosis return; update the relationship map only when accepted topology changes, and add another generic implementation caller only if its abstraction stays nonduplicative | Conflict procedure, operation tables, the full Router catalog, admission authority, or return schema |
-| `C2` | `skills/custom/parallel-implement/*` | Caller packet and resume boundary for conflicted serial landing | Verify the caller supplies preserved Git state, scope, operation goal, both authorities, proof expectation, and return owner; its own synthesis owns any concrete rewrite | Conflict resolution procedure or resolver completion authority |
+| `C2` | `skills/custom/skill-router/SKILL.md` and `docs/synthesis/skill-context-relationships.md` | Router tie-breaker, accepted runtime edges, and context-owner summary | Reconciled for unresolved conflict, resolved candidate, and post-operation failure | Conflict procedure, operation tables, admission authority, or return schema |
+| `C2` | `skills/custom/implement/SKILL.md` and `skills/custom/parallel-implement/*` | Conflict-only handoff or invocation packet and resume boundary | Reconciled around exact state, both authorities, proof expectation, and Return owner | Conflict procedure or resolver completion authority |
 | `C2` | `skills/custom/diagnosing-bugs/*` | Causal investigation and diagnosis return | Verify diagnosis mode accepts conflict proof evidence and returns cause without inheriting Finish authority; its synthesis owns any concrete rewrite | Conflict repair admission, staging, continuation, or caller closeout |
-| `C3` | `tests/test_skill_pack_contracts.py` | Structural protection | Replace shallow literal coverage with semantic-surface, invocation, authority ordering, context-pointer, relationship, Return, and completion assertions | Claims of Git runtime behavior from prose alone |
-| `C3` | `docs/validation/evals/core-workflows.md` and new transcript evidence | Behavioral claims, controls, positive cases, negative cases, and residual gaps | Expand operation, conflict-class, recovery, proof, refresh, and authority scenarios from the acceptance matrix | Template echoes or uncited simulated success |
+| `C3` | `tests/test_skill_pack_contracts.py` | Structural protection | Updated for the branch reference, typed outcomes, exact staging guard, and Implement handoff | Claims of Git runtime behavior from prose alone |
+| `C3` | `docs/validation/evals/core-workflows.md` and new transcript evidence | Behavioral claims, controls, positive cases, negative cases, and residual gaps | Fixtures updated; uncontaminated behavioral samples and real-Git evidence remain pending | Template echoes or uncited simulated success |
 | `C3` | Disposable real-Git fixture support inside tests | Merge, rebase, cherry-pick, revert, path conflict, staged-state, and continuation evidence | Use isolated temporary repositories and current Git; assert objects, modes, refs, status, index, worktree, and history | Mutating the repository under test or depending on user Git config without isolation |
 | `C4` | Installed mirror `C:\Users\steve\.agents\skills\resolving-merge-conflicts` | Validated runtime copy | Synchronize only after canonical implementation, focused/full proof, behavior promotion, and authorization | Independent edits or partial synchronization |
 
@@ -784,6 +792,10 @@ No helper is in the initial extraction. If the deferred state-capture helper is 
 ## Staged Extraction Plan
 
 Implementation stages order one coordinated candidate. They do not authorize partial installation.
+
+The canonical portions of `I1` and `I2` and the structural fixture portion of
+`I3` are extracted. Behavioral efficacy, real-Git fixtures, and `I4`
+installation remain pending and separately authorized.
 
 | Stage | Bundles | Extraction outcome | Stage boundary |
 | --- | --- | --- | --- |
@@ -862,6 +874,11 @@ Promote only when E0 demonstrates the claimed failure, the candidate materially 
 
 Noncritical uncertainty may remain only when the record names its evidence limit, operational consequence, conservative runtime branch, and later validation owner. Simulation and prose remain design evidence, never runtime promotion evidence.
 
-## Completion Criterion For The Future Rewrite
+## Promotion Completion Criterion
 
-The rewrite is complete only when every normative concern has one indexed home; the main skill follows the Proposed Runtime Semantic Surface; `OPERATIONS.md` discloses every selected branch without duplicating universal authority; current State selects exactly one legal operation or return; the completion table alone closes each operation; merge, rebase, cherry-pick, revert, unmerged-unknown, and marker-only roles behave as designed; every supported conflict class preserves semantic intent and unrelated work; Reconcile, Prove, and Finish remain separately authorized and freshly evidenced; every continuation and recovery branch returns exact state; Diagnosis returns without authority leakage; every `I1` through `I4` bundle is reconciled; every acceptance row passes its positive and negative cases under the listed evaluation phases; canonical validation and real-Git fixtures pass; no critical worst-case regression remains; and the installed mirror matches the validated source exactly after separate authorization.
+Promotion is complete only when every normative concern has one indexed home;
+the selected runtime surface remains nonduplicative; operation, conflict-class,
+authority, proof, continuation, recovery, Diagnosis, and exact Return behavior
+pass their positive and negative cases; canonical and real-Git validation pass;
+no critical worst-case regression remains; and a separately authorized
+installed mirror matches canonical source.

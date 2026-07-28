@@ -34,6 +34,7 @@ def test_router_names_every_custom_skill() -> None:
 def test_handoff_compacts_context_without_advancing_work() -> None:
     skill_dir = CUSTOM / "handoff"
     handoff = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    handoff_flat = " ".join(handoff.split())
 
     assert not implicit_policy(skill_dir)
     assert re.findall(r"(?m)^\*\*([A-Za-z]+)\.\*\*", handoff) == [
@@ -56,14 +57,25 @@ def test_handoff_compacts_context_without_advancing_work() -> None:
         "Next Step",
         "Suggested Skills",
     ]
-    assert "<work-root>/.tmp/handoff-<YYYYMMDD-HHMMSS>.md" in handoff
+    assert "<work-root>/.tmp/handoff-<YYYYMMDD-HHMMSS>[-<NN>].md" in handoff
     assert "$repo-bootstrap" in handoff
-    assert "Continue from `<absolute-path>`. Read the handoff first, then execute its Next Step." in handoff
+    for contract in (
+        "receiver can read the same work root",
+        "never overwrite",
+        "read first` or `conditional",
+        "exact condition that requires proof to rerun",
+        "Do not route here",
+        "refresh its volatile Current State",
+        "only if its authority and preconditions still hold",
+        "Do not create or message the receiving task",
+    ):
+        assert contract in handoff_flat
 
 
 def test_to_questionnaire_owns_one_safe_recipient_artifact() -> None:
     skill_dir = CUSTOM / "to-questionnaire"
     questionnaire = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    questionnaire_flat = " ".join(questionnaire.split())
     policy = (skill_dir / "agents/openai.yaml").read_text(encoding="utf-8")
     router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
     grilling = (CUSTOM / "grilling/SKILL.md").read_text(encoding="utf-8")
@@ -99,12 +111,12 @@ def test_to_questionnaire_owns_one_safe_recipient_artifact() -> None:
         "`Not admitted` requires a proven failed Admit predicate",
         "`Incomplete` names missing intake",
     ):
-        assert contract in questionnaire
+        assert contract in questionnaire_flat
     for rejected in ("Wayfinder", ".scratch/to-questionnaire"):
         assert rejected not in questionnaire
     assert policy.endswith("policy:\n  allow_implicit_invocation: false\n")
     assert skill_pack_contract.tree_hash(skill_dir) == (
-        "4b359410bff4a6ab4bbcaa462fffd880f8849ac17fc66b1929fc94dd85379b73"
+        "a933f364c8afd19cf261536952afbda98a9dc396c985a67bd66f777646e81481"
     )
     assert (
         "| One external stakeholder holds missing knowledge and needs an async "
@@ -182,10 +194,11 @@ def test_wayfinder_tracker_claims_distinguish_sessions_and_recover_explicitly() 
 def test_triage_label_template_respects_tracker_pr_policy() -> None:
     labels = (CUSTOM / "repo-bootstrap/triage-labels.md").read_text(encoding="utf-8")
     triage = (CUSTOM / "triage/SKILL.md").read_text(encoding="utf-8")
+    triage_flat = " ".join(triage.split())
 
     assert "Every triaged work item" in labels
     assert "Every triaged issue or PR" not in labels
-    assert "Triage PRs only when the tracker enables them" in triage
+    assert "Triage PRs only when the tracker enables them" in triage_flat
 
 
 def test_github_closeout_clears_dependency_frontier_safely() -> None:
@@ -218,8 +231,10 @@ def test_github_relationship_modes_are_explicit_before_publication() -> None:
 
     tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
     normalized_tickets = " ".join(tickets.split())
-    assert "resolve their operation and read-back routes once before" in tickets
-    assert "The first authorized child proves the configured" in tickets
+    assert "resolve their operation and read-back routes once before" in (
+        normalized_tickets
+    )
+    assert "The first authorized child proves the configured" in normalized_tickets
     assert "first applicable blocking edge" in normalized_tickets
     assert (
         "Never switch the frozen relationship representation" in normalized_tickets
@@ -320,7 +335,7 @@ def assert_repo_bootstrap_semantic_contract(
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     assert_repo_bootstrap_semantic_contract(
         CUSTOM / "repo-bootstrap",
-        "2e6b8a7c5306ed8a24ff923879fd7529dc0f36b9fb624c674e5d8aacab67c091",
+        "d351ca9852586b248fd7a4f5045e031050d417da5a33358f2cf2ea78ec3a55ce",
         profile="incumbent",
     )
 
@@ -428,6 +443,7 @@ def test_outdated_setup_routes_to_repo_bootstrap() -> None:
 
 def test_router_returns_exactly_one_next_skill() -> None:
     router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
+    router_flat = " ".join(router.split())
 
     assert not implicit_policy(CUSTOM / "skill-router")
     assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", router) == [
@@ -442,6 +458,7 @@ def test_router_returns_exactly_one_next_skill() -> None:
         "Reason",
         "Precondition",
     ]
+    assert "missing, incompatible, or outdated setup surface" in router_flat
     assert (
         "| Settled source needs a durable parent decision contract before ticket "
         "slicing | `$to-spec` |"
@@ -451,16 +468,32 @@ def test_router_returns_exactly_one_next_skill() -> None:
         "dependency-ordered Ready-for-agent ticket graph | `$to-tickets` |"
     ) in router
     tie_breaker = " ".join(
-        router.split("**Destination-before-scale tie-breaker:**", 1)[1].split()
+        router.split("**Unknown-owner tie-breaker:**", 1)[1].split(
+            "### Build", 1
+        )[0].split()
     )
     for contract in (
-        "still user-owned and unclear",
+        "`$research`",
+        "`$prototype`",
+        "`$to-questionnaire`",
         "`$grilling`",
         "`$grill-with-docs`",
         "only after the destination is bounded",
         "`$wayfinder`",
     ):
         assert contract in tie_breaker
+    existing_code = " ".join(
+        router.split("**Existing-code tie-breaker:**", 1)[1].split(
+            "**Conflict tie-breaker:**", 1
+        )[0].split()
+    )
+    for contract in (
+        "selected ready item to `$implement`",
+        "standalone settled red-testable behavior to `$tdd`",
+        "uncertain broken behavior to `$diagnosing-bugs`",
+        "existing diff needing judgment",
+    ):
+        assert contract in existing_code
 
 
 def test_branch_heavy_skills_disclose_branch_procedure() -> None:
@@ -477,7 +510,8 @@ def test_branch_heavy_skills_disclose_branch_procedure() -> None:
     assert "selected branch" in run
     assert "For any mutation branch" in run
     assert "tracker state stayed unchanged" in attention
-    assert "Skip request verification and grilling" in quick
+    assert "Skip ordinary request verification" in quick
+    assert "unseen mutation packet" in quick
     assert "[DIRECT-DESIGN.md](DIRECT-DESIGN.md)" in design
     assert "## 1. Orient" not in design
 
@@ -582,9 +616,10 @@ def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
     assert "At the end of Advance or Maintain" in closure
     assert "zero frontier tickets have substantive outcomes" in maintain
     bound = chart.split("1. **Bound.**", 1)[1].split("2. **Sweep.**", 1)[0]
-    assert "`$grilling` for a conversation-only decision" in bound
-    assert "`$grill-with-docs` when it may change durable domain terms" in bound
-    assert "intact returned decision" in bound
+    bound_flat = " ".join(bound.split())
+    assert "`$grilling` for a conversation-only decision" in bound_flat
+    assert "`$grill-with-docs` when it may change durable domain terms" in bound_flat
+    assert "intact returned decision" in bound_flat
     map_template = map_format.split("```markdown", 1)[1].split("```", 1)[0]
     assert re.findall(r"(?m)^## (.+)$", map_template) == [
         "Destination",
@@ -595,7 +630,10 @@ def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
         "Out Of Scope",
     ]
     assert "caller-approved repo-local note path" in map_format
-    assert advance.index("Mutation read-back before resolution work") < advance.index(
+    advance_flat = " ".join(advance.split())
+    assert advance_flat.index(
+        "Mutation read-back before resolution work"
+    ) < advance_flat.index(
         "4. **Resolve.**"
     )
 
@@ -606,9 +644,10 @@ def test_wayfinder_prototype_participation_matches_judgment() -> None:
     map_format = (skill_dir / "MAP-FORMAT.md").read_text(encoding="utf-8")
 
     tickets = wayfinder.split("## Tickets", 1)[1].split("## Modes", 1)[0]
+    tickets_flat = " ".join(tickets.split())
     rules = re.findall(
-        r"(?m)^- `(shape/feel|design evidence)` — (HITL|AFK) (.+)\.$",
-        tickets,
+        r"- `(shape/feel|design evidence)` — (HITL|AFK) (.+?)\.(?= - `|\Z)",
+        tickets_flat,
     )
     assert [(claim, mode) for claim, mode, _ in rules] == [
         ("shape/feel", "HITL"),
@@ -617,10 +656,11 @@ def test_wayfinder_prototype_participation_matches_judgment() -> None:
     ]
     assert "objective verdict criteria" in rules[1][2]
     assert "explicitly reserves the verdict for a human" in rules[2][2]
-    assert "pass its decision owner, claim level, judgment mode" in tickets
-    assert "supported result, evidence, limits, and cleanup state" in tickets
+    assert "pass its decision owner, claim level, judgment mode" in tickets_flat
+    assert "supported result, evidence, limits, and cleanup state" in tickets_flat
 
     approve = wayfinder.split("4. **Approve.**", 1)[1].split("5. **Chart.**", 1)[0]
+    approve_flat = " ".join(approve.split())
     for field in (
         "decision owner",
         "claim level",
@@ -628,8 +668,8 @@ def test_wayfinder_prototype_participation_matches_judgment() -> None:
         "human judge",
         "objective verdict criteria",
     ):
-        assert field in approve
-    assert "reject" in approve and "participation rule" in approve
+        assert field in approve_flat
+    assert "reject" in approve_flat and "participation rule" in approve_flat
 
     for field in (
         "Decision owner:",
@@ -647,21 +687,26 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
     map_format = (skill_dir / "MAP-FORMAT.md").read_text(encoding="utf-8")
 
     tickets = wayfinder.split("## Tickets", 1)[1].split("## Modes", 1)[0]
-    assert "user owns one resolution" in tickets
-    assert "accepted repository contracts and objective proof" in tickets
-    assert "Classify by resolution authority" in tickets
-    assert "Split a ticket" in tickets
-    assert "`$grilling` for a conversation-only preference or tradeoff" in tickets
-    assert "`$grill-with-docs` when the decision may change durable domain terms" in (
-        tickets
+    tickets_flat = " ".join(tickets.split())
+    assert "user owns one resolution" in tickets_flat
+    assert "accepted repository contracts and objective proof" in tickets_flat
+    assert "Classify by resolution authority" in tickets_flat
+    assert "Split a ticket" in tickets_flat
+    assert "`$grilling` for a conversation-only preference or tradeoff" in (
+        tickets_flat
     )
-    assert "recommend explicit `$to-questionnaire`" in tickets
-    assert "Resume the same ticket with attributable answers." in tickets
+    assert "`$grill-with-docs` when the decision may change durable domain terms" in (
+        tickets_flat
+    )
+    assert "recommend explicit `$to-questionnaire`" in tickets_flat
+    assert "Resume the same ticket with attributable answers." in tickets_flat
 
     advance = wayfinder.split("### Advance", 1)[1].split("### Maintain", 1)[0]
+    advance_flat = " ".join(advance.split())
     claim = advance.split("3. **Claim.**", 1)[1].split("4. **Resolve.**", 1)[0]
-    assert "current session's claim identity" in claim
-    assert "exact session identity or claimed-at value" in claim
+    claim_flat = " ".join(claim.split())
+    assert "current session's claim identity" in claim_flat
+    assert "exact session identity or claimed-at value" in claim_flat
 
     reconcile = advance.split("5. **Reconcile.**", 1)[1].split(
         "6. **Verify.**", 1
@@ -672,13 +717,14 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
         "Resolve",
         "Exclude",
     ]
-    assert "every affected fog item has exactly one disposition" in advance
+    assert "every affected fog item has exactly one disposition" in advance_flat
     assert "sole fog container" in map_format
     assert "None — all remaining in-scope questions are ticket-owned." in map_format
     assert "future-work owner, governing resolution, or map pointer" in map_format
     assert "Do not create a ticket solely to supply a link." in map_format
 
     maintain = wayfinder.split("### Maintain", 1)[1].split("## Closure", 1)[0]
+    maintain_flat = " ".join(maintain.split())
     assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", maintain) == [
         "Orient",
         "Bound",
@@ -688,16 +734,17 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
         "Verify",
         "Expose",
     ]
-    assert "Record no child outcome" in maintain
-    assert "claim the map" in maintain
-    assert "specific predicate takes precedence over Advance" in maintain
-    assert "evidence-backed scope indexing" in maintain
-    assert "every affected fog item exactly one Advance disposition" in maintain
-    assert "linked resolution" in maintain and "governing exclusion pointer" in maintain
+    assert "Record no child outcome" in maintain_flat
+    assert "claim the map" in maintain_flat
+    assert "specific predicate takes precedence over Advance" in maintain_flat
+    assert "evidence-backed scope indexing" in maintain_flat
+    assert "every affected fog item exactly one Advance disposition" in maintain_flat
+    assert "linked resolution" in maintain_flat
+    assert "governing exclusion pointer" in maintain_flat
 
     closure = wayfinder.split("## Closure", 1)[1].split("## Return", 1)[0]
-    assert "read back the absence of that claim" in closure
     closure_flat = " ".join(closure.split())
+    assert "read back the absence of that claim" in closure_flat
     assert "invoke `$domain-modeling` once" in closure_flat
     assert "no current Domain Delta already accounts for it" in closure_flat
     assert "`persist authorized` only with exact domain-write authority" in closure_flat
@@ -706,8 +753,12 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
     assert "an exact blocker leaves the map open" in closure_flat
 
     returned = wayfinder.split("## Return", 1)[1]
-    assert "Next frontier: [<ticket title>](<link>). Invoke $wayfinder to advance it." in returned
-    assert "any Domain Delta produced during Closure" in returned
+    returned_flat = " ".join(returned.split())
+    assert (
+        "Next frontier: [<ticket title>](<link>). Invoke $wayfinder to advance it."
+        in returned_flat
+    )
+    assert "any Domain Delta produced during Closure" in returned_flat
 
 
 def test_grill_with_docs_package_and_relationship_contract() -> None:
@@ -746,6 +797,7 @@ def test_grill_with_docs_package_and_relationship_contract() -> None:
 
 def test_domain_modeling_owns_durable_domain_truth() -> None:
     domain = (CUSTOM / "domain-modeling/SKILL.md").read_text(encoding="utf-8")
+    domain_flat = " ".join(domain.split())
 
     assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", domain) == [
         "Trace",
@@ -763,12 +815,12 @@ def test_domain_modeling_owns_durable_domain_truth() -> None:
         "never choose interview materiality or branching",
         "Domain Delta",
     ):
-        assert contract in domain
+        assert contract in domain_flat
 
 
 def test_grilling_preserves_one_decision_confirmed_exit_and_evidence_routes() -> None:
     grilling = (CUSTOM / "grilling/SKILL.md").read_text(encoding="utf-8")
-    grilling_plain = grilling.replace("**", "")
+    grilling_plain = " ".join(grilling.replace("**", "").split())
 
     assert re.findall(r"(?m)^\*\*([A-Za-z ]+)\.\*\*", grilling) == [
         "Bound",
@@ -784,6 +836,9 @@ def test_grilling_preserves_one_decision_confirmed_exit_and_evidence_routes() ->
         "Choose `$research` for an authoritative source",
         "recommend uninvoked `$wayfinder`",
         "original decision owner without changing the gap identity",
+        "preserve that owner and add uninvoked `$handoff` only as transport",
+        "Handoff neither answers nor owns the gap",
+        "Transport: $handoff (uninvoked)",
         "required result, and exact re-entry instruction",
         "Downstream execution: none",
     ):
@@ -793,6 +848,7 @@ def test_grilling_preserves_one_decision_confirmed_exit_and_evidence_routes() ->
 def test_prototype_preserves_lifecycle_boundaries_and_branch_gates() -> None:
     skill_dir = CUSTOM / "prototype"
     prototype = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    prototype_flat = " ".join(prototype.split())
     logic = (skill_dir / "LOGIC.md").read_text(encoding="utf-8")
     ui = (skill_dir / "UI.md").read_text(encoding="utf-8")
     measure = (skill_dir / "MEASURE.md").read_text(encoding="utf-8")
@@ -811,7 +867,7 @@ def test_prototype_preserves_lifecycle_boundaries_and_branch_gates() -> None:
         "Never carry caller identity from a preceding request or supplied result",
         "Do not select, recommend, or invoke a downstream route",
     ):
-        assert contract in prototype
+        assert contract in prototype_flat
 
     for removed in (
         "[RESUME.md](RESUME.md)",
@@ -958,8 +1014,8 @@ def test_review_family_shares_one_bounded_quality_and_risk_model() -> None:
     assert "Reuse exact-snapshot proof" in convergent
     assert "ordinary local PRs" in review
     assert "PR existence, diff size, repository size" in convergent
-    assert "ordinary PR needs fixed-point review" in router
-    assert "release candidate or supported high-risk diff or PR" in router
+    assert "ordinary PR needs read-only judgment" in router
+    assert "supported high-risk diff or PR needs a terminal release decision" in router
 
 
 def test_review_assurance_route_has_one_domain_decision() -> None:
@@ -1326,7 +1382,8 @@ def test_audit_codebase_is_serial_cumulative_html_report() -> None:
     assert "subsystem-local recommendation" in report
     assert "user selection required" in report
     assert re.search(
-        r"(?m)^\| A repository needs an exhaustive system map, serial subsystem audit, .*performance \| `\$audit-codebase` \|$",
+        r"(?m)^\| A repository needs a whole-system map, one selected subsystem "
+        r"audit, or one selected audit-candidate analysis \| `\$audit-codebase` \|$",
         router,
     )
 
@@ -1556,6 +1613,7 @@ def test_bug_routing_is_disjoint_and_non_bouncing() -> None:
     diagnosing = (CUSTOM / "diagnosing-bugs/SKILL.md").read_text(encoding="utf-8")
     diagnosing_flat = " ".join(diagnosing.split())
     tdd = (CUSTOM / "tdd/SKILL.md").read_text(encoding="utf-8")
+    tdd_flat = " ".join(tdd.split())
     tdd_tests = (CUSTOM / "tdd/tests.md").read_text(encoding="utf-8")
 
     assert [
@@ -1573,7 +1631,7 @@ def test_bug_routing_is_disjoint_and_non_bouncing() -> None:
     )
     assert "test-portfolio delta" in diagnosing_flat
     assert "applicable Change Closure" in diagnosing_flat
-    assert "explicit seam gap" in tdd
+    assert "explicit seam gap" in tdd_flat
 
 
 def test_workflow_trace_matches_to_spec_publication_authority() -> None:
@@ -1896,12 +1954,15 @@ def test_research_owns_one_authorized_cited_note() -> None:
     assert "starting downstream work" in research
 
 
-def test_writing_great_skills_keeps_promoted_package_and_relationship_boundary() -> None:
+def test_writing_great_skills_keeps_shape_and_relationship_boundary() -> None:
     skill_dir = CUSTOM / "writing-great-skills"
     skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    glossary = (skill_dir / "GLOSSARY.md").read_text(encoding="utf-8")
     relationships = (
         ROOT / "docs/synthesis/skill-context-relationships.md"
     ).read_text(encoding="utf-8")
+    normalized_skill = " ".join(skill.split())
+    normalized_glossary = " ".join(glossary.split())
 
     assert implicit_policy(skill_dir)
     assert {
@@ -1922,6 +1983,31 @@ def test_writing_great_skills_keeps_promoted_package_and_relationship_boundary()
         "BEHAVIOR-EVALS.md",
         "GLOSSARY.md",
     ))
+    assert "Make canonical skill behavior predictable" in normalized_skill
+    assert "## Behavior Shape" in skill
+    assert "state, authority, actor, artifact, or evidence" in normalized_skill
+    assert (
+        "Each gate names its condition, passing evidence, and safe failure action"
+        in normalized_skill
+    )
+    assert "## Prune" in skill
+    assert all(term in skill for term in (
+        "`Keep`",
+        "`Collapse`",
+        "`Disclose`",
+        "`Delete`",
+    ))
+    assert all(term in glossary for term in (
+        "**Predictable behavior**",
+        "**Leading word**",
+        "**Gate**",
+        "**Completion criterion**",
+    ))
+    assert (
+        "sharpen the pointer's target and loading condition first"
+        in normalized_glossary
+    )
+    assert "only if the sharpened pointer still fails" in normalized_glossary
     assert "fork_turns" not in skill
     assert (
         "bundled system `skill-creator` owns new-package scaffolding and metadata mechanics"
@@ -1933,16 +2019,26 @@ def test_writing_great_skills_keeps_promoted_package_and_relationship_boundary()
 def test_merge_conflict_resolution_is_three_way_and_finish_bounded() -> None:
     skill_dir = CUSTOM / "resolving-merge-conflicts"
     skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    skill_flat = " ".join(skill.split())
+    operations = (skill_dir / "OPERATIONS.md").read_text(encoding="utf-8")
 
     assert implicit_policy(skill_dir)
-    read_only = re.search(r"(?m)^\*\*Read-only: (.+)\.\*\*$", skill)
-    reconcile = re.search(r"(?m)^\*\*Reconcile: (.+)\.\*\*$", skill)
+    read_only = re.search(r"\*\*Read-only: (.+?)\.\*\*", skill_flat)
+    reconcile = re.search(r"\*\*Reconcile: (.+?)\.\*\*", skill_flat)
     assert read_only is not None and reconcile is not None
     assert "Reconcile" not in read_only.group(1)
     assert "Finish" not in read_only.group(1)
     assert reconcile.group(1).index("Prove") < reconcile.group(1).index("Return")
     assert "only with finish authority" in reconcile.group(1)
     assert "`git ls-files -u`" in skill
+    assert "[OPERATIONS.md](OPERATIONS.md)" in skill
+    assert "## Operation Roles" in operations
+    assert "## Conflict Classes" in operations
+    assert "## Finish Checks" in operations
+    assert "prepared reconciliation" in skill
+    assert "finished operation" in skill
+    assert "Never use `git add -A`" in skill
+    assert "Rebase" in operations and "commit being replayed" in operations
     assert "## Guardrails" in skill
     assert "## Return" in skill
 
@@ -2069,25 +2165,48 @@ def test_triage_branches_share_the_authoritative_brief_schema() -> None:
     triage = (CUSTOM / "triage/SKILL.md").read_text(encoding="utf-8")
     specific = (CUSTOM / "triage/SPECIFIC-ITEM.md").read_text(encoding="utf-8")
     quick = (CUSTOM / "triage/QUICK-OVERRIDE.md").read_text(encoding="utf-8")
-    examples = (CUSTOM / "triage/AGENT-BRIEF-EXAMPLES.md").read_text(encoding="utf-8")
     brief = (CUSTOM / "triage/AGENT-BRIEF.md").read_text(encoding="utf-8")
     out_of_scope = (CUSTOM / "triage/OUT-OF-SCOPE.md").read_text(encoding="utf-8")
 
     assert specific.index("mutation packet") < specific.index(
-        "explicit maintainer approval"
+        "universal approval"
     )
     assert "## Completion" in quick
     normalized_triage = " ".join(triage.split())
-    assert "Triage's Codex-ready brief and Ready Gate" in normalized_triage
+    assert "Codex-ready brief and Ready Gate" in normalized_triage
     assert "Ready-for-agent state and queries" in normalized_triage
     assert "tracker's Ready-for-agent contract" not in triage
-    assert "The tracker state records the verified result" in " ".join(brief.split())
-    assert brief.count("**Proof lane:**") == 1
-    assert "concrete example" not in brief
-    assert examples.startswith("# Brief Branch Emphasis")
-    assert "| Branch | Emphasize |" in examples
+    assert not (CUSTOM / "triage/AGENT-BRIEF-EXAMPLES.md").exists()
+    assert "tracker state is navigation metadata" in " ".join(brief.split())
+    assert "### Scope And Proof" in brief
+    assert "Canonical test owner or proof surface" in brief
+    assert "a new test requires a distinct responsibility" in brief
+    assert "### Change Closure" in brief
+    assert "Removal Trigger" in brief
+    assert "## Branch Emphasis" in brief
     for branch in ("Bug tracer", "Enhancement tracer", "Support slice", "PR finish"):
-        assert f"| {branch} |" in examples
+        assert f"| {branch} |" in brief
+    for route in ("$grilling", "$grill-with-docs", "$wayfinder", "$to-tickets"):
+        assert route in specific
+    assert "label-only" not in specific
+    assert "not-confirmed" in specific
+    assert "does not prove the report false" in specific
+    assert "refresh the item, affected dependents, and local targets" in (
+        normalized_triage
+    )
+    assert triage.index("Apply prerequisites and local") < triage.index("close last")
+    for status in (
+        "scan-complete",
+        "decision-required",
+        "mutation-complete",
+        "blocked-partial",
+    ):
+        assert f"`{status}`" in triage
+    assert "maintainer-override" in quick
+    assert "disclaimer-prefixed triage note" in (
+        CUSTOM / "triage/ATTENTION-SCAN.md"
+    ).read_text(encoding="utf-8")
+    assert "Leave it unstaged and stop before commit, push" in out_of_scope
     assert [
         title for title, _, _ in skill_pack_contract.level_two_heading_spans(out_of_scope)
     ] == [
@@ -2299,7 +2418,7 @@ def test_to_tickets_preserves_coverage_readiness_and_frontier_contract() -> None
     packages = (
         (
             CUSTOM / "to-tickets",
-            "e5dcfbeb71eff575a85675c416dd229635e3bbbe8dea7df531aa3580e0602637",
+            "0b1cba85d92c21626afa15ee9da993f70523bc1db1a175535963cb9db41276d3",
             "prompt3-candidate",
         ),
     )
@@ -2484,7 +2603,7 @@ def test_to_spec_prompt3_packages_share_the_parameterized_semantic_owner() -> No
     packages = (
         (
             CUSTOM / "to-spec",
-            "e319eb815944530ef30e7fa2cb1ab966fef6a2a9efe05601b7e12ce82795a5cc",
+            "d3ec9efaaba837192b44116c2e7dbef7ec7b5d07b60bd8d184511956abe00476",
             "author-handoff",
         ),
         (
@@ -2745,7 +2864,11 @@ def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts
     } <= event_types
     assert "serial tripwires" in gate_flat
 
-    assert re.search(r"(?m)^\| One parent spec or PRD .* \| `\$parallel-implement` \|$", router)
+    assert re.search(
+        r"(?m)^\| One explicitly requested parent has an exhaustive non-empty "
+        r"Ready-for-agent graph \| `\$parallel-implement` \|$",
+        router,
+    )
     return_span = skill_pack_contract.level_two_section_span(tickets, "## Return")
     assert return_span is not None
     ticket_return = " ".join(tickets[slice(*return_span)].split()).lower()
@@ -2887,11 +3010,15 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         ("wayfinder", "Invoke", "domain-modeling"),
         ("wayfinder", "Recommend and stop", "grill-with-docs"),
         ("wayfinder", "Recommend and stop", "to-spec"),
+        ("triage", "Recommend and stop", "grilling"),
         ("triage", "Recommend and stop", "grill-with-docs"),
+        ("triage", "Recommend and stop", "wayfinder"),
+        ("triage", "Recommend and stop", "to-tickets"),
         ("implement", "Invoke", "tdd"),
         ("implement", "Invoke", "diagnosing-bugs"),
         ("implement", "Invoke", "change-review"),
         ("implement", "Invoke", "high-assurance-review"),
+        ("implement", "Hand off", "resolving-merge-conflicts"),
         ("change-review", "Hand off", "high-assurance-review"),
         ("change-review", "Recommend and stop", "audit-codebase"),
         ("high-assurance-review", "Recommend and stop", "audit-codebase"),

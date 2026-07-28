@@ -17,16 +17,16 @@ Accept only an exact `$audit-codebase` candidate selected by the user or a
 user-named target. The user may name the current diff as that target; never
 infer or replace the target. Verify an Audit candidate's report, snapshot,
 subsystem, Source Trace, supported behavior, Proof Seam, and selected
-behavior-preserving direction against current bytes. An invalid, stale,
-blocked, disproved, or incomplete target returns `blocked` unchanged.
-Without a target, return `blocked` with the exact target needed; recommend
-`$audit-codebase` only when wide discovery or repository mapping is needed.
+behavior-preserving direction against current bytes. An invalid, stale, blocked,
+disproved, or incomplete target returns `blocked` unchanged. Without a target,
+return `blocked` with the exact target needed; recommend `$audit-codebase` only
+when wide discovery or repository mapping is needed.
 
 Return feature work, public-contract decisions, reviews, Git delivery, tracker
 mutation, installation, and external-system work to their owners. Return
 uncertain symptoms or causes to `$diagnosing-bugs`. Return a required new
-Interface, dependency direction, Proof Seam, or ownership decision to the
-caller as a design gap. Stop before copying a foreign owner's procedure.
+Interface, dependency direction, Proof Seam, or ownership decision to the caller
+as a design gap. Stop before copying a foreign owner's procedure.
 
 The user owns the target, mode, budget, and commitment decisions. Simplify Code
 owns selection, local edits, proof, and Return only inside the admitted region.
@@ -45,8 +45,8 @@ the full ordered inspection.
 Record the starting ref, status, relevant diff, and staged-state shape without
 disturbing existing work. Run the smallest trusted proof that can detect a
 behavior change against the exact starting state. A failing, ambiguous, or
-semantically inadequate baseline returns `blocked` with the exact proof gap
-and no production mutation. An adequate baseline is required for a
+semantically inadequate baseline returns `blocked` with the exact proof gap and
+no production mutation. An adequate baseline is required for a
 `no-safe-simplification` verdict.
 
 ## Reduce
@@ -54,8 +54,8 @@ and no production mutation. An adequate baseline is required for a
 Prefer source-supported deletion and an already-sufficient owner or native
 capability over locally attractive rewriting. For an admitted Audit candidate,
 choose the smallest concrete cut inside its selected reduction direction in
-default mode. For other targets and each `until-clean` cycle, inspect the
-region in this order. The first safe rung wins:
+default mode. For other targets and each `until-clean` cycle, inspect the region
+in this order. The first safe rung wins:
 
 1. **Delete** behavior, configuration, compatibility, or abstraction proved
    unreachable, expired, or unsupported within preserved contracts.
@@ -81,8 +81,8 @@ accessibility, concurrency, durability, ordering, timing, and required
 compatibility. Simplicity never overrides one of these floors.
 
 Do not add a dependency. Remove one only after repository-wide source,
-configuration, and runtime-entry evidence proves no use remains, then
-reconcile its manifest, lockfile, and repository-owned installation proof.
+configuration, and runtime-entry evidence proves no use remains, then reconcile
+its manifest, lockfile, and repository-owned installation proof.
 
 If the complete applicable inspection finds no safe cut under an adequate
 baseline, return `no-safe-simplification` with candidate rejections. The
@@ -92,23 +92,22 @@ Ceiling** and concrete **Revisit Trigger** when supported; invent neither.
 
 Otherwise make one bounded unstaged cut. Remove only fallout created by that
 cut: imports, helpers, files, configuration, dependencies, and
-implementation-detail tests displaced by stronger caller-facing proof.
-Preserve correct behavior proof, unrelated work, the index, trackers,
-installed state, and external state.
+implementation-detail tests displaced by stronger caller-facing proof. Preserve
+correct behavior proof, unrelated work, the index, trackers, installed state,
+and external state.
 
 ## Prove
 
-Rerun the same focused proof, then the nearest relevant tests and
-proportionate repository checks. Establish a strict net reduction across
-concepts, branch families, coordination, indirection, file responsibilities,
-dependencies, callers, tests, configuration, and operations. Counts are
-receipts, not correctness or productivity proof; a shorter patch that transfers
-burden is not simpler.
+Rerun the same focused proof, then the nearest relevant tests and proportionate
+repository checks. Establish a strict net reduction across concepts, branch
+families, coordination, indirection, file responsibilities, dependencies,
+callers, tests, configuration, and operations. Counts are receipts, not
+correctness or productivity proof; a shorter patch that transfers burden is not
+simpler.
 
 Refresh changed paths and work state after proof. Confirm the patch preserves
 commitments, changes only the admitted cut and its created fallout, keeps the
-index and unrelated state as found, and leaves no invocation-created
-artifacts.
+index and unrelated state as found, and leaves no invocation-created artifacts.
 
 If proof fails, revert only cut-created bytes that can be isolated without
 touching pre-existing or concurrent work; otherwise preserve current state.
@@ -118,13 +117,13 @@ recovery required.
 ## Until Clean
 
 Enter only when the user explicitly requests `until-clean`, names one region,
-and has a finite positive successful-cut budget; use exactly `3` successful
-cuts when omitted. Hold one invariant behavior contract and Proof Seam.
-Repeat `Baseline -> Reduce -> Prove` serially, recording removed and introduced
-maintenance obligations after each successful cut, decrementing the budget,
-and using the proved result as the next baseline. Continue only while the
-ledger shows strict monotonic reduction. A failed attempt consumes no
-successful-cut budget.
+and has a finite positive successful-cut budget; use exactly `3` successful cuts
+when omitted. Hold one invariant behavior contract and Proof Seam. Repeat
+`Baseline -> Reduce -> Prove` serially, recording removed and introduced
+maintenance obligations after each successful cut, decrementing the budget, and
+using the proved result as the next baseline. Continue only while the ledger
+shows strict monotonic reduction. A failed attempt consumes no successful-cut
+budget.
 
 Stop at the first applicable terminal:
 

@@ -1,9 +1,8 @@
 # Handoff Continuity Synthesis
 
-Status: exhaustive design reference and future extraction map. No proposed
-behavior in this document is current runtime authority until the coordinated
-rewrite, behavior evaluation, validation, and installed-mirror synchronization
-complete.
+Status: exhaustive design reference and extraction map. Canonical runtime owns
+current behavior; broader proposals in this document remain non-authoritative
+until separately extracted, evaluated, validated, and synchronized.
 
 Runtime authority remains in:
 
@@ -11,8 +10,7 @@ Runtime authority remains in:
 - `skills/custom/handoff/agents/openai.yaml`;
 - the active workflow for its own state, phase, legal next action, and return
   packet;
-- `$skill-router`, `$grilling`, and `$prototype` at their recommendation
-  boundaries;
+- `$skill-router` and `$grilling` at their recommendation boundaries;
 - `$repo-bootstrap` for the required ignored disposable-artifact surface;
 - `docs/synthesis/skill-context-relationships.md` for pack-wide composition
   edges;
@@ -22,9 +20,10 @@ Runtime authority remains in:
 - `C:\Users\steve\.agents\skills\handoff` as the installed mirror of validated
   canonical source.
 
-The current runtime and installed mirror are unchanged by this note. Layer Two
-specifies the selected future design. The other layers explain, place, and test
-that design without creating competing rules.
+The lean admission, continuation-packet, and reconcile-before-execute boundary
+is extracted into canonical runtime. The installed mirror remains unchanged.
+Layer Two preserves the broader design without creating competing runtime
+rules.
 
 ## How To Read This Document
 
@@ -657,8 +656,7 @@ exclusions, and return boundaries.
 | --- | --- | --- | --- |
 | Direct user | Invoke | `$handoff` | A fresh Codex session or agent thread needs one local resumable artifact; return the verified path and pickup, then stop |
 | `$skill-router` | Recommend and stop | `$handoff` | The user explicitly needs context to cross a fresh-context boundary; the user starts Handoff later |
-| `$grilling` | Recommend and stop | `$handoff` | Evidence work or continuation must cross sessions; Handoff preserves the confirmed and unresolved interview packet without performing the evidence work |
-| `$prototype` | Recommend and stop | `$handoff` | An `awaiting-verdict` packet and runnable artifact must cross sessions; Handoff preserves the pointer and judging action without judging |
+| `$grilling` | Recommend and stop | `$handoff` | The intact gap must cross into a fresh context; preserve its evidence or decision owner and exact re-entry identity, and use Handoff only as transport |
 | `$handoff` | Recommend and stop | `$repo-bootstrap` | The required ignored disposable-artifact surface is missing or incompatible; return `not-created` and stop |
 
 The active workflow remains the return owner after pickup. Handoff may preserve
@@ -678,9 +676,10 @@ fresh-context boundary must be intended.
 
 # Layer Three: Evidence And Rationale
 
-## Current Runtime Baseline
+## Pre-Extraction Runtime Baseline
 
-The current runtime is 54 lines with no disclosed references or helpers. Its
+Before the lean extraction, runtime had 54 lines with no disclosed references
+or helpers. Its
 seven-word spine and eight-section template already protect the highest-value
 behavior:
 
@@ -698,11 +697,11 @@ behavior:
 
 The current structural test fixes the invocation policy, spine, section order,
 target pattern, Repo Bootstrap gate, and pickup wording. Core workflow
-evaluation 30 tests the dirty-work, focus, pointer, fact-classification,
+evaluation 30 tested the dirty-work, focus, pointer, fact-classification,
 redaction, non-mutation, read-back, and not-ignored branches. Skill Router,
-Grilling, Prototype, and the relationship map carry the current inbound and
-setup edges. The canonical and installed Handoff files were byte-identical when
-this synthesis was drafted.
+Grilling, and the relationship map carried the inbound and setup edges. The
+canonical and installed Handoff files were byte-identical when this synthesis
+was drafted.
 
 ## Design Pressure
 
@@ -851,7 +850,7 @@ here rather than copying file lists.
 | --- | --- | --- | --- | --- |
 | `H1` | `skills/custom/handoff/SKILL.md` | Human-facing description; outcome; explicit fresh-context admission; authority and mutation boundary; seven-word spine; target preflight; snapshot, compaction, focus, packet, pointer, redaction, verification, recovery, Return, and completion | Realize the Proposed Runtime Semantic Surface; preserve the compact eight-section packet; change pickup to reconcile-before-execute; add sharp unsuccessful returns | Active workflow procedure, durable truth, setup mechanics, downstream execution, exhaustive rationale, evaluation protocol, transport APIs, or speculative helpers |
 | `H1` | `skills/custom/handoff/agents/openai.yaml` | Invocation policy | Preserve `policy.allow_implicit_invocation: false` | Description prose, runtime procedure, packet schema, or relationship catalog |
-| `H2` | `$skill-router`, `$grilling`, and `$prototype` owned runtime and synthesis surfaces | Their own recommendation triggers and return expectations | Reconcile only wording that conflicts with the accepted fresh-context, active-owner, or pickup boundary; preserve recommendation and stop | Handoff procedure, packet fields, path mechanics, redaction, or automatic invocation |
+| `H2` | `$skill-router` and `$grilling` owned runtime and synthesis surfaces | Their own recommendation triggers and return expectations | Reconcile only wording that conflicts with the accepted fresh-context, active-owner, or pickup boundary; preserve recommendation and stop | Handoff procedure, packet fields, path mechanics, redaction, or automatic invocation |
 | `H2` | `docs/synthesis/skill-context-relationships.md` | One authoritative index row per accepted composition edge and pack-wide Handoff ownership summary | Preserve current inbound and Repo Bootstrap edges; sharpen the fresh-context and active-owner return boundary if behavior promotion requires it | Runtime procedure, packet template, caller-local logic, or duplicate rationale |
 | `H2` | Repo Bootstrap-owned `.tmp/` and ignore contract | Setup representation, reconciliation, and verification for disposable artifacts | No planned change; verify the accepted Handoff precondition is supported and link to Repo Bootstrap synthesis if a real mismatch appears | Handoff admission, compaction, packet, or Return behavior |
 | `H3` | `tests/test_skill_pack_contracts.py` | Structural protection for invocation, semantic surface, packet, relationships, and terminal wording | Replace incidental exact-prose locks only where necessary; add structure for new admission, unsuccessful Return, receiver reconciliation, and no-helper decision | Claims that static assertions prove runtime redaction, omission resistance, or non-mutation |
@@ -931,7 +930,7 @@ Map.
 | `I1 / E2,E3` | `H1` | [Authority and mutation](#authority-and-mutation-boundary) | Read-only inspection plus one artifact is the complete delta; workflows, Git, tracker, process, tasks, threads, and skills remain unchanged | Handoff stages, commits, stashes, claims, retries, starts a task, invokes a skill, or advances the active workflow | Before/after state matrix and mutation audit |
 | `I1 / E2,E3` | `H1` | [Verification and recovery](#verification-and-recovery) | Saved bytes are reread; material drift repairs the same artifact; failed redaction or read-back removes only authored partial state and returns honestly | First draft is returned; repair creates a second artifact; pre-existing `.tmp` content is removed; blocked write reports success | Failure injection, drift, read-back, and authored-cleanup fixtures |
 | `I1 / E2,E3` | `H1` | [Return](#return-contract) | Success returns the exact absolute path and redacted reconcile-instructions-and-state-before-execute pickup; failure returns `not-created` or `blocked` without pickup | Old execute-immediately wording, inline packet duplication, wrong path, unredacted focus, or unverified pickup succeeds | Exact-path assertions and receiving-session evaluation |
-| `I1,I2 / E4` | `H1,H2` | [Relationship ownership](#relationship-ownership) | Router, Grilling, and Prototype recommend and stop; Handoff preserves their return owner; Repo Bootstrap remains the setup recommendation | Caller invokes Handoff automatically, Handoff resumes the workflow, Suggested Skills execute, or live callee Return is rerouted | Composition-edge tests and caller/callee behavior traces |
+| `I1,I2 / E4` | `H1,H2` | [Relationship ownership](#relationship-ownership) | Router and Grilling recommend and stop; Handoff preserves the active owner; Repo Bootstrap remains the setup recommendation | Caller invokes Handoff automatically, Handoff resumes the workflow, Suggested Skills execute, or live callee Return is rerouted | Composition-edge tests and caller/callee behavior traces |
 | `I1-I3 / E4` | `H1-H3` | [Runtime ownership and installation](#runtime-ownership-and-change-map) | Canonical references resolve; focused and full tests, validation, diff checks, and behavior phases pass; installed hashes match | New support machinery without revised design, partial caller sync, or independent installed edits are promoted | Focused pytest, full pytest, `python -m scripts.validate_skills`, dry-run and authorized install, changed-file read-back, both diff checks, and mirror parity |
 
 ## Promotion Gate And Residual Gaps

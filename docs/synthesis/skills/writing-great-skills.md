@@ -1,12 +1,42 @@
 # Writing Great Skills Deploy Synthesis
 
-Status: Deploy Prompt 5 complete; exact P1 is canonical and installed.
+Status: post-campaign canonical Author refinement active. The exact Prompt 5
+decision below remains historical evidence; installation state was not
+inspected or synchronized for this refinement.
 
-This synthesis owns the active semantic decision for campaign
-`2026-07-24-writing-great-skills-7d0da40-r2`. Research provenance, unit
-identities, aggregate judgments, promotion, and installation remain owned by
-the research packet and compact final manifest. Raw outputs and campaign work
-state are local `.tmp/` material, not tracked authority.
+The current section owns the later user-approved semantic delta. The campaign
+section preserves its exact historical decision and identities. Research
+provenance, campaign judgments, promotion, and its installation evidence remain
+owned by the research packet and compact final manifest.
+
+## Current Author Refinement
+
+Decision: `accepted`.
+
+The canonical package now makes predictable behavior its explicit outcome and
+adds one compact Behavior Shape contract:
+
+- use the fewest meaningful state transitions;
+- keep cross-cutting constraints in gates with condition, passing evidence,
+  and safe failure;
+- make completion clear and demanding enough to force required legwork;
+- use an earned pretrained Leading Word without replacing exact contracts;
+- prune changed and adjacent instructions as `Keep`, `Collapse`, `Disclose`,
+  or `Delete`; and
+- sharpen an observably weak branch pointer before inlining persistent misses.
+
+Audit/Author authority, behavior-capable coverage, single ownership,
+counterfactual evaluation, implicit invocation, package inventory, Return,
+canonical proof, and the stop before installation or delivery remain
+unchanged. `BEHAVIOR-EVALS.md`, callers, relationships, and invocation policy
+need no semantic change. Structural checks and behavior fixtures may protect
+the contract, but fresh counterfactual samples are still required before
+claiming wording-caused behavior improvement.
+
+Current canonical proof on 2026-07-28: the focused contract suite passed
+68 tests, skill validation passed, and the full suite passed 590 tests with
+5 skipped. The updated behavior fixture is a registered future evidence lane,
+not executed efficacy proof.
 
 <!-- WRITING-GREAT-SKILLS-DEPLOY-DECISION:START -->
 

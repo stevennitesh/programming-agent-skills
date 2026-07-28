@@ -1,11 +1,17 @@
 # Triage Relationship And Runtime Design Synthesis
 
-> Status (2026-07-27): historical design evidence. A later authorized Author
-> pass made canonical Triage the owner of its Codex-ready brief and Ready Gate;
-> tracker docs retain only Ready-for-agent state and navigation. Canonical
+> Status (2026-07-28): historical design evidence. Later authorized Author
+> passes made canonical Triage the owner of one agent/human Ready Gate, aligned
+> its compact packet with Implement's admission and the Engineering Contract,
+> separated observation from maintainer override, added refresh-safe typed
+> mutation Return, and folded branch emphasis into the brief owner. Triage now
+> recommends and stops at Grilling, Grill With Docs, Wayfinder, or To Tickets
+> according to decision topology and settled multi-slice need. Canonical
 > `skills/custom/triage/` is runtime authority at campaign-tree SHA-256
-> `12af1971512182f142b40cf183b2fece96b4f417d0682353b6ac138835fb550e`.
-> No installed sync is claimed.
+> `0414090ea3ea1505f1b65a100c41f0d501959504168faf3eac83f8c524a30e0d`.
+> Later pre-amendment proposal and gap text is historical when it disagrees
+> with canonical runtime. No installed sync or fresh wording-efficacy proof is
+> claimed.
 
 Status: exhaustive design reference for a future coordinated rewrite, not an executable contract.
 
@@ -276,7 +282,7 @@ If the source cannot support either category, Specific Item returns a classifica
 | --- | --- | --- | --- |
 | `needs-triage` | Evaluation remains open for agent or maintainer work, but neither reporter facts nor a ready recipient is the sole next dependency | `waiting-on-triage` | Preserve meaningful verified progress and the next unresolved decision in a triage note |
 | `needs-info` | One or more result-defining facts can be supplied only by the reporter or request owner | `waiting-on-reporter` | Post established facts and specific actionable questions addressed to the reporter |
-| `ready-for-agent` | One bounded AFK-safe slice satisfies the tracker-owned ready contract; verification is adequate or an explicit maintainer override names residual uncertainty | `ready` | Post the complete agent readiness brief unless the approved packet is label-only |
+| `ready-for-agent` | One bounded AFK-safe slice satisfies Triage's Ready Gate; verification is adequate or an explicit maintainer override names residual uncertainty | `ready` | Post a new complete agent readiness brief or explicitly reuse an existing brief proved current |
 | `ready-for-human` | The bounded next slice requires human judgment, access, design, testing, merge action, or another non-delegable act | `waiting-on-human` | Post the complete human readiness brief and name why human participation is required |
 | `wontfix` | The request will not be actioned as proposed | `rejected-bug`, `rejected-enhancement`, or `already-implemented` | Post the reason; update rejected-enhancement memory only for that disposition; close only as configured and approved |
 | `implemented` | Existing implementation closeout evidence already satisfies the tracker contract and only tracker state correction is requested | `label-correction` | Quick Override only; cite existing closeout evidence and apply no implementation mutation |
@@ -421,15 +427,18 @@ Evidence should reach the highest useful caller-facing seam. Structural proxy ev
 
 ## Shaping And Domain Authority
 
-Triage owns the decision that maintainer shaping is needed, the bounded recommendation packet, and later resumption. Direct `$grill-with-docs` owns interview composition, mutation disclosure, confirmation, and combined Return. Domain Modeling owns domain resolution, rendering or mutation, ADR assessment, and approved ADR recording. The named user or recorded ADR authority alone owns ADR approval.
+Triage owns the decision that shaping is needed, its bounded recommendation
+packet, and later resumption. Reporter-owned facts select `needs-info`. One
+conversation-only maintainer decision recommends Grilling; one decision that
+may change durable domain truth recommends Grill With Docs; several
+interdependent decisions or non-conversational prerequisites under a bounded
+destination recommend Wayfinder. Each target retains its procedure and Return,
+remains unstarted, and receives no tracker-mutation authority.
 
-The composition edge is legal only when:
-
-1. the missing decision is maintainer-owned rather than reporter-owned;
-2. it materially affects category, state, desired behavior, acceptance, scope, domain language, or design;
-3. the caller packet identifies one work item, exact open decisions, and the Grilling bound and authority;
-4. context and ADR actions are explicit, Triage remains the return owner, and no tracker-mutation authority transfers; and
-5. Triage waits for the complete composer Return before refreshing evidence.
+Domain Modeling alone owns domain resolution, rendering or mutation, ADR
+assessment, and approved ADR recording. The named user or recorded ADR
+authority alone owns ADR approval. Triage resumes only with the intact result,
+refreshes the Source Trace, and reruns affected verification.
 
 Triage must not copy the interview procedure, write domain docs itself, infer an ADR approval, or automatically continue after a blocked or evidence-gap composer Return. The user may need to participate in shaping; that interaction does not approve the later tracker mutation packet.
 
@@ -637,7 +646,10 @@ Only `scan-complete` and `mutation-complete` satisfy their branch completion cri
 | Human or Skill Router | Explicitly invoke or recommend and stop | Triage | Raw configured issue/request or configured external PR/MR needs classification or state work | Triage owns the selected branch; recommender does not continue it |
 | Triage | Load | Tracker docs | Every invocation before tracker access | Provider, literal mappings, ready fields, close policy, external PR/MR policy, and read-back capability; no provider procedure copied into Triage |
 | Triage | Load | Domain routing and engineering contract | Domain-sensitive work; reproduction or executable validation | Current vocabulary, decisions, work-state discipline, and proof expectations |
-| Triage | Recommend and stop | `$grill-with-docs` | Maintainer-owned scope, acceptance, language, or design requires direct-user resolution with durable capture | Resume the same target later with the direct result; no tracker mutation authority transfers |
+| Triage | Recommend and stop | `$grilling` | One maintainer-owned conversation-only decision needs direct resolution | Resume the same item later with the intact result; no tracker mutation authority transfers |
+| Triage | Recommend and stop | `$grill-with-docs` | One maintainer-owned decision may change durable domain truth or an ADR | Resume the same item later with the intact decision and Domain Delta |
+| Triage | Recommend and stop | `$wayfinder` | A bounded destination still has several interdependent decisions or non-conversational prerequisites | Preserve every unresolved identity and leave Wayfinder unstarted |
+| Triage | Recommend and stop | `$to-tickets` | Settled source requires several independently completable implementation slices | Preserve the intact source and leave graph creation unstarted |
 | Triage | Recommend and stop | `$repo-bootstrap` | Required tracker or label setup is missing or incompatible | Setup recommendation only; Triage does not continue automatically |
 | Triage | Produce | Tracker-owned Ready-for-agent contract | Approved `ready-for-agent` or `ready-for-human` state | Complete readiness brief with Triage verification extension |
 | `$to-tickets` | Produce peer contract | Tracker-owned Ready-for-agent contract | Settled parent source is sliced | Valid output bypasses Triage; Triage does not add verification retroactively |
@@ -647,7 +659,7 @@ Only `scan-complete` and `mutation-complete` satisfy their branch completion cri
 
 ### Relationship Exclusions
 
-- Triage does not automatically invoke Wayfinder, To Tickets, Implement, Parallel Implement, Review, or Skill Router.
+- Triage does not automatically invoke Wayfinder, To Tickets, Implement, Parallel Implement, Review, or Skill Router. Its explicit-only recommendations preserve human selection.
 - Triage does not absorb tracker commands, literal mappings, setup reconciliation, domain persistence, implementation, review, or closeout.
 - Delivery skills may detect an unready item and stop or return it to the user, but they do not silently perform Triage.
 - A composed skill's successful Return never constitutes approval of the Triage mutation packet.
@@ -695,15 +707,14 @@ The current skill already embodies much of this source pressure: explicit states
 - Explicit-only invocation protects maintainer judgment.
 - The main skill discloses three distinct branch procedures instead of carrying every branch inline.
 - Attention Scan is genuinely read-only and has a finite disjoint inventory.
-- Specific Item separates Trace, Verify, Shape, Recommend, Approve, Apply, and Prove.
+- Specific Item owns Trace, Verify, Shape, and Recommend; the main skill owns one shared approval, mutation, and proof envelope.
 - Quick Override skips discovery without skipping approval or read-back.
 - Tracker docs own transport, mappings, readiness fields, and Mutation read-back.
 - The brief preserves one bounded slice, public seam, dependencies, parallel safety, and scope fence.
 - `.out-of-scope/` stores durable concept decisions rather than issue-by-issue rejection noise.
-- Direct `$grill-with-docs` owns the composed maintainer interview and combined Return; Triage recommends and stops, then owns later resumption. Domain Modeling owns domain persistence and approved ADR recording within that composition.
-- Installed triage files currently match canonical files exactly.
+- Grilling, Grill With Docs, and Wayfinder own their distinct decision shapes; Triage recommends and stops, then owns later resumption.
 
-## Current Gaps Addressed By The Proposed Design
+## Pre-Amendment Gaps Resolved By The Current Runtime
 
 | Current pressure | Proposed clarification | Why it matters |
 | --- | --- | --- |
@@ -711,7 +722,7 @@ The current skill already embodies much of this source pressure: explicit states
 | Approval is exact, but the captured target facts and pre-Apply refresh are implicit | Bind approval to target identity, decision snapshot, and full packet; refetch before Apply | Prevent stale-label, new-comment, changed-diff, or changed-memory mutations |
 | Mutation read-back is strong, but safe cross-surface order is not explicit | Prerequisite-first, post-before-state, close-last sequence | Reduce externally visible half-states and make partial recovery deterministic |
 | Agent brief owns a shared schema while human-ready instructions live in a branch file | One readiness-brief semantic owner with agent and human variants | Prevent field drift between two ready recipients |
-| `AGENT-BRIEF-EXAMPLES.md` contains emphasis, not examples | Rename or fold it during extraction | Make its context pointer honest and reduce mistaken loading |
+| `AGENT-BRIEF-EXAMPLES.md` contained emphasis, not examples | Folded into the readiness owner and removed | Make its context pointer honest and reduce mistaken loading |
 | Attention Scan says reporter activity after the latest triage note without defining note identity | Use disclaimer plus triage content and expose missing-note ambiguity | Prevent arbitrary activity cutoffs |
 | Category uncertainty and semantic closure reason are implicit | Separate category, state, and disposition | Preserve two-role invariant without overloading `wontfix` |
 | Return content exists but nonterminal and partial outcomes are not typed | Define branch-specific fields and five legal statuses | Resist premature completion at approval and partial mutation boundaries |
@@ -789,12 +800,12 @@ This map owns proposed file placement and coordinated source bundles. Acceptance
 | `T1` | `skills/custom/triage/SPECIFIC-ITEM.md` | Trace, Verify, Shape, Recommend, and branch-specific use of universal approval/application | Adopt the observation vocabulary, full Source Trace, PR/MR identity, category/state/disposition recommendation, and composer refresh | Universal packet schema, provider mutation steps, complete brief schema, or copied composer procedure |
 | `T1` | `skills/custom/triage/QUICK-OVERRIDE.md` | Exact-state admission, deliberately skipped discovery, retained safety, and `implemented` correction gate | State skipped and retained work positively; use shared packet, refresh, Apply, Prove, and Return | Ordinary verification, grilling, implementation, or a second approval contract |
 | `T2` | `skills/custom/triage/AGENT-BRIEF.md` or a compatibility-preserving renamed readiness file | One readiness schema, agent/human variants, branch emphasis, observation and authority fields, and readiness completion | Make the semantic owner honest; include Human reason and completion evidence; preserve tracker-owned fields | Tracker transport, label mutation, branch selection, implementation procedure, or provider examples |
-| `T2` | `skills/custom/triage/AGENT-BRIEF-EXAMPLES.md` | Currently branch emphasis only | Prefer rename to `BRIEF-EMPHASIS.md` if kept separate, or fold the small table into the readiness owner; update all pointers and tests atomically | A second brief schema or concrete example corpus without evaluation need |
+| `T2` | Removed `skills/custom/triage/AGENT-BRIEF-EXAMPLES.md` | Historical branch emphasis only | Folded into `AGENT-BRIEF.md`; no separate runtime load remains | A second brief schema or concrete example corpus without evaluation need |
 | `T3` | `skills/custom/triage/OUT-OF-SCOPE.md` | Record format, concept screen, classification, directory-absence behavior, approved lifecycle, and read-back | Add tracked-state and no-commit/no-push boundary; preserve concept-level memory | Bug rejection records, provider commands, Triage state model, or general product roadmap |
 | `T1` | `skills/custom/triage/agents/openai.yaml` | Explicit-only invocation policy | Preserve `allow_implicit_invocation: false`; keep description human-facing | Runtime procedure or state catalog |
 | `T4` | Repo Bootstrap-owned tracker templates, label template, validator, and setup fingerprints | Provider transport, work-item fields, external PR/MR policy, literal mappings, close rules, affected-dependent read-back, and provider capabilities | Supply the outcomes required by this synthesis; concrete changes belong to [Repo Bootstrap synthesis](repo-bootstrap.md) | Triage classification, evidence, packet approval, readiness rendering, or rejected-memory semantics |
-| `T4` | `$grill-with-docs` and Domain Modeling-owned surfaces | Direct-user interview, explicit context and ADR actions, authoritative Domain Delta, and lean three-status Return | Verify Triage recommends and stops, then later consumes the intact result without tracker-authority transfer | Triage packet approval, tracker mutation, or readiness rendering |
-| `T4` | `$to-tickets`, `$implement`, `$parallel-implement`, Skill Router, README, and `docs/synthesis/skill-context-relationships.md` | Their own routing and consumption boundaries | Preserve peer ready producer, later delivery, explicit recommendation, and one authoritative relationship edge | Triage branch procedure or duplicated ready schema |
+| `T4` | Grilling, Grill With Docs, Wayfinder, and Domain Modeling-owned surfaces | Conversation-only decisions, domain-affecting decisions, multi-decision routes, domain persistence, and their Returns | Verify Triage recommends the narrowest owner and stops, then later consumes the intact result without tracker-authority transfer | Triage packet approval, tracker mutation, or readiness rendering |
+| `T4` | `$to-tickets`, `$implement`, `$parallel-implement`, Skill Router, README, and `docs/synthesis/skill-context-relationships.md` | Their own routing and consumption boundaries | Preserve multi-slice graph creation, peer ready production, later delivery, explicit recommendation, and authoritative relationship edges | Triage branch procedure or duplicated ready schema |
 | `T5` | `tests/test_skill_pack_contracts.py` and `docs/validation/evals/core-workflows.md` | Structural protection and behavior evaluation | Cover every promoted acceptance row, context pointer, role invariant, approval refresh, Return state, and negative control | Incidental prose snapshots or claims that literal tests prove judgment |
 | `T5` | Installed mirror `C:\Users\steve\.agents\skills\triage` | Validated runtime copy | Synchronize only after the coordinated canonical candidate and evaluations pass | Independent edits, partial synchronization, or authority over canonical source |
 

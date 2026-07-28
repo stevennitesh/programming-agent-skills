@@ -15,6 +15,7 @@ EXPERIMENTAL = ROOT / "skills/experimental"
 def test_promoted_domain_modeling_preserves_compact_ddd_contract() -> None:
     skill_dir = CUSTOM / "domain-modeling"
     skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    skill_flat = " ".join(skill.split())
     context_format = (skill_dir / "CONTEXT-FORMAT.md").read_text(encoding="utf-8")
     adr_format = (skill_dir / "ADR-FORMAT.md").read_text(encoding="utf-8")
     policy = (skill_dir / "agents/openai.yaml").read_text(encoding="utf-8")
@@ -40,7 +41,7 @@ def test_promoted_domain_modeling_preserves_compact_ddd_contract() -> None:
         "Persistence outcome: complete | partial | failed | not-applicable",
         "Return every other consequence or residual to its owner and stop",
     ):
-        assert contract in skill
+        assert contract in skill_flat
 
     for contract in (
         "## Invariants",
@@ -92,11 +93,12 @@ def test_promoted_grilling_and_domain_modeling_preserve_composer_inputs() -> Non
     grilling_dir = CUSTOM / "grilling"
     domain_dir = CUSTOM / "domain-modeling"
     grilling = (grilling_dir / "SKILL.md").read_text(encoding="utf-8")
-    grilling_plain = grilling.replace("**", "")
+    grilling_plain = " ".join(grilling.replace("**", "").split())
     grilling_policy = (grilling_dir / "agents/openai.yaml").read_text(
         encoding="utf-8"
     )
     domain = (domain_dir / "SKILL.md").read_text(encoding="utf-8")
+    domain_flat = " ".join(domain.split())
 
     for contract in (
         "Relay every settled material answer",
@@ -113,7 +115,7 @@ def test_promoted_grilling_and_domain_modeling_preserve_composer_inputs() -> Non
         "Return the authoritative cumulative Domain Delta and any collision before dependent questioning continues",
         "never choose interview materiality or branching",
     ):
-        assert contract in domain
+        assert contract in domain_flat
 
     for contract in (
         'display_name: "Grilling"',
@@ -130,6 +132,7 @@ def test_promoted_grilling_and_domain_modeling_preserve_composer_inputs() -> Non
 def test_promoted_prototype_preserves_selected_leaf_contract() -> None:
     skill_dir = CUSTOM / "prototype"
     skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    skill_flat = " ".join(skill.split())
     logic = (skill_dir / "LOGIC.md").read_text(encoding="utf-8")
     ui = (skill_dir / "UI.md").read_text(encoding="utf-8")
     measure = (skill_dir / "MEASURE.md").read_text(encoding="utf-8")
@@ -138,6 +141,7 @@ def test_promoted_prototype_preserves_selected_leaf_contract() -> None:
         encoding="utf-8"
     )
     wayfinder = (CUSTOM / "wayfinder" / "SKILL.md").read_text(encoding="utf-8")
+    wayfinder_flat = " ".join(wayfinder.split())
 
     assert (
         "description: Prototype one bounded design question with a disposable "
@@ -161,7 +165,7 @@ def test_promoted_prototype_preserves_selected_leaf_contract() -> None:
         "Do not select, recommend, or invoke a downstream route",
         "Production correctness remains with the real coding workflow",
     ):
-        assert contract in skill
+        assert contract in skill_flat
 
     for removed in (
         "supported_direction",
@@ -185,8 +189,8 @@ def test_promoted_prototype_preserves_selected_leaf_contract() -> None:
     assert "Decision owner: <who>" in wayfinder_map
     assert "Claim level: shape/feel | design evidence" in wayfinder_map
     assert "Judgment mode: human | rule-based" in wayfinder_map
-    assert "pass its decision owner, claim level, judgment mode" in wayfinder
-    assert "human judge when human" in wayfinder
+    assert "pass its decision owner, claim level, judgment mode" in wayfinder_flat
+    assert "human judge when human" in wayfinder_flat
     for branch in (logic, ui, measure):
         assert "Return to `Judge` in [SKILL.md](SKILL.md)" in branch
         assert "this branch does not Reconcile or Return" in branch
@@ -279,7 +283,7 @@ def test_current_implement_preserves_promoted_and_author_contract() -> None:
     } == inventory
 
     assert tree_hash(canonical_dir) == (
-        "08929386f2a815d6cef252e996b725b8b9404951924096fda34adb145e5f7e26"
+        "73cf7a816d35f0594c020760ae7deb217d28b67b0b8b276db4a1815fda631988"
     )
     promoted = (canonical_dir / "SKILL.md").read_text(encoding="utf-8")
     normalized = " ".join(promoted.split())
@@ -288,6 +292,7 @@ def test_current_implement_preserves_promoted_and_author_contract() -> None:
         "Deliver exactly one selected bounded Ready-for-agent item",
         "A named target remains binding",
         "exhaustive parent graph to `$parallel-implement`",
+        "Hand off conflict-only admission",
         "Freeze one immutable Charter",
         "default the selected-item budget to exactly `2`",
         "Invoke exactly one formal route",

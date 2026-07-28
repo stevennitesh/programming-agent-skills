@@ -18,9 +18,9 @@ supported high-risk trigger:
 - high-impact domain, financial, model, or data invariant; or
 - a measured performance, resource, or availability obligation.
 
-PR existence, diff size, repository size, severity labels, and hypothetical
-edge cases do not establish high risk. Hand an ordinary diff or PR and its
-packet to `$change-review`, then stop. Recommend `$audit-codebase` for an immutable
+PR existence, diff size, repository size, severity labels, and hypothetical edge
+cases do not establish high risk. Hand an ordinary diff or PR and its packet to
+`$change-review`, then stop. Recommend `$audit-codebase` for an immutable
 repository-baseline audit, then stop. After this route starts, do not run a
 competing ordinary review.
 
@@ -35,8 +35,8 @@ evidence needs mutation, return `incomplete` with the blocker and verified
 partial evidence.
 
 Freeze the caller's Charter, commitment boundary, review mode, fixed point,
-target, `Spec required: yes | no`, Source Trace, required proof, skips,
-accepted risk, supported route trigger, carried IDs, and later authority.
+target, `Spec required: yes | no`, Source Trace, required proof, skips, accepted
+risk, supported route trigger, carried IDs, and later authority.
 
 Use one mode:
 
@@ -107,8 +107,8 @@ Dispatch exactly two direct reviewers with `fork_turns="none"`:
    Operability, Code Quality and Design, Proof Discipline, and Stewardship.
 
 Add at most one specialist when a frozen supported risk requires a distinct
-security, migration, concurrency, model, data, or performance evidence lane
-that the two core assignments cannot responsibly cover. The specialist covers
+security, migration, concurrency, model, data, or performance evidence lane that
+the two core assignments cannot responsibly cover. The specialist covers
 assigned classes and risk only; Risk never becomes a third axis.
 
 Give each reviewer only the immutable snapshot and factual sources, assigned
@@ -134,8 +134,8 @@ Verify each return's freshness, snapshot, lane, axis, classes, read-only
 boundary, coverage, and fields. A contaminated, mutating, out-of-lane, or
 incomplete return receives no credit. Permit at most one unbiased replacement
 for an invalid lane when the same snapshot and factual brief remain valid. An
-evidence blocker or second invalid return closes that coverage `incomplete`;
-do not create new hypotheses or recursive rounds.
+evidence blocker or second invalid return closes that coverage `incomplete`; do
+not create new hypotheses or recursive rounds.
 
 Apply this completed-core-reviewer fallback:
 
@@ -156,16 +156,15 @@ Give each item a stable ID, factual origin, axis, primary class, and one state:
 carried IDs through remediation.
 
 The root verifies every candidate against the immutable snapshot and shared
-Finding Contract. Reject speculative, preference-only,
-unsupported-environment, adjacent-cleanup, missing-evidence, and
-optional-hardening claims. Required unavailable evidence makes coverage
-`incomplete`, not a finding.
+Finding Contract. Reject speculative, preference-only, unsupported-environment,
+adjacent-cleanup, missing-evidence, and optional-hardening claims. Required
+unavailable evidence makes coverage `incomplete`, not a finding.
 
-Resolve duplicates and disagreements from anchors, supported scenarios,
-behavior paths, direct evidence, and contrary evidence. Reviewer count,
-agreement, majority, and debate do not establish truth. An unresolved material
-dispute is `incomplete`; only a separately verified and admitted blocker
-supports `blocked`. Close every observation and carried ID before Gate.
+Resolve duplicates and disagreements from anchors, supported scenarios, behavior
+paths, direct evidence, and contrary evidence. Reviewer count, agreement,
+majority, and debate do not establish truth. An unresolved material dispute is
+`incomplete`; only a separately verified and admitted blocker supports
+`blocked`. Close every observation and carried ID before Gate.
 
 ## 5. Gate
 
@@ -173,8 +172,8 @@ Re-read the originally captured target and compare it with the pinned
 identities: Git object and content; connected PR base, head, and content; or
 live `HEAD`, index tree, staged diff, unstaged diff, status, and every captured
 in-scope untracked path and its bytes. Target drift returns `incomplete` with
-verified partial evidence. Do not recapture; symbolic baseline movement does
-not replace the pinned fixed point.
+verified partial evidence. Do not recapture; symbolic baseline movement does not
+replace the pinned fixed point.
 
 Derive exactly one decision:
 
@@ -201,6 +200,5 @@ Successor snapshot authority: none
 ```
 
 Completion requires every applicable axis, class, and risk trigger to close;
-every candidate and carried ID to be disposed; drift to pass; and one
-internally consistent decision to return. Return control to the caller and
-stop.
+every candidate and carried ID to be disposed; drift to pass; and one internally
+consistent decision to return. Return control to the caller and stop.

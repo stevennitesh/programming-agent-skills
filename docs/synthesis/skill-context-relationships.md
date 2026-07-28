@@ -36,6 +36,7 @@ flowchart TD
   GrillDocs --> DomainModel
   Grilling -. "async stakeholder gap" .-> Questionnaire
   Grilling -. "multi-decision route gap" .-> Wayfinder
+  Grilling -. "fresh-context transport" .-> Handoff
   Questionnaire --> TmpQuestionnaire[".tmp/to-questionnaire/*.md"]
   Questionnaire -. "source-answerable" .-> Research
   Questionnaire -. "user-owned decision" .-> Grilling
@@ -73,7 +74,10 @@ flowchart TD
   Triage --> AgentBrief["AGENT-BRIEF.md"]
   Triage --> OutOfScope["OUT-OF-SCOPE.md / .out-of-scope/"]
   Triage --> Ready
-  Triage -. "needs fleshing out" .-> GrillDocs
+  Triage -. "conversation-only decision" .-> Grilling
+  Triage -. "domain-affecting decision" .-> GrillDocs
+  Triage -. "multi-decision route" .-> Wayfinder
+  Triage -. "settled multi-slice source" .-> ToTickets
   Tracker -. "ready contract" .-> Triage
 
   Ready --> Implement["implement"]
@@ -85,6 +89,7 @@ flowchart TD
   Implement --> Tracker
   Implement -. "unsettled work" .-> Shape
   Implement -. "unsliced source" .-> ToTickets
+  Implement -. "conflict-only admission" .-> Conflict
   Parallel --> Contract
   Parallel --> Tracker
   Parallel --> DomainRouter
@@ -205,7 +210,7 @@ Use one verb for each accepted relationship:
 | `grilling` | Recommend and stop | `$prototype` | A design evidence gap needs a runnable verdict. |
 | `grilling` | Recommend and stop | `$diagnosing-bugs` | Expected behavior, the exact symptom, cause, or a trusted reproduction remains uncertain and blocks every available interview branch; Diagnosis remains uninvoked and no fix is authorized. |
 | `grilling` | Recommend and stop | `$to-questionnaire` | An identifiable external stakeholder owns evidence that must be collected asynchronously. |
-| `grilling` | Recommend and stop | `$handoff` | Evidence work must cross into a fresh session. |
+| `grilling` | Recommend and stop | `$handoff` | The intact gap must cross into a fresh context; preserve its evidence or decision owner and use Handoff only as transport. |
 | `grilling` | Recommend and stop | `$wayfinder` | Several interdependent unresolved decisions or non-conversational prerequisites need a tracker-backed multi-session route. |
 | `to-questionnaire` | Recommend and stop | `$research` | Inspectable primary sources can answer the gap. |
 | `to-questionnaire` | Recommend and stop | `$grilling` | The current user owns the unresolved conversation-only decision. |
@@ -228,19 +233,23 @@ Use one verb for each accepted relationship:
 | `to-tickets` | Recommend and stop | `$implement` | One ticket is ready, or overlap, a serial tripwire, uncertain independence, or uneconomic parallel dispatch requires the first ready ticket in tracker order. |
 | `to-tickets` | Recommend and stop | `$parallel-implement` | An explicitly requested top-level parent-delivery run has a non-empty exhaustive Ready-for-agent graph; Parallel Implement owns qualified serial or concurrent delivery. |
 | `to-tickets` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
-| `triage` | Recommend and stop | `$grill-with-docs` | Maintainer-owned shaping needs a direct user decision with durable capture; stop before mutation and resume Triage later with the result. |
+| `triage` | Recommend and stop | `$grilling` | One maintainer-owned conversation-only decision needs direct resolution; stop before mutation and resume the same item with the intact result. |
+| `triage` | Recommend and stop | `$grill-with-docs` | One maintainer-owned decision may change durable domain terms, Invariants, Context Relationships, or an ADR; stop before mutation and resume the same item with the intact result. |
+| `triage` | Recommend and stop | `$wayfinder` | A bounded destination still has several interdependent decisions or non-conversational prerequisites; leave the item unchanged and start Wayfinder only if the user chooses it. |
+| `triage` | Recommend and stop | `$to-tickets` | Settled source requires several independently completable implementation slices; leave readiness unchanged and pass the intact source for user-selected graph creation. |
 | `triage` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `implement` | Invoke | `$tdd` | New behavior is settled and red-testable, or expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known. |
 | `implement` | Invoke | `$diagnosing-bugs` | A bug's exact symptom, cause, or trusted red-capable reproduction is uncertain; return the bounded diagnosis packet, including regression proof or an explicit seam gap when fix mode succeeds. |
 | `implement` | Invoke | `$change-review` | The selected ordinary diff or PR, or bounded Repair generation, needs fixed-snapshot review. |
 | `implement` | Invoke | `$high-assurance-review` | The selected target is a release candidate or matches a supported high-risk trigger. |
+| `implement` | Hand off | `$resolving-merge-conflicts` | Admission finds an existing conflict-only state rather than the selected ready item; supply the exact operation, goal, state, scope, authorities, proof expectation, and Return owner, then stop. |
 | `implement` | Recommend and stop | `$to-tickets` | A verified landed predecessor or post-publication implementation change invalidated the selected ticket's commitments or graph facts; return the implementation identity, before-and-after evidence, invalidated fields, and affected ticket. Ordinary malformed or unsettled source returns to its caller, source, or triage owner. |
 | `implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `parallel-implement` | Invoke | `$tdd` | A lane worker has red-testable new behavior, or a bug whose expected behavior, exact symptom, cause, and trusted red-capable reproduction are known. |
 | `parallel-implement` | Invoke | `$diagnosing-bugs` | A lane worker's bug has uncertain expected behavior, exact symptom, cause, or trusted red-capable reproduction; return to the same lane worker. |
 | `parallel-implement` | Invoke | `$change-review` | The drained proved ordinary candidate or PR, or repaired successor, needs fixed-snapshot Spec and Standards review; judgment returns to the root. |
 | `parallel-implement` | Invoke | `$high-assurance-review` | The drained proved target is a release candidate or matches a supported high-risk trigger; the terminal decision returns to the root. |
-| `parallel-implement` | Invoke | `$resolving-merge-conflicts` | Serial landing enters preserved conflict or partial Git state; exact verified state and the authorized next boundary return to the root. |
+| `parallel-implement` | Invoke | `$resolving-merge-conflicts` | Serial landing enters preserved conflict or partial Git state; supply operation identity and goal, exact state, scope, both authorities, unrelated state, proof expectation, and root Return owner. Resume only from the resolver's fresh exact-state Return. |
 | `parallel-implement` | Recommend and stop | `$to-tickets` | Admission finds an actually incomplete or contradictory graph, or verified implementation invalidates remaining graph semantics; return one exhaustive evidence-backed repair packet. Ordinary blockers, regressions, conflicts, and review findings remain in Parallel Implement. |
 | `parallel-implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `tdd` | Hand off | `$diagnosing-bugs` | A bug's expected behavior, exact symptom, cause, or trusted red-capable reproduction is uncertain. |
@@ -268,7 +277,7 @@ Use one verb for each accepted relationship:
 | `audit-codebase` | Recommend and stop | `$implement` | One analyzed non-reduction item has settled outcome, acceptance, commitment boundary, scope and write authority, Source Trace, proof, and finite Repair budget; Audit publishes an exact report-backed pickup and leaves implementation unstarted. |
 | `simplify-code` | Recommend and stop | `$audit-codebase` | The request needs repository mapping, wide discovery, or multi-subsystem audit coverage. |
 | `codebase-design` | Recommend and stop | `$audit-codebase` | The request needs codebase-wide mapping and improvement discovery. |
-| `handoff` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
+| `handoff` | Recommend and stop | `$repo-bootstrap` | The exact Handoff target cannot be proved ignored because the disposable-artifact setup is missing or incompatible; return `not-created` and leave Repo Bootstrap unstarted. |
 
 Wayfinder invokes Domain Modeling once for an uncovered settled closing
 consequence; Audit Codebase recommends it and stops for user-selected settled
@@ -315,16 +324,16 @@ and
 
 | Skill | Supporting files own |
 | --- | --- |
-| `writing-great-skills` | `GLOSSARY.md`: skill-authoring vocabulary; `BEHAVIOR-EVALS.md`: counterfactual wording evaluation |
+| `writing-great-skills` | `GLOSSARY.md`: invocation, behavior-shape, information-hierarchy, pruning, and completion vocabulary; `BEHAVIOR-EVALS.md`: counterfactual wording evaluation |
 | `codebase-design` | `DIRECT-DESIGN.md`: direct pass, material Interface, safe Return, and packet; `DEEPENING.md`: dependency/Seam, test-portfolio, Change Closure, and migration discipline; `DESIGN-IT-TWICE.md`: alternative Interface exploration |
 | `domain-modeling` | `CONTEXT-FORMAT.md`: glossary and context-map format; `ADR-FORMAT.md`: ADR gate and format |
 | `tdd` | `tests.md`, `mocking.md`, `refactoring.md`: examples and branch mechanics |
 | `prototype` | `LOGIC.md`, `UI.md`, and `MEASURE.md`: decision-bearing branch mechanics. One decision branch loads; `SKILL.md` owns the universal lifecycle, reconciliation, and Return. |
-| `triage` | `ATTENTION-SCAN.md`, `SPECIFIC-ITEM.md`, `QUICK-OVERRIDE.md`: branch procedures; `AGENT-BRIEF.md`: Codex-ready brief and Ready Gate; `AGENT-BRIEF-EXAMPLES.md`: branch evidence emphasis; `OUT-OF-SCOPE.md`: rejected-work knowledge base |
+| `triage` | `ATTENTION-SCAN.md`, `SPECIFIC-ITEM.md`, `QUICK-OVERRIDE.md`: branch procedures; `AGENT-BRIEF.md`: agent/human ready brief, branch emphasis, and Ready Gate; `OUT-OF-SCOPE.md`: rejected-work knowledge base |
 | `repo-bootstrap` | Tracker, label, domain, and engineering-contract seeds; `setup-schema.json`: aggregate compatibility fingerprint; per-file source markers and `scripts/validate_setup.py`: complete target-repo setup-surface reconciliation and validation |
 | `wayfinder` | `MAP-FORMAT.md`: canonical map and ticket shape, empty-fog sentinel, and exclusion pointers; `SKILL.md`: Chart, Advance, Maintain, Closure, and foggy map lifecycle semantics |
 | `research` | One cited repo-local Markdown note per source question |
-| `resolving-merge-conflicts` | Three-way merge/rebase/cherry-pick/revert and marker-only conflict process, proof, return packet, and finish boundary |
+| `resolving-merge-conflicts` | `OPERATIONS.md`: branch-only operation roles, conflict classes, finish checks, and recovery decisions; `SKILL.md`: universal State/Trace/Reconcile/Prove/Finish contract, authority, typed Return, and completion |
 | `change-review`, `high-assurance-review`, `implement`, `parallel-implement` | `change-review/FINDING-CONTRACT.md`: shared axes, review classes, supported-risk and finding admission, remediation classes, and remediation-review bound; `change-review/SMELL-BASELINE.md`: fallback Standards reference when repo standards are thin |
 | `audit-codebase` | `DEFECT-CONTRACT.md`: defects and gaps; `QUALITY-LENS.md`: concept triage and opportunity admission; `RELIABILITY-LENS.md`, `DOMAIN-LENS.md`, `DESIGN-LENS.md`, `SIMPLIFICATION-LENS.md`, and `CODING-PRACTICES-LENS.md`: classified audit concepts including Behavior-Owned Test Portfolio; `CANDIDATE-CONTRACT.md`: improvement-candidate admission, analysis, decision briefs, and one next-step suggestion; `PERFORMANCE-LENS.md`: conditional measurement; `HTML-REPORT.md`: sole durable linked report |
 | `parallel-implement` | `WORKER-BRIEF.md`, `INTEGRATOR-BRIEF.md`, `CODEX-WORKTREE-LAUNCH.md`: compact lane contracts and one-step checkout opening; `run_ledger.py` and `RUN-LEDGER.md`: intuitive campaign facade over canonical event state, strict authority validation, generated ledger, and closeout plan |
@@ -334,13 +343,17 @@ and
 - The global template exposes bootstrap handles; `skill-router` routes; neither teaches downstream workflow procedures.
 - The bundled system `skill-creator` owns new-package scaffolding and metadata mechanics. `$writing-great-skills` owns semantic quality for new and existing canonical skill instructions, stops after canonical proof, and does not absorb installation or delivery.
 - Setup docs own tracker, labels, domain routing, and engineering-contract details. Skills should point there instead of restating those mechanics.
-- `$grill-with-docs` is the narrowly implicitly invocable, direct-user composer of `$grilling` and `$domain-modeling`; the owned skills do not invoke each other. Direct Domain Modeling may ask focused questions only about terms, invariants, bounded contexts, and relationships. Missing context authority defaults to `render only`, while ADR approval remains separate. During composition every settled material answer crosses Relay, Domain Modeling alone accumulates the current Domain Delta, and collisions return before dependent questioning. The composer returns only `Confirmed`, `Evidence gap`, or `Blocked` with intact component payloads and starts no downstream route. Wayfinder invokes Domain Modeling only for settled closing consequences and recommends Grilling for a conversation-only user decision or Grill With Docs when durable domain capture may change. Audit Codebase may recommend Domain Modeling for settled capture. Triage, Skill Router, Research, and Audit Codebase may recommend Grill With Docs and stop under their own domain-affecting decision predicates. Domain Modeling returns every residual to its direct user or caller and stops.
+- `$grill-with-docs` is the narrowly implicitly invocable, direct-user composer of `$grilling` and `$domain-modeling`; the owned skills do not invoke each other. Direct Domain Modeling may ask focused questions only about terms, invariants, bounded contexts, and relationships. Missing context authority defaults to `render only`, while ADR approval remains separate. During composition every settled material answer crosses Relay, Domain Modeling alone accumulates the current Domain Delta, and collisions return before dependent questioning. The composer returns only `Confirmed`, `Evidence gap`, or `Blocked` with intact component payloads and starts no downstream route. Wayfinder and Triage recommend Grilling for a conversation-only user decision or Grill With Docs when durable domain capture may change. Wayfinder invokes Domain Modeling only for settled closing consequences; Audit Codebase may recommend Domain Modeling for settled capture. Skill Router, Research, and Audit Codebase may recommend Grill With Docs and stop under their own domain-affecting decision predicates. Domain Modeling returns every residual to its direct user or caller and stops.
 - `to-questionnaire` owns Direct async stakeholder elicitation into one verified artifact only after its admissibility gate; source-answerable gaps recommend `$research` and stop, while a current-user-owned decision recommends `$grilling` and stops. A user may supply an origin owner and identity as context for the answer-return destination; this is not delegated invocation. The skill does not contact the recipient, wait, ingest or analyze answers, continue the origin workflow, mutate trackers or domain truth, or synthesize a specification.
 - `domain-modeling` is the only skill that writes `CONTEXT.md`, `CONTEXT-MAP.md`, or approved ADR truth; `repo-bootstrap` configures and verifies routing before persistence across a required topology transition, and vocabulary consumers follow `docs/agents/domain.md`.
 - `to-spec` owns parent spec synthesis and tracker publication; `to-tickets` owns implementation issue slicing.
 - `wayfinder` owns foggy multi-session maps, ticket resolution authority, consequence-only Maintain repairs, fog disposition, and Prototype ticket participation; tracker docs own transport, child and map claim identity, stale-claim recovery, blocking, and resolution mechanics. `prototype` owns judgment mechanics, probe execution, supported results, artifact reconciliation, and truthful terminal Return. Every Prototype return stays local to its current caller or the user; Prototype starts no downstream route.
 - `research` owns one bounded source question, claim-owning evidence judgment, and one authorized cited note or verified inline result. A user request or caller packet must authorize one note path before that tracked mutation; otherwise Research returns cited inline evidence, a blocker, or typed `not-admitted` classification without choosing the caller's next route.
-- `resolving-merge-conflicts` inspects State and Trace read-only by default. Reconciliation authority permits edits only to in-scope conflicts; finish authority separately permits staging and continuation. Abort, hard reset, or discarding a side requires explicit approval.
+- `resolving-merge-conflicts` inspects State and Trace read-only by default.
+  Reconciliation authority permits only in-scope working-tree changes; finish
+  authority separately permits exact-path staging and native continuation.
+  Prepared and finished outcomes remain distinct. Recovery actions and
+  whole-side selection require action-specific authority.
 - Tracker docs own transport, tracker commands, Ready-for-agent state and
   navigation, and Mutation read-back. `triage` owns incoming classification,
   verification, its Codex-ready brief and Ready Gate, state transitions, and
@@ -354,6 +367,6 @@ and
 - `high-assurance-review` may run its own bounded read-only reviewer passes only when selected as the review route; it is not a second implementation orchestrator.
 - `audit-codebase` owns the exhaustive system/subsystem map, one user-selected subsystem audit, and one user-selected improvement-candidate analysis per invocation over one immutable repository baseline. It accumulates verified items, retained complexity, candidate strength, decision briefs, returned decision packets, and coverage state in one durable offline HTML report. It ranks candidates only inside an audited subsystem, ranks no subsystem, suggests exactly zero or one candidate next step, starts no downstream work, and returns selection authority to the user.
 - `simplify-code` owns one standalone cleanup patch or an explicitly bounded serial `until-clean` campaign with a finite cut budget, strict net-reduction ledger, and terminal stop condition under before-and-after proof gates. It does not own feature work, bug diagnosis, public-contract decisions, wide improvement surveys, staging, commits, or tracker closeout.
-- `handoff` carries pointers across sessions; it should reference durable artifacts, not duplicate specs, issues, ADRs, commits, or diffs.
+- `handoff` is an explicit transport leaf: it carries exact pointers across a shared work root, preserves the active owner, and never duplicates durable truth, routes new work, or resumes from stale state.
 - `.tmp/` artifacts are disposable unless a skill explicitly preserves them for the user or next session.
 - `.scratch/` artifacts are durable, version-controlled local state; include in-scope changes in review and staging.

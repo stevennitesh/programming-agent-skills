@@ -36,3 +36,7 @@ Inspect filenames and headings, search by domain concept, and read likely matche
 - **Rejected bug:** explain the rejection; no rejection record is needed.
 
 For a rejected enhancement, return the matched or proposed concept path, durable reason, `Prior requests` delta, and required tracker outcome to the active triage branch. A knowledge-base change may occur only inside that branch's explicitly approved mutation packet; the branch owns application and proof.
+
+Before writing, refresh the exact target and unrelated worktree state. Reread
+the changed record after writing and report the attributable local mutation.
+Leave it unstaged and stop before commit, push, or other Git delivery.

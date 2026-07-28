@@ -42,7 +42,10 @@ For each orchestrator-accepted worker packet:
 4. Land exactly one item through the recorded mode.
 5. Verify the landed diff, run only invalidated interaction or readiness proof, append structured evidence through `run_ledger.py`, and report the work item, worker and integration SHAs, landing mode, changed files, validation, skipped checks, overlap or conflicts, decision, next need, risk, new `HEAD`, and status.
 
-**Conflict:** stop and preserve partial state. Report the operation, status, unmerged paths, worker commit, current `HEAD`, recorded landing mode, and landing authority; return the conflict packet to the orchestrator's routed recovery boundary.
+**Conflict:** stop and preserve partial state. Return the operation and goal,
+exact status and unmerged paths, worker commit and current `HEAD`, scope,
+reconciliation and finish authorities, unrelated index and worktree state,
+recorded landing mode, proof expectation, and orchestrator Return owner.
 
 **Proof budget:** run broad validation only at routed wave boundaries; final broad validation belongs to the review-ready handoff.
 

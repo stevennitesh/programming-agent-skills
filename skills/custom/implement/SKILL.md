@@ -11,47 +11,48 @@ proved, reviewed, and committed repository result.
 Implement owns the single-item Charter, bounded repository mutation, technique
 inside settled commitments, integration of inner proof Returns, proportionate
 proof, admitted bounded Repair, intentional staging and one commit, configured
-tracker closeout, and the final Return. The caller owns product and
-architecture intent, public and data contracts, security and privacy posture,
-scope, permissions, irreversible external actions, and residual-risk
-acceptance. Push requires separate authority.
+tracker closeout, and the final Return. The caller owns product and architecture
+intent, public and data contracts, security and privacy posture, scope,
+permissions, irreversible external actions, and residual-risk acceptance. Push
+requires separate authority.
 
 ## Admit
 
 Accept one caller-selected item only when its outcome, observable acceptance,
 commitment boundary, scope authority, and Source Trace are settled. For
-tracker-backed work, also require the configured Ready-for-agent facts:
-bounded slice, dependency state, proof lane, expected write scope,
-parallel-safety judgment, and scope fence.
+tracker-backed work, also require the configured Ready-for-agent facts: bounded
+slice, dependency state, proof lane, expected write scope, parallel-safety
+judgment, and scope fence.
 
 Preserve the complete source-owned packet: grounding and Repository Reuse,
-Commitment Boundary, Invariants and Trust Boundaries, supported states,
-failure, recovery, compatibility, environmental and observability
-obligations, prohibited behavior, proof responsibility, closure, scope fence,
-explicit Repair budget, migration, domain or ADR facts, and exclusions. A
-named target remains binding; do not substitute another item or make blocked
-or incomplete work ready.
+Commitment Boundary, Invariants and Trust Boundaries, supported states, failure,
+recovery, compatibility, environmental and observability obligations, prohibited
+behavior, proof responsibility, closure, scope fence, explicit Repair budget,
+migration, domain or ADR facts, and exclusions. A named target remains binding;
+do not substitute another item or make blocked or incomplete work ready.
 
 Return ordinary unsettled source, contradictory acceptance, missing readiness,
-or a malformed item to its caller, source, or triage owner before production
-or tracker mutation. Recommend `$to-tickets` only when a verified landed
+or a malformed item to its caller, source, or triage owner before production or
+tracker mutation. Recommend `$to-tickets` only when a verified landed
 predecessor or post-publication implementation change invalidated the current
 ticket's commitments or graph facts. Name the prior ticket or commit,
 before-and-after evidence, invalidated fields, and affected ticket, then stop
 without mutation or widening. Route an exhaustive parent graph to
-`$parallel-implement`, review-only work to `$change-review` or
-`$high-assurance-review`, and conflict-only reconciliation to
-`$resolving-merge-conflicts`.
+`$parallel-implement` and review-only work to `$change-review` or
+`$high-assurance-review`. Hand off conflict-only admission to
+`$resolving-merge-conflicts` and stop. Supply the operation and goal, exact
+preserved Git state, scope, reconciliation and finish authorities, unrelated
+state, expected proof, and Return owner.
 
 Read the target repository's applicable setup, engineering, and domain owners;
 read tracker and label owners only for tracker-backed work. Missing or
-incompatible setup Returns a `$repo-bootstrap` precondition before work-item
-or tracker mutation.
+incompatible setup Returns a `$repo-bootstrap` precondition before work-item or
+tracker mutation.
 
 Reconcile the complete packet, dependencies, repository state, applicable
-tracker state, authority, fixed point, worktree, index, and unrelated work.
-Stop without a claim when a blocker, contradiction, unsafe overlap, or
-unresolved commitment remains.
+tracker state, authority, fixed point, worktree, index, and unrelated work. Stop
+without a claim when a blocker, contradiction, unsafe overlap, or unresolved
+commitment remains.
 
 For tracker-backed work, claim through the configured tracker and apply its
 Mutation read-back. A competing, partial, or mismatched claim blocks
@@ -69,9 +70,9 @@ contradicted seam. Generate alternatives only when material uncertainty or a
 real tradeoff remains, then choose one narrow observable path under the routed
 Code Quality Contract: test necessity, available reuse, ownership, depth,
 clarity, proof, and domain fidelity. A technique that changes a commitment,
-permission, supported environment, or scope Returns for caller judgment.
-Honor the packet's canonical proof responsibility; otherwise identify the
-nearest existing Behavior Test or proof lane before adding one.
+permission, supported environment, or scope Returns for caller judgment. Honor
+the packet's canonical proof responsibility; otherwise identify the nearest
+existing Behavior Test or proof lane before adding one.
 
 Invoke `$tdd` when behavior and a red-capable seam are settled. For a bug, use
 `$tdd` only when expected behavior, exact symptom, cause, and a trusted
@@ -83,12 +84,12 @@ mode. Integrate only a complete bounded Return that preserves the Charter.
 Implement and prove the narrow path, then expand through every assigned
 acceptance, prohibited behavior, supported state, invariant, Trust Boundary,
 failure, recovery, compatibility, environmental, and observability obligation.
-Keep one bounded slice and proof story: tie every changed artifact to
-acceptance or its necessary support purpose, include required coupled surfaces,
-and Return adjacent work.
+Keep one bounded slice and proof story: tie every changed artifact to acceptance
+or its necessary support purpose, include required coupled surfaces, and Return
+adjacent work.
 
-Bind proof to the exact candidate and its proof inputs. Reuse it while the
-exact candidate and proof inputs remain unchanged; rerun only invalidated or
+Bind proof to the exact candidate and its proof inputs. Reuse it while the exact
+candidate and proof inputs remain unchanged; rerun only invalidated or
 repository-required proof. Reuse or extend the canonical test owner when it can
 express the responsibility clearly. Add a separate test only for distinct
 behavior, Invariant, oracle, Proof Seam, state or failure branch, risk, or
@@ -104,25 +105,24 @@ flags, tests, configuration, documentation, and migrations. Consolidate
 slice-created or superseded tests only after the surviving portfolio preserves
 each distinct responsibility and diagnostic clarity. Retain a path only for a
 supported compatibility obligation with a named owner, reason, proof, and
-Removal Trigger.
-Reconcile the candidate, affected proof, complete diff, and disposable state.
-Keep the last proved candidate when cleanup would change commitments or
-unrelated work.
+Removal Trigger. Reconcile the candidate, affected proof, complete diff, and
+disposable state. Keep the last proved candidate when cleanup would change
+commitments or unrelated work.
 
 ## Review
 
 Stage only selected work. Reuse current acceptance proof for the same exact
 staged tree; run only missing, invalidated, or repository-required staged
 checks, then pin one immutable proved candidate. Invoke exactly one formal
-route: `$change-review` for an ordinary diff or PR, or
-`$high-assurance-review` for a release candidate or supported high-risk diff
-or PR. Supply `Spec required: yes`; the required Spec, Charter, Source Trace,
-fixed point, exact candidate, proof, skips, and supported risk trigger when
-applicable. The reviewer returns judgment only.
+route: `$change-review` for an ordinary diff or PR, or `$high-assurance-review`
+for a release candidate or supported high-risk diff or PR. Supply `Spec
+required: yes`; the required Spec, Charter, Source Trace, fixed point, exact
+candidate, proof, skips, and supported risk trigger when applicable. The
+reviewer returns judgment only.
 
-Accept only a complete current review with no admitted blocker and no
-unaccepted residual under repository policy. Before Repair, read
-`$change-review`'s Finding Contract and validate the complete report.
+Accept only a complete current review with no admitted blocker and no unaccepted
+residual under repository policy. Before Repair, read `$change-review`'s Finding
+Contract and validate the complete report.
 
 Repair only a complete caller-admitted, Charter-preserving, proof-bounded batch
 within the frozen budget. A mixed-authority, partial, out-of-scope, or
@@ -154,9 +154,9 @@ fabricated tracker content.
 
 After the commit is verified, close GitHub or GitLab through its configured
 connector, apply Mutation read-back, and release the claim. A partial or failed
-closeout Returns the commit identity, observed tracker state, applied and
-failed effects, and the safest configured recovery action. Local Markdown and
-direct items perform no post-commit tracker mutation.
+closeout Returns the commit identity, observed tracker state, applied and failed
+effects, and the safest configured recovery action. Local Markdown and direct
+items perform no post-commit tracker mutation.
 
 Push only when separately authorized, then verify the exact approved commit at
 the remote.
@@ -171,10 +171,10 @@ succeed.
 Otherwise Return `partial` or `blocked` with the failed gate, repository and
 tracker state, retained changes and evidence, claim state, skipped checks,
 residual risk, authority needed, and one safest recovery or resume action. A
-Local Markdown closeout not included in the verified commit is staged
-incomplete tracker state. A connector item remains open until its post-commit
-closeout reads back. Release a claim when active work ends, subject to the
-configured tracker recovery rules.
+Local Markdown closeout not included in the verified commit is staged incomplete
+tracker state. A connector item remains open until its post-commit closeout
+reads back. Release a claim when active work ends, subject to the configured
+tracker recovery rules.
 
 Stop before another item, parent closure, deployment, PR creation, merge, or
 unauthorized push.
