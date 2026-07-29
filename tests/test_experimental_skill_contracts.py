@@ -304,7 +304,7 @@ def test_current_implement_preserves_promoted_and_author_contract() -> None:
     } == inventory
 
     assert tree_hash(canonical_dir) == (
-        "73cf7a816d35f0594c020760ae7deb217d28b67b0b8b276db4a1815fda631988"
+        "815471beb0e4e1b90421f993d68b0be91dbd43cb0f5fa8854837b75e00c87dab"
     )
     promoted = (canonical_dir / "SKILL.md").read_text(encoding="utf-8")
     normalized = " ".join(promoted.split())
@@ -316,12 +316,14 @@ def test_current_implement_preserves_promoted_and_author_contract() -> None:
         "Hand off conflict-only admission",
         "Freeze one immutable Charter",
         "default the selected-item budget to exactly `2`",
-        "Invoke exactly one formal route",
+        "Pin routing classification and Finding Contract",
         "complete caller-admitted, Charter-preserving, proof-bounded batch",
         "For Local Markdown, append the final closeout packet",
         "retain the open item and claim through Lock and commit",
-        "Commit once",
-        "commit tree to equal the locked tree",
+        "Produce exactly one commit",
+        "read-back proves `HEAD` unchanged",
+        "terminal `partial` or `blocked` Return releases the claim",
+        "require its tree to equal the locked tree",
         "partial or failed closeout Returns",
         "Return `complete` only after every applicable gate reads back",
     ):

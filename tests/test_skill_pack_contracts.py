@@ -284,7 +284,9 @@ def test_github_relationship_modes_are_explicit_before_publication() -> None:
     assert "resolve their operation and read-back routes once before" in (
         normalized_tickets
     )
-    assert "The first authorized child proves the configured" in normalized_tickets
+    assert "The first authorized child and its read-back prove live" in (
+        normalized_tickets
+    )
     assert "first applicable blocking edge" in normalized_tickets
     assert (
         "Never switch the frozen relationship representation" in normalized_tickets
@@ -1583,22 +1585,23 @@ def test_implement_selects_one_risk_scaled_review_route() -> None:
     )[0]
     review_flat = " ".join(review_section.split())
     assert "Stage only selected work" in review_flat
-    assert "Choose exactly one formal review route for the run" in review_flat
+    assert "Pin routing classification and Finding Contract" in review_flat
+    assert "then choose exactly one formal review route for the run" in review_flat
     assert "Invoke it once for the initial proved candidate" in review_flat
     assert "invoke the same route once in remediation mode" in review_flat
     assert "request an explicitly staged-only review" in review_flat
     assert "Never unstage foreign work" in review_flat
     assert "Return without Review" in review_flat
-    assert re.findall(
-        r"`\$(change-review|high-assurance-review)`", review_section
-    )[:2] == [
+    assert set(
+        re.findall(r"`\$(change-review|high-assurance-review)`", review_section)
+    ) == {
         "change-review",
         "high-assurance-review",
-    ]
+    }
     assert "ordinary diff or PR" in review_flat
     assert "release candidate or supported high-risk diff or PR" in review_flat
     assert "supported risk trigger when applicable" in review_flat
-    assert "Finding Contract" in review_flat
+    assert "already-loaded Finding Contract" in review_flat
     assert "complete caller-admitted" in review_flat
     assert "mixed-authority, partial, out-of-scope, or" in review_flat
 
@@ -2163,11 +2166,27 @@ def test_writing_great_skills_keeps_shape_and_relationship_boundary() -> None:
     ))
     assert "Make canonical skill behavior predictable" in normalized_skill
     assert "## Behavior Shape" in skill
-    assert "state, authority, actor, artifact, or evidence" in normalized_skill
     assert (
         "Each gate names its condition, passing evidence, and safe failure action"
         in normalized_skill
     )
+    for contract in (
+        "narrowest shared owner",
+        "one materially different applicable case",
+        "closest non-applicable case",
+        "every term that changes admission, branching, ordering, pass/fail, or completion",
+        "counting scope and invalidation condition",
+        "derived view as a projection of its owning facts",
+        "Prune removal test to every proposed step, required field, artifact, view, or check",
+        "transition that could invalidate it",
+        "directly checkable invariants before the judgment or action they protect",
+        "failed gate to the smallest dependent action or output",
+        "each independent supported result",
+        "its own weakest load-bearing evidence",
+        "exact claim, candidate state, and invalidation boundary",
+        "does not establish unobserved live behavior",
+    ):
+        assert contract in normalized_skill
     assert "## Prune" in skill
     assert all(term in skill for term in (
         "`Keep`",
@@ -2529,13 +2548,21 @@ def assert_to_tickets_semantic_contract(
         assert profile_field in shape_contract
     assert "finite nonnegative repair generation budget" in shape_contract
     assert "operational and observable acceptance" in shape_contract
+    assert "test every acceptance term" in shape_contract
+    assert "operational definition or exact authoritative owner" in shape_contract
+    assert "rather than delegate meaning to implementation" in shape_contract
+    assert "`not applicable — <reason>` instead of padding" in shape_contract
+    assert "never use it for identity, acceptance, scope, proof lane" in shape_contract
     assert "preserve an explicit source or caller value" in shape_contract
     assert "otherwise default exactly to `2`" in shape_contract
     assert "never infer a higher budget from ticket size or risk" in shape_contract
     assert "packet readiness from frontier eligibility" in shape_contract
     assert "ready-for-human" in shape_contract
     assert "mixed graphs may contain both states" in shape_contract
-    assert "non-empty actionable frontier" in shape_contract
+    assert "their union is the actionable frontier" in shape_contract
+    assert "at least one must be non-empty" in shape_contract
+    assert "dependency order is topological" in shape_contract
+    assert "stable tracker order breaks ties" in shape_contract
     assert "ready-for-agent and ready-for-human frontiers separately" in (
         shape_contract
     )
@@ -2544,6 +2571,10 @@ def assert_to_tickets_semantic_contract(
 
     publish_contract = level_two_section("Publish")
     assert re.search(r"freeze .*before .*mutation", publish_contract, re.S)
+    assert "preflight proves that configured operations exist" in normalized_runtime
+    assert "only the first real mutation proves live behavior" in normalized_runtime
+    assert "prove live parent/child behavior" in publish_contract
+    assert "prove live dependency behavior" in publish_contract
     assert re.search(
         r"create .*relationship.*activate each ticket's mapped ready-for-agent",
         publish_contract,
@@ -2577,6 +2608,12 @@ def assert_to_tickets_semantic_contract(
     assert "top-level" in return_contract
     assert "non-empty" in return_contract
     assert "parent" in return_contract
+    assert "compact cross-ticket proof-owner and serialization summaries" in (
+        return_contract
+    )
+    assert "ticket bodies remain authoritative" in return_contract
+    assert "successors refetch their pointers" in return_contract
+    assert "per-ticket execution profiles and state matrices" not in return_contract
     assert "no successor" in return_contract or "without starting" in return_contract
 
     if profile == "incumbent":
@@ -2630,7 +2667,7 @@ def assert_to_tickets_semantic_contract(
     ):
         assert result_kind in return_contract
     assert "one or more implementation tickets" in shape_contract
-    assert "non-empty actionable frontier" in shape_contract
+    assert "their union is the actionable frontier" in shape_contract
     assert "consumer repair" not in return_contract
     assert "no-ticket" not in return_contract
     assert "exact body" not in publish_contract
@@ -2655,7 +2692,7 @@ def test_to_tickets_preserves_coverage_readiness_and_frontier_contract() -> None
     packages = (
         (
             CUSTOM / "to-tickets",
-            "5906862923b1dbdd0c2cc1426ff921f386f106996ef816acc7444196b47aa472",
+            "d24e9829d9d95f8e1823585a40e5eeb99db654f69482ee3a0736e2aad88f108f",
             "prompt3-candidate",
         ),
     )
@@ -3191,6 +3228,7 @@ def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -
 
 def test_local_tracker_closeout_enters_the_lock_snapshot() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
+    implement_flat = " ".join(implement.split())
 
     review_tree = implement.index("pin one immutable proved candidate")
     closeout = implement.index("For Local Markdown, append the final closeout")
@@ -3199,6 +3237,18 @@ def test_local_tracker_closeout_enters_the_lock_snapshot() -> None:
     assert review_tree < closeout < lock_tree
     assert "apply Mutation read-back" in implement
     assert "Any other review-to-lock delta Returns to formal review" in implement
+    assert "Only configured mechanical closeout fields" in implement_flat
+    assert "new narrative or semantic content Returns to formal review" in (
+        implement_flat
+    )
+    assert "Produce exactly one commit" in implement_flat
+    assert "read-back proves `HEAD` unchanged" in implement_flat
+    assert "do not retry blindly" in implement_flat
+    assert "A retry inside the same active run is not a Return" in implement_flat
+    assert "terminal `partial` or `blocked` Return releases the claim" in (
+        implement_flat
+    )
+    assert "named retained custodian" in implement_flat
 
 
 def test_diagnosis_returns_to_one_implementation_owner() -> None:

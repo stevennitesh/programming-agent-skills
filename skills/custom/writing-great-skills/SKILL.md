@@ -38,6 +38,12 @@ Inspect an installed mirror only when installation-state evidence is explicitly
 requested. Report observed parity or drift and leave repair to the installation
 owner.
 
+When promoting a lesson beyond the incident or skill that exposed it, admit it
+only at the narrowest shared owner. Name the behavior class, observable
+applicability condition, one materially different applicable case, and the
+closest non-applicable case. Keep incident-specific mechanics local when
+transfer cannot be shown.
+
 ## Behavior Shape
 
 Give each behavior one owner for its rule, admission, authority, inputs,
@@ -45,12 +51,27 @@ outputs, evidence, failure Return, and completion. Preserve every relationship's
 callee, observable trigger, authority, and Return. Keep the local contract slice
 and point to foreign procedure.
 
+Operationalize every term that changes admission, branching, ordering,
+pass/fail, or completion: define its observable rule and, when applicable, its
+counting scope and invalidation condition, or point to its exact authority.
+
+Treat a derived view as a projection of its owning facts unless it has
+independent behavior; reuse the owner and update boundary rather than creating
+a second ledger, state machine, or proof loop.
+
 Make the outcome, applicable branches, authority, action, evidence, safe
 failure, Return, and completion discoverable. Use the fewest meaningful state
-transitions. A step earns its place only when it changes state, authority,
-actor, artifact, or evidence. Put cross-cutting checks in gates at the boundary
-they protect. Each gate names its condition, passing evidence, and safe failure
-action. Make completion checkable and demanding enough to force the required
+transitions. Apply the Prune removal test to every proposed step, required
+field, artifact, view, or check. Put cross-cutting checks in gates at the
+boundary they protect. Each gate names its condition, passing evidence, and
+safe failure action. Place directly checkable invariants before the judgment or
+action they protect; do not use review as a substitute for checks the skill can
+execute itself. Recheck an established invariant only after a transition that
+could invalidate it. Scope a failed gate to the smallest dependent action or
+output unless authority or safety requires a full stop. Preserve each
+independent supported result, but calibrate its status, certainty, and precision
+to its own weakest load-bearing evidence; never imply the failed branch
+completed. Make completion checkable and demanding enough to force the required
 legwork.
 
 Treat an implicitly invocable description as the routing predicate: name
@@ -81,7 +102,9 @@ necessary guardrail with its safe action.
 ## Claim-Matched Proof
 
 Use read-back for exact bytes and mutations, focused structural checks for
-machine contracts, and relationship traces for ownership. When a claim
+machine contracts, and relationship traces for ownership. Bind evidence to the
+exact claim, candidate state, and invalidation boundary. Capability or
+structural proof does not establish unobserved live behavior. When a claim
 attributes changed invocation, judgment, action, context loading, Return, or
 completion to exact wording, load [BEHAVIOR-EVALS.md](BEHAVIOR-EVALS.md) and use
 uncontaminated direct controls with fixed tasks and rubrics, fresh contexts,

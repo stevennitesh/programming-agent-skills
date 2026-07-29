@@ -25,6 +25,8 @@ routes once before the first create. When the connector does not expose native
 relationship mutations, use the bundled
 [GitHub relationship helper](scripts/github_issue_relationships.py) to perform
 at most one requested mutation and return normalized bidirectional read-back.
+Preflight proves that configured operations exist, are authorized, and have
+read-back routes; only the first real mutation proves live behavior.
 
 Accept one exact identity-bearing settled source whose remaining work is
 implementation slicing: a verified parent specification; a direct settled packet
@@ -122,11 +124,19 @@ Give each ticket a compact execution packet:
 - **Closure:** displaced surfaces and each retained compatibility path's owner,
   reason, proof, and Removal Trigger.
 
+Before readiness, test every acceptance term governing a calculation,
+threshold, comparison, equivalence, or state. Record its operational definition
+or exact authoritative owner; otherwise return `source-gap` rather than delegate
+meaning to implementation.
+
 Keep each body semantically dense: state each execution-relevant fact once,
 prefer sharp owner and evidence pointers to repeated source prose, and aim for
 at most about 5,500 characters as a soft target. Exceed it only when required
 authority, state, edge, proof, migration, or recovery detail cannot remain
 implementation-ready when shorter.
+For a genuinely simple or stateless ticket, mark an inapplicable detail
+`not applicable — <reason>` instead of padding. Never use it for identity,
+acceptance, scope, proof lane, dependency state, executor, or ownership.
 
 Record a finite nonnegative Repair generation budget on every ticket. Preserve
 an explicit source or caller value; otherwise default exactly to `2`. Never
@@ -150,13 +160,15 @@ high-risk branches in an applicable state-boundary matrix, without Cartesian
 padding. For stateless work, record `not applicable` and why. If supported state
 is unsettled, return `source-gap`.
 
-Freeze a complete acyclic dependency graph with explicit blockers, stable
-tracker order, and a non-empty actionable frontier. Derive the Ready-for-agent
-and Ready-for-human frontiers separately. Add a blocking edge only when the
-dependent consumes a required predecessor outcome; tracker order and serial
-constraints are not blockers. Correct cycles, orphans, false or hidden blockers,
-contradictory order, and empty or false frontiers before publication, or return
-`source-gap` when correction needs source authority.
+Freeze a complete acyclic dependency graph with explicit blockers and stable
+tracker order. Dependency order is topological: blockers precede dependents and
+stable tracker order breaks ties. Derive the Ready-for-agent and Ready-for-human
+frontiers separately; their union is the actionable frontier and at least one
+must be non-empty. Add a blocking edge only when the dependent consumes a
+required predecessor outcome; tracker order and serial constraints are not
+blockers. Correct cycles, orphans, false or hidden blockers, contradictory
+order, and empty or false frontiers before publication, or return `source-gap`
+when correction needs source authority.
 
 Give every ticket an execution profile covering semantic ownership, expected
 production writes, proof seams, canonical test mutations and scarce proof
@@ -186,9 +198,10 @@ Create verified-missing children in dependency order and a recoverable non-ready
 state, or use one configured atomic graph operation with equivalent proof.
 Immediately refetch each unique create, attach and read back its frozen parent
 relationship, and attach every now-resolvable blocking edge before creating the
-next child. The first authorized child proves the configured parent/child route
-without a disposable probe; the first applicable blocking edge likewise proves
-the dependency route. When the tracker lacks a safe route, return
+next child. The first authorized child and its read-back prove live
+parent/child behavior without a disposable probe; the first applicable blocking
+edge and read-back likewise prove live dependency behavior. When the tracker
+lacks a safe route, return
 `setup-precondition` before creation. Never repeat an indeterminate create.
 
 A missing endpoint or partial or mismatched relationship stops the run with
@@ -234,9 +247,10 @@ Return exactly one of `setup-precondition`, `source-gap`,
 `existing-state-conflict`, `publication-recovery`, or `ready-graph`. A
 `ready-graph` reports source and parent identities, graph identity, ordered
 ticket pointers, dependency edges, agent and human frontiers,
-proof-responsibility map, per-ticket execution profiles and state matrices,
-publication or reuse read-back, residual gaps, and exactly one unstarted next
-recommendation.
+compact cross-ticket proof-owner and serialization summaries, publication or
+reuse read-back, residual gaps, and exactly one unstarted next recommendation.
+Ticket bodies remain authoritative for execution profiles and state matrices;
+successors refetch their pointers instead of receiving repeated packet prose.
 Complete only when setup and source authority resolve; every commitment maps;
 every ticket, proof responsibility, matrix, profile, edge, order, frontier, and
 authorized transition verifies; no duplicate or false-ready item remains;

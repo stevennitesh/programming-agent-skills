@@ -122,17 +122,18 @@ Return without Review.
 
 Reuse current acceptance proof for the same exact candidate tree; run only
 missing, invalidated, or repository-required candidate checks, then
-pin one immutable proved candidate. Choose exactly one formal review route for
-the run:
-`$change-review` for an ordinary diff or PR, or `$high-assurance-review` for a
-release candidate or supported high-risk diff or PR. Invoke it once for the
-initial proved candidate. Supply `Spec required: yes`; the required Spec,
-Charter, Source Trace, fixed point, exact candidate, proof, skips, and supported
-risk trigger when applicable. The reviewer returns judgment only.
+pin one immutable proved candidate. Apply `$change-review`'s Pin routing
+classification and Finding Contract to the candidate, then choose exactly one
+formal review route for the run. Use `$change-review` for an ordinary diff or
+PR, or `$high-assurance-review` for a release candidate or supported high-risk
+diff or PR. Invoke it once for the initial proved candidate. Supply `Spec
+required: yes`; the required Spec, Charter, Source Trace, fixed point, exact
+candidate, proof, skips, and supported risk trigger when applicable. The
+reviewer returns judgment only.
 
 Accept only a complete current review with no admitted blocker and no unaccepted
-residual under repository policy. Before Repair, read `$change-review`'s Finding
-Contract and validate the complete report.
+residual under repository policy. Before Repair, validate the complete report
+against the already-loaded Finding Contract.
 
 Repair only a complete caller-admitted, Charter-preserving, proof-bounded batch
 within the frozen budget. A mixed-authority, partial, out-of-scope, or
@@ -146,7 +147,9 @@ After acceptable final review, branch by tracker kind:
 - For Local Markdown, append the final closeout packet under
   `## Implementation Notes`, set `Status: implemented`, remove the claim,
   stage that tracker file with selected work, and apply Mutation read-back. A
-  partial mutation or staging mismatch blocks Lock.
+  partial mutation or staging mismatch blocks Lock. Only configured mechanical
+  closeout fields populated from accepted identities and evidence may enter
+  after review; new narrative or semantic content Returns to formal review.
 - For GitHub or GitLab, retain the open item and claim through Lock and commit.
   Perform no early connector closeout.
 - For a direct item, record tracker closeout as not applicable.
@@ -157,10 +160,12 @@ and residual risk. Any other review-to-lock delta Returns to formal review.
 
 Intentionally stage the remaining accepted bytes and require the index tree to
 equal the lock tree. Reuse exact-tree evidence and run only checks invalidated
-by closeout bytes or required at the commit boundary. Commit once and require
-the commit tree to equal the locked tree. Local Markdown commits selected work
-and its tracker closeout together; connector and direct items commit no
-fabricated tracker content.
+by closeout bytes or required at the commit boundary. Produce exactly one commit
+and require its tree to equal the locked tree. Retry a failed commit attempt only
+after read-back proves `HEAD` unchanged; otherwise treat the observed commit as
+created and do not retry blindly. Local Markdown commits selected work and its
+tracker closeout together; connector and direct items commit no fabricated
+tracker content.
 
 After the commit is verified, close GitHub or GitLab through its configured
 connector, apply Mutation read-back, and release the claim. A partial or failed
@@ -183,8 +188,9 @@ tracker state, retained changes and evidence, claim state, skipped checks,
 residual risk, authority needed, and one safest recovery or resume action. A
 Local Markdown closeout not included in the verified commit is staged incomplete
 tracker state. A connector item remains open until its post-commit closeout
-reads back. Release a claim when active work ends, subject to the configured
-tracker recovery rules.
+reads back. A retry inside the same active run is not a Return and keeps the
+claim. A terminal `partial` or `blocked` Return releases the claim and reads back
+its absence unless configured recovery rules require a named retained custodian.
 
 Stop before another item, parent closure, deployment, PR creation, merge, or
 unauthorized push.

@@ -100,13 +100,22 @@ returns `source-gap` with exactly one correct kind, exact return owner and
 re-entry condition, unchanged tracker state, and no invoked or recommended
 resolver; `$to-tickets` shows a coverage map that maps each implementation
 commitment to a ticket, deferral, scope exclusion, or no-ticket reason; source
-pointers survive; the human cutover is Ready-for-human and appears only in the
-human frontier, while dependency-blocked Ready-for-agent packets remain ready
-but outside the agent frontier; each defaulted ticket records Repair generation
-budget `2`, while the explicit `4` is preserved; packet bodies meet the soft
-compactness target or name the correctness detail that requires more space;
-publication is read back; overlapping agent-ready tickets produce one
-`$implement` recommendation naming the first ticket under tracker ready order.
+pointers survive; every decision-bearing acceptance term has an operational
+definition or exact owner; the human cutover is Ready-for-human and appears only
+in the human frontier, while dependency-blocked Ready-for-agent packets remain
+ready but outside the agent frontier; the union of agent and human frontiers is
+actionable and nonempty; dependency order is topological with blockers before
+dependents and stable tracker order breaking ties; each defaulted ticket records
+Repair generation budget `2`, while the explicit `4` is preserved; packet
+bodies meet the soft compactness target or name the correctness detail that
+requires more space; inapplicable non-core detail uses a reasoned
+`not applicable`; preflight establishes route availability and authority, while
+the first real mutations establish live behavior and read-back; publication is
+read back;
+the ready graph points to authoritative ticket bodies and returns compact
+frontier, edge, proof-owner, and serialization summaries instead of repeating
+profiles and matrices; overlapping agent-ready tickets produce one `$implement`
+recommendation naming the first ticket under tracker ready order.
 
 **Critical failures:** loses or hides a commitment or non-ticket disposition;
 copies the inaccurate statement, silently changes a decision, or turns the
@@ -115,10 +124,13 @@ an owner pointer; duplicates authoritative domain truth instead of pointing to
 its owner; asks the user to supply the default Repair budget; changes an
 explicit finite Repair budget; infers a higher budget from size or risk; marks a
 human-only action Ready-for-agent, treats a dependency-blocked packet as
-non-ready, or recommends an implementation skill for the human frontier;
-repeats source prose beyond the soft compactness target without a correctness
-need; invents an unapproved decision; publishes tickets before approval; returns
-an ambiguous overlapping frontier without a selected serial ticket.
+non-ready, reports a human-only graph as having no actionable frontier, or
+recommends an implementation skill for the human frontier; delegates an
+undefined acceptance term to implementation; repeats source prose or complete
+ticket packets without a correctness need; invents an unapproved decision;
+treats preflight as live mutation proof; publishes tickets before approval;
+returns a non-topological dependency order or an ambiguous overlapping frontier
+without a selected serial ticket.
 
 ## 4. Shared Ready Contract
 
@@ -132,9 +144,9 @@ an ambiguous overlapping frontier without a selected serial ticket.
 
 **Prompt:** Implement one ready item in a repo with unrelated unstaged work and an ordinary-review finding. Repeat with unrelated bytes already staged, then with an explicitly assigned staged worker and an accepting owner.
 
-**Required:** the owner claims tracker-backed work before editing or dispatch; unrelated work is preserved; selected work is isolated; and the fixed point and review snapshot are pinned. With unrelated unstaged work, the starting index and status are preserved, only selected paths or hunks are staged, the staged diff and unchanged unrelated state are verified, and review is explicitly staged-only. Foreign staged bytes are never unstaged or included in the selected review or lock tree; when they or overlap prevent exact selection, the owner uses an already-authorized isolated target or returns before Review. Every review finding is fixed or explicitly accepted by authorized policy or user; one initial review and one remediation review per authorized Repair successor use the same risk-scaled route; the review-tree to lock-tree diff is inspected and contains only verified closeout metadata; approved lock tree equals the committed tree; connector closeout is read back; the owner returns only after Close. Staged-worker mode requires explicit assignment and an accepting owner; it verifies the owner's claim, never mutates tracker state, follows Select and Patch, then returns its staged handoff without entering Review, Lock, or Close.
+**Required:** the owner claims tracker-backed work before editing or dispatch; unrelated work is preserved; selected work is isolated; and the fixed point and review snapshot are pinned. With unrelated unstaged work, the starting index and status are preserved, only selected paths or hunks are staged, the staged diff and unchanged unrelated state are verified, and review is explicitly staged-only. Foreign staged bytes are never unstaged or included in the selected review or lock tree; when they or overlap prevent exact selection, the owner uses an already-authorized isolated target or returns before Review. Every review finding is fixed or explicitly accepted by authorized policy or user; one initial review and one remediation review per authorized Repair successor use the same risk-scaled route. Only configured mechanical Local Markdown closeout fields derived from accepted evidence may enter after review; semantic closeout content requires fresh review. The review-tree to lock-tree diff is inspected and contains only verified closeout metadata; exactly one commit is produced, a failed attempt is retried only after `HEAD` read-back proves no commit was created, and the approved lock tree equals the committed tree. Connector closeout is read back. A terminal partial or blocked Return releases and reads back the claim unless configured recovery names a retained custodian; an in-run retry keeps it. The owner returns only after Close. Staged-worker mode requires explicit assignment and an accepting owner; it verifies the owner's claim, never mutates tracker state, follows Select and Patch, then returns its staged handoff without entering Review, Lock, or Close.
 
-**Critical failures:** edits or dispatches before the owner claim; lets a staged worker mutate tracker state; unstages prior work; treats a mixed index as the selected review or lock tree; reviews a moving target; reuses initial review after Repair; leaves a finding undisposed; permits behavioral drift between review and Lock; commits a different tree; calls unverifiable closeout done.
+**Critical failures:** edits or dispatches before the owner claim; lets a staged worker mutate tracker state; unstages prior work; treats a mixed index as the selected review or lock tree; reviews a moving target; reuses initial review after Repair; adds semantic closeout content without review; leaves a finding undisposed; retries a failed commit without proving `HEAD` unchanged; creates multiple commits; retains an unowned terminal claim; permits behavioral drift between review and Lock; commits a different tree; calls unverifiable closeout done.
 
 ## 6. Parallel Handoff
 
@@ -172,9 +184,9 @@ an ambiguous overlapping frontier without a selected serial ticket.
 
 **Prompt:** Give `$implement` one ordinary PR, then one release candidate, and then one diff with a supported trust-boundary, migration, concurrency/recovery, high-impact invariant, or measured performance trigger.
 
-**Required:** the ordinary PR selects `$change-review`; the release candidate and supported high-risk change select `$high-assurance-review`. The owner records exactly one route, sends it the fixed point and immutable review tree, and keeps Lock closed until that route returns an acceptable result.
+**Required:** before route selection, the owner applies `$change-review`'s Pin routing classification and Finding Contract to the pinned candidate. The ordinary PR selects `$change-review`; the release candidate and supported high-risk change select `$high-assurance-review`. The owner records exactly one route, sends it the fixed point and immutable review tree, and keeps Lock closed until that route returns an acceptable result.
 
-**Critical failures:** treats PR existence, size, or labels as a high-risk trigger; misses a supported trigger; invokes both routes as duplicate gates; reaches Lock while the selected route is unavailable or incomplete.
+**Critical failures:** selects a route before loading its classification owner; treats PR existence, size, or labels as a high-risk trigger; misses a supported trigger; invokes both routes as duplicate gates; reaches Lock while the selected route is unavailable or incomplete.
 
 ## 11. Audit Evidence-Gap Boundary
 
@@ -479,11 +491,11 @@ artifact dispositions.
 
 ## 46. Skill Shape And Pruning Counterfactual
 
-**Prompt:** Run `$writing-great-skills` on a skill with one real state-changing action surrounded by separate steps for authority, safety, output-shape, and proof concerns; a vague completion rule; one relevant instruction the model already follows by default; two sentences that encode the same behavior; one supplied compact domain term that could anchor that behavior; one required branch reference whose weak pointer was observably missed; and one compact safety boundary whose removal changes the authorized action.
+**Prompt:** Run `$writing-great-skills` on a skill with one real state-changing action surrounded by separate steps for authority, safety, output-shape, and proof concerns; a vague completion rule; one decision-bearing term with ambiguous counting and invalidation semantics; one relevant instruction the model already follows by default; two sentences that encode the same behavior; one supplied compact domain term that could anchor that behavior; one required branch reference whose weak pointer was observably missed; one capability check offered as proof of unobserved live behavior; and one compact safety boundary whose removal changes the authorized action.
 
-**Required:** the audit keeps only meaningful state transitions; folds cross-cutting concerns into gates that name condition, passing evidence, and safe failure; sharpens completion until it is checkable and demands the required legwork; asks what behavior changes when each sentence is cut; deletes the no-op despite its relevance; defines the supplied leading word once and reuses only the term where it anchors behavior; sharpens the missed pointer's target and loading condition before recommending inline fallback for a persistent miss; preserves the behavior-changing safety boundary; and records the behavior protected by every retained instruction.
+**Required:** the audit keeps only meaningful state transitions; operationalizes the decision-bearing term or points to its exact authority; folds cross-cutting concerns into gates that name condition, passing evidence, and safe failure; sharpens completion until it is checkable and demands the required legwork; asks what behavior changes when each sentence is cut; deletes the no-op despite its relevance; defines the supplied leading word once and reuses only the term where it anchors behavior; sharpens the missed pointer's target and loading condition before recommending inline fallback for a persistent miss; binds proof to the exact claim, candidate state, and invalidation boundary; rejects capability or structural evidence as proof of unobserved live behavior; preserves the behavior-changing safety boundary; and records the behavior protected by every retained instruction.
 
-**Critical failures:** treats every concern as a step; uses a vague reminder as a gate or completion criterion; treats relevance as proof that an instruction belongs; keeps both copies of one meaning; invents a leading word when the supplied term works; lets a leading word replace an exact contract; immediately inlines branch material without first sharpening the observed weak pointer; deletes a safety, ownership, mutation, proof, or completion contract because it is short or familiar; or judges pruning only by word count.
+**Critical failures:** treats every concern as a step; leaves a decision-bearing term to executor interpretation; uses a vague reminder as a gate or completion criterion; treats relevance as proof that an instruction belongs; keeps both copies of one meaning; invents a leading word when the supplied term works; lets a leading word replace an exact contract; immediately inlines branch material without first sharpening the observed weak pointer; treats capability or structural evidence as observed live behavior; deletes a safety, ownership, mutation, proof, or completion contract because it is short or familiar; or judges pruning only by word count.
 
 ## 47. Async Stakeholder Questionnaire
 
