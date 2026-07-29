@@ -18,8 +18,9 @@ requires separate authority.
 
 ## Admit
 
-Accept one caller-selected item only when its outcome, observable acceptance,
-commitment boundary, scope authority, and Source Trace are settled. For
+Accept one caller-selected item only when its outcome, operational and
+observable acceptance, commitment boundary, scope authority, and Source Trace
+are settled. For
 tracker-backed work, also require the configured Ready-for-agent facts: bounded
 slice, dependency state, proof lane, expected write scope, parallel-safety
 judgment, and scope fence.
@@ -111,14 +112,23 @@ commitments or unrelated work.
 
 ## Review
 
-Stage only selected work. Reuse current acceptance proof for the same exact
-staged tree; run only missing, invalidated, or repository-required staged
-checks, then pin one immutable proved candidate. Invoke exactly one formal
-route: `$change-review` for an ordinary diff or PR, or `$high-assurance-review`
-for a release candidate or supported high-risk diff or PR. Supply `Spec
-required: yes`; the required Spec, Charter, Source Trace, fixed point, exact
-candidate, proof, skips, and supported risk trigger when applicable. The
-reviewer returns judgment only.
+Stage only selected work. With unrelated work present, preserve the starting
+index and status. When the index can represent the selected candidate exactly,
+stage only selected paths or hunks, verify the staged diff contains exactly
+that scope and unrelated state is unchanged, and request an explicitly
+staged-only review. Never unstage foreign work. When foreign staged bytes or
+overlap prevent exact selection, use an already-authorized isolated target or
+Return without Review.
+
+Reuse current acceptance proof for the same exact candidate tree; run only
+missing, invalidated, or repository-required candidate checks, then
+pin one immutable proved candidate. Choose exactly one formal review route for
+the run:
+`$change-review` for an ordinary diff or PR, or `$high-assurance-review` for a
+release candidate or supported high-risk diff or PR. Invoke it once for the
+initial proved candidate. Supply `Spec required: yes`; the required Spec,
+Charter, Source Trace, fixed point, exact candidate, proof, skips, and supported
+risk trigger when applicable. The reviewer returns judgment only.
 
 Accept only a complete current review with no admitted blocker and no unaccepted
 residual under repository policy. Before Repair, read `$change-review`'s Finding
@@ -127,7 +137,7 @@ Contract and validate the complete report.
 Repair only a complete caller-admitted, Charter-preserving, proof-bounded batch
 within the frozen budget. A mixed-authority, partial, out-of-scope, or
 over-budget report Returns intact for decision. Prove each Repair generation,
-pin its successor tree, and obtain fresh formal review through the same route.
+pin its successor tree, and invoke the same route once in remediation mode.
 
 ## Lock And Return
 

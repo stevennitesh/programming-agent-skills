@@ -16,7 +16,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:1afb980354f3 -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:f29046450d66 -->"
 ENGINEERING_PRIMER_TOKEN = (
     "Explore imaginatively. Converge under proof. Simplify ruthlessly."
 )
@@ -86,6 +86,7 @@ CONTRACT_LITERAL_TOKENS = (
     "**Source trace:**",
     "**Bounded slice:**",
     "**Commitment boundary:**",
+    "**Operational acceptance:**",
     "**Semantic correctness:**",
     "**Semantic proof:**",
     "**Proof seam:**",
@@ -95,6 +96,7 @@ CONTRACT_LITERAL_TOKENS = (
     "**Fixed point:**",
     "**Spec / Standards:**",
     "**Residual risk:**",
+    "Command availability does not determine proof scope.",
     "Explore -> Choose -> Prove -> Expand -> Simplify -> Lock",
     ".tmp/",
     ".scratch/",

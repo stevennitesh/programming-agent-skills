@@ -103,8 +103,8 @@ valuable.
 
 Give each ticket a compact execution packet:
 
-- **Intent:** one bounded outcome, Source Trace, observable acceptance,
-  Commitment Boundary, and explicit non-goals.
+- **Intent:** one bounded outcome, Source Trace, operational and observable
+  acceptance, Commitment Boundary, and explicit non-goals.
 - **Grounding:** current behavior owner, representative callers and entry
   paths, Repository Reuse, repository constraints, and source-owned
   prototype, research, domain, ADR, migration, or compatibility facts.

@@ -38,6 +38,10 @@ Observable outcome, acceptance authority, public or data contracts, and
 prohibited behavior.
 
 **Acceptance criteria:**
+
+Operational and observable; use exact owner pointers instead of restating
+governed semantics.
+
 - [ ] Specific observable criterion 1
 - [ ] Specific observable criterion 2
 
@@ -106,10 +110,11 @@ otherwise `not applicable`.
 Complete only when one bounded slice has a valid work-unit form; the
 Commitment Boundary and Source Trace are settled; observation status and
 readiness authority are honest; applicable correctness obligations and
-prohibited behavior are explicit; acceptance is observable; grounding,
-dependencies, expected write scope, parallel safety, scope fence, Proof Seam,
-proof lane, and proof responsibility are usable; Change Closure is accounted
-for; and a human brief names the required human act and completion evidence.
+prohibited behavior are explicit; acceptance is operational and observable;
+grounding, dependencies, expected write scope, parallel safety, scope fence,
+Proof Seam, proof lane, and proof responsibility are usable; Change Closure is
+accounted for; and a human brief names the required human act and completion
+evidence.
 
 An existing brief may be reused only after its source, evidence, dependencies,
 scope, and gate remain current.

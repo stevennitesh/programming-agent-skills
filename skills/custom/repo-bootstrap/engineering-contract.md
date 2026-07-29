@@ -19,6 +19,9 @@ accepted terms and decisions across specs, issues, code, tests, and docs.
 - **Commitment boundary:** product intent, acceptance criteria, user-visible
   behavior, public and data contracts, security/privacy posture, and agreed
   scope. Technique stays agent-owned.
+- **Operational acceptance:** every decision-bearing term, threshold,
+  configured minimum, comparison, or equivalence has a definition or exact
+  authoritative owner pointer. Internal technique stays agent-owned.
 - **Semantic correctness:** correctness of meaning, not output existence.
 - **Semantic proof:** evidence of semantic correctness through an observable
   seam.
@@ -160,8 +163,11 @@ uses the full spine. Compress steps, not gates.
 
 Claims need fresh, proportionate evidence from current state. Map each claim to
 the command, observation, or read-back that proves it. A focused check proves
-only its slice; record broader skipped checks and residual risk instead of
-extrapolating.
+only its slice. Command availability does not determine proof scope. Focused
+and applicable conformance proof are sufficient when they close every owned
+claim and affected semantic branch and no source, repository completion policy,
+release gate, or reachable shared interaction requires broader proof. Otherwise
+run the required broader proof; record skipped checks and residual risk.
 
 Use maintained repo configuration, CI, and contributor docs as command
 authority. When `AGENTS.md` commands drift, surface the mismatch and update the

@@ -68,8 +68,8 @@ exact status and unmerged paths, worker commit and current `HEAD`, scope,
 reconciliation and finish authorities, unrelated index and worktree state,
 recorded landing mode, proof expectation, and orchestrator Return owner.
 
-**Proof budget:** run broad validation only at routed wave boundaries; final
-broad validation belongs to the review-ready handoff.
+**Proof budget:** run any required broader validation only at routed wave
+boundaries; final required validation belongs to the review-ready handoff.
 
 **Integration regression:** return a failed loop-close packet before editing.
 The root records the trusted RED and selects the correction route. Apply a

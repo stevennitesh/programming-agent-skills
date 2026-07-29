@@ -385,7 +385,7 @@ def assert_repo_bootstrap_semantic_contract(
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     assert_repo_bootstrap_semantic_contract(
         CUSTOM / "repo-bootstrap",
-        "8f80f651e49d0cecf42c06629831b8e0cd8abf3546599b3eee34b4bbbb524ce0",
+        "b55d6b0cbcbbbfa0d762913051c6a90d41f47f79ac89962329c3f1b4e94a6516",
         profile="incumbent",
     )
 
@@ -1582,7 +1582,13 @@ def test_implement_selects_one_risk_scaled_review_route() -> None:
         "## Lock And Return", 1
     )[0]
     review_flat = " ".join(review_section.split())
-    assert "Invoke exactly one formal route" in review_flat
+    assert "Stage only selected work" in review_flat
+    assert "Choose exactly one formal review route for the run" in review_flat
+    assert "Invoke it once for the initial proved candidate" in review_flat
+    assert "invoke the same route once in remediation mode" in review_flat
+    assert "request an explicitly staged-only review" in review_flat
+    assert "Never unstage foreign work" in review_flat
+    assert "Return without Review" in review_flat
     assert re.findall(
         r"`\$(change-review|high-assurance-review)`", review_section
     )[:2] == [
@@ -1917,6 +1923,9 @@ def test_implementation_workflows_compress_steps_without_repeating_proof() -> No
     assert "only interaction or readiness proof" in parallel_flat
     assert "final required proof once on the drained current `HEAD`" in parallel_flat
     assert "only invalidated interaction or readiness proof" in integrator_flat
+    assert "final required validation belongs to the review-ready handoff" in (
+        integrator_flat
+    )
     assert "run touched-area proof" not in integrator_flat
     assert "canonical test owner" in implement_flat
     assert "proof-responsibility map" in parallel_flat
@@ -2245,6 +2254,7 @@ def test_portable_fallback_carries_the_standalone_engineering_contract() -> None
         "Source trace",
         "Bounded slice",
         "Commitment boundary",
+        "Operational acceptance",
         "Behavior-owned test portfolio",
         "Semantic proof",
         "Fixed point",
@@ -2343,6 +2353,12 @@ def test_portable_fallback_carries_the_standalone_engineering_contract() -> None
     assert "**Lean test portfolio — prefer.**" in quality
     assert "supported compatibility obligation" in quality
     assert "Removal Trigger" in quality
+    assert "**Operational acceptance:**" in contract
+    proof = contract.split("## Proof Discipline", 1)[1].split("## Work State", 1)[0]
+    proof_flat = " ".join(proof.split())
+    assert "Command availability does not determine proof scope" in proof_flat
+    assert "Focused and applicable conformance proof are sufficient" in proof_flat
+    assert "repository completion policy" in proof_flat
     spine = contract.split("## Tight Engineering Spine", 1)[1].split(
         "## Proof Discipline", 1
     )[0]
@@ -2392,6 +2408,7 @@ def test_triage_branches_share_the_authoritative_brief_schema() -> None:
     assert "### Scope And Proof" in brief
     assert "Canonical test owner or proof surface" in brief
     assert "a new test requires a distinct responsibility" in brief
+    assert "acceptance is operational and observable" in " ".join(brief.split())
     assert "### Change Closure" in brief
     assert "Removal Trigger" in brief
     assert "## Branch Emphasis" in brief
@@ -2511,6 +2528,7 @@ def assert_to_tickets_semantic_contract(
     ):
         assert profile_field in shape_contract
     assert "finite nonnegative repair generation budget" in shape_contract
+    assert "operational and observable acceptance" in shape_contract
     assert "preserve an explicit source or caller value" in shape_contract
     assert "otherwise default exactly to `2`" in shape_contract
     assert "never infer a higher budget from ticket size or risk" in shape_contract
@@ -2637,7 +2655,7 @@ def test_to_tickets_preserves_coverage_readiness_and_frontier_contract() -> None
     packages = (
         (
             CUSTOM / "to-tickets",
-            "7a728dc390e6fff6b2344345c7485500ab48e58585a4322f2e45ba69a2f96a89",
+            "5906862923b1dbdd0c2cc1426ff921f386f106996ef816acc7444196b47aa472",
             "prompt3-candidate",
         ),
     )

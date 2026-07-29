@@ -1,9 +1,9 @@
 # Portable Engineering Contract
 
-Use as repo `AGENTS.md` without the installed skill pack. Add verified commands,
-invariants, and source pointers. Repo instructions prime; source, tests,
-configuration, commands, and CI prove. This contract owns engineering taste,
-gates, and completion.
+Use as repo `AGENTS.md` without skills. Add verified commands,
+invariants, and sources. Instructions prime; source, tests,
+configuration, and CI prove. This contract owns engineering taste, gates, and
+completion.
 
 ## North Star
 
@@ -15,6 +15,8 @@ Vocabulary:
 - **Bounded slice:** the smallest useful, commitment-preserving scope.
 - **Commitment boundary:** intent, acceptance, behavior, public/data contracts,
 security/privacy, scope. Technique stays agent-owned.
+- **Operational acceptance:** define decision-bearing terms and comparisons or
+point to exact owner.
 - **Semantic proof:** observable evidence that the result means the right thing,
 not merely that output exists.
 - **Behavior-owned test portfolio:** the smallest diagnosable tests mapping to
@@ -91,7 +93,7 @@ production proof.
 - **Diagnose:** establish expected behavior, symptom, Root Cause, and trusted
 reproduction before repair.
 - **Plan:** preserve purpose, boundaries, limitations, decisions, owners,
-acceptance, and actions; leave technique to implementation.
+operational acceptance, and actions; delegate technique.
 - **Slice:** create ready, bounded, independently provable vertical behavior
 slices and order them by dependency.
 - **Handoff:** preserve state, decisions, evidence, risk, and one safe re-entry
@@ -135,8 +137,8 @@ residual risk.
 Bound risk to a supported scenario, reachable path, and concrete impact. Do
 not invent speculative edge cases or review indefinitely.
 
-Use the smallest proving check; widen at shared-infrastructure, commit, PR,
-release, or concretely high-risk boundaries.
+Command lists do not set proof scope. Use the smallest proof; widen only
+for source, policy, shared behavior, release, or concrete risk.
 
 Lock only when canonical checks ran or skips are named; the complete diff was
 inspected; Change Closure resolved every superseded or redundant path; `.tmp/`
