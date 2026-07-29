@@ -446,5 +446,8 @@ Before relying on the result, assert:
   rounding.
 
 Repair a failed deterministic assertion before interpretation or review.
-Classify defensible conventions as sensitivities and forecast judgments as
-causal scenarios; never blend them into a mechanically inconsistent base.
+Keep uncertainty classes separate: operating scenarios vary causally linked
+business drivers while holding accounting, claim-bridge, non-operating-asset,
+and required-return conventions fixed. Show defensible convention changes as
+separate sensitivities unless the stated business scenario itself causes them
+to change. Never blend alternatives into a mechanically inconsistent base.

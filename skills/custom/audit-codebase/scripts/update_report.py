@@ -18,7 +18,14 @@ from typing import Sequence
 _RUN_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}")
 _SECTION_ID = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 _GIT_ID = re.compile(r"(?:[0-9a-f]{40}|[0-9a-f]{64})")
-_KINDS = {"system", "subsystem", "candidate", "candidate-index", "summary"}
+_KINDS = {
+    "system",
+    "subsystem-narrative",
+    "finding",
+    "candidate",
+    "candidate-index",
+    "summary",
+}
 _MARKER_PREFIX = "<!-- audit-codebase:"
 _UNSAFE_HREF = re.compile(r"(?i)^(?://|[a-z][a-z0-9+.-]*:)")
 _UNSAFE_TAGS = {"base", "embed", "form", "iframe", "link", "object", "script", "style"}
@@ -32,7 +39,10 @@ _CANDIDATE_STATES = (
     "blocked",
 )
 _STRENGTHS = {"Strong", "Worth exploring", "Speculative"}
+_SUBSYSTEM_STATES = {"mapped", "incomplete", "audited"}
+_FINDING_STATES = ("active", "resolved", "disproved")
 _PROGRESS_IDS = {"report-header", "summary-progress", "report-footer"}
+_INSERT_KINDS = ("finding-insert", "candidate-index-insert", "candidate-insert")
 
 
 class ReportUpdateError(ValueError):
@@ -71,8 +81,15 @@ class _MarkupFacts(HTMLParser):
         self.report_versions: list[str] = []
         self.candidate_cards: dict[str, list[dict[str, str]]] = {}
         self.candidate_rows: dict[str, list[dict[str, str]]] = {}
+        self.candidate_findings: dict[str, list[str]] = {}
+        self.subsystems: dict[str, list[dict[str, str]]] = {}
+        self.findings: dict[str, list[dict[str, str]]] = {}
+        self.retained: dict[str, list[dict[str, str]]] = {}
+        self.gaps: dict[str, list[dict[str, str]]] = {}
         self.implementation_results: dict[str, list[dict[str, str]]] = {}
         self.progress: dict[str, list[str]] = {}
+        self.finding_progress: dict[str, list[str]] = {}
+        self.insertions: dict[tuple[str, str], int] = {}
         self.pickups: dict[str, dict[str, list[str]]] = {}
         self._pickup: tuple[str, str, str, list[str]] | None = None
 
@@ -101,6 +118,12 @@ class _MarkupFacts(HTMLParser):
         if lowered == "article" and element_id.startswith("candidate-"):
             candidate_id = element_id.removeprefix("candidate-")
             self.candidate_cards.setdefault(candidate_id, []).append(values)
+        if lowered == "article" and element_id.startswith("finding-"):
+            finding_id = element_id.removeprefix("finding-")
+            self.findings.setdefault(finding_id, []).append(values)
+        if lowered == "section" and element_id.startswith("subsystem-"):
+            subsystem_id = element_id.removeprefix("subsystem-")
+            self.subsystems.setdefault(subsystem_id, []).append(values)
         if lowered == "tr" and element_id.startswith("candidate-index-"):
             candidate_id = element_id.removeprefix("candidate-index-")
             self.candidate_rows.setdefault(candidate_id, []).append(values)
@@ -111,6 +134,21 @@ class _MarkupFacts(HTMLParser):
             self.progress.setdefault(element_id, []).append(
                 values["data-candidate-progress"]
             )
+        if "data-finding-progress" in values:
+            self.finding_progress.setdefault(element_id, []).append(
+                values["data-finding-progress"]
+            )
+        if "data-retained-id" in values:
+            self.retained.setdefault(values["data-retained-id"], []).append(values)
+        if "data-gap-id" in values:
+            self.gaps.setdefault(values["data-gap-id"], []).append(values)
+        if "data-candidate-finding" in values:
+            candidate_id = values["data-candidate-finding"]
+            href = values.get("href", "")
+            if href.startswith("#finding-"):
+                self.candidate_findings.setdefault(candidate_id, []).append(
+                    href.removeprefix("#finding-")
+                )
         if "data-candidate-pickup" in values:
             if self._pickup is not None:
                 raise ReportUpdateError("candidate pickup elements may not nest")
@@ -141,6 +179,17 @@ class _MarkupFacts(HTMLParser):
         self, tag: str, attrs: list[tuple[str, str | None]]
     ) -> None:
         self.handle_starttag(tag, attrs)
+
+    def handle_comment(self, data: str) -> None:
+        match = re.fullmatch(
+            r"\s*audit-codebase:"
+            r"(finding-insert|candidate-index-insert|candidate-insert):"
+            r"([a-z0-9]+(?:-[a-z0-9]+)*)\s*",
+            data,
+        )
+        if match:
+            key = (match.group(1), match.group(2))
+            self.insertions[key] = self.insertions.get(key, 0) + 1
 
     def handle_data(self, data: str) -> None:
         if self._pickup is not None:
@@ -226,25 +275,28 @@ def _required(record: dict[str, str], name: str, label: str) -> str:
 
 def _validate_candidate_record(
     *, identifier: str, record: dict[str, str], label: str
-) -> tuple[str, str]:
+) -> tuple[str, str, str]:
     if _required(record, "data-candidate-id", label) != identifier:
         raise ReportUpdateError(f"{label} candidate ID does not match its anchor")
     state = _required(record, "data-state", label)
     strength = _required(record, "data-strength", label)
+    subsystem_id = _required(record, "data-subsystem-id", label)
     if state not in _CANDIDATE_STATES:
         raise ReportUpdateError(f"{label} has unsupported candidate state {state!r}")
     if strength not in _STRENGTHS:
         raise ReportUpdateError(f"{label} has unsupported strength {strength!r}")
-    return state, strength
+    if not _SECTION_ID.fullmatch(subsystem_id):
+        raise ReportUpdateError(f"{label} has unsafe subsystem ID")
+    return state, strength, subsystem_id
 
 
 def _validate_complete_report(
     facts: _MarkupFacts,
-) -> tuple[dict[str, str], str]:
+) -> tuple[dict[str, str], str, dict[str, str], str]:
     if facts.html_count != 1 or facts.main_count != 1:
         raise ReportUpdateError("report must contain one html and one main element")
-    if facts.report_versions != ["3"]:
-        raise ReportUpdateError("report must declare audit-codebase version 3")
+    if facts.report_versions != ["4"]:
+        raise ReportUpdateError("report must declare audit-codebase version 4")
     duplicate_ids = sorted(
         identifier for identifier, count in facts.ids.items() if count != 1
     )
@@ -252,6 +304,47 @@ def _validate_complete_report(
         raise ReportUpdateError(
             f"report contains duplicate IDs: {', '.join(duplicate_ids)}"
         )
+
+    subsystem_ids = set(facts.subsystems)
+    for identifier in sorted(subsystem_ids):
+        records = facts.subsystems[identifier]
+        if len(records) != 1:
+            raise ReportUpdateError(
+                f"subsystem {identifier!r} must have one static container"
+            )
+        record = records[0]
+        if _required(record, "data-subsystem-id", f"subsystem {identifier!r}") != identifier:
+            raise ReportUpdateError(
+                f"subsystem {identifier!r} ID does not match its anchor"
+            )
+        _required(record, "data-state", f"subsystem {identifier!r}")
+        _required(record, "data-source-identity", f"subsystem {identifier!r}")
+        for kind in _INSERT_KINDS:
+            if facts.insertions.get((kind, identifier), 0) != 1:
+                raise ReportUpdateError(
+                    f"subsystem {identifier!r} requires one {kind} anchor"
+                )
+
+    finding_states: dict[str, str] = {}
+    finding_counts = {state: 0 for state in _FINDING_STATES}
+    for identifier in sorted(facts.findings):
+        records = facts.findings[identifier]
+        if len(records) != 1 or not _SECTION_ID.fullmatch(identifier):
+            raise ReportUpdateError(
+                f"finding {identifier!r} must have one safe record"
+            )
+        record = records[0]
+        label = f"finding {identifier!r}"
+        if _required(record, "data-finding-id", label) != identifier:
+            raise ReportUpdateError(f"{label} ID does not match its anchor")
+        subsystem_id = _required(record, "data-subsystem-id", label)
+        if subsystem_id not in subsystem_ids:
+            raise ReportUpdateError(f"{label} has no matching subsystem")
+        state = _required(record, "data-state", label)
+        if state not in _FINDING_STATES:
+            raise ReportUpdateError(f"{label} has unsupported state {state!r}")
+        finding_states[identifier] = state
+        finding_counts[state] += 1
 
     card_ids = set(facts.candidate_cards)
     row_ids = set(facts.candidate_rows)
@@ -289,8 +382,28 @@ def _validate_complete_report(
             )
 
         state = card_values[0]
+        subsystem_id = card_values[2]
+        if subsystem_id not in subsystem_ids:
+            raise ReportUpdateError(
+                f"candidate {identifier!r} has no matching subsystem"
+            )
         states[identifier] = state
         counts[state] += 1
+        member_findings = facts.candidate_findings.get(identifier, [])
+        if len(member_findings) != len(set(member_findings)):
+            raise ReportUpdateError(
+                f"candidate {identifier!r} repeats a finding member"
+            )
+        for finding_id in member_findings:
+            if finding_id not in finding_states:
+                raise ReportUpdateError(
+                    f"candidate {identifier!r} references unknown finding {finding_id!r}"
+                )
+            finding_record = facts.findings[finding_id][0]
+            if finding_record["data-subsystem-id"] != subsystem_id:
+                raise ReportUpdateError(
+                    f"candidate {identifier!r} references a foreign finding"
+                )
         pickups = facts.pickups.get(identifier, {})
         if set(pickups) - {"card", "index"}:
             raise ReportUpdateError(
@@ -376,7 +489,78 @@ def _validate_complete_report(
             raise ReportUpdateError(
                 f"candidate progress projection {identifier!r} is inconsistent"
             )
-    return states, progress
+    finding_progress = ",".join(
+        f"{state}:{finding_counts[state]}" for state in _FINDING_STATES
+    )
+    if not _PROGRESS_IDS <= set(facts.finding_progress):
+        raise ReportUpdateError("report is missing finding progress projections")
+    for identifier, values in facts.finding_progress.items():
+        if len(values) != 1 or values[0] != finding_progress:
+            raise ReportUpdateError(
+                f"finding progress projection {identifier!r} is inconsistent"
+            )
+    return states, progress, finding_states, finding_progress
+
+
+def _validate_report(
+    source: str,
+) -> tuple[dict[str, str], str, dict[str, str], str]:
+    facts = _facts(source)
+    result = _validate_complete_report(facts)
+    regions: list[tuple[int, int, str]] = []
+    for identifier in facts.subsystems:
+        regions.append(
+            (*_marked_bounds(source, "subsystem-narrative", identifier), "narrative")
+        )
+    for kind, identifiers in (
+        ("finding", facts.findings),
+        ("candidate", facts.candidate_cards),
+        ("candidate-index", facts.candidate_rows),
+    ):
+        for identifier in identifiers:
+            regions.append((*_marked_bounds(source, kind, identifier), f"{kind}:{identifier}"))
+    ordered = sorted(regions)
+    for left, right in zip(ordered, ordered[1:]):
+        if left[1] > right[0]:
+            raise ReportUpdateError(
+                f"report has overlapping regions: {left[2]} and {right[2]}"
+            )
+    return result
+
+
+def _sync_progress(source: str) -> str:
+    facts = _facts(source)
+    candidate_counts = {state: 0 for state in _CANDIDATE_STATES}
+    for records in facts.candidate_cards.values():
+        if len(records) == 1 and records[0].get("data-state") in candidate_counts:
+            candidate_counts[records[0]["data-state"]] += 1
+    finding_counts = {state: 0 for state in _FINDING_STATES}
+    for records in facts.findings.values():
+        if len(records) == 1 and records[0].get("data-state") in finding_counts:
+            finding_counts[records[0]["data-state"]] += 1
+    candidate_progress = ",".join(
+        f"{state.replace(' ', '-')}:{candidate_counts[state]}"
+        for state in _CANDIDATE_STATES
+    )
+    finding_progress = ",".join(
+        f"{state}:{finding_counts[state]}" for state in _FINDING_STATES
+    )
+
+    def replace(name: str, value: str, markup: str) -> str:
+        pattern = rf"({name}\s*=\s*)([\"'])[^\"']*\2"
+        updated, count = re.subn(
+            pattern,
+            lambda match: (
+                f"{match.group(1)}{match.group(2)}{value}{match.group(2)}"
+            ),
+            markup,
+        )
+        if count != len(_PROGRESS_IDS):
+            raise ReportUpdateError(f"{name} projections are not derivable")
+        return updated
+
+    source = replace("data-candidate-progress", candidate_progress, source)
+    return replace("data-finding-progress", finding_progress, source)
 
 
 def _validate_section(kind: str, identifier: str, fragment: str) -> _MarkupFacts:
@@ -403,17 +587,23 @@ def inspect_report(
     repo_root: Path,
     report: Path,
     candidate_id: str | None = None,
+    subsystem_id: str | None = None,
 ) -> dict[str, object]:
     """Validate one report and return its local navigation facts."""
 
     try:
         canonical = _canonical_report(repo_root, report)
         source_bytes, source = _decode(canonical)
+        if candidate_id is not None and subsystem_id is not None:
+            raise ReportUpdateError("inspect accepts one selected ID")
         facts = _facts(source)
-        states, progress = _validate_complete_report(facts)
+        states, progress, finding_states, finding_progress = _validate_report(source)
         candidates = {
             identifier: {
                 "id": identifier,
+                "subsystem_id": facts.candidate_cards[identifier][0][
+                    "data-subsystem-id"
+                ],
                 "state": states[identifier],
                 "strength": facts.candidate_cards[identifier][0]["data-strength"],
                 "pickup": (
@@ -431,14 +621,78 @@ def inspect_report(
             "sha256": _sha256(source_bytes),
             "candidate_states": states,
             "candidate_progress": progress,
+            "finding_states": finding_states,
+            "finding_progress": finding_progress,
             "stage": "inspect",
             "mutation_started": False,
             "report_unchanged": True,
+            "capabilities": {
+                "update_candidate": True,
+                "reaudit_subsystem": all(
+                    facts.insertions.get((kind, identifier), 0) == 1
+                    for identifier in facts.subsystems
+                    for kind in _INSERT_KINDS
+                ),
+                "close_candidate_findings": True,
+            },
         }
         if candidate_id is not None:
             if candidate_id not in candidates:
                 raise ReportUpdateError(f"candidate not found: {candidate_id}")
             result["candidate"] = candidates[candidate_id]
+        elif subsystem_id is not None:
+            if subsystem_id not in facts.subsystems:
+                raise ReportUpdateError(f"subsystem not found: {subsystem_id}")
+            subsystem = facts.subsystems[subsystem_id][0]
+            grouped_findings = {
+                state: sorted(
+                    identifier
+                    for identifier, finding_state in finding_states.items()
+                    if finding_state == state
+                    and facts.findings[identifier][0]["data-subsystem-id"]
+                    == subsystem_id
+                )
+                for state in _FINDING_STATES
+            }
+            result["subsystem"] = {
+                "id": subsystem_id,
+                "state": subsystem["data-state"],
+                "source_identity": subsystem["data-source-identity"],
+                "findings": grouped_findings,
+                "retained_complexity": sorted(
+                    identifier
+                    for identifier, records in facts.retained.items()
+                    if records[0].get("data-subsystem-id") == subsystem_id
+                ),
+                "gaps": sorted(
+                    identifier
+                    for identifier, records in facts.gaps.items()
+                    if records[0].get("data-subsystem-id") == subsystem_id
+                ),
+                "candidates": sorted(
+                    identifier
+                    for identifier, candidate in candidates.items()
+                    if candidate["subsystem_id"] == subsystem_id
+                ),
+                "regions": {
+                    "narrative": source.count(
+                        _marker("subsystem-narrative", subsystem_id, "start")
+                    )
+                    == 1,
+                    "finding_insert": facts.insertions.get(
+                        ("finding-insert", subsystem_id), 0
+                    )
+                    == 1,
+                    "candidate_index_insert": facts.insertions.get(
+                        ("candidate-index-insert", subsystem_id), 0
+                    )
+                    == 1,
+                    "candidate_insert": facts.insertions.get(
+                        ("candidate-insert", subsystem_id), 0
+                    )
+                    == 1,
+                },
+            }
         else:
             result["candidates"] = list(candidates.values())
         return result
@@ -468,7 +722,7 @@ def _prepare_update(
         raise ReportUpdateError(
             f"report collision: expected {expected_sha256}, observed {observed_sha256}"
         )
-    _validate_complete_report(_facts(source))
+    _validate_report(source)
 
     replacements: list[tuple[int, int, str, _MarkupFacts, str]] = []
     seen: set[tuple[str, str]] = set()
@@ -505,8 +759,11 @@ def _prepare_update(
     for start, end, replacement, _, _ in reversed(ordered):
         updated = updated[:start] + replacement + updated[end:]
 
+    updated = _sync_progress(updated)
     final_facts = _facts(updated)
-    candidate_states, progress = _validate_complete_report(final_facts)
+    candidate_states, progress, finding_states, finding_progress = (
+        _validate_report(updated)
+    )
     for _, _, _, fragment_facts, label in replacements:
         kind, identifier = label.split(":", 1)
         anchor = _anchor(kind, identifier)
@@ -535,6 +792,8 @@ def _prepare_update(
         "sections": [item[4] for item in replacements],
         "candidate_states": candidate_states,
         "candidate_progress": progress,
+        "finding_states": finding_states,
+        "finding_progress": finding_progress,
     }
 
 
@@ -593,7 +852,7 @@ def _publish_prepared(prepared: dict[str, object]) -> dict[str, object]:
                     "atomic sibling read-back mismatch",
                     stage="render",
                 )
-            _validate_complete_report(_facts(reread))
+            _validate_report(reread)
         except OSError as exc:
             raise ReportUpdateError(
                 f"cannot render atomic sibling: {exc}",
@@ -684,6 +943,212 @@ def update_report(
     )
 
 
+def _insert_marker(kind: str, subsystem_id: str) -> str:
+    return f"<!-- audit-codebase:{kind}:{subsystem_id} -->"
+
+
+def _upsert_region(
+    source: str,
+    *,
+    kind: str,
+    identifier: str,
+    fragment: str,
+    insert_kind: str,
+    subsystem_id: str,
+) -> tuple[str, bool]:
+    start_marker = _marker(kind, identifier, "start")
+    end_marker = _marker(kind, identifier, "end")
+    replacement = f"{start_marker}\n{fragment.strip()}\n{end_marker}"
+    if start_marker in source or end_marker in source:
+        start, end = _marked_bounds(source, kind, identifier)
+        return source[:start] + replacement + source[end:], False
+    anchor = _insert_marker(insert_kind, subsystem_id)
+    if source.count(anchor) != 1:
+        raise ReportUpdateError(
+            f"subsystem {subsystem_id!r} has no unique {insert_kind} anchor"
+        )
+    return source.replace(anchor, f"{replacement}\n{anchor}", 1), True
+
+
+def _prepared_markup(
+    *,
+    report: Path,
+    source_bytes: bytes,
+    updated: str,
+    sections: list[str],
+) -> dict[str, object]:
+    updated = _sync_progress(updated)
+    candidate_states, candidate_progress, finding_states, finding_progress = (
+        _validate_report(updated)
+    )
+    updated_bytes = updated.encode("utf-8")
+    return {
+        "_report_path": report,
+        "_source_bytes": source_bytes,
+        "_updated_bytes": updated_bytes,
+        "report": str(report),
+        "sha256": _sha256(updated_bytes),
+        "sections": sections,
+        "candidate_states": candidate_states,
+        "candidate_progress": candidate_progress,
+        "finding_states": finding_states,
+        "finding_progress": finding_progress,
+    }
+
+
+def reaudit_subsystem(
+    *,
+    repo_root: Path,
+    report: Path,
+    expected_sha256: str,
+    subsystem_id: str,
+    subsystem_state: str,
+    source_identity: str,
+    narrative_path: Path,
+    findings: Sequence[tuple[str, Path]] = (),
+    candidates: Sequence[tuple[str, Path, Path]] = (),
+    validate_only: bool = False,
+) -> dict[str, object]:
+    """Atomically refresh one subsystem and upsert its findings and candidates."""
+
+    if not _SECTION_ID.fullmatch(subsystem_id):
+        raise ReportUpdateError(f"unsafe subsystem ID: {subsystem_id}")
+    if subsystem_state not in _SUBSYSTEM_STATES:
+        raise ReportUpdateError(f"unsupported subsystem state: {subsystem_state}")
+    if not source_identity.strip():
+        raise ReportUpdateError("source identity must not be empty")
+    canonical = _canonical_report(repo_root, report)
+    source_bytes, source = _decode(canonical)
+    if _sha256(source_bytes) != expected_sha256:
+        raise ReportUpdateError(
+            f"report collision: expected {expected_sha256}, "
+            f"observed {_sha256(source_bytes)}"
+        )
+    facts = _facts(source)
+    _validate_report(source)
+    if subsystem_id not in facts.subsystems:
+        raise ReportUpdateError(f"subsystem not found: {subsystem_id}")
+
+    section_pattern = re.compile(
+        rf"<section\b[^>]*\bid\s*=\s*([\"'])"
+        rf"subsystem-{re.escape(subsystem_id)}\1[^>]*>"
+    )
+    section_match = section_pattern.search(source)
+    if section_match is None:
+        raise ReportUpdateError(f"subsystem container not found: {subsystem_id}")
+    section_tag = section_match.group(0)
+    for name, value in (
+        ("data-state", subsystem_state),
+        ("data-source-identity", source_identity.strip()),
+    ):
+        section_tag, count = re.subn(
+            rf"(\b{re.escape(name)}\s*=\s*)([\"'])[^\"']*\2",
+            lambda match, replacement=escape(value, quote=True): (
+                f"{match.group(1)}{match.group(2)}{replacement}{match.group(2)}"
+            ),
+            section_tag,
+            count=1,
+        )
+        if count != 1:
+            raise ReportUpdateError(f"subsystem container has no {name}")
+    source = source[: section_match.start()] + section_tag + source[section_match.end() :]
+
+    _, narrative = _decode(narrative_path)
+    _validate_section("subsystem-narrative", subsystem_id, narrative)
+    start, end = _marked_bounds(source, "subsystem-narrative", subsystem_id)
+    updated = (
+        source[:start]
+        + f"{_marker('subsystem-narrative', subsystem_id, 'start')}\n"
+        + narrative.strip()
+        + f"\n{_marker('subsystem-narrative', subsystem_id, 'end')}"
+        + source[end:]
+    )
+    sections = [f"subsystem-narrative:{subsystem_id}"]
+    seen_findings: set[str] = set()
+    for identifier, path in findings:
+        if identifier in seen_findings:
+            raise ReportUpdateError(f"duplicate finding update: {identifier}")
+        seen_findings.add(identifier)
+        _, fragment = _decode(path)
+        fragment_facts = _validate_section("finding", identifier, fragment)
+        record = fragment_facts.findings.get(identifier, [])
+        if (
+            len(record) != 1
+            or record[0].get("data-subsystem-id") != subsystem_id
+        ):
+            raise ReportUpdateError(
+                f"finding {identifier!r} does not belong to subsystem {subsystem_id!r}"
+            )
+        updated, _ = _upsert_region(
+            updated,
+            kind="finding",
+            identifier=identifier,
+            fragment=fragment,
+            insert_kind="finding-insert",
+            subsystem_id=subsystem_id,
+        )
+        sections.append(f"finding:{identifier}")
+
+    seen_candidates: set[str] = set()
+    for identifier, card_path, row_path in candidates:
+        if identifier in seen_candidates:
+            raise ReportUpdateError(f"duplicate candidate update: {identifier}")
+        seen_candidates.add(identifier)
+        _, card = _decode(card_path)
+        _, row = _decode(row_path)
+        card_facts = _validate_section("candidate", identifier, card)
+        row_facts = _validate_section("candidate-index", identifier, row)
+        card_record = card_facts.candidate_cards.get(identifier, [])
+        row_record = row_facts.candidate_rows.get(identifier, [])
+        if (
+            len(card_record) != 1
+            or len(row_record) != 1
+            or card_record[0].get("data-subsystem-id") != subsystem_id
+            or row_record[0].get("data-subsystem-id") != subsystem_id
+        ):
+            raise ReportUpdateError(
+                f"candidate {identifier!r} does not belong to subsystem "
+                f"{subsystem_id!r}"
+            )
+        updated, _ = _upsert_region(
+            updated,
+            kind="candidate-index",
+            identifier=identifier,
+            fragment=row,
+            insert_kind="candidate-index-insert",
+            subsystem_id=subsystem_id,
+        )
+        updated, _ = _upsert_region(
+            updated,
+            kind="candidate",
+            identifier=identifier,
+            fragment=card,
+            insert_kind="candidate-insert",
+            subsystem_id=subsystem_id,
+        )
+        sections.extend(
+            (f"candidate-index:{identifier}", f"candidate:{identifier}")
+        )
+
+    prepared = _prepared_markup(
+        report=canonical,
+        source_bytes=source_bytes,
+        updated=updated,
+        sections=sections,
+    )
+    if validate_only:
+        return {
+            key: value
+            for key, value in prepared.items()
+            if not key.startswith("_")
+        } | {
+            "stage": "validate",
+            "mutation_started": False,
+            "report_unchanged": True,
+        }
+    return _publish_prepared(prepared)
+
+
 def _load_completion(path: Path) -> dict[str, object]:
     _, source = _decode(path)
     try:
@@ -771,13 +1236,19 @@ def _implemented_evidence(
     )
 
 
-def _replace_state(region: str, tag: str) -> tuple[str, int]:
+def _replace_state(
+    region: str,
+    tag: str,
+    old_state: str,
+    new_state: str,
+) -> tuple[str, int]:
     pattern = re.compile(
-        rf"(<{tag}\b[^>]*\bdata-state\s*=\s*)([\"'])analyzed\2"
+        rf"(<{tag}\b[^>]*\bdata-state\s*=\s*)([\"'])"
+        rf"{re.escape(old_state)}\2"
     )
     return pattern.subn(
         lambda match: (
-            f"{match.group(1)}{match.group(2)}implemented{match.group(2)}"
+            f"{match.group(1)}{match.group(2)}{new_state}{match.group(2)}"
         ),
         region,
         count=1,
@@ -804,7 +1275,7 @@ def close_candidate(
             f"observed {_sha256(source_bytes)}"
         )
     facts = _facts(source)
-    states, _ = _validate_complete_report(facts)
+    states, _, finding_states, _ = _validate_report(source)
     if states.get(candidate_id) != "analyzed":
         raise ReportUpdateError(
             f"candidate {candidate_id!r} must be analyzed before closeout"
@@ -836,20 +1307,52 @@ def close_candidate(
     _packet_text(packet, "changed_scope")
     _packet_text(packet, "residual_risk")
     _packet_text(packet, "last_verified_identity")
+    raw_transitions = packet.get("finding_transitions")
+    if not isinstance(raw_transitions, list):
+        raise ReportUpdateError("completion packet requires finding_transitions")
+    transitions: dict[str, tuple[str, str]] = {}
+    for item in raw_transitions:
+        if not isinstance(item, dict):
+            raise ReportUpdateError("finding transition must be an object")
+        finding_id = item.get("finding_id")
+        state = item.get("state")
+        reason = item.get("reason")
+        if (
+            not isinstance(finding_id, str)
+            or not isinstance(state, str)
+            or state not in _FINDING_STATES
+            or not isinstance(reason, str)
+            or not reason.strip()
+            or finding_id in transitions
+        ):
+            raise ReportUpdateError("completion packet has invalid finding transition")
+        transitions[finding_id] = (state, reason.strip())
+
+    member_findings = set(facts.candidate_findings.get(candidate_id, []))
+    active_members = {
+        identifier
+        for identifier in member_findings
+        if finding_states.get(identifier) == "active"
+    }
+    if set(transitions) != active_members:
+        raise ReportUpdateError(
+            "finding transitions must cover every active candidate finding"
+        )
 
     card_start, card_end = _marked_bounds(source, "candidate", candidate_id)
     row_start, row_end = _marked_bounds(source, "candidate-index", candidate_id)
-    subsystem_start, subsystem_end = _marked_bounds(source, "subsystem", subsystem_id)
-    if not (
-        subsystem_start < card_start < card_end < subsystem_end
-        and subsystem_start < row_start < row_end < subsystem_end
+    card_record = facts.candidate_cards[candidate_id][0]
+    row_record = facts.candidate_rows[candidate_id][0]
+    if (
+        card_record.get("data-subsystem-id") != subsystem_id
+        or row_record.get("data-subsystem-id") != subsystem_id
     ):
         raise ReportUpdateError("candidate is not inside the matching subsystem")
 
     card = source[card_start:card_end]
     row = source[row_start:row_end]
-    card, card_count = _replace_state(card, "article")
-    row, row_count = _replace_state(row, "tr")
+    card, card_count = _replace_state(card, "article", "analyzed", "implemented")
+    row, row_count = _replace_state(row, "tr", "analyzed", "implemented")
     if card_count != 1 or row_count != 1:
         raise ReportUpdateError("candidate state projections are not closeable")
     card = _without_pickup(card, candidate_id, "card")
@@ -859,50 +1362,44 @@ def close_candidate(
         raise ReportUpdateError("candidate card has no closing article")
     card = card[:closing] + _implemented_evidence(candidate_id, packet) + card[closing:]
 
+    replacements = [(card_start, card_end, card), (row_start, row_end, row)]
+    for finding_id, (state, reason) in transitions.items():
+        finding_start, finding_end = _marked_bounds(source, "finding", finding_id)
+        finding = source[finding_start:finding_end]
+        finding, count = _replace_state(
+            finding,
+            "article",
+            finding_states[finding_id],
+            state,
+        )
+        if count != 1:
+            raise ReportUpdateError(
+                f"finding {finding_id!r} state is not closeable"
+            )
+        closing = finding.rfind("</article>")
+        if closing < 0:
+            raise ReportUpdateError(f"finding {finding_id!r} has no closing article")
+        transition = (
+            f'\n<p data-finding-transition="{finding_id}" '
+            f'data-state="{state}">{escape(reason)}</p>\n'
+        )
+        finding = finding[:closing] + transition + finding[closing:]
+        replacements.append((finding_start, finding_end, finding))
+
     updated = source
-    for start, end, replacement in sorted(
-        ((card_start, card_end, card), (row_start, row_end, row)),
-        reverse=True,
-    ):
+    for start, end, replacement in sorted(replacements, reverse=True):
         updated = updated[:start] + replacement + updated[end:]
 
-    new_states = dict(states)
-    new_states[candidate_id] = "implemented"
-    counts = {state: 0 for state in _CANDIDATE_STATES}
-    for state in new_states.values():
-        counts[state] += 1
-    progress = ",".join(
-        f"{state.replace(' ', '-')}:{counts[state]}"
-        for state in _CANDIDATE_STATES
-    )
-    updated, progress_count = re.subn(
-        r"(data-candidate-progress\s*=\s*)([\"'])[^\"']*\2",
-        lambda match: (
-            f"{match.group(1)}{match.group(2)}{progress}{match.group(2)}"
-        ),
-        updated,
-    )
-    if progress_count != len(_PROGRESS_IDS):
-        raise ReportUpdateError("candidate progress projections are not closeable")
-
-    updated_bytes = updated.encode("utf-8")
-    final_states, final_progress = _validate_complete_report(_facts(updated))
-    prepared: dict[str, object] = {
-        "_report_path": canonical,
-        "_source_bytes": source_bytes,
-        "_updated_bytes": updated_bytes,
-        "report": str(canonical),
-        "sha256": _sha256(updated_bytes),
-        "sections": [
+    prepared = _prepared_markup(
+        report=canonical,
+        source_bytes=source_bytes,
+        updated=updated,
+        sections=[
             f"candidate:{candidate_id}",
             f"candidate-index:{candidate_id}",
-            "summary:report-header",
-            "summary:progress",
-            "summary:report-footer",
+            *(f"finding:{identifier}" for identifier in sorted(transitions)),
         ],
-        "candidate_states": final_states,
-        "candidate_progress": final_progress,
-    }
+    )
     return _publish_prepared(prepared)
 
 
@@ -917,6 +1414,7 @@ def _parser() -> argparse.ArgumentParser:
     inspect = commands.add_parser("inspect")
     add_report_args(inspect)
     inspect.add_argument("--candidate-id")
+    inspect.add_argument("--subsystem-id")
 
     for name in ("validate", "update"):
         command = commands.add_parser(name)
@@ -935,6 +1433,33 @@ def _parser() -> argparse.ArgumentParser:
     close.add_argument("--expected-sha256", required=True)
     close.add_argument("--candidate-id", required=True)
     close.add_argument("--completion", type=Path, required=True)
+
+    reaudit = commands.add_parser("reaudit-subsystem")
+    add_report_args(reaudit)
+    reaudit.add_argument("--expected-sha256", required=True)
+    reaudit.add_argument("--subsystem-id", required=True)
+    reaudit.add_argument(
+        "--subsystem-state",
+        required=True,
+        choices=sorted(_SUBSYSTEM_STATES),
+    )
+    reaudit.add_argument("--source-identity", required=True)
+    reaudit.add_argument("--narrative", type=Path, required=True)
+    reaudit.add_argument(
+        "--finding",
+        nargs=2,
+        action="append",
+        default=[],
+        metavar=("ID", "FRAGMENT"),
+    )
+    reaudit.add_argument(
+        "--candidate",
+        nargs=3,
+        action="append",
+        default=[],
+        metavar=("ID", "CARD", "INDEX"),
+    )
+    reaudit.add_argument("--validate-only", action="store_true")
     return parser
 
 
@@ -946,6 +1471,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 repo_root=args.repo_root,
                 report=args.report,
                 candidate_id=args.candidate_id,
+                subsystem_id=args.subsystem_id,
             )
         elif args.command in {"validate", "update"}:
             sections = [
@@ -963,13 +1489,32 @@ def main(argv: Sequence[str] | None = None) -> int:
                 expected_sha256=args.expected_sha256,
                 sections=sections,
             )
-        else:
+        elif args.command == "close-candidate":
             result = close_candidate(
                 repo_root=args.repo_root,
                 report=args.report,
                 expected_sha256=args.expected_sha256,
                 candidate_id=args.candidate_id,
                 completion_path=args.completion,
+            )
+        else:
+            result = reaudit_subsystem(
+                repo_root=args.repo_root,
+                report=args.report,
+                expected_sha256=args.expected_sha256,
+                subsystem_id=args.subsystem_id,
+                subsystem_state=args.subsystem_state,
+                source_identity=args.source_identity,
+                narrative_path=args.narrative,
+                findings=tuple(
+                    (identifier, Path(fragment))
+                    for identifier, fragment in args.finding
+                ),
+                candidates=tuple(
+                    (identifier, Path(card), Path(index))
+                    for identifier, card, index in args.candidate
+                ),
+                validate_only=args.validate_only,
             )
     except (OSError, ReportUpdateError) as exc:
         error = (

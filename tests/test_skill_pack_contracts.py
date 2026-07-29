@@ -1429,6 +1429,7 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
         assert field in candidate
     assert "Successful implementation is distinct from `disproved`" in candidate
     assert "close-candidate" in candidate
+    assert "Finding transitions:" in candidate
     assert "The callee never re-enters Audit" in followup
     assert "Attempt the Audit-owned report update once" in followup_flat
     assert "Do not start another candidate" in followup_flat
@@ -1550,9 +1551,15 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert "inspect" in report
     assert "validate" in report
     assert "close-candidate" in report
+    assert "reaudit-subsystem" in report
+    assert "candidate-insert:<subsystem-id>" in report
+    assert "finding-insert:<subsystem-id>" in report
+    assert "static subsystem container" in report_flat
+    assert "public `add-candidate`" not in report
     assert "must not contain update markers" in report_flat
     assert "Objective result:" in audit
     assert "Publication result:" in audit
+    assert "Representation Gate" in audit
     assert "attempt incremental publication exactly once" in report_flat
     assert "Do not rerun the helper" in report
     assert "hand-edit the report" in report
@@ -1564,14 +1571,16 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert "changed-fragment links" in report
     assert "report SHA-256 is unchanged" in report
     assert "return completed source analysis" in report.lower()
-    assert 'content="3"' in report
-    assert 'content="2"' not in report
+    assert 'content="4"' in report
+    assert 'content="3"' not in report
     assert "candidate-index:<id>:start" in report
     assert 'data-candidate-id="<candidate-id>"' in report
     assert 'data-state="<state>"' in report
     assert "no pickup for `implemented` or `disproved`" in report_flat
     assert "every candidate ID has exactly one card and one index row" in report_flat
     assert '"candidate-index"' in updater
+    assert "def reaudit_subsystem(" in updater
+    assert "finding_transitions" in updater
     assert "_validate_complete_report" in updater
     assert "migrate" not in updater.lower()
     assert '<html lang="en">' in report

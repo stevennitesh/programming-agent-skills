@@ -50,6 +50,16 @@ A failed Entry Gate returns `blocked` with zero writes and the exact invalid
 input. Report-wide age or unrelated repository drift is not an Entry failure;
 Audit and Analyze establish current truth at the selected unit.
 
+### Representation Gate
+
+Immediately after Entry, use helper `inspect` for the selected ID and objective.
+Proceed only when the report exposes every required replacement or insertion
+region and the helper reports that objective as supported. Audit requires
+`reaudit-subsystem`; Analyze requires its candidate regions; implementation
+closeout also requires finding reconciliation. Fail before source analysis with
+the unsupported report version or region when representation is incomplete.
+Do not migrate a report inside Audit.
+
 **Current source** means the report's repository target: the exact Git object
 for an object-targeted atlas, or the observed live worktree for a live atlas.
 Never substitute checkout bytes for a supplied Git object.
@@ -195,9 +205,11 @@ gap; unfinished obtainable work is not.
 
 ### Publish Audit
 
-Apply the Incremental Publish Gate to the selected subsystem and affected
-summaries. For `audited`, return findings, retained complexity, gaps, candidate
-IDs and names, the local recommendation, coverage, and:
+Apply the Incremental Publish Gate through one `reaudit-subsystem` operation.
+It refreshes the narrative, upserts findings, updates or inserts candidates,
+and derives summaries without nested replacements. For `audited`, return
+findings, retained complexity, gaps, candidate IDs and names, the local
+recommendation, coverage, and:
 
 `$audit-codebase analyze <candidate-id> from <absolute-report-path>`
 
@@ -234,7 +246,9 @@ stop with the exact Map or Audit selection needed.
 
 When a matching implementation completion packet is supplied after a failed or
 deferred root closeout, apply `CANDIDATE-CONTRACT.md`'s Close Implemented gate.
-Do not repeat analysis whose exact evidence remains current.
+Reconcile each active member finding to `active`, `resolved`, or `disproved`
+while preserving its original evidence. Do not repeat analysis whose exact
+evidence remains current.
 
 ### Analyze Thoroughly
 

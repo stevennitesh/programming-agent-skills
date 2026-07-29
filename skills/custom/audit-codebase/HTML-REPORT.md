@@ -12,7 +12,7 @@ Write strict UTF-8 HTML that opens offline, with:
 
 - `<html lang="en">`, a meaningful `<title>`, and
   `<meta charset="utf-8">`;
-- `<meta name="audit-codebase-report-version" content="3">`;
+- `<meta name="audit-codebase-report-version" content="4">`;
 - no network requests, executable scripts, hidden workflow state, remote
   fonts, CDN assets, or browser-only persistence;
 - arbitrary repository, user, and returned content only in escaped text nodes;
@@ -40,7 +40,7 @@ Before deriving selection state from a supplied report:
    `<root>/.scratch/audit-codebase/<safe-run-id>/report.html`;
 2. reject traversal, redirected or reparse-point parents, a path outside that
    root, or mismatched embedded repository and run identities;
-3. decode strict UTF-8 and require report version `3`, one map state, and one
+3. decode strict UTF-8 and require report version `4`, one map state, and one
    unique selected subsystem or candidate anchor in an admissible state; and
 4. record the report SHA-256 for collision detection.
 
@@ -129,6 +129,18 @@ An audited or incomplete subsystem renders:
 Keep every member finding visible when it belongs to a candidate. Candidate
 pickups appear only for an audited subsystem.
 
+The subsystem `<section>` is a static container with
+`data-subsystem-id`, `data-state`, and `data-source-identity`. Its narrative
+owns current structure and Source Trace but does not restate finding status.
+Each finding owns its current state and preserved evidence:
+
+```html
+<article id="finding-<finding-id>"
+  data-finding-id="<finding-id>"
+  data-subsystem-id="<subsystem-id>"
+  data-state="active|resolved|disproved">...</article>
+```
+
 ## Candidate Card And Analysis
 
 The candidate card owns candidate facts. Render each as:
@@ -137,6 +149,7 @@ The candidate card owns candidate facts. Render each as:
 <article
   id="candidate-<candidate-id>"
   data-candidate-id="<candidate-id>"
+  data-subsystem-id="<subsystem-id>"
   data-state="<state>"
   data-strength="<strength>"
 >
@@ -148,6 +161,8 @@ decisions, state, strength, and pickup. Lead with current state and its
 available action, if any. After Analyze, keep the presentation and analysis
 record in `<details data-candidate-history="<candidate-id>">` so history remains
 available without dominating navigation.
+Mark each defect member with a link carrying
+`data-candidate-finding="<candidate-id>"` to its finding anchor.
 
 Render its index row as a required projection with the same
 `data-candidate-id`, `data-state`, and `data-strength` values. Mark an exact
@@ -202,38 +217,50 @@ pickup for `implemented` or `disproved`.
 
 Header, progress summary, and footer use IDs `report-header`,
 `summary-progress`, and `report-footer`. Each carries the same
-`data-candidate-progress` value in this fixed order:
+`data-candidate-progress` and `data-finding-progress` values in these fixed
+orders:
 
 ```text
 presented:<n>,decision-pending:<n>,analyzed:<n>,implemented:<n>,disproved:<n>,blocked:<n>
+active:<n>,resolved:<n>,disproved:<n>
 ```
 
 ## Stable Update Markers
 
-Wrap independently replaceable regions:
+Keep the subsystem container static. Its narrative, individual findings,
+candidate rows, and candidate cards are non-overlapping sibling regions:
 
 ```html
-<!-- audit-codebase:subsystem:<id>:start -->
-<section id="subsystem-<id>">...</section>
-<!-- audit-codebase:subsystem:<id>:end -->
+<section id="subsystem-<subsystem-id>" ...>
+<!-- audit-codebase:subsystem-narrative:<subsystem-id>:start -->
+<div id="subsystem-narrative-<subsystem-id>">...</div>
+<!-- audit-codebase:subsystem-narrative:<subsystem-id>:end -->
 
-<!-- audit-codebase:candidate:<id>:start -->
-<article id="candidate-<id>">...</article>
-<!-- audit-codebase:candidate:<id>:end -->
+<!-- audit-codebase:finding:<finding-id>:start -->
+<article id="finding-<finding-id>" ...>...</article>
+<!-- audit-codebase:finding:<finding-id>:end -->
+<!-- audit-codebase:finding-insert:<subsystem-id> -->
 
 <!-- audit-codebase:candidate-index:<id>:start -->
 <tr id="candidate-index-<id>" ...>...</tr>
 <!-- audit-codebase:candidate-index:<id>:end -->
+<!-- audit-codebase:candidate-index-insert:<subsystem-id> -->
+
+<!-- audit-codebase:candidate:<id>:start -->
+<article id="candidate-<id>">...</article>
+<!-- audit-codebase:candidate:<id>:end -->
+<!-- audit-codebase:candidate-insert:<subsystem-id> -->
+</section>
 
 <!-- audit-codebase:summary:<id>:start -->
 <section id="summary-<id>">...</section>
 <!-- audit-codebase:summary:<id>:end -->
 ```
 
-IDs use lowercase ASCII letters, digits, and single hyphens. Marker pairs are
-unique and properly nested. Candidate cards, index rows, and affected summaries
-have independent, non-overlapping regions. Map publication creates them; later
-publication replaces one or more marked regions atomically.
+IDs use lowercase ASCII letters, digits, and single hyphens. Marker pairs and
+insertion anchors are unique. No replaceable region contains another. Map
+publication creates the static subsystem container, sibling regions, and three
+insertion anchors; later publication updates or inserts siblings atomically.
 Use `summary:report-header` and `summary:report-footer` markers around their
 same-named anchors.
 
@@ -241,11 +268,15 @@ same-named anchors.
 
 Before publication, validate the prospective complete report:
 
-- report version is `3`;
+- report version is `4`;
+- every subsystem has one static container, narrative region, and three
+  insertion anchors;
+- every finding has one owning subsystem and valid current state;
 - every candidate ID has exactly one card and one index row;
-- each card and row agree on ID, state, strength, and marked pickup text;
+- each card and row agree on subsystem, ID, state, strength, and pickup text;
+- candidate finding links resolve inside the same subsystem;
 - pickup follows the candidate-state rules;
-- header, progress, and footer totals equal the card states; and
+- header, progress, and footer totals equal candidate and finding states; and
 - every implemented card has one complete matching implementation evidence
   element.
 
@@ -268,21 +299,27 @@ coverage and one Continue pickup.
 
 ## Incremental Publish Gate
 
-After a passed Entry Gate, inspect the selected report through the helper.
+After a passed Entry Gate, inspect the selected report and objective capability
+through the helper.
+Subsystem inspection returns state, source identity, findings by current state,
+retained complexity, gaps, candidates, available regions, and capabilities;
+manual parsing of rendered HTML is not an Entry step.
 Render only the selected regions, then run zero-write `validate`. Correct
 rendering or validation failures while the helper reports
 `mutation_started: false` and `report_unchanged: true`; this is preparation, not
 a publication attempt. Once validation passes, attempt incremental publication
-exactly once with one `update` call containing every selected region:
+exactly once. Analyze uses `update` for existing regions. Audit uses
+`reaudit-subsystem` to refresh narrative, upsert findings, and update or insert
+candidates in one prospective report:
 
-1. render only the selected subsystem or candidate plus affected summary
-   fragments;
+1. render only the selected narrative, finding, or candidate fragments;
 2. require strict UTF-8, safe text, the exact target anchor, no marker
    injection, and no executable or remote-resource markup;
 3. replace the unique marked regions, parse the complete result, and verify
    Report Consistency, changed anchors, and changed-fragment links;
-4. verify the source report SHA-256 is unchanged; and
-5. atomically replace and read back the report.
+4. derive candidate and finding progress from owning records;
+5. verify the source report SHA-256 is unchanged; and
+6. atomically replace and read back the report.
 
 Use the package-owned standard-library helper:
 
@@ -291,6 +328,7 @@ python <audit-codebase>/scripts/update_report.py inspect
   --repo-root <root>
   --report <absolute-report-path>
   [--candidate-id <id>]
+  [--subsystem-id <id>]
 
 python <audit-codebase>/scripts/update_report.py validate
   --repo-root <root>
@@ -305,6 +343,18 @@ python <audit-codebase>/scripts/update_report.py update
   --expected-sha256 <sha256>
   --section <kind> <id> <fragment-path>
   [--section <kind> <id> <fragment-path> ...]
+
+python <audit-codebase>/scripts/update_report.py reaudit-subsystem
+  --repo-root <root>
+  --report <absolute-report-path>
+  --expected-sha256 <sha256>
+  --subsystem-id <id>
+  --subsystem-state mapped|incomplete|audited
+  --source-identity <current-source-identity>
+  --narrative <fragment-path>
+  [--finding <id> <fragment-path> ...]
+  [--candidate <id> <card-path> <index-path> ...]
+  [--validate-only]
 ```
 
 Fragments contain only the inner target element and must not contain update
@@ -313,14 +363,16 @@ markers. For example:
 ```html
 <article id="candidate-alpha-fix"
   data-candidate-id="alpha-fix"
+  data-subsystem-id="alpha"
   data-state="analyzed"
   data-strength="Strong">...</article>
 ```
 
 The helper owns collision detection, changed-section and complete-report
-validation, sibling cleanup, atomic replacement, and read-back. Every success or
-error reports `stage`, `mutation_started`, and `report_unchanged`; success also
-returns changed regions, validated candidate states, and progress totals. The
+validation, insertion, derived progress, sibling cleanup, atomic replacement,
+and read-back. Every success or error reports `stage`, `mutation_started`, and
+`report_unchanged`; success also returns changed regions, candidate and finding
+states, and progress totals. The
 caller owns and removes fragment files. The helper does not judge codebase
 evidence, render the Map, or maintain another ledger.
 

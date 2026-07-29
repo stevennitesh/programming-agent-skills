@@ -138,6 +138,10 @@ Changed scope:
 Change Closure: complete
 Residual risk:
 Last verified identity:
+Finding transitions:
+  - Finding ID:
+    State: active | resolved | disproved
+    Reason:
 State: implemented
 ```
 
@@ -145,10 +149,13 @@ The commit and tree must match the accepted proof and review, the implementation
 commit must be current or reachable from current source, and no implementation
 blocker may remain. A mismatched, partial, blocked, or failing Return changes no
 candidate state. Successful implementation is distinct from `disproved`.
+Require one transition for every active defect member. The current state and
+reason change; original evidence remains in history. An `active` transition
+records residual work and does not misstate resolution.
 After the root verifies those facts, pass the exact packet to
 `update_report.py close-candidate`; the helper derives the card, index, progress,
-banner, and evidence projections in one publication. An implemented candidate
-has no pickup.
+finding states, banner, and evidence projections in one publication. An
+implemented candidate has no pickup.
 
 ## Bound
 

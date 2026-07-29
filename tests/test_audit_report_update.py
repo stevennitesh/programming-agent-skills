@@ -32,6 +32,7 @@ PRESENTED_PROGRESS = (
     "presented:1,decision-pending:0,analyzed:0,"
     "implemented:0,disproved:0,blocked:0"
 )
+ACTIVE_FINDINGS = "active:1,resolved:0,disproved:0"
 
 
 def _report(repo: Path) -> Path:
@@ -46,50 +47,74 @@ def _report(repo: Path) -> Path:
     report.write_text(
         """<!doctype html>
 <html lang="en"><head>
-<meta name="audit-codebase-report-version" content="3">
+<meta name="audit-codebase-report-version" content="4">
 </head><body>
 <!-- audit-codebase:summary:report-header:start -->
-<header id="report-header" data-candidate-progress="{progress}">Audit</header>
+<header id="report-header" data-candidate-progress="{progress}"
+  data-finding-progress="{finding_progress}">Audit</header>
 <!-- audit-codebase:summary:report-header:end -->
 <main>
-<!-- audit-codebase:subsystem:alpha:start -->
-<section id="subsystem-alpha">
-  <p>old subsystem</p>
+<section id="subsystem-alpha" data-subsystem-id="alpha"
+  data-state="audited" data-source-identity="tree-alpha">
+  <!-- audit-codebase:subsystem-narrative:alpha:start -->
+  <div id="subsystem-narrative-alpha"><p>old subsystem</p></div>
+  <!-- audit-codebase:subsystem-narrative:alpha:end -->
+  <div id="findings-alpha">
+  <!-- audit-codebase:finding:alpha-defect:start -->
+  <article id="finding-alpha-defect" data-finding-id="alpha-defect"
+    data-subsystem-id="alpha" data-state="active">
+    <p>original defect evidence</p>
+  </article>
+  <!-- audit-codebase:finding:alpha-defect:end -->
+  <!-- audit-codebase:finding-insert:alpha -->
+  </div>
+  <p data-retained-id="alpha-retained" data-subsystem-id="alpha">retained</p>
+  <p data-gap-id="alpha-gap" data-subsystem-id="alpha">gap</p>
   <table><tbody>
   <!-- audit-codebase:candidate-index:alpha-fix:start -->
   <tr id="candidate-index-alpha-fix"
       data-candidate-id="alpha-fix"
+      data-subsystem-id="alpha"
       data-state="presented"
       data-strength="Strong">
     <td><code data-candidate-pickup="alpha-fix"
       data-pickup-view="index">{pickup}</code></td>
   </tr>
   <!-- audit-codebase:candidate-index:alpha-fix:end -->
+  <!-- audit-codebase:candidate-index-insert:alpha -->
   </tbody></table>
+  <div id="candidate-cards-alpha">
   <!-- audit-codebase:candidate:alpha-fix:start -->
   <article id="candidate-alpha-fix"
       data-candidate-id="alpha-fix"
+      data-subsystem-id="alpha"
       data-state="presented"
       data-strength="Strong">
     <p>old candidate</p>
+    <a href="#finding-alpha-defect"
+      data-candidate-finding="alpha-fix">alpha-defect</a>
     <code data-candidate-pickup="alpha-fix"
       data-pickup-view="card">{pickup}</code>
   </article>
   <!-- audit-codebase:candidate:alpha-fix:end -->
+  <!-- audit-codebase:candidate-insert:alpha -->
+  </div>
 </section>
-<!-- audit-codebase:subsystem:alpha:end -->
 <!-- audit-codebase:summary:progress:start -->
-<section id="summary-progress" data-candidate-progress="{progress}">
+<section id="summary-progress" data-candidate-progress="{progress}"
+  data-finding-progress="{finding_progress}">
   <p>old progress</p>
 </section>
 <!-- audit-codebase:summary:progress:end -->
 </main>
 <!-- audit-codebase:summary:report-footer:start -->
-<footer id="report-footer" data-candidate-progress="{progress}">Audit</footer>
+<footer id="report-footer" data-candidate-progress="{progress}"
+  data-finding-progress="{finding_progress}">Audit</footer>
 <!-- audit-codebase:summary:report-footer:end -->
 </body></html>
 """.format(
             progress=PRESENTED_PROGRESS,
+            finding_progress=ACTIVE_FINDINGS,
             pickup="$audit-codebase analyze alpha-fix from report",
         ),
         encoding="utf-8",
@@ -115,7 +140,8 @@ def _progress_sections(tmp_path: Path, progress: str) -> tuple[tuple[str, str, P
             _fragment(
                 tmp_path,
                 f"{identifier}.html",
-                f'<{tag} id="{element_id}" data-candidate-progress="{progress}">'
+                f'<{tag} id="{element_id}" data-candidate-progress="{progress}" '
+                f'data-finding-progress="{ACTIVE_FINDINGS}">'
                 f"{identifier}</{tag}>",
             ),
         )
@@ -152,8 +178,9 @@ def _candidate_sections(
         "candidate.html",
         f"""<article id="candidate-alpha-fix"
 data-candidate-id="alpha-fix" data-state="{state}"
-data-strength="Strong">
-new{card_pickup}{evidence}
+data-subsystem-id="alpha" data-strength="Strong">
+new<a href="#finding-alpha-defect"
+data-candidate-finding="alpha-fix">alpha-defect</a>{card_pickup}{evidence}
 </article>""",
     )
     index = _fragment(
@@ -161,6 +188,7 @@ new{card_pickup}{evidence}
         "candidate-index.html",
         f"""<tr id="candidate-index-alpha-fix"
 data-candidate-id="alpha-fix" data-state="{row_state or state}"
+data-subsystem-id="alpha"
 data-strength="Strong"><td>new{index_pickup}</td></tr>""",
     )
     return (
@@ -209,6 +237,13 @@ def _completion(path: Path) -> Path:
                 "change_closure": "complete",
                 "residual_risk": "none",
                 "last_verified_identity": "a" * 40,
+                "finding_transitions": [
+                    {
+                        "finding_id": "alpha-defect",
+                        "state": "resolved",
+                        "reason": "covered by the accepted implementation",
+                    }
+                ],
             }
         ),
         encoding="utf-8",
@@ -230,10 +265,101 @@ def test_inspect_returns_local_candidate_packet(tmp_path: Path) -> None:
     assert result["sha256"] == _digest(report)
     assert result["candidate"] == {
         "id": "alpha-fix",
+        "subsystem_id": "alpha",
         "state": "presented",
         "strength": "Strong",
         "pickup": "$audit-codebase analyze alpha-fix from report",
     }
+
+
+def test_inspect_returns_subsystem_facts_and_capabilities(tmp_path: Path) -> None:
+    report = _report(tmp_path)
+
+    result = MODULE.inspect_report(
+        repo_root=tmp_path,
+        report=report,
+        subsystem_id="alpha",
+    )
+
+    assert result["subsystem"] == {
+        "id": "alpha",
+        "state": "audited",
+        "source_identity": "tree-alpha",
+        "findings": {"active": ["alpha-defect"], "resolved": [], "disproved": []},
+        "retained_complexity": ["alpha-retained"],
+        "gaps": ["alpha-gap"],
+        "candidates": ["alpha-fix"],
+        "regions": {
+            "narrative": True,
+            "finding_insert": True,
+            "candidate_index_insert": True,
+            "candidate_insert": True,
+        },
+    }
+    assert result["capabilities"]["reaudit_subsystem"] is True
+    assert result["capabilities"]["close_candidate_findings"] is True
+
+
+def test_reaudit_subsystem_adds_candidate_and_derives_projections(
+    tmp_path: Path,
+) -> None:
+    report = _report(tmp_path)
+    narrative = _fragment(
+        tmp_path,
+        "narrative.html",
+        '<div id="subsystem-narrative-alpha"><p>refreshed trace</p></div>',
+    )
+    finding = _fragment(
+        tmp_path,
+        "finding.html",
+        """<article id="finding-alpha-new"
+data-finding-id="alpha-new" data-subsystem-id="alpha" data-state="active">
+<p>new finding evidence</p></article>""",
+    )
+    card = _fragment(
+        tmp_path,
+        "new-card.html",
+        """<article id="candidate-alpha-new-fix"
+data-candidate-id="alpha-new-fix" data-subsystem-id="alpha"
+data-state="presented" data-strength="Strong">
+<a href="#finding-alpha-new"
+data-candidate-finding="alpha-new-fix">alpha-new</a>
+<code data-candidate-pickup="alpha-new-fix"
+data-pickup-view="card">analyze alpha-new-fix</code></article>""",
+    )
+    index = _fragment(
+        tmp_path,
+        "new-index.html",
+        """<tr id="candidate-index-alpha-new-fix"
+data-candidate-id="alpha-new-fix" data-subsystem-id="alpha"
+data-state="presented" data-strength="Strong"><td>
+<code data-candidate-pickup="alpha-new-fix"
+data-pickup-view="index">analyze alpha-new-fix</code></td></tr>""",
+    )
+
+    result = MODULE.reaudit_subsystem(
+        repo_root=tmp_path,
+        report=report,
+        expected_sha256=_digest(report),
+        subsystem_id="alpha",
+        subsystem_state="incomplete",
+        source_identity="tree-alpha-2",
+        narrative_path=narrative,
+        findings=(("alpha-new", finding),),
+        candidates=(("alpha-new-fix", card, index),),
+    )
+
+    updated = report.read_text(encoding="utf-8")
+    assert "refreshed trace" in updated
+    assert 'data-state="incomplete"' in updated
+    assert 'data-source-identity="tree-alpha-2"' in updated
+    assert updated.count("audit-codebase:finding:alpha-new:start") == 1
+    assert updated.count("audit-codebase:candidate:alpha-new-fix:start") == 1
+    assert updated.count("audit-codebase:candidate-index:alpha-new-fix:start") == 1
+    assert result["candidate_states"]["alpha-new-fix"] == "presented"
+    assert result["finding_states"]["alpha-new"] == "active"
+    assert result["candidate_progress"].startswith("presented:2")
+    assert result["finding_progress"] == "active:2,resolved:0,disproved:0"
 
 
 def test_validate_prepares_update_without_filesystem_mutation(tmp_path: Path) -> None:
@@ -345,6 +471,11 @@ def test_close_candidate_derives_all_report_projections(tmp_path: Path) -> None:
     assert 'data-implementation-result="complete"' in updated
     assert 'data-candidate-pickup="alpha-fix"' not in updated
     assert 'data-implemented-banner="alpha-fix"' in updated
+    assert 'data-state="resolved"' in updated
+    assert "original defect evidence" in updated
+    assert 'data-finding-transition="alpha-defect"' in updated
+    assert result["finding_states"] == {"alpha-defect": "resolved"}
+    assert result["finding_progress"] == "active:0,resolved:1,disproved:0"
 
 
 def test_updates_selected_regions_atomically(tmp_path: Path) -> None:
@@ -354,8 +485,10 @@ def test_updates_selected_regions_atomically(tmp_path: Path) -> None:
         "candidate.html",
         """<article id="candidate-alpha-fix"
 data-candidate-id="alpha-fix" data-state="analyzed"
-data-strength="Strong">
+data-subsystem-id="alpha" data-strength="Strong">
 <a href="#summary-progress">new</a>
+<a href="#finding-alpha-defect"
+data-candidate-finding="alpha-fix">alpha-defect</a>
 </article>""",
     )
     index = _fragment(
@@ -363,6 +496,7 @@ data-strength="Strong">
         "candidate-index.html",
         """<tr id="candidate-index-alpha-fix"
 data-candidate-id="alpha-fix" data-state="analyzed"
+data-subsystem-id="alpha"
 data-strength="Strong"><td>new</td></tr>""",
     )
     progress = (
@@ -458,36 +592,36 @@ def test_candidate_consistency_failure_preserves_report(
     assert not list(report.parent.glob("report.html.audit-update-*.tmp"))
 
 
-def test_progress_projection_failure_preserves_report(tmp_path: Path) -> None:
+def test_progress_projections_are_derived_from_candidate_state(tmp_path: Path) -> None:
     report = _report(tmp_path)
-    before = report.read_bytes()
     progress = _progress_for("analyzed")
     summary = _progress_sections(tmp_path, progress)[1]
 
-    with pytest.raises(MODULE.ReportUpdateError, match="report-header.*inconsistent"):
-        MODULE.update_report(
-            repo_root=tmp_path,
-            report=report,
-            expected_sha256=_digest(report),
-            sections=(
-                *_candidate_sections(
-                    tmp_path,
-                    state="analyzed",
-                    pickup="",
-                ),
-                summary,
+    result = MODULE.update_report(
+        repo_root=tmp_path,
+        report=report,
+        expected_sha256=_digest(report),
+        sections=(
+            *_candidate_sections(
+                tmp_path,
+                state="analyzed",
+                pickup="",
             ),
-        )
+            summary,
+        ),
+    )
 
-    assert report.read_bytes() == before
+    updated = report.read_text(encoding="utf-8")
+    assert result["candidate_progress"] == progress
+    assert updated.count(f'data-candidate-progress="{progress}"') == 3
 
 
-def test_requires_report_version_three(tmp_path: Path) -> None:
+def test_requires_report_version_four(tmp_path: Path) -> None:
     report = _report(tmp_path)
     report.write_text(
         report.read_text(encoding="utf-8").replace(
+            'content="4"',
             'content="3"',
-            'content="2"',
             1,
         ),
         encoding="utf-8",
@@ -499,7 +633,7 @@ def test_requires_report_version_three(tmp_path: Path) -> None:
         '<article id="candidate-alpha-fix">new</article>',
     )
 
-    with pytest.raises(MODULE.ReportUpdateError, match="version 3"):
+    with pytest.raises(MODULE.ReportUpdateError, match="version 4"):
         MODULE.update_report(
             repo_root=tmp_path,
             report=report,
@@ -560,7 +694,7 @@ def test_unsafe_fragment_preserves_report(tmp_path: Path, fragment: str) -> None
     assert not list(report.parent.glob("report.html.audit-update-*.tmp"))
 
 
-def test_rejects_overlapping_parent_and_child_updates(tmp_path: Path) -> None:
+def test_rejects_legacy_replaceable_subsystem_parent(tmp_path: Path) -> None:
     report = _report(tmp_path)
     subsystem = tmp_path / "subsystem.html"
     subsystem.write_text(
@@ -573,7 +707,7 @@ def test_rejects_overlapping_parent_and_child_updates(tmp_path: Path) -> None:
         encoding="utf-8",
     )
 
-    with pytest.raises(MODULE.ReportUpdateError, match="overlapping replacements"):
+    with pytest.raises(MODULE.ReportUpdateError, match="unsupported section kind"):
         MODULE.update_report(
             repo_root=tmp_path,
             report=report,

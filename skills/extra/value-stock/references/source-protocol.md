@@ -223,3 +223,7 @@ Stop earlier when the missing source is observable and blocks safe valuation.
 Before returning, re-open citations for the exact identity, period, number, and
 claim. Confirm that each item was public by the information cutoff. State the
 market-data timestamp and any source that may update after the analysis.
+
+When a publicly scheduled earnings release, filing, financing, vote, or other
+load-bearing event is imminent, keep the valuation valid as of its cutoff but
+label its shelf life unusually short and name the event and scheduled date.

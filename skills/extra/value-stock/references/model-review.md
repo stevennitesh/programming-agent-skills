@@ -30,20 +30,20 @@ alternative assumptions, and other reviewers' output. Reviewers are read-only
 candidate finders: they do not mutate, spawn, admit findings, or own the final
 valuation.
 
-Dispatch only warranted lenses, at most three:
+Default to two lenses:
 
 1. **Reproduction and claims** - reproduce the locked value without
    changing assumptions, then inspect claim basis, accounting conventions,
    cash, debt, awards, dilution, and share count.
-2. **Business or asset economics** - challenge growth, margins, reinvestment,
-   competitive duration, asset realization, and sector-specific drivers.
-3. **Required returns and residual value** - challenge discount construction,
-   timing, terminal or residual economics, probabilities, sensitivities, and
-   price-implied expectations.
+2. **Economics and required returns** - challenge growth, margins,
+   reinvestment, competitive duration, asset realization, sector-specific
+   drivers, discount construction, timing, terminal or residual economics,
+   probabilities, sensitivities, and price-implied expectations.
 
-Run exactly one reproduction-and-claims lens. Additional reviewers verify the
-same lock identity, inspect only their assigned lens, and need not reproduce the
-entire model. Require:
+Add one focused third reviewer only for a distinct load-bearing disagreement
+that neither default lens owns. Run exactly one reproduction-and-claims lens.
+Additional reviewers verify the same lock identity, inspect only their assigned
+lens, and need not reproduce the entire model. Require:
 
 ```text
 status: complete | blocked

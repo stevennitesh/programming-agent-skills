@@ -119,136 +119,51 @@ Reconstruct only enough history to normalize the selected value base and expose
 the drivers carrying the forecast. Forecast business drivers before accounting
 outputs, and keep growth consistent with reinvestment and returns.
 
-Before calculation, create one internal **Model Lock** containing only
-load-bearing:
+Before calculation, create one internal **Model Lock** with the five sections
+below. Each gate validates its section; the Lock is the canonical evidence
+object, not a second narrative checklist. Record each gate result, unresolved
+item, conservative bound when available, and final status in the Lock.
 
-- security, valuation date, information cutoff, currency, and price timestamp
-  when used;
-- source-tagged historical facts and forecast anchors;
-- method, claim holder, value or cash-flow definition, and matching required
-  return;
-- material accounting conventions, including cash, leases, acquisitions, and
-  stock-based compensation;
-- debt, other claims, actual shares, awards, dilution, and the
-  enterprise-to-equity or asset-to-security bridge;
-- forecast horizon, date map, scenarios, and cash-flow timing; and
-- terminal, residual, liquidation, or other realization assumptions.
+| Gate and Lock section | Required pass evidence |
+| --- | --- |
+| **1. As-Of** | Exact security, rights or ADR ratio, valuation date, cutoff, currency, latest balance-sheet date, authoritative price field, timestamp and timezone when used, a map of historical periods, stubs, forecast periods and realization dates, and a bridge for material intervening events. |
+| **2. Accounting-Identity** | Method, target claim, value or cash-flow definition and matching return; one filed historical period reconciled to that definition; consistent treatment of financing interest, non-operating income, taxes, capex, leases, excess cash, acquisitions, and material existing-award versus future-grant SBC. |
+| **3. Security-Claim** | Date-consistent actual common shares; debt, preferred, minority interests, awards, options, warrants, convertibles and other material claims; no weighted-average EPS shares as a point-in-time claim; and one-date or explicitly bridged cash, debt, claims, awards, and shares. |
+| **4. Economics-And-Reproduction** | Source-tagged facts and anchors; causal business or asset drivers and scenario definitions; organic versus acquired growth when material; coherent growth, margins, reinvestment, returns and competitive duration; exact rate definitions; terminal or other realization economics; useful sensitivities; and a separate pass that reproduces the typed calculation artifact and its deterministic assertions. |
+| **5. Horizon-And-Decision** | Present value separated from future-date value; a future-state roll-forward or a clearly subordinate required-return shortcut; authoritative price evidence for price-dependent outputs; the named observed-discount formula; only a user-supplied hurdle for formal pass/fail or entry price; and precision and status no stronger than the weakest load-bearing input. |
 
-For a nontrivial numerical valuation, build the typed calculation artifact
-defined in `valuation-methods.md`. Lock unknowns explicitly. When two
-conventions are defensible, choose one internally consistent base and keep the
-other as a sensitivity; never combine pieces of both.
+Run the gates in order; the first three are pre-calculation gates. A gate passes
+only with its named evidence. For a nontrivial numerical valuation, build the
+typed calculation artifact in `valuation-methods.md` before Gate 4.
 
-## Five Gates
+Apply failure narrowly:
 
-Run the gates in order. The As-Of, Accounting-Identity, and Security-Claim gates
-are pre-calculation gates. A gate passes only with its named evidence; prose
-assurance is not a substitute.
+- Repair any deterministic identity, timing, sign, unit, source-definition, or
+  reproduction failure before using the affected calculation.
+- An evidence gap may return `partial` when owning evidence supports a
+  conservative bound. Show the full valuation effect, narrow any conclusion the
+  bound could reverse, and do not imply that the unresolved fact was observed.
+- Block only the dependent method or per-security output when the missing item
+  is load-bearing and cannot be bounded without fabrication. Security identity
+  or missing current primary financial evidence blocks any dependent numerical
+  result; missing price evidence blocks only price-dependent outputs.
 
-### 1. As-Of Gate
-
-**Pass evidence:**
-
-- exact target security, valuation date, information cutoff, and latest
-  balance-sheet date;
-- authoritative price source, field, timestamp, and timezone for any
-  price-dependent conclusion;
-- an explicit date map for historical periods, forecast periods, stubs,
-  midpoints, discrete events, and terminal or residual value; and
-- an evidence-backed bridge for material filings, acquisitions, financing,
-  repurchases, distributions, or other events between the balance-sheet and
-  valuation dates.
-
-**Safe failure:** If identity or current primary financial evidence is missing,
-return `blocked`. If stale balance-sheet data or a missing bridge still permits
-a defensible bracket, return `partial` or `indicative` and avoid a precise point
-value. Missing authoritative price evidence blocks only price-implied
-expectations, observed discount, and hurdle pass/fail, not a standalone
-intrinsic valuation.
-
-### 2. Accounting-Identity Gate
-
-**Pass evidence:**
-
-- one filed historical period reconciles to the selected earnings, cash-flow,
-  book-value, or asset-value definition;
-- a CFO-derived FCFF reconciles financing interest, non-operating income,
-  taxes, capex, and cash-flow classification;
-- leases are operating or financing under one consistent convention;
-- only excess cash and separately valued non-operating assets enter the
-  security bridge; and
-- material SBC separates existing awards from future grants and reconciles the
-  expense, cash-flow, claim, and dilution treatment by cohort.
-
-**Safe failure:** Do not calculate the affected method. Use another method only
-when its evidence independently passes these gates; otherwise return `blocked`.
-
-### 3. Security-Claim Gate
-
-**Pass evidence:**
-
-- date-consistent actual common shares and the exact rights or ADR ratio of the
-  target security;
-- debt, preferred equity, minority interests, options, RSUs, PSUs, warrants,
-  convertibles, and other material claims reconcile on a disclosed basis;
-- weighted-average EPS shares are not used as a point-in-time equity claim; and
-- cash, debt, claims, awards, and shares share one date or an explicit bridge.
-
-**Safe failure:** The equity pool may be reported when supportable, but
-per-security value must remain unresolved or be shown only as a bounded range.
-Return `partial`, not `complete`, and do not imply a filing-supported diluted
-claim count.
-
-### 4. Economics-And-Reproduction Gate
-
-**Pass evidence:**
-
-- the method fits the company and the forecast identifies the few causal
-  business or asset drivers carrying value;
-- organic and acquired growth are separated when acquisitions materially affect
-  the forecast base or stated growth;
-- growth, margins, reinvestment, returns, competitive duration, and terminal or
-  residual economics are mutually coherent;
-- every rate and beta uses the source's exact definition and matches the claim,
-  currency, inflation basis, and timing;
-- sensitivities change the assumptions that actually drive the range; and
-- a separate calculation pass reproduces the locked result and passes the
-  deterministic assertions in `valuation-methods.md`.
-
-**Safe failure:** Repair mechanical, timing, sign, unit, identity, or source
-definition errors and recompute before interpretation. Preserve defensible
-conventions as sensitivities and forecast judgments as causal scenarios. A
-failed reproduction or unresolved mechanical discrepancy prevents `complete`.
+When two conventions are defensible, choose one internally consistent base and
+show the other as a separate sensitivity. Operating scenarios vary causally
+linked business drivers while holding accounting, claim-bridge, non-operating
+asset, and required-return conventions fixed, unless the stated business
+scenario itself causes one of those items to change.
 
 After deterministic checks pass, apply `model-review.md` when its loading
 condition is met. Reviewers challenge judgment, and one assigned reviewer
 reproduces the model; they do not replace the gates, vote on value, or average
 targets.
 
-### 5. Horizon-And-Decision Gate
-
-**Pass evidence:**
-
-- present fair value is distinct from any future-date value;
-- a requested future value either rolls the business, cash, debt, claims,
-  distributions, and shares to the future state or labels required-return
-  compounding as a subordinate shortcut;
-- price-dependent conclusions use authoritative price evidence and name the
-  formula:
+For price-dependent conclusions, name the formula:
 
 ```text
 observed price discount = (estimated value - market price) / estimated value
 ```
-
-- a formal attractiveness, entry-price, or hurdle pass/fail uses only a rule the
-  user supplied; and
-- status, range, and numerical precision match the weakest load-bearing input
-  and every unresolved gate.
-
-**Safe failure:** Report the intrinsic range or observed discount that is
-actually supported, but do not present a shortcut as bottom-up future value,
-invent a margin-of-safety hurdle, print arbitrary entry prices, or make a
-personalized adequacy judgment.
 
 ## Return
 
