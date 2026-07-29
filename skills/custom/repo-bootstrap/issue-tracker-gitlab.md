@@ -96,13 +96,17 @@ Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`,
   preserve child order; otherwise choose oldest first.
 - **Claim**: assign the work item to the owner or orchestrator before
   implementation dispatch; the assignee is the concurrency guard.
-- **Release**: clear the active assignee when work blocks, is abandoned, or
-  reaches closeout.
+- **Release**: for an ordinary pre-commit block or abandonment, clear the active
+  assignee only after pending tracker mutations are determinate. Once an accepted
+  commit or campaign landing exists, retain or transfer the claim to a named
+  recovery custodian until configured closeout makes the item durably
+  non-dispatchable and affected-frontier read-back succeeds.
 - **Closeout**: after required review and commits, post the closeout packet as a
-  note, apply `implemented`, remove the prior state-role label, and release the
-  claim. Close the issue only when `Close implemented items` is `yes` or the
-  user directs it. Close a parent only after its in-scope children and
-  follow-ups are drained.
+  note, apply `implemented`, and remove the prior state-role label. Close the
+  issue only when `Close implemented items` is `yes` or the user directs it.
+  Read back the resulting non-dispatchable state and affected frontier, then
+  release the claim and read back its absence. Close a parent only after its
+  in-scope children and follow-ups are drained.
 - **Mutation read-back**: after creating or changing an item, refetch it and its
   affected dependents; verify the intended description, relationships, labels or
   state, assignees, notes, open/closed status, and resulting ready frontier. A

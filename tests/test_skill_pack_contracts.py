@@ -251,15 +251,25 @@ def test_triage_label_template_respects_tracker_pr_policy() -> None:
     assert "Triage PRs only when the tracker enables them" in triage_flat
 
 
-def test_github_closeout_clears_dependency_frontier_safely() -> None:
+def test_connector_closeout_retains_custody_until_frontier_is_safe() -> None:
     github_trackers = (
         ROOT / "docs/agents/issue-tracker.md",
         CUSTOM / "repo-bootstrap/issue-tracker-github.md",
+        CUSTOM / "repo-bootstrap/issue-tracker-gitlab.md",
     )
     for tracker in github_trackers:
         text = tracker.read_text(encoding="utf-8")
-        assert "**Close implemented items:** yes." in text
-        assert "**Non-completed closure**" in text
+        normalized = " ".join(text.split()).lower()
+        assert "ordinary pre-commit block or abandonment" in normalized
+        assert "accepted commit or campaign landing" in normalized
+        assert "named recovery custodian" in normalized
+        assert "durably non-dispatchable" in normalized
+        assert "affected-frontier read-back succeeds" in normalized
+        assert "release the claim and read back its absence" in normalized
+
+    github = github_trackers[0].read_text(encoding="utf-8")
+    assert "**Close implemented items:** yes." in github
+    assert "**Non-completed closure**" in github
 
     bootstrap = (CUSTOM / "repo-bootstrap/SKILL.md").read_text(encoding="utf-8")
     assert "GitHub default: yes" in bootstrap
@@ -387,7 +397,7 @@ def assert_repo_bootstrap_semantic_contract(
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     assert_repo_bootstrap_semantic_contract(
         CUSTOM / "repo-bootstrap",
-        "b55d6b0cbcbbbfa0d762913051c6a90d41f47f79ac89962329c3f1b4e94a6516",
+        "d6adcf01a8df6149b71e68dfc8e0684a48e25b0f841e5fa871337a2c7a69118b",
         profile="incumbent",
     )
 
@@ -1584,12 +1594,12 @@ def test_implement_selects_one_risk_scaled_review_route() -> None:
         "## Lock And Return", 1
     )[0]
     review_flat = " ".join(review_section.split())
-    assert "Stage only selected work" in review_flat
+    assert "Stage one exact candidate for review" in review_flat
     assert "Pin routing classification and Finding Contract" in review_flat
     assert "then choose exactly one formal review route for the run" in review_flat
     assert "Invoke it once for the initial proved candidate" in review_flat
     assert "invoke the same route once in remediation mode" in review_flat
-    assert "request an explicitly staged-only review" in review_flat
+    assert "request explicitly staged-only review" in review_flat
     assert "Never unstage foreign work" in review_flat
     assert "Return without Review" in review_flat
     assert set(
@@ -2491,10 +2501,10 @@ def test_mutating_workflows_require_readback() -> None:
         text = (CUSTOM / name / "SKILL.md").read_text(encoding="utf-8")
         if name == "implement":
             assert "Mutation read-back" in text
-            assert "partial or failed closeout Returns" in " ".join(text.split())
+            assert "incomplete or indeterminate closeout" in " ".join(text.split())
         elif name == "parallel-implement":
             assert "mutation read-back" in text
-            assert "read that mutation back" in text
+            assert "affected-frontier read-back" in text
         elif name == "to-spec":
             normalized = " ".join(text.split())
             assert (
@@ -2594,6 +2604,12 @@ def assert_to_tickets_semantic_contract(
 
     publish_contract = level_two_section("Publish")
     assert re.search(r"freeze .*before .*mutation", publish_contract, re.S)
+    assert "symbolic child identities" in publish_contract
+    assert "publication operation templates" in publish_contract
+    assert "bind each returned tracker identity to its symbolic child" in (
+        publish_contract
+    )
+    assert "before any dependent mutation" in publish_contract
     assert "preflight proves that configured operations exist" in normalized_runtime
     assert "only the first real mutation proves live behavior" in normalized_runtime
     assert "prove live parent/child behavior" in publish_contract
@@ -2637,6 +2653,11 @@ def assert_to_tickets_semantic_contract(
     assert "ticket bodies remain authoritative" in return_contract
     assert "successors refetch their pointers" in return_contract
     assert "per-ticket execution profiles and state matrices" not in return_contract
+    assert "existing claim or divergence" in return_contract
+    assert "missing or unclear authority for the frozen tracker transition" in (
+        return_contract
+    )
+    assert "source-owned ambiguity remains `source-gap`" in return_contract
     assert "no successor" in return_contract or "without starting" in return_contract
 
     if profile == "incumbent":
@@ -2715,7 +2736,7 @@ def test_to_tickets_preserves_coverage_readiness_and_frontier_contract() -> None
     packages = (
         (
             CUSTOM / "to-tickets",
-            "d24e9829d9d95f8e1823585a40e5eeb99db654f69482ee3a0736e2aad88f108f",
+            "ca0ab6d53ed08a82021b33829f617a111db5eaad104f66ff7e52df841fb48933",
             "prompt3-candidate",
         ),
     )
@@ -2921,8 +2942,28 @@ def test_to_spec_prompt3_packages_share_the_parameterized_semantic_owner() -> No
 
 def test_parallel_delivery_roles_stay_out_of_the_shared_contract() -> None:
     contract = (ROOT / "docs/agents/engineering-contract.md").read_text(encoding="utf-8")
+    seed = (CUSTOM / "repo-bootstrap/engineering-contract.md").read_text(
+        encoding="utf-8"
+    )
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
     parallel = (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8")
+
+    git_owner = (
+        "**Git mutation owners.** Before changing the index, refs, or registered "
+        "worktrees"
+    )
+    for shared in (contract, seed):
+        normalized = " ".join(shared.split())
+        assert git_owner in normalized
+        assert (
+            "Clean isolated work needs only its exact base and clean status"
+            in normalized
+        )
+        assert (
+            "shared or dirty work must also preserve the starting index"
+            in normalized
+        )
+        assert "rerun only evidence invalidated by a later mutation" in normalized
 
     assert "staged worker" not in contract
     assert "lane worker" not in contract
@@ -2967,6 +3008,10 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
     ]
     assert "scripts/lane_worktree.py" in launch
     assert "runtime-managed" in launch and "manual Git" in launch
+    parallel_flat = " ".join(parallel.split())
+    assert "Land accepted commits serially at the root" in parallel_flat
+    assert "Read back each resulting `HEAD` and actual diff" in parallel_flat
+    assert "Run only interaction or readiness proof invalidated" in parallel_flat
     report = worker.split("```text", 1)[1].split("```", 1)[0]
     assert re.findall(r"(?m)^([^:\n]+):", report) == [
         "status",
@@ -3143,6 +3188,15 @@ def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts
     assert "$change-review" in review
     assert "mutation read-back" in lock
     assert lock.index("child") < lock.index("parent")
+    parallel_flat = " ".join(parallel.split())
+    lock_flat = " ".join(lock.split())
+    assert "Retain its campaign claim until verified child closeout" in parallel_flat
+    assert "verified non-dispatchable closeout" in lock_flat
+    assert "affected-frontier read-back" in lock_flat
+    assert "release only pre-landing ended claims" in lock_flat.lower()
+    assert "named recovery custodian" in lock_flat
+    assert "checkpoint claim accounting records retained custody" in ledger_flat
+    assert "release follows verified child closeout" in ledger_flat
 
     assert closeout_fields == {
         "delivered",
@@ -3249,10 +3303,16 @@ def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -
     assert "staged worker" not in implement
 
 
-def test_local_tracker_closeout_enters_the_lock_snapshot() -> None:
+def test_implement_closeout_enters_lock_and_preserves_connector_custody() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
     implement_flat = " ".join(implement.split())
 
+    assert "Stage one exact candidate for review" in implement_flat
+    assert "In clean isolated work, stage all and only authorized candidate bytes" in (
+        implement_flat
+    )
+    assert "In shared or dirty work, preserve the starting index" in implement_flat
+    assert "stage exact paths or hunks" in implement_flat
     review_tree = implement.index("pin one immutable proved candidate")
     closeout = implement.index("For Local Markdown, append the final closeout")
     lock_tree = implement.index("Lock the exact reviewed candidate")
@@ -3268,10 +3328,18 @@ def test_local_tracker_closeout_enters_the_lock_snapshot() -> None:
     assert "read-back proves `HEAD` unchanged" in implement_flat
     assert "do not retry blindly" in implement_flat
     assert "A retry inside the same active run is not a Return" in implement_flat
-    assert "terminal `partial` or `blocked` Return releases the claim" in (
+    assert "retain the claim while closing GitHub or GitLab" in implement_flat
+    assert "durably non-dispatchable" in implement_flat
+    assert "read back the item and affected frontiers" in implement_flat
+    assert "named recovery custodian" in implement_flat
+    assert "Before commit, a terminal `partial` or `blocked` Return releases" in (
         implement_flat
     )
-    assert "named retained custodian" in implement_flat
+    assert "pending mutations are determinate" in implement_flat
+    assert "After commit, incomplete or indeterminate connector closeout" in (
+        implement_flat
+    )
+    assert "remains outside the agent frontier" in implement_flat
 
 
 def test_diagnosis_returns_to_one_implementation_owner() -> None:

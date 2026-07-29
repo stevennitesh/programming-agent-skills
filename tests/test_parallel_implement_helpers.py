@@ -1691,7 +1691,7 @@ def test_runtime_three_release_rejects_partial_terminal_outcomes(tmp_path: Path)
     assert any("runtime contract 3 reserves release for complete" in error for error in state["errors"])
 
 
-def test_checkpoint_renderer_separates_implementation_from_tracker_closeout(
+def test_checkpoint_renderer_retains_landed_claim_until_tracker_closeout(
     tmp_path: Path,
 ) -> None:
     repo, base = repository(tmp_path)
@@ -1729,9 +1729,12 @@ def test_checkpoint_renderer_separates_implementation_from_tracker_closeout(
             "work_item": "parent",
             "integration_sha": base,
             "decision": "partial",
-            "data": checkpoint_data(base, claim_state="released"),
+            "data": checkpoint_data(base),
         },
     )
+    checkpoint = json.loads(events.read_text(encoding="utf-8").splitlines()[-1])
+    assert checkpoint["data"]["claims"][0]["state"] == "retained"
+    assert checkpoint["data"]["claims"][0]["recovery_owner"] == "root"
 
     ledger = tmp_path / "checkpoint-LEDGER.md"
     result, rendered = helper(

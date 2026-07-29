@@ -16,7 +16,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:f29046450d66 -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:0ef9de8bc7a5 -->"
 ENGINEERING_PRIMER_TOKEN = (
     "Explore imaginatively. Converge under proof. Simplify ruthlessly."
 )
@@ -409,7 +409,10 @@ def main() -> int:
                 ("**Expand:**", "bounded slice", "perform Change Closure"),
             ),
             ("## Proof Discipline", ("maintained repo configuration",)),
-            ("## Work State", ("**Refresh after interaction.**",)),
+            (
+                "## Work State",
+                ("**Refresh after interaction.**", "**Git mutation owners.**"),
+            ),
             (
                 "## Lock",
                 (".tmp/", ".scratch/", "Change Closure", "mutation boundary"),

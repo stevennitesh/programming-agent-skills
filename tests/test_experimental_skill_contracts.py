@@ -304,7 +304,7 @@ def test_current_implement_preserves_promoted_and_author_contract() -> None:
     } == inventory
 
     assert tree_hash(canonical_dir) == (
-        "815471beb0e4e1b90421f993d68b0be91dbd43cb0f5fa8854837b75e00c87dab"
+        "c025300e64dcbc06e249d4078163ba2af79b773e282c8043c80b12e37936a609"
     )
     promoted = (canonical_dir / "SKILL.md").read_text(encoding="utf-8")
     normalized = " ".join(promoted.split())
@@ -322,9 +322,12 @@ def test_current_implement_preserves_promoted_and_author_contract() -> None:
         "retain the open item and claim through Lock and commit",
         "Produce exactly one commit",
         "read-back proves `HEAD` unchanged",
-        "terminal `partial` or `blocked` Return releases the claim",
+        "retain the claim while closing GitHub or GitLab",
+        "Before commit, a terminal `partial` or `blocked` Return releases",
+        "After commit, incomplete or indeterminate connector closeout",
+        "remains outside the agent frontier",
         "require its tree to equal the locked tree",
-        "partial or failed closeout Returns",
+        "named recovery custodian",
         "Return `complete` only after every applicable gate reads back",
     ):
         assert contract in normalized

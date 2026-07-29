@@ -63,8 +63,9 @@ drained.
 
 **Select.** Derive the next dependency-ready set from reconciled tracker and
 ledger state. A proved same-campaign landing may satisfy readiness as
-`landed-awaiting-lock`, but it never closes the tracker item. Rollback,
-invalidation, or failed proof removes that overlay and reblocks dependents.
+`landed-awaiting-lock`, but it never closes the tracker item. Retain its campaign
+claim until verified child closeout. Rollback, invalidation, or failed proof
+removes that overlay and reblocks dependents.
 
 Start from the frozen graph and execution profiles. Requalify only pairs whose
 semantic ownership, expected production writes, proof seams, canonical test
@@ -102,20 +103,19 @@ need are fully accounted for. A blocker retries only after its condition
 changes. Continue an actor only while its reconciled lane, authority, and
 bounded assignment remain current; otherwise open a fresh lane.
 
-Land accepted commits one at a time at the root. Inspect the actual diff,
-expected scope, stale-base overlap, conflicts, and focused proof. Carry worker
-proof as slice evidence while its landing context, dependencies, and proof
-inputs remain valid. After each landing, run only interaction or readiness proof
-invalidated or required by that landing, record the new integration `HEAD`,
-record the landed proof responsibility and test-portfolio delta, and rederive
-readiness. Before Review, reconcile the graph's proof-responsibility map: keep
-one canonical owner per responsibility, consolidate semantically equivalent
-campaign-created tests, and retain overlap only for distinct seams, risks, or
-useful failure isolation. Then run final required proof once on the drained
-current `HEAD`, including all applicable state-boundary branches and high-risk
-interactions. Reconcile every assigned Change Closure obligation: remove
-superseded or redundant paths, or verify each intentional retention's owner,
-reason, proof, and Removal Trigger.
+Land accepted commits serially at the root. Read back each resulting `HEAD` and
+actual diff; verify expected scope, stale-base overlap, conflicts, and focused
+proof. Carry worker proof as slice evidence while its landing context,
+dependencies, and proof inputs remain valid. Run only interaction or readiness
+proof invalidated or required by that landing, record the landed proof
+responsibility and test-portfolio delta, and rederive readiness. Before Review,
+reconcile the graph's proof-responsibility map: keep one canonical owner per
+responsibility, consolidate semantically equivalent campaign-created tests, and
+retain overlap only for distinct seams, risks, or useful failure isolation.
+Then run final required proof once on the drained current `HEAD`, including all
+applicable state-boundary branches and high-risk interactions. Reconcile every
+assigned Change Closure obligation: remove superseded or redundant paths, or
+verify each intentional retention's owner, reason, proof, and Removal Trigger.
 
 If a same-campaign landing or verified external implementation invalidates a
 remaining ticket's commitments or graph facts, return one `$to-tickets` repair
@@ -161,11 +161,14 @@ formal review through the owner selected from its target type and risk facts.
 
 Open Lock only when the accepted reviewed `HEAD` equals current integration
 `HEAD`, required final proof passes, and the review requirement is complete.
-Generate the closeout plan, close every child with mutation read-back, then
-close the parent only after its rule passes and read that mutation back. Release
-every claim. Reconcile publication evidence only when a separately authorized
-owner supplies it. Make every lane `removed`, `provider-preserved`, or an
-explicitly accepted safe residual.
+Generate the closeout plan. For each child, retain its claim through verified
+non-dispatchable closeout, mutation read-back, and affected-frontier read-back,
+then release the claim and read back its absence. Close the parent only after
+every child rule passes and reads back, then release the parent claim and read
+back its absence.
+Reconcile publication evidence only when a separately authorized owner supplies
+it. Make every lane `removed`, `provider-preserved`, or an explicitly accepted
+safe residual.
 
 Return `complete` only when the exhaustive graph is drained; every accepted
 change is in the reviewed current integration `HEAD`; proof and independent
@@ -175,7 +178,10 @@ released; lanes are safe; and applicable publication evidence supplied under
 separate authority is verified.
 
 For every nonterminal `partial` or `blocked` return, preserve accepted and
-unrelated state, halt unsafe progression, quiesce or account for actors, release
-ended claims, invalidate unsafe dependency overlays, leave incomplete items
-open, and report the blocker, exact retained state, and safest recovery or
-resume action. A checkpoint is nonterminal.
+unrelated state, halt unsafe progression, and quiesce or account for actors.
+Release only pre-landing ended claims whose pending mutations are determinate.
+Retain or transfer every `landed-awaiting-lock` or indeterminate-closeout claim
+to a named recovery custodian and read back custody. Invalidate unsafe
+dependency overlays, leave incomplete items open, and report the blocker, exact
+retained state, and safest recovery or resume action. A checkpoint is
+nonterminal.

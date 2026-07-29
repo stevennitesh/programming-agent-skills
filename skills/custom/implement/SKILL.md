@@ -112,13 +112,12 @@ commitments or unrelated work.
 
 ## Review
 
-Stage only selected work. With unrelated work present, preserve the starting
-index and status. When the index can represent the selected candidate exactly,
-stage only selected paths or hunks, verify the staged diff contains exactly
-that scope and unrelated state is unchanged, and request an explicitly
-staged-only review. Never unstage foreign work. When foreign staged bytes or
-overlap prevent exact selection, use an already-authorized isolated target or
-Return without Review.
+Stage one exact candidate for review. In clean isolated work, stage all and only
+authorized candidate bytes. In shared or dirty work, preserve the starting index
+and unrelated changes, stage exact paths or hunks, verify the staged diff and
+unchanged unrelated state, and request explicitly staged-only review. Never
+unstage foreign work. When foreign staged bytes or overlap prevent an exact
+candidate, use an already-authorized isolated target or Return without Review.
 
 Reuse current acceptance proof for the same exact candidate tree; run only
 missing, invalidated, or repository-required candidate checks, then
@@ -155,23 +154,24 @@ After acceptable final review, branch by tracker kind:
 - For a direct item, record tracker closeout as not applicable.
 
 Lock the exact reviewed candidate plus the applicable verified Local Markdown
-closeout. Reconcile current proof, identities, scope, index, unrelated state,
-and residual risk. Any other review-to-lock delta Returns to formal review.
+closeout. Any other review-to-lock delta Returns to formal review. Stage the
+remaining accepted bytes and require the index tree to equal the lock tree.
+Reuse exact-tree evidence and run only checks invalidated by closeout bytes or
+required at the commit boundary. Produce exactly one commit and require its tree
+to equal the locked tree. Retry a failed commit attempt only after read-back
+proves `HEAD` unchanged; otherwise treat the observed commit as created and do
+not retry blindly. Local Markdown commits selected work and its tracker closeout
+together; connector and direct items commit no fabricated tracker content.
 
-Intentionally stage the remaining accepted bytes and require the index tree to
-equal the lock tree. Reuse exact-tree evidence and run only checks invalidated
-by closeout bytes or required at the commit boundary. Produce exactly one commit
-and require its tree to equal the locked tree. Retry a failed commit attempt only
-after read-back proves `HEAD` unchanged; otherwise treat the observed commit as
-created and do not retry blindly. Local Markdown commits selected work and its
-tracker closeout together; connector and direct items commit no fabricated
-tracker content.
-
-After the commit is verified, close GitHub or GitLab through its configured
-connector, apply Mutation read-back, and release the claim. A partial or failed
-closeout Returns the commit identity, observed tracker state, applied and failed
-effects, and the safest configured recovery action. Local Markdown and direct
-items perform no post-commit tracker mutation.
+After the commit is verified, retain the claim while closing GitHub or GitLab
+through its configured connector. Make the item durably non-dispatchable, read
+back the item and affected frontiers, then release the claim and read back its
+absence.
+An incomplete or indeterminate closeout retains or transfers the claim to a
+named recovery custodian and reads that custody back. Return the commit identity,
+observed tracker state, applied and failed effects, and the safest configured
+recovery action. Local Markdown and direct items perform no post-commit tracker
+mutation.
 
 Push only when separately authorized, then verify the exact approved commit at
 the remote.
@@ -189,8 +189,11 @@ residual risk, authority needed, and one safest recovery or resume action. A
 Local Markdown closeout not included in the verified commit is staged incomplete
 tracker state. A connector item remains open until its post-commit closeout
 reads back. A retry inside the same active run is not a Return and keeps the
-claim. A terminal `partial` or `blocked` Return releases the claim and reads back
-its absence unless configured recovery rules require a named retained custodian.
+claim. Before commit, a terminal `partial` or `blocked` Return releases and reads
+back the claim only when pending mutations are determinate and no named recovery
+duty remains. After commit, incomplete or indeterminate connector closeout
+retains or transfers named recovery custody; the item remains outside the agent
+frontier until closeout and frontier read-back succeed.
 
 Stop before another item, parent closure, deployment, PR creation, merge, or
 unauthorized push.

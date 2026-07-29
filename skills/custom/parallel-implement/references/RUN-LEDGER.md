@@ -119,7 +119,9 @@ and accepts only `complete`; the skill's semantic phase is Lock.
 satisfies in-scope dependency readiness only while the accepted landing remains
 in current integration history with valid proof. It does not close an issue or
 alter the tracker dependency. Rollback, invalidation, or failed proof removes
-the overlay and reblocks dependents.
+the overlay and reblocks dependents. While the overlay exists, checkpoint claim
+accounting records retained custody and a recovery owner; release follows
+verified child closeout.
 
 ## Advanced and compatibility surface
 

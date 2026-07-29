@@ -187,12 +187,14 @@ parallelize or defer unresolved high-risk proof.
 ## Publish
 
 Freeze the exact source identity, commitment ledger, ticket titles and bodies,
-roles, relationships, dependency order, predicted frontier, execution profiles,
-proof-responsibility map, state matrices, and publication operations before
-durable mutation. Verify that the invocation or an explicit follow-up authorizes
-that exact configured tracker transition. A read-only request, changed plan, or
-unclear mutation scope leaves state unchanged and returns
-`existing-state-conflict` with the exact authority needed.
+symbolic child identities, roles, expected relationships, dependency order,
+predicted frontier, execution profiles, proof-responsibility map, state
+matrices, and publication operation templates before durable mutation. Bind
+each returned tracker identity to its symbolic child through immediate
+read-back before any dependent mutation. Verify that the invocation or an
+explicit follow-up authorizes that exact configured tracker transition. A
+read-only request, changed plan, or unclear mutation scope leaves state
+unchanged and returns `existing-state-conflict` with the exact authority needed.
 
 Create verified-missing children in dependency order and a recoverable non-ready
 state, or use one configured atomic graph operation with equivalent proof.
@@ -244,7 +246,10 @@ preference for concurrency, incomplete graph, or missing explicit delivery
 request uses the single-frontier route above instead.
 
 Return exactly one of `setup-precondition`, `source-gap`,
-`existing-state-conflict`, `publication-recovery`, or `ready-graph`. A
+`existing-state-conflict`, `publication-recovery`, or `ready-graph`. An
+`existing-state-conflict` covers an existing claim or divergence and missing or
+unclear authority for the frozen tracker transition; source-owned ambiguity
+remains `source-gap`. A
 `ready-graph` reports source and parent identities, graph identity, ordered
 ticket pointers, dependency edges, agent and human frontiers,
 compact cross-ticket proof-owner and serialization summaries, publication or

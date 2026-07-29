@@ -212,6 +212,14 @@ worker return, or an external wait, refresh Git and work state and reread every
 in-scope file you will touch. Reconcile intervening edits; never overwrite from
 memory.
 
+**Git mutation owners.** Before changing the index, refs, or registered
+worktrees, verify the exact repository, worktree, source state, and authority.
+Apply the narrow authorized mutation and read back its result. Clean isolated
+work needs only its exact base and clean status; shared or dirty work must also
+preserve the starting index and unrelated changes. When delivering a tree, bind
+proof and review to that tree and rerun only evidence invalidated by a later
+mutation.
+
 ## Lock
 
 Lock only when:
