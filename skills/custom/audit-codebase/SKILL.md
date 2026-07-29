@@ -228,6 +228,10 @@ Unrelated repository changes do not block. If current structural change
 destroys the candidate's subsystem boundary or makes its identity ambiguous,
 stop with the exact Map or Audit selection needed.
 
+When a matching implementation completion packet is supplied after a failed or
+deferred root closeout, apply `CANDIDATE-CONTRACT.md`'s Close Implemented gate.
+Do not repeat analysis whose exact evidence remains current.
+
 ### Analyze Thoroughly
 
 Apply the complete comparison and proof contract in `CANDIDATE-CONTRACT.md`.
@@ -244,7 +248,8 @@ zero or one next owner labeled `user selection required`; invoke nothing.
 
 Apply the Incremental Publish Gate to the candidate and affected summaries.
 Return the current validity judgment, complete analysis or disproval, evidence
-limits, and zero or one uninvoked next-owner suggestion. Then stop.
+limits, implementation disposition when applicable, and zero or one uninvoked
+next-owner suggestion. Then stop.
 
 ## Publication And Return
 
@@ -260,7 +265,7 @@ State is local:
 ```text
 Map: none | incomplete | complete
 Subsystem: none | mapped | incomplete | audited
-Candidate: none | presented | decision pending | analyzed | disproved | blocked
+Candidate: none | presented | decision pending | analyzed | implemented | disproved | blocked
 Evidence freshness: map, subsystem, and candidate each record last verified identity
 ```
 

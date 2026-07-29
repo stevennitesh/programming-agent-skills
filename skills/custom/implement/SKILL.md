@@ -176,6 +176,24 @@ mutation.
 Push only when separately authorized, then verify the exact approved commit at
 the remote.
 
+Every terminal Return includes one compact completion packet:
+
+```text
+Outcome: complete | partial | blocked
+Commit identity: <sha> | none
+Commit tree identity: <sha> | none
+Accepted proof and skipped checks:
+Formal review decision:
+Repair generations used:
+Changed scope:
+Change Closure:
+Residual risk:
+Caller-owned post-completion actions: <actions> | none
+```
+
+Populate it from exact accepted evidence; do not infer or start caller-owned
+post-completion actions.
+
 Return `complete` only after every applicable gate reads back: selected
 acceptance and supported state branches pass on the exact accepted tree; every
 relevant review generation is accepted; tracker-kind order holds; Lock and

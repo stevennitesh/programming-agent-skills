@@ -27,6 +27,12 @@ finally:
     sys.dont_write_bytecode = PREVIOUS_DONT_WRITE_BYTECODE
 
 
+PRESENTED_PROGRESS = (
+    "presented:1,decision-pending:0,analyzed:0,"
+    "implemented:0,disproved:0,blocked:0"
+)
+
+
 def _report(repo: Path) -> Path:
     report = (
         repo
@@ -38,20 +44,53 @@ def _report(repo: Path) -> Path:
     report.parent.mkdir(parents=True)
     report.write_text(
         """<!doctype html>
-<html lang="en"><main>
+<html lang="en"><head>
+<meta name="audit-codebase-report-version" content="3">
+</head><body>
+<!-- audit-codebase:summary:report-header:start -->
+<header id="report-header" data-candidate-progress="{progress}">Audit</header>
+<!-- audit-codebase:summary:report-header:end -->
+<main>
 <!-- audit-codebase:subsystem:alpha:start -->
 <section id="subsystem-alpha">
   <p>old subsystem</p>
+  <table><tbody>
+  <!-- audit-codebase:candidate-index:alpha-fix:start -->
+  <tr id="candidate-index-alpha-fix"
+      data-candidate-id="alpha-fix"
+      data-state="presented"
+      data-strength="Strong">
+    <td><code data-candidate-pickup="alpha-fix"
+      data-pickup-view="index">{pickup}</code></td>
+  </tr>
+  <!-- audit-codebase:candidate-index:alpha-fix:end -->
+  </tbody></table>
   <!-- audit-codebase:candidate:alpha-fix:start -->
-  <article id="candidate-alpha-fix"><p>old candidate</p></article>
+  <article id="candidate-alpha-fix"
+      data-candidate-id="alpha-fix"
+      data-state="presented"
+      data-strength="Strong">
+    <p>old candidate</p>
+    <code data-candidate-pickup="alpha-fix"
+      data-pickup-view="card">{pickup}</code>
+  </article>
   <!-- audit-codebase:candidate:alpha-fix:end -->
 </section>
 <!-- audit-codebase:subsystem:alpha:end -->
 <!-- audit-codebase:summary:progress:start -->
-<section id="summary-progress"><p>old progress</p></section>
+<section id="summary-progress" data-candidate-progress="{progress}">
+  <p>old progress</p>
+</section>
 <!-- audit-codebase:summary:progress:end -->
-</main></html>
-""",
+</main>
+<!-- audit-codebase:summary:report-footer:start -->
+<footer id="report-footer" data-candidate-progress="{progress}">Audit</footer>
+<!-- audit-codebase:summary:report-footer:end -->
+</body></html>
+""".format(
+            progress=PRESENTED_PROGRESS,
+            pickup="$audit-codebase analyze alpha-fix from report",
+        ),
         encoding="utf-8",
     )
     return report
@@ -61,24 +100,110 @@ def _digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _fragment(tmp_path: Path, name: str, markup: str) -> Path:
+    path = tmp_path / name
+    path.write_text(markup, encoding="utf-8")
+    return path
+
+
+def _progress_sections(tmp_path: Path, progress: str) -> tuple[tuple[str, str, Path], ...]:
+    return tuple(
+        (
+            "summary",
+            identifier,
+            _fragment(
+                tmp_path,
+                f"{identifier}.html",
+                f'<{tag} id="{element_id}" data-candidate-progress="{progress}">'
+                f"{identifier}</{tag}>",
+            ),
+        )
+        for identifier, element_id, tag in (
+            ("report-header", "report-header", "header"),
+            ("progress", "summary-progress", "section"),
+            ("report-footer", "report-footer", "footer"),
+        )
+    )
+
+
+def _candidate_sections(
+    tmp_path: Path,
+    *,
+    state: str,
+    pickup: str,
+    row_state: str | None = None,
+    evidence: str = "",
+) -> tuple[tuple[str, str, Path], ...]:
+    card_pickup = (
+        f'<code data-candidate-pickup="alpha-fix" '
+        f'data-pickup-view="card">{pickup}</code>'
+        if pickup
+        else ""
+    )
+    index_pickup = (
+        f'<code data-candidate-pickup="alpha-fix" '
+        f'data-pickup-view="index">{pickup}</code>'
+        if pickup
+        else ""
+    )
+    candidate = _fragment(
+        tmp_path,
+        "candidate.html",
+        f"""<article id="candidate-alpha-fix"
+data-candidate-id="alpha-fix" data-state="{state}"
+data-strength="Strong">
+new{card_pickup}{evidence}
+</article>""",
+    )
+    index = _fragment(
+        tmp_path,
+        "candidate-index.html",
+        f"""<tr id="candidate-index-alpha-fix"
+data-candidate-id="alpha-fix" data-state="{row_state or state}"
+data-strength="Strong"><td>new{index_pickup}</td></tr>""",
+    )
+    return (
+        ("candidate", "alpha-fix", candidate),
+        ("candidate-index", "alpha-fix", index),
+    )
+
+
+def _progress_for(state: str) -> str:
+    states = (
+        "presented",
+        "decision-pending",
+        "analyzed",
+        "implemented",
+        "disproved",
+        "blocked",
+    )
+    return ",".join(
+        f"{candidate_state.replace(' ', '-')}:{int(candidate_state == state)}"
+        for candidate_state in states
+    )
+
+
 def test_updates_selected_regions_atomically(tmp_path: Path) -> None:
     report = _report(tmp_path)
-    candidate = tmp_path / "candidate.html"
-    candidate.write_text(
-        '<article id="candidate-alpha-fix"><a href="#summary-progress">new</a></article>',
-        encoding="utf-8",
+    candidate = _fragment(
+        tmp_path,
+        "candidate.html",
+        """<article id="candidate-alpha-fix"
+data-candidate-id="alpha-fix" data-state="analyzed"
+data-strength="Strong">
+<a href="#summary-progress">new</a>
+</article>""",
     )
-    summary = tmp_path / "summary.html"
-    summary.write_text(
-        """<section id="summary-progress">
-<svg viewBox="0 0 200 80" role="img" aria-labelledby="relationship-title">
-  <title id="relationship-title">Repository relationship map</title>
-  <desc>Alpha subsystem</desc>
-  <a href="#subsystem-alpha"><text>alpha</text></a>
-</svg>
-<p>1 analyzed</p>
-</section>""",
-        encoding="utf-8",
+    index = _fragment(
+        tmp_path,
+        "candidate-index.html",
+        """<tr id="candidate-index-alpha-fix"
+data-candidate-id="alpha-fix" data-state="analyzed"
+data-strength="Strong"><td>new</td></tr>""",
+    )
+    progress = (
+        "presented:0,decision-pending:0,analyzed:1,"
+        "implemented:0,disproved:0,blocked:0"
     )
 
     result = MODULE.update_report(
@@ -87,17 +212,138 @@ def test_updates_selected_regions_atomically(tmp_path: Path) -> None:
         expected_sha256=_digest(report),
         sections=(
             ("candidate", "alpha-fix", candidate),
-            ("summary", "progress", summary),
+            ("candidate-index", "alpha-fix", index),
+            *_progress_sections(tmp_path, progress),
         ),
     )
 
     updated = report.read_text(encoding="utf-8")
     assert "new" in updated
-    assert "Repository relationship map" in updated
-    assert "1 analyzed" in updated
     assert "old subsystem" in updated
-    assert result["sections"] == ["candidate:alpha-fix", "summary:progress"]
+    assert result["candidate_states"] == {"alpha-fix": "analyzed"}
+    assert result["candidate_progress"] == progress
     assert not list(report.parent.glob("report.html.audit-update-*.tmp"))
+
+
+def test_publishes_complete_implementation_evidence(tmp_path: Path) -> None:
+    report = _report(tmp_path)
+    evidence = f"""<dl data-implementation-result="complete"
+data-candidate-id="alpha-fix"
+data-commit-sha="{'a' * 40}" data-tree-sha="{'b' * 40}"
+data-source-status="reachable" data-proof-status="accepted"
+data-review-status="accepted" data-repair-generations="1"
+data-closure-status="complete" data-blockers="none"><dt>Done</dt></dl>"""
+    progress = _progress_for("implemented")
+
+    result = MODULE.update_report(
+        repo_root=tmp_path,
+        report=report,
+        expected_sha256=_digest(report),
+        sections=(
+            *_candidate_sections(
+                tmp_path,
+                state="implemented",
+                pickup="",
+                evidence=evidence,
+            ),
+            *_progress_sections(tmp_path, progress),
+        ),
+    )
+
+    assert result["candidate_states"] == {"alpha-fix": "implemented"}
+    assert result["candidate_progress"] == progress
+
+
+@pytest.mark.parametrize(
+    ("state", "pickup", "row_state", "evidence", "error"),
+    (
+        ("analyzed", "resume", "blocked", "", "projection disagree"),
+        ("implemented", "retry", None, "", "forbids pickup"),
+        ("implemented", "", None, "", "needs one evidence element"),
+    ),
+)
+def test_candidate_consistency_failure_preserves_report(
+    tmp_path: Path,
+    state: str,
+    pickup: str,
+    row_state: str | None,
+    evidence: str,
+    error: str,
+) -> None:
+    report = _report(tmp_path)
+    before = report.read_bytes()
+
+    with pytest.raises(MODULE.ReportUpdateError, match=error):
+        MODULE.update_report(
+            repo_root=tmp_path,
+            report=report,
+            expected_sha256=_digest(report),
+            sections=(
+                *_candidate_sections(
+                    tmp_path,
+                    state=state,
+                    pickup=pickup,
+                    row_state=row_state,
+                    evidence=evidence,
+                ),
+                *_progress_sections(tmp_path, _progress_for(state)),
+            ),
+        )
+
+    assert report.read_bytes() == before
+    assert not list(report.parent.glob("report.html.audit-update-*.tmp"))
+
+
+def test_progress_projection_failure_preserves_report(tmp_path: Path) -> None:
+    report = _report(tmp_path)
+    before = report.read_bytes()
+    progress = _progress_for("analyzed")
+    summary = _progress_sections(tmp_path, progress)[1]
+
+    with pytest.raises(MODULE.ReportUpdateError, match="report-header.*inconsistent"):
+        MODULE.update_report(
+            repo_root=tmp_path,
+            report=report,
+            expected_sha256=_digest(report),
+            sections=(
+                *_candidate_sections(
+                    tmp_path,
+                    state="analyzed",
+                    pickup="",
+                ),
+                summary,
+            ),
+        )
+
+    assert report.read_bytes() == before
+
+
+def test_requires_report_version_three(tmp_path: Path) -> None:
+    report = _report(tmp_path)
+    report.write_text(
+        report.read_text(encoding="utf-8").replace(
+            'content="3"',
+            'content="2"',
+            1,
+        ),
+        encoding="utf-8",
+    )
+    before = report.read_bytes()
+    fragment = _fragment(
+        tmp_path,
+        "candidate.html",
+        '<article id="candidate-alpha-fix">new</article>',
+    )
+
+    with pytest.raises(MODULE.ReportUpdateError, match="version 3"):
+        MODULE.update_report(
+            repo_root=tmp_path,
+            report=report,
+            expected_sha256=_digest(report),
+            sections=(("candidate", "alpha-fix", fragment),),
+        )
+
+    assert report.read_bytes() == before
 
 
 def test_collision_preserves_report(tmp_path: Path) -> None:

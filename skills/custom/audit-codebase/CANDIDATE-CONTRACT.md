@@ -66,6 +66,9 @@ Validity reason:
 Unrelated repository drift is irrelevant. A changed causal owner expands the
 Source Trace; it does not force a whole-repository remap.
 
+Validity describes whether the recorded problem and direction were supported;
+later implementation does not rewrite that judgment.
+
 ## Analyze
 
 Every confirmed or coherently changed candidate records:
@@ -116,6 +119,33 @@ Read [CANDIDATE-FOLLOWUP.md](CANDIDATE-FOLLOWUP.md) only when:
 
 Without one of those conditions, record `Next user selection: none` and do not
 load workflow routing.
+
+## Close Implemented
+
+After a user-selected generated implementation pickup returns, the root may
+close the candidate from its exact completion packet. Require matching report,
+run, subsystem, and candidate identities plus:
+
+```text
+Implementation outcome: complete
+Commit identity:
+Commit tree identity:
+Current-source result: current | reachable
+Accepted proof and skipped checks:
+Formal review decision: accepted
+Repair generations used:
+Changed scope:
+Change Closure: complete
+Residual risk:
+Last verified identity:
+State: implemented
+```
+
+The commit and tree must match the accepted proof and review, the implementation
+commit must be current or reachable from current source, and no implementation
+blocker may remain. A mismatched, partial, blocked, or failing Return changes no
+candidate state. Successful implementation is distinct from `disproved`.
+An implemented candidate has no pickup.
 
 ## Bound
 

@@ -1235,8 +1235,10 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     performance = (skill_dir / "PERFORMANCE-LENS.md").read_text(encoding="utf-8")
     performance_lower = performance.lower()
     report = (skill_dir / "HTML-REPORT.md").read_text(encoding="utf-8")
+    updater = (skill_dir / "scripts/update_report.py").read_text(encoding="utf-8")
     router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
     audit_flat = " ".join(audit.split())
+    followup_flat = " ".join(followup.split())
     quality_flat = " ".join(quality.split())
     report_flat = " ".join(report.split())
     map_section = audit.split("## Map", 1)[1].split("## Audit One Subsystem", 1)[0]
@@ -1301,7 +1303,7 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert "Map: none | incomplete | complete" in audit
     assert "Subsystem: none | mapped | incomplete | audited" in audit
     assert (
-        "Candidate: none | presented | decision pending | analyzed | disproved | blocked"
+        "Candidate: none | presented | decision pending | analyzed | implemented | disproved | blocked"
         in audit
     )
     assert "shared infrastructure with one audit-owning subsystem" in audit
@@ -1402,6 +1404,7 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
         "presented",
         "decision pending",
         "analyzed",
+        "implemented",
         "disproved",
         "blocked",
     ):
@@ -1411,6 +1414,24 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert "The card is a lead, not current proof." in candidate
     for validity in ("confirmed", "changed", "disproved", "blocked"):
         assert validity in candidate
+    assert "later implementation does not rewrite that judgment" in " ".join(
+        candidate.split()
+    )
+    for field in (
+        "Implementation outcome: complete",
+        "Commit identity:",
+        "Commit tree identity:",
+        "Current-source result: current | reachable",
+        "Formal review decision: accepted",
+        "Repair generations used:",
+        "Change Closure: complete",
+        "State: implemented",
+    ):
+        assert field in candidate
+    assert "Successful implementation is distinct from `disproved`" in candidate
+    assert "The callee never re-enters Audit" in followup
+    assert "Attempt the Audit-owned report update once" in followup_flat
+    assert "Do not start another candidate" in followup_flat
     assert "Current shape and demonstrated cost:" in candidate
     assert "Smallest sufficient change:" in candidate
     assert "Structural change:" in candidate
@@ -1520,6 +1541,7 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert "## Subsystem Audit" in report
     assert "## Candidate Card And Analysis" in report
     assert "## Stable Update Markers" in report
+    assert "## Report Consistency" in report
     assert "## Map Publish Gate" in report
     assert "## Incremental Publish Gate" in report
     assert "scripts/update_report.py" in report
@@ -1534,7 +1556,16 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert "changed-fragment links" in report
     assert "report SHA-256 is unchanged" in report
     assert "return completed source analysis" in report.lower()
-    assert 'content="2"' in report
+    assert 'content="3"' in report
+    assert 'content="2"' not in report
+    assert "candidate-index:<id>:start" in report
+    assert 'data-candidate-id="<candidate-id>"' in report
+    assert 'data-state="<state>"' in report
+    assert "no pickup for `implemented` or `disproved`" in report_flat
+    assert "every candidate ID has exactly one card and one index row" in report_flat
+    assert '"candidate-index"' in updater
+    assert "_validate_complete_report" in updater
+    assert "migrate" not in updater.lower()
     assert '<html lang="en">' in report
     assert '<section id="system-<system-id>">' in report
     assert '<section id="subsystem-<subsystem-id>">' in report
@@ -1614,6 +1645,22 @@ def test_implement_selects_one_risk_scaled_review_route() -> None:
     assert "already-loaded Finding Contract" in review_flat
     assert "complete caller-admitted" in review_flat
     assert "mixed-authority, partial, out-of-scope, or" in review_flat
+    for field in (
+        "Commit identity:",
+        "Commit tree identity:",
+        "Accepted proof and skipped checks:",
+        "Formal review decision:",
+        "Repair generations used:",
+        "Changed scope:",
+        "Change Closure:",
+        "Residual risk:",
+        "Caller-owned post-completion actions:",
+    ):
+        assert field in implement
+    assert "do not infer or start caller-owned" in " ".join(implement.split())
+    assert "audit-codebase" not in implement.lower()
+    assert "report.html" not in implement
+    assert "update_report.py" not in implement
 
 
 def test_audit_codebase_replaces_improve_codebase() -> None:
@@ -2219,6 +2266,10 @@ def test_writing_great_skills_keeps_shape_and_relationship_boundary() -> None:
     assert "sharpen that pointer first" in normalized_glossary
     assert "narrowest shared owner" in normalized_glossary
     assert "projection of its owning facts" in normalized_glossary
+    assert (
+        "one prospective mutation, then validate their agreement before publication"
+        in normalized_glossary
+    )
     assert "read-only proof branch" in normalized_evals
     assert "fresh isolated model executions" in normalized_evals
     assert "parent operation status plus one evaluation decision" in normalized_evals

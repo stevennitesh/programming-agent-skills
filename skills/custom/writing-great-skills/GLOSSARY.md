@@ -42,4 +42,6 @@ materially different applicable case, and the closest non-applicable case.
 
 **Derived view:** treat it as a projection of its owning facts unless it has
 independent behavior. Reuse the fact owner and update boundary instead of
-creating another ledger, state machine, or proof loop.
+creating another ledger, state machine, or proof loop. Update owning facts and
+required projections as one prospective mutation, then validate their agreement
+before publication.

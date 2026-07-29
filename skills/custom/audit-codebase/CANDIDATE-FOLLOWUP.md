@@ -42,7 +42,16 @@ Suggested invocation:
 
 The invocation names the skill, candidate ID, absolute report path, and
 callee-compatible admission facts without copying the callee's procedure.
-Planning and execution routes use `Audit re-entry: none`.
+The callee never re-enters Audit.
+
+For an `$implement` suggestion, the generated pickup also authorizes the root
+to reconcile the matching candidate from the exact completion packet after a
+successful verified commit and before responding to the user. Attempt the
+Audit-owned report update once. If it fails, preserve the implementation
+success and existing HTML, return the exact reconciliation failure and future
+Audit re-entry, and stop. Do not start another candidate.
+
+Other planning and execution routes use `Audit re-entry: none`.
 
 ## Decision Brief
 
@@ -78,6 +87,7 @@ payload or pointer. A mismatch changes no judgment.
 
 - Answering evidence reruns only dependent judgments.
 - Disproving evidence marks the candidate `disproved`.
+- A matching complete implementation packet applies the Close Implemented gate.
 - Unresolved required evidence marks it `blocked` with exact re-entry.
 - A foreign recommendation is evidence only; Audit chooses any next owner.
 - `Questionnaire ready` is not answer evidence; require attributable

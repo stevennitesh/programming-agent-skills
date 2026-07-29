@@ -12,7 +12,7 @@ Write strict UTF-8 HTML that opens offline, with:
 
 - `<html lang="en">`, a meaningful `<title>`, and
   `<meta charset="utf-8">`;
-- `<meta name="audit-codebase-report-version" content="2">`;
+- `<meta name="audit-codebase-report-version" content="3">`;
 - no network requests, executable scripts, hidden workflow state, remote
   fonts, CDN assets, or browser-only persistence;
 - arbitrary repository, user, and returned content only in escaped text nodes;
@@ -40,7 +40,7 @@ Before deriving selection state from a supplied report:
    `<root>/.scratch/audit-codebase/<safe-run-id>/report.html`;
 2. reject traversal, redirected or reparse-point parents, a path outside that
    root, or mismatched embedded repository and run identities;
-3. decode strict UTF-8 and require report version `2`, one map state, and one
+3. decode strict UTF-8 and require report version `3`, one map state, and one
    unique selected subsystem or candidate anchor in an admissible state; and
 4. record the report SHA-256 for collision detection.
 
@@ -129,10 +129,34 @@ pickups appear only for an audited subsystem.
 
 ## Candidate Card And Analysis
 
-Give each candidate `<article id="candidate-<candidate-id>">` with its title,
-strength, class and concepts, files and Modules, member links, problem, current
-evidence, direction, expected benefit, safety floors, required proof, decisions,
-state, and valid pickup.
+The candidate card owns candidate facts. Render each as:
+
+```html
+<article
+  id="candidate-<candidate-id>"
+  data-candidate-id="<candidate-id>"
+  data-state="<state>"
+  data-strength="<strength>"
+>
+```
+
+Include its title, class and concepts, files and Modules, member links, problem,
+current evidence, direction, expected benefit, safety floors, required proof,
+decisions, state, strength, and pickup.
+
+Render its index row as a required projection with the same
+`data-candidate-id`, `data-state`, and `data-strength` values. Mark an exact
+visible pickup in each view as:
+
+```html
+<code
+  data-candidate-pickup="<candidate-id>"
+  data-pickup-view="card|index"
+>...</code>
+```
+
+The card and row pickup text must match. Omit both elements when no pickup
+exists. The visible row repeats the remaining facts and links to the card.
 
 After Analyze, append:
 
@@ -148,9 +172,35 @@ After Analyze, append:
 - conditional decision, evidence, or next-owner content only when
   `CANDIDATE-FOLLOWUP.md` applies.
 
+For `implemented`, append the visible completion packet and one machine-readable
+evidence element:
+
+```html
+<dl
+  data-implementation-result="complete"
+  data-candidate-id="<candidate-id>"
+  data-commit-sha="<sha>"
+  data-tree-sha="<sha>"
+  data-source-status="current|reachable"
+  data-proof-status="accepted"
+  data-review-status="accepted"
+  data-repair-generations="<nonnegative integer>"
+  data-closure-status="complete"
+  data-blockers="none"
+>...</dl>
+```
+
 Show Analyze for `presented`, exact re-entry for `decision pending` or
 `blocked`, zero or one user-selected next-owner pickup for `analyzed`, and no
-pickup for `disproved`.
+pickup for `implemented` or `disproved`.
+
+Header, progress summary, and footer use IDs `report-header`,
+`summary-progress`, and `report-footer`. Each carries the same
+`data-candidate-progress` value in this fixed order:
+
+```text
+presented:<n>,decision-pending:<n>,analyzed:<n>,implemented:<n>,disproved:<n>,blocked:<n>
+```
 
 ## Stable Update Markers
 
@@ -165,21 +215,42 @@ Wrap independently replaceable regions:
 <article id="candidate-<id>">...</article>
 <!-- audit-codebase:candidate:<id>:end -->
 
+<!-- audit-codebase:candidate-index:<id>:start -->
+<tr id="candidate-index-<id>" ...>...</tr>
+<!-- audit-codebase:candidate-index:<id>:end -->
+
 <!-- audit-codebase:summary:<id>:start -->
 <section id="summary-<id>">...</section>
 <!-- audit-codebase:summary:<id>:end -->
 ```
 
 IDs use lowercase ASCII letters, digits, and single hyphens. Marker pairs are
-unique and properly nested. Map publication creates them; later publication
-replaces one or more non-overlapping marked regions atomically.
+unique and properly nested. Candidate cards, index rows, and affected summaries
+have independent, non-overlapping regions. Map publication creates them; later
+publication replaces one or more marked regions atomically.
+Use `summary:report-header` and `summary:report-footer` markers around their
+same-named anchors.
+
+## Report Consistency
+
+Before publication, validate the prospective complete report:
+
+- report version is `3`;
+- every candidate ID has exactly one card and one index row;
+- each card and row agree on ID, state, strength, and marked pickup text;
+- pickup follows the candidate-state rules;
+- header, progress, and footer totals equal the card states; and
+- every implemented card has one complete matching implementation evidence
+  element.
+
+These are projections of candidate-card facts, not another evidence ledger.
 
 ## Map Publish Gate
 
 For New, Continue, or explicit Refresh:
 
 1. render the complete report to one invocation-owned sibling;
-2. verify template invariants, contained paths, scope, IDs, states, file
+2. verify template invariants, Report Consistency, contained paths, scope, IDs, states, file
    assignments, evidence-backed edges, member ownership, map navigation,
    current pickups, marker uniqueness, and internal links;
 3. verify current Map observation identity and target non-collision; and
@@ -198,8 +269,8 @@ one `update_report.py` call containing every selected region:
    fragments;
 2. require strict UTF-8, safe text, the exact target anchor, no marker
    injection, and no executable or remote-resource markup;
-3. replace the unique marked regions, parse the complete result, and verify the
-   changed anchors and changed-fragment links;
+3. replace the unique marked regions, parse the complete result, and verify
+   Report Consistency, changed anchors, and changed-fragment links;
 4. verify the source report SHA-256 is unchanged; and
 5. atomically replace the report and remove invocation fragments.
 
@@ -214,9 +285,10 @@ python <audit-codebase>/scripts/update_report.py
   [--section <kind> <id> <fragment-path> ...]
 ```
 
-The helper owns collision detection, changed-section validation, sibling
-cleanup, and atomic replacement. It does not judge codebase evidence, render
-the Map, or maintain another ledger.
+The helper owns collision detection, changed-section and complete-report
+validation, sibling cleanup, and atomic replacement. It returns changed regions,
+validated candidate states, and progress totals. It does not judge codebase
+evidence, render the Map, or maintain another ledger.
 
 If the attempt fails, stop publication immediately. Do not rerun the helper,
 hand-edit the report, use another publication mechanism, or delay the Return.
