@@ -70,7 +70,14 @@ def test_updates_selected_regions_atomically(tmp_path: Path) -> None:
     )
     summary = tmp_path / "summary.html"
     summary.write_text(
-        '<section id="summary-progress"><p>1 analyzed</p></section>',
+        """<section id="summary-progress">
+<svg viewBox="0 0 200 80" role="img" aria-labelledby="relationship-title">
+  <title id="relationship-title">Repository relationship map</title>
+  <desc>Alpha subsystem</desc>
+  <a href="#subsystem-alpha"><text>alpha</text></a>
+</svg>
+<p>1 analyzed</p>
+</section>""",
         encoding="utf-8",
     )
 
@@ -86,6 +93,7 @@ def test_updates_selected_regions_atomically(tmp_path: Path) -> None:
 
     updated = report.read_text(encoding="utf-8")
     assert "new" in updated
+    assert "Repository relationship map" in updated
     assert "1 analyzed" in updated
     assert "old subsystem" in updated
     assert result["sections"] == ["candidate:alpha-fix", "summary:progress"]
@@ -118,6 +126,7 @@ def test_collision_preserves_report(tmp_path: Path) -> None:
         '<article id="candidate-alpha-fix"><script>bad()</script></article>',
         '<article id="candidate-alpha-fix"><a href="//example.com">bad</a></article>',
         '<article id="candidate-alpha-fix"><a href="ftp://example.com">bad</a></article>',
+        '<article id="candidate-alpha-fix"><svg onload="bad()"></svg></article>',
         "<!-- audit-codebase:candidate:other:start -->"
         '<article id="candidate-alpha-fix">bad</article>',
         '<article id="wrong-anchor">bad</article>',

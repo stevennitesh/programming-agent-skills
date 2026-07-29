@@ -103,6 +103,10 @@ cash-flow, timing, claim, or risk transmission.
   specialty methods.
 - Load [company-types.md](references/company-types.md) when choosing the model
   is uncertain or when handling a sector, life-cycle, or accounting exception.
+- Load [model-review.md](references/model-review.md) only when independent
+  validation is requested, exact reproduction fails, or complex claims,
+  conventions, methods, or alternative values could materially change the
+  conclusion.
 - Load [compact-report.md](references/compact-report.md) for Compact or
   [report-contract.md](references/report-contract.md) for Full before composing
   the answer.
@@ -221,6 +225,24 @@ company for which the denominator or capital structure has no economic meaning.
 
 ### 6. Calculate And Audit
 
+Before calculating, create one internal **Model Lock** for the base case. Record
+only load-bearing:
+
+- security, valuation date, cutoff, currency, and price timestamp when used;
+- source-tagged reported facts and forecast anchors;
+- method, claim holder, cash-flow definition, and matching required return;
+- material accounting conventions, including SBC, leases, or capitalization;
+- cash, debt, other claims, actual shares, awards, and dilution bridge;
+- forecast horizon, cash-flow timing, and scenario definitions; and
+- required-return construction plus terminal, residual, liquidation, or other
+  realization assumptions applicable to the method.
+
+Do not print the full lock in Compact. Do not calculate until each load-bearing
+field is locked or explicitly unknown; return `partial` or `blocked` when an
+unknown prevents a defensible result. When two conventions are defensible,
+select one internally consistent base before calculating, retain the other as a
+sensitivity, and never combine pieces of both.
+
 - Match cash flow to discount rate, currency, inflation basis, and claim holder.
 - Bridge enterprise value to the exact target security completely. When
   material, value employee options, warrants, and conversion rights as separate
@@ -245,9 +267,15 @@ company for which the denominator or capital structure has no economic meaning.
   today's value at the required return, label it a shortcut, reconcile interim
   holder distributions, and do not present it as a new bottom-up valuation.
 
-Do not mechanically average methods. Explain disagreements: intrinsic value and
-relative value answer different questions and may diverge because a peer group
-or entire sector is mispriced.
+Apply `model-review.md` when its loading condition is met. Resolve evidence and
+mechanical errors before returning; preserve defensible conventions as
+sensitivities, forecast judgments as causal scenarios, and method differences
+with an explanation of what each measures. Reject unsupported differences.
+Recompute one canonical valuation from the lock; never vote on or take the
+median of alternative targets, and do not mechanically average methods.
+Explain method disagreements: intrinsic and relative value answer different
+questions and may diverge because a peer group or entire sector is mispriced.
+Full alone does not require independent review.
 
 ### 7. Interpret Forward Multiples Carefully
 
@@ -327,7 +355,8 @@ Return `complete`, `partial`, or `blocked`.
 - `blocked`: security identity, current primary evidence, or a load-bearing
   input cannot be resolved without fabricating a result.
 
-Complete only when the result is reproducible; model choice fits the company;
-reported, estimated, guided, and assumed values remain distinct; valuation
-differences are reconciled; uncertainty and thesis breakers are visible; and
-the answer does not outrun the evidence.
+Complete only when the locked result reproduces within disclosed rounding;
+model choice fits the company; reported, estimated, guided, and assumed values
+remain distinct; no evidence or mechanical discrepancy remains unresolved;
+material alternatives are classified and reconciled; uncertainty and thesis
+breakers are visible; and the answer does not outrun the evidence.

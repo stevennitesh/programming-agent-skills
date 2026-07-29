@@ -1493,7 +1493,15 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert "Do not render a per-file hash ledger" in report
     assert "Older sections are historical evidence" in report
     assert "Never encode state by color alone" in report
+    assert "a `viewBox`" in report
     assert "## Linked System Map" in report
+    assert "one repository relationship figure" in report
+    assert "every unique direct evidence-backed dependency exactly once" in report_flat
+    assert "reverse caller or dependent duplicates" in report
+    assert "one current-state context-flow figure" in report
+    assert "Never render a proposed candidate shape" in report_flat
+    assert "perform no separate diagram analysis" in audit_flat
+    assert "create no graph ledger or layout-engine dependency" in audit_flat
     assert "## Subsystem Audit" in report
     assert "## Candidate Card And Analysis" in report
     assert "## Stable Update Markers" in report

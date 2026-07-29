@@ -106,7 +106,10 @@ plus in-scope untracked content under exactly one:
 Group subsystems into systems. Give each stable IDs, purpose, owned behavior,
 entry points, Interfaces, paths, callers, dependencies, dependents, flows,
 domain terms, decisions, and Proof Seams. Every dependency edge needs source
-evidence. Do not audit or rank a subsystem during Map.
+evidence. Render the relationship and context-flow figures in
+`HTML-REPORT.md` directly from these facts. Diagrams are a report view, not
+another stage: perform no separate diagram analysis and create no graph ledger
+or layout-engine dependency. Do not audit or rank a subsystem during Map.
 
 When mapping cannot finish, publish `Map: incomplete` with exact remaining
 coverage and one Continue pickup. Expose subsystem pickups only after every file
@@ -133,6 +136,9 @@ compatibility or staleness matters. Discover current callers and paths rather
 than trusting the old fingerprint.
 
 Record the current evidence identity and update affected local map ownership.
+Refresh the selected subsystem's current-state flow from the same evidence.
+Include `summary:map` only when one of its displayed node facts or direct edges
+changed.
 If structural change makes the selected boundary unresolvable, publish the
 reconciled map as incomplete and return its exact Map continuation instead of
 auditing a guessed subsystem.

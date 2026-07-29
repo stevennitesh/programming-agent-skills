@@ -366,6 +366,8 @@ source of uncertainty also matter:
 ## Audit Checklist
 
 - Historical model ties to filed totals and segment disclosures.
+- Reported inputs, conventions, claim basis, required returns, horizon, residual
+  assumptions, and scenarios match the Model Lock.
 - Formulas use consistent signs, scale, units, periods, and currency.
 - Forecast drivers reconcile to revenue, margins, taxes, reinvestment, and cash.
 - Growth is feasible relative to market size and capital needs.
@@ -383,4 +385,6 @@ source of uncertainty also matter:
 - Sensitivities change the intended inputs and preserve `discount rate > growth`.
 - Scenario differences are causal; probabilities sum to 100% when used; risk
   adjustments are mapped and residual uncertainty is separated from them.
+- Exact reproduction matches within disclosed rounding; every material
+  difference is repaired, classified, or bridged without hybrid conventions.
 - Every material input is reported, estimated, guided, or assumed and cited.

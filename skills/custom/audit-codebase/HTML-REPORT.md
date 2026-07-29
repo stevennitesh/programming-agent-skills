@@ -21,10 +21,14 @@ Write strict UTF-8 HTML that opens offline, with:
 - one header, labeled map navigation, main region, footer, non-skipping
   headings, visible focus, high contrast, and narrow-screen layout;
 - captions and scoped headers for tables; and
-- adjacent text alternatives for useful static SVG diagrams.
+- responsive inline SVG figures with a `viewBox`, `role="img"`, titles,
+  descriptions, fragment-linked nodes, and adjacent text alternatives.
 
 Use dark mode with reusable background, surface, border, text, muted, link,
 focus, positive, warning, and danger tokens. Never encode state by color alone.
+Style figures through reusable report classes; section fragments use no inline
+styles. Diagrams summarize the adjacent evidence and never become another
+ledger or validation workflow.
 These are template invariants checked at Map publication, not re-proved as a
 separate workflow during every section update.
 
@@ -75,6 +79,24 @@ Use the map as the table of contents. Give every system
 `<section id="system-<system-id>">` and subsystem
 `<section id="subsystem-<subsystem-id>">`. Display `mapped`, `incomplete`, or
 `audited`.
+
+Lead the `summary:map` region with one repository relationship figure. Group
+every subsystem node inside its system container and draw every unique direct
+evidence-backed dependency exactly once. Link each node to its subsystem, state
+one arrow convention, and include a legend. Route within-system edges inside
+their container and cross-system edges through container boundaries. Do not add
+reverse caller or dependent duplicates, transitive edges, file nodes, findings,
+or candidate state. Keep the linked text table of contents adjacent and
+canonical for exact labels, state, pickups, and accessible navigation.
+
+Begin each subsystem detail with one current-state context-flow figure showing
+its governing contracts or decisions, callers and entry points, material
+responsibility flow, direct dependencies, Interfaces or outputs, dependents,
+and Proof Seams. Map shows only mapped behavior; Audit may refine the selected
+flow with verified responsibility steps and branches. Analyze updates it only
+when revalidation changes current-source relationship facts. Never render a
+proposed candidate shape into the current-state figure. The adjacent detail
+remains the evidence owner.
 
 Each map node contains stable ID, name, purpose, state, file count, direct
 evidence-backed dependencies, and its valid user pickup. Its detail contains

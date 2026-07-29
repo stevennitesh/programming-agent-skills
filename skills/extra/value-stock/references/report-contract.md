@@ -95,6 +95,10 @@ Include a causal bear/base/bull table and sensitivities for the two or three mos
 important assumptions. Do not blend methods unless a defensible weighting rule
 was set before seeing results; otherwise present and reconcile them.
 
+When an admitted correction or material alternative changes value, show a
+bridge from the locked baseline to the recomputed value. If independent review
+ran, state its valid lens coverage and any reduced independence.
+
 ## 7. Forward Multiples And Peers
 
 State the exact forward period, denominator definition, estimate source/date,

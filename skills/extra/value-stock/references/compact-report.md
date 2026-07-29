@@ -31,6 +31,11 @@ State the selected primary method and why it fits. Show:
 Use a causal range. Full bear/base/bull narratives are optional unless
 asymmetric outcomes materially change the conclusion.
 
+When an admitted correction or material alternative changes value, show a
+short bridge from the locked baseline through each correction, convention, or
+scenario to the recomputed value. Otherwise omit the internal lock and review
+ceremony.
+
 ## 3. Material Evidence And Quality
 
 Include only the historical, latest-reporting, guidance, accounting, dilution,
