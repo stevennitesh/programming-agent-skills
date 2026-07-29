@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 import hashlib
 import importlib.util
 import json
 from pathlib import Path
+import subprocess
 import sys
 
 import pytest
@@ -35,6 +37,20 @@ PRESENTED_PROGRESS = (
 ACTIVE_FINDINGS = "active:1,resolved:0,disproved:0"
 
 
+def _narrative(text: str = "old subsystem") -> str:
+    return f"""<div id="subsystem-narrative-alpha"><p>{text}</p>
+<ul data-audit-collection="retained-complexity" data-subsystem-id="alpha">
+<li id="retained-alpha-retained" data-retained-id="alpha-retained"
+data-subsystem-id="alpha">retained</li></ul>
+<ul data-audit-collection="gaps" data-subsystem-id="alpha">
+<li id="gap-alpha-gap" data-gap-id="alpha-gap"
+data-subsystem-id="alpha">gap</li></ul>
+<ul data-audit-collection="opportunities" data-subsystem-id="alpha">
+<li id="opportunity-alpha-opportunity"
+data-opportunity-id="alpha-opportunity"
+data-subsystem-id="alpha">opportunity</li></ul></div>"""
+
+
 def _report(repo: Path) -> Path:
     report = (
         repo
@@ -57,7 +73,7 @@ def _report(repo: Path) -> Path:
 <section id="subsystem-alpha" data-subsystem-id="alpha"
   data-state="audited" data-source-identity="tree-alpha">
   <!-- audit-codebase:subsystem-narrative:alpha:start -->
-  <div id="subsystem-narrative-alpha"><p>old subsystem</p></div>
+  {narrative}
   <!-- audit-codebase:subsystem-narrative:alpha:end -->
   <div id="findings-alpha">
   <!-- audit-codebase:finding:alpha-defect:start -->
@@ -68,8 +84,6 @@ def _report(repo: Path) -> Path:
   <!-- audit-codebase:finding:alpha-defect:end -->
   <!-- audit-codebase:finding-insert:alpha -->
   </div>
-  <p data-retained-id="alpha-retained" data-subsystem-id="alpha">retained</p>
-  <p data-gap-id="alpha-gap" data-subsystem-id="alpha">gap</p>
   <table><tbody>
   <!-- audit-codebase:candidate-index:alpha-fix:start -->
   <tr id="candidate-index-alpha-fix"
@@ -77,6 +91,8 @@ def _report(repo: Path) -> Path:
       data-subsystem-id="alpha"
       data-state="presented"
       data-strength="Strong">
+    <td>1</td><td>alpha-fix</td><td>Fix alpha</td><td>Strong</td>
+    <td>presented</td>
     <td><code data-candidate-pickup="alpha-fix"
       data-pickup-view="index">{pickup}</code></td>
   </tr>
@@ -91,6 +107,7 @@ def _report(repo: Path) -> Path:
       data-state="presented"
       data-strength="Strong">
     <p>old candidate</p>
+    <p><strong>State:</strong> presented.</p>
     <a href="#finding-alpha-defect"
       data-candidate-finding="alpha-fix">alpha-defect</a>
     <code data-candidate-pickup="alpha-fix"
@@ -115,6 +132,7 @@ def _report(repo: Path) -> Path:
 """.format(
             progress=PRESENTED_PROGRESS,
             finding_progress=ACTIVE_FINDINGS,
+            narrative=_narrative(),
             pickup="$audit-codebase analyze alpha-fix from report",
         ),
         encoding="utf-8",
@@ -179,7 +197,8 @@ def _candidate_sections(
         f"""<article id="candidate-alpha-fix"
 data-candidate-id="alpha-fix" data-state="{state}"
 data-subsystem-id="alpha" data-strength="Strong">
-new<a href="#finding-alpha-defect"
+new<p><strong>State:</strong> {state}.</p>
+<a href="#finding-alpha-defect"
 data-candidate-finding="alpha-fix">alpha-defect</a>{card_pickup}{evidence}
 </article>""",
     )
@@ -189,7 +208,8 @@ data-candidate-finding="alpha-fix">alpha-defect</a>{card_pickup}{evidence}
         f"""<tr id="candidate-index-alpha-fix"
 data-candidate-id="alpha-fix" data-state="{row_state or state}"
 data-subsystem-id="alpha"
-data-strength="Strong"><td>new{index_pickup}</td></tr>""",
+data-strength="Strong"><td>1</td><td>alpha-fix</td><td>new</td><td>Strong</td>
+<td>{row_state or state}</td><td>{index_pickup}</td></tr>""",
     )
     return (
         ("candidate", "alpha-fix", candidate),
@@ -260,7 +280,7 @@ def test_inspect_returns_local_candidate_packet(tmp_path: Path) -> None:
         candidate_id="alpha-fix",
     )
 
-    assert result["report_version"] == "3"
+    assert result["report_version"] == "4"
     assert result["run_id"] == "run-001"
     assert result["sha256"] == _digest(report)
     assert result["candidate"] == {
@@ -288,6 +308,7 @@ def test_inspect_returns_subsystem_facts_and_capabilities(tmp_path: Path) -> Non
         "findings": {"active": ["alpha-defect"], "resolved": [], "disproved": []},
         "retained_complexity": ["alpha-retained"],
         "gaps": ["alpha-gap"],
+        "opportunities": ["alpha-opportunity"],
         "candidates": ["alpha-fix"],
         "regions": {
             "narrative": True,
@@ -307,7 +328,7 @@ def test_reaudit_subsystem_adds_candidate_and_derives_projections(
     narrative = _fragment(
         tmp_path,
         "narrative.html",
-        '<div id="subsystem-narrative-alpha"><p>refreshed trace</p></div>',
+        _narrative("refreshed trace"),
     )
     finding = _fragment(
         tmp_path,
@@ -360,6 +381,249 @@ data-pickup-view="index">analyze alpha-new-fix</code></td></tr>""",
     assert result["finding_states"]["alpha-new"] == "active"
     assert result["candidate_progress"].startswith("presented:2")
     assert result["finding_progress"] == "active:2,resolved:0,disproved:0"
+
+
+def test_reaudit_validation_rejects_unmarked_structured_observation(
+    tmp_path: Path,
+) -> None:
+    report = _report(tmp_path)
+    narrative = _fragment(
+        tmp_path,
+        "narrative.html",
+        _narrative("refreshed trace").replace(
+            ' data-retained-id="alpha-retained"',
+            "",
+        ),
+    )
+
+    with pytest.raises(MODULE.ReportUpdateError, match="data-retained-id"):
+        MODULE.reaudit_subsystem(
+            repo_root=tmp_path,
+            report=report,
+            expected_sha256=_digest(report),
+            subsystem_id="alpha",
+            subsystem_state="audited",
+            source_identity="tree-alpha-2",
+            narrative_path=narrative,
+            validate_only=True,
+        )
+
+
+@pytest.mark.parametrize(
+    ("mutate", "error"),
+    (
+        (
+            lambda source: source.replace(
+                "</ul>\n<ul data-audit-collection=\"opportunities\"",
+                """<li id="gap-alpha-gap-copy" data-gap-id="alpha-gap"
+data-subsystem-id="alpha">duplicate</li></ul>
+<ul data-audit-collection="opportunities\"""",
+                1,
+            ),
+            "must have one safe record",
+        ),
+        (
+            lambda source: source.replace(
+                'id="gap-alpha-gap" data-gap-id="alpha-gap"\n'
+                'data-subsystem-id="alpha"',
+                'id="gap-alpha-gap" data-gap-id="alpha-gap"\n'
+                'data-subsystem-id="beta"',
+                1,
+            ),
+            "no matching subsystem",
+        ),
+    ),
+)
+def test_structured_observations_require_unique_ids_and_owners(
+    tmp_path: Path,
+    mutate: Callable[[str], str],
+    error: str,
+) -> None:
+    report = _report(tmp_path)
+    report.write_text(
+        mutate(report.read_text(encoding="utf-8")),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(MODULE.ReportUpdateError, match=error):
+        MODULE.inspect_report(
+            repo_root=tmp_path,
+            report=report,
+            subsystem_id="alpha",
+        )
+
+
+def test_reaudit_manifest_locks_validation_and_publication_bundle(
+    tmp_path: Path,
+) -> None:
+    report = _report(tmp_path)
+    bundle = tmp_path / "publication"
+    bundle.mkdir()
+    _fragment(bundle, "narrative.html", _narrative("manifest trace"))
+    manifest = bundle / "audit-publication.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "version": 1,
+                "expected_report_sha256": _digest(report),
+                "subsystem": {
+                    "id": "alpha",
+                    "state": "audited",
+                    "source_identity": "tree-alpha-manifest",
+                    "narrative": "narrative.html",
+                },
+                "findings": [],
+                "candidates": [],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    validated = MODULE.reaudit_subsystem_manifest(
+        repo_root=tmp_path,
+        report=report,
+        manifest_path=manifest,
+        validate_only=True,
+    )
+    before = report.read_bytes()
+    assert validated["stage"] == "validate"
+    assert validated["report_unchanged"] is True
+    assert report.read_bytes() == before
+
+    with pytest.raises(MODULE.ReportUpdateError, match="expected bundle SHA-256"):
+        MODULE.reaudit_subsystem_manifest(
+            repo_root=tmp_path,
+            report=report,
+            manifest_path=manifest,
+        )
+
+    published = MODULE.reaudit_subsystem_manifest(
+        repo_root=tmp_path,
+        report=report,
+        manifest_path=manifest,
+        expected_bundle_sha256=validated["bundle_sha256"],
+    )
+
+    assert published["bundle_sha256"] == validated["bundle_sha256"]
+    assert "manifest trace" in report.read_text(encoding="utf-8")
+
+
+def test_reaudit_manifest_rejects_fragment_drift_before_publication(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    report = _report(tmp_path)
+    bundle = tmp_path / "publication"
+    bundle.mkdir()
+    narrative = _fragment(bundle, "narrative.html", _narrative("validated"))
+    manifest = bundle / "audit-publication.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "version": 1,
+                "expected_report_sha256": _digest(report),
+                "subsystem": {
+                    "id": "alpha",
+                    "state": "audited",
+                    "source_identity": "tree-alpha-manifest",
+                    "narrative": "narrative.html",
+                },
+                "findings": [],
+                "candidates": [],
+            }
+        ),
+        encoding="utf-8",
+    )
+    validated = MODULE.reaudit_subsystem_manifest(
+        repo_root=tmp_path,
+        report=report,
+        manifest_path=manifest,
+        validate_only=True,
+    )
+    before = report.read_bytes()
+    load_manifest = MODULE._load_reaudit_manifest
+
+    def drift_after_manifest_load(path: Path) -> tuple[dict[str, object], str]:
+        values, digest = load_manifest(path)
+        narrative.write_text(_narrative("drifted"), encoding="utf-8")
+        return values, digest
+
+    monkeypatch.setattr(
+        MODULE,
+        "_load_reaudit_manifest",
+        drift_after_manifest_load,
+    )
+
+    with pytest.raises(MODULE.ReportUpdateError, match="bundle collision"):
+        MODULE.reaudit_subsystem_manifest(
+            repo_root=tmp_path,
+            report=report,
+            manifest_path=manifest,
+            expected_bundle_sha256=validated["bundle_sha256"],
+        )
+
+    assert report.read_bytes() == before
+
+
+def test_source_identity_is_sorted_and_separates_live_from_object(
+    tmp_path: Path,
+) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    subprocess.run(["git", "init", "-q", str(repo)], check=True)
+    subprocess.run(
+        ["git", "-C", str(repo), "config", "user.email", "audit@example.com"],
+        check=True,
+    )
+    subprocess.run(
+        ["git", "-C", str(repo), "config", "user.name", "Audit Test"],
+        check=True,
+    )
+    (repo / "a.txt").write_text("alpha\n", encoding="utf-8")
+    (repo / "b.txt").write_text("beta\n", encoding="utf-8")
+    subprocess.run(["git", "-C", str(repo), "add", "a.txt", "b.txt"], check=True)
+    subprocess.run(
+        ["git", "-C", str(repo), "commit", "-q", "-m", "fixture"],
+        check=True,
+    )
+    head = subprocess.run(
+        ["git", "-C", str(repo), "rev-parse", "HEAD"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    path_list = tmp_path / "paths.txt"
+    path_list.write_text("b.txt\na.txt\n", encoding="utf-8")
+
+    object_result = MODULE.source_identity(
+        repo_root=repo,
+        path_list=path_list,
+        git_object=head,
+    )
+    (repo / "a.txt").write_text("changed\n", encoding="utf-8")
+    live_result = MODULE.source_identity(
+        repo_root=repo,
+        path_list=path_list,
+    )
+
+    assert [record["path"] for record in object_result["records"]] == [
+        "a.txt",
+        "b.txt",
+    ]
+    assert object_result["target"] == f"object:{head}"
+    assert live_result["target"] == "live-worktree"
+    assert live_result["identity"] != object_result["identity"]
+
+
+def test_source_identity_rejects_path_escape(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    subprocess.run(["git", "init", "-q", str(repo)], check=True)
+    path_list = tmp_path / "paths.txt"
+    path_list.write_text("../outside.txt\n", encoding="utf-8")
+
+    with pytest.raises(MODULE.ReportUpdateError, match="unsafe evidence path"):
+        MODULE.source_identity(repo_root=repo, path_list=path_list)
 
 
 def test_validate_prepares_update_without_filesystem_mutation(tmp_path: Path) -> None:
@@ -468,6 +732,10 @@ def test_close_candidate_derives_all_report_projections(tmp_path: Path) -> None:
     assert result["candidate_states"] == {"alpha-fix": "implemented"}
     assert result["candidate_progress"] == _progress_for("implemented")
     assert 'data-state="implemented"' in updated
+    assert "<td>implemented</td>" in updated
+    assert "<strong>State:</strong> implemented." in updated
+    assert "<td>analyzed</td>" not in updated
+    assert "<strong>State:</strong> analyzed." not in updated
     assert 'data-implementation-result="complete"' in updated
     assert 'data-candidate-pickup="alpha-fix"' not in updated
     assert 'data-implemented-banner="alpha-fix"' in updated

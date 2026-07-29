@@ -141,6 +141,30 @@ Each finding owns its current state and preserved evidence:
   data-state="active|resolved|disproved">...</article>
 ```
 
+The narrative owns three machine-readable observation collections, including
+empty collections. IDs are unique inside their record kind and every record
+names its subsystem:
+
+```html
+<ul data-audit-collection="retained-complexity"
+  data-subsystem-id="<subsystem-id>">
+  <li id="retained-<retain-id>" data-retained-id="<retain-id>"
+    data-subsystem-id="<subsystem-id>">...</li>
+</ul>
+<ul data-audit-collection="gaps" data-subsystem-id="<subsystem-id>">
+  <li id="gap-<gap-id>" data-gap-id="<gap-id>"
+    data-subsystem-id="<subsystem-id>">...</li>
+</ul>
+<ul data-audit-collection="opportunities"
+  data-subsystem-id="<subsystem-id>">
+  <li id="opportunity-<opportunity-id>"
+    data-opportunity-id="<opportunity-id>"
+    data-subsystem-id="<subsystem-id>">...</li>
+</ul>
+```
+
+Do not render structured observations as prose-only list items.
+
 ## Candidate Card And Analysis
 
 The candidate card owns candidate facts. Render each as:
@@ -166,7 +190,9 @@ Mark each defect member with a link carrying
 
 Render its index row as a required projection with the same
 `data-candidate-id`, `data-state`, and `data-strength` values. Mark an exact
-visible pickup in each view as:
+plain-text State cell in the index row and a visible
+`<strong>State:</strong> <state>` sentence in the card; closeout updates both
+with the machine state. Mark an exact visible pickup in each view as:
 
 ```html
 <code
@@ -272,6 +298,8 @@ Before publication, validate the prospective complete report:
 - every subsystem has one static container, narrative region, and three
   insertion anchors;
 - every finding has one owning subsystem and valid current state;
+- retained-complexity, gap, and opportunity records have safe unique IDs,
+  matching anchors, and one owning subsystem;
 - every candidate ID has exactly one card and one index row;
 - each card and row agree on subsystem, ID, state, strength, and pickup text;
 - candidate finding links resolve inside the same subsystem;
@@ -302,15 +330,15 @@ coverage and one Continue pickup.
 After a passed Entry Gate, inspect the selected report and objective capability
 through the helper.
 Subsystem inspection returns state, source identity, findings by current state,
-retained complexity, gaps, candidates, available regions, and capabilities;
-manual parsing of rendered HTML is not an Entry step.
-Render only the selected regions, then run zero-write `validate`. Correct
-rendering or validation failures while the helper reports
+retained complexity, gaps, opportunities, candidates, available regions, and
+capabilities; manual parsing of rendered HTML is not an Entry step.
+Render only the selected regions. Audit runs `reaudit-subsystem --validate-only`
+on one publication manifest, then publishes the unchanged bundle with its
+returned digest. Analyze runs generic `validate`, then `update`. Correct
+rendering or validation failures while either validation path reports
 `mutation_started: false` and `report_unchanged: true`; this is preparation, not
 a publication attempt. Once validation passes, attempt incremental publication
-exactly once. Analyze uses `update` for existing regions. Audit uses
-`reaudit-subsystem` to refresh narrative, upsert findings, and update or insert
-candidates in one prospective report:
+exactly once:
 
 1. render only the selected narrative, finding, or candidate fragments;
 2. require strict UTF-8, safe text, the exact target anchor, no marker
@@ -330,6 +358,11 @@ python <audit-codebase>/scripts/update_report.py inspect
   [--candidate-id <id>]
   [--subsystem-id <id>]
 
+python <audit-codebase>/scripts/update_report.py source-identity
+  --repo-root <root>
+  --path-list <strict-utf8-repository-relative-path-list>
+  [--git-object <commit-or-tree>]
+
 python <audit-codebase>/scripts/update_report.py validate
   --repo-root <root>
   --report <absolute-report-path>
@@ -347,15 +380,39 @@ python <audit-codebase>/scripts/update_report.py update
 python <audit-codebase>/scripts/update_report.py reaudit-subsystem
   --repo-root <root>
   --report <absolute-report-path>
-  --expected-sha256 <sha256>
-  --subsystem-id <id>
-  --subsystem-state mapped|incomplete|audited
-  --source-identity <current-source-identity>
-  --narrative <fragment-path>
-  [--finding <id> <fragment-path> ...]
-  [--candidate <id> <card-path> <index-path> ...]
-  [--validate-only]
+  --manifest <publication-manifest>
+  --validate-only
+
+python <audit-codebase>/scripts/update_report.py reaudit-subsystem
+  --repo-root <root>
+  --report <absolute-report-path>
+  --manifest <same-publication-manifest>
+  --expected-bundle-sha256 <digest-returned-by-validation>
 ```
+
+Publication manifest version 1 contains:
+
+```json
+{
+  "version": 1,
+  "expected_report_sha256": "<sha256>",
+  "subsystem": {
+    "id": "<id>",
+    "state": "mapped|incomplete|audited",
+    "source_identity": "<identity>",
+    "narrative": "<relative-fragment-path>"
+  },
+  "findings": [{"id": "<id>", "fragment": "<relative-path>"}],
+  "candidates": [
+    {"id": "<id>", "card": "<relative-path>", "index": "<relative-path>"}
+  ]
+}
+```
+
+Paths resolve inside the manifest directory. The validation result's
+`bundle_sha256` covers the manifest and every referenced fragment; publication
+requires the same digest. Manifest and manual fragment arguments may not mix.
+Manual arguments remain a lower-level diagnostic interface.
 
 Fragments contain only the inner target element and must not contain update
 markers. For example:
@@ -369,11 +426,11 @@ markers. For example:
 ```
 
 The helper owns collision detection, changed-section and complete-report
-validation, insertion, derived progress, sibling cleanup, atomic replacement,
-and read-back. Every success or error reports `stage`, `mutation_started`, and
-`report_unchanged`; success also returns changed regions, candidate and finding
-states, and progress totals. The
-caller owns and removes fragment files. The helper does not judge codebase
+validation, insertion, bundle locking, derived progress, sibling cleanup,
+atomic replacement, and read-back. Every success or error reports `stage`,
+`mutation_started`, and `report_unchanged`; success also returns changed
+regions, candidate and finding states, and progress totals. The caller owns and
+removes fragment and manifest files. The helper does not judge codebase
 evidence, render the Map, or maintain another ledger.
 
 After the root admits a matching implementation completion packet under

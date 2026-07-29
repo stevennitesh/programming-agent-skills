@@ -1,223 +1,452 @@
 ---
 name: mle-workflow
-description: Build, review, or harden production machine-learning systems through explicit prediction and data contracts, reproducible training, model evaluation, deployment, monitoring, and rollback. Use for production ML features, model refreshes, ranking or recommendation systems, classifiers, embeddings, forecasting pipelines, notebook-to-pipeline conversions, promotion criteria, training-serving consistency, drift, leakage, and model operations. Do not use for one-off exploratory notebook analysis that has no production or reproducibility requirement.
+description: Align, build, review, harden, or operate a production or reproducibility-bound machine-learning system across project purpose, data and feature contracts, experiments, evaluation, testing, release, monitoring, retraining, incidents, and retirement. Use for predictive or generative ML, ranking, recommendation, forecasting, anomaly detection, embeddings, batch or online inference, notebook-to-pipeline work, model refreshes, leakage or training-serving skew, promotion decisions, and MLE production-readiness reviews. Exclude one-off exploratory analysis with no reproducibility or operational requirement, algorithm tutorials, and work whose primary challenge is application code rather than ML-system behavior.
 ---
 
 # Machine Learning Engineering Workflow
 
-Turn model work into a production ML system with clear contracts, repeatable
-training, measurable quality gates, deployable artifacts, and operational
-monitoring.
+Align every model, dataset, experiment, and release with the learning
+objective, decision, action, or scientific claim the project exists to support.
+Apply only the controls earned by the system's purpose, lifecycle transition,
+operating mode, exposure, and risk.
 
-## Calibrate the scope
+## Match the requested operation
 
-Use only the lanes the system needs. Do not assume supervised labels, online
-serving, a feature store, GPUs, human review, A/B tests, or real-time feedback.
-Prefer the smallest set of controls that makes the work reproducible and
-reviewable. A data contract, baseline, evaluation script, and rollback note may
-be enough.
+- **Frame:** establish purpose, feasibility, contracts, and an evidence plan.
+- **Build, change, or harden:** implement the smallest useful slice under
+  authorized writes and prove it through project-native seams.
+- **Review:** inspect the fixed candidate read-only, report supported gaps, and
+  separate required corrections from optional maturity improvements.
+- **Observe or diagnose:** inspect field behavior read-only and recommend a
+  response.
+- **Respond or recover:** perform an explicitly authorized containment,
+  fallback, rollback, repair, replay, or retirement transition.
 
-Before changing code:
+Do not turn an implementation request into advice, a review into mutation, or a
+diagnosis into production action. Before an effectful lifecycle transition,
+identify the authorized owner, escalation route, and execution authority or
+approved automatic safety control. Gates supply evidence; they do not grant
+authority.
 
-- Inspect the repository for existing data, training, evaluation, serving,
-  deployment, and monitoring paths.
-- State missing assumptions instead of silently selecting labels, metrics,
-  slices, thresholds, or infrastructure.
-- Start from the decision affected by the model, not from a preferred algorithm.
-- Do not introduce a parallel ML stack without evidence that the existing path
-  cannot support the requirement.
+Execute only the stages needed for the requested operation and transition.
+Treat later lifecycle stages as readiness criteria or recommendations unless
+the caller explicitly requests them.
 
-## Write the iteration compact
+Reuse the repository's architecture, vocabulary, commands, trackers, and
+documentation before introducing an MLOps surface.
 
-For ambiguous, high-impact, or metric-heavy work, capture this compact before
-implementation. Keep it short enough for a pull request description.
+## Classify purpose and delivery independently
+
+Classify each independently deployable or outcome-changing slice before
+selecting controls:
 
 ```text
-Goal:
-Who cares:
-Decision owner:
-Action changed by the model:
-Success metric:
-Guardrail metrics:
-Mistake budget:
-Unacceptable mistakes:
-Assumptions and constraints:
-Labels and data snapshot:
-Baseline:
-Candidate signals:
-Threshold or configuration plan:
-Evaluation slices:
-Known risks:
-Next experiment:
-Rollback or fallback:
+Primary purpose and any secondary purpose:
+Purpose claim and confirming owner:
+Current delivery reality:
+Delivery classification evidence:
+Target delivery and assumptions:
+Requested transition:
 ```
 
-Skip fields that genuinely do not apply; do not invent values to fill the
-template.
+Purpose answers which claim the work must support:
 
-## Core workflow
+- **Personal learning:** the primary outcome is demonstrated understanding or
+  capability, not a real decision or action. For work admitted beyond the
+  exploratory lane, name the learning objective, preserve a restartable and
+  valid experiment, and explain the consequential choices and tradeoffs. Do
+  not claim reviewer, operational, scientific, or field impact without
+  separate evidence.
+- **Portfolio or resume:** an external reviewer must be able to inspect the
+  claimed capability. Require a concise problem-, question-, or
+  learning-objective-to-evidence story; a representative, secret-free exercise
+  path with its environment, entry point, accessible or proxy input, expected
+  output, and covered claim; baseline-relative results when empirical
+  performance is claimed; and one reviewer-visible output generated by that
+  path. Attribute the author's contribution and expose the consequential
+  alternatives, tradeoffs, failures, and constraints. Put limitations next to
+  the claims they constrain and label verification as author-run,
+  independently exercised, or independently reproduced. A notebook,
+  screenshot, container, CI badge, API wrapper, or cloud URL alone is not
+  engineered-system proof.
+- **Operational outcome:** a real personal, public, commercial, or
+  organizational decision or action is intended to improve. Choose this purpose
+  when that improvement is a project claim; observable field effects
+  independently determine delivery. Name the accountable outcome, owner,
+  current or non-ML baseline, model-to-outcome link, affected parties, failure
+  costs, and acceptance intent in the Purpose Lock.
+- **Research:** the work exists to answer, test, or support a scientific
+  question or claim. Name the accountable research owner, prior or simple
+  scientific baseline, evidence link, validity threats, knowledge limits, and
+  acceptance intent in the Purpose Lock.
+- **Unknown:** record assumptions as drafts. Block only purpose-dependent
+  acceptance, impact claims, and promotion until an owner confirms them.
 
-### 1. Define the prediction contract
+Delivery reality answers which machinery and safety controls are earned:
 
-Specify:
+- **Exploratory:** disposable analysis with no rerun promise, durable external
+  claim, committed operational consumer, schedule, or field effect. If no
+  transition to reproducible or operational work is requested, return this
+  skill as out of scope without creating MLOps surfaces.
+- **Reproducibility-bound prototype:** another person must be able to recover
+  and rerun the declared claim from identified code, inputs, configuration,
+  environment, and artifacts, but no operational promotion target is
+  committed. Require a demonstrated rerun boundary and repeatability within a
+  declared tolerance; omit rollout, monitoring, refresh, and incident
+  machinery unless another trigger independently requires them.
+- **Production-bound:** a named owner, consumer, target environment, and
+  promotion or rollout transition exist, but the slice is not yet live.
+  Apply the delivery, candidate, production-like integration, promotion-gate,
+  fallback, and ownership requirements below.
+- **Live production:** the slice runs against real field traffic or schedules,
+  affects real users or decisions, performs operational writes or automated
+  actions, or maintains active learned state. Shadow, canary, and bounded live
+  batches remain live. Load the [operations branch](references/OPERATE.md),
+  recover the active release identity where possible, and require execution
+  authority only before a state-changing transition. Missing identity is an
+  evidence gap, not a reason to block read-only observation.
 
-- The prediction target, decision owner, and product or system behavior affected
-- Input entity, output schema, confidence or calibration fields, and latency
-  limits
-- Batch, online, streaming, or hybrid serving mode
-- Fallback behavior when the model or a dependency is unavailable
-- Human review or override paths for high-impact decisions
-- Privacy, retention, and audit requirements
+Use repository and field evidence to establish delivery reality; purpose and
+values remain owner-confirmed. Apply each purpose requirement only to the
+claim it supports, but use the highest evidenced delivery lane for operational
+safety. A `personal`, `portfolio`, `resume`, `demo`, or `research` label never
+downgrades live behavior. Aspirational production language does not make a
+prototype live; apply the target lane's gates before the requested transition.
+When production ownership or a target environment is missing, classify the
+current lane from available evidence and record production-bound as a draft
+target. Apply its gates as readiness criteria and block only readiness,
+promotion, or other dependent effects. If delivery is otherwise unknown,
+remain read-only or offline and block only dependent effects.
 
-Do not accept "improve the model" as the complete requirement. Tie the work to
-observable behavior and a measurable acceptance gate.
+For portfolio claims, describe the demonstrated capability and its evidence
+directly. `Deployed demonstration` means a named environment exercised the
+stated path without implying field reliability. Reserve `deployment-ready` for
+proven gates in a named environment and production claims for actual field
+operation; use `production-operated` only with a stated period, scale,
+telemetry, and response policy. State when field operation is absent. Do not
+translate offline metrics into business impact or add registries, orchestration,
+feature stores, Kubernetes, automatic retraining, or governance paperwork
+merely to look production-like.
 
-### 2. Lock the data contract
+## Calibrate before adding machinery
+
+Identify the current lifecycle transition, delivery and update modes, and
+impact or exposure: affected people, reversibility, sensitive or third-party
+inputs, adversarial access, resource scale, governing obligations, and
+specialized architectures.
+
+Apply only relevant lanes. Record `not applicable` only when omission could be
+mistaken for incomplete coverage. Do not assume labels, online serving, a
+feature store, GPUs, containers, registries, human review, A/B tests, or
+automatic retraining.
+
+When a task needs a complete generative-AI, adaptive-learning, reinforcement-
+learning, federated-learning, safety-critical, or regulated-domain procedure
+beyond this common core, preserve supported results and return `partial` with
+the exact specialist handoff. Do not imply comprehensive specialized coverage.
+
+## Lock project purpose
+
+Create or recover a versioned **Purpose Lock**:
+
+```text
+ID and version:
+Learning objective, decision, action, or scientific claim/question:
+Intended users and affected non-users:
+Accountable owner:
+Intended and out-of-scope uses:
+Current workflow and non-ML baseline:
+Capability evidence, benefit hypothesis, research claim, or project outcome:
+Model-to-outcome or evidence link:
+Failure costs and unacceptable outcomes:
+Risk tolerance and governing obligations:
+Deployment context and knowledge limits:
+Fallback, rollback, or stop condition:
+```
+
+The Purpose Lock owns why, who, and acceptable impact. The Evaluation Contract
+later owns exact metrics, thresholds, splits, slices, uncertainty, and gates.
+Fit the fields to the project in a project-native surface; do not create a
+dedicated artifact or fill irrelevant slots merely to satisfy the template.
+
+Distinguish model quality from product, operational, scientific, or business
+success. Prefer a simple heuristic or non-ML solution when it meets the purpose
+with less total risk or maintenance cost.
+
+The accountable owner and governing sources own values, consent, legal
+applicability, risk tolerance, and residual-risk acceptance. If one is missing,
+block only the dependent decision, name the owner-held gap, and continue
+independent safe work.
+
+A review recovers the Purpose Lock or reports its absence; it does not create
+or rewrite it. Authorized Frame or Build work may draft or update it for owner
+confirmation. Preserve prior versions. Bind every decision-bearing run,
+candidate, and release to the applicable Purpose Lock version.
+
+Reopen it only when a change materially alters purpose, impact, users, context,
+data/label assumptions, objective, threshold, capability, delivery, feedback,
+or governing obligations.
+
+## Map the system and delivery contract
+
+Trace the smallest outcome-changing slice:
+
+```text
+source -> validation -> snapshot -> split -> transformation -> training
+       -> evaluation -> artifact -> promotion -> inference or batch output
+       -> consumer decision -> outcome or feedback -> monitoring -> refresh
+       -> rollback or retirement
+```
+
+For relevant nodes, record owner, identity/version, interface, trust boundary,
+upstream dependencies, downstream consumers, and failure/fallback. Include
+configuration, thresholds, human actions, and hidden consumers; the model file
+alone is not the system. Retrace affected nodes after a change to producers,
+consumers, shared transformations, feedback, or configuration invalidates the
+map.
+
+Define the **Delivery Contract** before rollout:
+
+- Mode and input/output identity
+- Latency or freshness and ordering requirements
+- Persistent state, external writes, idempotency, replay, or compensation
+- Throughput, connectivity, resource, privacy, and failure-isolation limits
+- Fallback, degraded behavior, and output reconciliation
+
+## Establish the data and feature contract
 
 Record:
 
-- Entity grain and primary key
-- Label definition, timestamp, availability delay, and confidence
-- Feature timestamp, freshness expectation, and point-in-time join rules
-- Train, validation, test, and backtest split policy
-- Required columns, allowed nulls, ranges, categories, and units
-- Sensitive fields excluded from training artifacts and logs
-- Dataset version or immutable snapshot identifier
+- Dataset identity, purpose, owner, source, permitted use, lineage, and change
+  policy
+- Entity grain/key, field meaning/units, required columns, null policy, type,
+  range, domain, and freshness
+- Prediction cutoff plus feature-window and outcome/label-window bounds
+- Label definition, collection/adjudication, confidence, event time,
+  availability, maturity/as-of time, and revision behavior
+- Feature event, availability, and ingestion times plus backfill behavior
+- Evaluation unit, all dependence boundaries, split policy, and persisted split
+  identity
+- Sensitive fields, access, retention/deletion, and artifact/log exclusions
 
-Check leakage before model complexity. Remove any feature unavailable at
-prediction time or joined with future information.
+Use only values knowable at the decision time. Prove point-in-time joins against
+availability, not latest event time. Audit aggregates, duplicates, labels,
+sample selection, and learned preprocessing for leakage. Purge, gap, or embargo
+examples when feature, outcome, or entity-dependence windows cross a split.
+When historical availability or lineage cannot be reconstructed, report
+point-in-time correctness or reproducibility as `unknown`.
 
-### 3. Establish a baseline and mistake economics
+Split before fitting learned state. Fit imputers, scalers, vocabularies,
+encoders, feature selectors, dimensionality reduction, calibration, thresholds,
+and other data-dependent state inside each applicable training fold or inner
+ownership boundary. Freeze the model-transform-calibrator-threshold composite
+before untouched evaluation. Use cross-fitting or nested ownership when literal
+partitions are too small.
 
-Choose metrics from failure costs:
+Share transformation semantics between training and inference or prove parity
+on the same examples. Validate raw inputs, transformed features, new batches,
+training/inference values, and important slices separately where applicable.
+Report precise violations; do not silently coerce, drop, impute, widen, or
+accept a changed contract.
 
-- Use a confusion matrix when false positives and false negatives apply.
-- Favor precision when incorrect positive decisions dominate the cost.
-- Favor recall when missed positives dominate the cost.
-- Use ranking metrics when order matters more than one threshold.
-- Track calibration, latency, throughput, memory, and cost when relevant.
-- Compare against a simple baseline and the current production model.
+## Run traceable experiments
 
-State which mistake each metric makes cheaper, which it may make more likely,
-and who absorbs the cost. Do not add model complexity until error analysis
-shows why additional signal or capacity could help.
+Use the applicable baseline ladder: current non-ML/heuristic behavior, current
+production model, and a deliberately simple learned model. Require complexity
+to justify its decision benefit, operational cost, risk, and maintenance.
 
-### 4. Build a reproducible pipeline
-
-Make training runnable without hidden notebook state:
-
-- Put hyperparameters, paths, and feature options in typed or validated config.
-- Pin relevant package and model dependencies.
-- Set random seeds and document unavoidable nondeterminism.
-- Record the dataset version, code revision, config hash, metrics, and artifact
-  location.
-- Package preprocessing with the model artifact.
-- Share train, evaluation, and inference transformations or prove their
-  equivalence with tests.
-- Make retries idempotent.
-
-Prefer immutable configuration and pure feature transforms over global mutable
-state.
-
-### 5. Declare evaluation and promotion gates
-
-Define gates before training finishes:
-
-- Primary metric aligned with the product decision
-- Baseline and current-production comparisons
-- Guardrails for latency, calibration, important slices, cost, and error
-  concentration
-- Repeated-run variance or confidence intervals when results are noisy
-- Human review of failure examples for high-impact models
-- Explicit fail-closed "do not ship" thresholds
-
-Treat offline metrics as gates, not guarantees. When a model changes live
-behavior, select a proportionate shadow, canary, A/B, or staged rollout.
-
-### 6. Package the serving contract
-
-Require:
-
-- A versioned artifact containing config, preprocessing, and training-data
-  reference
-- Input validation for missing, stale, invalid, and out-of-range features
-- Model version in outputs or prediction logs
-- Timeout, batching, resource limits, and fallback behavior where applicable
-- Safe artifact loading and logs that exclude secrets and sensitive data
-- Integration tests for bad input, empty batches, dependency failure, and
-  fallback behavior
-
-Never allow training-only feature logic to diverge from serving logic without
-an equivalence test.
-
-### 7. Deploy with rollback
-
-Name the rollout method, traffic or batch boundary, dashboards, quality and
-system guardrails, rollback triggers, previous known-good artifact, and
-traffic-switch mechanism. A rollback must not require retraining.
-
-### 8. Monitor and refresh
-
-Monitor the signals that apply:
-
-- Availability, errors, timeouts, queue depth, and latency
-- Feature nulls, ranges, categories, and freshness drift
-- Prediction and confidence distribution drift
-- Label arrival health and delayed quality metrics
-- Business guardrails by model version and important slice
-
-Assign alert ownership and define retraining or investigation criteria. Do not
-equate distribution drift with quality degradation without supporting evidence.
-
-## Run the error-analysis loop
-
-After each meaningful experiment:
-
-1. Separate false positives, false negatives, abstentions, low-confidence
-   cases, and system failures.
-2. Cluster errors by relevant traits such as time, source, language, geography,
-   device, sparsity, freshness, label source, or model version.
-3. Distinguish model errors from data bugs, ambiguous labels, product ambiguity,
-   instrumentation gaps, and serving mismatches.
-4. Map each important cluster to better labels, features, thresholds,
-   configuration, or product fallback.
-5. Preserve important failures as a regression test, evaluation slice,
-   dashboard signal, or runbook entry.
-6. Express the next iteration as a falsifiable experiment.
-
-## Keep an observation ledger
+For each decision-bearing run, preserve:
 
 ```text
-Iteration:
-Change and reason:
-Metric and slice movement:
-False positives and false negatives:
-Unexpected errors:
-Decision:
-Tradeoff accepted:
-Regression added:
-Debt created:
-Next iteration:
+Purpose Lock and hypothesis:
+Parent or baseline run and intended change:
+Code revision:
+Data, split, and transformation identities:
+Resolved configuration and hyperparameters:
+Environment, dependencies, and relevant hardware:
+Randomness and determinism controls:
+Metrics, slices, uncertainty method, resources, cost, and artifacts:
+Status, decision, and reason:
 ```
 
-## Review checklist
+Keep failed and neutral runs when they prevent repeated dead ends. Default
+diagnostic work to one intended change; allow explicit ablation, factorial, or
+search designs.
 
-- [ ] Prediction contract is explicit and testable
-- [ ] Data contract covers grain, label timing, feature timing, and version
-- [ ] Leakage is checked against prediction-time availability
-- [ ] Training is reproducible from code, config, data version, and seed
-- [ ] Metrics compare with a baseline and current production behavior
-- [ ] Important slices and operational guardrails are evaluated
-- [ ] Promotion gates are automated and fail closed
-- [ ] Training and serving transformations are shared or equivalence-tested
-- [ ] Artifact contains version, config, data reference, and preprocessing
-- [ ] Serving validates inputs and defines fallback and rollback behavior
-- [ ] Monitoring covers system health and applicable model-quality signals
-- [ ] Sensitive data is excluded from artifacts, logs, prompts, and examples
+Separate artifact reproducibility (recover exact inputs and outputs) from
+result reproducibility (repeat the claim within a declared tolerance or
+uncertainty envelope). One seed does not prove reproducibility. Bitwise equality
+across releases, platforms, or accelerators is conditional, not universal.
 
-## Return
+## Freeze the Evaluation Contract before candidate results
 
-Return the concrete artifacts appropriate to the request: iteration compact,
-data contract, baseline plan, evaluation and promotion gates, pipeline changes,
-test evidence, deployment and rollback plan, monitoring plan, or review
-findings. Clearly identify unresolved unknowns that block production readiness.
+Specify:
+
+- Deployment population, horizon, decision unit, and operating conditions
+- Primary decision metric, project outcome, guardrails, and failure costs
+- Baseline comparison and minimum meaningful improvement
+- Threshold, abstention, and calibration policy where applicable
+- Train, validation, calibration, and final-test ownership
+- Every applicable temporal, group, spatial, repeated-measure, or other
+  dependence constraint; stratification does not repair dependence
+- Important slices tied to known costs or operating contexts
+- Variability source, independent resampling unit, runs/resamples, interval
+  method, and assumptions
+- For each gated important slice, its absolute floor and allowable regression
+  from the baseline
+
+Apply all relevant separation constraints in outer and inner splits. Report
+training stochasticity separately from data, split, temporal, or group
+uncertainty. Protect final-test evidence from feature, model, hyperparameter,
+calibration, and threshold selection.
+
+Viewing final-test results consumes that evidence for the evaluated candidate.
+Any later decision informed by those results requires fresh untouched evidence;
+otherwise report the result as selection-biased or test-exhausted, not final.
+
+For important slices, report coverage and sample/label counts that exist.
+Treat small or unstable slices as uncertain. Choose the lowest evidence rung
+that supports the claim:
+
+```text
+structural tests -> offline holdout/replay/backtest -> shadow/dry run
+-> canary/bounded batch -> controlled experiment -> mature field outcomes
+```
+
+Read [references/EVALUATION-BRANCHES.md](references/EVALUATION-BRANCHES.md)
+when the task involves recurring forecasts; absent, delayed, sparse,
+untrustworthy, non-objective, unsupervised, or self-supervised labels;
+feedback-mediated ranking or intervention; or decision-bearing probabilities.
+Execute only the matching section.
+
+## Analyze errors into the next experiment
+
+Compare stable candidate, baseline, and downstream behavior; inspect and segment
+relevant failures; separate model error from data, label, policy, product,
+instrumentation, integration, and serving causes; quantify important clusters
+and convert supported ones into durable proof or fallback; record one
+falsifiable next experiment.
+
+Do not patch anecdotes that the project objective does not recognize as a
+failure.
+
+## Build the ML test portfolio
+
+Select the smallest diagnosable portfolio at the seams and claims in scope:
+
+- Data/feature contracts and executable leakage invariants
+- Model/API behavior, numerical and domain invariants, malformed inputs, and
+  checkpoint restore
+- Reduced-data pipelines and claimed delivery behaviors such as retries or
+  idempotency
+- Train/inference parity or a declared stochastic equivalence
+- Applicable quality, important-slice, compatibility, resource, security, and
+  policy gates
+- Claimed dependency-failure, overload, fallback, rollback, affected-output,
+  and restart behavior
+
+Where applicable, make split disjointness, temporal ordering, label maturity,
+group/window non-overlap, fold-local fit scopes, and blocked final-test access
+executable. Use sentinel or shuffled-label negative controls when they can
+expose contamination.
+
+Make gates explicit, reproducible, and enforced. Automate recurring gates when
+justified; retain accountable approval where risk or policy requires it. A
+warning that cannot stop an invalid promotion is not a gate.
+
+## Package, promote, and roll out an immutable candidate
+
+Execute this section only when the requested operation reaches candidate
+packaging, production readiness, promotion, or rollout in a production-bound
+or live slice. Otherwise preserve the applicable run and artifact identities
+and skip it.
+
+Use explicit transitions:
+
+```text
+experiment -> candidate -> validated -> staged -> active
+                                      -> rolled back or retired
+```
+
+Bind each candidate and active release to the Purpose Lock; model and learned
+preprocessing; input/output and feature contracts; code, config, thresholds,
+dependencies, and runtime; training data, split, run, evaluation, and approval;
+artifact origin/integrity; resource requirements; and known limitations.
+
+Never execute an untrusted or potentially tampered executable model artifact.
+Require trusted provenance, integrity verification, an approved loader/runtime,
+and compatible dependencies. Evidence is not a guarantee.
+
+Define the rollback unit as model plus preprocessing, runtime, configuration,
+contracts, and compatible state. Retain the previous known-good unit. Prove the
+fallback or rollback path proportionately.
+
+Choose rollout from the Delivery and Evaluation Contracts:
+
+- **Shadow/dry run:** suppress user-visible effects and production writes;
+  establish integration, parity, load, or skew, not user benefit.
+- **Canary:** limited real impact with representative traffic/data, concurrent
+  control, release-scoped telemetry, and pause/abort/ramp conditions; it limits
+  exposure but does not alone establish causal lift.
+- **Controlled experiment:** assignment, exposure, outcome/guardrail metrics,
+  integrity checks, stopping plan, and analysis ownership for causal impact.
+- **Batch/stream:** skipped-write mode, dry run, or bounded partition. A
+  committed partition limits blast radius but is reversible only with proven
+  replay, idempotency, compensation, or reconciliation.
+
+Do not claim launch guarantees from offline quality or require randomization
+where infeasible or unethical.
+
+## Operate and activate risk branches
+
+Refresh creates a candidate, never promotion. During an authorized incident,
+contain harm and restore stability before investigation. Retirement is an
+explicit owner-authorized lifecycle transition.
+
+When the task concerns the live-production lane, refresh, adaptive state,
+incident, rollback, or retirement, or production-readiness scope reaches field
+operation, read [references/OPERATE.md](references/OPERATE.md) and execute only
+the relevant section.
+
+Inventory observed risk triggers: sensitive or regulated data; weakly governed
+or automatically recycled training inputs; acquired executable artifacts or
+components crossing a material trust, update, deployment, or impact boundary;
+public/adversarial access; high-impact use; generative or tool-using
+capabilities; high resource scale; long-lived or cascaded systems; and
+edge/intermittent deployment. When one applies, read
+[references/RISK-BRANCHES.md](references/RISK-BRANCHES.md) and execute only its
+matching branch.
+
+Use governing and official sources current to the project. Do not claim
+universal legal, safety, privacy, security, fairness, or responsible-AI
+compliance.
+
+## Complete proportionately
+
+Use project-native artifacts and create only durable evidence the request
+needs. Bind claims to the exact data, run, candidate, release, environment, and
+operating conditions; artifact or dashboard existence is not proof.
+
+Before completion:
+
+- Recheck purpose and delivery classifications against the delivered claims
+  and observable effects.
+- Confirm every attempted lifecycle transition was explicitly requested and
+  authorized.
+- Recheck delivered behavior against the Purpose Lock.
+- Confirm data was legitimate at decision time and fitted state stayed inside
+  its ownership boundary.
+- Confirm the Evaluation Contract preceded candidate results and final evidence
+  was not consumed by later selection.
+- When a candidate or release transition was in scope, confirm the tested,
+  reviewed, and promoted identities match.
+- Confirm gates are enforced and failures stop only dependent actions.
+- When production or operations branches were active, confirm authority,
+  fallback, monitoring, rollback, and retirement match the actual delivery
+  state.
+- Report unknowns and residual risk at their weakest evidence.
+
+Respect the caller's requested format. Otherwise return operation/scope,
+purpose alignment, artifacts or changes, evidence and exact identities, gate
+decision when requested, unknowns/residual risk, and the next owner or
+`Next: none`.

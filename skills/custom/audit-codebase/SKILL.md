@@ -17,6 +17,10 @@ Audit may perform the selected objective's prerequisite source refresh in the
 same invocation. It never selects a subsystem or candidate and starts no
 downstream work.
 
+**Audit hot path:** inspect -> rebuild Source Trace -> apply six lenses ->
+admit observations -> group candidates -> render one publication manifest ->
+validate -> publish once -> inspect.
+
 **Root-owned:** the top-level root owns scope, selection admission, lens
 coverage, findings, candidates, publication, and Return. It may use up to six
 fresh-context read-only delegates for repository inventory or independent
@@ -30,7 +34,8 @@ root-only blocker.
 
 **Artifact boundary:** the only lasting mutation is
 `.scratch/audit-codebase/<run-id>/report.html`. The caller removes its fragment
-files; the helper removes its atomic sibling. Exclude both from audited content.
+and manifest files; the helper removes its atomic sibling. Exclude them from
+audited content.
 Leave product code, ordinary tracked docs, Git refs and index, trackers,
 reviews, deployments, and external systems unchanged.
 
@@ -149,6 +154,8 @@ compatibility or staleness matters. Discover current callers and paths rather
 than trusting the old fingerprint.
 
 Record the current evidence identity and update affected local map ownership.
+For an explicit evidence path list, use helper `source-identity`; it
+canonicalizes paths, modes, and content identities but never discovers scope.
 Refresh the selected subsystem's current-state flow from the same evidence.
 Include `summary:map` only when one of its displayed node facts or direct edges
 changed.
@@ -205,10 +212,11 @@ gap; unfinished obtainable work is not.
 
 ### Publish Audit
 
-Apply the Incremental Publish Gate through one `reaudit-subsystem` operation.
-It refreshes the narrative, upserts findings, updates or inserts candidates,
-and derives summaries without nested replacements. For `audited`, return
-findings, retained complexity, gaps, candidate IDs and names, the local
+Apply the Incremental Publish Gate through one `reaudit-subsystem` publication
+manifest. It refreshes the narrative, upserts findings, updates or inserts
+candidates, and derives summaries without nested replacements. For `audited`,
+return findings, opportunities, retained complexity, gaps, candidate IDs and
+names, the local
 recommendation, coverage, and:
 
 `$audit-codebase analyze <candidate-id> from <absolute-report-path>`

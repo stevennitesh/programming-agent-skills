@@ -1552,6 +1552,15 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert "validate" in report
     assert "close-candidate" in report
     assert "reaudit-subsystem" in report
+    assert "source-identity" in report
+    assert "--manifest <publication-manifest>" in report
+    assert "--expected-bundle-sha256" in report
+    assert 'data-audit-collection="retained-complexity"' in report
+    assert 'data-audit-collection="gaps"' in report
+    assert 'data-audit-collection="opportunities"' in report
+    assert "Audit hot path:" in audit
+    assert "Audit runs `reaudit-subsystem --validate-only`" in report
+    assert "Analyze runs generic `validate`, then `update`" in report
     assert "candidate-insert:<subsystem-id>" in report
     assert "finding-insert:<subsystem-id>" in report
     assert "static subsystem container" in report_flat
@@ -1580,6 +1589,8 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert "every candidate ID has exactly one card and one index row" in report_flat
     assert '"candidate-index"' in updater
     assert "def reaudit_subsystem(" in updater
+    assert "def reaudit_subsystem_manifest(" in updater
+    assert "def source_identity(" in updater
     assert "finding_transitions" in updater
     assert "_validate_complete_report" in updater
     assert "migrate" not in updater.lower()

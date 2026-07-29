@@ -1,7 +1,7 @@
 interface:
   display_name: "MLE Workflow"
-  short_description: "Build production-ready machine learning systems"
-  default_prompt: "Use $mle-workflow to turn this model work into a reproducible, deployable ML system."
+  short_description: "Scale MLE rigor to purpose and reality"
+  default_prompt: "Use $mle-workflow to align this ML project with its purpose and perform only the explicitly requested operation."
 
 policy:
   allow_implicit_invocation: false
