@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+import json
 from pathlib import Path
 import sys
 
@@ -181,6 +182,169 @@ def _progress_for(state: str) -> str:
         f"{candidate_state.replace(' ', '-')}:{int(candidate_state == state)}"
         for candidate_state in states
     )
+
+
+def _completion(path: Path) -> Path:
+    path.write_text(
+        json.dumps(
+            {
+                "implementation_outcome": "complete",
+                "report": str(
+                    path.parent
+                    / ".scratch"
+                    / "audit-codebase"
+                    / "run-001"
+                    / "report.html"
+                ),
+                "run_id": "run-001",
+                "subsystem_id": "alpha",
+                "candidate_id": "alpha-fix",
+                "commit_identity": "a" * 40,
+                "commit_tree_identity": "b" * 40,
+                "current_source_result": "reachable",
+                "accepted_proof": "focused and contract suites passed",
+                "formal_review_decision": "accepted",
+                "repair_generations_used": 1,
+                "changed_scope": "alpha implementation",
+                "change_closure": "complete",
+                "residual_risk": "none",
+                "last_verified_identity": "a" * 40,
+            }
+        ),
+        encoding="utf-8",
+    )
+    return path
+
+
+def test_inspect_returns_local_candidate_packet(tmp_path: Path) -> None:
+    report = _report(tmp_path)
+
+    result = MODULE.inspect_report(
+        repo_root=tmp_path,
+        report=report,
+        candidate_id="alpha-fix",
+    )
+
+    assert result["report_version"] == "3"
+    assert result["run_id"] == "run-001"
+    assert result["sha256"] == _digest(report)
+    assert result["candidate"] == {
+        "id": "alpha-fix",
+        "state": "presented",
+        "strength": "Strong",
+        "pickup": "$audit-codebase analyze alpha-fix from report",
+    }
+
+
+def test_validate_prepares_update_without_filesystem_mutation(tmp_path: Path) -> None:
+    report = _report(tmp_path)
+    before = report.read_bytes()
+    candidate = _candidate_sections(
+        tmp_path,
+        state="analyzed",
+        pickup="",
+    )
+    progress = _progress_sections(tmp_path, _progress_for("analyzed"))
+
+    result = MODULE.validate_report_update(
+        repo_root=tmp_path,
+        report=report,
+        expected_sha256=_digest(report),
+        sections=(*candidate, *progress),
+    )
+
+    assert result["stage"] == "validate"
+    assert result["mutation_started"] is False
+    assert result["report_unchanged"] is True
+    assert result["candidate_states"] == {"alpha-fix": "analyzed"}
+    assert report.read_bytes() == before
+    assert not list(report.parent.glob("report.html.audit-update-*.tmp"))
+
+
+def test_validation_error_reports_zero_mutation_boundary(tmp_path: Path) -> None:
+    report = _report(tmp_path)
+    fragment = _fragment(
+        tmp_path,
+        "candidate.html",
+        '<article id="wrong-anchor">bad</article>',
+    )
+
+    with pytest.raises(MODULE.ReportUpdateError) as raised:
+        MODULE.validate_report_update(
+            repo_root=tmp_path,
+            report=report,
+            expected_sha256=_digest(report),
+            sections=(("candidate", "alpha-fix", fragment),),
+        )
+
+    assert raised.value.stage == "validate"
+    assert raised.value.mutation_started is False
+    assert raised.value.report_unchanged is True
+
+
+def test_replace_error_reports_started_mutation_and_preserves_report(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    report = _report(tmp_path)
+    before = report.read_bytes()
+    sections = (
+        *_candidate_sections(tmp_path, state="analyzed", pickup=""),
+        *_progress_sections(tmp_path, _progress_for("analyzed")),
+    )
+
+    def fail_replace(source: Path, target: Path) -> None:
+        raise OSError("controlled replacement failure")
+
+    monkeypatch.setattr(MODULE.os, "replace", fail_replace)
+    with pytest.raises(MODULE.ReportUpdateError) as raised:
+        MODULE.update_report(
+            repo_root=tmp_path,
+            report=report,
+            expected_sha256=_digest(report),
+            sections=sections,
+        )
+
+    assert raised.value.stage == "replace"
+    assert raised.value.mutation_started is True
+    assert raised.value.report_unchanged is True
+    assert report.read_bytes() == before
+    assert not list(report.parent.glob("report.html.audit-update-*.tmp"))
+
+
+def test_close_candidate_derives_all_report_projections(tmp_path: Path) -> None:
+    report = _report(tmp_path)
+    analyzed = _candidate_sections(
+        tmp_path,
+        state="analyzed",
+        pickup="$implement candidate alpha-fix from report",
+    )
+    MODULE.update_report(
+        repo_root=tmp_path,
+        report=report,
+        expected_sha256=_digest(report),
+        sections=(
+            *analyzed,
+            *_progress_sections(tmp_path, _progress_for("analyzed")),
+        ),
+    )
+    completion = _completion(tmp_path / "completion.json")
+
+    result = MODULE.close_candidate(
+        repo_root=tmp_path,
+        report=report,
+        expected_sha256=_digest(report),
+        candidate_id="alpha-fix",
+        completion_path=completion,
+    )
+
+    updated = report.read_text(encoding="utf-8")
+    assert result["candidate_states"] == {"alpha-fix": "implemented"}
+    assert result["candidate_progress"] == _progress_for("implemented")
+    assert 'data-state="implemented"' in updated
+    assert 'data-implementation-result="complete"' in updated
+    assert 'data-candidate-pickup="alpha-fix"' not in updated
+    assert 'data-implemented-banner="alpha-fix"' in updated
 
 
 def test_updates_selected_regions_atomically(tmp_path: Path) -> None:

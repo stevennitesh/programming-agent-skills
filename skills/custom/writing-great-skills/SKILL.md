@@ -64,6 +64,10 @@ action or output unless authority or safety requires a full stop. Never report
 a failed branch complete. Preserve independent supported results and calibrate
 each to its weakest load-bearing evidence.
 
+For an effectful helper, separate correctable zero-effect preparation from the
+mutation. While state is unchanged, correct useful preparation failures; begin
+any attempt limit only at the effect boundary and report whether it started.
+
 Make completion checkable and demanding enough to force the required work.
 Treat an implicitly invocable description as a routing predicate: name
 observable triggers and the closest exclusions, not runtime procedure.

@@ -83,7 +83,8 @@ Use the map as the table of contents. Give every system
 Lead the `summary:map` region with one repository relationship figure. Group
 every subsystem node inside its system container and draw every unique direct
 evidence-backed dependency exactly once. Link each node to its subsystem, state
-one arrow convention, and include a legend. Route within-system edges inside
+one arrow convention, label it `Observed at <map identity>`, and include a
+legend. Route within-system edges inside
 their container and cross-system edges through container boundaries. Do not add
 reverse caller or dependent duplicates, transitive edges, file nodes, findings,
 or candidate state. Keep the linked text table of contents adjacent and
@@ -96,7 +97,8 @@ and Proof Seams. Map shows only mapped behavior; Audit may refine the selected
 flow with verified responsibility steps and branches. Analyze updates it only
 when revalidation changes current-source relationship facts. Never render a
 proposed candidate shape into the current-state figure. The adjacent detail
-remains the evidence owner.
+remains the evidence owner. After a later selected-unit update, unchanged map
+content is a labeled historical observation, not an assertion of current truth.
 
 Each map node contains stable ID, name, purpose, state, file count, direct
 evidence-backed dependencies, and its valid user pickup. Its detail contains
@@ -142,7 +144,10 @@ The candidate card owns candidate facts. Render each as:
 
 Include its title, class and concepts, files and Modules, member links, problem,
 current evidence, direction, expected benefit, safety floors, required proof,
-decisions, state, strength, and pickup.
+decisions, state, strength, and pickup. Lead with current state and its
+available action, if any. After Analyze, keep the presentation and analysis
+record in `<details data-candidate-history="<candidate-id>">` so history remains
+available without dominating navigation.
 
 Render its index row as a required projection with the same
 `data-candidate-id`, `data-state`, and `data-strength` values. Mark an exact
@@ -172,8 +177,9 @@ After Analyze, append:
 - conditional decision, evidence, or next-owner content only when
   `CANDIDATE-FOLLOWUP.md` applies.
 
-For `implemented`, append the visible completion packet and one machine-readable
-evidence element:
+For `implemented`, show a visible
+`data-implemented-banner="<candidate-id>"`, keep history collapsed, and append
+the visible completion packet plus one machine-readable evidence element:
 
 ```html
 <dl
@@ -262,8 +268,12 @@ coverage and one Continue pickup.
 
 ## Incremental Publish Gate
 
-After a passed Entry Gate, attempt incremental publication exactly once with
-one `update_report.py` call containing every selected region:
+After a passed Entry Gate, inspect the selected report through the helper.
+Render only the selected regions, then run zero-write `validate`. Correct
+rendering or validation failures while the helper reports
+`mutation_started: false` and `report_unchanged: true`; this is preparation, not
+a publication attempt. Once validation passes, attempt incremental publication
+exactly once with one `update` call containing every selected region:
 
 1. render only the selected subsystem or candidate plus affected summary
    fragments;
@@ -272,12 +282,24 @@ one `update_report.py` call containing every selected region:
 3. replace the unique marked regions, parse the complete result, and verify
    Report Consistency, changed anchors, and changed-fragment links;
 4. verify the source report SHA-256 is unchanged; and
-5. atomically replace the report and remove invocation fragments.
+5. atomically replace and read back the report.
 
 Use the package-owned standard-library helper:
 
 ```text
-python <audit-codebase>/scripts/update_report.py
+python <audit-codebase>/scripts/update_report.py inspect
+  --repo-root <root>
+  --report <absolute-report-path>
+  [--candidate-id <id>]
+
+python <audit-codebase>/scripts/update_report.py validate
+  --repo-root <root>
+  --report <absolute-report-path>
+  --expected-sha256 <sha256>
+  --section <kind> <id> <fragment-path>
+  [--section <kind> <id> <fragment-path> ...]
+
+python <audit-codebase>/scripts/update_report.py update
   --repo-root <root>
   --report <absolute-report-path>
   --expected-sha256 <sha256>
@@ -285,15 +307,39 @@ python <audit-codebase>/scripts/update_report.py
   [--section <kind> <id> <fragment-path> ...]
 ```
 
+Fragments contain only the inner target element and must not contain update
+markers. For example:
+
+```html
+<article id="candidate-alpha-fix"
+  data-candidate-id="alpha-fix"
+  data-state="analyzed"
+  data-strength="Strong">...</article>
+```
+
 The helper owns collision detection, changed-section and complete-report
-validation, sibling cleanup, and atomic replacement. It returns changed regions,
-validated candidate states, and progress totals. It does not judge codebase
+validation, sibling cleanup, atomic replacement, and read-back. Every success or
+error reports `stage`, `mutation_started`, and `report_unchanged`; success also
+returns changed regions, validated candidate states, and progress totals. The
+caller owns and removes fragment files. The helper does not judge codebase
 evidence, render the Map, or maintain another ledger.
+
+After the root admits a matching implementation completion packet under
+`CANDIDATE-CONTRACT.md`, publish its derived projections once without fragments:
+
+```text
+python <audit-codebase>/scripts/update_report.py close-candidate
+  --repo-root <root>
+  --report <absolute-report-path>
+  --expected-sha256 <sha256>
+  --candidate-id <id>
+  --completion <completion-json>
+```
 
 If the attempt fails, stop publication immediately. Do not rerun the helper,
 hand-edit the report, use another publication mechanism, or delay the Return.
-Preserve the last report and return completed source analysis with `Report
-update: failed`, the failed region, and the preserved report identity. This is
+Preserve the last report and return completed source analysis with `Publication
+result: failed`, the failed region, and the preserved report identity. This is
 an artifact failure, not a codebase gap.
 
 ## Navigation And Footer
@@ -305,8 +351,9 @@ visited and focus states. Changed-fragment links must resolve exactly once.
 End with audit and candidate-analysis coverage, failed or skipped proof, and:
 
 ```text
-Outcome: complete | incomplete | blocked
-Report update: updated | unchanged | failed
+Objective result: complete | incomplete | blocked
+Publication result: updated | unchanged | failed
+Outcome: complete | partial | blocked
 Report: <absolute path> | none
 Release decision: none
 Product mutation authority: none

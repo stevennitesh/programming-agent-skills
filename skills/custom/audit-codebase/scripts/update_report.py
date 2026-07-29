@@ -1,9 +1,10 @@
-"""Atomically replace marked regions in one audit-codebase HTML report."""
+"""Inspect, validate, or atomically update one audit-codebase HTML report."""
 
 from __future__ import annotations
 
 import argparse
 import hashlib
+from html import escape
 from html.parser import HTMLParser
 import json
 import os
@@ -36,6 +37,27 @@ _PROGRESS_IDS = {"report-header", "summary-progress", "report-footer"}
 
 class ReportUpdateError(ValueError):
     """The requested report update failed before publication."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        stage: str = "validate",
+        mutation_started: bool = False,
+        report_unchanged: bool = True,
+    ) -> None:
+        super().__init__(message)
+        self.stage = stage
+        self.mutation_started = mutation_started
+        self.report_unchanged = report_unchanged
+
+    def as_dict(self) -> dict[str, object]:
+        return {
+            "error": str(self),
+            "stage": self.stage,
+            "mutation_started": self.mutation_started,
+            "report_unchanged": self.report_unchanged,
+        }
 
 
 class _MarkupFacts(HTMLParser):
@@ -376,14 +398,63 @@ def _validate_section(kind: str, identifier: str, fragment: str) -> _MarkupFacts
     return facts
 
 
-def update_report(
+def inspect_report(
+    *,
+    repo_root: Path,
+    report: Path,
+    candidate_id: str | None = None,
+) -> dict[str, object]:
+    """Validate one report and return its local navigation facts."""
+
+    try:
+        canonical = _canonical_report(repo_root, report)
+        source_bytes, source = _decode(canonical)
+        facts = _facts(source)
+        states, progress = _validate_complete_report(facts)
+        candidates = {
+            identifier: {
+                "id": identifier,
+                "state": states[identifier],
+                "strength": facts.candidate_cards[identifier][0]["data-strength"],
+                "pickup": (
+                    facts.pickups.get(identifier, {}).get("card", [""])[0]
+                    if facts.pickups.get(identifier, {}).get("card")
+                    else ""
+                ),
+            }
+            for identifier in sorted(states)
+        }
+        result: dict[str, object] = {
+            "report": str(canonical),
+            "report_version": "3",
+            "run_id": canonical.parent.name,
+            "sha256": _sha256(source_bytes),
+            "candidate_states": states,
+            "candidate_progress": progress,
+            "stage": "inspect",
+            "mutation_started": False,
+            "report_unchanged": True,
+        }
+        if candidate_id is not None:
+            if candidate_id not in candidates:
+                raise ReportUpdateError(f"candidate not found: {candidate_id}")
+            result["candidate"] = candidates[candidate_id]
+        else:
+            result["candidates"] = list(candidates.values())
+        return result
+    except ReportUpdateError as exc:
+        exc.stage = "inspect"
+        raise
+
+
+def _prepare_update(
     *,
     repo_root: Path,
     report: Path,
     expected_sha256: str,
     sections: Sequence[tuple[str, str, Path]],
 ) -> dict[str, object]:
-    """Validate and atomically publish one non-overlapping section update."""
+    """Build and validate one prospective non-overlapping section update."""
 
     if not re.fullmatch(r"[0-9a-f]{64}", expected_sha256):
         raise ReportUpdateError("expected SHA-256 must be 64 lowercase hex characters")
@@ -455,37 +526,10 @@ def update_report(
                 )
 
     updated_bytes = updated.encode("utf-8")
-    sibling: Path | None = None
-    try:
-        with tempfile.NamedTemporaryFile(
-            mode="wb",
-            prefix=f"{report.name}.audit-update-",
-            suffix=".tmp",
-            dir=report.parent,
-            delete=False,
-        ) as handle:
-            sibling = Path(handle.name)
-            handle.write(updated_bytes)
-            handle.flush()
-            os.fsync(handle.fileno())
-        os.chmod(sibling, report.stat().st_mode)
-
-        reread_bytes, reread = _decode(sibling)
-        if reread_bytes != updated_bytes:
-            raise ReportUpdateError("atomic sibling read-back mismatch")
-        reread_facts = _facts(reread)
-        _validate_complete_report(reread_facts)
-
-        current_bytes = report.read_bytes()
-        if _sha256(current_bytes) != expected_sha256:
-            raise ReportUpdateError("report changed concurrently before replacement")
-        os.replace(sibling, report)
-        sibling = None
-    finally:
-        if sibling is not None:
-            sibling.unlink(missing_ok=True)
-
     return {
+        "_report_path": report,
+        "_source_bytes": source_bytes,
+        "_updated_bytes": updated_bytes,
         "report": str(report),
         "sha256": _sha256(updated_bytes),
         "sections": [item[4] for item in replacements],
@@ -494,36 +538,446 @@ def update_report(
     }
 
 
+def validate_report_update(
+    *,
+    repo_root: Path,
+    report: Path,
+    expected_sha256: str,
+    sections: Sequence[tuple[str, str, Path]],
+) -> dict[str, object]:
+    """Validate a prospective update without creating or changing files."""
+
+    prepared = _prepare_update(
+        repo_root=repo_root,
+        report=report,
+        expected_sha256=expected_sha256,
+        sections=sections,
+    )
+    return {
+        key: value
+        for key, value in prepared.items()
+        if not key.startswith("_")
+    } | {
+        "stage": "validate",
+        "mutation_started": False,
+        "report_unchanged": True,
+    }
+
+
+def _publish_prepared(prepared: dict[str, object]) -> dict[str, object]:
+    report = prepared["_report_path"]
+    source_bytes = prepared["_source_bytes"]
+    updated_bytes = prepared["_updated_bytes"]
+    assert isinstance(report, Path)
+    assert isinstance(source_bytes, bytes)
+    assert isinstance(updated_bytes, bytes)
+
+    sibling: Path | None = None
+    try:
+        try:
+            with tempfile.NamedTemporaryFile(
+                mode="wb",
+                prefix=f"{report.name}.audit-update-",
+                suffix=".tmp",
+                dir=report.parent,
+                delete=False,
+            ) as handle:
+                sibling = Path(handle.name)
+                handle.write(updated_bytes)
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.chmod(sibling, report.stat().st_mode)
+            reread_bytes, reread = _decode(sibling)
+            if reread_bytes != updated_bytes:
+                raise ReportUpdateError(
+                    "atomic sibling read-back mismatch",
+                    stage="render",
+                )
+            _validate_complete_report(_facts(reread))
+        except OSError as exc:
+            raise ReportUpdateError(
+                f"cannot render atomic sibling: {exc}",
+                stage="render",
+            ) from exc
+
+        try:
+            current_bytes = report.read_bytes()
+        except OSError as exc:
+            raise ReportUpdateError(
+                f"cannot verify report collision: {exc}",
+                stage="collision-check",
+            ) from exc
+        if current_bytes != source_bytes:
+            raise ReportUpdateError(
+                "report changed concurrently before replacement",
+                stage="collision-check",
+            )
+        try:
+            os.replace(sibling, report)
+        except OSError as exc:
+            try:
+                unchanged = report.exists() and report.read_bytes() == source_bytes
+            except OSError:
+                unchanged = False
+            raise ReportUpdateError(
+                f"atomic replacement failed: {exc}",
+                stage="replace",
+                mutation_started=True,
+                report_unchanged=unchanged,
+            ) from exc
+        sibling = None
+        try:
+            published = report.read_bytes()
+        except OSError as exc:
+            raise ReportUpdateError(
+                f"published report read-back failed: {exc}",
+                stage="read-back",
+                mutation_started=True,
+                report_unchanged=False,
+            ) from exc
+        if published != updated_bytes:
+            raise ReportUpdateError(
+                "published report read-back mismatch",
+                stage="read-back",
+                mutation_started=True,
+                report_unchanged=False,
+            )
+    finally:
+        if sibling is not None:
+            active_error = sys.exc_info()[0] is not None
+            try:
+                sibling.unlink(missing_ok=True)
+            except OSError as exc:
+                if not active_error:
+                    raise ReportUpdateError(
+                        f"atomic sibling cleanup failed: {exc}",
+                        stage="cleanup",
+                    ) from exc
+
+    return {
+        key: value
+        for key, value in prepared.items()
+        if not key.startswith("_")
+    } | {
+        "stage": "read-back",
+        "mutation_started": True,
+        "report_unchanged": False,
+    }
+
+
+def update_report(
+    *,
+    repo_root: Path,
+    report: Path,
+    expected_sha256: str,
+    sections: Sequence[tuple[str, str, Path]],
+) -> dict[str, object]:
+    """Validate and atomically publish one non-overlapping section update."""
+
+    return _publish_prepared(
+        _prepare_update(
+            repo_root=repo_root,
+            report=report,
+            expected_sha256=expected_sha256,
+            sections=sections,
+        )
+    )
+
+
+def _load_completion(path: Path) -> dict[str, object]:
+    _, source = _decode(path)
+    try:
+        value = json.loads(source)
+    except json.JSONDecodeError as exc:
+        raise ReportUpdateError(f"completion packet is not valid JSON: {exc}") from exc
+    if not isinstance(value, dict):
+        raise ReportUpdateError("completion packet must be a JSON object")
+    return value
+
+
+def _packet_text(packet: dict[str, object], name: str) -> str:
+    value = packet.get(name)
+    if not isinstance(value, str) or not value.strip():
+        raise ReportUpdateError(f"completion packet requires {name}")
+    return value.strip()
+
+
+def _marked_bounds(source: str, kind: str, identifier: str) -> tuple[int, int]:
+    start_marker = _marker(kind, identifier, "start")
+    end_marker = _marker(kind, identifier, "end")
+    if source.count(start_marker) != 1 or source.count(end_marker) != 1:
+        raise ReportUpdateError(
+            f"report must contain one marker pair for {kind}:{identifier}"
+        )
+    start = source.index(start_marker)
+    end = source.index(end_marker, start) + len(end_marker)
+    return start, end
+
+
+def _without_pickup(region: str, identifier: str, view: str) -> str:
+    pattern = re.compile(
+        rf"<code\b(?=[^>]*\bdata-candidate-pickup="
+        rf'["\']{re.escape(identifier)}["\'])(?=[^>]*\bdata-pickup-view='
+        rf'["\']{view}["\'])'
+        r"[^>]*>.*?</code>",
+        flags=re.DOTALL,
+    )
+    updated, count = pattern.subn("", region)
+    if count > 1:
+        raise ReportUpdateError(
+            f"candidate {identifier!r} has multiple {view} pickups"
+        )
+    return updated
+
+
+def _implemented_evidence(
+    identifier: str,
+    packet: dict[str, object],
+) -> str:
+    commit = _packet_text(packet, "commit_identity")
+    tree = _packet_text(packet, "commit_tree_identity")
+    source_status = _packet_text(packet, "current_source_result")
+    if not _GIT_ID.fullmatch(commit) or not _GIT_ID.fullmatch(tree):
+        raise ReportUpdateError("completion packet has invalid commit identity")
+    if source_status not in {"current", "reachable"}:
+        raise ReportUpdateError("completion packet has invalid current_source_result")
+    repairs = packet.get("repair_generations_used")
+    if not isinstance(repairs, int) or isinstance(repairs, bool) or repairs < 0:
+        raise ReportUpdateError("completion packet has invalid repair_generations_used")
+
+    visible = (
+        ("Commit", commit),
+        ("Tree", tree),
+        ("Current source", source_status),
+        ("Accepted proof", _packet_text(packet, "accepted_proof")),
+        ("Changed scope", _packet_text(packet, "changed_scope")),
+        ("Residual risk", _packet_text(packet, "residual_risk")),
+        ("Last verified", _packet_text(packet, "last_verified_identity")),
+    )
+    items = "".join(
+        f"<dt>{escape(label)}</dt><dd>{escape(value)}</dd>"
+        for label, value in visible
+    )
+    return (
+        f'\n<p data-implemented-banner="{identifier}">'
+        "Implemented and verified.</p>\n"
+        '<dl data-implementation-result="complete" '
+        f'data-candidate-id="{identifier}" '
+        f'data-commit-sha="{commit}" data-tree-sha="{tree}" '
+        f'data-source-status="{source_status}" data-proof-status="accepted" '
+        f'data-review-status="accepted" data-repair-generations="{repairs}" '
+        'data-closure-status="complete" data-blockers="none">'
+        f"{items}</dl>\n"
+    )
+
+
+def _replace_state(region: str, tag: str) -> tuple[str, int]:
+    pattern = re.compile(
+        rf"(<{tag}\b[^>]*\bdata-state\s*=\s*)([\"'])analyzed\2"
+    )
+    return pattern.subn(
+        lambda match: (
+            f"{match.group(1)}{match.group(2)}implemented{match.group(2)}"
+        ),
+        region,
+        count=1,
+    )
+
+
+def close_candidate(
+    *,
+    repo_root: Path,
+    report: Path,
+    expected_sha256: str,
+    candidate_id: str,
+    completion_path: Path,
+) -> dict[str, object]:
+    """Close one analyzed candidate from a root-admitted completion packet."""
+
+    if not _SECTION_ID.fullmatch(candidate_id):
+        raise ReportUpdateError(f"unsafe candidate ID: {candidate_id}")
+    canonical = _canonical_report(repo_root, report)
+    source_bytes, source = _decode(canonical)
+    if _sha256(source_bytes) != expected_sha256:
+        raise ReportUpdateError(
+            f"report collision: expected {expected_sha256}, "
+            f"observed {_sha256(source_bytes)}"
+        )
+    facts = _facts(source)
+    states, _ = _validate_complete_report(facts)
+    if states.get(candidate_id) != "analyzed":
+        raise ReportUpdateError(
+            f"candidate {candidate_id!r} must be analyzed before closeout"
+        )
+
+    packet = _load_completion(completion_path)
+    required = {
+        "implementation_outcome": "complete",
+        "run_id": canonical.parent.name,
+        "candidate_id": candidate_id,
+        "formal_review_decision": "accepted",
+        "change_closure": "complete",
+    }
+    for name, expected in required.items():
+        if packet.get(name) != expected:
+            raise ReportUpdateError(
+                f"completion packet {name} does not match {expected!r}"
+            )
+    try:
+        packet_report = Path(_packet_text(packet, "report")).resolve(strict=True)
+    except OSError as exc:
+        raise ReportUpdateError(f"completion packet report cannot resolve: {exc}") from exc
+    if packet_report != canonical:
+        raise ReportUpdateError("completion packet report does not match")
+    subsystem_id = _packet_text(packet, "subsystem_id")
+    if not _SECTION_ID.fullmatch(subsystem_id):
+        raise ReportUpdateError("completion packet has unsafe subsystem_id")
+    _packet_text(packet, "accepted_proof")
+    _packet_text(packet, "changed_scope")
+    _packet_text(packet, "residual_risk")
+    _packet_text(packet, "last_verified_identity")
+
+    card_start, card_end = _marked_bounds(source, "candidate", candidate_id)
+    row_start, row_end = _marked_bounds(source, "candidate-index", candidate_id)
+    subsystem_start, subsystem_end = _marked_bounds(source, "subsystem", subsystem_id)
+    if not (
+        subsystem_start < card_start < card_end < subsystem_end
+        and subsystem_start < row_start < row_end < subsystem_end
+    ):
+        raise ReportUpdateError("candidate is not inside the matching subsystem")
+
+    card = source[card_start:card_end]
+    row = source[row_start:row_end]
+    card, card_count = _replace_state(card, "article")
+    row, row_count = _replace_state(row, "tr")
+    if card_count != 1 or row_count != 1:
+        raise ReportUpdateError("candidate state projections are not closeable")
+    card = _without_pickup(card, candidate_id, "card")
+    row = _without_pickup(row, candidate_id, "index")
+    closing = card.rfind("</article>")
+    if closing < 0:
+        raise ReportUpdateError("candidate card has no closing article")
+    card = card[:closing] + _implemented_evidence(candidate_id, packet) + card[closing:]
+
+    updated = source
+    for start, end, replacement in sorted(
+        ((card_start, card_end, card), (row_start, row_end, row)),
+        reverse=True,
+    ):
+        updated = updated[:start] + replacement + updated[end:]
+
+    new_states = dict(states)
+    new_states[candidate_id] = "implemented"
+    counts = {state: 0 for state in _CANDIDATE_STATES}
+    for state in new_states.values():
+        counts[state] += 1
+    progress = ",".join(
+        f"{state.replace(' ', '-')}:{counts[state]}"
+        for state in _CANDIDATE_STATES
+    )
+    updated, progress_count = re.subn(
+        r"(data-candidate-progress\s*=\s*)([\"'])[^\"']*\2",
+        lambda match: (
+            f"{match.group(1)}{match.group(2)}{progress}{match.group(2)}"
+        ),
+        updated,
+    )
+    if progress_count != len(_PROGRESS_IDS):
+        raise ReportUpdateError("candidate progress projections are not closeable")
+
+    updated_bytes = updated.encode("utf-8")
+    final_states, final_progress = _validate_complete_report(_facts(updated))
+    prepared: dict[str, object] = {
+        "_report_path": canonical,
+        "_source_bytes": source_bytes,
+        "_updated_bytes": updated_bytes,
+        "report": str(canonical),
+        "sha256": _sha256(updated_bytes),
+        "sections": [
+            f"candidate:{candidate_id}",
+            f"candidate-index:{candidate_id}",
+            "summary:report-header",
+            "summary:progress",
+            "summary:report-footer",
+        ],
+        "candidate_states": final_states,
+        "candidate_progress": final_progress,
+    }
+    return _publish_prepared(prepared)
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--repo-root", type=Path, required=True)
-    parser.add_argument("--report", type=Path, required=True)
-    parser.add_argument("--expected-sha256", required=True)
-    parser.add_argument(
-        "--section",
-        nargs=3,
-        action="append",
-        metavar=("KIND", "ID", "FRAGMENT"),
-        required=True,
-    )
+    commands = parser.add_subparsers(dest="command", required=True)
+
+    def add_report_args(command: argparse.ArgumentParser) -> None:
+        command.add_argument("--repo-root", type=Path, required=True)
+        command.add_argument("--report", type=Path, required=True)
+
+    inspect = commands.add_parser("inspect")
+    add_report_args(inspect)
+    inspect.add_argument("--candidate-id")
+
+    for name in ("validate", "update"):
+        command = commands.add_parser(name)
+        add_report_args(command)
+        command.add_argument("--expected-sha256", required=True)
+        command.add_argument(
+            "--section",
+            nargs=3,
+            action="append",
+            metavar=("KIND", "ID", "FRAGMENT"),
+            required=True,
+        )
+
+    close = commands.add_parser("close-candidate")
+    add_report_args(close)
+    close.add_argument("--expected-sha256", required=True)
+    close.add_argument("--candidate-id", required=True)
+    close.add_argument("--completion", type=Path, required=True)
     return parser
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = _parser().parse_args(argv)
-    sections = [
-        (kind, identifier, Path(fragment))
-        for kind, identifier, fragment in args.section
-    ]
     try:
-        result = update_report(
-            repo_root=args.repo_root,
-            report=args.report,
-            expected_sha256=args.expected_sha256,
-            sections=sections,
-        )
+        if args.command == "inspect":
+            result = inspect_report(
+                repo_root=args.repo_root,
+                report=args.report,
+                candidate_id=args.candidate_id,
+            )
+        elif args.command in {"validate", "update"}:
+            sections = [
+                (kind, identifier, Path(fragment))
+                for kind, identifier, fragment in args.section
+            ]
+            operation = (
+                validate_report_update
+                if args.command == "validate"
+                else update_report
+            )
+            result = operation(
+                repo_root=args.repo_root,
+                report=args.report,
+                expected_sha256=args.expected_sha256,
+                sections=sections,
+            )
+        else:
+            result = close_candidate(
+                repo_root=args.repo_root,
+                report=args.report,
+                expected_sha256=args.expected_sha256,
+                candidate_id=args.candidate_id,
+                completion_path=args.completion,
+            )
     except (OSError, ReportUpdateError) as exc:
-        print(f"report update failed: {exc}", file=sys.stderr)
+        error = (
+            exc
+            if isinstance(exc, ReportUpdateError)
+            else ReportUpdateError(str(exc), stage=args.command)
+        )
+        print(json.dumps(error.as_dict(), sort_keys=True), file=sys.stderr)
         return 2
     print(json.dumps(result, sort_keys=True))
     return 0

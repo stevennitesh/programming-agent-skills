@@ -145,7 +145,10 @@ The commit and tree must match the accepted proof and review, the implementation
 commit must be current or reachable from current source, and no implementation
 blocker may remain. A mismatched, partial, blocked, or failing Return changes no
 candidate state. Successful implementation is distinct from `disproved`.
-An implemented candidate has no pickup.
+After the root verifies those facts, pass the exact packet to
+`update_report.py close-candidate`; the helper derives the card, index, progress,
+banner, and evidence projections in one publication. An implemented candidate
+has no pickup.
 
 ## Bound
 

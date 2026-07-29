@@ -1357,8 +1357,6 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     )
     assert "$tdd" not in defect
     assert "Suggested invocation:" in followup
-    assert "candidate ID" in followup
-    assert "absolute report path" in followup
     assert "Result recipient:" in followup
     assert "Audit re-entry:" in followup
     assert "gap-only hypotheses" in " ".join(candidate.lower().split())
@@ -1390,6 +1388,7 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert "Load a detailed owner when" in audit_section
     assert "A class is never skipped silently." in " ".join(audit_section.split())
     assert "Unrelated repository changes do not block." in analyze_section
+    assert "Analyze is root-local by default" in analyze_section
     assert "repeat its admission gate before changing the candidate" in (
         " ".join(analyze_section.split())
     )
@@ -1429,9 +1428,12 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     ):
         assert field in candidate
     assert "Successful implementation is distinct from `disproved`" in candidate
+    assert "close-candidate" in candidate
     assert "The callee never re-enters Audit" in followup
     assert "Attempt the Audit-owned report update once" in followup_flat
     assert "Do not start another candidate" in followup_flat
+    assert "$implement candidate <candidate-id> from <absolute-report-path>" in followup
+    assert "inspect" in followup
     assert "Current shape and demonstrated cost:" in candidate
     assert "Smallest sufficient change:" in candidate
     assert "Structural change:" in candidate
@@ -1545,7 +1547,13 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert "## Map Publish Gate" in report
     assert "## Incremental Publish Gate" in report
     assert "scripts/update_report.py" in report
-    assert "attempt incremental publication exactly once" in report
+    assert "inspect" in report
+    assert "validate" in report
+    assert "close-candidate" in report
+    assert "must not contain update markers" in report_flat
+    assert "Objective result:" in audit
+    assert "Publication result:" in audit
+    assert "attempt incremental publication exactly once" in report_flat
     assert "Do not rerun the helper" in report
     assert "hand-edit the report" in report
     assert "use another publication mechanism" in report
@@ -2270,6 +2278,7 @@ def test_writing_great_skills_keeps_shape_and_relationship_boundary() -> None:
         "one prospective mutation, then validate their agreement before publication"
         in normalized_glossary
     )
+    assert "begin any attempt limit only at the effect boundary" in normalized_skill
     assert "read-only proof branch" in normalized_evals
     assert "fresh isolated model executions" in normalized_evals
     assert "parent operation status plus one evaluation decision" in normalized_evals

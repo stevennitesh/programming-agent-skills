@@ -22,14 +22,17 @@ coverage, findings, candidates, publication, and Return. It may use up to six
 fresh-context read-only delegates for repository inventory or independent
 Source Trace inspection when concurrency is useful. Delegates use
 `fork_turns="none"`, mutate nothing, and return evidence; root repeats decisive
-checks before admitting a judgment. A delegated invocation of this skill
-returns a root-only blocker.
+checks before admitting a judgment. Map may delegate inventory; Audit delegates
+only genuinely independent evidence seams. Analyze is root-local by default and
+delegates only when a contradiction or enlarged causal boundary creates one
+bounded independent seam. A delegated invocation of this skill returns a
+root-only blocker.
 
 **Artifact boundary:** the only lasting mutation is
-`.scratch/audit-codebase/<run-id>/report.html`. Invocation-owned fragments and
-atomic-write siblings are temporary and removed before Return. Exclude them
-from audited content. Leave product code, ordinary tracked docs, Git refs and
-index, trackers, reviews, deployments, and external systems unchanged.
+`.scratch/audit-codebase/<run-id>/report.html`. The caller removes its fragment
+files; the helper removes its atomic sibling. Exclude both from audited content.
+Leave product code, ordinary tracked docs, Git refs and index, trackers,
+reviews, deployments, and external systems unchanged.
 
 ## Entry Gate
 
@@ -207,10 +210,11 @@ pickup. Then stop.
 
 Require one candidate inside an audited subsystem. Read
 [CANDIDATE-CONTRACT.md](CANDIDATE-CONTRACT.md), then treat the recorded card as
-a hypothesis rather than proof. Reinspect current implicated files, callers,
-contracts, decisions, tests, member findings, and Proof Seams; expand the Source
-Trace when current evidence reveals another causal owner. Load only implicated
-detailed lens owners.
+a hypothesis rather than proof. Analyze is root-local by default. Start from the
+recorded Source Trace and reinspect current implicated files, callers, contracts,
+decisions, tests, member findings, and Proof Seams. Expand only when current
+evidence contradicts the card or reveals another causal owner. Load only
+implicated detailed lens owners.
 
 When revalidation adds, removes, or reclassifies a member finding, reload
 `DEFECT-CONTRACT.md` or `QUALITY-LENS.md` as applicable and repeat its admission
@@ -256,8 +260,8 @@ next-owner suggestion. Then stop.
 Follow [HTML-REPORT.md](HTML-REPORT.md). A failed Map publication preserves the
 last verified report and returns `incomplete`. Apply its one-attempt
 Incremental Publish Gate after a passed Entry Gate. Failure does not erase
-completed source analysis: return immediately with the analysis, `Report
-update: failed`, the failed update, and the preserved report identity. Leave
+completed source analysis: return immediately with the analysis, `Publication
+result: failed`, the failed update, and the preserved report identity. Leave
 the report unchanged.
 
 State is local:
@@ -272,11 +276,12 @@ Evidence freshness: map, subsystem, and candidate each record last verified iden
 Every Return includes:
 
 ```text
-Outcome: complete | incomplete | blocked
+Objective result: complete | incomplete | blocked
+Publication result: updated | unchanged | failed
+Outcome: complete | partial | blocked
 Selected item:
 Result or state:
 Evidence limits:
-Report update: updated | unchanged | failed
 Report: <absolute-path> | none
 Next user selection: <exact action> | none
 ```
@@ -284,7 +289,8 @@ Next user selection: <exact action> | none
 Also state once: `Release decision: none; product mutation authority: none;
 downstream execution: none; next selection authority: user.`
 
-Complete only when the selected objective's current Source Trace, mandatory
-coverage, obtainable proof, report update result, and next user selection are
-explicit. A complete audit may contain severe defects, presented candidates,
-retained complexity, and evidence gaps; coverage is not a release decision.
+`Outcome` is `complete` only when both objective and publication complete,
+`partial` when completed analysis cannot be published or obtainable objective
+work remains, and `blocked` when the objective cannot proceed. A complete audit
+may contain severe defects, presented candidates, retained complexity, and
+evidence gaps; coverage is not a release decision.

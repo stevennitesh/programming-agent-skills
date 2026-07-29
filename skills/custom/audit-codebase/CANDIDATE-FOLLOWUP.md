@@ -40,9 +40,14 @@ Audit re-entry: <exact invocation> | none
 Suggested invocation:
 ```
 
-The invocation names the skill, candidate ID, absolute report path, and
-callee-compatible admission facts without copying the callee's procedure.
-The callee never re-enters Audit.
+Use this compact `$implement` pickup:
+
+`$implement candidate <candidate-id> from <absolute-report-path>`
+
+For every route, the root uses `update_report.py inspect` to resolve report
+facts and constructs the callee-compatible packet without copying the callee's
+procedure into the visible pickup. The callee never re-enters Audit or parses
+HTML.
 
 For an `$implement` suggestion, the generated pickup also authorizes the root
 to reconcile the matching candidate from the exact completion packet after a
