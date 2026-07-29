@@ -6,7 +6,8 @@ regulators to the issuer's jurisdiction.
 ## Contents
 
 - [Source Hierarchy](#source-hierarchy)
-- [Minimum Fair-Value Gate](#minimum-fair-value-gate)
+- [Market-Price Evidence](#market-price-evidence)
+- [Minimum Evidence Packet](#minimum-evidence-packet)
 - [Full Diligence Expansion](#full-diligence-expansion)
 - [Evidence Ledger](#evidence-ledger)
 - [Structured Filing Data](#structured-filing-data)
@@ -52,14 +53,31 @@ independent proof that the claim is correct. Treat news as primary evidence of
 what the outlet reported, not of an underlying fact it did not independently
 establish.
 
-## Minimum Fair-Value Gate
+## Market-Price Evidence
+
+Use an exchange or an authoritative market-data feed for a price that carries a
+valuation conclusion. Record the exact security, quote currency, exchange,
+field used (last trade, official close, or another defined field), timestamp,
+and timezone. Use aggregators only to discover a stronger source or to assess
+sentiment.
+
+If authoritative current-price evidence is unavailable, a standalone intrinsic
+fair-value estimate may still be complete when its own evidence gates pass.
+Omit price-implied expectations, observed discount, and hurdle pass/fail, or
+mark those specifically requested components `partial`; do not let a weak quote
+own the claim.
+
+## Minimum Evidence Packet
 
 Answer length does not lower the evidence standard. Before calling a numerical
-range fair value, collect and date enough primary evidence to establish:
+range fair value, collect and date enough owning evidence to establish:
 
-- the exact security, valuation date, and information cutoff, plus a
-  current-price timestamp when assessing market-implied expectations, observed
-  discount, or a margin-of-safety hurdle;
+- the exact security, valuation date, information cutoff, latest
+  balance-sheet date, and a current-price timestamp when a price-dependent
+  conclusion is requested;
+- a date map for every historical period, forecast period, stub, discount
+  midpoint, discrete event, and terminal or residual value, plus a bridge for
+  material events between the latest balance sheet and valuation date;
 - the latest annual filing, latest interim filing, and every later event known
   to be material to cash flows, risk, capital structure, or security claims;
 - enough history to normalize the business and cover relevant economics -
@@ -84,10 +102,8 @@ consensus, and broader news when they contain a load-bearing fact; they are not
 universal ceremonial requirements. Record access failures. Do not silently
 replace a missing primary source with an aggregator.
 
-If exact security identity, current primary financial evidence, or a
-load-bearing input is unavailable, return `blocked`. If a useful range can be
-bracketed without the missing item, label it `partial` or `indicative`, state
-what is missing, and do not imply that the full fair-value gate was satisfied.
+The main skill owns gate admission and safe failure. This packet supplies the
+evidence for those gates; it does not turn missing evidence into a pass.
 
 ## Full Diligence Expansion
 
@@ -126,8 +142,9 @@ For every load-bearing item, preserve:
 | Source | Direct URL and filing/section/table where practical |
 | Confidence | High / medium / low with reason |
 
-Numerical citations must support the exact number, period, and definition. If
-two sources disagree, prefer the owning primary source or preserve the conflict.
+Place citations adjacent to each material current claim. Numerical citations
+must support the exact number, period, and definition. If two sources disagree,
+prefer the owning primary source or preserve the conflict.
 
 ## Structured Filing Data
 

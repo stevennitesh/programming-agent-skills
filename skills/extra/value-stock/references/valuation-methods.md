@@ -5,6 +5,7 @@
 - [Method Principles](#method-principles)
 - [Future-Date Valuation](#future-date-valuation)
 - [FCFF DCF](#fcff-dcf)
+- [Cash-Flow And Accounting Identities](#cash-flow-and-accounting-identities)
 - [Stock-Based Compensation Reconciliation](#stock-based-compensation-reconciliation)
 - [FCFE And Dividend Models](#fcfe-and-dividend-models)
 - [Discount Rates, Country Risk, And Timing](#discount-rates-country-risk-and-timing)
@@ -16,13 +17,15 @@
 - [PEG](#peg)
 - [SOTP, NAV, And Distress](#sotp-nav-and-distress)
 - [Margin Of Safety](#margin-of-safety)
-- [Audit Checklist](#audit-checklist)
+- [Calculation Artifact And Assertions](#calculation-artifact-and-assertions)
 
 ## Method Principles
 
 Value cash flows to the correct claim holder at a matching required return.
 Keep currency, inflation basis, tax treatment, and timing consistent. Prefer a
-range tied to causal cases over a false-precision point estimate.
+range tied to causal cases over a false-precision point estimate. Report no more
+precision than the weakest load-bearing input supports; approximate claims,
+stale bridges, and broad sensitivities do not support cents-level fair value.
 
 Valuation is uncertain even when carefully executed; sensitivity, scenarios,
 and decision trees expose uncertainty but do not remove it:
@@ -115,6 +118,38 @@ Discount FCFF at WACC using market-value capital weights and a cost of capital
 consistent with the cash-flow currency. Do not use a stale universal risk-free
 rate, equity risk premium, beta, or debt spread.
 
+## Cash-Flow And Accounting Identities
+
+Reconcile one filed historical period to the selected cash-flow definition
+before forecasting it. For a CFO-derived FCFF:
+
+```text
+FCFF = CFO + financing interest x (1 - tax rate)
+       - fixed-capital investment
+       +/- disclosed classification and non-operating adjustments
+```
+
+This starts from the standard CFO conversion summarized by
+[CFA Institute](https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/free-cash-flow-valuation),
+but it is a reconciliation, not a license to add total interest expense.
+Identify the financing-interest amount the CFO treatment requires, then trace
+cash paid, accruals, non-cash interest, lease interest, capitalized interest,
+tax effects, and the issuer's cash-flow classification. Remove after-tax
+non-operating interest income when its cash or investment asset is separately
+added in the enterprise-to-equity bridge. Under IFRS or another policy choice,
+adapt the formula to where interest and dividends were actually classified:
+[Damodaran: Valuing Cash](https://pages.stern.nyu.edu/~adamodar/New_Home_Page/lectures/cash.html).
+
+Choose one lease convention. Either treat leases as operating and leave the
+matching rent in operating cash flow, or capitalize the financing claim and
+restate operating cash flow consistently. Do not subtract lease debt while also
+leaving the full financing component in operating expense.
+
+Add only **excess cash** and separately valued non-operating assets to operating
+value. Estimate the liquidity and working-capital reserve needed to run the
+business; when that reserve is uncertain and material, show a sensitivity
+instead of labeling all cash excess.
+
 ## Stock-Based Compensation Reconciliation
 
 Separate two economic questions:
@@ -176,6 +211,12 @@ Build discount rates from current, named inputs:
 - a pre-tax cost of debt reflecting current default risk, then the applicable
   tax treatment; and
 - market-value capital weights or an economically defensible target structure.
+
+Preserve the source's exact rate and beta definitions. Distinguish raw,
+levered, unlevered, cash-corrected, bottom-up, and adjusted betas; unlever or
+relever them explicitly when required. Never relabel a cash-corrected unlevered
+beta as the target equity beta:
+[Damodaran: Dataset Variable Definitions](https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/variable.htm).
 
 Assess country risk from where revenue, production, assets, funding, and legal
 claims are exposed, not simply where the company is incorporated or traded.
@@ -363,28 +404,47 @@ dominates plausible cases, or catalysts are weak. Diversification and the
 source of uncertainty also matter:
 [Damodaran: Margin of Safety](https://pages.stern.nyu.edu/~adamodar/pdfiles/blog/MOS.pdf).
 
-## Audit Checklist
+## Calculation Artifact And Assertions
 
-- Historical model ties to filed totals and segment disclosures.
-- Reported inputs, conventions, claim basis, required returns, horizon, residual
-  assumptions, and scenarios match the Model Lock.
-- Formulas use consistent signs, scale, units, periods, and currency.
-- Forecast drivers reconcile to revenue, margins, taxes, reinvestment, and cash.
-- Growth is feasible relative to market size and capital needs.
-- Discount rates match claim holder, currency, and inflation basis.
-- Country risk follows operating and claim exposure and is not double-counted.
-- Fiscal, calendar, stub-period, and discount timing are aligned.
-- Terminal economics are internally consistent and economically sustainable.
-- Enterprise-to-equity bridge includes every material non-operating claim.
-- Options, warrants, convertibles, ADR ratios, and common shares reconcile to
-  the exact security; any diluted-share shortcut is disclosed.
-- Existing SBC awards and future grants are separated; cash-flow, claim-value,
-  and diluted-share treatments do not count the same award cohort twice.
-- A future-date value rolls forward cash, distributions, claims, and shares or
-  is explicitly labeled as a required-return shortcut.
-- Sensitivities change the intended inputs and preserve `discount rate > growth`.
-- Scenario differences are causal; probabilities sum to 100% when used; risk
-  adjustments are mapped and residual uncertainty is separated from them.
-- Exact reproduction matches within disclosed rounding; every material
-  difference is repaired, classified, or bridged without hybrid conventions.
-- Every material input is reported, estimated, guided, or assumed and cited.
+For a nontrivial numerical valuation, use a typed calculation artifact: a small
+worksheet, script, or explicit table that separates inputs from formulas. Give
+each load-bearing item:
+
+| Field | Required content |
+| --- | --- |
+| ID | Stable input or calculation name |
+| Class | Reported / estimated / guided / assumed / calculated |
+| Source date | Publication date and observation or balance-sheet date |
+| Period | Historical, stub, forecast, terminal, or valuation date |
+| Unit | Currency, scale, per-share basis, nominal or real |
+| Claim basis | Enterprise, debt, preferred, common pool, or target security |
+| Scenario | Base or named causal alternative |
+| Source or formula | Owning citation or reproducible expression |
+| Result | Value at disclosed precision |
+
+Before relying on the result, assert:
+
+- one historical period ties from the filing to the selected earnings, cash-flow,
+  book-value, or asset-value definition;
+- no cash flow that elapsed before the valuation date remains in the forecast;
+- CFO-derived FCFF reconciles financing interest, non-operating income, tax,
+  capex, and classification without counting cash returns twice;
+- cash, debt, claims, awards, and shares use one date or an explicit
+  post-balance-sheet bridge;
+- actual point-in-time common shares, not weighted-average EPS shares, own the
+  per-security denominator;
+- the enterprise-to-equity or asset-to-security bridge includes every material
+  claim and only excess cash;
+- existing awards and future grants reconcile without double counting;
+- organic and acquired growth are distinguished when acquisitions materially
+  affect the forecast base or stated growth;
+- growth, reinvestment, returns, terminal economics, and required returns are
+  coherent, including `discount rate > growth` where applicable;
+- source variable definitions, signs, units, currency, fiscal periods, and
+  timing match the Model Lock; and
+- a separate calculation pass reproduces the locked result within the disclosed
+  rounding.
+
+Repair a failed deterministic assertion before interpretation or review.
+Classify defensible conventions as sensitivities and forecast judgments as
+causal scenarios; never blend them into a mechanically inconsistent base.

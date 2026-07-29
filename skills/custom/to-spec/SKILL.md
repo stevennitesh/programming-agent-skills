@@ -47,7 +47,12 @@ and state the exact re-entry condition. Do not invoke or recommend a resolver.
 Verify implementation-adjacent source claims against their exact code, caller,
 test, configuration, or decision pointers. If a required current-state claim has
 no verifiable pointer, return `source-gap`; do not replace source shaping with
-an independent repository survey or architecture choice.
+an independent repository survey or architecture choice. When verification
+corrects a source statement without changing a source-owned decision or
+commitment, preserve the settled direction and record one Verified Source
+Correction with the original statement, observed evidence pointer, corrected
+current-state wording, and why the commitments are unchanged. A
+decision-changing correction is a `source-gap`, not editorial license.
 
 Inspect the relevant durable parent state before creation and distinguish
 verified absence, exact matching state, divergent state, and unknown state.
@@ -79,10 +84,11 @@ with exact source identity and owner; problem and outcome; users and scenarios;
 scope and non-goals; requirements and invariants; interfaces, data, and state;
 edge and error behavior; security and privacy; compatibility, migration, and
 rollback; operability; dependencies and risks; acceptance and proof; decisions,
-deferrals, and residual gaps; and the downstream boundary. Headings and order
-may fit the source. Include only source-triggered facts and omit empty or
-ceremonial sections. Point to the Engineering Contract instead of copying its
-generic practices.
+deferrals, and residual gaps; Verified Source Corrections when present; and the
+downstream boundary. Headings and order may fit the source. Include only
+source-triggered facts and omit empty or ceremonial sections, including the
+correction section when none exists. Point to the Engineering Contract instead
+of copying its generic practices.
 
 Pair every commitment with observable acceptance and an honest proof authority.
 Cover edge, error, and state branches where behavior materially varies. Name

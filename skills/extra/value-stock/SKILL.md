@@ -50,7 +50,8 @@ Resolve or state:
 
 - legal company name, ticker, exchange, security class, economic and voting
   rights, and any ADR-to-ordinary-share ratio;
-- valuation date, information cutoff, and market-price timestamp;
+- valuation date, information cutoff, and market-price timestamp when price is
+  used;
 - requested horizon, whether value is present or future, method, depth, and
   output currency;
 - whether the user supplied an explicit margin-of-safety rule or a trigger for
@@ -69,7 +70,7 @@ comprehensive, or full analysis.
 If the user requests Full only when the stock appears attractive:
 
 1. run Compact first;
-2. compare the Compact result with the hurdle the user specified in advance;
+2. compare the result with the hurdle the user specified in advance;
 3. continue directly to Full when the hurdle is met; and
 4. otherwise stop after Compact and state why Full did not run.
 
@@ -78,31 +79,25 @@ do not invent a universal threshold. A user-supplied required
 margin-of-safety hurdle may serve as the trigger.
 
 Compact and Full change evidence breadth and answer length, not analytical
-honesty. Both must pass the minimum fair-value gate, use a fitting method,
-reconcile the target security, test price-implied expectations, show material
-sensitivity, and expose thesis breakers. Full adds historical depth,
-corroboration, detailed bridges, scenarios, guidance delivery, peers, and news
-where they matter.
+honesty. Full adds history, corroboration, detailed bridges, causal scenarios,
+guidance delivery, peers, and news only where they can challenge the result.
 
-Treat a factor as material when it can credibly change cash flows, their timing,
-reinvestment, security claims, the discount rate, the selected method, the
-value range, confidence, or a thesis breaker. Inspect every material factor,
-but do not create a report section for an immaterial research lane. Catalysts,
-tone, and sentiment affect intrinsic value only through a demonstrated
-cash-flow, timing, claim, or risk transmission.
+Treat a factor as material when it can credibly change cash flows, timing,
+reinvestment, security claims, required returns, method, range, confidence, or
+a thesis breaker. Catalysts, tone, and sentiment affect intrinsic value only
+through a demonstrated cash-flow, timing, claim, or risk transmission.
 
 ## Load The Right References
 
 - Load [source-protocol.md](references/source-protocol.md) before collecting
-  evidence. Apply the minimum fair-value gate in both paths and its Full
-  expansion only for Full or a material issue.
-- Load the Method Principles, applicable method sections, Margin Of Safety, and
-  Audit Checklist from
+  evidence. Apply its source hierarchy and minimum evidence packet in both
+  depths and its Full expansion only for Full or a material issue.
+- Load Method Principles, the applicable method sections, Margin Of Safety, and
+  Calculation Artifact And Assertions from
   [valuation-methods.md](references/valuation-methods.md). Load Future-Date
-  Valuation only when a future value is requested and do not load unrelated
-  specialty methods.
-- Load [company-types.md](references/company-types.md) when choosing the model
-  is uncertain or when handling a sector, life-cycle, or accounting exception.
+  Valuation only when a future value is requested.
+- Load [company-types.md](references/company-types.md) when model selection is
+  uncertain or the issuer is a sector, life-cycle, or accounting exception.
 - Load [model-review.md](references/model-review.md) only when independent
   validation is requested, exact reproduction fails, or complex claims,
   conventions, methods, or alternative values could materially change the
@@ -111,252 +106,166 @@ cash-flow, timing, claim, or risk transmission.
   [report-contract.md](references/report-contract.md) for Full before composing
   the answer.
 
-## Valuation Spine
+## Select And Lock The Model
 
-Run the numbered spine for both depths. In Compact, keep only load-bearing
-evidence and calculations. In Full, expand each step where additional evidence
-can challenge or materially refine the result.
+Choose the primary method by the business economics and target claim. Use an
+intrinsic or asset-based method when supportable and a reverse valuation when
+authoritative current-price evidence exists. Add a relative method only when it
+can challenge the primary result or the user requests it. Never force P/E, PEG,
+EBITDA, or industrial FCFF onto a company whose denominator or capital structure
+makes it misleading.
 
-### 1. Establish The Evidence Date
+Reconstruct only enough history to normalize the selected value base and expose
+the drivers carrying the forecast. Forecast business drivers before accounting
+outputs, and keep growth consistent with reinvestment and returns.
 
-Record the latest fiscal year, latest reported quarter, all material filings
-and company updates after that quarter, the market-price timestamp, and the
-publication date of every forward estimate. Use only information available by
-the stated cutoff; never use later outcomes to make an earlier valuation appear
-better informed. If current primary evidence is unavailable, stop numerical
-valuation or return a clearly bounded partial analysis; do not fill gaps from
-memory.
+Before calculation, create one internal **Model Lock** containing only
+load-bearing:
 
-### 2. Explain The Business Economically
+- security, valuation date, information cutoff, currency, and price timestamp
+  when used;
+- source-tagged historical facts and forecast anchors;
+- method, claim holder, value or cash-flow definition, and matching required
+  return;
+- material accounting conventions, including cash, leases, acquisitions, and
+  stock-based compensation;
+- debt, other claims, actual shares, awards, dilution, and the
+  enterprise-to-equity or asset-to-security bridge;
+- forecast horizon, date map, scenarios, and cash-flow timing; and
+- terminal, residual, liquidation, or other realization assumptions.
 
-Identify the few economic drivers that can move value: revenue engines, pricing
-and volume, margins, capital intensity, reinvestment, competitive duration, and
-material concentration, regulatory, commodity, country, or currency exposure.
-Assess country and currency risk from revenue, production, assets, funding, and
-legal exposure rather than incorporation or listing venue alone. Connect each
-claimed advantage to observable evidence and a value driver such as growth
-duration, margin, reinvestment efficiency, or risk. Expand segment, customer,
-industry, and unit-economics detail in Full or when load-bearing.
+For a nontrivial numerical valuation, build the typed calculation artifact
+defined in `valuation-methods.md`. Lock unknowns explicitly. When two
+conventions are defensible, choose one internally consistent base and keep the
+other as a sensitivity; never combine pieces of both.
 
-### 3. Reconstruct And Normalize History
+## Five Gates
 
-Use enough history to normalize the relevant economics - normally at least
-three annual periods and the latest trailing period, a full cycle for cyclicals,
-or the available life for a young company. Expand to five or more periods in
-Full when available. Reconcile the statements, segment data, and footnotes that
-carry the selected method.
+Run the gates in order. The As-Of, Accounting-Identity, and Security-Claim gates
+are pre-calculation gates. A gate passes only with its named evidence; prose
+assurance is not a substitute.
 
-Normalize only with an explicit bridge. Inspect the following items when
-plausibly material to the selected method or security bridge; Full expands the
-review where additional evidence can challenge the result:
+### 1. As-Of Gate
 
-- acquisitions, divestitures, discontinued operations, restructuring, and
-  genuinely non-recurring items;
-- stock-based compensation, future grants, dilution, buybacks, options,
-  warrants, convertibles, and other claims on common equity;
-- capitalized versus expensed investment, including R&D where material;
-- leases, pensions, minority interest, preferred claims, and off-balance-sheet
-  commitments;
-- working-capital swings, maintenance versus growth capex, taxes, and cyclicality;
-- GAAP or local-GAAP results versus management-defined non-GAAP measures;
-- per-share growth versus aggregate growth;
-- receivables, inventory, reserves, capitalized costs, related-party activity,
-  auditor changes, and internal-control weaknesses when material; and
-- capital allocation at the prices and terms actually paid, not merely the
-  amount spent.
+**Pass evidence:**
 
-Show the historical and trailing metrics carrying the valuation, such as
-revenue growth, relevant margins, cash conversion, ROIC or the appropriate
-sector return measure, incremental returns when supportable, leverage and
-coverage, reinvestment, and share-count change. A high growth rate is not value
-creation unless its return on incremental capital exceeds its opportunity cost.
+- exact target security, valuation date, information cutoff, and latest
+  balance-sheet date;
+- authoritative price source, field, timestamp, and timezone for any
+  price-dependent conclusion;
+- an explicit date map for historical periods, forecast periods, stubs,
+  midpoints, discrete events, and terminal or residual value; and
+- an evidence-backed bridge for material filings, acquisitions, financing,
+  repurchases, distributions, or other events between the balance-sheet and
+  valuation dates.
 
-When stock-based compensation is material, show one reconciled bridge separating
-existing awards from future grants. Identify whether the cash-flow starting
-point already expenses or adds back SBC, how current awards enter the equity or
-share-count bridge, how future grants enter forecasts, and why no award cohort
-is counted twice. Treat repurchases through cash spent and shares retired.
+**Safe failure:** If identity or current primary financial evidence is missing,
+return `blocked`. If stale balance-sheet data or a missing bridge still permits
+a defensible bracket, return `partial` or `indicative` and avoid a precise point
+value. Missing authoritative price evidence blocks only price-implied
+expectations, observed discount, and hurdle pass/fail, not a standalone
+intrinsic valuation.
 
-### 4. Build A Driver Forecast
+### 2. Accounting-Identity Gate
 
-Forecast business drivers before earnings:
+**Pass evidence:**
 
-```text
-market or unit volume x share x price
--> revenue
--> operating margin
--> after-tax operating profit
--> reinvestment
--> free cash flow
-```
+- one filed historical period reconciles to the selected earnings, cash-flow,
+  book-value, or asset-value definition;
+- a CFO-derived FCFF reconciles financing interest, non-operating income,
+  taxes, capex, and cash-flow classification;
+- leases are operating or financing under one consistent convention;
+- only excess cash and separately valued non-operating assets enter the
+  security bridge; and
+- material SBC separates existing awards from future grants and reconciles the
+  expense, cash-flow, claim, and dilution treatment by cohort.
 
-Anchor near-term ranges to reported backlog, contracts, capacity, company
-guidance, consensus estimates, and industry evidence, while labeling each
-source and recording estimate date, dispersion, and revisions when available.
-Align fiscal and calendar periods, model any stub period explicitly, and avoid
-mixing next-twelve-month and next-fiscal-year inputs. Fade growth, margins, risk,
-and returns toward economically coherent steady-state levels. Make growth
-consistent with reinvestment and returns on capital. Do not extrapolate a
-temporary margin, tax rate, commodity price, or working-capital benefit forever.
+**Safe failure:** Do not calculate the affected method. Use another method only
+when its evidence independently passes these gates; otherwise return `blocked`.
 
-In Compact, use a defensible range and targeted sensitivity; add full causal
-bear, base, and bull cases when asymmetric outcomes drive the range. In Full,
-construct distinct causal cases rather than cosmetic percentage offsets.
-Assign probabilities only when evidence supports them; otherwise present
-unweighted cases. Make assigned probabilities sum to 100%. Map each risk
-explicitly and do not hide the same adjustment in scenario odds, a cash-flow
-haircut, and a discount-rate premium. Reserve the required margin-of-safety
-hurdle for residual valuation and decision uncertainty.
+### 3. Security-Claim Gate
 
-### 5. Choose Methods By Economics
+**Pass evidence:**
 
-When `company-types.md` is loaded, use its model-selection matrix. For a typical
-non-financial operating company, default to:
+- date-consistent actual common shares and the exact rights or ADR ratio of the
+  target security;
+- debt, preferred equity, minority interests, options, RSUs, PSUs, warrants,
+  convertibles, and other material claims reconcile on a disclosed basis;
+- weighted-average EPS shares are not used as a point-in-time equity claim; and
+- cash, debt, claims, awards, and shares share one date or an explicit bridge.
 
-1. FCFF DCF for intrinsic value;
-2. reverse DCF to expose what the current price implies; and
-3. a fundamentals-controlled comparable valuation only when it can materially
-   challenge the intrinsic model or the user requests it.
+**Safe failure:** The equity pool may be reported when supportable, but
+per-security value must remain unresolved or be shown only as a bounded range.
+Return `partial`, not `complete`, and do not imply a filing-supported diluted
+claim count.
 
-Add or substitute FCFE, DDM, residual-income or excess-return, NAV, SOTP,
-normalized mid-cycle, liquidation, or probability-adjusted methods when the
-business requires them. Never force P/E, EBITDA, or a standard FCFF model onto a
-company for which the denominator or capital structure has no economic meaning.
+### 4. Economics-And-Reproduction Gate
 
-### 6. Calculate And Audit
+**Pass evidence:**
 
-Before calculating, create one internal **Model Lock** for the base case. Record
-only load-bearing:
+- the method fits the company and the forecast identifies the few causal
+  business or asset drivers carrying value;
+- organic and acquired growth are separated when acquisitions materially affect
+  the forecast base or stated growth;
+- growth, margins, reinvestment, returns, competitive duration, and terminal or
+  residual economics are mutually coherent;
+- every rate and beta uses the source's exact definition and matches the claim,
+  currency, inflation basis, and timing;
+- sensitivities change the assumptions that actually drive the range; and
+- a separate calculation pass reproduces the locked result and passes the
+  deterministic assertions in `valuation-methods.md`.
 
-- security, valuation date, cutoff, currency, and price timestamp when used;
-- source-tagged reported facts and forecast anchors;
-- method, claim holder, cash-flow definition, and matching required return;
-- material accounting conventions, including SBC, leases, or capitalization;
-- cash, debt, other claims, actual shares, awards, and dilution bridge;
-- forecast horizon, cash-flow timing, and scenario definitions; and
-- required-return construction plus terminal, residual, liquidation, or other
-  realization assumptions applicable to the method.
+**Safe failure:** Repair mechanical, timing, sign, unit, identity, or source
+definition errors and recompute before interpretation. Preserve defensible
+conventions as sensitivities and forecast judgments as causal scenarios. A
+failed reproduction or unresolved mechanical discrepancy prevents `complete`.
 
-Do not print the full lock in Compact. Do not calculate until each load-bearing
-field is locked or explicitly unknown; return `partial` or `blocked` when an
-unknown prevents a defensible result. When two conventions are defensible,
-select one internally consistent base before calculating, retain the other as a
-sensitivity, and never combine pieces of both.
+After deterministic checks pass, apply `model-review.md` when its loading
+condition is met. Reviewers challenge judgment, and one assigned reviewer
+reproduces the model; they do not replace the gates, vote on value, or average
+targets.
 
-- Match cash flow to discount rate, currency, inflation basis, and claim holder.
-- Bridge enterprise value to the exact target security completely. When
-  material, value employee options, warrants, and conversion rights as separate
-  claims on equity; use a fully diluted share-count shortcut only as a disclosed
-  approximation that handles exercise proceeds consistently.
-- Match discount timing to cash-flow timing. Use a disclosed midyear convention
-  only for cash generated through the year; use actual or explicit timing for
-  discrete events and stub periods.
-- Keep terminal growth below the matching discount rate and consistent with
-  long-run economic limits. Make terminal reinvestment and returns coherent.
-- Treat an exit multiple as relative valuation, not an intrinsic terminal value.
-- Show sensitivities for the assumptions that actually drive value.
-- State formulas, units, dates, source cells or lines, and calculation choices
-  sufficiently for another analyst to reproduce the result.
-- Run arithmetic, sign, unit, period, and identity checks. Reconcile historical
-  values back to the filings before trusting forecasts.
-- If reporting a future fair value, do not compare it directly with today's
-  price as current upside. Roll the model to the future state: remove elapsed
-  cash flows, trace retained cash and distributions, update cash, debt, claims,
-  and shares, and revalue remaining cash flows from that date. Cross-check
-  against an appropriate normalized forward metric. If merely compounding
-  today's value at the required return, label it a shortcut, reconcile interim
-  holder distributions, and do not present it as a new bottom-up valuation.
+### 5. Horizon-And-Decision Gate
 
-Apply `model-review.md` when its loading condition is met. Resolve evidence and
-mechanical errors before returning; preserve defensible conventions as
-sensitivities, forecast judgments as causal scenarios, and method differences
-with an explanation of what each measures. Reject unsupported differences.
-Recompute one canonical valuation from the lock; never vote on or take the
-median of alternative targets, and do not mechanically average methods.
-Explain method disagreements: intrinsic and relative value answer different
-questions and may diverge because a peer group or entire sector is mispriced.
-Full alone does not require independent review.
+**Pass evidence:**
 
-### 7. Interpret Forward Multiples Carefully
-
-Use forward P/E only when selected as a material cross-check and with positive,
-sustainable, consistently defined forward diluted EPS and a named forecast
-period and source. Interpret it through growth, growth duration, risk, payout or
-reinvestment, and return on equity.
-
-Use PEG only as a contextual cross-check among sufficiently comparable firms.
-State the P/E basis, growth metric, horizon, and percent convention. Do not use
-PEG with negative or near-zero growth, treat `PEG < 1` as a law, or assume PEG
-fully controls for risk, payout, or reinvestment quality.
-
-Apply the same denominator definition and time basis to the target and peers.
-Select peers by similar cash-flow economics, growth, risk, margins, capital
-intensity, and geography - not industry label alone. Do not add PEG or a peer
-table to Compact when neither changes the range or challenges the model.
-
-### 8. Process Material Earnings, Guidance, News, And Sentiment
-
-In Compact, inspect the latest results, guidance, and post-period events and
-include only items that change the model, range, confidence, or thesis breakers.
-In Full, maintain a dated guidance ledger: original metric and range, later
-revisions, reported outcome, and management explanation. Compare like-for-like
-definitions. Use this to assess forecasting evidence and execution, not
-character.
-
-When news, transcript changes, or sentiment are material, classify each as:
-
-- new fundamental information that changes cash flow, reinvestment, or risk;
-- a catalyst or timing signal that may close a price-value gap;
-- market sentiment or positioning with no demonstrated value change; or
-- duplicate or immaterial noise.
-
-Do not double-count one event across guidance, news, and scenarios. Treat tone,
-evasion, analyst questions, and social sentiment as hypotheses requiring
-corroboration. Positive language is not intrinsic value. Omit sentiment
-entirely when no value transmission is demonstrated.
-
-### 9. Challenge The Thesis
-
-Use a pre-mortem. Identify the assumptions carrying the most value, evidence
-against them, base rates or relevant history, accounting red flags, financing
-or dilution paths, competitive responses, and observable thesis breakers.
-Compare the modeled expectations with those implied by the market price.
-
-Always compute:
+- present fair value is distinct from any future-date value;
+- a requested future value either rolls the business, cash, debt, claims,
+  distributions, and shares to the future state or labels required-return
+  compounding as a subordinate shortcut;
+- price-dependent conclusions use authoritative price evidence and name the
+  formula:
 
 ```text
-observed price discount to estimated value
-  = (estimated value - market price) / estimated value
+observed price discount = (estimated value - market price) / estimated value
 ```
 
-Market practice sometimes calls this observed discount a margin of safety, so
-answer that usage directly when the user asks. Keep it distinct from the
-**required margin-of-safety hurdle**, which is a user or policy decision rule.
-If a hurdle was supplied, show it and pass/fail. Otherwise report the observed
-discount plus `required hurdle: not supplied; pass/fail: not assessed`; do not
-judge adequacy or invent a threshold. Explain briefly how valuation uncertainty,
-balance-sheet risk, business fragility, diversification, and catalyst
-uncertainty can inform a user-chosen hurdle. Show threshold-specific entry
-prices only when requested.
+- a formal attractiveness, entry-price, or hurdle pass/fail uses only a rule the
+  user supplied; and
+- status, range, and numerical precision match the weakest load-bearing input
+  and every unresolved gate.
+
+**Safe failure:** Report the intrinsic range or observed discount that is
+actually supported, but do not present a shortcut as bottom-up future value,
+invent a margin-of-safety hurdle, print arbitrary entry prices, or make a
+personalized adequacy judgment.
 
 ## Return
 
-Follow the selected Compact or Full return contract. Lead with the valuation
-range, current price and timestamp, price-implied expectations, confidence, and
-the two or three assumptions that dominate the result. Cite every material
-current fact and number adjacent to its claim.
+Follow the selected Compact or Full return contract. Lead with the range,
+price-implied expectations only when supported, confidence, status, and the two
+or three assumptions dominating value.
 
-Return `complete`, `partial`, or `blocked`.
+Return:
 
-- `complete`: current evidence, applicable methods, calculations, challenges,
-  and citations satisfy the contract.
-- `partial`: useful analysis is possible, but named data or a method is
-  unavailable; narrow the claims and state the effect.
-- `blocked`: security identity, current primary evidence, or a load-bearing
-  input cannot be resolved without fabricating a result.
+- `complete` only when every applicable gate passes, the locked result
+  reproduces within disclosed precision, the method fits, evidence classes
+  remain distinct, and material alternatives are classified and reconciled;
+- `partial` when a named failed gate or unavailable component still permits a
+  useful bounded result; narrow the claim and state the valuation effect; or
+- `blocked` when security identity, current primary evidence, or a load-bearing
+  input prevents any defensible numerical result.
 
-Complete only when the locked result reproduces within disclosed rounding;
-model choice fits the company; reported, estimated, guided, and assumed values
-remain distinct; no evidence or mechanical discrepancy remains unresolved;
-material alternatives are classified and reconciled; uncertainty and thesis
-breakers are visible; and the answer does not outrun the evidence.
+Completion requires one canonical valuation, visible uncertainty and thesis
+breakers, no unresolved deterministic discrepancy, and an answer that does not
+outrun its evidence.

@@ -140,11 +140,13 @@ def test_tracker_templates_share_ready_state_navigation_and_readback() -> None:
     ]
     required = (
         "**Ready-for-agent state**",
+        "**Ready-for-human state**",
         "navigation metadata",
         "not proof of content completeness",
         "$triage",
         "$to-tickets",
         "**Ready query**",
+        "agent and human frontiers separately",
         "**Mutation read-back**",
         "partial mutation is blocked",
     )
@@ -383,7 +385,7 @@ def assert_repo_bootstrap_semantic_contract(
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     assert_repo_bootstrap_semantic_contract(
         CUSTOM / "repo-bootstrap",
-        "a1a2a5b9a7ad19a08402d50fbe0a00b4bc5e3cfb7d5f95d28e26dd59461c8622",
+        "8f80f651e49d0cecf42c06629831b8e0cd8abf3546599b3eee34b4bbbb524ce0",
         profile="incumbent",
     )
 
@@ -513,7 +515,8 @@ def test_router_returns_exactly_one_next_skill() -> None:
     ) in router
     assert (
         "| A `ready-spec` or equivalent settled bounded source needs a "
-        "dependency-ordered Ready-for-agent ticket graph | `$to-tickets` |"
+        "dependency-ordered implementation ticket graph and actionable "
+        "frontier | `$to-tickets` |"
     ) in router
     tie_breaker = " ".join(
         router.split("**Unknown-owner tie-breaker:**", 1)[1].split(
@@ -2018,7 +2021,12 @@ def test_ticket_and_delivery_packets_preserve_quality_and_route_repairs() -> Non
     assert "prohibited behavior, which requires an acceptance or proof obligation" in (
         tickets_flat
     )
-    assert "Delivery skills own their default budgets" in tickets_flat
+    assert "default exactly to `2`" in tickets_flat
+    assert "Never infer a higher budget from ticket size or risk" in tickets_flat
+    assert "5,500 characters as a soft target" in tickets_flat
+    assert "Separate packet readiness from frontier eligibility" in tickets_flat
+    assert "Mixed graphs may contain both states" in tickets_flat
+    assert "only the human frontier is non-empty" in tickets_flat
     assert "Dependency edges and tracker order remain graph facts" in tickets_flat
     assert "proof-responsibility map" in tickets_flat
     assert "one canonical responsibility" in tickets_flat
@@ -2503,15 +2511,23 @@ def assert_to_tickets_semantic_contract(
     ):
         assert profile_field in shape_contract
     assert "finite nonnegative repair generation budget" in shape_contract
-    assert "only when the source or caller explicitly supplies one" in shape_contract
-    assert "delivery skills own their default budgets" in shape_contract
+    assert "preserve an explicit source or caller value" in shape_contract
+    assert "otherwise default exactly to `2`" in shape_contract
+    assert "never infer a higher budget from ticket size or risk" in shape_contract
+    assert "packet readiness from frontier eligibility" in shape_contract
+    assert "ready-for-human" in shape_contract
+    assert "mixed graphs may contain both states" in shape_contract
+    assert "non-empty actionable frontier" in shape_contract
+    assert "ready-for-agent and ready-for-human frontiers separately" in (
+        shape_contract
+    )
     assert "expand-migrate-contract" in shape_contract
     assert re.search(r"contract only after old usage ends", shape_contract)
 
     publish_contract = level_two_section("Publish")
     assert re.search(r"freeze .*before .*mutation", publish_contract, re.S)
     assert re.search(
-        r"create .*relationship.*(?:mapped state|activate mapped ready-for-agent)",
+        r"create .*relationship.*activate each ticket's mapped ready-for-agent",
         publish_contract,
         re.S,
     )
@@ -2596,7 +2612,7 @@ def assert_to_tickets_semantic_contract(
     ):
         assert result_kind in return_contract
     assert "one or more implementation tickets" in shape_contract
-    assert "non-empty ready frontier" in shape_contract
+    assert "non-empty actionable frontier" in shape_contract
     assert "consumer repair" not in return_contract
     assert "no-ticket" not in return_contract
     assert "exact body" not in publish_contract
@@ -2621,7 +2637,7 @@ def test_to_tickets_preserves_coverage_readiness_and_frontier_contract() -> None
     packages = (
         (
             CUSTOM / "to-tickets",
-            "0b1cba85d92c21626afa15ee9da993f70523bc1db1a175535963cb9db41276d3",
+            "7a728dc390e6fff6b2344345c7485500ab48e58585a4322f2e45ba69a2f96a89",
             "prompt3-candidate",
         ),
     )
@@ -2676,6 +2692,8 @@ def assert_to_spec_semantic_contract(
             "concrete proof lanes and test owners",
             "exactly one gap kind",
             "do not invoke or recommend a resolver",
+            "verified source correction",
+            "decision-changing correction is a `source-gap`",
         ):
             assert current_semantic in normalized
         assert re.search(r"reuse only an exact match.*verified absence", normalized)
@@ -2806,7 +2824,7 @@ def test_to_spec_prompt3_packages_share_the_parameterized_semantic_owner() -> No
     packages = (
         (
             CUSTOM / "to-spec",
-            "d3ec9efaaba837192b44116c2e7dbef7ec7b5d07b60bd8d184511956abe00476",
+            "4fdfea5b659b73de29c46b7651a4d8e1f449ddecfae3ce168d3786c800b91c32",
             "author-handoff",
         ),
         (

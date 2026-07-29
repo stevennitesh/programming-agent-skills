@@ -47,7 +47,7 @@ tracker-backed multi-session route.
 | Situation | Route |
 | --- | --- |
 | Settled source needs a durable parent decision contract before ticket slicing | `$to-spec` |
-| A `ready-spec` or equivalent settled bounded source needs a dependency-ordered Ready-for-agent ticket graph | `$to-tickets` |
+| A `ready-spec` or equivalent settled bounded source needs a dependency-ordered implementation ticket graph and actionable frontier | `$to-tickets` |
 | One bounded ready-for-agent item is selected | `$implement` |
 | One explicitly requested parent has an exhaustive non-empty Ready-for-agent graph | `$parallel-implement` |
 

@@ -41,12 +41,15 @@ Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`,
 
 - **Packet**: `SPEC.md`, issue bodies, `## Comments`, and
   `## Implementation Notes` are the durable packet. Approved implementation
-  issues use `Status: ready-for-agent` and one category role when the source
-  settles it.
+  issues use their mapped `Status: ready-for-agent` or source-authorized
+  `Status: ready-for-human` and one category role when the source settles it.
 - **Ready-for-agent state**: the configured state marks an item whose producing
   workflow verified its owned packet. The state is navigation metadata, not
   proof of content completeness. `$triage` owns its Codex-ready brief and Ready
   Gate; `$to-tickets` owns its execution packets and graph readiness.
+- **Ready-for-human state**: the configured state marks a shaped item whose
+  next action requires a named human owner. It never makes the item eligible for
+  agent dispatch.
 - **Parent / child**: `SPEC.md` is the parent. Its ordered issue list links each
   file, and every issue records `Parent: ../SPEC.md`.
 - **Blocking**: put `Blocked by: <NN>, <NN>` near the top of an issue. Normally
@@ -57,11 +60,11 @@ Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`,
   in-scope dependents in that campaign. The recorded dependency remains until
   Lock. Rollback, invalidation, or failed proof removes the overlay and reblocks
   dependents.
-- **Ready query**: list issues with `Status: ready-for-agent`, then drop issues
-  with an unresolved blocker or `Claimed by`. Treat a recorded blocker as
-  resolved only when the verified same-campaign `landed-awaiting-lock` overlay
-  above applies. Preserve the order in `SPEC.md`; without a parent order, choose
-  the lowest issue number.
+- **Ready query**: derive agent and human frontiers separately from issues with
+  their mapped readiness status, then drop issues with an unresolved blocker or
+  `Claimed by`. Treat a recorded blocker as resolved only when the verified
+  same-campaign `landed-awaiting-lock` overlay above applies. Preserve the order
+  in `SPEC.md`; without a parent order, choose the lowest issue number.
 - **Claim**: add `Claimed by: <driver/session>` before implementation dispatch;
   keep the state role unchanged.
 - **Release**: remove `Claimed by` when work blocks, is abandoned, or reaches

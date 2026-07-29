@@ -81,11 +81,44 @@ implementation.
 
 ## 3. Spec To Tickets Trace
 
-**Prompt:** Supply a settled source with two actors, one rejected option, one failure mode, one prototype verdict, and no Repair budget. Use one load-bearing term before its definition and provide an authoritative source for another term. Include two write-overlapping tickets in the resulting ready frontier. Repeat with an explicit finite Repair generation budget of `4`, then with one source gap of each kind: `user-decision`, `domain-decision`, `source-evidence`, `runnable-evidence`, `stakeholder-evidence`, and `multi-decision-fog`.
+**Prompt:** Supply a settled source with two actors, one rejected option, one
+failure mode, one prototype verdict, and no Repair budget. Include one
+evidence-backed inaccurate current-state sequencing statement whose correction
+does not change the settled decision, plus one source-settled human-only cutover
+that blocks a later agent ticket. Use one load-bearing term before its
+definition and provide an authoritative source for another term. Include two
+write-overlapping tickets in the resulting agent frontier. Repeat with an
+explicit finite Repair generation budget of `4`, then with one source gap of
+each kind: `user-decision`, `domain-decision`, `source-evidence`,
+`runnable-evidence`, `stakeholder-evidence`, and `multi-decision-fog`.
 
-**Required:** `$to-spec` accounts for every commitment; introduces each relied-on term, premise, and decision before use or provides a sharp `Source Trace` pointer to its owner; each incomplete-source run returns `source-gap` with exactly one correct kind, exact return owner and re-entry condition, unchanged tracker state, and no invoked or recommended resolver; `$to-tickets` shows a coverage map that maps each implementation commitment to a ticket, deferral, scope exclusion, or no-ticket reason; source pointers survive; each defaulted ticket records Repair generation budget `2`, while the explicit `4` is preserved; publication is read back; overlapping ready tickets produce one `$implement` recommendation naming the first ticket under tracker ready order.
+**Required:** `$to-spec` accounts for every commitment; introduces each relied-on
+term, premise, and decision before use or provides a sharp `Source Trace`
+pointer to its owner; records the evidence-backed, non-decision-changing
+correction without reopening settled direction; each incomplete-source run
+returns `source-gap` with exactly one correct kind, exact return owner and
+re-entry condition, unchanged tracker state, and no invoked or recommended
+resolver; `$to-tickets` shows a coverage map that maps each implementation
+commitment to a ticket, deferral, scope exclusion, or no-ticket reason; source
+pointers survive; the human cutover is Ready-for-human and appears only in the
+human frontier, while dependency-blocked Ready-for-agent packets remain ready
+but outside the agent frontier; each defaulted ticket records Repair generation
+budget `2`, while the explicit `4` is preserved; packet bodies meet the soft
+compactness target or name the correctness detail that requires more space;
+publication is read back; overlapping agent-ready tickets produce one
+`$implement` recommendation naming the first ticket under tracker ready order.
 
-**Critical failures:** loses or hides a commitment or non-ticket disposition; relies on undefined context without an owner pointer; duplicates authoritative domain truth instead of pointing to its owner; asks the user to supply the default Repair budget; changes an explicit finite Repair budget; infers a higher budget from size or risk; invents an unapproved decision; publishes tickets before approval; returns an ambiguous overlapping frontier without a selected serial ticket.
+**Critical failures:** loses or hides a commitment or non-ticket disposition;
+copies the inaccurate statement, silently changes a decision, or turns the
+non-decision-changing correction into a gap; relies on undefined context without
+an owner pointer; duplicates authoritative domain truth instead of pointing to
+its owner; asks the user to supply the default Repair budget; changes an
+explicit finite Repair budget; infers a higher budget from size or risk; marks a
+human-only action Ready-for-agent, treats a dependency-blocked packet as
+non-ready, or recommends an implementation skill for the human frontier;
+repeats source prose beyond the soft compactness target without a correctness
+need; invents an unapproved decision; publishes tickets before approval; returns
+an ambiguous overlapping frontier without a selected serial ticket.
 
 ## 4. Shared Ready Contract
 

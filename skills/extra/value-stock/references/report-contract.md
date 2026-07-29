@@ -1,149 +1,89 @@
-# Full Valuation Report Contract
+# Full Valuation Return Contract
 
-Use this contract only for the Full path. Preserve the following order and
-distinctions, while omitting a subsection that is demonstrably immaterial rather
-than filling it with generic prose.
+Use this contract only for the Full path. Full adds challenge and corroboration,
+not mandatory filler. Keep four core sections and insert a branch only when it
+can change the method, range, confidence, or a thesis breaker.
 
-## Contents
+## 1. Decision Snapshot
 
-- [Valuation Snapshot](#1-valuation-snapshot)
-- [What The Price Implies](#2-what-the-price-implies)
-- [Thesis And Variant View](#3-thesis-and-variant-view)
-- [Evidence And Financial Quality](#4-evidence-and-financial-quality)
-- [Earnings And Guidance Ledger](#5-earnings-and-guidance-ledger)
-- [Valuation](#6-valuation)
-- [Forward Multiples And Peers](#7-forward-multiples-and-peers)
-- [News, Sentiment, And Changes](#8-news-sentiment-and-changes)
-- [Risks, Monitoring, And Conclusion](#9-risks-monitoring-and-conclusion)
-- [Citation And Number Rules](#citation-and-number-rules)
+Lead with:
 
-## 1. Valuation Snapshot
+- company, ticker, exchange, exact security, reporting currency, valuation date,
+  information cutoff, and price timestamp when price is used;
+- present fair-value range and base value at precision supported by the weakest
+  load-bearing input;
+- observed price discount using the named formula when authoritative price
+  evidence exists;
+- the user-supplied margin-of-safety hurdle and pass/fail, or
+  `required hurdle: not supplied; pass/fail: not assessed`;
+- confidence with its main evidence limit; and
+- status (`complete`, `partial`, or `blocked`) plus any failed gate.
 
-State:
+Do not lead with a generic company description or imply a precise per-share
+claim when the security bridge is unresolved.
 
-- company, ticker, exchange, security class, and reporting currency;
-- ADR ratio or material security rights when applicable;
-- valuation date, information cutoff, and current-price timestamp;
-- fair-value range and base-case value per target security on the disclosed
-  share and equity-claim basis;
-- observed price discount to estimated value using the named formula;
-- user-defined required margin-of-safety hurdle and pass/fail, or
-  `required hurdle: not supplied; pass/fail: not assessed`, with no unstated
-  adequacy judgment;
-- confidence (`high`, `medium`, or `low`) with one-line reason; and
-- status (`complete`, `partial`, or `blocked`).
+## 2. Valuation And Price Expectations
 
-Confidence must reflect evidence quality, model fit, value-range dispersion,
-terminal dependence, and unresolved conflicts. It is not a synonym for upside.
+For each applicable method, state why it fits, the assumptions carrying the
+value, the reproducible calculation, the enterprise-to-equity or
+asset-to-security bridge, the resulting range, and its principal limitation.
+Show a reverse DCF or equivalent when authoritative current-price evidence
+exists. Name the solved variable and fixed assumptions.
 
-Do not lead with a generic company description.
+Use causal cases and sensitivities for the two or three inputs that materially
+move value. Do not average methods unless a weighting rule was fixed before
+seeing the results. When an admitted correction or material convention changes
+value, bridge from the locked baseline to the recomputed value. If review ran,
+state its valid lens coverage and reduced independence, if any.
 
-## 2. What The Price Implies
+## 3. Evidence, Economics, And Variant View
 
-Show the reverse-DCF or equivalent market-implied expectations. Name the solved
-variable and fixed assumptions. Say whether the implied path appears plausible,
-demanding, or inconsistent with the cited evidence.
+Show only evidence that supports or challenges the model:
 
-## 3. Thesis And Variant View
+- the economic engine, variant view, causal value drivers, and observable
+  thesis breakers;
+- historical and trailing metrics carrying the selected method;
+- reported-to-normalized bridges and material accounting, liquidity, dilution,
+  claim, country, or control issues;
+- forecast anchors, organic versus acquired growth when material, and the
+  evidence for growth, margins, reinvestment, and return duration; and
+- the price-implied path compared with company history, guidance, industry
+  constraints, and relevant base rates.
 
-In a compact table, state:
+Separate reported, guided, estimated, assumed, and calculated values. Preserve
+conflicts and unknowns rather than merging them.
 
-| Item | Required content |
-| --- | --- |
-| Business engine | How the company creates cash |
-| Variant view | What the valuation assumes differently from price or consensus |
-| Value drivers | Two to five causal drivers |
-| Thesis breakers | Observable conditions that invalidate the case |
-| Catalysts | Events that may reveal value; do not treat as value itself |
+## 4. Risks, Monitoring, And Decision Boundary
 
-## 4. Evidence And Financial Quality
+Rank load-bearing risks by valuation effect. For each, name an observable
+indicator and the model input it would change. Conclude with the fair-value
+range, current-price timestamp, observed discount, and hurdle status when
+supported, plus the single most important unknown and the evidence that would
+trigger revaluation. Do not invent entry prices or an attractiveness judgment
+without a user-supplied rule.
 
-Show three to five years and the latest trailing period when available:
-
-- revenue and per-share growth;
-- gross, operating, and free-cash-flow margins where meaningful;
-- ROIC versus WACC or the sector-appropriate return metric;
-- free-cash-flow conversion and reinvestment;
-- leverage, interest or fixed-charge coverage, and liquidity; and
-- diluted-share change, SBC, buybacks, and net dilution.
-
-Include an explicit reported-to-normalized bridge for material adjustments.
-Identify country-risk transmission, material security claims, and accounting or
-control concerns that affect the model.
-
-## 5. Earnings And Guidance Ledger
-
-Summarize recent actual-versus-expectation results and the chronological guidance
-ledger. Separate company guidance, consensus, and analyst assumptions. Highlight
-definition changes, estimate dispersion and revisions, delivery, and unresolved
-gaps. Use only estimate snapshots published before each measured outcome.
-
-## 6. Valuation
-
-For each applicable method, show:
-
-- why the method fits;
-- key assumptions and their sources or analyst labels;
-- calculation summary and enterprise-to-equity bridge where applicable;
-- implied value range; and
-- principal limitation.
-
-If a value is stated for a future date, show the horizon and either its present
-value or the annualized holder return including modeled cash distributions.
-
-Include a causal bear/base/bull table and sensitivities for the two or three most
-important assumptions. Do not blend methods unless a defensible weighting rule
-was set before seeing results; otherwise present and reconcile them.
-
-When an admitted correction or material alternative changes value, show a
-bridge from the locked baseline to the recomputed value. If independent review
-ran, state its valid lens coverage and any reduced independence.
-
-## 7. Forward Multiples And Peers
-
-State the exact forward period, denominator definition, estimate source/date,
-and peer-selection logic. Compare growth, margins, returns, risk, and capital
-intensity alongside multiples.
-
-If using PEG, state the percent convention and growth horizon and explain why
-the comparison is meaningful. If not meaningful, say `PEG: not applicable`.
-
-## 8. News, Sentiment, And Changes
-
-Use a dated table:
-
-| Event | Evidence class | Valuation transmission | Already reflected? | Model effect |
-| --- | --- | --- | --- | --- |
-
-Include only material or decision-relevant items. Separate changed fundamentals
-from catalysts and uncorroborated sentiment.
-
-## 9. Risks, Monitoring, And Conclusion
-
-Rank risks by impact on the value range, not by headline drama. For each
-load-bearing uncertainty, give one observable indicator and the model assumption
-it would change.
-
-Conclude with:
-
-- fair-value range and current price timestamp;
-- conditions supporting the low and high ends;
-- the price-implied expectation;
-- observed price discount and required margin-of-safety hurdle status;
-- the single most important unknown; and
-- what new evidence would trigger a revaluation.
-
-End with a concise statement that the work is impersonal research, not
+End with one sentence stating that the work is impersonal research, not
 personalized investment advice.
 
-## Citation And Number Rules
+## Conditional Inserts
 
-- Cite every current price, filing fact, reported number, guidance item,
-  estimate, rate, peer metric, and news claim adjacent to the statement.
-- Use only evidence public by the information cutoff; label later evidence
-  separately rather than letting it leak into an earlier valuation.
-- Mark calculations as calculations and show enough inputs to reproduce them.
-- Do not cite a search result when the underlying filing or page is available.
-- Use consistent currency, scale, fiscal periods, and per-share basis.
-- Label unavailable values `unknown`; never infer a missing number silently.
-- Use ranges that follow from cases or sensitivity, not decorative rounding.
+Add the smallest relevant insert:
+
+| Condition | Insert |
+| --- | --- |
+| Deep normalization changes the value base | Historical and normalization bridge |
+| Guidance revisions or delivery are load-bearing | Chronological guidance ledger |
+| Relative valuation can challenge the intrinsic result | Controlled peers, forward multiples, or PEG |
+| A post-period event has a demonstrated value transmission | Dated news or event table |
+| A future-date value was requested | Bottom-up horizon roll-forward or clearly subordinate shortcut |
+| Independent review ran or a convention changed value | Review coverage and correction bridge |
+
+For forward multiples, use matching periods, definitions, estimate dates, and
+peer economics. If PEG is not meaningful, say `PEG: not applicable`. For news
+or sentiment, distinguish changed fundamentals from catalysts and unsupported
+tone.
+
+Apply the evidence, date, market-price, and citation rules in
+[source-protocol.md](source-protocol.md), and the calculation, precision,
+future-date, and margin-of-safety rules in
+[valuation-methods.md](valuation-methods.md).

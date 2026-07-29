@@ -23,14 +23,16 @@ as evidence.
 ## Fresh Challenge When Supported
 
 Give each reviewer the identical Model Lock and factual source packet. Use
-fresh context with `fork_turns="none"` when supported. Withhold parent
-hypotheses, preferred conclusions, peer output, and terminal cues. Reviewers are
-read-only candidate finders: they do not mutate, spawn, admit findings, or own
-the final valuation.
+fresh context with `fork_turns="none"` when supported. Include every locked
+input needed for the assigned lens, including terminal or residual inputs.
+Withhold the parent's suspected weaknesses, desired conclusion, preferred
+alternative assumptions, and other reviewers' output. Reviewers are read-only
+candidate finders: they do not mutate, spawn, admit findings, or own the final
+valuation.
 
 Dispatch only warranted lenses, at most three:
 
-1. **Reproduction and claims** - first reproduce the locked value without
+1. **Reproduction and claims** - reproduce the locked value without
    changing assumptions, then inspect claim basis, accounting conventions,
    cash, debt, awards, dilution, and share count.
 2. **Business or asset economics** - challenge growth, margins, reinvestment,
@@ -39,7 +41,9 @@ Dispatch only warranted lenses, at most three:
    timing, terminal or residual economics, probabilities, sensitivities, and
    price-implied expectations.
 
-Every independent branch includes the first lens. Require:
+Run exactly one reproduction-and-claims lens. Additional reviewers verify the
+same lock identity, inspect only their assigned lens, and need not reproduce the
+entire model. Require:
 
 ```text
 status: complete | blocked

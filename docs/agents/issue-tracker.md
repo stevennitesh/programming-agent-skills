@@ -53,11 +53,14 @@ Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`,
 
 **Dependency mode:** native-dependencies.
 
-- **Packet**: the issue body and comments are the durable packet. A parent spec owns intent; child issues own implementation slices and closeout evidence. No separate repo-local packet is required unless `AGENTS.md` points to one. Approved implementation tickets carry the mapped `ready-for-agent` state and one category role when the source settles it.
+- **Packet**: the issue body and comments are the durable packet. A parent spec owns intent; child issues own implementation slices and closeout evidence. No separate repo-local packet is required unless `AGENTS.md` points to one. Approved implementation tickets carry their mapped `ready-for-agent` or source-authorized `ready-for-human` state and one category role when the source settles it.
 - **Ready-for-agent state**: the configured state marks an item whose producing
   workflow verified its owned packet. The state is navigation metadata, not
   proof of content completeness. `$triage` owns its Codex-ready brief and Ready
   Gate; `$to-tickets` owns its execution packets and graph readiness.
+- **Ready-for-human state**: the configured state marks a shaped item whose
+  next action requires a named human owner. It never makes the item eligible for
+  agent dispatch.
 - **Parent / child**: `native-sub-issues` uses GitHub sub-issues.
   `parent-task-list` keeps an ordered task list in the parent and puts
   `Part of #<parent>` near the top of each child.
@@ -73,7 +76,11 @@ Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`,
 - **Publication mode**: freeze both configured modes before the first create.
   If their operation or read-back route is unavailable, stop before creation;
   never switch representations during a publication.
-- **Ready query**: list open issues with the mapped `ready-for-agent` state, then drop issues with an unresolved blocker or assignee. Treat an open blocker as resolved only when the verified same-campaign `landed-awaiting-lock` overlay above applies. Within a parent, preserve child order; otherwise choose oldest first.
+- **Ready query**: derive agent and human frontiers separately from open issues
+  with their mapped readiness state, then drop issues with an unresolved blocker
+  or assignee. Treat an open blocker as resolved only when the verified
+  same-campaign `landed-awaiting-lock` overlay above applies. Within a parent,
+  preserve child order; otherwise choose oldest first.
 - **Claim**: assign the work item to the owner or orchestrator before implementation dispatch; the assignee is the concurrency guard.
 - **Release**: remove the active assignee when work blocks, is abandoned, or reaches closeout.
 - **Closeout**: after required review and commits, post the closeout packet, apply or retain `implemented`, remove the prior state-role label, release the claim, and close the implementation issue as completed. Preserve dependency links: closing a completed blocker retains history and removes it from the active blocker set. Close a parent spec only after every in-scope child and follow-up is closed; post a final summary before closing it.

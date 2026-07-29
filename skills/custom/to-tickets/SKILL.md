@@ -1,6 +1,6 @@
 ---
 name: to-tickets
-description: Explicitly create or repair a verified dependency-ordered Ready-for-agent ticket graph from one settled bounded source; exclude unsettled intake or product design, triage, implementation, and delivery.
+description: Explicitly create or repair a verified dependency-ordered implementation ticket graph with an actionable frontier from one settled bounded source; exclude unsettled intake or product design, triage, implementation, and delivery.
 ---
 
 # To Tickets
@@ -16,11 +16,15 @@ Read the target repository's `AGENTS.md` and its routed tracker, label, domain,
 and engineering contracts. Before tracker mutation, verify that the configured
 tracker can create recoverable non-ready items or one equivalently safe atomic
 graph, represent parent and blocking relationships, map roles and
-Ready-for-agent state, inspect claims and the frontier, and read every mutation
-back. Otherwise return `setup-precondition`, name the missing or incompatible
-surface, recommend `$repo-bootstrap`, and preserve state. For GitHub, consume
-the configured parent/child and dependency modes and resolve their operation and
-read-back routes once before the first create.
+Ready-for-agent state and, when applicable, Ready-for-human state, inspect
+claims and both frontiers, and read every mutation back. Otherwise return
+`setup-precondition`, name the missing or incompatible surface, recommend
+`$repo-bootstrap`, and preserve state. For GitHub, consume the configured
+parent/child and dependency modes and resolve their operation and read-back
+routes once before the first create. When the connector does not expose native
+relationship mutations, use the bundled
+[GitHub relationship helper](scripts/github_issue_relationships.py) to perform
+at most one requested mutation and return normalized bidirectional read-back.
 
 Accept one exact identity-bearing settled source whose remaining work is
 implementation slicing: a verified parent specification; a direct settled packet
@@ -114,14 +118,31 @@ Give each ticket a compact execution packet:
   evidence. State whether the ticket should reuse, extend, or add proof;
   adding a test requires a distinct responsibility.
 - **Delivery:** dependency state, true blockers or `none`, stable tracker
-  order, and a parallel-safety judgment.
+  order, executor role, and a parallel-safety judgment.
 - **Closure:** displaced surfaces and each retained compatibility path's owner,
   reason, proof, and Removal Trigger.
 
-Transport a finite nonnegative Repair generation budget only when the source or
-caller explicitly supplies one. Delivery skills own their default budgets. A
-ticket that lacks any required Ready-for-agent fact remains non-ready; correct
-locally or return `source-gap` when source authority is missing.
+Keep each body semantically dense: state each execution-relevant fact once,
+prefer sharp owner and evidence pointers to repeated source prose, and aim for
+at most about 5,500 characters as a soft target. Exceed it only when required
+authority, state, edge, proof, migration, or recovery detail cannot remain
+implementation-ready when shorter.
+
+Record a finite nonnegative Repair generation budget on every ticket. Preserve
+an explicit source or caller value; otherwise default exactly to `2`. Never
+infer a higher budget from ticket size or risk.
+
+Separate packet readiness from frontier eligibility. Ready-for-agent means the
+agent execution packet is verified; unresolved blockers or claims keep it out
+of the agent frontier without making the packet non-ready. When settled work
+requires human access, permission, judgment in execution, or a cutover, create a
+fully shaped Ready-for-human ticket with its executor, trigger, completion
+evidence, and return condition. Mixed graphs may contain both states. Human
+tickets never enter the agent frontier or an implementation recommendation, and
+their unresolved edges block consumers normally. Do not use Ready-for-human to
+defer an unsettled source or design decision; return `source-gap` instead.
+A ticket missing the facts required for its mapped readiness remains non-ready;
+correct locally or return `source-gap` when source authority is missing.
 
 For each stateful ticket, record the distinct supported absent or initial,
 reusable, legacy or incompatible, public access-path, variant, lifecycle, and
@@ -130,7 +151,8 @@ padding. For stateless work, record `not applicable` and why. If supported state
 is unsettled, return `source-gap`.
 
 Freeze a complete acyclic dependency graph with explicit blockers, stable
-tracker order, and a non-empty ready frontier. Add a blocking edge only when the
+tracker order, and a non-empty actionable frontier. Derive the Ready-for-agent
+and Ready-for-human frontiers separately. Add a blocking edge only when the
 dependent consumes a required predecessor outcome; tracker order and serial
 constraints are not blockers. Correct cycles, orphans, false or hidden blockers,
 contradictory order, and empty or false frontiers before publication, or return
@@ -174,42 +196,47 @@ A missing endpoint or partial or mismatched relationship stops the run with
 frozen relationship representation during publication.
 
 Only after every body and relationship verifies, apply source-authorized roles
-and activate mapped Ready-for-agent state in dependency order, reading back each
-transition. Do not invent a category role. A claim, unverified packet or edge,
-or partial activation returns `publication-recovery` with the exact exposed
-frontier.
+and activate each ticket's mapped Ready-for-agent or Ready-for-human state in
+dependency order, reading back each transition. Do not invent a category role.
+A claim, unverified packet or edge, or partial activation returns
+`publication-recovery` with the exact exposed frontiers.
 
 Refetch the complete affected graph and every affected dependent. Compare bodies
 by the tracker-owned exact-byte or normalized-semantic rule and verify
 relationships, roles, claims, comments, assignees, open or closed status,
-Ready-for-agent state, and the derived frontier against the frozen plan. Any
-stale, partial, indeterminate, or mismatched observation returns
+mapped readiness state, and the derived agent and human frontiers against the
+frozen plan. Any stale, partial, indeterminate, or mismatched observation returns
 `publication-recovery` and cannot support success.
 
 On the first unsafe, failed, or indeterminate transition, stop further mutation.
 Return `publication-recovery` with the frozen graph identity, every applied and
-failed operation, exact observed items and relationships, current ready
-frontier, and the safest configured recovery action. Do not invent rollback,
-compensation, atomic success, or a duplicate create.
+failed operation, exact observed items and relationships, current agent and
+human frontiers, and the safest configured recovery action. Do not invent
+rollback, compensation, atomic success, or a duplicate create.
 
 ## Return
 
-For a verified graph without a qualified parent-delivery request, recommend
-`$implement` with the first dependency-ready ticket in tracker order. Do not
-recommend implementation before graph proof or select a blocked or later ticket.
+For a verified graph with a non-empty agent frontier and without a qualified
+parent-delivery request, recommend `$implement` with the first agent ticket in
+tracker order. Do not recommend implementation before graph proof or select a
+blocked, human-owned, or later ticket. When only the human frontier is non-empty,
+recommend its first ticket to the named human owner and do not recommend an
+implementation skill.
 
 Recommend `$parallel-implement` only when the user explicitly requested a
 top-level parent-delivery run and the verified graph is parent-backed,
-non-empty, exhaustive, and Ready-for-agent. A direct graph, delegated request,
-generic preference for concurrency, incomplete graph, or missing explicit
-delivery request uses the `$implement` route instead.
+non-empty, exhaustive, entirely Ready-for-agent, and has a non-empty agent
+frontier. A direct graph, mixed human/agent graph, delegated request, generic
+preference for concurrency, incomplete graph, or missing explicit delivery
+request uses the single-frontier route above instead.
 
 Return exactly one of `setup-precondition`, `source-gap`,
 `existing-state-conflict`, `publication-recovery`, or `ready-graph`. A
 `ready-graph` reports source and parent identities, graph identity, ordered
-ticket pointers, dependency edges, ready frontier, proof-responsibility map,
-per-ticket execution profiles and state matrices, publication or reuse
-read-back, residual gaps, and exactly one unstarted next recommendation.
+ticket pointers, dependency edges, agent and human frontiers,
+proof-responsibility map, per-ticket execution profiles and state matrices,
+publication or reuse read-back, residual gaps, and exactly one unstarted next
+recommendation.
 Complete only when setup and source authority resolve; every commitment maps;
 every ticket, proof responsibility, matrix, profile, edge, order, frontier, and
 authorized transition verifies; no duplicate or false-ready item remains;

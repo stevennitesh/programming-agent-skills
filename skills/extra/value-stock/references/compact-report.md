@@ -9,12 +9,14 @@ value.
 Lead with:
 
 - company, ticker, exchange, exact security, and reporting currency;
-- valuation date, information cutoff, and current-price timestamp;
-- present fair-value range and base value per target security;
-- observed price discount to estimated value using the named formula;
+- valuation date, information cutoff, and current-price timestamp when used;
+- present fair-value range and base value per target security at supported
+  precision;
+- observed price discount to estimated value using the named formula when
+  authoritative price evidence exists;
 - required margin-of-safety hurdle and pass/fail when the user supplied one,
   otherwise `required hurdle: not supplied; pass/fail: not assessed`;
-- confidence and status (`complete`, `partial`, or `blocked`).
+- confidence, status (`complete`, `partial`, or `blocked`), and any failed gate.
 
 Do not lead with a generic company description.
 
@@ -25,7 +27,8 @@ State the selected primary method and why it fits. Show:
 - the three to five assumptions carrying most of the value;
 - a short reproducible calculation and enterprise-to-equity or
   asset-to-security bridge;
-- current-price-implied expectations from a reverse DCF or equivalent; and
+- current-price-implied expectations from a reverse DCF or equivalent when
+  authoritative price evidence exists; and
 - sensitivities for the two or three inputs that can materially move the range.
 
 Use a causal range. Full bear/base/bull narratives are optional unless
@@ -61,11 +64,7 @@ Full or stop here. If no hurdle was supplied, do not invent one.
 End with one sentence stating that the work is impersonal research, not
 personalized investment advice.
 
-## Citation And Number Rules
-
-- Cite every material current fact and number adjacent to the claim.
-- Separate reported, guided, estimated, assumed, and calculated values.
-- Show enough inputs, units, dates, and formulas to reproduce the range.
-- Label missing data `unknown`; narrow the claim instead of silently inferring.
-- Use evidence public by the information cutoff and consistent periods,
-  currency, scale, and per-share basis.
+Apply the evidence, date, market-price, and citation rules in
+[source-protocol.md](source-protocol.md), and the calculation, precision,
+future-date, and margin-of-safety rules in
+[valuation-methods.md](valuation-methods.md).
