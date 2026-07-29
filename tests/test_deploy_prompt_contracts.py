@@ -650,7 +650,7 @@ def test_behavior_evaluation_contract_supports_quality_lift_and_adaptive_cost() 
     sample = _section(evals, "## Freeze the cohorts", "## Judge conditional efficacy")
     judge = _section(evals, "## Judge conditional efficacy", "## Record the result")
     record = evals.split("## Record the result", 1)[1]
-    claim_proof = _section(writing, "## Claim-Matched Proof", "## Author Lock")
+    claim_proof = _section(writing, "## Prove", "## Return")
 
     def assert_tokens_in_order(section: str, *tokens: str) -> None:
         cursor = 0
@@ -659,6 +659,21 @@ def test_behavior_evaluation_contract_supports_quality_lift_and_adaptive_cost() 
 
     for token in ("`defect-correction`", "`quality-lift`"):
         assert token in register
+    assert_tokens_in_order(
+        register,
+        "full",
+        "context",
+        "model",
+        "host",
+        "reasoning",
+        "configuration",
+        "tools",
+        "authority",
+        "evidence",
+        "runtime",
+        "rubric",
+        "inputs",
+    )
     assert_tokens_in_order(register, "meaningful", "rubric", "deficit")
     assert_tokens_in_order(register, "observable", "entry", "predicate")
     assert_tokens_in_order(register, "applicability", "`common`", "`situational`", "`rare`", "`unknown`")
@@ -671,20 +686,32 @@ def test_behavior_evaluation_contract_supports_quality_lift_and_adaptive_cost() 
         "does not",
         "appear",
         "stop",
-        "H1",
+        "candidate",
         "`reject-no-control-deficit`",
     )
 
     assert_tokens_in_order(sample, "entry-positive", "wrong-condition", "cohorts")
-    assert_tokens_in_order(sample, "fresh", "contexts")
-    assert_tokens_in_order(sample, "five", "fresh", "M0", "entry-positive", "controls")
+    assert_tokens_in_order(sample, "fresh-context", "mechanism")
+    assert_tokens_in_order(sample, "never", "reuse", "authoring", "conversation")
+    assert_tokens_in_order(
+        sample,
+        "Reuse",
+        "samples",
+        "only",
+        "frozen",
+        "bytes",
+        "inputs",
+        "runtime",
+        "identity",
+        "unchanged",
+    )
+    assert_tokens_in_order(sample, "five", "fresh", "entry-positive", "controls")
     assert_tokens_in_order(
         sample,
         "five",
         "fresh",
-        "H1",
         "entry-positive",
-        "samples",
+        "candidates",
         "only",
         "deficit",
         "appears",
@@ -692,7 +719,7 @@ def test_behavior_evaluation_contract_supports_quality_lift_and_adaptive_cost() 
     assert_tokens_in_order(
         sample,
         "wrong-condition",
-        "M0/H1",
+        "control/candidate",
         "pairs",
         "only",
         "after",
@@ -717,7 +744,19 @@ def test_behavior_evaluation_contract_supports_quality_lift_and_adaptive_cost() 
         "`blocked`",
     ):
         assert token in record
+    assert_tokens_in_order(record, "registration", "expected", "deficit")
+    assert_tokens_in_order(record, "control/candidate", "hashes")
+    assert_tokens_in_order(
+        record,
+        "model",
+        "host",
+        "reasoning",
+        "configuration",
+        "runtime",
+    )
+    assert_tokens_in_order(record, "unavailable", "telemetry")
     assert_tokens_in_order(record, "residual", "transfer", "gap")
+    assert "without extrapolation" in record
     assert_tokens_in_order(
         record,
         "`reject-regression`",
@@ -731,8 +770,9 @@ def test_behavior_evaluation_contract_supports_quality_lift_and_adaptive_cost() 
     assert "[BEHAVIOR-EVALS.md](BEHAVIOR-EVALS.md)" in claim_proof
     assert_tokens_in_order(
         claim_proof,
-        "attributes",
-        "changed",
+        "exact",
+        "wording",
+        "changes",
         "invocation",
         "judgment",
         "action",
@@ -740,7 +780,7 @@ def test_behavior_evaluation_contract_supports_quality_lift_and_adaptive_cost() 
         "Return",
         "completion",
     )
-    assert_tokens_in_order(claim_proof, "uncontaminated", "direct", "controls")
+    assert "Structural evidence does not prove live behavior" in claim_proof
 
 
 def test_source_method_and_indexes_match_independent_verification_model() -> None:

@@ -330,7 +330,7 @@ and
 
 | Skill | Supporting files own |
 | --- | --- |
-| `writing-great-skills` | `GLOSSARY.md`: invocation, behavior-shape, information-hierarchy, pruning, and completion vocabulary; `BEHAVIOR-EVALS.md`: counterfactual wording evaluation |
+| `writing-great-skills` | `GLOSSARY.md`: leading-word, invocation, reference-loading, skill-splitting, transfer, and derived-state vocabulary; `BEHAVIOR-EVALS.md`: fresh-context counterfactual wording evaluation |
 | `codebase-design` | `DIRECT-DESIGN.md`: direct pass, material Interface, safe Return, and packet; `DEEPENING.md`: dependency/Seam, test-portfolio, Change Closure, and migration discipline; `DESIGN-IT-TWICE.md`: alternative Interface exploration |
 | `domain-modeling` | `CONTEXT-FORMAT.md`: glossary and context-map format; `ADR-FORMAT.md`: ADR gate and format |
 | `tdd` | `tests.md`, `mocking.md`, `refactoring.md`: examples and branch mechanics |

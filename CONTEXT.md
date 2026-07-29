@@ -258,7 +258,11 @@ _Avoid_: pack manual, copied route map
   high-risk trigger belong to this context and
   [ADR-0011](docs/adr/0011-review-assurance-follows-release-risk.md).
 - Deploy-campaign automation authority and control-plane vocabulary belong to [ADR-0008](docs/adr/0008-deploy-campaign-automation-separates-mechanical-evidence-from-semantic-decisions.md) and this context.
-- Skill-authoring vocabulary—Predictability, invocation, information hierarchy, leading words, completion criteria, and pruning—belongs to [`skills/custom/writing-great-skills/GLOSSARY.md`](skills/custom/writing-great-skills/GLOSSARY.md).
+- Skill-authoring vocabulary—leading words, invocation, reference loading,
+  skill splitting, transfer gates, and derived views—belongs to
+  [`skills/custom/writing-great-skills/GLOSSARY.md`](skills/custom/writing-great-skills/GLOSSARY.md);
+  predictable behavior, gates, completion, and pruning stay inline in
+  `SKILL.md`.
 - Runtime engineering vocabulary and preventive code-quality defaults—Source
   Trace, bounded slice, commitment boundary, proof seam, proof lane, fixed
   point, Spec / Standards, correctness, robustness, Change Closure, code shape,

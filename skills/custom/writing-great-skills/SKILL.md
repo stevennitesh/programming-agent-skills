@@ -1,134 +1,128 @@
 ---
 name: writing-great-skills
-description: Create or edit canonical Codex skill behavior; audit or review skill semantics; or test whether skill wording changes invocation, judgment, action, context loading, Return, or completion. Exclude general prompt rewriting, ordinary code review, new-package scaffolding, installation, and delivery.
+description: Create, edit, audit, or test canonical Codex skill behavior. Exclude general prompt editing, ordinary code review, new-package scaffolding, installation, publishing, synchronization, and Git delivery.
 ---
 
 # Writing Great Skills
 
-Make canonical skill behavior predictable: choose the intended branch, perform
-the required legwork, fail safely, and stop at the intended boundary. Optimize
-behavior and semantic density, not prose or step count.
+Make canonical skill behavior predictable: choose the intended branch, do the
+required work, fail safely, and stop at the intended boundary. Optimize behavior
+and semantic density, not prose or step count.
 
 ## Authority
 
-Select exactly one operation from the request:
+Choose one operation:
 
 - **Audit:** judge read-only; exact replacement wording is advisory.
-- **Author:** edit only the requested canonical skill or skill-design artifact
-  and directly affected proof or relationship surfaces.
+- **Author:** when edits are authorized, perform any needed audit and edit only
+  the requested canonical skill or skill-design artifact and directly affected
+  proof or relationship surfaces.
 
-Resolve the target, operation, canonical source, and mutation boundary before
-judgment or mutation. Return `blocked` when any cannot be resolved safely.
-New-package scaffolding and metadata mechanics belong to the bundled
-`skill-creator`. Installation, publishing, synchronization, and Git delivery
-remain with their owners; stop with an exact handoff instead of performing their
-work.
+Behavioral evaluation is a read-only proof branch within either operation, not
+a third operation.
 
-## Coverage
+New-package scaffolding and metadata belong to the bundled `skill-creator`.
+Installation, publishing, synchronization, and Git delivery remain with their
+owners. When requested work crosses a foreign boundary, stop with the exact
+next-owner handoff.
 
-Inspect only surfaces capable of changing the requested behavior: the canonical
-package, applicable intent and decisions, callers, relationships, owned gates,
+## Resolve
+
+Resolve the target, operation, canonical source, and allowed writes before
+judgment or mutation. Audit allows no writes. Return `blocked` if any boundary
+cannot be resolved safely.
+
+## Trace
+
+Inspect only surfaces capable of changing the requested behavior: applicable
+intent, the canonical package, affected callers and relationships, gates,
 outputs, mutations, failure branches, completion, and the smallest relevant
-proof. Classify each inspected surface as `affected`, `preserve`, `owned
-elsewhere`, `historical evidence`, `drift`, or `not applicable`. For a full
-audit, classify the complete canonical package and every behaviorally affected
-caller, relationship, proof, and publication surface.
+proof. A whole-skill audit covers the complete package and every behaviorally
+affected caller, relationship, proof, and active routing record. Record a
+classification only when it changes judgment or handoff.
 
-Inspect an installed mirror only when installation-state evidence is explicitly
-requested. Report observed parity or drift and leave repair to the installation
-owner.
+Inspect an installed mirror only when installation state is explicitly
+requested. Report parity or drift; leave repair to the installation owner.
 
-When promoting a lesson beyond the incident or skill that exposed it, admit it
-only at the narrowest shared owner. Name the behavior class, observable
-applicability condition, one materially different applicable case, and the
-closest non-applicable case. Keep incident-specific mechanics local when
-transfer cannot be shown.
+## Shape
 
-## Behavior Shape
+Give each behavior one owner for its trigger, authority, action, evidence,
+failure Return, and completion. Preserve each relationship's callee, observable
+trigger, authority, and Return. Keep the local contract slice and point to
+foreign procedure.
 
-Give each behavior one owner for its rule, admission, authority, inputs,
-outputs, evidence, failure Return, and completion. Preserve every relationship's
-callee, observable trigger, authority, and Return. Keep the local contract slice
-and point to foreign procedure.
+Define every term that changes admission, branching, order, pass/fail, or
+completion with an observable rule and any applicable counting scope or
+invalidation condition.
 
-Operationalize every term that changes admission, branching, ordering,
-pass/fail, or completion: define its observable rule and, when applicable, its
-counting scope and invalidation condition, or point to its exact authority.
+Use steps for ordered actions or state changes. Use gates for cross-cutting
+checks at the boundary they protect. Each gate names its condition, passing
+evidence, and safe failure action. Execute a directly checkable invariant before
+the judgment or action it protects; do not defer it to review. Recheck only
+after a transition could invalidate it. Scope failure to the smallest dependent
+action or output unless authority or safety requires a full stop. Never report
+a failed branch complete. Preserve independent supported results and calibrate
+each to its weakest load-bearing evidence.
 
-Treat a derived view as a projection of its owning facts unless it has
-independent behavior; reuse the owner and update boundary rather than creating
-a second ledger, state machine, or proof loop.
+Make completion checkable and demanding enough to force the required work.
+Treat an implicitly invocable description as a routing predicate: name
+observable triggers and the closest exclusions, not runtime procedure.
 
-Make the outcome, applicable branches, authority, action, evidence, safe
-failure, Return, and completion discoverable. Use the fewest meaningful state
-transitions. Apply the Prune removal test to every proposed step, required
-field, artifact, view, or check. Put cross-cutting checks in gates at the
-boundary they protect. Each gate names its condition, passing evidence, and
-safe failure action. Place directly checkable invariants before the judgment or
-action they protect; do not use review as a substitute for checks the skill can
-execute itself. Recheck an established invariant only after a transition that
-could invalidate it. Scope a failed gate to the smallest dependent action or
-output unless authority or safety requires a full stop. Preserve each
-independent supported result, but calibrate its status, certainty, and precision
-to its own weakest load-bearing evidence; never imply the failed branch
-completed. Make completion checkable and demanding enough to force the required
-legwork.
+Prefer an established leading word when it accurately recruits a known practice
+and replaces repeated guidance. Define any local deviation, then use the term
+consistently where the practice must stay salient. Never let it replace
+observable authority, gates, proof, safe failure, Return, or completion.
 
-Treat an implicitly invocable description as the routing predicate: name
-observable request or caller triggers and the closest exclusions without runtime
-procedure or body-summary detail.
-
-Prefer a strong pretrained leading word when one behavior must stay salient
-across decision points. Define it once and reuse only the term. Keep exact
-safety, authority, machine, proof, Return, and completion contracts explicit; a
-leading word never replaces them.
-
-Keep common behavior inline. Load [GLOSSARY.md](GLOSSARY.md) only when
-invocation, behavior shape, information hierarchy, pruning, or completion
-vocabulary affects the work. Split only for independent invocation, irreducible
-branch load, or an observed persistent early-stop defect after sharpening
-completion.
+Keep common behavior inline. Load [GLOSSARY.md](GLOSSARY.md) only when choosing
+or defining a leading word, changing invocation or reference-loading behavior,
+splitting a skill, promoting a lesson across skills, or specifying derived
+state.
 
 ## Prune
 
-After behavior is correct, give each changed or adjacent instruction unit one
-pruning disposition: `Keep`, `Collapse`, `Disclose`, or `Delete`. Keep it when
-removal changes intended behavior, safety, authority, proof, irreversible order,
-safe failure, Return, or completion. Collapse duplicated meaning into one owner
-or an earned leading word. Disclose branch-only detail. Delete no-ops, stale
-exposition, and ownerless clauses. State the positive target first and pair each
-necessary guardrail with its safe action.
+After behavior is correct, mark each changed or adjacent instruction unit
+`Keep`, `Collapse`, `Disclose`, or `Delete`:
 
-## Claim-Matched Proof
+- Keep behavior, safety, authority, proof, irreversible order, safe failure,
+  Return, and completion.
+- Collapse duplicated meaning into one owner.
+- Disclose branch-only detail behind an exact condition and target.
+- Delete no-ops, stale exposition, and ownerless clauses.
 
-Use read-back for exact bytes and mutations, focused structural checks for
-machine contracts, and relationship traces for ownership. Bind evidence to the
-exact claim, candidate state, and invalidation boundary. Capability or
-structural proof does not establish unobserved live behavior. When a claim
-attributes changed invocation, judgment, action, context loading, Return, or
-completion to exact wording, load [BEHAVIOR-EVALS.md](BEHAVIOR-EVALS.md) and use
-uncontaminated direct controls with fixed tasks and rubrics, fresh contexts,
-candidate language absent from control inputs, and root-owned judgment.
-Structural evidence does not prove wording efficacy.
+Apply the same removal test to every proposed step, field, artifact, view, and
+check.
 
-## Author Lock
+State the positive target first and pair each necessary guardrail with its safe
+action.
 
-After authorized semantic edits, read back exact mutations and current work
+## Prove
+
+Match proof to the claim: read back exact bytes and mutations, use focused
+structural checks for machine contracts, and trace relationships to their
+owners. Bind evidence to the exact candidate and its invalidation boundary.
+Structural evidence does not prove live behavior.
+
+For a claim that exact wording changes invocation, judgment, action, context
+loading, Return, or completion, load
+[BEHAVIOR-EVALS.md](BEHAVIOR-EVALS.md).
+
+**Author Lock:** after authorized edits, read back mutations and current work
 state, preserve unrelated work, run proportionate canonical proof, and stop
 before installation, publishing, synchronization, staging, commit, push, or
 other delivery.
 
 ## Return
 
-Return `complete`, `partial`, or `blocked` with the selected operation and
-coverage. Audit reports the verdict, impact-ordered findings, useful exact
-candidates, deliberate non-changes, behavior at risk, and evidence limits.
-Author reports changed canonical surfaces, behavior added, changed, or removed,
-proof, preserved unrelated state, deliberate non-changes, and residual risk.
-Name every skipped proof, evidence limit, and unchanged foreign state.
+Return `complete`, `partial`, or `blocked` with the operation and coverage.
+Use `partial` when safe work completed but admitted coverage or proof remains
+incomplete.
 
-Complete only when coverage is classified; every affected trigger, owner,
-relationship, pointer, gate, output, mutation boundary, Return, and completion
-condition has one home; required differences are decided; proportionate proof
-and read-back are recorded; unrelated work is preserved; and execution stops
-before installation or delivery.
+- **Audit complete:** requested coverage is inspected; the verdict, supported
+  impact-ordered findings, advisory candidates, deliberate non-changes,
+  behavior at risk, and material evidence limits are reported.
+- **Author complete:** affected contracts have one owner; required differences
+  are implemented; exact mutations, proof, preserved unrelated state,
+  deliberate non-changes, and residual risk are reported; Author Lock holds.
+
+Name skipped proof or unchanged foreign state only when its omission could be
+mistaken for completed scope.

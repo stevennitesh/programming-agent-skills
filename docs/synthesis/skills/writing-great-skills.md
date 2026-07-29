@@ -13,32 +13,30 @@ owned by the research packet and compact final manifest.
 
 Decision: `accepted`.
 
-The canonical package now makes predictable behavior its explicit outcome and
-adds one compact Behavior Shape contract:
+The canonical package now uses one ordered common path:
+`Resolve -> Trace -> Shape -> Prune -> Prove -> Return`.
 
-- use the fewest meaningful state transitions;
-- keep cross-cutting constraints in gates with condition, passing evidence,
-  and safe failure;
-- treat an exact user-approved caller packet as explicit authority for its named
-  explicit-only invocation, never as semantic auto-routing;
-- make completion clear and demanding enough to force required legwork;
-- use an earned pretrained Leading Word without replacing exact contracts;
-- prune changed and adjacent instructions as `Keep`, `Collapse`, `Disclose`,
-  or `Delete`; and
-- sharpen an observably weak branch pointer before inlining persistent misses.
+The refinement:
 
-Audit/Author authority, behavior-capable coverage, single ownership,
-counterfactual evaluation, implicit invocation, package inventory, Return,
-canonical proof, and the stop before installation or delivery remain
-unchanged. `BEHAVIOR-EVALS.md`, callers, relationships, and invocation policy
-need no semantic change. Structural checks and behavior fixtures may protect
-the contract, but fresh counterfactual samples are still required before
-claiming wording-caused behavior improvement.
+- separates successful Audit completion from target conformance;
+- defines behavioral evaluation as a frozen read-only proof branch inside
+  either operation with a parent status and one evaluation decision;
+- uses steps for ordered actions and gates for cross-cutting boundary checks;
+- narrows `GLOSSARY.md` to Leading Word, invocation, reference-loading,
+  transfer, splitting, and derived-state vocabulary;
+- aligns active context and relationship records with that narrowed owner;
+- restores established Leading Words as semantic compression without letting
+  them replace exact contracts;
+- preserves one-owner relationships, executable checks, local failure
+  containment, process-level pruning, claim-matched proof, and exact handoff
+  before installation or delivery; and
+- uses control/candidate language in `BEHAVIOR-EVALS.md` while retaining the
+  deploy-campaign M0/H1 aliases and exact reproducibility identities.
 
-Current canonical proof on 2026-07-28: the focused contract suite passed
-68 tests, skill validation passed, and the full suite passed 590 tests with
-5 skipped. The updated behavior fixture is a registered future evidence lane,
-not executed efficacy proof.
+The invocation policy, callers, relationship owners, and four-file package
+remain unchanged. Structural proof is reported with the Author closeout; fresh
+counterfactual samples remain required before claiming wording-caused behavior
+improvement.
 
 <!-- WRITING-GREAT-SKILLS-DEPLOY-DECISION:START -->
 

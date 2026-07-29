@@ -2139,11 +2139,17 @@ def test_writing_great_skills_keeps_shape_and_relationship_boundary() -> None:
     skill_dir = CUSTOM / "writing-great-skills"
     skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     glossary = (skill_dir / "GLOSSARY.md").read_text(encoding="utf-8")
+    behavior_evals = (skill_dir / "BEHAVIOR-EVALS.md").read_text(
+        encoding="utf-8"
+    )
     relationships = (
         ROOT / "docs/synthesis/skill-context-relationships.md"
     ).read_text(encoding="utf-8")
+    context = (ROOT / "CONTEXT.md").read_text(encoding="utf-8")
     normalized_skill = " ".join(skill.split())
     normalized_glossary = " ".join(glossary.split())
+    normalized_evals = " ".join(behavior_evals.split())
+    normalized_context = " ".join(context.split())
 
     assert implicit_policy(skill_dir)
     assert {
@@ -2165,28 +2171,24 @@ def test_writing_great_skills_keeps_shape_and_relationship_boundary() -> None:
         "GLOSSARY.md",
     ))
     assert "Make canonical skill behavior predictable" in normalized_skill
-    assert "## Behavior Shape" in skill
-    assert (
-        "Each gate names its condition, passing evidence, and safe failure action"
-        in normalized_skill
-    )
-    for contract in (
-        "narrowest shared owner",
-        "one materially different applicable case",
-        "closest non-applicable case",
-        "every term that changes admission, branching, ordering, pass/fail, or completion",
-        "counting scope and invalidation condition",
-        "derived view as a projection of its owning facts",
-        "Prune removal test to every proposed step, required field, artifact, view, or check",
-        "transition that could invalidate it",
-        "directly checkable invariants before the judgment or action they protect",
-        "failed gate to the smallest dependent action or output",
-        "each independent supported result",
-        "its own weakest load-bearing evidence",
-        "exact claim, candidate state, and invalidation boundary",
-        "does not establish unobserved live behavior",
-    ):
-        assert contract in normalized_skill
+    assert re.findall(
+        r"^## (Resolve|Trace|Shape|Prune|Prove|Return)$",
+        skill,
+        flags=re.MULTILINE,
+    ) == ["Resolve", "Trace", "Shape", "Prune", "Prove", "Return"]
+    assert "read-only proof branch within either operation" in normalized_skill
+    assert "not a third operation" in normalized_skill
+    assert "exact next-owner handoff" in normalized_skill
+    assert "Use steps for ordered actions or state changes" in normalized_skill
+    assert "Use gates for cross-cutting checks" in normalized_skill
+    assert "condition, passing evidence, and safe failure action" in normalized_skill
+    assert "do not defer it to review" in normalized_skill
+    assert "Recheck only after a transition could invalidate it" in normalized_skill
+    assert "Never report a failed branch complete" in normalized_skill
+    assert "weakest load-bearing evidence" in normalized_skill
+    assert "every proposed step, field, artifact, view, and check" in normalized_skill
+    assert "use the term consistently where the practice must stay salient" in normalized_skill
+    assert "Audit complete" in skill and "Author complete" in skill
     assert "## Prune" in skill
     assert all(term in skill for term in (
         "`Keep`",
@@ -2195,22 +2197,43 @@ def test_writing_great_skills_keeps_shape_and_relationship_boundary() -> None:
         "`Delete`",
     ))
     assert all(term in glossary for term in (
-        "**Predictable behavior**",
-        "**Leading word**",
-        "**Gate**",
-        "**Completion criterion**",
+        "**Leading word:**",
+        "**Implicitly invocable:**",
+        "**Explicit-only:**",
+        "**Description:**",
+        "**Branch-only reference:**",
+        "**Skill split:**",
+        "**Transfer gate:**",
+        "**Derived view:**",
     ))
-    assert (
-        "sharpen the pointer's target and loading condition first"
-        in normalized_glossary
-    )
-    assert "only if the sharpened pointer still fails" in normalized_glossary
+    assert "sharpen that pointer first" in normalized_glossary
+    assert "narrowest shared owner" in normalized_glossary
+    assert "projection of its owning facts" in normalized_glossary
+    assert "read-only proof branch" in normalized_evals
+    assert "fresh isolated model executions" in normalized_evals
+    assert "parent operation status plus one evaluation decision" in normalized_evals
+    assert all(term in normalized_context for term in (
+        "leading words",
+        "reference loading",
+        "skill splitting",
+        "transfer gates",
+        "derived views",
+        "completion",
+        "pruning stay inline",
+    ))
     assert "fork_turns" not in skill
     assert (
         "bundled system `skill-creator` owns new-package scaffolding and metadata mechanics"
         in relationships
     )
     assert "$writing-great-skills` owns semantic quality" in relationships
+    assert all(term in relationships for term in (
+        "leading-word",
+        "reference-loading",
+        "skill-splitting",
+        "derived-state",
+        "fresh-context counterfactual wording evaluation",
+    ))
 
 
 def test_merge_conflict_resolution_is_three_way_and_finish_bounded() -> None:
