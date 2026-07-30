@@ -2816,7 +2816,7 @@ def test_to_tickets_preserves_coverage_readiness_and_frontier_contract() -> None
     packages = (
         (
             CUSTOM / "to-tickets",
-            "ca0ab6d53ed08a82021b33829f617a111db5eaad104f66ff7e52df841fb48933",
+            "af54ca4b0ee1b5026678beb0455270c45e5aadd703a975678eb3c6b0c37793b2",
             "prompt3-candidate",
         ),
     )
