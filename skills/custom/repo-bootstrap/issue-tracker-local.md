@@ -5,7 +5,7 @@ Tracker state is durable, version-controlled Markdown under
 representation. Skills own packet content, readiness judgment, authorization,
 workflow order, claim lifecycle, review, and completion.
 
-## Layout and operations
+## Operations
 
 - **Parent:** `.scratch/<feature-slug>/SPEC.md`.
 - **Issues:** `.scratch/<feature-slug>/issues/<NN>-<slug>.md`, numbered from
@@ -58,5 +58,6 @@ frontier selection, claim lifecycle, outcomes, and map completion.
 
 After a mutation, reread changed files and affected dependents and verify every
 intended body, relationship, state, claim, comment, closeout field, and
-resulting frontier. Treat any unverified partial mutation as blocked and report
-applied, failed, and unknown effects plus the safest recovery.
+resulting frontier. When recovery is required, do not retry blindly. Treat any
+unverified partial mutation as blocked and report applied, failed, and unknown
+effects plus the safest recovery.

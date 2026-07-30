@@ -222,11 +222,11 @@ def test_wayfinder_owns_claim_lifecycle_while_trackers_own_representation() -> N
         assert token in wayfinder
 
 
-def test_repo_bootstrap_validates_provider_specific_wayfinder_representation() -> None:
+def test_repo_bootstrap_validates_provider_tracker_templates() -> None:
     validator = runpy.run_path(
         str(CUSTOM / "repo-bootstrap/scripts/validate_setup.py")
     )
-    check = validator["wayfinder_contract_failures"]
+    wayfinder_failures = validator["wayfinder_contract_failures"]
     trackers = (
         CUSTOM / "repo-bootstrap/issue-tracker-github.md",
         CUSTOM / "repo-bootstrap/issue-tracker-gitlab.md",
@@ -235,14 +235,28 @@ def test_repo_bootstrap_validates_provider_specific_wayfinder_representation() -
 
     for tracker in trackers:
         text = tracker.read_text(encoding="utf-8")
-        assert check(text, str(tracker)) == []
+        failures: list[str] = []
+        validator["require_tokens"](
+            text,
+            str(tracker),
+            validator["WORK_ITEM_TOKENS"],
+            failures,
+        )
+        validator["require_prose_tokens"](
+            text,
+            str(tracker),
+            validator["WORK_ITEM_PROSE_TOKENS"],
+            failures,
+        )
+        assert failures == []
+        assert wayfinder_failures(text, str(tracker)) == []
 
     hosted = trackers[0].read_text(encoding="utf-8").replace(
         "Blocked: waiting - <gist>", "Blocked: paused - <gist>"
     )
     assert any(
         "Blocked: waiting - <gist>" in item
-        for item in check(hosted, "hosted")
+        for item in wayfinder_failures(hosted, "hosted")
     )
 
     local = trackers[2].read_text(encoding="utf-8").replace(
@@ -252,7 +266,7 @@ def test_repo_bootstrap_validates_provider_specific_wayfinder_representation() -
     assert any(
         "Status: Pending | In Progress | Resolved | Blocked | Waiting | Out Of Scope"
         in item
-        for item in check(local, "local")
+        for item in wayfinder_failures(local, "local")
     )
 
 
@@ -483,7 +497,7 @@ def assert_repo_bootstrap_semantic_contract(
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     assert_repo_bootstrap_semantic_contract(
         CUSTOM / "repo-bootstrap",
-        "da5af9e627b991dc42e43bd3e98ffb48437c1e1c71c6aa14a6c9ad7358f180c1",
+        "27b40be21a07abf101c21cc9b16b3b20ee53ef8cc3be8b79d6675dc5cfc501a4",
         profile="incumbent",
     )
 
