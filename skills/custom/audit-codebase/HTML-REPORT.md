@@ -46,7 +46,7 @@ Before deriving selection state from a supplied report:
    `<root>/.scratch/audit-codebase/<safe-run-id>/report.html`;
 2. reject traversal, redirected or reparse-point parents, a path outside that
    root, or mismatched embedded repository and run identities;
-3. decode strict UTF-8 and require report version `4`, one map state, and one
+3. decode strict UTF-8 and require report version `5`, one map state, and one
    unique selected subsystem or candidate anchor in an admissible state; and
 4. record the report SHA-256 for collision detection.
 
@@ -328,7 +328,7 @@ same-named anchors.
 
 Before publication, validate the prospective complete report:
 
-- report version is `4`;
+- report version is `5`;
 - every subsystem has one static container, narrative region, and three
   insertion anchors;
 - every finding has one owning subsystem and valid current state;

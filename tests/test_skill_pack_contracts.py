@@ -1564,6 +1564,8 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert 'audit-codebase-report-version" content="5"' in report
     assert "The report version is structural" in report
     assert "must not add a requirement to an\nexisting version" in report
+    assert "require report version `5`" in report
+    assert "- report version is `5`;" in report
     assert "Do not render\n`summary:map` for a state-only transition" in audit
     assert "nodes, labels, file counts, or direct edges" in audit
     assert "candidate-insert:<subsystem-id>" in report
