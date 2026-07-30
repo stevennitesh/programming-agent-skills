@@ -27,6 +27,11 @@ separately; invocation alone grants neither.
    An unmerged index with unknown operation may be inspected or reconciled only
    from proven object and intent roles and has no **Finish**. Markers are
    signals, not proof of conflict.
+   When no active conflict or unmerged entry remains and only post-operation
+   behavior is broken for an uncertain reason, recommend `$diagnosing-bugs`
+   and stop without reconciliation or finish mutation. Return the exact Git
+   state, symptom, available evidence, and Return owner; leave Diagnosis
+   unstarted.
 2. **Trace.** Load [OPERATIONS.md](OPERATIONS.md) only for the observed
    operation and relevant conflict-class rows. Inspect the base and sides in
    their actual operation roles. Trace intent through the operation goal and

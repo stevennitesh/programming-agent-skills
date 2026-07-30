@@ -16,7 +16,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:dcc9e030f6e0 -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:9b13d504a6c8 -->"
 ENGINEERING_PRIMER_TOKEN = (
     "Explore imaginatively. Converge under proof. Simplify ruthlessly."
 )
@@ -65,78 +65,101 @@ AGENT_POINTERS = (
     "docs/agents/engineering-contract.md",
 )
 
+DOMAIN_TOKENS = (
+    "## Route",
+    "## Preserve The Model",
+    "**single-context:**",
+    "**multi-context:**",
+    "CONTEXT-MAP.md",
+    "<context-root>/docs/adr/",
+    "$domain-modeling",
+)
+
+DOMAIN_PROSE_TOKENS = (
+    "Missing records are not setup gaps.",
+    "setup neither creates nor recommends them.",
+    "invariants",
+    "Do not flatten different meanings across contexts.",
+    "return the exact gap",
+    "never silently override them",
+    "decision owner",
+)
+
 CONTRACT_LITERAL_TOKENS = (
     ENGINEERING_PRIMER_TOKEN,
-    "## Engineering Taste",
-    "**Explore before commitment.**",
-    "**Prove meaning.**",
-    "**Deep simplicity.**",
-    "**Stewardship.**",
-    "## Code Quality Contract",
-    "**Lean test portfolio — prefer.**",
-    "**Grounded implementation — must.**",
-    "**Correct and robust — must.**",
-    "**Domain faithful — must.**",
-    "**Explicit and provable — must.**",
-    "**Change closure — must.**",
-    "**Measured when relevant — must for claims.**",
-    "**Deep and local — prefer.**",
-    "**Simple after proof — prefer.**",
-    "**Readable by default — prefer.**",
-    "**Source trace:**",
+    "not a workflow, checklist, review gate",
+    "Skills own procedures, checks, stopping",
+    "## How To Read This Contract",
+    "**Must** marks a correctness, safety, integrity, or honesty floor.",
+    "**Prefer** marks the default engineering choice.",
+    "**Method** names a practice triggered by a stated condition.",
+    "## Shared Concepts",
     "**Bounded slice:**",
     "**Commitment boundary:**",
-    "**Operational acceptance:**",
-    "**Semantic correctness:**",
-    "**Semantic proof:**",
     "**Proof seam:**",
     "**Proof lane:**",
-    "**Behavior-owned test portfolio:**",
-    "**Tracer bullet:**",
-    "**Fixed point:**",
-    "**Spec / Standards:**",
+    "**Change closure:**",
     "**Residual risk:**",
-    "Command availability does not determine proof scope.",
-    "Explore -> Choose -> Prove -> Expand -> Simplify -> Lock",
-    ".tmp/",
-    ".scratch/",
-    "## Lock",
+    "## Keep Faith With The Work",
+    "### Preserve Commitments And Domain Truth",
+    "### Make Correctness Robust",
+    "### Respect Trust And Data Boundaries",
+    "### Keep Evidence Honest",
+    "### Practice Stewardship",
+    "## Shape Code For Understanding",
+    "### Deep Simplicity",
+    "### Local Readability",
+    "### Fit Before Novelty",
+    "### Build Only What Is Needed",
+    "### Keep Tests Lean And Meaningful",
+    "YAGNI",
+    "DRY",
+    "## Methods When The Condition Applies",
+    "### Reason Across State Boundaries",
+    "### Use A Negative Control",
+    "### Close Displaced Paths",
+    "### Measure Consequential Claims",
 )
 
 WORK_ITEM_TOKENS = (
-    "## Work-item operations",
-    "**Packet**",
-    "**Ready-for-agent state**",
-    "**Mutation read-back**",
-    "**Parent / child**",
-    "**Blocking**",
-    "**Ready query**",
-    "**Claim**",
-    "**Release**",
-    "**Closeout**",
+    "## Operations",
+    "## Work-item representation",
+    "**Packet:**",
+    "**Parent / child:**",
+    "**Blocking:**",
+    "**Ready query:**",
+    "**Claim:**",
+    "**Closeout:**",
+    "## Mutation read-back",
+)
+WORK_ITEM_PROSE_TOKENS = (
+    "navigation metadata",
+    "agent and human frontiers separately",
+    "false-ready",
+    "do not retry blindly",
+    "unverified partial mutation",
 )
 
 WAYFINDER_TOKENS = (
-    "## Wayfinding operations",
-    "Participation: HITL | AFK",
-    "**Frontier query**",
-    "**Claim**",
+    "## Wayfinding representation",
+    "Participation:",
+    "Resolution owner:",
+    "Resolver:",
+    "Expected return:",
+    "Re-entry owner: $wayfinder",
     "Claim token:",
     "Claimed at:",
-    "codex/<lowercase UUIDv4>",
-    "<YYYY-MM-DDTHH:MM:SSZ>",
-    "Maintain",
-    "claims the map",
-    "Elapsed time alone never makes a claim stale.",
-    "explicit user approval",
-    "**Release**",
-    "**Outcome**",
-    "**Complete map**",
 )
 
-WAYFINDER_PROSE_TOKENS = ("never reuse it across invocations",)
-HOSTED_WAYFINDER_PROSE_TOKENS = ("wait by adding the waiting marker",)
-LOCAL_WAYFINDER_PROSE_TOKENS = ("set `Waiting` with its return record",)
+HOSTED_WAYFINDER_TOKENS = (
+    "docs/agents/triage-labels.md",
+    "Blocked: waiting - <gist>",
+    "exact return record",
+)
+LOCAL_WAYFINDER_TOKENS = (
+    "Status: Pending | In Progress | Resolved | Blocked | Waiting | Out Of Scope",
+    "waiting return records",
+)
 
 GITHUB_RELATIONSHIP_MODES = (
     (
@@ -201,13 +224,19 @@ def require_prose_tokens(
 def wayfinder_contract_failures(text: str, relative: str) -> list[str]:
     failures: list[str] = []
     require_tokens(text, relative, WAYFINDER_TOKENS, failures)
-    require_prose_tokens(text, relative, WAYFINDER_PROSE_TOKENS, failures)
     provider_tokens = (
-        LOCAL_WAYFINDER_PROSE_TOKENS
+        LOCAL_WAYFINDER_TOKENS
         if "issue tracker: local markdown" in text.lower()
-        else HOSTED_WAYFINDER_PROSE_TOKENS
+        else HOSTED_WAYFINDER_TOKENS
     )
-    require_prose_tokens(text, relative, provider_tokens, failures)
+    require_tokens(text, relative, provider_tokens, failures)
+    return failures
+
+
+def domain_contract_failures(text: str, relative: str) -> list[str]:
+    failures: list[str] = []
+    require_tokens(text, relative, DOMAIN_TOKENS, failures)
+    require_prose_tokens(text, relative, DOMAIN_PROSE_TOKENS, failures)
     return failures
 
 
@@ -350,10 +379,16 @@ def main() -> int:
     tracker = texts["docs/agents/issue-tracker.md"]
     if tracker:
         require_tokens(tracker, "docs/agents/issue-tracker.md", WORK_ITEM_TOKENS, failures)
+        require_prose_tokens(
+            tracker,
+            "docs/agents/issue-tracker.md",
+            WORK_ITEM_PROSE_TOKENS,
+            failures,
+        )
         failures.extend(
             wayfinder_contract_failures(tracker, "docs/agents/issue-tracker.md")
         )
-        if "post a codex-ready brief" not in tracker.lower():
+        if "**comment or brief:**" not in tracker.lower():
             failures.append(
                 "docs/agents/issue-tracker.md is missing Codex-ready brief transport"
             )
@@ -380,6 +415,7 @@ def main() -> int:
         failures.append(
             "docs/agents/domain.md must set Configured layout to single-context or multi-context"
         )
+    failures.extend(domain_contract_failures(domain, "docs/agents/domain.md"))
 
     contract = texts["docs/agents/engineering-contract.md"]
     require_tokens(
@@ -393,29 +429,41 @@ def main() -> int:
         "docs/agents/engineering-contract.md",
         (
             (
-                "## Code Quality Contract",
+                "## How To Read This Contract",
                 (
-                    "**Must** marks a correctness or safety",
-                    "deviation alone is not a defect",
-                    "not another workflow stage",
-                    "**Lean test portfolio — prefer.**",
-                    "**Change closure — must.**",
-                    "supported compatibility obligation",
-                    "Removal Trigger",
+                    "Methods are not",
+                    "responsible task or skill owns the procedure and evidence",
+                    "No generic rule overrides",
                 ),
             ),
             (
-                "## Tight Engineering Spine",
-                ("**Expand:**", "bounded slice", "perform Change Closure"),
+                "## Keep Faith With The Work",
+                (
+                    "operational definition or exact authoritative owner",
+                    "not merely a successful happy path",
+                    "Validate untrusted or contract-sensitive input",
+                    "A focused check",
+                    "Preserve unrelated behavior, work, and durable decisions",
+                ),
             ),
-            ("## Proof Discipline", ("maintained repo configuration",)),
             (
-                "## Work State",
-                ("**Refresh after interaction.**", "**Git mutation owners.**"),
+                "## Shape Code For Understanding",
+                (
+                    "supported variation, repeated policy, or a real external",
+                    "Apply YAGNI",
+                    "Apply DRY to shared meaning and policy",
+                    "Consolidation must preserve coverage and diagnostic clarity",
+                    "Test count is not a goal",
+                ),
             ),
             (
-                "## Lock",
-                (".tmp/", ".scratch/", "Change Closure", "mutation boundary"),
+                "## Methods When The Condition Applies",
+                (
+                    "not a blind Cartesian",
+                    "controlled violation fails for the intended reason",
+                    "Retain an older path only for a supported",
+                    "measure before claiming improvement",
+                ),
             ),
         ),
         failures,

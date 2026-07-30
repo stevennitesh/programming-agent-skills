@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: "Use directly for one bounded red-testable behavior, or as the inner loop of an implementation owner. Exclude whole-ticket delivery and closeout, bugs with uncertain expected behavior, exact symptom, cause, or trusted red-capable reproduction, and throwaway design questions."
+description: 'Test-driven development. Use when the user wants to build features or fix bugs test-first, mentions "red-green-refactor", or wants integration tests.'
 ---
 
 # Test-Driven Development
@@ -17,7 +17,9 @@ mutation, publishing, and closeout.
 
 When a bug's expected behavior, exact symptom, cause, or trusted red-capable
 reproduction is uncertain, return `diagnosis-required` with the intact facts to
-the caller and stop. Hand off throwaway design questions to `$prototype`.
+the caller and stop. Return `design-evidence-required` with the intact facts
+to the caller and stop when the question needs design evidence rather than
+production proof.
 
 Read [tests.md](tests.md) only when test shape, oracle, or seam remains unclear
 after inspecting nearby tests. Read [mocking.md](mocking.md) before adding a

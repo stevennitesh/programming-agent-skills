@@ -40,7 +40,7 @@ red-testable behavior. For an uncertain bug, return `needs-feedback` with a
 `diagnosis-required` packet containing the facts, evidence, environment, exact
 lane state, authorities, and root Return owner; stop.
 
-Choose implementation technique under the routed Code Quality Contract. Start
+Choose implementation technique under the routed engineering contract. Start
 from assigned grounding and refresh only facts that current evidence makes
 stale or contradictory.
 

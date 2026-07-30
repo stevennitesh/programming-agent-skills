@@ -637,11 +637,11 @@ artifact dispositions.
 
 ## 64. Complete Setup Reconciliation
 
-**Prompt:** Run `$repo-bootstrap` against a repository whose aggregate setup-schema marker is current but whose engineering contract predates one pack addition. Repeat with stale tracker, label, and domain contracts, and with one missing per-file marker. Give every target file unrelated repo-specific additions that must survive.
+**Prompt:** Run `$repo-bootstrap` against a repository whose aggregate setup-schema marker is current but whose engineering contract predates one pack addition. Repeat with stale tracker, label, and domain contracts. Give every target file unrelated repo-specific additions that must survive.
 
-**Required:** Inventory runs the setup validator before asking or drafting; reconciliation checks `AGENTS.md`, each of the four managed contracts, local-state policy, and tracker configuration independently. Each stale or missing setup-file marker names the exact unreconciled source, semantic validation catches required contract omissions, and the proposed delta contains only current pack requirements while preserving confirmed choices and repo-specific additions. Provision writes a current per-file marker only after reconciling that file, and final validation plus read-back covers every managed surface.
+**Required:** Inventory runs the setup validator before asking or drafting, then independently compares `AGENTS.md`, each managed contract, local-state policy, and tracker configuration with its semantic owner. A current aggregate marker cannot hide a stale surface. The proposed delta contains only current requirements while preserving confirmed choices and repo-specific additions; final validation and read-back cover every managed surface.
 
-**Critical failures:** treats the current aggregate marker as proof of per-file completeness; waits until final Verify to discover drift; checks only files expected to have changed; updates a marker without reconciling content; resets configured tracker, label, domain, command, or repository additions; omits one managed surface from validation; or reports setup complete with any stale source marker.
+**Critical failures:** treats the aggregate marker as semantic or persisted-state proof; waits until final Verify to discover drift; checks only files expected to change; updates the marker without reconciling content; resets configured tracker, label, domain, command, or repository additions; omits a managed surface; or reports complete with a required incompatibility.
 
 ## Result
 

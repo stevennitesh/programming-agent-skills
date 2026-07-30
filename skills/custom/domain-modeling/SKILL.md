@@ -60,9 +60,10 @@ Trace -> Challenge -> Resolve -> (Persist -> Verify | Render) -> Return
 3. **Resolve.** Settle the canonical term or decision,
    implementation-independent meaning, owning context, load-bearing sources, and
    decision authority. Add aliases, invariants, boundaries, relationships,
-   conflicts, and consequences only when material. Preserve intended truth when
-   implementation differs, expose the contradiction, and keep unresolved meaning
-   out of durable records.
+   conflicts, and consequences only when material. When implementation and
+   proposed meaning differ, keep the change unresolved until the meaning
+   authority classifies an implementation defect, model correction, or
+   intentional migration.
 
    For each context relationship, settle interaction direction,
    responsibilities, contract, language ownership, and change authority. Apply a

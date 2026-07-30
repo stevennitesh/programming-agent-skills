@@ -92,8 +92,9 @@ Select patterns from model behavior, not organizational influence alone:
   `_Avoid_`.
 - Keep generic technical vocabulary, ordinary words without context-specific
   meaning, and code indexes out.
-- Let one context own canonical meaning; consumers reference it through the
-  relationship contract.
+- Within one context, its local model owns canonical meaning. Across contexts,
+  preserve independent meanings unless an explicit relationship contract or
+  Shared Kernel says otherwise.
 - Define each local term and mapping when contexts translate.
 - Repeat definitions only for a genuine Shared Kernel with explicit joint
   control.

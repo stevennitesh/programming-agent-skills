@@ -5,7 +5,12 @@ import re
 import runpy
 from pathlib import Path
 
-from scripts import campaign_artifacts, skill_pack_contract, validate_skills
+from scripts import (
+    campaign_artifacts,
+    pack_contract,
+    skill_pack_contract,
+    validate_skills,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -139,24 +144,24 @@ def test_tracker_templates_share_ready_state_navigation_and_readback() -> None:
         CUSTOM / "repo-bootstrap/issue-tracker-local.md",
     ]
     required = (
-        "**Ready-for-agent state**",
-        "**Ready-for-human state**",
+        "## Work-item representation",
+        "**State:**",
         "navigation metadata",
-        "not proof of content completeness",
-        "$triage",
-        "$to-tickets",
-        "**Ready query**",
+        "not proof that a packet or transition is valid",
+        "**Ready query:**",
         "agent and human frontiers separately",
-        "**Mutation read-back**",
-        "partial mutation is blocked",
+        "## Mutation read-back",
+        "unverified partial mutation",
     )
-    producer_owned = (
+    skill_owned = (
         "Source Trace",
         "observable acceptance criteria",
         "proof lane",
         "expected write scope",
         "parallel-safety note",
         "scope fence",
+        "landed-awaiting-lock",
+        "Elapsed time alone never makes a claim stale",
     )
 
     for tracker in trackers:
@@ -164,14 +169,13 @@ def test_tracker_templates_share_ready_state_navigation_and_readback() -> None:
         normalized = " ".join(text.split())
         for token in required:
             assert token in normalized, f"{tracker} is missing {token}"
-        work_items = " ".join(
-            text.split("## Work-item operations", 1)[1].split()
-        ).lower()
-        for token in producer_owned:
-            assert token.lower() not in work_items, f"{tracker} still owns {token}"
+        for token in skill_owned:
+            assert token.lower() not in normalized.lower(), (
+                f"{tracker} still owns {token}"
+            )
 
 
-def test_wayfinder_tracker_claims_distinguish_sessions_and_recover_explicitly() -> None:
+def test_wayfinder_owns_claim_lifecycle_while_trackers_own_representation() -> None:
     trackers = (
         CUSTOM / "repo-bootstrap/issue-tracker-github.md",
         CUSTOM / "repo-bootstrap/issue-tracker-gitlab.md",
@@ -179,37 +183,46 @@ def test_wayfinder_tracker_claims_distinguish_sessions_and_recover_explicitly() 
     )
     for tracker in trackers:
         wayfinding = tracker.read_text(encoding="utf-8").split(
-            "## Wayfinding operations", 1
+            "## Wayfinding representation", 1
         )[1]
         wayfinding_flat = " ".join(wayfinding.split())
         for token in (
-            "MAP-FORMAT.md",
+            "Participation:",
             "Resolution owner:",
+            "Resolver:",
+            "Expected return:",
             "Re-entry owner: $wayfinder",
-            "diagnosis",
-            "approved map order",
             "Claim token:",
             "Claimed at:",
-            "codex/<lowercase UUIDv4>",
-            "<YYYY-MM-DDTHH:MM:SSZ>",
-            "Maintain claims the map",
-            "claims the map before recording any ticket outcome",
-            "reuse it for both claims",
-            "waiting",
-            "exact return trigger",
-            "through Advance",
-            "never reuse it across invocations",
-            "different token owns the item",
-            "Elapsed time alone never makes a claim stale.",
-            "explicit user approval",
-            "takeover reason",
-            "Mutation read-back",
         ):
             assert token in wayfinding_flat, f"{tracker} is missing {token}"
-        assert "Its body holds Destination" not in wayfinding
+        for foreign_procedure in (
+            "codex/<lowercase UUIDv4>",
+            "<YYYY-MM-DDTHH:MM:SSZ>",
+            "Elapsed time alone never makes a claim stale.",
+            "approver authority",
+        ):
+            assert foreign_procedure not in wayfinding_flat
+
+    wayfinder = " ".join(
+        (CUSTOM / "wayfinder/SKILL.md").read_text(encoding="utf-8").split()
+    )
+    for token in (
+        "codex/<lowercase UUIDv4>",
+        "<YYYY-MM-DDTHH:MM:SSZ>",
+        "For each invocation",
+        "never across invocations",
+        "A different token owns an item",
+        "Elapsed time alone never makes a claim stale.",
+        "exclusive lock with an observable losing-race result",
+        "affirmed destination owner or provider administrator",
+        "approver authority",
+        "verify its absence",
+    ):
+        assert token in wayfinder
 
 
-def test_repo_bootstrap_validates_wrapped_provider_specific_wayfinder_prose() -> None:
+def test_repo_bootstrap_validates_provider_specific_wayfinder_representation() -> None:
     validator = runpy.run_path(
         str(CUSTOM / "repo-bootstrap/scripts/validate_setup.py")
     )
@@ -225,18 +238,20 @@ def test_repo_bootstrap_validates_wrapped_provider_specific_wayfinder_prose() ->
         assert check(text, str(tracker)) == []
 
     hosted = trackers[0].read_text(encoding="utf-8").replace(
-        "wait by adding the waiting marker", "wait without a marker"
+        "Blocked: waiting - <gist>", "Blocked: paused - <gist>"
     )
     assert any(
-        "wait by adding the waiting marker" in item
+        "Blocked: waiting - <gist>" in item
         for item in check(hosted, "hosted")
     )
 
-    local = " ".join(trackers[2].read_text(encoding="utf-8").split()).replace(
-        "set `Waiting` with its return record", "record an unspecified pause"
+    local = trackers[2].read_text(encoding="utf-8").replace(
+        "Status: Pending | In Progress | Resolved | Blocked | Waiting | Out Of Scope",
+        "Status: Pending | Resolved",
     )
     assert any(
-        "set `Waiting` with its return record" in item
+        "Status: Pending | In Progress | Resolved | Blocked | Waiting | Out Of Scope"
+        in item
         for item in check(local, "local")
     )
 
@@ -251,33 +266,39 @@ def test_triage_label_template_respects_tracker_pr_policy() -> None:
     assert "Triage PRs only when the tracker enables them" in triage_flat
 
 
-def test_connector_closeout_retains_custody_until_frontier_is_safe() -> None:
-    github_trackers = (
+def test_delivery_skills_own_custody_and_trackers_map_closeout() -> None:
+    hosted_trackers = (
         ROOT / "docs/agents/issue-tracker.md",
         CUSTOM / "repo-bootstrap/issue-tracker-github.md",
         CUSTOM / "repo-bootstrap/issue-tracker-gitlab.md",
     )
-    for tracker in github_trackers:
-        text = tracker.read_text(encoding="utf-8")
-        normalized = " ".join(text.split()).lower()
-        assert "ordinary pre-commit block or abandonment" in normalized
-        assert "accepted commit or campaign landing" in normalized
-        assert "named recovery custodian" in normalized
-        assert "durably non-dispatchable" in normalized
-        assert "affected-frontier read-back succeeds" in normalized
-        assert "release the claim and read back its absence" in normalized
-        assert "read back every intended effect" in normalized
-        assert "absence and the final affected frontier" in normalized
-        assert "a failed command requires refetch" in normalized
-        assert "unless every intended field verifies" in normalized
+    for tracker in hosted_trackers:
+        normalized = " ".join(tracker.read_text(encoding="utf-8").split())
+        assert "**Closeout:**" in normalized
+        assert "## Mutation read-back" in normalized
+        assert "false-ready dependent" in normalized
+        assert "named recovery custodian" not in normalized
 
-    github = github_trackers[0].read_text(encoding="utf-8")
+    github = hosted_trackers[0].read_text(encoding="utf-8")
     assert "**Close implemented items:** yes." in github
-    assert "**Non-completed closure**" in github
 
     bootstrap = (CUSTOM / "repo-bootstrap/SKILL.md").read_text(encoding="utf-8")
-    assert "GitHub default: yes" in bootstrap
-    assert "GitLab default: no" in bootstrap
+    assert "closure defaults to yes for GitHub and no for GitLab" in bootstrap
+
+    implement = " ".join(
+        (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8").split()
+    )
+    parallel = " ".join(
+        (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8").split()
+    )
+    for token in (
+        "Before commit, release a claim only after pending mutations are determinate",
+        "After commit, retain custody until closeout and frontier verification succeed",
+        "named recovery custodian",
+    ):
+        assert token in implement
+    for token in ("landed-awaiting-lock", "indeterminate-closeout claim"):
+        assert token in parallel
 
 
 def test_github_relationship_modes_are_explicit_before_publication() -> None:
@@ -287,10 +308,13 @@ def test_github_relationship_modes_are_explicit_before_publication() -> None:
     )
     for tracker in github_trackers:
         text = tracker.read_text(encoding="utf-8")
+        normalized = " ".join(text.split())
         assert "**Parent / child mode:** native-sub-issues." in text
         assert "**Dependency mode:** native-dependencies." in text
-        assert "Resolve the authenticated operation and read-back route before" in text
-        assert "never switch representations during a publication" in text
+        assert "Resolve the authenticated operation and read-back route before" in (
+            normalized
+        )
+        assert "never switch representations during one publication" in normalized
         assert "when available" not in text
 
     tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
@@ -323,6 +347,31 @@ def test_repo_bootstrap_rejects_unconfigured_github_relationship_modes() -> None
     assert check(tracker) == []
 
 
+def test_repo_bootstrap_domain_contract_is_wrap_safe_and_causal() -> None:
+    validator = runpy.run_path(
+        str(CUSTOM / "repo-bootstrap/scripts/validate_setup.py")
+    )
+    check = validator["domain_contract_failures"]
+    domain = (ROOT / "docs/agents/domain.md").read_text(encoding="utf-8")
+
+    assert check(domain, "docs/agents/domain.md") == []
+    wrapped = domain.replace(
+        "Do not flatten different meanings across contexts.",
+        "Do not flatten different meanings\nacross contexts.",
+    )
+    assert check(wrapped, "docs/agents/domain.md") == []
+
+    invalid = domain.replace(
+        "never silently override them",
+        "may override them",
+    )
+    failures = check(invalid, "docs/agents/domain.md")
+    assert failures == [
+        "docs/agents/domain.md is missing never silently override them"
+    ]
+    assert check(domain, "docs/agents/domain.md") == []
+
+
 def assert_repo_bootstrap_semantic_contract(
     package_root: Path,
     expected_tree_sha256: str,
@@ -335,6 +384,7 @@ def assert_repo_bootstrap_semantic_contract(
     )
     bootstrap = (package_root / "SKILL.md").read_text(encoding="utf-8")
     domain = (package_root / "domain.md").read_text(encoding="utf-8")
+    domain_flat = " ".join(domain.split())
     normalized = " ".join(bootstrap.lower().split())
     assert re.search(r"(?m)^name: repo-bootstrap$", bootstrap)
     assert not implicit_policy(package_root)
@@ -349,6 +399,24 @@ def assert_repo_bootstrap_semantic_contract(
             "Verify",
         ]
         assert bootstrap.index("## Draft") < bootstrap.index("## Provision")
+        for obligation in (
+            "current user names it",
+            "grants no execution, mutation, resumption, or completion authority",
+            "inventory through draft is read-only",
+            "identity is structural evidence",
+            "`compatible`, `delta`, `conflict`, or `not applicable`",
+            "a `conflict` blocks only its affected delta",
+            "with zero delta, mutate nothing",
+            "proposal only",
+            "before each effect",
+            "never recompute a delta under old approval",
+            "create or reconcile",
+            "`applied`, `failed`, `unknown`, or `not attempted`",
+            "never retry without new proof or assume rollback",
+            "setup incomplete",
+            "verified zero delta or verified approved delta",
+        ):
+            assert obligation in normalized
     else:
         assert profile == "m0"
         headings = [
@@ -393,15 +461,29 @@ def assert_repo_bootstrap_semantic_contract(
         ):
             assert forbidden not in normalized
         assert "do not claim automatic rollback" in normalized
-    assert "<context-root>/docs/adr/" in domain
-    assert "following the context root recorded in `CONTEXT-MAP.md`" in domain
+    for contract in (
+        "**Configured layout:** <single-context | multi-context>",
+        "## Route",
+        "## Preserve The Model",
+        "**single-context:** root `CONTEXT.md` and applicable `docs/adr/`.",
+        "`CONTEXT-MAP.md`",
+        "`<context-root>/docs/adr/`",
+        "setup neither creates nor recommends them.",
+        "$domain-modeling` alone may create or change domain truth",
+        "canonical terms, invariants, ownership, and relationship language",
+        "Do not flatten different meanings across contexts.",
+        "return the exact gap",
+        "never silently override them",
+        "decision owner",
+    ):
+        assert contract in domain_flat
     assert "src/<context>/docs/adr/" not in domain
 
 
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     assert_repo_bootstrap_semantic_contract(
         CUSTOM / "repo-bootstrap",
-        "acf39a93dd9168827b0a19dd732060b0f104a64abe5d6acd9e7031b4de92c76e",
+        "da5af9e627b991dc42e43bd3e98ffb48437c1e1c71c6aa14a6c9ad7358f180c1",
         profile="incumbent",
     )
 
@@ -655,11 +737,12 @@ def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
     skill_dir = CUSTOM / "wayfinder"
     wayfinder = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     map_format = (skill_dir / "MAP-FORMAT.md").read_text(encoding="utf-8")
+    flat = " ".join(wayfinder.split())
 
     assert not implicit_policy(skill_dir)
     assert "[MAP-FORMAT.md](MAP-FORMAT.md)" in wayfinder
-    chart, modes = wayfinder.split("### Chart", 1)[1].split("### Advance", 1)
-    advance, remaining = modes.split("### Maintain", 1)
+    chart, modes = wayfinder.split("## Chart", 1)[1].split("## Advance", 1)
+    advance, remaining = modes.split("## Maintain", 1)
     maintain, closure = remaining.split("## Closure", 1)
     for earlier, later in (
         ("**Bound.**", "**Admit.**"),
@@ -677,31 +760,27 @@ def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
         ("**Verify.**", "**Expose.**"),
     ):
         assert advance.index(earlier) < advance.index(later)
-    assert re.findall(r"(?m)^### (Chart|Advance|Maintain)$", wayfinder) == [
+    assert re.findall(r"(?m)^## (Chart|Advance|Maintain)$", wayfinder) == [
         "Chart",
         "Advance",
         "Maintain",
     ]
-    assert "Close only while holding the map claim" in closure
-    assert "zero substantive ticket outcomes" in maintain
-    bound = chart.split("1. **Bound.**", 1)[1].split("2. **Admit.**", 1)[0]
-    bound_flat = " ".join(bound.split())
     for field in (
-        "destination owner",
+        "Destination:",
+        "owner",
         "outcome",
         "scope",
         "route-closing condition",
         "terminal kind",
         "return owner",
     ):
-        assert field in bound_flat
-    assert "Invoke the applicable conversational resolver" in bound_flat
+        assert field in flat
     admit = chart.split("2. **Admit.**", 1)[1].split("3. **Sweep.**", 1)[0]
     admit_flat = " ".join(admit.split())
     assert "exact destination tuple" in admit_flat
-    assert "at least one non-conversational resolver" in admit_flat
-    assert "Wayfinding not needed" in admit_flat
-    assert "recommend `$to-spec` only when the source is already ready" in admit_flat
+    assert "a non-conversational resolver" in admit_flat
+    assert "return `not-needed`" in admit_flat
+    assert "recommend `$to-spec` only for an existing settled source" in admit_flat
     map_template = map_format.split("```markdown", 1)[1].split("```", 1)[0]
     assert re.findall(r"(?m)^## (.+)$", map_template) == [
         "Destination",
@@ -712,17 +791,28 @@ def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
         "Out Of Scope",
     ]
     assert "approved repo-local note path" in map_format
-    advance_flat = " ".join(advance.split())
-    assert advance_flat.index("Continue only after its exact owner") < (
-        advance_flat.index("4. **Resolve.**")
-    )
     chart_flat = " ".join(chart.split())
-    assert chart_flat.index("[MAP-FORMAT.md](MAP-FORMAT.md)") < (
-        chart_flat.index("show one complete mutation packet")
+    authority_flat = " ".join(
+        wayfinder.split("## Authority", 1)[1].split("## Tickets", 1)[0].split()
     )
-    assert "repeat the destination-tuple search" in chart_flat
+    assert "Initial map creation is the exception" in authority_flat
+    assert authority_flat.index("approve its exact title") < authority_flat.index(
+        "create only that map"
+    )
+    assert authority_flat.index("repeat the identity search") < authority_flat.index(
+        "claim the sole canonical match"
+    )
+    assert chart_flat.index("[MAP-FORMAT.md](MAP-FORMAT.md)-conforming") < chart_flat.index(
+        "create only the map"
+    )
+    assert "repeat the destination search" in chart_flat
     assert "sole canonical match" in chart_flat
-    assert "read back their exact identities, then wire" in chart_flat
+    assert chart_flat.index("read back identities") < chart_flat.index(
+        "wire from those identities"
+    )
+    assert "no outcome recorded" in chart_flat
+    assert "no substantive ticket outcome" in " ".join(maintain.split())
+    assert "Close only while holding the map claim" in closure
 
 
 def test_wayfinder_prototype_participation_matches_judgment() -> None:
@@ -730,31 +820,23 @@ def test_wayfinder_prototype_participation_matches_judgment() -> None:
     wayfinder = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     map_format = (skill_dir / "MAP-FORMAT.md").read_text(encoding="utf-8")
 
-    tickets = wayfinder.split("## Tickets", 1)[1].split("## Modes", 1)[0]
+    tickets = wayfinder.split("## Tickets", 1)[1].split("## Chart", 1)[0]
     tickets_flat = " ".join(tickets.split())
     for contract in (
         "`shape/feel` uses HITL, human judgment",
-        "`design evidence` uses AFK and rule-based judgment by default",
-        "`design evidence` uses HITL only when the caller reserves the verdict",
+        "`design evidence` defaults to AFK/rule-based",
+        "use HITL only for a named human verdict owner",
         "decision owner, claim level, judgment mode",
     ):
         assert contract in tickets_flat
-    assert (
-        "supported answer or truthful residual, supported decision implications, "
-        "evidence, limits, and cleanup state"
-    ) in tickets_flat
 
-    approve = wayfinder.split("4. **Approve.**", 1)[1].split("5. **Chart.**", 1)[0]
+    approve = wayfinder.split("4. **Approve.**", 1)[1].split(
+        "5. **Chart.**", 1
+    )[0]
     approve_flat = " ".join(approve.split())
-    for field in (
-        "decision owner",
-        "claim level",
-        "judgment mode",
-        "human judge",
-        "objective verdict criteria",
-    ):
-        assert field in approve_flat
-    assert "Reject" in approve and "incompatible Prototype fields" in approve
+    assert "[MAP-FORMAT.md](MAP-FORMAT.md)-conforming packet" in approve_flat
+    assert "map title" in approve_flat
+    assert "Reject invalid Prototype fields" in approve_flat
 
     for field in (
         "Decision owner:",
@@ -772,63 +854,56 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
     map_format = (skill_dir / "MAP-FORMAT.md").read_text(encoding="utf-8")
     map_flat = " ".join(map_format.split())
 
-    tickets = wayfinder.split("## Tickets", 1)[1].split("## Modes", 1)[0]
+    tickets = wayfinder.split("## Tickets", 1)[1].split("## Chart", 1)[0]
     tickets_flat = " ".join(tickets.split())
-    assert "current user owns a conversation-only decision" in tickets_flat
-    assert "repository contracts and objective proof" in tickets_flat
+    assert "conversation-only decision owned by the current user" in tickets_flat
+    assert "contracts and objective proof settle it" in tickets_flat
     assert "Classify by resolution authority" in tickets_flat
-    assert "Split independently resolvable" in tickets_flat
-    assert "Invoke `$grilling`" in tickets_flat
-    assert "Invoke `$grill-with-docs`" in tickets_flat
-    assert "Pass the user as decision owner" in tickets_flat
-    assert "context action, and separate ADR action" in tickets_flat
+    assert "split independently resolvable" in tickets_flat
+    assert "`$grilling`" in tickets_flat
+    assert "`$grill-with-docs`" in tickets_flat
+    assert "Pass decision and return owners, context action" in tickets_flat
+    assert "separate ADR action" in tickets_flat
     assert "`diagnosis-required`" in tickets_flat
     assert "$diagnosing-bugs" not in tickets_flat
-    assert "Invoke `$to-questionnaire` only after the user explicitly approves" in (
-        tickets_flat
-    )
-    assert "`Questionnaire ready` is `Waiting`, never an answer." in tickets_flat
+    assert "Invoke only after explicit approval of that packet" in tickets_flat
+    assert "`Questionnaire ready` is Waiting, never an answer" in tickets_flat
     for field in (
         "Resolution owner:",
         "Resolver:",
         "Expected return:",
         "Re-entry owner: $wayfinder",
-        "Type: research | prototype | diagnosis | grilling | task",
+        "Type: <type locked by SKILL.md>",
     ):
         assert field in map_format
 
-    advance = wayfinder.split("### Advance", 1)[1].split("### Maintain", 1)[0]
+    advance = wayfinder.split("## Advance", 1)[1].split("## Maintain", 1)[0]
     advance_flat = " ".join(advance.split())
     claim = advance.split("3. **Claim.**", 1)[1].split("4. **Resolve.**", 1)[0]
     claim_flat = " ".join(claim.split())
-    assert "this invocation's token" in claim_flat
-    assert "exact owner, token, and claimed-at value" in claim_flat
-    assert "Waiting and the supplied attributable evidence matches" in advance_flat
-    assert "validate the supplied return for a selected Waiting ticket" in advance_flat
-    assert "claim the map with the same invocation token" in advance_flat
+    assert "exclusively claim the ticket" in claim_flat
+    assert "owner, token, and claimed-at value read back exactly" in claim_flat
+    assert "Waiting ticket with attributable evidence matching" in advance_flat
+    assert "validate a Waiting return" in advance_flat
+    assert "claim the map with the same token" in advance_flat
     assert "record no outcome or shared mutation" in advance_flat
-    assert "Run **Closure** while the map claim is still held" in advance_flat
-    assert "Release the ticket claim and read back its absence" in advance
-    assert "release the map claim, read back its absence" in advance_flat
-    for outcome in ("Resolved", "Blocked", "Waiting", "Out of scope"):
-        assert f"**{outcome}:**" in advance
+    assert "run it while holding the map claim" in advance_flat
+    assert "Release and verify the ticket claim" in advance
+    assert "release and verify the map claim" in advance_flat
+    for outcome in ("resolved", "blocked", "waiting", "out of scope"):
+        assert f"`{outcome}`" in tickets
 
     reconcile = advance.split("5. **Reconcile.**", 1)[1].split(
         "6. **Verify.**", 1
     )[0]
-    assert re.findall(r"(?m)^   - \*\*(Retain|Graduate|Resolve|Exclude):\*\*", reconcile) == [
-        "Retain",
-        "Graduate",
-        "Resolve",
-        "Exclude",
-    ]
-    assert "give each affected fog item exactly one disposition" in advance_flat
-    assert "sole fog container" in map_flat
+    for disposition in ("**retain**", "**graduate**", "**resolve**", "**exclude**"):
+        assert disposition in reconcile
+    assert "disposition each affected fog item once" in advance_flat
+    assert "## Not Yet Specified" in map_format
     assert "None - all remaining in-scope questions are ticket-owned." in map_flat
-    assert "future-work owner, governing resolution, or map pointer" in map_flat
-    assert "Do not create a ticket only to supply a link." in map_flat
+    assert "governing resolution, ticket, map, or future-work owner" in map_flat
 
-    maintain = wayfinder.split("### Maintain", 1)[1].split("## Closure", 1)[0]
+    maintain = wayfinder.split("## Maintain", 1)[1].split("## Closure", 1)[0]
     maintain_flat = " ".join(maintain.split())
     assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", maintain) == [
         "Orient",
@@ -839,22 +914,26 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
         "Verify",
         "Expose",
     ]
-    assert "Record no child outcome" in maintain_flat
-    assert "claim the map" in maintain_flat
-    assert "representation has drifted and no question needs an answer" in maintain_flat
-    assert "scope indexes" in maintain_flat
-    assert "Give affected fog one disposition" in maintain_flat
+    assert "record no ticket outcome" in maintain_flat
+    assert "exclusively claim the map" in maintain_flat
+    assert "representation drift whose repair needs no new answer" in maintain_flat
+    assert "scope, dependencies" in maintain_flat
+    assert "give affected fog one disposition" in maintain_flat
 
     closure = wayfinder.split("## Closure", 1)[1].split("## Return", 1)[0]
     closure_flat = " ".join(closure.split())
-    assert "read back its absence" in closure_flat
+    assert "read back claim absence" in closure_flat
     assert "invoke `$domain-modeling` once" in closure_flat
-    assert "no current Domain Delta accounts for it" in closure_flat
+    assert "unaccounted durable-language or ADR consequence" in closure_flat
     assert "`persist authorized` only with exact domain-write authority" in closure_flat
     assert "`render only` otherwise" in closure_flat
     assert "separate explicit approval" in closure_flat
-    assert "A material Domain Delta blocker leaves the map open" in closure
-    assert "compact closing packet" in closure_flat
+    assert "material Domain Delta blocker leaves the map open" in closure
+    assert "closing packet defined in" in closure_flat
+    assert closure_flat.index("post it") < closure_flat.index("close the map")
+    assert closure_flat.index("close the map") < closure_flat.index(
+        "read back its closed state and empty frontier"
+    )
     assert "settled parent-spec source" in closure_flat
     assert "terminal decision" in closure_flat
 
@@ -864,7 +943,7 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
         "Next frontier: [<ticket title>](<link>). Invoke $wayfinder to advance it."
         in returned_flat
     )
-    assert "Status: charted | advanced | maintained | waiting | blocked" in returned_flat
+    assert "`charted | advanced | maintained | waiting | blocked" in returned_flat
     assert "Domain Delta: <intact packet or not applicable>" in returned_flat
 
 
@@ -919,6 +998,10 @@ def test_grill_with_docs_package_and_relationship_contract() -> None:
 def test_domain_modeling_owns_durable_domain_truth() -> None:
     domain = (CUSTOM / "domain-modeling/SKILL.md").read_text(encoding="utf-8")
     domain_flat = " ".join(domain.split())
+    context_format = (
+        CUSTOM / "domain-modeling/CONTEXT-FORMAT.md"
+    ).read_text(encoding="utf-8")
+    context_format_flat = " ".join(context_format.split())
 
     assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", domain) == [
         "Trace",
@@ -935,6 +1018,29 @@ def test_domain_modeling_owns_durable_domain_truth() -> None:
         "Return the authoritative cumulative Domain Delta and any collision before dependent questioning continues",
         "never choose interview materiality or branching",
         "Domain Delta",
+        "implementation defect, model correction, or intentional migration",
+    ):
+        assert contract in domain_flat
+    assert (
+        "Within one context, its local model owns canonical meaning. Across "
+        "contexts, preserve independent meanings unless an explicit "
+        "relationship contract or Shared Kernel says otherwise."
+    ) in context_format_flat
+
+
+def test_instantiated_domain_helper_preserves_routing_and_ownership() -> None:
+    domain = (ROOT / "docs/agents/domain.md").read_text(encoding="utf-8")
+    domain_flat = " ".join(domain.split())
+
+    assert "**Configured layout:** single-context." in domain
+    assert "setup-file:" not in domain
+    for contract in (
+        "Missing records are not setup gaps.",
+        "setup neither creates nor recommends them.",
+        "$domain-modeling` alone may create or change domain truth",
+        "Do not flatten different meanings across contexts.",
+        "never silently override them",
+        "decision owner",
     ):
         assert contract in domain_flat
 
@@ -997,7 +1103,8 @@ def test_prototype_preserves_lifecycle_boundaries_and_branch_gates() -> None:
         "authorized-durable-evidence",
         "No terminal return leaves a live resource",
         "Never carry caller identity from a preceding request or supplied result",
-        "Do not select, recommend, or invoke a downstream route",
+        "Except for the named Fit mismatch above, do not select, recommend, or invoke a downstream route",
+        "recommend `$diagnosing-bugs` and stop before mutation",
         "resolved by judgeable disposable evidence or returned with a truthful residual",
         "supported answer or residual, supported decision implications, evidence, limitations, and artifact dispositions",
     ):
@@ -1726,9 +1833,13 @@ def test_tdd_discloses_test_reference_only_for_an_evidence_gap() -> None:
     tdd = (CUSTOM / "tdd/SKILL.md").read_text(encoding="utf-8")
     tests = (CUSTOM / "tdd/tests.md").read_text(encoding="utf-8")
 
-    assert "Use directly for one bounded red-testable behavior" in tdd
-    assert "inner loop of an implementation owner" in tdd
-    assert "Exclude whole-ticket delivery and closeout" in tdd
+    assert (
+        'description: \'Test-driven development. Use when the user wants to build '
+        'features or fix bugs test-first, mentions "red-green-refactor", or wants '
+        "integration tests.'"
+    ) in tdd
+    assert "Own one inner loop:" in tdd
+    assert "The caller owns bounded scope" in tdd
     assert re.findall(r"(?m)^## \d+\. ([A-Z]+)$", tdd) == [
         "TRACE",
         "RED",
@@ -1745,17 +1856,24 @@ def test_tdd_discloses_test_reference_only_for_an_evidence_gap() -> None:
     assert "Test count is not a target" in tests
 
 
-def test_tdd_routes_improvement_followups_by_scope() -> None:
+def test_tdd_returns_every_outbound_gap_to_its_caller() -> None:
+    tdd = (CUSTOM / "tdd/SKILL.md").read_text(encoding="utf-8")
     refactoring = (CUSTOM / "tdd/refactoring.md").read_text(encoding="utf-8")
     refactoring_flat = " ".join(refactoring.split())
 
-    assert "$simplify-code" in refactoring
-    assert "$codebase-design" not in refactoring
-    assert (
-        "Return an already-framed Interface or Seam question to the caller as "
-        "a design gap"
-    ) in refactoring_flat
-    assert "$audit-codebase" in refactoring
+    assert "`design-evidence-required`" in tdd
+    assert "with the intact facts" in tdd
+    assert "to the caller and stop" in tdd
+    assert "The caller owns any later route" in refactoring_flat
+    for callee in (
+        "$audit-codebase",
+        "$codebase-design",
+        "$diagnosing-bugs",
+        "$prototype",
+        "$simplify-code",
+    ):
+        assert callee not in tdd
+        assert callee not in refactoring
 
 
 def test_simplify_code_is_explicit_bounded_and_behavior_preserving() -> None:
@@ -1880,8 +1998,8 @@ def test_bug_routing_is_disjoint_and_non_bouncing() -> None:
     assert "[SKILL.md](SKILL.md)" in tdd_tests
     assert "`diagnosis-required`" in tdd
     assert "$diagnosing-bugs" not in tdd
-    assert "expectation" in diagnosing.split("---", 2)[1]
-    assert "expected behavior" in tdd.split("---", 2)[1]
+    assert "expected behavior" in diagnosing_flat
+    assert "expected behavior" in tdd_flat
     assert "observed failing result" in tdd
     assert "canonical test owner" in diagnosing_flat
     assert (
@@ -2071,7 +2189,9 @@ def test_planning_and_delivery_activate_preventive_code_quality_contract() -> No
     assert "Repository Reuse" in normalized["to-tickets"]
     assert "Change Closure" in normalized["to-tickets"]
     assert "Removal Trigger" in normalized["to-tickets"]
-    assert "Code Quality Contract" in normalized["implement"]
+    assert "binding floors, preferences, and condition-triggered methods" in (
+        normalized["implement"]
+    )
     assert "Change Closure" in normalized["implement"]
     assert "`Spec required: yes`" in normalized["implement"]
     assert "engineering-contract.md" in normalized["review"]
@@ -2163,7 +2283,7 @@ def test_ticket_and_delivery_packets_preserve_quality_and_route_repairs() -> Non
         "Applicable Invariants, Trust Boundaries",
         "Confirmed authority boundary",
         "Proof responsibility:",
-        "routed Code Quality Contract",
+        "routed engineering contract",
         "return it as `needs-feedback`",
     ):
         assert field in worker_flat
@@ -2354,15 +2474,16 @@ def test_merge_conflict_resolution_is_three_way_and_finish_bounded() -> None:
     assert "## Return" in skill
 
 
-def test_portable_fallback_carries_the_standalone_engineering_contract() -> None:
+def test_portable_fallback_remains_standalone_from_the_repo_contract() -> None:
     loop = "Explore -> Choose -> Prove -> Expand -> Simplify -> Lock"
     fallback = (ROOT / "AGENTS_PORTABLE_FALLBACK.md").read_text(encoding="utf-8")
     fallback_flat = " ".join(fallback.split())
     contract = (ROOT / "docs/agents/engineering-contract.md").read_text(encoding="utf-8")
     bootstrap = (CUSTOM / "repo-bootstrap/SKILL.md").read_text(encoding="utf-8")
+    bootstrap_flat = " ".join(bootstrap.split())
 
     assert loop in fallback
-    assert loop in contract
+    assert loop not in contract
     assert re.findall(r"(?m)^## (.+)$", fallback) == [
         "North Star",
         "Engineering Taste",
@@ -2373,13 +2494,11 @@ def test_portable_fallback_carries_the_standalone_engineering_contract() -> None
         "Review And Report",
     ]
     assert re.findall(r"(?m)^## (.+)$", contract) == [
-        "Shared Engineering Language",
-        "Engineering Taste",
-        "Code Quality Contract",
-        "Tight Engineering Spine",
-        "Proof Discipline",
-        "Work State",
-        "Lock",
+        "How To Read This Contract",
+        "Shared Concepts",
+        "Keep Faith With The Work",
+        "Shape Code For Understanding",
+        "Methods When The Condition Applies",
     ]
     north_star = fallback.split("## North Star", 1)[1].split("## Engineering Taste", 1)[0]
     vocabulary = set(re.findall(r"(?m)^- \*\*([^*]+):\*\*", north_star))
@@ -2395,7 +2514,7 @@ def test_portable_fallback_carries_the_standalone_engineering_contract() -> None
         "Residual risk",
         "Lock",
     }
-    assert "portable engineering-contract owner" in bootstrap
+    assert "replace any portable contract owner preamble" in bootstrap_flat
     assert re.findall(r"\$[a-z0-9][a-z0-9-]*", fallback) == []
     assert len(fallback.split()) <= 950
     assert not any(line.startswith("  ") for line in fallback.splitlines())
@@ -2465,41 +2584,59 @@ def test_portable_fallback_carries_the_standalone_engineering_contract() -> None
     assert "Do not invent speculative edge cases" in review_flat
     assert "one owner, one boundary" in fallback_flat.lower()
 
-    quality = contract.split("## Code Quality Contract", 1)[1].split(
-        "## Tight Engineering Spine", 1
-    )[0]
-    assert "**Must** marks a correctness or safety" in quality
-    assert "deviation alone is not a defect" in quality
-    assert "not another workflow stage" in quality
-    for rule in (
-        "**Grounded implementation — must.**",
-        "**Correct and robust — must.**",
-        "**Domain faithful — must.**",
-        "**Change closure — must.**",
-        "**Deep and local — prefer.**",
-        "**Simple after proof — prefer.**",
-        "**Readable by default — prefer.**",
-        "**Explicit and provable — must.**",
-        "**Measured when relevant — must for claims.**",
-    ):
-        assert rule in quality
-    assert "**Lean test portfolio — prefer.**" in quality
-    assert "supported compatibility obligation" in quality
-    assert "Removal Trigger" in quality
-    assert "**Operational acceptance:**" in contract
-    proof = contract.split("## Proof Discipline", 1)[1].split("## Work State", 1)[0]
-    proof_flat = " ".join(proof.split())
-    assert "Command availability does not determine proof scope" in proof_flat
-    assert "Focused and applicable conformance proof are sufficient" in proof_flat
-    assert "repository completion policy" in proof_flat
-    spine = contract.split("## Tight Engineering Spine", 1)[1].split(
-        "## Proof Discipline", 1
-    )[0]
-    assert "**Simplify:** perform Change Closure" in spine
-    lock = contract.split("## Lock", 1)[1]
-    assert "Change Closure proved every path superseded or made redundant" in " ".join(
-        lock.split()
+    assert "It is not a workflow, checklist, review gate, completion contract" in (
+        " ".join(contract.split())
     )
+    assert re.findall(r"(?m)^### (.+) — Must$", contract) == [
+        "Preserve Commitments And Domain Truth",
+        "Make Correctness Robust",
+        "Respect Trust And Data Boundaries",
+        "Keep Evidence Honest",
+        "Practice Stewardship",
+    ]
+    assert re.findall(r"(?m)^### (.+) — Prefer$", contract) == [
+        "Deep Simplicity",
+        "Local Readability",
+        "Fit Before Novelty",
+        "Build Only What Is Needed",
+        "Keep Tests Lean And Meaningful",
+    ]
+    assert re.findall(r"(?m)^### (.+) — Method$", contract) == [
+        "Reason Across State Boundaries",
+        "Use A Negative Control",
+        "Close Displaced Paths",
+        "Measure Consequential Claims",
+    ]
+    for concept in (
+        "**Bounded slice:**",
+        "**Commitment boundary:**",
+        "**Proof seam:**",
+        "**Proof lane:**",
+        "**Change closure:**",
+        "**Residual risk:**",
+    ):
+        assert concept in contract
+    for required in (
+        "operational definition or exact authoritative owner",
+        "not merely a successful happy path",
+        "A focused check proves only its covered slice",
+        "Apply YAGNI",
+        "Apply DRY to shared meaning and policy",
+        "Test count is not a goal",
+        "controlled violation fails for the intended reason",
+        "measure before claiming improvement",
+    ):
+        assert required in " ".join(contract.split())
+    for foreign_procedure in (
+        "## Tight Engineering Spine",
+        "## Work State",
+        "## Lock",
+        "**Git mutation owners.**",
+        "Observe RED before GREEN",
+        ".tmp/",
+        ".scratch/",
+    ):
+        assert foreign_procedure not in contract
 
 
 def test_readme_exposes_both_adoption_paths() -> None:
@@ -3003,11 +3140,11 @@ def assert_to_spec_semantic_contract(
 
 def test_to_spec_prompt3_packages_share_the_parameterized_semantic_owner() -> None:
     packages = (
-        (
-            CUSTOM / "to-spec",
-            "4fdfea5b659b73de29c46b7651a4d8e1f449ddecfae3ce168d3786c800b91c32",
-            "author-handoff",
-        ),
+            (
+                CUSTOM / "to-spec",
+                "01b1bb2c254861ae2012e22ce67ec7458c629ad750e5873289068248ab6036f1",
+                "author-handoff",
+            ),
         (
             ROOT / "skills/experimental/to-spec",
             "47c223639318b041e6c86e6144b7fb23399634ead73e18ddcf306ab8242effeb",
@@ -3022,7 +3159,7 @@ def test_to_spec_prompt3_packages_share_the_parameterized_semantic_owner() -> No
         )
 
 
-def test_parallel_delivery_roles_stay_out_of_the_shared_contract() -> None:
+def test_git_and_parallel_delivery_roles_stay_out_of_the_shared_contract() -> None:
     contract = (ROOT / "docs/agents/engineering-contract.md").read_text(encoding="utf-8")
     seed = (CUSTOM / "repo-bootstrap/engineering-contract.md").read_text(
         encoding="utf-8"
@@ -3030,26 +3167,19 @@ def test_parallel_delivery_roles_stay_out_of_the_shared_contract() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
     parallel = (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8")
 
-    git_owner = (
-        "**Git mutation owners.** Before changing the index, refs, or registered "
-        "worktrees"
-    )
     for shared in (contract, seed):
         normalized = " ".join(shared.split())
-        assert git_owner in normalized
-        assert (
-            "Clean isolated work needs only its exact base and clean status"
-            in normalized
-        )
-        assert (
-            "shared or dirty work must also preserve the starting index"
-            in normalized
-        )
-        assert "rerun only evidence invalidated by a later mutation" in normalized
+        assert "Git mutation owners" not in normalized
+        assert "starting index" not in normalized
+        assert "registered worktrees" not in normalized
 
     assert "staged worker" not in contract
     assert "lane worker" not in contract
     assert "staged worker" not in implement
+    assert "preserving the starting index and unrelated work" in " ".join(
+        implement.split()
+    )
+    assert "unrelated index and worktree state" in " ".join(parallel.split())
     assert "exhaustive parent graph to `$parallel-implement`" in " ".join(
         implement.split()
     )
@@ -3329,13 +3459,21 @@ def test_parallel_dependency_overlay_is_campaign_scoped_and_reversible() -> None
 
     for path in tracker_surfaces:
         text = " ".join(path.read_text(encoding="utf-8").split())
-        assert "landed-awaiting-lock" in text, path
-        assert "same-campaign" in text, path
-        assert "until Lock" in text, path
-        assert "reblocks dependents" in text, path
+        assert "landed-awaiting-lock" not in text, path
+
+    parallel = " ".join(
+        (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8").split()
+    )
+    for token in (
+        "landed-awaiting-lock",
+        "same-campaign",
+        "until verified child closeout",
+        "reblocks dependents",
+    ):
+        assert token in parallel
 
 
-def test_state_boundary_proof_has_one_owner_and_explicit_consumers() -> None:
+def test_state_boundary_reasoning_has_one_owner_and_explicit_consumers() -> None:
     contract = (ROOT / "docs/agents/engineering-contract.md").read_text(
         encoding="utf-8"
     )
@@ -3352,8 +3490,9 @@ def test_state_boundary_proof_has_one_owner_and_explicit_consumers() -> None:
     )
 
     owner_text = (
-        "**State-boundary matrix.** When correctness depends on cached, persisted, "
-        "resumed, grouped, projected, or session-scoped state"
+        "### Reason Across State Boundaries — Method When correctness depends on "
+        "cached, persisted, resumed, grouped, projected, distributed, or "
+        "session-scoped state"
     )
     assert owner_text in " ".join(contract.split())
     assert owner_text in " ".join(seed.split())
@@ -3419,12 +3558,21 @@ def test_implement_closeout_enters_lock_and_preserves_connector_custody() -> Non
     assert "frontier verification succeed" in implement_flat
 
 
-def test_diagnosis_is_an_explicit_leaf() -> None:
+def test_diagnosis_is_an_explicit_leaf_with_bounded_recommendations() -> None:
     diagnosing = (CUSTOM / "diagnosing-bugs/SKILL.md").read_text(encoding="utf-8")
+    prototype = (CUSTOM / "prototype/SKILL.md").read_text(encoding="utf-8")
+    resolver = (CUSTOM / "resolving-merge-conflicts/SKILL.md").read_text(
+        encoding="utf-8"
+    )
     relationships = (ROOT / "docs/synthesis/skill-context-relationships.md").read_text(
         encoding="utf-8"
     )
 
+    assert (
+        'description: \'Diagnosis loop for hard bugs and performance regressions. '
+        'Use when the user says "diagnose"/"debug this", or reports something '
+        "broken/throwing/failing/slow.'"
+    ) in diagnosing
     packet = diagnosing.split("Return one diagnosis packet containing:", 1)[1]
     assert len(re.findall(r"(?m)^- ", packet)) >= 7
     rows = set(
@@ -3434,14 +3582,46 @@ def test_diagnosis_is_an_explicit_leaf() -> None:
         )
     )
     assert not implicit_policy(CUSTOM / "diagnosing-bugs")
-    assert "Start no successor." in " ".join(diagnosing.split())
+    assert "Start no successor; any recommendation below remains unstarted" in (
+        " ".join(diagnosing.split())
+    )
+    assert set(re.findall(r"\$[a-z0-9-]+", diagnosing)) == {"$audit-codebase"}
+    assert "recommend `$diagnosing-bugs` and stop before mutation" in prototype
+    assert "recommend `$diagnosing-bugs`" in resolver
     assert {
         (caller, verb, callee)
         for caller, verb, callee in rows
         if caller == "diagnosing-bugs" or callee == "diagnosing-bugs"
-    } == set()
+    } == {
+        ("prototype", "Recommend and stop", "diagnosing-bugs"),
+        ("diagnosing-bugs", "Recommend and stop", "audit-codebase"),
+        ("resolving-merge-conflicts", "Recommend and stop", "diagnosing-bugs"),
+    }
+    contract = pack_contract.parse_contract(
+        (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
+    )
+    names = {
+        skill["skill_id"]: skill["canonical_name"]
+        for skill in contract["selected_skills"]
+    }
+    assert {
+        (names[row["caller_skill_id"]], row["verb"], names[row["target_skill_id"]])
+        for row in contract["relationships"]
+        if names[row["caller_skill_id"]] == "diagnosing-bugs"
+        or names[row["target_skill_id"]] == "diagnosing-bugs"
+    } == {
+        ("skill-router", "Recommend and stop", "diagnosing-bugs"),
+        ("prototype", "Recommend and stop", "diagnosing-bugs"),
+        ("diagnosing-bugs", "Recommend and stop", "audit-codebase"),
+        ("resolving-merge-conflicts", "Recommend and stop", "diagnosing-bugs"),
+    }
     for skill in CUSTOM.iterdir():
-        if skill.is_dir() and skill.name not in {"diagnosing-bugs", "skill-router"}:
+        if skill.is_dir() and skill.name not in {
+            "diagnosing-bugs",
+            "prototype",
+            "resolving-merge-conflicts",
+            "skill-router",
+        }:
             for path in skill.rglob("*.md"):
                 assert "$diagnosing-bugs" not in path.read_text(encoding="utf-8")
 
@@ -3488,6 +3668,9 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         ("high-assurance-review", "Recommend and stop", "audit-codebase"),
         ("parallel-implement", "Invoke", "high-assurance-review"),
         ("parallel-implement", "Invoke", "resolving-merge-conflicts"),
+        ("prototype", "Recommend and stop", "diagnosing-bugs"),
+        ("diagnosing-bugs", "Recommend and stop", "audit-codebase"),
+        ("resolving-merge-conflicts", "Recommend and stop", "diagnosing-bugs"),
         ("audit-codebase", "Recommend and stop", "domain-modeling"),
         ("audit-codebase", "Recommend and stop", "grill-with-docs"),
         ("audit-codebase", "Recommend and stop", "grilling"),
@@ -3501,9 +3684,6 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         ("audit-codebase", "Recommend and stop", "simplify-code"),
         ("audit-codebase", "Recommend and stop", "implement"),
         ("simplify-code", "Recommend and stop", "audit-codebase"),
-        ("tdd", "Hand off", "prototype"),
-        ("tdd", "Recommend and stop", "simplify-code"),
-        ("tdd", "Recommend and stop", "audit-codebase"),
         ("implement", "Recommend and stop", "to-tickets"),
         ("to-tickets", "Recommend and stop", "implement"),
         ("to-tickets", "Recommend and stop", "parallel-implement"),
@@ -3517,6 +3697,9 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
     }
 
     assert required <= edges
+    assert {
+        edge for edge in edges if edge[0] == "tdd"
+    } == set()
     assert ("audit-codebase", "Invoke", "codebase-design") not in edges
     for removed_edge in (
         ("audit-codebase", "Recommend and stop", "codebase-design"),

@@ -1,33 +1,26 @@
 # Wayfinder Map Format
 
-Read when creating, validating, or reconciling a map.
-
-Open work lives in child tickets. Resolutions live in their owning tickets. The
-map keeps orientation and pointers. `Not Yet Specified` is the sole fog
-container.
+Persist these shapes. `SKILL.md` owns behavior; tracker docs own representation.
 
 ## Map
 
 ```markdown
 ## Destination
 
-Destination owner: <who owns the outcome>
-Outcome: <decision, settled source, or readiness state>
+Destination owner: <owner>
+Outcome: <decision, settled source, or readiness>
 Route-closing condition: <observable condition>
 Terminal kind: settled source for $to-spec | terminal decision
-Return owner: <who receives closure>
+Return owner: <closure recipient>
 
 ## Scope Boundary
 
-In: <charted scope>
-Out: <destination delivery and explicit exclusions>
+In: <scope>
+Out: <delivery and exclusions>
 
 ## Notes
 
-Source Trace: <source pointers>
-Domain: <domain pointers and current Domain Delta, when any>
-Constraints: <governing constraints>
-Standing decisions: <applicable durable decisions>
+<source, domain, constraint, skill, or standing-decision pointers; or None>
 
 ## Decisions So Far
 
@@ -40,35 +33,30 @@ None - all remaining in-scope questions are ticket-owned.>
 
 ## Out Of Scope
 
-- [<future-work owner, governing resolution, or map pointer>](link) -
-  <why it lies beyond the destination>
+- [<governing resolution, ticket, map, or future-work owner>](link) - <reason>
 ```
-
-Prefer the ticket that owns future work. When none exists, link the governing
-resolution or map pointer. Do not create a ticket only to supply a link.
 
 ## Ticket
 
 ```markdown
-Type: research | prototype | diagnosis | grilling | task
+Type: <type locked by SKILL.md>
 Participation: HITL | AFK
-Resolution owner: <who can settle the question>
-Resolver: $research | $prototype | user-selected diagnosis | $grilling |
-  $grill-with-docs | $to-questionnaire | direct task
-Expected return: <evidence packet or human return that permits classification>
+Resolution owner: <who settles it>
+Resolver: <resolver locked by SKILL.md>
+Expected return: <evidence or return permitting classification>
 Re-entry owner: $wayfinder
 
 ## Question
 
-<one sharp decision or investigation, sized for one session>
+<one sharp one-session question>
 ```
 
-Record parent relationship, blocking edges, claim state, and outcome through
-the repo's `Wayfinding operations` convention. For Research, record the
-approved repo-local note path. For Prototype, also record:
+Append only applicable resolver fields:
 
 ```text
-Decision owner: <who>
+Research note path: <approved repo-local note path>
+
+Decision owner: <Prototype decision owner>
 Claim level: shape/feel | design evidence
 Judgment mode: human | rule-based
 Human judge: <who> | Verdict criteria: <objective caller-locked criteria>
@@ -78,9 +66,22 @@ Human judge: <who> | Verdict criteria: <objective caller-locked criteria>
 
 ```markdown
 Status: resolved | blocked | waiting | out of scope
-Answer or condition: <supported answer, blocker, wait trigger, or scope reason>
-Authority: <resolution owner or governing source>
+Answer or condition: <answer, blocker, wait trigger, or scope reason>
+Authority: <owner or governing source>
 Evidence or assets: <links>
-Map implications: <pointers, edges, fog dispositions, or none>
-Residual: <remaining uncertainty or none>
+Map implications: <pointers, edges, fog, or none>
+Residual: <uncertainty or none>
+```
+
+## Closing Packet
+
+```markdown
+Map/source owner: <link; owner>
+Destination/bound: <outcome; scope; exclusions>
+Closing route: <condition; terminal kind; return owner>
+Decisive resolutions: <links; owners>
+Evidence: <links>
+Residual: <exclusions; deferrals; uncertainty; or none>
+Proof/acceptance objectives: <items>
+Domain Delta: <intact packet or not applicable>
 ```

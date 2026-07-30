@@ -183,7 +183,8 @@ def test_promoted_prototype_preserves_selected_leaf_contract() -> None:
         "authorized-durable-evidence",
         "No terminal return leaves a live resource",
         "Never carry caller identity from a preceding request or supplied result",
-        "Do not select, recommend, or invoke a downstream route",
+        "Except for the named Fit mismatch above, do not select, recommend, or invoke a downstream route",
+        "recommend `$diagnosing-bugs` and stop before mutation",
         "Production correctness remains with the real coding workflow",
     ):
         assert contract in skill_flat
@@ -207,10 +208,10 @@ def test_promoted_prototype_preserves_selected_leaf_contract() -> None:
     assert "variance and worst observed result" in measure_flat
     assert "known confounders and unsupported extrapolations" in measure_flat
     assert "does not diagnose an unexplained slowdown" in measure_flat
-    assert "Decision owner: <who>" in wayfinder_map
+    assert "Decision owner: <Prototype decision owner>" in wayfinder_map
     assert "Claim level: shape/feel | design evidence" in wayfinder_map
     assert "Judgment mode: human | rule-based" in wayfinder_map
-    assert "with the decision owner, claim level, judgment mode" in wayfinder_flat
+    assert "with decision owner, claim level, judgment mode" in wayfinder_flat
     assert "human judge or objective verdict criteria" in wayfinder_flat
     for branch in (logic_flat, ui_flat, measure_flat):
         assert "Return to `Judge` in [SKILL.md](SKILL.md)" in branch
@@ -304,7 +305,7 @@ def test_current_implement_preserves_promoted_and_author_contract() -> None:
     } == inventory
 
     assert tree_hash(canonical_dir) == (
-        "d2f27f50cdbead43cfa9edc71c37e8577fe5bef18d5111af4c2cd0cd45566a62"
+        "e4f9317b613aaf72dc302c41093148babd552beb4c4e2990c623f8bb347f1d2e"
     )
     promoted = (canonical_dir / "SKILL.md").read_text(encoding="utf-8")
     normalized = " ".join(promoted.split())

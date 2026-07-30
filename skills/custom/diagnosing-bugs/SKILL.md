@@ -1,6 +1,6 @@
 ---
 name: diagnosing-bugs
-description: "Use only when explicitly selected to diagnose broken, failing, flaky, slow, environment-only, or production-only behavior whose expectation, symptom, cause, or trusted red-capable reproduction is uncertain. Fix only when implementation is authorized."
+description: 'Diagnosis loop for hard bugs and performance regressions. Use when the user says "diagnose"/"debug this", or reports something broken/throwing/failing/slow.'
 ---
 
 # Diagnosing Bugs
@@ -21,8 +21,8 @@ Own uncertain diagnosis through causal proof and regression evidence.
   push, release, Lock, and architecture follow-up.
 
 Run only when explicitly selected. Return to the user or named caller. Start no
-successor. When all diagnosis inputs are already settled, return `route
-mismatch` with the facts unchanged.
+successor; any recommendation below remains unstarted. When all diagnosis
+inputs are already settled, return `route mismatch` with the facts unchanged.
 
 Apply `docs/agents/engineering-contract.md` and `docs/agents/domain.md` when
 present. Put disposable artifacts under `.tmp/diagnosing-bugs/<bug-slug>/`. Live
@@ -146,8 +146,12 @@ Return one diagnosis packet containing:
 - original-scenario result;
 - Change Closure, cleanup, validation, residual risk, and skipped checks.
 
-Record architecture concerns as follow-up evidence for the caller; do not start
-architecture work here.
+After an authorized fix is proved, recommend `$audit-codebase` and stop when
+post-mortem evidence shows that prevention needs repository mapping or
+unclassified architecture work, including a missing correct regression seam.
+Return the concern, affected callers, seam gap, fix identity, and proof; leave
+Audit unstarted. Otherwise record architecture concerns as follow-up evidence
+for the caller.
 
 Diagnosis is complete only when the cause gate passes, cleanup is complete, and
 the packet is returned. Fix work additionally requires authority, a complete

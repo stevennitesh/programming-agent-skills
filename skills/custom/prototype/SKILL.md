@@ -27,6 +27,11 @@ Before mutation, decide whether one material design decision can be answered by
 one bounded runnable-evidence question. When it cannot, state the mismatch and
 actual need without mutating.
 
+When an existing built system is instead broken, throwing, failing, or slow
+for an uncertain reason, recommend `$diagnosing-bugs` and stop before mutation.
+Return the observed symptom and intact available evidence; leave Diagnosis
+unstarted.
+
 ## Freeze
 
 Before mutation, read back:
@@ -109,8 +114,9 @@ not proceed, or did not fit. Include only the applicable identity, question,
 supported answer or residual, supported decision implications, evidence,
 limitations, and artifact dispositions.
 
-Never carry caller identity from a preceding request or supplied result. Do not
-select, recommend, or invoke a downstream route.
+Never carry caller identity from a preceding request or supplied result. Except
+for the named Fit mismatch above, do not select, recommend, or invoke a
+downstream route.
 
 ## Completion
 

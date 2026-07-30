@@ -49,9 +49,9 @@ mutation.
 
 ## Execute
 
-Follow the engineering contract's Tight Engineering Spine and Code Quality
-Contract. Start from source grounding and refresh only stale, uncertain, or
-contradicted evidence.
+Apply the engineering contract's binding floors, preferences, and
+condition-triggered methods. Start from source grounding and refresh only
+stale, uncertain, or contradicted evidence.
 
 Implement the smallest acceptance-complete path. Prove every assigned behavior
 and supported state through its canonical seam. Reuse the canonical test owner.
@@ -88,8 +88,8 @@ intact. Prove and rereview every repaired tree through the same route.
 
 ## Lock And Return
 
-Apply the configured tracker owner's claim, closeout, custody, and Mutation
-read-back rules.
+Use the configured tracker representation to encode this skill's claim,
+closeout, custody, and Mutation read-back rules.
 
 - Add only mechanical Local Markdown closeout after review and before Lock.
   Commit it with the selected work.

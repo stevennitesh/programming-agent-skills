@@ -41,14 +41,14 @@ flowchart TD
   Questionnaire -. "source-answerable" .-> Research
   Questionnaire -. "user-owned decision" .-> Grilling
   Wayfinder["wayfinder"] --> Tracker
-  Wayfinder --> Labels
+  Wayfinder -. "hosted label representation" .-> Labels
   Wayfinder -. "setup gate" .-> Setup
   Wayfinder --> Grilling
   Wayfinder --> GrillDocs
   Wayfinder -. "exact user-approved artifact packet" .-> Questionnaire
   Wayfinder --> Prototype["prototype"]
   Wayfinder --> Research["research"]
-  Wayfinder --> Debug
+  Wayfinder -. "closed settled source" .-> ToSpec
   Wayfinder --> DomainModel
   Prototype -. "promotion or production proof" .-> Contract
 
@@ -139,18 +139,17 @@ flowchart TD
   TDD --> DomainRouter
   Debug["diagnosing-bugs"] --> Contract
   Debug --> DomainRouter
+  Debug -. "post-fix architecture prevention" .-> Audit
   CodeDesign["codebase-design"] --> Contract
   CodeDesign --> DomainRouter
   Conflict -. "uncertain post-resolution failure" .-> Debug
+  Prototype -. "built behavior misbehaves" .-> Debug
   Simplify["simplify-code"] --> Contract
   Simplify -. "wide repository audit" .-> Audit
 
   Handoff -. "setup gate" .-> Setup
 
   TDD --> TddRefs["tests.md / mocking.md / refactoring.md"]
-  TddRefs -. "uncertain repro" .-> Debug
-  TddRefs -. "standalone bounded cleanup" .-> Simplify
-  TddRefs -. "wide audit follow-up" .-> Audit
   Audit -. "selected design candidate" .-> CodeDesign
   CodeDesign --> DirectDesign["DIRECT-DESIGN.md"]
   DirectDesign --> DesignRefs["DEEPENING.md / DESIGN-IT-TWICE.md"]
@@ -253,9 +252,9 @@ that caller; without that approval, recommend and stop.
 | `parallel-implement` | Invoke | `$resolving-merge-conflicts` | Serial landing enters preserved conflict or partial Git state; supply operation identity and goal, exact state, scope, both authorities, unrelated state, proof expectation, and root Return owner. Resume only from the resolver's fresh exact-state Return. |
 | `parallel-implement` | Recommend and stop | `$to-tickets` | Admission finds an actually incomplete or contradictory graph, or verified implementation invalidates remaining graph semantics; return one exhaustive evidence-backed repair packet. Ordinary blockers, regressions, conflicts, and review findings remain in Parallel Implement. |
 | `parallel-implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
-| `tdd` | Hand off | `$prototype` | The question is design evidence rather than production proof. |
-| `tdd` | Recommend and stop | `$simplify-code` | A GREEN refactor exposes settled, bounded, behavior-preserving cleanup outside the tracer bullet. |
-| `tdd` | Recommend and stop | `$audit-codebase` | A GREEN refactor exposes repository-wide or unclassified audit work outside the slice. |
+| `prototype` | Recommend and stop | `$diagnosing-bugs` | Fit finds that an existing built system is broken, throwing, failing, or slow for an uncertain reason rather than posing one disposable design question; return the intact symptom evidence and leave Diagnosis unstarted. |
+| `diagnosing-bugs` | Recommend and stop | `$audit-codebase` | After an authorized fix is proved, post-mortem evidence shows that prevention needs repository mapping or unclassified architecture work, including a missing correct regression seam; return the exact concern and proof and leave Audit unstarted. |
+| `resolving-merge-conflicts` | Recommend and stop | `$diagnosing-bugs` | State finds no active conflict or unmerged entry and only post-operation behavior is broken for an uncertain reason; return exact Git state and symptom evidence and leave Diagnosis unstarted. |
 | `change-review` | Hand off | `$high-assurance-review` | The target is a release candidate or matches a supported high-risk trigger. |
 | `change-review` | Recommend and stop | `$audit-codebase` | The request targets an immutable repository baseline rather than an ordinary branch, WIP, staged, or since-X diff. |
 | `high-assurance-review` | Recommend and stop | `$audit-codebase` | The request targets a bounded repository correctness, domain-robustness, methodology, or performance baseline rather than a pending release diff. |
@@ -302,19 +301,19 @@ and
 | `README.md` | Human-facing overview and installation | Humans installing or learning the pack |
 | `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md` | Minimal pack-owned global Codex bootstrap template: explicit-only router/setup discovery | `~/.codex/AGENTS.md` |
 | `skill-router` | Current executable route map and tie-breakers | Humans or agents choosing one next route |
-| `repo-bootstrap` | Provisions and verifies the repo setup surface | `skill-router`, setup gates in planning/tracker skills |
-| `docs/agents/issue-tracker.md` | Tracker interface, work-item lifecycle, PR-as-request rules, wayfinding operations, and the campaign-scoped `landed-awaiting-lock` dependency overlay | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `change-review`, `high-assurance-review`, `wayfinder` |
-| `docs/agents/triage-labels.md` | Category/state role to label mapping and fixed wayfinding labels | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
-| `docs/agents/domain.md` | Routing to `CONTEXT.md`, `CONTEXT-MAP.md`, ADRs | `to-spec`, `triage`, `tdd`, `diagnosing-bugs`, `codebase-design`, `simplify-code`, `audit-codebase`, `parallel-implement` |
-| `docs/agents/engineering-contract.md` | Engineering taste, preventive code-quality defaults, shared runtime language, commitment boundary, grounded implementation, correctness and robustness floors, Behavior-Owned Test Portfolio, Change Closure, brief code-shape and simplification guidance, implementation clarity, measured-performance discipline, fresh, negative-control, and state-boundary proof, work-state policy, fixed-snapshot Spec/Standards review, and Lock | `to-spec`, `to-tickets`, `implement`, `tdd`, `diagnosing-bugs`, `codebase-design`, `prototype`, `simplify-code`, `audit-codebase`, `parallel-implement`, `resolving-merge-conflicts`, `change-review`, `high-assurance-review` |
+| `repo-bootstrap` | Inventories and reconciles the repo setup surface; provisions an approved delta and verifies the result | `skill-router`, setup gates in planning/tracker skills |
+| `docs/agents/issue-tracker.md` | Provider transport, configured tracker policy, durable work-item and Wayfinder representation, and mutation read-back | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
+| `docs/agents/triage-labels.md` | Category/state role mappings and fixed Wayfinder labels | `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
+| `docs/agents/domain.md` | Context-sensitive routing plus the preserve-or-return posture for domain language, invariants, relationships, and ADR conflicts | `to-spec`, `triage`, `tdd`, `diagnosing-bugs`, `codebase-design`, `audit-codebase`, `parallel-implement` |
+| `docs/agents/engineering-contract.md` | Shared engineering philosophy, binding correctness, trust, data, evidence, and stewardship floors; code-shape and testing preferences; bounded-slice, proof-seam, proof-lane, Change Closure, and residual-risk vocabulary; and condition-triggered state, enforcement, closure, and measurement methods. Skills retain procedure, gates, completion, and Return. | `to-spec`, `to-tickets`, `implement`, `tdd`, `diagnosing-bugs`, `codebase-design`, `prototype`, `simplify-code`, `audit-codebase`, `parallel-implement`, `resolving-merge-conflicts`, `change-review`, `high-assurance-review` |
 | `domain-modeling` | Resolves domain semantics; exclusively accumulates and returns the authoritative current cumulative Domain Delta; renders or persists routed `CONTEXT.md` and `CONTEXT-MAP.md` changes under `render only` or `persist authorized`; assesses plausible ADR candidates; and records approved ADR truth | `skill-router`, `grill-with-docs`, `wayfinder`, `repo-bootstrap` |
 | `codebase-design` | Bounded module-design procedure and detailed Responsibility, Interface, Seam, Adapter, Proof Seam, correctness, robustness, migration, and replacement vocabulary | `to-spec`, `audit-codebase`, direct architecture/design work |
 | `research` | Claim-owning source legwork and one authorized cited note or verified inline evidence | `skill-router`, `grilling`, `wayfinder` |
 | `to-questionnaire` | One recipient-ready async discovery artifact for one external stakeholder and downstream decision | `skill-router`, `grilling`, `wayfinder`, humans collecting stakeholder evidence |
 | `resolving-merge-conflicts` | Read-only three-way inspection, authorized reconciliation, and the separate finish boundary | Git operations and implementation or integration work that enters a conflicted state |
 | `change-review` | Ordinary fixed-snapshot Standards/Spec review | `implement`, `parallel-implement`; hands off once to `high-assurance-review` for release or supported high risk |
-| `audit-codebase` | Durable repository atlas plus current-source, user-selected subsystem audits and candidate analyses with mandatory correctness, robustness, domain, design, simplification, coding-practice, and applicable performance coverage; detailed owners load when implicated, and one HTML report updates incrementally without a release decision | `skill-router`, `change-review`, `high-assurance-review`, `tdd`, `simplify-code`, `$grill-with-docs` decision returns, and humans explicitly invoking repository audits |
-| `simplify-code` | One unstaged, behavior-preserving simplification patch, an explicit finite and bounded `until-clean` campaign, or a proved no-safe-cut verdict | `skill-router`, `tdd`, `audit-codebase`, humans invoking bounded cleanup |
+| `audit-codebase` | Durable repository atlas plus current-source, user-selected subsystem audits and candidate analyses with mandatory correctness, robustness, domain, design, simplification, coding-practice, and applicable performance coverage; detailed owners load when implicated, and one HTML report updates incrementally without a release decision | `skill-router`, `change-review`, `high-assurance-review`, `diagnosing-bugs`, `simplify-code`, `$grill-with-docs` decision returns, and humans explicitly invoking repository audits |
+| `simplify-code` | One unstaged, behavior-preserving simplification patch, an explicit finite and bounded `until-clean` campaign, or a proved no-safe-cut verdict | `skill-router`, `audit-codebase`, humans invoking bounded cleanup |
 
 ## Supporting Files
 
@@ -326,7 +325,7 @@ and
 | `tdd` | `tests.md`, `mocking.md`, `refactoring.md`: examples and branch mechanics |
 | `prototype` | `LOGIC.md`, `UI.md`, and `MEASURE.md`: decision-bearing branch mechanics. One decision branch loads; `SKILL.md` owns the universal lifecycle, reconciliation, and Return. |
 | `triage` | `ATTENTION-SCAN.md`, `SPECIFIC-ITEM.md`, `QUICK-OVERRIDE.md`: branch procedures; `AGENT-BRIEF.md`: agent/human ready brief, branch emphasis, and Ready Gate; `OUT-OF-SCOPE.md`: rejected-work knowledge base |
-| `repo-bootstrap` | Tracker, label, domain, and engineering-contract seeds; `setup-schema.json`: aggregate compatibility fingerprint; per-file source markers and `scripts/validate_setup.py`: complete target-repo setup-surface reconciliation and validation |
+| `repo-bootstrap` | Tracker, label, domain, and engineering-contract seeds; `setup-schema.json`: aggregate compatibility fingerprint; `scripts/validate_setup.py`: target-repo structural compatibility validation |
 | `wayfinder` | `MAP-FORMAT.md`: canonical map and ticket shape, empty-fog sentinel, and exclusion pointers; `SKILL.md`: Chart, Advance, Maintain, Closure, and foggy map lifecycle semantics |
 | `research` | One cited repo-local Markdown note per source question |
 | `resolving-merge-conflicts` | `OPERATIONS.md`: branch-only operation roles, conflict classes, finish checks, and recovery decisions; `SKILL.md`: universal State/Trace/Reconcile/Prove/Finish contract, authority, typed Return, and completion |
@@ -364,11 +363,12 @@ and
 - `domain-modeling` is the only skill that writes `CONTEXT.md`, `CONTEXT-MAP.md`, or approved ADR truth; `repo-bootstrap` configures and verifies routing before persistence across a required topology transition, and vocabulary consumers follow `docs/agents/domain.md`.
 - `to-spec` owns final source admission, parent spec synthesis, and tracker publication; Grilling may report conditional spec-source readiness but neither drafts nor publishes. `to-tickets` owns implementation issue slicing.
 - `wayfinder` owns finite foggy multi-session maps, ticket classification,
-  resolver selection, result reconciliation, consequence-only Maintain repairs,
-  fog disposition, and the compact closing source or decision packet. Tracker
-  docs own transport, publication order, child and shared-map claim identity,
-  waiting state, stale-claim recovery, and outcome mechanics. Each resolver owns
-  its local gates and Return; none chooses the map outcome or downstream route.
+  frontier selection, claim lifecycle and takeover, resolver selection, Waiting
+  and outcome reconciliation, consequence-only Maintain repairs, fog
+  disposition, completion, and the compact closing packet. Tracker docs own
+  provider representation, transport primitives, and mutation read-back. Each
+  resolver owns its local gates and Return; none chooses the map outcome or
+  downstream route.
 - `research` owns one bounded source question, claim-owning evidence judgment, and one authorized cited note or verified inline result. A user request or caller packet must authorize one note path before that tracked mutation; otherwise Research returns cited inline evidence, a blocker, or typed `not-admitted` classification without choosing the caller's next route.
 - `resolving-merge-conflicts` inspects State and Trace read-only by default.
   Reconciliation authority permits only in-scope working-tree changes; finish

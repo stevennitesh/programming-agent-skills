@@ -27,8 +27,5 @@ Stop when the intended material cleanup is complete and the focused plus nearest
 relevant tests are GREEN, or when the next improvement would expand scope.
 
 If refactoring reveals work outside the tracer bullet, return it as residual
-follow-up evidence without mutating a tracker or widening the slice. Recommend
-`$simplify-code` and stop for one settled, bounded, behavior-preserving
-cleanup. Return an already-framed Interface or Seam question to the caller as
-a design gap. Recommend `$audit-codebase` and stop when the best improvement
-still needs repository mapping or wide discovery.
+follow-up evidence without mutating a tracker, widening the slice, selecting a
+successor, or starting downstream work. The caller owns any later route.

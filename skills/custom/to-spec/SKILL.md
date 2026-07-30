@@ -21,8 +21,8 @@ recovery evidence, Return, and completion.
 
 ### 1. Setup
 
-Read the target repository's `AGENTS.md` and its routed tracker, labels, domain,
-and engineering contracts. Verify the required inspect and read-back operations
+Read the target repository's `AGENTS.md` and its routed tracker, domain, and
+engineering contracts. Verify the required inspect and read-back operations
 before any draft. Before any create, verify that the configured parent-create
 operation is compatible. When setup is missing or incompatible, return
 `setup-precondition` with the evidence and unchanged state, recommend

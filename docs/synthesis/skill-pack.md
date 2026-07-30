@@ -40,6 +40,13 @@ multi-session interdependent routes, invokes the selected evidence or
 conversation resolver, serializes shared map reconciliation, records external
 waits, and closes with one settled source or terminal decision. It adds no
 delivery stage.
+Revision 12 removes every outbound TDD relationship. TDD now returns design,
+diagnosis, cleanup, and wider-discovery gaps to its caller without choosing or
+starting a successor.
+Revision 13 preserves Skill Router's existing Diagnosis route and adds three
+recommend-and-stop edges: Prototype and Resolving Merge Conflicts can return
+route mismatches to Diagnosis, and proved Diagnosis can return post-fix
+architecture prevention work to Audit Codebase. Every target remains unstarted.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -2894,83 +2901,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     },
     {
       "affected_capability_ids": [
-        "CAP-006",
-        "CAP-017"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-006",
-      "combined_exit_owner_skill_id": "SK-006",
-      "context_loaded": [],
-      "entry_condition": "A GREEN refactor exposes repository-wide or unclassified audit work outside the slice.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace and declared audit-codebase input",
-      "ordering_impact": "none",
-      "relationship_id": "REL-073",
-      "required_proof_ids": [
-        "PROOF-REL-073"
-      ],
-      "resume_owner_skill_id": "SK-006",
-      "return_packet": "One named target and reason with downstream work unstarted",
-      "target_skill_id": "SK-017",
-      "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-006",
-        "CAP-004"
-      ],
-      "callee_owned_gates_mutations": [
-        "The target retains all target-local admission, evidence, mutation, Return, and completion gates"
-      ],
-      "caller_skill_id": "SK-006",
-      "combined_exit_owner_skill_id": "SK-004",
-      "context_loaded": [
-        "prototype caller-facing interface and branch-required reference only"
-      ],
-      "entry_condition": "The question is design evidence rather than production proof.",
-      "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for tdd and the declared prototype input",
-      "ordering_impact": "none",
-      "relationship_id": "REL-074",
-      "required_proof_ids": [
-        "PROOF-REL-074"
-      ],
-      "resume_owner_skill_id": "SK-004",
-      "return_packet": "The declared prototype Return packet plus evidence, limits, and residual state",
-      "target_skill_id": "SK-004",
-      "verb": "Hand off",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-006",
-        "CAP-018"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-006",
-      "combined_exit_owner_skill_id": "SK-006",
-      "context_loaded": [],
-      "entry_condition": "A GREEN refactor exposes settled, bounded, behavior-preserving cleanup outside the tracer bullet.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for tdd and the declared simplify-code input",
-      "ordering_impact": "none",
-      "relationship_id": "REL-075",
-      "required_proof_ids": [
-        "PROOF-REL-075"
-      ],
-      "resume_owner_skill_id": "SK-006",
-      "return_packet": "One named target and reason with downstream work unstarted",
-      "target_skill_id": "SK-018",
-      "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
         "CAP-009",
         "CAP-008"
       ],
@@ -3610,6 +3540,81 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "target_skill_id": "SK-016",
       "verb": "Hand off",
       "wrong_condition": "The selected ready item remains implementable, the conflict is only a review concern, or behavior failed after the operation ended"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-005",
+        "CAP-017"
+      ],
+      "callee_owned_gates_mutations": [
+        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-005",
+      "combined_exit_owner_skill_id": "SK-005",
+      "context_loaded": [],
+      "entry_condition": "After an authorized fix is proved, post-mortem evidence shows that prevention needs repository mapping or unclassified architecture work, including a missing correct regression seam.",
+      "failure_behavior": "Return the recommendation and exact post-mortem evidence without starting Audit or widening Diagnosis",
+      "input_packet": "Diagnosis identity, proved fix and original-scenario result, architecture concern, affected callers, seam gap, evidence, and limits",
+      "ordering_impact": "none",
+      "relationship_id": "REL-101",
+      "required_proof_ids": [
+        "PROOF-REL-101"
+      ],
+      "resume_owner_skill_id": "SK-005",
+      "return_packet": "One Audit Codebase recommendation with the exact concern and proof, leaving downstream work unstarted",
+      "target_skill_id": "SK-017",
+      "verb": "Recommend and stop",
+      "wrong_condition": "Diagnosis or an authorized fix is incomplete, the architecture concern lacks post-mortem evidence, or the prevention work is already bounded and caller-owned"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-004",
+        "CAP-005"
+      ],
+      "callee_owned_gates_mutations": [
+        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-004",
+      "combined_exit_owner_skill_id": "SK-004",
+      "context_loaded": [],
+      "entry_condition": "Prototype Fit finds that an existing built system is broken, throwing, failing, or slow for an uncertain reason rather than posing one disposable design question.",
+      "failure_behavior": "Return the recommendation and intact symptom evidence without creating a probe or starting Diagnosis",
+      "input_packet": "Observed symptom, available evidence, relevant work state, caller identity, and known limits",
+      "ordering_impact": "none",
+      "relationship_id": "REL-102",
+      "required_proof_ids": [
+        "PROOF-REL-102"
+      ],
+      "resume_owner_skill_id": "SK-004",
+      "return_packet": "One Diagnosis recommendation with intact available facts and downstream work unstarted",
+      "target_skill_id": "SK-005",
+      "verb": "Recommend and stop",
+      "wrong_condition": "The question remains a bounded design question, the failure cause is already settled, or another owner has the requested outcome"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-016",
+        "CAP-005"
+      ],
+      "callee_owned_gates_mutations": [
+        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-016",
+      "combined_exit_owner_skill_id": "SK-016",
+      "context_loaded": [],
+      "entry_condition": "Resolver State finds no active conflict or unmerged entry and only post-operation behavior is broken for an uncertain reason.",
+      "failure_behavior": "Return the recommendation and exact state without reconciliation, finish mutation, or starting Diagnosis",
+      "input_packet": "Repository and worktree identity, exact Git and operation state, observed symptom, available evidence, authorities, and Return owner",
+      "ordering_impact": "none",
+      "relationship_id": "REL-103",
+      "required_proof_ids": [
+        "PROOF-REL-103"
+      ],
+      "resume_owner_skill_id": "SK-016",
+      "return_packet": "One Diagnosis recommendation with exact Git state and symptom evidence, leaving downstream work unstarted",
+      "target_skill_id": "SK-005",
+      "verb": "Recommend and stop",
+      "wrong_condition": "An active conflict or unmerged entry remains, the request is operation planning, or the behavioral failure cause is already settled"
     }
   ],
   "selected_skills": [
@@ -3769,7 +3774,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Per-skill H1 outside this immutable contract slice",
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
-      "relationship_ids": [],
+      "relationship_ids": [
+        "REL-102"
+      ],
       "required_input": "A bounded caller-owned Source Trace and authority for: Produce one disposable runnable verdict for one bounded design question",
       "return_packet": "A supported answer or truthful residual with supported decision implications, evidence, limits, and cleanup state",
       "skill_id": "SK-004"
@@ -3808,7 +3815,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Per-skill H1 outside this immutable contract slice",
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
-      "relationship_ids": [],
+      "relationship_ids": [
+        "REL-101"
+      ],
       "required_input": "A bounded caller-owned Source Trace and authority for: Establish the cause and trusted reproduction of uncertain broken behavior before repair",
       "return_packet": "A causal packet, regression-ready reproduction, or decision-needed blocker",
       "skill_id": "SK-005"
@@ -3826,7 +3835,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "completion_condition": "RED and GREEN were observed through the selected seam and relevant proof remains green",
       "contract_order": 6,
       "essential_outcome": "Deliver one red-green-refactor tracer for settled red-testable behavior",
-      "failure_return": "Hand off uncertain bugs or design questions without claiming TDD",
+      "failure_return": "Return uncertain bugs, design questions, and out-of-slice follow-ups to the caller without claiming TDD or choosing a successor",
       "invocation_mode": "implicit",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
@@ -3847,13 +3856,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Per-skill H1 outside this immutable contract slice",
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
-      "relationship_ids": [
-        "REL-073",
-        "REL-074",
-        "REL-075"
-      ],
+      "relationship_ids": [],
       "required_input": "A bounded caller-owned Source Trace and authority for: Deliver one red-green-refactor tracer for settled red-testable behavior",
-      "return_packet": "A complete TDD proof packet or a typed handoff",
+      "return_packet": "A complete TDD proof packet or a typed caller return",
       "skill_id": "SK-006"
     },
     {
@@ -4275,7 +4280,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Per-skill H1 outside this immutable contract slice",
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
-      "relationship_ids": [],
+      "relationship_ids": [
+        "REL-103"
+      ],
       "required_input": "One repository worktree, observed conflict state, operation goal when known, bounded scope, and separately declared reconciliation and finish authorities",
       "return_packet": "One typed inspection, prepared reconciliation, finished operation, decision required, blocked, or route mismatch packet with exact state",
       "skill_id": "SK-016"
