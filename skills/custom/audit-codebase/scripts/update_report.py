@@ -19,6 +19,7 @@ from typing import Sequence
 _RUN_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}")
 _SECTION_ID = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 _GIT_ID = re.compile(r"(?:[0-9a-f]{40}|[0-9a-f]{64})")
+_REPORT_STRUCTURAL_VERSION = "5"
 _KINDS = {
     "system",
     "subsystem-narrative",
@@ -705,8 +706,11 @@ def _validate_complete_report(
 ) -> tuple[dict[str, str], str, dict[str, str], str]:
     if facts.html_count != 1 or facts.main_count != 1:
         raise ReportUpdateError("report must contain one html and one main element")
-    if facts.report_versions != ["4"]:
-        raise ReportUpdateError("report must declare audit-codebase version 4")
+    if facts.report_versions != [_REPORT_STRUCTURAL_VERSION]:
+        raise ReportUpdateError(
+            "report must declare audit-codebase version "
+            f"{_REPORT_STRUCTURAL_VERSION}"
+        )
     duplicate_ids = sorted(
         identifier for identifier, count in facts.ids.items() if count != 1
     )
@@ -1105,7 +1109,7 @@ def inspect_report(
         }
         result: dict[str, object] = {
             "report": str(canonical),
-            "report_version": "4",
+            "report_version": _REPORT_STRUCTURAL_VERSION,
             "run_id": canonical.parent.name,
             "sha256": _sha256(source_bytes),
             "candidate_states": states,

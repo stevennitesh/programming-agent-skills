@@ -63,7 +63,7 @@ def _report(repo: Path, *, subsystem_state: str = "audited") -> Path:
     report.write_text(
         """<!doctype html>
 <html lang="en"><head>
-<meta name="audit-codebase-report-version" content="4">
+<meta name="audit-codebase-report-version" content="5">
 </head><body>
 <!-- audit-codebase:summary:report-header:start -->
 <header id="report-header" data-candidate-progress="{progress}"
@@ -307,7 +307,7 @@ def test_inspect_returns_local_candidate_packet(tmp_path: Path) -> None:
         candidate_id="alpha-fix",
     )
 
-    assert result["report_version"] == "4"
+    assert result["report_version"] == "5"
     assert result["run_id"] == "run-001"
     assert result["sha256"] == _digest(report)
     assert result["candidate"] == {
@@ -874,6 +874,116 @@ def test_close_candidate_derives_all_report_projections(tmp_path: Path) -> None:
     assert result["finding_progress"] == "active:0,resolved:1,disproved:0"
 
 
+def test_fresh_report_normal_lifecycle_remains_consistent(tmp_path: Path) -> None:
+    report = _report(tmp_path, subsystem_state="mapped")
+    source = report.read_text(encoding="utf-8")
+    for kind, identifier in (
+        ("candidate", "alpha-fix"),
+        ("candidate-index", "alpha-fix"),
+        ("finding", "alpha-defect"),
+    ):
+        start, end = MODULE._marked_bounds(source, kind, identifier)
+        source = source[:start] + source[end:]
+    source = source.replace(PRESENTED_PROGRESS, _progress_for("none"))
+    source = source.replace(
+        ACTIVE_FINDINGS,
+        "active:0,resolved:0,disproved:0",
+    )
+    report.write_text(source, encoding="utf-8")
+
+    def inspect(expected_subsystem: str, expected_candidate: str | None) -> None:
+        result = MODULE.inspect_report(
+            repo_root=tmp_path,
+            report=report,
+            subsystem_id="alpha",
+        )
+        assert result["report_version"] == "5"
+        assert result["subsystem"]["state"] == expected_subsystem
+        assert result["candidate_states"].get("alpha-fix") == expected_candidate
+        facts = MODULE._facts(report.read_text(encoding="utf-8"))
+        for projection in ("svg-map", "linked-map", "system-list"):
+            record = facts.subsystem_projections[projection]["alpha"][0]
+            assert record["data-state"] == expected_subsystem
+            visible = facts.subsystem_visible_states[projection]["alpha"]
+            assert len(visible) == 1
+            assert (
+                MODULE._visible_subsystem_state(projection, visible[0])
+                == expected_subsystem
+            )
+
+    # Map
+    inspect("mapped", None)
+
+    # Audit
+    narrative = _fragment(
+        tmp_path,
+        "lifecycle-narrative.html",
+        _narrative("audited lifecycle trace"),
+    )
+    finding = _fragment(
+        tmp_path,
+        "lifecycle-finding.html",
+        """<article id="finding-alpha-defect"
+data-finding-id="alpha-defect" data-subsystem-id="alpha" data-state="active">
+<p>lifecycle defect evidence</p></article>""",
+    )
+    candidate_sections = _candidate_sections(
+        tmp_path,
+        state="presented",
+        pickup="$audit-codebase analyze alpha-fix from report",
+    )
+    MODULE.reaudit_subsystem(
+        repo_root=tmp_path,
+        report=report,
+        expected_sha256=_digest(report),
+        subsystem_id="alpha",
+        subsystem_state="audited",
+        source_identity="tree-alpha-audited",
+        narrative_path=narrative,
+        findings=(("alpha-defect", finding),),
+        candidates=(
+            (
+                "alpha-fix",
+                candidate_sections[0][2],
+                candidate_sections[1][2],
+            ),
+        ),
+    )
+    inspect("audited", "presented")
+
+    # Analyze
+    MODULE.update_report(
+        repo_root=tmp_path,
+        report=report,
+        expected_sha256=_digest(report),
+        sections=(
+            *_candidate_sections(
+                tmp_path,
+                state="analyzed",
+                pickup="$implement candidate alpha-fix from report",
+            ),
+            *_progress_sections(tmp_path, _progress_for("analyzed")),
+        ),
+    )
+    inspect("audited", "analyzed")
+
+    # close-candidate
+    MODULE.close_candidate(
+        repo_root=tmp_path,
+        report=report,
+        expected_sha256=_digest(report),
+        candidate_id="alpha-fix",
+        completion_path=_completion(tmp_path / "completion.json"),
+    )
+    inspect("audited", "implemented")
+    final = MODULE.inspect_report(
+        repo_root=tmp_path,
+        report=report,
+        candidate_id="alpha-fix",
+    )
+    assert final["finding_states"] == {"alpha-defect": "resolved"}
+
+
 def test_updates_selected_regions_atomically(tmp_path: Path) -> None:
     report = _report(tmp_path)
     candidate = _fragment(
@@ -1012,12 +1122,12 @@ def test_progress_projections_are_derived_from_candidate_state(tmp_path: Path) -
     assert updated.count(f'data-candidate-progress="{progress}"') == 3
 
 
-def test_requires_report_version_four(tmp_path: Path) -> None:
+def test_requires_report_version_five(tmp_path: Path) -> None:
     report = _report(tmp_path)
     report.write_text(
         report.read_text(encoding="utf-8").replace(
+            'content="5"',
             'content="4"',
-            'content="3"',
             1,
         ),
         encoding="utf-8",
@@ -1029,7 +1139,7 @@ def test_requires_report_version_four(tmp_path: Path) -> None:
         '<article id="candidate-alpha-fix">new</article>',
     )
 
-    with pytest.raises(MODULE.ReportUpdateError, match="version 4"):
+    with pytest.raises(MODULE.ReportUpdateError, match="version 5"):
         MODULE.update_report(
             repo_root=tmp_path,
             report=report,

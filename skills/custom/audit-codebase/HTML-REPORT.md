@@ -12,7 +12,7 @@ Write strict UTF-8 HTML that opens offline, with:
 
 - `<html lang="en">`, a meaningful `<title>`, and
   `<meta charset="utf-8">`;
-- `<meta name="audit-codebase-report-version" content="4">`;
+- `<meta name="audit-codebase-report-version" content="5">`;
 - no network requests, executable scripts, hidden workflow state, remote
   fonts, CDN assets, or browser-only persistence;
 - arbitrary repository, user, and returned content only in escaped text nodes;
@@ -23,6 +23,12 @@ Write strict UTF-8 HTML that opens offline, with:
 - captions and scoped headers for tables; and
 - responsive inline SVG figures with a `viewBox`, `role="img"`, titles,
   descriptions, fragment-linked nodes, and adjacent text alternatives.
+
+The report version is structural. Increment it before requiring any new HTML
+attribute, marker, projection, or evidence element. A validator change may
+clarify or repair the declared structure, but must not add a requirement to an
+existing version. Version 5 first requires the subsystem-state projections
+defined below.
 
 Use dark mode with reusable background, surface, border, text, muted, link,
 focus, positive, warning, and danger tokens. Never encode state by color alone.
@@ -115,6 +121,8 @@ The first element is the linked SVG node; the others are the linked Map and
 system-list entries. Their machine states, visible state text, SVG state class,
 and SVG aria-label suffix must match the subsystem `<section>`.
 `reaudit-subsystem` updates and validates them atomically.
+That state-only reconciliation never requires a `summary:map` fragment.
+Structural changes to nodes, labels, file counts, or edges do.
 
 Begin each subsystem detail with one current-state context-flow figure showing
 its governing contracts or decisions, callers and entry points, material

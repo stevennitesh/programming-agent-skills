@@ -1561,6 +1561,11 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert "Audit hot path:" in audit
     assert "Audit runs `reaudit-subsystem --validate-only`" in report
     assert "Analyze runs generic `validate`, then `update`" in report
+    assert 'audit-codebase-report-version" content="5"' in report
+    assert "The report version is structural" in report
+    assert "must not add a requirement to an\nexisting version" in report
+    assert "Do not render\n`summary:map` for a state-only transition" in audit
+    assert "nodes, labels, file counts, or direct edges" in audit
     assert "candidate-insert:<subsystem-id>" in report
     assert "finding-insert:<subsystem-id>" in report
     assert "static subsystem container" in report_flat
@@ -1580,7 +1585,7 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert "changed-fragment links" in report
     assert "report SHA-256 is unchanged" in report
     assert "return completed source analysis" in report.lower()
-    assert 'content="4"' in report
+    assert 'content="5"' in report
     assert 'content="3"' not in report
     assert "candidate-index:<id>:start" in report
     assert 'data-candidate-id="<candidate-id>"' in report

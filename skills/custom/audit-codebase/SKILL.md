@@ -157,8 +157,10 @@ Record the current evidence identity and update affected local map ownership.
 For an explicit evidence path list, use helper `source-identity`; it
 canonicalizes paths, modes, and content identities but never discovers scope.
 Refresh the selected subsystem's current-state flow from the same evidence.
-Include `summary:map` only when one of its displayed node facts or direct edges
-changed.
+`reaudit-subsystem` owns state-only synchronization across the subsystem
+container, SVG node, linked Map list, and system list. Do not render
+`summary:map` for a state-only transition. Include it only for structural
+changes to nodes, labels, file counts, or direct edges.
 If structural change makes the selected boundary unresolvable, publish the
 reconciled map as incomplete and return its exact Map continuation instead of
 auditing a guessed subsystem.
