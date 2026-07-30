@@ -89,13 +89,14 @@ Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`,
   non-dispatchable and affected-frontier read-back succeeds.
 - **Closeout**: after required review and commits, post the closeout packet,
   apply or retain `implemented`, remove the prior state-role label, close the
-  implementation issue as completed, and read back the item and affected
-  frontier. Then release the claim and read back its absence. Preserve
+  implementation issue as completed, and read back every intended effect with
+  the item durably non-dispatchable. Then release the claim and read back its
+  absence and the final affected frontier. Preserve
   dependency links: closing a completed blocker retains history and removes it
   from the active blocker set. Close a parent spec only after every in-scope
   child and follow-up is closed; post a final summary before closing it.
 - **Non-completed closure**: before closing a blocker as not planned, duplicate, or superseded, inspect every dependent. Rewire it, give it an explicit open blocker, or close it for its own reason. Closure must not create a false-ready frontier.
-- **Mutation read-back**: after creating or changing an item, refetch the item and its affected dependents; verify the intended body, relationships, labels or state, assignee, comments, close reason, open/closed status, and resulting frontier. A partial mutation is blocked; report applied operations, failed operations, and the safest recovery action.
+- **Mutation read-back**: after creating or changing an item, refetch the item and its affected dependents; verify the intended body, relationships, labels or state, assignee, comments, close reason, open/closed status, and resulting frontier. A failed command requires refetch. Unless every intended field verifies, the partial mutation is blocked; report applied, failed, and unverified operations plus the safest recovery action.
 
 ## Wayfinding operations
 

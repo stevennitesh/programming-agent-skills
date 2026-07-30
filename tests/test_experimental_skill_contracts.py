@@ -304,7 +304,7 @@ def test_current_implement_preserves_promoted_and_author_contract() -> None:
     } == inventory
 
     assert tree_hash(canonical_dir) == (
-        "855811bedddfb01dda437e7f9c62c2fce8cdfefb6a1fdee1fe63ba6832bd6724"
+        "45087455148fe8ee7e74d5b59f93ae3a84b2f3e0538e4c2b12709987fcac6414"
     )
     promoted = (canonical_dir / "SKILL.md").read_text(encoding="utf-8")
     normalized = " ".join(promoted.split())
@@ -322,7 +322,9 @@ def test_current_implement_preserves_promoted_and_author_contract() -> None:
         "retain the open item and claim through Lock and commit",
         "Produce exactly one commit",
         "read-back proves `HEAD` unchanged",
-        "retain the claim while closing GitHub or GitLab",
+        "retain the claim and apply the configured GitHub",
+        "A failed connector command requires refetch",
+        "Tracker closeout: <configured Mutation read-back",
         "Before commit, a terminal `partial` or `blocked` Return releases",
         "After commit, incomplete or indeterminate connector closeout",
         "remains outside the agent frontier",

@@ -266,6 +266,10 @@ def test_connector_closeout_retains_custody_until_frontier_is_safe() -> None:
         assert "durably non-dispatchable" in normalized
         assert "affected-frontier read-back succeeds" in normalized
         assert "release the claim and read back its absence" in normalized
+        assert "read back every intended effect" in normalized
+        assert "absence and the final affected frontier" in normalized
+        assert "a failed command requires refetch" in normalized
+        assert "unless every intended field verifies" in normalized
 
     github = github_trackers[0].read_text(encoding="utf-8")
     assert "**Close implemented items:** yes." in github
@@ -397,7 +401,7 @@ def assert_repo_bootstrap_semantic_contract(
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     assert_repo_bootstrap_semantic_contract(
         CUSTOM / "repo-bootstrap",
-        "d6adcf01a8df6149b71e68dfc8e0684a48e25b0f841e5fa871337a2c7a69118b",
+        "acf39a93dd9168827b0a19dd732060b0f104a64abe5d6acd9e7031b4de92c76e",
         profile="incumbent",
     )
 
@@ -3415,9 +3419,16 @@ def test_implement_closeout_enters_lock_and_preserves_connector_custody() -> Non
     assert "read-back proves `HEAD` unchanged" in implement_flat
     assert "do not retry blindly" in implement_flat
     assert "A retry inside the same active run is not a Return" in implement_flat
-    assert "retain the claim while closing GitHub or GitLab" in implement_flat
+    assert "retain the claim and apply the configured GitHub" in implement_flat
     assert "durably non-dispatchable" in implement_flat
-    assert "read back the item and affected frontiers" in implement_flat
+    assert "Read back every intended effect" in implement_flat
+    assert "absence and the final affected frontier" in implement_flat
+    assert "A failed connector command requires refetch" in implement_flat
+    assert (
+        "`partial` unless the configured final state fully verifies"
+        in implement_flat
+    )
+    assert "Tracker closeout: <configured Mutation read-back" in implement
     assert "named recovery custodian" in implement_flat
     assert "Before commit, a terminal `partial` or `blocked` Return releases" in (
         implement_flat

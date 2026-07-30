@@ -163,15 +163,14 @@ proves `HEAD` unchanged; otherwise treat the observed commit as created and do
 not retry blindly. Local Markdown commits selected work and its tracker closeout
 together; connector and direct items commit no fabricated tracker content.
 
-After the commit is verified, retain the claim while closing GitHub or GitLab
-through its configured connector. Make the item durably non-dispatchable, read
-back the item and affected frontiers, then release the claim and read back its
-absence.
-An incomplete or indeterminate closeout retains or transfers the claim to a
-named recovery custodian and reads that custody back. Return the commit identity,
-observed tracker state, applied and failed effects, and the safest configured
-recovery action. Local Markdown and direct items perform no post-commit tracker
-mutation.
+After the commit is verified, retain the claim and apply the configured GitHub
+or GitLab connector closeout. Read back every intended effect with the item
+durably non-dispatchable. Then release the claim and read back its absence and
+the final affected frontier. A failed connector command requires refetch; Return
+`partial` unless the configured final state fully verifies. An incomplete or
+indeterminate closeout retains or transfers the claim to a named recovery
+custodian and reads that custody back. Local Markdown and direct items perform
+no post-commit tracker mutation.
 
 Push only when separately authorized, then verify the exact approved commit at
 the remote.
@@ -187,6 +186,7 @@ Formal review decision:
 Repair generations used:
 Changed scope:
 Change Closure:
+Tracker closeout: <configured Mutation read-back, claim, and final frontier> | not applicable
 Residual risk:
 Caller-owned post-completion actions: <actions> | none
 ```

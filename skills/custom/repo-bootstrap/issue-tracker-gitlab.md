@@ -104,14 +104,15 @@ Used by `$to-spec`, `$to-tickets`, `$triage`, `$implement`,
 - **Closeout**: after required review and commits, post the closeout packet as a
   note, apply `implemented`, and remove the prior state-role label. Close the
   issue only when `Close implemented items` is `yes` or the user directs it.
-  Read back the resulting non-dispatchable state and affected frontier, then
-  release the claim and read back its absence. Close a parent only after its
-  in-scope children and follow-ups are drained.
+  Read back every intended effect with the item durably non-dispatchable. Then
+  release the claim and read back its absence and the final affected frontier.
+  Close a parent only after its in-scope children and follow-ups are drained.
 - **Mutation read-back**: after creating or changing an item, refetch it and its
   affected dependents; verify the intended description, relationships, labels or
   state, assignees, notes, open/closed status, and resulting ready frontier. A
-  partial mutation is blocked; report applied operations, failed operations, and
-  the safest recovery action.
+  failed command requires refetch. Unless every intended field verifies, the
+  partial mutation is blocked; report applied, failed, and unverified operations
+  plus the safest recovery action.
 
 ## Wayfinding operations
 
