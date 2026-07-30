@@ -304,33 +304,32 @@ def test_current_implement_preserves_promoted_and_author_contract() -> None:
     } == inventory
 
     assert tree_hash(canonical_dir) == (
-        "45087455148fe8ee7e74d5b59f93ae3a84b2f3e0538e4c2b12709987fcac6414"
+        "479b5242121887c38cdb2139da93f77e5dd57589086e462f58c34fc8e6ffaab5"
     )
     promoted = (canonical_dir / "SKILL.md").read_text(encoding="utf-8")
     normalized = " ".join(promoted.split())
 
     for contract in (
-        "Deliver exactly one selected bounded Ready-for-agent item",
-        "A named target remains binding",
+        "Deliver exactly one caller-selected ready item",
+        "Keep the named item and all source-owned commitments unchanged",
         "exhaustive parent graph to `$parallel-implement`",
-        "Hand off conflict-only admission",
-        "Freeze one immutable Charter",
-        "default the selected-item budget to exactly `2`",
-        "Pin routing classification and Finding Contract",
-        "complete caller-admitted, Charter-preserving, proof-bounded batch",
-        "For Local Markdown, append the final closeout packet",
-        "retain the open item and claim through Lock and commit",
-        "Produce exactly one commit",
-        "read-back proves `HEAD` unchanged",
-        "retain the claim and apply the configured GitHub",
-        "A failed connector command requires refetch",
-        "Tracker closeout: <configured Mutation read-back",
-        "Before commit, a terminal `partial` or `blocked` Return releases",
-        "After commit, incomplete or indeterminate connector closeout",
-        "remains outside the agent frontier",
-        "require its tree to equal the locked tree",
+        "conflicts to `$resolving-merge-conflicts`",
+        "Freeze one Charter",
+        "otherwise default to exactly `2`",
+        "Pin classification and Finding Contract",
+        "complete caller-admitted, Charter-preserving batch",
+        "mechanical Local Markdown closeout after review and before Lock",
+        "Retain GitHub or GitLab claims through Lock and commit",
+        "Create exactly one commit",
+        "proving `HEAD` unchanged",
+        "Complete connector closeout",
+        "connector failure, preserve the commit, refetch state",
+        "Tracker closeout, claim, and frontier:",
+        "Before commit, release a claim only after",
+        "After commit, retain custody until closeout",
+        "index and commit trees to equal the locked tree",
         "named recovery custodian",
-        "Return `complete` only after every applicable gate reads back",
+        "Return `complete` only when acceptance, proof, review, Lock",
     ):
         assert contract in normalized
 

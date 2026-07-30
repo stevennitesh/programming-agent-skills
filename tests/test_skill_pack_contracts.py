@@ -1664,36 +1664,33 @@ def test_implement_selects_one_risk_scaled_review_route() -> None:
         "## Lock And Return", 1
     )[0]
     review_flat = " ".join(review_section.split())
-    assert "Stage one exact candidate for review" in review_flat
-    assert "Pin routing classification and Finding Contract" in review_flat
-    assert "then choose exactly one formal review route for the run" in review_flat
-    assert "Invoke it once for the initial proved candidate" in review_flat
-    assert "invoke the same route once in remediation mode" in review_flat
-    assert "request explicitly staged-only review" in review_flat
+    assert "Stage one exact candidate" in review_flat
+    assert "Pin classification and Finding Contract" in review_flat
+    assert "Invoke one route once" in review_flat
+    assert "rereview every repaired tree through the same route" in review_flat
+    assert "request staged-only review" in review_flat
     assert "Never unstage foreign work" in review_flat
-    assert "Return without Review" in review_flat
+    assert "Stop when the candidate cannot be isolated" in review_flat
     assert set(
         re.findall(r"`\$(change-review|high-assurance-review)`", review_section)
     ) == {
         "change-review",
         "high-assurance-review",
     }
-    assert "ordinary diff or PR" in review_flat
-    assert "release candidate or supported high-risk diff or PR" in review_flat
-    assert "supported risk trigger when applicable" in review_flat
-    assert "already-loaded Finding Contract" in review_flat
+    assert "release candidate or supported high-risk target" in review_flat
+    assert "otherwise use `$change-review`" in review_flat
+    assert "Charter, Source Trace, fixed point, candidate, proof," in review_flat
+    assert "complete current review" in review_flat
     assert "complete caller-admitted" in review_flat
     assert "mixed-authority, partial, out-of-scope, or" in review_flat
     for field in (
-        "Commit identity:",
-        "Commit tree identity:",
-        "Accepted proof and skipped checks:",
-        "Formal review decision:",
-        "Repair generations used:",
-        "Changed scope:",
-        "Change Closure:",
+        "Commit identity and tree:",
+        "Proof, skips, and formal review:",
+        "Repair generations:",
+        "Changed scope and Change Closure:",
+        "Tracker closeout, claim, and frontier:",
         "Residual risk:",
-        "Caller-owned post-completion actions:",
+        "Caller-owned next action:",
     ):
         assert field in implement
     assert "do not infer or start caller-owned" in " ".join(implement.split())
@@ -1978,9 +1975,7 @@ def test_implementation_closeout_requires_the_spec_axis() -> None:
 
     for text in (review, convergent):
         assert "`Spec required: yes | no`" in text
-    assert "Supply `Spec required: yes`; the required Spec" in " ".join(
-        implement.split()
-    )
+    assert "`Spec required: yes`" in " ".join(implement.split())
     assert "`Spec required: yes`" in " ".join(parallel.split())
 
 
@@ -2013,9 +2008,9 @@ def test_implementation_workflows_compress_steps_without_repeating_proof() -> No
         "Lock And Return",
     ]
     assert "tracker and label owners only for tracker-backed work" in implement_flat
-    assert "Reuse settled packet facts" in implement_flat
-    assert "exact candidate and proof inputs remain unchanged" in implement_flat
-    assert "rerun only invalidated or repository-required proof" in implement_flat
+    assert "all source-owned commitments unchanged" in implement_flat
+    assert "Bind proof to the exact candidate and inputs" in implement_flat
+    assert "Rerun only invalidated or repository-required checks" in implement_flat
     assert "Start from the frozen graph and execution profiles" in parallel_flat
     assert "Requalify only" in parallel_flat
     assert "Carry worker proof as slice evidence" in parallel_flat
@@ -2076,7 +2071,6 @@ def test_planning_and_delivery_activate_preventive_code_quality_contract() -> No
     assert "Removal Trigger" in normalized["to-tickets"]
     assert "Code Quality Contract" in normalized["implement"]
     assert "Change Closure" in normalized["implement"]
-    assert "Removal Trigger" in normalized["implement"]
     assert "`Spec required: yes`" in normalized["implement"]
     assert "engineering-contract.md" in normalized["review"]
     assert "Change Closure" in normalized["review"]
@@ -2141,20 +2135,14 @@ def test_ticket_and_delivery_packets_preserve_quality_and_route_repairs() -> Non
     assert "adding a test requires a distinct responsibility" in tickets_flat
     assert "create no second planning artifact" in tickets_flat
 
-    assert "Preserve the complete source-owned packet" in implement_flat
-    assert "Add only the runtime fixed point and confirmed authorized writes" in (
-        implement_flat
-    )
-    assert "default the selected-item budget to exactly `2`" in implement_flat
-    assert "Refresh only a stale, uncertain, or contradicted seam" in implement_flat
-    assert "Recommend `$to-tickets` only when a verified landed predecessor" in (
-        implement_flat
-    )
-    assert "malformed item to its caller, source, or triage owner" in implement_flat
-    assert "canonical proof responsibility" in implement_flat
-    assert "surviving portfolio preserves each distinct responsibility" in (
-        implement_flat
-    )
+    assert "all source-owned commitments unchanged" in implement_flat
+    assert "Freeze one Charter" in implement_flat
+    assert "otherwise default to exactly `2`" in implement_flat
+    assert "refresh only stale, uncertain, or contradicted evidence" in implement_flat
+    assert "Recommend `$to-tickets` only when verified landed" in implement_flat
+    assert "Return malformed or unsettled work to its source owner" in implement_flat
+    assert "Reuse the canonical test owner" in implement_flat
+    assert "Perform Change Closure" in implement_flat
 
     assert "Tickets execution packet and profile" in parallel_flat
     assert "Resolve authority prerequisites before a ticket becomes dispatchable" in (
@@ -2591,8 +2579,9 @@ def test_mutating_workflows_require_readback() -> None:
     for name in ("implement", "parallel-implement", "to-spec", "to-tickets", "triage", "wayfinder"):
         text = (CUSTOM / name / "SKILL.md").read_text(encoding="utf-8")
         if name == "implement":
-            assert "Mutation read-back" in text
-            assert "incomplete or indeterminate closeout" in " ".join(text.split())
+            normalized = " ".join(text.split())
+            assert "Mutation read-back" in normalized
+            assert "retain custody until closeout" in normalized
         elif name == "parallel-implement":
             assert "mutation read-back" in text
             assert "affected-frontier read-back" in text
@@ -3059,7 +3048,9 @@ def test_parallel_delivery_roles_stay_out_of_the_shared_contract() -> None:
     assert "staged worker" not in contract
     assert "lane worker" not in contract
     assert "staged worker" not in implement
-    assert "exhaustive parent graph to\n`$parallel-implement`" in implement
+    assert "exhaustive parent graph to `$parallel-implement`" in " ".join(
+        implement.split()
+    )
     assert "A lane worker or child integrator" in " ".join(parallel.split())
 
 
@@ -3387,10 +3378,10 @@ def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -
     implement_flat = " ".join(implement.split())
 
     assert not implicit_policy(CUSTOM / "implement")
-    assert "Accept one caller-selected item only" in implement_flat
-    assert "A named target remains binding" in implement_flat
-    assert "do not substitute another item" in implement_flat
-    assert "exhaustive parent graph to\n`$parallel-implement`" in implement
+    assert "Deliver exactly one caller-selected ready item" in implement_flat
+    assert "Keep the named item" in implement_flat
+    assert "Do not substitute, split, widen" in implement_flat
+    assert "exhaustive parent graph to `$parallel-implement`" in implement_flat
     assert "staged worker" not in implement
 
 
@@ -3398,46 +3389,31 @@ def test_implement_closeout_enters_lock_and_preserves_connector_custody() -> Non
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
     implement_flat = " ".join(implement.split())
 
-    assert "Stage one exact candidate for review" in implement_flat
-    assert "In clean isolated work, stage all and only authorized candidate bytes" in (
-        implement_flat
-    )
-    assert "In shared or dirty work, preserve the starting index" in implement_flat
+    assert "Stage one exact candidate" in implement_flat
+    assert "preserving the starting index and unrelated work" in implement_flat
     assert "stage exact paths or hunks" in implement_flat
-    review_tree = implement.index("pin one immutable proved candidate")
-    closeout = implement.index("For Local Markdown, append the final closeout")
-    lock_tree = implement.index("Lock the exact reviewed candidate")
+    review_tree = implement.index("Pin the proved tree")
+    closeout = implement.index("mechanical Local Markdown closeout")
+    lock_tree = implement.index("Lock the reviewed tree")
 
     assert review_tree < closeout < lock_tree
-    assert "apply Mutation read-back" in implement
-    assert "Any other review-to-lock delta Returns to formal review" in implement
-    assert "Only configured mechanical closeout fields" in implement_flat
-    assert "new narrative or semantic content Returns to formal review" in (
-        implement_flat
-    )
-    assert "Produce exactly one commit" in implement_flat
-    assert "read-back proves `HEAD` unchanged" in implement_flat
+    assert "Mutation read-back rules" in implement_flat
+    assert "Send every other review-to-lock delta through formal review" in implement_flat
+    assert "Add only mechanical Local Markdown closeout" in implement_flat
+    assert "Create exactly one commit" in implement_flat
+    assert "proving `HEAD` unchanged" in implement_flat
     assert "do not retry blindly" in implement_flat
-    assert "A retry inside the same active run is not a Return" in implement_flat
-    assert "retain the claim and apply the configured GitHub" in implement_flat
+    assert "Retain GitHub or GitLab claims through Lock and commit" in implement_flat
     assert "durably non-dispatchable" in implement_flat
-    assert "Read back every intended effect" in implement_flat
-    assert "absence and the final affected frontier" in implement_flat
-    assert "A failed connector command requires refetch" in implement_flat
-    assert (
-        "`partial` unless the configured final state fully verifies"
-        in implement_flat
-    )
-    assert "Tracker closeout: <configured Mutation read-back" in implement
+    assert "verify every effect" in implement_flat
+    assert "release the claim, and verify the final frontier" in implement_flat
+    assert "connector failure, preserve the commit, refetch state" in implement_flat
+    assert "Tracker closeout, claim, and frontier:" in implement
     assert "named recovery custodian" in implement_flat
-    assert "Before commit, a terminal `partial` or `blocked` Return releases" in (
-        implement_flat
-    )
+    assert "Before commit, release a claim only after" in implement_flat
     assert "pending mutations are determinate" in implement_flat
-    assert "After commit, incomplete or indeterminate connector closeout" in (
-        implement_flat
-    )
-    assert "remains outside the agent frontier" in implement_flat
+    assert "After commit, retain custody until closeout" in implement_flat
+    assert "frontier verification succeed" in implement_flat
 
 
 def test_diagnosis_returns_to_one_implementation_owner() -> None:
