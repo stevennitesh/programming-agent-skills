@@ -90,6 +90,21 @@ reverse caller or dependent duplicates, transitive edges, file nodes, findings,
 or candidate state. Keep the linked text table of contents adjacent and
 canonical for exact labels, state, pickups, and accessible navigation.
 
+Project each subsystem container's `data-state` through exactly these elements:
+
+```html
+<a id="map-node-<subsystem-id>" data-subsystem-projection="svg-map"
+  data-subsystem-id="<subsystem-id>" data-state="<state>">...</a>
+<li id="map-list-<subsystem-id>" data-subsystem-projection="linked-map"
+  data-subsystem-id="<subsystem-id>" data-state="<state>">...</li>
+<li id="system-list-<subsystem-id>" data-subsystem-projection="system-list"
+  data-subsystem-id="<subsystem-id>" data-state="<state>">...</li>
+```
+
+The first element is the linked SVG node; the others are the linked Map and
+system-list entries. Each state must match the subsystem `<section>`.
+`reaudit-subsystem` updates and validates all four values atomically.
+
 Begin each subsystem detail with one current-state context-flow figure showing
 its governing contracts or decisions, callers and entry points, material
 responsibility flow, direct dependencies, Interfaces or outputs, dependents,
@@ -426,12 +441,13 @@ markers. For example:
 ```
 
 The helper owns collision detection, changed-section and complete-report
-validation, insertion, bundle locking, derived progress, sibling cleanup,
-atomic replacement, and read-back. Every success or error reports `stage`,
-`mutation_started`, and `report_unchanged`; success also returns changed
-regions, candidate and finding states, and progress totals. The caller owns and
-removes fragment and manifest files. The helper does not judge codebase
-evidence, render the Map, or maintain another ledger.
+validation, subsystem-state projection reconciliation, insertion, bundle
+locking, derived progress, sibling cleanup, atomic replacement, and read-back.
+Every success or error reports `stage`, `mutation_started`, and
+`report_unchanged`; success also returns changed regions, candidate and finding
+states, and progress totals. The caller owns and removes fragment and manifest
+files. The helper does not judge codebase evidence, render the Map, or maintain
+another ledger.
 
 After the root admits a matching implementation completion packet under
 `CANDIDATE-CONTRACT.md`, publish its derived projections once without fragments:

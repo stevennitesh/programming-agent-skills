@@ -214,9 +214,10 @@ gap; unfinished obtainable work is not.
 
 Apply the Incremental Publish Gate through one `reaudit-subsystem` publication
 manifest. It refreshes the narrative, upserts findings, updates or inserts
-candidates, and derives summaries without nested replacements. For `audited`,
-return findings, opportunities, retained complexity, gaps, candidate IDs and
-names, the local
+candidates, derives summaries, and automatically reconciles the subsystem
+container's state across all Map projections without nested replacements. For
+`audited`, return findings, opportunities, retained complexity, gaps, candidate
+IDs and names, the local
 recommendation, coverage, and:
 
 `$audit-codebase analyze <candidate-id> from <absolute-report-path>`

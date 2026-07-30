@@ -41,6 +41,16 @@ _CANDIDATE_STATES = (
 )
 _STRENGTHS = {"Strong", "Worth exploring", "Speculative"}
 _SUBSYSTEM_STATES = {"mapped", "incomplete", "audited"}
+_SUBSYSTEM_PROJECTION_TAGS = {
+    "svg-map": "a",
+    "linked-map": "li",
+    "system-list": "li",
+}
+_SUBSYSTEM_PROJECTION_IDS = {
+    "svg-map": "map-node",
+    "linked-map": "map-list",
+    "system-list": "system-list",
+}
 _FINDING_STATES = ("active", "resolved", "disproved")
 _PROGRESS_IDS = {"report-header", "summary-progress", "report-footer"}
 _INSERT_KINDS = ("finding-insert", "candidate-index-insert", "candidate-insert")
@@ -89,6 +99,9 @@ class _MarkupFacts(HTMLParser):
         self.candidate_rows: dict[str, list[dict[str, str]]] = {}
         self.candidate_findings: dict[str, list[str]] = {}
         self.subsystems: dict[str, list[dict[str, str]]] = {}
+        self.subsystem_projections: dict[
+            str, dict[str, list[dict[str, str]]]
+        ] = {}
         self.findings: dict[str, list[dict[str, str]]] = {}
         self.retained: dict[str, list[dict[str, str]]] = {}
         self.gaps: dict[str, list[dict[str, str]]] = {}
@@ -134,6 +147,15 @@ class _MarkupFacts(HTMLParser):
         if lowered == "section" and element_id.startswith("subsystem-"):
             subsystem_id = element_id.removeprefix("subsystem-")
             self.subsystems.setdefault(subsystem_id, []).append(values)
+        projection = values.get("data-subsystem-projection")
+        if projection is not None:
+            expected_tag = _SUBSYSTEM_PROJECTION_TAGS.get(projection)
+            if expected_tag is None or lowered != expected_tag:
+                raise ReportUpdateError("invalid subsystem state projection")
+            subsystem_id = values.get("data-subsystem-id", "")
+            self.subsystem_projections.setdefault(projection, {}).setdefault(
+                subsystem_id, []
+            ).append(values)
         if lowered == "tr" and element_id.startswith("candidate-index-"):
             candidate_id = element_id.removeprefix("candidate-index-")
             self.candidate_rows.setdefault(candidate_id, []).append(values)
@@ -600,6 +622,7 @@ def _validate_complete_report(
         )
 
     subsystem_ids = set(facts.subsystems)
+    subsystem_states: dict[str, str] = {}
     for identifier in sorted(subsystem_ids):
         records = facts.subsystems[identifier]
         if len(records) != 1:
@@ -611,13 +634,38 @@ def _validate_complete_report(
             raise ReportUpdateError(
                 f"subsystem {identifier!r} ID does not match its anchor"
             )
-        _required(record, "data-state", f"subsystem {identifier!r}")
+        state = _required(record, "data-state", f"subsystem {identifier!r}")
+        if state not in _SUBSYSTEM_STATES:
+            raise ReportUpdateError(
+                f"subsystem {identifier!r} has unsupported state {state!r}"
+            )
+        subsystem_states[identifier] = state
         _required(record, "data-source-identity", f"subsystem {identifier!r}")
         for kind in _INSERT_KINDS:
             if facts.insertions.get((kind, identifier), 0) != 1:
                 raise ReportUpdateError(
                     f"subsystem {identifier!r} requires one {kind} anchor"
                 )
+
+    for projection, expected_tag in _SUBSYSTEM_PROJECTION_TAGS.items():
+        by_subsystem = facts.subsystem_projections.get(projection, {})
+        if set(by_subsystem) != subsystem_ids:
+            raise ReportUpdateError(
+                f"report requires one {projection} projection per subsystem"
+            )
+        for identifier in sorted(subsystem_ids):
+            records = by_subsystem[identifier]
+            label = f"subsystem {identifier!r} {projection} projection"
+            if len(records) != 1:
+                raise ReportUpdateError(f"{label} must have one {expected_tag} element")
+            record = records[0]
+            if _required(record, "data-subsystem-id", label) != identifier:
+                raise ReportUpdateError(f"{label} has wrong subsystem")
+            expected_id = f"{_SUBSYSTEM_PROJECTION_IDS[projection]}-{identifier}"
+            if _required(record, "id", label) != expected_id:
+                raise ReportUpdateError(f"{label} has wrong anchor")
+            if _required(record, "data-state", label) != subsystem_states[identifier]:
+                raise ReportUpdateError(f"{projection} projection disagrees with subsystem")
 
     if facts.observation_collections:
         for kind in _OBSERVATIONS:
@@ -1309,6 +1357,57 @@ def _prepared_markup(
     }
 
 
+def _replace_required_attribute(
+    element: str,
+    *,
+    name: str,
+    value: str,
+    label: str,
+) -> str:
+    updated, count = re.subn(
+        rf"(\b{re.escape(name)}\s*=\s*)([\"'])[^\"']*\2",
+        lambda match: (
+            f"{match.group(1)}{match.group(2)}"
+            f"{escape(value, quote=True)}{match.group(2)}"
+        ),
+        element,
+        count=1,
+    )
+    if count != 1:
+        raise ReportUpdateError(f"{label} has no {name}")
+    return updated
+
+
+def _sync_subsystem_state_projections(
+    source: str,
+    *,
+    subsystem_id: str,
+    state: str,
+) -> str:
+    for projection, tag in _SUBSYSTEM_PROJECTION_TAGS.items():
+        pattern = re.compile(
+            rf"<{tag}\b"
+            rf"(?=[^>]*\bdata-subsystem-projection\s*=\s*"
+            rf"[\"']{re.escape(projection)}[\"'])"
+            rf"(?=[^>]*\bdata-subsystem-id\s*=\s*"
+            rf"[\"']{re.escape(subsystem_id)}[\"'])[^>]*>"
+        )
+        matches = list(pattern.finditer(source))
+        if len(matches) != 1:
+            raise ReportUpdateError(
+                f"subsystem {subsystem_id!r} requires one {projection} projection"
+            )
+        match = matches[0]
+        replacement = _replace_required_attribute(
+            match.group(0),
+            name="data-state",
+            value=state,
+            label=f"subsystem {subsystem_id!r} {projection} projection",
+        )
+        source = source[: match.start()] + replacement + source[match.end() :]
+    return source
+
+
 def reaudit_subsystem(
     *,
     repo_root: Path,
@@ -1355,17 +1454,18 @@ def reaudit_subsystem(
         ("data-state", subsystem_state),
         ("data-source-identity", source_identity.strip()),
     ):
-        section_tag, count = re.subn(
-            rf"(\b{re.escape(name)}\s*=\s*)([\"'])[^\"']*\2",
-            lambda match, replacement=escape(value, quote=True): (
-                f"{match.group(1)}{match.group(2)}{replacement}{match.group(2)}"
-            ),
+        section_tag = _replace_required_attribute(
             section_tag,
-            count=1,
+            name=name,
+            value=value,
+            label="subsystem container",
         )
-        if count != 1:
-            raise ReportUpdateError(f"subsystem container has no {name}")
     source = source[: section_match.start()] + section_tag + source[section_match.end() :]
+    source = _sync_subsystem_state_projections(
+        source,
+        subsystem_id=subsystem_id,
+        state=subsystem_state,
+    )
 
     _, narrative = _decode_publication_fragment(
         narrative_path,
@@ -1385,7 +1485,10 @@ def reaudit_subsystem(
         + f"\n{_marker('subsystem-narrative', subsystem_id, 'end')}"
         + source[end:]
     )
-    sections = [f"subsystem-narrative:{subsystem_id}"]
+    sections = [
+        f"subsystem-state:{subsystem_id}",
+        f"subsystem-narrative:{subsystem_id}",
+    ]
     seen_findings: set[str] = set()
     for identifier, path in findings:
         if identifier in seen_findings:

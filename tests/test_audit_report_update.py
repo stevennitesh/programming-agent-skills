@@ -51,7 +51,7 @@ data-opportunity-id="alpha-opportunity"
 data-subsystem-id="alpha">opportunity</li></ul></div>"""
 
 
-def _report(repo: Path) -> Path:
+def _report(repo: Path, *, subsystem_state: str = "audited") -> Path:
     report = (
         repo
         / ".scratch"
@@ -70,8 +70,27 @@ def _report(repo: Path) -> Path:
   data-finding-progress="{finding_progress}">Audit</header>
 <!-- audit-codebase:summary:report-header:end -->
 <main>
+<svg aria-label="Repository relationship map">
+  <a id="map-node-alpha" href="#subsystem-alpha"
+    data-subsystem-projection="svg-map" data-subsystem-id="alpha"
+    data-state="{subsystem_state}"><text>Alpha</text></a>
+</svg>
+<ul id="linked-map">
+  <li id="map-list-alpha" data-subsystem-projection="linked-map"
+    data-subsystem-id="alpha" data-state="{subsystem_state}">
+    <a href="#subsystem-alpha">Alpha</a>
+  </li>
+</ul>
+<section id="system-core">
+  <ul>
+    <li id="system-list-alpha" data-subsystem-projection="system-list"
+      data-subsystem-id="alpha" data-state="{subsystem_state}">
+      <a href="#subsystem-alpha">Alpha</a>
+    </li>
+  </ul>
+</section>
 <section id="subsystem-alpha" data-subsystem-id="alpha"
-  data-state="audited" data-source-identity="tree-alpha">
+  data-state="{subsystem_state}" data-source-identity="tree-alpha">
   <!-- audit-codebase:subsystem-narrative:alpha:start -->
   {narrative}
   <!-- audit-codebase:subsystem-narrative:alpha:end -->
@@ -134,6 +153,7 @@ def _report(repo: Path) -> Path:
             finding_progress=ACTIVE_FINDINGS,
             narrative=_narrative(),
             pickup="$audit-codebase analyze alpha-fix from report",
+            subsystem_state=subsystem_state,
         ),
         encoding="utf-8",
     )
@@ -381,6 +401,56 @@ data-pickup-view="index">analyze alpha-new-fix</code></td></tr>""",
     assert result["finding_states"]["alpha-new"] == "active"
     assert result["candidate_progress"].startswith("presented:2")
     assert result["finding_progress"] == "active:2,resolved:0,disproved:0"
+
+
+def test_reaudit_subsystem_updates_all_state_projections(tmp_path: Path) -> None:
+    report = _report(tmp_path, subsystem_state="mapped")
+    narrative = _fragment(
+        tmp_path,
+        "narrative.html",
+        _narrative("audited trace"),
+    )
+
+    result = MODULE.reaudit_subsystem(
+        repo_root=tmp_path,
+        report=report,
+        expected_sha256=_digest(report),
+        subsystem_id="alpha",
+        subsystem_state="audited",
+        source_identity="tree-alpha-2",
+        narrative_path=narrative,
+    )
+
+    assert "subsystem-state:alpha" in result["sections"]
+    source = report.read_text(encoding="utf-8")
+    assert 'id="subsystem-alpha" data-subsystem-id="alpha"\n  data-state="audited"' in source
+    facts = MODULE._facts(source)
+    for projection in ("svg-map", "linked-map", "system-list"):
+        assert facts.subsystem_projections[projection]["alpha"][0]["data-state"] == (
+            "audited"
+        )
+
+
+@pytest.mark.parametrize("projection", ("svg-map", "linked-map", "system-list"))
+def test_report_rejects_subsystem_state_projection_mismatch(
+    tmp_path: Path,
+    projection: str,
+) -> None:
+    report = _report(tmp_path)
+    source = report.read_text(encoding="utf-8")
+    start = source.index(f'data-subsystem-projection="{projection}"')
+    old_state = 'data-state="audited"'
+    state = source.index(old_state, start)
+    report.write_text(
+        source[:state] + 'data-state="mapped"' + source[state + len(old_state):],
+        encoding="utf-8",
+    )
+
+    with pytest.raises(
+        MODULE.ReportUpdateError,
+        match=f"{projection} projection disagrees",
+    ):
+        MODULE.inspect_report(repo_root=tmp_path, report=report)
 
 
 def test_reaudit_validation_rejects_unmarked_structured_observation(
