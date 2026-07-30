@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-from html import escape
+from html import escape, unescape
 from html.parser import HTMLParser
 import json
 import os
@@ -50,6 +50,9 @@ _SUBSYSTEM_PROJECTION_IDS = {
     "svg-map": "map-node",
     "linked-map": "map-list",
     "system-list": "system-list",
+}
+_SUBSYSTEM_STATE_CLASSES = {
+    f"state-{state}" for state in _SUBSYSTEM_STATES
 }
 _FINDING_STATES = ("active", "resolved", "disproved")
 _PROGRESS_IDS = {"report-header", "summary-progress", "report-footer"}
@@ -102,6 +105,8 @@ class _MarkupFacts(HTMLParser):
         self.subsystem_projections: dict[
             str, dict[str, list[dict[str, str]]]
         ] = {}
+        self.subsystem_visible_states: dict[str, dict[str, list[str]]] = {}
+        self.subsystem_svg_classes: dict[str, list[str]] = {}
         self.findings: dict[str, list[dict[str, str]]] = {}
         self.retained: dict[str, list[dict[str, str]]] = {}
         self.gaps: dict[str, list[dict[str, str]]] = {}
@@ -114,6 +119,10 @@ class _MarkupFacts(HTMLParser):
         self.insertions: dict[tuple[str, str], int] = {}
         self.pickups: dict[str, dict[str, list[str]]] = {}
         self._pickup: tuple[str, str, str, list[str]] | None = None
+        self._subsystem_projection: tuple[str, str, str, list[str]] | None = None
+        self._subsystem_visible_state: tuple[
+            str, str, str, list[str]
+        ] | None = None
         self._observation_collection: tuple[str, str] | None = None
 
     def handle_starttag(
@@ -126,6 +135,10 @@ class _MarkupFacts(HTMLParser):
             self.main_count += 1
         elif lowered in _UNSAFE_TAGS:
             self.unsafe.append(f"{lowered} element")
+        if self._subsystem_visible_state is not None:
+            raise ReportUpdateError(
+                "subsystem visible state may not contain child elements"
+            )
 
         values = {
             name.lower(): value
@@ -150,12 +163,49 @@ class _MarkupFacts(HTMLParser):
         projection = values.get("data-subsystem-projection")
         if projection is not None:
             expected_tag = _SUBSYSTEM_PROJECTION_TAGS.get(projection)
-            if expected_tag is None or lowered != expected_tag:
+            if (
+                expected_tag is None
+                or lowered != expected_tag
+                or self._subsystem_projection is not None
+            ):
                 raise ReportUpdateError("invalid subsystem state projection")
             subsystem_id = values.get("data-subsystem-id", "")
+            self._subsystem_projection = (
+                lowered,
+                projection,
+                subsystem_id,
+                [],
+            )
             self.subsystem_projections.setdefault(projection, {}).setdefault(
                 subsystem_id, []
             ).append(values)
+        if self._subsystem_projection is not None:
+            _, active_projection, active_subsystem, _ = self._subsystem_projection
+            classes = values.get("class", "").split()
+            if (
+                active_projection == "svg-map"
+                and lowered == "rect"
+                and "diagram-node" in classes
+            ):
+                self.subsystem_svg_classes.setdefault(
+                    active_subsystem, []
+                ).append(values.get("class", ""))
+            is_visible_state = (
+                active_projection == "svg-map"
+                and lowered == "tspan"
+                and "diagram-node-state" in classes
+            ) or (
+                active_projection == "linked-map"
+                and lowered == "span"
+                and "status" in classes
+            )
+            if is_visible_state:
+                self._subsystem_visible_state = (
+                    lowered,
+                    active_projection,
+                    active_subsystem,
+                    [],
+                )
         if lowered == "tr" and element_id.startswith("candidate-index-"):
             candidate_id = element_id.removeprefix("candidate-index-")
             self.candidate_rows.setdefault(candidate_id, []).append(values)
@@ -251,6 +301,10 @@ class _MarkupFacts(HTMLParser):
     def handle_data(self, data: str) -> None:
         if self._pickup is not None:
             self._pickup[3].append(data)
+        if self._subsystem_projection is not None:
+            self._subsystem_projection[3].append(data)
+        if self._subsystem_visible_state is not None:
+            self._subsystem_visible_state[3].append(data)
 
     def handle_endtag(self, tag: str) -> None:
         lowered = tag.lower()
@@ -261,6 +315,27 @@ class _MarkupFacts(HTMLParser):
                 value
             )
             self._pickup = None
+        if (
+            self._subsystem_visible_state is not None
+            and lowered == self._subsystem_visible_state[0]
+        ):
+            _, projection, subsystem_id, parts = self._subsystem_visible_state
+            value = " ".join("".join(parts).split())
+            self.subsystem_visible_states.setdefault(projection, {}).setdefault(
+                subsystem_id, []
+            ).append(value)
+            self._subsystem_visible_state = None
+        if (
+            self._subsystem_projection is not None
+            and lowered == self._subsystem_projection[0]
+        ):
+            _, projection, subsystem_id, parts = self._subsystem_projection
+            if projection == "system-list":
+                value = " ".join("".join(parts).split())
+                self.subsystem_visible_states.setdefault(
+                    projection, {}
+                ).setdefault(subsystem_id, []).append(value)
+            self._subsystem_projection = None
         if lowered == "ul" and self._observation_collection is not None:
             self._observation_collection = None
 
@@ -606,6 +681,25 @@ def _validate_narrative_observations(
     _validate_observation_records(facts, {subsystem_id})
 
 
+def _visible_subsystem_state(projection: str, value: str) -> str | None:
+    if projection == "svg-map":
+        state, separator, detail = value.partition(" · ")
+        if (
+            separator != " · "
+            or state not in _SUBSYSTEM_STATES
+            or re.fullmatch(r"\d+\s+files?", detail) is None
+        ):
+            return None
+        return state
+    if projection == "linked-map":
+        return value if value in _SUBSYSTEM_STATES else None
+    match = re.search(
+        rf"\b\d+\s+files?,\s*({'|'.join(sorted(_SUBSYSTEM_STATES))})$",
+        value,
+    )
+    return match.group(1) if match is not None else None
+
+
 def _validate_complete_report(
     facts: _MarkupFacts,
 ) -> tuple[dict[str, str], str, dict[str, str], str]:
@@ -653,6 +747,11 @@ def _validate_complete_report(
             raise ReportUpdateError(
                 f"report requires one {projection} projection per subsystem"
             )
+        visible_by_subsystem = facts.subsystem_visible_states.get(projection, {})
+        if set(visible_by_subsystem) != subsystem_ids:
+            raise ReportUpdateError(
+                f"report requires one {projection} visible state per subsystem"
+            )
         for identifier in sorted(subsystem_ids):
             records = by_subsystem[identifier]
             label = f"subsystem {identifier!r} {projection} projection"
@@ -666,6 +765,40 @@ def _validate_complete_report(
                 raise ReportUpdateError(f"{label} has wrong anchor")
             if _required(record, "data-state", label) != subsystem_states[identifier]:
                 raise ReportUpdateError(f"{projection} projection disagrees with subsystem")
+            visible_states = visible_by_subsystem.get(identifier, [])
+            if (
+                len(visible_states) != 1
+                or _visible_subsystem_state(
+                    projection,
+                    visible_states[0],
+                )
+                != subsystem_states[identifier]
+            ):
+                raise ReportUpdateError(
+                    f"{projection} visible state disagrees with subsystem"
+                )
+            if projection != "svg-map":
+                continue
+            svg_classes = facts.subsystem_svg_classes.get(identifier, [])
+            if len(svg_classes) != 1:
+                raise ReportUpdateError(
+                    "report requires one SVG state class per subsystem"
+                )
+            state_classes = [
+                token
+                for token in svg_classes[0].split()
+                if token in _SUBSYSTEM_STATE_CLASSES
+            ]
+            if state_classes != [f"state-{subsystem_states[identifier]}"]:
+                raise ReportUpdateError("SVG state class disagrees with subsystem")
+            aria_label = _required(record, "aria-label", label)
+            name, separator, aria_state = aria_label.rpartition("; ")
+            if (
+                separator != "; "
+                or not name.strip()
+                or aria_state != subsystem_states[identifier]
+            ):
+                raise ReportUpdateError("SVG aria-label disagrees with subsystem")
 
     if facts.observation_collections:
         for kind in _OBSERVATIONS:
@@ -1378,6 +1511,121 @@ def _replace_required_attribute(
     return updated
 
 
+def _required_attribute_value(element: str, *, name: str, label: str) -> str:
+    match = re.search(
+        rf"\b{re.escape(name)}\s*=\s*([\"'])([^\"']*)\1",
+        element,
+    )
+    if match is None:
+        raise ReportUpdateError(f"{label} has no {name}")
+    return unescape(match.group(2))
+
+
+def _replace_state_class(
+    element: str,
+    *,
+    state: str,
+    label: str,
+) -> str:
+    classes = _required_attribute_value(
+        element,
+        name="class",
+        label=label,
+    ).split()
+    state_classes = [
+        token for token in classes if token in _SUBSYSTEM_STATE_CLASSES
+    ]
+    if len(state_classes) != 1:
+        raise ReportUpdateError(f"{label} requires one state class")
+    return _replace_required_attribute(
+        element,
+        name="class",
+        value=" ".join(
+            f"state-{state}"
+            if token in _SUBSYSTEM_STATE_CLASSES
+            else token
+            for token in classes
+        ),
+        label=label,
+    )
+
+
+def _replace_svg_visible_state(body: str, *, state: str, label: str) -> str:
+    rect_pattern = re.compile(
+        r"<rect\b(?=[^>]*\bclass\s*=\s*[\"']"
+        r"[^\"']*\bdiagram-node\b[^\"']*[\"'])[^>]*>"
+    )
+    rects = list(rect_pattern.finditer(body))
+    if len(rects) != 1:
+        raise ReportUpdateError(f"{label} requires one diagram node")
+    rect = rects[0]
+    replacement = _replace_state_class(
+        rect.group(0),
+        state=state,
+        label=f"{label} diagram node",
+    )
+    body = body[: rect.start()] + replacement + body[rect.end() :]
+
+    text_pattern = re.compile(
+        r"(<tspan\b(?=[^>]*\bclass\s*=\s*[\"']"
+        r"[^\"']*\bdiagram-node-state\b[^\"']*[\"'])[^>]*>)"
+        r"([^<]*)(</tspan\s*>)"
+    )
+    texts = list(text_pattern.finditer(body))
+    if len(texts) != 1:
+        raise ReportUpdateError(f"{label} requires one visible state")
+    text = texts[0]
+    _, separator, detail = unescape(text.group(2)).partition(" · ")
+    if separator != " · " or re.fullmatch(r"\d+\s+files?", detail) is None:
+        raise ReportUpdateError(f"{label} has invalid visible state")
+    return (
+        body[: text.start()]
+        + text.group(1)
+        + escape(f"{state} · {detail}")
+        + text.group(3)
+        + body[text.end() :]
+    )
+
+
+def _replace_list_visible_state(
+    body: str,
+    *,
+    projection: str,
+    state: str,
+    label: str,
+) -> str:
+    if projection == "linked-map":
+        pattern = re.compile(
+            r"(<span\b(?=[^>]*\bclass\s*=\s*[\"']"
+            r"[^\"']*\bstatus\b[^\"']*[\"'])[^>]*>)"
+            r"([^<]*)(</span\s*>)"
+        )
+        matches = list(pattern.finditer(body))
+        if len(matches) != 1:
+            raise ReportUpdateError(f"{label} requires one visible state")
+        match = matches[0]
+        return (
+            body[: match.start()]
+            + match.group(1)
+            + state
+            + match.group(3)
+            + body[match.end() :]
+        )
+
+    pattern = re.compile(
+        rf"(\b\d+\s+files?,\s*)"
+        rf"({'|'.join(sorted(_SUBSYSTEM_STATES))})(\s*)$"
+    )
+    updated, count = pattern.subn(
+        lambda match: f"{match.group(1)}{state}{match.group(3)}",
+        body,
+        count=1,
+    )
+    if count != 1:
+        raise ReportUpdateError(f"{label} requires one visible state")
+    return updated
+
+
 def _sync_subsystem_state_projections(
     source: str,
     *,
@@ -1386,11 +1634,13 @@ def _sync_subsystem_state_projections(
 ) -> str:
     for projection, tag in _SUBSYSTEM_PROJECTION_TAGS.items():
         pattern = re.compile(
-            rf"<{tag}\b"
+            rf"(<{tag}\b"
             rf"(?=[^>]*\bdata-subsystem-projection\s*=\s*"
             rf"[\"']{re.escape(projection)}[\"'])"
             rf"(?=[^>]*\bdata-subsystem-id\s*=\s*"
-            rf"[\"']{re.escape(subsystem_id)}[\"'])[^>]*>"
+            rf"[\"']{re.escape(subsystem_id)}[\"'])[^>]*>)"
+            rf"(.*?)(</{tag}\s*>)",
+            re.DOTALL,
         )
         matches = list(pattern.finditer(source))
         if len(matches) != 1:
@@ -1398,12 +1648,46 @@ def _sync_subsystem_state_projections(
                 f"subsystem {subsystem_id!r} requires one {projection} projection"
             )
         match = matches[0]
-        replacement = _replace_required_attribute(
-            match.group(0),
+        label = f"subsystem {subsystem_id!r} {projection} projection"
+        opening = _replace_required_attribute(
+            match.group(1),
             name="data-state",
             value=state,
-            label=f"subsystem {subsystem_id!r} {projection} projection",
+            label=label,
         )
+        body = match.group(2)
+        if projection == "svg-map":
+            aria_label = _required_attribute_value(
+                opening,
+                name="aria-label",
+                label=label,
+            )
+            name, separator, aria_state = aria_label.rpartition("; ")
+            if (
+                separator != "; "
+                or not name.strip()
+                or aria_state not in _SUBSYSTEM_STATES
+            ):
+                raise ReportUpdateError(f"{label} has invalid aria-label state")
+            opening = _replace_required_attribute(
+                opening,
+                name="aria-label",
+                value=f"{name}; {state}",
+                label=label,
+            )
+            body = _replace_svg_visible_state(
+                body,
+                state=state,
+                label=label,
+            )
+        else:
+            body = _replace_list_visible_state(
+                body,
+                projection=projection,
+                state=state,
+                label=label,
+            )
+        replacement = opening + body + match.group(3)
         source = source[: match.start()] + replacement + source[match.end() :]
     return source
 

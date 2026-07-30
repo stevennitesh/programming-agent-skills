@@ -73,19 +73,26 @@ def _report(repo: Path, *, subsystem_state: str = "audited") -> Path:
 <svg aria-label="Repository relationship map">
   <a id="map-node-alpha" href="#subsystem-alpha"
     data-subsystem-projection="svg-map" data-subsystem-id="alpha"
-    data-state="{subsystem_state}"><text>Alpha</text></a>
+    data-state="{subsystem_state}"
+    aria-label="alpha: Alpha; {subsystem_state}">
+    <rect class="diagram-node state-{subsystem_state}"/>
+    <text><tspan>Alpha</tspan>
+      <tspan class="diagram-node-state">{subsystem_state} · 1 file</tspan>
+    </text>
+  </a>
 </svg>
 <ul id="linked-map">
   <li id="map-list-alpha" data-subsystem-projection="linked-map"
     data-subsystem-id="alpha" data-state="{subsystem_state}">
     <a href="#subsystem-alpha">Alpha</a>
+    <span class="status">{subsystem_state}</span> · 1 file
   </li>
 </ul>
 <section id="system-core">
   <ul>
     <li id="system-list-alpha" data-subsystem-projection="system-list"
       data-subsystem-id="alpha" data-state="{subsystem_state}">
-      <a href="#subsystem-alpha">Alpha</a>
+      <a href="#subsystem-alpha">Alpha</a> — 1 file, {subsystem_state}
     </li>
   </ul>
 </section>
@@ -429,6 +436,16 @@ def test_reaudit_subsystem_updates_all_state_projections(tmp_path: Path) -> None
         assert facts.subsystem_projections[projection]["alpha"][0]["data-state"] == (
             "audited"
         )
+        visible = facts.subsystem_visible_states[projection]["alpha"]
+        assert len(visible) == 1
+        assert MODULE._visible_subsystem_state(projection, visible[0]) == "audited"
+    svg = facts.subsystem_projections["svg-map"]["alpha"][0]
+    assert set(facts.subsystem_svg_classes["alpha"][0].split()) & {
+        "state-mapped",
+        "state-incomplete",
+        "state-audited",
+    } == {"state-audited"}
+    assert svg["aria-label"] == "alpha: Alpha; audited"
 
 
 @pytest.mark.parametrize("projection", ("svg-map", "linked-map", "system-list"))
@@ -450,6 +467,47 @@ def test_report_rejects_subsystem_state_projection_mismatch(
         MODULE.ReportUpdateError,
         match=f"{projection} projection disagrees",
     ):
+        MODULE.inspect_report(repo_root=tmp_path, report=report)
+
+
+@pytest.mark.parametrize(
+    ("old", "new", "error"),
+    (
+        ("state-audited", "state-mapped", "SVG state class disagrees"),
+        (
+            "alpha: Alpha; audited",
+            "alpha: Alpha; mapped",
+            "SVG aria-label disagrees",
+        ),
+        (
+            "audited · 1 file</tspan>",
+            "mapped · 1 file</tspan>",
+            "svg-map visible state disagrees",
+        ),
+        (
+            '<span class="status">audited</span>',
+            '<span class="status">mapped</span>',
+            "linked-map visible state disagrees",
+        ),
+        (
+            "1 file, audited",
+            "1 file, mapped",
+            "system-list visible state disagrees",
+        ),
+    ),
+)
+def test_report_rejects_visible_subsystem_state_projection_mismatch(
+    tmp_path: Path,
+    old: str,
+    new: str,
+    error: str,
+) -> None:
+    report = _report(tmp_path)
+    source = report.read_text(encoding="utf-8")
+    source = source.replace(old, new, 1)
+    report.write_text(source, encoding="utf-8")
+
+    with pytest.raises(MODULE.ReportUpdateError, match=error):
         MODULE.inspect_report(repo_root=tmp_path, report=report)
 
 

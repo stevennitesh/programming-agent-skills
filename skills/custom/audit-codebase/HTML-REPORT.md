@@ -94,16 +94,27 @@ Project each subsystem container's `data-state` through exactly these elements:
 
 ```html
 <a id="map-node-<subsystem-id>" data-subsystem-projection="svg-map"
-  data-subsystem-id="<subsystem-id>" data-state="<state>">...</a>
+  data-subsystem-id="<subsystem-id>" data-state="<state>"
+  aria-label="<subsystem-id>: <name>; <state>">
+  <rect class="diagram-node state-<state>" .../>
+  <text>...
+    <tspan class="diagram-node-state">mapped|incomplete|audited · N files</tspan>
+  </text>
+</a>
 <li id="map-list-<subsystem-id>" data-subsystem-projection="linked-map"
-  data-subsystem-id="<subsystem-id>" data-state="<state>">...</li>
+  data-subsystem-id="<subsystem-id>" data-state="<state>">...
+  <span class="status">mapped|incomplete|audited</span> · N files
+</li>
 <li id="system-list-<subsystem-id>" data-subsystem-projection="system-list"
-  data-subsystem-id="<subsystem-id>" data-state="<state>">...</li>
+  data-subsystem-id="<subsystem-id>" data-state="<state>">
+  ... — N files, mapped|incomplete|audited
+</li>
 ```
 
 The first element is the linked SVG node; the others are the linked Map and
-system-list entries. Each state must match the subsystem `<section>`.
-`reaudit-subsystem` updates and validates all four values atomically.
+system-list entries. Their machine states, visible state text, SVG state class,
+and SVG aria-label suffix must match the subsystem `<section>`.
+`reaudit-subsystem` updates and validates them atomically.
 
 Begin each subsystem detail with one current-state context-flow figure showing
 its governing contracts or decisions, callers and entry points, material
