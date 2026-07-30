@@ -59,8 +59,8 @@ Perform Change Closure and remove authored scaffolding.
 
 Use `$tdd` for settled red-testable behavior. For a bug, use `$tdd` only when its
 expected behavior, symptom, cause, and trusted red-capable reproduction are
-known; otherwise use `$diagnosing-bugs` in fix mode. Integrate only a complete
-Charter-preserving Return.
+known. Otherwise return `diagnosis-required` with expected and actual behavior,
+evidence, environment, exact work state, authorities, and Return owner; stop.
 
 Bind proof to the exact candidate and inputs. Reuse unchanged proof. Rerun only
 invalidated or repository-required checks. When execution is unsafe or

@@ -49,11 +49,10 @@ and one required branch remains blocked, return `Evidence gap` with kind
 owner, and the exact instruction for returning its result to the original
 decision owner without changing the gap identity. Choose `$research` for an
 authoritative source, `$prototype` for runnable design evidence,
-`$diagnosing-bugs` for causal or reproduction uncertainty,
 `$to-questionnaire` for an external stakeholder, and the caller or `none`
-otherwise. When the intact gap must cross into a fresh context, preserve that
-owner and add uninvoked `$handoff` only as transport; Handoff neither answers
-nor owns the gap.
+otherwise. Mark causal or reproduction uncertainty `diagnosis-required`. When
+the intact gap must cross into a fresh context, preserve that owner and add
+uninvoked `$handoff` only as transport; Handoff neither answers nor owns the gap.
 
 **Return.** Always return status, bound, confirmed decisions, return owner,
 `Spec source: ready | not ready | not requested`, and `Downstream execution:

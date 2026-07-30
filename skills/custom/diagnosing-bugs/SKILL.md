@@ -1,6 +1,6 @@
 ---
 name: diagnosing-bugs
-description: "Diagnose broken, failing, flaky, slow, environment-only, or production-only behavior when expected behavior, the exact symptom, cause, or a trusted red-capable reproduction is uncertain. Fix only when implementation is authorized."
+description: "Use only when explicitly selected to diagnose broken, failing, flaky, slow, environment-only, or production-only behavior whose expectation, symptom, cause, or trusted red-capable reproduction is uncertain. Fix only when implementation is authorized."
 ---
 
 # Diagnosing Bugs
@@ -20,12 +20,9 @@ Own uncertain diagnosis through causal proof and regression evidence.
 - **Caller:** owns scope, review, staging, commit, tracker or external mutation,
   push, release, Lock, and architecture follow-up.
 
-A caller-invoked run returns its diagnosis packet to that caller. A standalone
-diagnosis-only run recommends `$implement` as its one next owner.
-
-Hand off to `$tdd` only when expected behavior, the exact symptom, the cause,
-and a trusted red-capable reproduction are known before **Trace**. Retain the
-original caller; do not bounce between skills without new evidence.
+Run only when explicitly selected. Return to the user or named caller. Start no
+successor. When all diagnosis inputs are already settled, return `route
+mismatch` with the facts unchanged.
 
 Apply `docs/agents/engineering-contract.md` and `docs/agents/domain.md` when
 present. Put disposable artifacts under `.tmp/diagnosing-bugs/<bug-slug>/`. Live

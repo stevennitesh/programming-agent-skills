@@ -304,7 +304,7 @@ def test_current_implement_preserves_promoted_and_author_contract() -> None:
     } == inventory
 
     assert tree_hash(canonical_dir) == (
-        "479b5242121887c38cdb2139da93f77e5dd57589086e462f58c34fc8e6ffaab5"
+        "d2f27f50cdbead43cfa9edc71c37e8577fe5bef18d5111af4c2cd0cd45566a62"
     )
     promoted = (canonical_dir / "SKILL.md").read_text(encoding="utf-8")
     normalized = " ".join(promoted.split())

@@ -782,7 +782,8 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
     assert "Invoke `$grill-with-docs`" in tickets_flat
     assert "Pass the user as decision owner" in tickets_flat
     assert "context action, and separate ADR action" in tickets_flat
-    assert "Invoke `$diagnosing-bugs` in diagnosis mode" in tickets_flat
+    assert "`diagnosis-required`" in tickets_flat
+    assert "$diagnosing-bugs" not in tickets_flat
     assert "Invoke `$to-questionnaire` only after the user explicitly approves" in (
         tickets_flat
     )
@@ -1340,7 +1341,6 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
         "$domain-modeling",
         "$grill-with-docs",
         "$grilling",
-        "$diagnosing-bugs",
         "$to-questionnaire",
         "$to-spec",
         "$to-tickets",
@@ -1350,6 +1350,7 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     ):
         assert route in followup
         assert route not in candidate
+    assert "`diagnosis-required`" in followup
     assert "$codebase-design" in candidate
     assert (
         "Material Responsibilities, Interfaces, Seams, and Proof Seams:"
@@ -1877,8 +1878,9 @@ def test_bug_routing_is_disjoint_and_non_bouncing() -> None:
         for match in re.finditer(r"(?m)^## \d+\. ([A-Za-z]+)$", diagnosing)
     ] == ["Trace", "Loop", "Minimise", "Hypothesise", "Probe", "Prove", "Return"]
     assert "[SKILL.md](SKILL.md)" in tdd_tests
-    assert "Hand off to `$diagnosing-bugs`" in tdd
-    assert "expected behavior" in diagnosing.split("---", 2)[1]
+    assert "`diagnosis-required`" in tdd
+    assert "$diagnosing-bugs" not in tdd
+    assert "expectation" in diagnosing.split("---", 2)[1]
     assert "expected behavior" in tdd.split("---", 2)[1]
     assert "observed failing result" in tdd
     assert "canonical test owner" in diagnosing_flat
@@ -1887,7 +1889,7 @@ def test_bug_routing_is_disjoint_and_non_bouncing() -> None:
     )
     assert "test-portfolio delta" in diagnosing_flat
     assert "applicable Change Closure" in diagnosing_flat
-    assert "explicit seam gap" in tdd_flat
+    assert "intact facts" in tdd_flat
 
 
 def test_workflow_trace_matches_to_spec_publication_authority() -> None:
@@ -3115,7 +3117,8 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
         "final status",
     ]
     assert "criterion -> evidence" in report
-    assert "$diagnosing-bugs" in worker
+    assert "`diagnosis-required`" in worker
+    assert "$diagnosing-bugs" not in worker
     assert "## Normal path" in ledger
     assert "## Phases and decisions" in ledger
     assert "## Branch packets" in ledger
@@ -3416,7 +3419,7 @@ def test_implement_closeout_enters_lock_and_preserves_connector_custody() -> Non
     assert "frontier verification succeed" in implement_flat
 
 
-def test_diagnosis_returns_to_one_implementation_owner() -> None:
+def test_diagnosis_is_an_explicit_leaf() -> None:
     diagnosing = (CUSTOM / "diagnosing-bugs/SKILL.md").read_text(encoding="utf-8")
     relationships = (ROOT / "docs/synthesis/skill-context-relationships.md").read_text(
         encoding="utf-8"
@@ -3430,12 +3433,17 @@ def test_diagnosis_returns_to_one_implementation_owner() -> None:
             relationships,
         )
     )
-    assert ("diagnosing-bugs", "Recommend and stop", "implement") in rows
-    assert "regression proof or an explicit seam gap" in relationships
-    assert all(
-        not (caller == "diagnosing-bugs" and callee == "audit-codebase")
-        for caller, _, callee in rows
-    )
+    assert not implicit_policy(CUSTOM / "diagnosing-bugs")
+    assert "Start no successor." in " ".join(diagnosing.split())
+    assert {
+        (caller, verb, callee)
+        for caller, verb, callee in rows
+        if caller == "diagnosing-bugs" or callee == "diagnosing-bugs"
+    } == set()
+    for skill in CUSTOM.iterdir():
+        if skill.is_dir() and skill.name not in {"diagnosing-bugs", "skill-router"}:
+            for path in skill.rglob("*.md"):
+                assert "$diagnosing-bugs" not in path.read_text(encoding="utf-8")
 
 
 def test_runtime_composition_edges_respect_invocation_policy() -> None:
@@ -3462,7 +3470,6 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         ("to-spec", "Load", "codebase-design"),
         ("wayfinder", "Invoke", "research"),
         ("wayfinder", "Invoke", "prototype"),
-        ("wayfinder", "Invoke", "diagnosing-bugs"),
         ("wayfinder", "Invoke", "grilling"),
         ("wayfinder", "Invoke", "grill-with-docs"),
         ("wayfinder", "Invoke", "to-questionnaire"),
@@ -3473,7 +3480,6 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         ("triage", "Recommend and stop", "wayfinder"),
         ("triage", "Recommend and stop", "to-tickets"),
         ("implement", "Invoke", "tdd"),
-        ("implement", "Invoke", "diagnosing-bugs"),
         ("implement", "Invoke", "change-review"),
         ("implement", "Invoke", "high-assurance-review"),
         ("implement", "Hand off", "resolving-merge-conflicts"),
@@ -3482,13 +3488,11 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         ("high-assurance-review", "Recommend and stop", "audit-codebase"),
         ("parallel-implement", "Invoke", "high-assurance-review"),
         ("parallel-implement", "Invoke", "resolving-merge-conflicts"),
-        ("resolving-merge-conflicts", "Invoke", "diagnosing-bugs"),
         ("audit-codebase", "Recommend and stop", "domain-modeling"),
         ("audit-codebase", "Recommend and stop", "grill-with-docs"),
         ("audit-codebase", "Recommend and stop", "grilling"),
         ("audit-codebase", "Recommend and stop", "research"),
         ("audit-codebase", "Recommend and stop", "prototype"),
-        ("audit-codebase", "Recommend and stop", "diagnosing-bugs"),
         ("audit-codebase", "Recommend and stop", "to-questionnaire"),
         ("audit-codebase", "Load", "codebase-design"),
         ("audit-codebase", "Recommend and stop", "wayfinder"),
@@ -3497,12 +3501,9 @@ def test_runtime_composition_edges_respect_invocation_policy() -> None:
         ("audit-codebase", "Recommend and stop", "simplify-code"),
         ("audit-codebase", "Recommend and stop", "implement"),
         ("simplify-code", "Recommend and stop", "audit-codebase"),
-        ("tdd", "Hand off", "diagnosing-bugs"),
         ("tdd", "Hand off", "prototype"),
         ("tdd", "Recommend and stop", "simplify-code"),
         ("tdd", "Recommend and stop", "audit-codebase"),
-        ("diagnosing-bugs", "Hand off", "tdd"),
-        ("diagnosing-bugs", "Recommend and stop", "implement"),
         ("implement", "Recommend and stop", "to-tickets"),
         ("to-tickets", "Recommend and stop", "implement"),
         ("to-tickets", "Recommend and stop", "parallel-implement"),

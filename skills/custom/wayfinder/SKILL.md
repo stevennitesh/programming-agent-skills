@@ -44,10 +44,9 @@ expected return, and `$wayfinder` as re-entry owner:
   claim level, judgment mode, and human judge or objective verdict criteria.
   Expect its supported answer or truthful residual, supported decision
   implications, evidence, limits, and cleanup state.
-- **Diagnosis - AFK:** Invoke `$diagnosing-bugs` in diagnosis mode. Expect its
-  cause status, reproduction or evidence boundary, smallest recommended fix,
-  regression evidence, limits, and return owner. Wayfinder retains all
-  implementation authority.
+- **Diagnosis - AFK:** Return `diagnosis-required` with the facts, evidence,
+  environment, exact ticket state, authorities, and Wayfinder as Return owner.
+  Record the ticket as Waiting and stop.
 - **Grilling - HITL:** Invoke `$grilling` when the current user owns a
   conversation-only decision. Invoke `$grill-with-docs` when the decision may
   change durable domain terms, Invariants, Context Relationships, or an ADR.

@@ -45,8 +45,9 @@ after Diagnosis, and after every continuation.
    boundary when applicable, and remaining plausible markers. Do not stage.
 4. **Prove.** Run focused repo-owned checks and broader checks required by risk
    or repo convention. Repair an obvious in-scope resolution defect and reprove.
-   Invoke `$diagnosing-bugs` only when failure causality is uncertain, then
-   resume here from its causal packet. Return `blocked` for a required
+   When failure causality is uncertain, return `diagnosis-required` with the
+   operation, goal, exact state, evidence, authorities, and Return owner. Return
+   `blocked` for a required
    out-of-scope, authority-gated, or blocking pre-existing correction. A proven
    unrelated failure may remain explicit residual risk. Focused resolution
    proof must pass before **Finish**.

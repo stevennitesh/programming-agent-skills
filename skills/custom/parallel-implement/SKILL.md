@@ -88,9 +88,10 @@ Generate the complete bounded assignment from
 [WORKER-BRIEF.md](references/WORKER-BRIEF.md). The worker owns only that item
 and returns one typed packet; it does not spawn, integrate, formally review,
 mutate trackers, push, or declare campaign completion. Use `$tdd` for
-red-testable new behavior or a fully known red-capable bug. Use
-`$diagnosing-bugs` when expected behavior, symptom, cause, or a trusted
-reproduction is unsettled.
+red-testable new behavior or a fully known red-capable bug. For an uncertain
+bug, return `needs-feedback` with a `diagnosis-required` packet containing the
+facts, evidence, environment, exact lane state, authorities, and root Return
+owner; stop that lane.
 
 The root normally integrates. Use
 [INTEGRATOR-BRIEF.md](references/INTEGRATOR-BRIEF.md) only when serial

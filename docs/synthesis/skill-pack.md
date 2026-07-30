@@ -1422,58 +1422,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     },
     {
       "affected_capability_ids": [
-        "CAP-005",
-        "CAP-022"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-005",
-      "combined_exit_owner_skill_id": "SK-005",
-      "context_loaded": [],
-      "entry_condition": "Standalone diagnosis proved the cause and needs an implementation owner.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for diagnosing-bugs and the declared implement input",
-      "ordering_impact": "none",
-      "relationship_id": "REL-003",
-      "required_proof_ids": [
-        "PROOF-REL-003"
-      ],
-      "resume_owner_skill_id": "SK-005",
-      "return_packet": "One named target and reason with downstream work unstarted",
-      "target_skill_id": "SK-022",
-      "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-005",
-        "CAP-006"
-      ],
-      "callee_owned_gates_mutations": [
-        "The target retains all target-local admission, evidence, mutation, Return, and completion gates"
-      ],
-      "caller_skill_id": "SK-005",
-      "combined_exit_owner_skill_id": "SK-006",
-      "context_loaded": [
-        "tdd caller-facing interface and branch-required reference only"
-      ],
-      "entry_condition": "Only when expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known before Trace; retain the original caller.",
-      "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for diagnosing-bugs and the declared tdd input",
-      "ordering_impact": "none",
-      "relationship_id": "REL-004",
-      "required_proof_ids": [
-        "PROOF-REL-004"
-      ],
-      "resume_owner_skill_id": "SK-006",
-      "return_packet": "The declared tdd Return packet plus evidence, limits, and residual state",
-      "target_skill_id": "SK-006",
-      "verb": "Hand off",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
         "CAP-020",
         "CAP-002"
       ],
@@ -1524,31 +1472,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "return_packet": "The declared Grilling Return packet, including readiness or an intact Evidence or Route gap, preserved through the composer without reinterpretation",
       "target_skill_id": "SK-008",
       "verb": "Compose",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-008",
-        "CAP-005"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-008",
-      "combined_exit_owner_skill_id": "SK-008",
-      "context_loaded": [],
-      "entry_condition": "Expected behavior, the exact symptom, cause, or a trusted reproduction remains uncertain and blocks every available interview branch; Diagnosis remains uninvoked and no fix is authorized.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for grilling and the declared diagnosing-bugs input",
-      "ordering_impact": "none",
-      "relationship_id": "REL-007",
-      "required_proof_ids": [
-        "PROOF-REL-007"
-      ],
-      "resume_owner_skill_id": "SK-008",
-      "return_packet": "One named target and reason with downstream work unstarted",
-      "target_skill_id": "SK-005",
-      "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     },
     {
@@ -1700,33 +1623,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "resume_owner_skill_id": "SK-022",
       "return_packet": "The declared high-assurance-review Return packet plus evidence, limits, and residual state",
       "target_skill_id": "SK-014",
-      "verb": "Invoke",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-022",
-        "CAP-005"
-      ],
-      "callee_owned_gates_mutations": [
-        "The target retains all target-local admission, evidence, mutation, Return, and completion gates"
-      ],
-      "caller_skill_id": "SK-022",
-      "combined_exit_owner_skill_id": "SK-022",
-      "context_loaded": [
-        "diagnosing-bugs caller-facing interface and branch-required reference only"
-      ],
-      "entry_condition": "A bug's exact symptom, cause, or trusted red-capable reproduction is uncertain; return after regression proof.",
-      "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for implement and the declared diagnosing-bugs input",
-      "ordering_impact": "callee-before-caller",
-      "relationship_id": "REL-014",
-      "required_proof_ids": [
-        "PROOF-REL-014"
-      ],
-      "resume_owner_skill_id": "SK-022",
-      "return_packet": "The declared diagnosing-bugs Return packet plus evidence, limits, and residual state",
-      "target_skill_id": "SK-005",
       "verb": "Invoke",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     },
@@ -1906,31 +1802,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "resume_owner_skill_id": "SK-017",
       "return_packet": "One intact direct-user Grilling exit packet and current Domain Delta for later Audit Analyze",
       "target_skill_id": "SK-020",
-      "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-017",
-        "CAP-005"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-017",
-      "combined_exit_owner_skill_id": "SK-017",
-      "context_loaded": [],
-      "entry_condition": "One candidate has broken or slow behavior with uncertain expected behavior, symptom, cause, or trusted reproduction; Audit publishes an exact report-backed pickup and leaves Diagnosis unstarted.",
-      "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
-      "input_packet": "Immutable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
-      "ordering_impact": "none",
-      "relationship_id": "REL-022",
-      "required_proof_ids": [
-        "PROOF-REL-022"
-      ],
-      "resume_owner_skill_id": "SK-017",
-      "return_packet": "One exact target, reason, prerequisite, and invocation with downstream work unstarted",
-      "target_skill_id": "SK-005",
       "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     },
@@ -2166,33 +2037,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     {
       "affected_capability_ids": [
         "CAP-023",
-        "CAP-005"
-      ],
-      "callee_owned_gates_mutations": [
-        "The target retains all target-local admission, evidence, mutation, Return, and completion gates"
-      ],
-      "caller_skill_id": "SK-023",
-      "combined_exit_owner_skill_id": "SK-023",
-      "context_loaded": [
-        "diagnosing-bugs caller-facing interface and branch-required reference only"
-      ],
-      "entry_condition": "A lane worker's bug has uncertain expected behavior, exact symptom, cause, or trusted red-capable reproduction; return to the same lane worker.",
-      "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for parallel-implement and the declared diagnosing-bugs input",
-      "ordering_impact": "callee-before-caller",
-      "relationship_id": "REL-031",
-      "required_proof_ids": [
-        "PROOF-REL-031"
-      ],
-      "resume_owner_skill_id": "SK-023",
-      "return_packet": "The declared diagnosing-bugs Return packet plus evidence, limits, and residual state",
-      "target_skill_id": "SK-005",
-      "verb": "Invoke",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-023",
         "CAP-001"
       ],
       "callee_owned_gates_mutations": [
@@ -2324,31 +2168,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     {
       "affected_capability_ids": [
         "CAP-003",
-        "CAP-005"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-003",
-      "combined_exit_owner_skill_id": "SK-003",
-      "context_loaded": [],
-      "entry_condition": "Admission shows the missing authority is causal reproduction or diagnosis rather than source evidence.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for research and the declared diagnosing-bugs input",
-      "ordering_impact": "none",
-      "relationship_id": "REL-038",
-      "required_proof_ids": [
-        "PROOF-REL-038"
-      ],
-      "resume_owner_skill_id": "SK-003",
-      "return_packet": "One named target and reason with downstream work unstarted",
-      "target_skill_id": "SK-005",
-      "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-003",
         "CAP-020"
       ],
       "callee_owned_gates_mutations": [
@@ -2444,33 +2263,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "return_packet": "One deterministic Wayfinder match with route choice and downstream work left to the caller",
       "target_skill_id": "SK-021",
       "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-016",
-        "CAP-005"
-      ],
-      "callee_owned_gates_mutations": [
-        "The target retains all target-local admission, evidence, mutation, Return, and completion gates"
-      ],
-      "caller_skill_id": "SK-016",
-      "combined_exit_owner_skill_id": "SK-016",
-      "context_loaded": [
-        "diagnosing-bugs caller-facing interface and branch-required reference only"
-      ],
-      "entry_condition": "Diagnose an uncertain proof failure, return the causal packet, then resume Prove.",
-      "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Uncertain proof symptom, expected behavior, exact candidate and state, relevant evidence, reconciliation scope, and resolver Return owner",
-      "ordering_impact": "callee-before-caller",
-      "relationship_id": "REL-043",
-      "required_proof_ids": [
-        "PROOF-REL-043"
-      ],
-      "resume_owner_skill_id": "SK-016",
-      "return_packet": "The declared diagnosing-bugs Return packet plus evidence, limits, and residual state",
-      "target_skill_id": "SK-005",
-      "verb": "Invoke",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     },
     {
@@ -3098,33 +2890,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "return_packet": "One named target and reason with downstream work unstarted",
       "target_skill_id": "SK-019",
       "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-006",
-        "CAP-005"
-      ],
-      "callee_owned_gates_mutations": [
-        "The target retains all target-local admission, evidence, mutation, Return, and completion gates"
-      ],
-      "caller_skill_id": "SK-006",
-      "combined_exit_owner_skill_id": "SK-005",
-      "context_loaded": [
-        "diagnosing-bugs caller-facing interface and branch-required reference only"
-      ],
-      "entry_condition": "A bug's expected behavior, exact symptom, cause, or trusted red-capable reproduction is uncertain.",
-      "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for tdd and the declared diagnosing-bugs input",
-      "ordering_impact": "none",
-      "relationship_id": "REL-072",
-      "required_proof_ids": [
-        "PROOF-REL-072"
-      ],
-      "resume_owner_skill_id": "SK-005",
-      "return_packet": "The declared diagnosing-bugs Return packet plus evidence, limits, and residual state",
-      "target_skill_id": "SK-005",
-      "verb": "Hand off",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     },
     {
@@ -3845,33 +3610,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "target_skill_id": "SK-016",
       "verb": "Hand off",
       "wrong_condition": "The selected ready item remains implementable, the conflict is only a review concern, or behavior failed after the operation ended"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-021",
-        "CAP-005"
-      ],
-      "callee_owned_gates_mutations": [
-        "Diagnosing Bugs retains diagnosis admission, causal loop, evidence, Return, and completion gates; fix authority remains absent"
-      ],
-      "caller_skill_id": "SK-021",
-      "combined_exit_owner_skill_id": "SK-021",
-      "context_loaded": [
-        "diagnosing-bugs diagnosis-mode caller interface and branch-required references only"
-      ],
-      "entry_condition": "One AFK Wayfinder ticket needs causal diagnosis or a trusted reproduction before its question can be resolved.",
-      "failure_behavior": "Return the exact diagnosis packet or blocker for Wayfinder classification without changing production behavior",
-      "input_packet": "Wayfinder ticket identity, bounded Source Trace, expected and actual behavior, known evidence, diagnosis-only authority, and Wayfinder return owner",
-      "ordering_impact": "callee-before-caller",
-      "relationship_id": "REL-101",
-      "required_proof_ids": [
-        "PROOF-REL-101"
-      ],
-      "resume_owner_skill_id": "SK-021",
-      "return_packet": "One diagnosis packet with cause status, reproduction or evidence boundary, smallest recommended fix, regression evidence, limits, and return owner",
-      "target_skill_id": "SK-005",
-      "verb": "Invoke",
-      "wrong_condition": "Expected behavior, cause, and a trusted red-capable reproduction are already settled, or implementation rather than diagnosis is requested"
     }
   ],
   "selected_skills": [
@@ -3988,7 +3726,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
       "relationship_ids": [
-        "REL-038",
         "REL-039",
         "REL-040",
         "REL-041",
@@ -4051,7 +3788,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "contract_order": 5,
       "essential_outcome": "Establish the cause and trusted reproduction of uncertain broken behavior before repair",
       "failure_return": "Return the exact missing fact, reproduction, access, or authority",
-      "invocation_mode": "implicit",
+      "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
         "The request does not satisfy: Expected behavior, symptom, cause, reproduction, environment, or performance mechanism is uncertain",
@@ -4071,10 +3808,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Per-skill H1 outside this immutable contract slice",
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
-      "relationship_ids": [
-        "REL-003",
-        "REL-004"
-      ],
+      "relationship_ids": [],
       "required_input": "A bounded caller-owned Source Trace and authority for: Establish the cause and trusted reproduction of uncertain broken behavior before repair",
       "return_packet": "A causal packet, regression-ready reproduction, or decision-needed blocker",
       "skill_id": "SK-005"
@@ -4114,7 +3848,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
       "relationship_ids": [
-        "REL-072",
         "REL-073",
         "REL-074",
         "REL-075"
@@ -4199,7 +3932,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
       "relationship_ids": [
-        "REL-007",
         "REL-008",
         "REL-009",
         "REL-010",
@@ -4543,9 +4275,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Per-skill H1 outside this immutable contract slice",
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
-      "relationship_ids": [
-        "REL-043"
-      ],
+      "relationship_ids": [],
       "required_input": "One repository worktree, observed conflict state, operation goal when known, bounded scope, and separately declared reconciliation and finish authorities",
       "return_packet": "One typed inspection, prepared reconciliation, finished operation, decision required, blocked, or route mismatch packet with exact state",
       "skill_id": "SK-016"
@@ -4588,7 +4318,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-019",
         "REL-020",
         "REL-021",
-        "REL-022",
         "REL-023",
         "REL-024",
         "REL-025",
@@ -4767,8 +4496,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-090",
         "REL-091",
         "REL-095",
-        "REL-096",
-        "REL-101"
+        "REL-096"
       ],
       "required_input": "A bounded destination tuple or existing map, caller-owned Source Trace, and tracker authority for one finite fog-resolution route",
       "return_packet": "A typed verified map, frontier, wait, blocker, settled source, terminal decision, or not-needed result",
@@ -4810,7 +4538,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "relationship_ids": [
         "REL-013",
-        "REL-014",
         "REL-015",
         "REL-016",
         "REL-017",
@@ -4857,7 +4584,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "relationship_ids": [
         "REL-030",
-        "REL-031",
         "REL-032",
         "REL-033",
         "REL-034",

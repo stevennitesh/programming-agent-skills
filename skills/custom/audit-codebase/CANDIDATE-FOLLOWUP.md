@@ -11,7 +11,7 @@ Choose the first unresolved work, not an eventual workflow:
 | --- | --- |
 | One non-diagnostic source-answerable authoritative fact | `$research` |
 | One settled design question needing a disposable runnable probe or performance experiment | `$prototype` |
-| Broken or slow behavior with uncertain expectation, symptom, cause, or trusted reproduction | `$diagnosing-bugs` |
+| Broken or slow behavior with uncertain expectation, symptom, cause, or trusted reproduction | `none`; return `diagnosis-required` |
 | Settled domain language, Invariant, Bounded Context, Context Relationship, or ADR candidate needing durable capture | `$domain-modeling` |
 | One current-user decision that also requires domain-record maintenance | `$grill-with-docs` |
 | One conversation-only current-user decision | `$grilling` |
@@ -23,10 +23,10 @@ Choose the first unresolved work, not an eventual workflow:
 | One settled non-reduction correction or addition with finite Repair budget | `$implement` |
 | Disproved candidate or no justified route | `none` |
 
-Diagnosis wins over Prototype for an uncertain observed symptom. A current-user
-decision precedes design. To Spec wins when a parent specification is required.
-Codebase Design is loaded during Analyze for design or mixed candidates and is
-not a next owner.
+An uncertain observed symptom is not Prototype work. A current-user decision
+precedes design. To Spec wins when a parent specification is required. Codebase
+Design is loaded during Analyze for design or mixed candidates and is not a next
+owner.
 
 Label a suggestion `user selection required`, invoke nothing, and encode no
 workflow chain. For a non-`none` suggestion record:

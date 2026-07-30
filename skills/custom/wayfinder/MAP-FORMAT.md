@@ -53,7 +53,7 @@ resolution or map pointer. Do not create a ticket only to supply a link.
 Type: research | prototype | diagnosis | grilling | task
 Participation: HITL | AFK
 Resolution owner: <who can settle the question>
-Resolver: $research | $prototype | $diagnosing-bugs | $grilling |
+Resolver: $research | $prototype | user-selected diagnosis | $grilling |
   $grill-with-docs | $to-questionnaire | direct task
 Expected return: <evidence packet or human return that permits classification>
 Re-entry owner: $wayfinder

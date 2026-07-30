@@ -15,11 +15,9 @@ it cannot replace it.
 The caller owns bounded scope, review, staging, commit, tracker or external
 mutation, publishing, and closeout.
 
-Hand off to `$diagnosing-bugs` when a bug's expected behavior, exact symptom,
-cause, or trusted red-capable reproduction is uncertain; it returns a bounded
-diagnosis packet to the original caller, including regression proof, an explicit
-seam gap, or the exact blocker. Hand off throwaway design questions to
-`$prototype`.
+When a bug's expected behavior, exact symptom, cause, or trusted red-capable
+reproduction is uncertain, return `diagnosis-required` with the intact facts to
+the caller and stop. Hand off throwaway design questions to `$prototype`.
 
 Read [tests.md](tests.md) only when test shape, oracle, or seam remains unclear
 after inspecting nearby tests. Read [mocking.md](mocking.md) before adding a
