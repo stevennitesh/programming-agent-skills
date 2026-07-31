@@ -441,6 +441,13 @@ Before relying on the result, assert:
 
 - one historical period ties from the filing to the selected earnings, cash-flow,
   book-value, or asset-value definition;
+- for residual-income models, each explicit modeled period and continuing-state
+  anchor reconciles beginning to ending selected common-equity book value, and
+  any adjusted basis to reported common book value, under the clean-surplus
+  relation above; earnings, OCI, and other direct-to-equity movements stay on
+  that basis, and each earnings or book-value normalization has a quantified
+  bridge without double counting or an assertion-tested reason it affects no
+  modeled period;
 - no cash flow that elapsed before the valuation date remains in the forecast;
 - when a discrete continuing-value formula defines value at date `T` from a
   numerator flow represented one modeled interval later, that flow's recorded
@@ -460,6 +467,10 @@ Before relying on the result, assert:
   affect the forecast base or stated growth;
 - growth, reinvestment, returns, terminal economics, and required returns are
   coherent, including `discount rate > growth` where applicable;
+- each sensitivity point or case records every input or convention intentionally
+  varied from the Lock, the applicable formulas or identities, and every linked
+  quantity mechanically recomputed; it satisfies those identities and leaves
+  every other locked input and convention unchanged;
 - source variable definitions, signs, units, currency, fiscal periods, and
   timing match the Model Lock; and
 - a separate calculation pass reproduces the locked result within the disclosed

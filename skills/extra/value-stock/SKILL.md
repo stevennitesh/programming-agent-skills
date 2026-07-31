@@ -138,11 +138,14 @@ Do not admit or report any pre-Lock target as a valuation result.
 | **4. Economics-And-Reproduction** | Source-tagged facts and anchors; causal business or asset drivers and scenario definitions; organic versus acquired growth when material; coherent growth, margins, reinvestment, returns and competitive duration; exact rate definitions; terminal or other realization economics; useful sensitivities; and a separate pass that reproduces the typed calculation artifact and its deterministic assertions. |
 | **5. Horizon-And-Decision** | Present value separated from future-date value; a future-state roll-forward or a clearly subordinate required-return shortcut; authoritative price evidence for price-dependent outputs; the named observed-discount formula; only a user-supplied hurdle for formal pass/fail or entry price; and precision and status no stronger than the weakest load-bearing input. |
 
-Before calculation or review, freeze the Lock's load-bearing model content under
-an immutable run-local version; reuse that version while the content is
-unchanged, and bind the calculation artifact, gate results, and review evidence
-to it. A root-admitted load-bearing change creates a new version: recompute
-every dependent output and rerun its deterministic assertions and gates. Do not
+Before calculation or review, resolve or conservatively bound each known
+unresolved or pending evidence item that could materially change the Lock's
+load-bearing content; an explicit forecast assumption is not unresolved
+evidence solely because it is uncertain. Then freeze that content under an
+immutable run-local version; reuse that version while the content is unchanged,
+and bind the calculation artifact, gate results, and review evidence to it. A
+root-admitted load-bearing change creates a new version: recompute every
+dependent output and rerun its deterministic assertions and gates. Do not
 combine evidence across versions unless unchanged dependencies are verified.
 
 Run the gates in order; the first three are pre-calculation gates. A gate passes
