@@ -23,13 +23,17 @@ as evidence.
 
 ## Fresh Challenge When Supported
 
-Give each reviewer the identical Model Lock and factual source packet. Use
-fresh context with `fork_turns="none"` when supported. Include every locked
-input needed for the assigned lens, including terminal or residual inputs.
-Withhold the parent's suspected weaknesses, desired conclusion, preferred
-alternative assumptions, and other reviewers' output. Reviewers are read-only
-candidate finders: they do not mutate, spawn, admit findings, or own the final
-valuation.
+Give each reviewer the identical frozen Model Lock, calculation artifact, and
+Lock-bound review evidence packet. Use fresh context with `fork_turns="none"`
+when supported. Review only the supplied candidate and packet. Reviewers may
+challenge source meaning, dependencies, conflicts, bounds, assumptions, and
+calculations, but may not search for, admit, substitute, or rely on new factual
+evidence. Report missing or insufficient source context as a blocked check; the
+root owns later evidence collection and admission. Include every locked input
+needed for the assigned lens, including terminal or residual inputs. Withhold
+the parent's suspected weaknesses, desired conclusion, preferred alternative
+assumptions, and other reviewers' output. Reviewers are read-only candidate
+finders: they do not mutate, spawn, admit findings, or own the final valuation.
 
 Default to two lenses:
 
@@ -59,7 +63,7 @@ reproduced value and difference:
 findings:
   - finding:
     classification:
-    evidence:
+    packet evidence or blocked dependency:
     correction or alternative:
     estimated valuation effect:
     confidence:
@@ -67,18 +71,14 @@ findings:
 
 Return every material finding within the assigned lens. Use `findings: none`
 only when status is `complete` and no assigned check is omitted; otherwise name
-each omitted or blocked check. The root verifies the lock identity,
-reproduction, evidence, scope, and classification; then admits or rejects each
-finding and recomputes the model. An unresolved reproduction, evidence, or
-mechanical mismatch prevents `complete`.
-
-After an admitted correction, rerun each lens whose locked input, formula,
-source meaning, assigned claim, classification, or reproduced result could
-change. Carry an unaffected lens forward only after the root verifies that
-every load-bearing dependency consumed by it is unchanged. Any change to the
-canonical calculation artifact or its unrounded result invalidates
-reproduction. If identity or dependency cannot be verified, rerun the affected
-packet; never synthesize coverage across Lock versions without that check.
+each omitted or blocked check. The root verifies Lock and artifact identity,
+reproduction, packet evidence, scope, dependencies, and classification, then
+admits or rejects each finding; only the root admits factual evidence. Apply the
+main skill's Model Lock invalidation rule after every admitted finding. An
+unresolved reproduction, evidence, or mechanical mismatch prevents `complete`.
+Any change to the canonical calculation artifact or its unrounded result
+invalidates reproduction. If dependency identity cannot be verified, rerun the
+affected lens.
 
 If fresh reviewers are unavailable, run separated root passes and disclose
 reduced independence. If the user explicitly required independent validation,

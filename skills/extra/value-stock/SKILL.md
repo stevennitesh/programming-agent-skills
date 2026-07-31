@@ -53,11 +53,15 @@ analyst, not an oracle or investment adviser.
   authority `none`; and `$value-stock` as return owner.
 - `$research` owns source work and claim classification for the handed-off gap.
   `$value-stock` owns the evidence ledger, candidate disposition, Model Lock,
-  model, valuation status, and conclusion. On return, integrate supported claims,
-  preserve conflicts and unknowns, treat `not-admitted` as no new evidence, and
-  rescreen the affected candidate once before freezing the Lock. Research status
-  does not determine valuation status; derive it under this skill's gates and
-  failure policy.
+  model, valuation status, and conclusion. On return, record one root disposition
+  for each load-bearing claim: `admit`, `reject`, or `preserve-conflict`. Admit
+  only a supported claim applicable to the resolved security, date, target claim,
+  and intended use. A rejected claim cannot satisfy a candidate or Lock
+  requirement; retain its unknown or limit in the ledger. A preserved conflict
+  cannot satisfy a Lock requirement except through an owning conservative bound
+  over its full valuation effect, including interactions. Treat `not-admitted`
+  as no new evidence, rescreen the affected candidate once, and derive valuation
+  status under this skill's gates and failure policy.
 
 ## Lock The Question
 
@@ -164,39 +168,65 @@ has an unbounded load-bearing gap. Rejected or cross-check alternatives do not
 force `partial` when an admitted primary passes and material alternatives are
 reconciled.
 
-Reconstruct only enough history to normalize the selected value base and expose
-the drivers carrying the forecast. Derive forecast cash flow from causal
-business drivers before accounting outputs; direct cash-flow growth may
-summarize that derivation but cannot replace it. Keep growth consistent with
-reinvestment and returns.
-
-Before calculation, create one internal **Model Lock** with the five sections
-below. Each gate validates its section; the Lock is the canonical evidence
-object, not a second narrative checklist. Record each gate result, unresolved
-item, conservative bound when available, and final status in the Lock.
-Do not admit or report any pre-Lock target as a valuation result.
+Before forecasting, initialize one internal **Model Lock** with the five sections
+below. Mark sections not yet reached as pending and record each gate result,
+unresolved item, conservative bound when available, and final status as it
+becomes available. Each gate validates its section; the Lock is the canonical
+evidence object, not a second narrative checklist. Do not admit or report any
+pre-Lock target as a valuation result.
 
 | Gate and Lock section | Required pass evidence |
 | --- | --- |
 | **1. As-Of** | Cited Security Identity receipt; valuation date, cutoff, currency, latest balance-sheet date; authoritative price field, timestamp, and timezone when price is used; a map of historical periods, stubs, forecast periods and realization dates; and a completed intervening-event sweep with every material effect bridged or bounded. |
-| **2. Accounting-Identity** | Method, target claim, value or cash-flow definition and matching return; one filed historical period reconciled to that definition; consistent treatment of financing interest, non-operating income, taxes, capex, leases, excess cash, acquisitions, and material existing-award versus future-grant SBC. |
+| **2. Accounting-Identity** | Selected or requested method and target claim; selected starting value or cash-flow identity and matching return convention; one filed starting period or balance-sheet date reconciled to that identity; and consistent treatment conventions for financing interest, non-operating income, taxes, capex, leases, excess cash, acquisitions, and material existing-award versus future-grant SBC. Forecast drivers, assumptions, projected amounts, and economics belong to Gate 4. |
 | **3. Security-Claim** | Date-consistent actual common shares; debt, preferred, minority interests, awards, options, warrants, convertibles and other material claims; no weighted-average EPS shares as a point-in-time claim; and one-date or explicitly bridged cash, debt, claims, awards, and shares. |
 | **4. Economics-And-Reproduction** | Source-tagged facts and anchors; causal business or asset drivers and scenario definitions; organic versus acquired growth when material; coherent growth, margins, reinvestment, returns and competitive duration; exact rate definitions; terminal or other realization economics; useful sensitivities; and a separate pass that reproduces the typed calculation artifact and its deterministic assertions. |
 | **5. Horizon-And-Decision** | Present value separated from future-date value; a future-state roll-forward or a clearly subordinate required-return shortcut; authoritative price evidence for price-dependent outputs; the named observed-discount formula; only a user-supplied hurdle for formal pass/fail or entry price; and precision and status no stronger than the weakest load-bearing input. |
 
-Before calculation or review, resolve or conservatively bound each known
-unresolved or pending evidence item that could materially change the Lock's
-load-bearing content; an explicit forecast assumption is not unresolved
-evidence solely because it is uncertain. Then freeze that content under an
-immutable run-local version; reuse that version while the content is unchanged,
-and bind the calculation artifact, gate results, and review evidence to it. A
-root-admitted load-bearing change creates a new version: recompute every
-dependent output and rerun its deterministic assertions and gates. Do not
-combine evidence across versions unless unchanged dependencies are verified.
+Run Gates 1-3 in order before constructing any forecast. Record the derived
+marker `forecast foundation: ready` in the Model Lock only when every applicable
+requirement either passes or has an owning conservative bound over its full
+valuation effect, including interactions. The foundation includes the date
+spine, target claim and applicable claim bridge, selected starting value or
+cash-flow identity and matching return convention, and its filed starting-
+period or balance-sheet-date reconciliation. A bound does not pass a failed gate
+or strengthen status; every dependent result remains `partial`. Security
+Identity and required current primary financial evidence must pass and cannot
+be replaced by a bound. The marker is not another gate or receipt.
 
-Run the gates in order; the first three are pre-calculation gates. A gate passes
-only with its named evidence. For a nontrivial numerical valuation, build the
-typed calculation artifact in `valuation-methods.md` before Gate 4.
+Only after the foundation is ready, reconstruct enough history to normalize the
+selected value base and expose the drivers carrying the forecast. Construct the
+forecast from causal business drivers before accounting outputs; direct
+cash-flow growth may summarize that derivation but cannot replace it. Keep
+growth consistent with reinvestment and returns. Any later change to Gate 1-3
+content resets the marker and invalidates its dependent work.
+
+Before calculation or review, resolve or conservatively bound every known
+pending item that could change load-bearing content; an explicit forecast
+assumption is not unresolved evidence solely because it is uncertain. Freeze
+that content under one immutable run-local Model Lock version. Bind the forecast
+and every resulting calculation artifact and gate result to that version. When
+review is required, bind its Review Readiness receipt and dependency-closed
+review evidence packet to the same version. The packet contains only evidence
+already admitted into the frozen candidate or Lock, plus preserved conflicts
+consumed by the candidate or assigned lenses, precise source identities and
+locations, enough captured context to test source meaning, semantic
+dependencies, and owning bounds. It is Lock-bound, not separately versioned.
+
+A later root-admitted change is load-bearing when it can change a forecast
+premise, calculation or unrounded result, gate disposition, bound, status,
+conclusion, or assigned-lens dependency. Create a new Lock version and
+invalidate only the dependent forecast, calculation, assertions, gates, Review
+Readiness receipt, evidence packet, and lenses; recompute or rerun them before
+reuse. Carry an unaffected result forward only after verifying every dependency
+it consumed is unchanged. A fact outside every load-bearing and review
+dependency may be recorded without a new version or rerun. Do not combine
+evidence across versions without that verification.
+
+After the forecast foundation is ready and the Lock version is frozen, run
+Gates 4 and 5 in order. A gate passes only with its named evidence. For a
+nontrivial numerical valuation, build the typed calculation artifact in
+`valuation-methods.md` before Gate 4.
 
 Apply failure narrowly:
 
@@ -223,6 +253,7 @@ record one run-local **Review Readiness** receipt:
 model lock version:
 calculation artifact identity:
 review scope:
+review evidence packet for scope: dependency-closed | fail
 security and target-claim identity: pass | fail
 authoritative price source when price-dependent: pass | not applicable | fail
 selected value or cash-flow basis: <type>; pass | fail
