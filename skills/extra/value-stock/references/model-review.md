@@ -1,9 +1,10 @@
 # Model Review And Reconciliation
 
-Use this branch only when the user requests independent validation, the locked
-calculation does not reproduce, or complex claims, conventions, methods, or
-alternative values could materially change the conclusion. Full alone is not a
-trigger.
+Use this branch only when the main-skill Review Readiness receipt says
+`ready: yes` and names the same frozen Model Lock version and calculation
+artifact supplied for review. If the receipt is absent, not ready, or
+mismatched, return `blocked` to the root without reviewing or repairing the
+candidate. Full alone is not a trigger.
 
 ## Classify The Difference
 
@@ -49,6 +50,7 @@ lens, and need not reproduce the entire model. Require:
 ```text
 status: complete | blocked
 model lock version:
+calculation artifact identity:
 lens:
 semantic dependencies:
 coverage performed:

@@ -32,11 +32,24 @@ labeled sensitivity band, and its principal limitation. Show a reverse DCF or
 equivalent when authoritative current-price evidence exists. Name the solved
 variable and fixed assumptions.
 
-Use causal cases and sensitivities for the two or three inputs that materially
-move value. Do not average methods unless a weighting rule was fixed before
-seeing the results. When an admitted correction or material convention changes
-value, bridge from the locked baseline to the recomputed value. If review ran,
-state its valid lens coverage and reduced independence, if any.
+When more than one coherent causal case is supported, show a distinct
+**Operating Cases** table with the base and named alternatives, intentionally
+varied business, financing, asset-realization, claim-path, or outcome drivers,
+and recomputed value. Hold accounting, claim-bridge, non-operating-asset,
+required-return, and realization conventions fixed unless the named causal
+transmission changes one. If only one case is supported, report the base and
+state that no causal range was established; do not invent alternatives.
+
+When a second defensible convention or fixed-case parameterization materially
+changes the result, show a separate **Convention Sensitivities** table that holds
+the base causal case fixed, names each changed convention, and recomputes value.
+Otherwise omit it. Never create a bull or bear operating case from a
+convention-only change.
+
+Do not average methods unless a weighting rule was fixed before seeing the
+results. When an admitted correction or material convention changes value,
+bridge from the locked baseline to the recomputed value. If review ran, state
+its valid lens coverage and reduced independence, if any.
 
 ## 3. Evidence, Economics, And Variant View
 
@@ -48,7 +61,8 @@ Show only evidence that supports or challenges the model:
 - reported-to-normalized bridges and material accounting, liquidity, dilution,
   claim, country, or control issues;
 - forecast anchors, organic versus acquired growth when material, and the
-  evidence for growth, margins, reinvestment, and return duration; and
+  evidence for growth, margins, reinvestment, return duration, and any Full FCFF
+  phase paths required by [valuation-methods.md](valuation-methods.md); and
 - the price-implied path compared with company history, guidance, industry
   constraints, and relevant base rates.
 

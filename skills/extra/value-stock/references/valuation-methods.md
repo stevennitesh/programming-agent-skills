@@ -126,13 +126,29 @@ Discount FCFF at WACC using market-value capital weights and a cost of capital
 consistent with the cash-flow currency. Do not use a stale universal risk-free
 rate, equity risk premium, beta, or debt spread.
 
+At Full depth, each explicit FCFF forecast phase must trace revenue or volume
+and price through operating margin, cash operating tax, reinvestment, and the
+economically matching return driver. Use incremental ROIC when meaningful;
+otherwise state why it is not meaningful and use the applicable driver.
+Reconcile sustainable growth with reinvestment and return on new invested
+capital, or an economically matching terminal driver, in the terminal state.
+Separate organic and acquired contribution when material. Direct FCFF growth
+may summarize a completed path; otherwise it is only a labeled sensitivity and
+cannot establish a causal range or pass Gate 4.
+
 ## Cash-Flow And Accounting Identities
 
-Reconcile one filed historical period to the selected cash-flow definition
-before forecasting it. For a CFO-derived FCFF:
+Declare each historical FCFF base as `EBIT-derived FCFF` or `CFO-derived FCFF`;
+do not blend branches or switch between them to conceal a failed
+reconciliation. An EBIT-derived base must bridge filed operating income to
+normalized operating EBIT and reconcile cash operating tax, D&A, fixed-capital
+investment, operating working-capital change, and material lease, acquisition,
+or classification adjustments. A CFO-derived base must reconcile one filed
+period under the identity below:
 
 ```text
-FCFF = CFO + financing interest x (1 - tax rate)
+FCFF = CFO + financing interest
+       - cash tax benefit attributable to financing interest
        - fixed-capital investment
        +/- disclosed classification and non-operating adjustments
 ```
@@ -142,11 +158,19 @@ This starts from the standard CFO conversion summarized by
 but it is a reconciliation, not a license to add total interest expense.
 Identify the financing-interest amount the CFO treatment requires, then trace
 cash paid, accruals, non-cash interest, lease interest, capitalized interest,
-tax effects, and the issuer's cash-flow classification. Remove after-tax
-non-operating interest income when its cash or investment asset is separately
-added in the enterprise-to-equity bridge. Under IFRS or another policy choice,
-adapt the formula to where interest and dividends were actually classified:
+tax effects, and the issuer's cash-flow classification. Use the cash tax benefit
+from financing interest actually available under applicable losses, limits, and
+classifications; do not mechanically apply a reported effective tax rate.
+Remove after-tax non-operating interest income when its cash or investment asset
+is separately added in the enterprise-to-equity bridge. Under IFRS or another
+policy choice, adapt the formula to where interest and dividends were actually
+classified:
 [Damodaran: Valuing Cash](https://pages.stern.nyu.edu/~adamodar/New_Home_Page/lectures/cash.html).
+
+A second derivation is optional and must pass independently. Reject only the
+dependent FCFF result when its selected branch has a load-bearing unbounded gap;
+an owning conservative full-effect bound may carry only a bounded partial
+result.
 
 Choose one lease convention. Either treat leases as operating and leave the
 matching rent in operating cash flow, or capitalize the financing claim and
@@ -480,6 +504,9 @@ Before relying on the result, assert:
   use their formula-specific timing instead;
 - CFO-derived FCFF reconciles financing interest, non-operating income, tax,
   capex, and classification without counting cash returns twice;
+- the declared FCFF derivation and its filed-period bridge reproduce the
+  applicable EBIT- or CFO-derived identity; no failed branch is silently blended
+  or replaced;
 - cash, debt, claims, awards, and shares use one date or an explicit
   post-balance-sheet bridge;
 - actual point-in-time common shares, not weighted-average EPS shares, own the

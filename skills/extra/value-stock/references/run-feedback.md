@@ -54,10 +54,6 @@ methods:
 outcome:
   final status and supported value:
   baseline or pre-review value:  # only when a material correction changed it
-fixture nomination:  # only when explicitly requested; no finding required
-  frozen input and evidence pointers:
-  behavior and expected observable result:
-  reuse scope and invalidation boundary:
 verified findings:
   - issue:
     classification:
@@ -76,25 +72,32 @@ summary:
   value change from mechanical corrections:
   value change from economic judgment:
   unresolved items controlling partial or blocked (count):
-improvement nominations:
-  - observed failure and evidence pointer:
-    observable entry predicate and transfer basis:
-    narrowest shared owner:
-    expected behavior and safe failure:
-    origin fixture:
-    materially different entry-positive fixture family:
-    closest wrong-condition fixture:
-    advisory candidate wording:
-    deliberate non-change:
+improvement and fixture assessments:  # only for improvement or fixture use
+  - source: finding | standalone request
+    source finding or requested behavior:
+    decision: nominate | reuse existing | no nomination
+    kind: existing-contract regression | existing-contract coverage |
+          contract-gap evaluation
+    reason:
+    entry predicate:
+    frozen minimal stable public/shareable input and evidence pointers,
+      or safe synthetic recipe:
+    expected observable result and safe failure:
+    materially different entry-positive family and transfer basis:
+    closest wrong-condition:
+    existing fixture or duplicate-search boundary:
+    reuse scope, invalidation boundary, and evidence limit:
+    advisory candidate wording and deliberate non-change:
+    proof state and next owner:
 ```
 
 Set `feedback status` to `complete` when every explicitly requested feedback use
 is grounded in the bound run and every reported finding is verified, classified,
-and dispositioned; `partial` when a useful packet is grounded but one requested
-component or finding remains unverifiable; and `blocked` when the run or blocked
-attempt cannot be bound well enough to support any requested feedback output.
-Feedback status is independent of valuation status. A fixture nomination does
-not require a finding and is not evidence of prevalence or behavioral efficacy.
+and dispositioned, and every explicitly requested fixture assessment has a
+supported decision; `partial` when a useful packet is grounded but one requested
+component, finding, or assessment remains unverifiable; and `blocked` when the
+run or blocked attempt cannot be bound well enough to support any requested
+feedback output. Feedback status is independent of valuation status.
 
 Derive summary counts and value bridges from the method, Lock, review, and
 finding records; do not create a second source of truth. Count only root-verified
@@ -107,6 +110,26 @@ value definition and identify mechanical correction separately from economic
 judgment.
 
 ## Nominate, Do Not Self-Edit
+
+Assess fixture eligibility only when the requested feedback use includes
+improving `$value-stock` or a reusable valuation fixture. For each root-verified
+material `execution miss` or `contract gap candidate`, return one decision for
+the distinct behavioral failure family; return one decision for every explicit
+standalone fixture request even when no finding exists. Nominate only when the
+behavior has an observable entry predicate, expected result and safe failure;
+transfers to a materially different entry-positive family; has a closest wrong
+condition; can be represented by stable, public or shareable frozen inputs and
+evidence, or a safe synthetic recipe; and is not already covered by the same
+fixture family. Otherwise return `reuse existing` or `no nomination` with the
+reason. Evidence limits, forecast judgments, immaterial accidents, and
+ticker-only or sector-only variation do not qualify.
+
+Label an existing-instruction miss an `existing-contract regression` candidate.
+Label a gap a `contract-gap evaluation` candidate until the authoring owner
+admits the behavior; do not call it a regression fixture before then. A correct
+`reuse existing` or `no nomination` decision completes that assessment.
+Deduplicate by entry predicate, expected behavior, and invalidation boundary,
+not by finder, output, ticker, or company.
 
 One run may establish an observation and transfer hypothesis, not prevalence or
 behavioral efficacy. A materially different fixture changes the load-bearing

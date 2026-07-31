@@ -61,10 +61,21 @@ analyst, not an oracle or investment adviser.
 
 ## Lock The Question
 
+Before collecting company-specific financial evidence or selecting a
+company-type or valuation branch, create the first company-specific artifact: a
+cited **Security Identity** receipt. Identity-only discovery is permitted.
+Record the target security's legal issuer; reporting or underlying issuer when
+different; class or series and material rights; ticker and listing venue or
+status at the cutoff; an owning regulator issuer identifier when one exists; an
+authoritative listing or security identifier when available; quote, reporting,
+and model currencies when different; and any applicable ADR ratio, depositary,
+former name, predecessor, or reorganization chain. Carry this receipt into Gate
+1. If supported identities still imply different claims, denominators, or issuer
+perimeters, ask or block the dependent work. Absence of a CIK or current
+exchange alone is not a failure.
+
 Resolve or state:
 
-- legal company name, ticker, exchange, security class, economic and voting
-  rights, and any ADR-to-ordinary-share ratio;
 - valuation date, information cutoff, and market-price timestamp when price is
   used;
 - requested horizon, whether value is present or future, method, depth, and
@@ -119,9 +130,9 @@ through a demonstrated cash-flow, timing, claim, or risk transmission.
   custody/customer-funds, insurance-underwriting, or asset-linked funding
   activity that can change the cash-flow definition, claim bridge, or method.
 - Load [model-review.md](references/model-review.md) only when independent
-  validation is requested, exact reproduction fails, or complex claims,
-  conventions, methods, or alternative values could materially change the
-  conclusion.
+  validation is requested or complex claims, conventions, methods, or
+  alternative values could materially change the conclusion. A reproduction
+  failure is root-owned deterministic repair, not a review trigger.
 - Load [run-feedback.md](references/run-feedback.md) only when the caller
   explicitly requests evaluation of this run's valuation process, evidence for
   improving `$value-stock`, or a reusable valuation fixture. Full analysis,
@@ -167,7 +178,7 @@ Do not admit or report any pre-Lock target as a valuation result.
 
 | Gate and Lock section | Required pass evidence |
 | --- | --- |
-| **1. As-Of** | Exact security, rights or ADR ratio, valuation date, cutoff, currency, latest balance-sheet date, authoritative price field, timestamp and timezone when used, a map of historical periods, stubs, forecast periods and realization dates, and a bridge for material intervening events. |
+| **1. As-Of** | Cited Security Identity receipt; valuation date, cutoff, currency, latest balance-sheet date; authoritative price field, timestamp, and timezone when price is used; a map of historical periods, stubs, forecast periods and realization dates; and a completed intervening-event sweep with every material effect bridged or bounded. |
 | **2. Accounting-Identity** | Method, target claim, value or cash-flow definition and matching return; one filed historical period reconciled to that definition; consistent treatment of financing interest, non-operating income, taxes, capex, leases, excess cash, acquisitions, and material existing-award versus future-grant SBC. |
 | **3. Security-Claim** | Date-consistent actual common shares; debt, preferred, minority interests, awards, options, warrants, convertibles and other material claims; no weighted-average EPS shares as a point-in-time claim; and one-date or explicitly bridged cash, debt, claims, awards, and shares. |
 | **4. Economics-And-Reproduction** | Source-tagged facts and anchors; causal business or asset drivers and scenario definitions; organic versus acquired growth when material; coherent growth, margins, reinvestment, returns and competitive duration; exact rate definitions; terminal or other realization economics; useful sensitivities; and a separate pass that reproduces the typed calculation artifact and its deterministic assertions. |
@@ -205,10 +216,40 @@ linked business drivers while holding accounting, claim-bridge, non-operating
 asset, and required-return conventions fixed, unless the stated business
 scenario itself causes one of those items to change.
 
-After deterministic checks pass, apply `model-review.md` when its loading
-condition is met. Reviewers challenge judgment, and one assigned reviewer
-reproduces the model; they do not replace the gates, vote on value, or average
-targets.
+Before dispatching review, define the stable candidate and review scope, then
+record one run-local **Review Readiness** receipt:
+
+```text
+model lock version:
+calculation artifact identity:
+review scope:
+security and target-claim identity: pass | fail
+authoritative price source when price-dependent: pass | not applicable | fail
+selected value or cash-flow basis: <type>; pass | fail
+historical FCFF reconciliation basis: not applicable | EBIT-derived | CFO-derived
+filed starting-period reconciliation: pass | fail
+cash, debt, shares, awards, and claims: one date | explicit bridge | bounded | fail
+intervening-event sweep through cutoff: pass | fail
+root calculation reproduction: pass | fail
+ready: yes | no
+```
+
+Derive the receipt from existing gate and assertion results; record their
+references and dispositions, not copied evidence or values. Bind both identities
+to the frozen candidate. `ready: yes` requires every item applicable to the
+candidate and review scope to have a passing disposition and no unresolved
+deterministic discrepancy. `bounded` passes only when the Lock shows the gap's
+full valuation effect and reviewers can inspect a stable candidate without
+owning the missing evidence. Excluded failed components retain their own
+`partial` or `blocked` status. Otherwise do not dispatch review: repair
+deterministic failures or return the dependent `partial` or `blocked` result and
+state `review: not run - candidate not ready`. The receipt is not a sixth gate
+and cannot pass a gate or upgrade valuation status.
+
+After readiness passes, apply `model-review.md` when its loading condition is
+met. Reviewers challenge judgment, and one assigned reviewer reproduces the
+model; they do not replace the gates, construct the candidate, vote on value, or
+average targets.
 
 For price-dependent conclusions, name the formula:
 
@@ -222,11 +263,12 @@ Follow the selected Compact or Full return contract. Lead with the range,
 price-implied expectations only when supported, confidence, status, and the two
 or three assumptions dominating value.
 
-When material intervening events change cash, debt, claims, awards, or shares
-between the latest balance-sheet date and valuation date, show a dated
-opening-to-valuation bridge. Label each item with its evidence class, state any
-conservative bound, and show the valuation effect of any estimate or bound that
-could change the range or conclusion.
+When the intervening-event sweep finds a material event, show a dated
+latest-balance-sheet-to-information-cutoff bridge for every affected
+load-bearing Lock field, plus any separately evidenced or explicitly assumed
+bridge from the cutoff to the valuation date. Label each item with its evidence
+class and show the full valuation effect of any estimate or conservative bound
+that could change the range or conclusion.
 
 Return:
 

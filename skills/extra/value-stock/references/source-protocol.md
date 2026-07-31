@@ -98,6 +98,20 @@ range fair value, collect and date enough owning evidence to establish:
 - material post-period developments, including guidance or news only to the
   extent that they can change those inputs, the selected method, or confidence.
 
+After establishing the latest admitted balance-sheet date and before freezing
+the Model Lock, sweep through the information cutoff across later regulator
+filings, issuer releases, and applicable listing or quotation-venue, depositary,
+or other corporate-action notices; use reputable reporting for discovery or
+corroboration. Record the window and lanes searched and either `no material
+intervening event found` or each dated material event and its evidence class.
+Bridge every affected load-bearing Lock field, including issuer perimeter,
+method or forecast base, risk, capital or regulatory base, cash, debt,
+acquisitions or disposals, repurchases, issuances, shares, awards, and other
+claims. Unknown amounts remain unknown: conservatively bound their full
+valuation effect, including interactions, or apply the dependent `partial` or
+`blocked` policy. Never treat silence, pro forma guidance, or undisclosed
+consideration as zero.
+
 Load earnings-call transcripts, investor decks, proxies, peer filings,
 consensus, and broader news when they contain a load-bearing fact; they are not
 universal ceremonial requirements. Record access failures. Do not silently
