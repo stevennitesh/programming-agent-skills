@@ -59,8 +59,9 @@ Rank load-bearing risks by valuation effect. For each, name an observable
 indicator and the model input it would change. Conclude with the fair-value
 range, current-price timestamp, observed discount, and hurdle status when
 supported, plus the single most important unknown and the evidence that would
-trigger revaluation. Do not invent entry prices or an attractiveness judgment
-without a user-supplied rule.
+trigger revaluation. When explicitly requested and supported, characterize
+price only relative to the present-value estimate and range; without a supplied
+rule, do not state formal pass/fail, an entry price, or a rule-derived threshold.
 
 End with one sentence stating that the work is impersonal research, not
 personalized investment advice.

@@ -33,8 +33,9 @@ valuation.
 Default to two lenses:
 
 1. **Reproduction and claims** - reproduce the locked value without
-   changing assumptions, then inspect claim basis, accounting conventions,
-   cash, debt, awards, dilution, and share count.
+   changing assumptions, then inspect claim basis, as-of and intervening-event
+   bridges, accounting conventions, cash, debt, awards, dilution, and share
+   count.
 2. **Economics and required returns** - challenge growth, margins,
    reinvestment, competitive duration, asset realization, sector-specific
    drivers, discount construction, timing, terminal or residual economics,
@@ -48,19 +49,24 @@ lens, and need not reproduce the entire model. Require:
 ```text
 status: complete | blocked
 lens:
+coverage performed:
+coverage omitted or blocked:
 reproduced value and difference:
-finding:
-classification:
-evidence:
-correction or alternative:
-estimated valuation effect:
-confidence:
+findings:
+  - finding:
+    classification:
+    evidence:
+    correction or alternative:
+    estimated valuation effect:
+    confidence:
 ```
 
-The root verifies the lock identity, reproduction, evidence, scope, and
-classification; then admits or rejects each finding and recomputes the model.
-An unresolved reproduction, evidence, or mechanical mismatch prevents
-`complete`.
+Return every material finding within the assigned lens. Use `findings: none`
+only when status is `complete` and no assigned check is omitted; otherwise name
+each omitted or blocked check. The root verifies the lock identity,
+reproduction, evidence, scope, and classification; then admits or rejects each
+finding and recomputes the model. An unresolved reproduction, evidence, or
+mechanical mismatch prevents `complete`.
 
 If fresh reviewers are unavailable, run separated root passes and disclose
 reduced independence. If the user explicitly required independent validation,

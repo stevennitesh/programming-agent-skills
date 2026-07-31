@@ -97,7 +97,10 @@ through a demonstrated cash-flow, timing, claim, or risk transmission.
   [valuation-methods.md](references/valuation-methods.md). Load Future-Date
   Valuation only when a future value is requested.
 - Load [company-types.md](references/company-types.md) when model selection is
-  uncertain or the issuer is a sector, life-cycle, or accounting exception.
+  uncertain, the issuer is a sector, life-cycle, or accounting exception, or a
+  non-financial issuer has material lending, lease-financing,
+  custody/customer-funds, insurance-underwriting, or asset-linked funding
+  activity that can change the cash-flow definition, claim bridge, or method.
 - Load [model-review.md](references/model-review.md) only when independent
   validation is requested, exact reproduction fails, or complex claims,
   conventions, methods, or alternative values could materially change the
@@ -116,13 +119,16 @@ EBITDA, or industrial FCFF onto a company whose denominator or capital structure
 makes it misleading.
 
 Reconstruct only enough history to normalize the selected value base and expose
-the drivers carrying the forecast. Forecast business drivers before accounting
-outputs, and keep growth consistent with reinvestment and returns.
+the drivers carrying the forecast. Derive forecast cash flow from causal
+business drivers before accounting outputs; direct cash-flow growth may
+summarize that derivation but cannot replace it. Keep growth consistent with
+reinvestment and returns.
 
 Before calculation, create one internal **Model Lock** with the five sections
 below. Each gate validates its section; the Lock is the canonical evidence
 object, not a second narrative checklist. Record each gate result, unresolved
 item, conservative bound when available, and final status in the Lock.
+Do not admit or report any pre-Lock target as a valuation result.
 
 | Gate and Lock section | Required pass evidence |
 | --- | --- |
@@ -170,6 +176,12 @@ observed price discount = (estimated value - market price) / estimated value
 Follow the selected Compact or Full return contract. Lead with the range,
 price-implied expectations only when supported, confidence, status, and the two
 or three assumptions dominating value.
+
+When material intervening events change cash, debt, claims, awards, or shares
+between the latest balance-sheet date and valuation date, show a dated
+opening-to-valuation bridge. Label each item with its evidence class, state any
+conservative bound, and show the valuation effect of any estimate or bound that
+could change the range or conclusion.
 
 Return:
 

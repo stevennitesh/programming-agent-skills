@@ -20,6 +20,27 @@ for inspecting the issuer.
 | Declining or runoff | Finite-life DCF, liquidation or runoff value | decline rate, harvest margin, obligations, asset sale proceeds | perpetual growth unsupported by economics |
 | Holding company | Look-through NAV or SOTP | ownership percentages, taxes, debt, central costs, liquidity discounts | consolidated earnings multiple without look-through |
 
+## Mixed Operating-And-Financial Economics
+
+Apply this branch when an issuer otherwise routed as non-financial, including a
+multi-segment issuer, has material lending, lease-financing,
+custody/customer-funds, insurance-underwriting, or asset-linked funding
+activity. Map the material related assets, liabilities, cash flows, and funding
+sources to the operating business, financial activity, or customer claim.
+Identify assets unavailable to the target security and the liabilities or
+restrictions that encumber them.
+
+Use consolidated FCFF only when the activity's flows and claims can be
+normalized consistently. Otherwise use SOTP only when the activity is
+economically separable and supportable segment inputs exist. If neither
+treatment is supportable, apply the main skill's bounded-partial or
+dependent-method block policy.
+
+Do not count restricted or customer funds as excess cash without evidence of
+availability, subtract activity-linked funding as corporate debt while also
+valuing its funded economics as operating, or classify originations and
+repayments as industrial working capital without a consistent stated treatment.
+
 ## Selection Questions
 
 1. Is debt financing or an operating input?

@@ -397,11 +397,18 @@ A **required margin-of-safety hurdle** is a decision rule layered on an
 uncertain valuation, not another valuation method. Report its pass/fail only
 when the user or a stated policy supplies the hurdle. Without one, report the
 observed discount and `required hurdle: not supplied; pass/fail: not assessed`.
+When the user explicitly asks for a valuation-relative assessment of
+attractiveness, cheapness, or over/undervaluation and authoritative current-price
+evidence supports comparison, describe where price lies relative to the
+supported present-value estimate and range. Do not characterize a blocked
+comparison. Reserve formal pass/fail, entry-price, and rule-derived price
+thresholds for a supplied rule.
+
 Do not invent one threshold for every company or automatically print arbitrary
-entry-price thresholds. A wider hurdle is generally warranted when value is
-more uncertain, the balance sheet or business is fragile, terminal value
-dominates plausible cases, or catalysts are weak. Diversification and the
-source of uncertainty also matter:
+entry-price thresholds. A wider hurdle is generally warranted when value is more
+uncertain, the balance sheet or business is fragile, terminal value dominates
+plausible cases, or catalysts are weak. Diversification and the source of
+uncertainty also matter:
 [Damodaran: Margin of Safety](https://pages.stern.nyu.edu/~adamodar/pdfiles/blog/MOS.pdf).
 
 ## Calculation Artifact And Assertions
