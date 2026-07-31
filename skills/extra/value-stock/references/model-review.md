@@ -42,9 +42,11 @@ Default to two lenses:
    bridges, accounting conventions, cash, debt, awards, dilution, and share
    count.
 2. **Economics and required returns** - challenge growth, margins,
-   reinvestment, competitive duration, asset realization, sector-specific
-   drivers, discount construction, timing, terminal or residual economics,
-   probabilities, sensitivities, and price-implied expectations.
+   reinvestment, the first forecast cash-flow bridge against admitted reported
+   or guided anchors, prior-investment timing, competitive duration, asset
+   realization, sector-specific drivers, discount construction, timing,
+   terminal or residual economics, probabilities, sensitivities, and whether
+   price-implied expectations are conditional or jointly coherent.
 
 Add one focused third reviewer only for a distinct load-bearing disagreement
 that neither default lens owns. Run exactly one reproduction-and-claims lens.

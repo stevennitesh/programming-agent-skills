@@ -136,6 +136,15 @@ Separate organic and acquired contribution when material. Direct FCFF growth
 may summarize a completed path; otherwise it is only a labeled sensitivity and
 cannot establish a causal range or pass Gate 4.
 
+When an admitted reported or guided cash-flow measure materially anchors the
+first explicit forecast period, reconcile modeled FCFF to it by definition and
+timing. Trace the difference through tax, interest classification, D&A, capex,
+working capital, acquisitions, prior-period growth investment, utilization, or
+other identified sources and uses. A growth-and-return reinvestment identity is
+a consistency check, not a substitute for this bridge. An unexplained material
+difference fails Gate 4; apply the main skill's dependent `partial` or `blocked`
+policy.
+
 ## Cash-Flow And Accounting Identities
 
 Declare each historical FCFF base as `EBIT-derived FCFF` or `CFO-derived FCFF`;
@@ -323,6 +332,12 @@ Hold a transparent set of non-growth assumptions and solve for the revenue
 growth, margin, reinvestment efficiency, or terminal economics required for the
 current price. State which variable was solved and what stayed fixed.
 
+Treat a one-variable solve as a conditional sensitivity, not the market's
+unique thesis. When multiple economically linked drivers can plausibly explain
+price and the price-implied expectation is load-bearing, also show one coherent
+joint path or state that the expectation is not uniquely identified. Do not
+present an extreme held-constant solution as the singular market implication.
+
 Compare implied expectations with:
 
 - company history and current guidance;
@@ -507,6 +522,8 @@ Before relying on the result, assert:
 - the declared FCFF derivation and its filed-period bridge reproduce the
   applicable EBIT- or CFO-derived identity; no failed branch is silently blended
   or replaced;
+- any admitted reported or guided cash-flow anchor material to the first
+  forecast period has a quantified definition-and-timing bridge to modeled FCFF;
 - cash, debt, claims, awards, and shares use one date or an explicit
   post-balance-sheet bridge;
 - actual point-in-time common shares, not weighted-average EPS shares, own the
