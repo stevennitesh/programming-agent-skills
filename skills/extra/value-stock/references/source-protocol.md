@@ -225,6 +225,15 @@ revision direction, and the provider's treatment of stale estimates. Historical
 surprise or delivery comparisons must use the estimate snapshot that existed
 before the result, never a subsequently revised history.
 
+When analyst price targets materially challenge a present-value result, record
+each usable target's publication date, target date or horizon, valuation method
+or operator, forecast period, and earnings or cash-flow definition. Compare
+values only at a common date under
+[Future-Date Valuation](valuation-methods.md#future-date-valuation). If the
+horizon or method is unavailable, use the target only as dispersion or sentiment
+evidence. Do not average incompatible methods or treat a consensus mean as
+independent fundamental evidence.
+
 ## News And Sentiment
 
 Use a defined window, normally from the latest reported quarter through the
