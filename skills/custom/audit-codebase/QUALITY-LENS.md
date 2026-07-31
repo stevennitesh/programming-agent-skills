@@ -23,17 +23,11 @@ disposition keeps the subsystem `incomplete`.
 | Class | Mandatory question | Load the detailed owner when |
 | --- | --- | --- |
 | Reliability | Can supported behavior be trusted across meaningful success, edge, state, failure, security, and environmental branches? | Always load [RELIABILITY-LENS.md](RELIABILITY-LENS.md). |
-| Domain | Does code express accepted language, Invariants, Bounded Context ownership, Context Relationships, and ADR decisions? | Domain records, project terms, policy meaning, Invariants, cross-context behavior, or a material decision is present or uncertain. |
-| Design | Do Interfaces and Seams concentrate capability, decisions, change, and proof with useful Depth, Leverage, and Locality? | Boundaries, pass-through layers, caller spread, dependency direction, test seams, or ownership placement may matter. |
-| Simplification | Is behavior, configuration, compatibility, duplication, dependency, or abstraction unnecessary, or already owned by a smaller sufficient mechanism? | A stale path, duplicate policy, custom mechanism, shallow boundary, or cheaper behavior-preserving direction may exist. |
-| Coding practice | Do naming, types, errors, validation, control flow, comments, state, and tests make the contract clear and provable? | Implementation clarity, invalid states, error behavior, Trust Boundaries, test responsibility, or concurrency may affect cost or risk. |
+| [Domain](DOMAIN-LENS.md) | Does code express accepted language, Invariants, Bounded Context ownership, Context Relationships, and ADR decisions? | Domain records, project terms, policy meaning, Invariants, cross-context behavior, or a material decision is present or uncertain. |
+| [Design](DESIGN-LENS.md) | Do Interfaces and Seams concentrate capability, decisions, change, and proof with useful Depth, Leverage, and Locality? | Boundaries, pass-through layers, caller spread, dependency direction, test seams, or ownership placement may matter. |
+| [Simplification](SIMPLIFICATION-LENS.md) | Is behavior, configuration, compatibility, duplication, dependency, or abstraction unnecessary, or already owned by a smaller sufficient mechanism? | A stale path, duplicate policy, custom mechanism, shallow boundary, or cheaper behavior-preserving direction may exist. |
+| [Coding practice](CODING-PRACTICES-LENS.md) | Do naming, types, errors, validation, control flow, comments, state, and tests make the contract clear and provable? | Implementation clarity, invalid states, error behavior, Trust Boundaries, test responsibility, or concurrency may affect cost or risk. |
 | Performance | Is any speed or resource claim supported by like-for-like measurement against an applicable budget or comparison? | Performance or resources are declared, observed, suspected, or claimed; then load [PERFORMANCE-LENS.md](PERFORMANCE-LENS.md). |
-
-The detailed owners are:
-[DOMAIN-LENS.md](DOMAIN-LENS.md),
-[DESIGN-LENS.md](DESIGN-LENS.md),
-[SIMPLIFICATION-LENS.md](SIMPLIFICATION-LENS.md), and
-[CODING-PRACTICES-LENS.md](CODING-PRACTICES-LENS.md).
 
 ## Class Ownership
 

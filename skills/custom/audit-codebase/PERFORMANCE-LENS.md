@@ -1,8 +1,9 @@
 # Performance Lens
 
-Read this only when the declared audit scope or a governing requirement
-includes speed, latency, throughput, scalability, memory, storage, network,
-CPU, GPU, or other resource behavior.
+Read this when performance or resource behavior is governed, declared,
+observed, suspected from direct current evidence, or claimed. This includes
+speed, latency, throughput, scalability, memory, storage, network, CPU, GPU,
+and other resource behavior. A generic smell alone does not trigger it.
 
 ## Classify
 

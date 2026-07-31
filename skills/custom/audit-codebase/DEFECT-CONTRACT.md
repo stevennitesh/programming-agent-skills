@@ -13,7 +13,8 @@ Admit a defect only when all five gates close:
   invariant, budget, acceptance threshold, or required evidence rule. A
   comparison basis counts only when its authority defines pass/fail.
 - **Reach:** a supported scenario inside the named repository baseline.
-- **Evidence:** direct evidence from the immutable snapshot.
+- **Evidence:** direct evidence from the selected objective's current source
+  identity.
 - **Impact:** a concrete correctness, domain, robustness, security, privacy,
   methodology, model-risk, data, validation, metric, analytics, performance,
   or repository-governed maintenance or proof failure under that expectation.
@@ -53,9 +54,8 @@ without a violated expectation is an opportunity under `QUALITY-LENS.md`.
 
 ## Evidence Gap
 
-Preserve required evidence unavailable within the pinned snapshot and Audit's
-authorized read-only boundary as a gap, not a defect or speculative
-opportunity:
+Preserve required evidence unavailable from current source within Audit's
+authorized read-only boundary as a gap, not a defect or speculative opportunity:
 
 ```text
 Gap ID:

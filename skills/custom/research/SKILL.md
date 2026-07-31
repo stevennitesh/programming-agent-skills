@@ -53,9 +53,10 @@ route when inspected evidence changes the claim's shape. Actual ownership,
 applicability, and answer impact control evidence and challenge depth; evidence
 for a definition does not by itself support effectiveness or a recommendation.
 Comparative recommendations require locked caller-owned criteria, constraints,
-and comparison rule; lock decision-relevant version or configuration, price
-basis, availability, and date. Return a tie or conditional answer when those
-locks do not support one winner, without making the caller's decision.
+and comparison rule. Lock the decision-relevant version or configuration, price
+basis, availability channel, and date when applicable. Return a tie or
+conditional answer when those locks do not support one winner, without making
+the caller's decision.
 
 For each claim, inspect the source that owns it in the applicable state:
 repository source, tests, configuration, governing documentation, or
@@ -127,11 +128,20 @@ inspected identities and missing links; reread mutable load-bearing surfaces
 before Return. On drift or an incomplete chain, preserve unaffected results and
 keep the mapping `unresolved` rather than synthesizing a hybrid state.
 
-Classify static correspondence as `aligned`, `materially different`, or
-`unresolved`. Classify runtime behavior and empirical effectiveness separately
-as `supported`, `conflicted`, or `unknown` against their own evidence state;
-static correspondence supports neither by itself. A supported difference is an
-`answered` mapping. Report the sourced concept, observed local expression,
+Before synthesizing a target mapping, classify each applicable layer
+independently:
+
+- static correspondence as `aligned`, `materially different`, or `unresolved`;
+- runtime behavior as `supported`, `conflicted`, or `unknown`; and
+- empirical effectiveness as `supported`, `conflicted`, or `unknown`.
+
+If sufficient applicable evidence for a layer is unavailable, use `unresolved`
+for static correspondence or `unknown` for runtime behavior or empirical
+effectiveness; do not substitute evidence from another layer. Static
+correspondence supports neither by itself. An evidenced `aligned` or `materially
+different` static classification resolves the mapping; mapping resolution does
+not determine the packet's terminal status. Report the sourced concept,
+observed local expression,
 material discrepancy, mechanically entailed consequences, source-supported
 alignment constraints, and only explicitly described applicable alternatives
 whose authority, state, prerequisites, and constraints are evidenced. Do not
@@ -210,11 +220,13 @@ remove, or modify repository files; return `Tracked mutation: none`. Report
 external or tool-managed temporary captures when material.
 
 Return exactly one `answered`, `conflicted`, `blocked`, or pre-research
-`not-admitted` packet. Include the question, answer or exact evidence boundary,
-direct citations or absolute note path, freshness, material limits, stopping
-basis, mutation result, caller-use boundary, applicable target or repository
-mapping and empirical remainder, and return owner. A blocker also includes
-attempted lanes and an observable unblock condition.
+`not-admitted` packet. For an admitted packet, always include the question,
+answer or exact evidence boundary, direct citations or absolute note path,
+freshness, stopping basis, mutation result, caller-use boundary, and return
+owner. Include material limits when applicable, a target or repository mapping
+when applicable, and an empirical remainder when applicable. A blocker also
+includes attempted lanes and an observable unblock condition. For
+`not-admitted`, return only the Admission contract.
 
 Return to the caller without deciding its artifact, changing its state, or
 starting downstream work. A complete standalone answer ends with `Next: none`.

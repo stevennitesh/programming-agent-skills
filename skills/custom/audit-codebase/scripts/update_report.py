@@ -19,9 +19,8 @@ from typing import Sequence
 _RUN_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}")
 _SECTION_ID = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 _GIT_ID = re.compile(r"(?:[0-9a-f]{40}|[0-9a-f]{64})")
-_REPORT_STRUCTURAL_VERSION = "5"
+_REPORT_STRUCTURAL_VERSION = "6"
 _KINDS = {
-    "system",
     "subsystem-narrative",
     "finding",
     "candidate",
@@ -45,12 +44,10 @@ _SUBSYSTEM_STATES = {"mapped", "incomplete", "audited"}
 _SUBSYSTEM_PROJECTION_TAGS = {
     "svg-map": "a",
     "linked-map": "li",
-    "system-list": "li",
 }
 _SUBSYSTEM_PROJECTION_IDS = {
     "svg-map": "map-node",
     "linked-map": "map-list",
-    "system-list": "system-list",
 }
 _SUBSYSTEM_STATE_CLASSES = {
     f"state-{state}" for state in _SUBSYSTEM_STATES
@@ -58,6 +55,24 @@ _SUBSYSTEM_STATE_CLASSES = {
 _FINDING_STATES = ("active", "resolved", "disproved")
 _PROGRESS_IDS = {"report-header", "summary-progress", "report-footer"}
 _INSERT_KINDS = ("finding-insert", "candidate-index-insert", "candidate-insert")
+_MAP_STATES = {"incomplete", "complete"}
+_OBJECTIVES = {"map", "audit", "analyze", "close"}
+_VOID_TAGS = {
+    "area",
+    "base",
+    "br",
+    "col",
+    "embed",
+    "hr",
+    "img",
+    "input",
+    "link",
+    "meta",
+    "param",
+    "source",
+    "track",
+    "wbr",
+}
 _OBSERVATIONS = {
     "retained-complexity": ("data-retained-id", "retained"),
     "gaps": ("data-gap-id", "gap"),
@@ -87,6 +102,8 @@ class ReportUpdateError(ValueError):
             "stage": self.stage,
             "mutation_started": self.mutation_started,
             "report_unchanged": self.report_unchanged,
+            "effect": "none" if not self.mutation_started else "unknown",
+            "report_state": "unchanged" if self.report_unchanged else "unknown",
         }
 
 
@@ -99,10 +116,14 @@ class _MarkupFacts(HTMLParser):
         self.main_count = 0
         self.unsafe: list[str] = []
         self.report_versions: list[str] = []
+        self.report_headers: list[dict[str, str]] = []
         self.candidate_cards: dict[str, list[dict[str, str]]] = {}
         self.candidate_rows: dict[str, list[dict[str, str]]] = {}
+        self.candidate_visible_states: dict[str, dict[str, list[str]]] = {}
         self.candidate_findings: dict[str, list[str]] = {}
+        self.implemented_banners: dict[str, list[dict[str, str]]] = {}
         self.subsystems: dict[str, list[dict[str, str]]] = {}
+        self.subsystem_narratives: dict[str, list[dict[str, str]]] = {}
         self.subsystem_projections: dict[
             str, dict[str, list[dict[str, str]]]
         ] = {}
@@ -118,13 +139,17 @@ class _MarkupFacts(HTMLParser):
         self.progress: dict[str, list[str]] = {}
         self.finding_progress: dict[str, list[str]] = {}
         self.insertions: dict[tuple[str, str], int] = {}
+        self.insertion_owners: dict[tuple[str, str], list[str]] = {}
         self.pickups: dict[str, dict[str, list[str]]] = {}
         self._pickup: tuple[str, str, str, list[str]] | None = None
+        self._candidate_visible_state: tuple[str, str, str, list[str]] | None = None
         self._subsystem_projection: tuple[str, str, str, list[str]] | None = None
         self._subsystem_visible_state: tuple[
             str, str, str, list[str]
         ] | None = None
         self._observation_collection: tuple[str, str] | None = None
+        self._active_subsystem: str | None = None
+        self._subsystem_depth = 0
 
     def handle_starttag(
         self, tag: str, attrs: list[tuple[str, str | None]]
@@ -147,11 +172,25 @@ class _MarkupFacts(HTMLParser):
             if value is not None
         }
         element_id = values.get("id", "")
+        starting_subsystem = (
+            lowered == "section" and element_id.startswith("subsystem-")
+        )
+        if starting_subsystem:
+            if self._active_subsystem is not None:
+                raise ReportUpdateError("subsystem containers may not nest")
+            self._active_subsystem = element_id.removeprefix("subsystem-")
+            self._subsystem_depth = 1
+        elif self._active_subsystem is not None and lowered not in _VOID_TAGS:
+            self._subsystem_depth += 1
+        if self._active_subsystem is not None:
+            values["_physical-subsystem-id"] = self._active_subsystem
         if (
             lowered == "meta"
             and values.get("name") == "audit-codebase-report-version"
         ):
             self.report_versions.append(values.get("content", ""))
+        if lowered == "header" and element_id == "report-header":
+            self.report_headers.append(values)
         if lowered == "article" and element_id.startswith("candidate-"):
             candidate_id = element_id.removeprefix("candidate-")
             self.candidate_cards.setdefault(candidate_id, []).append(values)
@@ -161,6 +200,9 @@ class _MarkupFacts(HTMLParser):
         if lowered == "section" and element_id.startswith("subsystem-"):
             subsystem_id = element_id.removeprefix("subsystem-")
             self.subsystems.setdefault(subsystem_id, []).append(values)
+        if lowered == "div" and element_id.startswith("subsystem-narrative-"):
+            subsystem_id = element_id.removeprefix("subsystem-narrative-")
+            self.subsystem_narratives.setdefault(subsystem_id, []).append(values)
         projection = values.get("data-subsystem-projection")
         if projection is not None:
             expected_tag = _SUBSYSTEM_PROJECTION_TAGS.get(projection)
@@ -210,6 +252,24 @@ class _MarkupFacts(HTMLParser):
         if lowered == "tr" and element_id.startswith("candidate-index-"):
             candidate_id = element_id.removeprefix("candidate-index-")
             self.candidate_rows.setdefault(candidate_id, []).append(values)
+        visible_candidate = values.get("data-candidate-state")
+        if visible_candidate is not None:
+            view = values.get("data-state-view", "")
+            if (
+                lowered != "span"
+                or view not in {"card", "index"}
+                or self._candidate_visible_state is not None
+            ):
+                raise ReportUpdateError("invalid candidate visible state projection")
+            self._candidate_visible_state = (
+                lowered,
+                visible_candidate,
+                view,
+                [],
+            )
+        implemented_banner = values.get("data-implemented-banner")
+        if implemented_banner is not None:
+            self.implemented_banners.setdefault(implemented_banner, []).append(values)
         if values.get("data-implementation-result") is not None:
             candidate_id = values.get("data-candidate-id", "")
             self.implementation_results.setdefault(candidate_id, []).append(values)
@@ -286,7 +346,12 @@ class _MarkupFacts(HTMLParser):
     def handle_startendtag(
         self, tag: str, attrs: list[tuple[str, str | None]]
     ) -> None:
+        values = {name.lower(): value for name, value in attrs if value is not None}
+        if tag.lower() == "section" and values.get("id", "").startswith("subsystem-"):
+            raise ReportUpdateError("subsystem container may not be self-closing")
         self.handle_starttag(tag, attrs)
+        if self._active_subsystem is not None and tag.lower() not in _VOID_TAGS:
+            self._subsystem_depth -= 1
 
     def handle_comment(self, data: str) -> None:
         match = re.fullmatch(
@@ -298,10 +363,15 @@ class _MarkupFacts(HTMLParser):
         if match:
             key = (match.group(1), match.group(2))
             self.insertions[key] = self.insertions.get(key, 0) + 1
+            self.insertion_owners.setdefault(key, []).append(
+                self._active_subsystem or ""
+            )
 
     def handle_data(self, data: str) -> None:
         if self._pickup is not None:
             self._pickup[3].append(data)
+        if self._candidate_visible_state is not None:
+            self._candidate_visible_state[3].append(data)
         if self._subsystem_projection is not None:
             self._subsystem_projection[3].append(data)
         if self._subsystem_visible_state is not None:
@@ -317,6 +387,16 @@ class _MarkupFacts(HTMLParser):
             )
             self._pickup = None
         if (
+            self._candidate_visible_state is not None
+            and lowered == self._candidate_visible_state[0]
+        ):
+            _, candidate_id, view, parts = self._candidate_visible_state
+            value = " ".join("".join(parts).split())
+            self.candidate_visible_states.setdefault(candidate_id, {}).setdefault(
+                view, []
+            ).append(value)
+            self._candidate_visible_state = None
+        if (
             self._subsystem_visible_state is not None
             and lowered == self._subsystem_visible_state[0]
         ):
@@ -330,15 +410,13 @@ class _MarkupFacts(HTMLParser):
             self._subsystem_projection is not None
             and lowered == self._subsystem_projection[0]
         ):
-            _, projection, subsystem_id, parts = self._subsystem_projection
-            if projection == "system-list":
-                value = " ".join("".join(parts).split())
-                self.subsystem_visible_states.setdefault(
-                    projection, {}
-                ).setdefault(subsystem_id, []).append(value)
             self._subsystem_projection = None
         if lowered == "ul" and self._observation_collection is not None:
             self._observation_collection = None
+        if self._active_subsystem is not None and lowered not in _VOID_TAGS:
+            self._subsystem_depth -= 1
+            if self._subsystem_depth == 0:
+                self._active_subsystem = None
 
 
 def _sha256(data: bytes) -> str:
@@ -477,9 +555,11 @@ def source_identity(
         tree = _git(root, "rev-parse", "--verify", f"{head}^{{tree}}").strip()
         staged_by_path: dict[str, list[str]] = {}
         output = _git_paths(root, ("ls-files", "-s", "-z"), paths)
+        index_snapshot = output
         for entry in output.rstrip("\0").split("\0") if output else ():
             metadata, observed_path = entry.split("\t", 1)
             staged_by_path.setdefault(observed_path, []).append(metadata)
+        live_stats: dict[str, tuple[int, int]] = {}
         for path in paths:
             value = path.as_posix()
             lexical = root.joinpath(*path.parts)
@@ -511,14 +591,45 @@ def source_identity(
                 ) from exc
             if not resolved.is_file():
                 raise ReportUpdateError(f"evidence path is not a file: {value}")
+            before = resolved.stat()
+            content = resolved.read_bytes()
+            after = resolved.stat()
+            before_identity = (
+                before.st_size,
+                before.st_mtime_ns,
+            )
+            after_identity = (
+                after.st_size,
+                after.st_mtime_ns,
+            )
+            if before_identity != after_identity:
+                raise ReportUpdateError(
+                    f"evidence path changed during source identity: {value}"
+                )
+            live_stats[value] = after_identity
             records.append(
                 {
                     "path": value,
                     "mode": mode,
-                    "content": f"sha256:{_sha256(resolved.read_bytes())}",
+                    "content": f"sha256:{_sha256(content)}",
                     "status": "tracked-live" if staged else "untracked",
                 }
             )
+        for path in paths:
+            value = path.as_posix()
+            if value not in live_stats:
+                continue
+            current = root.joinpath(*path.parts).stat()
+            current_identity = (
+                current.st_size,
+                current.st_mtime_ns,
+            )
+            if current_identity != live_stats[value]:
+                raise ReportUpdateError(
+                    f"evidence path changed during source identity: {value}"
+                )
+        if _git_paths(root, ("ls-files", "-s", "-z"), paths) != index_snapshot:
+            raise ReportUpdateError("repository index changed during source identity")
         if _git(root, "rev-parse", "--verify", "HEAD").strip() != head:
             raise ReportUpdateError("repository HEAD changed during source identity")
         target = "live-worktree"
@@ -540,6 +651,8 @@ def source_identity(
         "stage": "source-identity",
         "mutation_started": False,
         "report_unchanged": True,
+        "effect": "none",
+        "report_state": "unchanged",
     }
 
 
@@ -586,13 +699,31 @@ def _facts(markup: str) -> _MarkupFacts:
     return parser
 
 
+def _validate_embedded_identity(
+    facts: _MarkupFacts,
+    *,
+    repo_root: Path,
+    report: Path,
+) -> None:
+    header = facts.report_headers[0]
+    embedded_root = Path(header["data-repository-root"])
+    try:
+        resolved_embedded = embedded_root.resolve(strict=True)
+    except OSError as exc:
+        raise ReportUpdateError(
+            f"embedded repository identity cannot resolve: {exc}"
+        ) from exc
+    if resolved_embedded != repo_root:
+        raise ReportUpdateError("embedded repository identity does not match")
+    if header["data-run-id"] != report.parent.name:
+        raise ReportUpdateError("embedded run identity does not match")
+
+
 def _marker(kind: str, identifier: str, edge: str) -> str:
     return f"<!-- audit-codebase:{kind}:{identifier}:{edge} -->"
 
 
 def _anchor(kind: str, identifier: str) -> str:
-    if kind == "summary" and identifier in {"report-header", "report-footer"}:
-        return identifier
     return f"{kind}-{identifier}"
 
 
@@ -646,6 +777,9 @@ def _validate_observation_records(
             subsystem_id = _required(record, "data-subsystem-id", label)
             if subsystem_id not in subsystem_ids:
                 raise ReportUpdateError(f"{label} has no matching subsystem")
+            physical_owner = record.get("_physical-subsystem-id")
+            if physical_owner is not None and physical_owner != subsystem_id:
+                raise ReportUpdateError(f"{label} has foreign physical ownership")
             collection_subsystem = record.get("_collection-subsystem-id")
             if (
                 collection_subsystem is not None
@@ -692,13 +826,7 @@ def _visible_subsystem_state(projection: str, value: str) -> str | None:
         ):
             return None
         return state
-    if projection == "linked-map":
-        return value if value in _SUBSYSTEM_STATES else None
-    match = re.search(
-        rf"\b\d+\s+files?,\s*({'|'.join(sorted(_SUBSYSTEM_STATES))})$",
-        value,
-    )
-    return match.group(1) if match is not None else None
+    return value if projection == "linked-map" and value in _SUBSYSTEM_STATES else None
 
 
 def _validate_complete_report(
@@ -711,6 +839,16 @@ def _validate_complete_report(
             "report must declare audit-codebase version "
             f"{_REPORT_STRUCTURAL_VERSION}"
         )
+    if len(facts.report_headers) != 1:
+        raise ReportUpdateError("report must contain one report-header")
+    report_header = facts.report_headers[0]
+    _required(report_header, "data-repository-root", "report-header")
+    run_id = _required(report_header, "data-run-id", "report-header")
+    if not _RUN_ID.fullmatch(run_id):
+        raise ReportUpdateError("report-header has unsafe run identity")
+    map_state = _required(report_header, "data-map-state", "report-header")
+    if map_state not in _MAP_STATES:
+        raise ReportUpdateError("report-header has unsupported Map state")
     duplicate_ids = sorted(
         identifier for identifier, count in facts.ids.items() if count != 1
     )
@@ -739,10 +877,26 @@ def _validate_complete_report(
             )
         subsystem_states[identifier] = state
         _required(record, "data-source-identity", f"subsystem {identifier!r}")
+        if record.get("_physical-subsystem-id") != identifier:
+            raise ReportUpdateError(
+                f"subsystem {identifier!r} has invalid physical ownership"
+            )
+        narratives = facts.subsystem_narratives.get(identifier, [])
+        if (
+            len(narratives) != 1
+            or narratives[0].get("_physical-subsystem-id") != identifier
+        ):
+            raise ReportUpdateError(
+                f"subsystem {identifier!r} requires one owned narrative"
+            )
         for kind in _INSERT_KINDS:
             if facts.insertions.get((kind, identifier), 0) != 1:
                 raise ReportUpdateError(
                     f"subsystem {identifier!r} requires one {kind} anchor"
+                )
+            if facts.insertion_owners.get((kind, identifier)) != [identifier]:
+                raise ReportUpdateError(
+                    f"subsystem {identifier!r} has foreign {kind} anchor"
                 )
 
     for projection, expected_tag in _SUBSYSTEM_PROJECTION_TAGS.items():
@@ -804,17 +958,30 @@ def _validate_complete_report(
             ):
                 raise ReportUpdateError("SVG aria-label disagrees with subsystem")
 
-    if facts.observation_collections:
-        for kind in _OBSERVATIONS:
-            wrappers = facts.observation_collections.get(kind, [])
-            owners = [
-                _required(record, "data-subsystem-id", f"{kind} collection")
-                for record in wrappers
-            ]
-            if len(owners) != len(subsystem_ids) or set(owners) != subsystem_ids:
-                raise ReportUpdateError(
-                    f"report requires one {kind} collection per subsystem"
-                )
+    observation_required = {
+        identifier
+        for identifier, state in subsystem_states.items()
+        if state in {"incomplete", "audited"}
+    }
+    for kind in _OBSERVATIONS:
+        wrappers = facts.observation_collections.get(kind, [])
+        owners = [
+            _required(record, "data-subsystem-id", f"{kind} collection")
+            for record in wrappers
+        ]
+        if (
+            len(owners) != len(set(owners))
+            or not observation_required <= set(owners)
+            or not set(owners) <= subsystem_ids
+        ):
+            raise ReportUpdateError(
+                f"report requires one {kind} collection per audited or "
+                "incomplete subsystem"
+            )
+        for record in wrappers:
+            owner = record["data-subsystem-id"]
+            if record.get("_physical-subsystem-id") != owner:
+                raise ReportUpdateError(f"{kind} collection has foreign ownership")
 
     _validate_observation_records(facts, subsystem_ids)
 
@@ -833,6 +1000,8 @@ def _validate_complete_report(
         subsystem_id = _required(record, "data-subsystem-id", label)
         if subsystem_id not in subsystem_ids:
             raise ReportUpdateError(f"{label} has no matching subsystem")
+        if record.get("_physical-subsystem-id") != subsystem_id:
+            raise ReportUpdateError(f"{label} has foreign physical ownership")
         state = _required(record, "data-state", label)
         if state not in _FINDING_STATES:
             raise ReportUpdateError(f"{label} has unsupported state {state!r}")
@@ -880,8 +1049,24 @@ def _validate_complete_report(
             raise ReportUpdateError(
                 f"candidate {identifier!r} has no matching subsystem"
             )
+        if (
+            cards[0].get("_physical-subsystem-id") != subsystem_id
+            or rows[0].get("_physical-subsystem-id") != subsystem_id
+        ):
+            raise ReportUpdateError(
+                f"candidate {identifier!r} has foreign physical ownership"
+            )
         states[identifier] = state
         counts[state] += 1
+        visible_states = facts.candidate_visible_states.get(identifier, {})
+        if (
+            visible_states.get("card") != [state]
+            or visible_states.get("index") != [state]
+            or set(visible_states) != {"card", "index"}
+        ):
+            raise ReportUpdateError(
+                f"candidate {identifier!r} visible state disagrees"
+            )
         member_findings = facts.candidate_findings.get(identifier, [])
         if len(member_findings) != len(set(member_findings)):
             raise ReportUpdateError(
@@ -924,12 +1109,18 @@ def _validate_complete_report(
                 f"candidate {identifier!r} {state} state forbids pickup"
             )
         results = facts.implementation_results.get(identifier, [])
+        banners = facts.implemented_banners.get(identifier, [])
         if state != "implemented":
-            if results:
+            if results or banners:
                 raise ReportUpdateError(
-                    f"candidate {identifier!r} has implementation evidence before implemented"
+                    f"candidate {identifier!r} has implementation projection "
+                    "before implemented"
                 )
             continue
+        if len(banners) != 1:
+            raise ReportUpdateError(
+                f"implemented candidate {identifier!r} needs one banner"
+            )
         if len(results) != 1:
             raise ReportUpdateError(
                 f"implemented candidate {identifier!r} needs one evidence element"
@@ -1000,7 +1191,9 @@ def _validate_report(
 ) -> tuple[dict[str, str], str, dict[str, str], str]:
     facts = _facts(source)
     result = _validate_complete_report(facts)
-    regions: list[tuple[int, int, str]] = []
+    regions: list[tuple[int, int, str]] = [
+        (*_marked_bounds(source, "summary", "map"), "summary:map")
+    ]
     for identifier in facts.subsystems:
         regions.append(
             (*_marked_bounds(source, "subsystem-narrative", identifier), "narrative")
@@ -1059,6 +1252,8 @@ def _sync_progress(source: str) -> str:
 def _validate_section(kind: str, identifier: str, fragment: str) -> _MarkupFacts:
     if kind not in _KINDS:
         raise ReportUpdateError(f"unsupported section kind: {kind}")
+    if kind == "summary" and identifier != "map":
+        raise ReportUpdateError("summary updates support only the structural Map")
     if not _SECTION_ID.fullmatch(identifier):
         raise ReportUpdateError(f"unsafe section ID: {identifier}")
     if _MARKER_PREFIX in fragment:
@@ -1079,18 +1274,34 @@ def inspect_report(
     *,
     repo_root: Path,
     report: Path,
+    objective: str,
     candidate_id: str | None = None,
     subsystem_id: str | None = None,
 ) -> dict[str, object]:
-    """Validate one report and return its local navigation facts."""
+    """Admit one report-backed objective and return its local facts."""
 
     try:
+        if objective not in _OBJECTIVES:
+            raise ReportUpdateError(f"unsupported objective: {objective}")
         canonical = _canonical_report(repo_root, report)
         source_bytes, source = _decode(canonical)
-        if candidate_id is not None and subsystem_id is not None:
-            raise ReportUpdateError("inspect accepts one selected ID")
+        if objective == "map":
+            if candidate_id is not None or subsystem_id is not None:
+                raise ReportUpdateError("Map inspection accepts no selected ID")
+        elif objective == "audit":
+            if subsystem_id is None or candidate_id is not None:
+                raise ReportUpdateError("Audit inspection requires one subsystem ID")
+        elif candidate_id is None or subsystem_id is not None:
+            raise ReportUpdateError(
+                f"{objective.capitalize()} inspection requires one candidate ID"
+            )
         facts = _facts(source)
         states, progress, finding_states, finding_progress = _validate_report(source)
+        _validate_embedded_identity(
+            facts,
+            repo_root=canonical.parents[3],
+            report=canonical,
+        )
         candidates = {
             identifier: {
                 "id": identifier,
@@ -1111,6 +1322,9 @@ def inspect_report(
             "report": str(canonical),
             "report_version": _REPORT_STRUCTURAL_VERSION,
             "run_id": canonical.parent.name,
+            "map_state": facts.report_headers[0]["data-map-state"],
+            "objective": objective,
+            "objective_supported": True,
             "sha256": _sha256(source_bytes),
             "candidate_states": states,
             "candidate_progress": progress,
@@ -1119,24 +1333,37 @@ def inspect_report(
             "stage": "inspect",
             "mutation_started": False,
             "report_unchanged": True,
-            "capabilities": {
-                "update_candidate": True,
-                "reaudit_subsystem": all(
-                    facts.insertions.get((kind, identifier), 0) == 1
-                    for identifier in facts.subsystems
-                    for kind in _INSERT_KINDS
-                ),
-                "close_candidate_findings": True,
-            },
+            "effect": "none",
+            "report_state": "unchanged",
         }
-        if candidate_id is not None:
+        if objective in {"analyze", "close"}:
+            assert candidate_id is not None
             if candidate_id not in candidates:
                 raise ReportUpdateError(f"candidate not found: {candidate_id}")
-            result["candidate"] = candidates[candidate_id]
-        elif subsystem_id is not None:
+            candidate = candidates[candidate_id]
+            subsystem = facts.subsystems[candidate["subsystem_id"]][0]
+            if subsystem["data-state"] != "audited":
+                raise ReportUpdateError(
+                    f"candidate {candidate_id!r} is not inside an audited subsystem"
+                )
+            admissible = (
+                {"presented", "decision pending", "analyzed", "blocked"}
+                if objective == "analyze"
+                else {"analyzed"}
+            )
+            if candidate["state"] not in admissible:
+                raise ReportUpdateError(
+                    f"candidate {candidate_id!r} state {candidate['state']!r} "
+                    f"is not admissible for {objective}"
+                )
+            result["candidate"] = candidate
+        elif objective == "audit":
+            assert subsystem_id is not None
             if subsystem_id not in facts.subsystems:
                 raise ReportUpdateError(f"subsystem not found: {subsystem_id}")
             subsystem = facts.subsystems[subsystem_id][0]
+            if facts.report_headers[0]["data-map-state"] != "complete":
+                raise ReportUpdateError("Audit requires a complete Map")
             grouped_findings = {
                 state: sorted(
                     identifier
@@ -1199,6 +1426,55 @@ def inspect_report(
         raise
 
 
+def _section_bundle_sha256(
+    expected_report_sha256: str,
+    sections: Sequence[tuple[str, str, Path]],
+) -> str:
+    digest = hashlib.sha256(b"audit-codebase-section-bundle-v1\0")
+    digest.update(expected_report_sha256.encode("ascii"))
+    for kind, identifier, fragment_path in sections:
+        data = fragment_path.read_bytes()
+        digest.update(b"\0")
+        digest.update(kind.encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(identifier.encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(data)
+    return digest.hexdigest()
+
+
+def _validate_candidate_transitions(
+    before: dict[str, str],
+    after: dict[str, str],
+    *,
+    close_candidate_id: str | None = None,
+) -> None:
+    for identifier, state in after.items():
+        previous = before.get(identifier)
+        if previous is None:
+            if state != "presented":
+                raise ReportUpdateError(
+                    f"new candidate {identifier!r} must be presented"
+                )
+            continue
+        if identifier == close_candidate_id:
+            if previous != "analyzed" or state != "implemented":
+                raise ReportUpdateError(
+                    f"closeout candidate {identifier!r} must transition "
+                    "from analyzed to implemented"
+                )
+            continue
+        if previous in {"implemented", "disproved"} and state != previous:
+            raise ReportUpdateError(
+                f"terminal candidate {identifier!r} may not transition"
+            )
+        if state == "implemented" and previous != "implemented":
+            raise ReportUpdateError(
+                f"candidate {identifier!r} may enter implemented only through "
+                "close-candidate"
+            )
+
+
 def _prepare_update(
     *,
     repo_root: Path,
@@ -1220,7 +1496,13 @@ def _prepare_update(
         raise ReportUpdateError(
             f"report collision: expected {expected_sha256}, observed {observed_sha256}"
         )
-    _validate_report(source)
+    source_facts = _facts(source)
+    before_states, _, _, _ = _validate_report(source)
+    _validate_embedded_identity(
+        source_facts,
+        repo_root=report.parents[3],
+        report=report,
+    )
 
     replacements: list[tuple[int, int, str, _MarkupFacts, str]] = []
     seen: set[tuple[str, str]] = set()
@@ -1259,6 +1541,13 @@ def _prepare_update(
 
     updated = _sync_progress(updated)
     final_facts = _facts(updated)
+    _validate_candidate_transitions(
+        before_states,
+        {
+            candidate_id: values[0].get("data-state", "")
+            for candidate_id, values in final_facts.candidate_cards.items()
+        },
+    )
     candidate_states, progress, finding_states, finding_progress = (
         _validate_report(updated)
     )
@@ -1287,6 +1576,7 @@ def _prepare_update(
         "_updated_bytes": updated_bytes,
         "report": str(report),
         "sha256": _sha256(updated_bytes),
+        "bundle_sha256": _section_bundle_sha256(expected_sha256, sections),
         "sections": [item[4] for item in replacements],
         "candidate_states": candidate_states,
         "candidate_progress": progress,
@@ -1318,6 +1608,8 @@ def validate_report_update(
         "stage": "validate",
         "mutation_started": False,
         "report_unchanged": True,
+        "effect": "none",
+        "report_state": "unchanged",
     }
 
 
@@ -1419,6 +1711,8 @@ def _publish_prepared(prepared: dict[str, object]) -> dict[str, object]:
         "stage": "read-back",
         "mutation_started": True,
         "report_unchanged": False,
+        "effect": "replaced",
+        "report_state": "updated",
     }
 
 
@@ -1427,18 +1721,23 @@ def update_report(
     repo_root: Path,
     report: Path,
     expected_sha256: str,
+    expected_bundle_sha256: str,
     sections: Sequence[tuple[str, str, Path]],
 ) -> dict[str, object]:
     """Validate and atomically publish one non-overlapping section update."""
 
-    return _publish_prepared(
-        _prepare_update(
-            repo_root=repo_root,
-            report=report,
-            expected_sha256=expected_sha256,
-            sections=sections,
-        )
+    prepared = _prepare_update(
+        repo_root=repo_root,
+        report=report,
+        expected_sha256=expected_sha256,
+        sections=sections,
     )
+    if prepared["bundle_sha256"] != expected_bundle_sha256:
+        raise ReportUpdateError(
+            "section bundle collision: expected "
+            f"{expected_bundle_sha256}, observed {prepared['bundle_sha256']}"
+        )
+    return _publish_prepared(prepared)
 
 
 def _insert_marker(kind: str, subsystem_id: str) -> str:
@@ -1474,10 +1773,17 @@ def _prepared_markup(
     source_bytes: bytes,
     updated: str,
     sections: list[str],
+    before_candidate_states: dict[str, str],
+    close_candidate_id: str | None = None,
 ) -> dict[str, object]:
     updated = _sync_progress(updated)
     candidate_states, candidate_progress, finding_states, finding_progress = (
         _validate_report(updated)
+    )
+    _validate_candidate_transitions(
+        before_candidate_states,
+        candidate_states,
+        close_candidate_id=close_candidate_id,
     )
     updated_bytes = updated.encode("utf-8")
     return {
@@ -1594,40 +1900,25 @@ def _replace_svg_visible_state(body: str, *, state: str, label: str) -> str:
 def _replace_list_visible_state(
     body: str,
     *,
-    projection: str,
     state: str,
     label: str,
 ) -> str:
-    if projection == "linked-map":
-        pattern = re.compile(
-            r"(<span\b(?=[^>]*\bclass\s*=\s*[\"']"
-            r"[^\"']*\bstatus\b[^\"']*[\"'])[^>]*>)"
-            r"([^<]*)(</span\s*>)"
-        )
-        matches = list(pattern.finditer(body))
-        if len(matches) != 1:
-            raise ReportUpdateError(f"{label} requires one visible state")
-        match = matches[0]
-        return (
-            body[: match.start()]
-            + match.group(1)
-            + state
-            + match.group(3)
-            + body[match.end() :]
-        )
-
     pattern = re.compile(
-        rf"(\b\d+\s+files?,\s*)"
-        rf"({'|'.join(sorted(_SUBSYSTEM_STATES))})(\s*)$"
+        r"(<span\b(?=[^>]*\bclass\s*=\s*[\"']"
+        r"[^\"']*\bstatus\b[^\"']*[\"'])[^>]*>)"
+        r"([^<]*)(</span\s*>)"
     )
-    updated, count = pattern.subn(
-        lambda match: f"{match.group(1)}{state}{match.group(3)}",
-        body,
-        count=1,
-    )
-    if count != 1:
+    matches = list(pattern.finditer(body))
+    if len(matches) != 1:
         raise ReportUpdateError(f"{label} requires one visible state")
-    return updated
+    match = matches[0]
+    return (
+        body[: match.start()]
+        + match.group(1)
+        + state
+        + match.group(3)
+        + body[match.end() :]
+    )
 
 
 def _sync_subsystem_state_projections(
@@ -1687,7 +1978,6 @@ def _sync_subsystem_state_projections(
         else:
             body = _replace_list_visible_state(
                 body,
-                projection=projection,
                 state=state,
                 label=label,
             )
@@ -1707,6 +1997,7 @@ def reaudit_subsystem(
     narrative_path: Path,
     findings: Sequence[tuple[str, Path]] = (),
     candidates: Sequence[tuple[str, Path, Path]] = (),
+    map_path: Path | None = None,
     validate_only: bool = False,
     fragment_sha256: dict[Path, str] | None = None,
 ) -> dict[str, object]:
@@ -1726,9 +2017,31 @@ def reaudit_subsystem(
             f"observed {_sha256(source_bytes)}"
         )
     facts = _facts(source)
-    _validate_report(source)
+    before_states, _, _, _ = _validate_report(source)
+    _validate_embedded_identity(
+        facts,
+        repo_root=canonical.parents[3],
+        report=canonical,
+    )
     if subsystem_id not in facts.subsystems:
         raise ReportUpdateError(f"subsystem not found: {subsystem_id}")
+
+    sections: list[str] = []
+    if map_path is not None:
+        _, map_fragment = _decode_publication_fragment(
+            map_path,
+            fragment_sha256,
+        )
+        _validate_section("summary", "map", map_fragment)
+        map_start, map_end = _marked_bounds(source, "summary", "map")
+        source = (
+            source[:map_start]
+            + f"{_marker('summary', 'map', 'start')}\n"
+            + map_fragment.strip()
+            + f"\n{_marker('summary', 'map', 'end')}"
+            + source[map_end:]
+        )
+        sections.append("summary:map")
 
     section_pattern = re.compile(
         rf"<section\b[^>]*\bid\s*=\s*([\"'])"
@@ -1773,10 +2086,12 @@ def reaudit_subsystem(
         + f"\n{_marker('subsystem-narrative', subsystem_id, 'end')}"
         + source[end:]
     )
-    sections = [
-        f"subsystem-state:{subsystem_id}",
-        f"subsystem-narrative:{subsystem_id}",
-    ]
+    sections.extend(
+        (
+            f"subsystem-state:{subsystem_id}",
+            f"subsystem-narrative:{subsystem_id}",
+        )
+    )
     seen_findings: set[str] = set()
     for identifier, path in findings:
         if identifier in seen_findings:
@@ -1848,6 +2163,7 @@ def reaudit_subsystem(
         source_bytes=source_bytes,
         updated=updated,
         sections=sections,
+        before_candidate_states=before_states,
     )
     if validate_only:
         return {
@@ -1858,6 +2174,8 @@ def reaudit_subsystem(
             "stage": "validate",
             "mutation_started": False,
             "report_unchanged": True,
+            "effect": "none",
+            "report_state": "unchanged",
         }
     return _publish_prepared(prepared)
 
@@ -1907,12 +2225,13 @@ def _load_reaudit_manifest(
         raise ReportUpdateError(
             f"publication manifest is not valid JSON: {exc}"
         ) from exc
-    if not isinstance(manifest, dict) or manifest.get("version") != 1:
-        raise ReportUpdateError("publication manifest requires version 1")
+    if not isinstance(manifest, dict) or manifest.get("version") != 2:
+        raise ReportUpdateError("publication manifest requires version 2")
     expected_sha256 = manifest.get("expected_report_sha256")
     subsystem = manifest.get("subsystem")
     raw_findings = manifest.get("findings")
     raw_candidates = manifest.get("candidates")
+    raw_map = manifest.get("map")
     if (
         not isinstance(expected_sha256, str)
         or not re.fullmatch(r"[0-9a-f]{64}", expected_sha256)
@@ -1937,6 +2256,10 @@ def _load_reaudit_manifest(
         "subsystem narrative",
     )
     digest_items: list[tuple[str, Path]] = [("narrative", narrative)]
+    map_path: Path | None = None
+    if raw_map is not None:
+        map_path = _manifest_fragment(base, raw_map, "Map fragment")
+        digest_items.append(("summary:map", map_path))
 
     findings: list[tuple[str, Path]] = []
     for index, item in enumerate(raw_findings):
@@ -1971,7 +2294,7 @@ def _load_reaudit_manifest(
             ((f"candidate:{identifier}", card), (f"candidate-index:{identifier}", row))
         )
 
-    digest = hashlib.sha256(b"audit-codebase-publication-bundle-v1\0")
+    digest = hashlib.sha256(b"audit-codebase-publication-bundle-v2\0")
     fragment_sha256: dict[Path, str] = {}
     digest.update(manifest_bytes)
     for label, path in digest_items:
@@ -1993,6 +2316,7 @@ def _load_reaudit_manifest(
             "narrative_path": narrative,
             "findings": tuple(findings),
             "candidates": tuple(candidates),
+            "map_path": map_path,
             "fragment_sha256": fragment_sha256,
         },
         digest.hexdigest(),
@@ -2056,7 +2380,10 @@ def _marked_bounds(source: str, kind: str, identifier: str) -> tuple[int, int]:
             f"report must contain one marker pair for {kind}:{identifier}"
         )
     start = source.index(start_marker)
-    end = source.index(end_marker, start) + len(end_marker)
+    end_start = source.find(end_marker, start + len(start_marker))
+    if end_start < 0:
+        raise ReportUpdateError(f"reversed marker pair for {kind}:{identifier}")
+    end = end_start + len(end_marker)
     return start, end
 
 
@@ -2143,18 +2470,14 @@ def _replace_visible_state(
     old_state: str,
     new_state: str,
 ) -> str:
-    if view == "card":
-        pattern = re.compile(
-            rf"(<strong\b[^>]*>\s*State:\s*</strong>\s*)"
-            rf"{re.escape(old_state)}\b"
-        )
-    else:
-        pattern = re.compile(
-            rf"(<td\b[^>]*>\s*){re.escape(old_state)}(\s*</td>)",
-            flags=re.DOTALL,
-        )
+    pattern = re.compile(
+        rf"(<span\b(?=[^>]*\bdata-candidate-state\s*=\s*[\"'][^\"']+[\"'])"
+        rf"(?=[^>]*\bdata-state-view\s*=\s*[\"']{re.escape(view)}[\"'])"
+        rf"[^>]*>\s*){re.escape(old_state)}(\s*</span>)",
+        flags=re.DOTALL,
+    )
     updated, count = pattern.subn(
-        lambda match: f"{match.group(1)}{new_state}{match.group(2) if view == 'index' else ''}",
+        lambda match: f"{match.group(1)}{new_state}{match.group(2)}",
         region,
         count=1,
     )
@@ -2186,6 +2509,11 @@ def close_candidate(
         )
     facts = _facts(source)
     states, _, finding_states, _ = _validate_report(source)
+    _validate_embedded_identity(
+        facts,
+        repo_root=canonical.parents[3],
+        report=canonical,
+    )
     if states.get(candidate_id) != "analyzed":
         raise ReportUpdateError(
             f"candidate {candidate_id!r} must be analyzed before closeout"
@@ -2321,6 +2649,8 @@ def close_candidate(
             f"candidate-index:{candidate_id}",
             *(f"finding:{identifier}" for identifier in sorted(transitions)),
         ],
+        before_candidate_states=states,
+        close_candidate_id=candidate_id,
     )
     return _publish_prepared(prepared)
 
@@ -2335,6 +2665,7 @@ def _parser() -> argparse.ArgumentParser:
 
     inspect = commands.add_parser("inspect")
     add_report_args(inspect)
+    inspect.add_argument("--objective", choices=sorted(_OBJECTIVES), required=True)
     inspect.add_argument("--candidate-id")
     inspect.add_argument("--subsystem-id")
 
@@ -2347,6 +2678,8 @@ def _parser() -> argparse.ArgumentParser:
         command = commands.add_parser(name)
         add_report_args(command)
         command.add_argument("--expected-sha256", required=True)
+        if name == "update":
+            command.add_argument("--expected-bundle-sha256", required=True)
         command.add_argument(
             "--section",
             nargs=3,
@@ -2363,30 +2696,8 @@ def _parser() -> argparse.ArgumentParser:
 
     reaudit = commands.add_parser("reaudit-subsystem")
     add_report_args(reaudit)
-    reaudit.add_argument("--manifest", type=Path)
+    reaudit.add_argument("--manifest", type=Path, required=True)
     reaudit.add_argument("--expected-bundle-sha256")
-    reaudit.add_argument("--expected-sha256")
-    reaudit.add_argument("--subsystem-id")
-    reaudit.add_argument(
-        "--subsystem-state",
-        choices=sorted(_SUBSYSTEM_STATES),
-    )
-    reaudit.add_argument("--source-identity")
-    reaudit.add_argument("--narrative", type=Path)
-    reaudit.add_argument(
-        "--finding",
-        nargs=2,
-        action="append",
-        default=[],
-        metavar=("ID", "FRAGMENT"),
-    )
-    reaudit.add_argument(
-        "--candidate",
-        nargs=3,
-        action="append",
-        default=[],
-        metavar=("ID", "CARD", "INDEX"),
-    )
     reaudit.add_argument("--validate-only", action="store_true")
     return parser
 
@@ -2398,6 +2709,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             result = inspect_report(
                 repo_root=args.repo_root,
                 report=args.report,
+                objective=args.objective,
                 candidate_id=args.candidate_id,
                 subsystem_id=args.subsystem_id,
             )
@@ -2412,17 +2724,21 @@ def main(argv: Sequence[str] | None = None) -> int:
                 (kind, identifier, Path(fragment))
                 for kind, identifier, fragment in args.section
             ]
-            operation = (
-                validate_report_update
-                if args.command == "validate"
-                else update_report
-            )
-            result = operation(
-                repo_root=args.repo_root,
-                report=args.report,
-                expected_sha256=args.expected_sha256,
-                sections=sections,
-            )
+            if args.command == "validate":
+                result = validate_report_update(
+                    repo_root=args.repo_root,
+                    report=args.report,
+                    expected_sha256=args.expected_sha256,
+                    sections=sections,
+                )
+            else:
+                result = update_report(
+                    repo_root=args.repo_root,
+                    report=args.report,
+                    expected_sha256=args.expected_sha256,
+                    expected_bundle_sha256=args.expected_bundle_sha256,
+                    sections=sections,
+                )
         elif args.command == "close-candidate":
             result = close_candidate(
                 repo_root=args.repo_root,
@@ -2432,64 +2748,13 @@ def main(argv: Sequence[str] | None = None) -> int:
                 completion_path=args.completion,
             )
         else:
-            if args.manifest is not None:
-                manual = (
-                    args.expected_sha256,
-                    args.subsystem_id,
-                    args.subsystem_state,
-                    args.source_identity,
-                    args.narrative,
-                )
-                if (
-                    any(value is not None for value in manual)
-                    or args.finding
-                    or args.candidate
-                ):
-                    raise ReportUpdateError(
-                        "publication manifest may not mix with manual fragments"
-                    )
-                result = reaudit_subsystem_manifest(
-                    repo_root=args.repo_root,
-                    report=args.report,
-                    manifest_path=args.manifest,
-                    validate_only=args.validate_only,
-                    expected_bundle_sha256=args.expected_bundle_sha256,
-                )
-            else:
-                required = {
-                    "--expected-sha256": args.expected_sha256,
-                    "--subsystem-id": args.subsystem_id,
-                    "--subsystem-state": args.subsystem_state,
-                    "--source-identity": args.source_identity,
-                    "--narrative": args.narrative,
-                }
-                missing = [name for name, value in required.items() if value is None]
-                if missing:
-                    raise ReportUpdateError(
-                        f"manual re-audit requires {', '.join(missing)}"
-                    )
-                if args.expected_bundle_sha256 is not None:
-                    raise ReportUpdateError(
-                        "manual re-audit does not accept a bundle SHA-256"
-                    )
-                result = reaudit_subsystem(
-                    repo_root=args.repo_root,
-                    report=args.report,
-                    expected_sha256=args.expected_sha256,
-                    subsystem_id=args.subsystem_id,
-                    subsystem_state=args.subsystem_state,
-                    source_identity=args.source_identity,
-                    narrative_path=args.narrative,
-                    findings=tuple(
-                        (identifier, Path(fragment))
-                        for identifier, fragment in args.finding
-                    ),
-                    candidates=tuple(
-                        (identifier, Path(card), Path(index))
-                        for identifier, card, index in args.candidate
-                    ),
-                    validate_only=args.validate_only,
-                )
+            result = reaudit_subsystem_manifest(
+                repo_root=args.repo_root,
+                report=args.report,
+                manifest_path=args.manifest,
+                validate_only=args.validate_only,
+                expected_bundle_sha256=args.expected_bundle_sha256,
+            )
     except (OSError, ReportUpdateError) as exc:
         error = (
             exc

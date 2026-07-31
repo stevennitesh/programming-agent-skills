@@ -34,15 +34,30 @@ analyst, not an oracle or investment adviser.
   stop; do not duplicate grilling inside this skill.
 - Otherwise, do not invoke `$grilling` and do not delay an ordinary valuation
   with grilling questions.
-- Invoke `$research` only when one bounded, source-answerable uncertainty remains
-  after normal primary-source collection and could materially change the model,
-  method, or conclusion. Pass the exact question, scope, as-of date,
-  jurisdiction when relevant, note authority `none`, write authority `none`, and
-  `$value-stock` as return owner. Integrate supported claims and preserve
-  conflicts and unknowns. Return `partial` when supported alternatives can be
-  bracketed; return `blocked` when the unresolved input is load-bearing and any
-  number would be fabricated. Do not use `$research` for the broad stock survey
-  or to outsource this skill's evidence ledger, model, or conclusion.
+- After normal primary-source collection and any required candidate screen,
+  make at most one `$research` handoff per valuation run, only when exactly one
+  remaining gap is bounded to one source-answerable question and finite claim
+  set, lacks an owning conservative bound over its full valuation effect
+  including interactions, and its answer could change the affected candidate's
+  disposition, make a primary result available, or materially change the model
+  or conclusion. Do not hand off a forecast or valuation judgment, multiple
+  independent gaps, an immaterial alternative, the broad stock survey, or
+  ownership of this skill's evidence ledger, model, or conclusion. Do not use
+  `$research` to rescue a method that fails fit or identity independently of the
+  missing evidence; apply the dependent-method failure policy when the handoff
+  condition is not met.
+- Pass the exact question and exclusions; candidate method and target claim;
+  required identity or input; applicable issuer state, as-of date, information
+  cutoff, and jurisdiction when relevant; the disposition at stake and
+  observable answer condition that would change it; note authority `none`; write
+  authority `none`; and `$value-stock` as return owner.
+- `$research` owns source work and claim classification for the handed-off gap.
+  `$value-stock` owns the evidence ledger, candidate disposition, Model Lock,
+  model, valuation status, and conclusion. On return, integrate supported claims,
+  preserve conflicts and unknowns, treat `not-admitted` as no new evidence, and
+  rescreen the affected candidate once before freezing the Lock. Research status
+  does not determine valuation status; derive it under this skill's gates and
+  failure policy.
 
 ## Lock The Question
 
@@ -96,15 +111,23 @@ through a demonstrated cash-flow, timing, claim, or risk transmission.
   Calculation Artifact And Assertions from
   [valuation-methods.md](references/valuation-methods.md). Load Future-Date
   Valuation only when a future value is requested.
-- Load [company-types.md](references/company-types.md) when model selection is
-  uncertain, the issuer is a sector, life-cycle, or accounting exception, or a
-  non-financial issuer has material lending, lease-financing,
+- Load [company-types.md](references/company-types.md) when initial inspection
+  leaves more than one primary method materially plausible for the issuer's
+  business economics and target claim; when the issuer is a sector, life-cycle,
+  or accounting exception; or when a non-financial issuer has material lending,
+  lease-financing,
   custody/customer-funds, insurance-underwriting, or asset-linked funding
   activity that can change the cash-flow definition, claim bridge, or method.
 - Load [model-review.md](references/model-review.md) only when independent
   validation is requested, exact reproduction fails, or complex claims,
   conventions, methods, or alternative values could materially change the
   conclusion.
+- Load [run-feedback.md](references/run-feedback.md) only when the caller
+  explicitly requests evaluation of this run's valuation process, evidence for
+  improving `$value-stock`, or a reusable valuation fixture. Full analysis,
+  independent validation, report revision, or an ordinary request for stronger
+  evidence is not a trigger. Complete the canonical valuation or blocked
+  attempt and any applicable review before running this branch.
 - Load [compact-report.md](references/compact-report.md) for Compact or
   [report-contract.md](references/report-contract.md) for Full before composing
   the answer.
@@ -117,6 +140,18 @@ authoritative current-price evidence exists. Add a relative method only when it
 can challenge the primary result or the user requests it. Never force P/E, PEG,
 EBITDA, or industrial FCFF onto a company whose denominator or capital structure
 makes it misleading.
+
+Validate the selected or requested method under Gate 2. When more than one
+primary candidate remains materially plausible, screen them before forecasting
+or calculation. For each, record the target claim, required identity, owning
+evidence, load-bearing gaps, and disposition as `admit`, `cross-check`, `bound`,
+or `reject`. `Admit` only when claim and identity fit and load-bearing inputs are
+supported. `Bound` may carry only a partial method result when owning evidence
+brackets the gap's full valuation effect, including interactions. A
+`cross-check` cannot carry the conclusion; reject a candidate that fails fit or
+has an unbounded load-bearing gap. Rejected or cross-check alternatives do not
+force `partial` when an admitted primary passes and material alternatives are
+reconciled.
 
 Reconstruct only enough history to normalize the selected value base and expose
 the drivers carrying the forecast. Derive forecast cash flow from causal
@@ -206,3 +241,8 @@ Return:
 Completion requires one canonical valuation, visible uncertainty and thesis
 breakers, no unresolved deterministic discrepancy, and an answer that does not
 outrun its evidence.
+
+When run feedback was requested, return `valuation status` and `feedback status`
+separately. Feedback cannot upgrade, relabel, or suppress the canonical
+valuation. Return the combined response only after both requested outputs reach
+terminal status; do not collapse them into one.

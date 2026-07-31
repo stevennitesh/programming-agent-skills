@@ -57,7 +57,9 @@ Validity reason:
 
 - **Confirmed:** the recorded problem and direction still hold.
 - **Changed:** revise the evidence, members, or direction and continue only
-  while one coherent improvement and Proof Seam remain.
+  while at least one currently admitted defect or opportunity remains and all
+  members still share one coherent improvement and Proof Seam. Otherwise
+  disprove the old candidate and present any genuinely new boundary separately.
 - **Disproved:** show the current evidence that removes the problem or cost,
   mark `disproved`, and stop.
 - **Blocked:** name the unobtainable evidence or material user decision and
@@ -111,14 +113,9 @@ the HTML; no second design artifact or later Codebase Design step exists.
 
 ## Conditional Follow-up
 
-Read [CANDIDATE-FOLLOWUP.md](CANDIDATE-FOLLOWUP.md) only when:
-
-- one material current-user decision blocks analysis;
-- returned evidence or a returned decision packet is supplied; or
-- the completed analysis justifies zero or one next-owner suggestion.
-
-Without one of those conditions, record `Next user selection: none` and do not
-load workflow routing.
+When `SKILL.md` admits its conditional follow-up branch, apply
+[CANDIDATE-FOLLOWUP.md](CANDIDATE-FOLLOWUP.md). Otherwise record
+`Next user selection: none`.
 
 ## Close Implemented
 

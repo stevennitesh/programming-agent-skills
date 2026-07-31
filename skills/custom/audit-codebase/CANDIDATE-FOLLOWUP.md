@@ -1,7 +1,6 @@
 # Candidate Follow-up
 
-Load this branch-only contract only for a material current-user decision,
-returned evidence, or one justified next-owner suggestion.
+Apply this branch-only contract only after `SKILL.md` admits it.
 
 ## Suggest Zero Or One Next Owner
 
@@ -49,12 +48,12 @@ facts and constructs the callee-compatible packet without copying the callee's
 procedure into the visible pickup. The callee never re-enters Audit or parses
 HTML.
 
-For an `$implement` suggestion, the generated pickup also authorizes the root
-to reconcile the matching candidate from the exact completion packet after a
-successful verified commit and before responding to the user. Attempt the
-Audit-owned report update once. If it fails, preserve the implementation
-success and existing HTML, return the exact reconciliation failure and future
-Audit re-entry, and stop. Do not start another candidate.
+The suggestion grants no authority. If the user selects the exact generated
+`$implement` pickup, that invocation authorizes the root to reconcile only its
+matching candidate from an exact successful completion packet before responding
+to the user. Attempt the Audit-owned report update once. On failure preserve
+implementation success, report the helper's actual report effect, return the
+future Audit re-entry, and stop. Do not start another candidate.
 
 Other planning and execution routes use `Audit re-entry: none`.
 

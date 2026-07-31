@@ -1,304 +1,233 @@
 # Durable HTML Audit Report
 
-Render one self-contained report at
-`.scratch/audit-codebase/<run-id>/report.html`. It is the durable repository
-atlas, subsystem and candidate selector, finding record, and analysis history.
-The report preserves evidence; current truth comes from each selected
-objective's Source Trace.
+Create one self-contained UTF-8 report at
+`.scratch/audit-codebase/<run-id>/report.html`. It is the linked repository
+atlas, selector, evidence history, and current state projection. Current truth
+comes from reinspection, not report age.
 
-## Portable Template
+## Structural Contract
 
-Write strict UTF-8 HTML that opens offline, with:
+Version `6` requires:
 
-- `<html lang="en">`, a meaningful `<title>`, and
-  `<meta charset="utf-8">`;
-- `<meta name="audit-codebase-report-version" content="5">`;
-- no network requests, executable scripts, hidden workflow state, remote
-  fonts, CDN assets, or browser-only persistence;
-- arbitrary repository, user, and returned content only in escaped text nodes;
-- strict internal ASCII IDs and only report fragments or explicit local file
-  links in `href`;
-- one header, labeled map navigation, main region, footer, non-skipping
-  headings, visible focus, high contrast, and narrow-screen layout;
-- captions and scoped headers for tables; and
-- responsive inline SVG figures with a `viewBox`, `role="img"`, titles,
-  descriptions, fragment-linked nodes, and adjacent text alternatives.
+```html
+<meta name="audit-codebase-report-version" content="6">
+<header id="report-header"
+  data-repository-root="<canonical-root>"
+  data-run-id="<run-id>"
+  data-map-state="incomplete|complete">...</header>
+<main>...</main>
+```
 
-The report version is structural. Increment it before requiring any new HTML
-attribute, marker, projection, or evidence element. A validator change may
-clarify or repair the declared structure, but must not add a requirement to an
-existing version. Version 5 first requires the subsystem-state projections
-defined below.
+Increment the structural version before requiring a new attribute, marker,
+projection, or evidence element. Validation fixes may enforce already-declared
+structure; they may not redefine it.
 
-Use dark mode with reusable background, surface, border, text, muted, link,
-focus, positive, warning, and danger tokens. Never encode state by color alone.
-Style figures through reusable report classes; section fragments use no inline
-styles. Diagrams summarize the adjacent evidence and never become another
-ledger or validation workflow.
-These are template invariants checked at Map publication, not re-proved as a
-separate workflow during every section update.
+The report opens offline: no scripts, network requests, remote fonts, hidden
+workflow state, or browser persistence. Escape arbitrary content into text
+nodes. IDs are lowercase ASCII letters/digits separated by single hyphens.
+Links are report fragments or explicit local file links.
 
-## Entry Gate
+Use semantic landmarks, non-skipping headings, visible focus, high contrast,
+responsive layout, table captions/scoped headers, and a plain-language state
+legend. Inline SVGs have a `viewBox`, `role="img"`, title, description,
+fragment-linked nodes, and an adjacent text alternative. Color is never the
+only state signal.
 
-Before deriving selection state from a supplied report:
+## Admission And Inspection
 
-1. resolve the repository root and require exactly
+For a supplied report:
+
+1. resolve exactly
    `<root>/.scratch/audit-codebase/<safe-run-id>/report.html`;
-2. reject traversal, redirected or reparse-point parents, a path outside that
-   root, or mismatched embedded repository and run identities;
-3. decode strict UTF-8 and require report version `5`, one map state, and one
-   unique selected subsystem or candidate anchor in an admissible state; and
-4. record the report SHA-256 for collision detection.
-
-Do not validate every unrelated count, link, command, or evidence identity at
-Entry. A corrupt or ambiguous selected identity returns `blocked` with zero
-writes. Report age and unrelated source drift pass to the selected objective's
-Current Evidence Gate.
-
-## Provenance And Freshness
-
-The header shows repository, Map state, run ID, map observation identity and
-time, audit progress, candidate-analysis progress, scope, workloads and
-environments, and a plain-language state legend. State that candidate strength
-is neither global priority nor mutation authority and coverage is not a release
-decision.
-
-For a Git-addressed target, record commit and tree. For a live target, record
-HEAD provenance and one compact digest derived from sorted in-scope path, mode,
-and content identities. Do not render a per-file hash ledger.
-
-Each subsystem and candidate shows:
+2. reject traversal, redirected/reparse-point parents, containment escapes, or
+   mismatched embedded root/run identity;
+3. decode strict UTF-8 and require structural version `6`; and
+4. use objective-specific inspection:
 
 ```text
-Last verified identity:
-Current Source Trace or owned paths:
-Evidence fingerprint:
+update_report.py inspect --repo-root <root> --report <report>
+  --objective map
+
+update_report.py inspect --repo-root <root> --report <report>
+  --objective audit --subsystem-id <id>
+
+update_report.py inspect --repo-root <root> --report <report>
+  --objective analyze|close --candidate-id <id>
 ```
 
-Older sections are historical evidence, not a reason to block current analysis.
-Audit and Analyze replace the selected unit's freshness and evidence after
-reinspection.
+Inspection admits only the requested objective/state, reports its regions and
+current records, and returns the report SHA-256. Invalid or ambiguous selection
+is a zero-write blocker. Do not parse minified HTML manually or migrate reports
+inside the skill.
 
-## Linked System Map
+## Map And Navigation
 
-Use the map as the table of contents. Give every system
-`<section id="system-<system-id>">` and subsystem
-`<section id="subsystem-<subsystem-id>">`. Display `mapped`, `incomplete`, or
-`audited`.
-
-Lead the `summary:map` region with one repository relationship figure. Group
-every subsystem node inside its system container and draw every unique direct
-evidence-backed dependency exactly once. Link each node to its subsystem, state
-one arrow convention, label it `Observed at <map identity>`, and include a
-legend. Route within-system edges inside
-their container and cross-system edges through container boundaries. Do not add
-reverse caller or dependent duplicates, transitive edges, file nodes, findings,
-or candidate state. Keep the linked text table of contents adjacent and
-canonical for exact labels, state, pickups, and accessible navigation.
-
-Project each subsystem container's `data-state` through exactly these elements:
+The Map is the table of contents. Every system has
+`id="system-<id>"`; every subsystem is physically contained once as:
 
 ```html
-<a id="map-node-<subsystem-id>" data-subsystem-projection="svg-map"
-  data-subsystem-id="<subsystem-id>" data-state="<state>"
-  aria-label="<subsystem-id>: <name>; <state>">
+<section id="subsystem-<id>"
+  data-subsystem-id="<id>"
+  data-state="mapped|incomplete|audited"
+  data-source-identity="<identity>">...</section>
+```
+
+The `summary:map` region contains one relationship SVG and its adjacent linked
+Map list. Draw each unique direct evidence-backed dependency once. Group nodes
+by system and label the figure with its observation identity and arrow
+convention. Omit reverse duplicates, transitive edges, file nodes, findings,
+and candidate state.
+
+Each subsystem has exactly two state projections:
+
+```html
+<a id="map-node-<id>" data-subsystem-projection="svg-map"
+  data-subsystem-id="<id>" data-state="<state>"
+  aria-label="<id>: <name>; <state>">
   <rect class="diagram-node state-<state>" .../>
   <text>...
-    <tspan class="diagram-node-state">mapped|incomplete|audited · N files</tspan>
+    <tspan class="diagram-node-state"><state> · N files</tspan>
   </text>
 </a>
-<li id="map-list-<subsystem-id>" data-subsystem-projection="linked-map"
-  data-subsystem-id="<subsystem-id>" data-state="<state>">...
-  <span class="status">mapped|incomplete|audited</span> · N files
-</li>
-<li id="system-list-<subsystem-id>" data-subsystem-projection="system-list"
-  data-subsystem-id="<subsystem-id>" data-state="<state>">
-  ... — N files, mapped|incomplete|audited
+
+<li id="map-list-<id>" data-subsystem-projection="linked-map"
+  data-subsystem-id="<id>" data-state="<state>">
+  ... <span class="status"><state></span> · N files
 </li>
 ```
 
-The first element is the linked SVG node; the others are the linked Map and
-system-list entries. Their machine states, visible state text, SVG state class,
-and SVG aria-label suffix must match the subsystem `<section>`.
-`reaudit-subsystem` updates and validates them atomically.
-That state-only reconciliation never requires a `summary:map` fragment.
-Structural changes to nodes, labels, file counts, or edges do.
+Their machine state, visible text, SVG state class, and SVG aria-label agree
+with the subsystem container. `reaudit-subsystem` synchronizes these
+atomically. A `summary:map` fragment is needed only when nodes, labels, file
+counts, or edges change.
 
-Begin each subsystem detail with one current-state context-flow figure showing
-its governing contracts or decisions, callers and entry points, material
-responsibility flow, direct dependencies, Interfaces or outputs, dependents,
-and Proof Seams. Map shows only mapped behavior; Audit may refine the selected
-flow with verified responsibility steps and branches. Analyze updates it only
-when revalidation changes current-source relationship facts. Never render a
-proposed candidate shape into the current-state figure. The adjacent detail
-remains the evidence owner. After a later selected-unit update, unchanged map
-content is a labeled historical observation, not an assertion of current truth.
+Begin each subsystem detail with a current-state flow figure: governing
+contracts/decisions, callers and entry points, responsibility flow, direct
+dependencies, Interfaces/outputs, dependents, and Proof Seams. The adjacent
+detail owns exact evidence. Candidate proposals never appear in current-state
+figures.
 
-Each map node contains stable ID, name, purpose, state, file count, direct
-evidence-backed dependencies, and its valid user pickup. Its detail contains
-entry points, Interfaces, owned paths, shared consumers, callers, dependents,
-flows, domain terms, decisions, Proof Seams, relationship evidence, and
-evidence fingerprint.
+Account for every in-scope file under one subsystem, audit-owned shared
+infrastructure with named consumers, or the excluded ledger. System lists may
+repeat navigation facts but are not state projections.
 
-Account for every in-scope file under one primary subsystem, shared
-infrastructure with one audit-owning subsystem and named consumers, or an
-excluded ledger with reason. Never rank subsystems or add a global
-recommendation.
+## Subsystem Records
 
-## Subsystem Audit
-
-An audited or incomplete subsystem renders:
-
-- current Source Trace and mandatory six-class lens ledger;
-- supported scenarios and checked state or failure branches;
-- verified defects in severity order;
-- opportunities by primary class;
-- retained complexity and Revisit Triggers;
-- evidence gaps, disproved items, and duplicates;
-- performance evidence when applicable;
-- local candidate index and cards when audited;
-- one advisory subsystem-local recommendation; and
-- exact remaining obtainable coverage when incomplete.
-
-Keep every member finding visible when it belongs to a candidate. Candidate
-pickups appear only for an audited subsystem.
-
-The subsystem `<section>` is a static container with
-`data-subsystem-id`, `data-state`, and `data-source-identity`. Its narrative
-owns current structure and Source Trace but does not restate finding status.
-Each finding owns its current state and preserved evidence:
+The static subsystem container owns the current source identity. Its narrative
+owns Source Trace, lens dispositions, supported branches, current flow,
+opportunities, retained complexity, gaps, disproved observations, coverage, and
+local recommendation. Individual findings own current state and preserved
+evidence:
 
 ```html
-<article id="finding-<finding-id>"
-  data-finding-id="<finding-id>"
+<article id="finding-<id>"
+  data-finding-id="<id>"
   data-subsystem-id="<subsystem-id>"
   data-state="active|resolved|disproved">...</article>
 ```
 
-The narrative owns three machine-readable observation collections, including
-empty collections. IDs are unique inside their record kind and every record
-names its subsystem:
+Every `incomplete` or `audited` narrative contains all three collections,
+including empty ones:
 
 ```html
 <ul data-audit-collection="retained-complexity"
   data-subsystem-id="<subsystem-id>">
-  <li id="retained-<retain-id>" data-retained-id="<retain-id>"
+  <li id="retained-<id>" data-retained-id="<id>"
     data-subsystem-id="<subsystem-id>">...</li>
 </ul>
 <ul data-audit-collection="gaps" data-subsystem-id="<subsystem-id>">
-  <li id="gap-<gap-id>" data-gap-id="<gap-id>"
+  <li id="gap-<id>" data-gap-id="<id>"
     data-subsystem-id="<subsystem-id>">...</li>
 </ul>
 <ul data-audit-collection="opportunities"
   data-subsystem-id="<subsystem-id>">
-  <li id="opportunity-<opportunity-id>"
-    data-opportunity-id="<opportunity-id>"
+  <li id="opportunity-<id>" data-opportunity-id="<id>"
     data-subsystem-id="<subsystem-id>">...</li>
 </ul>
 ```
 
-Do not render structured observations as prose-only list items.
+Each wrapper and record is physically inside and names its owning subsystem.
+Do not render structured observations as prose-only substitutes.
 
-## Candidate Card And Analysis
+## Candidate Records
 
-The candidate card owns candidate facts. Render each as:
+Each candidate has one card and one index row, physically inside the same
+subsystem:
 
 ```html
-<article
-  id="candidate-<candidate-id>"
-  data-candidate-id="<candidate-id>"
-  data-subsystem-id="<subsystem-id>"
-  data-state="<state>"
-  data-strength="<strength>"
->
+<article id="candidate-<id>"
+  data-candidate-id="<id>" data-subsystem-id="<subsystem-id>"
+  data-state="<state>" data-strength="<strength>">
+  <span data-candidate-state="<id>"
+    data-state-view="card"><state></span>
+  ...
+</article>
+
+<tr id="candidate-index-<id>"
+  data-candidate-id="<id>" data-subsystem-id="<subsystem-id>"
+  data-state="<state>" data-strength="<strength>">
+  <td><span data-candidate-state="<id>"
+    data-state-view="index"><state></span></td>
+  ...
+</tr>
 ```
 
-Include its title, class and concepts, files and Modules, member links, problem,
-current evidence, direction, expected benefit, safety floors, required proof,
-decisions, state, strength, and pickup. Lead with current state and its
-available action, if any. After Analyze, keep the presentation and analysis
-record in `<details data-candidate-history="<candidate-id>">` so history remains
-available without dominating navigation.
-Mark each defect member with a link carrying
-`data-candidate-finding="<candidate-id>"` to its finding anchor.
+Card and row agree on ID, subsystem, state, strength, visible state, and pickup.
+The card includes title, class/concepts, files/modules, member links, problem,
+evidence, direction, benefit, safety floors, proof, decisions, and history.
+Finding member links carry
+`data-candidate-finding="<candidate-id>"`.
 
-Render its index row as a required projection with the same
-`data-candidate-id`, `data-state`, and `data-strength` values. Mark an exact
-plain-text State cell in the index row and a visible
-`<strong>State:</strong> <state>` sentence in the card; closeout updates both
-with the machine state. Mark an exact visible pickup in each view as:
+For `presented`, `decision pending`, and `blocked`, render one identical pickup
+in each view:
 
 ```html
-<code
-  data-candidate-pickup="<candidate-id>"
-  data-pickup-view="card|index"
->...</code>
+<code data-candidate-pickup="<id>"
+  data-pickup-view="card|index">...</code>
 ```
 
-The card and row pickup text must match. Omit both elements when no pickup
-exists. The visible row repeats the remaining facts and links to the card.
+For `analyzed`, both views either omit pickup or contain one identical pickup.
+`implemented` and `disproved` omit it.
 
-After Analyze, append:
+Analysis records validity/freshness, changed evidence/members, demonstrated
+cost, Keep/Smallest sufficient/Structural/Replacement comparison,
+recommendation, rejected alternatives, responsibilities, Interfaces, Seams,
+Proof Seams, compatibility/migration/cutover/rollback where applicable, proof,
+residual risk, and decision state. Keep history in
+`<details data-candidate-history="<id>">`.
 
-- current-source validity and last verified identity;
-- current Source Trace and changed evidence or members;
-- current shape and demonstrated cost;
-- Keep, Smallest sufficient change, Structural change, and Replacement;
-- recommendation and rejected alternatives;
-- material Responsibilities, Interfaces, Seams, and Proof Seams;
-- affected contracts and applicable compatibility, migration, cutover, and
-  rollback;
-- proof plan, residual risk, decision status, and candidate state; and
-- conditional decision, evidence, or next-owner content only when
-  `CANDIDATE-FOLLOWUP.md` applies.
-
-For `implemented`, show a visible
-`data-implemented-banner="<candidate-id>"`, keep history collapsed, and append
-the visible completion packet plus one machine-readable evidence element:
+Implemented candidates additionally contain exactly one visible
+`data-implemented-banner="<id>"` and:
 
 ```html
-<dl
-  data-implementation-result="complete"
-  data-candidate-id="<candidate-id>"
-  data-commit-sha="<sha>"
-  data-tree-sha="<sha>"
+<dl data-implementation-result="complete"
+  data-candidate-id="<id>"
+  data-commit-sha="<sha>" data-tree-sha="<sha>"
   data-source-status="current|reachable"
-  data-proof-status="accepted"
-  data-review-status="accepted"
-  data-repair-generations="<nonnegative integer>"
-  data-closure-status="complete"
-  data-blockers="none"
->...</dl>
+  data-proof-status="accepted" data-review-status="accepted"
+  data-repair-generations="<nonnegative-integer>"
+  data-closure-status="complete" data-blockers="none">...</dl>
 ```
 
-Show Analyze for `presented`, exact re-entry for `decision pending` or
-`blocked`, zero or one user-selected next-owner pickup for `analyzed`, and no
-pickup for `implemented` or `disproved`.
-
-Header, progress summary, and footer use IDs `report-header`,
-`summary-progress`, and `report-footer`. Each carries the same
-`data-candidate-progress` and `data-finding-progress` values in these fixed
-orders:
+Header, `summary-progress`, and `report-footer` carry identical derived totals:
 
 ```text
-presented:<n>,decision-pending:<n>,analyzed:<n>,implemented:<n>,disproved:<n>,blocked:<n>
-active:<n>,resolved:<n>,disproved:<n>
+data-candidate-progress="presented:N,decision-pending:N,analyzed:N,implemented:N,disproved:N,blocked:N"
+data-finding-progress="active:N,resolved:N,disproved:N"
 ```
 
-## Stable Update Markers
+## Replaceable Regions
 
-Keep the subsystem container static. Its narrative, individual findings,
-candidate rows, and candidate cards are non-overlapping sibling regions:
+Regions are non-overlapping siblings inside the owning subsystem:
 
 ```html
-<section id="subsystem-<subsystem-id>" ...>
 <!-- audit-codebase:subsystem-narrative:<subsystem-id>:start -->
 <div id="subsystem-narrative-<subsystem-id>">...</div>
 <!-- audit-codebase:subsystem-narrative:<subsystem-id>:end -->
 
-<!-- audit-codebase:finding:<finding-id>:start -->
-<article id="finding-<finding-id>" ...>...</article>
-<!-- audit-codebase:finding:<finding-id>:end -->
+<!-- audit-codebase:finding:<id>:start -->
+<article id="finding-<id>" ...>...</article>
+<!-- audit-codebase:finding:<id>:end -->
 <!-- audit-codebase:finding-insert:<subsystem-id> -->
 
 <!-- audit-codebase:candidate-index:<id>:start -->
@@ -307,135 +236,45 @@ candidate rows, and candidate cards are non-overlapping sibling regions:
 <!-- audit-codebase:candidate-index-insert:<subsystem-id> -->
 
 <!-- audit-codebase:candidate:<id>:start -->
-<article id="candidate-<id>">...</article>
+<article id="candidate-<id>" ...>...</article>
 <!-- audit-codebase:candidate:<id>:end -->
 <!-- audit-codebase:candidate-insert:<subsystem-id> -->
-</section>
-
-<!-- audit-codebase:summary:<id>:start -->
-<section id="summary-<id>">...</section>
-<!-- audit-codebase:summary:<id>:end -->
 ```
 
-IDs use lowercase ASCII letters, digits, and single hyphens. Marker pairs and
-insertion anchors are unique. No replaceable region contains another. Map
-publication creates the static subsystem container, sibling regions, and three
-insertion anchors; later publication updates or inserts siblings atomically.
-Use `summary:report-header` and `summary:report-footer` markers around their
-same-named anchors.
+The Map alone uses:
 
-## Report Consistency
-
-Before publication, validate the prospective complete report:
-
-- report version is `5`;
-- every subsystem has one static container, narrative region, and three
-  insertion anchors;
-- every finding has one owning subsystem and valid current state;
-- retained-complexity, gap, and opportunity records have safe unique IDs,
-  matching anchors, and one owning subsystem;
-- every candidate ID has exactly one card and one index row;
-- each card and row agree on subsystem, ID, state, strength, and pickup text;
-- candidate finding links resolve inside the same subsystem;
-- pickup follows the candidate-state rules;
-- header, progress, and footer totals equal candidate and finding states; and
-- every implemented card has one complete matching implementation evidence
-  element.
-
-These are projections of candidate-card facts, not another evidence ledger.
-
-## Map Publish Gate
-
-For New, Continue, or explicit Refresh:
-
-1. render the complete report to one invocation-owned sibling;
-2. verify template invariants, Report Consistency, contained paths, scope, IDs, states, file
-   assignments, evidence-backed edges, member ownership, map navigation,
-   current pickups, marker uniqueness, and internal links;
-3. verify current Map observation identity and target non-collision; and
-4. atomically replace `report.html`, then remove only the invocation sibling.
-
-On interruption, source change, collision, or failure, preserve the last
-verified report. An incomplete Map may publish only with exact remaining
-coverage and one Continue pickup.
-
-## Incremental Publish Gate
-
-After a passed Entry Gate, inspect the selected report and objective capability
-through the helper.
-Subsystem inspection returns state, source identity, findings by current state,
-retained complexity, gaps, opportunities, candidates, available regions, and
-capabilities; manual parsing of rendered HTML is not an Entry step.
-Render only the selected regions. Audit runs `reaudit-subsystem --validate-only`
-on one publication manifest, then publishes the unchanged bundle with its
-returned digest. Analyze runs generic `validate`, then `update`. Correct
-rendering or validation failures while either validation path reports
-`mutation_started: false` and `report_unchanged: true`; this is preparation, not
-a publication attempt. Once validation passes, attempt incremental publication
-exactly once:
-
-1. render only the selected narrative, finding, or candidate fragments;
-2. require strict UTF-8, safe text, the exact target anchor, no marker
-   injection, and no executable or remote-resource markup;
-3. replace the unique marked regions, parse the complete result, and verify
-   Report Consistency, changed anchors, and changed-fragment links;
-4. derive candidate and finding progress from owning records;
-5. verify the source report SHA-256 is unchanged; and
-6. atomically replace and read back the report.
-
-Use the package-owned standard-library helper:
-
-```text
-python <audit-codebase>/scripts/update_report.py inspect
-  --repo-root <root>
-  --report <absolute-report-path>
-  [--candidate-id <id>]
-  [--subsystem-id <id>]
-
-python <audit-codebase>/scripts/update_report.py source-identity
-  --repo-root <root>
-  --path-list <strict-utf8-repository-relative-path-list>
-  [--git-object <commit-or-tree>]
-
-python <audit-codebase>/scripts/update_report.py validate
-  --repo-root <root>
-  --report <absolute-report-path>
-  --expected-sha256 <sha256>
-  --section <kind> <id> <fragment-path>
-  [--section <kind> <id> <fragment-path> ...]
-
-python <audit-codebase>/scripts/update_report.py update
-  --repo-root <root>
-  --report <absolute-report-path>
-  --expected-sha256 <sha256>
-  --section <kind> <id> <fragment-path>
-  [--section <kind> <id> <fragment-path> ...]
-
-python <audit-codebase>/scripts/update_report.py reaudit-subsystem
-  --repo-root <root>
-  --report <absolute-report-path>
-  --manifest <publication-manifest>
-  --validate-only
-
-python <audit-codebase>/scripts/update_report.py reaudit-subsystem
-  --repo-root <root>
-  --report <absolute-report-path>
-  --manifest <same-publication-manifest>
-  --expected-bundle-sha256 <digest-returned-by-validation>
+```html
+<!-- audit-codebase:summary:map:start -->
+<section id="summary-map">...</section>
+<!-- audit-codebase:summary:map:end -->
 ```
 
-Publication manifest version 1 contains:
+Every pair/anchor occurs once, has the physical owner named by its ID, and no
+region contains another. Fragments contain only their target element and no
+markers, scripts, remote resources, or inline styles.
+
+## Publication
+
+Map renders the complete report to an invocation-owned sibling, validates all
+structure, coverage, ownership, edges, navigation, state, IDs, links, and
+observation identity, then atomically replaces `report.html`.
+
+Incremental publication has two exact paths.
+
+**Audit:** create manifest version `2`, run `reaudit-subsystem --validate-only`,
+then publish the unchanged manifest with the returned bundle digest:
 
 ```json
 {
-  "version": 1,
+  "version": 2,
   "expected_report_sha256": "<sha256>",
   "subsystem": {
     "id": "<id>",
     "state": "mapped|incomplete|audited",
     "source_identity": "<identity>",
-    "narrative": "<relative-fragment-path>"
+    "narrative": "<relative-path>"
   },
+  "map": "<optional-relative-summary-map-fragment>",
   "findings": [{"id": "<id>", "fragment": "<relative-path>"}],
   "candidates": [
     {"id": "<id>", "card": "<relative-path>", "index": "<relative-path>"}
@@ -443,62 +282,37 @@ Publication manifest version 1 contains:
 }
 ```
 
-Paths resolve inside the manifest directory. The validation result's
-`bundle_sha256` covers the manifest and every referenced fragment; publication
-requires the same digest. Manifest and manual fragment arguments may not mix.
-Manual arguments remain a lower-level diagnostic interface.
+Paths resolve inside the manifest directory. The digest covers the manifest and
+every fragment.
 
-Fragments contain only the inner target element and must not contain update
-markers. For example:
+**Analyze:** run `validate` with candidate/card sections, then run `update` with
+the identical arguments plus the returned `--expected-bundle-sha256`.
 
-```html
-<article id="candidate-alpha-fix"
-  data-candidate-id="alpha-fix"
-  data-subsystem-id="alpha"
-  data-state="analyzed"
-  data-strength="Strong">...</article>
-```
+Both paths validate prospective complete markup, ownership, lifecycle
+transitions, changed anchors/links, derived progress, and report collision
+before mutation. Publication atomically replaces then reads back. Generic
+update cannot create `implemented`; use `close-candidate` with an admitted
+completion packet.
 
-The helper owns collision detection, changed-section and complete-report
-validation, subsystem-state projection reconciliation, insertion, bundle
-locking, derived progress, sibling cleanup, atomic replacement, and read-back.
-Every success or error reports `stage`, `mutation_started`, and
-`report_unchanged`; success also returns changed regions, candidate and finding
-states, and progress totals. The caller owns and removes fragment and manifest
-files. The helper does not judge codebase evidence, render the Map, or maintain
-another ledger.
+The helper returns `stage`, `mutation_started`, `report_unchanged`, `effect`,
+and `report_state`. Zero-write validation is not a publication attempt. After
+validation, attempt publication exactly once. On failure, never retry,
+hand-edit, switch mechanisms, or delay Return. Before replacement, preserve and
+report the unchanged report; after replacement, report unknown state truthfully
+unless read-back completed.
 
-After the root admits a matching implementation completion packet under
-`CANDIDATE-CONTRACT.md`, publish its derived projections once without fragments:
+The helper owns markup validation, insert/replace mechanics, collision and
+bundle checks, state projection synchronization, progress derivation, sibling
+cleanup, atomic replacement, and read-back. The auditor owns evidence,
+judgment, fragments/manifests, and their cleanup. The top-level root is the
+single writer for one report invocation.
 
-```text
-python <audit-codebase>/scripts/update_report.py close-candidate
-  --repo-root <root>
-  --report <absolute-report-path>
-  --expected-sha256 <sha256>
-  --candidate-id <id>
-  --completion <completion-json>
-```
+## Footer
 
-If the attempt fails, stop publication immediately. Do not rerun the helper,
-hand-edit the report, use another publication mechanism, or delay the Return.
-Preserve the last report and return completed source analysis with `Publication
-result: failed`, the failed region, and the preserved report identity. This is
-an artifact failure, not a codebase gap.
-
-## Navigation And Footer
-
-Provide the map as the system/subsystem table of contents, candidate links
-inside their subsystem, back-to-map and back-to-subsystem links, and visible
-visited and focus states. Changed-fragment links must resolve exactly once.
-
-End with audit and candidate-analysis coverage, failed or skipped proof, and:
+End with coverage, failed/skipped proof, report path, objective outcome,
+publication result, evidence limits, next user selection, and:
 
 ```text
-Objective result: complete | incomplete | blocked
-Publication result: updated | unchanged | failed
-Outcome: complete | partial | blocked
-Report: <absolute path> | none
 Release decision: none
 Product mutation authority: none
 Downstream execution: none

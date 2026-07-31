@@ -6,6 +6,7 @@
 - [Future-Date Valuation](#future-date-valuation)
 - [FCFF DCF](#fcff-dcf)
 - [Cash-Flow And Accounting Identities](#cash-flow-and-accounting-identities)
+- [Management-Defined And Analyst-Constructed Cash Flow](#management-defined-and-analyst-constructed-cash-flow)
 - [Stock-Based Compensation Reconciliation](#stock-based-compensation-reconciliation)
 - [FCFE And Dividend Models](#fcfe-and-dividend-models)
 - [Discount Rates, Country Risk, And Timing](#discount-rates-country-risk-and-timing)
@@ -156,6 +157,29 @@ Add only **excess cash** and separately valued non-operating assets to operating
 value. Estimate the liquidity and working-capital reserve needed to run the
 business; when that reserve is uncertain and material, show a sensitivity
 instead of labeling all cash excess.
+
+## Management-Defined And Analyst-Constructed Cash Flow
+
+Before a management-defined or analyst-constructed cash-flow measure carries a
+method result, reconcile at least one filed period from the nearest reported
+measure to its exact definition and target claim, and test material adjustments
+for recurrence over the admitted history. Classify each material adjustment as
+recurring owner cost, reinvestment, financing or security claim, non-operating
+or timing, or finite source or use.
+
+Deduct omitted recurring owner costs and model all reinvestment required by the
+forecast without forcing growth investment into a maintenance or steady-state
+denominator. Treat stock-based compensation and acquisitions consistently
+through cash flow, claims or dilution, and acquired-growth economics without
+double counting. Distinguish generated from distributable cash after minimum
+liquidity, regulatory or reserve requirements, covenants, debt service, and
+stable leverage.
+
+Opening cash is a dated bridge asset. Asset-sale proceeds and finite funding are
+dated realization or financing flows, never recurring or terminal cash flow.
+Bound an unsupported maintenance-versus-growth split over its full valuation
+effect. Reject only the dependent measure when a load-bearing adjustment remains
+unreconciled and unbounded; then apply the main status policy.
 
 ## Stock-Based Compensation Reconciliation
 

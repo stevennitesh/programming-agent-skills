@@ -1,7 +1,7 @@
 interface:
   display_name: "Audit Codebase"
   short_description: "Map, audit one subsystem, or analyze one candidate"
-  default_prompt: "Use $audit-codebase for one user objective. Build or continue the durable linked HTML atlas when no report-backed selection exists; otherwise refresh current evidence and thoroughly audit one user-selected subsystem or revalidate and analyze one user-selected candidate. Apply every required lens, load detailed owners when implicated, update only the affected report regions, and stop without selecting or starting downstream work."
+  default_prompt: "Use $audit-codebase for exactly one explicit objective: Map the repository, Audit one supplied subsystem ID from a supplied report, or Analyze one supplied candidate ID from a supplied report. Never fall back from an invalid report-backed selection to Map. Rebuild current evidence, apply the required coverage, publish only the affected durable HTML regions once, and stop without selecting or starting downstream work."
 
 policy:
   allow_implicit_invocation: false

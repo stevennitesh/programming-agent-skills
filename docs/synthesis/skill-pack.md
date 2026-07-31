@@ -451,7 +451,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-017",
-      "completion_return": "One verified durable immutable-baseline HTML report for exactly one Map, Audit, or Analyze invocation",
+      "completion_return": "One verified durable current-source HTML report for exactly one Map, Audit, or Analyze invocation",
       "disposition": "selected",
       "entry_conditions": [
         "A repository needs a new, continued, or refreshed exhaustive system map; one selected subsystem audit; or analysis of one selected candidate or returned packet"
@@ -462,7 +462,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Map one immutable repository, audit one user-selected subsystem, or analyze one user-selected candidate or returned packet per invocation without a release decision",
+      "observable_outcome": "Map one selected repository target, audit one user-selected subsystem, or analyze one user-selected candidate or returned packet per invocation without a release decision",
       "primary_owner_skill_id": "SK-017",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
@@ -743,7 +743,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-016"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for audit-codebase: Map one immutable repository, audit one user-selected subsystem, or analyze one user-selected candidate or returned packet without a release decision",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for audit-codebase: Map one selected repository target, audit one user-selected subsystem, or analyze one user-selected candidate or returned packet without a release decision",
         "expected_owner_skill_id": "SK-017",
         "scenario_id": "PS-017"
       },
@@ -1750,7 +1750,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "One analyzed candidate needs one non-diagnostic source-answerable authoritative fact; Audit publishes an exact report-backed pickup and leaves Research unstarted.",
       "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
-      "input_packet": "Immutable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
+      "input_packet": "Durable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
       "ordering_impact": "none",
       "relationship_id": "REL-019",
       "required_proof_ids": [
@@ -1775,7 +1775,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "One settled candidate design question needs one disposable runnable probe or performance experiment; Audit publishes an exact report-backed pickup and leaves Prototype unstarted.",
       "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
-      "input_packet": "Immutable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
+      "input_packet": "Durable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
       "ordering_impact": "none",
       "relationship_id": "REL-020",
       "required_proof_ids": [
@@ -1825,7 +1825,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "One identifiable external stakeholder holds candidate knowledge unavailable from sources or the current user; Audit publishes an exact report-backed pickup and leaves questionnaire creation unstarted.",
       "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
-      "input_packet": "Immutable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
+      "input_packet": "Durable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
       "ordering_impact": "none",
       "relationship_id": "REL-023",
       "required_proof_ids": [
@@ -1852,7 +1852,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "entry_condition": "During Analyze, one selected design or mixed candidate still needs bounded internal design after user-owned decisions settle.",
       "failure_behavior": "Fold decision-needed or evidence-gap state into the candidate and preserve the Audit-owned report and resumption boundary",
-      "input_packet": "Immutable audit report, selected candidate identity, settled decisions, Source Trace, proof seams, and implicated contracts",
+      "input_packet": "Durable audit report, selected candidate identity, settled decisions, Source Trace, proof seams, and implicated contracts",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-024",
       "required_proof_ids": [
@@ -1877,7 +1877,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "Multiple interdependent unresolved candidate decisions or prerequisites need a configured tracker-backed route; Audit publishes an exact pickup and leaves Wayfinder unstarted.",
       "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
-      "input_packet": "Immutable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
+      "input_packet": "Durable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
       "ordering_impact": "none",
       "relationship_id": "REL-025",
       "required_proof_ids": [
@@ -1927,7 +1927,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "One analyzed candidate has settled direction and commitments but needs a durable parent specification; Audit publishes an exact report-backed pickup and leaves specification work unstarted.",
       "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
-      "input_packet": "Immutable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
+      "input_packet": "Durable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
       "ordering_impact": "none",
       "relationship_id": "REL-027",
       "required_proof_ids": [
@@ -1952,7 +1952,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "One analyzed candidate has settled direction, authority, commitments, acceptance, dependency meaning, and supported states; requires multiple implementation slices; and either needs no new parent specification or already has one. Audit publishes an exact report-backed pickup and leaves ticket creation unstarted.",
       "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
-      "input_packet": "Immutable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
+      "input_packet": "Durable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
       "ordering_impact": "none",
       "relationship_id": "REL-028",
       "required_proof_ids": [
@@ -1977,7 +1977,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "One analyzed candidate has a bounded behavior-preserving reduction, current report identity, supported behavior, Source Trace, and proof seam; Audit publishes an exact report-backed pickup and leaves simplification unstarted.",
       "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
-      "input_packet": "Immutable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
+      "input_packet": "Durable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
       "ordering_impact": "none",
       "relationship_id": "REL-029",
       "required_proof_ids": [
@@ -2002,7 +2002,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "One analyzed non-reduction item has settled outcome, acceptance, commitment boundary, scope and write authority, Source Trace, proof, and finite Repair budget; Audit publishes an exact report-backed pickup and leaves implementation unstarted.",
       "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
-      "input_packet": "Immutable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
+      "input_packet": "Durable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
       "ordering_impact": "none",
       "relationship_id": "REL-056",
       "required_proof_ids": [
@@ -2335,7 +2335,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-025",
       "combined_exit_owner_skill_id": "SK-025",
       "context_loaded": [],
-      "entry_condition": "The situation satisfies a repository needs an exhaustive system map and serial subsystem audit for correctness, robustness, code quality, architecture, methodology, data, analytics, or performance; return that route and leave it unstarted.",
+      "entry_condition": "The situation requires a whole-repository ownership map, one selected subsystem audit, or one selected candidate analysis; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
       "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared audit-codebase input",
       "ordering_impact": "callee-before-caller",
@@ -3347,7 +3347,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "One analyzed candidate has settled domain language, Invariants, Bounded Contexts, Context Relationships, or an ADR candidate requiring durable capture or assessment.",
       "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
-      "input_packet": "Immutable audit report, candidate identity, settled domain consequence and authority, context action, ADR action, and exact Analyze re-entry",
+      "input_packet": "Durable audit report, candidate identity, settled domain consequence and authority, context action, ADR action, and exact Analyze re-entry",
       "ordering_impact": "none",
       "relationship_id": "REL-093",
       "required_proof_ids": [
@@ -4297,14 +4297,14 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "terminal_evidence_pointer": null
       },
       "canonical_name": "audit-codebase",
-      "completion_condition": "The selected Map, Audit, or Analyze path is terminal for this invocation; the complete snapshot manifest and sole durable HTML report pass atomic publication verification; and any next-step suggestion has one exact uninvoked pickup",
+      "completion_condition": "The selected Map, Audit, or Analyze path is terminal for this invocation; its current evidence identity and sole durable HTML report pass atomic publication verification; and any next-step suggestion has one exact uninvoked pickup",
       "contract_order": 17,
-      "essential_outcome": "Map one immutable repository, audit one user-selected subsystem, or analyze one user-selected candidate or returned packet",
+      "essential_outcome": "Map one selected repository target, audit one user-selected subsystem, or analyze one user-selected candidate or returned packet",
       "failure_return": "Return current, incomplete, or stale report coverage without mutating the repository baseline",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: A repository needs a whole-system map or serial subsystem baseline and improvement audit",
+        "The request does not satisfy: A repository needs a whole-system map, one selected subsystem audit, or one selected candidate analysis",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
@@ -4314,7 +4314,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "owned_capability_ids": [
         "CAP-017"
       ],
-      "positive_entry_predicate": "A repository needs a whole-system map or serial subsystem baseline and improvement audit",
+      "positive_entry_predicate": "A repository needs a whole-system map, one selected subsystem audit, or one selected candidate analysis",
       "primary_role": "leaf",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",

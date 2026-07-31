@@ -11,6 +11,7 @@ regulators to the issuer's jurisdiction.
 - [Full Diligence Expansion](#full-diligence-expansion)
 - [Evidence Ledger](#evidence-ledger)
 - [Structured Filing Data](#structured-filing-data)
+- [Transformed Issuers](#transformed-issuers)
 - [Earnings And Guidance](#earnings-and-guidance)
 - [News And Sentiment](#news-and-sentiment)
 - [Freshness And Stopping](#freshness-and-stopping)
@@ -162,6 +163,28 @@ comparability; the SEC also directs users to the official filing for decisions:
 - [SEC: EDGAR Application Programming Interfaces](https://www.sec.gov/search-filings/edgar-application-programming-interfaces)
 - [SEC: Important Information About EDGAR](https://www.sec.gov/edgar/searchedgar/aboutedgar.htm)
 
+## Transformed Issuers
+
+Apply this branch only when owning public evidence shows a transaction or
+operating change within the cutoff that makes admitted reported history
+non-comparable with the forecast value or cash-flow base, or makes the ordinary
+dated event bridge insufficient for the target claim. Do not trigger it from a
+transaction label or size alone.
+
+Keep reported actual, transaction-adjusted pro forma, and management guidance
+separate by date, entity perimeter, definition, source, and assumptions. For
+material applicable effects, build a dated old-to-new bridge covering
+consideration and funding, accounting and tax, debt, shares and claims, retained
+or divested assets and liabilities, and recurring versus finite synergies,
+costs, and stranded obligations.
+
+Use pre-change history only for matched legacy drivers or components; never
+present it as combined actual. Admit combined normalization only from filed
+actuals or a reproducible applicable identity-and-claim bridge. Pro forma or
+guidance alone is not a conservative bound. Apply the main skill's
+dependent-method `partial` or `blocked` policy when the new perimeter remains
+incomplete.
+
 ## Earnings And Guidance
 
 In Compact, inspect current guidance only when it is load-bearing. For Full, or
@@ -173,9 +196,11 @@ or confidence, create a chronological ledger for explicitly guided metrics:
 
 Never turn qualitative aspiration into numerical guidance. Distinguish constant
 currency, organic, adjusted, and GAAP measures. Reconcile management-defined
-metrics to the nearest reported measure when possible. The SEC requires
-attention to prominence and reconciliation for non-GAAP measures and explains
-special limits for forward non-GAAP reconciliation:
+metrics to the nearest reported measure when possible. A management-defined
+cash-flow measure proposed as a valuation base must meet the admission rule in
+[Management-Defined And Analyst-Constructed Cash Flow](valuation-methods.md#management-defined-and-analyst-constructed-cash-flow).
+The SEC requires attention to prominence and reconciliation for non-GAAP
+measures and explains special limits for forward non-GAAP reconciliation:
 
 - [SEC: Non-GAAP Financial Measures](https://www.sec.gov/rules-regulations/staff-guidance/corporation-finance-interpretations/non-gaap-financial-measures)
 
