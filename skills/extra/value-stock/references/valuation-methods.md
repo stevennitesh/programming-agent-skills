@@ -22,10 +22,17 @@
 ## Method Principles
 
 Value cash flows to the correct claim holder at a matching required return.
-Keep currency, inflation basis, tax treatment, and timing consistent. Prefer a
-range tied to causal cases over a false-precision point estimate. Report no more
-precision than the weakest load-bearing input supports; approximate claims,
-stale bridges, and broad sensitivities do not support cents-level fair value.
+Keep currency, inflation basis, tax treatment, and timing consistent. Reserve
+fair-value range endpoints for named coherent operating, financing,
+asset-realization, claim-path, or outcome cases. A fixed-case sweep of required
+return, terminal growth, cap rate, continuing spread, or market multiple remains
+a separately labeled sensitivity band unless each endpoint is a coherent causal
+case. A causal case may change required return when its supported transmission
+changes risk or funding.
+
+Report no more precision than the weakest load-bearing input supports;
+approximate claims, stale bridges, and broad sensitivities do not support
+cents-level fair value.
 
 Valuation is uncertain even when carefully executed; sensitivity, scenarios,
 and decision trees expose uncertainty but do not remove it:
@@ -400,9 +407,9 @@ observed discount and `required hurdle: not supplied; pass/fail: not assessed`.
 When the user explicitly asks for a valuation-relative assessment of
 attractiveness, cheapness, or over/undervaluation and authoritative current-price
 evidence supports comparison, describe where price lies relative to the
-supported present-value estimate and range. Do not characterize a blocked
-comparison. Reserve formal pass/fail, entry-price, and rule-derived price
-thresholds for a supplied rule.
+supported present-value estimate and any causal range or labeled sensitivity
+band. Do not characterize a blocked comparison. Reserve formal pass/fail,
+entry-price, and rule-derived price thresholds for a supplied rule.
 
 Do not invent one threshold for every company or automatically print arbitrary
 entry-price thresholds. A wider hurdle is generally warranted when value is more
@@ -426,6 +433,7 @@ each load-bearing item:
 | Unit | Currency, scale, per-share basis, nominal or real |
 | Claim basis | Enterprise, debt, preferred, common pool, or target security |
 | Scenario | Base or named causal alternative |
+| Timing | For each discounted item, value or represented-realization date and calculated discount factor or exponent; record valuation origin and applicable compounding, day-count, and rate basis once per artifact |
 | Source or formula | Owning citation or reproducible expression |
 | Result | Value at disclosed precision |
 
@@ -434,6 +442,11 @@ Before relying on the result, assert:
 - one historical period ties from the filing to the selected earnings, cash-flow,
   book-value, or asset-value definition;
 - no cash flow that elapsed before the valuation date remains in the forecast;
+- when a discrete continuing-value formula defines value at date `T` from a
+  numerator flow represented one modeled interval later, that flow's recorded
+  date equals `T + interval`, and its midpoint or year-end representation
+  matches the numerator and discount factor; other continuing-value formulas
+  use their formula-specific timing instead;
 - CFO-derived FCFF reconciles financing interest, non-operating income, tax,
   capex, and classification without counting cash returns twice;
 - cash, debt, claims, awards, and shares use one date or an explicit

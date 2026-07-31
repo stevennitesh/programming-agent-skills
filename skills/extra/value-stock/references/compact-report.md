@@ -10,8 +10,9 @@ Lead with:
 
 - company, ticker, exchange, exact security, and reporting currency;
 - valuation date, information cutoff, and current-price timestamp when used;
-- present fair-value range and base value per target security at supported
-  precision;
+- present causal fair-value range and base value per target security when
+  supported; otherwise a supported base plus a narrowly labeled sensitivity
+  band and an explicit statement that no causal range was established;
 - observed price discount to estimated value using the named formula when
   authoritative price evidence exists;
 - required margin-of-safety hurdle and pass/fail when the user supplied one,
@@ -31,8 +32,11 @@ State the selected primary method and why it fits. Show:
   authoritative price evidence exists; and
 - sensitivities for the two or three inputs that can materially move the range.
 
-Use a causal range. Full bear/base/bull narratives are optional unless
-asymmetric outcomes materially change the conclusion.
+Use a causal range when coherent endpoints are supported. Otherwise, only when
+the base remains supportable, show the base plus a narrowly labeled sensitivity
+band; the band does not establish a causal fair-value range. Full bear/base/bull
+narratives are optional unless asymmetric outcomes materially change the
+conclusion.
 
 When an admitted correction or material alternative changes value, show a
 short bridge from the locked baseline through each correction, convention, or

@@ -10,8 +10,9 @@ Lead with:
 
 - company, ticker, exchange, exact security, reporting currency, valuation date,
   information cutoff, and price timestamp when price is used;
-- present fair-value range and base value at precision supported by the weakest
-  load-bearing input;
+- present causal fair-value range and base value when supported; otherwise a
+  supported base plus a narrowly labeled sensitivity band and an explicit
+  statement that no causal range was established;
 - observed price discount using the named formula when authoritative price
   evidence exists;
 - the user-supplied margin-of-safety hurdle and pass/fail, or
@@ -26,9 +27,10 @@ claim when the security bridge is unresolved.
 
 For each applicable method, state why it fits, the assumptions carrying the
 value, the reproducible calculation, the enterprise-to-equity or
-asset-to-security bridge, the resulting range, and its principal limitation.
-Show a reverse DCF or equivalent when authoritative current-price evidence
-exists. Name the solved variable and fixed assumptions.
+asset-to-security bridge, the resulting causal range or supported base plus
+labeled sensitivity band, and its principal limitation. Show a reverse DCF or
+equivalent when authoritative current-price evidence exists. Name the solved
+variable and fixed assumptions.
 
 Use causal cases and sensitivities for the two or three inputs that materially
 move value. Do not average methods unless a weighting rule was fixed before
@@ -56,12 +58,14 @@ conflicts and unknowns rather than merging them.
 ## 4. Risks, Monitoring, And Decision Boundary
 
 Rank load-bearing risks by valuation effect. For each, name an observable
-indicator and the model input it would change. Conclude with the fair-value
-range, current-price timestamp, observed discount, and hurdle status when
-supported, plus the single most important unknown and the evidence that would
-trigger revaluation. When explicitly requested and supported, characterize
-price only relative to the present-value estimate and range; without a supplied
-rule, do not state formal pass/fail, an entry price, or a rule-derived threshold.
+indicator and the model input it would change. Conclude with the causal
+fair-value range, or supported base plus labeled sensitivity band, current-price
+timestamp, observed discount, and hurdle status when supported, plus the single
+most important unknown and the evidence that would trigger revaluation. When
+explicitly requested and supported, characterize price only relative to the
+present-value estimate and any causal range or labeled sensitivity band;
+without a supplied rule, do not state formal pass/fail, an entry price, or a
+rule-derived threshold.
 
 End with one sentence stating that the work is impersonal research, not
 personalized investment advice.
