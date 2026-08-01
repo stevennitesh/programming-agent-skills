@@ -529,10 +529,6 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
     caller_id: str | None = None
     residual_risk_policy: dict[str, Any] | None = None
     repair_generation_budget = 2
-    review_invocation_budget = 3
-    review_invocations_required = 1
-    review_invocations_used = 0
-    review_invocations_completed = 0
     repair_generation = 0
     repair_completed_generation = 0
     repair_open = False
@@ -712,35 +708,11 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                 candidate_repair = charter.get(
                     "repair_generation_budget", repair_generation_budget
                 )
-                candidate_review_budget = charter.get(
-                    "review_invocation_budget",
-                    candidate_repair + 1 if isinstance(candidate_repair, int) else 1,
-                )
-                candidate_required = charter.get(
-                    "review_invocations_required", review_invocations_required
-                )
-                budget_values_valid = True
-                budget_values_valid &= need(
+                if need(
                     isinstance(candidate_repair, int) and candidate_repair >= 0,
                     f"{prefix} Charter repair_generation_budget must be a nonnegative integer",
-                )
-                budget_values_valid &= need(
-                    isinstance(candidate_review_budget, int)
-                    and candidate_review_budget > 0,
-                    f"{prefix} Charter review_invocation_budget must be a positive integer",
-                )
-                budget_values_valid &= need(
-                    isinstance(candidate_required, int) and candidate_required > 0,
-                    f"{prefix} Charter review_invocations_required must be a positive integer",
-                )
-                if budget_values_valid:
-                    need(
-                        candidate_review_budget >= candidate_required,
-                        f"{prefix} review budget is below required invocations",
-                    )
+                ):
                     repair_generation_budget = candidate_repair
-                    review_invocation_budget = candidate_review_budget
-                    review_invocations_required = candidate_required
             candidate_parent_claim = data.get("parent_claim")
             if need(
                 isinstance(candidate_parent_claim, dict)
@@ -1610,7 +1582,7 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                 f"{prefix} HEAD differs from integration HEAD",
             )
             need(
-                review_invocations_used == 0,
+                review_invocation_id is None,
                 f"{prefix} is only valid before formal review",
             )
             need(integration_regression is None, f"{prefix} duplicates an open integration regression")
@@ -1892,6 +1864,30 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                 route in {"change-review", "high-assurance-review"},
                 f"{prefix} has invalid review route",
             )
+            route_evidence = data.get("route_evidence")
+            valid_route_evidence = need(
+                isinstance(route_evidence, dict)
+                and route_evidence.get("candidate") == target
+                and bool(route_evidence.get("source"))
+                and route_evidence.get("basis")
+                in {"ordinary", "release", "supported-high-risk"},
+                f"{prefix} requires candidate-bound route evidence",
+            )
+            if valid_route_evidence and isinstance(route_evidence, dict):
+                basis = route_evidence.get("basis")
+                valid &= need(
+                    (route == "change-review" and basis == "ordinary")
+                    or (
+                        route == "high-assurance-review"
+                        and basis in {"release", "supported-high-risk"}
+                    ),
+                    f"{prefix} route differs from its evidence basis",
+                )
+                if basis == "supported-high-risk":
+                    valid &= need(
+                        bool(route_evidence.get("trigger")),
+                        f"{prefix} supported-high-risk route requires its trigger",
+                    )
             valid &= need(
                 isinstance(actor_id, str) and bool(actor_id.strip()),
                 f"{prefix} requires a review actor ID",
@@ -2025,30 +2021,14 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                     review_task_id not in review_task_ids_used,
                     f"{prefix} reuses a prior review task",
                 )
-            reason = data.get("reason")
-            valid &= need(
-                isinstance(reason, str) and bool(reason.strip()),
-                f"{prefix} requires a reason",
-            )
             valid &= need(
                 target == integration_head,
                 f"{prefix} HEAD differs from integration HEAD",
-            )
-            valid &= need(
-                review_invocations_used < review_invocation_budget,
-                f"{prefix} exceeds review invocation budget",
             )
             if review_invocation_id is None:
                 valid &= need(
                     review_ready and mode == "initial",
                     f"{prefix} first invocation must be initial and review-ready",
-                )
-            elif review_decision == "incomplete":
-                valid &= need(
-                    target == review_target
-                    and mode == review_mode
-                    and route == review_route,
-                    f"{prefix} incomplete retry must keep target, mode, and route",
                 )
             elif review_decision == "scope-mismatch":
                 valid &= need(
@@ -2075,8 +2055,8 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                 )
             else:
                 valid &= need(
-                    review_ready and review_invocation_id is None,
-                    f"{prefix} initial mode is only valid for the first invocation or incomplete retry",
+                    False,
+                    f"{prefix} initial mode is only valid for the first invocation",
                 )
             if valid:
                 if target != review_target:
@@ -2103,7 +2083,6 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                         "provider",
                     }
                 }
-                review_invocations_used += 1
                 review_target = target
                 review_ready = False
                 review_decision = None
@@ -2124,7 +2103,7 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
             need(
                 decision
                 in ACCEPTED_REVIEWS
-                | {"blocked", "incomplete", "fail", "scope-mismatch"},
+                | {"blocked", "incomplete", "scope-mismatch"},
                 f"{prefix} has unknown decision",
             )
             decision_invocation = data.get("review_invocation_id")
@@ -2136,39 +2115,20 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
             need(mode == review_mode, f"{prefix} review mode differs from invocation")
             if review_invocation_id is not None:
                 need(data.get("route") == review_route, f"{prefix} review route differs from invocation")
-                actor_ids = data.get("review_actor_ids")
-                valid_actor_ids = need(
-                    isinstance(actor_ids, list)
-                    and bool(actor_ids)
-                    and all(isinstance(actor, str) and bool(actor) for actor in actor_ids)
-                    and len(actor_ids) == len(set(actor_ids)),
-                    f"{prefix} requires unique review_actor_ids",
-                )
                 implementation_actors = implementation_actor_ids()
-                if valid_actor_ids and isinstance(actor_ids, list):
-                    need(
-                        review_actor_id in actor_ids,
-                        f"{prefix} review actor IDs omit the invocation actor",
-                    )
-                    need(
-                        not (set(actor_ids) & implementation_actors),
-                        f"{prefix} review actor IDs overlap implementation or integration actors",
-                    )
-                    need(
-                        not (set(actor_ids) & review_actor_ids_used),
-                        f"{prefix} reuses prior review actor IDs",
-                    )
-                    review_actor_ids_used.update(actor_ids)
+                returned_actor_ids = (
+                    {review_actor_id}
+                    if isinstance(review_actor_id, str) and review_actor_id
+                    else set()
+                )
                 assurance_returns = data.get("assurance_returns", [])
-                if (
-                    review_route == "high-assurance-review"
-                    and decision in (ACCEPTED_REVIEWS | {"blocked"})
-                ):
+                if review_route == "high-assurance-review":
+                    require_quorum = decision in (ACCEPTED_REVIEWS | {"blocked"})
                     valid_returns = need(
                         isinstance(assurance_returns, list)
-                        and len(assurance_returns) in {2, 3}
+                        and len(assurance_returns) <= 3
                         and all(isinstance(row, dict) for row in assurance_returns),
-                        f"{prefix} requires two core assurance returns and at most one specialist",
+                        f"{prefix} assurance returns must contain at most three lanes",
                     )
                     if valid_returns and isinstance(assurance_returns, list):
                         agent_ids = [row.get("agent_id") for row in assurance_returns]
@@ -2177,16 +2137,22 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                         assurance_lanes = [row.get("lane_id") for row in assurance_returns]
                         valid_agent_ids = need(
                             all(
-                                isinstance(agent_id, str) and bool(agent_id)
+                                isinstance(agent_id, str)
+                                and agent_id in ASSURANCE_REVIEWER_IDS
                                 for agent_id in agent_ids
                             )
-                            and frozenset(agent_ids) in {
-                                frozenset(ASSURANCE_CORE_AGENT_IDS),
-                                frozenset(ASSURANCE_REVIEWER_IDS),
-                            }
                             and len(agent_ids) == len(set(agent_ids)),
-                            f"{prefix} assurance returns require both core agent IDs and at most one specialist",
+                            f"{prefix} assurance returns require unique known agent IDs",
                         )
+                        if require_quorum:
+                            valid_agent_ids &= need(
+                                frozenset(agent_ids)
+                                in {
+                                    frozenset(ASSURANCE_CORE_AGENT_IDS),
+                                    frozenset(ASSURANCE_REVIEWER_IDS),
+                                },
+                                f"{prefix} requires two core assurance returns and at most one specialist",
+                            )
                         valid_identity_fields = valid_agent_ids
                         for field, values in {
                             "actor_id": assurance_actors,
@@ -2200,12 +2166,18 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                             )
                         valid_identity_fields &= need(
                             all(
-                                row.get("status") == "complete"
+                                row.get("status")
+                                in ({"complete"} if require_quorum else {"complete", "blocked"})
                                 and row.get("reviewed_head") == review_target
                                 for row in assurance_returns
                             ),
                             f"{prefix} assurance returns are incomplete or bound to another snapshot",
                         )
+                        if decision == "scope-mismatch":
+                            valid_identity_fields &= need(
+                                not assurance_returns,
+                                f"{prefix} scope mismatch cannot return assurance lanes",
+                            )
                         implementation_tasks = {
                             lane.get("task_id")
                             for lane in lanes.values()
@@ -2231,18 +2203,22 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                                 ),
                                 f"{prefix} assurance reviewer tasks are not fresh or independent",
                             )
-                            need(
-                                isinstance(actor_ids, list)
-                                and set(actor_ids)
-                                == ({review_actor_id} | set(assurance_actors)),
-                                f"{prefix} review_actor_ids must match the coordinator and assurance returns",
-                            )
+                            returned_actor_ids.update(assurance_actors)
                             review_task_ids_used.update(assurance_tasks)
-                elif review_route != "high-assurance-review":
+                else:
                     need(
                         not assurance_returns,
                         f"{prefix} ordinary review cannot return assurance lanes",
                     )
+                need(
+                    not (returned_actor_ids & implementation_actors),
+                    f"{prefix} review actors overlap implementation or integration actors",
+                )
+                need(
+                    not (returned_actor_ids & review_actor_ids_used),
+                    f"{prefix} reuses prior review actors",
+                )
+                review_actor_ids_used.update(returned_actor_ids)
                 if isinstance(review_receipt, dict):
                     for field, expected in review_receipt.items():
                         need(
@@ -2314,8 +2290,6 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
             )
             if decision == "scope-mismatch":
                 review_route_mismatches += 1
-            if decision not in {"incomplete", "scope-mismatch"}:
-                review_invocations_completed += 1
         elif kind == "repair-plan":
             generation = data.get("generation")
             finding_ids = data.get("finding_ids")
@@ -2347,10 +2321,6 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
             )
             need(isinstance(generation, int) and generation == repair_generation + 1, f"{prefix} has invalid Repair generation")
             need(isinstance(generation, int) and generation <= repair_generation_budget, f"{prefix} exceeds Repair Generation Budget")
-            need(
-                review_invocations_used < review_invocation_budget,
-                f"{prefix} requires one remaining successor review invocation",
-            )
             need(bool(blockers), f"{prefix} requires complete blocking findings")
             need(
                 all(
@@ -2478,10 +2448,6 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                         and set(residual_ids) == set(reviewed_residual_ids),
                         f"{prefix} caller acceptance differs from the reviewed residual set",
                     )
-            need(
-                review_invocations_completed >= review_invocations_required,
-                f"{prefix} requires {review_invocations_required} completed review invocations",
-            )
             need(event.get("integration_sha") == integration_head, f"{prefix} closeout HEAD differs from integration HEAD")
             need(event.get("integration_sha") == review_target, f"{prefix} closeout HEAD differs from review target")
             closeout_head = event.get("integration_sha")
@@ -2880,7 +2846,7 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
         campaign_status = "repairing"
     elif review_decision in ACCEPTED_REVIEWS:
         campaign_status = "reviewed"
-    elif review_decision in {"blocked", "incomplete", "fail"}:
+    elif review_decision in {"blocked", "incomplete"}:
         campaign_status = "review-blocked"
     elif review_decision == "scope-mismatch":
         campaign_status = (
@@ -2927,10 +2893,6 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
         "residual_risk_policy": residual_risk_policy,
         "runtime_contract": RUNTIME_CONTRACT,
         "repair_generation_budget": repair_generation_budget,
-        "review_invocation_budget": review_invocation_budget,
-        "review_invocations_required": review_invocations_required,
-        "review_invocations_used": review_invocations_used,
-        "review_invocations_completed": review_invocations_completed,
         "repair_generation": repair_generation,
         "repair_completed_generation": repair_completed_generation,
         "repair_open": repair_open,
@@ -2982,10 +2944,10 @@ def intent_errors(state: dict[str, Any], intent: str) -> list[str]:
             errors.append("integration checkout is not clean")
         if state["repair_generation"] != state["repair_completed_generation"]:
             errors.append("latest Repair generation lacks completion proof")
-        if state["review_invocations_used"] >= state["review_invocation_budget"]:
-            errors.append("Review Invocation Budget is exhausted")
         if state["review_invocation_id"] and state["review_decision"] is None:
             errors.append("current review invocation has no decision")
+        if state["review_decision"] == "incomplete":
+            errors.append("incomplete review requires a partial checkpoint")
         if (
             state["review_decision"] == "scope-mismatch"
             and state["review_route_mismatches"] > 1
@@ -2996,7 +2958,7 @@ def intent_errors(state: dict[str, Any], intent: str) -> list[str]:
             and state["repair_generation"] == state["repair_completed_generation"]
             and state["integration_head"] != state["review_target"]
         )
-        if state["review_decision"] in {"blocked", "fail"} and not repaired_successor_ready:
+        if state["review_decision"] == "blocked" and not repaired_successor_ready:
             errors.append("blocked review requires Repair or caller decision")
     elif intent == "repair":
         if not state["charter_id"]:
@@ -3007,8 +2969,6 @@ def intent_errors(state: dict[str, Any], intent: str) -> list[str]:
             errors.append("no Repair plan is open")
         if state["repair_generation"] > state["repair_generation_budget"]:
             errors.append("Repair Generation Budget is exhausted")
-        if state["review_invocations_used"] >= state["review_invocation_budget"]:
-            errors.append("no successor review invocation remains")
         if state["review_target"] != state["current_head"]:
             errors.append("blocked review target does not equal current HEAD")
     elif intent == "lock":
@@ -3018,11 +2978,6 @@ def intent_errors(state: dict[str, Any], intent: str) -> list[str]:
             errors.append("review target does not equal current HEAD")
         if state["repair_open"]:
             errors.append("Repair generation remains open")
-        if (
-            state["review_invocations_completed"]
-            < state["review_invocations_required"]
-        ):
-            errors.append("required review invocations are incomplete")
     elif intent == "checkpoint":
         if not state["checkpoint_active"]:
             errors.append("no resumable checkpoint is active")
@@ -3280,10 +3235,6 @@ def start(args: argparse.Namespace) -> int:
         **charter,
         "runtime_contract": RUNTIME_CONTRACT,
         "repair_generation_budget": repair_budget,
-        "review_invocation_budget": charter.get(
-            "review_invocation_budget", repair_budget + 1
-        ),
-        "review_invocations_required": charter.get("review_invocations_required", 1),
     }
     data = {
         key: value
@@ -3596,7 +3547,7 @@ def markdown(state: dict[str, Any], events_name: str) -> str:
         f"- Closeout HEAD: `{state['closeout_head'] or 'not reached'}`",
         f"- Runtime contract: `{state['runtime_contract']}`",
         f"- Repair generations: `{state['repair_generation']}/{state['repair_generation_budget']}`",
-        f"- Review invocations: `{state['review_invocations_used']}/{state['review_invocation_budget']}` used; `{state['review_invocations_completed']}/{state['review_invocations_required']}` required complete",
+        f"- Review: `{state['review_mode'] or 'not reached'}` / `{state['review_decision'] or 'not reached'}`",
         f"- Repair state: `{'open' if state['repair_open'] else 'closed'}`",
         f"- Carried findings: {', '.join(state['repair_findings']) or 'none'}",
         f"- Children: {', '.join(state['children']) or 'not recorded'}",

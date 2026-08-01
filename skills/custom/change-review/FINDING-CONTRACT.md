@@ -21,10 +21,12 @@ duplicating the finding.
 | **Standards** | **Stewardship** | Retained complexity has an owner and reason, unrelated work is preserved, and changed code remains maintainable. |
 
 Behavior is evidence used by both axes, not another axis. Risk is a
-cross-cutting modifier. A risk may widen coverage or justify a specialist only
-when the changed surface, one supported scenario, a reachable behavior or
-failure path, and concrete impact are all identified. Hypothetical
-permutations do not qualify.
+cross-cutting modifier. A **supported high-risk trigger** identifies a changed
+surface, supported scenario, reachable behavior or failure path, and concrete
+impact involving a trust boundary, irreversible effect or migration,
+concurrency or recovery, high-impact domain or model invariant, or measured
+performance obligation. PR existence, size, labels, and hypothetical cases do
+not qualify.
 
 ## Admit
 
@@ -78,6 +80,15 @@ Required proof:
 Keep IDs stable through remediation. Name the tightest useful captured line or
 missing seam. Separate direct observation from inference. Required proof is
 the smallest semantic proof that can close the Repair.
+
+## Remediation Review
+
+A fresh remediation review receives `Invocation: formal-delivery` and
+`Review mode: remediation`, plus the original Charter, prior snapshot identity,
+stable carried IDs, caller-owned Repair delta, remaining acceptance, fixed
+point, and successor candidate. Judge only the carried outcomes, Repair delta,
+affected surfaces, and remaining acceptance exercised there; leave untouched
+scope closed.
 
 ## Severity And Remediation
 

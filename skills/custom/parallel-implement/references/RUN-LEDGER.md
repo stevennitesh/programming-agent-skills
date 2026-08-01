@@ -16,7 +16,7 @@ python <skill-dir>/scripts/run_ledger.py start \
 The UTF-8 scope object supplies `parent`, `root_actor_id`, `caller_id`, the
 retained `parent_claim`, exhaustive non-empty `children`, and a Charter with
 `id` and outcome. Start records the repository, exact `HEAD`, stable scope
-identity, and frozen Repair and review budgets. Only runtime contract 5 is
+identity, and the frozen Repair budget. Only runtime contract 5 is
 accepted.
 
 Scope or budget changes require a new run.
@@ -91,8 +91,8 @@ Packet fields:
 | `integration-correction` | `integration_sha`, `validation`, `data.{regression_event_id,prior_integration_sha,correction_commit,route,actor_id,changed_scope,lane_head,lane_clean,task_state,liveness_cursor,root_receipt}` plus lane, worker, landing method, and transformed-landing read-back when applicable |
 | `graph-drained` | `integration_sha`, `data.root_receipt` |
 | `review-ready` | `integration_sha`, `data.{tasks,integration,final_proof,root_receipt}` |
-| `review-invocation` | `integration_sha`, review task binding, route, startup/provenance proof, `root_receipt` |
-| `review-decision` | `integration_sha`, `decision`, review Return binding, `review_actor_ids`, `findings`, `residual_risks`; High Assurance also requires `assurance_returns` |
+| `review-invocation` | `integration_sha`, review task binding, route, candidate-bound `route_evidence`, startup/provenance proof, `root_receipt` |
+| `review-decision` | `integration_sha`, `decision`, review Return binding, `findings`, `residual_risks`; High Assurance also requires `assurance_returns` |
 | `repair-plan` | Charter, generation, review decision/target, complete finding IDs, caller decision receipt |
 | `repair-complete` | `integration_sha`, `validation`, generation, finding IDs, delegated lane/actor/task, accepted worker SHA, prior and superseded candidate, landing method, `root_receipt` |
 | `closeout-head` | `integration_sha`, residual acceptance when applicable, `root_receipt` |
@@ -115,7 +115,7 @@ receipt equality, containment and cleanliness, superseding Return ancestry,
 root and caller receipts, claim receipt, serial landing ancestry, candidate and
 reviewed-`HEAD` binding, idle-task and final-proof receipts, delegated Repair
 provenance, review-task separation, High Assurance core quorum, distinct
-residual-risk identity, supplied budget arithmetic, caller Repair identity,
+residual-risk identity, Repair-budget arithmetic, caller Repair identity,
 reconciliation, child-first closeout and claim-release read-backs, and safe
 lane state.
 

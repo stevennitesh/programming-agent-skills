@@ -15,8 +15,8 @@ only in an explicitly requested finite serial `until-clean` campaign.
 
 Accept only an exact `$audit-codebase` candidate selected by the user or a
 user-named target. The user may name the current diff as that target; never
-infer or replace the target. Verify an Audit candidate's report, snapshot,
-subsystem, Source Trace, supported behavior, Proof Seam, and selected
+infer or replace the target. Verify an Audit candidate's report digest,
+subsystem, current Source Trace, supported behavior, Proof Seam, and selected
 behavior-preserving direction against current bytes. An invalid, stale, blocked,
 disproved, or incomplete target returns `blocked` unchanged. Without a target,
 return `blocked` with the exact target needed; recommend `$audit-codebase` only

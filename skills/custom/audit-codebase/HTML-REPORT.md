@@ -29,7 +29,7 @@ embedded state.
 
 ## State
 
-The helper accepts exactly structural version 9 and state-schema version 1.
+The helper accepts exactly structural version 10 and state-schema version 2.
 Any other version is rejected before mutation.
 
 ```text

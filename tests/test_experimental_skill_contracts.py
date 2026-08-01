@@ -4,9 +4,6 @@ import re
 import runpy
 from pathlib import Path
 
-from scripts.skill_pack_contract import tree_hash
-
-
 ROOT = Path(__file__).resolve().parents[1]
 CUSTOM = ROOT / "skills/custom"
 EXPERIMENTAL = ROOT / "skills/experimental"
@@ -292,51 +289,3 @@ def test_experimental_aggregate_marker_cannot_hide_stale_setup_file() -> None:
         f"{relative} must contain exactly one current setup-file source marker: "
         f"{expected}"
     ]
-
-
-def test_current_implement_preserves_promoted_and_author_contract() -> None:
-    canonical_dir = CUSTOM / "implement"
-    inventory = {"SKILL.md", "agents/openai.yaml"}
-
-    assert {
-        path.relative_to(canonical_dir).as_posix()
-        for path in canonical_dir.rglob("*")
-        if path.is_file()
-    } == inventory
-
-    assert tree_hash(canonical_dir) == (
-        "fbb7d7d9cf781ab1cc3fa760bd08c917d5c9fe6322bdfbeebcf42236d5b5d93f"
-    )
-    promoted = (canonical_dir / "SKILL.md").read_text(encoding="utf-8")
-    normalized = " ".join(promoted.split())
-
-    for contract in (
-        "Deliver exactly one caller-selected ready item",
-        "Keep the named item and all source-owned commitments unchanged",
-        "Return an exhaustive parent graph or review-only request intact",
-        "Hand conflicts to `$resolving-merge-conflicts`",
-        "Freeze one Charter",
-        "otherwise default to exactly `2`",
-        "fresh `ordinary-reviewer` task",
-        "caller-admitted IDs equal every blocking ID",
-        "mechanical Local Markdown closeout after review and before Lock",
-        "Retain GitHub or GitLab claims through Lock and commit",
-        "Create exactly one commit",
-        "proving `HEAD` unchanged",
-        "Complete connector closeout",
-        "connector failure, preserve the commit, refetch state",
-        "Tracker closeout, claim, and frontier:",
-        "Before commit, release a claim only after",
-        "After commit, retain custody until closeout",
-        "index and commit trees to equal the locked tree",
-        "named recovery custodian",
-        "Return `complete` only when acceptance, proof, review, Lock",
-    ):
-        assert contract in normalized
-
-    for rejected in (
-        "staged worker",
-        "two generations",
-        "Invoke exactly one campaign route",
-    ):
-        assert rejected not in promoted

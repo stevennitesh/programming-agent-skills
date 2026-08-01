@@ -1,10 +1,8 @@
 # Change Review Synthesis
 
-Status: current rename amendment; canonical proof pending.
+Status: current runtime summary.
 
-Runtime authority is `skills/custom/change-review/`. The former `review`
-campaign and its exact evidence remain at
-[Review Deployment Synthesis](review.md) under their historical identity.
+Runtime authority is `skills/custom/change-review/`.
 
 Change Review owns one ordinary branch, WIP, staged, since-X diff, or ordinary
 PR from a fixed snapshot. It judges Spec and Standards separately through the
@@ -14,8 +12,7 @@ as route mismatches; immutable repository-baseline audits recommend
 `$audit-codebase` and stop.
 
 Implement and Parallel Implement select Change Review for ordinary candidates
-and retain Repair, mutation, Lock, and successor-snapshot authority. The rename
-does not claim installed parity or fresh wording efficacy. The shared Finding
-Contract now admits new or changed test overlap only with a violated Standard,
-no distinct proof responsibility, and concrete maintenance or execution cost;
-High Assurance Review consumes that same owner without duplicate wording.
+and retain Repair, mutation, Lock, and successor-snapshot authority. The shared
+Finding Contract owns review classes, risk triggers, admission, severity, and
+remediation bounds; High Assurance Review consumes that owner without duplicate
+wording.

@@ -58,6 +58,4 @@ impact, not an exact replacement API. Candidate Analyze owns the Keep /
 Smallest sufficient / Structural / Replacement comparison.
 
 For a design or mixed candidate, settle any user-owned trade-off first, then
-load `$codebase-design` Direct Design and fold its result into the candidate.
-Audit retains the HTML and Return; emit no separate design packet or later
-Codebase Design step.
+apply `CANDIDATE-CONTRACT.md`'s design branch.

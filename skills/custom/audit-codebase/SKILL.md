@@ -31,9 +31,11 @@ The only durable Audit-owned artifact is
 `.scratch/audit-codebase/<run-id>/report.html`. Use only
 [REPORT-QUICK-REFERENCE.md](REPORT-QUICK-REFERENCE.md)'s helper interface;
 [HTML-REPORT.md](HTML-REPORT.md) owns report state and rendering. Leave product
-source, tracked docs, Git state, reviews, deployments, and every other external
-system unchanged. Remove invocation-owned temporary JSON and path lists only
-after final read-back or a proven zero-effect failure.
+source, tracked docs, Git state, reviews, and deployments unchanged. Audit
+itself mutates no foreign system; only an exact helper-generated To Tickets
+invocation may let that callee mutate its configured tracker. Remove
+invocation-owned temporary JSON and path lists only after final read-back or a
+proven zero-effect failure.
 
 [CANDIDATE-CONTRACT.md](CANDIDATE-CONTRACT.md) owns candidate judgment and
 Close. Analyze may invoke To Tickets only through the helper-generated pickup;
@@ -43,8 +45,9 @@ it never implements.
 
 Choose once:
 
-- **Map:** no selected subsystem or candidate; create a new atlas, continue an
-  incomplete supplied atlas, or refresh a supplied atlas only when requested.
+- **Map:** no selected subsystem or candidate; create a new atlas or update a
+  supplied map-only atlas with its current digest. A history-bearing atlas that
+  needs structural remapping requires a new explicitly selected report.
 - **Audit:** exactly one subsystem ID from a complete Map.
 - **Analyze:** exactly one candidate ID inside an audited subsystem.
 - **Close:** exactly one analyzed candidate ID plus its exact implementation
@@ -56,16 +59,20 @@ record and admits its report path, structural and state versions,
 repository/run identity, canonical rendering, digest, and current state. A
 failed admission makes zero writes.
 
-**Current source** is the selected Git object or observed live worktree. Never
-substitute checkout bytes for an object-targeted atlas.
+An unsupported structural or state version remains immutable historical
+evidence. Return `blocked` with an exact user-selected Map invocation targeting
+a new report; never migrate or overwrite it in place.
+
+**Current source** is the observed live worktree bound by helper-derived path
+and content identities.
 
 ## Map
 
 ### Observe
 
-Use New for no report, Continue for incomplete coverage, and Refresh only when
-requested or current structure invalidates the Map. Run `inventory` first and
-use its tracked-live-worktree identity and paths as the boundary. Record target,
+Create a report when none exists. Update a supplied map-only report with its
+current digest. Run `inventory` first and use its
+tracked-live-worktree identity and paths as the boundary. Record target,
 observation time, scope, governing contracts, supported scenarios, workloads,
 environments, proof expectations, non-goals, and missing authority.
 
@@ -87,7 +94,7 @@ ownership, owned/excluded overlap, unknown or self dependencies, and dependency
 edges without evidence. Do not audit or rank during Map. Name relevant untracked
 files as an evidence limit.
 
-Publish once. Return incomplete coverage and one Continue pickup, or complete
+Publish once. Return incomplete coverage and an exact Map re-entry, or complete
 coverage and ask the user to select any mapped subsystem. Stop.
 
 ## Audit One Subsystem
@@ -127,17 +134,12 @@ re-admit changed members; and classify it `confirmed`, `changed`, `disproved`,
 or `blocked`. Expand only when contradiction reveals another causal owner and
 load only implicated detailed lenses.
 
-Compare Keep, Smallest sufficient, Structural, and Replacement. For a design
-or mixed candidate, settle user-owned decisions first, then load
-`$codebase-design` Direct Design and fold its result into this candidate.
+Compare Keep, Smallest sufficient, Structural, and Replacement. Apply the
+Candidate contract's design branch when triggered.
 
 Read [CANDIDATE-FOLLOWUP.md](CANDIDATE-FOLLOWUP.md) only when the result needs a
 material user decision, returned evidence, one other owner, or implementation
-work publication. Follow the generated Analyze pickup exactly. If its
-conditional To Tickets authority is absent, publish tracker state
-`authority-required` and the linked Analyze re-entry without invoking anything.
-A To Tickets recovery result produces no Implement pickup and makes the outcome
-`partial`.
+work publication. It owns To Tickets authority, recovery, and pickup behavior.
 
 Publish once. Return validity, comparison, proof, limits, tracker result, and
 next user selection. Stop.
@@ -147,9 +149,8 @@ next user selection. Stop.
 Close is a separate user-selected objective, never an implicit continuation.
 Require one analyzed candidate and the exact completion packet requested by its
 helper-generated Implement pickup. Apply
-[CANDIDATE-CONTRACT.md](CANDIDATE-CONTRACT.md)'s Close gate. The helper verifies
-the packet's report, source, candidate, tracker, proof, review, Change Closure,
-commit/tree, and finding-transition identities. A mismatch changes nothing.
+[CANDIDATE-CONTRACT.md](CANDIDATE-CONTRACT.md)'s Close gate. A mismatch changes
+nothing.
 
 Publish once through `close-candidate`. Only that command may enter
 `implemented`.
@@ -182,6 +183,6 @@ Downstream implementation: none; next selection authority: user
 `complete` requires the selected objective and durable HTML publication.
 Implementation-ready Analyze also requires a To Tickets result or
 `authority-required` when its exact invocation authority is absent. `partial`
-preserves completed analysis awaiting that authority, tracker recovery, or
-exact unfinished coverage. `blocked` means the objective could not proceed.
+preserves completed analysis with tracker recovery or exact unfinished
+coverage. `blocked` means the objective could not proceed.
 Findings and gaps do not themselves make a thorough Audit incomplete.

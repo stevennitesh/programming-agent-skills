@@ -457,10 +457,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-017",
-      "completion_return": "One verified durable current-source HTML report for exactly one Map, Audit, Analyze, or Close invocation, plus the To Tickets result for an implementation-ready Analyze",
+      "completion_return": "One verified durable current-source HTML report for exactly one Map, Audit, Analyze, or Close invocation, plus a candidate-bound To Tickets result or authority-required state for an implementation-ready Analyze",
       "disposition": "selected",
       "entry_conditions": [
-        "A repository needs a new, continued, or refreshed exhaustive system map; one selected subsystem audit; or analysis of one selected candidate or returned packet"
+        "A repository needs a new or updated exhaustive live-worktree map, one selected subsystem audit, one selected candidate analysis, or one selected analyzed-candidate closeout"
       ],
       "essential": true,
       "exclusions": [
@@ -468,11 +468,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Map one selected repository target, audit one user-selected subsystem, or analyze one user-selected candidate or returned packet per invocation without a release decision",
+      "observable_outcome": "Map one live-worktree repository target, audit one user-selected subsystem, analyze one user-selected candidate, or close one analyzed candidate per invocation without a release decision",
       "primary_owner_skill_id": "SK-017",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
-        "Baseline pinning and manifest verification, linked system map, subsystem coverage, verified items, improvement candidates, candidate analysis, returned-evidence judgment, exact next-step pickups, and one atomic durable HTML report"
+        "Current-source identity and manifest verification, linked system map, subsystem coverage, verified items, improvement candidates, candidate analysis and Close, returned-evidence judgment, exact next-step pickups, and one atomic durable HTML report"
       ]
     },
     {
@@ -604,7 +604,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Deliver one selected bounded Ready-for-agent item through proof, review, Lock, one commit, and tracker closeout",
+      "observable_outcome": "Deliver one caller-selected ready item through proof, review, Lock, one commit, and applicable tracker closeout",
       "primary_owner_skill_id": "SK-022",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
@@ -774,7 +774,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-021"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for implement: Deliver one selected bounded Ready-for-agent item through proof, review, Lock, one commit, and tracker closeout",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for implement: Deliver one caller-selected ready item through proof, review, Lock, one commit, and applicable tracker closeout",
         "expected_owner_skill_id": "SK-022",
         "scenario_id": "PS-022"
       },
@@ -1733,19 +1733,19 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-022",
       "combined_exit_owner_skill_id": "SK-022",
       "context_loaded": [],
-      "entry_condition": "The supplied work is unsliced or shaping-unready; return the exact readiness defects. Selection ambiguity remains local to Implement.",
+      "entry_condition": "Verified landed implementation invalidated the selected ticket's commitments or graph facts.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for implement and the declared to-tickets input",
+      "input_packet": "Implementation identity, before-and-after evidence, invalidated fields, affected ticket, and the declared to-tickets input",
       "ordering_impact": "none",
       "relationship_id": "REL-018",
       "required_proof_ids": [
         "PROOF-REL-018"
       ],
       "resume_owner_skill_id": "SK-022",
-      "return_packet": "One named target and reason with downstream work unstarted",
+      "return_packet": "The intact invalidation packet with To Tickets unstarted",
       "target_skill_id": "SK-012",
       "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      "wrong_condition": "Work is malformed, unsettled, unsliced, ambiguous, or has not produced verified post-landing invalidation"
     },
     {
       "affected_capability_ids": [
@@ -1810,7 +1810,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "One candidate decision belongs to the current user and also requires current domain language, Invariants, relationships, or ADR handling; Audit publishes the decision brief and exact Analyze re-entry, then leaves composition unstarted.",
       "failure_behavior": "Publish the decision brief and return the recommendation without invoking the target; preserve the candidate for later Analyze",
-      "input_packet": "One immutable audit snapshot, candidate identity, and complete decision brief",
+      "input_packet": "One digest-bound current audit report, candidate identity, last verified source identity, and complete decision brief",
       "ordering_impact": "none",
       "relationship_id": "REL-021",
       "required_proof_ids": [
@@ -1912,7 +1912,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "One candidate decision belongs to the current user but needs no domain-record maintenance; Audit publishes the decision brief and exact Analyze re-entry, then leaves Grilling unstarted.",
       "failure_behavior": "Publish the decision brief and return the recommendation without invoking the target; preserve the candidate for later Analyze",
-      "input_packet": "One immutable audit snapshot, candidate identity, and complete decision brief",
+      "input_packet": "One digest-bound current audit report, candidate identity, last verified source identity, and complete decision brief",
       "ordering_impact": "none",
       "relationship_id": "REL-026",
       "required_proof_ids": [
@@ -2321,7 +2321,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-025",
       "combined_exit_owner_skill_id": "SK-025",
       "context_loaded": [],
-      "entry_condition": "The situation requires a whole-repository ownership map, one selected subsystem audit, or one selected candidate analysis; return that route and leave it unstarted.",
+      "entry_condition": "The situation requires a whole-repository ownership map, one selected subsystem audit, one selected candidate analysis, or one selected analyzed-candidate closeout; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
       "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared audit-codebase input",
       "ordering_impact": "callee-before-caller",
@@ -4282,7 +4282,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "terminal_evidence_pointer": null
       },
       "canonical_name": "audit-codebase",
-      "completion_condition": "The selected Map, Audit, Analyze, or Close path is terminal for this invocation; its current evidence identity and deterministic JSON-state HTML report pass digest-locked publication and read-back; an implementation-ready Analyze also records a candidate-bound ready/reused or recovery result",
+      "completion_condition": "The selected Map, Audit, Analyze, or Close path is terminal for this invocation; its current evidence identity and deterministic JSON-state HTML report pass digest-locked publication and read-back; an implementation-ready Analyze also records a candidate-bound ready/reused or recovery result, or authority-required when exact invocation authority is absent",
       "contract_order": 17,
       "essential_outcome": "Map one repository target, audit one user-selected subsystem, analyze one user-selected candidate, or close one analyzed candidate from its exact completion packet",
       "failure_return": "Return current, incomplete, or stale report coverage without mutating the repository baseline, while preserving exact GitHub issue recovery state from an attempted implementation-ready Analyze",
@@ -4504,9 +4504,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "terminal_evidence_pointer": null
       },
       "canonical_name": "implement",
-      "completion_condition": "The exact accepted tree is reviewed, locked, committed once, and tracker state reads back",
+      "completion_condition": "The exact accepted tree is reviewed, locked, committed once, and applicable tracker state reads back",
       "contract_order": 22,
-      "essential_outcome": "Deliver one selected bounded Ready-for-agent item through proof, review, Lock, one commit, and tracker closeout",
+      "essential_outcome": "Deliver one caller-selected ready item through proof, review, Lock, one commit, and applicable tracker closeout",
       "failure_return": "Return the failed gate, retained state, evidence, authority need, and safest recovery",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-aggregate",
@@ -4536,7 +4536,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-018",
         "REL-100"
       ],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Deliver one selected bounded Ready-for-agent item through proof, review, Lock, one commit, and tracker closeout",
+      "required_input": "A bounded caller-owned Source Trace and authority for: Deliver one caller-selected ready item through proof, review, Lock, one commit, and applicable tracker closeout",
       "return_packet": "A complete, partial, or blocked single-item delivery packet",
       "skill_id": "SK-022"
     },

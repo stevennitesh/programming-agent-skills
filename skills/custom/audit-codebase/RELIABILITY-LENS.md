@@ -65,6 +65,6 @@ interfaces. A proposed enforcement rule's eventual proof needs a negative
 control: clean pass, one intended violation failing for the intended reason,
 restoration, and final pass.
 
-Static smell, narration, and line count do not prove behavior. Unchecked
-obtainable evidence makes coverage incomplete; evidence unavailable inside
-Audit becomes a gap.
+Static smell, narration, and line count do not prove behavior. Apply
+`QUALITY-LENS.md`'s coverage-completion rule; unavailable required evidence is
+a gap.

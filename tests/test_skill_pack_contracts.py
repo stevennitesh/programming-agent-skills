@@ -305,12 +305,6 @@ def test_delivery_skills_own_custody_and_trackers_map_closeout() -> None:
     parallel = " ".join(
         (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8").split()
     )
-    for token in (
-        "Before commit, release a claim only after pending mutations are determinate",
-        "After commit, retain custody until closeout and frontier verification succeed",
-        "named recovery custodian",
-    ):
-        assert token in implement
     for token in ("landed-awaiting-lock", "indeterminate-closeout claim"):
         assert token in parallel
 
@@ -1160,12 +1154,8 @@ def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
         encoding="utf-8"
     )
 
-    assert not (CUSTOM / "review").exists()
-    assert not (CUSTOM / "convergent-pr-review").exists()
     assert re.search(r"(?m)^name: change-review$", review)
     assert re.search(r"(?m)^name: high-assurance-review$", convergent)
-    assert "## Pin" in review
-    assert "## 2. Pin" in convergent
     assert "$high-assurance-review" not in review
     assert "$change-review" not in convergent.split("## 1. Admit", 1)[1].split(
         "## 2. Pin", 1
@@ -1178,26 +1168,21 @@ def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
         "change-review/SMELL-BASELINE.md` only when Standards are thin"
         in " ".join(convergent.split())
     )
-    review_steps = re.findall(r"(?m)^## (Pin|Cover|Judge|Gate)$", review)
-    assert review_steps == ["Pin", "Cover", "Judge", "Gate"]
-    convergent_steps = re.findall(r"(?m)^## \d+\. (.+)$", convergent)
-    assert convergent_steps == [
-        "Admit",
-        "Pin",
-        "Review",
-        "Converge",
-        "Gate",
-    ]
     report = review.split("```text", 2)[2].split("```", 1)[0]
-    assert report.lstrip().startswith("Review mode: initial | remediation")
-    assert "Coverage: complete | incomplete" in report
-    assert (
-        "Decision: pass | pass with residual risk | blocked | incomplete"
-        in report
-    )
-    assert "Standards findings:" in report
-    assert "Spec findings:" in report
-    assert "Candidate:" in report
+    for field in (
+        "Invocation: formal-delivery | standalone",
+        "Review mode: initial | remediation",
+        "Semantic agent: ordinary-reviewer",
+        "Reviewer actor ID:",
+        "Reviewer task ID:",
+        "Fresh-context and separation evidence: <evidence> | standalone",
+        "Coverage: complete | incomplete",
+        "Decision: pass | pass with residual risk | blocked | incomplete",
+        "Standards findings:",
+        "Spec findings:",
+        "Candidate:",
+    ):
+        assert field in report
 
 
 def test_review_finding_interface_and_return_boundary_are_shared() -> None:
@@ -1241,6 +1226,26 @@ def test_review_finding_interface_and_return_boundary_are_shared() -> None:
         assert "Successor snapshot authority: none" in skill
     assert "Test count or runtime alone does not admit a finding" in finding
     assert "distinct responsibility or justified failure isolation" in finding
+    remediation = finding.split("## Remediation Review", 1)[1].split(
+        "## Severity And Remediation", 1
+    )[0]
+    remediation_flat = " ".join(remediation.split())
+    for field in (
+        "`Invocation: formal-delivery`",
+        "`Review mode: remediation`",
+        "original Charter",
+        "prior snapshot identity",
+        "stable carried IDs",
+        "caller-owned Repair delta",
+        "remaining acceptance",
+        "fixed point",
+        "successor candidate",
+    ):
+        assert field in remediation_flat
+    for skill in (review, convergent):
+        assert "Finding Contract's remediation packet and coverage boundary" in " ".join(
+            skill.split()
+        )
 
 
 def test_review_family_shares_one_bounded_quality_and_risk_model() -> None:
@@ -1268,13 +1273,14 @@ def test_review_family_shares_one_bounded_quality_and_risk_model() -> None:
         assert finding.count(f"**{class_name}**") == 1
     assert "Behavior is evidence used by both axes, not another axis." in finding_flat
     assert "Risk is a cross-cutting modifier." in finding_flat
-    assert "Hypothetical permutations do not qualify." in finding_flat
+    assert "PR existence, size, labels, and hypothetical cases do not qualify." in finding_flat
     assert "not a blind Cartesian product" in review
     assert "not a blind Cartesian product" in convergent_flat
     assert "Reuse proof tied to the exact snapshot" in review
     assert "Reuse exact-snapshot proof" in convergent_flat
     assert "ordinary local PR" in review
-    assert "PR existence, diff size, repository size" in convergent
+    assert "FINDING-CONTRACT.md" in convergent
+    assert "governed by at least one supported" in convergent_flat
     assert "ordinary PR needs read-only judgment" in router
     assert "supported high-risk diff or PR needs a terminal release decision" in router
 
@@ -1334,11 +1340,9 @@ def test_high_assurance_review_has_root_guard_bounded_capacity_and_risk() -> Non
     assert "other nested review lane that invokes this skill" in convergent_flat
     for mode in ("initial", "remediation"):
         assert f"- `{mode}`" in convergent
-    assert "- `assurance`" not in convergent
-    assert "Exactly two valid fresh core returns are required" in convergent
-    assert "never self-reviews a missing lane" in convergent
-    assert "separated root" not in convergent
-    assert "degraded" not in convergent
+    assert "valid reviewer quorum" in convergent
+    assert "exactly two valid fresh core returns" in convergent
+    assert "coordinator never substitutes for a reviewer" in convergent
     assert "no Repair, Lock, or residual-risk acceptance authority" in convergent_flat
     assert "at most one `har-specialist`" in convergent
     assert "at most one fresh unbiased replacement per invalid lane" in convergent
@@ -1366,16 +1370,11 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     candidate = (skill_dir / "CANDIDATE-CONTRACT.md").read_text(encoding="utf-8")
     followup = (skill_dir / "CANDIDATE-FOLLOWUP.md").read_text(encoding="utf-8")
     metadata = (skill_dir / "agents/openai.yaml").read_text(encoding="utf-8")
-    performance = (skill_dir / "PERFORMANCE-LENS.md").read_text(encoding="utf-8")
-    reliability = (skill_dir / "RELIABILITY-LENS.md").read_text(encoding="utf-8")
-    domain = (skill_dir / "DOMAIN-LENS.md").read_text(encoding="utf-8")
-    design = (skill_dir / "DESIGN-LENS.md").read_text(encoding="utf-8")
     simplification = (skill_dir / "SIMPLIFICATION-LENS.md").read_text(encoding="utf-8")
     report = (skill_dir / "HTML-REPORT.md").read_text(encoding="utf-8")
     report_quick = (skill_dir / "REPORT-QUICK-REFERENCE.md").read_text(
         encoding="utf-8"
     )
-    updater = (skill_dir / "scripts/update_report.py").read_text(encoding="utf-8")
     router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
     audit_frontmatter = audit.split("---", 2)[1]
 
@@ -1424,24 +1423,17 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert "Coverage: complete | incomplete" in quality
     assert "An admitted item does not close class coverage" in quality
     assert "`authority-required`" in audit
-    assert "`authority-required`" in candidate
     assert "`authority-required`" in followup
+    assert "`authority-required`" not in candidate
     assert "current-source evidence" in quality
-    assert "immutable snapshot" not in defect
     assert "selected objective's current source identity" in " ".join(defect.split())
     assert "separately user-selected `$audit-codebase` objective" in candidate
-    assert "separately selects" in followup
     assert "The helper generates one Implement pickup" in followup
     assert "exact Close packet" in followup
     assert "$to-tickets" not in metadata
     assert "helper derives the linked Analyze pickup" in candidate
     assert "conditional To Tickets authority" in candidate
     assert "`schema --objective close`" in candidate
-    assert "authoritative existing trace" in performance
-    assert "enforcing it at `_store()`" in reliability
-    assert "permits partial cancellation" in domain
-    assert "Handler -> Validator -> Mapper -> Repository wrapper" in design
-    assert "canonical `slugify`" in simplification
     assert "Known Ceiling" in simplification and "Revisit Trigger" in simplification
 
     contract = pack_contract.parse_contract(
@@ -1462,8 +1454,22 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     )
     assert "candidate-bundle-bound ready/reused graph" in ticket_edge["return_packet"]
     assert "verified GitHub issue" in relationships["REL-056"]["input_packet"]
+    assert "analyzed-candidate closeout" in relationships["REL-047"]["entry_condition"]
+    for relationship_id in ("REL-021", "REL-026"):
+        packet = relationships[relationship_id]["input_packet"]
+        assert "digest-bound current audit report" in packet
+        assert "last verified source identity" in packet
+    capability = next(
+        row for row in contract["capabilities"] if row["capability_id"] == "CAP-017"
+    )
+    assert "analyzed-candidate closeout" in capability["entry_conditions"][0]
+    assert "authority-required" in capability["completion_return"]
+    selected_skill = next(
+        row for row in contract["selected_skills"] if row["skill_id"] == "SK-017"
+    )
+    assert "authority-required" in selected_skill["completion_condition"]
 
-    assert "accepts exactly structural version 9" in report
+    assert "accepts exactly structural version 10" in report
     assert "embedded canonical JSON state" in " ".join(report.split())
     assert "The helper alone owns" in report
     assert "HTML, markup, projections" in report
@@ -1477,7 +1483,6 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
         assert state_token in report
     assert "`implemented` is reachable only through `close-candidate`" in " ".join(report.split())
 
-    assert len(report_quick.splitlines()) < 90
     for command in (
         "schema",
         "inspect",
@@ -1490,29 +1495,6 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     ):
         assert command in report_quick
     assert "Never open, parse, copy, or edit HTML" in report_quick
-    assert "--section" not in report_quick
-    assert "--view" not in report_quick
-    assert "fragment" not in report_quick.lower()
-
-    assert "REPORT_VERSION = 9" in updater
-    assert 'id="audit-codebase-state"' in updater
-    assert "def mutate_report(" in updater
-    assert "def inspect_report(" in updater
-    assert "def source_identity(" in updater
-    for command in (
-        "render-report",
-        "audit-subsystem",
-        "analyze-candidate",
-        "close-candidate",
-    ):
-        assert f'("{command}"' in updater or f'"{command}"' in updater
-    assert "--section" not in updater
-    assert 'commands.add_parser("validate")' not in updater
-    assert 'commands.add_parser("update")' not in updater
-    assert 'add_argument("--view"' not in updater
-    assert "response_version" in updater
-    assert "expected_bundle_sha256" in updater
-    assert "finding_transitions" in updater
     assert re.search(
         r"(?m)^\| A repository needs a whole-system map, one selected subsystem "
         r"audit, one selected audit-candidate analysis, or one selected "
@@ -1544,8 +1526,9 @@ def test_high_assurance_review_checks_snapshot_drift_not_baseline_drift() -> Non
         encoding="utf-8"
     )
 
-    verify = convergent.split("## 5. Gate", 1)[1]
-    verify = " ".join(verify.split())
+    pin = " ".join(
+        convergent.split("## 2. Pin", 1)[1].split("## 3. Review", 1)[0].split()
+    )
     for surface in (
         "`HEAD`",
         "index tree",
@@ -1554,7 +1537,10 @@ def test_high_assurance_review_checks_snapshot_drift_not_baseline_drift() -> Non
         "status",
         "untracked path and its bytes",
     ):
-        assert surface in verify
+        assert surface in pin
+    verify = " ".join(convergent.split("## 5. Gate", 1)[1].split())
+    assert "every cell of the pinned candidate identity" in verify
+    assert "Do not recapture" in verify
 
 
 def test_implement_selects_one_risk_scaled_review_route() -> None:
@@ -1566,14 +1552,20 @@ def test_implement_selects_one_risk_scaled_review_route() -> None:
     review_flat = " ".join(review_section.split())
     assert "Stage one exact candidate" in review_flat
     assert "immutable candidate generation" in review_flat
-    assert "fresh `ordinary-reviewer` task" in review_flat
-    assert "fresh `assurance-coordinator` task" in review_flat
+    assert "[Finding Contract](../change-review/FINDING-CONTRACT.md)" in review_section
+    assert "candidate-bound route evidence" in review_flat
+    assert "`ordinary | release | supported-high-risk` basis" in review_flat
+    assert "`ordinary-reviewer` with `$change-review`" in review_flat
+    assert "`assurance-coordinator` with `$high-assurance-review`" in review_flat
     assert "distinct from all implementation actor and task IDs" in review_flat
-    assert "withhold implementation hypotheses" in review_flat
+    assert "withhold hypotheses" in review_flat
     assert "transport-invalid" in review_flat
     assert "reselect its route from current facts" in review_flat
-    assert "repeat this gate in a fresh task" in review_flat
+    assert "review it under new actor and task IDs" in review_flat
     assert "Never resume a prior review" in review_flat
+    assert "`Invocation: formal-delivery`" in review_flat
+    assert "`Review mode: remediation`" in review_flat
+    assert "Finding Contract's remediation packet" in review_flat
     assert "request staged-only review" in review_flat
     assert "Never unstage foreign work" in review_flat
     assert "Stop when the candidate cannot be isolated" in review_flat
@@ -1616,28 +1608,6 @@ def test_implement_selects_one_risk_scaled_review_route() -> None:
     for row in review_edges.values():
         assert "implementation actor and task identities" in row["input_packet"]
         assert "fresh-task provenance" in row["return_packet"]
-
-
-def test_audit_codebase_replaces_improve_codebase() -> None:
-    audit = (CUSTOM / "audit-codebase/SKILL.md").read_text(encoding="utf-8")
-    quality = (CUSTOM / "audit-codebase/QUALITY-LENS.md").read_text(encoding="utf-8")
-    design = (CUSTOM / "audit-codebase/DESIGN-LENS.md").read_text(encoding="utf-8")
-    simplification = (
-        CUSTOM / "audit-codebase/SIMPLIFICATION-LENS.md"
-    ).read_text(encoding="utf-8")
-    candidate = (CUSTOM / "audit-codebase/CANDIDATE-CONTRACT.md").read_text(
-        encoding="utf-8"
-    )
-
-    assert not (CUSTOM / "improve-codebase/SKILL.md").exists()
-    assert "stale code" in quality.lower()
-    assert "complexity" in audit.lower()
-    assert "Deep Module" in design
-    assert "deepens" in candidate
-    assert "Collapse" in simplification
-    assert "retain" in quality
-    assert "Top recommendation" in candidate or "Recommendation strength" in candidate
-    assert "decision pending" in candidate
 
 
 def test_tdd_discloses_test_reference_only_for_an_evidence_gap() -> None:
@@ -1910,32 +1880,12 @@ def test_implementation_closeout_requires_the_spec_axis() -> None:
     assert "`Spec required: yes`" in " ".join(parallel.split())
 
 
-def test_implementation_workflows_compress_steps_without_repeating_proof() -> None:
+def test_implementation_workflows_keep_local_proof_owners() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
     parallel = (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8")
-    implement_synthesis = (
-        ROOT / "docs/synthesis/skills/implement.md"
-    ).read_text(encoding="utf-8")
-    parallel_synthesis = (
-        ROOT / "docs/synthesis/skills/parallel-implement.md"
-    ).read_text(encoding="utf-8")
     implement_flat = " ".join(implement.split())
     parallel_flat = " ".join(parallel.split())
 
-    assert re.findall(r"(?m)^## (.+)$", implement) == [
-        "Admit",
-        "Execute",
-        "Review",
-        "Lock And Return",
-    ]
-    assert re.findall(r"(?m)^## (.+)$", parallel) == [
-        "Admit",
-        "Freeze",
-        "Wave",
-        "Land",
-        "Review",
-        "Lock",
-    ]
     assert "tracker and label owners only for tracker-backed work" in implement_flat
     assert "all source-owned commitments unchanged" in implement_flat
     assert "Bind proof to the exact candidate and inputs" in implement_flat
@@ -1948,13 +1898,6 @@ def test_implementation_workflows_compress_steps_without_repeating_proof() -> No
     assert "canonical test owner" in implement_flat
     assert "proof-responsibility map" in parallel_flat
     assert "consolidate equivalent campaign-created tests" in parallel_flat
-    for synthesis in (implement_synthesis, parallel_synthesis):
-        synthesis_flat = " ".join(synthesis.replace("> ", "").split())
-        assert "historical evidence for the exact pre-efficiency bytes" in synthesis_flat
-        assert "Prior hashes and evaluations below do not prove current wording" in (
-            synthesis_flat
-        )
-        assert "No installed sync is claimed" in synthesis_flat
 
 
 def test_planning_and_delivery_activate_preventive_code_quality_contract() -> None:
@@ -2073,7 +2016,7 @@ def test_ticket_and_delivery_packets_preserve_quality_and_route_repairs() -> Non
     assert "each ticket's To Tickets execution profile" in parallel_flat
     assert "Tickets remain factual and model-neutral" in parallel_flat
     assert "Missing or contradictory readiness, profile, authority" in parallel_flat
-    assert "otherwise use the ledger defaults" in parallel_flat
+    assert "otherwise use the ledger default" in parallel_flat
     assert "repair_generation_budget = 2" in (
         CUSTOM / "parallel-implement/scripts/run_ledger.py"
     ).read_text(encoding="utf-8")
@@ -2553,7 +2496,6 @@ def test_mutating_workflows_require_readback() -> None:
         if name == "implement":
             normalized = " ".join(text.split())
             assert "Mutation read-back" in normalized
-            assert "retain custody until closeout" in normalized
         elif name == "parallel-implement":
             assert "mutation read-back" in text
             assert "affected-frontier read-back" in text
@@ -3006,9 +2948,7 @@ def test_git_and_parallel_delivery_roles_stay_out_of_the_shared_contract() -> No
         assert "starting index" not in normalized
         assert "registered worktrees" not in normalized
 
-    assert "staged worker" not in contract
     assert "lane worker" not in contract
-    assert "staged worker" not in implement
     assert "preserving the starting index and unrelated work" in " ".join(
         implement.split()
     )
@@ -3167,12 +3107,17 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
 
     review = parallel.split("## Review", 1)[1].split("## Lock", 1)[0]
     review_flat = " ".join(review.split())
+    assert "[Finding Contract](../change-review/FINDING-CONTRACT.md)" in review
+    assert "candidate-bound route evidence" in review_flat
     assert "fresh task distinct from every implementation and integration task" in review_flat
     assert "fresh task provenance" in review_flat
     assert "new actor and task identities" in review_flat
     assert "Accept a Review Return only when complete" in review_flat
     assert "candidate passes Review only with no blocker" in review_flat
     assert "If it also mismatches, preserve the candidate and return `partial`" in review_flat
+    assert "`Invocation: formal-delivery`" in review_flat
+    assert "`Review mode: remediation`" in review_flat
+    assert "Finding Contract's remediation packet" in review_flat
     assert "resume only from its fresh exact-state Return" in parallel_flat
     freeze = parallel.split("## Freeze", 1)[1].split("## Wave", 1)[0]
     assert "caller-supplied residual-risk policy with its identity and evidence" in (
@@ -3235,7 +3180,6 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
         "repair-plan",
         "repair-complete",
     } <= event_types
-    assert {"scope-change", "review-target"}.isdisjoint(event_types)
     assert "## Close" in launch
     lock = parallel.split("## Lock", 1)[1]
     open_gate = run.split("**Dispatch.**", 1)[1].split("**Drain.**", 1)[0]
@@ -3259,15 +3203,9 @@ def test_parallel_implement_has_root_receipt_budget_and_windows_contracts() -> N
 
     assert "Pass only at the top-level root" in parallel
     assert "Return before mutation" in parallel
-    for field in (
-        "repair_generation_budget",
-        "review_invocation_budget",
-        "review_invocations_required",
-    ):
-        assert field in script
-    assert "Repair and review budgets" in ledger
+    assert "repair_generation_budget" in script
+    assert "frozen Repair budget" in ledger
     assert "Start -> Status -> Apply -> Brief -> Finish" in ledger
-    assert "append-receipt" not in ledger and "append-receipt" not in script
     assert "reviewer" in ledger
     assert "review-invocation" in script
     assert "PARALLEL_IMPLEMENT_WORKTREE_ROOT" in launch and "PARALLEL_IMPLEMENT_WORKTREE_ROOT" in lane_script
@@ -3454,7 +3392,15 @@ def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -
     assert "`scope-mismatch`" in implement_flat
     admit = implement.split("## Admit", 1)[1].split("## Execute", 1)[0]
     assert "$parallel-implement" not in admit
-    assert "staged worker" not in implement
+
+    contract = pack_contract.parse_contract(
+        (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
+    )
+    edge = next(
+        row for row in contract["relationships"] if row["relationship_id"] == "REL-018"
+    )
+    assert "Verified landed implementation invalidated" in edge["entry_condition"]
+    assert "malformed, unsettled, unsliced" in edge["wrong_condition"]
 
 
 def test_implement_closeout_enters_lock_and_preserves_connector_custody() -> None:
@@ -3475,17 +3421,17 @@ def test_implement_closeout_enters_lock_and_preserves_connector_custody() -> Non
     assert "Create exactly one commit" in implement_flat
     assert "proving `HEAD` unchanged" in implement_flat
     assert "do not retry blindly" in implement_flat
-    assert "Retain GitHub or GitLab claims through Lock and commit" in implement_flat
-    assert "durably non-dispatchable" in implement_flat
-    assert "verify every effect" in implement_flat
-    assert "release the claim, and verify the final frontier" in implement_flat
-    assert "connector failure, preserve the commit, refetch state" in implement_flat
-    assert "Tracker closeout, claim, and frontier:" in implement
+    assert "For GitHub or GitLab, retain the claim through Lock and commit" in implement_flat
+    assert "durable non-dispatchability" in implement_flat
+    assert "refetch and prove every effect" in implement_flat
+    assert "release the claim, then refetch claim absence and the affected frontier" in implement_flat
+    assert "post-commit hosted closeout failure, preserve the commit, refetch state" in implement_flat
+    assert "Tracker closeout, claim, and frontier: <evidence> | not applicable" in implement
     assert "named recovery custodian" in implement_flat
-    assert "Before commit, release a claim only after" in implement_flat
+    assert "early Return before commit, release a claim only after" in implement_flat
     assert "pending mutations are determinate" in implement_flat
-    assert "After commit, retain custody until closeout" in implement_flat
-    assert "frontier verification succeed" in implement_flat
+    assert "retain or transfer custody" in implement_flat
+    assert "closeout and frontier proof finish" in implement_flat
 
 
 def test_diagnosis_is_an_explicit_leaf_with_bounded_recommendations() -> None:

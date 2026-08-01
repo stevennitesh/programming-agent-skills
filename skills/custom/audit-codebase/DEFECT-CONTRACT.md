@@ -36,9 +36,8 @@ Required proof:
 ```
 
 When a Root Cause or shared owner is claimed, verify the causal owner and
-sibling entry paths. If that evidence is obtainable but unchecked, keep the
-subsystem incomplete; if unavailable within Audit authority, record the
-blocked causal claim as a gap.
+sibling entry paths. Apply `QUALITY-LENS.md`'s coverage-completion rule;
+unavailable required causal evidence is a gap.
 
 Assign severity only after admission:
 
@@ -73,5 +72,5 @@ Re-entry requirement:
 Verification may reproduce or disprove a claim read-only. Optional proof
 needing new infrastructure remains a gap rather than expanding the audit.
 If proportionate evidence is available within Audit authority but has not been
-checked, keep the subsystem `incomplete`; do not relabel unfinished work as a
-gap. Candidate grouping belongs only to `CANDIDATE-CONTRACT.md`.
+checked, it is unfinished work under Quality's completion rule, not a gap.
+Candidate grouping belongs only to `CANDIDATE-CONTRACT.md`.

@@ -15,10 +15,10 @@ import tempfile
 from typing import Any, NoReturn, Sequence
 
 
-REPORT_VERSION = 9
-STATE_VERSION = 1
+REPORT_VERSION = 10
+STATE_VERSION = 2
 RESPONSE_VERSION = 1
-MANIFEST_VERSION = 1
+MANIFEST_VERSION = 2
 
 _ID = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 _RUN_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
@@ -218,13 +218,13 @@ def _sha(value: object, label: str, *, absent: bool = False) -> str:
     return result
 
 
-def _load_json(path: Path, label: str) -> tuple[dict[str, Any], bytes]:
+def _load_json(path: Path, label: str) -> dict[str, Any]:
     try:
         data = path.resolve(strict=True).read_bytes()
         value = json.loads(data.decode("utf-8"))
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise ReportError(f"{label} is not readable UTF-8 JSON: {exc}") from exc
-    return _object(value, label), data
+    return _object(value, label)
 
 
 def _report_path(repo_root: Path, report: Path, *, must_exist: bool) -> tuple[Path, Path]:
@@ -282,7 +282,6 @@ def _normalize_subsystem(value: object, label: str) -> dict[str, Any]:
         "id",
         "system_id",
         "name",
-        "state",
         "source_identity",
         "purpose",
         "authority",
@@ -294,14 +293,11 @@ def _normalize_subsystem(value: object, label: str) -> dict[str, Any]:
         "owned_paths",
     }
     _strict(item, required, set(), label)
-    state = _text(item["state"], f"{label}.state")
-    if state not in _SUBSYSTEM_STATES:
-        raise ReportError(f"{label}.state is unsupported")
     return {
         "id": _identifier(item["id"], f"{label}.id"),
         "system_id": _identifier(item["system_id"], f"{label}.system_id"),
         "name": _text(item["name"], f"{label}.name"),
-        "state": state,
+        "state": "mapped",
         "source_identity": _text(item["source_identity"], f"{label}.source_identity"),
         "purpose": _text(item["purpose"], f"{label}.purpose"),
         "authority": _text_list(item["authority"], f"{label}.authority"),
@@ -802,7 +798,7 @@ def _normalize_analysis(value: object) -> dict[str, Any]:
     return result
 
 
-def _normalize_tracker(value: object, implementation_ready: bool) -> dict[str, Any]:
+def _normalize_tracker(value: object) -> dict[str, Any]:
     item = _object(value, "tracker")
     required = {"status", "issue_urls", "ready_issue_url"}
     optional = {
@@ -821,35 +817,65 @@ def _normalize_tracker(value: object, implementation_ready: bool) -> dict[str, A
         raise ReportError("tracker issue_urls must be absolute HTTPS URLs")
     if ready and re.fullmatch(r"https://[^\s]+", ready) is None:
         raise ReportError("tracker ready_issue_url must be an absolute HTTPS URL")
+    supplied_optional = set(item) - required
     if status in {"ready-graph", "reused"}:
-        if not implementation_ready or not urls or ready not in urls:
+        expected = {"candidate_bundle_sha256", "mutation_identity", "read_back"}
+        if supplied_optional != expected:
+            raise ReportError("ready tracker state has missing or foreign fields")
+        if not urls or ready not in urls:
             raise ReportError("ready tracker state requires one returned frontier issue")
-        _sha(item.get("candidate_bundle_sha256"), "tracker.candidate_bundle_sha256")
-        _text(item.get("mutation_identity"), "tracker.mutation_identity")
-        if item.get("read_back") is not True:
+        _sha(item["candidate_bundle_sha256"], "tracker.candidate_bundle_sha256")
+        _text(item["mutation_identity"], "tracker.mutation_identity")
+        if item["read_back"] is not True:
             raise ReportError("ready tracker state requires verified read-back")
     elif status == "recovery":
-        if not implementation_ready:
-            raise ReportError("tracker recovery requires an implementation-ready candidate")
-        _sha(item.get("candidate_bundle_sha256"), "tracker.candidate_bundle_sha256")
-        _text(item.get("mutation_identity"), "tracker.mutation_identity")
-        _text(item.get("observed_issue_state"), "tracker.observed_issue_state")
+        expected = {
+            "candidate_bundle_sha256",
+            "mutation_identity",
+            "observed_issue_state",
+        }
+        if supplied_optional != expected:
+            raise ReportError("tracker recovery has missing or foreign fields")
+        _sha(item["candidate_bundle_sha256"], "tracker.candidate_bundle_sha256")
+        _text(item["mutation_identity"], "tracker.mutation_identity")
+        _text(item["observed_issue_state"], "tracker.observed_issue_state")
     elif status == "authority-required":
-        if not implementation_ready:
-            raise ReportError("authority-required tracker state requires an implementation-ready candidate")
-        if any(item.get(name) for name in optional):
-            raise ReportError("authority-required tracker state forbids tracker mutation facts")
-    elif urls or ready:
-        raise ReportError("not-applicable tracker state forbids issues")
-    return {
+        if supplied_optional:
+            raise ReportError("authority-required tracker state forbids tracker mutation fields")
+    elif supplied_optional or urls or ready:
+        raise ReportError(
+            "not-applicable tracker state forbids tracker mutation fields or issues"
+        )
+    result = {
         "status": status,
         "issue_urls": urls,
         "ready_issue_url": ready,
-        "candidate_bundle_sha256": item.get("candidate_bundle_sha256", ""),
-        "mutation_identity": item.get("mutation_identity", ""),
-        "read_back": item.get("read_back", False),
-        "observed_issue_state": item.get("observed_issue_state", ""),
     }
+    return result | {name: item[name] for name in supplied_optional}
+
+
+def _normalize_finding_transitions(value: object, label: str) -> list[dict[str, str]]:
+    if not isinstance(value, list):
+        raise ReportError(f"{label} must be a list")
+    transitions: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for index, raw in enumerate(value):
+        item_label = f"{label}[{index}]"
+        item = _object(raw, item_label)
+        _strict(item, {"finding_id", "state", "reason"}, set(), item_label)
+        finding_id = _identifier(item["finding_id"], f"{item_label}.finding_id")
+        state = _text(item["state"], f"{item_label}.state")
+        if finding_id in seen or state not in _FINDING_STATES:
+            raise ReportError(f"{label} has duplicate or unsupported transition")
+        seen.add(finding_id)
+        transitions.append(
+            {
+                "finding_id": finding_id,
+                "state": state,
+                "reason": _text(item["reason"], f"{item_label}.reason"),
+            }
+        )
+    return sorted(transitions, key=lambda item: item["finding_id"])
 
 
 def _normalize_analyze_manifest(raw: dict[str, Any]) -> dict[str, Any]:
@@ -862,7 +888,6 @@ def _normalize_analyze_manifest(raw: dict[str, Any]) -> dict[str, Any]:
         "source_trace",
         "state",
         "analysis",
-        "implementation_ready",
         "tracker",
         "next_owner",
         "member_ids",
@@ -885,9 +910,8 @@ def _normalize_analyze_manifest(raw: dict[str, Any]) -> dict[str, Any]:
     }
     if state not in valid_pairs[validity]:
         raise ReportError("Analyze validity and state disagree")
-    ready = raw["implementation_ready"]
-    if not isinstance(ready, bool):
-        raise ReportError("Analyze implementation_ready must be boolean")
+    tracker = _normalize_tracker(raw["tracker"])
+    ready = tracker["status"] != "not-applicable"
     if ready and state != "analyzed":
         raise ReportError("only analyzed candidates may be implementation-ready")
     if ready and validity != "confirmed":
@@ -903,26 +927,9 @@ def _normalize_analyze_manifest(raw: dict[str, Any]) -> dict[str, Any]:
             raise ReportError("a next owner requires its reason and invocation")
     elif any(normalized_owner[name] for name in ("reason", "prerequisite", "invocation")):
         raise ReportError("next-owner details require one named skill")
-    raw_transitions = raw["finding_transitions"]
-    if not isinstance(raw_transitions, list):
-        raise ReportError("Analyze finding_transitions must be a list")
-    transitions: list[dict[str, str]] = []
-    seen_transitions: set[str] = set()
-    for index, value in enumerate(raw_transitions):
-        item = _object(value, f"Analyze finding_transition[{index}]")
-        _strict(item, {"finding_id", "state", "reason"}, set(), f"Analyze finding_transition[{index}]")
-        finding_id = _identifier(item["finding_id"], f"Analyze finding_transition[{index}].finding_id")
-        finding_state = _text(item["state"], f"Analyze finding_transition[{index}].state")
-        if finding_id in seen_transitions or finding_state not in _FINDING_STATES:
-            raise ReportError("Analyze has duplicate or unsupported finding transition")
-        seen_transitions.add(finding_id)
-        transitions.append(
-            {
-                "finding_id": finding_id,
-                "state": finding_state,
-                "reason": _text(item["reason"], f"Analyze finding_transition[{index}].reason"),
-            }
-        )
+    transitions = _normalize_finding_transitions(
+        raw["finding_transitions"], "Analyze finding_transitions"
+    )
     analysis = _normalize_analysis(raw["analysis"])
     readiness_fields = (
         "validity_reason",
@@ -941,9 +948,6 @@ def _normalize_analyze_manifest(raw: dict[str, Any]) -> dict[str, Any]:
         or any(not analysis[name] for name in readiness_fields)
     ):
         raise ReportError("implementation readiness requires a settled comparison and proof plan")
-    tracker = _normalize_tracker(raw["tracker"], ready)
-    if ready and tracker["status"] == "not-applicable":
-        raise ReportError("implementation-ready Analyze requires the To Tickets result")
     return {
         "version": MANIFEST_VERSION,
         "expected_report_sha256": _sha(
@@ -957,11 +961,10 @@ def _normalize_analyze_manifest(raw: dict[str, Any]) -> dict[str, Any]:
         "source_trace": _text_list(raw["source_trace"], "Analyze source_trace", allow_empty=False),
         "state": state,
         "analysis": analysis,
-        "implementation_ready": ready,
         "tracker": tracker,
         "next_owner": normalized_owner,
         "member_ids": _text_list(raw["member_ids"], "Analyze member_ids", allow_empty=False),
-        "finding_transitions": sorted(transitions, key=lambda item: item["finding_id"]),
+        "finding_transitions": transitions,
     }
 
 
@@ -1001,26 +1004,9 @@ def _normalize_close_manifest(raw: dict[str, Any]) -> dict[str, Any]:
     repairs = raw["repair_generations_used"]
     if not isinstance(repairs, int) or isinstance(repairs, bool) or repairs < 0:
         raise ReportError("Close repair_generations_used must be a non-negative integer")
-    transitions_raw = raw["finding_transitions"]
-    if not isinstance(transitions_raw, list):
-        raise ReportError("Close finding_transitions must be a list")
-    transitions: list[dict[str, str]] = []
-    seen: set[str] = set()
-    for index, value in enumerate(transitions_raw):
-        item = _object(value, f"finding_transition[{index}]")
-        _strict(item, {"finding_id", "state", "reason"}, set(), f"finding_transition[{index}]")
-        finding_id = _identifier(item["finding_id"], f"finding_transition[{index}].finding_id")
-        state = _text(item["state"], f"finding_transition[{index}].state")
-        if finding_id in seen or state not in _FINDING_STATES:
-            raise ReportError("Close has duplicate or unsupported finding transition")
-        seen.add(finding_id)
-        transitions.append(
-            {
-                "finding_id": finding_id,
-                "state": state,
-                "reason": _text(item["reason"], f"finding_transition[{index}].reason"),
-            }
-        )
+    transitions = _normalize_finding_transitions(
+        raw["finding_transitions"], "Close finding_transitions"
+    )
     commit = _text(raw["commit_identity"], "Close commit_identity")
     tree = _text(raw["commit_tree_identity"], "Close commit_tree_identity")
     if _GIT_ID.fullmatch(commit) is None or _GIT_ID.fullmatch(tree) is None:
@@ -1060,7 +1046,7 @@ def _normalize_close_manifest(raw: dict[str, Any]) -> dict[str, Any]:
             raw["tracker_mutation_identity"], "Close tracker_mutation_identity"
         ),
         "ready_issue_url": ready_issue_url,
-        "finding_transitions": sorted(transitions, key=lambda item: item["finding_id"]),
+        "finding_transitions": transitions,
     }
 
 
@@ -1087,6 +1073,170 @@ def _validate_state(state: dict[str, Any]) -> None:
         raise ReportError(f"report state requires version {STATE_VERSION}")
     if state["map_state"] not in _MAP_STATES or _RUN_ID.fullmatch(state["run_id"]) is None:
         raise ReportError("report state has invalid map or run state")
+    for field in ("systems", "subsystems", "excluded", "findings", "candidates", "history"):
+        if not isinstance(state[field], list):
+            raise ReportError(f"report state {field} must be a list")
+    for index, system in enumerate(state["systems"]):
+        item = _object(system, f"report system[{index}]")
+        _strict(item, {"id", "name"}, set(), f"report system[{index}]")
+    subsystem_fields = {
+        "id",
+        "system_id",
+        "name",
+        "state",
+        "source_identity",
+        "purpose",
+        "authority",
+        "callers",
+        "responsibility",
+        "dependencies",
+        "interfaces",
+        "proof_seams",
+        "owned_paths",
+    }
+    for index, subsystem in enumerate(state["subsystems"]):
+        item = _object(subsystem, f"report subsystem[{index}]")
+        _strict(item, subsystem_fields, {"audit"}, f"report subsystem[{index}]")
+        if item["state"] not in _SUBSYSTEM_STATES:
+            raise ReportError("report state has unsupported subsystem state")
+        if not isinstance(item["dependencies"], list):
+            raise ReportError("report state subsystem dependencies must be a list")
+        for dep_index, dependency in enumerate(item["dependencies"]):
+            _strict(
+                _object(dependency, f"report dependency[{dep_index}]"),
+                {"id", "evidence"},
+                set(),
+                f"report dependency[{dep_index}]",
+            )
+        if "audit" not in item:
+            if item["state"] != "mapped":
+                raise ReportError("incomplete or audited subsystem requires Audit facts")
+            continue
+        if item["state"] == "mapped":
+            raise ReportError("mapped subsystem forbids Audit facts")
+        audit = _object(item["audit"], f"report subsystem[{index}].audit")
+        _strict(
+            audit,
+            {
+                "source_trace",
+                "lenses",
+                "coverage",
+                "evidence_limits",
+                "recommendation",
+                "history",
+                "skill_links",
+            },
+            set(),
+            f"report subsystem[{index}].audit",
+        )
+        if _normalize_source_trace(audit["source_trace"]) != audit["source_trace"]:
+            raise ReportError("report state has noncanonical Source Trace")
+        if _normalize_lenses(audit["lenses"], item["state"]) != audit["lenses"]:
+            raise ReportError("report state has noncanonical lens coverage")
+        if _skill_links(audit["skill_links"]) != audit["skill_links"]:
+            raise ReportError("report state has noncanonical skill links")
+        if not isinstance(audit["history"], list):
+            raise ReportError("report state Audit history must be a list")
+    for index, excluded_item in enumerate(state["excluded"]):
+        _strict(
+            _object(excluded_item, f"report exclusion[{index}]"),
+            {"path", "reason"},
+            set(),
+            f"report exclusion[{index}]",
+        )
+    for index, finding in enumerate(state["findings"]):
+        item = _object(finding, f"report finding[{index}]")
+        if "subsystem_id" not in item or not isinstance(item.get("history"), list):
+            raise ReportError("report state finding requires subsystem ownership and history")
+        current = {
+            key: value
+            for key, value in item.items()
+            if key not in {"subsystem_id", "history"}
+        }
+        normalized = _normalize_finding(
+            current,
+            item["subsystem_id"],
+            f"report finding[{index}]",
+        )
+        normalized["history"] = item["history"]
+        if normalized != item:
+            raise ReportError("report state has noncanonical finding facts")
+    candidate_fields = {
+        "id",
+        "subsystem_id",
+        "title",
+        "primary_class",
+        "member_ids",
+        "files_modules",
+        "supported_behavior",
+        "problem",
+        "evidence",
+        "direction",
+        "benefit",
+        "safety_floors",
+        "required_proof",
+        "decision_questions",
+        "strength",
+        "strength_reason",
+        "state",
+        "current_source_validity",
+        "last_verified_identity",
+        "source_trace",
+        "analysis",
+        "tracker",
+        "pickup",
+        "history",
+    }
+    implementation_fields = {
+        "commit_identity",
+        "commit_tree_identity",
+        "current_source_result",
+        "accepted_proof",
+        "skipped_checks",
+        "formal_review_decision",
+        "formal_review_provenance",
+        "repair_generations_used",
+        "changed_scope",
+        "residual_risk",
+        "last_verified_identity",
+    }
+    for index, candidate in enumerate(state["candidates"]):
+        item = _object(candidate, f"report candidate[{index}]")
+        _strict(
+            item,
+            candidate_fields,
+            {"next_owner", "implementation"},
+            f"report candidate[{index}]",
+        )
+        if not isinstance(item["history"], list):
+            raise ReportError("report state candidate history must be a list")
+        if _normalize_tracker(item["tracker"]) != item["tracker"]:
+            raise ReportError("report state has noncanonical tracker facts")
+        if item["analysis"]:
+            if _normalize_analysis(item["analysis"]) != item["analysis"]:
+                raise ReportError("report state has noncanonical candidate analysis")
+        elif item["state"] != "presented":
+            raise ReportError("non-presented candidate requires analysis")
+        if "next_owner" in item:
+            _strict(
+                _object(item["next_owner"], f"report candidate[{index}].next_owner"),
+                {"skill", "reason", "prerequisite", "invocation"},
+                set(),
+                f"report candidate[{index}].next_owner",
+            )
+        elif item["state"] != "presented":
+            raise ReportError("non-presented candidate requires next-owner facts")
+        if "implementation" in item:
+            _strict(
+                _object(item["implementation"], f"report candidate[{index}].implementation"),
+                implementation_fields,
+                set(),
+                f"report candidate[{index}].implementation",
+            )
+            if item["state"] != "implemented" or item["pickup"]:
+                raise ReportError("implementation facts require a closed candidate")
+        elif item["state"] == "implemented":
+            raise ReportError("implemented candidate requires implementation facts")
     system_ids = {item["id"] for item in state["systems"]}
     subsystem_ids = {item["id"] for item in state["subsystems"]}
     if len(system_ids) != len(state["systems"]) or len(subsystem_ids) != len(state["subsystems"]):
@@ -1143,7 +1293,9 @@ def _dl(fields: Sequence[tuple[str, object]]) -> str:
         elif isinstance(value, bool):
             rendered = "yes" if value else "no"
         else:
-            rendered = escape(str(value or "None recorded"))
+            rendered = escape(
+                "None recorded" if value is None or value == "" else str(value)
+            )
         parts.append(f"<dt>{escape(label)}</dt><dd>{rendered}</dd>")
     return "<dl>" + "".join(parts) + "</dl>"
 
@@ -1457,27 +1609,47 @@ def _upsert(records: list[dict[str, Any]], incoming: list[dict[str, Any]], label
             prior = records[positions[item["id"]]]
             if prior["subsystem_id"] != item["subsystem_id"]:
                 raise ReportError(f"{label} {item['id']!r} cannot change subsystem")
-            history = list(prior.get("history", []))
-            history.append({key: value for key, value in prior.items() if key != "history"})
-            item["history"] = history
+            item["history"] = _prior_record_history(prior)
             records[positions[item["id"]]] = item
         else:
             records.append(item)
     records.sort(key=lambda item: item["id"])
 
 
-def _reduce_audit(state: dict[str, Any], packet: dict[str, Any], report: Path) -> dict[str, Any]:
+def _prior_record_history(record: dict[str, Any]) -> list[dict[str, Any]]:
+    return list(record["history"]) + [
+        {key: value for key, value in record.items() if key != "history"}
+    ]
+
+
+def _reduce_audit(state: dict[str, Any], packet: dict[str, Any]) -> dict[str, Any]:
     subsystem = next(
         (item for item in state["subsystems"] if item["id"] == packet["subsystem_id"]),
         None,
     )
     if subsystem is None:
         raise ReportError(f"subsystem not found: {packet['subsystem_id']}")
+    if any(
+        candidate["subsystem_id"] == packet["subsystem_id"]
+        and candidate["state"] == "analyzed"
+        for candidate in state["candidates"]
+    ):
+        raise ReportError("Audit may not rewrite a subsystem with an analyzed candidate")
+    audit_history = list(subsystem["audit"]["history"]) if "audit" in subsystem else []
     previous = {
         "state": subsystem["state"],
         "source_identity": subsystem["source_identity"],
-        "audit": subsystem.get("audit"),
+        "audit": (
+            {
+                key: value
+                for key, value in subsystem["audit"].items()
+                if key != "history"
+            }
+            if "audit" in subsystem
+            else None
+        ),
     }
+    audit_history.append(previous)
     subsystem["state"] = packet["state"]
     subsystem["source_identity"] = packet["source_identity"]
     subsystem["audit"] = {
@@ -1486,7 +1658,8 @@ def _reduce_audit(state: dict[str, Any], packet: dict[str, Any], report: Path) -
         "coverage": packet["coverage"],
         "evidence_limits": packet["evidence_limits"],
         "recommendation": packet["recommendation"],
-        "history": [previous],
+        "history": audit_history,
+        "skill_links": packet["skill_links"],
     }
     existing_findings = {item["id"]: item for item in state["findings"]}
     lifecycle_changes = sorted(
@@ -1515,7 +1688,8 @@ def _reduce_audit(state: dict[str, Any], packet: dict[str, Any], report: Path) -
             "Audit may only present new candidate IDs; Analyze owns existing candidates: "
             + ", ".join(repeated_candidates)
         )
-    _upsert(state["candidates"], packet["candidates"], "candidate")
+    state["candidates"].extend(packet["candidates"])
+    state["candidates"].sort(key=lambda item: item["id"])
     state["next_selection"] = (
         "Select one presented candidate to Analyze."
         if packet["candidates"]
@@ -1554,9 +1728,10 @@ def _reduce_analyze(state: dict[str, Any], packet: dict[str, Any], report: Path)
     prior_members = set(candidate["member_ids"])
     if packet["current_source_validity"] == "confirmed" and packet["member_ids"] != candidate["member_ids"]:
         raise ReportError("confirmed Analyze must preserve the exact candidate boundary")
-    if packet["current_source_validity"] == "changed" and packet["implementation_ready"]:
-        raise ReportError("changed candidate evidence requires a new Analyze selection before publication")
     tracker = packet["tracker"]
+    tracker_published = tracker["status"] != "not-applicable"
+    if packet["current_source_validity"] == "changed" and tracker_published:
+        raise ReportError("changed candidate evidence requires a new Analyze selection before publication")
     if tracker["status"] in {"ready-graph", "reused", "recovery"}:
         if tracker["candidate_bundle_sha256"] != candidate_digest:
             raise ReportError("tracker candidate bundle does not match the selected candidate")
@@ -1569,18 +1744,7 @@ def _reduce_analyze(state: dict[str, Any], packet: dict[str, Any], report: Path)
             {"state": finding["state"], "reason": transition["reason"]}
         )
         finding["state"] = transition["state"]
-    history = list(candidate["history"])
-    history.append(
-        {
-            "state": candidate["state"],
-            "current_source_validity": candidate["current_source_validity"],
-            "last_verified_identity": candidate["last_verified_identity"],
-            "analysis": candidate["analysis"],
-            "tracker": candidate["tracker"],
-            "pickup": candidate["pickup"],
-        }
-    )
-    candidate["history"] = history
+    candidate["history"] = _prior_record_history(candidate)
     candidate["member_ids"] = packet["member_ids"]
     candidate["current_source_validity"] = packet["current_source_validity"]
     candidate["last_verified_identity"] = packet["last_verified_identity"]
@@ -1588,7 +1752,6 @@ def _reduce_analyze(state: dict[str, Any], packet: dict[str, Any], report: Path)
     candidate["state"] = packet["state"]
     candidate["analysis"] = packet["analysis"]
     candidate["tracker"] = packet["tracker"]
-    candidate["implementation_ready"] = packet["implementation_ready"]
     if packet["state"] in {"disproved"}:
         candidate["pickup"] = ""
     elif tracker["status"] in {"ready-graph", "reused"}:
@@ -1613,7 +1776,6 @@ def _reduce_analyze(state: dict[str, Any], packet: dict[str, Any], report: Path)
     else:
         candidate["pickup"] = packet["next_owner"]["invocation"]
     candidate["next_owner"] = packet["next_owner"]
-    candidate["candidate_bundle_sha256"] = candidate_digest
     state["next_selection"] = (
         candidate["pickup"] if candidate["pickup"] else "Select another report item."
     )
@@ -1675,20 +1837,23 @@ def _reduce_close(
         raise ReportError("Close candidate or subsystem identity does not match")
     if candidate["state"] != "analyzed":
         raise ReportError("Close requires an analyzed candidate")
-    tracker = candidate.get("tracker", {})
+    tracker = candidate["tracker"]
     if (
-        candidate.get("implementation_ready") is not True
-        or tracker.get("status") not in {"ready-graph", "reused"}
-        or tracker.get("read_back") is not True
+        tracker["status"] not in {"ready-graph", "reused"}
+        or tracker["read_back"] is not True
     ):
         raise ReportError("Close requires a read-back-verified implementation-ready tracker frontier")
-    if packet["candidate_bundle_sha256"] != candidate.get("candidate_bundle_sha256"):
+    candidate_digest = _candidate_bundle_sha256(state, candidate)
+    if (
+        packet["candidate_bundle_sha256"] != candidate_digest
+        or tracker["candidate_bundle_sha256"] != candidate_digest
+    ):
         raise ReportError("Close candidate bundle identity does not match")
-    if packet["tracker_mutation_identity"] != tracker.get("mutation_identity"):
+    if packet["tracker_mutation_identity"] != tracker["mutation_identity"]:
         raise ReportError("Close tracker mutation identity does not match")
-    if packet["ready_issue_url"] != tracker.get("ready_issue_url"):
+    if packet["ready_issue_url"] != tracker["ready_issue_url"]:
         raise ReportError("Close Ready issue identity does not match")
-    if packet["last_verified_identity"] != candidate.get("last_verified_identity"):
+    if packet["last_verified_identity"] != candidate["last_verified_identity"]:
         raise ReportError("Close last verified identity does not match Analyze")
     _verify_commit(
         root,
@@ -1711,13 +1876,7 @@ def _reduce_close(
             {"state": finding["state"], "reason": transition["reason"]}
         )
         finding["state"] = transition["state"]
-    candidate["history"].append(
-        {
-            "state": candidate["state"],
-            "analysis": candidate["analysis"],
-            "tracker": candidate["tracker"],
-        }
-    )
+    candidate["history"] = _prior_record_history(candidate)
     candidate["state"] = "implemented"
     candidate["pickup"] = ""
     candidate["implementation"] = {
@@ -1755,7 +1914,7 @@ def _prepare(
     report: Path,
     manifest_path: Path,
 ) -> dict[str, Any]:
-    raw, _ = _load_json(manifest_path, f"{command} manifest")
+    raw = _load_json(manifest_path, f"{command} manifest")
     root, canonical = _report_path(
         repo_root,
         report,
@@ -1775,7 +1934,7 @@ def _prepare(
             raise ReportError("new Map report requires expected_report_sha256 absent")
         source_bytes = current_bytes if canonical.exists() else None
         state = _normalize_map_manifest(raw, root, canonical)
-        normalized = raw | {"expected_report_sha256": expected}
+        normalized = {"expected_report_sha256": expected}
     else:
         root, canonical, source_bytes, state = _load_report(root, canonical)
         if command == "audit-subsystem":
@@ -1790,9 +1949,7 @@ def _prepare(
             raise ReportError("report collision")
         state = json.loads(json.dumps(state))
         if command == "audit-subsystem":
-            state = _reduce_audit(state, normalized, canonical)
-            subsystem = next(item for item in state["subsystems"] if item["id"] == normalized["subsystem_id"])
-            subsystem["audit"]["skill_links"] = normalized["skill_links"]
+            state = _reduce_audit(state, normalized)
         elif command == "analyze-candidate":
             state = _reduce_analyze(state, normalized, canonical)
         else:
@@ -2023,10 +2180,10 @@ def inspect_report(
         )
         if candidate["state"] not in allowed:
             raise ReportError(f"candidate state {candidate['state']!r} is not admissible for {objective}")
-        if objective == "close" and (
-            candidate.get("implementation_ready") is not True
-            or candidate.get("tracker", {}).get("status") not in {"ready-graph", "reused"}
-        ):
+        if objective == "close" and candidate["tracker"]["status"] not in {
+            "ready-graph",
+            "reused",
+        }:
             raise ReportError("candidate has no implementation-ready tracker frontier for Close")
         result["candidate"] = candidate
         result["candidate_bundle_sha256"] = _candidate_bundle_sha256(state, candidate)
@@ -2097,7 +2254,6 @@ def source_identity(
     *,
     repo_root: Path,
     path_list: Path,
-    git_object: str | None = None,
 ) -> dict[str, Any]:
     root = repo_root.resolve(strict=True)
     try:
@@ -2109,22 +2265,12 @@ def source_identity(
         raise ReportError("path list is empty")
     digest = hashlib.sha256(b"audit-codebase-source-v1\0")
     for path in paths:
-        if git_object:
-            process = subprocess.run(
-                ["git", "-c", f"safe.directory={root}", "show", f"{git_object}:{path}"],
-                cwd=root,
-                capture_output=True,
-            )
-            if process.returncode != 0:
-                raise ReportError(f"cannot read {path!r} from Git object {git_object!r}")
-            data = process.stdout
-        else:
-            candidate = (root / Path(*PurePosixPath(path).parts)).resolve(strict=True)
-            try:
-                candidate.relative_to(root)
-            except ValueError as exc:
-                raise ReportError(f"path escapes repository: {path}") from exc
-            data = candidate.read_bytes()
+        candidate = (root / Path(*PurePosixPath(path).parts)).resolve(strict=True)
+        try:
+            candidate.relative_to(root)
+        except ValueError as exc:
+            raise ReportError(f"path escapes repository: {path}") from exc
+        data = candidate.read_bytes()
         digest.update(path.encode("utf-8"))
         digest.update(b"\0")
         digest.update(_digest(data).encode("ascii"))
@@ -2133,8 +2279,7 @@ def source_identity(
         "response_version": RESPONSE_VERSION,
         "command": "source-identity",
         "ok": True,
-        "mode": "git-object" if git_object else "live-worktree",
-        "git_object": git_object,
+        "mode": "live-worktree",
         "paths": paths,
         "identity": digest.hexdigest(),
     }
@@ -2154,7 +2299,6 @@ def _schema(objective: str) -> dict[str, Any]:
                     "id": "",
                     "system_id": "",
                     "name": "",
-                    "state": "mapped",
                     "source_identity": "",
                     "purpose": "",
                     "authority": [],
@@ -2236,7 +2380,6 @@ def _schema(objective: str) -> dict[str, Any]:
                 "residual_risk": "",
                 "decision_status": "none",
             },
-            "implementation_ready": False,
             "tracker": {
                 "status": "not-applicable",
                 "issue_urls": [],
@@ -2299,7 +2442,6 @@ def _parser() -> argparse.ArgumentParser:
     identity = commands.add_parser("source-identity")
     identity.add_argument("--repo-root", type=Path, required=True)
     identity.add_argument("--path-list", type=Path, required=True)
-    identity.add_argument("--git-object")
 
     inventory_command = commands.add_parser("inventory")
     inventory_command.add_argument("--repo-root", type=Path, required=True)
@@ -2333,7 +2475,6 @@ def main(argv: Sequence[str] | None = None) -> int:
             result = source_identity(
                 repo_root=args.repo_root,
                 path_list=args.path_list,
-                git_object=args.git_object,
             )
         elif command == "inventory":
             result = inventory(repo_root=args.repo_root)

@@ -50,8 +50,8 @@ Required proof:
 
 Materially different environments, datasets, builds, or methods become gaps.
 Noisy or under-sampled results support only the uncertainty they resolve. If
-the required measurement is available but unfinished, keep the class and
-subsystem `incomplete`.
+required measurement is available but unfinished, apply `QUALITY-LENS.md`'s
+coverage-completion rule.
 
 ## Bound
 

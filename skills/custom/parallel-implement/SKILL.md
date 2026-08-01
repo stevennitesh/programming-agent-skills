@@ -53,7 +53,7 @@ state-boundary matrix. Missing or contradictory readiness, profile, authority,
 closure, matrix, or proof ownership is a graph defect; return the complete
 repair packet instead of reconstructing its owner's judgment.
 
-Freeze supplied Repair and review budgets; otherwise use the ledger defaults.
+Freeze the supplied Repair budget; otherwise use the ledger default.
 
 Start one canonical stream through
 [RUN-LEDGER.md](references/RUN-LEDGER.md) and `scripts/run_ledger.py`.
@@ -145,13 +145,17 @@ Pin one immutable candidate only when all implementation and integration tasks
 are idle, the integration worktree is clean, every child disposition is
 complete, and final current-`HEAD` proof passes.
 
-Select `ordinary-reviewer` with `$change-review` for an ordinary candidate or
+Apply `$change-review`'s
+[Finding Contract](../change-review/FINDING-CONTRACT.md) supported-risk
+predicate to the pinned candidate. Select `ordinary-reviewer` with
+`$change-review` for an ordinary candidate or
 `assurance-coordinator` with `$high-assurance-review` for a release candidate
-or supported high-risk diff or PR. Launch it through the task-lane contract as
-a fresh task distinct from every implementation and integration task. Supply
-only `Spec required: yes`, the implementation and integration actor and task
-IDs, Charter, Source Trace, fixed point, candidate, proof, skips, risk, and
-contradictory evidence. Withhold
+or supported high-risk diff or PR. Record candidate-bound route evidence with
+its source, `ordinary | release | supported-high-risk` basis, and trigger when
+applicable. Launch through the task-lane contract as a fresh task distinct from
+every implementation and integration task. Supply only `Spec required: yes`,
+the implementation and integration actor and task IDs, Charter, Source Trace,
+fixed point, candidate, proof, skips, risk, and contradictory evidence. Withhold
 implementation hypotheses, expected conclusions, partial findings, and
 terminal cues.
 
@@ -167,7 +171,7 @@ candidate and return `partial`.
 **Repair.** Review grants no mutation. Preserve and return the complete blocking
 set for caller decision. Open Repair only when caller-admitted IDs equal every
 blocking ID, every blocker is `automatic-in-scope` and individually
-Charter-preserving, and the complete batch fits both frozen budgets. Return any
+Charter-preserving, and the complete batch fits the frozen budget. Return any
 mixed, partial, speculative, decision-required, commitment-changing, or
 over-budget set intact with its exact gap.
 
@@ -175,7 +179,9 @@ Delegate one serial Repair worker in the integration checkout. Use the original
 worker's agent ID for a localized finding; use `serial-integrator` for
 cross-worker findings. Every admitted successor gets identity-matched proof, a
 route selected from its actual risk, and formal review with new actor and task
-identities. Never resume a prior reviewer or assurance run.
+identities. Send `Invocation: formal-delivery`, `Review mode: remediation`, and
+the Finding Contract's remediation packet. Never resume a prior reviewer or
+assurance run.
 
 ## Lock
 

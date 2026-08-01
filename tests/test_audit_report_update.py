@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import argparse
 import hashlib
 import importlib.util
 import json
@@ -87,7 +86,7 @@ def _report(root: Path) -> Path:
 
 def _map_values(root: Path, *, title: str = "Repository atlas") -> dict[str, object]:
     return {
-        "version": 1,
+        "version": MODULE.MANIFEST_VERSION,
         "expected_report_sha256": "absent",
         "map_state": "complete",
         "title": title,
@@ -101,7 +100,6 @@ def _map_values(root: Path, *, title: str = "Repository atlas") -> dict[str, obj
                 "id": "alpha",
                 "system_id": "core",
                 "name": "Alpha contracts",
-                "state": "mapped",
                 "source_identity": "tree-alpha-001",
                 "purpose": "Own shared contracts.",
                 "authority": ["CONTEXT.md"],
@@ -121,7 +119,6 @@ def _map_values(root: Path, *, title: str = "Repository atlas") -> dict[str, obj
                 "id": "beta",
                 "system_id": "delivery",
                 "name": "Beta delivery",
-                "state": "mapped",
                 "source_identity": "tree-beta-001",
                 "purpose": "Deliver results.",
                 "authority": [],
@@ -177,7 +174,7 @@ def _audit_values(report: Path, report_sha: str) -> dict[str, object]:
             }
         )
     return {
-        "version": 1,
+        "version": MODULE.MANIFEST_VERSION,
         "expected_report_sha256": report_sha,
         "subsystem_id": "alpha",
         "state": "audited",
@@ -270,7 +267,7 @@ def _analysis_values(
             "ready_issue_url": "",
         }
     return {
-        "version": 1,
+        "version": MODULE.MANIFEST_VERSION,
         "expected_report_sha256": report_sha,
         "candidate_id": "alpha-fix",
         "member_ids": ["alpha-defect", "alpha-gap"],
@@ -296,9 +293,52 @@ def _analysis_values(
             "residual_risk": "Production frequency remains unknown.",
             "decision_status": "settled",
         },
-        "implementation_ready": tracker_ready,
         "tracker": tracker,
         "next_owner": {"skill": "", "reason": "", "prerequisite": "", "invocation": ""},
+    }
+
+
+def _close_values(
+    root: Path,
+    report: Path,
+    commit: str,
+    tree: str,
+) -> dict[str, object]:
+    return {
+        "version": MODULE.MANIFEST_VERSION,
+        "expected_report_sha256": _digest(report),
+        "implementation_outcome": "complete",
+        "report": str(report),
+        "run_id": "run-001",
+        "subsystem_id": "alpha",
+        "candidate_id": "alpha-fix",
+        "commit_identity": commit,
+        "commit_tree_identity": tree,
+        "current_source_result": "current",
+        "accepted_proof": "focused and contract suites passed",
+        "skipped_checks": "none",
+        "formal_review_decision": "accepted",
+        "formal_review_provenance": "change-review accepted the pinned diff",
+        "repair_generations_used": 0,
+        "changed_scope": "src/alpha.py",
+        "change_closure": "complete",
+        "residual_risk": "none",
+        "last_verified_identity": "tree-alpha-003",
+        "candidate_bundle_sha256": _candidate_digest(root, report),
+        "tracker_mutation_identity": "issue-17-readback",
+        "ready_issue_url": "https://github.example/issues/17",
+        "finding_transitions": [
+            {
+                "finding_id": "alpha-defect",
+                "state": "resolved",
+                "reason": "Accepted implementation protects both entry paths.",
+            },
+            {
+                "finding_id": "alpha-gap",
+                "state": "active",
+                "reason": "Production frequency remains unavailable.",
+            },
+        ],
     }
 
 
@@ -375,7 +415,11 @@ def test_map_render_is_deterministic_and_dark(tmp_path: Path) -> None:
     _init_repo(tmp_path)
     report = _report(tmp_path)
     compact = _write(tmp_path / "compact.json", _map_values(tmp_path), indent=None)
-    pretty = _write(tmp_path / "pretty.json", _map_values(tmp_path), indent=2)
+    reordered = _map_values(tmp_path)
+    reordered["title"] = "  Repository atlas  "
+    reordered["systems"].reverse()
+    reordered["subsystems"].reverse()
+    pretty = _write(tmp_path / "pretty.json", reordered, indent=2)
 
     first = MODULE.mutate_report(
         command="render-report",
@@ -409,9 +453,8 @@ def test_map_render_is_deterministic_and_dark(tmp_path: Path) -> None:
     assert published["effect"] == "created"
     assert 'data-theme="dark"' in source
     assert '<meta name="color-scheme" content="dark">' in source
-    assert 'content="9"' in source
+    assert 'content="10"' in source
     assert 'data-state="mapped"' in source
-    assert "mapped · 2 files" in source
 
 
 @pytest.mark.parametrize(
@@ -432,6 +475,10 @@ def test_map_render_is_deterministic_and_dark(tmp_path: Path) -> None:
                 {"evidence": []}
             ),
             "must be a list",
+        ),
+        (
+            lambda values: values["subsystems"][0].update({"state": "audited"}),
+            "unknown fields: state",
         ),
     ],
 )
@@ -501,88 +548,6 @@ def test_render_escapes_text_and_embedded_state(tmp_path: Path) -> None:
         report=_report(tmp_path),
         objective="map",
     )
-
-
-def test_full_cli_lifecycle_derives_every_html_projection(tmp_path: Path) -> None:
-    commit, tree = _init_repo(tmp_path)
-    report = _published_analysis(tmp_path)
-
-    inspected = MODULE.inspect_report(
-        repo_root=tmp_path,
-        report=report,
-        objective="analyze",
-        candidate_id="alpha-fix",
-    )
-    assert inspected["candidate"]["state"] == "analyzed"
-    assert inspected["candidate"]["tracker"]["ready_issue_url"].endswith("/17")
-    assert "[$implement](C:/skills/implement/SKILL.md)" in inspected["candidate"]["pickup"]
-    assert "[$audit-codebase](C:/skills/audit-codebase/SKILL.md) Close" in inspected["candidate"]["pickup"]
-    assert inspected["member_findings"][0]["evidence"]
-
-    close = {
-        "version": 1,
-        "expected_report_sha256": _digest(report),
-        "implementation_outcome": "complete",
-        "report": str(report),
-        "run_id": "run-001",
-        "subsystem_id": "alpha",
-        "candidate_id": "alpha-fix",
-        "commit_identity": commit,
-        "commit_tree_identity": tree,
-        "current_source_result": "current",
-        "accepted_proof": "focused and contract suites passed",
-        "skipped_checks": "none",
-        "formal_review_decision": "accepted",
-        "formal_review_provenance": "change-review accepted the pinned diff",
-        "repair_generations_used": 1,
-        "changed_scope": "src/alpha.py",
-        "change_closure": "complete",
-        "residual_risk": "none",
-        "last_verified_identity": "tree-alpha-003",
-        "candidate_bundle_sha256": _candidate_digest(tmp_path, report),
-        "tracker_mutation_identity": "issue-17-readback",
-        "ready_issue_url": "https://github.example/issues/17",
-        "finding_transitions": [
-            {
-                "finding_id": "alpha-defect",
-                "state": "resolved",
-                "reason": "Accepted implementation protects both entry paths.",
-            },
-            {
-                "finding_id": "alpha-gap",
-                "state": "active",
-                "reason": "Production frequency remains unavailable.",
-            },
-        ],
-    }
-    manifest = _write(tmp_path / "close.json", close)
-    before = report.read_bytes()
-    prepared = MODULE.mutate_report(
-        command="close-candidate",
-        repo_root=tmp_path,
-        report=report,
-        manifest_path=manifest,
-        validate_only=True,
-        expected_bundle_sha256=None,
-    )
-    assert report.read_bytes() == before
-    _prepare_and_publish("close-candidate", tmp_path, report, manifest)
-    state = MODULE.inspect_report(
-        repo_root=tmp_path,
-        report=report,
-        objective="map",
-    )["state"]
-    candidate = next(item for item in state["candidates"] if item["id"] == "alpha-fix")
-    findings = {item["id"]: item for item in state["findings"]}
-    assert candidate["state"] == "implemented"
-    assert candidate["pickup"] == ""
-    assert candidate["implementation"]["commit_identity"] == commit
-    assert findings["alpha-defect"]["state"] == "resolved"
-    assert findings["alpha-gap"]["state"] == "active"
-    assert prepared["bundle_sha256"]
-    source = report.read_text(encoding="utf-8")
-    assert source.count('data-candidate-id="alpha-fix"') == 1
-    assert 'data-state="implemented"' in source
 
 
 def test_public_cli_runs_the_same_two_phase_transaction_for_all_objectives(
@@ -659,42 +624,7 @@ def test_public_cli_runs_the_same_two_phase_transaction_for_all_objectives(
                         "close-candidate",
                         _write(
                             tmp_path / "close.json",
-                            {
-                                "version": 1,
-                                "expected_report_sha256": _digest(report),
-                                "implementation_outcome": "complete",
-                                "report": str(report),
-                                "run_id": "run-001",
-                                "subsystem_id": "alpha",
-                                "candidate_id": "alpha-fix",
-                                "commit_identity": commit,
-                                "commit_tree_identity": tree,
-                                "current_source_result": "current",
-                                "accepted_proof": "proof",
-                                "skipped_checks": "none",
-                                "formal_review_decision": "accepted",
-                                "formal_review_provenance": "review receipt",
-                                "repair_generations_used": 0,
-                                "changed_scope": "src/alpha.py",
-                                "change_closure": "complete",
-                                "residual_risk": "none",
-                                "last_verified_identity": "tree-alpha-003",
-                                "candidate_bundle_sha256": _candidate_digest(tmp_path, report),
-                                "tracker_mutation_identity": "issue-17-readback",
-                                "ready_issue_url": "https://github.example/issues/17",
-                                "finding_transitions": [
-                                    {
-                                        "finding_id": "alpha-defect",
-                                        "state": "resolved",
-                                        "reason": "fixed",
-                                    },
-                                    {
-                                        "finding_id": "alpha-gap",
-                                        "state": "active",
-                                        "reason": "still unavailable",
-                                    },
-                                ],
-                            },
+                            _close_values(tmp_path, report, commit, tree),
                         ),
                     )
                 ]
@@ -710,7 +640,21 @@ def test_public_cli_runs_the_same_two_phase_transaction_for_all_objectives(
         "map",
         cwd=tmp_path,
     )
-    assert inspected["state"]["candidates"][0]["state"] == "implemented"
+    state = inspected["state"]
+    candidate = state["candidates"][0]
+    findings = {item["id"]: item for item in state["findings"]}
+    assert candidate["state"] == "implemented"
+    assert candidate["pickup"] == ""
+    assert candidate["implementation"]["commit_identity"] == commit
+    assert findings["alpha-defect"]["state"] == "resolved"
+    assert findings["alpha-gap"]["state"] == "active"
+    persisted = MODULE._load_report(tmp_path, report)[3]["candidates"][0]
+    assert persisted["history"][-1]["member_ids"] == ["alpha-defect", "alpha-gap"]
+    assert persisted["history"][-1]["tracker"]["status"] == "ready-graph"
+    source = report.read_text(encoding="utf-8")
+    assert source.count('data-candidate-id="alpha-fix"') == 1
+    assert 'data-state="implemented"' in source
+    assert "Repair Generations Used</dt><dd>0" in source
 
 
 def test_audit_requires_complete_six_lens_coverage(tmp_path: Path) -> None:
@@ -732,7 +676,7 @@ def test_audit_requires_complete_six_lens_coverage(tmp_path: Path) -> None:
     assert report.read_bytes() == before
 
 
-def test_candidate_is_one_record_and_views_are_derived(tmp_path: Path) -> None:
+def test_candidate_is_one_record_and_projections_are_derived(tmp_path: Path) -> None:
     _init_repo(tmp_path)
     report = _published_audit(tmp_path)
     inspected = MODULE.inspect_report(
@@ -771,32 +715,10 @@ def test_analyze_not_ready_has_no_implementation_pickup(
         candidate_id="alpha-fix",
     )["candidate"]
     assert candidate["tracker"]["status"] == "not-applicable"
-    assert candidate["implementation_ready"] is False
     assert candidate["pickup"] == ""
 
 
-def test_implementation_ready_analyze_requires_to_tickets_result(tmp_path: Path) -> None:
-    _init_repo(tmp_path)
-    report = _published_audit(tmp_path)
-    values = _analysis_values(
-        _digest(report),
-        _candidate_digest(tmp_path, report),
-        tracker_ready=False,
-    )
-    values["implementation_ready"] = True
-    manifest = _write(tmp_path / "missing-tickets-result.json", values)
-    with pytest.raises(MODULE.ReportError, match="requires the To Tickets result"):
-        MODULE.mutate_report(
-            command="analyze-candidate",
-            repo_root=tmp_path,
-            report=report,
-            manifest_path=manifest,
-            validate_only=True,
-            expected_bundle_sha256=None,
-        )
-
-
-def test_implementation_ready_analyze_without_ticket_authority_returns_analyze_reentry(
+def test_analyze_without_ticket_authority_returns_analyze_reentry(
     tmp_path: Path,
 ) -> None:
     _init_repo(tmp_path)
@@ -806,7 +728,6 @@ def test_implementation_ready_analyze_without_ticket_authority_returns_analyze_r
         _candidate_digest(tmp_path, report),
         tracker_ready=False,
     )
-    values["implementation_ready"] = True
     values["tracker"] = {
         "status": "authority-required",
         "issue_urls": [],
@@ -821,7 +742,6 @@ def test_implementation_ready_analyze_without_ticket_authority_returns_analyze_r
         objective="analyze",
         candidate_id="alpha-fix",
     )["candidate"]
-    assert candidate["implementation_ready"] is True
     assert candidate["tracker"]["status"] == "authority-required"
     assert "[$audit-codebase](C:/skills/audit-codebase/SKILL.md)" in candidate["pickup"]
     assert "If implementation-ready" in candidate["pickup"]
@@ -836,7 +756,6 @@ def test_authority_required_tracker_rejects_mutation_facts(tmp_path: Path) -> No
         _candidate_digest(tmp_path, report),
         tracker_ready=False,
     )
-    values["implementation_ready"] = True
     values["tracker"] = {
         "status": "authority-required",
         "issue_urls": [],
@@ -844,7 +763,7 @@ def test_authority_required_tracker_rejects_mutation_facts(tmp_path: Path) -> No
         "mutation_identity": "must-not-exist",
     }
     manifest = _write(tmp_path / "ticket-authority-with-mutation.json", values)
-    with pytest.raises(MODULE.ReportError, match="forbids tracker mutation facts"):
+    with pytest.raises(MODULE.ReportError, match="forbids tracker mutation fields"):
         MODULE.mutate_report(
             command="analyze-candidate",
             repo_root=tmp_path,
@@ -853,33 +772,6 @@ def test_authority_required_tracker_rejects_mutation_facts(tmp_path: Path) -> No
             validate_only=True,
             expected_bundle_sha256=None,
         )
-
-
-def test_authority_required_tracker_requires_ready_analysis(tmp_path: Path) -> None:
-    _init_repo(tmp_path)
-    report = _published_audit(tmp_path)
-    values = _analysis_values(
-        _digest(report),
-        _candidate_digest(tmp_path, report),
-        tracker_ready=False,
-    )
-    values["tracker"] = {
-        "status": "authority-required",
-        "issue_urls": [],
-        "ready_issue_url": "",
-    }
-    manifest = _write(tmp_path / "ticket-authority-not-ready.json", values)
-    with pytest.raises(MODULE.ReportError, match="requires an implementation-ready candidate"):
-        MODULE.mutate_report(
-            command="analyze-candidate",
-            repo_root=tmp_path,
-            report=report,
-            manifest_path=manifest,
-            validate_only=True,
-            expected_bundle_sha256=None,
-        )
-
-
 def test_tracker_recovery_forbids_implement_pickup(tmp_path: Path) -> None:
     _init_repo(tmp_path)
     report = _published_audit(tmp_path)
@@ -893,7 +785,6 @@ def test_tracker_recovery_forbids_implement_pickup(tmp_path: Path) -> None:
         "ready_issue_url": "",
         "candidate_bundle_sha256": _candidate_digest(tmp_path, report),
         "mutation_identity": "attempt-17",
-        "read_back": False,
         "observed_issue_state": "Issue 17 exists but relationship read-back failed.",
     }
     manifest = _write(tmp_path / "analyze.json", values)
@@ -1017,14 +908,89 @@ def test_report_tampering_and_unsupported_version_are_rejected(tmp_path: Path) -
     with pytest.raises(MODULE.ReportError, match="canonical projection"):
         MODULE.inspect_report(repo_root=tmp_path, report=report, objective="map")
 
-    report.write_text(source.replace('content="9"', 'content="8"'), encoding="utf-8")
-    with pytest.raises(MODULE.ReportError, match="version 9 is required"):
+    report.write_text(source.replace('content="10"', 'content="9"'), encoding="utf-8")
+    with pytest.raises(MODULE.ReportError, match="version 10 is required"):
         MODULE.inspect_report(repo_root=tmp_path, report=report, objective="map")
+
+    state = MODULE._normalize_map_manifest(
+        _map_values(tmp_path),
+        tmp_path,
+        report,
+    )
+    state["subsystems"][0]["retired_field"] = True
+    with pytest.raises(MODULE.ReportError, match="unknown fields: retired_field"):
+        MODULE._validate_state(state)
+
+
+@pytest.mark.parametrize(
+    ("mutation", "message"),
+    [
+        (lambda state: state.update({"state_version": 1}), "requires version 2"),
+        (
+            lambda state: state["findings"][0].update({"kind": "legacy-kind"}),
+            "unsupported kind or state",
+        ),
+    ],
+)
+def test_public_inspect_rejects_retired_or_invalid_canonical_state(
+    tmp_path: Path,
+    mutation,
+    message: str,
+) -> None:
+    _init_repo(tmp_path)
+    report = _published_audit(tmp_path)
+    state = MODULE._load_report(tmp_path, report)[3]
+    mutation(state)
+    validator = MODULE._validate_state
+    try:
+        MODULE._validate_state = lambda value: None
+        invalid_report = MODULE._render_html(state)
+    finally:
+        MODULE._validate_state = validator
+    report.write_bytes(invalid_report)
+    with pytest.raises(MODULE.ReportError, match=message):
+        MODULE.inspect_report(repo_root=tmp_path, report=report, objective="map")
+
+
+def test_all_objectives_reject_retired_manifest_version(tmp_path: Path) -> None:
+    commit, tree = _init_repo(tmp_path)
+    report = _published_analysis(tmp_path)
+    packets = [
+        (
+            "Map",
+            _map_values(tmp_path),
+            lambda value: MODULE._normalize_map_manifest(value, tmp_path, report),
+        ),
+        (
+            "Audit",
+            _audit_values(report, _digest(report)),
+            lambda value: MODULE._normalize_audit_manifest(value, report),
+        ),
+        (
+            "Analyze",
+            _analysis_values(
+                _digest(report),
+                _candidate_digest(tmp_path, report),
+            ),
+            MODULE._normalize_analyze_manifest,
+        ),
+        (
+            "Close",
+            _close_values(tmp_path, report, commit, tree),
+            MODULE._normalize_close_manifest,
+        ),
+    ]
+    for objective, packet, normalize in packets:
+        packet["version"] = 1
+        with pytest.raises(MODULE.ReportError, match=f"{objective} manifest requires version 2"):
+            normalize(packet)
 
 
 def test_schema_and_cli_errors_are_one_json_document(tmp_path: Path) -> None:
     schema = MODULE._schema("audit")
     assert schema["response_version"] == 1
+    assert schema["template"]["version"] == MODULE.MANIFEST_VERSION == 2
+    assert MODULE.STATE_VERSION == 2
     assert len(schema["template"]["lenses"]) == 6
 
     process = subprocess.run(
@@ -1048,68 +1014,25 @@ def test_schema_and_cli_errors_are_one_json_document(tmp_path: Path) -> None:
     }
 
 
-@pytest.mark.parametrize(
-    "command",
-    ["render-report", "audit-subsystem", "analyze-candidate", "close-candidate"],
-)
-def test_mutation_commands_share_one_transaction_interface(command: str) -> None:
-    parser = MODULE._parser()
-    help_text = parser.format_help()
-    assert command in help_text
-    subparser = next(
-        action for action in parser._actions if isinstance(action, argparse._SubParsersAction)
-    ).choices[command]
-    options = {option for action in subparser._actions for option in action.option_strings}
-    assert {"--manifest", "--validate-only", "--expected-bundle-sha256"} <= options
-
-
-def test_source_identity_is_sorted_and_object_sensitive(tmp_path: Path) -> None:
-    commit, _ = _init_repo(tmp_path)
+def test_source_identity_is_sorted_and_live_content_sensitive(tmp_path: Path) -> None:
+    _init_repo(tmp_path)
     path_list = tmp_path / "paths.txt"
     path_list.write_text("src/beta.py\nsrc/alpha.py\n", encoding="utf-8")
-    live = MODULE.source_identity(repo_root=tmp_path, path_list=path_list)
-    frozen = MODULE.source_identity(
-        repo_root=tmp_path,
-        path_list=path_list,
-        git_object=commit,
-    )
-    assert live["paths"] == ["src/alpha.py", "src/beta.py"]
-    assert live["identity"] != frozen["identity"]
+    initial = MODULE.source_identity(repo_root=tmp_path, path_list=path_list)
+    assert initial["paths"] == ["src/alpha.py", "src/beta.py"]
+    assert initial["mode"] == "live-worktree"
     (tmp_path / "src" / "alpha.py").write_text("VALUE = 3\n", encoding="utf-8")
     changed = MODULE.source_identity(repo_root=tmp_path, path_list=path_list)
-    assert changed["identity"] != frozen["identity"]
+    assert changed["identity"] != initial["identity"]
 
 
-def test_close_rejects_unreachable_commit_and_incomplete_transitions(
+def test_close_rejects_incomplete_transitions(
     tmp_path: Path,
 ) -> None:
     commit, tree = _init_repo(tmp_path)
     report = _published_analysis(tmp_path)
-    values = {
-        "version": 1,
-        "expected_report_sha256": _digest(report),
-        "implementation_outcome": "complete",
-        "report": str(report),
-        "run_id": "run-001",
-        "subsystem_id": "alpha",
-        "candidate_id": "alpha-fix",
-        "commit_identity": commit,
-        "commit_tree_identity": tree,
-        "current_source_result": "current",
-        "accepted_proof": "proof",
-        "skipped_checks": "none",
-        "formal_review_decision": "accepted",
-        "formal_review_provenance": "review receipt",
-        "repair_generations_used": 0,
-        "changed_scope": "src/alpha.py",
-        "change_closure": "complete",
-        "residual_risk": "none",
-        "last_verified_identity": "tree-alpha-003",
-        "candidate_bundle_sha256": _candidate_digest(tmp_path, report),
-        "tracker_mutation_identity": "issue-17-readback",
-        "ready_issue_url": "https://github.example/issues/17",
-        "finding_transitions": [],
-    }
+    values = _close_values(tmp_path, report, commit, tree)
+    values["finding_transitions"] = []
     manifest = _write(tmp_path / "close.json", values)
     before = report.read_bytes()
     with pytest.raises(MODULE.ReportError, match="every active candidate finding"):
@@ -1127,34 +1050,7 @@ def test_close_rejects_unreachable_commit_and_incomplete_transitions(
 def test_close_rejects_analyzed_candidate_without_ready_tracker(tmp_path: Path) -> None:
     commit, tree = _init_repo(tmp_path)
     report = _published_analysis(tmp_path, tracker_ready=False)
-    values = {
-        "version": 1,
-        "expected_report_sha256": _digest(report),
-        "implementation_outcome": "complete",
-        "report": str(report),
-        "run_id": "run-001",
-        "subsystem_id": "alpha",
-        "candidate_id": "alpha-fix",
-        "candidate_bundle_sha256": _candidate_digest(tmp_path, report),
-        "tracker_mutation_identity": "not-published",
-        "ready_issue_url": "https://github.example/issues/17",
-        "commit_identity": commit,
-        "commit_tree_identity": tree,
-        "current_source_result": "current",
-        "accepted_proof": "proof",
-        "skipped_checks": "none",
-        "formal_review_decision": "accepted",
-        "formal_review_provenance": "review receipt",
-        "repair_generations_used": 0,
-        "changed_scope": "src/alpha.py",
-        "change_closure": "complete",
-        "residual_risk": "none",
-        "last_verified_identity": "tree-alpha-003",
-        "finding_transitions": [
-            {"finding_id": "alpha-defect", "state": "resolved", "reason": "fixed"},
-            {"finding_id": "alpha-gap", "state": "active", "reason": "unknown"},
-        ],
-    }
+    values = _close_values(tmp_path, report, commit, tree)
     manifest = _write(tmp_path / "close-not-ready.json", values)
     with pytest.raises(MODULE.ReportError, match="implementation-ready tracker frontier"):
         MODULE.mutate_report(

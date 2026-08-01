@@ -1,6 +1,6 @@
 ---
 name: high-assurance-review
-description: Review one immutable release candidate or concretely high-risk diff or PR read-only through two fresh core reviewers and coordinator-only finding admission, then return one terminal release decision. Coordinator-only. Exclude ordinary diffs and PRs and immutable repository-baseline audits.
+description: Review one immutable release candidate or diff or PR governed by a supported high-risk trigger read-only through two fresh core reviewers and coordinator-only finding admission, then return one terminal release decision. Coordinator-only. Exclude ordinary diffs and PRs and immutable repository-baseline audits.
 ---
 
 # High-Assurance Review
@@ -9,20 +9,12 @@ description: Review one immutable release candidate or concretely high-risk diff
 
 ## 1. Admit
 
-Accept one release candidate or caller-bounded diff or PR with at least one
-supported high-risk trigger:
-
-- security, privacy, or another trust boundary;
-- irreversible external effect, data or schema change, migration, or cutover;
-- concurrency, state lifecycle, recovery, or failure atomicity;
-- high-impact domain, financial, model, or data invariant; or
-- a measured performance, resource, or availability obligation.
-
-PR existence, diff size, repository size, severity labels, and hypothetical edge
-cases do not establish high risk. Return an ordinary diff or PR and its complete
-factual packet intact to the caller as `scope-mismatch`; name the supported
-route facts, leave the route unselected, and stop. Recommend `$audit-codebase`
-for an immutable repository-baseline audit, then stop.
+Load the `change-review` skill's `FINDING-CONTRACT.md`. Accept one release
+candidate or caller-bounded diff or PR governed by at least one supported
+high-risk trigger. Return an ordinary diff or PR and its complete factual packet
+intact to the caller as `scope-mismatch`; name the route facts, leave the route
+unselected, and stop. Recommend `$audit-codebase` for an immutable
+repository-baseline audit, then stop.
 
 Require this invocation to be the `assurance-coordinator`, the root of its
 review run. A core reviewer, specialist, or other nested review lane that
@@ -30,28 +22,22 @@ invokes this skill returns `incomplete` before Pin. The coordinator owns
 dispatch, finding admission, convergence, and the terminal read-only decision;
 it never mutates or substitutes for a reviewer.
 
-Hold a read-only boundary through Gate. Leave files, worktree, index, Git
-objects and administration, dependencies and caches, trackers, PR state,
-external systems, Repair state, and successor snapshots unchanged. If required
-evidence needs mutation, return `incomplete` with the blocker and verified
-partial evidence.
+Hold a read-only boundary through Gate. Leave repository, dependency, tracker,
+PR, external, Repair, and successor state unchanged. If required evidence needs
+mutation, return `incomplete` with the blocker and verified partial evidence.
 
 Freeze the caller's Charter, commitment boundary, fixed point, candidate,
 `Spec required: yes | no`, Source Trace, required proof, skips, supported route
-trigger, carried IDs, and mode.
+trigger, carried IDs, coordinator actor and task IDs, and mode.
 
 Use one mode:
 
 - `initial` is the default and judges the selected snapshot; or
-- `remediation` is a fresh run for one caller-repaired candidate and requires
-  the original Charter, prior snapshot identity, stable carried IDs,
-  caller-owned Repair delta, remaining acceptance, fixed point, and successor
-  candidate. Judge only the carried outcomes and affected surfaces.
+- `remediation` is a fresh run for one caller-repaired candidate and applies
+  the Finding Contract's remediation packet and coverage boundary.
 
 Return `incomplete` before Pin for a missing, contradictory, or ambiguous
-decision-bearing field. A high-risk trigger must identify the changed surface,
-one supported scenario, a reachable behavior or failure path, and concrete
-impact; otherwise return `scope-mismatch` with the intact factual packet.
+decision-bearing field.
 
 ## 2. Pin
 
@@ -69,8 +55,8 @@ bytes. Return `incomplete` when the fixed point or candidate is unavailable,
 ambiguous, empty, partial, or mismatched. Do not infer, switch candidates,
 mutate to obtain one, or silently narrow scope.
 
-Load the `change-review` skill's `FINDING-CONTRACT.md`. Trace Standards from
-repository instructions, `docs/agents/engineering-contract.md`, maintained
+Trace Standards from repository instructions,
+`docs/agents/engineering-contract.md`, maintained
 configuration, and meaningful nearby conventions. Load
 `change-review/SMELL-BASELINE.md` only when Standards are thin. Trace Spec
 independently in this precedence:
@@ -82,7 +68,7 @@ independently in this precedence:
 A missing, conflicting, unreadable, or unresolved required Spec makes coverage
 `incomplete`. An absent optional Spec is skipped, never inferred.
 
-Freeze the same compact coverage rows used by `$change-review`:
+Freeze one compact row per semantic change unit:
 
 ```text
 change -> governing commitment -> actual behavior path
@@ -138,10 +124,9 @@ credit. Permit at most one fresh unbiased replacement per invalid lane while
 the snapshot and factual brief remain valid. An evidence blocker or second
 invalid return closes that lane `incomplete`; do not create recursive rounds.
 
-Exactly two valid fresh core returns are required to proceed to finding
-admission and Gate. A required specialist must also return validly. Fewer than
-two valid core returns or a missing required specialist returns `incomplete`;
-the coordinator never self-reviews a missing lane.
+Define **valid reviewer quorum** as exactly two valid fresh core returns plus a
+valid required specialist, if any. Without quorum, return `incomplete`; the
+coordinator never substitutes for a reviewer.
 
 ## 4. Converge
 
@@ -150,10 +135,8 @@ each item a stable ID, factual origin, axis, primary class, and one state:
 `candidate`, `accepted`, `rejected`, `duplicate`, or `disputed`. Preserve
 carried IDs through remediation.
 
-The coordinator verifies every finding candidate against the immutable snapshot
-and shared Finding Contract. Reject speculative, preference-only,
-unsupported-environment, adjacent-cleanup, missing-evidence, and
-optional-hardening claims. Required unavailable evidence makes coverage
+The coordinator admits or rejects every finding candidate against the immutable
+snapshot and Finding Contract. Required unavailable evidence makes coverage
 `incomplete`, not a finding.
 
 Resolve duplicates and disagreements from anchors, supported scenarios,
@@ -164,31 +147,27 @@ Gate.
 
 ## 5. Gate
 
-Re-read the originally captured candidate and compare it with the pinned
-identities: Git object and content; connected PR base, head, and content; or
-live `HEAD`, index tree, staged diff, unstaged diff, status, and every captured
-in-scope untracked path and its bytes. Candidate drift returns `incomplete` with
-verified partial evidence. Do not recapture; symbolic baseline movement does not
-replace the pinned fixed point.
+Re-read and compare every cell of the pinned candidate identity using its
+recorded command and ref resolution. Candidate drift returns `incomplete` with
+verified partial evidence. Do not recapture; symbolic baseline movement does
+not replace the pinned fixed point.
 
 Derive exactly one decision after the reviewer quorum closes:
 
 - `incomplete` when required source, coverage, finding-candidate disposition,
   dispute, protocol, report, specialist, or drift state remains unresolved;
 - `blocked` when a directly verified admitted finding blocks release;
-- `pass with residual risk` when coverage is complete, both fresh core lanes and
-  any required specialist completed, no blocker exists, and decision-bearing
-  residual risk remains for caller acceptance; or
-- `pass` when coverage is complete, both fresh core lanes and any required
-  specialist completed, no blocker or decision-bearing residual risk remains,
-  and drift is clear.
+- `pass with residual risk` when coverage is complete, no blocker exists, and
+  decision-bearing residual risk remains for caller acceptance; or
+- `pass` when coverage is complete, no blocker or decision-bearing residual
+  risk remains, and drift is clear.
 
 Return one caller-bound packet with mode, fixed point, snapshot, candidate,
-sources, core and specialist provenance, coverage by axis and class, admitted
-findings, carried dispositions, closed finding-candidate states, skipped checks,
-residual risk, drift, decision, and blockers. The decision grants no Repair,
-Lock, or residual-risk acceptance authority; those remain with the caller. End
-with:
+sources, coordinator, core, and specialist provenance, coverage by axis and
+class, admitted findings, carried dispositions, closed finding-candidate states,
+skipped checks, residual risk, drift, decision, and blockers. The decision
+grants no Repair, Lock, or residual-risk acceptance authority; those remain
+with the caller. End with:
 
 ```text
 Return boundary: caller
@@ -196,7 +175,7 @@ Mutation authority: none
 Successor snapshot authority: none
 ```
 
-Completion requires every applicable axis, class, and risk trigger to close;
-both fresh core lanes and any required specialist to return validly; every
-finding candidate and carried ID to be disposed; drift to pass; and one
-internally consistent decision to return. Return control to the caller and stop.
+Completion requires valid reviewer quorum; every applicable axis, class, and
+risk trigger to close; every finding candidate and carried ID to be disposed;
+drift to pass; and one internally consistent decision to return. Return control
+to the caller and stop.

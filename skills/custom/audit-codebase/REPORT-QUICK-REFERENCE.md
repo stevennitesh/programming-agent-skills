@@ -13,7 +13,6 @@ validates strict JSON, and renders the complete report.
 schema --objective map|audit|analyze|close
 inventory --repo-root <repo>
 source-identity --repo-root <repo> --path-list <paths.txt>
-  [--git-object <object>]
 inspect --repo-root <repo> --report <report>
   --objective map
 inspect --repo-root <repo> --report <report>
@@ -25,7 +24,7 @@ inspect --repo-root <repo> --report <report>
 `inspect` returns the selected current projection without history. Use it for
 routing, admission, work, and read-back. `schema` returns the exact manifest
 template; copy only its `template` object into an invocation-owned JSON file.
-Unknown or retired fields are rejected.
+Unknown manifest fields are rejected.
 
 ## Publish Once
 
@@ -47,16 +46,15 @@ the manifest between calls.
 ## Objective Rules
 
 - **Map:** run `inventory` immediately before work and use its paths and
-  identity. A new report expects `absent`; a requested Refresh expects the
-  current report digest and is rejected after Audit or candidate history.
+  identity. A new report expects `absent`; updating a map-only report requires
+  its current digest. A report with Audit or candidate history is rejected.
 - **Audit:** supply one selected subsystem's current Source Trace, six coverage
   rows, admitted records, candidates, limits, and resolved Audit, To Tickets,
   and Implement skill paths. A changed ownership or dependency boundary
-  requires a separately selected Map Refresh.
+  requires a separately selected Map with a new report.
 - **Analyze:** supply one selected candidate's current validity, members,
   comparison, proof, tracker result, and at most one other next owner.
-  `authority-required` and `recovery` return Analyze re-entry; only a verified
-  `ready-graph` or `reused` result produces an Implement pickup.
+  The helper derives the pickup from the validated tracker result.
 - **Close:** use the exact completion packet requested by the Implement pickup.
   The helper admits only a matching analyzed, implementation-ready candidate
   and independently verifies Git commit/tree reachability and every active

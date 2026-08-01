@@ -26,7 +26,7 @@ Choose the first unresolved work, not an eventual workflow:
 | --- | --- |
 | One non-diagnostic source-answerable authoritative fact | `$research` |
 | One settled design question needing a disposable runnable probe or performance experiment | `$prototype` |
-| Broken or slow behavior with uncertain expectation, symptom, cause, or trusted reproduction | `none`; return `diagnosis-required` |
+| Broken or slow behavior with uncertain expectation, symptom, cause, or trusted reproduction | `none`; return `blocked` with result `diagnosis-required`, the evidence limit, and exact re-entry |
 | Settled domain language, Invariant, Bounded Context, Context Relationship, or ADR candidate needing durable capture | `$domain-modeling` |
 | One current-user decision that also requires domain-record maintenance | `$grill-with-docs` |
 | One conversation-only current-user decision | `$grilling` |
@@ -38,9 +38,7 @@ Choose the first unresolved work, not an eventual workflow:
 
 Implementation-ready work without a required parent specification uses
 **Publish Implementation Work**, not this table. An uncertain observed symptom
-is not Prototype work. A current-user decision precedes design. Codebase Design
-is loaded during Analyze for design or mixed candidates and is not a next
-owner.
+is not Prototype work. A current-user decision precedes design.
 
 Except for To Tickets above, label a suggestion
 `user selection required`, invoke nothing, and encode no workflow chain. For a
@@ -58,9 +56,6 @@ Suggested invocation:
 For every route, `update_report.py inspect` returns the complete selected JSON
 record. The root constructs the callee-compatible packet without parsing HTML
 or copying the callee's procedure into the pickup.
-
-The user separately selects the linked Close invocation returned by Implement.
-Close owns reconciliation and makes one report publication attempt.
 
 Other planning and execution routes use `Audit re-entry: none`.
 
@@ -101,7 +96,8 @@ payload or pointer. A mismatch changes no judgment.
 - A matching complete implementation packet is admissible evidence for a
   separately selected Close objective.
 - Unresolved required evidence marks it `blocked` with exact re-entry.
-- A foreign recommendation is evidence only; Audit chooses any next owner.
+- A foreign recommendation is evidence only; reapply this contract's
+  first-unresolved-work rule.
 - `Questionnaire ready` is not answer evidence; require attributable
   stakeholder answers.
 - An unchanged exhausted or blocked return keeps suggestion `none` until its

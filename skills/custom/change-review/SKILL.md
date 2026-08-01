@@ -1,6 +1,6 @@
 ---
 name: change-review
-description: "Review one ordinary branch, WIP, staged, since-X diff, or ordinary local PR read-only from a fixed snapshot. Judge Spec (\"right thing?\") and Standards (\"built right?\") separately, then return one terminal gate decision. Exclude release candidates, concretely high-risk changes, and immutable repository-baseline audits."
+description: "Review one ordinary branch, WIP, staged, since-X diff, or ordinary local PR read-only from a fixed snapshot. Judge Spec (\"right thing?\") and Standards (\"built right?\") separately, then return one terminal gate decision. Exclude release candidates, changes governed by a supported high-risk trigger, and immutable repository-baseline audits."
 ---
 
 # Change Review
@@ -15,25 +15,23 @@ unchanged.
 
 Load [FINDING-CONTRACT.md](FINDING-CONTRACT.md). Change Review owns one ordinary
 branch, WIP, staged, since-X diff, or ordinary local PR. Return a release
-candidate or concretely high-risk diff or PR and its complete factual packet
-intact to the caller as `scope-mismatch`; name the supported route facts, leave
-the route unselected, and stop. Recommend `$audit-codebase` for an immutable
-repository-baseline audit, then stop. Return mutation requests to their caller
-without beginning review.
+candidate or candidate governed by a supported high-risk trigger and its
+complete factual packet intact to the caller as `scope-mismatch`; name the
+route facts, leave the route unselected, and stop. Recommend `$audit-codebase`
+for an immutable repository-baseline audit, then stop. Return mutation requests
+to their caller without beginning review.
 
-High risk means a supported trust boundary, irreversible effect or migration,
-concurrency or recovery, high-impact domain or model invariant, or measured
-performance obligation satisfies the Finding Contract risk condition. PR
-existence alone does not qualify.
+`ordinary-reviewer` reviews directly and never delegates, invokes another
+review, or repairs. Formal delivery requires caller-supplied implementation IDs
+and any integration IDs the caller has, plus a fresh reviewer actor and task
+distinct from every supplied ID. Standalone review records provenance but needs
+no separation proof.
 
-`ordinary-reviewer` reviews directly in its current task and never delegates,
-invokes another review, or repairs. Formal-delivery freshness and task
-separation belong to the delivery caller; standalone review needs neither.
-
-Carry every factual caller-supplied Charter field, `Spec required`, review mode,
-Source Trace, fixed point and candidate, required proof, skips, risk,
-contradictory evidence, and carried finding ID. Implementation hypotheses,
-expected conclusions, partial findings, and terminal cues are not evidence.
+Carry every factual caller-supplied Charter field, `Spec required`, invocation
+and review modes, implementation and integration IDs, Source Trace, fixed point
+and candidate, required proof, skips, risk, contradictory evidence, and carried
+finding IDs. Hypotheses, expected conclusions, partial findings, and terminal
+cues are not evidence.
 
 Use the supplied fixed point. Otherwise resolve the repository default branch
 and its ref, enumerate applicable best merge bases with the candidate, and
@@ -53,12 +51,9 @@ each in-scope untracked path, mode, and content identity. Return `incomplete`
 when the fixed point or candidate is missing, ambiguous, partial, empty, or
 cannot be identified completely. Judge captured bytes, never later live reads.
 
-Record `Review mode: initial | remediation`; standalone Change Review defaults
-to `initial`. Remediation is a fresh invocation; never resume the prior review.
-It requires the original Charter, prior snapshot identity, stable carried IDs,
-caller-owned Repair delta, remaining acceptance, fixed point, and successor
-candidate. Cover only the carried outcomes, Repair delta, affected seams, and
-remaining acceptance exercised there. Leave untouched scope closed.
+Record `Invocation: formal-delivery | standalone` and `Review mode: initial |
+remediation`; standalone defaults to `initial`. Apply the Finding Contract's
+remediation packet and coverage boundary.
 
 ## Cover
 
@@ -114,12 +109,9 @@ and adequately proved under the applicable Finding Contract classes. Apply
 **Must** rules as floors. Apply **Prefer** rules only when direct evidence shows
 violated repository authority or a concrete supported cost.
 
-Behavior is evidence for both axes, not a third axis. Report pre-existing
-problems only when the candidate creates or worsens them, or Change Closure
-makes them part of the selected slice. Admit finding candidates only through
-the Finding Contract. Missing evidence for a required axis makes coverage
-`incomplete`;
-unavailable optional verification is residual risk.
+Behavior is evidence for both axes, not a third axis. Admit finding candidates
+only through the Finding Contract. Missing evidence for a required axis makes
+coverage `incomplete`; unavailable optional verification is residual risk.
 
 Keep admitted IDs stable. In remediation, dispose each carried ID as `resolved`,
 `still admitted`, `disproved`, or `incomplete`.
@@ -145,7 +137,12 @@ Derive exactly one decision:
 Return one packet:
 
 ```text
+Invocation: formal-delivery | standalone
 Review mode: initial | remediation
+Semantic agent: ordinary-reviewer
+Reviewer actor ID:
+Reviewer task ID:
+Fresh-context and separation evidence: <evidence> | standalone
 Coverage: complete | incomplete
 Decision: pass | pass with residual risk | blocked | incomplete
 Fixed point:

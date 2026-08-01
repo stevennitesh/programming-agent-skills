@@ -15,7 +15,6 @@ Candidate ID:
 Subsystem:
 Title:
 Primary class: reliability | domain | design | simplification | coding practice | performance | declared:<lens-id> | mixed
-Concepts:
 Member defect, opportunity, and gap IDs:
 Files and Modules:
 Supported behavior:
@@ -31,13 +30,9 @@ Strength reason:
 State: presented
 ```
 
-The helper derives the linked Analyze pickup from the candidate ID, absolute
-report path, and resolved Audit and To Tickets skill paths. That pickup grants
-conditional To Tickets authority only when this Analyze proves the candidate
-implementation-ready. Without it, finish the judgment, publish tracker state
-`authority-required`, and return the same linked Analyze re-entry. Invoke
-nothing and do not mark a ready candidate unready merely because authority is
-absent.
+The helper derives the linked Analyze pickup from the candidate ID, report, and
+resolved skill paths. Apply [CANDIDATE-FOLLOWUP.md](CANDIDATE-FOLLOWUP.md) for
+its conditional To Tickets authority and Return.
 
 - **Strong:** direct evidence, concrete cost or impact, a plausible bounded
   alternative, and a meaningful Proof Seam.
@@ -128,15 +123,16 @@ When `SKILL.md` admits its conditional follow-up branch, apply
 
 Close is a separately user-selected `$audit-codebase` objective after the
 helper-generated Implement pickup returns. Use `schema --objective close` as
-the only packet shape. Require matching report, run, subsystem, candidate,
-candidate-bundle, tracker mutation, Ready issue, commit/tree, current-source,
-proof, review, Change Closure, residual-risk, and last-Analyze identities plus
-one state-and-reason transition for every active candidate finding.
+the only packet shape. Before constructing it, the root verifies that the
+accepted proof and review bind to the supplied commit/tree, the commit is
+current or reachable, Change Closure is complete, no implementation blocker
+remains, every identity matches the last Analyze and tracker result, and every
+active candidate finding has one state-and-reason transition.
 
-The commit and tree must match the accepted proof and review, the implementation
-commit must be current or reachable from current source, and no implementation
-blocker may remain. A mismatched, partial, blocked, or failing Return changes no
-candidate state. Successful implementation is distinct from `disproved`.
+The helper enforces the exact packet schema and Git commit/tree relationship;
+it does not independently prove the supplied proof or review claims. A
+mismatched, partial, blocked, or failing Return changes no candidate state.
+Successful implementation is distinct from `disproved`.
 Each transition changes only current state and reason; original evidence
 remains in history, and `active` records residual work without misstating
 resolution. The helper verifies Git reachability and derives candidate state,

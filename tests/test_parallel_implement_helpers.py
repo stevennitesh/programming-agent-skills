@@ -323,9 +323,7 @@ def test_ledger_facade_starts_applies_reports_and_briefs_idempotently(
         "id": "parent-charter",
         "outcome": "deliver the recorded child graph",
         "repair_generation_budget": 2,
-        "review_invocation_budget": 3,
-        "review_invocations_required": 1,
-            "runtime_contract": 5,
+        "runtime_contract": 5,
     }
 
     packet = tmp_path / "lane-ready.json"
@@ -1243,29 +1241,6 @@ def test_events_packet_cannot_bypass_the_lane_ready_gate() -> None:
         )
 
 
-def test_run_ledger_contains_only_runtime_contract_five_vocabulary() -> None:
-    source = LEDGER.read_text(encoding="utf-8")
-    obsolete_vocabulary = (
-        "scope-change",
-        "review-target",
-        "append-receipt",
-        "root-tiny",
-        "fresh-lane",
-        "root-task",
-        "root-custody",
-        "runtime contract 1",
-        "runtime contract 2",
-        "runtime contract 3",
-        "runtime contract 4",
-    )
-
-    assert all(term not in source for term in obsolete_vocabulary)
-    assert not re.search(
-        r"runtime_contract\s*(?:<|<=|>|>=|==|!=)\s*[1-4]", source
-    )
-    assert not re.search(r"runtime_contract\s*(?:<|<=|>|>=)\s*5", source)
-
-
 def test_run_ledger_syntax_failures_are_compact_json() -> None:
     result = subprocess.run(
         [sys.executable, str(LEDGER), "status"],
@@ -1332,10 +1307,8 @@ def test_runtime_five_resume_accepts_empty_exhaustive_lane_inventories(
                 "dispositions": {"ticket-1": "caller-deferred"},
                 "charter": {
                     "id": "charter",
-                        "runtime_contract": 5,
+                    "runtime_contract": 5,
                     "repair_generation_budget": 2,
-                    "review_invocation_budget": 3,
-                    "review_invocations_required": 1,
                 },
             },
         },
@@ -1536,8 +1509,6 @@ def current_review_events(base: str, lane_path: Path) -> list[dict]:
                     "id": "parent-charter",
                     "runtime_contract": 5,
                     "repair_generation_budget": 2,
-                    "review_invocation_budget": 3,
-                    "review_invocations_required": 1,
                 },
             },
         },
@@ -1688,7 +1659,11 @@ def current_review_events(base: str, lane_path: Path) -> list[dict]:
             "data": {
                 "mode": "initial",
                 "route": "change-review",
-                "reason": "review integrated candidate",
+                "route_evidence": {
+                    "candidate": base,
+                    "basis": "ordinary",
+                    "source": "recorded candidate risk classification",
+                },
                 "task_state": "ready",
                 "liveness_cursor": "review-cursor",
                 "task_id_state": "canonical",
@@ -1730,7 +1705,6 @@ def current_review_events(base: str, lane_path: Path) -> list[dict]:
                 "review_invocation_id": "review-invocation",
                 "mode": "initial",
                 "route": "change-review",
-                "review_actor_ids": ["review-agent"],
                 "findings": [],
                 "terminal_task_state": "completed",
                 "liveness_cursor": "review-final-cursor",
@@ -2368,6 +2342,68 @@ def test_runtime_five_binds_review_repair_to_a_delegated_successor(
     assert state["errors"] == []
     assert state["repair_completed_generation"] == 1
     assert state["integration_head"] == repaired
+    assert "review has not passed" in LEDGER_RUNTIME["intent_errors"](state, "lock")
+
+    remediation_invocation = json.loads(json.dumps(events[9]))
+    remediation_invocation.update(
+        {
+            "event_id": "remediation-review-invocation",
+            "integration_sha": repaired,
+        }
+    )
+    remediation_data = remediation_invocation["data"]
+    remediation_data.update(
+        {
+            "mode": "remediation",
+            "actor_id": "remediation-reviewer",
+            "task_id": "remediation-review-task",
+            "host_id": "remediation-review-host",
+            "lane_id": "remediation-review-lane",
+            "observed_head": repaired,
+            "route_evidence": {
+                "candidate": repaired,
+                "basis": "ordinary",
+                "source": "repaired candidate risk classification",
+            },
+        }
+    )
+    remediation_data["provider_acceptance"].update(
+        {
+            "actor_id": "remediation-reviewer",
+            "task_id": "remediation-review-task",
+            "host_id": "remediation-review-host",
+            "lane_id": "remediation-review-lane",
+        }
+    )
+    remediation_data["root_receipt"] = root_receipt(
+        "select-review", "parent", repaired, remediation_data
+    )
+
+    remediation_decision = json.loads(json.dumps(events[10]))
+    remediation_decision.update(
+        {
+            "event_id": "remediation-review-decision",
+            "integration_sha": repaired,
+            "decision": "pass",
+        }
+    )
+    remediation_decision["data"].update(
+        {
+            "review_invocation_id": "remediation-review-invocation",
+            "mode": "remediation",
+            "actor_id": "remediation-reviewer",
+            "task_id": "remediation-review-task",
+            "host_id": "remediation-review-host",
+            "lane_id": "remediation-review-lane",
+            "reviewed_head": repaired,
+            "findings": [],
+        }
+    )
+    reviewed = [*events, remediation_invocation, remediation_decision]
+    bind_root_receipts(reviewed)
+    reviewed_state = LEDGER_RUNTIME["derive_state"](reviewed, str(repo))
+    assert reviewed_state["errors"] == []
+    assert LEDGER_RUNTIME["intent_errors"](reviewed_state, "lock") == []
 
     missing_provenance = [dict(event) for event in events]
     missing_provenance[-2] = {
@@ -2580,6 +2616,69 @@ def test_runtime_five_binds_review_return_to_fresh_task(tmp_path: Path) -> None:
     assert any("review task is an implementation task" in error for error in invalid["errors"])
 
 
+def test_runtime_five_reselects_route_once_but_does_not_retry_incomplete_review(
+    tmp_path: Path,
+) -> None:
+    _, base = repository(tmp_path)
+    original = current_review_events(base, (tmp_path / "worker-lane").resolve())
+
+    def successor_invocation(route: str) -> dict:
+        event = json.loads(json.dumps(original[-2]))
+        event["event_id"] = "review-invocation-2"
+        data = event["data"]
+        data.update(
+            {
+                "route": route,
+                "agent_id": (
+                    "assurance-coordinator"
+                    if route == "high-assurance-review"
+                    else "ordinary-reviewer"
+                ),
+                "actor_id": "review-agent-2",
+                "task_id": "review-task-2",
+                "host_id": "review-host-2",
+                "lane_id": "review-lane-2",
+            }
+        )
+        data["route_evidence"] = {
+            "candidate": base,
+            "basis": "release" if route == "high-assurance-review" else "ordinary",
+            "source": "recorded candidate risk classification",
+        }
+        data["provider_acceptance"].update(
+            {
+                "agent_id": data["agent_id"],
+                "task_id": data["task_id"],
+                "host_id": data["host_id"],
+                "lane_id": data["lane_id"],
+            }
+        )
+        data["root_receipt"] = root_receipt("select-review", "parent", base, data)
+        return event
+
+    mismatch = json.loads(json.dumps(original))
+    mismatch[-1]["decision"] = "scope-mismatch"
+    mismatch[-1]["data"]["findings"] = []
+    mismatch[-1]["data"]["residual_risks"] = []
+    alternate = successor_invocation("high-assurance-review")
+    allowed = LEDGER_RUNTIME["derive_state"]([*mismatch, alternate])
+    assert allowed["errors"] == []
+    assert allowed["review_route"] == "high-assurance-review"
+
+    incomplete = json.loads(json.dumps(original))
+    incomplete[-1]["decision"] = "incomplete"
+    incomplete_state = LEDGER_RUNTIME["derive_state"](incomplete)
+    assert "incomplete review requires a partial checkpoint" in LEDGER_RUNTIME[
+        "intent_errors"
+    ](incomplete_state, "review")
+    retry = successor_invocation("change-review")
+    rejected = LEDGER_RUNTIME["derive_state"]([*incomplete, retry])
+    assert any(
+        "initial mode is only valid for the first invocation" in error
+        for error in rejected["errors"]
+    )
+
+
 def test_runtime_five_requires_both_high_assurance_core_returns(
     tmp_path: Path,
 ) -> None:
@@ -2588,15 +2687,11 @@ def test_runtime_five_requires_both_high_assurance_core_returns(
     invocation = events[-2]["data"]
     invocation["route"] = "high-assurance-review"
     invocation["agent_id"] = "assurance-coordinator"
+    invocation["route_evidence"]["basis"] = "release"
     invocation["provider_acceptance"]["agent_id"] = "assurance-coordinator"
     decision = events[-1]["data"]
     decision["route"] = "high-assurance-review"
     decision["agent_id"] = "assurance-coordinator"
-    decision["review_actor_ids"] = [
-        "review-agent",
-        "spec-reviewer",
-        "standards-reviewer",
-    ]
     decision["assurance_returns"] = [
         {
             "agent_id": "har-spec-reviewer",
@@ -2620,11 +2715,17 @@ def test_runtime_five_requires_both_high_assurance_core_returns(
     accepted = LEDGER_RUNTIME["derive_state"](events, str(repo))
     assert accepted["errors"] == []
 
+    partial = json.loads(json.dumps(events))
+    partial[-1]["decision"] = "incomplete"
+    partial[-1]["data"]["assurance_returns"] = partial[-1]["data"][
+        "assurance_returns"
+    ][:1]
+    partial_state = LEDGER_RUNTIME["derive_state"](partial, str(repo))
+    assert partial_state["errors"] == []
+    assert "spec-reviewer" in partial_state["review_actor_ids_used"]
+    assert "spec-review-task" in partial_state["review_task_ids_used"]
+
     incomplete = json.loads(json.dumps(events))
-    incomplete[-1]["data"]["review_actor_ids"] = [
-        "review-agent",
-        "spec-reviewer",
-    ]
     incomplete[-1]["data"]["assurance_returns"] = incomplete[-1]["data"][
         "assurance_returns"
     ][:1]

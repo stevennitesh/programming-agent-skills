@@ -1,6 +1,6 @@
 ---
 name: implement
-description: Deliver one explicitly selected bounded ready item through proof, review, Lock, tracker closeout, and one commit.
+description: Deliver one explicitly selected bounded ready item through proof, review, Lock, applicable tracker closeout, and one commit.
 ---
 
 # Implement
@@ -38,10 +38,10 @@ repository budget; otherwise default to exactly `2`.
 
 Return malformed or unsettled work to its source owner. Return an exhaustive
 parent graph or review-only request intact to the caller as `blocked` with
-`scope-mismatch`. Recommend `$repo-bootstrap` for missing
-setup and stop. Hand conflicts to `$resolving-merge-conflicts`. Recommend
-`$to-tickets` only when verified landed implementation invalidated the selected
-ticket's commitments or graph facts.
+`scope-mismatch`. Recommend `$repo-bootstrap` for missing setup and stop. Hand
+conflicts to `$resolving-merge-conflicts`. Recommend `$to-tickets` only when
+verified landed implementation invalidated the selected ticket's commitments
+or graph facts.
 
 Every Return or handoff carries the exact source, state, scope, authorities,
 proof, and Return owner. Ticket invalidation also names the implementation
@@ -75,14 +75,18 @@ work. In shared work, stage exact paths or hunks and request staged-only review.
 Never unstage foreign work. Stop when the candidate cannot be isolated. Pin the
 proved tree as one immutable candidate generation.
 
-Invoke `$change-review` in a fresh `ordinary-reviewer` task for an ordinary
-candidate, or `$high-assurance-review` in a fresh `assurance-coordinator` task
-for a release candidate or supported high-risk candidate. For each generation,
-use new review actor and task IDs distinct from all implementation actor and task
-IDs. Supply `Spec required: yes`, those implementation IDs, Charter, Source
-Trace, fixed point, candidate, proof, skips, risk, and contradictory evidence;
-withhold implementation hypotheses, expected conclusions, partial findings,
-and terminal cues.
+Apply `$change-review`'s
+[Finding Contract](../change-review/FINDING-CONTRACT.md) supported-risk
+predicate to the pinned candidate. Give each generation one fresh review task:
+`ordinary-reviewer` with `$change-review` for an ordinary candidate, or
+`assurance-coordinator` with `$high-assurance-review` for a release candidate or
+supported high-risk candidate. Record candidate-bound route evidence with its source,
+`ordinary | release | supported-high-risk` basis, and trigger when applicable.
+Use new review actor and task IDs distinct from all implementation actor and
+task IDs. Supply `Spec required: yes`, those implementation IDs, Charter,
+Source Trace, fixed point, candidate, proof, skips, risk, and contradictory
+evidence; withhold hypotheses, expected conclusions, partial findings, and
+terminal cues.
 
 Accept only a complete current Return bound to the generation and review
 semantic agent, actor, and task IDs, with no blocker or unaccepted residual
@@ -96,7 +100,9 @@ blocking ID, all blockers are `automatic-in-scope`, and the complete batch fits
 the frozen budget. Return every other set intact with its exact gap.
 
 Prove each repaired generation, reselect its route from current facts, and
-repeat this gate in a fresh task. Never resume a prior review.
+review it under new actor and task IDs. Send `Invocation: formal-delivery`,
+`Review mode: remediation`, and the Finding Contract's remediation packet.
+Never resume a prior review.
 
 ## Lock And Return
 
@@ -105,8 +111,10 @@ closeout, custody, and Mutation read-back rules.
 
 - Add only mechanical Local Markdown closeout after review and before Lock.
   Commit it with the selected work.
-- Retain GitHub or GitLab claims through Lock and commit. Close the item after
-  the verified commit.
+- For GitHub or GitLab, retain the claim through Lock and commit. Apply the
+  configured closeout, refetch and prove every effect plus durable
+  non-dispatchability, release the claim, then refetch claim absence and the
+  affected frontier.
 - Create no tracker state for direct work.
 
 Lock the reviewed tree plus applicable Local Markdown closeout. Send every other
@@ -117,14 +125,11 @@ boundary.
 Create exactly one commit. Retry a failed commit only after proving `HEAD`
 unchanged; do not retry blindly.
 
-Complete connector closeout, verify every effect, make the item durably
-non-dispatchable, release the claim, and verify the final frontier. After a
-connector failure, preserve the commit, refetch state, avoid blind replay, and
-retain or transfer the claim to a named recovery custodian.
-
-Before commit, release a claim only after pending mutations are determinate and
-no recovery duty remains. After commit, retain custody until closeout and
-frontier verification succeed.
+On an early Return before commit, release a claim only after pending mutations
+are determinate and no recovery duty remains. After a post-commit hosted
+closeout failure, preserve the commit, refetch state, avoid blind replay, and
+retain or transfer custody to a named recovery custodian until closeout and
+frontier proof finish.
 
 Push only with separate authority and verify the approved commit remotely.
 
@@ -136,7 +141,7 @@ Commit identity and tree:
 Proof, skips, and formal-review provenance:
 Repair generations:
 Changed scope and Change Closure:
-Tracker closeout, claim, and frontier:
+Tracker closeout, claim, and frontier: <evidence> | not applicable
 Residual risk:
 Caller-owned next action: <action> | none
 ```
@@ -144,8 +149,9 @@ Caller-owned next action: <action> | none
 Report but do not infer or start caller-owned next actions.
 
 Return `complete` only when acceptance, proof, review, Lock, commit identity,
-tracker order, relationships, claim release, frontier, Change Closure,
-unrelated-state exclusion, and every authorized external read-back pass.
+applicable tracker order, relationships, claim release, frontier, Change
+Closure, unrelated-state exclusion, and every authorized external read-back
+pass.
 
 Otherwise return `partial` or `blocked` with the failed gate, preserved state,
 evidence, custody, skipped checks, needed authority, and safest recovery.
