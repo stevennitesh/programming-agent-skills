@@ -9,7 +9,6 @@ import os
 import re
 import shutil
 import subprocess
-import sys
 import uuid
 from pathlib import Path
 from typing import Any
@@ -185,15 +184,42 @@ def path_budget(worktree: Path, repo: Path, configured: int | None) -> dict[str,
     }
 
 
-def emit(operation: str, ok: bool, **data: Any) -> int:
-    packet = {
+def result_packet(operation: str, ok: bool, **data: Any) -> dict[str, Any]:
+    return {
         "schema": SCHEMA_VERSION,
         "operation": operation,
         "ok": ok,
         **data,
     }
+
+
+def emit_packet(packet: dict[str, Any]) -> int:
     print(json.dumps(packet, sort_keys=True))
-    return 0 if ok else 1
+    return 0 if packet["ok"] else 1
+
+
+def emit(operation: str, ok: bool, **data: Any) -> int:
+    return emit_packet(result_packet(operation, ok, **data))
+
+
+def blocked_packet(
+    operation: str,
+    *,
+    state: str,
+    error: str,
+    recoverable: bool,
+    next_action: dict[str, Any],
+    **data: Any,
+) -> dict[str, Any]:
+    return result_packet(
+        operation,
+        False,
+        state=state,
+        error=error,
+        recoverable=recoverable,
+        next_action=next_action,
+        **data,
+    )
 
 
 def blocked(
@@ -205,18 +231,19 @@ def blocked(
     next_action: dict[str, Any],
     **data: Any,
 ) -> int:
-    return emit(
-        operation,
-        False,
-        state=state,
-        error=error,
-        recoverable=recoverable,
-        next_action=next_action,
-        **data,
+    return emit_packet(
+        blocked_packet(
+            operation,
+            state=state,
+            error=error,
+            recoverable=recoverable,
+            next_action=next_action,
+            **data,
+        )
     )
 
 
-def create(args: argparse.Namespace) -> int:
+def create_packet(args: argparse.Namespace) -> dict[str, Any]:
     repo, repo_trust = git_root(Path(args.repo).resolve())
     environment_root = os.environ.get("PARALLEL_IMPLEMENT_WORKTREE_ROOT", "").strip()
     if args.root:
@@ -236,12 +263,13 @@ def create(args: argparse.Namespace) -> int:
         raise LaneError("worktree path is inside the active checkout")
     if not contains(root, worktree):
         raise LaneError("worktree path escaped the selected root")
-    if worktree.exists():
+    reused = worktree.exists()
+    if reused and not getattr(args, "reuse_existing", False):
         raise LaneError(f"worktree path already exists: {worktree}")
     try:
         budget = path_budget(worktree, repo, args.max_path)
     except LaneError as error:
-        return blocked(
+        return blocked_packet(
             "create",
             state="blocked-path-budget",
             error=str(error),
@@ -250,7 +278,7 @@ def create(args: argparse.Namespace) -> int:
                 "command": "create",
                 "repair": "choose a shorter explicit or environment worktree root",
             },
-            provider="manual-git",
+            provider="manual-helper",
             repo=str(repo),
             root=str(root),
             root_source=root_source,
@@ -258,30 +286,32 @@ def create(args: argparse.Namespace) -> int:
         )
     root.mkdir(parents=True, exist_ok=True)
 
-    command = ["git", "worktree", "add"]
-    if args.branch:
-        command.extend(["-b", args.branch])
-    else:
-        command.append("--detach")
-    command.extend([str(worktree), args.base])
-    result, create_trust = git_repo_with_trust(repo, command[1:], check=False)
-    if result.returncode != 0:
-        return blocked(
-            "create",
-            state="blocked-create",
-            error=result.stderr.strip() or result.stdout.strip(),
-            recoverable=True,
-            next_action={
-                "command": "create",
-                "repair": "change the base, root, trust, permission, capability, or conflicting path",
-            },
-            provider="manual-git",
-            repo=str(repo),
-            root=str(root),
-            root_source=root_source,
-            worktree=str(worktree),
-            git_trust=create_trust,
-        )
+    create_trust = repo_trust
+    if not reused:
+        command = ["git", "worktree", "add"]
+        if args.branch:
+            command.extend(["-b", args.branch])
+        else:
+            command.append("--detach")
+        command.extend([str(worktree), args.base])
+        result, create_trust = git_repo_with_trust(repo, command[1:], check=False)
+        if result.returncode != 0:
+            return blocked_packet(
+                "create",
+                state="blocked-create",
+                error=result.stderr.strip() or result.stdout.strip(),
+                recoverable=True,
+                next_action={
+                    "command": "open",
+                    "repair": "change the base, root, trust, permission, capability, or conflicting path",
+                },
+                provider="manual-helper",
+                repo=str(repo),
+                root=str(root),
+                root_source=root_source,
+                worktree=str(worktree),
+                git_trust=create_trust,
+            )
 
     records = registered_worktrees(repo)
     record = records.get(worktree)
@@ -292,10 +322,10 @@ def create(args: argparse.Namespace) -> int:
     actual = record.get("HEAD") or record.get("head")
     if actual != expected:
         raise LaneError(f"registered worktree HEAD {actual} does not match {expected}")
-    return emit(
+    return result_packet(
         "create",
         True,
-        provider="manual-git",
+        provider="manual-helper",
         repo=str(repo),
         root=str(root),
         root_source=root_source,
@@ -310,6 +340,7 @@ def create(args: argparse.Namespace) -> int:
             else "normal"
         ),
         path_budget=budget,
+        reused=reused,
         cleanup_route="lane_worktree.py cleanup",
     )
 
@@ -402,6 +433,7 @@ def python_provenance(args: argparse.Namespace, worktree: Path) -> dict[str, Any
         [
             str(executable),
             "-I",
+            "-B",
             "-c",
             PYTHON_PROVENANCE_PROBE,
             json.dumps([str(root) for root in import_roots]),
@@ -446,6 +478,7 @@ def python_provenance(args: argparse.Namespace, worktree: Path) -> dict[str, Any
         resolved_packages[package] = verified
 
     return {
+        "status": "verified",
         "configuration_file": str(path),
         "configuration_sha256": hashlib.sha256(raw).hexdigest(),
         "executable": str(executable),
@@ -455,10 +488,10 @@ def python_provenance(args: argparse.Namespace, worktree: Path) -> dict[str, Any
     }
 
 
-def preflight(args: argparse.Namespace) -> int:
+def preflight_packet(args: argparse.Namespace) -> dict[str, Any]:
     worktree = Path(args.worktree).resolve()
     if not args.proof_command_json and not args.proof_command_file and not args.skip_proof:
-        return blocked(
+        return blocked_packet(
             "preflight",
             state="blocked-proof",
             error="proof startup is required unless explicitly skipped",
@@ -476,7 +509,7 @@ def preflight(args: argparse.Namespace) -> int:
 
     command, command_provenance = proof_command(args)
     if args.skip_proof and not args.reason:
-        return blocked(
+        return blocked_packet(
             "preflight",
             state="blocked-proof",
             error="--skip-proof requires --reason",
@@ -485,7 +518,7 @@ def preflight(args: argparse.Namespace) -> int:
             worktree=str(worktree),
         )
     if not args.python_provenance_file and not args.skip_python_provenance:
-        return blocked(
+        return blocked_packet(
             "preflight",
             state="blocked-provenance",
             error="Python provenance is required unless explicitly skipped",
@@ -500,7 +533,7 @@ def preflight(args: argparse.Namespace) -> int:
             worktree=str(worktree),
         )
     if args.skip_python_provenance and not args.python_provenance_reason:
-        return blocked(
+        return blocked_packet(
             "preflight",
             state="blocked-provenance",
             error="--skip-python-provenance requires --python-provenance-reason",
@@ -567,6 +600,7 @@ def preflight(args: argparse.Namespace) -> int:
     if command is not None:
         result = run(command, cwd=worktree, check=False)
         proof = {
+            "status": "passed",
             "command": command,
             "returncode": result.returncode,
             "stdout": result.stdout[-2000:],
@@ -576,24 +610,58 @@ def preflight(args: argparse.Namespace) -> int:
         if result.returncode != 0:
             raise LaneError(f"proof startup failed: {result.stderr.strip()}")
     else:
-        proof = {"skipped": True, "reason": args.reason}
+        proof = {"status": "skipped", "skipped": True, "reason": args.reason}
 
     provenance = (
         python_provenance(args, worktree)
         if args.python_provenance_file
-        else {"skipped": True, "reason": args.python_provenance_reason}
+        else {
+            "status": "not-applicable",
+            "skipped": True,
+            "reason": args.python_provenance_reason,
+        }
     )
 
-    return emit(
+    final_head_result, trust = git_with_trust(worktree, ["rev-parse", "HEAD"])
+    trusts.add(trust)
+    final_head = final_head_result.stdout.strip()
+    if final_head != base:
+        raise LaneError(
+            f"worktree HEAD changed during preflight: expected {base}, got {final_head}"
+        )
+    final_status_result, trust = git_with_trust(
+        worktree, ["status", "--porcelain=v1"]
+    )
+    trusts.add(trust)
+    if final_status_result.stdout:
+        raise LaneError(
+            f"worktree changed during preflight: {final_status_result.stdout.strip()}"
+        )
+    final_branch_result, trust = git_with_trust(
+        worktree, ["symbolic-ref", "-q", "--short", "HEAD"], check=False
+    )
+    trusts.add(trust)
+    final_branch = (
+        final_branch_result.stdout.strip()
+        if final_branch_result.returncode == 0
+        else None
+    )
+    if final_branch != branch:
+        raise LaneError(
+            f"worktree branch changed during preflight: expected {branch or 'detached'}, "
+            f"got {final_branch or 'detached'}"
+        )
+
+    return result_packet(
         "preflight",
         True,
-        provider="manual-git",
+        provider="manual-helper",
         worktree=str(worktree),
         repo_root=str(root),
         base=base,
-        head=head,
-        branch=branch,
-        detached=branch is None,
+        observed_head=final_head,
+        branch=final_branch,
+        detached=final_branch is None,
         status="clean",
         git_trust=(
             "command-scoped-safe-directory"
@@ -602,8 +670,8 @@ def preflight(args: argparse.Namespace) -> int:
         ),
         effective_identity=os.environ.get("USERNAME") or os.environ.get("USER"),
         probes={"checkout": "passed", "index_lock": "passed", "git_objects": "passed"},
-        proof_startup=proof,
-        python_provenance=provenance,
+        startup_proof=proof,
+        project_provenance=provenance,
         actor_id=args.actor_id,
         temp_root=str(actor_root),
         pytest_basetemp=str(pytest_basetemp),
@@ -612,42 +680,31 @@ def preflight(args: argparse.Namespace) -> int:
     )
 
 
-def helper_packet(arguments: list[str]) -> tuple[subprocess.CompletedProcess[str], dict[str, Any]]:
-    result = run([sys.executable, str(Path(__file__).resolve()), *arguments], check=False)
-    try:
-        packet = json.loads(result.stdout)
-    except json.JSONDecodeError as error:
-        raise LaneError(
-            f"lane helper returned no structured packet: {result.stderr.strip()}"
-        ) from error
-    if not isinstance(packet, dict):
-        raise LaneError("lane helper returned an invalid packet")
-    return result, packet
-
-
 def open_lane(args: argparse.Namespace) -> int:
     """Create and preflight one lane while preserving it on startup failure."""
-    create_args = [
-        "create",
-        "--repo",
-        args.repo,
-        "--base",
-        args.base,
-        "--run-id",
-        args.run_id,
-        "--item-id",
-        args.item_id,
-    ]
-    if args.root:
-        create_args.extend(["--root", args.root])
-    if args.branch:
-        create_args.extend(["--branch", args.branch])
-    if args.max_path is not None:
-        create_args.extend(["--max-path", str(args.max_path)])
-    if args.allow_inside_repo:
-        create_args.append("--allow-inside-repo")
-    create_result, lane = helper_packet(create_args)
-    if create_result.returncode != 0 or not lane.get("ok"):
+    try:
+        lane = create_packet(
+            argparse.Namespace(
+                repo=args.repo,
+                root=args.root,
+                base=args.base,
+                run_id=args.run_id,
+                item_id=args.item_id,
+                branch=args.branch,
+                max_path=args.max_path,
+                allow_inside_repo=args.allow_inside_repo,
+                reuse_existing=True,
+            )
+        )
+    except (LaneError, OSError, json.JSONDecodeError) as error:
+        lane = blocked_packet(
+            "create",
+            state="blocked-error",
+            error=str(error),
+            recoverable=True,
+            next_action={"command": "open", "repair": "correct the creation input"},
+        )
+    if not lane.get("ok"):
         return emit(
             "open",
             False,
@@ -658,35 +715,32 @@ def open_lane(args: argparse.Namespace) -> int:
             next_action=lane.get("next_action"),
         )
 
-    preflight_args = [
-        "preflight",
-        "--worktree",
-        str(lane["worktree"]),
-        "--base",
-        args.base,
-        "--actor-id",
-        args.actor_id,
-    ]
-    if args.branch:
-        preflight_args.extend(["--expect-branch", args.branch])
-    if args.proof_command_json:
-        preflight_args.extend(["--proof-command-json", args.proof_command_json])
-    elif args.proof_command_file:
-        preflight_args.extend(["--proof-command-file", args.proof_command_file])
-    elif args.skip_proof:
-        preflight_args.append("--skip-proof")
-    if args.reason:
-        preflight_args.extend(["--reason", args.reason])
-    if args.python_provenance_file:
-        preflight_args.extend(["--python-provenance-file", args.python_provenance_file])
-    elif args.skip_python_provenance:
-        preflight_args.append("--skip-python-provenance")
-    if args.python_provenance_reason:
-        preflight_args.extend(
-            ["--python-provenance-reason", args.python_provenance_reason]
+    try:
+        preflight = preflight_packet(
+            argparse.Namespace(
+                worktree=str(lane["worktree"]),
+                base=args.base,
+                actor_id=args.actor_id,
+                expect_branch=args.branch,
+                proof_command_json=args.proof_command_json,
+                proof_command_file=args.proof_command_file,
+                skip_proof=args.skip_proof,
+                reason=args.reason,
+                python_provenance_file=args.python_provenance_file,
+                skip_python_provenance=args.skip_python_provenance,
+                python_provenance_reason=args.python_provenance_reason,
+            )
         )
-    preflight_result, preflight_packet = helper_packet(preflight_args)
-    if preflight_result.returncode != 0 or not preflight_packet.get("ok"):
+    except (LaneError, OSError, json.JSONDecodeError) as error:
+        preflight = blocked_packet(
+            "preflight",
+            state="blocked-error",
+            error=str(error),
+            recoverable=True,
+            next_action={"command": "open", "repair": "correct the startup input"},
+            worktree=str(lane["worktree"]),
+        )
+    if not preflight.get("ok"):
         return emit(
             "open",
             False,
@@ -696,12 +750,12 @@ def open_lane(args: argparse.Namespace) -> int:
             root=lane.get("root"),
             worktree=lane.get("worktree"),
             lane=lane,
-            preflight=preflight_packet,
-            error=preflight_packet.get("error", "lane preflight failed"),
+            preflight=preflight,
+            error=preflight.get("error", "lane preflight failed"),
             next_action={
-                "command": "preflight",
+                "command": "open",
                 "worktree": lane.get("worktree"),
-                "repair": "fix the startup cause and retry preflight; the lane was preserved",
+                "repair": "fix the startup cause and retry open; the lane was preserved",
             },
         )
     return emit(
@@ -712,7 +766,7 @@ def open_lane(args: argparse.Namespace) -> int:
         root=lane.get("root"),
         worktree=lane.get("worktree"),
         lane=lane,
-        preflight=preflight_packet,
+        preflight=preflight,
         next_action={
             "command": "run_ledger.py apply",
             "packet": "lane-ready",
@@ -741,16 +795,18 @@ def cleanup(args: argparse.Namespace) -> int:
                 registered_after=False,
                 directory_exists=False,
             )
+        if getattr(args, "confirm_unregistered_residual", False):
+            return emit_packet(purge_residual_packet(args))
         return blocked(
             "cleanup",
             state=state,
             error="worktree is already unregistered, so its HEAD and cleanliness cannot be reverified",
             recoverable=True,
             next_action={
-                "command": "purge-residual",
+                "command": "cleanup",
                 "root": str(root),
                 "worktree": str(worktree),
-                "requires": "explicit residual cleanup authority",
+                "requires": "--confirm-unregistered-residual",
             },
             repo=str(repo),
             root=str(root),
@@ -812,10 +868,10 @@ def cleanup(args: argparse.Namespace) -> int:
                 error=str(error),
                 recoverable=True,
                 next_action={
-                    "command": "purge-residual",
+                    "command": "inspect-residual",
                     "root": str(root),
                     "worktree": str(worktree),
-                    "requires": "explicit residual cleanup authority",
+                    "requires": "manual recovery after verified cleanup failure",
                 },
                 repo=str(repo),
                 root=str(root),
@@ -877,7 +933,7 @@ def extended_path(path: Path) -> str:
     return "\\\\?\\" + value
 
 
-def purge_residual(args: argparse.Namespace) -> int:
+def purge_residual_packet(args: argparse.Namespace) -> dict[str, Any]:
     repo, _ = git_root(Path(args.repo).resolve())
     root = Path(args.root).resolve()
     worktree = Path(args.worktree).resolve()
@@ -889,8 +945,8 @@ def purge_residual(args: argparse.Namespace) -> int:
         raise LaneError("residual path is still registered as a Git worktree")
     if worktree.exists():
         shutil.rmtree(extended_path(worktree))
-    return emit(
-        "purge-residual",
+    return result_packet(
+        "cleanup",
         not worktree.exists(),
         repo=str(repo),
         root=str(root),
@@ -902,17 +958,6 @@ def purge_residual(args: argparse.Namespace) -> int:
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(description=__doc__)
     commands = root.add_subparsers(dest="command", required=True)
-
-    create_parser = commands.add_parser("create")
-    create_parser.add_argument("--repo", required=True)
-    create_parser.add_argument("--root")
-    create_parser.add_argument("--base", required=True)
-    create_parser.add_argument("--run-id", required=True)
-    create_parser.add_argument("--item-id", required=True)
-    create_parser.add_argument("--branch")
-    create_parser.add_argument("--max-path", type=int)
-    create_parser.add_argument("--allow-inside-repo", action="store_true")
-    create_parser.set_defaults(handler=create)
 
     open_parser = commands.add_parser("open")
     open_parser.add_argument("--repo", required=True)
@@ -935,36 +980,14 @@ def parser() -> argparse.ArgumentParser:
     open_parser.add_argument("--python-provenance-reason")
     open_parser.set_defaults(handler=open_lane)
 
-    preflight_parser = commands.add_parser("preflight")
-    preflight_parser.add_argument("--worktree", required=True)
-    preflight_parser.add_argument("--base", required=True)
-    preflight_parser.add_argument("--actor-id", required=True)
-    preflight_parser.add_argument("--expect-branch")
-    proof_group = preflight_parser.add_mutually_exclusive_group()
-    proof_group.add_argument("--proof-command-json")
-    proof_group.add_argument("--proof-command-file")
-    proof_group.add_argument("--skip-proof", action="store_true")
-    preflight_parser.add_argument("--reason")
-    provenance_group = preflight_parser.add_mutually_exclusive_group()
-    provenance_group.add_argument("--python-provenance-file")
-    provenance_group.add_argument("--skip-python-provenance", action="store_true")
-    preflight_parser.add_argument("--python-provenance-reason")
-    preflight_parser.set_defaults(handler=preflight)
-
     cleanup_parser = commands.add_parser("cleanup")
     cleanup_parser.add_argument("--repo", required=True)
     cleanup_parser.add_argument("--root", required=True)
     cleanup_parser.add_argument("--worktree", required=True)
     cleanup_parser.add_argument("--expected-head", required=True)
     cleanup_parser.add_argument("--disposition", required=True)
+    cleanup_parser.add_argument("--confirm-unregistered-residual", action="store_true")
     cleanup_parser.set_defaults(handler=cleanup)
-
-    purge_parser = commands.add_parser("purge-residual")
-    purge_parser.add_argument("--repo", required=True)
-    purge_parser.add_argument("--root", required=True)
-    purge_parser.add_argument("--worktree", required=True)
-    purge_parser.add_argument("--confirm-unregistered-residual", action="store_true")
-    purge_parser.set_defaults(handler=purge_residual)
     return root
 
 

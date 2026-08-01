@@ -4,4 +4,4 @@ policy:
 interface:
   display_name: "Implement"
   short_description: "Deliver one ready item exactly"
-  default_prompt: "Use $implement to deliver this one selected Ready-for-agent item through its Charter, proof, formal review, tracker-kind closeout, Lock, and one exact commit."
+  default_prompt: "Use $implement to deliver this one selected Ready-for-agent item through its Charter, proof, fresh independent formal review, tracker-kind closeout, Lock, and one exact commit."

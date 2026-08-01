@@ -1,140 +1,103 @@
 # Quality Coverage And Triage
 
-Use this compact owner on every subsystem Audit. It forces breadth before
-specialist depth, classifies observations, admits opportunities, and records
-retained complexity.
+Load this compact owner for every subsystem Audit. It owns coverage, detailed
+lens routing, primary-class arbitration, opportunity admission, and retained
+complexity.
 
-## Mandatory Lens Gate
+## Six-Class Coverage
 
-Record every required class once:
+Record exactly one row per class:
 
 ```text
-Lens:
-Disposition: finding | retained complexity | gap | examined-no-finding | not applicable
-Evidence:
+Class:
+Applicability: applicable | not applicable
+Coverage: complete | incomplete
+Examined scenarios and evidence:
+Admitted item IDs: <defects/opportunities/gaps/retained> | none
 Detailed owner loaded: yes | no
 Reason:
 ```
 
-`not applicable` requires source evidence. When applicability or a clean
-disposition is not obvious, load the detailed owner and examine it. A missing
-disposition keeps the subsystem `incomplete`.
+An admitted item does not close class coverage. `not applicable` requires
+current-source evidence. Any unchecked obtainable evidence makes that class and
+the subsystem `incomplete`.
 
-| Class | Mandatory question | Load the detailed owner when |
+| Class | Purpose | Load detailed owner when current evidence shows |
 | --- | --- | --- |
-| Reliability | Can supported behavior be trusted across meaningful success, edge, state, failure, security, and environmental branches? | Always load [RELIABILITY-LENS.md](RELIABILITY-LENS.md). |
-| [Domain](DOMAIN-LENS.md) | Does code express accepted language, Invariants, Bounded Context ownership, Context Relationships, and ADR decisions? | Domain records, project terms, policy meaning, Invariants, cross-context behavior, or a material decision is present or uncertain. |
-| [Design](DESIGN-LENS.md) | Do Interfaces and Seams concentrate capability, decisions, change, and proof with useful Depth, Leverage, and Locality? | Boundaries, pass-through layers, caller spread, dependency direction, test seams, or ownership placement may matter. |
-| [Simplification](SIMPLIFICATION-LENS.md) | Is behavior, configuration, compatibility, duplication, dependency, or abstraction unnecessary, or already owned by a smaller sufficient mechanism? | A stale path, duplicate policy, custom mechanism, shallow boundary, or cheaper behavior-preserving direction may exist. |
-| [Coding practice](CODING-PRACTICES-LENS.md) | Do naming, types, errors, validation, control flow, comments, state, and tests make the contract clear and provable? | Implementation clarity, invalid states, error behavior, Trust Boundaries, test responsibility, or concurrency may affect cost or risk. |
-| Performance | Is any speed or resource claim supported by like-for-like measurement against an applicable budget or comparison? | Performance or resources are declared, observed, suspected, or claimed; then load [PERFORMANCE-LENS.md](PERFORMANCE-LENS.md). |
+| Reliability | Supported behavior, failure, lifecycle, security, state, and environmental correctness | Always load [RELIABILITY-LENS.md](RELIABILITY-LENS.md). |
+| Domain | Accepted project meaning and durable decisions | A governing domain record, specification, schema, acceptance test, or declared code contract plus a possible language, Invariant, relationship, implementation, or ADR contradiction; then load [DOMAIN-LENS.md](DOMAIN-LENS.md). |
+| Design | Interface, Seam, dependency direction, and ownership placement | Mapped caller spread, pass-through boundaries, a cycle or dependency-direction conflict, misplaced ownership, supported variation, or caller-facing tests bypassing an Interface; then load [DESIGN-LENS.md](DESIGN-LENS.md). |
+| Simplification | Necessity and the lowest-burden sufficient behavior-preserving reduction | Reachable duplicate or stale behavior, unnecessary configuration/compatibility/dependency, a custom mechanism beside repository/standard/native capability, or an unearned boundary; then load [SIMPLIFICATION-LENS.md](SIMPLIFICATION-LENS.md). |
+| Coding practice | Independently evidenced residual clarity and provability | An observed naming, control-flow, comment, error-expression, invalid-state, duplicated-expression, or test-portfolio burden; then load [CODING-PRACTICES-LENS.md](CODING-PRACTICES-LENS.md). |
+| Performance | Measured resource behavior and comparability | A resource budget, requirement or claim, repository-owned measurement, current trace, deterministic count, or direct bottleneck evidence; then load [PERFORMANCE-LENS.md](PERFORMANCE-LENS.md). |
 
-## Class Ownership
+Generic project nouns, file size, function length, nesting, test count, suite
+time, dependency count, or aesthetic preference do not trigger depth or prove a
+finding.
 
-A violated authoritative expectation is a defect under
-[DEFECT-CONTRACT.md](DEFECT-CONTRACT.md). A verified beneficial change without
-a violated expectation is an opportunity. Missing required evidence is a gap.
-Complexity that protects a real constraint is retained complexity.
+## Primary Ownership
 
-Give each observation one primary class:
-
-- **Reliability** owns Semantic Correctness, supported behavior, state, and
-  failure safety.
-- **Domain** owns accepted project meaning.
-- **Design** owns Interface, Seam, and code-ownership placement.
-- **Simplification** owns unnecessary behavior or a proved cheaper mechanism.
-- **Coding practice** owns readability and provability when behavior, meaning,
-  and ownership remain correct.
-- **Performance** owns measured resource behavior; Reliability owns failure
+- **Reliability:** behavior, enforcement, failure safety, Trust Boundaries,
+  lifecycle, concurrency, compatibility, and behavioral proof.
+- **Domain:** accepted meaning and decision authority.
+- **Design:** Interface, Seam, dependency direction, and code ownership.
+- **Simplification:** necessity and the smallest sufficient reduction.
+- **Coding practice:** residual clarity and provability.
+- **Performance:** measured resource behavior; Reliability still owns failure
   semantics under load.
 
-When **Invariant** spans classes, use Reliability for behavioral enforcement
-or failure safety and Domain for accepted meaning. A mixed candidate may group
-observations later without erasing their primary owners.
+Design establishes whether a boundary is earned. Simplification chooses the
+smallest safe removal, reuse, or collapse direction. Mixed candidates may group
+items later without erasing each item's primary owner.
 
-## Triage
+## Classification
 
-Before admitting an opportunity, test:
+A violated authoritative expectation is a defect under
+[DEFECT-CONTRACT.md](DEFECT-CONTRACT.md). Missing required evidence unavailable
+within Audit is a gap. Complexity protecting a verified constraint is retained
+complexity. A beneficial change without a violated expectation is an
+opportunity only when all gates close:
 
-- **Necessary:** Does the behavior, compatibility path, flag, configuration,
-  dependency, or abstraction serve a supported scenario?
-- **Available:** Does Repository Reuse, Standard Library, Native Platform,
-  framework, database, or an Installed Dependency already own it?
-- **Owned:** Is policy duplicated, leaked across callers, or split between
-  competing owners or Bounded Contexts?
-- **Deep:** Does the Interface provide Leverage and Locality, or expose an
-  implementation-sized surface?
-- **Clear:** Do names, control flow, errors, state, comments, and configuration
-  reveal the contract?
-- **Provable:** Is the Interface the Test Surface, with each test owning a
-  distinct behavior, branch, risk, or diagnostic responsibility?
-- **Faithful:** Does code preserve Ubiquitous Language, Invariants, Context
-  Relationships, and accepted decisions?
-
-Function length, nesting depth, file size, test count, suite time, and
-dependency count are discovery hints only.
-
-## Opportunity Admission
-
-Admit an opportunity only when all five gates close:
-
-- **Reach:** the code participates in a supported subsystem scenario.
+- **Reach:** one supported scenario currently reaches the code.
 - **Evidence:** direct current-source evidence identifies the shape.
-- **Cost:** concrete caller burden, duplicated decisions, change spread, proof
-  friction, execution cost, dependency weight, misleading ownership, failure
-  exposure, or comprehension cost exists.
-- **Alternative:** a smaller, deeper, clearer, or more robust local shape
-  plausibly removes the cost without weakening the contract.
-- **Proof:** the observable seam and checks needed to preserve behavior are
-  named.
+- **Observed cost:** one affected scenario has concrete caller burden,
+  duplicated decisions, change spread, proof friction, execution cost,
+  dependency weight, misleading ownership, failure exposure, or comprehension
+  burden.
+- **Existing direction:** a named current/local owner or sufficient mechanism
+  plausibly removes that cost without weakening the contract.
+- **Proof:** the observable seam and preservation checks are named.
 
 ```text
 Opportunity ID:
 Primary class:
-Concepts:
-Location:
-Supported behavior:
-Current evidence:
-Concrete cost:
-Change direction:
+Location and supported behavior:
+Current evidence and observed cost:
+Existing owner or smallest direction:
 Behavior and safety floors:
 Required proof:
 Confidence:
 ```
 
-Convert only a cohesive user-selectable opportunity, defect, or cluster
-containing at least one of them under
-[CANDIDATE-CONTRACT.md](CANDIDATE-CONTRACT.md). A related gap may join; a
-gap-only hypothesis may not. Keep every member ID visible.
-
-## Stale Code
-
-Call code stale only after proportionately checking current reachability,
-registration, configuration, callers, supported compatibility, generated
-ownership, and relevant history. Missing text references do not prove
-staleness for reflection, plugins, dynamic imports, serialization, command
-registries, templates, or external entry points.
-
-When obtainable proof is unfinished, keep the subsystem `incomplete`. When it
-is unavailable within Audit authority, record a gap with its re-entry.
-
-## Retain
+Retain justified complexity:
 
 ```text
 Retain ID:
-Location:
-Apparent cost:
-Constraint or behavior it protects:
+Location and apparent cost:
+Constraint or behavior protected:
 Evidence:
 Known Ceiling:
 Revisit Trigger:
 ```
 
-Retained complexity is not a candidate. It prevents the same unsafe reduction
-from being re-proposed without new evidence.
+## Stale Code And False-Positive Controls
 
-## Bound
+Call code stale only after proportionately checking current reachability,
+registration, configuration, callers, supported compatibility, generated
+ownership, and relevant history. Missing text references do not prove
+staleness for reflection, plugins, dynamic imports, serialization, registries,
+templates, or external entry points.
 
-Do not estimate lines or dependencies saved without a verified patch or
-mechanical count. Audit records change directions, not implementation. A
-quality opportunity grants no mutation or downstream authority.
+Do not estimate savings without a verified patch or mechanical count. Audit
+records directions, not implementation. Retained complexity is not a candidate.
+A gap-only or retained-only cluster is not a candidate.

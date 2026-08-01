@@ -35,22 +35,20 @@ Ask:
 - Does an opportunity reopen an ADR, and is current friction strong enough to
   justify that decision?
 
-Example: if the glossary distinguishes **Customer** from **User**, code named
-`account` may hide a Language Collision. The finding must show which behavior
-or ownership is obscured; vocabulary preference alone is insufficient.
+Vocabulary preference alone is insufficient. A finding must identify the
+accepted authority and the behavior, ownership, or decision it obscures or
+contradicts.
 
-Example: if the model allows partial Order cancellation but code cancels the
-entire Order, record an Implementation Contradiction against the authoritative
-Invariant and supported scenario.
+Examples: `account` is problematic where accepted language distinguishes
+Customer from User only when it obscures behavior or ownership. Code that
+cancels a whole Order where the authoritative model permits partial cancellation
+is an Implementation Contradiction.
 
 ## Decision Boundary
 
-Code and tests are evidence about present behavior, not authority over intended
-meaning. When a candidate needs the user to settle a term, Invariant, Bounded
-Context, Context Relationship, or ADR trade-off, write the exact collision and
-consequences into the candidate's decision brief and recommend
-`$grill-with-docs`.
-
-Only `$domain-modeling`, directly or under `$grill-with-docs`, owns durable
-domain changes and ADR handling. Audit later records the returned Domain Delta
-without claiming its mutations.
+Code and tests are not authority merely because they describe current behavior;
+honor acceptance tests, schemas, or code contracts that repository authority
+explicitly designates. When a candidate needs a term, Invariant, Bounded Context, Context
+Relationship, or ADR trade-off settled, record the exact collision and
+consequences. `CANDIDATE-FOLLOWUP.md` alone selects the next owner. Audit never
+mutates domain records and treats a returned Domain Delta only as evidence.

@@ -25,8 +25,11 @@ establish impact.
 
 ## Measure
 
-Prefer a repository-owned benchmark, profiler, production trace, or
-representative end-to-end proof lane. Record one reproducible run:
+Prefer a repository-owned benchmark, profiler, production trace, deterministic
+resource count, or representative end-to-end proof lane. Record one
+reproducible evidence packet. Complete applicable fields and give a reason for
+inapplicable ones; an authoritative existing trace needs provenance and
+comparability, not a forced rerun.
 
 ```text
 Workload:
@@ -47,8 +50,8 @@ Required proof:
 
 Materially different environments, datasets, builds, or methods become gaps.
 Noisy or under-sampled results support only the uncertainty they resolve. If
-the required measurement is available but unfinished, keep the subsystem
-`incomplete`.
+the required measurement is available but unfinished, keep the class and
+subsystem `incomplete`.
 
 ## Bound
 

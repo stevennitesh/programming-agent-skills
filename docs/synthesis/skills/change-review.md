@@ -9,8 +9,8 @@ campaign and its exact evidence remain at
 Change Review owns one ordinary branch, WIP, staged, since-X diff, or ordinary
 PR from a fixed snapshot. It judges Spec and Standards separately through the
 shared Finding Contract and returns one read-only gate decision. Release
-candidates and supported high-risk changes hand off once to
-`$high-assurance-review`; immutable repository-baseline audits recommend
+candidates and supported high-risk changes return intact to the delivery caller
+as route mismatches; immutable repository-baseline audits recommend
 `$audit-codebase` and stop.
 
 Implement and Parallel Implement select Change Review for ordinary candidates

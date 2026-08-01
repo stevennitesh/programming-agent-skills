@@ -1,116 +1,119 @@
-# Worker Brief Contract
+# Worker Brief
 
-Generate one assignment with `run_ledger.py brief`, then add the ticket-owned
-execution packet that the ledger cannot infer.
+**Bind -> Implement -> Prove -> Return**
 
-## Common assignment
+Generate the ledger-owned assignment with
+[Campaign Runtime](RUN-LEDGER.md) `brief`, then add only ticket-owned meaning.
 
-- Work item and mode
-- Actor ID and preflight packet
-- Charter and Source Trace
-- Applicable engineering and domain pointers
-- Verified base and absolute worktree
-- Stable temp, pytest, and cache roots
-- Grounding: current owner, representative callers and entry paths, Repository
-  Reuse, and repository constraints
-- Acceptance, Commitment Boundary, prohibited behavior, exclusions, and
-  dependencies
-- Applicable Invariants, Trust Boundaries, supported states, and failure,
-  recovery, compatibility, environmental, and observability obligations
-- Confirmed authority boundary
-- Change Closure: `<displaced paths and retention obligations / not applicable>`
-- State-boundary matrix:
-  `<applicable branches and interactions / not applicable>`
-- Proof responsibility: `<behavior or branch, canonical test surface or proof
-  lane, consumers, expected reuse / extend / add>`
-- Expected write scope; proposed concrete write set when shared fixtures are
-  plausible
-- Focused proof and validation environment
-- Observable liveness checkpoint
-- Report transport
+## Assignment
 
-The assigned worktree is the workspace. Reconcile its root, base, clean status,
-actor, proof startup, Python import provenance, and temp roots before editing.
-Use it as `workdir` for every command and edit only beneath it. Stop on
-mismatch.
+The ledger supplies the work item, mode, semantic agent ID, actor, task, lane,
+base, checkout, temp roots, Charter, launch receipt, liveness cursor, and Return
+transport.
 
-One worker owns one lane and returns one packet. Never spawn, integrate,
-formally review, mutate trackers, push, or widen scope. Use `$tdd` for
-red-testable behavior. For an uncertain bug, return `needs-feedback` with a
-`diagnosis-required` packet containing the facts, evidence, environment, exact
-lane state, authorities, and root Return owner; stop.
+The root adds:
 
-Choose implementation technique under the routed engineering contract. Start
-from assigned grounding and refresh only facts that current evidence makes
-stale or contradictory.
+- Source Trace and applicable engineering and domain pointers;
+- current owner, representative callers and entry paths, Repository Reuse, and
+  repository constraints;
+- acceptance, Commitment Boundary, prohibited behavior, exclusions, and
+  dependencies;
+- applicable Invariants, Trust Boundaries, supported states, and failure,
+  recovery, compatibility, environmental, and observability obligations;
+- confirmed authority, expected write scope, and proposed concrete write set
+  when shared fixtures are plausible;
+- Change Closure and any applicable state-boundary matrix;
+- proof responsibility, canonical owner and consumers, expected reuse, extend,
+  or add decision, focused proof, and validation environment.
 
-Prove every assigned acceptance, prohibited behavior, correctness and
-robustness obligation, matrix branch, and proof responsibility. Reuse or extend
-the assigned canonical test owner; add a separate test only for a distinct
-responsibility. If repository inspection contradicts the assignment or reveals
-an omitted supported semantic branch or overlapping test owner, return it as
-`needs-feedback`; do not silently rewrite the packet, narrow acceptance, or
-widen the commitment boundary.
+## Bind
+
+Reconcile the final augmented assignment SHA-256 from the dispatch receipt,
+launch receipt, current directory, task, actor, lane, exact base, clean status,
+startup proof, project provenance, and temp roots before editing. Use the
+assigned checkout for every command and edit only beneath it. Stop on mismatch.
+
+One worker owns one item and returns one packet. Never spawn or delegate. Leave
+dispatch, integration, tracker mutation, remote Git delivery, scope changes,
+and campaign completion to their owners. Do not invoke
+`$change-review` or `$high-assurance-review`; formal review belongs to the
+root-selected owner.
+
+## Implement
+
+Choose implementation technique under the routed engineering contract. Refresh
+assigned grounding only when current evidence makes it stale or contradictory.
+Discoveries outside the assignment are scope notes, not authority.
+
+Use `$tdd` for red-testable behavior. An uncertain bug returns
+`needs-feedback` with a `diagnosis-required` packet containing facts, evidence,
+environment, exact task and lane state, authorities, and the root Return owner.
+
+If repository evidence contradicts the assignment or reveals an omitted
+supported semantic branch or overlapping test owner, return `needs-feedback`;
+do not rewrite the packet, narrow acceptance, or widen the Commitment Boundary.
+
+## Prove
+
+Prove every acceptance, prohibited behavior, correctness and robustness
+obligation, matrix branch, proof responsibility, and Change Closure obligation.
+Reuse or extend the assigned canonical test owner; add a separate test only for
+a distinct responsibility.
 
 Run focused proof by default. Run broader proof only for shared-behavior risk or
-an explicit route. Product intent, public/domain contracts, dependency meaning,
-security posture, and adjacent work remain outside the lane unless the Source
-Trace authorizes them.
+an explicit route. Product intent, public or domain contracts, dependency
+meaning, security posture, and adjacent work remain outside the lane unless the
+Source Trace authorizes them.
 
-## Mode additions
+## Branches
 
-### Implementation
+**Pre-landing correction.** Continue only in the same current task, lane, and
+checkout. Amend or supersede the returned commit, prove the requested fix, and
+name the superseded commit in Return.
 
-Implement exactly the assigned acceptance slice. Discoveries outside it are
-scope notes, not authority. Return one clean commit or an exact
-blocker/needs-feedback packet.
+**Integration correction.** Require the regression event ID, prior integration
+`HEAD`, correction route, authorized owner and actor, write-scope IDs, trusted
+RED, and required proof. Start from that `HEAD`, change only authorized IDs,
+prove the RED and affected paths, and return one clean correction commit. An
+owned correction returns to its current worker; cross-worker work belongs to
+`serial-integrator`.
 
-### Integration correction
+**Review Repair.** Require caller admission, generation, blocked reviewed
+`HEAD`, complete blocking set, exact admitted IDs, per-blocker automatic and
+Charter-preservation evidence, both budgets, write scope, and required proof.
+Accept only when admitted IDs equal every blocker and every gate passes. Change
+only those findings under the original Charter and prove each remedy and
+regression.
 
-Include the regression event ID, prior integration HEAD, correction route,
-authorized owner and actor, structured write-scope IDs, trusted RED, and
-required proof. Start from that HEAD, select only authorized IDs, reproduce or
-reconcile the RED, and prove failing and affected paths. Return selected IDs,
-actual changed files, one clean correction commit, and evidence. Do not land it.
-
-An existing worker may receive this correction only while the root-recorded
-route, reconciled lane, authority, and bounded assignment remain current.
-Otherwise use a fresh lane.
-
-### Review repair
-
-Include the caller admission record, repair generation, blocked reviewed HEAD,
-complete blocking finding set, exact admitted IDs, automatic classification and
-Charter-preservation evidence for every blocker, both frozen budget states,
-scopes, and required proof. Accept the assignment only when the admitted IDs
-equal every blocking ID and every blocker passes all gates. Change only those
-admitted findings under the original Charter. Prove each remedy and regression.
-Adjacent observations authorize no work.
-
-## Return packet
+## Return
 
 ```text
 status: <done / blocker / needs-feedback>
 work item:
 mode:
+agent ID:
 actor ID:
+task ID and host ID:
+transport:
+lane and worktree:
 base:
+assignment ref:
+assignment SHA-256:
 commit:
+supersedes commit: <prior returned commit / none>
 changed scope IDs: <when authorized IDs exist>
 actual changed files:
 acceptance proof: <criterion -> evidence>
-test portfolio delta: <reused / extended / added / consolidated / removed +
-  responsibility>
+test portfolio delta: <reused / extended / added / consolidated / removed + responsibility>
 commands and results:
 skipped checks:
-liveness checkpoint:
+liveness cursor:
 risk or blocker:
 next need:
 scope notes:
 final status: <clean / dirty + reason>
 ```
 
-`done` requires reconciled preflight, every criterion, proof responsibility,
-and assigned Change Closure obligation accounted for, one commit, focused
-proof, and clean status. `blocker` and `needs-feedback` claim no completion and
-preserve exact state.
+`done` requires a matching launch receipt, every assigned obligation accounted
+for, one commit, focused proof, and clean status. `blocker` and
+`needs-feedback` preserve exact state and claim no completion.

@@ -47,6 +47,12 @@ Revision 13 preserves Skill Router's existing Diagnosis route and adds three
 recommend-and-stop edges: Prototype and Resolving Merge Conflicts can return
 route mismatches to Diagnosis, and proved Diagnosis can return post-fix
 architecture prevention work to Audit Codebase. Every target remains unstarted.
+Revision 14 puts To Tickets in the generated candidate Analyze prompt and
+Implement in the resulting Ready-for-agent prompt. To Tickets retains issue
+publication; Audit retains candidate judgment, report publication, and Return.
+Revision 15 makes Implement and Parallel Implement the sole formal-review route
+selectors, removes cross-review routing, and requires two valid fresh core
+reviewers for a High-Assurance passing decision.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -380,7 +386,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "completion_return": "One terminal release decision with admitted findings and residual risk",
       "disposition": "selected",
       "entry_conditions": [
-        "A release candidate or supported high-risk diff or PR needs independent fresh-context review"
+        "A release candidate or supported high-risk diff or PR needs independent fresh-task review"
       ],
       "essential": true,
       "exclusions": [
@@ -392,7 +398,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "primary_owner_skill_id": "SK-014",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
-        "Immutable candidate pinning, independent review passes, root finding admission, and release decision"
+        "Immutable candidate pinning, independent review passes, coordinator finding admission, and release decision"
       ]
     },
     {
@@ -451,7 +457,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-017",
-      "completion_return": "One verified durable current-source HTML report for exactly one Map, Audit, or Analyze invocation",
+      "completion_return": "One verified durable current-source HTML report for exactly one Map, Audit, Analyze, or Close invocation, plus the To Tickets result for an implementation-ready Analyze",
       "disposition": "selected",
       "entry_conditions": [
         "A repository needs a new, continued, or refreshed exhaustive system map; one selected subsystem audit; or analysis of one selected candidate or returned packet"
@@ -602,7 +608,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "primary_owner_skill_id": "SK-022",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
-        "Single-item Charter, technique routing, integration, proof, review admission, Lock, commit, and closeout"
+        "Single-item Charter, technique routing, integration, proof, formal-review selection and admission, Lock, commit, and closeout"
       ]
     },
     {
@@ -743,7 +749,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-016"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for audit-codebase: Map one selected repository target, audit one user-selected subsystem, or analyze one user-selected candidate or returned packet without a release decision",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for audit-codebase: Map one repository target, audit one selected subsystem, analyze one selected candidate through its generated To Tickets branch when ready, or close one analyzed candidate from its exact completion packet",
         "expected_owner_skill_id": "SK-017",
         "scenario_id": "PS-017"
       },
@@ -887,6 +893,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       {
         "predecessor_skill_id": "SK-011",
         "successor_skill_id": "SK-025"
+      },
+      {
+        "predecessor_skill_id": "SK-012",
+        "successor_skill_id": "SK-017"
       },
       {
         "predecessor_skill_id": "SK-012",
@@ -1619,16 +1629,16 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "high-assurance-review caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "The selected target is a release candidate or matches a supported high-risk trigger.",
+      "entry_condition": "The selected candidate is a release candidate or matches a supported high-risk trigger and needs one fresh independent assurance run.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for implement and the declared high-assurance-review input",
+      "input_packet": "Caller-owned bounded Source Trace for implement, implementation actor and task identities, factual candidate evidence, and the declared high-assurance-review input",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-013",
       "required_proof_ids": [
         "PROOF-REL-013"
       ],
       "resume_owner_skill_id": "SK-022",
-      "return_packet": "The declared high-assurance-review Return packet plus evidence, limits, and residual state",
+      "return_packet": "The declared high-assurance-review Return packet plus review actor and fresh-task provenance, exact candidate evidence, limits, and residual state",
       "target_skill_id": "SK-014",
       "verb": "Invoke",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -1671,16 +1681,16 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "change-review caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "The selected ordinary diff or PR, or bounded Repair generation, needs fixed-snapshot review.",
+      "entry_condition": "The selected ordinary diff or PR, or bounded Repair generation, needs one fresh independent fixed-snapshot review.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for implement and the declared change-review input",
+      "input_packet": "Caller-owned bounded Source Trace for implement, implementation actor and task identities, factual candidate evidence, and the declared change-review input",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-016",
       "required_proof_ids": [
         "PROOF-REL-016"
       ],
       "resume_owner_skill_id": "SK-022",
-      "return_packet": "The declared change-review Return packet plus evidence, limits, and residual state",
+      "return_packet": "The declared change-review Return packet plus review actor and fresh-task provenance, exact candidate evidence, limits, and residual state",
       "target_skill_id": "SK-015",
       "verb": "Invoke",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -1945,24 +1955,27 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "CAP-012"
       ],
       "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+        "To Tickets retains source admission, execution-packet shaping, slicing, configured GitHub tracker mutation, relationship and readiness proof, recovery, Return, and completion"
       ],
       "caller_skill_id": "SK-017",
       "combined_exit_owner_skill_id": "SK-017",
-      "context_loaded": [],
-      "entry_condition": "One analyzed candidate has settled direction, authority, commitments, acceptance, dependency meaning, and supported states; requires multiple implementation slices; and either needs no new parent specification or already has one. Audit publishes an exact report-backed pickup and leaves ticket creation unstarted.",
-      "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
-      "input_packet": "Durable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
-      "ordering_impact": "none",
+      "context_loaded": [
+        "to-tickets caller-facing interface and configured issue-tracker owner"
+      ],
+      "explicit_target_authority": "exact-user-approved-packet",
+      "entry_condition": "The generated candidate Analyze prompt includes To Tickets and the candidate is implementation-ready with settled execution source, proof, Change Closure, and finite Repair budget.",
+      "failure_behavior": "Return ready/reused or recovery state; recovery produces no Implement prompt",
+      "input_packet": "Generated To Tickets invocation plus report, run, subsystem, candidate, current-source, and candidate-bundle digest identities; settled execution source; proof; Change Closure; and one-item constraint when applicable",
+      "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-028",
       "required_proof_ids": [
         "PROOF-REL-028"
       ],
       "resume_owner_skill_id": "SK-017",
-      "return_packet": "One exact target, reason, prerequisite, and invocation with downstream work unstarted",
+      "return_packet": "One candidate-bundle-bound ready/reused graph or typed recovery packet with exact issue identities, relationships, first Ready-for-agent frontier identity, mutation/read-back identity, and residual state",
       "target_skill_id": "SK-012",
-      "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      "verb": "Invoke",
+      "wrong_condition": "The generated conditional authority is absent or the candidate is not implementation-ready; publish authority-required with the linked Analyze re-entry when only authority is absent, make zero tracker effects, and otherwise do not invoke To Tickets"
     },
     {
       "affected_capability_ids": [
@@ -2000,16 +2013,16 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-017",
       "combined_exit_owner_skill_id": "SK-017",
       "context_loaded": [],
-      "entry_condition": "One analyzed non-reduction item has settled outcome, acceptance, commitment boundary, scope and write authority, Source Trace, proof, and finite Repair budget; Audit publishes an exact report-backed pickup and leaves implementation unstarted.",
-      "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
-      "input_packet": "Durable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
+      "entry_condition": "To Tickets returned a candidate-digest-bound ready/reused graph, verified mutation/read-back identity, exact issue URLs, and a non-empty Ready-for-agent frontier; To Tickets owns the first recommendation and Audit preserves it while appending candidate/report identity plus the exact Close-return schema without starting implementation.",
+      "failure_behavior": "Publish the tracker recovery state and Analyze re-entry without an implementation recommendation",
+      "input_packet": "Durable audit report, candidate and candidate-bundle digest identities, verified GitHub issue and first Ready-for-agent identity, mutation/read-back identity, analysis, requested Close-return fields, and exact uninvoked suggestion",
       "ordering_impact": "none",
       "relationship_id": "REL-056",
       "required_proof_ids": [
         "PROOF-REL-056"
       ],
       "resume_owner_skill_id": "SK-017",
-      "return_packet": "One exact target, reason, prerequisite, and invocation with downstream work unstarted",
+      "return_packet": "One exact issue-bound Implement pickup with requested Close-return fields and implementation unstarted; Close remains a separate user-selected Audit invocation",
       "target_skill_id": "SK-022",
       "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -2027,16 +2040,16 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "high-assurance-review caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "The drained proved target is a release candidate or supported high-risk diff or PR; the terminal decision returns to the root.",
+      "entry_condition": "The drained proved candidate is a release candidate or supported high-risk diff or PR and needs one fresh independent assurance run.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for parallel-implement and the declared high-assurance-review input",
+      "input_packet": "Caller-owned bounded Source Trace for parallel-implement, implementation and integration actor identities, factual candidate evidence, and the declared high-assurance-review input",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-030",
       "required_proof_ids": [
         "PROOF-REL-030"
       ],
       "resume_owner_skill_id": "SK-023",
-      "return_packet": "The declared high-assurance-review Return packet plus evidence, limits, and residual state",
+      "return_packet": "The declared high-assurance-review Return packet plus review actor and fresh-task provenance, exact candidate evidence, limits, and residual state",
       "target_skill_id": "SK-014",
       "verb": "Invoke",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -2106,16 +2119,16 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "change-review caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "The drained proved ordinary candidate or repaired successor needs fixed-snapshot Spec and Standards review; judgment returns to the root.",
+      "entry_condition": "The drained proved ordinary candidate or repaired successor needs one fresh independent fixed-snapshot Spec and Standards review.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for parallel-implement and the declared change-review input",
+      "input_packet": "Caller-owned bounded Source Trace for parallel-implement, implementation and integration actor identities, factual candidate evidence, and the declared change-review input",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-034",
       "required_proof_ids": [
         "PROOF-REL-034"
       ],
       "resume_owner_skill_id": "SK-023",
-      "return_packet": "The declared change-review Return packet plus evidence, limits, and residual state",
+      "return_packet": "The declared change-review Return packet plus review actor and fresh-task provenance, exact candidate evidence, limits, and residual state",
       "target_skill_id": "SK-015",
       "verb": "Invoke",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -2274,33 +2287,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     },
     {
       "affected_capability_ids": [
-        "CAP-015",
-        "CAP-014"
-      ],
-      "callee_owned_gates_mutations": [
-        "The target retains all target-local admission, evidence, mutation, Return, and completion gates"
-      ],
-      "caller_skill_id": "SK-015",
-      "combined_exit_owner_skill_id": "SK-014",
-      "context_loaded": [
-        "high-assurance-review caller-facing interface and branch-required reference only"
-      ],
-      "entry_condition": "The target is a release candidate or matches a supported high-risk trigger.",
-      "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for change-review and the declared high-assurance-review input",
-      "ordering_impact": "callee-before-caller",
-      "relationship_id": "REL-044",
-      "required_proof_ids": [
-        "PROOF-REL-044"
-      ],
-      "resume_owner_skill_id": "SK-014",
-      "return_packet": "The declared high-assurance-review Return packet plus evidence, limits, and residual state",
-      "target_skill_id": "SK-014",
-      "verb": "Hand off",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
         "CAP-018",
         "CAP-017"
       ],
@@ -2385,7 +2371,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-025",
       "combined_exit_owner_skill_id": "SK-025",
       "context_loaded": [],
-      "entry_condition": "The situation satisfies a release candidate or supported high-risk diff or PR needs independent fresh-context review; return that route and leave it unstarted.",
+      "entry_condition": "The situation satisfies a release candidate or supported high-risk diff or PR needs independent fresh-task review; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
       "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared high-assurance-review input",
       "ordering_impact": "callee-before-caller",
@@ -4173,24 +4159,24 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "terminal_evidence_pointer": null
       },
       "canonical_name": "high-assurance-review",
-      "completion_condition": "Independent current review converges on the exact immutable candidate",
+      "completion_condition": "The exact immutable candidate is judged through two valid fresh core reviewer returns and any required specialist",
       "contract_order": 14,
       "essential_outcome": "Return one terminal release decision for an immutable release candidate or supported high-risk change",
-      "failure_return": "Return degraded capacity, incomplete coverage, or admitted blockers without mutation",
+      "failure_return": "Return an ordinary-target route mismatch, incomplete reviewer quorum or coverage, or admitted blockers without mutation",
       "invocation_mode": "implicit",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: A release candidate or supported high-risk diff or PR needs independent fresh-context review",
+        "The request does not satisfy: A release candidate or supported high-risk diff or PR needs independent fresh-task review",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Immutable candidate pinning, independent review passes, root finding admission, and release decision"
+        "Immutable candidate pinning, fresh core reviewer dispatch, coordinator finding admission, and release decision"
       ],
       "owned_capability_ids": [
         "CAP-014"
       ],
-      "positive_entry_predicate": "A release candidate or supported high-risk diff or PR needs independent fresh-context review",
+      "positive_entry_predicate": "A release candidate or supported high-risk diff or PR needs independent fresh-task review",
       "primary_role": "leaf",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -4201,7 +4187,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-002"
       ],
       "required_input": "A bounded caller-owned Source Trace and authority for: Return one terminal release decision for an immutable release candidate or supported high-risk change",
-      "return_packet": "One terminal release decision with admitted findings and residual risk",
+      "return_packet": "One terminal release decision with core reviewer provenance, admitted findings, and residual risk",
       "skill_id": "SK-014"
     },
     {
@@ -4217,7 +4203,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "completion_condition": "Every in-scope changed behavior is judged against Spec and Standards",
       "contract_order": 15,
       "essential_outcome": "Review one ordinary fixed-snapshot diff or PR with separate Spec and Standards judgment",
-      "failure_return": "Hand off high-risk candidates or return incomplete evidence without mutation",
+      "failure_return": "Return high-risk or release route mismatches or incomplete evidence to the caller without mutation",
       "invocation_mode": "implicit",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
@@ -4239,7 +4225,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
       "relationship_ids": [
-        "REL-044",
         "REL-092"
       ],
       "required_input": "A bounded caller-owned Source Trace and authority for: Review one ordinary fixed-snapshot diff or PR with separate Spec and Standards judgment",
@@ -4297,25 +4282,25 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "terminal_evidence_pointer": null
       },
       "canonical_name": "audit-codebase",
-      "completion_condition": "The selected Map, Audit, or Analyze path is terminal for this invocation; its current evidence identity and sole durable HTML report pass atomic publication verification; and any next-step suggestion has one exact uninvoked pickup",
+      "completion_condition": "The selected Map, Audit, Analyze, or Close path is terminal for this invocation; its current evidence identity and deterministic JSON-state HTML report pass digest-locked publication and read-back; an implementation-ready Analyze also records a candidate-bound ready/reused or recovery result",
       "contract_order": 17,
-      "essential_outcome": "Map one selected repository target, audit one user-selected subsystem, or analyze one user-selected candidate or returned packet",
-      "failure_return": "Return current, incomplete, or stale report coverage without mutating the repository baseline",
+      "essential_outcome": "Map one repository target, audit one user-selected subsystem, analyze one user-selected candidate, or close one analyzed candidate from its exact completion packet",
+      "failure_return": "Return current, incomplete, or stale report coverage without mutating the repository baseline, while preserving exact GitHub issue recovery state from an attempted implementation-ready Analyze",
       "invocation_mode": "explicit-only",
-      "load_budget_class": "conditional-leaf",
+      "load_budget_class": "conditional-aggregate",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: A repository needs a whole-system map, one selected subsystem audit, or one selected candidate analysis",
+        "The request does not satisfy: A repository needs a whole-system map, one selected subsystem audit, one selected candidate analysis, or one selected candidate closeout",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Baseline pinning and manifest verification, linked system map, correctness and robustness defects, classified opportunities, retained complexity, candidate presentation and analysis, returned-evidence judgment, exact next-step pickups, coverage state, and the sole atomic durable HTML report"
+        "Current-source identity and strict manifest verification, linked system map, six-lens coverage, findings and retained complexity, candidate presentation, analysis and Close, To Tickets result admission, exact issue-bound pickups, and the deterministic atomic JSON-state HTML report"
       ],
       "owned_capability_ids": [
         "CAP-017"
       ],
-      "positive_entry_predicate": "A repository needs a whole-system map, one selected subsystem audit, or one selected candidate analysis",
-      "primary_role": "leaf",
+      "positive_entry_predicate": "A repository needs a whole-system map, one selected subsystem audit, one selected candidate analysis, or one selected candidate closeout",
+      "primary_role": "executable-aggregate",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
         "Per-skill H1 outside this immutable contract slice",
@@ -4335,8 +4320,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-056",
         "REL-093"
       ],
-      "required_input": "A repository baseline for Map; one current complete report and selected subsystem for Audit; or one current report and selected candidate or returned packet for Analyze",
-      "return_packet": "A complete, incomplete, or blocked invocation result with snapshot and Map state, absolute report path or none, current selection, coverage, and any exact uninvoked pickup",
+      "required_input": "A repository target for Map; one current complete report and selected subsystem for Audit; one current report and selected candidate for Analyze, with the generated conditional To Tickets authority when tracker publication may proceed; or one analyzed candidate plus exact completion packet for Close",
+      "return_packet": "A complete, partial, or blocked invocation result with current-source and Map state, absolute report path or none, current selection, coverage, tracker publication and issue identity when applicable, and any exact uninvoked pickup",
       "skill_id": "SK-017"
     },
     {
@@ -4531,7 +4516,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Single-item Charter, technique routing, integration, proof, review admission, Lock, commit, and closeout"
+        "Single-item Charter, technique routing, integration, proof, formal-review selection and admission, Lock, commit, and closeout"
       ],
       "owned_capability_ids": [
         "CAP-022"

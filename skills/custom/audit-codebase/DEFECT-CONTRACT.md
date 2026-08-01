@@ -13,8 +13,9 @@ Admit a defect only when all five gates close:
   invariant, budget, acceptance threshold, or required evidence rule. A
   comparison basis counts only when its authority defines pass/fail.
 - **Reach:** a supported scenario inside the named repository baseline.
-- **Evidence:** direct evidence from the selected objective's current source
-  identity.
+- **Evidence:** direct evidence bound to the selected objective's current source
+  identity; governing external contracts, attributable traces, or dependency
+  behavior may contribute when their applicability is proved.
 - **Impact:** a concrete correctness, domain, robustness, security, privacy,
   methodology, model-risk, data, validation, metric, analytics, performance,
   or repository-governed maintenance or proof failure under that expectation.

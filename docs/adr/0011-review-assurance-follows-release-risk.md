@@ -20,14 +20,17 @@ path, and concrete impact. PR existence, diff or repository size, severity
 labels, and hypothetical edge cases do not qualify.
 
 High-Assurance Review uses two fresh core lanes, at most one specialist for a
-frozen supported trigger, root-only finding admission, and bounded
-degraded-capacity fallback. Risk remains cross-cutting rather than becoming a
-third review axis.
+frozen supported trigger, and coordinator-only finding admission. Both core
+lanes are required for a passing decision; the coordinator never substitutes
+for a missing reviewer. Risk remains cross-cutting rather than becoming a third
+review axis.
 
 Review gates return admitted findings and residual risk only. Non-defect
 improvement opportunities belong to Audit Codebase or Simplify Code; the shared
 Advisory Contract is retired. Implementation callers choose exactly one review
-route and retain Repair, mutation, Lock, and successor-snapshot authority.
+route; review skills return route mismatches to those callers and never route to
+each other. Implementation callers retain Repair, mutation, Lock, and
+successor-snapshot authority.
 
 ## Considered Options
 
@@ -35,7 +38,7 @@ route and retain Repair, mutation, Lock, and successor-snapshot authority.
   not establish release or supported-risk pressure and adds unnecessary
   review coordination.
 - Use one review skill that chooses reviewer fanout internally. Rejected
-  because ordinary judgment and root-only convergence have different
+  because ordinary judgment and coordinator-only convergence have different
   authority, capacity, and terminal contracts.
 - Keep an optional advisory lane in review gates. Rejected because opportunity
   discovery is unbounded, does not affect release acceptance, and already has

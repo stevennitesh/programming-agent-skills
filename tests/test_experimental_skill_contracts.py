@@ -305,7 +305,7 @@ def test_current_implement_preserves_promoted_and_author_contract() -> None:
     } == inventory
 
     assert tree_hash(canonical_dir) == (
-        "e4f9317b613aaf72dc302c41093148babd552beb4c4e2990c623f8bb347f1d2e"
+        "fbb7d7d9cf781ab1cc3fa760bd08c917d5c9fe6322bdfbeebcf42236d5b5d93f"
     )
     promoted = (canonical_dir / "SKILL.md").read_text(encoding="utf-8")
     normalized = " ".join(promoted.split())
@@ -313,12 +313,12 @@ def test_current_implement_preserves_promoted_and_author_contract() -> None:
     for contract in (
         "Deliver exactly one caller-selected ready item",
         "Keep the named item and all source-owned commitments unchanged",
-        "exhaustive parent graph to `$parallel-implement`",
-        "conflicts to `$resolving-merge-conflicts`",
+        "Return an exhaustive parent graph or review-only request intact",
+        "Hand conflicts to `$resolving-merge-conflicts`",
         "Freeze one Charter",
         "otherwise default to exactly `2`",
-        "Pin classification and Finding Contract",
-        "complete caller-admitted, Charter-preserving batch",
+        "fresh `ordinary-reviewer` task",
+        "caller-admitted IDs equal every blocking ID",
         "mechanical Local Markdown closeout after review and before Lock",
         "Retain GitHub or GitLab claims through Lock and commit",
         "Create exactly one commit",
@@ -338,6 +338,5 @@ def test_current_implement_preserves_promoted_and_author_contract() -> None:
         "staged worker",
         "two generations",
         "Invoke exactly one campaign route",
-        "`automatic-in-scope`",
     ):
         assert rejected not in promoted

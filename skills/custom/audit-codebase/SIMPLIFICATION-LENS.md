@@ -1,72 +1,49 @@
 # Simplification Lens
 
-Understand the full supported flow first. Then stop at the first sufficient
-reduction that preserves behavior and safety.
-
-## Concepts
-
-- **YAGNI:** remove behavior, configurability, compatibility, or abstraction
-  that no supported need requires.
-- **KISS:** prefer the simplest correct shape over clever or speculative
-  machinery.
-- **DRY:** concentrate one duplicated policy at its actual owner; do not create
-  a generic abstraction merely because syntax repeats.
-- **Readability First:** optimize for clear names, visible contracts, and
-  unsurprising control flow, not code golf.
-- **Repository Reuse:** use the helper, type, pattern, or owner already present
-  in the codebase before creating another.
-- **Standard Library:** use a language/runtime capability whose supported
-  semantics fit.
-- **Native Platform:** prefer a browser, framework, database, operating-system,
-  or deployment capability when it already owns the behavior.
-- **Installed Dependency:** reuse a dependency already justified by the
-  repository before adding another or rebuilding it.
-- **Collapse:** remove a pass-through boundary or concentrate one duplicated
-  decision at its narrowest existing owner.
-- **Known Ceiling:** a deliberate simple choice has an explicit limit and a
-  **Revisit Trigger** that says when a more complex shape becomes justified.
+Understand the supported flow first. Then stop at the earliest sufficient
+reduction that preserves behavior, Reliability Floors, and the Proof Seam.
 
 ## Reduction Ladder
 
 1. delete behavior proved stale or unsupported;
-2. Repository Reuse;
-3. Standard Library;
-4. Native Platform, framework, or database capability;
-5. Installed Dependency;
-6. collapse duplicate policy into its narrowest current owner;
-7. deepen, merge, inline, or retain the current Module shape;
+2. reuse the repository's existing owner;
+3. use a sufficient Standard Library capability;
+4. use a sufficient native platform, framework, or database capability;
+5. reuse an already justified dependency;
+6. concentrate duplicate policy at its narrowest current owner;
+7. Deepen, merge, inline, or Collapse the current Module shape;
 8. propose the smallest local reduction that holds.
 
-Two rungs work: choose the earlier sufficient one. A shorter option that fails
-edge cases, compatibility, or safety does not hold.
+Use the ladder as search order. When several options hold, choose the earliest
+only when total caller, lifecycle, dependency, operational, and proof burden is
+no worse. Retention is a Quality disposition, not a reduction. A shorter option
+that loses an edge, compatibility path, safety rule, clarity, or proof does not
+hold.
 
-## Examples
+A **Known Ceiling** states a deliberate simple choice's limit; its **Revisit
+Trigger** states when additional complexity becomes justified.
 
-- a third-party parser used only for supported ISO timestamps:
-  Python's `datetime.datetime.fromisoformat()` may be the Standard Library
-  replacement.
-- a repository abstraction with one Implementation, no required substitution,
-  and only pass-through forwarding: apply YAGNI and the Deletion Test, then
-  inline the unearned boundary after proving behavior. One Implementation
-  alone is insufficient evidence.
-- a custom slug formatter beside the repository's canonical `slugify`:
-  Repository Reuse preserves project-specific accent handling that a new regex
-  may silently lose.
-- an O(n²) scan accepted for tiny bounded input: retain it with a Known Ceiling
-  and Revisit Trigger such as “profiled p95 exceeds the budget at 10k rows.”
+## Questions That Find Simplification Issues
 
-## Stale And Dead Code
+- Does behavior, configuration, compatibility, dependency, or abstraction
+  serve a current supported scenario?
+- Does the repository already contain the semantic owner?
+- Does a runtime or platform facility fully match the required semantics?
+- Is one policy duplicated across reachable callers?
+- Is a boundary pass-through after Design establishes it has no supported
+  variation, substitution, ownership, or proof value?
+- Can the simpler shape name a Known Ceiling and Revisit Trigger instead of
+  speculative machinery?
 
-Use `delete` only with reachability and registration evidence. Use `reuse`,
-`stdlib`, `native`, `yagni`, `collapse`, or `shrink` as strong candidate
-concepts, but describe the supported behavior and proof rather than emitting a
-tag alone.
+Examples: prefer the repository's canonical `slugify` when it preserves
+project-specific accent handling. Retain an O(n²) scan for proved-small input
+with a measured ceiling and revisit trigger instead of speculative machinery.
 
-Do not fabricate `net -N lines` or dependency savings. A per-repository number
-requires a verified patch or mechanical count.
+Apply `QUALITY-LENS.md`'s reachability and registration proof before using
+`delete`. One implementation, repeated syntax, file size, or line savings alone
+does not prove a reduction.
 
-## Floors
-
-Never trade away comprehension, Trust Boundary validation, data-loss
-prevention, security, accessibility, durability, compatibility, physical
-calibration, or the smallest meaningful Behavior Test.
+Record the supported behavior, observed cost, existing owner or mechanism,
+smallest direction, safety floors, and required proof. Do not fabricate saved
+lines or dependency counts; repository-specific savings require a verified
+patch or mechanical count.

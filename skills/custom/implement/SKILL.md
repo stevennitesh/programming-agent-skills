@@ -36,16 +36,17 @@ Freeze one Charter containing the accepted outcome, commitments, scope, writes,
 proof, exclusions, fixed point, and Repair budget. Use the source, caller, or
 repository budget; otherwise default to exactly `2`.
 
-Return malformed or unsettled work to its source owner. Route missing setup to
-`$repo-bootstrap`, an exhaustive parent graph to `$parallel-implement`,
-review-only work to its review owner, and conflicts to
-`$resolving-merge-conflicts`. Recommend `$to-tickets` only when verified landed
-implementation invalidated the selected ticket's commitments or graph facts.
+Return malformed or unsettled work to its source owner. Return an exhaustive
+parent graph or review-only request intact to the caller as `blocked` with
+`scope-mismatch`. Recommend `$repo-bootstrap` for missing
+setup and stop. Hand conflicts to `$resolving-merge-conflicts`. Recommend
+`$to-tickets` only when verified landed implementation invalidated the selected
+ticket's commitments or graph facts.
 
-Every handoff carries the exact source, state, scope, authorities, proof, and
-Return owner. Ticket invalidation also names the implementation identity,
-before-and-after evidence, invalidated fields, and affected ticket. Stop before
-mutation.
+Every Return or handoff carries the exact source, state, scope, authorities,
+proof, and Return owner. Ticket invalidation also names the implementation
+identity, before-and-after evidence, invalidated fields, and affected ticket.
+Stop before mutation.
 
 ## Execute
 
@@ -71,20 +72,31 @@ behavior and residual risk.
 
 Stage one exact candidate while preserving the starting index and unrelated
 work. In shared work, stage exact paths or hunks and request staged-only review.
-Never unstage foreign work. Stop when the candidate cannot be isolated.
+Never unstage foreign work. Stop when the candidate cannot be isolated. Pin the
+proved tree as one immutable candidate generation.
 
-Pin the proved tree. Apply `$change-review`'s Pin classification and Finding
-Contract. Use `$high-assurance-review` for a release candidate or supported
-high-risk target; otherwise use `$change-review`. Invoke one route once with
-`Spec required: yes`, the Charter, Source Trace, fixed point, candidate, proof,
-skips, and risk.
+Invoke `$change-review` in a fresh `ordinary-reviewer` task for an ordinary
+candidate, or `$high-assurance-review` in a fresh `assurance-coordinator` task
+for a release candidate or supported high-risk candidate. For each generation,
+use new review actor and task IDs distinct from all implementation actor and task
+IDs. Supply `Spec required: yes`, those implementation IDs, Charter, Source
+Trace, fixed point, candidate, proof, skips, risk, and contradictory evidence;
+withhold implementation hypotheses, expected conclusions, partial findings,
+and terminal cues.
 
-Accept only a complete current review with no admitted blocker or unaccepted
-residual.
+Accept only a complete current Return bound to the generation and review
+semantic agent, actor, and task IDs, with no blocker or unaccepted residual
+risk. On `scope-mismatch`, reselect from the returned facts once in a new fresh
+task. Treat transport failure before candidate-bound judgment as
+`transport-invalid` and retry once in another fresh task; after a second failure
+or route mismatch, preserve the candidate and return `partial`.
 
-Repair one complete caller-admitted, Charter-preserving batch within the frozen
-budget. Return mixed-authority, partial, out-of-scope, or over-budget findings
-intact. Prove and rereview every repaired tree through the same route.
+Review grants no mutation. Repair only when caller-admitted IDs equal every
+blocking ID, all blockers are `automatic-in-scope`, and the complete batch fits
+the frozen budget. Return every other set intact with its exact gap.
+
+Prove each repaired generation, reselect its route from current facts, and
+repeat this gate in a fresh task. Never resume a prior review.
 
 ## Lock And Return
 
@@ -121,7 +133,7 @@ Return:
 ```text
 Outcome: complete | partial | blocked
 Commit identity and tree:
-Proof, skips, and formal review:
+Proof, skips, and formal-review provenance:
 Repair generations:
 Changed scope and Change Closure:
 Tracker closeout, claim, and frontier:

@@ -95,7 +95,6 @@ flowchart TD
   Parallel --> Tracker
   Parallel --> DomainRouter
   Parallel --> WorkerBrief["WORKER-BRIEF.md<br/>lane worker contract"]
-  Parallel --> IntegratorBrief["INTEGRATOR-BRIEF.md"]
   Parallel --> Ledger["RUN-LEDGER.md / run_ledger.py<br/>canonical events + generated ledger"]
   Parallel --> Review
   Parallel --> FindingContract
@@ -127,6 +126,8 @@ flowchart TD
   Audit --> AuditPractices["CODING-PRACTICES-LENS.md"]
   Audit --> AuditPerformance["PERFORMANCE-LENS.md<br/>only for performance scope"]
   Audit --> AuditReport["HTML-REPORT.md<br/>sole durable artifact"]
+  Audit --> AuditReportCli["REPORT-QUICK-REFERENCE.md<br/>only report interface"]
+  Audit -->|"generated Analyze prompt + implementation-ready candidate"| ToTickets
   Audit -. "current-user decision" .-> GrillDocs
   Audit -. "settled domain capture" .-> DomainModel
 
@@ -241,21 +242,20 @@ that caller; without that approval, recommend and stop.
 | `triage` | Recommend and stop | `$to-tickets` | Settled source requires several independently completable implementation slices; leave readiness unchanged and pass the intact source for user-selected graph creation. |
 | `triage` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `implement` | Invoke | `$tdd` | New behavior is settled and red-testable, or expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known. |
-| `implement` | Invoke | `$change-review` | The selected ordinary diff or PR, or bounded Repair generation, needs fixed-snapshot review. |
-| `implement` | Invoke | `$high-assurance-review` | The selected target is a release candidate or matches a supported high-risk trigger. |
+| `implement` | Invoke | `$change-review` | The selected ordinary diff or PR, or bounded Repair generation, needs one fresh independent fixed-snapshot review; the decision returns to Implement. |
+| `implement` | Invoke | `$high-assurance-review` | The selected candidate is a release candidate or matches a supported high-risk trigger and needs one fresh independent assurance run; the decision returns to Implement. |
 | `implement` | Hand off | `$resolving-merge-conflicts` | Admission finds an existing conflict-only state rather than the selected ready item; supply the exact operation, goal, state, scope, authorities, proof expectation, and Return owner, then stop. |
 | `implement` | Recommend and stop | `$to-tickets` | A verified landed predecessor or post-publication implementation change invalidated the selected ticket's commitments or graph facts; return the implementation identity, before-and-after evidence, invalidated fields, and affected ticket. Ordinary malformed or unsettled source returns to its caller, source, or triage owner. |
 | `implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `parallel-implement` | Invoke | `$tdd` | A lane worker has red-testable new behavior, or a bug whose expected behavior, exact symptom, cause, and trusted red-capable reproduction are known. |
-| `parallel-implement` | Invoke | `$change-review` | The drained proved ordinary candidate or PR, or repaired successor, needs fixed-snapshot Spec and Standards review; judgment returns to the root. |
-| `parallel-implement` | Invoke | `$high-assurance-review` | The drained proved target is a release candidate or matches a supported high-risk trigger; the terminal decision returns to the root. |
+| `parallel-implement` | Invoke | `$change-review` | The drained proved ordinary candidate or PR, or repaired successor, needs one fresh independent fixed-snapshot review; the decision returns to the root. |
+| `parallel-implement` | Invoke | `$high-assurance-review` | The drained proved candidate is a release candidate or matches a supported high-risk trigger and needs one fresh independent assurance run; the decision returns to the root. |
 | `parallel-implement` | Invoke | `$resolving-merge-conflicts` | Serial landing enters preserved conflict or partial Git state; supply operation identity and goal, exact state, scope, both authorities, unrelated state, proof expectation, and root Return owner. Resume only from the resolver's fresh exact-state Return. |
 | `parallel-implement` | Recommend and stop | `$to-tickets` | Admission finds an actually incomplete or contradictory graph, or verified implementation invalidates remaining graph semantics; return one exhaustive evidence-backed repair packet. Ordinary blockers, regressions, conflicts, and review findings remain in Parallel Implement. |
 | `parallel-implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `prototype` | Recommend and stop | `$diagnosing-bugs` | Fit finds that an existing built system is broken, throwing, failing, or slow for an uncertain reason rather than posing one disposable design question; return the intact symptom evidence and leave Diagnosis unstarted. |
 | `diagnosing-bugs` | Recommend and stop | `$audit-codebase` | After an authorized fix is proved, post-mortem evidence shows that prevention needs repository mapping or unclassified architecture work, including a missing correct regression seam; return the exact concern and proof and leave Audit unstarted. |
 | `resolving-merge-conflicts` | Recommend and stop | `$diagnosing-bugs` | State finds no active conflict or unmerged entry and only post-operation behavior is broken for an uncertain reason; return exact Git state and symptom evidence and leave Diagnosis unstarted. |
-| `change-review` | Hand off | `$high-assurance-review` | The target is a release candidate or matches a supported high-risk trigger. |
 | `change-review` | Recommend and stop | `$audit-codebase` | The request targets an immutable repository baseline rather than an ordinary branch, WIP, staged, or since-X diff. |
 | `high-assurance-review` | Recommend and stop | `$audit-codebase` | The request targets a bounded repository correctness, domain-robustness, methodology, or performance baseline rather than a pending release diff. |
 | `audit-codebase` | Recommend and stop | `$domain-modeling` | One analyzed candidate has settled domain language, Invariants, Bounded Contexts, Context Relationships, or an ADR candidate requiring durable capture or assessment; Audit publishes an exact report-backed pickup and leaves Domain Modeling unstarted. |
@@ -267,9 +267,9 @@ that caller; without that approval, recommend and stop.
 | `audit-codebase` | Load | `$codebase-design` | During Analyze of one selected design or mixed candidate after user decisions settle, apply Direct Design and fold its result into the HTML. Audit retains artifact and completion and creates no second design step. |
 | `audit-codebase` | Recommend and stop | `$wayfinder` | Multiple interdependent unresolved candidate decisions or prerequisites need a configured tracker-backed route; Audit publishes an exact pickup and leaves Wayfinder unstarted. |
 | `audit-codebase` | Recommend and stop | `$to-spec` | One analyzed candidate has settled direction and commitments but needs a durable parent specification; Audit publishes an exact report-backed pickup and leaves specification work unstarted. |
-| `audit-codebase` | Recommend and stop | `$to-tickets` | One analyzed candidate has settled direction, authority, commitments, acceptance, dependency meaning, and supported states; requires multiple implementation slices; and either needs no new parent specification or already has one. Audit publishes an exact report-backed pickup and leaves ticket creation unstarted. |
+| `audit-codebase` | Invoke | `$to-tickets` | The generated candidate Analyze prompt includes To Tickets and the candidate is implementation-ready. Without that exact authority Audit publishes `authority-required`, returns its linked Analyze re-entry, and invokes nothing. With authority, To Tickets returns a ready/reused graph or recovery state. |
 | `audit-codebase` | Recommend and stop | `$simplify-code` | One analyzed candidate has a bounded behavior-preserving reduction, current report identity, supported behavior, Source Trace, and proof seam; Audit publishes an exact report-backed pickup and leaves simplification unstarted. |
-| `audit-codebase` | Recommend and stop | `$implement` | One analyzed non-reduction item has settled outcome, acceptance, commitment boundary, scope and write authority, Source Trace, proof, and finite Repair budget; Audit publishes an exact report-backed pickup and leaves implementation unstarted. |
+| `audit-codebase` | Recommend and stop | `$implement` | To Tickets returned a candidate-digest-bound ready/reused graph, verified mutation/read-back identity, exact issue URLs, and a non-empty Ready-for-agent frontier. To Tickets owns the first recommendation; Audit preserves it and appends candidate/report identity plus the exact Close-return schema without starting implementation. Close remains a separate user-selected Audit invocation. |
 | `simplify-code` | Recommend and stop | `$audit-codebase` | The request needs repository mapping, wide discovery, or multi-subsystem audit coverage. |
 | `codebase-design` | Recommend and stop | `$audit-codebase` | The request needs codebase-wide mapping and improvement discovery. |
 | `handoff` | Recommend and stop | `$repo-bootstrap` | The exact Handoff target cannot be proved ignored because the disposable-artifact setup is missing or incompatible; return `not-created` and leave Repo Bootstrap unstarted. |
@@ -311,8 +311,8 @@ and
 | `research` | Claim-owning source legwork and one authorized cited note or verified inline evidence | `skill-router`, `grilling`, `wayfinder` |
 | `to-questionnaire` | One recipient-ready async discovery artifact for one external stakeholder and downstream decision | `skill-router`, `grilling`, `wayfinder`, humans collecting stakeholder evidence |
 | `resolving-merge-conflicts` | Read-only three-way inspection, authorized reconciliation, and the separate finish boundary | Git operations and implementation or integration work that enters a conflicted state |
-| `change-review` | Ordinary fixed-snapshot Standards/Spec review | `implement`, `parallel-implement`; hands off once to `high-assurance-review` for release or supported high risk |
-| `audit-codebase` | Durable repository atlas plus current-source, user-selected subsystem audits and candidate analyses with mandatory correctness, robustness, domain, design, simplification, coding-practice, and applicable performance coverage; detailed owners load when implicated, and one HTML report updates incrementally without a release decision | `skill-router`, `change-review`, `high-assurance-review`, `diagnosing-bugs`, `simplify-code`, `$grill-with-docs` decision returns, and humans explicitly invoking repository audits |
+| `change-review` | Ordinary fixed-snapshot Standards/Spec review | `implement`, `parallel-implement`; returns release or supported-high-risk route mismatches to its caller |
+| `audit-codebase` | Deterministic JSON-state HTML repository atlas plus current-source, user-selected subsystem Audit, candidate Analyze, and explicit implementation Close; mandatory six-class coverage loads detailed owners on observable triggers, and implementation-ready Analyze prompts invoke `to-tickets` without starting implementation or making a release decision | `skill-router`, `change-review`, `high-assurance-review`, `diagnosing-bugs`, `simplify-code`, `$grill-with-docs` decision returns, and humans explicitly invoking repository audits |
 | `simplify-code` | One unstaged, behavior-preserving simplification patch, an explicit finite and bounded `until-clean` campaign, or a proved no-safe-cut verdict | `skill-router`, `audit-codebase`, humans invoking bounded cleanup |
 
 ## Supporting Files
@@ -330,8 +330,8 @@ and
 | `research` | One cited repo-local Markdown note per source question |
 | `resolving-merge-conflicts` | `OPERATIONS.md`: branch-only operation roles, conflict classes, finish checks, and recovery decisions; `SKILL.md`: universal State/Trace/Reconcile/Prove/Finish contract, authority, typed Return, and completion |
 | `change-review`, `high-assurance-review`, `implement`, `parallel-implement` | `change-review/FINDING-CONTRACT.md`: shared axes, review classes, supported-risk and finding admission, remediation classes, and remediation-review bound; `change-review/SMELL-BASELINE.md`: fallback Standards reference when repo standards are thin |
-| `audit-codebase` | `DEFECT-CONTRACT.md`: defects and gaps; `QUALITY-LENS.md`: mandatory six-class coverage, triage, opportunity admission, and retained complexity; detailed lens owners: conditional depth; `CANDIDATE-CONTRACT.md`: current-source candidate admission and thorough comparison; `CANDIDATE-FOLLOWUP.md`: conditional decisions, returned evidence, and one next-owner suggestion; `HTML-REPORT.md` plus `scripts/update_report.py`: durable linked atlas and atomic marked-region updates |
-| `parallel-implement` | `WORKER-BRIEF.md`, `INTEGRATOR-BRIEF.md`, `CODEX-WORKTREE-LAUNCH.md`: compact lane contracts and one-step checkout opening; `run_ledger.py` and `RUN-LEDGER.md`: intuitive campaign facade over canonical event state, strict authority validation, generated ledger, and closeout plan |
+| `audit-codebase` | `DEFECT-CONTRACT.md`: defects and gaps; `QUALITY-LENS.md`: six-class coverage, routing, opportunity admission, and retained complexity; detailed lens owners: condition-triggered issue discovery; `CANDIDATE-CONTRACT.md`: current-source comparison and Close; `CANDIDATE-FOLLOWUP.md`: conditional decisions, evidence, tracker publication, and one next-owner suggestion; `REPORT-QUICK-REFERENCE.md`: sole CLI procedure; `HTML-REPORT.md` plus `scripts/update_report.py`: deterministic JSON-state atlas and atomic full rendering |
+| `parallel-implement` | `WORKER-BRIEF.md`: implementation, correction, and Repair Return contract; `CODEX-WORKTREE-LAUNCH.md`: task binding and checkout isolation; `run_ledger.py` and `RUN-LEDGER.md`: campaign events, validation, generated ledger, and closeout plan |
 
 ## Boundary Notes
 
@@ -382,11 +382,14 @@ and
   order, proof-responsibility mapping, and graph readiness. Do not re-triage
   valid `$to-tickets` output.
 - `implement` owns one standalone selected item and its bounded Repair campaign; `parallel-implement` owns one explicitly requested parent-backed exhaustive Ready-for-agent graph through qualified serial or concurrent frontiers, bounded Repair generations, serial integration, and verified child-first then parent-last closeout.
-- The `parallel-implement` orchestrator is the sole dispatcher and formal-review owner. Lane workers and child integrators never fan out; an integration lane lands, validates, and returns a review-ready packet.
-- `change-review` is the ordinary fixed-snapshot diff and PR gate and may hand off once to `high-assurance-review` for a release candidate or supported high-risk trigger; the high-assurance route never hands back.
+- The `parallel-implement` root is the sole dispatcher, mechanical landing
+  owner, and formal-review owner. Workers never fan out; `serial-integrator`
+  changes code only for routed cross-worker correction or Repair and returns a
+  Worker Brief packet.
+- `implement` and `parallel-implement` select exactly one formal-review route from candidate facts. `change-review` and `high-assurance-review` return route mismatches to their caller and never route to each other.
 - `change-review` and `high-assurance-review` return terminal read-only evidence. Their reports grant no mutation or successor-snapshot authority; the implementation caller's pre-recorded Charter and Repair Budget govern continuation.
 - `high-assurance-review` may run its own bounded read-only reviewer passes only when selected as the review route; it is not a second implementation orchestrator.
-- `audit-codebase` owns the exhaustive system/subsystem map, one user-selected subsystem audit, and one user-selected improvement-candidate analysis per invocation over one selected current-source identity. It accumulates verified items, retained complexity, candidate strength, decision briefs, returned decision packets, and local freshness in one durable offline HTML report. It ranks candidates only inside an audited subsystem, ranks no subsystem, suggests at most one candidate next step, starts no downstream work, and returns selection authority to the user.
+- `audit-codebase` owns the exhaustive system/subsystem map and exactly one user-selected Audit, Analyze, or Close objective per invocation over current-source identity. It accumulates verified items, retained complexity, candidate strength, decisions, implementation evidence, and history in one deterministic offline HTML report backed by canonical JSON state. It ranks candidates only inside an audited subsystem, ranks no subsystem, starts no implementation, and returns selection authority to the user.
 - `simplify-code` owns one standalone cleanup patch or an explicitly bounded serial `until-clean` campaign with a finite cut budget, strict net-reduction ledger, and terminal stop condition under before-and-after proof gates. It does not own feature work, bug diagnosis, public-contract decisions, wide improvement surveys, staging, commits, or tracker closeout.
 - `handoff` is an explicit transport leaf: it carries exact pointers across a shared work root, preserves the active owner, and never duplicates durable truth, routes new work, or resumes from stale state.
 - `.tmp/` artifacts are disposable unless a skill explicitly preserves them for the user or next session.

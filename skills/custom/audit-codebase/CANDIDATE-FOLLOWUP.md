@@ -2,7 +2,23 @@
 
 Apply this branch-only contract only after `SKILL.md` admits it.
 
-## Suggest Zero Or One Next Owner
+## Publish Implementation Work
+
+Accept only To Tickets `ready-graph`, or an exact-semantic `reused` result,
+bound to the candidate digest with publication read-back and a Ready-for-agent
+issue. Record the returned issues. The helper generates one Implement pickup
+bound to the Ready issue, candidate, report, and exact Close packet; publish it
+unchanged and do not invoke it.
+
+A non-ready or partial ticket result is `recovery`: record observed state and
+publish no Implement prompt.
+
+If the candidate is implementation-ready but the selected Analyze invocation
+lacks the generated prompt's exact To Tickets authority, publish
+`authority-required`, invoke nothing, and use the helper-derived Analyze
+re-entry. This is not tracker recovery.
+
+## Suggest Zero Or One Other Owner
 
 Choose the first unresolved work, not an eventual workflow:
 
@@ -17,18 +33,18 @@ Choose the first unresolved work, not an eventual workflow:
 | One identifiable external stakeholder holding unavailable knowledge | `$to-questionnaire` |
 | Multiple interdependent unresolved decisions or prerequisites | `$wayfinder` |
 | Settled direction and commitments needing a parent specification | `$to-spec` |
-| Settled multi-slice implementation with a parent spec or no need for one | `$to-tickets` |
 | One bounded behavior-preserving reduction | `$simplify-code` |
-| One settled non-reduction correction or addition with finite Repair budget | `$implement` |
 | Disproved candidate or no justified route | `none` |
 
-An uncertain observed symptom is not Prototype work. A current-user decision
-precedes design. To Spec wins when a parent specification is required. Codebase
-Design is loaded during Analyze for design or mixed candidates and is not a next
+Implementation-ready work without a required parent specification uses
+**Publish Implementation Work**, not this table. An uncertain observed symptom
+is not Prototype work. A current-user decision precedes design. Codebase Design
+is loaded during Analyze for design or mixed candidates and is not a next
 owner.
 
-Label a suggestion `user selection required`, invoke nothing, and encode no
-workflow chain. For a non-`none` suggestion record:
+Except for To Tickets above, label a suggestion
+`user selection required`, invoke nothing, and encode no workflow chain. For a
+non-`none` suggestion record:
 
 ```text
 Suggested next step:
@@ -39,21 +55,12 @@ Audit re-entry: <exact invocation> | none
 Suggested invocation:
 ```
 
-Use this compact `$implement` pickup:
+For every route, `update_report.py inspect` returns the complete selected JSON
+record. The root constructs the callee-compatible packet without parsing HTML
+or copying the callee's procedure into the pickup.
 
-`$implement candidate <candidate-id> from <absolute-report-path>`
-
-For every route, the root uses `update_report.py inspect` to resolve report
-facts and constructs the callee-compatible packet without copying the callee's
-procedure into the visible pickup. The callee never re-enters Audit or parses
-HTML.
-
-The suggestion grants no authority. If the user selects the exact generated
-`$implement` pickup, that invocation authorizes the root to reconcile only its
-matching candidate from an exact successful completion packet before responding
-to the user. Attempt the Audit-owned report update once. On failure preserve
-implementation success, report the helper's actual report effect, return the
-future Audit re-entry, and stop. Do not start another candidate.
+The user separately selects the linked Close invocation returned by Implement.
+Close owns reconciliation and makes one report publication attempt.
 
 Other planning and execution routes use `Audit re-entry: none`.
 
@@ -91,7 +98,8 @@ payload or pointer. A mismatch changes no judgment.
 
 - Answering evidence reruns only dependent judgments.
 - Disproving evidence marks the candidate `disproved`.
-- A matching complete implementation packet applies the Close Implemented gate.
+- A matching complete implementation packet is admissible evidence for a
+  separately selected Close objective.
 - Unresolved required evidence marks it `blocked` with exact re-entry.
 - A foreign recommendation is evidence only; Audit chooses any next owner.
 - `Questionnaire ready` is not answer evidence; require attributable
@@ -105,5 +113,6 @@ boundary; do not invalidate unrelated report content.
 
 ## Bound
 
-Follow-up transports one decision, evidence packet, or suggestion. It grants no
-mutation authority and starts no downstream work.
+Follow-up transports one decision or evidence packet, publishes one bounded
+implementation issue graph through `$to-tickets`, or suggests one other owner.
+It grants no product mutation authority and never starts implementation.

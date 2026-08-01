@@ -1,140 +1,158 @@
 # Campaign Runtime
 
-`events.jsonl` is the sole campaign source of truth. `LEDGER.md` is generated.
-The root is the sole writer.
+**Start -> Status -> Apply -> Brief -> Finish**
 
-## Normal path
+`events.jsonl` is authority. `state.json`, briefs, receipts, logs, and
+`LEDGER.md` are generated views. The root alone writes the stream; Python
+checks mechanics and never supplies judgment.
 
-Start from one JSON scope packet containing `parent`, exhaustive `children`, and
-a Charter with at least `id` and outcome:
-
-```text
-python <skill-dir>/scripts/run_ledger.py start --events <run-dir>/events.jsonl --repo <repo> --scope-file <scope.json>
-```
-
-`start` supplies runtime contract 3, default budgets, a stable scope event ID,
-and the repository HEAD. It rejects a nonempty stream; use `status` to resume.
-
-The canonical Charter counters are `repair_generation_budget` (default `2`),
-`review_invocation_budget` (default `3`), and `review_invocations_required`
-(default `1`). They are independent ceilings/minimums and change only through
-caller-authorized scope evidence.
-
-Ask for the current mechanical move whenever state changes or a run resumes:
+## Start
 
 ```text
-python <skill-dir>/scripts/run_ledger.py status --events <events.jsonl> --repo <repo>
+python <skill-dir>/scripts/run_ledger.py start \
+  --run <run-dir> --repo <repo> --in <scope.json>
 ```
 
-The response reports `phase`, current and integration heads, implementation
-state, frontier, active lanes, blockers, `decision_required`, currently
-authorized intents, and one `next_action`. It derives mechanics only. Root
-judgment still selects scope, independence, acceptance, correction policy,
-findings, and external mutation.
+The UTF-8 scope object supplies `parent`, `root_actor_id`, `caller_id`, the
+retained `parent_claim`, exhaustive non-empty `children`, and a Charter with
+`id` and outcome. Start records the repository, exact `HEAD`, stable scope
+identity, and frozen Repair and review budgets. Only runtime contract 5 is
+accepted.
 
-Apply a UTF-8 JSON packet:
+Scope or budget changes require a new run.
+
+## Status
 
 ```text
-python <skill-dir>/scripts/run_ledger.py apply --events <events.jsonl> --repo <repo> --packet-file <packet.json>
+python <skill-dir>/scripts/run_ledger.py status --run <run-dir>
 ```
 
-Supported packet kinds:
+Status validates the stream and current repository, refreshes the derived
+`state.json`, and emits one compact JSON line. It reports unfinished children,
+recorded-ready lanes, active lanes, mechanically eligible intents, and the
+next missing owner action. It never calls unfinished work a dependency-ready
+frontier or selects a route.
 
-- `lane-ready`: `work_item`, `lane_id`, `actor_id`, and the helper's `create`
-  and `preflight` evidence; records creation and preflight atomically.
-- `worker-result`: `work_item` and `report`; records a handoff but never accepts
-  it automatically.
-- `events`: a nonempty `events` list for decisions and exceptional branches
-  whose semantics remain explicit.
+After a checkpoint, progression stays closed until `apply` records fresh,
+exhaustive Git, worktree, task, claim, and tracker reconciliation. Add remote
+evidence only when separately authorized delivery depends on it.
 
-`apply` supplies stable event IDs, locks and fsyncs the stream, validates the
-complete prospective state, and is idempotent for the same semantic packet. A
-changed payload under the same identity rejects.
-
-Generate a worker brief from current state:
+## Apply
 
 ```text
-python <skill-dir>/scripts/run_ledger.py brief --events <events.jsonl> --repo <repo> --work-item <id> --mode <implementation|integration-correction|review-repair> --output <brief.md>
+python <skill-dir>/scripts/run_ledger.py apply \
+  --run <run-dir> --in <packet.json>
 ```
 
-Finish only after terminal `complete` has been recorded:
+Apply accepts one UTF-8 object:
+
+- `lane-ready`: new provider task, root-receipted assignment, and preflight
+  evidence;
+- `worker-result`: new worker Return facts;
+- `events`: explicit root, reviewer, caller, tracker, or provider decisions
+  and receipts.
+
+An `events` packet is `{"kind":"events","events":[...]}`. Each entry supplies
+`event`, `work_item`, event-specific `integration_sha`, `worker_sha`,
+`validation`, or `decision`, and one `data` object containing the Gate's named
+evidence. Omit `event_id` to receive a stable content-derived identity.
+
+Root-owned entries include `data.root_receipt` with `actor_id`, `action`,
+`subject`, `head`, `receipt_id`, and `decision_sha256`. The digest is SHA-256 of
+canonical sorted compact JSON containing `action`, `subject`, `head`, and the
+entry's `data` without `root_receipt`. Actions are `assign`, `dispatch`,
+`accept-worker-return`, `land`, `route-correction`, `land-correction`,
+`graph-drained`, `review-ready`, `select-review`, `complete-repair`, `lock`,
+`close-child`, `close-parent`, `tracker-lock`, `checkpoint`, and `release`.
+
+Packet fields:
+
+- `lane-ready`: `work_item`, `lane_id`, `agent_id`, actor and execution
+  identities, `transport`, requested binding, environment, task state, Return
+  transport, liveness cursor, the Task Lanes transport/environment binding, and
+  `assignment.{mode,ref,root_receipt}`;
+  `create` with provider acceptance and binding read-back; `preflight` from the
+  manual helper or provider with `base`, `observed_head`, clean `status`,
+  `worktree`, `provider`, `startup_proof`, `project_provenance`, and isolated
+  roots.
+- `worker-result`: the same work-item, lane, agent, actor, task, host,
+  transport, worktree, base, and final assignment SHA-256; `report` is the
+  Worker Brief Return. After recorded feedback, the same lane returns a new
+  commit naming the prior commit it supersedes.
+- `events`: use these exact event fields:
+
+| Event | Required event-specific fields |
+| --- | --- |
+| `dispatch` | `data.{lane_id,claim,assignment_sha256,root_receipt}` |
+| `accept` | `worker_sha`, `data.root_receipt` |
+| `reject` | returned `worker_sha`, bounded `decision.{return_event_id,feedback,required_proof}`, `data.root_receipt` |
+| `land` | `worker_sha`, `integration_sha`, `data.{prior_integration_sha,observed_head,clean,lane_head,lane_clean,task_state,liveness_cursor,root_receipt}` |
+| `integration-regression` | `integration_sha`, `data.{red,route,owner,write_scope,required_proof,root_receipt}` where route is `original-worker` or `serial-integrator` |
+| `integration-correction` | `integration_sha`, `validation`, `data.{regression_event_id,prior_integration_sha,correction_commit,route,actor_id,changed_scope,lane_head,lane_clean,task_state,liveness_cursor,root_receipt}` plus lane, worker, landing method, and transformed-landing read-back when applicable |
+| `graph-drained` | `integration_sha`, `data.root_receipt` |
+| `review-ready` | `integration_sha`, `data.{tasks,integration,final_proof,root_receipt}` |
+| `review-invocation` | `integration_sha`, review task binding, route, startup/provenance proof, `root_receipt` |
+| `review-decision` | `integration_sha`, `decision`, review Return binding, `review_actor_ids`, `findings`, `residual_risks`; High Assurance also requires `assurance_returns` |
+| `repair-plan` | Charter, generation, review decision/target, complete finding IDs, caller decision receipt |
+| `repair-complete` | `integration_sha`, `validation`, generation, finding IDs, delegated lane/actor/task, accepted worker SHA, prior and superseded candidate, landing method, `root_receipt` |
+| `closeout-head` | `integration_sha`, residual acceptance when applicable, `root_receipt` |
+| `child-closeout` | final `integration_sha`, `landed_head`, verified closeout/read-backs, `root_receipt` |
+| `parent-closeout` | final `integration_sha`, verified state, matching parent claim-release read-back, `root_receipt` |
+| `lane-cleanup` | recorded lane/task identities, terminal state, commit disposition, exact head, clean/safe-state proof |
+| `tracker-lock` | final `integration_sha`, `data.root_receipt` |
+| `checkpoint` | current `integration_sha`, `decision`, idle/current-state, exhaustive claim custody and read-backs, `root_receipt` |
+| `resume` / `reconcile` | resume marker, then fresh exhaustive Git/worktree/task/claim/tracker evidence |
+
+Reference recorded identities instead of reconstructing them. The helper
+hydrates stable event IDs, checks the complete prospective state, appends with
+locking and fsync, and treats an exact retry as a replay. Changed content under
+one identity rejects without mutation.
+
+Mechanical checks include exact Git identities, assignment-base currency,
+worker actor uniqueness, concurrent task/lane/worktree uniqueness, exclusive
+serial-checkout custody, selected agent binding, provider
+receipt equality, containment and cleanliness, superseding Return ancestry,
+root and caller receipts, claim receipt, serial landing ancestry, candidate and
+reviewed-`HEAD` binding, idle-task and final-proof receipts, delegated Repair
+provenance, review-task separation, High Assurance core quorum, distinct
+residual-risk identity, supplied budget arithmetic, caller Repair identity,
+reconciliation, child-first closeout and claim-release read-backs, and safe
+lane state.
+
+The helper does not decide readiness, independence, concurrency, agent choice,
+proof sufficiency, worker acceptance, landing safety, correction route, review
+route or judgment, Repair eligibility, risk acceptance, tracker meaning, or
+completion.
+
+## Brief
 
 ```text
-python <skill-dir>/scripts/run_ledger.py finish --events <events.jsonl> --repo <repo> --output <run-dir>/LEDGER.md
+python <skill-dir>/scripts/run_ledger.py brief \
+  --run <run-dir> --item <work-item>
 ```
 
-For runtime-contract-3 compatibility, `finish` supplies `none_observed` when
-the stream contains no friction observations and requires an explicit
-historical synthesis when it does. This compatibility field is not a campaign
-outcome or completion proxy. `finish` validates complete authority and renders
-the ledger; it never closes trackers, pushes, or fabricates completion.
+Brief requires a ready task lane and projects its recorded agent, actor, lane,
+task, host, transport, environment, Charter, base, worktree, isolated roots,
+Return transport, liveness cursor, and triggered execution mode into
+one collision-safe artifact under `<run-dir>/briefs/`. Stdout returns only its
+path and SHA-256.
+The root adds ticket-owned meaning from the Worker Brief, records the final
+artifact SHA-256 at dispatch, and requires the worker to echo it in Return.
 
-## Phases and decisions
+## Finish
 
-| Phase | Root decision | Runtime derives |
-| --- | --- | --- |
-| Trace | outcome, graph, Charter, commitments | scope identity, budgets, starting HEAD |
-| Select | readiness, independence, worker count | unfinished children and recorded blockers |
-| Open | claim, actor, proof route | lane/preflight consistency and dispatch authority |
-| Drain | accept/reject, stale-base route, correction route | landing authority, integration HEAD, invalidation |
-| Review | route, finding admission, repair eligibility | immutable target, counters, successor requirements |
-| Lock | external mutation approval | closeout plan, approved HEAD, missing read-backs |
-| Completion | terminal disposition | completeness and safe lanes |
+```text
+python <skill-dir>/scripts/run_ledger.py finish \
+  --run <run-dir> --in <completion.json>
+```
 
-If `status.next_action` is surprising, inspect the state and canonical events.
-Do not force the suggested command.
+The completion object supplies the root release receipt. Finish first validates reviewed
+current `HEAD`, required closeout and read-backs, released claims, and safe
+lanes. Failure writes no event and returns a compact error plus
+`failure.json`. Success records the terminal release once and renders
+`<run-dir>/LEDGER.md`.
 
-## Branch packets
-
-Use an `events` packet for checkpoint/resume, integration correction, formal
-review, Repair, Lock, and the compatibility `release` event. These branches are
-explicit because they carry judgment or external evidence, not because the
-operator must calculate IDs or receipts.
-
-Progressive evidence belongs at the gate where it becomes actionable:
-
-- **Checkpoint:** idle actors, repository-backed nonempty current HEAD, safe
-  lanes, continuation, frontier, blockers, tracker/remote state, and complete
-  retained-or-released claim accounting.
-- **Integration regression:** trusted RED, prior integration HEAD, route, owner,
-  structured write-scope IDs, and required proof.
-- **Integration correction:** matching regression, owner and lane actor,
-  selected scope-ID subset, worker or correction commit, actual changed files,
-  ancestry, clean successor HEAD, and bounded regression proof.
-- **Review:** drained graph, loop-close proof, immutable target,
-  `review-invocation` identity, route, mode, classified findings, decision, and
-  residual risk.
-- **Repair:** blocked snapshot, one complete eligible finding set, generation,
-  owners, scopes, proof, successor HEAD, and completion evidence.
-- **Lock:** approved HEAD, verified child packets, child-first mutation
-  read-backs, parent closeout, publication evidence supplied under separate
-  authority when applicable, and lane dispositions.
-
-Runtime contract 3 uses `checkpoint` for resumable `partial` or `blocked`. After
-`resume`, authority stays closed until `reconcile` records Git, worktree, actor,
-tracker, and remote observations. Its compatibility `release` event is terminal
-and accepts only `complete`; the skill's semantic phase is Lock.
-
-`landed-awaiting-lock` is a derived, campaign-scoped execution state. It
-satisfies in-scope dependency readiness only while the accepted landing remains
-in current integration history with valid proof. It does not close an issue or
-alter the tracker dependency. Rollback, invalidation, or failed proof removes
-the overlay and reblocks dependents. While the overlay exists, checkpoint claim
-accounting records retained custody and a recovery owner; release follows
-verified child closeout.
-
-## Advanced and compatibility surface
-
-`append-receipt --intent <intent> --event-id <stable-id> --stdin` remains the
-exact low-level authority surface. It validates the prospective event, appends
-once, and returns the requested and currently authorized intents.
-`committed: true` proves durable append only; action requires
-`requested_intent.allowed: true` in current state.
-
-`validate-state`, `resume-status`, `closeout-plan`, `render`, `list`, `append`,
-and `append-batch` remain available for diagnosis, recovery, historical streams,
-and tests. New normal-path orchestration should prefer `start`, `status`,
-`apply`, `brief`, and `finish`.
-
-The executable schema lives in `run_ledger.py`. Do not copy field-by-field event
-contracts into `SKILL.md` or edit generated ledger prose.
+Every command emits one JSON object. A valid workflow blocker remains `ok: true`
+with its phase and missing owner action. Rejected input or failed mechanics
+returns `ok: false`, a stable code, and truthful effect and state-change flags;
+when a run is resolved it also writes the detailed failure packet.

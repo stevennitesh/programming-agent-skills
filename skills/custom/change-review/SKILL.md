@@ -1,6 +1,6 @@
 ---
 name: change-review
-description: "Review one ordinary branch, WIP, staged, since-X diff, or ordinary local PR read-only from a fixed snapshot. Judge Spec (\"right thing?\") and Standards (\"built right?\") separately, then return one terminal gate decision. Release candidates and concretely high-risk diffs or PRs belong to $high-assurance-review; immutable repository-baseline audits belong to $audit-codebase."
+description: "Review one ordinary branch, WIP, staged, since-X diff, or ordinary local PR read-only from a fixed snapshot. Judge Spec (\"right thing?\") and Standards (\"built right?\") separately, then return one terminal gate decision. Exclude release candidates, concretely high-risk changes, and immutable repository-baseline audits."
 ---
 
 # Change Review
@@ -13,50 +13,58 @@ unchanged.
 
 ## Pin
 
-Load [FINDING-CONTRACT.md](FINDING-CONTRACT.md). Change Review owns ordinary
-diffs and ordinary local PRs. Hand a release candidate or concretely high-risk
-diff or PR and its complete caller packet to `$high-assurance-review`, then
-stop. Recommend `$audit-codebase` for an immutable repository-baseline audit,
-then stop. Return mutation requests to their caller without beginning review.
+Load [FINDING-CONTRACT.md](FINDING-CONTRACT.md). Change Review owns one ordinary
+branch, WIP, staged, since-X diff, or ordinary local PR. Return a release
+candidate or concretely high-risk diff or PR and its complete factual packet
+intact to the caller as `scope-mismatch`; name the supported route facts, leave
+the route unselected, and stop. Recommend `$audit-codebase` for an immutable
+repository-baseline audit, then stop. Return mutation requests to their caller
+without beginning review.
+
 High risk means a supported trust boundary, irreversible effect or migration,
 concurrency or recovery, high-impact domain or model invariant, or measured
 performance obligation satisfies the Finding Contract risk condition. PR
 existence alone does not qualify.
 
-Carry every caller-supplied Charter field, `Spec required`, review mode, Source
-Trace, fixed point and target, required proof, skips, risk, and carried finding
-ID.
+`ordinary-reviewer` reviews directly in its current task and never delegates,
+invokes another review, or repairs. Formal-delivery freshness and task
+separation belong to the delivery caller; standalone review needs neither.
+
+Carry every factual caller-supplied Charter field, `Spec required`, review mode,
+Source Trace, fixed point and candidate, required proof, skips, risk,
+contradictory evidence, and carried finding ID. Implementation hypotheses,
+expected conclusions, partial findings, and terminal cues are not evidence.
 
 Use the supplied fixed point. Otherwise resolve the repository default branch
-and its ref, enumerate applicable best merge bases with the target, and require
-exactly one. Select exactly one target in this precedence:
+and its ref, enumerate applicable best merge bases with the candidate, and
+require exactly one. Select exactly one candidate in this precedence:
 
 1. supplied review tree;
 2. explicitly staged-only;
-3. supplied committed target or connected local PR head;
+3. supplied committed candidate or connected local PR head;
 4. live WIP.
 
 Capture a nonempty immutable state-location tuple before inspection. For a
 connected local PR, record its exact base, head, and diff content. Otherwise
-record the target kind, fixed point, resolved endpoints, captured diff bytes,
+record the candidate kind, fixed point, resolved endpoints, captured diff bytes,
 commands and ref resolutions, plus every applicable identity: `HEAD`, index
 tree, staged diff, unstaged diff, normalized status and untracked inventory, and
 each in-scope untracked path, mode, and content identity. Return `incomplete`
-when the fixed point or target is missing, ambiguous, partial, empty, or cannot
-be identified completely. Judge captured bytes, never later live reads.
+when the fixed point or candidate is missing, ambiguous, partial, empty, or
+cannot be identified completely. Judge captured bytes, never later live reads.
 
 Record `Review mode: initial | remediation`; standalone Change Review defaults
-to `initial`. Remediation requires the original Charter, prior snapshot
-identity, stable carried IDs, caller-owned Repair delta, remaining acceptance,
-fixed point, and successor target. Cover only the carried outcomes, Repair
-delta, affected seams, and remaining acceptance exercised there. Leave untouched
-scope closed.
+to `initial`. Remediation is a fresh invocation; never resume the prior review.
+It requires the original Charter, prior snapshot identity, stable carried IDs,
+caller-owned Repair delta, remaining acceptance, fixed point, and successor
+candidate. Cover only the carried outcomes, Repair delta, affected seams, and
+remaining acceptance exercised there. Leave untouched scope closed.
 
 ## Cover
 
 Trace the user request, Charter, Source Trace, repository instructions, domain
-decisions, captured target, tests, required proof, skips, and risk. Narration is
-a source pointer, not proof.
+decisions, captured candidate, tests, required proof, skips, and risk. Narration
+is a source pointer, not proof.
 
 Trace Spec in this precedence:
 
@@ -89,8 +97,8 @@ interactions, not a blind Cartesian product. Close each row as `inspected`,
 `proved`, `skipped-nonmaterial`, or `blocked`; any material skip or block makes
 coverage `incomplete`.
 
-When the target supersedes or makes behavior redundant, extend coverage to every
-displaced implementation, caller, registration, export, flag, test,
+When the candidate supersedes or makes behavior redundant, extend coverage to
+every displaced implementation, caller, registration, export, flag, test,
 configuration, document, and migration required by Change Closure.
 
 ## Judge
@@ -107,9 +115,10 @@ and adequately proved under the applicable Finding Contract classes. Apply
 violated repository authority or a concrete supported cost.
 
 Behavior is evidence for both axes, not a third axis. Report pre-existing
-problems only when the target creates or worsens them, or Change Closure makes
-them part of the selected slice. Admit candidates only through the Finding
-Contract. Missing evidence for a required axis makes coverage `incomplete`;
+problems only when the candidate creates or worsens them, or Change Closure
+makes them part of the selected slice. Admit finding candidates only through
+the Finding Contract. Missing evidence for a required axis makes coverage
+`incomplete`;
 unavailable optional verification is residual risk.
 
 Keep admitted IDs stable. In remediation, dispose each carried ID as `resolved`,
@@ -126,7 +135,7 @@ Derive exactly one decision:
 
 - `blocked` when an admitted finding blocks under the Finding Contract and
   repository policy;
-- `incomplete` when required source, coverage, evidence, candidate
+- `incomplete` when required source, coverage, evidence, finding-candidate
   disposition, report state, or drift is unresolved and no admitted blocker
   already establishes `blocked`;
 - `pass with residual risk` when coverage is complete and no blocker exists,
@@ -141,7 +150,7 @@ Coverage: complete | incomplete
 Decision: pass | pass with residual risk | blocked | incomplete
 Fixed point:
 Snapshot identity:
-Target:
+Candidate:
 Sources: Spec: <source or skipped>. Standards: <sources>.
 Covered work:
 Spec findings: <admitted findings, none, or skipped>
@@ -157,7 +166,7 @@ Successor snapshot authority: none
 ```
 
 Completion requires every applicable coverage row and axis to close, the axis
-reset to occur, every candidate and carried ID to be disposed, drift read-back
-to pass, and the packet to be internally consistent. The decision is review
+reset to occur, every finding candidate and carried ID to be disposed, drift
+read-back to pass, and the packet to be internally consistent. The decision is review
 judgment, not mutation, Lock, or Release authority. Return control to the caller
 and stop.

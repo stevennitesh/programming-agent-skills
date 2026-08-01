@@ -3,83 +3,68 @@
 Audit what the subsystem promises and every meaningful supported way that
 promise can succeed, fail, persist, resume, or interact.
 
-## Semantic Correctness
+## Contract-Derived Ledger
 
-**Semantic Correctness** means observable behavior has the intended meaning,
-not merely that code runs or output exists.
+Derive rows from actual contracts rather than a blind Cartesian product:
 
-- **Contract Fidelity:** public behavior, data contracts, ordering, errors,
-  budgets, and compatibility match their authority.
-- **Invariant:** a condition that must remain true across every relevant
-  transition and entry path.
-- **Root Cause:** the shared cause that explains all affected callers, rather
-  than the nearest named symptom.
-- **Proof Seam:** the observable caller-facing place where meaning can be
-  established.
+```text
+Supported scenario or transition:
+Entry paths and affected callers:
+Applicable state, edge, failure, security, compatibility, and environment:
+Expected observable behavior:
+Evidence checked:
+Proof Seam:
+Coverage: complete | incomplete
+Admitted item IDs: <IDs> | none
+```
 
-A Proof Seam establishes meaning. Design's **Seam** permits behavior to vary
-without caller edits; a Proof Seam alone does not earn an Adapter or design
-Seam.
+Cover included, excluded, edge, state-transition, and failure branches. Verify
+sibling callers when a shared function owns behavior. One finding or a green
+broad suite never closes the remaining ledger.
 
-Example: `load()` and `refresh()` both write cache entries through `_store()`.
-Validating expiry only in `refresh()` fixes one symptom; enforcing it at
-`_store()` protects the shared lifecycle invariant for both callers.
+## Questions That Find Reliability Issues
 
-Trace included, excluded, edge, and failure scenarios. Verify sibling callers
-when a shared function owns the behavior. Treat a green broad suite as support,
-not a replacement for a missing semantic branch.
+- **Semantic correctness:** Do public behavior, data meaning, ordering, errors,
+  budgets, and compatibility match their authority?
+- **Invariant enforcement:** Does the causal owner protect the condition across
+  every supported transition and entry path?
+- **Trust Boundaries:** Are reachable inputs, encoded outputs, privileges,
+  secrets, authority, and external effects validated and minimally exposed?
+- **Failure atomicity:** Does failure leave the old valid state or the complete
+  new state?
+- **Recovery and idempotency:** Do retry, resume, restart, rollback, cleanup,
+  and repetition restore an explicit valid state without duplicate effects?
+- **Concurrency and cancellation:** Do supported interleavings preserve
+  invariants, ownership, ordering, resource bounds, and cleanup?
+- **Lifecycle and compatibility:** Are absent, current, legacy, incompatible,
+  expired, and restarted states intentional?
+- **Environmental variation:** Do time, locale, filesystem, network, hardware,
+  resources, and configuration behave within supported bounds?
+- **Observability:** When repository authority requires operational signals,
+  are critical failures and transitions detectable and attributable without
+  leaking sensitive data?
 
-## Robustness
+Claim a shared Root Cause only after verifying the causal owner and sibling
+paths. A symptom-level defect may remain valid when cause is unresolved; record
+the causal limitation or gap. A Proof Seam establishes caller-visible meaning;
+it does not by itself earn a design Seam or Adapter.
 
-**Robustness** is correct, bounded behavior under supported stress, variation,
-and partial failure.
+Example: if `load()` and `refresh()` both write through `_store()`, validating
+expiry only in `refresh()` fixes one symptom; enforcing it at `_store()` protects
+the shared lifecycle invariant for both callers.
 
-- **Trust Boundary:** where reachable input, encoded output, data, privilege,
-  secrets, authority, or external effects cross trust; preserve validation,
-  authentication, authorization, safe parsing and encoding, and
-  least-necessary exposure.
-- **Failure Atomicity:** a failed operation leaves either the old valid state
-  or the complete new state, never an unintended partial state.
-- **Recovery:** retry, resume, restart, rollback, cleanup, or reconciliation
-  restores an explicit valid state.
-- **Idempotency:** repetition has the promised effect and does not duplicate
-  irreversible work.
-- **Concurrency:** interleavings preserve invariants, ownership, ordering, and
-  cancellation behavior.
-- **State Lifecycle:** initial, absent, current, legacy, incompatible, expired,
-  restarted, and same-session transition branches behave intentionally.
-- **Compatibility:** supported versions, schemas, formats, platforms, and
-  integration contracts fail or migrate deliberately.
-- **Environmental Variation:** time, locale, filesystem, network, hardware,
-  resources, and configuration vary within supported bounds.
-- **Observability:** repository-required logs, metrics, traces, or other
-  signals make supported failures and state transitions detectable and
-  attributable without leaking sensitive data.
+## Floors
 
-Derive a state-boundary matrix from actual subsystem contracts. Cover distinct
-branches and high-risk interactions, not a blind Cartesian product.
-Ask whether each supported failure and critical transition is safely
-observable when repository authority requires an operational signal.
-
-## Robustness Floors
-
-Never recommend simplifying away:
-
-- input validation at Trust Boundaries;
-- error handling that prevents data loss;
-- security, privacy, authorization, or auditability;
-- accessibility basics;
-- durability, Failure Atomicity, Recovery, or Idempotency;
-- required compatibility;
-- calibration or tolerance needed by physical systems; or
-- the smallest meaningful check for nontrivial behavior.
-
-## Evidence
+Never propose removing the smallest mechanism required for validation,
+authorization, safe parsing/encoding, data-loss prevention, privacy, security,
+accessibility, durability, failure atomicity, recovery, idempotency,
+compatibility, physical calibration, or nontrivial behavior proof.
 
 Prefer repository-owned tests, fixtures, schemas, traces, and observable
-interfaces. When a new enforcement rule is proposed, its eventual proof needs
-a negative control: clean pass, one intended violation failing for the intended
-reason, restoration, and final pass.
+interfaces. A proposed enforcement rule's eventual proof needs a negative
+control: clean pass, one intended violation failing for the intended reason,
+restoration, and final pass.
 
-Record unsupported or unobtainable behavior evidence as a gap. Static smell,
-plausible narration, and line count do not prove correctness or robustness.
+Static smell, narration, and line count do not prove behavior. Unchecked
+obtainable evidence makes coverage incomplete; evidence unavailable inside
+Audit becomes a gap.

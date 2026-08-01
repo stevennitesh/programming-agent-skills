@@ -27,26 +27,20 @@ terms for business concepts.
   preserving supported behavior. If the same necessary complexity spreads
   into callers, the Module earns its keep. If behavior and proof become
   simpler at an existing owner, the boundary may be pass-through.
-- **Interface is the Test Surface:** callers and behavior tests should cross
-  the same Seam. Tests that must reach past it expose misplaced ownership or
-  an incomplete Interface.
+- **Interface is the Test Surface:** callers and caller-facing behavior tests
+  should cross the same Seam. Their need to bypass it is evidence of a possible
+  ownership or Interface gap. Focused tests of hidden algorithms are not
+  independently such evidence.
 - **Variation Test:** a Seam is earned by supported variation or required
   substitution at a real external boundary. A fake created only because the
   Seam exists is not independent evidence.
 
-Example:
+Fewer boxes alone are not proof. Design establishes whether a boundary is
+earned; Simplification owns the earliest sufficient removal or reuse direction.
 
-```text
-Before: Handler -> Validator -> Mapper -> Repository wrapper
-        each Interface exposes the next Module
-
-After:  Order intake Module
-        one caller-facing Interface; validation, mapping, and persistence
-        coordination remain hidden Implementation
-```
-
-The after shape is stronger only when it increases Leverage and Locality while
-preserving a justified persistence Seam. Fewer boxes alone are not proof.
+Example: `Handler -> Validator -> Mapper -> Repository wrapper` may collapse
+into one caller-facing Order intake Module only when Leverage and Locality
+improve and any persistence Seam remains justified.
 
 ## Dependency Classes
 
@@ -59,9 +53,9 @@ preserving a justified persistence Seam. Fewer boxes alone are not proof.
 
 ## Candidate Bound
 
-During subsystem audit, name the friction and change direction, not an exact
-new public Interface. During candidate analysis, compare keep, inline/merge,
-deepening, Seam movement, and earned Adapter alternatives.
+During subsystem Audit, name the Interface, Seam, ownership friction, and proof
+impact, not an exact replacement API. Candidate Analyze owns the Keep /
+Smallest sufficient / Structural / Replacement comparison.
 
 For a design or mixed candidate, settle any user-owned trade-off first, then
 load `$codebase-design` Direct Design and fold its result into the candidate.

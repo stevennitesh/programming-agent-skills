@@ -6,8 +6,8 @@ bounds.
 
 ## Classify
 
-Use one primary class per candidate. Cite secondary anchors without duplicating
-the finding.
+Use one primary class per finding candidate. Cite secondary anchors without
+duplicating the finding.
 
 | Axis | Class | Brief |
 | --- | --- | --- |
@@ -32,7 +32,7 @@ Admit a finding only when all five gates close:
 
 | Gate | Required evidence |
 | --- | --- |
-| **Anchor** | Governing acceptance, repository Standard, required validation, or reachable behavior changed or promised by the target |
+| **Anchor** | Governing acceptance, repository Standard, required validation, or reachable behavior changed or promised by the candidate |
 | **Reach** | A supported scenario inside the Charter or requested slice |
 | **Evidence** | Direct evidence from the immutable snapshot and safe read-only verification |
 | **Impact** | Concrete correctness, security, privacy, data, proof, operability, or maintainability failure |
@@ -40,14 +40,14 @@ Admit a finding only when all five gates close:
 
 Admission precedes severity. Reject disproved, speculative, preference-only,
 unsupported-environment, tooling-style, optional-hardening, and adjacent
-cleanup candidates. Exclude pre-existing problems unless the target creates or
+cleanup finding candidates. Exclude pre-existing problems unless the candidate creates or
 worsens them, or Change Closure brings them into scope. Record one finding per
 violated primary obligation; do not multiply one observation across classes.
 
-A target's omission of contract-required proof may pass the normal gates.
-Reviewer inability to obtain evidence needed to decide a candidate or required
-axis makes coverage `incomplete`, not a finding. Optional unavailable
-verification is residual risk and does not admit a candidate.
+A candidate's omission of contract-required proof may pass the normal gates.
+Reviewer inability to obtain evidence needed to decide a finding candidate or
+required axis makes coverage `incomplete`, not a finding. Optional unavailable
+verification is residual risk and does not admit a finding candidate.
 
 Test count or runtime alone does not admit a finding. For new or changed test
 overlap, require direct evidence that no distinct behavior, branch, seam, risk,

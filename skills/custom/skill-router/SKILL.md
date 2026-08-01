@@ -64,7 +64,7 @@ delivery through its complete ready graph to `$parallel-implement`.
 | An active merge, rebase, cherry-pick, or revert is conflicted, an index is unmerged, or plausible markers need inspection | `$resolving-merge-conflicts` |
 | An ordinary branch, WIP, staged, since-X diff, or ordinary PR needs read-only judgment | `$change-review` |
 | A release candidate or supported high-risk diff or PR needs a terminal release decision | `$high-assurance-review` |
-| A repository needs a whole-system map, one selected subsystem audit, or one selected audit-candidate analysis | `$audit-codebase` |
+| A repository needs a whole-system map, one selected subsystem audit, one selected audit-candidate analysis, or one selected analyzed-candidate closeout | `$audit-codebase` |
 | Existing behavior in one bounded region should be simplified under proof | `$simplify-code` |
 
 **Existing-code tie-breaker:** route repository-wide discovery or baseline

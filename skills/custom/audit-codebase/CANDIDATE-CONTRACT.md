@@ -31,6 +31,14 @@ Strength reason:
 State: presented
 ```
 
+The helper derives the linked Analyze pickup from the candidate ID, absolute
+report path, and resolved Audit and To Tickets skill paths. That pickup grants
+conditional To Tickets authority only when this Analyze proves the candidate
+implementation-ready. Without it, finish the judgment, publish tracker state
+`authority-required`, and return the same linked Analyze re-entry. Invoke
+nothing and do not mark a ready candidate unready merely because authority is
+absent.
+
 - **Strong:** direct evidence, concrete cost or impact, a plausible bounded
   alternative, and a meaningful Proof Seam.
 - **Worth exploring:** real friction is evidenced, but a material choice,
@@ -102,9 +110,8 @@ Do not force an alternative to exist, but `not applicable` needs evidence.
 - **Replacement** is valid only when incremental evolution is worse and parity,
   migration, cutover, rollback, and proof are explicit.
 
-Use **Goal-Driven Execution** to name observable success and proof. Use
-**Surgical Change** to bound change-created fallout and leave unrelated cleanup
-separate.
+Name observable success and proof. Bound change-created fallout and leave
+unrelated cleanup separate.
 
 For a design or mixed candidate, settle current-user decisions first. Then load
 `$codebase-design` Direct Design and fold its comparison, material Interface,
@@ -119,43 +126,26 @@ When `SKILL.md` admits its conditional follow-up branch, apply
 
 ## Close Implemented
 
-After a user-selected generated implementation pickup returns, the root may
-close the candidate from its exact completion packet. Require matching report,
-run, subsystem, and candidate identities plus:
-
-```text
-Implementation outcome: complete
-Commit identity:
-Commit tree identity:
-Current-source result: current | reachable
-Accepted proof and skipped checks:
-Formal review decision: accepted
-Repair generations used:
-Changed scope:
-Change Closure: complete
-Residual risk:
-Last verified identity:
-Finding transitions:
-  - Finding ID:
-    State: active | resolved | disproved
-    Reason:
-State: implemented
-```
+Close is a separately user-selected `$audit-codebase` objective after the
+helper-generated Implement pickup returns. Use `schema --objective close` as
+the only packet shape. Require matching report, run, subsystem, candidate,
+candidate-bundle, tracker mutation, Ready issue, commit/tree, current-source,
+proof, review, Change Closure, residual-risk, and last-Analyze identities plus
+one state-and-reason transition for every active candidate finding.
 
 The commit and tree must match the accepted proof and review, the implementation
 commit must be current or reachable from current source, and no implementation
 blocker may remain. A mismatched, partial, blocked, or failing Return changes no
 candidate state. Successful implementation is distinct from `disproved`.
-Require one transition for every active defect member. The current state and
-reason change; original evidence remains in history. An `active` transition
-records residual work and does not misstate resolution.
-After the root verifies those facts, pass the exact packet to
-`update_report.py close-candidate`; the helper derives the card, index, progress,
-finding states, banner, and evidence projections in one publication. An
-implemented candidate has no pickup.
+Each transition changes only current state and reason; original evidence
+remains in history, and `active` records residual work without misstating
+resolution. The helper verifies Git reachability and derives candidate state,
+implementation evidence, history, progress, colors, and finding transitions.
+An implemented candidate has no pickup.
 
 ## Bound
 
-Candidate analysis confirms, revises, disproves, or frames an improvement. It
-does not implement, approve a public contract, mutate domain records, invoke a
-suggested next step, or grant that suggestion authority.
+Candidate analysis confirms, revises, disproves, or frames an improvement and
+follows its generated implementation-work prompt when ready. It does not
+implement, approve a public contract, mutate domain records, or invoke another
+suggested owner.

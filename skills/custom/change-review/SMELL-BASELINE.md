@@ -2,7 +2,7 @@
 
 **Fallback only:** use this baseline only when documented repo standards and
 meaningful nearby conventions are thin. Repo standards override it. A smell
-name alone never admits a finding. Report one only when the target creates or
+name alone never admits a finding. Report one only when the candidate creates or
 worsens a concrete, actionable maintainability risk, or Change Closure brings
 it into scope. State the required outcome and leave tooling-enforced style to
 tooling.
