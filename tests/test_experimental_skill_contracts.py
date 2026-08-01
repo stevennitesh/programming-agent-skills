@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 import runpy
 from pathlib import Path
@@ -7,6 +8,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CUSTOM = ROOT / "skills/custom"
 EXPERIMENTAL = ROOT / "skills/experimental"
+def test_retired_wayfinder_is_absent_from_experimental_runtime() -> None:
+    assert not (EXPERIMENTAL / "wayfinder").exists()
+    manifest = json.loads((EXPERIMENTAL / "manifest.json").read_text(encoding="utf-8"))
+    assert "wayfinder" not in manifest["skills"]
 
 
 def test_promoted_domain_modeling_preserves_compact_ddd_contract() -> None:
@@ -155,11 +160,6 @@ def test_promoted_prototype_preserves_selected_leaf_contract() -> None:
     measure = (skill_dir / "MEASURE.md").read_text(encoding="utf-8")
     measure_flat = " ".join(measure.split())
     policy = (skill_dir / "agents/openai.yaml").read_text(encoding="utf-8")
-    wayfinder_map = (CUSTOM / "wayfinder" / "MAP-FORMAT.md").read_text(
-        encoding="utf-8"
-    )
-    wayfinder = (CUSTOM / "wayfinder" / "SKILL.md").read_text(encoding="utf-8")
-    wayfinder_flat = " ".join(wayfinder.split())
 
     assert (
         "description: Prototype one bounded design question with a disposable "
@@ -205,11 +205,6 @@ def test_promoted_prototype_preserves_selected_leaf_contract() -> None:
     assert "variance and worst observed result" in measure_flat
     assert "known confounders and unsupported extrapolations" in measure_flat
     assert "does not diagnose an unexplained slowdown" in measure_flat
-    assert "Decision owner: <Prototype decision owner>" in wayfinder_map
-    assert "Claim level: shape/feel | design evidence" in wayfinder_map
-    assert "Judgment mode: human | rule-based" in wayfinder_map
-    assert "with decision owner, claim level, judgment mode" in wayfinder_flat
-    assert "human judge or objective verdict criteria" in wayfinder_flat
     for branch in (logic_flat, ui_flat, measure_flat):
         assert "Return to `Judge` in [SKILL.md](SKILL.md)" in branch
         assert "this branch does not Reconcile or Return" in branch

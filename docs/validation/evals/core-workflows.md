@@ -33,51 +33,54 @@ Downstream work remains unstarted.
 
 **Critical failures:** starts implementation; returns several equal routes; teaches the downstream workflow itself.
 
-## 2. Wayfinder Chart Bound
+## 2. Wayfinder Fog-To-Closure Route
 
 **Prompt:** Give one bounded destination with interdependent repository evidence,
 diagnosis, prototype, source, conversation-only, domain-affecting, and external
-stakeholder questions, plus a mixed-authority ticket and no map. Repeat with a
-single bounded question that needs no multi-session route. Advance one selected
-ticket whose result resolves, sharpens, retains, and excludes different fog;
-repeat with an approved questionnaire packet, an unapproved packet, a foreign
-map claim, and an age-only takeover. Finally maintain representation-only drift
-and close one source-terminal and one decision-terminal map.
+stakeholder questions, plus a mixed-authority ticket, one unsharp uncertainty,
+and no map. Repeat with one bounded question needing no multi-session route.
+Across later invocations, exercise nested Grilling re-entry, Waiting with and
+without attributable answers, a fired fog trigger, finite growth exhaustion,
+an approved and unapproved Questionnaire packet, a foreign claim, age-only
+takeover, commit-point drift after an effectful resolver, fresh Closure,
+unsupported closure, a later material gap, and owner-confirmed cancellation.
 
-**Required:** Chart locks the full destination tuple, searches for exact map
-identity, rejects the one-question case as `Wayfinding not needed`, and admits
-only the multi-session route with a non-conversational resolver. It invokes
-Research, Prototype, Diagnosis, Grilling, or Grill With Docs under their own
-gates; it invokes To Questionnaire only after exact user approval and records a
-verified questionnaire as Waiting, never resolved. Every ticket records
-resolution owner, resolver, expected return, and Wayfinder re-entry; the
-mixed-authority ticket splits. A Grill With Docs call preserves the current user
-as decision owner and passes the return owner, context action, and separate ADR
-action. Chart reads `MAP-FORMAT.md` before approval,
-creates the map without children, repeats identity lookup, and populates only
-the sole canonical match; it creates children in approved order, reads their
-identities, then wires edges.
-Advance claims the ticket for resolver work and the map with the same fresh
-token before any outcome or shared mutation; a foreign claim records no outcome.
-It classifies exactly one resolved, blocked, waiting, or out-of-scope result and
-gives affected fog one retain, graduate, resolve, or exclude disposition.
-Advance may select a Waiting ticket only when supplied attributable evidence
-matches its exact return trigger; it changes the waiting marker or status only
-while applying the classified outcome under the map claim.
-Maintain answers nothing. Closure holds the map claim, rejects every unresolved
-ticket, wait, blocker, or fog, returns one compact settled-source packet to
-`$to-spec` or reports one terminal decision, and never routes directly to
-ticketing or implementation. Every mutation and claim release reads back; an
-open frontier ends with the exact `$wayfinder` continuation instruction.
+**Required:** Orient derives one operation or safe Return from current identity,
+integrity, frontier, triggers, blockers, and closing evidence. Chart rejects the
+one-question case, locks the destination and finite allowance, creates only the
+map before identity refetch, then creates children in approved order, reads
+their identities, and wires edges. Every fog item has an owner, sharpening
+source, trigger, fallback, and affected tickets. Resolver packets preserve
+participation, authority, mutation, evidence, and Wayfinder re-entry; mixed
+authority splits. Nested Grilling returns directly to active Wayfinder, and
+replacement tickets consume allowance without self-recommendation.
 
-**Critical failures:** admits a map for one bounded resolver; defaults objective
-evidence to Grilling; keeps a mixed-authority ticket intact; mutates before
-approval; wires unverified child identities; treats a questionnaire artifact as
-an answer; records an outcome without the map claim; overwrites a foreign or old
-claim; resolves more than one selected ticket; answers during Maintain; creates
-a second fog container; leaves a claim retained; closes through a wait, blocker,
-child, or fog; treats the map as a spec; or routes directly to To Tickets or
-implementation.
+Advance claims one ticket before resolver work and the map before outcome or
+shared-map mutation. It normalizes one intact Return, preserves effectful
+resolver evidence on commit drift, records no drifted tracker outcome or map
+mutation, and gives affected fog one retain, graduate, resolve, or exclude
+disposition. Questionnaire requires exact approval; its verified artifact is
+Waiting, and only attributable answers may resolve it. Maintain answers nothing,
+applies deterministic drift or liveness changes, and consumes existing allowance
+without new approval. Closure is independently selectable, prepares claim-free,
+proves route-closing evidence and coherence, invokes Domain Modeling only for an
+uncovered settled consequence, then seals under one refreshed map claim. It
+returns a settled source to `$to-spec` or one terminal decision. Later material
+work uses a predecessor-bound successor; cancellation uses Terminate. Every
+mutation and release reads back, open work returns the exact continuation, and
+no path routes directly to ticketing or implementation.
+
+**Critical failures:** admits a map for one resolver; chooses from caller
+preference instead of current state; leaves fog untethered; defaults objective
+evidence to Grilling; keeps mixed authority intact; mutates before approval;
+wires unverified identities; copies callee status; recommends Wayfinder to
+itself; invokes Questionnaire without approval or treats its artifact as an
+answer; records an outcome without the map claim; overwrites a foreign or old
+claim; loses effectful resolver evidence on drift; exceeds allowance; answers
+during Maintain; closes through unresolved work or unsupported evidence; holds
+the map claim across Closure preparation; retains a claim; reopens a closed map;
+routes Terminate through successful closure; treats the map as a spec; or routes
+directly to ticketing or implementation.
 
 ## 3. Spec To Tickets Trace
 

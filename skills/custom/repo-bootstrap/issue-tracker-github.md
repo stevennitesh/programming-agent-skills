@@ -68,7 +68,7 @@ Use the fixed map and ticket labels from `docs/agents/triage-labels.md`. The map
 body follows `$wayfinder`'s `MAP-FORMAT.md`.
 
 Store `Participation:`, `Resolution owner:`, `Resolver:`, `Expected return:`,
-and `Re-entry owner: $wayfinder` in the issue body. Represent fog as
+`Mutation boundary:`, and `Re-entry owner: $wayfinder` in the issue body. Represent fog as
 `Blocked: fog - <gist>` and an external return as
 `Blocked: waiting - <gist>` with its exact return record in a comment. Store an
 active claim in the assignee plus `Claim token:` and `Claimed at:` body fields.

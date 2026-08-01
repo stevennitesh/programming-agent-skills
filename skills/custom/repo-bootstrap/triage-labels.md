@@ -40,4 +40,5 @@ types. They are not triage roles.
 - `wayfinder:prototype`
 - `wayfinder:diagnosis`
 - `wayfinder:grilling`
+- `wayfinder:questionnaire`
 - `wayfinder:task`

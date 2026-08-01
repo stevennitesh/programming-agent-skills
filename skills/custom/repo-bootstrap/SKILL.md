@@ -65,7 +65,7 @@ Show the exact local and external delta, policies and relationship modes,
 preserved additions, conflicts or blockers, and proof plan. The `AGENTS.md`
 result includes:
 
-`<!-- programming-agent-skills setup-schema: 1:6db7b903bb0f -->`
+`<!-- programming-agent-skills setup-schema: 1:8113e40631ff -->`
 
 With zero delta, mutate nothing and continue to Verify. Otherwise wait for
 approval. Narrowing requires a new exact proposal; refusal or deferral returns

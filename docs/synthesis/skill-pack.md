@@ -3204,16 +3204,16 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "prototype caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "Pass decision authority, claim level, judgment mode, and the human judge when human; receive the supported answer or truthful residual, supported decision implications, evidence, limits, and cleanup state.",
+      "entry_condition": "One Wayfinder Prototype ticket needs runnable evidence under its locked participation and judgment mode.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for wayfinder and the declared prototype input",
+      "input_packet": "Wayfinder ticket, Source Trace, decision owner, result recipient, claim level, judgment mode, human judge or objective criteria, evidence surface, verdict basis, representative cases, authorized paths and effects, entry point or recipe, finite bound, known limits, final disposition, and return owner",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-088",
       "required_proof_ids": [
         "PROOF-REL-088"
       ],
       "resume_owner_skill_id": "SK-021",
-      "return_packet": "The declared prototype Return packet plus evidence, limits, and residual state",
+      "return_packet": "One intact Prototype verdict or residual with evidence, limits, cleanup state, and Wayfinder re-entry",
       "target_skill_id": "SK-004",
       "verb": "Invoke",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -3256,16 +3256,16 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "research caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "Resolve one AFK research ticket, then record its pointer.",
+      "entry_condition": "One Wayfinder Research ticket needs claim-owning source evidence.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for wayfinder and the declared research input",
+      "input_packet": "Wayfinder question, supported map use, scope and exclusions, applicable state, approved note path and write mode, Source Trace, and return owner",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-090",
       "required_proof_ids": [
         "PROOF-REL-090"
       ],
       "resume_owner_skill_id": "SK-021",
-      "return_packet": "The declared research Return packet plus evidence, limits, and residual state",
+      "return_packet": "One intact Research answer, conflict, blocker, or non-admission packet with citations, limits, artifact state, and Wayfinder re-entry",
       "target_skill_id": "SK-003",
       "verb": "Invoke",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -3356,7 +3356,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-008",
       "combined_exit_owner_skill_id": "SK-008",
       "context_loaded": [],
-      "entry_condition": "The bounded interview cannot close in one conversation because several interdependent unresolved decisions or non-conversational prerequisites need a tracker-backed multi-session route.",
+      "entry_condition": "The bounded interview cannot close in one conversation because several interdependent unresolved decisions or non-conversational prerequisites need a tracker-backed multi-session route, and active Wayfinder is not the return owner.",
       "failure_behavior": "Return the recommendation without invoking the target; preserve the intact bound and exact re-entry instruction",
       "input_packet": "Grilling bound, confirmed decisions, unresolved branches or prerequisites, return owner, and exact re-entry instruction",
       "ordering_impact": "none",
@@ -3368,7 +3368,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "return_packet": "One intact Route gap with Wayfinder left unstarted",
       "target_skill_id": "SK-021",
       "verb": "Recommend and stop",
-      "wrong_condition": "One bounded conversation can still settle the decision or the destination remains unbounded"
+      "wrong_condition": "One bounded conversation can still settle the decision, the destination remains unbounded, or active Wayfinder already owns re-entry"
     },
     {
       "affected_capability_ids": [
@@ -3410,10 +3410,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "to-questionnaire caller-facing interface only after exact packet approval"
       ],
-      "entry_condition": "One Task or HITL prerequisite needs attributable asynchronous answers from an identifiable external stakeholder, and the user approved the exact invocation packet.",
+      "entry_condition": "One external Questionnaire prerequisite needs attributable asynchronous answers from an identifiable stakeholder, and the user approved the exact invocation packet.",
       "explicit_target_authority": "exact-user-approved-packet",
-      "failure_behavior": "Return To Questionnaire's exact status and artifact state; classify a verified questionnaire only as Waiting",
-      "input_packet": "User-approved recipient, downstream decision, origin and return owner, needed-back ledger, sensitivity, effort, authorized path and durability, overwrite authority, and Delivery not performed",
+      "failure_behavior": "Return To Questionnaire's exact status and artifact state to Wayfinder; classify a verified questionnaire only as Waiting",
+      "input_packet": "User-approved recipient, downstream decision, origin and return owner, needed-back ledger, sensitivity, effort, explicitly authorized durable path, retention owner, answer-return destination, overwrite authority, and Delivery not performed",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-096",
       "required_proof_ids": [
@@ -3423,7 +3423,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "return_packet": "One typed questionnaire status, exact artifact path and durability when written, and answer-return destination",
       "target_skill_id": "SK-009",
       "verb": "Invoke",
-      "wrong_condition": "The exact packet lacks user approval, or inspectable sources, the current user, or objective AFK proof can resolve the prerequisite"
+      "wrong_condition": "Without exact approval no edge fires and Wayfinder returns the packet as incomplete; otherwise inspectable sources, the current user, or objective AFK proof can resolve the prerequisite"
     },
     {
       "affected_capability_ids": [
@@ -3601,6 +3601,31 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "target_skill_id": "SK-005",
       "verb": "Recommend and stop",
       "wrong_condition": "An active conflict or unmerged entry remains, the request is operation planning, or the behavioral failure cause is already settled"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-009",
+        "CAP-001"
+      ],
+      "callee_owned_gates_mutations": [
+        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-009",
+      "combined_exit_owner_skill_id": "SK-009",
+      "context_loaded": [],
+      "entry_condition": "The default questionnaire artifact path cannot be proved ignored and no explicitly authorized path overrides it.",
+      "failure_behavior": "Return the exact setup precondition without starting Repo Bootstrap or writing the questionnaire",
+      "input_packet": "Repository identity, failed ignored-path proof, intended default artifact root, and To Questionnaire return owner",
+      "ordering_impact": "none",
+      "relationship_id": "REL-104",
+      "required_proof_ids": [
+        "PROOF-REL-104"
+      ],
+      "resume_owner_skill_id": "SK-009",
+      "return_packet": "One Repo Bootstrap recommendation with the exact setup gap and questionnaire work unstarted",
+      "target_skill_id": "SK-001",
+      "verb": "Recommend and stop",
+      "wrong_condition": "The default path is proved ignored or an explicitly authorized output path is usable"
     }
   ],
   "selected_skills": [
@@ -3969,7 +3994,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "relationship_ids": [
         "REL-076",
-        "REL-077"
+        "REL-077",
+        "REL-104"
       ],
       "required_input": "A bounded caller-owned Source Trace and authority for: Create one Markdown questionnaire for an identifiable external stakeholder who owns missing facts, judgment, or decision authority",
       "return_packet": "A verified questionnaire path, artifact durability, and delivery-ready summary",
@@ -4456,7 +4482,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "terminal_evidence_pointer": null
       },
       "canonical_name": "wayfinder",
-      "completion_condition": "Chart returns not-needed or a verified map; Advance records one verified outcome or wait; Closure returns a settled source or terminal decision with no retained claim",
+      "completion_condition": "Orient selects one valid operation or return; Chart creates one verified finite map; Advance or Maintain reconciles one bounded transition; Closure or Terminate closes with exact evidence and no retained claim",
       "contract_order": 21,
       "essential_outcome": "Resolve one finite tracker-backed route from bounded fog to a coherent settled source or terminal decision",
       "failure_return": "Return the exact admission gap, frontier, wait, blocker, claim conflict, or missing setup surface",

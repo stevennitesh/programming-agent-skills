@@ -42,9 +42,11 @@ presented shared understanding. Confirmation starts nothing.
 several interdependent unresolved decisions or non-conversational prerequisites
 need a tracker-backed multi-session route, return `Route gap` with kind
 `multi-decision route`, the intact bound, unresolved branches or prerequisites,
-and impact; recommend uninvoked `$wayfinder`, give the exact re-entry
-instruction, and stop. Otherwise, only when no frontier decision can advance
-and one required branch remains blocked, return `Evidence gap` with kind
+and impact. When active `$wayfinder` is the return owner, return the intact gap
+to it for graph reconciliation without recommending another Wayfinder. Otherwise
+recommend uninvoked `$wayfinder`, give the exact re-entry instruction, and stop.
+When no `Route gap` applies, only when no frontier decision can advance and one
+required branch remains blocked, return `Evidence gap` with kind
 `evidence` or `decision authority`, missing input, impact, exactly one uninvoked
 owner, and the exact instruction for returning its result to the original
 decision owner without changing the gap identity. Choose `$research` for an

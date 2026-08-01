@@ -16,7 +16,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:6db7b903bb0f -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:8113e40631ff -->"
 ENGINEERING_PRIMER_TOKEN = (
     "Explore imaginatively. Converge under proof. Simplify ruthlessly."
 )
@@ -141,11 +141,11 @@ WORK_ITEM_PROSE_TOKENS = (
 )
 
 WAYFINDER_TOKENS = (
-    "## Wayfinding representation",
     "Participation:",
     "Resolution owner:",
     "Resolver:",
     "Expected return:",
+    "Mutation boundary:",
     "Re-entry owner: $wayfinder",
     "Claim token:",
     "Claimed at:",
@@ -186,6 +186,7 @@ LABEL_TOKENS = (
     "`wayfinder:prototype`",
     "`wayfinder:diagnosis`",
     "`wayfinder:grilling`",
+    "`wayfinder:questionnaire`",
     "`wayfinder:task`",
 )
 
@@ -223,13 +224,17 @@ def require_prose_tokens(
 
 def wayfinder_contract_failures(text: str, relative: str) -> list[str]:
     failures: list[str] = []
-    require_tokens(text, relative, WAYFINDER_TOKENS, failures)
     provider_tokens = (
         LOCAL_WAYFINDER_TOKENS
         if "issue tracker: local markdown" in text.lower()
         else HOSTED_WAYFINDER_TOKENS
     )
-    require_tokens(text, relative, provider_tokens, failures)
+    require_section_tokens(
+        text,
+        relative,
+        (("## Wayfinding representation", WAYFINDER_TOKENS + provider_tokens),),
+        failures,
+    )
     return failures
 
 
@@ -247,22 +252,64 @@ def require_section_tokens(
     failures: list[str],
 ) -> None:
     for heading, tokens in requirements:
+        section = markdown_section(text, heading, include_fenced_content=False)
         for token in tokens:
-            if not markdown_section_contains(text, heading, token):
+            if section is None or token not in section:
                 failures.append(f"{relative} section {heading} is missing {token}")
 
 
-def markdown_section_contains(text: str, heading: str, signature: str) -> bool:
-    pattern = re.compile(
-        rf"(?ms)^{re.escape(heading)}[ \t]*(?:\r?\n|\Z)"
-        r"(.*?)(?=^#{1,2}(?:[ \t]+|$)|\Z)"
+def markdown_section(
+    text: str,
+    heading: str,
+    *,
+    include_fenced_content: bool = True,
+) -> str | None:
+    lines = text.splitlines(keepends=True)
+    outside_fence: list[bool] = []
+    fence_char = ""
+    fence_length = 0
+
+    for line in lines:
+        outside_fence.append(not fence_char)
+        stripped = line.rstrip("\r\n")
+        if fence_char:
+            if re.fullmatch(
+                rf"[ \t]{{0,3}}{re.escape(fence_char)}{{{fence_length},}}[ \t]*",
+                stripped,
+            ):
+                fence_char = ""
+                fence_length = 0
+            continue
+        opening = re.match(r"[ \t]{0,3}(`{3,}|~{3,})", stripped)
+        if opening:
+            fence_char = opening.group(1)[0]
+            fence_length = len(opening.group(1))
+
+    matches = [
+        index
+        for index, line in enumerate(lines)
+        if outside_fence[index] and line.rstrip().rstrip("\r\n") == heading
+    ]
+    if len(matches) != 1:
+        return None
+
+    start = matches[0] + 1
+    end = len(lines)
+    for index in range(start, len(lines)):
+        if outside_fence[index] and re.match(r"^#{1,2}(?:[ \t]+|$)", lines[index]):
+            end = index
+            break
+    section = "".join(
+        line
+        for index, line in enumerate(lines[start:end], start)
+        if include_fenced_content or outside_fence[index]
     )
-    return any(signature in match.group(1) for match in pattern.finditer(text))
+    return section
 
 
 def portable_owner_failures(agents: str) -> list[str]:
     portable_section_remains = any(
-        markdown_section_contains(agents, heading, signature)
+        signature in (markdown_section(agents, heading) or "")
         for heading, signature in PORTABLE_SECTION_SIGNATURES
     )
     if any(token in agents for token in PORTABLE_OWNER_TOKENS) or portable_section_remains:

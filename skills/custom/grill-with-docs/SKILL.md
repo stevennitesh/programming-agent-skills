@@ -49,8 +49,8 @@ Admit -> Compose [Grill <-> Relay <-> Model] -> Return
    - `Blocked`: admission, component integrity, Relay, collision processing,
      mutation verification, payload currency, or compatibility cannot close.
 
-   Only Grilling originates `Evidence gap` or `Route gap`. Return to the user
-   and stop:
+   Only Grilling originates `Evidence gap` or `Route gap`. Return to the
+   declared return owner, or the user on direct invocation, and stop:
 
    ```text
    Status: Confirmed | Evidence gap | Route gap | Blocked
@@ -59,10 +59,9 @@ Admit -> Compose [Grill <-> Relay <-> Model] -> Return
    Composition blocker, owner, and re-entry condition: <Blocked only>
    ```
 
-   `Confirmed` selects no next route. `Evidence gap` preserves Grilling's
-   uninvoked evidence owner. `Route gap` preserves Grilling's uninvoked
-   Wayfinder recommendation. `Blocked` preserves the originating blocker and
-   owner without performing recovery.
+   `Confirmed` selects no route. Preserve every `Evidence gap` or `Route gap`
+   field exactly as Grilling returned it. `Blocked` preserves its originating
+   blocker and owner; the composer selects no route or recovery.
 
 ## Completion
 

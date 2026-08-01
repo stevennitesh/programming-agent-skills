@@ -202,10 +202,10 @@ Use one verb for each accepted relationship:
 - **Recommend `<skill>` and stop:** return one next route without executing it. The user or receiving caller starts it.
 
 `Load`, `Invoke`, `Compose`, and `Hand off` target implicitly invocable skills.
-An explicit-only target is normally reached through `Recommend and stop` so
-human selection remains authoritative. A caller may `Invoke` an explicit-only
-artifact skill only after the user approves its exact invocation packet inside
-that caller; without that approval, recommend and stop.
+An explicit-only target normally uses `Recommend and stop`. A declared caller
+exception may invoke it only after exact user approval of its invocation
+packet; without approval, execute no edge and use the caller-specific safe
+Return.
 
 | Caller | Verb | Callee | Condition and return |
 | --- | --- | --- | --- |
@@ -215,18 +215,19 @@ that caller; without that approval, recommend and stop.
 | `grilling` | Recommend and stop | `$prototype` | A design evidence gap needs a runnable verdict. |
 | `grilling` | Recommend and stop | `$to-questionnaire` | An identifiable external stakeholder owns evidence that must be collected asynchronously. |
 | `grilling` | Recommend and stop | `$handoff` | The intact gap must cross into a fresh context; preserve its evidence or decision owner and use Handoff only as transport. |
-| `grilling` | Recommend and stop | `$wayfinder` | The bounded interview cannot close in one conversation because several interdependent unresolved decisions or non-conversational prerequisites need a tracker-backed multi-session route. |
+| `grilling` | Recommend and stop | `$wayfinder` | The bounded interview cannot close in one conversation because several interdependent unresolved decisions or non-conversational prerequisites need a tracker-backed multi-session route, and active Wayfinder is not the return owner. An active Wayfinder receives the intact Route gap directly for graph reconciliation. |
 | `to-questionnaire` | Recommend and stop | `$research` | Inspectable primary sources can answer the gap. |
 | `to-questionnaire` | Recommend and stop | `$grilling` | The current user owns the unresolved conversation-only decision. |
+| `to-questionnaire` | Recommend and stop | `$repo-bootstrap` | The default artifact path cannot be proved ignored; return the exact setup precondition with Repo Bootstrap unstarted. |
 | `research` | Recommend and stop | `$prototype` | Admission shows the question needs one runnable design or behavior verdict. |
 | `research` | Recommend and stop | `$grilling` | The current user owns the unresolved conversation-only decision. |
 | `research` | Recommend and stop | `$grill-with-docs` | The current user owns the unresolved repo-backed decision and durable domain capture must remain active. |
 | `research` | Recommend and stop | `$wayfinder` | Admission directly identifies several interdependent decisions and non-conversational prerequisites needing a durable route; Research returns only the deterministic match and leaves route choice to the caller. |
-| `wayfinder` | Invoke | `$research` | Resolve one AFK research ticket, then record its pointer. |
-| `wayfinder` | Invoke | `$prototype` | Pass decision authority, claim level, judgment mode, and the human judge when human; receive the supported answer or truthful residual, supported decision implications, evidence, limits, and cleanup state. |
+| `wayfinder` | Invoke | `$research` | Pass the question, supported map use, scope, exact state, approved note path and write mode, and Wayfinder return owner; normalize the intact answer or blocker. |
+| `wayfinder` | Invoke | `$prototype` | Pass decision owner, result recipient, claim level, judgment mode, evidence surface, verdict basis, representative cases, authorized paths and effects, entry point or recipe, finite bound, limits, disposition, and the human judge or objective criteria; normalize the intact verdict or residual. |
 | `wayfinder` | Invoke | `$grilling` | One HITL ticket or Chart bound needs a conversation-only user decision; receive the intact decision or gap packet and retain map ownership. |
 | `wayfinder` | Invoke | `$grill-with-docs` | One HITL ticket or Chart bound needs a user decision while durable domain capture remains active; receive the intact Grilling packet and Domain Delta. |
-| `wayfinder` | Invoke | `$to-questionnaire` | One Task/HITL prerequisite needs asynchronous attributable answers and the user approved the exact recipient, needed-back, sensitivity, effort, path, durability, overwrite, no-send, origin, and return packet. The questionnaire path returns as Waiting; without exact approval, Wayfinder recommends and stops before artifact mutation. |
+| `wayfinder` | Invoke | `$to-questionnaire` | One external Questionnaire prerequisite needs asynchronous attributable answers and the user approved the exact recipient, needed-back, sensitivity, effort, durable path, retention owner, answer-return destination, overwrite, no-send, origin, and return packet. The questionnaire path returns as Waiting. Without approval, no edge fires: Wayfinder returns `incomplete` with the packet and exact re-entry. |
 | `wayfinder` | Invoke | `$domain-modeling` | A settled closing decision changes durable language or warrants ADR assessment, and no current Domain Delta accounts for it; return the complete Domain Delta before Closure continues. |
 | `wayfinder` | Recommend and stop | `$to-spec` | The closed map produced settled parent-spec source. |
 | `wayfinder` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
@@ -282,18 +283,6 @@ and every residual returns to the user or caller without invoking Skill
 Router, its composer, or downstream execution. Prototype likewise returns
 every terminal result directly to its current caller or the user.
 
-To Questionnaire is an explicit-only Direct leaf. Skill Router and Grilling
-recommend it and stop. Wayfinder invokes it only after the user approves the
-exact artifact packet; otherwise Wayfinder also recommends and stops. A
-user-supplied origin owner and identity preserve where attributable answers
-return but grant no invocation or continuation authority by themselves. On a
-proven terminal mismatch, To Questionnaire may recommend Research or Grilling,
-then stop. Wayfinder, not To Questionnaire, owns waiting, answer reconciliation,
-and continuation. Current evidence:
-[`2026-07-23-to-questionnaire-behavior-eval.md`](../validation/skills/to-questionnaire/evals/EV-to-questionnaire-behavior-eval-20260723-01/evidence/2026-07-23-to-questionnaire-behavior-eval.md)
-and
-[`2026-07-21-to-questionnaire-pruning-equivalence-eval.md`](../validation/skills/to-questionnaire/evals/EV-to-questionnaire-pruning-equivalence-eval-20260721-01/evidence/2026-07-21-to-questionnaire-pruning-equivalence-eval.md).
-
 ## Context Owners
 
 | Owner | Owns | Read by / pointed to |
@@ -338,28 +327,12 @@ and
 - The global template exposes bootstrap handles; `skill-router` routes; neither teaches downstream workflow procedures.
 - The bundled system `skill-creator` owns new-package scaffolding and metadata mechanics. `$writing-great-skills` owns semantic quality for new and existing canonical skill instructions, stops after canonical proof, and does not absorb installation or delivery.
 - Setup docs own tracker, labels, domain routing, and engineering-contract details. Skills should point there instead of restating those mechanics.
-- `$grill-with-docs` is the narrowly implicitly invocable composer of
-  `$grilling` and `$domain-modeling`; it accepts a direct-user request or an
-  exact caller packet that preserves the current user as decision owner and
-  supplies the return owner. The owned skills do not invoke each other. Missing
-  context authority defaults to `render only`, and ADR approval remains
-  separate. Every settled material answer crosses Relay;
-  collisions or blockers return before dependent questioning; Domain Modeling
-  alone accumulates the current Domain Delta. A material Domain Delta blocker
-  makes the combined status `Blocked`; otherwise the composer preserves
-  Grilling's terminal packet and starts no downstream route. Wayfinder invokes
-  Grilling or Grill With Docs for its selected conversational decision; Triage,
-  Skill Router, Research, and Audit Codebase only recommend and stop under their
-  predicates. Wayfinder invokes Domain Modeling separately only for an
-  unaccounted settled closing consequence.
-- `to-questionnaire` owns async stakeholder elicitation into one verified
-  artifact after admission. Source-answerable gaps recommend `$research`; a
-  current-user-owned decision recommends `$grilling`. Supplied origin context
-  grants no invocation authority by itself. Wayfinder may invoke it only after
-  exact user approval of the artifact packet, then Wayfinder owns Waiting and
-  answer reconciliation. To Questionnaire does not contact the recipient, wait,
-  ingest or analyze answers, continue the origin workflow, mutate trackers or
-  domain truth, or synthesize a specification.
+- `$grill-with-docs` owns composition and preserves the intact Grilling packet
+  and cumulative Domain Delta. Wayfinder invokes Domain Modeling separately
+  only for an uncovered settled consequence during Closure.
+- `$to-questionnaire` owns one verified artifact, not delivery or continuation.
+  Wayfinder may invoke it only from an exact user-approved durable-custody
+  packet and then owns Waiting and answer reconciliation.
 - `domain-modeling` is the only skill that writes `CONTEXT.md`, `CONTEXT-MAP.md`, or approved ADR truth; `repo-bootstrap` configures and verifies routing before persistence across a required topology transition, and vocabulary consumers follow `docs/agents/domain.md`.
 - `to-spec` owns final source admission, parent spec synthesis, and tracker publication; Grilling may report conditional spec-source readiness but neither drafts nor publishes. `to-tickets` owns implementation issue slicing.
 - `wayfinder` owns finite foggy multi-session maps, ticket classification,

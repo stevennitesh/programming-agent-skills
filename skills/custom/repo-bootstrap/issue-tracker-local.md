@@ -46,7 +46,7 @@ Use `.scratch/<feature-slug>/wayfinder/map.md` with
 `.scratch/<feature-slug>/wayfinder/tickets/<NN>-<slug>.md` in map order.
 
 Each ticket stores `Part of: map.md`, `Type:`, `Participation:`,
-`Resolution owner:`, `Resolver:`, `Expected return:`,
+`Resolution owner:`, `Resolver:`, `Expected return:`, `Mutation boundary:`,
 `Re-entry owner: $wayfinder`, and
 `Status: Pending | In Progress | Resolved | Blocked | Waiting | Out Of Scope`.
 Store edges in `Blocked by:`, waiting return records under comments, and active
