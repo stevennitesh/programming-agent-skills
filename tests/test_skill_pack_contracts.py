@@ -511,9 +511,84 @@ def assert_repo_bootstrap_semantic_contract(
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     assert_repo_bootstrap_semantic_contract(
         CUSTOM / "repo-bootstrap",
-        "ebf9c11355bda8f077062d51ba6d425f65ec45fcd39eefe62a94831a881bf617",
+        "569b5ec471a70b081a5618de96eef50575b99b3d58fc6463a6aa34a6fc9f7ec3",
         profile="incumbent",
     )
+
+
+def test_repo_bootstrap_owns_optional_parallel_support_and_reconciliation(
+    tmp_path: Path,
+) -> None:
+    validator = runpy.run_path(
+        str(CUSTOM / "repo-bootstrap/scripts/validate_setup.py")
+    )
+    check = validator["parallel_support_failures"]
+    bootstrap = " ".join(
+        (CUSTOM / "repo-bootstrap/SKILL.md").read_text(encoding="utf-8").split()
+    )
+    root = tmp_path / "repo"
+    root.mkdir()
+
+    assert check(root) == []
+    assert "When support is absent, ask whether to enable it" in bootstrap
+    assert "goes directly through Reconcile without this question" in bootstrap
+    assert "one missing or stale half is a `delta`" in bootstrap
+    assert "do not create worktrees, project markers, or external directories" in bootstrap
+
+    agent = root / validator["PARALLEL_AGENT"]
+    agent.parent.mkdir(parents=True)
+    template = CUSTOM / "parallel-implement/assets/luna_max.toml"
+    agent.write_bytes(template.read_bytes())
+    assert check(root) == [
+        "Parallel implementation support is missing .codex/config.toml"
+    ]
+
+    config = root / validator["PARALLEL_CONFIG"]
+    base = validator["parallel_package"]()
+    runtime = runpy.run_path(str(base / "scripts/lane_worktree.py"))
+    lane_root = runtime["default_base_root"](root) / "repo-001" / "wt"
+    encoded_lane_root = json.dumps(str(lane_root.resolve()))
+    config.write_text(
+        "default_permissions = \"project-lanes\"\n\n"
+        "[permissions.project-lanes]\n"
+        "extends = \":workspace\"\n\n"
+        "[permissions.project-lanes.workspace_roots]\n"
+        f"{encoded_lane_root} = true\n"
+        f"{json.dumps(str((tmp_path / 'cache').resolve()))} = true\n",
+        encoding="utf-8",
+    )
+    assert check(root) == []
+
+    stale_root = tmp_path / "old" / "repo-001" / "wt"
+    stale_root.mkdir(parents=True)
+    (stale_root / "preserved.txt").write_text("preserved\n", encoding="utf-8")
+    config.write_text(
+        "default_permissions = \"project-lanes\"\n\n"
+        "[permissions.project-lanes]\n"
+        "extends = \":workspace\"\n\n"
+        "[permissions.project-lanes.workspace_roots]\n"
+        f"{json.dumps(str(stale_root.resolve()))} = true\n",
+        encoding="utf-8",
+    )
+    expected_root = lane_root.resolve()
+    assert check(root) == [
+        f"parallel lane root must match the current repository location: {expected_root}",
+        "stale parallel lane root still contains preserved lanes",
+    ]
+
+    config.write_text(
+        "default_permissions = \"project-lanes\"\n\n"
+        "[permissions.project-lanes]\n"
+        "extends = \":workspace\"\n\n"
+        "[permissions.project-lanes.workspace_roots]\n"
+        f"{encoded_lane_root} = true\n",
+        encoding="utf-8",
+    )
+
+    agent.write_text("name = \"stale\"\n", encoding="utf-8")
+    assert check(root) == [
+        ".codex/agents/luna_max.toml does not match the current template"
+    ]
 
 
 def test_repo_bootstrap_marks_and_validates_setup_schema() -> None:
@@ -1272,6 +1347,7 @@ def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
         "Semantic agent: ordinary-reviewer",
         "Reviewer actor ID:",
         "Reviewer task ID:",
+        "Runtime binding: agent type <value or standalone>; requested <model and reasoning or standalone>; observed <values or unavailable>",
         "Fresh-context and separation evidence: <evidence> | standalone",
         "Coverage: complete | incomplete",
         "Decision: pass | pass with residual risk | blocked | incomplete",
@@ -1280,6 +1356,60 @@ def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
         "Candidate:",
     ):
         assert field in report
+
+
+def test_spawned_agents_share_one_runtime_profile_owner() -> None:
+    implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
+    review = (CUSTOM / "change-review/SKILL.md").read_text(encoding="utf-8")
+    assurance = (CUSTOM / "high-assurance-review/SKILL.md").read_text(
+        encoding="utf-8"
+    )
+    profiles = (
+        CUSTOM / "parallel-implement/references/RUNTIME-PROFILES.md"
+    ).read_text(
+        encoding="utf-8"
+    )
+    ledger_script = (
+        CUSTOM / "parallel-implement/scripts/run_ledger.py"
+    ).read_text(encoding="utf-8")
+    profiles_flat = " ".join(profiles.split())
+
+    assert re.findall(
+        r"(?m)^\| `([^`]+)` \| `([^`]+)` \| `([^`]+)` \| `([^`]+)` \|$",
+        profiles,
+    ) == [
+        ("parallel-root", "current", "gpt-5.6-sol", "high"),
+        ("clear-worker", "luna_max", "gpt-5.6-luna", "max"),
+        ("adaptive-worker", "default", "gpt-5.6-terra", "xhigh"),
+        ("fast-adaptive-worker", "default", "gpt-5.6-sol", "medium"),
+        ("demanding-worker", "default", "gpt-5.6-sol", "high"),
+        ("serial-integrator", "default", "gpt-5.6-sol", "medium"),
+        ("ordinary-reviewer", "default", "gpt-5.6-sol", "high"),
+        ("assurance-coordinator", "default", "gpt-5.6-sol", "high"),
+        ("har-spec-reviewer", "default", "gpt-5.6-sol", "xhigh"),
+        ("har-standards-reviewer", "default", "gpt-5.6-sol", "xhigh"),
+        ("har-specialist", "default", "gpt-5.6-sol", "xhigh"),
+    ]
+    assert "A named agent type loads its custom TOML" in profiles_flat
+    assert "`transport-invalid` and receives no review credit" in profiles_flat
+    assert "[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md)" in implement
+    assert "[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md)" in review
+    assert "[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md)" in assurance
+    assert 'references/RUNTIME-PROFILES.md' in ledger_script
+    assert "assurance reviewer binding does not match" in ledger_script
+    custom_agents = sorted((ROOT / ".codex/agents").glob("*.toml"))
+    assert [path.name for path in custom_agents] == ["luna_max.toml"]
+    luna = custom_agents[0].read_text(encoding="utf-8")
+    assert 'model = "gpt-5.6-luna"' in luna
+    assert 'model_reasoning_effort = "max"' in luna
+    review_flat = " ".join(review.split())
+    assert "missing or mismatched formal-delivery binding" in review_flat
+    assert "`transport-invalid` before candidate judgment" in review_flat
+    assert "Standalone review records its current runtime provenance" in " ".join(
+        review.split()
+    )
+    for skill in (implement, review, assurance):
+        assert "gpt-5.6" not in skill
 
 
 def test_review_finding_interface_and_return_boundary_are_shared() -> None:
@@ -1323,6 +1453,12 @@ def test_review_finding_interface_and_return_boundary_are_shared() -> None:
         assert "Successor snapshot authority: none" in skill
     assert "Test count or runtime alone does not admit a finding" in finding
     assert "distinct responsibility or justified failure isolation" in finding
+    assert "A frozen delivery request authorizes `automatic-in-scope` remediation" in (
+        " ".join(finding.split())
+    )
+    assert "every other class returns for caller decision" in " ".join(
+        finding.split()
+    )
     remediation = finding.split("## Remediation Review", 1)[1].split(
         "## Severity And Remediation", 1
     )[0]
@@ -1408,8 +1544,11 @@ def test_high_assurance_review_uses_fresh_context_and_root_only_fanout() -> None
         encoding="utf-8"
     )
 
-    assert "exactly two direct core reviewer lanes in fresh tasks" in convergent
-    assert "Record each lane's semantic agent ID, actor ID, task ID" in convergent
+    assert (
+        "exactly two direct core reviewer lanes as fresh read-only collaboration subagents"
+        in " ".join(convergent.split())
+    )
+    assert "Record each lane's semantic agent ID, runtime agent type, actor ID, task ID" in convergent
     contract = (
         convergent.split("this return contract:", 1)[1]
         .split("```text", 1)[1]
@@ -1434,6 +1573,9 @@ def test_high_assurance_review_has_root_guard_bounded_capacity_and_risk() -> Non
     convergent_flat = " ".join(convergent.split())
 
     assert "the `assurance-coordinator`, the root of its review run" in convergent_flat
+    assert "requested and observed-or-unavailable model and reasoning" in convergent_flat
+    assert "binding returns `transport-invalid` before Pin" in convergent_flat
+    assert "nested review lane that invokes this skill returns `incomplete` before Pin" in convergent_flat
     assert "other nested review lane that invokes this skill" in convergent_flat
     for mode in ("initial", "remediation"):
         assert f"- `{mode}`" in convergent
@@ -1650,6 +1792,8 @@ def test_implement_selects_one_risk_scaled_review_route() -> None:
     assert "Stage one exact candidate" in review_flat
     assert "immutable candidate generation" in review_flat
     assert "[Finding Contract](../change-review/FINDING-CONTRACT.md)" in review_section
+    assert "[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md)" in review_section
+    assert "exact semantic profile and runtime binding" in review_flat
     assert "candidate-bound route evidence" in review_flat
     assert "`ordinary | release | supported-high-risk` basis" in review_flat
     assert "`ordinary-reviewer` with `$change-review`" in review_flat
@@ -1676,7 +1820,12 @@ def test_implement_selects_one_risk_scaled_review_route() -> None:
     assert "assurance-coordinator" in review_flat
     assert "Charter, Source Trace, fixed point, candidate, proof," in review_flat
     assert "complete current Return" in review_flat
-    assert "caller-admitted IDs equal every blocking ID" in review_flat
+    assert "runtime binding provenance to match the Runtime Profiles" in review_flat
+    assert "automatically opens Repair" in review_flat
+    assert "Unless the caller restricts Repair before Freeze" in " ".join(
+        implement.split()
+    )
+    assert "every blocker is `automatic-in-scope`" in review_flat
     assert "Return every other set intact with its exact gap" in review_flat
     for field in (
         "Commit identity and tree:",
@@ -3060,8 +3209,11 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
     worker = (CUSTOM / "parallel-implement/references/WORKER-BRIEF.md").read_text(
         encoding="utf-8"
     )
-    launch = (
-        CUSTOM / "parallel-implement/references/CODEX-WORKTREE-LAUNCH.md"
+    lanes = (
+        CUSTOM / "parallel-implement/references/AGENT-LANES.md"
+    ).read_text(encoding="utf-8")
+    profiles = (
+        CUSTOM / "parallel-implement/references/RUNTIME-PROFILES.md"
     ).read_text(encoding="utf-8")
     ledger = (CUSTOM / "parallel-implement/references/RUN-LEDGER.md").read_text(
         encoding="utf-8"
@@ -3089,51 +3241,48 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
         "demanding-worker",
     ]
     assert "A matching later condition overrides every earlier one" in dispatch
-    assert "Give concurrent workers separate Codex tasks and distinct managed worktrees" in " ".join(
-        parallel.split()
+    assert "Give every concurrent writer a distinct helper-created worktree" in " ".join(
+        lanes.split()
     )
     admit = parallel.split("## Admit", 1)[1].split("## Freeze", 1)[0]
     admit_flat = " ".join(admit.split())
     assert "one standalone item -> `scope-mismatch`" in admit_flat
     assert "$implement" not in admit
-    assert re.findall(r"(?m)^## (.+)$", launch) == [
-        "Route",
-        "Create",
-        "Bind",
+    assert re.findall(r"(?m)^## (.+)$", lanes) == [
+        "Prepare",
+        "Dispatch",
         "Await",
-        "Close",
-        "Manual Lane",
+        "Release",
+        "Isolated Worktree",
     ]
-    assert "scripts/lane_worktree.py" in launch
-    assert "Codex-managed worktree" in launch and "manual Git worktree" in launch
-    assert "same-checkout Subagents V2 task" in launch
-    assert "create a local Codex task" in launch
+    assert "scripts/lane_worktree.py" in lanes
+    assert "fresh-context collaboration subagent" in lanes
+    assert "transport `subagent-v2`" in lanes
+    assert "helper-created worktree" in lanes
+    assert "PARALLEL_IMPLEMENT_ROOT_CHECKOUT" in lanes
+    assert "may read needed ignored inputs" in " ".join(lanes.split())
     for row in (
-        "| `parallel-root` | `gpt-5.6-sol` | `high` |",
-        "| `clear-worker` | `gpt-5.6-luna` | `max` |",
-        "| `adaptive-worker` | `gpt-5.6-terra` | `max` |",
-        "| `fast-adaptive-worker` | `gpt-5.6-sol` | `medium` |",
-        "| `demanding-worker` | `gpt-5.6-sol` | `high` |",
-        "| `serial-integrator` | `gpt-5.6-sol` | `medium` |",
-        "| `ordinary-reviewer` | `gpt-5.6-sol` | `high` |",
-        "| `assurance-coordinator` | `gpt-5.6-sol` | `high` |",
-        "| `har-spec-reviewer` | `gpt-5.6-sol` | `xhigh` |",
-        "| `har-standards-reviewer` | `gpt-5.6-sol` | `xhigh` |",
-        "| `har-specialist` | `gpt-5.6-sol` | `xhigh` |",
+        "| `parallel-root` | `current` | `gpt-5.6-sol` | `high` |",
+        "| `clear-worker` | `luna_max` | `gpt-5.6-luna` | `max` |",
+        "| `adaptive-worker` | `default` | `gpt-5.6-terra` | `xhigh` |",
+        "| `fast-adaptive-worker` | `default` | `gpt-5.6-sol` | `medium` |",
+        "| `demanding-worker` | `default` | `gpt-5.6-sol` | `high` |",
+        "| `serial-integrator` | `default` | `gpt-5.6-sol` | `medium` |",
+        "| `ordinary-reviewer` | `default` | `gpt-5.6-sol` | `high` |",
+        "| `har-spec-reviewer` | `default` | `gpt-5.6-sol` | `xhigh` |",
     ):
-        assert row in launch
-    launch_flat = " ".join(launch.split())
+        assert row in profiles
+    profiles_flat = " ".join(profiles.split())
+    assert "binding is `transport-blocked`" in profiles_flat
+    assert "formal-review mismatch is `transport-invalid`" in profiles_flat
     assert (
         "Escalate `serial-integrator` to `high` only for conflicting architectural "
         "intent, cross-module invariants, migrations or compatibility behavior, "
         "security-sensitive boundaries, or a repeated failed correction."
-    ) in launch_flat
-    assert "non-mutating bootstrap" in launch_flat
-    assert (
-        "After recording the receipt, augment the ledger-owned assignment, "
-        "record its final SHA-256 in the dispatch receipt, and send the bound "
-        "[Worker Brief]"
-    ) in launch_flat
+    ) in profiles_flat
+    lanes_flat = " ".join(lanes.split())
+    assert "The agent echoes the binding before work" in lanes_flat
+    assert "Generate writer assignments through [WORKER-BRIEF.md]" in lanes_flat
     assert "gpt-5.6" not in parallel
     assert "gpt-5.6" not in worker
     assert "gpt-5.6" not in ledger
@@ -3152,8 +3301,9 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
         "work item",
         "mode",
         "agent ID",
+        "runtime agent type",
         "actor ID",
-        "task ID and host ID",
+        "task ID",
         "transport",
         "lane and worktree",
         "base",
@@ -3180,6 +3330,7 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
         worker.split()
     )
     assert "Never spawn or delegate" in worker
+    assert "recorded root checkout but never writes there" in " ".join(worker.split())
     assert "The root never authors implementation, tests, integration corrections, or Review Repair" in (
         " ".join(parallel.split())
     )
@@ -3206,7 +3357,10 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
     review_flat = " ".join(review.split())
     assert "[Finding Contract](../change-review/FINDING-CONTRACT.md)" in review
     assert "candidate-bound route evidence" in review_flat
-    assert "fresh task distinct from every implementation and integration task" in review_flat
+    assert (
+        "fresh collaboration subagent distinct from every implementation and integration actor"
+        in review_flat
+    )
     assert "fresh task provenance" in review_flat
     assert "new actor and task identities" in review_flat
     assert "Accept a Review Return only when complete" in review_flat
@@ -3215,6 +3369,8 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
     assert "`Invocation: formal-delivery`" in review_flat
     assert "`Review mode: remediation`" in review_flat
     assert "Finding Contract's remediation packet" in review_flat
+    assert "automatically opens Repair" in review_flat
+    assert "Unless the caller restricts Repair before Freeze" in parallel_flat
     assert "resume only from its fresh exact-state Return" in parallel_flat
     freeze = parallel.split("## Freeze", 1)[1].split("## Wave", 1)[0]
     assert "caller-supplied residual-risk policy with its identity and evidence" in (
@@ -3243,8 +3399,8 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
     worker = (CUSTOM / "parallel-implement/references/WORKER-BRIEF.md").read_text(
         encoding="utf-8"
     )
-    launch = (
-        CUSTOM / "parallel-implement/references/CODEX-WORKTREE-LAUNCH.md"
+    lanes = (
+        CUSTOM / "parallel-implement/references/AGENT-LANES.md"
     ).read_text(encoding="utf-8")
     ledger = (CUSTOM / "parallel-implement/references/RUN-LEDGER.md").read_text(
         encoding="utf-8"
@@ -3277,7 +3433,7 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
         "repair-plan",
         "repair-complete",
     } <= event_types
-    assert "## Close" in launch
+    assert "## Release" in lanes
     lock = parallel.split("## Lock", 1)[1]
     open_gate = run.split("**Dispatch.**", 1)[1].split("**Drain.**", 1)[0]
     assert "claim" in open_gate
@@ -3291,12 +3447,13 @@ def test_parallel_implement_has_root_receipt_budget_and_windows_contracts() -> N
     skill_dir = CUSTOM / "parallel-implement"
     parallel = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     ledger = (skill_dir / "references/RUN-LEDGER.md").read_text(encoding="utf-8")
-    launch = (skill_dir / "references/CODEX-WORKTREE-LAUNCH.md").read_text(
+    launch = (skill_dir / "references/AGENT-LANES.md").read_text(
         encoding="utf-8"
     )
     worker = (skill_dir / "references/WORKER-BRIEF.md").read_text(encoding="utf-8")
     script = (skill_dir / "scripts/run_ledger.py").read_text(encoding="utf-8")
     lane_script = (skill_dir / "scripts/lane_worktree.py").read_text(encoding="utf-8")
+    codex_config = (ROOT / ".codex/config.toml").read_text(encoding="utf-8")
 
     assert "Pass only at the top-level root" in parallel
     assert "Return before mutation" in parallel
@@ -3305,20 +3462,49 @@ def test_parallel_implement_has_root_receipt_budget_and_windows_contracts() -> N
     assert "Start -> Status -> Apply -> Brief -> Finish" in ledger
     assert "reviewer" in ledger
     assert "review-invocation" in script
-    assert "PARALLEL_IMPLEMENT_WORKTREE_ROOT" in launch and "PARALLEL_IMPLEMENT_WORKTREE_ROOT" in lane_script
-    assert "E:\\pi" in launch and 'Path("E:/pi")' in lane_script
-    assert "maximum path `320`" in launch
-    assert "WINDOWS_DEFAULT_MAX_PATH = 320" in lane_script
+    assert "PARALLEL_IMPLEMENT_BASE_ROOT" in launch and "PARALLEL_IMPLEMENT_BASE_ROOT" in lane_script
+    assert "<repo-drive>:\\pi" in launch
+    assert 'Path(f"{repo.drive}/") / "pi"' in lane_script
+    assert "<base-root>/<project-key>/wt/<lane>" in launch
+    assert "<short-name>-<three-digit-ID>" in launch
+    assert 'WORKTREE_DIR_NAME = "wt"' in lane_script
+    assert 'PROJECT_KEY_PATTERN = re.compile' in lane_script
+    expected_lane_root = str(Path(ROOT.anchor) / "pi" / "pas-001" / "wt")
+    encoded_lane_root = expected_lane_root.replace("\\", "\\\\")
+    assert f'"{encoded_lane_root}" = true' in codex_config
+    assert "must not exceed 259 characters" in " ".join(launch.split())
+    assert "WINDOWS_USABLE_MAX_PATH = 259" in lane_script
+    assert "--max-path" not in launch
+    assert "--max-path" not in lane_script
+    assert '"checkout_projection": predicted' in lane_script
+    assert '["ls-tree", "-r", "--name-only", "-z", base]' in " ".join(
+        lane_script.split()
+    )
+    assert '["ls-files", "-z"]' not in lane_script
+    assert "Correct a failed preflight and repeat the same `open`" in " ".join(
+        launch.split()
+    )
+    assert "Cleanup verifies the project marker, recomputes the exact helper-created lane path" in " ".join(
+        launch.split()
+    )
+    assert "--run-id <run> --item-id <item>" in " ".join(launch.split())
+    assert "require_lane_identity(project, root, worktree, args.run_id, args.item_id)" in " ".join(
+        lane_script.split()
+    )
     assert "--proof-command-file" in launch and "--proof-command-file" in lane_script
-    assert "runtime contract 5" in ledger.lower()
+    assert "runtime contract 6" in ledger.lower()
+    assert "project key, base/project/`wt` roots" in " ".join(ledger.split())
     assert "correction route" in ledger
     assert "integration_regression" in script
-    assert "runtime contract 5" in ledger
+    assert "runtime contract 6" in ledger
     assert "viability, not throughput" in launch and "-n 0" in launch
     assert "project imports must resolve beneath the lane" in launch.lower()
     assert "repo-owned configuration" in launch
     assert "namespace-package locations" in " ".join(launch.split())
     assert "--python-provenance-file" in launch and "--python-provenance-file" in lane_script
+    assert (skill_dir / "assets/luna_max.toml").read_bytes() == (
+        ROOT / ".codex/agents/luna_max.toml"
+    ).read_bytes()
     assert "return an owned correction to its current worker" in " ".join(parallel.split())
     assert "**Integration correction.**" in worker
     assert "regression event ID" in worker
@@ -3340,7 +3526,7 @@ def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts
     closeout_fields = runpy.run_path(str(skill_dir / "scripts/run_ledger.py"))[
         "CLOSEOUT_FIELDS"
     ]
-    launch = (skill_dir / "references/CODEX-WORKTREE-LAUNCH.md").read_text(
+    launch = (skill_dir / "references/AGENT-LANES.md").read_text(
         encoding="utf-8"
     )
     router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")

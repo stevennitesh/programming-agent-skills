@@ -4,7 +4,6 @@ import argparse
 import hashlib
 import json
 import os
-import re
 import runpy
 import subprocess
 import sys
@@ -18,6 +17,7 @@ LANE = ROOT / "skills/custom/parallel-implement/scripts/lane_worktree.py"
 LEDGER = ROOT / "skills/custom/parallel-implement/scripts/run_ledger.py"
 LEDGER_RUNTIME = runpy.run_path(str(LEDGER))
 LANE_RUNTIME = runpy.run_path(str(LANE))
+PROJECT_KEY = "repo-001"
 
 
 def internal_lane_packet(args: tuple[str, ...]) -> tuple[subprocess.CompletedProcess[str], dict]:
@@ -25,15 +25,16 @@ def internal_lane_packet(args: tuple[str, ...]) -> tuple[subprocess.CompletedPro
     parser = argparse.ArgumentParser()
     if operation == "create":
         parser.add_argument("--repo", required=True)
-        parser.add_argument("--root")
+        parser.add_argument("--project-key", required=True)
+        parser.add_argument("--base-root")
         parser.add_argument("--base", required=True)
         parser.add_argument("--run-id", required=True)
         parser.add_argument("--item-id", required=True)
         parser.add_argument("--branch")
-        parser.add_argument("--max-path", type=int)
         parser.add_argument("--allow-inside-repo", action="store_true")
         packet = LANE_RUNTIME["create_packet"](parser.parse_args(args[1:]))
     elif operation == "preflight":
+        parser.add_argument("--repo", required=True)
         parser.add_argument("--worktree", required=True)
         parser.add_argument("--base", required=True)
         parser.add_argument("--actor-id", required=True)
@@ -67,16 +68,18 @@ def command(*args: str, cwd: Path | None = None) -> subprocess.CompletedProcess[
 def helper(
     script: Path, *args: str, env: dict[str, str] | None = None
 ) -> tuple[subprocess.CompletedProcess[str], dict]:
+    if script == LANE and args and args[0] in {"create", "open", "cleanup"}:
+        args = (args[0], "--project-key", PROJECT_KEY, *args[1:])
     if script == LANE and args and args[0] in {"create", "preflight"}:
-        prior_root = os.environ.get("PARALLEL_IMPLEMENT_WORKTREE_ROOT")
+        prior_root = os.environ.get("PARALLEL_IMPLEMENT_BASE_ROOT")
         requested_root = (
-            env.get("PARALLEL_IMPLEMENT_WORKTREE_ROOT") if env is not None else prior_root
+            env.get("PARALLEL_IMPLEMENT_BASE_ROOT") if env is not None else prior_root
         )
         try:
             if requested_root is None:
-                os.environ.pop("PARALLEL_IMPLEMENT_WORKTREE_ROOT", None)
+                os.environ.pop("PARALLEL_IMPLEMENT_BASE_ROOT", None)
             else:
-                os.environ["PARALLEL_IMPLEMENT_WORKTREE_ROOT"] = requested_root
+                os.environ["PARALLEL_IMPLEMENT_BASE_ROOT"] = requested_root
             return internal_lane_packet(args)
         except (LANE_RUNTIME["LaneError"], OSError, json.JSONDecodeError) as error:
             packet = LANE_RUNTIME["result_packet"](
@@ -89,9 +92,9 @@ def helper(
             return subprocess.CompletedProcess([], 1), packet
         finally:
             if prior_root is None:
-                os.environ.pop("PARALLEL_IMPLEMENT_WORKTREE_ROOT", None)
+                os.environ.pop("PARALLEL_IMPLEMENT_BASE_ROOT", None)
             else:
-                os.environ["PARALLEL_IMPLEMENT_WORKTREE_ROOT"] = prior_root
+                os.environ["PARALLEL_IMPLEMENT_BASE_ROOT"] = prior_root
     result = subprocess.run(
         [sys.executable, str(script), *args],
         text=True,
@@ -124,22 +127,20 @@ def repository(tmp_path: Path) -> tuple[Path, str]:
     return repo, base
 
 
-def create_lane(repo: Path, base: str, lane_root: Path, item: str = "ticket-1") -> dict:
+def create_lane(repo: Path, base: str, base_root: Path, item: str = "ticket-1") -> dict:
     result, packet = helper(
         LANE,
         "create",
         "--repo",
         str(repo),
-        "--root",
-        str(lane_root),
+        "--base-root",
+        str(base_root),
         "--base",
         base,
         "--run-id",
         "run-1",
         "--item-id",
         item,
-        "--max-path",
-        "1000",
     )
     assert result.returncode == 0, packet
     assert packet["ok"] is True
@@ -155,7 +156,7 @@ def test_lane_open_creates_and_preflights_one_recoverable_lane(
         "open",
         "--repo",
         str(repo),
-        "--root",
+        "--base-root",
         str(tmp_path / "lanes"),
         "--base",
         base,
@@ -165,8 +166,6 @@ def test_lane_open_creates_and_preflights_one_recoverable_lane(
         "ticket-1",
         "--actor-id",
         "worker-1",
-        "--max-path",
-        "1000",
         "--proof-command-json",
         json.dumps([sys.executable, "-c", "print('started')"]),
         "--skip-python-provenance",
@@ -185,16 +184,98 @@ def test_lane_open_creates_and_preflights_one_recoverable_lane(
         "cleanup",
         "--repo",
         str(repo),
-        "--root",
-        opened["root"],
+        "--base-root",
+        opened["base_root"],
         "--worktree",
         opened["worktree"],
+        "--run-id",
+        "run-1",
+        "--item-id",
+        "ticket-1",
         "--expected-head",
         base,
         "--disposition",
         "integrated",
     )
     assert cleanup_result.returncode == 0, cleanup
+
+
+def test_lane_open_exposes_root_inputs_read_only_without_copying(
+    tmp_path: Path,
+) -> None:
+    repo, _ = repository(tmp_path)
+    (repo / ".gitignore").write_text("raw/\n", encoding="utf-8")
+    command("git", "add", ".gitignore", cwd=repo)
+    command("git", "commit", "-m", "ignore raw inputs", cwd=repo)
+    base = command("git", "rev-parse", "HEAD", cwd=repo).stdout.strip()
+    raw = repo / "raw/source.txt"
+    raw.parent.mkdir()
+    raw.write_text("root-only\n", encoding="utf-8")
+    proof = [
+        sys.executable,
+        "-c",
+        (
+            "import json, os, pathlib; "
+            "root = pathlib.Path(os.environ['PARALLEL_IMPLEMENT_ROOT_CHECKOUT']); "
+            "print(json.dumps({'cwd': str(pathlib.Path.cwd()), "
+            "'root': str(root), 'raw': (root / 'raw/source.txt').read_text()}))"
+        ),
+    ]
+
+    result, opened = helper(
+        LANE,
+        "open",
+        "--repo",
+        str(repo),
+        "--base-root",
+        str(tmp_path / "lanes"),
+        "--base",
+        base,
+        "--run-id",
+        "run-inputs",
+        "--item-id",
+        "ticket-inputs",
+        "--actor-id",
+        "worker-inputs",
+        "--proof-command-json",
+        json.dumps(proof),
+        "--skip-python-provenance",
+        "--python-provenance-reason",
+        "test repository has no importable project package",
+    )
+
+    assert result.returncode == 0, opened
+    observed = json.loads(opened["preflight"]["startup_proof"]["stdout"])
+    assert Path(observed["cwd"]) == Path(opened["worktree"])
+    assert Path(observed["root"]) == repo.resolve()
+    assert observed["raw"] == "root-only\n"
+    assert opened["preflight"]["root_checkout"] == {
+        "path": str(repo.resolve()),
+        "access": "read-only",
+        "environment": "PARALLEL_IMPLEMENT_ROOT_CHECKOUT",
+    }
+    assert not (Path(opened["worktree"]) / "raw/source.txt").exists()
+
+    cleanup_result, cleanup = helper(
+        LANE,
+        "cleanup",
+        "--repo",
+        str(repo),
+        "--base-root",
+        opened["base_root"],
+        "--worktree",
+        opened["worktree"],
+        "--run-id",
+        "run-inputs",
+        "--item-id",
+        "ticket-inputs",
+        "--expected-head",
+        base,
+        "--disposition",
+        "integrated",
+    )
+    assert cleanup_result.returncode == 0, cleanup
+    assert raw.read_text(encoding="utf-8") == "root-only\n"
 
 
 def test_lane_open_preserves_created_lane_when_preflight_fails(
@@ -206,7 +287,7 @@ def test_lane_open_preserves_created_lane_when_preflight_fails(
         "open",
         "--repo",
         str(repo),
-        "--root",
+        "--base-root",
         str(tmp_path / "lanes"),
         "--base",
         base,
@@ -216,8 +297,6 @@ def test_lane_open_preserves_created_lane_when_preflight_fails(
         "ticket-1",
         "--actor-id",
         "worker-1",
-        "--max-path",
-        "1000",
         "--proof-command-json",
         json.dumps([sys.executable, "-c", "raise SystemExit(7)"]),
         "--skip-python-provenance",
@@ -236,7 +315,7 @@ def test_lane_open_preserves_created_lane_when_preflight_fails(
         "open",
         "--repo",
         str(repo),
-        "--root",
+        "--base-root",
         str(tmp_path / "lanes"),
         "--base",
         base,
@@ -246,8 +325,6 @@ def test_lane_open_preserves_created_lane_when_preflight_fails(
         "ticket-1",
         "--actor-id",
         "worker-1",
-        "--max-path",
-        "1000",
         "--proof-command-json",
         json.dumps([sys.executable, "-c", "print('recovered')"]),
         "--skip-python-provenance",
@@ -263,10 +340,14 @@ def test_lane_open_preserves_created_lane_when_preflight_fails(
         "cleanup",
         "--repo",
         str(repo),
-        "--root",
-        opened["root"],
+        "--base-root",
+        opened["base_root"],
         "--worktree",
         opened["worktree"],
+        "--run-id",
+        "run-1",
+        "--item-id",
+        "ticket-1",
         "--expected-head",
         base,
         "--disposition",
@@ -323,7 +404,7 @@ def test_ledger_facade_starts_applies_reports_and_briefs_idempotently(
         "id": "parent-charter",
         "outcome": "deliver the recorded child graph",
         "repair_generation_budget": 2,
-        "runtime_contract": 5,
+        "runtime_contract": 6,
     }
 
     packet = tmp_path / "lane-ready.json"
@@ -334,15 +415,15 @@ def test_ledger_facade_starts_applies_reports_and_briefs_idempotently(
                 "work_item": "ticket-1",
                 "lane_id": "lane-1",
                 "agent_id": "clear-worker",
+                "runtime_agent_type": "luna_max",
                 "actor_id": "worker-1",
                 "task_id": "task-1",
-                "host_id": "host-1",
-                "transport": "codex-task",
+                "transport": "subagent-v2",
                 "requested_model": "gpt-5.6-luna",
                 "requested_effort": "max",
                 "environment": "worktree",
                 "task_state": "ready",
-                "report_transport": "codex-task",
+                "report_transport": "subagent-v2",
                 "liveness_cursor": "cursor-1",
                 "assignment": {
                     "mode": "implementation",
@@ -356,12 +437,12 @@ def test_ledger_facade_starts_applies_reports_and_briefs_idempotently(
                         "status": "accepted",
                         "lane_id": "lane-1",
                         "agent_id": "clear-worker",
+                        "runtime_agent_type": "luna_max",
                         "task_id": "task-1",
-                        "host_id": "host-1",
                         "requested_model": "gpt-5.6-luna",
                         "requested_effort": "max",
                         "environment": "worktree",
-                        "provider": "codex-managed",
+                        "provider": "manual-helper",
                         "worktree": str(tmp_path / "lane-1"),
                     },
                     "environment_match": True,
@@ -375,7 +456,12 @@ def test_ledger_facade_starts_applies_reports_and_briefs_idempotently(
                     "observed_head": base,
                     "status": "clean",
                     "worktree": str(tmp_path / "lane-1"),
-                    "provider": "codex-managed",
+                    "root_checkout": {
+                        "path": str(repo.resolve()),
+                        "access": "read-only",
+                        "environment": "PARALLEL_IMPLEMENT_ROOT_CHECKOUT",
+                    },
+                    "provider": "manual-helper",
                     "startup_proof": {"status": "passed"},
                     "project_provenance": {"status": "verified"},
                     "temp_root": str(tmp_path / "lane-1" / ".tmp"),
@@ -445,9 +531,13 @@ def test_ledger_facade_starts_applies_reports_and_briefs_idempotently(
     assert "Agent: `clear-worker`" in text
     assert "Actor: `worker-1`" in text
     assert "Task: `task-1`" in text
-    assert "Host: `host-1`" in text
+    assert f"Root checkout: `{recorded_scope['data']['repo']}`" in text
+    assert "Root checkout access: `read-only`" in text
+    assert "Write boundary: `assigned worktree only`" in text
+    assert "Host:" not in text
     assert "Integration correction" not in text
     assert "Do not integrate" not in text
+
 
     result_packet = tmp_path / "worker-result.json"
     result_packet.write_text(
@@ -457,10 +547,10 @@ def test_ledger_facade_starts_applies_reports_and_briefs_idempotently(
                 "work_item": "ticket-1",
                 "lane_id": "lane-1",
                 "agent_id": "clear-worker",
+                "runtime_agent_type": "luna_max",
                 "actor_id": "worker-1",
                 "task_id": "task-1",
-                "host_id": "host-1",
-                "transport": "codex-task",
+                "transport": "subagent-v2",
                 "worktree": str(tmp_path / "lane-1"),
                 "base": base,
                 "assignment_ref": "ticket-1",
@@ -526,7 +616,26 @@ def test_ledger_facade_starts_applies_reports_and_briefs_idempotently(
     assert "mismatched task_id" in detail["error"]
 
 
-def test_runtime_five_rejects_lane_ready_without_task_receipt(tmp_path: Path) -> None:
+def test_runtime_profile_resolver_emits_exact_collaboration_arguments() -> None:
+    result, clear = helper(LEDGER, "profile", "--id", "clear-worker")
+    assert result.returncode == 0
+    assert clear["spawn"] == {"agent_type": "luna_max"}
+    assert (clear["model"], clear["reasoning"]) == ("gpt-5.6-luna", "max")
+
+    result, adaptive = helper(LEDGER, "profile", "--id", "adaptive-worker")
+    assert result.returncode == 0
+    assert adaptive["spawn"] == {
+        "agent_type": "default",
+        "model": "gpt-5.6-terra",
+        "reasoning_effort": "xhigh",
+    }
+
+    result, missing = helper(LEDGER, "profile", "--id", "unknown-worker")
+    assert result.returncode == 1
+    assert missing["code"] == "UNKNOWN_PROFILE"
+
+
+def test_runtime_six_rejects_lane_ready_without_task_receipt(tmp_path: Path) -> None:
     repo, _ = repository(tmp_path)
     events = tmp_path / "run" / "events.jsonl"
     scope = tmp_path / "scope.json"
@@ -592,41 +701,57 @@ def test_runtime_five_rejects_lane_ready_without_task_receipt(tmp_path: Path) ->
 
 
 @pytest.mark.skipif(os.name != "nt", reason="Windows manual-lane default")
-def test_lane_helper_defaults_to_the_short_windows_worktree_root(
-    tmp_path: Path,
-) -> None:
-    repo, base = repository(tmp_path)
-    result, created = helper(
-        LANE,
-        "create",
-        "--repo",
-        str(repo),
-        "--base",
-        base,
-        "--run-id",
-        "run-123456",
-        "--item-id",
-        "ticket-1234",
-        "--max-path",
-        "1",
-    )
-    assert result.returncode == 1, created
-    expected_root = Path("E:/pi").resolve()
-    assert Path(created["root"]) == expected_root
-    assert created["root_source"] == "windows-default"
-    assert Path(created["worktree"]).is_relative_to(expected_root)
-    assert created["state"] == "blocked-path-budget"
-    assert "limit 1" in created["error"]
+def test_lane_helper_defaults_to_the_repository_drive_project_worktree_root() -> None:
+    lane = runpy.run_path(str(LANE))
+    repository_root = Path("C:/repo")
+    expected_base = Path("C:/pi").resolve()
+    project_root, root = lane["project_paths"](expected_base, PROJECT_KEY)
+
+    assert lane["default_base_root"](repository_root) == expected_base
+    assert project_root == expected_base / PROJECT_KEY
+    assert root == expected_base / PROJECT_KEY / "wt"
 
 
 @pytest.mark.skipif(os.name != "nt", reason="Windows path-budget default")
-def test_lane_helper_defaults_the_windows_path_budget_to_320(tmp_path: Path) -> None:
+def test_lane_helper_uses_the_259_character_windows_path_limit(tmp_path: Path) -> None:
     repo, _ = repository(tmp_path)
     lane = runpy.run_path(str(LANE))
 
-    budget = lane["path_budget"](Path("E:/pi/lane"), repo, None)
+    base = command("git", "rev-parse", "HEAD", cwd=repo).stdout.strip()
+    worktree = Path(f"{repo.drive}/pi/lane")
+    budget = lane["path_budget"](worktree, repo, base)
 
-    assert budget["limit"] == 320
+    assert budget["limit"] == 259
+    assert budget["checkout_projection"] == len(str(worktree)) + 1 + len("tracked.txt")
+
+
+def test_lane_path_budget_uses_the_selected_base_not_the_current_index(
+    tmp_path: Path,
+) -> None:
+    repo, _ = repository(tmp_path)
+    base_path = Path("base") / ("b" * 48)
+    (repo / base_path).parent.mkdir()
+    (repo / base_path).write_text("base\n", encoding="utf-8")
+    command("git", "add", str(base_path), cwd=repo)
+    command("git", "commit", "-m", "add base path", cwd=repo)
+    base = command("git", "rev-parse", "HEAD", cwd=repo).stdout.strip()
+
+    (repo / base_path).unlink()
+    index_path = Path("index") / ("i" * 80)
+    (repo / index_path).parent.mkdir()
+    (repo / index_path).write_text("index\n", encoding="utf-8")
+    command("git", "add", "-A", cwd=repo)
+
+    lane = runpy.run_path(str(LANE))
+    worktree = tmp_path / "lane"
+    budget = lane["path_budget"](worktree, repo, base)
+
+    assert budget["longest_tracked_relative_path"] == len(base_path.as_posix())
+    assert budget["longest_tracked_relative_path"] != len(index_path.as_posix())
+    assert budget["checkout_projection"] == len(str(worktree)) + 1 + len(
+        base_path.as_posix()
+    )
+    assert "reserve" not in budget
 
 
 def test_lane_helper_creates_preflights_and_removes_a_detached_worktree(
@@ -639,6 +764,8 @@ def test_lane_helper_creates_preflights_and_removes_a_detached_worktree(
     result, preflight = helper(
         LANE,
         "preflight",
+        "--repo",
+        str(repo),
         "--worktree",
         str(worktree),
         "--base",
@@ -666,10 +793,14 @@ def test_lane_helper_creates_preflights_and_removes_a_detached_worktree(
         "cleanup",
         "--repo",
         str(repo),
-        "--root",
-        created["root"],
+        "--base-root",
+        created["base_root"],
         "--worktree",
         str(worktree),
+        "--run-id",
+        "run-1",
+        "--item-id",
+        "ticket-1",
         "--expected-head",
         base,
         "--disposition",
@@ -695,6 +826,8 @@ def test_lane_preflight_accepts_a_utf8_argv_file_with_provenance(
     result, preflight = helper(
         LANE,
         "preflight",
+        "--repo",
+        str(repo),
         "--worktree",
         created["worktree"],
         "--base",
@@ -719,6 +852,8 @@ def test_lane_preflight_accepts_a_utf8_argv_file_with_provenance(
     result, bom_preflight = helper(
         LANE,
         "preflight",
+        "--repo",
+        str(repo),
         "--worktree",
         created["worktree"],
         "--base",
@@ -743,10 +878,14 @@ def test_lane_preflight_accepts_a_utf8_argv_file_with_provenance(
         "cleanup",
         "--repo",
         str(repo),
-        "--root",
-        created["root"],
+        "--base-root",
+        created["base_root"],
         "--worktree",
         created["worktree"],
+        "--run-id",
+        "run-1",
+        "--item-id",
+        "ticket-1",
         "--expected-head",
         base,
         "--disposition",
@@ -788,6 +927,8 @@ def test_lane_preflight_verifies_declared_python_packages_resolve_beneath_lane(
     result, preflight = helper(
         LANE,
         "preflight",
+        "--repo",
+        str(repo),
         "--worktree",
         created["worktree"],
         "--base",
@@ -839,6 +980,8 @@ def test_lane_preflight_rejects_python_provenance_outside_the_lane(
     result, blocked = helper(
         LANE,
         "preflight",
+        "--repo",
+        str(repo),
         "--worktree",
         created["worktree"],
         "--base",
@@ -855,20 +998,20 @@ def test_lane_preflight_rejects_python_provenance_outside_the_lane(
     assert "import root escapes the lane" in blocked["error"]
 
 
-def test_lane_root_precedence_uses_explicit_then_environment_then_default(
+def test_lane_base_root_precedence_uses_explicit_then_environment_then_default(
     tmp_path: Path,
 ) -> None:
     repo, base = repository(tmp_path)
     environment_root = tmp_path / "environment-lanes"
     explicit_root = tmp_path / "explicit-lanes"
-    env = {**os.environ, "PARALLEL_IMPLEMENT_WORKTREE_ROOT": str(environment_root)}
+    env = {**os.environ, "PARALLEL_IMPLEMENT_BASE_ROOT": str(environment_root)}
 
     result, created = helper(
         LANE,
         "create",
         "--repo",
         str(repo),
-        "--root",
+        "--base-root",
         str(explicit_root),
         "--base",
         base,
@@ -876,22 +1019,25 @@ def test_lane_root_precedence_uses_explicit_then_environment_then_default(
         "run-explicit",
         "--item-id",
         "ticket-explicit",
-        "--max-path",
-        "1000",
         env=env,
     )
     assert result.returncode == 0, created
-    assert Path(created["root"]) == explicit_root.resolve()
-    assert created["root_source"] == "explicit"
+    assert Path(created["base_root"]) == explicit_root.resolve()
+    assert Path(created["root"]) == explicit_root.resolve() / PROJECT_KEY / "wt"
+    assert created["base_root_source"] == "explicit"
     result, cleanup = helper(
         LANE,
         "cleanup",
         "--repo",
         str(repo),
-        "--root",
-        created["root"],
+        "--base-root",
+        created["base_root"],
         "--worktree",
         created["worktree"],
+        "--run-id",
+        "run-explicit",
+        "--item-id",
+        "ticket-explicit",
         "--expected-head",
         base,
         "--disposition",
@@ -910,24 +1056,98 @@ def test_lane_root_precedence_uses_explicit_then_environment_then_default(
         "run-environment",
         "--item-id",
         "ticket-environment",
-        "--max-path",
-        "1000",
         env=env,
     )
     assert result.returncode == 0, created
-    assert Path(created["root"]) == environment_root.resolve()
-    assert created["root_source"] == "environment"
+    assert Path(created["base_root"]) == environment_root.resolve()
+    assert Path(created["root"]) == environment_root.resolve() / PROJECT_KEY / "wt"
+    assert created["base_root_source"] == "environment"
     result, cleanup = helper(
         LANE,
         "cleanup",
         "--repo",
         str(repo),
-        "--root",
-        created["root"],
+        "--base-root",
+        created["base_root"],
         "--worktree",
         created["worktree"],
+        "--run-id",
+        "run-environment",
+        "--item-id",
+        "ticket-environment",
         "--expected-head",
         base,
+        "--disposition",
+        "integrated",
+    )
+    assert result.returncode == 0, cleanup
+
+
+def test_lane_project_key_owns_one_repository_and_short_worktree_root(
+    tmp_path: Path,
+) -> None:
+    first_parent = tmp_path / "first"
+    second_parent = tmp_path / "second"
+    first_parent.mkdir()
+    second_parent.mkdir()
+    first_repo, first_base = repository(first_parent)
+    second_repo, second_base = repository(second_parent)
+    command(
+        "git",
+        "remote",
+        "add",
+        "origin",
+        "https://example.test/first.git",
+        cwd=first_repo,
+    )
+    command(
+        "git",
+        "remote",
+        "add",
+        "origin",
+        "https://example.test/second.git",
+        cwd=second_repo,
+    )
+    base_root = tmp_path / "pi"
+
+    created = create_lane(first_repo, first_base, base_root)
+    assert Path(created["project_root"]) == base_root / PROJECT_KEY
+    assert Path(created["root"]) == base_root / PROJECT_KEY / "wt"
+    assert Path(created["worktree"]).parent == Path(created["root"])
+    assert first_repo.name not in Path(created["worktree"]).name
+
+    result, blocked = helper(
+        LANE,
+        "create",
+        "--repo",
+        str(second_repo),
+        "--base-root",
+        str(base_root),
+        "--base",
+        second_base,
+        "--run-id",
+        "run-2",
+        "--item-id",
+        "ticket-2",
+    )
+    assert result.returncode == 1
+    assert "belongs to another repository" in blocked["error"]
+
+    result, cleanup = helper(
+        LANE,
+        "cleanup",
+        "--repo",
+        str(first_repo),
+        "--base-root",
+        str(base_root),
+        "--worktree",
+        created["worktree"],
+        "--run-id",
+        "run-1",
+        "--item-id",
+        "ticket-1",
+        "--expected-head",
+        first_base,
         "--disposition",
         "integrated",
     )
@@ -941,6 +1161,8 @@ def test_lane_preflight_requires_proof_or_an_explicit_skip(tmp_path: Path) -> No
     result, blocked = helper(
         LANE,
         "preflight",
+        "--repo",
+        str(repo),
         "--worktree",
         created["worktree"],
         "--base",
@@ -956,6 +1178,8 @@ def test_lane_preflight_requires_proof_or_an_explicit_skip(tmp_path: Path) -> No
     result, provenance_blocked = helper(
         LANE,
         "preflight",
+        "--repo",
+        str(repo),
         "--worktree",
         created["worktree"],
         "--base",
@@ -971,6 +1195,8 @@ def test_lane_preflight_requires_proof_or_an_explicit_skip(tmp_path: Path) -> No
     result, skipped = helper(
         LANE,
         "preflight",
+        "--repo",
+        str(repo),
         "--worktree",
         created["worktree"],
         "--base",
@@ -993,10 +1219,14 @@ def test_lane_preflight_requires_proof_or_an_explicit_skip(tmp_path: Path) -> No
         "cleanup",
         "--repo",
         str(repo),
-        "--root",
-        created["root"],
+        "--base-root",
+        created["base_root"],
         "--worktree",
         created["worktree"],
+        "--run-id",
+        "run-1",
+        "--item-id",
+        "ticket-1",
         "--expected-head",
         base[:8],
         "--disposition",
@@ -1015,7 +1245,7 @@ def test_lane_creation_stops_on_failure_and_rejects_unsafe_roots(tmp_path: Path)
         "create",
         "--repo",
         str(repo),
-        "--root",
+        "--base-root",
         str(lane_root),
         "--base",
         "missing-base",
@@ -1023,8 +1253,6 @@ def test_lane_creation_stops_on_failure_and_rejects_unsafe_roots(tmp_path: Path)
         "run-1",
         "--item-id",
         "ticket-1",
-        "--max-path",
-        "1000",
     )
     assert result.returncode == 1
     assert failed["operation"] == "create"
@@ -1036,7 +1264,7 @@ def test_lane_creation_stops_on_failure_and_rejects_unsafe_roots(tmp_path: Path)
         "create",
         "--repo",
         str(repo),
-        "--root",
+        "--base-root",
         str(repo / "nested"),
         "--base",
         base,
@@ -1044,46 +1272,32 @@ def test_lane_creation_stops_on_failure_and_rejects_unsafe_roots(tmp_path: Path)
         "run-1",
         "--item-id",
         "ticket-2",
-        "--max-path",
-        "1000",
     )
     assert result.returncode == 1
     assert "inside the active checkout" in nested["error"]
 
-    short_budget_root = tmp_path / "short-budget-lanes"
-    result, budget = helper(
-        LANE,
-        "create",
-        "--repo",
-        str(repo),
-        "--root",
-        str(short_budget_root),
-        "--base",
-        base,
-        "--run-id",
-        "run-1",
-        "--item-id",
-        "ticket-3",
-        "--max-path",
-        "10",
-    )
-    assert result.returncode == 1
-    assert "path budget exceeded" in budget["error"]
-    assert budget["state"] == "blocked-path-budget"
-    assert not short_budget_root.exists()
+    lane = runpy.run_path(str(LANE))
+    limit = lane["WINDOWS_USABLE_MAX_PATH"] if os.name == "nt" else 4096
+    with pytest.raises(lane["LaneError"], match="checkout path limit exceeded"):
+        lane["path_budget"](Path("x" * limit), repo, base)
 
     created = create_lane(repo, base, lane_root, item="ticket-with-a-long-name")
-    if sys.platform == "win32":
-        assert created["path_budget"]["reserve"] >= 96
+    assert created["path_budget"]["checkout_projection"] == (
+        len(created["worktree"]) + 1 + len("tracked.txt")
+    )
     result, cleanup = helper(
         LANE,
         "cleanup",
         "--repo",
         str(repo),
-        "--root",
-        created["root"],
+        "--base-root",
+        created["base_root"],
         "--worktree",
         created["worktree"],
+        "--run-id",
+        "run-1",
+        "--item-id",
+        "ticket-with-a-long-name",
         "--expected-head",
         base,
         "--disposition",
@@ -1108,10 +1322,14 @@ def test_lane_cleanup_records_and_purges_an_unregistered_residual(
         "cleanup",
         "--repo",
         str(repo),
-        "--root",
+        "--base-root",
         str(lane_root),
         "--worktree",
         str(worktree),
+        "--run-id",
+        "run-1",
+        "--item-id",
+        "ticket-1",
         "--expected-head",
         base,
         "--disposition",
@@ -1125,10 +1343,14 @@ def test_lane_cleanup_records_and_purges_an_unregistered_residual(
         "cleanup",
         "--repo",
         str(repo),
-        "--root",
+        "--base-root",
         str(lane_root),
         "--worktree",
         str(worktree),
+        "--run-id",
+        "run-1",
+        "--item-id",
+        "ticket-1",
         "--expected-head",
         base,
         "--disposition",
@@ -1140,6 +1362,95 @@ def test_lane_cleanup_records_and_purges_an_unregistered_residual(
     assert not worktree.exists()
 
 
+def test_lane_cleanup_rejects_an_unrelated_contained_directory(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    created = create_lane(repo, base, lane_root)
+    result, cleanup = helper(
+        LANE,
+        "cleanup",
+        "--repo",
+        str(repo),
+        "--base-root",
+        created["base_root"],
+        "--worktree",
+        created["worktree"],
+        "--run-id",
+        "run-1",
+        "--item-id",
+        "ticket-1",
+        "--expected-head",
+        base,
+        "--disposition",
+        "integrated",
+    )
+    assert result.returncode == 0, cleanup
+    unrelated = Path(created["root"]) / "unrelated"
+    unrelated.mkdir(parents=True)
+    marker = unrelated / "keep.txt"
+    marker.write_text("keep\n", encoding="utf-8")
+
+    result, blocked = helper(
+        LANE,
+        "cleanup",
+        "--repo",
+        str(repo),
+        "--base-root",
+        str(lane_root),
+        "--worktree",
+        str(unrelated),
+        "--run-id",
+        "run-1",
+        "--item-id",
+        "ticket-1",
+        "--expected-head",
+        base,
+        "--disposition",
+        "preserved",
+        "--confirm-unregistered-residual",
+    )
+
+    assert result.returncode == 1
+    assert "does not match the helper-created lane identity" in blocked["error"]
+    assert marker.read_text(encoding="utf-8") == "keep\n"
+
+
+def test_lane_cleanup_requires_the_existing_project_binding(tmp_path: Path) -> None:
+    repo, base = repository(tmp_path)
+    base_root = tmp_path / "missing-lanes"
+    worktree = (
+        base_root
+        / PROJECT_KEY
+        / "wt"
+        / LANE_RUNTIME["lane_name"](PROJECT_KEY, "run-1", "ticket-1")
+    )
+
+    result, blocked = helper(
+        LANE,
+        "cleanup",
+        "--repo",
+        str(repo),
+        "--base-root",
+        str(base_root),
+        "--worktree",
+        str(worktree),
+        "--run-id",
+        "run-1",
+        "--item-id",
+        "ticket-1",
+        "--expected-head",
+        base,
+        "--disposition",
+        "preserved",
+    )
+
+    assert result.returncode == 1
+    assert "has no identity marker" in blocked["error"]
+    assert not base_root.exists()
+
+
 @pytest.mark.parametrize("removal_fails", [False, True])
 def test_lane_cleanup_reports_verified_residual_recovery_in_the_same_call(
     tmp_path: Path, monkeypatch, capsys, removal_fails: bool
@@ -1148,14 +1459,20 @@ def test_lane_cleanup_reports_verified_residual_recovery_in_the_same_call(
     cleanup = namespace["cleanup"]
     globals_ = cleanup.__globals__
     repo = tmp_path / "repo"
-    root = tmp_path / "lanes"
-    worktree = root / "lane"
+    base_root = tmp_path / "lanes"
+    root = base_root / PROJECT_KEY / "wt"
+    run_id = "run-1"
+    item_id = "ticket-1"
+    worktree = root / namespace["lane_name"](PROJECT_KEY, run_id, item_id)
     worktree.mkdir(parents=True)
     (worktree / "generated-path.txt").write_text("residual\n", encoding="utf-8")
     head = "a" * 40
     registrations = iter(({worktree.resolve(): {"HEAD": head}}, {}))
 
     monkeypatch.setitem(globals_, "git_root", lambda path: (repo.resolve(), "normal"))
+    monkeypatch.setitem(
+        globals_, "ensure_project_marker", lambda *args, **kwargs: {}
+    )
     monkeypatch.setitem(globals_, "registered_worktrees", lambda path: next(registrations))
 
     def fake_worktree_git(path, args, *, check=True):
@@ -1180,8 +1497,11 @@ def test_lane_cleanup_reports_verified_residual_recovery_in_the_same_call(
     result = cleanup(
         argparse.Namespace(
             repo=str(repo),
-            root=str(root),
+            project_key=PROJECT_KEY,
+            base_root=str(base_root),
             worktree=str(worktree),
+            run_id=run_id,
+            item_id=item_id,
             expected_head=head[:8],
             disposition="integrated",
         )
@@ -1219,12 +1539,19 @@ def test_lane_helper_exposes_only_open_and_cleanup() -> None:
     assert set(subparsers.choices) == {"open", "cleanup"}
 
 
-def test_run_ledger_exposes_only_the_five_agent_facing_commands() -> None:
+def test_run_ledger_exposes_the_profile_resolver_and_five_campaign_commands() -> None:
     parser = LEDGER_RUNTIME["parser"]()
     subparsers = next(
         action for action in parser._actions if isinstance(action, argparse._SubParsersAction)
     )
-    assert set(subparsers.choices) == {"start", "status", "apply", "brief", "finish"}
+    assert set(subparsers.choices) == {
+        "profile",
+        "start",
+        "status",
+        "apply",
+        "brief",
+        "finish",
+    }
 
 
 def test_events_packet_cannot_bypass_the_lane_ready_gate() -> None:
@@ -1277,7 +1604,7 @@ def test_brief_artifact_names_are_collision_safe() -> None:
     assert artifact_name(encoded) != encoded
 
 
-def test_runtime_five_resume_accepts_empty_exhaustive_lane_inventories(
+def test_runtime_six_resume_accepts_empty_exhaustive_lane_inventories(
     tmp_path: Path,
 ) -> None:
     repo, base = repository(tmp_path)
@@ -1307,7 +1634,7 @@ def test_runtime_five_resume_accepts_empty_exhaustive_lane_inventories(
                 "dispositions": {"ticket-1": "caller-deferred"},
                 "charter": {
                     "id": "charter",
-                    "runtime_contract": 5,
+                    "runtime_contract": 6,
                     "repair_generation_budget": 2,
                 },
             },
@@ -1440,18 +1767,21 @@ def bind_root_receipts(events: list[dict]) -> list[dict]:
 
 
 def current_review_events(base: str, lane_path: Path) -> list[dict]:
+    root_checkout = (lane_path.parent / "repo").resolve()
+    review_path = (lane_path.parent / "integration-checkout").resolve()
     lane_receipt = {
         "lane_id": "lane-1",
         "agent_id": "clear-worker",
+        "runtime_agent_type": "luna_max",
         "actor_id": "worker-agent",
         "task_id": "worker-task",
         "host_id": "worker-host",
-        "transport": "codex-task",
+        "transport": "subagent-v2",
         "requested_model": "gpt-5.6-luna",
         "requested_effort": "max",
         "environment": "worktree",
         "task_state": "ready",
-        "report_transport": "codex-task",
+        "report_transport": "subagent-v2",
         "liveness_cursor": "worker-cursor",
         "assignment_mode": "implementation",
         "assignment_ref": "ticket-1",
@@ -1461,12 +1791,13 @@ def current_review_events(base: str, lane_path: Path) -> list[dict]:
             "status": "accepted",
             "lane_id": "lane-1",
             "agent_id": "clear-worker",
+            "runtime_agent_type": "luna_max",
             "task_id": "worker-task",
             "host_id": "worker-host",
             "requested_model": "gpt-5.6-luna",
             "requested_effort": "max",
             "environment": "worktree",
-            "provider": "codex-managed",
+            "provider": "manual-helper",
             "worktree": str(lane_path),
         },
         "environment_match": True,
@@ -1477,16 +1808,22 @@ def current_review_events(base: str, lane_path: Path) -> list[dict]:
     }
     review_receipt = {
         "agent_id": "ordinary-reviewer",
+        "runtime_agent_type": "default",
         "lane_id": "review-lane",
         "actor_id": "review-agent",
         "task_id": "review-task",
         "host_id": "review-host",
-        "transport": "codex-task",
+        "transport": "subagent-v2",
         "requested_model": "gpt-5.6-sol",
         "requested_effort": "high",
-        "environment": "worktree",
-        "worktree": str((lane_path.parent / "review-lane").resolve()),
-        "provider": "codex-managed",
+        "resolved_model_status": "matched",
+        "resolved_model": "gpt-5.6-sol",
+        "resolved_effort_status": "matched",
+        "resolved_effort": "high",
+        "telemetry_unavailable_reason": None,
+        "environment": "local",
+        "worktree": str(review_path),
+        "provider": "delegated-custody",
     }
     events = [
         {
@@ -1507,7 +1844,7 @@ def current_review_events(base: str, lane_path: Path) -> list[dict]:
                 "children": ["ticket-1"],
                 "charter": {
                     "id": "parent-charter",
-                    "runtime_contract": 5,
+                    "runtime_contract": 6,
                     "repair_generation_budget": 2,
                 },
             },
@@ -1525,9 +1862,14 @@ def current_review_events(base: str, lane_path: Path) -> list[dict]:
             "data": {
                 "lane_id": "lane-1",
                 "worktree": str(lane_path),
+                "root_checkout": {
+                    "path": str(root_checkout),
+                    "access": "read-only",
+                    "environment": "PARALLEL_IMPLEMENT_ROOT_CHECKOUT",
+                },
                 "base": base,
                 "observed_head": base,
-                "provider": "codex-managed",
+                "provider": "manual-helper",
                 "status": "clean",
                 "startup_proof": {"status": "passed"},
                 "project_provenance": {"status": "verified"},
@@ -1564,6 +1906,7 @@ def current_review_events(base: str, lane_path: Path) -> list[dict]:
                     for key in (
                         "lane_id",
                         "agent_id",
+                        "runtime_agent_type",
                         "actor_id",
                         "task_id",
                         "host_id",
@@ -1671,13 +2014,14 @@ def current_review_events(base: str, lane_path: Path) -> list[dict]:
                     "status": "accepted",
                     "lane_id": "review-lane",
                     "agent_id": "ordinary-reviewer",
+                    "runtime_agent_type": "default",
                     "task_id": "review-task",
                     "host_id": "review-host",
                     "requested_model": "gpt-5.6-sol",
                     "requested_effort": "high",
-                    "environment": "worktree",
-                    "provider": "codex-managed",
-                    "worktree": str((lane_path.parent / "review-lane").resolve()),
+                    "environment": "local",
+                    "provider": "delegated-custody",
+                    "worktree": str(review_path),
                 },
                 "environment_match": True,
                 "resolved_model_status": "matched",
@@ -1688,9 +2032,9 @@ def current_review_events(base: str, lane_path: Path) -> list[dict]:
                 "status": "clean",
                 "startup_proof": {"status": "passed"},
                 "project_provenance": {"status": "verified"},
-                "temp_root": str((lane_path.parent / "review-lane" / ".tmp").resolve()),
-                "pytest_basetemp": str((lane_path.parent / "review-lane" / ".pytest").resolve()),
-                "cache_root": str((lane_path.parent / "review-lane" / ".cache").resolve()),
+                "temp_root": str((review_path / ".tmp").resolve()),
+                "pytest_basetemp": str((review_path / ".pytest").resolve()),
+                "cache_root": str((review_path / ".cache").resolve()),
                 "root_receipt": root_receipt("select-review", "parent", base),
                 **review_receipt,
             },
@@ -1719,7 +2063,7 @@ def current_review_events(base: str, lane_path: Path) -> list[dict]:
     return bind_root_receipts(events)
 
 
-def runtime_five_local_lane_events(
+def runtime_six_local_lane_events(
     base: str,
     checkout: Path,
     *,
@@ -1733,6 +2077,7 @@ def runtime_five_local_lane_events(
     receipt.update(
         {
             "agent_id": agent_id,
+            "runtime_agent_type": "luna_max" if agent_id == "clear-worker" else "default",
             "transport": transport,
             "report_transport": transport,
             "requested_model": model,
@@ -1745,6 +2090,7 @@ def runtime_five_local_lane_events(
     receipt["provider_acceptance"].update(
         {
             "agent_id": agent_id,
+            "runtime_agent_type": "luna_max" if agent_id == "clear-worker" else "default",
             "requested_model": model,
             "requested_effort": effort,
             "environment": "local",
@@ -1761,21 +2107,22 @@ def runtime_five_local_lane_events(
             "cache_root": str(checkout / ".cache"),
         }
     )
+    events[2]["data"].pop("root_checkout")
     return bind_root_receipts(events)
 
 
-def test_runtime_five_routes_serial_workers_without_root_implementation(
+def test_runtime_six_routes_serial_workers_without_root_implementation(
     tmp_path: Path,
 ) -> None:
     repo, base = repository(tmp_path)
     cases = (
-        ("clear-worker", "gpt-5.6-luna", "max", "codex-task"),
-        ("adaptive-worker", "gpt-5.6-terra", "max", "subagent-v2"),
+        ("clear-worker", "gpt-5.6-luna", "max", "subagent-v2"),
+        ("adaptive-worker", "gpt-5.6-terra", "xhigh", "subagent-v2"),
         ("fast-adaptive-worker", "gpt-5.6-sol", "medium", "subagent-v2"),
         ("demanding-worker", "gpt-5.6-sol", "high", "subagent-v2"),
     )
     for agent_id, model, effort, transport in cases:
-        events = runtime_five_local_lane_events(
+        events = runtime_six_local_lane_events(
             base,
             repo,
             agent_id=agent_id,
@@ -1785,7 +2132,7 @@ def test_runtime_five_routes_serial_workers_without_root_implementation(
         )
         assert LEDGER_RUNTIME["derive_state"](events, str(repo))["errors"] == []
 
-    crossed = runtime_five_local_lane_events(
+    leaked_root = runtime_six_local_lane_events(
         base,
         repo,
         agent_id="clear-worker",
@@ -1793,15 +2140,34 @@ def test_runtime_five_routes_serial_workers_without_root_implementation(
         effort="max",
         transport="subagent-v2",
     )
-    invalid = LEDGER_RUNTIME["derive_state"](crossed, str(repo))
-    assert any("local agent requires codex-task transport" in error for error in invalid["errors"])
+    leaked_root[2]["data"]["root_checkout"] = {
+        "path": str(repo),
+        "access": "read-only",
+        "environment": "PARALLEL_IMPLEMENT_ROOT_CHECKOUT",
+    }
+    invalid = LEDGER_RUNTIME["derive_state"](leaked_root, str(repo))
+    assert any(
+        "local lane cannot include a root checkout binding" in error
+        for error in invalid["errors"]
+    )
 
-    root_actor = runtime_five_local_lane_events(
+    crossed = runtime_six_local_lane_events(
+        base,
+        repo,
+        agent_id="clear-worker",
+        model="gpt-5.6-luna",
+        effort="xhigh",
+        transport="codex-task",
+    )
+    invalid = LEDGER_RUNTIME["derive_state"](crossed, str(repo))
+    assert any("requires subagent-v2 transport" in error for error in invalid["errors"])
+
+    root_actor = runtime_six_local_lane_events(
         base,
         repo,
         agent_id="adaptive-worker",
         model="gpt-5.6-terra",
-        effort="max",
+        effort="xhigh",
         transport="subagent-v2",
     )
     root_actor[1]["data"]["actor_id"] = "root-agent"
@@ -1811,7 +2177,7 @@ def test_runtime_five_routes_serial_workers_without_root_implementation(
     assert any("root cannot be a worker actor" in error for error in invalid["errors"])
 
 
-def test_runtime_five_reuses_the_same_lane_for_pre_landing_correction(
+def test_runtime_six_reuses_the_same_lane_for_pre_landing_correction(
     tmp_path: Path,
 ) -> None:
     repo, base = repository(tmp_path)
@@ -1825,7 +2191,7 @@ def test_runtime_five_reuses_the_same_lane_for_pre_landing_correction(
     successor = command("git", "rev-parse", "HEAD", cwd=repo).stdout.strip()
 
     events = current_review_events(base, (tmp_path / "lane").resolve())[:5]
-    events[0]["data"]["charter"]["runtime_contract"] = 5
+    events[0]["data"]["charter"]["runtime_contract"] = 6
     events[3]["data"]["assignment_sha256"] = "a" * 64
     events[4]["data"]["assignment_sha256"] = "a" * 64
     events[4]["data"]["commit"] = first
@@ -1923,7 +2289,7 @@ def test_runtime_five_reuses_the_same_lane_for_pre_landing_correction(
     assert any("must supersede the prior commit" in error for error in invalid["errors"])
 
 
-def test_runtime_five_serializes_local_workers_and_delegates_integration_correction(
+def test_runtime_six_serializes_local_workers_and_delegates_integration_correction(
     tmp_path: Path,
 ) -> None:
     repo, base = repository(tmp_path)
@@ -1931,12 +2297,12 @@ def test_runtime_five_serializes_local_workers_and_delegates_integration_correct
     command("git", "add", "tracked.txt", cwd=repo)
     command("git", "commit", "-m", "advance first serial worker", cwd=repo)
     advanced = command("git", "rev-parse", "HEAD", cwd=repo).stdout.strip()
-    events = runtime_five_local_lane_events(
+    events = runtime_six_local_lane_events(
         base,
         repo,
         agent_id="adaptive-worker",
         model="gpt-5.6-terra",
-        effort="max",
+        effort="xhigh",
         transport="subagent-v2",
     )
     events[0]["data"]["children"] = ["ticket-1", "ticket-2"]
@@ -1971,6 +2337,7 @@ def test_runtime_five_serializes_local_workers_and_delegates_integration_correct
                         for key in (
                             "lane_id",
                             "agent_id",
+                            "runtime_agent_type",
                             "actor_id",
                             "task_id",
                             "host_id",
@@ -2026,7 +2393,7 @@ def test_runtime_five_serializes_local_workers_and_delegates_integration_correct
         ]
     )
 
-    second = runtime_five_local_lane_events(
+    second = runtime_six_local_lane_events(
         advanced,
         repo,
         agent_id="demanding-worker",
@@ -2100,12 +2467,12 @@ def test_runtime_five_serializes_local_workers_and_delegates_integration_correct
     bind_root_receipts(routed)
     assert LEDGER_RUNTIME["derive_state"](routed, str(repo))["errors"] == []
 
-def test_runtime_five_binds_review_repair_to_a_delegated_successor(
+def test_runtime_six_binds_review_repair_to_a_delegated_successor(
     tmp_path: Path,
 ) -> None:
     repo, base = repository(tmp_path)
     events = current_review_events(base, (tmp_path / "worker-lane").resolve())
-    events[0]["data"]["charter"]["runtime_contract"] = 5
+    events[0]["data"]["charter"]["runtime_contract"] = 6
     events[3]["data"]["assignment_sha256"] = "a" * 64
     events[4]["data"]["assignment_sha256"] = "a" * 64
     events[6]["data"].update(
@@ -2140,14 +2507,6 @@ def test_runtime_five_binds_review_repair_to_a_delegated_successor(
                 "review_decision_id": "review-decision",
                 "review_target": base,
                 "finding_ids": ["F1"],
-                "caller_decision": {
-                    "caller_id": "caller",
-                    "receipt_id": "caller-repair-1",
-                    "review_decision_id": "review-decision",
-                    "review_target": base,
-                    "finding_ids": ["F1"],
-                    "source": "caller admitted complete blocker set",
-                },
             },
         }
     )
@@ -2157,7 +2516,7 @@ def test_runtime_five_binds_review_repair_to_a_delegated_successor(
     command("git", "commit", "-m", "repair review finding", cwd=repo)
     repaired = command("git", "rev-parse", "HEAD", cwd=repo).stdout.strip()
 
-    repair_lane = runtime_five_local_lane_events(
+    repair_lane = runtime_six_local_lane_events(
         base,
         repo,
         agent_id="serial-integrator",
@@ -2225,6 +2584,7 @@ def test_runtime_five_binds_review_repair_to_a_delegated_successor(
                         for key in (
                             "lane_id",
                             "agent_id",
+                            "runtime_agent_type",
                             "actor_id",
                             "task_id",
                             "host_id",
@@ -2415,12 +2775,12 @@ def test_runtime_five_binds_review_repair_to_a_delegated_successor(
     assert any("Repair worker provenance differs" in error for error in invalid["errors"])
 
 
-def test_runtime_five_correction_lane_becomes_truthfully_review_ready(
+def test_runtime_six_correction_lane_becomes_truthfully_review_ready(
     tmp_path: Path,
 ) -> None:
     repo, base = repository(tmp_path)
     events = current_review_events(base, (tmp_path / "worker-lane").resolve())[:7]
-    events[0]["data"]["charter"]["runtime_contract"] = 5
+    events[0]["data"]["charter"]["runtime_contract"] = 6
     events[3]["data"]["assignment_sha256"] = "a" * 64
     events[4]["data"]["assignment_sha256"] = "a" * 64
     events[6]["data"].update(
@@ -2452,7 +2812,7 @@ def test_runtime_five_correction_lane_becomes_truthfully_review_ready(
     command("git", "commit", "-m", "correct integration", cwd=repo)
     corrected = command("git", "rev-parse", "HEAD", cwd=repo).stdout.strip()
 
-    lane_events = runtime_five_local_lane_events(
+    lane_events = runtime_six_local_lane_events(
         base,
         repo,
         agent_id="serial-integrator",
@@ -2511,7 +2871,7 @@ def test_runtime_five_correction_lane_becomes_truthfully_review_ready(
                 "event_id": "correction-handoff",
                 "work_item": "correction-1",
                 "data": {
-                    **{key: receipt[key] for key in ("lane_id", "agent_id", "actor_id", "task_id", "host_id", "transport")},
+                    **{key: receipt[key] for key in ("lane_id", "agent_id", "runtime_agent_type", "actor_id", "task_id", "host_id", "transport")},
                     "assignment_ref": "regression-1",
                     "assignment_sha256": "c" * 64,
                     "worktree": str(repo),
@@ -2591,7 +2951,7 @@ def test_runtime_five_correction_lane_becomes_truthfully_review_ready(
     assert state["lanes"]["correction-lane"]["worker_sha"] == corrected
 
 
-def test_runtime_five_binds_review_return_to_fresh_task(tmp_path: Path) -> None:
+def test_runtime_six_binds_review_return_to_fresh_task(tmp_path: Path) -> None:
     ledger = runpy.run_path(str(LEDGER))
     base = "a" * 40
     events = current_review_events(base, (tmp_path / "lane").resolve())
@@ -2616,7 +2976,7 @@ def test_runtime_five_binds_review_return_to_fresh_task(tmp_path: Path) -> None:
     assert any("review task is an implementation task" in error for error in invalid["errors"])
 
 
-def test_runtime_five_reselects_route_once_but_does_not_retry_incomplete_review(
+def test_runtime_six_reselects_route_once_but_does_not_retry_incomplete_review(
     tmp_path: Path,
 ) -> None:
     _, base = repository(tmp_path)
@@ -2679,7 +3039,7 @@ def test_runtime_five_reselects_route_once_but_does_not_retry_incomplete_review(
     )
 
 
-def test_runtime_five_requires_both_high_assurance_core_returns(
+def test_runtime_six_requires_both_high_assurance_core_returns(
     tmp_path: Path,
 ) -> None:
     repo, base = repository(tmp_path)
@@ -2695,17 +3055,67 @@ def test_runtime_five_requires_both_high_assurance_core_returns(
     decision["assurance_returns"] = [
         {
             "agent_id": "har-spec-reviewer",
+            "runtime_agent_type": "default",
             "actor_id": "spec-reviewer",
             "task_id": "spec-review-task",
             "lane_id": "spec-review-lane",
+            "host_id": "spec-review-host",
+            "transport": "subagent-v2",
+            "task_id_state": "canonical",
+            "requested_model": "gpt-5.6-sol",
+            "requested_effort": "xhigh",
+            "environment": "local",
+            "worktree": str(repo),
+            "resolved_model_status": "matched",
+            "resolved_model": "gpt-5.6-sol",
+            "resolved_effort_status": "matched",
+            "resolved_effort": "xhigh",
+            "provider_acceptance": {
+                "status": "accepted",
+                "lane_id": "spec-review-lane",
+                "agent_id": "har-spec-reviewer",
+                "runtime_agent_type": "default",
+                "task_id": "spec-review-task",
+                "host_id": "spec-review-host",
+                "requested_model": "gpt-5.6-sol",
+                "requested_effort": "xhigh",
+                "environment": "local",
+                "provider": "delegated-custody",
+                "worktree": str(repo),
+            },
             "status": "complete",
             "reviewed_head": base,
         },
         {
             "agent_id": "har-standards-reviewer",
+            "runtime_agent_type": "default",
             "actor_id": "standards-reviewer",
             "task_id": "standards-review-task",
             "lane_id": "standards-review-lane",
+            "host_id": "standards-review-host",
+            "transport": "subagent-v2",
+            "task_id_state": "canonical",
+            "requested_model": "gpt-5.6-sol",
+            "requested_effort": "xhigh",
+            "environment": "local",
+            "worktree": str(repo),
+            "resolved_model_status": "matched",
+            "resolved_model": "gpt-5.6-sol",
+            "resolved_effort_status": "matched",
+            "resolved_effort": "xhigh",
+            "provider_acceptance": {
+                "status": "accepted",
+                "lane_id": "standards-review-lane",
+                "agent_id": "har-standards-reviewer",
+                "runtime_agent_type": "default",
+                "task_id": "standards-review-task",
+                "host_id": "standards-review-host",
+                "requested_model": "gpt-5.6-sol",
+                "requested_effort": "xhigh",
+                "environment": "local",
+                "provider": "delegated-custody",
+                "worktree": str(repo),
+            },
             "status": "complete",
             "reviewed_head": base,
         },
@@ -2714,6 +3124,37 @@ def test_runtime_five_requires_both_high_assurance_core_returns(
 
     accepted = LEDGER_RUNTIME["derive_state"](events, str(repo))
     assert accepted["errors"] == []
+
+    wrong_binding = json.loads(json.dumps(events))
+    wrong_binding[-1]["data"]["assurance_returns"][0][
+        "requested_effort"
+    ] = "high"
+    invalid_binding = LEDGER_RUNTIME["derive_state"](wrong_binding, str(repo))
+    assert any(
+        "assurance reviewer binding does not match har-spec-reviewer" in error
+        for error in invalid_binding["errors"]
+    )
+
+    missing_receipt = json.loads(json.dumps(events))
+    del missing_receipt[-1]["data"]["assurance_returns"][0]["provider_acceptance"]
+    invalid_receipt = LEDGER_RUNTIME["derive_state"](missing_receipt, str(repo))
+    assert any(
+        "assurance reviewer har-spec-reviewer requires a task-bound provider receipt"
+        in error
+        for error in invalid_receipt["errors"]
+    )
+
+    contradictory_telemetry = json.loads(json.dumps(events))
+    spec_return = contradictory_telemetry[-1]["data"]["assurance_returns"][0]
+    spec_return["resolved_model_status"] = "unavailable"
+    spec_return["telemetry_unavailable_reason"] = "runtime did not expose it"
+    invalid_telemetry = LEDGER_RUNTIME["derive_state"](
+        contradictory_telemetry, str(repo)
+    )
+    assert any(
+        "unavailable review telemetry cannot include resolved_model" in error
+        for error in invalid_telemetry["errors"]
+    )
 
     partial = json.loads(json.dumps(events))
     partial[-1]["decision"] = "incomplete"
@@ -2736,7 +3177,7 @@ def test_runtime_five_requires_both_high_assurance_core_returns(
     )
 
 
-def test_runtime_five_binds_root_and_caller_decisions(tmp_path: Path) -> None:
+def test_runtime_six_binds_root_and_automatic_repair(tmp_path: Path) -> None:
     ledger = runpy.run_path(str(LEDGER))
     base = "a" * 40
     events = current_review_events(base, (tmp_path / "lane").resolve())
@@ -2778,30 +3219,31 @@ def test_runtime_five_binds_root_and_caller_decisions(tmp_path: Path) -> None:
             "review_decision_id": "review-decision",
             "review_target": base,
             "finding_ids": ["F1"],
-            "caller_decision": {
-                "caller_id": "wrong-caller",
-                "receipt_id": "caller-repair-1",
-                "review_decision_id": "review-decision",
-                "review_target": base,
-                "finding_ids": ["F1"],
-                "source": "caller response",
-            },
         },
     }
-    invalid = ledger["derive_state"]([*blocked, repair])
-    assert any("caller admission" in error for error in invalid["errors"])
-
-    repair["data"]["caller_decision"]["caller_id"] = "caller"
     valid = ledger["derive_state"]([*blocked, repair])
     assert valid["errors"] == []
 
+    decision_required = json.loads(json.dumps(blocked))
+    decision_required[-1]["data"]["findings"][0]["remediation"] = "decision-required"
+    invalid = ledger["derive_state"]([*decision_required, repair])
+    assert any("decision-required blocker" in error for error in invalid["errors"])
 
-def test_runtime_five_validates_route_lane_identity_and_manual_provider(
+
+def test_runtime_six_validates_route_lane_identity_and_manual_provider(
     tmp_path: Path,
 ) -> None:
     ledger = runpy.run_path(str(LEDGER))
     base = "b" * 40
     events = current_review_events(base, (tmp_path / "lane").resolve())[:3]
+
+    missing_root_checkout = json.loads(json.dumps(events))
+    missing_root_checkout[2]["data"].pop("root_checkout")
+    invalid = ledger["derive_state"](missing_root_checkout)
+    assert any(
+        "requires the read-only root checkout binding" in error
+        for error in invalid["errors"]
+    )
 
     wrong_route = [dict(event) for event in events]
     wrong_route[1] = {
@@ -2873,7 +3315,7 @@ def test_runtime_five_validates_route_lane_identity_and_manual_provider(
     assert valid["errors"] == []
 
 
-def test_runtime_five_requires_cleanup_and_resume_evidence(tmp_path: Path) -> None:
+def test_runtime_six_requires_cleanup_and_resume_evidence(tmp_path: Path) -> None:
     ledger = runpy.run_path(str(LEDGER))
     base = "c" * 40
     lane_path = (tmp_path / "lane").resolve()
@@ -2917,7 +3359,7 @@ def test_runtime_five_requires_cleanup_and_resume_evidence(tmp_path: Path) -> No
         "work_item": "ticket-1",
         "data": {
             "lane_id": "lane-1",
-            "state": "provider-preserved",
+            "state": "removed",
             "agent_id": "clear-worker",
             "actor_id": "worker-agent",
             "task_id": "worker-task",
@@ -2926,7 +3368,8 @@ def test_runtime_five_requires_cleanup_and_resume_evidence(tmp_path: Path) -> No
             "commit_disposition": "integrated",
             "exact_head": base,
             "clean": True,
-            "custody": "Codex provider retains cleanup custody",
+            "registered_after": False,
+            "directory_exists": False,
         },
     }
     valid = ledger["derive_state"](landed + [cleanup])
@@ -3007,9 +3450,9 @@ def test_runtime_five_requires_cleanup_and_resume_evidence(tmp_path: Path) -> No
                 },
                 "worktrees": [
                     {
-                        "lane_id": "lane-1",
-                        "provider": "codex-managed",
-                        "state": "provider-preserved",
+                            "lane_id": "lane-1",
+                            "provider": "manual-helper",
+                        "state": "removed",
                         "worktree": str(lane_path),
                         "observed_at": "2026-01-01T00:00:11+00:00",
                     }
@@ -3183,11 +3626,11 @@ def test_finish_is_nonmutating_when_the_run_is_incomplete(
     assert Path(blocked["detail"]).is_file()
 
 
-def test_runtime_five_finish_records_the_supplied_root_release_receipt(
+def test_runtime_six_finish_records_the_supplied_root_release_receipt(
     tmp_path: Path,
 ) -> None:
     repo, base = repository(tmp_path)
-    run = tmp_path / "runtime-five-finish"
+    run = tmp_path / "runtime-six-finish"
     events_path = run / "events.jsonl"
     events = current_review_events(base, (tmp_path / "lane").resolve())
     events[0]["data"]["repo"] = str(repo.resolve())
@@ -3252,12 +3695,13 @@ def test_runtime_five_finish_records_the_supplied_root_release_receipt(
                     "actor_id": "worker-agent",
                     "task_id": "worker-task",
                     "host_id": "worker-host",
-                    "state": "provider-preserved",
+                    "state": "removed",
                     "terminal_task_state": "completed",
                     "commit_disposition": "integrated",
                     "exact_head": base,
                     "clean": True,
-                    "custody": "Codex provider custody",
+                    "registered_after": False,
+                    "directory_exists": False,
                 },
             },
             {

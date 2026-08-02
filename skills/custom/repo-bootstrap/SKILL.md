@@ -20,7 +20,9 @@ Resolve the repository root, authority, and starting working-tree, index, and
 Inspect before asking: `AGENTS.md`, the four `docs/agents/` contracts,
 `.gitignore`, `.tmp/`, `.scratch/`, repo-owned command sources, tracker
 configuration and read-back capability, labels, and applicable context, ADR,
-manifest, ownership, and domain-layout evidence.
+manifest, ownership, and domain-layout evidence. Inspect `.codex/config.toml`
+and `.codex/agents/luna_max.toml`; if either exists, also inspect the configured
+parallel-lane root, repository marker, and registered worktrees.
 
 When any managed file or setup marker exists, run
 [scripts/validate_setup.py](scripts/validate_setup.py) read-only, then compare
@@ -40,10 +42,24 @@ missing, ambiguous, incompatible, reopened, or contradicted choices. Repository
 policy remains authoritative; a `conflict` blocks only its affected delta until
 the user resolves it.
 
+Parallel implementation support is installed when both repo-local files exist,
+the permission profile extends the workspace with one canonical
+`<repo-drive>:\pi\<project-key>\wt` root on Windows or
+`<repo-parent>/worktrees/<project-key>/wt` elsewhere, the Luna agent matches
+the current [Luna agent template](../parallel-implement/assets/luna_max.toml),
+and any existing project marker matches the repository. Reconcile this state
+without asking to reinstall it; one missing or stale half is a `delta`. A stale
+root with active or preserved lanes is a `conflict`; otherwise reconcile it to
+the current repository drive.
+
 ## Choose
 
 Ask one unsettled choice at a time with its recommendation and consequence.
 
+- **Parallel implementation.** When support is absent, ask whether to enable
+  it. Recommend yes when Repo Bootstrap was selected for a Parallel Implement
+  setup blocker; otherwise present it as optional. An existing complete or
+  partial installation goes directly through Reconcile without this question.
 - **Tracker.** Load exactly one selected guide:
   [GitHub](issue-tracker-github.md), [GitLab](issue-tracker-gitlab.md), or
   [Local Markdown](issue-tracker-local.md). Another tracker requires an
@@ -62,10 +78,11 @@ Ask one unsettled choice at a time with its recommendation and consequence.
 ## Draft
 
 Show the exact local and external delta, policies and relationship modes,
-preserved additions, conflicts or blockers, and proof plan. The `AGENTS.md`
-result includes:
+preserved additions, conflicts or blockers, and proof plan. For selected
+parallel support, show the permanent project key, derived base and lane roots,
+permission delta, and exact Luna template. The `AGENTS.md` result includes:
 
-`<!-- programming-agent-skills setup-schema: 1:8113e40631ff -->`
+`<!-- programming-agent-skills setup-schema: 1:4e8dbf9a1bdc -->`
 
 With zero delta, mutate nothing and continue to Verify. Otherwise wait for
 approval. Narrowing requires a new exact proposal; refusal or deferral returns
@@ -89,6 +106,9 @@ Apply only the approved delta:
   [engineering-contract.md](engineering-contract.md) into `docs/agents/`;
 - keep `.tmp/` ignored and `.scratch/` trackable without replacing unrelated
   ignore rules;
+- when selected, create or reconcile `.codex/config.toml` and
+  `.codex/agents/luna_max.toml`, preserving unrelated configuration; do not
+  create worktrees, project markers, or external directories;
 - create only approved missing GitHub or GitLab labels.
 
 Do not alter domain truth, tracker items, the index, or `HEAD`; stage, commit,
@@ -110,6 +130,11 @@ command, `git diff --check`, and preservation of unrelated work, index, and
 
 Separate source-verified commands from commands executed now. Name each skipped
 check and its unproved claim; any required skip returns **Setup incomplete**.
+
+For installed parallel support, verify the exact current-drive permission,
+Luna template, and any existing marker. Configuration written during this
+session is structurally verified but becomes active only in a new Codex
+session; live lane creation and startup proof remain with `$parallel-implement`.
 
 Complete only with a verified zero delta or verified approved delta. Return
 changed, unchanged, and preserved surfaces; proof, skipped checks, and residual

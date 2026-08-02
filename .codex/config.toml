@@ -1,0 +1,7 @@
+default_permissions = "project-lanes"
+
+[permissions.project-lanes]
+extends = ":workspace"
+
+[permissions.project-lanes.workspace_roots]
+"E:\\pi\\pas-001\\wt" = true

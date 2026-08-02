@@ -53,7 +53,9 @@ state-boundary matrix. Missing or contradictory readiness, profile, authority,
 closure, matrix, or proof ownership is a graph defect; return the complete
 repair packet instead of reconstructing its owner's judgment.
 
-Freeze the supplied Repair budget; otherwise use the ledger default.
+Freeze the supplied Repair budget; otherwise use the ledger default. Unless the
+caller restricts Repair before Freeze, the parent-delivery request authorizes
+every admitted `automatic-in-scope` blocker that fits this budget.
 
 Start one canonical stream through
 [RUN-LEDGER.md](references/RUN-LEDGER.md) and `scripts/run_ledger.py`.
@@ -91,11 +93,8 @@ escalation. A matching later condition overrides every earlier one:
   work.
 
 Claim each selected ticket and read back the claim. Launch each worker through
-[CODEX-WORKTREE-LAUNCH.md](references/CODEX-WORKTREE-LAUNCH.md), which owns the
-concrete task binding, starting state, isolation, readiness, liveness, Return,
-and cleanup contract. Delegate serial work in the integration checkout under
-exclusive worker custody. Give concurrent workers separate Codex tasks and
-distinct managed worktrees.
+[AGENT-LANES.md](references/AGENT-LANES.md), which owns runtime binding,
+starting state, isolation, readiness, liveness, Return, and cleanup.
 
 Generate the bounded assignment through
 [WORKER-BRIEF.md](references/WORKER-BRIEF.md).
@@ -152,8 +151,8 @@ predicate to the pinned candidate. Select `ordinary-reviewer` with
 `assurance-coordinator` with `$high-assurance-review` for a release candidate
 or supported high-risk diff or PR. Record candidate-bound route evidence with
 its source, `ordinary | release | supported-high-risk` basis, and trigger when
-applicable. Launch through the task-lane contract as a fresh task distinct from
-every implementation and integration task. Supply only `Spec required: yes`,
+applicable. Launch through the agent-lane contract as a fresh collaboration
+subagent distinct from every implementation and integration actor. Supply only `Spec required: yes`,
 the implementation and integration actor and task IDs, Charter, Source Trace,
 fixed point, candidate, proof, skips, risk, and contradictory evidence. Withhold
 implementation hypotheses, expected conclusions, partial findings, and
@@ -168,15 +167,14 @@ On `scope-mismatch`, preserve the factual packet and select the other route once
 for the same generation in a new fresh task. If it also mismatches, preserve the
 candidate and return `partial`.
 
-**Repair.** Review grants no mutation. Preserve and return the complete blocking
-set for caller decision. Open Repair only when caller-admitted IDs equal every
-blocking ID, every blocker is `automatic-in-scope` and individually
-Charter-preserving, and the complete batch fits the frozen budget. Return any
-mixed, partial, speculative, decision-required, commitment-changing, or
-over-budget set intact with its exact gap.
+**Repair.** Review grants no mutation. The root validates the complete blocking
+set and automatically opens Repair only when every blocker is
+`automatic-in-scope`, individually Charter-preserving, and within the frozen
+budget. Return any mixed, partial, speculative, decision-required,
+commitment-changing, or over-budget set intact with its exact gap.
 
-Delegate one serial Repair worker in the integration checkout. Use the original
-worker's agent ID for a localized finding; use `serial-integrator` for
+Delegate one serial Repair worker. Use the original worker's agent ID for a
+localized finding; use `serial-integrator` for
 cross-worker findings. Every admitted successor gets identity-matched proof, a
 route selected from its actual risk, and formal review with new actor and task
 identities. Send `Invocation: formal-delivery`, `Review mode: remediation`, and

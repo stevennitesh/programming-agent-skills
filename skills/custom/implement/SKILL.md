@@ -34,7 +34,9 @@ tracker state.
 
 Freeze one Charter containing the accepted outcome, commitments, scope, writes,
 proof, exclusions, fixed point, and Repair budget. Use the source, caller, or
-repository budget; otherwise default to exactly `2`.
+repository budget; otherwise default to exactly `2`. Unless the caller
+restricts Repair before Freeze, the delivery request authorizes every admitted
+`automatic-in-scope` blocker that fits this budget.
 
 Return malformed or unsettled work to its source owner. Return an exhaustive
 parent graph or review-only request intact to the caller as `blocked` with
@@ -77,7 +79,10 @@ proved tree as one immutable candidate generation.
 
 Apply `$change-review`'s
 [Finding Contract](../change-review/FINDING-CONTRACT.md) supported-risk
-predicate to the pinned candidate. Give each generation one fresh review task:
+predicate to the pinned candidate. Load the
+[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md). Give
+each generation one fresh read-only collaboration subagent using the exact
+semantic profile and runtime binding:
 `ordinary-reviewer` with `$change-review` for an ordinary candidate, or
 `assurance-coordinator` with `$high-assurance-review` for a release candidate or
 supported high-risk candidate. Record candidate-bound route evidence with its source,
@@ -90,14 +95,16 @@ terminal cues.
 
 Accept only a complete current Return bound to the generation and review
 semantic agent, actor, and task IDs, with no blocker or unaccepted residual
-risk. On `scope-mismatch`, reselect from the returned facts once in a new fresh
-task. Treat transport failure before candidate-bound judgment as
+risk. Require requested and observed-or-unavailable runtime binding provenance
+to match the Runtime Profiles. On `scope-mismatch`, reselect from the
+returned facts once in a new fresh task. Treat transport failure before candidate-bound judgment as
 `transport-invalid` and retry once in another fresh task; after a second failure
 or route mismatch, preserve the candidate and return `partial`.
 
-Review grants no mutation. Repair only when caller-admitted IDs equal every
-blocking ID, all blockers are `automatic-in-scope`, and the complete batch fits
-the frozen budget. Return every other set intact with its exact gap.
+Review grants no mutation. The delivery owner validates the complete blocking
+set and automatically opens Repair only when every blocker is
+`automatic-in-scope`, Charter-preserving, and within the frozen budget. Return
+every other set intact with its exact gap.
 
 Prove each repaired generation, reselect its route from current facts, and
 review it under new actor and task IDs. Send `Invocation: formal-delivery`,

@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import argparse
+import json
 import re
+import runpy
 import subprocess
+import tomllib
 from pathlib import Path
 
 
@@ -16,7 +19,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:8113e40631ff -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:4e8dbf9a1bdc -->"
 ENGINEERING_PRIMER_TOKEN = (
     "Explore imaginatively. Converge under proof. Simplify ruthlessly."
 )
@@ -189,6 +192,9 @@ LABEL_TOKENS = (
     "`wayfinder:questionnaire`",
     "`wayfinder:task`",
 )
+
+PARALLEL_CONFIG = Path(".codex/config.toml")
+PARALLEL_AGENT = Path(".codex/agents/luna_max.toml")
 
 
 def parse_args() -> argparse.Namespace:
@@ -363,6 +369,93 @@ def github_relationship_mode_failures(tracker: str) -> list[str]:
     return failures
 
 
+def parallel_package() -> Path:
+    return Path(__file__).resolve().parents[2] / "parallel-implement"
+
+
+def parallel_support_failures(root: Path) -> list[str]:
+    config_path = root / PARALLEL_CONFIG
+    agent_path = root / PARALLEL_AGENT
+    if not config_path.is_file() and not agent_path.is_file():
+        return []
+
+    failures: list[str] = []
+    package = parallel_package()
+    helper_path = package / "scripts/lane_worktree.py"
+    template_path = package / "assets/luna_max.toml"
+    if not helper_path.is_file() or not template_path.is_file():
+        return ["Parallel implementation support requires the installed canonical package"]
+
+    if not config_path.is_file():
+        failures.append("Parallel implementation support is missing .codex/config.toml")
+    if not agent_path.is_file():
+        failures.append(
+            "Parallel implementation support is missing .codex/agents/luna_max.toml"
+        )
+    elif agent_path.read_bytes() != template_path.read_bytes():
+        failures.append(".codex/agents/luna_max.toml does not match the current template")
+    if not config_path.is_file():
+        return failures
+
+    try:
+        config = tomllib.loads(config_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, tomllib.TOMLDecodeError) as error:
+        failures.append(f".codex/config.toml is invalid: {error}")
+        return failures
+
+    if config.get("default_permissions") != "project-lanes":
+        failures.append(".codex/config.toml must select the project-lanes permission profile")
+    permissions = config.get("permissions")
+    profile = permissions.get("project-lanes") if isinstance(permissions, dict) else None
+    if not isinstance(profile, dict) or profile.get("extends") != ":workspace":
+        failures.append("project-lanes permissions must extend :workspace")
+    roots = profile.get("workspace_roots") if isinstance(profile, dict) else None
+    if not isinstance(roots, dict):
+        failures.append("project-lanes permissions must declare workspace_roots")
+        return failures
+
+    runtime = runpy.run_path(str(helper_path))
+    pattern = runtime["PROJECT_KEY_PATTERN"]
+    candidates: list[tuple[str, Path]] = []
+    for raw_path, enabled in roots.items():
+        if not isinstance(raw_path, str) or enabled is not True:
+            continue
+        lane_root = Path(raw_path)
+        if lane_root.name == "wt" and pattern.fullmatch(lane_root.parent.name):
+            candidates.append((lane_root.parent.name, lane_root.resolve()))
+    if len(candidates) != 1:
+        failures.append("project-lanes permissions must contain one canonical parallel lane root")
+        return failures
+
+    project, lane_root = candidates[0]
+    expected_base = runtime["default_base_root"](root)
+    expected_root = (expected_base / project / "wt").resolve()
+    if lane_root != expected_root:
+        failures.append(
+            f"parallel lane root must match the current repository location: {expected_root}"
+        )
+        if lane_root.is_dir() and any(lane_root.iterdir()):
+            failures.append("stale parallel lane root still contains preserved lanes")
+
+    marker = lane_root.parent / runtime["PROJECT_MARKER_NAME"]
+    if marker.exists():
+        try:
+            observed = json.loads(marker.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError):
+            failures.append(f"parallel project marker is invalid: {marker}")
+        else:
+            identity, source = runtime["repository_identity"](root)
+            expected_marker = {
+                "schema": runtime["PROJECT_MARKER_SCHEMA"],
+                "project_key": project,
+                "repository_identity": identity,
+                "identity_source": source,
+            }
+            if observed != expected_marker:
+                failures.append(f"parallel project marker conflicts with this repository: {marker}")
+    return failures
+
+
 def check_ignore(root: Path, probe: str) -> tuple[bool | None, str]:
     result = subprocess.run(
         ["git", "check-ignore", "-q", "--no-index", probe],
@@ -400,7 +493,10 @@ def main() -> int:
     root = Path(parse_args().repo).resolve()
     failures: list[str] = []
 
-    failures.extend(git_root_failures(root))
+    repository_failures = git_root_failures(root)
+    failures.extend(repository_failures)
+    if not repository_failures:
+        failures.extend(parallel_support_failures(root))
 
     texts = {
         relative: read_required(root, relative, failures) for relative in REQUIRED_FILES

@@ -9,16 +9,21 @@ description: Review one immutable release candidate or diff or PR governed by a 
 
 ## 1. Admit
 
-Load the `change-review` skill's `FINDING-CONTRACT.md`. Accept one release
+Load the `change-review` skill's `FINDING-CONTRACT.md` and the shared
+[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md).
+Accept one release
 candidate or caller-bounded diff or PR governed by at least one supported
-high-risk trigger. Return an ordinary diff or PR and its complete factual packet
-intact to the caller as `scope-mismatch`; name the route facts, leave the route
-unselected, and stop. Recommend `$audit-codebase` for an immutable
+high-risk trigger. Return an ordinary diff or PR and its complete factual
+packet intact to the caller as `scope-mismatch`; name the route facts, leave
+the route unselected, and stop. Recommend `$audit-codebase` for an immutable
 repository-baseline audit, then stop.
 
 Require this invocation to be the `assurance-coordinator`, the root of its
 review run. A core reviewer, specialist, or other nested review lane that
-invokes this skill returns `incomplete` before Pin. The coordinator owns
+invokes this skill returns `incomplete` before Pin. For the coordinator, record
+runtime agent type, requested and observed-or-unavailable model and reasoning,
+and accepted-request or telemetry proof; a missing or mismatched binding returns `transport-invalid`
+before Pin. The coordinator owns
 dispatch, finding admission, convergence, and the terminal read-only decision;
 it never mutates or substitutes for a reviewer.
 
@@ -83,7 +88,8 @@ seam, overlap, or risk trigger left uncovered makes the review `incomplete`.
 
 ## 3. Review
 
-Dispatch exactly two direct core reviewer lanes in fresh tasks:
+Dispatch exactly two direct core reviewer lanes as fresh read-only collaboration
+subagents using their exact semantic agent, model, and reasoning bindings:
 
 1. `har-spec-reviewer` — Commitment Fidelity, Scope and Contracts, and
    Acceptance and Change Closure.
@@ -99,9 +105,11 @@ security, migration, concurrency, model, data, or performance evidence lane the
 two core lanes cannot responsibly cover. The specialist covers only its
 assigned classes and risk; Risk never becomes a third axis.
 
-Record each lane's semantic agent ID, actor ID, task ID, fresh-context proof,
-and snapshot binding. Give each lane only the immutable snapshot, factual
-sources, assigned coverage, read-only boundary, and this return contract:
+Record each lane's semantic agent ID, runtime agent type, actor ID, task ID,
+requested and observed-or-unavailable model and reasoning, accepted-request or telemetry
+proof, fresh-context proof, and snapshot binding. Give each lane only the
+immutable snapshot, factual sources, assigned coverage, read-only boundary,
+and this return contract:
 
 ```text
 status: complete | blocked
@@ -163,9 +171,10 @@ Derive exactly one decision after the reviewer quorum closes:
   risk remains, and drift is clear.
 
 Return one caller-bound packet with mode, fixed point, snapshot, candidate,
-sources, coordinator, core, and specialist provenance, coverage by axis and
-class, admitted findings, carried dispositions, closed finding-candidate states,
-skipped checks, residual risk, drift, decision, and blockers. The decision
+sources, coordinator, core, and specialist requested and
+observed-or-unavailable runtime bindings plus their proof, coverage by axis and
+class, admitted findings, carried dispositions, closed finding-candidate
+states, skipped checks, residual risk, drift, decision, and blockers. The decision
 grants no Repair, Lock, or residual-risk acceptance authority; those remain
 with the caller. End with:
 

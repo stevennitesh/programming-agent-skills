@@ -13,8 +13,10 @@ unchanged.
 
 ## Pin
 
-Load [FINDING-CONTRACT.md](FINDING-CONTRACT.md). Change Review owns one ordinary
-branch, WIP, staged, since-X diff, or ordinary local PR. Return a release
+Load [FINDING-CONTRACT.md](FINDING-CONTRACT.md) and the shared
+[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md).
+Change Review owns one ordinary branch,
+WIP, staged, since-X diff, or ordinary local PR. Return a release
 candidate or candidate governed by a supported high-risk trigger and its
 complete factual packet intact to the caller as `scope-mismatch`; name the
 route facts, leave the route unselected, and stop. Recommend `$audit-codebase`
@@ -24,8 +26,10 @@ to their caller without beginning review.
 `ordinary-reviewer` reviews directly and never delegates, invokes another
 review, or repairs. Formal delivery requires caller-supplied implementation IDs
 and any integration IDs the caller has, plus a fresh reviewer actor and task
-distinct from every supplied ID. Standalone review records provenance but needs
-no separation proof.
+distinct from every supplied ID and launched with the `ordinary-reviewer`
+binding. A missing or mismatched formal-delivery binding returns
+`transport-invalid` before candidate judgment. Standalone review records its current runtime
+provenance but needs no binding or separation proof.
 
 Carry every factual caller-supplied Charter field, `Spec required`, invocation
 and review modes, implementation and integration IDs, Source Trace, fixed point
@@ -142,6 +146,7 @@ Review mode: initial | remediation
 Semantic agent: ordinary-reviewer
 Reviewer actor ID:
 Reviewer task ID:
+Runtime binding: agent type <value or standalone>; requested <model and reasoning or standalone>; observed <values or unavailable>
 Fresh-context and separation evidence: <evidence> | standalone
 Coverage: complete | incomplete
 Decision: pass | pass with residual risk | blocked | incomplete

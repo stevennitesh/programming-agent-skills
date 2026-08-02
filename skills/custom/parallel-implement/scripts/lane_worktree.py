@@ -15,9 +15,14 @@ from typing import Any
 
 
 SCHEMA_VERSION = 1
-WINDOWS_DEFAULT_WORKTREE_ROOT = Path("E:/pi")
-WINDOWS_DEFAULT_MAX_PATH = 320
+PROJECT_MARKER_SCHEMA = 1
+PROJECT_KEY_PATTERN = re.compile(r"[a-z][a-z0-9-]{1,15}-\d{3}")
+PROJECT_MARKER_NAME = ".repo.json"
+WORKTREE_DIR_NAME = "wt"
+WINDOWS_USABLE_MAX_PATH = 259
 PYTHON_PROVENANCE_MARKER = "PARALLEL_IMPLEMENT_PYTHON_PROVENANCE="
+ROOT_CHECKOUT_ENV = "PARALLEL_IMPLEMENT_ROOT_CHECKOUT"
+BASE_ROOT_ENV = "PARALLEL_IMPLEMENT_BASE_ROOT"
 PYTHON_PROVENANCE_PROBE = r"""
 import importlib
 import json
@@ -52,6 +57,7 @@ def run(
     cwd: Path | None = None,
     check: bool = True,
     input_text: str | None = None,
+    env: dict[str, str] | None = None,
 ) -> subprocess.CompletedProcess[str]:
     result = subprocess.run(
         args,
@@ -60,6 +66,7 @@ def run(
         text=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
+        env=env,
     )
     if check and result.returncode != 0:
         detail = result.stderr.strip() or result.stdout.strip() or "command failed"
@@ -129,10 +136,31 @@ def slug(value: str, *, limit: int = 16) -> str:
     return (normalized or "lane")[:limit].rstrip("-")
 
 
-def lane_name(repo: Path, run_id: str, item_id: str) -> str:
-    identity = f"{repo.name}\0{run_id}\0{item_id}"
+def project_key(value: str) -> str:
+    if not PROJECT_KEY_PATTERN.fullmatch(value):
+        raise LaneError(
+            "project key must be a short lowercase name followed by a three-digit ID"
+        )
+    return value
+
+
+def lane_name(project: str, run_id: str, item_id: str) -> str:
+    identity = f"{project}\0{run_id}\0{item_id}"
     suffix = hashlib.sha256(identity.encode()).hexdigest()[:8]
-    return f"{slug(repo.name, limit=12)}-{slug(run_id, limit=10)}-{slug(item_id, limit=10)}-{suffix}"
+    return f"{slug(run_id, limit=10)}-{slug(item_id, limit=10)}-{suffix}"
+
+
+def project_paths(base_root: Path, project: str) -> tuple[Path, Path]:
+    project_root = (base_root / project).resolve()
+    return project_root, (project_root / WORKTREE_DIR_NAME).resolve()
+
+
+def default_base_root(repo: Path) -> Path:
+    if os.name == "nt":
+        if not re.fullmatch(r"[A-Za-z]:", repo.drive):
+            raise LaneError("repository root has no Windows drive")
+        return (Path(f"{repo.drive}/") / "pi").resolve()
+    return (repo.parent / "worktrees").resolve()
 
 
 def contains(root: Path, target: Path) -> bool:
@@ -141,6 +169,73 @@ def contains(root: Path, target: Path) -> bool:
     except ValueError:
         return False
     return target != root
+
+
+def require_lane_identity(
+    project: str,
+    root: Path,
+    worktree: Path,
+    run_id: str,
+    item_id: str,
+) -> None:
+    expected = (root / lane_name(project, run_id, item_id)).resolve()
+    if worktree != expected:
+        raise LaneError(
+            f"worktree path does not match the helper-created lane identity: "
+            f"expected {expected}"
+        )
+
+
+def repository_identity(repo: Path) -> tuple[str, str]:
+    origin, _ = git_repo_with_trust(
+        repo, ["config", "--get", "remote.origin.url"], check=False
+    )
+    if origin.returncode == 0 and origin.stdout.strip():
+        source = "origin"
+        value = origin.stdout.strip()
+    else:
+        roots, _ = git_repo_with_trust(
+            repo, ["rev-list", "--max-parents=0", "HEAD"]
+        )
+        source = "root-commits"
+        value = "\n".join(sorted(roots.stdout.splitlines()))
+    digest = hashlib.sha256(f"{source}\0{value}".encode()).hexdigest()
+    return digest, source
+
+
+def ensure_project_marker(
+    repo: Path, project_root: Path, project: str, *, create: bool = False
+) -> dict[str, str | int]:
+    identity, identity_source = repository_identity(repo)
+    marker = project_root / PROJECT_MARKER_NAME
+    expected: dict[str, str | int] = {
+        "schema": PROJECT_MARKER_SCHEMA,
+        "project_key": project,
+        "repository_identity": identity,
+        "identity_source": identity_source,
+    }
+    if marker.exists():
+        try:
+            observed = json.loads(marker.read_text(encoding="utf-8"))
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
+            raise LaneError(f"invalid project identity marker: {marker}") from error
+        if observed != expected:
+            raise LaneError(f"project key {project} belongs to another repository")
+        return expected
+    if not create:
+        raise LaneError(f"project root has no identity marker: {project_root}")
+    project_root.mkdir(parents=True, exist_ok=True)
+    if any(project_root.iterdir()):
+        raise LaneError(f"project root has no identity marker: {project_root}")
+    try:
+        with marker.open("x", encoding="utf-8") as handle:
+            json.dump(expected, handle, sort_keys=True)
+            handle.write("\n")
+    except FileExistsError:
+        observed = json.loads(marker.read_text(encoding="utf-8"))
+        if observed != expected:
+            raise LaneError(f"project key {project} belongs to another repository")
+    return expected
 
 
 def registered_worktrees(repo: Path) -> dict[Path, dict[str, str]]:
@@ -158,29 +253,26 @@ def registered_worktrees(repo: Path) -> dict[Path, dict[str, str]]:
     return records
 
 
-def longest_tracked_path(repo: Path) -> int:
-    result, _ = git_repo_with_trust(repo, ["ls-files", "-z"])
+def longest_tracked_path_at_base(repo: Path, base: str) -> int:
+    result, _ = git_repo_with_trust(
+        repo, ["ls-tree", "-r", "--name-only", "-z", base]
+    )
     return max((len(path) for path in result.stdout.split("\0") if path), default=0)
 
 
-def path_budget(worktree: Path, repo: Path, configured: int | None) -> dict[str, int]:
-    limit = (
-        configured
-        if configured is not None
-        else (WINDOWS_DEFAULT_MAX_PATH if os.name == "nt" else 4096)
-    )
-    longest = longest_tracked_path(repo)
-    reserve = 128 if os.name == "nt" else 32
-    predicted = len(str(worktree)) + 1 + longest + reserve
+def path_budget(worktree: Path, repo: Path, base: str) -> dict[str, int]:
+    limit = WINDOWS_USABLE_MAX_PATH if os.name == "nt" else 4096
+    longest = longest_tracked_path_at_base(repo, base)
+    predicted = len(str(worktree)) + 1 + longest
     if predicted > limit:
         raise LaneError(
-            f"path budget exceeded: predicted {predicted}, limit {limit}; choose a shorter root"
+            f"checkout path limit exceeded: predicted {predicted}, limit {limit}; "
+            "choose a shorter base root or project key"
         )
     return {
         "limit": limit,
         "longest_tracked_relative_path": longest,
-        "reserve": reserve,
-        "predicted_maximum": predicted,
+        "checkout_projection": predicted,
     }
 
 
@@ -245,20 +337,21 @@ def blocked(
 
 def create_packet(args: argparse.Namespace) -> dict[str, Any]:
     repo, repo_trust = git_root(Path(args.repo).resolve())
-    environment_root = os.environ.get("PARALLEL_IMPLEMENT_WORKTREE_ROOT", "").strip()
-    if args.root:
-        root = Path(args.root).resolve()
-        root_source = "explicit"
+    project = project_key(args.project_key)
+    environment_root = os.environ.get(BASE_ROOT_ENV, "").strip()
+    if args.base_root:
+        base_root = Path(args.base_root).resolve()
+        base_root_source = "explicit"
     elif environment_root:
-        root = Path(environment_root).resolve()
-        root_source = "environment"
-    elif os.name == "nt":
-        root = WINDOWS_DEFAULT_WORKTREE_ROOT.resolve()
-        root_source = "windows-default"
+        base_root = Path(environment_root).resolve()
+        base_root_source = "environment"
     else:
-        root = (repo.parent / "worktrees" / "parallel-implement").resolve()
-        root_source = "repo-parent-default"
-    worktree = (root / lane_name(repo, args.run_id, args.item_id)).resolve()
+        base_root = default_base_root(repo)
+        base_root_source = (
+            "windows-repo-drive-default" if os.name == "nt" else "repo-parent-default"
+        )
+    project_root, root = project_paths(base_root, project)
+    worktree = (root / lane_name(project, args.run_id, args.item_id)).resolve()
     if contains(repo, worktree) and not args.allow_inside_repo:
         raise LaneError("worktree path is inside the active checkout")
     if not contains(root, worktree):
@@ -267,7 +360,7 @@ def create_packet(args: argparse.Namespace) -> dict[str, Any]:
     if reused and not getattr(args, "reuse_existing", False):
         raise LaneError(f"worktree path already exists: {worktree}")
     try:
-        budget = path_budget(worktree, repo, args.max_path)
+        budget = path_budget(worktree, repo, args.base)
     except LaneError as error:
         return blocked_packet(
             "create",
@@ -276,15 +369,19 @@ def create_packet(args: argparse.Namespace) -> dict[str, Any]:
             recoverable=True,
             next_action={
                 "command": "create",
-                "repair": "choose a shorter explicit or environment worktree root",
+                "repair": "choose a shorter base root or project key",
             },
             provider="manual-helper",
             repo=str(repo),
+            project_key=project,
+            base_root=str(base_root),
+            base_root_source=base_root_source,
+            project_root=str(project_root),
             root=str(root),
-            root_source=root_source,
             worktree=str(worktree),
         )
-    root.mkdir(parents=True, exist_ok=True)
+    marker = ensure_project_marker(repo, project_root, project, create=True)
+    root.mkdir(exist_ok=True)
 
     create_trust = repo_trust
     if not reused:
@@ -307,8 +404,11 @@ def create_packet(args: argparse.Namespace) -> dict[str, Any]:
                 },
                 provider="manual-helper",
                 repo=str(repo),
+                project_key=project,
+                base_root=str(base_root),
+                base_root_source=base_root_source,
+                project_root=str(project_root),
                 root=str(root),
-                root_source=root_source,
                 worktree=str(worktree),
                 git_trust=create_trust,
             )
@@ -327,8 +427,12 @@ def create_packet(args: argparse.Namespace) -> dict[str, Any]:
         True,
         provider="manual-helper",
         repo=str(repo),
+        project_key=project,
+        base_root=str(base_root),
+        base_root_source=base_root_source,
+        project_root=str(project_root),
+        project_marker=marker,
         root=str(root),
-        root_source=root_source,
         worktree=str(worktree),
         base=expected,
         branch=args.branch,
@@ -490,6 +594,7 @@ def python_provenance(args: argparse.Namespace, worktree: Path) -> dict[str, Any
 
 def preflight_packet(args: argparse.Namespace) -> dict[str, Any]:
     worktree = Path(args.worktree).resolve()
+    root_checkout = Path(args.repo).resolve()
     if not args.proof_command_json and not args.proof_command_file and not args.skip_proof:
         return blocked_packet(
             "preflight",
@@ -546,6 +651,15 @@ def preflight_packet(args: argparse.Namespace) -> dict[str, Any]:
         )
 
     trusts: set[str] = set()
+    source_result, trust = git_with_trust(
+        root_checkout, ["rev-parse", "--show-toplevel"]
+    )
+    trusts.add(trust)
+    if Path(source_result.stdout.strip()).resolve() != root_checkout:
+        raise LaneError("root checkout does not resolve to its recorded Git root")
+    if root_checkout == worktree:
+        raise LaneError("isolated worktree must differ from the root checkout")
+
     root_result, trust = git_with_trust(worktree, ["rev-parse", "--show-toplevel"])
     trusts.add(trust)
     root = Path(root_result.stdout.strip()).resolve()
@@ -598,7 +712,8 @@ def preflight_packet(args: argparse.Namespace) -> dict[str, Any]:
 
     proof: dict[str, Any]
     if command is not None:
-        result = run(command, cwd=worktree, check=False)
+        proof_env = {**os.environ, ROOT_CHECKOUT_ENV: str(root_checkout)}
+        result = run(command, cwd=worktree, check=False, env=proof_env)
         proof = {
             "status": "passed",
             "command": command,
@@ -657,6 +772,11 @@ def preflight_packet(args: argparse.Namespace) -> dict[str, Any]:
         True,
         provider="manual-helper",
         worktree=str(worktree),
+        root_checkout={
+            "path": str(root_checkout),
+            "access": "read-only",
+            "environment": ROOT_CHECKOUT_ENV,
+        },
         repo_root=str(root),
         base=base,
         observed_head=final_head,
@@ -686,12 +806,12 @@ def open_lane(args: argparse.Namespace) -> int:
         lane = create_packet(
             argparse.Namespace(
                 repo=args.repo,
-                root=args.root,
+                project_key=args.project_key,
+                base_root=args.base_root,
                 base=args.base,
                 run_id=args.run_id,
                 item_id=args.item_id,
                 branch=args.branch,
-                max_path=args.max_path,
                 allow_inside_repo=args.allow_inside_repo,
                 reuse_existing=True,
             )
@@ -719,6 +839,7 @@ def open_lane(args: argparse.Namespace) -> int:
         preflight = preflight_packet(
             argparse.Namespace(
                 worktree=str(lane["worktree"]),
+                repo=str(lane["repo"]),
                 base=args.base,
                 actor_id=args.actor_id,
                 expect_branch=args.branch,
@@ -747,6 +868,8 @@ def open_lane(args: argparse.Namespace) -> int:
             state="created-preflight-blocked",
             recoverable=True,
             repo=lane.get("repo"),
+            project_key=lane.get("project_key"),
+            base_root=lane.get("base_root"),
             root=lane.get("root"),
             worktree=lane.get("worktree"),
             lane=lane,
@@ -763,6 +886,8 @@ def open_lane(args: argparse.Namespace) -> int:
         True,
         state="ready",
         repo=lane.get("repo"),
+        project_key=lane.get("project_key"),
+        base_root=lane.get("base_root"),
         root=lane.get("root"),
         worktree=lane.get("worktree"),
         lane=lane,
@@ -776,10 +901,14 @@ def open_lane(args: argparse.Namespace) -> int:
 
 def cleanup(args: argparse.Namespace) -> int:
     repo, repo_trust = git_root(Path(args.repo).resolve())
-    root = Path(args.root).resolve()
+    project = project_key(args.project_key)
+    base_root = Path(args.base_root).resolve()
+    project_root, root = project_paths(base_root, project)
+    ensure_project_marker(repo, project_root, project)
     worktree = Path(args.worktree).resolve()
     if not contains(root, worktree):
         raise LaneError("worktree path is outside the recorded root")
+    require_lane_identity(project, root, worktree, args.run_id, args.item_id)
     registered_before = worktree in registered_worktrees(repo)
     if not registered_before:
         state = "unregistered-residual-directory" if worktree.exists() else "removed"
@@ -788,6 +917,8 @@ def cleanup(args: argparse.Namespace) -> int:
                 "cleanup",
                 True,
                 repo=str(repo),
+                project_key=project,
+                base_root=str(base_root),
                 root=str(root),
                 worktree=str(worktree),
                 state=state,
@@ -804,11 +935,15 @@ def cleanup(args: argparse.Namespace) -> int:
             recoverable=True,
             next_action={
                 "command": "cleanup",
+                "project_key": project,
+                "base_root": str(base_root),
                 "root": str(root),
                 "worktree": str(worktree),
                 "requires": "--confirm-unregistered-residual",
             },
             repo=str(repo),
+            project_key=project,
+            base_root=str(base_root),
             root=str(root),
             worktree=str(worktree),
             registered_before=False,
@@ -901,6 +1036,8 @@ def cleanup(args: argparse.Namespace) -> int:
         "cleanup",
         state == "removed",
         repo=str(repo),
+        project_key=project,
+        base_root=str(base_root),
         root=str(root),
         worktree=str(worktree),
         state=state,
@@ -935,12 +1072,16 @@ def extended_path(path: Path) -> str:
 
 def purge_residual_packet(args: argparse.Namespace) -> dict[str, Any]:
     repo, _ = git_root(Path(args.repo).resolve())
-    root = Path(args.root).resolve()
+    project = project_key(args.project_key)
+    base_root = Path(args.base_root).resolve()
+    project_root, root = project_paths(base_root, project)
+    ensure_project_marker(repo, project_root, project)
     worktree = Path(args.worktree).resolve()
     if not args.confirm_unregistered_residual:
         raise LaneError("explicit residual-cleanup confirmation is required")
     if not contains(root, worktree):
         raise LaneError("residual path is outside the recorded worktree root")
+    require_lane_identity(project, root, worktree, args.run_id, args.item_id)
     if worktree in registered_worktrees(repo):
         raise LaneError("residual path is still registered as a Git worktree")
     if worktree.exists():
@@ -949,6 +1090,8 @@ def purge_residual_packet(args: argparse.Namespace) -> dict[str, Any]:
         "cleanup",
         not worktree.exists(),
         repo=str(repo),
+        project_key=project,
+        base_root=str(base_root),
         root=str(root),
         worktree=str(worktree),
         state="removed" if not worktree.exists() else "unregistered-residual-directory",
@@ -961,13 +1104,13 @@ def parser() -> argparse.ArgumentParser:
 
     open_parser = commands.add_parser("open")
     open_parser.add_argument("--repo", required=True)
-    open_parser.add_argument("--root")
+    open_parser.add_argument("--project-key", required=True)
+    open_parser.add_argument("--base-root")
     open_parser.add_argument("--base", required=True)
     open_parser.add_argument("--run-id", required=True)
     open_parser.add_argument("--item-id", required=True)
     open_parser.add_argument("--actor-id", required=True)
     open_parser.add_argument("--branch")
-    open_parser.add_argument("--max-path", type=int)
     open_parser.add_argument("--allow-inside-repo", action="store_true")
     open_proof = open_parser.add_mutually_exclusive_group()
     open_proof.add_argument("--proof-command-json")
@@ -982,8 +1125,11 @@ def parser() -> argparse.ArgumentParser:
 
     cleanup_parser = commands.add_parser("cleanup")
     cleanup_parser.add_argument("--repo", required=True)
-    cleanup_parser.add_argument("--root", required=True)
+    cleanup_parser.add_argument("--project-key", required=True)
+    cleanup_parser.add_argument("--base-root", required=True)
     cleanup_parser.add_argument("--worktree", required=True)
+    cleanup_parser.add_argument("--run-id", required=True)
+    cleanup_parser.add_argument("--item-id", required=True)
     cleanup_parser.add_argument("--expected-head", required=True)
     cleanup_parser.add_argument("--disposition", required=True)
     cleanup_parser.add_argument("--confirm-unregistered-residual", action="store_true")

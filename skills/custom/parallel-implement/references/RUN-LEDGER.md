@@ -16,7 +16,7 @@ python <skill-dir>/scripts/run_ledger.py start \
 The UTF-8 scope object supplies `parent`, `root_actor_id`, `caller_id`, the
 retained `parent_claim`, exhaustive non-empty `children`, and a Charter with
 `id` and outcome. Start records the repository, exact `HEAD`, stable scope
-identity, and the frozen Repair budget. Only runtime contract 5 is
+identity, and the frozen Repair budget. Only runtime contract 6 is
 accepted.
 
 Scope or budget changes require a new run.
@@ -46,7 +46,7 @@ python <skill-dir>/scripts/run_ledger.py apply \
 
 Apply accepts one UTF-8 object:
 
-- `lane-ready`: new provider task, root-receipted assignment, and preflight
+- `lane-ready`: new subagent, root-receipted assignment, and preflight
   evidence;
 - `worker-result`: new worker Return facts;
 - `events`: explicit root, reviewer, caller, tracker, or provider decisions
@@ -67,15 +67,15 @@ entry's `data` without `root_receipt`. Actions are `assign`, `dispatch`,
 
 Packet fields:
 
-- `lane-ready`: `work_item`, `lane_id`, `agent_id`, actor and execution
-  identities, `transport`, requested binding, environment, task state, Return
-  transport, liveness cursor, the Task Lanes transport/environment binding, and
-  `assignment.{mode,ref,root_receipt}`;
-  `create` with provider acceptance and binding read-back; `preflight` from the
-  manual helper or provider with `base`, `observed_head`, clean `status`,
-  `worktree`, `provider`, `startup_proof`, `project_provenance`, and isolated
-  roots.
-- `worker-result`: the same work-item, lane, agent, actor, task, host,
+- `lane-ready`: `work_item`, `lane_id`, `agent_id`, runtime agent type, actor and
+  execution identities, `transport`, requested binding, environment, task state,
+  Return transport, liveness cursor, the Agent Lanes transport/environment
+  binding, and `assignment.{mode,ref,root_receipt}`; `create` with provider
+  acceptance, project key, base/project/`wt` roots, repository marker, and
+  binding read-back; `preflight` from the manual helper or provider with `base`,
+  `observed_head`, clean `status`, `worktree`, read-only `root_checkout`,
+  `provider`, `startup_proof`, `project_provenance`, and isolated roots.
+- `worker-result`: the same work-item, lane, agent, actor, task,
   transport, worktree, base, and final assignment SHA-256; `report` is the
   Worker Brief Return. After recorded feedback, the same lane returns a new
   commit naming the prior commit it supersedes.
@@ -92,8 +92,8 @@ Packet fields:
 | `graph-drained` | `integration_sha`, `data.root_receipt` |
 | `review-ready` | `integration_sha`, `data.{tasks,integration,final_proof,root_receipt}` |
 | `review-invocation` | `integration_sha`, review task binding, route, candidate-bound `route_evidence`, startup/provenance proof, `root_receipt` |
-| `review-decision` | `integration_sha`, `decision`, review Return binding, `findings`, `residual_risks`; High Assurance also requires `assurance_returns` |
-| `repair-plan` | Charter, generation, review decision/target, complete finding IDs, caller decision receipt |
+| `review-decision` | `integration_sha`, `decision`, review Return binding, `findings`, `residual_risks`; High Assurance also requires each `assurance_returns` lane's identity, requested and observed-or-unavailable binding with evidence, status, and reviewed HEAD |
+| `repair-plan` | Charter, generation, review decision/target, and the complete automatically eligible finding IDs |
 | `repair-complete` | `integration_sha`, `validation`, generation, finding IDs, delegated lane/actor/task, accepted worker SHA, prior and superseded candidate, landing method, `root_receipt` |
 | `closeout-head` | `integration_sha`, residual acceptance when applicable, `root_receipt` |
 | `child-closeout` | final `integration_sha`, `landed_head`, verified closeout/read-backs, `root_receipt` |
@@ -115,7 +115,7 @@ receipt equality, containment and cleanliness, superseding Return ancestry,
 root and caller receipts, claim receipt, serial landing ancestry, candidate and
 reviewed-`HEAD` binding, idle-task and final-proof receipts, delegated Repair
 provenance, review-task separation, High Assurance core quorum, distinct
-residual-risk identity, Repair-budget arithmetic, caller Repair identity,
+residual-risk identity, Repair-budget arithmetic, automatic Repair eligibility,
 reconciliation, child-first closeout and claim-release read-backs, and safe
 lane state.
 
@@ -132,7 +132,7 @@ python <skill-dir>/scripts/run_ledger.py brief \
 ```
 
 Brief requires a ready task lane and projects its recorded agent, actor, lane,
-task, host, transport, environment, Charter, base, worktree, isolated roots,
+task, transport, environment, Charter, base, worktree, isolated roots,
 Return transport, liveness cursor, and triggered execution mode into
 one collision-safe artifact under `<run-dir>/briefs/`. Stdout returns only its
 path and SHA-256.

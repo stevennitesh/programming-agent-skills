@@ -17,7 +17,7 @@ from typing import Any
 
 
 SCHEMA_VERSION = 1
-RUNTIME_CONTRACT = 5
+RUNTIME_CONTRACT = 6
 REVIEW_AGENT_IDS = {
     "change-review": "ordinary-reviewer",
     "high-assurance-review": "assurance-coordinator",
@@ -33,22 +33,25 @@ ASSURANCE_REVIEWER_IDS = {
 PROVIDER_BINDING_FIELDS = (
     "lane_id",
     "agent_id",
+    "runtime_agent_type",
     "task_id",
-    "host_id",
     "requested_model",
     "requested_effort",
     "environment",
 )
 
 
-def load_agent_routes() -> dict[str, tuple[str, str]]:
-    launch = Path(__file__).resolve().parents[1] / "references/CODEX-WORKTREE-LAUNCH.md"
-    routes = {}
-    for line in launch.read_text(encoding="utf-8").splitlines():
-        match = re.fullmatch(r"\| `([^`]+)` \| `([^`]+)` \| `([^`]+)` \|", line)
+def load_runtime_profiles() -> dict[str, tuple[str, str, str]]:
+    source = Path(__file__).resolve().parents[1] / "references/RUNTIME-PROFILES.md"
+    profiles = {}
+    for line in source.read_text(encoding="utf-8").splitlines():
+        match = re.fullmatch(
+            r"\| `([^`]+)` \| `([^`]+)` \| `([^`]+)` \| `([^`]+)` \|",
+            line,
+        )
         if match:
-            agent_id, model, effort = match.groups()
-            routes[agent_id] = (model, effort)
+            profile, agent_type, model, effort = match.groups()
+            profiles[profile] = (agent_type, model, effort)
     required = {
         "parallel-root",
         "clear-worker",
@@ -59,29 +62,32 @@ def load_agent_routes() -> dict[str, tuple[str, str]]:
         *REVIEW_AGENT_IDS.values(),
         *ASSURANCE_REVIEWER_IDS,
     }
-    if set(routes) != required:
-        raise ValueError("Codex Task Lanes agent bindings are incomplete")
-    return routes
+    if set(profiles) != required:
+        raise ValueError("runtime profiles are incomplete")
+    return profiles
 
 
-_AGENT_ROUTES: dict[str, tuple[str, str]] | None = None
+_RUNTIME_PROFILES: dict[str, tuple[str, str, str]] | None = None
 
 
-def agent_routes() -> dict[str, tuple[str, str]]:
-    global _AGENT_ROUTES
-    if _AGENT_ROUTES is None:
-        _AGENT_ROUTES = load_agent_routes()
-    return _AGENT_ROUTES
+def runtime_profiles() -> dict[str, tuple[str, str, str]]:
+    global _RUNTIME_PROFILES
+    if _RUNTIME_PROFILES is None:
+        _RUNTIME_PROFILES = load_runtime_profiles()
+    return _RUNTIME_PROFILES
 
 
-def agent_route_matches(agent_id: Any, model: Any, effort: Any) -> bool:
-    expected = agent_routes().get(agent_id)
-    if expected == (model, effort):
+def runtime_profile_matches(
+    profile: Any, agent_type: Any, model: Any, effort: Any
+) -> bool:
+    expected = runtime_profiles().get(profile)
+    if expected == (agent_type, model, effort):
         return True
     return (
-        agent_id == "serial-integrator"
+        profile == "serial-integrator"
         and expected is not None
-        and model == expected[0]
+        and agent_type == expected[0]
+        and model == expected[1]
         and effort == "high"
     )
 
@@ -222,6 +228,29 @@ def stream_lock(path: Path):
 def emit(ok: bool, **data: Any) -> int:
     print(json.dumps({"schema": SCHEMA_VERSION, "ok": ok, **data}, sort_keys=True))
     return 0 if ok else 1
+
+
+def resolve_profile(args: argparse.Namespace) -> int:
+    binding = runtime_profiles().get(args.profile)
+    if binding is None:
+        return emit(
+            False,
+            operation="profile",
+            code="UNKNOWN_PROFILE",
+            profile=args.profile,
+        )
+    agent_type, model, effort = binding
+    spawn = {"agent_type": agent_type}
+    if agent_type == "default":
+        spawn.update(model=model, reasoning_effort=effort)
+    return emit(
+        True,
+        operation="profile",
+        profile=args.profile,
+        model=model,
+        reasoning=effort,
+        spawn=spawn,
+    )
 
 
 def event_path(value: str) -> Path:
@@ -494,9 +523,8 @@ def git_is_ancestor(repo: str | None, ancestor: str, descendant: str) -> bool:
 
 
 def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[str, Any]:
-    routes = agent_routes()
     lane_agent_ids = (
-        set(routes)
+        set(runtime_profiles())
         - set(REVIEW_AGENT_IDS.values())
         - ASSURANCE_REVIEWER_IDS
         - {"parallel-root"}
@@ -636,6 +664,10 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                 valid &= need(
                     bool(data.get("telemetry_unavailable_reason")),
                     f"{prefix} unavailable {label}telemetry requires a reason",
+                )
+                valid &= need(
+                    data.get(resolved_field) in {None, ""},
+                    f"{prefix} unavailable {label}telemetry cannot include {resolved_field}",
                 )
         return valid
 
@@ -837,7 +869,7 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                             lane_id in claim_lanes
                             and observation.get("provider") == lane.get("provider")
                             and observation.get("state")
-                            in {"registered", "provider-preserved"}
+                            in SAFE_LANE_STATES | {"registered"}
                             and isinstance(observation.get("worktree"), str)
                             and canonical_path(observation["worktree"])
                             == canonical_path(str(lane.get("worktree")))
@@ -908,7 +940,6 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                             observation.get("agent_id"),
                             observation.get("actor_id"),
                             observation.get("task_id"),
-                            observation.get("host_id"),
                         )
                         for observation in task_observations
                         if isinstance(observation, dict)
@@ -919,7 +950,6 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                             lane.get("agent_id"),
                             lane.get("actor_id"),
                             lane.get("task_id"),
-                            lane.get("host_id"),
                         )
                         for lane in claim_lanes.values()
                     }
@@ -937,7 +967,6 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                             and observation.get("agent_id") == lane.get("agent_id")
                             and observation.get("actor_id") == lane.get("actor_id")
                             and observation.get("task_id") == lane.get("task_id")
-                            and observation.get("host_id") == lane.get("host_id")
                         ]
                         valid_observation = need(
                             len(matches) == 1,
@@ -1025,8 +1054,8 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                 required = {
                     "agent_id",
                     "actor_id",
+                    "runtime_agent_type",
                     "task_id",
-                    "host_id",
                     "transport",
                     "requested_model",
                     "requested_effort",
@@ -1099,16 +1128,17 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                         f"{prefix} Repair lane reuses a review actor or task",
                     )
                 valid &= need(
-                    agent_route_matches(
+                    runtime_profile_matches(
                         data.get("agent_id"),
+                        data.get("runtime_agent_type"),
                         data.get("requested_model"),
                         data.get("requested_effort"),
                     ),
                     f"{prefix} agent binding does not match requested model and effort",
                 )
                 valid &= need(
-                    data.get("transport") in {"codex-task", "subagent-v2"},
-                    f"{prefix} has invalid task transport",
+                    data.get("transport") == "subagent-v2",
+                    f"{prefix} requires subagent-v2 transport",
                 )
                 valid &= need(
                     data.get("environment") in {"local", "worktree"},
@@ -1130,7 +1160,7 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                 valid &= need(
                     provider_binding_matches(provider_acceptance, data)
                     and provider_acceptance.get("provider")
-                    in {"codex-managed", "delegated-custody", "manual-helper"}
+                    in {"delegated-custody", "manual-helper"}
                     and isinstance(provider_acceptance.get("worktree"), str)
                     and Path(provider_acceptance["worktree"]).is_absolute(),
                     f"{prefix} requires task-bound provider acceptance receipt",
@@ -1160,9 +1190,9 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                 lane = lanes[lane_id]
                 for field in {
                     "agent_id",
+                    "runtime_agent_type",
                     "actor_id",
                     "task_id",
-                    "host_id",
                     "transport",
                     "requested_model",
                     "requested_effort",
@@ -1218,8 +1248,6 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                     data.get("provider"),
                 )
                 allowed_routes = {
-                    ("codex-task", "worktree", "codex-managed"),
-                    ("codex-task", "local", "delegated-custody"),
                     ("subagent-v2", "local", "delegated-custody"),
                     ("subagent-v2", "worktree", "manual-helper"),
                 }
@@ -1228,14 +1256,13 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                     f"{prefix} has incompatible transport, environment, and provider",
                 )
                 if lane.get("environment") == "local":
-                    expected_transport = (
-                        "codex-task"
-                        if lane.get("agent_id") == "clear-worker"
-                        else "subagent-v2"
+                    valid &= need(
+                        lane.get("transport") == "subagent-v2",
+                        f"{prefix} local agent requires subagent-v2 transport",
                     )
                     valid &= need(
-                        lane.get("transport") == expected_transport,
-                        f"{prefix} local agent requires {expected_transport} transport",
+                        "root_checkout" not in data,
+                        f"{prefix} local lane cannot include a root checkout binding",
                     )
                 if lane.get("environment") == "local" and isinstance(worktree, str):
                     valid &= need(bool(repo), f"{prefix} local lane requires repository identity")
@@ -1253,6 +1280,25 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                             for other_id, other in lanes.items()
                         ),
                         f"{prefix} reuses an active local checkout",
+                    )
+                if lane.get("environment") == "worktree":
+                    root_checkout = data.get("root_checkout")
+                    valid &= need(
+                        isinstance(root_checkout, dict)
+                        and root_checkout.get("access") == "read-only"
+                        and root_checkout.get("environment")
+                        == "PARALLEL_IMPLEMENT_ROOT_CHECKOUT"
+                        and isinstance(root_checkout.get("path"), str)
+                        and Path(root_checkout["path"]).is_absolute()
+                        and (
+                            not repo
+                            or canonical_path(root_checkout["path"])
+                            == canonical_path(str(repo))
+                        )
+                        and isinstance(worktree, str)
+                        and canonical_path(root_checkout["path"])
+                        != canonical_path(worktree),
+                        f"{prefix} requires the read-only root checkout binding",
                     )
                 valid &= need(data.get("status") == "clean", f"{prefix} requires clean status")
                 startup_proof = data.get("startup_proof")
@@ -1348,9 +1394,9 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
             )
             for field in {
                 "agent_id",
+                "runtime_agent_type",
                 "actor_id",
                 "task_id",
-                "host_id",
                 "transport",
                 "worktree",
             }:
@@ -1835,7 +1881,6 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
             review_agent_id = data.get("agent_id")
             review_lane_id = data.get("lane_id")
             review_task_id = data.get("task_id")
-            review_host_id = data.get("host_id")
             review_transport = data.get("transport")
             review_model = data.get("requested_model")
             review_effort = data.get("requested_effort")
@@ -1910,8 +1955,12 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                 f"{prefix} requires a review lane ID",
             )
             valid &= need(
-                routes.get(review_agent_id)
-                == (review_model, review_effort),
+                runtime_profile_matches(
+                    review_agent_id,
+                    data.get("runtime_agent_type"),
+                    review_model,
+                    review_effort,
+                ),
                 f"{prefix} review agent binding does not match requested model and effort",
             )
             valid &= need(
@@ -1919,12 +1968,8 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                 f"{prefix} requires a review task ID",
             )
             valid &= need(
-                isinstance(review_host_id, str) and bool(review_host_id),
-                f"{prefix} requires a review host ID",
-            )
-            valid &= need(
-                review_transport == "codex-task",
-                f"{prefix} review requires Codex task transport",
+                review_transport == "subagent-v2",
+                f"{prefix} review requires subagent-v2 transport",
             )
             valid &= need(
                 review_environment in {"local", "worktree"},
@@ -1938,16 +1983,15 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
             )
             valid &= need(
                 (review_environment, review_provider)
-                in {
-                    ("worktree", "codex-managed"),
-                    ("local", "delegated-custody"),
-                },
-                f"{prefix} has incompatible review environment and provider",
+                == ("local", "delegated-custody"),
+                f"{prefix} review requires delegated custody of the local candidate",
             )
             if isinstance(review_worktree, str) and review_worktree:
                 valid &= need(
                     all(
-                        not lane.get("worktree")
+                        lane.get("state") in SAFE_LANE_STATES
+                        or serial_lane_idle(lane)
+                        or not lane.get("worktree")
                         or canonical_path(str(lane.get("worktree")))
                         != canonical_path(review_worktree)
                         for lane in lanes.values()
@@ -2071,16 +2115,21 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                     field: data.get(field)
                     for field in {
                         "agent_id",
+                        "runtime_agent_type",
                         "lane_id",
                         "actor_id",
                         "task_id",
-                        "host_id",
                         "transport",
                         "requested_model",
                         "requested_effort",
                         "environment",
                         "worktree",
                         "provider",
+                        "resolved_model_status",
+                        "resolved_model",
+                        "resolved_effort_status",
+                        "resolved_effort",
+                        "telemetry_unavailable_reason",
                     }
                 }
                 review_target = target
@@ -2173,6 +2222,46 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                             ),
                             f"{prefix} assurance returns are incomplete or bound to another snapshot",
                         )
+                        valid_bindings = True
+                        for row in assurance_returns:
+                            agent_id = row.get("agent_id")
+                            valid_bindings &= need(
+                                runtime_profile_matches(
+                                    agent_id,
+                                    row.get("runtime_agent_type"),
+                                    row.get("requested_model"),
+                                    row.get("requested_effort"),
+                                ),
+                                f"{prefix} assurance reviewer binding does not match {agent_id}",
+                            )
+                            valid_bindings &= need(
+                                row.get("transport") == "subagent-v2"
+                                and row.get("task_id_state") == "canonical",
+                                f"{prefix} assurance reviewer {agent_id} requires canonical subagent-v2 transport",
+                            )
+                            provider_acceptance = row.get("provider_acceptance")
+                            valid_bindings &= need(
+                                isinstance(provider_acceptance, dict)
+                                and provider_acceptance.get("status") == "accepted"
+                                and provider_binding_matches(provider_acceptance, row)
+                                and row.get("environment") in {"local", "worktree"}
+                                and (
+                                    row.get("environment"),
+                                    provider_acceptance.get("provider"),
+                                )
+                                == ("local", "delegated-custody")
+                                and isinstance(row.get("worktree"), str)
+                                and Path(row["worktree"]).is_absolute()
+                                and provider_acceptance.get("worktree")
+                                == row.get("worktree"),
+                                f"{prefix} assurance reviewer {agent_id} requires a task-bound provider receipt",
+                            )
+                            valid_bindings &= require_resolved_telemetry(
+                                row,
+                                f"{prefix} assurance reviewer {agent_id}",
+                                review=True,
+                            )
+                        valid_identity_fields &= valid_bindings
                         if decision == "scope-mismatch":
                             valid_identity_fields &= need(
                                 not assurance_returns,
@@ -2300,25 +2389,6 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
             need(data.get("review_target") == review_target, f"{prefix} blocked snapshot differs from review target")
             need(bool(charter_id), f"{prefix} requires a recorded Charter")
             need(data.get("charter_id") == charter_id, f"{prefix} Charter differs from campaign Charter")
-            caller_decision = data.get("caller_decision")
-            caller_finding_ids = (
-                caller_decision.get("finding_ids")
-                if isinstance(caller_decision, dict)
-                else None
-            )
-            need(
-                isinstance(caller_decision, dict)
-                and caller_decision.get("caller_id") == caller_id
-                and bool(caller_decision.get("receipt_id"))
-                and caller_decision.get("review_decision_id")
-                == review_decision_id
-                and caller_decision.get("review_target") == review_target
-                and isinstance(caller_finding_ids, list)
-                and set(caller_finding_ids)
-                == set(blocker_ids)
-                and bool(caller_decision.get("source")),
-                f"{prefix} requires caller admission of the complete blocker set",
-            )
             need(isinstance(generation, int) and generation == repair_generation + 1, f"{prefix} has invalid Repair generation")
             need(isinstance(generation, int) and generation <= repair_generation_budget, f"{prefix} exceeds Repair Generation Budget")
             need(bool(blockers), f"{prefix} requires complete blocking findings")
@@ -2532,7 +2602,7 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                     lane.get("work_item") == item,
                     f"{prefix} cleanup lane belongs to another work item",
                 )
-                for field in {"agent_id", "actor_id", "task_id", "host_id"}:
+                for field in {"agent_id", "actor_id", "task_id"}:
                     valid &= need(
                         data.get(field) == lane.get(field),
                         f"{prefix} cleanup has mismatched {field}",
@@ -2575,33 +2645,15 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                     )
                 provider = lane.get("provider")
                 if cleanup_state == "removed":
-                    removal_receipt = data.get("provider_removal_receipt")
-                    provider_removed = (
-                        isinstance(removal_receipt, dict)
-                        and removal_receipt.get("status") == "removed"
-                        and removal_receipt.get("lane_id") == lane_id
-                        and removal_receipt.get("task_id") == lane.get("task_id")
-                        and removal_receipt.get("host_id") == lane.get("host_id")
-                        and removal_receipt.get("worktree") == lane.get("worktree")
-                        and removal_receipt.get("exact_head") == data.get("exact_head")
-                        and removal_receipt.get("terminal_task_state")
-                        == data.get("terminal_task_state")
-                        and removal_receipt.get("registered_after") is False
-                        and removal_receipt.get("directory_exists") is False
-                    )
                     valid &= need(
-                        provider in {"manual-helper", "codex-managed"}
+                        provider == "manual-helper"
                         and data.get("registered_after") is False
-                        and data.get("directory_exists") is False
-                        and (
-                            provider == "manual-helper"
-                            or provider_removed
-                        ),
+                        and data.get("directory_exists") is False,
                         f"{prefix} removed lane lacks cleanup proof",
                     )
                 elif cleanup_state == "provider-preserved":
                     valid &= need(
-                        provider in {"codex-managed", "delegated-custody"}
+                        provider == "delegated-custody"
                         and bool(data.get("custody")),
                         f"{prefix} provider-preserved lane lacks custody proof",
                     )
@@ -3273,8 +3325,8 @@ def packet_events(packet: dict[str, Any]) -> list[dict[str, Any]]:
             field: packet.get(field)
             for field in {
                 "agent_id",
+                "runtime_agent_type",
                 "task_id",
-                "host_id",
                 "transport",
                 "requested_model",
                 "requested_effort",
@@ -3332,9 +3384,9 @@ def packet_events(packet: dict[str, Any]) -> list[dict[str, Any]]:
             for field in {
                 "lane_id",
                 "agent_id",
+                "runtime_agent_type",
                 "actor_id",
                 "task_id",
-                "host_id",
                 "transport",
                 "worktree",
                 "base",
@@ -3409,7 +3461,6 @@ def brief(args: argparse.Namespace) -> int:
         f"- Actor: `{lane['actor_id']}`",
         f"- Lane: `{item['lane_id']}`",
         f"- Task: `{lane['task_id']}`",
-        f"- Host: `{lane['host_id']}`",
         f"- Transport: `{lane['transport']}`",
         f"- Environment: `{lane['environment']}`",
         f"- Charter: `{state['charter_id'] or 'not recorded'}`",
@@ -3421,6 +3472,14 @@ def brief(args: argparse.Namespace) -> int:
         f"- Return transport: `{lane['report_transport']}`",
         f"- Liveness cursor: `{lane['liveness_cursor']}`",
     ]
+    if lane["environment"] == "worktree":
+        lines.extend(
+            [
+                f"- Root checkout: `{args.repo}`",
+                "- Root checkout access: `read-only`",
+                "- Write boundary: `assigned worktree only`",
+            ]
+        )
     if mode == "integration-correction":
         regression = state.get("integration_regression") or {}
         lines.extend([
@@ -3614,6 +3673,10 @@ def parser() -> argparse.ArgumentParser:
     root = JsonArgumentParser(description=__doc__)
     commands = root.add_subparsers(dest="command", required=True)
 
+    profile_parser = commands.add_parser("profile")
+    profile_parser.add_argument("--id", dest="profile", required=True)
+    profile_parser.set_defaults(handler=resolve_profile)
+
     start_parser = commands.add_parser("start")
     start_parser.add_argument("--run", required=True)
     start_parser.add_argument("--repo", required=True)
@@ -3647,6 +3710,9 @@ def main() -> int:
     handler_started = False
     try:
         args = parser().parse_args()
+        if args.command == "profile":
+            handler_started = True
+            return args.handler(args)
         args.events = str(run_events(args.run, create=args.command == "start"))
         before_revision = len(load_events(Path(args.events)))
         if args.command != "start":
@@ -3661,6 +3727,14 @@ def main() -> int:
                 code="INPUT_INVALID",
                 effect_started=False,
                 changed=False,
+                error=str(error),
+            )
+        if args.command == "profile":
+            return emit(
+                False,
+                operation="profile",
+                code="INPUT_INVALID",
+                profile=getattr(args, "profile", None),
                 error=str(error),
             )
         events_path = Path(args.events)

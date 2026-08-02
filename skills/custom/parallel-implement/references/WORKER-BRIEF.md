@@ -8,8 +8,8 @@ Generate the ledger-owned assignment with
 ## Assignment
 
 The ledger supplies the work item, mode, semantic agent ID, actor, task, lane,
-base, checkout, temp roots, Charter, launch receipt, liveness cursor, and Return
-transport.
+base, checkout, isolated-lane read-only root checkout, temp roots, Charter,
+launch receipt, liveness cursor, and Return transport.
 
 The root adds:
 
@@ -31,7 +31,9 @@ The root adds:
 Reconcile the final augmented assignment SHA-256 from the dispatch receipt,
 launch receipt, current directory, task, actor, lane, exact base, clean status,
 startup proof, project provenance, and temp roots before editing. Use the
-assigned checkout for every command and edit only beneath it. Stop on mismatch.
+assigned checkout as every command's working directory and edit only beneath
+it. An isolated worker may read needed ignored inputs from its recorded root
+checkout but never writes there. Stop on mismatch.
 
 One worker owns one item and returns one packet. Never spawn or delegate. Leave
 dispatch, integration, tracker mutation, remote Git delivery, scope changes,
@@ -78,12 +80,12 @@ prove the RED and affected paths, and return one clean correction commit. An
 owned correction returns to its current worker; cross-worker work belongs to
 `serial-integrator`.
 
-**Review Repair.** Require caller admission, generation, blocked reviewed
-`HEAD`, complete blocking set, exact admitted IDs, per-blocker automatic and
-Charter-preservation evidence, both budgets, write scope, and required proof.
-Accept only when admitted IDs equal every blocker and every gate passes. Change
-only those findings under the original Charter and prove each remedy and
-regression.
+**Review Repair.** Require frozen delivery authority, generation, blocked
+reviewed `HEAD`, complete blocking set, exact review-admitted IDs, per-blocker
+automatic and Charter-preservation evidence, both budgets, write scope, and
+required proof. Accept only when the IDs equal every blocker and every gate
+passes. Change only those findings under the original Charter and prove each
+remedy and regression.
 
 ## Return
 
@@ -92,8 +94,9 @@ status: <done / blocker / needs-feedback>
 work item:
 mode:
 agent ID:
+runtime agent type:
 actor ID:
-task ID and host ID:
+task ID:
 transport:
 lane and worktree:
 base:

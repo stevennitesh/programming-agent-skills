@@ -105,4 +105,7 @@ scope closed.
 - `residual-hardening` identifies a directly evidenced reachable risk outside
   automatic acceptance.
 
-Classification grants no mutation. The caller validates it before Repair.
+Classification grants no mutation. The delivery owner validates it before
+Repair. A frozen delivery request authorizes `automatic-in-scope` remediation
+unless its caller restricted Repair; every other class returns for caller
+decision.
