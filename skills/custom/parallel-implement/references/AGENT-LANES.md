@@ -9,11 +9,10 @@ isolate concurrent writers.
 
 Load [RUNTIME-PROFILES.md](RUNTIME-PROFILES.md).
 
-Read the permanent project key and writable lane root from the repo-local setup
-owned by `$repo-bootstrap`. The key is shaped
-`<short-name>-<three-digit-ID>`, and the root is
-`<base-root>/<project-key>/wt`. Spawned agents inherit its permission. Do not
-put lane permissions in agent-role TOMLs.
+`run_ledger.py dispatch` reads the permanent project key and writable lane root
+from the repo-local setup owned by `$repo-bootstrap`. The key is shaped
+`<short-name>-<three-digit-ID>` and the root is
+`<base-root>/<project-key>/wt`. Spawned agents inherit its permission.
 
 Give one serial writer exclusive custody of the clean integration checkout at
 the exact base. The root performs no repository or Git mutation until Return.
@@ -32,21 +31,27 @@ because none may write.
 
 ## Dispatch
 
-Spawn one fresh-context collaboration subagent for the selected profile. Use
-the profile's named custom agent type when present; otherwise use `default` and
-supply its model and reasoning explicitly. Assign the exact role, work item or
-candidate, base, absolute checkout, actor and lane identities, and Return
-transport. The agent echoes the binding before work.
+Run dispatch `prepare` after the root chooses the item, profile, environment,
+write scope, and claim. It prepares the checkout, seals the final brief, records
+pre-spawn authorization, and returns exact fresh-context collaboration subagent
+spawn arguments. Spawn once with those arguments. Record the accepted provider identity through
+dispatch `receipt`; only then is the lane active.
 
-Record the accepted spawn receipt, requested and observed-or-unavailable
-binding, transport `subagent-v2`, environment, provider, checkout, base, clean
-status, startup proof, and liveness identity. The accepted request is binding
-evidence when the runtime exposes no resolved telemetry; never invent it.
+The receipt binds requested and observed-or-unavailable profile, transport `subagent-v2`,
+environment, provider, checkout, task, and liveness identity. Supply observed
+facts explicitly; the helper derives none of them.
+The accepted request is binding evidence when resolved telemetry is
+unavailable; never invent telemetry.
 
 Implementation and integration mismatches return `transport-blocked`. Formal
 review mismatches return `transport-invalid` before candidate judgment.
 
-Generate writer assignments through [WORKER-BRIEF.md](WORKER-BRIEF.md).
+Dispatch generates writer assignments through
+[WORKER-BRIEF.md](WORKER-BRIEF.md).
+
+Formal review is read-only and has no writer lane. Spawn the selected review
+agent from the pinned, hashed Review packet, then record its assignment path and
+SHA-256 with the observed task and provider receipt in `review-invocation`.
 
 ## Await
 
@@ -60,7 +65,12 @@ actor, lane, checkout, base, and produced or reviewed `HEAD`.
 
 Keep a clean isolated worker and worktree available through landing when a
 pre-landing correction is plausible. Return that correction to the same worker
-and accept only a Return naming the commit it supersedes.
+and accept only a Return naming the commit it supersedes and the root feedback
+event as its current assignment reference.
+
+If the provider confirms no task was created, clean or preserve the prepared
+lane as `not-created` and dispatch a new attempt. Reconcile uncertain outcomes
+instead of spawning again.
 
 ## Release
 
@@ -78,7 +88,7 @@ Serial and review agents own no extra worktree to release.
 python <skill-dir>/scripts/lane_worktree.py open \
   --repo <repo> --project-key <name-NNN> --base <sha> \
   --run-id <run> --item-id <item> --actor-id <actor> \
-  --proof-command-file <argv.json> --python-provenance-file <python.json>
+  --python-provenance-file <python.json>
 ```
 
 The helper owns `<base-root>/<project-key>/wt/<lane>`. It binds the permanent
@@ -93,14 +103,14 @@ working directory. On Windows, the worktree path plus the longest tracked path
 at the selected base must not exceed 259 characters. Keep `pi` and `wt` short;
 use temporary storage only for the UTF-8 argv files. Correct a failed preflight
 and repeat the same `open`; it reuses the preserved lane.
-Startup proof uses one UTF-8 argv array without a shell and the repository's
-verified executable. It proves viability, not throughput; disable parallel
-test execution such as with `-n 0`.
+The default startup proof verifies checkout, index-lock, and Git-object
+viability. `--proof-command-file` may add one repository startup check from a UTF-8 argv file;
+it proves viability, not throughput, so disable nested parallel test execution.
 Derive executables, import roots, and packages from repo-owned configuration.
 Project imports must resolve beneath the lane, including namespace-package
 locations. A non-Python repository may use
-`--skip-python-provenance` with its reason. Missing startup proof may use
-`--skip-proof` with its reason. Either skip remains residual risk.
+`--skip-python-provenance` with its reason. An explicitly skipped startup proof
+also requires its reason.
 
 ```text
 python <skill-dir>/scripts/lane_worktree.py cleanup \

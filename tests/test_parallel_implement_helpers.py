@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 import runpy
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -125,6 +126,48 @@ def repository(tmp_path: Path) -> tuple[Path, str]:
     command("git", "commit", "-m", "base", cwd=repo)
     base = command("git", "rev-parse", "HEAD", cwd=repo).stdout.strip()
     return repo, base
+
+
+def tracker_snapshot(run: Path, parent: str, children: list[str]) -> dict[str, str | int | list[str]]:
+    run.mkdir(parents=True, exist_ok=True)
+    artifact = run / "tracker-snapshot.json"
+    nodes = []
+    for item in [parent, *children]:
+        nodes.append(
+            {
+                "id": item,
+                "title": item,
+                "body": f"frozen body for {item}",
+                "comments": [],
+                "labels": [],
+                "assignees": [],
+                "state": "open",
+            }
+        )
+    artifact.write_text(
+        json.dumps(
+            {
+                "schema": 1,
+                "tracker": "test",
+                "repository": "owner/repo",
+                "observed_at": "2026-08-02T00:00:00Z",
+                "parent": parent,
+                "children": children,
+                "nodes": nodes,
+                "edges": [],
+            },
+            sort_keys=True,
+        ),
+        encoding="utf-8",
+    )
+    return {
+        "schema": 1,
+        "path": str(artifact.resolve()),
+        "sha256": hashlib.sha256(artifact.read_bytes()).hexdigest(),
+        "repository": "owner/repo",
+        "parent": parent,
+        "children": children,
+    }
 
 
 def create_lane(repo: Path, base: str, base_root: Path, item: str = "ticket-1") -> dict:
@@ -356,26 +399,26 @@ def test_lane_open_preserves_created_lane_when_preflight_fails(
     assert cleanup_result.returncode == 0, cleanup
 
 
-def test_ledger_facade_starts_applies_reports_and_briefs_idempotently(
+def test_ledger_dispatch_prepares_one_final_brief_then_binds_the_spawn(
     tmp_path: Path,
 ) -> None:
     repo, base = repository(tmp_path)
     events = tmp_path / "run" / "events.jsonl"
     scope = tmp_path / "scope.json"
+    snapshot = tracker_snapshot(events.parent, "parent", ["ticket-1"])
     scope.write_text(
         json.dumps(
-                {
-                    "parent": "parent",
-                    "root_actor_id": "root-agent",
-                    "caller_id": "caller",
-                    "parent_claim": {
-                        "state": "retained",
-                        "work_item": "parent",
-                        "owner": "root-agent",
-                        "token": "claim-parent",
-                        "readback": "retained",
-                    },
-                    "children": ["ticket-1"],
+            {
+                "root_actor_id": "root-agent",
+                "caller_id": "caller",
+                "parent_claim": {
+                    "state": "retained",
+                    "work_item": "parent",
+                    "owner": "root-agent",
+                    "token": "claim-parent",
+                    "readback": "retained",
+                },
+                "tracker_snapshot": snapshot,
                 "charter": {
                     "id": "parent-charter",
                     "outcome": "deliver the recorded child graph",
@@ -404,140 +447,176 @@ def test_ledger_facade_starts_applies_reports_and_briefs_idempotently(
         "id": "parent-charter",
         "outcome": "deliver the recorded child graph",
         "repair_generation_budget": 2,
-        "runtime_contract": 6,
+        "runtime_contract": 7,
     }
+    snapshot_path = Path(snapshot["path"])
+    frozen_snapshot = snapshot_path.read_bytes()
+    snapshot_path.write_bytes(frozen_snapshot + b"\n")
+    result, drifted = helper(LEDGER, "status", "--run", str(events.parent))
+    assert result.returncode == 1
+    detail = json.loads(Path(drifted["detail"]).read_text(encoding="utf-8"))
+    assert any("frozen tracker snapshot is missing or changed" in error for error in detail["errors"])
+    snapshot_path.write_bytes(frozen_snapshot)
 
-    packet = tmp_path / "lane-ready.json"
+    packet = tmp_path / "dispatch.json"
     packet.write_text(
         json.dumps(
             {
-                "kind": "lane-ready",
+                "kind": "prepare",
                 "work_item": "ticket-1",
-                "lane_id": "lane-1",
-                "agent_id": "clear-worker",
-                "runtime_agent_type": "luna_max",
+                "profile": "clear-worker",
                 "actor_id": "worker-1",
-                "task_id": "task-1",
-                "transport": "subagent-v2",
-                "requested_model": "gpt-5.6-luna",
-                "requested_effort": "max",
-                "environment": "worktree",
-                "task_state": "ready",
-                "report_transport": "subagent-v2",
-                "liveness_cursor": "cursor-1",
+                "attempt_id": "ticket-1-attempt-1",
+                "environment": "local",
                 "assignment": {
                     "mode": "implementation",
                     "ref": "ticket-1",
-                    "root_receipt": root_receipt("assign", "ticket-1", base),
                 },
-                "create": {
-                    "state": "created",
-                    "task_id_state": "canonical",
-                    "provider_acceptance": {
-                        "status": "accepted",
-                        "lane_id": "lane-1",
-                        "agent_id": "clear-worker",
-                        "runtime_agent_type": "luna_max",
-                        "task_id": "task-1",
-                        "requested_model": "gpt-5.6-luna",
-                        "requested_effort": "max",
-                        "environment": "worktree",
-                        "provider": "manual-helper",
-                        "worktree": str(tmp_path / "lane-1"),
-                    },
-                    "environment_match": True,
-                    "resolved_model_status": "matched",
-                    "resolved_model": "gpt-5.6-luna",
-                    "resolved_effort_status": "matched",
-                    "resolved_effort": "max",
-                },
-                "preflight": {
-                    "base": base,
-                    "observed_head": base,
-                    "status": "clean",
-                    "worktree": str(tmp_path / "lane-1"),
-                    "root_checkout": {
-                        "path": str(repo.resolve()),
-                        "access": "read-only",
-                        "environment": "PARALLEL_IMPLEMENT_ROOT_CHECKOUT",
-                    },
-                    "provider": "manual-helper",
-                    "startup_proof": {"status": "passed"},
-                    "project_provenance": {"status": "verified"},
-                    "temp_root": str(tmp_path / "lane-1" / ".tmp"),
-                    "pytest_basetemp": str(tmp_path / "lane-1" / ".pytest"),
-                    "cache_root": str(tmp_path / "lane-1" / ".cache"),
+                "write_scope": ["tracked.txt"],
+                "claim": {
+                    "state": "retained",
+                    "work_item": "ticket-1",
+                    "actor_id": "worker-1",
+                    "owner": "root-agent",
+                    "token": "claim-ticket-1",
+                    "readback": "retained",
                 },
             }
         ),
         encoding="utf-8",
     )
-    lane_ready = json.loads(packet.read_text(encoding="utf-8"))
-    lane_create = LEDGER_RUNTIME["packet_events"](lane_ready)[0]
-    lane_ready["assignment"]["root_receipt"] = root_receipt(
-        "assign", "ticket-1", base, lane_create["data"]
-    )
-    packet.write_text(json.dumps(lane_ready), encoding="utf-8")
-    result, applied = helper(
+    result, prepared = helper(
         LEDGER,
-        "apply",
+        "dispatch",
         "--run",
         str(events.parent),
         "--in",
         str(packet),
     )
-    assert result.returncode == 0, applied
-    assert applied["receipt"]["applied"] == 2
-    first_count = len(events.read_text(encoding="utf-8").splitlines())
-
-    result, replayed = helper(
-        LEDGER,
-        "apply",
-        "--run",
-        str(events.parent),
-        "--in",
-        str(packet),
+    assert result.returncode == 0, prepared
+    assert prepared["receipt"]["applied"] == 3
+    assert prepared["awaiting"]["action"] == "record-spawn-receipt"
+    assert prepared["spawn"]["agent_type"] == "luna_max"
+    revision = prepared["revision"]
+    result, recovered_prepare = helper(
+        LEDGER, "dispatch", "--run", str(events.parent), "--in", str(packet)
     )
-    assert result.returncode == 0, replayed
-    assert replayed["receipt"]["applied"] == 0
-    assert replayed["receipt"]["replayed"] == 2
-    assert len(events.read_text(encoding="utf-8").splitlines()) == first_count
-
-    result, state = helper(
-        LEDGER,
-        "status",
-        "--run",
-        str(events.parent),
-    )
-    assert result.returncode == 0, state
-    assert state["phase"] == "open"
-    assert state["awaiting"]["action"] == "dispatch"
-    projection = json.loads(Path(state["state"]).read_text(encoding="utf-8"))
-    assert projection["items"]["ticket-1"] == "ready"
-
-    brief = tmp_path / "WORKER.md"
-    result, generated = helper(
-        LEDGER,
-        "brief",
-        "--run",
-        str(events.parent),
-        "--item",
-        "ticket-1",
-    )
-    assert result.returncode == 0, generated
-    brief = Path(generated["artifact"])
+    assert result.returncode == 0, recovered_prepare
+    assert recovered_prepare["mode"] == "recover"
+    assert recovered_prepare["revision"] == revision
+    assert recovered_prepare["spawn"] == prepared["spawn"]
+    brief = Path(prepared["assignment"]["path"])
     text = brief.read_text(encoding="utf-8")
     assert "Mode: `implementation`" in text
-    assert "Agent: `clear-worker`" in text
+    assert "Profile: `clear-worker`" in text
     assert "Actor: `worker-1`" in text
-    assert "Task: `task-1`" in text
-    assert f"Root checkout: `{recorded_scope['data']['repo']}`" in text
-    assert "Root checkout access: `read-only`" in text
-    assert "Write boundary: `assigned worktree only`" in text
-    assert "Host:" not in text
-    assert "Integration correction" not in text
-    assert "Do not integrate" not in text
+    assert "task-1" not in text
+    assert str(snapshot["path"]) in text
+    assert "do not wait for a follow-up assignment" in prepared["spawn"]["message"]
 
+    rejected_run = tmp_path / "rejected-run"
+    shutil.copytree(events.parent, rejected_run)
+    prepared_lane = next(
+        event
+        for event in map(
+            json.loads,
+            (rejected_run / "events.jsonl").read_text(encoding="utf-8").splitlines(),
+        )
+        if event["event"] == "lane-preflight"
+    )
+    cleanup_packet = tmp_path / "not-created-cleanup.json"
+    cleanup_packet.write_text(
+        json.dumps(
+            {
+                "kind": "events",
+                "events": [
+                    {
+                        "event": "lane-cleanup",
+                        "work_item": "ticket-1",
+                        "data": {
+                            "lane_id": prepared_lane["data"]["lane_id"],
+                            "agent_id": "clear-worker",
+                            "actor_id": "worker-1",
+                            "task_id": None,
+                            "state": "provider-preserved",
+                            "terminal_task_state": "not-created",
+                            "commit_disposition": "preserved",
+                            "exact_head": base,
+                            "clean": True,
+                            "preservation": {"reason": "provider rejected spawn"},
+                            "custody": "root integration checkout",
+                        },
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    result, cleaned = helper(
+        LEDGER, "apply", "--run", str(rejected_run), "--in", str(cleanup_packet)
+    )
+    assert result.returncode == 0, cleaned
+    cleaned_state = LEDGER_RUNTIME["derive_state"](
+        LEDGER_RUNTIME["load_events"](rejected_run / "events.jsonl"), str(repo)
+    )
+    assert next(iter(cleaned_state["lanes"].values()))["state"] == "provider-preserved"
+    retry_packet = json.loads(packet.read_text(encoding="utf-8"))
+    retry_packet.update(attempt_id="ticket-1-attempt-2", actor_id="worker-2")
+    retry_packet["claim"].update(actor_id="worker-2", token="claim-ticket-1-retry")
+    packet.write_text(json.dumps(retry_packet), encoding="utf-8")
+    result, retried_prepare = helper(
+        LEDGER, "dispatch", "--run", str(rejected_run), "--in", str(packet)
+    )
+    assert result.returncode == 0, retried_prepare
+    assert retried_prepare["mode"] == "prepare"
+
+    sealed = brief.read_bytes()
+    brief.write_bytes(sealed + b"tampered\n")
+    result, tampered = helper(LEDGER, "status", "--run", str(events.parent))
+    assert result.returncode == 1
+    detail = json.loads(Path(tampered["detail"]).read_text(encoding="utf-8"))
+    assert any("immutable final assignment artifact" in error for error in detail["errors"])
+    brief.write_bytes(sealed)
+
+    receipt = tmp_path / "spawn-receipt.json"
+    receipt.write_text(
+        json.dumps(
+            {
+                "kind": "receipt",
+                "attempt_id": "ticket-1-attempt-1",
+                "task_id": "task-1",
+                "task_state": "running",
+                "liveness_cursor": "cursor-1",
+                "provider": "delegated-custody",
+                "worktree": str(repo.resolve()),
+                "environment_match": False,
+                "resolved_model_status": "matched",
+                "resolved_model": "gpt-5.6-luna",
+                "resolved_effort_status": "matched",
+                "resolved_effort": "max",
+            }
+        ),
+        encoding="utf-8",
+    )
+    result, rejected_receipt = helper(
+        LEDGER, "dispatch", "--run", str(events.parent), "--in", str(receipt)
+    )
+    assert result.returncode == 1, rejected_receipt
+    result, still_authorized = helper(LEDGER, "status", "--run", str(events.parent))
+    assert result.returncode == 0
+    assert still_authorized["awaiting"]["action"] == "record-spawn-receipt"
+    observed_receipt = json.loads(receipt.read_text(encoding="utf-8"))
+    observed_receipt["environment_match"] = True
+    receipt.write_text(json.dumps(observed_receipt), encoding="utf-8")
+    result, activated = helper(
+        LEDGER, "dispatch", "--run", str(events.parent), "--in", str(receipt)
+    )
+    assert result.returncode == 0, activated
+    assert activated["awaiting"]["action"] == "await-worker"
+    lane = next(
+        event for event in map(json.loads, events.read_text(encoding="utf-8").splitlines())
+        if event["event"] == "lane-preflight"
+    )
 
     result_packet = tmp_path / "worker-result.json"
     result_packet.write_text(
@@ -545,13 +624,13 @@ def test_ledger_facade_starts_applies_reports_and_briefs_idempotently(
             {
                 "kind": "worker-result",
                 "work_item": "ticket-1",
-                "lane_id": "lane-1",
+                "lane_id": lane["data"]["lane_id"],
                 "agent_id": "clear-worker",
                 "runtime_agent_type": "luna_max",
                 "actor_id": "worker-1",
                 "task_id": "task-1",
                 "transport": "subagent-v2",
-                "worktree": str(tmp_path / "lane-1"),
+                "worktree": str(repo.resolve()),
                 "base": base,
                 "assignment_ref": "ticket-1",
                 "report": {
@@ -559,14 +638,12 @@ def test_ledger_facade_starts_applies_reports_and_briefs_idempotently(
                     "commit": base,
                     "changed_scope_ids": ["ticket-1"],
                     "actual_changed_files": ["tracked.txt"],
-                    "acceptance_proof": "criterion -> evidence",
-                    "test_portfolio_delta": "unchanged",
-                    "commands_and_results": ["focused proof passed"],
-                    "skipped_checks": [],
+                    "assignment_sha256": prepared["assignment"]["sha256"],
+                    "grounding_and_scope": "ticket and repository grounded",
+                    "proof": {"summary": "criterion -> focused proof passed"},
                     "risk_or_blocker": "none",
-                    "next_need": "root acceptance",
-                    "scope_notes": "bounded",
-                    "final_status": "complete",
+                    "required_root_action": "accept or reject",
+                    "final_worktree": {"head": base, "clean": True},
                 },
             }
         ),
@@ -583,7 +660,7 @@ def test_ledger_facade_starts_applies_reports_and_briefs_idempotently(
     assert result.returncode == 0, handed_off
 
     changed_return = json.loads(result_packet.read_text(encoding="utf-8"))
-    changed_return["report"]["final_status"] = "changed retry"
+    changed_return["report"]["final_worktree"] = {"head": base, "clean": False}
     result_packet.write_text(json.dumps(changed_return), encoding="utf-8")
     result, rejected_retry = helper(
         LEDGER,
@@ -600,7 +677,7 @@ def test_ledger_facade_starts_applies_reports_and_briefs_idempotently(
     assert "different payload" in retry_detail["error"]
 
     mismatched = json.loads(result_packet.read_text(encoding="utf-8"))
-    mismatched["report"]["final_status"] = "complete"
+    mismatched["report"]["final_worktree"] = {"head": base, "clean": True}
     mismatched["task_id"] = "task-other"
     result_packet.write_text(json.dumps(mismatched), encoding="utf-8")
     result, rejected = helper(
@@ -614,6 +691,209 @@ def test_ledger_facade_starts_applies_reports_and_briefs_idempotently(
     assert result.returncode == 1
     detail = json.loads(Path(rejected["detail"]).read_text(encoding="utf-8"))
     assert "mismatched task_id" in detail["error"]
+
+
+def test_dispatch_reports_and_recovers_a_preserved_lane_after_failed_preflight(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    run = tmp_path / "run"
+    scope = tmp_path / "scope.json"
+    scope.write_text(
+        json.dumps(
+            {
+                "root_actor_id": "root-agent",
+                "caller_id": "caller",
+                "parent_claim": {
+                    "state": "retained",
+                    "work_item": "parent",
+                    "owner": "root-agent",
+                    "token": "claim-parent",
+                    "readback": "retained",
+                },
+                "tracker_snapshot": tracker_snapshot(run, "parent", ["ticket-1"]),
+                "charter": {"id": "charter", "outcome": "deliver"},
+            }
+        ),
+        encoding="utf-8",
+    )
+    result, started = helper(
+        LEDGER, "start", "--run", str(run), "--repo", str(repo), "--in", str(scope)
+    )
+    assert result.returncode == 0, started
+    proof = tmp_path / "proof.json"
+    proof.write_text(json.dumps([sys.executable, "-c", "raise SystemExit(9)"]), encoding="utf-8")
+    packet = tmp_path / "dispatch.json"
+    packet.write_text(
+        json.dumps(
+            {
+                "kind": "prepare",
+                "work_item": "ticket-1",
+                "profile": "clear-worker",
+                "actor_id": "worker-1",
+                "attempt_id": "attempt-1",
+                "environment": "worktree",
+                "assignment": {"mode": "implementation", "ref": "ticket-1"},
+                "write_scope": ["tracked.txt"],
+                "claim": {
+                    "state": "retained",
+                    "work_item": "ticket-1",
+                    "actor_id": "worker-1",
+                    "owner": "root-agent",
+                    "token": "claim-ticket-1",
+                    "readback": "retained",
+                },
+                "lane": {
+                    "project_key": PROJECT_KEY,
+                    "base_root": str(tmp_path / "lanes"),
+                    "proof_command_file": str(proof),
+                    "python_provenance_reason": "test repository has no Python package",
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    result, blocked = helper(
+        LEDGER, "dispatch", "--run", str(run), "--in", str(packet)
+    )
+    assert result.returncode == 1
+    assert blocked["effect_started"] is True
+    recovery = blocked["recovery"]
+    assert recovery["kind"] == "isolated-lane"
+    worktree = Path(recovery["worktree"])
+    assert worktree.is_dir()
+    cleanup_result, cleanup = helper(
+        LANE,
+        "cleanup",
+        "--repo",
+        str(repo),
+        "--base-root",
+        recovery["recovery"]["base_root"],
+        "--worktree",
+        str(worktree),
+        "--run-id",
+        run.name,
+        "--item-id",
+        "ticket-1",
+        "--expected-head",
+        base,
+        "--disposition",
+        "preserved",
+    )
+    assert cleanup_result.returncode == 0, cleanup
+
+
+def test_dispatch_prepare_opens_the_configured_isolated_lane(tmp_path: Path) -> None:
+    repo, _ = repository(tmp_path)
+    lane_root = (tmp_path / "lanes" / PROJECT_KEY / "wt").resolve()
+    config = repo / ".codex/config.toml"
+    config.parent.mkdir()
+    encoded_root = str(lane_root).replace("\\", "\\\\")
+    config.write_text(
+        "default_permissions = \"project-lanes\"\n\n"
+        "[permissions.project-lanes.workspace_roots]\n"
+        f'"{encoded_root}" = true\n',
+        encoding="utf-8",
+    )
+    command("git", "add", ".codex/config.toml", cwd=repo)
+    command("git", "commit", "-m", "configure lanes", cwd=repo)
+    base = command("git", "rev-parse", "HEAD", cwd=repo).stdout.strip()
+    run = tmp_path / "run"
+    scope = tmp_path / "scope.json"
+    scope.write_text(
+        json.dumps(
+            {
+                "parent": "parent",
+                "children": ["ticket-1"],
+                "root_actor_id": "root-agent",
+                "caller_id": "caller",
+                "parent_claim": {
+                    "state": "retained",
+                    "work_item": "parent",
+                    "owner": "root-agent",
+                    "token": "parent-claim",
+                    "readback": "retained",
+                },
+                "tracker_snapshot": tracker_snapshot(
+                    run, "parent", ["ticket-1"]
+                ),
+                "charter": {"id": "charter", "outcome": "deliver"},
+            }
+        ),
+        encoding="utf-8",
+    )
+    result, started = helper(
+        LEDGER, "start", "--run", str(run), "--repo", str(repo), "--in", str(scope)
+    )
+    assert result.returncode == 0, started
+    packet = tmp_path / "dispatch.json"
+    packet.write_text(
+        json.dumps(
+            {
+                "kind": "prepare",
+                "work_item": "ticket-1",
+                "profile": "clear-worker",
+                "actor_id": "worker-1",
+                "attempt_id": "attempt-1",
+                "environment": "worktree",
+                "assignment": {"mode": "implementation", "ref": "ticket-1"},
+                "write_scope": ["tracked.txt"],
+                "lane": {
+                    "python_provenance_reason": "test repository has no Python package"
+                },
+                "claim": {
+                    "state": "retained",
+                    "work_item": "ticket-1",
+                    "actor_id": "worker-1",
+                    "owner": "root-agent",
+                    "token": "ticket-claim",
+                    "readback": "retained",
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    invalid_packet = json.loads(packet.read_text(encoding="utf-8"))
+    invalid_packet["claim"]["actor_id"] = "other-worker"
+    packet.write_text(json.dumps(invalid_packet), encoding="utf-8")
+    result, rejected = helper(
+        LEDGER, "dispatch", "--run", str(run), "--in", str(packet)
+    )
+    assert result.returncode == 1, rejected
+    assert not lane_root.exists()
+    invalid_packet["claim"]["actor_id"] = "worker-1"
+    packet.write_text(json.dumps(invalid_packet), encoding="utf-8")
+    result, prepared = helper(
+        LEDGER, "dispatch", "--run", str(run), "--in", str(packet)
+    )
+    assert result.returncode == 0, prepared
+    recorded = [
+        json.loads(line) for line in (run / "events.jsonl").read_text(encoding="utf-8").splitlines()
+    ]
+    preflight = next(event["data"] for event in recorded if event["event"] == "lane-preflight")
+    assert Path(preflight["worktree"]).is_dir()
+    assert Path(preflight["worktree"]).is_relative_to(lane_root)
+
+    cleanup_result, cleanup = helper(
+        LANE,
+        "cleanup",
+        "--repo",
+        str(repo),
+        "--base-root",
+        str(tmp_path / "lanes"),
+        "--worktree",
+        preflight["worktree"],
+        "--run-id",
+        run.name,
+        "--item-id",
+        "ticket-1",
+        "--expected-head",
+        base,
+        "--disposition",
+        "preserved",
+    )
+    assert cleanup_result.returncode == 0, cleanup
+    assert cleanup["state"] == "removed"
 
 
 def test_runtime_profile_resolver_emits_exact_collaboration_arguments() -> None:
@@ -635,69 +915,9 @@ def test_runtime_profile_resolver_emits_exact_collaboration_arguments() -> None:
     assert missing["code"] == "UNKNOWN_PROFILE"
 
 
-def test_runtime_six_rejects_lane_ready_without_task_receipt(tmp_path: Path) -> None:
-    repo, _ = repository(tmp_path)
-    events = tmp_path / "run" / "events.jsonl"
-    scope = tmp_path / "scope.json"
-    scope.write_text(
-        json.dumps(
-            {
-                "parent": "parent",
-                "root_actor_id": "root-agent",
-                "caller_id": "caller",
-                "parent_claim": {
-                    "state": "retained",
-                    "work_item": "parent",
-                    "owner": "root-agent",
-                    "token": "claim-parent",
-                    "readback": "retained",
-                },
-                "children": ["ticket-1"],
-                "charter": {"id": "parent-charter", "outcome": "deliver"},
-            }
-        ),
-        encoding="utf-8",
-    )
-    result, started = helper(
-        LEDGER,
-        "start",
-        "--run",
-        str(events.parent),
-        "--repo",
-        str(repo),
-        "--in",
-        str(scope),
-    )
-    assert result.returncode == 0, started
-
-    packet = tmp_path / "lane-ready.json"
-    packet.write_text(
-        json.dumps(
-            {
-                "kind": "lane-ready",
-                "work_item": "ticket-1",
-                "lane_id": "lane-1",
-                "actor_id": "worker-1",
-                "assignment": {
-                    "mode": "implementation",
-                    "ref": "ticket-1",
-                    "root_receipt": root_receipt("assign", "ticket-1", ""),
-                },
-            }
-        ),
-        encoding="utf-8",
-    )
-    result, rejected = helper(
-        LEDGER,
-        "apply",
-        "--run",
-        str(events.parent),
-        "--in",
-        str(packet),
-    )
-    assert result.returncode == 1
-    detail = json.loads(Path(rejected["detail"]).read_text(encoding="utf-8"))
-    assert "task receipt" in detail["error"]
+def test_runtime_seven_removes_the_lane_ready_compatibility_packet() -> None:
+    with pytest.raises(ValueError, match="worker-result or events"):
+        LEDGER_RUNTIME["packet_events"]({"kind": "lane-ready"})
 
 
 @pytest.mark.skipif(os.name != "nt", reason="Windows manual-lane default")
@@ -1154,7 +1374,7 @@ def test_lane_project_key_owns_one_repository_and_short_worktree_root(
     assert result.returncode == 0, cleanup
 
 
-def test_lane_preflight_requires_proof_or_an_explicit_skip(tmp_path: Path) -> None:
+def test_lane_preflight_uses_builtin_viability_and_requires_provenance(tmp_path: Path) -> None:
     repo, base = repository(tmp_path)
     created = create_lane(repo, base, tmp_path / "lanes")
 
@@ -1171,11 +1391,11 @@ def test_lane_preflight_requires_proof_or_an_explicit_skip(tmp_path: Path) -> No
         "worker-1",
     )
     assert result.returncode == 1
-    assert blocked["state"] == "blocked-proof"
+    assert blocked["state"] == "blocked-provenance"
     assert blocked["recoverable"] is True
     assert blocked["next_action"]
 
-    result, provenance_blocked = helper(
+    result, builtin = helper(
         LANE,
         "preflight",
         "--repo",
@@ -1186,11 +1406,16 @@ def test_lane_preflight_requires_proof_or_an_explicit_skip(tmp_path: Path) -> No
         base,
         "--actor-id",
         "worker-1",
-        "--proof-command-json",
-        json.dumps([sys.executable, "-c", "print('started')"]),
+        "--skip-python-provenance",
+        "--python-provenance-reason",
+        "test repository has no importable project package",
     )
-    assert result.returncode == 1
-    assert provenance_blocked["state"] == "blocked-provenance"
+    assert result.returncode == 0, builtin
+    assert builtin["startup_proof"] == {
+        "status": "passed",
+        "kind": "builtin-viability",
+        "checks": ["checkout", "index-lock", "git-objects"],
+    }
 
     result, skipped = helper(
         LANE,
@@ -1549,7 +1774,7 @@ def test_run_ledger_exposes_the_profile_resolver_and_five_campaign_commands() ->
         "start",
         "status",
         "apply",
-        "brief",
+        "dispatch",
         "finish",
     }
 
@@ -1604,7 +1829,7 @@ def test_brief_artifact_names_are_collision_safe() -> None:
     assert artifact_name(encoded) != encoded
 
 
-def test_runtime_six_resume_accepts_empty_exhaustive_lane_inventories(
+def test_runtime_seven_resume_accepts_empty_exhaustive_lane_inventories(
     tmp_path: Path,
 ) -> None:
     repo, base = repository(tmp_path)
@@ -1631,10 +1856,13 @@ def test_runtime_six_resume_accepts_empty_exhaustive_lane_inventories(
                     "readback": "retained",
                 },
                 "children": ["ticket-1"],
+                "tracker_snapshot": tracker_snapshot(
+                    tmp_path / "run", "parent", ["ticket-1"]
+                ),
                 "dispositions": {"ticket-1": "caller-deferred"},
                 "charter": {
                     "id": "charter",
-                    "runtime_contract": 6,
+                    "runtime_contract": 7,
                     "repair_generation_budget": 2,
                 },
             },
@@ -1769,6 +1997,42 @@ def bind_root_receipts(events: list[dict]) -> list[dict]:
 def current_review_events(base: str, lane_path: Path) -> list[dict]:
     root_checkout = (lane_path.parent / "repo").resolve()
     review_path = (lane_path.parent / "integration-checkout").resolve()
+    lane_path.parent.mkdir(parents=True, exist_ok=True)
+    brief_path = lane_path.parent / "assignment.md"
+    brief_path.write_text("frozen assignment\n", encoding="utf-8")
+    assignment_sha256 = hashlib.sha256(brief_path.read_bytes()).hexdigest()
+    review_brief_path = lane_path.parent / "review-assignment.md"
+    review_brief_path.write_text("frozen candidate review assignment\n", encoding="utf-8")
+    review_assignment_sha256 = hashlib.sha256(review_brief_path.read_bytes()).hexdigest()
+    snapshot_path = lane_path.parent / "tracker-snapshot.json"
+    snapshot_path.write_text(
+        json.dumps(
+            {
+                "schema": 1,
+                "tracker": "test",
+                "repository": "owner/repo",
+                "observed_at": "2026-08-02T00:00:00Z",
+                "parent": "parent",
+                "children": ["ticket-1"],
+                "nodes": [
+                    {
+                        "id": item,
+                        "title": item,
+                        "body": f"frozen body for {item}",
+                        "comments": [],
+                        "labels": [],
+                        "assignees": [],
+                        "state": "open",
+                    }
+                    for item in ("parent", "ticket-1")
+                ],
+                "edges": [],
+            },
+            sort_keys=True,
+        ),
+        encoding="utf-8",
+    )
+    snapshot_sha256 = hashlib.sha256(snapshot_path.read_bytes()).hexdigest()
     lane_receipt = {
         "lane_id": "lane-1",
         "agent_id": "clear-worker",
@@ -1824,6 +2088,8 @@ def current_review_events(base: str, lane_path: Path) -> list[dict]:
         "environment": "local",
         "worktree": str(review_path),
         "provider": "delegated-custody",
+        "brief_path": str(review_brief_path.resolve()),
+        "assignment_sha256": review_assignment_sha256,
     }
     events = [
         {
@@ -1842,9 +2108,17 @@ def current_review_events(base: str, lane_path: Path) -> list[dict]:
                     "readback": "retained",
                 },
                 "children": ["ticket-1"],
+                "tracker_snapshot": {
+                    "schema": 1,
+                    "path": str(snapshot_path.resolve()),
+                    "sha256": snapshot_sha256,
+                    "repository": "owner/repo",
+                    "parent": "parent",
+                    "children": ["ticket-1"],
+                },
                 "charter": {
                     "id": "parent-charter",
-                    "runtime_contract": 6,
+                    "runtime_contract": 7,
                     "repair_generation_budget": 2,
                 },
             },
@@ -1853,7 +2127,22 @@ def current_review_events(base: str, lane_path: Path) -> list[dict]:
             "event": "lane-create",
             "event_id": "lane-create",
             "work_item": "ticket-1",
-            "data": lane_receipt,
+            "data": {
+                key: lane_receipt[key]
+                for key in (
+                    "lane_id",
+                    "agent_id",
+                    "runtime_agent_type",
+                    "actor_id",
+                    "transport",
+                    "requested_model",
+                    "requested_effort",
+                    "environment",
+                    "assignment_mode",
+                    "assignment_ref",
+                    "root_receipt",
+                )
+            },
         },
         {
             "event": "lane-preflight",
@@ -1892,8 +2181,46 @@ def current_review_events(base: str, lane_path: Path) -> list[dict]:
                     "token": "claim-ticket-1",
                     "readback": "claim retained",
                 },
-                "assignment_sha256": "a" * 64,
+                "attempt_id": "ticket-1-attempt-1",
+                "task_name": "ticket_1",
+                "prepare_sha256": "c" * 64,
+                "brief_path": str(brief_path.resolve()),
+                "assignment_sha256": assignment_sha256,
+                "tracker_snapshot_sha256": snapshot_sha256,
                 "root_receipt": root_receipt("dispatch", "ticket-1", base),
+            },
+        },
+        {
+            "event": "spawn-receipt",
+            "event_id": "spawn-receipt",
+            "work_item": "ticket-1",
+            "data": {
+                **{
+                    key: lane_receipt[key]
+                    for key in (
+                        "lane_id",
+                        "agent_id",
+                        "runtime_agent_type",
+                        "actor_id",
+                        "task_id",
+                        "transport",
+                        "requested_model",
+                        "requested_effort",
+                        "environment",
+                        "task_state",
+                        "report_transport",
+                        "liveness_cursor",
+                        "task_id_state",
+                        "provider_acceptance",
+                        "environment_match",
+                        "resolved_model_status",
+                        "resolved_model",
+                        "resolved_effort_status",
+                        "resolved_effort",
+                    )
+                },
+                "attempt_id": "ticket-1-attempt-1",
+                "assignment_sha256": assignment_sha256,
             },
         },
         {
@@ -1914,7 +2241,7 @@ def current_review_events(base: str, lane_path: Path) -> list[dict]:
                     )
                 },
                 "assignment_ref": "ticket-1",
-                "assignment_sha256": "a" * 64,
+                "assignment_sha256": assignment_sha256,
                 "worktree": str(lane_path),
                 "base": base,
                 "status": "done",
@@ -1926,6 +2253,10 @@ def current_review_events(base: str, lane_path: Path) -> list[dict]:
                 "commands_and_results": ["focused proof passed"],
                 "skipped_checks": [],
                 "risk_or_blocker": "none",
+                "grounding_and_scope": "bounded repository grounding",
+                "proof": {"summary": "focused proof passed"},
+                "required_root_action": "accept or reject",
+                "final_worktree": {"head": base, "clean": True},
                 "next_need": "root acceptance",
                 "scope_notes": "bounded",
                 "final_status": "complete",
@@ -2063,7 +2394,7 @@ def current_review_events(base: str, lane_path: Path) -> list[dict]:
     return bind_root_receipts(events)
 
 
-def runtime_six_local_lane_events(
+def runtime_seven_local_lane_events(
     base: str,
     checkout: Path,
     *,
@@ -2071,33 +2402,21 @@ def runtime_six_local_lane_events(
     model: str,
     effort: str,
     transport: str,
+    active: bool = False,
 ) -> list[dict]:
-    events = current_review_events(base, checkout)[:3]
+    events = current_review_events(base, checkout)[:5 if active else 3]
     receipt = events[1]["data"]
     receipt.update(
         {
             "agent_id": agent_id,
             "runtime_agent_type": "luna_max" if agent_id == "clear-worker" else "default",
             "transport": transport,
-            "report_transport": transport,
-            "requested_model": model,
-            "requested_effort": effort,
-            "resolved_model": model,
-            "resolved_effort": effort,
-            "environment": "local",
-        }
-    )
-    receipt["provider_acceptance"].update(
-        {
-            "agent_id": agent_id,
-            "runtime_agent_type": "luna_max" if agent_id == "clear-worker" else "default",
             "requested_model": model,
             "requested_effort": effort,
             "environment": "local",
-            "provider": "delegated-custody",
-            "worktree": str(checkout),
         }
     )
+    events[2]["data"].update(receipt)
     events[2]["data"].update(
         {
             "worktree": str(checkout),
@@ -2108,10 +2427,36 @@ def runtime_six_local_lane_events(
         }
     )
     events[2]["data"].pop("root_checkout")
+    if active:
+        spawn = events[4]["data"]
+        spawn.update(
+            {
+                "agent_id": agent_id,
+                "runtime_agent_type": receipt["runtime_agent_type"],
+                "transport": transport,
+                "report_transport": transport,
+                "requested_model": model,
+                "requested_effort": effort,
+                "resolved_model": model,
+                "resolved_effort": effort,
+                "environment": "local",
+            }
+        )
+        spawn["provider_acceptance"].update(
+            {
+                "agent_id": agent_id,
+                "runtime_agent_type": receipt["runtime_agent_type"],
+                "requested_model": model,
+                "requested_effort": effort,
+                "environment": "local",
+                "provider": "delegated-custody",
+                "worktree": str(checkout),
+            }
+        )
     return bind_root_receipts(events)
 
 
-def test_runtime_six_routes_serial_workers_without_root_implementation(
+def test_runtime_seven_routes_serial_workers_without_root_implementation(
     tmp_path: Path,
 ) -> None:
     repo, base = repository(tmp_path)
@@ -2122,7 +2467,7 @@ def test_runtime_six_routes_serial_workers_without_root_implementation(
         ("demanding-worker", "gpt-5.6-sol", "high", "subagent-v2"),
     )
     for agent_id, model, effort, transport in cases:
-        events = runtime_six_local_lane_events(
+        events = runtime_seven_local_lane_events(
             base,
             repo,
             agent_id=agent_id,
@@ -2132,7 +2477,7 @@ def test_runtime_six_routes_serial_workers_without_root_implementation(
         )
         assert LEDGER_RUNTIME["derive_state"](events, str(repo))["errors"] == []
 
-    leaked_root = runtime_six_local_lane_events(
+    leaked_root = runtime_seven_local_lane_events(
         base,
         repo,
         agent_id="clear-worker",
@@ -2151,7 +2496,7 @@ def test_runtime_six_routes_serial_workers_without_root_implementation(
         for error in invalid["errors"]
     )
 
-    crossed = runtime_six_local_lane_events(
+    crossed = runtime_seven_local_lane_events(
         base,
         repo,
         agent_id="clear-worker",
@@ -2162,7 +2507,7 @@ def test_runtime_six_routes_serial_workers_without_root_implementation(
     invalid = LEDGER_RUNTIME["derive_state"](crossed, str(repo))
     assert any("requires subagent-v2 transport" in error for error in invalid["errors"])
 
-    root_actor = runtime_six_local_lane_events(
+    root_actor = runtime_seven_local_lane_events(
         base,
         repo,
         agent_id="adaptive-worker",
@@ -2171,13 +2516,12 @@ def test_runtime_six_routes_serial_workers_without_root_implementation(
         transport="subagent-v2",
     )
     root_actor[1]["data"]["actor_id"] = "root-agent"
-    root_actor[1]["data"]["provider_acceptance"]["actor_id"] = "root-agent"
     bind_root_receipts(root_actor)
     invalid = LEDGER_RUNTIME["derive_state"](root_actor, str(repo))
     assert any("root cannot be a worker actor" in error for error in invalid["errors"])
 
 
-def test_runtime_six_reuses_the_same_lane_for_pre_landing_correction(
+def test_runtime_seven_reuses_the_same_lane_for_pre_landing_correction(
     tmp_path: Path,
 ) -> None:
     repo, base = repository(tmp_path)
@@ -2190,11 +2534,10 @@ def test_runtime_six_reuses_the_same_lane_for_pre_landing_correction(
     command("git", "commit", "--amend", "-m", "correct returned commit", cwd=repo)
     successor = command("git", "rev-parse", "HEAD", cwd=repo).stdout.strip()
 
-    events = current_review_events(base, (tmp_path / "lane").resolve())[:5]
-    events[0]["data"]["charter"]["runtime_contract"] = 6
-    events[3]["data"]["assignment_sha256"] = "a" * 64
-    events[4]["data"]["assignment_sha256"] = "a" * 64
-    events[4]["data"]["commit"] = first
+    events = current_review_events(base, (tmp_path / "lane").resolve())[:6]
+    events[0]["data"]["charter"]["runtime_contract"] = 7
+    events[5]["data"]["commit"] = first
+    events[5]["data"]["final_worktree"] = {"head": first, "clean": True}
     feedback_data = {"root_receipt": root_receipt("route-correction", "ticket-1", first)}
     events.append(
         {
@@ -2211,13 +2554,14 @@ def test_runtime_six_reuses_the_same_lane_for_pre_landing_correction(
         }
     )
     corrected_return = {
-        **events[4],
+        **events[5],
         "event_id": "handoff-corrected",
         "data": {
-            **events[4]["data"],
+            **events[5]["data"],
             "assignment_ref": "feedback-1",
-            "commit": successor,
-            "supersedes_commit": first,
+                "commit": successor,
+                "final_worktree": {"head": successor, "clean": True},
+                "supersedes_commit": first,
         },
     }
     events.extend(
@@ -2260,7 +2604,7 @@ def test_runtime_six_reuses_the_same_lane_for_pre_landing_correction(
     assert state["items"]["ticket-1"]["landed"] == successor
 
     stale_accept = [
-        *events[:6],
+        *events[:7],
         {
             "event": "accept",
             "event_id": "accept-stale-return",
@@ -2278,10 +2622,10 @@ def test_runtime_six_reuses_the_same_lane_for_pre_landing_correction(
     assert any("feedback requires a corrected successor Return" in error for error in invalid["errors"])
 
     missing_supersession = [dict(event) for event in events]
-    missing_supersession[6] = {
-        **missing_supersession[6],
+    missing_supersession[7] = {
+        **missing_supersession[7],
         "data": {
-            **missing_supersession[6]["data"],
+            **missing_supersession[7]["data"],
             "supersedes_commit": None,
         },
     }
@@ -2289,7 +2633,7 @@ def test_runtime_six_reuses_the_same_lane_for_pre_landing_correction(
     assert any("must supersede the prior commit" in error for error in invalid["errors"])
 
 
-def test_runtime_six_serializes_local_workers_and_delegates_integration_correction(
+def test_runtime_seven_serializes_local_workers_and_delegates_integration_correction(
     tmp_path: Path,
 ) -> None:
     repo, base = repository(tmp_path)
@@ -2297,36 +2641,20 @@ def test_runtime_six_serializes_local_workers_and_delegates_integration_correcti
     command("git", "add", "tracked.txt", cwd=repo)
     command("git", "commit", "-m", "advance first serial worker", cwd=repo)
     advanced = command("git", "rev-parse", "HEAD", cwd=repo).stdout.strip()
-    events = runtime_six_local_lane_events(
+    events = runtime_seven_local_lane_events(
         base,
         repo,
         agent_id="adaptive-worker",
         model="gpt-5.6-terra",
         effort="xhigh",
         transport="subagent-v2",
+        active=True,
     )
     events[0]["data"]["children"] = ["ticket-1", "ticket-2"]
-    receipt = events[1]["data"]
+    events[0]["data"]["tracker_snapshot"]["children"] = ["ticket-1", "ticket-2"]
+    receipt = events[4]["data"]
     events.extend(
         [
-            {
-                "event": "dispatch",
-                "event_id": "dispatch-1",
-                "work_item": "ticket-1",
-                "data": {
-                    "lane_id": "lane-1",
-                    "claim": {
-                        "state": "retained",
-                        "work_item": "ticket-1",
-                        "actor_id": "worker-agent",
-                        "owner": "root-agent",
-                        "token": "claim-ticket-1",
-                        "readback": "retained",
-                    },
-                    "root_receipt": root_receipt("dispatch", "ticket-1", base),
-                    "assignment_sha256": "a" * 64,
-                },
-            },
             {
                 "event": "handoff",
                 "event_id": "handoff-1",
@@ -2340,7 +2668,6 @@ def test_runtime_six_serializes_local_workers_and_delegates_integration_correcti
                             "runtime_agent_type",
                             "actor_id",
                             "task_id",
-                            "host_id",
                             "transport",
                         )
                     },
@@ -2350,16 +2677,20 @@ def test_runtime_six_serializes_local_workers_and_delegates_integration_correcti
                     "status": "done",
                     "commit": advanced,
                     "changed_scope_ids": ["ticket-1"],
-                    "actual_changed_files": [],
+                    "actual_changed_files": ["tracked.txt"],
                     "acceptance_proof": "criterion -> evidence",
                     "test_portfolio_delta": "unchanged",
                     "commands_and_results": ["focused proof passed"],
                     "skipped_checks": [],
                     "risk_or_blocker": "none",
+                    "grounding_and_scope": "bounded repository grounding",
+                    "proof": {"summary": "focused proof passed"},
+                    "required_root_action": "accept or reject",
+                    "final_worktree": {"head": advanced, "clean": True},
                     "next_need": "root acceptance",
                     "scope_notes": [],
                     "final_status": "clean",
-                    "assignment_sha256": "a" * 64,
+                    "assignment_sha256": receipt["assignment_sha256"],
                 },
             },
             {
@@ -2393,7 +2724,7 @@ def test_runtime_six_serializes_local_workers_and_delegates_integration_correcti
         ]
     )
 
-    second = runtime_six_local_lane_events(
+    second = runtime_seven_local_lane_events(
         advanced,
         repo,
         agent_id="demanding-worker",
@@ -2408,31 +2739,20 @@ def test_runtime_six_serializes_local_workers_and_delegates_integration_correcti
     second[0]["data"].update(
         {
             "actor_id": "worker-agent-2",
-            "task_id": "worker-task-2",
-            "host_id": "worker-host-2",
             "assignment_ref": "ticket-2",
-        }
-    )
-    second[0]["data"]["provider_acceptance"].update(
-        {
-            "lane_id": "lane-2",
-            "actor_id": "worker-agent-2",
-            "task_id": "worker-task-2",
-            "host_id": "worker-host-2",
         }
     )
     second[1]["data"].update(
         {
             "actor_id": "worker-agent-2",
-            "task_id": "worker-task-2",
-            "host_id": "worker-host-2",
+            "assignment_ref": "ticket-2",
         }
     )
     events.extend(second)
     bind_root_receipts(events)
     state = LEDGER_RUNTIME["derive_state"](events, str(repo))
     assert state["errors"] == []
-    assert state["lanes"]["lane-2"]["state"] == "ready"
+    assert state["lanes"]["lane-2"]["state"] == "prepared"
 
     stale = json.loads(json.dumps(events))
     stale[-1]["data"].update({"base": base, "observed_head": base})
@@ -2441,7 +2761,6 @@ def test_runtime_six_serializes_local_workers_and_delegates_integration_correcti
 
     reused_actor = json.loads(json.dumps(events))
     reused_actor[-2]["data"]["actor_id"] = "worker-agent"
-    reused_actor[-2]["data"]["provider_acceptance"]["actor_id"] = "worker-agent"
     bind_root_receipts(reused_actor)
     invalid = LEDGER_RUNTIME["derive_state"](reused_actor, str(repo))
     assert any("reuses a worker actor identity" in error for error in invalid["errors"])
@@ -2467,15 +2786,13 @@ def test_runtime_six_serializes_local_workers_and_delegates_integration_correcti
     bind_root_receipts(routed)
     assert LEDGER_RUNTIME["derive_state"](routed, str(repo))["errors"] == []
 
-def test_runtime_six_binds_review_repair_to_a_delegated_successor(
+def test_runtime_seven_binds_review_repair_to_a_delegated_successor(
     tmp_path: Path,
 ) -> None:
     repo, base = repository(tmp_path)
     events = current_review_events(base, (tmp_path / "worker-lane").resolve())
-    events[0]["data"]["charter"]["runtime_contract"] = 6
-    events[3]["data"]["assignment_sha256"] = "a" * 64
-    events[4]["data"]["assignment_sha256"] = "a" * 64
-    events[6]["data"].update(
+    events[0]["data"]["charter"]["runtime_contract"] = 7
+    events[7]["data"].update(
         {
             "lane_head": base,
             "lane_clean": True,
@@ -2483,7 +2800,7 @@ def test_runtime_six_binds_review_repair_to_a_delegated_successor(
             "liveness_cursor": "worker-complete",
         }
     )
-    events[8]["data"]["tasks"][0].update(
+    events[9]["data"]["tasks"][0].update(
         {"head": base, "clean": True, "liveness_cursor": "worker-complete"}
     )
     finding = {
@@ -2494,8 +2811,8 @@ def test_runtime_six_binds_review_repair_to_a_delegated_successor(
         "evidence": "failing proof A",
         "required_proof": "proof A passes",
     }
-    events[10]["decision"] = "blocked"
-    events[10]["data"]["findings"] = [finding]
+    events[11]["decision"] = "blocked"
+    events[11]["data"]["findings"] = [finding]
     events.append(
         {
             "event": "repair-plan",
@@ -2516,64 +2833,47 @@ def test_runtime_six_binds_review_repair_to_a_delegated_successor(
     command("git", "commit", "-m", "repair review finding", cwd=repo)
     repaired = command("git", "rev-parse", "HEAD", cwd=repo).stdout.strip()
 
-    repair_lane = runtime_six_local_lane_events(
+    repair_lane = runtime_seven_local_lane_events(
         base,
         repo,
         agent_id="serial-integrator",
         model="gpt-5.6-sol",
         effort="medium",
         transport="subagent-v2",
-    )[1:3]
+        active=True,
+    )[1:5]
     for event in repair_lane:
         event["work_item"] = "repair-1"
         event["event_id"] = f"repair-{event['event_id']}"
         event["data"]["lane_id"] = "repair-lane"
-    repair_receipt = repair_lane[0]["data"]
-    repair_receipt.update(
+    repair_lane[0]["data"].update(
         {
             "actor_id": "repair-worker",
-            "task_id": "repair-task",
-            "host_id": "repair-host",
             "assignment_mode": "review-repair",
             "assignment_ref": "repair-1",
-        }
-    )
-    repair_receipt["provider_acceptance"].update(
-        {
-            "lane_id": "repair-lane",
-            "actor_id": "repair-worker",
-            "task_id": "repair-task",
-            "host_id": "repair-host",
         }
     )
     repair_lane[1]["data"].update(
         {
             "actor_id": "repair-worker",
-            "task_id": "repair-task",
-            "host_id": "repair-host",
+            "assignment_mode": "review-repair",
+            "assignment_ref": "repair-1",
         }
+    )
+    repair_lane[2]["data"]["claim"].update(
+        {
+            "actor_id": "repair-worker",
+            "work_item": "repair-1",
+        }
+    )
+    repair_receipt = repair_lane[3]["data"]
+    repair_receipt.update({"actor_id": "repair-worker", "task_id": "repair-task"})
+    repair_receipt["provider_acceptance"].update(
+        {"lane_id": "repair-lane", "actor_id": "repair-worker", "task_id": "repair-task"}
     )
     events.extend(repair_lane)
     events.extend(
         [
-            {
-                "event": "dispatch",
-                "event_id": "repair-dispatch",
-                "work_item": "repair-1",
-                "data": {
-                    "lane_id": "repair-lane",
-                    "claim": {
-                        "state": "retained",
-                        "work_item": "repair-1",
-                        "actor_id": "repair-worker",
-                        "owner": "root-agent",
-                        "token": "claim-repair-1",
-                        "readback": "retained",
-                    },
-                    "root_receipt": root_receipt("dispatch", "repair-1", base),
-                    "assignment_sha256": "b" * 64,
-                },
-            },
             {
                 "event": "handoff",
                 "event_id": "repair-handoff",
@@ -2587,7 +2887,6 @@ def test_runtime_six_binds_review_repair_to_a_delegated_successor(
                             "runtime_agent_type",
                             "actor_id",
                             "task_id",
-                            "host_id",
                             "transport",
                         )
                     },
@@ -2603,10 +2902,14 @@ def test_runtime_six_binds_review_repair_to_a_delegated_successor(
                     "commands_and_results": ["proof A passed"],
                     "skipped_checks": [],
                     "risk_or_blocker": "none",
+                    "grounding_and_scope": "bounded review repair",
+                    "proof": {"summary": "F1 proof A passed"},
+                    "required_root_action": "accept or reject",
+                    "final_worktree": {"head": repaired, "clean": True},
                     "next_need": "root acceptance",
                     "scope_notes": [],
                     "final_status": "clean",
-                    "assignment_sha256": "b" * 64,
+                    "assignment_sha256": repair_receipt["assignment_sha256"],
                 },
             },
             {
@@ -2704,7 +3007,7 @@ def test_runtime_six_binds_review_repair_to_a_delegated_successor(
     assert state["integration_head"] == repaired
     assert "review has not passed" in LEDGER_RUNTIME["intent_errors"](state, "lock")
 
-    remediation_invocation = json.loads(json.dumps(events[9]))
+    remediation_invocation = json.loads(json.dumps(events[10]))
     remediation_invocation.update(
         {
             "event_id": "remediation-review-invocation",
@@ -2739,7 +3042,7 @@ def test_runtime_six_binds_review_repair_to_a_delegated_successor(
         "select-review", "parent", repaired, remediation_data
     )
 
-    remediation_decision = json.loads(json.dumps(events[10]))
+    remediation_decision = json.loads(json.dumps(events[11]))
     remediation_decision.update(
         {
             "event_id": "remediation-review-decision",
@@ -2775,15 +3078,13 @@ def test_runtime_six_binds_review_repair_to_a_delegated_successor(
     assert any("Repair worker provenance differs" in error for error in invalid["errors"])
 
 
-def test_runtime_six_correction_lane_becomes_truthfully_review_ready(
+def test_runtime_seven_correction_lane_becomes_truthfully_review_ready(
     tmp_path: Path,
 ) -> None:
     repo, base = repository(tmp_path)
-    events = current_review_events(base, (tmp_path / "worker-lane").resolve())[:7]
-    events[0]["data"]["charter"]["runtime_contract"] = 6
-    events[3]["data"]["assignment_sha256"] = "a" * 64
-    events[4]["data"]["assignment_sha256"] = "a" * 64
-    events[6]["data"].update(
+    events = current_review_events(base, (tmp_path / "worker-lane").resolve())[:8]
+    events[0]["data"]["charter"]["runtime_contract"] = 7
+    events[7]["data"].update(
         {
             "lane_head": base,
             "lane_clean": True,
@@ -2812,68 +3113,52 @@ def test_runtime_six_correction_lane_becomes_truthfully_review_ready(
     command("git", "commit", "-m", "correct integration", cwd=repo)
     corrected = command("git", "rev-parse", "HEAD", cwd=repo).stdout.strip()
 
-    lane_events = runtime_six_local_lane_events(
+    lane_events = runtime_seven_local_lane_events(
         base,
         repo,
         agent_id="serial-integrator",
         model="gpt-5.6-sol",
         effort="high",
         transport="subagent-v2",
-    )[1:3]
+        active=True,
+    )[1:5]
     for event in lane_events:
         event["work_item"] = "correction-1"
         event["event_id"] = f"correction-{event['event_id']}"
         event["data"]["lane_id"] = "correction-lane"
-    receipt = lane_events[0]["data"]
-    receipt.update(
+    lane_events[0]["data"].update(
         {
             "actor_id": "integrator-agent",
-            "task_id": "integrator-task",
-            "host_id": "integrator-host",
             "assignment_mode": "integration-correction",
             "assignment_ref": "regression-1",
         }
     )
-    receipt["provider_acceptance"].update(
+    lane_events[1]["data"].update(
         {
-            "lane_id": "correction-lane",
             "actor_id": "integrator-agent",
-            "task_id": "integrator-task",
-            "host_id": "integrator-host",
+            "assignment_mode": "integration-correction",
+            "assignment_ref": "regression-1",
         }
     )
-    lane_events[1]["data"].update(
-        {"actor_id": "integrator-agent", "task_id": "integrator-task", "host_id": "integrator-host"}
+    lane_events[2]["data"]["claim"].update(
+        {"work_item": "correction-1", "actor_id": "integrator-agent"}
+    )
+    receipt = lane_events[3]["data"]
+    receipt.update({"actor_id": "integrator-agent", "task_id": "integrator-task"})
+    receipt["provider_acceptance"].update(
+        {"lane_id": "correction-lane", "actor_id": "integrator-agent", "task_id": "integrator-task"}
     )
     events.extend(lane_events)
     events.extend(
         [
             {
-                "event": "dispatch",
-                "event_id": "correction-dispatch",
-                "work_item": "correction-1",
-                "data": {
-                    "lane_id": "correction-lane",
-                    "claim": {
-                        "state": "retained",
-                        "work_item": "correction-1",
-                        "actor_id": "integrator-agent",
-                        "owner": "root-agent",
-                        "token": "claim-correction",
-                        "readback": "retained",
-                    },
-                    "assignment_sha256": "c" * 64,
-                    "root_receipt": root_receipt("dispatch", "correction-1", base),
-                },
-            },
-            {
                 "event": "handoff",
                 "event_id": "correction-handoff",
                 "work_item": "correction-1",
                 "data": {
-                    **{key: receipt[key] for key in ("lane_id", "agent_id", "runtime_agent_type", "actor_id", "task_id", "host_id", "transport")},
+                    **{key: receipt[key] for key in ("lane_id", "agent_id", "runtime_agent_type", "actor_id", "task_id", "transport")},
                     "assignment_ref": "regression-1",
-                    "assignment_sha256": "c" * 64,
+                    "assignment_sha256": receipt["assignment_sha256"],
                     "worktree": str(repo),
                     "base": base,
                     "status": "done",
@@ -2885,6 +3170,10 @@ def test_runtime_six_correction_lane_becomes_truthfully_review_ready(
                     "commands_and_results": ["loop-close passed"],
                     "skipped_checks": [],
                     "risk_or_blocker": "none",
+                    "grounding_and_scope": "bounded integration correction",
+                    "proof": {"summary": "RED to green and loop-close passed"},
+                    "required_root_action": "accept or reject",
+                    "final_worktree": {"head": corrected, "clean": True},
                     "next_need": "root acceptance",
                     "scope_notes": [],
                     "final_status": "clean",
@@ -2951,7 +3240,7 @@ def test_runtime_six_correction_lane_becomes_truthfully_review_ready(
     assert state["lanes"]["correction-lane"]["worker_sha"] == corrected
 
 
-def test_runtime_six_binds_review_return_to_fresh_task(tmp_path: Path) -> None:
+def test_runtime_seven_binds_review_return_to_fresh_task(tmp_path: Path) -> None:
     ledger = runpy.run_path(str(LEDGER))
     base = "a" * 40
     events = current_review_events(base, (tmp_path / "lane").resolve())
@@ -2976,7 +3265,7 @@ def test_runtime_six_binds_review_return_to_fresh_task(tmp_path: Path) -> None:
     assert any("review task is an implementation task" in error for error in invalid["errors"])
 
 
-def test_runtime_six_reselects_route_once_but_does_not_retry_incomplete_review(
+def test_runtime_seven_reselects_route_once_but_does_not_retry_incomplete_review(
     tmp_path: Path,
 ) -> None:
     _, base = repository(tmp_path)
@@ -3039,7 +3328,7 @@ def test_runtime_six_reselects_route_once_but_does_not_retry_incomplete_review(
     )
 
 
-def test_runtime_six_requires_both_high_assurance_core_returns(
+def test_runtime_seven_requires_both_high_assurance_core_returns(
     tmp_path: Path,
 ) -> None:
     repo, base = repository(tmp_path)
@@ -3177,7 +3466,7 @@ def test_runtime_six_requires_both_high_assurance_core_returns(
     )
 
 
-def test_runtime_six_binds_root_and_automatic_repair(tmp_path: Path) -> None:
+def test_runtime_seven_binds_root_and_automatic_repair(tmp_path: Path) -> None:
     ledger = runpy.run_path(str(LEDGER))
     base = "a" * 40
     events = current_review_events(base, (tmp_path / "lane").resolve())
@@ -3230,12 +3519,12 @@ def test_runtime_six_binds_root_and_automatic_repair(tmp_path: Path) -> None:
     assert any("decision-required blocker" in error for error in invalid["errors"])
 
 
-def test_runtime_six_validates_route_lane_identity_and_manual_provider(
+def test_runtime_seven_validates_route_lane_identity_and_manual_provider(
     tmp_path: Path,
 ) -> None:
     ledger = runpy.run_path(str(LEDGER))
     base = "b" * 40
-    events = current_review_events(base, (tmp_path / "lane").resolve())[:3]
+    events = current_review_events(base, (tmp_path / "lane").resolve())[:5]
 
     missing_root_checkout = json.loads(json.dumps(events))
     missing_root_checkout[2]["data"].pop("root_checkout")
@@ -3254,20 +3543,20 @@ def test_runtime_six_validates_route_lane_identity_and_manual_provider(
     assert any("agent binding does not match" in error for error in invalid["errors"])
 
     provisional = [dict(event) for event in events]
-    provisional[1] = {
-        **provisional[1],
-        "data": {**provisional[1]["data"], "task_id_state": "provisional"},
+    provisional[4] = {
+        **provisional[4],
+        "data": {**provisional[4]["data"], "task_id_state": "provisional"},
     }
     invalid = ledger["derive_state"](provisional)
-    assert any("task ID is not canonical" in error for error in invalid["errors"])
+    assert any("not active and canonical" in error for error in invalid["errors"])
 
     unrelated_receipt = [dict(event) for event in events]
-    unrelated_receipt[1] = {
-        **unrelated_receipt[1],
+    unrelated_receipt[4] = {
+        **unrelated_receipt[4],
         "data": {
-            **unrelated_receipt[1]["data"],
+            **unrelated_receipt[4]["data"],
             "provider_acceptance": {
-                **unrelated_receipt[1]["data"]["provider_acceptance"],
+                **unrelated_receipt[4]["data"]["provider_acceptance"],
                 "task_id": "other-task",
             },
         },
@@ -3293,33 +3582,15 @@ def test_runtime_six_validates_route_lane_identity_and_manual_provider(
     invalid = ledger["derive_state"](reused_lane)
     assert any("reuses a lane ID" in error for error in invalid["errors"])
 
-    manual = [dict(event) for event in events]
-    manual[1] = {
-        **manual[1],
-        "data": {
-            **manual[1]["data"],
-                "transport": "subagent-v2",
-                "report_transport": "subagent-v2",
-            "provider_acceptance": {
-                **manual[1]["data"]["provider_acceptance"],
-                "provider": "manual-helper",
-            },
-        },
-    }
-    manual[2] = {
-        **manual[2],
-        "data": {**manual[2]["data"], "provider": "manual-helper"},
-    }
-    bind_root_receipts(manual)
-    valid = ledger["derive_state"](manual)
+    valid = ledger["derive_state"](events)
     assert valid["errors"] == []
 
 
-def test_runtime_six_requires_cleanup_and_resume_evidence(tmp_path: Path) -> None:
+def test_runtime_seven_requires_cleanup_and_resume_evidence(tmp_path: Path) -> None:
     ledger = runpy.run_path(str(LEDGER))
     base = "c" * 40
     lane_path = (tmp_path / "lane").resolve()
-    landed = current_review_events(base, lane_path)[:7]
+    landed = current_review_events(base, lane_path)[:8]
 
     shallow_cleanup = landed + [
         {
@@ -3598,6 +3869,9 @@ def test_finish_is_nonmutating_when_the_run_is_incomplete(
                     "readback": "retained",
                 },
                 "children": ["ticket-1"],
+                "tracker_snapshot": tracker_snapshot(
+                    run, "parent", ["ticket-1"]
+                ),
                 "charter": {"id": "parent-charter", "outcome": "deliver"},
             }
         ),
@@ -3626,7 +3900,7 @@ def test_finish_is_nonmutating_when_the_run_is_incomplete(
     assert Path(blocked["detail"]).is_file()
 
 
-def test_runtime_six_finish_records_the_supplied_root_release_receipt(
+def test_runtime_seven_finish_records_the_supplied_root_release_receipt(
     tmp_path: Path,
 ) -> None:
     repo, base = repository(tmp_path)
@@ -3652,7 +3926,7 @@ def test_runtime_six_finish_records_the_supplied_root_release_receipt(
                     "state": "verified",
                     "delivered": "ticket implementation",
                     "acceptance_evidence": "accepted",
-                    "proof": "passed",
+                    "proof": {"summary": "passed"},
                     "review": "passed",
                     "reviewed_head": base,
                     "landed_head": base,

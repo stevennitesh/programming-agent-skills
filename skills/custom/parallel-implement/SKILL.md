@@ -46,6 +46,13 @@ any caller-supplied residual-risk policy with its identity and evidence. Freeze
 each ticket's To Tickets execution profile. Tickets remain factual and
 model-neutral; absent residual-risk policy means caller-only acceptance.
 
+Capture one complete tracker snapshot containing the parent, ordered children,
+full ticket bodies and comments, labels, assignees, native sub-issue read-back,
+and verified dependency edges. Bind its path and SHA-256 at ledger start. Use
+that snapshot for campaign meaning. If live tracker evidence exposes
+consequential drift, checkpoint the run; changed meaning, authority, or frontier
+starts a new run and snapshot.
+
 Require every profile to record grounding, semantic ownership, authority,
 dependencies, expected production writes, correctness and robustness,
 canonical proof owners and consumers, Change Closure, and any applicable
@@ -95,9 +102,9 @@ escalation. A matching later condition overrides every earlier one:
 Claim each selected ticket and read back the claim. Launch each worker through
 [AGENT-LANES.md](references/AGENT-LANES.md), which owns runtime binding,
 starting state, isolation, readiness, liveness, Return, and cleanup.
-
-Generate the bounded assignment through
-[WORKER-BRIEF.md](references/WORKER-BRIEF.md).
+Use `run_ledger.py dispatch` to prepare the lane, seal the final
+[WORKER-BRIEF.md](references/WORKER-BRIEF.md) assignment, and return the exact
+spawn arguments. Spawn once with that brief, then record the provider receipt.
 
 **Drain.** Accept only a task-lane-matched Return satisfying the Worker Brief.
 `blocker` and `needs-feedback` claim no completion. Retry only after the

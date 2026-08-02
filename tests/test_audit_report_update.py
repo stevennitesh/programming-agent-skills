@@ -303,10 +303,13 @@ def _close_values(
     report: Path,
     commit: str,
     tree: str,
+    *,
+    completion_route: str = "tracker-frontier",
 ) -> dict[str, object]:
-    return {
+    values: dict[str, object] = {
         "version": MODULE.MANIFEST_VERSION,
         "expected_report_sha256": _digest(report),
+        "completion_route": completion_route,
         "implementation_outcome": "complete",
         "report": str(report),
         "run_id": "run-001",
@@ -325,8 +328,6 @@ def _close_values(
         "residual_risk": "none",
         "last_verified_identity": "tree-alpha-003",
         "candidate_bundle_sha256": _candidate_digest(root, report),
-        "tracker_mutation_identity": "issue-17-readback",
-        "ready_issue_url": "https://github.example/issues/17",
         "finding_transitions": [
             {
                 "finding_id": "alpha-defect",
@@ -340,6 +341,16 @@ def _close_values(
             },
         ],
     }
+    if completion_route == "tracker-frontier":
+        values |= {
+            "tracker_mutation_identity": "issue-17-readback",
+            "ready_issue_url": "https://github.example/issues/17",
+        }
+    else:
+        values["direct_implementation_authority"] = (
+            "current user authorized this exact direct implementation before landing"
+        )
+    return values
 
 
 def _prepare_and_publish(
@@ -397,18 +408,38 @@ def _published_audit(root: Path) -> Path:
     return report
 
 
-def _published_analysis(root: Path, *, tracker_ready: bool = True) -> Path:
+def _published_analysis(
+    root: Path,
+    *,
+    tracker_status: str = "ready-graph",
+) -> Path:
     report = _published_audit(root)
-    manifest = _write(
-        root / "analyze.json",
-        _analysis_values(
-            _digest(report),
-            _candidate_digest(root, report),
-            tracker_ready=tracker_ready,
-        ),
+    values = _analysis_values(
+        _digest(report),
+        _candidate_digest(root, report),
+        tracker_ready=tracker_status == "ready-graph",
     )
+    if tracker_status == "authority-required":
+        values["tracker"] = {
+            "status": "authority-required",
+            "issue_urls": [],
+            "ready_issue_url": "",
+        }
+    elif tracker_status != "ready-graph" and tracker_status != "not-applicable":
+        raise AssertionError(f"unsupported test tracker status: {tracker_status}")
+    manifest = _write(root / "analyze.json", values)
     _prepare_and_publish("analyze-candidate", root, report, manifest)
     return report
+
+
+def _write_invalid_canonical_state(report: Path, state: dict[str, object]) -> None:
+    validator = MODULE._validate_state
+    try:
+        MODULE._validate_state = lambda value: None
+        invalid_report = MODULE._render_html(state)
+    finally:
+        MODULE._validate_state = validator
+    report.write_bytes(invalid_report)
 
 
 def test_map_render_is_deterministic_and_dark(tmp_path: Path) -> None:
@@ -648,6 +679,7 @@ def test_public_cli_runs_the_same_two_phase_transaction_for_all_objectives(
     assert candidate["implementation"]["commit_identity"] == commit
     assert findings["alpha-defect"]["state"] == "resolved"
     assert findings["alpha-gap"]["state"] == "active"
+    assert "Completion Route" not in report.read_text(encoding="utf-8")
     persisted = MODULE._load_report(tmp_path, report)[3]["candidates"][0]
     assert persisted["history"][-1]["member_ids"] == ["alpha-defect", "alpha-gap"]
     assert persisted["history"][-1]["tracker"]["status"] == "ready-graph"
@@ -748,7 +780,22 @@ def test_analyze_without_ticket_authority_returns_analyze_reentry(
     assert "$implement" not in candidate["pickup"]
 
 
-def test_authority_required_tracker_rejects_mutation_facts(tmp_path: Path) -> None:
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        lambda tracker: tracker.update({"mutation_identity": "must-not-exist"}),
+        lambda tracker: tracker.update(
+            {"issue_urls": ["https://github.example/issues/fabricated"]}
+        ),
+        lambda tracker: tracker.update(
+            {"ready_issue_url": "https://github.example/issues/fabricated"}
+        ),
+    ],
+)
+def test_authority_required_tracker_rejects_tracker_facts(
+    tmp_path: Path,
+    mutation,
+) -> None:
     _init_repo(tmp_path)
     report = _published_audit(tmp_path)
     values = _analysis_values(
@@ -756,14 +803,19 @@ def test_authority_required_tracker_rejects_mutation_facts(tmp_path: Path) -> No
         _candidate_digest(tmp_path, report),
         tracker_ready=False,
     )
-    values["tracker"] = {
+    tracker = {
         "status": "authority-required",
         "issue_urls": [],
         "ready_issue_url": "",
-        "mutation_identity": "must-not-exist",
     }
-    manifest = _write(tmp_path / "ticket-authority-with-mutation.json", values)
-    with pytest.raises(MODULE.ReportError, match="forbids tracker mutation fields"):
+    mutation(tracker)
+    values["tracker"] = tracker
+    manifest = _write(tmp_path / "ticket-authority-with-facts.json", values)
+    before = report.read_bytes()
+    with pytest.raises(
+        MODULE.ReportError,
+        match="forbids tracker mutation fields or issues",
+    ):
         MODULE.mutate_report(
             command="analyze-candidate",
             repo_root=tmp_path,
@@ -772,6 +824,9 @@ def test_authority_required_tracker_rejects_mutation_facts(tmp_path: Path) -> No
             validate_only=True,
             expected_bundle_sha256=None,
         )
+    assert report.read_bytes() == before
+
+
 def test_tracker_recovery_forbids_implement_pickup(tmp_path: Path) -> None:
     _init_repo(tmp_path)
     report = _published_audit(tmp_path)
@@ -941,13 +996,55 @@ def test_public_inspect_rejects_retired_or_invalid_canonical_state(
     report = _published_audit(tmp_path)
     state = MODULE._load_report(tmp_path, report)[3]
     mutation(state)
-    validator = MODULE._validate_state
-    try:
-        MODULE._validate_state = lambda value: None
-        invalid_report = MODULE._render_html(state)
-    finally:
-        MODULE._validate_state = validator
-    report.write_bytes(invalid_report)
+    _write_invalid_canonical_state(report, state)
+    with pytest.raises(MODULE.ReportError, match=message):
+        MODULE.inspect_report(repo_root=tmp_path, report=report, objective="map")
+
+
+@pytest.mark.parametrize(
+    ("mutation", "message"),
+    [
+        (
+            lambda candidate: (
+                candidate["tracker"].update(
+                    {
+                        "status": "recovery",
+                        "observed_issue_state": "relationship read-back failed",
+                    }
+                ),
+                candidate["tracker"].pop("read_back"),
+            ),
+            "no valid completion route",
+        ),
+        (
+            lambda candidate: candidate["implementation"].update(
+                {"formal_review_decision": "rejected"}
+            ),
+            "requires accepted review",
+        ),
+        (
+            lambda candidate: candidate["implementation"].update(
+                {"commit_tree_identity": "invalid"}
+            ),
+            "invalid commit or tree identity",
+        ),
+    ],
+)
+def test_public_inspect_rejects_invalid_implementation_state(
+    tmp_path: Path,
+    mutation,
+    message: str,
+) -> None:
+    commit, tree = _init_repo(tmp_path)
+    report = _published_analysis(tmp_path)
+    manifest = _write(
+        tmp_path / "close.json",
+        _close_values(tmp_path, report, commit, tree),
+    )
+    _prepare_and_publish("close-candidate", tmp_path, report, manifest)
+    state = MODULE._load_report(tmp_path, report)[3]
+    mutation(state["candidates"][0])
+    _write_invalid_canonical_state(report, state)
     with pytest.raises(MODULE.ReportError, match=message):
         MODULE.inspect_report(repo_root=tmp_path, report=report, objective="map")
 
@@ -982,16 +1079,35 @@ def test_all_objectives_reject_retired_manifest_version(tmp_path: Path) -> None:
     ]
     for objective, packet, normalize in packets:
         packet["version"] = 1
-        with pytest.raises(MODULE.ReportError, match=f"{objective} manifest requires version 2"):
+        with pytest.raises(MODULE.ReportError, match=f"{objective} manifest requires version 3"):
             normalize(packet)
 
 
 def test_schema_and_cli_errors_are_one_json_document(tmp_path: Path) -> None:
     schema = MODULE._schema("audit")
     assert schema["response_version"] == 1
-    assert schema["template"]["version"] == MODULE.MANIFEST_VERSION == 2
+    assert schema["template"]["version"] == MODULE.MANIFEST_VERSION == 3
     assert MODULE.STATE_VERSION == 2
     assert len(schema["template"]["lenses"]) == 6
+    tracker_close = MODULE._schema("close", "tracker-frontier")["template"]
+    direct_close = MODULE._schema("close", "authorized-direct-recovery")["template"]
+    assert tracker_close["completion_route"] == "tracker-frontier"
+    assert "tracker_mutation_identity" in tracker_close
+    assert "direct_implementation_authority" not in tracker_close
+    assert direct_close["completion_route"] == "authorized-direct-recovery"
+    assert "direct_implementation_authority" in direct_close
+    assert "tracker_mutation_identity" not in direct_close
+    assert "ready_issue_url" not in direct_close
+    assert _cli(
+        "schema",
+        "--objective",
+        "close",
+        "--completion-route",
+        "authorized-direct-recovery",
+        cwd=tmp_path,
+    )["template"] == direct_close
+    with pytest.raises(MODULE.ReportError, match="requires one completion_route"):
+        MODULE._schema("close")
 
     process = subprocess.run(
         [sys.executable, str(MODULE_PATH), "inspect", "--unknown"],
@@ -1047,12 +1163,122 @@ def test_close_rejects_incomplete_transitions(
     assert report.read_bytes() == before
 
 
-def test_close_rejects_analyzed_candidate_without_ready_tracker(tmp_path: Path) -> None:
+@pytest.mark.parametrize("tracker_status", ["authority-required", "not-applicable"])
+def test_authorized_direct_recovery_closes_without_a_tracker_frontier(
+    tmp_path: Path,
+    tracker_status: str,
+) -> None:
     commit, tree = _init_repo(tmp_path)
-    report = _published_analysis(tmp_path, tracker_ready=False)
-    values = _close_values(tmp_path, report, commit, tree)
-    manifest = _write(tmp_path / "close-not-ready.json", values)
-    with pytest.raises(MODULE.ReportError, match="implementation-ready tracker frontier"):
+    report = _published_analysis(tmp_path, tracker_status=tracker_status)
+    inspected = MODULE.inspect_report(
+        repo_root=tmp_path,
+        report=report,
+        objective="close",
+        candidate_id="alpha-fix",
+    )
+    assert inspected["completion_route"] == "authorized-direct-recovery"
+    manifest = _write(
+        tmp_path / "close-direct.json",
+        _close_values(
+            tmp_path,
+            report,
+            commit,
+            tree,
+            completion_route="authorized-direct-recovery",
+        ),
+    )
+    _prepare_and_publish("close-candidate", tmp_path, report, manifest)
+    candidate = MODULE.inspect_report(
+        repo_root=tmp_path,
+        report=report,
+        objective="map",
+    )["state"]["candidates"][0]
+    assert candidate["state"] == "implemented"
+    assert candidate["tracker"] == {
+        "status": tracker_status,
+        "issue_urls": [],
+        "ready_issue_url": "",
+    }
+    assert "direct_implementation_authority" in candidate["implementation"]
+    assert "Completion Route</dt><dd>authorized-direct-recovery" in report.read_text(
+        encoding="utf-8"
+    )
+
+
+@pytest.mark.parametrize(
+    ("completion_route", "tracker_status", "mutation", "message"),
+    [
+        (
+            "authorized-direct-recovery",
+            "authority-required",
+            lambda values: values.update(
+                {
+                    "tracker_mutation_identity": "fabricated",
+                    "ready_issue_url": "https://github.example/issues/retroactive",
+                }
+            ),
+            "forbids tracker fields",
+        ),
+        (
+            "tracker-frontier",
+            "ready-graph",
+            lambda values: values.update(
+                {"direct_implementation_authority": "wrong route"}
+            ),
+            "requires only tracker identity fields",
+        ),
+        (
+            "authorized-direct-recovery",
+            "authority-required",
+            lambda values: values.update({"candidate_bundle_sha256": "0" * 64}),
+            "candidate bundle identity",
+        ),
+        (
+            "authorized-direct-recovery",
+            "authority-required",
+            lambda values: values.update({"commit_tree_identity": "0" * 40}),
+            "commit tree identity",
+        ),
+        (
+            "authorized-direct-recovery",
+            "authority-required",
+            lambda values: values.update({"accepted_proof": ""}),
+            "Close accepted_proof must be a non-empty string",
+        ),
+        (
+            "authorized-direct-recovery",
+            "authority-required",
+            lambda values: values.update({"formal_review_decision": "rejected"}),
+            "accepted review",
+        ),
+        (
+            "authorized-direct-recovery",
+            "authority-required",
+            lambda values: values.update({"candidate_ids": ["alpha-fix"]}),
+            "unknown fields: candidate_ids",
+        ),
+    ],
+)
+def test_close_routes_preserve_packet_and_completion_gates(
+    tmp_path: Path,
+    completion_route: str,
+    tracker_status: str,
+    mutation,
+    message: str,
+) -> None:
+    commit, tree = _init_repo(tmp_path)
+    report = _published_analysis(tmp_path, tracker_status=tracker_status)
+    values = _close_values(
+        tmp_path,
+        report,
+        commit,
+        tree,
+        completion_route=completion_route,
+    )
+    mutation(values)
+    manifest = _write(tmp_path / "close-direct-invalid.json", values)
+    before = report.read_bytes()
+    with pytest.raises(MODULE.ReportError, match=message):
         MODULE.mutate_report(
             command="close-candidate",
             repo_root=tmp_path,
@@ -1061,3 +1287,4 @@ def test_close_rejects_analyzed_candidate_without_ready_tracker(tmp_path: Path) 
             validate_only=True,
             expected_bundle_sha256=None,
         )
+    assert report.read_bytes() == before

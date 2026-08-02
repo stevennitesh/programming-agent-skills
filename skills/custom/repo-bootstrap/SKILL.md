@@ -82,7 +82,7 @@ preserved additions, conflicts or blockers, and proof plan. For selected
 parallel support, show the permanent project key, derived base and lane roots,
 permission delta, and exact Luna template. The `AGENTS.md` result includes:
 
-`<!-- programming-agent-skills setup-schema: 1:4e8dbf9a1bdc -->`
+`<!-- programming-agent-skills setup-schema: 1:0803f55bb242 -->`
 
 With zero delta, mutate nothing and continue to Verify. Otherwise wait for
 approval. Narrowing requires a new exact proposal; refusal or deferral returns

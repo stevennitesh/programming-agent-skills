@@ -1,122 +1,76 @@
 # Worker Brief
 
-**Bind -> Implement -> Prove -> Return**
+**Bind -> Ground -> Implement -> Prove -> Return**
 
-Generate the ledger-owned assignment with
-[Campaign Runtime](RUN-LEDGER.md) `brief`, then add only ticket-owned meaning.
-
-## Assignment
-
-The ledger supplies the work item, mode, semantic agent ID, actor, task, lane,
-base, checkout, isolated-lane read-only root checkout, temp roots, Charter,
-launch receipt, liveness cursor, and Return transport.
-
-The root adds:
-
-- Source Trace and applicable engineering and domain pointers;
-- current owner, representative callers and entry paths, Repository Reuse, and
-  repository constraints;
-- acceptance, Commitment Boundary, prohibited behavior, exclusions, and
-  dependencies;
-- applicable Invariants, Trust Boundaries, supported states, and failure,
-  recovery, compatibility, environmental, and observability obligations;
-- confirmed authority, expected write scope, and proposed concrete write set
-  when shared fixtures are plausible;
-- Change Closure and any applicable state-boundary matrix;
-- proof responsibility, canonical owner and consumers, expected reuse, extend,
-  or add decision, focused proof, and validation environment.
+The dispatch helper seals the complete assignment before spawn. The initial
+spawn message names its path and SHA-256; no follow-up assignment is required.
 
 ## Bind
 
-Reconcile the final augmented assignment SHA-256 from the dispatch receipt,
-launch receipt, current directory, task, actor, lane, exact base, clean status,
-startup proof, project provenance, and temp roots before editing. Use the
-assigned checkout as every command's working directory and edit only beneath
-it. An isolated worker may read needed ignored inputs from its recorded root
+Verify the assignment SHA-256, work item, attempt, semantic profile, actor,
+lane, checkout, exact base, environment, Charter, tracker snapshot, and write
+scope before editing. Reconcile the provider task ID from the current runtime;
+it is intentionally absent from the pre-spawn brief.
+
+Use the assigned checkout for every command and write only inside its authorized
+scope. An isolated worker may read ignored inputs from the recorded root
 checkout but never writes there. Stop on mismatch.
 
-One worker owns one item and returns one packet. Never spawn or delegate. Leave
-dispatch, integration, tracker mutation, remote Git delivery, scope changes,
-and campaign completion to their owners. Do not invoke
-`$change-review` or `$high-assurance-review`; formal review belongs to the
-root-selected owner.
+One worker owns one item and returns one packet. Never spawn, delegate, claim
+tickets, integrate, mutate trackers, push, review, or decide campaign
+completion. Do not invoke `$change-review` or `$high-assurance-review`.
+
+## Ground
+
+Read the frozen tracker snapshot for the Source Trace, applicable engineering
+and domain pointers, current owner, acceptance, Commitment Boundary, prohibited
+behavior, dependencies, applicable Invariants, Trust Boundaries, confirmed
+authority, proof responsibility, Change Closure, and any applicable state-boundary matrix.
+Refresh current repository grounding: implementation
+seams, callers, fixtures, canonical proof owners, and the concrete write set
+inside the authorized scope.
+
+Contradictions return `needs-feedback` when live repository evidence contradicts the frozen
+assignment, invalidates acceptance, exposes an omitted semantic branch, or
+requires overlapping ownership. Report the exact evidence; do not rewrite or
+widen scope.
 
 ## Implement
 
-Choose implementation technique under the routed engineering contract. Refresh
-assigned grounding only when current evidence makes it stale or contradictory.
-Discoveries outside the assignment are scope notes, not authority.
+Choose the implementation technique under the routed engineering contract.
+Use `$tdd` for red-testable behavior. Keep discoveries outside the assignment
+as scope notes.
 
-Use `$tdd` for red-testable behavior. An uncertain bug returns
-`needs-feedback` with a `diagnosis-required` packet containing facts, evidence,
-environment, exact task and lane state, authorities, and the root Return owner.
-
-If repository evidence contradicts the assignment or reveals an omitted
-supported semantic branch or overlapping test owner, return `needs-feedback`;
-do not rewrite the packet, narrow acceptance, or widen the Commitment Boundary.
+For a pre-landing correction, continue in the same task, lane, and checkout;
+amend or supersede the returned commit, name the superseded commit, and bind the
+Return to the root feedback event. For an
+integration correction or Review Repair, obey the exact recorded event, prior
+integration `HEAD`, generation, finding IDs, write scope, and proof.
 
 ## Prove
 
-Prove every acceptance, prohibited behavior, correctness and robustness
-obligation, matrix branch, proof responsibility, and Change Closure obligation.
-Reuse or extend the assigned canonical test owner; add a separate test only for
-a distinct responsibility.
-
-Run focused proof by default. Run broader proof only for shared-behavior risk or
-an explicit route. Product intent, public or domain contracts, dependency
-meaning, security posture, and adjacent work remain outside the lane unless the
-Source Trace authorizes them.
-
-## Branches
-
-**Pre-landing correction.** Continue only in the same current task, lane, and
-checkout. Amend or supersede the returned commit, prove the requested fix, and
-name the superseded commit in Return.
-
-**Integration correction.** Require the regression event ID, prior integration
-`HEAD`, correction route, authorized owner and actor, write-scope IDs, trusted
-RED, and required proof. Start from that `HEAD`, change only authorized IDs,
-prove the RED and affected paths, and return one clean correction commit. An
-owned correction returns to its current worker; cross-worker work belongs to
-`serial-integrator`.
-
-**Review Repair.** Require frozen delivery authority, generation, blocked
-reviewed `HEAD`, complete blocking set, exact review-admitted IDs, per-blocker
-automatic and Charter-preservation evidence, both budgets, write scope, and
-required proof. Accept only when the IDs equal every blocker and every gate
-passes. Change only those findings under the original Charter and prove each
-remedy and regression.
+Map every acceptance and robustness obligation to evidence. Reuse or extend the
+canonical proof owner. Run focused proof by default and broader proof only for
+shared-behavior risk or an explicit assignment. Finish with one clean commit and
+a clean checkout.
 
 ## Return
 
-```text
-status: <done / blocker / needs-feedback>
-work item:
-mode:
-agent ID:
-runtime agent type:
-actor ID:
-task ID:
-transport:
-lane and worktree:
-base:
-assignment ref:
-assignment SHA-256:
-commit:
-supersedes commit: <prior returned commit / none>
-changed scope IDs: <when authorized IDs exist>
-actual changed files:
-acceptance proof: <criterion -> evidence>
-test portfolio delta: <reused / extended / added / consolidated / removed + responsibility>
-commands and results:
-skipped checks:
-liveness cursor:
-risk or blocker:
-next need:
-scope notes:
-final status: <clean / dirty + reason>
-```
+Return exact binding:
 
-`done` requires a matching launch receipt, every assigned obligation accounted
-for, one commit, focused proof, and clean status. `blocker` and
-`needs-feedback` preserve exact state and claim no completion.
+- work item, actor, provider task ID, lane, checkout, base, assignment reference,
+  and assignment SHA-256;
+- status: `done | blocker | needs-feedback` and commit or superseded commit when
+  applicable;
+- actual changed files;
+- `grounding_and_scope`: repository grounding, concrete write set, and scope
+  discoveries;
+- `proof`: acceptance-to-evidence mapping, checks and results, proof-owner or
+  test-portfolio change, and skips;
+- `risk_or_blocker`;
+- `required_root_action`;
+- `final_worktree`: structured exact `head` and `clean` status.
+
+`done` requires every assigned obligation accounted for, one commit, focused
+proof, and clean status. Other statuses preserve exact state and claim no
+completion.

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import hashlib
 import json
 import subprocess
 import sys
@@ -20,6 +21,7 @@ HELPER = (
     / "scripts"
     / "github_issue_relationships.py"
 )
+LEDGER = ROOT / "skills/custom/parallel-implement/scripts/run_ledger.py"
 
 
 def load_helper() -> ModuleType:
@@ -60,7 +62,16 @@ class FakeGitHubApi:
         blockers: dict[int, set[int]] | None = None,
         apply_mutations: bool = True,
     ) -> None:
-        self.issues = {number: issue(number) for number in numbers}
+        self.issues = {
+            number: {
+                **issue(number),
+                "title": f"Issue {number}",
+                "body": f"Body {number}",
+                "labels": [{"name": "agent-ready"}],
+                "assignees": [{"login": "worker"}],
+            }
+            for number in numbers
+        }
         self.parents = dict(parents or {})
         self.blockers = {
             number: set(values) for number, values in (blockers or {}).items()
@@ -92,6 +103,18 @@ class FakeGitHubApi:
 
         if method == "GET" and not suffix:
             return self.issues[issue_number]
+        if method == "GET" and suffix == "comments":
+            assert paginate
+            return [
+                {
+                    "id": issue_number * 1000,
+                    "user": {"login": "author"},
+                    "body": f"Comment {issue_number}",
+                    "created_at": "2026-08-02T00:00:00Z",
+                    "updated_at": "2026-08-02T00:00:00Z",
+                    "html_url": f"https://github.com/acme/widgets/issues/{issue_number}#issuecomment-1",
+                }
+            ]
         if method == "GET" and suffix == "parent":
             parent = self.parents.get(issue_number)
             if parent is None:
@@ -167,6 +190,138 @@ def test_inspect_normalizes_all_relationship_directions() -> None:
         "blocked_by": [issue(40)],
         "blocking": [issue(50)],
     }
+
+
+def test_snapshot_campaign_writes_one_complete_verified_graph(tmp_path: Path) -> None:
+    helper = load_helper()
+    api = FakeGitHubApi(
+        [10, 20, 30],
+        parents={20: 10, 30: 10},
+        blockers={30: {20}},
+    )
+    output = tmp_path / "run" / "tracker-snapshot.json"
+
+    receipt = helper.snapshot_campaign(api, "acme/widgets", 10, output)
+
+    snapshot = json.loads(output.read_text(encoding="utf-8"))
+    assert receipt["schema"] == 1
+    assert receipt["path"] == str(output.resolve())
+    assert receipt["sha256"] == hashlib.sha256(output.read_bytes()).hexdigest()
+    assert snapshot["children"] == [30, 20]
+    assert [node["number"] for node in snapshot["nodes"]] == [10, 30, 20]
+    assert snapshot["nodes"][1]["body"] == "Body 30"
+    assert snapshot["nodes"][1]["comments"][0]["body"] == "Comment 30"
+    assert snapshot["edges"] == [{"blocker": 20, "dependent": 30}]
+    assert len(api.calls) == 12
+
+
+def test_snapshot_receipt_directly_starts_the_parallel_ledger(tmp_path: Path) -> None:
+    helper = load_helper()
+    api = FakeGitHubApi([10, 20], parents={20: 10})
+    run = tmp_path / "run"
+    receipt = helper.snapshot_campaign(
+        api, "acme/widgets", 10, run / "tracker-snapshot.json"
+    )
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    subprocess.run(["git", "init", "-b", "main"], cwd=repo, check=True, capture_output=True)
+    subprocess.run(["git", "config", "user.name", "Skill Tests"], cwd=repo, check=True)
+    subprocess.run(["git", "config", "user.email", "skills@example.test"], cwd=repo, check=True)
+    (repo / "tracked.txt").write_text("base\n", encoding="utf-8")
+    subprocess.run(["git", "add", "tracked.txt"], cwd=repo, check=True)
+    subprocess.run(["git", "commit", "-m", "base"], cwd=repo, check=True, capture_output=True)
+    scope = tmp_path / "scope.json"
+    scope.write_text(
+        json.dumps(
+            {
+                "root_actor_id": "root-agent",
+                "caller_id": "caller",
+                "parent_claim": {
+                    "state": "retained",
+                    "work_item": "10",
+                    "owner": "root-agent",
+                    "token": "claim-10",
+                    "readback": "retained",
+                },
+                "tracker_snapshot": receipt,
+                "charter": {"id": "charter", "outcome": "deliver"},
+            }
+        ),
+        encoding="utf-8",
+    )
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(LEDGER),
+            "start",
+            "--run",
+            str(run),
+            "--repo",
+            str(repo),
+            "--in",
+            str(scope),
+        ],
+        text=True,
+        capture_output=True,
+    )
+    packet = json.loads(result.stdout)
+    assert result.returncode == 0, packet
+    assert packet["awaiting"]["action"] == "select-frontier"
+
+
+def test_snapshot_campaign_never_overwrites_frozen_output(tmp_path: Path) -> None:
+    helper = load_helper()
+    api = FakeGitHubApi([10, 20], parents={20: 10})
+    output = tmp_path / "snapshot.json"
+    helper.snapshot_campaign(api, "acme/widgets", 10, output)
+    frozen = output.read_bytes()
+    with pytest.raises(helper.GitHubApiError, match="already exists"):
+        helper.snapshot_campaign(api, "acme/widgets", 10, output)
+    assert output.read_bytes() == frozen
+
+
+def test_snapshot_campaign_rejects_native_child_order_drift(tmp_path: Path) -> None:
+    helper = load_helper()
+
+    class ReorderedApi(FakeGitHubApi):
+        reads = 0
+
+        def request(self, method: str, endpoint: str, **kwargs: Any) -> Any:
+            value = super().request(method, endpoint, **kwargs)
+            if method == "GET" and endpoint.endswith("/10/sub_issues"):
+                self.reads += 1
+                if self.reads == 2:
+                    return list(reversed(value))
+            return value
+
+    api = ReorderedApi([10, 20, 30], parents={20: 10, 30: 10})
+    with pytest.raises(helper.RelationshipVerificationError, match="ordered campaign graph"):
+        helper.snapshot_campaign(api, "acme/widgets", 10, tmp_path / "snapshot.json")
+
+
+@pytest.mark.parametrize("hidden_direction", ("blocked_by", "blocking"))
+def test_snapshot_campaign_rejects_asymmetric_dependencies(
+    tmp_path: Path,
+    hidden_direction: str,
+) -> None:
+    helper = load_helper()
+
+    class AsymmetricApi(FakeGitHubApi):
+        def request(self, method: str, endpoint: str, **kwargs: Any) -> Any:
+            if method == "GET" and endpoint.endswith(
+                f"/dependencies/{hidden_direction}"
+            ):
+                super().request(method, endpoint, **kwargs)
+                return []
+            return super().request(method, endpoint, **kwargs)
+
+    api = AsymmetricApi(
+        [10, 20, 30],
+        parents={20: 10, 30: 10},
+        blockers={30: {20}},
+    )
+    with pytest.raises(helper.RelationshipVerificationError, match="directions differ"):
+        helper.snapshot_campaign(api, "acme/widgets", 10, tmp_path / "snapshot.json")
 
 
 def test_attach_child_is_idempotent_and_verifies_both_directions() -> None:

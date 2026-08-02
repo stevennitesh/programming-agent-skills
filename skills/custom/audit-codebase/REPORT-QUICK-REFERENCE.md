@@ -10,7 +10,9 @@ validates strict JSON, and renders the complete report.
 ## Read Commands
 
 ```text
-schema --objective map|audit|analyze|close
+schema --objective map|audit|analyze
+schema --objective close
+  --completion-route tracker-frontier|authorized-direct-recovery
 inventory --repo-root <repo>
 source-identity --repo-root <repo> --path-list <paths.txt>
 inspect --repo-root <repo> --report <report>
@@ -21,9 +23,12 @@ inspect --repo-root <repo> --report <report>
   --objective analyze|close --candidate-id <id>
 ```
 
-`inspect` returns the selected current projection without history. Use it for
-routing, admission, work, and read-back. `schema` returns the exact manifest
-template; copy only its `template` object into an invocation-owned JSON file.
+`inspect` returns the selected current projection without history and derives
+the Close packet route from tracker facts. The route selects a schema;
+[CANDIDATE-CONTRACT.md](CANDIDATE-CONTRACT.md) owns semantic Close admission.
+Use the projection for routing, admission, work, and read-back. `schema`
+returns the exact manifest template for the selected objective and Close
+route; copy only its `template` object into an invocation-owned JSON file.
 Unknown manifest fields are rejected.
 
 ## Publish Once
@@ -55,10 +60,12 @@ the manifest between calls.
 - **Analyze:** supply one selected candidate's current validity, members,
   comparison, proof, tracker result, and at most one other next owner.
   The helper derives the pickup from the validated tracker result.
-- **Close:** use the exact completion packet requested by the Implement pickup.
-  The helper admits only a matching analyzed, implementation-ready candidate
-  and independently verifies Git commit/tree reachability and every active
-  member transition.
+- **Close:** `tracker-frontier` requires the matching read-back-verified tracker
+  frontier. `authorized-direct-recovery` requires an already-landed
+  `authority-required|not-applicable` candidate and direct implementation
+  authority; it forbids tracker fields and retrospective ticket fabrication.
+  Both routes independently verify Git commit/tree reachability, candidate
+  identity, and every active member transition.
 
 ## Use The Response Literally
 

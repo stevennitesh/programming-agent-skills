@@ -241,6 +241,27 @@ def test_repo_bootstrap_validates_provider_tracker_templates() -> None:
         assert failures == []
         assert wayfinder_failures(text, str(tracker)) == []
 
+    github = trackers[0].read_text(encoding="utf-8")
+    failures = []
+    validator["require_tokens"](
+        github,
+        str(trackers[0]),
+        validator["GITHUB_CAMPAIGN_SNAPSHOT_TOKENS"],
+        failures,
+    )
+    assert failures == []
+    missing_snapshot = github.replace("**Campaign snapshot:**", "**Snapshot:**", 1)
+    failures = []
+    validator["require_tokens"](
+        missing_snapshot,
+        str(trackers[0]),
+        validator["GITHUB_CAMPAIGN_SNAPSHOT_TOKENS"],
+        failures,
+    )
+    assert failures == [
+        f"{trackers[0]} is missing **Campaign snapshot:**"
+    ]
+
     hosted = trackers[0].read_text(encoding="utf-8").replace(
         "Blocked: waiting - <gist>", "Blocked: paused - <gist>"
     )
@@ -511,7 +532,7 @@ def assert_repo_bootstrap_semantic_contract(
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     assert_repo_bootstrap_semantic_contract(
         CUSTOM / "repo-bootstrap",
-        "569b5ec471a70b081a5618de96eef50575b99b3d58fc6463a6aa34a6fc9f7ec3",
+        "0ae32b318ea3d372a53243c8b5dd130f448c8606cc91771785c596cd77102d66",
         profile="incumbent",
     )
 
@@ -1663,7 +1684,7 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert "An admitted item does not close class coverage" in quality
     assert "`authority-required`" in audit
     assert "`authority-required`" in followup
-    assert "`authority-required`" not in candidate
+    assert "`authority-required|not-applicable`" in candidate
     assert "current-source evidence" in quality
     assert "selected objective's current source identity" in " ".join(defect.split())
     assert "separately user-selected `$audit-codebase` objective" in candidate
@@ -1672,7 +1693,7 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert "$to-tickets" not in metadata
     assert "helper derives the linked Analyze pickup" in candidate
     assert "conditional To Tickets authority" in candidate
-    assert "`schema --objective close`" in candidate
+    assert "`schema --objective close --completion-route <route>`" in candidate
     assert "Known Ceiling" in simplification and "Revisit Trigger" in simplification
 
     contract = pack_contract.parse_contract(
@@ -2976,7 +2997,7 @@ def test_to_tickets_preserves_coverage_readiness_and_frontier_contract() -> None
     packages = (
         (
             CUSTOM / "to-tickets",
-            "af54ca4b0ee1b5026678beb0455270c45e5aadd703a975678eb3c6b0c37793b2",
+            "2f009005fbef524e6d43c9d0c104400db94dc138e90a8d231bbfefa2d1b81eeb",
             "prompt3-candidate",
         ),
     )
@@ -3281,8 +3302,10 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
         "security-sensitive boundaries, or a repeated failed correction."
     ) in profiles_flat
     lanes_flat = " ".join(lanes.split())
-    assert "The agent echoes the binding before work" in lanes_flat
-    assert "Generate writer assignments through [WORKER-BRIEF.md]" in lanes_flat
+    assert "Spawn once with those arguments" in lanes_flat
+    assert "Dispatch generates writer assignments through [WORKER-BRIEF.md]" in lanes_flat
+    assert "Supply observed facts explicitly; the helper derives none of them" in lanes_flat
+    assert "record its assignment path and SHA-256 with the observed task and provider receipt" in lanes_flat
     assert "gpt-5.6" not in parallel
     assert "gpt-5.6" not in worker
     assert "gpt-5.6" not in ledger
@@ -3295,53 +3318,34 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
     assert "For a serial same-checkout lane, require clean current `HEAD` to equal the returned commit" in parallel_flat
     assert "read back integration `HEAD` and the actual diff" in parallel_flat
     assert "run only proof invalidated or required by the transition" in parallel_flat
-    report = worker.split("```text", 1)[1].split("```", 1)[0]
-    assert re.findall(r"(?m)^([^:\n]+):", report) == [
-        "status",
-        "work item",
-        "mode",
-        "agent ID",
-        "runtime agent type",
-        "actor ID",
-        "task ID",
-        "transport",
-        "lane and worktree",
-        "base",
-        "assignment ref",
-        "assignment SHA-256",
-        "commit",
-        "supersedes commit",
-        "changed scope IDs",
-        "actual changed files",
-        "acceptance proof",
-        "test portfolio delta",
-        "commands and results",
-        "skipped checks",
-        "liveness cursor",
-        "risk or blocker",
-        "next need",
-        "scope notes",
-        "final status",
-    ]
-    assert "criterion -> evidence" in report
-    assert "`diagnosis-required`" in worker
+    for field in (
+        "grounding_and_scope",
+        "proof",
+        "risk_or_blocker",
+        "required_root_action",
+        "final_worktree",
+    ):
+        assert f"`{field}`" in worker
+    assert "acceptance-to-evidence mapping" in worker
     assert "$diagnosing-bugs" not in worker
     assert "Do not invoke `$change-review` or `$high-assurance-review`" in " ".join(
         worker.split()
     )
-    assert "Never spawn or delegate" in worker
+    assert "Never spawn, delegate" in worker
     assert "recorded root checkout but never writes there" in " ".join(worker.split())
     assert "The root never authors implementation, tests, integration corrections, or Review Repair" in (
         " ".join(parallel.split())
     )
     assert "## Start" in ledger
     assert "## Status" in ledger
+    assert "## Dispatch" in ledger
     assert "## Apply" in ledger
-    assert "## Brief" in ledger
     assert "## Finish" in ledger
     assert "events.jsonl" in ledger
-    assert "LEDGER.md" in ledger and "generated" in ledger
-    for command_name in ("start", "status", "apply", "brief", "finish"):
+    assert "derives the ordered graph from it" in " ".join(ledger.split())
+    assert "rehashes the frozen tracker snapshot" in " ".join(ledger.split())
+    assert "LEDGER.md" in ledger and "generated" in ledger.lower()
+    for command_name in ("start", "status", "dispatch", "apply", "finish"):
         assert f"run_ledger.py {command_name}" in ledger
     ledger_script = (
         CUSTOM / "parallel-implement/scripts/run_ledger.py"
@@ -3412,13 +3416,7 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
     drain = run.split("**Drain.**", 1)[1]
     assert "Accept only a task-lane-matched Return satisfying the Worker Brief" in drain
     assert "`blocker`" in drain
-    report_status = re.search(r"(?m)^status: <([^>]+)>$", worker)
-    assert report_status is not None
-    assert {status.strip() for status in report_status.group(1).split("/")} == {
-        "done",
-        "needs-feedback",
-        "blocker",
-    }
+    assert "`done | blocker | needs-feedback`" in worker
     for outcome in ("complete", "partial", "blocked"):
         assert f"`{outcome}`" in parallel
     assert "Return `partial` when safe, already-authorized work remains resumable" in " ".join(parallel.split())
@@ -3458,8 +3456,10 @@ def test_parallel_implement_has_root_receipt_budget_and_windows_contracts() -> N
     assert "Pass only at the top-level root" in parallel
     assert "Return before mutation" in parallel
     assert "repair_generation_budget" in script
-    assert "frozen Repair budget" in ledger
-    assert "Start -> Status -> Apply -> Brief -> Finish" in ledger
+    assert "Repair budget" in ledger
+    assert "Start -> Status -> Dispatch -> Apply -> Finish" in ledger
+    assert "Spawn once" in ledger
+    assert "contains no provider-created task identity" in " ".join(ledger.split())
     assert "reviewer" in ledger
     assert "review-invocation" in script
     assert "PARALLEL_IMPLEMENT_BASE_ROOT" in launch and "PARALLEL_IMPLEMENT_BASE_ROOT" in lane_script
@@ -3492,12 +3492,11 @@ def test_parallel_implement_has_root_receipt_budget_and_windows_contracts() -> N
         lane_script.split()
     )
     assert "--proof-command-file" in launch and "--proof-command-file" in lane_script
-    assert "runtime contract 6" in ledger.lower()
-    assert "project key, base/project/`wt` roots" in " ".join(ledger.split())
-    assert "correction route" in ledger
+    assert "runtime contract 7" in ledger.lower()
+    assert "reads the repo-local parallel-lane setup" in " ".join(ledger.split())
     assert "integration_regression" in script
-    assert "runtime contract 6" in ledger
-    assert "viability, not throughput" in launch and "-n 0" in launch
+    assert "runtime contract 7" in ledger
+    assert "viability, not throughput" in launch
     assert "project imports must resolve beneath the lane" in launch.lower()
     assert "repo-owned configuration" in launch
     assert "namespace-package locations" in " ".join(launch.split())
@@ -3506,13 +3505,12 @@ def test_parallel_implement_has_root_receipt_budget_and_windows_contracts() -> N
         ROOT / ".codex/agents/luna_max.toml"
     ).read_bytes()
     assert "return an owned correction to its current worker" in " ".join(parallel.split())
-    assert "**Integration correction.**" in worker
-    assert "regression event ID" in worker
+    assert "integration correction" in worker.lower()
+    assert "exact recorded event" in worker
     worker_flat = " ".join(worker.split())
     assert "prior integration `HEAD`" in worker_flat
-    assert "write-scope IDs" in worker_flat
+    assert "write scope" in worker_flat
     assert '"write_scope_ids"' in script
-    assert "Authorized scope IDs" in script
     assert "lane_actor == actor_id" in script
     assert "extended-path" in launch
 
@@ -3659,8 +3657,8 @@ def test_state_boundary_reasoning_has_one_owner_and_explicit_consumers() -> None
     assert "applicable state-boundary matrix" in worker
     assert "return `needs-feedback`" in " ".join(worker.split())
     ledger_flat = " ".join(ledger.split())
-    assert "Python checks mechanics and never supplies judgment" in ledger_flat
-    assert "The helper does not decide readiness" in ledger_flat
+    assert "The root supplies decisions; the helper performs deterministic checks" in ledger_flat
+    assert "does not choose the frontier, concurrency, worker profile, proof, review, or completion" in ledger_flat
 
 
 def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -> None:

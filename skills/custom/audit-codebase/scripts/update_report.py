@@ -18,7 +18,7 @@ from typing import Any, NoReturn, Sequence
 REPORT_VERSION = 10
 STATE_VERSION = 2
 RESPONSE_VERSION = 1
-MANIFEST_VERSION = 2
+MANIFEST_VERSION = 3
 
 _ID = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 _RUN_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
@@ -840,8 +840,10 @@ def _normalize_tracker(value: object) -> dict[str, Any]:
         _text(item["mutation_identity"], "tracker.mutation_identity")
         _text(item["observed_issue_state"], "tracker.observed_issue_state")
     elif status == "authority-required":
-        if supplied_optional:
-            raise ReportError("authority-required tracker state forbids tracker mutation fields")
+        if supplied_optional or urls or ready:
+            raise ReportError(
+                "authority-required tracker state forbids tracker mutation fields or issues"
+            )
     elif supplied_optional or urls or ready:
         raise ReportError(
             "not-applicable tracker state forbids tracker mutation fields or issues"
@@ -972,6 +974,7 @@ def _normalize_close_manifest(raw: dict[str, Any]) -> dict[str, Any]:
     required = {
         "version",
         "expected_report_sha256",
+        "completion_route",
         "implementation_outcome",
         "report",
         "run_id",
@@ -990,13 +993,43 @@ def _normalize_close_manifest(raw: dict[str, Any]) -> dict[str, Any]:
         "residual_risk",
         "last_verified_identity",
         "candidate_bundle_sha256",
-        "tracker_mutation_identity",
-        "ready_issue_url",
         "finding_transitions",
     }
-    _strict(raw, required, set(), "Close manifest")
+    route_fields = {
+        "tracker_mutation_identity",
+        "ready_issue_url",
+        "direct_implementation_authority",
+    }
+    _strict(raw, required, route_fields, "Close manifest")
     if raw["version"] != MANIFEST_VERSION:
         raise ReportError(f"Close manifest requires version {MANIFEST_VERSION}")
+    route = _text(raw["completion_route"], "Close completion_route")
+    supplied_route_fields = set(raw) & route_fields
+    if route == "tracker-frontier":
+        if supplied_route_fields != {"tracker_mutation_identity", "ready_issue_url"}:
+            raise ReportError("tracker-frontier Close requires only tracker identity fields")
+        ready_issue_url = _text(raw["ready_issue_url"], "Close ready_issue_url")
+        if re.fullmatch(r"https://[^\s]+", ready_issue_url) is None:
+            raise ReportError("Close ready_issue_url must be an absolute HTTPS URL")
+        route_packet = {
+            "tracker_mutation_identity": _text(
+                raw["tracker_mutation_identity"], "Close tracker_mutation_identity"
+            ),
+            "ready_issue_url": ready_issue_url,
+        }
+    elif route == "authorized-direct-recovery":
+        if supplied_route_fields != {"direct_implementation_authority"}:
+            raise ReportError(
+                "authorized-direct-recovery Close requires direct authority and forbids tracker fields"
+            )
+        route_packet = {
+            "direct_implementation_authority": _text(
+                raw["direct_implementation_authority"],
+                "Close direct_implementation_authority",
+            )
+        }
+    else:
+        raise ReportError("Close completion_route is unsupported")
     if raw["implementation_outcome"] != "complete":
         raise ReportError("Close requires implementation_outcome complete")
     if raw["formal_review_decision"] != "accepted" or raw["change_closure"] != "complete":
@@ -1014,12 +1047,10 @@ def _normalize_close_manifest(raw: dict[str, Any]) -> dict[str, Any]:
     current = _text(raw["current_source_result"], "Close current_source_result")
     if current not in {"current", "reachable"}:
         raise ReportError("Close current_source_result is unsupported")
-    ready_issue_url = _text(raw["ready_issue_url"], "Close ready_issue_url")
-    if re.fullmatch(r"https://[^\s]+", ready_issue_url) is None:
-        raise ReportError("Close ready_issue_url must be an absolute HTTPS URL")
     return {
         "version": MANIFEST_VERSION,
         "expected_report_sha256": _sha(raw["expected_report_sha256"], "Close expected_report_sha256"),
+        "completion_route": route,
         "implementation_outcome": "complete",
         "report": _text(raw["report"], "Close report"),
         "run_id": _text(raw["run_id"], "Close run_id"),
@@ -1042,12 +1073,8 @@ def _normalize_close_manifest(raw: dict[str, Any]) -> dict[str, Any]:
         "candidate_bundle_sha256": _sha(
             raw["candidate_bundle_sha256"], "Close candidate_bundle_sha256"
         ),
-        "tracker_mutation_identity": _text(
-            raw["tracker_mutation_identity"], "Close tracker_mutation_identity"
-        ),
-        "ready_issue_url": ready_issue_url,
         "finding_transitions": transitions,
-    }
+    } | route_packet
 
 
 def _validate_state(state: dict[str, Any]) -> None:
@@ -1227,14 +1254,59 @@ def _validate_state(state: dict[str, Any]) -> None:
         elif item["state"] != "presented":
             raise ReportError("non-presented candidate requires next-owner facts")
         if "implementation" in item:
+            implementation = _object(
+                item["implementation"], f"report candidate[{index}].implementation"
+            )
             _strict(
-                _object(item["implementation"], f"report candidate[{index}].implementation"),
+                implementation,
                 implementation_fields,
-                set(),
+                {"direct_implementation_authority"},
                 f"report candidate[{index}].implementation",
             )
             if item["state"] != "implemented" or item["pickup"]:
                 raise ReportError("implementation facts require a closed candidate")
+            tracker_status = item["tracker"]["status"]
+            has_direct_authority = "direct_implementation_authority" in implementation
+            if tracker_status in {"ready-graph", "reused"}:
+                if has_direct_authority:
+                    raise ReportError("tracker-frontier implementation forbids direct authority")
+            elif tracker_status in {"authority-required", "not-applicable"}:
+                if not has_direct_authority:
+                    raise ReportError("direct implementation requires explicit authority")
+                _text(
+                    implementation["direct_implementation_authority"],
+                    "report direct_implementation_authority",
+                )
+            else:
+                raise ReportError("implemented candidate has no valid completion route")
+            commit = _text(implementation["commit_identity"], "report commit_identity")
+            tree = _text(
+                implementation["commit_tree_identity"], "report commit_tree_identity"
+            )
+            if _GIT_ID.fullmatch(commit) is None or _GIT_ID.fullmatch(tree) is None:
+                raise ReportError("report implementation has invalid commit or tree identity")
+            source_result = _text(
+                implementation["current_source_result"],
+                "report implementation.current_source_result",
+            )
+            if source_result not in {"current", "reachable"}:
+                raise ReportError("report implementation has invalid current-source result")
+            if implementation["formal_review_decision"] != "accepted":
+                raise ReportError("report implementation requires accepted review")
+            repairs = implementation["repair_generations_used"]
+            if not isinstance(repairs, int) or isinstance(repairs, bool) or repairs < 0:
+                raise ReportError("report implementation has invalid repair count")
+            for field in (
+                "accepted_proof",
+                "skipped_checks",
+                "formal_review_provenance",
+                "changed_scope",
+                "residual_risk",
+                "last_verified_identity",
+            ):
+                _text(implementation[field], f"report implementation.{field}")
+            if implementation["last_verified_identity"] != item["last_verified_identity"]:
+                raise ReportError("report implementation last verified identity does not match")
         elif item["state"] == "implemented":
             raise ReportError("implemented candidate requires implementation facts")
     system_ids = {item["id"] for item in state["systems"]}
@@ -1416,6 +1488,8 @@ def _candidate_html(candidate: dict[str, Any]) -> str:
         for name, value in sorted(candidate["analysis"].items()):
             fields.append((name.replace("_", " ").title(), value))
     if candidate.get("implementation"):
+        if "direct_implementation_authority" in candidate["implementation"]:
+            fields.append(("Completion Route", "authorized-direct-recovery"))
         for name, value in sorted(candidate["implementation"].items()):
             fields.append((name.replace("_", " ").title(), value))
     return (
@@ -1838,21 +1912,27 @@ def _reduce_close(
     if candidate["state"] != "analyzed":
         raise ReportError("Close requires an analyzed candidate")
     tracker = candidate["tracker"]
-    if (
-        tracker["status"] not in {"ready-graph", "reused"}
-        or tracker["read_back"] is not True
-    ):
-        raise ReportError("Close requires a read-back-verified implementation-ready tracker frontier")
     candidate_digest = _candidate_bundle_sha256(state, candidate)
-    if (
-        packet["candidate_bundle_sha256"] != candidate_digest
-        or tracker["candidate_bundle_sha256"] != candidate_digest
-    ):
+    if packet["candidate_bundle_sha256"] != candidate_digest:
         raise ReportError("Close candidate bundle identity does not match")
-    if packet["tracker_mutation_identity"] != tracker["mutation_identity"]:
-        raise ReportError("Close tracker mutation identity does not match")
-    if packet["ready_issue_url"] != tracker["ready_issue_url"]:
-        raise ReportError("Close Ready issue identity does not match")
+    if packet["completion_route"] == "tracker-frontier":
+        if (
+            tracker["status"] not in {"ready-graph", "reused"}
+            or tracker["read_back"] is not True
+        ):
+            raise ReportError(
+                "tracker-frontier Close requires a read-back-verified tracker frontier"
+            )
+        if tracker["candidate_bundle_sha256"] != candidate_digest:
+            raise ReportError("Close tracker candidate bundle identity does not match")
+        if packet["tracker_mutation_identity"] != tracker["mutation_identity"]:
+            raise ReportError("Close tracker mutation identity does not match")
+        if packet["ready_issue_url"] != tracker["ready_issue_url"]:
+            raise ReportError("Close Ready issue identity does not match")
+    elif tracker["status"] not in {"authority-required", "not-applicable"}:
+        raise ReportError(
+            "authorized-direct-recovery Close requires authority-required or not-applicable tracker state"
+        )
     if packet["last_verified_identity"] != candidate["last_verified_identity"]:
         raise ReportError("Close last verified identity does not match Analyze")
     _verify_commit(
@@ -1895,6 +1975,10 @@ def _reduce_close(
             "last_verified_identity",
         )
     }
+    if packet["completion_route"] == "authorized-direct-recovery":
+        candidate["implementation"]["direct_implementation_authority"] = packet[
+            "direct_implementation_authority"
+        ]
     state["next_selection"] = "Select another report item."
     state["history"].append(
         {
@@ -2180,11 +2264,14 @@ def inspect_report(
         )
         if candidate["state"] not in allowed:
             raise ReportError(f"candidate state {candidate['state']!r} is not admissible for {objective}")
-        if objective == "close" and candidate["tracker"]["status"] not in {
-            "ready-graph",
-            "reused",
-        }:
-            raise ReportError("candidate has no implementation-ready tracker frontier for Close")
+        if objective == "close":
+            tracker_status = candidate["tracker"]["status"]
+            if tracker_status in {"ready-graph", "reused"}:
+                result["completion_route"] = "tracker-frontier"
+            elif tracker_status in {"authority-required", "not-applicable"}:
+                result["completion_route"] = "authorized-direct-recovery"
+            else:
+                raise ReportError("candidate has no admissible Close completion route")
         result["candidate"] = candidate
         result["candidate_bundle_sha256"] = _candidate_bundle_sha256(state, candidate)
         result["member_findings"] = [
@@ -2285,7 +2372,9 @@ def source_identity(
     }
 
 
-def _schema(objective: str) -> dict[str, Any]:
+def _schema(objective: str, completion_route: str | None = None) -> dict[str, Any]:
+    if objective != "close" and completion_route is not None:
+        raise ReportError("completion_route applies only to Close schema")
     common = {"version": MANIFEST_VERSION, "expected_report_sha256": "<sha256>"}
     if objective == "map":
         template = common | {
@@ -2388,7 +2477,13 @@ def _schema(objective: str) -> dict[str, Any]:
             "next_owner": {"skill": "", "reason": "", "prerequisite": "", "invocation": ""},
         }
     elif objective == "close":
+        if completion_route not in {
+            "tracker-frontier",
+            "authorized-direct-recovery",
+        }:
+            raise ReportError("Close schema requires one completion_route")
         template = common | {
+            "completion_route": completion_route,
             "implementation_outcome": "complete",
             "report": "",
             "run_id": "",
@@ -2407,10 +2502,15 @@ def _schema(objective: str) -> dict[str, Any]:
             "residual_risk": "",
             "last_verified_identity": "",
             "candidate_bundle_sha256": "",
-            "tracker_mutation_identity": "",
-            "ready_issue_url": "",
             "finding_transitions": [],
         }
+        if completion_route == "tracker-frontier":
+            template |= {
+                "tracker_mutation_identity": "",
+                "ready_issue_url": "",
+            }
+        else:
+            template["direct_implementation_authority"] = ""
     else:
         raise ReportError(f"unsupported schema objective: {objective}")
     return {
@@ -2428,6 +2528,10 @@ def _parser() -> argparse.ArgumentParser:
 
     schema = commands.add_parser("schema")
     schema.add_argument("--objective", choices=("map", "audit", "analyze", "close"), required=True)
+    schema.add_argument(
+        "--completion-route",
+        choices=("tracker-frontier", "authorized-direct-recovery"),
+    )
 
     def report_args(command: argparse.ArgumentParser) -> None:
         command.add_argument("--repo-root", type=Path, required=True)
@@ -2462,7 +2566,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         args = _parser().parse_args(arguments)
         command = args.command
         if command == "schema":
-            result = _schema(args.objective)
+            result = _schema(args.objective, args.completion_route)
         elif command == "inspect":
             result = inspect_report(
                 repo_root=args.repo_root,

@@ -457,7 +457,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-017",
-      "completion_return": "One verified durable current-source HTML report for exactly one Map, Audit, Analyze, or Close invocation, plus a candidate-bound To Tickets result or authority-required state for an implementation-ready Analyze",
+      "completion_return": "One verified durable current-source HTML report for exactly one Map, Audit, Analyze, or Close invocation; Analyze records not-applicable or, when implementation-ready, a candidate-bound To Tickets result or authority-required state; Close records tracker-frontier or explicitly authorized already-landed direct recovery",
       "disposition": "selected",
       "entry_conditions": [
         "A repository needs a new or updated exhaustive live-worktree map, one selected subsystem audit, one selected candidate analysis, or one selected analyzed-candidate closeout"
@@ -468,11 +468,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Map one live-worktree repository target, audit one user-selected subsystem, analyze one user-selected candidate, or close one analyzed candidate per invocation without a release decision",
+      "observable_outcome": "Map one live-worktree repository target, audit one user-selected subsystem, analyze one user-selected candidate, or close one analyzed candidate from one verified tracker-frontier or authorized-direct-recovery packet without a release decision",
       "primary_owner_skill_id": "SK-017",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
-        "Current-source identity and manifest verification, linked system map, subsystem coverage, verified items, improvement candidates, candidate analysis and Close, returned-evidence judgment, exact next-step pickups, and one atomic durable HTML report"
+        "Current-source identity and manifest verification, linked system map, subsystem coverage, verified items, improvement candidates, candidate analysis, tracker-frontier or authorized-direct-recovery Close, returned-evidence judgment, exact next-step pickups, and one atomic durable HTML report"
       ]
     },
     {
@@ -4308,7 +4308,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "terminal_evidence_pointer": null
       },
       "canonical_name": "audit-codebase",
-      "completion_condition": "The selected Map, Audit, Analyze, or Close path is terminal for this invocation; its current evidence identity and deterministic JSON-state HTML report pass digest-locked publication and read-back; an implementation-ready Analyze also records a candidate-bound ready/reused or recovery result, or authority-required when exact invocation authority is absent",
+      "completion_condition": "The selected Map, Audit, Analyze, or one-candidate Close path is terminal for this invocation; implementation-ready Analyze records ready/reused, recovery, or authority-required; Close admits either an exact read-back-verified tracker frontier or an explicitly authorized already-landed direct recovery without tracker identities; current evidence identity and deterministic JSON-state HTML pass digest-locked publication and read-back",
       "contract_order": 17,
       "essential_outcome": "Map one repository target, audit one user-selected subsystem, analyze one user-selected candidate, or close one analyzed candidate from its exact completion packet",
       "failure_return": "Return current, incomplete, or stale report coverage without mutating the repository baseline, while preserving exact GitHub issue recovery state from an attempted implementation-ready Analyze",
@@ -4320,7 +4320,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Current-source identity and strict manifest verification, linked system map, six-lens coverage, findings and retained complexity, candidate presentation, analysis and Close, To Tickets result admission, exact issue-bound pickups, and the deterministic atomic JSON-state HTML report"
+        "Current-source identity and strict manifest verification, linked system map, six-lens coverage, findings and retained complexity, candidate presentation, analysis, tracker-frontier or authorized-direct-recovery Close, To Tickets result admission, exact issue-bound pickups, and the deterministic atomic JSON-state HTML report"
       ],
       "owned_capability_ids": [
         "CAP-017"
@@ -4346,7 +4346,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-056",
         "REL-093"
       ],
-      "required_input": "A repository target for Map; one current complete report and selected subsystem for Audit; one current report and selected candidate for Analyze, with the generated conditional To Tickets authority when tracker publication may proceed; or one analyzed candidate plus exact completion packet for Close",
+      "required_input": "A repository target for Map; one current complete report and selected subsystem for Audit; one current report and selected candidate for Analyze; or one analyzed candidate plus an exact tracker-frontier completion packet or explicitly authorized already-landed direct-recovery packet for Close",
       "return_packet": "A complete, partial, or blocked invocation result with current-source and Map state, absolute report path or none, current selection, coverage, tracker publication and issue identity when applicable, and any exact uninvoked pickup",
       "skill_id": "SK-017"
     },

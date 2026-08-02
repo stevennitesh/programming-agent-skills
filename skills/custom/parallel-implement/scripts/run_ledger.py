@@ -9,6 +9,7 @@ import os
 import re
 import subprocess
 import sys
+import tomllib
 import uuid
 from contextlib import contextmanager
 from datetime import UTC, datetime
@@ -17,7 +18,7 @@ from typing import Any
 
 
 SCHEMA_VERSION = 1
-RUNTIME_CONTRACT = 6
+RUNTIME_CONTRACT = 7
 REVIEW_AGENT_IDS = {
     "change-review": "ordinary-reviewer",
     "high-assurance-review": "assurance-coordinator",
@@ -130,6 +131,7 @@ EVENT_TYPES = {
     "lane-preflight",
     "lane-cleanup",
     "dispatch",
+    "spawn-receipt",
     "handoff",
     "accept",
     "reject",
@@ -179,16 +181,12 @@ CLOSEOUT_FIELDS = {
     "affected_frontier_readback",
 }
 WORKER_RETURN_FIELDS = {
-    "changed_scope_ids",
     "actual_changed_files",
-    "acceptance_proof",
-    "test_portfolio_delta",
-    "commands_and_results",
-    "skipped_checks",
+    "grounding_and_scope",
+    "proof",
     "risk_or_blocker",
-    "next_need",
-    "scope_notes",
-    "final_status",
+    "required_root_action",
+    "final_worktree",
 }
 
 
@@ -290,6 +288,99 @@ def write_derived_json(path: Path, value: dict[str, Any]) -> None:
 
 def artifact_digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def validate_tracker_snapshot(
+    receipt: Any,
+    *,
+    run: Path,
+) -> dict[str, Any]:
+    if not isinstance(receipt, dict):
+        raise ValueError("scope packet requires tracker_snapshot")
+    path_value = receipt.get("path")
+    digest = receipt.get("sha256")
+    if not isinstance(path_value, str) or not path_value:
+        raise ValueError("tracker_snapshot requires path")
+    path = Path(path_value).resolve()
+    if not path.is_file() or not path_within(str(path), str(run)):
+        raise ValueError("tracker_snapshot must be one file inside the run directory")
+    if not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest):
+        raise ValueError("tracker_snapshot requires SHA-256")
+    if artifact_digest(path) != digest:
+        raise ValueError("tracker_snapshot SHA-256 mismatch")
+    value = read_object(str(path))
+    if value.get("schema") != 1:
+        raise ValueError("tracker_snapshot schema must be 1")
+    if not all(
+        isinstance(value.get(field), expected)
+        for field, expected in {
+            "tracker": str,
+            "repository": str,
+            "observed_at": str,
+            "nodes": list,
+            "edges": list,
+        }.items()
+    ):
+        raise ValueError("tracker_snapshot is incomplete")
+    parent = str(value.get("parent") or "")
+    children = [str(row) for row in value.get("children", [])]
+    repository = value.get("repository")
+    if not parent or not children or len(children) != len(set(children)):
+        raise ValueError("tracker_snapshot requires one parent and ordered unique children")
+    if "parent" in receipt and str(receipt.get("parent")) != parent:
+        raise ValueError("tracker_snapshot receipt changes parent")
+    if "children" in receipt and [str(row) for row in receipt.get("children", [])] != children:
+        raise ValueError("tracker_snapshot receipt changes children")
+    if "repository" in receipt and receipt.get("repository") != repository:
+        raise ValueError("tracker_snapshot receipt changes repository")
+    node_ids: list[str] = []
+    for node in value["nodes"]:
+        if not isinstance(node, dict):
+            raise ValueError("tracker_snapshot nodes must be objects")
+        node_id = node.get("number", node.get("id"))
+        if node_id is None or not all(
+            field in node for field in ("title", "body", "comments", "labels", "assignees", "state")
+        ):
+            raise ValueError("tracker_snapshot node is incomplete")
+        if not isinstance(node["body"], str) or not isinstance(node["comments"], list):
+            raise ValueError("tracker_snapshot packet bytes are incomplete")
+        node_ids.append(str(node_id))
+    expected_nodes = [parent, *children]
+    if node_ids != expected_nodes or len(node_ids) != len(set(node_ids)):
+        raise ValueError("tracker_snapshot nodes differ from the ordered graph")
+    adjacency = {node: [] for node in node_ids}
+    indegree = {node: 0 for node in node_ids}
+    seen_edges: set[tuple[str, str]] = set()
+    for edge in value["edges"]:
+        if not isinstance(edge, dict):
+            raise ValueError("tracker_snapshot edges must be objects")
+        pair = (str(edge.get("blocker")), str(edge.get("dependent")))
+        if pair[0] not in adjacency or pair[1] not in adjacency or pair[0] == pair[1]:
+            raise ValueError("tracker_snapshot edge leaves the graph or is reflexive")
+        if pair in seen_edges:
+            raise ValueError("tracker_snapshot edges must be unique")
+        seen_edges.add(pair)
+        adjacency[pair[0]].append(pair[1])
+        indegree[pair[1]] += 1
+    ready = [node for node in node_ids if indegree[node] == 0]
+    visited = 0
+    while ready:
+        node = ready.pop()
+        visited += 1
+        for dependent in adjacency[node]:
+            indegree[dependent] -= 1
+            if indegree[dependent] == 0:
+                ready.append(dependent)
+    if visited != len(node_ids):
+        raise ValueError("tracker_snapshot dependency graph is cyclic")
+    return {
+        "schema": 1,
+        "path": str(path),
+        "sha256": digest,
+        "repository": repository,
+        "parent": parent,
+        "children": children,
+    }
 
 
 def root_decision_digest(
@@ -555,6 +646,7 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
     charter_id: str | None = None
     root_actor_id: str | None = None
     caller_id: str | None = None
+    tracker_snapshot: dict[str, Any] | None = None
     residual_risk_policy: dict[str, Any] | None = None
     repair_generation_budget = 2
     repair_generation = 0
@@ -756,6 +848,30 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                 f"{prefix} requires the retained parent claim",
             ):
                 parent_claim = dict(candidate_parent_claim)
+            candidate_snapshot = data.get("tracker_snapshot")
+            snapshot_path = (
+                Path(candidate_snapshot.get("path", "")).resolve()
+                if isinstance(candidate_snapshot, dict)
+                else None
+            )
+            if need(
+                isinstance(candidate_snapshot, dict)
+                and candidate_snapshot.get("schema") == 1
+                and candidate_snapshot.get("parent") == parent_id
+                and candidate_snapshot.get("children") == children
+                and isinstance(candidate_snapshot.get("repository"), str)
+                and bool(candidate_snapshot.get("repository"))
+                and isinstance(candidate_snapshot.get("path"), str)
+                and bool(re.fullmatch(r"[0-9a-f]{64}", str(candidate_snapshot.get("sha256")))),
+                f"{prefix} requires the frozen tracker snapshot receipt",
+            ):
+                need(
+                    snapshot_path is not None
+                    and snapshot_path.is_file()
+                    and artifact_digest(snapshot_path) == candidate_snapshot.get("sha256"),
+                    f"{prefix} frozen tracker snapshot is missing or changed",
+                )
+                tracker_snapshot = dict(candidate_snapshot)
             scope_head = event.get("integration_sha")
             if need(
                 commit_identity(scope_head),
@@ -1055,24 +1171,19 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                     "agent_id",
                     "actor_id",
                     "runtime_agent_type",
-                    "task_id",
                     "transport",
                     "requested_model",
                     "requested_effort",
                     "environment",
-                    "task_state",
-                    "report_transport",
-                    "liveness_cursor",
-                    "task_id_state",
-                    "resolved_model_status",
-                    "resolved_effort_status",
+                    "assignment_mode",
+                    "assignment_ref",
                 }
                 missing = sorted(
                     field
                     for field in required
                     if not isinstance(data.get(field), str) or not data.get(field)
                 )
-                valid &= need(not missing, f"{prefix} missing task receipt fields: {', '.join(missing)}")
+                valid &= need(not missing, f"{prefix} missing assignment fields: {', '.join(missing)}")
                 valid &= need(
                     data.get("agent_id") in lane_agent_ids,
                     f"{prefix} has invalid worker agent ID",
@@ -1123,9 +1234,8 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                         f"{prefix} Repair assignment differs from open generation",
                     )
                     valid &= need(
-                        data.get("actor_id") not in review_actor_ids_used
-                        and data.get("task_id") not in review_task_ids_used,
-                        f"{prefix} Repair lane reuses a review actor or task",
+                        data.get("actor_id") not in review_actor_ids_used,
+                        f"{prefix} Repair lane reuses a review actor",
                     )
                 valid &= need(
                     runtime_profile_matches(
@@ -1144,42 +1254,6 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                     data.get("environment") in {"local", "worktree"},
                     f"{prefix} has invalid task environment",
                 )
-                valid &= need(
-                    data.get("task_state") in {"ready", "running"},
-                    f"{prefix} task is not dispatchable",
-                )
-                valid &= need(
-                    data.get("report_transport") == data.get("transport"),
-                    f"{prefix} Return transport differs from task transport",
-                )
-                valid &= need(
-                    data.get("task_id_state") == "canonical",
-                    f"{prefix} task ID is not canonical",
-                )
-                provider_acceptance = data.get("provider_acceptance")
-                valid &= need(
-                    provider_binding_matches(provider_acceptance, data)
-                    and provider_acceptance.get("provider")
-                    in {"delegated-custody", "manual-helper"}
-                    and isinstance(provider_acceptance.get("worktree"), str)
-                    and Path(provider_acceptance["worktree"]).is_absolute(),
-                    f"{prefix} requires task-bound provider acceptance receipt",
-                )
-                valid &= need(
-                    data.get("environment_match") is True,
-                    f"{prefix} provider did not confirm the requested environment",
-                )
-                valid &= require_resolved_telemetry(data, prefix)
-                task_id = data.get("task_id")
-                if isinstance(task_id, str) and task_id:
-                    valid &= need(
-                        all(
-                            lane.get("task_id") != task_id
-                            or lane.get("state") in SAFE_LANE_STATES
-                            for lane in lanes.values()
-                        ),
-                        f"{prefix} reuses an active task ID",
-                    )
                 if valid:
                     lanes[lane_id] = {"work_item": item, "state": "created", **data}
                     state["lane_id"] = lane_id
@@ -1192,21 +1266,17 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                     "agent_id",
                     "runtime_agent_type",
                     "actor_id",
-                    "task_id",
                     "transport",
                     "requested_model",
                     "requested_effort",
                     "environment",
-                    "task_state",
-                    "report_transport",
-                    "liveness_cursor",
                     "assignment_mode",
                     "assignment_ref",
                 }:
                     if field in data:
                         valid &= need(
                             data.get(field) == lane.get(field),
-                            f"{prefix} changes task receipt field {field}",
+                            f"{prefix} changes assignment field {field}",
                         )
                 worktree = data.get("worktree")
                 valid &= need(
@@ -1233,15 +1303,6 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                         f"{prefix} lane base differs from live repository HEAD",
                     )
                 valid &= need(bool(data.get("provider")), f"{prefix} requires a lane provider")
-                provider_acceptance = lane.get("provider_acceptance")
-                valid &= need(
-                    isinstance(provider_acceptance, dict)
-                    and provider_acceptance.get("provider") == data.get("provider")
-                    and isinstance(worktree, str)
-                    and canonical_path(str(provider_acceptance.get("worktree")))
-                    == canonical_path(worktree),
-                    f"{prefix} preflight differs from provider acceptance receipt",
-                )
                 route = (
                     lane.get("transport"),
                     lane.get("environment"),
@@ -1328,9 +1389,14 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                         isinstance(value, str)
                         and bool(value)
                         and Path(value).is_absolute()
-                        and isinstance(worktree, str)
-                        and path_within(value, worktree),
-                        f"{prefix} requires lane-contained {field}",
+                        and (
+                            lane.get("environment") == "local"
+                            or (
+                                isinstance(worktree, str)
+                                and path_within(value, worktree)
+                            )
+                        ),
+                        f"{prefix} requires isolated {field}",
                     )
                 if isinstance(worktree, str) and worktree:
                     valid &= need(
@@ -1347,7 +1413,7 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                     )
                 if valid:
                     lanes[lane_id].update(data)
-                    lanes[lane_id]["state"] = "ready"
+                    lanes[lane_id]["state"] = "prepared"
                     state["preflight"] = True
         elif kind == "dispatch":
             need(not resume_pending, f"{prefix} requires reconciliation after resume")
@@ -1355,6 +1421,10 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
             if need(bool(state.get("preflight")) and lane_id in lanes, f"{prefix} requires lane-preflight"):
                 valid = True
                 lane = lanes[lane_id]
+                valid &= need(
+                    lane.get("state") == "prepared",
+                    f"{prefix} requires a prepared lane",
+                )
                 claim = data.get("claim")
                 valid &= need(
                     isinstance(claim, dict)
@@ -1379,12 +1449,119 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                     and bool(re.fullmatch(r"[0-9a-f]{64}", assignment_sha256)),
                     f"{prefix} requires the final assignment SHA-256",
                 )
+                brief_path = data.get("brief_path")
+                valid &= need(
+                    isinstance(brief_path, str)
+                    and Path(brief_path).is_absolute()
+                    and Path(brief_path).is_file()
+                    and artifact_digest(Path(brief_path)) == assignment_sha256,
+                    f"{prefix} requires the immutable final assignment artifact",
+                )
+                valid &= need(
+                    data.get("tracker_snapshot_sha256")
+                    == tracker_snapshot.get("sha256"),
+                    f"{prefix} changes the frozen tracker snapshot",
+                )
+                valid &= need(
+                    isinstance(data.get("attempt_id"), str)
+                    and bool(data.get("attempt_id")),
+                    f"{prefix} requires an attempt ID",
+                )
+                valid &= need(
+                    isinstance(data.get("task_name"), str)
+                    and bool(data.get("task_name")),
+                    f"{prefix} requires a requested task name",
+                )
+                valid &= need(
+                    isinstance(data.get("prepare_sha256"), str)
+                    and bool(re.fullmatch(r"[0-9a-f]{64}", data.get("prepare_sha256", ""))),
+                    f"{prefix} requires the dispatch preparation SHA-256",
+                )
                 if valid:
                     lane["claim"] = claim
                     lane["assignment_sha256"] = data.get("assignment_sha256")
-                if valid:
-                    state["dispatched"] = True
-                    lanes[lane_id]["state"] = "active"
+                    lane["brief_path"] = brief_path
+                    lane["attempt_id"] = data.get("attempt_id")
+                    lane["task_name"] = data.get("task_name")
+                    lane["prepare_sha256"] = data.get("prepare_sha256")
+                    state["spawn_authorized"] = True
+                    lanes[lane_id]["state"] = "spawn-authorized"
+        elif kind == "spawn-receipt":
+            lane_id = data.get("lane_id") or state.get("lane_id")
+            lane = lanes.get(lane_id, {})
+            valid = need(
+                lane.get("state") == "spawn-authorized",
+                f"{prefix} requires pre-spawn dispatch authorization",
+            )
+            for field in {
+                "agent_id",
+                "runtime_agent_type",
+                "actor_id",
+                "transport",
+                "requested_model",
+                "requested_effort",
+                "environment",
+                "attempt_id",
+                "assignment_sha256",
+            }:
+                valid &= need(
+                    data.get(field) == lane.get(field),
+                    f"{prefix} changes authorized field {field}",
+                )
+            required = {
+                "task_id",
+                "task_state",
+                "report_transport",
+                "liveness_cursor",
+                "task_id_state",
+                "resolved_model_status",
+                "resolved_effort_status",
+            }
+            missing = sorted(
+                field
+                for field in required
+                if not isinstance(data.get(field), str) or not data.get(field)
+            )
+            valid &= need(
+                not missing,
+                f"{prefix} missing provider receipt fields: {', '.join(missing)}",
+            )
+            valid &= need(
+                data.get("task_state") in {"ready", "running"}
+                and data.get("report_transport") == data.get("transport")
+                and data.get("task_id_state") == "canonical",
+                f"{prefix} task receipt is not active and canonical",
+            )
+            provider_acceptance = data.get("provider_acceptance")
+            valid &= need(
+                provider_binding_matches(provider_acceptance, data)
+                and provider_acceptance.get("provider")
+                in {"delegated-custody", "manual-helper"}
+                and provider_acceptance.get("provider") == lane.get("provider")
+                and isinstance(provider_acceptance.get("worktree"), str)
+                and canonical_path(str(provider_acceptance.get("worktree")))
+                == canonical_path(str(lane.get("worktree"))),
+                f"{prefix} requires task-bound provider acceptance",
+            )
+            valid &= need(
+                data.get("environment_match") is True,
+                f"{prefix} provider did not confirm the requested environment",
+            )
+            valid &= require_resolved_telemetry(data, prefix)
+            task_id = data.get("task_id")
+            valid &= need(
+                all(
+                    other_id == lane_id
+                    or other.get("task_id") != task_id
+                    or other.get("state") in SAFE_LANE_STATES
+                    for other_id, other in lanes.items()
+                ),
+                f"{prefix} reuses an active task ID",
+            )
+            if valid:
+                lane.update(data)
+                lane["state"] = "active"
+                state["dispatched"] = True
         elif kind == "handoff":
             lane_id = data.get("lane_id") or state.get("lane_id")
             lane = lanes.get(lane_id, {})
@@ -1446,15 +1623,34 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                 not missing_return,
                 f"{prefix} handoff missing Return fields: {', '.join(missing_return)}",
             )
-            valid &= need(
-                isinstance(data.get("changed_scope_ids"), list)
-                and isinstance(data.get("actual_changed_files"), list)
-                and isinstance(data.get("commands_and_results"), list)
-                and isinstance(data.get("skipped_checks"), list),
-                f"{prefix} handoff Return collections must be lists",
-            )
+            if not missing_return:
+                valid &= need(
+                    isinstance(data.get("actual_changed_files"), list)
+                    and all(
+                        isinstance(path, str) and bool(path)
+                        for path in data["actual_changed_files"]
+                    )
+                    and isinstance(data.get("grounding_and_scope"), str)
+                    and bool(data["grounding_and_scope"])
+                    and isinstance(data.get("proof"), dict)
+                    and bool(data["proof"])
+                    and isinstance(data.get("risk_or_blocker"), str)
+                    and bool(data["risk_or_blocker"])
+                    and isinstance(data.get("required_root_action"), str)
+                    and bool(data["required_root_action"])
+                    and isinstance(data.get("final_worktree"), dict)
+                    and commit_identity(data["final_worktree"].get("head"))
+                    and isinstance(data["final_worktree"].get("clean"), bool),
+                    f"{prefix} handoff Return fields are empty or malformed",
+                )
             if data.get("status") == "done":
-                valid &= need(bool(data.get("commit")), f"{prefix} done handoff requires commit")
+                valid &= need(
+                    commit_identity(data.get("commit"))
+                    and bool(data.get("actual_changed_files"))
+                    and data["final_worktree"].get("head") == data.get("commit")
+                    and data["final_worktree"].get("clean") is True,
+                    f"{prefix} done handoff requires one changed clean commit",
+                )
             prior_handoff = state.get("handoff")
             if isinstance(feedback, dict):
                 valid &= need(
@@ -1933,6 +2129,17 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                         bool(route_evidence.get("trigger")),
                         f"{prefix} supported-high-risk route requires its trigger",
                     )
+            review_brief_path = data.get("brief_path")
+            review_assignment_sha256 = data.get("assignment_sha256")
+            valid &= need(
+                isinstance(review_brief_path, str)
+                and Path(review_brief_path).is_absolute()
+                and Path(review_brief_path).is_file()
+                and isinstance(review_assignment_sha256, str)
+                and bool(re.fullmatch(r"[0-9a-f]{64}", review_assignment_sha256))
+                and artifact_digest(Path(review_brief_path)) == review_assignment_sha256,
+                f"{prefix} requires the immutable review assignment artifact",
+            )
             valid &= need(
                 isinstance(actor_id, str) and bool(actor_id.strip()),
                 f"{prefix} requires a review actor ID",
@@ -2130,6 +2337,8 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                         "resolved_effort_status",
                         "resolved_effort",
                         "telemetry_unavailable_reason",
+                        "brief_path",
+                        "assignment_sha256",
                     }
                 }
                 review_target = target
@@ -2612,8 +2821,14 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                     cleanup_state in SAFE_LANE_STATES,
                     f"{prefix} has invalid cleanup state",
                 )
+                no_task_cleanup = (
+                    lane.get("state") == "spawn-authorized"
+                    and lane.get("task_id") is None
+                    and data.get("terminal_task_state") == "not-created"
+                )
                 valid &= need(
-                    data.get("terminal_task_state")
+                    no_task_cleanup
+                    or data.get("terminal_task_state")
                     in {"completed", "interrupted", "failed"},
                     f"{prefix} requires terminal task state",
                 )
@@ -2626,11 +2841,17 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                     if isinstance(state.get("handoff"), dict)
                     else None
                 ) or state.get("accepted")
-                valid &= need(
-                    commit_identity(data.get("exact_head"))
-                    and data.get("exact_head") == returned_commit,
-                    f"{prefix} cleanup HEAD differs from returned commit",
-                )
+                if no_task_cleanup:
+                    valid &= need(
+                        data.get("exact_head") == lane.get("base"),
+                        f"{prefix} unstarted lane HEAD differs from its base",
+                    )
+                else:
+                    valid &= need(
+                        commit_identity(data.get("exact_head"))
+                        and data.get("exact_head") == returned_commit,
+                        f"{prefix} cleanup HEAD differs from returned commit",
+                    )
                 valid &= need(data.get("clean") is True, f"{prefix} requires clean status")
                 if data.get("commit_disposition") == "integrated":
                     valid &= need(
@@ -2669,6 +2890,11 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                 if valid:
                     lanes[lane_id].update(data)
                     lanes[lane_id]["state"] = data.get("state")
+                    if no_task_cleanup:
+                        state["lane_id"] = None
+                        state["preflight"] = False
+                        state["spawn_authorized"] = False
+                        state["dispatched"] = False
         elif kind == "tracker-lock":
             require_root_receipt(
                 data,
@@ -2942,6 +3168,7 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
         "charter_id": charter_id,
         "root_actor_id": root_actor_id,
         "caller_id": caller_id,
+        "tracker_snapshot": tracker_snapshot,
         "residual_risk_policy": residual_risk_policy,
         "runtime_contract": RUNTIME_CONTRACT,
         "repair_generation_budget": repair_generation_budget,
@@ -2971,7 +3198,12 @@ def intent_errors(state: dict[str, Any], intent: str) -> list[str]:
     if state["resume_pending"]:
         errors.append("resume requires reconciled Git, worktree, agent, and tracker evidence")
     if intent == "dispatch":
-        if not any(item.get("preflight") and not item.get("dispatched") for item in items.values()):
+        if not any(
+            item.get("preflight")
+            and not item.get("spawn_authorized")
+            and not item.get("dispatched")
+            for item in items.values()
+        ):
             errors.append("no reconciled preflighted item is ready to dispatch")
     elif intent == "land":
         if not any(item.get("accepted") and not item.get("landed") for item in items.values()):
@@ -3075,6 +3307,8 @@ def implementation_states(state: dict[str, Any]) -> dict[str, str]:
             value = "accepted"
         elif item.get("dispatched"):
             value = "active"
+        elif item.get("spawn_authorized"):
+            value = "spawn-authorized"
         elif item.get("preflight"):
             value = "ready"
         elif item.get("disposition"):
@@ -3120,6 +3354,12 @@ def facade_view(state: dict[str, Any]) -> dict[str, Any]:
     elif any(value == "ready" for value in implementations.values()):
         phase, action = "open", "dispatch"
         subjects = sorted(key for key, value in implementations.items() if value == "ready")
+    elif any(value == "spawn-authorized" for value in implementations.values()):
+        phase, action = "open", "record-spawn-receipt"
+        owner = "task"
+        subjects = sorted(
+            key for key, value in implementations.items() if value == "spawn-authorized"
+        )
     elif any(value == "accepted" for value in implementations.values()):
         phase, action = "drain", "inspect-land"
         subjects = sorted(key for key, value in implementations.items() if value == "accepted")
@@ -3245,22 +3485,16 @@ def start(args: argparse.Namespace) -> int:
     if load_events(path):
         raise ValueError("start requires an empty event stream; use status to resume")
     packet = read_object(args.scope_file)
-    parent = packet.get("parent")
-    children = packet.get("children")
     charter = packet.get("charter")
     root_actor_id = packet.get("root_actor_id")
     caller_id = packet.get("caller_id")
     parent_claim = packet.get("parent_claim")
-    if not isinstance(parent, str) or not parent:
-        raise ValueError("scope packet requires parent")
-    if not isinstance(children, list):
-        raise ValueError("scope packet requires children")
-    if (
-        not children
-        or not all(isinstance(child, str) and child.strip() for child in children)
-        or len(children) != len(set(children))
-    ):
-        raise ValueError("scope packet requires nonempty unique child IDs")
+    tracker_snapshot = validate_tracker_snapshot(
+        packet.get("tracker_snapshot"),
+        run=run_path(args.run),
+    )
+    parent = tracker_snapshot["parent"]
+    children = tracker_snapshot["children"]
     if (
         not isinstance(charter, dict)
         or not isinstance(charter.get("id"), str)
@@ -3296,7 +3530,9 @@ def start(args: argparse.Namespace) -> int:
     if not args.repo:
         raise ValueError("start requires --repo")
     data["repo"] = canonical_path(args.repo)
+    data["children"] = children
     data["charter"] = charter
+    data["tracker_snapshot"] = tracker_snapshot
     raw = {
         "event": "scope",
         "event_id": stable_event_id("scope", {"parent": parent, "data": data}),
@@ -3318,66 +3554,6 @@ def packet_events(packet: dict[str, Any]) -> list[dict[str, Any]]:
     kind = packet.get("kind")
     work_item = packet.get("work_item")
     identity = {key: value for key, value in packet.items() if key != "event_id"}
-    if kind == "lane-ready":
-        lane_id = packet.get("lane_id")
-        actor_id = packet.get("actor_id")
-        task_fields = {
-            field: packet.get(field)
-            for field in {
-                "agent_id",
-                "runtime_agent_type",
-                "task_id",
-                "transport",
-                "requested_model",
-                "requested_effort",
-                "environment",
-                "task_state",
-                "report_transport",
-                "liveness_cursor",
-            }
-        }
-        if not all(
-            isinstance(value, str) and value
-            for value in (work_item, lane_id, actor_id, *task_fields.values())
-        ):
-            raise ValueError("lane-ready requires work item, lane, actor, and task receipt")
-        create = packet.get("create") if isinstance(packet.get("create"), dict) else {}
-        preflight = packet.get("preflight") if isinstance(packet.get("preflight"), dict) else {}
-        assignment = (
-            packet.get("assignment")
-            if isinstance(packet.get("assignment"), dict)
-            else {}
-        )
-        assignment_mode = assignment.get("mode")
-        assignment_ref = assignment.get("ref")
-        root_receipt = assignment.get("root_receipt")
-        if not all(
-            isinstance(value, str) and value
-            for value in (assignment_mode, assignment_ref)
-        ):
-            raise ValueError("lane-ready requires a root-recorded assignment mode and ref")
-        common = {
-            "lane_id": lane_id,
-            "actor_id": actor_id,
-            "assignment_mode": assignment_mode,
-            "assignment_ref": assignment_ref,
-            "root_receipt": root_receipt,
-            **task_fields,
-        }
-        return [
-            {
-                "event": "lane-create",
-                "event_id": stable_event_id("lane-create", identity),
-                "work_item": work_item,
-                "data": {**create, **common},
-            },
-            {
-                "event": "lane-preflight",
-                "event_id": stable_event_id("lane-preflight", identity),
-                "work_item": work_item,
-                "data": {**preflight, **common},
-            },
-        ]
     if kind == "worker-result":
         required = {
             field: packet.get(field)
@@ -3404,7 +3580,15 @@ def packet_events(packet: dict[str, Any]) -> list[dict[str, Any]]:
         values = packet.get("events")
         if not isinstance(values, list) or not values:
             raise ValueError("events packet requires a non-empty events list")
-        facade_owned = {"scope", "lane-create", "lane-preflight", "handoff", "release"}
+        facade_owned = {
+            "scope",
+            "lane-create",
+            "lane-preflight",
+            "dispatch",
+            "spawn-receipt",
+            "handoff",
+            "release",
+        }
         result = []
         for index, value in enumerate(values):
             if not isinstance(value, dict):
@@ -3415,7 +3599,7 @@ def packet_events(packet: dict[str, Any]) -> list[dict[str, Any]]:
                 )
             result.append({**value, "event_id": value.get("event_id") or stable_event_id(str(value.get("event", "event")), identity, index=index)})
         return result
-    raise ValueError("unsupported packet kind; use lane-ready, worker-result, or events")
+    raise ValueError("unsupported packet kind; use worker-result or events")
 
 
 def apply_packet(args: argparse.Namespace) -> int:
@@ -3438,83 +3622,567 @@ def apply_packet(args: argparse.Namespace) -> int:
     )
 
 
-def brief(args: argparse.Namespace) -> int:
-    path = event_path(args.events)
-    events = load_events(path)
-    validate_events(events)
-    state = derive_state(events, args.repo)
-    item = state["items"].get(args.work_item, {})
-    lane = state["lanes"].get(item.get("lane_id"), {})
-    if not item:
-        raise ValueError(f"unknown work item: {args.work_item}")
-    if not lane or lane.get("state") not in {"ready", "active"}:
-        raise ValueError(f"work item is not bound to a ready task lane: {args.work_item}")
-    mode = lane.get("assignment_mode")
-    if mode not in {"implementation", "integration-correction", "review-repair"}:
-        raise ValueError(f"work item has no recorded assignment mode: {args.work_item}")
+def root_receipt(
+    actor_id: str,
+    *,
+    action: str,
+    subject: str,
+    head: str | None,
+    data: dict[str, Any],
+) -> dict[str, str | None]:
+    return {
+        "actor_id": actor_id,
+        "action": action,
+        "subject": subject,
+        "head": head,
+        "receipt_id": stable_event_id(
+            f"root-{action}", {"subject": subject, "head": head, "data": data}
+        ),
+        "decision_sha256": root_decision_digest(action, subject, head, data),
+    }
+
+
+def lane_setup(repo: str) -> tuple[str, str]:
+    config = Path(repo) / ".codex" / "config.toml"
+    if not config.is_file():
+        raise ValueError("isolated dispatch requires repo-bootstrap parallel lane setup")
+    value = tomllib.loads(config.read_text(encoding="utf-8"))
+    permission = value.get("default_permissions")
+    roots = (
+        value.get("permissions", {})
+        .get(permission, {})
+        .get("workspace_roots", {})
+    )
+    candidates = [Path(path).resolve() for path, enabled in roots.items() if enabled]
+    candidates = [path for path in candidates if path.name.lower() == "wt"]
+    if len(candidates) != 1:
+        raise ValueError("parallel lane setup must declare exactly one writable wt root")
+    lane_root = candidates[0]
+    return lane_root.parent.name, str(lane_root.parent.parent)
+
+
+def open_worktree_lane(
+    args: argparse.Namespace,
+    packet: dict[str, Any],
+    *,
+    state: dict[str, Any],
+    item: str,
+    actor_id: str,
+) -> dict[str, Any]:
+    lane = packet.get("lane") if isinstance(packet.get("lane"), dict) else {}
+    project_key = lane.get("project_key")
+    base_root = lane.get("base_root")
+    if not project_key or not base_root:
+        project_key, base_root = lane_setup(args.repo)
+    command = [
+        sys.executable,
+        str(Path(__file__).with_name("lane_worktree.py")),
+        "open",
+        "--repo",
+        args.repo,
+        "--project-key",
+        str(project_key),
+        "--base-root",
+        str(base_root),
+        "--base",
+        state["current_head"],
+        "--run-id",
+        run_path(args.run).name,
+        "--item-id",
+        item,
+        "--actor-id",
+        actor_id,
+    ]
+    option_map = {
+        "proof_command_file": "--proof-command-file",
+        "python_provenance_file": "--python-provenance-file",
+    }
+    for field, option in option_map.items():
+        if lane.get(field):
+            command.extend([option, str(lane[field])])
+    if not lane.get("python_provenance_file"):
+        reason = lane.get("python_provenance_reason")
+        if not isinstance(reason, str) or not reason:
+            raise ValueError(
+                "isolated dispatch requires Python provenance or an explicit non-Python reason"
+            )
+        command.extend(
+            [
+                "--skip-python-provenance",
+                "--python-provenance-reason",
+                reason,
+            ]
+        )
+    result = subprocess.run(
+        command,
+        cwd=args.repo,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    try:
+        receipt = json.loads(result.stdout.strip().splitlines()[-1])
+    except (IndexError, json.JSONDecodeError) as error:
+        raise ValueError("lane helper returned no valid receipt") from error
+    if receipt.get("worktree"):
+        args.external_effect = {
+            "kind": "isolated-lane",
+            "worktree": receipt["worktree"],
+            "recovery": {
+                "command": "lane_worktree.py cleanup",
+                "repo": args.repo,
+                "project_key": receipt.get("project_key") or project_key,
+                "base_root": receipt.get("base_root") or base_root,
+                "run_id": run_path(args.run).name,
+                "item_id": item,
+                "expected_head": state["current_head"],
+                "disposition": "preserved",
+            },
+        }
+    if result.returncode != 0:
+        raise ValueError(receipt.get("error") or result.stderr.strip() or "lane setup failed")
+    if not receipt.get("ok"):
+        raise ValueError(receipt.get("error") or "lane setup failed")
+    return receipt["preflight"]
+
+
+def open_local_lane(
+    args: argparse.Namespace,
+    *,
+    state: dict[str, Any],
+    actor_id: str,
+) -> dict[str, Any]:
+    if git_head(args.repo) != state["current_head"] or git_clean(args.repo) is not True:
+        raise ValueError("local dispatch requires the clean recorded integration HEAD")
+    actor_root = run_path(args.run) / "lanes" / artifact_name(actor_id)
+    pytest_root = actor_root / "pytest"
+    cache_root = actor_root / "cache"
+    pytest_root.mkdir(parents=True, exist_ok=True)
+    cache_root.mkdir(parents=True, exist_ok=True)
+    args.external_effect = {
+        "kind": "local-lane-temp-roots",
+        "path": str(actor_root),
+        "recovery": "preserve or remove this run-owned directory after confirming the attempt did not start",
+    }
+    return {
+        "provider": "delegated-custody",
+        "worktree": str(Path(args.repo).resolve()),
+        "base": state["current_head"],
+        "observed_head": state["current_head"],
+        "status": "clean",
+        "startup_proof": {
+            "status": "passed",
+            "kind": "builtin-viability",
+            "checks": ["checkout", "index-lock", "git-objects"],
+        },
+        "project_provenance": {
+            "status": "not-applicable",
+            "reason": "local lane uses the integration checkout",
+        },
+        "temp_root": str(actor_root),
+        "pytest_basetemp": str(pytest_root),
+        "cache_root": str(cache_root),
+    }
+
+
+def seal_brief(
+    args: argparse.Namespace,
+    packet: dict[str, Any],
+    *,
+    state: dict[str, Any],
+    binding: dict[str, Any],
+) -> tuple[Path, str]:
+    write_scope = packet.get("write_scope")
+    if not isinstance(write_scope, list) or not write_scope or not all(
+        isinstance(value, str) and value for value in write_scope
+    ):
+        raise ValueError("dispatch prepare requires a non-empty write_scope")
+    instructions = packet.get("instructions", [])
+    if not isinstance(instructions, list) or not all(
+        isinstance(value, str) and value for value in instructions
+    ):
+        raise ValueError("dispatch instructions must be strings")
     lines = [
         "# Parallel Implementation Assignment",
         "",
-        f"- Work item: `{args.work_item}`",
-        f"- Mode: `{mode}`",
-        f"- Agent: `{lane['agent_id']}`",
-        f"- Actor: `{lane['actor_id']}`",
-        f"- Lane: `{item['lane_id']}`",
-        f"- Task: `{lane['task_id']}`",
-        f"- Transport: `{lane['transport']}`",
-        f"- Environment: `{lane['environment']}`",
-        f"- Charter: `{state['charter_id'] or 'not recorded'}`",
-        f"- Base: `{lane['base']}`",
-        f"- Worktree: `{lane['worktree']}`",
-        f"- Temp root: `{lane['temp_root']}`",
-        f"- Pytest base: `{lane['pytest_basetemp']}`",
-        f"- Cache root: `{lane['cache_root']}`",
-        f"- Return transport: `{lane['report_transport']}`",
-        f"- Liveness cursor: `{lane['liveness_cursor']}`",
+        "## Binding",
+        "",
+        f"- Work item: `{binding['work_item']}`",
+        f"- Attempt: `{binding['attempt_id']}`",
+        f"- Mode: `{binding['assignment_mode']}`",
+        f"- Assignment: `{binding['assignment_ref']}`",
+        f"- Profile: `{binding['agent_id']}`",
+        f"- Actor: `{binding['actor_id']}`",
+        f"- Lane: `{binding['lane_id']}`",
+        f"- Environment: `{binding['environment']}`",
+        f"- Base: `{binding['base']}`",
+        f"- Checkout: `{binding['worktree']}`",
+        f"- Charter: `{state['charter_id']}`",
+        f"- Tracker snapshot: `{state['tracker_snapshot']['path']}`",
+        f"- Tracker snapshot SHA-256: `{state['tracker_snapshot']['sha256']}`",
+        "",
+        "## Authority",
+        "",
+        "- Read the frozen tracker snapshot for ticket meaning and dependency evidence.",
+        "- Refresh repository grounding, callers, fixtures, and the concrete write set.",
+        "- Work only inside the assigned checkout and authorized write scope.",
+        "- Implement, validate, create one clean commit, and return through WORKER-BRIEF.md.",
+        "- Do not claim tickets, dispatch agents, integrate, review, mutate trackers, push, or decide campaign completion.",
+        "",
+        "## Write scope",
+        "",
+        *[f"- `{value}`" for value in write_scope],
     ]
-    if lane["environment"] == "worktree":
-        lines.extend(
-            [
-                f"- Root checkout: `{args.repo}`",
-                "- Root checkout access: `read-only`",
-                "- Write boundary: `assigned worktree only`",
-            ]
-        )
-    if mode == "integration-correction":
-        regression = state.get("integration_regression") or {}
-        lines.extend([
+    if instructions:
+        lines.extend(["", "## Assignment instructions", "", *[f"- {value}" for value in instructions]])
+    lines.extend(
+        [
             "",
-            "## Integration correction",
+            "## Return binding",
             "",
-            f"- Regression event: `{regression.get('event_id') or 'not recorded'}`",
-            f"- Prior integration HEAD: `{regression.get('integration_sha') or 'not recorded'}`",
-            f"- Route: `{regression.get('route') or 'not recorded'}`",
-            f"- Authorized scope IDs: `{', '.join(regression.get('write_scope_ids') or []) or 'not recorded'}`",
-            f"- Required proof: `{regression.get('required_proof') or 'not recorded'}`",
-        ])
-    elif mode == "review-repair":
-        lines.extend([
-            "",
-            "## Review repair",
-            "",
-            f"- Generation: `{state['repair_generation']}`",
-            f"- Finding IDs: `{', '.join(state['repair_findings']) or 'not recorded'}`",
-            f"- Reviewed HEAD: `{state['repair_base'] or 'not recorded'}`",
-        ])
-    briefs = run_path(args.run) / "briefs"
-    output = briefs / f"{artifact_name(args.work_item)}.md"
-    if not path_within(str(output), str(briefs)):
-        raise ValueError("brief artifact escapes its run directory")
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    return emit(
-        True,
-        operation="brief",
-        work_item=args.work_item,
-        mode=mode,
-        artifact=str(output),
-        sha256=artifact_digest(output),
+            "Echo work item, actor, provider task ID, lane, checkout, base, and assignment SHA-256 exactly.",
+        ]
     )
+    content = "\n".join(lines) + "\n"
+    digest = hashlib.sha256(content.encode()).hexdigest()
+    directory = run_path(args.run) / "briefs"
+    output = directory / f"{digest}.md"
+    directory.mkdir(parents=True, exist_ok=True)
+    if output.exists() and output.read_text(encoding="utf-8") != content:
+        raise ValueError("content-addressed assignment collision")
+    if not output.exists():
+        temporary = output.with_suffix(".tmp")
+        with temporary.open("w", encoding="utf-8", newline="\n") as handle:
+            handle.write(content)
+        temporary.replace(output)
+    return output, digest
+
+
+def spawn_arguments(lane: dict[str, Any]) -> dict[str, str]:
+    brief_path = lane["brief_path"]
+    assignment_sha256 = lane["assignment_sha256"]
+    spawn = {
+        "task_name": lane["task_name"],
+        "agent_type": lane["runtime_agent_type"],
+        "fork_turns": "none",
+        "message": (
+            f"Execute the immutable assignment at {brief_path}. "
+            f"Verify SHA-256 {assignment_sha256} before starting. "
+            "Return one WORKER-BRIEF.md packet; do not wait for a follow-up assignment."
+        ),
+    }
+    if lane["runtime_agent_type"] == "default":
+        spawn.update(
+            model=lane["requested_model"],
+            reasoning_effort=lane["requested_effort"],
+        )
+    return spawn
+
+
+def prepare_dispatch(
+    args: argparse.Namespace,
+    packet: dict[str, Any],
+    events: list[dict[str, Any]],
+    state: dict[str, Any],
+) -> int:
+    item = packet.get("work_item")
+    profile = packet.get("profile")
+    actor_id = packet.get("actor_id")
+    attempt_id = packet.get("attempt_id")
+    assignment = packet.get("assignment")
+    environment = packet.get("environment", "worktree")
+    if not all(isinstance(value, str) and value for value in (item, profile, actor_id, attempt_id)):
+        raise ValueError("dispatch prepare requires work_item, profile, actor_id, and attempt_id")
+    if item not in state["children"]:
+        raise ValueError("dispatch work item is outside the campaign graph")
+    worker_profiles = (
+        set(runtime_profiles())
+        - set(REVIEW_AGENT_IDS.values())
+        - ASSURANCE_REVIEWER_IDS
+        - {"parallel-root"}
+    )
+    if profile not in worker_profiles:
+        raise ValueError("dispatch profile is not a worker profile")
+    if environment not in {"local", "worktree"}:
+        raise ValueError("dispatch environment must be local or worktree")
+    if not isinstance(assignment, dict):
+        raise ValueError("dispatch prepare requires assignment mode and ref")
+    mode, assignment_ref = assignment.get("mode"), assignment.get("ref")
+    if not all(isinstance(value, str) and value for value in (mode, assignment_ref)):
+        raise ValueError("dispatch prepare requires assignment mode and ref")
+    write_scope = packet.get("write_scope")
+    instructions = packet.get("instructions", [])
+    if not isinstance(write_scope, list) or not write_scope or not all(
+        isinstance(value, str) and value for value in write_scope
+    ):
+        raise ValueError("dispatch prepare requires a non-empty write_scope")
+    if not isinstance(instructions, list) or not all(
+        isinstance(value, str) and value for value in instructions
+    ):
+        raise ValueError("dispatch instructions must be strings")
+    claim = packet.get("claim")
+    if not (
+        isinstance(claim, dict)
+        and claim.get("state") == "retained"
+        and claim.get("work_item") == item
+        and claim.get("actor_id") == actor_id
+        and claim.get("owner") == state["root_actor_id"]
+        and bool(claim.get("token"))
+        and bool(claim.get("readback"))
+    ):
+        raise ValueError("dispatch prepare requires the retained child claim and read-back")
+    prepare_sha256 = hashlib.sha256(
+        json.dumps(packet, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+    existing = [
+        lane
+        for lane in state["lanes"].values()
+        if lane.get("attempt_id") == attempt_id
+    ]
+    if existing:
+        if len(existing) != 1 or existing[0].get("state") != "spawn-authorized":
+            raise ValueError("dispatch attempt already exists outside spawn authorization")
+        lane = existing[0]
+        if lane.get("prepare_sha256") != prepare_sha256:
+            raise ValueError("dispatch attempt retry changes the prepared packet")
+        return public_state(
+            "dispatch",
+            args,
+            state,
+            events,
+            mode="recover",
+            assignment={
+                "path": lane["brief_path"],
+                "sha256": lane["assignment_sha256"],
+            },
+            spawn=spawn_arguments(lane),
+            receipt={"applied": 0, "replayed": 3},
+        )
+    if intent_errors(state, "dispatch") and not (
+        state["items"].get(item, {}).get("preflight")
+        and not state["items"].get(item, {}).get("spawn_authorized")
+    ):
+        pending = state["items"].get(item, {})
+        if pending.get("lane_id"):
+            raise ValueError("work item already has a dispatch lane")
+    agent_type, model, effort = runtime_profiles()[profile]
+    lane_id = f"lane-{artifact_name(attempt_id)}"
+    common = {
+        "lane_id": lane_id,
+        "agent_id": profile,
+        "runtime_agent_type": agent_type,
+        "actor_id": actor_id,
+        "transport": "subagent-v2",
+        "requested_model": model,
+        "requested_effort": effort,
+        "environment": environment,
+        "assignment_mode": mode,
+        "assignment_ref": assignment_ref,
+    }
+    assign_data = dict(common)
+    assign_data["root_receipt"] = root_receipt(
+        state["root_actor_id"],
+        action="assign",
+        subject=item,
+        head=state["integration_head"],
+        data=assign_data,
+    )
+    dry_create = {
+        "event": "lane-create",
+        "event_id": stable_event_id("lane-create-check", {"attempt_id": attempt_id}),
+        "work_item": item,
+        "data": assign_data,
+    }
+    dry_state = derive_state([*events, normalize_event(dry_create)], args.repo)
+    if dry_state["errors"]:
+        raise ValueError("dispatch assignment is invalid: " + "; ".join(dry_state["errors"]))
+    preflight = (
+        open_worktree_lane(args, packet, state=state, item=item, actor_id=actor_id)
+        if environment == "worktree"
+        else open_local_lane(args, state=state, actor_id=actor_id)
+    )
+    binding = {
+        **common,
+        "work_item": item,
+        "attempt_id": attempt_id,
+        "base": preflight["base"],
+        "worktree": preflight["worktree"],
+    }
+    brief_path, assignment_sha256 = seal_brief(
+        args, packet, state=state, binding=binding
+    )
+    task_name = packet.get("task_name") or f"pi_{artifact_name(item)[:32]}"
+    dispatch_data = {
+        "lane_id": lane_id,
+        "claim": claim,
+        "attempt_id": attempt_id,
+        "task_name": task_name,
+        "brief_path": str(brief_path),
+        "assignment_sha256": assignment_sha256,
+        "tracker_snapshot_sha256": state["tracker_snapshot"]["sha256"],
+        "prepare_sha256": prepare_sha256,
+    }
+    dispatch_data["root_receipt"] = root_receipt(
+        state["root_actor_id"],
+        action="dispatch",
+        subject=item,
+        head=state["integration_head"],
+        data=dispatch_data,
+    )
+    identity = {"attempt_id": attempt_id, "assignment_sha256": assignment_sha256}
+    raw = [
+        {
+            "event": "lane-create",
+            "event_id": stable_event_id("lane-create", identity),
+            "work_item": item,
+            "data": assign_data,
+        },
+        {
+            "event": "lane-preflight",
+            "event_id": stable_event_id("lane-preflight", identity),
+            "work_item": item,
+            "data": {**common, **preflight},
+        },
+        {
+            "event": "dispatch",
+            "event_id": stable_event_id("dispatch", identity),
+            "work_item": item,
+            "data": dispatch_data,
+        },
+    ]
+    applied, replayed, events, state = append_facade_events(
+        event_path(args.events), raw, repo=args.repo
+    )
+    args.external_effect = None
+    return public_state(
+        "dispatch",
+        args,
+        state,
+        events,
+        mode="prepare",
+        assignment={"path": str(brief_path), "sha256": assignment_sha256},
+        spawn=spawn_arguments({**common, **dispatch_data}),
+        receipt={
+            "applied": applied,
+            "replayed": replayed,
+            "event_ids": [event["event_id"] for event in raw],
+        },
+    )
+
+
+def record_spawn_receipt(
+    args: argparse.Namespace,
+    packet: dict[str, Any],
+    events: list[dict[str, Any]],
+    state: dict[str, Any],
+) -> int:
+    attempt_id = packet.get("attempt_id")
+    matches = [lane for lane in state["lanes"].values() if lane.get("attempt_id") == attempt_id]
+    if len(matches) != 1:
+        raise ValueError("spawn receipt requires one authorized attempt_id")
+    lane = matches[0]
+    required_strings = {
+        "task_id",
+        "task_state",
+        "liveness_cursor",
+        "provider",
+        "worktree",
+        "resolved_model_status",
+        "resolved_effort_status",
+    }
+    missing = sorted(
+        field
+        for field in required_strings
+        if not isinstance(packet.get(field), str) or not packet.get(field)
+    )
+    if missing or not isinstance(packet.get("environment_match"), bool):
+        suffix = ", ".join(missing + ([] if isinstance(packet.get("environment_match"), bool) else ["environment_match"]))
+        raise ValueError(f"spawn receipt requires observed provider fields: {suffix}")
+    task_id = packet["task_id"]
+    liveness_cursor = packet["liveness_cursor"]
+    provider = packet["provider"]
+    if provider != lane.get("provider"):
+        raise ValueError("spawn receipt provider differs from the authorized lane")
+    if canonical_path(packet["worktree"]) != canonical_path(str(lane.get("worktree"))):
+        raise ValueError("spawn receipt worktree differs from the authorized lane")
+    for kind in ("model", "effort"):
+        status = packet[f"resolved_{kind}_status"]
+        value = packet.get(f"resolved_{kind}")
+        if status == "matched" and (not isinstance(value, str) or not value):
+            raise ValueError(f"matched {kind} telemetry requires its observed value")
+        if status == "unavailable" and not packet.get("telemetry_unavailable_reason"):
+            raise ValueError("unavailable telemetry requires its observed reason")
+    data = {
+        key: lane[key]
+        for key in {
+            "lane_id",
+            "agent_id",
+            "runtime_agent_type",
+            "actor_id",
+            "transport",
+            "requested_model",
+            "requested_effort",
+            "environment",
+            "attempt_id",
+            "assignment_sha256",
+        }
+    }
+    data.update(
+        {
+            "task_id": task_id,
+            "task_state": packet["task_state"],
+            "report_transport": lane["transport"],
+            "liveness_cursor": liveness_cursor,
+            "task_id_state": "canonical",
+            "environment_match": packet["environment_match"],
+            "resolved_model": packet.get("resolved_model"),
+            "resolved_model_status": packet["resolved_model_status"],
+            "resolved_effort": packet.get("resolved_effort"),
+            "resolved_effort_status": packet["resolved_effort_status"],
+            "telemetry_unavailable_reason": packet.get("telemetry_unavailable_reason"),
+        }
+    )
+    data["provider_acceptance"] = {
+        "status": "accepted",
+        "provider": provider,
+        "worktree": packet["worktree"],
+        **{field: data[field] for field in PROVIDER_BINDING_FIELDS},
+    }
+    raw = {
+        "event": "spawn-receipt",
+        "event_id": stable_event_id(
+            "spawn-receipt", {"attempt_id": attempt_id, "task_id": task_id}
+        ),
+        "work_item": lane["work_item"],
+        "data": data,
+    }
+    applied, replayed, events, state = append_facade_events(
+        event_path(args.events), [raw], repo=args.repo
+    )
+    return public_state(
+        "dispatch",
+        args,
+        state,
+        events,
+        mode="receipt",
+        task={"id": task_id, "state": data["task_state"], "attempt_id": attempt_id},
+        receipt={"applied": applied, "replayed": replayed, "event_id": raw["event_id"]},
+    )
+
+
+def dispatch(args: argparse.Namespace) -> int:
+    packet = read_object(args.packet_file)
+    events = load_events(event_path(args.events))
+    validate_events(events)
+    state = derive_state(events, args.repo)
+    if state["errors"]:
+        raise ValueError("run state is invalid: " + "; ".join(state["errors"]))
+    kind = packet.get("kind")
+    if kind == "prepare":
+        return prepare_dispatch(args, packet, events, state)
+    if kind == "receipt":
+        return record_spawn_receipt(args, packet, events, state)
+    raise ValueError("dispatch packet kind must be prepare or receipt")
 
 
 def finish(args: argparse.Namespace) -> int:
@@ -3692,10 +4360,10 @@ def parser() -> argparse.ArgumentParser:
     apply_parser.add_argument("--in", dest="packet_file", required=True)
     apply_parser.set_defaults(handler=apply_packet)
 
-    brief_parser = commands.add_parser("brief")
-    brief_parser.add_argument("--run", required=True)
-    brief_parser.add_argument("--item", dest="work_item", required=True)
-    brief_parser.set_defaults(handler=brief)
+    dispatch_parser = commands.add_parser("dispatch")
+    dispatch_parser.add_argument("--run", required=True)
+    dispatch_parser.add_argument("--in", dest="packet_file", required=True)
+    dispatch_parser.set_defaults(handler=dispatch)
 
     finish_parser = commands.add_parser("finish")
     finish_parser.add_argument("--run", required=True)
@@ -3746,6 +4414,8 @@ def main() -> int:
                 changed = after_revision != before_revision
             except (OSError, ValueError):
                 changed = events_path.exists() and events_path.stat().st_size > 0
+        external_effect = getattr(args, "external_effect", None)
+        effect_started = changed or external_effect is not None
         detail = run_path(args.run) / "failure.json"
         write_derived_json(
             detail,
@@ -3753,14 +4423,16 @@ def main() -> int:
                 "code": "INPUT_INVALID",
                 "error": str(error),
                 "revision": {"before": before_revision, "after": after_revision},
+                "external_effect": external_effect,
             },
         )
         return emit(
             False,
             operation=args.command,
             code="INPUT_INVALID",
-            effect_started=changed,
+            effect_started=effect_started,
             changed=changed,
+            recovery=external_effect,
             detail=str(detail),
         )
 

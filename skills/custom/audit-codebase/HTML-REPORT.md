@@ -94,6 +94,10 @@ Ready-for-agent issue. It generates the Implement prompt; recovery does not.
 `implemented` is reachable only through `close-candidate` with an exact
 completion packet and one transition for every active member finding. Original
 evidence remains in history. Generic or Analyze publication cannot enter it.
+Direct recovery renders its route label, keeps
+`authority-required|not-applicable`, persists its explicit implementation
+authority, and creates no issue projection. Tracker-frontier projection stays
+unchanged for current version 10 reports.
 
 ## Publication Guarantees
 

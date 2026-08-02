@@ -595,23 +595,6 @@ def python_provenance(args: argparse.Namespace, worktree: Path) -> dict[str, Any
 def preflight_packet(args: argparse.Namespace) -> dict[str, Any]:
     worktree = Path(args.worktree).resolve()
     root_checkout = Path(args.repo).resolve()
-    if not args.proof_command_json and not args.proof_command_file and not args.skip_proof:
-        return blocked_packet(
-            "preflight",
-            state="blocked-proof",
-            error="proof startup is required unless explicitly skipped",
-            recoverable=True,
-            next_action={
-                "command": "preflight",
-                "required": [
-                    "--proof-command-json",
-                    "--proof-command-file",
-                    "or --skip-proof --reason",
-                ],
-            },
-            worktree=str(worktree),
-        )
-
     command, command_provenance = proof_command(args)
     if args.skip_proof and not args.reason:
         return blocked_packet(
@@ -724,8 +707,14 @@ def preflight_packet(args: argparse.Namespace) -> dict[str, Any]:
         }
         if result.returncode != 0:
             raise LaneError(f"proof startup failed: {result.stderr.strip()}")
-    else:
+    elif args.skip_proof:
         proof = {"status": "skipped", "skipped": True, "reason": args.reason}
+    else:
+        proof = {
+            "status": "passed",
+            "kind": "builtin-viability",
+            "checks": ["checkout", "index-lock", "git-objects"],
+        }
 
     provenance = (
         python_provenance(args, worktree)
@@ -893,8 +882,8 @@ def open_lane(args: argparse.Namespace) -> int:
         lane=lane,
         preflight=preflight,
         next_action={
-            "command": "run_ledger.py apply",
-            "packet": "lane-ready",
+            "command": "run_ledger.py dispatch",
+            "packet": "prepare",
         },
     )
 

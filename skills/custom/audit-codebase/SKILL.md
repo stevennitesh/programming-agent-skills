@@ -51,7 +51,7 @@ Choose once:
 - **Audit:** exactly one subsystem ID from a complete Map.
 - **Analyze:** exactly one candidate ID inside an audited subsystem.
 - **Close:** exactly one analyzed candidate ID plus its exact implementation
-  completion packet.
+  completion packet using the route derived from current tracker state.
 
 An invalid selection never falls back to Map. Inspect an existing report for
 the exact objective and ID. Proceed only when the helper returns the selected
@@ -148,7 +148,8 @@ next user selection. Stop.
 
 Close is a separate user-selected objective, never an implicit continuation.
 Require one analyzed candidate and the exact completion packet requested by its
-helper-generated Implement pickup. Apply
+helper-generated Implement pickup or required by an explicitly authorized,
+already-landed direct implementation. Apply
 [CANDIDATE-CONTRACT.md](CANDIDATE-CONTRACT.md)'s Close gate. A mismatch changes
 nothing.
 

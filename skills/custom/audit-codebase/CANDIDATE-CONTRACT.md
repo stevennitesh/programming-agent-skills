@@ -121,17 +121,30 @@ When `SKILL.md` admits its conditional follow-up branch, apply
 
 ## Close Implemented
 
-Close is a separately user-selected `$audit-codebase` objective after the
-helper-generated Implement pickup returns. Use `schema --objective close` as
-the only packet shape. Before constructing it, the root verifies that the
-accepted proof and review bind to the supplied commit/tree, the commit is
-current or reachable, Change Closure is complete, no implementation blocker
-remains, every identity matches the last Analyze and tracker result, and every
-active candidate finding has one state-and-reason transition.
+Close is a separately user-selected `$audit-codebase` objective for exactly one
+analyzed candidate. Select the route returned by `inspect --objective close`
+and use `schema --objective close --completion-route <route>`:
+
+- **`tracker-frontier`:** only for `ready-graph|reused`; require the candidate
+  digest, tracker mutation/read-back identity, and Ready issue.
+- **`authorized-direct-recovery`:** only for an already-landed,
+  `authority-required|not-applicable` candidate whose direct implementation
+  was explicitly authorized. Require the exact authority evidence and forbid
+  tracker identities. This route repairs the atlas only; never create,
+  reconstruct, or imply a retrospective ticket.
+
+Before constructing either packet, the root verifies that the accepted proof
+and review bind to the supplied commit/tree, the commit is current or
+reachable, Change Closure is complete, no implementation blocker remains,
+the report/run/subsystem/candidate, candidate digest, and last Analyze identity
+match, and every active candidate finding has one state-and-reason transition.
+For direct recovery, the root also verifies the supplied implementation
+authority granted that exact direct change before it landed.
 
 The helper enforces the exact packet schema and Git commit/tree relationship;
-it does not independently prove the supplied proof or review claims. A
-mismatched, partial, blocked, or failing Return changes no candidate state.
+it does not independently prove the supplied authority, proof, or review
+claims. A mismatched, partial, blocked, or failing Return changes no candidate
+state.
 Successful implementation is distinct from `disproved`.
 Each transition changes only current state and reason; original evidence
 remains in history, and `active` records residual work without misstating
