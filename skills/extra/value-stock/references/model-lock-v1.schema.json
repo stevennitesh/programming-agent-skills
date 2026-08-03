@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openai.local/programming-agent-skills/value-stock/model-lock-v1.schema.json",
+  "title": "Value Stock Model Lock v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_id",
+    "issuer_id",
+    "security_id",
+    "as_of_date",
+    "reporting_currency",
+    "method",
+    "base_scenario",
+    "scenarios",
+    "periods",
+    "conventions",
+    "diluted_shares",
+    "inputs"
+  ],
+  "properties": {
+    "run_id": {"type": "string", "minLength": 1},
+    "issuer_id": {"type": "string", "minLength": 1},
+    "security_id": {"type": "string", "minLength": 1},
+    "as_of_date": {"type": "string", "format": "date"},
+    "reporting_currency": {"type": "string", "pattern": "^[A-Z]{3}$"},
+    "method": {"enum": ["fcff", "residual_income"]},
+    "base_scenario": {"type": "string", "minLength": 1},
+    "scenarios": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "periods": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kind", "date"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "kind": {
+            "enum": ["historical", "stub", "forecast", "terminal", "valuation"]
+          },
+          "date": {"type": "string", "format": "date"}
+        }
+      }
+    },
+    "conventions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["timing", "terminal"],
+      "properties": {
+        "timing": {"enum": ["explicit", "midyear", "year_end"]},
+        "terminal": {
+          "enum": ["none", "perpetual_growth", "continuing_residual_income"]
+        }
+      }
+    },
+    "diluted_shares": {
+      "allOf": [
+        {"$ref": "#/$defs/valueRecord"},
+        {
+          "properties": {
+            "unit": {"const": "shares"},
+            "value_kind": {"const": "non_monetary"},
+            "currency": {"const": null},
+            "claim_basis": {"const": "target_security"}
+          }
+        }
+      ]
+    },
+    "inputs": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"$ref": "#/$defs/valueRecord"}
+    }
+  },
+  "$defs": {
+    "valueRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "unit",
+        "value_kind",
+        "currency",
+        "evidence_class",
+        "claim_basis",
+        "scenario"
+      ],
+      "properties": {
+        "value": {"type": "number"},
+        "unit": {
+          "enum": [
+            "currency",
+            "currency_per_period",
+            "currency_per_share",
+            "shares",
+            "percent",
+            "ratio",
+            "count"
+          ]
+        },
+        "value_kind": {"enum": ["monetary", "non_monetary"]},
+        "currency": {
+          "oneOf": [
+            {"type": "null"},
+            {"type": "string", "pattern": "^[A-Z]{3}$"}
+          ]
+        },
+        "date": {"type": "string", "format": "date"},
+        "period": {"type": "string", "minLength": 1},
+        "evidence_class": {
+          "enum": ["reported", "guided", "estimated", "assumed", "calculated"]
+        },
+        "claim_basis": {
+          "enum": [
+            "operating",
+            "enterprise",
+            "debt",
+            "preferred",
+            "noncontrolling_interest",
+            "common_equity",
+            "target_security",
+            "other"
+          ]
+        },
+        "scenario": {"type": "string", "minLength": 1},
+        "source_ref": {"type": "string", "minLength": 1},
+        "formula_ref": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"value_kind": {"const": "monetary"}}},
+          "then": {
+            "properties": {
+              "currency": {"type": "string", "pattern": "^[A-Z]{3}$"},
+              "unit": {
+                "enum": ["currency", "currency_per_period", "currency_per_share"]
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "currency": {"const": null},
+              "unit": {"enum": ["shares", "percent", "ratio", "count"]}
+            }
+          }
+        },
+        {
+          "oneOf": [
+            {"required": ["date"], "not": {"required": ["period"]}},
+            {"required": ["period"], "not": {"required": ["date"]}}
+          ]
+        },
+        {
+          "oneOf": [
+            {"required": ["source_ref"], "not": {"required": ["formula_ref"]}},
+            {"required": ["formula_ref"], "not": {"required": ["source_ref"]}}
+          ]
+        }
+      ]
+    }
+  }
+}
