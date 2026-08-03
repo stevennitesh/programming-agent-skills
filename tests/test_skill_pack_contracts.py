@@ -2168,6 +2168,32 @@ def test_implementation_workflows_keep_local_proof_owners() -> None:
     assert "consolidate equivalent campaign-created tests" in parallel_flat
 
 
+def test_implement_owns_one_shared_assignment_contract_without_a_new_route() -> None:
+    implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
+    parallel = (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8")
+    relationships = (
+        ROOT / "docs/synthesis/skill-context-relationships.md"
+    ).read_text(encoding="utf-8")
+    reference_path = CUSTOM / "implement/references/EXECUTION-ASSIGNMENT.md"
+
+    assert reference_path.is_file()
+    assert (
+        "[Execution Assignment and Worker Return Contract]"
+        "(references/EXECUTION-ASSIGNMENT.md)"
+    ) in implement
+    assert (
+        "[implement-owned Execution Assignment and Worker Return Contract]"
+        "(../implement/references/EXECUTION-ASSIGNMENT.md)"
+    ) in parallel
+    assert "does not invoke `$implement`" in parallel
+    assert "does not activate delegated dispatch" in implement
+    assert "implement/references/EXECUTION-ASSIGNMENT.md" in relationships
+    assert "shared assignment and Return authority" in relationships
+    assert "WORKER-BRIEF.md" in relationships
+    assert "compatibility adapter" in relationships
+    assert not (CUSTOM / "delegated-execution").exists()
+
+
 def test_planning_and_delivery_activate_preventive_code_quality_contract() -> None:
     to_spec = (CUSTOM / "to-spec/SKILL.md").read_text(encoding="utf-8")
     to_tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
