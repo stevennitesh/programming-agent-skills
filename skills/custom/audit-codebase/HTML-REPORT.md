@@ -48,8 +48,9 @@ Every current record has one physical owner:
 - candidates under their subsystem; and
 - implementation evidence under its candidate.
 
-SVG nodes, system lists, progress, candidate presentation, issue links, state
-labels, and colors are derived views. They never own independent state.
+SVG nodes, system lists, progress, candidate presentation, tracker links or
+contained refs, state labels, and colors are derived views. They never own
+independent state.
 
 ## Map Facts
 
@@ -88,16 +89,20 @@ agents do not author that prompt.
 
 Analyze records current-source validity, comparison, proof, decisions,
 residual risk, tracker state, and at most one next owner. A ready/reused result
-requires the candidate digest, mutation/read-back identity, issue URLs, and a
-Ready-for-agent issue. It generates the Implement prompt; recovery does not.
+requires the candidate digest, mutation/read-back identity, and provider-native
+graph and Ready tracker-item identities. Hosted providers require HTTPS URLs;
+Local Markdown requires contained parent/item refs, readiness, blockers, claim
+state, frontier, and graph digest. It generates the Implement prompt; recovery
+does not.
 
 `implemented` is reachable only through `close-candidate` with an exact
 completion packet and one transition for every active member finding. Original
 evidence remains in history. Generic or Analyze publication cannot enter it.
 Direct recovery renders its route label, keeps
 `authority-required|not-applicable`, persists its explicit implementation
-authority, and creates no issue projection. Tracker-frontier projection stays
-unchanged for current version 10 reports.
+authority, and adds no tracker-item or frontier identities. The bounded HTTPS-only Local
+Markdown recovery preserves its prior record in history and normalizes the
+current tracker projection to `ready-graph` after exact committed closeout.
 
 ## Publication Guarantees
 

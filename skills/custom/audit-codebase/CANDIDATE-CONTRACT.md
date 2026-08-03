@@ -123,17 +123,26 @@ When `SKILL.md` admits its conditional follow-up branch, apply
 
 Close is a separately user-selected `$audit-codebase` objective for exactly one
 analyzed candidate. Select the route returned by `inspect --objective close`
-and use `schema --objective close --completion-route <route>`:
+and use `schema --objective close --completion-route <route>`. Add
+`--tracker-provider local-markdown` for a Local Markdown `tracker-frontier`:
 
 - **`tracker-frontier`:** only for `ready-graph|reused`; require the candidate
-  digest, tracker mutation/read-back identity, and Ready issue.
+  digest, tracker mutation/read-back identity, and provider-native Ready tracker
+  item identity. Hosted providers require exact HTTPS URLs; Local Markdown
+  requires contained parent/item refs and committed completion read-back.
+- **`local-markdown-recovery`:** only for an existing version-10/state-schema-2
+  `recovery` record whose recorded failure is exactly the former HTTPS-only
+  Ready identity mismatch. Require one uniquely matching candidate-bound local
+  graph, its original recorded frontier facts, and exact committed closeout.
+  Successful Close normalizes the tracker to `ready-graph`. Fresh Analyze must
+  record Local Markdown directly and never select this route.
 - **`authorized-direct-recovery`:** only for an already-landed,
   `authority-required|not-applicable` candidate whose direct implementation
   was explicitly authorized. Require the exact authority evidence and forbid
   tracker identities. This route repairs the atlas only; never create,
   reconstruct, or imply a retrospective ticket.
 
-Before constructing either packet, the root verifies that the accepted proof
+Before constructing any packet, the root verifies that the accepted proof
 and review bind to the supplied commit/tree, the commit is current or
 reachable, Change Closure is complete, no implementation blocker remains,
 the report/run/subsystem/candidate, candidate digest, and last Analyze identity

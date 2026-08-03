@@ -1688,8 +1688,9 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert "current-source evidence" in quality
     assert "selected objective's current source identity" in " ".join(defect.split())
     assert "separately user-selected `$audit-codebase` objective" in candidate
-    assert "The helper generates one Implement pickup" in followup
-    assert "exact Close packet" in followup
+    normalized_followup = " ".join(followup.split())
+    assert "The helper generates one Implement pickup" in normalized_followup
+    assert "exact Close packet" in normalized_followup
     assert "$to-tickets" not in metadata
     assert "helper derives the linked Analyze pickup" in candidate
     assert "conditional To Tickets authority" in candidate
@@ -1709,11 +1710,11 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert "generated candidate Analyze prompt" in ticket_edge["entry_condition"]
     assert "authority-required" in ticket_edge["wrong_condition"]
     assert "Generated To Tickets invocation" in ticket_edge["input_packet"]
-    assert "configured GitHub tracker mutation" in " ".join(
+    assert "configured tracker mutation" in " ".join(
         ticket_edge["callee_owned_gates_mutations"]
     )
     assert "candidate-bundle-bound ready/reused graph" in ticket_edge["return_packet"]
-    assert "verified GitHub issue" in relationships["REL-056"]["input_packet"]
+    assert "verified tracker graph" in relationships["REL-056"]["input_packet"]
     assert "analyzed-candidate closeout" in relationships["REL-047"]["entry_condition"]
     for relationship_id in ("REL-021", "REL-026"):
         packet = relationships[relationship_id]["input_packet"]

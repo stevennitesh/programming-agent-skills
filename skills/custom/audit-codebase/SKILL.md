@@ -171,7 +171,7 @@ Outcome: complete | partial | blocked
 Objective: Map | Audit | Analyze | Close
 Publication: updated | unchanged | failed | not-attempted
 Tracker publication: ready-graph | reused | recovery | authority-required | not-applicable
-Implementation issue: <url> | none
+Implementation tracker item: <provider-native identity> | none
 Selected item:
 Result or state:
 Evidence limits:

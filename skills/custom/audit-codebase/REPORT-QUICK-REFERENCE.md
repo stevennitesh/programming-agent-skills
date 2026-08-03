@@ -10,9 +10,14 @@ validates strict JSON, and renders the complete report.
 ## Read Commands
 
 ```text
-schema --objective map|audit|analyze
+schema --objective map|audit
+schema --objective analyze
+  [--tracker-provider local-markdown]
 schema --objective close
-  --completion-route tracker-frontier|authorized-direct-recovery
+  --completion-route tracker-frontier
+  [--tracker-provider local-markdown]
+schema --objective close
+  --completion-route local-markdown-recovery|authorized-direct-recovery
 inventory --repo-root <repo>
 source-identity --repo-root <repo> --path-list <paths.txt>
 inspect --repo-root <repo> --report <report>
@@ -58,13 +63,21 @@ the manifest between calls.
   and Implement skill paths. A changed ownership or dependency boundary
   requires a separately selected Map with a new report.
 - **Analyze:** supply one selected candidate's current validity, members,
-  comparison, proof, tracker result, and at most one other next owner.
+  comparison, proof, tracker result, and at most one other next owner. Request
+  the Local Markdown schema when that provider returned the graph; the helper
+  derives and locks its contained refs and read-back digest without an HTTPS
+  identity.
   The helper derives the pickup from the validated tracker result.
 - **Close:** `tracker-frontier` requires the matching read-back-verified tracker
-  frontier. `authorized-direct-recovery` requires an already-landed
+  frontier. Request its Local Markdown schema when applicable.
+  `local-markdown-recovery` is restricted to an existing version-10/state-2
+  recovery record caused solely by the former HTTPS-only Ready identity field;
+  it revalidates one uniquely matching candidate-bound local graph and exact
+  committed closeout, then records `ready-graph` without remapping.
+  `authorized-direct-recovery` requires an already-landed
   `authority-required|not-applicable` candidate and direct implementation
   authority; it forbids tracker fields and retrospective ticket fabrication.
-  Both routes independently verify Git commit/tree reachability, candidate
+  Every route independently verifies Git commit/tree reachability, candidate
   identity, and every active member transition.
 
 ## Use The Response Literally

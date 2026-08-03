@@ -432,6 +432,153 @@ def _published_analysis(
     return report
 
 
+def _local_markdown_graph(
+    root: Path,
+    candidate_digest: str,
+    *,
+    status: str = "ready-for-agent",
+    blocked_by: str = "none",
+    claimed_by: str | None = None,
+    implementation_notes: str | None = None,
+) -> dict[str, object]:
+    parent_ref = ".scratch/alpha-fix/SPEC.md"
+    issue_ref = ".scratch/alpha-fix/issues/01-alpha-fix.md"
+    parent = root / parent_ref
+    issue = root / issue_ref
+    issue.parent.mkdir(parents=True, exist_ok=True)
+    parent.write_text(
+        "\n".join(
+            (
+                "# Alpha Fix",
+                "",
+                "Status: needs-triage",
+                "",
+                "## Settled Source",
+                "",
+                "- Candidate: `alpha-fix`",
+                f"- Candidate bundle SHA-256: `{candidate_digest}`",
+                "",
+                "## Ordered Implementation Graph",
+                "",
+                "1. [`01-alpha-fix.md`](issues/01-alpha-fix.md)",
+                "",
+            )
+        ),
+        encoding="utf-8",
+    )
+    issue_lines = [
+        "# Alpha Fix",
+        "",
+        "Category: bug",
+        f"Status: {status}",
+        "Parent: ../SPEC.md",
+        f"Blocked by: {blocked_by}",
+    ]
+    if claimed_by is not None:
+        issue_lines.append(f"Claimed by: {claimed_by}")
+    issue_lines.extend(
+        (
+            "",
+            "## Intent",
+            "",
+            f"Implement candidate `alpha-fix` with bundle `{candidate_digest}`.",
+            "",
+            "## Delivery",
+            "",
+            "- Ready state after publication verification: `ready-for-agent`.",
+        )
+    )
+    if implementation_notes is not None:
+        issue_lines.extend(("", "## Implementation Notes", "", implementation_notes))
+    issue.write_text("\n".join(issue_lines) + "\n", encoding="utf-8")
+    return {
+        "status": "ready-graph",
+        "issue_urls": [],
+        "ready_issue_url": "",
+        "provider": "local-markdown",
+        "parent_ref": parent_ref,
+        "issue_refs": [issue_ref],
+        "ready_issue_ref": issue_ref,
+        "readiness": "ready-for-agent",
+        "blockers": [],
+        "claim_state": "unclaimed",
+        "frontier": [issue_ref],
+        "candidate_bundle_sha256": candidate_digest,
+        "mutation_identity": "local-graph-readback-001",
+        "read_back": True,
+    }
+
+
+def _https_only_local_recovery(candidate_digest: str) -> dict[str, object]:
+    return {
+        "status": "recovery",
+        "issue_urls": [],
+        "ready_issue_url": "",
+        "candidate_bundle_sha256": candidate_digest,
+        "mutation_identity": "local-graph-readback-001",
+        "observed_issue_state": (
+            "Publication recovery: local Markdown graph alpha-fix read back with "
+            "one unclaimed ready-for-agent child, no blockers, and frontier 01. "
+            "The audit Analyze schema requires an absolute HTTPS ready_issue_url, "
+            "but the configured tracker supplies only local repository paths; no "
+            "truthful hosted URL exists, so the graph cannot be recorded as ready-graph."
+        ),
+    }
+
+
+def _commit_local_markdown_completion(
+    root: Path,
+    candidate_digest: str,
+) -> tuple[str, str]:
+    _local_markdown_graph(
+        root,
+        candidate_digest,
+        status="implemented",
+        implementation_notes="Proof and accepted review read back.",
+    )
+    (root / "src" / "alpha.py").write_text("VALUE = 3\n", encoding="utf-8")
+    subprocess.run(["git", "add", "src/alpha.py"], cwd=root, check=True)
+    subprocess.run(["git", "add", "-f", ".scratch/alpha-fix"], cwd=root, check=True)
+    subprocess.run(["git", "commit", "-m", "implement alpha fix"], cwd=root, check=True)
+    commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=root,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    tree = subprocess.run(
+        ["git", "show", "-s", "--format=%T", commit],
+        cwd=root,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    return commit, tree
+
+
+def _local_close_values(
+    root: Path,
+    report: Path,
+    commit: str,
+    tree: str,
+    completion_digest: str,
+    *,
+    route: str = "tracker-frontier",
+) -> dict[str, object]:
+    values = _close_values(root, report, commit, tree)
+    values["completion_route"] = route
+    values.pop("ready_issue_url")
+    values["tracker_mutation_identity"] = "local-graph-readback-001"
+    return values | {
+        "tracker_provider": "local-markdown",
+        "parent_ref": ".scratch/alpha-fix/SPEC.md",
+        "issue_refs": [".scratch/alpha-fix/issues/01-alpha-fix.md"],
+        "ready_issue_ref": ".scratch/alpha-fix/issues/01-alpha-fix.md",
+        "tracker_completion_sha256": completion_digest,
+    }
+
+
 def _write_invalid_canonical_state(report: Path, state: dict[str, object]) -> None:
     validator = MODULE._validate_state
     try:
@@ -750,6 +897,309 @@ def test_analyze_not_ready_has_no_implementation_pickup(
     assert candidate["pickup"] == ""
 
 
+def test_analyze_publishes_verified_local_markdown_ready_graph(
+    tmp_path: Path,
+) -> None:
+    _init_repo(tmp_path)
+    report = _published_audit(tmp_path)
+    candidate_digest = _candidate_digest(tmp_path, report)
+    values = _analysis_values(_digest(report), candidate_digest)
+    values["tracker"] = _local_markdown_graph(tmp_path, candidate_digest)
+    manifest = _write(tmp_path / "analyze-local.json", values)
+
+    _prepare_and_publish("analyze-candidate", tmp_path, report, manifest)
+
+    candidate = MODULE.inspect_report(
+        repo_root=tmp_path,
+        report=report,
+        objective="analyze",
+        candidate_id="alpha-fix",
+    )["candidate"]
+    assert candidate["tracker"]["provider"] == "local-markdown"
+    assert candidate["tracker"]["graph_sha256"]
+    assert candidate["tracker"]["frontier"] == [
+        ".scratch/alpha-fix/issues/01-alpha-fix.md"
+    ]
+    assert "tracker item .scratch/alpha-fix/issues/01-alpha-fix.md" in candidate["pickup"]
+    assert "Ready tracker item identity" in candidate["pickup"]
+    assert "Ready issue URL" not in candidate["pickup"]
+    assert "https://" not in candidate["pickup"]
+
+
+@pytest.mark.parametrize(
+    ("fault", "message"),
+    [
+        ("missing", "missing or escapes"),
+        ("wrong-digest", "does not match the selected candidate"),
+        ("blocked", "frontier does not match"),
+        ("claimed", "frontier does not match"),
+        ("not-ready", "frontier does not match"),
+    ],
+)
+def test_local_markdown_analyze_rejects_unverified_graph_without_writing(
+    tmp_path: Path,
+    fault: str,
+    message: str,
+) -> None:
+    _init_repo(tmp_path)
+    report = _published_audit(tmp_path)
+    candidate_digest = _candidate_digest(tmp_path, report)
+    tracker = _local_markdown_graph(tmp_path, candidate_digest)
+    if fault == "missing":
+        (tmp_path / str(tracker["ready_issue_ref"])).unlink()
+    elif fault == "wrong-digest":
+        for ref in (tracker["parent_ref"], tracker["ready_issue_ref"]):
+            path = tmp_path / str(ref)
+            path.write_text(
+                path.read_text(encoding="utf-8").replace(candidate_digest, "0" * 64),
+                encoding="utf-8",
+            )
+    elif fault == "blocked":
+        _local_markdown_graph(tmp_path, candidate_digest, blocked_by="99")
+    elif fault == "claimed":
+        _local_markdown_graph(tmp_path, candidate_digest, claimed_by="worker")
+    else:
+        _local_markdown_graph(tmp_path, candidate_digest, status="needs-triage")
+    values = _analysis_values(_digest(report), candidate_digest)
+    values["tracker"] = tracker
+    manifest = _write(tmp_path / f"analyze-local-{fault}.json", values)
+    before = report.read_bytes()
+
+    with pytest.raises(MODULE.ReportError, match=message):
+        MODULE.mutate_report(
+            command="analyze-candidate",
+            repo_root=tmp_path,
+            report=report,
+            manifest_path=manifest,
+            validate_only=True,
+            expected_bundle_sha256=None,
+        )
+
+    assert report.read_bytes() == before
+
+
+def test_local_markdown_refs_must_be_contained_repository_paths(tmp_path: Path) -> None:
+    _init_repo(tmp_path)
+    with pytest.raises(MODULE.ReportError, match="contained .scratch relative path"):
+        MODULE._contained_local_markdown_ref(tmp_path, "../SPEC.md", "tracker ref")
+
+
+def test_local_markdown_rejects_duplicate_numeric_issue_identity(tmp_path: Path) -> None:
+    _init_repo(tmp_path)
+    report = _published_audit(tmp_path)
+    candidate_digest = _candidate_digest(tmp_path, report)
+    tracker = _local_markdown_graph(tmp_path, candidate_digest)
+    first_ref = str(tracker["ready_issue_ref"])
+    second_ref = ".scratch/alpha-fix/issues/01-alpha-fix-copy.md"
+    (tmp_path / second_ref).write_bytes((tmp_path / first_ref).read_bytes())
+    parent = tmp_path / str(tracker["parent_ref"])
+    parent.write_text(
+        parent.read_text(encoding="utf-8").replace(
+            "1. [`01-alpha-fix.md`](issues/01-alpha-fix.md)",
+            "1. [`01-alpha-fix.md`](issues/01-alpha-fix.md)\n"
+            "2. [`01-alpha-fix-copy.md`](issues/01-alpha-fix-copy.md)",
+        ),
+        encoding="utf-8",
+    )
+    tracker["issue_refs"] = [first_ref, second_ref]
+    tracker["ready_issue_ref"] = second_ref
+    tracker["frontier"] = [second_ref]
+    values = _analysis_values(_digest(report), candidate_digest)
+    values["tracker"] = tracker
+    manifest = _write(tmp_path / "analyze-duplicate-local-id.json", values)
+
+    with pytest.raises(MODULE.ReportError, match="duplicate numeric stable identity"):
+        MODULE.mutate_report(
+            command="analyze-candidate",
+            repo_root=tmp_path,
+            report=report,
+            manifest_path=manifest,
+            validate_only=True,
+            expected_bundle_sha256=None,
+        )
+
+
+def test_local_markdown_ready_graph_requires_committed_closeout_before_close(
+    tmp_path: Path,
+) -> None:
+    _init_repo(tmp_path)
+    report = _published_audit(tmp_path)
+    candidate_digest = _candidate_digest(tmp_path, report)
+    values = _analysis_values(_digest(report), candidate_digest)
+    values["tracker"] = _local_markdown_graph(tmp_path, candidate_digest)
+    manifest = _write(tmp_path / "analyze-local.json", values)
+    _prepare_and_publish("analyze-candidate", tmp_path, report, manifest)
+
+    with pytest.raises(MODULE.ReportError, match="not implemented"):
+        MODULE.inspect_report(
+            repo_root=tmp_path,
+            report=report,
+            objective="close",
+            candidate_id="alpha-fix",
+        )
+
+    _local_markdown_graph(
+        tmp_path,
+        candidate_digest,
+        status="implemented",
+    )
+    with pytest.raises(MODULE.ReportError, match="incomplete closeout"):
+        MODULE.inspect_report(
+            repo_root=tmp_path,
+            report=report,
+            objective="close",
+            candidate_id="alpha-fix",
+        )
+    commit, tree = _commit_local_markdown_completion(tmp_path, candidate_digest)
+    inspected = MODULE.inspect_report(
+        repo_root=tmp_path,
+        report=report,
+        objective="close",
+        candidate_id="alpha-fix",
+    )
+    assert inspected["completion_route"] == "tracker-frontier"
+    close_values = _local_close_values(
+        tmp_path,
+        report,
+        commit,
+        tree,
+        inspected["tracker_completion_sha256"],
+    )
+    close_manifest = _write(tmp_path / "close-local.json", close_values)
+
+    wrong_mutation = dict(close_values)
+    wrong_mutation["tracker_mutation_identity"] = "changed-readback"
+    wrong_manifest = _write(tmp_path / "close-local-wrong-mutation.json", wrong_mutation)
+    with pytest.raises(MODULE.ReportError, match="mutation identity"):
+        MODULE.mutate_report(
+            command="close-candidate",
+            repo_root=tmp_path,
+            report=report,
+            manifest_path=wrong_manifest,
+            validate_only=True,
+            expected_bundle_sha256=None,
+        )
+
+    issue = tmp_path / ".scratch/alpha-fix/issues/01-alpha-fix.md"
+    issue.write_text(
+        issue.read_text(encoding="utf-8") + "Uncommitted closeout drift.\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(MODULE.ReportError, match="not exact in the implementation commit"):
+        MODULE.mutate_report(
+            command="close-candidate",
+            repo_root=tmp_path,
+            report=report,
+            manifest_path=close_manifest,
+            validate_only=True,
+            expected_bundle_sha256=None,
+        )
+    _local_markdown_graph(
+        tmp_path,
+        candidate_digest,
+        status="implemented",
+        implementation_notes="Proof and accepted review read back.",
+    )
+
+    _prepare_and_publish("close-candidate", tmp_path, report, close_manifest)
+
+    candidate = MODULE._load_report(tmp_path, report)[3]["candidates"][0]
+    assert candidate["state"] == "implemented"
+    assert candidate["implementation"]["tracker_completion_sha256"] == inspected[
+        "tracker_completion_sha256"
+    ]
+
+
+def test_fresh_analyze_rejects_https_only_local_markdown_recovery_shape(
+    tmp_path: Path,
+) -> None:
+    _init_repo(tmp_path)
+    report = _published_audit(tmp_path)
+    candidate_digest = _candidate_digest(tmp_path, report)
+    values = _analysis_values(_digest(report), candidate_digest)
+    values["tracker"] = _https_only_local_recovery(candidate_digest)
+    manifest = _write(tmp_path / "analyze-forged-recovery.json", values)
+    before = report.read_bytes()
+
+    with pytest.raises(MODULE.ReportError, match="must record Local Markdown directly"):
+        MODULE.mutate_report(
+            command="analyze-candidate",
+            repo_root=tmp_path,
+            report=report,
+            manifest_path=manifest,
+            validate_only=True,
+            expected_bundle_sha256=None,
+        )
+
+    assert report.read_bytes() == before
+
+
+def test_existing_https_only_local_markdown_recovery_closes_without_remap(
+    tmp_path: Path,
+) -> None:
+    _init_repo(tmp_path)
+    report = _published_audit(tmp_path)
+    candidate_digest = _candidate_digest(tmp_path, report)
+    _local_markdown_graph(tmp_path, candidate_digest)
+    values = _analysis_values(_digest(report), candidate_digest)
+    legacy_tracker = _https_only_local_recovery(candidate_digest)
+    values["tracker"] = {
+        "status": "recovery",
+        "issue_urls": [],
+        "ready_issue_url": "",
+        "candidate_bundle_sha256": candidate_digest,
+        "mutation_identity": "local-graph-readback-001",
+        "observed_issue_state": "Legacy fixture publication requires persisted-state repair.",
+    }
+    analyze_manifest = _write(tmp_path / "analyze-recovery.json", values)
+    _prepare_and_publish("analyze-candidate", tmp_path, report, analyze_manifest)
+    legacy_state = MODULE._load_report(tmp_path, report)[3]
+    legacy_state["candidates"][0]["tracker"] = legacy_tracker
+    report.write_bytes(MODULE._render_html(legacy_state))
+
+    commit, tree = _commit_local_markdown_completion(tmp_path, candidate_digest)
+
+    inspected = MODULE.inspect_report(
+        repo_root=tmp_path,
+        report=report,
+        objective="close",
+        candidate_id="alpha-fix",
+    )
+    assert inspected["completion_route"] == "local-markdown-recovery"
+    close_values = _local_close_values(
+        tmp_path,
+        report,
+        commit,
+        tree,
+        inspected["tracker_completion_sha256"],
+        route="local-markdown-recovery",
+    )
+    close_manifest = _write(tmp_path / "close-recovery.json", close_values)
+
+    _prepare_and_publish("close-candidate", tmp_path, report, close_manifest)
+
+    candidate = MODULE._load_report(tmp_path, report)[3]["candidates"][0]
+    assert candidate["state"] == "implemented"
+    assert candidate["tracker"]["status"] == "ready-graph"
+    assert candidate["tracker"]["provider"] == "local-markdown"
+    assert any(item["tracker"]["status"] == "recovery" for item in candidate["history"])
+
+
+def test_close_invalid_selection_does_not_fall_back_to_another_candidate(
+    tmp_path: Path,
+) -> None:
+    _init_repo(tmp_path)
+    report = _published_analysis(tmp_path)
+
+    with pytest.raises(MODULE.ReportError, match="candidate not found: missing-candidate"):
+        MODULE.inspect_report(
+            repo_root=tmp_path,
+            report=report,
+            objective="close",
+            candidate_id="missing-candidate",
+        )
+
+
 def test_analyze_without_ticket_authority_returns_analyze_reentry(
     tmp_path: Path,
 ) -> None:
@@ -852,6 +1302,13 @@ def test_tracker_recovery_forbids_implement_pickup(tmp_path: Path) -> None:
     )["candidate"]
     assert candidate["tracker"]["status"] == "recovery"
     assert "$implement" not in candidate["pickup"]
+    with pytest.raises(MODULE.ReportError, match="no admissible Close completion route"):
+        MODULE.inspect_report(
+            repo_root=tmp_path,
+            report=report,
+            objective="close",
+            candidate_id="alpha-fix",
+        )
     assert "$audit-codebase" in candidate["pickup"]
 
 
@@ -1079,21 +1536,35 @@ def test_all_objectives_reject_retired_manifest_version(tmp_path: Path) -> None:
     ]
     for objective, packet, normalize in packets:
         packet["version"] = 1
-        with pytest.raises(MODULE.ReportError, match=f"{objective} manifest requires version 3"):
+        with pytest.raises(MODULE.ReportError, match=f"{objective} manifest requires version 4"):
             normalize(packet)
 
 
 def test_schema_and_cli_errors_are_one_json_document(tmp_path: Path) -> None:
     schema = MODULE._schema("audit")
     assert schema["response_version"] == 1
-    assert schema["template"]["version"] == MODULE.MANIFEST_VERSION == 3
+    assert schema["template"]["version"] == MODULE.MANIFEST_VERSION == 4
     assert MODULE.STATE_VERSION == 2
     assert len(schema["template"]["lenses"]) == 6
     tracker_close = MODULE._schema("close", "tracker-frontier")["template"]
+    local_analyze = MODULE._schema("analyze", tracker_provider="local-markdown")[
+        "template"
+    ]
+    local_close = MODULE._schema(
+        "close", "tracker-frontier", "local-markdown"
+    )["template"]
+    recovery_close = MODULE._schema("close", "local-markdown-recovery")["template"]
     direct_close = MODULE._schema("close", "authorized-direct-recovery")["template"]
     assert tracker_close["completion_route"] == "tracker-frontier"
     assert "tracker_mutation_identity" in tracker_close
     assert "direct_implementation_authority" not in tracker_close
+    assert local_analyze["tracker"]["provider"] == "local-markdown"
+    assert "ready_issue_ref" in local_analyze["tracker"]
+    assert local_close["tracker_provider"] == "local-markdown"
+    assert "ready_issue_ref" in local_close
+    assert "ready_issue_url" not in local_close
+    assert recovery_close["completion_route"] == "local-markdown-recovery"
+    assert recovery_close["tracker_provider"] == "local-markdown"
     assert direct_close["completion_route"] == "authorized-direct-recovery"
     assert "direct_implementation_authority" in direct_close
     assert "tracker_mutation_identity" not in direct_close
@@ -1106,6 +1577,16 @@ def test_schema_and_cli_errors_are_one_json_document(tmp_path: Path) -> None:
         "authorized-direct-recovery",
         cwd=tmp_path,
     )["template"] == direct_close
+    assert _cli(
+        "schema",
+        "--objective",
+        "analyze",
+        "--tracker-provider",
+        "local-markdown",
+        cwd=tmp_path,
+    )["template"] == local_analyze
+    with pytest.raises(MODULE.ReportError, match="applies only to Analyze or Close"):
+        MODULE._schema("map", tracker_provider="local-markdown")
     with pytest.raises(MODULE.ReportError, match="requires one completion_route"):
         MODULE._schema("close")
 
@@ -1225,7 +1706,7 @@ def test_authorized_direct_recovery_closes_without_a_tracker_frontier(
             lambda values: values.update(
                 {"direct_implementation_authority": "wrong route"}
             ),
-            "requires only tracker identity fields",
+            "mixed or incomplete tracker identity fields",
         ),
         (
             "authorized-direct-recovery",

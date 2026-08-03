@@ -1955,7 +1955,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "CAP-012"
       ],
       "callee_owned_gates_mutations": [
-        "To Tickets retains source admission, execution-packet shaping, slicing, configured GitHub tracker mutation, relationship and readiness proof, recovery, Return, and completion"
+        "To Tickets retains source admission, execution-packet shaping, slicing, configured tracker mutation, relationship and readiness proof, recovery, Return, and completion"
       ],
       "caller_skill_id": "SK-017",
       "combined_exit_owner_skill_id": "SK-017",
@@ -2013,16 +2013,16 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-017",
       "combined_exit_owner_skill_id": "SK-017",
       "context_loaded": [],
-      "entry_condition": "To Tickets returned a candidate-digest-bound ready/reused graph, verified mutation/read-back identity, exact issue URLs, and a non-empty Ready-for-agent frontier; To Tickets owns the first recommendation and Audit preserves it while appending candidate/report identity plus the exact Close-return schema without starting implementation.",
+      "entry_condition": "To Tickets returned a candidate-digest-bound ready/reused graph, verified mutation/read-back identity, exact provider-native tracker identities, and a non-empty Ready-for-agent frontier; To Tickets owns the first recommendation and Audit preserves it while appending candidate/report identity plus the exact Close-return schema without starting implementation.",
       "failure_behavior": "Publish the tracker recovery state and Analyze re-entry without an implementation recommendation",
-      "input_packet": "Durable audit report, candidate and candidate-bundle digest identities, verified GitHub issue and first Ready-for-agent identity, mutation/read-back identity, analysis, requested Close-return fields, and exact uninvoked suggestion",
+      "input_packet": "Durable audit report, candidate and candidate-bundle digest identities, verified tracker graph and first Ready-for-agent identity, mutation/read-back identity, analysis, requested Close-return fields, and exact uninvoked suggestion",
       "ordering_impact": "none",
       "relationship_id": "REL-056",
       "required_proof_ids": [
         "PROOF-REL-056"
       ],
       "resume_owner_skill_id": "SK-017",
-      "return_packet": "One exact issue-bound Implement pickup with requested Close-return fields and implementation unstarted; Close remains a separate user-selected Audit invocation",
+      "return_packet": "One exact tracker-item-bound Implement pickup with requested Close-return fields and implementation unstarted; Close remains a separate user-selected Audit invocation",
       "target_skill_id": "SK-022",
       "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -4311,7 +4311,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "completion_condition": "The selected Map, Audit, Analyze, or one-candidate Close path is terminal for this invocation; implementation-ready Analyze records ready/reused, recovery, or authority-required; Close admits either an exact read-back-verified tracker frontier or an explicitly authorized already-landed direct recovery without tracker identities; current evidence identity and deterministic JSON-state HTML pass digest-locked publication and read-back",
       "contract_order": 17,
       "essential_outcome": "Map one repository target, audit one user-selected subsystem, analyze one user-selected candidate, or close one analyzed candidate from its exact completion packet",
-      "failure_return": "Return current, incomplete, or stale report coverage without mutating the repository baseline, while preserving exact GitHub issue recovery state from an attempted implementation-ready Analyze",
+      "failure_return": "Return current, incomplete, or stale report coverage without mutating the repository baseline, while preserving exact configured-tracker recovery state from an attempted implementation-ready Analyze",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-aggregate",
       "negative_exclusion_predicates": [
@@ -4320,7 +4320,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Current-source identity and strict manifest verification, linked system map, six-lens coverage, findings and retained complexity, candidate presentation, analysis, tracker-frontier or authorized-direct-recovery Close, To Tickets result admission, exact issue-bound pickups, and the deterministic atomic JSON-state HTML report"
+        "Current-source identity and strict manifest verification, linked system map, six-lens coverage, findings and retained complexity, candidate presentation, analysis, tracker-frontier or authorized-direct-recovery Close, To Tickets result admission, exact tracker-item-bound pickups, and the deterministic atomic JSON-state HTML report"
       ],
       "owned_capability_ids": [
         "CAP-017"
@@ -4347,7 +4347,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-093"
       ],
       "required_input": "A repository target for Map; one current complete report and selected subsystem for Audit; one current report and selected candidate for Analyze; or one analyzed candidate plus an exact tracker-frontier completion packet or explicitly authorized already-landed direct-recovery packet for Close",
-      "return_packet": "A complete, partial, or blocked invocation result with current-source and Map state, absolute report path or none, current selection, coverage, tracker publication and issue identity when applicable, and any exact uninvoked pickup",
+      "return_packet": "A complete, partial, or blocked invocation result with current-source and Map state, absolute report path or none, current selection, coverage, tracker publication and provider-native item identity when applicable, and any exact uninvoked pickup",
       "skill_id": "SK-017"
     },
     {

@@ -18,7 +18,7 @@ from typing import Any, NoReturn, Sequence
 REPORT_VERSION = 10
 STATE_VERSION = 2
 RESPONSE_VERSION = 1
-MANIFEST_VERSION = 3
+MANIFEST_VERSION = 4
 
 _ID = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 _RUN_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
@@ -798,16 +798,31 @@ def _normalize_analysis(value: object) -> dict[str, Any]:
     return result
 
 
-def _normalize_tracker(value: object) -> dict[str, Any]:
+def _normalize_tracker(
+    value: object,
+    *,
+    require_local_graph: bool = False,
+) -> dict[str, Any]:
     item = _object(value, "tracker")
     required = {"status", "issue_urls", "ready_issue_url"}
-    optional = {
+    common_optional = {
         "candidate_bundle_sha256",
         "mutation_identity",
         "read_back",
         "observed_issue_state",
     }
-    _strict(item, required, optional, "tracker")
+    local_optional = {
+        "provider",
+        "parent_ref",
+        "issue_refs",
+        "ready_issue_ref",
+        "readiness",
+        "blockers",
+        "claim_state",
+        "frontier",
+        "graph_sha256",
+    }
+    _strict(item, required, common_optional | local_optional, "tracker")
     status = _text(item["status"], "tracker.status")
     if status not in _TRACKER_STATES:
         raise ReportError("tracker has unsupported status")
@@ -818,16 +833,58 @@ def _normalize_tracker(value: object) -> dict[str, Any]:
     if ready and re.fullmatch(r"https://[^\s]+", ready) is None:
         raise ReportError("tracker ready_issue_url must be an absolute HTTPS URL")
     supplied_optional = set(item) - required
+    local = item.get("provider") == "local-markdown"
+    if "provider" in item and not local:
+        raise ReportError("tracker provider is unsupported")
+    if local and status not in {"ready-graph", "reused"}:
+        raise ReportError("Local Markdown provider requires a ready tracker state")
     if status in {"ready-graph", "reused"}:
         expected = {"candidate_bundle_sha256", "mutation_identity", "read_back"}
-        if supplied_optional != expected:
+        if local:
+            expected |= local_optional - {"graph_sha256"}
+            allowed = {frozenset(expected), frozenset(expected | {"graph_sha256"})}
+            if frozenset(supplied_optional) not in allowed:
+                raise ReportError("Local Markdown tracker state has missing or foreign fields")
+            if require_local_graph and "graph_sha256" not in supplied_optional:
+                raise ReportError("Local Markdown tracker state requires graph_sha256")
+            if urls or ready:
+                raise ReportError("Local Markdown tracker state forbids hosted issue URLs")
+        elif supplied_optional != expected:
             raise ReportError("ready tracker state has missing or foreign fields")
-        if not urls or ready not in urls:
+        if not local and (not urls or ready not in urls):
             raise ReportError("ready tracker state requires one returned frontier issue")
         _sha(item["candidate_bundle_sha256"], "tracker.candidate_bundle_sha256")
         _text(item["mutation_identity"], "tracker.mutation_identity")
         if item["read_back"] is not True:
             raise ReportError("ready tracker state requires verified read-back")
+        if local:
+            parent_ref = _text(item["parent_ref"], "tracker.parent_ref")
+            issue_refs = _text_list(item["issue_refs"], "tracker.issue_refs", allow_empty=False)
+            ready_issue_ref = _text(item["ready_issue_ref"], "tracker.ready_issue_ref")
+            frontier = _text_list(item["frontier"], "tracker.frontier", allow_empty=False)
+            blockers = _text_list(item["blockers"], "tracker.blockers")
+            readiness = _text(item["readiness"], "tracker.readiness")
+            claim_state = _text(item["claim_state"], "tracker.claim_state")
+            if readiness != "ready-for-agent" or blockers or claim_state != "unclaimed":
+                raise ReportError(
+                    "Local Markdown ready tracker requires ready, unblocked, unclaimed state"
+                )
+            if ready_issue_ref not in issue_refs or frontier[0] != ready_issue_ref:
+                raise ReportError("Local Markdown ready issue must lead the verified frontier")
+            local_result = {
+                "provider": "local-markdown",
+                "parent_ref": parent_ref,
+                "issue_refs": issue_refs,
+                "ready_issue_ref": ready_issue_ref,
+                "readiness": readiness,
+                "blockers": blockers,
+                "claim_state": claim_state,
+                "frontier": frontier,
+            }
+            if "graph_sha256" in item:
+                local_result["graph_sha256"] = _sha(
+                    item["graph_sha256"], "tracker.graph_sha256"
+                )
     elif status == "recovery":
         expected = {
             "candidate_bundle_sha256",
@@ -848,12 +905,300 @@ def _normalize_tracker(value: object) -> dict[str, Any]:
         raise ReportError(
             "not-applicable tracker state forbids tracker mutation fields or issues"
         )
-    result = {
+    result: dict[str, Any] = {
         "status": status,
         "issue_urls": urls,
         "ready_issue_url": ready,
     }
-    return result | {name: item[name] for name in supplied_optional}
+    for name in ("candidate_bundle_sha256", "mutation_identity", "read_back", "observed_issue_state"):
+        if name in item:
+            result[name] = item[name]
+    if local:
+        result |= local_result
+    return result
+
+
+def _contained_local_markdown_ref(root: Path, ref: str, label: str) -> Path:
+    pure = PurePosixPath(ref)
+    if (
+        pure.is_absolute()
+        or pure.as_posix() != ref
+        or not pure.parts
+        or pure.parts[0] != ".scratch"
+        or any(part in {"", ".", ".."} for part in pure.parts)
+    ):
+        raise ReportError(f"{label} must be one contained .scratch relative path")
+    path = root
+    for part in pure.parts:
+        path /= part
+        if path.is_symlink():
+            raise ReportError(f"{label} may not traverse a symlink")
+    try:
+        path.resolve(strict=True).relative_to(root)
+    except (OSError, ValueError) as exc:
+        raise ReportError(f"{label} is missing or escapes the repository") from exc
+    if not path.is_file():
+        raise ReportError(f"{label} must identify one file")
+    return path
+
+
+def _markdown_field(source: str, field: str, *, required: bool = True) -> str:
+    matches = re.findall(rf"(?m)^{re.escape(field)}:\s*(.*?)\s*$", source)
+    if len(matches) > 1 or (required and len(matches) != 1):
+        raise ReportError(f"Local Markdown issue requires one {field} field")
+    return matches[0] if matches else ""
+
+
+def _verify_local_markdown_graph(
+    root: Path,
+    tracker: dict[str, Any],
+    candidate_id: str,
+    candidate_digest: str,
+    *,
+    phase: str,
+) -> str:
+    parent_ref = tracker["parent_ref"]
+    issue_refs = tracker["issue_refs"]
+    parent_parts = PurePosixPath(parent_ref).parts
+    if len(parent_parts) != 3 or parent_parts[-1] != "SPEC.md":
+        raise ReportError("Local Markdown parent must be .scratch/<feature>/SPEC.md")
+    expected_issue_parent = PurePosixPath(*parent_parts[:-1], "issues")
+    if any(
+        len(PurePosixPath(ref).parts) != 4
+        or PurePosixPath(ref).parent != expected_issue_parent
+        or PurePosixPath(ref).suffix != ".md"
+        for ref in issue_refs
+    ):
+        raise ReportError("Local Markdown issues must share the configured parent issue directory")
+    parent_path = _contained_local_markdown_ref(root, parent_ref, "tracker.parent_ref")
+    issue_paths = [
+        _contained_local_markdown_ref(root, ref, f"tracker.issue_refs[{index}]")
+        for index, ref in enumerate(issue_refs)
+    ]
+    parent_source = parent_path.read_text(encoding="utf-8")
+    if (
+        f"- Candidate: `{candidate_id}`" not in parent_source
+        or f"- Candidate bundle SHA-256: `{candidate_digest}`" not in parent_source
+    ):
+        raise ReportError("Local Markdown parent does not match the selected candidate")
+    parent_links = re.findall(r"\]\((issues/[^)\s]+\.md)\)", parent_source)
+    expected_links = [f"issues/{PurePosixPath(ref).name}" for ref in issue_refs]
+    if parent_links != expected_links:
+        raise ReportError("Local Markdown parent child order does not match issue_refs")
+
+    issues: dict[str, dict[str, object]] = {}
+    for ref, path in zip(issue_refs, issue_paths, strict=True):
+        source = path.read_text(encoding="utf-8")
+        match = re.fullmatch(r"(\d+)-[a-z0-9]+(?:-[a-z0-9]+)*\.md", path.name)
+        if match is None:
+            raise ReportError("Local Markdown issue filename requires a numeric stable identity")
+        if match.group(1) in issues:
+            raise ReportError("Local Markdown graph has duplicate numeric stable identity")
+        if _markdown_field(source, "Parent") != "../SPEC.md":
+            raise ReportError("Local Markdown issue parent identity does not match")
+        if f"`{candidate_id}`" not in source or f"`{candidate_digest}`" not in source:
+            raise ReportError("Local Markdown issue does not match the selected candidate")
+        blocked = _markdown_field(source, "Blocked by")
+        blockers = [] if blocked.lower() == "none" else [item.strip() for item in blocked.split(",")]
+        claim = _markdown_field(source, "Claimed by", required=False)
+        issues[match.group(1)] = {
+            "ref": ref,
+            "status": _markdown_field(source, "Status"),
+            "blockers": blockers,
+            "claimed": bool(claim),
+            "source": source,
+        }
+    if phase == "ready":
+        frontier = [
+            str(issue["ref"])
+            for issue in issues.values()
+            if issue["status"] == "ready-for-agent"
+            and not issue["claimed"]
+            and not any(
+                blocker not in issues or issues[blocker]["status"] != "implemented"
+                for blocker in issue["blockers"]
+            )
+        ]
+        if frontier != tracker["frontier"]:
+            raise ReportError("Local Markdown frontier does not match read-back")
+        ready_ref = tracker["ready_issue_ref"]
+        ready = next(issue for issue in issues.values() if issue["ref"] == ready_ref)
+        if ready["status"] != tracker["readiness"] or ready["blockers"] != tracker["blockers"]:
+            raise ReportError("Local Markdown ready issue state does not match read-back")
+        if bool(ready["claimed"]) != (tracker["claim_state"] != "unclaimed"):
+            raise ReportError("Local Markdown ready issue claim state does not match read-back")
+    elif phase == "completed":
+        if any(issue["status"] != "implemented" for issue in issues.values()):
+            raise ReportError("Local Markdown tracker graph is not implemented")
+        if any(issue["claimed"] for issue in issues.values()):
+            raise ReportError("Local Markdown implemented issue remains claimed")
+        if any(
+            blocker not in issues or issues[blocker]["status"] != "implemented"
+            for issue in issues.values()
+            for blocker in issue["blockers"]
+        ):
+            raise ReportError("Local Markdown implemented graph has an unresolved blocker")
+        if any(
+            not str(issue["source"]).partition("\n## Implementation Notes\n")[2].strip()
+            for issue in issues.values()
+        ):
+            raise ReportError("Local Markdown implemented issue has incomplete closeout")
+    else:
+        raise ReportError("Local Markdown verification phase is unsupported")
+    digest = hashlib.sha256()
+    for ref, path in [(parent_ref, parent_path), *zip(issue_refs, issue_paths, strict=True)]:
+        digest.update(ref.encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(path.read_bytes())
+        digest.update(b"\0")
+    return digest.hexdigest()
+
+
+def _verify_local_markdown_commit(
+    root: Path,
+    tracker: dict[str, Any],
+    candidate_id: str,
+    candidate_digest: str,
+    commit: str,
+) -> str:
+    completion_digest = _verify_local_markdown_graph(
+        root,
+        tracker,
+        candidate_id,
+        candidate_digest,
+        phase="completed",
+    )
+    for ref in [tracker["parent_ref"], *tracker["issue_refs"]]:
+        path = _contained_local_markdown_ref(root, ref, "Local Markdown completion ref")
+        committed = subprocess.run(
+            ["git", "-c", f"safe.directory={root}", "rev-parse", f"{commit}:{ref}"],
+            cwd=root,
+            capture_output=True,
+            text=True,
+        )
+        observed = subprocess.run(
+            [
+                "git",
+                "-c",
+                f"safe.directory={root}",
+                "hash-object",
+                f"--path={ref}",
+                str(path),
+            ],
+            cwd=root,
+            capture_output=True,
+            text=True,
+        )
+        if (
+            committed.returncode != 0
+            or observed.returncode != 0
+            or committed.stdout.strip() != observed.stdout.strip()
+        ):
+            raise ReportError("Local Markdown completion is not exact in the implementation commit")
+    return completion_digest
+
+
+def _https_only_local_markdown_frontier(tracker: dict[str, Any]) -> str | None:
+    if (
+        tracker.get("status") != "recovery"
+        or tracker.get("issue_urls")
+        or tracker.get("ready_issue_url")
+    ):
+        return None
+    observed = str(tracker.get("observed_issue_state", "")).lower()
+    required = (
+        "publication recovery: local markdown graph",
+        "one unclaimed ready-for-agent child",
+        "no blockers",
+        "requires an absolute https ready_issue_url",
+        "supplies only local repository paths",
+        "no truthful hosted url exists",
+        "cannot be recorded as ready-graph",
+    )
+    match = re.search(r"\bfrontier\s+(\d+)\b", observed)
+    if match is None or any(fragment not in observed for fragment in required):
+        return None
+    return match.group(1)
+
+
+def _recover_local_markdown_tracker(
+    root: Path,
+    candidate_id: str,
+    candidate_digest: str,
+    tracker: dict[str, Any],
+    commit: str,
+) -> tuple[dict[str, Any], str]:
+    frontier_id = _https_only_local_markdown_frontier(tracker)
+    if frontier_id is None:
+        raise ReportError("tracker recovery is not the Local Markdown HTTPS-only mismatch")
+    scratch = root / ".scratch"
+    matches: list[tuple[str, list[str]]] = []
+    if scratch.is_dir() and not scratch.is_symlink():
+        for parent in sorted(scratch.glob("*/SPEC.md")):
+            try:
+                parent_ref = parent.relative_to(root).as_posix()
+                checked = _contained_local_markdown_ref(
+                    root, parent_ref, "Local Markdown recovery parent"
+                )
+            except (ReportError, ValueError):
+                continue
+            source = checked.read_text(encoding="utf-8")
+            if (
+                f"- Candidate: `{candidate_id}`" not in source
+                or f"- Candidate bundle SHA-256: `{candidate_digest}`" not in source
+            ):
+                continue
+            links = re.findall(r"\]\((issues/[^)\s]+\.md)\)", source)
+            issue_refs = [
+                (PurePosixPath(parent_ref).parent / link).as_posix() for link in links
+            ]
+            if len(issue_refs) == 1:
+                matches.append((parent_ref, issue_refs))
+    if len(matches) != 1:
+        raise ReportError("Local Markdown recovery requires one uniquely matching graph")
+    parent_ref, issue_refs = matches[0]
+    ready_matches = [
+        ref
+        for ref in issue_refs
+        if re.match(rf"{re.escape(frontier_id)}-", PurePosixPath(ref).name)
+    ]
+    if len(ready_matches) != 1:
+        raise ReportError("Local Markdown recovery frontier identity does not match")
+    ready_ref = ready_matches[0]
+    ready_source = _contained_local_markdown_ref(
+        root, ready_ref, "Local Markdown recovery ready issue"
+    ).read_text(encoding="utf-8")
+    if (
+        "- Ready state after publication verification: `ready-for-agent`." not in ready_source
+        or _markdown_field(ready_source, "Blocked by").lower() != "none"
+        or _markdown_field(ready_source, "Claimed by", required=False)
+    ):
+        raise ReportError("Local Markdown recovery cannot revalidate the original ready frontier")
+    recovered = {
+        "status": "ready-graph",
+        "issue_urls": [],
+        "ready_issue_url": "",
+        "provider": "local-markdown",
+        "parent_ref": parent_ref,
+        "issue_refs": issue_refs,
+        "ready_issue_ref": ready_ref,
+        "readiness": "ready-for-agent",
+        "blockers": [],
+        "claim_state": "unclaimed",
+        "frontier": [ready_ref],
+        "candidate_bundle_sha256": candidate_digest,
+        "mutation_identity": tracker["mutation_identity"],
+        "read_back": True,
+    }
+    completion_digest = _verify_local_markdown_commit(
+        root,
+        recovered,
+        candidate_id,
+        candidate_digest,
+        commit,
+    )
+    recovered["graph_sha256"] = completion_digest
+    return recovered, completion_digest
 
 
 def _normalize_finding_transitions(value: object, label: str) -> list[dict[str, str]]:
@@ -913,6 +1258,10 @@ def _normalize_analyze_manifest(raw: dict[str, Any]) -> dict[str, Any]:
     if state not in valid_pairs[validity]:
         raise ReportError("Analyze validity and state disagree")
     tracker = _normalize_tracker(raw["tracker"])
+    if _https_only_local_markdown_frontier(tracker) is not None:
+        raise ReportError(
+            "Fresh Analyze must record Local Markdown directly, not as HTTPS-only recovery"
+        )
     ready = tracker["status"] != "not-applicable"
     if ready and state != "analyzed":
         raise ReportError("only analyzed candidates may be implementation-ready")
@@ -998,6 +1347,11 @@ def _normalize_close_manifest(raw: dict[str, Any]) -> dict[str, Any]:
     route_fields = {
         "tracker_mutation_identity",
         "ready_issue_url",
+        "tracker_provider",
+        "parent_ref",
+        "issue_refs",
+        "ready_issue_ref",
+        "tracker_completion_sha256",
         "direct_implementation_authority",
     }
     _strict(raw, required, route_fields, "Close manifest")
@@ -1005,18 +1359,50 @@ def _normalize_close_manifest(raw: dict[str, Any]) -> dict[str, Any]:
         raise ReportError(f"Close manifest requires version {MANIFEST_VERSION}")
     route = _text(raw["completion_route"], "Close completion_route")
     supplied_route_fields = set(raw) & route_fields
-    if route == "tracker-frontier":
-        if supplied_route_fields != {"tracker_mutation_identity", "ready_issue_url"}:
-            raise ReportError("tracker-frontier Close requires only tracker identity fields")
-        ready_issue_url = _text(raw["ready_issue_url"], "Close ready_issue_url")
-        if re.fullmatch(r"https://[^\s]+", ready_issue_url) is None:
-            raise ReportError("Close ready_issue_url must be an absolute HTTPS URL")
-        route_packet = {
-            "tracker_mutation_identity": _text(
-                raw["tracker_mutation_identity"], "Close tracker_mutation_identity"
-            ),
-            "ready_issue_url": ready_issue_url,
+    if route in {"tracker-frontier", "local-markdown-recovery"}:
+        hosted_fields = {"tracker_mutation_identity", "ready_issue_url"}
+        local_fields = {
+            "tracker_mutation_identity",
+            "tracker_provider",
+            "parent_ref",
+            "issue_refs",
+            "ready_issue_ref",
+            "tracker_completion_sha256",
         }
+        if route == "tracker-frontier" and supplied_route_fields == hosted_fields:
+            ready_issue_url = _text(raw["ready_issue_url"], "Close ready_issue_url")
+            if re.fullmatch(r"https://[^\s]+", ready_issue_url) is None:
+                raise ReportError("Close ready_issue_url must be an absolute HTTPS URL")
+            route_packet = {
+                "tracker_mutation_identity": _text(
+                    raw["tracker_mutation_identity"], "Close tracker_mutation_identity"
+                ),
+                "ready_issue_url": ready_issue_url,
+            }
+        elif supplied_route_fields == local_fields:
+            if raw["tracker_provider"] != "local-markdown":
+                raise ReportError("Local Markdown Close requires tracker_provider local-markdown")
+            route_packet = {
+                "tracker_mutation_identity": _text(
+                    raw["tracker_mutation_identity"], "Close tracker_mutation_identity"
+                ),
+                "tracker_provider": "local-markdown",
+                "parent_ref": _text(raw["parent_ref"], "Close parent_ref"),
+                "issue_refs": _text_list(
+                    raw["issue_refs"], "Close issue_refs", allow_empty=False
+                ),
+                "ready_issue_ref": _text(
+                    raw["ready_issue_ref"], "Close ready_issue_ref"
+                ),
+                "tracker_completion_sha256": _sha(
+                    raw["tracker_completion_sha256"],
+                    "Close tracker_completion_sha256",
+                ),
+            }
+        else:
+            raise ReportError(
+                f"{route} Close has mixed or incomplete tracker identity fields"
+            )
     elif route == "authorized-direct-recovery":
         if supplied_route_fields != {"direct_implementation_authority"}:
             raise ReportError(
@@ -1237,7 +1623,7 @@ def _validate_state(state: dict[str, Any]) -> None:
         )
         if not isinstance(item["history"], list):
             raise ReportError("report state candidate history must be a list")
-        if _normalize_tracker(item["tracker"]) != item["tracker"]:
+        if _normalize_tracker(item["tracker"], require_local_graph=True) != item["tracker"]:
             raise ReportError("report state has noncanonical tracker facts")
         if item["analysis"]:
             if _normalize_analysis(item["analysis"]) != item["analysis"]:
@@ -1260,18 +1646,29 @@ def _validate_state(state: dict[str, Any]) -> None:
             _strict(
                 implementation,
                 implementation_fields,
-                {"direct_implementation_authority"},
+                {"direct_implementation_authority", "tracker_completion_sha256"},
                 f"report candidate[{index}].implementation",
             )
             if item["state"] != "implemented" or item["pickup"]:
                 raise ReportError("implementation facts require a closed candidate")
             tracker_status = item["tracker"]["status"]
             has_direct_authority = "direct_implementation_authority" in implementation
+            has_tracker_completion = "tracker_completion_sha256" in implementation
             if tracker_status in {"ready-graph", "reused"}:
                 if has_direct_authority:
                     raise ReportError("tracker-frontier implementation forbids direct authority")
+                local = item["tracker"].get("provider") == "local-markdown"
+                if local != has_tracker_completion:
+                    raise ReportError(
+                        "Local Markdown implementation requires exact tracker completion identity"
+                    )
+                if local:
+                    _sha(
+                        implementation["tracker_completion_sha256"],
+                        "report tracker_completion_sha256",
+                    )
             elif tracker_status in {"authority-required", "not-applicable"}:
-                if not has_direct_authority:
+                if not has_direct_authority or has_tracker_completion:
                     raise ReportError("direct implementation requires explicit authority")
                 _text(
                     implementation["direct_implementation_authority"],
@@ -1484,6 +1881,16 @@ def _candidate_html(candidate: dict[str, Any]) -> str:
         ("Tracker", tracker["status"]),
         ("Issues", tracker["issue_urls"]),
     ]
+    if tracker.get("provider") == "local-markdown":
+        fields.extend(
+            (
+                ("Tracker Provider", tracker["provider"]),
+                ("Tracker Parent", tracker["parent_ref"]),
+                ("Tracker Items", tracker["issue_refs"]),
+                ("Ready Tracker Item", tracker["ready_issue_ref"]),
+                ("Tracker Frontier", tracker["frontier"]),
+            )
+        )
     if candidate["analysis"]:
         for name, value in sorted(candidate["analysis"].items()):
             fields.append((name.replace("_", " ").title(), value))
@@ -1780,7 +2187,12 @@ def _reduce_audit(state: dict[str, Any], packet: dict[str, Any]) -> dict[str, An
     return state
 
 
-def _reduce_analyze(state: dict[str, Any], packet: dict[str, Any], report: Path) -> dict[str, Any]:
+def _reduce_analyze(
+    state: dict[str, Any],
+    packet: dict[str, Any],
+    report: Path,
+    root: Path,
+) -> dict[str, Any]:
     candidate = next(
         (item for item in state["candidates"] if item["id"] == packet["candidate_id"]),
         None,
@@ -1809,6 +2221,14 @@ def _reduce_analyze(state: dict[str, Any], packet: dict[str, Any], report: Path)
     if tracker["status"] in {"ready-graph", "reused", "recovery"}:
         if tracker["candidate_bundle_sha256"] != candidate_digest:
             raise ReportError("tracker candidate bundle does not match the selected candidate")
+    if tracker.get("provider") == "local-markdown":
+        tracker["graph_sha256"] = _verify_local_markdown_graph(
+            root,
+            tracker,
+            candidate["id"],
+            candidate_digest,
+            phase="ready",
+        )
     transitions = {item["finding_id"]: item for item in packet["finding_transitions"]}
     if not set(transitions) <= prior_members | set(packet["member_ids"]):
         raise ReportError("Analyze finding transition is outside the old or current candidate members")
@@ -1830,13 +2250,14 @@ def _reduce_analyze(state: dict[str, Any], packet: dict[str, Any], report: Path)
         candidate["pickup"] = ""
     elif tracker["status"] in {"ready-graph", "reused"}:
         links = subsystem["audit"]["skill_links"]
+        ready_identity = tracker.get("ready_issue_ref", tracker["ready_issue_url"])
         candidate["pickup"] = (
-            f"[$implement]({links['implement']}) issue {tracker['ready_issue_url']} "
+            f"[$implement]({links['implement']}) tracker item {ready_identity} "
             f"for audit candidate {candidate['id']} from {report.as_posix()}. Return, but do not "
             f"invoke, [$audit-codebase]({links['audit_codebase']}) Close with matching report, "
             "run, subsystem, and candidate identities; "
             "implementation outcome; candidate-bundle digest; tracker mutation identity and Ready "
-            "issue URL; commit and tree identities; current-source result; accepted proof and "
+            "tracker item identity; commit and tree identities; current-source result; accepted proof and "
             "skipped checks; formal-review decision and provenance; Repair generations used; "
             "changed scope; Change Closure; residual risk; last verified identity; and one proposed "
             "state-and-reason transition for every active member finding."
@@ -1915,6 +2336,8 @@ def _reduce_close(
     candidate_digest = _candidate_bundle_sha256(state, candidate)
     if packet["candidate_bundle_sha256"] != candidate_digest:
         raise ReportError("Close candidate bundle identity does not match")
+    local_tracker = False
+    recovered_tracker: dict[str, Any] | None = None
     if packet["completion_route"] == "tracker-frontier":
         if (
             tracker["status"] not in {"ready-graph", "reused"}
@@ -1927,12 +2350,32 @@ def _reduce_close(
             raise ReportError("Close tracker candidate bundle identity does not match")
         if packet["tracker_mutation_identity"] != tracker["mutation_identity"]:
             raise ReportError("Close tracker mutation identity does not match")
-        if packet["ready_issue_url"] != tracker["ready_issue_url"]:
+        local_tracker = tracker.get("provider") == "local-markdown"
+        if local_tracker:
+            if packet.get("tracker_provider") != "local-markdown":
+                raise ReportError("Local Markdown Close requires the local tracker packet")
+            for field in ("parent_ref", "issue_refs", "ready_issue_ref"):
+                if packet[field] != tracker[field]:
+                    raise ReportError(f"Close Local Markdown {field} identity does not match")
+        elif packet.get("ready_issue_url") != tracker["ready_issue_url"]:
             raise ReportError("Close Ready issue identity does not match")
-    elif tracker["status"] not in {"authority-required", "not-applicable"}:
-        raise ReportError(
-            "authorized-direct-recovery Close requires authority-required or not-applicable tracker state"
-        )
+    elif packet["completion_route"] == "local-markdown-recovery":
+        if _https_only_local_markdown_frontier(tracker) is None:
+            raise ReportError(
+                "local-markdown-recovery Close requires the exact HTTPS-only recovery state"
+            )
+        if packet["tracker_mutation_identity"] != tracker["mutation_identity"]:
+            raise ReportError("Close tracker mutation identity does not match")
+        if packet.get("tracker_provider") != "local-markdown":
+            raise ReportError("Local Markdown recovery requires the local tracker packet")
+        local_tracker = True
+    elif packet["completion_route"] == "authorized-direct-recovery":
+        if tracker["status"] not in {"authority-required", "not-applicable"}:
+            raise ReportError(
+                "authorized-direct-recovery Close requires authority-required or not-applicable tracker state"
+            )
+    else:
+        raise ReportError("Close completion route is unsupported")
     if packet["last_verified_identity"] != candidate["last_verified_identity"]:
         raise ReportError("Close last verified identity does not match Analyze")
     _verify_commit(
@@ -1941,6 +2384,29 @@ def _reduce_close(
         packet["commit_tree_identity"],
         packet["current_source_result"],
     )
+    if packet["completion_route"] == "local-markdown-recovery":
+        recovered_tracker, completion_digest = _recover_local_markdown_tracker(
+            root,
+            candidate["id"],
+            candidate_digest,
+            tracker,
+            packet["commit_identity"],
+        )
+        for field in ("parent_ref", "issue_refs", "ready_issue_ref"):
+            if packet[field] != recovered_tracker[field]:
+                raise ReportError(f"Close Local Markdown {field} identity does not match")
+        if packet["tracker_completion_sha256"] != completion_digest:
+            raise ReportError("Close Local Markdown completion identity does not match")
+    elif local_tracker:
+        completion_digest = _verify_local_markdown_commit(
+            root,
+            tracker,
+            candidate["id"],
+            candidate_digest,
+            packet["commit_identity"],
+        )
+        if packet["tracker_completion_sha256"] != completion_digest:
+            raise ReportError("Close Local Markdown completion identity does not match")
     findings = {item["id"]: item for item in state["findings"]}
     active_members = {
         identifier
@@ -1957,6 +2423,8 @@ def _reduce_close(
         )
         finding["state"] = transition["state"]
     candidate["history"] = _prior_record_history(candidate)
+    if recovered_tracker is not None:
+        candidate["tracker"] = recovered_tracker
     candidate["state"] = "implemented"
     candidate["pickup"] = ""
     candidate["implementation"] = {
@@ -1978,6 +2446,10 @@ def _reduce_close(
     if packet["completion_route"] == "authorized-direct-recovery":
         candidate["implementation"]["direct_implementation_authority"] = packet[
             "direct_implementation_authority"
+        ]
+    elif local_tracker:
+        candidate["implementation"]["tracker_completion_sha256"] = packet[
+            "tracker_completion_sha256"
         ]
     state["next_selection"] = "Select another report item."
     state["history"].append(
@@ -2035,7 +2507,7 @@ def _prepare(
         if command == "audit-subsystem":
             state = _reduce_audit(state, normalized)
         elif command == "analyze-candidate":
-            state = _reduce_analyze(state, normalized, canonical)
+            state = _reduce_analyze(state, normalized, canonical, root)
         else:
             state = _reduce_close(state, normalized, canonical, root)
     output = _render_html(state)
@@ -2264,16 +2736,37 @@ def inspect_report(
         )
         if candidate["state"] not in allowed:
             raise ReportError(f"candidate state {candidate['state']!r} is not admissible for {objective}")
+        candidate_digest = _candidate_bundle_sha256(state, candidate)
         if objective == "close":
-            tracker_status = candidate["tracker"]["status"]
+            tracker = candidate["tracker"]
+            tracker_status = tracker["status"]
             if tracker_status in {"ready-graph", "reused"}:
+                if tracker.get("provider") == "local-markdown":
+                    result["tracker_completion_sha256"] = _verify_local_markdown_commit(
+                        Path(state["repository_root"]),
+                        tracker,
+                        candidate["id"],
+                        candidate_digest,
+                        "HEAD",
+                    )
                 result["completion_route"] = "tracker-frontier"
+            elif _https_only_local_markdown_frontier(tracker) is not None:
+                recovered, completion_digest = _recover_local_markdown_tracker(
+                    Path(state["repository_root"]),
+                    candidate["id"],
+                    candidate_digest,
+                    tracker,
+                    "HEAD",
+                )
+                result["completion_route"] = "local-markdown-recovery"
+                result["tracker_completion_sha256"] = completion_digest
+                result["recovered_tracker"] = recovered
             elif tracker_status in {"authority-required", "not-applicable"}:
                 result["completion_route"] = "authorized-direct-recovery"
             else:
                 raise ReportError("candidate has no admissible Close completion route")
         result["candidate"] = candidate
-        result["candidate_bundle_sha256"] = _candidate_bundle_sha256(state, candidate)
+        result["candidate_bundle_sha256"] = candidate_digest
         result["member_findings"] = [
             item for item in state["findings"] if item["id"] in candidate["member_ids"]
         ]
@@ -2372,9 +2865,15 @@ def source_identity(
     }
 
 
-def _schema(objective: str, completion_route: str | None = None) -> dict[str, Any]:
+def _schema(
+    objective: str,
+    completion_route: str | None = None,
+    tracker_provider: str | None = None,
+) -> dict[str, Any]:
     if objective != "close" and completion_route is not None:
         raise ReportError("completion_route applies only to Close schema")
+    if objective not in {"analyze", "close"} and tracker_provider is not None:
+        raise ReportError("tracker_provider applies only to Analyze or Close schema")
     common = {"version": MANIFEST_VERSION, "expected_report_sha256": "<sha256>"}
     if objective == "map":
         template = common | {
@@ -2444,6 +2943,8 @@ def _schema(objective: str, completion_route: str | None = None) -> dict[str, An
             },
         }
     elif objective == "analyze":
+        if tracker_provider not in {None, "local-markdown"}:
+            raise ReportError("Analyze schema tracker provider is unsupported")
         template = common | {
             "candidate_id": "",
             "member_ids": [],
@@ -2469,16 +2970,36 @@ def _schema(objective: str, completion_route: str | None = None) -> dict[str, An
                 "residual_risk": "",
                 "decision_status": "none",
             },
-            "tracker": {
-                "status": "not-applicable",
-                "issue_urls": [],
-                "ready_issue_url": "",
-            },
+            "tracker": (
+                {
+                    "status": "ready-graph",
+                    "issue_urls": [],
+                    "ready_issue_url": "",
+                    "provider": "local-markdown",
+                    "parent_ref": "",
+                    "issue_refs": [],
+                    "ready_issue_ref": "",
+                    "readiness": "ready-for-agent",
+                    "blockers": [],
+                    "claim_state": "unclaimed",
+                    "frontier": [],
+                    "candidate_bundle_sha256": "",
+                    "mutation_identity": "",
+                    "read_back": True,
+                }
+                if tracker_provider == "local-markdown"
+                else {
+                    "status": "not-applicable",
+                    "issue_urls": [],
+                    "ready_issue_url": "",
+                }
+            ),
             "next_owner": {"skill": "", "reason": "", "prerequisite": "", "invocation": ""},
         }
     elif objective == "close":
         if completion_route not in {
             "tracker-frontier",
+            "local-markdown-recovery",
             "authorized-direct-recovery",
         }:
             raise ReportError("Close schema requires one completion_route")
@@ -2505,11 +3026,40 @@ def _schema(objective: str, completion_route: str | None = None) -> dict[str, An
             "finding_transitions": [],
         }
         if completion_route == "tracker-frontier":
+            if tracker_provider not in {None, "local-markdown"}:
+                raise ReportError("tracker-frontier schema provider is unsupported")
+            if tracker_provider == "local-markdown":
+                template |= {
+                    "tracker_mutation_identity": "",
+                    "tracker_provider": "local-markdown",
+                    "parent_ref": "",
+                    "issue_refs": [],
+                    "ready_issue_ref": "",
+                    "tracker_completion_sha256": "",
+                }
+            else:
+                template |= {
+                    "tracker_mutation_identity": "",
+                    "ready_issue_url": "",
+                }
+        elif completion_route == "local-markdown-recovery":
+            if tracker_provider is not None:
+                raise ReportError(
+                    "local-markdown-recovery schema fixes its tracker provider"
+                )
             template |= {
                 "tracker_mutation_identity": "",
-                "ready_issue_url": "",
+                "tracker_provider": "local-markdown",
+                "parent_ref": "",
+                "issue_refs": [],
+                "ready_issue_ref": "",
+                "tracker_completion_sha256": "",
             }
         else:
+            if tracker_provider is not None:
+                raise ReportError(
+                    "authorized-direct-recovery schema forbids a tracker provider"
+                )
             template["direct_implementation_authority"] = ""
     else:
         raise ReportError(f"unsupported schema objective: {objective}")
@@ -2530,8 +3080,13 @@ def _parser() -> argparse.ArgumentParser:
     schema.add_argument("--objective", choices=("map", "audit", "analyze", "close"), required=True)
     schema.add_argument(
         "--completion-route",
-        choices=("tracker-frontier", "authorized-direct-recovery"),
+        choices=(
+            "tracker-frontier",
+            "local-markdown-recovery",
+            "authorized-direct-recovery",
+        ),
     )
+    schema.add_argument("--tracker-provider", choices=("local-markdown",))
 
     def report_args(command: argparse.ArgumentParser) -> None:
         command.add_argument("--repo-root", type=Path, required=True)
@@ -2566,7 +3121,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         args = _parser().parse_args(arguments)
         command = args.command
         if command == "schema":
-            result = _schema(args.objective, args.completion_route)
+            result = _schema(
+                args.objective,
+                args.completion_route,
+                args.tracker_provider,
+            )
         elif command == "inspect":
             result = inspect_report(
                 repo_root=args.repo_root,

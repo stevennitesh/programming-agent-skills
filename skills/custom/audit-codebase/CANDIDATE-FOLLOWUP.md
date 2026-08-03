@@ -6,9 +6,9 @@ Apply this branch-only contract only after `SKILL.md` admits it.
 
 Accept only To Tickets `ready-graph`, or an exact-semantic `reused` result,
 bound to the candidate digest with publication read-back and a Ready-for-agent
-issue. Record the returned issues. The helper generates one Implement pickup
-bound to the Ready issue, candidate, report, and exact Close packet; publish it
-unchanged and do not invoke it.
+tracker item. Record the provider-native graph and item identities. The helper
+generates one Implement pickup bound to the Ready tracker item, candidate,
+report, and exact Close packet; publish it unchanged and do not invoke it.
 
 A non-ready or partial ticket result is `recovery`: record observed state and
 publish no Implement prompt.
@@ -110,5 +110,5 @@ boundary; do not invalidate unrelated report content.
 ## Bound
 
 Follow-up transports one decision or evidence packet, publishes one bounded
-implementation issue graph through `$to-tickets`, or suggests one other owner.
+implementation tracker graph through `$to-tickets`, or suggests one other owner.
 It grants no product mutation authority and never starts implementation.
