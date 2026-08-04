@@ -2409,6 +2409,17 @@ def test_research_owns_one_authorized_cited_note() -> None:
         "another credible applicable search lane is unlikely to change the answer",
         "at least one credible independent lane capable of disconfirming",
         "do not capture a repository mutation baseline solely for Research",
+        "A direct request comes from the current user",
+        "identify every exact missing field",
+        "Treat required sources as evidentiary conditions",
+        "never block solely on a preference",
+        "Use discovery results to refine vocabulary and locate direct sources",
+        "Put only public information or caller-approved search terms",
+        "use it only within the locked audience, destination, and tool authority",
+        "Judge independence against the challenged failure mode",
+        "sharing the claim's subject alone does not defeat independence",
+        "For a direct admitted request, lead with the answer when `answered`",
+        "For a caller invocation, use the complete structured Return contract",
     ):
         assert contract in " ".join(research.split())
     assert research.index("## Output") < research.index("## Verify And Return")
