@@ -10,7 +10,7 @@ Persist these shapes. `SKILL.md` owns behavior; tracker docs own representation.
 Destination owner: <owner>
 Outcome: <decision, settled source, or readiness>
 Route-closing condition: <observable condition>
-Terminal kind: settled source for $to-spec | terminal decision
+Terminal kind: settled source | terminal decision
 Return owner: <closure recipient>
 Predecessor: <closed map link or none>
 Post-Chart ticket allowance: <finite integer>

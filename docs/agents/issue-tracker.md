@@ -30,12 +30,6 @@ the connector lacks the required operation.
 - **Relationships:** use connector actions when exposed; otherwise use GitHub's
   sub-issue and issue-dependency REST endpoints through `gh api`. Resolve the
   authenticated operation and read-back route before the first create.
-- **Campaign snapshot:** before `$parallel-implement` starts, run
-  the bundled `$to-tickets` `scripts/github_issue_relationships.py snapshot`
-  command once into its run directory. The artifact freezes full parent and
-  child packets plus verified native relationships; the ledger binds its
-  SHA-256.
-
 When PR intake is enabled, fetch the PR body, comments, labels, author
 association, and diff. External candidates have author association
 `CONTRIBUTOR`, `FIRST_TIME_CONTRIBUTOR`, or `NONE`. GitHub issues and PRs share

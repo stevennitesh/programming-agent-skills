@@ -39,12 +39,17 @@ completion.
 One small helper prepares worktrees only for concurrent writers. It creates or
 safely reuses an exact-base clean worktree, creates reusable pytest temp,
 basetemp, and cache paths outside the tracked checkout, and runs a quick pytest
-collection smoke. The same helper removes safe completed lanes at graph end or
-the oldest safe completed lane under the existing runtime capacity limit. It
-considers only lanes explicitly named completed and preserves omitted, dirty,
-unintegrated, and uncertain lanes. Cleanup delegates
-generated process-temp reclamation to the temp owner instead of recursively
-deleting worker-writable paths.
+collection smoke when the checkout declares pytest through configuration or a
+supported Python test layout. A newly created lane that fails preflight is
+removed only after its exact base and cleanliness are reverified; reused,
+changed, dirty, and uncertain lanes are preserved.
+
+The same helper removes safe completed lanes at graph end or the oldest safe
+completed lane under the existing runtime capacity limit. It considers only
+lanes explicitly named completed and preserves omitted, dirty, unintegrated,
+and uncertain lanes. Cleanup removes only the helper-owned released-lane state
+under the configured root and its registered worktree. It never forces removal
+or reports a lane removed when that bounded cleanup failed.
 
 `$parallel-implement` composes the same handoff while retaining dependency and
 independence judgment, claims, serial landing, recombined proof, formal review,

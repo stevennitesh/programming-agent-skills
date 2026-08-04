@@ -14,23 +14,16 @@ The user and settled source own outcome, commitments, acceptance, scope,
 exclusions, public and data contracts, security and privacy posture, and agreed
 tradeoffs. Repository, domain, ADR, engineering, tracker, and relationship
 owners retain their routed authority. `to-spec` owns faithful synthesis,
-coverage judgment, one disposable draft, one parent publication, read-back,
+coverage judgment, at most one disposable draft, one parent publication, read-back,
 recovery evidence, Return, and completion.
 
 ## Gates
 
-### 1. Setup
+### 1. Trace settled source and choose the branch
 
-Read the target repository's `AGENTS.md` and its routed tracker, domain, and
-engineering contracts. Verify the required inspect and read-back operations
-before any draft. Before any create, verify that the configured parent-create
-operation is compatible. When setup is missing or incompatible, return
-`setup-precondition` with the evidence and unchanged state, recommend
-`$repo-bootstrap`, and stop.
-
-### 2. Trace settled source and state
-
-Read the complete supplied packet and every decision-bearing pointer it names.
+Read the target repository's `AGENTS.md`, routed domain and engineering
+contracts, the complete supplied packet, and every decision-bearing pointer it
+names.
 Accept a direct settled packet, a closed Wayfinder map with decisive
 resolutions, or one verified selected improvement candidate with settled
 direction and commitment boundary. Record one source owner, exact identity,
@@ -49,6 +42,14 @@ complete acceptance and authority and no useful durable parent contract, return
 `not-needed` with its exact source and `$implement` as the one unstarted next
 recommendation. Create no draft or tracker state.
 
+### 2. Prepare the durable-parent branch
+
+Only after the direct branch is excluded, load the routed tracker contract and
+verify its required inspect and read-back operations. Before any create, verify
+that the configured parent-create operation is compatible. When that setup is
+missing or incompatible, return `setup-precondition` with the evidence and
+unchanged state, recommend `$repo-bootstrap`, and stop.
+
 Verify implementation-adjacent source claims against their exact code, caller,
 test, configuration, or decision pointers. If a required current-state claim has
 no verifiable pointer, return `source-gap`; do not replace source shaping with
@@ -59,21 +60,14 @@ Correction with the original statement, observed evidence pointer, corrected
 current-state wording, and why the commitments are unchanged. A
 decision-changing correction is a `source-gap`, not editorial license.
 
-Inspect the relevant durable parent state before creation and distinguish
-verified absence, exact matching state, divergent state, and unknown state.
-Reuse only an exact match; otherwise create only from verified absence. Updating
-or reconciling requires an explicitly identified target and explicit authority;
-otherwise return `existing-state-conflict` with observed identity, unchanged
-state, and the smallest needed authorization or source delta.
-
 Preserve routed domain terms and ADR decisions and point to their owners; change
-no domain truth. Load `$codebase-design` for shared design vocabulary. When the
-source delegates internal technical design and one consequential Responsibility,
-Interface, Seam, or Proof Seam must be settled for the spec, apply Direct Design
-before drafting and fold its supported result into the specification. Retain
-artifact and decision authority and create no separate design packet. A
-`decision-needed` or `evidence-gap` result, new public or ownership choice, or
-unsupported trade-off returns `source-gap`.
+no domain truth. Load `$codebase-design` only when the source uses its shared
+module or interface vocabulary or delegates one consequential Responsibility,
+Interface, Seam, migration, or Proof Seam question. Apply Direct Design only
+for that unresolved question, fold its supported result into the specification,
+and create no separate design packet. A `decision-needed` or `evidence-gap`
+result, new public or ownership choice, or unsupported trade-off returns
+`source-gap`.
 
 Cover every applicable requirement, exclusion, deferral, constraint,
 dependency, risk, and nonblocking open note and trace each specification
@@ -83,9 +77,9 @@ choices, implementation results, or a ready child-ticket graph. When the source
 supersedes behavior, carry each displaced surface and retained compatibility
 path with its owner, reason, proof, and Removal Trigger.
 
-### 3. Draft and cover
+### 3. Freeze, compare, and draft when needed
 
-Draft one internally consistent parent specification containing Source Trace
+Freeze one internally consistent title and parent body containing Source Trace
 with exact source identity and owner; problem and outcome; users and scenarios;
 scope and non-goals; requirements and invariants; interfaces, data, and state;
 edge and error behavior; security and privacy; compatibility, migration, and
@@ -107,6 +101,14 @@ When state matters, cover only the material initial, reusable,
 legacy-or-incompatible, access-path, variant, and lifecycle branches. Do not
 replace judgment with a Cartesian checklist.
 
+Inspect the intended durable parent target and compare it with the frozen title
+and body. Distinguish verified absence, exact matching state, divergent state,
+and unknown state. Reuse only an exact match; otherwise create only from
+verified absence. Updating or reconciling requires an explicitly identified
+target and explicit authority; otherwise return `existing-state-conflict` with
+observed identity, unchanged state, and the smallest needed authorization or
+source delta.
+
 Write one ignored `.tmp/to-spec/<feature-slug>.md` draft only when a new or
 updated durable publication is required and after the source and coverage gates
 pass. Exact reuse creates no draft. Read back draft bytes and correct synthesis
@@ -125,18 +127,18 @@ technique, and default Repair budgets to `$to-tickets` and delivery owners.
 ### 4. Publish, verify, and reconcile
 
 For exact matching state, reuse the verified parent without mutation. Otherwise
-delegate exactly one create operation to the configured GitHub issue, GitLab
+perform exactly one configured create operation for the GitHub issue, GitLab
 issue, or Local Markdown `.scratch/<feature-slug>/SPEC.md` contract. Use the
 frozen title and body. Add no child, label, source, domain, implementation, Git,
 installation, or downstream mutation.
 
 Refetch or reread the full created or reused parent, including body, location,
 state, metadata, and affected relationships, and compare it with the frozen
-draft. When publication fails, is partial, is indeterminate, or read-back
+title and body. When publication fails, is partial, is indeterminate, or read-back
 mismatches, return `publication-recovery` with applied and failed operations,
-draft identity, observed durable state, affected relationships, and the safest
-inspection or recovery action. Preserve the exact draft and never repeat a
-create whose result is unknown.
+publication input identity, any draft identity, observed durable state, affected
+relationships, and the safest inspection or recovery action. Preserve any exact
+draft and never repeat a create whose result is unknown.
 
 After a verified create or exact reuse, remove any disposable draft and return
 `ready-spec` with the durable pointer, source identity, coverage result,

@@ -17,12 +17,11 @@ may shape coverage but are neither required nor sufficient for invocation.
 Recommend `$audit-codebase` for an immutable
 repository-baseline audit, then stop.
 
-Require this invocation to be the `assurance-coordinator`, the root of its
-review run. A core reviewer, specialist, or other nested review lane that
-invokes this skill returns `incomplete` before Pin. For the coordinator, record
-runtime agent type, requested and observed-or-unavailable model and reasoning,
-and accepted-request or telemetry proof; a missing or mismatched binding returns `transport-invalid`
-before Pin. The coordinator owns
+Require this invocation to be the top-level root of its review run. That root
+is the semantic assurance coordinator and records its available runtime
+provenance without a model or reasoning gate. A core reviewer, specialist, or
+other nested review lane that invokes this skill returns `incomplete` before
+Pin. The coordinator owns
 dispatch, finding admission, convergence, and the terminal read-only decision;
 it never mutates or substitutes for a reviewer.
 
@@ -80,8 +79,8 @@ change -> governing commitment -> actual behavior path
 ```
 
 Assign each applicable Spec and Standards class to exactly one core lane. Reuse
-exact-snapshot proof and run only missing, invalidated, or repository-required safe checks. Mark
-inapplicable classes `N/A` with a reason; cover semantic branches and supported
+exact-snapshot proof and run only missing, invalidated, or repository-required
+safe checks. Omit inapplicable classes; cover semantic branches and supported
 interactions, not a blind Cartesian product. Any required source, class, proof
 seam, overlap, or risk trigger left uncovered makes the review `incomplete`.
 
@@ -163,14 +162,15 @@ Derive exactly one decision after the reviewer quorum closes:
 
 - `incomplete` when required source, coverage, finding-candidate disposition,
   dispute, protocol, report, specialist, or drift state remains unresolved;
-- `blocked` when a directly verified admitted finding blocks release;
+- `blocked` when a directly verified admitted finding blocks candidate
+  acceptance under the governing caller or repository policy;
 - `pass with residual risk` when coverage is complete, no blocker exists, and
   decision-bearing residual risk remains for caller acceptance; or
 - `pass` when coverage is complete, no blocker or decision-bearing residual
   risk remains, and drift is clear.
 
 Return one caller-bound packet with mode, fixed point, snapshot, candidate,
-sources, coordinator, core, and specialist requested and
+sources, coordinator provenance, core and specialist requested and
 observed-or-unavailable runtime bindings plus their proof, coverage by axis and
 class, admitted findings, carried dispositions, closed finding-candidate
 states, skipped checks, residual risk, drift, decision, and blockers. The decision

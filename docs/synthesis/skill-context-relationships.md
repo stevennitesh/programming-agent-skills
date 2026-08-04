@@ -56,7 +56,7 @@ flowchart TD
   Shape --> ToSpec["to-spec"]
   ToSpec --> DomainRouter
   ToSpec --> Contract
-  ToSpec --> CodeDesign
+  ToSpec -. "material module or interface vocabulary or question" .-> CodeDesign
   ToSpec -. "new or updated durable spec" .-> TmpSpec[".tmp/to-spec/*.md<br/>draft until publication is verified"]
   ToSpec --> Tracker
   ToSpec --> Labels
@@ -227,12 +227,12 @@ Return.
 | `wayfinder` | Recommend and stop | `$implement` | The closed map produced one settled bounded implementation and no durable parent contract is useful. |
 | `wayfinder` | Recommend and stop | `$to-spec` | The closed map produced settled parent-spec source. |
 | `wayfinder` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
-| `to-spec` | Load | `$codebase-design` | Apply shared vocabulary; when source authority delegates one consequential internal design, apply Direct Design before drafting and fold the supported result into the specification. To Spec retains artifact and completion; gaps return `source-gap`. |
+| `to-spec` | Load | `$codebase-design` | The source uses material module or interface vocabulary, or delegates one consequential internal design question. Apply Direct Design only for that unresolved question and fold the supported result into the specification. To Spec retains artifact and completion; gaps return `source-gap`. |
 | `to-spec` | Recommend and stop | `$implement` | The settled source is one bounded complete implementation and a durable parent contract would add no useful coordination or lasting decision record. |
 | `to-spec` | Recommend and stop | `$to-tickets` | `ready-spec` verifies purpose, boundaries, limitations, settled decisions and owners, required outcomes, acceptance, and Source Trace; To Tickets owns bounded repository grounding, child slicing, and graph publication. |
 | `to-spec` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
-| `to-tickets` | Recommend and stop | `$implement` | One ticket is ready, or overlap, a serial tripwire, uncertain independence, or uneconomic parallel dispatch requires the first ready ticket in tracker order. |
-| `to-tickets` | Recommend and stop | `$parallel-implement` | An explicitly requested top-level parent-delivery run has an exhaustive Ready-for-agent graph and at least two substantial potentially independent tickets or otherwise worthwhile coordination; Parallel Implement owns live concurrency decisions. |
+| `to-tickets` | Recommend and stop | `$implement` | One standalone ticket is ready, or a verified graph lacks an explicit qualified parent-delivery request; return the first ready ticket in tracker order. |
+| `to-tickets` | Recommend and stop | `$parallel-implement` | An explicitly requested top-level parent-delivery run has an exhaustive non-empty Ready-for-agent graph; Parallel Implement retains campaign custody and owns live serial or concurrent dispatch decisions. |
 | `to-tickets` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `triage` | Recommend and stop | `$grilling` | One maintainer-owned conversation-only decision needs direct resolution; stop before mutation and resume the same item with the intact result. |
 | `triage` | Recommend and stop | `$grill-with-docs` | One maintainer-owned decision may change durable domain terms, Invariants, Context Relationships, or an ADR; stop before mutation and resume the same item with the intact result. |
@@ -240,20 +240,20 @@ Return.
 | `triage` | Recommend and stop | `$to-tickets` | Settled source requires several independently completable implementation slices; leave readiness unchanged and pass the intact source for user-selected graph creation. |
 | `triage` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `implement` | Invoke | `$tdd` | New behavior is settled and red-testable, or expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known. |
-| `implement` | Invoke | `$change-review` | Every accepted candidate or Repair generation gets one fresh `ordinary-reviewer`; supported risk changes coverage, and the decision returns to Implement. |
+| `implement` | Invoke | `$change-review` | Every accepted candidate or Repair generation gets one fresh `ordinary-reviewer`; supported risk changes coverage, and the decision returns to Implement before final delivery commit or closeout. A worker-created candidate commit may already exist and remains provisional until accepted. |
 | `implement` | Hand off | `$resolving-merge-conflicts` | Admission finds an existing conflict-only state rather than the selected ready item; supply the exact operation, goal, state, scope, authorities, proof expectation, and Return owner, then stop. |
 | `implement` | Recommend and stop | `$to-tickets` | A verified landed predecessor or post-publication implementation change invalidated the selected ticket's commitments or graph facts; return the implementation identity, before-and-after evidence, invalidated fields, and affected ticket. Ordinary malformed or unsettled source returns to its caller, source, or triage owner. |
 | `implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `parallel-implement` | Invoke | `$tdd` | A lane worker has red-testable new behavior, or a bug whose expected behavior, exact symptom, cause, and trusted red-capable reproduction are known. |
 | `parallel-implement` | Invoke | `$change-review` | Every drained proved integrated candidate or repaired successor gets one fresh `integration-reviewer`; supported risk changes coverage, and the decision returns to the root. |
 | `parallel-implement` | Invoke | `$resolving-merge-conflicts` | Serial landing enters preserved conflict or partial Git state; supply operation identity and goal, exact state, scope, both authorities, unrelated state, proof expectation, and root Return owner. Resume only from the resolver's fresh exact-state Return. |
-| `parallel-implement` | Recommend and stop | `$to-tickets` | Admission finds an actually incomplete or contradictory graph, or verified implementation invalidates remaining graph semantics; return one exhaustive evidence-backed repair packet. Ordinary blockers, regressions, conflicts, and review findings remain in Parallel Implement. |
+| `parallel-implement` | Recommend and stop | `$to-tickets` | Admission finds an actually incomplete or contradictory graph, or verified implementation invalidates remaining graph semantics; return one exhaustive evidence-backed repair packet and retain campaign claims. Only a later explicit To Tickets invocation can admit the exact packet and transfer its named claims; To Tickets releases those claims only after repaired graph read-back, then returns outcome custody. Ordinary blockers, regressions, conflicts, and review findings remain in Parallel Implement. |
 | `parallel-implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `prototype` | Recommend and stop | `$diagnosing-bugs` | Fit finds that an existing built system is broken, throwing, failing, or slow for an uncertain reason rather than posing one disposable design question; return the intact symptom evidence and leave Diagnosis unstarted. |
 | `diagnosing-bugs` | Recommend and stop | `$audit-codebase` | After an authorized fix is proved, post-mortem evidence shows that prevention needs repository mapping or unclassified architecture work, including a missing correct regression seam; return the exact concern and proof and leave Audit unstarted. |
 | `resolving-merge-conflicts` | Recommend and stop | `$diagnosing-bugs` | State finds no active conflict or unmerged entry and only post-operation behavior is broken for an uncertain reason; return exact Git state and symptom evidence and leave Diagnosis unstarted. |
 | `change-review` | Recommend and stop | `$audit-codebase` | The request targets an immutable repository baseline rather than a pending implementation candidate. |
-| `high-assurance-review` | Recommend and stop | `$audit-codebase` | The request targets a bounded repository correctness, domain-robustness, methodology, or performance baseline rather than a pending release diff. |
+| `high-assurance-review` | Recommend and stop | `$audit-codebase` | The request targets a bounded repository correctness, domain-robustness, methodology, or performance baseline rather than a pending candidate diff. |
 | `audit-codebase` | Recommend and stop | `$domain-modeling` | One analyzed candidate has settled domain language, Invariants, Bounded Contexts, Context Relationships, or an ADR candidate requiring durable capture or assessment; Audit publishes an exact report-backed pickup and leaves Domain Modeling unstarted. |
 | `audit-codebase` | Recommend and stop | `$grill-with-docs` | One candidate decision belongs to the current user and also requires current domain language, Invariants, relationships, or ADR handling; Audit publishes the decision brief and exact Analyze re-entry, then leaves composition unstarted. |
 | `audit-codebase` | Recommend and stop | `$grilling` | One candidate decision belongs to the current user but needs no domain-record maintenance; Audit publishes the decision brief and exact Analyze re-entry, then leaves Grilling unstarted. |
@@ -350,7 +350,7 @@ every terminal result directly to its current caller or the user.
   the AI disclaimer; `$to-tickets` owns execution packets, slicing, dependency
   order, proof-responsibility mapping, and graph readiness. Do not re-triage
   valid `$to-tickets` output.
-- `implement` owns one standalone selected item and its bounded Repair campaign; `parallel-implement` owns one explicitly requested parent-backed exhaustive Ready-for-agent graph through qualified serial or concurrent frontiers, bounded Repair generations, serial integration, and verified child-first then parent-last closeout.
+- `implement` owns one standalone selected item and its bounded Repair campaign, with Git delivery only when the selected branch requires it; `parallel-implement` owns one explicitly requested parent-backed exhaustive Ready-for-agent graph through concurrent and serial frontiers, bounded Repair generations, serial integration, and verified child-first then parent-last closeout.
 - The `parallel-implement` root is the sole dispatcher, serial landing,
   integration-judgment, and formal-review owner. Workers never fan out. There
   is no warm general integrator or machine-validated worker capsule.

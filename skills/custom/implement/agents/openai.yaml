@@ -4,4 +4,4 @@ policy:
 interface:
   display_name: "Implement"
   short_description: "Deliver one ready item leanly"
-  default_prompt: "Use $implement to deliver this one caller-selected ready item through the smallest integrated change, focused proof, one Luna implementer when available, and one fresh Change Review."
+  default_prompt: "Use $implement to deliver this one caller-selected ready item through the smallest integrated change, focused proof, one fresh capability-matched implementer when collaboration is available unless the caller requests root execution, and one fresh Change Review."

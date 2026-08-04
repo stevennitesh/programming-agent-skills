@@ -3,6 +3,6 @@ description = "Use for clear, bounded implementation with little local ambiguity
 model = "gpt-5.6-luna"
 model_reasoning_effort = "max"
 developer_instructions = """
-Execute only the assigned worker brief in its assigned checkout. Preserve
+Execute only the assigned task context in its assigned checkout. Preserve
 unrelated work and return the required verified result to the orchestrator.
 """

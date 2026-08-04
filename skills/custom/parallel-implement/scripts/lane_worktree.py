@@ -6,9 +6,9 @@ import argparse
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
-import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -85,11 +85,12 @@ def repository_root(path: str) -> Path:
     return observed
 
 
-def lane_root(path: str, repo: Path) -> Path:
+def lane_root(path: str, repo: Path, *, create: bool) -> Path:
     root = Path(path).resolve()
     if root == repo or contained(root, repo):
         raise LaneError("worktree root must be outside the repository")
-    root.mkdir(parents=True, exist_ok=True)
+    if create:
+        root.mkdir(parents=True, exist_ok=True)
     return root
 
 
@@ -107,14 +108,41 @@ def registered_worktrees(repo: Path) -> list[Path]:
     return paths
 
 
-def state_paths(name: str) -> tuple[Path, Path, Path, Path]:
-    state = Path(tempfile.mkdtemp(prefix=f"parallel-implement-{name}-")).resolve()
+def lane_state(root: Path, name: str) -> Path:
+    state = (root / ".state" / name).resolve()
+    if not contained(state, root):
+        raise LaneError("lane state path escapes the configured root")
+    return state
+
+
+def state_paths(root: Path, name: str) -> tuple[Path, Path, Path, Path]:
+    state = lane_state(root, name)
     temp_root = state / "tmp"
     pytest_basetemp = state / "pytest"
     pytest_cache = state / "cache"
     for path in (temp_root, pytest_basetemp, pytest_cache):
         path.mkdir(parents=True, exist_ok=True)
     return state, temp_root, pytest_basetemp, pytest_cache
+
+
+def pytest_configured(worktree: Path) -> bool:
+    pytest_ini = worktree / "pytest.ini"
+    if pytest_ini.is_file():
+        return True
+    for relative, marker in (
+        ("pyproject.toml", "[tool.pytest.ini_options]"),
+        ("setup.cfg", "[tool:pytest]"),
+        ("tox.ini", "[pytest]"),
+    ):
+        path = worktree / relative
+        if path.is_file() and marker in path.read_text(encoding="utf-8", errors="replace"):
+            return True
+    tracked = git(worktree, "ls-files", "--", "*.py").stdout.splitlines()
+    return any(
+        Path(relative).name.startswith("test_")
+        or Path(relative).name.endswith("_test.py")
+        for relative in tracked
+    )
 
 
 def pytest_smoke(
@@ -152,9 +180,31 @@ def pytest_smoke(
         raise LaneError(f"pytest collection failed: {detail}")
 
 
+def rollback_created_lane(
+    repo: Path, root: Path, worktree: Path, base: str, name: str
+) -> str | None:
+    head = git(worktree, "rev-parse", "HEAD", check=False)
+    status = git(worktree, "status", "--porcelain", check=False)
+    if head.returncode != 0 or status.returncode != 0:
+        return "new lane preserved because rollback state is uncertain"
+    if head.stdout.strip() != base or status.stdout.strip():
+        return "new lane preserved because rollback is not exact-base and clean"
+
+    state = lane_state(root, name)
+    if state.exists():
+        try:
+            shutil.rmtree(state)
+        except OSError as error:
+            return f"new lane preserved because state cleanup failed: {error}"
+    removed = git(repo, "worktree", "remove", str(worktree), check=False)
+    if removed.returncode != 0:
+        return f"new lane preserved because worktree removal failed: {command_error(removed)}"
+    return None
+
+
 def prepare(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
     repo = repository_root(args.repo)
-    root = lane_root(args.root, repo)
+    root = lane_root(args.root, repo, create=True)
     if not LANE_NAME.fullmatch(args.name):
         raise LaneError("--name must contain only letters, digits, dot, dash, or underscore")
     base = resolve_base(repo, args.base)
@@ -181,28 +231,39 @@ def prepare(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
         if result.returncode != 0:
             raise LaneError(f"worktree creation failed: {command_error(result)}")
 
-    head = git(worktree, "rev-parse", "HEAD").stdout.strip()
-    if head != base:
-        raise LaneError(f"worktree HEAD {head} does not match requested base {base}")
-    status = git(worktree, "status", "--porcelain").stdout.strip()
-    if status:
-        raise LaneError("worktree is not clean")
+    try:
+        head = git(worktree, "rev-parse", "HEAD").stdout.strip()
+        if head != base:
+            raise LaneError(f"worktree HEAD {head} does not match requested base {base}")
+        status = git(worktree, "status", "--porcelain").stdout.strip()
+        if status:
+            raise LaneError("worktree is not clean")
 
-    _, temp_root, pytest_basetemp, pytest_cache = state_paths(args.name)
-    pytest_smoke(worktree, temp_root, pytest_basetemp, pytest_cache)
-    if git(worktree, "status", "--porcelain").stdout.strip():
-        raise LaneError("pytest collection left the worktree dirty")
+        _, temp_root, pytest_basetemp, pytest_cache = state_paths(root, args.name)
+        pytest_status = "not-applicable"
+        if pytest_configured(worktree):
+            pytest_smoke(worktree, temp_root, pytest_basetemp, pytest_cache)
+            pytest_status = "passed"
+        if git(worktree, "status", "--porcelain").stdout.strip():
+            raise LaneError("preflight left the worktree dirty")
 
-    return 0, {
-        "ok": True,
-        "worktree": str(worktree),
-        "base": base,
-        "reused": reused,
-        "temp_root": str(temp_root),
-        "pytest_basetemp": str(pytest_basetemp),
-        "pytest_cache": str(pytest_cache),
-        "pytest": "passed",
-    }
+        return 0, {
+            "ok": True,
+            "worktree": str(worktree),
+            "base": base,
+            "reused": reused,
+            "temp_root": str(temp_root),
+            "pytest_basetemp": str(pytest_basetemp),
+            "pytest_cache": str(pytest_cache),
+            "pytest": pytest_status,
+        }
+    except (LaneError, OSError) as error:
+        if reused:
+            raise
+        rollback_error = rollback_created_lane(repo, root, worktree, base, args.name)
+        if rollback_error:
+            raise LaneError(f"{error}; {rollback_error}") from error
+        raise LaneError(str(error)) from error
 
 
 def worktree_age(worktree: Path) -> tuple[int, str]:
@@ -215,14 +276,34 @@ def worktree_age(worktree: Path) -> tuple[int, str]:
 
 def cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
     repo = repository_root(args.repo)
-    root = lane_root(args.root, repo)
-    completed = {Path(path).resolve() for path in args.completed}
+    root = lane_root(args.root, repo, create=False)
+    completed_paths = [Path(path).resolve() for path in args.completed]
+    if len(completed_paths) != len(set(completed_paths)):
+        raise LaneError("--completed contains a duplicate worktree")
+    for worktree in completed_paths:
+        if not contained(worktree, root):
+            raise LaneError(f"completed worktree is outside the configured root: {worktree}")
+        if worktree.parent != root:
+            raise LaneError(
+                f"completed worktree is not a direct child of the configured root: {worktree}"
+            )
+        if not LANE_NAME.fullmatch(worktree.name):
+            raise LaneError(
+                f"completed worktree name does not match prepare lane naming: {worktree}"
+            )
+    if completed_paths and not root.is_dir():
+        raise LaneError(f"worktree root does not exist: {root}")
+    completed = set(completed_paths)
+    registered = set(registered_worktrees(repo))
+    for worktree in completed_paths:
+        if worktree not in registered:
+            raise LaneError(f"completed path is not a registered worktree: {worktree}")
     repo_head = git(repo, "rev-parse", "HEAD").stdout.strip()
     candidates = sorted(
         (
             path
-            for path in registered_worktrees(repo)
-            if path != repo and contained(path, root)
+            for path in registered
+            if path != repo and path.parent == root
         ),
         key=worktree_age,
     )
@@ -262,20 +343,69 @@ def cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
 
     removed: list[str] = []
     remove_failed = False
-    for worktree in safe:
+    for index, worktree in enumerate(safe):
+        state = lane_state(root, worktree.name)
+        state_status = "absent"
+        if state.exists():
+            try:
+                shutil.rmtree(state)
+                state_status = "removed"
+            except OSError as error:
+                remove_failed = True
+                preserved.append(
+                    {
+                        "worktree": str(worktree),
+                        "reason": "lane state cleanup failed",
+                        "error": str(error),
+                    }
+                )
+                continue
         result = git(repo, "worktree", "remove", str(worktree), check=False)
         if result.returncode != 0:
+            try:
+                still_registered = worktree in set(registered_worktrees(repo))
+                path_exists = worktree.exists()
+            except (LaneError, OSError):
+                still_registered = None
+                path_exists = True
+            if still_registered is False and not path_exists:
+                removed.append(str(worktree))
+                if args.oldest:
+                    preserved.extend(
+                        {"worktree": str(remaining), "reason": "capacity retained"}
+                        for remaining in safe[index + 1 :]
+                    )
+                    break
+                continue
             remove_failed = True
+            worktree_state = (
+                "registered"
+                if still_registered is True
+                else "unregistered"
+                if still_registered is False
+                else "uncertain"
+            )
             preserved.append(
                 {
                     "worktree": str(worktree),
-                    "reason": "remove failed",
+                    "reason": (
+                        "remove failed"
+                        if still_registered is not False
+                        else "remove incomplete"
+                    ),
                     "error": command_error(result),
+                    "lane_state": state_status,
+                    "worktree_state": worktree_state,
+                    "path_state": "present" if path_exists else "missing",
                 }
             )
             continue
         removed.append(str(worktree))
         if args.oldest:
+            preserved.extend(
+                {"worktree": str(remaining), "reason": "capacity retained"}
+                for remaining in safe[index + 1 :]
+            )
             break
 
     if args.oldest and not removed:

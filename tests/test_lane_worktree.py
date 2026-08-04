@@ -88,10 +88,47 @@ def test_prepare_creates_exact_base_and_reusable_pytest_environment(
         path = Path(str(prepared[field]))
         assert path.is_dir()
         assert not path.is_relative_to(worktree)
-        assert not path.is_relative_to(lane_root)
+        assert path.is_relative_to(lane_root / ".state" / "ticket-67")
 
 
-def test_prepare_blocks_on_pytest_collection_failure_and_preserves_lane(
+def test_prepare_skips_pytest_when_checkout_does_not_declare_it(
+    tmp_path: Path,
+) -> None:
+    repo, _ = repository(tmp_path)
+    git(repo, "rm", "test_smoke.py")
+    git(repo, "commit", "-m", "remove pytest surface")
+    base = git(repo, "rev-parse", "HEAD")
+
+    lane_root = tmp_path / "lanes"
+    result, prepared = prepare(repo, lane_root, base, "non-pytest")
+
+    assert result.returncode == 0, prepared
+    assert prepared["ok"] is True
+    assert prepared["pytest"] == "not-applicable"
+    for field in ("temp_root", "pytest_basetemp", "pytest_cache"):
+        assert Path(str(prepared[field])).is_dir()
+        assert Path(str(prepared[field])).is_relative_to(
+            lane_root / ".state" / "non-pytest"
+        )
+
+
+def test_prepare_detects_arbitrary_depth_tracked_python_tests(tmp_path: Path) -> None:
+    repo, _ = repository(tmp_path)
+    git(repo, "rm", "test_smoke.py")
+    nested = repo / "backend" / "components" / "feature" / "specs" / "test_deep.py"
+    nested.parent.mkdir(parents=True)
+    nested.write_text("def test_deep():\n    assert True\n", encoding="utf-8")
+    git(repo, "add", ".")
+    git(repo, "commit", "-m", "move test to arbitrary tracked depth")
+    base = git(repo, "rev-parse", "HEAD")
+
+    result, prepared = prepare(repo, tmp_path / "lanes", base, "deep-pytest")
+
+    assert result.returncode == 0, prepared
+    assert prepared["pytest"] == "passed"
+
+
+def test_prepare_blocks_on_pytest_collection_failure_and_reclaims_new_lane(
     tmp_path: Path,
 ) -> None:
     repo, _ = repository(tmp_path)
@@ -106,7 +143,29 @@ def test_prepare_blocks_on_pytest_collection_failure_and_preserves_lane(
     assert result.returncode == 1
     assert blocked["ok"] is False
     assert "pytest collection failed" in str(blocked["error"])
-    assert Path(str(blocked["worktree"])).is_dir()
+    assert "worktree" not in blocked
+    assert not (lane_root / "broken").exists()
+    assert not (lane_root / ".state" / "broken").exists()
+
+
+def test_prepare_preserves_reused_lane_after_pytest_failure(tmp_path: Path) -> None:
+    repo, _ = repository(tmp_path)
+    (repo / "test_smoke.py").write_text("def broken(:\n", encoding="utf-8")
+    git(repo, "add", "test_smoke.py")
+    git(repo, "commit", "-m", "break collection")
+    base = git(repo, "rev-parse", "HEAD")
+    lane_root = tmp_path / "lanes"
+    worktree = lane_root / "reused-broken"
+    assert run(
+        "git", "-C", str(repo), "worktree", "add", "--detach", str(worktree), base
+    ).returncode == 0
+
+    result, blocked = prepare(repo, lane_root, base, "reused-broken")
+
+    assert result.returncode == 1
+    assert "pytest collection failed" in str(blocked["error"])
+    assert blocked["worktree"] == str(worktree.resolve())
+    assert worktree.exists()
 
 
 def test_prepare_reuses_only_the_clean_expected_base(tmp_path: Path) -> None:
@@ -168,6 +227,7 @@ def test_cleanup_removes_oldest_safe_and_preserves_active_dirty_and_unintegrated
         assert prepared[name].exists()
     reasons = {Path(item["worktree"]).name: item["reason"] for item in cleaned["preserved"]}
     assert reasons == {
+        "newer": "capacity retained",
         "active": "not completed",
         "uncertain": "not completed",
         "dirty": "not clean",
@@ -194,7 +254,103 @@ def test_graph_end_cleanup_removes_all_safe_lanes(tmp_path: Path) -> None:
     assert all(not path.exists() for path in worktrees)
 
 
-def test_cleanup_never_recursively_deletes_worker_writable_state(
+def test_cleanup_rejects_completed_lane_outside_exact_root(tmp_path: Path) -> None:
+    repo, base = repository(tmp_path)
+    first_root = tmp_path / "first-lanes"
+    result, packet = prepare(repo, first_root, base, "complete")
+    assert result.returncode == 0, packet
+    worktree = Path(str(packet["worktree"]))
+    other_root = tmp_path / "other-lanes"
+
+    result, blocked = helper(
+        "cleanup",
+        "--repo",
+        str(repo),
+        "--root",
+        str(other_root),
+        "--completed",
+        str(worktree),
+    )
+
+    assert result.returncode == 1
+    assert blocked["ok"] is False
+    assert "outside the configured root" in str(blocked["error"])
+    assert not other_root.exists()
+    assert worktree.exists()
+
+
+def test_cleanup_rejects_unregistered_completed_lane(tmp_path: Path) -> None:
+    repo, _ = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    lane_root.mkdir()
+    unregistered = lane_root / "not-registered"
+
+    result, blocked = helper(
+        "cleanup",
+        "--repo",
+        str(repo),
+        "--root",
+        str(lane_root),
+        "--completed",
+        str(unregistered),
+    )
+
+    assert result.returncode == 1
+    assert blocked["ok"] is False
+    assert "not a registered worktree" in str(blocked["error"])
+
+
+def test_cleanup_rejects_nested_registered_worktree(tmp_path: Path) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    nested = lane_root / "nested" / "lane"
+    nested.parent.mkdir(parents=True)
+    assert run(
+        "git", "-C", str(repo), "worktree", "add", "--detach", str(nested), base
+    ).returncode == 0
+
+    result, blocked = helper(
+        "cleanup",
+        "--repo",
+        str(repo),
+        "--root",
+        str(lane_root),
+        "--completed",
+        str(nested),
+    )
+
+    assert result.returncode == 1
+    assert blocked["ok"] is False
+    assert "not a direct child of the configured root" in str(blocked["error"])
+    assert nested.exists()
+
+
+def test_cleanup_rejects_reserved_state_worktree_name(tmp_path: Path) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    reserved = lane_root / ".state"
+    lane_root.mkdir()
+    assert run(
+        "git", "-C", str(repo), "worktree", "add", "--detach", str(reserved), base
+    ).returncode == 0
+
+    result, blocked = helper(
+        "cleanup",
+        "--repo",
+        str(repo),
+        "--root",
+        str(lane_root),
+        "--completed",
+        str(reserved),
+    )
+
+    assert result.returncode == 1
+    assert blocked["ok"] is False
+    assert "does not match prepare lane naming" in str(blocked["error"])
+    assert reserved.exists()
+
+
+def test_cleanup_removes_helper_owned_lane_state(
     tmp_path: Path,
 ) -> None:
     repo, base = repository(tmp_path)
@@ -218,7 +374,7 @@ def test_cleanup_never_recursively_deletes_worker_writable_state(
     assert result.returncode == 0, cleaned
     assert cleaned["removed"] == [str(worktree.resolve())]
     assert not worktree.exists()
-    assert sentinel.read_text(encoding="utf-8") == "keep\n"
+    assert not sentinel.exists()
 
 
 def test_capacity_cleanup_returns_blocker_when_no_lane_is_safe(tmp_path: Path) -> None:
@@ -318,15 +474,149 @@ def test_cleanup_reports_partial_failure_and_oldest_falls_through(
             "worktree": str(worktrees[0]),
             "reason": "remove failed",
             "error": "worktree locked",
+            "lane_state": "removed",
+            "worktree_state": "registered",
+            "path_state": "present",
         }
     ]
 
     common.oldest = False
+    common.completed = [str(worktrees[0])]
     code, packet = cleanup(common)
     assert code == 1
     assert packet["ok"] is False
     assert packet["error"] == "cleanup incomplete"
     assert packet["preserved"][0]["error"] == "worktree locked"
+    assert packet["preserved"][0]["lane_state"] == "absent"
+    assert packet["preserved"][0]["worktree_state"] == "registered"
+    assert packet["preserved"][0]["path_state"] == "present"
+
+
+def test_cleanup_reports_removed_when_git_unregisters_before_error(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    result, packet = prepare(repo, lane_root, base, "unregistered-first")
+    assert result.returncode == 0, packet
+    worktree = Path(str(packet["worktree"]))
+
+    namespace = runpy.run_path(str(HELPER))
+    cleanup = namespace["cleanup"]
+    original_git = cleanup.__globals__["git"]
+
+    def remove_then_error(checkout, *args, check=True):
+        if args[:3] == ("worktree", "remove", str(worktree)):
+            removed = original_git(checkout, *args, check=check)
+            assert removed.returncode == 0
+            return subprocess.CompletedProcess(args, 1, "", "late filesystem error")
+        return original_git(checkout, *args, check=check)
+
+    monkeypatch.setitem(cleanup.__globals__, "git", remove_then_error)
+    code, cleaned = cleanup(
+        Namespace(
+            repo=str(repo),
+            root=str(lane_root),
+            completed=[str(worktree)],
+            oldest=False,
+        )
+    )
+
+    assert code == 0
+    assert cleaned == {"ok": True, "removed": [str(worktree)], "preserved": []}
+
+
+def test_cleanup_reports_unregistered_residual_path_after_remove_error(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    result, packet = prepare(repo, lane_root, base, "residual-path")
+    assert result.returncode == 0, packet
+    worktree = Path(str(packet["worktree"]))
+
+    namespace = runpy.run_path(str(HELPER))
+    cleanup = namespace["cleanup"]
+    original_git = cleanup.__globals__["git"]
+
+    def remove_then_leave_path(checkout, *args, check=True):
+        if args[:3] == ("worktree", "remove", str(worktree)):
+            removed = original_git(checkout, *args, check=check)
+            assert removed.returncode == 0
+            worktree.mkdir()
+            return subprocess.CompletedProcess(args, 1, "", "late filesystem error")
+        return original_git(checkout, *args, check=check)
+
+    monkeypatch.setitem(cleanup.__globals__, "git", remove_then_leave_path)
+    code, cleaned = cleanup(
+        Namespace(
+            repo=str(repo),
+            root=str(lane_root),
+            completed=[str(worktree)],
+            oldest=False,
+        )
+    )
+
+    assert code == 1
+    assert cleaned["ok"] is False
+    assert cleaned["preserved"] == [
+        {
+            "worktree": str(worktree),
+            "reason": "remove incomplete",
+            "error": "late filesystem error",
+            "lane_state": "removed",
+            "worktree_state": "unregistered",
+            "path_state": "present",
+        }
+    ]
+
+
+def test_capacity_cleanup_falls_through_after_lane_state_failure(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    worktrees = []
+    for name in ("first", "second"):
+        result, packet = prepare(repo, lane_root, base, name)
+        assert result.returncode == 0, packet
+        worktrees.append(Path(str(packet["worktree"])))
+    os.utime(worktrees[0], (1, 1))
+    os.utime(worktrees[1], (2, 2))
+
+    namespace = runpy.run_path(str(HELPER))
+    cleanup = namespace["cleanup"]
+    original_rmtree = cleanup.__globals__["shutil"].rmtree
+    first_state = lane_root / ".state" / "first"
+
+    def fail_first_state(path):
+        if Path(path) == first_state:
+            raise OSError("state locked")
+        return original_rmtree(path)
+
+    monkeypatch.setattr(cleanup.__globals__["shutil"], "rmtree", fail_first_state)
+    code, packet = cleanup(
+        Namespace(
+            repo=str(repo),
+            root=str(lane_root),
+            completed=[str(path) for path in worktrees],
+            oldest=True,
+        )
+    )
+
+    assert code == 0
+    assert packet["ok"] is True
+    assert packet["removed"] == [str(worktrees[1])]
+    assert packet["preserved"] == [
+        {
+            "worktree": str(worktrees[0]),
+            "reason": "lane state cleanup failed",
+            "error": "state locked",
+        }
+    ]
+    assert worktrees[0].exists()
+    assert first_state.exists()
+    assert not worktrees[1].exists()
 
 
 def test_cleanup_preserves_git_uncertainty(tmp_path: Path, monkeypatch) -> None:

@@ -244,26 +244,8 @@ def test_repo_bootstrap_validates_provider_tracker_templates() -> None:
         assert failures == []
         assert wayfinder_failures(text, str(tracker)) == []
 
-    github = trackers[0].read_text(encoding="utf-8")
-    failures = []
-    validator["require_tokens"](
-        github,
-        str(trackers[0]),
-        validator["GITHUB_CAMPAIGN_SNAPSHOT_TOKENS"],
-        failures,
-    )
-    assert failures == []
-    missing_snapshot = github.replace("**Campaign snapshot:**", "**Snapshot:**", 1)
-    failures = []
-    validator["require_tokens"](
-        missing_snapshot,
-        str(trackers[0]),
-        validator["GITHUB_CAMPAIGN_SNAPSHOT_TOKENS"],
-        failures,
-    )
-    assert failures == [
-        f"{trackers[0]} is missing **Campaign snapshot:**"
-    ]
+    assert "**Campaign snapshot:**" not in trackers[0].read_text(encoding="utf-8")
+    assert "GITHUB_CAMPAIGN_SNAPSHOT_TOKENS" not in validator
 
     hosted = trackers[0].read_text(encoding="utf-8").replace(
         "Blocked: waiting - <gist>", "Blocked: paused - <gist>"
@@ -535,7 +517,7 @@ def assert_repo_bootstrap_semantic_contract(
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     assert_repo_bootstrap_semantic_contract(
         CUSTOM / "repo-bootstrap",
-        "ded3c180a0126e68b958c27c6be0902fc24eb0c5dc153bc9f1b6a256eb852247",
+        "01ccbe03928a6032ff2b6ea3b7d62107e13a5eb10f02d88c2121b5ff93309942",
         profile="incumbent",
     )
 
@@ -911,8 +893,13 @@ def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
     )
     assert "Run exactly one selected operation and return its verified result" in orient_flat
     assert "may independently select Closure" in orient_flat
+    assert orient_flat.index("Require inspect and read-back") < orient_flat.index(
+        "After selecting one operation"
+    )
+    assert "A no-mutation Return requires none of those mutation capabilities" in orient_flat
     assert "zero-match initial or successor identity" in chart_flat
     assert "Predecessor:" in map_format
+    assert "Terminal kind: settled source | terminal decision" in map_format
     assert "a non-conversational resolver" in admit_flat
     assert "return `not-needed`" in admit_flat
     assert "recommend `$implement` for one settled bounded implementation" in admit_flat
@@ -1343,6 +1330,12 @@ def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
     baseline = (CUSTOM / "change-review/SMELL-BASELINE.md").read_text(
         encoding="utf-8"
     )
+    review_summary = (
+        ROOT / "docs/synthesis/skills/change-review.md"
+    ).read_text(encoding="utf-8")
+    assurance_summary = (
+        ROOT / "docs/synthesis/skills/high-assurance-review.md"
+    ).read_text(encoding="utf-8")
 
     assert re.search(r"(?m)^name: change-review$", review)
     assert re.search(r"(?m)^name: high-assurance-review$", convergent)
@@ -1354,6 +1347,10 @@ def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
         " ".join(review.split())
     )
     assert "Accept only when the user explicitly invokes" in convergent
+    assert "supported-risk implementation candidate" in review_summary
+    assert "every accepted candidate" in " ".join(review_summary.split())
+    assert "explicitly user-selected immutable candidate" in assurance_summary
+    assert "No workflow selects High-Assurance Review automatically" in assurance_summary
     assert "only when documented repo standards" in " ".join(baseline.split())
     assert "concrete, actionable maintainability risk" in baseline
     assert (
@@ -1380,6 +1377,7 @@ def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
 
 def test_spawned_agents_share_one_runtime_profile_owner() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
+    implement_flat = " ".join(implement.split())
     review = (CUSTOM / "change-review/SKILL.md").read_text(encoding="utf-8")
     assurance = (CUSTOM / "high-assurance-review/SKILL.md").read_text(
         encoding="utf-8"
@@ -1395,24 +1393,26 @@ def test_spawned_agents_share_one_runtime_profile_owner() -> None:
         r"(?m)^\| `([^`]+)` \| `([^`]+)` \| `([^`]+)` \| `([^`]+)` \|$",
         profiles,
     ) == [
-        ("parallel-root", "current", "gpt-5.6-sol", "high"),
         ("clear-worker", "luna_max", "gpt-5.6-luna", "max"),
         ("adaptive-worker", "default", "gpt-5.6-terra", "xhigh"),
         ("fast-adaptive-worker", "default", "gpt-5.6-sol", "medium"),
         ("demanding-worker", "default", "gpt-5.6-sol", "high"),
         ("ordinary-reviewer", "default", "gpt-5.6-sol", "high"),
         ("integration-reviewer", "default", "gpt-5.6-sol", "xhigh"),
-        ("assurance-coordinator", "default", "gpt-5.6-sol", "high"),
         ("har-spec-reviewer", "default", "gpt-5.6-sol", "xhigh"),
         ("har-standards-reviewer", "default", "gpt-5.6-sol", "xhigh"),
         ("har-specialist", "default", "gpt-5.6-sol", "xhigh"),
     ]
     assert "A named agent type loads its custom TOML" in profiles_flat
+    assert "Enforce a row only for a spawned actor" in profiles_flat
+    assert "public interface, cross-owner invariant" in profiles_flat
     assert "`transport-invalid` and receives no review credit" in profiles_flat
     assert "[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md)" in implement
     assert "[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md)" in review
     assert "[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md)" in assurance
     assert "passes it directly when starting the worker" in profiles_flat
+    assert "first matching capable worker using the ordered conditions" in implement_flat
+    assert "Luna/max `clear-worker`" not in implement
     assert not (CUSTOM / "parallel-implement/scripts/run_ledger.py").exists()
     custom_agents = sorted((ROOT / ".codex/agents").glob("*.toml"))
     assert [path.name for path in custom_agents] == ["luna_max.toml"]
@@ -1526,6 +1526,8 @@ def test_review_family_shares_one_bounded_quality_and_risk_model() -> None:
     assert "PR existence, size, labels, and hypothetical cases do not qualify." in finding_flat
     assert "not a blind Cartesian product" in review
     assert "not a blind Cartesian product" in convergent_flat
+    assert "Omit inapplicable classes" in convergent_flat
+    assert "inapplicable classes `N/A`" not in convergent_flat
     assert "Reuse proof tied to the exact snapshot" in review
     assert "Reuse exact-snapshot proof" in convergent_flat
     assert "release candidate, or supported-risk implementation candidate" in review
@@ -1592,9 +1594,9 @@ def test_high_assurance_review_has_root_guard_bounded_capacity_and_risk() -> Non
     )
     convergent_flat = " ".join(convergent.split())
 
-    assert "the `assurance-coordinator`, the root of its review run" in convergent_flat
-    assert "requested and observed-or-unavailable model and reasoning" in convergent_flat
-    assert "binding returns `transport-invalid` before Pin" in convergent_flat
+    assert "top-level root of its review run" in convergent_flat
+    assert "semantic assurance coordinator" in convergent_flat
+    assert "without a model or reasoning gate" in convergent_flat
     assert "nested review lane that invokes this skill returns `incomplete` before Pin" in convergent_flat
     assert "other nested review lane that invokes this skill" in convergent_flat
     for mode in ("initial", "remediation"):
@@ -2148,7 +2150,7 @@ def test_ticket_and_delivery_packets_are_compact_and_preserve_repairs() -> None:
     assert "smallest acceptance-complete path" in implement_flat
     assert "plain ticket-specific handoff" in implement_flat
     assert "prose Return as evidence" in implement_flat
-    assert "Do not build a run ledger" in parallel_flat
+    assert "create no campaign ledger" in parallel_flat
     assert "plain task context" in parallel_flat
     assert "Prose is evidence, not trusted state" in parallel_flat
     assert "one `$to-tickets` repair packet" in parallel_flat
@@ -2497,6 +2499,11 @@ def test_to_tickets_is_proportional_and_preserves_ready_frontiers() -> None:
     assert "`$parallel-implement` decides live concurrency" in flat
     assert "Separate packet readiness from frontier eligibility" in flat
     assert "Ready-for-agent and Ready-for-human frontiers separately" in flat
+    assert "executor roles and static execution facts" in flat
+    assert "execution profiles" not in flat
+    assert flat.index("If the settled source is already one bounded implementation") < flat.index(
+        "Only after the direct branch is excluded"
+    )
 
 
 def test_to_spec_canonical_is_lean_and_experimental_evidence_stays_frozen() -> None:
@@ -2508,6 +2515,15 @@ def test_to_spec_canonical_is_lean_and_experimental_evidence_stays_frozen() -> N
     assert "Create no draft or tracker state" in flat
     assert "draft only when a new or updated durable publication is required" in flat
     assert "Recommend `$to-tickets` only when several implementation slices" in flat
+    assert "Load `$codebase-design` only when" in flat
+    assert "perform exactly one configured create operation" in flat
+    assert "delegate exactly one create operation" not in flat
+    assert flat.index("When the settled source already describes one bounded implementation") < flat.index(
+        "Only after the direct branch is excluded"
+    )
+    assert flat.index("Freeze one internally consistent title and parent body") < flat.index(
+        "Inspect the intended durable parent target"
+    )
 
     experimental = ROOT / "skills/experimental/to-spec"
     assert campaign_artifacts.campaign_tree_hash(experimental)["sha256"] == (
@@ -2541,12 +2557,12 @@ def test_parallel_implement_separates_plain_context_checkout_and_review() -> Non
         "Admit", "Wave", "Integrate", "Review And Repair", "Close"
     ]
     for profile in ("clear-worker", "adaptive-worker", "fast-adaptive-worker", "demanding-worker"):
-        assert f"`{profile}`" in parallel
+        assert f"`{profile}`" in profiles
     assert "one fresh `integration-reviewer` using `$change-review`" in flat
     assert "The root judges integration" in flat
     assert "warm general integrator" in flat
     assert "plain task context" in flat and "not a schema" in flat
-    assert "quick pytest collection smoke" in lanes
+    assert "quick pytest collection smoke when the checkout declares" in " ".join(lanes.split())
     assert "| `integration-reviewer` | `default` | `gpt-5.6-sol` | `xhigh` |" in profiles
     assert "serial-integrator" not in profiles
     assert not (skill_dir / "scripts/run_ledger.py").exists()
@@ -2563,7 +2579,18 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
     assert "Retry only after an observed blocking condition changes" in flat
     assert "never duplicate an uncertain task" in flat
     assert "return one `$to-tickets` repair packet" in flat
+    assert "transfer only the exact verified campaign-owned claims" in flat
+    tickets = " ".join(
+        (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8").split()
+    )
+    assert "On an explicit To Tickets repair invocation" in flat
+    assert "An admitted transferred claim remains expected custody" in tickets
+    assert "release transferred claims, verify the assignee state, and derive" in tickets
     assert "use `$resolving-merge-conflicts`" in flat
+    assert "one admitted complete blocker set" in flat
+    assert "Transport retry and proof-only rerun do not consume" in flat
+    assert "`blocked` means no authorized in-scope progress" in flat
+    assert "`partial` means accepted progress is preserved" in flat
     assert "Retain each claim through verified non-dispatchable closeout" in flat
     assert "Close the parent only after every child verifies" in flat
 
@@ -2580,13 +2607,14 @@ def test_parallel_implement_has_one_lean_worktree_lifecycle() -> None:
     assert "lane_worktree.py prepare" in flat
     assert "lane_worktree.py cleanup" in flat
     assert "pytest temp and cache roots" in flat
-    assert "quick pytest collection smoke" in flat
+    assert "quick pytest collection smoke when the checkout declares" in flat
     assert "Start the worker only when" in flat and "`ok: true`" in flat
     assert "--oldest" in lanes and "--completed" in lanes
     assert 'operations.add_parser("prepare")' in lane_script
     assert 'operations.add_parser("cleanup")' in lane_script
     assert '"--collect-only"' in lane_script and '"addopts="' in lane_script
-    assert "shutil.rmtree" not in lane_script and "--global" not in lane_script
+    assert "lane_state(root, worktree.name)" in lane_script
+    assert "shutil.rmtree(state)" in lane_script and "--global" not in lane_script
     assert (skill_dir / "assets/luna_max.toml").read_bytes() == (
         ROOT / ".codex/agents/luna_max.toml"
     ).read_bytes()
@@ -2599,6 +2627,7 @@ def test_parallel_implement_exposes_live_frontier_and_closeout_contracts() -> No
     parallel = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
     tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
+    tickets_flat = " ".join(tickets.split())
     relationships = (
         ROOT / "docs/synthesis/skill-context-relationships.md"
     ).read_text(encoding="utf-8")
@@ -2608,14 +2637,19 @@ def test_parallel_implement_exposes_live_frontier_and_closeout_contracts() -> No
     assert "dependency-ready frontier" in flat
     assert "expected time saving exceeds coordination and integration cost" in flat
     assert "Uncertain or overlapping items run serially" in flat
+    assert "retain the parent campaign through serial or concurrent frontiers" in flat
+    assert "Claim the parent and read the claim back before dispatch" in flat
+    assert "does not land the same commit again" in flat
     assert "one fresh `integration-reviewer`" in flat
     assert flat.index("Close children") < flat.index("Close the parent")
     assert re.search(
-        r"(?m)^\| One explicitly requested parent has an exhaustive non-empty "
-        r"Ready-for-agent graph \| `\$parallel-implement` \|$",
+        r"(?m)^\| One explicitly requested parent has an exhaustive "
+        r"non-empty Ready-for-agent graph \| `\$parallel-implement` \|$",
         router,
     )
+    assert "selected directly or as a Ready-for-agent item" in router
     assert "Recommend `$parallel-implement` only when the user explicitly requested" in tickets
+    assert "may run any frontier serially" in tickets_flat
     assert "`to-tickets` | Recommend and stop | `$parallel-implement`" in relationships
 
 
@@ -2624,7 +2658,7 @@ def test_parallel_uses_current_landed_state_without_a_dependency_overlay() -> No
         (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8").split()
     )
     assert "current landed state" in parallel
-    assert "Recompute the frontier after each landing" in parallel
+    assert "Recompute the frontier after each accepted landing" in parallel
     for token in ("landed-awaiting-lock", "same-campaign", "dependency overlay"):
         assert token not in parallel
 
@@ -2651,6 +2685,7 @@ def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -
     assert "an exhaustive parent graph to the caller" in flat
     assert "The caller owns commitments" in flat
     assert "Push requires separate authority" in flat
+    assert "Otherwise, direct work creates one only when the caller requests Git delivery" in flat
 
 
 def test_implement_closeout_locks_exact_candidate_and_preserves_custody() -> None:
@@ -2663,9 +2698,37 @@ def test_implement_closeout_locks_exact_candidate_and_preserves_custody() -> Non
     assert "Lock the reviewed tree plus only applicable closeout" in flat
     assert "Do not rewrite an exact accepted commit" in flat
     assert "proving `HEAD` unchanged" in flat
+    assert "Otherwise preserve the reviewed locked candidate and stop before commit" in flat
     assert "retain the claim through commit and configured closeout" in flat
     assert "read back non-dispatchability" in flat
     assert "release the claim and verify the frontier" in flat
+    assert "exclusive mutation custody of the reconciled checkout until Return" in flat
+    assert "unless the caller explicitly requests root execution" in flat
+    assert "keep repair mutation with the root" in flat
+    assert "one admitted complete blocker set" in flat
+    assert "used and remaining" in flat
+
+
+def test_current_relationships_preserve_candidate_commit_and_repair_claim_custody() -> None:
+    relationships = (ROOT / "docs/synthesis/skill-context-relationships.md").read_text(
+        encoding="utf-8"
+    )
+    flat = " ".join(relationships.split())
+    contract = pack_contract.parse_contract(
+        (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
+    )
+    repair = next(
+        relationship
+        for relationship in contract["relationships"]
+        if relationship["relationship_id"] == "REL-036"
+    )
+
+    assert "worker-created candidate commit may already exist" in flat
+    assert "retain campaign claims" in flat
+    assert "Only a later explicit To Tickets invocation" in flat
+    assert "releases those claims only after repaired graph read-back" in flat
+    assert "campaign claims retained pending later explicit admission" in repair["return_packet"]
+    assert "only after repaired graph read-back" in repair["return_packet"]
 
 
 def test_diagnosis_is_an_explicit_leaf_with_bounded_recommendations() -> None:

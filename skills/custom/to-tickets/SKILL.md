@@ -12,23 +12,8 @@ delivery of an existing graph.
 
 ## Admit
 
-Read the target repository's `AGENTS.md` and its routed tracker, label, domain,
-and engineering contracts. Before tracker mutation, verify that the configured
-tracker can create recoverable non-ready items or one equivalently safe atomic
-graph, represent parent and blocking relationships, map roles and
-Ready-for-agent state and, when applicable, Ready-for-human state, inspect
-claims and both frontiers, and read every mutation back. Otherwise return
-`setup-precondition`, name the missing or incompatible surface, recommend
-`$repo-bootstrap`, and preserve state. For GitHub, consume the configured
-parent/child and dependency modes and resolve their operation and read-back
-routes once before the first create. When the connector does not expose native
-relationship mutations, use the bundled
-[GitHub relationship helper](scripts/github_issue_relationships.py) to perform
-at most one requested mutation and return normalized bidirectional read-back.
-Preflight proves that configured operations exist, are authorized, and have
-read-back routes; only the first real mutation proves live behavior.
-
-Accept one exact identity-bearing settled source whose remaining work is
+Read the target repository's `AGENTS.md` and its routed domain and engineering
+contracts. Accept one exact identity-bearing settled source whose remaining work is
 implementation slicing: a verified parent specification; a direct settled packet
 with commitment authority; a verified selected improvement whose direction,
 boundary, and multi-slice need are settled; a verified audit finding or cohesive
@@ -43,14 +28,29 @@ If the settled source is already one bounded implementation with one useful
 proof path and no durable coordination need, return `direct-item` with a compact
 Implement handoff and recommend `$implement`. Create no graph or tracker state.
 
+Only after the direct branch is excluded, load the routed tracker and label
+contracts. Before tracker mutation, verify that the configured tracker can
+create recoverable non-ready items or one equivalently safe atomic graph,
+represent parent and blocking relationships, map roles and Ready-for-agent
+state and, when applicable, Ready-for-human state, inspect claims and both
+frontiers, and read every mutation back. Otherwise return `setup-precondition`,
+name the missing or incompatible surface, recommend `$repo-bootstrap`, and
+preserve state. For GitHub, consume the configured parent/child and dependency
+modes and resolve their operation and read-back routes once before the first
+create. When the connector does not expose native relationship mutations, use
+the bundled [GitHub relationship helper](scripts/github_issue_relationships.py)
+to perform at most one requested mutation and return normalized bidirectional
+read-back. Preflight proves that configured operations exist, are authorized,
+and have read-back routes; only the first real mutation proves live behavior.
+
 The user and settled source retain outcome, commitments, acceptance, scope,
 exclusions, supported states, public and data contracts, security and privacy
 posture, compatibility, migration, rollback, and agreed tradeoffs. `to-tickets`
 owns coverage, slicing, ticket boundaries, dependency order,
-proof-responsibility mapping, execution profiles, the frozen publication packet,
-configured tracker publication, read-back, recovery evidence, Return, and
-completion. Tracker, engineering, domain, ADR, setup, triage, and delivery
-owners retain their foreign contracts.
+proof-responsibility mapping, executor roles and static execution facts, the
+frozen publication packet, configured tracker publication, read-back, recovery
+evidence, Return, and completion. Tracker, engineering, domain, ADR, setup,
+triage, and delivery owners retain their foreign contracts.
 
 Classify the requested operation as create or repair. Repair authority exists
 only for an explicit user-selected repair, a verified `$parallel-implement`
@@ -58,6 +58,14 @@ graph-defect packet, or a post-publication implementation invalidation that
 names the landed predecessor or commit, before-and-after evidence, invalidated
 graph fields, and affected tickets. Repair does not settle a source-owned fact.
 Admit repair only while the underlying source commitments remain settled.
+
+A verified Parallel Implement repair packet may transfer only its exact
+campaign-owned parent and child claims to this repair. Read every transferred
+claim back before mutation; any missing, foreign, expanded, or ambiguous claim
+returns `existing-state-conflict`. Retain transferred claims until the repaired
+graph bodies, relationships, roles, and mapped readiness publish and read back,
+or a terminal repair handoff preserves their custody. Then release and verify
+them before deriving the repaired frontiers.
 
 Change only configured tracker state, including configured Local Markdown
 tracker files. Do not mutate source or domain truth, code, implementation,
@@ -70,10 +78,11 @@ Inspect the exact target parent, related children, relationships, roles, claims,
 open or closed state, and ready frontier before design. Distinguish verified
 absence, an exact semantic match, verified unclaimed divergence, and unknown
 state. Create only after verified absence. Reuse only an exact semantic match.
-Repair frozen mismatches only under the admitted repair authority. A claim,
-partial authorship, ambiguous identity, unauthorized divergence, or
-indeterminate prior mutation returns `existing-state-conflict` with observed
-identities and the smallest needed authority or source delta.
+Repair frozen mismatches only under the admitted repair authority. A claim
+other than an exact admitted campaign-owned transfer, partial authorship,
+ambiguous identity, unauthorized divergence, or indeterminate prior mutation
+returns `existing-state-conflict` with observed identities and the smallest
+needed authority or source delta.
 
 Only when graph work remains, inspect enough code to ground the affected
 tickets: the current behavior owner, representative callers and entry paths,
@@ -218,15 +227,19 @@ frozen relationship representation during publication.
 Only after every body and relationship verifies, apply source-authorized roles
 and activate each ticket's mapped Ready-for-agent or Ready-for-human state in
 dependency order, reading back each transition. Do not invent a category role.
-A claim, unverified packet or edge, or partial activation returns
-`publication-recovery` with the exact exposed frontiers.
+A claim other than an exact admitted campaign-owned transfer, an unverified
+packet or edge, or partial activation returns `publication-recovery` with the
+exact exposed frontiers. An admitted transferred claim remains expected
+custody, not a publication defect.
 
 Refetch the complete affected graph and every affected dependent. Compare bodies
 by the tracker-owned exact-byte or normalized-semantic rule and verify
 relationships, roles, claims, comments, assignees, open or closed status,
-mapped readiness state, and the derived agent and human frontiers against the
-frozen plan. Any stale, partial, indeterminate, or mismatched observation returns
-`publication-recovery` and cannot support success.
+mapped readiness state, and expected transferred claims against the frozen
+plan. After those facts read back, release transferred claims, verify the
+assignee state, and derive the agent and human frontiers. Any stale, partial,
+indeterminate, or mismatched observation returns `publication-recovery` and
+cannot support success.
 
 On the first unsafe, failed, or indeterminate transition, stop further mutation.
 Return `publication-recovery` with the frozen graph identity, every applied and
@@ -245,11 +258,11 @@ implementation skill.
 
 Recommend `$parallel-implement` only when the user explicitly requested a
 top-level parent-delivery run and the verified graph is parent-backed,
-exhaustive, entirely Ready-for-agent, has a non-empty agent frontier, and
-contains at least two substantial tickets that may be independent enough for
-concurrency or whose coordinated delivery is otherwise worthwhile. A direct graph, mixed human/agent graph, delegated request, generic
-preference for concurrency, incomplete graph, or missing explicit delivery
-request uses the single-frontier route above instead.
+exhaustive, entirely Ready-for-agent, and has a non-empty agent frontier.
+Parallel Implement owns live dispatch economics and may run any frontier
+serially. A direct graph, mixed human/agent graph, delegated request, incomplete
+graph, or missing explicit delivery request uses the single-frontier route
+above instead.
 
 Return exactly one of `direct-item`, `setup-precondition`, `source-gap`,
 `existing-state-conflict`, `publication-recovery`, or `ready-graph`. An

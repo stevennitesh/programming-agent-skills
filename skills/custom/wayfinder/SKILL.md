@@ -28,9 +28,8 @@ Keep every sharp question in a ticket, even when blocked.
 
 Load the tracker `Wayfinding representation` and, when hosted labels apply,
 `Wayfinding Labels`. Freeze its parent/child and dependency modes. Require
-inspect, create, update, link, close, read-back, release, and an exclusive claim
-route with an observable losing-race result. Missing or incompatible setup
-recommends `$repo-bootstrap` and stops before mutation.
+inspect and read-back before resolving map identity. Missing or incompatible
+inspection setup recommends `$repo-bootstrap` and stops before mutation.
 
 Search open and closed maps for the exact destination tuple. One open match
 supplies current state; several open matches return the identity conflict. With
@@ -58,6 +57,13 @@ For one map derive:
 | An authority, capability, growth, or prerequisite blocker remains | Return `blocked` with its intervention. |
 | No unresolved ticket, fog, wait, or blocker remains and cited evidence satisfies the route-closing condition | Closure. |
 | None applies | Return `incomplete` with the state gap. |
+
+After selecting one operation and excluding its no-mutation Returns, require
+only its create, update, link, close, claim, release, and read-back
+capabilities, including an exclusive claim route with an observable losing-race
+result when that operation claims state. A no-mutation Return requires none of
+those mutation capabilities. Missing or incompatible selected-operation setup
+recommends `$repo-bootstrap` and stops before mutation.
 
 Run exactly one selected operation and return its verified result. A later
 invocation re-orients from read-back state and may independently select Closure.

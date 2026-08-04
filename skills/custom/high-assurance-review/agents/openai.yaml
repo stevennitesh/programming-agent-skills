@@ -4,4 +4,4 @@ policy:
 interface:
   display_name: "High-Assurance Review"
   short_description: "Explicit two-lane assurance review"
-  default_prompt: "Explicitly use $high-assurance-review as the assurance-coordinator to review this immutable candidate through exactly two fresh core reviewer lanes and return one verified read-only decision."
+  default_prompt: "Explicitly use $high-assurance-review as the top-level coordinator to review this immutable candidate through exactly two fresh core reviewer lanes and return one verified read-only decision."

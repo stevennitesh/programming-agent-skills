@@ -127,7 +127,7 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
 
     assert pack_contract.validate_contract(contract) == []
     assert contract["epoch_header"]["composition_epoch_id"] == EPOCH
-    assert contract["epoch_header"]["contract_revision"] == 3
+    assert contract["epoch_header"]["contract_revision"] == 4
     assert contract["epoch_header"]["status"] == "frozen"
     assert contract["epoch_header"]["integration_result"] == {
         "decision": None,
@@ -213,7 +213,7 @@ def test_first_epoch_revision_preserves_r2_and_derives_r3_blueprints() -> None:
             skill_id,
         )
         assert projected["slice"]["slice_id"].startswith(
-            f"{EPOCH}:r3:"
+            f"{EPOCH}:r4:"
         )
         assert projected["slice"]["skill"] == skill_by_id[skill_id]
     assert {
@@ -222,7 +222,7 @@ def test_first_epoch_revision_preserves_r2_and_derives_r3_blueprints() -> None:
     } == {"change-review", "high-assurance-review"}
 
 
-def test_current_topology_records_the_adr_0013_exception_to_the_frozen_epoch() -> None:
+def test_current_topology_materializes_the_post_freeze_amendment() -> None:
     contract = pack_contract.parse_contract(
         (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
     )
@@ -230,8 +230,39 @@ def test_current_topology_records_the_adr_0013_exception_to_the_frozen_epoch() -
         skill["canonical_name"]: skill for skill in contract["selected_skills"]
     }
     assert contract["epoch_header"]["status"] == "frozen"
-    assert contract["epoch_header"]["contract_revision"] == 3
-    assert skill_by_name["high-assurance-review"]["invocation_mode"] == "implicit"
+    assert contract["epoch_header"]["contract_revision"] == 4
+    assert skill_by_name["high-assurance-review"]["invocation_mode"] == "explicit-only"
+    assert "user explicitly invokes" in (
+        skill_by_name["high-assurance-review"]["positive_entry_predicate"]
+    )
+    assert "release candidate, or supported-risk" in (
+        skill_by_name["change-review"]["positive_entry_predicate"]
+    )
+    assert "REL-013" not in skill_by_name["implement"]["relationship_ids"]
+    assert "REL-030" not in skill_by_name["parallel-implement"]["relationship_ids"]
+    assert "REL-049" not in skill_by_name["skill-router"]["relationship_ids"]
+
+    relationship_ids = {
+        relationship["relationship_id"] for relationship in contract["relationships"]
+    }
+    assert {"REL-013", "REL-030", "REL-049"}.isdisjoint(relationship_ids)
+    graph_edges = {
+        (edge["predecessor_skill_id"], edge["successor_skill_id"])
+        for edge in contract["epoch_header"]["campaign_proof_graph"]
+    }
+    assert not any(predecessor == "SK-014" for predecessor, _ in graph_edges)
+
+    contract_text = (
+        ROOT / "docs/synthesis/skill-pack.md"
+    ).read_text(encoding="utf-8")
+    amendment = contract_text.split("Revision 16", 1)[1].split(
+        "It binds the complete fingerprinted", 1
+    )[0]
+    amendment_flat = " ".join(amendment.split())
+    assert "machine contract revision 4" in amendment_flat
+    assert "High-Assurance Review explicit" in amendment
+    assert "Direct Implement requires a commit only" in amendment
+    assert "dispatch economics change concurrency, not campaign custody" in amendment_flat
 
     metadata = yaml.safe_load(
         (

@@ -17,7 +17,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:a4c824e10f22 -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:e6aa3811fac3 -->"
 ENGINEERING_PRIMER_TOKEN = (
     "Explore imaginatively. Converge under proof. Simplify ruthlessly."
 )
@@ -64,15 +64,6 @@ AGENT_POINTERS = (
     "docs/agents/triage-labels.md",
     "docs/agents/domain.md",
     "docs/agents/engineering-contract.md",
-)
-
-GITHUB_CAMPAIGN_SNAPSHOT_TOKENS = (
-    "**Campaign snapshot:**",
-    "$parallel-implement",
-    "$to-tickets",
-    "scripts/github_issue_relationships.py snapshot",
-    "run directory",
-    "SHA-256",
 )
 
 DOMAIN_TOKENS = (
@@ -530,13 +521,6 @@ def main() -> int:
                 "docs/agents/issue-tracker.md must set Close implemented items to yes or no"
             )
         failures.extend(github_relationship_mode_failures(tracker))
-        if "issue tracker: github" in tracker.lower():
-            require_tokens(
-                tracker,
-                "docs/agents/issue-tracker.md",
-                GITHUB_CAMPAIGN_SNAPSHOT_TOKENS,
-                failures,
-            )
     else:
         local_tracker = False
 

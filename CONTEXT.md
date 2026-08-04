@@ -25,8 +25,11 @@ This repository packages a shared engineering discipline as skills, setup contra
   diff, requested commit, and observed proof. Formal review judges the
   recombined candidate independently.
 - A concurrent writer starts only after one helper creates a clean exact-base
-  worktree, prepares reusable pytest temp/cache paths, and passes a quick pytest
-  collection smoke. A serial writer needs no worktree automation.
+  worktree and prepares reusable pytest temp/cache paths. When the checkout
+  declares pytest, the same preflight must pass a quick collection smoke. A
+  newly created untouched lane is reclaimed after failed preflight; reused,
+  changed, dirty, or uncertain lanes are preserved. A serial writer needs no
+  worktree automation.
 - The runtime owns numeric worker capacity. Delivery coordination qualifies
   each use of that capacity through semantic ownership, write and proof
   independence, dependencies, integration bandwidth, and expected benefit.

@@ -137,8 +137,9 @@ Representative routes:
   `$skill-router`.
 - Whole-repository correctness, robustness, or quality discovery -> `$audit-codebase` builds, continues, or refreshes one linked HTML map, audits one user-selected subsystem, then can analyze one user-selected improvement candidate or returned evidence
 - Existing behavior in one bounded region -> `$simplify-code` for one proved reduction, a finite `until-clean` campaign, or a no-safe-cut verdict
-- Ordinary diff or PR -> `$change-review`; release candidate or supported
-  high-risk change -> `$high-assurance-review`
+- Any ordinary, release, or supported-risk implementation candidate ->
+  `$change-review`; an explicitly selected two-lane assurance review ->
+  `$high-assurance-review`
 - Bounded correctness, domain robustness, performance, structural, or simplification discovery over an immutable repository baseline -> `$audit-codebase`, with repo-backed candidate decisions returned through `$grill-with-docs`
 
 These are examples. `$skill-router` owns the complete route map and tie-breakers.

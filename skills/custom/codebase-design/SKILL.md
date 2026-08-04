@@ -10,17 +10,16 @@ question. Recommend a stronger shape, retain the current one, or name the exact
 decision or evidence gap that prevents judgment.
 
 Default to read-only design. The user or caller owns public-contract
-commitments, design acceptance, implementation, and downstream mutations. When
-another workflow loads this discipline, fold any vocabulary or Direct Design
-result into its artifact and Return; create no separate workflow step.
+commitments, design acceptance, implementation, and downstream mutations.
 
 Use Direct Design before planning or implementation only when one consequential
 responsibility, Interface, Seam, migration, or caller-facing proof question
 remains unresolved.
 
 A clear repository-native path earns no design pass. When another workflow
-loads this skill, fold the supported result into its artifact or Return and
-create no design packet, tracker item, or implementation edge.
+loads this skill, fold its vocabulary or supported Direct Design result into
+the caller's artifact or Return and create no separate workflow step, design
+packet, tracker item, or implementation edge.
 
 For codebase-wide mapping and improvement discovery, recommend `$audit-codebase`
 and stop.
