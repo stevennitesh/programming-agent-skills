@@ -53,8 +53,7 @@ python <skill-dir>/scripts/run_ledger.py dispatch \
 `actor_id`, stable `attempt_id`, `environment: local | worktree`,
 `assignment.{mode,ref}`, retained child `claim`, non-empty `write_scope`, and
 optional assignment `instructions`. An isolated lane may also supply startup
-proof and Python provenance files; otherwise the helper reads the repo-local
-parallel-lane setup.
+root override; otherwise the helper reads the repo-local parallel-lane setup.
 
 The command prepares the lane and brief, then atomically records assignment and
 dispatch receipts plus pre-spawn authorization and returns the exact

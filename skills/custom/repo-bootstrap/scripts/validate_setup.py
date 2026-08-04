@@ -3,9 +3,7 @@
 from __future__ import annotations
 
 import argparse
-import json
 import re
-import runpy
 import subprocess
 import tomllib
 from pathlib import Path
@@ -19,7 +17,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:0803f55bb242 -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:9a6e33da0abc -->"
 ENGINEERING_PRIMER_TOKEN = (
     "Explore imaginatively. Converge under proof. Simplify ruthlessly."
 )
@@ -423,45 +421,24 @@ def parallel_support_failures(root: Path) -> list[str]:
         failures.append("project-lanes permissions must declare workspace_roots")
         return failures
 
-    runtime = runpy.run_path(str(helper_path))
-    pattern = runtime["PROJECT_KEY_PATTERN"]
-    candidates: list[tuple[str, Path]] = []
+    candidates: list[Path] = []
     for raw_path, enabled in roots.items():
         if not isinstance(raw_path, str) or enabled is not True:
             continue
-        lane_root = Path(raw_path)
-        if lane_root.name == "wt" and pattern.fullmatch(lane_root.parent.name):
-            candidates.append((lane_root.parent.name, lane_root.resolve()))
+        lane_root = Path(raw_path).resolve()
+        if lane_root.name.lower() == "wt":
+            candidates.append(lane_root)
     if len(candidates) != 1:
-        failures.append("project-lanes permissions must contain one canonical parallel lane root")
+        failures.append("project-lanes permissions must contain one parallel wt root")
         return failures
 
-    project, lane_root = candidates[0]
-    expected_base = runtime["default_base_root"](root)
-    expected_root = (expected_base / project / "wt").resolve()
-    if lane_root != expected_root:
-        failures.append(
-            f"parallel lane root must match the current repository location: {expected_root}"
-        )
-        if lane_root.is_dir() and any(lane_root.iterdir()):
-            failures.append("stale parallel lane root still contains preserved lanes")
-
-    marker = lane_root.parent / runtime["PROJECT_MARKER_NAME"]
-    if marker.exists():
-        try:
-            observed = json.loads(marker.read_text(encoding="utf-8"))
-        except (OSError, UnicodeError, json.JSONDecodeError):
-            failures.append(f"parallel project marker is invalid: {marker}")
-        else:
-            identity, source = runtime["repository_identity"](root)
-            expected_marker = {
-                "schema": runtime["PROJECT_MARKER_SCHEMA"],
-                "project_key": project,
-                "repository_identity": identity,
-                "identity_source": source,
-            }
-            if observed != expected_marker:
-                failures.append(f"parallel project marker conflicts with this repository: {marker}")
+    lane_root = candidates[0]
+    try:
+        lane_root.relative_to(root.resolve())
+    except ValueError:
+        pass
+    else:
+        failures.append("parallel lane root must be outside the repository")
     return failures
 
 

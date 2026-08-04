@@ -1388,14 +1388,7 @@ def derive_state(events: list[dict[str, Any]], repo: str | None = None) -> dict[
                     valid &= need(
                         isinstance(value, str)
                         and bool(value)
-                        and Path(value).is_absolute()
-                        and (
-                            lane.get("environment") == "local"
-                            or (
-                                isinstance(worktree, str)
-                                and path_within(value, worktree)
-                            )
-                        ),
+                        and Path(value).is_absolute(),
                         f"{prefix} requires isolated {field}",
                     )
                 if isinstance(worktree, str) and worktree:
@@ -3642,7 +3635,7 @@ def root_receipt(
     }
 
 
-def lane_setup(repo: str) -> tuple[str, str]:
+def lane_setup(repo: str) -> str:
     config = Path(repo) / ".codex" / "config.toml"
     if not config.is_file():
         raise ValueError("isolated dispatch requires repo-bootstrap parallel lane setup")
@@ -3657,8 +3650,7 @@ def lane_setup(repo: str) -> tuple[str, str]:
     candidates = [path for path in candidates if path.name.lower() == "wt"]
     if len(candidates) != 1:
         raise ValueError("parallel lane setup must declare exactly one writable wt root")
-    lane_root = candidates[0]
-    return lane_root.parent.name, str(lane_root.parent.parent)
+    return str(candidates[0])
 
 
 def open_worktree_lane(
@@ -3670,49 +3662,21 @@ def open_worktree_lane(
     actor_id: str,
 ) -> dict[str, Any]:
     lane = packet.get("lane") if isinstance(packet.get("lane"), dict) else {}
-    project_key = lane.get("project_key")
-    base_root = lane.get("base_root")
-    if not project_key or not base_root:
-        project_key, base_root = lane_setup(args.repo)
+    root = lane.get("root") or lane_setup(args.repo)
+    name = artifact_name(str(packet.get("attempt_id") or f"{item}-{actor_id}"))[:80]
     command = [
         sys.executable,
         str(Path(__file__).with_name("lane_worktree.py")),
-        "open",
+        "prepare",
         "--repo",
         args.repo,
-        "--project-key",
-        str(project_key),
-        "--base-root",
-        str(base_root),
+        "--root",
+        str(root),
         "--base",
         state["current_head"],
-        "--run-id",
-        run_path(args.run).name,
-        "--item-id",
-        item,
-        "--actor-id",
-        actor_id,
+        "--name",
+        name,
     ]
-    option_map = {
-        "proof_command_file": "--proof-command-file",
-        "python_provenance_file": "--python-provenance-file",
-    }
-    for field, option in option_map.items():
-        if lane.get(field):
-            command.extend([option, str(lane[field])])
-    if not lane.get("python_provenance_file"):
-        reason = lane.get("python_provenance_reason")
-        if not isinstance(reason, str) or not reason:
-            raise ValueError(
-                "isolated dispatch requires Python provenance or an explicit non-Python reason"
-            )
-        command.extend(
-            [
-                "--skip-python-provenance",
-                "--python-provenance-reason",
-                reason,
-            ]
-        )
     result = subprocess.run(
         command,
         cwd=args.repo,
@@ -3729,21 +3693,36 @@ def open_worktree_lane(
             "kind": "isolated-lane",
             "worktree": receipt["worktree"],
             "recovery": {
-                "command": "lane_worktree.py cleanup",
+                "action": "preserve-until-graph-cleanup",
                 "repo": args.repo,
-                "project_key": receipt.get("project_key") or project_key,
-                "base_root": receipt.get("base_root") or base_root,
-                "run_id": run_path(args.run).name,
-                "item_id": item,
-                "expected_head": state["current_head"],
-                "disposition": "preserved",
+                "root": str(root),
+                "worktree": receipt["worktree"],
             },
         }
     if result.returncode != 0:
         raise ValueError(receipt.get("error") or result.stderr.strip() or "lane setup failed")
     if not receipt.get("ok"):
         raise ValueError(receipt.get("error") or "lane setup failed")
-    return receipt["preflight"]
+    return {
+        "provider": "manual-helper",
+        "worktree": receipt["worktree"],
+        "root_checkout": {
+            "path": str(Path(args.repo).resolve()),
+            "access": "read-only",
+            "environment": "PARALLEL_IMPLEMENT_ROOT_CHECKOUT",
+        },
+        "base": receipt["base"],
+        "observed_head": receipt["base"],
+        "status": "clean",
+        "startup_proof": {"status": "passed", "kind": "pytest-collect"},
+        "project_provenance": {
+            "status": "not-applicable",
+            "reason": "the lean lane preflight verifies checkout and pytest collection only",
+        },
+        "temp_root": receipt["temp_root"],
+        "pytest_basetemp": receipt["pytest_basetemp"],
+        "cache_root": receipt["pytest_cache"],
+    }
 
 
 def open_local_lane(

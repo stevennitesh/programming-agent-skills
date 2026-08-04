@@ -9,21 +9,20 @@ isolate concurrent writers.
 
 Load [RUNTIME-PROFILES.md](RUNTIME-PROFILES.md).
 
-`run_ledger.py dispatch` reads the permanent project key and writable lane root
-from the repo-local setup owned by `$repo-bootstrap`. The key is shaped
-`<short-name>-<three-digit-ID>` and the root is
-`<base-root>/<project-key>/wt`. Spawned agents inherit its permission.
+`run_ledger.py dispatch` reads the writable lane root from the repo-local setup
+owned by `$repo-bootstrap`. Spawned agents inherit its permission.
 
 Give one serial writer exclusive custody of the clean integration checkout at
 the exact base. The root performs no repository or Git mutation until Return.
 
 Give every concurrent writer a distinct helper-created worktree at the exact
-base. Open it with `../scripts/lane_worktree.py`; only `ok: true, state: ready` is
-dispatchable. Never assign one worktree to two active writers.
+base. Prepare it with `../scripts/lane_worktree.py`; only `ok: true` is
+dispatchable. Never assign one worktree to two active writers. The helper also
+creates checkout-external pytest temp and cache roots and runs a quick pytest
+collection smoke. A serial writer needs no worktree automation.
 
-For an isolated lane, `--repo` is the root checkout. The helper supplies it to
-startup proof as `PARALLEL_IMPLEMENT_ROOT_CHECKOUT`; the worker may read needed
-ignored inputs there but writes only in its assigned worktree.
+For an isolated lane, `--repo` is the root checkout and `--root` is its writable
+worktree root. The worker writes only in its assigned worktree.
 
 After all writers stop, formal reviewers use the immutable candidate read-only
 in the integration checkout. High Assurance reviewers may share that checkout
@@ -74,54 +73,38 @@ instead of spawning again.
 
 ## Release
 
-After the commit is integrated or preserved and no correction needs the lane,
-run `lane_worktree.py cleanup` with its recorded project key, base root,
-worktree, run and item IDs, expected `HEAD`, and disposition. Cleanup must
-report `removed`; otherwise preserve the lane and return its exact recovery
-state.
+At graph end, run `lane_worktree.py cleanup` once without `--oldest` to remove
+all safe completed lanes. When the worktree limit is reached, run it with
+`--oldest` to free the oldest safe completed lane. Pass each explicitly
+completed worktree with `--completed`; omit active or uncertain lanes. Dirty,
+not-completed, unintegrated, and uncertain lanes stay preserved; a
+capacity-blocked result means no new concurrent worker may start.
 
 Serial and review agents own no extra worktree to release.
 
 ## Isolated Worktree
 
 ```text
-python <skill-dir>/scripts/lane_worktree.py open \
-  --repo <repo> --project-key <name-NNN> --base <sha> \
-  --run-id <run> --item-id <item> --actor-id <actor> \
-  --python-provenance-file <python.json>
+python <skill-dir>/scripts/lane_worktree.py prepare \
+  --repo <repo> --root <worktree-root> --base <sha> --name <lane-name>
 ```
 
-The helper owns `<base-root>/<project-key>/wt/<lane>`. It binds the permanent
-project key to one repository with a marker outside `wt`; a conflicting or
-unmarked project root blocks creation. Lane names omit the repository name.
-
-Base-root selection is explicit `--base-root`, then
-`PARALLEL_IMPLEMENT_BASE_ROOT`, then `<repo-drive>:\pi` on Windows or
-`<repo-parent>/worktrees` elsewhere. Detached `HEAD` is the default. `--repo`
-remains the read-only root checkout; the isolated worktree remains the command
-working directory. On Windows, the worktree path plus the longest tracked path
-at the selected base must not exceed 259 characters. Keep `pi` and `wt` short;
-use temporary storage only for the UTF-8 argv files. Correct a failed preflight
-and repeat the same `open`; it reuses the preserved lane.
-The default startup proof verifies checkout, index-lock, and Git-object
-viability. `--proof-command-file` may add one repository startup check from a UTF-8 argv file;
-it proves viability, not throughput, so disable nested parallel test execution.
-Derive executables, import roots, and packages from repo-owned configuration.
-Project imports must resolve beneath the lane, including namespace-package
-locations. A non-Python repository may use
-`--skip-python-provenance` with its reason. An explicitly skipped startup proof
-also requires its reason.
+`prepare` creates or reuses `<worktree-root>/<lane-name>` at the exact base. It
+checks registration, `HEAD`, clean status, basic Git operation, and pytest
+collection using a fresh process-temp directory with temp, base-temp, and cache
+children. Those generated paths remain outside the tracked checkout and the
+shared worktree root. Success returns the worktree and generated paths needed
+to start the worker; failure returns the cause and preserves any created lane
+for inspection or retry.
 
 ```text
 python <skill-dir>/scripts/lane_worktree.py cleanup \
-  --repo <repo> --project-key <name-NNN> --base-root <root> --worktree <path> \
-  --run-id <run> --item-id <item> \
-  --expected-head <sha> --disposition <integrated-or-preserved>
+  --repo <repo> --root <worktree-root> [--completed <path>] [--oldest]
 ```
 
-Cleanup verifies the project marker, recomputes the exact helper-created lane
-path, then verifies containment, exact `HEAD`, clean status, and disposition.
-Lost registration remains preserved. A confirmed contained unregistered
-residual may use the helper's extended-path cleanup.
-Forced removal, branch deletion, global `safe.directory` mutation, and cleanup
-outside the recorded root remain outside helper authority.
+Cleanup considers only registered worktrees contained by the explicit root. A
+lane is safe to remove only when it is explicitly completed, clean, and its
+`HEAD` is already integrated into the root checkout's current `HEAD`. Forced removal,
+branch deletion, global `safe.directory` mutation, and cleanup outside the
+explicit root remain outside helper authority. Cleanup never recursively
+deletes worker-writable temp state; the process temp owner may reclaim it.

@@ -56,11 +56,12 @@ Apply the engineering contract's binding floors, preferences, and
 condition-triggered methods. Start from source grounding and refresh only
 stale, uncertain, or contradicted evidence.
 
-When a separately admitted delegated route supplies an assignment or Return,
-load the [Execution Assignment and Worker Return Contract](references/EXECUTION-ASSIGNMENT.md)
-and validate the untrusted packet at its implement-owned boundary before
-execution credit. The disclosed contract does not activate delegated dispatch;
-the current direct route remains in force until its separately owned cutover.
+When a separately admitted delegated route supplies a worker, load the
+[Plain Worker Handoff](references/WORKER-HANDOFF.md). Send fresh ticket-specific
+context and accept its evidence as provisional until the delivery owner verifies
+the diff, requested commit, and observed proof. This is ordinary task context, not a schema.
+The reference defines handoff meaning only; #69 owns activation
+and the current direct route remains available.
 
 Implement the smallest acceptance-complete path. Prove every assigned behavior
 and supported state through its canonical seam. Reuse the canonical test owner.

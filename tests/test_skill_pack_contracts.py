@@ -532,7 +532,7 @@ def assert_repo_bootstrap_semantic_contract(
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     assert_repo_bootstrap_semantic_contract(
         CUSTOM / "repo-bootstrap",
-        "0ae32b318ea3d372a53243c8b5dd130f448c8606cc91771785c596cd77102d66",
+        "053d87ef0a66f935725ac8746b566a481f7985788321a9dc30953fc79b402601",
         profile="incumbent",
     )
 
@@ -554,7 +554,7 @@ def test_repo_bootstrap_owns_optional_parallel_support_and_reconciliation(
     assert "When support is absent, ask whether to enable it" in bootstrap
     assert "goes directly through Reconcile without this question" in bootstrap
     assert "one missing or stale half is a `delta`" in bootstrap
-    assert "do not create worktrees, project markers, or external directories" in bootstrap
+    assert "do not create worktrees or external directories" in bootstrap
 
     agent = root / validator["PARALLEL_AGENT"]
     agent.parent.mkdir(parents=True)
@@ -565,9 +565,7 @@ def test_repo_bootstrap_owns_optional_parallel_support_and_reconciliation(
     ]
 
     config = root / validator["PARALLEL_CONFIG"]
-    base = validator["parallel_package"]()
-    runtime = runpy.run_path(str(base / "scripts/lane_worktree.py"))
-    lane_root = runtime["default_base_root"](root) / "repo-001" / "wt"
+    lane_root = tmp_path / "lanes" / "wt"
     encoded_lane_root = json.dumps(str(lane_root.resolve()))
     config.write_text(
         "default_permissions = \"project-lanes\"\n\n"
@@ -580,22 +578,16 @@ def test_repo_bootstrap_owns_optional_parallel_support_and_reconciliation(
     )
     assert check(root) == []
 
-    stale_root = tmp_path / "old" / "repo-001" / "wt"
-    stale_root.mkdir(parents=True)
-    (stale_root / "preserved.txt").write_text("preserved\n", encoding="utf-8")
+    nested_root = root / "nested" / "wt"
     config.write_text(
         "default_permissions = \"project-lanes\"\n\n"
         "[permissions.project-lanes]\n"
         "extends = \":workspace\"\n\n"
         "[permissions.project-lanes.workspace_roots]\n"
-        f"{json.dumps(str(stale_root.resolve()))} = true\n",
+        f"{json.dumps(str(nested_root.resolve()))} = true\n",
         encoding="utf-8",
     )
-    expected_root = lane_root.resolve()
-    assert check(root) == [
-        f"parallel lane root must match the current repository location: {expected_root}",
-        "stale parallel lane root still contains preserved lanes",
-    ]
+    assert check(root) == ["parallel lane root must be outside the repository"]
 
     config.write_text(
         "default_permissions = \"project-lanes\"\n\n"
@@ -2168,29 +2160,42 @@ def test_implementation_workflows_keep_local_proof_owners() -> None:
     assert "consolidate equivalent campaign-created tests" in parallel_flat
 
 
-def test_implement_owns_one_shared_assignment_contract_without_a_new_route() -> None:
+def test_implement_owns_one_plain_worker_handoff_without_a_new_route() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
     parallel = (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8")
     relationships = (
         ROOT / "docs/synthesis/skill-context-relationships.md"
     ).read_text(encoding="utf-8")
-    reference_path = CUSTOM / "implement/references/EXECUTION-ASSIGNMENT.md"
+    reference_path = CUSTOM / "implement/references/WORKER-HANDOFF.md"
 
     assert reference_path.is_file()
+    assert "[Plain Worker Handoff](references/WORKER-HANDOFF.md)" in implement
     assert (
-        "[Execution Assignment and Worker Return Contract]"
-        "(references/EXECUTION-ASSIGNMENT.md)"
-    ) in implement
-    assert (
-        "[implement-owned Execution Assignment and Worker Return Contract]"
-        "(../implement/references/EXECUTION-ASSIGNMENT.md)"
+        "[implement-owned Plain Worker Handoff]"
+        "(../implement/references/WORKER-HANDOFF.md)"
     ) in parallel
     assert "does not invoke `$implement`" in parallel
-    assert "does not activate delegated dispatch" in implement
-    assert "implement/references/EXECUTION-ASSIGNMENT.md" in relationships
-    assert "shared assignment and Return authority" in relationships
+    assert "ordinary task context, not a schema" in implement
+    assert "implement/references/WORKER-HANDOFF.md" in relationships
+    assert "plain handoff meaning" in relationships
     assert "WORKER-BRIEF.md" in relationships
-    assert "compatibility adapter" in relationships
+    handoff = reference_path.read_text(encoding="utf-8")
+    for required in (
+        "Ticket and desired outcome",
+        "Fixed decisions and relevant context",
+        "Acceptance criteria",
+        "Owned write scope",
+        "Required validation",
+        "Stop and escalation conditions",
+        "Expected evidence return",
+        "completed | partial | blocked",
+    ):
+        assert required in handoff
+    assert "schema" not in handoff.lower()
+    assert not (CUSTOM / "implement/scripts/execution_assignment.py").exists()
+    assert not (CUSTOM / "implement/references/EXECUTION-ASSIGNMENT.md").exists()
+    assert not (CUSTOM / "implement/scripts/executor_capsule.py").exists()
+    assert not (CUSTOM / "implement/references/EXECUTOR-CAPSULE.md").exists()
     assert not (CUSTOM / "delegated-execution").exists()
 
 
@@ -3307,8 +3312,6 @@ def test_parallel_implement_separates_context_checkout_and_review_ownership() ->
     assert "fresh-context collaboration subagent" in lanes
     assert "transport `subagent-v2`" in lanes
     assert "helper-created worktree" in lanes
-    assert "PARALLEL_IMPLEMENT_ROOT_CHECKOUT" in lanes
-    assert "may read needed ignored inputs" in " ".join(lanes.split())
     for row in (
         "| `parallel-root` | `current` | `gpt-5.6-sol` | `high` |",
         "| `clear-worker` | `luna_max` | `gpt-5.6-luna` | `max` |",
@@ -3468,7 +3471,7 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
     assert "idle" in review
 
 
-def test_parallel_implement_has_root_receipt_budget_and_windows_contracts() -> None:
+def test_parallel_implement_has_root_receipts_and_lean_worktree_lifecycle() -> None:
     skill_dir = CUSTOM / "parallel-implement"
     parallel = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     ledger = (skill_dir / "references/RUN-LEDGER.md").read_text(encoding="utf-8")
@@ -3476,6 +3479,7 @@ def test_parallel_implement_has_root_receipt_budget_and_windows_contracts() -> N
         encoding="utf-8"
     )
     worker = (skill_dir / "references/WORKER-BRIEF.md").read_text(encoding="utf-8")
+    bootstrap = (CUSTOM / "repo-bootstrap/SKILL.md").read_text(encoding="utf-8")
     script = (skill_dir / "scripts/run_ledger.py").read_text(encoding="utf-8")
     lane_script = (skill_dir / "scripts/lane_worktree.py").read_text(encoding="utf-8")
     codex_config = (ROOT / ".codex/config.toml").read_text(encoding="utf-8")
@@ -3489,45 +3493,36 @@ def test_parallel_implement_has_root_receipt_budget_and_windows_contracts() -> N
     assert "contains no provider-created task identity" in " ".join(ledger.split())
     assert "reviewer" in ledger
     assert "review-invocation" in script
-    assert "PARALLEL_IMPLEMENT_BASE_ROOT" in launch and "PARALLEL_IMPLEMENT_BASE_ROOT" in lane_script
-    assert "<repo-drive>:\\pi" in launch
-    assert 'Path(f"{repo.drive}/") / "pi"' in lane_script
-    assert "<base-root>/<project-key>/wt/<lane>" in launch
-    assert "<short-name>-<three-digit-ID>" in launch
-    assert 'WORKTREE_DIR_NAME = "wt"' in lane_script
-    assert 'PROJECT_KEY_PATTERN = re.compile' in lane_script
+    launch_flat = " ".join(launch.split())
+    assert "lane_worktree.py prepare" in launch_flat
+    assert "lane_worktree.py cleanup" in launch_flat
+    assert "--repo <repo> --root <worktree-root> --base <sha> --name <lane-name>" in launch_flat
+    assert "checkout-external pytest temp and cache roots" in launch_flat
+    assert "Dirty, not-completed, unintegrated, and uncertain lanes stay preserved" in launch_flat
+    assert "--oldest" in launch and "--completed" in launch
+    assert 'operations.add_parser("prepare")' in lane_script
+    assert 'operations.add_parser("cleanup")' in lane_script
+    assert '"--collect-only"' in lane_script
+    assert '"addopts="' in lane_script
+    assert "shutil.rmtree" not in lane_script
+    assert 'cleanup_parser.add_argument("--oldest", action="store_true")' in lane_script
+    assert 'cleanup_parser.add_argument("--completed", action="append", default=[])' in lane_script
+    assert "project_key" not in lane_script
+    assert "project marker" not in lane_script.lower()
+    assert "python_provenance" not in lane_script
+    assert "proof-command" not in lane_script
+    assert "Python provenance" not in ledger
+    assert "startup proof" not in ledger
+    assert "permanent project key" not in bootstrap
+    assert "derived base and lane roots" not in bootstrap
+    assert "--global" not in lane_script
     expected_lane_root = str(Path(ROOT.anchor) / "pi" / "pas-001" / "wt")
     encoded_lane_root = expected_lane_root.replace("\\", "\\\\")
     assert f'"{encoded_lane_root}" = true' in codex_config
-    assert "must not exceed 259 characters" in " ".join(launch.split())
-    assert "WINDOWS_USABLE_MAX_PATH = 259" in lane_script
-    assert "--max-path" not in launch
-    assert "--max-path" not in lane_script
-    assert '"checkout_projection": predicted' in lane_script
-    assert '["ls-tree", "-r", "--name-only", "-z", base]' in " ".join(
-        lane_script.split()
-    )
-    assert '["ls-files", "-z"]' not in lane_script
-    assert "Correct a failed preflight and repeat the same `open`" in " ".join(
-        launch.split()
-    )
-    assert "Cleanup verifies the project marker, recomputes the exact helper-created lane path" in " ".join(
-        launch.split()
-    )
-    assert "--run-id <run> --item-id <item>" in " ".join(launch.split())
-    assert "require_lane_identity(project, root, worktree, args.run_id, args.item_id)" in " ".join(
-        lane_script.split()
-    )
-    assert "--proof-command-file" in launch and "--proof-command-file" in lane_script
     assert "runtime contract 7" in ledger.lower()
     assert "reads the repo-local parallel-lane setup" in " ".join(ledger.split())
     assert "integration_regression" in script
     assert "runtime contract 7" in ledger
-    assert "viability, not throughput" in launch
-    assert "project imports must resolve beneath the lane" in launch.lower()
-    assert "repo-owned configuration" in launch
-    assert "namespace-package locations" in " ".join(launch.split())
-    assert "--python-provenance-file" in launch and "--python-provenance-file" in lane_script
     assert (skill_dir / "assets/luna_max.toml").read_bytes() == (
         ROOT / ".codex/agents/luna_max.toml"
     ).read_bytes()
@@ -3539,7 +3534,7 @@ def test_parallel_implement_has_root_receipt_budget_and_windows_contracts() -> N
     assert "write scope" in worker_flat
     assert '"write_scope_ids"' in script
     assert "lane_actor == actor_id" in script
-    assert "extended-path" in launch
+    assert '"prepare"' in script
 
 
 def test_parallel_implement_exposes_parent_graph_frontier_and_closeout_contracts() -> None:

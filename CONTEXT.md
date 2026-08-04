@@ -15,6 +15,21 @@ This repository packages a shared engineering discipline as skills, setup contra
 - Mechanical rules belong in scripts or config. Prose owns routing, judgment, and behavior that cannot be enforced directly.
 - Deploy-campaign automation may write only reproducible mechanical evidence
   state. The campaign owner alone settles semantic gate decisions.
+- A delegated implementation handoff is fresh ordinary task context. It never
+  replaces its authoritative ticket, source, or live repository evidence and
+  requires no worker-side schema, capsule, hash, transcript, or receipt check.
+- An implementation worker owns only its assigned write scope and evidence
+  return. It never gains delivery, scheduling, integration, review, Lock, or
+  closeout authority and never spawns another worker.
+- Worker completion is provisional until the coordinator inspects the scoped
+  diff, requested commit, and observed proof. Formal review judges the
+  recombined candidate independently.
+- A concurrent writer starts only after one helper creates a clean exact-base
+  worktree, prepares reusable pytest temp/cache paths, and passes a quick pytest
+  collection smoke. A serial writer needs no worktree automation.
+- The runtime owns numeric worker capacity. Delivery coordination qualifies
+  each use of that capacity through semantic ownership, write and proof
+  independence, dependencies, integration bandwidth, and expected benefit.
 
 ## Context Trace
 
@@ -153,6 +168,30 @@ _Avoid_: style guide, copied philosophy
 The part of a shared contract a skill must enforce because it directly governs that skill's work.
 _Avoid_: duplicated contract
 
+**Delegated implementation handoff**
+
+The plain ticket-specific context a delivery coordinator sends to one fresh
+implementation worker: outcome, fixed decisions and relevant references,
+acceptance, owned scope and exclusions, base and checkout, validation, stop
+conditions, and expected evidence. It is neither an editable plan nor a
+machine-validated execution protocol.
+_Avoid_: capsule, assignment schema, planner transcript
+
+**Implementation worker**
+
+The delegated agent that implements one bounded handoff and returns changed
+files, observed validation, acceptance evidence, risk, and a task commit when
+requested. Its return remains provisional until coordinator verification.
+_Avoid_: delivery coordinator, campaign owner, reviewer
+
+**Concurrent worker lane**
+
+One isolated Git worktree prepared at an exact base for a writer that may overlap
+another writer in time. Its helper owns mechanical preparation, pytest-ready
+temp/cache setup, and conservative cleanup; the coordinator owns whether and
+when to dispatch or remove it.
+_Avoid_: worker runtime, scheduler, execution ledger
+
 **Change review candidate**
 
 A fixed-snapshot diff or PR that is neither a release candidate nor governed by
@@ -270,5 +309,9 @@ _Avoid_: pack manual, copied route map
   residual risk—belong to `docs/agents/engineering-contract.md`.
   Project-specific domain language and decisions remain with routed domain
   records.
-- Parallel-delivery roles, gates, and packets belong to `$parallel-implement` and its disclosed references.
+- Delegated implementation handoff language and worker evidence Returns belong
+  to `$implement` and its disclosed reference. Concurrent-lane preparation and
+  cleanup are shared mechanics. Parallel campaign scheduling, concurrency
+  qualification, serial landing, recombination, and parent closeout belong to
+  `$parallel-implement`. [ADR-0012](docs/adr/0012-shared-delegated-execution-separates-delivery-authority-from-executor-transport.md)
 - Domain vocabulary belongs to routed `CONTEXT.md` files and ADRs in each target repo.

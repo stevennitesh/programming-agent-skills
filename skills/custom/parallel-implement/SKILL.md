@@ -102,10 +102,10 @@ escalation. A matching later condition overrides every earlier one:
 Claim each selected ticket and read back the claim. Launch each worker through
 [AGENT-LANES.md](references/AGENT-LANES.md), which owns runtime binding,
 starting state, isolation, readiness, liveness, Return, and cleanup.
-Load the [implement-owned Execution Assignment and Worker Return Contract](../implement/references/EXECUTION-ASSIGNMENT.md)
-as the shared field and authority boundary. Consuming that disclosed contract
-does not invoke `$implement`; the current campaign Worker Brief remains the
-compatibility adapter until shared-lane composition proves its replacement.
+Load the [implement-owned Plain Worker Handoff](../implement/references/WORKER-HANDOFF.md)
+as the shared context and evidence boundary. Consuming that disclosed reference
+does not invoke `$implement`; #71 owns replacing the current campaign brief and
+ledger dispatch path.
 Use `run_ledger.py dispatch` to prepare the lane, seal the final
 [WORKER-BRIEF.md](references/WORKER-BRIEF.md) assignment, and return the exact
 spawn arguments. Spawn once with that brief, then record the provider receipt.
