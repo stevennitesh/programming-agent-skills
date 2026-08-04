@@ -1,6 +1,6 @@
 ---
 name: high-assurance-review
-description: Review one immutable release candidate or diff or PR governed by a supported high-risk trigger read-only through two fresh core reviewers and coordinator-only finding admission, then return one terminal release decision. Coordinator-only. Exclude ordinary diffs and PRs and immutable repository-baseline audits.
+description: Explicit-only review of one immutable caller-selected candidate through two fresh core reviewers and coordinator-only finding admission, returning one terminal decision. Never selected automatically from release or risk facts.
 ---
 
 # High-Assurance Review
@@ -11,11 +11,10 @@ description: Review one immutable release candidate or diff or PR governed by a 
 
 Load the `change-review` skill's `FINDING-CONTRACT.md` and the shared
 [Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md).
-Accept one release
-candidate or caller-bounded diff or PR governed by at least one supported
-high-risk trigger. Return an ordinary diff or PR and its complete factual
-packet intact to the caller as `scope-mismatch`; name the route facts, leave
-the route unselected, and stop. Recommend `$audit-codebase` for an immutable
+Accept only when the user explicitly invokes High Assurance Review for one
+caller-bounded immutable candidate. Release status and supported-risk triggers
+may shape coverage but are neither required nor sufficient for invocation.
+Recommend `$audit-codebase` for an immutable
 repository-baseline audit, then stop.
 
 Require this invocation to be the `assurance-coordinator`, the root of its
@@ -32,8 +31,8 @@ PR, external, Repair, and successor state unchanged. If required evidence needs
 mutation, return `incomplete` with the blocker and verified partial evidence.
 
 Freeze the caller's Charter, commitment boundary, fixed point, candidate,
-`Spec required: yes | no`, Source Trace, required proof, skips, supported route
-trigger, carried IDs, coordinator actor and task IDs, and mode.
+`Spec required: yes | no`, Source Trace, required proof, skips, supported-risk
+facts, carried IDs, coordinator actor and task IDs, and mode.
 
 Use one mode:
 

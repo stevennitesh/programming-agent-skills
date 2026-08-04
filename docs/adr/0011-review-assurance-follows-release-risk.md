@@ -7,7 +7,7 @@ improvement advisories compete with the release gate. Implement, Parallel
 Implement, Change Review, High-Assurance Review, and Skill Router all depend
 on one stable routing boundary.
 
-**Status**: accepted
+**Status**: superseded by ADR-0013
 
 `$change-review` owns every Change review candidate, including an ordinary PR.
 It pins one snapshot, judges Spec and Standards separately through the shared

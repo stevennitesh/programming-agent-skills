@@ -1,6 +1,6 @@
 ---
 name: change-review
-description: "Review one ordinary branch, WIP, staged, since-X diff, or ordinary local PR read-only from a fixed snapshot. Judge Spec (\"right thing?\") and Standards (\"built right?\") separately, then return one terminal gate decision. Exclude release candidates, changes governed by a supported high-risk trigger, and immutable repository-baseline audits."
+description: "Review one branch, WIP, staged, since-X diff, local PR, release candidate, or supported-risk implementation candidate read-only from a fixed snapshot. Judge Spec and Standards separately, with risk-proportional coverage, then return one terminal gate decision."
 ---
 
 # Change Review
@@ -15,19 +15,19 @@ unchanged.
 
 Load [FINDING-CONTRACT.md](FINDING-CONTRACT.md) and the shared
 [Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md).
-Change Review owns one ordinary branch,
-WIP, staged, since-X diff, or ordinary local PR. Return a release
-candidate or candidate governed by a supported high-risk trigger and its
-complete factual packet intact to the caller as `scope-mismatch`; name the
-route facts, leave the route unselected, and stop. Recommend `$audit-codebase`
+Change Review owns one branch, WIP, staged, since-X diff, local PR, release
+candidate, or supported-risk implementation candidate. Release and supported
+risk facts expand applicable coverage; they do not select another automatic
+review system. Recommend `$audit-codebase`
 for an immutable repository-baseline audit, then stop. Return mutation requests
 to their caller without beginning review.
 
-`ordinary-reviewer` reviews directly and never delegates, invokes another
-review, or repairs. Formal delivery requires caller-supplied implementation IDs
-and any integration IDs the caller has, plus a fresh reviewer actor and task
-distinct from every supplied ID and launched with the `ordinary-reviewer`
-binding. A missing or mismatched formal-delivery binding returns
+Change Review reviews directly and never delegates, invokes another review, or
+repairs. Formal delivery requires caller-supplied implementation IDs and any
+integration IDs the caller has, plus a fresh reviewer actor and task distinct
+from every supplied ID. Use `ordinary-reviewer` for one-item delivery and
+`integration-reviewer` for a Parallel Implement final candidate. A missing or
+mismatched formal-delivery binding returns
 `transport-invalid` before candidate judgment. Standalone review records its current runtime
 provenance but needs no binding or separation proof.
 
@@ -63,7 +63,9 @@ remediation packet and coverage boundary.
 
 Trace the user request, Charter, Source Trace, repository instructions, domain
 decisions, captured candidate, tests, required proof, skips, and risk. Narration
-is a source pointer, not proof.
+is a source pointer, not proof. Supported risk adds the relevant failure,
+recovery, security, migration, concurrency, data, or operational scenarios to
+coverage; it does not add actors or ceremony by itself.
 
 Trace Spec in this precedence:
 
@@ -90,8 +92,8 @@ change -> governing commitment -> actual behavior path
 
 Trace the real entry, caller, output or effect, and applicable failure or
 recovery path. Reuse proof tied to the exact snapshot; run only missing,
-invalidated, or repository-required safe checks. Mark an inapplicable class
-`N/A` with a reason. Cover distinct semantic branches and supported risk
+invalidated, or repository-required safe checks. Omit inapplicable classes
+instead of adding `N/A` bookkeeping. Cover distinct semantic branches and supported risk
 interactions, not a blind Cartesian product. Close each row as `inspected`,
 `proved`, `skipped-nonmaterial`, or `blocked`; any material skip or block makes
 coverage `incomplete`.
@@ -143,7 +145,7 @@ Return one packet:
 ```text
 Invocation: formal-delivery | standalone
 Review mode: initial | remediation
-Semantic agent: ordinary-reviewer
+Semantic agent: ordinary-reviewer | integration-reviewer | standalone
 Reviewer actor ID:
 Reviewer task ID:
 Runtime binding: agent type <value or standalone>; requested <model and reasoning or standalone>; observed <values or unavailable>

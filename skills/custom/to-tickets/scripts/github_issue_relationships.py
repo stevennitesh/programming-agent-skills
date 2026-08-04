@@ -1,19 +1,16 @@
 """Mutate and verify GitHub issue relationships through ``gh api``.
 
 The helper keeps GitHub's database IDs behind a small issue-number interface
-and returns deterministic, bidirectional relationship snapshots for recovery.
+and returns deterministic, bidirectional relationship read-back for recovery.
 """
 
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import subprocess
 import sys
 from collections.abc import Sequence
-from datetime import UTC, datetime
-from pathlib import Path
 from typing import Any, Protocol
 
 
@@ -155,49 +152,6 @@ def _normalize_many(payload: Any) -> list[dict[str, object]]:
     )
 
 
-def _normalize_issue_packet(payload: Any) -> dict[str, object]:
-    issue = _normalize_issue(payload)
-    if not isinstance(payload, dict):
-        raise GitHubApiError("GitHub issue response must be an object")
-    for field in ("title", "body", "labels", "assignees"):
-        if field not in payload:
-            raise GitHubApiError(f"GitHub issue response is missing: {field}")
-    labels = payload["labels"]
-    assignees = payload["assignees"]
-    if not isinstance(labels, list) or not all(isinstance(row, dict) for row in labels):
-        raise GitHubApiError("GitHub issue labels must be objects")
-    if not isinstance(assignees, list) or not all(
-        isinstance(row, dict) for row in assignees
-    ):
-        raise GitHubApiError("GitHub issue assignees must be objects")
-    return {
-        **issue,
-        "title": str(payload["title"]),
-        "body": str(payload["body"] or ""),
-        "labels": sorted(str(row.get("name") or "") for row in labels),
-        "assignees": sorted(str(row.get("login") or "") for row in assignees),
-    }
-
-
-def _normalize_comments(payload: Any) -> list[dict[str, object]]:
-    if not isinstance(payload, list):
-        raise GitHubApiError("GitHub comments response must be a list")
-    result = []
-    for row in payload:
-        if not isinstance(row, dict) or "id" not in row or "body" not in row:
-            raise GitHubApiError("GitHub comment response is incomplete")
-        result.append(
-            {
-                "id": int(row["id"]),
-                "body": str(row["body"] or ""),
-                "author": str((row.get("user") or {}).get("login") or ""),
-                "created_at": row.get("created_at"),
-                "updated_at": row.get("updated_at"),
-            }
-        )
-    return result
-
-
 def _contains(
     issues: Sequence[dict[str, object]],
     issue_number: int,
@@ -247,145 +201,6 @@ def inspect_issue(
                 paginate=True,
             )
         ),
-    }
-
-
-def snapshot_campaign(
-    client: GitHubApi,
-    repository: str,
-    parent_number: int,
-    output: Path,
-) -> dict[str, object]:
-    """Write one complete immutable parent-graph snapshot and return its receipt."""
-
-    repository = _repository(repository)
-    parent_number = _positive_issue_number(parent_number)
-    parent_endpoint = _issue_endpoint(repository, parent_number)
-    raw_children = client.request("GET", f"{parent_endpoint}/sub_issues", paginate=True)
-    if not isinstance(raw_children, list) or not raw_children:
-        raise GitHubApiError("campaign parent must have at least one sub-issue")
-    children = [_normalize_issue(row) for row in raw_children]
-    child_numbers = [int(row["number"]) for row in children]
-    if len(child_numbers) != len(set(child_numbers)):
-        raise GitHubApiError("campaign sub-issues must be unique")
-    child_set = set(child_numbers)
-    child_packets = {
-        int(row["number"]): row for row in raw_children if isinstance(row, dict)
-    }
-    nodes: list[dict[str, object]] = []
-    for number in [parent_number, *child_numbers]:
-        endpoint = _issue_endpoint(repository, number)
-        payload = (
-            client.request("GET", endpoint)
-            if number == parent_number
-            else child_packets[number]
-        )
-        packet = _normalize_issue_packet(payload)
-        packet["comments"] = _normalize_comments(
-            client.request("GET", f"{endpoint}/comments", paginate=True)
-        )
-        nodes.append(packet)
-
-    blocked_by_edges: set[tuple[int, int]] = set()
-    for child_number in child_numbers:
-        endpoint = _issue_endpoint(repository, child_number)
-        parent_payload = client.request("GET", f"{endpoint}/parent", allow_not_found=True)
-        parent = _normalize_issue(parent_payload) if parent_payload is not None else None
-        if not isinstance(parent, dict) or int(parent["number"]) != parent_number:
-            raise RelationshipVerificationError(
-                {
-                    "operation": "snapshot",
-                    "status": "mismatch",
-                    "verified": False,
-                    "error": f"issue #{child_number} does not read back parent #{parent_number}",
-                }
-            )
-        blockers = _normalize_many(
-            client.request(
-                "GET",
-                f"{endpoint}/dependencies/blocked_by",
-                paginate=True,
-            )
-        )
-        for blocker in blockers:
-            blocker_number = int(blocker["number"])
-            if blocker_number not in child_set:
-                raise GitHubApiError(
-                    f"dependency #{blocker_number} -> #{child_number} leaves the campaign graph"
-                )
-            blocked_by_edges.add((blocker_number, child_number))
-
-    blocking_edges: set[tuple[int, int]] = set()
-    for blocker_number in child_numbers:
-        endpoint = _issue_endpoint(repository, blocker_number)
-        blocking = _normalize_many(
-            client.request(
-                "GET",
-                f"{endpoint}/dependencies/blocking",
-                paginate=True,
-            )
-        )
-        blocking_edges.update(
-            (blocker_number, int(dependent["number"]))
-            for dependent in blocking
-            if int(dependent["number"]) in child_set
-        )
-    if blocked_by_edges != blocking_edges:
-        raise RelationshipVerificationError(
-            {
-                "operation": "snapshot",
-                "status": "mismatch",
-                "verified": False,
-                "error": "dependency directions differ",
-                "blocked_by_only": sorted(blocked_by_edges - blocking_edges),
-                "blocking_only": sorted(blocking_edges - blocked_by_edges),
-            }
-        )
-    parent_children = [
-        int(row["number"])
-        for row in client.request("GET", f"{parent_endpoint}/sub_issues", paginate=True)
-    ]
-    if parent_children != child_numbers:
-        raise RelationshipVerificationError(
-            {
-                "operation": "snapshot",
-                "status": "mismatch",
-                "verified": False,
-                "error": "parent sub-issue read-back differs from the ordered campaign graph",
-            }
-        )
-
-    artifact = {
-        "schema": 1,
-        "tracker": "github",
-        "repository": repository,
-        "observed_at": datetime.now(UTC).isoformat(),
-        "parent": parent_number,
-        "children": child_numbers,
-        "nodes": nodes,
-        "edges": [
-            {"blocker": blocker, "dependent": dependent}
-            for blocker, dependent in sorted(blocked_by_edges)
-        ],
-    }
-    encoded = (json.dumps(artifact, indent=2, sort_keys=True) + "\n").encode()
-    output = output.resolve()
-    output.parent.mkdir(parents=True, exist_ok=True)
-    if output.exists():
-        raise GitHubApiError("snapshot output already exists")
-    temporary = output.with_suffix(output.suffix + ".tmp")
-    temporary.write_bytes(encoded)
-    temporary.replace(output)
-    return {
-        "schema": 1,
-        "operation": "snapshot",
-        "status": "complete",
-        "verified": True,
-        "path": str(output),
-        "sha256": hashlib.sha256(encoded).hexdigest(),
-        "repository": repository,
-        "parent": parent_number,
-        "children": child_numbers,
     }
 
 
@@ -573,11 +388,6 @@ def _parser() -> argparse.ArgumentParser:
     inspect_parser.add_argument("--repo", required=True)
     inspect_parser.add_argument("--issue", type=int, required=True)
 
-    snapshot_parser = subparsers.add_parser("snapshot")
-    snapshot_parser.add_argument("--repo", required=True)
-    snapshot_parser.add_argument("--parent", type=int, required=True)
-    snapshot_parser.add_argument("--out", type=Path, required=True)
-
     child_parser = subparsers.add_parser("attach-child")
     child_parser.add_argument("--repo", required=True)
     child_parser.add_argument("--parent", type=int, required=True)
@@ -602,8 +412,6 @@ def main(
     try:
         if args.operation == "inspect":
             result = inspect_issue(api, args.repo, args.issue)
-        elif args.operation == "snapshot":
-            result = snapshot_campaign(api, args.repo, args.parent, args.out)
         elif args.operation == "attach-child":
             result = attach_child(api, args.repo, args.parent, args.child)
         else:

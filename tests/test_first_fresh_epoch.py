@@ -222,68 +222,38 @@ def test_first_epoch_revision_preserves_r2_and_derives_r3_blueprints() -> None:
     } == {"change-review", "high-assurance-review"}
 
 
-def test_current_invocation_and_relationship_topology_preserve_first_epoch() -> None:
+def test_current_topology_records_the_adr_0013_exception_to_the_frozen_epoch() -> None:
     contract = pack_contract.parse_contract(
         (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
     )
-    skill_by_id = {
-        skill["skill_id"]: skill for skill in contract["selected_skills"]
+    skill_by_name = {
+        skill["canonical_name"]: skill for skill in contract["selected_skills"]
     }
-    id_by_name = {
-        skill["canonical_name"]: skill["skill_id"]
-        for skill in contract["selected_skills"]
-    }
-    for name, skill_id in id_by_name.items():
-        metadata = yaml.safe_load(
-            (
-                ROOT / "skills/custom" / name / "agents/openai.yaml"
-            ).read_text(encoding="utf-8")
-        )
-        implicit = bool(
-            metadata.get("policy", {}).get("allow_implicit_invocation")
-        )
-        assert skill_by_id[skill_id]["invocation_mode"] == (
-            "implicit" if implicit else "explicit-only"
-        )
+    assert contract["epoch_header"]["status"] == "frozen"
+    assert contract["epoch_header"]["contract_revision"] == 3
+    assert skill_by_name["high-assurance-review"]["invocation_mode"] == "implicit"
 
-    relationship_text = (
+    metadata = yaml.safe_load(
+        (
+            ROOT
+            / "skills/custom/high-assurance-review/agents/openai.yaml"
+        ).read_text(encoding="utf-8")
+    )
+    assert metadata["policy"]["allow_implicit_invocation"] is False
+
+    adr = (
+        ROOT
+        / "docs/adr/0013-automatic-implementation-review-uses-one-change-review-path.md"
+    ).read_text(encoding="utf-8")
+    assert "**Status**: accepted" in adr
+    assert "High-Assurance Review is explicit-only" in adr
+
+    relationships = (
         ROOT / "docs/synthesis/skill-context-relationships.md"
     ).read_text(encoding="utf-8")
-    runtime_table = relationship_text.split("## Runtime Composition", 1)[1]
-    runtime_table = runtime_table.split("The accepted future", 1)[0]
-    expected_runtime: set[tuple[str, str, str]] = set()
-    pattern = re.compile(
-        r"^\| `([^`]+)` \| ([^|]+?) \| `\$([^`]+)` \| (.+) \|$"
-    )
-    for line in runtime_table.splitlines():
-        match = pattern.match(line)
-        if match is None:
-            continue
-        caller = match.group(1).replace(" finding contract", "")
-        expected_runtime.add(
-            (
-                caller,
-                match.group(2).strip().replace("`", ""),
-                match.group(3),
-            )
-        )
-    actual_runtime = {
-        (
-            skill_by_id[row["caller_skill_id"]]["canonical_name"],
-            row["verb"],
-            skill_by_id[row["target_skill_id"]]["canonical_name"],
-        )
-        for row in contract["relationships"]
-        if row["caller_skill_id"] != id_by_name["skill-router"]
-    }
-    router_rows = [
-        row
-        for row in contract["relationships"]
-        if row["caller_skill_id"] == id_by_name["skill-router"]
-    ]
-
-    assert actual_runtime == expected_runtime
-    assert {row["target_skill_id"] for row in router_rows} == (
-        set(skill_by_id) - {id_by_name["skill-router"]}
-    )
-    assert {row["verb"] for row in router_rows} == {"Recommend and stop"}
+    assert "| `implement` | Invoke | `$change-review` |" in relationships
+    assert "| `parallel-implement` | Invoke | `$change-review` |" in relationships
+    assert "| `implement` | Invoke | `$high-assurance-review` |" not in relationships
+    assert "| `parallel-implement` | Invoke | `$high-assurance-review` |" not in relationships
+    assert "| `wayfinder` | Recommend and stop | `$implement` |" in relationships
+    assert "| `to-spec` | Recommend and stop | `$implement` |" in relationships

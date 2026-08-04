@@ -1,6 +1,6 @@
 ---
 name: to-tickets
-description: Explicitly create or repair a verified dependency-ordered implementation ticket graph with an actionable frontier from one settled bounded source; exclude unsettled intake or product design, triage, implementation, and delivery.
+description: Explicitly create or repair a verified dependency-ordered implementation ticket graph when one settled source has several valuable delivery slices or durable coordination needs; route one bounded implementation directly to Implement.
 ---
 
 # To Tickets
@@ -38,6 +38,10 @@ identity, access, authority, commitment, acceptance, dependency meaning,
 supported state, or another source-owned fact is missing, ambiguous, or
 contradictory, return `source-gap` with the affected fields and owner and leave
 tracker state unchanged.
+
+If the settled source is already one bounded implementation with one useful
+proof path and no durable coordination need, return `direct-item` with a compact
+Implement handoff and recommend `$implement`. Create no graph or tracker state.
 
 The user and settled source retain outcome, commitments, acceptance, scope,
 exclusions, supported states, public and data contracts, security and privacy
@@ -81,15 +85,16 @@ applicable Proof Seam to its concrete proof lane and canonical test owner; do
 not create or move a Seam, or turn a ticket boundary into architecture. A
 missing consequential design decision returns `source-gap`.
 
-Build a bidirectional commitment ledger. Account exactly once for every in-scope
+Account exactly once for every in-scope
 requirement, exclusion, deferral, dependency, risk, and proof obligation. Map
 each proof obligation to one canonical responsibility: its existing test surface
 or proof lane, one owning ticket or graph-level fence, and every dependent
 consumer. Shared proof may serve several tickets, but shared test mutation needs
 one owner or explicit serialization. The result must contain one or more
 implementation tickets; omitted, duplicated, contradictory, or ownerless
-commitments block publication. Keep this mapping inside the commitment ledger
-and ticket packets; create no second planning artifact. Distinguish a non-goal,
+commitments block publication. Keep the mapping in the ticket packets; add a
+compact cross-ticket coverage table only when shared commitments or proof make
+ticket-local mapping ambiguous. Create no second planning artifact. Distinguish a non-goal,
 which is outside delivery scope, from prohibited behavior, which requires an
 acceptance or proof obligation. Map every source-visible Change Closure
 obligation, including displaced paths and intentionally retained compatibility,
@@ -103,14 +108,15 @@ microtasks; split only where separate proof, authority, rollback, dependency
 unlock, permission, state, migration, or ownership makes separate completion
 valuable.
 
-Give each ticket a compact execution packet:
+Give each ticket the smallest execution packet that lets a fresh implementer
+act correctly:
 
 - **Intent:** one bounded outcome, Source Trace, operational and observable
   acceptance, Commitment Boundary, and explicit non-goals.
 - **Grounding:** current behavior owner, representative callers and entry
   paths, Repository Reuse, repository constraints, and source-owned
   prototype, research, domain, ADR, migration, or compatibility facts.
-- **Correctness:** applicable Invariants, Trust Boundaries, supported states,
+- **Correctness, when material:** applicable Invariants, Trust Boundaries, supported states,
   edge and error cases, failure and recovery behavior, compatibility and
   environmental constraints, observability or measured-claim obligations,
   and prohibited behavior with negative proof.
@@ -120,8 +126,8 @@ Give each ticket a compact execution packet:
   evidence. State whether the ticket should reuse, extend, or add proof;
   adding a test requires a distinct responsibility.
 - **Delivery:** dependency state, true blockers or `none`, stable tracker
-  order, executor role, and a parallel-safety judgment.
-- **Closure:** displaced surfaces and each retained compatibility path's owner,
+  order, executor role, and known overlap or serial tripwires.
+- **Closure, when material:** displaced surfaces and each retained compatibility path's owner,
   reason, proof, and Removal Trigger.
 
 Before readiness, test every acceptance term governing a calculation,
@@ -134,13 +140,13 @@ prefer sharp owner and evidence pointers to repeated source prose, and aim for
 at most about 5,500 characters as a soft target. Exceed it only when required
 authority, state, edge, proof, migration, or recovery detail cannot remain
 implementation-ready when shorter.
-For a genuinely simple or stateless ticket, mark an inapplicable detail
-`not applicable — <reason>` instead of padding. Never use it for identity,
-acceptance, scope, proof lane, dependency state, executor, or ownership.
+Omit inapplicable optional sections. Do not add `N/A` padding. Identity,
+acceptance, scope, proof lane, dependency state, executor, and ownership always
+remain explicit.
 
-Record a finite nonnegative Repair generation budget on every ticket. Preserve
-an explicit source or caller value; otherwise default exactly to `2`. Never
-infer a higher budget from ticket size or risk.
+Record one finite nonnegative graph-level Repair generation budget. Preserve an
+explicit source or caller value; otherwise default exactly to `2`. Repeat it in
+a ticket only when that ticket overrides the graph value.
 
 Separate packet readiness from frontier eligibility. Ready-for-agent means the
 agent execution packet is verified; unresolved blockers or claims keep it out
@@ -154,11 +160,11 @@ defer an unsettled source or design decision; return `source-gap` instead.
 A ticket missing the facts required for its mapped readiness remains non-ready;
 correct locally or return `source-gap` when source authority is missing.
 
-For each stateful ticket, record the distinct supported absent or initial,
+For a stateful ticket whose behavior materially changes by state, record the distinct supported absent or initial,
 reusable, legacy or incompatible, public access-path, variant, lifecycle, and
-high-risk branches in an applicable state-boundary matrix, without Cartesian
-padding. For stateless work, record `not applicable` and why. If supported state
-is unsettled, return `source-gap`.
+high-risk branches needed for implementation and proof. Use a matrix only when
+it is clearer than prose; never add Cartesian or stateless padding. If material
+supported state is unsettled, return `source-gap`.
 
 Freeze a complete acyclic dependency graph with explicit blockers and stable
 tracker order. Dependency order is topological: blockers precede dependents and
@@ -170,12 +176,11 @@ blockers. Correct cycles, orphans, false or hidden blockers, contradictory
 order, and empty or false frontiers before publication, or return `source-gap`
 when correction needs source authority.
 
-Give every ticket an execution profile covering semantic ownership, expected
-production writes, proof seams, canonical test mutations and scarce proof
-resources, overlap, serial tripwires, inspectability, and evidenced independence
-or serialization. Dependency edges and tracker order remain graph facts. Treat
-uncertain independence conservatively as serial; never infer it from filenames
-alone.
+Record only the static execution facts implementation needs: semantic owner,
+expected writes, proof owner, blockers, and known overlap or serial tripwires.
+`$parallel-implement` decides live concurrency from the current graph and
+checkout state. Treat uncertain independence conservatively as serial; never
+infer it from filenames alone.
 
 For protected data, permissions, trust boundaries, irreversible state,
 migrations, or cutovers, put one production-path tracer before dependent work
@@ -186,10 +191,10 @@ parallelize or defer unresolved high-risk proof.
 
 ## Publish
 
-Freeze the exact source identity, commitment ledger, ticket titles and bodies,
+Freeze the exact source identity, ticket titles and bodies,
 symbolic child identities, roles, expected relationships, dependency order,
-predicted frontier, execution profiles, proof-responsibility map, state
-matrices, and publication operation templates before durable mutation. Bind
+predicted frontier, applicable cross-ticket proof ownership, and publication
+operation templates before durable mutation. Bind
 each returned tracker identity to its symbolic child through immediate
 read-back before any dependent mutation. Verify that the invocation or an
 explicit follow-up authorizes that exact configured tracker transition. A
@@ -240,12 +245,13 @@ implementation skill.
 
 Recommend `$parallel-implement` only when the user explicitly requested a
 top-level parent-delivery run and the verified graph is parent-backed,
-non-empty, exhaustive, entirely Ready-for-agent, and has a non-empty agent
-frontier. A direct graph, mixed human/agent graph, delegated request, generic
+exhaustive, entirely Ready-for-agent, has a non-empty agent frontier, and
+contains at least two substantial tickets that may be independent enough for
+concurrency or whose coordinated delivery is otherwise worthwhile. A direct graph, mixed human/agent graph, delegated request, generic
 preference for concurrency, incomplete graph, or missing explicit delivery
 request uses the single-frontier route above instead.
 
-Return exactly one of `setup-precondition`, `source-gap`,
+Return exactly one of `direct-item`, `setup-precondition`, `source-gap`,
 `existing-state-conflict`, `publication-recovery`, or `ready-graph`. An
 `existing-state-conflict` covers an existing claim or divergence and missing or
 unclear authority for the frozen tracker transition; source-owned ambiguity
@@ -254,10 +260,12 @@ remains `source-gap`. A
 ticket pointers, dependency edges, agent and human frontiers,
 compact cross-ticket proof-owner and serialization summaries, publication or
 reuse read-back, residual gaps, and exactly one unstarted next recommendation.
-Ticket bodies remain authoritative for execution profiles and state matrices;
+Ticket bodies remain authoritative for static execution facts and applicable
+state coverage;
 successors refetch their pointers instead of receiving repeated packet prose.
-Complete only when setup and source authority resolve; every commitment maps;
-every ticket, proof responsibility, matrix, profile, edge, order, frontier, and
+Complete only when the selected branch's setup and source authority resolve;
+every commitment maps; every ticket, proof responsibility, applicable state
+coverage, edge, order, frontier, and
 authorized transition verifies; no duplicate or false-ready item remains;
 unrelated state is preserved; one typed Return is supported by observed state;
 and no successor starts.

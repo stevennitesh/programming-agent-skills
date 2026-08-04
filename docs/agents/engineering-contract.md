@@ -29,6 +29,9 @@ contract.
 
 - **Bounded slice:** the smallest useful scope that preserves commitments and
   is capable of producing meaningful evidence.
+- **Integrated shape:** the implementation path with the lowest total caller,
+  maintainer, migration, operational, coordination, and proof burden that works
+  through the real behavior owner and callers.
 - **Commitment boundary:** product intent, accepted behavior, public and data
   contracts, security and privacy posture, compatibility promises, and agreed
   scope. Technique remains agent-owned until it changes a commitment.
@@ -73,7 +76,12 @@ Do not add machinery for risks the system cannot reach.
 Treat crossings between differently trusted callers, services, files,
 processes, users, and privilege levels according to their actual contracts.
 
-Validate untrusted or contract-sensitive input at the boundary that owns it.
+Validate untrusted or contract-sensitive input at the boundary that owns it
+when a machine consumes it to affect behavior, state, authority, or mutation.
+Convert accepted input once into a validated typed internal representation;
+trusted internal code relies on that representation until another trust
+boundary is crossed. Unstructured output remains evidence unless a consumer
+parses or acts on it.
 Preserve data meaning, identity, integrity, provenance, schema, units, ordering,
 and lifecycle where applicable. Protect authentication, authorization, secrets,
 confidentiality, privacy, encoding, and external effects in proportion to the
@@ -112,6 +120,11 @@ boundary.
 Remove pass-through layers and ceremonial abstractions that do not reduce
 caller burden.
 
+Prefer deepening or modifying the current behavior owner before adding another
+path. Retain parallel behavior only for an explicit compatibility, migration,
+trust, lifecycle, or ownership boundary with named callers, proof, owner,
+reason, selection or cutover behavior, and Removal Trigger.
+
 ### Local Readability — Prefer
 
 Make important behavior understandable where it is owned and used. Let names,
@@ -122,11 +135,24 @@ can already see.
 ### Fit Before Novelty — Prefer
 
 Start with repository conventions, owned abstractions, standard or native
-facilities, platform capabilities, and established dependencies.
+facilities, platform capabilities, and established dependencies. Novelty is
+neither a goal nor a defect, and the current owner is a default rather than an
+immutable constraint.
 
 Add a new abstraction, dependency, framework, or mechanism only when its
 demonstrated value exceeds its learning, integration, maintenance, and failure
-costs.
+costs. Select the integrated shape with the lowest total burden. Replace or
+relocate ownership only when direct evidence shows ownership is the material
+problem and one bounded migration can close the displaced path.
+
+### Converge Efficiently — Prefer
+
+Use the least context, coordination, artifacts, mutations, and validation that
+can support the claim. Prefer direct data flow, existing primitives,
+appropriate data structures, focused proof, and reuse of valid evidence.
+Remove avoidable work, allocation, I/O, and repeated computation when the cost
+is evident. Add caching, batching, concurrency, or optimization machinery only
+for measured or clearly material cost.
 
 ### Build Only What Is Needed — Prefer
 
@@ -167,9 +193,21 @@ product.
 ### Use A Negative Control — Method
 
 When adding or changing a validator, hook, policy check, dependency boundary,
-or other enforcement mechanism, show that the rule is causal: a conforming case
-passes, one controlled violation fails for the intended reason, and the
-restored conforming case passes.
+or other enforcement mechanism, show that the rule is causal. A pure stateless
+validator needs one representative conforming input.
+A controlled violation fails for the intended reason.
+Repeat the conforming case after
+failure only when state, caching, hooks, partial mutation, or lifecycle
+contamination could affect later behavior.
+
+### Prove Durable Artifacts Proportionally — Method
+
+When a change creates or changes a durable artifact contract, prove only the
+properties its consumer and the claim require: schema or format for machine
+consumption, identity and destination for persistence or routing, read-back
+after external or durable mutation, and caller- or consumer-level behavior when
+integration or publication is claimed. Serialization or structural validity
+alone does not prove semantic correctness or consumption.
 
 ### Close Displaced Paths — Method
 

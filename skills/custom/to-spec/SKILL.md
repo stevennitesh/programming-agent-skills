@@ -1,14 +1,14 @@
 ---
 name: to-spec
-description: Explicitly turn one bounded settled-source packet into one verified durable parent specification; exclude ticket slicing and delivery.
+description: Explicitly turn settled source that benefits from a durable parent decision contract into one verified specification; return one bounded direct implementation to its caller without drafting.
 ---
 
 # To Spec
 
-Turn one bounded packet of settled source into one durable parent decision
-contract through the configured tracker. Preserve source-owned commitments,
-verify the publication, return a typed result, recommend `$to-tickets` only
-after verified success, and stop without delivering the work.
+Turn settled source into a durable parent decision contract only when that
+artifact is useful for several slices, durable coordination, or a lasting
+decision boundary. Preserve source-owned commitments, verify any publication,
+return one typed result, and stop without delivering the work.
 
 The user and settled source own outcome, commitments, acceptance, scope,
 exclusions, public and data contracts, security and privacy posture, and agreed
@@ -44,6 +44,11 @@ the exact return owner, and exactly one gap kind: `user-decision`,
 `stakeholder-evidence`, or `multi-decision-fog`. Preserve the source identity
 and state the exact re-entry condition. Do not invoke or recommend a resolver.
 
+When the settled source already describes one bounded implementation with
+complete acceptance and authority and no useful durable parent contract, return
+`not-needed` with its exact source and `$implement` as the one unstarted next
+recommendation. Create no draft or tracker state.
+
 Verify implementation-adjacent source claims against their exact code, caller,
 test, configuration, or decision pointers. If a required current-state claim has
 no verifiable pointer, return `source-gap`; do not replace source shaping with
@@ -70,12 +75,13 @@ artifact and decision authority and create no separate design packet. A
 `decision-needed` or `evidence-gap` result, new public or ownership choice, or
 unsupported trade-off returns `source-gap`.
 
-Build a bidirectional commitment ledger. Account once for every requirement,
-exclusion, deferral, constraint, dependency, risk, and nonblocking open note,
-and trace every specification commitment back to source authority. Do not invent
-product choices, implementation results, or a ready child-ticket graph. When the
-source supersedes behavior, carry each displaced surface and retained
-compatibility path with its owner, reason, proof, and Removal Trigger.
+Cover every applicable requirement, exclusion, deferral, constraint,
+dependency, risk, and nonblocking open note and trace each specification
+commitment back to source authority. Use a detailed bidirectional crosswalk only
+for numerous, conflicting, or multi-source commitments. Do not invent product
+choices, implementation results, or a ready child-ticket graph. When the source
+supersedes behavior, carry each displaced surface and retained compatibility
+path with its owner, reason, proof, and Removal Trigger.
 
 ### 3. Draft and cover
 
@@ -101,9 +107,10 @@ When state matters, cover only the material initial, reusable,
 legacy-or-incompatible, access-path, variant, and lifecycle branches. Do not
 replace judgment with a Cartesian checklist.
 
-Write one ignored `.tmp/to-spec/<feature-slug>.md` draft only after the source
-and coverage gates pass. Read back its exact bytes and correct synthesis defects
-before durable publication. If the path is not safe and ignored, stop without
+Write one ignored `.tmp/to-spec/<feature-slug>.md` draft only when a new or
+updated durable publication is required and after the source and coverage gates
+pass. Exact reuse creates no draft. Read back draft bytes and correct synthesis
+defects before publication. If the path is not safe and ignored, stop without
 durable mutation.
 
 Carry a path, current owner, reuse candidate, or Proof Seam only when it is a
@@ -112,7 +119,7 @@ material Seam belongs in the spec when it affects caller contracts, cross-ticket
 ownership, compatibility or migration, or test strategy. Paths are evidence, not
 an implementation plan. Leave bounded repository grounding, ticket slices,
 expected writes, concrete proof lanes and test owners, dependency graph and
-ready frontier, execution profiles, parallel-safety decisions, implementation
+ready frontier, static execution facts, live concurrency decisions, implementation
 technique, and default Repair budgets to `$to-tickets` and delivery owners.
 
 ### 4. Publish, verify, and reconcile
@@ -131,16 +138,19 @@ draft identity, observed durable state, affected relationships, and the safest
 inspection or recovery action. Preserve the exact draft and never repeat a
 create whose result is unknown.
 
-After a verified create or exact reuse, remove the disposable draft and return
+After a verified create or exact reuse, remove any disposable draft and return
 `ready-spec` with the durable pointer, source identity, coverage result,
-publication-or-reuse proof, residual gaps, and `$to-tickets` as the one next
-recommendation. Do not invoke `$to-tickets`.
+publication-or-reuse proof, and residual gaps. Recommend `$to-tickets` only
+when several implementation slices or durable tracker coordination are useful;
+otherwise recommend `$implement`. Invoke neither.
 
 ## Completion
 
-Complete only when the setup, source, target-state, commitment, draft,
-publication-or-reuse, durable read-back, and cleanup-or-preservation gates all
-resolve; every applicable commitment is accounted for; unrelated state is
-preserved; and exactly one typed Return is supported by observed durable state.
+Complete through the selected branch: `not-needed` requires verified direct
+readiness and no mutation; `ready-spec` requires applicable setup, source,
+target-state, coverage, publication-or-reuse, durable read-back, and
+cleanup-or-preservation gates. Every applicable commitment is accounted for,
+unrelated state is preserved, and exactly one typed Return is supported by
+observed state.
 Stop before source research, conversational shaping, ticket slicing,
 implementation, review, installation, or Git delivery.

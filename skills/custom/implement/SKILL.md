@@ -1,174 +1,135 @@
 ---
 name: implement
-description: Deliver one explicitly selected bounded ready item through proof, review, Lock, applicable tracker closeout, and one commit.
+description: Deliver one explicitly selected bounded ready item through the smallest acceptance-complete change, focused proof, one fresh Change Review, applicable closeout, and commit; use one Luna implementer when top-level delegation is available.
 ---
 
 # Implement
 
-Deliver exactly one caller-selected ready item.
+Deliver exactly one caller-selected ready item. Prefer the smallest
+repository-native integrated solution that satisfies its real callers and
+proof obligations. Novelty and familiarity are neutral.
 
-Implement owns technique and repository delivery inside the Charter. The caller
-owns commitments, permissions, irreversible external effects, and residual-risk
-acceptance. Push requires separate authority.
+Implement owns technique and repository delivery inside the selected boundary.
+The caller owns commitments, permissions, irreversible external effects, and
+residual-risk acceptance. Push requires separate authority.
 
 ## Admit
 
-Load the repository's applicable setup, engineering, and domain owners. Load
-tracker and label owners only for tracker-backed work.
+Load the repository's setup, engineering, and domain owners. Load tracker and
+label owners only for tracker-backed work.
 
-Accept only a settled outcome with operational acceptance, Source Trace,
-commitment boundary, dependencies, scope authority, and proof lane. For
-tracker-backed work, also require configured readiness, expected write scope,
-parallel-safety judgment, and scope fence. For direct work, derive a missing
-scope fence from the caller's selection.
+Accept a settled outcome with operational acceptance, source, scope authority,
+dependencies, and a useful proof seam. For tracker-backed work, require the
+configured ready state and claim rules. For direct work, use the caller's
+selection as the scope fence. Return unsettled meaning to its owner, an
+exhaustive parent graph to the caller, missing setup to `$repo-bootstrap`, and
+an active conflict to `$resolving-merge-conflicts` before mutation.
 
-Keep the named item and all source-owned commitments unchanged. Do not
-substitute, split, widen, or make incomplete work ready.
+Keep the selected outcome and all source-owned commitments unchanged. Do not
+substitute, split, or widen the item.
 
-Reconcile the packet, repository, authority, fixed point, worktree, index,
-tracker state, and unrelated work. Stop on ambiguity, contradiction, unsafe
-overlap, missing authority, or incomplete readiness.
+Reconcile the repository, `HEAD`, index, worktree, tracker state, and unrelated
+work. Preserve foreign changes. Freeze a compact Charter containing the
+outcome, commitments, scope, exclusions, proof, fixed point, and one Repair
+budget; preserve an explicit value or default to `2`.
 
 Claim tracker-backed work and read the claim back. Direct work creates no
 tracker state.
 
-Freeze one Charter containing the accepted outcome, commitments, scope, writes,
-proof, exclusions, fixed point, and Repair budget. Use the source, caller, or
-repository budget; otherwise default to exactly `2`. Unless the caller
-restricts Repair before Freeze, the delivery request authorizes every admitted
-`automatic-in-scope` blocker that fits this budget.
+## Implement
 
-Return malformed or unsettled work to its source owner. Return an exhaustive
-parent graph or review-only request intact to the caller as `blocked` with
-`scope-mismatch`. Recommend `$repo-bootstrap` for missing setup and stop. Hand
-conflicts to `$resolving-merge-conflicts`. Recommend `$to-tickets` only when
-verified landed implementation invalidated the selected ticket's commitments
-or graph facts.
+At the top-level root, when fresh collaboration delegation is available, send
+one plain ticket-specific handoff to a fresh `clear-worker` from the
+[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md). Use
+the [Plain Worker Handoff](references/WORKER-HANDOFF.md) as guidance, not as a
+schema. Once the information is sent, start the worker; do not add a capsule
+validator, receipt protocol, ledger, or sealed brief. A delegated Implement
+worker implements directly and never delegates again.
 
-Every Return or handoff carries the exact source, state, scope, authorities,
-proof, and Return owner. Ticket invalidation also names the implementation
-identity, before-and-after evidence, invalidated fields, and affected ticket.
-Stop before mutation.
+The worker implements the smallest acceptance-complete path, proves the
+assigned behavior through the repository's canonical seam, performs Change
+Closure, commits its bounded change, and returns the commit plus concise proof
+and residual-risk evidence. The root treats that prose Return as evidence,
+then verifies the actual diff, scope, commit, and proof before accepting it.
+When delegation is unavailable or the caller explicitly requests direct work,
+the current owner follows the same implementation path directly.
 
-## Execute
+Use `$tdd` for settled red-testable behavior. For a bug whose expected behavior,
+cause, or trusted reproduction is uncertain, return `diagnosis-required` with
+the observed evidence rather than guessing.
 
-Apply the engineering contract's binding floors, preferences, and
-condition-triggered methods. Start from source grounding and refresh only
-stale, uncertain, or contradicted evidence.
+Choose the lowest-total-burden solution across callers, maintenance,
+migration, operation, coordination, and proof. Reuse the current owner when it
+fits. Add a boundary only when it has a named caller, observable proof,
+ownership, and a concrete reason to exist now. Validate machine-consumed
+actionable input once at its trust boundary; do not validate ordinary prose
+handoffs or Returns.
 
-When a separately admitted delegated route supplies a worker, load the
-[Plain Worker Handoff](references/WORKER-HANDOFF.md). Send fresh ticket-specific
-context and accept its evidence as provisional until the delivery owner verifies
-the diff, requested commit, and observed proof. This is ordinary task context, not a schema.
-The reference defines handoff meaning only; #69 owns activation
-and the current direct route remains available.
+Bind proof to the exact candidate and inputs. Run focused checks that prove the
+change, plus broader checks only when repository policy or shared impact makes
+them necessary. When safe execution is unavailable, use the strongest safe
+proxy and report what remains unproved.
 
-Implement the smallest acceptance-complete path. Prove every assigned behavior
-and supported state through its canonical seam. Reuse the canonical test owner.
-Perform Change Closure and remove authored scaffolding.
+## Review And Repair
 
-Use `$tdd` for settled red-testable behavior. For a bug, use `$tdd` only when its
-expected behavior, symptom, cause, and trusted red-capable reproduction are
-known. Otherwise return `diagnosis-required` with expected and actual behavior,
-evidence, environment, exact work state, authorities, and Return owner; stop.
+Pin the exact candidate while preserving the starting index and unrelated work.
+For staged review, stage only owned paths or hunks and never unstage foreign
+work. Stop if the candidate cannot be isolated.
 
-Bind proof to the exact candidate and inputs. Reuse unchanged proof. Rerun only
-invalidated or repository-required checks. When execution is unsafe or
-unavailable, use the strongest safe structural proxy and record the unrun
-behavior and residual risk.
+Launch exactly one fresh `ordinary-reviewer` using `$change-review`, with a
+runtime distinct from every implementation actor. Supply the Charter, source,
+fixed point, immutable candidate, implementation identities, proof, skips,
+risks, contradictory evidence, and `Spec required: yes`. Supported risk changes review coverage; it
+does not select another automatic review system. `$high-assurance-review` runs
+only when the user explicitly invokes it.
 
-## Review
+Accept only a complete Review Return bound to the candidate. Review grants no
+mutation. Automatically repair only when every blocker is Charter-preserving,
+in scope, and within the frozen budget. Send localized findings to the current
+implementer when safely resumable; otherwise use one fresh implementation
+worker. Prove the repaired candidate and launch a new fresh Change Review.
+Return decision-required, scope-changing, speculative, mixed, or over-budget
+findings to the caller intact.
 
-Stage one exact candidate while preserving the starting index and unrelated
-work. In shared work, stage exact paths or hunks and request staged-only review.
-Never unstage foreign work. Stop when the candidate cannot be isolated. Pin the
-proved tree as one immutable candidate generation.
-
-Apply `$change-review`'s
-[Finding Contract](../change-review/FINDING-CONTRACT.md) supported-risk
-predicate to the pinned candidate. Load the
-[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md). Give
-each generation one fresh read-only collaboration subagent using the exact
-semantic profile and runtime binding:
-`ordinary-reviewer` with `$change-review` for an ordinary candidate, or
-`assurance-coordinator` with `$high-assurance-review` for a release candidate or
-supported high-risk candidate. Record candidate-bound route evidence with its source,
-`ordinary | release | supported-high-risk` basis, and trigger when applicable.
-Use new review actor and task IDs distinct from all implementation actor and
-task IDs. Supply `Spec required: yes`, those implementation IDs, Charter,
-Source Trace, fixed point, candidate, proof, skips, risk, and contradictory
-evidence; withhold hypotheses, expected conclusions, partial findings, and
-terminal cues.
-
-Accept only a complete current Return bound to the generation and review
-semantic agent, actor, and task IDs, with no blocker or unaccepted residual
-risk. Require requested and observed-or-unavailable runtime binding provenance
-to match the Runtime Profiles. On `scope-mismatch`, reselect from the
-returned facts once in a new fresh task. Treat transport failure before candidate-bound judgment as
-`transport-invalid` and retry once in another fresh task; after a second failure
-or route mismatch, preserve the candidate and return `partial`.
-
-Review grants no mutation. The delivery owner validates the complete blocking
-set and automatically opens Repair only when every blocker is
-`automatic-in-scope`, Charter-preserving, and within the frozen budget. Return
-every other set intact with its exact gap.
-
-Prove each repaired generation, reselect its route from current facts, and
-review it under new actor and task IDs. Send `Invocation: formal-delivery`,
-`Review mode: remediation`, and the Finding Contract's remediation packet.
-Never resume a prior review.
+Treat a pre-judgment review transport failure as invalid and retry once with a
+fresh reviewer. Preserve the candidate and return `partial` after a second
+failure. Never self-certify.
 
 ## Lock And Return
 
-Use the configured tracker representation to encode this skill's claim,
-closeout, custody, and Mutation read-back rules.
+Lock the reviewed tree plus only applicable closeout. Any other delta requires
+new proof and review. Require the commit tree to equal the locked tree. Reuse
+valid proof and run only commit-boundary checks that policy or invalidation
+requires.
 
-- Add only mechanical Local Markdown closeout after review and before Lock.
-  Commit it with the selected work.
-- For GitHub or GitLab, retain the claim through Lock and commit. Apply the
-  configured closeout, refetch and prove every effect plus durable
-  non-dispatchability, release the claim, then refetch claim absence and the
-  affected frontier.
-- Create no tracker state for direct work.
+Create the delivery commit if the accepted candidate is not already exactly
+committed. Do not rewrite an exact accepted commit merely to satisfy a commit
+count. Retry a failed commit only after proving `HEAD` unchanged.
 
-Lock the reviewed tree plus applicable Local Markdown closeout. Send every other
-review-to-lock delta through formal review. Require the index and commit trees
-to equal the locked tree. Run only checks invalidated or required at the commit
-boundary.
+For hosted trackers, retain the claim through commit and configured closeout,
+read back non-dispatchability, then release the claim and verify the frontier.
+For Local Markdown, include required mechanical closeout in the reviewed and
+locked tree. Direct work has no tracker closeout.
 
-Create exactly one commit. Retry a failed commit only after proving `HEAD`
-unchanged; do not retry blindly.
-
-On an early Return before commit, release a claim only after pending mutations
-are determinate and no recovery duty remains. After a post-commit hosted
-closeout failure, preserve the commit, refetch state, avoid blind replay, and
-retain or transfer custody to a named recovery custodian until closeout and
-frontier proof finish.
-
-Push only with separate authority and verify the approved commit remotely.
+Apply the configured Mutation read-back rules to every tracker closeout.
 
 Return:
 
 ```text
 Outcome: complete | partial | blocked
 Commit identity and tree:
-Proof, skips, and formal-review provenance:
+Proof, skips, and Change Review provenance:
 Repair generations:
 Changed scope and Change Closure:
-Tracker closeout, claim, and frontier: <evidence> | not applicable
+Tracker closeout and frontier: <evidence> | not applicable
 Residual risk:
 Caller-owned next action: <action> | none
 ```
 
-Report but do not infer or start caller-owned next actions.
-
-Return `complete` only when acceptance, proof, review, Lock, commit identity,
-applicable tracker order, relationships, claim release, frontier, Change
-Closure, unrelated-state exclusion, and every authorized external read-back
-pass.
-
-Otherwise return `partial` or `blocked` with the failed gate, preserved state,
-evidence, custody, skipped checks, needed authority, and safest recovery.
+Return `complete` only when acceptance, focused proof, Change Review, Lock,
+commit identity, applicable tracker closeout, claim release, Change Closure,
+and unrelated-state exclusion pass. Otherwise preserve state and report the
+failed gate, evidence, custody, needed authority, and safest recovery.
 
 Stop before another item, parent closure, deployment, PR creation, merge, or
 unauthorized push.

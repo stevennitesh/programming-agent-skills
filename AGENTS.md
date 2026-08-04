@@ -1,6 +1,6 @@
 # Repository Instructions
 
-<!-- programming-agent-skills setup-schema: 1:9a6e33da0abc -->
+<!-- programming-agent-skills setup-schema: 1:a4c824e10f22 -->
 
 Explore imaginatively. Converge under proof. Simplify ruthlessly.
 
@@ -9,8 +9,9 @@ Explore imaginatively. Converge under proof. Simplify ruthlessly.
 - Create the repo environment if needed: `python -m venv .venv`
 - Activate `.venv` for your shell before running Python commands.
 - Install dev/test dependencies: `python -m pip install -r requirements-dev.txt`
-- Full pytest suite: `python -m pytest`
 - Focused pytest run: `python -m scripts.pytest_focused`
+- Full pytest suite when repository policy or broad shared impact requires it:
+  `python -m pytest`
 - Pytest config: `pyproject.toml`
 - Validate skill-pack integrity: `python -m scripts.validate_skills`
 - Preview managed install/update: `python -m scripts.install_skills --dry-run`

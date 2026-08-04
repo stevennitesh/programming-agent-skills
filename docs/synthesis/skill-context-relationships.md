@@ -49,6 +49,7 @@ flowchart TD
   Wayfinder --> Prototype["prototype"]
   Wayfinder --> Research["research"]
   Wayfinder -. "closed settled source" .-> ToSpec
+  Wayfinder -. "one settled bounded implementation" .-> Implement
   Wayfinder --> DomainModel
   Prototype -. "promotion or production proof" .-> Contract
 
@@ -56,7 +57,7 @@ flowchart TD
   ToSpec --> DomainRouter
   ToSpec --> Contract
   ToSpec --> CodeDesign
-  ToSpec --> TmpSpec[".tmp/to-spec/*.md<br/>draft until publication is verified"]
+  ToSpec -. "new or updated durable spec" .-> TmpSpec[".tmp/to-spec/*.md<br/>draft until publication is verified"]
   ToSpec --> Tracker
   ToSpec --> Labels
   ToSpec --> ToTickets["to-tickets"]
@@ -86,7 +87,6 @@ flowchart TD
   Implement --> Contract
   Implement --> Review["change-review"]
   Implement --> FindingContract["FINDING-CONTRACT.md<br/>admission + remediation interface"]
-  Implement -. "release / supported high risk" .-> CPR
   Implement --> Tracker
   Implement -. "unsettled work" .-> Shape
   Implement -. "unsliced source" .-> ToTickets
@@ -94,21 +94,17 @@ flowchart TD
   Parallel --> Contract
   Parallel --> Tracker
   Parallel --> DomainRouter
-  Parallel --> WorkerBrief["WORKER-BRIEF.md<br/>lane worker contract"]
-  Parallel --> Ledger["RUN-LEDGER.md / run_ledger.py<br/>canonical events + generated ledger"]
+  Parallel --> AgentLanes["AGENT-LANES.md<br/>worktree prepare + cleanup"]
   Parallel --> Review
   Parallel --> FindingContract
-  Parallel -. "release / supported high risk" .-> CPR["high-assurance-review"]
   Parallel -. "conflicted landing" .-> Conflict
-  WorkerBrief --> TDD
   Review --> Tracker
   Review --> Contract
   Review --> SpecSources["spec / acceptance / source material"]
   Review --> StandardsSources["repo standards / configs / test docs"]
   Review --> FindingContract
-  Review -. "release / supported high risk" .-> CPR
   Review -. "repository-baseline audit" .-> Audit
-  CPR --> Contract
+  CPR["high-assurance-review<br/>explicit user invocation"] --> Contract
   CPR --> SpecSources
   CPR --> StandardsSources
   CPR --> FindingContract
@@ -165,7 +161,7 @@ Source: `skills/custom/*/agents/openai.yaml`.
 | Skill | Invocation |
 | --- | --- |
 | `codebase-design` | implicitly invocable |
-| `high-assurance-review` | implicitly invocable |
+| `high-assurance-review` | explicit-only |
 | `diagnosing-bugs` | explicit-only |
 | `domain-modeling` | implicitly invocable |
 | `grilling` | implicitly invocable |
@@ -228,13 +224,15 @@ Return.
 | `wayfinder` | Invoke | `$grill-with-docs` | One HITL ticket or Chart bound needs a user decision while durable domain capture remains active; receive the intact Grilling packet and Domain Delta. |
 | `wayfinder` | Invoke | `$to-questionnaire` | One external Questionnaire prerequisite needs asynchronous attributable answers and the user approved the exact recipient, needed-back, sensitivity, effort, durable path, retention owner, answer-return destination, overwrite, no-send, origin, and return packet. The questionnaire path returns as Waiting. Without approval, no edge fires: Wayfinder returns `incomplete` with the packet and exact re-entry. |
 | `wayfinder` | Invoke | `$domain-modeling` | A settled closing decision changes durable language or warrants ADR assessment, and no current Domain Delta accounts for it; return the complete Domain Delta before Closure continues. |
+| `wayfinder` | Recommend and stop | `$implement` | The closed map produced one settled bounded implementation and no durable parent contract is useful. |
 | `wayfinder` | Recommend and stop | `$to-spec` | The closed map produced settled parent-spec source. |
 | `wayfinder` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `to-spec` | Load | `$codebase-design` | Apply shared vocabulary; when source authority delegates one consequential internal design, apply Direct Design before drafting and fold the supported result into the specification. To Spec retains artifact and completion; gaps return `source-gap`. |
+| `to-spec` | Recommend and stop | `$implement` | The settled source is one bounded complete implementation and a durable parent contract would add no useful coordination or lasting decision record. |
 | `to-spec` | Recommend and stop | `$to-tickets` | `ready-spec` verifies purpose, boundaries, limitations, settled decisions and owners, required outcomes, acceptance, and Source Trace; To Tickets owns bounded repository grounding, child slicing, and graph publication. |
 | `to-spec` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `to-tickets` | Recommend and stop | `$implement` | One ticket is ready, or overlap, a serial tripwire, uncertain independence, or uneconomic parallel dispatch requires the first ready ticket in tracker order. |
-| `to-tickets` | Recommend and stop | `$parallel-implement` | An explicitly requested top-level parent-delivery run has a non-empty exhaustive Ready-for-agent graph; Parallel Implement owns qualified serial or concurrent delivery. |
+| `to-tickets` | Recommend and stop | `$parallel-implement` | An explicitly requested top-level parent-delivery run has an exhaustive Ready-for-agent graph and at least two substantial potentially independent tickets or otherwise worthwhile coordination; Parallel Implement owns live concurrency decisions. |
 | `to-tickets` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `triage` | Recommend and stop | `$grilling` | One maintainer-owned conversation-only decision needs direct resolution; stop before mutation and resume the same item with the intact result. |
 | `triage` | Recommend and stop | `$grill-with-docs` | One maintainer-owned decision may change durable domain terms, Invariants, Context Relationships, or an ADR; stop before mutation and resume the same item with the intact result. |
@@ -242,21 +240,19 @@ Return.
 | `triage` | Recommend and stop | `$to-tickets` | Settled source requires several independently completable implementation slices; leave readiness unchanged and pass the intact source for user-selected graph creation. |
 | `triage` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `implement` | Invoke | `$tdd` | New behavior is settled and red-testable, or expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known. |
-| `implement` | Invoke | `$change-review` | The selected ordinary diff or PR, or bounded Repair generation, needs one fresh independent fixed-snapshot review; the decision returns to Implement. |
-| `implement` | Invoke | `$high-assurance-review` | The selected candidate is a release candidate or matches a supported high-risk trigger and needs one fresh independent assurance run; the decision returns to Implement. |
+| `implement` | Invoke | `$change-review` | Every accepted candidate or Repair generation gets one fresh `ordinary-reviewer`; supported risk changes coverage, and the decision returns to Implement. |
 | `implement` | Hand off | `$resolving-merge-conflicts` | Admission finds an existing conflict-only state rather than the selected ready item; supply the exact operation, goal, state, scope, authorities, proof expectation, and Return owner, then stop. |
 | `implement` | Recommend and stop | `$to-tickets` | A verified landed predecessor or post-publication implementation change invalidated the selected ticket's commitments or graph facts; return the implementation identity, before-and-after evidence, invalidated fields, and affected ticket. Ordinary malformed or unsettled source returns to its caller, source, or triage owner. |
 | `implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `parallel-implement` | Invoke | `$tdd` | A lane worker has red-testable new behavior, or a bug whose expected behavior, exact symptom, cause, and trusted red-capable reproduction are known. |
-| `parallel-implement` | Invoke | `$change-review` | The drained proved ordinary candidate or PR, or repaired successor, needs one fresh independent fixed-snapshot review; the decision returns to the root. |
-| `parallel-implement` | Invoke | `$high-assurance-review` | The drained proved candidate is a release candidate or matches a supported high-risk trigger and needs one fresh independent assurance run; the decision returns to the root. |
+| `parallel-implement` | Invoke | `$change-review` | Every drained proved integrated candidate or repaired successor gets one fresh `integration-reviewer`; supported risk changes coverage, and the decision returns to the root. |
 | `parallel-implement` | Invoke | `$resolving-merge-conflicts` | Serial landing enters preserved conflict or partial Git state; supply operation identity and goal, exact state, scope, both authorities, unrelated state, proof expectation, and root Return owner. Resume only from the resolver's fresh exact-state Return. |
 | `parallel-implement` | Recommend and stop | `$to-tickets` | Admission finds an actually incomplete or contradictory graph, or verified implementation invalidates remaining graph semantics; return one exhaustive evidence-backed repair packet. Ordinary blockers, regressions, conflicts, and review findings remain in Parallel Implement. |
 | `parallel-implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `prototype` | Recommend and stop | `$diagnosing-bugs` | Fit finds that an existing built system is broken, throwing, failing, or slow for an uncertain reason rather than posing one disposable design question; return the intact symptom evidence and leave Diagnosis unstarted. |
 | `diagnosing-bugs` | Recommend and stop | `$audit-codebase` | After an authorized fix is proved, post-mortem evidence shows that prevention needs repository mapping or unclassified architecture work, including a missing correct regression seam; return the exact concern and proof and leave Audit unstarted. |
 | `resolving-merge-conflicts` | Recommend and stop | `$diagnosing-bugs` | State finds no active conflict or unmerged entry and only post-operation behavior is broken for an uncertain reason; return exact Git state and symptom evidence and leave Diagnosis unstarted. |
-| `change-review` | Recommend and stop | `$audit-codebase` | The request targets an immutable repository baseline rather than an ordinary branch, WIP, staged, or since-X diff. |
+| `change-review` | Recommend and stop | `$audit-codebase` | The request targets an immutable repository baseline rather than a pending implementation candidate. |
 | `high-assurance-review` | Recommend and stop | `$audit-codebase` | The request targets a bounded repository correctness, domain-robustness, methodology, or performance baseline rather than a pending release diff. |
 | `audit-codebase` | Recommend and stop | `$domain-modeling` | One analyzed candidate has settled domain language, Invariants, Bounded Contexts, Context Relationships, or an ADR candidate requiring durable capture or assessment; Audit publishes an exact report-backed pickup and leaves Domain Modeling unstarted. |
 | `audit-codebase` | Recommend and stop | `$grill-with-docs` | One candidate decision belongs to the current user and also requires current domain language, Invariants, relationships, or ADR handling; Audit publishes the decision brief and exact Analyze re-entry, then leaves composition unstarted. |
@@ -299,7 +295,7 @@ every terminal result directly to its current caller or the user.
 | `research` | Claim-owning source legwork and one authorized cited note or verified inline evidence | `skill-router`, `grilling`, `wayfinder` |
 | `to-questionnaire` | One recipient-ready async discovery artifact for one external stakeholder and downstream decision | `skill-router`, `grilling`, `wayfinder`, humans collecting stakeholder evidence |
 | `resolving-merge-conflicts` | Read-only three-way inspection, authorized reconciliation, and the separate finish boundary | Git operations and implementation or integration work that enters a conflicted state |
-| `change-review` | Ordinary fixed-snapshot Standards/Spec review | `implement`, `parallel-implement`; returns release or supported-high-risk route mismatches to its caller |
+| `change-review` | Single automatic fixed-snapshot Standards/Spec review with risk-proportional coverage | `implement`, `parallel-implement` |
 | `audit-codebase` | Deterministic JSON-state HTML repository atlas plus current-source, user-selected subsystem Audit, candidate Analyze, and explicit one-candidate Close through a tracker frontier or authorized already-landed direct recovery; mandatory six-class coverage loads detailed owners on observable triggers, and implementation-ready Analyze prompts invoke `to-tickets` without starting implementation or making a release decision | `skill-router`, `change-review`, `high-assurance-review`, `diagnosing-bugs`, `simplify-code`, `$grill-with-docs` decision returns, and humans explicitly invoking repository audits |
 | `simplify-code` | One unstaged, behavior-preserving simplification patch, an explicit finite and bounded `until-clean` campaign, or a proved no-safe-cut verdict | `skill-router`, `audit-codebase`, humans invoking bounded cleanup |
 
@@ -320,7 +316,7 @@ every terminal result directly to its current caller or the user.
 | `change-review`, `high-assurance-review`, `implement`, `parallel-implement` | `change-review/FINDING-CONTRACT.md`: shared axes, review classes, supported-risk and finding admission, remediation classes, and remediation-review bound; `parallel-implement/references/RUNTIME-PROFILES.md`: semantic profiles and runtime bindings; `change-review/SMELL-BASELINE.md`: fallback Standards reference when repo standards are thin |
 | `implement`, `parallel-implement` | `implement/references/WORKER-HANDOFF.md`: shared plain handoff meaning and provisional evidence Return that Parallel Implement consumes without invoking Implement's delivery lifecycle |
 | `audit-codebase` | `DEFECT-CONTRACT.md`: defects and gaps; `QUALITY-LENS.md`: six-class coverage, routing, opportunity admission, and retained complexity; detailed lens owners: condition-triggered issue discovery; `CANDIDATE-CONTRACT.md`: current-source comparison and Close; `CANDIDATE-FOLLOWUP.md`: conditional decisions, evidence, tracker publication, and one next-owner suggestion; `REPORT-QUICK-REFERENCE.md`: sole CLI procedure; `HTML-REPORT.md` plus `scripts/update_report.py`: deterministic JSON-state atlas and atomic full rendering |
-| `parallel-implement` | `WORKER-BRIEF.md`: campaign pre-spawn assignment and Return compatibility adapter; `AGENT-LANES.md`: one-spawn subagent dispatch and checkout isolation; `assets/luna_max.toml`: canonical named-agent template; `lane_worktree.py`: isolated worktree lifecycle; `run_ledger.py` and `RUN-LEDGER.md`: frozen tracker binding, dispatch receipts, campaign events, validation, generated ledger, and closeout plan |
+| `parallel-implement` | `AGENT-LANES.md`: minimal checkout isolation and cleanup; `assets/luna_max.toml`: canonical named-agent template; `lane_worktree.py`: the one concurrent-lane prepare/preflight and safe-cleanup helper |
 
 ## Boundary Notes
 
@@ -355,13 +351,15 @@ every terminal result directly to its current caller or the user.
   order, proof-responsibility mapping, and graph readiness. Do not re-triage
   valid `$to-tickets` output.
 - `implement` owns one standalone selected item and its bounded Repair campaign; `parallel-implement` owns one explicitly requested parent-backed exhaustive Ready-for-agent graph through qualified serial or concurrent frontiers, bounded Repair generations, serial integration, and verified child-first then parent-last closeout.
-- The `parallel-implement` root is the sole dispatcher, mechanical landing
-  owner, and formal-review owner. Workers never fan out; `serial-integrator`
-  changes code only for routed cross-worker correction or Repair and returns a
-  Worker Brief packet.
-- `implement` and `parallel-implement` select exactly one formal-review route from candidate facts. `change-review` and `high-assurance-review` return route mismatches to their caller and never route to each other.
+- The `parallel-implement` root is the sole dispatcher, serial landing,
+  integration-judgment, and formal-review owner. Workers never fan out. There
+  is no warm general integrator or machine-validated worker capsule.
+- `implement` and `parallel-implement` automatically use exactly one fresh
+  `$change-review`; supported risk changes coverage. `$high-assurance-review`
+  runs only when the user explicitly invokes it and is never automatically
+  routed or recommended.
 - `change-review` and `high-assurance-review` return terminal read-only evidence. Their reports grant no mutation or successor-snapshot authority; the implementation caller's pre-recorded Charter and Repair Budget govern continuation.
-- `high-assurance-review` may run its own bounded read-only reviewer passes only when selected as the review route; it is not a second implementation orchestrator.
+- `high-assurance-review` may run its own bounded read-only reviewer passes only when explicitly invoked; it is not a second implementation orchestrator.
 - `audit-codebase` owns the exhaustive system/subsystem map and exactly one user-selected Audit, Analyze, or one-candidate Close objective per invocation over current-source identity. Close admits a tracker frontier or an explicitly authorized already-landed direct recovery and never fabricates a retrospective ticket. Audit accumulates verified items, retained complexity, candidate strength, decisions, implementation evidence, and history in one deterministic offline HTML report backed by canonical JSON state. It ranks candidates only inside an audited subsystem, ranks no subsystem, starts no implementation, and returns selection authority to the user.
 - `simplify-code` owns one standalone cleanup patch or an explicitly bounded serial `until-clean` campaign with a finite cut budget, strict net-reduction ledger, and terminal stop condition under before-and-after proof gates. It does not own feature work, bug diagnosis, public-contract decisions, wide improvement surveys, staging, commits, or tracker closeout.
 - `handoff` is an explicit transport leaf: it carries exact pointers across a shared work root, preserves the active owner, and never duplicates durable truth, routes new work, or resumes from stale state.

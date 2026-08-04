@@ -62,8 +62,7 @@ delivery through its complete ready graph to `$parallel-implement`.
 | Expected behavior, symptom, cause, reproduction, environment, or performance mechanism is uncertain | `$diagnosing-bugs` |
 | One bounded behavior and a useful red-capable proof seam are settled | `$tdd` |
 | An active merge, rebase, cherry-pick, or revert is conflicted, an index is unmerged, or plausible markers need inspection | `$resolving-merge-conflicts` |
-| An ordinary branch, WIP, staged, since-X diff, or ordinary PR needs read-only judgment | `$change-review` |
-| A release candidate or supported high-risk diff or PR needs a terminal release decision | `$high-assurance-review` |
+| A branch, WIP, staged, since-X diff, PR, release candidate, or supported-risk candidate needs read-only judgment | `$change-review` |
 | A repository needs a whole-system map, one selected subsystem audit, one selected audit-candidate analysis, or one selected analyzed-candidate closeout | `$audit-codebase` |
 | Existing behavior in one bounded region should be simplified under proof | `$simplify-code` |
 
@@ -72,8 +71,9 @@ judgment to `$audit-codebase`; one bounded behavior-preserving reduction to
 `$simplify-code`; and one module, interface, or seam decision to
 `$codebase-design`. Route a selected ready item to `$implement`, one standalone
 settled red-testable behavior to `$tdd`, uncertain broken behavior to
-`$diagnosing-bugs`, and an existing diff needing judgment to the applicable
-review.
+`$diagnosing-bugs`, and an existing diff needing judgment to `$change-review`.
+High Assurance Review is an explicit user-selected alternative, never an
+automatic route.
 
 **Conflict tie-breaker:** route an active unresolved operation or unmerged index
 to `$resolving-merge-conflicts`; an already-resolved candidate to review; and a

@@ -3,5 +3,5 @@ policy:
 
 interface:
   display_name: "Implement"
-  short_description: "Deliver one ready item exactly"
-  default_prompt: "Use $implement to deliver this one caller-selected ready item exactly."
+  short_description: "Deliver one ready item leanly"
+  default_prompt: "Use $implement to deliver this one caller-selected ready item through the smallest integrated change, focused proof, one Luna implementer when available, and one fresh Change Review."

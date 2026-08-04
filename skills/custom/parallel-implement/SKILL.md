@@ -1,223 +1,144 @@
 ---
 name: parallel-implement
-description: Deliver one explicitly requested parent through its exhaustive non-empty Ready-for-agent ticket graph using delegated workers, isolated concurrent lanes, serial integration, independent review, and child-first closeout. Root-only; exclude single-item delivery, graph shaping, generic parallel work, and delegated invocation.
+description: Deliver one explicitly requested parent through its exhaustive ready ticket graph using plain delegated workers, isolated concurrent lanes, serial root integration, one fresh Change Review, and child-first closeout. Root-only.
 ---
 
 # Parallel Implement
 
-**Admit -> Freeze -> Wave -> Land -> Review -> Lock**
+**Admit -> Wave -> Integrate -> Review -> Close**
 
-Deliver one parent-backed graph. Parallelism is optional; the reviewed, proved,
-and closed parent outcome is the result.
+Deliver one parent-backed graph. Parallelism is an optimization, not a goal.
+Use it only where independent work saves time without increasing total
+coordination or proof burden.
 
 ## Admit
 
 Pass only at the top-level root after an explicit request to deliver one parent
-and its exhaustive, non-empty Ready-for-agent graph. The parent bounds delivery;
-it is not direct implementation scope.
+and its exhaustive, non-empty Ready-for-agent graph. Return one standalone item
+to `$implement`, graph defects to `$to-tickets`, unsettled meaning to its owner,
+missing setup to `$repo-bootstrap`, and active conflicts to
+`$resolving-merge-conflicts` before mutation.
 
-The root alone freezes scope, qualifies concurrency, claims and dispatches
-tickets, accepts returns, lands commits, routes corrections and conflicts,
-selects formal review, applies caller Repair and residual-risk decisions,
-mutates the tracker, closes items, and declares completion. Workers neither
-widen nor dispatch the campaign. Publication and Git delivery remain with their
-separately authorized owners. The root never authors implementation, tests,
-integration corrections, or Review Repair.
+The root owns campaign scope, live concurrency decisions, claims, dispatch,
+acceptance, serial landing, integration judgment, formal review, Repair
+admission, tracker closeout, and completion. Workers own their assigned
+implementation and tests. Workers never widen scope or dispatch successors.
+The root does not author implementation or Repair code.
 
-Return before mutation:
-
-- delegated invocation -> routing blocker;
-- one standalone item -> `scope-mismatch`;
-- incomplete or contradictory graph -> one exhaustive `$to-tickets` repair
-  packet;
-- unsettled source meaning -> its source owner;
-- missing or incompatible setup -> recommend `$repo-bootstrap` and stop.
-
-Exclude graph shaping, generic parallel work, review-only work, and invocation
-based only on available concurrency. Apply the repository engineering, tracker,
-and domain contracts.
-
-## Freeze
-
-Freeze the parent outcome, exhaustive children and follow-ups, Charter, Source
-Trace, fixed point, acceptance, Commitment Boundary, non-goals, dependency
-edges, proof-responsibility map, review-selection policy, closeout rule, and
-any caller-supplied residual-risk policy with its identity and evidence. Freeze
-each ticket's To Tickets execution profile. Tickets remain factual and
-model-neutral; absent residual-risk policy means caller-only acceptance.
-
-Capture one complete tracker snapshot containing the parent, ordered children,
-full ticket bodies and comments, labels, assignees, native sub-issue read-back,
-and verified dependency edges. Bind its path and SHA-256 at ledger start. Use
-that snapshot for campaign meaning. If live tracker evidence exposes
-consequential drift, checkpoint the run; changed meaning, authority, or frontier
-starts a new run and snapshot.
-
-Require every profile to record grounding, semantic ownership, authority,
-dependencies, expected production writes, correctness and robustness,
-canonical proof owners and consumers, Change Closure, and any applicable
-state-boundary matrix. Missing or contradictory readiness, profile, authority,
-closure, matrix, or proof ownership is a graph defect; return the complete
-repair packet instead of reconstructing its owner's judgment.
-
-Freeze the supplied Repair budget; otherwise use the ledger default. Unless the
-caller restricts Repair before Freeze, the parent-delivery request authorizes
-every admitted `automatic-in-scope` blocker that fits this budget.
-
-Start one canonical stream through
-[RUN-LEDGER.md](references/RUN-LEDGER.md) and `scripts/run_ledger.py`.
-`events.jsonl` is authority; projections are derived and judgments are explicit.
-After interaction or resume, reconcile Git, worktrees, actors, tasks, claims,
-tracker, and derived state; include remote state only when separately authorized
-delivery depends on it. Missing state is not completed state.
+Freeze only the facts needed to run: parent outcome, ordered children,
+dependencies, acceptance, source, fixed point, ticket scopes and expected
+writes, proof owners, known overlap, closeout rule, and a graph-level Repair
+budget. Preserve an explicit budget or default to `2`. Refetch current tracker
+and Git state; consequential drift returns one factual repair or authority
+packet. Do not build a run ledger, receipt system, sealed brief, or duplicate
+tracker snapshot.
 
 ## Wave
 
-Repeat **Frontier -> Dispatch -> Drain** until the exhaustive graph is drained.
+Repeat until every child has an accepted landing or an exact blocker.
 
-**Frontier.** Derive the dependency-ready set from reconciled graph and ledger
-state. A proved same-campaign landing may satisfy campaign readiness as
-`landed-awaiting-lock` only while its landing and proof remain valid. It never
-closes the ticket; its claim remains through verified child closeout. Rollback,
-invalidation, or failed proof removes it and reblocks dependents.
+Derive the dependency-ready frontier from the verified graph and current landed
+state. For each frontier item, compare semantic ownership, expected production
+writes, proof owners, scarce resources, and known serial tripwires. Run items
+concurrently only when they are independently bounded and the expected time
+saving exceeds coordination and integration cost. Uncertain or overlapping
+items run serially. Protected data, permissions, trust boundaries, migrations,
+cutovers, and irreversible state start with one production-path tracer.
 
-Qualify concurrency from semantic ownership, production writes, proof seams,
-canonical test mutations, scarce proof resources, ordering, and serial
-tripwires. Dispatch only independently bounded, inspectable packets; downshift
-uncertain or overlapping work to serial. Protected data, permissions, trust
-boundaries, migrations, cutovers, and irreversible state require one
-production-path tracer first with retry, rollback, and partial-state proof.
+Choose the cheapest capable profile from
+[Runtime Profiles](references/RUNTIME-PROFILES.md):
 
-If nothing is executable, return the exact blockers without widening scope.
+- `clear-worker` for fully settled, repeatable work;
+- `adaptive-worker` for bounded work with material local choices;
+- `fast-adaptive-worker` only under an explicit latency preference;
+- `demanding-worker` for architectural or broadly coupled work.
 
-**Dispatch.** Choose the cheapest capable semantic agent ID from this ordered
-escalation. A matching later condition overrides every earlier one:
+Claim each selected ticket and read the claim back. Give the worker the ticket,
+source pointers, exact base, allowed writes, dependencies, acceptance, proof,
+and exclusions as plain task context. The implement-owned
+[Plain Worker Handoff](../implement/references/WORKER-HANDOFF.md) is guidance,
+not a schema. Start the worker once the information is sent. Do not validate or
+seal the prose packet and do not require a machine-shaped Return.
 
-- `clear-worker`: fully specified, repeatable work;
-- `adaptive-worker`: bounded work with material local choices;
-- `fast-adaptive-worker`: adaptive work under an explicit latency preference;
-- `demanding-worker`: architectural, broadly coupled, or materially ambiguous
-  work.
+Use [Agent Lanes](references/AGENT-LANES.md) for checkout handling. A serial
+writer may receive exclusive custody of the clean integration checkout. Every
+concurrent writer gets a distinct worktree prepared by the one lane helper;
+dispatch only when it returns `ok: true` after Git and quick-pytest preflight.
 
-Claim each selected ticket and read back the claim. Launch each worker through
-[AGENT-LANES.md](references/AGENT-LANES.md), which owns runtime binding,
-starting state, isolation, readiness, liveness, Return, and cleanup.
-Load the [implement-owned Plain Worker Handoff](../implement/references/WORKER-HANDOFF.md)
-as the shared context and evidence boundary. Consuming that disclosed reference
-does not invoke `$implement`; #71 owns replacing the current campaign brief and
-ledger dispatch path.
-Use `run_ledger.py dispatch` to prepare the lane, seal the final
-[WORKER-BRIEF.md](references/WORKER-BRIEF.md) assignment, and return the exact
-spawn arguments. Spawn once with that brief, then record the provider receipt.
+Each worker implements the smallest acceptance-complete solution, runs focused
+proof, commits its bounded work, and returns concise prose naming the commit,
+changed scope, proof, skips, and blockers. The root verifies the actual lane,
+base, commit, diff, scope, and proof. Prose is evidence, not trusted state.
+Retry only after an observed blocking condition changes; never duplicate an
+uncertain task.
 
-**Drain.** Accept only a task-lane-matched Return satisfying the Worker Brief.
-`blocker` and `needs-feedback` claim no completion. Retry only after the
-blocking condition changes. Route pre-landing correction through the current
-task lane.
+## Integrate
 
-## Land
+Land one accepted worker commit at a time onto the current integration branch.
+Before landing, verify its base, actual diff, scope, and overlap with changes
+landed since dispatch. After landing, read back `HEAD`, inspect the resulting
+diff, and run only proof invalidated by the transition or required by repository
+policy. Recompute the frontier after each landing.
 
-The root mechanically lands one accepted commit at a time. For an isolated
-lane, require a clean integration checkout at the recorded prior `HEAD` before
-landing. For a serial same-checkout lane, require clean current `HEAD` to equal
-the returned commit and descend from the recorded prior `HEAD`, then adopt it.
-Otherwise preserve state and reconcile. Inspect the actual `base..head` diff
-for scope, new files, stale-base overlap, conflicts, and proof; this is not
-formal review. After landing, read back integration `HEAD` and the actual diff,
-run only proof invalidated or required by the transition, record the landed
-proof responsibility and test-portfolio delta, and rederive the frontier.
+The root judges integration but does not create a second implementation layer.
+If a landing exposes a localized defect, return it with exact evidence to the
+responsible worker when safely resumable or to one fresh capable worker. If it
+invalidates ticket commitments or graph facts, return one `$to-tickets` repair
+packet. If it creates a real Git conflict, preserve state and use
+`$resolving-merge-conflicts`. Do not dispatch a warm general integrator or
+rebuild a campaign ledger.
 
-Carry worker proof only while its landing context, dependencies, and inputs
-remain valid. Before Review, reconcile one canonical owner per proof
-responsibility, consolidate equivalent campaign-created tests, run final
-required proof once on drained current `HEAD`, cover applicable state-boundary
-branches and high-risk interactions, and remove or justify every displaced
-Change Closure path.
+Carry worker proof only while its dependencies, inputs, and landing context
+remain valid. When the graph drains, reconcile one owner per proof obligation,
+remove duplicated campaign-created proof, run the smallest final proof set that
+covers current integrated behavior and material interactions, and complete
+Change Closure.
 
-Branch only on observed failure:
+## Review And Repair
 
-- invalidated ticket commitments -> return one `$to-tickets` packet naming the
-  implementation, before-and-after evidence, invalidated fields, and affected
-  tickets;
-- stale or conflicted landing -> preserve it, choose a safe serial route, or
-  invoke `$resolving-merge-conflicts` with exact state and authorities; resume
-  only from its fresh exact-state Return;
-- trusted integration regression -> record the RED and prior integration
-  `HEAD`, then return an owned correction to its current worker or route
-  cross-worker work to `serial-integrator`.
+Pin one immutable candidate only when every writer is idle, the integration
+checkout is clean, every child disposition is known, and final proof passes.
 
-Every correction proves the RED and affected paths and invalidates superseded
-drained or review-ready evidence.
+Launch exactly one fresh `integration-reviewer` using `$change-review`, distinct
+from every implementation actor. Supply the parent Charter, source, fixed
+point, immutable integrated candidate, implementation identities, proof,
+skips, supported risks, contradictory evidence, and `Spec required: yes`.
+Supported risk expands
+coverage; it does not change the automatic review system.
+`$high-assurance-review` runs only when the user explicitly invokes it.
 
-## Review
+Accept only a complete Review Return bound to the candidate. Never self-certify.
+Automatically repair only when every blocker is Charter-preserving, in scope,
+and within the graph Repair budget. Send localized findings to the responsible
+worker when safely resumable; otherwise dispatch one fresh capable worker.
+Land and prove the correction, then use a new fresh integration reviewer.
+Decision-required, scope-changing, speculative, mixed, or over-budget findings
+return to the caller intact.
 
-Pin one immutable candidate only when all implementation and integration tasks
-are idle, the integration worktree is clean, every child disposition is
-complete, and final current-`HEAD` proof passes.
+A review transport failure before candidate judgment may be retried once with
+a fresh reviewer. After a second failure, preserve the candidate and return
+`partial`.
 
-Apply `$change-review`'s
-[Finding Contract](../change-review/FINDING-CONTRACT.md) supported-risk
-predicate to the pinned candidate. Select `ordinary-reviewer` with
-`$change-review` for an ordinary candidate or
-`assurance-coordinator` with `$high-assurance-review` for a release candidate
-or supported high-risk diff or PR. Record candidate-bound route evidence with
-its source, `ordinary | release | supported-high-risk` basis, and trigger when
-applicable. Launch through the agent-lane contract as a fresh collaboration
-subagent distinct from every implementation and integration actor. Supply only `Spec required: yes`,
-the implementation and integration actor and task IDs, Charter, Source Trace,
-fixed point, candidate, proof, skips, risk, and contradictory evidence. Withhold
-implementation hypotheses, expected conclusions, partial findings, and
-terminal cues.
+## Close
 
-Accept a Review Return only when complete, current, and bound to the exact
-candidate and fresh task provenance. The candidate passes Review only with no
-blocker or unaccepted residual. If no valid independent Return arrives, preserve
-the candidate and return `partial`; never self-certify.
+Open closeout only when reviewed `HEAD` still equals current integration
+`HEAD`, required final proof passes, and any residual risk has caller acceptance.
 
-On `scope-mismatch`, preserve the factual packet and select the other route once
-for the same generation in a new fresh task. If it also mismatches, preserve the
-candidate and return `partial`.
+Close children in dependency order using the configured tracker rules. Retain
+each claim through verified non-dispatchable closeout and read-back, then
+release it. Close the parent only after every child verifies, then release its
+claim and verify the final frontier.
 
-**Repair.** Review grants no mutation. The root validates the complete blocking
-set and automatically opens Repair only when every blocker is
-`automatic-in-scope`, individually Charter-preserving, and within the frozen
-budget. Return any mixed, partial, speculative, decision-required,
-commitment-changing, or over-budget set intact with its exact gap.
+Apply configured mutation read-back to every closeout and frontier transition.
 
-Delegate one serial Repair worker. Use the original worker's agent ID for a
-localized finding; use `serial-integrator` for
-cross-worker findings. Every admitted successor gets identity-matched proof, a
-route selected from its actual risk, and formal review with new actor and task
-identities. Send `Invocation: formal-delivery`, `Review mode: remediation`, and
-the Finding Contract's remediation packet. Never resume a prior reviewer or
-assurance run.
+At graph end, remove all safe completed worktrees. If the configured worktree
+limit is reached earlier, remove the oldest safe completed worktree first.
+Never remove a dirty, active, uncertain, or unintegrated lane.
 
-## Lock
-
-Open Lock only when accepted reviewed `HEAD` equals current integration `HEAD`,
-required final proof passes, independent review is complete, and any residual
-risk has caller or identified frozen-policy acceptance.
-
-Generate the closeout plan. For each child, retain its claim through verified
-non-dispatchable closeout, mutation read-back, and affected-frontier read-back;
-then release the claim and read back absence. Close the parent only after every
-child passes and reads back; then release the parent claim and read back
-absence. Reconcile publication evidence only when its separately authorized
-owner supplies it. Leave every lane `removed`, `provider-preserved`, or an
-explicitly accepted safe residual.
-
-Return `complete` only when the exhaustive graph is drained; every accepted
-change is in reviewed current integration `HEAD`; final proof, proof ownership,
-Change Closure, and independent review pass; children and parent close
-child-first with read-back; claims are released; lanes are safe; and any
-separately supplied publication evidence is verified.
-
-Return `partial` when safe, already-authorized work remains resumable; return
-`blocked` when progress requires changed external state or new caller
-authority. In either case, preserve accepted and unrelated state, halt unsafe
-progression, and account for every task and lane. Release only pre-landing ended
-claims with determinate pending mutations. Retain or transfer every
-`landed-awaiting-lock` or indeterminate-closeout claim to a named recovery
-custodian and read back custody. Invalidate unsafe dependency overlays, leave
-incomplete tickets open, and report the blocker, exact retained state, and
-safest resume action. A checkpoint is nonterminal.
+Return `complete` only when the graph is drained; every accepted change is in
+reviewed current `HEAD`; focused final proof, proof ownership, Change Closure,
+and one independent Change Review pass; children and parent close child-first
+with read-back; claims are released; and lanes are safe. Otherwise return
+`partial` or `blocked` with the exact retained state, custody, blocker, and
+safest resume action. Do not infer deployment, PR, merge, push, or another
+campaign.

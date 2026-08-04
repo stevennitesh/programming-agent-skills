@@ -18,6 +18,10 @@ Use Direct Design before planning or implementation only when one consequential
 responsibility, Interface, Seam, migration, or caller-facing proof question
 remains unresolved.
 
+A clear repository-native path earns no design pass. When another workflow
+loads this skill, fold the supported result into its artifact or Return and
+create no design packet, tracker item, or implementation edge.
+
 For codebase-wide mapping and improvement discovery, recommend `$audit-codebase`
 and stop.
 

@@ -150,7 +150,8 @@ Use only after Orient admits a zero-match initial or successor identity.
 2. **Admit.** Require several interdependent material decisions or
    prerequisites, a non-conversational resolver, tracker-backed multi-session
    sequencing, and finitely tethered fog. Otherwise return `not-needed`;
-   recommend `$to-spec` only for an already settled source.
+   recommend `$implement` for one settled bounded implementation or `$to-spec`
+   only when a durable parent decision contract remains useful.
 3. **Sweep.** Surface decisions breadth-first: one ticket per sharp question,
    only unsharp uncertainty as fog. Set the finite growth allowance.
 4. **Approve.** Show one [MAP-FORMAT.md](MAP-FORMAT.md)-conforming packet with
@@ -226,9 +227,11 @@ Closure is independently selectable from `closeable` state.
    post the packet, close as `delivered`, read back closed state and empty
    frontier, release, and prove claim absence.
 
-Return the terminal decision and stop, or recommend `$to-spec` and stop for a
-settled parent-spec source. Never route directly to `$to-tickets`, `$implement`,
-or `$parallel-implement`.
+Return the terminal decision and stop. Recommend `$implement` for one settled
+bounded implementation whose acceptance and authority are complete. Recommend
+`$to-spec` when the settled outcome still benefits from a durable parent
+decision contract and several slices or durable coordination are plausible.
+Never route directly to `$to-tickets` or `$parallel-implement`.
 
 ## Terminate
 

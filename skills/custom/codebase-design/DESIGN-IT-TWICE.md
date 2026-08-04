@@ -21,11 +21,13 @@ constraints concrete; label it illustrative, not a proposal or evidence.
 
 ## 2. Diverge
 
-Produce at least three genuinely different candidate shapes. Each must make its
-caller-facing interface explicit; include the current or simplest no-new-seam
-shape when it is credible.
+Produce at least two credible materially different candidate shapes. Each must
+make its caller-facing interface explicit; include the simplest no-new-seam
+shape when it is credible. Add a third shape only when it tests a distinct
+consequential pressure that could change the decision.
 
-Use direct fresh-context scouts when independent judgment matters. Start each
+Use a direct fresh-context scout only when independent judgment on a distinct
+consequential pressure could change the decision. Start each
 with `fork_turns="none"` when supported. Give every scout the same
 self-contained factual brief: objective, settled constraints, applicable
 engineering and domain obligations, scope, source pointers, one distinct design
@@ -74,8 +76,8 @@ follow-ups. Name behavior-preserving prerequisites as support slices.
 
 ## Completion
 
-Complete when the frame is source-traced; at least three genuinely different
-candidate shapes exist; fake variety was removed; every alternative covers
+Complete when the frame is source-traced; at least two credible materially
+different candidate shapes exist; fake variety was removed; every alternative covers
 callers, hidden behavior, any earned seam, dependencies, tests, migration,
 trade-offs, and risk; one design was recommended; and the bounded first step and
 proof were returned.

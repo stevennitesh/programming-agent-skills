@@ -1,7 +1,7 @@
 interface:
   display_name: "Parallel Implement"
   short_description: "Drain one graph to a verified parent outcome"
-  default_prompt: "Use $parallel-implement from the root to orchestrate this parent graph without root-authored implementation: bind one tracker snapshot, dispatch each worker once with its final brief, isolate concurrent writers, mechanically land accepted commits, obtain fresh independent formal review, and close only the verified reviewed HEAD."
+  default_prompt: "Use $parallel-implement from the root to deliver this parent graph with plain worker handoffs, isolated concurrent lanes only when worthwhile, serial root integration, focused proof, one fresh Change Review, and child-first closeout."
 
 policy:
   allow_implicit_invocation: false

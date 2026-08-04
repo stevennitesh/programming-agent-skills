@@ -1,7 +1,7 @@
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false
 
 interface:
   display_name: "High-Assurance Review"
-  short_description: "Coordinator-owned high-risk release review"
-  default_prompt: "Use $high-assurance-review as the assurance-coordinator to review one immutable release candidate or supported high-risk diff or PR through exactly two fresh core reviewer lanes and return one verified read-only release decision."
+  short_description: "Explicit two-lane assurance review"
+  default_prompt: "Explicitly use $high-assurance-review as the assurance-coordinator to review this immutable candidate through exactly two fresh core reviewer lanes and return one verified read-only decision."

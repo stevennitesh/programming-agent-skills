@@ -3,5 +3,5 @@ policy:
 
 interface:
   display_name: "Change Review"
-  short_description: "Ordinary fixed-snapshot review gate"
-  default_prompt: "Use $change-review to pin one ordinary diff or PR, cover and judge Spec and Standards separately, and return one read-only gate decision."
+  short_description: "Single fixed-snapshot review gate"
+  default_prompt: "Use $change-review to pin this candidate, cover and judge Spec and Standards separately with risk-proportional depth, and return one read-only gate decision."

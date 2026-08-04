@@ -30,6 +30,11 @@ This repository packages a shared engineering discipline as skills, setup contra
 - The runtime owns numeric worker capacity. Delivery coordination qualifies
   each use of that capacity through semantic ownership, write and proof
   independence, dependencies, integration bandwidth, and expected benefit.
+- Delivery starts from the intended outcome, current behavior owner, real
+  callers, and relevant constraints, then selects and simplifies the smallest
+  repository-native integrated shape. Novelty and familiarity are neutral.
+- Automatic implementation review uses Change Review. Supported risk changes
+  coverage, not the review skill. High-Assurance Review is explicit-only.
 
 ## Context Trace
 
@@ -194,24 +199,25 @@ _Avoid_: worker runtime, scheduler, execution ledger
 
 **Change review candidate**
 
-A fixed-snapshot diff or PR that is neither a release candidate nor governed by
-a Supported high-risk trigger. `$change-review` owns its separate Spec and
-Standards gate.
-_Avoid_: non-PR review, low-priority review
+A fixed-snapshot implementation diff or PR, including release and supported-risk
+candidates. `$change-review` owns its separate Spec and Standards gate and
+scales coverage to the candidate's supported facts.
+_Avoid_: low-priority review, risk-free review
 
 **High-assurance review candidate**
 
-A fixed-snapshot release candidate or diff or PR governed by a Supported
-high-risk trigger. `$high-assurance-review` owns its root-only fresh-context
-review and terminal release decision.
-_Avoid_: every PR, large diff, severe-looking change
+A fixed-snapshot candidate explicitly sent to `$high-assurance-review` by the
+user or one exact caller-owned approved invocation. Risk does not implicitly
+select it.
+_Avoid_: automatic escalation, every risky change
 
 **Supported high-risk trigger**
 
 A changed surface with a supported scenario, reachable behavior or failure
 path, and concrete impact involving a trust boundary, irreversible effect or
 migration, concurrency or recovery, high-impact domain or model invariant, or
-measured performance obligation. PR existence, size, and labels do not qualify.
+measured performance obligation. It modifies Change Review coverage and proof;
+PR existence, size, and labels do not qualify.
 _Avoid_: hypothetical edge case, risk label, PR route
 
 **Router skill**
@@ -295,7 +301,7 @@ _Avoid_: pack manual, copied route map
   [ADR-0010](docs/adr/0010-deploy-campaigns-advance-through-proof-gates.md).
 - Change review candidate, High-assurance review candidate, and Supported
   high-risk trigger belong to this context and
-  [ADR-0011](docs/adr/0011-review-assurance-follows-release-risk.md).
+  [ADR-0013](docs/adr/0013-automatic-implementation-review-uses-one-change-review-path.md).
 - Deploy-campaign automation authority and control-plane vocabulary belong to [ADR-0008](docs/adr/0008-deploy-campaign-automation-separates-mechanical-evidence-from-semantic-decisions.md) and this context.
 - Skill-authoring vocabulary—leading words, invocation, reference loading,
   skill splitting, transfer gates, and derived views—belongs to
