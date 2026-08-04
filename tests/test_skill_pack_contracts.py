@@ -2686,6 +2686,9 @@ def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -
     assert "The caller owns commitments" in flat
     assert "Push requires separate authority" in flat
     assert "Otherwise, direct work creates one only when the caller requests Git delivery" in flat
+    assert "expected root effort saved exceeds handoff and verification cost" in flat
+    assert "create no score, worksheet, or artifact" in flat
+    assert "When the delegation gate fails" in flat
 
 
 def test_implement_closeout_locks_exact_candidate_and_preserves_custody() -> None:
@@ -2703,7 +2706,7 @@ def test_implement_closeout_locks_exact_candidate_and_preserves_custody() -> Non
     assert "read back non-dispatchability" in flat
     assert "release the claim and verify the frontier" in flat
     assert "exclusive mutation custody of the reconciled checkout until Return" in flat
-    assert "unless the caller explicitly requests root execution" in flat
+    assert "caller did not request root execution" in flat
     assert "keep repair mutation with the root" in flat
     assert "one admitted complete blocker set" in flat
     assert "used and remaining" in flat

@@ -1,6 +1,7 @@
 {
   "oracle_version": "residual-income-independent-oracle-v1",
   "construction": "Hand-derived Decimal arithmetic; does not import or call calculator code.",
+  "source_fixture": "skills/extra/value-stock/examples/residual-income-model-lock.json",
   "formulae": {
     "net_income_from_roe": "beginning_book_value * roe",
     "residual_income": "net_income - required_return * beginning_book_value",
@@ -68,6 +69,13 @@
       "required_return": "0.1",
       "roe": "0.12",
       "growth_rate": "0.03",
+      "next_period_net_income": "145.2",
+      "next_period_book_value_growth": "36.3",
+      "next_period_ending_book_value": "1246.3",
+      "implied_distribution": "108.9",
+      "implied_payout_ratio": "0.75",
+      "direct_equity_adjustment": "0",
+      "direct_equity_adjustment_assumption": "none_supplied_clean_surplus_assumes_zero",
       "next_period_residual_income": "24.2",
       "formula_ref": "residual-income-v1:next-residual-income-over-ke-minus-growth",
       "terminal_value": "345.71428571",
@@ -78,6 +86,12 @@
     "beginning_common_book_value": "1000",
     "forecast_residual_income_present_value": "73.05785124",
     "terminal_present_value": "285.71428571",
+    "common_equity_before_target_adjustments": "1358.77213695",
+    "claim_bridge": {
+      "existing_awards": "0",
+      "target_claim_adjustments": "0",
+      "target_common_equity": "1358.77213695"
+    },
     "target_common_equity": "1358.77213695",
     "diluted_shares": "100",
     "per_share_value": "13.58772137"

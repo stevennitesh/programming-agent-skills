@@ -67,10 +67,11 @@
     ],
     "per_share_value": "77.53553524",
     "terminal": {
+      "branch": "direct_fcff_growth",
       "discount_exponent": "1.90136986",
       "discount_factor": "0.84886453",
       "discount_rate_input": "terminal_wacc",
-      "formula_ref": "fcff-v1:last-fcff-times-one-plus-growth",
+      "formula_ref": "fcff-v2:direct-last-fcff-times-one-plus-growth",
       "growth_rate": "0.03",
       "growth_rate_input": "terminal_growth",
       "next_period_date": "2028-12-31",
@@ -112,7 +113,7 @@
     "oldest_dated_input_age_days": 0,
     "terminal_value_share": "0.92690481"
   },
-  "input_identity": "sha256:9936733095cb3e8d2cde8bf452edf0f9d54b15234b8904752f2cf1164c016d43",
+  "input_identity": "sha256:080428df5c1f01f30ecce21206821b4c9e7bc7528f55260b1f8adcaebbf73698",
   "mechanical_status": "pass",
   "method": "fcff",
   "normalized_input": {
@@ -190,6 +191,7 @@
         }
       ],
       "terminal": {
+        "branch": "direct_fcff_growth",
         "discount_rate_input": "terminal_wacc",
         "growth_rate_input": "terminal_growth",
         "terminal_date": "2027-12-31"
@@ -464,7 +466,10 @@
     "output_decimal_places": 8,
     "reverse_solve_tolerance": "0.00000001",
     "rounding": "ROUND_HALF_EVEN",
-    "terminal_formula": "fcff-v1:last-fcff-times-one-plus-growth",
+    "terminal_formulas": {
+      "direct_fcff_growth": "fcff-v2:direct-last-fcff-times-one-plus-growth",
+      "stable_economics": "fcff-v2:stable-nopat-minus-growth-reinvestment"
+    },
     "terminal_wacc_roles": [
       "valuation_origin_spot_discount_rate",
       "perpetual_growth_denominator_rate"
@@ -477,8 +482,8 @@
   },
   "run_id": "VAL-05-ALPHABET-FCFF-2026-02-05",
   "versions": {
-    "calculation_path": "fcff-contract-v1",
-    "calculator": "1.0.0",
+    "calculation_path": "fcff-contract-v2",
+    "calculator": "1.1.0",
     "gateway_contract": "model-lock-v1"
   },
   "warnings": []

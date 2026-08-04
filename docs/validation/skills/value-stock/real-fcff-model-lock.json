@@ -275,6 +275,7 @@
       }
     ],
     "terminal": {
+      "branch": "direct_fcff_growth",
       "terminal_date": "2027-12-31",
       "discount_rate_input": "terminal_wacc",
       "growth_rate_input": "terminal_growth"

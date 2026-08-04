@@ -85,7 +85,8 @@
                 "formula_ref": {
                   "enum": [
                     "fcff-v1:nopat-plus-da-minus-capex-minus-working-capital-change",
-                    "fcff-v1:last-fcff-times-one-plus-growth",
+                    "fcff-v2:direct-last-fcff-times-one-plus-growth",
+                    "fcff-v2:stable-nopat-minus-growth-reinvestment",
                     "residual-income-v1:roe-times-beginning-book-value",
                     "residual-income-v1:net-income-minus-equity-charge",
                     "residual-income-v1:beginning-book-plus-net-income-minus-dividends-plus-adjustments",
@@ -183,15 +184,45 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
+        "branch",
         "terminal_date",
         "discount_rate_input",
         "growth_rate_input"
       ],
       "properties": {
+        "branch": {
+          "enum": ["direct_fcff_growth", "stable_economics"]
+        },
         "terminal_date": {"type": "string", "format": "date"},
         "discount_rate_input": {"type": "string", "minLength": 1},
-        "growth_rate_input": {"type": "string", "minLength": 1}
-      }
+        "growth_rate_input": {"type": "string", "minLength": 1},
+        "next_period_nopat_input": {"type": "string", "minLength": 1},
+        "return_on_new_invested_capital_input": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"branch": {"const": "stable_economics"}}
+          },
+          "then": {
+            "required": [
+              "next_period_nopat_input",
+              "return_on_new_invested_capital_input"
+            ]
+          },
+          "else": {
+            "not": {
+              "anyOf": [
+                {"required": ["next_period_nopat_input"]},
+                {"required": ["return_on_new_invested_capital_input"]}
+              ]
+            }
+          }
+        }
+      ]
     },
     "fcffClaimBridge": {
       "type": "object",
@@ -269,6 +300,42 @@
             {"type": "null"},
             {"$ref": "#/$defs/residualIncomeTerminal"}
           ]
+        },
+        "claim_bridge": {"$ref": "#/$defs/residualIncomeClaimBridge"},
+        "award_treatment": {"$ref": "#/$defs/residualIncomeAwardTreatment"}
+      },
+      "dependentRequired": {
+        "claim_bridge": ["award_treatment"],
+        "award_treatment": ["claim_bridge"]
+      }
+    },
+    "residualIncomeClaimBridge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["existing_awards", "target_claim_adjustments"],
+      "properties": {
+        "existing_awards": {"$ref": "#/$defs/inputReferenceArray"},
+        "target_claim_adjustments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["effect", "input"],
+            "properties": {
+              "effect": {"enum": ["add", "subtract"]},
+              "input": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      }
+    },
+    "residualIncomeAwardTreatment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["existing_awards"],
+      "properties": {
+        "existing_awards": {
+          "enum": ["none", "claim_bridge", "diluted_shares"]
         }
       }
     },

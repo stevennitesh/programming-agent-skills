@@ -187,6 +187,13 @@
       "required_return_input": "terminal_required_return",
       "roe_input": "terminal_roe",
       "growth_rate_input": "terminal_growth"
+    },
+    "claim_bridge": {
+      "existing_awards": [],
+      "target_claim_adjustments": []
+    },
+    "award_treatment": {
+      "existing_awards": "diluted_shares"
     }
   }
 }

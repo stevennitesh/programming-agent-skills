@@ -1,6 +1,6 @@
 {
   "fixture_version": "residual-income-negative-controls-v1",
-  "base_fixture": "residual_income_model_lock.json",
+  "base_fixture": "skills/extra/value-stock/examples/residual-income-model-lock.json",
   "cases": [
     {
       "id": "caller_supplied_rollforward_mismatch",

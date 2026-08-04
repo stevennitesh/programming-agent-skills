@@ -136,6 +136,14 @@ Separate organic and acquired contribution when material. Direct FCFF growth
 may summarize a completed path; otherwise it is only a labeled sensitivity and
 cannot establish a causal range or pass Gate 4.
 
+Select the perpetual-growth terminal branch explicitly. Prefer
+`stable_economics` when the Lock admits next-period NOPAT, stable growth, stable
+return on new invested capital, and WACC: the calculator derives reinvestment
+rate as `growth / return on new invested capital`, reinvestment, next-period
+FCFF, and terminal value. `direct_fcff_growth` is a labeled shortcut that grows
+the last explicit FCFF; use it only when that direct scalar path is consistent
+with the admitted terminal economics and keep its analytical limit visible.
+
 When an admitted reported or guided cash-flow measure materially anchors the
 first explicit forecast period, reconcile modeled FCFF to it by definition and
 timing. Trace the difference through tax, interest classification, D&A, capex,
@@ -366,6 +374,14 @@ The equivalent driver is `(ROE - cost of equity) x beginning book value`.
 Forecast continuing residual income from sustainable ROE, growth, payout, and
 competition; do not assume excess returns persist forever.
 
+The continuing-state calculator exposes the clean-surplus economics implied by
+the admitted terminal book value, ROE, growth, and required return: next-period
+net income, book growth, ending book value, distribution, and payout. It assumes
+zero direct-to-equity adjustment because the terminal input has no separate
+adjustment field; if that assumption is not supportable, do not use the result.
+This arithmetic does not judge whether the resulting payout or economics are
+plausible.
+
 Reconcile the clean-surplus relation: ending common book value should equal
 beginning book value plus comprehensive income attributable to common less
 dividends and repurchases plus issuances, with other direct-to-equity changes
@@ -374,6 +390,12 @@ distortions, write-offs, reserve changes, acquisitions, and other-comprehensive-
 income items. Pair the model with justified P/B or P/TBV, asset quality, and
 capital adequacy:
 [CFA Institute: Residual Income Valuation](https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/residual-income-valuation).
+
+Residual income starts from common-equity book value, so do not repeat FCFF's
+debt, preferred, or noncontrolling-interest bridge. After calculating common
+equity, apply only separately valued existing awards/options and explicit
+target-security add/subtract adjustments. Declare existing awards in exactly
+one place: either the dated share count or the RI claim bridge, never both.
 
 ## Relative Valuation
 
@@ -485,10 +507,13 @@ uncertainty also matter:
 
 For a supported nontrivial FCFF or residual-income valuation, serialize the
 admitted frozen Model Lock through the calculator. Its authoritative JSON
-receipt supplies all material arithmetic and assertions; do not reproduce them
+receipt supplies the deterministic arithmetic and assertions represented by
+the selected typed calculation path; it does not prove every derivation behind
+an admitted scalar assumption. Do not reproduce the receipt-owned arithmetic
 manually in the valuation report. If the selected method is unsupported, keep
-the capability gap explicit instead of improvising material arithmetic. The
-receipt gives each load-bearing item:
+the capability gap explicit instead of improvising material arithmetic. For
+each admitted input the selected path consumes and each derived output it owns,
+the receipt gives:
 
 | Field | Required content |
 | --- | --- |

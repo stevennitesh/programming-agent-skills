@@ -12,7 +12,7 @@
 
 Residual income fits a regulated financial firm whose book value and common earnings are meaningful while industrial FCFF would misclassify financing activity. The admitted Model Lock starts from reported common equity, uses a 10% common-equity required return, forecasts $56.0 billion of FY2026 common income and 15% FY2027 ROE, includes dividends plus net repurchase/direct-equity adjustments in the clean-surplus roll-forward, and fades to 12% continuing ROE with 3% growth.
 
-Receipt status: `pass`; input identity: `sha256:8a15ed39fde124da2c1f67df44101ea8a245642f8b50986bfb95321754f13f04`; calculation path: `residual-income-contract-v1`.
+Receipt status: `pass`; input identity: `sha256:8a15ed39fde124da2c1f67df44101ea8a245642f8b50986bfb95321754f13f04`; calculation path: `residual-income-contract-v2`.
 
 Material arithmetic: receipt only; not manually reproduced.
 

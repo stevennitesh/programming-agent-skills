@@ -38,10 +38,17 @@
       }
     ],
     "terminal": {
+      "branch": "stable_economics",
       "terminal_date": "2027-12-31",
       "next_period_date": "2028-12-31",
-      "formula_ref": "fcff-v1:last-fcff-times-one-plus-growth",
+      "formula_ref": "fcff-v2:stable-nopat-minus-growth-reinvestment",
       "next_period_fcff": "72.1",
+      "next_period_nopat_input": "next_period_nopat",
+      "next_period_nopat": "90.125",
+      "return_on_new_invested_capital_input": "stable_return_on_new_invested_capital",
+      "stable_return_on_new_invested_capital": "0.15",
+      "reinvestment_rate": "0.2",
+      "reinvestment": "18.025",
       "discount_rate_input": "terminal_wacc",
       "growth_rate_input": "terminal_growth",
       "wacc": "0.1",

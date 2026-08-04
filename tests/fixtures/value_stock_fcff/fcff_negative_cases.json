@@ -3,6 +3,12 @@
   "base_fixture": "skills/extra/value-stock/examples/fcff-model-lock.json",
   "cases": [
     {
+      "id": "terminal_branch_not_selected",
+      "operation": "delete",
+      "path": ["fcff", "terminal", "branch"],
+      "expected_code": "schema"
+    },
+    {
       "id": "elapsed_cash_flow",
       "operation": "set",
       "path": ["fcff", "forecast_periods", 0, "realization_date"],
@@ -53,7 +59,7 @@
         "evidence_class": "calculated",
         "claim_basis": "enterprise",
         "scenario": "base",
-        "formula_ref": "fcff-v1:last-fcff-times-one-plus-growth"
+        "formula_ref": "fcff-v2:stable-nopat-minus-growth-reinvestment"
       },
       "expected_code": "schema"
     },

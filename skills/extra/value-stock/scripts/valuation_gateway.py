@@ -25,11 +25,11 @@ import yaml
 from jsonschema import Draft202012Validator, FormatChecker, validators
 
 
-CALCULATOR_VERSION = "1.0.0"
+CALCULATOR_VERSION = "1.1.0"
 GATEWAY_CONTRACT_VERSION = "model-lock-v1"
 PATH_VERSIONS = {
-    "fcff": "fcff-contract-v1",
-    "residual_income": "residual-income-contract-v1",
+    "fcff": "fcff-contract-v2",
+    "residual_income": "residual-income-contract-v2",
 }
 CONTRACT = {
     "assertion_tolerance_owner": "calculator-version",
@@ -50,7 +50,12 @@ REVERSE_SOLVE_MAX_ITERATIONS = 256
 FCFF_DERIVED_FORMULA_REF = (
     "fcff-v1:nopat-plus-da-minus-capex-minus-working-capital-change"
 )
-FCFF_TERMINAL_FORMULA_REF = "fcff-v1:last-fcff-times-one-plus-growth"
+FCFF_DIRECT_TERMINAL_FORMULA_REF = (
+    "fcff-v2:direct-last-fcff-times-one-plus-growth"
+)
+FCFF_STABLE_TERMINAL_FORMULA_REF = (
+    "fcff-v2:stable-nopat-minus-growth-reinvestment"
+)
 FCFF_PATH_CONTRACT = {
     "arithmetic_precision_digits": CALCULATION_CONTEXT_PRECISION,
     "assertion_absolute_tolerance": "0.00000001",
@@ -81,7 +86,10 @@ FCFF_PATH_CONTRACT = {
         "midyear": "floor_midpoint_from_declared_first_prior_period_end",
         "year_end": "declared_period_end_date",
     },
-    "terminal_formula": FCFF_TERMINAL_FORMULA_REF,
+    "terminal_formulas": {
+        "direct_fcff_growth": FCFF_DIRECT_TERMINAL_FORMULA_REF,
+        "stable_economics": FCFF_STABLE_TERMINAL_FORMULA_REF,
+    },
 }
 RI_NET_INCOME_FORMULA_REF = "residual-income-v1:roe-times-beginning-book-value"
 RI_RESIDUAL_INCOME_FORMULA_REF = (
@@ -106,6 +114,7 @@ RI_PATH_CONTRACT = {
     "reverse_solve_tolerance": "0.00000001",
     "rounding": "ROUND_HALF_EVEN",
     "terminal_formula": RI_TERMINAL_FORMULA_REF,
+    "terminal_clean_surplus_assumption": "no_direct_equity_adjustment",
     "timing_conventions": {
         "explicit": "caller_declared_realization_date",
         "year_end": "declared_period_end_date",
@@ -592,6 +601,16 @@ def _next_period_fcff(last_fcff: Decimal, growth_rate: Decimal) -> Decimal:
     return last_fcff * (Decimal(1) + growth_rate)
 
 
+def _stable_terminal_fcff(
+    next_period_nopat: Decimal,
+    growth_rate: Decimal,
+    return_on_new_invested_capital: Decimal,
+) -> tuple[Decimal, Decimal, Decimal]:
+    reinvestment_rate = growth_rate / return_on_new_invested_capital
+    reinvestment = next_period_nopat * reinvestment_rate
+    return reinvestment_rate, reinvestment, next_period_nopat - reinvestment
+
+
 def _perpetual_growth_terminal_value(
     next_period_fcff: Decimal,
     discount_rate: Decimal,
@@ -882,6 +901,38 @@ def _validate_fcff_terminal(
             claim_basis="enterprise",
             record_date=terminal["terminal_date"],
         )
+        branch = terminal["branch"]
+        stable_records: dict[str, dict[str, Any] | None] = {}
+        if branch == "stable_economics":
+            stable_records = {
+                "next_period_nopat": _method_input(
+                    source,
+                    terminal["next_period_nopat_input"],
+                    "fcff.terminal.next_period_nopat_input",
+                    failures,
+                    unit="currency",
+                    claim_basis="operating",
+                    record_date=_next_year(terminal_date).isoformat(),
+                ),
+                "return_on_new_invested_capital": _method_input(
+                    source,
+                    terminal["return_on_new_invested_capital_input"],
+                    "fcff.terminal.return_on_new_invested_capital_input",
+                    failures,
+                    unit="ratio",
+                    claim_basis="operating",
+                    record_date=terminal["terminal_date"],
+                ),
+            }
+            stable_return = stable_records["return_on_new_invested_capital"]
+            if stable_return is not None and Decimal(stable_return["value"]) == 0:
+                failures.append(
+                    _failure(
+                        "terminal_reinvestment_undefined",
+                        "fcff.terminal.return_on_new_invested_capital_input",
+                        "stable return on new invested capital cannot be zero",
+                    )
+                )
         if terminal_wacc is not None and growth is not None:
             wacc_value = Decimal(terminal_wacc["value"])
             growth_value = Decimal(growth["value"])
@@ -904,9 +955,26 @@ def _validate_fcff_terminal(
                 and calculated_fcff
                 and calculated_fcff[-1] is not None
             ):
-                next_period_fcff = _next_period_fcff(
-                    calculated_fcff[-1], growth_value
-                )
+                if branch == "stable_economics":
+                    next_nopat = stable_records.get("next_period_nopat")
+                    stable_return = stable_records.get(
+                        "return_on_new_invested_capital"
+                    )
+                    if (
+                        next_nopat is None
+                        or stable_return is None
+                        or Decimal(stable_return["value"]) == 0
+                    ):
+                        return
+                    _, _, next_period_fcff = _stable_terminal_fcff(
+                        Decimal(next_nopat["value"]),
+                        growth_value,
+                        Decimal(stable_return["value"]),
+                    )
+                else:
+                    next_period_fcff = _next_period_fcff(
+                        calculated_fcff[-1], growth_value
+                    )
                 _perpetual_growth_terminal_value(
                     next_period_fcff,
                     wacc_value,
@@ -1130,7 +1198,38 @@ def _calculate_fcff(source: dict[str, Any]) -> dict[str, Any]:
             terminal_wacc = _input_decimal(source, terminal["discount_rate_input"])
             growth_rate = _input_decimal(source, terminal["growth_rate_input"])
             assert last_fcff is not None
-            next_period_fcff = _next_period_fcff(last_fcff, growth_rate)
+            branch = terminal["branch"]
+            stable_details: dict[str, Any] = {}
+            if branch == "stable_economics":
+                next_period_nopat = _input_decimal(
+                    source, terminal["next_period_nopat_input"]
+                )
+                stable_return = _input_decimal(
+                    source, terminal["return_on_new_invested_capital_input"]
+                )
+                reinvestment_rate, reinvestment, next_period_fcff = (
+                    _stable_terminal_fcff(
+                        next_period_nopat,
+                        growth_rate,
+                        stable_return,
+                    )
+                )
+                formula_ref = FCFF_STABLE_TERMINAL_FORMULA_REF
+                stable_details = {
+                    "next_period_nopat_input": terminal["next_period_nopat_input"],
+                    "next_period_nopat": _receipt_decimal(next_period_nopat),
+                    "return_on_new_invested_capital_input": terminal[
+                        "return_on_new_invested_capital_input"
+                    ],
+                    "stable_return_on_new_invested_capital": _receipt_decimal(
+                        stable_return
+                    ),
+                    "reinvestment_rate": _receipt_decimal(reinvestment_rate),
+                    "reinvestment": _receipt_decimal(reinvestment),
+                }
+            else:
+                next_period_fcff = _next_period_fcff(last_fcff, growth_rate)
+                formula_ref = FCFF_DIRECT_TERMINAL_FORMULA_REF
             terminal_value = _perpetual_growth_terminal_value(
                 next_period_fcff,
                 terminal_wacc,
@@ -1144,9 +1243,10 @@ def _calculate_fcff(source: dict[str, Any]) -> dict[str, Any]:
             )
             terminal_present_value = terminal_value * terminal_discount_factor
             terminal_result = {
+                "branch": branch,
                 "terminal_date": terminal["terminal_date"],
                 "next_period_date": _next_year(terminal_date).isoformat(),
-                "formula_ref": FCFF_TERMINAL_FORMULA_REF,
+                "formula_ref": formula_ref,
                 "next_period_fcff": _receipt_decimal(next_period_fcff),
                 "discount_rate_input": terminal["discount_rate_input"],
                 "growth_rate_input": terminal["growth_rate_input"],
@@ -1156,6 +1256,7 @@ def _calculate_fcff(source: dict[str, Any]) -> dict[str, Any]:
                 "discount_exponent": _receipt_decimal(terminal_exponent),
                 "discount_factor": _receipt_decimal(terminal_discount_factor),
                 "present_value": _receipt_decimal(terminal_present_value),
+                **stable_details,
             }
 
         enterprise_value = sum(forecast_present_values, Decimal(0)) + terminal_present_value
@@ -1533,11 +1634,27 @@ def _validate_residual_income_terminal(
             )
         else:
             _discount_terms(as_of, terminal_date, required_return)
+        terminal_roe = Decimal(records["roe"]["value"])
         final_ending_book = ending_book_values[-1] if ending_book_values else None
-        if final_ending_book is not None and required_return > growth:
-            terminal_net_income = _derive_net_income(
-                final_ending_book, Decimal(records["roe"]["value"])
+        terminal_net_income = (
+            _derive_net_income(final_ending_book, terminal_roe)
+            if final_ending_book is not None
+            else None
+        )
+        if terminal_net_income == 0:
+            failures.append(
+                _failure(
+                    "terminal_payout_undefined",
+                    "residual_income.terminal.roe_input",
+                    "terminal net income cannot be zero when implied payout is required",
+                )
             )
+        if (
+            final_ending_book is not None
+            and required_return > growth
+            and terminal_net_income is not None
+            and terminal_net_income != 0
+        ):
             next_residual_income = _derive_residual_income(
                 final_ending_book,
                 terminal_net_income,
@@ -1550,9 +1667,76 @@ def _validate_residual_income_terminal(
             )
 
 
-def _validate_residual_income_shares(
-    source: dict[str, Any], failures: list[dict[str, str]]
+def _validate_residual_income_claims_and_shares(
+    source: dict[str, Any],
+    config: dict[str, Any],
+    failures: list[dict[str, str]],
 ) -> None:
+    bridge = config.get("claim_bridge")
+    if bridge is not None:
+        seen: set[str] = set()
+        for position, input_id in enumerate(bridge["existing_awards"]):
+            seen.add(input_id)
+            _method_input(
+                source,
+                input_id,
+                f"residual_income.claim_bridge.existing_awards.{position}",
+                failures,
+                unit="currency",
+                claim_basis="target_security",
+                record_date=source["as_of_date"],
+                nonnegative=True,
+            )
+        for position, item in enumerate(bridge["target_claim_adjustments"]):
+            input_id = item["input"]
+            if input_id in seen:
+                failures.append(
+                    _failure(
+                        "bridge_duplicate",
+                        f"residual_income.claim_bridge.target_claim_adjustments.{position}",
+                        "target-security bridge input is counted more than once",
+                    )
+                )
+            seen.add(input_id)
+            _method_input(
+                source,
+                input_id,
+                f"residual_income.claim_bridge.target_claim_adjustments.{position}.input",
+                failures,
+                unit="currency",
+                claim_basis="target_security",
+                record_date=source["as_of_date"],
+                nonnegative=True,
+            )
+        for input_id, record in source["inputs"].items():
+            is_material_target_claim = (
+                record.get("unit") == "currency"
+                and record.get("value_kind") == "monetary"
+                and record.get("currency") == source["reporting_currency"]
+                and record.get("date") == source["as_of_date"]
+                and record.get("scenario") == source["base_scenario"]
+                and record.get("claim_basis") == "target_security"
+                and Decimal(record["value"]) != 0
+            )
+            if is_material_target_claim and input_id not in seen:
+                failures.append(
+                    _failure(
+                        "bridge_incomplete",
+                        "residual_income.claim_bridge",
+                        f"material target-security input {input_id} is not applied",
+                    )
+                )
+        award_treatment = config["award_treatment"]["existing_awards"]
+        has_award_claim = bool(bridge["existing_awards"])
+        if (award_treatment == "claim_bridge") != has_award_claim:
+            failures.append(
+                _failure(
+                    "award_double_count",
+                    "residual_income.award_treatment.existing_awards",
+                    "existing awards must use exactly one declared treatment",
+                )
+            )
+
     shares = source["diluted_shares"]
     if shares.get("scenario") != source["base_scenario"]:
         failures.append(
@@ -1599,7 +1783,7 @@ def validate_residual_income_calculation(
             prior_realization,
             failures,
         )
-        _validate_residual_income_shares(source, failures)
+        _validate_residual_income_claims_and_shares(source, config, failures)
 
     unique = {
         (failure["code"], failure["path"], failure["message"]): failure
@@ -1730,6 +1914,14 @@ def _calculate_residual_income(source: dict[str, Any]) -> dict[str, Any]:
                 terminal_net_income,
                 required_return,
             )
+            next_period_book_value_growth = final_ending_book_value * growth_rate
+            next_period_ending_book_value = (
+                final_ending_book_value + next_period_book_value_growth
+            )
+            implied_distribution = (
+                terminal_net_income - next_period_book_value_growth
+            )
+            implied_payout_ratio = implied_distribution / terminal_net_income
             terminal_value = _continuing_residual_income_value(
                 next_period_residual_income,
                 required_return,
@@ -1752,6 +1944,19 @@ def _calculate_residual_income(source: dict[str, Any]) -> dict[str, Any]:
                 "required_return": _receipt_decimal(required_return),
                 "roe": _receipt_decimal(terminal_roe),
                 "growth_rate": _receipt_decimal(growth_rate),
+                "next_period_net_income": _receipt_decimal(terminal_net_income),
+                "next_period_book_value_growth": _receipt_decimal(
+                    next_period_book_value_growth
+                ),
+                "next_period_ending_book_value": _receipt_decimal(
+                    next_period_ending_book_value
+                ),
+                "implied_distribution": _receipt_decimal(implied_distribution),
+                "implied_payout_ratio": _receipt_decimal(implied_payout_ratio),
+                "direct_equity_adjustment": "0",
+                "direct_equity_adjustment_assumption": (
+                    "none_supplied_clean_surplus_assumes_zero"
+                ),
                 "next_period_residual_income": _receipt_decimal(
                     next_period_residual_income
                 ),
@@ -1763,10 +1968,30 @@ def _calculate_residual_income(source: dict[str, Any]) -> dict[str, Any]:
             }
 
         forecast_present_value = sum(forecast_present_values, Decimal(0))
-        target_common_equity = (
+        common_equity_before_target_adjustments = (
             first_beginning_book_value
             + forecast_present_value
             + terminal_present_value
+        )
+        bridge = config.get("claim_bridge")
+        effective_bridge = bridge or {
+            "existing_awards": [],
+            "target_claim_adjustments": [],
+        }
+        existing_awards = _sum_inputs(source, effective_bridge["existing_awards"])
+        target_adjustments = sum(
+            (
+                _input_decimal(source, item["input"])
+                if item["effect"] == "add"
+                else -_input_decimal(source, item["input"])
+                for item in effective_bridge["target_claim_adjustments"]
+            ),
+            Decimal(0),
+        )
+        target_common_equity = (
+            common_equity_before_target_adjustments
+            - existing_awards
+            + target_adjustments
         )
         diluted_shares = Decimal(source["diluted_shares"]["value"])
         per_share_value = target_common_equity / diluted_shares
@@ -1781,6 +2006,18 @@ def _calculate_residual_income(source: dict[str, Any]) -> dict[str, Any]:
             forecast_present_value
         ),
         "terminal_present_value": _receipt_decimal(terminal_present_value),
+        "common_equity_before_target_adjustments": _receipt_decimal(
+            common_equity_before_target_adjustments
+        ),
+        "claim_bridge": (
+            {
+                "existing_awards": _receipt_decimal(existing_awards),
+                "target_claim_adjustments": _receipt_decimal(target_adjustments),
+                "target_common_equity": _receipt_decimal(target_common_equity),
+            }
+            if bridge is not None
+            else None
+        ),
         "target_common_equity": _receipt_decimal(target_common_equity),
         "diluted_shares": _receipt_decimal(diluted_shares),
         "per_share_value": _receipt_decimal(per_share_value),
@@ -2206,8 +2443,8 @@ def main(argv: list[str] | None = None) -> int:
             "  validate INPUT   validate and normalize without calculating\n"
             "  calculate INPUT  validate, calculate, and emit a receipt\n\n"
             "Example:\n"
-            "  python scripts/valuation_gateway.py calculate "
-            "examples/fcff-model-lock.json"
+            "  python skills/extra/value-stock/scripts/valuation_gateway.py calculate "
+            "skills/extra/value-stock/examples/fcff-model-lock.json"
         ),
     )
     subparsers = parser.add_subparsers(dest="command", required=True)

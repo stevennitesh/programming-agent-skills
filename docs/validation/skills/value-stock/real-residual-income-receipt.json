@@ -76,6 +76,8 @@
         "roe_input": "roe_fy2027"
       }
     ],
+    "claim_bridge": null,
+    "common_equity_before_target_adjustments": "463343.63345292",
     "forecast_residual_income_present_value": "34699.21973896",
     "per_share_value": "171.85061696",
     "target_common_equity": "463343.63345292",
@@ -86,7 +88,14 @@
       "formula_ref": "residual-income-v1:next-residual-income-over-ke-minus-growth",
       "growth_rate": "0.03",
       "growth_rate_input": "terminal_growth",
+      "direct_equity_adjustment": "0",
+      "direct_equity_adjustment_assumption": "none_supplied_clean_surplus_assumes_zero",
+      "implied_distribution": "32499.1755",
+      "implied_payout_ratio": "0.75",
+      "next_period_book_value_growth": "10833.0585",
       "next_period_date": "2028-12-31",
+      "next_period_ending_book_value": "371935.0085",
+      "next_period_net_income": "43332.234",
       "next_period_residual_income": "7222.039",
       "present_value": "86251.41371395",
       "required_return": "0.1",
@@ -350,6 +359,7 @@
     "reverse_solve_tolerance": "0.00000001",
     "rounding": "ROUND_HALF_EVEN",
     "terminal_formula": "residual-income-v1:next-residual-income-over-ke-minus-growth",
+    "terminal_clean_surplus_assumption": "no_direct_equity_adjustment",
     "timing_conventions": {
       "explicit": "caller_declared_realization_date",
       "year_end": "declared_period_end_date"
@@ -357,8 +367,8 @@
   },
   "run_id": "VAL-05-JPM-RESIDUAL-INCOME-2026-02-13",
   "versions": {
-    "calculation_path": "residual-income-contract-v1",
-    "calculator": "1.0.0",
+    "calculation_path": "residual-income-contract-v2",
+    "calculator": "1.1.0",
     "gateway_contract": "model-lock-v1"
   },
   "warnings": []

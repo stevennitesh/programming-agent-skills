@@ -134,6 +134,28 @@
       "scenario": "base",
       "source_ref": "model-lock:terminal-wacc"
     },
+    "next_period_nopat": {
+      "value": 90.125,
+      "unit": "currency",
+      "value_kind": "monetary",
+      "currency": "USD",
+      "date": "2028-12-31",
+      "evidence_class": "assumed",
+      "claim_basis": "operating",
+      "scenario": "base",
+      "source_ref": "model-lock:next-period-nopat"
+    },
+    "stable_return_on_new_invested_capital": {
+      "value": 0.15,
+      "unit": "ratio",
+      "value_kind": "non_monetary",
+      "currency": null,
+      "date": "2027-12-31",
+      "evidence_class": "assumed",
+      "claim_basis": "operating",
+      "scenario": "base",
+      "source_ref": "model-lock:stable-ronic"
+    },
     "excess_cash": {
       "value": 50,
       "unit": "currency",
@@ -247,7 +269,10 @@
       }
     ],
     "terminal": {
+      "branch": "stable_economics",
       "terminal_date": "2027-12-31",
+      "next_period_nopat_input": "next_period_nopat",
+      "return_on_new_invested_capital_input": "stable_return_on_new_invested_capital",
       "discount_rate_input": "terminal_wacc",
       "growth_rate_input": "terminal_growth"
     },

@@ -83,7 +83,7 @@ def test_frozen_fcff_case_matches_independent_oracle_without_input_mutation() ->
     assert source == before
     assert receipt["mechanical_status"] == "pass"
     assert receipt["method"] == "fcff"
-    assert receipt["versions"]["calculation_path"] == "fcff-contract-v1"
+    assert receipt["versions"]["calculation_path"] == "fcff-contract-v2"
     assert receipt["path_contract"] == {
         "arithmetic_precision_digits": 50,
         "assertion_absolute_tolerance": "0.00000001",
@@ -116,7 +116,14 @@ def test_frozen_fcff_case_matches_independent_oracle_without_input_mutation() ->
             "midyear": "floor_midpoint_from_declared_first_prior_period_end",
             "year_end": "declared_period_end_date",
         },
-        "terminal_formula": "fcff-v1:last-fcff-times-one-plus-growth",
+        "terminal_formulas": {
+            "direct_fcff_growth": (
+                "fcff-v2:direct-last-fcff-times-one-plus-growth"
+            ),
+            "stable_economics": (
+                "fcff-v2:stable-nopat-minus-growth-reinvestment"
+            ),
+        },
     }
     assert receipt["calculation"] == oracle["expected"]
     assert receipt["assertions"][-1] == {"id": "fcff_calculation_valid", "status": "pass"}
@@ -132,7 +139,11 @@ def test_calculator_owns_derived_fcff_terminal_values_and_fixed_conventions() ->
     terminal_input = source["fcff"]["terminal"]
     assert "next_period_date" not in terminal_input
     assert "interval_years" not in terminal_input
-    assert "next_period_fcff_input" not in terminal_input
+    assert terminal_input["branch"] == "stable_economics"
+    assert terminal_input["next_period_nopat_input"] == "next_period_nopat"
+    assert terminal_input["return_on_new_invested_capital_input"] == (
+        "stable_return_on_new_invested_capital"
+    )
 
     receipt = gateway.calculate_model_lock(source)
 
@@ -151,8 +162,89 @@ def test_calculator_owns_derived_fcff_terminal_values_and_fixed_conventions() ->
     terminal_result = receipt["calculation"]["terminal"]
     assert terminal_result["next_period_date"] == "2028-12-31"
     assert "next_period_fcff_input" not in terminal_result
-    assert terminal_result["formula_ref"] == "fcff-v1:last-fcff-times-one-plus-growth"
+    assert terminal_result["formula_ref"] == (
+        "fcff-v2:stable-nopat-minus-growth-reinvestment"
+    )
+    assert terminal_result["reinvestment_rate"] == "0.2"
+    assert terminal_result["reinvestment"] == "18.025"
     assert terminal_result["next_period_fcff"] == "72.1"
+
+
+def test_stable_economics_terminal_derives_fcff_from_nopat_growth_and_ronic() -> None:
+    gateway = load_gateway()
+    source = load_fixture()
+    source["inputs"]["next_period_nopat"] = {
+        "value": 85,
+        "unit": "currency",
+        "value_kind": "monetary",
+        "currency": "USD",
+        "date": "2028-12-31",
+        "evidence_class": "assumed",
+        "claim_basis": "operating",
+        "scenario": "base",
+        "source_ref": "model-lock:next-period-nopat",
+    }
+    source["inputs"]["stable_return_on_new_invested_capital"] = {
+        "value": 0.15,
+        "unit": "ratio",
+        "value_kind": "non_monetary",
+        "currency": None,
+        "date": "2027-12-31",
+        "evidence_class": "assumed",
+        "claim_basis": "operating",
+        "scenario": "base",
+        "source_ref": "model-lock:stable-ronic",
+    }
+    source["fcff"]["terminal"] = {
+        "branch": "stable_economics",
+        "terminal_date": "2027-12-31",
+        "next_period_nopat_input": "next_period_nopat",
+        "return_on_new_invested_capital_input": (
+            "stable_return_on_new_invested_capital"
+        ),
+        "discount_rate_input": "terminal_wacc",
+        "growth_rate_input": "terminal_growth",
+    }
+
+    receipt = gateway.calculate_model_lock(source)
+
+    assert receipt["mechanical_status"] == "pass"
+    terminal = receipt["calculation"]["terminal"]
+    assert terminal["branch"] == "stable_economics"
+    assert terminal["next_period_nopat"] == "85"
+    assert terminal["stable_return_on_new_invested_capital"] == "0.15"
+    assert terminal["reinvestment_rate"] == "0.2"
+    assert terminal["reinvestment"] == "17"
+    assert terminal["next_period_fcff"] == "68"
+    assert terminal["formula_ref"] == (
+        "fcff-v2:stable-nopat-minus-growth-reinvestment"
+    )
+    assert terminal["terminal_value"] == "971.42857143"
+
+    undefined = copy.deepcopy(source)
+    undefined["inputs"]["stable_return_on_new_invested_capital"]["value"] = 0
+    failed = gateway.calculate_model_lock(undefined)
+    assert failed["mechanical_status"] == "fail"
+    assert "terminal_reinvestment_undefined" in {
+        failure["code"] for failure in failed["failures"]
+    }
+
+
+def test_direct_fcff_growth_terminal_is_explicitly_labeled() -> None:
+    gateway = load_gateway()
+    source = load_fixture()
+    source["fcff"]["terminal"]["branch"] = "direct_fcff_growth"
+    source["fcff"]["terminal"].pop("next_period_nopat_input")
+    source["fcff"]["terminal"].pop("return_on_new_invested_capital_input")
+
+    receipt = gateway.calculate_model_lock(source)
+
+    assert receipt["mechanical_status"] == "pass"
+    terminal = receipt["calculation"]["terminal"]
+    assert terminal["branch"] == "direct_fcff_growth"
+    assert terminal["formula_ref"] == (
+        "fcff-v2:direct-last-fcff-times-one-plus-growth"
+    )
 
 
 @pytest.mark.parametrize("case", NEGATIVE_CASES, ids=lambda case: case["id"])
@@ -323,6 +415,10 @@ def test_irregular_dates_match_independent_actual_365_oracle_and_one_day_change(
     source["fcff"]["terminal"]["terminal_date"] = "2027-09-30"
     source["inputs"]["terminal_wacc"]["date"] = "2027-09-30"
     source["inputs"]["terminal_growth"]["date"] = "2027-09-30"
+    source["inputs"]["stable_return_on_new_invested_capital"]["date"] = (
+        "2027-09-30"
+    )
+    source["inputs"]["next_period_nopat"]["date"] = "2028-09-30"
     oracle = json.loads((FIXTURES / "fcff_oracle_v1.json").read_text(encoding="utf-8"))[
         "irregular_actual_365_expected"
     ]
@@ -418,6 +514,10 @@ def test_unequal_valuation_origin_spot_rates_match_independent_oracle() -> None:
     source["fcff"]["terminal"]["terminal_date"] = "2027-09-30"
     source["inputs"]["terminal_wacc"]["date"] = "2027-09-30"
     source["inputs"]["terminal_growth"]["date"] = "2027-09-30"
+    source["inputs"]["stable_return_on_new_invested_capital"]["date"] = (
+        "2027-09-30"
+    )
+    source["inputs"]["next_period_nopat"]["date"] = "2028-09-30"
     source["inputs"]["wacc_fy2026"]["value"] = 0.08
     source["inputs"]["wacc_fy2027"]["value"] = 0.12
     oracle = json.loads((FIXTURES / "fcff_oracle_v1.json").read_text(encoding="utf-8"))[

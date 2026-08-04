@@ -12,7 +12,7 @@
 
 FCFF fits Alphabet's non-financial operating business and values the common economic pool shared by its three economically equivalent common classes. The admitted Model Lock uses two derived forecast periods, a 9% USD WACC, 17% normalized operating tax rate, 3% terminal growth, and an $80.0 billion excess-cash estimate. These are analyst assumptions, not facts selected by the calculator.
 
-Receipt status: `pass`; input identity: `sha256:9936733095cb3e8d2cde8bf452edf0f9d54b15234b8904752f2cf1164c016d43`; calculation path: `fcff-contract-v1`.
+Receipt status: `pass`; input identity: `sha256:080428df5c1f01f30ecce21206821b4c9e7bc7528f55260b1f8adcaebbf73698`; calculation path: `fcff-contract-v2`.
 
 Material arithmetic: receipt only; not manually reproduced.
 

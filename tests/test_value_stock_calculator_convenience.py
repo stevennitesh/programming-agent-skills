@@ -18,7 +18,7 @@ GATEWAY = ROOT / "skills/extra/value-stock/scripts/valuation_gateway.py"
 FCFF_FIXTURE = ROOT / "skills/extra/value-stock/examples/fcff-model-lock.json"
 RI_FIXTURE = (
     ROOT
-    / "tests/fixtures/value_stock_residual_income/residual_income_model_lock.json"
+    / "skills/extra/value-stock/examples/residual-income-model-lock.json"
 )
 SKILL = ROOT / "skills/extra/value-stock/SKILL.md"
 METHODS = ROOT / "skills/extra/value-stock/references/valuation-methods.md"
@@ -78,18 +78,21 @@ def test_cli_has_obvious_validate_and_calculate_routes_with_copyable_help() -> N
     )
     validate_run = run_gateway("validate", FCFF_FIXTURE)
     calculate_run = run_gateway("calculate", FCFF_FIXTURE)
+    residual_income_run = run_gateway("calculate", RI_FIXTURE)
 
     assert help_run.returncode == 0
     assert "validate INPUT" in help_run.stdout
     assert "calculate INPUT" in help_run.stdout
     assert (
-        "python scripts/valuation_gateway.py calculate "
-        "examples/fcff-model-lock.json" in help_run.stdout
+        "python skills/extra/value-stock/scripts/valuation_gateway.py calculate "
+        "skills/extra/value-stock/examples/fcff-model-lock.json" in help_run.stdout
     )
     assert validate_run.returncode == 0, validate_run.stderr
     assert "calculation" not in json.loads(validate_run.stdout)
     assert calculate_run.returncode == 0, calculate_run.stderr
     assert json.loads(calculate_run.stdout)["calculation"]["per_share_value"]
+    assert residual_income_run.returncode == 0, residual_income_run.stderr
+    assert json.loads(residual_income_run.stdout)["method"] == "residual_income"
 
 
 def test_skill_has_one_calculator_route_to_the_tested_example_and_method_owner() -> None:
@@ -97,13 +100,24 @@ def test_skill_has_one_calculator_route_to_the_tested_example_and_method_owner()
     methods = METHODS.read_text(encoding="utf-8")
 
     assert skill.count("## Run The Calculator") == 1
-    assert "[canonical Model Lock](examples/fcff-model-lock.json)" in skill
+    assert "[FCFF example](examples/fcff-model-lock.json)" in skill
+    assert "[residual-income example](examples/residual-income-model-lock.json)" in skill
     assert "[valuation-methods.md](references/valuation-methods.md)" in skill
-    assert "python scripts/valuation_gateway.py validate examples/fcff-model-lock.json" in skill
-    assert "python scripts/valuation_gateway.py calculate examples/fcff-model-lock.json" in skill
+    assert (
+        "python skills/extra/value-stock/scripts/valuation_gateway.py calculate "
+        "skills/extra/value-stock/examples/fcff-model-lock.json" in skill
+    )
+    assert (
+        "python skills/extra/value-stock/scripts/valuation_gateway.py calculate "
+        "skills/extra/value-stock/examples/residual-income-model-lock.json" in skill
+    )
     assert "`mechanical_status: fail` excludes the affected result" in skill
     assert "explicit capability gap" in skill
-    assert "receipt supplies all material arithmetic and assertions" in methods
+    normalized_methods = " ".join(methods.split())
+    assert (
+        "receipt supplies the deterministic arithmetic and assertions represented "
+        "by the selected typed calculation path" in normalized_methods
+    )
 
     canonical_path = "skills/extra/value-stock/examples/fcff-model-lock.json"
     oracle = json.loads(

@@ -45,9 +45,12 @@ the caller requests Git delivery.
 
 ## Implement
 
-At the top-level root, unless the caller explicitly requests root execution,
-when fresh collaboration delegation is available choose the first matching
-capable worker using the ordered conditions in
+At the top-level root, delegate only when fresh collaboration is available, the
+caller did not request root execution, a worker can independently own the
+bounded edit and proof, and the expected root effort saved exceeds handoff and
+verification cost. Make that judgment directly from the item and checkout;
+create no score, worksheet, or artifact. When the gate passes, choose the first
+matching capable worker using the ordered conditions in
 [Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md), then
 send one plain ticket-specific handoff to one fresh worker. Use the
 [Plain Worker Handoff](references/WORKER-HANDOFF.md) as guidance, not as a
@@ -64,8 +67,8 @@ one. It returns the changed scope, concise proof, residual-risk evidence, and
 the commit when created. The root treats that prose Return as evidence, then
 verifies the actual diff, scope, proof, and applicable commit before accepting
 it.
-When delegation is unavailable or the caller explicitly requests root
-execution, the root follows the same implementation path directly.
+When the delegation gate fails, the root follows the same implementation path
+directly.
 
 Use `$tdd` for settled red-testable behavior. For a bug whose expected behavior,
 cause, or trusted reproduction is uncertain, return `diagnosis-required` with
