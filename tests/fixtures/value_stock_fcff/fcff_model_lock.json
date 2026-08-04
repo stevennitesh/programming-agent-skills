@@ -79,17 +79,6 @@
       "scenario": "base",
       "source_ref": "model-lock:working-capital-change-fy2026"
     },
-    "fcff_fy2026": {
-      "value": 60,
-      "unit": "currency",
-      "value_kind": "monetary",
-      "currency": "USD",
-      "period": "FY2026",
-      "evidence_class": "calculated",
-      "claim_basis": "enterprise",
-      "scenario": "base",
-      "formula_ref": "fcff-v1:nopat-plus-da-minus-capex-minus-working-capital-change"
-    },
     "wacc_fy2026": {
       "value": 0.10,
       "unit": "ratio",
@@ -144,17 +133,6 @@
       "claim_basis": "enterprise",
       "scenario": "base",
       "source_ref": "model-lock:terminal-wacc"
-    },
-    "terminal_fcff": {
-      "value": 72.1,
-      "unit": "currency",
-      "value_kind": "monetary",
-      "currency": "USD",
-      "date": "2028-12-31",
-      "evidence_class": "calculated",
-      "claim_basis": "enterprise",
-      "scenario": "base",
-      "formula_ref": "fcff-v1:last-fcff-times-one-plus-growth"
     },
     "excess_cash": {
       "value": 50,
@@ -246,17 +224,11 @@
     }
   },
   "fcff": {
-    "discounting": {
-      "day_count": "actual_365",
-      "compounding": "annual",
-      "forecast_rate_basis": "valuation_origin_spot"
-    },
     "forecast_periods": [
       {
         "period": "FY2026",
         "realization_date": "2026-12-31",
         "branch": "derived",
-        "output_input": "fcff_fy2026",
         "discount_rate_input": "wacc_fy2026",
         "components": {
           "ebit": "ebit_fy2026",
@@ -276,9 +248,6 @@
     ],
     "terminal": {
       "terminal_date": "2027-12-31",
-      "next_period_date": "2028-12-31",
-      "interval_years": 1,
-      "next_period_fcff_input": "terminal_fcff",
       "discount_rate_input": "terminal_wacc",
       "growth_rate_input": "terminal_growth"
     },

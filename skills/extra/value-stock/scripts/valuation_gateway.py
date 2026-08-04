@@ -43,7 +43,6 @@ CONTRACT = {
         "timing": ["explicit", "midyear", "year_end"],
     },
 }
-FCFF_ASSERTION_TOLERANCE = Decimal("0.00000001")
 FCFF_OUTPUT_QUANTUM = Decimal("0.00000001")
 FCFF_CONTEXT_PRECISION = 50
 FCFF_DERIVED_FORMULA_REF = (
@@ -64,6 +63,7 @@ FCFF_PATH_CONTRACT = {
         ],
         "declared": ["target_claim_adjustments"],
     },
+    "compounding": "annual",
     "day_count": "actual_365",
     "forecast_rate_basis": "valuation_origin_spot",
     "derived_fcff_formula": FCFF_DERIVED_FORMULA_REF,
@@ -533,12 +533,48 @@ def _next_year(value: date) -> date:
         return value.replace(year=value.year + 1, day=28)
 
 
-def validate_fcff_calculation(source: dict[str, Any]) -> list[dict[str, str]]:
-    failures: list[dict[str, str]] = []
-    config = source.get("fcff")
-    if not isinstance(config, dict):
-        return [_failure("fcff_required", "fcff", "FCFF calculation data is required")]
+def _derive_fcff(source: dict[str, Any], components: dict[str, str]) -> Decimal:
+    return (
+        _input_decimal(source, components["ebit"])
+        * (Decimal(1) - _input_decimal(source, components["tax_rate"]))
+        + _input_decimal(source, components["depreciation_amortization"])
+        - _input_decimal(source, components["capital_expenditures"])
+        - _input_decimal(source, components["working_capital_change"])
+    )
 
+
+def _discount_terms(
+    as_of: date,
+    realization_date: date,
+    discount_rate: Decimal,
+) -> tuple[Decimal, Decimal]:
+    exponent = Decimal((realization_date - as_of).days) / Decimal(365)
+    factor = Decimal(1) / ((Decimal(1) + discount_rate) ** exponent)
+    return exponent, factor
+
+
+def _next_period_fcff(last_fcff: Decimal, growth_rate: Decimal) -> Decimal:
+    return last_fcff * (Decimal(1) + growth_rate)
+
+
+def _perpetual_growth_terminal_value(
+    next_period_fcff: Decimal,
+    discount_rate: Decimal,
+    growth_rate: Decimal,
+) -> Decimal:
+    return next_period_fcff / (discount_rate - growth_rate)
+
+
+def _validate_fcff_forecasts(
+    source: dict[str, Any],
+    config: dict[str, Any],
+    failures: list[dict[str, str]],
+) -> tuple[
+    dict[str, dict[str, Any]],
+    list[dict[str, Any]],
+    list[Decimal | None],
+    date | None,
+]:
     as_of = date.fromisoformat(source["as_of_date"])
     period_rows = {
         row["id"]: row
@@ -558,9 +594,7 @@ def validate_fcff_calculation(source: dict[str, Any]) -> list[dict[str, str]]:
 
     timing = source["conventions"]["timing"]
     prior_realization: date | None = None
-    first_prior_period_end = config["discounting"].get(
-        "midyear_first_prior_period_end"
-    )
+    first_prior_period_end = config.get("midyear_first_prior_period_end")
     prior_period_end: date | None = None
     if timing == "midyear":
         if isinstance(first_prior_period_end, str):
@@ -569,7 +603,7 @@ def validate_fcff_calculation(source: dict[str, Any]) -> list[dict[str, str]]:
                 failures.append(
                     _failure(
                         "timing_convention",
-                        "fcff.discounting.midyear_first_prior_period_end",
+                        "fcff.midyear_first_prior_period_end",
                         "the preceding period end cannot follow the valuation date",
                     )
                 )
@@ -577,7 +611,7 @@ def validate_fcff_calculation(source: dict[str, Any]) -> list[dict[str, str]]:
             failures.append(
                 _failure(
                     "timing_convention",
-                    "fcff.discounting.midyear_first_prior_period_end",
+                    "fcff.midyear_first_prior_period_end",
                     "midyear timing requires the preceding period end",
                 )
             )
@@ -585,7 +619,7 @@ def validate_fcff_calculation(source: dict[str, Any]) -> list[dict[str, str]]:
         failures.append(
             _failure(
                 "timing_convention",
-                "fcff.discounting.midyear_first_prior_period_end",
+                "fcff.midyear_first_prior_period_end",
                 "the preceding period end is only used for midyear timing",
             )
         )
@@ -642,15 +676,6 @@ def validate_fcff_calculation(source: dict[str, Any]) -> list[dict[str, str]]:
                     )
             prior_period_end = period_end
 
-        output = _fcff_input(
-            source,
-            row["output_input"],
-            f"{row_path}.output_input",
-            failures,
-            unit="currency",
-            claim_basis="enterprise",
-            period=period_id,
-        )
         rate = _fcff_input(
             source,
             row["discount_rate_input"],
@@ -664,6 +689,8 @@ def validate_fcff_calculation(source: dict[str, Any]) -> list[dict[str, str]]:
             failures.append(
                 _failure("discount_rate", f"{row_path}.discount_rate_input", "rate must exceed -1")
             )
+        elif rate is not None:
+            _discount_terms(as_of, realization, Decimal(rate["value"]))
 
         computed: Decimal | None = None
         if row["branch"] == "derived":
@@ -696,36 +723,21 @@ def validate_fcff_calculation(source: dict[str, Any]) -> list[dict[str, str]]:
                 )
                 for role, spec in component_specs.items()
             }
-            if output is not None and output.get("formula_ref") != FCFF_DERIVED_FORMULA_REF:
-                failures.append(
-                    _failure(
-                        "fcff_formula",
-                        f"{row_path}.output_input",
-                        "derived FCFF must retain the registered formula reference",
-                    )
-                )
             if all(record is not None for record in records.values()):
-                computed = (
-                    Decimal(records["ebit"]["value"])
-                    * (Decimal(1) - Decimal(records["tax_rate"]["value"]))
-                    + Decimal(records["depreciation_amortization"]["value"])
-                    - Decimal(records["capital_expenditures"]["value"])
-                    - Decimal(records["working_capital_change"]["value"])
-                )
-                if (
-                    output is not None
-                    and abs(computed - Decimal(output["value"])) > FCFF_ASSERTION_TOLERANCE
-                ):
-                    failures.append(
-                        _failure(
-                            "fcff_identity",
-                            f"{row_path}.output_input",
-                            "derived FCFF does not match the registered identity",
-                        )
-                    )
-        elif output is not None:
-            computed = Decimal(output["value"])
-            if "source_ref" not in output:
+                computed = _derive_fcff(source, components)
+        else:
+            output = _fcff_input(
+                source,
+                row["output_input"],
+                f"{row_path}.output_input",
+                failures,
+                unit="currency",
+                claim_basis="enterprise",
+                period=period_id,
+            )
+            if output is not None:
+                computed = Decimal(output["value"])
+            if output is not None and "source_ref" not in output:
                 failures.append(
                     _failure(
                         "fcff_formula",
@@ -735,6 +747,19 @@ def validate_fcff_calculation(source: dict[str, Any]) -> list[dict[str, str]]:
                 )
         calculated_fcff.append(computed)
 
+    return period_rows, forecast_periods, calculated_fcff, prior_realization
+
+
+def _validate_fcff_terminal(
+    source: dict[str, Any],
+    config: dict[str, Any],
+    period_rows: dict[str, dict[str, Any]],
+    forecast_periods: list[dict[str, Any]],
+    calculated_fcff: list[Decimal | None],
+    prior_realization: date | None,
+    failures: list[dict[str, str]],
+) -> None:
+    as_of = date.fromisoformat(source["as_of_date"])
     terminal = config["terminal"]
     convention = source["conventions"]["terminal"]
     if convention == "none" and terminal is not None:
@@ -745,7 +770,6 @@ def validate_fcff_calculation(source: dict[str, Any]) -> list[dict[str, str]]:
         )
     if terminal is not None:
         terminal_date = date.fromisoformat(terminal["terminal_date"])
-        next_period_date = date.fromisoformat(terminal["next_period_date"])
         if terminal_date <= as_of:
             failures.append(
                 _failure(
@@ -771,23 +795,6 @@ def validate_fcff_calculation(source: dict[str, Any]) -> list[dict[str, str]]:
                     "terminal date must equal the final forecast period end",
                 )
             )
-        if next_period_date != _next_year(terminal_date):
-            failures.append(
-                _failure(
-                    "terminal_timing",
-                    "fcff.terminal.next_period_date",
-                    "terminal numerator must be dated one interval after terminal date",
-                )
-            )
-        next_fcff = _fcff_input(
-            source,
-            terminal["next_period_fcff_input"],
-            "fcff.terminal.next_period_fcff_input",
-            failures,
-            unit="currency",
-            claim_basis="enterprise",
-            record_date=terminal["next_period_date"],
-        )
         terminal_wacc = _fcff_input(
             source,
             terminal["discount_rate_input"],
@@ -821,32 +828,28 @@ def validate_fcff_calculation(source: dict[str, Any]) -> list[dict[str, str]]:
                 failures.append(
                     _failure("discount_rate", "fcff.terminal", "terminal WACC must exceed -1")
                 )
+            else:
+                _discount_terms(as_of, terminal_date, wacc_value)
             if (
-                next_fcff is not None
+                wacc_value > growth_value
                 and calculated_fcff
                 and calculated_fcff[-1] is not None
-                and abs(
-                    Decimal(next_fcff["value"])
-                    - calculated_fcff[-1] * (Decimal(1) + growth_value)
-                )
-                > FCFF_ASSERTION_TOLERANCE
             ):
-                failures.append(
-                    _failure(
-                        "terminal_fcff_identity",
-                        "fcff.terminal.next_period_fcff_input",
-                        "terminal FCFF does not match last FCFF grown one interval",
-                    )
+                next_period_fcff = _next_period_fcff(
+                    calculated_fcff[-1], growth_value
                 )
-        if next_fcff is not None and next_fcff.get("formula_ref") != FCFF_TERMINAL_FORMULA_REF:
-            failures.append(
-                _failure(
-                    "fcff_formula",
-                    "fcff.terminal.next_period_fcff_input",
-                    "terminal FCFF must retain the registered formula reference",
+                _perpetual_growth_terminal_value(
+                    next_period_fcff,
+                    wacc_value,
+                    growth_value,
                 )
-            )
 
+
+def _validate_fcff_claims_and_shares(
+    source: dict[str, Any],
+    config: dict[str, Any],
+    failures: list[dict[str, str]],
+) -> None:
     bridge = config["claim_bridge"]
     bridge_claims = {
         "excess_cash": "common_equity",
@@ -978,6 +981,29 @@ def validate_fcff_calculation(source: dict[str, Any]) -> list[dict[str, str]]:
                 f"input exceeds {FCFF_CONTEXT_PRECISION} significant digits",
             )
         )
+
+
+def validate_fcff_calculation(source: dict[str, Any]) -> list[dict[str, str]]:
+    failures: list[dict[str, str]] = []
+    config = source.get("fcff")
+    if not isinstance(config, dict):
+        return [_failure("fcff_required", "fcff", "FCFF calculation data is required")]
+
+    with localcontext(_fcff_decimal_context()):
+        period_rows, forecast_periods, calculated_fcff, prior_realization = (
+            _validate_fcff_forecasts(source, config, failures)
+        )
+        _validate_fcff_terminal(
+            source,
+            config,
+            period_rows,
+            forecast_periods,
+            calculated_fcff,
+            prior_realization,
+            failures,
+        )
+        _validate_fcff_claims_and_shares(source, config, failures)
+
     unique = {
         (failure["code"], failure["path"], failure["message"]): failure
         for failure in failures
@@ -988,86 +1014,70 @@ def validate_fcff_calculation(source: dict[str, Any]) -> list[dict[str, str]]:
 def _calculate_fcff(source: dict[str, Any]) -> dict[str, Any]:
     config = source["fcff"]
     as_of = date.fromisoformat(source["as_of_date"])
-    forecast_results: list[dict[str, str]] = []
+    forecast_results: list[dict[str, Any]] = []
     forecast_present_values: list[Decimal] = []
 
     with localcontext(_fcff_decimal_context()):
         last_fcff: Decimal | None = None
         for period in config["forecast_periods"]:
-            output_record = source["inputs"][period["output_input"]]
-            output_value = _input_decimal(source, period["output_input"])
             if period["branch"] == "derived":
-                components = period["components"]
-                ebit = _input_decimal(source, components["ebit"])
-                tax_rate = _input_decimal(source, components["tax_rate"])
-                depreciation = _input_decimal(
-                    source,
-                    components["depreciation_amortization"],
-                )
-                capital_expenditures = _input_decimal(
-                    source,
-                    components["capital_expenditures"],
-                )
-                working_capital_change = _input_decimal(
-                    source,
-                    components["working_capital_change"],
-                )
-                fcff = (
-                    ebit * (Decimal(1) - tax_rate)
-                    + depreciation
-                    - capital_expenditures
-                    - working_capital_change
-                )
+                fcff = _derive_fcff(source, period["components"])
+                lineage = {"kind": "formula", "ref": FCFF_DERIVED_FORMULA_REF}
             else:
-                fcff = output_value
+                output_record = source["inputs"][period["output_input"]]
+                fcff = _input_decimal(source, period["output_input"])
+                lineage = {"kind": "source", "ref": output_record["source_ref"]}
             last_fcff = fcff
 
             realization_date = date.fromisoformat(period["realization_date"])
-            exponent = Decimal((realization_date - as_of).days) / Decimal(365)
             discount_rate = _input_decimal(source, period["discount_rate_input"])
-            discount_factor = Decimal(1) / ((Decimal(1) + discount_rate) ** exponent)
+            exponent, discount_factor = _discount_terms(
+                as_of,
+                realization_date,
+                discount_rate,
+            )
             present_value = fcff * discount_factor
             forecast_present_values.append(present_value)
-            forecast_results.append(
-                {
-                    "period": period["period"],
-                    "realization_date": period["realization_date"],
-                    "branch": period["branch"],
-                    "output_input": period["output_input"],
-                    "lineage": {
-                        "kind": "formula" if "formula_ref" in output_record else "source",
-                        "ref": output_record.get("formula_ref", output_record.get("source_ref")),
-                    },
-                    "fcff": _receipt_decimal(fcff),
-                    "discount_rate_input": period["discount_rate_input"],
-                    "discount_rate": _receipt_decimal(discount_rate),
-                    "discount_exponent": _receipt_decimal(exponent),
-                    "discount_factor": _receipt_decimal(discount_factor),
-                    "present_value": _receipt_decimal(present_value),
-                }
-            )
+            forecast_result = {
+                "period": period["period"],
+                "realization_date": period["realization_date"],
+                "branch": period["branch"],
+                "lineage": lineage,
+                "fcff": _receipt_decimal(fcff),
+                "discount_rate_input": period["discount_rate_input"],
+                "discount_rate": _receipt_decimal(discount_rate),
+                "discount_exponent": _receipt_decimal(exponent),
+                "discount_factor": _receipt_decimal(discount_factor),
+                "present_value": _receipt_decimal(present_value),
+            }
+            if period["branch"] == "direct":
+                forecast_result["output_input"] = period["output_input"]
+            forecast_results.append(forecast_result)
 
-        terminal_result: dict[str, str] | None = None
+        terminal_result: dict[str, Any] | None = None
         terminal_present_value = Decimal(0)
         terminal = config["terminal"]
         if terminal is not None:
-            next_period_record = source["inputs"][terminal["next_period_fcff_input"]]
             terminal_wacc = _input_decimal(source, terminal["discount_rate_input"])
             growth_rate = _input_decimal(source, terminal["growth_rate_input"])
             assert last_fcff is not None
-            next_period_fcff = last_fcff * (Decimal(1) + growth_rate)
-            terminal_value = next_period_fcff / (terminal_wacc - growth_rate)
+            next_period_fcff = _next_period_fcff(last_fcff, growth_rate)
+            terminal_value = _perpetual_growth_terminal_value(
+                next_period_fcff,
+                terminal_wacc,
+                growth_rate,
+            )
             terminal_date = date.fromisoformat(terminal["terminal_date"])
-            terminal_exponent = Decimal((terminal_date - as_of).days) / Decimal(365)
-            terminal_discount_factor = Decimal(1) / (
-                (Decimal(1) + terminal_wacc) ** terminal_exponent
+            terminal_exponent, terminal_discount_factor = _discount_terms(
+                as_of,
+                terminal_date,
+                terminal_wacc,
             )
             terminal_present_value = terminal_value * terminal_discount_factor
             terminal_result = {
                 "terminal_date": terminal["terminal_date"],
-                "next_period_date": terminal["next_period_date"],
-                "next_period_fcff_input": terminal["next_period_fcff_input"],
-                "formula_ref": next_period_record["formula_ref"],
+                "next_period_date": _next_year(terminal_date).isoformat(),
+                "formula_ref": FCFF_TERMINAL_FORMULA_REF,
                 "next_period_fcff": _receipt_decimal(next_period_fcff),
                 "discount_rate_input": terminal["discount_rate_input"],
                 "growth_rate_input": terminal["growth_rate_input"],

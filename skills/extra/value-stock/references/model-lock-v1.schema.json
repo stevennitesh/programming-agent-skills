@@ -75,7 +75,24 @@
     "inputs": {
       "type": "object",
       "minProperties": 1,
-      "additionalProperties": {"$ref": "#/$defs/valueRecord"}
+      "additionalProperties": {
+        "allOf": [
+          {"$ref": "#/$defs/valueRecord"},
+          {
+            "not": {
+              "required": ["formula_ref"],
+              "properties": {
+                "formula_ref": {
+                  "enum": [
+                    "fcff-v1:nopat-plus-da-minus-capex-minus-working-capital-change",
+                    "fcff-v1:last-fcff-times-one-plus-growth"
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
     },
     "fcff": {"$ref": "#/$defs/fcffModel"}
   },
@@ -84,30 +101,15 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "discounting",
         "forecast_periods",
         "terminal",
         "claim_bridge",
         "award_treatment"
       ],
       "properties": {
-        "discounting": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "day_count",
-            "compounding",
-            "forecast_rate_basis"
-          ],
-          "properties": {
-            "day_count": {"const": "actual_365"},
-            "compounding": {"const": "annual"},
-            "forecast_rate_basis": {"const": "valuation_origin_spot"},
-            "midyear_first_prior_period_end": {
-              "type": "string",
-              "format": "date"
-            }
-          }
+        "midyear_first_prior_period_end": {
+          "type": "string",
+          "format": "date"
         },
         "forecast_periods": {
           "type": "array",
@@ -131,7 +133,6 @@
         "period",
         "realization_date",
         "branch",
-        "output_input",
         "discount_rate_input"
       ],
       "properties": {
@@ -162,8 +163,14 @@
       "allOf": [
         {
           "if": {"properties": {"branch": {"const": "derived"}}},
-          "then": {"required": ["components"]},
-          "else": {"not": {"required": ["components"]}}
+          "then": {
+            "required": ["components"],
+            "not": {"required": ["output_input"]}
+          },
+          "else": {
+            "required": ["output_input"],
+            "not": {"required": ["components"]}
+          }
         }
       ]
     },
@@ -172,17 +179,11 @@
       "additionalProperties": false,
       "required": [
         "terminal_date",
-        "next_period_date",
-        "interval_years",
-        "next_period_fcff_input",
         "discount_rate_input",
         "growth_rate_input"
       ],
       "properties": {
         "terminal_date": {"type": "string", "format": "date"},
-        "next_period_date": {"type": "string", "format": "date"},
-        "interval_years": {"const": 1},
-        "next_period_fcff_input": {"type": "string", "minLength": 1},
         "discount_rate_input": {"type": "string", "minLength": 1},
         "growth_rate_input": {"type": "string", "minLength": 1}
       }

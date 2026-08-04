@@ -9,7 +9,6 @@
         "period": "FY2026",
         "realization_date": "2026-12-31",
         "branch": "derived",
-        "output_input": "fcff_fy2026",
         "lineage": {
           "kind": "formula",
           "ref": "fcff-v1:nopat-plus-da-minus-capex-minus-working-capital-change"
@@ -41,7 +40,6 @@
     "terminal": {
       "terminal_date": "2027-12-31",
       "next_period_date": "2028-12-31",
-      "next_period_fcff_input": "terminal_fcff",
       "formula_ref": "fcff-v1:last-fcff-times-one-plus-growth",
       "next_period_fcff": "72.1",
       "discount_rate_input": "terminal_wacc",

@@ -17,18 +17,45 @@
       "expected_code": "timing_convention"
     },
     {
-      "id": "derived_fcff_identity",
+      "id": "caller_supplied_derived_fcff",
       "operation": "set",
-      "path": ["inputs", "fcff_fy2026", "value"],
-      "value": 61,
-      "expected_code": "fcff_identity"
+      "path": ["fcff", "forecast_periods", 0, "output_input"],
+      "value": "fcff_fy2027",
+      "expected_code": "schema"
     },
     {
-      "id": "derived_fcff_formula_lineage",
+      "id": "unreferenced_caller_supplied_derived_fcff",
       "operation": "set",
-      "path": ["inputs", "fcff_fy2026", "formula_ref"],
-      "value": "unknown-formula",
-      "expected_code": "fcff_formula"
+      "path": ["inputs", "caller_supplied_fcff_fy2026"],
+      "value": {
+        "value": 999,
+        "unit": "currency",
+        "value_kind": "monetary",
+        "currency": "USD",
+        "period": "FY2026",
+        "evidence_class": "calculated",
+        "claim_basis": "enterprise",
+        "scenario": "base",
+        "formula_ref": "fcff-v1:nopat-plus-da-minus-capex-minus-working-capital-change"
+      },
+      "expected_code": "schema"
+    },
+    {
+      "id": "unreferenced_caller_supplied_terminal_fcff",
+      "operation": "set",
+      "path": ["inputs", "caller_supplied_terminal_fcff"],
+      "value": {
+        "value": 999,
+        "unit": "currency",
+        "value_kind": "monetary",
+        "currency": "USD",
+        "period": "FY2027",
+        "evidence_class": "calculated",
+        "claim_basis": "enterprise",
+        "scenario": "base",
+        "formula_ref": "fcff-v1:last-fcff-times-one-plus-growth"
+      },
+      "expected_code": "schema"
     },
     {
       "id": "duplicate_derived_component_reference",
@@ -102,22 +129,22 @@
     {
       "id": "fcff_unit_mismatch",
       "operation": "set",
-      "path": ["inputs", "fcff_fy2026", "unit"],
+      "path": ["inputs", "fcff_fy2027", "unit"],
       "value": "ratio",
       "expected_code": "schema"
     },
     {
       "id": "fcff_currency_mismatch",
       "operation": "set",
-      "path": ["inputs", "fcff_fy2026", "currency"],
+      "path": ["inputs", "fcff_fy2027", "currency"],
       "value": "EUR",
       "expected_code": "currency"
     },
     {
       "id": "fcff_period_mismatch",
       "operation": "set",
-      "path": ["inputs", "fcff_fy2026", "period"],
-      "value": "FY2027",
+      "path": ["inputs", "fcff_fy2027", "period"],
+      "value": "FY2026",
       "expected_code": "fcff_period"
     },
     {
@@ -141,32 +168,11 @@
       "expected_code": "terminal_timing"
     },
     {
-      "id": "terminal_numerator_date_mismatch",
-      "operation": "set",
-      "path": ["fcff", "terminal", "next_period_date"],
-      "value": "2029-12-31",
-      "expected_code": "terminal_timing"
-    },
-    {
       "id": "invalid_terminal_spread",
       "operation": "set",
       "path": ["inputs", "terminal_wacc", "value"],
       "value": 0.03,
       "expected_code": "terminal_spread"
-    },
-    {
-      "id": "terminal_fcff_identity",
-      "operation": "set",
-      "path": ["inputs", "terminal_fcff", "value"],
-      "value": 73,
-      "expected_code": "terminal_fcff_identity"
-    },
-    {
-      "id": "terminal_fcff_formula_lineage",
-      "operation": "set",
-      "path": ["inputs", "terminal_fcff", "formula_ref"],
-      "value": "unknown-formula",
-      "expected_code": "fcff_formula"
     },
     {
       "id": "negative_claim_amount",
@@ -178,7 +184,7 @@
     {
       "id": "missing_fcff_input_reference",
       "operation": "set",
-      "path": ["fcff", "forecast_periods", 0, "output_input"],
+      "path": ["fcff", "forecast_periods", 1, "output_input"],
       "value": "missing_input",
       "expected_code": "input_reference"
     },

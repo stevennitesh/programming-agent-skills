@@ -97,6 +97,7 @@ def test_frozen_fcff_case_matches_independent_oracle_without_input_mutation() ->
             ],
             "declared": ["target_claim_adjustments"],
         },
+        "compounding": "annual",
         "day_count": "actual_365",
         "forecast_rate_basis": "valuation_origin_spot",
         "derived_fcff_formula": (
@@ -117,12 +118,39 @@ def test_frozen_fcff_case_matches_independent_oracle_without_input_mutation() ->
     }
     assert receipt["calculation"] == oracle["expected"]
     assert receipt["assertions"][-1] == {"id": "fcff_calculation_valid", "status": "pass"}
-    normalized_inputs = receipt["normalized_input"]["inputs"]
-    assert normalized_inputs["fcff_fy2026"]["formula_ref"].startswith("fcff-v1:")
-    assert normalized_inputs["fcff_fy2027"]["source_ref"] == (
-        "model-lock:direct-fcff-fy2027"
-    )
-    assert normalized_inputs["terminal_fcff"]["formula_ref"].startswith("fcff-v1:")
+
+
+def test_calculator_owns_derived_fcff_terminal_values_and_fixed_conventions() -> None:
+    gateway = load_gateway()
+    source = load_fixture()
+    assert "fcff_fy2026" not in source["inputs"]
+    assert "terminal_fcff" not in source["inputs"]
+    assert "discounting" not in source["fcff"]
+    assert "output_input" not in source["fcff"]["forecast_periods"][0]
+    terminal_input = source["fcff"]["terminal"]
+    assert "next_period_date" not in terminal_input
+    assert "interval_years" not in terminal_input
+    assert "next_period_fcff_input" not in terminal_input
+
+    receipt = gateway.calculate_model_lock(source)
+
+    assert receipt["mechanical_status"] == "pass"
+    assert receipt["path_contract"]["day_count"] == "actual_365"
+    assert receipt["path_contract"]["compounding"] == "annual"
+    assert receipt["path_contract"]["forecast_rate_basis"] == "valuation_origin_spot"
+    assert "fcff_fy2026" not in receipt["normalized_input"]["inputs"]
+    assert "terminal_fcff" not in receipt["normalized_input"]["inputs"]
+    derived = receipt["calculation"]["forecast_periods"][0]
+    assert "output_input" not in derived
+    assert derived["lineage"] == {
+        "kind": "formula",
+        "ref": "fcff-v1:nopat-plus-da-minus-capex-minus-working-capital-change",
+    }
+    terminal_result = receipt["calculation"]["terminal"]
+    assert terminal_result["next_period_date"] == "2028-12-31"
+    assert "next_period_fcff_input" not in terminal_result
+    assert terminal_result["formula_ref"] == "fcff-v1:last-fcff-times-one-plus-growth"
+    assert terminal_result["next_period_fcff"] == "72.1"
 
 
 @pytest.mark.parametrize("case", NEGATIVE_CASES, ids=lambda case: case["id"])
@@ -232,10 +260,8 @@ def test_terminal_timing_must_follow_valuation_and_final_realization() -> None:
     elapsed_terminal = copy.deepcopy(valid_explicit)
     elapsed_terminal["periods"][1]["date"] = "2025-12-31"
     elapsed_terminal["fcff"]["terminal"]["terminal_date"] = "2025-12-31"
-    elapsed_terminal["fcff"]["terminal"]["next_period_date"] = "2026-12-31"
     elapsed_terminal["inputs"]["terminal_wacc"]["date"] = "2025-12-31"
     elapsed_terminal["inputs"]["terminal_growth"]["date"] = "2025-12-31"
-    elapsed_terminal["inputs"]["terminal_fcff"]["date"] = "2026-12-31"
 
     pre_forecast_terminal = copy.deepcopy(valid_explicit)
     pre_forecast_terminal["fcff"]["forecast_periods"][1]["realization_date"] = "2028-06-30"
@@ -282,18 +308,6 @@ def test_future_dilution_adjustment_must_subtract_from_equity() -> None:
     assert restored == valid_receipt
 
 
-def test_terminal_value_uses_recomputed_formula_numerator() -> None:
-    gateway = load_gateway()
-    source = load_fixture()
-    source["inputs"]["terminal_fcff"]["value"] = 72.10000001
-
-    receipt = gateway.calculate_model_lock(source)
-
-    assert receipt["mechanical_status"] == "pass"
-    assert receipt["calculation"]["terminal"]["next_period_fcff"] == "72.1"
-    assert receipt["calculation"]["terminal"]["terminal_value"] == "1030"
-
-
 def test_irregular_dates_match_independent_actual_365_oracle_and_one_day_change() -> None:
     gateway = load_gateway()
     source = load_fixture()
@@ -302,10 +316,8 @@ def test_irregular_dates_match_independent_actual_365_oracle_and_one_day_change(
     source["fcff"]["forecast_periods"][1]["realization_date"] = "2027-06-30"
     source["periods"][1]["date"] = "2027-09-30"
     source["fcff"]["terminal"]["terminal_date"] = "2027-09-30"
-    source["fcff"]["terminal"]["next_period_date"] = "2028-09-30"
     source["inputs"]["terminal_wacc"]["date"] = "2027-09-30"
     source["inputs"]["terminal_growth"]["date"] = "2027-09-30"
-    source["inputs"]["terminal_fcff"]["date"] = "2028-09-30"
     oracle = json.loads((FIXTURES / "fcff_oracle_v1.json").read_text(encoding="utf-8"))[
         "irregular_actual_365_expected"
     ]
@@ -341,7 +353,7 @@ def test_midyear_timing_matches_independent_oracle_and_rejects_mistiming() -> No
         if record.get("date") == "2025-12-31":
             record["date"] = source["as_of_date"]
     source["conventions"]["timing"] = "midyear"
-    source["fcff"]["discounting"]["midyear_first_prior_period_end"] = "2025-12-31"
+    source["fcff"]["midyear_first_prior_period_end"] = "2025-12-31"
     source["fcff"]["forecast_periods"][0]["realization_date"] = "2026-07-01"
     source["fcff"]["forecast_periods"][1]["realization_date"] = "2027-07-01"
     oracle = json.loads((FIXTURES / "fcff_oracle_v1.json").read_text(encoding="utf-8"))[
@@ -358,9 +370,7 @@ def test_midyear_timing_matches_independent_oracle_and_rejects_mistiming() -> No
     reversed_periods["periods"][1]["date"] = "2026-06-30"
     reversed_receipt = gateway.calculate_model_lock(reversed_periods)
     future_prior_end = copy.deepcopy(source)
-    future_prior_end["fcff"]["discounting"][
-        "midyear_first_prior_period_end"
-    ] = "2026-04-01"
+    future_prior_end["fcff"]["midyear_first_prior_period_end"] = "2026-04-01"
     future_prior_end["fcff"]["forecast_periods"][0][
         "realization_date"
     ] = "2026-08-16"
@@ -401,10 +411,8 @@ def test_unequal_valuation_origin_spot_rates_match_independent_oracle() -> None:
     source["fcff"]["forecast_periods"][1]["realization_date"] = "2027-06-30"
     source["periods"][1]["date"] = "2027-09-30"
     source["fcff"]["terminal"]["terminal_date"] = "2027-09-30"
-    source["fcff"]["terminal"]["next_period_date"] = "2028-09-30"
     source["inputs"]["terminal_wacc"]["date"] = "2027-09-30"
     source["inputs"]["terminal_growth"]["date"] = "2027-09-30"
-    source["inputs"]["terminal_fcff"]["date"] = "2028-09-30"
     source["inputs"]["wacc_fy2026"]["value"] = 0.08
     source["inputs"]["wacc_fy2027"]["value"] = 0.12
     oracle = json.loads((FIXTURES / "fcff_oracle_v1.json").read_text(encoding="utf-8"))[
@@ -430,17 +438,24 @@ def test_unequal_valuation_origin_spot_rates_match_independent_oracle() -> None:
     assert receipt["calculation"]["per_share_value"] == oracle["per_share_value"]
 
 
-def test_discount_rate_basis_is_required_and_rejects_unsupported_semantics() -> None:
+def test_fixed_discount_conventions_are_owned_by_the_path_contract() -> None:
     gateway = load_gateway()
     conforming = load_fixture()
-    unsupported = copy.deepcopy(conforming)
-    unsupported["fcff"]["discounting"]["forecast_rate_basis"] = "period_forward"
+    caller_override = copy.deepcopy(conforming)
+    caller_override["fcff"]["discounting"] = {
+        "day_count": "actual_365",
+        "compounding": "annual",
+        "forecast_rate_basis": "valuation_origin_spot",
+    }
 
     baseline = gateway.calculate_model_lock(conforming)
-    failed = gateway.calculate_model_lock(unsupported)
+    failed = gateway.calculate_model_lock(caller_override)
     restored = gateway.calculate_model_lock(conforming)
 
     assert baseline["mechanical_status"] == "pass"
+    assert baseline["path_contract"]["day_count"] == "actual_365"
+    assert baseline["path_contract"]["compounding"] == "annual"
+    assert baseline["path_contract"]["forecast_rate_basis"] == "valuation_origin_spot"
     assert failed["mechanical_status"] == "fail"
     assert "schema" in {failure["code"] for failure in failed["failures"]}
     assert restored == baseline
@@ -454,7 +469,6 @@ def test_fcff_receipt_is_repeatable_and_changes_with_load_bearing_input() -> Non
     repeated = gateway.calculate_model_lock(source)
     changed_source = copy.deepcopy(source)
     changed_source["inputs"]["fcff_fy2027"]["value"] = 71
-    changed_source["inputs"]["terminal_fcff"]["value"] = 73.13
     changed = gateway.calculate_model_lock(changed_source)
 
     assert repeated == first
