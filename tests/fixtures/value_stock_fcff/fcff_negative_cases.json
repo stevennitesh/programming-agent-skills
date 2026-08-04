@@ -1,6 +1,6 @@
 {
   "fixture_version": "fcff-negative-controls-v1",
-  "base_fixture": "fcff_model_lock.json",
+  "base_fixture": "skills/extra/value-stock/examples/fcff-model-lock.json",
   "cases": [
     {
       "id": "elapsed_cash_flow",

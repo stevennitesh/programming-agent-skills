@@ -2198,28 +2198,47 @@ def _decimal_argument(value: str) -> Decimal:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Validate a valuation Model Lock.")
-    parser.add_argument("input", type=Path)
-    parser.add_argument(
-        "--output-format",
-        choices=("json", "markdown"),
-        default="json",
+    parser = argparse.ArgumentParser(
+        description="Validate or calculate a valuation Model Lock.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=(
+            "Routes:\n"
+            "  validate INPUT   validate and normalize without calculating\n"
+            "  calculate INPUT  validate, calculate, and emit a receipt\n\n"
+            "Example:\n"
+            "  python scripts/valuation_gateway.py calculate "
+            "examples/fcff-model-lock.json"
+        ),
     )
-    parser.add_argument(
-        "--calculate",
-        action="store_true",
-        help="execute the selected supported calculation path after validation",
+    subparsers = parser.add_subparsers(dest="command", required=True)
+    validate_parser = subparsers.add_parser(
+        "validate",
+        help="validate and normalize a Model Lock without calculating",
     )
-    parser.add_argument("--reverse-input")
-    parser.add_argument("--target-per-share", type=_decimal_argument)
-    parser.add_argument("--lower-bound", type=_decimal_argument)
-    parser.add_argument("--upper-bound", type=_decimal_argument)
+    calculate_parser = subparsers.add_parser(
+        "calculate",
+        help="validate and calculate a supported Model Lock",
+    )
+    for command_parser in (validate_parser, calculate_parser):
+        command_parser.add_argument("input", type=Path, metavar="INPUT")
+        command_parser.add_argument(
+            "--output-format",
+            choices=("json", "markdown"),
+            default="json",
+        )
+    calculate_parser.add_argument(
+        "--reverse-input",
+        help="solve this one named input instead of running an ordinary calculation",
+    )
+    calculate_parser.add_argument("--target-per-share", type=_decimal_argument)
+    calculate_parser.add_argument("--lower-bound", type=_decimal_argument)
+    calculate_parser.add_argument("--upper-bound", type=_decimal_argument)
     args = parser.parse_args(argv)
     reverse_arguments = (
-        args.reverse_input,
-        args.target_per_share,
-        args.lower_bound,
-        args.upper_bound,
+        getattr(args, "reverse_input", None),
+        getattr(args, "target_per_share", None),
+        getattr(args, "lower_bound", None),
+        getattr(args, "upper_bound", None),
     )
     if any(value is not None for value in reverse_arguments) and not all(
         value is not None for value in reverse_arguments
@@ -2227,7 +2246,7 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("reverse solve requires input, target, and both bounds")
     try:
         source = load_source(args.input)
-        if args.reverse_input is not None:
+        if getattr(args, "reverse_input", None) is not None:
             receipt = reverse_solve_model_lock(
                 source,
                 input_id=args.reverse_input,
@@ -2238,7 +2257,7 @@ def main(argv: list[str] | None = None) -> int:
         else:
             receipt = (
                 calculate_model_lock(source)
-                if args.calculate
+                if args.command == "calculate"
                 else process_model_lock(source)
             )
     except (OSError, ValueError, ArithmeticError, yaml.YAMLError) as error:

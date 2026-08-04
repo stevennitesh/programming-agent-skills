@@ -18,6 +18,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 GATEWAY = ROOT / "skills/extra/value-stock/scripts/valuation_gateway.py"
 FIXTURES = ROOT / "tests/fixtures/value_stock_fcff"
+MODEL_LOCK = ROOT / "skills/extra/value-stock/examples/fcff-model-lock.json"
 
 
 def load_gateway() -> ModuleType:
@@ -34,14 +35,14 @@ def load_gateway() -> ModuleType:
 
 
 def load_fixture() -> dict[str, object]:
-    return json.loads((FIXTURES / "fcff_model_lock.json").read_text(encoding="utf-8"))
+    return json.loads(MODEL_LOCK.read_text(encoding="utf-8"))
 
 
-def run_gateway(path: Path, *args: str) -> subprocess.CompletedProcess[str]:
+def run_gateway(command: str, path: Path, *args: str) -> subprocess.CompletedProcess[str]:
     environment = os.environ.copy()
     environment["PYTHONDONTWRITEBYTECODE"] = "1"
     return subprocess.run(
-        [sys.executable, str(GATEWAY), str(path), *args],
+        [sys.executable, str(GATEWAY), command, str(path), *args],
         cwd=ROOT,
         capture_output=True,
         text=True,
@@ -186,10 +187,10 @@ def test_fcff_without_terminal_values_only_explicit_cash_flows() -> None:
 
 
 def test_cli_calculate_dispatches_json_and_compact_markdown_receipt() -> None:
-    path = FIXTURES / "fcff_model_lock.json"
+    path = MODEL_LOCK
 
-    json_run = run_gateway(path, "--calculate")
-    markdown_run = run_gateway(path, "--calculate", "--output-format", "markdown")
+    json_run = run_gateway("calculate", path)
+    markdown_run = run_gateway("calculate", path, "--output-format", "markdown")
 
     assert json_run.returncode == 0, json_run.stderr
     assert markdown_run.returncode == 0, markdown_run.stderr
@@ -208,7 +209,7 @@ def test_cli_calculation_failure_is_machine_readable_and_nonzero(tmp_path: Path)
     path = tmp_path / "invalid-fcff.json"
     path.write_text(json.dumps(source), encoding="utf-8")
 
-    completed = run_gateway(path, "--calculate")
+    completed = run_gateway("calculate", path)
 
     assert completed.returncode == 2
     assert completed.stderr == ""
@@ -221,12 +222,12 @@ def test_cli_calculation_failure_is_machine_readable_and_nonzero(tmp_path: Path)
 def test_json_and_yaml_fcff_runs_have_identical_inputs_and_calculations(
     tmp_path: Path,
 ) -> None:
-    json_path = FIXTURES / "fcff_model_lock.json"
+    json_path = MODEL_LOCK
     yaml_path = tmp_path / "fcff_model_lock.yaml"
     yaml_path.write_text(yaml.safe_dump(load_fixture(), sort_keys=False), encoding="utf-8")
 
-    json_run = run_gateway(json_path, "--calculate")
-    yaml_run = run_gateway(yaml_path, "--calculate")
+    json_run = run_gateway("calculate", json_path)
+    yaml_run = run_gateway("calculate", yaml_path)
 
     assert json_run.returncode == 0, json_run.stderr
     assert yaml_run.returncode == 0, yaml_run.stderr

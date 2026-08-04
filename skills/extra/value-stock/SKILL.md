@@ -147,6 +147,24 @@ through a demonstrated cash-flow, timing, claim, or risk transmission.
   [report-contract.md](references/report-contract.md) for Full before composing
   the answer.
 
+## Run The Calculator
+
+For a nontrivial supported FCFF or residual-income valuation, freeze the
+admitted Model Lock, use the [canonical Model Lock](examples/fcff-model-lock.json)
+as the input example, and follow
+[valuation-methods.md](references/valuation-methods.md) for methodology:
+
+```text
+python scripts/valuation_gateway.py validate examples/fcff-model-lock.json
+python scripts/valuation_gateway.py calculate examples/fcff-model-lock.json
+```
+
+Treat receipt JSON as authoritative; Markdown is only its compact readable view.
+`mechanical_status: fail` excludes the affected result. Interpret objective
+diagnostics without letting them alter inputs, confidence, range, or status.
+When the selected method is unsupported, report an explicit capability gap and
+do not improvise material valuation arithmetic.
+
 ## Select And Lock The Model
 
 Choose the primary method by the business economics and target claim. Use an
@@ -225,8 +243,9 @@ evidence across versions without that verification.
 
 After the forecast foundation is ready and the Lock version is frozen, run
 Gates 4 and 5 in order. A gate passes only with its named evidence. For a
-nontrivial numerical valuation, build the typed calculation artifact in
-`valuation-methods.md` before Gate 4.
+nontrivial supported FCFF or residual-income valuation, calculate the frozen
+Model Lock through the gateway before Gate 4. For another method, report the
+capability gap instead of silently performing material arithmetic.
 
 Apply failure narrowly:
 

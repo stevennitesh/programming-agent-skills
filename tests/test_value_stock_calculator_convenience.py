@@ -15,11 +15,14 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 GATEWAY = ROOT / "skills/extra/value-stock/scripts/valuation_gateway.py"
-FCFF_FIXTURE = ROOT / "tests/fixtures/value_stock_fcff/fcff_model_lock.json"
+FCFF_FIXTURE = ROOT / "skills/extra/value-stock/examples/fcff-model-lock.json"
 RI_FIXTURE = (
     ROOT
     / "tests/fixtures/value_stock_residual_income/residual_income_model_lock.json"
 )
+SKILL = ROOT / "skills/extra/value-stock/SKILL.md"
+METHODS = ROOT / "skills/extra/value-stock/references/valuation-methods.md"
+WORKFLOW_PROOF = ROOT / "docs/validation/skills/value-stock"
 
 
 def load_gateway() -> ModuleType:
@@ -50,11 +53,11 @@ def use_scenario(source: dict[str, object], scenario: str) -> None:
         record["scenario"] = scenario
 
 
-def run_gateway(path: Path, *args: str) -> subprocess.CompletedProcess[str]:
+def run_gateway(command: str, path: Path, *args: str) -> subprocess.CompletedProcess[str]:
     environment = os.environ.copy()
     environment["PYTHONDONTWRITEBYTECODE"] = "1"
     return subprocess.run(
-        [sys.executable, str(GATEWAY), str(path), *args],
+        [sys.executable, str(GATEWAY), command, str(path), *args],
         cwd=ROOT,
         capture_output=True,
         text=True,
@@ -62,6 +65,76 @@ def run_gateway(path: Path, *args: str) -> subprocess.CompletedProcess[str]:
         env=environment,
         check=False,
     )
+
+
+def test_cli_has_obvious_validate_and_calculate_routes_with_copyable_help() -> None:
+    help_run = subprocess.run(
+        [sys.executable, str(GATEWAY), "--help"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+    )
+    validate_run = run_gateway("validate", FCFF_FIXTURE)
+    calculate_run = run_gateway("calculate", FCFF_FIXTURE)
+
+    assert help_run.returncode == 0
+    assert "validate INPUT" in help_run.stdout
+    assert "calculate INPUT" in help_run.stdout
+    assert (
+        "python scripts/valuation_gateway.py calculate "
+        "examples/fcff-model-lock.json" in help_run.stdout
+    )
+    assert validate_run.returncode == 0, validate_run.stderr
+    assert "calculation" not in json.loads(validate_run.stdout)
+    assert calculate_run.returncode == 0, calculate_run.stderr
+    assert json.loads(calculate_run.stdout)["calculation"]["per_share_value"]
+
+
+def test_skill_has_one_calculator_route_to_the_tested_example_and_method_owner() -> None:
+    skill = SKILL.read_text(encoding="utf-8")
+    methods = METHODS.read_text(encoding="utf-8")
+
+    assert skill.count("## Run The Calculator") == 1
+    assert "[canonical Model Lock](examples/fcff-model-lock.json)" in skill
+    assert "[valuation-methods.md](references/valuation-methods.md)" in skill
+    assert "python scripts/valuation_gateway.py validate examples/fcff-model-lock.json" in skill
+    assert "python scripts/valuation_gateway.py calculate examples/fcff-model-lock.json" in skill
+    assert "`mechanical_status: fail` excludes the affected result" in skill
+    assert "explicit capability gap" in skill
+    assert "receipt supplies all material arithmetic and assertions" in methods
+
+    canonical_path = "skills/extra/value-stock/examples/fcff-model-lock.json"
+    oracle = json.loads(
+        (ROOT / "tests/fixtures/value_stock_fcff/fcff_oracle_v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    negatives = json.loads(
+        (ROOT / "tests/fixtures/value_stock_fcff/fcff_negative_cases.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert oracle["source_fixture"] == canonical_path
+    assert negatives["base_fixture"] == canonical_path
+
+
+@pytest.mark.parametrize("stem", ["real-fcff", "real-residual-income"])
+def test_real_workflow_report_consumes_its_authoritative_receipt(stem: str) -> None:
+    gateway = load_gateway()
+    model_lock = load_fixture(WORKFLOW_PROOF / f"{stem}-model-lock.json")
+    persisted_receipt = json.loads(
+        (WORKFLOW_PROOF / f"{stem}-receipt.json").read_text(encoding="utf-8")
+    )
+    report = (WORKFLOW_PROOF / f"{stem}-report.md").read_text(encoding="utf-8")
+
+    assert persisted_receipt == gateway.calculate_model_lock(model_lock)
+    assert persisted_receipt["mechanical_status"] == "pass"
+    assert persisted_receipt["input_identity"] in report
+    assert persisted_receipt["versions"]["calculation_path"] in report
+    assert persisted_receipt["calculation"]["per_share_value"] in report
+    assert "Material arithmetic: receipt only; not manually reproduced." in report
 
 
 def test_complete_cases_stay_separate_immutable_and_repeatable() -> None:
@@ -204,6 +277,7 @@ def test_objective_diagnostics_are_cross_method_and_repeatable() -> None:
 
 def test_cli_reverse_solve_emits_authoritative_json() -> None:
     completed = run_gateway(
+        "calculate",
         FCFF_FIXTURE,
         "--reverse-input",
         "fcff_fy2027",

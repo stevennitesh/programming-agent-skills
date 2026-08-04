@@ -33,11 +33,11 @@ def load_gateway() -> ModuleType:
     return module
 
 
-def run_gateway(path: Path, *args: str) -> subprocess.CompletedProcess[str]:
+def run_gateway(command: str, path: Path, *args: str) -> subprocess.CompletedProcess[str]:
     environment = os.environ.copy()
     environment["PYTHONDONTWRITEBYTECODE"] = "1"
     return subprocess.run(
-        [sys.executable, str(GATEWAY), str(path), *args],
+        [sys.executable, str(GATEWAY), command, str(path), *args],
         cwd=ROOT,
         capture_output=True,
         text=True,
@@ -52,8 +52,8 @@ def test_equivalent_json_and_yaml_have_same_identity_without_file_mutation() -> 
     yaml_path = FIXTURES / "valid_model_lock.yaml"
     before = {path: path.read_bytes() for path in (json_path, yaml_path)}
 
-    json_run = run_gateway(json_path)
-    yaml_run = run_gateway(yaml_path)
+    json_run = run_gateway("validate", json_path)
+    yaml_run = run_gateway("validate", yaml_path)
 
     assert json_run.returncode == 0, json_run.stderr
     assert yaml_run.returncode == 0, yaml_run.stderr
@@ -195,7 +195,7 @@ def test_cli_identifiable_failure_emits_receipt_and_nonzero_exit(tmp_path: Path)
     path = tmp_path / "invalid-model-lock.json"
     path.write_text(json.dumps(source), encoding="utf-8")
 
-    completed = run_gateway(path)
+    completed = run_gateway("validate", path)
 
     assert completed.returncode == 2
     assert completed.stderr == ""
@@ -234,7 +234,7 @@ def test_cli_non_string_method_has_typed_failure_without_traceback(
     else:
         path.write_text(yaml.safe_dump(source), encoding="utf-8")
 
-    completed = run_gateway(path)
+    completed = run_gateway("validate", path)
 
     assert completed.returncode == 2
     assert completed.stderr == ""
@@ -251,7 +251,7 @@ def test_cli_unidentifiable_input_does_not_fabricate_receipt(
     path = tmp_path / "unidentifiable.json"
     path.write_text(payload, encoding="utf-8")
 
-    completed = run_gateway(path)
+    completed = run_gateway("validate", path)
 
     assert completed.returncode == 3
     assert completed.stdout == ""
@@ -259,7 +259,7 @@ def test_cli_unidentifiable_input_does_not_fabricate_receipt(
 
 
 def test_cli_missing_input_does_not_fabricate_receipt(tmp_path: Path) -> None:
-    completed = run_gateway(tmp_path / "missing.json")
+    completed = run_gateway("validate", tmp_path / "missing.json")
 
     assert completed.returncode == 3
     assert completed.stdout == ""
@@ -281,7 +281,7 @@ def test_cli_rejects_duplicate_keys_without_choosing_a_value(
     path = tmp_path / f"duplicate{suffix}"
     path.write_text(payload, encoding="utf-8")
 
-    completed = run_gateway(path)
+    completed = run_gateway("validate", path)
 
     assert completed.returncode == 3
     assert completed.stdout == ""
@@ -293,7 +293,7 @@ def test_cli_rejects_unsupported_yaml_number_without_a_traceback(tmp_path: Path)
     path = tmp_path / "unsupported-number.yaml"
     path.write_text(payload.replace("value: 1200", "value: 0x10"), encoding="utf-8")
 
-    completed = run_gateway(path)
+    completed = run_gateway("validate", path)
 
     assert completed.returncode == 3
     assert completed.stdout == ""
@@ -303,7 +303,7 @@ def test_cli_rejects_unsupported_yaml_number_without_a_traceback(tmp_path: Path)
 
 def test_markdown_is_a_compact_navigation_summary() -> None:
     path = FIXTURES / "valid_model_lock.json"
-    markdown_run = run_gateway(path, "--output-format", "markdown")
+    markdown_run = run_gateway("validate", path, "--output-format", "markdown")
 
     assert markdown_run.returncode == 0, markdown_run.stderr
     assert markdown_run.stdout.startswith("# Calculation Receipt\n")

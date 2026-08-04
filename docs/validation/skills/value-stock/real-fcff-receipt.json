@@ -1,0 +1,485 @@
+{
+  "assertions": [
+    {
+      "id": "model_lock_source_valid",
+      "status": "pass"
+    },
+    {
+      "id": "model_lock_normalized_valid",
+      "status": "pass"
+    },
+    {
+      "id": "fcff_calculation_valid",
+      "status": "pass"
+    }
+  ],
+  "calculation": {
+    "claim_bridge": {
+      "categories": {
+        "debt": "49085",
+        "excess_cash": "80000",
+        "existing_awards": "0",
+        "non_operating_assets": "0",
+        "noncontrolling_interests": "0",
+        "other_senior_claims": "0",
+        "preferred_stock": "0"
+      },
+      "common_equity_pool": "937249.5500365",
+      "excess_cash_and_non_operating_assets": "80000",
+      "existing_awards": "0",
+      "senior_and_excluded_claims": "49085",
+      "target_claim_adjustments": "0",
+      "target_common_equity": "937249.5500365"
+    },
+    "diluted_shares": "12088",
+    "enterprise_value": "906334.5500365",
+    "forecast_periods": [
+      {
+        "branch": "derived",
+        "discount_exponent": "0.90136986",
+        "discount_factor": "0.92526233",
+        "discount_rate": "0.09",
+        "discount_rate_input": "wacc_fy2026",
+        "fcff": "18710",
+        "lineage": {
+          "kind": "formula",
+          "ref": "fcff-v1:nopat-plus-da-minus-capex-minus-working-capital-change"
+        },
+        "period": "FY2026",
+        "present_value": "17311.65825352",
+        "realization_date": "2026-12-31"
+      },
+      {
+        "branch": "derived",
+        "discount_exponent": "1.90136986",
+        "discount_factor": "0.84886453",
+        "discount_rate": "0.09",
+        "discount_rate_input": "wacc_fy2027",
+        "fcff": "57650",
+        "lineage": {
+          "kind": "formula",
+          "ref": "fcff-v1:nopat-plus-da-minus-capex-minus-working-capital-change"
+        },
+        "period": "FY2027",
+        "present_value": "48937.03991466",
+        "realization_date": "2027-12-31"
+      }
+    ],
+    "per_share_value": "77.53553524",
+    "terminal": {
+      "discount_exponent": "1.90136986",
+      "discount_factor": "0.84886453",
+      "discount_rate_input": "terminal_wacc",
+      "formula_ref": "fcff-v1:last-fcff-times-one-plus-growth",
+      "growth_rate": "0.03",
+      "growth_rate_input": "terminal_growth",
+      "next_period_date": "2028-12-31",
+      "next_period_fcff": "59379.5",
+      "present_value": "840085.85186832",
+      "terminal_date": "2027-12-31",
+      "terminal_value": "989658.33333333",
+      "wacc": "0.09"
+    }
+  },
+  "contract": {
+    "assertion_tolerance_owner": "calculator-version",
+    "canonical_identity": "sha256-canonical-json-v1",
+    "max_decimal_places": 12,
+    "rounding": "ROUND_HALF_EVEN",
+    "solver_tolerance_owner": "calculation-path-version",
+    "supported_conventions": {
+      "fcff": {
+        "terminal": [
+          "none",
+          "perpetual_growth"
+        ]
+      },
+      "residual_income": {
+        "terminal": [
+          "continuing_residual_income",
+          "none"
+        ]
+      },
+      "timing": [
+        "explicit",
+        "midyear",
+        "year_end"
+      ]
+    }
+  },
+  "diagnostics": {
+    "discount_rate_growth_spread": "0.06",
+    "oldest_dated_input_age_days": 0,
+    "terminal_value_share": "0.92690481"
+  },
+  "input_identity": "sha256:9936733095cb3e8d2cde8bf452edf0f9d54b15234b8904752f2cf1164c016d43",
+  "mechanical_status": "pass",
+  "method": "fcff",
+  "normalized_input": {
+    "as_of_date": "2026-02-05",
+    "base_scenario": "base",
+    "conventions": {
+      "terminal": "perpetual_growth",
+      "timing": "year_end"
+    },
+    "diluted_shares": {
+      "claim_basis": "target_security",
+      "currency": null,
+      "date": "2026-02-05",
+      "evidence_class": "estimated",
+      "scenario": "base",
+      "source_ref": "sec:0001652044-26-000018:balance-sheet-shares; model-lock:unchanged-through-cutoff-bridge",
+      "unit": "shares",
+      "value": "12088",
+      "value_kind": "non_monetary"
+    },
+    "fcff": {
+      "award_treatment": {
+        "existing_awards": "claim_bridge",
+        "future_grants": "operating_expense",
+        "future_grants_claim_adjustment": null
+      },
+      "claim_bridge": {
+        "debt": [
+          "debt"
+        ],
+        "excess_cash": [
+          "excess_cash"
+        ],
+        "existing_awards": [
+          "existing_awards"
+        ],
+        "non_operating_assets": [],
+        "noncontrolling_interests": [
+          "noncontrolling_interests"
+        ],
+        "other_senior_claims": [
+          "other_senior_claims"
+        ],
+        "preferred_stock": [
+          "preferred_stock"
+        ],
+        "target_claim_adjustments": []
+      },
+      "forecast_periods": [
+        {
+          "branch": "derived",
+          "components": {
+            "capital_expenditures": "capex_fy2026",
+            "depreciation_amortization": "da_fy2026",
+            "ebit": "ebit_fy2026",
+            "tax_rate": "tax_rate_fy2026",
+            "working_capital_change": "working_capital_change_fy2026"
+          },
+          "discount_rate_input": "wacc_fy2026",
+          "period": "FY2026",
+          "realization_date": "2026-12-31"
+        },
+        {
+          "branch": "derived",
+          "components": {
+            "capital_expenditures": "capex_fy2027",
+            "depreciation_amortization": "da_fy2027",
+            "ebit": "ebit_fy2027",
+            "tax_rate": "tax_rate_fy2027",
+            "working_capital_change": "working_capital_change_fy2027"
+          },
+          "discount_rate_input": "wacc_fy2027",
+          "period": "FY2027",
+          "realization_date": "2027-12-31"
+        }
+      ],
+      "terminal": {
+        "discount_rate_input": "terminal_wacc",
+        "growth_rate_input": "terminal_growth",
+        "terminal_date": "2027-12-31"
+      }
+    },
+    "inputs": {
+      "capex_fy2026": {
+        "claim_basis": "operating",
+        "currency": "USD",
+        "evidence_class": "assumed",
+        "period": "FY2026",
+        "scenario": "base",
+        "source_ref": "model-lock:alphabet-fy2026-capex",
+        "unit": "currency",
+        "value": "120000",
+        "value_kind": "monetary"
+      },
+      "capex_fy2027": {
+        "claim_basis": "operating",
+        "currency": "USD",
+        "evidence_class": "assumed",
+        "period": "FY2027",
+        "scenario": "base",
+        "source_ref": "model-lock:alphabet-fy2027-capex",
+        "unit": "currency",
+        "value": "110000",
+        "value_kind": "monetary"
+      },
+      "da_fy2026": {
+        "claim_basis": "operating",
+        "currency": "USD",
+        "evidence_class": "assumed",
+        "period": "FY2026",
+        "scenario": "base",
+        "source_ref": "model-lock:alphabet-fy2026-depreciation-amortization",
+        "unit": "currency",
+        "value": "30000",
+        "value_kind": "monetary"
+      },
+      "da_fy2027": {
+        "claim_basis": "operating",
+        "currency": "USD",
+        "evidence_class": "assumed",
+        "period": "FY2027",
+        "scenario": "base",
+        "source_ref": "model-lock:alphabet-fy2027-depreciation-amortization",
+        "unit": "currency",
+        "value": "42000",
+        "value_kind": "monetary"
+      },
+      "debt": {
+        "claim_basis": "debt",
+        "currency": "USD",
+        "date": "2026-02-05",
+        "evidence_class": "estimated",
+        "scenario": "base",
+        "source_ref": "sec:0001652044-26-000018:total-face-value-debt; model-lock:unchanged-through-cutoff-bridge",
+        "unit": "currency",
+        "value": "49085",
+        "value_kind": "monetary"
+      },
+      "ebit_fy2026": {
+        "claim_basis": "operating",
+        "currency": "USD",
+        "evidence_class": "assumed",
+        "period": "FY2026",
+        "scenario": "base",
+        "source_ref": "model-lock:alphabet-fy2026-ebit",
+        "unit": "currency",
+        "value": "137000",
+        "value_kind": "monetary"
+      },
+      "ebit_fy2027": {
+        "claim_basis": "operating",
+        "currency": "USD",
+        "evidence_class": "assumed",
+        "period": "FY2027",
+        "scenario": "base",
+        "source_ref": "model-lock:alphabet-fy2027-ebit",
+        "unit": "currency",
+        "value": "155000",
+        "value_kind": "monetary"
+      },
+      "excess_cash": {
+        "claim_basis": "common_equity",
+        "currency": "USD",
+        "date": "2026-02-05",
+        "evidence_class": "estimated",
+        "scenario": "base",
+        "source_ref": "sec:0001652044-26-000018:cash-and-marketable-securities; model-lock:operating-cash-reserve",
+        "unit": "currency",
+        "value": "80000",
+        "value_kind": "monetary"
+      },
+      "existing_awards": {
+        "claim_basis": "target_security",
+        "currency": "USD",
+        "date": "2026-02-05",
+        "evidence_class": "estimated",
+        "scenario": "base",
+        "source_ref": "model-lock:existing-awards-not-separately-valued",
+        "unit": "currency",
+        "value": "0",
+        "value_kind": "monetary"
+      },
+      "noncontrolling_interests": {
+        "claim_basis": "noncontrolling_interest",
+        "currency": "USD",
+        "date": "2026-02-05",
+        "evidence_class": "assumed",
+        "scenario": "base",
+        "source_ref": "model-lock:no-separate-material-nci-claim",
+        "unit": "currency",
+        "value": "0",
+        "value_kind": "monetary"
+      },
+      "other_senior_claims": {
+        "claim_basis": "other",
+        "currency": "USD",
+        "date": "2026-02-05",
+        "evidence_class": "assumed",
+        "scenario": "base",
+        "source_ref": "model-lock:no-other-senior-claim-adjustment",
+        "unit": "currency",
+        "value": "0",
+        "value_kind": "monetary"
+      },
+      "preferred_stock": {
+        "claim_basis": "preferred",
+        "currency": "USD",
+        "date": "2026-02-05",
+        "evidence_class": "reported",
+        "scenario": "base",
+        "source_ref": "sec:0001652044-26-000018:preferred-stock",
+        "unit": "currency",
+        "value": "0",
+        "value_kind": "monetary"
+      },
+      "tax_rate_fy2026": {
+        "claim_basis": "operating",
+        "currency": null,
+        "evidence_class": "assumed",
+        "period": "FY2026",
+        "scenario": "base",
+        "source_ref": "model-lock:alphabet-normalized-operating-tax-rate",
+        "unit": "ratio",
+        "value": "0.17",
+        "value_kind": "non_monetary"
+      },
+      "tax_rate_fy2027": {
+        "claim_basis": "operating",
+        "currency": null,
+        "evidence_class": "assumed",
+        "period": "FY2027",
+        "scenario": "base",
+        "source_ref": "model-lock:alphabet-normalized-operating-tax-rate",
+        "unit": "ratio",
+        "value": "0.17",
+        "value_kind": "non_monetary"
+      },
+      "terminal_growth": {
+        "claim_basis": "enterprise",
+        "currency": null,
+        "date": "2027-12-31",
+        "evidence_class": "assumed",
+        "scenario": "base",
+        "source_ref": "model-lock:alphabet-terminal-growth",
+        "unit": "ratio",
+        "value": "0.03",
+        "value_kind": "non_monetary"
+      },
+      "terminal_wacc": {
+        "claim_basis": "enterprise",
+        "currency": null,
+        "date": "2027-12-31",
+        "evidence_class": "assumed",
+        "scenario": "base",
+        "source_ref": "model-lock:alphabet-terminal-wacc",
+        "unit": "ratio",
+        "value": "0.09",
+        "value_kind": "non_monetary"
+      },
+      "wacc_fy2026": {
+        "claim_basis": "enterprise",
+        "currency": null,
+        "evidence_class": "assumed",
+        "period": "FY2026",
+        "scenario": "base",
+        "source_ref": "model-lock:alphabet-usd-wacc",
+        "unit": "ratio",
+        "value": "0.09",
+        "value_kind": "non_monetary"
+      },
+      "wacc_fy2027": {
+        "claim_basis": "enterprise",
+        "currency": null,
+        "evidence_class": "assumed",
+        "period": "FY2027",
+        "scenario": "base",
+        "source_ref": "model-lock:alphabet-usd-wacc",
+        "unit": "ratio",
+        "value": "0.09",
+        "value_kind": "non_monetary"
+      },
+      "working_capital_change_fy2026": {
+        "claim_basis": "operating",
+        "currency": "USD",
+        "evidence_class": "assumed",
+        "period": "FY2026",
+        "scenario": "base",
+        "source_ref": "model-lock:alphabet-fy2026-operating-working-capital-change",
+        "unit": "currency",
+        "value": "5000",
+        "value_kind": "monetary"
+      },
+      "working_capital_change_fy2027": {
+        "claim_basis": "operating",
+        "currency": "USD",
+        "evidence_class": "assumed",
+        "period": "FY2027",
+        "scenario": "base",
+        "source_ref": "model-lock:alphabet-fy2027-operating-working-capital-change",
+        "unit": "currency",
+        "value": "3000",
+        "value_kind": "monetary"
+      }
+    },
+    "issuer_id": "sec-cik-0001652044",
+    "method": "fcff",
+    "periods": [
+      {
+        "date": "2026-12-31",
+        "id": "FY2026",
+        "kind": "forecast"
+      },
+      {
+        "date": "2027-12-31",
+        "id": "FY2027",
+        "kind": "forecast"
+      }
+    ],
+    "reporting_currency": "USD",
+    "run_id": "VAL-05-ALPHABET-FCFF-2026-02-05",
+    "scenarios": [
+      "base"
+    ],
+    "security_id": "ALPHABET:COMMON-ECONOMIC-POOL:GOOGL"
+  },
+  "path_contract": {
+    "arithmetic_precision_digits": 50,
+    "assertion_absolute_tolerance": "0.00000001",
+    "claim_bridge_signs": {
+      "add": [
+        "excess_cash",
+        "non_operating_assets"
+      ],
+      "declared": [
+        "target_claim_adjustments"
+      ],
+      "subtract": [
+        "debt",
+        "preferred_stock",
+        "noncontrolling_interests",
+        "other_senior_claims",
+        "existing_awards"
+      ]
+    },
+    "compounding": "annual",
+    "day_count": "actual_365",
+    "derived_fcff_formula": "fcff-v1:nopat-plus-da-minus-capex-minus-working-capital-change",
+    "forecast_rate_basis": "valuation_origin_spot",
+    "output_decimal_places": 8,
+    "reverse_solve_tolerance": "0.00000001",
+    "rounding": "ROUND_HALF_EVEN",
+    "terminal_formula": "fcff-v1:last-fcff-times-one-plus-growth",
+    "terminal_wacc_roles": [
+      "valuation_origin_spot_discount_rate",
+      "perpetual_growth_denominator_rate"
+    ],
+    "timing_conventions": {
+      "explicit": "caller_declared_realization_date",
+      "midyear": "floor_midpoint_from_declared_first_prior_period_end",
+      "year_end": "declared_period_end_date"
+    }
+  },
+  "run_id": "VAL-05-ALPHABET-FCFF-2026-02-05",
+  "versions": {
+    "calculation_path": "fcff-contract-v1",
+    "calculator": "1.0.0",
+    "gateway_contract": "model-lock-v1"
+  },
+  "warnings": []
+}

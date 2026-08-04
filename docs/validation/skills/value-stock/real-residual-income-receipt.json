@@ -1,0 +1,365 @@
+{
+  "assertions": [
+    {
+      "id": "model_lock_source_valid",
+      "status": "pass"
+    },
+    {
+      "id": "model_lock_normalized_valid",
+      "status": "pass"
+    },
+    {
+      "id": "residual_income_calculation_valid",
+      "status": "pass"
+    }
+  ],
+  "calculation": {
+    "beginning_common_book_value": "342393",
+    "diluted_shares": "2696.2",
+    "forecast_periods": [
+      {
+        "beginning_book_value": "342393",
+        "beginning_book_value_input": "beginning_book_fy2026",
+        "branch": "direct_net_income",
+        "clean_surplus_adjustment_inputs": [
+          "clean_surplus_adjustment_fy2026"
+        ],
+        "clean_surplus_adjustments": "-30000",
+        "discount_exponent": "0.87945205",
+        "discount_factor": "0.91959609",
+        "dividends": "17000",
+        "dividends_input": "dividends_fy2026",
+        "ending_book_value": "351393",
+        "ending_book_value_formula_ref": "residual-income-v1:beginning-book-plus-net-income-minus-dividends-plus-adjustments",
+        "equity_charge": "34239.3",
+        "net_income": "56000",
+        "net_income_input": "net_income_fy2026",
+        "net_income_lineage": {
+          "kind": "source",
+          "ref": "model-lock:jpm-fy2026-common-net-income"
+        },
+        "period": "FY2026",
+        "present_value": "20011.05472529",
+        "realization_date": "2026-12-31",
+        "required_return": "0.1",
+        "required_return_input": "required_return_fy2026",
+        "residual_income": "21760.7",
+        "residual_income_formula_ref": "residual-income-v1:net-income-minus-equity-charge"
+      },
+      {
+        "beginning_book_value": "351393",
+        "beginning_book_value_formula_ref": "residual-income-v1:prior-ending-book-value",
+        "branch": "roe_derived",
+        "clean_surplus_adjustment_inputs": [
+          "clean_surplus_adjustment_fy2027"
+        ],
+        "clean_surplus_adjustments": "-25000",
+        "discount_exponent": "1.87945205",
+        "discount_factor": "0.83599645",
+        "dividends": "18000",
+        "dividends_input": "dividends_fy2027",
+        "ending_book_value": "361101.95",
+        "ending_book_value_formula_ref": "residual-income-v1:beginning-book-plus-net-income-minus-dividends-plus-adjustments",
+        "equity_charge": "35139.3",
+        "net_income": "52708.95",
+        "net_income_lineage": {
+          "kind": "formula",
+          "ref": "residual-income-v1:roe-times-beginning-book-value"
+        },
+        "period": "FY2027",
+        "present_value": "14688.16501367",
+        "realization_date": "2027-12-31",
+        "required_return": "0.1",
+        "required_return_input": "required_return_fy2027",
+        "residual_income": "17569.65",
+        "residual_income_formula_ref": "residual-income-v1:net-income-minus-equity-charge",
+        "roe_input": "roe_fy2027"
+      }
+    ],
+    "forecast_residual_income_present_value": "34699.21973896",
+    "per_share_value": "171.85061696",
+    "target_common_equity": "463343.63345292",
+    "terminal": {
+      "beginning_book_value": "361101.95",
+      "discount_exponent": "1.87945205",
+      "discount_factor": "0.83599645",
+      "formula_ref": "residual-income-v1:next-residual-income-over-ke-minus-growth",
+      "growth_rate": "0.03",
+      "growth_rate_input": "terminal_growth",
+      "next_period_date": "2028-12-31",
+      "next_period_residual_income": "7222.039",
+      "present_value": "86251.41371395",
+      "required_return": "0.1",
+      "required_return_input": "terminal_required_return",
+      "roe": "0.12",
+      "roe_input": "terminal_roe",
+      "terminal_date": "2027-12-31",
+      "terminal_value": "103171.98571429"
+    },
+    "terminal_present_value": "86251.41371395"
+  },
+  "contract": {
+    "assertion_tolerance_owner": "calculator-version",
+    "canonical_identity": "sha256-canonical-json-v1",
+    "max_decimal_places": 12,
+    "rounding": "ROUND_HALF_EVEN",
+    "solver_tolerance_owner": "calculation-path-version",
+    "supported_conventions": {
+      "fcff": {
+        "terminal": [
+          "none",
+          "perpetual_growth"
+        ]
+      },
+      "residual_income": {
+        "terminal": [
+          "continuing_residual_income",
+          "none"
+        ]
+      },
+      "timing": [
+        "explicit",
+        "midyear",
+        "year_end"
+      ]
+    }
+  },
+  "diagnostics": {
+    "discount_rate_growth_spread": "0.07",
+    "oldest_dated_input_age_days": 0,
+    "terminal_value_share": "0.18614999"
+  },
+  "input_identity": "sha256:8a15ed39fde124da2c1f67df44101ea8a245642f8b50986bfb95321754f13f04",
+  "mechanical_status": "pass",
+  "method": "residual_income",
+  "normalized_input": {
+    "as_of_date": "2026-02-13",
+    "base_scenario": "base",
+    "conventions": {
+      "terminal": "continuing_residual_income",
+      "timing": "year_end"
+    },
+    "diluted_shares": {
+      "claim_basis": "target_security",
+      "currency": null,
+      "date": "2026-02-13",
+      "evidence_class": "estimated",
+      "scenario": "base",
+      "source_ref": "jpm-2025-10-k:period-end-common-shares; model-lock:unchanged-through-cutoff-bridge",
+      "unit": "shares",
+      "value": "2696.2",
+      "value_kind": "non_monetary"
+    },
+    "inputs": {
+      "beginning_book_fy2026": {
+        "claim_basis": "common_equity",
+        "currency": "USD",
+        "evidence_class": "estimated",
+        "period": "FY2026",
+        "scenario": "base",
+        "source_ref": "jpm-2025-10-k:common-stockholders-equity; model-lock:unchanged-through-cutoff-bridge",
+        "unit": "currency",
+        "value": "342393",
+        "value_kind": "monetary"
+      },
+      "clean_surplus_adjustment_fy2026": {
+        "claim_basis": "common_equity",
+        "currency": "USD",
+        "evidence_class": "assumed",
+        "period": "FY2026",
+        "scenario": "base",
+        "source_ref": "model-lock:jpm-fy2026-net-repurchase-and-other-direct-equity-adjustment",
+        "unit": "currency",
+        "value": "-30000",
+        "value_kind": "monetary"
+      },
+      "clean_surplus_adjustment_fy2027": {
+        "claim_basis": "common_equity",
+        "currency": "USD",
+        "evidence_class": "assumed",
+        "period": "FY2027",
+        "scenario": "base",
+        "source_ref": "model-lock:jpm-fy2027-net-repurchase-and-other-direct-equity-adjustment",
+        "unit": "currency",
+        "value": "-25000",
+        "value_kind": "monetary"
+      },
+      "dividends_fy2026": {
+        "claim_basis": "common_equity",
+        "currency": "USD",
+        "evidence_class": "assumed",
+        "period": "FY2026",
+        "scenario": "base",
+        "source_ref": "model-lock:jpm-fy2026-common-dividends",
+        "unit": "currency",
+        "value": "17000",
+        "value_kind": "monetary"
+      },
+      "dividends_fy2027": {
+        "claim_basis": "common_equity",
+        "currency": "USD",
+        "evidence_class": "assumed",
+        "period": "FY2027",
+        "scenario": "base",
+        "source_ref": "model-lock:jpm-fy2027-common-dividends",
+        "unit": "currency",
+        "value": "18000",
+        "value_kind": "monetary"
+      },
+      "net_income_fy2026": {
+        "claim_basis": "common_equity",
+        "currency": "USD",
+        "evidence_class": "assumed",
+        "period": "FY2026",
+        "scenario": "base",
+        "source_ref": "model-lock:jpm-fy2026-common-net-income",
+        "unit": "currency",
+        "value": "56000",
+        "value_kind": "monetary"
+      },
+      "required_return_fy2026": {
+        "claim_basis": "common_equity",
+        "currency": null,
+        "evidence_class": "assumed",
+        "period": "FY2026",
+        "scenario": "base",
+        "source_ref": "model-lock:jpm-cost-of-common-equity",
+        "unit": "ratio",
+        "value": "0.1",
+        "value_kind": "non_monetary"
+      },
+      "required_return_fy2027": {
+        "claim_basis": "common_equity",
+        "currency": null,
+        "evidence_class": "assumed",
+        "period": "FY2027",
+        "scenario": "base",
+        "source_ref": "model-lock:jpm-cost-of-common-equity",
+        "unit": "ratio",
+        "value": "0.1",
+        "value_kind": "non_monetary"
+      },
+      "roe_fy2027": {
+        "claim_basis": "common_equity",
+        "currency": null,
+        "evidence_class": "assumed",
+        "period": "FY2027",
+        "scenario": "base",
+        "source_ref": "model-lock:jpm-fy2027-roe",
+        "unit": "ratio",
+        "value": "0.15",
+        "value_kind": "non_monetary"
+      },
+      "terminal_growth": {
+        "claim_basis": "common_equity",
+        "currency": null,
+        "date": "2027-12-31",
+        "evidence_class": "assumed",
+        "scenario": "base",
+        "source_ref": "model-lock:jpm-terminal-growth",
+        "unit": "ratio",
+        "value": "0.03",
+        "value_kind": "non_monetary"
+      },
+      "terminal_required_return": {
+        "claim_basis": "common_equity",
+        "currency": null,
+        "date": "2027-12-31",
+        "evidence_class": "assumed",
+        "scenario": "base",
+        "source_ref": "model-lock:jpm-terminal-required-return",
+        "unit": "ratio",
+        "value": "0.1",
+        "value_kind": "non_monetary"
+      },
+      "terminal_roe": {
+        "claim_basis": "common_equity",
+        "currency": null,
+        "date": "2027-12-31",
+        "evidence_class": "assumed",
+        "scenario": "base",
+        "source_ref": "model-lock:jpm-terminal-roe",
+        "unit": "ratio",
+        "value": "0.12",
+        "value_kind": "non_monetary"
+      }
+    },
+    "issuer_id": "sec-cik-0000019617",
+    "method": "residual_income",
+    "periods": [
+      {
+        "date": "2026-12-31",
+        "id": "FY2026",
+        "kind": "forecast"
+      },
+      {
+        "date": "2027-12-31",
+        "id": "FY2027",
+        "kind": "forecast"
+      }
+    ],
+    "reporting_currency": "USD",
+    "residual_income": {
+      "forecast_periods": [
+        {
+          "beginning_book_value_input": "beginning_book_fy2026",
+          "branch": "direct_net_income",
+          "clean_surplus_adjustment_inputs": [
+            "clean_surplus_adjustment_fy2026"
+          ],
+          "dividends_input": "dividends_fy2026",
+          "net_income_input": "net_income_fy2026",
+          "period": "FY2026",
+          "realization_date": "2026-12-31",
+          "required_return_input": "required_return_fy2026"
+        },
+        {
+          "branch": "roe_derived",
+          "clean_surplus_adjustment_inputs": [
+            "clean_surplus_adjustment_fy2027"
+          ],
+          "dividends_input": "dividends_fy2027",
+          "period": "FY2027",
+          "realization_date": "2027-12-31",
+          "required_return_input": "required_return_fy2027",
+          "roe_input": "roe_fy2027"
+        }
+      ],
+      "terminal": {
+        "growth_rate_input": "terminal_growth",
+        "required_return_input": "terminal_required_return",
+        "roe_input": "terminal_roe",
+        "terminal_date": "2027-12-31"
+      }
+    },
+    "run_id": "VAL-05-JPM-RESIDUAL-INCOME-2026-02-13",
+    "scenarios": [
+      "base"
+    ],
+    "security_id": "JPM:NYSE:COMMON"
+  },
+  "path_contract": {
+    "arithmetic_precision_digits": 50,
+    "compounding": "annual",
+    "day_count": "actual_365",
+    "ending_book_value_formula": "residual-income-v1:beginning-book-plus-net-income-minus-dividends-plus-adjustments",
+    "forecast_rate_basis": "valuation_origin_spot",
+    "net_income_formula": "residual-income-v1:roe-times-beginning-book-value",
+    "output_decimal_places": 8,
+    "residual_income_formula": "residual-income-v1:net-income-minus-equity-charge",
+    "reverse_solve_tolerance": "0.00000001",
+    "rounding": "ROUND_HALF_EVEN",
+    "terminal_formula": "residual-income-v1:next-residual-income-over-ke-minus-growth",
+    "timing_conventions": {
+      "explicit": "caller_declared_realization_date",
+      "year_end": "declared_period_end_date"
+    }
+  },
+  "run_id": "VAL-05-JPM-RESIDUAL-INCOME-2026-02-13",
+  "versions": {
+    "calculation_path": "residual-income-contract-v1",
+    "calculator": "1.0.0",
+    "gateway_contract": "model-lock-v1"
+  },
+  "warnings": []
+}

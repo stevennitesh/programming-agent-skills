@@ -1,7 +1,7 @@
 {
   "oracle_version": "fcff-independent-oracle-v1",
   "construction": "Static cases independently hand-calculated from the frozen fixture and documented test mutations; this artifact does not import or execute calculator code.",
-  "source_fixture": "fcff_model_lock.json",
+  "source_fixture": "skills/extra/value-stock/examples/fcff-model-lock.json",
   "absolute_tolerance": "0.00000001",
   "expected": {
     "forecast_periods": [

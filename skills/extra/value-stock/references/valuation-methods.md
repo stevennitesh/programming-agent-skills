@@ -483,9 +483,12 @@ uncertainty also matter:
 
 ## Calculation Artifact And Assertions
 
-For a nontrivial numerical valuation, use a typed calculation artifact: a small
-worksheet, script, or explicit table that separates inputs from formulas. Give
-each load-bearing item:
+For a supported nontrivial FCFF or residual-income valuation, serialize the
+admitted frozen Model Lock through the calculator. Its authoritative JSON
+receipt supplies all material arithmetic and assertions; do not reproduce them
+manually in the valuation report. If the selected method is unsupported, keep
+the capability gap explicit instead of improvising material arithmetic. The
+receipt gives each load-bearing item:
 
 | Field | Required content |
 | --- | --- |
