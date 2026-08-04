@@ -301,15 +301,16 @@ def test_cli_rejects_unsupported_yaml_number_without_a_traceback(tmp_path: Path)
     assert "Traceback" not in completed.stderr
 
 
-def test_markdown_contains_the_exact_json_receipt() -> None:
+def test_markdown_is_a_compact_navigation_summary() -> None:
     path = FIXTURES / "valid_model_lock.json"
-    json_run = run_gateway(path)
     markdown_run = run_gateway(path, "--output-format", "markdown")
 
     assert markdown_run.returncode == 0, markdown_run.stderr
     assert markdown_run.stdout.startswith("# Calculation Receipt\n")
-    embedded = markdown_run.stdout.split("```json\n", 1)[1].split("\n```", 1)[0]
-    assert json.loads(embedded) == json.loads(json_run.stdout)
+    assert "mechanical_status: `pass`" in markdown_run.stdout
+    assert "input_identity:" in markdown_run.stdout
+    assert "```json" not in markdown_run.stdout
+    assert "normalized_input" not in markdown_run.stdout
 
 
 def test_normalized_contract_is_revalidated_and_identity_is_independently_checkable() -> None:

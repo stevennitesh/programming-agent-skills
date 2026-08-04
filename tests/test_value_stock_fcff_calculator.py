@@ -104,6 +104,7 @@ def test_frozen_fcff_case_matches_independent_oracle_without_input_mutation() ->
             "fcff-v1:nopat-plus-da-minus-capex-minus-working-capital-change"
         ),
         "output_decimal_places": 8,
+        "reverse_solve_tolerance": "0.00000001",
         "rounding": "ROUND_HALF_EVEN",
         "terminal_wacc_roles": [
             "valuation_origin_spot_discount_rate",
@@ -184,7 +185,7 @@ def test_fcff_without_terminal_values_only_explicit_cash_flows() -> None:
     assert receipt["calculation"]["per_share_value"] == "0.53396694"
 
 
-def test_cli_calculate_dispatches_json_and_exact_markdown_receipt() -> None:
+def test_cli_calculate_dispatches_json_and_compact_markdown_receipt() -> None:
     path = FIXTURES / "fcff_model_lock.json"
 
     json_run = run_gateway(path, "--calculate")
@@ -193,9 +194,12 @@ def test_cli_calculate_dispatches_json_and_exact_markdown_receipt() -> None:
     assert json_run.returncode == 0, json_run.stderr
     assert markdown_run.returncode == 0, markdown_run.stderr
     json_receipt = json.loads(json_run.stdout)
-    embedded = markdown_run.stdout.split("```json\n", 1)[1].split("\n```", 1)[0]
-    assert json.loads(embedded) == json_receipt
     assert json_receipt["calculation"]["per_share_value"] == "9.04636364"
+    assert "## Results" in markdown_run.stdout
+    assert "per_share_value: `9.04636364`" in markdown_run.stdout
+    assert "## Diagnostics" in markdown_run.stdout
+    assert "```json" not in markdown_run.stdout
+    assert "normalized_input" not in markdown_run.stdout
 
 
 def test_cli_calculation_failure_is_machine_readable_and_nonzero(tmp_path: Path) -> None:

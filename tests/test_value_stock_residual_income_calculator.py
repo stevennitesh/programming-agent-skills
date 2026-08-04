@@ -74,6 +74,7 @@ def test_frozen_residual_income_case_matches_independent_oracle_without_mutation
         "net_income_formula": "residual-income-v1:roe-times-beginning-book-value",
         "output_decimal_places": 8,
         "residual_income_formula": "residual-income-v1:net-income-minus-equity-charge",
+        "reverse_solve_tolerance": "0.00000001",
         "rounding": "ROUND_HALF_EVEN",
         "terminal_formula": (
             "residual-income-v1:next-residual-income-over-ke-minus-growth"

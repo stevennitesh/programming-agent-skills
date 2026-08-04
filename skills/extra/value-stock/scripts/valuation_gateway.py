@@ -45,6 +45,8 @@ CONTRACT = {
 }
 CALCULATION_OUTPUT_QUANTUM = Decimal("0.00000001")
 CALCULATION_CONTEXT_PRECISION = 50
+REVERSE_SOLVE_TOLERANCE = CALCULATION_OUTPUT_QUANTUM
+REVERSE_SOLVE_MAX_ITERATIONS = 256
 FCFF_DERIVED_FORMULA_REF = (
     "fcff-v1:nopat-plus-da-minus-capex-minus-working-capital-change"
 )
@@ -68,6 +70,7 @@ FCFF_PATH_CONTRACT = {
     "forecast_rate_basis": "valuation_origin_spot",
     "derived_fcff_formula": FCFF_DERIVED_FORMULA_REF,
     "output_decimal_places": 8,
+    "reverse_solve_tolerance": "0.00000001",
     "rounding": "ROUND_HALF_EVEN",
     "terminal_wacc_roles": [
         "valuation_origin_spot_discount_rate",
@@ -100,6 +103,7 @@ RI_PATH_CONTRACT = {
     "net_income_formula": RI_NET_INCOME_FORMULA_REF,
     "output_decimal_places": 8,
     "residual_income_formula": RI_RESIDUAL_INCOME_FORMULA_REF,
+    "reverse_solve_tolerance": "0.00000001",
     "rounding": "ROUND_HALF_EVEN",
     "terminal_formula": RI_TERMINAL_FORMULA_REF,
     "timing_conventions": {
@@ -1783,6 +1787,41 @@ def _calculate_residual_income(source: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _objective_diagnostics(
+    source: dict[str, Any], calculation: dict[str, Any]
+) -> dict[str, Any]:
+    diagnostics: dict[str, Any] = {}
+    as_of = date.fromisoformat(source["as_of_date"])
+    dated_records = [source["diluted_shares"], *source["inputs"].values()]
+    ages = [
+        (as_of - record_date).days
+        for record in dated_records
+        if isinstance(record.get("date"), str)
+        and (record_date := date.fromisoformat(record["date"])) <= as_of
+    ]
+    if ages:
+        diagnostics["oldest_dated_input_age_days"] = max(ages)
+
+    terminal = calculation.get("terminal")
+    if terminal is None:
+        return diagnostics
+    if source["method"] == "fcff":
+        denominator = Decimal(calculation["enterprise_value"])
+        discount_rate = Decimal(terminal["wacc"])
+    else:
+        denominator = Decimal(calculation["target_common_equity"])
+        discount_rate = Decimal(terminal["required_return"])
+    growth_rate = Decimal(terminal["growth_rate"])
+    diagnostics["discount_rate_growth_spread"] = _receipt_decimal(
+        discount_rate - growth_rate
+    )
+    if denominator != 0:
+        diagnostics["terminal_value_share"] = _receipt_decimal(
+            Decimal(terminal["present_value"]) / denominator
+        )
+    return diagnostics
+
+
 def calculate_model_lock(source: Any) -> dict[str, Any]:
     receipt = process_model_lock(source)
     if receipt["mechanical_status"] == "fail":
@@ -1811,8 +1850,258 @@ def calculate_model_lock(source: Any) -> dict[str, Any]:
             return _calculation_failure_receipt(receipt, failures, assertion_id)
         result = copy.deepcopy(receipt)
         result["calculation"] = calculator(result["normalized_input"])
+        result["diagnostics"] = _objective_diagnostics(
+            result["normalized_input"], result["calculation"]
+        )
     result["assertions"].append({"id": assertion_id, "status": "pass"})
     return result
+
+
+def calculate_model_locks(sources: list[Any]) -> list[dict[str, Any]]:
+    return [calculate_model_lock(source) for source in sources]
+
+
+def _reverse_solve_metadata(
+    *,
+    status: str,
+    input_id: str,
+    target_per_share: Decimal,
+    lower_bound: Decimal,
+    upper_bound: Decimal,
+    tolerance: Decimal,
+    solved_input_value: Decimal,
+    achieved_value: Decimal,
+    iterations: int,
+) -> dict[str, Any]:
+    return {
+        "status": status,
+        "input_id": input_id,
+        "target_output": "per_share_value",
+        "target_value": _canonical_decimal(target_per_share),
+        "lower_bound": _canonical_decimal(lower_bound),
+        "upper_bound": _canonical_decimal(upper_bound),
+        "tolerance": _canonical_decimal(tolerance),
+        "solved_input_value": _canonical_decimal(solved_input_value),
+        "achieved_value": _receipt_decimal(achieved_value),
+        "iterations": iterations,
+        "residual_error": _receipt_decimal(achieved_value - target_per_share),
+    }
+
+
+def _reverse_solve_failure(
+    receipt: dict[str, Any],
+    *,
+    code: str,
+    path: str,
+    message: str,
+    metadata: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    result = copy.deepcopy(receipt)
+    result["mechanical_status"] = "fail"
+    result.setdefault("failures", []).append(_failure(code, path, message))
+    result.setdefault("assertions", []).append(
+        {"id": "reverse_solve_valid", "status": "fail"}
+    )
+    if metadata is not None:
+        result["reverse_solve"] = metadata
+    return result
+
+
+def _reverse_solve_model_lock(
+    source: Any,
+    *,
+    input_id: str,
+    target_per_share: Decimal,
+    lower_bound: Decimal,
+    upper_bound: Decimal,
+) -> dict[str, Any]:
+    tolerance = REVERSE_SOLVE_TOLERANCE
+    base_receipt = calculate_model_lock(source)
+
+    def fail(
+        receipt: dict[str, Any],
+        code: str,
+        message: str,
+        *,
+        path: str = "reverse_solve",
+        metadata: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        return _reverse_solve_failure(
+            receipt,
+            code=code,
+            path=path,
+            message=message,
+            metadata=metadata,
+        )
+
+    if base_receipt["mechanical_status"] == "fail":
+        return fail(
+            base_receipt,
+            "reverse_solve_model_lock",
+            "reverse solve requires a mechanically valid Model Lock",
+            path="$",
+        )
+    if input_id not in source["inputs"]:
+        return fail(
+            base_receipt,
+            "reverse_solve_input",
+            "reverse solve input must name one admitted scalar input",
+            path="input_id",
+        )
+    scalar = source["inputs"][input_id].get("value")
+    if not isinstance(scalar, (Decimal, int, float)) or isinstance(scalar, bool):
+        return fail(
+            base_receipt,
+            "reverse_solve_input",
+            "reverse solve input must be numeric",
+            path=f"inputs.{input_id}.value",
+        )
+    parameters = (target_per_share, lower_bound, upper_bound)
+    if not all(value.is_finite() for value in parameters):
+        return fail(
+            base_receipt,
+            "reverse_solve_bounds",
+            "target and bounds must be finite",
+        )
+    if lower_bound >= upper_bound:
+        return fail(
+            base_receipt,
+            "reverse_solve_bounds",
+            "lower bound must be below upper bound",
+        )
+
+    def evaluate(value: Decimal) -> tuple[dict[str, Any], Decimal] | None:
+        candidate = copy.deepcopy(source)
+        candidate["inputs"][input_id]["value"] = value
+        receipt = calculate_model_lock(candidate)
+        if receipt["mechanical_status"] == "fail":
+            return None
+        achieved = Decimal(receipt["calculation"]["per_share_value"])
+        return receipt, achieved - target_per_share
+
+    def solved(
+        receipt: dict[str, Any], value: Decimal, residual: Decimal, iterations: int
+    ) -> dict[str, Any]:
+        receipt["reverse_solve"] = _reverse_solve_metadata(
+            status="solved",
+            input_id=input_id,
+            target_per_share=target_per_share,
+            lower_bound=lower_bound,
+            upper_bound=upper_bound,
+            tolerance=tolerance,
+            solved_input_value=value,
+            achieved_value=target_per_share + residual,
+            iterations=iterations,
+        )
+        receipt["assertions"].append(
+            {"id": "reverse_solve_valid", "status": "pass"}
+        )
+        return receipt
+
+    lower_result = evaluate(lower_bound)
+    upper_result = evaluate(upper_bound)
+    if lower_result is None or upper_result is None:
+        return fail(
+            base_receipt,
+            "reverse_solve_bounds",
+            "both reverse-solve bounds must produce valid ordinary valuations",
+        )
+    lower_receipt, lower_residual = lower_result
+    upper_receipt, upper_residual = upper_result
+
+    for value, receipt, residual in (
+        (lower_bound, lower_receipt, lower_residual),
+        (upper_bound, upper_receipt, upper_residual),
+    ):
+        if abs(residual) <= tolerance:
+            return solved(receipt, value, residual, 0)
+
+    if lower_residual * upper_residual > 0:
+        value, receipt, residual = min(
+            (
+                (lower_bound, lower_receipt, lower_residual),
+                (upper_bound, upper_receipt, upper_residual),
+            ),
+            key=lambda item: abs(item[2]),
+        )
+        metadata = _reverse_solve_metadata(
+            status="no_solution",
+            input_id=input_id,
+            target_per_share=target_per_share,
+            lower_bound=lower_bound,
+            upper_bound=upper_bound,
+            tolerance=tolerance,
+            solved_input_value=value,
+            achieved_value=target_per_share + residual,
+            iterations=0,
+        )
+        return fail(
+            receipt,
+            "reverse_solve_no_solution",
+            "target is not bracketed by the supplied bounds",
+            metadata=metadata,
+        )
+
+    low = lower_bound
+    high = upper_bound
+    low_residual = lower_residual
+    last_receipt = base_receipt
+    last_value = low
+    last_residual = lower_residual
+    for iteration in range(1, REVERSE_SOLVE_MAX_ITERATIONS + 1):
+        midpoint = (low + high) / 2
+        midpoint_result = evaluate(midpoint)
+        if midpoint_result is None:
+            return fail(
+                base_receipt,
+                "reverse_solve_trial",
+                "a bisection trial failed ordinary method validation",
+            )
+        last_receipt, last_residual = midpoint_result
+        last_value = midpoint
+        if abs(last_residual) <= tolerance:
+            return solved(last_receipt, midpoint, last_residual, iteration)
+        if low_residual * last_residual <= 0:
+            high = midpoint
+        else:
+            low = midpoint
+            low_residual = last_residual
+
+    metadata = _reverse_solve_metadata(
+        status="no_solution",
+        input_id=input_id,
+        target_per_share=target_per_share,
+        lower_bound=lower_bound,
+        upper_bound=upper_bound,
+        tolerance=tolerance,
+        solved_input_value=last_value,
+        achieved_value=target_per_share + last_residual,
+        iterations=REVERSE_SOLVE_MAX_ITERATIONS,
+    )
+    return fail(
+        last_receipt,
+        "reverse_solve_no_convergence",
+        "bounded bisection did not reach the declared tolerance",
+        metadata=metadata,
+    )
+
+
+def reverse_solve_model_lock(
+    source: Any,
+    *,
+    input_id: str,
+    target_per_share: Decimal,
+    lower_bound: Decimal,
+    upper_bound: Decimal,
+) -> dict[str, Any]:
+    with localcontext(_calculation_decimal_context()):
+        return _reverse_solve_model_lock(
+            source,
+            input_id=input_id,
+            target_per_share=target_per_share,
+            lower_bound=lower_bound,
+            upper_bound=upper_bound,
+        )
 
 
 def render_receipt_json(receipt: dict[str, Any]) -> str:
@@ -1820,15 +2109,92 @@ def render_receipt_json(receipt: dict[str, Any]) -> str:
 
 
 def render_receipt_markdown(receipt: dict[str, Any]) -> str:
-    return (
-        "# Calculation Receipt\n\n"
-        f"- mechanical_status: `{receipt['mechanical_status']}`\n"
-        f"- run_id: `{receipt['run_id']}`\n"
-        f"- method: `{receipt.get('method')}`\n\n"
-        "```json\n"
-        f"{render_receipt_json(receipt).rstrip()}\n"
-        "```\n"
-    )
+    lines = [
+        "# Calculation Receipt",
+        "",
+        f"- mechanical_status: `{receipt['mechanical_status']}`",
+        f"- run_id: `{receipt['run_id']}`",
+        f"- method: `{receipt.get('method')}`",
+    ]
+    if "input_identity" in receipt:
+        lines.append(f"- input_identity: `{receipt['input_identity']}`")
+    versions = receipt.get("versions", {})
+    lines.append(f"- calculator_version: `{versions.get('calculator')}`")
+    if versions.get("calculation_path") is not None:
+        lines.append(f"- calculation_path: `{versions['calculation_path']}`")
+
+    normalized = receipt.get("normalized_input")
+    if isinstance(normalized, dict):
+        lines.extend(
+            [
+                "",
+                "## Model Lock",
+                "",
+                f"- as_of_date: `{normalized['as_of_date']}`",
+                f"- scenario: `{normalized['base_scenario']}`",
+            ]
+        )
+
+    calculation = receipt.get("calculation")
+    if isinstance(calculation, dict):
+        lines.extend(["", "## Results", ""])
+        if "enterprise_value" in calculation:
+            lines.append(f"- enterprise_value: `{calculation['enterprise_value']}`")
+            target_common_equity = calculation["claim_bridge"][
+                "target_common_equity"
+            ]
+        else:
+            target_common_equity = calculation["target_common_equity"]
+        lines.extend(
+            [
+                f"- target_common_equity: `{target_common_equity}`",
+                f"- diluted_shares: `{calculation['diluted_shares']}`",
+                f"- per_share_value: `{calculation['per_share_value']}`",
+            ]
+        )
+
+    diagnostics = receipt.get("diagnostics")
+    if diagnostics:
+        lines.extend(["", "## Diagnostics", ""])
+        lines.extend(
+            f"- {name}: `{value}`" for name, value in sorted(diagnostics.items())
+        )
+
+    reverse_solve = receipt.get("reverse_solve")
+    if isinstance(reverse_solve, dict):
+        lines.extend(["", "## Reverse Solve", ""])
+        for name in (
+            "status",
+            "input_id",
+            "target_value",
+            "lower_bound",
+            "upper_bound",
+            "tolerance",
+            "solved_input_value",
+            "achieved_value",
+            "iterations",
+            "residual_error",
+        ):
+            lines.append(f"- {name}: `{reverse_solve[name]}`")
+
+    failures = receipt.get("failures", [])
+    if failures:
+        lines.extend(["", "## Failures", ""])
+        lines.extend(
+            f"- `{failure['code']}` at `{failure['path']}`: {failure['message']}"
+            for failure in failures
+        )
+    return "\n".join(lines) + "\n"
+
+
+def _decimal_argument(value: str) -> Decimal:
+    try:
+        result = Decimal(value)
+    except (InvalidOperation, ValueError) as error:
+        raise argparse.ArgumentTypeError("must be a decimal number") from error
+    if not result.is_finite():
+        raise argparse.ArgumentTypeError("must be finite")
+    return result
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -1844,10 +2210,37 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="execute the selected supported calculation path after validation",
     )
+    parser.add_argument("--reverse-input")
+    parser.add_argument("--target-per-share", type=_decimal_argument)
+    parser.add_argument("--lower-bound", type=_decimal_argument)
+    parser.add_argument("--upper-bound", type=_decimal_argument)
     args = parser.parse_args(argv)
+    reverse_arguments = (
+        args.reverse_input,
+        args.target_per_share,
+        args.lower_bound,
+        args.upper_bound,
+    )
+    if any(value is not None for value in reverse_arguments) and not all(
+        value is not None for value in reverse_arguments
+    ):
+        parser.error("reverse solve requires input, target, and both bounds")
     try:
         source = load_source(args.input)
-        receipt = calculate_model_lock(source) if args.calculate else process_model_lock(source)
+        if args.reverse_input is not None:
+            receipt = reverse_solve_model_lock(
+                source,
+                input_id=args.reverse_input,
+                target_per_share=args.target_per_share,
+                lower_bound=args.lower_bound,
+                upper_bound=args.upper_bound,
+            )
+        else:
+            receipt = (
+                calculate_model_lock(source)
+                if args.calculate
+                else process_model_lock(source)
+            )
     except (OSError, ValueError, ArithmeticError, yaml.YAMLError) as error:
         sys.stderr.write(f"model-lock input error: {error}\n")
         return 3
