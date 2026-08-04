@@ -2115,6 +2115,34 @@ def test_implement_owns_one_plain_worker_handoff_without_a_schema() -> None:
     assert not (CUSTOM / "parallel-implement/scripts/run_ledger.py").exists()
 
 
+def test_implementation_workflows_trace_acceptance_before_completion() -> None:
+    implement = " ".join(
+        (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8").split()
+    )
+    parallel = " ".join(
+        (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8").split()
+    )
+    handoff = " ".join(
+        (CUSTOM / "implement/references/WORKER-HANDOFF.md")
+        .read_text(encoding="utf-8")
+        .split()
+    )
+
+    assert "Before either path chooses an implementation seam" in implement
+    assert (
+        "Do not return `partial` merely because the first bounded seam is green"
+        in implement
+    )
+    assert (
+        "Do not accept a lane merely because its first component seam is green"
+        in parallel
+    )
+    assert (
+        "component proof counts only when that path exercises the component"
+        in handoff
+    )
+
+
 def test_planning_and_delivery_activate_lean_integrated_quality_contract() -> None:
     to_spec = (CUSTOM / "to-spec/SKILL.md").read_text(encoding="utf-8")
     tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")

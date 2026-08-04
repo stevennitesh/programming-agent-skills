@@ -70,6 +70,12 @@ it.
 When the delegation gate fails, the root follows the same implementation path
 directly.
 
+Before either path chooses an implementation seam, trace each acceptance
+commitment to its proof seam. When a commitment depends on integration, follow
+the canonical production caller to the observable output and proof. Existing
+code or component tests count only when that path reaches them. Do this
+directly; create no matrix or artifact.
+
 Use `$tdd` for settled red-testable behavior. For a bug whose expected behavior,
 cause, or trusted reproduction is uncertain, return `diagnosis-required` with
 the observed evidence rather than guessing.
@@ -133,6 +139,10 @@ For Local Markdown, include required mechanical closeout in the reviewed and
 locked tree. Direct work has no tracker closeout.
 
 Apply the configured Mutation read-back rules to every tracker closeout.
+
+Do not return `partial` merely because the first bounded seam is green. Continue
+while an unmet acceptance commitment remains safely actionable within current
+scope and authority.
 
 Return:
 

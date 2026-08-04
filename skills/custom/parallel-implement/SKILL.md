@@ -75,6 +75,11 @@ Each worker implements the smallest acceptance-complete solution, runs focused
 proof, commits its bounded work, and returns concise prose naming the commit,
 changed scope, proof, skips, and blockers. The root verifies the actual lane,
 base, commit, diff, scope, and proof. Prose is evidence, not trusted state.
+Do not accept a lane merely because its first component seam is green. Require
+evidence that each acceptance commitment reaches its proof seam and, when
+integration-dependent, that the canonical production caller reaches the
+observable output. If an in-scope gap remains safely actionable, resume the
+same worker before accepting the landing.
 Retry only after an observed blocking condition changes; never duplicate an
 uncertain task.
 

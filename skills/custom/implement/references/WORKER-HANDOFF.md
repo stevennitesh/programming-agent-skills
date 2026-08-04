@@ -5,12 +5,15 @@ Send a fresh implementation worker only the task context needed to begin:
 - **Ticket and desired outcome:** the selected work item and observable result.
 - **Fixed decisions and relevant context:** settled choices plus precise source,
   repository, and symbol references worth reading.
-- **Acceptance criteria:** every behavior the worker must satisfy.
+- **Acceptance criteria:** every behavior the worker must satisfy, including any
+  canonical production caller-to-output path that must be proven.
 - **Owned write scope:** allowed files or directories, exclusions, and protected
   areas.
 - **Repository base and working directory:** the exact starting commit and the
   checkout in which every command and write must occur.
-- **Required validation:** focused commands and the evidence they must produce.
+- **Required validation:** focused commands and evidence through the claimed
+  production path; component proof counts only when that path exercises the
+  component.
 - **Stop and escalation conditions:** new authority, contradictory repository
   evidence, overlapping ownership, or an unplanned public-contract decision.
 - **Expected evidence return:** the result described below.
