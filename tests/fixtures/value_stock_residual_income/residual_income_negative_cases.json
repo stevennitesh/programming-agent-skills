@@ -1,0 +1,41 @@
+{
+  "fixture_version": "residual-income-negative-controls-v1",
+  "base_fixture": "residual_income_model_lock.json",
+  "cases": [
+    {
+      "id": "caller_supplied_rollforward_mismatch",
+      "operation": "set",
+      "path": ["residual_income", "forecast_periods", 1, "beginning_book_value_input"],
+      "value": "beginning_book_fy2026",
+      "expected_code": "clean_surplus"
+    },
+    {
+      "id": "beginning_book_claim_basis_mismatch",
+      "operation": "set",
+      "path": ["inputs", "beginning_book_fy2026", "claim_basis"],
+      "value": "enterprise",
+      "expected_code": "claim_basis"
+    },
+    {
+      "id": "mistimed_year_end_residual_income",
+      "operation": "set",
+      "path": ["residual_income", "forecast_periods", 0, "realization_date"],
+      "value": "2026-06-30",
+      "expected_code": "timing_convention"
+    },
+    {
+      "id": "missing_continuing_terminal",
+      "operation": "set",
+      "path": ["residual_income", "terminal"],
+      "value": null,
+      "expected_code": "terminal_convention"
+    },
+    {
+      "id": "nonpositive_diluted_shares",
+      "operation": "set",
+      "path": ["diluted_shares", "value"],
+      "value": 0,
+      "expected_code": "positive"
+    }
+  ]
+}

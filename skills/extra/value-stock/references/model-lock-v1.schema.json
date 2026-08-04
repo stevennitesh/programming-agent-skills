@@ -85,7 +85,11 @@
                 "formula_ref": {
                   "enum": [
                     "fcff-v1:nopat-plus-da-minus-capex-minus-working-capital-change",
-                    "fcff-v1:last-fcff-times-one-plus-growth"
+                    "fcff-v1:last-fcff-times-one-plus-growth",
+                    "residual-income-v1:roe-times-beginning-book-value",
+                    "residual-income-v1:net-income-minus-equity-charge",
+                    "residual-income-v1:beginning-book-plus-net-income-minus-dividends-plus-adjustments",
+                    "residual-income-v1:next-residual-income-over-ke-minus-growth"
                   ]
                 }
               }
@@ -94,7 +98,8 @@
         ]
       }
     },
-    "fcff": {"$ref": "#/$defs/fcffModel"}
+    "fcff": {"$ref": "#/$defs/fcffModel"},
+    "residual_income": {"$ref": "#/$defs/residualIncomeModel"}
   },
   "$defs": {
     "fcffModel": {
@@ -247,6 +252,76 @@
             {"type": "string", "minLength": 1}
           ]
         }
+      }
+    },
+    "residualIncomeModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["forecast_periods", "terminal"],
+      "properties": {
+        "forecast_periods": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/residualIncomeForecastPeriod"}
+        },
+        "terminal": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/$defs/residualIncomeTerminal"}
+          ]
+        }
+      }
+    },
+    "residualIncomeForecastPeriod": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "period",
+        "realization_date",
+        "branch",
+        "required_return_input",
+        "dividends_input",
+        "clean_surplus_adjustment_inputs"
+      ],
+      "properties": {
+        "period": {"type": "string", "minLength": 1},
+        "realization_date": {"type": "string", "format": "date"},
+        "branch": {"enum": ["direct_net_income", "roe_derived"]},
+        "beginning_book_value_input": {"type": "string", "minLength": 1},
+        "net_income_input": {"type": "string", "minLength": 1},
+        "roe_input": {"type": "string", "minLength": 1},
+        "required_return_input": {"type": "string", "minLength": 1},
+        "dividends_input": {"type": "string", "minLength": 1},
+        "clean_surplus_adjustment_inputs": {"$ref": "#/$defs/inputReferenceArray"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"branch": {"const": "direct_net_income"}}},
+          "then": {
+            "required": ["net_income_input"],
+            "not": {"required": ["roe_input"]}
+          },
+          "else": {
+            "required": ["roe_input"],
+            "not": {"required": ["net_income_input"]}
+          }
+        }
+      ]
+    },
+    "residualIncomeTerminal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "terminal_date",
+        "required_return_input",
+        "roe_input",
+        "growth_rate_input"
+      ],
+      "properties": {
+        "terminal_date": {"type": "string", "format": "date"},
+        "required_return_input": {"type": "string", "minLength": 1},
+        "roe_input": {"type": "string", "minLength": 1},
+        "growth_rate_input": {"type": "string", "minLength": 1}
       }
     },
     "valueRecord": {
