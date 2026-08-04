@@ -76,9 +76,178 @@
       "type": "object",
       "minProperties": 1,
       "additionalProperties": {"$ref": "#/$defs/valueRecord"}
-    }
+    },
+    "fcff": {"$ref": "#/$defs/fcffModel"}
   },
   "$defs": {
+    "fcffModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "discounting",
+        "forecast_periods",
+        "terminal",
+        "claim_bridge",
+        "award_treatment"
+      ],
+      "properties": {
+        "discounting": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "day_count",
+            "compounding",
+            "forecast_rate_basis"
+          ],
+          "properties": {
+            "day_count": {"const": "actual_365"},
+            "compounding": {"const": "annual"},
+            "forecast_rate_basis": {"const": "valuation_origin_spot"},
+            "midyear_first_prior_period_end": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        },
+        "forecast_periods": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/fcffForecastPeriod"}
+        },
+        "terminal": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/$defs/fcffTerminal"}
+          ]
+        },
+        "claim_bridge": {"$ref": "#/$defs/fcffClaimBridge"},
+        "award_treatment": {"$ref": "#/$defs/fcffAwardTreatment"}
+      }
+    },
+    "fcffForecastPeriod": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "period",
+        "realization_date",
+        "branch",
+        "output_input",
+        "discount_rate_input"
+      ],
+      "properties": {
+        "period": {"type": "string", "minLength": 1},
+        "realization_date": {"type": "string", "format": "date"},
+        "branch": {"enum": ["derived", "direct"]},
+        "output_input": {"type": "string", "minLength": 1},
+        "discount_rate_input": {"type": "string", "minLength": 1},
+        "components": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "ebit",
+            "tax_rate",
+            "depreciation_amortization",
+            "capital_expenditures",
+            "working_capital_change"
+          ],
+          "properties": {
+            "ebit": {"type": "string", "minLength": 1},
+            "tax_rate": {"type": "string", "minLength": 1},
+            "depreciation_amortization": {"type": "string", "minLength": 1},
+            "capital_expenditures": {"type": "string", "minLength": 1},
+            "working_capital_change": {"type": "string", "minLength": 1}
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"branch": {"const": "derived"}}},
+          "then": {"required": ["components"]},
+          "else": {"not": {"required": ["components"]}}
+        }
+      ]
+    },
+    "fcffTerminal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "terminal_date",
+        "next_period_date",
+        "interval_years",
+        "next_period_fcff_input",
+        "discount_rate_input",
+        "growth_rate_input"
+      ],
+      "properties": {
+        "terminal_date": {"type": "string", "format": "date"},
+        "next_period_date": {"type": "string", "format": "date"},
+        "interval_years": {"const": 1},
+        "next_period_fcff_input": {"type": "string", "minLength": 1},
+        "discount_rate_input": {"type": "string", "minLength": 1},
+        "growth_rate_input": {"type": "string", "minLength": 1}
+      }
+    },
+    "fcffClaimBridge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "excess_cash",
+        "non_operating_assets",
+        "debt",
+        "preferred_stock",
+        "noncontrolling_interests",
+        "other_senior_claims",
+        "existing_awards",
+        "target_claim_adjustments"
+      ],
+      "properties": {
+        "excess_cash": {"$ref": "#/$defs/inputReferenceArray"},
+        "non_operating_assets": {"$ref": "#/$defs/inputReferenceArray"},
+        "debt": {"$ref": "#/$defs/inputReferenceArray"},
+        "preferred_stock": {"$ref": "#/$defs/inputReferenceArray"},
+        "noncontrolling_interests": {"$ref": "#/$defs/inputReferenceArray"},
+        "other_senior_claims": {"$ref": "#/$defs/inputReferenceArray"},
+        "existing_awards": {"$ref": "#/$defs/inputReferenceArray"},
+        "target_claim_adjustments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["effect", "input"],
+            "properties": {
+              "effect": {"enum": ["add", "subtract"]},
+              "input": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      }
+    },
+    "inputReferenceArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "fcffAwardTreatment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "existing_awards",
+        "future_grants",
+        "future_grants_claim_adjustment"
+      ],
+      "properties": {
+        "existing_awards": {"enum": ["none", "claim_bridge", "diluted_shares"]},
+        "future_grants": {
+          "enum": ["none", "operating_expense", "cash_equivalent", "future_dilution"]
+        },
+        "future_grants_claim_adjustment": {
+          "oneOf": [
+            {"type": "null"},
+            {"type": "string", "minLength": 1}
+          ]
+        }
+      }
+    },
     "valueRecord": {
       "type": "object",
       "additionalProperties": false,
