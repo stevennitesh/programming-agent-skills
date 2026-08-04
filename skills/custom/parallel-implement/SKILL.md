@@ -71,6 +71,12 @@ concurrent writer gets a distinct worktree prepared by the one lane helper;
 dispatch only when it returns `ok: true` after Git and any applicable pytest
 preflight.
 
+Before choosing an implementation seam, each worker traces every assigned
+acceptance commitment to its proof seam. When a commitment depends on
+integration, the worker follows the canonical production caller to the
+observable output and proof. Existing code or component tests count only when
+that path reaches them. Do this directly; create no matrix or artifact.
+
 Each worker implements the smallest acceptance-complete solution, runs focused
 proof, commits its bounded work, and returns concise prose naming the commit,
 changed scope, proof, skips, and blockers. The root verifies the actual lane,

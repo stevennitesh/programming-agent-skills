@@ -2130,6 +2130,10 @@ def test_implementation_workflows_trace_acceptance_before_completion() -> None:
 
     assert "Before either path chooses an implementation seam" in implement
     assert (
+        "Before choosing an implementation seam, each worker traces every assigned"
+        in parallel
+    )
+    assert (
         "Do not return `partial` merely because the first bounded seam is green"
         in implement
     )
