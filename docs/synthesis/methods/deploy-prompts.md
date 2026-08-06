@@ -1,8 +1,10 @@
 # Deploy Campaign
 
-Use this method only when the user explicitly invokes `Run Deploy Campaign on
-<skill>`. It is one controllerless authoring method organized by four ordered
-reasoning and proof obligations:
+Use this method only when either the user explicitly invokes `Run Deploy
+Campaign on <skill>` or a Fresh Composition Epoch issues a dependency-ready
+canonical contract slice as part of already-authorized epoch execution. It is
+one controllerless authoring method organized by four ordered reasoning and
+proof obligations:
 
 ```text
 Contract Lock -> Candidate Lock -> conditional Behavioral Proof -> Release

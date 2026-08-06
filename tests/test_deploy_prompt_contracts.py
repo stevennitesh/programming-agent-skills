@@ -6,6 +6,7 @@ AGENTS = ROOT / "AGENTS.md"
 CONTEXT = ROOT / "CONTEXT.md"
 ADR = ROOT / "docs/adr/0010-deploy-campaigns-advance-through-proof-gates.md"
 DEPLOY = ROOT / "docs/synthesis/methods/deploy-prompts.md"
+FRESH_EPOCH = ROOT / "docs/synthesis/methods/fresh-composition-epoch.md"
 SYNTHESIS_README = ROOT / "docs/synthesis/README.md"
 METHODS_README = ROOT / "docs/synthesis/methods/README.md"
 BEHAVIOR_EVALS = (
@@ -45,6 +46,26 @@ def test_active_method_exposes_one_controllerless_four_obligation_path() -> None
         assert "Candidate Lock" in text
         assert "Behavioral Proof" in text
         assert "Release" in text
+
+
+def test_dependency_ready_fce_slice_is_an_authorized_method_caller() -> None:
+    deploy = _normalized(DEPLOY)
+    fresh_epoch = _normalized(FRESH_EPOCH)
+
+    assert (
+        "For each dependency-ready node, issue its canonical immutable contract slice"
+        in fresh_epoch
+    )
+    assert (
+        "the one-skill method at `docs/synthesis/methods/deploy-prompts.md`"
+        in fresh_epoch
+    )
+    assert "the user explicitly invokes `Run Deploy Campaign on <skill>`" in deploy
+    assert (
+        "a Fresh Composition Epoch issues a dependency-ready canonical contract slice"
+        in deploy
+    )
+    assert "already-authorized epoch execution" in deploy
 
 
 def test_candidate_lock_blocks_before_behavioral_dispatch_or_promotion() -> None:

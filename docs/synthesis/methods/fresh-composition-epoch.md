@@ -48,8 +48,9 @@ context loaded, affected capabilities, ordering impact, and required proofs.
    stable skill ID as tie breakers. Emit one immutable fingerprinted blueprint
    for every selected skill, including its predecessor IDs; a blueprint proves
    projection only and never proves delivery readiness.
-5. For each ready node, issue its canonical immutable contract slice to the
-   one-skill method at `docs/synthesis/methods/deploy-prompts.md`. Its Contract
+5. For each dependency-ready node, issue its canonical immutable contract slice
+   to the one-skill method at `docs/synthesis/methods/deploy-prompts.md`. This is
+   the method's already-authorized Fresh Composition Epoch entry; its Contract
    Lock consumes the slice as authority and its Return reports exact candidate
    and proof identities without persisting campaign progress. The method
    neither chooses nor schedules a successor.
