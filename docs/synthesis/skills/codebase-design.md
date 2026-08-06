@@ -1,6 +1,14 @@
 # Codebase Design Whole-Skill Synthesis
 
-Status: generous whole-skill design reference for a future rewrite. The unpromoted candidate is preserved under `skills/experimental/codebase-design/`; this document does not change executable behavior or authorize promotion.
+> Status (2026-07-27): historical future-design evidence. A later authorized
+> Author pass aligned canonical Direct Design with the Engineering Contract,
+> safe non-recommendation Returns, material Interface obligations, the
+> Behavior-Owned Test Portfolio, and Change Closure. A later lean composition
+> pass permits To Spec and Audit Analyze to load Direct Design and fold its
+> result into their own artifact and Return; it creates no post-skill design
+> step. Prior hashes and evaluations below do not prove current wording.
+> `skills/custom/codebase-design/` is runtime authority.
+> `DESIGN-COHERENCE.md` remains unpromoted. No installed sync is claimed.
 
 Runtime authority remains in:
 
@@ -13,7 +21,10 @@ Runtime authority remains in:
 - `docs/synthesis/skill-context-relationships.md`, pack tests, behavior evaluations, and validation transcripts; and
 - the installed mirror under `C:\Users\steve\.agents\skills\codebase-design` only after validated synchronization.
 
-`skills/custom/codebase-design/` matches the installed active baseline. `skills/experimental/codebase-design/` preserves the coordinated Design Coherence candidate, including `DESIGN-COHERENCE.md`; it is neither routed nor installed.
+This Author pass does not claim installed parity.
+`skills/experimental/codebase-design/` preserves the coordinated Design
+Coherence candidate, including `DESIGN-COHERENCE.md`; it is neither routed nor
+installed.
 
 ## How To Read This Document
 
@@ -98,7 +109,7 @@ flowchart TB
     MODE -->|Vocabulary only| VOCAB["Apply shared terms; preserve caller ownership"]
     MODE -->|Frame or Check| COHERENCE["Read Design Coherence branch"]
     MODE -->|Recommendation| BOUND{"One bounded design question?"}
-    BOUND -->|No, wide discovery| IMPROVE["Recommend Improve Codebase and stop"]
+    BOUND -->|No, wide discovery| AUDIT["Recommend Audit Codebase and stop"]
     BOUND -->|Yes| ORIENT["Orient: build Source Trace"]
     ORIENT --> DIAGNOSE["Diagnose current shape and caller friction"]
     DIAGNOSE --> SHAPE["Shape candidate interface and hidden behavior"]
@@ -154,7 +165,7 @@ Select exactly one supported use:
 | A caller explicitly asks only to apply deep-module vocabulary to its own artifact | **Load** | Preserve the caller's output and completion; return no independent design packet |
 | A caller explicitly asks to frame unresolved design concerns or check settled design coherence without a recommendation | **Frame / Check** | Require the bounded artifact, accepted constraints, evidence, and caller-owned disposition |
 | One module, shallow cluster, interface, seam, adapter, dependency shape, migration, replacement, or proof-surface question needs a recommendation | **Direct Design** | Bound the question through Source Trace, then run one direct pass |
-| The request needs repository-wide discovery, classification, ranking, or multi-region sequencing | Not admitted | Recommend `$improve-codebase` and stop |
+| The request needs repository-wide discovery, classification, ranking, or multi-region sequencing | Not admitted | Recommend `$audit-codebase` and stop |
 | The requested answer would settle product intent, public behavior, irreversible migration, or a named owner-reserved trade-off without authority | Not yet decidable | Return the exact decision and evidence needed; do not infer acceptance |
 
 Bounded means one caller-facing design decision whose current shape, affected callers, dependencies, proof surface, and first migration edge can be traced together. A package or tier-spanning slice may still be one module when it hides one cohesive responsibility behind one useful interface. File count alone neither admits nor rejects the request.
@@ -423,11 +434,10 @@ References call back to the universal vocabulary and authority boundary rather t
 | `$wayfinder` | Load | Design Coherence | Qualification uses Frame and Closeout uses Check; Codebase Design returns criteria results while Wayfinder retains map, mutation, disposition, and completion |
 | `$wayfinder` | Invoke | Direct Design | Resolve one bounded Design ticket and return one design packet plus acceptance evidence to the same ticket |
 | `$to-spec` | Load | Vocabulary | Apply deep-module terms while To Spec retains Source Trace, parent-spec output, publication, and completion |
-| `$improve-codebase` | Load | Vocabulary | Use module, depth, interface, seam, leverage, and locality during Survey without producing a design packet |
-| `$improve-codebase` | Invoke | Direct Design | A selected supported `Concentrate` candidate needs interface, dependency, seam, ownership, migration, or replacement design; return the packet for reclassification |
+| `$audit-codebase` | Recommend and stop | Direct Design | After user decisions settle, one bounded interface, dependency, seam, ownership, migration, or replacement decision remains; publish the pickup and leave design unstarted |
 | `$simplify-code` | Recommend and stop | Direct Design | The best next move requires one new interface or ownership decision outside simplification |
 | `$tdd` | Recommend and stop | Direct Design | A GREEN refactor exposes one already-framed interface or seam question outside the tracer bullet |
-| `$codebase-design` | Recommend and stop | `$improve-codebase` | The request needs codebase-wide discovery, classification, ranking, or multi-region sequencing |
+| `$codebase-design` | Recommend and stop | `$audit-codebase` | The request needs codebase-wide discovery, classification, ranking, or multi-region sequencing |
 | Any bounded caller | Load | Vocabulary or Design Coherence | The caller explicitly retains its artifact, mutation, output, and completion authority |
 | Direct user | Invoke | Direct Design | One bounded design question returns a recommendation for user acceptance; no implementation follows automatically |
 
@@ -631,7 +641,7 @@ These are semantic targets, not approved final wording.
 | `C3` | `skills/custom/codebase-design/DEEPENING.md` | Material dependency classification, seam placement, substitutes, coverage parity, test dispositions, bounded migration, and packet contribution | Align categories, proof consequences, test accounting, and completion with Layer Two | Universal vocabulary, ordinary direct steps, alternative comparison ownership, or framework catalogs |
 | `C4` | `skills/custom/codebase-design/DESIGN-IT-TWICE.md` | Consequential-choice trigger, factual frame, distinct pressures, scout isolation, alternative completeness, comparison, and branch completion | Preserve at least three genuinely different shapes, no-new-seam pressure, private independent scouts, and root judgment | Direct packet ownership, dependency mechanics, automatic delegation, mutation, or peer-result sharing |
 | `C5` | `skills/custom/codebase-design/DESIGN-COHERENCE.md` | Shared criteria, Frame, Check, typed gaps, caller-retained Return, and reference completion | Preserve the coordinated candidate; reconcile terms with the future direct contract | Architecture recommendation, caller state, ticket or fog mapping, invocation of another skill, or Direct Design procedure |
-| `C6` | Consumer skills | Their own trigger, artifact, state, disposition, mutation, and completion | Reconcile only observed pointer or return-boundary mismatches in Wayfinder, To Spec, Improve Codebase, Simplify Code, and TDD | Codebase Design procedure or duplicated criteria |
+| `C6` | Consumer skills | Their own trigger, artifact, state, disposition, mutation, and completion | Reconcile only observed pointer or return-boundary mismatches in Wayfinder, To Spec, Audit Codebase, Simplify Code, and TDD | Codebase Design procedure or duplicated criteria |
 | `C6` | `docs/synthesis/skill-context-relationships.md` | One indexed composition edge per accepted relationship | Keep Load, Invoke, and Recommend-and-stop edges aligned with Layer Two | Branch procedure or repeated runtime wording |
 | `C7` | `tests/test_skill_pack_contracts.py` | Structural and relationship protection | Cover reference resolution, invocation policy, semantic branches, required fields, progressive disclosure, and exclusions | Incidental prose snapshots or claims that static tests prove behavior |
 | `C7` | `docs/validation/evals/core-workflows.md` and transcripts | Behavior definitions and recorded runs | Add or refine controls for mode selection, no-seam bias, design completeness, dependency choices, coherence, replacement, and authority | Runtime authority or uninspected template scoring |
@@ -678,7 +688,7 @@ This matrix supplies cases and proof; it does not create runtime rules or file p
 | Implementation / evaluation | Bundles | Behavior | Positive case | Negative control | Verification |
 | --- | --- | --- | --- | --- | --- |
 | `I1 / E1` | `C1,C2` | Direct invocation | One bounded interface question enters Direct Design and returns a packet | Generic cleanup or repository-wide architecture survey runs a direct pass | Invocation structural test and fresh ambiguous-prompt samples |
-| `I1,I2 / E1` | `C1,C6` | Vocabulary load | To Spec or Improve Codebase applies terms while retaining its own artifact and completion | A vocabulary load emits a design packet or changes caller state | Relationship test and caller behavior samples |
+| `I1,I2 / E1` | `C1,C6` | Vocabulary load | To Spec applies terms while retaining its own artifact and completion | A vocabulary load emits a design packet or changes caller state | Relationship test and caller behavior samples |
 | `I1,I2 / E1,E3` | `C1,C5,C6` | Coherence mode | Wayfinder Qualification uses Frame and Closeout uses Check with caller-retained authority | Coherence recommends architecture, invokes Direct Design, mutates the map, or creates fog/tickets | Reference-resolution test and fresh composition samples |
 | `I1 / E1` | `C1-C5` | Context loading | The observed use loads only its required reference; Deepening and Design It Twice load only on their predicates | All references preload or branch mechanics move into `SKILL.md` | Pointer/heading tests and context-inventory comparison |
 | `I1 / E2` | `C2` | Source Trace | Current interface, implementation, callers, tests, material dependencies, constraints, and migration edge support every claim | Recommendation starts from the requested abstraction name or one implementation file | Packet rubric over bounded repository fixtures |

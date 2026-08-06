@@ -1,0 +1,199 @@
+{
+  "run_id": "residual-income-oracle-v1",
+  "issuer_id": "synthetic-common-equity-issuer",
+  "security_id": "synthetic-common-stock",
+  "as_of_date": "2025-12-31",
+  "reporting_currency": "USD",
+  "method": "residual_income",
+  "base_scenario": "base",
+  "scenarios": ["base"],
+  "periods": [
+    {"id": "FY2026", "kind": "forecast", "date": "2026-12-31"},
+    {"id": "FY2027", "kind": "forecast", "date": "2027-12-31"}
+  ],
+  "conventions": {
+    "timing": "year_end",
+    "terminal": "continuing_residual_income"
+  },
+  "diluted_shares": {
+    "value": 100,
+    "unit": "shares",
+    "value_kind": "non_monetary",
+    "currency": null,
+    "date": "2025-12-31",
+    "evidence_class": "reported",
+    "claim_basis": "target_security",
+    "scenario": "base",
+    "source_ref": "filing:synthetic:diluted-shares"
+  },
+  "inputs": {
+    "beginning_book_fy2026": {
+      "value": 1000,
+      "unit": "currency",
+      "value_kind": "monetary",
+      "currency": "USD",
+      "period": "FY2026",
+      "evidence_class": "reported",
+      "claim_basis": "common_equity",
+      "scenario": "base",
+      "source_ref": "filing:synthetic:beginning-book-fy2026"
+    },
+    "required_return_fy2026": {
+      "value": 0.10,
+      "unit": "ratio",
+      "value_kind": "non_monetary",
+      "currency": null,
+      "period": "FY2026",
+      "evidence_class": "assumed",
+      "claim_basis": "common_equity",
+      "scenario": "base",
+      "source_ref": "model-lock:required-return-fy2026"
+    },
+    "net_income_fy2026": {
+      "value": 140,
+      "unit": "currency",
+      "value_kind": "monetary",
+      "currency": "USD",
+      "period": "FY2026",
+      "evidence_class": "assumed",
+      "claim_basis": "common_equity",
+      "scenario": "base",
+      "source_ref": "model-lock:net-income-fy2026"
+    },
+    "dividends_fy2026": {
+      "value": 40,
+      "unit": "currency",
+      "value_kind": "monetary",
+      "currency": "USD",
+      "period": "FY2026",
+      "evidence_class": "assumed",
+      "claim_basis": "common_equity",
+      "scenario": "base",
+      "source_ref": "model-lock:dividends-fy2026"
+    },
+    "clean_surplus_adjustment_fy2026": {
+      "value": 10,
+      "unit": "currency",
+      "value_kind": "monetary",
+      "currency": "USD",
+      "period": "FY2026",
+      "evidence_class": "assumed",
+      "claim_basis": "common_equity",
+      "scenario": "base",
+      "source_ref": "model-lock:clean-surplus-adjustment-fy2026"
+    },
+    "required_return_fy2027": {
+      "value": 0.10,
+      "unit": "ratio",
+      "value_kind": "non_monetary",
+      "currency": null,
+      "period": "FY2027",
+      "evidence_class": "assumed",
+      "claim_basis": "common_equity",
+      "scenario": "base",
+      "source_ref": "model-lock:required-return-fy2027"
+    },
+    "roe_fy2027": {
+      "value": 0.14,
+      "unit": "ratio",
+      "value_kind": "non_monetary",
+      "currency": null,
+      "period": "FY2027",
+      "evidence_class": "assumed",
+      "claim_basis": "common_equity",
+      "scenario": "base",
+      "source_ref": "model-lock:roe-fy2027"
+    },
+    "dividends_fy2027": {
+      "value": 55.4,
+      "unit": "currency",
+      "value_kind": "monetary",
+      "currency": "USD",
+      "period": "FY2027",
+      "evidence_class": "assumed",
+      "claim_basis": "common_equity",
+      "scenario": "base",
+      "source_ref": "model-lock:dividends-fy2027"
+    },
+    "clean_surplus_adjustment_fy2027": {
+      "value": 0,
+      "unit": "currency",
+      "value_kind": "monetary",
+      "currency": "USD",
+      "period": "FY2027",
+      "evidence_class": "assumed",
+      "claim_basis": "common_equity",
+      "scenario": "base",
+      "source_ref": "model-lock:clean-surplus-adjustment-fy2027"
+    },
+    "terminal_required_return": {
+      "value": 0.10,
+      "unit": "ratio",
+      "value_kind": "non_monetary",
+      "currency": null,
+      "date": "2027-12-31",
+      "evidence_class": "assumed",
+      "claim_basis": "common_equity",
+      "scenario": "base",
+      "source_ref": "model-lock:terminal-required-return"
+    },
+    "terminal_roe": {
+      "value": 0.12,
+      "unit": "ratio",
+      "value_kind": "non_monetary",
+      "currency": null,
+      "date": "2027-12-31",
+      "evidence_class": "assumed",
+      "claim_basis": "common_equity",
+      "scenario": "base",
+      "source_ref": "model-lock:terminal-roe"
+    },
+    "terminal_growth": {
+      "value": 0.03,
+      "unit": "ratio",
+      "value_kind": "non_monetary",
+      "currency": null,
+      "date": "2027-12-31",
+      "evidence_class": "assumed",
+      "claim_basis": "common_equity",
+      "scenario": "base",
+      "source_ref": "model-lock:terminal-growth"
+    }
+  },
+  "residual_income": {
+    "forecast_periods": [
+      {
+        "period": "FY2026",
+        "realization_date": "2026-12-31",
+        "branch": "direct_net_income",
+        "beginning_book_value_input": "beginning_book_fy2026",
+        "net_income_input": "net_income_fy2026",
+        "required_return_input": "required_return_fy2026",
+        "dividends_input": "dividends_fy2026",
+        "clean_surplus_adjustment_inputs": ["clean_surplus_adjustment_fy2026"]
+      },
+      {
+        "period": "FY2027",
+        "realization_date": "2027-12-31",
+        "branch": "roe_derived",
+        "roe_input": "roe_fy2027",
+        "required_return_input": "required_return_fy2027",
+        "dividends_input": "dividends_fy2027",
+        "clean_surplus_adjustment_inputs": ["clean_surplus_adjustment_fy2027"]
+      }
+    ],
+    "terminal": {
+      "terminal_date": "2027-12-31",
+      "required_return_input": "terminal_required_return",
+      "roe_input": "terminal_roe",
+      "growth_rate_input": "terminal_growth"
+    },
+    "claim_bridge": {
+      "existing_awards": [],
+      "target_claim_adjustments": []
+    },
+    "award_treatment": {
+      "existing_awards": "diluted_shares"
+    }
+  }
+}

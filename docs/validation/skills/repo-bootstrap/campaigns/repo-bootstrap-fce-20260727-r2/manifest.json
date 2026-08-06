@@ -1,0 +1,601 @@
+{
+  "campaign": {
+    "composition_epoch_id": "FCE-20260727-01",
+    "continuation": null,
+    "delivery_mode": "none",
+    "epoch": "repo-bootstrap-fce-20260727-r2",
+    "id": "repo-bootstrap-fce-20260727-r2",
+    "skill": "repo-bootstrap",
+    "supersession": null,
+    "worktree": "E:\\GitHub\\code\\programming-agent-skills"
+  },
+  "contract": {
+    "pack_contract": {
+      "fingerprint": "sha256-v1:74e70c063cdcd5672680e1043e974dfc48d7026c438822948118f163ad6402a0",
+      "path": "docs/synthesis/skill-pack.md",
+      "revision": "2"
+    },
+    "proof_predecessors": [],
+    "schedule_fingerprint": "sha256-v1:77dfec1d0cd2bcc21e887f73745b44d416632574c4a90e5c57813f15961537b0",
+    "schedule_pointer": "docs/validation/skill-pack/FCE-20260727-01/schedule.json#campaign_order",
+    "selected_capability_ids": [
+      "CAP-001"
+    ],
+    "selected_relationship_ids": [
+      "REL-012",
+      "REL-015",
+      "REL-032",
+      "REL-059",
+      "REL-079",
+      "REL-083",
+      "REL-085",
+      "REL-089"
+    ],
+    "selected_scenario_ids": [
+      "PS-001",
+      "PS-003",
+      "PS-007",
+      "PS-012",
+      "PS-025"
+    ],
+    "slice": {
+      "fingerprint": "sha256-v1:37ad7e952f8864229bec8f32bcaf97bda6029367a4fcd35a1c16c321cacde552",
+      "id": "FCE-20260727-01:r2:SK-001:repo-bootstrap",
+      "path": "docs/validation/skill-pack/FCE-20260727-01/admissions/repo-bootstrap.json"
+    }
+  },
+  "mechanical": {
+    "artifact_identities": [
+      {
+        "fingerprint": "sha256-v1:5952c52b90b0215add5523884a53471ddc84c5b705f6cb34995d614ffb54f54d",
+        "name": "prompt-1-m0",
+        "path": "docs/validation/skills/repo-bootstrap/campaigns/repo-bootstrap-fce-20260727-r2/prompt1-m0.md"
+      },
+      {
+        "algorithm": "campaign-tree-v1",
+        "file_count": 10,
+        "fingerprint": "sha256-v1:81f713211af198cb81c07b17f933d9b0be8e0efbaba012720b3c786a6fedaef1",
+        "name": "prompt-3-m0-runtime",
+        "path": ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/runtime"
+      },
+      {
+        "admitted_h1_units": 0,
+        "algorithm": "campaign-tree-v1",
+        "file_count": 10,
+        "fingerprint": "sha256-v1:81f713211af198cb81c07b17f933d9b0be8e0efbaba012720b3c786a6fedaef1",
+        "name": "prompt-3-h1-runtime",
+        "path": ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/runtime",
+        "shared_with": "prompt-3-m0-runtime"
+      },
+      {
+        "algorithm": "campaign-tree-v1",
+        "disposition": "comparison-evidence-only",
+        "file_count": 10,
+        "fingerprint": "sha256-v1:f7b5392e023beaf2e65202a7c64f3dd4ce80c46294da9cf1d0f026b01b14457e",
+        "name": "prompt-3-c0-runtime",
+        "path": "skills/custom/repo-bootstrap"
+      },
+      {
+        "fingerprint": "sha256-v1:7a9c5d3e833fff4b1cb90c0507c4de8c449905e592a62a60bc49c93d35cef567",
+        "name": "prompt-3-construction",
+        "path": ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/proof/construction.json"
+      },
+      {
+        "algorithm": "canonical-json-v1",
+        "fingerprint": "sha256-v1:a575a32bc6ed10397c70321e07e021093d04bcb93f7c4f7134bc87d7e8fba5d9",
+        "name": "prompt-3-worker-fixture",
+        "path": ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/proof/worker-fixture.json",
+        "schema_version": 2
+      },
+      {
+        "algorithm": "canonical-json-v1",
+        "fingerprint": "sha256-v1:504d1113ffc42fdbcbb3260b58cee88037c5474a96ec6bfd798bfc1f1776e4b5",
+        "name": "prompt-3-root-registration",
+        "path": ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/proof/root-registration.json"
+      },
+      {
+        "fingerprint": "sha256-v1:7303bcb9d86613263c8398d0f22d832846595ab0b57601538d452f1e08adc072",
+        "name": "prompt-3-dispatch-plan",
+        "path": ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/proof/dispatch-plan.json",
+        "resolved_dispatch_count": 12
+      },
+      {
+        "algorithm": "campaign-tree-v1",
+        "file_count": 16,
+        "fingerprint": "sha256-v1:6c494f1920864db851dd7aee2de9f2cd4b3b988e850c7d12268f6a0eeba48717",
+        "name": "prompt-3-proof-tree",
+        "path": ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/proof"
+      },
+      {
+        "algorithm": "marker-semantic-v1",
+        "fingerprint": "sha256-v1:498286a906b1f5a4220eca146457bb924b46354815552522242450cb1c3a726a",
+        "marker": "prompt-3",
+        "name": "prompt-3-decision-capsule",
+        "path": "docs/validation/skills/repo-bootstrap/campaigns/repo-bootstrap-fce-20260727-r2/decisions.md"
+      },
+      {
+        "algorithm": "campaign-tree-v1",
+        "file_count": 10,
+        "fingerprint": "sha256-v1:81f713211af198cb81c07b17f933d9b0be8e0efbaba012720b3c786a6fedaef1",
+        "name": "prompt-4-v1-runtime",
+        "path": ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/runtime",
+        "shared_with": "prompt-4-m0-runtime"
+      },
+      {
+        "algorithm": "canonical-json-v1",
+        "fingerprint": "sha256-v1:3d32a57889f0389af908659b1dfeb8a729e83d3fb06db179655613b5994091b8",
+        "name": "prompt-4-results",
+        "path": ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/results/m0-results.json"
+      },
+      {
+        "algorithm": "marker-semantic-v1",
+        "fingerprint": "sha256-v1:1920b9f76c204ade401e638a94f7d38442a05020b0ce7be3f5e0d4e3625dc57d",
+        "marker": "prompt-4",
+        "name": "prompt-4-decision-capsule",
+        "path": "docs/validation/skills/repo-bootstrap/campaigns/repo-bootstrap-fce-20260727-r2/decisions.md"
+      },
+      {
+        "algorithm": "marker-semantic-v1",
+        "fingerprint": "sha256-v1:838d3ad2363c77ff52cf1be8218640c2e0aac431c057e7a0f6603b380c92cece",
+        "marker": "prompt-4-synthesis",
+        "name": "prompt-4-synthesis",
+        "path": "docs/synthesis/skills/repo-bootstrap.md"
+      },
+      {
+        "algorithm": "campaign-tree-v1",
+        "cut_ledger": {
+          "accepted": 0,
+          "plausible": 4,
+          "rejected": 4
+        },
+        "disposition": "pruning-not-needed",
+        "file_count": 10,
+        "fingerprint": "sha256-v1:81f713211af198cb81c07b17f933d9b0be8e0efbaba012720b3c786a6fedaef1",
+        "load_delta": {
+          "files": 0,
+          "markdown_bytes": 0,
+          "skill_bytes": 0,
+          "skill_lines": 0,
+          "skill_whitespace_words": 0,
+          "total_bytes": 0
+        },
+        "name": "pruning-p1-runtime",
+        "path": ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/runtime",
+        "pruning_proof": {
+          "fresh_wave": false,
+          "prompt4_receipt_id": "receipt-e105e9772e0949d8a072f4cb44fb2b98",
+          "results_fingerprint": "sha256-v1:3d32a57889f0389af908659b1dfeb8a729e83d3fb06db179655613b5994091b8",
+          "reuse_basis": "p1-byte-identical-v1"
+        },
+        "shared_with": "prompt-4-v1-runtime"
+      },
+      {
+        "algorithm": "marker-semantic-v1",
+        "fingerprint": "sha256-v1:2cf8af50a3882a8b512ede2a79823b044a9f0ca2117bf8a232d23e8ae4c4bd05",
+        "marker": "pruning",
+        "name": "pruning-decision-capsule",
+        "path": "docs/validation/skills/repo-bootstrap/campaigns/repo-bootstrap-fce-20260727-r2/decisions.md"
+      },
+      {
+        "algorithm": "marker-semantic-v1",
+        "fingerprint": "sha256-v1:f7ca048d3e9807ff9dab5af0b340e1ae694bf35597a61c819217ae3f60a79629",
+        "marker": "pruning-synthesis",
+        "name": "pruning-synthesis",
+        "path": "docs/synthesis/skills/repo-bootstrap.md"
+      }
+    ],
+    "campaign_digest": "903e31d7a397d508145e5a6387d411cf7d0ba096468ca60ae9c6b3e29b296a93",
+    "contract_digest": "b8825d1a0542a272c1dccebd67685b276c4a2ad57d7fa9a240e9a1ddf1746e4a",
+    "created_at": "2026-07-27T19:14:43.722829Z",
+    "evidence_state": "current",
+    "invalidations": [
+      {
+        "changed_inputs": [
+          "prompt-3-proof-tree"
+        ],
+        "observed_at": "2026-07-27T20:44:03.794322Z",
+        "receipt_ids": [
+          "receipt-55e26ff9a88040d9858731b4d134a290"
+        ]
+      }
+    ],
+    "parity": null,
+    "preflight_registrations": [
+      {
+        "applicability": "required",
+        "candidate_root": ".",
+        "decision_pointer": "decisions.md#research-markdown",
+        "hard_break_policy": "forbid",
+        "id": "research-markdown",
+        "kind": "markdown",
+        "paths": [
+          "docs/research/skills/repo-bootstrap/RP-repo-bootstrap-FCE-20260727-01-r2.md"
+        ],
+        "stage": "research",
+        "target": {
+          "algorithm": "campaign-tree-v1",
+          "digest": "84eba0b4a16286345eb1b0b933bec6890c4711f369550357dc2d8a3a74778a39",
+          "path": "docs/research/skills/repo-bootstrap"
+        }
+      },
+      {
+        "applicability": "not-applicable",
+        "decision_pointer": "decisions.md#research-registry",
+        "id": "research-registry",
+        "kind": "research",
+        "stage": "research"
+      },
+      {
+        "applicability": "not-applicable",
+        "decision_pointer": "decisions.md#prompt-3-behavioral-comparison",
+        "id": "prompt-3-behavioral-comparison",
+        "kind": "behavioral-comparison",
+        "stage": "prompt-3"
+      },
+      {
+        "applicability": "required",
+        "candidate_root": ".",
+        "decision_pointer": "decisions.md#prompt-3-markdown",
+        "hard_break_policy": "forbid",
+        "id": "prompt-3-runtime-markdown",
+        "kind": "markdown",
+        "paths": [
+          ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/runtime/SKILL.md",
+          ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/runtime/domain.md",
+          ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/runtime/engineering-contract.md",
+          ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/runtime/issue-tracker-github.md",
+          ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/runtime/issue-tracker-gitlab.md",
+          ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/runtime/issue-tracker-local.md",
+          ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/runtime/triage-labels.md"
+        ],
+        "stage": "prompt-3",
+        "target": {
+          "algorithm": "campaign-tree-v1",
+          "digest": "ef3b20cc0e3b3a0069e17cd5a861332b85880b10c8c5e3fd7513a467550f9ee6",
+          "path": ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/runtime"
+        }
+      },
+      {
+        "applicability": "required",
+        "candidate_root": ".",
+        "decision_pointer": "decisions.md#prompt-3-markdown",
+        "hard_break_policy": "allow",
+        "id": "prompt-3-decision-markdown",
+        "kind": "markdown",
+        "paths": [
+          "docs/validation/skills/repo-bootstrap/campaigns/repo-bootstrap-fce-20260727-r2/decisions.md"
+        ],
+        "stage": "prompt-3",
+        "target": {
+          "algorithm": "marker-semantic-v1",
+          "digest": "498286a906b1f5a4220eca146457bb924b46354815552522242450cb1c3a726a",
+          "marker": "prompt-3",
+          "path": "docs/validation/skills/repo-bootstrap/campaigns/repo-bootstrap-fce-20260727-r2/decisions.md"
+        }
+      },
+      {
+        "applicability": "required",
+        "candidate_root": ".",
+        "decision_pointer": "decisions.md#prompt-4-markdown",
+        "hard_break_policy": "forbid",
+        "id": "prompt-4-runtime-markdown",
+        "kind": "markdown",
+        "paths": [
+          ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/runtime/SKILL.md",
+          ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/runtime/domain.md",
+          ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/runtime/engineering-contract.md",
+          ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/runtime/issue-tracker-github.md",
+          ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/runtime/issue-tracker-gitlab.md",
+          ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/runtime/issue-tracker-local.md",
+          ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/runtime/triage-labels.md"
+        ],
+        "stage": "prompt-4",
+        "target": {
+          "algorithm": "campaign-tree-v1",
+          "digest": "81f713211af198cb81c07b17f933d9b0be8e0efbaba012720b3c786a6fedaef1",
+          "path": ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/runtime"
+        }
+      },
+      {
+        "applicability": "required",
+        "candidate_root": ".",
+        "decision_pointer": "decisions.md#prompt-4-markdown",
+        "hard_break_policy": "allow",
+        "id": "prompt-4-decision-markdown",
+        "kind": "markdown",
+        "paths": [
+          "docs/validation/skills/repo-bootstrap/campaigns/repo-bootstrap-fce-20260727-r2/decisions.md"
+        ],
+        "stage": "prompt-4",
+        "target": {
+          "algorithm": "marker-semantic-v1",
+          "digest": "1920b9f76c204ade401e638a94f7d38442a05020b0ce7be3f5e0d4e3625dc57d",
+          "marker": "prompt-4",
+          "path": "docs/validation/skills/repo-bootstrap/campaigns/repo-bootstrap-fce-20260727-r2/decisions.md"
+        }
+      },
+      {
+        "applicability": "required",
+        "candidate_root": ".",
+        "decision_pointer": "decisions.md#prompt-4-markdown",
+        "hard_break_policy": "forbid",
+        "id": "prompt-4-synthesis-markdown",
+        "kind": "markdown",
+        "paths": [
+          "docs/synthesis/skills/repo-bootstrap.md"
+        ],
+        "stage": "prompt-4",
+        "target": {
+          "algorithm": "marker-semantic-v1",
+          "digest": "838d3ad2363c77ff52cf1be8218640c2e0aac431c057e7a0f6603b380c92cece",
+          "marker": "prompt-4-synthesis",
+          "path": "docs/synthesis/skills/repo-bootstrap.md"
+        }
+      },
+      {
+        "applicability": "required",
+        "candidate_root": ".",
+        "decision_pointer": "decisions.md#pruning-markdown",
+        "hard_break_policy": "allow",
+        "id": "pruning-decision-markdown",
+        "kind": "markdown",
+        "paths": [
+          "docs/validation/skills/repo-bootstrap/campaigns/repo-bootstrap-fce-20260727-r2/decisions.md"
+        ],
+        "stage": "pruning",
+        "target": {
+          "algorithm": "marker-semantic-v1",
+          "digest": "2cf8af50a3882a8b512ede2a79823b044a9f0ca2117bf8a232d23e8ae4c4bd05",
+          "marker": "pruning",
+          "path": "docs/validation/skills/repo-bootstrap/campaigns/repo-bootstrap-fce-20260727-r2/decisions.md"
+        }
+      },
+      {
+        "applicability": "required",
+        "candidate_root": ".",
+        "decision_pointer": "decisions.md#pruning-markdown",
+        "hard_break_policy": "forbid",
+        "id": "pruning-synthesis-markdown",
+        "kind": "markdown",
+        "paths": [
+          "docs/synthesis/skills/repo-bootstrap.md"
+        ],
+        "stage": "pruning",
+        "target": {
+          "algorithm": "marker-semantic-v1",
+          "digest": "f7ca048d3e9807ff9dab5af0b340e1ae694bf35597a61c819217ae3f60a79629",
+          "marker": "pruning-synthesis",
+          "path": "docs/synthesis/skills/repo-bootstrap.md"
+        }
+      }
+    ],
+    "prompt5": {
+      "canonical_identity": {
+        "algorithm": "campaign-tree-v1",
+        "fingerprint": "sha256-v1:f7b5392e023beaf2e65202a7c64f3dd4ce80c46294da9cf1d0f026b01b14457e",
+        "path": "skills/custom/repo-bootstrap",
+        "state": "restored-after-rejected-promotion"
+      },
+      "changed_cohort": [
+        "repo-bootstrap"
+      ],
+      "decision": "evidence-gap",
+      "final_evidence_dispositions": {
+        "canonical_focused_semantic_proof": "passed-before-rollback",
+        "diff_checks": "passed",
+        "full_integration_suite": "failed-two-required-compatibility-omissions",
+        "managed_install": "not-run",
+        "pack_validation": "ambient-red-pre-existing-prompt1-hard-breaks",
+        "p1_behavioral_evidence": "lane-limited-simulated",
+        "post_install_dry_run": "not-run"
+      },
+      "installed_identity": null,
+      "p1_identity": {
+        "algorithm": "campaign-tree-v1",
+        "fingerprint": "sha256-v1:81f713211af198cb81c07b17f933d9b0be8e0efbaba012720b3c786a6fedaef1",
+        "path": ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/runtime"
+      },
+      "residual_limits": [
+        "canonical-promotion-not-complete",
+        "installed-parity-not-proved",
+        "live-target-repository-mutation-not-tested",
+        "hosted-tracker-mutation-and-provider-recovery-not-tested",
+        "model-reasoning-token-latency-cost-and-prevalence-telemetry-unavailable",
+        "pack-acceptance-git-delivery-and-lease-release-not-complete"
+      ],
+      "terminal_claims": {
+        "behavioral": {
+          "basis": "prior-simulated-m0-lanes-only",
+          "status": "not-established-for-p1-compatibility-branches"
+        },
+        "runtime_load": {
+          "basis": "byte-and-word-proxy-only",
+          "status": "zero-delta-v1-to-p1"
+        },
+        "semantic_contract": {
+          "basis": "required-full-suite",
+          "status": "rejected-before-promotion"
+        }
+      }
+    },
+    "proof_registrations": [
+      {
+        "applicability": "required",
+        "candidate_root": ".",
+        "decision_pointer": "decisions.md#prompt-3-proof",
+        "fresh_epoch_identity": {
+          "composition_epoch_id": "FCE-20260727-01",
+          "pack_contract_revision": "2",
+          "relationship_ids": [],
+          "scenario_ids": [],
+          "slice_fingerprint": "sha256-v1:37ad7e952f8864229bec8f32bcaf97bda6029367a4fcd35a1c16c321cacde552"
+        },
+        "id": "prompt-3-campaign-artifacts",
+        "inputs": [
+          {
+            "algorithm": "campaign-tree-v1",
+            "digest": "8efb1ddabdd395a84190e52b35b2517839cd487105a65e5d02ca6a12db61f8cc",
+            "name": "prompt-3-proof-tree",
+            "path": ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/proof"
+          }
+        ],
+        "profile": "campaign-artifacts-focused-v1",
+        "stage": "prompt-3",
+        "target": {
+          "algorithm": "campaign-tree-v1",
+          "digest": "f43e706d79325dc7a009c7aeb2eccc6aace1e0572e0cfb8b006afab6b337b02d",
+          "path": "tests"
+        }
+      },
+      {
+        "applicability": "required",
+        "candidate_root": ".",
+        "decision_pointer": "decisions.md#prompt-4-proof",
+        "fresh_epoch_identity": {
+          "composition_epoch_id": "FCE-20260727-01",
+          "pack_contract_revision": "2",
+          "relationship_ids": [],
+          "scenario_ids": [],
+          "slice_fingerprint": "sha256-v1:37ad7e952f8864229bec8f32bcaf97bda6029367a4fcd35a1c16c321cacde552"
+        },
+        "id": "prompt-4-campaign-artifacts",
+        "inputs": [
+          {
+            "algorithm": "campaign-tree-v1",
+            "digest": "6c494f1920864db851dd7aee2de9f2cd4b3b988e850c7d12268f6a0eeba48717",
+            "name": "prompt-4-proof-tree",
+            "path": ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/proof"
+          }
+        ],
+        "profile": "campaign-artifacts-focused-v1",
+        "stage": "prompt-4",
+        "target": {
+          "algorithm": "campaign-tree-v1",
+          "digest": "f43e706d79325dc7a009c7aeb2eccc6aace1e0572e0cfb8b006afab6b337b02d",
+          "path": "tests"
+        }
+      }
+    ],
+    "receipts": [
+      {
+        "environment": {
+          "ambient_environment_sha256": "d4ccc367e22ff1a86b206a1052b6812b20c845e724589c032c38c43cc623bdd1",
+          "dependency_files_sha256": "4d363c788281299128010761f6b33be315f6592d00e6513583acce311f4a12b4",
+          "executable": "C:\\Users\\steve\\miniforge3\\python.exe",
+          "implementation": "cpython",
+          "installed_packages_sha256": "23f2e671185ba5b4d92ab405c1e4e866837ea524690fcd76d820cc25e05254e2",
+          "platform": "win32",
+          "python": "3.12.12"
+        },
+        "exit_state": {
+          "code": 0,
+          "status": "passed"
+        },
+        "forced_reason": null,
+        "fresh_epoch_identity": {
+          "composition_epoch_id": "FCE-20260727-01",
+          "pack_contract_revision": "2",
+          "relationship_ids": [],
+          "scenario_ids": [],
+          "slice_fingerprint": "sha256-v1:37ad7e952f8864229bec8f32bcaf97bda6029367a4fcd35a1c16c321cacde552"
+        },
+        "id": "receipt-55e26ff9a88040d9858731b4d134a290",
+        "inputs": [
+          {
+            "algorithm": "campaign-tree-v1",
+            "candidate_root": "E:\\GitHub\\code\\programming-agent-skills",
+            "digest": "8efb1ddabdd395a84190e52b35b2517839cd487105a65e5d02ca6a12db61f8cc",
+            "name": "prompt-3-proof-tree",
+            "path": ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/proof"
+          }
+        ],
+        "observed_at": "2026-07-27T20:24:04.576028Z",
+        "output_digest": "25d4f2d500749ed7b19e8f59f0534da0f30fdd9dc490031cdb16747895fe9c34",
+        "proof_profile": "campaign-artifacts-focused-v1",
+        "receipt_digest": "9076f46e88e7a134cfa4b76e80a296a9a2aff3a3ae7bebf83ced8e0946349946",
+        "registration_id": "prompt-3-campaign-artifacts",
+        "schema_version": 2,
+        "source": "execution",
+        "stage": "prompt-3",
+        "supersedes": null,
+        "target": {
+          "algorithm": "campaign-tree-v1",
+          "candidate_root": "E:\\GitHub\\code\\programming-agent-skills",
+          "digest": "f43e706d79325dc7a009c7aeb2eccc6aace1e0572e0cfb8b006afab6b337b02d",
+          "path": "tests"
+        }
+      },
+      {
+        "environment": {
+          "ambient_environment_sha256": "6a1a1f0692375912c03b26f42a7157ea2c52e46a8a2459f1a5feb06e027a345b",
+          "dependency_files_sha256": "4d363c788281299128010761f6b33be315f6592d00e6513583acce311f4a12b4",
+          "executable": "C:\\Users\\steve\\miniforge3\\python.exe",
+          "implementation": "cpython",
+          "installed_packages_sha256": "23f2e671185ba5b4d92ab405c1e4e866837ea524690fcd76d820cc25e05254e2",
+          "platform": "win32",
+          "python": "3.12.12"
+        },
+        "exit_state": {
+          "code": 0,
+          "status": "passed"
+        },
+        "forced_reason": null,
+        "fresh_epoch_identity": {
+          "composition_epoch_id": "FCE-20260727-01",
+          "pack_contract_revision": "2",
+          "relationship_ids": [],
+          "scenario_ids": [],
+          "slice_fingerprint": "sha256-v1:37ad7e952f8864229bec8f32bcaf97bda6029367a4fcd35a1c16c321cacde552"
+        },
+        "id": "receipt-e105e9772e0949d8a072f4cb44fb2b98",
+        "inputs": [
+          {
+            "algorithm": "campaign-tree-v1",
+            "candidate_root": "E:\\GitHub\\code\\programming-agent-skills",
+            "digest": "6c494f1920864db851dd7aee2de9f2cd4b3b988e850c7d12268f6a0eeba48717",
+            "name": "prompt-4-proof-tree",
+            "path": ".tmp/campaign-runtimes/repo-bootstrap-fce-20260727-r2/proof"
+          }
+        ],
+        "observed_at": "2026-07-27T20:51:30.334691Z",
+        "output_digest": "a0ee6174117bf3a9b5e784cd146e8c0bd09158532c3a2eea380316df37e39446",
+        "proof_profile": "campaign-artifacts-focused-v1",
+        "receipt_digest": "b21a85bd94cee383f2d370c7dcec828b9a4fac4d1bd0819f749a452daf1584f6",
+        "registration_id": "prompt-4-campaign-artifacts",
+        "schema_version": 2,
+        "source": "execution",
+        "stage": "prompt-4",
+        "supersedes": null,
+        "target": {
+          "algorithm": "campaign-tree-v1",
+          "candidate_root": "E:\\GitHub\\code\\programming-agent-skills",
+          "digest": "f43e706d79325dc7a009c7aeb2eccc6aace1e0572e0cfb8b006afab6b337b02d",
+          "path": "tests"
+        }
+      }
+    ],
+    "supersession_digest": null,
+    "verified_at": "2026-07-27T20:57:01.650994Z"
+  },
+  "schema_version": 2,
+  "semantic": {
+    "lifecycle": {
+      "h1": "m0-equals-h1-no-admitted-h1",
+      "m0": "materialized",
+      "p1": "promotion-evidence-gap",
+      "proof": "prompt-4-needs-more-evidence",
+      "pruning": "complete",
+      "research": "research-complete"
+    },
+    "pointers": {
+      "claim_adjacency": "docs/synthesis/skills/repo-bootstrap.md#claim-adjacency",
+      "decision_capsule": "decisions.md#prompt-5",
+      "m0_checkpoint": "docs/validation/skills/repo-bootstrap/campaigns/repo-bootstrap-fce-20260727-r2/prompt1-m0.md",
+      "pack_synthesis": "docs/synthesis/skill-pack.md",
+      "research_packet": "docs/research/skills/repo-bootstrap/RP-repo-bootstrap-FCE-20260727-01-r2.md",
+      "skill_synthesis": "docs/synthesis/skills/repo-bootstrap.md"
+    },
+    "stage_token": "prompt-5",
+    "terminal_token": null
+  }
+}

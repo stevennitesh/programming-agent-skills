@@ -1,59 +1,132 @@
 ---
 name: writing-great-skills
-description: Create or edit canonical Codex skill behavior; audit or review skill semantics; or test whether skill wording changes behavior. Use when the request turns on invocation, ownership, context loading, leading words, pruning, or completion; exclude general prompt rewriting, ordinary code review, plugin scaffolding, and post-edit delivery.
+description: Create, edit, audit, or test canonical Codex skill behavior. Exclude general prompt editing, ordinary code review, new-package scaffolding, installation, publishing, synchronization, and Git delivery.
 ---
 
 # Writing Great Skills
 
-**Predictability:** same process, variable output.
+Make canonical skill behavior predictable: choose the intended branch, do the
+required work, fail safely, and stop at the intended boundary. Optimize behavior
+and semantic density, not prose or step count.
 
 ## Authority
 
-Select one operation from the request:
+Choose one operation:
 
-- **Audit:** judge read-only. Exact candidate wording remains advisory.
-- **Author:** edit only the requested canonical skill or skill-design artifact and directly affected proof or relationship surfaces.
+- **Audit:** judge read-only; exact replacement wording is advisory.
+- **Author:** when edits are authorized, perform any needed audit and edit only
+  the requested canonical skill or skill-design artifact and directly affected
+  proof or relationship surfaces.
 
-A direct behavior test is read-only; any persisted artifact requires Author authority. The bundled `skill-creator` owns new-package scaffolding and metadata mechanics. Writing Great Skills owns semantic quality and stops after canonical proof; installation and delivery remain with their owners.
+Behavioral evaluation is a read-only proof branch within either operation, not
+a third operation.
 
-Resolve authority and source before judgment or mutation. Proof follows the candidate it evaluates. No other universal step order is required.
+New-package scaffolding and metadata belong to the bundled `skill-creator`.
+Installation, publishing, synchronization, and Git delivery remain with their
+owners. When requested work crosses a foreign boundary, stop with the exact
+next-owner handoff.
 
-## Coverage
+## Resolve
 
-Resolve the target, operation, canonical source, relevant current upstream, affected surfaces, relationships, and available evidence. Bounded work follows only surfaces capable of changing the requested behavior, including affected policy, pointers, owners, and the smallest relevant proof.
+Resolve the target, operation, canonical source, and allowed writes before
+judgment or mutation. Audit allows no writes. Return `blocked` if any boundary
+cannot be resolved safely.
 
-For a full audit, read and classify the complete canonical package; upstream and recorded decisions; callers and composition; owned gates, outputs, mutations, failure branches, and completion; tests, evaluations, and gaps; and routing or publication surfaces. Classify each item `affected`, `preserve`, `owned elsewhere`, `historical evidence`, `drift`, or `not applicable`, and each upstream difference `keep local`, `adapt`, `adopt`, `reject`, or `defer`.
+## Trace
 
-Inspect mirrors only when installation-state evidence is explicitly requested. Report what is observed and leave repair to the installation owner.
+Inspect only surfaces capable of changing the requested behavior: applicable
+intent, the canonical package, affected callers and relationships, gates,
+outputs, mutations, failure branches, completion, and the smallest relevant
+proof. A whole-skill audit covers the complete package and every behaviorally
+affected caller, relationship, proof, and active routing record. Record a
+classification only when it changes judgment or handoff.
 
-## Ownership
+Inspect an installed mirror only when installation state is explicitly
+requested. Report parity or drift; leave repair to the installation owner.
 
-Give each behavior one owner for its rule, admission, authority, inputs, outputs, evidence, failure return, and completion. Preserve each relationship's callee, observable trigger, authority, and Return. Point to foreign procedure instead of copying it.
+## Shape
 
-## Authoring Contract
+Give each behavior one owner for its trigger, authority, action, evidence,
+failure Return, and completion. Preserve each relationship's callee, observable
+trigger, authority, and Return. Keep the local contract slice and point to
+foreign procedure.
 
-Load [GLOSSARY.md](GLOSSARY.md) when invocation, information hierarchy, leading words, pruning, or completion meaning affects the work; a full audit reads it completely.
+Define every term that changes admission, branching, order, pass/fail, or
+completion with an observable rule and any applicable counting scope or
+invalidation condition.
 
-Make the applicable outcome, authority, action or branch, Return, and completion discoverable without imposing a named surface, mandatory headings, or fixed order.
+Use steps for ordered actions or state changes. Use gates for cross-cutting
+checks at the boundary they protect. Each gate names its condition, passing
+evidence, and safe failure action. Execute a directly checkable invariant before
+the judgment or action it protects; do not defer it to review. Recheck only
+after a transition could invalidate it. Scope failure to the smallest dependent
+action or output unless authority or safety requires a full stop. Never report
+a failed branch complete. Preserve independent supported results and calibrate
+each to its weakest load-bearing evidence.
 
-Treat an implicitly invocable description as an always-loaded routing predicate. Name observable request or caller triggers, add the closest exclusion only when needed, and omit explicit-name reach, runtime procedure, and body-summary detail. Each trigger selects a distinct branch rather than renaming another.
+For an effectful helper, separate correctable zero-effect preparation from the
+mutation. While state is unchanged, correct useful preparation failures; begin
+any attempt limit only at the effect boundary and report whether it started.
 
-Keep common-path behavior inline. Put branch-only reference behind a pointer that names its target and loading condition. Co-locate each concept. Split only for independent invocation, irreducible branch load, or observed premature completion that survives a sharper criterion.
+Make completion checkable and demanding enough to force the required work.
+Treat an implicitly invocable description as a routing predicate: name
+observable triggers and the closest exclusions, not runtime procedure.
 
-## Behavior-Preserving Cuts
+Prefer an established leading word when it accurately recruits a known practice
+and replaces repeated guidance. Define any local deviation, then use the term
+consistently where the practice must stay salient. Never let it replace
+observable authority, gates, proof, safe failure, Return, or completion.
 
-Protect non-intuitive mechanics, semantic and safety contracts, authority, proof, irreversible order, safe failure actions, and completion. Restore one owner, remove stale exposition, and ask of every instruction: "If I cut this, what behavior changes?" Delete no-ops, collapse duplicated meaning into one rule or leading word, and disclose branch-only detail. State the positive target first; retain negation only for a necessary guardrail paired with the safe action.
+Keep common behavior inline. Load [GLOSSARY.md](GLOSSARY.md) only when choosing
+or defining a leading word, changing invocation or reference-loading behavior,
+splitting a skill, promoting a lesson across skills, or specifying derived
+state.
 
-## Claim-Matched Proof
+## Prune
 
-Use read-back and focused structural checks for exact bytes or machine contracts, relationship traces for ownership, and [BEHAVIOR-EVALS.md](BEHAVIOR-EVALS.md) when a direct test or claim says wording changes invocation, judgment, action, context loading, Return, or completion. Reject candidate guidance when a realistic control does not exhibit its claimed failure.
+After behavior is correct, mark each changed or adjacent instruction unit
+`Keep`, `Collapse`, `Disclose`, or `Delete`:
 
-Keep behavioral controls uncontaminated: fixed tasks and rubrics, fresh contexts, no candidate leakage, and root-held judgment. Ambient collaboration policy owns dispatch mechanics.
+- Keep behavior, safety, authority, proof, irreversible order, safe failure,
+  Return, and completion.
+- Collapse duplicated meaning into one owner.
+- Disclose branch-only detail behind an exact condition and target.
+- Delete no-ops, stale exposition, and ownerless clauses.
+
+Apply the same removal test to every proposed step, field, artifact, view, and
+check.
+
+State the positive target first and pair each necessary guardrail with its safe
+action.
+
+## Prove
+
+Match proof to the claim: read back exact bytes and mutations, use focused
+structural checks for machine contracts, and trace relationships to their
+owners. Bind evidence to the exact candidate and its invalidation boundary.
+Structural evidence does not prove live behavior.
+
+For a claim that exact wording changes invocation, judgment, action, context
+loading, Return, or completion, load
+[BEHAVIOR-EVALS.md](BEHAVIOR-EVALS.md).
+
+**Author Lock:** after authorized edits, read back mutations and current work
+state, preserve unrelated work, run proportionate canonical proof, and stop
+before installation, publishing, synchronization, staging, commit, push, or
+other delivery.
 
 ## Return
 
-Return `complete`, `partial`, or `blocked` with authority and coverage. Audit adds the verdict, impact-ordered findings, useful exact candidates, deliberate non-changes, behavior at risk, and evidence limits. Author adds changed canonical surfaces, behavior added, changed, or removed, proof, preserved unrelated state, deliberate non-changes, and residual risk.
+Return `complete`, `partial`, or `blocked` with the operation and coverage.
+Use `partial` when safe work completed but admitted coverage or proof remains
+incomplete.
 
-## Completion
+- **Audit complete:** requested coverage is inspected; the verdict, supported
+  impact-ordered findings, advisory candidates, deliberate non-changes,
+  behavior at risk, and material evidence limits are reported.
+- **Author complete:** affected contracts have one owner; required differences
+  are implemented; exact mutations, proof, preserved unrelated state,
+  deliberate non-changes, and residual risk are reported; Author Lock holds.
 
-Complete when coverage is classified; every affected invocation surface, owner, relationship, pointer, gate, output, mutation boundary, Return, and completion criterion has one home; upstream differences are decided; claimed behavior has current proportionate evidence; canonical checks pass or skips are named; unrelated work is preserved; and Return stops before installation or delivery.
+Name skipped proof or unchanged foreign state only when its omission could be
+mistaken for completed scope.

@@ -1,0 +1,64 @@
+{
+  "acceptance_scenario_families": [
+    "Choose one next owner and stop; ambiguity asks one discriminating question.",
+    "Detect and reconcile missing repository setup before engineering mutation.",
+    "Clarify domain meaning and keep durable decisions under their semantic owner.",
+    "Acquire bounded source or stakeholder evidence without transferring adoption authority.",
+    "Turn fog into settled source, specification, and dependency-ordered executable work.",
+    "Classify incoming work without fabricating readiness.",
+    "Choose a bounded design seam or disposable probe when technique is uncertain.",
+    "Separate uncertain diagnosis from settled red-green production proof.",
+    "Deliver one selected item or one explicit graph with isolated authority and exact closeout.",
+    "Resolve version-control conflicts while preserving both intended sides.",
+    "Keep ordinary diff review, high-risk release review, and immutable baseline audit distinct.",
+    "Improve or simplify code without hiding scope expansion or behavior change.",
+    "Author canonical skill semantics and prove behavior without assuming delivery authority.",
+    "Stress-test user-owned decisions with optional durable domain capture.",
+    "Preserve an exact resumable handoff when the active context ends."
+  ],
+  "composition_epoch_id": "FCE-20260727-01",
+  "environment": {
+    "enabled_evidence_tools": [
+      "workspace filesystem and command execution",
+      "GitHub connector and gh read fallback",
+      "Node REPL request metadata"
+    ],
+    "filesystem_authority": "workspace-write",
+    "model": "gpt-5.6-sol",
+    "operating_system": "Windows",
+    "python": "3.12.12",
+    "reasoning_effort": "medium",
+    "request_sandbox": "windows_elevated",
+    "shell": "PowerShell",
+    "surface": "Codex Desktop",
+    "thread_id": "019f9c92-07fb-7b80-b8a2-a218bbfd9a1f",
+    "workspace_kind": "project"
+  },
+  "exclusions": [
+    "Per-skill H1 or candidate wording",
+    "Incumbent skill bodies, current inventory count, or prior composition conclusions as discovery seeds",
+    "Runtime edits, campaign execution, efficacy claims, or pack acceptance",
+    "Historical cleanup, compatibility retirement, installation, push, or Git delivery",
+    "Universal optimality beyond this finite tested environment"
+  ],
+  "fixed_point_fingerprint": "sha256-v1:98a9c9f84c788049557fc4f352f8c9b3c862f0d6da083c5751001acd1357e2d9",
+  "fixed_point_id": "FP-FCE-20260727-01-M0",
+  "intended_pack_outcome": "Route bounded repository engineering work to one clear owner, conditionally load compact procedure, preserve semantic and mutation authority across typed composition, and converge under fresh observable proof in the tested Codex environment.",
+  "load_budget_policy": {
+    "ceiling_or_class": "Always load metadata only; load one selected owner procedure; load aggregate callees and branch references only after their predicates; never copy foreign procedure",
+    "metric": "UTF-8 instruction bytes classified as metadata, selected-owner common, aggregate-callee conditional, or branch-reference conditional"
+  },
+  "repository_tree": "97cb4931b0c91964b5f86ea2931875fd46168be5",
+  "research_bound": {
+    "catalog_reconciliation_passes": 1,
+    "independent_passes": 1,
+    "named_gap_passes": 1
+  },
+  "schema_version": 1,
+  "scope": [
+    "Repository engineering route selection, setup, domain capture, evidence, shaping, design, diagnosis, delivery, conflict resolution, review, improvement, skill authoring, and resumable handoff",
+    "Capability-owner, role, invocation, relationship, exclusion, collision, gap, context-load, and proof-order composition",
+    "Immutable one-skill campaign slices and serial campaign proof order"
+  ],
+  "timestamp": "2026-07-27T05:34:05Z"
+}

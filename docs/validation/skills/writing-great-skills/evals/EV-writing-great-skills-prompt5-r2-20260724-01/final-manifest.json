@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "artifact_type": "deploy-prompt5-final-manifest",
+  "campaign": "2026-07-24-writing-great-skills-7d0da40-r2",
+  "skill": "writing-great-skills",
+  "decision": "complete",
+  "campaign_shape": "minimum-candidate",
+  "git_head": "7d0da40a218114aa138265557ea2454361dcd147",
+  "runtime_identities": {
+    "p1": "campaign-tree-v1:eee3e8ce88820a074f42bd388505d4274014c5bbd59246f81876ce6c309584fb",
+    "canonical": "campaign-tree-v1:eee3e8ce88820a074f42bd388505d4274014c5bbd59246f81876ce6c309584fb",
+    "installed": "campaign-tree-v1:eee3e8ce88820a074f42bd388505d4274014c5bbd59246f81876ce6c309584fb"
+  },
+  "terminal_claims": {
+    "semantic_contract": "P1 preserves frozen M0 semantics and directly affected heading-bounded compatibility proof passes after a proof-only snapshot repair.",
+    "bounded_behavior": "Exact Prompt 4 evidence reused only within its frozen bounds; no Prompt 5 behavior rerun or broader transfer claim.",
+    "runtime_load": "P1 equals V1 at 9363 exact file bytes and 1219 whitespace-delimited words; token and latency telemetry unavailable."
+  },
+  "promotion_critical_paths": [
+    "docs/research/skills/writing-great-skills/RP-writing-great-skills-20260724-01.md",
+    "docs/synthesis/skills/writing-great-skills.md",
+    "docs/validation/skills/writing-great-skills/evals/EV-writing-great-skills-prompt5-r2-20260724-01/final-manifest.json",
+    "skills/custom/writing-great-skills",
+    "tests/test_deploy_prompt_contracts.py"
+  ],
+  "record_compaction": "Research, active synthesis, this terminal manifest, canonical runtime, and current semantic contract tests own the surviving decision. Raw outputs and campaign work state moved to ignored .tmp/campaign-evidence and are not authority.",
+  "path_verification": {
+    "repository_root": "E:/GitHub/code/programming-agent-skills",
+    "all_resolve_inside_repository": true,
+    "all_exist": true,
+    "none_ignored": true,
+    "scratch_disposition": "no tracked scratch dependency"
+  },
+  "installation": {
+    "ambient_pre_promotion_dry_run": "25 unchanged",
+    "promotion_dry_run": "updated cohort exactly writing-great-skills; 24 unchanged",
+    "synchronization": "completed through python -m scripts.install_skills --skip-global-agents",
+    "canonical_installed_parity": "exact P1",
+    "post_install_dry_run": "25 unchanged"
+  },
+  "experimental_cleanup": "no-op-target-package-and-manifest-entry-absent",
+  "recommended_next_unit": "none",
+  "git_delivery": "pending",
+  "exact_stop_reason": "Exact P1 was promoted and synchronized; the proof-only heading snapshot repair preserved all semantics; parity and clean dry-run passed; Prompt 5 stops before Git delivery."
+}

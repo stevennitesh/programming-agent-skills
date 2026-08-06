@@ -1,6 +1,17 @@
 # Grill With Docs Composition Synthesis
 
-Status: Prompt 5 promotion is complete. The canonical runtime now carries a post-promotion invocation revision: narrow implicit discovery for direct-user requests needing both components. The runtime body, caller boundaries, and component ownership remain otherwise unchanged. Current invocation evidence is recorded in [`2026-07-22-grill-with-docs-implicit-invocation-eval.md`](../../validation/transcripts/2026-07-22-grill-with-docs-implicit-invocation-eval.md).
+Status: Prompt 5 promotion is complete. Later lean Author passes add narrow
+implicit discovery, preserve Grilling's `Route gap`, and make Domain Modeling
+blockers dominant and owner-preserving at the combined exit. The three-step
+spine and component ownership remain unchanged. The current amendment admits a
+caller packet only when it preserves the current user as decision owner and
+supplies the return owner; otherwise the direct-user boundary remains intact.
+Current invocation evidence is recorded in
+[`2026-07-22-grill-with-docs-implicit-invocation-eval.md`](../../validation/skills/grill-with-docs/evals/EV-grill-with-docs-implicit-invocation-eval-20260722-01/evidence/2026-07-22-grill-with-docs-implicit-invocation-eval.md);
+historical promotion evidence does not prove the later wording changes.
+Canonical tree SHA-256 is
+`f1ede795193cecefcc930573bfb35711574aab8eb762cd1395488c8905b6ad50`;
+installed parity and fresh wording-efficacy proof are not claimed.
 
 Runtime authority currently remains in:
 
@@ -49,8 +60,11 @@ Admit -> Compose [Grill <-> Relay <-> Model] -> Return
 
 - **Admit** accepts only a direct-user request needing both components, locks mutation authority, and gives the required disclosure before the first question.
 - **Compose** runs one Grilling session with Domain Modeling active.
-- **Relay** carries each settled material answer to Domain Modeling and any collision back before dependent progress.
-- **Return** derives one combined status, preserves both component payloads intact, reports an exact blocker and re-entry condition when blocked, and stops.
+- **Relay** carries each settled material answer to Domain Modeling and any
+  collision or blocker back before dependent progress.
+- **Return** derives one combined status, preserves both component payloads
+  intact, reports an exact blocker, owner, and re-entry condition when blocked,
+  and stops.
 
 `Relay` is a repeated callback inside `Compose`, not a peer phase. Pre-question disclosure is part of `Admit`. Joint eligibility is part of `Return`. The runtime needs neither separate `Disclose` and `Join` stages nor a state machine.
 
@@ -62,7 +76,7 @@ Admit -> Compose [Grill <-> Relay <-> Model] -> Return
 | **Settled material answer** | An answer Grilling has integrated as decision-bearing under its own rules |
 | **Relay** | Opaque transport of each settled material answer to Domain Modeling and any returned collision or blocker to Grilling before dependent progress |
 | **Component payload** | The complete Grilling exit packet or authoritative cumulative Domain Delta, preserved under its owner's schema |
-| **Combined status** | `Confirmed`, `Evidence gap`, or `Blocked`, derived by the composer without replacing component states |
+| **Combined status** | `Confirmed`, `Evidence gap`, `Route gap`, or `Blocked`, derived without replacing component states; a material Domain Delta blocker always yields `Blocked` |
 
 These are composer-local terms, not additions to the repository domain model.
 
@@ -76,7 +90,7 @@ These are composer-local terms, not additions to the repository domain model.
 | Direct composition fit, modes, and pre-question disclosure | Grill With Docs | [Admit](#admit) | Exact mismatch or `Blocked` with exact blocker and re-entry condition |
 | Interview and exit packet | Grilling | Component-owned | Preserve its result intact |
 | Domain semantics, mutation, ADR handling, and cumulative Domain Delta | Domain Modeling | Component-owned | Preserve its collision, blocker, and delta intact |
-| Settled-answer and collision transport | Grill With Docs | [Compose And Relay](#compose-and-relay) | Pause dependent progress; return `Blocked` if a current delta cannot be obtained |
+| Settled-answer and collision-or-blocker transport | Grill With Docs | [Compose And Relay](#compose-and-relay) | Pause dependent progress; return `Blocked` if a current delta cannot be obtained |
 | Combined status, packet, and stop boundary | Grill With Docs | [Return](#return) | `Blocked`; start nothing |
 | Completion | Grill With Docs | [Completion](#completion) | Remain incomplete or `Blocked` |
 
@@ -122,23 +136,29 @@ When Grilling reaches a terminal candidate, derive one combined status from curr
 | Status | Eligibility |
 | --- | --- |
 | `Confirmed` | Grilling returns its complete confirmed packet; Domain Modeling returns a current complete delta; no material nondeferred collision or blocker remains |
-| `Evidence gap` | Grilling returns its legitimate complete Evidence-gap packet; Domain Modeling returns a current complete delta through the last settled answer |
+| `Evidence gap` | Grilling returns its legitimate complete Evidence-gap packet; Domain Modeling returns a current complete delta through the last settled answer with no material blocker |
+| `Route gap` | Grilling returns its legitimate complete Route-gap packet; Domain Modeling returns a current complete delta through the last settled answer with no material blocker |
 | `Blocked` | Admission, component integrity, Relay, collision processing, mutation verification, payload currency, or compatibility cannot close |
 
-Only Grilling originates `Evidence gap`. A Domain Modeling failure is `Blocked` at the composer boundary.
+Only Grilling originates `Evidence gap` or `Route gap`. A material Domain
+Modeling blocker is `Blocked` at the composer boundary and retains its
+originating owner; never relabel it as a Grilling gap.
 
 Return only:
 
 ```text
-Status: Confirmed | Evidence gap | Blocked
+Status: Confirmed | Evidence gap | Route gap | Blocked
 Grilling exit packet: <attached intact when available>
 Domain Delta: <attached intact when available>
-Composition blocker and re-entry condition: <Blocked only>
+Composition blocker, owner, and re-entry condition: <Blocked only>
 ```
 
 The direct user is necessarily the recipient, so caller identifiers and return-owner fields are noise and are omitted. Do not copy admission data, disclosure text, callback history, component semantics, or continuation instructions into the packet.
 
-Return to the user and stop. `Confirmed` selects no next route. `Evidence gap` preserves Grilling's exact uninvoked evidence owner. `Blocked` explains safe re-entry without performing recovery.
+Return to the user and stop. `Confirmed` selects no next route. `Evidence gap`
+preserves Grilling's exact uninvoked evidence owner. `Route gap` preserves its
+uninvoked Wayfinder recommendation. `Blocked` preserves the originating blocker
+and owner while explaining safe re-entry without performing recovery.
 
 ## Completion
 
@@ -147,27 +167,31 @@ Complete only when:
 - Admit either establishes direct dual-capability fit or returns the exact mismatch;
 - the mutation modes and required disclosure are explicit before questioning;
 - both components retain their contracts;
-- every settled material answer and returned collision traverses Relay before dependent progress;
+- every settled material answer and returned collision or blocker traverses
+  Relay before dependent progress;
 - Domain Modeling alone supplies a current cumulative Domain Delta;
 - Return derives exactly one allowed status from intact current component results;
-- a blocked result names the exact blocker and re-entry condition; and
+- a blocked result names the exact blocker, owner, and re-entry condition; and
 - no downstream workflow starts.
 
 Composer completion never substitutes for component completion.
 
 ## Relationships
 
-The future runtime has only these executable relationships:
+The current runtime has only these executable relationships:
 
 | Source | Relationship | Target | Trigger and return |
 | --- | --- | --- | --- |
-| Direct user | Explicitly invoke | `$grill-with-docs` | One bounded repo-backed decision needs both components; receive the combined packet and stop |
+| Direct user | Invoke | `$grill-with-docs` | One bounded repo-backed decision needs both components; receive the combined packet and stop |
 | `$grill-with-docs` | Compose | `$grilling` | Preserve its complete interview contract and intact exit packet |
-| `$grill-with-docs` | Compose | `$domain-modeling` | Relay every settled material answer and preserve its authoritative cumulative Domain Delta |
+| `$grill-with-docs` | Compose | `$domain-modeling` | Relay every settled material answer, return collisions or blockers to Grilling, and preserve its authoritative cumulative Domain Delta |
 
-Wayfinder, Triage, and Improve Codebase caller integrations are deferred. They are not admitted runtime branches, entry fields, Return fields, or Prompt 3 extraction work. Recommendation-only or suggestion-only references may continue to tell the user that the explicit skill exists, but they confer no admission or continuation authority.
+Wayfinder, Triage, and Audit Codebase recommendations are not admitted runtime
+branches, entry fields, or Return fields. They may tell the user that the skill
+exists, but they confer no admission or continuation authority.
 
-The current relationship index still describes the current canonical skill and therefore remains unchanged in Prompt 2. It becomes an affected promotion surface only after the experimental candidate is accepted and the canonical invocation policy and caller edges actually change.
+The pack-wide relationship index owns recommendation-only callers; none becomes
+an executable composer branch.
 
 # Layer Three: Evidence And Decisions
 
@@ -194,7 +218,14 @@ Admit -> Disclose -> Compose [Grill <-> Relay <-> Model] -> Join -> Return
 
 It was implicitly invocable, admitted three workflow callers in addition to direct use, transported caller identifiers and return ownership, and named Disclose and Join as peer stages.
 
-The Prompt 5 promoted design changed those points deliberately: explicit-only, direct-user-only, no caller packet, disclosure folded into Admit, and joint eligibility folded into Return. The post-promotion invocation revision changes only explicit-only discovery to a narrow dual-condition predicate. It preserves direct-user-only admission, render-only default, separate ADR approval, every-answer Relay, Domain Modeling's cumulative-delta ownership, intact component payloads, three combined statuses, exact blocked re-entry, and no downstream execution.
+The Prompt 5 promoted design changed those points deliberately: explicit-only,
+direct-user-only, no caller packet, disclosure folded into Admit, and joint
+eligibility folded into Return. The post-promotion invocation revision changed
+only explicit-only discovery to a narrow dual-condition predicate. Later lean
+reconciliation added Grilling's Route gap and explicit blocker precedence while
+preserving direct-user-only admission, render-only default, separate ADR
+approval, every-answer Relay, cumulative-delta ownership, intact component
+payloads, exact blocked re-entry, and no downstream execution.
 
 ## Mechanism-Admission Ledger
 
@@ -287,6 +318,6 @@ No extraction choice remained between competing spines, invocation policies, cal
 
 **Accepted and promoted to canonical source** at exact tree hash `09438242574437c91ed631a1dd59010f3c02752b51b8eb93d096259fab65def7`.
 
-The upstream control failed admission/disclosure, one-component non-invocation, and all three combined-status Returns in all five samples. The final candidate passed every fixed case in five fresh contexts, as did the repaired pre-prune control; no critical failure or prune regression appeared. Ordered Relay was already correct in the neutral upstream control, so detailed Relay procedure was removed and only the protected seam remains. Evidence and residual limits are recorded in [`2026-07-22-grill-with-docs-post-candidate-behavior-eval.md`](../../validation/transcripts/2026-07-22-grill-with-docs-post-candidate-behavior-eval.md).
+The upstream control failed admission/disclosure, one-component non-invocation, and all three combined-status Returns in all five samples. The final candidate passed every fixed case in five fresh contexts, as did the repaired pre-prune control; no critical failure or prune regression appeared. Ordered Relay was already correct in the neutral upstream control, so detailed Relay procedure was removed and only the protected seam remains. Evidence and residual limits are recorded in [`2026-07-22-grill-with-docs-post-candidate-behavior-eval.md`](../../validation/skills/grill-with-docs/evals/EV-grill-with-docs-post-candidate-behavior-eval-20260722-01/evidence/2026-07-22-grill-with-docs-post-candidate-behavior-eval.md).
 
 Prompt 5 reused this evidence because candidate bytes and affected claims remained unchanged. Executable caller integrations remain removed; Wayfinder, Triage, and Improve Codebase now recommend the explicit direct-user composer and stop.

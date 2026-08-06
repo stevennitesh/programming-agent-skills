@@ -1,193 +1,174 @@
-# To Tickets Runtime Design Synthesis
+# To Tickets Deploy Synthesis
 
-Status: promoted active design.
+> Status (2026-07-27): historical evidence for the exact 2026-07-25 Deploy
+> Campaign bytes. Later authorized Author passes changed canonical
+> `to-tickets`; the latest adds one graph-level proof-responsibility map so
+> tickets share canonical test owners instead of manufacturing duplicate
+> proof, preserves source-owned Responsibilities, Interfaces, and Seams, and
+> maps source-owned Proof Seams to concrete proof lanes without designing
+> architecture. Prior hashes and evaluations below do not prove current wording.
+> `skills/custom/to-tickets/` is runtime authority. No installed sync is
+> claimed.
 
-The canonical runtime is `skills/custom/to-tickets` at package hash
-`f652f1fb12787a482dcde59771e7b50f8dd5f7a890981df6acede35dc8a47758`.
-It is the exact final C1 accepted by the 2026-07-23 Deploy Campaign. The
-installed mirror must match that identity after managed synchronization.
+The decision-bearing content is bounded below. Its identity is the SHA-256 of
+the exact UTF-8 bytes between the markers, including the first and last
+newline. The campaign
+[manifest](../../validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/manifest.json)
+owns exact runtime identities and promotion-critical paths.
 
-Runtime authority remains in the canonical package. This synthesis records the
-selected behavior, ownership, evidence boundary, rejected alternatives, and
-residual gaps without restaging campaign chronology or tracker procedure.
+<!-- BEGIN TO-TICKETS ACTIVE SYNTHESIS -->
 
-## Selected Runtime
+## Active Decision
 
-To Tickets converts one bounded body of settled implementation source into one
-approved, exhaustive, dependency-ordered graph of independently grabbable
-Ready-for-agent tickets. It verifies tracker state, recommends exactly one
-implementation owner, and stops.
+The `2026-07-25` bare Deploy Campaign promoted exact P1 into the canonical
+`to-tickets` package. The campaign shape is `minimum-candidate`; M0, rederived
+H1, V1, P1, and canonical are byte-identical. The complete Pruning Pass found
+no safe material cut, so P1 is `pruning-not-needed`.
 
-The runtime is explicit-only. It admits source only when outcome, decisions,
-scope, exclusions, proof expectations, owner, and publication authority are
-settled. Missing or incompatible tracker setup returns the exact
-`$repo-bootstrap` precondition. A material source gap returns one complete gap
-packet before slicing or mutation.
+M0 remains the intent-derived 22-unit minimum specified by the immutable
+[Prompt 1 capsule](../../validation/skills/to-tickets/campaigns/to-tickets-2026-07-25/prompt1-m0.md).
+It passed all 24 registered viability cases with zero critical failures. No
+current-only behavior has unresolved removal risk.
 
-Its five leading words implement this semantic order:
+H1-01, the situational rule/example/question acceptance audit, is
+`reject-no-control-deficit`. Five fresh exact-M0 positive controls scored
+`[4, 4, 4, 4, 4]`, so the registered adaptive gate did not open. No H1 or
+wrong-condition sample ran, and no H1 wording entered V1.
 
-```text
-Trace -> Map -> Slice -> Approve -> Publish
-      -> Mutation read-back -> recommend exactly one owner -> stop
-```
+## Intended Contract And Ownership
 
-- **Trace** covers the complete source and records decisions, scope, evidence,
-  proof expectations, deferrals, rejections, and material gaps.
-- **Map** inspects repository reality only far enough to identify stable seams,
-  supported state, proof lanes, expected production scope, overlap, migration
-  constraints, and durable pointers. Patch design remains with delivery.
-- **Slice** covers every source-visible commitment exactly once, defaults to a
-  fresh-session-sized vertical behavior slice, builds factual predecessor
-  edges, and makes each ticket independently provable.
-- **Approve** presents one identified complete revision and requires explicit
-  approval of that exact revision.
-- **Publish** reconciles freshness, publishes blockers first through the
-  tracker owner, reads every affected surface back, and returns one safe result.
+On explicit invocation, transform one exact settled source into one verified,
+exhaustive, dependency-ordered, non-empty graph of Ready-for-agent
+implementation tickets. Preserve source authority; make every slice
+independently completable; prove commitment coverage, graph truth, execution
+qualification, applicable state, and safe publication; return one typed
+result; recommend exactly one qualified delivery owner only after verified
+success; and stop without implementation or delivery.
 
-Successful publication requires every source commitment and scope boundary to
-map to one ticket, explicit deferral or exclusion, or no-ticket reason. Every
-ticket satisfies the tracker-owned Ready-for-agent contract and also carries
-its source, work-unit form, applicable migration phase, rationale, covered
-commitments, durable pointers, observable acceptance, highest meaningful proof
-seam, blockers, expected write scope, semantic ownership, shared resources,
-serial tripwires, and scope fence.
+The source owns commitments and product meaning. `to-tickets` owns slicing,
+coverage, graph and readiness judgment, publication planning, configured
+tracker mutation, recovery evidence, Return, and completion. Tracker,
+engineering, domain, caller, setup, implementation, review, installation, and
+Git owners retain their foreign contracts.
 
-A blocking edge exists only when a dependent consumes a required predecessor
-outcome. Tracker order, predicted overlap, readiness, shared resources, and
-serial tripwires remain distinct. The local ready frontier is open,
-Ready-for-agent, unclaimed work whose true blockers are satisfied, in tracker
-order.
+## M0 And Research Dispositions
 
-Stateful tickets apply the engineering contract's state-boundary matrix. A
-parent-delivery request or plausible substantial independence adds the
-conditional execution profile required by Parallel Implement: blockers,
-semantic owner, production scope and exclusions, public proof seam and focused
-proof, size, shared seam or scarce resource, and serial tripwire. To Tickets
-records these facts; Parallel Implement alone decides runtime width.
+M0 owns these neutral behavior groups:
 
-Non-atomic compatibility work uses operable, releasable, backward-compatible
-expand-migrate-contract stages. Contract waits until old usage ends and
-compatibility proof passes. Migration phases are not automatically vertical
-product slices.
-
-Mutation read-back covers the parent, ordered children, bodies, roles, state,
-relationships, blocking edges, affected dependents, and resulting frontier.
-A failed, unknown, or mismatched mutation returns the approved revision,
-observed operations, unknown state, frontier risk, and safest nonduplicating
-recovery. Provider receipts alone do not establish completion.
-
-After a completely verified graph, To Tickets selects exactly one next action:
-
-- resolve a named blocker when the frontier is empty;
-- recommend `$parallel-implement` for an explicitly requested parent-delivery
-  run;
-- recommend `$implement` for one ready ticket;
-- recommend tracker-ordered `$implement` when ownership, scope, seam, fixture,
-  proof resource, or tripwire overlaps;
-- recommend `$parallel-implement` for at least two substantial, semantically
-  independent, production-isolated, proof-isolated tickets; or
-- default uncertain independence or economics to tracker-ordered `$implement`.
-
-The skill recommends and stops. It does not implement, dispatch, review, claim,
-or close tickets.
-
-## Typed Returns And Completion
-
-The runtime returns exactly one of:
-
-- setup precondition;
-- source-gap packet;
-- no-ticket result;
-- proposal awaiting approval;
-- partial-publication recovery; or
-- published graph.
-
-Each result names its evidence, unchanged or observed tracker state, and exact
-safe continuation. Only the published-graph branch is successful publication;
-the other typed results are bounded stops.
-
-## Ownership
-
-| Surface | Owns | Excludes |
+| Runtime group | Semantic units | Active obligation |
 | --- | --- | --- |
-| `skills/custom/to-tickets/SKILL.md` | Admission, complete source coverage, slicing, graph facts, approval, publication scope, typed Return, completion, and one next-owner decision | Tracker transport, implementation, runtime dispatch, review, claim, and closeout |
-| `skills/custom/to-tickets/agents/openai.yaml` | Explicit-only invocation policy | Runtime procedure |
-| Tracker docs and Repo Bootstrap-owned templates | Common Ready contract, roles, representation, queries, transport, and Mutation read-back procedure | Coverage judgment, slicing, approval, and execution economics |
-| Engineering contract | Source Trace, proof, state-boundary matrix, evidence, and Lock vocabulary | Ticket procedure |
-| Source owner and `$to-spec` | Settled intent, parent completeness, decisions, and proof expectations | Ticket graph design and tracker mutation |
-| `$triage` | Equivalent Ready-contract production from raw incoming work | To Tickets coverage and parent decomposition |
-| `$implement` | Delivery of one selected Ready item | Ticket repair, graph mutation, and parent campaign execution |
-| `$parallel-implement` | Parent-graph admission, serial or parallel execution, landing, review, Lock, and release | To Tickets approval, source decisions, and publication |
-| Relationship index and routing docs | Caller-callee edges and public routing | Skill-local procedure |
-| Contract tests and validation records | Structural and bounded behavioral evidence | Runtime rules or generalized efficacy claims |
-| Installed mirror | Managed copy at canonical parity | Independent edits |
+| Invocation and setup | M01-M02 | Explicit-only settled-source slicing; prove compatible tracker operations before mutation |
+| Source and authority | M03-M04 | Freeze one exact settled source and return source-owned gaps without changing commitments |
+| Reconciliation and coverage | M05-M06 | Distinguish absence, equality, divergence, and uncertainty; map every commitment exactly once |
+| Slicing and ticket readiness | M07-M09 | Independently completable slices, complete Ready packets, and applicable reduced state matrices |
+| Graph, execution, and risk | M10-M12 | Consumed-outcome DAG, truthful non-empty frontier, conservative execution profiles, and safe high-risk order |
+| Publication authority and order | M13-M16 | Freeze an authorized plan; create recoverably non-ready, verify relationships, then activate readiness |
+| Read-back and recovery | M17-M18 | Refetch the affected graph and stop safely on partial or indeterminate state |
+| Recommendation and completion | M19-M22 | Default to first-ready `implement`; qualify parent delivery narrowly; return one typed result and start no successor |
 
-The 2026-07-23 campaign found no relationship delta. The existing edges remain:
-Repo Bootstrap owns setup repair; tracker docs own transport and read-back;
-engineering owns shared proof and state semantics; To Tickets recommends
-exactly one implementation owner and stops.
+Research remains admission evidence, not behavioral proof:
 
-## 2026-07-23 Runtime Decision
-
-The campaign shape was `pruning-only`: the prior canonical runtime differed
-from exact `B0 = C1`. Exact B0 package hash
-`f652f1fb12787a482dcde59771e7b50f8dd5f7a890981df6acede35dc8a47758`
-passed all `55/55` minimum-runtime judgments. B01-B11 remain independently
-required by intent, compatibility, authority, safety, proof, caller, or
-completion contracts. No behavioral-efficacy claim is made for a B0 unit whose
-no-guidance control also passed.
-
-Three beyond-minimum mechanisms were rejected independently because exact B0
-did not exhibit their registered failure:
-
-| Unit | Proposed addition | Decision |
+| Research candidate | Method classification | Final disposition |
 | --- | --- | --- |
-| C101 | Tracer-purpose and tracer-learning-role clauses | `rejected-no-control-failure`; B0 passed five positive and five wrong-condition judgments |
-| C102 | Conditional support-slice clause | `rejected-no-control-failure`; B0 passed five positive and ten wrong-condition judgments |
-| C103 | Blast-radius and progressive-exposure clause | `rejected-no-control-failure`; B0 passed five positive and five wrong-condition judgments |
+| Learning tracer versus vertical delivery | Separate concepts independently supported; compound term contested | M12 already owns the conditional high-risk tracer; reject a default tracer |
+| Preparatory refactoring | Independently supported under recorded economics | M07 already requires observable value and proof; reject duplicate ceremony |
+| Coordination versus dependency readiness | Constituents independently supported; exact profile pack-local | M10-M11 already own the distinction |
+| Rule/example/question acceptance audit | Independently supported under source-authority limits | H1-01 rejected because exact M0 showed no registered deficit |
+| Transitive reduction | Algorithm independently supported; ticket transfer inferred | Proof tactic only; never source dependency authority |
+| Observed mutation journal | Independently supported staged observation | M13-M18 already own the required facts; reject a second runtime schema |
 
-Exact B0 passed all `35/35` registered C1-control judgments, so no candidate arm
-was opened and no mechanism-contribution claim survives. The mandatory Pruning
-Pass audited every runtime passage, found no material behavior-preserving cut,
-and retained the exact bytes with disposition `pruning-not-needed`.
+Rejected lanes remain rejected: universal INVEST or Definition-of-Ready
+ceremony, fixed ticket size or count, exact implementation scripts, canary
+sufficiency, blind retry, generic compensation, filename-based concurrency,
+and popularity as validation.
 
-## Evidence
+## V1, Pruning, And Canonical State
 
-| Record | Authority |
+H1 was rederived from M0 plus zero surviving transformations, so V1 equals M0.
+The Pruning Pass audited all 24 instruction-bearing passages and classified all
+24 `keep`. Plausible cuts to routing/admission, graph guards, irreversible
+publication order, and recommendation exclusions were rejected because they
+would scatter an owner, weaken a tested countercondition, or add navigation
+without lowering package load materially.
+
+P1 therefore equals V1 byte-for-byte. Canonical promotion copied only that
+complete two-file package. The shared parameterized semantic owner is bound to
+the canonical package root and expected campaign-tree identity. It proves the
+heading-bounded semantic contract, explicit-only policy, package identity,
+typed Return tokens, and forbidden-semantic absence without snapshotting
+human prose.
+
+Accepted Prompt 4 behavior evidence is exact-reusable for canonical P1 because
+the executable runtime bytes and fixed evidence tuple are unchanged. No new
+behavioral wave was run merely for promotion.
+
+## Relationships
+
+Relationship topology and predicates are unchanged:
+
+| Relationship | Active trigger and Return |
 | --- | --- |
-| [Prompt 4 evaluation](../../validation/transcripts/2026-07-23-to-tickets-prompt4-eval.md) | Original exact tasks, packets, rubric, raw-output identities, samples, and terminal observations |
-| [Prompt 4 reconciliation](../../validation/transcripts/2026-07-23-to-tickets-prompt4-reconciliation.md) | Accepted exact B0 as behavior-complete C1 and recorded individual C101-C103 rejection |
-| [Pruning Pass](../../validation/transcripts/2026-07-23-to-tickets-pruning.md) | Complete cut audit and byte-identical no-cut decision |
-| [Prompt 5 promotion and install](../../validation/transcripts/2026-07-23-to-tickets-promotion-install.md) | Canonical promotion, current mechanical proof, managed synchronization, and installed parity |
-| [Earlier I3 promotion](../../validation/transcripts/2026-07-22-to-tickets-i3-promotion-eval.md) | Historical prior-runtime evidence only |
+| `to-spec` -> `to-tickets` | Verified parent ready for slicing; preserve identity and Source Trace |
+| Improve/Audit -> `to-tickets` | Settled multi-slice packet; preserve the complete accepted source |
+| `implement` -> `to-tickets` | Selected item is shaping-unready; admit its exhaustive repair packet as source evidence |
+| `parallel-implement` -> `to-tickets` | Graph, readiness, profile, or matrix packet is incomplete or contradictory |
+| `to-tickets` -> `repo-bootstrap` | Required setup is missing or incompatible; typed unchanged stop |
+| `to-tickets` -> `implement` | Default verified first-ready route |
+| `to-tickets` -> `parallel-implement` | Explicit top-level parent delivery over a verified non-empty exhaustive Ready parent graph |
 
-The current campaign reuses exact behavioral evidence because final bytes,
-tasks, claims, authority, and evidence contracts did not change between Prompt
-4 acceptance, pruning, and promotion. Structural proof demonstrates the
-canonical contract and relationships; it does not independently prove slicing
-quality or behavioral efficacy.
+No relationship-index, caller, callee, router, tracker, domain, or engineering
+owner changed.
 
-## Deliberate Non-Changes
+## Proof And Evidence Dispositions
 
-- Invocation remains explicit-only.
-- The runtime remains one linear five-verb skill with no disclosed helper.
-- Tracker procedure and shared engineering rules remain with their owners.
-- Relationship surfaces remain byte-unchanged because the relationship delta
-  is none.
-- No mandatory proposal file, graph renderer, ticket generator, numeric sizing
-  score, story-point quota, mechanical coverage validator, or direct
-  implementation dispatch is added.
-- C101-C103 remain outside the runtime and receive no efficacy claim.
-- Raw and chronological validation records remain historical evidence and are
-  not rewritten as active instructions.
+- The immutable Prompt 1 through Prompt 4 and Pruning capsules own their stage
+  decisions.
+- The reusable worker fixture, root registration/rubric, and compact Prompt 4
+  results own the tested cases, fixed conditions, sample identities,
+  deviations, judgments, and aggregates.
+- Prompt 4 results are `exact-reusable` for M0/P1 viability and the H1-01
+  adaptive gate under the frozen conditions.
+- Historical current-runtime, C0, earlier candidate, and prior installation
+  records are `historical-admission-only` or lane-limited as recorded in the
+  manifest. They do not control canonical or installed state.
+- Copied runtimes, dispatch materializers and plans, routine verifiers,
+  proof-coverage duplication, payload captures, and transcripts are removed
+  campaign exhaust. No active claim depends on them.
 
-## Residual Gaps
+## Terminal Claims
 
-- live-provider publication, read-back, idempotency, and recovery;
-- support-work comparative economics without supplied facts;
-- generalization beyond the exact fixtures, runtime, and local harness; and
-- unavailable model and configuration telemetry recorded by Prompt 4.
+Semantic contract status: canonical P1 realizes M01-M22, preserves required
+compatibility and relationship predicates, excludes F01-F16, and has no
+unresolved current-removal risk. This is supported by the frozen decision
+trace, exact package identity, shared semantic owner, and canonical read-back.
 
-Any material runtime or claim change creates a new candidate identity and a
-proportionate proof obligation. Installation and Git delivery remain separate
-from canonical semantic authority.
+Behavioral contribution or non-regression: exact M0/P1 passed 24 of 24 fixed
+viability cases with zero critical failures. H1-01 contributes no claimed
+lift because its five M0 controls all scored 4 and the adaptive gate stayed
+closed. This claim is limited to the recorded model, host, reasoning
+configuration, tools, tasks, authority, evidence, and exact runtime bytes.
+
+Runtime-load direction: P1 retains the registered exact-byte and
+whitespace-delimited-word proxy of 9,547 bytes, 1,234 words, and 171 lines.
+That is a zero V1-to-P1 delta, removes the provisional 319-byte and 47-word H1
+delta, and is 2,673 bytes and 323 words larger than the pre-promotion canonical
+comparison. Token, latency, and prevalence telemetry were unavailable, so no
+runtime cost or frequency claim is implied.
+
+## Deliberate Non-Changes And Residual Gaps
+
+Deliberate non-changes are relationship topology, foreign owner procedures,
+research provenance, Prompt 1 through Pruning capsules, fixed behavioral
+fixtures and results, unrelated experimental candidates, Git index, `HEAD`,
+remotes, and Git delivery.
+
+Residual professional gaps are method prevalence and transfer beyond cited
+conditions. Behavioral gaps are live-provider execution, idempotency, eventual
+consistency, mutation durability, and duplicate avoidance. Model and host gaps
+are transfer beyond the fixed Prompt 4 execution tuple. Runtime-load gaps are
+token and latency telemetry. Transfer gaps include untested trackers,
+configurations, task families, and authority or evidence variants.
+
+<!-- END TO-TICKETS ACTIVE SYNTHESIS -->
+
+Content fingerprint is owned by the campaign manifest.

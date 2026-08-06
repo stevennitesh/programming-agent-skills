@@ -1,60 +1,158 @@
 ---
 name: to-spec
-description: Synthesize settled source into a source-traced parent spec and publish it to the configured tracker.
+description: Explicitly turn settled source that benefits from a durable parent decision contract into one verified specification; return one bounded direct implementation to its caller without drafting.
 ---
 
 # To Spec
 
-Own one outcome: a source-traced **parent spec** that preserves settled product and engineering intent for a fresh Codex session.
+Turn settled source into a durable parent decision contract only when that
+artifact is useful for several slices, durable coordination, or a lasting
+decision boundary. Preserve source-owned commitments, verify any publication,
+return one typed result, and stop without delivering the work.
 
-Use the target repo's `AGENTS.md` for tracker, label, and domain pointers. If a required setup document or named tracker operation is absent or incompatible with this skill, recommend `$repo-bootstrap` and stop.
+The user and settled source own outcome, commitments, acceptance, scope,
+exclusions, public and data contracts, security and privacy posture, and agreed
+tradeoffs. Repository, domain, ADR, engineering, tracker, and relationship
+owners retain their routed authority. `to-spec` owns faithful synthesis,
+coverage judgment, at most one disposable draft, one parent publication, read-back,
+recovery evidence, Return, and completion.
 
-## Process
+## Gates
 
-### 1. Trace
+### 1. Trace settled source and choose the branch
 
-Trace the settled source: the conversation; every supplied artifact in full; decision-bearing comments; required linked context; and relevant code, prior art, domain terms, and ADRs. Surface domain or ADR conflicts. Record every relied-on source in `Source Trace`.
+Read the target repository's `AGENTS.md`, routed domain and engineering
+contracts, the complete supplied packet, and every decision-bearing pointer it
+names.
+Accept a direct settled packet, a closed Wayfinder map with decisive
+resolutions, or one verified selected improvement candidate with settled
+direction and commitment boundary. Record one source owner, exact identity,
+bound, and intended parent target. Confirm that the source settles the purpose,
+boundaries, limitations, decisions and their owners, required behavioral,
+migration, cutover, or retirement outcomes, and acceptance objectives that
+apply. A missing, inaccessible, ambiguous, contradictory, or decision-changing
+gap returns `source-gap` with affected contract fields, unchanged tracker state,
+the exact return owner, and exactly one gap kind: `user-decision`,
+`domain-decision`, `source-evidence`, `runnable-evidence`,
+`stakeholder-evidence`, or `multi-decision-fog`. Preserve the source identity
+and state the exact re-entry condition. Do not invoke or recommend a resolver.
 
-Load `$codebase-design` as shared architecture vocabulary; this skill retains spec ownership.
+When the settled source already describes one bounded implementation with
+complete acceptance and authority and no useful durable parent contract, return
+`not-needed` with its exact source and `$implement` as the one unstarted next
+recommendation. Create no draft or tracker state.
 
-Pause only for a **material gap**: an unsettled decision that would change product intent, scope, architecture, or proof. Record other uncertainty in `Open Questions`.
+### 2. Prepare the durable-parent branch
 
-### 2. Choose
+Only after the direct branch is excluded, load the routed tracker contract and
+verify its required inspect and read-back operations. Before any create, verify
+that the configured parent-create operation is compatible. When that setup is
+missing or incompatible, return `setup-precondition` with the evidence and
+unchanged state, recommend `$repo-bootstrap`, and stop.
 
-Choose the highest existing **proof seam** that proves user-visible behavior. If no existing seam can prove the spec, record the proposed load-bearing seam, behavior proved, prior art, and regression risks. Unless the settled source already approves it, treat that new seam as a material gap.
+Verify implementation-adjacent source claims against their exact code, caller,
+test, configuration, or decision pointers. If a required current-state claim has
+no verifiable pointer, return `source-gap`; do not replace source shaping with
+an independent repository survey or architecture choice. When verification
+corrects a source statement without changing a source-owned decision or
+commitment, preserve the settled direction and record one Verified Source
+Correction with the original statement, observed evidence pointer, corrected
+current-state wording, and why the commitments are unchanged. A
+decision-changing correction is a `source-gap`, not editorial license.
 
-### 3. Draft
+Preserve routed domain terms and ADR decisions and point to their owners; change
+no domain truth. Load `$codebase-design` only when the source uses its shared
+module or interface vocabulary or delegates one consequential Responsibility,
+Interface, Seam, migration, or Proof Seam question. Apply Direct Design only
+for that unresolved question, fold its supported result into the specification,
+and create no separate design packet. A `decision-needed` or `evidence-gap`
+result, new public or ownership choice, or unsupported trade-off returns
+`source-gap`.
 
-Draft under `.tmp/to-spec/<slug>.md`. Pass the **fresh-session test**: the spec alone recovers the shared understanding. Pass the **grounding test**: introduce every term, premise, or decision before a section relies on it, or provide a sharp `Source Trace` pointer to its owner.
+Cover every applicable requirement, exclusion, deferral, constraint,
+dependency, risk, and nonblocking open note and trace each specification
+commitment back to source authority. Use a detailed bidirectional crosswalk only
+for numerous, conflicting, or multi-source commitments. Do not invent product
+choices, implementation results, or a ready child-ticket graph. When the source
+supersedes behavior, carry each displaced surface and retained compatibility
+path with its owner, reason, proof, and Removal Trigger.
 
-Use these sections:
+### 3. Freeze, compare, and draft when needed
 
-- `Source Trace`
-- `Problem Statement`
-- `Desired Outcome`
-- `User Stories`
-- `Accepted Decisions`
-- `Deferred Or Rejected Options`
-- `Edge Cases And Failure Modes`
-- `Proof Seams And Testing Notes`
-- `Out Of Scope`
-- `Open Questions`
-- `Further Notes` - omit when empty
+Freeze one internally consistent title and parent body containing Source Trace
+with exact source identity and owner; problem and outcome; users and scenarios;
+scope and non-goals; requirements and invariants; interfaces, data, and state;
+edge and error behavior; security and privacy; compatibility, migration, and
+rollback; operability; dependencies and risks; acceptance and proof; decisions,
+deferrals, and residual gaps; Verified Source Corrections when present; and the
+downstream boundary. Headings and order may fit the source. Include only
+source-triggered facts and omit empty or ceremonial sections, including the
+correction section when none exists. Point to the Engineering Contract instead
+of copying its generic practices.
 
-Write a comprehensive, numbered set of user stories that exhausts every source-visible actor, capability, benefit, edge case, and acceptance branch. Keep proof notes to seams, proof points, likely tracer bullets, fixtures, prior patterns, and regression risks. Include paths or snippets only when a durable contract or prototype finding preserves a decision more precisely than prose.
+Pair every commitment with observable acceptance and an honest proof authority.
+Cover edge, error, and state branches where behavior materially varies. Name
+structural proxies and their residual risk; claim no implementation proof that
+was not run. Record settled or delegated-and-supported material
+Responsibilities, Interfaces, Seams, Proof Seams, and state. Omit incidental
+internal seams.
 
-### 4. Cover
+When state matters, cover only the material initial, reusable,
+legacy-or-incompatible, access-path, variant, and lifecycle branches. Do not
+replace judgment with a Cartesian checklist.
 
-Apply the **coverage gate**: account for every source-visible commitment, actor, flow, constraint, edge case, failure mode, prototype finding, and scope boundary, or mark it irrelevant in `Source Trace`.
+Inspect the intended durable parent target and compare it with the frozen title
+and body. Distinguish verified absence, exact matching state, divergent state,
+and unknown state. Reuse only an exact match; otherwise create only from
+verified absence. Updating or reconciling requires an explicitly identified
+target and explicit authority; otherwise return `existing-state-conflict` with
+observed identity, unchanged state, and the smallest needed authorization or
+source delta.
 
-For setup, credential, CI, migration, or external-integration work, apply the **value-flow gate**: trace every externally supplied value from its source and sensitivity through its destination and consumer to its verification path, or record an explicit gap.
+Write one ignored `.tmp/to-spec/<feature-slug>.md` draft only when a new or
+updated durable publication is required and after the source and coverage gates
+pass. Exact reuse creates no draft. Read back draft bytes and correct synthesis
+defects before publication. If the path is not safe and ignored, stop without
+durable mutation.
 
-### 5. Publish
+Carry a path, current owner, reuse candidate, or Proof Seam only when it is a
+binding source decision, supported design result, or evidence pointer. A
+material Seam belongs in the spec when it affects caller contracts, cross-ticket
+ownership, compatibility or migration, or test strategy. Paths are evidence, not
+an implementation plan. Leave bounded repository grounding, ticket slices,
+expected writes, concrete proof lanes and test owners, dependency graph and
+ready frontier, static execution facts, live concurrency decisions, implementation
+technique, and default Repair budgets to `$to-tickets` and delivery owners.
 
-Mutate only the draft and one parent spec. Supplied artifacts remain sources unless the user explicitly asks to update them. `$to-tickets` owns implementation slicing, blocking edges, and `ready-for-agent` state.
+### 4. Publish, verify, and reconcile
 
-Publish through the tracker contract routed by `AGENTS.md`. Apply **Mutation read-back** to body and metadata. Delete the draft after successful read-back; preserve and report it when blocked or explicitly requested.
+For exact matching state, reuse the verified parent without mutation. Otherwise
+perform exactly one configured create operation for the GitHub issue, GitLab
+issue, or Local Markdown `.scratch/<feature-slug>/SPEC.md` contract. Use the
+frozen title and body. Add no child, label, source, domain, implementation, Git,
+installation, or downstream mutation.
 
-Return the parent reference, any preserved draft path, and recommend `$to-tickets` and stop when implementation slicing is next.
+Refetch or reread the full created or reused parent, including body, location,
+state, metadata, and affected relationships, and compare it with the frozen
+title and body. When publication fails, is partial, is indeterminate, or read-back
+mismatches, return `publication-recovery` with applied and failed operations,
+publication input identity, any draft identity, observed durable state, affected
+relationships, and the safest inspection or recovery action. Preserve any exact
+draft and never repeat a create whose result is unknown.
 
-Complete only after Trace passes; the proof seam is settled; Draft passes the fresh-session and grounding tests; Cover passes; no material gap remains; publication is read back; and draft cleanup or preservation is reported.
+After a verified create or exact reuse, remove any disposable draft and return
+`ready-spec` with the durable pointer, source identity, coverage result,
+publication-or-reuse proof, and residual gaps. Recommend `$to-tickets` only
+when several implementation slices or durable tracker coordination are useful;
+otherwise recommend `$implement`. Invoke neither.
+
+## Completion
+
+Complete through the selected branch: `not-needed` requires verified direct
+readiness and no mutation; `ready-spec` requires applicable setup, source,
+target-state, coverage, publication-or-reuse, durable read-back, and
+cleanup-or-preservation gates. Every applicable commitment is accounted for,
+unrelated state is preserved, and exactly one typed Return is supported by
+observed state.
+Stop before source research, conversational shaping, ticket slicing,
+implementation, review, installation, or Git delivery.

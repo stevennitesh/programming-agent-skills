@@ -1,0 +1,1368 @@
+{
+  "schema": {
+    "name": "deploy-campaign-manifest",
+    "version": 5,
+    "profile": "prompt4-accepted-v1"
+  },
+  "campaign": {
+    "skill": "to-spec",
+    "epoch": "2026-07-25",
+    "delivery_mode": "bare",
+    "current_unit": "prompt-4",
+    "status": "accepted",
+    "decision": "accepted",
+    "campaign_shape": "hypothesis-candidate",
+    "relationship_delta": "none",
+    "starting_head": "b9750babea998c4bc0f5809972a8651934218eca",
+    "ending_head": "b9750babea998c4bc0f5809972a8651934218eca",
+    "git_delivery": "pending",
+    "recommended_next_unit": "deploy-pruning-pass"
+  },
+  "path_refs": {
+    "prompt1_checkpoint": "docs/validation/skills/to-spec/campaigns/to-spec-2026-07-25/prompt1-m0.md",
+    "research_packet": "docs/research/skills/to-spec/RP-to-spec-20260725-01.md",
+    "active_synthesis": "docs/synthesis/skills/to-spec.md",
+    "prompt2_capsule": "docs/validation/skills/to-spec/campaigns/to-spec-2026-07-25/prompt2-h1.md",
+    "manifest": "docs/validation/skills/to-spec/campaigns/to-spec-2026-07-25/manifest.json",
+    "current_canonical": "skills/custom/to-spec",
+    "historical_c0_isolated": ".tmp/campaign-evidence/to-spec-2026-07-25/incumbent-root/skills/custom/to-spec",
+    "prompt3_capsule": "docs/validation/skills/to-spec/campaigns/to-spec-2026-07-25/prompt3-build.md",
+    "prompt4_capsule": "docs/validation/skills/to-spec/campaigns/to-spec-2026-07-25/prompt4-decision.md",
+    "prompt4_results": "docs/validation/skills/to-spec/evals/EV-to-spec-prompt4-20260725-01/prompt4-results.json",
+    "candidate_record": "docs/validation/skills/to-spec/campaigns/to-spec-2026-07-25/candidate.md",
+    "worker_fixture": "docs/validation/skills/to-spec/evals/EV-to-spec-prompt4-20260725-01/worker-fixture.json",
+    "root_registration": "docs/validation/skills/to-spec/evals/EV-to-spec-prompt4-20260725-01/root-registration.json",
+    "fixture_lint_map": "docs/validation/skills/to-spec/evals/EV-to-spec-prompt4-20260725-01/fixture-lint-map.json",
+    "dispatch_plan": "docs/validation/skills/to-spec/evals/EV-to-spec-prompt4-20260725-01/dispatch-plan.json",
+    "m0_runtime": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+    "h1_01_runtime": ".tmp/campaign-evidence/to-spec-2026-07-25/h1-01",
+    "h1_02_runtime": ".tmp/campaign-evidence/to-spec-2026-07-25/h1-02",
+    "v1_runtime": "skills/experimental/to-spec",
+    "shared_semantic_owner": "tests/test_skill_pack_contracts.py"
+  },
+  "fixed_point": {
+    "git_head": "b9750babea998c4bc0f5809972a8651934218eca",
+    "m0": {
+      "full_file_sha256": "449a834273817d47a37f3d2bb6a203d4e86a31bada89558340810408346dd9bf",
+      "bounded_fingerprint": "94521f7c73c756fbeb53de3a04a551007fa473a44108683dd760e42ff5b185b1",
+      "decision": "ready-for-research"
+    },
+    "research": {
+      "full_file_sha256": "fff827f6482fafb891968cb8a095ccd1aa4de0ab0ea6ed091526298e63deebc0",
+      "decision": "research-complete"
+    },
+    "synthesis": {
+      "full_file_sha256": "129fca83da6c714fa6e9a1a74044485c54c30b9e2c87961463468d85abde5b5e",
+      "bounded_fingerprint": "da87b89e3e40a6b38e87f48fd7aaa924be7482bf76f15a21d42d2397fddaff11"
+    },
+    "prompt2_capsule": {
+      "full_file_sha256": "79efc84d7a3cfe8bb034ac241cc5ca129bfd1e57b454a04c4b6207001c040301",
+      "bounded_fingerprint": "f768ec67d50a82426ed33e26565f6b79307e98255a97006b6f201ec336806b49",
+      "decision": "ready-for-prompt-3"
+    },
+    "prompt3_capsule": {
+      "full_file_sha256": "3bc87bace21cdf6adafa9198881ca6ac5a2f9c5136b317baec63060f28e5173a",
+      "bounded_fingerprint": "ab140cc953322c659184981efefc2919fd85813ab230626fa2ea3db40d275586",
+      "decision": "ready-for-prompt-4"
+    }
+  },
+  "runtime_identities": {
+    "tree_algorithm": "campaign-tree-v1",
+    "historical_c0": {
+      "commit": "f3be70c31dd8f2ae9f12a75248065ef313790bda",
+      "tree_sha256": "9d1a3e45416b8a36a1cdf4cf155de0a193e78df4aa107a9af25608c1b1fc918c",
+      "files": {
+        "SKILL.md": {
+          "sha256": "b7e05a55f30aa16a385360183281c516cf10223ec27f348c50f9039315bac86e",
+          "git_blob": "ee4e95f0b17520710b9d31c5b5ab55c2217f07ce"
+        },
+        "agents/openai.yaml": {
+          "sha256": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94",
+          "git_blob": "5b1f887a9138416870f64ba2fe21602e4a59cfa7"
+        }
+      },
+      "disposition": "historical-admission-only",
+      "durable_dependency": false
+    },
+    "current_canonical": {
+      "tree_sha256": "3cdb41fbca411d8c2332c4e9cff52b5ef1000dd28a27422615ac6f150133e06b",
+      "files": {
+        "SKILL.md": "00e26469482d657f6201ad33051f2d4c1d3554c91d6780e7402f41ca8158d7fd",
+        "agents/openai.yaml": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94"
+      },
+      "disposition": "current-observation-and-compatibility-evidence"
+    },
+    "m0": {
+      "specification_fingerprint": "94521f7c73c756fbeb53de3a04a551007fa473a44108683dd760e42ff5b185b1",
+      "tree_sha256": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb",
+      "tree_algorithm": "campaign-tree-v1",
+      "status": "materialized-immutable-control",
+      "package_root_ref": "m0_runtime",
+      "inventory": [
+        {
+          "path": "SKILL.md",
+          "bytes": 7728,
+          "sha256": "14977d70cdda67e71224d305a23500975355411b0b9489c166a145e822b474a8"
+        },
+        {
+          "path": "agents/openai.yaml",
+          "bytes": 43,
+          "sha256": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94"
+        }
+      ],
+      "transformations": []
+    },
+    "h1": {
+      "status": "evaluated-isolated",
+      "transformation_ids": [
+        "H1-01"
+      ],
+      "isolated": {
+        "H1-01": {
+          "tree_sha256": "47c223639318b041e6c86e6144b7fb23399634ead73e18ddcf306ab8242effeb",
+          "package_root_ref": "h1_01_runtime",
+          "inventory": [
+            {
+              "path": "SKILL.md",
+              "bytes": 7982,
+              "sha256": "84cf1b2faf5fa22feb6406afd3bd84fecc6d54da9eb58f395852fb21cf2d3fb9"
+            },
+            {
+              "path": "agents/openai.yaml",
+              "bytes": 43,
+              "sha256": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94"
+            }
+          ],
+          "exact_delta": "M0 plus H1-01 passage only",
+          "disposition": "accept"
+        },
+        "H1-02": {
+          "tree_sha256": "aab3d073179fcedcc18845d950073db2ccd2b1b4dd2f8ac6f76da982ad87f68d",
+          "package_root_ref": "h1_02_runtime",
+          "inventory": [
+            {
+              "path": "SKILL.md",
+              "bytes": 8023,
+              "sha256": "328dd3eaf02dc21559606e3f55144dcbe8cf3435c12cb9ce68932f625030767a"
+            },
+            {
+              "path": "agents/openai.yaml",
+              "bytes": 43,
+              "sha256": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94"
+            }
+          ],
+          "exact_delta": "M0 plus H1-02 passage only",
+          "disposition": "reject-no-control-deficit"
+        }
+      },
+      "surviving_integrated": {
+        "tree_sha256": "47c223639318b041e6c86e6144b7fb23399634ead73e18ddcf306ab8242effeb",
+        "package_root_ref": "v1_runtime",
+        "inventory": [
+          {
+            "path": "SKILL.md",
+            "bytes": 7982,
+            "sha256": "84cf1b2faf5fa22feb6406afd3bd84fecc6d54da9eb58f395852fb21cf2d3fb9"
+          },
+          {
+            "path": "agents/openai.yaml",
+            "bytes": 43,
+            "sha256": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94"
+          }
+        ],
+        "exact_delta": "M0 plus accepted H1-01 passage only"
+      }
+    },
+    "v1": {
+      "tree_sha256": "47c223639318b041e6c86e6144b7fb23399634ead73e18ddcf306ab8242effeb",
+      "package_root_ref": "v1_runtime",
+      "transformations": [
+        "H1-01"
+      ],
+      "status": "accepted"
+    },
+    "p1": {
+      "tree_sha256": null,
+      "status": "not-pruned"
+    },
+    "canonical_promoted": {
+      "tree_sha256": null,
+      "status": "not-promoted"
+    },
+    "installed": {
+      "tree_sha256": null,
+      "status": "not-inspected"
+    }
+  },
+  "semantic_state": {
+    "m0_required_ids": [
+      "U01",
+      "U02",
+      "U03",
+      "U04",
+      "U05",
+      "U06",
+      "U07",
+      "U08",
+      "U09",
+      "U10",
+      "U11",
+      "U12",
+      "U13",
+      "U14",
+      "U15",
+      "U16"
+    ],
+    "h1_required_ids": [
+      "H1-01"
+    ],
+    "m0_clause_groups": [
+      {
+        "id": "M0-C01",
+        "units": [
+          "U01"
+        ],
+        "gate": "description-and-explicit-invocation"
+      },
+      {
+        "id": "M0-C02",
+        "units": [
+          "U02"
+        ],
+        "gate": "compatible-setup"
+      },
+      {
+        "id": "M0-C03",
+        "units": [
+          "U03",
+          "U04",
+          "U05",
+          "U06",
+          "U07"
+        ],
+        "gate": "exact-settled-source-authority-and-existing-state"
+      },
+      {
+        "id": "M0-C04",
+        "units": [
+          "U08",
+          "U09",
+          "U10"
+        ],
+        "gate": "complete-bidirectional-parent-packet"
+      },
+      {
+        "id": "M0-C05",
+        "units": [
+          "U11",
+          "U12"
+        ],
+        "gate": "exact-draft-operation-and-authority-freeze"
+      },
+      {
+        "id": "M0-C06",
+        "units": [
+          "U13",
+          "U14",
+          "U15"
+        ],
+        "gate": "one-create-or-exact-reuse-and-complete-reconciliation"
+      },
+      {
+        "id": "M0-C07",
+        "units": [
+          "U16"
+        ],
+        "gate": "typed-return-completion-and-stop"
+      }
+    ],
+    "m0_gate_order": [
+      "explicit-invocation",
+      "compatible-setup",
+      "exact-settled-source-and-authority",
+      "existing-state-classification",
+      "complete-bidirectional-parent-packet",
+      "exact-draft-and-operation-freeze",
+      "one-authorized-create-or-exact-reuse",
+      "complete-durable-state-reconciliation",
+      "truthful-draft-disposition",
+      "typed-return-and-stop"
+    ],
+    "return_types": [
+      "setup-precondition",
+      "source-gap",
+      "existing-state-conflict",
+      "publication-recovery",
+      "ready-spec"
+    ],
+    "forbidden_semantics": [
+      {
+        "id": "F01",
+        "behavior": "exact-current-four-numbered-heading-shape",
+        "decision": "remove",
+        "absence_proof": "package-wide heading inventory plus U01-U16 owner and order assertions",
+        "checked_packages": [
+          "m0",
+          "h1-isolated-H1-01",
+          "h1-isolated-H1-02",
+          "h1-combined"
+        ],
+        "proof_id": "P3-FORBIDDEN-ABSENCE-01",
+        "status": "passed"
+      },
+      {
+        "id": "F02",
+        "behavior": "categorical-highest-or-singular-proof-seam",
+        "decision": "remove-reject",
+        "absence_proof": "normalized semantic absence plus H1-02 wrong-condition rubric",
+        "checked_packages": [
+          "m0",
+          "h1-isolated-H1-01",
+          "h1-isolated-H1-02",
+          "h1-combined"
+        ],
+        "proof_id": "P3-FORBIDDEN-ABSENCE-01",
+        "status": "passed"
+      },
+      {
+        "id": "F03",
+        "behavior": "exhaustive-story-form-for-all-commitments",
+        "decision": "remove-reject",
+        "absence_proof": "normalized semantic absence plus U09 bidirectional commitment coverage",
+        "checked_packages": [
+          "m0",
+          "h1-isolated-H1-01",
+          "h1-isolated-H1-02",
+          "h1-combined"
+        ],
+        "proof_id": "P3-FORBIDDEN-ABSENCE-01",
+        "status": "passed"
+      },
+      {
+        "id": "F04",
+        "behavior": "parent-ready-for-agent-state",
+        "decision": "remove-reject",
+        "absence_proof": "label and Return absence plus to-spec-to-to-tickets ownership assertion",
+        "checked_packages": [
+          "m0",
+          "h1-isolated-H1-01",
+          "h1-isolated-H1-02",
+          "h1-combined"
+        ],
+        "proof_id": "P3-FORBIDDEN-ABSENCE-01",
+        "status": "passed"
+      },
+      {
+        "id": "F05",
+        "behavior": "published-spec-success-token",
+        "decision": "remove-replace",
+        "absence_proof": "parsed Return enum equals the five M0 values and contains ready-spec",
+        "checked_packages": [
+          "m0",
+          "h1-isolated-H1-01",
+          "h1-isolated-H1-02",
+          "h1-combined"
+        ],
+        "proof_id": "P3-FORBIDDEN-ABSENCE-01",
+        "status": "passed"
+      },
+      {
+        "id": "F06",
+        "behavior": "universal-trust-or-value-flow-table",
+        "decision": "defer-forbid-in-current-candidates",
+        "absence_proof": "package-wide semantic absence plus U09-U10 source coverage",
+        "checked_packages": [
+          "m0",
+          "h1-isolated-H1-01",
+          "h1-isolated-H1-02",
+          "h1-combined"
+        ],
+        "proof_id": "P3-FORBIDDEN-ABSENCE-01",
+        "status": "passed"
+      },
+      {
+        "id": "F07",
+        "behavior": "ears-as-universal-sentence-syntax",
+        "decision": "defer-forbid-in-current-candidates",
+        "absence_proof": "package-wide semantic and literal absence",
+        "checked_packages": [
+          "m0",
+          "h1-isolated-H1-01",
+          "h1-isolated-H1-02",
+          "h1-combined"
+        ],
+        "proof_id": "P3-FORBIDDEN-ABSENCE-01",
+        "status": "passed"
+      },
+      {
+        "id": "F08",
+        "behavior": "new-helper-schema-or-copied-tracker-procedure",
+        "decision": "remove-reject",
+        "absence_proof": "complete package inventory and owner-pointer audit",
+        "checked_packages": [
+          "m0",
+          "h1-isolated-H1-01",
+          "h1-isolated-H1-02",
+          "h1-combined"
+        ],
+        "proof_id": "P3-FORBIDDEN-ABSENCE-01",
+        "status": "passed"
+      }
+    ],
+    "current_dispositions": [
+      {
+        "id": "CUR-01",
+        "owner_ids": [
+          "U01"
+        ],
+        "decision": "required-compatibility",
+        "surface": "description-and-explicit-only-metadata"
+      },
+      {
+        "id": "CUR-02",
+        "owner_ids": [
+          "U03",
+          "U04",
+          "U05",
+          "U06",
+          "U16"
+        ],
+        "decision": "m0-equivalent",
+        "surface": "outcome-and-ownership-preamble"
+      },
+      {
+        "id": "CUR-03",
+        "owner_ids": [
+          "U02"
+        ],
+        "decision": "m0-equivalent",
+        "surface": "setup-and-repo-bootstrap-stop"
+      },
+      {
+        "id": "CUR-04",
+        "owner_ids": [
+          "U03",
+          "U04"
+        ],
+        "decision": "replace",
+        "surface": "partial-caller-admission"
+      },
+      {
+        "id": "CUR-05",
+        "owner_ids": [
+          "U07",
+          "U12",
+          "U13"
+        ],
+        "decision": "replace",
+        "surface": "create-only-existing-state"
+      },
+      {
+        "id": "CUR-06",
+        "owner_ids": [
+          "U05",
+          "U06"
+        ],
+        "decision": "required-compatibility",
+        "surface": "domain-adr-and-codebase-design-vocabulary"
+      },
+      {
+        "id": "CUR-07",
+        "owner_ids": [
+          "U09"
+        ],
+        "decision": "m0-equivalent",
+        "surface": "bidirectional-commitment-ledger"
+      },
+      {
+        "id": "CUR-08",
+        "owner_ids": [
+          "U08",
+          "U09",
+          "U10"
+        ],
+        "decision": "m0-equivalent",
+        "surface": "parent-content-and-tailored-headings"
+      },
+      {
+        "id": "CUR-09",
+        "owner_ids": [
+          "U08",
+          "U09",
+          "U10"
+        ],
+        "decision": "required-compatibility",
+        "surface": "acceptance-proof-and-proxy-honesty"
+      },
+      {
+        "id": "CUR-10",
+        "owner_ids": [
+          "U08",
+          "U10"
+        ],
+        "decision": "required-compatibility",
+        "surface": "material-state-branches"
+      },
+      {
+        "id": "CUR-11",
+        "owner_ids": [
+          "U11"
+        ],
+        "decision": "m0-equivalent",
+        "surface": "safe-draft-and-exact-read-back"
+      },
+      {
+        "id": "CUR-12",
+        "owner_ids": [
+          "U12",
+          "U13"
+        ],
+        "decision": "replace",
+        "surface": "one-create-and-no-foreign-mutation"
+      },
+      {
+        "id": "CUR-13",
+        "owner_ids": [
+          "U13",
+          "U14",
+          "U15"
+        ],
+        "decision": "m0-equivalent",
+        "surface": "complete-read-back-recovery-and-no-retry"
+      },
+      {
+        "id": "CUR-14",
+        "owner_ids": [
+          "U16"
+        ],
+        "decision": "replace",
+        "surface": "published-spec-success-token"
+      },
+      {
+        "id": "CUR-15",
+        "owner_ids": [
+          "U15",
+          "U16"
+        ],
+        "decision": "m0-equivalent",
+        "surface": "completion-and-downstream-stop"
+      },
+      {
+        "id": "CUR-16",
+        "owner_ids": [
+          "F01"
+        ],
+        "decision": "remove",
+        "surface": "exact-four-heading-shape"
+      },
+      {
+        "id": "CUR-17",
+        "owner_ids": [],
+        "decision": "disclose",
+        "surface": "no-helper-or-conditional-runtime-file"
+      }
+    ],
+    "h1_dispositions": [
+      {
+        "id": "H1-01",
+        "name": "proportionate-applicable-aspect-expression",
+        "origin": [
+          "professional-method",
+          "intent-adjacent"
+        ],
+        "method_evidence": "independently-supported",
+        "intended_value": "raise decision density while retaining every source-triggered obligation",
+        "owner": {
+          "rule": "to-spec",
+          "commitments": "source-owner"
+        },
+        "entry_predicate": "at least two aspect families are applicable and at least three are explicitly irrelevant",
+        "applicability": {
+          "class": "situational",
+          "basis": "independent tailoring and applicability evidence; fixture frequency is not prevalence"
+        },
+        "expected_m0_weakness": "complete and accurate M0 output may contain substantial ceremonial non-applicable prose",
+        "m0_compliant_counterexample": "all required obligations are present and all irrelevant aspects are marked not applicable, with no invention or omission",
+        "contribution_mode": "quality-lift",
+        "cheapest_expression": "one inline trigger-based include-applicable-and-omit-ceremonial instruction",
+        "expected_load_effect": {
+          "new_files": 0,
+          "new_sections": 0,
+          "max_whitespace_words": 45
+        },
+        "acceptance_budget": "materially lower irrelevant content with complete triggered coverage, zero invented obligations, zero false source gaps, and no M0 regression",
+        "positive_cases": [
+          "service source with privacy and availability obligations but no migration",
+          "local tool with file-failure obligations but no network identity migration or retained state"
+        ],
+        "wrong_condition": "dense source where nearly every aspect is material",
+        "fixed_rubric": [
+          "all source-triggered obligations retained",
+          "zero invented obligations",
+          "zero false source-gap returns",
+          "irrelevant-section and ceremonial-prose count",
+          "material aspect families and acceptance remain identifiable"
+        ],
+        "proof": {
+          "m0_entry_positive_minimum": 5,
+          "h1_entry_positive_minimum_after_deficit": 5,
+          "wrong_condition_after_contribution": true,
+          "decision_values": [
+            "accept",
+            "reject-no-control-deficit",
+            "reject-insufficient-contribution",
+            "reject-regression",
+            "needs-more-evidence",
+            "blocked"
+          ]
+        },
+        "claim_limits": [
+          "fixed source families",
+          "fixed future model host tools and rubric",
+          "no universal taxonomy",
+          "no prevalence claim",
+          "no professional completeness claim"
+        ],
+        "decision": "accept"
+      },
+      {
+        "id": "H1-02",
+        "name": "scope-matched-verification-portfolio",
+        "origin": [
+          "professional-method",
+          "intent-adjacent"
+        ],
+        "method_evidence": "independently-supported",
+        "intended_value": "retain oracle adequacy while reducing unjustified breadth and private implementation coupling",
+        "owner": {
+          "rule": "to-spec",
+          "new_public_seam": "source-owner",
+          "harnesses": "repository-proof-owner"
+        },
+        "entry_predicate": "at least two commitments have materially distinct existing proof objectives or one broad harness is materially expensive or brittle",
+        "applicability": {
+          "class": "situational",
+          "basis": "independent distinction among test objectives; fixture frequency is not prevalence"
+        },
+        "expected_m0_weakness": "adequate and truthful M0 may choose a needlessly broad or privately coupled verification plan",
+        "m0_compliant_counterexample": "one end-to-end harness observes every outcome but is materially broader and more implementation-sensitive than an available mixed portfolio",
+        "contribution_mode": "quality-lift",
+        "cheapest_expression": "one inline objective-led scope-matched portfolio instruction with public-seam authority guard",
+        "expected_load_effect": {
+          "new_files": 0,
+          "new_sections": 0,
+          "max_whitespace_words": 55
+        },
+        "acceptance_budget": "complete oracle adequacy with materially less unjustified breadth or private coupling, zero invented public seams, and no M0 regression",
+        "positive_cases": [
+          "API plus worker commitments with distinct existing harnesses",
+          "stateful user flow with browser and state-contract proof objectives"
+        ],
+        "wrong_condition": "one low-cost existing harness is the only adequate oracle",
+        "fixed_rubric": [
+          "every commitment has an observing oracle",
+          "zero private-only oracles",
+          "zero invented public seams",
+          "unjustified broad-stack mandate count",
+          "residual uncovered risk is explicit"
+        ],
+        "proof": {
+          "m0_entry_positive_minimum": 5,
+          "h1_entry_positive_minimum_after_deficit": 5,
+          "wrong_condition_after_contribution": true,
+          "decision_values": [
+            "accept",
+            "reject-no-control-deficit",
+            "reject-insufficient-contribution",
+            "reject-regression",
+            "needs-more-evidence",
+            "blocked"
+          ]
+        },
+        "claim_limits": [
+          "fixed harness descriptions",
+          "fixed future model host tools and rubric",
+          "no universal test level or count",
+          "no general cost or latency claim"
+        ],
+        "decision": "reject-no-control-deficit"
+      }
+    ],
+    "protected_helpers": [],
+    "protected_compatibility_surfaces": [
+      "explicit-only-openai-policy",
+      "confirmed-grill-packet-and-current-domain-delta",
+      "closed-wayfinder-resolution-pointers",
+      "selected-improvement-evidence",
+      "verified-audit-finding-evidence",
+      "configured-tracker-durable-owner",
+      "source-authorized-mapped-roles-without-parent-ready-for-agent",
+      "accepted-domain-terms-and-adr-conflict-disclosure",
+      "codebase-design-vocabulary-only-load",
+      "to-tickets-identity-checkable-parent-source",
+      "tmp-draft-cleanup-or-recovery-preservation",
+      "repo-bootstrap-recommend-and-stop",
+      "to-tickets-recommend-and-stop"
+    ],
+    "unresolved_current_removal_risk": false,
+    "runtime_passage_map": [
+      {
+        "id": "M0-P01",
+        "surface": "frontmatter.description",
+        "unit": "U01"
+      },
+      {
+        "id": "M0-P02",
+        "surface": "opening outcome",
+        "unit": "U03"
+      },
+      {
+        "id": "M0-P03",
+        "surface": "Ownership source authority",
+        "unit": "U04"
+      },
+      {
+        "id": "M0-P04",
+        "surface": "Ownership domain and ADR authority",
+        "unit": "U05"
+      },
+      {
+        "id": "M0-P05",
+        "surface": "Ownership tracker and labels",
+        "unit": "U02"
+      },
+      {
+        "id": "M0-P06",
+        "surface": "Ownership codebase-design vocabulary",
+        "unit": "U06"
+      },
+      {
+        "id": "M0-P07",
+        "surface": "Ownership local and successor owners",
+        "unit": "U16"
+      },
+      {
+        "id": "M0-P08",
+        "surface": "Admit invocation and caller shapes",
+        "unit": "U03"
+      },
+      {
+        "id": "M0-P09",
+        "surface": "Admit setup gate",
+        "unit": "U02"
+      },
+      {
+        "id": "M0-P10",
+        "surface": "Admit source sufficiency",
+        "unit": "U04"
+      },
+      {
+        "id": "M0-P11",
+        "surface": "Admit existing-state classification",
+        "unit": "U07"
+      },
+      {
+        "id": "M0-P12",
+        "surface": "Synthesize parent contract inventory",
+        "unit": "U08"
+      },
+      {
+        "id": "M0-P13",
+        "surface": "Synthesize bidirectional mapping",
+        "unit": "U09"
+      },
+      {
+        "id": "M0-P14",
+        "surface": "Synthesize validity gate",
+        "unit": "U10"
+      },
+      {
+        "id": "M0-P15",
+        "surface": "Freeze draft exact identity",
+        "unit": "U11"
+      },
+      {
+        "id": "M0-P16",
+        "surface": "Freeze operation authority",
+        "unit": "U12"
+      },
+      {
+        "id": "M0-P17",
+        "surface": "Publish exact reuse or create and metadata order",
+        "unit": "U13"
+      },
+      {
+        "id": "M0-P18",
+        "surface": "Publish complete reconciliation and recovery",
+        "unit": "U14"
+      },
+      {
+        "id": "M0-P19",
+        "surface": "Publish draft disposition",
+        "unit": "U15"
+      },
+      {
+        "id": "M0-P20",
+        "surface": "Return typed statuses",
+        "unit": "U16"
+      },
+      {
+        "id": "M0-P21",
+        "surface": "Completion success gate",
+        "unit": "U16"
+      },
+      {
+        "id": "M0-P22",
+        "surface": "Completion exclusions and foreign-state safety",
+        "unit": "U16"
+      },
+      {
+        "id": "M0-P23",
+        "surface": "agents/openai.yaml explicit-only policy",
+        "unit": "U01"
+      }
+    ],
+    "required_semantic_proof_ledger": [
+      {
+        "unit": "U01",
+        "owner": "relationship-invocation-map",
+        "runtime_passages": [
+          "M0-P01",
+          "M0-P23"
+        ],
+        "proof_ids": [
+          "P3-CANDIDATE-COMPAT-01",
+          "PROMPT4-U01-VIABILITY"
+        ]
+      },
+      {
+        "unit": "U02",
+        "owner": "tracker-label-domain-setup-contracts",
+        "runtime_passages": [
+          "M0-P05",
+          "M0-P09"
+        ],
+        "proof_ids": [
+          "P3-CANDIDATE-COMPAT-01",
+          "PROMPT4-U02-VIABILITY"
+        ]
+      },
+      {
+        "unit": "U03",
+        "owner": "user-and-allowed-caller-contracts",
+        "runtime_passages": [
+          "M0-P02",
+          "M0-P08"
+        ],
+        "proof_ids": [
+          "P3-CANDIDATE-COMPAT-01",
+          "PROMPT4-U03-VIABILITY"
+        ]
+      },
+      {
+        "unit": "U04",
+        "owner": "user-and-accepted-source",
+        "runtime_passages": [
+          "M0-P03",
+          "M0-P10"
+        ],
+        "proof_ids": [
+          "P3-CANDIDATE-COMPAT-01",
+          "PROMPT4-U04-VIABILITY"
+        ]
+      },
+      {
+        "unit": "U05",
+        "owner": "domain-documents-and-adrs",
+        "runtime_passages": [
+          "M0-P04"
+        ],
+        "proof_ids": [
+          "P3-CANDIDATE-COMPAT-01",
+          "PROMPT4-U05-VIABILITY"
+        ]
+      },
+      {
+        "unit": "U06",
+        "owner": "codebase-design-vocabulary-owner",
+        "runtime_passages": [
+          "M0-P06"
+        ],
+        "proof_ids": [
+          "P3-CANDIDATE-COMPAT-01",
+          "PROMPT4-U06-VIABILITY"
+        ]
+      },
+      {
+        "unit": "U07",
+        "owner": "tracker-mutation-read-back",
+        "runtime_passages": [
+          "M0-P11"
+        ],
+        "proof_ids": [
+          "P3-CANDIDATE-COMPAT-01",
+          "PROMPT4-U07-VIABILITY"
+        ]
+      },
+      {
+        "unit": "U08",
+        "owner": "to-spec-parent-packet-synthesis",
+        "runtime_passages": [
+          "M0-P12"
+        ],
+        "proof_ids": [
+          "P3-CANDIDATE-COMPAT-01",
+          "PROMPT4-U08-VIABILITY"
+        ]
+      },
+      {
+        "unit": "U09",
+        "owner": "to-spec-source-coverage",
+        "runtime_passages": [
+          "M0-P13"
+        ],
+        "proof_ids": [
+          "P3-CANDIDATE-COMPAT-01",
+          "PROMPT4-U09-VIABILITY"
+        ]
+      },
+      {
+        "unit": "U10",
+        "owner": "to-spec-parent-validity",
+        "runtime_passages": [
+          "M0-P14"
+        ],
+        "proof_ids": [
+          "P3-CANDIDATE-COMPAT-01",
+          "PROMPT4-U10-VIABILITY"
+        ]
+      },
+      {
+        "unit": "U11",
+        "owner": "to-spec-disposable-draft",
+        "runtime_passages": [
+          "M0-P15"
+        ],
+        "proof_ids": [
+          "P3-CANDIDATE-COMPAT-01",
+          "PROMPT4-U11-VIABILITY"
+        ]
+      },
+      {
+        "unit": "U12",
+        "owner": "user-explicit-mutation-authority",
+        "runtime_passages": [
+          "M0-P16"
+        ],
+        "proof_ids": [
+          "P3-CANDIDATE-COMPAT-01",
+          "PROMPT4-U12-VIABILITY"
+        ]
+      },
+      {
+        "unit": "U13",
+        "owner": "tracker-transition-contract",
+        "runtime_passages": [
+          "M0-P17"
+        ],
+        "proof_ids": [
+          "P3-CANDIDATE-COMPAT-01",
+          "PROMPT4-U13-VIABILITY"
+        ]
+      },
+      {
+        "unit": "U14",
+        "owner": "tracker-mutation-read-back",
+        "runtime_passages": [
+          "M0-P18"
+        ],
+        "proof_ids": [
+          "P3-CANDIDATE-COMPAT-01",
+          "PROMPT4-U14-VIABILITY"
+        ]
+      },
+      {
+        "unit": "U15",
+        "owner": "to-spec-draft-disposition",
+        "runtime_passages": [
+          "M0-P19"
+        ],
+        "proof_ids": [
+          "P3-CANDIDATE-COMPAT-01",
+          "PROMPT4-U15-VIABILITY"
+        ]
+      },
+      {
+        "unit": "U16",
+        "owner": "to-spec-return-completion-and-relationships",
+        "runtime_passages": [
+          "M0-P07",
+          "M0-P20",
+          "M0-P21",
+          "M0-P22"
+        ],
+        "proof_ids": [
+          "P3-CANDIDATE-COMPAT-01",
+          "PROMPT4-U16-VIABILITY"
+        ]
+      }
+    ],
+    "h1_passage_map": [
+      {
+        "passage": "H1-P01",
+        "unit": "H1-01",
+        "surface": "Synthesize trigger-based aspect-family inclusion and ceremonial omission",
+        "origin": [
+          "professional-method",
+          "intent-adjacent"
+        ],
+        "method_evidence": "independently-supported",
+        "contribution_mode": "quality-lift",
+        "isolated_runtime": "H1-01",
+        "prompt4_disposition": "accept"
+      },
+      {
+        "passage": "H1-P02",
+        "unit": "H1-02",
+        "surface": "Synthesize objective-led scope-matched verification portfolio and public-seam authority guard",
+        "origin": [
+          "professional-method",
+          "intent-adjacent"
+        ],
+        "method_evidence": "independently-supported",
+        "contribution_mode": "quality-lift",
+        "isolated_runtime": "H1-02",
+        "prompt4_disposition": "reject-no-control-deficit"
+      }
+    ]
+  },
+  "research_classifications": {
+    "packet_sha256": "fff827f6482fafb891968cb8a095ccd1aa4de0ab0ea6ed091526298e63deebc0",
+    "status": "research-complete",
+    "m0_recruited": [
+      "settled-source-baseline",
+      "bidirectional-commitment-trace",
+      "target-reader-handoff-usability",
+      "publication-material-defect-rejection",
+      "freeze-and-reconcile-before-retry"
+    ],
+    "accepted_h1": [
+      "proportionate-applicable-aspect-expression",
+      "scope-matched-verification-portfolio"
+    ],
+    "rejected_or_removed": [
+      "categorical-highest-or-one-seam",
+      "extremely-extensive-story-form",
+      "parent-ready-for-agent",
+      "blind-retry"
+    ],
+    "deferred": [
+      "ears-sentence-patterns",
+      "provider-idempotency-key-until-owned",
+      "conditional-trust-flow-rendering-until-distinct-m0-compliant-deficit"
+    ]
+  },
+  "relationships": {
+    "delta": "none",
+    "preserved": [
+      "wayfinder-recommend-and-stop-to-spec",
+      "improve-codebase-recommend-and-stop-to-spec",
+      "to-spec-load-codebase-design",
+      "to-spec-recommend-and-stop-repo-bootstrap",
+      "to-spec-recommend-and-stop-to-tickets"
+    ]
+  },
+  "evidence_dispositions": [
+    {
+      "id": "current-m0-checkpoint",
+      "identity": "sha256:94521f7c73c756fbeb53de3a04a551007fa473a44108683dd760e42ff5b185b1",
+      "disposition": "exact-reusable",
+      "lane": "specification"
+    },
+    {
+      "id": "current-research-packet",
+      "identity": "sha256:fff827f6482fafb891968cb8a095ccd1aa4de0ab0ea6ed091526298e63deebc0",
+      "disposition": "exact-reusable",
+      "lane": "method-admission"
+    },
+    {
+      "id": "current-canonical",
+      "identity": "campaign-tree-v1:3cdb41fbca411d8c2332c4e9cff52b5ef1000dd28a27422615ac6f150133e06b",
+      "disposition": "historical-admission-only",
+      "lane": "current-observation"
+    },
+    {
+      "id": "historical-c0",
+      "identity": "campaign-tree-v1:9d1a3e45416b8a36a1cdf4cf155de0a193e78df4aa107a9af25608c1b1fc918c",
+      "disposition": "historical-admission-only",
+      "lane": "incumbent-comparison"
+    },
+    {
+      "id": "prior-compact-decision",
+      "identity": "sha256:71b173494a1c51806a329afea03523beb068cbf2cbcd4a6113ed5ec33deb7d43",
+      "disposition": "historical-admission-only",
+      "lane": "prior-lifecycle-and-limits"
+    },
+    {
+      "id": "prior-worker-fixture",
+      "identity": "sha256:e16d50fce206dcd86fdf97a7dd355ed0bd580f5b363d29ad676e0195764df87c",
+      "disposition": "lane-limited",
+      "lane": "fixture-design"
+    },
+    {
+      "id": "prior-root-fixture",
+      "identity": "sha256:4a4583c89cee71e4e8360a125f2dd7f8855e1ede93d72421d5494aa3e701b320",
+      "disposition": "lane-limited",
+      "lane": "rubric-design"
+    },
+    {
+      "id": "prior-behavioral-result",
+      "identity": "campaign:2026-07-24-to-spec",
+      "disposition": "invalidated",
+      "invalidation": [
+        "runtime-identity-changed",
+        "m0-specification-changed",
+        "success-return-token-changed",
+        "caller-forms-changed",
+        "campaign-epoch-changed"
+      ]
+    },
+    {
+      "id": "live-provider-recovery",
+      "identity": null,
+      "disposition": "missing",
+      "lane": "behavioral-provider"
+    },
+    {
+      "id": "installed-runtime",
+      "identity": null,
+      "disposition": "missing",
+      "lane": "prompt5-installation"
+    }
+  ],
+  "runtime_load_profiles": {
+    "current_canonical": {
+      "files": 2,
+      "bytes_proxy": 5664,
+      "whitespace_words_proxy": 748,
+      "lines_proxy": 113
+    },
+    "historical_c0": {
+      "files": 2,
+      "bytes_proxy": 3656,
+      "whitespace_words_proxy": 529,
+      "lines_proxy": 64
+    },
+    "m0": {
+      "status": "materialized",
+      "files": 2,
+      "bytes_proxy": 7771,
+      "whitespace_words_proxy": 997,
+      "lines_proxy": 151,
+      "conditional_files": 0
+    },
+    "h1": {
+      "status": "evaluated",
+      "always_loaded_files_expected": 2,
+      "conditional_files_expected": 0,
+      "accepted_units": [
+        "H1-01"
+      ],
+      "rejected_units": [
+        "H1-02"
+      ]
+    },
+    "unavailable_telemetry": [
+      "tokens",
+      "latency",
+      "cost",
+      "prevalence"
+    ],
+    "h1_01": {
+      "status": "materialized-isolated",
+      "files": 2,
+      "bytes_proxy": 8025,
+      "whitespace_words_proxy": 1030,
+      "lines_proxy": 156,
+      "delta_words_from_m0": 33,
+      "registered_maximum_delta_words": 45
+    },
+    "h1_02": {
+      "status": "rejected-no-control-deficit",
+      "files": 2,
+      "bytes_proxy": 8066,
+      "whitespace_words_proxy": 1035,
+      "lines_proxy": 156,
+      "delta_words_from_m0": 38,
+      "registered_maximum_delta_words": 55
+    },
+    "v1": {
+      "status": "accepted",
+      "files": 2,
+      "bytes_proxy": 8025,
+      "whitespace_words_proxy": 1030,
+      "lines_proxy": 156,
+      "delta_words_from_m0": 33,
+      "registered_maximum_delta_words": 45
+    }
+  },
+  "claim_slots": {
+    "semantic": {
+      "status": "prompt4-v1-passed",
+      "basis": "Exact V1 equals the accepted isolated H1-01 package and passed the shared parameterized heading-bounded semantic owner, machine checks, relationship traces, and forbidden absence checks.",
+      "behavioral_efficacy_claimed": true
+    },
+    "behavioral": {
+      "status": "accepted-bounded",
+      "basis": "M0 passed V01-V13; H1-01 cleared five entry-positive comparisons and repaired wrong-condition non-inferiority; H1-02 was reject-no-control-deficit.",
+      "required_owner": "deploy-prompt-4"
+    },
+    "load": {
+      "status": "exact-proxy-budgets-passed",
+      "basis": "Exact files, bytes, lines, and whitespace-delimited words; no token, latency, cost, or prevalence telemetry.",
+      "direction_claimed": true,
+      "v1_delta_from_m0_words": 33
+    }
+  },
+  "proof": {
+    "m0_fingerprint": "passed",
+    "research_identity_and_status": "passed",
+    "current_tree_identity": "passed",
+    "historical_c0_tree_and_commit_identity": "passed",
+    "synthesis_complete_read_back": "passed",
+    "manifest_schema_validation": "passed",
+    "markdown_gates": "passed-prompt4-affected-4-files-local-links-anchors-fences-tables",
+    "directly_affected_documentation_checks": "passed",
+    "skill_validation": "passed",
+    "diff_checks": "passed-working-and-cached",
+    "allowed_mutation_boundary": "passed",
+    "head_read_back": "b9750babea998c4bc0f5809972a8651934218eca",
+    "m0_exact_inventory_and_hash": "passed",
+    "h1_exact_inventories_hashes_and_deltas": "passed",
+    "fixture_lint": "passed-25-cases-schema-v2",
+    "fixture_lint_map": "passed",
+    "payload_lints": "passed-37-of-37",
+    "payload_comparisons": "passed-12-of-12",
+    "shared_semantic_owner": "passed-current-m0-h1-01-h1-02-and-v1",
+    "forbidden_absence": "passed-all-exact-candidates",
+    "relationship": "passed-no-delta-owner-matched",
+    "invocation": "passed-explicit-only",
+    "behavioral_sampling": "passed-30-valid-2-invalid-zero-credit",
+    "focused_campaign_artifact_tests": "passed-10",
+    "focused_semantic_relationship_tests": "passed-4-plus-final-v1-owner",
+    "prompt4_json_hash_and_fingerprint_integrity": "passed"
+  },
+  "residual_gaps": {
+    "construction": [],
+    "behavioral": [
+      "live-provider-recovery",
+      "idempotency",
+      "eventual-consistency",
+      "mutation-durability"
+    ],
+    "professional": [
+      "method-prevalence",
+      "transfer-beyond-cited-conditions"
+    ],
+    "load": [
+      "token-telemetry",
+      "latency-telemetry",
+      "cost-telemetry",
+      "prevalence"
+    ],
+    "transfer": [
+      "untested-models",
+      "untested-hosts",
+      "untested-reasoning-configurations",
+      "untested-tools",
+      "untested-trackers",
+      "untested-source-families",
+      "untested-authority-variants"
+    ]
+  },
+  "prompt3_artifacts": {
+    "candidate_record": {
+      "sha256": "36f4bf391a2edaf9f484592745ea6da7909d28a9c664049b46834b3f0ac9c186",
+      "status": "candidate-specific-proof-plan-frozen"
+    },
+    "worker_fixture": {
+      "sha256": "5ad982d84268fde9496131d5b18c9bf8b2d7be24508f0e9b7b03df5845234b5a",
+      "schema_version": 2,
+      "case_count": 25,
+      "lint_status": "passed"
+    },
+    "root_registration": {
+      "sha256": "a9d81bebb1289b15b952e40a5a1e85722756da8b6708e3acd707a46d0cbe76b0",
+      "hypotheses_isolated": [
+        "H1-01",
+        "H1-02"
+      ],
+      "sampling_status": "completed-by-prompt4"
+    },
+    "fixture_lint_map": {
+      "sha256": "527472e458b0b8b2a29586377ac0498412bc0c7367d8c3634e7813563fe751b1",
+      "status": "passed"
+    },
+    "dispatch_plan": {
+      "sha256": "7791b324ac08466f1f56f39c77caca727da1926ce55bb903568467a129953b41",
+      "resolved_payload_count": 37,
+      "comparison_count": 12,
+      "lint_status": "passed",
+      "compare_status": "passed"
+    },
+    "semantic_owner": {
+      "owner": "assert_to_spec_semantic_contract",
+      "path_ref": "shared_semantic_owner",
+      "profiles": [
+        "incumbent",
+        "m0",
+        "h1-01",
+        "h1-02",
+        "h1-combined"
+      ],
+      "status": "passed"
+    }
+  },
+  "prompt4_artifacts": {
+    "candidate_record": {
+      "sha256": "99e0e2611a323ce3f31af8d2e33fc93c56528b15125b59cc43f0066f78a3085b",
+      "status": "v1-accepted"
+    },
+    "decision_capsule": {
+      "sha256": "c5f623c846757a771c6bc9238ba344c7be5c370ef18302057aec2235c7a84848",
+      "content_fingerprint_sha256": "da2b9270280250d800f18ff8e32891a2b2807d76464e8e159a97e8d36a0fc875",
+      "decision": "accepted"
+    },
+    "results": {
+      "sha256": "56260daeb772685db39ab69877714da0735aaaf8b89a5fd5ca5d56afc8f2cef3",
+      "valid_behavioral_samples": 30,
+      "invalid_zero_credit_samples": 2,
+      "critical_failures": 0
+    },
+    "active_synthesis": {
+      "sha256": "09bf9861b2df30dbd36cbe510cd32bda1069ca17416c2cdab57580e714ff73cf",
+      "content_fingerprint_sha256": "78453e43cdd5fe881c06d20a1d2d0f0f9401cf8822a46bad7276c1dfe6c6b355"
+    },
+    "v1": {
+      "tree_algorithm": "campaign-tree-v1",
+      "tree_sha256": "47c223639318b041e6c86e6144b7fb23399634ead73e18ddcf306ab8242effeb",
+      "accepted_units": [
+        "H1-01"
+      ],
+      "rejected_units": [
+        "H1-02"
+      ]
+    },
+    "semantic_owner": {
+      "owner": "assert_to_spec_semantic_contract",
+      "path_ref": "shared_semantic_owner",
+      "profile": "h1-01",
+      "status": "passed-v1"
+    },
+    "protocol": {
+      "aw01_source_repair": "recorded-zero-credit-and-family-restart",
+      "aw01_operation_fidelity_rerun": "recorded-zero-credit-and-exact-payload-rerun",
+      "ambient_concurrent_work": "preserved-and-excluded-from-prompt4-evidence"
+    }
+  }
+}

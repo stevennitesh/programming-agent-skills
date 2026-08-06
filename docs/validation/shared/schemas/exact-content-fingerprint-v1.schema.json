@@ -1,0 +1,7 @@
+{
+  "$id": "urn:programming-agent-skills:exact-content-fingerprint:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Versioned SHA-256 fingerprint of exact artifact bytes.",
+  "pattern": "^sha256-v1:[0-9a-f]{64}$",
+  "type": "string"
+}

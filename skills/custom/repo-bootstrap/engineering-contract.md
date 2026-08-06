@@ -2,89 +2,226 @@
 
 Explore imaginatively. Converge under proof. Simplify ruthlessly.
 
-Be adventurous in discovery, conservative in claims, and exacting at Lock.
+This document states durable engineering philosophy, shared concepts, and
+condition-triggered methods. It is not a workflow, checklist, review gate,
+completion contract, or authority to mutate files, Git state, trackers,
+deployments, or external systems.
 
-This contract owns engineering taste, shared runtime language, and cross-cutting discipline. `AGENTS.md` owns repo commands and pointers. Domain docs own product language and decisions. Skills own procedures and local contract slices.
+Repository instructions own local commands and boundaries. Domain records own
+product meaning and settled decisions. Skills own procedures, checks, stopping
+conditions, and outputs.
 
-Follow `docs/agents/domain.md` to the relevant glossary and ADRs. Preserve accepted terms and decisions across specs, issues, code, tests, and docs.
+## How To Read This Contract
 
-## Shared Engineering Language
+- **Must** marks a correctness, safety, integrity, or honesty floor.
+- **Prefer** marks the default engineering choice. Deviation needs a supported
+  reason; authority is required only when the deviation changes a commitment.
+- **Method** names a practice triggered by a stated condition. Methods are not
+  universal steps. When a condition applies, the outcome is binding; the
+  responsible task or skill owns the procedure and evidence.
 
-- **Source trace:** the governing request or spec, repo instructions, domain decisions, baseline, constraints, code, and tests.
-- **Bounded slice:** the smallest useful scope that preserves commitments and can produce evidence.
-- **Commitment boundary:** product intent, acceptance criteria, user-visible behavior, public and data contracts, security/privacy posture, and agreed scope. Technique stays agent-owned.
-- **Load-bearing internal:** internal behavior that determines semantic correctness and therefore needs a contract and proof.
-- **Semantic correctness:** correctness of meaning, not output existence.
-- **Semantic proof:** evidence of semantic correctness through an observable seam.
-- **Proof seam:** the caller-facing interface or observable boundary where meaning can be established.
-- **Proof lane:** the repo-owned command, fixture, workflow, or artifact that exercises one proof seam.
-- **Evidence:** inspectable support for a claim.
-- **Tracer bullet:** one narrow, observable path through the real system.
-- **Fixed point:** the pinned review baseline; it does not mean fixing and reviewing until no findings remain.
-- **Review snapshot:** the immutable tree or captured target compared with a fixed point for one review invocation.
-- **Charter:** the caller-recorded outcome, acceptance, supported paths, required proof, commitment boundary, non-goals, fixed point, and repair budget for one implementation campaign.
-- **Repair generation:** one caller-owned batch of admitted in-scope findings, its proof, and one successor review snapshot under the same Charter.
-- **Spec / Standards:** originating commitments / repo conventions and maintainability. Review them separately.
-- **Residual risk:** uncertainty or skipped proof remaining after validation.
-- **Disposable / durable:** `.tmp/` holds disposable work; `.scratch/` holds durable, version-controlled local state.
-- **Lock:** reconciliation and evidence at the authorized completion boundary.
+No generic rule overrides an explicit product commitment or repository
+contract.
 
-## Engineering Taste
+## Shared Concepts
 
-- **Imagination before commitment.** Do not confuse the first workable idea with the best local design. When uncertainty matters, inspect alternatives, invert assumptions, and use experiments to discover what the code can teach.
-- **Experiments over speculation.** Prefer a disposable spike, tracer bullet, or runnable prototype to extended guesswork. Keep experiments cheap enough to discard and real enough to change the decision.
-- **Semantic proof over plausible output.** Prove that the result means the right thing through an observable seam. Treat plans, summaries, memory, and confident narration as maps, not proof.
-- **Deep simplicity.** Prefer locality, small caller-facing surfaces, and complexity hidden behind clear ownership. Add or deepen an abstraction only when the proved system becomes easier to change, test, or reason about.
-- **Stewardship.** Preserve unrelated work and accepted language. Remove code and artifacts made unused by the selected slice; preserve pre-existing dead work outside it. Leave the slice more coherent without laundering adjacent cleanup into scope.
+- **Bounded slice:** the smallest useful scope that preserves commitments and
+  is capable of producing meaningful evidence.
+- **Integrated shape:** the implementation path with the lowest total caller,
+  maintainer, migration, operational, coordination, and proof burden that works
+  through the real behavior owner and callers.
+- **Commitment boundary:** product intent, accepted behavior, public and data
+  contracts, security and privacy posture, compatibility promises, and agreed
+  scope. Technique remains agent-owned until it changes a commitment.
+- **Proof seam:** the caller-facing interface or observable boundary where
+  correct meaning can be established.
+- **Proof lane:** a repository-owned fixture, check, workflow, or artifact that
+  exercises a proof seam. It proves only the behavior and conditions it covers.
+- **Change closure:** removal or justified retention of paths made obsolete,
+  redundant, or contradictory by a change.
+- **Residual risk:** material uncertainty or unexecuted proof that limits a
+  claim.
 
-## Tight Engineering Spine
+## Keep Faith With The Work
 
-```text
-Explore -> Choose -> Prove -> Expand -> Simplify -> Lock
-```
+### Preserve Commitments And Domain Truth — Must
 
-- **Explore:** build the Source Trace; pin the fixed point, commitments, and bounded slice; inspect real seams and generate credible alternatives. Keep probes disposable. Touch production during Explore only for the smallest reversible probe inside the authorized boundary.
-- **Choose:** select the strongest local approach and one tracer bullet. Choose technique freely inside the bounded slice. Stop for a user decision when a better approach changes a commitment. Stay inside authorized filesystem, Git, tracker, deployment, and external-mutation boundaries.
-- **Prove:** establish semantic proof through the smallest meaningful seam. Observe RED before GREEN when behavior and a useful test seam are known. Treat prototypes as design evidence, not production proof.
-- **Expand:** after the tracer bullet works, cover the remaining requirements, edge cases, failure modes, and integrations. Reconsider the design with what the proof revealed. Widen proof and required coverage while holding the bounded slice.
-- **Simplify:** remove scaffolding, collapse accidental complexity, sharpen names and boundaries, and deepen abstractions only when correctness, locality, testability, or maintainability improves. Keep proof green.
-- **Lock:** run canonical repo checks, reconcile work state, review Spec and Standards separately, record evidence and residual risk, and stop at the authorized boundary.
+Trace behavior to the governing request, repository authority, accepted domain
+language, invariants, decisions, and contracts. Keep meaning consistent across
+code, tests, interfaces, data, and documentation.
 
-Tiny work may compress to `Explore -> Prove -> Lock`; uncertain, risky, user-facing, multi-file, data, security, or architecture work uses the full spine. Compress steps, not gates.
+Every decision-bearing acceptance term, threshold, unit, comparison, or
+equivalence needs an operational definition or exact authoritative owner.
+Surface ambiguity and contradiction instead of silently inventing meaning.
 
-## Proof Discipline
+Implementation technique remains free where commitments leave it free.
 
-Claims need fresh, proportionate evidence from current state. Map each claim to the command, observation, or read-back that proves it. A focused check proves only its slice; record broader skipped checks and residual risk instead of extrapolating.
+### Make Correctness Robust — Must
 
-Use maintained repo configuration, CI, and contributor docs as command authority. When `AGENTS.md` commands drift, surface the mismatch and update the primer through its normal approval boundary.
+Correctness includes behavior over relevant inputs, states, lifecycle
+transitions, failures, supported environments, accessibility, and observable
+effects—not merely a successful happy path.
 
-Match proof to meaning: filtering needs included, excluded, and edge fixtures; transformations need known inputs, outputs, and invariants; ordering needs thresholds or relative order; persistence needs before/after evidence and constraints.
+Where the supported contract exposes them, preserve atomicity, recovery, retry,
+idempotency, compatibility, cancellation, concurrency, and observability
+semantics. Defect correction should address the causal owner and prevent the
+supported failure across affected callers rather than mask one symptom.
 
-**State-boundary matrix.** When correctness depends on cached, persisted, resumed, grouped, projected, or session-scoped state, derive proof from the supported semantic branches: initial or absent state; current reusable state; legacy or incompatible state; each public access path; supported configuration or profile variants; and relevant lifecycle transitions such as reuse, invalidation, expiry, restart, or exit. Cover every distinct branch and high-risk interaction, not a blind Cartesian product. A broad green suite does not replace missing branch evidence.
+Do not add machinery for risks the system cannot reach.
 
-**Negative control.** Prove a new validator, hook, dependency boundary, or enforcement rule by observing the clean case pass, one controlled violation fail for the intended rule, and the restored case pass. Preserve and restore the starting state.
+### Respect Trust And Data Boundaries — Must
 
-Support work earns its place only when it directly unblocks or de-risks a tracer bullet and has observable proof.
+Treat crossings between differently trusted callers, services, files,
+processes, users, and privilege levels according to their actual contracts.
 
-When meaningful execution is unsafe, irreversible, or blocked on human access, use the strongest safe structural proxy: trace the promised inputs, transitions, outputs, and failure branches. Name every unrun behavior and its residual risk. Never report the proxy as runtime or semantic proof.
+Validate untrusted or contract-sensitive input at the boundary that owns it
+when a machine consumes it to affect behavior, state, authority, or mutation.
+Convert accepted input once into a validated typed internal representation;
+trusted internal code relies on that representation until another trust
+boundary is crossed. Unstructured output remains evidence unless a consumer
+parses or acts on it.
+Preserve data meaning, identity, integrity, provenance, schema, units, ordering,
+and lifecycle where applicable. Protect authentication, authorization, secrets,
+confidentiality, privacy, encoding, and external effects in proportion to the
+governing contract and potential harm.
 
-For review, a caller-supplied fixed point wins. Otherwise discover the default branch and merge base, state the resolved baseline, and ask only when discovery is ambiguous.
+Simplification never discounts these obligations.
 
-## Work State And Workers
+### Keep Evidence Honest — Must
 
-Production changes begin after Choose, except for the authorized Explore probe above.
+Make no claim broader than fresh, relevant evidence supports. A focused check
+proves only its covered slice. Tie behavioral claims to an observable proof
+seam and a proof lane that actually exercises the claimed meaning.
 
-**Refresh after interaction.** Before resuming mutation after user feedback, worker return, or an external wait, refresh Git and work state and reread every in-scope file you will touch. Reconcile intervening edits; never overwrite from memory.
+Mocks, generated artifacts, structural inspection, and plausible narration do
+not establish live behavior by themselves. When direct execution is unsafe or
+unavailable, use the strongest safe proxy and identify it as a proxy.
 
-A **staged worker** returns one bounded staged patch and focused proof to an owner. A **lane worker** returns one bounded commit and proof from an isolated worktree. Neither owns integration, formal review, tracker closeout, or push.
+Keep assumptions, skipped proof, unsupported conditions, and residual risk
+visible. Residual risk is not failure; hidden or understated risk is.
 
-## Lock
+### Practice Stewardship — Must
 
-Lock only when:
+Preserve unrelated behavior, work, and durable decisions. Improve the selected
+scope without silently widening it. Remove only fallout owned by the selected
+change; do not disguise adjacent cleanup as necessary work.
 
-- canonical checks ran or every skip has a reason;
-- each nontrivial diff passed separate Spec and Standards review from its fixed point;
-- every `.tmp/` path was deleted or intentionally preserved;
-- in-scope `.scratch/` state entered review and, when authorized, staging;
-- current Git state, evidence, residual risk, and out-of-slice follow-ups were recorded;
-- the mutation boundary held and remaining work was handed off.
+## Shape Code For Understanding
+
+### Deep Simplicity — Prefer
+
+Give callers a small, honest interface that hides necessary complexity and has
+a clear owner. Earn abstraction, indirection, adapters, configurability, and
+seams through supported variation, repeated policy, or a real external
+boundary.
+
+Remove pass-through layers and ceremonial abstractions that do not reduce
+caller burden.
+
+Prefer deepening or modifying the current behavior owner before adding another
+path. Retain parallel behavior only for an explicit compatibility, migration,
+trust, lifecycle, or ownership boundary with named callers, proof, owner,
+reason, selection or cutover behavior, and Removal Trigger.
+
+### Local Readability — Prefer
+
+Make important behavior understandable where it is owned and used. Let names,
+types, units, state ownership, and control flow reveal meaning and valid
+transitions. Comment surprising reasons and constraints, not syntax the reader
+can already see.
+
+### Fit Before Novelty — Prefer
+
+Start with repository conventions, owned abstractions, standard or native
+facilities, platform capabilities, and established dependencies. Novelty is
+neither a goal nor a defect, and the current owner is a default rather than an
+immutable constraint.
+
+Add a new abstraction, dependency, framework, or mechanism only when its
+demonstrated value exceeds its learning, integration, maintenance, and failure
+costs. Select the integrated shape with the lowest total burden. Replace or
+relocate ownership only when direct evidence shows ownership is the material
+problem and one bounded migration can close the displaced path.
+
+### Converge Efficiently — Prefer
+
+Use the least context, coordination, artifacts, mutations, and validation that
+can support the claim. Prefer direct data flow, existing primitives,
+appropriate data structures, focused proof, and reuse of valid evidence.
+Remove avoidable work, allocation, I/O, and repeated computation when the cost
+is evident. Add caching, batching, concurrency, or optimization machinery only
+for measured or clearly material cost.
+
+### Build Only What Is Needed — Prefer
+
+Apply YAGNI to speculative behavior, configuration, compatibility, flexibility,
+and extensibility.
+
+Apply DRY to shared meaning and policy, not every repeated line. Repetition may
+remain when unification would couple different meanings, owners, change rates,
+or failure modes.
+
+A deliberate limit is acceptable when its ceiling is known and there is a clear
+reason to reconsider it.
+
+### Keep Tests Lean And Meaningful — Prefer
+
+Treat tests as durable evidence for behavior, invariants, failure paths, and
+risks—not as a diary of tickets or edits. Reuse or extend a clear existing test
+before adding a separate one.
+
+A separate test earns its place through a distinct behavior, invariant, oracle,
+proof seam, state or failure branch, material risk, or need for diagnostic
+isolation. Consolidation must preserve coverage and diagnostic clarity.
+
+Test count is not a goal. Unique evidence, clarity, maintenance burden, and
+execution cost determine the portfolio.
+
+## Methods When The Condition Applies
+
+### Reason Across State Boundaries — Method
+
+When correctness depends on cached, persisted, resumed, grouped, projected,
+distributed, or session-scoped state, distinguish the supported states, access
+paths, and lifecycle transitions that can change meaning.
+
+Cover distinct behavior and high-risk interactions, not a blind Cartesian
+product.
+
+### Use A Negative Control — Method
+
+When adding or changing a validator, hook, policy check, dependency boundary,
+or other enforcement mechanism, show that the rule is causal. A pure stateless
+validator needs one representative conforming input.
+A controlled violation fails for the intended reason.
+Repeat the conforming case after
+failure only when state, caching, hooks, partial mutation, or lifecycle
+contamination could affect later behavior.
+
+### Prove Durable Artifacts Proportionally — Method
+
+When a change creates or changes a durable artifact contract, prove only the
+properties its consumer and the claim require: schema or format for machine
+consumption, identity and destination for persistence or routing, read-back
+after external or durable mutation, and caller- or consumer-level behavior when
+integration or publication is claimed. Serialization or structural validity
+alone does not prove semantic correctness or consumption.
+
+### Close Displaced Paths — Method
+
+When a change replaces or makes behavior redundant, trace the affected
+implementations, callers, registrations, exports, flags, tests, configuration,
+documentation, and migrations.
+
+Remove obsolete or duplicate paths. Retain an older path only for a supported
+compatibility obligation with a clear reason, owner, evidence, and removal
+condition.
+
+### Measure Consequential Claims — Method
+
+When a decision or claim depends on performance, capacity, reliability,
+latency, cost, or resource use, measure before claiming improvement.
+
+Bind the result to a comparable workload, environment, build, method, sample
+and material variation, and baseline or budget. If meaningful measurement is
+unavailable, narrow the claim and record the residual risk.

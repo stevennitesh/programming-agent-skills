@@ -1,5 +1,17 @@
 # Skill Router Residual Routing Synthesis
 
+> Status (2026-07-28): historical design evidence. Later authorized Author
+> passes clarified the active explicit-only routes from settled source and the
+> destination-before-scale tie-breaker: unresolved user-owned destination
+> shaping precedes Wayfinder, which begins only after a bounded destination
+> still has interdependent decisions or prerequisites, a non-conversational
+> resolver, and a multi-session tracker need. Canonical
+> `skills/custom/skill-router/` is runtime authority at tree SHA-256
+> `bf922ac7439ee7c00a17daa66b57399f17273a3eb57fcb6a791374bd10e7736e`.
+> Current review routes are `$change-review` and
+> `$high-assurance-review`; later former-name references are historical. No
+> installed sync or fresh wording-efficacy proof is claimed.
+
 Status: design reference and extraction map. The implicit residual-router candidate is preserved under `skills/experimental/skill-router/`; custom and installed copies remain the explicit-only active control. Fresh-context behavior promotion and coordinated caller validation remain outstanding.
 
 Runtime authority remains in:
@@ -263,7 +275,9 @@ Apply these rules in order:
 4. **Direct leaf before orchestrator.** One source, runnable, causal, stakeholder, domain, or bounded interface gap goes to its leaf owner. Wayfinder and Improve Codebase require their broader predicates.
 5. **Settled delivery before renewed discovery.** Settled source goes to To Spec or To Tickets; a selected ready item goes to Implement; a ready parent graph goes to Parallel Implement only under its explicit parent-delivery boundary.
 6. **Smallest judgment surface.** Conversation-only uncertainty goes to Grilling; repo-backed interview plus durable domain capture goes to Grill With Docs; settled domain persistence goes to Domain Modeling.
-7. **Artifact state before scale.** An existing diff routes to Review or Convergent PR Review; an immutable repository baseline routes to Audit Codebase. Size alone never turns one into another.
+7. **Artifact state before scale.** An existing diff routes to Change Review
+   or High-Assurance Review; an immutable repository baseline routes to Audit
+   Codebase. Size alone never turns one into another.
 8. **One bounded change before broad improvement discovery.** A proved behavior-preserving reduction goes to Simplify Code; a framed module seam goes to Codebase Design; broad classification and ranking goes to Improve Codebase.
 9. **`none` before speculation.** If no destination's predicate remains justified, return `none`.
 
@@ -310,8 +324,8 @@ This taxonomy owns only the Router-side observable ingress for every supported d
 | `$diagnosing-bugs` | Broken, failing, flaky, slow, environment-only, or production-only behavior has uncertainty in expected behavior, exact symptom, cause, or a trusted red-capable reproduction | All four facts are known and implementation is authorized, or only an existing diff needs review |
 | `$tdd` | Settled new behavior has a red-capable proof seam, or a bug's expected behavior, exact symptom, cause, and trusted red-capable reproduction are all known | Any bug fact is uncertain, the question is throwaway design evidence, or the requested work is broad implementation ownership |
 | `$resolving-merge-conflicts` | An in-progress merge, rebase, cherry-pick, or revert is conflicted, or files contain conflict markers; status or explanation remains read-only | Similar-looking content has no conflict state or markers, the underlying failure is causal uncertainty, or the user asks for ordinary diff review |
-| `$review` | One ordinary branch, WIP, staged, or since-X diff needs fixed-snapshot Spec and Standards review | The target is a local PR or high-risk bounded diff, an immutable repository baseline rather than a diff is in scope, or edits are requested without review |
-| `$convergent-pr-review` | One immutable local PR, release candidate, or bounded high-risk diff needs independent fresh-context review and one release decision | The request is an open-ended repository audit, ordinary low-risk diff, or implementation campaign rather than review |
+| `$change-review` | One ordinary branch, WIP, staged, since-X diff, or ordinary PR needs fixed-snapshot Spec and Standards review | The target is a release candidate or supported high-risk change, an immutable repository baseline rather than a diff is in scope, or edits are requested without review |
+| `$high-assurance-review` | One immutable release candidate or supported high-risk diff or PR needs independent fresh-context review and one release decision | The request is an open-ended repository audit, ordinary diff or PR, or implementation campaign rather than review |
 | `$audit-codebase` | One immutable repository baseline needs a caller-bounded correctness, domain robustness, methodology, model-risk, leakage, validation, analytics, or performance audit without a release decision | A pending diff is the target, edits are requested, or broad improvement discovery rather than defect/evidence accounting is desired |
 | `$simplify-code` | One bounded region has a high-value behavior-preserving reduction, or the user explicitly requests a finite bounded `until-clean` campaign | New behavior, bug fixing, architectural redesign, broad ranking, or an unbounded cleanup campaign is required |
 | `$improve-codebase` | A bounded codebase needs evidence-backed discovery, classification, and ranking of what to eliminate, concentrate, retain, or investigate before one candidate is selected | One reduction, interface question, defect audit, ready item, or review target is already framed |
@@ -476,7 +490,11 @@ Repo Bootstrap does not compete topically with Implement, To Tickets, Triage, or
 
 ## Why One Clarification
 
-One decisive question is enough for route selection when the residual sits at a sharp boundary such as Grilling versus Grill With Docs, Review versus Convergent PR Review, or Implement versus To Tickets. More questions would turn the Router into the interview, diagnosis, audit, or planning owner it is supposed to select.
+One decisive question is enough for route selection when the residual sits at
+a sharp boundary such as Grilling versus Grill With Docs, Change Review versus
+High-Assurance Review, or Implement versus To Tickets. More questions would
+turn the Router into the interview, diagnosis, audit, or planning owner it is
+supposed to select.
 
 When no single answer decides, `none` is safer and more truthful than an unbounded clarification loop.
 
@@ -588,11 +606,11 @@ This matrix supplies cases, not runtime rules. Normative claims point to their L
 | `I1-I3 / E1,E3` | `R1,R4,R5` | [Caller And Residual Packet Contract](#caller-and-residual-packet-contract) | A terminal owner supplies every required field and receives one recommendation | Difficult, waiting, unfinished, nonterminal, or incomplete work is accepted as residual | Caller packet evaluation and relationship test |
 | `I1-I3 / E1` | `R1,R5` | [Authority And Mutation Boundary](#authority-and-mutation-boundary) | Router performs only route-changing reads and returns without execution | Router edits, claims, plans, invokes the destination, or promises destination admission | Tool trace and output audit |
 | `I1-I3 / E2` | `R1,R3,R5` | [Preference And Tie-Breaker Contract](#preference-and-tie-breaker-contract) | A ready item in a repo with missing required setup selects `$repo-bootstrap`; the same item with compatible setup selects `$implement` | Setup always wins even for work that does not require the setup surface, or incompatible setup is ignored | Fixed repo-state pair and structural bootstrap tests |
-| `I1-I3 / E2` | `R1,R5` | [Current-state precedence](#preference-and-tie-breaker-contract) | Marker-only conflict selects `$resolving-merge-conflicts`; an ordinary existing diff selects `$review`; raw intake selects `$triage` | Broad topic wording overrides the current operational state | State-boundary route fixtures |
+| `I1-I3 / E2` | `R1,R5` | [Current-state precedence](#preference-and-tie-breaker-contract) | Marker-only conflict selects `$resolving-merge-conflicts`; an ordinary existing diff selects `$change-review`; raw intake selects `$triage` | Broad topic wording overrides the current operational state | State-boundary route fixtures |
 | `I1-I3 / E2` | `R1,R5` | [Shape taxonomy](#shape-evidence-and-context-transfer) | Conversation-only, repo-backed durable interview, settled domain persistence, and tracker campaign select Grilling, Grill With Docs, Domain Modeling, and Wayfinder respectively | Size, question count, or generic fog selects Wayfinder; settled persistence reopens grilling | Four-way fresh-context route set |
 | `I1-I3 / E2` | `R1,R5` | [Evidence leaves](#shape-evidence-and-context-transfer) | One source, runnable, causal, external-stakeholder, or interface gap selects Research, Prototype, Diagnosis, Questionnaire, or Codebase Design | One leaf gap selects Wayfinder or Improve Codebase | Leaf-versus-orchestrator samples |
 | `I1-I3 / E2` | `R1,R5` | [Settled delivery taxonomy](#settled-delivery-and-incoming-work) | Settled parent source, several slices, one selected item, and one explicitly requested ready graph select To Spec, To Tickets, Implement, and Parallel Implement | Available concurrency selects Parallel Implement; unsliced work selects Implement | Delivery-state fixtures and route coverage test |
-| `I1-I3 / E2` | `R1,R5` | [Review taxonomy](#diagnosis-proof-review-and-existing-code) | Ordinary diff, high-risk local PR, and immutable repository baseline select Review, Convergent PR Review, and Audit Codebase | Severity or repository size alone changes the artifact-state route | Fixed-snapshot route fixtures |
+| `I1-I3 / E2` | `R1,R5` | [Review taxonomy](#diagnosis-proof-review-and-existing-code) | Ordinary diff or PR, release or supported high-risk candidate, and immutable repository baseline select Change Review, High-Assurance Review, and Audit Codebase | PR existence, severity, or repository size alone selects the high-risk route | Fixed-snapshot route fixtures |
 | `I1-I3 / E2` | `R1,R5` | [Existing-code taxonomy](#diagnosis-proof-review-and-existing-code) | One proved reduction, one framed seam, broad ranked discovery, and uncertain bug select Simplify Code, Codebase Design, Improve Codebase, and Diagnosis | Broad improvement or architecture wording absorbs a bounded ready owner | Four-way existing-code samples |
 | `I1-I3 / E2,E3` | `R1,R5` | [Wayfinder Pre-Screen](#wayfinder-pre-screen) | All four pre-screen predicates select Wayfinder provisionally and leave Admission to Wayfinder | Question-only, domain-only, one-leaf, settled, unbounded, or tracker-unavailable work selects Wayfinder | Positive case plus each negative branch |
 | `I1-I3 / E3` | `R1,R4,R5` | [Loop And Idempotence Guards](#loop-and-idempotence-guards) | An unchanged Wayfinder rejection selects a narrower owner or `none`; an active Grill With Docs session returns Grilling's Evidence gap with its current Domain Delta; repeated packets return the same result | Router selects itself, returns unchanged work to its rejecting caller, retries Wayfinder, re-enters the composer for its component gap, confirms an owned recommendation, or changes route without evidence | Multi-turn fixed-packet evaluation |

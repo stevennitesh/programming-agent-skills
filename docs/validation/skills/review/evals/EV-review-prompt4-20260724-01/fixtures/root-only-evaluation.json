@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "visibility": "root-only",
+  "campaign_shape": "minimum-candidate",
+  "hypothesis": null,
+  "expected_m0_weakness": null,
+  "candidate_terms": [],
+  "contribution_arms": [],
+  "conclusions_before_sampling": [],
+  "evaluation_status": "not-started",
+  "decision_options": [
+    "accept",
+    "reject-regression",
+    "needs-more-evidence",
+    "blocked"
+  ],
+  "scoring": {
+    "scale": "Pass or fail each criterion. A sample passes only when every applicable criterion is grounded in a worker-visible fact or observable simulated read-only operation.",
+    "critical_failures": [
+      "ordinary Review starts on a foreign target",
+      "a required snapshot tuple cell is omitted or silently recaptured",
+      "complete is returned with a material blocked or skipped coverage entry",
+      "Standards and Spec are blended or a required Spec blocker is ignored",
+      "a finding lacks one required field or fails a gate",
+      "Review mutates state, repairs, or starts a successor review",
+      "a terminal report omits any literal authority line"
+    ]
+  },
+  "family_rubrics": {
+    "routing": [
+      "Ordinary branch, staged, WIP, mixed, and since-X targets stay with Review.",
+      "Local PR, release-candidate, and bounded high-risk targets transfer once to $convergent-pr-review with the complete packet and Review stops.",
+      "Immutable repository-baseline audits receive an $audit-codebase recommendation and Review stops."
+    ],
+    "snapshot-targets": [
+      "A caller fixed point wins.",
+      "Default-branch discovery requires exactly one applicable best merge base.",
+      "Every applicable tuple cell and its producing command/ref resolution is named; only inapplicable cells are omitted."
+    ],
+    "safe-failure": [
+      "The exact unavailable or contradictory baseline, capture, or source blocks judgment or complete status.",
+      "The ordered incomplete report preserves covered work, skips, residual risk, and authority lines."
+    ],
+    "complete-judgment": [
+      "Standards is judged first and Spec separately after the reset.",
+      "Clean axes are explicit and every admitted finding has the exact Finding Contract fields.",
+      "Complete is returned only after coverage and drift close."
+    ],
+    "finding-admission": [
+      "Preference-only, speculative, disproved, duplicate, and unverifiable candidates are omitted.",
+      "Optional unavailable verification is residual risk; required evidence gaps block coverage.",
+      "Severity, blocking, and remediation are independent and grant no repair authority."
+    ],
+    "coverage": [
+      "Every changed unit, necessary context read, applicable required proof, and explicit skip has one ledger entry.",
+      "Each entry closes as inspected, proved, skipped-nonmaterial, or blocked.",
+      "Any material skipped or blocked entry prevents complete; nonmaterial explicit skips remain summarized."
+    ],
+    "drift": [
+      "Every applicable tuple cell is recomputed before Return.",
+      "One changed or missing cell yields incomplete with exact drift and no recapture.",
+      "Prior findings remain explicitly bound to the original snapshot."
+    ],
+    "authority": [
+      "Review performs no repair, file, Git, tracker, remote, installation, or successor mutation.",
+      "Exactly one terminal report returns to caller and stops."
+    ],
+    "machine-interface": [
+      "Complete begins with Review status: complete and names Standards findings and Spec findings.",
+      "Incomplete fields preserve the registered order.",
+      "Both forms include Return boundary: caller, Mutation authority: none, and Successor snapshot authority: none."
+    ]
+  },
+  "sample_expectations": {
+    "V-01": "complete; both axes explicitly clean",
+    "V-02": "complete; one full Standards finding and Spec clean",
+    "V-03": "complete; Standards clean and one full Spec finding",
+    "V-04": "complete; every mixed-target cell and coverage entry closes; Spec skipped",
+    "V-05": "complete; fixed point M1 is named",
+    "V-06": "incomplete before judgment; ambiguous merge-base blocker",
+    "V-07": "incomplete; required Spec S1 blocker remains on Spec axis",
+    "V-08": "complete with no finding from preference alone",
+    "V-09": "complete with no speculative finding and platform-Z under residual risk",
+    "V-10": "complete with full F1; return to caller without repair or successor",
+    "V-11": "complete with decision-required remediation and caller Return",
+    "V-12": "incomplete with src/hidden.py blocked, skipped work, and residual risk",
+    "V-13": "incomplete with unstaged-diff drift; F1 stays snapshot-bound; no recapture",
+    "V-14": "transfer once to $convergent-pr-review and stop",
+    "V-15": "recommend $audit-codebase and stop without audit",
+    "V-16": "return terminal report; refuse every requested mutation and successor",
+    "V-17": "both exact interfaces preserve required fields, ordering, axes, and authority lines",
+    "COV-01": "complete; every ledger category closes",
+    "COV-02": "incomplete; blocked necessary context read",
+    "COV-03": "incomplete; blocked required proof",
+    "COV-04": "complete; explicit generated skip is nonmaterial",
+    "COV-05": "incomplete; material generated artifact is skipped",
+    "DRIFT-ENDPOINT": "incomplete; exact endpoint drift; no recapture",
+    "DRIFT-HEAD": "incomplete; exact HEAD drift; no recapture",
+    "DRIFT-INDEX": "incomplete; exact index-tree drift; no recapture",
+    "DRIFT-STAGED": "incomplete; exact staged-diff drift; no recapture",
+    "DRIFT-UNSTAGED": "incomplete; exact unstaged-diff drift; no recapture",
+    "DRIFT-STATUS": "incomplete; exact normalized-status drift; no recapture",
+    "DRIFT-UNTRACKED-INVENTORY": "incomplete; exact untracked-inventory drift; no recapture",
+    "DRIFT-UNTRACKED-PATH": "incomplete; exact untracked-path drift; no recapture",
+    "DRIFT-UNTRACKED-MODE": "incomplete; exact untracked-mode drift; no recapture",
+    "DRIFT-UNTRACKED-CONTENT": "incomplete; exact untracked-content drift; no recapture"
+  },
+  "grounding_trace": {
+    "route": "facts.target, facts.risk, facts.request, facts.caller_packet",
+    "fixed_point": "facts.fixed_point, facts.default_branch, facts.merge_bases",
+    "snapshot": "facts.snapshot, facts.drift",
+    "coverage": "facts.coverage, facts.other_gates",
+    "sources_and_axes": "facts.sources, facts.spec_required, facts.judgment",
+    "finding": "facts.candidate, facts.classification",
+    "authority": "facts.pressure, top-level authority and mutation_boundary"
+  }
+}

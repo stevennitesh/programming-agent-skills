@@ -1,0 +1,137 @@
+{
+  "schema": "to-tickets-prompt4-results-v1",
+  "decision": "reject-no-control-deficit",
+  "execution": {
+    "model": "gpt-5.6-sol",
+    "host": "Codex fresh-context subagent",
+    "reasoning_configuration": "high",
+    "tools": [
+      "read-only runtime package",
+      "read-only worker fixture facts",
+      "no live tracker or repository mutation tools"
+    ],
+    "authority": "Read-only simulated ticket-graph construction and judgment from supplied facts only.",
+    "unavailable_telemetry": [
+      "per-sample token count",
+      "per-sample latency"
+    ]
+  },
+  "identities": {
+    "m0_runtime_tree_sha256": "480f837cde4088e41ff7a4ada97be9df634e0ba73cba55fb9c786873d95e40d3",
+    "original_h1_runtime_tree_sha256": "53cefaa38d159937655dabf58123a7215ab8d88112abf2732ce7f982d5f03e91",
+    "final_h1_runtime_tree_sha256": "480f837cde4088e41ff7a4ada97be9df634e0ba73cba55fb9c786873d95e40d3",
+    "v1_runtime_tree_sha256": "480f837cde4088e41ff7a4ada97be9df634e0ba73cba55fb9c786873d95e40d3",
+    "worker_fixture_sha256": "9028a74e9e9519463b0a00b350098c8750d4cbbdb08d231a66ad6ebae80cd8ec",
+    "root_registration_sha256": "5e14a5932cfa5e9719a20752b7b068b247fe42456b1ca762b530082531415049",
+    "dispatch_plan_sha256": "21f922dd3b79a87e5bdf9c62475512d7df42a4d1d9bd00f049f56a732caa13d7"
+  },
+  "protocol_deviations": [
+    {
+      "id": "D01",
+      "kind": "source-completeness-repair",
+      "affected_samples": ["V01:m0", "V02:m0", "V03:m0", "V06:m0", "V08:m0"],
+      "old_dispatch_hashes": [
+        "ba15385a1e3aac4faaa945e74a01104d6c7ca3de068fc5c167ccd8660fd5866d",
+        "5ce1a7859c0998f005b7b951d555dbea3f537a0f1158d165ed806cdba29f8e73",
+        "0bb2fdcd288c5765fb3599208b87bfeb5a4955b0e45098958afdfb8db8130515",
+        "bf91c88caba7d6a15c5c4e442d4c6b0662bbd5d5736758045613437738bde8e6",
+        "49e6b0bb2ff645d3c76b8fa20fe2df9533a1ca0f85e5a174c187b48f94249f7e"
+      ],
+      "facts_changed": true,
+      "credit": 0,
+      "disposition": "All five samples invalidated; task and rubric stayed fixed; fixture authority and V01/V03/V08 facts were refrozen before restart."
+    },
+    {
+      "id": "D02",
+      "kind": "source-completeness-repair",
+      "affected_samples": ["V10:m0", "V12:m0"],
+      "old_dispatch_hashes": [
+        "cd285d680999d7a8b94b9c5da5522f777389debb19ff7f8a7de2b4c4aa7a6757",
+        "d055831e4fc56fd2f62c97b4e8f657821755d7daabac46d39ac24dc861ba3b4e"
+      ],
+      "facts_changed": true,
+      "credit": 0,
+      "disposition": "Both samples invalidated and their family gates restarted after adding settled branch and simulated completion evidence."
+    },
+    {
+      "id": "D03",
+      "kind": "source-completeness-repair",
+      "affected_samples": ["V18:m0"],
+      "old_dispatch_hashes": ["375e3cb0552e17444297c63d05fdd7beb28d699f3c3920518dd23876c71a77fe"],
+      "facts_changed": true,
+      "credit": 0,
+      "disposition": "Sample invalidated and restarted after recording that the category role is optional and roleless activation is valid."
+    },
+    {
+      "id": "D04",
+      "kind": "source-completeness-repair",
+      "affected_samples": ["V04:m0", "V09:m0"],
+      "old_dispatch_hashes": [
+        "8be48433b56893e19ab866bc0f9ec1e5fd3d010f33208c14a5ce3641c70b292d",
+        "80ecc99c05b3b955cf8bcca99ef9a0830e32790ce30388ece7ab7a463e9c4dfc"
+      ],
+      "facts_changed": true,
+      "credit": 0,
+      "disposition": "Both samples invalidated and restarted after adding source-authorized simulated publication and final read-back evidence."
+    }
+  ],
+  "m0_viability": {
+    "required": 24,
+    "valid": 24,
+    "passed": 24,
+    "critical_failures": 0,
+    "decision": "viable",
+    "samples": [
+      {"case": "V01", "family": "invocation", "dispatch_sha256": "5db213a8cd86f46db165d75772994c62c1526f7f4583bafaf56046a397b9b9d7", "sample": "eval2_v01_m0", "terminal": "ready-graph", "pass": true},
+      {"case": "V02", "family": "setup", "dispatch_sha256": "a99d2ea7552ec52aaaaa7a907e973ee54c9c0de88737e50fb35674bd1cd4f4fd", "sample": "eval2_v02_m0", "terminal": "setup-precondition", "pass": true},
+      {"case": "V03", "family": "source", "dispatch_sha256": "9e554dbfacbd13983ead6f2ecb22710c14482a455626c058c49c31d91c4539c8", "sample": "eval2_v03_m0", "terminal": "ready-graph", "pass": true},
+      {"case": "V04", "family": "source", "dispatch_sha256": "1db805164fe40f5c4c797324003c765d64012fe6d0371b093a7606d969bfe788", "sample": "eval3_v04_m0", "terminal": "ready-graph", "pass": true},
+      {"case": "V05", "family": "source", "dispatch_sha256": "a69b848550d0a46b6fd259b15585e2724c3a2c0a87e8b3d7c70a0f9b51f1413d", "sample": "eval2_v05_m0", "terminal": "source-gap", "pass": true},
+      {"case": "V06", "family": "reconciliation", "dispatch_sha256": "91ab3809fd549766816c7d7fe3a3beec4026d4579e3c116b1f80420226199425", "sample": "eval2_v06_m0", "terminal": "ready-graph", "pass": true},
+      {"case": "V07", "family": "reconciliation", "dispatch_sha256": "ec5427cdbc92cf80094315d60b4eadc01edc07b16b0b1ee4dfd211393bb8ef40", "sample": "eval2_v07_m0", "terminal": "existing-state-conflict", "pass": true},
+      {"case": "V08", "family": "graph", "dispatch_sha256": "aceef534292382059a9c11de0c0fb96609260277a53644cfcf50a555fa19dfdc", "sample": "eval2_v08_m0", "terminal": "ready-graph", "pass": true},
+      {"case": "V09", "family": "graph", "dispatch_sha256": "15fb7018f54bf1b0853a4f0969ae09742f3bf418f61f749ac51a25672932eeca", "sample": "eval3_v09_m0", "terminal": "ready-graph", "pass": true},
+      {"case": "V10", "family": "state", "dispatch_sha256": "bd5e6617f1e527fda85a0b7181033b2f3f4866bb4e9c7480f68a5130c8cb450c", "sample": "eval3_v10_m0", "terminal": "ready-graph", "pass": true},
+      {"case": "V11", "family": "state", "dispatch_sha256": "fba1c29cbaceeded92231ccf2d8c5d1fd6ca55ed1f1cf4460590463f8efe2c46", "sample": "eval2_v11_m0", "terminal": "ready-graph", "pass": true},
+      {"case": "V12", "family": "risk", "dispatch_sha256": "ebb9be5082d3d1b751d1c75e48e258745bca2ca1cc58f0a02c4508d8ee122202", "sample": "eval3_v12_m0", "terminal": "ready-graph", "pass": true},
+      {"case": "V13", "family": "execution-profile", "dispatch_sha256": "d1e66420f1c7bf0af7255fedef6a3317315d0c5f53657d3e599b03a10b69ef67", "sample": "eval2_v13_m0", "terminal": "ready-graph", "pass": true},
+      {"case": "V14", "family": "publication", "dispatch_sha256": "a811fccae97e6737de864b9d7503e2e103b0313fac21f42af9b3212e8b555fe6", "sample": "eval2_v14_m0", "terminal": "publication-recovery", "pass": true},
+      {"case": "V15", "family": "publication", "dispatch_sha256": "abda502c87a2c24222e1c1d8071272a28341ef89687e9a8d0bc0caca6f3a3073", "sample": "eval2_v15_m0", "terminal": "publication-recovery", "pass": true},
+      {"case": "V16", "family": "publication", "dispatch_sha256": "590e5106e076843ff18a6f4b0e577ce49456c3116812cf946b8b9166f0bdf5e0", "sample": "eval2_v16_m0", "terminal": "publication-recovery", "pass": true},
+      {"case": "V17", "family": "local-tracker", "dispatch_sha256": "502fb1367afb01172ed1b22705ada38e44b935fcd549c0a4a12a4bb75089bce7", "sample": "eval2_v17_m0", "terminal": "ready-graph", "pass": true},
+      {"case": "V18", "family": "role-authority", "dispatch_sha256": "c1c3351e80442572e63ee9b010e072273ff935d563b2b555317ff930b8a99d1f", "sample": "eval3_v18_m0", "terminal": "ready-graph", "pass": true},
+      {"case": "V19", "family": "readback", "dispatch_sha256": "98d9dd62510a4f5e14a67c731433b9d5c785a01a4e17b7417c48762e095b6ffc", "sample": "eval2_v19_m0", "terminal": "publication-recovery", "pass": true},
+      {"case": "V20", "family": "mutation-boundary", "dispatch_sha256": "7f9f12bb19a4231a2f490a5ba322e5934393a5c29d8afde9d496d9ffff5de65b", "sample": "eval2_v20_m0", "terminal": "publication-recovery", "pass": true},
+      {"case": "V21", "family": "routing", "dispatch_sha256": "b8d2f5eae94161e510baef80df1484e29760cffcc2e64963acc3bdff007cf7b2", "sample": "eval2_v21_m0", "terminal": "ready-graph-with-implement", "pass": true},
+      {"case": "V22", "family": "routing", "dispatch_sha256": "b44744a89dbb28a22053159200e3c49b09b9a18bdd9542654017c81c455b18f3", "sample": "eval2_v22_m0", "terminal": "ready-graph-with-parallel-implement", "pass": true},
+      {"case": "V23", "family": "routing", "dispatch_sha256": "c73ecad0047fdfd17f67bd7c0537ab0c689db659e87134ed11895bd7ad1da7f7", "sample": "eval2_v23_m0", "terminal": "ready-graph-with-implement", "pass": true},
+      {"case": "V24", "family": "completion", "dispatch_sha256": "efa849d59e8d25ac0ae9e74a45d185e8548e5bf262d8ff7cc1b1014439be726f", "sample": "eval2_v24_m0", "terminal": "ready-graph", "pass": true}
+    ]
+  },
+  "h1_01_pilot": {
+    "registration": "quality-lift",
+    "entry_predicate": "Settled acceptance has multiple rules or material edge/error ambiguity where a representative example may discriminate.",
+    "applicability": "situational",
+    "trigger": "At least three M0 scores are 2 or below, or the M0 median is 2 or below.",
+    "samples": [
+      {"case": "H1P01", "dispatch_sha256": "d5f695c045ff099297f4ebf62a602b7f61b50b21dff573633ef22d927b830c7a", "sample": "pilot_p01_m0", "score": 4, "critical_failure": false},
+      {"case": "H1P02", "dispatch_sha256": "f6d51e048648349dd66c53cb959bdf2bd7bf010797275cfddf366e9a54123122", "sample": "pilot_p02_m0", "score": 4, "critical_failure": false},
+      {"case": "H1P03", "dispatch_sha256": "d0134100fde59f41fc85be29f03cd61ebf58d186e3ca0d1bc27a20eca749d96b", "sample": "pilot_p03_m0", "score": 4, "critical_failure": false},
+      {"case": "H1P04", "dispatch_sha256": "af4ccc799f50f6d87b3e488c9eec39a5d9dca8695d94b62c94a95b942dcca822", "sample": "pilot_p04_m0", "score": 4, "critical_failure": false},
+      {"case": "H1P05", "dispatch_sha256": "fab2fb73279456e3453ad279825f19cfa0056f75414c17de500b3ee33a3991c6", "sample": "pilot_p05_m0", "score": 4, "critical_failure": false}
+    ],
+    "aggregate": {
+      "scores": [4, 4, 4, 4, 4],
+      "median": 4,
+      "count_at_or_below_2": 0,
+      "variance": 0,
+      "worst_case": 4,
+      "critical_failures": 0
+    },
+    "gate_opened": false,
+    "h1_entry_positive_samples": 0,
+    "h1_wrong_condition_pairs": 0,
+    "decision": "reject-no-control-deficit",
+    "residual_transfer_gap": "Exact fixed Prompt 4 conditions only; no provider, cross-model, task-family, prevalence, or professional-method efficacy claim."
+  }
+}

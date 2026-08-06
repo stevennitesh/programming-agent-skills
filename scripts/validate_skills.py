@@ -11,6 +11,10 @@ import subprocess
 import sys
 from pathlib import Path
 
+from scripts import fresh_epoch_contract
+from scripts import pack_contract as pack_composition_contract
+from scripts import pack_integration
+from scripts import research_catalog
 from scripts import skill_pack_contract as pack_contract
 
 
@@ -108,6 +112,7 @@ STALE_ACTIVE_TOKENS = (
     "skills/current",
     "skills/matt-pocock",
     "improve-codebase-architecture",
+    "$improve-codebase",
 )
 
 
@@ -446,6 +451,22 @@ def validate_relationship_invocation_map(root: Path) -> list[str]:
                 f"{name} -> {actual[name]} (expected {expected[name]})"
             )
     return failures
+
+
+def validate_fresh_epoch_contract(root: Path) -> list[str]:
+    return fresh_epoch_contract.validate_repository(root)
+
+
+def validate_research_catalog_contract(root: Path) -> list[str]:
+    return research_catalog.validate_repository(root)
+
+
+def validate_pack_composition_contract(root: Path) -> list[str]:
+    return pack_composition_contract.validate_repository(root)
+
+
+def validate_pack_integration_contract(root: Path) -> list[str]:
+    return pack_integration.validate_repository(root)
 
 
 def validate_required_docs(root: Path) -> list[str]:
@@ -903,6 +924,10 @@ def main(argv: list[str] | None = None) -> int:
     failures.extend(validate_active_surfaces(root))
     failures.extend(validate_skill_handle_references(root, custom_skill_names))
     failures.extend(validate_relationship_invocation_map(root))
+    failures.extend(validate_fresh_epoch_contract(root))
+    failures.extend(validate_pack_composition_contract(root))
+    failures.extend(validate_pack_integration_contract(root))
+    failures.extend(validate_research_catalog_contract(root))
     failures.extend(validate_setup_surface(root))
     failures.extend(
         unified_file_diff(

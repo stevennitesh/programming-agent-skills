@@ -1,6 +1,9 @@
 # Domain Context Format
 
-Follow the repository's routed domain-document format. When no format exists, use the fallbacks below for settled, context-scoped language, behavior, invariants, responsibilities, and relationships. Keep unresolved meaning in the Domain Delta.
+Follow the repository's routed domain-document format. When no format exists,
+use the fallbacks below for settled, context-scoped language, behavior,
+invariants, responsibilities, and relationships. Keep unresolved meaning in the
+Domain Delta.
 
 ## Single-Context Fallback
 
@@ -52,31 +55,51 @@ Pattern: <recognized DDD pattern when one fits>
 `Pattern` is optional. Recognized Context Mapping patterns are:
 
 - **Partnership:** contexts coordinate evolution and share success or failure.
-- **Shared Kernel:** contexts share an explicitly bounded model subset under joint change control.
-- **Customer/Supplier Development:** downstream priorities influence the upstream provider's plan.
-- **Conformist:** downstream adopts the upstream model without influence over it.
-- **Anticorruption Layer:** a translation boundary protects one model from another.
-- **Open-host Service:** an upstream context exposes a broadly usable integration protocol.
+- **Shared Kernel:** contexts share an explicitly bounded model subset under
+  joint change control.
+- **Customer/Supplier Development:** downstream priorities influence the
+  upstream provider's plan.
+- **Conformist:** downstream adopts the upstream model without influence over
+  it.
+- **Anticorruption Layer:** a translation boundary protects one model from
+  another.
+- **Open-host Service:** an upstream context exposes a broadly usable
+  integration protocol.
 - **Published Language:** contexts share a documented interchange language.
 - **Separate Ways:** contexts deliberately integrate nothing.
-- **Big Ball of Mud:** a boundary contains an incoherent model instead of pretending it is well-structured.
+- **Big Ball of Mud:** a boundary contains an incoherent model instead of
+  pretending it is well-structured.
 
-Patterns may combine when each relationship is true. `Translation` belongs in the language mapping; it is not itself a Context Mapping pattern. Omit `Pattern` rather than force a false label.
+Patterns may combine when each relationship is true. `Translation` belongs in
+the language mapping; it is not itself a Context Mapping pattern. Omit `Pattern`
+rather than force a false label.
 
 Select patterns from model behavior, not organizational influence alone:
 
-- Use **Conformist** only when downstream adopts the upstream model as its own. A boundary that translates into a distinct local model is an **Anticorruption Layer**, not Conformist for that interaction.
-- Use **Open-host Service** only when upstream intentionally exposes a general protocol for multiple consumers. A versioned or published schema alone does not establish it.
+- Use **Conformist** only when downstream adopts the upstream model as its own.
+  A boundary that translates into a distinct local model is an **Anticorruption
+  Layer**, not Conformist for that interaction.
+- Use **Open-host Service** only when upstream intentionally exposes a general
+  protocol for multiple consumers. A versioned or published schema alone does
+  not establish it.
 
 ## Representation Rules
 
-- Record only settled canonical meaning, ownership, material conflicts, and decision authority.
+- Record only settled canonical meaning, ownership, material conflicts, and
+  decision authority.
 - Define domain behavior and boundaries independently of implementation.
-- Use one canonical term inside its context; list rejected synonyms under `_Avoid_`.
-- Keep generic technical vocabulary, ordinary words without context-specific meaning, and code indexes out.
-- Let one context own canonical meaning; consumers reference it through the relationship contract.
+- Use one canonical term inside its context; list rejected synonyms under
+  `_Avoid_`.
+- Keep generic technical vocabulary, ordinary words without context-specific
+  meaning, and code indexes out.
+- Within one context, its local model owns canonical meaning. Across contexts,
+  preserve independent meanings unless an explicit relationship contract or
+  Shared Kernel says otherwise.
 - Define each local term and mapping when contexts translate.
-- Repeat definitions only for a genuine Shared Kernel with explicit joint control.
+- Repeat definitions only for a genuine Shared Kernel with explicit joint
+  control.
 - Add language subheadings only when natural groups emerge.
 
-Rendered output names the target, insertion or replacement scope, complete wording, affected relationships, and ordering dependency. Unclear meaning, ownership, relationship, or authority stays unresolved in the Domain Delta.
+Rendered output names the target, insertion or replacement scope, complete
+wording, affected relationships, and ordering dependency. Unclear meaning,
+ownership, relationship, or authority stays unresolved in the Domain Delta.

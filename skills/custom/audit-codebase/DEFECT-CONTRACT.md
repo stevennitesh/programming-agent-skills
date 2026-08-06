@@ -1,15 +1,24 @@
 # Audit Finding Contract
 
-Use this for repository-baseline findings, evidence gaps, and suggested next owners. Diff findings remain owned by `review/FINDING-CONTRACT.md`.
+Use this for repository-baseline defects and evidence gaps. Opportunities and
+retained complexity use `QUALITY-LENS.md`; user-selectable improvement
+boundaries and next-step suggestions use `CANDIDATE-CONTRACT.md`. Diff
+findings remain owned by `change-review/FINDING-CONTRACT.md`.
 
 ## Burden Of Proof
 
 Admit a defect only when all five gates close:
 
-- **Expectation:** an authoritative Charter contract, methodology, invariant, budget, comparison basis, or required evidence rule.
+- **Expectation:** an authoritative audit-scope contract, methodology,
+  invariant, budget, acceptance threshold, or required evidence rule. A
+  comparison basis counts only when its authority defines pass/fail.
 - **Reach:** a supported scenario inside the named repository baseline.
-- **Evidence:** direct evidence from the immutable snapshot.
-- **Impact:** a concrete correctness, domain, robustness, methodology, model-risk, data, validation, metric, analytics, or performance failure under that expectation.
+- **Evidence:** direct evidence bound to the selected objective's current source
+  identity; governing external contracts, attributable traces, or dependency
+  behavior may contribute when their applicability is proved.
+- **Impact:** a concrete correctness, domain, robustness, security, privacy,
+  methodology, model-risk, data, validation, metric, analytics, performance,
+  or repository-governed maintenance or proof failure under that expectation.
 - **Proportion:** proof proportionate to the claim.
 
 ```text
@@ -21,15 +30,32 @@ Expected contract, invariant, or methodology:
 Supported scenario:
 Verified evidence:
 Impact:
+Causal owner and affected callers: <required for a Root Cause or shared-owner claim> | not applicable
 Confidence:
 Required proof:
 ```
 
-Admit first, then assign severity by impact. Severity orders defects; evidence state and work shape choose the suggestion. Severity issues no release decision and grants no mutation authority. Omit unsupported possibilities. A verified beneficial opportunity without a violated expectation is an advisory only when enabled.
+When a Root Cause or shared owner is claimed, verify the causal owner and
+sibling entry paths. Apply `QUALITY-LENS.md`'s coverage-completion rule;
+unavailable required causal evidence is a gap.
+
+Assign severity only after admission:
+
+- **P0:** catastrophic or irreversible production, security, privacy,
+  availability, or data-integrity impact.
+- **P1:** major failure across a critical or widely supported scenario.
+- **P2:** concrete bounded failure with meaningful user, operational, domain,
+  or maintenance impact.
+- **P3:** localized low-impact violation of an authoritative expectation.
+
+Severity orders defects. It grants no release, mutation, or next-step
+authority. Omit unsupported possibilities. A verified beneficial change
+without a violated expectation is an opportunity under `QUALITY-LENS.md`.
 
 ## Evidence Gap
 
-Preserve required evidence that cannot be obtained read-only as a gap, not a defect or speculative advisory.
+Preserve required evidence unavailable from current source within Audit's
+authorized read-only boundary as a gap, not a defect or speculative opportunity:
 
 ```text
 Gap ID:
@@ -38,35 +64,13 @@ Blocked claim or decision:
 Missing evidence:
 Why the audit cannot obtain it:
 Coverage and confidence impact:
+Re-entry requirement:
 ```
-
-## Suggest One Owner
-
-Each defect, gap, advisory, or cohesive finding cluster receives exactly zero or one non-authoritative suggested next owner. Append:
-
-```text
-Suggested next owner: <skill> | none
-Suggestion reason:
-Pickup prerequisite:
-```
-
-Choose by the unresolved work:
-
-| Evidence state or work shape | Suggested owner |
-| --- | --- |
-| One external authoritative fact is missing | `$research` |
-| One disposable runnable probe or performance experiment is needed | `$prototype` |
-| A domain rule, term, preference, or material tradeoff belongs to the user | `$grill-with-docs` |
-| Expected behavior, symptom, cause, or trusted reproduction remains uncertain | `$diagnosing-bugs` |
-| Remediation intent, acceptance, or migration remains unsettled | `$to-spec` |
-| The solution is settled and only slicing remains across multiple implementation items | `$to-tickets` |
-| Exactly one bounded remediation item is ready | `$implement` |
-| Broad structural deepening, consolidation, or simplification needs its own survey | `$improve-codebase` |
-| A cluster has multiple unresolved decisions or prerequisites and needs a tracker-backed, multi-session route | `$wayfinder` |
-| No next owner is justified | `none` |
-
-Name the immediate owner and stop; encode no workflow chain.
 
 ## Bound
 
-Verification may reproduce or disprove a claim read-only. Optional proof needing new infrastructure remains a gap rather than expanding the audit. Cluster only items that share one remediation boundary or unresolved decision structure, and keep every member finding visible.
+Verification may reproduce or disprove a claim read-only. Optional proof
+needing new infrastructure remains a gap rather than expanding the audit.
+If proportionate evidence is available within Audit authority but has not been
+checked, it is unfinished work under Quality's completion rule, not a gap.
+Candidate grouping belongs only to `CANDIDATE-CONTRACT.md`.

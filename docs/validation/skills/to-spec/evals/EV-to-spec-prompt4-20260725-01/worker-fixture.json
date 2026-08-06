@@ -1,0 +1,462 @@
+{
+  "schema_version": 2,
+  "fixture_id": "to-spec-2026-07-25-prompt4-v1",
+  "isolation": {
+    "candidate_terms_present": false,
+    "prior_outputs_present": false,
+    "conclusions_present": false,
+    "arm_delta": "runtime package only"
+  },
+  "fixed_execution": {
+    "authority": "Use only the supplied facts and assigned runtime package. Treat facts stated as exact, settled, authorized, complete, matching, successful, or failed as inspectable simulated evidence. Do not choose source-owned commitments, use a live tracker, mutate repository authority, or start a successor.",
+    "tools_operations": [
+      "read the assigned runtime package",
+      "read the supplied source and tracker facts",
+      "simulate only the listed observations and authorized operations",
+      "return only the requested packet"
+    ],
+    "mutation_boundary": "No durable mutation. Draft, tracker, and read-back operations are supplied simulations only."
+  },
+  "cases": [
+    {
+      "id": "V01",
+      "family": "invocation",
+      "task": "Apply the assigned runtime to the explicit request and settled source.",
+      "facts": {
+        "V01-F1": "The user explicitly selected to-spec for one named source S-1 and repository R-1.",
+        "V01-F2": "S-1 identity, commitment authority, acceptance, supported behavior, and publication target are settled and inspectable.",
+        "V01-F3": "The configured tracker is compatible, no parent exists, the one authorized create and complete read-back succeed, and no successor starts."
+      },
+      "initial_state": "No matching parent or disposable draft exists.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result with source identity, parent identity, coverage and publication evidence, draft disposition, residual gaps, recommendation, and successor status."
+    },
+    {
+      "id": "V02",
+      "family": "invocation",
+      "task": "Classify and handle this request using the assigned runtime.",
+      "facts": {
+        "V02-F1": "The user asks conversationally for ideas about an unsettled feature.",
+        "V02-F2": "The user did not explicitly select to-spec, name a settled parent source, authorize publication, or request downstream execution."
+      },
+      "initial_state": "Repository and tracker state are unchanged.",
+      "decision_state": {
+        "target_resolution": "not-applicable",
+        "evidence_availability": "not-applicable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "State whether the runtime begins, what evidence supports that decision, and whether any state or successor changed."
+    },
+    {
+      "id": "V03",
+      "family": "source-authority",
+      "task": "Apply the assigned runtime to source packet S-3.",
+      "facts": {
+        "V03-F1": "S-3 names retention duration as decision pointer decision://retention.",
+        "V03-F2": "The pointer is inaccessible and retention changes acceptance, data handling, and rollback.",
+        "V03-F3": "The privacy owner owns the missing decision and no tracker mutation has occurred."
+      },
+      "initial_state": "No draft or parent exists.",
+      "decision_state": {
+        "target_resolution": "unresolved",
+        "evidence_availability": "unavailable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result naming the affected field, owner, inspected evidence, re-entry condition, and observed state."
+    },
+    {
+      "id": "V04",
+      "family": "setup",
+      "task": "Apply the assigned runtime to the routed repository setup.",
+      "facts": {
+        "V04-F1": "AGENTS.md points to tracker.md and triage-labels.md.",
+        "V04-F2": "tracker.md is absent, so no configured create or complete read-back operation is available.",
+        "V04-F3": "No draft, tracker, source, or Git operation has occurred."
+      },
+      "initial_state": "Repository and tracker state are unchanged.",
+      "decision_state": {
+        "target_resolution": "unresolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result with failed setup surface, evidence, preserved state, one qualified recommendation, and successor status."
+    },
+    {
+      "id": "V05",
+      "family": "caller-admission",
+      "task": "Classify each supplied source packet independently under the assigned runtime.",
+      "facts": {
+        "V05-F1": "Packet A is a direct settled packet with exact identity and complete commitment authority.",
+        "V05-F2": "Packet B is a Confirmed grill-with-docs packet with its current Domain Delta; both identities and all decision-bearing pointers verify.",
+        "V05-F3": "Packet C is a closed Wayfinder map whose destination is settled parent-spec source; its resolution pointers verify.",
+        "V05-F4": "Packet D is one verified selected improvement routed as specification-ready with fixed evidence and boundary.",
+        "V05-F5": "Packet E is one verified cohesive audit cluster with fixed expectation, evidence, source owner, and acceptance.",
+        "V05-F6": "Packet F resembles a caller return but omits acceptance authority.",
+        "V05-F7": "No publication operation is requested in this classification task."
+      },
+      "initial_state": "Six independent read-only packets; tracker state is unchanged.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "For each packet, state admission or safe failure, retained identities or missing field, owner, evidence, and whether state changed."
+    },
+    {
+      "id": "V06",
+      "family": "domain-authority",
+      "task": "Apply the assigned runtime to source S-6 and the routed domain authority.",
+      "facts": {
+        "V06-F1": "S-6 calls the aggregate Workspace.",
+        "V06-F2": "Governing ADR-12 requires Project in this bounded context and changes the public contract.",
+        "V06-F3": "The domain owner owns reconciliation; no authority permits a domain or ADR write."
+      },
+      "initial_state": "No draft or parent exists; domain files are unchanged.",
+      "decision_state": {
+        "target_resolution": "unresolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result naming both authorities, affected contract, owner, re-entry condition, and all preserved state."
+    },
+    {
+      "id": "V07",
+      "family": "packet-coverage",
+      "task": "Produce the parent packet from the settled source using the assigned runtime.",
+      "facts": {
+        "V07-F1": "The source settles outcome, scope, exclusion, caller-visible API behavior, two lifecycle states, error behavior, privacy constraint, rollback, and three acceptance observations.",
+        "V07-F2": "Each source commitment has an exact identity and owner; a stable ADR pointer owns the interface term.",
+        "V07-F3": "The source declares that no child implementation slices or parent Ready-for-agent state belong in the parent.",
+        "V07-F4": "The configured tracker is compatible, verified absent, and the authorized create and complete read-back succeed."
+      },
+      "initial_state": "No parent or draft exists.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One proposed parent packet and typed result showing bidirectional commitment trace, observable acceptance, proof, owner pointers, publication evidence, and downstream boundary."
+    },
+    {
+      "id": "V08",
+      "family": "existing-state",
+      "task": "Classify four independent tracker observations before publication.",
+      "facts": {
+        "V08-F1": "Case A proves verified absence and authorizes exactly one create, whose unique refetch matches.",
+        "V08-F2": "Case B has an exact existing parent whose complete normalized packet, metadata, relationships, and source identity match.",
+        "V08-F3": "Case C has a parent with matching source identity but divergent retention content and no update authority.",
+        "V08-F4": "Case D lookup timed out and cannot prove absence or equality; create is non-idempotent.",
+        "V08-F5": "Each case is independent and supplies no successor authority."
+      },
+      "initial_state": "Four independent simulated tracker states.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "For each case, state the supported operation or stop, typed result, identities, observed evidence, and whether any create repeats."
+    },
+    {
+      "id": "V09",
+      "family": "freeze",
+      "task": "Freeze and authorize the supplied complete parent packet.",
+      "facts": {
+        "V09-F1": "Source authority and bidirectional coverage are complete.",
+        "V09-F2": "The only safe ignored draft path is .tmp/to-spec/source-9.md.",
+        "V09-F3": "Draft exact bytes match the title and body digest packet-9.",
+        "V09-F4": "The explicit invocation authorizes exactly the named source, target, title, body, and one create operation.",
+        "V09-F5": "No external mutation has occurred."
+      },
+      "initial_state": "One exact disposable draft and absent target parent.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "The frozen packet and operation identity, exact read-back evidence, authorized boundary, and next safe unexecuted operation."
+    },
+    {
+      "id": "V10",
+      "family": "publication-recovery",
+      "task": "Handle two independent publication failures using the assigned runtime.",
+      "facts": {
+        "V10-F1": "Case A sent one create; the connection closed before response and query is unavailable, so application is indeterminate.",
+        "V10-F2": "Case B created parent 42, then metadata application partially failed and complete read-back shows the missing role.",
+        "V10-F3": "Each case has a frozen packet digest and exact disposable draft.",
+        "V10-F4": "No authority permits a retry, overwrite, or further mutation after uncertainty."
+      },
+      "initial_state": "Two independent recovery states with preserved drafts.",
+      "decision_state": {
+        "target_resolution": "unresolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "For each case, one typed result with frozen identity, applied and failed operations, observed state, draft identity, safest recovery action, and operation-stop evidence."
+    },
+    {
+      "id": "V11",
+      "family": "publication-success",
+      "task": "Reconcile two independent successful parent states using the assigned runtime.",
+      "facts": {
+        "V11-F1": "Case A's one new create refetch matches frozen title, body, roles, labels, assignee, open state, relationships, and affected frontier.",
+        "V11-F2": "Case B's exact reused parent matches the same complete observable classes.",
+        "V11-F3": "Both parents use only source-authorized mapped roles and neither has Ready-for-agent state.",
+        "V11-F4": "Each disposable draft deletion succeeds after verification."
+      },
+      "initial_state": "Two independent exact durable parents with exact drafts.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "For each case, one typed result with source and parent identities, publication or reuse evidence, complete read-back, draft disposition, residual gaps, and successor status."
+    },
+    {
+      "id": "V12",
+      "family": "completion",
+      "task": "Close the verified successful run using the assigned runtime.",
+      "facts": {
+        "V12-F1": "Source identity, authority, bidirectional coverage, parent packet, applicable roles and state all verify.",
+        "V12-F2": "The exact parent and complete affected state read-back match the frozen plan.",
+        "V12-F3": "The disposable draft is removed, unrelated state is preserved, and no successor has started."
+      },
+      "initial_state": "Every publication and cleanup gate is closed with inspectable evidence.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "Exactly one typed result with source and parent identities, verification evidence, residual gaps, one recommendation, and successor status."
+    },
+    {
+      "id": "V13",
+      "family": "preservation",
+      "task": "Audit the supplied run boundary and produce the supported terminal packet.",
+      "facts": {
+        "V13-F1": "The authorized parent publication and disposable draft are the only intended effects.",
+        "V13-F2": "Domain, source, code, child tickets, Git index, HEAD, remotes, installation, and unrelated modified file src/other.py are unchanged.",
+        "V13-F3": "The parent read-back matches, the draft disposition is truthful, and no successor started."
+      },
+      "initial_state": "One verified parent plus unrelated modified src/other.py.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One typed result with complete preservation evidence, draft disposition, parent evidence, and successor status."
+    },
+    {
+      "id": "A01",
+      "family": "service-aspects",
+      "task": "Produce a parent specification from the settled service source.",
+      "facts": {
+        "A01-F1": "The service source requires personal-data deletion within 30 days and 99.9 percent monthly availability.",
+        "A01-F2": "The service has no migration, rollback, cutover, retained legacy state, or user-managed permissions.",
+        "A01-F3": "The source declares all listed facts settled and complete."
+      },
+      "initial_state": "No parent exists; setup and authority gates are complete.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One complete parent packet with all supported obligations, acceptance, proof, and treatment of irrelevant material."
+    },
+    {
+      "id": "A02",
+      "family": "service-aspects",
+      "task": "Produce a parent specification from the settled event service source.",
+      "facts": {
+        "A02-F1": "The service requires at-least-once delivery, caller-visible duplicate IDs, and redaction of email addresses in logs.",
+        "A02-F2": "The service has no interactive users, UI state, migration, rollback, or credential rotation.",
+        "A02-F3": "The source declares all listed facts settled and complete."
+      },
+      "initial_state": "No parent exists; setup and authority gates are complete.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One complete parent packet with all supported obligations, acceptance, proof, and treatment of irrelevant material."
+    },
+    {
+      "id": "A03",
+      "family": "service-aspects",
+      "task": "Produce a parent specification from the settled API source.",
+      "facts": {
+        "A03-F1": "The API requires role-based access and atomic failure for mixed-validity batches.",
+        "A03-F2": "The API has no retained state, migration, rollback, background worker, personal data, or availability objective.",
+        "A03-F3": "The source declares all listed facts settled and complete."
+      },
+      "initial_state": "No parent exists; setup and authority gates are complete.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One complete parent packet with all supported obligations, acceptance, proof, and treatment of irrelevant material."
+    },
+    {
+      "id": "A04",
+      "family": "local-tool-aspects",
+      "task": "Produce a parent specification from the settled local file tool source.",
+      "facts": {
+        "A04-F1": "The tool must preserve the input file on parse failure and write the output atomically on success.",
+        "A04-F2": "The tool has no network, identity, permissions, personal data, migration, retained service state, or deployment cutover.",
+        "A04-F3": "The source declares all listed facts settled and complete."
+      },
+      "initial_state": "No parent exists; setup and authority gates are complete.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One complete parent packet with all supported obligations, acceptance, proof, and treatment of irrelevant material."
+    },
+    {
+      "id": "A05",
+      "family": "local-tool-aspects",
+      "task": "Produce a parent specification from the settled validation library source.",
+      "facts": {
+        "A05-F1": "The library must accept exactly eight ASCII digits and return INVALID_CODE with no writes otherwise.",
+        "A05-F2": "The library has no UI, network, identity, persistence, concurrency, migration, personal data, or deployment state.",
+        "A05-F3": "The source declares all listed facts settled and complete."
+      },
+      "initial_state": "No parent exists; setup and authority gates are complete.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One complete parent packet with all supported obligations, acceptance, proof, and treatment of irrelevant material."
+    },
+    {
+      "id": "AW01",
+      "family": "dense-aspects",
+      "task": "Produce a parent specification from the settled dense platform source.",
+      "facts": {
+        "AW01-F1": "The platform source settles these material obligations: the UI shows published status and version within two seconds; GET /status returns that same status and version; the durable record keeps a monotonically increasing version; lifecycle transitions are draft to published to retired only; only the publisher role may publish; email fields are encrypted at rest and deleted within 30 days; monthly availability is at least 99.9 percent; v1-to-v2 migration preserves record IDs; rollback restores the prior status and version; cutover loses no accepted write; the audit event records actor, action, and time; an invalid transition returns INVALID_STATE with no mutation; and acceptance uses browser, API-contract, public-state, migration, rollback, cutover, audit, error, and coverage evidence.",
+        "AW01-F2": "The settled acceptance observations are respectively: the UI deadline is met; UI and GET /status agree; stored versions only increase; only the three named lifecycle states and two named forward transitions occur; unauthorized publication is denied; encryption and 30-day deletion verify; every measured month meets 99.9 percent; migrated IDs match; rollback state equals the prior state; accepted writes survive cutover; audit fields are complete; INVALID_STATE leaves state unchanged; and every preceding obligation has its named observable proof.",
+        "AW01-F3": "The source declares no listed family irrelevant."
+      },
+      "initial_state": "No parent exists; setup and authority gates are complete.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "One complete parent packet preserving every settled family, acceptance observation, and proof obligation."
+    },
+    {
+      "id": "P01",
+      "family": "api-worker-proof",
+      "task": "Produce the verification portion of a parent specification from the settled API and worker source.",
+      "facts": {
+        "P01-F1": "The API response contract is observed by the existing API integration harness.",
+        "P01-F2": "Retry scheduling is observed by the existing worker component harness.",
+        "P01-F3": "The full end-to-end harness observes both but is ten times slower and couples to private queue storage.",
+        "P01-F4": "No new public interface is authorized or needed."
+      },
+      "initial_state": "Source commitments and existing harness capabilities are settled.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "A commitment-to-oracle plan naming available harnesses, observable outcomes, coupling, residual risk, and any authority gap."
+    },
+    {
+      "id": "P02",
+      "family": "api-worker-proof",
+      "task": "Produce the verification portion of a parent specification from the settled webhook source.",
+      "facts": {
+        "P02-F1": "HTTP signature rejection is observed by the API contract harness.",
+        "P02-F2": "Event redelivery is observed by the worker component harness.",
+        "P02-F3": "The broad deployment harness observes both but requires unrelated services and private database fixtures.",
+        "P02-F4": "No new public interface is authorized or needed."
+      },
+      "initial_state": "Source commitments and existing harness capabilities are settled.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "A commitment-to-oracle plan naming available harnesses, observable outcomes, coupling, residual risk, and any authority gap."
+    },
+    {
+      "id": "P03",
+      "family": "api-worker-proof",
+      "task": "Produce the verification portion of a parent specification from the settled export source.",
+      "facts": {
+        "P03-F1": "Export authorization is observed by the API integration harness.",
+        "P03-F2": "Generated-file retention is observed by the file lifecycle component harness.",
+        "P03-F3": "The browser-to-storage harness observes both but is materially brittle and asserts private file names.",
+        "P03-F4": "No new public interface is authorized or needed."
+      },
+      "initial_state": "Source commitments and existing harness capabilities are settled.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "A commitment-to-oracle plan naming available harnesses, observable outcomes, coupling, residual risk, and any authority gap."
+    },
+    {
+      "id": "P04",
+      "family": "browser-state-proof",
+      "task": "Produce the verification portion of a parent specification from the settled user-flow source.",
+      "facts": {
+        "P04-F1": "The visible checkout result is observed by the browser harness.",
+        "P04-F2": "Idempotent order state is observed by the public state-contract harness.",
+        "P04-F3": "One broad browser test can observe both only by reading private serialization fields and is materially flaky.",
+        "P04-F4": "No new public interface is authorized or needed."
+      },
+      "initial_state": "Source commitments and existing harness capabilities are settled.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "A commitment-to-oracle plan naming available harnesses, observable outcomes, coupling, residual risk, and any authority gap."
+    },
+    {
+      "id": "P05",
+      "family": "browser-state-proof",
+      "task": "Produce the verification portion of a parent specification from the settled session source.",
+      "facts": {
+        "P05-F1": "The visible reauthentication flow is observed by the browser harness.",
+        "P05-F2": "Session expiry transition is observed by the public state-contract harness.",
+        "P05-F3": "The single broad harness uses private token storage and has materially higher setup cost.",
+        "P05-F4": "No new public interface is authorized or needed."
+      },
+      "initial_state": "Source commitments and existing harness capabilities are settled.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "A commitment-to-oracle plan naming available harnesses, observable outcomes, coupling, residual risk, and any authority gap."
+    },
+    {
+      "id": "PW01",
+      "family": "single-proof",
+      "task": "Produce the verification portion of a parent specification from the settled validator source.",
+      "facts": {
+        "PW01-F1": "One low-cost public function harness observes the complete accepted-input predicate, exact error token, and no-write behavior.",
+        "PW01-F2": "No other harness is available or needed, and the harness has no private implementation coupling.",
+        "PW01-F3": "The source authorizes no new public seam and declares the proof objective complete."
+      },
+      "initial_state": "Source commitments and the only adequate harness are settled.",
+      "decision_state": {
+        "target_resolution": "resolved",
+        "evidence_availability": "inspectable",
+        "mutation_permission": "forbidden"
+      },
+      "requested_output": "A commitment-to-oracle plan naming the adequate harness, observable outcomes, residual risk, and any authority gap."
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "schema": "programming-agent-skills.compact-campaign-decision.v1",
+  "skill": "convergent-pr-review",
+  "epoch": "2026-07-24",
+  "decision": "complete",
+  "fixed_git_head": "f3be70c31dd8f2ae9f12a75248065ef313790bda",
+  "sources": {
+    "intent_checkpoint": "docs/validation/skills/convergent-pr-review/evals/EV-convergent-pr-review-prompt1-m0-20260724-01/evidence/2026-07-24-convergent-pr-review-prompt1-m0.md",
+    "research": "docs/research/skills/convergent-pr-review/RP-convergent-pr-review-20260724-01.md",
+    "synthesis": "docs/synthesis/skills/convergent-pr-review.md",
+    "reusable_fixtures": "docs/validation/skills/convergent-pr-review/evals/EV-convergent-pr-review-prompt4-20260724-01/fixtures"
+  },
+  "identities": {
+    "incumbent": "42d2c56f8313fb35dbb4f5033f7ed48b81043466ca8becb8c4a38075acee44a9",
+    "m0": "6c419036d5cb8000d47666f2e02d414330c2369933a75654bac786bd8cff7280",
+    "h1": "379474917dc540ef9704a74628af11e123db11fc9e800a94b797278c1ab05c82",
+    "v1": "6c419036d5cb8000d47666f2e02d414330c2369933a75654bac786bd8cff7280",
+    "p1": "6c33843eb1ad6074af36e634f7ebd98882ede20a24b9120c130796285047001d",
+    "canonical": "6c33843eb1ad6074af36e634f7ebd98882ede20a24b9120c130796285047001d",
+    "installed": "6c33843eb1ad6074af36e634f7ebd98882ede20a24b9120c130796285047001d"
+  },
+  "behavior": {
+    "m0_viability": "25/25 passed; minimum score 9; zero critical failures",
+    "h1_01": "rejected-no-control-deficit",
+    "h1_02": "rejected-no-control-deficit",
+    "h1_03": "rejected-insufficient-contribution; common-mode disclosure improved 2/5",
+    "h1_04": "rejected-no-control-deficit",
+    "h1_05": "rejected-insufficient-contribution; bounded recovery improved 1/5",
+    "v1": "exact M0",
+    "claim_boundary": "historical-admission-only after raw-output retirement; rerun for new behavioral credit"
+  },
+  "pruning": {
+    "decision": "accepted",
+    "skill_bytes": -474,
+    "skill_words": -70,
+    "equivalence": "9/9 fresh cases; zero critical or meaningful regressions"
+  },
+  "promotion": {
+    "canonical_installed_parity": true,
+    "experimental_lifecycle_retired": true,
+    "git_delivery": "pending"
+  },
+  "retention": {
+    "kept": [
+      "intent checkpoint",
+      "research",
+      "active synthesis",
+      "reusable fixtures",
+      "entry-predicate reconciliation decision",
+      "this compact terminal decision"
+    ],
+    "raw_outputs": "moved to ignored .tmp/campaign-evidence",
+    "copied_runtimes_payloads_and_routine_transcripts": "retired",
+    "future_use": "incumbent identities, method admission, fixture reuse, and hypothesis dispositions only"
+  },
+  "residual_gaps": [
+    "portable atomic dirty-tree capture",
+    "transfer beyond recorded model, host, fixtures, and tools",
+    "live execution beyond simulated observations",
+    "exact backend build, seed, token, and latency telemetry"
+  ]
+}

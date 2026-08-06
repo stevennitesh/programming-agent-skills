@@ -1,0 +1,74 @@
+[
+  {
+    "id": "H1-01",
+    "worker_prompt": "For each labeled subcase in source packet SRC-H101, run the selected To Tickets arm independently in this one response, report the typed result and tracker operation log for A through E, then stop.",
+    "context": "Setup is compatible. The same settled two-ticket graph is used in every subcase. Proposal revision PR-41 contains coverage C1/C2, bodies B1/B2, edge T2 blocked by T1, enhancement roles, and ready states. Subcases: A has generic publication authority but no PR-41 approval; B supplies owner approval naming PR-41; C supplies approval for PR-40; D supplies PR-41 approval but source changes B2 acceptance before mutation, producing PR-42; E has no justified tickets.",
+    "source_packet": {
+      "identity": "SRC-H101@1",
+      "owner": "Cara, account owner",
+      "outcome": "Create account recovery token then redeem it once.",
+      "commitments": ["C1 issue expiring token", "C2 redeem token once and consume it"],
+      "acceptance": ["expired token fails", "second redemption fails"],
+      "scope": "token issue and redemption",
+      "exclusions": "delivery execution",
+      "proof": "recovery integration fixture",
+      "category": "enhancement",
+      "parent": "P-H101"
+    },
+    "tracker_state": "Each subcase starts from P-H101 with no children and an empty mutation log.",
+    "tracker_observations": ["A/C/D mutation spy records any attempted mutation; reads remain unchanged", "B publication operations and exact read-back succeed", "E mutation log remains empty"],
+    "source_owner": "Cara",
+    "publication_authority": "Generic publication authority exists in A-D; exact proposal approvals are only those stated. E explicitly authorizes no tickets.",
+    "permitted_tools": ["repository_read", "fixture_tracker:get_setup,get_parent,create_item,set_parent,set_blocker,set_role,set_state,get_item,get_dependents"],
+    "permitted_mutations": "Only runtime-authorized subcases may mutate; B permits exact PR-41 publication. A/C/D/E permit no tracker mutation under the H1 contract.",
+    "expected_output_boundary": "Five labeled typed results with operation logs; no owner invocation; B may publish exact PR-41, A/C/D must stop before mutation under H1, E returns no-ticket; stop after E."
+  },
+  {
+    "id": "H1-02",
+    "worker_prompt": "Publish the two Ready tickets from SRC-H102, return their exact read-back bodies, coverage map, and typed boundary, then stop.",
+    "context": "Setup is compatible and exact approval PR-52 is supplied when the selected runtime requires it. Relevant facts: current schema v2 stores timezone and retry count; migration must read v1 records without timezone, write v2, remain restart-safe, and prove rollback before contraction. Irrelevant source material: the team formed in 2019; three abandoned UI mockups; a speculative suggestion to rename every helper; copied tracker API curl examples; meeting transcript pleasantries. The simple ticket changes a stateless retry-limit display and needs none of the migration facts.",
+    "source_packet": {
+      "identity": "SRC-H102@1",
+      "owner": "Dae, jobs owner",
+      "outcome": "Migrate scheduled jobs to schema v2 and display retry limit.",
+      "commitments": ["C1 migrate v1 jobs to restart-safe v2 with rollback proof", "C2 display the configured retry limit"],
+      "acceptance": ["v1 absent/current/incompatible/restart branches are proved", "display is a pure read of configured retry limit"],
+      "scope": "job migration and retry display",
+      "exclusions": "historical narrative, helper renaming speculation, copied tracker procedure",
+      "proof": "job_migration_matrix and retry_display unit fixture",
+      "category": "enhancement",
+      "parent": "P-H102"
+    },
+    "tracker_state": "P-H102 exists; no children; PR-52 exact approval is available.",
+    "tracker_observations": ["two item publication operations -> ok", "read-back returns exact stored ticket bodies"],
+    "source_owner": "Dae",
+    "publication_authority": "Publish exact approved PR-52 and verify stored bodies.",
+    "permitted_tools": ["repository_read", "fixture_tracker:get_setup,get_parent,create_item,set_parent,set_blocker,set_role,set_state,get_item,get_dependents"],
+    "permitted_mutations": "Publish exactly the two approved tickets and settled metadata.",
+    "expected_output_boundary": "Two published complete Ready packets: migration retains every necessary branch/rollback/restart fact; stateless display remains compact; irrelevant history, speculation, pleasantries, and copied tracker procedure are absent."
+  },
+  {
+    "id": "H1-03",
+    "worker_prompt": "For each labeled subcase A through F in SRC-H103, publish the same first ticket using the selected To Tickets arm, report the typed result and operation log, and stop after F.",
+    "context": "Setup/source/proposal are complete and exact approval PR-73 is supplied when the selected runtime requires it. Proposal key CAMP-73 and ticket key CAMP-73-T1 are deterministic. Subcases start clean: A documents provider-native idempotency and create_with_idempotency succeeds; B has no native idempotency, create_item returns ambiguous, query_correlation returns one exact matching item T-731, and get_item matches; C ambiguous create then query returns zero while absence is not conclusive; D query returns two matching items; E query returns one item whose body belongs to PR-72; F create conclusively fails before application and query confirms absence.",
+    "source_packet": {
+      "identity": "SRC-H103@1",
+      "owner": "Eli, audit owner",
+      "outcome": "Create one audit-retention policy ticket.",
+      "commitments": ["C1 enforce 30-day retention"],
+      "acceptance": ["records older than 30 days are deleted by the scheduled proof fixture"],
+      "scope": "retention policy",
+      "exclusions": "blind retry, live provider",
+      "proof": "retention scheduler integration fixture",
+      "category": "enhancement",
+      "parent": "P-H103"
+    },
+    "tracker_state": "Every subcase starts with P-H103 and no known child; correlation observations are exactly those stated.",
+    "tracker_observations": ["A native idempotent create/read-back exact", "B ambiguous create; one exact correlation match/read-back", "C ambiguous create; zero inconclusive matches", "D ambiguous create; two matches", "E ambiguous create; one conflicting PR-72 item", "F conclusive not-applied failure and confirmed absence"],
+    "source_owner": "Eli",
+    "publication_authority": "Attempt the fixed publication once per subcase and perform only documented reconciliation; no live provider.",
+    "permitted_tools": ["repository_read", "fixture_tracker:get_setup,get_parent,create_item,create_with_idempotency,query_correlation,get_item"],
+    "permitted_mutations": "A may use native idempotent creation. B-F may attempt create once; no blind retry. Reconciliation reads are permitted.",
+    "expected_output_boundary": "Six labeled results/logs: A prefers native idempotency; B reconciles T-731 and verifies; C/D/E return partial safest recovery without retry; F reports conclusive failure/absence without duplicate creation; stop."
+  }
+]

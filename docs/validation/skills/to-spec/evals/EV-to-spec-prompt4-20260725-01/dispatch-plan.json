@@ -1,0 +1,849 @@
+{
+  "schema": "to-spec-prompt3-dispatch-plan-v1",
+  "sampling_status": "not-started",
+  "runtime_slot": "/runtime",
+  "fixture_lint": {
+    "case_count": 25,
+    "schema_version": 2,
+    "status": "ok"
+  },
+  "cases": {
+    "V01": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "V01",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/V01/m0.json",
+          "lint": {
+            "case_id": "V01",
+            "dispatch_payload_sha256": "f1efa40623fccdcd41ec829ef7e62bcee19c15f10e788ee99e04f7a10aed59ad",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": []
+    },
+    "V02": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "V02",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/V02/m0.json",
+          "lint": {
+            "case_id": "V02",
+            "dispatch_payload_sha256": "64ad5f64a4b7ad433ef07628d0b5253b1608bfed88a0687cceb5970a8e3780a7",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": []
+    },
+    "V03": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "V03",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/V03/m0.json",
+          "lint": {
+            "case_id": "V03",
+            "dispatch_payload_sha256": "f4c38adab5af66a6dde475f0e1e7b1b984ab6242321482cde5a17035ed1a6d93",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": []
+    },
+    "V04": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "V04",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/V04/m0.json",
+          "lint": {
+            "case_id": "V04",
+            "dispatch_payload_sha256": "973b06bb0224d85df4c982e07f897f1cd0e09327b3fd128ec0142873e022c543",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": []
+    },
+    "V05": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "V05",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/V05/m0.json",
+          "lint": {
+            "case_id": "V05",
+            "dispatch_payload_sha256": "6bf29f269cce157c75a8776b9e1ce117cf991936f37b2e72c922c0ef437d1b76",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": []
+    },
+    "V06": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "V06",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/V06/m0.json",
+          "lint": {
+            "case_id": "V06",
+            "dispatch_payload_sha256": "ca6643c19f15238f92f57971ea1e2a3136b5a0cef77183446a49f764d0cf7f13",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": []
+    },
+    "V07": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "V07",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/V07/m0.json",
+          "lint": {
+            "case_id": "V07",
+            "dispatch_payload_sha256": "fa7f9b044543abdba6d5bbd45a9e4884568ac6472b2a08e98311ef592505788e",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": []
+    },
+    "V08": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "V08",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/V08/m0.json",
+          "lint": {
+            "case_id": "V08",
+            "dispatch_payload_sha256": "ad21d9b50a17e92d2743dc6451d3863662d6e0805531233d999d7f8574f6d092",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": []
+    },
+    "V09": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "V09",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/V09/m0.json",
+          "lint": {
+            "case_id": "V09",
+            "dispatch_payload_sha256": "ebe6f5f2e669dddf5515adc51f5d7f99fa8db769270d0b636dfceaccbf267ecb",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": []
+    },
+    "V10": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "V10",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/V10/m0.json",
+          "lint": {
+            "case_id": "V10",
+            "dispatch_payload_sha256": "fd9f2afb058b2dc31430071f31c9ba2cce74ddeb09b1fd55ac6d169072729615",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": []
+    },
+    "V11": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "V11",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/V11/m0.json",
+          "lint": {
+            "case_id": "V11",
+            "dispatch_payload_sha256": "d6c0d9baeb9ae7c86c23c7e6d02a77debf9d5172898f2ad0de6bdff642cade0d",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": []
+    },
+    "V12": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "V12",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/V12/m0.json",
+          "lint": {
+            "case_id": "V12",
+            "dispatch_payload_sha256": "9091adfdff398f5eefa9ee76a8e85daeea462d276f8fb626b521e1719a95c890",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": []
+    },
+    "V13": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "V13",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/V13/m0.json",
+          "lint": {
+            "case_id": "V13",
+            "dispatch_payload_sha256": "26f507534f687b0ea7207aab404066c122059822538638a642d3c5cf2da87825",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": []
+    },
+    "A01": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "A01",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/A01/m0.json",
+          "lint": {
+            "case_id": "A01",
+            "dispatch_payload_sha256": "88c2bcafc37a2078d7486a11c214ec7040bdcc6bf4303ba7384ae1ae076cb4f6",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        },
+        "h1-01": {
+          "parameters": {
+            "case_id": "A01",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/h1-01",
+              "campaign_tree_v1": "47c223639318b041e6c86e6144b7fb23399634ead73e18ddcf306ab8242effeb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/A01/h1-01.json",
+          "lint": {
+            "case_id": "A01",
+            "dispatch_payload_sha256": "f6131db915a9b053c8561c0e2671291b9256a7a3ae9d130b48b8d2315f0dfce2",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": [
+        {
+          "control": "m0",
+          "candidate": "h1-01",
+          "result": {
+            "runtime_pointer": "/runtime",
+            "shared_payload_sha256": "ef7182da4015c912e8c58aa33b46442b043223ee3e748e1309bba18e87dde107",
+            "status": "ok"
+          }
+        }
+      ]
+    },
+    "A02": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "A02",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/A02/m0.json",
+          "lint": {
+            "case_id": "A02",
+            "dispatch_payload_sha256": "79628ae98f23df2e8bf37dd653b3509dc6c3f2995fd4bfb188aef4435e5e40dd",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        },
+        "h1-01": {
+          "parameters": {
+            "case_id": "A02",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/h1-01",
+              "campaign_tree_v1": "47c223639318b041e6c86e6144b7fb23399634ead73e18ddcf306ab8242effeb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/A02/h1-01.json",
+          "lint": {
+            "case_id": "A02",
+            "dispatch_payload_sha256": "24b83955c506328dec55c01014c32bc49822d9924422cd7c8d30c16e8b0ec101",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": [
+        {
+          "control": "m0",
+          "candidate": "h1-01",
+          "result": {
+            "runtime_pointer": "/runtime",
+            "shared_payload_sha256": "af45e4a7b1c676ef42956cbb9299718fafd56d9f78e70c5b2f1bb3331b8b5675",
+            "status": "ok"
+          }
+        }
+      ]
+    },
+    "A03": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "A03",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/A03/m0.json",
+          "lint": {
+            "case_id": "A03",
+            "dispatch_payload_sha256": "c7cdd109a0a8ae65373db3a8f4750bc82639a5b76475a2d646699e4e973b84dd",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        },
+        "h1-01": {
+          "parameters": {
+            "case_id": "A03",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/h1-01",
+              "campaign_tree_v1": "47c223639318b041e6c86e6144b7fb23399634ead73e18ddcf306ab8242effeb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/A03/h1-01.json",
+          "lint": {
+            "case_id": "A03",
+            "dispatch_payload_sha256": "cf2f3ecd5ceb0a01c632ee7e95dafc72ecb26b104078b564eac854802cb2a8a7",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": [
+        {
+          "control": "m0",
+          "candidate": "h1-01",
+          "result": {
+            "runtime_pointer": "/runtime",
+            "shared_payload_sha256": "e016f372ef3a5ab5f00cf08a06b6704e55e4cabebb0bc9e34b263abc3969c661",
+            "status": "ok"
+          }
+        }
+      ]
+    },
+    "A04": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "A04",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/A04/m0.json",
+          "lint": {
+            "case_id": "A04",
+            "dispatch_payload_sha256": "0e34d89fb3f9d18084d0067e48f6fb2cb2a109a6fb55701d0fa1b6046ea8d03c",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        },
+        "h1-01": {
+          "parameters": {
+            "case_id": "A04",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/h1-01",
+              "campaign_tree_v1": "47c223639318b041e6c86e6144b7fb23399634ead73e18ddcf306ab8242effeb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/A04/h1-01.json",
+          "lint": {
+            "case_id": "A04",
+            "dispatch_payload_sha256": "f48e1a10b0e956318d4893a26049281cffa2b190228306ec8165d49ef5149432",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": [
+        {
+          "control": "m0",
+          "candidate": "h1-01",
+          "result": {
+            "runtime_pointer": "/runtime",
+            "shared_payload_sha256": "12cfec9803cabaaea2366808f5dc1790b3cca0bf0d5a2d5c30f901a68a7d36c3",
+            "status": "ok"
+          }
+        }
+      ]
+    },
+    "A05": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "A05",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/A05/m0.json",
+          "lint": {
+            "case_id": "A05",
+            "dispatch_payload_sha256": "bc3d709491c310b0ff288c275a4fccd521990a3b8db3998d20fdf5b7a47ea1bb",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        },
+        "h1-01": {
+          "parameters": {
+            "case_id": "A05",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/h1-01",
+              "campaign_tree_v1": "47c223639318b041e6c86e6144b7fb23399634ead73e18ddcf306ab8242effeb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/A05/h1-01.json",
+          "lint": {
+            "case_id": "A05",
+            "dispatch_payload_sha256": "78cb8b271c4fdb9fa16445ea4c901b3d15a7867c269615fb92aca7b9bc1ab848",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": [
+        {
+          "control": "m0",
+          "candidate": "h1-01",
+          "result": {
+            "runtime_pointer": "/runtime",
+            "shared_payload_sha256": "2bee55d97567ccc258acfe72d8b16d51c87e9978ffd9ed25f704402b2c90334a",
+            "status": "ok"
+          }
+        }
+      ]
+    },
+    "AW01": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "AW01",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/prompt4/dispatches/AW01/m0.json",
+          "lint": {
+            "case_id": "AW01",
+            "dispatch_payload_sha256": "ee5cdfac1d18e7b42000b6c754bcb20ce8946708d73537027ec7a435255cb13b",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        },
+        "h1-01": {
+          "parameters": {
+            "case_id": "AW01",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/h1-01",
+              "campaign_tree_v1": "47c223639318b041e6c86e6144b7fb23399634ead73e18ddcf306ab8242effeb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/prompt4/dispatches/AW01/h1-01.json",
+          "lint": {
+            "case_id": "AW01",
+            "dispatch_payload_sha256": "6140660ac2402e0e06e295a1794c0fb00a07f60d4000277395e4291c99213ac3",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": [
+        {
+          "control": "m0",
+          "candidate": "h1-01",
+          "result": {
+            "runtime_pointer": "/runtime",
+            "shared_payload_sha256": "6089f14e1bdf44abfaad2ab677ae71b1e88a7ee7eef5b6e12218e79eb30d8abb",
+            "status": "ok"
+          }
+        }
+      ]
+    },
+    "P01": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "P01",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/P01/m0.json",
+          "lint": {
+            "case_id": "P01",
+            "dispatch_payload_sha256": "f800a36fa85546d113b953783bcfc7976b6e1dbd3aaa7b20d4d586e90ef77cb5",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        },
+        "h1-02": {
+          "parameters": {
+            "case_id": "P01",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/h1-02",
+              "campaign_tree_v1": "aab3d073179fcedcc18845d950073db2ccd2b1b4dd2f8ac6f76da982ad87f68d"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/P01/h1-02.json",
+          "lint": {
+            "case_id": "P01",
+            "dispatch_payload_sha256": "73f29406aee462b3b7c10687566468d12d23fcff2c2cf0f482fcf02b244353c0",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": [
+        {
+          "control": "m0",
+          "candidate": "h1-02",
+          "result": {
+            "runtime_pointer": "/runtime",
+            "shared_payload_sha256": "a75fb9a45ad7028cf3b6b4bef71da9571b8160dbda77b5a7085ee5912cf56eae",
+            "status": "ok"
+          }
+        }
+      ]
+    },
+    "P02": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "P02",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/P02/m0.json",
+          "lint": {
+            "case_id": "P02",
+            "dispatch_payload_sha256": "8b8174694425754e8d2494215125cc0f428d719eefc25eb2c7a9f2ba911a8456",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        },
+        "h1-02": {
+          "parameters": {
+            "case_id": "P02",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/h1-02",
+              "campaign_tree_v1": "aab3d073179fcedcc18845d950073db2ccd2b1b4dd2f8ac6f76da982ad87f68d"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/P02/h1-02.json",
+          "lint": {
+            "case_id": "P02",
+            "dispatch_payload_sha256": "243aa853447d275be2c14f57d96f113554187dccbc6b3fb0664653153ba567a7",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": [
+        {
+          "control": "m0",
+          "candidate": "h1-02",
+          "result": {
+            "runtime_pointer": "/runtime",
+            "shared_payload_sha256": "fe8f2114ea71d013e3851d9fcfad95662e060857ca102e758a1b1c4db2b525b7",
+            "status": "ok"
+          }
+        }
+      ]
+    },
+    "P03": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "P03",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/P03/m0.json",
+          "lint": {
+            "case_id": "P03",
+            "dispatch_payload_sha256": "285d61c7a48f7e360cb02ed312821ec77a5524d0b37451f33a7fa8107fcf9470",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        },
+        "h1-02": {
+          "parameters": {
+            "case_id": "P03",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/h1-02",
+              "campaign_tree_v1": "aab3d073179fcedcc18845d950073db2ccd2b1b4dd2f8ac6f76da982ad87f68d"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/P03/h1-02.json",
+          "lint": {
+            "case_id": "P03",
+            "dispatch_payload_sha256": "c3ddca0c47c8bed3a6f84a73b37dc3d546db518634362e31a9b33815616b64f9",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": [
+        {
+          "control": "m0",
+          "candidate": "h1-02",
+          "result": {
+            "runtime_pointer": "/runtime",
+            "shared_payload_sha256": "75aca092f2e5410791f2d52eba76ea2bf29a4d6abf3cc99d9110218abd71af97",
+            "status": "ok"
+          }
+        }
+      ]
+    },
+    "P04": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "P04",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/P04/m0.json",
+          "lint": {
+            "case_id": "P04",
+            "dispatch_payload_sha256": "2bc16de197d60d26961fd837a3e1fa54f36cc22de309bc8f24b6fef8d8c8f3fd",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        },
+        "h1-02": {
+          "parameters": {
+            "case_id": "P04",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/h1-02",
+              "campaign_tree_v1": "aab3d073179fcedcc18845d950073db2ccd2b1b4dd2f8ac6f76da982ad87f68d"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/P04/h1-02.json",
+          "lint": {
+            "case_id": "P04",
+            "dispatch_payload_sha256": "27d6d4a322e82fc02e342f7d5683408867cfb5a2c20f79e7591e6765b03d8d3f",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": [
+        {
+          "control": "m0",
+          "candidate": "h1-02",
+          "result": {
+            "runtime_pointer": "/runtime",
+            "shared_payload_sha256": "56926b8ce8f8629b436b9183c4c94eca76b76ac40a8ea75001b52009c27ee288",
+            "status": "ok"
+          }
+        }
+      ]
+    },
+    "P05": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "P05",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/P05/m0.json",
+          "lint": {
+            "case_id": "P05",
+            "dispatch_payload_sha256": "92054b787b9840dd29e0a2224a416f1a997fc49d0ca7212d5260b1aa4a5c545c",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        },
+        "h1-02": {
+          "parameters": {
+            "case_id": "P05",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/h1-02",
+              "campaign_tree_v1": "aab3d073179fcedcc18845d950073db2ccd2b1b4dd2f8ac6f76da982ad87f68d"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/P05/h1-02.json",
+          "lint": {
+            "case_id": "P05",
+            "dispatch_payload_sha256": "19613b6ba809490adb74cf3bcd0e866ce7d19b17d88981e3bbf9a7d47709b9dd",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": [
+        {
+          "control": "m0",
+          "candidate": "h1-02",
+          "result": {
+            "runtime_pointer": "/runtime",
+            "shared_payload_sha256": "1be07209e634dd1ce4ef8360c9ff6dd0646ce8966128d53248f9858a3463652b",
+            "status": "ok"
+          }
+        }
+      ]
+    },
+    "PW01": {
+      "arms": {
+        "m0": {
+          "parameters": {
+            "case_id": "PW01",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/m0",
+              "campaign_tree_v1": "8d1a70398c4eaa0386574d2594cf41658900facc92d3ab7fb6e20358c92d76eb"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/PW01/m0.json",
+          "lint": {
+            "case_id": "PW01",
+            "dispatch_payload_sha256": "ab8450167cfda77455ad507cb7e9e184a7e577e488c0f8d7e29ab8d2ff9ff103",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        },
+        "h1-02": {
+          "parameters": {
+            "case_id": "PW01",
+            "runtime": {
+              "package_root": ".tmp/campaign-evidence/to-spec-2026-07-25/h1-02",
+              "campaign_tree_v1": "aab3d073179fcedcc18845d950073db2ccd2b1b4dd2f8ac6f76da982ad87f68d"
+            }
+          },
+          "resolved_payload": ".tmp/campaign-evidence/to-spec-2026-07-25/dispatches/PW01/h1-02.json",
+          "lint": {
+            "case_id": "PW01",
+            "dispatch_payload_sha256": "b7c153a9d0f121f0728dcd39fd85b9f1dff6e3d462d63d5fd729d91b1b652e64",
+            "runtime_pointer": "/runtime",
+            "status": "ok"
+          }
+        }
+      },
+      "comparisons": [
+        {
+          "control": "m0",
+          "candidate": "h1-02",
+          "result": {
+            "runtime_pointer": "/runtime",
+            "shared_payload_sha256": "7019a8610a535d7b08b0b75aa2d31c3e2233f4e65805893c6c22364f18d9101a",
+            "status": "ok"
+          }
+        }
+      ]
+    }
+  }
+}

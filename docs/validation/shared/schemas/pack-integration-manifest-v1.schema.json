@@ -1,0 +1,181 @@
+{
+  "$id": "urn:programming-agent-skills:pack-integration-manifest:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "identities": {
+      "additionalProperties": false,
+      "properties": {
+        "composition_epoch_id": {"pattern": "^FCE-[0-9]{8}-[0-9]{2}$", "type": ["string", "null"]},
+        "contract": {
+          "oneOf": [
+            {"type": "null"},
+            {
+              "additionalProperties": false,
+              "properties": {
+                "fingerprint": {"$ref": "#/$defs/fingerprint"},
+                "path": {"minLength": 1, "type": "string"},
+                "revision": {"minimum": 1, "type": "integer"},
+                "semantic_fingerprint": {"$ref": "#/$defs/fingerprint"}
+              },
+              "required": ["path", "fingerprint", "semantic_fingerprint", "revision"],
+              "type": "object"
+            }
+          ]
+        },
+        "installed_pack": {
+          "oneOf": [
+            {"type": "null"},
+            {
+              "additionalProperties": false,
+              "properties": {
+                "fingerprint": {"$ref": "#/$defs/fingerprint"},
+                "manifest_fingerprint": {"$ref": "#/$defs/fingerprint"}
+              },
+              "required": ["fingerprint", "manifest_fingerprint"],
+              "type": "object"
+            }
+          ]
+        },
+        "relationship_index": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/$defs/pointer"}
+          ]
+        },
+        "relationship_projection": {
+          "items": {"$ref": "#/$defs/relationshipProjection"},
+          "type": "array"
+        }
+      },
+      "required": ["composition_epoch_id", "contract", "installed_pack", "relationship_index", "relationship_projection"],
+      "type": "object"
+    },
+    "invalidations": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "changed_inputs": {"items": {"minLength": 1, "type": "string"}, "minItems": 1, "type": "array"},
+          "observed_at": {"format": "date-time", "type": "string"},
+          "receipt_ids": {"items": {"minLength": 1, "type": "string"}, "minItems": 1, "type": "array"},
+          "registration_id": {"minLength": 1, "type": "string"}
+        },
+        "required": ["registration_id", "receipt_ids", "changed_inputs", "observed_at"],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "parity": {
+      "additionalProperties": false,
+      "properties": {
+        "contract_skills_installed": {"enum": ["pending", "match", "mismatch"]},
+        "relationship_index": {"enum": ["pending", "match", "mismatch"]}
+      },
+      "required": ["contract_skills_installed", "relationship_index"],
+      "type": "object"
+    },
+    "receipts": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "claim_class": {"enum": ["behavioral", "structural"]},
+          "gate_id": {"pattern": "^G(0[1-9]|10)$", "type": "string"},
+          "id": {"minLength": 1, "type": "string"},
+          "identity": {"$ref": "#/$defs/fingerprint"},
+          "candidate_fingerprint": {"$ref": "#/$defs/fingerprint"},
+          "observations": {"items": {"type": "object"}, "type": "array"},
+          "observed_at": {"format": "date-time", "type": "string"},
+          "outcome": {"enum": ["evidence-recorded", "fail", "pass"]},
+          "registration_id": {"minLength": 1, "type": "string"}
+        },
+        "required": ["id", "registration_id", "gate_id", "claim_class", "identity", "candidate_fingerprint", "outcome", "observations", "observed_at"],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "registrations": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "check_profile": {
+            "enum": [
+              "behavioral-evidence-v1",
+              "gate-g01-v1",
+              "gate-g02-v1",
+              "gate-g03-v1",
+              "gate-g04-v1",
+              "gate-g05-v1",
+              "gate-g06-v1",
+              "gate-g07-v1",
+              "gate-g08-v1",
+              "gate-g09-v1",
+              "gate-g10-v1"
+            ]
+          },
+          "claim_class": {"enum": ["behavioral", "structural"]},
+          "gate_id": {"pattern": "^G(0[1-9]|10)$", "type": "string"},
+          "id": {"pattern": "^[a-z0-9][a-z0-9-]*$", "type": "string"},
+          "inputs": {"items": {"$ref": "#/$defs/pointer"}, "type": "array"},
+          "preregistration": {"$ref": "#/$defs/preregistration"},
+          "result": {"$ref": "#/$defs/pointer"}
+        },
+        "required": ["id", "gate_id", "claim_class", "check_profile", "inputs", "result"],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "schema_version": {"const": 1}
+  },
+  "required": ["schema_version", "identities", "registrations", "receipts", "invalidations", "parity"],
+  "type": "object",
+  "$defs": {
+    "pointer": {
+      "additionalProperties": false,
+      "properties": {
+        "fingerprint": {"pattern": "^sha256-v1:[0-9a-f]{64}$", "type": "string"},
+        "path": {"minLength": 1, "type": "string"}
+      },
+      "required": ["path", "fingerprint"],
+      "type": "object"
+    },
+    "fingerprint": {
+      "pattern": "^sha256-v1:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "relationshipProjection": {
+      "additionalProperties": false,
+      "properties": {
+        "caller_skill_id": {"type": ["string", "null"]},
+        "combined_exit_owner_skill_id": {"type": ["string", "null"]},
+        "relationship_id": {"type": ["string", "null"]},
+        "resume_owner_skill_id": {"type": ["string", "null"]},
+        "target_skill_id": {"type": ["string", "null"]}
+      },
+      "required": ["relationship_id", "caller_skill_id", "target_skill_id", "resume_owner_skill_id", "combined_exit_owner_skill_id"],
+      "type": "object"
+    },
+    "preregistration": {
+      "additionalProperties": false,
+      "properties": {
+        "controls": {"items": {"minLength": 1, "type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true},
+        "environment_bounds": {"$ref": "#/$defs/pointer"},
+        "fixtures": {"items": {"$ref": "#/$defs/pointer"}, "minItems": 1, "type": "array"},
+        "protocol": {"$ref": "#/$defs/pointer"},
+        "repetitions": {"minimum": 2, "type": "integer"},
+        "rubric": {"$ref": "#/$defs/pointer"},
+        "variance": {
+          "additionalProperties": false,
+          "properties": {
+            "measure": {"minLength": 1, "type": "string"},
+            "reported": {"const": true},
+            "worst_case_reported": {"const": true}
+          },
+          "required": ["measure", "reported", "worst_case_reported"],
+          "type": "object"
+        }
+      },
+      "required": ["protocol", "rubric", "fixtures", "controls", "repetitions", "variance", "environment_bounds"],
+      "type": "object"
+    }
+  }
+}

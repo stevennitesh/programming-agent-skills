@@ -1,0 +1,224 @@
+{
+  "schema_version": 1,
+  "campaign": "2026-07-24-to-spec",
+  "isolation": {
+    "candidate_terms_present": false,
+    "prior_outputs_present": false,
+    "conclusions_present": false,
+    "arm_delta": "runtime package only"
+  },
+  "fixed_execution": {
+    "model": "gpt-5.6-sol",
+    "host": "Codex fresh-context subagent",
+    "reasoning_effort": "xhigh",
+    "tools": [
+      "read-only fixture filesystem",
+      "fixture-scoped disposable draft write",
+      "simulated configured tracker create",
+      "simulated tracker read-back"
+    ],
+    "authority": "Create at most one simulated parent target after all runtime gates pass; do not resolve source-owned choices.",
+    "initial_state": "Fresh isolated fixture checkout with no conversation history and only the named fixture files.",
+    "mutation_boundary": "Only fixture .tmp/to-spec/<feature-slug>.md and the one simulated configured parent target may change.",
+    "requested_output": "Return the exact typed result, operation log, final draft state, durable-state snapshot, and parent specification when one is produced.",
+    "runtime_arms": [
+      "runtime/m0",
+      "runtime/h1"
+    ],
+    "sample_count_per_arm_per_cluster": 5,
+    "arm_order_plan": [
+      "M0:sample-01",
+      "M0:sample-02",
+      "M0:sample-03",
+      "M0:sample-04",
+      "M0:sample-05",
+      "root-only:deficit-gate",
+      "H1:sample-05",
+      "H1:sample-04",
+      "H1:sample-03",
+      "H1:sample-02",
+      "H1:sample-01"
+    ],
+    "fresh_context_per_dispatch": true
+  },
+  "m0_viability": [
+    {"id":"V01","family":"success-transport","task":"Publish one parent specification from packet A through the configured GitHub simulation.","source_facts":["packet A is settled and complete","GitHub parent lookup is absent","create returns issue 41","refetch exactly matches title, body, open state, and no child relationships"],"authority":"new parent creation only","initial_state":"no matching parent; unrelated issue 9 exists","tools_operations":["read packet and routed contracts","query parent state","write and reread draft","create once","refetch"],"mutation_boundary":"draft and issue 41 only","requested_output":"typed result and operation/state evidence"},
+    {"id":"V02","family":"success-transport","task":"Publish one parent specification from packet B through the configured GitLab simulation.","source_facts":["packet B is settled and complete","GitLab parent lookup is absent","create returns issue 73","refetch exactly matches description, notes, open state, and no child relationships"],"authority":"new parent creation only","initial_state":"no matching parent","tools_operations":["read packet and routed contracts","query parent state","write and reread draft","create once","refetch"],"mutation_boundary":"draft and issue 73 only","requested_output":"typed result and operation/state evidence"},
+    {"id":"V03","family":"success-transport","task":"Publish one parent specification from packet C through the configured Local Markdown simulation.","source_facts":["packet C is settled and complete","the configured target is .scratch/cache-key/SPEC.md","the target is absent","file reread exactly matches frozen draft"],"authority":"new local parent creation only","initial_state":"no target file; unrelated scratch file exists","tools_operations":["read packet and routed contracts","query target state","write and reread draft","create target once","reread target"],"mutation_boundary":"draft and .scratch/cache-key/SPEC.md only","requested_output":"typed result and operation/state evidence"},
+    {"id":"V04","family":"caller-packet","task":"Publish from the supplied closed Wayfinder packet.","source_facts":["the target repository AGENTS.md and routed tracker, labels, domain, and engineering contracts are accessible, complete, and compatible with the configured create/read-back simulation","map WF-204 owned by the product council is closed","destination is one durable parent spec for cache-key rotation","R1 settles the outcome: operators can rotate cache keys without interrupting reads","R2 settles scope: manual operator rotation and audit evidence are included; automatic rotation is excluded","R3 settles acceptance: old keys reject new writes after activation while reads remain available, and the audit record identifies actor, key version, and activation time","R4 settles proof: the configured integration harness observes write rejection, read continuity, and the audit record","the stable pointers for R1-R4 are accessible and their contents match these facts","configured target is absent and create/read-back succeed"],"authority":"synthesize settled map; no Wayfinder mutation","initial_state":"closed map and absent parent","tools_operations":["read routed setup contracts","read map and all pointers","query parent","draft","create once","read back"],"mutation_boundary":"draft and one parent only","requested_output":"typed result, trace, and operation/state evidence"},
+    {"id":"V05","family":"caller-packet","task":"Publish from the supplied selected improvement candidate.","source_facts":["candidate IC-7 is verified and selected","direction, Source Trace, resolution evidence, commitment boundary, proof seam, limits, and overlap disposition are accessible and settled","configured target is absent and create/read-back succeed"],"authority":"synthesize candidate; no candidate mutation","initial_state":"selected candidate and absent parent","tools_operations":["read candidate packet and pointers","query parent","draft","create once","read back"],"mutation_boundary":"draft and one parent only","requested_output":"typed result, trace, and operation/state evidence"},
+    {"id":"V06","family":"invocation","task":"Handle an explicit to-spec request and report how an adjacent raw feature request is treated.","source_facts":["request 1 explicitly invokes to-spec with settled source","request 2 asks conversationally for ideas for an unsettled feature","no publication is authorized for request 2"],"authority":"publication only for request 1","initial_state":"both requests supplied separately","tools_operations":["classify invocation"],"mutation_boundary":"none for request 2","requested_output":"admission decisions and any typed return"},
+    {"id":"V07","family":"setup-failure","task":"Handle a settled packet in a repository with an incomplete routed setup.","source_facts":["AGENTS.md points to tracker.md","tracker.md is absent","no configured create or read-back operation exists"],"authority":"read-only setup inspection","initial_state":"no draft and no parent","tools_operations":["read AGENTS.md","attempt routed setup read"],"mutation_boundary":"none","requested_output":"typed result, evidence, state, and recommendation"},
+    {"id":"V08","family":"source-failure","task":"Handle packet D whose decision pointer cannot be opened.","source_facts":["D names decision://retention as authority for retention and deletion","that pointer returns access denied","retention changes acceptance and data contract"],"authority":"do not choose retention","initial_state":"no draft and no parent","tools_operations":["read D","attempt pointer read"],"mutation_boundary":"none","requested_output":"typed result, missing pointer, affected fields, and owner"},
+    {"id":"V09","family":"source-failure","task":"Handle packet E with one unresolved material choice.","source_facts":["E leaves maximum upload size undecided","the value changes acceptance, API behavior, and resource limits","product owner owns the choice"],"authority":"do not choose upload size","initial_state":"no draft and no parent","tools_operations":["read E","trace decision consequence"],"mutation_boundary":"none","requested_output":"typed result, affected commitments, and owner"},
+    {"id":"V10","family":"authority-conflict","task":"Handle packet F against the routed domain decision.","source_facts":["F calls the aggregate a Workspace","ADR-12 requires Project for this bounded context","the conflict changes the public contract","domain owner owns reconciliation"],"authority":"no domain or ADR mutation","initial_state":"no draft and no parent","tools_operations":["read F","read domain route and ADR-12"],"mutation_boundary":"none","requested_output":"typed result naming both authorities and conflict"},
+    {"id":"V11","family":"authority-conflict","task":"Handle packet G that requires a new public interface decision.","source_facts":["G settles outcome but not whether callers use events or polling","the choice changes public ownership and acceptance","codebase-design vocabulary is available but grants no decision authority"],"authority":"vocabulary load only; no design decision","initial_state":"no draft and no parent","tools_operations":["read G","load vocabulary owner"],"mutation_boundary":"none","requested_output":"typed result, exposed decision, and owner"},
+    {"id":"V12","family":"existing-state","task":"Handle an explicitly identified matching existing parent.","source_facts":["parent 18 exists","body and source identity match the requested source","request authorizes creation only and does not authorize reconciliation"],"authority":"no existing-parent mutation","initial_state":"matching parent 18","tools_operations":["query and refetch parent 18"],"mutation_boundary":"none","requested_output":"existing-state result with observed identity and needed authority if any"},
+    {"id":"V13","family":"existing-state","task":"Handle an explicitly identified divergent existing parent.","source_facts":["parent 19 exists","its source identity matches but body conflicts on retention","request authorizes creation only"],"authority":"no overwrite or reconciliation","initial_state":"divergent parent 19","tools_operations":["query and refetch parent 19"],"mutation_boundary":"none","requested_output":"typed conflict result and smallest needed authorization/source delta"},
+    {"id":"V14","family":"existing-state","task":"Handle a parent lookup whose state is unknown.","source_facts":["lookup times out after server receipt","absence is not established","create is non-idempotent","no provider idempotency primitive is configured"],"authority":"inspection only until state is known","initial_state":"durable state unknown","tools_operations":["query parent once"],"mutation_boundary":"none","requested_output":"typed result and safe next inspection action"},
+    {"id":"V15","family":"coverage","task":"Draft from packet H and apply pre-publication coverage.","source_facts":["packet H is owned by the deletion-service product owner and has exact identity H-2026-07-24","H contains requirements H1-H4","H4 requires an audit export file on deletion containing the deletion record ID and completion timestamp","H4 acceptance is observable when the configured deletion integration fixture completes a deletion and reads back the export file with the matching ID and timestamp","H4 failure behavior is deletion failure with no success claim when the export cannot be written or read back","the proposed draft source trace accounts only for H1-H3","no publication has occurred"],"authority":"correct synthesis only; do not invent H4 details","initial_state":"incomplete proposed draft and absent parent","tools_operations":["read H","compare source and draft","reread corrected draft if possible"],"mutation_boundary":"draft only unless all gates pass","requested_output":"typed result or corrected coverage evidence and operation log"},
+    {"id":"V16","family":"state-coverage","task":"Draft the applicable lifecycle behavior for packet I.","source_facts":["new sessions use token v2","a reused v1 session remains valid for 30 minutes measured from its first reuse after the v2 rollout","after that 30-minute window the v1 session must reauthenticate","admins may revoke sessions; ordinary users may not and receive a forbidden result on revocation attempts","admin and user access paths otherwise share the same token lifecycle","no storage-format migration exists"],"authority":"preserve stated lifecycle only","initial_state":"absent parent","tools_operations":["read I","draft and coverage-check"],"mutation_boundary":"draft and parent only if gates pass","requested_output":"typed result and covered state branches"},
+    {"id":"V17","family":"publication-failure","task":"Handle a configured create that fails before application.","source_facts":["preflight and draft gates passed","create returns authenticated rejection before server application","read-back confirms no parent","draft bytes are available"],"authority":"one create attempt only","initial_state":"absent parent and frozen draft","tools_operations":["create once","query durable state"],"mutation_boundary":"draft only","requested_output":"typed result, operations, observed state, and draft identity"},
+    {"id":"V18","family":"publication-failure","task":"Handle a create success response followed by mismatched read-back.","source_facts":["create returns parent 22","refetch body omits requirement R3","location and state are known","draft contains R1-R3"],"authority":"no second create and no overwrite","initial_state":"frozen draft and newly created mismatching parent 22","tools_operations":["create once","refetch parent 22"],"mutation_boundary":"parent 22 from the one attempt; preserve draft","requested_output":"typed result and exact observed delta"},
+    {"id":"V19","family":"publication-failure","task":"Handle an indeterminate create result.","source_facts":["create request was sent","connection closed before response","query is temporarily unavailable","application status is unknown"],"authority":"no repeated create","initial_state":"frozen draft and unknown parent state","tools_operations":["record create attempt","attempt query once"],"mutation_boundary":"unknown durable effect; preserve draft","requested_output":"typed result, unknown state, and safe inspection action"},
+    {"id":"V20","family":"success-reconciliation","task":"Finish a verified successful publication.","source_facts":["created parent 27 exactly matches frozen draft and intended relationships","source identity is S27","draft deletion succeeds"],"authority":"cleanup after verified match","initial_state":"verified parent 27 and existing draft","tools_operations":["compare durable state","delete disposable draft"],"mutation_boundary":"draft cleanup only","requested_output":"typed success with parent, source identity, coverage, read-back, and residuals"},
+    {"id":"V21","family":"downstream-boundary","task":"Publish a parent when the same request also asks for child slicing.","source_facts":["parent source is settled","parent create and read-back succeed","to-tickets owns child slicing","no separate to-tickets invocation is authorized"],"authority":"parent publication only","initial_state":"absent parent and no children","tools_operations":["publish parent","inspect child state"],"mutation_boundary":"draft and one parent only","requested_output":"typed success and one next recommendation"},
+    {"id":"V22","family":"preservation","task":"Publish while unrelated work is present.","source_facts":["settled source and target gates pass","unrelated modified code.py and tracker issue 99 exist","parent create and read-back succeed"],"authority":"parent publication only","initial_state":"unrelated work plus absent target parent","tools_operations":["snapshot unrelated state","publish parent","compare unrelated state"],"mutation_boundary":"draft and one parent only","requested_output":"typed result and preservation evidence"}
+  ],
+  "h1_comparisons": [
+    {
+      "cluster_id":"Q01",
+      "units":["H1-01"],
+      "claim_scope":"broad artifact reconstruction across product and infrastructure specifications",
+      "task":"Produce the parent specification from the selected variant, then answer the listed reconstruction questions using only the published artifact and its reachable authoritative pointers.",
+      "families":[
+        {"family":"product-vocabulary","variants":[
+          {"id":"Q01-A","source_facts":["term Quorum means two of three approvers per ADR-31","outcome is that a deployment request publishes only after Quorum approves it","roles are deployment requester and one of the three designated approvers","emergency override and automatic approval are excluded","acceptance requires one recorded request, two distinct approvals, and no publication before the second approval","ADR-31 is reachable at a stable pointer"],"observations":["reader begins with no conversation memory"]},
+          {"id":"Q01-B","source_facts":["term Cooling Window means 24 hours per domain glossary","outcome is that an operator can schedule a release only after the Cooling Window ends","operator is the only source-visible role","rollback may restore the prior release during the first hour after publication but does not shorten the Cooling Window","release-controller integration tests own proof","acceptance observes rejection before 24 hours and successful scheduling at or after 24 hours","glossary pointer is stable"],"observations":["reader begins with no conversation memory"]},
+          {"id":"Q01-C","source_facts":["term Safe Hold means reject writes while reads continue","outcome is that an operator can activate Safe Hold during an incident","affected actors are operator and API client","automatic activation is a non-goal","acceptance observes rejected writes, continuing reads, and operator-visible active status","the incident integration harness owns proof"],"observations":["no external glossary exists"]}
+        ]},
+        {"family":"integration-premises","variants":[
+          {"id":"Q01-D","source_facts":["partner callback delivery is at-least-once","deduplication owner is ADR-44","caller acceptance requires one durable order update despite duplicate callbacks","failure acceptance requires a retryable response when durable update is unavailable and no success response before durability","ADR-44 pointer is stable"],"observations":["reader begins with no conversation memory"]},
+          {"id":"Q01-E","source_facts":["batch source timestamps are UTC","records more than 15 minutes behind the current batch watermark are late","late records are quarantined and the operator sees the batch ID and late-record count","acceptance observes UTC comparison, quarantine, and the operator notice","time contract pointer is stable"],"observations":["reader begins with no conversation memory"]}
+        ]}
+      ],
+      "authority":"synthesize and publish only",
+      "initial_state":"absent parent; all named pointers have declared reachability",
+      "tools_operations":["read source and pointers","draft","publish simulated parent","read artifact as independent reader"],
+      "mutation_boundary":"draft and one simulated parent",
+      "requested_output":"typed result, artifact, and answers for outcome, users, commitments, acceptance, exclusions, owners, and proof"
+    },
+    {
+      "cluster_id":"Q02",
+      "units":["H1-02"],
+      "claim_scope":"bounded pre-publication semantic defect detection",
+      "task":"Process the selected proposed draft against its settled source and publish only when the source supports a publication-ready result.",
+      "families":[
+        {"family":"defective-drafts","variants":[
+          {"id":"Q02-A","source_facts":["draft contains TODO for deletion period","source fixes deletion at 30 days","all other fields agree"],"observations":["parent absent"]},
+          {"id":"Q02-B","source_facts":["draft says retry forever and later says retry at most twice","source says at most twice"],"observations":["parent absent"]},
+          {"id":"Q02-C","source_facts":["draft adds administrator export","source expressly excludes export"],"observations":["parent absent"]}
+        ]},
+        {"family":"nondefects","variants":[
+          {"id":"Q02-D","source_facts":["draft uses concise prose rather than preferred house style","all commitments and acceptance match"],"observations":["parent absent"]},
+          {"id":"Q02-E","source_facts":["draft retains a named nonblocking note that cannot change acceptance","owner is recorded","all commitments match"],"observations":["parent absent"]}
+        ]}
+      ],
+      "authority":"repair source-supported drafting defects; no new approval or source decision",
+      "initial_state":"frozen proposed draft and absent parent",
+      "tools_operations":["read source","read exact draft","publish at most once","read back"],
+      "mutation_boundary":"draft and one simulated parent",
+      "requested_output":"typed result, defect dispositions, operation log, and durable state"
+    },
+    {
+      "cluster_id":"Q03",
+      "units":["H1-03"],
+      "claim_scope":"broad applicability judgment across service and local-tool specifications",
+      "task":"Produce the parent specification from the selected source without adding unstated requirements.",
+      "families":[
+        {"family":"service-concerns","variants":[
+          {"id":"Q03-A","source_facts":["stores customer email","privacy deletion at 30 days is settled","no migration exists","availability target is 99.9 percent"],"observations":["parent absent"]},
+          {"id":"Q03-B","source_facts":["changes stored schema from v1 to v2","rollback compatibility and backfill are settled","no personal data exists"],"observations":["parent absent"]},
+          {"id":"Q03-C","source_facts":["public API uses bearer credentials","credentials rotate every 90 days with a one-hour overlap in which the prior and new credential are accepted","after the overlap the prior credential returns 401 and creates no resource","missing or invalid credentials return 401 and create no resource","acceptance exercises overlap, expiry, and unauthorized no-mutation behavior","no persistent migration exists"],"observations":["parent absent"]}
+        ]},
+        {"family":"local-tool-concerns","variants":[
+          {"id":"Q03-D","source_facts":["pure local formatter with no network, persistence, credentials, or personal data","input is one UTF-8 source file and output is the same source with canonical whitespace","unreadable or invalid UTF-8 input returns a nonzero result and writes no output","acceptance compares the formatted bytes and verifies unchanged input on failure"],"observations":["parent absent"]},
+          {"id":"Q03-E","source_facts":["local report generator reads one existing UTF-8 data file and writes one Markdown report beside it","no network, identity, migration, or retained state exists beyond the report file","missing or invalid input returns a nonzero result and creates no report","acceptance compares the report to the settled projection and verifies no report on failure"],"observations":["parent absent"]}
+        ]}
+      ],
+      "authority":"include only source-supported obligations",
+      "initial_state":"settled packet and absent parent",
+      "tools_operations":["read source","draft","publish simulated parent","read back"],
+      "mutation_boundary":"draft and one simulated parent",
+      "requested_output":"typed result, artifact, and source trace"
+    },
+    {
+      "cluster_id":"Q04",
+      "units":["H1-04"],
+      "claim_scope":"boundary-sensitive values across credential and migration families",
+      "task":"Produce the parent specification, or a typed gap when an acceptance-changing value fact is missing.",
+      "families":[
+        {"family":"credential-integration","variants":[
+          {"id":"Q04-A","source_facts":["credential originates in vault secret ref billing/key","crosses deploy injection boundary","consumer is billing client","rotation every 90 days","verification checks authenticated sandbox call","literal secret is not supplied"],"observations":["parent absent"]},
+          {"id":"Q04-B","source_facts":["gateway generates the request ID before enqueue and attaches that same ID to every retry","the ID passes from gateway to queue to worker without substitution","gateway and worker correlation records are retained for 7 days measured from gateway receipt and deleted after that window","a missing or malformed upstream ID is irrelevant because the gateway always generates the authoritative ID","verification queries the retained gateway and worker records and matches the same ID across both"],"observations":["parent absent"]},
+          {"id":"Q04-C","source_facts":["partner token source is named but destination consumer is unresolved","consumer choice changes security acceptance"],"observations":["parent absent"]}
+        ]},
+        {"family":"migration-config","variants":[
+          {"id":"Q04-D","source_facts":["timezone config originates in tenant profile","crosses API boundary to scheduler","retained with job","verification observes scheduled UTC instant"],"observations":["parent absent"]},
+          {"id":"Q04-E","source_facts":["legacy customer ID maps through a total one-to-one migration table to the new customer ID; a missing or duplicate mapping fails the migration before cutover","invoicing consumes the new customer ID after cutover","cutover occurs only after every active legacy ID has one verified new mapping; in-flight invoices finish against the pre-cutover lookup","rollback restores legacy lookup for later invoices without rewriting already issued invoices","verification compares customer association and monetary totals for matched invoices before and after migration","the billing migration owner owns these settled rules"],"observations":["parent absent"]}
+        ]}
+      ],
+      "authority":"preserve stated hops; do not reveal or invent values",
+      "initial_state":"settled packet except where a variant explicitly states a material gap",
+      "tools_operations":["read source","draft or return gap","publish at most once","read back"],
+      "mutation_boundary":"draft and one simulated parent",
+      "requested_output":"typed result, artifact or affected gap fields, and operation log"
+    },
+    {
+      "cluster_id":"Q05",
+      "units":["H1-05"],
+      "claim_scope":"proof selection across API and stateful user-flow families",
+      "task":"Produce the parent specification with an observable proof plan for every settled commitment.",
+      "families":[
+        {"family":"api-proof","variants":[
+          {"id":"Q05-A","source_facts":["public POST /jobs returns 202 and job ID","caller can query final status","private parser may be refactored","contract and error cases are settled"],"observations":["unit, API, and end-to-end harnesses exist"]},
+          {"id":"Q05-B","source_facts":["library public function normalize returns canonical value","private cache is replaceable","property oracle and caller tests exist"],"observations":["full-stack deployment is expensive and adds no required observation"]},
+          {"id":"Q05-C","source_facts":["webhook receiver exposes response and durable event","retry behavior is caller-visible","internal queue type is not contractual"],"observations":["component and integration harnesses exist"]}
+        ]},
+        {"family":"stateful-flow-proof","variants":[
+          {"id":"Q05-D","source_facts":["user resumes checkout across sessions","browser-visible outcome and stored state transition both matter","private serialization may change"],"observations":["browser and state-contract harnesses exist"]},
+          {"id":"Q05-E","source_facts":["admin revocation must affect next API call and background worker","no single harness observes both economically"],"observations":["API integration and worker component harnesses exist"]}
+        ]}
+      ],
+      "authority":"select from existing observable seams; new public seams require source authority",
+      "initial_state":"settled requirements and listed harness capabilities",
+      "tools_operations":["read requirements and harness descriptions","draft proof mapping"],
+      "mutation_boundary":"draft and one simulated parent",
+      "requested_output":"typed result, requirement-to-oracle mapping, coupling rationale, and residual risk"
+    },
+    {
+      "cluster_id":"Q06",
+      "units":["H1-06"],
+      "claim_scope":"product and platform specification cases",
+      "task":"Produce the parent specification while preserving every source-visible user benefit and every non-user constraint.",
+      "families":[
+        {"family":"multi-actor-product","variants":[
+          {"id":"Q06-A","source_facts":["buyer resumes checkout to avoid reentry","support agent views recovery status to resolve calls","encryption-at-rest is a source constraint with no human actor"],"observations":["all three commitments are settled"]},
+          {"id":"Q06-B","source_facts":["author schedules publication to coordinate launch","reader sees content only after release","migration must preserve legacy slugs without a persona"],"observations":["all three commitments are settled"]},
+          {"id":"Q06-C","source_facts":["operator pauses jobs to contain incident","customer receives accurate delayed status","audit retention is a regulatory constraint"],"observations":["all three commitments are settled"]}
+        ]},
+        {"family":"platform-internal","variants":[
+          {"id":"Q06-D","source_facts":["service owner rotates keys to maintain access","dependent service receives uninterrupted calls","rollback window is an internal constraint"],"observations":["no end-user persona is supplied"]},
+          {"id":"Q06-E","source_facts":["analyst downloads report to reconcile billing","administrator limits access to approved groups","schema compatibility is a non-story constraint"],"observations":["all commitments are settled"]}
+        ]}
+      ],
+      "authority":"use only source-visible actors and value",
+      "initial_state":"settled packet and absent parent",
+      "tools_operations":["read source","draft","trace every commitment","publish simulated parent"],
+      "mutation_boundary":"draft and one simulated parent",
+      "requested_output":"typed result, artifact, and bidirectional disposition ledger"
+    },
+    {
+      "cluster_id":"Q07",
+      "units":["H1-07"],
+      "claim_scope":"blocking and nonblocking unknowns across product and operations",
+      "task":"Produce a parent specification only when unresolved items cannot change current acceptance.",
+      "families":[
+        {"family":"product-deferrals","variants":[
+          {"id":"Q07-A","source_facts":["dark-mode support is deferred","owner is design lead","current acceptance excludes dark mode","revisit when design tokens v3 ships"],"observations":["all current commitments are settled"]},
+          {"id":"Q07-B","source_facts":["maximum upload size is undecided","it changes API acceptance and resource limits","product owner owns it"],"observations":["no value or trigger is settled"]},
+          {"id":"Q07-C","source_facts":["mobile layout is deferred","owner is product design","desktop acceptance is unchanged","revisit when mobile traffic exceeds 20 percent"],"observations":["metric source is named"]}
+        ]},
+        {"family":"operations-deferrals","variants":[
+          {"id":"Q07-D","source_facts":["regional failover is deferred","owner is reliability lead","single-region acceptance remains valid","revisit when second region is funded"],"observations":["no current failover claim is made"]},
+          {"id":"Q07-E","source_facts":["retention period is undecided","it changes deletion acceptance and legal posture","privacy owner owns it"],"observations":["publication cannot be truthful without the choice"]}
+        ]}
+      ],
+      "authority":"record nonblocking dispositions; return material choices to their owners",
+      "initial_state":"settled packet except variants that explicitly identify acceptance-changing unknowns",
+      "tools_operations":["read source","classify consequence","draft or return gap","publish at most once"],
+      "mutation_boundary":"draft and one simulated parent",
+      "requested_output":"typed result, each unknown's disposition, and operation log"
+    }
+  ]
+}

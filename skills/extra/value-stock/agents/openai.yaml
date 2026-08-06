@@ -1,0 +1,7 @@
+interface:
+  display_name: "Stock Valuation"
+  short_description: "Research and value a publicly traded company"
+  default_prompt: "Use $value-stock to research and estimate a fair-value range for a publicly traded company."
+
+policy:
+  allow_implicit_invocation: true

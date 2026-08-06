@@ -1,0 +1,469 @@
+{
+  "predecessor_skill_ids": [],
+  "slice": {
+    "acceptance_scenarios": [
+      {
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for research: Answer one bounded source-answerable question with cited evidence for a caller-owned decision",
+        "expected_owner_skill_id": "SK-003",
+        "scenario_id": "PS-003"
+      },
+      {
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for codebase-design: Design one bounded module behind a small caller-facing interface",
+        "expected_owner_skill_id": "SK-007",
+        "scenario_id": "PS-007"
+      },
+      {
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for to-tickets: Create one verified dependency-ordered Ready-for-agent ticket graph from settled source",
+        "expected_owner_skill_id": "SK-012",
+        "scenario_id": "PS-012"
+      },
+      {
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for triage: Classify incoming tracker work into maintainer-approved executable or human-owned states",
+        "expected_owner_skill_id": "SK-013",
+        "scenario_id": "PS-013"
+      },
+      {
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for skill-router: Choose exactly one next engineering skill from the current situation and stop",
+        "expected_owner_skill_id": "SK-025",
+        "scenario_id": "PS-025"
+      }
+    ],
+    "campaign_proof_edges": [
+      {
+        "predecessor_skill_id": "SK-013",
+        "successor_skill_id": "SK-025"
+      }
+    ],
+    "capabilities": [
+      {
+        "acceptance_scenario_ids": [
+          "PS-013"
+        ],
+        "allowed_contributor_skill_ids": [],
+        "capability_id": "CAP-013",
+        "completion_return": "A verified triage state and exact next owner",
+        "disposition": "selected",
+        "entry_conditions": [
+          "Raw issues or configured external requests need sorting and readiness verification"
+        ],
+        "essential": true,
+        "exclusions": [
+          "Shared or implicit final authority",
+          "Unbounded foreign procedure loading",
+          "Automated semantic acceptance"
+        ],
+        "observable_outcome": "Classify incoming tracker work into maintainer-approved executable or human-owned states",
+        "primary_owner_skill_id": "SK-013",
+        "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
+        "required_authority_mutation": [
+          "Classification, state-role labels, readiness facts, and tracker mutation read-back"
+        ]
+      }
+    ],
+    "composition_epoch_id": "FCE-20260727-01",
+    "contract_fingerprint": "sha256-v1:f433bece32b0c3cc7e825718511835ce83048bac961da473ce1be7edd06a16f4",
+    "contract_revision": 2,
+    "fixed_point": {
+      "environment": "surface=Codex Desktop; model=gpt-5.6-sol; reasoning_effort=medium; thread_id=019f9c92-07fb-7b80-b8a2-a218bbfd9a1f; workspace_kind=project; operating_system=Windows; shell=PowerShell; python=3.12.12; filesystem_authority=workspace-write; request_sandbox=windows_elevated; evidence_tools=workspace exec, GitHub connector/gh read fallback, Node REPL request metadata",
+      "repository_tree": "97cb4931b0c91964b5f86ea2931875fd46168be5",
+      "timestamp": "2026-07-27T05:34:05Z"
+    },
+    "issues": [
+      {
+        "class": "exclusion",
+        "essential": true,
+        "future_owner_or_stopping_condition": null,
+        "governing_owner": "Pack Contract owner",
+        "involved_capability_ids": [],
+        "involved_skill_ids": [
+          "SK-001",
+          "SK-002",
+          "SK-003",
+          "SK-004",
+          "SK-005",
+          "SK-006",
+          "SK-007",
+          "SK-008",
+          "SK-009",
+          "SK-010",
+          "SK-011",
+          "SK-012",
+          "SK-013",
+          "SK-014",
+          "SK-015",
+          "SK-016",
+          "SK-017",
+          "SK-018",
+          "SK-019",
+          "SK-020",
+          "SK-021",
+          "SK-022",
+          "SK-023",
+          "SK-025"
+        ],
+        "issue_id": "ECG-001",
+        "negative_control_scenario_id": "PS-003",
+        "nondependency_proof_ids": [],
+        "observable_conflict": "Prior epoch semantics, incumbent wording, and current count could anchor discovery",
+        "resolution": "The fixed-point independent packet was recorded without skill names before Catalog or current inventory reconciliation",
+        "status": "resolved",
+        "terms": []
+      },
+      {
+        "class": "capability",
+        "essential": true,
+        "future_owner_or_stopping_condition": null,
+        "governing_owner": "Pack Contract owner",
+        "involved_capability_ids": [
+          "CAP-001",
+          "CAP-002",
+          "CAP-003",
+          "CAP-004",
+          "CAP-005",
+          "CAP-006",
+          "CAP-007",
+          "CAP-008",
+          "CAP-009",
+          "CAP-010",
+          "CAP-011",
+          "CAP-012",
+          "CAP-013",
+          "CAP-014",
+          "CAP-015",
+          "CAP-016",
+          "CAP-017",
+          "CAP-018",
+          "CAP-019",
+          "CAP-020",
+          "CAP-021",
+          "CAP-022",
+          "CAP-023",
+          "CAP-025"
+        ],
+        "involved_skill_ids": [
+          "SK-001",
+          "SK-002",
+          "SK-003",
+          "SK-004",
+          "SK-005",
+          "SK-006",
+          "SK-007",
+          "SK-008",
+          "SK-009",
+          "SK-010",
+          "SK-011",
+          "SK-012",
+          "SK-013",
+          "SK-014",
+          "SK-015",
+          "SK-016",
+          "SK-017",
+          "SK-018",
+          "SK-019",
+          "SK-020",
+          "SK-021",
+          "SK-022",
+          "SK-023",
+          "SK-025"
+        ],
+        "issue_id": "ECG-003",
+        "negative_control_scenario_id": "PS-025",
+        "nondependency_proof_ids": [],
+        "observable_conflict": "An essential M0 capability could remain ownerless or multiply owned",
+        "resolution": "Each independently discovered capability family maps to exactly one selected primary owner; contributors return typed subresults only",
+        "status": "resolved",
+        "terms": []
+      },
+      {
+        "class": "invocation",
+        "essential": true,
+        "future_owner_or_stopping_condition": null,
+        "governing_owner": "Pack Contract owner",
+        "involved_capability_ids": [
+          "CAP-001",
+          "CAP-002",
+          "CAP-003",
+          "CAP-004",
+          "CAP-005",
+          "CAP-006",
+          "CAP-007",
+          "CAP-008",
+          "CAP-009",
+          "CAP-010",
+          "CAP-011",
+          "CAP-012",
+          "CAP-013",
+          "CAP-014",
+          "CAP-015",
+          "CAP-016",
+          "CAP-017",
+          "CAP-018",
+          "CAP-019",
+          "CAP-020",
+          "CAP-021",
+          "CAP-022",
+          "CAP-023",
+          "CAP-025"
+        ],
+        "involved_skill_ids": [
+          "SK-001",
+          "SK-002",
+          "SK-003",
+          "SK-004",
+          "SK-005",
+          "SK-006",
+          "SK-007",
+          "SK-008",
+          "SK-009",
+          "SK-010",
+          "SK-011",
+          "SK-012",
+          "SK-013",
+          "SK-014",
+          "SK-015",
+          "SK-016",
+          "SK-017",
+          "SK-018",
+          "SK-019",
+          "SK-020",
+          "SK-021",
+          "SK-022",
+          "SK-023",
+          "SK-025"
+        ],
+        "issue_id": "ECG-004",
+        "negative_control_scenario_id": "PS-025",
+        "nondependency_proof_ids": [],
+        "observable_conflict": "The general router and local route-producing skills could both own destination execution",
+        "resolution": "Only skill-router owns general route choice; every Recommend and stop edge leaves the explicit destination unstarted",
+        "status": "resolved",
+        "terms": []
+      },
+      {
+        "class": "context-load",
+        "essential": true,
+        "future_owner_or_stopping_condition": null,
+        "governing_owner": "Pack Contract owner",
+        "involved_capability_ids": [],
+        "involved_skill_ids": [
+          "SK-001",
+          "SK-002",
+          "SK-003",
+          "SK-004",
+          "SK-005",
+          "SK-006",
+          "SK-007",
+          "SK-008",
+          "SK-009",
+          "SK-010",
+          "SK-011",
+          "SK-012",
+          "SK-013",
+          "SK-014",
+          "SK-015",
+          "SK-016",
+          "SK-017",
+          "SK-018",
+          "SK-019",
+          "SK-020",
+          "SK-021",
+          "SK-022",
+          "SK-023",
+          "SK-025"
+        ],
+        "issue_id": "ECG-007",
+        "negative_control_scenario_id": "PS-007",
+        "nondependency_proof_ids": [],
+        "observable_conflict": "Shared vocabulary and relationships could load foreign procedures into every caller",
+        "resolution": "Metadata is always available, exactly one owner procedure is conditional, and branch references load only when their predicate is met",
+        "status": "resolved",
+        "terms": []
+      },
+      {
+        "class": "mutation",
+        "essential": true,
+        "future_owner_or_stopping_condition": null,
+        "governing_owner": "Pack Contract owner",
+        "involved_capability_ids": [],
+        "involved_skill_ids": [
+          "SK-001",
+          "SK-002",
+          "SK-003",
+          "SK-004",
+          "SK-005",
+          "SK-006",
+          "SK-007",
+          "SK-008",
+          "SK-009",
+          "SK-010",
+          "SK-011",
+          "SK-012",
+          "SK-013",
+          "SK-014",
+          "SK-015",
+          "SK-016",
+          "SK-017",
+          "SK-018",
+          "SK-019",
+          "SK-020",
+          "SK-021",
+          "SK-022",
+          "SK-023",
+          "SK-025"
+        ],
+        "issue_id": "ECG-008",
+        "negative_control_scenario_id": "PS-012",
+        "nondependency_proof_ids": [],
+        "observable_conflict": "Recommendation edges to explicit-only skills could silently authorize mutation",
+        "resolution": "Every explicit-only destination uses Recommend and stop; a later caller invocation supplies separate authority",
+        "status": "resolved",
+        "terms": []
+      }
+    ],
+    "load_budget_policy": {
+      "ceiling_or_class": "Always load metadata only; load one selected owner procedure; load aggregate callees and branch references only after their predicates; never copy foreign procedure",
+      "metric": "UTF-8 instruction bytes classified as metadata, selected-owner common, aggregate-callee conditional, or branch-reference conditional",
+      "status": "set"
+    },
+    "relationships": [
+      {
+        "affected_capability_ids": [
+          "CAP-025",
+          "CAP-013"
+        ],
+        "callee_owned_gates_mutations": [
+          "No callee execution, mutation, resumption, or completion is authorized by this edge"
+        ],
+        "caller_skill_id": "SK-025",
+        "combined_exit_owner_skill_id": "SK-025",
+        "context_loaded": [],
+        "entry_condition": "The situation satisfies raw issues or configured external requests need sorting and readiness verification; return that route and leave it unstarted.",
+        "failure_behavior": "Return the recommendation or suggestion without executing the target",
+        "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared triage input",
+        "ordering_impact": "callee-before-caller",
+        "relationship_id": "REL-068",
+        "required_proof_ids": [
+          "PROOF-REL-068"
+        ],
+        "resume_owner_skill_id": "SK-025",
+        "return_packet": "One named target and reason with downstream work unstarted",
+        "target_skill_id": "SK-013",
+        "verb": "Recommend and stop",
+        "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      },
+      {
+        "affected_capability_ids": [
+          "CAP-013",
+          "CAP-020"
+        ],
+        "callee_owned_gates_mutations": [
+          "No callee execution, mutation, resumption, or completion is authorized by this edge"
+        ],
+        "caller_skill_id": "SK-013",
+        "combined_exit_owner_skill_id": "SK-013",
+        "context_loaded": [],
+        "entry_condition": "Maintainer-owned shaping needs a direct user decision with durable capture; stop before mutation and resume Triage later with the result.",
+        "failure_behavior": "Return the recommendation or suggestion without executing the target",
+        "input_packet": "Caller-owned bounded Source Trace for triage and the declared grill-with-docs input",
+        "ordering_impact": "none",
+        "relationship_id": "REL-084",
+        "required_proof_ids": [
+          "PROOF-REL-084"
+        ],
+        "resume_owner_skill_id": "SK-013",
+        "return_packet": "One named target and reason with downstream work unstarted",
+        "target_skill_id": "SK-020",
+        "verb": "Recommend and stop",
+        "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      },
+      {
+        "affected_capability_ids": [
+          "CAP-013",
+          "CAP-001"
+        ],
+        "callee_owned_gates_mutations": [
+          "No callee execution, mutation, resumption, or completion is authorized by this edge"
+        ],
+        "caller_skill_id": "SK-013",
+        "combined_exit_owner_skill_id": "SK-013",
+        "context_loaded": [],
+        "entry_condition": "A required setup surface is missing or incompatible.",
+        "failure_behavior": "Return the recommendation or suggestion without executing the target",
+        "input_packet": "Caller-owned bounded Source Trace for triage and the declared repo-bootstrap input",
+        "ordering_impact": "none",
+        "relationship_id": "REL-085",
+        "required_proof_ids": [
+          "PROOF-REL-085"
+        ],
+        "resume_owner_skill_id": "SK-013",
+        "return_packet": "One named target and reason with downstream work unstarted",
+        "target_skill_id": "SK-001",
+        "verb": "Recommend and stop",
+        "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      }
+    ],
+    "research_bound": {
+      "catalog_reconciliation_passes": 1,
+      "independent_passes": 1,
+      "named_gap_passes": 1
+    },
+    "skill": {
+      "acceptance_scenario_ids": [
+        "PS-013"
+      ],
+      "campaign_state": {
+        "campaign_id": null,
+        "status": "not-started",
+        "terminal_evidence_pointer": null
+      },
+      "canonical_name": "triage",
+      "completion_condition": "The item has one truthful state and no fabricated readiness",
+      "contract_order": 13,
+      "essential_outcome": "Classify incoming tracker work into maintainer-approved executable or human-owned states",
+      "failure_return": "Return the missing reporter fact, maintainer decision, or setup boundary",
+      "invocation_mode": "explicit-only",
+      "load_budget_class": "conditional-leaf",
+      "negative_exclusion_predicates": [
+        "The request does not satisfy: Raw issues or configured external requests need sorting and readiness verification",
+        "Another selected skill owns the requested outcome",
+        "The action would cross a caller-owned commitment or mutation boundary"
+      ],
+      "owned_authority_mutation_surfaces": [
+        "Classification, state-role labels, readiness facts, and tracker mutation read-back"
+      ],
+      "owned_capability_ids": [
+        "CAP-013"
+      ],
+      "positive_entry_predicate": "Raw issues or configured external requests need sorting and readiness verification",
+      "primary_role": "leaf",
+      "prohibited_ownership": [
+        "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
+        "Per-skill H1 outside this immutable contract slice",
+        "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
+      ],
+      "relationship_ids": [
+        "REL-084",
+        "REL-085"
+      ],
+      "required_input": "A bounded caller-owned Source Trace and authority for: Classify incoming tracker work into maintainer-approved executable or human-owned states",
+      "return_packet": "A verified triage state and exact next owner",
+      "skill_id": "SK-013"
+    },
+    "slice_id": "FCE-20260727-01:r2:SK-013",
+    "source_pointers": [
+      "docs/research/skill-pack-composition/epochs/FCE-20260727-01/pre-discovery-fixed-point.json#sha256-v1:98a9c9f84c788049557fc4f352f8c9b3c862f0d6da083c5751001acd1357e2d9",
+      "docs/research/skill-pack-composition/epochs/FCE-20260727-01/independent-discovery.json#sha256-v1:54c55c9efe02194fb7a350824ffcfa7feca96734ac49c01b478f265c82e2e48d",
+      "docs/research/skill-pack-composition/epochs/FCE-20260727-01/catalog-reconciliation.json#sha256-v1:f11fead78d45a6d4f4b2361f645d93a3d57c300e0ed177aed4dc55df69b0c8a9",
+      "docs/research/skill-pack-composition/catalog.json#sha256-v1:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "docs/adr/0009-fresh-composition-epochs-revalidate-skill-pack-knowledge.md#sha256-v1:26f392e8c645f587052681e4f401b8d078cccf87519b58b1a9008ffd1d8213a2",
+      "docs/adr/0008-deploy-campaign-automation-separates-mechanical-evidence-from-semantic-decisions.md#sha256-v1:5fa8981188f8ac513e1d192b14391ee1ac44dc3ffc24d036a749feedcd306fb1",
+      "github-issue-comment-body:stevennitesh/programming-agent-skills#36:5081636826#sha256-v1:b48d5b27ed87d0c651fa46d7859e6724be3a9a581a05e0997b6461fec1c82428",
+      "github-issue-body:stevennitesh/programming-agent-skills#39#sha256-v1:f8115df444ab80f15fdb49610d96152cdff2edc12a5f03bb50efaba308a840a3",
+      "github-issue-body:stevennitesh/programming-agent-skills#50#sha256-v1:21d89976101c1815c6e08f921d6045f97615bfdad8b3a3babc6ed40ca9d463bb",
+      "git-commit:2710890325c51a2120656a8d1233d442f6454c1a",
+      "docs/synthesis/skill-context-relationships.md#sha256-v1:99935160bc0b4053282763dd6857add487425cf7c9fc3c55f5284de7f6bd027e"
+    ]
+  },
+  "slice_fingerprint": "sha256-v1:63a6f4a0f9e9e23c3c3c573b776090b1e03a867792c7d655301a242688ec83f0",
+  "status": "contract-slice-blueprint"
+}

@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import re
 import subprocess
+import tomllib
 from pathlib import Path
 
 
@@ -16,7 +17,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:04d85ba5be57 -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:e6aa3811fac3 -->"
 ENGINEERING_PRIMER_TOKEN = (
     "Explore imaginatively. Converge under proof. Simplify ruthlessly."
 )
@@ -65,67 +66,111 @@ AGENT_POINTERS = (
     "docs/agents/engineering-contract.md",
 )
 
+DOMAIN_TOKENS = (
+    "## Route",
+    "## Preserve The Model",
+    "**single-context:**",
+    "**multi-context:**",
+    "CONTEXT-MAP.md",
+    "<context-root>/docs/adr/",
+    "$domain-modeling",
+)
+
+DOMAIN_PROSE_TOKENS = (
+    "Missing records are not setup gaps.",
+    "setup neither creates nor recommends them.",
+    "invariants",
+    "Do not flatten different meanings across contexts.",
+    "return the exact gap",
+    "never silently override them",
+    "decision owner",
+)
+
 CONTRACT_LITERAL_TOKENS = (
     ENGINEERING_PRIMER_TOKEN,
-    "## Engineering Taste",
-    "**Imagination before commitment.**",
-    "**Experiments over speculation.**",
-    "**Semantic proof over plausible output.**",
-    "**Deep simplicity.**",
-    "**Stewardship.**",
-    "**Source trace:**",
+    "not a workflow, checklist, review gate",
+    "Skills own procedures, checks, stopping",
+    "## How To Read This Contract",
+    "**Must** marks a correctness, safety, integrity, or honesty floor.",
+    "**Prefer** marks the default engineering choice.",
+    "**Method** names a practice triggered by a stated condition.",
+    "## Shared Concepts",
     "**Bounded slice:**",
     "**Commitment boundary:**",
-    "**Load-bearing internal:**",
-    "**Semantic correctness:**",
-    "**Semantic proof:**",
     "**Proof seam:**",
     "**Proof lane:**",
-    "**Evidence:**",
-    "**Tracer bullet:**",
-    "**Fixed point:**",
-    "**Review snapshot:**",
-    "**staged worker**",
-    "**lane worker**",
-    "**Spec / Standards:**",
+    "**Change closure:**",
     "**Residual risk:**",
-    "Explore -> Choose -> Prove -> Expand -> Simplify -> Lock",
-    ".tmp/",
-    ".scratch/",
-    "## Lock",
+    "## Keep Faith With The Work",
+    "### Preserve Commitments And Domain Truth",
+    "### Make Correctness Robust",
+    "### Respect Trust And Data Boundaries",
+    "### Keep Evidence Honest",
+    "### Practice Stewardship",
+    "## Shape Code For Understanding",
+    "### Deep Simplicity",
+    "### Local Readability",
+    "### Fit Before Novelty",
+    "### Build Only What Is Needed",
+    "### Keep Tests Lean And Meaningful",
+    "YAGNI",
+    "DRY",
+    "## Methods When The Condition Applies",
+    "### Reason Across State Boundaries",
+    "### Use A Negative Control",
+    "### Close Displaced Paths",
+    "### Measure Consequential Claims",
 )
 
 WORK_ITEM_TOKENS = (
-    "## Work-item operations",
-    "**Packet**",
-    "**Ready-for-agent contract**",
-    "**Mutation read-back**",
-    "**Parent / child**",
-    "**Blocking**",
-    "**Ready query**",
-    "**Claim**",
-    "**Release**",
-    "**Closeout**",
+    "## Operations",
+    "## Work-item representation",
+    "**Packet:**",
+    "**Parent / child:**",
+    "**Blocking:**",
+    "**Ready query:**",
+    "**Claim:**",
+    "**Closeout:**",
+    "## Mutation read-back",
+)
+WORK_ITEM_PROSE_TOKENS = (
+    "navigation metadata",
+    "agent and human frontiers separately",
+    "false-ready",
+    "do not retry blindly",
+    "unverified partial mutation",
 )
 
 WAYFINDER_TOKENS = (
-    "## Wayfinding operations",
-    "Participation: HITL | AFK",
-    "**Frontier query**",
-    "**Claim**",
+    "Participation:",
+    "Resolution owner:",
+    "Resolver:",
+    "Expected return:",
+    "Mutation boundary:",
+    "Re-entry owner: $wayfinder",
     "Claim token:",
     "Claimed at:",
-    "codex/<lowercase UUIDv4>",
-    "<YYYY-MM-DDTHH:MM:SSZ>",
-    "Maintain claims the map",
-    "never reuse it across invocations",
-    "Elapsed time alone never makes a claim stale.",
-    "explicit user approval",
-    "**Release**",
-    "**Resolve**",
-    "**Block**",
-    "**Out of scope**",
-    "**Complete map**",
+)
+
+HOSTED_WAYFINDER_TOKENS = (
+    "docs/agents/triage-labels.md",
+    "Blocked: waiting - <gist>",
+    "exact return record",
+)
+LOCAL_WAYFINDER_TOKENS = (
+    "Status: Pending | In Progress | Resolved | Blocked | Waiting | Out Of Scope",
+    "waiting return records",
+)
+
+GITHUB_RELATIONSHIP_MODES = (
+    (
+        "Parent / child mode",
+        ("native-sub-issues", "parent-task-list"),
+    ),
+    (
+        "Dependency mode",
+        ("native-dependencies", "body-links"),
+    ),
 )
 
 LABEL_TOKENS = (
@@ -140,9 +185,14 @@ LABEL_TOKENS = (
     "`wayfinder:map`",
     "`wayfinder:research`",
     "`wayfinder:prototype`",
+    "`wayfinder:diagnosis`",
     "`wayfinder:grilling`",
+    "`wayfinder:questionnaire`",
     "`wayfinder:task`",
 )
+
+PARALLEL_CONFIG = Path(".codex/config.toml")
+PARALLEL_AGENT = Path(".codex/agents/luna_max.toml")
 
 
 def parse_args() -> argparse.Namespace:
@@ -167,6 +217,38 @@ def require_tokens(
             failures.append(f"{relative} is missing {token}")
 
 
+def require_prose_tokens(
+    text: str, relative: str, tokens: tuple[str, ...], failures: list[str]
+) -> None:
+    normalized_text = " ".join(text.split())
+    for token in tokens:
+        if " ".join(token.split()) not in normalized_text:
+            failures.append(f"{relative} is missing {token}")
+
+
+def wayfinder_contract_failures(text: str, relative: str) -> list[str]:
+    failures: list[str] = []
+    provider_tokens = (
+        LOCAL_WAYFINDER_TOKENS
+        if "issue tracker: local markdown" in text.lower()
+        else HOSTED_WAYFINDER_TOKENS
+    )
+    require_section_tokens(
+        text,
+        relative,
+        (("## Wayfinding representation", WAYFINDER_TOKENS + provider_tokens),),
+        failures,
+    )
+    return failures
+
+
+def domain_contract_failures(text: str, relative: str) -> list[str]:
+    failures: list[str] = []
+    require_tokens(text, relative, DOMAIN_TOKENS, failures)
+    require_prose_tokens(text, relative, DOMAIN_PROSE_TOKENS, failures)
+    return failures
+
+
 def require_section_tokens(
     text: str,
     relative: str,
@@ -174,22 +256,64 @@ def require_section_tokens(
     failures: list[str],
 ) -> None:
     for heading, tokens in requirements:
+        section = markdown_section(text, heading, include_fenced_content=False)
         for token in tokens:
-            if not markdown_section_contains(text, heading, token):
+            if section is None or token not in section:
                 failures.append(f"{relative} section {heading} is missing {token}")
 
 
-def markdown_section_contains(text: str, heading: str, signature: str) -> bool:
-    pattern = re.compile(
-        rf"(?ms)^{re.escape(heading)}[ \t]*(?:\r?\n|\Z)"
-        r"(.*?)(?=^#{1,2}(?:[ \t]+|$)|\Z)"
+def markdown_section(
+    text: str,
+    heading: str,
+    *,
+    include_fenced_content: bool = True,
+) -> str | None:
+    lines = text.splitlines(keepends=True)
+    outside_fence: list[bool] = []
+    fence_char = ""
+    fence_length = 0
+
+    for line in lines:
+        outside_fence.append(not fence_char)
+        stripped = line.rstrip("\r\n")
+        if fence_char:
+            if re.fullmatch(
+                rf"[ \t]{{0,3}}{re.escape(fence_char)}{{{fence_length},}}[ \t]*",
+                stripped,
+            ):
+                fence_char = ""
+                fence_length = 0
+            continue
+        opening = re.match(r"[ \t]{0,3}(`{3,}|~{3,})", stripped)
+        if opening:
+            fence_char = opening.group(1)[0]
+            fence_length = len(opening.group(1))
+
+    matches = [
+        index
+        for index, line in enumerate(lines)
+        if outside_fence[index] and line.rstrip().rstrip("\r\n") == heading
+    ]
+    if len(matches) != 1:
+        return None
+
+    start = matches[0] + 1
+    end = len(lines)
+    for index in range(start, len(lines)):
+        if outside_fence[index] and re.match(r"^#{1,2}(?:[ \t]+|$)", lines[index]):
+            end = index
+            break
+    section = "".join(
+        line
+        for index, line in enumerate(lines[start:end], start)
+        if include_fenced_content or outside_fence[index]
     )
-    return any(signature in match.group(1) for match in pattern.finditer(text))
+    return section
 
 
 def portable_owner_failures(agents: str) -> list[str]:
     portable_section_remains = any(
-        markdown_section_contains(agents, heading, signature)
+        signature in (markdown_section(agents, heading) or "")
         for heading, signature in PORTABLE_SECTION_SIGNATURES
     )
     if any(token in agents for token in PORTABLE_OWNER_TOKENS) or portable_section_remains:
@@ -222,6 +346,91 @@ def engineering_primer_failures(agents: str) -> list[str]:
         "AGENTS.md must place the engineering primer between the current "
         "setup-schema marker and ## Commands"
     ]
+
+
+def github_relationship_mode_failures(tracker: str) -> list[str]:
+    if "issue tracker: github" not in tracker.lower():
+        return []
+
+    failures: list[str] = []
+    for field, choices in GITHUB_RELATIONSHIP_MODES:
+        choice_pattern = "|".join(re.escape(choice) for choice in choices)
+        if not re.search(
+            rf"(?im)^\*\*{re.escape(field)}:\*\*\s*(?:{choice_pattern})"
+            rf"\.?(?:\r?\n|\Z)",
+            tracker,
+        ):
+            failures.append(
+                "docs/agents/issue-tracker.md must set "
+                f"{field} to one configured GitHub mode"
+            )
+    return failures
+
+
+def parallel_package() -> Path:
+    return Path(__file__).resolve().parents[2] / "parallel-implement"
+
+
+def parallel_support_failures(root: Path) -> list[str]:
+    config_path = root / PARALLEL_CONFIG
+    agent_path = root / PARALLEL_AGENT
+    if not config_path.is_file() and not agent_path.is_file():
+        return []
+
+    failures: list[str] = []
+    package = parallel_package()
+    helper_path = package / "scripts/lane_worktree.py"
+    template_path = package / "assets/luna_max.toml"
+    if not helper_path.is_file() or not template_path.is_file():
+        return ["Parallel implementation support requires the installed canonical package"]
+
+    if not config_path.is_file():
+        failures.append("Parallel implementation support is missing .codex/config.toml")
+    if not agent_path.is_file():
+        failures.append(
+            "Parallel implementation support is missing .codex/agents/luna_max.toml"
+        )
+    elif agent_path.read_bytes() != template_path.read_bytes():
+        failures.append(".codex/agents/luna_max.toml does not match the current template")
+    if not config_path.is_file():
+        return failures
+
+    try:
+        config = tomllib.loads(config_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, tomllib.TOMLDecodeError) as error:
+        failures.append(f".codex/config.toml is invalid: {error}")
+        return failures
+
+    if config.get("default_permissions") != "project-lanes":
+        failures.append(".codex/config.toml must select the project-lanes permission profile")
+    permissions = config.get("permissions")
+    profile = permissions.get("project-lanes") if isinstance(permissions, dict) else None
+    if not isinstance(profile, dict) or profile.get("extends") != ":workspace":
+        failures.append("project-lanes permissions must extend :workspace")
+    roots = profile.get("workspace_roots") if isinstance(profile, dict) else None
+    if not isinstance(roots, dict):
+        failures.append("project-lanes permissions must declare workspace_roots")
+        return failures
+
+    candidates: list[Path] = []
+    for raw_path, enabled in roots.items():
+        if not isinstance(raw_path, str) or enabled is not True:
+            continue
+        lane_root = Path(raw_path).resolve()
+        if lane_root.name.lower() == "wt":
+            candidates.append(lane_root)
+    if len(candidates) != 1:
+        failures.append("project-lanes permissions must contain one parallel wt root")
+        return failures
+
+    lane_root = candidates[0]
+    try:
+        lane_root.relative_to(root.resolve())
+    except ValueError:
+        pass
+    else:
+        failures.append("parallel lane root must be outside the repository")
+    return failures
 
 
 def check_ignore(root: Path, probe: str) -> tuple[bool | None, str]:
@@ -261,7 +470,10 @@ def main() -> int:
     root = Path(parse_args().repo).resolve()
     failures: list[str] = []
 
-    failures.extend(git_root_failures(root))
+    repository_failures = git_root_failures(root)
+    failures.extend(repository_failures)
+    if not repository_failures:
+        failures.extend(parallel_support_failures(root))
 
     texts = {
         relative: read_required(root, relative, failures) for relative in REQUIRED_FILES
@@ -287,8 +499,16 @@ def main() -> int:
     tracker = texts["docs/agents/issue-tracker.md"]
     if tracker:
         require_tokens(tracker, "docs/agents/issue-tracker.md", WORK_ITEM_TOKENS, failures)
-        require_tokens(tracker, "docs/agents/issue-tracker.md", WAYFINDER_TOKENS, failures)
-        if "post a codex-ready brief" not in tracker.lower():
+        require_prose_tokens(
+            tracker,
+            "docs/agents/issue-tracker.md",
+            WORK_ITEM_PROSE_TOKENS,
+            failures,
+        )
+        failures.extend(
+            wayfinder_contract_failures(tracker, "docs/agents/issue-tracker.md")
+        )
+        if "**comment or brief:**" not in tracker.lower():
             failures.append(
                 "docs/agents/issue-tracker.md is missing Codex-ready brief transport"
             )
@@ -300,6 +520,7 @@ def main() -> int:
             failures.append(
                 "docs/agents/issue-tracker.md must set Close implemented items to yes or no"
             )
+        failures.extend(github_relationship_mode_failures(tracker))
     else:
         local_tracker = False
 
@@ -314,6 +535,7 @@ def main() -> int:
         failures.append(
             "docs/agents/domain.md must set Configured layout to single-context or multi-context"
         )
+    failures.extend(domain_contract_failures(domain, "docs/agents/domain.md"))
 
     contract = texts["docs/agents/engineering-contract.md"]
     require_tokens(
@@ -326,10 +548,43 @@ def main() -> int:
         contract,
         "docs/agents/engineering-contract.md",
         (
-            ("## Tight Engineering Spine", ("**Expand:**", "bounded slice")),
-            ("## Proof Discipline", ("command authority",)),
-            ("## Work State And Workers", ("**staged worker**", "**lane worker**")),
-            ("## Lock", (".tmp/", ".scratch/", "mutation boundary")),
+            (
+                "## How To Read This Contract",
+                (
+                    "Methods are not",
+                    "responsible task or skill owns the procedure and evidence",
+                    "No generic rule overrides",
+                ),
+            ),
+            (
+                "## Keep Faith With The Work",
+                (
+                    "operational definition or exact authoritative owner",
+                    "not merely a successful happy path",
+                    "Validate untrusted or contract-sensitive input",
+                    "A focused check",
+                    "Preserve unrelated behavior, work, and durable decisions",
+                ),
+            ),
+            (
+                "## Shape Code For Understanding",
+                (
+                    "supported variation, repeated policy, or a real external",
+                    "Apply YAGNI",
+                    "Apply DRY to shared meaning and policy",
+                    "Consolidation must preserve coverage and diagnostic clarity",
+                    "Test count is not a goal",
+                ),
+            ),
+            (
+                "## Methods When The Condition Applies",
+                (
+                    "not a blind Cartesian",
+                    "controlled violation fails for the intended reason",
+                    "Retain an older path only for a supported",
+                    "measure before claiming improvement",
+                ),
+            ),
         ),
         failures,
     )

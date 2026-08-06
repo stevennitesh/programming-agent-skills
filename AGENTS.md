@@ -1,6 +1,6 @@
 # Repository Instructions
 
-<!-- programming-agent-skills setup-schema: 1:04d85ba5be57 -->
+<!-- programming-agent-skills setup-schema: 1:e6aa3811fac3 -->
 
 Explore imaginatively. Converge under proof. Simplify ruthlessly.
 
@@ -9,8 +9,9 @@ Explore imaginatively. Converge under proof. Simplify ruthlessly.
 - Create the repo environment if needed: `python -m venv .venv`
 - Activate `.venv` for your shell before running Python commands.
 - Install dev/test dependencies: `python -m pip install -r requirements-dev.txt`
-- Full pytest suite: `python -m pytest`
 - Focused pytest run: `python -m scripts.pytest_focused`
+- Full pytest suite when repository policy or broad shared impact requires it:
+  `python -m pytest`
 - Pytest config: `pyproject.toml`
 - Validate skill-pack integrity: `python -m scripts.validate_skills`
 - Preview managed install/update: `python -m scripts.install_skills --dry-run`
@@ -21,10 +22,10 @@ Explore imaginatively. Converge under proof. Simplify ruthlessly.
 
 - Stable vocabulary and repo invariants: `CONTEXT.md`
 - Active plans and runbooks: `docs/plans/README.md`
-- One-skill deployment: each `Run Deploy Campaign on <skill>` starts a fresh
-  Prompts 1-5 campaign epoch under
-  `docs/synthesis/methods/deploy-prompts.md` and explicitly authorizes its
-  bounded fresh-context delegation.
+- One-skill deployment: each `Run Deploy Campaign on <skill>` uses Contract
+  Lock, Candidate Lock, conditional Behavioral Proof, and Release under
+  `docs/synthesis/methods/deploy-prompts.md`; the obligations are not persisted
+  lifecycle state.
 - Before nontrivial coding, read `docs/agents/engineering-contract.md`.
 - Tracker and labels: `docs/agents/issue-tracker.md`,
   `docs/agents/triage-labels.md`

@@ -101,14 +101,20 @@ Use `python -m scripts.install_skills --dry-run` to preview skill deltas and the
 
 No installer or Python runtime is required. Copy [`AGENTS_PORTABLE_FALLBACK.md`](AGENTS_PORTABLE_FALLBACK.md) into the target repository as `AGENTS.md`, then add verified repo commands, local invariants, and source-of-truth pointers.
 
-The portable contract carries the convergence loop, commitment boundaries, shaping, semantic proof, TDD, parallel-safety, fixed-point review, and Lock. It intentionally omits skill routing, specialized workflow procedures, tracker and domain setup, templates, and managed updates.
+The portable contract carries the convergence loop, commitment boundaries,
+shaping, grounded implementation, root-cause robustness, behavior-owned tests,
+state proof, simplification, fixed-point review, and Lock. It intentionally
+omits skill routing, specialized workflow procedures, tracker and domain setup,
+templates, and managed updates.
 
 ## What's Included
 
 - **Shape before building:** `$grilling`, `$grill-with-docs`, `$wayfinder`, `$to-questionnaire`, `$research`, `$prototype`, `$handoff`
 - **Turn intent into delivery:** `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement`
-- **Prove and protect behavior:** `$tdd`, `$diagnosing-bugs`, `$resolving-merge-conflicts`, `$review`, `$convergent-pr-review`, `$audit-codebase`
-- **Improve code and design:** `$improve-codebase`, `$simplify-code`, `$codebase-design`, `$domain-modeling`
+- **Prove and protect behavior:** `$tdd`, `$diagnosing-bugs`,
+  `$resolving-merge-conflicts`, `$change-review`,
+  `$high-assurance-review`, `$audit-codebase`
+- **Improve code and design:** `$audit-codebase`, `$simplify-code`, `$codebase-design`, `$domain-modeling`
 - **Route and maintain the pack:** `$repo-bootstrap`, `$skill-router`, `$writing-great-skills`
 
 The small [`GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`](GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md) bootstrap teaches Codex when to suggest `$skill-router` and `$repo-bootstrap`. Workflows stay with their skills, and personal global instructions stay local.
@@ -125,12 +131,16 @@ Representative routes:
 - External stakeholder knowledge gap -> `$to-questionnaire` -> human delivery and answer collection
 - One bounded ready item -> `$implement`; one parent-backed ready ticket graph to finish -> `$parallel-implement`, serializing or parallelizing each frontier as needed
 - Incoming issue or configured external PR -> `$triage`; ready-for-agent item -> `$implement`
-- Multi-session fog of war -> `$wayfinder` until the map closes -> `$to-spec`, `$to-tickets`, or `$implement`
-- Settled red-testable behavior -> `$tdd`; uncertain bug -> `$diagnosing-bugs`; the router owns the exact diagnosis/TDD boundary.
-- Bloated or hard-to-change code with an uncertain best move -> `$improve-codebase` -> selected candidate -> `$simplify-code`, `$codebase-design`, or a delivery route
+- Bounded multi-session fog -> `$wayfinder` until the map closes -> terminal
+  decision or settled source for `$to-spec`
+- Settled red-testable behavior -> `$tdd`; route uncertain bugs through
+  `$skill-router`.
+- Whole-repository correctness, robustness, or quality discovery -> `$audit-codebase` builds, continues, or refreshes one linked HTML map, audits one user-selected subsystem, then can analyze one user-selected improvement candidate or returned evidence
 - Existing behavior in one bounded region -> `$simplify-code` for one proved reduction, a finite `until-clean` campaign, or a no-safe-cut verdict
-- Ordinary diff -> `$review`; local PR or high-risk diff -> `$convergent-pr-review`
-- Bounded correctness, domain-robustness, or performance audit of an immutable repository baseline -> `$audit-codebase`; structural deepening, consolidation, or simplification discovery -> `$improve-codebase`
+- Any ordinary, release, or supported-risk implementation candidate ->
+  `$change-review`; an explicitly selected two-lane assurance review ->
+  `$high-assurance-review`
+- Bounded correctness, domain robustness, performance, structural, or simplification discovery over an immutable repository baseline -> `$audit-codebase`, with repo-backed candidate decisions returned through `$grill-with-docs`
 
 These are examples. `$skill-router` owns the complete route map and tie-breakers.
 
@@ -147,9 +157,9 @@ Build faster without making the repository harder to trust. Move quickly through
 
 ## Engineering Contract
 
-[`$repo-bootstrap`](skills/custom/repo-bootstrap/SKILL.md) installs a small `docs/agents/engineering-contract.md` in each target repository. The contract owns engineering taste, shared vocabulary, and cross-skill discipline while leaving implementation technique flexible.
+[`$repo-bootstrap`](skills/custom/repo-bootstrap/SKILL.md) installs a small `docs/agents/engineering-contract.md` in each target repository. The contract owns engineering taste, preventive code-quality defaults, shared vocabulary, and cross-skill discipline while leaving implementation technique flexible.
 
-The shared spine is `Explore -> Choose -> Prove -> Expand -> Simplify -> Lock`. Explore opens the solution space. Proof establishes one real tracer bullet. Expand covers requirements and improves the design with what the proof revealed. Simplify removes accidental complexity. **Lock** closes only with separate Spec / Standards review, evidence, and named residual risk.
+The shared spine is `Explore -> Choose -> Prove -> Expand -> Simplify -> Lock`. Explore grounds the work while opening credible alternatives. Choose selects the strongest evidence-backed design. Proof establishes one real tracer bullet. Expand covers requirements and applicable failure, state, trust, compatibility, and performance paths while letting evidence improve the design. Simplify reduces the proved shape without erasing its capability. **Lock** closes only after whole-diff Spec / Standards review, canonical evidence, cleanup, and named residual risk.
 
 For the same core behavior without installing skills, use [`AGENTS_PORTABLE_FALLBACK.md`](AGENTS_PORTABLE_FALLBACK.md) as a standalone repository-level `AGENTS.md`.
 

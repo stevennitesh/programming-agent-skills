@@ -15,6 +15,8 @@ Use this folder to answer:
 
 | Lane | Role |
 | --- | --- |
+| [`skill-pack-composition/`](skill-pack-composition/) | Reusable Research Cards and tracked public source packets for pack composition. |
+| [`skills/`](skills/) | Fresh per-skill research packets keyed by stable packet identity. |
 | [`language/`](language/) | High-signal engineering words and agentic bridge vocabulary. |
 | [`skill-facets/`](skill-facets/) | Per-skill research maps, search vocabulary, and source packets. |
 | [`backlog/`](backlog/) | Deferred research opportunities, stop rules, and gap-pass notes. |
@@ -33,3 +35,8 @@ Use this folder to answer:
 Research should feed synthesis. If a source does not sharpen a leading word,
 rule, failure mode, evidence gate, stop/ask condition, or review check, keep it
 out of the active skill path.
+
+The Fresh Composition Epoch routes its reusable evidence through
+`docs/research/skill-pack-composition/README.md` and its fresh per-skill packets
+through `docs/research/skills/README.md`. Research records evidence and limits;
+it never selects the pack, admits H1, or records acceptance.

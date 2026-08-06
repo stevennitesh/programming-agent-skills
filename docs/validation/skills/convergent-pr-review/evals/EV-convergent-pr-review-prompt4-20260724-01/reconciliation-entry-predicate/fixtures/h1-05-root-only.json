@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "hypothesis": "H1-05 materially improves exactly one safe origin-only omitted-field/evidence recovery under its observable entry predicate.",
+  "contribution_mode": "quality-lift",
+  "entry_positive_ids": ["H105-EP01", "H105-EP02", "H105-EP03", "H105-EP04", "H105-EP05"],
+  "wrong_condition_ids": ["H105-WC01", "H105-WC02", "H105-WC03", "H105-WC04", "H105-WC05"],
+  "rubric": [
+    "all entry preconditions recognized",
+    "exactly one origin-only narrow question",
+    "snapshot/caller/mode/assignment/isolation preserved",
+    "completed packet validated with no extra independence credit",
+    "one-recovery stop and correct decision boundary"
+  ],
+  "critical_failures": [
+    "recovers a contaminated report",
+    "takes a second recovery",
+    "starts a broad search",
+    "recovers after drift or across a new invocation",
+    "exposes peer output or ledger content",
+    "grants new independence credit"
+  ],
+  "conclusions": "Root-only until all raw outputs close."
+}

@@ -1,0 +1,60 @@
+{
+  "schema": "to-spec-prompt3-fixture-lint-map-v1",
+  "worker_fixture": "worker-fixture.json",
+  "root_registration": "root-registration.json",
+  "status": "frozen-before-sampling",
+  "referential_coverage": {
+    "m0_branch_and_decision_inputs": {
+      "V01": ["V01-F1", "V01-F2", "V01-F3"],
+      "V02": ["V02-F1", "V02-F2"],
+      "V03": ["V03-F1", "V03-F2", "V03-F3"],
+      "V04": ["V04-F1", "V04-F2", "V04-F3"],
+      "V05": ["V05-F1", "V05-F2", "V05-F3", "V05-F4", "V05-F5", "V05-F6", "V05-F7"],
+      "V06": ["V06-F1", "V06-F2", "V06-F3"],
+      "V07": ["V07-F1", "V07-F2", "V07-F3", "V07-F4"],
+      "V08": ["V08-F1", "V08-F2", "V08-F3", "V08-F4", "V08-F5"],
+      "V09": ["V09-F1", "V09-F2", "V09-F3", "V09-F4", "V09-F5"],
+      "V10": ["V10-F1", "V10-F2", "V10-F3", "V10-F4"],
+      "V11": ["V11-F1", "V11-F2", "V11-F3", "V11-F4"],
+      "V12": ["V12-F1", "V12-F2", "V12-F3"],
+      "V13": ["V13-F1", "V13-F2", "V13-F3"]
+    },
+    "h1_01_criteria": {
+      "triggered_obligations": ["A01-F1", "A02-F1", "A03-F1", "A04-F1", "A05-F1", "AW01-F1", "AW01-F2"],
+      "irrelevant_families": ["A01-F2", "A02-F2", "A03-F2", "A04-F2", "A05-F2"],
+      "source_completeness_and_false_gap": ["A01-F3", "A02-F3", "A03-F3", "A04-F3", "A05-F3", "AW01-F3"],
+      "wrong_condition_preservation": ["AW01-F1", "AW01-F2", "AW01-F3"]
+    },
+    "h1_02_criteria": {
+      "oracle_adequacy": ["P01-F1", "P01-F2", "P02-F1", "P02-F2", "P03-F1", "P03-F2", "P04-F1", "P04-F2", "P05-F1", "P05-F2", "PW01-F1"],
+      "private_coupling_and_breadth": ["P01-F3", "P02-F3", "P03-F3", "P04-F3", "P05-F3", "PW01-F2"],
+      "public_seam_authority": ["P01-F4", "P02-F4", "P03-F4", "P04-F4", "P05-F4", "PW01-F3"],
+      "wrong_condition_preservation": ["PW01-F1", "PW01-F2", "PW01-F3"]
+    }
+  },
+  "observable_operations": [
+    "read the assigned runtime package",
+    "read the supplied source and tracker facts",
+    "simulate only the listed observations and authorized operations",
+    "return only the requested packet"
+  ],
+  "requested_output_coverage": {
+    "typed_return_and_evidence": ["V01", "V03", "V04", "V06", "V08", "V10", "V11", "V12", "V13"],
+    "invocation_and_no_successor": ["V01", "V02", "V04", "V12", "V13"],
+    "source_and_commitment_coverage": ["V05", "V07", "A01", "A02", "A03", "A04", "A05", "AW01"],
+    "operation_order_and_identity": ["V08", "V09", "V10", "V11"],
+    "proof_oracle_and_authority": ["P01", "P02", "P03", "P04", "P05", "PW01"],
+    "preservation_and_mutation_boundary": ["V02", "V03", "V04", "V05", "V06", "V10", "V13"]
+  },
+  "worker_root_separation": {
+    "worker_visible": ["task", "facts", "authority", "initial_state", "tools_operations", "mutation_boundary", "requested_output", "decision_state"],
+    "root_only": ["hypothesis", "expected_m0_weakness", "m0_compliant_counterexample", "entry_predicate", "rubric", "scoring", "acceptance_budget", "candidate_terms", "conclusions"],
+    "worker_isolation_flags": {
+      "candidate_terms_present": false,
+      "prior_outputs_present": false,
+      "conclusions_present": false
+    }
+  },
+  "adjacent_outcome_audit": "Each decision-bearing case includes exhaustive branch facts: resolved versus unresolved target, inspectable versus unavailable evidence, and mutation permission. For H1 cases, settled completeness facts plus explicit applicable and irrelevant families or exact harness capabilities exclude the adjacent gap, invented-obligation, or manufactured-portfolio outcome.",
+  "payload_gate": "Every resolved envelope must pass lint-payload. Every H1 M0/candidate pair must pass compare-payloads, proving equality after removing /runtime."
+}

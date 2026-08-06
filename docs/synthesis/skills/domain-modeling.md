@@ -2,6 +2,12 @@
 
 Status: Prompt 5 complete. The accepted Domain Modeling package is canonical and globally installed; no experimental lifecycle entry remains.
 
+Current relationship amendment: Wayfinder invokes Domain Modeling for one
+uncovered settled closing consequence, while Audit Codebase recommends it and
+stops for user-selected settled capture. Grill With Docs remains the sole
+composer for unresolved direct-user decisions. The Domain Modeling package is
+unchanged; no new installation or wording-efficacy claim is made.
+
 Before Prompt 3, the canonical and experimental Domain Modeling packages were byte-identical. Prompt 3 replaced the stale lifecycle copy; Prompt 4 repaired direct-user meaning authority and false Context Mapping labels, froze pre-prune package `cfea0f22106e4a8ec231912afadd09ca717189dcb4b53eadb6ec19bdde44c6e0`, and accepted pruned candidate `88413f471ffcedccdf8b4b3a162a3068334c7befbcd28801165add6d29e8941b`. Prompt 5 promoted those exact bytes to `skills/custom/domain-modeling/`; accepted behavioral evidence was reused because no candidate byte or claim changed.
 
 This synthesis has four roles:
@@ -221,7 +227,7 @@ Complete. Prompt 3 classified every proposed behavior without inventing a decisi
 - used the confirmed baseline and classifications above;
 - updated the experimental manifest to the new package identity and truthful baseline;
 - preserved the already-reconciled direct-question and leaf Return relationships;
-- recorded pruning decisions for every instruction-bearing unit in `docs/validation/transcripts/2026-07-21-domain-modeling-extraction-pruning-evidence.md`; and
+- recorded pruning decisions for every instruction-bearing unit in `docs/validation/skills/domain-modeling/evals/EV-domain-modeling-extraction-pruning-evidence-20260721-01/evidence/2026-07-21-domain-modeling-extraction-pruning-evidence.md`; and
 - stopped before behavioral evaluation, promotion, installation, or Git delivery.
 
 ## Prompt 4 Proof Obligations
@@ -242,10 +248,10 @@ Behavioral evaluation must cover:
 
 Critical failures are invented settlement, false DDD pattern labels, directory-derived bounded contexts, unauthorized persistence or ADR creation, missing relationship authority, hidden implementation contradiction, false verification, automatic rollback, omitted partial state or blocker, caller-identity loss, Domain Modeling taking over composed questioning, Router invocation, or downstream execution.
 
-Prompt 4 is complete. Claim-matched controls exposed failures in settled-ADR routing, persistence verification, Context Mapping accuracy, partial-failure Return, composed question ownership, and leaf completion. An initial candidate wave passed every case except Context Mapping: three of five samples invented Conformist, and one also invented Open-host Service. A narrow reference repair produced 5/5 accurate pattern choices on a fresh affected-arm rerun. The repaired pre-prune and final packages both returned the same pruned completion behavior at 5/5. Full results, deviations, and residual gaps are recorded in `docs/validation/transcripts/2026-07-21-domain-modeling-post-candidate-behavior-eval.md`.
+Prompt 4 is complete. Claim-matched controls exposed failures in settled-ADR routing, persistence verification, Context Mapping accuracy, partial-failure Return, composed question ownership, and leaf completion. An initial candidate wave passed every case except Context Mapping: three of five samples invented Conformist, and one also invented Open-host Service. A narrow reference repair produced 5/5 accurate pattern choices on a fresh affected-arm rerun. The repaired pre-prune and final packages both returned the same pruned completion behavior at 5/5. Full results, deviations, and residual gaps are recorded in `docs/validation/skills/domain-modeling/evals/EV-domain-modeling-post-candidate-behavior-eval-20260721-01/evidence/2026-07-21-domain-modeling-post-candidate-behavior-eval.md`.
 
 ## Prompt 5 Promotion Result
 
 Complete. Prompt 5 promoted accepted hash `88413f471ffcedccdf8b4b3a162a3068334c7befbcd28801165add6d29e8941b` byte-for-byte to `skills/custom/domain-modeling/`, reused the unchanged Prompt 4 behavioral evidence, and proved the canonical package before lifecycle cleanup. The relationship index already represented the selected invocation and ownership edges, so it required no change.
 
-The Domain Modeling experimental directory and only its manifest entry were removed. The managed installer then synchronized the canonical package to `C:\Users\steve\.agents\skills\domain-modeling`. A concurrent global-bootstrap change triggered the transactional guard; the supported `--skip-global-agents` path preserved that unrelated file and installed the skill pack. Canonical and installed Domain Modeling hashes match, the post-install dry run reports all managed skills unchanged, and complete proof is recorded in `docs/validation/transcripts/2026-07-22-domain-modeling-promotion-install-evidence.md`.
+The Domain Modeling experimental directory and only its manifest entry were removed. The managed installer then synchronized the canonical package to `C:\Users\steve\.agents\skills\domain-modeling`. A concurrent global-bootstrap change triggered the transactional guard; the supported `--skip-global-agents` path preserved that unrelated file and installed the skill pack. Canonical and installed Domain Modeling hashes match, the post-install dry run reports all managed skills unchanged, and complete proof is recorded in `docs/validation/skills/domain-modeling/evals/EV-domain-modeling-promotion-install-evidence-20260722-01/evidence/2026-07-22-domain-modeling-promotion-install-evidence.md`.

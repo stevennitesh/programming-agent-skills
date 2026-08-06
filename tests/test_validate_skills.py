@@ -196,7 +196,7 @@ def test_skill_handle_validation_rejects_unknown_yaml_handle(tmp_path: Path) -> 
     assert "$missing-skill" in failures[0]
 
 
-def test_active_surface_validation_rejects_retired_improvement_name_only_on_active_surfaces(
+def test_active_surface_validation_rejects_retired_improvement_names_only_on_active_surfaces(
     tmp_path: Path,
 ) -> None:
     (tmp_path / "README.md").write_text(
@@ -213,8 +213,10 @@ def test_active_surface_validation_rejects_retired_improvement_name_only_on_acti
         "improve-codebase-architecture"
     ]
 
-    (tmp_path / "README.md").write_text("Use improve-codebase.\n", encoding="utf-8")
-    assert validate_skills.validate_active_surfaces(tmp_path) == []
+    (tmp_path / "README.md").write_text("Use $improve-codebase.\n", encoding="utf-8")
+    assert validate_skills.validate_active_surfaces(tmp_path) == [
+        "Active surface contains stale token: README.md -> $improve-codebase"
+    ]
 
 
 def test_setup_schema_fingerprint_detects_contract_drift(tmp_path: Path) -> None:

@@ -1,0 +1,7 @@
+interface:
+  display_name: "MLE Workflow"
+  short_description: "Scale MLE rigor to purpose and reality"
+  default_prompt: "Use $mle-workflow to align this ML project with its purpose and perform only the explicitly requested operation."
+
+policy:
+  allow_implicit_invocation: false

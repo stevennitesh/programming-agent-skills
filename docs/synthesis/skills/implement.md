@@ -1,451 +1,401 @@
 # Implement Minimum-Runtime Synthesis
 
-Status: Deploy Prompt 5 promoted exact candidate
-`b918d2762505a69d1ba577533a2b9bd040133188b0e0c6dee4cb7e78351b4f7c`
-for a pruning-only Implement campaign. Canonical runtime now owns those exact
-bytes, and the managed installed mirror has verified parity. Git delivery and
-tracker mutation are outside runtime behavior.
+> Status (2026-07-27): historical evidence for the exact pre-efficiency bytes.
+> Later authorized Author passes changed canonical `implement` to a four-phase
+> spine with identity-aware proof reuse and then aligned its source-packet,
+> default-budget, refresh, proof, and repair-routing contracts with To Tickets.
+> The latest pass consumes a canonical proof responsibility and consolidates
+> only proved in-slice test overlap. Prior hashes and evaluations below do not
+> prove current wording. `skills/custom/implement/` is runtime authority. No
+> installed sync is claimed.
 
-## Decision
+## Active Promoted And Installed Decision — 2026-07-24
 
-Implement owns one outcome: deliver exactly one selected ready work item as
-one proved, independently reviewed, immutable committed tree, with tracker
-closeout reconciled at the repository-policy boundary.
+Decision: `complete`; exact P1 is canonical is installed is V1 is M0.
 
-The accepted identity is:
+Prompt 4 acceptance remains exact: the accepted transcript is
+`sha256:9ca3c016847764b32ec99b17ea6cf952bac643947a628c0ab5d33f5de86b5343`,
+V1/M0 is
+`1f61b9880b881771b579372075dd89e3bccb7ce9c94ae3bd0e30f1f43ae8724f`,
+the rejected original H1 is
+`3960bc073a49022faaf581c4829653e16d470e3c9a727066d8a755a1086b5e8d`,
+and the admitted Prompt 4 workspace is
+`80f6ae5dfcb2367545b77a1b5c7207890c947636f283b9e0f38c1620cc26dfeb`.
+
+The corrected frozen M0 checkpoint is intact at
+`sha256:c56d01368a49d19ed33fb4d0c4b926029d6264885e36bea5af820f40c31d5f0c`.
+The matching R2 research packet is `research-complete` at whole-file SHA-256
+`4d08005025411969cbadb583077ff3fabe28a8a6f6fc7887c99bb9dc62d438cf`.
+Both retain the intended singleton-delivery contract and the same starting
+Git `HEAD`.
+
+The correction closes the historical blocker: Local Markdown closeout now
+occurs after acceptable review and before Lock, is staged with selected work,
+and is Mutation-read back; GitHub and GitLab closeout remain external
+post-commit mutations. Complete current, owner, caller, relationship, test,
+evaluation, candidate, pruning, promotion, and research inspection exposed no
+other missed minimum authority, compatibility, safety, or relationship
+obligation.
+
+The pre-evaluation shape was a `hypothesis-candidate`; Prompt 4 rejected both
+quality lifts because exact M0 exhibited no registered deficit:
 
 ```text
-pre-prune != canonical = accepted B0 = accepted C1
+current = b918d2762505a69d1ba577533a2b9bd040133188b0e0c6dee4cb7e78351b4f7c
+M0 runtime = 1f61b9880b881771b579372075dd89e3bccb7ce9c94ae3bd0e30f1f43ae8724f
+original H1 candidate = 3960bc073a49022faaf581c4829653e16d470e3c9a727066d8a755a1086b5e8d
+rederived H1 = V1 = P1 = M0
 ```
 
-Therefore:
+The promoted P1 is the active canonical and managed installed runtime at
+`1f61b9880b881771b579372075dd89e3bccb7ce9c94ae3bd0e30f1f43ae8724f`.
+The canonical package was promoted byte-for-byte from exact P1; the managed
+installer synchronized only `implement`, canonical/installed parity passed,
+and the post-install dry-run was clean.
 
-- campaign shape: `pruning-only`;
-- canonical runtime is the promoted accepted corpus;
-- `B0` is the executable locally compatible minimum specified below;
-- `C1` has no behavioral delta from `B0`;
-- substitutions, ownership corrections, and behavior-preserving cuts receive
-  no mechanism-contribution credit; and
-- Prompt 4 accepted pruning equivalence at 45/45 registered cases per arm; and
-- Prompt 5 promoted the accepted package byte-for-byte.
+Historical-current/M0 byte equality is not claimed. M0 removes the prior
+canonical-only
+staged-worker outcome and numeric two-generation default, adds the
+checkpoint-required explicit Simplify unit, and expresses the corrected
+tracker-kind order. The two evaluated H1 transformations survive only as
+rejected hypotheses and do not enter V1.
 
-No material user-owned design choice remains open.
+### Intended Contract And Standalone M0
 
-## Authority
+M0 implements all 17 frozen units without research or current-only behavior.
+It admits exactly one selected bounded Ready-for-agent item; applies repository
+setup and domain routing; reconciles packet, dependencies, fixed point,
+authority, Git/tracker state, and unrelated work; claims tracker work; freezes
+one Charter and finite Repair budget; chooses technique inside settled
+commitments; routes only matching inner proof work to TDD or Diagnosis;
+implements a narrow path and assigned state branches; simplifies and
+reconciles authored work; obtains and, when authorized, repairs one immutable
+risk-scaled review lineage; applies tracker-kind-correct closeout and Lock;
+commits the exact locked tree; pushes only under separate authority; and
+returns one truthful terminal or nonterminal packet.
 
-Runtime authority remains in:
+The neutral M0 Repair rule is executable without the current numeric default:
+record a finite caller-, repository-, or risk-bounded budget before production
+mutation; when no bound can be selected inside settled authority, return the
+decision instead of repairing. The neutral M0 has no staged-worker branch.
+Parallel Implement and its worker contract already own delegated parent-graph
+lanes; no inspected caller invokes Implement for staged handoff.
 
-- `skills/custom/implement/SKILL.md` and
-  `skills/custom/implement/agents/openai.yaml`;
-- `docs/agents/engineering-contract.md`;
-- the target repository's domain and tracker contracts;
-- the selected work item's authoritative source;
-- `$tdd` and `$diagnosing-bugs` for their inner loops;
-- `$review`, `$convergent-pr-review`, and
-  `skills/custom/review/FINDING-CONTRACT.md` for review judgment and finding
-  admission; and
-- `docs/synthesis/skill-context-relationships.md` for composition edges.
+### Corrected M0 Clause Map
 
-This synthesis owns the minimum-runtime decision, dispositions, extraction
-boundary, and proof claims. It is not executable runtime authority.
-
-## Viability Floor
-
-The minimum runtime must preserve:
-
-1. explicit-only invocation for one selected ready item;
-2. compatible setup, readiness, dependency, and selection authority before
-   mutation;
-3. a binding explicit target, with no silent substitution or readiness repair;
-4. distinct owner and explicitly assigned staged-worker authority;
-5. tracker claim read-back before owner edits or dispatch when tracker-backed;
-6. fixed-point capture, unrelated-work preservation, and selected-work
-   isolation;
-7. one immutable Charter and commitment boundary;
-8. semantic proof through the highest meaningful available seam;
-9. correct TDD versus Diagnosis routing without absorbing either procedure;
-10. one immutable review tree and exactly one risk-scaled review route;
-11. caller-owned finding admission and finite complete-batch Repair;
-12. repo-local closeout before Lock when it belongs in the repository tree;
-13. review-tree-to-lock-tree inspection, one commit, and tree-identity proof;
-14. connector closeout only after commit, with Mutation read-back; and
-15. one safe Return that distinguishes setup, selection, assignment, staged
-    handoff, decision, blocked, and complete outcomes.
-
-Tiny work may compress narration. It may not omit these gates when applicable.
-
-## Verified Source Registry
-
-Prompt 1 inspected complete matching packages and the decision-relevant local
-sources. Freshness is bounded by the recorded checkout; no remote refresh was
-performed.
-
-| Source | Identity And Access | Role | Freshness Limit |
+| M0 Clause | Units | Cheapest Neutral Runtime Meaning | Current Disposition |
 | --- | --- | --- | --- |
-| Pre-prune canonical Implement package | Tree SHA-256 `ef2a52520462266ad0af171869d516c709ba57e737dcf9658e0a3cbb643af8bc`; complete package read at repository `HEAD` `a0879b1e1602928a705e4973e5a013bf3f2bb42c` | Historical behavior source and frozen pruning control | Exact for the campaign starting package only |
-| Promoted canonical Implement package | Tree SHA-256 `b918d2762505a69d1ba577533a2b9bd040133188b0e0c6dee4cb7e78351b4f7c`; exact accepted Prompt 4 bytes | Current runtime authority | Exact for the promoted source in this record |
-| Matt Pocock `implement` | Clean `main`; `ed37663cc5fbef691ddfecd080dff42f7e7e350d`; complete matching package | Simplest credible core baseline | Checkout commit dated 2026-07-21; remote currency not established |
-| Superpowers | Clean `main`; `d884ae04edebef577e82ff7c4e143debd0bbec99`; complete closest execution, finishing, review, and verification surfaces inspected | Broader execution and completion counterpressure | Checkout commit dated 2026-07-02; remote currency not established |
-| Ponytail | Clean `main`; `16f29800fd2681bdf24f3eb4ccffe38be3baec6b`; complete closest implementation and simplicity surfaces inspected; no matching delivery skill | Simplicity counterpressure | Checkout commit dated 2026-07-15; remote currency not established |
-| Upper-bound engineering language | Applicable implementation, slicing, proof, review, and completion rows read | Semantic pressure with original claim labels | Local packet checked 2026-07-22 |
-| `UBL-01-slicing-and-migration.md` | Complete source packet | Tracer-bullet, vertical-slice, readiness, and proof distinctions | Primary-source checks dated 2026-07-22; behavioral status remains `untested` |
-| Implement facet map | Complete README and search vocabulary read | Research inventory only | Every named Implement facet remains pending source distillation |
+| C01 | U01 | One selected bounded ready item; exclude foreign work classes. | `M0-equivalent`; staged-worker description text is separate and removed. |
+| C02 | U02 | Follow relevant setup, tracker, label, domain, and engineering owners; stop on incompatibility. | `M0-equivalent`, `required compatibility`. |
+| C03 | U03 | Reconcile packet, dependencies, fixed point, authority, Git/tracker state, and unrelated work before mutation. | `M0-equivalent`. |
+| C04 | U04 | Claim configured tracker work with read-back; fabricate no direct-item tracker state. | `M0-equivalent`, `required compatibility`. |
+| C05 | U05 | Freeze Charter, bounded slice, proof lanes, state branches, fence, and finite Repair budget. | `M0-equivalent`; numeric default is `replace`. |
+| C06 | U06 | Inspect alternatives inside commitments and return commitment changes. | `M0-equivalent`. |
+| C07 | U07 | Invoke Diagnosis or TDD only under its owned trigger and integrate a complete Return. | `M0-equivalent`, relationship-protected. |
+| C08 | U08 | Prove a narrow path, then implement assigned acceptance and state branches within scope. | `M0-equivalent`. |
+| C09 | U09 | Simplify authored work and reconcile candidate, proof, and disposable state. | Current explicit passage absent; `replace` with required M0 expression. |
+| C10 | U10 | Pin a proved candidate and obtain the applicable formal review with required Spec. | `M0-equivalent`, relationship-protected. |
+| C11 | U11 | Repair only a complete admitted Charter-preserving batch within the finite budget; rereview successors. | `M0-equivalent`; numeric default is `replace`. |
+| C12 | U12 | For Local Markdown, close, release, stage with selected work, and Mutation-read back after review and before Lock. | `M0-equivalent`, `required compatibility`. |
+| C13 | U13 | Lock reviewed work plus applicable Local Markdown closeout through current proof, identity, scope, staged state, and risk. | `M0-equivalent`, `required compatibility`. |
+| C14 | U14 | Commit exactly the locked tree, atomically including applicable Local Markdown state and excluding unrelated state. | `M0-equivalent`, `required compatibility`. |
+| C15 | U15 | After commit, reconcile GitHub/GitLab closeout and release; mutate no local/direct tracker post-commit. | `M0-equivalent`, `required compatibility`; H1-02 may refine failure judgment. |
+| C16 | U16 | Push only under separate authority and verify the approved remote identity. | `M0-equivalent`. |
+| C17 | U17 | Complete only after every applicable gate; otherwise return safe `partial` or `blocked` state. | `M0-equivalent`; staged-handoff result is removed. |
 
-The source checkouts are evidence about inspected bytes, not claims that their
-remote repositories were current.
+M0 is implementable from this map and the complete frozen checkpoint alone.
+Research terms, current wording, historical B0/C1 names, H1 weaknesses, and
+evaluator conclusions are unnecessary to construct it.
 
-## Simplest Credible Baseline
+### Complete Current-Clause Dispositions
 
-Matt's Implement package is the simplest credible core:
+IDs retain the exact 40-passage inventory from the historical Pruning Pass.
+Each current passage has one safe disposition; mixed passages are split at
+their smallest semantic unit.
 
-```text
-take supplied spec or tickets
--> implement
--> use TDD where possible
--> run focused and final checks
--> review
--> commit
-```
-
-It is selected over the alternatives because it achieves the generic delivery
-outcome with the least runtime machinery.
-
-It is not locally executable without adaptation. It omits singleton selection,
-setup compatibility, tracker claims, staged-worker authority, immutable
-Charter and commitment boundaries, unrelated-work isolation, risk-scaled
-review ownership, finding admission, bounded Repair, tree identity, provider
-closeout ordering, Mutation read-back, and typed failure Returns.
-
-Superpowers is not the baseline because its closest package executes a
-multi-task plan and then enters a separate branch-finishing menu that may
-merge, push, preserve, or discard work. Those operations exceed Implement's
-singleton and mutation boundary. Ponytail has no equivalent delivery owner;
-its shortest-sufficient-solution pressure cannot supply admission, proof,
-review, Lock, or closeout.
-
-## Pre-Prune Runtime Disposition Ledger
-
-Every distinct current behavior has one disposition.
-
-| Pre-Prune Behavior | Disposition | Reason And Destination |
+| Clause | Semantic Unit | Classification And Decision |
 | --- | --- | --- |
-| Explicit-only policy | `protect` | Human selection is intentional; preserve in B0 metadata |
-| One selected ready work item | `protect` | Core local delivery unit; preserve in B0 |
-| Setup compatibility before implementation | `protect` | Required local contract; preserve as one gate and Repo Bootstrap Return |
-| Parent source is context, not implementation scope | `protect` | Prevents unsliced expansion; preserve once |
-| Explicit target is binding | `protect` | Non-intuitive authority boundary; preserve once |
-| Repository-policy selection without a target | `protect` | Required local selection authority; preserve once |
-| Selection reads but does not repair readiness | `protect` | Prevents self-created authority; preserve once |
-| Duplicate unsliced or shaping-unready `$to-tickets` explanation | `remove` | Same meaning currently appears twice; one exact Return is sufficient |
-| Ready gate and tracker eligibility | `protect` | Required admission; preserve in compact form |
-| Owner versus staged-worker roles | `protect` | Non-intuitive mutation and completion boundary |
-| Owner staging, Repair, commit, and closeout authority | `protect` | Required mutation boundary |
-| Push, deployment, PR, destructive Git, and unrelated mutation exclusion | `protect` | Required safety boundary paired with the external-authority Return |
-| Tracker claim and staged-worker claim verification | `protect` | Concurrency guard owned with the tracker contract |
-| Fixed point, index/worktree capture, and unrelated-work preservation | `protect` | Required Lock and stewardship contract |
-| Charter and default two-generation Repair Budget | `protect` | Required campaign authority; preserve once |
-| Commitment-boundary stop | `protect` | Caller-owned product and contract decisions |
-| Generic "keep changes inside the selected item" | `replace` | Express through the bounded-slice and one-proof-story contract without adding a separate runtime subsystem |
-| TDD trigger | `owned elsewhere` | Preserve only the observable trigger and caller Return |
-| Diagnosis trigger | `owned elsewhere` | Preserve only uncertainty routing and caller Return |
-| RED-unsuitable evidence branch | `protect` | Safe proof fallback; keep concise |
-| Staged-worker staging, proof, and handoff | `protect` | Required alternate Return; no formal review or closeout authority |
-| Canonical acceptance and risk-scaled proof | `protect` | Required before immutable review |
-| Complete selected-work diff and review tree | `protect` | Non-intuitive immutable target |
-| Exactly one ordinary or high-risk review route | `protect` | Review owner and duplicate-gate boundary |
-| Required Spec and immutable review packet | `protect` | Caller-review contract |
-| Review acceptance and residual-risk boundary | `protect` | Lock remains closed without a current acceptable result |
-| Finding Contract read and caller validation | `owned elsewhere` | Preserve pointer, trigger, and caller authority |
-| Complete-batch automatic Repair | `protect` | Prevents partial repair before surfacing a decision |
-| Finite Repair Budget and successor review | `protect` | Prevents unbounded review-fix cycling |
-| Repo-local closeout before Lock | `protect` | Required because the tracker file belongs in the committed tree |
-| Lock-tree capture and review-to-lock delta inspection | `protect` | Protects post-review behavior identity |
-| Index-tree equality, cached diff check, one commit, `HEAD^{tree}` equality | `protect` | Required irreversible-order and completion proof |
-| Connector closeout after commit | `protect` | Provider ordering requires the commit SHA |
-| Mutation read-back and partial-failure block | `protect` | Attempted mutation is not completion |
-| Current prose-only Done sentence | `replace` | One typed Return table owns every terminal and nonterminal result |
-| Final evidence packet | `protect` | Preserve required evidence and exact continuation |
+| M01 | Singleton trigger; staged-worker trigger | Singleton `M0-equivalent`; staged-worker trigger `remove`. |
+| M02 | Explicit-only policy | `M0-equivalent`; preserve. |
+| M03 | Provider display identity | `required compatibility`; preserve. |
+| M04 | Singleton and bounded-Repair provider summary | `M0-equivalent`; adapt to neutral finite Repair. |
+| M05 | Charter, review, Repair, Lock, closeout prompt | `M0-equivalent`; `replace` generic closeout with corrected tracker-kind order. |
+| S01 | Selected ready singleton outcome | `M0-equivalent`; preserve meaning. |
+| S02 | Owner sequence | `M0-equivalent`; adapt to the complete C01-C17 order. |
+| S03 | Staged-worker sequence | `remove`; current-only alternate outcome with no caller dependency. |
+| S04 | Owner authority; staged-worker limits | Owner `M0-equivalent`; staged-worker unit `remove`. |
+| S05 | Owner mutation authority and external-action exclusions | `M0-equivalent`; preserve meaning. |
+| S06 | Setup and tracker-guidance gate | `M0-equivalent`, `required compatibility`; preserve pointer ownership. |
+| S07 | Select one ready item | `M0-equivalent`; preserve meaning. |
+| S08 | Binding named target | `M0-equivalent`; preserve safety boundary. |
+| S09 | Parent remains context; shaping Return | `M0-equivalent`; preserve exclusion and owner. |
+| S10 | Repository-policy selection or caller question | `M0-equivalent`; preserve authority. |
+| S11 | Read-only selection state | `M0-equivalent`; preserve no-self-readiness guard. |
+| S12 | Ready definition | `M0-equivalent`, `required compatibility`; adapt to the full configured contract. |
+| S13 | Claim, fixed point, unrelated-state preservation, isolation | `M0-equivalent`, `required compatibility`; preserve meaning. |
+| S14 | Immutable Charter; default two generations | Charter and finite budget `M0-equivalent`; exact `two` `replace` with neutral finite authority-bound budget. |
+| S15 | Bounded slice, proof story, commitment-change Return | `M0-equivalent`; H1-01 may substitute coherence steering. |
+| S16 | Conditional TDD/Diagnosis routing | `M0-equivalent`, relationship-protected; preserve trigger and Return. |
+| S17 | RED-unsuitable proof and adjacent-work Return | `M0-equivalent`; preserve claim-matched fallback. |
+| S18 | Staged-worker patch, proof, staging, Return | `remove`; no M0 or relationship owner. |
+| S19 | Acceptance, selected staging, immutable review tree | `M0-equivalent`; adapt after removing staged-worker assumptions. |
+| S20 | Exactly one risk-scaled review route and packet | `M0-equivalent`, relationship-protected. |
+| S21 | Complete current-review acceptance gate | `M0-equivalent`; preserve. |
+| S22 | Complete-report finding admission; no partial Repair | `M0-equivalent`, owned by Review's Finding Contract. |
+| S23 | Batched Repair and successor review within Budget | `M0-equivalent`; exact numeric default `replace`. |
+| S24 | Local Markdown closeout before Lock and staging | `M0-equivalent`, `required compatibility`; this is now frozen M0. |
+| S25 | Review-to-lock delta, index equality, exact commit | `M0-equivalent`, `required compatibility`. |
+| S26 | Connector closeout after commit and read-back | M0 core `M0-equivalent`, `required compatibility`; recovery expression is `H1 hypothesis` H1-02. |
+| S27 | Exactly one typed Return | `M0-equivalent`; preserve. |
+| S28 | Setup-precondition Return | `M0-equivalent`; preserve. |
+| S29 | Selection-gate Return | `M0-equivalent`; preserve. |
+| S30 | Assignment-blocker Return | `remove` with staged-worker branch. |
+| S31 | Staged-handoff Return | `remove` with staged-worker branch. |
+| S32 | Decision-required Return | `M0-equivalent`; preserve. |
+| S33 | Blocked Return | `M0-equivalent`; adapt to complete M0 failure fields. |
+| S34 | Complete Return | `M0-equivalent`; adapt to tracker-kind proof. |
+| S35 | Completion and downstream stop | M0 completion `M0-equivalent`; staged-handoff exclusion `remove`. |
 
-## Protected Behavior Set
+Safe-removal decision: staged-worker text has no current relationship edge,
+caller contract, candidate manifest entry, or required compatibility owner.
+Parallel Implement workers use their own bounded worker brief and Return to
+the root. Removing the branch narrows Implement to its frozen terminal
+singleton outcome and cannot reach promotion until Prompt 4 proves the
+invocation/exclusion and protected relationship cases. The numeric default
+has no independent authority or professional support and is replaced, not
+silently dropped. No unresolved removal risk may reach promotion.
 
-The protected set is the viability floor plus every `protect` row above.
-Particularly non-negotiable are:
+### Research Registry And H1 Decisions
 
-- binding-target and no-substitution behavior;
-- staged-worker inability to claim, review, commit, or close;
-- unrelated index and worktree preservation;
-- immutable Charter and finite Repair Budget;
-- exactly one immutable formal-review route;
-- complete-batch finding admission before Repair;
-- repo-local closeout inside the lock tree;
-- one commit whose tree equals the approved lock tree; and
-- connector Mutation read-back before a complete claim.
+| Candidate | Origin | Method Evidence | Current State | Decision And Limit |
+| --- | --- | --- | --- | --- |
+| Self-contained small batch | `professional-method`, intent-adjacent | `independently-supported` | Current says bounded slice but does not distinguish coherence from file count. | Admit H1-01 as a `quality-lift`; bounded to one independently understandable, acceptance-complete change. |
+| Evidence before claims | `professional-method`, intent-adjacent | `independently-supported` rationale; exact phrase unproved | M0 already requires fresh claim-matched proof and evidence-bearing Returns. | `M0-equivalent`; reject a duplicate H1 term. |
+| Latest accepted tree | `professional-method` | `independently-supported` Git identity mechanics plus local authority | M0 C10-C14 already bind review, local cohort, Lock, and commit identities. | `M0-equivalent`; reject a duplicate leading-term substitution. |
+| Commit-anchored reconciliation | `professional-method`, intent-adjacent | `independently-supported` under the settled no-rollback condition | Current blocks partial read-back but does not require preserve/refetch/classify/safe-resume judgment. | Admit H1-02 as a post-commit connector `quality-lift`; no universal retry or compensation claim. |
+| Green simplification | `professional-method` | `independently-supported` | Current explicit passage is absent; corrected M0 U09/C09 already requires simplify under proof. | `M0-equivalent`; no H1. |
+| Atomic tracker closeout | `intent-adjacent` term | `contested` outside one Git tree | Absent; corrected M0 separates repository and connector systems. | Reject; use no cross-system atomicity claim. |
+| Provider retry by HTTP verb | `professional-method` inference | `unverified` | Absent. | Reject; provider owner and state read-back govern replay safety. |
+| Universal test-first | `pack-observed` | `contested` | Current conditional routing is compatible. | Reject; preserve Diagnosis, TDD, and direct-evidence conditions. |
+| Per-task review and finishing menu | `pack-observed` | `pack-specific` | Absent. | Reject; wrong singleton mutation and completion boundary. |
+| Ponytail ordered-sufficiency ladder | `pack-observed` | `pack-specific` | Absent. | Defer; no distinct M0 weakness justifies the full ladder. |
+| Fixed two-generation Repair default | `current-observed` | `unverified` | Present. | Replace with M0 finite authority-bound budget; no H1. |
 
-Current wording is not protected merely because it exists. Duplicate
-explanation, foreign-owner procedure, and synthesis-only machinery remain
-eligible for removal.
+Broader research found no decisive contradiction to H1-01 or H1-02. Neither
+inherits universal professional authority, exact-wording efficacy, provider
+transport ownership, or transfer beyond the registered conditions.
 
-## Research Intake
+### H1 Transformation Units
 
-Research preserves its original claim label. Local disposition is separate.
+**H1-01 — Self-contained coherence**
 
-| Research Item | Original Label | Local Disposition | Consequence |
-| --- | --- | --- | --- |
-| Tracer bullet is a skeletally thin real path for selected feedback | `synthesis`; UBL01-C1/C2 supported with narrowing; behavior `untested` | `semantic substitution` | Use the term only for a real learning path; do not equate it with all delivery slices |
-| Vertical slice organizes relevant concerns around one request or behavior | `synthesis`; UBL01-C1/C3; behavior `untested` | `supporting rationale only` | Implement already receives a shaped singleton; do not add ticket-shaping procedure |
-| Proof through the claimed boundary | `synthesis`; UBL01-C3 narrowed; behavior `untested` | `supporting rationale only` | Preserve local proof policy without presenting it as tracer-bullet definition |
-| Readiness differs from independence and concurrency | `synthesis`; UBL01-C4; behavior `untested` | `supporting rationale only` | Preserve singleton selection; Parallel Implement owns runtime width |
-| RED-GREEN-REFACTOR | `synthesis`; Superpowers corroborated; Matt conflict recorded | `owned elsewhere` | TDD owns the loop; Implement retains only its entry and Return |
-| Root cause rather than symptom | `synthesis`; Ponytail and Superpowers corroboration | `owned elsewhere` | Diagnosis owns causal proof |
-| Fixed-point two-axis review | `synthesis`; Matt direct and Superpowers corroborated | `supporting rationale only` | Review skills own judgment; Implement supplies one immutable target and required Spec |
-| Evidence before claims | `synthesis`; Superpowers corroborated | `supporting rationale only` | Preserve fresh claim-matched proof |
-| Ordered sufficiency search | `inference`; Ponytail corroborated | `defer` | No exact Implement baseline failure admits a runtime ladder |
-| Serial fresh-context multi-task implementation | `inference`; Superpowers corroborated | `reject` | Wrong unit and ownership model for singleton Implement |
-| Shortest working diff and one runnable check | Ponytail pack-specific pressure | `reject` as universal; `supporting rationale only` for simplicity | Volume and one-check floors cannot replace commitments or canonical proof |
+- Origin: `professional-method` and `intent-adjacent`; method evidence
+  `independently-supported`.
+- Intended value and owner: Implement holds one independently understandable,
+  acceptance-complete, testable change; caller remains scope/acceptance owner.
+- Expected M0 weakness: “bounded” may be optimized as few files or a
+  horizontal fragment, losing necessary coupled surfaces or admitting adjacent
+  concerns.
+- Contribution mode: `quality-lift`; M0 remains viable.
+- Cheapest expression: substitute one bounded-slice construction sentence
+  with a self-contained coherence gate; add no file, table, or procedure.
+- Positive cases: tempting horizontal fragments, broad adjacent cleanup, and
+  acceptance requiring several coupled surfaces.
+- Wrong condition: do not split an indivisible multi-surface behavior merely
+  to reduce files or lines; do not reopen caller-owned scope.
+- Fixed rubric: score acceptance completeness, coherent proof story, inclusion
+  of required coupled surfaces, exclusion/Return of adjacent work, and
+  preserved authority. Missing accepted behavior or fabricating a new slice is
+  critical.
+- Proof: five fresh M0 controls first across at least two families
+  (horizontal-fragment and adjacent-work); run five H1 samples only if M0 shows
+  the registered quality deficit.
+- Residual limit: evidence applies only to registered singleton decomposition
+  cases and does not establish a universal size metric.
 
-No unresolved semantic or professional-validity question changes a ledger
-decision. A Conditional Research Interlude is not admitted.
+**H1-02 — Commit-anchored connector reconciliation**
 
-## Prior-Evidence Dispositions
+- Origin: `professional-method` and `intent-adjacent`; method evidence
+  `independently-supported` for inspect-before-replay and resumable progress
+  under the settled no-rollback condition.
+- Intended value and owner: Implement preserves the verified commit as the
+  recovery anchor, refetches connector state, classifies intended effects, and
+  returns only the configured safe continuation; tracker owners retain
+  transport and field semantics.
+- Expected M0 weakness: generic partial-publication recovery may invite blind
+  replay, false rollback, loss of commit identity, or an incomplete account of
+  ambiguous effects.
+- Contribution mode: `quality-lift`; M0 remains viable and truthful.
+- Cheapest expression: refine the post-commit connector failure sentence to
+  preserve the commit, refetch, classify `applied`, `missing`, `conflicted`, or
+  `unknown`, and resume only safe missing steps.
+- Positive cases: lost response before or after apply, partial
+  label/comment/claim effects, concurrent provider change, and provider error.
+- Wrong condition: do not apply the method before a verified commit, to Local
+  Markdown or direct work, after confirmed complete closeout, or when the
+  configured owner cannot establish a safe replay.
+- Fixed rubric: score commit preservation, actual-state refetch, complete
+  effect classification, no blind replay/automatic rollback, truthful
+  completion status, and one owner-matched continuation. False completion,
+  overwriting concurrent state, or reversing the accepted commit is critical.
+- Proof: five fresh M0 controls first across lost-response and
+  partial/concurrent-state families; run five H1 samples only if M0 shows the
+  registered quality deficit.
+- Residual limit: no claim that PATCH/PUT or a composite GitHub/GitLab
+  operation is universally idempotent; no live-provider or cross-model
+  transfer claim.
 
-| Evidence | Exact Lane | Disposition | Limit |
-| --- | --- | --- | --- |
-| 2026-07-22 canonical validation and installation record for Implement tree `ef2a5252...8e8bc` | Structural repository consistency and historical canonical-to-installed parity | `exact-reusable` for structural identity; `lane-limited` for installation | It does not establish current installed state or behavioral minimality |
-| 2026-07-22 integrated handoff samples | Selection ambiguity and shaping-defect routing | `historical-admission-only` | Samples used an older installed Implement hash, not the current package |
-| 2026-07-12 through 2026-07-18 Implement workflow simulations | Selection, review route, Lock, local closeout, diagnosis return | `invalidated` for exact-current behavior; `historical-admission-only` for mechanism inspection | Package identity changed; several runs were contract simulations rather than live mutation |
-| Audit-to-Implement handoff evaluation | Caller chooses Implement rather than exposing TDD as a peer delivery route | `lane-limited` | Proves Audit caller routing, not Implement runtime behavior |
-| Current structural tests | Explicit policy, role spines, review route, Spec, local closeout ordering, tree delta, and relationship edges | `lane-limited` | Protects source shape; no behavioral-effect claim |
-| Upper-bound language and UBL-01 packet | Semantic fidelity for slicing, proof, and readiness distinctions | `exact-reusable` for source meaning | Explicitly untested for agent behavior and local adoption |
-| Exact current-runtime behavioral control | None | `missing` | Required before claiming a wording mechanism fixes current behavior |
-| Exact pre-prune versus B0/C1 equivalence | Five fresh samples per arm over nine registered families | `exact-reusable` for unchanged accepted bytes, tasks, protocol, settings, and rubric | Read-only decisions rather than live provider mutation |
-| Exact B0 and C1 hashes | One shared corpus at `b918d276...b4f7c` | `exact-reusable` for package identity | Superseded experimental path removed after byte-for-byte promotion |
+Neither unit changes outcome, invocation, exclusion, authority, Return,
+completion, or relationships. Both are agent-owned runtime expressions and
+need no Prototype or Behavior Decision Interlude.
 
-Historical installation evidence remains historical. Prompt 2 did not inspect
-or synchronize the installed mirror.
+### Decision Ledger
 
-## Unified Baseline-Delta Ledger
-
-`Baseline` belongs in executable B0. `Caller-owned` and `Disclose` stay behind
-their existing owners. `Non-runtime`, `Deferred`, and `Rejected` do not enter
-the candidate package.
-
-| Mechanism | Baseline State | Current Disposition | Research Pressure And Claim Label | Admission Basis | Owner | Cheaper Expression | Runtime Destination | Required Proof | Decision |
+| Unit | M0 Obligation Or H1 Origin | Method Evidence | Current State | Owner | Contribution Mode And Expected M0 Weakness | Cheapest Expression | Wrong Condition | Proof | Decision |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Implement, test, review, commit | Present in Matt | Protect | Cross-pack core; no behavior-improvement claim | `core outcome` | Implement | One leading-word spine | B0 common path | Current-contract preservation | `Baseline` |
-| Explicit singleton selection | Absent from Matt | Protect | Readiness and concurrency distinctions are `synthesis`, behavior `untested` | `required local contract` | Implement and tracker | One binding selection gate | B0 common path | Positive target, ambiguity, blocked target, unsliced source | `Baseline` |
-| Setup and no-substitution gates | Absent from Matt | Protect | Local ownership evidence | `required local contract`; `non-intuitive safety or authority boundary` | Implement and Repo Bootstrap | One admission block | B0 common path | Setup gap and explicit blocked-target cases | `Baseline` |
-| Owner and staged-worker roles | Absent from Matt | Protect | Local worker contract | `required local contract`; `non-intuitive safety or authority boundary` | Implement | Two short role branches | B0 common plus staged branch | Owner/staged positive and adjacent-negative cases | `Baseline` |
-| Claim, fixed point, and unrelated-work isolation | Absent from Matt | Protect | Evidence-before-claims is `synthesis` | `required local contract`; `non-intuitive safety or authority boundary` | Implement and tracker | One pre-mutation gate | B0 common path | Dirty-index and claim-read-back fixtures | `Baseline` |
-| Charter and commitment boundary | Absent from Matt | Protect | Local engineering contract | `required local contract`; `non-intuitive safety or authority boundary` | Implement and caller | Compact Charter plus one decision Return | B0 common path | Missing field and changed-commitment cases | `Baseline` |
-| Bounded slice and proof story | Generic "piece of work" in Matt; implicit local pressure in current | Replace current generic scope sentence | Tracer/vertical distinctions are `synthesis`, behavior `untested` | `required local contract` | Engineering contract; Implement applies | One local slice/proof sentence plus shared pointer | B0 common path | Current-contract preservation and pruning equivalence | `Baseline`; semantic clarification only |
-| TDD and Diagnosis routing | TDD only in Matt | Protect trigger; procedure owned elsewhere | RGR and root-cause labels remain source-bounded | `required local contract` | TDD and Diagnosis | Trigger, inputs, and Return only | B0 caller-owned pointers | Relationship and routing cases | `Caller-owned` |
-| Immutable risk-scaled review | Generic code review in Matt | Protect | Fixed-point review is `synthesis` | `required local contract`; `non-intuitive safety or authority boundary` | Review owners; Implement selects | One route gate and immutable packet | B0 common path | Ordinary/high-risk, missing Spec, unavailable route | `Baseline` |
-| Finding admission and finite Repair | Absent from Matt | Protect | Local finding contract | `required local contract`; `non-intuitive safety or authority boundary` | Implement and Finding Contract | Pointer plus complete-batch Budget gate | B0 conditional branch | Mixed findings, two generations, exhausted Budget | `Baseline` |
-| Local closeout, Lock, one commit, connector Close | Commit only in Matt | Protect | Evidence-before-claims is supporting rationale | `required local contract`; `non-intuitive safety or authority boundary` | Implement and tracker | One irreversible ordered chain | B0 common/conditional path | Local, connector, tree mismatch, partial mutation | `Baseline` |
-| Typed Returns | Minimal completion in Matt | Replace prose-only Done | Completion clarity is local policy | `required local contract`; `non-intuitive safety or authority boundary` | Implement | One compact Return table | B0 common surface | Every stop branch has evidence and continuation | `Baseline` |
-| Separate Bound operation and full slice-lock packet | Synthesis-only expansion | Not current runtime | No observed exact baseline failure; behavior `untested` | none beyond contract already represented above | Non-runtime synthesis | B0's one slice/proof sentence | None beyond B0 | No contribution arm | `Deferred` |
-| State-transition, operation-completion, artifact-authority, and proof-level tables | Synthesis-only expansion | Not current runtime | No observed exact baseline failure | none | Non-runtime synthesis | Omit; preserve only decisions in B0 and proof matrix | Non-runtime | Not applicable | `Rejected` as runtime; `Non-runtime` rationale only |
-| Implement-specific ledger, helper, schema, or operations file | Absent | Preserve absence | No recovery failure evidence | none | Deferred design | No new surface | None | New admission required | `Deferred` |
-| Ordered-sufficiency ladder | Ponytail only | Absent | `inference`; behavior untested | none | Implementation technique | Existing-owner inspection when locally useful | None | Exact baseline failure required | `Deferred` |
-| Superpowers finishing menu or multi-task controller | Superpowers only | Absent | Source-specific | none | Other workflow owners | Keep outside Implement | None | Not applicable | `Rejected` |
+| M0-U01 | Selected ready singleton | Local intent; upstream nucleus is observation | Present plus staged trigger | Caller selects; Implement admits | M0; none | One admission/exclusion gate | Raw, blocked, parent, review-only, conflict-only | Invocation/exclusion suite | Preserve M0; remove staged trigger |
+| M0-U02 | Setup/domain compatibility | Local authority | Present | Repo Bootstrap/docs own setup; Implement checks | M0; none | Triggered pointers and safe stop | Missing/incompatible setup | Pointer trace and setup cases | Preserve |
+| M0-U03 | Packet/state/authority reconciliation | Local authority | Present | Implement | M0; none | One pre-mutation reconciliation gate | Blocker, ambiguity, unsafe overlap | Packet/Git/frontier cases | Preserve |
+| M0-U04 | Claim or direct N/A | Local tracker authority | Present | Tracker transport; Implement applies | M0; none | Claim plus read-back | Competing/partial claim | Before/after state | Preserve |
+| M0-U05 | Charter and finite budget | Local intent | Present with numeric default | Caller owns commitments; Implement records | M0; numeric default unsupported | Neutral finite authority-bound budget | Missing commitment/bound | Clause trace and decision case | Replace numeric default |
+| M0-U06 | Technique inside commitments | Local intent | Present | Implement; caller owns commitment change | M0; none | Alternatives then bounded choice | Choice changes commitment | Source/authority trace | Preserve |
+| M0-U07 | Diagnosis/TDD routing | Corroborated, condition-bound | Present | Inner owners; Implement integrates | M0; none | Trigger-bearing pointers | Wrong owner or incomplete Return | Relationship cases | Preserve |
+| M0-U08 | Narrow path then assigned branches | Local intent; bounded-change support | Present | Implement | M0; none | Narrow proof then expansion | Contradiction or scope escape | Acceptance/state suite | Preserve |
+| M0-U09 | Simplify and reconcile | Independently supported but required by local contract | Explicit passage absent | Implement | M0; none | One green simplify/reconcile gate | Cleanup changes commitment/unrelated work | Proof/diff/disposable inventory | Add neutral M0 |
+| M0-U10 | Immutable formal review | Direct/corroborated plus local authority | Present | Implement routes; reviewer judges | M0; none | One risk-scaled route and packet | Drift/incomplete review | Ordinary/high-risk cases | Preserve |
+| M0-U11 | Admitted Repair and rereview | Local Finding Contract | Present with numeric default | Implement admits; caller owns decisions | M0; numeric default unsupported | Complete batch within finite budget | Partial/mixed/over-budget repair | Finding and successor cases | Replace numeric default |
+| M0-U12 | Local closeout pre-Lock | Local tracker authority | Present | Local tracker owns fields/order | M0; none | Close, stage, read back | Wrong kind, partial, unstaged | Tracker/index/frontier cases | Preserve required compatibility |
+| M0-U13 | Exact Lock | Local engineering authority | Present | Implement | M0; none | Identity/scope/proof/risk gate | Drift or extra state | Review-to-lock identity | Preserve |
+| M0-U14 | Exact commit | Git mechanics plus local authority | Present | Implement/caller | M0; none | Commit locked tree once | Unrelated index/hook drift/mismatch | Tree and status checks | Preserve |
+| M0-U15 | Connector closeout | Local tracker authority | Present, recovery compact | Tracker owns transport; Implement reconciles | M0; none | Post-commit mutation/read-back | Local/direct or unsafe retry | Provider-state cases | Preserve M0; H1-02 transforms recovery |
+| M0-U16 | Conditional push | Local authority | Present | User/caller | M0; none | Separate-authority gate | No authority or wrong remote | Remote identity/boundary | Preserve |
+| M0-U17 | Truthful Return/completion | Local intent | Present plus staged Returns | Implement | M0; none | Terminal/nonterminal packet | Unchecked gate or false completion | Packet-to-gate suite | Preserve M0; remove staged Returns |
+| H1-01 | Professional method + intent-adjacent coherence | `independently-supported` | Adjacent bounded wording | Implement inside caller scope | `quality-lift`: M0 may optimize for file count/horizontal fragments | One sentence substitution | Indivisible coupled behavior or new scope | Two-family M0-first comparison | Admit |
+| H1-02 | Professional method + intent-adjacent recovery | `independently-supported`, bounded | Compact partial-failure block | Implement judgment; tracker transport | `quality-lift`: M0 may replay/rollback or lose ambiguous effects | One recovery refinement | Pre-commit, local/direct, complete, unsafe replay | Two-family M0-first comparison | Admit |
 
-The ledger admits no C1 mechanism.
+### Protected Behavior, Relationships, And Affected Surfaces
 
-## Canonical Semantic Surface
+The active protected set is all M0-U01 through M0-U17. No H1 unit entered it.
+Independently required compatibility, explicit-only policy and provider
+identity, tracker-kind ordering, exact-tree identity, non-intuitive authority
+and safety boundaries, and truthful Return and completion remain protected.
+Historical presence alone protected neither staged-worker behavior nor the
+numeric Repair default.
 
-The promoted canonical package implements this accepted surface:
+Relationship delta is `none`. Direct users, To Tickets, Triage, Diagnosis, and
+Improve Codebase may supply or recommend one selected item under their existing
+authority. Implement invokes TDD or Diagnosis under their triggers and exactly
+one of Review or Convergent PR Review. It recommends and stops at To Tickets
+for shaping and Repo Bootstrap for setup. Parallel Implement continues to own
+parent graphs and delegated lanes. Foreign procedures remain behind their
+existing context pointers.
 
-### Entry
+Prompt 5 changed only the exact canonical Implement package, directly affected
+canonical contract tests, this active synthesis, the Prompt 5 validation
+record, and removal of the Implement experimental package and manifest entry.
+It published no relationship-topology change and preserved every unrelated
+experimental candidate.
 
-- Keep `policy.allow_implicit_invocation: false`.
-- Admit one explicit or repository-selected ready singleton.
-- Read the engineering contract and the applicable tracker contract.
-- Return the setup, target, readiness, blocker, or shaping defect before
-  mutation.
+### Proof Matrix And Prior Evidence
 
-### Authority
-
-- Owner is the default and owns claim, Charter, accepted patch, proof, review
-  route, Repair, Lock, commit, and closeout.
-- Staged-worker mode requires an explicit assignment and accepting owner. It
-  owns only its bounded patch, focused proof, staging, and handoff.
-- Preserve unrelated work and refresh state after interaction or external
-  change.
-
-### Charter And Patch
-
-- Record the selected item, outcome, acceptance, supported paths, proof,
-  commitment boundary, non-goals, fixed point, review route, and Repair Budget.
-- Hold one bounded slice and proof story inside that Charter.
-- Invoke TDD for settled red-testable behavior and Diagnosis for uncertain bug
-  facts; retain delivery ownership on Return.
-- Use the strongest safe semantic evidence when RED is unsuitable.
-- A staged worker proves and stages only its assignment, then Returns.
-
-### Review And Repair
-
-- Assemble only selected work and capture one immutable review tree.
-- Invoke exactly one ordinary or high-risk review owner with required Spec.
-- Validate the complete report through the Finding Contract.
-- Repair only a complete eligible automatic blocker batch under the unchanged
-  Charter and remaining Budget.
-- Prove and re-review one successor tree; otherwise Return the complete
-  decision or blocker.
-
-### Lock And Close
-
-- After acceptable review, apply required repo-local closeout, read it back,
-  and include it in the selected index.
-- Capture the lock tree and allow only verified closeout metadata after the
-  accepted review tree.
-- Require index-tree equality, cached diff integrity, one commit, and
-  `HEAD^{tree}` equality.
-- Apply connector closeout after commit and require Mutation read-back.
-- Stop before push, deployment, PR creation, parent closure, or another item
-  without separate authority.
-
-### Return
-
-One compact surface must distinguish:
-
-| Return | Minimum Evidence |
-| --- | --- |
-| Setup precondition | Missing or incompatible surface and Repo Bootstrap continuation |
-| Selection gate | Checked target or candidates, failed gate, preserved tracker state, and exact local question or To Tickets repair |
-| Assignment blocker | Missing worker authority and required owner action |
-| Staged handoff | Assigned staged diff, proof, skips, risk, unrelated state, and owner action |
-| Decision required | Immutable target, complete decision set, consequences, and resume point |
-| Blocked | Current state, blocker owner, release condition, preserved work, and resume operation |
-| Complete | Selected item, approved and committed tree, review, proof, residual risk, tracker read-back, and deliberate next boundary |
-
-## C1 Delta Set
-
-Empty.
-
-There is no admitted behavioral addition, entry condition, failure Return, or
-mechanism-contribution proof lane beyond B0. Accepted C1 was byte-identical to
-B0 and became canonical. A later behavioral difference requires a new
-minimum-runtime decision.
-
-## Information And Ownership Placement
-
-| Placement | Content |
-| --- | --- |
-| Canonical common path | Outcome, roles, admission, Charter, bounded patch/proof, owner review, Lock, Close, Return, completion |
-| Canonical conditional branch | Staged-worker handoff; Repair; repo-local versus connector closeout |
-| Disclosed existing owner | Tracker provider mechanics, TDD procedure, Diagnosis procedure, Finding Contract, ordinary and convergent review procedure |
-| Caller-owned | Product commitments, changed acceptance or contracts, residual-risk acceptance when policy requires it, external mutation authority |
-| Non-runtime synthesis | Provenance, baseline comparison, dispositions, identity, rejected alternatives, proof claims, residual gaps |
-| Rejected or deferred | Transition schema, artifact catalog, proof-level taxonomy, Implement ledger/helper, multi-task controller, branch-finishing menu, ordered-sufficiency ladder |
-
-No new Implement-specific file is admitted.
-
-## Relationships And Boundaries
-
-| Caller | Verb | Callee | Trigger And Return |
-| --- | --- | --- | --- |
-| Direct user | Invoke | `$implement` | User selects singleton delivery; Implement still applies admission |
-| `$to-tickets` | Recommend and stop | `$implement` | One serial ready ticket is selected; no automatic execution |
-| `$diagnosing-bugs` | Recommend and stop | `$implement` | Standalone diagnosis has a ready causal remediation |
-| `$improve-codebase` | Recommend and stop | `$implement` | One Concentrate candidate is a ready singleton |
-| `$implement` | Invoke | `$tdd` | Settled red-testable behavior; Return proof to the same owner |
-| `$implement` | Invoke | `$diagnosing-bugs` | A required bug fact is uncertain; Return causal evidence to the same owner |
-| `$implement` | Invoke | `$review` | Ordinary immutable tree |
-| `$implement` | Invoke | `$convergent-pr-review` | Local PR or high-risk immutable tree |
-| `$implement` | Recommend and stop | `$to-tickets` | Work is unsliced or shaping-unready |
-| `$implement` | Recommend and stop | `$repo-bootstrap` | Setup is missing or incompatible |
-
-Implement does not become Parallel Implement when more work appears. It does
-not absorb shaping, review judgment, diagnosis, TDD, provider transport,
-deployment, release, or parent-graph completion.
-
-## Promoted Runtime Surface
-
-| Surface | Promoted State | Preserve Outside |
+| Lane | Exact Required Proof | Prior Evidence Disposition |
 | --- | --- | --- |
-| `skills/custom/implement/SKILL.md` | Exact accepted B0/C1 bytes; one compact delivery owner | Provider mechanics, callee procedures, evaluation protocol, source history |
-| `skills/custom/implement/agents/openai.yaml` | Explicit-only policy and accepted provider interface unchanged | Runtime procedure and validation claims |
-| Pre-prune fixture | Frozen only for pruning evidence | Runtime authority |
-| Experimental lifecycle | Implement candidate tree and manifest entry removed after promotion | Every unrelated experimental candidate |
-| Relationship index | No delta | Existing caller, callee, ownership, and Return edges |
+| Checkpoint and research identity | Marker fingerprint, whole-file research hash, intended-contract match | `exact-reusable` for identity and admission |
+| M0 intent fidelity | Every runtime passage maps only to C01-C17/U01-U17 and local authority | Passed by the frozen Prompt 3 runtime map and Prompt 4 read-back |
+| M0 viability | Complete 17-fixture frozen suite, including direct/local/connector order and injected failures | `passed`: 17/17 valid fresh M0 samples; one zero-credit source-incomplete sample was repaired without task/rubric change |
+| Staged-worker removal | Explicit-only singleton positives/negatives; no staged admission/Return; parent lanes remain Parallel Implement-owned | Relationship/tests `lane-limited`; no behavioral reuse |
+| Numeric-budget replacement | Finite bound recorded before repair; missing authority returns decision; no unbounded or partial Repair | Historical mixed-Repair cases `historical-admission-only` |
+| H1-01 contribution | M0-first five-sample control, then H1 only on registered coherence deficit; two fixture families | `rejected-no-control-deficit`: all five controls scored 5/5; no H1 dispatch |
+| H1-02 contribution | M0-first five-sample control, then H1 only on registered recovery deficit; two fixture families | `rejected-no-control-deficit`: all five controls scored 6/6; no H1 dispatch |
+| Protected relationships | Trigger, verb, callee authority, Return, and no delta | Passed fresh structural read-back; no topology change published |
+| Invocation/context/machine | Exact inventory, explicit-only policy, metadata, hashes, links, anchors, fences, tables | Passed for exact V1=M0 |
+| Removal safety | Current clause disposition, caller search, candidate/manifest absence, negative relationship proof | Passed; staged-worker and numeric-default removal has no unresolved protected dependency |
+| Pruning | Complete audit of the exact runtime-clause map, plausible-cut ledger, V1/P1 identity, and load delta | `pruning-not-needed`; P1 is byte-identical to V1; no behavioral equivalence wave was warranted |
+| Promotion/install | Exact P1/canonical/installed identity, authorized cohort, parity, clean dry-run, canonical tests, full suite | Passed; only `implement` changed before synchronization, all 25 were unchanged afterward |
 
-## Claim-To-Proof Matrix
+Prior exact current bytes and package inventory are reusable only as current
+comparison evidence. The 2026-07-23 construction, D0/B0 evaluation, pruning,
+promotion, and install records preserve their historical claims; they do not
+prove corrected M0, H1 contribution, removal safety, current installed parity,
+or this epoch's lifecycle. The retired pre-prune fixture identity remains
+`historical-admission-only`; rerun for new behavioral credit. No prior candidate behavioral proof matches
+H1-01 or H1-02.
 
-| Claim Lane | Claim | Required Later Proof | Current Status |
+### Pruning Audit And P1
+
+The complete runtime-facing package was audited against the exact Prompt 3
+runtime map and corrected C01-C17/U01-U17 clause map. Every
+instruction-bearing passage remains `keep`; no passage is `collapse`,
+`disclose`, or `delete`. Only plausible cut groups are recorded:
+
+| Cut Group | Affected Units | Expected Unchanged Behavior And Named Load | Disposition |
 | --- | --- | --- | --- |
-| Semantic fidelity | Tracer bullet, vertical slice, readiness, proof, fixed point, and caller ownership are used without source distortion | Source read-back and ownership trace | Accepted local wording is materialized |
-| Mechanism contribution | C1 improves B0 through an admitted behavioral mechanism | Not applicable because C1 delta is empty | No claim permitted |
-| Invocation and context loading | Explicit-only policy and branch pointers remain reachable at the right trigger | Deterministic policy checks and focused pointer traces | Accepted metadata promoted unchanged |
-| Current-contract preservation | B0 preserves every protected behavior | Structural relationships plus fixed positive and adjacent-negative scenarios | Accepted: all five exact-candidate samples passed all nine registered families |
-| Pruning equivalence | B0/C1 preserve the behavior-complete current package while removing only duplicate or unsupported representation | Immutable current control versus exact B0/C1 repeated fresh-context equivalence arms | Accepted: 45/45 per arm, no critical failure |
-| Deterministic package proof | Accepted B0/C1 and canonical bytes agree | Inventory, SHA-256/tree hashes, links, relationship checks, validator, and diff checks | Canonical hash `b918d276...b4f7c` proved |
-| Promotion integration | Canonical runtime, synthesis, tests, installation, and mirror agree | Prompt 5 proof | Complete; canonical and installed hashes equal `b918d276...b4f7c` |
+| P-CUT-01 outcome and boundary wording | U01, U05, U10, U12, U14, U17 | Preserve singleton invocation, authority, completion, and provider reach while reducing repeated outcome words | Rejected: each occurrence owns a distinct invocation, runtime, authority, completion, or provider-interface surface; collapsing it produces no package-load reduction without deleting a surface |
+| P-CUT-02 reconciliation and identity wording | U04, U10, U12-U15 | Preserve claim, review, tracker-kind order, Lock, commit, and connector behavior while reducing repeated read-back words | Rejected: the clauses guard different irreversible phases and cannot become one generic gate without weakening order or identity |
+| P-CUT-03 negative and nonterminal guards | U01-U06, U11, U15, U17 | Preserve all positive gates while reducing guardrail and recovery words | Rejected: the passages protect non-intuitive no-substitution, no-self-readiness, authority, safe-failure, and truthful-Return behavior |
+| P-CUT-04 owner and tracker disclosure | U02, U07, U10, U15 | Preserve routing and tracker behavior while shortening the common body | Rejected: foreign procedure is already behind owner pointers; observable triggers, authority, Returns, and tracker-kind order remain common-path behavior |
 
-No behavior evaluation compared B0 with C1 for contribution because their bytes
-were identical. The accepted Prompt 4 lane compared the frozen pre-prune
-package with exact C1 for pruning equivalence.
+No cut is material and no package support is unused. P1 therefore reuses the
+exact V1 runtime files byte-for-byte:
 
-## Promotion And Distribution State
+```text
+V1 = P1 = 1f61b9880b881771b579372075dd89e3bccb7ce9c94ae3bd0e30f1f43ae8724f
+runtime files delta = 0
+runtime bytes delta = 0
+SKILL.md lines delta = 0
+SKILL.md words delta = 0
+```
 
-| Artifact | State |
+Prompt 4's 17/17 valid M0 viability result and its invocation, context,
+relationship, and machine lanes remain exact reusable proof. Because no
+material cut entered P1, the Pruning Pass created no fresh behavioral wave and
+makes no new wording-equivalence claim.
+
+### Rejected, Deferred, Active Lifecycle, And Residuals
+
+Rejected: staged-worker execution inside Implement; a fixed two-generation
+default; universal TDD; provider retry inferred from HTTP verb; cross-system
+“atomic closeout”; automatic compensation or commit rollback; whole
+parent/batch delivery; duplicate review gates; push/deploy/PR/merge/discard
+menus; copied tracker transport; redundant helper/schema/table surfaces; and
+H1 terms duplicating M0 evidence, tree, or simplification obligations.
+
+Deferred: the full Ponytail ladder, a separate Bound operation, a larger or
+numerically fixed Repair budget, and any new runtime machinery lacking a named
+M0 control deficit. No deferred unit enters H1.
+
+| Artifact Or Unit | R2 State |
 | --- | --- |
-| Canonical package | Promoted exact accepted hash `b918d2762505a69d1ba577533a2b9bd040133188b0e0c6dee4cb7e78351b4f7c` |
-| Behavior-complete pre-prune control | `docs/validation/evals/implement-pruning-pre-prune`, hash `ef2a52520462266ad0af171869d516c709ba57e737dcf9658e0a3cbb643af8bc` |
-| Pruning-equivalence evidence | Accepted; `docs/validation/transcripts/2026-07-23-implement-post-candidate-behavior-eval.md` |
-| Experimental lifecycle | Implement tree and manifest entry removed; unrelated candidates preserved |
-| Installed mirror | Managed synchronization complete; exact canonical parity at `b918d276...b4f7c`; clean post-install dry-run |
-| Git delivery | Owned separately by Deploy Prompt 6; it does not change runtime identity |
+| Corrected Prompt 1 | `ready-for-research`; M0 fingerprint frozen |
+| R2 Research Pass | `research-complete`; exact packet verified |
+| R2 Prompt 2 | `ready-for-prompt-3` |
+| M0 runtime | Materialized once under `skills/experimental/implement/controls/m0` at `1f61b9880b881771b579372075dd89e3bccb7ce9c94ae3bd0e30f1f43ae8724f` |
+| Original H1 runtime | Evaluated candidate identity `3960bc073a49022faaf581c4829653e16d470e3c9a727066d8a755a1086b5e8d`; both transformations rejected before H1 sampling |
+| V1 / rederived H1 | Exact M0 at `1f61b9880b881771b579372075dd89e3bccb7ce9c94ae3bd0e30f1f43ae8724f` |
+| Prototype / Behavior Decision Interlude | Not admitted |
+| Prompt 3 | Complete; original exact runtimes and proof manifest frozen |
+| Prompt 4 | `accepted`; M0 viable, both H1 units `rejected-no-control-deficit`, V1=M0 |
+| Pruning Pass | `complete`; `pruning-not-needed`; exact P1 is V1=M0 at `1f61b9880b881771b579372075dd89e3bccb7ce9c94ae3bd0e30f1f43ae8724f` |
+| Prompt 5 | `complete`; exact P1 promoted byte-for-byte, only `implement` synchronized, parity and clean post-install dry-run verified |
+| Canonical runtime | Active exact P1 at `1f61b9880b881771b579372075dd89e3bccb7ce9c94ae3bd0e30f1f43ae8724f` |
+| Installed runtime | Managed mirror exact P1 at `1f61b9880b881771b579372075dd89e3bccb7ce9c94ae3bd0e30f1f43ae8724f` |
+| Relationships | No topology change; existing owner pointers remain exact |
+| Experimental candidate | Removed after canonical proof; all non-Implement candidates preserved |
+| Git delivery | Pending in bare mode; Prompt 6 was not authorized |
 
-## Rejected And Deferred Alternatives
+Residual gaps are live dirty-index, hook, and provider mutation;
+provider-composite idempotence; cross-model/host transfer; exact backend build,
+seed, token, and latency telemetry; upstream remote freshness; and pending
+non-decision-changing Implement facet research.
 
-| Alternative | Decision | Reconsideration Trigger |
-| --- | --- | --- |
-| Whole parent spec, queue, batch, or PRD as Implement scope | Rejected | None inside this skill |
-| Substitute a different ready item for a blocked explicit target | Rejected | None |
-| Worker-owned claim, review, commit, or closeout | Rejected | A different delivery skill with a different role contract |
-| Reviewer-authorized or partial mixed-authority Repair | Rejected | None |
-| Unbounded Repair | Rejected | New caller-owned campaign design and evidence |
-| Automatic Parallel Implement conversion | Rejected | Explicit user selection of that owner |
-| Separate Bound operation and full runtime packet | Deferred | Exact current baseline failure after the minimum B0 expression |
-| State-transition, operation-completion, artifact-authority, or proof-level runtime tables | Rejected as runtime | A distinct observed failure that a cheaper expression cannot cure |
-| Implement-specific ledger, helper, schema, or `OPERATIONS.md` | Deferred | Repeated singleton recovery failure or measured branch-loading failure |
-| Ordered-sufficiency ladder | Deferred | Exact baseline failure and admitted local owner |
-| Larger Repair Budget | Deferred | Evidence that two generations safely underfit without encouraging churn |
-| Staged-worker commit | Rejected | Parallel Implement lane workers own bounded commits |
-| Push, PR, deployment, merge, discard, or branch-finishing menu | Rejected | Separate explicit owner and authority |
+Promotion reused exact accepted behavior evidence because P1 is V1
+byte-for-byte. The authoritative promotion and installation record is
+`docs/validation/skills/implement/evals/EV-implement-prompt5-20260724-01/evidence/2026-07-24-implement-prompt5.md`; raw outputs and
+chronology remain in validation, not this active synthesis.
 
-## Accepted Evidence And Residual Gaps
+## 2026-07-27 Review-Route Amendment
 
-The campaign was accepted because:
-
-- every current behavior and applicable research item has one disposition;
-- every prior evidence item has one reuse disposition and exact lane;
-- the C1 delta set is explicitly empty;
-- substitutions and cuts are outside mechanism contribution;
-- B0 is executable without inventing behavior;
-- the protected behavior set is explicit;
-- foreign behavior points to its owner;
-- one active design replaces the former competing future-rewrite architecture;
-- `pre-prune != canonical = accepted B0 = accepted C1` agrees with
-  `pruning-only`; and
-- the aggregate runtime remains the minimum coherent delivery owner under the
-  accepted local contract.
-
-Preserved residual gaps:
-
-1. live dirty-index Lock and connector partial-failure behavior were evaluated
-   as read-only decision packets rather than provider mutations;
-2. the fixed nine-case suite does not represent every repository or tracker
-   configuration;
-3. exact backend model-build, token, and latency telemetry was unavailable;
-4. remote currency of the three upstream checkouts is unverified.
-
-These gaps do not block the accepted pruning-only claim or installed parity.
-
-## Completion
-
-The design is complete when canonical and installed hashes equal
-`b918d2762505a69d1ba577533a2b9bd040133188b0e0c6dee4cb7e78351b4f7c`,
-the accepted evidence remains applicable, the Implement experimental lifecycle
-is absent, relationships remain unchanged, validation passes, and Git delivery
-does not change the runtime identity.
+The canonical caller now sends ordinary diffs and ordinary PRs to Change
+Review. Release candidates and changes with a supported high-risk trigger go
+to High-Assurance Review. The review still returns judgment only; Implement
+retains Repair, Lock, and mutation authority. Installed parity is not claimed.

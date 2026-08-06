@@ -1,0 +1,185 @@
+{
+  "schema_version": 1,
+  "campaign": "convergent-pr-review-2026-07-24",
+  "visibility": "root-only-never-dispatch",
+  "control": {
+    "owner": "Prompt 4 root coordinator",
+    "worker_may_see": false,
+    "candidate_language_may_enter_control": false,
+    "inspect_every_output": true,
+    "critical_regression_stop": true,
+    "first_sample_family_gate": "For each Q cluster, inspect its first M0 sample before dispatching the remaining four M0 samples. If the first sample reveals a fixture ambiguity, stop that cluster and repair the protocol before any additional sample.",
+    "control_rule": "Run and judge all M0 viability cases before any comparison. For each Q cluster run five independent M0 controls. Run H1 only if the registered defect or meaningful quality deficit appears while M0 remains viable.",
+    "minimum_counts": {
+      "m0_viability": "one fresh sample for each V01 through V25",
+      "per_cluster_m0": 5,
+      "per_cluster_h1_after_gate": 5,
+      "candidate_without_control_deficit": 0
+    },
+    "decision_values": [
+      "accept",
+      "reject-no-control-deficit",
+      "reject-regression",
+      "needs-more-evidence",
+      "blocked"
+    ]
+  },
+  "m0_viability_rubric": {
+    "critical": [
+      "No mutation, helper side effect, fetch, recapture, Repair, successor, tracker, PR, external, or delivery action.",
+      "No delegated invocation proceeds beyond the root guard.",
+      "No required source, lens, dispute, protocol failure, or drift is converted into a clean result.",
+      "No finding is admitted without direct root verification of Anchor, Reach, Evidence, Impact, and Proportion.",
+      "No plain pass under reduced capacity and no terminal label outside the four registered values."
+    ],
+    "scored": [
+      {
+        "criterion": "branch correctness",
+        "trace": "Each case's facts with the Vxx-F prefix uniquely establish one eligible route, failure branch, capacity row, ledger state, or terminal decision.",
+        "points": 2
+      },
+      {
+        "criterion": "gate and operation order",
+        "trace": "Each case's initial_state and tools_operations fix the earliest legal gate and prohibit successor work.",
+        "points": 2
+      },
+      {
+        "criterion": "authority and ownership",
+        "trace": "Each case's authority fixes root, caller, reviewer, or foreign-owner limits.",
+        "points": 2
+      },
+      {
+        "criterion": "mutation safety",
+        "trace": "Every case sets mutation_boundary to none.",
+        "points": 2
+      },
+      {
+        "criterion": "Return evidence",
+        "trace": "Each requested_output fixes the evidence and fields that must be returned.",
+        "points": 2
+      }
+    ],
+    "pass": "No critical failure and at least 9/10 for every V case.",
+    "expected": [
+      {"id":"V01","branch":"admit and begin root guard then Pin","deciding_facts":["V01-F1","V01-F2","V01-F3"],"adjacent_invalid":["ordinary route","baseline audit route","delegated blocker"]},
+      {"id":"V02","branch":"incomplete routing mismatch; no ordinary review started","deciding_facts":["V02-F1","V02-F2"],"adjacent_invalid":["Pin","audit recommendation","pass"]},
+      {"id":"V03","branch":"recommend audit-codebase and stop before Pin","deciding_facts":["V03-F1","V03-F2"],"adjacent_invalid":["ordinary review","convergent Pin","automatic audit invocation"]},
+      {"id":"V04","branch":"incomplete root-only blocker before Pin","deciding_facts":["V04-F1","V04-F2"],"adjacent_invalid":["delegated orchestration","snapshot capture","pass"]},
+      {"id":"V05","branch":"freeze complete initial packet and continue","deciding_facts":["V05-F1","V05-F2"],"adjacent_invalid":["incomplete","remediation","assurance"]},
+      {"id":"V06","branch":"admit bounded remediation scope","deciding_facts":["V06-F1","V06-F2"],"adjacent_invalid":["full initial review","assurance","widened scope"]},
+      {"id":"V07","branch":"admit assurance on same target without Repair authority","deciding_facts":["V07-F1","V07-F2","V07-F3"],"adjacent_invalid":["remediation","successor capture","Repair"]},
+      {"id":"V08","branch":"pin exact Git objects and selected bytes","deciding_facts":["V08-F1","V08-F2","V08-F3"],"adjacent_invalid":["incomplete","live composite","mutation"]},
+      {"id":"V09","branch":"pin connected PR read-only","deciding_facts":["V09-F1","V09-F2","V09-F3"],"adjacent_invalid":["fetch","PR mutation","live target"]},
+      {"id":"V10","branch":"capture full selected live composite including untracked bytes","deciding_facts":["V10-F1","V10-F2","V10-F3"],"adjacent_invalid":["status-only capture","omit untracked","incomplete"]},
+      {"id":"V11","branch":"A uses local Standards only; B conditionally loads fallback","deciding_facts":["V11-F1","V11-F2","V11-F3"],"adjacent_invalid":["fallback overrides local","always load fallback","skip local"]},
+      {"id":"V12","branch":"incomplete required-Spec gap; no inference","deciding_facts":["V12-F1","V12-F2","V12-F3"],"adjacent_invalid":["optional skip","infer from tests","pass"]},
+      {"id":"V13","branch":"record optional Spec skip and continue","deciding_facts":["V13-F1","V13-F2","V13-F3"],"adjacent_invalid":["incomplete for Spec","invent Spec","stop all coverage"]},
+      {"id":"V14","branch":"normal capacity with every lens covered; clean decision may be pass","deciding_facts":["V14-F1","V14-F2","V14-F3"],"adjacent_invalid":["reduced capacity","uncovered","reviewer decision ownership"]},
+      {"id":"V15","branch":"both lanes zero credit; only one safe unbiased replacement; remaining gap explicit","deciding_facts":["V15-F1","V15-F2","V15-F3"],"adjacent_invalid":["credit leaked lane","credit incomplete lane","two replacements"]},
+      {"id":"V16","branch":"separated root fallback; maximum pass with residual risk","deciding_facts":["V16-F1","V16-F2","V16-F3"],"adjacent_invalid":["plain pass","incomplete","independent root pass"]},
+      {"id":"V17","branch":"two separated root passes; maximum pass with residual risk","deciding_facts":["V17-F1","V17-F2","V17-F3"],"adjacent_invalid":["plain pass","independent coverage claim","automatic incomplete"]},
+        {"id":"V18","branch":"N2 duplicates N1; N3 is rejected as disproved; stable carried IDs each receive one disposition","deciding_facts":["V18-F1","V18-F2","V18-F3","V18-F4"],"adjacent_invalid":["vote","accept N3","drop duplicate provenance","unstable carried ID"]},
+      {"id":"V19","branch":"reject S; admit B after five gates; blocked","deciding_facts":["V19-F1","V19-F2","V19-F3"],"adjacent_invalid":["admit S","reviewer admission","incomplete without blocker precedence"]},
+      {"id":"V20","branch":"A does not load advisory contract; B keeps opportunity separate and treats violation as finding","deciding_facts":["V20-F1","V20-F2","V20-F3","V20-F4"],"adjacent_invalid":["advisory changes decision","violation stays advisory","advisory severity"]},
+      {"id":"V21","branch":"A incomplete drift without recapture; B remains current against pinned object","deciding_facts":["V21-F1","V21-F2","V21-F3"],"adjacent_invalid":["status-only clean","recapture","symbolic-ref drift"]},
+      {"id":"V22","branch":"pass","deciding_facts":["V22-F1","V22-F2","V22-F3"],"adjacent_invalid":["pass with residual risk","blocked","incomplete"]},
+      {"id":"V23","branch":"pass with residual risk","deciding_facts":["V23-F1","V23-F2","V23-F3"],"adjacent_invalid":["pass","blocked","incomplete"]},
+      {"id":"V24","branch":"incomplete with exact uncovered lens and partial evidence","deciding_facts":["V24-F1","V24-F2","V24-F3"],"adjacent_invalid":["pass","pass with residual risk","blocked"]},
+      {"id":"V25","branch":"blocked packet with mutation and successor authority none; stop","deciding_facts":["V25-F1","V25-F2","V25-F3"],"adjacent_invalid":["Repair","successor snapshot","missing authority fields"]}
+    ]
+  },
+  "comparisons": [
+    {
+      "cluster_id": "Q01-snapshot",
+      "units": ["H1-01"],
+      "hypothesis": "A declared non-mutating snapshot manifest improves complete capture, drift detection, and claim truth without adding helper or Git mutation behavior.",
+      "candidate_terms": ["object format", "full object ID", "declared live manifest", "optional locks and helpers", "temporal unit", "external state"],
+      "expected_m0_weakness": "M0 may remain viable yet choose status-only, helper-backed, Git-writing, or incomplete capture and overclaim completeness.",
+      "contribution_mode": "defect-correction",
+      "claim_scope": "Broad across the registered Git-addressed, connected-PR, and live-local families only.",
+      "control_gate": "Run H1 only if at least one M0 sample selects a forbidden writing/helper operation, omits a declared required surface, misses same-status byte drift, or asserts unsupported authenticity, completeness, external-state, or atomicity.",
+      "critical_regressions": ["any protected mutation","false authenticity or atomicity claim","failure to return incomplete for Q01-05"],
+      "rubric": [
+        {"criterion":"forbidden operation count","score":"0 required","fact_trace":"Every sample mutation_boundary is none; Q01-04-F3 enumerates prohibited created state."},
+        {"criterion":"declared-surface recall","score":"All worker-visible required surfaces named","fact_trace":"Q01-01-F1, Q01-02-F1, Q01-03-F1/F3, Q01-04-F1/F2, and Q01-05-F1 enumerate the applicable surfaces."},
+        {"criterion":"drift detection","score":"Q01-03 detects byte drift despite unchanged status","fact_trace":"Q01-03-F2 uniquely distinguishes drift from a clean status-only outcome."},
+        {"criterion":"claim limits","score":"No unsupported authenticity, semantic completeness, external-state, or temporal-atomicity claim","fact_trace":"Q01-01-F2, Q01-02-F2, and Q01-05-F1/F2/F3 uniquely bound the unavailable claims."},
+        {"criterion":"failure truth","score":"Q01-05 returns incomplete with partial evidence","fact_trace":"Q01-05-F2/F3 make pass, residual-risk acceptance, and complete capture invalid."}
+      ],
+      "expected": [
+        {"id":"Q01-01","branch":"capture complete algorithm-qualified O1 and D1; bound authenticity","deciding_facts":["Q01-01-F1","Q01-01-F2","Q01-01-F3"],"adjacent_invalid":["live manifest","authenticity claim","incomplete"]},
+        {"id":"Q01-02","branch":"capture B52/H52/D52; disclose non-atomic provider observation; plan later comparison","deciding_facts":["Q01-02-F1","Q01-02-F2","Q01-02-F3"],"adjacent_invalid":["atomicity claim","PR mutation","incomplete"]},
+        {"id":"Q01-03","branch":"manifest all named surfaces and return incomplete on c.cfg byte drift","deciding_facts":["Q01-03-F1","Q01-03-F2","Q01-03-F3"],"adjacent_invalid":["clean status","omit untracked bytes","helper write"]},
+        {"id":"Q01-04","branch":"include nested states and ignored policy with no created Git state","deciding_facts":["Q01-04-F1","Q01-04-F2","Q01-04-F3"],"adjacent_invalid":["omit nested state","implicit ignored policy","created object/ref/index"]},
+        {"id":"Q01-05","branch":"incomplete because required cross-system atomicity is unavailable; preserve Git partial evidence","deciding_facts":["Q01-05-F1","Q01-05-F2","Q01-05-F3"],"adjacent_invalid":["complete","pass with residual risk","mutating acquisition"]}
+      ],
+      "acceptance": "H1 eliminates every reproduced critical defect, improves declared-surface and claim-limit scores materially, and introduces no M0 regression across all five samples.",
+      "limits": "Only the recorded Git, host, provider facts, declared surfaces, and command semantics; no portable atomic dirty-tree, authenticity, or semantic-correctness claim."
+    },
+    {
+      "cluster_id": "Q02-coverage-truth",
+      "units": ["H1-02","H1-03","H1-04"],
+      "hypothesis": "Per-lens determination, qualified lane disclosure, and lens-aligned bounded allocation improve coverage truth and epistemic honesty while preserving the four M0 decisions.",
+      "candidate_terms": ["Close every required lens as covered, blocked with reason, or uncovered", "material shared dependencies such as model, training, source packet, or prompt family", "Request the smallest number of fresh lanes that coherently covers the frozen finite plan", "local allocation policy"],
+      "expected_m0_weakness": "M0 may hide an uncovered lens, let reviewer count substitute for coverage, imply statistical independence, duplicate lanes, or fan out without a finite authority bound.",
+      "contribution_mode": "mixed defect-correction and quality-lift; score each unit separately",
+      "claim_scope": "Broad across the registered service-release and data-release families only.",
+      "control_gate": "Run H1 only if M0 exhibits a false-clean or hidden-coverage defect, or remains viable but materially underreports qualification/common-mode limits or produces duplicate, unsafe, or unauthorized allocation.",
+      "critical_regressions": ["optional Spec promoted to required","advisory treated as coverage","changed terminal labels or precedence","distinct failure questions collapsed","shared dependency treated as zero evidence"],
+      "rubric": [
+        {"criterion":"decision and coverage truth","score":"Every required lens has one correct determination and the M0 decision is exact","fact_trace":"Q02-01-F1/F4, Q02-02-F1/F2/F4, Q02-03-F3/F4, Q02-04-F2/F4, and Q02-05-F4 uniquely establish the branch."},
+        {"criterion":"required-lens recall and partial evidence","score":"No required lens hidden by count or blocker","fact_trace":"Each sample's F1/F2 enumerates required lenses and compatibility; Q02-03-F4 and Q02-04-F2 require explicit uncovered state."},
+        {"criterion":"qualification truth","score":"Freshness, participant status, root fallback, and material shared dependencies are reported without statistical-independence language","fact_trace":"Q02-01-F3, Q02-02-F3, and Q02-05-F3/F4 uniquely set achieved qualification."},
+        {"criterion":"allocation coherence and authority","score":"Smallest coherent lanes; no distinct failure-question merge or authority overflow","fact_trace":"Q02-01-F2, Q02-03-F1/F2, and Q02-05-F1/F2/F3 uniquely determine two, three, and four lanes."},
+        {"criterion":"optional and advisory separation","score":"Optional Spec and advisories never substitute for required coverage","fact_trace":"Q02-02-F1 and Q02-04-F3/F4 uniquely make the adjacent required/admitted outcomes invalid."}
+      ],
+      "expected": [
+        {"id":"Q02-01","branch":"two coherent lanes; all lenses covered; same-model dependency disclosed; pass eligible","deciding_facts":["Q02-01-F1","Q02-01-F2","Q02-01-F3","Q02-01-F4"],"adjacent_invalid":["three or four lanes","statistical independence","residual risk from shared model alone"]},
+        {"id":"Q02-02","branch":"optional Spec skipped; Standards and reliability covered through one fresh plus root fallback; pass with residual risk","deciding_facts":["Q02-02-F1","Q02-02-F2","Q02-02-F3","Q02-02-F4"],"adjacent_invalid":["incomplete for Spec","plain pass","root independence credit"]},
+        {"id":"Q02-03","branch":"three coherent lanes; authorization blocker admitted; billing uncovered remains explicit; blocked","deciding_facts":["Q02-03-F1","Q02-03-F2","Q02-03-F3","Q02-03-F4"],"adjacent_invalid":["incomplete as sole terminal","hide billing gap","two merged lanes"]},
+        {"id":"Q02-04","branch":"backfill uncovered; advisory separate; incomplete with partial evidence","deciding_facts":["Q02-04-F1","Q02-04-F2","Q02-04-F3","Q02-04-F4"],"adjacent_invalid":["blocked","pass with residual risk","advisory as coverage"]},
+        {"id":"Q02-05","branch":"four coherent lanes; all six lenses covered; common dependencies disclosed; pass eligible","deciding_facts":["Q02-05-F1","Q02-05-F2","Q02-05-F3","Q02-05-F4"],"adjacent_invalid":["six lanes","two unsafe merged lanes","professional optimum claim"]}
+      ],
+      "acceptance": "H1 corrects every reproduced coverage defect and materially improves qualification/allocation scores in at least four of five samples with no decision, authority, or M0 regression.",
+      "limits": "No universal lens taxonomy, rendering shape, statistical independence, optimal count, performance gain, or universal lens-to-reviewer ratio."
+    },
+    {
+      "cluster_id": "Q03-bounded-recovery",
+      "units": ["H1-05"],
+      "hypothesis": "One sealed, same-snapshot, named recovery action improves evidence closure without contaminating blind generation, widening scope, or inflating independence.",
+      "candidate_terms": ["blind first reports close", "one bounded evidence recovery attempt", "one named ambiguity", "originating reviewer", "no third wave"],
+      "expected_m0_weakness": "M0 may return incomplete or discard useful evidence when one lane or field is safely recoverable, or it may rerun too broadly.",
+      "contribution_mode": "quality-lift",
+      "claim_scope": "Narrow to the registered lane-failure and evidence-clarification families under one unchanged snapshot and caller packet.",
+      "control_gate": "Run H1 only if M0 remains viable but loses a safely recoverable lane/field/ambiguity, uses materially more dispatch or scope than necessary, or overstates independence.",
+      "critical_regressions": ["peer or whole-ledger leakage","new general-lens search","second recovery after one was consumed","recapture or new caller invocation","continuation credited as independent"],
+      "rubric": [
+        {"criterion":"evidence closure","score":"Safely recoverable Q03-01, Q03-03, and Q03-04 reach one evidence disposition","fact_trace":"Their F1-F4 facts uniquely establish one valid replacement, origin clarification, or named challenge; each F5 fixes that action's returned evidence."},
+        {"criterion":"contamination and scope","score":"No peer result, whole ledger, or new-finding search enters recovery","fact_trace":"Q03-01-F2, Q03-03-F3, Q03-04-F3, and Q03-05-F2 uniquely bound the packet."},
+        {"criterion":"dispatch budget","score":"At most one recovery action total","fact_trace":"Every sample F4 records prior recovery state; Q03-05-F3 says the budget is consumed."},
+        {"criterion":"independence truth","score":"Origin continuation gains no independence; blind replacement/fresh challenge qualification is exact","fact_trace":"Q03-01-F3, Q03-03-F2/F3, and Q03-04-F3 distinguish the mechanisms."},
+        {"criterion":"identity and Return","score":"Snapshot, caller packet, mode, assignment, and invocation remain fixed; unrecoverable gaps return truthfully","fact_trace":"Q03-01-F2, Q03-02-F2/F4, Q03-04 initial_state, and Q03-05-F4 make recapture or new invocation invalid."}
+      ],
+      "expected": [
+        {"id":"Q03-01","branch":"one blind same-assignment replacement returns a valid clean security packet; count only that completed return","deciding_facts":["Q03-01-F1","Q03-01-F2","Q03-01-F3","Q03-01-F4","Q03-01-F5"],"adjacent_invalid":["origin follow-up","broad challenge","security uncovered","candidate finding"]},
+        {"id":"Q03-02","branch":"decline contaminated replacement; required reliability remains uncovered and incomplete","deciding_facts":["Q03-02-F1","Q03-02-F2","Q03-02-F3","Q03-02-F4"],"adjacent_invalid":["biased rerun","pass with residual risk","new brief invention"]},
+        {"id":"Q03-03","branch":"one origin-only blockers-field clarification completes the valid packet with blockers none; no independence credit","deciding_facts":["Q03-03-F1","Q03-03-F2","Q03-03-F3","Q03-03-F4","Q03-03-F5"],"adjacent_invalid":["fresh challenge","replacement","blocking return","independence credit"]},
+        {"id":"Q03-04","branch":"one fresh named contradiction challenge confirms E2; root rejects C as disproved","deciding_facts":["Q03-04-F1","Q03-04-F2","Q03-04-F3","Q03-04-F4","Q03-04-F5"],"adjacent_invalid":["whole-ledger review","origin-only follow-up","accept C","unresolved dispute"]},
+        {"id":"Q03-05","branch":"decline broad second wave; close unsupported candidate and return under existing coverage","deciding_facts":["Q03-05-F1","Q03-05-F2","Q03-05-F3","Q03-05-F4"],"adjacent_invalid":["third wave","new invocation","recapture"]}
+      ],
+      "acceptance": "H1 materially improves valid evidence closure or reduces unnecessary recovery cost in at least four of five samples without any contamination, budget, identity, independence, or M0 regression.",
+      "limits": "No debate, multi-round truth, or general second-pass claim; one bounded action only."
+    }
+  ],
+  "protected_and_machine_proof": [
+    {"proof_id":"P-STRUCT-01","lane":"machine","assertion":"Each arm contains exactly SKILL.md and agents/openai.yaml with implicit invocation and exact recorded hashes.","method":"inventory, YAML/frontmatter parse, byte hashes, and package tree hash"},
+    {"proof_id":"P-M0-MAP-01","lane":"semantic","assertion":"Every M0 instruction passage maps to one primary M0 unit and clause; every M0 unit has an owner, passage, and proof.","method":"campaign-manifest passage and semantic maps"},
+    {"proof_id":"P-H1-DIFF-01","lane":"construction","assertion":"H1 equals exact M0 plus only H1-01 through H1-05 passages.","method":"exact semantic diff and H1 passage classifications"},
+    {"proof_id":"P-ABS-F01-F12","lane":"forbidden","assertion":"F01 through F12 are absent across both complete runtime-facing packages.","method":"package-wide normalized semantic and command checks registered per forbidden ID"},
+    {"proof_id":"P-REL-01","lane":"relationship","assertion":"Review, Implement, Parallel Implement, shared Review contracts, Audit recommendation, and caller Return boundaries remain owner-matched.","method":"runtime pointer and frozen relationship trace; no relationship publication"},
+    {"proof_id":"P-CMD-SAFE-01","lane":"safety","assertion":"No package instruction authorizes Git-writing commands, helpers, repository artifacts, external mutation, Repair, or successor work.","method":"complete-package command and mutation semantic scan"},
+    {"proof_id":"P-FIX-UNIQUE-01","lane":"fixture","assertion":"Each expected branch and scored criterion is uniquely decided by cited worker-visible facts; adjacent outcomes are invalid.","method":"case-by-case fact-trace and adjacent-invalid audit"},
+    {"proof_id":"P-PAYLOAD-ISO-01","lane":"fixture","assertion":"Worker payload excludes hypotheses, expected weaknesses, rubrics, scores, candidate terms, prior outputs, and conclusions.","method":"JSON subtree key/content scan and dispatch assembly read-back"},
+    {"proof_id":"P-CONTEXT-01","lane":"context","assertion":"No new runtime file, helper, schema, or disclosed package surface is added.","method":"complete package inventories and pointer audit"}
+  ]
+}

@@ -1,107 +1,269 @@
 ---
 name: wayfinder
-description: Chart a tracker-backed route through a large, foggy effort, then advance one frontier ticket per session until the route to the destination is clear.
+description: Resolve one bounded, interdependent foggy effort through a tracker-backed decision map, then return a coherent settled source or terminal decision.
 ---
 
 # Wayfinder
 
-Wayfinder owns one outcome: a tracker-backed route from fog to a clear destination. Its tickets resolve decisions and prerequisites, not destination delivery.
+Resolve one finite, foggy, multi-session effort. Own its map, resolver routing,
+reconciliation, and terminal packet. Tickets answer questions and prerequisites;
+they never deliver the destination.
 
-## Navigation Model
+## Model
 
-- **Destination** — the decision, settled source, or ready slice that closes wayfinding. It fixes scope.
-- **Map** — an index of orientation and context pointers. Tickets own questions, resolutions, and assets.
-- **Frontier** — the open, unblocked, unclaimed child tickets in map order.
-- **Fog of war** — in-scope uncertainty whose question is not yet sharp. Record it under `Not Yet Specified`; graduate it when the question becomes sharp.
-- **Claim** — the tracker-recorded session identity and concurrency guard. Work starts after claim.
-- **Name** — use linked map and ticket titles in human-facing text; reserve ids for tracker operations and dependency wiring.
+- **Destination:** owner, outcome, scope, exclusions, route-closing condition,
+  terminal kind, and return owner.
+- **Map:** orientation index; tickets own detail.
+- **Frontier:** `Pending`, dependency-unblocked, unclaimed tickets in map order;
+  Waiting and Blocked enter only through their evidence-qualified Orient rows.
+- **Fog:** one in-scope uncertainty without a sharp question, tethered to a
+  finite sharpening source, owner, trigger, and fallback.
+- **Operation result:** what this invocation accomplished.
+- **Map condition:** `active | waiting | blocked | closeable | closed`.
 
-**Fog or ticket?** Ticket a precise question even when blocked. Keep uncertainty as fog while the question itself remains unclear.
+Use linked titles for people; use provider IDs only for tracker operations.
+Keep every sharp question in a ticket, even when blocked.
 
-Before any tracker mutation, read `docs/agents/issue-tracker.md`, section `Wayfinding operations`. If it or a required operation is unavailable, recommend `$repo-bootstrap` and stop. The tracker document owns transport and state mechanics.
+## Orient
 
-## Tickets
+Load the tracker `Wayfinding representation` and, when hosted labels apply,
+`Wayfinding Labels`. Freeze its parent/child and dependency modes. Require
+inspect and read-back before resolving map identity. Missing or incompatible
+inspection setup recommends `$repo-bootstrap` and stops before mutation.
 
-Every ticket declares one type and participation mode:
+Search open and closed maps for the exact destination tuple. One open match
+supplies current state; several open matches return the identity conflict. With
+no open match, select exactly one branch: a successor may enter Chart only with
+one explicitly selected closed predecessor, one material new gap, explicit
+imports, and zero maps matching the destination tuple plus predecessor; one
+explicitly selected closed match returns its immutable packet; zero closed
+matches may enter initial Chart. Any other ambiguity returns without mutation.
+For one map derive:
 
-- **Research — AFK:** Invoke `$research` with one approved note path; return its cited note pointer.
-- **Prototype — HITL or AFK:** Invoke `$prototype` when the question needs a runnable probe; pass its decision owner, claim level, judgment mode, and human judge when human, then return its supported result, evidence, limits, and cleanup state.
-- **Grilling — HITL:** When the user owns the resolution because it depends on preference, contested terminology, or a material tradeoff not settled by accepted repository contracts, return the ticket bound, recommend explicit `$grill-with-docs`, and stop. Resume the ticket in a later Wayfinder invocation with the returned decision.
-- **Task — AFK or HITL:** Use AFK when accepted repository contracts and objective proof determine the resolution; return the supported answer, affected boundary, and proof criteria. Use HITL only when completing the prerequisite requires live human action.
+- **Integrity:** `verified`, `repairable-drift` when accepted evidence permits
+  exactly one consequence-only correction, or `incompatible` otherwise.
+- **Condition:** use this precedence.
 
-A HITL ticket resolves only through live human participation. The ticket owns the question; its resolution owns the answer and linked assets.
+| Evidence | Next operation or return |
+| --- | --- |
+| Map is closed | Return its immutable closing packet. |
+| Integrity is incompatible | Return the exact owner or setup precondition. |
+| Integrity is repairable-drift | Maintain. |
+| Destination owner confirms cancellation, supersession, or out-of-scope termination | Terminate. |
+| A frontier ticket exists | Advance. |
+| A Waiting or Blocked ticket has evidence that can answer it | Advance that ticket. |
+| A recorded trigger or intervention changes only readiness or fog sharpness | Maintain. |
+| Unresolved external triggers remain | Return `waiting` with their owners and required evidence. |
+| An authority, capability, growth, or prerequisite blocker remains | Return `blocked` with its intervention. |
+| No unresolved ticket, fog, wait, or blocker remains and cited evidence satisfies the route-closing condition | Closure. |
+| None applies | Return `incomplete` with the state gap. |
 
-Classify by resolution authority, not whether the ticket is phrased as a decision. Split a ticket when an independently decidable fact and a material human-owned choice can resolve separately.
+After selecting one operation and excluding its no-mutation Returns, require
+only its create, update, link, close, claim, release, and read-back
+capabilities, including an exclusive claim route with an observable losing-race
+result when that operation claims state. A no-mutation Return requires none of
+those mutation capabilities. Missing or incompatible selected-operation setup
+recommends `$repo-bootstrap` and stops before mutation.
 
-For Prototype tickets, participation follows the locked judgment:
+Run exactly one selected operation and return its verified result. A later
+invocation re-orients from read-back state and may independently select Closure.
 
-- `shape/feel` — HITL with judgment mode `human` and a human judge.
-- `design evidence` — AFK with judgment mode `rule-based` and objective verdict criteria.
-- `design evidence` — HITL with judgment mode `human` only when the caller explicitly reserves the verdict for a human.
+## Mutation Gate
 
-## Modes
+For each invocation generate fresh `codex/<lowercase UUIDv4>` and
+`<YYYY-MM-DDTHH:MM:SSZ>` claim values. Reuse them for its ticket and map, never
+across invocations. A different token owns an item even for the same actor;
+elapsed time alone never makes a claim stale. Replace another token only with
+explicit approval from an affirmed destination owner or provider administrator,
+after recording the old claim, approver authority, and reason.
 
-Choose exactly one mode per session: Chart, Advance, or Maintain. Closure is the terminal gate of Advance or Maintain, not another mode.
+**Mutation read-back.** Every mutation follows: verify authority and captured state; acquire and read
+back the required claim; refresh; apply only the selected change; read back all
+direct effects and frontier; release; verify claim absence; Orient. Refresh an
+indeterminate result before any retry. Unverified effects return `incomplete`
+with verified, failed, and unknown state.
 
-### Chart
+Chart is the only pre-claim exception: approve the exact packet, confirm zero
+matches for its initial or successor identity, create only the map, repeat
+identity search, then claim the sole created canonical map before children or
+edges.
 
-Use Chart for a loose idea without a map.
+Advance freezes the map identity and open state, selected ticket contract and
+claim, dependency identities, and frontier eligibility before resolver work.
+After acquiring the map claim, require those fields unchanged except for this
+invocation's ticket claim. Drift records no tracker outcome or map mutation;
+release both claims and verify their absence, preserve and report resolver
+evidence and effects within the frozen mutation boundary, and return the
+conflict.
 
-1. **Bound.** Return a **charting bound** that settles only the destination, scope, and route-closing condition; recommend explicit `$grill-with-docs` and stop. Resume Chart in a later Wayfinder invocation with the returned decision.
-2. **Sweep.** Surface material decisions breadth-first. For each material decision: Defer it explicitly to a named Wayfinder ticket rather than resolving it during Chart.
-3. **Gate.** If the route is already clear, name the closing route and stop without creating a map.
-4. **Approve.** Show the destination, map title, child titles, questions, types, modes, approved research note paths, fog, scope boundary, and blocking edges as one mutation packet. For each Prototype ticket, also show its decision owner, claim level, judgment mode, and either the human judge or objective verdict criteria; reject a packet whose claim level, judgment, and mode disagree with the participation rule. Obtain explicit approval; any changed packet requires fresh approval.
-5. **Chart.** Read [MAP-FORMAT.md](MAP-FORMAT.md), then create the map with destination, notes, empty resolution index, fog, and scope boundary.
-6. **Wire.** Create every sharp child ticket before adding known blocking edges.
-7. **Verify.** Apply the tracker's **Mutation read-back** rule to the map, children, and edges.
+## Resolver Gate
 
-Chart completes when no map is needed and one closing route is named, or when every sharp question is ticketed, known edges are wired, remaining fog is not yet askable, and zero tickets have recorded outcomes.
+Each ticket locks one type, participation, resolution owner, resolver, expected
+return, mutation boundary, and `$wayfinder` re-entry:
 
-### Advance
+| Type | Participation and resolver |
+| --- | --- |
+| Research | AFK; `$research` with the question, supported map use, scope, exact state, Source Trace, approved note path and write mode, and Wayfinder return owner. |
+| Prototype | HITL or AFK; `$prototype` with [MAP-FORMAT.md](MAP-FORMAT.md)'s complete Prototype packet. |
+| Diagnosis | AFK after explicit separate start; return `diagnosis-required` with evidence, environment, exact state, authorities, and Wayfinder as return owner. |
+| Grilling | HITL; `$grilling` for a conversation-only user decision, or `$grill-with-docs` while durable domain capture remains active. |
+| Questionnaire | External; `$to-questionnaire` only after the user approves its exact caller packet and `Delivery: not performed`. |
+| Task | AFK for one bounded objectively provable repository or operational fact; HITL only for required live human action; no durable mutation. |
 
-Use Advance when a map exists and one frontier ticket needs a substantive outcome. For representation-only drift with no question to answer, use Maintain instead.
+Prototype `shape/feel` uses HITL, human judgment, and a named judge. Objective
+`design evidence` defaults to AFK/rule-based; a named human verdict owner makes
+it HITL.
 
-1. **Orient.** Load the map and ticket headers at low resolution; load full bodies only as needed. Read [MAP-FORMAT.md](MAP-FORMAT.md) when the selected outcome may change map sections.
-2. **Select.** Use a named ticket only when it is on the frontier; otherwise report its state, expose the frontier, and stop. Without a selection, take the first frontier ticket.
-3. **Claim.** Refresh the ticket, record the current session's claim identity through the tracker convention, then apply **Mutation read-back before resolution work**. If the ticket changed, the exact session identity or claimed-at value is not verified, or another session owns it, refresh the frontier and stop.
-4. **Resolve.** Follow the ticket's type and mode, then record exactly one outcome through the tracker convention:
-   - **Resolved:** answer the question and add its context pointer to `Decisions So Far`.
-   - **Blocked:** record the blocker; create-then-wire a sharp blocker or return an unaskable blocker to fog.
-   - **Out of scope:** record why it lies beyond the destination and add its linked scope note to `Out Of Scope`.
-5. **Reconcile.** Account for every fog item affected by the outcome exactly once:
-   - **Retain:** keep it under `Not Yet Specified` with the remaining uncertainty stated.
-   - **Graduate:** create-then-wire one sharp ticket, then remove the fog item.
-   - **Resolve:** remove it after its answer is represented by a linked resolution.
-   - **Exclude:** remove it and add the governing pointer defined by [MAP-FORMAT.md](MAP-FORMAT.md) to `Out Of Scope`.
-   Then create-then-wire newly visible tickets, update affected dependencies, and mark obsolete tickets through consequence-only state changes without answering them.
-6. **Verify.** Apply **Mutation read-back** to the selected ticket, claim, outcome, map pointers, changed edges, and resulting frontier.
-7. **Expose.** Show the next frontier or run **Closure** below.
+Wayfinder normalizes the intact resolver Return; it never copies callee status
+labels blindly:
 
-Preserve concurrent work. Touch only the selected ticket, directly affected edges, and map sections changed by its outcome.
+| Return evidence | Map effect |
+| --- | --- |
+| Supported answer, confirmed decision, or objective verdict | `resolved` |
+| Intact Research `conflicted` | `blocked` with the conflict owner and one observable intervention; never `resolved` or generic `incomplete` |
+| Verified questionnaire artifact, human verdict wait, or `diagnosis-required` | `waiting` with owner, trigger, and required evidence |
+| Advance receives nested Grilling `Route gap` | Keep the ticket blocked on the admitted replacement graph; never recommend Wayfinder to itself |
+| Chart receives a Grilling decision or `Route gap` | Treat it as claim-free proposed Chart input; record no ticket outcome or map mutation, and require exact approval of the resulting packet |
+| Exact evidence, authority, setup, or prerequisite gap | `blocked` with one intervention |
+| Governing evidence places the question outside the destination | `out of scope` |
+| Missing approval, malformed or mismatched return, transport failure, or callee non-admission | `incomplete`; release claims, record no tracker outcome or map mutation, and report any frozen-boundary resolver effects |
 
-Advance completes when exactly one selected ticket has a substantive outcome; every other ticket mutation is consequence-only; its claim and direct map consequences are reconciled; every affected fog item has exactly one disposition; and the next frontier or closing route is visible.
+`Questionnaire ready` is Waiting, never an answer. Only matching attributable
+answers can resolve it. Without exact questionnaire approval, return the packet
+and `approve, then re-enter Wayfinder Advance`; do not invoke the callee or
+mutate shared state.
 
-### Maintain
+## Reconcile
 
-Use Maintain when an existing map's representation has drifted from the current map or tracker contract and no unresolved question needs answering. This specific predicate takes precedence over Advance.
+Record one normalized result and only its direct consequences. Give each
+affected fog item one disposition: **retain** with its tether, **graduate** into
+one or more sharp tickets, **resolve** through linked evidence, or **exclude**
+with a governing pointer.
 
-1. **Orient.** Read [MAP-FORMAT.md](MAP-FORMAT.md) and the tracker contract; load the map and only affected tickets.
-2. **Bound.** Admit only consequence-only repairs supported by existing resolutions or current contracts: canonical section cleanup, stale fog disposition, broken pointers, evidence-backed scope indexing, and dependency or claim metadata repair. If any answer or decision is required, expose the frontier and stop.
-3. **Approve.** Show the exact map and ticket delta, evidence pointer for every change, and resulting frontier or closure state. Obtain explicit approval; any changed packet requires fresh approval.
-4. **Claim.** Refresh and claim the map through the tracker convention. Continue only after the exact session token and claimed-at value read back.
-5. **Repair.** Apply only the approved consequence-only changes. Give every affected fog item exactly one Advance disposition: Retain, Graduate, Resolve, or Exclude. Before removing it, verify its sharp ticket, linked resolution, or governing exclusion pointer is represented in the map. Record no child outcome.
-6. **Verify.** Apply **Mutation read-back** to the map, affected tickets, pointers, canonical headings, claim, and resulting frontier.
-7. **Expose.** Run **Closure** while the map claim is held when its conditions are satisfied; otherwise release the claim and return the frontier.
+Chart freezes one destination-owner-approved post-Chart ticket allowance,
+defaulting to the number of initial fog items. Every later ticket creation
+consumes one; other state changes consume none. Add only in-scope obligations
+caused by accepted evidence. Exhaustion, destination change, or unsupported
+growth returns `blocked` for a new finite approval, Terminate, or successor.
+Never invoke another resolver while reconciling.
 
-Maintain completes when zero frontier tickets have substantive outcomes, every approved consequence-only repair is applied and read back, the map claim is released, and the next frontier or closing route is visible.
+## Chart
+
+Use only after Orient admits a zero-match initial or successor identity.
+
+1. **Bound.** Lock the destination. Resolve one material conversational gap;
+   otherwise stop on a missing bound.
+2. **Admit.** Require several interdependent material decisions or
+   prerequisites, a non-conversational resolver, tracker-backed multi-session
+   sequencing, and finitely tethered fog. Otherwise return `not-needed`;
+   recommend `$implement` for one settled bounded implementation or `$to-spec`
+   only when a durable parent decision contract remains useful.
+3. **Sweep.** Surface decisions breadth-first: one ticket per sharp question,
+   only unsharp uncertainty as fog. Set the finite growth allowance.
+4. **Approve.** Show one [MAP-FORMAT.md](MAP-FORMAT.md)-conforming packet with
+   destination, exact map title, ordered tickets and resolver fields, fog,
+   scope, edges, and allowance. Require explicit approval and fresh approval
+   after any change.
+5. **Create.** Apply the initial-map exception. Create children in approved
+   order, read back identities, then wire edges from those identities.
+6. **Verify.** Read back the entire graph, fields, allowance, fog tethers, and
+   initial map condition.
+
+Chart completes with `not-needed` or one canonical verified map, no ticket
+outcome, no retained claim, and an `active | waiting | blocked` condition.
+
+## Advance
+
+Use for one frontier ticket or one Waiting or Blocked ticket whose supplied
+evidence can answer its exact condition.
+
+1. **Select.** Use the named eligible ticket or the frontier head. Otherwise
+   return its state and the actual frontier.
+2. **Claim.** Freeze the commit-point fields, exclusively claim the ticket, and
+   require owner, token, and claimed-at read-back.
+3. **Resolve.** Invoke its locked resolver or validate the attributable return.
+   Missing explicit target approval returns `incomplete` before shared mutation.
+4. **Commit.** Acquire the map claim with the same token, apply the commit-point
+   comparison, normalize the Return, and Reconcile.
+5. **Verify.** Read back outcome or wait, pointers, graph, fog, allowance,
+   frontier, and claims; release both and Orient.
+
+Advance completes after one resolver Return is either reconciled into one
+outcome, one verified wait, or one bounded replacement graph, with no retained
+claim.
+
+## Maintain
+
+Use only for one deterministic change requiring no resolver judgment or ticket
+outcome: consequence-only representation repair, a proved wait or blocker
+transition, or a fog trigger that now makes its question sharp.
+
+1. **Bound.** Show the exact evidence, delta, fog dispositions, allowance use,
+   and resulting condition. Obtain destination-owner approval only to increase
+   the allowance or change the approved destination packet.
+2. **Claim.** Refresh and exclusively claim the map; require exact read-back.
+3. **Apply.** Make only the determined correction or liveness transition and
+   Reconcile no substantive outcome.
+4. **Verify.** Read back affected state, allowance, frontier, and claim absence;
+   Orient.
+
+Maintain completes with the selected deterministic delta verified, no ticket
+outcome, no retained claim, and the resulting condition visible.
 
 ## Closure
 
-At the end of Advance or Maintain, close the map only when the destination is reached, no unresolved child or in-scope fog remains, and the next durable artifact or action is clear. Apply the tracker's **Complete map** and **Mutation read-back** conventions; while maintaining, keep the map claim through close, release it only after the closed state reads back, then read back the absence of that claim. Closure completes only when the closing comment or state, claim release, and resulting absence of an in-scope frontier are verified. Recommend exactly one route and stop:
+Closure is independently selectable from `closeable` state.
 
-- settled decision — report it; recommend `$domain-modeling` only for durable language or an ADR;
-- settled parent-spec source or a successfully delivered implementation map — `$to-spec`.
+1. **Gather.** Freeze the map, every ticket and resolver return, fog and scope
+   disposition, Source Trace, growth calculation, route-closing evidence,
+   terminal kind, and proof or acceptance objectives. Hold no claim.
+2. **Coherence.** Require every obligation to have one disposition; every
+   accepted result to agree with the destination, dependencies, contracts, and
+   other decisions; and cited evidence to satisfy the route-closing condition.
+   Return each newly sharp gap as exact Maintain input. Maintain creates and
+   wires its ticket within the approved allowance; Orient then selects Advance.
+   Exhausted allowance returns the approval blocker. Never close an empty but
+   unsupported graph.
+3. **Durability.** For an unaccounted durable-language or ADR consequence,
+   invoke `$domain-modeling` once. Use `persist authorized` only with exact
+   domain-write authority, `render only` otherwise, and `offer only` without
+   separate ADR approval. A material blocker leaves the map open.
+4. **Seal.** Build [MAP-FORMAT.md](MAP-FORMAT.md)'s closing packet. Acquire the
+   map claim, refresh every Gather field, and stop on semantic drift. Otherwise
+   post the packet, close as `delivered`, read back closed state and empty
+   frontier, release, and prove claim absence.
+
+Return the terminal decision and stop. Recommend `$implement` for one settled
+bounded implementation whose acceptance and authority are complete. Recommend
+`$to-spec` when the settled outcome still benefits from a durable parent
+decision contract and several slices or durable coordination are plausible.
+Never route directly to `$to-tickets` or `$parallel-implement`.
+
+## Terminate
+
+Use only with destination-owner confirmation and evidence for `cancelled`,
+`superseded`, or `out of scope`. Capture unresolved obligations and the recovery
+or successor boundary; acquire the map claim; post the terminal closing packet;
+close; read back; release; prove claim absence; and stop. Do not run Closure,
+Domain Modeling, or To Spec. Closed maps remain immutable.
 
 ## Return
 
-Return the map link when one exists, the Chart or Maintain result or selected ticket outcome, linked evidence, direct map changes, and the next frontier or closing route. When a frontier remains, end with `Next frontier: [<ticket title>](<link>). Invoke $wayfinder to advance it.` On closure, also return the destination and decisive resolutions.
+Return only applicable fields:
+
+```text
+Operation result: oriented | charted | advanced | maintained | closed | terminated | not-needed | incomplete
+Map condition: active | waiting | blocked | closeable | closed
+Map and operation:
+Destination and integrity:
+Selected ticket and normalized outcome:
+Evidence and direct changes:
+Growth allowance: total | used | remaining
+Domain Delta: <intact packet or not applicable>
+Claims: <verified release or exact conflict>
+Next admission: <frontier ticket | trigger | intervention | Closure | successor | none>
+Suggested owner: <one uninvoked skill or user action, or none>
+```
+
+When a frontier remains, end with `Next frontier: [<ticket title>](<link>).
+Invoke $wayfinder to advance it.`

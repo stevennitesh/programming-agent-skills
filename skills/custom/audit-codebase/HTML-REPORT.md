@@ -1,40 +1,124 @@
-# HTML Audit Report Contract
+# HTML Report Contract
 
-Render one self-contained audit report at `.tmp/audit-codebase/<run-id>/report.html`.
+The report is one durable, offline repository atlas and the only persisted
+Audit artifact. Its browser surface is for people; its embedded canonical JSON
+state is for the helper. The agent interface is
+[REPORT-QUICK-REFERENCE.md](REPORT-QUICK-REFERENCE.md).
 
-## Portability
+## Ownership
 
-The report opens offline with no network requests or runtime JavaScript. Embed CSS and static SVG. Use semantic HTML, stable anchors, visible keyboard focus, high-contrast text, text labels for every color, and a narrow-screen layout.
+The helper alone owns:
 
-## Header
+- the document shell, dark stylesheet, SVG, tables, cards, anchors, colors,
+  progress, and accessibility markup;
+- one non-executable `application/json` state block and its digest;
+- strict manifest normalization, objective reducers, history, and derived
+  projections; and
+- validation, an exclusive publication lock, collision checks, sibling
+  read-back, atomic replacement, and
+  published-byte read-back.
 
-Show repository, snapshot, run ID, audit status, confidence, Charter summary, workloads and environments, generation time, and only visual encodings actually used. State that status measures coverage, not release acceptance.
+The auditor owns current evidence and judgment expressed as versioned JSON
+facts. HTML, markup, projections, candidate card/index state, and failed-write
+recovery remain helper-owned.
 
-## Coverage Matrix
+The report must contain no executable script, remote resource, form, active
+control, secret, credential, or unsupported URI. Text from repository or
+tracker evidence is untrusted and escaped in every projection and in the
+embedded state.
 
-Render a **Coverage Matrix** crossing every named region with every required lens. Each cell links to its evidence or gap and uses one labeled state: `covered`, `gap`, `blocked`, or `not applicable`. The matrix must account for the full Charter.
+## State
 
-## Audit Ledger
+The helper accepts exactly structural version 10 and state-schema version 2.
+Any other version is rejected before mutation.
 
-Show counts by defect severity, advisories, evidence gaps, and disproved or duplicate items. Render every verified defect in severity order with its full finding contract and stable `<article id="finding-id">` anchor. Preserve disproved and duplicate items in a compact ledger.
+```text
+Map: complete | incomplete
+Subsystem: mapped | incomplete | audited
+Candidate:
+  presented | decision pending | analyzed | implemented | disproved | blocked
+Finding: active | resolved | disproved
+Tracker: not-applicable | authority-required | ready-graph | reused | recovery
+```
 
-Render separate domain and robustness, performance, evidence-gap, enabled-advisory, and finding-cluster sections using each item's complete owning contract. Add only presentation-specific context: the governing domain boundary, the complete performance measurement, or cluster member IDs, shared boundary, unresolved decisions, and Wayfinder eligibility.
+Every current record has one physical owner:
 
-Use compact static charts or tables only when they clarify measured values, distributions, scaling, or comparisons. Label inferred benefits as inference.
+- subsystem facts under that subsystem;
+- findings under their subsystem;
+- candidates under their subsystem; and
+- implementation evidence under its candidate.
 
-## Suggested Handoffs
+SVG nodes, system lists, progress, candidate presentation, tracker links or
+contained refs, state labels, and colors are derived views. They never own
+independent state.
 
-Group suggestions by immediate owner. Each row links to the item, states the reason and pickup prerequisite, and says `caller selection required`. Keep `none` items in the audit ledger.
+## Map Facts
 
-**Ledger, not leaderboard:** show every item. Severity orders defects; work shape determines suggested ownership. Select no **Top recommendation**.
+Each subsystem has a stable ID, system, name, state, source identity, purpose,
+authority, callers, responsibility, directed dependencies with evidence,
+interfaces, Proof Seams, and owned paths. File counts are derived. The helper
+verifies the tracked-live-worktree inventory, owned files, complete coverage,
+and ancestor scopes, and rejects duplicate ownership, owned/excluded overlap,
+unknown systems or dependencies, self-dependencies, and dependency edges
+without evidence.
 
-## Footer
+Map records structure only. It does not imply Audit coverage or candidate rank.
 
-End with coverage status, preserved disposable paths, failed or skipped proof, and:
+## Audit Facts
+
+An audited or incomplete subsystem holds:
+
+- its current Source Trace and source identity;
+- exactly six coverage rows: Reliability, Domain, Design, Simplification,
+  Coding Practice, and Performance;
+- admitted findings, opportunities, gaps, and retained complexity;
+- candidates grouped from admitted members;
+- coverage, evidence limits, and local recommendation; and
+- immutable prior-record history on update.
+
+Each lens row separately records applicability, `complete|incomplete` coverage,
+examined evidence, admitted item IDs, detailed-owner use, and reason. A finding
+does not itself close coverage. `audited` requires all six rows complete.
+
+## Candidate Facts
+
+One canonical candidate record supplies its browser card, state, color,
+tracker projection, history, and pickup. The helper derives the conditional
+Analyze/To Tickets pickup for `presented` candidates from resolved skill paths;
+agents do not author that prompt.
+
+Analyze records current-source validity, comparison, proof, decisions,
+residual risk, tracker state, and at most one next owner. A ready/reused result
+requires the candidate digest, mutation/read-back identity, and provider-native
+graph and Ready tracker-item identities. Hosted providers require HTTPS URLs;
+Local Markdown requires contained parent/item refs, readiness, blockers, claim
+state, frontier, and graph digest. It generates the Implement prompt; recovery
+does not.
+
+`implemented` is reachable only through `close-candidate` with an exact
+completion packet and one transition for every active member finding. Original
+evidence remains in history. Generic or Analyze publication cannot enter it.
+Direct recovery renders its route label, keeps
+`authority-required|not-applicable`, persists its explicit implementation
+authority, and adds no tracker-item or frontier identities. The bounded HTTPS-only Local
+Markdown recovery preserves its prior record in history and normalizes the
+current tracker projection to `ready-graph` after exact committed closeout.
+
+## Publication Guarantees
+
+The helper normalizes and validates the selected objective before returning a
+bundle digest. On the one publication call defined by
+[REPORT-QUICK-REFERENCE.md](REPORT-QUICK-REFERENCE.md), it revalidates current
+inputs, locks and collision-checks the report, reads back an invocation-owned
+sibling, atomically creates or replaces `report.html`, and reads back the final
+bytes. Failure reports the stage, whether mutation started, and whether report
+state is unchanged or unknown.
+
+Every successful render retains:
 
 ```text
 Release decision: none
-Mutation authority: none
+Product mutation authority: none
 Downstream execution: none
-Return boundary: caller
+Next selection authority: user
 ```

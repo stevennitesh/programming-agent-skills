@@ -1,0 +1,68 @@
+{
+  "alternatives": [
+    "One universal engineering agent with all procedures always loaded",
+    "Implicit free-form routing chosen anew for every request",
+    "A loose collection of unrelated prompts without shared ownership",
+    "A large workflow framework with persistent orchestration state"
+  ],
+  "counterpressure": [
+    "Every additional owner increases routing and relationship proof cost",
+    "Always-loaded procedure consumes context needed for the repository task",
+    "Overlapping owners create ambiguous authority and duplicate completion",
+    "Automation can verify structure but cannot safely choose semantic outcomes",
+    "Human interaction is valuable for unsettled commitments but costly as ceremony"
+  ],
+  "discovered_methods": [
+    "Use one explicit router that recommends one next owner and stops",
+    "Separate repository setup, domain meaning, evidence, shaping, delivery, and review authority",
+    "Use bounded leaf outcomes behind small caller-facing interfaces",
+    "Use executable aggregates only for named multi-owner outcomes with explicit resume and exit ownership",
+    "Separate prototypes, diagnosis, and red-green implementation by uncertainty state",
+    "Separate ordinary diff review, high-risk convergence, and immutable baseline audit",
+    "Preserve exact handoff and tracker state at session and concurrency boundaries",
+    "Keep semantic decisions human or owner-controlled and mechanical validation pure"
+  ],
+  "failures": [
+    "The agent begins execution before selecting the correct authority owner",
+    "Repository prerequisites or domain invariants are discovered after mutation",
+    "Prior vocabulary or incumbent procedure anchors fresh composition",
+    "Evidence gathering silently becomes adoption or product judgment",
+    "Unsettled intent is converted directly into implementation",
+    "Prototype, diagnosis, and production proof are conflated",
+    "Parallel workers share scarce state or semantic decisions",
+    "Review mutates the candidate or implementation admits partial findings",
+    "A workflow duplicates a callee's gates, mutation, Return, or completion",
+    "Context grows through copied foreign procedure instead of conditional loading",
+    "Tracker, Git, or session state is reported complete without exact read-back"
+  ],
+  "fingerprint": "sha256-v1:54c55c9efe02194fb7a350824ffcfa7feca96734ac49c01b478f265c82e2e48d",
+  "intended_essence": "A compact engineering skill pack that routes bounded repository work to one clear owner, loads procedure conditionally, composes only through typed relationships, preserves domain and authority boundaries, and converges under observable proof.",
+  "m0_units": [
+    "Choose one next engineering owner without starting it",
+    "Reconcile the target repository's setup and governing context before work",
+    "Clarify and persist domain meaning and durable decisions",
+    "Acquire bounded external or stakeholder evidence without adopting outcomes",
+    "Shape foggy work into a settled source, specification, and dependency-ordered queue",
+    "Classify incoming work into an executable or human-owned state",
+    "Design or probe one bounded seam when implementation technique is uncertain",
+    "Diagnose uncertain failure before fixing and use red-green proof when behavior is settled",
+    "Deliver one selected item or one explicit ticket graph with isolated authority",
+    "Resolve version-control conflicts without discarding either intended side",
+    "Review ordinary changes, high-risk candidates, and immutable baselines at distinct boundaries",
+    "Improve or simplify code without hiding scope expansion",
+    "Author and behaviorally validate canonical skill instructions",
+    "Stress-test decisions with or without durable domain capture",
+    "Preserve a resumable exact handoff when the active context must end"
+  ],
+  "packet_id": "M0-FCE-20260727-01-pack-discovery",
+  "pre_discovery_fixed_point_fingerprint": "sha256-v1:98a9c9f84c788049557fc4f352f8c9b3c862f0d6da083c5751001acd1357e2d9",
+  "schema_version": 1,
+  "unresolved_named_gaps": [],
+  "wrong_conditions": [
+    "A direct self-contained answer needs no repository workflow",
+    "A commitment-changing decision lacks caller authority",
+    "Required external facts are unavailable and cannot be safely inferred",
+    "The requested action is irreversible or outside the granted mutation boundary",
+    "No observable proof seam exists for the claimed behavior"
+  ]
+}

@@ -1,32 +1,26 @@
 # Domain Docs
 
-<!-- programming-agent-skills setup-file: domain.md:2b669de800f0 -->
-
-How engineering skills consume repo domain documentation when exploring codebase context.
-
 **Configured layout:** single-context.
 
-This file is routing guidance. It points agents to relevant glossary and ADR files without loading all domain docs by default. Do not create missing domain docs during setup.
+## Route
 
-## Before Exploring
+Load only model records relevant to the selected work:
 
-Read only the domain docs relevant to the selected issue, interface, bounded slice, or changed module:
+- **single-context:** root `CONTEXT.md` and applicable `docs/adr/`.
+- **multi-context:** follow root `CONTEXT-MAP.md` to relevant context records
+  and `<context-root>/docs/adr/`; load root `docs/adr/` for applicable repo-wide
+  decisions.
 
-- `CONTEXT.md` at the repo root for single-context repos.
-- `CONTEXT-MAP.md` at the repo root for multi-context repos; follow it to relevant context `CONTEXT.md` files.
-- `docs/adr/` for repo-wide decisions touching the work.
-- `<context-root>/docs/adr/` for context-local decisions in multi-context repositories, following the context root recorded in `CONTEXT-MAP.md`.
+Missing records are not setup gaps. Proceed silently; setup neither creates nor
+recommends them. `$domain-modeling` alone may create or change domain truth for
+an authorized settled meaning or decision.
 
-If any file or directory is absent, proceed silently. Do not flag its absence or suggest creating it upfront. The `$domain-modeling` skill creates domain docs lazily when terms or decisions get resolved.
+## Preserve The Model
 
-## Use Glossary Vocabulary
+Use each context's canonical terms, invariants, ownership, and relationship
+language. Do not flatten different meanings across contexts. If needed meaning
+is absent or ambiguous, reconsider the wording or return the exact gap to
+`$domain-modeling`.
 
-When your output names a domain concept in an issue title, refactor proposal, hypothesis, test name, commit message, or implementation note, use the term as defined in the relevant `CONTEXT.md`.
-
-If the concept is missing, either reconsider the invented language or note the gap for `$domain-modeling`.
-
-## Flag ADR Conflicts
-
-If your output contradicts an existing ADR, surface it explicitly instead of silently overriding it:
-
-> Contradicts ADR-0007 (event-sourced orders), but worth reopening because...
+Name conflicts with routed domain records or ADRs; never silently override them.
+Conform or return the reopening question to the decision owner.

@@ -1,123 +1,189 @@
 ---
 name: audit-codebase
-description: Audit one immutable repository baseline read-only against a bounded caller-defined Charter for correctness, domain robustness, performance, methodology, data, analytics, or other supported behavior. Verify every in-scope finding, advisory, and evidence gap; render one self-contained HTML ledger; attach at most one non-authoritative next-owner suggestion to each item or finding cluster; and return complete or incomplete coverage without a release decision or downstream execution. Use explicitly from the top-level root outside ordinary implementation workflow.
+description: Build a repository atlas, audit one selected subsystem, analyze one selected improvement candidate, or close one analyzed candidate from its exact verified implementation-completion packet. Use explicitly for repository-baseline improvement discovery; exclude diffs, product implementation, release decisions, and automatic selection.
 ---
 
 # Audit Codebase
 
-**Pin -> Charter -> Trace -> Examine -> Verify -> Synthesize -> Report -> Return**
-
-**Terminal:** produce one verified HTML ledger over one immutable snapshot. `complete` or `incomplete` measures coverage, never acceptance; a complete audit may contain severe defects. Report every verified in-scope item and return control without a release decision or downstream execution.
-
-**Root-owned:** the top-level root owns lens dispatch, the evidence ledger, verification, synthesis, and the report. Delegated invocation stops before Pin with an `incomplete` routing blocker. Lenses are read-only leaves.
-
-**Mutation boundary:** write only disposable evidence and one report under `.tmp/audit-codebase/<run-id>/`. Product files, tracked docs, Git state, trackers, reviews, deployments, and external systems remain unchanged.
-
-## Pin
-
-**Chain of custody.** Record a run ID and one complete immutable target:
-
-- supplied commit or tree: resolve and inspect Git-addressed content;
-- branch baseline: capture its commit SHA and tree;
-- live worktree baseline: capture `HEAD`, index tree, staged and unstaged diffs, status, and every in-scope untracked path and content.
-
-Hash only live content not already addressed by Git. Return `incomplete` when the target does not resolve, is empty, or cannot be captured completely.
-
-## Charter
-
-Record the caller-defined audit boundary before lens work:
+Complete exactly one user-selected objective:
 
 ```text
-Audit outcome:
-Snapshot:
-Regions:
-Required lenses:
-Expected contracts and invariants:
-Supported scenarios:
-Workloads and environments:
-Performance budgets or comparison baselines:
-Required evidence and proof:
-Non-goals:
-Advisories: yes | no
+Map                         Audit(subsystem)
+  observe and account         refresh current Source Trace
+  render atlas                apply six-class coverage
+
+Analyze(candidate)          Close(candidate, completion)
+  revalidate and compare      verify implementation result
+  publish next boundary       reconcile candidate and findings
 ```
 
-Require at least one bounded region, required lens, and authoritative expected contract, invariant, or comparison basis. Partition an explicitly whole-codebase request into named finite regions and lenses. Preserve missing or conflicting authority as an evidence gap that makes only the affected lens incomplete. Ignore observations outside the Charter.
+Map precedes judgment. Never choose the next subsystem or candidate.
 
-## Trace
+## Authority
 
-Build one Source Trace from the request, repo instructions and routed docs, domain decisions and ADRs, authoritative methodology or model-risk sources supplied by the caller, current implementation, representative callers and tests, data lineage, validation configuration, workloads, and operational constraints.
+The top-level root owns scope, admission, lens coverage, findings, candidates,
+tracker-publication admission, report publication, and Return. Optional
+read-only delegates use `fork_turns="none"` to gather evidence in fresh context;
+root repeats decisive checks. A delegated invocation of this skill returns a
+root-only blocker.
 
-Map each required lens to its expected contract, code and data paths, supported scenarios, observable evidence seam, and unavailable evidence.
+The only durable Audit-owned artifact is
+`.scratch/audit-codebase/<run-id>/report.html`. Use only
+[REPORT-QUICK-REFERENCE.md](REPORT-QUICK-REFERENCE.md)'s helper interface;
+[HTML-REPORT.md](HTML-REPORT.md) owns report state and rendering. Leave product
+source, tracked docs, Git state, reviews, and deployments unchanged. Audit
+itself mutates no foreign system; only an exact helper-generated To Tickets
+invocation may let that callee mutate its configured tracker. Remove
+invocation-owned temporary JSON and path lists only after final read-back or a
+proven zero-effect failure.
 
-Read [DEFECT-CONTRACT.md](DEFECT-CONTRACT.md) completely. When performance, speed, throughput, latency, memory, resource use, or scalability is in scope, also read [PERFORMANCE-LENS.md](PERFORMANCE-LENS.md) completely. When advisories are enabled, read [ADVISORY-CONTRACT.md](../review/ADVISORY-CONTRACT.md).
+[CANDIDATE-CONTRACT.md](CANDIDATE-CONTRACT.md) owns candidate judgment and
+Close. Analyze may invoke To Tickets only through the helper-generated pickup;
+it never implements.
 
-## Examine
+## Resolve And Admit
 
-Dispatch direct fresh-context lenses with `fork_turns="none"` when regions or domains partition cleanly. Give each lens only the immutable snapshot, Charter, Source Trace pointers, assigned region and question, mutation boundary, and output contract. Exclude parent hypotheses and peer results.
+Choose once:
 
-```text
-status: complete | blocked
-domain or lens:
-coverage:
-defects:
-advisories: <when enabled>
-evidence gaps:
-skipped checks:
-blockers:
-```
+- **Map:** no selected subsystem or candidate; create a new atlas or update a
+  supplied map-only atlas with its current digest. A history-bearing atlas that
+  needs structural remapping requires a new explicitly selected report.
+- **Audit:** exactly one subsystem ID from a complete Map.
+- **Analyze:** exactly one candidate ID inside an audited subsystem.
+- **Close:** exactly one analyzed candidate ID plus its exact implementation
+  completion packet using the route derived from current tracker state.
 
-Reconcile active capacity and retry once before degrading. When fresh lenses are unavailable, run separated root passes, reduce confidence, and name the missing independence. Any uncovered required lens makes the audit `incomplete`.
+An invalid selection never falls back to Map. Inspect an existing report for
+the exact objective and ID. Proceed only when the helper returns the selected
+record and admits its report path, structural and state versions,
+repository/run identity, canonical rendering, digest, and current state. A
+failed admission makes zero writes.
 
-Normalize defects and advisories into separate ledgers. Preserve cross-domain links without collapsing distinct expected contracts. Challenge a disputed defect only with its claim, evidence, contrary evidence, and exact decision needed. Evidence decides; agreement is signal.
+An unsupported structural or state version remains immutable historical
+evidence. Return `blocked` with an exact user-selected Map invocation targeting
+a new report; never migrate or overwrite it in place.
 
-## Verify
+**Current source** is the observed live worktree bound by helper-derived path
+and content identities.
 
-Verify every reported defect and advisory against the immutable snapshot and its contract. Each defect reaches `verified`, `disproved`, or `not checked`; preserve `not checked` only as an evidence gap with the missing evidence, affected lens, and confidence impact. No candidate or unverified item survives as a finding.
+## Map
 
-Recheck chain of custody. Target drift makes the audit stale and `incomplete`; the caller alone authorizes a new snapshot.
+### Observe
 
-Delete disposable artifacts that the report does not need or record each intentionally preserved path.
+Create a report when none exists. Update a supplied map-only report with its
+current digest. Run `inventory` first and use its
+tracked-live-worktree identity and paths as the boundary. Record target,
+observation time, scope, governing contracts, supported scenarios, workloads,
+environments, proof expectations, non-goals, and missing authority.
 
-## Synthesize
+Read repository instructions, manifests, entry points, routed domain records
+and ADRs, implementation, representative callers and tests, build/deployment
+configuration, and data/control-flow edges.
 
-Assign stable IDs, sort verified defects by severity, and retain every verified in-scope defect, enabled advisory, evidence gap, and disproved or duplicate item.
+### Account
 
-Apply [DEFECT-CONTRACT.md](DEFECT-CONTRACT.md) once to each item or cohesive cluster. Preserve every member finding.
+Assign every tracked source, test, configuration, and support path exactly once
+to one subsystem, to shared infrastructure represented by one owner and named
+consumers, or to an evidenced exclusion. Group subsystems into systems. For
+each subsystem record one stable ID, purpose, owned behavior, entry points,
+interfaces, owned paths, callers, directed dependencies with evidence, flows,
+domain terms, decisions, and Proof Seams.
 
-## Report
+The helper rejects incomplete complete-Map coverage, overlapping or duplicate
+ownership, owned/excluded overlap, unknown or self dependencies, and dependency
+edges without evidence. Do not audit or rank during Map. Name relevant untracked
+files as an evidence limit.
 
-Read [HTML-REPORT.md](HTML-REPORT.md) completely, then render one self-contained `.tmp/audit-codebase/<run-id>/report.html`.
+Publish once. Return incomplete coverage and an exact Map re-entry, or complete
+coverage and ask the user to select any mapped subsystem. Stop.
 
-Reread the report and, when supported, render or open it. Verify it against the report contract. Any failed check becomes an evidence gap and makes the audit `incomplete`.
+## Audit One Subsystem
+
+Require a complete Map and one selected `mapped`, `incomplete`, or explicitly
+re-audited subsystem.
+
+Rebuild its Source Trace from current owned files, consumed shared
+infrastructure, entry paths, callers, dependents, tests, configuration, routed
+domain records, ADRs, and bounded history when current compatibility or
+staleness depends on it. Discover the path set before using `source-identity`.
+
+Always load [RELIABILITY-LENS.md](RELIABILITY-LENS.md),
+[QUALITY-LENS.md](QUALITY-LENS.md), and
+[DEFECT-CONTRACT.md](DEFECT-CONTRACT.md). Quality owns the six-class coverage
+ledger and every detailed-lens trigger. Record applicability, coverage,
+examined evidence, admitted IDs, detailed-owner use, and reason for Reliability,
+Domain, Design, Simplification, Coding Practice, and Performance. Apply
+Quality's coverage-completion rule; unavailable required evidence is a gap.
+
+Admit defects and gaps under the Finding contract; admit opportunities and
+retained complexity under Quality. Smells and generic thresholds are discovery
+hints only. Read [CANDIDATE-CONTRACT.md](CANDIDATE-CONTRACT.md) only when an
+admitted defect or opportunity needs grouping. Preserve every member and rank
+candidates only inside the selected subsystem by verified impact, applicable
+Leverage or Locality, confidence, and proof burden.
+
+Recheck current source identity, publish once, return observations, coverage,
+and evidence limits, then ask the user to select any candidate. Stop.
+
+## Analyze One Candidate
+
+Require one selected candidate in an audited subsystem. Apply
+[CANDIDATE-CONTRACT.md](CANDIDATE-CONTRACT.md): reinspect its implicated current
+source, callers, contracts, decisions, tests, findings, and Proof Seams;
+re-admit changed members; and classify it `confirmed`, `changed`, `disproved`,
+or `blocked`. Expand only when contradiction reveals another causal owner and
+load only implicated detailed lenses.
+
+Compare Keep, Smallest sufficient, Structural, and Replacement. Apply the
+Candidate contract's design branch when triggered.
+
+Read [CANDIDATE-FOLLOWUP.md](CANDIDATE-FOLLOWUP.md) only when the result needs a
+material user decision, returned evidence, one other owner, or implementation
+work publication. It owns To Tickets authority, recovery, and pickup behavior.
+
+Publish once. Return validity, comparison, proof, limits, tracker result, and
+next user selection. Stop.
+
+## Close One Candidate
+
+Close is a separate user-selected objective, never an implicit continuation.
+Require one analyzed candidate and the exact completion packet requested by its
+helper-generated Implement pickup or required by an explicitly authorized,
+already-landed direct implementation. Apply
+[CANDIDATE-CONTRACT.md](CANDIDATE-CONTRACT.md)'s Close gate. A mismatch changes
+nothing.
+
+Publish once through `close-candidate`. Only that command may enter
+`implemented`.
+
+## Publish
+
+For the selected objective, use the strict schema and the single
+validate/digest/publish transaction in
+[REPORT-QUICK-REFERENCE.md](REPORT-QUICK-REFERENCE.md). Make at most one
+effectful call. On failure, use the helper's returned state literally; never
+retry, hand-edit, switch mechanisms, or delay Return.
 
 ## Return
 
-Return exactly one status:
-
-- `complete`: every required region and lens was covered, every survivor reached a terminal evidence state, and the report passed verification;
-- `incomplete`: the target, Charter authority, required lens, required evidence, verification, drift, or report gate did not close.
-
-Begin with:
-
 ```text
-Audit status: complete | incomplete
-Snapshot:
-Run ID:
-Report: <absolute-path>
-Charter:
-Source Trace:
-Lens coverage:
-Confidence: full | reduced
+Outcome: complete | partial | blocked
+Objective: Map | Audit | Analyze | Close
+Publication: updated | unchanged | failed | not-attempted
+Tracker publication: ready-graph | reused | recovery | authority-required | not-applicable
+Implementation tracker item: <provider-native identity> | none
+Selected item:
+Result or state:
+Evidence limits:
+Report: <absolute-path> | none
+Next user selection: <exact action> | none
+Release decision: none; product mutation authority: none
+Downstream implementation: none; next selection authority: user
 ```
 
-Summarize counts by severity and item type, then name any suggested owners with `Caller selection required`. End with:
-
-```text
-Release decision: none
-Return boundary: caller
-Mutation authority: none
-Downstream execution: none
-Successor snapshot authority: none
-```
-
-Close only when every Charter cell is covered or explicitly blocked, every surviving item is terminal and reported, chain of custody is intact, and the report verifies.
+`complete` requires the selected objective and durable HTML publication.
+Implementation-ready Analyze also requires a To Tickets result or
+`authority-required` when its exact invocation authority is absent. `partial`
+preserves completed analysis with tracker recovery or exact unfinished
+coverage. `blocked` means the objective could not proceed.
+Findings and gaps do not themselves make a thorough Audit incomplete.

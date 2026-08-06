@@ -1,42 +1,72 @@
 # Behavioral Skill Evaluation
 
-Prove that guidance changes behavior, not merely prose.
+Use this read-only proof branch only for a claim that exact skill wording
+changes invocation, judgment, action, context loading, Return, or completion.
+Read-only means the control, candidate, and repository remain unchanged during
+sampling; the branch still runs fresh isolated model executions. Freeze control
+and candidate bytes before sampling. Return the parent operation status plus
+one evaluation decision.
 
-## Diagnose
+Use **control** and **candidate** below. A deploy campaign may call them M0 and
+H1.
 
-Classify the observed failure before choosing its instruction form:
+## Register the control
 
-| Failure | Instruction form |
-| --- | --- |
-| A known discipline is abandoned under pressure | Positive gate plus only observed, necessary guardrails |
-| Output has the wrong shape | Ordered positive contract |
-| A required element is omitted | Required field, slot, or schema |
-| Behavior fires under the wrong condition | Observable predicate |
-| Invocation misses or false-fires | One distinct trigger per branch plus positive and adjacent negative cases |
-| A step ends early | Sharper checkable criterion first; context split only after the failure persists |
+Register `defect-correction` or `quality-lift`. Fix the task, full context,
+model, host, reasoning configuration, tools, authority, evidence, runtime,
+rubric, and inputs. For defect correction, name the expected failure. For
+quality lift, name the meaningful rubric deficit while the control remains
+viable.
 
-## Control
+Record an observable entry predicate. Classify applicability as `common`,
+`situational`, `rare`, or `unknown` with its evidence basis; fixture frequency
+does not establish prevalence. If the registered control deficit does not
+appear, stop before candidate sampling with `reject-no-control-deficit`.
 
-Fix the task, full context, model, reasoning settings, tools, authority, evidence, runtime, and rubric. Run without the candidate guidance. Stop when the claimed failure does not appear; the guidance is a no-op candidate.
+## Freeze the cohorts
 
-## Sample
+Freeze separate entry-positive and wrong-condition cohorts. Keep candidate
+language, conclusions, and prior outputs out of control contexts. Keep inputs
+fixed. Use the host's fresh-context mechanism; never reuse the authoring
+conversation as a sample. Alternate or randomize arm order when practical.
+Reuse samples only when their frozen bytes, inputs, and runtime identity are
+unchanged. Evidence judgment stays with the root.
 
-Run control and candidate arms in fresh contexts with at least five independent samples per arm for a behavioral claim. Keep inputs fixed. Alternate or randomize arm order when practical.
+## Apply the adaptive gate
 
-Keep candidate language, conclusions, and prior outputs out of control contexts. Ambient collaboration policy decides whether and how workers run; evidence judgment stays with the root.
+Run at least five fresh entry-positive controls. Run at least five fresh
+entry-positive candidates only when the registered deficit appears. Run frozen
+wrong-condition control/candidate pairs only after the candidate clears the
+entry-positive contribution gate. A rejected candidate receives no
+wrong-condition samples.
 
-## Stress
+Keep wrong-condition results separate; do not dilute a situational effect with
+non-triggering cases. Extend sampling for material variance, a borderline
+effect, or protocol deviation. Stop early for a critical regression. Five is a
+minimum, not automatic evidence sufficiency.
 
-Stress only discipline failures with realistic competing pressures. Keep authority and mutation boundaries fixed. Shape, omission, invocation, conditional, and completion failures use representative positive and negative tasks instead of invented adversity.
+## Judge conditional efficacy
 
-## Judge
+Inspect every flagged output against the fixed rubric. Strings, headings, and
+template echoes are structural evidence only. Accept only when the control
+shows the registered deficit, the candidate materially improves it, variance
+is acceptably bounded, and no critical or protected-behavior regression appears.
 
-Use an explicit behavior rubric. Inspect every flagged output; strings, headings, and template echoes are structural evidence only. Accept guidance only when the control demonstrates the failure, the candidate materially improves compliance, variance narrows or remains acceptably bounded, and no new critical failure appears.
+Judge conditional efficacy on entry-positive cases before deciding whether
+bounded applicability justifies runtime load. Keep applicability separate from
+efficacy.
 
-## Record
+## Record the result
 
-Record the failure, fixed inputs, control, candidate, sample count, runtime, hashes, rubric, per-sample results, aggregate, variance, worst result, critical failures, protocol deviations, unavailable telemetry, decision, and residual gap.
+Record the registration, expected deficit, task, rubric, entry predicate,
+applicability basis, fixed inputs, control/candidate hashes, model, host,
+reasoning configuration, runtime, tools, authority, evidence, cohort counts and
+per-sample results, aggregate, variance, worst result, critical failures,
+protocol deviations, unavailable telemetry, decision, and residual transfer
+gap.
 
-## Completion
-
-Complete when the record is current and supports `accept`, `reject-no-control-failure`, `reject-regression`, `needs-more-evidence`, or `blocked` without extrapolation.
+Choose exactly one evaluation decision: `accept`,
+`reject-no-control-deficit`, `reject-insufficient-contribution`,
+`reject-regression`, `needs-more-evidence`, or `blocked`, without extrapolation.
+Reserve `reject-regression` for an observed critical or protected-behavior
+regression.

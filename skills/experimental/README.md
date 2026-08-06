@@ -10,12 +10,13 @@ This directory preserves inactive alternatives to skills in `../custom/`.
 owns experimental creation, evaluation, promotion, lifecycle cleanup, and the
 separately owned installation continuation:
 
-- Deploy Prompt 3 creates and mechanically proves one inactive candidate.
-- Deploy Prompt 4 audits, repairs, behaviorally evaluates, and accepts or
-  rejects that candidate.
-- Deploy Prompt 5 promotes only an accepted candidate, proves canonical source,
-  removes only that promoted experimental tree and manifest entry, then resumes
-  the separately owned managed-install continuation.
+- Contract Lock binds the intended behavior and applicable proof.
+- Candidate Lock freezes one inactive candidate and proves its deterministic
+  caller and integration seams.
+- Behavioral Proof runs conditionally for wording-effect claims.
+- Release promotes only the exact proved candidate, removes only that promoted
+  experimental tree and manifest entry, and stops before any separately owned
+  managed-install continuation.
 
 Experimental edits keep `candidate_sha256` current, and experimental tests name
 the experimental path explicitly. Abandoned candidates remain inactive until a

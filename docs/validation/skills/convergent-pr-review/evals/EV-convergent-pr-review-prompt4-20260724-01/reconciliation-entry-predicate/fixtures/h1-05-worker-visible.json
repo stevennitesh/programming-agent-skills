@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "fixed_execution": {
+    "task": "Apply the supplied convergent-pr-review runtime after all initial blind reports have closed. Decide whether one recovery action is authorized, then return the exact action, completed-packet and capacity effect, evidence disposition, decision boundary, and stop point.",
+    "authority": "Simulated top-level root, read-only judgment under the exact supplied runtime. At most one recovery action may be taken when authorized.",
+    "initial_state": "The caller packet, review mode, immutable snapshot, assignment, sealed blind reports, candidate ledger exposure, and recovery budget are fixed by the case facts.",
+    "tools_operations": ["read the exact runtime", "apply the case facts", "authorize or decline recovery", "return the supported boundary"],
+    "mutation_boundary": "none",
+    "requested_output": "Recovery disposition, evidence and capacity effect, terminal boundary, and concise log."
+  },
+  "isolation": {
+    "candidate_terms_present": false,
+    "prior_outputs_present": false,
+    "conclusions_present": false,
+    "rubric_present": false,
+    "arm_delta": "runtime package only"
+  },
+  "cases": [
+    {
+      "id": "H105-EP01",
+      "facts": {
+        "F1": "All initial blind reports are sealed under one unchanged snapshot, caller packet, initial mode, and assignment.",
+        "F2": "One origin report is otherwise valid but omits only the required blockers field.",
+        "F3": "The report already claims complete clean evidence; the origin can answer blockers none from its own return.",
+        "F4": "No peer output or ledger content is needed or exposed; no recovery has occurred.",
+        "F5": "With blockers none supplied, the packet validates and all required coverage is complete."
+      }
+    },
+    {
+      "id": "H105-EP02",
+      "facts": {
+        "F1": "All initial blind reports are sealed under one unchanged snapshot, caller packet, remediation mode, and assignment.",
+        "F2": "One origin report is otherwise valid but omits only skipped checks.",
+        "F3": "The report already states every assigned check ran; the origin can answer skipped checks none from its own return.",
+        "F4": "No peer output or ledger content is needed or exposed; no recovery has occurred.",
+        "F5": "With the field supplied, the packet validates without changing carried-ID or independence credit."
+      }
+    },
+    {
+      "id": "H105-EP03",
+      "facts": {
+        "F1": "All initial blind reports are sealed under one unchanged snapshot, caller packet, assurance mode, and assignment.",
+        "F2": "One origin report is otherwise valid but omits only the lens field.",
+        "F3": "Its sealed assignment and evidence already identify the rollback lens; the origin can restate rollback from its own return.",
+        "F4": "No peer output or ledger content is needed or exposed; no recovery has occurred.",
+        "F5": "With lens rollback supplied, the packet validates and earns only its original fresh-reviewer credit."
+      }
+    },
+    {
+      "id": "H105-EP04",
+      "facts": {
+        "F1": "All initial blind reports are sealed under one unchanged snapshot, caller packet, initial mode, and assignment.",
+        "F2": "One origin report is otherwise valid but its coverage field omits only the evidence reference value.",
+        "F3": "The report already claims test R17 as its coverage basis; the origin can supply the exact R17 reference from its own return.",
+        "F4": "No peer output or ledger content is needed or exposed; no recovery has occurred.",
+        "F5": "With R17 supplied, root validation confirms the same already-claimed evidence and the packet is complete."
+      }
+    },
+    {
+      "id": "H105-EP05",
+      "facts": {
+        "F1": "All initial blind reports are sealed under one unchanged snapshot, caller packet, initial mode, and assignment.",
+        "F2": "One origin report is otherwise valid but omits only findings.",
+        "F3": "Its coverage and blockers fields already claim a clean result; the origin can answer findings none from its own return.",
+        "F4": "No peer output or ledger content is needed or exposed; no recovery has occurred.",
+        "F5": "With findings none supplied, the packet validates and all other capacity and decision facts remain unchanged."
+      }
+    },
+    {
+      "id": "H105-WC01",
+      "facts": {
+        "F1": "One report omits blockers, but its originating brief contains a peer conclusion.",
+        "F2": "The contamination cannot be removed or reconstructed.",
+        "F3": "The snapshot is unchanged and no prior recovery occurred.",
+        "F4": "The required lens would remain uncovered without valid evidence."
+      }
+    },
+    {
+      "id": "H105-WC02",
+      "facts": {
+        "F1": "One otherwise valid origin report omits blockers.",
+        "F2": "A prior failed-lane replacement already consumed the single recovery action.",
+        "F3": "The snapshot and caller packet are unchanged.",
+        "F4": "No new caller authority exists."
+      }
+    },
+    {
+      "id": "H105-WC03",
+      "facts": {
+        "F1": "All reports are complete and one unsupported candidate remains.",
+        "F2": "The caller asks the origin to search the whole ledger and all lenses for new findings.",
+        "F3": "No field or evidence value is omitted from the origin report.",
+        "F4": "No new invocation is authorized."
+      }
+    },
+    {
+      "id": "H105-WC04",
+      "facts": {
+        "F1": "One otherwise valid origin report omits blockers.",
+        "F2": "The target bytes changed after the report was sealed.",
+        "F3": "The caller has not authorized recapture or a successor snapshot.",
+        "F4": "No prior recovery occurred."
+      }
+    },
+    {
+      "id": "H105-WC05",
+      "facts": {
+        "F1": "A prior completed review has an otherwise valid report that omitted blockers.",
+        "F2": "The caller now supplies a different target and asks to reuse the old origin clarification.",
+        "F3": "This is a new invocation with a new snapshot and caller packet.",
+        "F4": "No evidence from the old packet is valid for the new target."
+      }
+    }
+  ]
+}

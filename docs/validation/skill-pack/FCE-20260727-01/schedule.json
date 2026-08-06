@@ -1,0 +1,326 @@
+{
+  "campaign_order": [
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "repo-bootstrap",
+      "predecessor_skill_ids": [],
+      "role": "leaf",
+      "sequence": 1,
+      "skill_id": "SK-001",
+      "slice_fingerprint": "sha256-v1:251b265e302d2a92606df36c6eecf21d9b0399306d619278e1a1fc1c21d2aa7b",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/repo-bootstrap.json",
+      "tier": "leaf-provider"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "domain-modeling",
+      "predecessor_skill_ids": [],
+      "role": "leaf",
+      "sequence": 2,
+      "skill_id": "SK-002",
+      "slice_fingerprint": "sha256-v1:9b6cdd438bc60d35c39fc2f423186ed2900e64fb164c5176f1954296a6aee1ee",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/domain-modeling.json",
+      "tier": "leaf-provider"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "research",
+      "predecessor_skill_ids": [],
+      "role": "leaf",
+      "sequence": 3,
+      "skill_id": "SK-003",
+      "slice_fingerprint": "sha256-v1:7301209775dc35290b073242206f1e822131f081d7d464d2498133fe223f9caf",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/research.json",
+      "tier": "leaf-provider"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "prototype",
+      "predecessor_skill_ids": [],
+      "role": "leaf",
+      "sequence": 4,
+      "skill_id": "SK-004",
+      "slice_fingerprint": "sha256-v1:42209e3f248490d0b4100e573175db23553e07e507461e10ef2a25390b35f36b",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/prototype.json",
+      "tier": "leaf-provider"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "diagnosing-bugs",
+      "predecessor_skill_ids": [],
+      "role": "leaf",
+      "sequence": 5,
+      "skill_id": "SK-005",
+      "slice_fingerprint": "sha256-v1:21f800798241dd0ecbdb3281e5f1b9ba078a72040f0b6f3dbda2d4a298342dcc",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/diagnosing-bugs.json",
+      "tier": "leaf-provider"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "tdd",
+      "predecessor_skill_ids": [],
+      "role": "leaf",
+      "sequence": 6,
+      "skill_id": "SK-006",
+      "slice_fingerprint": "sha256-v1:b6b56692a15e8d879b1b2706290931f98a73321596b5c991f380908496b772e6",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/tdd.json",
+      "tier": "leaf-provider"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "codebase-design",
+      "predecessor_skill_ids": [],
+      "role": "leaf",
+      "sequence": 7,
+      "skill_id": "SK-007",
+      "slice_fingerprint": "sha256-v1:9b5166a8a2c96d5c0c90f4a91afc0d9958368a56f0f910ec5a66c9d0f68f899c",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/codebase-design.json",
+      "tier": "leaf-provider"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "grilling",
+      "predecessor_skill_ids": [],
+      "role": "leaf",
+      "sequence": 8,
+      "skill_id": "SK-008",
+      "slice_fingerprint": "sha256-v1:bc2aac6adcad1839fb6afdb2a45a517aa3849bee47ea1b3003c9c7581d024526",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/grilling.json",
+      "tier": "leaf-provider"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "to-questionnaire",
+      "predecessor_skill_ids": [],
+      "role": "leaf",
+      "sequence": 9,
+      "skill_id": "SK-009",
+      "slice_fingerprint": "sha256-v1:cccdc0a4bac730ac70105bd2ec20ae5688dba05361fc12a37990d646397edfe1",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/to-questionnaire.json",
+      "tier": "leaf-provider"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "handoff",
+      "predecessor_skill_ids": [],
+      "role": "leaf",
+      "sequence": 10,
+      "skill_id": "SK-010",
+      "slice_fingerprint": "sha256-v1:3a1c104e850f7e3a6d596c6cff29493271ca4f9bb0cd52d787362f20feb9cc7c",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/handoff.json",
+      "tier": "leaf-provider"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "to-spec",
+      "predecessor_skill_ids": [
+        "SK-007"
+      ],
+      "role": "leaf",
+      "sequence": 11,
+      "skill_id": "SK-011",
+      "slice_fingerprint": "sha256-v1:578dfdcf966750c8c8c312fe8c24b7cf5867c11b14fb1ff1c3e51d1897971d1d",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/to-spec.json",
+      "tier": "leaf-provider"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "to-tickets",
+      "predecessor_skill_ids": [],
+      "role": "leaf",
+      "sequence": 12,
+      "skill_id": "SK-012",
+      "slice_fingerprint": "sha256-v1:099b522a10976b1e722e00da9b29354084328f4b31d943971923502a227bfd59",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/to-tickets.json",
+      "tier": "leaf-provider"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "triage",
+      "predecessor_skill_ids": [],
+      "role": "leaf",
+      "sequence": 13,
+      "skill_id": "SK-013",
+      "slice_fingerprint": "sha256-v1:63a6f4a0f9e9e23c3c3c573b776090b1e03a867792c7d655301a242688ec83f0",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/triage.json",
+      "tier": "leaf-provider"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "convergent-pr-review",
+      "predecessor_skill_ids": [],
+      "role": "leaf",
+      "sequence": 14,
+      "skill_id": "SK-014",
+      "slice_fingerprint": "sha256-v1:f63062ae3730f72e0ebbe713d6b8da689371c0f539df6d2dab8ff604cb08a255",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/convergent-pr-review.json",
+      "tier": "leaf-provider"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "review",
+      "predecessor_skill_ids": [
+        "SK-014"
+      ],
+      "role": "leaf",
+      "sequence": 15,
+      "skill_id": "SK-015",
+      "slice_fingerprint": "sha256-v1:e2fc990f8f8664f7482d6103a38c3c5d0a75ae8c00815ae34bcca0dc13612ec4",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/review.json",
+      "tier": "leaf-provider"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "resolving-merge-conflicts",
+      "predecessor_skill_ids": [
+        "SK-005"
+      ],
+      "role": "leaf",
+      "sequence": 16,
+      "skill_id": "SK-016",
+      "slice_fingerprint": "sha256-v1:701ee990c5a89c917743a8a662d5b00844a840916c496272b55bb54895d21975",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/resolving-merge-conflicts.json",
+      "tier": "leaf-provider"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "audit-codebase",
+      "predecessor_skill_ids": [],
+      "role": "leaf",
+      "sequence": 17,
+      "skill_id": "SK-017",
+      "slice_fingerprint": "sha256-v1:bd12fe2f67ede550cf83e510a49daed059d8927ef1d5115f367b20324e7faa9a",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/audit-codebase.json",
+      "tier": "leaf-provider"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "simplify-code",
+      "predecessor_skill_ids": [],
+      "role": "leaf",
+      "sequence": 18,
+      "skill_id": "SK-018",
+      "slice_fingerprint": "sha256-v1:4587357fd3954e8271823b20512b48dfecb6ddf88537e82f167daad7b46337d4",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/simplify-code.json",
+      "tier": "leaf-provider"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "writing-great-skills",
+      "predecessor_skill_ids": [],
+      "role": "leaf",
+      "sequence": 19,
+      "skill_id": "SK-019",
+      "slice_fingerprint": "sha256-v1:3cd4cabc6306c5b3f758a9ebccc1efa0ad2424c2bdadbe3ce72de6e5a7d1ab05",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/writing-great-skills.json",
+      "tier": "leaf-provider"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "grill-with-docs",
+      "predecessor_skill_ids": [
+        "SK-002",
+        "SK-008"
+      ],
+      "role": "executable-aggregate",
+      "sequence": 20,
+      "skill_id": "SK-020",
+      "slice_fingerprint": "sha256-v1:67cb7f9024cb885b58b973ef05e6a5dccb163d1e1dc32636c5725d0be9fb30a1",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/grill-with-docs.json",
+      "tier": "executable-aggregate"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "wayfinder",
+      "predecessor_skill_ids": [
+        "SK-003",
+        "SK-004"
+      ],
+      "role": "executable-aggregate",
+      "sequence": 21,
+      "skill_id": "SK-021",
+      "slice_fingerprint": "sha256-v1:5e0f688d0a23209cc86b1ecefe389f915cef9336b745c23fb77e3df8d4ade723",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/wayfinder.json",
+      "tier": "executable-aggregate"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "implement",
+      "predecessor_skill_ids": [
+        "SK-005",
+        "SK-006",
+        "SK-014",
+        "SK-015"
+      ],
+      "role": "executable-aggregate",
+      "sequence": 22,
+      "skill_id": "SK-022",
+      "slice_fingerprint": "sha256-v1:55c76293293a4d3bdd8186b5758657d35b5e98a3441813815b5158dd6b88412d",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/implement.json",
+      "tier": "executable-aggregate"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "parallel-implement",
+      "predecessor_skill_ids": [
+        "SK-005",
+        "SK-006",
+        "SK-014",
+        "SK-015",
+        "SK-016"
+      ],
+      "role": "executable-aggregate",
+      "sequence": 23,
+      "skill_id": "SK-023",
+      "slice_fingerprint": "sha256-v1:53f32d6dabd1a92e718b61260c537d2cdf1ca29c1721748d06fa8dbb68e70328",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/parallel-implement.json",
+      "tier": "executable-aggregate"
+    },
+    {
+      "campaign_status": "not-started",
+      "canonical_name": "skill-router",
+      "predecessor_skill_ids": [
+        "SK-001",
+        "SK-002",
+        "SK-003",
+        "SK-004",
+        "SK-005",
+        "SK-006",
+        "SK-007",
+        "SK-008",
+        "SK-009",
+        "SK-010",
+        "SK-011",
+        "SK-012",
+        "SK-013",
+        "SK-014",
+        "SK-015",
+        "SK-016",
+        "SK-017",
+        "SK-018",
+        "SK-019",
+        "SK-020",
+        "SK-021",
+        "SK-022",
+        "SK-023"
+      ],
+      "role": "router",
+      "sequence": 24,
+      "skill_id": "SK-025",
+      "slice_fingerprint": "sha256-v1:df8fe5012d1a145d354be3383b2a2e21c40686f0a6f571744082b6c6f1b9a665",
+      "slice_path": "docs/validation/skill-pack/FCE-20260727-01/slices/skill-router.json",
+      "tier": "router"
+    }
+  ],
+  "composition_epoch_id": "FCE-20260727-01",
+  "contract_fingerprint": "sha256-v1:f433bece32b0c3cc7e825718511835ce83048bac961da473ce1be7edd06a16f4",
+  "contract_path": "docs/synthesis/skill-pack.md",
+  "contract_revision": 2,
+  "fixed_point": {
+    "environment": "surface=Codex Desktop; model=gpt-5.6-sol; reasoning_effort=medium; thread_id=019f9c92-07fb-7b80-b8a2-a218bbfd9a1f; workspace_kind=project; operating_system=Windows; shell=PowerShell; python=3.12.12; filesystem_authority=workspace-write; request_sandbox=windows_elevated; evidence_tools=workspace exec, GitHub connector/gh read fallback, Node REPL request metadata",
+    "repository_tree": "97cb4931b0c91964b5f86ea2931875fd46168be5",
+    "timestamp": "2026-07-27T05:34:05Z"
+  },
+  "schema_version": 1,
+  "status": "frozen"
+}

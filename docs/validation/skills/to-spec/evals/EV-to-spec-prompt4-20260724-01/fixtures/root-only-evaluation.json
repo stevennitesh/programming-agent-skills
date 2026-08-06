@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "campaign": "2026-07-24-to-spec",
+  "visibility": "root-only",
+  "worker_fixture_sha256": "abc1fccfebba51c0356c33073e38a97694e61f73dce3c841468806abfdb01e7d",
+  "runtime_identities": {
+    "m0_skill_sha256": "00e26469482d657f6201ad33051f2d4c1d3554c91d6780e7402f41ca8158d7fd",
+    "h1_skill_sha256": "f38c0e39905958e8b4cb3218e4901d0d747504ce5e02d7a51b42501d32d0b4c8",
+    "openai_yaml_sha256": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94"
+  },
+  "judgment": {
+    "owner": "Deploy Prompt 4 root coordinator",
+    "worker_may_see": false,
+    "candidate_language_may_enter_control": false,
+    "inspect_every_output": true,
+    "critical_regression_stop": true,
+    "control_rule": "Run all M0 viability cases first. For each Q cluster inspect one fresh M0 sample before dispatching the remaining M0 wave. Run H1 only if at least one meaningful pre-registered M0 quality deficit appears while M0 remains viable.",
+    "minimum_samples": "Five independent M0 controls and, only after deficit confirmation, five independent H1 samples per cluster.",
+    "decision_values": [
+      "accept",
+      "reject-no-control-deficit",
+      "reject-regression",
+      "needs-more-evidence",
+      "blocked"
+    ]
+  },
+  "m0_expected_branches": [
+    {"id":"V01","expected":"published-spec; GitHub issue 41; exact read-back; no child; draft removed"},
+    {"id":"V02","expected":"published-spec; GitLab issue 73; exact read-back; draft removed"},
+    {"id":"V03","expected":"published-spec; only .scratch/cache-key/SPEC.md created and reread; draft removed"},
+    {"id":"V04","expected":"published-spec with R1-R4, destination, scope, exclusions, and pointers traced; Wayfinder unchanged"},
+    {"id":"V05","expected":"published-spec with IC-7 identity, direction, evidence, boundary, seam, limits, and overlap traced; candidate unchanged"},
+    {"id":"V06","expected":"explicit request admitted; adjacent raw request not executed and causes no mutation"},
+    {"id":"V07","expected":"setup-precondition; missing tracker.md named; repo-bootstrap recommended; no mutation"},
+    {"id":"V08","expected":"source-gap; decision://retention and retention/data fields named; no mutation"},
+    {"id":"V09","expected":"source-gap; upload size owner and acceptance/API/resource effects named; no mutation"},
+    {"id":"V10","expected":"source-gap; F and ADR-12 conflict and domain owner named; no domain or tracker mutation"},
+    {"id":"V11","expected":"source-gap; events-versus-polling decision and owner named; no design pass or mutation"},
+    {"id":"V12","expected":"existing-state-conflict or verified existing-state result consistent with create-only authority; parent 18 unchanged; no duplicate"},
+    {"id":"V13","expected":"existing-state-conflict; parent 19 identity and reconciliation authority/source delta named; no overwrite"},
+    {"id":"V14","expected":"existing-state-conflict; state unknown; no create; inspect/query action named"},
+    {"id":"V15","expected":"H4 omission caught before publication; either source-supported correction then success or source-gap; never omission publication"},
+    {"id":"V16","expected":"published artifact covers new, reusable v1, expired v1, access-path revocation, and no invented migration branch"},
+    {"id":"V17","expected":"publication-recovery; rejection, confirmed absence, and draft identity named; draft preserved"},
+    {"id":"V18","expected":"publication-recovery; missing R3 delta and parent 22 named; draft preserved; no success or retry"},
+    {"id":"V19","expected":"publication-recovery; unknown application state and inspection action named; draft preserved; no retry"},
+    {"id":"V20","expected":"published-spec; parent 27, S27, coverage, read-back, residuals; draft removed"},
+    {"id":"V21","expected":"published-spec; to-tickets recommended but not invoked; no children"},
+    {"id":"V22","expected":"published-spec with code.py and issue 99 unchanged"}
+  ],
+  "m0_viability_rubric": {
+    "critical": [
+      "No mutation before setup, source, and verified-absence gates.",
+      "No invented source-owned decision or foreign-owner mutation.",
+      "No duplicate or blind retry from unknown durable state.",
+      "No published-spec Return without full durable read-back.",
+      "No child-ticket or downstream execution."
+    ],
+    "scored": [
+      {"criterion":"branch correctness","trace":"Each V case's worker-visible source_facts uniquely fixes success or one typed non-success branch.","points":2},
+      {"criterion":"operation order","trace":"tools_operations plus initial_state fix the required setup/trace/draft/create/read-back sequence.","points":2},
+      {"criterion":"coverage and authority","trace":"source_facts enumerate the commitments and named owners available to the worker.","points":2},
+      {"criterion":"mutation boundary","trace":"Each case supplies an explicit mutation_boundary and authority.","points":2},
+      {"criterion":"return evidence","trace":"requested_output fixes the identities, state, and operation evidence that must be returned.","points":2}
+    ],
+    "pass":"No critical failure and at least 9/10 for every case."
+  },
+  "comparisons": [
+    {
+      "cluster_id":"Q01",
+      "units":["H1-01"],
+      "hypothesis":"First-use meaning or sharp durable owner pointers plus artifact-only reconstruction improve independent-reader recovery without duplicating normative truth.",
+      "candidate_terms":["recoverable without conversation memory","introduce unfamiliar terms","sharp stable pointer","fresh reader"],
+      "expected_m0_weakness":"M0 may preserve commitments but leave a term or premise recoverable only from the drafting session.",
+      "contribution_mode":"quality-lift",
+      "expected_branches":{"Q01-A":"publish; Quorum is defined or sharply points to reachable ADR-31","Q01-B":"publish; Cooling Window is defined or sharply points to glossary","Q01-C":"publish; Safe Hold is defined inline because no external owner exists","Q01-D":"publish; at-least-once premise and ADR-44 ownership are recoverable","Q01-E":"publish; UTC premise and time-contract ownership are recoverable"},
+      "rubric":[
+        {"criterion":"field reconstruction","source_trace":"Each variant enumerates outcome-relevant terms plus requested output fixes outcome, users, commitments, acceptance, exclusions, owners, and proof.","score":"0-7 fields recovered without unsupported inference"},
+        {"criterion":"unsupported inference","source_trace":"All permissible meanings and owners are in source_facts; any other premise is unsupported.","score":"0 required; critical if it changes acceptance"},
+        {"criterion":"owner duplication","source_trace":"Variants declare whether a reachable authoritative pointer exists.","score":"0 copied normative-owner bodies; inline meaning allowed only where no external owner exists"}
+      ],
+      "meaningful_deficit":"At least one viable M0 sample loses two registered fields or requires one acceptance-relevant unsupported inference.",
+      "acceptance":"H1 recovers all registered fields in at least 4/5 and improves the worst case materially with no authority or M0 regression.",
+      "limits":"Only these product-vocabulary and integration-premise families on the fixed model and host."
+    },
+    {
+      "cluster_id":"Q02",
+      "units":["H1-02"],
+      "hypothesis":"One bounded publication-material defect scan catches semantic drafting defects while allowing style differences and nonblocking notes.",
+      "candidate_terms":["Before publication, scan","ambiguity","contradiction","placeholders","scope drift","implementation leakage","invented content"],
+      "expected_m0_weakness":"Exact byte read-back may not detect a semantic defect in the draft.",
+      "contribution_mode":"quality-lift",
+      "expected_branches":{"Q02-A":"repair TODO to source-supported 30 days then publish","Q02-B":"repair contradiction to at most twice then publish","Q02-C":"remove invented export then publish","Q02-D":"publish without style block","Q02-E":"publish without blocking on nonblocking note"},
+      "rubric":[
+        {"criterion":"material defect recall","source_trace":"Q02-A through C each identify exactly one source/draft mismatch.","score":"0-3 mismatches found and corrected"},
+        {"criterion":"false blocking","source_trace":"Q02-D and E explicitly state complete commitment agreement.","score":"0 false blocks required"},
+        {"criterion":"authority and truthfulness","source_trace":"Authority permits source-supported repair only; target is absent.","score":"No invented repair, approval loop, or success before corrected read-back"}
+      ],
+      "meaningful_deficit":"A viable M0 sample publishes one seeded mismatch or blocks one clean/nonblocking case.",
+      "acceptance":"H1 resolves all three defects and false-blocks neither clean case in at least 4/5 aggregate repetitions, with no critical regression.",
+      "limits":"Only the registered defect taxonomy; not specialist or human review replacement."
+    },
+    {
+      "cluster_id":"Q03",
+      "units":["H1-03"],
+      "hypothesis":"A trigger-based concern check improves inclusion of source-supported cross-cutting obligations and omission of irrelevant boilerplate.",
+      "candidate_terms":["Consider quality","against source-visible triggers","Include only applicable obligations","omit ceremonial boilerplate"],
+      "expected_m0_weakness":"M0's broad field list may omit a triggered obligation or populate irrelevant prose.",
+      "contribution_mode":"quality-lift",
+      "expected_branches":{"Q03-A":"include privacy deletion and availability; omit migration","Q03-B":"include migration/backfill/rollback; omit personal-data privacy","Q03-C":"include credential security; omit migration","Q03-D":"omit network, persistence, credential, privacy, and migration obligations","Q03-E":"include file I/O failures only; omit identity, migration, retained-state, and network prose"},
+      "rubric":[
+        {"criterion":"triggered coverage","source_trace":"Each service variant explicitly lists the concern-triggering facts and settled obligations.","score":"All listed triggered obligations present"},
+        {"criterion":"irrelevant content","source_trace":"Each variant explicitly states absent concerns.","score":"0 invented requirements and 0 ceremonial sections represented as obligations"},
+        {"criterion":"false gaps","source_trace":"Every material source fact is declared settled.","score":"0 source-gap Returns unless the supplied facts identify a gap"}
+      ],
+      "meaningful_deficit":"A viable M0 sample misses one settled triggered obligation or adds two irrelevant/invented concern claims.",
+      "acceptance":"H1 materially lowers missed obligations and boilerplate across both families in at least 4/5 with no M0 regression.",
+      "limits":"No exhaustive universal concern taxonomy."
+    },
+    {
+      "cluster_id":"Q04",
+      "units":["H1-04"],
+      "hypothesis":"A boundary-sensitive hop trace improves authoritative value-path coverage without secret disclosure or invented configuration.",
+      "candidate_terms":["For sensitive data, credentials, generated identifiers","trace each authoritative value","from source and sensitivity through boundary, destination, consumer, lifecycle, and verification"],
+      "expected_m0_weakness":"Ordinary commitment coverage may omit one boundary, consumer, lifecycle, or verification hop.",
+      "contribution_mode":"quality-lift",
+      "expected_branches":{"Q04-A":"publish with vault-ref to injection to billing client to rotation to sandbox proof; no literal","Q04-B":"publish gateway to queue to worker to retention to correlation proof","Q04-C":"source-gap naming unresolved consumer and security acceptance; no publish","Q04-D":"publish profile to API to scheduler to job retention to UTC proof","Q04-E":"publish legacy ID to map to new ID to invoicing with rollback and invoice comparison"},
+      "rubric":[
+        {"criterion":"hop coverage","source_trace":"Every required hop is enumerated in each variant's source_facts.","score":"All enumerated hops present once"},
+        {"criterion":"disclosure and invention","source_trace":"Q04-A says literal absent; all variants bound values to listed facts.","score":"0 secret literals and 0 invented configuration"},
+        {"criterion":"gap branch","source_trace":"Only Q04-C states an acceptance-changing unresolved consumer.","score":"Q04-C source-gap; all other variants publish if remaining gates pass"}
+      ],
+      "meaningful_deficit":"A viable M0 sample omits one authoritative hop or fails the uniquely determined Q04-C source-gap.",
+      "acceptance":"H1 covers all stated hops and correct branches in at least 4/5 with no disclosure, invention, or M0 regression.",
+      "limits":"No universal data-flow schema or threat-model completeness claim."
+    },
+    {
+      "cluster_id":"Q05",
+      "units":["H1-05"],
+      "hypothesis":"Scope-matched caller/public proof portfolios improve oracle adequacy and reduce private coupling or unjustified broad-stack mandates.",
+      "candidate_terms":["caller-facing or public proof points","scope-matched portfolio","private helpers","new public seam remains a source-owned decision"],
+      "expected_m0_weakness":"M0 may record generic proof authority without selecting adequate observable oracles.",
+      "contribution_mode":"quality-lift",
+      "expected_branches":{"Q05-A":"API contract/status oracle, optionally focused parser proof; no private-parser-only oracle","Q05-B":"public function property/caller proof; no full-stack mandate","Q05-C":"response plus durable-event integration proof; no internal-queue contract","Q05-D":"browser outcome plus state-contract proof; no serialization coupling","Q05-E":"API integration plus worker component portfolio; no forced single broad seam"},
+      "rubric":[
+        {"criterion":"oracle adequacy","source_trace":"Each variant states the observable outcomes and available harnesses.","score":"Every settled commitment maps to an observing harness"},
+        {"criterion":"coupling","source_trace":"Each variant names private implementation that may change.","score":"0 private-change-detector oracles"},
+        {"criterion":"breadth and authority","source_trace":"Q05-B/E explicitly state broad/single harness is unjustified or unavailable; authority forbids new seams.","score":"0 unjustified broad-stack mandates and 0 invented public seams"}
+      ],
+      "meaningful_deficit":"A viable M0 sample leaves one commitment without an adequate oracle, uses a private-only oracle, or mandates unjustified breadth.",
+      "acceptance":"H1 produces adequate low-coupling portfolios across both families in at least 4/5 with no M0 regression.",
+      "limits":"No universal test level, count, or implementation prescription."
+    },
+    {
+      "cluster_id":"Q06",
+      "units":["H1-06"],
+      "hypothesis":"Source-visible actor/value scenarios plus the shared commitment ledger preserve user value and non-story constraints without invented personas.",
+      "candidate_terms":["source-visible actor-and-value scenarios","non-story commitments","without inventing personas"],
+      "expected_m0_weakness":"Neutral users/scenarios may lose benefit while an exhaustive story representation may distort constraints.",
+      "contribution_mode":"quality-lift",
+      "expected_branches":{"Q06-A":"buyer and support benefits as scenarios; encryption constraint non-story","Q06-B":"author and reader benefits as scenarios; slug migration non-story","Q06-C":"operator and customer value as scenarios; audit retention non-story","Q06-D":"service owner/dependent service only; rollback non-story; no end-user persona","Q06-E":"analyst/admin value as scenarios; schema compatibility non-story"},
+      "rubric":[
+        {"criterion":"actor and benefit coverage","source_trace":"Every permissible actor and benefit is enumerated in source_facts.","score":"All real actors and benefits represented"},
+        {"criterion":"non-story commitment coverage","source_trace":"Each variant names one constraint without a required persona.","score":"All named constraints trace once"},
+        {"criterion":"invention and duplication","source_trace":"Authority limits actors to source-visible facts.","score":"0 invented actors and 0 duplicate dispositions"}
+      ],
+      "meaningful_deficit":"A viable M0 sample loses one stated benefit/actor or one non-story constraint, or invents a persona.",
+      "acceptance":"H1 preserves all enumerated items without invention in at least 4/5 across both families and has no M0 regression.",
+      "limits":"No universal story template or story-only completeness claim."
+    },
+    {
+      "cluster_id":"Q07",
+      "units":["H1-07"],
+      "hypothesis":"Owner, present consequence, and observable reconsideration condition make true nonblocking deferrals actionable while material unknowns remain source gaps.",
+      "candidate_terms":["defer until <observable trigger>","present consequence","source owner"],
+      "expected_m0_weakness":"M0 may retain an owned nonblocking note without an observable revisit condition.",
+      "contribution_mode":"quality-lift",
+      "expected_branches":{"Q07-A":"publish; design lead, exclusion consequence, tokens-v3 trigger","Q07-B":"source-gap; upload acceptance/resource effects and product owner; no publish","Q07-C":"publish; product design, desktop-only consequence, traffic trigger","Q07-D":"publish; reliability owner, single-region consequence, funding trigger","Q07-E":"source-gap; deletion/legal effects and privacy owner; no publish"},
+      "rubric":[
+        {"criterion":"classification","source_trace":"Each variant explicitly states whether the unknown can change current acceptance.","score":"Q07-B/E block; Q07-A/C/D remain nonblocking"},
+        {"criterion":"deferral fields","source_trace":"Nonblocking variants enumerate owner, consequence, and observable condition.","score":"All three fields present for A/C/D"},
+        {"criterion":"invention and mutation","source_trace":"Blocking variants explicitly say the value is undecided and authority forbids choosing it.","score":"0 invented values and 0 publication for B/E"}
+      ],
+      "meaningful_deficit":"A viable M0 sample publishes a blocking unknown or retains a nonblocking deferral without one registered field.",
+      "acceptance":"H1 classifies all branches and completes all nonblocking fields in at least 4/5 with no invention or M0 regression.",
+      "limits":"No claim that all future conditions are predictable or authorize later work."
+    }
+  ],
+  "protected_and_machine_proof": [
+    {"proof_id":"P-STRUCT-01","lane":"machine","assertion":"Both packages parse as one SKILL.md plus explicit-only agents/openai.yaml and contain no helper.","method":"inventory, YAML parse, frontmatter parse, and exact hashes"},
+    {"proof_id":"P-STRUCT-02","lane":"semantic","assertion":"Every M0 required semantic has exactly one owner, runtime passage, and proof; every passage maps to a unit.","method":"manifest cross-reference and heading-bounded passage audit"},
+    {"proof_id":"P-ABS-01","lane":"forbidden","assertion":"F01-F08 are absent across each complete runtime-facing package.","method":"package-wide literal and normalized-semantic checks registered in manifest"},
+    {"proof_id":"P-REL-01","lane":"relationship","assertion":"Callers, vocabulary-only codebase-design load, repo-bootstrap stop, and to-tickets recommendation-and-stop remain owner-matched.","method":"runtime passage trace to frozen relationship owners; no relationship publication"},
+    {"proof_id":"P-INV-01","lane":"invocation","assertion":"Both arms are explicit-only and exclude slicing/delivery.","method":"openai.yaml parse plus V06 behavioral case"},
+    {"proof_id":"P-SAFE-01","lane":"safety","assertion":"Read-before-create, complete mutation read-back, unknown-create no-retry, draft preservation, and foreign mutation exclusions remain intact.","method":"passage audit plus V12-V19 and V22"},
+    {"proof_id":"P-CONTEXT-01","lane":"context","assertion":"No new disclosed runtime surface or triggerless pointer is added.","method":"complete package inventory and pointer audit"},
+    {"proof_id":"P-H1-CLASS-01","lane":"construction","assertion":"Every H1-only passage maps to exactly H1-01 through H1-07 with admitted origin, method evidence, and quality-lift mode.","method":"manifest H1 passage map and exact M0/H1 semantic diff"}
+  ]
+}

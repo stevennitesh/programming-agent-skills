@@ -11,6 +11,27 @@ import pytest
 from scripts import install_skills, skill_pack_contract
 
 
+def test_campaign_install_cli_flags_remain_supported(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "install_skills",
+            "--dry-run",
+            "--json",
+            "--skip-global-agents",
+        ],
+    )
+
+    args = install_skills.parse_args()
+
+    assert args.dry_run is True
+    assert args.json is True
+    assert args.skip_global_agents is True
+
+
 def write_source_skill(root: Path, name: str, marker: str) -> None:
     skill = root / "skills/custom" / name
     skill.mkdir(parents=True)
@@ -25,6 +46,85 @@ def write_template(root: Path) -> None:
         "- **Route:** Suggest `$skill-router`.\n",
         encoding="utf-8",
     )
+
+
+def test_dry_run_returns_stable_structured_cohort_and_identities(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / ".agents/skills"
+    write_source_skill(root, "alpha", "v1")
+    write_template(root)
+
+    first = install_skills.install(root, installed, None, dry_run=True)
+
+    assert first["schema_version"] == 1
+    assert first["dry_run"] is True
+    assert first["new"] == ["alpha"]
+    assert first["updated"] == []
+    assert first["retired"] == []
+    assert first["unchanged"] == []
+    assert first["identity_algorithm"] == "skill-tree-v1"
+    assert first["planned_identities"]["alpha"]
+    assert first["resulting_identities"] == {"alpha": None}
+    assert not installed.exists()
+
+    installed_result = install_skills.install(root, installed, None)
+    current = install_skills.install(root, installed, None, dry_run=True)
+
+    assert installed_result["dry_run"] is False
+    assert (
+        installed_result["planned_identities"]
+        == installed_result["resulting_identities"]
+    )
+    assert current["new"] == []
+    assert current["unchanged"] == ["alpha"]
+    assert current["planned_identities"] == current["resulting_identities"]
+
+
+def test_json_cli_preserves_human_output_default(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / ".agents/skills"
+    write_source_skill(root, "alpha", "v1")
+    write_template(root)
+    monkeypatch.setattr(install_skills, "repo_root", lambda: root)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "install_skills",
+            "--dry-run",
+            "--json",
+            "--skip-global-agents",
+            "--skills-dir",
+            str(installed),
+        ],
+    )
+
+    assert install_skills.main() == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["schema_version"] == 1
+    assert payload["new"] == ["alpha"]
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "install_skills",
+            "--dry-run",
+            "--skip-global-agents",
+            "--skills-dir",
+            str(installed),
+        ],
+    )
+    assert install_skills.main() == 0
+    human = capsys.readouterr().out
+    assert human.startswith("Managed skills: 1 in ")
+    assert "New skills: alpha" in human
 
 
 def tree_snapshot(root: Path) -> dict[str, bytes]:

@@ -1,0 +1,164 @@
+{
+  "format": 1,
+  "campaign": "parallel-implement-2026-07-24-prompt4-r2",
+  "authority": "Simulate only from the supplied facts. Do not perform real tracker, Git, worktree, remote, installation, publication, or destructive mutations.",
+  "mutation_boundary": "Read the exact frozen runtime and only the assigned fixture. Write only the assigned disposable capture.",
+  "requested_output": "Return the selected review owner and reason, the complete report disposition before caller admission, the first moment Repair may open, the exact admitted blocker IDs and gates, successor proof and review requirements, and the terminal or resumable state. Cite the supplied fact used for every decision.",
+  "templates": {
+    "ordinary": {
+      "target": {
+        "parent": "P-77-O",
+        "snapshot": "O1",
+        "state": "Implementation is drained, the integration worktree is clean, and identity-matched proof passes.",
+        "type": "ordinary local branch diff",
+        "risk": "ordinary",
+        "risk_evidence": "The target is not a PR, touches no high-risk surface, and the frozen risk record classifies it ordinary."
+      },
+      "pre_admission": {
+        "complete_review_report": [
+          {
+            "id": "F1",
+            "severity": "blocking",
+            "classification": "automatic-in-scope",
+            "evidence": "The review supplies concrete defect evidence and required proof.",
+            "charter_preserving_if_resolved": true
+          },
+          {
+            "id": "F2",
+            "severity": "blocking",
+            "classification": "decision-required",
+            "evidence": "The review requires caller disposition before any correction.",
+            "charter_preserving_if_resolved": true
+          },
+          {
+            "id": "F3",
+            "severity": "advisory",
+            "classification": "advisory",
+            "evidence": "The review marks this nonblocking.",
+            "charter_preserving_if_resolved": null
+          }
+        ],
+        "caller_admission": "absent",
+        "repair_generation_budget_remaining": 1,
+        "successor_review_budget_remaining": 1
+      },
+      "post_decision_admission": {
+        "caller_admission": "The caller newly admits the complete blocking set exactly as {F1,F2}.",
+        "admitted_ids": [
+          "F1",
+          "F2"
+        ],
+        "classifications": {
+          "F1": "automatic-in-scope",
+          "F2": "automatic-in-scope"
+        },
+        "charter_evidence": {
+          "F1": "The admitted remedy stays within the frozen Charter and changes no commitment.",
+          "F2": "The caller-authorized disposition stays within the frozen Charter and changes no commitment."
+        },
+        "repair_generation_budget_remaining": 1,
+        "successor_review_budget_remaining": 1
+      },
+      "successor": {
+        "snapshot": "O2",
+        "target_type": "ordinary local branch diff",
+        "risk": "ordinary",
+        "risk_evidence": "O2 remains the same non-PR, non-high-risk target under the frozen ordinary risk record.",
+        "proof": "Identity-matched proof can run and pass on O2.",
+        "review": "A fresh formal review can judge O2.",
+        "authorized_effects": "Simulation only; no real mutation, publication, installation, or destructive action."
+      }
+    },
+    "high_risk": {
+      "target": {
+        "parent": "P-77-H",
+        "snapshot": "H1",
+        "state": "Implementation is drained, the integration worktree is clean, and identity-matched proof passes.",
+        "type": "local PR",
+        "risk": "bounded high-risk",
+        "risk_evidence": "The frozen risk record identifies a bounded high-risk authentication diff."
+      },
+      "pre_admission": {
+        "complete_review_report": [
+          {
+            "id": "F1",
+            "severity": "blocking",
+            "classification": "automatic-in-scope",
+            "evidence": "The review supplies concrete defect evidence and required proof.",
+            "charter_preserving_if_resolved": true
+          },
+          {
+            "id": "F2",
+            "severity": "blocking",
+            "classification": "decision-required",
+            "evidence": "The review requires caller disposition before any correction.",
+            "charter_preserving_if_resolved": true
+          },
+          {
+            "id": "F3",
+            "severity": "advisory",
+            "classification": "advisory",
+            "evidence": "The review marks this nonblocking.",
+            "charter_preserving_if_resolved": null
+          }
+        ],
+        "caller_admission": "absent",
+        "repair_generation_budget_remaining": 1,
+        "successor_review_budget_remaining": 1
+      },
+      "post_decision_admission": {
+        "caller_admission": "The caller newly admits the complete blocking set exactly as {F1,F2}.",
+        "admitted_ids": [
+          "F1",
+          "F2"
+        ],
+        "classifications": {
+          "F1": "automatic-in-scope",
+          "F2": "automatic-in-scope"
+        },
+        "charter_evidence": {
+          "F1": "The admitted remedy stays within the frozen Charter and changes no commitment.",
+          "F2": "The caller-authorized disposition stays within the frozen Charter and changes no commitment."
+        },
+        "repair_generation_budget_remaining": 1,
+        "successor_review_budget_remaining": 1
+      },
+      "successor": {
+        "snapshot": "H2",
+        "target_type": "local PR",
+        "risk": "bounded high-risk",
+        "risk_evidence": "H2 remains the same local PR with the frozen bounded high-risk authentication classification.",
+        "proof": "Identity-matched proof can run and pass on H2.",
+        "review": "A fresh formal review can judge H2.",
+        "authorized_effects": "Simulation only; no real mutation, publication, installation, or destructive action."
+      }
+    }
+  },
+  "samples": [
+    {
+      "id": "O-01",
+      "family": "ordinary",
+      "template": "ordinary"
+    },
+    {
+      "id": "O-02",
+      "family": "ordinary",
+      "template": "ordinary"
+    },
+    {
+      "id": "O-03",
+      "family": "ordinary",
+      "template": "ordinary"
+    },
+    {
+      "id": "H-01",
+      "family": "high-risk",
+      "template": "high_risk"
+    },
+    {
+      "id": "H-02",
+      "family": "high-risk",
+      "template": "high_risk"
+    }
+  ]
+}

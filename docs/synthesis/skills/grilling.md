@@ -1,12 +1,43 @@
 # Grilling Runtime Design Synthesis
 
-Status: Deploy Prompt 5 complete. Canonical and installed Grilling are byte-identical at tree hash `5c6ab5e504123fdaa79db33fc436f361e8e9383bf028892970a9efee4b54cf63`, and Grilling's experimental package and manifest entry are removed. Canonical Grilling is executable authority; this document authorizes no downstream execution by itself.
+Historical status: Deploy Prompt 5 completed at tree hash
+`5c6ab5e504123fdaa79db33fc436f361e8e9383bf028892970a9efee4b54cf63`.
+A later lean Author pass added one Route gap to Wayfinder and strengthened
+evidence-detour re-entry with the original decision owner, intact gap identity,
+required result, and exact re-entry instruction. The current amendment also
+admits one approved caller-owned conversation while retaining the user's
+decision and confirmation authority. Canonical Grilling is current executable
+authority at tree SHA-256
+`fbde5cb5031866b3ccc78015d8ae210042b74400912e7b1e031e5698c6547c32`.
+Installed parity and fresh wording-efficacy proof are not claimed; later
+campaign-era exact-body and parity statements are historical.
 
-Executable authority is `skills/custom/grilling/SKILL.md` and `skills/custom/grilling/agents/openai.yaml`. `C:\Users\steve\.agents\skills\grilling` is the verified managed distribution copy, never independent authority. The accepted evaluation fixture remains under `docs/validation/evals/grilling-pruning-pre-prune/` as evidence, not runtime.
+Executable authority is `skills/custom/grilling/SKILL.md` and
+`skills/custom/grilling/agents/openai.yaml`. The installed mirror is never
+independent authority. The retired evaluation fixture is
+historical-admission-only.
+
+## Current Runtime Reconciliation
+
+The current lean Author pass keeps the five-part runtime and admits only a
+compact **decision frontier**: ask one highest-leverage unblocked material
+decision, recompute after each answer or fact, and let missing evidence pause
+only dependent branches. It does not adopt frontier batches, question counts,
+durable interview state, or another workflow stage.
+
+When the intended result is a spec source, Grilling now applies readiness as an
+exit test after material exploration. It reports whether the confirmed packet
+is ready, blocked, or not targeting a spec; it does not draft, publish, or
+perform To Spec's final source admission. Grill With Docs preserves that packet
+and now propagates Grilling's existing `Route gap` without reclassifying it.
+
+The historical design and evaluation below remain evidence for the accepted
+candidate at their recorded hashes. They are not proof of these later wording
+changes.
 
 ## Design Verdict
 
-Rebuild the experimental candidate from Matt Pocock's small Grilling primitive, then admit only the local mechanisms needed for bounded questioning, composition, recoverable gaps, and caller return. Grilling remains one implicitly invocable, conversation-only skill whose purpose is to grill until shared understanding is explicitly confirmed. It writes nothing, invokes no evidence owner, chooses no downstream route, and starts no work.
+Rebuild the experimental candidate from Matt Pocock's small Grilling primitive, then admit only the local mechanisms needed for bounded questioning, composition, recoverable gaps, and caller return. Grilling remains one implicitly invocable, conversation-only skill whose purpose is to grill until shared understanding is explicitly confirmed. It writes nothing, invokes no evidence owner, and starts no work; a gap may name exactly one uninvoked owner.
 
 The simplest credible baseline is the complete upstream package at Matt Pocock checkout `ed37663cc5fbef691ddfecd080dff42f7e7e350d`:
 
@@ -217,7 +248,7 @@ Prompt 4 owns fresh no-guidance controls, candidate trials, repeated samples whe
 
 ## Prompt 4 Acceptance And Readiness
 
-Fresh controls and candidate samples are recorded in [`2026-07-21-grilling-post-candidate-behavior-eval.md`](../../validation/transcripts/2026-07-21-grilling-post-candidate-behavior-eval.md). Prompt 4 made two evidence-backed repairs inside admitted mechanisms:
+Fresh controls and candidate samples are recorded in [`2026-07-21-grilling-post-candidate-behavior-eval.md`](../../validation/skills/grilling/evals/EV-grilling-post-candidate-behavior-eval-20260721-01/evidence/2026-07-21-grilling-post-candidate-behavior-eval.md). Prompt 4 made two evidence-backed repairs inside admitted mechanisms:
 
 - repeated non-answers now make decision authority unavailable, closing semantic non-progress from 3/5 to 5/5 candidate compliance; and
 - Gap now maps evidence categories to one uninvoked owner, closing authoritative-source selection from 4/5 to 5/5.

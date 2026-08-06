@@ -1,0 +1,50 @@
+{
+  "$id": "urn:programming-agent-skills:pack-integration-result:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "coverage": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "claim_classes": {"items": {"enum": ["behavioral", "structural"]}, "type": "array", "uniqueItems": true},
+          "gate_id": {"pattern": "^G(0[1-9]|10)$", "type": "string"},
+          "name": {"minLength": 1, "type": "string"},
+          "receipt_ids": {"items": {"type": "string"}, "type": "array", "uniqueItems": true},
+          "registration_ids": {"items": {"type": "string"}, "type": "array", "uniqueItems": true}
+        },
+        "required": ["gate_id", "name", "registration_ids", "receipt_ids", "claim_classes"],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "evidence_class": {"const": "mechanical-only"},
+    "failures": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {"minLength": 1, "type": "string"},
+          "message": {"minLength": 1, "type": "string"}
+        },
+        "required": ["code", "message"],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "invalidated_receipt_ids": {"items": {"type": "string"}, "type": "array", "uniqueItems": true},
+    "owner": {"const": "fresh-composition-epoch"},
+    "parity": {
+      "additionalProperties": false,
+      "properties": {
+        "contract_skills_installed": {"enum": ["match", "mismatch"]},
+        "relationship_index": {"enum": ["match", "mismatch"]}
+      },
+      "required": ["contract_skills_installed", "relationship_index"],
+      "type": "object"
+    },
+    "schema_version": {"const": 1},
+    "status": {"enum": ["blocked", "failed", "stale", "verified"]}
+  },
+  "required": ["schema_version", "status", "evidence_class", "owner", "coverage", "failures", "invalidated_receipt_ids", "parity"],
+  "type": "object"
+}

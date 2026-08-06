@@ -1,0 +1,177 @@
+{
+  "compatibility": {
+    "relationship_index": "docs/synthesis/skill-context-relationships.md"
+  },
+  "fingerprint": {
+    "algorithm": "sha256",
+    "format": "sha256-v1",
+    "pattern": "^sha256-v1:[0-9a-f]{64}$"
+  },
+  "format": 1,
+  "identity_families": [
+    {
+      "name": "composition-epoch",
+      "pattern": "^FCE-[0-9]{8}-[0-9]{2}$"
+    },
+    {
+      "name": "research-card",
+      "pattern": "^RC-[0-9]{4}$"
+    },
+    {
+      "name": "card-claim",
+      "pattern": "^RC-[0-9]{4}-C[0-9]{2}$"
+    },
+    {
+      "name": "source-record",
+      "pattern": "^SRC-[0-9]{4}$"
+    },
+    {
+      "name": "skill-research-packet",
+      "pattern": "^RP-[a-z0-9-]+-[0-9]{8}-[0-9]{2}$"
+    },
+    {
+      "name": "evaluation",
+      "pattern": "^EV-[a-z0-9-]+-[a-z0-9-]+-[0-9]{8}-[0-9]{2}$"
+    },
+    {
+      "name": "migration-entry",
+      "pattern": "^MIG-[0-9]{4}$"
+    }
+  ],
+  "owners": [
+    {
+      "identity_family": "research-card",
+      "information_class": "research-card",
+      "path": "docs/research/skill-pack-composition/cards",
+      "required": true,
+      "route": "docs/research/skill-pack-composition/README.md"
+    },
+    {
+      "identity_family": "source-record",
+      "information_class": "source-record",
+      "path": "docs/research/skill-pack-composition/sources",
+      "required": true,
+      "route": "docs/research/skill-pack-composition/README.md"
+    },
+    {
+      "identity_family": "skill-research-packet",
+      "information_class": "skill-research-packet",
+      "path": "docs/research/skills",
+      "required": true,
+      "route": "docs/research/skills/README.md"
+    },
+    {
+      "information_class": "pack-composition-contract",
+      "path": "docs/synthesis/skill-pack.md",
+      "required": true,
+      "route": "docs/synthesis/README.md"
+    },
+    {
+      "information_class": "per-skill-synthesis",
+      "path": "docs/synthesis/skills",
+      "required": true,
+      "route": "docs/synthesis/README.md"
+    },
+    {
+      "information_class": "fresh-epoch-controller",
+      "path": "docs/synthesis/methods/fresh-composition-epoch.md",
+      "required": true,
+      "route": "docs/synthesis/methods/README.md"
+    },
+    {
+      "information_class": "one-skill-method",
+      "path": "docs/synthesis/methods/deploy-prompts.md",
+      "required": true,
+      "route": "docs/synthesis/methods/README.md"
+    },
+    {
+      "information_class": "shared-validation-contract",
+      "path": "docs/validation/shared",
+      "required": true,
+      "route": "docs/validation/shared/README.md"
+    },
+    {
+      "identity_family": "evaluation",
+      "information_class": "per-skill-validation",
+      "path": "docs/validation/skills",
+      "required": true,
+      "route": "docs/validation/README.md"
+    },
+    {
+      "identity_family": "composition-epoch",
+      "information_class": "pack-integration-validation",
+      "path": "docs/validation/skill-pack",
+      "required": true,
+      "route": "docs/validation/README.md"
+    }
+  ],
+  "privacy": {
+    "forbidden_authority_keys": [
+      "acceptance_decision",
+      "adoption",
+      "h1",
+      "recommendation",
+      "rubric_score"
+    ],
+    "private_ignore": "sources/",
+    "public_unignore": [
+      "!docs/research/skill-pack-composition/sources/",
+      "!docs/research/skill-pack-composition/sources/**"
+    ],
+    "public_sources": "docs/research/skill-pack-composition/sources"
+  },
+  "routes": [
+    {
+      "path": "docs/research/README.md",
+      "targets": [
+        "docs/research/skill-pack-composition/README.md",
+        "docs/research/skills/README.md"
+      ]
+    },
+    {
+      "path": "docs/research/skill-pack-composition/README.md",
+      "targets": [
+        "docs/research/skill-pack-composition/cards",
+        "docs/research/skill-pack-composition/sources"
+      ]
+    },
+    {
+      "path": "docs/research/skills/README.md",
+      "targets": [
+        "docs/research/skills"
+      ]
+    },
+    {
+      "path": "docs/synthesis/README.md",
+      "targets": [
+        "docs/synthesis/skill-pack.md",
+        "docs/synthesis/skills",
+        "docs/synthesis/methods/README.md"
+      ]
+    },
+    {
+      "path": "docs/synthesis/methods/README.md",
+      "targets": [
+        "docs/synthesis/methods/fresh-composition-epoch.md",
+        "docs/synthesis/methods/deploy-prompts.md"
+      ]
+    },
+    {
+      "path": "docs/validation/README.md",
+      "targets": [
+        "docs/validation/shared/README.md",
+        "docs/validation/skills/README.md",
+        "docs/validation/skill-pack/README.md"
+      ]
+    },
+    {
+      "path": "docs/validation/shared/README.md",
+      "targets": [
+        "docs/validation/shared/protocols",
+        "docs/validation/shared/fixtures",
+        "docs/validation/shared/schemas"
+      ]
+    }
+  ],
+  "schema_registry": "docs/validation/shared/schemas/registry.json"
+}

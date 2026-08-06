@@ -5,23 +5,57 @@ description: Triage raw tracker issues and configured external PR requests throu
 
 # Triage
 
-Move raw tracker requests to a maintainer-approved state and handoff. Triage owns classification, verification, shaping, approved state transitions, briefs, and rejected-enhancement memory. Tracker docs own transport, label mappings, the Ready-for-agent contract, and Mutation read-back. `$implement` and `$parallel-implement` own code changes and `implemented` closeout.
+Move raw tracker requests to a maintainer-approved state and handoff. Triage
+owns classification, verification, shaping, approved state transitions, its
+Codex-ready brief and Ready Gate, and rejected-enhancement memory. Tracker docs
+own transport, label mappings, Ready-for-agent state and queries, and Mutation
+read-back. `$implement` and `$parallel-implement` own code changes and
+`implemented` closeout.
 
 ## Spine
 
-1. **Load.** Read `docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md` before tracker access. If either is absent or incompatible with triage, recommend `$repo-bootstrap` and stop. Follow `docs/agents/domain.md` for codebase context and read `docs/agents/engineering-contract.md` before reproduction, checkout, or executable validation. Triage PRs only when the tracker enables them. A named PR bypasses only external-author discovery; a **PR is an issue with attached code**.
+1. **Load.** Read `docs/agents/issue-tracker.md` and
+   `docs/agents/triage-labels.md` before tracker access. If either is absent or
+   incompatible with triage, recommend `$repo-bootstrap` and stop. Follow
+   `docs/agents/domain.md` for codebase context. Read
+   `docs/agents/engineering-contract.md` before Specific Item verification,
+   readiness rendering, checkout, or executable validation. Triage PRs only when
+   the tracker enables them. A named PR bypasses only external-author discovery;
+   a **PR is an issue with attached code**, not a formal code review.
 
 2. **Choose.** Read one branch completely:
 
-   - [ATTENTION-SCAN.md](ATTENTION-SCAN.md) — show incoming work needing maintainer attention.
-   - [SPECIFIC-ITEM.md](SPECIFIC-ITEM.md) — verify, shape, recommend, and apply one outcome.
-   - [QUICK-OVERRIDE.md](QUICK-OVERRIDE.md) — apply an explicitly named state with reduced discovery.
+   - [ATTENTION-SCAN.md](ATTENTION-SCAN.md) — show incoming work needing
+     maintainer attention.
+   - [SPECIFIC-ITEM.md](SPECIFIC-ITEM.md) — verify, shape, recommend, and apply
+     one outcome.
+   - [QUICK-OVERRIDE.md](QUICK-OVERRIDE.md) — apply an explicitly named state
+     with reduced discovery.
 
-   Read [AGENT-BRIEF.md](AGENT-BRIEF.md) only when preparing a `ready-for-agent` or `ready-for-human` brief. Read [OUT-OF-SCOPE.md](OUT-OF-SCOPE.md) only when screening, rejecting, or reconsidering an enhancement.
+   Read [AGENT-BRIEF.md](AGENT-BRIEF.md) only when preparing or reusing a
+   `ready-for-agent` or `ready-for-human` brief. Read
+   [OUT-OF-SCOPE.md](OUT-OF-SCOPE.md) only when screening, rejecting, or
+   reconsidering an enhancement.
 
-3. **Run.** Follow only the selected branch; its helper owns branch-specific discovery, sequence, and completion criterion. Treat valid `$to-tickets` output as ready; re-enter triage only for an explicit state or brief correction.
+3. **Run.** Follow only the selected branch; its helper owns branch-specific
+   discovery, sequence, and completion criterion. Treat valid `$to-tickets`
+   output as ready; re-enter triage only for an explicit state or brief
+   correction.
 
-   For any mutation branch, keep exactly one mapped category role and one mapped state role; surface missing or conflicting roles before mutation. Mutate only an explicitly approved packet; any packet change requires fresh approval. A `ready-for-agent` outcome satisfies the tracker's Ready-for-agent contract and adds verification evidence.
+   For any mutation branch, keep exactly one mapped category role and one mapped
+   state role; surface missing or conflicting roles before mutation. Display
+   one exact packet containing the target identity, roles and mapped labels
+   before and after, complete post or brief, rejected-memory delta, and close
+   state. Mutate only after explicit approval. After that interaction, refresh
+   the item, affected dependents, and local targets; any decision-bearing drift
+   or packet change requires fresh approval. Apply prerequisites and local
+   records before the post, roles, and state; close last. Stop on the first
+   unsafe, failed, or indeterminate operation.
+
+   Before applying `ready-for-agent`, satisfy Triage's Ready Gate with a new
+   brief or an existing brief proved current. Reduced discovery records
+   `maintainer-override` and its residual uncertainty; it never fabricates
+   confirmed verification.
 
    Prefix every posted issue or comment with:
 
@@ -29,4 +63,19 @@ Move raw tracker requests to a maintainer-approved state and handoff. Triage own
    > *This was generated by AI during triage.*
    ```
 
-4. **Prove.** Complete at the selected branch's criterion. An Attention Scan ends after its read-only criterion with tracker state unchanged. A mutation branch ends only after the approved packet is applied, read back, and returned as a triage packet confirming role invariants, disclaimer, required brief or rejected-enhancement record, shaping domain deltas, partial failures, skipped checks, and blockers.
+4. **Prove.** Apply tracker Mutation read-back and reread affected local files.
+   Return exactly one status and stop:
+
+   - `scan-complete` — every Attention Scan bucket was evaluated and nothing
+     mutated;
+   - `decision-required` — one complete packet awaits exact approval;
+   - `mutation-complete` — every approved effect and invariant read back;
+   - `partial` or `blocked` — discovery cannot safely reach a packet; or
+   - `blocked-partial` — some mutation occurred; applied, failed, withheld,
+     and observed effects plus the safest recovery are explicit.
+
+   The triage packet preserves branch and target identity, Source Trace,
+   verification and readiness authority, roles, disposition, packet or applied
+   effects, artifact references, skipped checks, residual uncertainty, and one
+   unstarted next route when applicable. Only `scan-complete` and
+   `mutation-complete` satisfy branch completion.

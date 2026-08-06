@@ -1,0 +1,49 @@
+{
+  "run_id": "VAL-GATEWAY-FIXTURE-001",
+  "issuer_id": "example-industries",
+  "security_id": "EXMPL:XNYS:COMMON",
+  "as_of_date": "2026-08-01",
+  "reporting_currency": "USD",
+  "method": "fcff",
+  "base_scenario": "base",
+  "scenarios": ["base", "downside"],
+  "periods": [
+    {"id": "FY2027", "kind": "forecast", "date": "2027-12-31"}
+  ],
+  "conventions": {"timing": "year_end", "terminal": "perpetual_growth"},
+  "diluted_shares": {
+    "value": 100000000,
+    "unit": "shares",
+    "value_kind": "non_monetary",
+    "currency": null,
+    "date": "2026-08-01",
+    "evidence_class": "reported",
+    "claim_basis": "target_security",
+    "scenario": "base",
+    "source_ref": "filing:example:shares:2026-08-01"
+  },
+  "inputs": {
+    "revenue": {
+      "value": 1200,
+      "unit": "currency",
+      "value_kind": "monetary",
+      "currency": "USD",
+      "period": "FY2027",
+      "evidence_class": "assumed",
+      "claim_basis": "operating",
+      "scenario": "base",
+      "source_ref": "model-lock:revenue-base"
+    },
+    "tax_rate": {
+      "value": 0.21,
+      "unit": "ratio",
+      "value_kind": "non_monetary",
+      "currency": null,
+      "period": "FY2027",
+      "evidence_class": "assumed",
+      "claim_basis": "operating",
+      "scenario": "base",
+      "source_ref": "model-lock:tax-rate-base"
+    }
+  }
+}
