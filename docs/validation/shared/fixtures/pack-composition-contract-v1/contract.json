@@ -195,11 +195,6 @@
       "acceptance_scenario_ids": [
         "PS-001"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "fixture-leaf",
       "completion_condition": "The bounded outcome is complete",
       "contract_order": 1,

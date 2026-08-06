@@ -211,7 +211,6 @@ def validate_contract(contract: object, *, for_freeze: bool = False) -> list[str
     if header.get("status") not in {
         "draft",
         "frozen",
-        "campaign-active",
         "integration-accepted",
     }:
         failures.append("Pack Contract status is invalid")
@@ -238,17 +237,6 @@ def validate_contract(contract: object, *, for_freeze: bool = False) -> list[str
             failures.append("Freeze requires intended_pack_outcome")
         if not contract.get("selected_skills"):
             failures.append("Freeze requires selected skills")
-        initial_campaign_state = {
-            "status": "not-started",
-            "campaign_id": None,
-            "terminal_evidence_pointer": None,
-        }
-        if any(
-            isinstance(skill, dict)
-            and skill.get("campaign_state") != initial_campaign_state
-            for skill in contract.get("selected_skills", [])
-        ):
-            failures.append("Freeze rejects pre-seeded campaign progress")
         if header.get("integration_result") != {
             "decision": None,
             "evidence_pointer": None,
@@ -382,13 +370,6 @@ def contract_fingerprint(contract: dict[str, object]) -> str:
             "evidence_pointer": None,
         }
         header["epoch_lock"] = None
-    for skill in projection.get("selected_skills", []):
-        if isinstance(skill, dict):
-            skill["campaign_state"] = {
-                "status": "not-started",
-                "campaign_id": None,
-                "terminal_evidence_pointer": None,
-            }
     return exact_fingerprint(projection)
 
 
@@ -748,17 +729,15 @@ def campaign_order(contract: dict[str, object]) -> list[str]:
 def contract_slice(
     contract: dict[str, object],
     skill_id: str,
-    *,
-    terminal_evidence: dict[str, str] | None = None,
-    allow_terminal_projection: bool = False,
 ) -> dict[str, object]:
     """Project an immutable skill-local admission packet from a frozen contract."""
 
     header = contract.get("epoch_header")
-    if not isinstance(header, dict) or header.get("status") not in {
-        "frozen",
-        "campaign-active",
-    } or header.get("epoch_lock") is not None:
+    if (
+        not isinstance(header, dict)
+        or header.get("status") != "frozen"
+        or header.get("epoch_lock") is not None
+    ):
         return {"status": "contract-not-frozen"}
     skills = contract.get("selected_skills", [])
     skill = next(
@@ -771,60 +750,11 @@ def contract_slice(
     )
     if skill is None:
         return {"status": "skill-not-selected", "skill_id": skill_id}
-    state = skill.get("campaign_state")
-    if (
-        not allow_terminal_projection
-        and isinstance(state, dict)
-        and state.get("status") in {"active", "terminal"}
-    ):
-        return {
-            "status": "campaign-already-started",
-            "skill_id": skill_id,
-        }
     predecessors = {
         edge.get("predecessor_skill_id")
         for edge in header.get("campaign_proof_graph", [])
         if isinstance(edge, dict) and edge.get("successor_skill_id") == skill_id
     }
-    del terminal_evidence  # External proof strings never establish readiness.
-    skill_by_id = {
-        row.get("skill_id"): row
-        for row in skills
-        if isinstance(row, dict)
-    }
-    missing_predecessors = sorted(
-        predecessor
-        for predecessor in predecessors
-        if not isinstance(skill_by_id.get(predecessor), dict)
-        or not isinstance(
-            skill_by_id[predecessor].get("campaign_state"),  # type: ignore[index]
-            dict,
-        )
-        or skill_by_id[predecessor]["campaign_state"].get("status")  # type: ignore[index]
-        != "terminal"
-        or not isinstance(
-            skill_by_id[predecessor]["campaign_state"].get(  # type: ignore[index]
-                "campaign_id"
-            ),
-            str,
-        )
-        or not skill_by_id[predecessor]["campaign_state"]["campaign_id"].strip()  # type: ignore[index]
-        or not isinstance(
-            skill_by_id[predecessor]["campaign_state"].get(  # type: ignore[index]
-                "terminal_evidence_pointer"
-            ),
-            str,
-        )
-        or not skill_by_id[predecessor]["campaign_state"][  # type: ignore[index]
-            "terminal_evidence_pointer"
-        ].strip()
-    )
-    if missing_predecessors:
-        return {
-            "status": "campaign-not-ready",
-            "skill_id": skill_id,
-            "missing_predecessor_skill_ids": missing_predecessors,
-        }
     capabilities = [
         deepcopy(row)
         for row in contract.get("capabilities", [])
@@ -885,12 +815,6 @@ def contract_slice(
             or scenario.get("expected_owner_skill_id") == skill_id
         )
     ]
-    skill_projection = deepcopy(skill)
-    skill_projection["campaign_state"] = {
-        "status": "not-started",
-        "campaign_id": None,
-        "terminal_evidence_pointer": None,
-    }
     projection = {
         "slice_id": f"{epoch_id}:r{revision}:{skill_id}",
         "composition_epoch_id": epoch_id,
@@ -901,7 +825,7 @@ def contract_slice(
         "source_pointers": deepcopy(header.get("source_pointers")),
         "acceptance_scenarios": scenarios,
         "load_budget_policy": deepcopy(header.get("load_budget_policy")),
-        "skill": skill_projection,
+        "skill": deepcopy(skill),
         "capabilities": capabilities,
         "relationships": relationships,
         "issues": issues,
@@ -934,33 +858,7 @@ def contract_blueprint(
         and edge.get("successor_skill_id") == skill_id
         and isinstance(edge.get("predecessor_skill_id"), str)
     )
-    projection_state = deepcopy(contract)
-    skills = projection_state.get("selected_skills", [])
-    if not isinstance(skills, list):
-        return {"status": "skill-not-selected", "skill_id": skill_id}
-    selected = False
-    for skill in skills:
-        if not isinstance(skill, dict):
-            continue
-        selected_id = skill.get("skill_id")
-        if selected_id == skill_id:
-            selected = True
-            skill["campaign_state"] = {
-                "status": "not-started",
-                "campaign_id": None,
-                "terminal_evidence_pointer": None,
-            }
-        elif selected_id in predecessors:
-            skill["campaign_state"] = {
-                "status": "terminal",
-                "campaign_id": f"blueprint-predecessor:{selected_id}",
-                "terminal_evidence_pointer": (
-                    f"blueprint://predecessor/{selected_id}"
-                ),
-            }
-    if not selected:
-        return {"status": "skill-not-selected", "skill_id": skill_id}
-    projected = contract_slice(projection_state, skill_id)
+    projected = contract_slice(contract, skill_id)
     if projected.get("status") != "contract-slice":
         return projected
     return {
@@ -971,77 +869,6 @@ def contract_blueprint(
     }
 
 
-def campaign_admission_slice(
-    contract: dict[str, object],
-    skill_id: str,
-    *,
-    allow_terminal_projection: bool = False,
-) -> dict[str, object]:
-    """Derive the exact five-field campaign envelope from one canonical slice."""
-
-    canonical = contract_slice(
-        contract,
-        skill_id,
-        allow_terminal_projection=allow_terminal_projection,
-    )
-    if canonical.get("status") != "contract-slice":
-        return canonical
-    projection = canonical["slice"]
-    assert isinstance(projection, dict)
-    selected_skill = projection.get("skill")
-    if not isinstance(selected_skill, dict):
-        raise PackContractError("canonical slice has no selected skill")
-    canonical_name = selected_skill.get("canonical_name")
-    canonical_slice_id = projection.get("slice_id")
-    if not isinstance(canonical_name, str) or not canonical_name:
-        raise PackContractError("canonical slice selected skill has no name")
-    if not isinstance(canonical_slice_id, str) or not canonical_slice_id:
-        raise PackContractError("canonical slice has no identity")
-
-    def identities(rows: object, field: str) -> list[str]:
-        if not isinstance(rows, list):
-            raise PackContractError(f"canonical slice {field} rows are invalid")
-        values = [
-            row.get(field)
-            for row in rows
-            if isinstance(row, dict)
-        ]
-        if len(values) != len(rows) or not all(
-            isinstance(value, str) and value for value in values
-        ):
-            raise PackContractError(f"canonical slice {field} rows are invalid")
-        return sorted(set(values))
-
-    envelope = {
-        "slice_id": f"{canonical_slice_id}:{canonical_name}",
-        "selected_capability_ids": identities(
-            projection.get("capabilities"),
-            "capability_id",
-        ),
-        "selected_relationship_ids": identities(
-            projection.get("relationships"),
-            "relationship_id",
-        ),
-        "selected_scenario_ids": identities(
-            projection.get("acceptance_scenarios"),
-            "scenario_id",
-        ),
-        "hard_proof_predecessor_ids": sorted(
-            {
-                edge["predecessor_skill_id"]
-                for edge in projection.get("campaign_proof_edges", [])
-                if isinstance(edge, dict)
-                and edge.get("successor_skill_id") == skill_id
-                and isinstance(edge.get("predecessor_skill_id"), str)
-                and edge["predecessor_skill_id"]
-            }
-        ),
-    }
-    return {
-        "status": "campaign-admission-slice",
-        "slice": envelope,
-        "slice_fingerprint": exact_fingerprint(envelope),
-    }
 
 
 def _descendants(contract: dict[str, object], roots: Iterable[str]) -> set[str]:
@@ -1080,7 +907,6 @@ def assess_amendment(
         }
     if current_header.get("status") not in {
         "frozen",
-        "campaign-active",
         "integration-accepted",
     }:
         return {
@@ -1378,7 +1204,7 @@ def validate_result(contract: dict[str, object]) -> dict[str, object]:
     if decision is None and pointer is None:
         if (
             isinstance(header, dict)
-            and header.get("status") in {"draft", "frozen", "campaign-active"}
+            and header.get("status") in {"draft", "frozen"}
             and header.get("epoch_lock") is None
         ):
             return {"status": "result-pending"}
@@ -1396,30 +1222,18 @@ def validate_result(contract: dict[str, object]) -> dict[str, object]:
             "integration-accepted"
         ):
             failures.append("accepted result requires integration-accepted status")
-        for skill in contract.get("selected_skills", []):
-            state = skill.get("campaign_state") if isinstance(skill, dict) else None
-            if (
-                not isinstance(state, dict)
-                or state.get("status") != "terminal"
-                or not isinstance(state.get("campaign_id"), str)
-                or not state["campaign_id"].strip()
-                or not isinstance(state.get("terminal_evidence_pointer"), str)
-                or not state["terminal_evidence_pointer"].strip()
-            ):
-                failures.append("accepted result requires all terminal campaign proof")
-                break
         if failures:
             return {"status": "result-invalid", "failures": failures}
     elif (
         not isinstance(header, dict)
-        or header.get("status") not in {"frozen", "campaign-active"}
+        or header.get("status") != "frozen"
         or header.get("epoch_lock") is not None
     ):
         return {
             "status": "result-invalid",
             "failures": [
                 "blocked or needs-more-evidence result requires an unlocked "
-                "frozen or campaign-active contract"
+                "frozen contract"
             ],
         }
     return {"status": "result-valid", "decision": decision}

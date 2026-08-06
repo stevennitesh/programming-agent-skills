@@ -1,84 +1,60 @@
-# Deploy Campaigns Advance Through Proof Gates
+# Deploy Campaigns Advance Through Proof Obligations
 
-The mandatory Prompt 1, Research, Prompts 2 through 5, and Pruning sequence
-made lifecycle completion a proxy for proof. In the Repo Bootstrap campaign,
-research found no hypothesis, pruning found no material cut, and thirty-one
-behavioral dispatches ran before the complete integration suite rejected the
-candidate on two deterministic compatibility obligations. Controller schema
-errors also consumed candidate repair authority before semantic repair was
-needed.
+The mandatory Prompt-stage lifecycle made unit completion a proxy for proof.
+Its later manifest controllers persisted semantic progress, retained legacy
+compatibility paths, and could dispatch behavioral work before complete
+deterministic integration proof.
 
 **Status**: accepted
 
-A Deploy Campaign advances one skill through four proof gates:
+A Deploy Campaign uses one controllerless method with four ordered proof
+obligations:
 
-1. **Contract Lock** independently binds current intent, authority,
-   dependencies, compatibility obligations, and the complete identities of
-   any prior evidence proposed for reuse. Research runs only for a
-   decision-relevant method, concept, hypothesis, or source-evidence gap that
-   current applicable evidence does not close.
-2. **Candidate Lock** materializes the exact candidate and runs complete
-   deterministic, schema, relationship, compatibility, and integration proof
-   before behavioral sampling or canonical mutation.
-3. **Behavioral Proof** runs only for claims that deterministic or real-state
-   proof cannot establish. M0 viability and failure behavior use one
-   high-fidelity scenario per distinct decision mechanism and expand only for
-   ambiguity, variance, or failure. Comparative H1 wording claims retain at
-   least five M0 controls and proceed to H1 only when the registered control
-   deficit appears. Claims about mutation, preservation, read-back, partial
-   failure, or recovery exercise real disposable state.
-4. **Release** performs a cheap cut scan, runs behavioral pruning proof only
-   for a concrete material cut, promotes the exact locked candidate, and
-   verifies installation cohort and parity. With no material cut, P1 equals
-   V1 by exact identity.
+1. **Contract Lock** binds current intent, authority, callers, relationships,
+   compatibility, scope, delivery authority, and any decision-relevant research
+   gap from the issue, specification, and applicable current authority record.
+2. **Candidate Lock** freezes exact candidate bytes and completes every
+   applicable structural, relationship, compatibility,
+   canonical-production-caller, and integration check before behavioral
+   dispatch, promotion, or installation.
+3. **Behavioral Proof** is conditional. Exact wording claims use the existing
+   `writing-great-skills/BEHAVIOR-EVALS.md` owner. Effect, preservation,
+   failure, and recovery claims use real disposable state. Deterministic claims
+   receive no behavioral samples.
+4. **Release** performs a cheap cut scan, proves only a concrete material cut,
+   and promotes only the exact tested candidate. Installation and Git delivery
+   remain with their existing authorities.
 
-M0, H1, V1, and P1 remain useful conditional evidence identities. They are not
-mandatory lifecycle stages. Exact prior evidence may satisfy a gate only after
-Contract Lock validates its complete claim, runtime, fixture, protocol, model,
-host, configuration, tools, authority, environment, rubric, and proof-lane
-identity. Missing behavioral proof routes to Behavioral Proof, not research.
+The obligations govern reasoning and proof. They are not persisted semantic
+lifecycle states. A deterministic failure produces zero behavioral dispatch
+and zero promotion. A deterministic no-change result produces zero research,
+behavioral sampling, and pruning.
 
-Candidate semantic or runtime changes alone consume semantic repair
-generations. Controller, schema, fixture, and pre-execution recovery earns no
-evidence credit, invalidates affected mechanical work, and blocks when it
-cannot close without consuming candidate repair authority.
+There is no active campaign manifest, controller, schema, profile, reader,
+status, resume, repair, release, migration, rollback, or compatibility route.
+Historical campaign artifacts remain byte-unchanged inert records; current
+tooling neither interprets nor mutates them.
 
-Existing campaign manifests and receipts remain immutable historical records.
-A gate-schema campaign explicitly supersedes its predecessor and may import
-only evidence admitted by current Contract Lock. The replacement design uses a
-new parent specification and replacement tickets; completed prior work remains
-historical, and affected unfinished work is marked superseded only after the
-new durable owners are published and read back.
-
-ADR-0008 remains authoritative for the separation between mechanical evidence
-and semantic decisions. ADR-0009 remains authoritative for pack composition,
-historical-by-default evidence, and Fresh Composition Epoch boundaries; this
-decision supersedes mandatory per-skill research and fixed unit sequencing.
+ADR-0009 remains authoritative for pack composition and historical-by-default
+evidence. This decision supersedes ADR-0008's campaign automation design and
+all mandatory Prompt-stage routing while preserving historical records of
+those decisions.
 
 ## Considered Options
 
-- Keep the mandatory units and optimize within them. Rejected because
-  no-change research, no-op pruning, repeated verification, and per-unit
-  artifacts remain lifecycle obligations even when they cannot change the
-  decision.
-- Reuse all prior evidence by default. Rejected because unverified source,
-  runtime, model, fixture, environment, and judgment drift would bypass
-  Contract Lock.
-- Automate semantic judgment and gate progression. Rejected because evidence
-  sufficiency, research applicability, behavioral scoring, pruning, and
-  promotion remain campaign-owner decisions.
+- Retain the old controller as a compatibility path. Rejected because the hard
+  switch would remain dual-routed and historical state would stay executable.
+- Persist the four obligations as a new manifest or state machine. Rejected
+  because they are proof responsibilities, not semantic lifecycle state.
+- Require research, sampling, or pruning on every run. Rejected because each
+  is useful only when an observed decision or claim triggers it.
 
 ## Consequences
 
-- `CONTEXT.md`, Deploy Campaign prompts, controller schema and status,
-  behavioral fixtures, and the durable parent specification must converge on
-  the four gates.
-- Historical manifests are readable and safely releasable but are never
-  rewritten into the new schema.
-- Research, behavioral sampling, and pruning become evidence-triggered work
-  rather than mandatory units.
-- Candidate integration proof runs before expensive behavioral sampling and
-  before canonical mutation.
-- A read-only shadow replay across runtime-no-change, M0-only, H1, pruning,
-  drift, recovery, and promotion outcomes must show equal or stronger terminal
-  decisions with less work before the new controller replaces the old one.
+- The active method and its callers expose one four-obligation path.
+- Candidate-facing deterministic and integration proof precedes all behavioral
+  dispatch and canonical promotion.
+- Wording efficacy remains owned by the existing conditional behavioral
+  protocol; real effects require disposable state.
+- Old campaign files may still be read by humans as history, but no supported
+  command consumes them.

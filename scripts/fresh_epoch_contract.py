@@ -97,7 +97,7 @@ REQUIRED_OWNERS = {
         "route": "docs/synthesis/methods/README.md",
         "required": True,
     },
-    "one-skill-controller": {
+    "one-skill-method": {
         "path": "docs/synthesis/methods/deploy-prompts.md",
         "route": "docs/synthesis/methods/README.md",
         "required": True,
@@ -121,10 +121,6 @@ REQUIRED_OWNERS = {
     },
 }
 REQUIRED_SCHEMAS = {
-    ("deploy-campaign-manifest", 2): (
-        "docs/validation/shared/schemas/"
-        "deploy-campaign-manifest-v2.schema.json"
-    ),
     ("exact-content-fingerprint", 1): (
         "docs/validation/shared/schemas/"
         "exact-content-fingerprint-v1.schema.json"
@@ -296,13 +292,6 @@ def _validate_migration_row(
         or re.fullmatch(r"sha256-v1:[0-9a-f]{64}", fingerprint) is None
     ):
         failures.append(f"Invalid source fingerprint: {migration_id}")
-    if (
-        row.get("artifact_class") == "campaign"
-        and source.get("identity") is None
-    ):
-        failures.append(
-            f"Campaign member has no applicable identity: {migration_id}"
-        )
 
     axes = (
         ("migration_disposition", MIGRATION_DISPOSITIONS),
@@ -525,17 +514,6 @@ def _repository_fingerprint(path: Path) -> str | None:
 
 def _artifact_identity(path: Path) -> str | None:
     try:
-        if path.name == "manifest.json":
-            payload = json.loads(path.read_text(encoding="utf-8"))
-            campaign = payload.get("campaign") if isinstance(payload, dict) else None
-            if isinstance(campaign, dict):
-                skill = campaign.get("skill")
-                epoch = campaign.get("epoch")
-                if isinstance(skill, str) and isinstance(epoch, str):
-                    return f"campaign:{skill}:{epoch}"
-                campaign_id = campaign.get("id")
-                if isinstance(campaign_id, str):
-                    return f"campaign:{campaign_id}"
         if path.suffix == ".json":
             payload = json.loads(path.read_text(encoding="utf-8"))
             if isinstance(payload, dict):
@@ -561,7 +539,6 @@ def _artifact_class(relative: str, state: str) -> str:
         (".archive/docs/", "historical-documentation"),
         ("docs/research/", "research"),
         ("docs/synthesis/", "synthesis"),
-        ("docs/validation/campaigns/", "campaign"),
         ("docs/validation/evals/", "evaluation"),
         ("docs/validation/transcripts/", "validation-transcript"),
         ("docs/validation/", "validation"),
@@ -639,21 +616,6 @@ def _migration_plan(
             "docs/research/skills/<owner-gap>/<pending-packet-id>.md",
             ["issue-34-current-to-target-mapping"],
         )
-    if relative.startswith("docs/validation/campaigns/"):
-        parts = PurePosixPath(relative).parts
-        epoch = parts[3] if len(parts) > 3 else "<pending-epoch>"
-        skill = epoch.rsplit("-", 3)[0] if "-" in epoch else "<owner-gap>"
-        suffix = "/".join(parts[4:])
-        target = f"docs/validation/skills/{skill}/campaigns/{epoch}"
-        if suffix:
-            target += f"/{suffix}"
-        return (
-            "move",
-            f"docs/validation/skills/{skill}/README.md",
-            None,
-            target,
-            ["issue-34-current-to-target-mapping"],
-        )
     if relative.startswith(("docs/validation/evals/", "docs/validation/transcripts/")):
         return (
             "owner-gap",
@@ -710,7 +672,6 @@ def _current_authority(relative: str) -> bool:
         or relative.startswith("docs/synthesis/methods/")
         or relative
         in {
-            "scripts/campaign_artifacts.py",
             "scripts/install_skills.py",
             "scripts/skill_pack_contract.py",
             "scripts/validate_skills.py",
@@ -760,14 +721,7 @@ def _container_identities(
     public_paths: list[str],
 ) -> dict[str, str]:
     identities: dict[str, str] = {}
-    for relative in public_paths:
-        if (
-            relative.startswith("docs/validation/campaigns/")
-            and PurePosixPath(relative).name == "manifest.json"
-        ):
-            identity = _artifact_identity(root / PurePosixPath(relative))
-            if identity is not None:
-                identities[PurePosixPath(relative).parent.as_posix()] = identity
+    del root, public_paths
     return identities
 
 
@@ -783,6 +737,15 @@ def _container_identity(
     return None
 
 
+def _historical_campaign_path(relative: str) -> bool:
+    path = PurePosixPath(relative)
+    return relative.startswith("docs/validation/campaigns/") or (
+        len(path.parts) >= 5
+        and path.parts[:3] == ("docs", "validation", "skills")
+        and path.parts[4] == "campaigns"
+    )
+
+
 def build_migration_control(
     root: Path,
     *,
@@ -796,6 +759,15 @@ def build_migration_control(
 ) -> tuple[dict[str, object], dict[str, object], dict[str, object]]:
     """Build deterministic public control and private ignored sidecar payloads."""
 
+    public_paths = [
+        path for path in public_paths if not _historical_campaign_path(path)
+    ]
+    private_paths = [
+        path for path in private_paths if not _historical_campaign_path(path)
+    ]
+    reference_paths = [
+        path for path in reference_paths if not _historical_campaign_path(path)
+    ]
     public_states = public_states or {}
     private_states = private_states or {}
     head_paths = head_paths or set()
@@ -1433,25 +1405,6 @@ def _validate_compatibility(
     if not isinstance(compatibility, dict):
         failures.append("Fresh-epoch compatibility must be an object.")
         return
-    versions = compatibility.get("campaign_manifest_versions")
-    if versions != [1, 2]:
-        failures.append(
-            "Fresh-epoch compatibility must preserve manifest version 1 "
-            "and admit version 2."
-        )
-
-    fixture = _record_path(
-        compatibility.get("legacy_fixture"),
-        failures,
-        context="legacy manifest fixture",
-    )
-    if fixture is not None:
-        manifest = _read_json(root / fixture, failures, "legacy campaign manifest")
-        if isinstance(manifest, dict) and manifest.get("schema_version") != 1:
-            failures.append(
-                f"Legacy campaign manifest requires schema version 1: {fixture}"
-            )
-
     relationship_index = _record_path(
         compatibility.get("relationship_index"),
         failures,

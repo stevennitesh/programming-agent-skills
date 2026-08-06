@@ -14,7 +14,6 @@ from pathlib import Path
 from jsonschema import Draft202012Validator
 
 from scripts import (
-    campaign_artifacts,
     install_skills,
     pack_contract,
     skill_pack_contract,
@@ -66,13 +65,12 @@ def create_manifest() -> dict[str, object]:
             "installed_pack": None,
             "relationship_index": None,
             "relationship_projection": [],
-            "campaigns": [],
         },
         "registrations": [],
         "receipts": [],
         "invalidations": [],
         "parity": {
-            "contract_campaigns_installed": "pending",
+            "contract_skills_installed": "pending",
             "relationship_index": "pending",
         },
     }
@@ -371,7 +369,7 @@ def _identity_failures(
         or header.get("contract_revision") != contract_pointer.get("revision")
         or header.get("composition_epoch_id")
         != identities.get("composition_epoch_id")
-        or header.get("status") not in {"frozen", "campaign-active"}
+        or header.get("status") != "frozen"
         or header.get("integration_result")
         != {"decision": None, "evidence_pointer": None}
         or header.get("epoch_lock") is not None
@@ -385,186 +383,6 @@ def _identity_failures(
     selected = [
         row for row in contract.get("selected_skills", []) if isinstance(row, dict)
     ]
-    selected_by_id = {str(row.get("skill_id")): row for row in selected}
-    campaign_rows = identities.get("campaigns")
-    if not isinstance(campaign_rows, list):
-        campaign_rows = []
-    campaign_ids = [
-        str(row.get("skill_id"))
-        for row in campaign_rows
-        if isinstance(row, dict)
-    ]
-    if len(campaign_ids) != len(set(campaign_ids)):
-        failures.append(
-            {
-                "code": "campaign-duplicate",
-                "message": "Campaign identities contain a duplicate skill ID",
-            }
-        )
-    campaign_by_id = {
-        str(row.get("skill_id")): row
-        for row in campaign_rows
-        if isinstance(row, dict)
-    }
-    if set(campaign_by_id) != set(selected_by_id):
-        failures.append(
-            {
-                "code": "campaign-coverage",
-                "message": "Campaign identities do not exactly cover selected skills",
-            }
-        )
-    for skill_id, selected_skill in selected_by_id.items():
-        row = campaign_by_id.get(skill_id)
-        state = selected_skill.get("campaign_state")
-        if not isinstance(row, dict) or not isinstance(state, dict):
-            continue
-        name = selected_skill.get("canonical_name")
-        expected_campaign_pointer = state.get("terminal_evidence_pointer")
-        expected_campaign_path = (
-            f"docs/validation/skills/{name}/campaigns/"
-            f"{row.get('campaign_id')}/manifest.json"
-        )
-        if (
-            state.get("status") != "terminal"
-            or state.get("campaign_id") != row.get("campaign_id")
-            or row.get("canonical_name") != name
-            or row.get("contract_revision") != header.get("contract_revision")
-            or not isinstance(row.get("manifest"), dict)
-            or row["manifest"].get("path") != expected_campaign_pointer
-            or expected_campaign_pointer != expected_campaign_path
-        ):
-            failures.append(
-                {
-                    "code": "campaign-state",
-                    "message": f"{skill_id} campaign state or revision is mixed",
-                }
-            )
-            continue
-        try:
-            campaign_path, _ = _read_pointer(
-                row.get("manifest"),
-                root=root,
-                label=f"{skill_id} campaign manifest",
-            )
-            campaign = campaign_artifacts.read_campaign_manifest(campaign_path)
-        except (OSError, ValueError, json.JSONDecodeError) as error:
-            failures.append(
-                {"code": "campaign-manifest", "message": f"{skill_id}: {error}"}
-            )
-            continue
-        campaign_record = campaign.get("campaign")
-        campaign_contract = campaign.get("contract")
-        semantic = campaign.get("semantic")
-        mechanical = campaign.get("mechanical")
-        if not all(
-            isinstance(value, dict)
-            for value in (campaign_record, campaign_contract, semantic, mechanical)
-        ):
-            failures.append(
-                {"code": "campaign-manifest", "message": f"{skill_id} is malformed"}
-            )
-            continue
-        assert isinstance(campaign_record, dict)
-        assert isinstance(campaign_contract, dict)
-        assert isinstance(semantic, dict)
-        assert isinstance(mechanical, dict)
-        pack_pointer = campaign_contract.get("pack_contract")
-        slice_pointer = campaign_contract.get("slice")
-        derived_slice = pack_contract.campaign_admission_slice(
-            contract,
-            skill_id,
-            allow_terminal_projection=True,
-        )
-        derived_envelope = derived_slice.get("slice")
-        artifact_rows = mechanical.get("artifact_identities")
-        artifact_map = {
-            value.get("name"): value.get("fingerprint")
-            for value in artifact_rows
-            if isinstance(value, dict)
-        } if isinstance(artifact_rows, list) else {}
-        if (
-            campaign.get("schema_version") != 2
-            or campaign_record.get("id") != row.get("campaign_id")
-            or campaign_record.get("skill") != name
-            or campaign_record.get("composition_epoch_id")
-            != identities.get("composition_epoch_id")
-            or not isinstance(pack_pointer, dict)
-            or pack_pointer.get("revision") != str(header.get("contract_revision"))
-            or pack_pointer.get("fingerprint") != expected_semantic
-            or not isinstance(slice_pointer, dict)
-            or not isinstance(derived_envelope, dict)
-            or slice_pointer.get("id") != derived_envelope.get("slice_id")
-            or slice_pointer.get("fingerprint")
-            != derived_slice.get("slice_fingerprint")
-            or row.get("slice_fingerprint")
-            != derived_slice.get("slice_fingerprint")
-            or campaign_contract.get("selected_capability_ids")
-            != derived_envelope.get("selected_capability_ids")
-            or campaign_contract.get("selected_relationship_ids")
-            != derived_envelope.get("selected_relationship_ids")
-            or campaign_contract.get("selected_scenario_ids")
-            != derived_envelope.get("selected_scenario_ids")
-            or campaign_contract.get("proof_predecessors")
-            != derived_envelope.get("hard_proof_predecessor_ids")
-            or semantic.get("terminal_token") != "campaign-complete"
-            or semantic.get("lifecycle") != campaign_artifacts.FRESH_TERMINAL_LIFECYCLE
-            or mechanical.get("evidence_state") != "current"
-            or artifact_map.get("canonical-p1")
-            != row.get("canonical_p1_fingerprint")
-            or artifact_map.get("installed-p1")
-            != row.get("installed_p1_fingerprint")
-            or mechanical.get("parity")
-            != {
-                "canonical_installed": "match",
-                "relationship_ids": sorted(
-                    relationship.get("relationship_id")
-                    for relationship in contract.get("relationships", [])
-                    if isinstance(relationship, dict)
-                    and skill_id
-                    in {
-                        relationship.get("caller_skill_id"),
-                        relationship.get("target_skill_id"),
-                        relationship.get("resume_owner_skill_id"),
-                        relationship.get("combined_exit_owner_skill_id"),
-                    }
-                ),
-            }
-        ):
-            failures.append(
-                {
-                    "code": "campaign-identity",
-                    "message": f"{skill_id} terminal campaign identity is mixed",
-                }
-            )
-        canonical_path = root / "skills/custom" / str(name)
-        try:
-            skill_pack_contract.reject_unsafe_redirect(
-                installed_root,
-                "installed skill pack",
-            )
-            canonical_fp = (
-                "sha256-v1:" + install_skills.skill_tree_hash(canonical_path)
-            )
-            installed_fp = (
-                "sha256-v1:"
-                + install_skills.skill_tree_hash(installed_root / str(name))
-            )
-        except (OSError, ValueError) as error:
-            failures.append(
-                {"code": "installed-identity", "message": f"{skill_id} installed: {error}"}
-            )
-        else:
-            if (
-                canonical_fp != row.get("canonical_p1_fingerprint")
-                or installed_fp != row.get("installed_p1_fingerprint")
-                or canonical_fp != installed_fp
-            ):
-                failures.append(
-                    {
-                        "code": "installed-identity",
-                        "message": f"{skill_id} canonical and installed P1 are mixed",
-                    }
-                )
     installed_record = identities.get("installed_pack")
     if isinstance(installed_record, dict):
         try:
@@ -766,7 +584,7 @@ def _return(
         "invalidated_receipt_ids": invalidated or [],
         "parity": parity
         or {
-            "contract_campaigns_installed": "mismatch",
+            "contract_skills_installed": "mismatch",
             "relationship_index": "mismatch",
         },
     }
@@ -883,8 +701,6 @@ def _run_registration(
                     bool(row.get("completion_condition"))
                     and bool(row.get("failure_return"))
                     and bool(row.get("return_packet"))
-                    and isinstance(row.get("campaign_state"), dict)
-                    and row["campaign_state"].get("status") == "terminal"
                     for row in skills
                 ),
             )
@@ -1395,7 +1211,7 @@ def verify_integration(
         gate["receipt_ids"] = sorted(set(gate["receipt_ids"]))  # type: ignore[arg-type]
         gate["claim_classes"] = sorted(set(gate["claim_classes"]))  # type: ignore[arg-type]
     parity = {
-        "contract_campaigns_installed": "match",
+        "contract_skills_installed": "match",
         "relationship_index": "match",
     }
     manifest["parity"] = deepcopy(parity)

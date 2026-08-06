@@ -47,15 +47,13 @@ context loaded, affected capabilities, ordering impact, and required proofs.
    nodes, order leaf, executable aggregate, then router; use contract order and
    stable skill ID as tie breakers. Emit one immutable fingerprinted blueprint
    for every selected skill, including its predecessor IDs; a blueprint proves
-   projection only and never proves campaign readiness.
-5. For each ready node, issue its canonical immutable contract slice to
-   the one-skill controller at
-   `docs/synthesis/methods/deploy-prompts.md`. That controller runs exactly one
-   skill and returns its terminal evidence pointer. Admission recomputes the
-   canonical slice and requires exact terminal predecessor evidence; a stored
-   blueprint cannot satisfy that gate. The controller neither chooses nor
-   schedules a successor.
-6. After all required terminal packets exist, run the pack integration
+   projection only and never proves delivery readiness.
+5. For each ready node, issue its canonical immutable contract slice to the
+   one-skill method at `docs/synthesis/methods/deploy-prompts.md`. Its Contract
+   Lock consumes the slice as authority and its Return reports exact candidate
+   and proof identities without persisting campaign progress. The method
+   neither chooses nor schedules a successor.
+6. After all required Returns exist, run the pack integration
    scenarios and load-budget checks. Validators report evidence only. The
    epoch owner records `integration-accepted`, `needs-more-evidence`, or
    `blocked` with an evidence pointer.
@@ -71,7 +69,7 @@ context loaded, affected capabilities, ordering impact, and required proofs.
 | Contract absent | Create an inactive marker-bounded draft; return `contract-draft` |
 | Draft incomplete or invalid | Return exact gaps; do not freeze |
 | Contract frozen | Return deterministic order, all immutable blueprints, and the first admission-ready slice |
-| Campaign active | Admit only dependency-ready frozen slices; collect terminal pointers |
+| Per-skill work active | Issue only dependency-ready frozen slices; collect exact Returns outside the Pack Contract |
 | Semantic amendment proposed | Require revision plus one; return `behavior-decision-gap` and affected stale proof IDs |
 | Contract incompatible | Return `contract-incompatible`; do not infer a repair |
 | Integration evidence incomplete | Return `needs-more-evidence` or `blocked` for owner recording |
@@ -86,5 +84,5 @@ proof remains reusable by exact identity.
 
 The epoch completes only when the owner has recorded a valid result and, for an
 accepted result, an epoch Lock with its evidence pointer. Return the epoch ID,
-contract revision and fingerprint, ordered per-skill terminal pointers,
+contract revision and fingerprint, ordered per-skill proof Returns,
 integration-result pointer, Lock pointer when applicable, and cleanup handoff.

@@ -1,12 +1,12 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import runpy
 from pathlib import Path
 
 from scripts import (
-    campaign_artifacts,
     pack_contract,
     skill_pack_contract,
     validate_skills,
@@ -15,6 +15,19 @@ from scripts import (
 
 ROOT = Path(__file__).resolve().parents[1]
 CUSTOM = ROOT / "skills/custom"
+
+
+def exact_tree_hash(directory: Path) -> str:
+    files = [
+        (name, content)
+        for name, (kind, content) in skill_pack_contract.tree_entries(directory).items()
+        if kind == "file"
+    ]
+    digest = hashlib.sha256()
+    for name, content in sorted(files, key=lambda item: item[0].encode("utf-8")):
+        file_sha256 = hashlib.sha256(content).hexdigest()
+        digest.update(f"{name}\t{len(content)}\t{file_sha256}\n".encode("utf-8"))
+    return digest.hexdigest()
 
 
 def implicit_policy(skill: Path) -> bool:
@@ -413,7 +426,7 @@ def assert_repo_bootstrap_semantic_contract(
     profile: str,
 ) -> None:
     assert (
-        campaign_artifacts.campaign_tree_hash(package_root)["sha256"]
+        exact_tree_hash(package_root)
         == expected_tree_sha256
     )
     bootstrap = (package_root / "SKILL.md").read_text(encoding="utf-8")
@@ -2558,7 +2571,7 @@ def test_to_spec_canonical_is_lean_and_experimental_evidence_stays_frozen() -> N
     )
 
     experimental = ROOT / "skills/experimental/to-spec"
-    assert campaign_artifacts.campaign_tree_hash(experimental)["sha256"] == (
+    assert exact_tree_hash(experimental) == (
         "47c223639318b041e6c86e6144b7fb23399634ead73e18ddcf306ab8242effeb"
     )
 

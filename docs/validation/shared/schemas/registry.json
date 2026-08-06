@@ -2,16 +2,6 @@
   "format": 1,
   "schemas": [
     {
-      "id": "deploy-campaign-manifest",
-      "path": "docs/validation/shared/schemas/deploy-campaign-manifest-v2.schema.json",
-      "version": 2
-    },
-    {
-      "id": "deploy-campaign-manifest",
-      "path": "docs/validation/shared/schemas/deploy-campaign-manifest-v3.schema.json",
-      "version": 3
-    },
-    {
       "id": "exact-content-fingerprint",
       "path": "docs/validation/shared/schemas/exact-content-fingerprint-v1.schema.json",
       "version": 1
@@ -28,7 +18,7 @@
       "version": 1
     },
     {
-      "fingerprint": "sha256-v1:5112bd7d985ed695233ebdfaa12741c92ced5564b052d6fae6a746032bfdc1e0",
+      "fingerprint": "sha256-v1:b7563f85c4d816f2d0a59b0d81185071391cd40b9afb4db68b8103ac3555e34f",
       "id": "pack-composition-contract",
       "path": "docs/validation/shared/schemas/pack-composition-contract-v1.schema.json",
       "version": 1

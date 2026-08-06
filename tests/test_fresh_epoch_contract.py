@@ -74,23 +74,7 @@ def write_contract_tree(root: Path) -> dict[str, object]:
         "# Fresh Composition Epoch\n",
         encoding="utf-8",
     )
-    legacy_fixture = (
-        root / "docs/validation/shared/fixtures/campaign-manifest-v1.json"
-    )
-    legacy_fixture.write_text(
-        json.dumps({"schema_version": 1, "campaign": {"id": "legacy"}}),
-        encoding="utf-8",
-    )
-
     schemas = [
-        {
-            "id": "deploy-campaign-manifest",
-            "version": 2,
-            "path": (
-                "docs/validation/shared/schemas/"
-                "deploy-campaign-manifest-v2.schema.json"
-            ),
-        },
         {
             "id": "fresh-epoch-topology",
             "version": 1,
@@ -226,7 +210,7 @@ def write_contract_tree(root: Path) -> dict[str, object]:
                 "required": True,
             },
             {
-                "information_class": "one-skill-controller",
+                "information_class": "one-skill-method",
                 "path": "docs/synthesis/methods/deploy-prompts.md",
                 "route": "docs/synthesis/methods/README.md",
                 "required": True,
@@ -268,10 +252,6 @@ def write_contract_tree(root: Path) -> dict[str, object]:
             {"name": "migration-entry", "pattern": "^MIG-[0-9]{4}$"},
         ],
         "compatibility": {
-            "campaign_manifest_versions": [1, 2],
-            "legacy_fixture": (
-                "docs/validation/shared/fixtures/campaign-manifest-v1.json"
-            ),
             "relationship_index": (
                 "docs/synthesis/skill-context-relationships.md"
             ),
@@ -520,25 +500,15 @@ def test_fresh_epoch_contract_rejects_forbidden_source_authority(
     assert any("forbidden authority key: adoption" in failure for failure in failures)
 
 
-def test_fresh_epoch_contract_preserves_private_and_legacy_boundaries(
+def test_fresh_epoch_contract_preserves_private_boundaries(
     tmp_path: Path,
 ) -> None:
     write_contract_tree(tmp_path)
     (tmp_path / ".gitignore").write_text("", encoding="utf-8")
-    legacy = tmp_path / "docs/validation/shared/fixtures/campaign-manifest-v1.json"
-    legacy.write_text(
-        json.dumps({"schema_version": 2, "campaign": {"id": "future"}}),
-        encoding="utf-8",
-    )
-
     failures = validate(tmp_path)
 
     assert "Private source root must remain ignored: sources/" in failures
     assert any(
         "Public source packet root must remain trackable" in failure
-        for failure in failures
-    )
-    assert any(
-        "Legacy campaign manifest requires schema version 1" in failure
         for failure in failures
     )

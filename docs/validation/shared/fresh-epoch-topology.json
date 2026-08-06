@@ -1,10 +1,5 @@
 {
   "compatibility": {
-    "campaign_manifest_versions": [
-      1,
-      2
-    ],
-    "legacy_fixture": "docs/validation/shared/fixtures/campaign-manifest-v1.json",
     "relationship_index": "docs/synthesis/skill-context-relationships.md"
   },
   "fingerprint": {
@@ -84,7 +79,7 @@
       "route": "docs/synthesis/methods/README.md"
     },
     {
-      "information_class": "one-skill-controller",
+      "information_class": "one-skill-method",
       "path": "docs/synthesis/methods/deploy-prompts.md",
       "required": true,
       "route": "docs/synthesis/methods/README.md"

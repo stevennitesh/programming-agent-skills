@@ -22,10 +22,10 @@ Explore imaginatively. Converge under proof. Simplify ruthlessly.
 
 - Stable vocabulary and repo invariants: `CONTEXT.md`
 - Active plans and runbooks: `docs/plans/README.md`
-- One-skill deployment: each `Run Deploy Campaign on <skill>` starts a fresh
-  Prompt 1, Research Pass, Prompts 2-4, Pruning Pass, and Prompt 5 epoch under
-  `docs/synthesis/methods/deploy-prompts.md` and explicitly authorizes its
-  bounded fresh-context delegation.
+- One-skill deployment: each `Run Deploy Campaign on <skill>` uses Contract
+  Lock, Candidate Lock, conditional Behavioral Proof, and Release under
+  `docs/synthesis/methods/deploy-prompts.md`; the obligations are not persisted
+  lifecycle state.
 - Before nontrivial coding, read `docs/agents/engineering-contract.md`.
 - Tracker and labels: `docs/agents/issue-tracker.md`,
   `docs/agents/triage-labels.md`

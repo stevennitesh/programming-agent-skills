@@ -12,7 +12,7 @@ from collections import Counter
 from pathlib import Path, PurePosixPath
 from typing import Iterable
 
-from scripts import campaign_artifacts, fresh_epoch_contract
+from scripts import fresh_epoch_contract
 
 
 PUBLIC_LEDGER = Path(
@@ -42,7 +42,6 @@ PUBLIC_EXACT = frozenset(
         "AGENTS.md",
         "CONTEXT.md",
         "README.md",
-        "scripts/campaign_artifacts.py",
         "scripts/install_skills.py",
         "scripts/skill_pack_contract.py",
         "scripts/validate_skills.py",
@@ -441,69 +440,6 @@ def _atomic_write_bytes(path: Path, content: bytes) -> None:
             temporary.unlink()
 
 
-def _campaign_mapping(
-    rows: list[dict[str, object]],
-) -> tuple[str, str, str, list[tuple[dict[str, object], str, str, str]]]:
-    if not rows:
-        raise MigrationBlocked("campaign migration has no rows")
-    mapped: list[tuple[dict[str, object], str, str, str]] = []
-    identities: set[str] = set()
-    owners: set[str] = set()
-    source_roots: set[str] = set()
-    target_roots: set[str] = set()
-    for row in rows:
-        source = row.get("source")
-        target = row.get("target")
-        if not isinstance(source, dict) or not isinstance(target, dict):
-            raise MigrationBlocked("campaign row has no source/target mapping")
-        source_key = source.get("key")
-        fingerprint = source.get("fingerprint")
-        identity = source.get("identity")
-        target_key = target.get("path")
-        owner = row.get("owner")
-        if not all(
-            isinstance(value, str) and value
-            for value in (
-                source_key,
-                fingerprint,
-                identity,
-                target_key,
-                owner,
-            )
-        ):
-            raise MigrationBlocked("campaign row mapping is incomplete")
-        if (
-            row.get("artifact_class") != "campaign"
-            or row.get("migration_disposition") != "move"
-        ):
-            raise MigrationBlocked("campaign row is not an authorized move")
-        source_path = PurePosixPath(str(source_key))
-        target_path = PurePosixPath(str(target_key))
-        identities.add(str(identity))
-        owners.add(str(owner))
-        source_roots.add(source_path.parent.as_posix())
-        target_roots.add(target_path.parent.as_posix())
-        if source_path.name != target_path.name:
-            raise MigrationBlocked("campaign target changes an artifact filename")
-        mapped.append(
-            (row, str(source_key), str(target_key), str(fingerprint))
-        )
-    if (
-        len(identities) != 1
-        or len(owners) != 1
-        or len(source_roots) != 1
-        or len(target_roots) != 1
-    ):
-        raise MigrationBlocked("campaign rows do not describe one exact tree")
-    identity = next(iter(identities))
-    if not identity.startswith("campaign:"):
-        raise MigrationBlocked("campaign rows have no campaign identity")
-    return (
-        next(iter(source_roots)),
-        next(iter(target_roots)),
-        next(iter(owners)),
-        mapped,
-    )
 
 
 def _restore_paths(snapshots: dict[Path, bytes | None]) -> None:
@@ -528,60 +464,6 @@ def _restore_paths(snapshots: dict[Path, bytes | None]) -> None:
                 pass
 
 
-def _read_compact_historical_manifest(path: Path) -> dict[str, object]:
-    try:
-        manifest = campaign_artifacts.read_campaign_manifest(path)
-    except ValueError as reader_error:
-        try:
-            candidate = json.loads(path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError) as error:
-            raise MigrationBlocked(
-                f"historical campaign manifest is unreadable: {error}"
-            ) from error
-        schema = candidate.get("schema") if isinstance(candidate, dict) else None
-        campaign = (
-            candidate.get("campaign") if isinstance(candidate, dict) else None
-        )
-        runtime_identities = (
-            candidate.get("runtime_identities")
-            if isinstance(candidate, dict)
-            else None
-        )
-        if (
-            not isinstance(schema, dict)
-            or schema.get("name") != "deploy-campaign-manifest"
-            or schema.get("version") != 5
-            or schema.get("profile") != "prompt4-accepted-v1"
-            or not isinstance(campaign, dict)
-            or not isinstance(campaign.get("skill"), str)
-            or not isinstance(campaign.get("epoch"), str)
-            or not isinstance(runtime_identities, dict)
-            or runtime_identities.get("tree_algorithm")
-            != "campaign-tree-v1"
-        ):
-            raise MigrationBlocked(
-                f"historical campaign manifest is unreadable: {reader_error}"
-            ) from reader_error
-        manifest = candidate
-    except (OSError, json.JSONDecodeError) as error:
-        raise MigrationBlocked(
-            f"historical campaign manifest is unreadable: {error}"
-        ) from error
-    schema = manifest.get("schema")
-    runtime_identities = manifest.get("runtime_identities")
-    if (
-        not isinstance(schema, dict)
-        or schema.get("name")
-        not in {
-            "deploy-campaign-final-manifest",
-            "deploy-campaign-manifest",
-        }
-        or schema.get("version") != 5
-        or not isinstance(runtime_identities, dict)
-        or runtime_identities.get("tree_algorithm") != "campaign-tree-v1"
-    ):
-        raise MigrationBlocked("historical campaign meaning changed")
-    return manifest
 
 
 MARKDOWN_LINK = re.compile(
@@ -592,389 +474,12 @@ FULL_MARKDOWN_LINK = re.compile(
 )
 
 
-def _campaign_target_bytes(
-    original: bytes,
-    *,
-    source_key: str,
-    target_key: str,
-    source_root: str,
-    target_root: str,
-) -> bytes:
-    """Rewrite moved-root locators and preserve relative Markdown targets."""
-
-    text = original.decode("utf-8")
-    source_path = PurePosixPath(source_key)
-    target_path = PurePosixPath(target_key)
-    source_root_path = PurePosixPath(source_root)
-    target_root_path = PurePosixPath(target_root)
-
-    def rebase(match: re.Match[str]) -> str:
-        destination = match.group("destination")
-        if destination.startswith(("#", "/", "http:", "https:", "mailto:")):
-            return match.group(0)
-        locator, separator, fragment = destination.partition("#")
-        source_destination = PurePosixPath(
-            posixpath.normpath(
-                posixpath.join(source_path.parent.as_posix(), locator)
-            )
-        )
-        if source_destination.is_relative_to(source_root_path):
-            relative_member = source_destination.relative_to(source_root_path)
-            target_destination = target_root_path / relative_member
-        else:
-            target_destination = source_destination
-        rebased = posixpath.relpath(
-            target_destination.as_posix(),
-            start=target_path.parent.as_posix(),
-        )
-        if separator:
-            rebased = f"{rebased}#{fragment}"
-        return f"{match.group('prefix')}{rebased}{match.group('suffix')}"
-
-    rebased = MARKDOWN_LINK.sub(rebase, text)
-    return rebased.replace(source_root, target_root).encode("utf-8")
 
 
-def apply_campaign_migration(
-    root: Path,
-    rows: list[dict[str, object]],
-    *,
-    source_overrides: dict[str, bytes] | None = None,
-) -> list[dict[str, object]]:
-    """Move one historical campaign tree and reconcile its locators."""
-
-    source_root, target_root, owner, mapped = _campaign_mapping(rows)
-    owner_path = _safe_workspace_path(root, owner)
-    if not owner_path.is_file():
-        raise MigrationBlocked("target owner does not exist")
-    source_root_path = _safe_workspace_path(root, source_root)
-    target_root_path = _safe_workspace_path(root, target_root)
-    source_needle = source_root.encode("utf-8")
-    target_needle = target_root.encode("utf-8")
-    originals: dict[str, bytes] = {}
-    snapshots: dict[Path, bytes | None] = {}
-    reference_contexts: dict[Path, set[str]] = {}
-    exact_target_state: dict[str, bool] = {}
-    target_specs: dict[Path, tuple[bytes, str, str]] = {}
-
-    for row, source_key, target_key, fingerprint in mapped:
-        original = (source_overrides or {}).get(
-            source_key,
-            _git_recovery_bytes(root, row),
-        )
-        if (
-            source_key not in (source_overrides or {})
-            and _fingerprint(original) != fingerprint
-        ):
-            raise MigrationBlocked("campaign recovery fingerprint mismatch")
-        originals[source_key] = original
-        source_path = _safe_workspace_path(root, source_key)
-        target_path = _safe_workspace_path(root, target_key)
-        source_bytes = source_path.read_bytes() if source_path.is_file() else None
-        target_bytes = target_path.read_bytes() if target_path.is_file() else None
-        exact_target_state[source_key] = source_bytes is None and target_bytes is not None
-        expected_target = _campaign_target_bytes(
-            original,
-            source_key=source_key,
-            target_key=target_key,
-            source_root=source_root,
-            target_root=target_root,
-        )
-        legacy_target = original.replace(source_needle, target_needle)
-        if source_bytes is None and target_bytes is None:
-            raise MigrationBlocked("campaign source and target are both absent")
-        if source_bytes is not None and source_bytes != original:
-            raise MigrationBlocked("campaign source fingerprint mismatch")
-        if target_bytes is not None and target_bytes not in {
-            original,
-            expected_target,
-            legacy_target,
-        }:
-            raise MigrationBlocked("campaign target collision")
-        snapshots[source_path] = source_bytes
-        snapshots[target_path] = target_bytes
-        target_specs[target_path] = (original, source_key, target_key)
-        rewrites = row.get("reference_rewrite_set")
-        if not isinstance(rewrites, list):
-            raise MigrationBlocked("campaign row has no reference rewrite set")
-        for raw_reference in rewrites:
-            if not isinstance(raw_reference, str):
-                raise MigrationBlocked("campaign reference is invalid")
-            reference_key = (
-                raw_reference.replace(source_root, target_root, 1)
-                if raw_reference.startswith(f"{source_root}/")
-                else raw_reference
-            )
-            reference_path = _safe_workspace_path(root, reference_key)
-            reference_contexts.setdefault(reference_path, set()).add(raw_reference)
-
-    for reference_path in reference_contexts:
-        if reference_path in snapshots:
-            continue
-        if not reference_path.is_file():
-            raise MigrationBlocked(
-                "declared campaign reference is absent: "
-                + reference_path.relative_to(root).as_posix()
-            )
-        snapshots[reference_path] = reference_path.read_bytes()
-
-    manifest_candidates = [
-        (
-            _safe_workspace_path(root, source_key),
-            _safe_workspace_path(root, target_key),
-        )
-        for _, source_key, target_key, _ in mapped
-        if PurePosixPath(source_key).name == "manifest.json"
-    ]
-    if len(manifest_candidates) != 1:
-        raise MigrationBlocked("campaign tree has no exact manifest")
-    source_manifest, target_manifest = manifest_candidates[0]
-    _read_compact_historical_manifest(
-        source_manifest if source_manifest.is_file() else target_manifest
-    )
-
-    target_root_path.mkdir(parents=True, exist_ok=True)
-    try:
-        for _, source_key, target_key, _ in mapped:
-            source_path = _safe_workspace_path(root, source_key)
-            target_path = _safe_workspace_path(root, target_key)
-            if source_path.is_file() and not target_path.is_file():
-                source_path.replace(target_path)
-            elif source_path.is_file() and target_path.is_file():
-                source_path.unlink()
-        for target_path, (
-            original,
-            source_key,
-            target_key,
-        ) in target_specs.items():
-            expected_target = _campaign_target_bytes(
-                original,
-                source_key=source_key,
-                target_key=target_key,
-                source_root=source_root,
-                target_root=target_root,
-            )
-            if target_path.read_bytes() != expected_target:
-                _atomic_write_bytes(target_path, expected_target)
-        for path in sorted(reference_contexts):
-            content = path.read_bytes()
-            target_spec = target_specs.get(path)
-            if target_spec is not None:
-                original, source_key, target_key = target_spec
-                rewritten = _campaign_target_bytes(
-                    original,
-                    source_key=source_key,
-                    target_key=target_key,
-                    source_root=source_root,
-                    target_root=target_root,
-                )
-            else:
-                rewritten = content.replace(source_needle, target_needle)
-                for raw_reference in reference_contexts[path]:
-                    original_parent = PurePosixPath(
-                        raw_reference
-                    ).parent.as_posix()
-                    actual_key = path.relative_to(root).as_posix()
-                    actual_parent = PurePosixPath(actual_key).parent.as_posix()
-                    for _, source_key, target_key, _ in mapped:
-                        source_locator = posixpath.relpath(
-                            source_key,
-                            start=original_parent,
-                        )
-                        target_locator = posixpath.relpath(
-                            target_key,
-                            start=actual_parent,
-                        )
-                        rewritten = rewritten.replace(
-                            source_locator.encode("utf-8"),
-                            target_locator.encode("utf-8"),
-                        )
-            if rewritten != content:
-                _atomic_write_bytes(path, rewritten)
-        if source_root_path.is_dir() and not any(source_root_path.iterdir()):
-            source_root_path.rmdir()
-    except Exception:
-        _restore_paths(snapshots)
-        raise
-
-    source_tree_fingerprints = {
-        PurePosixPath(source_key).name: _fingerprint(originals[source_key])
-        for _, source_key, _, _ in mapped
-    }
-    results: list[dict[str, object]] = []
-    for row, source_key, target_key, fingerprint in mapped:
-        result = copy.deepcopy(row)
-        target_path = _safe_workspace_path(root, target_key)
-        prior = result.get("observed_result")
-        rollback_proved = (
-            prior.get("rollback_proved") is True
-            if isinstance(prior, dict)
-            else False
-        )
-        result["status"] = "references-reconciled"
-        result["observed_result"] = {
-            "passed": False,
-            "campaign_identity": result["source"]["identity"],
-            "source_tree_fingerprints": dict(
-                sorted(source_tree_fingerprints.items())
-            ),
-            "moved_fingerprint": fingerprint,
-            "target_fingerprint": _fingerprint(target_path.read_bytes()),
-            "source_absent": True,
-            "target_path": target_key,
-            "exact_target_reconciled": exact_target_state[source_key],
-            "rollback_proved": rollback_proved,
-        }
-        result["residual_risk"] = (
-            "campaign compatibility and old-path proof remain pending"
-        )
-        results.append(result)
-    return results
 
 
-def rollback_campaign_migration(
-    root: Path,
-    rows: list[dict[str, object]],
-    *,
-    source_overrides: dict[str, bytes] | None = None,
-) -> list[dict[str, object]]:
-    """Restore one historical campaign tree and every declared locator."""
-
-    source_root, target_root, owner, mapped = _campaign_mapping(rows)
-    if not _safe_workspace_path(root, owner).is_file():
-        raise MigrationBlocked("target owner does not exist")
-    source_needle = source_root.encode("utf-8")
-    target_needle = target_root.encode("utf-8")
-    originals: dict[str, bytes] = {}
-    snapshots: dict[Path, bytes | None] = {}
-    reference_contexts: dict[Path, set[str]] = {}
-    artifact_paths: set[Path] = set()
-    for row, source_key, target_key, fingerprint in mapped:
-        original = (source_overrides or {}).get(
-            source_key,
-            _git_recovery_bytes(root, row),
-        )
-        if (
-            source_key not in (source_overrides or {})
-            and _fingerprint(original) != fingerprint
-        ):
-            raise MigrationBlocked("campaign recovery fingerprint mismatch")
-        originals[source_key] = original
-        source_path = _safe_workspace_path(root, source_key)
-        target_path = _safe_workspace_path(root, target_key)
-        source_bytes = source_path.read_bytes() if source_path.is_file() else None
-        target_bytes = target_path.read_bytes() if target_path.is_file() else None
-        expected_target = _campaign_target_bytes(
-            original,
-            source_key=source_key,
-            target_key=target_key,
-            source_root=source_root,
-            target_root=target_root,
-        )
-        legacy_target = original.replace(source_needle, target_needle)
-        if source_bytes is None and target_bytes is None:
-            raise MigrationBlocked("campaign rollback has no source or target")
-        if source_bytes is not None and source_bytes != original:
-            raise MigrationBlocked("campaign rollback source collision")
-        if target_bytes is not None and target_bytes not in {
-            original,
-            expected_target,
-            legacy_target,
-        }:
-            raise MigrationBlocked("campaign target changed; rollback blocked")
-        snapshots[source_path] = source_bytes
-        snapshots[target_path] = target_bytes
-        artifact_paths.update({source_path, target_path})
-        rewrites = row.get("reference_rewrite_set")
-        if not isinstance(rewrites, list):
-            raise MigrationBlocked("campaign row has no reference rewrite set")
-        for raw_reference in rewrites:
-            if not isinstance(raw_reference, str):
-                raise MigrationBlocked("campaign reference is invalid")
-            reference_key = (
-                raw_reference.replace(source_root, target_root, 1)
-                if raw_reference.startswith(f"{source_root}/")
-                else raw_reference
-            )
-            reference_path = _safe_workspace_path(root, reference_key)
-            reference_contexts.setdefault(reference_path, set()).add(raw_reference)
-    for path in reference_contexts:
-        if path not in snapshots:
-            if not path.is_file():
-                raise MigrationBlocked(
-                    "declared campaign reference is absent: "
-                    + path.relative_to(root).as_posix()
-                )
-            snapshots[path] = path.read_bytes()
-
-    try:
-        for path in sorted(reference_contexts):
-            if path in artifact_paths or not path.is_file():
-                continue
-            content = path.read_bytes()
-            restored = content.replace(target_needle, source_needle)
-            for raw_reference in reference_contexts[path]:
-                original_parent = PurePosixPath(raw_reference).parent.as_posix()
-                actual_key = path.relative_to(root).as_posix()
-                actual_parent = PurePosixPath(actual_key).parent.as_posix()
-                for _, source_key, target_key, _ in mapped:
-                    source_locator = posixpath.relpath(
-                        source_key,
-                        start=original_parent,
-                    )
-                    target_locator = posixpath.relpath(
-                        target_key,
-                        start=actual_parent,
-                    )
-                    restored = restored.replace(
-                        target_locator.encode("utf-8"),
-                        source_locator.encode("utf-8"),
-                    )
-            if restored != content:
-                _atomic_write_bytes(path, restored)
-        for _, source_key, target_key, _ in mapped:
-            source_path = _safe_workspace_path(root, source_key)
-            target_path = _safe_workspace_path(root, target_key)
-            if not source_path.is_file():
-                source_path.parent.mkdir(parents=True, exist_ok=True)
-                _atomic_write_bytes(source_path, originals[source_key])
-            if target_path.is_file():
-                target_path.unlink()
-        target_root_path = _safe_workspace_path(root, target_root)
-        if target_root_path.is_dir() and not any(target_root_path.iterdir()):
-            target_root_path.rmdir()
-    except Exception:
-        _restore_paths(snapshots)
-        raise
-
-    results: list[dict[str, object]] = []
-    for row, _, _, fingerprint in mapped:
-        result = copy.deepcopy(row)
-        result["status"] = "prepared"
-        result["observed_result"] = {
-            "passed": False,
-            "rollback_proved": True,
-            "restored_fingerprint": fingerprint,
-        }
-        result["residual_risk"] = "campaign migration remains pending after rollback"
-        results.append(result)
-    return results
 
 
-CAMPAIGN_EXPLAINED_OLD_PATH_OWNERS = frozenset(
-    {
-        PUBLIC_LEDGER.as_posix(),
-        "scripts/migration_ledger.py",
-        "tests/test_migration_ledger.py",
-    }
-)
-CAMPAIGN_SUPPORT_PATHS = (
-    "docs/synthesis/skills/to-spec.md",
-    "docs/synthesis/skills/to-tickets.md",
-    "docs/validation/skills/to-spec/README.md",
-    "docs/validation/skills/to-tickets/README.md",
-    "scripts/campaign_artifacts.py",
-)
 
 RESEARCH_SYNTHESIS_MOVES = {
     "docs/research/2026-07-24-to-spec.md": (
@@ -1508,34 +1013,7 @@ def _reference_baseline_bytes(
         None,
     )
     if target_row is not None:
-        if target_row.get("artifact_class") == "campaign":
-            source = target_row.get("source")
-            identity = (
-                source.get("identity") if isinstance(source, dict) else None
-            )
-            campaign_rows = [
-                row
-                for row in rows
-                if row.get("artifact_class") == "campaign"
-                and isinstance(row.get("source"), dict)
-                and row["source"].get("identity") == identity
-            ]
-            source_root, target_root, _, mapped = _campaign_mapping(
-                campaign_rows
-            )
-            campaign_member = next(
-                item
-                for item in mapped
-                if item[2] == actual_reference
-            )
-            row, source_key, target_key, _ = campaign_member
-            return _campaign_target_bytes(
-                _git_recovery_bytes(root, row),
-                source_key=source_key,
-                target_key=target_key,
-                source_root=source_root,
-                target_root=target_root,
-            )
+        source = target_row.get("source")
         source = target_row.get("source")
         target = target_row.get("target")
         source_key = source.get("key") if isinstance(source, dict) else None
@@ -2495,7 +1973,6 @@ def prepare_validation_migrations(
         if (
             not isinstance(source_key, str)
             or not source_key.startswith("docs/validation/")
-            or prepared.get("artifact_class") == "campaign"
             or prepared.get("status") == "verified"
         ):
             prepared_rows.append(prepared)
@@ -2820,24 +2297,6 @@ def _validation_target_bytes(
             PurePosixPath(target_key).suffix.casefold() != ".md"
         ),
     )
-    campaign_roots = {
-        (
-            PurePosixPath(source_key).parent.as_posix(),
-            PurePosixPath(target_key).parent.as_posix(),
-        )
-        for row, source_key, _, target_key, _ in (prior_mapped or [])
-        if row.get("artifact_class") == "campaign"
-    }
-    if PurePosixPath(target_key).suffix.casefold() != ".md":
-        for source_root, target_root in sorted(
-            campaign_roots,
-            key=lambda item: len(item[0]),
-            reverse=True,
-        ):
-            rewritten = rewritten.replace(
-                source_root.encode("utf-8"),
-                target_root.encode("utf-8"),
-            )
     for before, after in VALIDATION_STRUCTURED_REFERENCE_REPAIRS.get(
         source_key, {}
     ).items():
@@ -2947,46 +2406,7 @@ def _validation_reference_states(
                 ),
                 None,
             )
-            if (
-                prior_target_row is not None
-                and prior_target_row.get("artifact_class") == "campaign"
-            ):
-                source = prior_target_row.get("source")
-                identity = (
-                    source.get("identity")
-                    if isinstance(source, dict)
-                    else None
-                )
-                campaign_rows = [
-                    candidate
-                    for candidate in rows
-                    if candidate.get("artifact_class") == "campaign"
-                    and isinstance(candidate.get("source"), dict)
-                    and candidate["source"].get("identity") == identity
-                ]
-                source_root, target_root, _, campaign_mapping = (
-                    _campaign_mapping(campaign_rows)
-                )
-                member = next(
-                    item
-                    for item in campaign_mapping
-                    if item[2] == actual_reference
-                )
-                campaign_row, source_key, target_key, _ = member
-                overrides = _campaign_source_overrides(
-                    root, rows, campaign_rows
-                )
-                rollback_baseline = _campaign_target_bytes(
-                    overrides.get(
-                        source_key,
-                        _git_recovery_bytes(root, campaign_row),
-                    ),
-                    source_key=source_key,
-                    target_key=target_key,
-                    source_root=source_root,
-                    target_root=target_root,
-                )
-            elif prior_target_row is not None:
+            if prior_target_row is not None:
                 head_bytes = _git_path_bytes(
                     root, _head(root), actual_reference
                 )
@@ -3587,160 +3007,8 @@ def verify_validation_migrations(
     return results
 
 
-def _campaign_support_fingerprints(
-    root: Path,
-    mapped: list[tuple[dict[str, object], str, str, str]],
-) -> dict[str, dict[str, str | None]]:
-    recovery = mapped[0][0].get("recovery")
-    pointer = recovery.get("pointer") if isinstance(recovery, dict) else None
-    match = re.fullmatch(
-        r"git:(?P<head>[0-9a-f]{40}):.+@sha256-v1:[0-9a-f]{64}",
-        pointer or "",
-    )
-    if match is None:
-        raise MigrationBlocked("campaign support has no recovery fixed point")
-    result: dict[str, dict[str, str | None]] = {}
-    controlled_paths = set(CAMPAIGN_SUPPORT_PATHS)
-    controlled_paths.update(
-        source_key
-        for _, source_key, _, _ in mapped
-    )
-    controlled_paths.update(
-        target_key
-        for _, _, target_key, _ in mapped
-    )
-    for relative in sorted(controlled_paths):
-        baseline = _git_path_bytes(root, match.group("head"), relative)
-        before = _fingerprint(baseline) if baseline is not None else None
-        path = _safe_workspace_path(root, relative)
-        after = (
-            fresh_epoch_contract._path_fingerprint(path)
-            if path.exists()
-            else None
-        )
-        result[relative] = {"before": before, "after": after}
-    return result
 
 
-def verify_campaign_migration(
-    root: Path,
-    rows: list[dict[str, object]],
-    allowed_support: dict[str, dict[str, object]] | None = None,
-    *,
-    source_overrides: dict[str, bytes] | None = None,
-) -> list[dict[str, object]]:
-    """Prove one moved campaign tree, v1 meaning, and locator closure."""
-
-    source_root, target_root, owner, mapped = _campaign_mapping(rows)
-    if not _safe_workspace_path(root, owner).is_file():
-        raise MigrationBlocked("target owner does not exist")
-    source_needle = source_root.encode("utf-8")
-    target_needle = target_root.encode("utf-8")
-    source_tree_fingerprints: dict[str, str] = {}
-    target_fingerprints: dict[str, str] = {}
-    for row, source_key, target_key, fingerprint in mapped:
-        source_path = _safe_workspace_path(root, source_key)
-        target_path = _safe_workspace_path(root, target_key)
-        if source_path.exists() or not target_path.is_file():
-            raise MigrationBlocked("campaign target/source disposition is incomplete")
-        original = (source_overrides or {}).get(
-            source_key,
-            _git_recovery_bytes(root, row),
-        )
-        expected = _campaign_target_bytes(
-            original,
-            source_key=source_key,
-            target_key=target_key,
-            source_root=source_root,
-            target_root=target_root,
-        )
-        try:
-            target_bytes = target_path.read_bytes()
-        except OSError as error:
-            raise MigrationBlocked(
-                f"cannot read campaign migration target: {error}"
-            ) from error
-        supported = (
-            isinstance(allowed_support, dict)
-            and isinstance(allowed_support.get(target_key), dict)
-            and allowed_support[target_key].get("after")
-            == _fingerprint(target_bytes)
-        )
-        if target_bytes != expected and not supported:
-            raise MigrationBlocked("campaign target differs from locator-only rewrite")
-        source_tree_fingerprints[PurePosixPath(source_key).name] = (
-            _fingerprint(original)
-        )
-        target_fingerprints[PurePosixPath(target_key).name] = _fingerprint(
-            target_bytes
-        )
-
-    manifest_path = _safe_workspace_path(
-        root,
-        f"{target_root}/manifest.json",
-    )
-    _read_compact_historical_manifest(manifest_path)
-
-    explained: list[str] = []
-    unexplained: list[str] = []
-    old_needles = {
-        source_needle,
-        f"validation/campaigns/{PurePosixPath(source_root).name}".encode("utf-8"),
-    }
-    for relative in _text_inventory(root):
-        path = _safe_workspace_path(root, relative)
-        if not path.is_file():
-            continue
-        try:
-            content = path.read_bytes()
-        except OSError as error:
-            raise MigrationBlocked(
-                f"cannot complete campaign old-path scan: {relative}: {error}"
-            ) from error
-        if not any(needle in content for needle in old_needles):
-            continue
-        if relative in CAMPAIGN_EXPLAINED_OLD_PATH_OWNERS:
-            explained.append(relative)
-        else:
-            unexplained.append(relative)
-    if unexplained:
-        raise MigrationBlocked(
-            "unexplained campaign old-path reference: "
-            + ", ".join(unexplained)
-        )
-
-    support_fingerprints = _campaign_support_fingerprints(root, mapped)
-    results: list[dict[str, object]] = []
-    for row, source_key, target_key, fingerprint in mapped:
-        result = copy.deepcopy(row)
-        prior = result.get("observed_result")
-        prior = prior if isinstance(prior, dict) else {}
-        result["status"] = "verified"
-        result["observed_result"] = {
-            **prior,
-            "passed": True,
-            "campaign_identity": result["source"]["identity"],
-            "source_tree_fingerprints": dict(
-                sorted(source_tree_fingerprints.items())
-            ),
-            "target_tree_fingerprints": dict(
-                sorted(target_fingerprints.items())
-            ),
-            "moved_fingerprint": fingerprint,
-            "source_absent": True,
-            "target_path": target_key,
-            "manifest_schema": "deploy-campaign-final-manifest:5",
-            "runtime_tree_algorithm": "campaign-tree-v1",
-            "owner": owner,
-            "support_fingerprints": support_fingerprints,
-            "unexplained_old_path_references": [],
-            "explained_historical_references": sorted(explained),
-        }
-        result["residual_risk"] = (
-            "semantic admission and proof reuse remain explicitly unassessed"
-        )
-        results.append(result)
-    return results
 
 
 def apply_migration(
@@ -4203,75 +3471,6 @@ def _write_control_state(
                 temporary.unlink()
 
 
-def _campaign_source_overrides(
-    root: Path,
-    all_rows: list[dict[str, object]],
-    campaign_rows: list[dict[str, object]],
-) -> dict[str, bytes]:
-    """Replay prior verified path-only migrations into campaign baselines."""
-
-    research_mapping = _research_synthesis_mapping(all_rows)
-    support: dict[str, list[dict[str, object]]] = {}
-    for row in all_rows:
-        observed = row.get("observed_result")
-        raw_support = (
-            observed.get("support_fingerprints")
-            if isinstance(observed, dict)
-            else None
-        )
-        if isinstance(raw_support, dict):
-            for key, value in raw_support.items():
-                if isinstance(value, dict):
-                    support.setdefault(str(key), []).append(value)
-    overrides: dict[str, bytes] = {}
-    source_root, target_root, _, campaign_mapping = _campaign_mapping(
-        campaign_rows
-    )
-    target_by_source = {
-        source_key: target_key
-        for _, source_key, target_key, _ in campaign_mapping
-    }
-    for row in campaign_rows:
-        source = row.get("source")
-        source_key = source.get("key") if isinstance(source, dict) else None
-        if not isinstance(source_key, str):
-            raise MigrationBlocked("campaign source is incomplete")
-        original = _git_recovery_bytes(root, row)
-        replayed = _rewrite_group_reference(
-            original,
-            original_reference=source_key,
-            actual_reference=source_key,
-            mapped=research_mapping,
-            forward=True,
-        )
-        if replayed == original:
-            continue
-        support_entries = support.get(source_key, [])
-        direct_proof = any(
-            entry.get("before") == _fingerprint(original)
-            and entry.get("after") == _fingerprint(replayed)
-            for entry in support_entries
-        )
-        target_key = target_by_source[source_key]
-        target_proof = any(
-            entry.get("after")
-            == _fingerprint(
-                _campaign_target_bytes(
-                    replayed,
-                    source_key=source_key,
-                    target_key=target_key,
-                    source_root=source_root,
-                    target_root=target_root,
-                )
-            )
-            for entry in support.get(target_key, [])
-        )
-        if not direct_proof and not target_proof:
-            raise MigrationBlocked(
-                f"campaign prior-migration baseline is unproved: {source_key}"
-            )
-        overrides[source_key] = replayed
-    return overrides
 
 
 def _latest_support_fingerprints(
@@ -4341,19 +3540,6 @@ def operate(root: Path, *, action: str, migration_id: str) -> int:
         if isinstance(selected_source, dict)
         else None
     )
-    campaign_indexes = [
-        index
-        for index, row in enumerate(rows)
-        if isinstance(row, dict)
-        and isinstance(row.get("source"), dict)
-        and row["source"].get("identity") == selected_identity
-        and row.get("artifact_class") == "campaign"
-    ]
-    is_campaign = (
-        isinstance(selected_identity, str)
-        and selected_identity.startswith("campaign:")
-        and bool(campaign_indexes)
-    )
     research_synthesis_indexes = [
         index
         for index, row in enumerate(rows)
@@ -4376,62 +3562,14 @@ def operate(root: Path, *, action: str, migration_id: str) -> int:
         and str(row["source"].get("key", "")).startswith(
             "docs/validation/"
         )
-        and row.get("artifact_class") != "campaign"
     ]
     is_validation = (
         isinstance(selected_source_key, str)
         and selected_source_key.startswith("docs/validation/")
-        and selected.get("artifact_class") != "campaign"
         and bool(validation_indexes)
     )
     try:
-        if is_campaign:
-            campaign_rows = [rows[index] for index in campaign_indexes]
-            assert all(isinstance(row, dict) for row in campaign_rows)
-            typed_campaign_rows = [
-                row for row in campaign_rows if isinstance(row, dict)
-            ]
-            typed_all_rows = [
-                row for row in rows if isinstance(row, dict)
-            ]
-            campaign_overrides = _campaign_source_overrides(
-                root,
-                typed_all_rows,
-                typed_campaign_rows,
-            )
-            if action == "migrate":
-                campaign_result = apply_campaign_migration(
-                    root,
-                    typed_campaign_rows,
-                    source_overrides=campaign_overrides,
-                )
-            elif action == "rollback":
-                campaign_result = rollback_campaign_migration(
-                    root,
-                    typed_campaign_rows,
-                    source_overrides=campaign_overrides,
-                )
-            elif action == "verify":
-                campaign_result = verify_campaign_migration(
-                    root,
-                    typed_campaign_rows,
-                    allowed_support=_latest_support_fingerprints(
-                        typed_all_rows
-                    ),
-                    source_overrides=campaign_overrides,
-                )
-            else:
-                raise MigrationBlocked(
-                    f"unsupported migration action: {action}"
-                )
-            for index, result_row in zip(
-                campaign_indexes,
-                campaign_result,
-                strict=True,
-            ):
-                rows[index] = result_row
-            result_status = campaign_result[0]["status"]
-        elif is_research_synthesis:
+        if is_research_synthesis:
             typed_rows = [
                 row for row in rows if isinstance(row, dict)
             ]
@@ -4513,20 +3651,7 @@ def operate(root: Path, *, action: str, migration_id: str) -> int:
         try:
             _write_control_state(root, public, private)
         except OSError:
-            if is_campaign:
-                if action == "migrate":
-                    rollback_campaign_migration(
-                        root,
-                        campaign_result,
-                        source_overrides=campaign_overrides,
-                    )
-                elif action == "rollback":
-                    apply_campaign_migration(
-                        root,
-                        campaign_result,
-                        source_overrides=campaign_overrides,
-                    )
-            elif is_research_synthesis:
+            if is_research_synthesis:
                 if action == "migrate":
                     rollback_research_synthesis_migrations(
                         root,
@@ -4723,7 +3848,6 @@ def _check_applied(
     ) = discover_inventory(root)
     expected_public: set[str] = set()
     support_changes: dict[str, dict[str, object]] = {}
-    verified_campaigns: dict[str, list[dict[str, object]]] = {}
     verified_research_synthesis: list[dict[str, object]] = []
     verified_validation: list[dict[str, object]] = []
     for row in public_rows:
@@ -4781,13 +3905,7 @@ def _check_applied(
             if isinstance(target_key, str):
                 expected_public.add(target_key)
             source_identity = source.get("identity")
-            if (
-                row.get("artifact_class") == "campaign"
-                and isinstance(source_identity, str)
-                and source_identity.startswith("campaign:")
-            ):
-                verified_campaigns.setdefault(source_identity, []).append(row)
-            elif row.get("artifact_class") in {
+            if row.get("artifact_class") in {
                 "evaluation",
                 "validation-transcript",
             }:
@@ -4823,52 +3941,6 @@ def _check_applied(
                     )
             continue
         expected_public.add(source_key)
-
-    for campaign_rows in verified_campaigns.values():
-        try:
-            campaign_overrides = _campaign_source_overrides(
-                root,
-                [
-                    row
-                    for row in public_rows
-                    if isinstance(row, dict)
-                ],
-                campaign_rows,
-            )
-            reverified_rows = verify_campaign_migration(
-                root,
-                campaign_rows,
-                allowed_support=support_changes,
-                source_overrides=campaign_overrides,
-            )
-        except MigrationBlocked as error:
-            failures.append(str(error))
-            continue
-        observed_by_id = {
-            row.get("migration_id"): row.get("observed_result")
-            for row in reverified_rows
-        }
-        campaign_has_supported_change = any(
-            isinstance(row.get("target"), dict)
-            and row["target"].get("path") in support_changes
-            for row in campaign_rows
-        )
-        for row in campaign_rows:
-            target = row.get("target")
-            target_key = (
-                target.get("path") if isinstance(target, dict) else None
-            )
-            if campaign_has_supported_change or (
-                isinstance(target_key, str)
-                and target_key in support_changes
-            ):
-                continue
-            if observed_by_id.get(row.get("migration_id")) != row.get(
-                "observed_result"
-            ):
-                failures.append(
-                    f"Verified migration proof drift: {row.get('migration_id')}"
-                )
 
     if verified_research_synthesis:
         try:

@@ -113,7 +113,7 @@
         "schema_version": {"const": 1},
         "scope": {"items": {"type": "string"}, "type": "array"},
         "source_pointers": {"items": {"type": "string"}, "type": "array"},
-        "status": {"enum": ["draft", "frozen", "campaign-active", "integration-accepted"]}
+        "status": {"enum": ["draft", "frozen", "integration-accepted"]}
       },
       "required": ["schema_version", "composition_epoch_id", "contract_revision", "status", "fixed_point", "intended_pack_outcome", "scope", "exclusions", "research_bound", "source_pointers", "acceptance_scenarios", "load_budget_policy", "campaign_proof_graph", "integration_result", "epoch_lock"],
       "type": "object"
@@ -173,16 +173,6 @@
         "additionalProperties": false,
         "properties": {
           "acceptance_scenario_ids": {"items": {"type": "string"}, "type": "array"},
-          "campaign_state": {
-            "additionalProperties": false,
-            "properties": {
-              "campaign_id": {"type": ["string", "null"]},
-              "status": {"enum": ["not-started", "ready", "active", "terminal"]},
-              "terminal_evidence_pointer": {"type": ["string", "null"]}
-            },
-            "required": ["status", "campaign_id", "terminal_evidence_pointer"],
-            "type": "object"
-          },
           "canonical_name": {"minLength": 1, "type": "string"},
           "completion_condition": {"minLength": 1, "type": "string"},
           "contract_order": {"minimum": 1, "type": "integer"},
@@ -201,7 +191,7 @@
           "return_packet": {"minLength": 1, "type": "string"},
           "skill_id": {"pattern": "^SK-[0-9]{3}$", "type": "string"}
         },
-        "required": ["skill_id", "canonical_name", "essential_outcome", "primary_role", "contract_order", "invocation_mode", "positive_entry_predicate", "negative_exclusion_predicates", "owned_authority_mutation_surfaces", "prohibited_ownership", "required_input", "return_packet", "completion_condition", "failure_return", "owned_capability_ids", "relationship_ids", "acceptance_scenario_ids", "load_budget_class", "campaign_state"],
+        "required": ["skill_id", "canonical_name", "essential_outcome", "primary_role", "contract_order", "invocation_mode", "positive_entry_predicate", "negative_exclusion_predicates", "owned_authority_mutation_surfaces", "prohibited_ownership", "required_input", "return_packet", "completion_condition", "failure_return", "owned_capability_ids", "relationship_ids", "acceptance_scenario_ids", "load_budget_class"],
         "type": "object"
       },
       "type": "array"

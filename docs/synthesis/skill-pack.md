@@ -3550,11 +3550,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-001"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "repo-bootstrap",
       "completion_condition": "Every required setup owner is present or an exact blocker is returned",
       "contract_order": 1,
@@ -3589,11 +3584,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-002"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "domain-modeling",
       "completion_condition": "The requested domain delta is current and every residual is explicit",
       "contract_order": 2,
@@ -3628,11 +3618,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-003"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "research",
       "completion_condition": "The bounded question is answered or its source gap is proved",
       "contract_order": 3,
@@ -3672,11 +3657,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-004"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "prototype",
       "completion_condition": "Fit is resolved, the admitted question has a supported result or truthful residual, and no prototype state is promoted",
       "contract_order": 4,
@@ -3713,11 +3693,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-005"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "diagnosing-bugs",
       "completion_condition": "The observed symptom has a supported cause or the uncertainty is bounded",
       "contract_order": 5,
@@ -3754,11 +3729,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-006"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "tdd",
       "completion_condition": "RED and GREEN were observed through the selected seam and relevant proof remains green",
       "contract_order": 6,
@@ -3793,11 +3763,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-007"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "codebase-design",
       "completion_condition": "The bounded design question is settled without widening the architecture",
       "contract_order": 7,
@@ -3834,11 +3799,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-008"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "grilling",
       "completion_condition": "The bounded decision is confirmed with applicable readiness or one exact gap is exposed",
       "contract_order": 8,
@@ -3879,11 +3839,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-009"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "to-questionnaire",
       "completion_condition": "The verified questionnaire asks only for bounded stakeholder-owned input needed by one downstream decision",
       "contract_order": 9,
@@ -3922,11 +3877,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-010"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "handoff",
       "completion_condition": "One verified ignored packet and reconcile-before-execute pickup are returned",
       "contract_order": 10,
@@ -3965,11 +3915,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-011"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "to-spec",
       "completion_condition": "The source is represented without inventing product decisions",
       "contract_order": 11,
@@ -4008,11 +3953,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-012"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "to-tickets",
       "completion_condition": "Every in-scope slice is represented once with safe execution order",
       "contract_order": 12,
@@ -4051,11 +3991,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-013"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "triage",
       "completion_condition": "The item has one truthful state and no fabricated readiness",
       "contract_order": 13,
@@ -4096,11 +4031,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-014"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "high-assurance-review",
       "completion_condition": "The exact immutable candidate is judged through two valid fresh core reviewer returns and any required specialist",
       "contract_order": 14,
@@ -4137,11 +4067,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-015"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "change-review",
       "completion_condition": "Every in-scope changed behavior is judged against Spec and Standards",
       "contract_order": 15,
@@ -4178,11 +4103,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-016"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "resolving-merge-conflicts",
       "completion_condition": "The selected route returns exact unchanged inspection state, a proved prepared reconciliation, or a finished operation with no targeted operation or unmerged entries and current required proof",
       "contract_order": 16,
@@ -4219,11 +4139,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-017"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "audit-codebase",
       "completion_condition": "The selected Map, Audit, Analyze, or one-candidate Close path is terminal for this invocation; implementation-ready Analyze records ready/reused, recovery, or authority-required; Close admits either an exact read-back-verified tracker frontier or an explicitly authorized already-landed direct recovery without tracker identities; current evidence identity and deterministic JSON-state HTML pass digest-locked publication and read-back",
       "contract_order": 17,
@@ -4271,11 +4186,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-018"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "simplify-code",
       "completion_condition": "The bounded behavior is unchanged and accidental complexity is reduced",
       "contract_order": 18,
@@ -4312,11 +4222,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-019"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "writing-great-skills",
       "completion_condition": "The requested semantic behavior is proved at the canonical owner and stops before installation or delivery",
       "contract_order": 19,
@@ -4351,11 +4256,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-020"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "grill-with-docs",
       "completion_condition": "Both conversational confirmation and durable capture finish under their own gates",
       "contract_order": 20,
@@ -4393,11 +4293,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-021"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "wayfinder",
       "completion_condition": "Orient selects one valid operation or return; Chart creates one verified finite map; Advance or Maintain reconciles one bounded transition; Closure or Terminate closes with exact evidence and no retained claim",
       "contract_order": 21,
@@ -4441,11 +4336,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-022"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "implement",
       "completion_condition": "The exact accepted tree is reviewed and locked, with every branch-applicable Git and tracker closeout verified",
       "contract_order": 22,
@@ -4486,11 +4376,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-023"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "parallel-implement",
       "completion_condition": "Every in-scope child is integrated and reviewed before parent closeout",
       "contract_order": 23,
@@ -4531,11 +4416,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-025"
       ],
-      "campaign_state": {
-        "campaign_id": null,
-        "status": "not-started",
-        "terminal_evidence_pointer": null
-      },
       "canonical_name": "skill-router",
       "completion_condition": "Exactly one selected route is returned and no destination is invoked",
       "contract_order": 25,

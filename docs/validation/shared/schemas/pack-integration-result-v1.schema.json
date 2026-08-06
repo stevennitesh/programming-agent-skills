@@ -36,10 +36,10 @@
     "parity": {
       "additionalProperties": false,
       "properties": {
-        "contract_campaigns_installed": {"enum": ["match", "mismatch"]},
+        "contract_skills_installed": {"enum": ["match", "mismatch"]},
         "relationship_index": {"enum": ["match", "mismatch"]}
       },
-      "required": ["contract_campaigns_installed", "relationship_index"],
+      "required": ["contract_skills_installed", "relationship_index"],
       "type": "object"
     },
     "schema_version": {"const": 1},

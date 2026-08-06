@@ -6,7 +6,6 @@
     "identities": {
       "additionalProperties": false,
       "properties": {
-        "campaigns": {"items": {"$ref": "#/$defs/campaignIdentity"}, "type": "array"},
         "composition_epoch_id": {"pattern": "^FCE-[0-9]{8}-[0-9]{2}$", "type": ["string", "null"]},
         "contract": {
           "oneOf": [
@@ -49,7 +48,7 @@
           "type": "array"
         }
       },
-      "required": ["composition_epoch_id", "contract", "installed_pack", "relationship_index", "relationship_projection", "campaigns"],
+      "required": ["composition_epoch_id", "contract", "installed_pack", "relationship_index", "relationship_projection"],
       "type": "object"
     },
     "invalidations": {
@@ -69,10 +68,10 @@
     "parity": {
       "additionalProperties": false,
       "properties": {
-        "contract_campaigns_installed": {"enum": ["pending", "match", "mismatch"]},
+        "contract_skills_installed": {"enum": ["pending", "match", "mismatch"]},
         "relationship_index": {"enum": ["pending", "match", "mismatch"]}
       },
-      "required": ["contract_campaigns_installed", "relationship_index"],
+      "required": ["contract_skills_installed", "relationship_index"],
       "type": "object"
     },
     "receipts": {
@@ -130,21 +129,6 @@
   "required": ["schema_version", "identities", "registrations", "receipts", "invalidations", "parity"],
   "type": "object",
   "$defs": {
-    "campaignIdentity": {
-      "additionalProperties": false,
-      "properties": {
-        "campaign_id": {"minLength": 1, "type": "string"},
-        "canonical_name": {"pattern": "^[a-z0-9][a-z0-9-]*$", "type": "string"},
-        "canonical_p1_fingerprint": {"$ref": "#/$defs/fingerprint"},
-        "contract_revision": {"minimum": 1, "type": "integer"},
-        "installed_p1_fingerprint": {"$ref": "#/$defs/fingerprint"},
-        "manifest": {"$ref": "#/$defs/pointer"},
-        "skill_id": {"pattern": "^SK-[0-9]{3}$", "type": "string"},
-        "slice_fingerprint": {"$ref": "#/$defs/fingerprint"}
-      },
-      "required": ["skill_id", "canonical_name", "campaign_id", "manifest", "contract_revision", "slice_fingerprint", "canonical_p1_fingerprint", "installed_p1_fingerprint"],
-      "type": "object"
-    },
     "pointer": {
       "additionalProperties": false,
       "properties": {

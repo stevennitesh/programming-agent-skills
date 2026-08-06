@@ -37,11 +37,6 @@ def skill(
         "relationship_ids": relationships or [],
         "acceptance_scenario_ids": ["PS-001"],
         "load_budget_class": "conditional",
-        "campaign_state": {
-            "status": "not-started",
-            "campaign_id": None,
-            "terminal_evidence_pointer": None,
-        },
     }
 
 
@@ -261,11 +256,6 @@ def test_freeze_returns_deterministic_order_and_immutable_slice() -> None:
         "SK-002",
         "SK-003",
     ]
-    frozen["contract"]["selected_skills"][0]["campaign_state"] = {
-        "status": "terminal",
-        "campaign_id": "campaign-SK-001",
-        "terminal_evidence_pointer": "proof://provider",
-    }
     first = contract.contract_slice(
         frozen["contract"],
         "SK-002",
@@ -282,58 +272,10 @@ def test_freeze_returns_deterministic_order_and_immutable_slice() -> None:
     ]
     assert first["slice"]["slice_id"] == "FCE-20260726-01:r1:SK-002"
     assert first["slice_fingerprint"].startswith("sha256-v1:")
-    admission = contract.campaign_admission_slice(
-        frozen["contract"],
-        "SK-002",
-    )
-    assert admission["status"] == "campaign-admission-slice"
-    assert admission["slice"] == {
-        "slice_id": "FCE-20260726-01:r1:SK-002:aggregate",
-        "selected_capability_ids": ["CAP-002"],
-        "selected_relationship_ids": ["REL-001"],
-        "selected_scenario_ids": ["PS-001"],
-        "hard_proof_predecessor_ids": ["SK-001"],
-    }
-    semantic_base = contract.freeze_contract(valid_contract())["contract"]
-    runtime = deepcopy(semantic_base)
-    runtime["epoch_header"]["status"] = "campaign-active"
-    runtime["selected_skills"][1]["campaign_state"] = {
-        "status": "active",
-        "campaign_id": "campaign-SK-002",
-        "terminal_evidence_pointer": None,
-    }
-    leaf_runtime = contract.contract_slice(runtime, "SK-001")
-    leaf_frozen = contract.contract_slice(semantic_base, "SK-001")
-    assert leaf_runtime["slice_fingerprint"] == leaf_frozen["slice_fingerprint"]
-    runtime["selected_skills"][0]["campaign_state"] = {
-        "status": "ready",
-        "campaign_id": None,
-        "terminal_evidence_pointer": None,
-    }
-    assert contract.contract_slice(runtime, "SK-001")["slice_fingerprint"] == (
-        leaf_frozen["slice_fingerprint"]
-    )
-    runtime["selected_skills"][0]["campaign_state"] = {
-        "status": "active",
-        "campaign_id": "campaign-SK-001",
-        "terminal_evidence_pointer": None,
-    }
-    assert contract.contract_slice(runtime, "SK-001")["status"] == (
-        "campaign-already-started"
-    )
     assert (
         contract.contract_slice(draft, "SK-002")["status"]
         == "contract-not-frozen"
     )
-    not_ready = contract.freeze_contract(valid_contract())["contract"]
-    assert contract.contract_slice(not_ready, "SK-002")["status"] == (
-        "campaign-not-ready"
-    )
-    assert contract.contract_slice(
-        not_ready,
-        "SK-002",
-        terminal_evidence={"SK-001": "proof://forged"},
-    )["status"] == "campaign-not-ready"
     locked = deepcopy(frozen["contract"])
     locked["epoch_header"]["status"] = "integration-accepted"
     assert contract.contract_slice(locked, "SK-002")["status"] == (
@@ -349,18 +291,14 @@ def test_freeze_returns_deterministic_order_and_immutable_slice() -> None:
     )
 
 
-def test_frozen_contract_projects_unready_immutable_blueprints() -> None:
+def test_frozen_contract_projects_immutable_blueprints() -> None:
     contract = pack_contract()
     frozen = contract.freeze_contract(valid_contract())["contract"]
 
     admission = contract.contract_slice(frozen, "SK-002")
     blueprint = contract.contract_blueprint(frozen, "SK-002")
 
-    assert admission == {
-        "status": "campaign-not-ready",
-        "skill_id": "SK-002",
-        "missing_predecessor_skill_ids": ["SK-001"],
-    }
+    assert admission["status"] == "contract-slice"
     assert blueprint["status"] == "contract-slice-blueprint"
     assert blueprint["slice"]["slice_id"] == "FCE-20260726-01:r1:SK-002"
     assert blueprint["predecessor_skill_ids"] == ["SK-001"]
@@ -672,12 +610,6 @@ def test_result_state_is_validated_but_never_set_by_automation() -> None:
     }
     premature = contract.validate_result(accepted)
     accepted["epoch_header"]["status"] = "integration-accepted"
-    for row in accepted["selected_skills"]:
-        row["campaign_state"] = {
-            "status": "terminal",
-            "campaign_id": f"campaign-{row['skill_id']}",
-            "terminal_evidence_pointer": f"proof://{row['skill_id']}",
-        }
     allowed = contract.validate_result(accepted)
     pending_completion = contract.validate_completion(accepted)
     accepted["epoch_header"]["epoch_lock"] = {
@@ -713,12 +645,7 @@ def test_result_state_is_validated_but_never_set_by_automation() -> None:
         "lock_id": "",
         "evidence_pointer": "",
     }
-    empty_acceptance["selected_skills"][0]["campaign_state"] = {
-        "status": "terminal",
-        "campaign_id": None,
-        "terminal_evidence_pointer": "",
-    }
-    assert contract.validate_result(empty_acceptance)["status"] == "result-invalid"
+    assert contract.validate_completion(empty_acceptance)["status"] == "completion-invalid"
 
     premature_draft = valid_contract()
     premature_draft["epoch_header"]["integration_result"] = {
@@ -820,13 +747,6 @@ def test_freeze_enforces_schema_collision_and_graph_parity() -> None:
     assert contract.freeze_contract(dangling_negative)["status"] == (
         "contract-invalid"
     )
-    preseeded = valid_contract()
-    preseeded["selected_skills"][0]["campaign_state"] = {
-        "status": "terminal",
-        "campaign_id": "forged-campaign",
-        "terminal_evidence_pointer": "proof://forged",
-    }
-    assert contract.freeze_contract(preseeded)["status"] == "contract-invalid"
 
 
 def test_slice_recruits_only_relevant_scenarios_and_exit_owners() -> None:
@@ -867,22 +787,12 @@ def test_slice_recruits_only_relevant_scenarios_and_exit_owners() -> None:
     draft["relationships"][0]["combined_exit_owner_skill_id"] = "SK-003"
     frozen = contract.freeze_contract(draft)["contract"]
 
-    frozen["selected_skills"][0]["campaign_state"] = {
-        "status": "terminal",
-        "campaign_id": "campaign-SK-001",
-        "terminal_evidence_pointer": "proof://provider",
-    }
     projected = contract.contract_slice(frozen, "SK-002")["slice"]
 
     assert [
         scenario["scenario_id"]
         for scenario in projected["acceptance_scenarios"]
     ] == ["PS-001", "PS-002", "PS-003"]
-    frozen["selected_skills"][1]["campaign_state"] = {
-        "status": "terminal",
-        "campaign_id": "campaign-SK-002",
-        "terminal_evidence_pointer": "proof://aggregate",
-    }
     exit_projection = contract.contract_slice(frozen, "SK-003")["slice"]
     assert [
         row["relationship_id"] for row in exit_projection["relationships"]

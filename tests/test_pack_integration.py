@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from scripts import campaign_artifacts, install_skills, pack_contract
+from scripts import install_skills, pack_contract
 
 
 def pack_integration():
@@ -26,13 +26,12 @@ def test_create_manifest_is_mechanical_only() -> None:
             "installed_pack": None,
             "relationship_index": None,
             "relationship_projection": [],
-            "campaigns": [],
         },
         "registrations": [],
         "receipts": [],
         "invalidations": [],
         "parity": {
-            "contract_campaigns_installed": "pending",
+            "contract_skills_installed": "pending",
             "relationship_index": "pending",
         },
     }
@@ -175,15 +174,7 @@ def integration_fixture(root: Path) -> Path:
             "pack-composition-contract-v1/contract.json"
         ).read_text(encoding="utf-8")
     )
-    contract["epoch_header"]["status"] = "campaign-active"
-    contract["selected_skills"][0]["campaign_state"] = {
-        "status": "terminal",
-        "campaign_id": "fixture-leaf-campaign",
-        "terminal_evidence_pointer": (
-            "docs/validation/skills/fixture-leaf/campaigns/"
-            "fixture-leaf-campaign/manifest.json"
-        ),
-    }
+    contract["epoch_header"]["status"] = "frozen"
     contract_path = root / "docs/synthesis/skill-pack.md"
     contract_path.parent.mkdir(parents=True)
     contract_path.write_text(
@@ -201,9 +192,6 @@ def integration_fixture(root: Path) -> Path:
     installed.mkdir(parents=True)
     (canonical / "SKILL.md").write_text("# Fixture leaf\n", encoding="utf-8")
     (installed / "SKILL.md").write_text("# Fixture leaf\n", encoding="utf-8")
-    p1_fingerprint = (
-        "sha256-v1:" + install_skills.skill_tree_hash(canonical)
-    )
 
     relationship_index = root / "docs/synthesis/skill-context-relationships.md"
     relationship_index.write_text("# Relationships\n", encoding="utf-8")
@@ -219,104 +207,6 @@ def integration_fixture(root: Path) -> Path:
             },
         },
     )
-    campaign_path = (
-        root
-        / "docs/validation/skills/fixture-leaf/campaigns/"
-        "fixture-leaf-campaign/manifest.json"
-    )
-    admission = pack_contract.campaign_admission_slice(
-        contract,
-        "SK-001",
-        allow_terminal_projection=True,
-    )
-    admission_slice = admission["slice"]
-    campaign = {
-        "schema_version": 2,
-        "campaign": {
-            "id": "fixture-leaf-campaign",
-            "skill": "fixture-leaf",
-            "epoch": "fixture-leaf-campaign",
-            "composition_epoch_id": "FCE-20990101-01",
-            "delivery_mode": "none",
-            "continuation": None,
-            "supersession": None,
-            "worktree": str(root.resolve()),
-        },
-        "contract": {
-            "pack_contract": {
-                "path": "docs/synthesis/skill-pack.md",
-                "revision": "1",
-                "fingerprint": contract_fingerprint,
-            },
-            "slice": {
-                "id": admission_slice["slice_id"],
-                "path": "slice.json",
-                "fingerprint": admission["slice_fingerprint"],
-            },
-            "selected_capability_ids": admission_slice[
-                "selected_capability_ids"
-            ],
-            "selected_relationship_ids": admission_slice[
-                "selected_relationship_ids"
-            ],
-            "selected_scenario_ids": admission_slice[
-                "selected_scenario_ids"
-            ],
-            "proof_predecessors": admission_slice[
-                "hard_proof_predecessor_ids"
-            ],
-            "schedule_pointer": "schedule.json#SK-001",
-            "schedule_fingerprint": "sha256-v1:" + "4" * 64,
-        },
-        "semantic": {
-            "stage_token": "prompt-5",
-            "terminal_token": "campaign-complete",
-            "lifecycle": deepcopy(campaign_artifacts.FRESH_TERMINAL_LIFECYCLE),
-            "pointers": {
-                "decision_capsule": "decisions.md#prompt-5",
-                "m0_checkpoint": "docs/validation/skills/fixture-leaf/m0.md",
-                "research_packet": "research.md",
-                "skill_synthesis": "synthesis.md",
-                "claim_adjacency": "synthesis.md#claims",
-                "pack_synthesis": "docs/synthesis/skill-pack.md",
-            },
-        },
-        "mechanical": {
-            "created_at": "2099-01-01T00:00:00Z",
-            "campaign_digest": "5" * 64,
-            "supersession_digest": None,
-            "contract_digest": "6" * 64,
-            "verified_at": "2099-01-01T00:00:00Z",
-            "artifact_identities": [
-                {"name": "canonical-p1", "fingerprint": p1_fingerprint},
-                {"name": "installed-p1", "fingerprint": p1_fingerprint},
-            ],
-            "proof_registrations": [{"id": "prompt-5-proof"}],
-            "preflight_registrations": [
-                {"kind": "installation", "state": "post-install"}
-            ],
-            "receipts": [],
-            "invalidations": [],
-            "parity": {
-                "canonical_installed": "match",
-                "relationship_ids": [],
-            },
-            "evidence_state": "current",
-        },
-    }
-    campaign["mechanical"]["campaign_digest"] = (
-        campaign_artifacts._campaign_lineage_digest(  # noqa: SLF001
-            campaign["campaign"],
-            None,
-        )
-    )
-    campaign["mechanical"]["contract_digest"] = (
-        campaign_artifacts._canonical_json_sha256(  # noqa: SLF001
-            campaign["contract"]
-        )
-    )
-    write_json(campaign_path, campaign)
-
     result_root = root / "docs/validation/skill-pack/FCE-20990101-01"
     rows = registrations()
     for row in rows:
@@ -379,18 +269,6 @@ def integration_fixture(root: Path) -> Path:
         },
         "relationship_index": pointer(relationship_index, root),
         "relationship_projection": [],
-        "campaigns": [
-            {
-                "skill_id": "SK-001",
-                "canonical_name": "fixture-leaf",
-                "campaign_id": "fixture-leaf-campaign",
-                "manifest": pointer(campaign_path, root),
-                "contract_revision": 1,
-                "slice_fingerprint": admission["slice_fingerprint"],
-                "canonical_p1_fingerprint": p1_fingerprint,
-                "installed_p1_fingerprint": p1_fingerprint,
-            }
-        ],
     }
     manifest["registrations"] = rows
     manifest_path = result_root / "integration-manifest.json"
@@ -421,46 +299,10 @@ def rewrite_candidate_contract(
     )
     contract_pointer["fingerprint"] = module.file_fingerprint(contract_path)
     contract_pointer["semantic_fingerprint"] = semantic
-    campaign_row = manifest["identities"]["campaigns"][0]
-    campaign_path = root / campaign_row["manifest"]["path"]
-    campaign = json.loads(campaign_path.read_text(encoding="utf-8"))
-    admission = pack_contract.campaign_admission_slice(
-        contract,
-        "SK-001",
-        allow_terminal_projection=True,
-    )
-    envelope = admission["slice"]
-    campaign["contract"]["pack_contract"]["fingerprint"] = semantic
-    campaign["contract"]["slice"]["id"] = envelope["slice_id"]
-    campaign["contract"]["slice"]["fingerprint"] = admission[
-        "slice_fingerprint"
-    ]
-    campaign["contract"]["selected_capability_ids"] = envelope[
-        "selected_capability_ids"
-    ]
-    campaign["contract"]["selected_relationship_ids"] = envelope[
-        "selected_relationship_ids"
-    ]
-    campaign["contract"]["selected_scenario_ids"] = envelope[
-        "selected_scenario_ids"
-    ]
-    campaign["contract"]["proof_predecessors"] = envelope[
-        "hard_proof_predecessor_ids"
-    ]
-    campaign["mechanical"]["contract_digest"] = (
-        campaign_artifacts._canonical_json_sha256(  # noqa: SLF001
-            campaign["contract"]
-        )
-    )
-    write_json(campaign_path, campaign)
-    campaign_row["manifest"]["fingerprint"] = module.file_fingerprint(
-        campaign_path
-    )
-    campaign_row["slice_fingerprint"] = admission["slice_fingerprint"]
     write_json(manifest_path, manifest)
 
 
-def test_verify_binds_contract_campaign_install_and_ten_gate_evidence(
+def test_verify_binds_contract_install_and_ten_gate_evidence(
     tmp_path: Path,
 ) -> None:
     module = pack_integration()
@@ -474,7 +316,7 @@ def test_verify_binds_contract_campaign_install_and_ten_gate_evidence(
     assert result["evidence_class"] == "mechanical-only"
     assert len(result["coverage"]) == 10
     assert result["parity"] == {
-        "contract_campaigns_installed": "match",
+        "contract_skills_installed": "match",
         "relationship_index": "match",
     }
     assert contract_path.read_bytes() == contract_before
@@ -540,7 +382,7 @@ def test_mixed_revision_and_installed_identity_block_without_acceptance(
     module = pack_integration()
     manifest_path = integration_fixture(tmp_path)
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    manifest["identities"]["campaigns"][0]["contract_revision"] = 2
+    manifest["identities"]["contract"]["revision"] = 2
     write_json(manifest_path, manifest)
 
     mixed = module.verify_integration(manifest_path, worktree=tmp_path)
@@ -548,7 +390,7 @@ def test_mixed_revision_and_installed_identity_block_without_acceptance(
     assert mixed["status"] == "blocked"
     assert mixed["owner"] == "fresh-composition-epoch"
     assert "acceptance" not in mixed
-    manifest["identities"]["campaigns"][0]["contract_revision"] = 1
+    manifest["identities"]["contract"]["revision"] = 1
     write_json(manifest_path, manifest)
     assert module.verify_integration(
         manifest_path,
@@ -563,7 +405,10 @@ def test_mixed_revision_and_installed_identity_block_without_acceptance(
         worktree=tmp_path / "installed-drift",
     )
     assert drift["status"] == "blocked"
-    assert any("installed" in failure["message"] for failure in drift["failures"])
+    assert any(
+        "installed" in failure["message"].casefold()
+        for failure in drift["failures"]
+    )
     installed_skill.write_text("# Fixture leaf\n", encoding="utf-8")
     assert module.verify_integration(
         manifest_path,
@@ -773,39 +618,6 @@ def test_hand_authored_pass_cannot_override_gate_owned_profile(
     assert verified["failures"][0]["code"] == "registered-check"
 
 
-@pytest.mark.parametrize(
-    ("field", "replacement"),
-    [
-        ("selected_capability_ids", []),
-        ("selected_scenario_ids", []),
-        ("proof_predecessors", ["SK-999"]),
-    ],
-)
-def test_campaign_admission_fields_are_independently_derived(
-    tmp_path: Path,
-    field: str,
-    replacement: object,
-) -> None:
-    module = pack_integration()
-    manifest_path = integration_fixture(tmp_path)
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    campaign_pointer = manifest["identities"]["campaigns"][0]["manifest"]
-    campaign_path = tmp_path / campaign_pointer["path"]
-    campaign = json.loads(campaign_path.read_text(encoding="utf-8"))
-    campaign["contract"][field] = replacement
-    write_json(campaign_path, campaign)
-    campaign_pointer["fingerprint"] = module.file_fingerprint(campaign_path)
-    write_json(manifest_path, manifest)
-
-    result = module.verify_integration(manifest_path, worktree=tmp_path)
-
-    assert result["status"] == "blocked"
-    assert any(
-        failure["code"].startswith("campaign")
-        for failure in result["failures"]
-    )
-
-
 def test_external_installed_root_and_managed_manifest_are_verified(
     tmp_path: Path,
 ) -> None:
@@ -834,26 +646,10 @@ def test_external_installed_root_and_managed_manifest_are_verified(
     assert any("manifest" in failure["message"] for failure in stale["failures"])
 
 
-def test_duplicate_campaign_and_receipt_histories_are_rejected(
+def test_duplicate_receipt_histories_are_rejected(
     tmp_path: Path,
 ) -> None:
     module = pack_integration()
-    manifest_path = integration_fixture(tmp_path)
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    manifest["identities"]["campaigns"].append(
-        deepcopy(manifest["identities"]["campaigns"][0])
-    )
-    write_json(manifest_path, manifest)
-    duplicate_campaign = module.verify_integration(
-        manifest_path,
-        worktree=tmp_path,
-    )
-    assert duplicate_campaign["status"] == "blocked"
-    assert any(
-        failure["code"] == "campaign-duplicate"
-        for failure in duplicate_campaign["failures"]
-    )
-
     manifest_path = integration_fixture(tmp_path / "receipts")
     assert module.verify_integration(
         manifest_path,

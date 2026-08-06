@@ -13,8 +13,6 @@ This repository packages a shared engineering discipline as skills, setup contra
 - Historical research, synthesis, transcripts, issue notes, and run logs remain evidence. They become current instructions only when an owning README or `docs/plans/README.md` says so.
 - A Fresh Composition Epoch treats prior research, synthesis, validation, and campaign conclusions as historical by default. It admits them only after independent rediscovery or explicit revalidation against the epoch's fixed identities and claims.
 - Mechanical rules belong in scripts or config. Prose owns routing, judgment, and behavior that cannot be enforced directly.
-- Deploy-campaign automation may write only reproducible mechanical evidence
-  state. The campaign owner alone settles semantic gate decisions.
 - A delegated implementation handoff is fresh ordinary task context. It never
   replaces its authoritative ticket, source, or live repository evidence and
   requires no worker-side schema, capsule, hash, transcript, or receipt check.
@@ -230,65 +228,21 @@ _Avoid_: dispatcher, automatic router
 
 **Deploy Campaign**
 
-An explicitly invoked one-skill controller, owned by
-[`deploy-prompts.md`](docs/synthesis/methods/deploy-prompts.md), that advances
-one skill only through satisfied proof gates: Contract Lock, Candidate Lock,
-Behavioral Proof, and Release. Research is conditional on a decision-relevant
-evidence gap. Behavioral evaluation runs only for claims that deterministic
-or real-state proof cannot establish. Release performs a cheap cut scan and
-runs pruning proof only for a concrete material cut.
+An explicitly invoked controllerless one-skill authoring method, owned by
+[`deploy-prompts.md`](docs/synthesis/methods/deploy-prompts.md), organized by
+four ordered reasoning and proof obligations: Contract Lock, Candidate Lock,
+conditional Behavioral Proof, and Release. The obligations are not persisted
+semantic lifecycle state.
 
-Prior evidence may satisfy a gate only after Contract Lock independently binds
-current intent and dependencies and the complete evidence identity matches.
-Bare runs include promotion/install; Git delivery must be named. The controller
-retains user interaction and bounded fresh-context delegation without making
-research, behavioral sampling, or pruning a mandatory unit.
+Contract Lock binds the issue, specification, applicable current authority,
+callers, relationships, compatibility, and delivery authority. Candidate Lock
+freezes exact bytes and completes applicable deterministic and integration
+proof before behavioral dispatch or promotion. Behavioral Proof uses the
+existing conditional evaluation owner only for wording-dependent claims and
+real disposable state for effect claims. Release promotes only the exact tested
+candidate. Research, behavioral sampling, pruning, installation, and Git
+delivery occur only when their conditions and authorities apply.
 _Avoid_: mega-prompt, self-chaining prompt, pack-wide campaign
-
-**Deploy runtime identities**
-
-M0 is an intent-derived, behavior-minimal control; H1 is a method- or
-concept-informed hypothesis; V1 is the behavior-verified runtime; and P1 is
-the exact Release candidate after the cut gate. They are conditional evidence
-identities, not mandatory lifecycle stages. When no material cut exists,
-P1 equals V1 by exact identity. Historical B0/C1 records keep their original
-campaign meaning.
-_Avoid_: current baseline, source-derived minimum, final C1
-
-**Campaign control manifest**
-
-The machine-readable control plane for one exact Deploy Campaign epoch. It owns
-campaign identity, artifact pointers and identities, proof registrations and
-receipts, invalidations, and mechanical gate state. It points to semantic
-decisions in synthesis and the decision record instead of copying their
-meaning or rationale.
-_Avoid_: second synthesis, campaign diary, latest campaign
-
-**Mechanical evidence state**
-
-Reproducible campaign state that automation may compute and write
-transactionally, such as leases, bounded identities, deterministic proof
-receipts, cache validity, isolation checks, and parity. Optional `.tmp` data
-may recover exact reusable evidence but is never promotion-critical authority
-and cannot replace explicitly fresh behavioral proof.
-_Avoid_: automated judgment, inferred decision
-
-**Semantic decision state**
-
-The campaign owner's settled intent, research interpretation, hypothesis,
-applicability, evaluation judgment, proof sufficiency, disposition, pruning,
-promotion, and gate decision. Automation may verify referenced mechanical
-facts but cannot manufacture, alter, or advance this state.
-_Avoid_: verifier decision, test-determined adoption
-
-**Campaign continuation modes**
-
-Resume continues one epoch with unchanged semantic inputs and identities.
-Repair changes an authorized artifact in that epoch and mechanically stales
-dependent proof. Restart creates a new epoch that explicitly supersedes the
-old manifest when the target, intended contract, delivery authority, or a
-terminal campaign changes.
-_Avoid_: silent reopen, latest-run recovery
 
 **Global AGENTS template**
 
@@ -298,14 +252,12 @@ _Avoid_: pack manual, copied route map
 ## Vocabulary Owners
 
 - Fresh Composition Epoch, Pack Composition Contract, Research Catalog, and Research Card vocabulary belongs to this context and [ADR-0009](docs/adr/0009-fresh-composition-epochs-revalidate-skill-pack-knowledge.md). The accepted `docs/synthesis/skill-pack.md` owner remains to be materialized by the separately authorized topology migration.
-- Deploy-campaign gate vocabulary and the conditional M0, H1, V1, and P1
-  identities belong to
+- Deploy-campaign proof-obligation vocabulary belongs to
   [`deploy-prompts.md`](docs/synthesis/methods/deploy-prompts.md) and
   [ADR-0010](docs/adr/0010-deploy-campaigns-advance-through-proof-gates.md).
 - Change review candidate, High-assurance review candidate, and Supported
   high-risk trigger belong to this context and
   [ADR-0013](docs/adr/0013-automatic-implementation-review-uses-one-change-review-path.md).
-- Deploy-campaign automation authority and control-plane vocabulary belong to [ADR-0008](docs/adr/0008-deploy-campaign-automation-separates-mechanical-evidence-from-semantic-decisions.md) and this context.
 - Skill-authoring vocabulary—leading words, invocation, reference loading,
   skill splitting, transfer gates, and derived views—belongs to
   [`skills/custom/writing-great-skills/GLOSSARY.md`](skills/custom/writing-great-skills/GLOSSARY.md);
