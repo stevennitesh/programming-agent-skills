@@ -163,8 +163,12 @@ Run these commands from the repository root. Replace the example path with the
 frozen Model Lock for the selected method; use `validate` in place of
 `calculate` when only normalization and contract validation are needed.
 
-Treat receipt JSON as authoritative; Markdown is only its compact readable view.
-`mechanical_status: fail` excludes the affected result. Interpret objective
+Treat receipt JSON as authoritative for normalized inputs, arithmetic,
+assertions, and reproducibility; Markdown is only its compact readable view.
+`mechanical_status: fail` excludes the affected result. A
+`mechanical_status: pass` result is a mechanical tracer; it neither passes Gate
+4 nor determines valuation status. When Gate 4 is pending or partial, report
+calculation status and valuation status separately. Interpret objective
 diagnostics without letting them alter inputs, confidence, range, or status.
 When the selected method is unsupported, report an explicit capability gap and
 do not improvise material valuation arithmetic.
@@ -222,6 +226,15 @@ forecast from causal business drivers before accounting outputs; direct
 cash-flow growth may summarize that derivation but cannot replace it. Keep
 growth consistent with reinvestment and returns. Any later change to Gate 1-3
 content resets the marker and invalidates its dependent work.
+
+Before freezing forecast assumptions, disposition every applicable current
+management guidance item or long-term target that could materially change a
+forecast premise or terminal or realization state. Trace the first explicit
+period and terminal or realization state from reported or guided
+method-appropriate drivers through the economics required by the selected method.
+Preserve any unexplained material conflict as pending. Usable dated consensus
+may challenge this path, but is neither required nor a forecast input by
+default.
 
 Before calculation or review, resolve or conservatively bound every known
 pending item that could change load-bearing content; an explicit forecast
