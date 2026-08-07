@@ -167,8 +167,9 @@ Treat receipt JSON as authoritative for normalized inputs, arithmetic,
 assertions, and reproducibility; Markdown is only its compact readable view.
 `mechanical_status: fail` excludes the affected result. A
 `mechanical_status: pass` result is a mechanical tracer; it neither passes Gate
-4 nor determines valuation status. When Gate 4 is pending or partial, report
-calculation status and valuation status separately. Interpret objective
+4 nor determines valuation status. Until Gate 4 passes, report calculation
+status and valuation status separately, and do not present the mechanical tracer
+as fair value, intrinsic value, or a valuation conclusion. Interpret objective
 diagnostics without letting them alter inputs, confidence, range, or status.
 When the selected method is unsupported, report an explicit capability gap and
 do not improvise material valuation arithmetic.
