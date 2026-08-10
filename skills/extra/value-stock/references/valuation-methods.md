@@ -199,6 +199,11 @@ value. Estimate the liquidity and working-capital reserve needed to run the
 business; when that reserve is uncertain and material, show a sensitivity
 instead of labeling all cash excess.
 
+Apply one disclosed liquidity-reserve convention to cash and economically
+equivalent marketable securities after separately classifying restricted,
+regulatory, customer, and non-operating balances. Do not reserve one while
+treating the other as fully excess without support.
+
 ## Management-Defined And Analyst-Constructed Cash Flow
 
 Before a management-defined or analyst-constructed cash-flow measure carries a
@@ -561,6 +566,12 @@ Before relying on the result, assert:
 - existing awards and future grants reconcile without double counting;
 - organic and acquired growth are distinguished when acquisitions materially
   affect the forecast base or stated growth;
+- any historical payout or retention ratio used to anchor the forecast uses the
+  same attributable earnings, distributions, and investee population as the
+  forecast, or has a quantified bridge;
+- every material contractual or potentially finite income stream has an
+  explicit terminal or realization disposition as continuing, fading, or
+  expiring; no finite stream continues into perpetuity by omission;
 - growth, reinvestment, returns, terminal economics, and required returns are
   coherent, including `discount rate > growth` where applicable;
 - each sensitivity point or case records every input or convention intentionally

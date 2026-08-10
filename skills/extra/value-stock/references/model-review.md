@@ -82,6 +82,12 @@ Any change to the canonical calculation artifact or its unrounded result
 invalidates reproduction. If dependency identity cannot be verified, rerun the
 affected lens.
 
+Record each finding's root disposition as `rejected`, `corrected`, `bounded`, or
+`unresolved`. A bounded disposition identifies its owning conservative evidence
+and full valuation effect. When a correction changes load-bearing content, name
+the new Lock and the prior gate, reproduction, or review coverage it invalidates;
+do not reuse invalidated coverage until it is rerun against that Lock.
+
 If fresh reviewers are unavailable, run separated root passes and disclose
 reduced independence. If the user explicitly required independent validation,
 return `partial` rather than implying that it occurred.
