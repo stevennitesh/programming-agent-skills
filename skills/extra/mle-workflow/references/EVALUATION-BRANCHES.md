@@ -3,6 +3,60 @@
 Read only the sections activated by the system under evaluation. These branches
 extend, but do not replace, the common evaluation contract in `SKILL.md`.
 
+## Confirmatory inference
+
+Use only when the requested decision rests on a claim presented as confirmatory
+statistical inference or a causal-effect claim. Do not activate for explicitly
+exploratory analysis, diagnostics, ordinary predictive candidate comparison,
+deterministic verification, or engineering gate checks.
+
+For prospective Frame or Build work, before accessing outcome evidence reserved
+for confirmation, version the protocol and obtain confirmation from the
+accountable research or analysis owner identified in the Purpose Lock. In
+Review, recover the contemporaneous protocol and report missing or late
+declarations; never backfill them as prospective.
+
+Freeze, as applicable:
+
+- the hypothesis, target population and target quantity or estimand;
+- the outcome and measurement rule, comparator, sampling design, exclusions,
+  missingness or censoring handling, estimator and analysis procedure;
+- uncertainty method, precision or power rationale, stopping rule, and decision
+  rule; and
+- assignment or exposure, observation, analysis, and independent-resampling
+  units plus their clustering, repeated-measure, or interference relationships.
+
+Define each confirmatory claim family and which planned hypotheses, outcomes,
+metrics, claim-bearing slices, individually claim-bearing candidate
+comparisons, and outcome-dependent interim looks it counts. Use a
+design-appropriate error-control, hierarchical, sequential, or fresh
+independent-confirmation policy. Treat adaptive model or candidate selection
+as a locked selection procedure evaluated on untouched outer evidence, not as
+ordinary multiple testing.
+
+For a causal-effect claim, additionally state the intervention or exposure,
+counterfactual contrast, assignment mechanism or identification strategy, and
+applicable confounding, selection, interference, noncompliance, positivity,
+attrition, missingness, and transport assumptions. Predictive improvement,
+temporal precedence, or regression adjustment alone does not identify a causal
+effect. When identification is unsupported, preserve descriptive or predictive
+results and block only the causal interpretation.
+
+Timestamp and justify protocol amendments. An amendment may remain confirmatory
+when made before access capable of revealing the affected outcome comparison,
+or under a predeclared blinded or sequential amendment procedure. A change
+informed by the affected comparison is post hoc and makes the affected analysis
+exploratory. A deviation that breaks measurement, assignment, identification,
+or independence invalidates the affected claim; labeling it is insufficient.
+Require new untouched evidence that was not used for selection and satisfies
+the declared sampling and dependence boundaries before restoring confirmatory
+status.
+
+Complete this branch only when the contemporaneous protocol, data and analysis
+identities, deviations, effect and uncertainty, and decision read back
+consistently. Otherwise block only the dependent confirmatory or causal claim
+and preserve correctly labeled descriptive or exploratory results.
+
 ## Recurring forecasts
 
 Use when the system repeatedly predicts future values or events.

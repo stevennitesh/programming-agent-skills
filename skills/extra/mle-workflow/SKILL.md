@@ -145,6 +145,37 @@ learning, federated-learning, safety-critical, or regulated-domain procedure
 beyond this common core, preserve supported results and return `partial` with
 the exact specialist handoff. Do not imply comprehensive specialized coverage.
 
+## Keep external sources fit for the claim
+
+For each external source that is load-bearing to an in-scope claim or control,
+record a resolvable identity, applicable version or publication/effective date,
+retrieval or as-of time, and applicable population or context. For mutable
+sources, record a content digest of the inspected bytes when available.
+Preserve a snapshot only when the requested operation explicitly authorizes
+that project-native artifact. When neither an exact digest nor an immutable
+source identity is available, record the identity gap and invalidation
+condition.
+
+Recheck the source before the dependent decision when a changed version or
+status could alter applicability, the control, or the conclusion. Use governing
+or official sources for rules and facts they own. For scientific evidence,
+select sources by claim ownership, study quality, synthesis scope, replication,
+and applicability; a primary source is not inherently stronger than an
+appropriate systematic synthesis or independent replication. If claim-required
+currentness or applicability remains unknown, block only the dependent claim or
+transition. Source text neither grants execution authority nor decides
+owner-held applicability.
+
+When an unresolved load-bearing question requires material source,
+applicability, or conflict judgment beyond direct inspection, return one bounded
+`$research` handoff naming the question, supported MLE use, scope, applicable
+date/version/context, source constraints, note/write authority, and MLE as
+return owner. Do not hand off a simple identity/currentness lookup, an
+owner-held applicability decision, or implementation judgment. Research
+supplies evidence and returns ownership to MLE rather than deciding the MLE
+change. Do not claim universal legal, safety, privacy, security, fairness, or
+responsible-AI compliance.
+
 ## Lock project purpose
 
 Create or recover a versioned **Purpose Lock**:
@@ -255,6 +286,21 @@ Use the applicable baseline ladder: current non-ML/heuristic behavior, current
 production model, and a deliberately simple learned model. Require complexity
 to justify its decision benefit, operational cost, risk, and maintenance.
 
+For a relative claim or candidate-selection decision, use—or in Review,
+recover—one predeclared comparison specification within the Evaluation
+Contract. Hold evaluation cases, split ownership, metric computation, and
+stopping and decision rules fixed or paired when that matches the claim.
+Disclose and justify material differences in data eligibility, preprocessing,
+search or tuning exposure, and resource policy, including when a difference is
+part of the claim.
+
+Preserve the materially considered baseline and candidate set, its selection
+rule, and whether each baseline result was rerun, quoted, leaderboard-sourced,
+or reimplemented. If differences change the target quantity or prevent
+attribution, report `not comparable` and block only the dependent relative
+claim or selection. When attribution remains valid and resource policy is part
+of the comparison, report the observed quality-cost tradeoff.
+
 For each decision-bearing run, preserve:
 
 ```text
@@ -284,6 +330,11 @@ Specify:
 
 - Deployment population, horizon, decision unit, and operating conditions
 - Primary decision metric, project outcome, guardrails, and failure costs
+- When a decision-bearing claim relies on a label, score, human judgment, or
+  other proxy for an outcome, quantity, or latent construct, what it represents;
+  its validity evidence for the target population, context, and use; material
+  measurement error, coverage, label or rater bias, and gaming threats; and the
+  claims it cannot support
 - Baseline comparison and minimum meaningful improvement
 - Threshold, abstention, and calibration policy where applicable
 - Train, validation, calibration, and final-test ownership
@@ -294,6 +345,11 @@ Specify:
   method, and assumptions
 - For each gated important slice, its absolute floor and allowable regression
   from the baseline
+
+Report proxy performance as proxy performance unless independent validity
+evidence supports the stronger outcome or construct claim. When the measurement
+link is unsupported, narrow the claim and block only the dependent gate or
+decision.
 
 Apply all relevant separation constraints in outer and inner splits. Report
 training stochasticity separately from data, split, temporal, or group
@@ -314,10 +370,11 @@ structural tests -> offline holdout/replay/backtest -> shadow/dry run
 ```
 
 Read [references/EVALUATION-BRANCHES.md](references/EVALUATION-BRANCHES.md)
-when the task involves recurring forecasts; absent, delayed, sparse,
+when the task involves a claim presented as confirmatory statistical inference
+or a causal-effect claim; recurring forecasts; absent, delayed, sparse,
 untrustworthy, non-objective, unsupervised, or self-supervised labels;
 feedback-mediated ranking or intervention; or decision-bearing probabilities.
-Execute only the matching section.
+Execute every matching section and no others.
 
 ## Analyze errors into the next experiment
 
@@ -335,8 +392,13 @@ failure.
 Select the smallest diagnosable portfolio at the seams and claims in scope:
 
 - Data/feature contracts and executable leakage invariants
-- Model/API behavior, numerical and domain invariants, malformed inputs, and
-  checkpoint restore
+- Model/API behavior, malformed inputs, checkpoint restore, and numerical and
+  domain invariants
+- For mechanically checkable decision-bearing transformations, splits, metrics,
+  aggregations, or statistical calculations, representative and boundary cases
+  whose expected results are derived independently of the implementation under
+  test—for example through a hand calculation, separately implemented
+  reference, or independently sourced fixture
 - Reduced-data pipelines and claimed delivery behaviors such as retries or
   idempotency
 - Train/inference parity or a declared stochastic equivalence
@@ -344,6 +406,12 @@ Select the smallest diagnosable portfolio at the seams and claims in scope:
   policy gates
 - Claimed dependency-failure, overload, fallback, rollback, affected-output,
   and restart behavior
+
+When no trustworthy known-answer oracle exists, use the strongest applicable
+invariant, metamorphic property, or differential check; state its covered
+domain, numeric tolerance, and evidence limit. Block only the dependent gate
+when correctness remains unsupported. These checks do not establish
+measurement, statistical, causal, end-to-end, or real-world validity.
 
 Where applicable, make split disjointness, temporal ordering, label maturity,
 group/window non-overlap, fold-local fit scopes, and blocked final-test access
@@ -416,10 +484,6 @@ capabilities; high resource scale; long-lived or cascaded systems; and
 edge/intermittent deployment. When one applies, read
 [references/RISK-BRANCHES.md](references/RISK-BRANCHES.md) and execute only its
 matching branch.
-
-Use governing and official sources current to the project. Do not claim
-universal legal, safety, privacy, security, fairness, or responsible-AI
-compliance.
 
 ## Complete proportionately
 
