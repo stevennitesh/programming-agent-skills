@@ -1,364 +1,316 @@
-# Engineering Vocabulary Reconciliation
+# Lean Engineering Defaults And Source Vocabulary
 
-Status: ready for implementation planning
+Status: active
 
-Captured: 2026-08-11 at repository HEAD
-`4cf8412d3b4f5ce692d2c1c63325a72c17664010`, including the existing dirty
-worktree as inspected evidence. Re-read every target before editing; this note
-does not authorize overwriting unrelated work.
+Baseline: clean repository HEAD
+`5d5705eea1827fa7627d74e0621a050e7125ad02` on 2026-08-11. That commit
+partially projected source vocabulary, but left contradictory prose checks,
+duplicated doctrine, and universal workflow expansion. Re-read each target
+before editing and preserve unrelated work.
 
 ## Objective
 
-Make the engineering contract and canonical skills use established engineering
-vocabulary where it preserves meaning and reduces explanation. Keep a
-repository-local term only when it compresses a unique, behavior-bearing
-contract. Keep the result lean: shared philosophy and concepts belong in the
-engineering contract; procedures, gates, proof mechanics, and Return contracts
-stay with their skill owners.
+Make high-quality code the ordinary default while keeping specialist methods
+and coordination conditional. Prefer established engineering vocabulary when
+it preserves the repository's meaning and recruits useful prior practice. Use
+plain descriptive language when no established term fits. Retain a local term
+only when it names an exact behavior-bearing protocol or artifact.
 
-This note is the execution map. It does not authorize installation, staging,
-commit, push, publication, or rewriting historical evidence.
+This plan records future implementation work. This edit performs no
+installed-mirror synchronization, staging, commit, push, publication,
+historical rewrite, or machine-schema migration.
 
-## Contract Questions
+## User Policy
 
-Do not add an author-by-author checklist. Embed exactly these three questions
-beside the contract principles they exercise:
+- Favor complex behavior made simple over simplistic behavior or elaborate
+  process.
+- The normal path is direct implementation plus the smallest check capable of
+  disproving the claim.
+- Keep the always-loaded engineering contract compact. Put specialist detail
+  behind an observable condition and its existing owner.
+- Security and production/SRE work are explicit-request-only. Generic risk,
+  file type, external input, a release label, or source prestige cannot activate
+  them.
+- Preserve an explicit existing security, privacy, authorization, production,
+  or data-integrity contract touched by the requested change; do not expand the
+  task into specialist analysis, hardening, deployment, or operations work.
+- A dormant branch creates no checklist row, `N/A`, artifact, reviewer, or
+  explanation obligation.
+- Validators enforce machine-checkable structure, not preferred prose.
 
-1. **Data and invalid states:** Can the data structures and their relationships
-   make this invalid state or special case impossible?
-2. **Abstraction and ownership:** Before extracting, splitting, or unifying
-   code, does the new shape give shared meaning or supported variation a
-   clearer owner and lower total caller and maintainer burden—or merely trade
-   visible repetition for more names, branches, interfaces, and hops?
-3. **Evidence discrimination:** For every test used to support a claim, what
-   incorrect behavior would it reject, and is its oracle independent of the
-   failure mode being tested?
+## Always-Loaded Quality Core
 
-These questions cover the useful review pressure without making a person's
-reputation an authority.
+The shared contract should compress ordinary engineering into these defaults:
 
-## Source-To-Runtime Map
+1. Preserve the explicit request, accepted behavior, applicable context-scoped
+   Ubiquitous Language, preconditions, postconditions, invariants, applicable
+   contracts, and unrelated work.
+2. Trace the current behavior owner and real callers. Change the smallest
+   repository-native path that minimizes total caller, maintainer, migration,
+   operational, coordination, and proof burden; do not create an orphan
+   component, speculative layer, or parallel V2 path.
+3. At a changed boundary, validate action-driving input against its functional
+   contract and preserve data identity, integrity, provenance, schema, units,
+   ordering, and lifecycle where applicable. Do not weaken existing
+   authorization, privacy, or secret-handling guarantees. This is ordinary
+   correctness, not authority for a security program.
+4. Preserve conceptual integrity and essential complexity while removing
+   demonstrated accidental complexity. Use information hiding and deep
+   modules to contain change, not to justify more interfaces.
+5. Make interfaces easy to use correctly and hard to misuse. Prefer clear
+   names, explicit data relationships, local ownership, and readable control
+   flow. Define errors out of existence where the accepted behavior
+   permits it.
+6. Apply DRY to knowledge and policy, not repeated syntax. Apply yagni to
+   speculative capability. Prefer bounded duplication to the wrong
+   abstraction when meanings, owners, change rates, or failure modes differ.
+7. Run the smallest claim-matched check at the real caller or closest
+   observable boundary. Require a discriminating independent oracle when a
+   behavioral claim could otherwise self-confirm. Prefer state verification;
+   use behavior verification only when the interaction is itself a
+   responsibility or is necessary for failure isolation.
+8. Remove or justify paths made obsolete or contradictory by the change.
+   Report only material skipped proof or Residual Risk that limits the claim.
 
-| Source | Vocabulary or contribution to adopt | Runtime owner |
+Use Ousterhout's change amplification, cognitive load, unknown unknowns, deep
+module, shallow module, information hiding, and pass-through method only where
+they sharpen a design judgment. Use Brooks's essential complexity, accidental
+complexity, and conceptual integrity where they preserve problem meaning.
+These are diagnostic concepts, not mandatory scorecards or Return fields.
+
+`Proof Seam` and `Change Closure` may remain as repository-local protocol terms
+because they currently encode distinct cross-skill behavior. Add no new
+capitalized local vocabulary. A test exercises a Proof Seam; it is not itself
+the seam. Prefer a concrete test, fixture, check, workflow, or artifact over the
+invented label `Proof lane`.
+
+## Conditional Activation
+
+A positive predicate activates its branch. A closest non-trigger is not weak
+positive evidence. Untriggered branches stay silent.
+
+| Branch | Activate exactly when | Closest non-trigger and default |
 | --- | --- | --- |
-| Linus Torvalds | Data structures and their relationships; make special cases disappear in the model | Engineering contract question 1; Codebase Design orientation |
-| Robert C. Martin | Actor or reason to change; policy/detail dependency direction | Codebase Design and Audit Design Lens |
-| Martin Fowler | State verification, behavior verification; code smells are investigation leads; behavior-preserving refactoring | TDD and Change Review |
-| Kent Beck | Keep behavior and structure changes separate; simple design; small GREEN refactorings | Contract question 2 and TDD refactoring |
-| Michael Feathers | Seam, Enabling Point, characterization test, sensing and separation | Codebase Design, TDD, Diagnosis, Simplify Code |
-| Dan Abramov | Judge abstraction by changeability and concrete outcomes, not “clean code” aesthetics | Contract question 2 |
-| Sandi Metz | Wrong abstraction; duplication can be cheaper; tests as clients of public interfaces; incoming/outgoing message distinctions | Contract, Codebase Design, Simplify Code, TDD |
-| John Ousterhout | Change amplification, cognitive load, unknown unknowns, deep modules, information hiding, shallow modules, pass-through methods | Engineering contract and Codebase Design |
-| Hyrum Wright and Google | Hyrum's Law, actual caller dependence, define errors out of existence, discriminating review evidence | Engineering contract, Audit Reliability, Change Review |
-| *The Pragmatic Programmer* | DRY is about knowledge; tracer bullets; prove assumptions | Contract, Parallel Implement, Triage |
-| Dave Farley | Fast, high-quality feedback and empiricism | Engineering contract; skill-local wording only when it changes an action or gate |
+| Codebase Design | One consequential responsibility, interface, ownership, seam, substitution, or migration decision is unresolved. | A clear current-owner path. Implement directly. |
+| TDD protocol | The user explicitly requests test-first or RED-GREEN-REFACTOR, or an explicit repository policy requires it. | Ordinary feature or bug work that still needs tests. Test normally without claiming TDD. |
+| Independent Change Review | The user or repository explicitly requires review; multiple independently authored mutation lanes are being recombined; or focused proof cannot establish a material shared-contract or irreversible-migration claim and review is the lowest-burden way to close it. | Every candidate, PR, large diff, novelty, one delegated edit, release label, or generic risk. Use direct diff read-back and focused proof. |
+| High-Assurance Review | The user explicitly names it or approves one exact invocation packet. | Security, production, release, severity, or uncertainty alone. Do not recommend or invoke it automatically. |
+| Delegation | The user explicitly requests subagents, or an explicitly invoked skill owns required fanout. | Multiple files, spare agents, possible parallelism, or an independently ownable subtask. Work directly. |
+| State and lifecycle reasoning | Requested behavior materially depends on reachable states, transitions, ordering, retry, resume, cancellation, persistence, or concurrency. | Asynchronous syntax or hypothetical combinations. Test the enumerable behavior directly. |
+| Formal methods | The user or repository explicitly requires a formal specification, model checker, solver, or formal verification. | Stateful, concurrent, mathematical, high-risk, or invariant-bearing code by itself. Ordinary state reasoning remains available without formal machinery. |
+| Property-based testing | A stable property and independent oracle range over a broad or combinatorial domain, credible generators and shrinking exist, and generation discriminates better than a small example table. | Many edge cases, a regression, or desire for more coverage. Prefer examples or an exhaustive small table. |
+| Test doubles | A real dependency cannot provide deterministic, fast, or safe proof and the double has an explicit fidelity contract. | Convenience or difficult setup alone. Prefer real in-process behavior. |
+| Characterization test | Actual legacy behavior must be recorded while intended behavior is unavailable. | Settled expected behavior. A characterization test establishes actuality, not correctness, cause, or a corrective RED. |
+| Negative control | A validator, hook, policy check, dependency rule, or other enforcement boundary changes. | Ordinary behavior code. One representative failing violation is sufficient unless mutable state can contaminate later checks. |
+| Performance | An explicit budget or acceptance criterion exists, or comparable evidence shows material cost on a supported workload. | Loops, allocations, suite duration, file size, or generic “make it faster.” Do not add optimization machinery. |
+| Accessibility | A changed user-facing surface can alter semantics, labeling, focus, keyboard behavior, contrast, motion, or assistive-technology behavior. | Backend or data-only work. Full WCAG conformance work requires an explicit commitment or claim. |
+| Security | The user or accepted task explicitly names a security objective, assessment, hardening requirement, or security acceptance criterion. | External input, auth/secrets code, hypothetical harm, severity, or supported risk alone. Preserve touched guarantees; otherwise do no security program. |
+| Production/SRE | The user or accepted task explicitly names deployment, production access/configuration, incident work, operability, observability/SLI, SLO, capacity/load, cutover, rollback, or production evidence. | Application code, a “production implementation,” deployment files, release status, or proving a real runtime caller. Do no production/SRE work. |
 
-Primary references:
+Real-caller integration is ordinary correctness. Replace generic “production
+caller/path” wording with “real caller,” “entry path,” or “runtime path” unless
+an actual production environment is explicitly in scope.
 
-- Sandi Metz, [The Wrong Abstraction](https://sandimetz.com/blog/2016/1/20/the-wrong-abstraction)
-- Martin Fowler, [Mocks Aren't Stubs](https://martinfowler.com/articles/mocksArentStubs.html)
-- Martin Fowler, [Code Smell](https://martinfowler.com/bliki/CodeSmell.html)
-- Michael Feathers, [Looking Back at Working Effectively with Legacy Code](https://www.infoq.com/podcasts/working-effectively-legacy-code/)
-- Dan Abramov, [Goodbye, Clean Code](https://overreacted.io/goodbye-clean-code/)
-- John Ousterhout, [A Philosophy of Software Design](https://web.stanford.edu/~ouster/cgi-bin/aposd.php)
-- Google, [What to look for in a code review](https://google.github.io/eng-practices/review/reviewer/looking-for.html)
-- Google, [The standard of code review](https://google.github.io/eng-practices/review/reviewer/standard.html)
-- *The Pragmatic Programmer*, [Tips](https://pragprog.com/tips/)
-- NASA, [Distinctions between product verification and validation](https://www.nasa.gov/reference/2-4-distinctions-between-product-verification-and-product-validation/)
-- NIST SP 800-128, [Guide for Security-Focused Configuration Management](https://csrc.nist.gov/pubs/sp/800/128/upd1/final)
-- W3C, [Data Catalog Vocabulary](https://www.w3.org/TR/vocab-dcat-3/)
+## Source Vocabulary Placement
 
-## Engineering Contract Changes
+Use source vocabulary at the narrowest owner where it changes judgment:
 
-Update these atomically:
-
-- `skills/custom/repo-bootstrap/engineering-contract.md`
-- `docs/agents/engineering-contract.md`
-
-Retain and sharpen:
-
-- Hyrum's Law once, at the shared contract owner.
-- “Define errors out of existence.”
-- Ousterhout's three complexity symptoms and deep-module vocabulary.
-- Cohesion, coupling, and essential versus accidental complexity.
-- Fast, high-quality feedback as shared philosophy.
-- `Proof Seam`: the caller-facing boundary where meaning is verified. A test
-  exercises the Proof Seam; the test is not itself the seam.
-- `Change Closure`: remove or justify displaced, redundant, or contradictory
-  paths.
-
-Add or correct:
-
-- DRY applies to shared knowledge or policy, not every repeated line. Prefer
-  duplication over the **wrong abstraction** when meanings, owners, change
-  rates, or failure modes differ.
-- Use Fowler's **state verification** and **behavior verification**, replacing
-  “state testing” and “interaction testing.” Prefer state verification through
-  stable caller-facing interfaces. Use behavior verification only when the
-  interaction is itself part of the responsibility or is needed for failure
-  isolation.
-- A **characterization test** records actual current behavior. It does not by
-  itself establish intended behavior, correctness, or a corrective RED.
-- Define **Traceability** as a current, bounded chain from governing request
-  and authority through the behavior owner and real callers to the observable
-  proof boundary and evidence.
-
-Replace:
-
-| Current term | Replacement |
+| Owner | Established vocabulary to use |
 | --- | --- |
-| Source Trace | Traceability in human-facing text; retain `source_trace` machine fields for compatibility |
-| Integrated shape | The smallest repository-native path through the current behavior owner and real callers |
-| Proof Lane | Repository-owned proof mechanism, or the concrete fixture/check/workflow/artifact |
-| Removal Trigger | Removal condition |
-| Generic capitalized Lock | The actual action: define, authorize, baseline, freeze, verify, or record acceptance |
+| Engineering contract | Ubiquitous Language; preconditions, postconditions, invariants; conceptual integrity; essential/accidental complexity; information hiding; deep/shallow module; change amplification; cognitive load; unknown unknowns; DRY; yagni; state/behavior verification; refactoring |
+| Codebase Design | responsibility, interface, module, information hiding, deep module, seam, enabling point, behavioral subtyping, preconditions/postconditions/class invariants, wrong abstraction |
+| TDD references | RED-GREEN-REFACTOR; state verification; behavior verification; characterization test; properties, generators, and shrinking; Test Double; Dummy Object; Test Stub; Test Spy; Mock Object; Fake Object |
+| Audit and Change Review | Code smell as an investigation lead; Hyrum's Law only for observable compatibility; safety/liveness only for activated state work; source-specific specialist vocabulary only after its branch activates |
+| Simplify Code and Diagnosis | Refactoring, wrong abstraction, characterization test, change amplification, cognitive load; no source slogan that changes no action |
 
-## Pack Vocabulary Changes
+Source provenance belongs here and in research evidence, not as an
+author-by-author runtime checklist:
 
-Record one nomenclature ADR that supersedes names without rewriting the
-accepted historical decisions.
+- Parnas, [On the Criteria To Be Used in Decomposing Systems into
+  Modules](https://doi.org/10.1145/361598.361623): information hiding and
+  changeable design decisions.
+- Brooks, [No Silver Bullet](https://www.cs.unc.edu/techreports/86-020.pdf):
+  essential and accidental complexity; conceptual integrity.
+- Evans, [Domain-Driven Design Reference](https://www.domainlanguage.com/ddd/reference/):
+  Ubiquitous Language and context-scoped domain models.
+- Meyer, [Design by Contract](https://se.inf.ethz.ch/~meyer/publications/old/dbc_chapter.pdf):
+  preconditions, postconditions, and invariants.
+- Ousterhout, [Complexity](https://web.stanford.edu/~ouster/cgi-bin/cs190-winter18/lecture.php?topic=complexity):
+  change amplification, cognitive load, and unknown unknowns; [Modular
+  Design](https://web.stanford.edu/~ouster/cgi-bin/cs190-winter18/lecture.php?topic=modularDesign)
+  and [Exception Handling](https://web.stanford.edu/~ouster/cgi-bin/cs190-winter18/lecture.php?topic=exceptions):
+  deep/shallow modules, pass-through methods, and defining errors out of
+  existence.
+- Bloch, [How to Design a Good API and Why It Matters](https://www.infoq.com/articles/API-Design-Joshua-Bloch/):
+  easy correct use and resistance to misuse.
+- Fowler, [Mocks Aren't Stubs](https://martinfowler.com/articles/mocksArentStubs.html),
+  [Refactoring](https://martinfowler.com/bliki/DefinitionOfRefactoring.html), and
+  [Yagni](https://martinfowler.com/bliki/Yagni.html): state/behavior
+  verification, behavior-preserving refactoring, and the XP practice yagni;
+  [Code Smell](https://martinfowler.com/bliki/CodeSmell.html): an investigation
+  lead rather than a defect by itself.
+- Beck, [Canon TDD](https://newsletter.kentbeck.com/p/canon-tdd): the small
+  test-first cycle represented here as RED-GREEN-REFACTOR.
+- Feathers, [Working Effectively with Legacy Code sample](https://www.informit.com/content/images/9780131177055/samplepages/0131177052.pdf):
+  seam and enabling point; [author interview](https://www.infoq.com/podcasts/working-effectively-legacy-code/):
+  characterization tests record actual rather than correct behavior.
+- Liskov and Wing, [A Behavioral Notion of Subtyping](https://www.cs.cmu.edu/~wing/publications/LiskovWing94.pdf):
+  behavioral subtyping.
+- Metz, [The Wrong Abstraction](https://sandimetz.com/blog/2016/1/20/the-wrong-abstraction):
+  unsharing and duplication before a false abstraction.
+- Meszaros, [Test Double Patterns](https://ptgmedia.pearsoncmg.com/images/9780131495050/samplechapter/0131495054_CH23.pdf):
+  Test Double taxonomy.
+- Claessen and Hughes, [QuickCheck](https://doi.org/10.1145/351240.351266):
+  properties and generated cases; the canonical TDD reference must also source
+  any adopted shrinking semantics.
+- The Pragmatic Programmer, [DRY extract](https://media.pragprog.com/titles/tpp20/dry.pdf):
+  knowledge-level DRY.
+- Hyrum Wright, [Hyrum's Law](https://www.hyrumslaw.com/): observable behavior
+  can acquire dependents beyond the promised contract.
+- NASA, [Verification and Validation](https://www.nasa.gov/reference/2-4-distinctions-between-product-verification-and-validation/):
+  requirements conformance versus intended purpose in the intended environment.
 
-| Current term | Replacement | Compatibility rule |
+## Vocabulary Disposition
+
+- Keep established terms only at their behavior owner; do not project phrases
+  across every skill.
+- Keep stable machine identities such as `source_trace`, `epoch_lock`, schema
+  IDs, paths, and frozen evidence unchanged.
+- Keep an existing local term only when removing it would lose an exact gate,
+  artifact identity, or Return meaning. Describe it explicitly as local rather
+  than claiming it is source-native.
+- Retain `Source Trace` where it names the repository's exact source packet.
+  Use lowercase traceability only for the generic quality of being traceable.
+- Delete the `Integrated shape`, `Proof lane`, `Behavior-Owned Test Portfolio`,
+  generic capitalized `Lock`, and `Author Lock` labels. Preserve Integrated
+  shape's load-bearing total-burden comparison in direct prose; otherwise keep
+  necessary behavior by naming the concrete artifact or action.
+- Replace `Removal Trigger` with removal condition.
+- Replace `state testing` and `interaction testing` with Fowler's state
+  verification and behavior verification.
+- Delete “test as first user,” “fast, high-quality feedback,” and other slogans
+  when the following rule already owns the behavior.
+- Use verification for conformance to specified requirements and validation
+  for intended purpose in the intended environment.
+- Do not rename a stable protocol field to a near-synonym merely because a
+  source uses a related noun.
+
+## Exact Change Inventory
+
+| Owner | Files | Required outcome |
 | --- | --- | --- |
-| Fresh Composition Epoch | Keep | It uniquely names the pack-wide evidence reset and recomposition process |
-| Pack Composition Contract | Pack Composition Baseline | Retain v1 schema IDs and paths unless a separate machine-format migration is authorized |
-| Research Catalog | Evidence Catalog | Retain current module and schema identities |
-| Research Card | Evidence Record | Retain `RC-*` identities |
-| Deploy Campaign | Skill Change-Control Method | Update active callers; leave historical run evidence unchanged |
-| Contract Lock | Define and Authorize Change | Stage heading and active references |
-| Candidate Lock | Baseline and Verify Candidate | Stage heading and active references |
-| Behavioral Proof | Validate Behavior | Conditional stage; use validation for intended effect |
-| Release | Promote Canonical Skill | Change only this method stage; other genuine release uses remain |
-| Author Lock | No label | “Before Author mode returns…” followed by the existing read-back obligations |
-| epoch Lock | Epoch Acceptance Record | Retain machine field `epoch_lock` unless separately migrated |
+| Active context | `AGENTS.md`, `CONTEXT.md`, `docs/plans/README.md` | Keep boot text small; route this plan while active; remove universal deployment/review language from shared context. |
+| Shared core | `docs/agents/engineering-contract.md`, `skills/custom/repo-bootstrap/engineering-contract.md`, `AGENTS_PORTABLE_FALLBACK.md` | Replace the 256-line mixed contract with the compact quality core plus short trigger pointers; update both managed copies atomically. |
+| Review decision | `docs/adr/0015-lean-quality-defaults-and-conditional-workflow-expansion.md` | Supersede ADR-0013's universal Implement review and narrow ADR-0014's incomplete nomenclature migration; preserve both historical ADRs. |
+| Ordinary implementation | `skills/custom/implement/SKILL.md`, its metadata and handoff reference | Remove default Charter, Repair budget, mandatory reviewer, repeated Hyrum prose, and production-caller wording. Require current owner, real callers, focused proof, diff/read-back check, obsolete-path cleanup, and honest Residual Risk. |
+| Parallel implementation | `skills/custom/parallel-implement/SKILL.md` and metadata | Keep lane isolation and one final independent review for genuinely independently authored integration; use runtime-path language; do not imply production/SRE scope. |
+| Design | `skills/custom/codebase-design/{SKILL.md,DIRECT-DESIGN.md,DEEPENING.md,DESIGN-IT-TWICE.md}` | Keep the ordinary interface packet small; load substitution, migration, state, security, production, and performance concerns only through their predicates. Use the source vocabulary above. |
+| Testing | `skills/custom/tdd/{SKILL.md,tests.md,mocking.md,refactoring.md}` and metadata | Keep TDD invocation conditional; correct Fowler/Meszaros terms; add bounded characterization, Test Double, and property-testing branches without new phases or Return fields. |
+| Diagnosis, simplification, audit, review | Directly affected canonical skills and existing references | Remove duplicated doctrine and slogans; preserve their gates and Returns; activate specialist coverage only from the table. |
+| Relationship owners | `docs/synthesis/skill-context-relationships.md`, applicable runtime profiles and core-workflow evals | Make Implement-to-Change-Review conditional; preserve final review for independently authored integration and explicit-only High Assurance. |
+| Pack composition owner | `docs/synthesis/skill-pack.md`, `tests/test_first_fresh_epoch.py`, and affected composition proof | Add one revision-plus-one amendment for the behavioral review-routing change and regenerate only affected fingerprints and integration evidence. Do not amend the baseline for prose-only vocabulary changes. |
+| Active vocabulary callers | `skills/custom/to-spec/SKILL.md`, `skills/custom/to-tickets/SKILL.md`, `skills/custom/triage/AGENT-BRIEF.md`, `skills/custom/writing-great-skills/SKILL.md`, `docs/synthesis/methods/deploy-prompts.md`, and directly asserting tests | Remove only the retired human-facing labels and production-caller wording named above; preserve behavior and machine identities. |
+| Mechanical projection | `skills/custom/repo-bootstrap/scripts/validate_setup.py`, `skills/custom/repo-bootstrap/setup-schema.json`, `scripts/validate_skills.py`, `tests/test_skill_pack_contracts.py` | Delete source-phrase policing and broad vocabulary-projection tests. Validate owners, managed identity, pointers, and observable activation contracts. Refresh digests only after wording freezes. |
 
-Use **verification** for conformance to specified deterministic requirements
-and **validation** for intended behavior or effect.
-
-The marker-bounded JSON in `docs/synthesis/skill-pack.md` is a frozen baseline.
-Changing embedded `Proof Lane` or `epoch Lock` text requires a revision-plus-one
-amendment and regeneration of affected semantic fingerprints, blueprints,
-slices, and integration evidence. Do not mutate the accepted revision in place.
-
-## Skill Changes
-
-### Codebase Design
-
-Files:
-
-- `skills/custom/codebase-design/SKILL.md`
-- `skills/custom/codebase-design/DIRECT-DESIGN.md`
-- `skills/custom/codebase-design/DEEPENING.md`
-- `skills/custom/codebase-design/DESIGN-IT-TWICE.md`
-
-Changes:
-
-- Add Feathers's **Enabling Point**: where behavior or dependency selection
-  occurs at an earned Seam.
-- Preserve the caller-facing Interface as the Proof Seam; tests exercise it.
-- Prefer deep, somewhat-general-purpose Modules whose Interfaces hide decisions
-  and do not accumulate caller-specific special cases.
-- Trace material data structures, ownership, and relationships.
-- Diagnose wrong abstraction, mixed actors or reasons to change, weak cohesion,
-  harmful coupling, policy depending on details, and obscured data relations.
-- Compare unsharing, inlining, or bounded duplication before adding parameters,
-  conditional paths, or another layer.
-- State that characterization tests freeze observed legacy behavior, not intent.
-
-### TDD
-
-Files:
-
-- `skills/custom/tdd/SKILL.md`
-- `skills/custom/tdd/tests.md`
-- `skills/custom/tdd/mocking.md`
-- `skills/custom/tdd/refactoring.md`
-
-Changes:
-
-- Use state verification and behavior verification consistently.
-- Treat tests as clients of the public interface; remove “test as first user.”
-- State-verify incoming/public results. Behavior-verify outgoing commands only
-  when sending is the owned responsibility or necessary for failure isolation.
-- Add the characterization-test limitation.
-- Replace `Behavior-Owned Test Portfolio` or bare `Test Portfolio` with a plain
-  **Test Ownership** rule: each supported behavior has one canonical test
-  owner; supporting tests cover distinct risks.
-- Keep `RED -> GREEN -> REFACTOR`. Do not add a `TIDY` phase or new Return field.
-
-### Diagnosing Bugs
-
-File: `skills/custom/diagnosing-bugs/SKILL.md`
-
-- Before corrective regression proof, state that a characterization test may
-  record actual behavior or protect unaffected legacy behavior but cannot
-  establish expected behavior, cause, or the corrective RED.
-- Remove a redundant fast-feedback slogan if it changes no action or gate.
-
-### Audit Codebase
-
-Files:
-
-- `skills/custom/audit-codebase/DESIGN-LENS.md`
-- `skills/custom/audit-codebase/CODING-PRACTICES-LENS.md`
-- `skills/custom/audit-codebase/RELIABILITY-LENS.md`
-- `skills/custom/audit-codebase/QUALITY-LENS.md`
-
-Changes:
-
-- Design: add wrong abstraction, Enabling Point, actor/reason, policy/detail
-  inversion, cohesion/coupling, and material data relationships as evidence
-  prompts.
-- Coding practices: smells and refactoring names are investigation vocabulary,
-  not findings or prescribed remedies.
-- Reliability: ask which actual dependencies callers rely upon; keep this
-  source-neutral because Hyrum's Law is already in the shared contract.
-- Quality: preserve demonstrated-cost admission.
-- Do not add Candidate Contract fields or finding rows solely to carry source
-  vocabulary.
-
-### Change Review
-
-Files:
-
-- `skills/custom/change-review/FINDING-CONTRACT.md`
-- `skills/custom/change-review/SMELL-BASELINE.md`
-- `skills/custom/change-review/SKILL.md`
-
-Changes:
-
-- Use state verification and behavior verification in Proof Discipline.
-- State: “Treat smells as investigation leads, not defects or findings.”
-- A new or changed test must discriminate the supported broken case.
-- When changing a validator, hook, policy check, or enforcement boundary, use
-  an applicable negative control to show a controlled violation failing for
-  the intended reason. Do not require mutation controls universally.
-- Remove repeated Hyrum explanation; inherit it from the contract.
-- Preserve all finding fields, severities, admission gates, remediation
-  classes, and Return authority.
-
-### Simplify Code
-
-File: `skills/custom/simplify-code/SKILL.md`
-
-- Add the wrong-abstraction response: delete, unshare, inline, or accept bounded
-  duplication before parameterizing a false common abstraction.
-- Keep each cut a small behavior-preserving refactoring.
-- Treat characterization tests as observed-behavior evidence only.
-
-### Remaining Active Skills
-
-- `parallel-implement`: retain one tracer bullet through the production path.
-- `triage`: retain tracer bullet as a learning role, not a slice type or
-  completion claim.
-- `implement`: remove its duplicated Hyrum paragraph.
-- `to-spec` and `to-tickets`: vocabulary-only updates for Traceability, removal
-  condition, and repository-owned proof mechanism.
-- `high-assurance-review`: no source-specific edit; it consumes the shared
-  Finding Contract.
-- `writing-great-skills`: remove the Author Lock label while retaining read-back,
-  proof, unrelated-work, and stop-before-delivery behavior.
-
-## Current-WIP Corrections
-
-Before adding more vocabulary, reconcile the existing dirty candidate:
-
-- Delete
-  `test_source_derived_vocabulary_projects_to_affected_skill_slices` from
-  `tests/test_skill_pack_contracts.py`.
-- Remove source-phrase literals such as Hyrum/complexity/testing vocabulary from
-  `skills/custom/repo-bootstrap/scripts/validate_setup.py`.
-- Do not make the validator police prose. ADR-0004 assigns it publishing and
-  structural hygiene, not language enforcement.
-- Remove duplicated Hyrum paragraphs from Implement and Change Review.
-- Correct every claim that a test itself is the Proof Seam.
-- Remove no-op source slogans from skills when they add no behavior, condition,
-  gate, or stopping rule.
-- Preserve behavior-bearing ownership, Return, closure, and proof obligations
-  while replacing labels.
-
-## Tests And Behavioral Evaluation
-
-Replace broad vocabulary-projection assertions with owner-specific behavior
-assertions in `tests/test_skill_pack_contracts.py`:
-
-- shared concepts appear at the engineering-contract owner;
-- TDD and the Finding Contract use state/behavior verification consistently;
-- characterization tests are actual-behavior evidence, not correctness or RED;
-- wrong-abstraction actions appear only in Codebase Design and Simplify Code;
-- smells remain leads rather than findings;
-- conditional negative controls remain conditional;
-- no new TDD phase, Return field, finding field, or universal ceremony appears.
-
-The exact wording changes judgment, so structural tests are insufficient. Use
-`skills/custom/writing-great-skills/BEHAVIOR-EVALS.md`:
-
-1. Freeze the accepted control and exact candidate bytes.
-2. Run at least five fresh entry-positive control/candidate pairs.
-3. Admit the wording only if it changes the intended judgment or action without
-   weakening established behavior.
-4. Then run wrong-condition pairs, including:
-   - an already-deep cohesive module;
-   - genuinely shared knowledge where duplication is harmful;
-   - a characterization test being mistaken for correctness;
-   - an interaction that is genuinely contractual;
-   - a low-risk change where a negative control is unnecessary.
-5. Evaluate behavior, not phrase echo.
+Do not create new security, SRE, accessibility, formal-methods, property-testing,
+or “lean implementation” skills. Use the current owner and an existing
+branch-only reference; add a small reference only when the existing owner
+cannot remain readable without it.
 
 ## Execution Order
 
-1. Capture current repository state and protect unrelated dirty work.
-2. Add the nomenclature ADR.
-3. Update `CONTEXT.md` ownership and preferred terms.
-4. Update both engineering-contract copies atomically.
-5. Amend the Pack Composition Baseline and regenerate only affected derived
-   evidence.
-6. Update Codebase Design and TDD, then Audit, Review, Diagnosis, Simplify, and
-   vocabulary-only callers.
-7. Reconcile validators and owner-specific tests.
-8. Recalculate `setup-schema.json`'s contract digest and all managed markers
-   only after wording is frozen.
-9. Run behavioral evaluation.
-10. Run:
-    - `python -m scripts.pytest_focused`
-    - `python -m scripts.validate_skills`
-    - `python -m pytest`
-    - `python -m scripts.install_skills --dry-run`
-    - `git diff --check`
-    - `git diff --cached --check`
-11. Stop before installed-mirror synchronization, staging, commit, push, or
-    publication unless separately authorized.
+1. Snapshot the current files and classify every planned instruction as Keep,
+   Collapse, Disclose, or Delete.
+2. Add the successor ADR, then amend the Pack Composition Baseline only for
+   the review-routing behavior change.
+3. Compact both engineering-contract copies and the root portable fallback.
+4. Simplify Implement and its relationship to Change Review; then update
+   Parallel Implement and High Assurance only where their routing text depends
+   on that decision.
+5. Update Codebase Design and TDD branch owners, then the directly affected
+   Diagnosis, Simplify, Audit, and Review text.
+6. Remove validator prose policing and replace phrase projection with
+   owner-specific structural assertions.
+7. Freeze wording, update managed markers and the setup digest, then run
+   focused structural tests, skill validation, and diff checks.
+8. Run applicable behavioral evaluation, followed by the full suite and
+   install dry-run because shared context and composition changed.
+9. Stop before installation synchronization or Git delivery unless separately
+   authorized.
+
+Do not revise the Pack Composition Baseline or regenerate semantic fingerprints
+merely to rename human-facing prose. The Implement review-routing change is
+behavioral, so its one revision-plus-one amendment is required for coherence.
+
+## Proof And Behavioral Evaluation
+
+Structural proof must establish ownership and branching, not source-phrase
+presence:
+
+- both engineering-contract copies match except for the managed marker;
+- the setup digest matches the frozen final wording;
+- no validator requires author names, book titles, or literature phrases;
+- each changed branch has an observable positive condition and resulting
+  action; add a closest non-trigger only where demonstrated ambiguity requires
+  it;
+- ordinary Implement can finish with focused caller proof and no reviewer;
+- independently authored final integration still receives review;
+- High Assurance, security, and production/SRE remain explicit-only;
+- no new TDD phase, Return field, finding field, checklist, score, or mandatory
+  artifact appears.
+
+Use `skills/custom/writing-great-skills/BEHAVIOR-EVALS.md` for each registered
+`quality-lift` wording claim. Freeze control/candidate bytes, rubric, runtime,
+and protected behavior. Run controls first; stop at
+`reject-no-control-deficit` when the deficit is absent; sample the candidate
+only after the control deficit appears; judge the contribution from those
+candidate samples; and sample selected wrong conditions only after the
+candidate contributes. An `accept` decision is required for retained
+judgment-changing wording. Pure nomenclature uses structural proof.
+
+Candidate pairs, selected only for behavior changed by the final delta:
+
+- small local fix / shared public-contract migration;
+- ordinary tests / explicit TDD request;
+- real runtime caller / explicit production deployment;
+- functional validation at a trust boundary / explicit security hardening;
+- enumerable examples / broad generated property;
+- ordinary state transitions / explicit formal verification;
+- suspected slowness / measured budget violation;
+- backend change / changed interactive UI;
+- one-owner edit / independently owned parallel work;
+- repeated syntax with distinct meaning / duplicated policy knowledge.
+
+Run:
+
+- `python -m scripts.pytest_focused`
+- `python -m scripts.validate_skills`
+- `python -m pytest`
+- `python -m scripts.install_skills --dry-run`
+- `git diff --check`
+- `git diff --cached --check`
 
 ## Deliberate Non-Changes
 
-- No author-by-author runtime checklist or celebrity authority.
-- No SOLID checklist, tiny-function rule, “clean code” score, or universal
-  abstraction prescription.
-- No universal negative-control or mutation-testing ceremony.
-- No characterization test promoted to a correctness oracle.
-- No smell promoted to a defect or finding.
-- No tracer bullet promoted to a ticket type, slice type, or completion claim.
-- No routing, relationship, Return, tracker, Git, or installation-state change
-  unless a concrete renamed artifact requires it.
-- No rewriting of historical research, accepted ADRs, validation runs, or
-  frozen evidence as though they were current instructions.
+- No author checklist in runtime context.
+- No new review system or universal independent reviewer.
+- No security, production/SRE, threat-model, ASVS, SSDF, SLO, incident,
+  deployment, or release-readiness work without explicit scope.
+- No full WCAG conformance claim without explicit scope.
+- No universal TDD, property testing, formal methods, mutation testing,
+  performance benchmarking, matrix, scorecard, or negative-control ceremony.
+- No source-vocabulary enforcement in validators.
+- No new branded phases, fields, ledgers, locks, portfolios, or artifacts.
+- No rewrite of historical ADRs, synthesis, research, validation, or run logs.
+- No machine identity or frozen-baseline migration solely for prose; the one
+  review-routing successor is behavior, not nomenclature.
+- No installed-mirror synchronization, staging, commit, push, or publication.
 
-## Completion Boundary
+## Completion
 
-The vocabulary reconciliation is complete only when active owners and callers
-are cohesive, frozen baseline changes have valid successor evidence, the
-behavioral evaluation supports the judgment changes, all repository checks
-pass, and displaced terminology is removed or explicitly retained for machine
-compatibility.
-
-Research status: answered. The source-to-runtime mapping and active repository
-surface were inspected on 2026-08-11. Remaining uncertainty is implementation
-drift after this capture; resolve it by rereading each owner before mutation.
-Additional source searching is unlikely to change the selected leading terms.
-
-Caller-use boundary: this note supports a later authorized implementation. It
-does not itself change canonical vocabulary or authorize delivery.
-
-Return owner: repository maintainer.
-
-Next: none.
+The work is complete when ordinary engineering uses the compact quality core,
+each changed heavier branch has an observable activation condition, security
+programs and production/SRE are explicit-only, ordinary trust/data correctness
+remains active, source vocabulary is precise without phrase projection,
+obsolete universal ceremony is removed, accepted behavioral evaluation
+supports judgment changes, and repository checks pass.

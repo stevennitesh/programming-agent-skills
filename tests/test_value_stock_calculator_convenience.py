@@ -21,6 +21,7 @@ RI_FIXTURE = (
     / "skills/extra/value-stock/examples/residual-income-model-lock.json"
 )
 SKILL = ROOT / "skills/extra/value-stock/SKILL.md"
+RUNBOOK = ROOT / "skills/extra/value-stock/references/analyst-runbook.md"
 METHODS = ROOT / "skills/extra/value-stock/references/valuation-methods.md"
 WORKFLOW_PROOF = ROOT / "docs/validation/skills/value-stock"
 
@@ -95,24 +96,31 @@ def test_cli_has_obvious_validate_and_calculate_routes_with_copyable_help() -> N
     assert json.loads(residual_income_run.stdout)["method"] == "residual_income"
 
 
-def test_skill_has_one_calculator_route_to_the_tested_example_and_method_owner() -> None:
+def test_skill_routes_one_runbook_to_the_tested_examples_and_method_owner() -> None:
     skill = SKILL.read_text(encoding="utf-8")
+    runbook = RUNBOOK.read_text(encoding="utf-8")
     methods = METHODS.read_text(encoding="utf-8")
 
-    assert skill.count("## Run The Calculator") == 1
-    assert "[FCFF example](examples/fcff-model-lock.json)" in skill
-    assert "[residual-income example](examples/residual-income-model-lock.json)" in skill
-    assert "[valuation-methods.md](references/valuation-methods.md)" in skill
+    assert skill.count("[analyst-runbook.md](references/analyst-runbook.md)") == 1
+    assert runbook.count("## 3. Forecast, Freeze, And Calculate") == 1
+    assert "[FCFF example](../examples/fcff-model-lock.json)" in runbook
+    assert "[residual-income example](../examples/residual-income-model-lock.json)" in runbook
+    assert "[valuation-methods.md](valuation-methods.md)" in runbook
+    assert runbook.count("caller repository declares a valuation research catalog") == 1
+    assert "open exactly one best eligible note" in runbook
+    assert "a catalog row cannot satisfy a Model Lock requirement" in runbook
+    assert "report the live capability state" in runbook
+    assert "do not invent a command or manual parallel calculation" in runbook
     assert (
         "python skills/extra/value-stock/scripts/valuation_gateway.py calculate "
-        "skills/extra/value-stock/examples/fcff-model-lock.json" in skill
+        "skills/extra/value-stock/examples/fcff-model-lock.json" in runbook
     )
     assert (
         "python skills/extra/value-stock/scripts/valuation_gateway.py calculate "
-        "skills/extra/value-stock/examples/residual-income-model-lock.json" in skill
+        "skills/extra/value-stock/examples/residual-income-model-lock.json" in runbook
     )
     assert "`mechanical_status: fail` excludes the affected result" in skill
-    assert "explicit capability gap" in skill
+    assert "expose a capability gap" in runbook
     normalized_methods = " ".join(methods.split())
     assert (
         "receipt supplies the deterministic arithmetic and assertions represented "

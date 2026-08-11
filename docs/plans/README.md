@@ -6,7 +6,7 @@ created.
 
 ## Current Work
 
-No active pack-maintenance plan.
+- [Lean engineering defaults and source vocabulary](engineering-vocabulary-reconciliation.md)
 
 ## Current Runbooks
 
