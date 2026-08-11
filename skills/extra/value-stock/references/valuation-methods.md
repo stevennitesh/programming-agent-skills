@@ -35,6 +35,13 @@ Report no more precision than the weakest load-bearing input supports;
 approximate claims, stale bridges, and broad sensitivities do not support
 cents-level fair value.
 
+When multiple load-bearing bounds affect one per-security result, record each
+bound's affected layer, held-constant scope, unlock condition, and direction on
+the numerator, denominator, and final metric. Label the combined result upper
+or lower only when its direction is proven over the full bound ranges. Opposing
+effects remain `partial` and directionally unresolved unless their combined
+direction is proven.
+
 Valuation is uncertain even when carefully executed; sensitivity, scenarios,
 and decision trees expose uncertainty but do not remove it:
 [Damodaran: An Introduction to Valuation](https://pages.stern.nyu.edu/~adamodar/New_Home_Page/background/valintro.htm).
@@ -121,6 +128,15 @@ separate claims on equity before dividing by common shares. A fully diluted
 share count is a shortcut, not an equivalent treatment, because it can miss
 exercise proceeds, vesting, and option time value:
 [Damodaran: Dealing with Options, Warrants and Convertibles](https://pages.stern.nyu.edu/adamodar/New_Home_Page/lectures/eqshare.htm).
+
+Decompose material non-controlling interests by subsidiary or economic
+component. For a listed subsidiary, use dated minority ownership, market price,
+and the applicable foreign-exchange rate. For private components, require a
+supported economic value or finite conservative bound. Treat carrying value as
+a labeled proxy unless it is reconciled to attributable cash flows or equity
+value. Apply the dependent status policy to any material residual component: a
+finite bound may support `partial`; an unbounded load-bearing gap blocks the
+affected numerical result.
 
 Discount FCFF at WACC using market-value capital weights and a cost of capital
 consistent with the cash-flow currency. Do not use a stale universal risk-free
@@ -344,6 +360,10 @@ diagnostic, not an automatic pass/fail rule.
 Hold a transparent set of non-growth assumptions and solve for the revenue
 growth, margin, reinvestment efficiency, or terminal economics required for the
 current price. State which variable was solved and what stayed fixed.
+
+Describe a reverse result as a minimum or maximum only relative to the named
+bound and stated held-constant assumptions. Do not extend that direction across
+other unresolved bounds.
 
 Treat a one-variable solve as a conditional sensitivity, not the market's
 unique thesis. When multiple economically linked drivers can plausibly explain

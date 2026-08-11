@@ -161,6 +161,12 @@ Place citations adjacent to each material current claim. Numerical citations
 must support the exact number, period, and definition. If two sources disagree,
 prefer the owning primary source or preserve the conflict.
 
+Treat provider pages containing quotes, estimates, targets, or consensus
+history as mutable. Preserve the artifact or captured content identity available
+by the information cutoff. A later render cannot silently replace it, even when
+the displayed update date is unchanged; treat it as later corroboration or
+preserve the conflict.
+
 ## Structured Filing Data
 
 Use regulator APIs, inline XBRL, and filing data tables to accelerate discovery
@@ -227,8 +233,12 @@ before the result, never a subsequently revised history.
 
 When analyst price targets materially challenge a present-value result, record
 each usable target's publication date, target date or horizon, valuation method
-or operator, forecast period, and earnings or cash-flow definition. Compare
-values only at a common date under
+or operator, forecast period, earnings or cash-flow definition, target claim
+basis (`enterprise`, `total equity`, or `common share`), disclosed claim bridge,
+and share-denominator or forecast-EPS convention.
+Mark unavailable details `unknown`; do not infer that an opaque target uses the
+valuation's NCI, debt, cash, or dilution treatment. Compare values only at a
+common date under
 [Future-Date Valuation](valuation-methods.md#future-date-valuation). If the
 horizon or method is unavailable, use the target only as dispersion or sentiment
 evidence. Do not average incompatible methods or treat a consensus mean as

@@ -1,5 +1,8 @@
 default_permissions = "project-lanes"
 
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+web_search = "live"
 [permissions.project-lanes]
 extends = ":workspace"
 
