@@ -4,7 +4,8 @@ Refactor only while tests are GREEN. Preserve observable behavior and the
 current public contract; intended behavior or contract changes start a new RED
 cycle.
 
-Prefer moves that increase **depth**, **leverage**, or **locality**:
+Prefer moves that increase **depth** or **information hiding** and reduce
+**change amplification**, **cognitive load**, or **unknown unknowns**:
 
 - remove duplication introduced by the tracer bullet;
 - rename concepts to match the domain glossary;

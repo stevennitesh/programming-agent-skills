@@ -38,6 +38,9 @@ broad suite never closes the remaining ledger.
   invariants, ownership, ordering, resource bounds, and cleanup?
 - **Lifecycle and compatibility:** Are absent, current, legacy, incompatible,
   expired, and restarted states intentional?
+- **Hyrum's Law:** When observable behavior changes, is actual dependence
+  distinguished from the intended contract and treated as migration evidence
+  rather than automatically as a new commitment?
 - **Environmental variation:** Do time, locale, filesystem, network, hardware,
   resources, and configuration behave within supported bounds?
 - **Observability:** When repository authority requires operational signals,

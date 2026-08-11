@@ -98,9 +98,10 @@ interactions, not a blind Cartesian product. Close each row as `inspected`,
 `proved`, `skipped-nonmaterial`, or `blocked`; any material skip or block makes
 coverage `incomplete`.
 
-When the candidate supersedes or makes behavior redundant, extend coverage to
-every displaced implementation, caller, registration, export, flag, test,
-configuration, document, and migration required by Change Closure.
+When the candidate supersedes or makes behavior redundant, apply Hyrum's Law by
+distinguishing the intended contract from actual dependence while extending
+coverage to every displaced implementation, caller, registration, export,
+flag, test, configuration, document, and migration required by Change Closure.
 
 ## Judge
 

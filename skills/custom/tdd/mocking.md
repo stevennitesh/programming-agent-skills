@@ -31,7 +31,9 @@ def test_paid_order_is_confirmed():
 ```
 
 The fake replaces the payment boundary while owned order behavior remains real.
-Assert an interaction only when the adapter request is the contract under test.
+Prefer state testing of observable outcomes through the stable caller-facing
+interface. Use interaction testing only when the adapter request is itself the
+contract or provides necessary failure isolation.
 
 ## Fidelity Gate
 

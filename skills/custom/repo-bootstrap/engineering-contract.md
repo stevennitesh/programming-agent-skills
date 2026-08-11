@@ -62,12 +62,22 @@ Correctness includes behavior over relevant inputs, states, lifecycle
 transitions, failures, supported environments, accessibility, and observable
 effects—not merely a successful happy path.
 
+Apply **Hyrum's Law** as a compatibility-risk heuristic: externally observable
+behavior may have dependents even when it is not promised. Before changing or
+removing it, distinguish the intended contract from actual dependence;
+demonstrated dependence is migration evidence, not automatically a new
+commitment.
+
 Where the supported contract exposes them, preserve atomicity, recovery, retry,
 idempotency, compatibility, cancellation, concurrency, and observability
 semantics. Defect correction should address the causal owner and prevent the
 supported failure across affected callers rather than mask one symptom.
 
 Do not add machinery for risks the system cannot reach.
+
+Where commitments permit, **define errors out of existence**: choose semantics
+or representations that eliminate needless error cases instead of exporting
+them for callers to handle.
 
 ### Respect Trust And Data Boundaries — Must
 
@@ -108,15 +118,24 @@ change; do not disguise adjacent cleanup as necessary work.
 
 ## Shape Code For Understanding
 
-### Deep Simplicity — Prefer
+Use **change amplification**, **cognitive load**, and **unknown unknowns** as
+symptoms of complexity. Prefer designs where a supported change touches few
+places, requires little information to be held in mind, and makes affected
+dependencies and callers obvious.
 
-Give callers a small, honest interface that hides necessary complexity and has
-a clear owner. Earn abstraction, indirection, adapters, configurability, and
-seams through supported variation, repeated policy, or a real external
-boundary.
+### Deep Modules And Information Hiding — Prefer
 
-Remove pass-through layers and ceremonial abstractions that do not reduce
-caller burden.
+Prefer **deep modules**: give callers a small, honest interface that uses
+**information hiding** to conceal essential complexity behind a clear owner.
+Avoid **shallow modules** and **pass-through methods** whose interface burden
+approaches their useful functionality. Preserve **cohesion**, manage
+**coupling**, and separate **essential complexity** from
+**accidental complexity** so the accidental can be removed. Judge depth by coherent
+functionality relative to interface burden, not by class, function, or
+implementation size.
+
+Earn abstraction, indirection, adapters, configurability, and seams through
+supported variation, repeated policy, or a real external boundary.
 
 Prefer deepening or modifying the current behavior owner before adding another
 path. Retain parallel behavior only for an explicit compatibility, migration,
@@ -139,11 +158,13 @@ immutable constraint.
 
 Add a new abstraction, dependency, framework, or mechanism only when its
 demonstrated value exceeds its learning, integration, maintenance, and failure
-costs. Select the integrated shape with the lowest total burden. Replace or
-relocate ownership only when direct evidence shows ownership is the material
-problem and one bounded migration can close the displaced path.
+costs. Replace or relocate ownership only when direct evidence shows ownership
+is the material problem and one bounded migration can close the displaced path.
 
 ### Converge Efficiently — Prefer
+
+When material uncertainty exists, optimize for learning through
+fast, high-quality feedback.
 
 Use the least context, coordination, artifacts, mutations, and validation that
 can support the claim. Prefer direct data flow, existing primitives,
@@ -154,8 +175,9 @@ for measured or clearly material cost.
 
 ### Build Only What Is Needed — Prefer
 
-Apply YAGNI to speculative behavior, configuration, compatibility, flexibility,
-and extensibility.
+Apply YAGNI to speculative capabilities, not automatically to the shape of an
+already-needed interface. Prefer **somewhat general-purpose modules** when they
+reduce special cases and caller burden without adding speculative capabilities.
 
 Apply DRY to shared meaning and policy, not every repeated line. Repetition may
 remain when unification would couple different meanings, owners, change rates,
@@ -169,6 +191,11 @@ reason to reconsider it.
 Treat tests as durable evidence for behavior, invariants, failure paths, and
 risks—not as a diary of tickets or edits. Reuse or extend a clear existing test
 before adding a separate one.
+
+Treat **a test as the first user** of an interface and as feedback about its
+design, API, and coupling. Prefer **state testing** through stable caller-facing
+APIs; use **interaction testing** only when the interaction itself is part of
+the contract or provides necessary failure isolation.
 
 A separate test earns its place through a distinct behavior, invariant, oracle,
 proof seam, state or failure branch, material risk, or need for diagnostic

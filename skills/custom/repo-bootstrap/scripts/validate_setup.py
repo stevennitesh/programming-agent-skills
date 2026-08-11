@@ -17,7 +17,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:e6aa3811fac3 -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:4ad200ae7e6e -->"
 ENGINEERING_PRIMER_TOKEN = (
     "Explore imaginatively. Converge under proof. Simplify ruthlessly."
 )
@@ -96,6 +96,7 @@ CONTRACT_LITERAL_TOKENS = (
     "**Method** names a practice triggered by a stated condition.",
     "## Shared Concepts",
     "**Bounded slice:**",
+    "fast, high-quality feedback",
     "**Commitment boundary:**",
     "**Proof seam:**",
     "**Proof lane:**",
@@ -108,7 +109,7 @@ CONTRACT_LITERAL_TOKENS = (
     "### Keep Evidence Honest",
     "### Practice Stewardship",
     "## Shape Code For Understanding",
-    "### Deep Simplicity",
+    "### Deep Modules And Information Hiding",
     "### Local Readability",
     "### Fit Before Novelty",
     "### Build Only What Is Needed",
@@ -561,6 +562,8 @@ def main() -> int:
                 (
                     "operational definition or exact authoritative owner",
                     "not merely a successful happy path",
+                    "Hyrum's Law",
+                    "define errors out of existence",
                     "Validate untrusted or contract-sensitive input",
                     "A focused check",
                     "Preserve unrelated behavior, work, and durable decisions",
@@ -569,9 +572,21 @@ def main() -> int:
             (
                 "## Shape Code For Understanding",
                 (
+                    "change amplification",
+                    "deep modules",
+                    "information hiding",
+                    "shallow modules",
+                    "pass-through methods",
+                    "essential complexity",
+                    "accidental complexity",
+                    "fast, high-quality feedback",
                     "supported variation, repeated policy, or a real external",
                     "Apply YAGNI",
+                    "somewhat general-purpose modules",
                     "Apply DRY to shared meaning and policy",
+                    "a test as the first user",
+                    "state testing",
+                    "interaction testing",
                     "Consolidation must preserve coverage and diagnostic clarity",
                     "Test count is not a goal",
                 ),

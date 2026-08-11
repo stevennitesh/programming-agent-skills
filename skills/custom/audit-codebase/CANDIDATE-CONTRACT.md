@@ -101,7 +101,8 @@ Do not force an alternative to exist, but `not applicable` needs evidence.
 - **Smallest sufficient change** is the first valid reduction or correction
   that preserves supported behavior and safety.
 - **Structural change** deepens, merges, inlines, moves a Seam, or introduces
-  an earned Adapter only when Leverage, Locality, and testability improve.
+  an earned Adapter only when Depth, information hiding, or testability
+  improves and relevant complexity symptoms fall.
 - **Replacement** is valid only when incremental evolution is worse and parity,
   migration, cutover, rollback, and proof are explicit.
 

@@ -53,7 +53,8 @@ writes, proof owners, scarce resources, and known serial tripwires. Run items
 concurrently only when they are independently bounded and the expected time
 saving exceeds coordination and integration cost. Uncertain or overlapping
 items run serially. Protected data, permissions, trust boundaries, migrations,
-cutovers, and irreversible state start with one production-path tracer.
+cutovers, and irreversible state start with one tracer bullet through the
+production path.
 
 Choose the first matching capable profile using the ordered conditions in
 [Runtime Profiles](references/RUNTIME-PROFILES.md).

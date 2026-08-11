@@ -54,16 +54,17 @@ items later without erasing each item's primary owner.
 
 A violated authoritative expectation is a defect under
 [DEFECT-CONTRACT.md](DEFECT-CONTRACT.md). Missing required evidence unavailable
-within Audit is a gap. Complexity protecting a verified constraint is retained
-complexity. A beneficial change without a violated expectation is an
+within Audit is a gap. Essential complexity protecting a verified constraint
+is retained complexity; accidental complexity earns no retention merely
+because it exists. A beneficial change without a violated expectation is an
 opportunity only when all gates close:
 
 - **Reach:** one supported scenario currently reaches the code.
 - **Evidence:** direct current-source evidence identifies the shape.
 - **Observed cost:** one affected scenario has concrete caller burden,
-  duplicated decisions, change spread, proof friction, execution cost,
-  dependency weight, misleading ownership, failure exposure, or comprehension
-  burden.
+  duplicated decisions, change amplification, proof friction, execution cost,
+  dependency weight, misleading ownership, failure exposure, cognitive load,
+  or exposed unknown unknowns.
 - **Existing direction:** a named current/local owner or sufficient mechanism
   plausibly removes that cost without weakening the contract.
 - **Proof:** the observable seam and preservation checks are named.

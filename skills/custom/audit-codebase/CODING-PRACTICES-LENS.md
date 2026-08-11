@@ -9,17 +9,19 @@ independently evidenced clarity or provability item in the same subsystem.
 
 - **Naming:** Do names reveal accepted meaning, units, state, and intent, or
   does an observed ambiguity burden callers or tests?
-- **Valid states:** Do types and local state representation make invalid states
-  representable or transitions hidden?
+- **Valid states:** Where commitments permit, can semantics, types, or local
+  state representations define needless errors out of existence, or are
+  invalid states representable or transitions hidden?
 - **Control flow:** Are meaningful happy, edge, cleanup, and failure paths
   visible without obscuring ordering?
 - **Comments:** Do comments preserve a surprising constraint or trade-off, or
   duplicate syntax and drift from behavior?
 - **Error expression:** After Reliability establishes required semantics, do
   names and structure preserve cause and caller-useful context?
-- **Test portfolio:** Does each test own a distinct supported behavior,
-  invariant, branch, risk, or diagnostic responsibility through the Proof
-  Seam?
+- **Test portfolio:** As a first user of the Interface, does each test prefer
+  state testing through the Proof Seam and own a distinct supported behavior,
+  invariant, branch, risk, or diagnostic responsibility? Is interaction
+  testing limited to contractual interactions or necessary failure isolation?
 
 For suspected test sprawl, map every relevant test to behavior, seam, oracle,
 distinct risk, and observed cost. Admit consolidation only when overlap has no

@@ -119,8 +119,9 @@ Admit defects and gaps under the Finding contract; admit opportunities and
 retained complexity under Quality. Smells and generic thresholds are discovery
 hints only. Read [CANDIDATE-CONTRACT.md](CANDIDATE-CONTRACT.md) only when an
 admitted defect or opportunity needs grouping. Preserve every member and rank
-candidates only inside the selected subsystem by verified impact, applicable
-Leverage or Locality, confidence, and proof burden.
+candidates only inside the selected subsystem by verified impact, demonstrated
+change amplification, cognitive load, or unknown unknowns, confidence, and
+proof burden.
 
 Recheck current source identity, publish once, return observations, coverage,
 and evidence limits, then ask the user to select any candidate. Stop.

@@ -23,7 +23,11 @@ def test_confirmed_order_reserves_inventory_and_exposes_receipt():
 This proves one acceptance behavior through its observable effects rather than
 splitting pricing, reservation, persistence, and receipt into horizontal tests.
 
-## Public Behavior
+## State Testing
+
+Treat a test as the first user of an interface. Prefer state testing through
+stable caller-facing behavior; use interaction testing only when the
+interaction itself is contractual or provides necessary failure isolation.
 
 Implementation-coupled:
 
@@ -62,7 +66,7 @@ assert calculate_total([{"price": 10}, {"price": 5}]) == 15
 Trace expectations to a specification, known-good literal, fixture, or worked
 result—not the production implementation.
 
-## Behavior-Owned Test Portfolio
+## Test Portfolio
 
 Extend or parameterize an existing test when the same seam, oracle, and
 outcome prove semantically equivalent inputs. Keep a separate test when it

@@ -58,13 +58,16 @@ default mode. For other targets and each `until-clean` cycle, inspect the region
 in this order. The first safe rung wins:
 
 1. **Delete** behavior, configuration, compatibility, or abstraction proved
-   unreachable, expired, or unsupported within preserved contracts.
+   unreachable, expired, or unsupported within preserved contracts. Apply
+   Hyrum's Law as a compatibility-risk heuristic when observable behavior may
+   have actual dependents; dependence informs migration without automatically
+   expanding the intended contract.
 2. **Reuse** an existing project-owned semantic match.
 3. **Standardize, native-first** through standard/runtime, platform/framework,
    then already-installed dependency capability.
-4. **Collapse** an unearned abstraction or duplicated decision at its
-   narrowest existing owner; deepen, merge, or inline only within settled
-   existing boundaries.
+4. **Collapse** an unearned abstraction or duplicated decision that creates
+   accidental complexity at its narrowest existing owner; deepen, merge, or
+   inline only within settled existing boundaries.
 5. **Shrink** branching or data movement with ordinary readable constructs.
 
 An earlier rung yields when its semantics, compatibility, edge behavior,
@@ -101,9 +104,11 @@ and external state.
 Rerun the same focused proof, then the nearest relevant tests and proportionate
 repository checks. Establish a strict net reduction across concepts, branch
 families, coordination, indirection, file responsibilities, dependencies,
-callers, tests, configuration, and operations. Counts are receipts, not
-correctness or productivity proof; a shorter patch that transfers burden is not
-simpler.
+callers, tests, configuration, and operations. When relevant, explain the net
+reduction as lower change amplification or cognitive load, or as an unknown
+unknown made discoverable. Counts are receipts, not correctness or productivity
+proof; a shorter patch that merely relocates accidental complexity, exposes
+essential complexity to callers, or transfers equivalent burden is not simpler.
 
 Refresh changed paths and work state after proof. Confirm the patch preserves
 commitments, changes only the admitted cut and its created fallout, keeps the

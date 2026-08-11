@@ -530,7 +530,7 @@ def assert_repo_bootstrap_semantic_contract(
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     assert_repo_bootstrap_semantic_contract(
         CUSTOM / "repo-bootstrap",
-        "01ccbe03928a6032ff2b6ea3b7d62107e13a5eb10f02d88c2121b5ff93309942",
+        "4dbce0d7f08f08536a147b4d2774b910eeade4cd71581cdaba8a94c88266884d",
         profile="incumbent",
     )
 
@@ -805,6 +805,18 @@ def test_codebase_design_preserves_lean_branch_contracts() -> None:
     )
     assert "Proof Seam" in design
     assert "test double alone does not earn one" in design_flat
+    for source_term in (
+        "deep modules",
+        "information hiding",
+        "change amplification",
+        "cognitive load",
+        "unknown unknowns",
+        "somewhat general-purpose interfaces",
+        "a test as the first user",
+        "state testing",
+        "interaction testing",
+    ):
+        assert source_term in design_flat.lower()
     assert len(re.findall(r"(?m)^## \d+\. ", direct)) == 5
     for required in (
         "decision-needed",
@@ -812,7 +824,7 @@ def test_codebase_design_preserves_lean_branch_contracts() -> None:
         "Failure Atomicity",
         "Trust Boundaries",
         "Proof Seam establishes meaning",
-        "Behavior-Owned Test Portfolio",
+        "Test Portfolio",
         "Change Closure",
     ):
         assert required in direct_flat
@@ -1858,7 +1870,10 @@ def test_tdd_discloses_test_reference_only_for_an_evidence_gap() -> None:
         assert f"[{helper}]({helper})" in tdd
     assert "existing Behavior Test, case table, or contract suite" in tdd
     assert "Add a test only when the tracer has a distinct proof" in tdd
-    assert "## Behavior-Owned Test Portfolio" in tests
+    assert "## Test Portfolio" in tests
+    assert "a test as the first user" in tests
+    assert "state testing" in tests
+    assert "interaction testing" in tests
     assert "Test count is not a target" in tests
 
 
@@ -2431,13 +2446,44 @@ def test_portable_fallback_remains_standalone_from_the_repo_contract() -> None:
     assert "It is not a workflow, checklist, review gate, completion contract" in contract_flat
     assert "replace any portable contract owner preamble" in " ".join(bootstrap.split())
     assert re.findall(r"\$[a-z0-9][a-z0-9-]*", fallback) == []
-    assert "### Deep Simplicity — Prefer" in contract
+    assert "### Deep Modules And Information Hiding — Prefer" in contract
     assert "### Fit Before Novelty — Prefer" in contract
     assert "### Converge Efficiently — Prefer" in contract
     assert "### Use A Negative Control — Method" in contract
     assert "### Prove Durable Artifacts Proportionally — Method" in contract
     assert "controlled violation fails for the intended reason" in contract_flat
     assert "Repeat the conforming case after failure only when state" in contract_flat
+
+
+def test_source_derived_vocabulary_projects_to_affected_skill_slices() -> None:
+    projections = {
+        "audit-codebase": (
+            "Hyrum's Law",
+            "define needless errors out of existence",
+            "change amplification",
+            "cognitive load",
+            "unknown unknowns",
+            "state testing",
+            "interaction testing",
+        ),
+        "change-review": ("Hyrum's Law", "essential and accidental complexity"),
+        "simplify-code": ("Hyrum's Law", "change amplification", "cognitive load"),
+        "implement": ("Hyrum's Law", "actual dependence"),
+    }
+    paths = {
+        "audit-codebase": tuple((CUSTOM / "audit-codebase").glob("*.md")),
+        "change-review": tuple((CUSTOM / "change-review").glob("*.md")),
+        "simplify-code": (CUSTOM / "simplify-code/SKILL.md",),
+        "implement": (CUSTOM / "implement/SKILL.md",),
+    }
+
+    for owner, terms in projections.items():
+        text = " ".join(
+            " ".join(path.read_text(encoding="utf-8").split())
+            for path in paths[owner]
+        )
+        for term in terms:
+            assert term in text
 
 
 def test_readme_exposes_both_adoption_paths() -> None:

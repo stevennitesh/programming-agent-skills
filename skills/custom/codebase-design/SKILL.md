@@ -33,16 +33,18 @@ terms for architecture claims:
   function, class, package, workflow, or tier-spanning slice.
 - **Interface** — everything callers must know: operations, inputs, outputs,
   invariants, ordering, errors, configuration, performance, and behavior.
-- **Implementation** — behavior hidden behind the interface. Use **adapter**
-  only when its role at a seam matters.
-- **Depth** — caller and test leverage per unit of interface learned. Depth is a
-  property of the interface, not implementation size.
+- **Implementation** — behavior and design decisions hidden behind the
+  interface through **information hiding**. Use **adapter** only when its role
+  at a seam matters.
+- **Depth** — coherent functionality relative to interface burden. Depth
+  is a property of the interface, not implementation size.
 - **Seam** — where behavior can vary without editing callers; the interface
   lives here.
 - **Adapter** — a concrete implementation satisfying an interface at a seam.
-- **Leverage** — capability gained per unit of interface learned.
-- **Locality** — change, bugs, decisions, knowledge, and verification
-  concentrated in one place.
+- **Change amplification**, **cognitive load**, and **unknown unknowns** — the
+  three symptoms of complexity: how many places a supported change touches,
+  how much information a developer must hold in mind, and whether needed
+  information or dependencies are hard to discover.
 - **Responsibility** — cohesive behavior, Invariants, decisions, and failure
   policy with one owner.
 - **Proof Seam** — the caller-facing boundary where meaning is established;
@@ -50,16 +52,19 @@ terms for architecture claims:
 
 ## Taste
 
-- **Compress.** Reduce what callers learn and coordinate.
-- **Delete.** A useful module redistributes its complexity when removed; a
-  pass-through removes it.
+- **Deepen.** Prefer deep modules and somewhat general-purpose interfaces that
+  reduce special cases without adding capabilities beyond current needs.
+- **Delete.** Removing a useful Module exposes or redistributes essential
+  complexity; removing a shallow module or pass-through method removes
+  accidental complexity.
 - **Earn.** Keep a seam or layer only for locality, dependency isolation,
   domain ownership, supported variation, a real external boundary, or
   caller-facing testability unavailable more directly. An Adapter count or
   test double alone does not earn one.
-- **Prove.** Use the caller-facing Interface as the Proof Seam. Prefer
-  observable outcomes; specify an internal Module directly only when it owns
-  independently meaningful behavior.
+- **Prove.** Treat a test as the first user of the Interface. Use the
+  caller-facing Interface as the Proof Seam, prefer state testing through
+  observable outcomes, and use interaction testing only when the interaction
+  is contractual or isolates a necessary failure.
 
 ## Direct Design
 

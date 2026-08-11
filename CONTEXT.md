@@ -11,14 +11,17 @@ This repository packages a shared engineering discipline as skills, setup contra
 - `docs/agents/issue-tracker.md`, `triage-labels.md`, and `domain.md` own tracker mechanics, state roles, and domain routing.
 - `skills/custom/` is the active supported install set and the only source for managed installation. `skills/experimental/` holds inactive named alternatives to active skills. `skills/extra/` is optional, and `skills/.archive/` is retired history.
 - Historical research, synthesis, transcripts, issue notes, and run logs remain evidence. They become current instructions only when an owning README or `docs/plans/README.md` says so.
-- A Fresh Composition Epoch treats prior research, synthesis, validation, and campaign conclusions as historical by default. It admits them only after independent rediscovery or explicit revalidation against the epoch's fixed identities and claims.
+- A Fresh Composition Epoch treats prior research, synthesis, validation, and
+  one-skill change conclusions as historical by default. It admits them only
+  after independent rediscovery or explicit revalidation against the epoch's
+  fixed identities and claims.
 - Mechanical rules belong in scripts or config. Prose owns routing, judgment, and behavior that cannot be enforced directly.
 - A delegated implementation handoff is fresh ordinary task context. It never
   replaces its authoritative ticket, source, or live repository evidence and
   requires no worker-side schema, capsule, hash, transcript, or receipt check.
 - An implementation worker owns only its assigned write scope and evidence
-  return. It never gains delivery, scheduling, integration, review, Lock, or
-  closeout authority and never spawns another worker.
+  return. It never gains delivery, scheduling, integration, review, candidate
+  baselining, promotion, or closeout authority and never spawns another worker.
 - Worker completion is provisional until the coordinator inspects the scoped
   diff, requested commit, and observed proof. Formal review judges the
   recombined candidate independently.
@@ -33,7 +36,8 @@ This repository packages a shared engineering discipline as skills, setup contra
   independence, dependencies, integration bandwidth, and expected benefit.
 - Delivery starts from the intended outcome, current behavior owner, real
   callers, and relevant constraints, then selects and simplifies the smallest
-  repository-native integrated shape. Novelty and familiarity are neutral.
+  repository-native path through that owner and its real callers. Novelty and
+  familiarity are neutral.
 - Automatic implementation review uses Change Review. Supported risk changes
   coverage, not the review skill. High-Assurance Review is explicit-only.
 
@@ -103,39 +107,43 @@ _Avoid_: prompt collection, script bundle
 **Fresh Composition Epoch**
 
 A pack-wide epistemic reset that freezes intended composition before prior
-research, synthesis, validation, campaign conclusions, or current skill bodies
-can steer discovery. It rebuilds a Pack Composition Contract and Research
-Catalog, runs gate-driven one-skill Deploy Campaigns under that contract,
-proves the composed pack, and cleans up superseded material only after Lock.
-Prior artifacts are historical intake until Contract Lock independently binds
-current intent and explicitly revalidates their complete identities.
-_Avoid_: clean slate, destructive reset, pack-wide Deploy Campaign
+research, synthesis, validation, change-control conclusions, or current skill
+bodies can steer discovery. It rebuilds a Pack Composition Baseline and
+Evidence Catalog, runs the Skill Change-Control Method for each selected skill
+under that baseline, proves the composed pack, and cleans up superseded
+material only after an Epoch Acceptance Record. Prior artifacts are historical
+intake until Define and Authorize Change independently binds current intent and
+explicitly revalidates their complete identities.
+_Avoid_: clean slate, destructive reset, pack-wide change-control method
 
-**Pack Composition Contract**
+**Pack Composition Baseline**
 
-The pack-level synthesis contract for selected capabilities, each skill's
+The approved pack-level synthesis baseline for selected capabilities, each skill's
 essential outcome and router, executable-aggregate, or leaf role, ownership
 boundaries, relationships, exclusions, collisions, gaps, and required
-integration proof. It constrains one-skill Deploy Campaigns without selecting
-their H1 behavior or copying their procedures.
-_Avoid_: skill inventory, route list, campaign charter
+integration proof. It constrains one-skill change-control work without
+selecting its H1 behavior or copying its procedures.
+_Compatibility alias_: Pack Composition Contract
+_Avoid_: skill inventory, route list, change-control charter
 
-**Research Catalog**
+**Evidence Catalog**
 
-The campaign-facing index of reusable Research Cards, organized by the
+The change-control-facing index of reusable Evidence Records, organized by the
 behavior or failure they address, conditions, evidence class, freshness,
-limits, and source pointers. A one-skill campaign opens it only when Contract
-Lock finds a decision-relevant method, concept, hypothesis, or source-evidence
-gap, and only after recording an independent problem-first packet. It supports
-retrieval and never selects skill composition or admits H1.
+limits, and source pointers. One-skill work opens it only when Define and
+Authorize Change finds a decision-relevant method, concept, hypothesis, or
+source-evidence gap, and only after recording an independent problem-first
+packet. It supports retrieval and never selects skill composition or admits H1.
+_Compatibility alias_: Research Catalog
 _Avoid_: recommendation engine, synthesis index, source dump
 
-**Research Card**
+**Evidence Record**
 
 A reusable evidence unit describing one behavior or method, the failure it may
 prevent, applicability and counterconditions, claim-owning evidence,
 freshness, limits, and source-packet pointers. Per-skill synthesis decides
-whether a card contributes to H1.
+whether a record contributes to H1.
+_Compatibility alias_: Research Card
 _Avoid_: adopted behavior, H1 unit, source summary
 
 **Active skill**
@@ -188,7 +196,7 @@ _Avoid_: capsule, assignment schema, planner transcript
 The delegated agent that implements one bounded handoff and returns changed
 files, observed validation, acceptance evidence, risk, and a task commit when
 requested. Its return remains provisional until coordinator verification.
-_Avoid_: delivery coordinator, campaign owner, reviewer
+_Avoid_: delivery coordinator, change-control owner, reviewer
 
 **Concurrent worker lane**
 
@@ -226,23 +234,26 @@ _Avoid_: hypothetical edge case, risk label, PR route
 An explicit-only skill that returns one next route and leaves downstream work unstarted.
 _Avoid_: dispatcher, automatic router
 
-**Deploy Campaign**
+**Skill Change-Control Method**
 
 An explicitly invoked controllerless one-skill authoring method, owned by
 [`deploy-prompts.md`](docs/synthesis/methods/deploy-prompts.md), organized by
-four ordered reasoning and proof obligations: Contract Lock, Candidate Lock,
-conditional Behavioral Proof, and Release. The obligations are not persisted
-semantic lifecycle state.
+four ordered reasoning and proof obligations: Define and Authorize Change,
+Baseline and Verify Candidate, conditional Validate Behavior, and Promote
+Canonical Skill. The obligations are not persisted semantic lifecycle state.
 
-Contract Lock binds the issue, specification, applicable current authority,
-callers, relationships, compatibility, and delivery authority. Candidate Lock
-freezes exact bytes and completes applicable deterministic and integration
-proof before behavioral dispatch or promotion. Behavioral Proof uses the
-existing conditional evaluation owner only for wording-dependent claims and
-real disposable state for effect claims. Release promotes only the exact tested
-candidate. Research, behavioral sampling, pruning, installation, and Git
-delivery occur only when their conditions and authorities apply.
-_Avoid_: mega-prompt, self-chaining prompt, pack-wide campaign
+Define and Authorize Change binds the issue, specification, applicable current
+authority, callers, relationships, compatibility, and delivery authority.
+Baseline and Verify Candidate freezes exact bytes and completes applicable
+deterministic and integration verification before behavioral dispatch or
+promotion. Validate Behavior uses the existing conditional evaluation owner
+only for wording-dependent claims and real disposable state for effect claims.
+Promote Canonical Skill moves only the exact tested candidate into the
+canonical package. Research, behavioral sampling, pruning, installation, and
+Git delivery occur only when their conditions and authorities apply.
+_Compatibility aliases_: Deploy Campaign; Contract Lock; Candidate Lock;
+Behavioral Proof; Release (for this method stage only)
+_Avoid_: mega-prompt, self-chaining prompt, pack-wide method
 
 **Global AGENTS template**
 
@@ -251,10 +262,18 @@ _Avoid_: pack manual, copied route map
 
 ## Vocabulary Owners
 
-- Fresh Composition Epoch, Pack Composition Contract, Research Catalog, and Research Card vocabulary belongs to this context and [ADR-0009](docs/adr/0009-fresh-composition-epochs-revalidate-skill-pack-knowledge.md). The accepted `docs/synthesis/skill-pack.md` owner remains to be materialized by the separately authorized topology migration.
-- Deploy-campaign proof-obligation vocabulary belongs to
+- Fresh Composition Epoch, Pack Composition Baseline, Evidence Catalog, and
+  Evidence Record vocabulary belongs to this context and
+  [ADR-0014](docs/adr/0014-source-native-vocabulary-names-active-pack-concepts.md).
+  [ADR-0009](docs/adr/0009-fresh-composition-epochs-revalidate-skill-pack-knowledge.md)
+  remains the Fresh Composition Epoch decision. The accepted
+  `docs/synthesis/skill-pack.md` payload is the current Pack Composition
+  Baseline owner.
+- Skill Change-Control Method proof-obligation vocabulary belongs to
   [`deploy-prompts.md`](docs/synthesis/methods/deploy-prompts.md) and
-  [ADR-0010](docs/adr/0010-deploy-campaigns-advance-through-proof-gates.md).
+  [ADR-0014](docs/adr/0014-source-native-vocabulary-names-active-pack-concepts.md).
+  [ADR-0010](docs/adr/0010-deploy-campaigns-advance-through-proof-gates.md)
+  remains the controllerless proof-ordering decision.
 - Change review candidate, High-assurance review candidate, and Supported
   high-risk trigger belong to this context and
   [ADR-0013](docs/adr/0013-automatic-implementation-review-uses-one-change-review-path.md).
@@ -263,16 +282,17 @@ _Avoid_: pack manual, copied route map
   [`skills/custom/writing-great-skills/GLOSSARY.md`](skills/custom/writing-great-skills/GLOSSARY.md);
   predictable behavior, gates, completion, and pruning stay inline in
   `SKILL.md`.
-- Runtime engineering vocabulary and preventive code-quality defaults—Source
-  Trace, bounded slice, commitment boundary, proof seam, proof lane, fixed
-  point, Spec / Standards, correctness, robustness, Change Closure, code shape,
-  simplification, implementation clarity, measured performance, Lock, and
-  residual risk—belong to `docs/agents/engineering-contract.md`.
+- Runtime engineering vocabulary and preventive code-quality
+  defaults—Traceability, bounded slice, commitment boundary, proof seam,
+  repository-owned proof mechanism, fixed point, Spec / Standards,
+  correctness, robustness, Change Closure, code shape, simplification,
+  implementation clarity, measured performance, and residual risk—belong to
+  `docs/agents/engineering-contract.md`.
   Project-specific domain language and decisions remain with routed domain
   records.
 - Delegated implementation handoff language and worker evidence Returns belong
   to `$implement` and its disclosed reference. Concurrent-lane preparation and
-  cleanup are shared mechanics. Parallel campaign scheduling, concurrency
+  cleanup are shared mechanics. Parallel delivery scheduling, concurrency
   qualification, serial landing, recombination, and parent closeout belong to
   `$parallel-implement`. [ADR-0012](docs/adr/0012-shared-delegated-execution-separates-delivery-authority-from-executor-transport.md)
 - Domain vocabulary belongs to routed `CONTEXT.md` files and ADRs in each target repo.

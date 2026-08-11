@@ -192,7 +192,8 @@ checkout state. Treat uncertain independence conservatively as serial; never
 infer it from filenames alone.
 
 For protected data, permissions, trust boundaries, irreversible state,
-migrations, or cutovers, put one production-path tracer before dependent work
+migrations, or cutovers, put one tracer bullet through the production path
+before dependent work
 and require retry, rollback, and partial-state proof. For a non-atomic
 interface, schema, client, or data change, use expand-migrate-contract and
 contract only after old usage ends and compatibility proof passes. Do not

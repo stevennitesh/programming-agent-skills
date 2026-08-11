@@ -87,6 +87,11 @@ ownership, and a concrete reason to exist now. Validate machine-consumed
 actionable input once at its trust boundary; do not validate ordinary prose
 handoffs or Returns.
 
+Apply Hyrum's Law as a compatibility-risk heuristic when changing observable
+behavior: distinguish the intended contract from actual dependence, and treat
+demonstrated dependence as migration evidence rather than automatically as a
+new commitment.
+
 Bind proof to the exact candidate and inputs. Run focused checks that prove the
 change, plus broader checks only when repository policy or shared impact makes
 them necessary. When safe execution is unavailable, use the strongest safe

@@ -6,8 +6,7 @@ migration, or validation strategy.
 [`SKILL.md`](SKILL.md) owns vocabulary and taste.
 [DIRECT-DESIGN.md](DIRECT-DESIGN.md) owns the direct pass and design packet.
 This file owns dependency classification, Seam placement, the
-Behavior-Owned Test Portfolio, coverage parity, Change Closure, and bounded
-migration.
+Test Portfolio, coverage parity, Change Closure, and bounded migration.
 
 Classify -> Place -> Substitute -> Replace -> Migrate.
 
@@ -52,8 +51,10 @@ isolation. Classify every affected test as **add, rewrite, keep, or delete**:
 - **Delete** pass-through, call-order, or implementation-detail assertions
   superseded by stronger behavior proof.
 
-Assert observable outcomes through the Interface callers use. A test that
-changes only because Implementation moved is testing past the Interface.
+Treat a test as the first user of the Interface. Prefer state testing through
+observable outcomes; use interaction testing only when the interaction is the
+contract or provides necessary failure isolation. A test that changes only
+because Implementation moved is testing past the Interface.
 Remove shallow production and test paths only after stronger proof owns their
 Responsibilities.
 

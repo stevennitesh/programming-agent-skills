@@ -62,11 +62,12 @@ For each alternative, show:
 
 ## 3. Compare
 
-Compare Depth, Locality, caller ergonomics, Seam placement, dependency
-strategy, Semantic Correctness, Robustness, test portfolio, Change Closure,
-migration cost, and risk under the same obligations. Merge alternatives that
-differ only by names, parameter reshuffling, or cosmetic layering; replace
-fake variety with a genuinely different design.
+Compare Depth, information hiding, change amplification, cognitive load,
+unknown unknowns, caller ergonomics, Seam placement, dependency strategy,
+Semantic Correctness, Robustness, test portfolio, Change Closure, migration
+cost, and risk under the same obligations. Merge alternatives that differ only
+by names, parameter reshuffling, or cosmetic layering; replace fake variety
+with a genuinely different design.
 
 ## 4. Recommend
 

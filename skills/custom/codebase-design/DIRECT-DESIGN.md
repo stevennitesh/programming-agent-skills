@@ -18,6 +18,9 @@ terms and ADRs, current Interface and Implementation, material
 Responsibilities and owners, representative callers and tests, dependencies,
 operational constraints, and first migration edge. Inspect bounded history
 only when repeated change, churn, or compatibility supports a design claim.
+Apply Hyrum's Law as a compatibility-risk heuristic when observable behavior
+may have actual dependents; dependence informs migration without automatically
+expanding the intended contract.
 
 If material behavior, ownership, authority, or compatibility cannot be
 established, return `decision-needed` or `evidence-gap` with the exact missing
@@ -29,8 +32,9 @@ Name the Module, Interface, Implementation, material Responsibilities,
 Invariants, state and failure policies and their owners, spread behavior or
 decisions, caller and test friction, Interface pressure, deletion-test result,
 real or hypothetical Seams, and relevant repeated-change hotspots. Explain the
-losses in Depth, Leverage, and Locality, or retain the current shape when no
-material problem is proved.
+losses in Depth or information hiding and the demonstrated change
+amplification, cognitive load, or unknown unknowns; retain the current shape
+when no material problem is proved.
 
 ## 3. Shape
 
@@ -38,6 +42,10 @@ Choose the strongest shape: deepen, merge, inline, retain, replace, or introduce
 no new seam. Describe its caller-facing contract, hidden behavior and decisions,
 any earned seam, adapters or substitutes, caller and test surfaces, and first
 bounded migration step.
+
+For an already-needed Module, keep capabilities within current needs while
+making the Interface somewhat general-purpose: remove caller-specific special
+cases without adding speculative capability.
 
 For each material Interface concern, state Responsibility and exclusions;
 operations, inputs, outputs, and effects; Invariants and State Lifecycle;
@@ -47,7 +55,10 @@ and authoritative or measured performance constraints; and the Proof Seam.
 Mark a concern not applicable only with evidence. A Proof Seam establishes
 meaning; it does not by itself earn a design Seam or Adapter.
 
-Admit **replace** only when current commitments and caller behavior are
+Where commitments permit, define errors out of existence before adding
+caller-handled failure cases.
+
+Admit **replace** only when the intended contract and actual dependence are
 traceable, incremental evolution is riskier or more complicated, parity has a
 proof seam, and migration, cutover, rollback, and one bounded first slice are
 explicit.
@@ -88,7 +99,7 @@ Return:
 - recommended or retained shape, material Interface contract, hidden behavior,
   and caller-retained Responsibilities;
 - earned Seams, dependencies, Adapters, substitutes, and Proof Seams;
-- caller Leverage, maintainer Locality, and Behavior-Owned Test Portfolio;
+- Depth, information hiding, complexity symptoms, and Test Portfolio;
 - credible alternatives and recommendation when applicable;
 - first bounded migration step when change is recommended, validation,
   Change Closure, and stop boundary, including boundary proof when applicable;

@@ -53,7 +53,7 @@ automation is impossible, use a shell-appropriate HITL harness that captures the
 exact symptom, expected and actual behavior, steps, attempts, failures,
 environment, and observations.
 
-The **Loop** must be:
+The **Loop** must provide fast, high-quality feedback by being:
 
 - **sharp:** asserts the exact symptom;
 - **repeatable:** deterministic or measured by reproduction rate;

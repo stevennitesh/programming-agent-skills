@@ -7,6 +7,8 @@ description: 'Test-driven development. Use when the user wants to build features
 
 Own one inner loop:
 
+Optimize it for fast, high-quality feedback.
+
 **TRACE -> RED -> GREEN -> REFACTOR -> RETURN**
 
 **No observed RED, no TDD.** After-the-fact proof may supplement RED evidence;
