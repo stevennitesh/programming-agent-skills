@@ -23,6 +23,8 @@ RI_FIXTURE = (
 SKILL = ROOT / "skills/extra/value-stock/SKILL.md"
 RUNBOOK = ROOT / "skills/extra/value-stock/references/analyst-runbook.md"
 METHODS = ROOT / "skills/extra/value-stock/references/valuation-methods.md"
+COMPACT_REPORT = ROOT / "skills/extra/value-stock/references/compact-report.md"
+FULL_REPORT = ROOT / "skills/extra/value-stock/references/report-contract.md"
 WORKFLOW_PROOF = ROOT / "docs/validation/skills/value-stock"
 
 
@@ -161,6 +163,52 @@ def test_skill_routes_operations_to_conditional_references_and_calculators() -> 
     )
     assert oracle["source_fixture"] == canonical_path
     assert negatives["base_fixture"] == canonical_path
+
+
+def test_runbook_resolves_capability_before_dependent_work_and_preserves_catalog_states() -> None:
+    runbook = RUNBOOK.read_text(encoding="utf-8")
+    method_position = runbook.index("### Method Disposition")
+    capability_position = runbook.index("### Operation Capability Resolution")
+    evidence_position = runbook.index("### Selected Evidence And Gates")
+
+    assert method_position < capability_position < evidence_position
+    capability = runbook[capability_position:evidence_position]
+    for field in (
+        "caller owner",
+        "selected method",
+        "exact requested operation",
+        "public interface",
+        "contract and version",
+        "capability state",
+        "unlock condition",
+    ):
+        assert field in capability
+    assert "Capability does not choose method fit" in capability
+
+    research = runbook[
+        runbook.index("### Conditional Research Resolution") : runbook.index(
+            "### Forward P/E Or PEG"
+        )
+    ]
+    rows = {
+        columns[0]: columns[1]
+        for line in research.splitlines()
+        if line.startswith("| `")
+        and len(columns := [part.strip() for part in line.strip("|").split("|")]) == 2
+    }
+    assert set(rows) == {"`no_match`", "`blocked`", "`stale`", "`conflict`", "`ambiguous`"}
+    assert "$research" in rows["`no_match`"]
+    assert all("$research" not in action for state, action in rows.items() if state != "`no_match`")
+
+
+def test_return_contracts_scope_reverse_as_an_adjunct_and_reuse_selected_sections() -> None:
+    for path in (COMPACT_REPORT, FULL_REPORT):
+        contract = " ".join(path.read_text(encoding="utf-8").split())
+        assert "only when the selected intrinsic spine declares a compatible operation" in contract
+        assert "separate adjunct capability gap" in contract
+        assert "does not downgrade an otherwise complete intrinsic result" in contract
+        assert "Apply only the source and method sections already selected by the runbook" in contract
+        assert "Do not reload either whole reference" in contract
 
 
 @pytest.mark.parametrize("stem", ["real-fcff", "real-residual-income"])

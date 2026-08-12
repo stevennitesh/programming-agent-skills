@@ -29,8 +29,12 @@ For each applicable method, state why it fits, the assumptions carrying the
 value, the reproducible calculation, the enterprise-to-equity or
 asset-to-security bridge, the resulting causal range or supported base plus
 labeled sensitivity band, and its principal limitation. Show a reverse DCF or
-equivalent when authoritative current-price evidence exists. Name the solved
-variable and fixed assumptions.
+equivalent only when the selected intrinsic spine declares a compatible
+operation and authoritative current-price evidence exists. Name the solved
+variable and fixed assumptions. If that optional reverse operation is
+unsupported, show a separate adjunct capability gap and its unlock condition.
+It does not downgrade an otherwise complete intrinsic result unless the user
+explicitly requested it or it is load-bearing to the requested conclusion.
 
 When more than one coherent causal case is supported, show a distinct
 **Operating Cases** table with the base and named alternatives, intentionally
@@ -102,7 +106,7 @@ peer economics. If PEG is not meaningful, say `PEG: not applicable`. For news
 or sentiment, distinguish changed fundamentals from catalysts and unsupported
 tone.
 
-Apply the evidence, date, market-price, and citation rules in
-[source-protocol.md](source-protocol.md), and the calculation, precision,
-future-date, and margin-of-safety rules in
-[valuation-methods.md](valuation-methods.md).
+Apply only the source and method sections already selected by the runbook from
+[source-protocol.md](source-protocol.md) and
+[valuation-methods.md](valuation-methods.md). Do not reload either whole
+reference while formatting the return.

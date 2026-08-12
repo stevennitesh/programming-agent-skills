@@ -107,8 +107,11 @@ scenarios unless the stated business scenario itself changes them.
 
 For an admitted numerical method, use exactly one declared public deterministic
 path. Resolve capability for the requested calculator operation, not merely the
-method name; a caller-owned path takes precedence over the bundled fallback. If
-that calculation is unsupported or its current contract cannot be resolved,
+method name. After security identity and method disposition, resolve that exact
+operation before dependent method-specific collection, gates, forecasting, or
+freezing; capability cannot choose method fit. A caller-owned path takes
+precedence over the bundled fallback. If that calculation is unsupported or
+its current contract cannot be resolved,
 expose a capability gap with its unlock condition instead of improvising
 material arithmetic. The receipt is authoritative for normalized inputs,
 arithmetic, assertions, and reproducibility. Markdown is its view, not another

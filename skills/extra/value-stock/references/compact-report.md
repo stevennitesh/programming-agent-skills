@@ -28,9 +28,15 @@ State the selected primary method and why it fits. Show:
 - the three to five assumptions carrying most of the value;
 - a short reproducible calculation and enterprise-to-equity or
   asset-to-security bridge;
-- current-price-implied expectations from a reverse DCF or equivalent when
+- current-price-implied expectations from a reverse DCF or equivalent only
+  when the selected intrinsic spine declares a compatible operation and
   authoritative price evidence exists; and
 - sensitivities for the two or three inputs that can materially move the range.
+
+If that optional reverse operation is unsupported, show a separate adjunct
+capability gap and its unlock condition. It does not downgrade an otherwise
+complete intrinsic result unless the user explicitly requested it or it is
+load-bearing to the requested conclusion.
 
 Use a causal range when coherent endpoints are supported. Otherwise, only when
 the base remains supportable, show the base plus a narrowly labeled sensitivity
@@ -68,7 +74,7 @@ Full or stop here. If no hurdle was supplied, do not invent one.
 End with one sentence stating that the work is impersonal research, not
 personalized investment advice.
 
-Apply the evidence, date, market-price, and citation rules in
-[source-protocol.md](source-protocol.md), and the calculation, precision,
-future-date, and margin-of-safety rules in
-[valuation-methods.md](valuation-methods.md).
+Apply only the source and method sections already selected by the runbook from
+[source-protocol.md](source-protocol.md) and
+[valuation-methods.md](valuation-methods.md). Do not reload either whole
+reference while formatting the return.

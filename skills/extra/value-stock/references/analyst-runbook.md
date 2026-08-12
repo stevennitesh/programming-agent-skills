@@ -43,18 +43,9 @@ or delay an ordinary valuation with grilling questions.
 
 ## 2. Build The Evidence Foundation
 
-When live evidence collection begins, read Source Hierarchy, Minimum Evidence
-Packet, Evidence Ledger, and Freshness And Stopping in
-[source-protocol.md](source-protocol.md). Read its market-price section only for
-a price-dependent output; structured-data, transformed-issuer, guidance, news,
-and Full-expansion sections only when their named condition applies. Keep facts,
-guidance, estimates, assumptions, and calculations distinct.
+### Method Disposition
 
-Read Method Principles and only the selected or still-plausible method sections
-in [valuation-methods.md](valuation-methods.md). Read Future-Date Valuation only
-for a future-date output, Margin Of Safety only for a price, attractiveness, or
-hurdle comparison, and Calculation Artifact And Assertions only when a
-supported deterministic lane is used. Read
+Read Method Principles in [valuation-methods.md](valuation-methods.md). Read
 [company-types.md](company-types.md) only when multiple methods remain
 materially plausible or exception economics could change the cash-flow,
 claim-bridge, or method identity.
@@ -65,6 +56,39 @@ authoritative current-price evidence exists. Add relative valuation only when
 requested or able to challenge the primary result. For each materially
 plausible candidate, record target claim, required identity, owning evidence,
 load-bearing gaps, and `admit`, `cross-check`, `bound`, or `reject` disposition.
+
+### Operation Capability Resolution
+
+For each admitted or cross-check numerical path, resolve the **caller owner**,
+**selected method**, **exact requested operation**, **public interface**,
+**contract and version**, **capability state**, and **unlock condition** before
+dependent method-specific collection, gates, forecasting, or freezing.
+Capability does not choose method fit; it only determines whether the already
+selected operation has one usable deterministic path.
+
+Use the caller repository's valuation methodology, method contract, and public
+interface. If a caller-owned path exists, use only it. If none exists, use the
+[bundled valuation gateway](../scripts/valuation_gateway.py) only for its
+declared FCFF or residual-income `validate`, `calculate`, or explicit reverse
+solve route. Never use both paths for one material result. An absent,
+conflicting, or unverified operation is a capability gap with an exact unlock
+condition, not authority for manual arithmetic. Stop that operation's dependent
+numerical branch; independent evidence work may continue.
+
+### Selected Evidence And Gates
+
+When live evidence collection begins, read Source Hierarchy, Minimum Evidence
+Packet, Evidence Ledger, and Freshness And Stopping in
+[source-protocol.md](source-protocol.md). Read its market-price section only for
+a price-dependent output; structured-data, transformed-issuer, guidance, news,
+and Full-expansion sections only when their named condition applies. Keep facts,
+guidance, estimates, assumptions, and calculations distinct.
+
+Read only the selected or still-plausible method sections in
+[valuation-methods.md](valuation-methods.md). Read Future-Date Valuation only
+for a future-date output, Margin Of Safety only for a price, attractiveness, or
+hurdle comparison, and Calculation Artifact And Assertions only when a
+supported deterministic lane is used.
 
 Initialize the Model Lock and run the gates in order. Keep unreached sections
 pending.
@@ -105,16 +129,10 @@ Model Lock version. Bind forecasts, calculation artifacts, assertions, gates,
 and any review packet to it. An uncertain but explicit analyst assumption is
 not automatically an unresolved evidence gap.
 
-At the calculation boundary, resolve the caller repository's valuation
-methodology, selected method contract, and public interface. Record the owner,
-method, requested calculation, contract version, and capability state. Require
-the selected path to declare the calculation it will perform. If a caller-owned
-path exists, use only it. If none exists, use the
-[bundled valuation gateway](../scripts/valuation_gateway.py) only for its
-declared FCFF or residual-income `validate`, `calculate`, or explicit reverse
-solve route. Never use both paths for one material result. An absent,
-conflicting, or unverified calculation is a capability gap with an exact unlock
-condition, not authority for manual arithmetic.
+At the calculation boundary, consume the operation binding recorded in Section
+2. Re-resolve it only if its owner, interface, contract version, or capability
+state changed. Require the selected path to declare the calculation it will
+perform; never improvise material arithmetic when the binding is unavailable.
 
 When the selected caller path uses a method-specific lock, bind it to the
 run-level security, valuation date, cutoff, currency, and upstream evidence
@@ -143,23 +161,27 @@ price-dependent conclusion, use the named convention from Margin Of Safety in
 ### Conditional Research Resolution
 
 Use this subsection only for the unresolved question routed from Section 2. If
-the caller declares a valuation research catalog, search only its metadata.
-Exclude wrong-scope, countercondition, retired, superseded, stale, and
-conflicted entries; open exactly one best eligible note and disposition its
-answer in the existing ledger. A catalog row cannot satisfy a Model Lock
-requirement. Equal eligible matches or no eligible note return a routing gap,
-not permission to load the archive.
+the caller declares a valuation research catalog, search only its metadata and
+preserve the catalog's routing state. A catalog row cannot satisfy a Model Lock
+requirement, and no state permits loading the archive.
 
-Only after the catalog is unavailable or returns no eligible answer, make at
-most one `$research` handoff when the bounded question could change a candidate
-disposition, enable a primary result, or materially change the model or
-conclusion, and no owning full-effect bound exists. Do not delegate a forecast,
-valuation judgment, broad survey, multiple gaps, or ownership of the ledger or
-conclusion. Pass the exact question and exclusions, candidate and claim,
-identity, issuer state, cutoff, jurisdiction when relevant, disposition at
-stake, observable answer condition, no note or write authority, and
-`$value-stock` as return owner. On return, disposition each load-bearing claim
-as `admit`, `reject`, or `preserve-conflict`, then rescreen the candidate once.
+| Catalog state | Next action |
+| --- | --- |
+| `no_match` | Make at most one bounded `$research` handoff if the question can change a candidate disposition, enable a primary result, or materially change the model or conclusion, and no owning full-effect bound exists. |
+| `blocked` | Follow the named unlock condition; do not research around inaccessible required evidence. |
+| `stale` | Refresh the named note or its freshness-owning source before use. |
+| `conflict` | Reconcile the preserved conflict under the catalog contract. |
+| `ambiguous` | Narrow the question or identity until one primary claim family can own it. |
+
+If the caller declares no catalog, this catalog branch is inapplicable; route a
+qualifying bounded research question directly under the same one-handoff rule.
+Do not delegate a forecast, valuation judgment, broad survey, multiple gaps, or
+ownership of the ledger or conclusion. Pass the exact question and exclusions,
+candidate and claim, identity, issuer state, cutoff, jurisdiction when relevant,
+disposition at stake, observable answer condition, no note or write authority,
+and `$value-stock` as return owner. On return, disposition each load-bearing
+claim as `admit`, `reject`, or `preserve-conflict`, then rescreen the candidate
+once.
 
 ### Forward P/E Or PEG
 
